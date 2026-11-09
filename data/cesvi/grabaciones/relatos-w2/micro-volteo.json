@@ -1,0 +1,58 @@
+{
+  "narracion": "Un microbús que estaba detenido en la parada fue golpeado en la parte trasera por un camión de volteo; un micro que venía atrás frenó a tiempo.",
+  "modelo": "claude-sonnet-5-5",
+  "version": "escena-narracion-v2",
+  "grabada": "2026-11-09",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "clase",
+        "valor": "microbus_combi",
+        "cita": "Un microbús que estaba detenido en la parada fue golpeado en la parte trasera por un camión de volteo"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "clase",
+        "valor": "camion_unitario",
+        "cita": "por un camión de volteo"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "se_detiene",
+        "cita": "Un microbús que estaba detenido en la parada"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "Un microbús que estaba detenido en la parada fue golpeado en la parte trasera por un camión de volteo"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 posterior",
+        "cita": "fue golpeado en la parte trasera por un camión de volteo"
+      }
+    ]
+  }
+}

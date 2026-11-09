@@ -226,12 +226,40 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   await expect(
     page.getByTestId("panel-paso").getByRole("heading", { name: /dictamen/i }),
   ).toHaveCount(1);
+  // O2 (plan v4): citar dos veces deja un solo bloque, y lo dice.
+  for (const id of ["citar-velocidad", "citar-supuestos"]) {
+    await page.getByTestId(id).click();
+    const una = await page.getByTestId("conclusion-perito").inputValue();
+    await page.getByTestId(id).click();
+    await expect(page.getByTestId("aviso-cita")).toContainText("ya está en tu conclusión");
+    expect(await page.getByTestId("conclusion-perito").inputValue()).toBe(una);
+  }
+  const citas = await page.getByTestId("conclusion-perito").inputValue();
+  expect(citas.split("antes del impacto:").length - 1).toBe(1);
+  expect(citas.split("Supuestos declarados:").length - 1).toBe(1);
+  // O2: «Exportar», ya en el dictamen, lleva a las descargas y lo dice.
+  await page.getByTestId("exportar-barra").click();
+  await expect(page.getByTestId("estado-descarga")).toContainText("Elige cómo exportar");
+  await expect(page.getByTestId("descargar-dictamen-pdf")).toBeFocused();
   const descarga = page.waitForEvent("download");
   await page.getByTestId("descargar-dictamen-pdf").click();
   const archivo = await descarga;
   expect(archivo.suggestedFilename()).toBe("dictamen-reconstruccion-borrador.pdf");
+  // Al terminar lo dice, a la vista: antes el aviso quedaba fuera de la pantalla.
+  await expect(page.getByTestId("estado-descarga")).toContainText("se descargó");
+  await expect(page.getByTestId("estado-descarga")).toBeInViewport();
   const bytesPdf = readFileSync(await archivo.path());
   expect(bytesPdf.subarray(0, 5).toString()).toBe("%PDF-");
+  // El PDF abre y tiene al menos una página.
+  expect(
+    (bytesPdf.toString("latin1").match(/\/Type\s*\/Page\b/g) ?? []).length,
+  ).toBeGreaterThanOrEqual(1);
+  // El Word es un zip con su documento adentro.
+  const bajaWord = page.waitForEvent("download");
+  await page.getByTestId("descargar-dictamen-word").click();
+  const bytesWord = readFileSync(await (await bajaWord).path());
+  expect(bytesWord.subarray(0, 2).toString()).toBe("PK");
+  expect(bytesWord.includes("word/document.xml")).toBe(true);
   // En el PDF, las dos lecturas: la misma cifra de la evaluación y la de CESVI con sus datos.
   const pdf = await textoDelPdf(bytesPdf);
   expect(pdf).toContain(`${V2.texto} (${V2.rango})`);

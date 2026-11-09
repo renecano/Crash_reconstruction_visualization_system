@@ -1,0 +1,106 @@
+{
+  "narracion": "Un tráiler invade el carril contrario en la autopista y choca de frente contra una urvan; atrás venía un rabón que alcanza a la urvan.",
+  "modelo": "claude-sonnet-5-5",
+  "version": "escena-narracion-v2",
+  "grabada": "2026-11-09",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "autopista",
+        "cita": "Un tráiler invade el carril contrario en la autopista y choca de frente contra una urvan"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "clase",
+        "valor": "tractocamion",
+        "cita": "Un tráiler invade el carril contrario en la autopista"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "clase",
+        "valor": "van",
+        "cita": "choca de frente contra una urvan"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "clase",
+        "valor": "camion_unitario",
+        "cita": "atrás venía un rabón que alcanza a la urvan"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "otra",
+        "cita": "Un tráiler invade el carril contrario en la autopista"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V3",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "atrás venía un rabón que alcanza a la urvan"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "choca de frente contra una urvan"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": "choca de frente contra una urvan"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 2,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V3",
+        "cita": "atrás venía un rabón que alcanza a la urvan"
+      },
+      {
+        "seccion": "impacto",
+        "n": 2,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      }
+    ]
+  }
+}

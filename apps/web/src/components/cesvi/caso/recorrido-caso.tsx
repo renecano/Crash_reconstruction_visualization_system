@@ -24,6 +24,8 @@ import {
   preguntaPendiente,
   reconstruccionContraCesvi,
   supuestoAlNoSaber,
+  revisarRelato,
+  supuestosDeClase,
   supuestosDeclarados,
   verificacionCesvi,
   type ContextoPizarra,
@@ -128,6 +130,19 @@ const DETALLE: Record<CasoExpediente["origen"], string> = {
 /** Con el 3D a la vista, los avisos del reloj no mueven el mapa (está desmontado). */
 const IGNORAR_POSICIONES = (): undefined => undefined;
 
+/**
+ * Las clases que se supusieron por el vocabulario del relato, mientras el perito no las cambie: si
+ * ya eligió otra clase en su pregunta, deja de ser un supuesto.
+ */
+function supuestosDeClaseVigentes(leida: EscenaNarrada | null, e: Expediente) {
+  return supuestosDeClase(
+    (leida?.menciones ?? []).filter(
+      (m) =>
+        m.claseSupuesta && e.vehiculos.find((v) => v.id === m.vehiculo)?.clase === m.claseSupuesta,
+    ),
+  );
+}
+
 export function RecorridoCaso({
   inicial,
   actoInicial = null,
@@ -189,6 +204,7 @@ export function RecorridoCaso({
   const [comparacionDeclarada, setComparacionDeclarada] =
     useState<DatosDictamenCaso["declarada"]>(null);
   const [exportApi, setExportApi] = useState<ViewerExportApi | null>(null);
+  const [pedidoExportar, setPedidoExportar] = useState(0);
   const [guardadoId, setGuardadoId] = useState<string | null>(
     inicial.origen === "guardado" ? inicial.id : null,
   );
@@ -293,8 +309,11 @@ export function RecorridoCaso({
   );
   // Lo que el caso no trae, como supuesto declarado con su justificación (ADR 0091).
   const supuestos = useMemo(
-    () => (expediente ? supuestosDeclarados(expediente, r) : []),
-    [expediente, r],
+    () =>
+      expediente
+        ? [...supuestosDeClaseVigentes(leida, expediente), ...supuestosDeclarados(expediente, r)]
+        : [],
+    [expediente, r, leida],
   );
   // La velocidad de la reconstrucción contra la de cada método del reporte (ADR 0091).
   const contraCesvi = useMemo(
@@ -340,16 +359,32 @@ export function RecorridoCaso({
   // La lectura pasa por la pizarra (R12b): el Lector (Claude), el Verificador de citas (que puede
   // pedir una relectura), el Validador y el Preguntador.
   const leer = async () => {
+    // O1 (plan v4): un texto sin contenido no se manda a leer; se dice por qué, con un ejemplo.
+    const revision = revisarRelato(texto);
+    if (!revision.suficiente) {
+      setEstado(revision.mensaje ?? "El relato no alcanza para leerlo.");
+      return;
+    }
     setEditandoRelato(false);
     setEstado("Leyendo la narración…");
     let motivo: string | null = null;
+    let insuficiente: string | null = null;
     const leerConClaude: ContextoPizarra["leer"] = async (t, rechazadas) => {
       const res = await fetch("/api/cesvi/escena", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ texto: t, ...(rechazadas?.length ? { rechazadas } : {}) }),
       });
-      const d = (await res.json()) as { metodo?: string; motivo?: string; salida?: SalidaCorpus };
+      const d = (await res.json()) as {
+        metodo?: string;
+        motivo?: string;
+        mensaje?: string;
+        salida?: SalidaCorpus;
+      };
+      if (d.metodo === "relato_insuficiente") {
+        insuficiente = d.mensaje ?? "El relato no alcanza para leerlo.";
+        return null;
+      }
       if (d.metodo !== "claude" || !d.salida) {
         motivo = d.motivo ?? "sin respuesta";
         return null;
@@ -363,7 +398,7 @@ export function RecorridoCaso({
       );
       setPizarra(p);
       if (!p.escena) {
-        setEstado(`No se pudo leer con Claude (${motivo ?? "sin respuesta"}).`);
+        setEstado(insuficiente ?? `No se pudo leer con Claude (${motivo ?? "sin respuesta"}).`);
         return;
       }
       abrirEscena({ ...p.escena, preguntas: p.preguntas });
@@ -1086,6 +1121,7 @@ export function RecorridoCaso({
         verificacion={verificacion}
         declarada={comparacionDeclarada}
         exportApi={vista === "3d" ? exportApi : null}
+        pedidoExportar={pedidoExportar}
         mapa={mapa}
         validacion={validacion}
         onValidacion={setValidacion}
@@ -1264,10 +1300,16 @@ export function RecorridoCaso({
         tema={tema}
         resumen={titulo}
         completo={Boolean(expediente && validacionVigente(validacion, expediente, narracion))}
+        exportarBloqueado={
+          abierto(pasos.length - 1) && r
+            ? null
+            : "Primero reconstruye: el dictamen se arma con la reconstrucción."
+        }
         onExportar={() => {
           if (!abierto(pasos.length - 1)) return;
           setModo("trabajar");
           irA(pasos.length - 1);
+          setPedidoExportar((n) => n + 1);
         }}
       />
       {escenaFacil && expediente && leida ? (
