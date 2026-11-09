@@ -4,7 +4,7 @@ Lee este archivo y `docs/cesvi/PLAN-CESVI.md` al inicio de cada sesión. `PLAN-C
 
 ## Contexto
 - Dueño: René (ITC, Tec de Monterrey Campus Toluca). Producto para los peritos de CESVI México.
-- Máquina de desarrollo: **Windows, 8 GB de RAM**. Comandos compatibles con PowerShell. No asumir WSL ni GPU dedicada. No levantar más procesos pesados de los necesarios a la vez.
+- Máquina de desarrollo: **Windows, 8 GB de RAM**. Comandos compatibles con PowerShell. No asumir WSL ni GPU dedicada. Un solo proceso pesado a la vez: Unity en modo batch, las pruebas de Python y Playwright nunca corren juntos, y antes de cada paso pesado se verifica que no quede ningún proceso de Unity vivo. El Editor con el MCP se abre solo para inspeccionar la escena, y se cierra al terminar.
 - Idioma: interfaz, documentación y mensajes al usuario en **español de México**; identificadores de código, nombres de archivos de código y commits en inglés.
 
 ## Para quién y qué tan lejos (manda sobre todo lo demás)
@@ -24,7 +24,7 @@ Croquis es para los **peritos de CESVI México**. El alcance lo define lo que el
 
 ## El visor en Unity y los dos frentes (plan v4; ADR 0111)
 
-Trabajan dos Claude Code en paralelo. Antes de tocar algo, revisa de qué frente es: el detalle está en `docs/cesvi/PLAN-CESVI.md` §3.
+El plan tiene dos frentes, U y W. Desde el 2026-11-09 el Claude Code de René lleva los dos, porque el compañero no ha subido nada de W. Antes de empezar una fase W, haz `git fetch` y revisa si existe una rama o un PR `feat/w<n>` de esa fase: si existe, no la tomes y sigue con la siguiente. Cada fase W que tomes, anótala en `docs/progress/W.md`. El detalle está en `docs/cesvi/PLAN-CESVI.md` §3.
 
 | Frente | Solo este frente cambia |
 | --- | --- |
@@ -33,7 +33,7 @@ Trabajan dos Claude Code en paralelo. Antes de tocar algo, revisa de qué frente
 
 - **Compartidos:** `escena.schema.json`, `resultado.schema.json`, `CLAUDE.md`, `docs/cesvi/PLAN-CESVI.md`, `.github/workflows/**`, `package.json`, `pnpm-lock.yaml` y el índice de `docs/PROGRESS.md`. Se cambian solo con un PR pequeño `contract:` o `chore:`, y el otro frente rebasa. Si `pnpm-lock.yaml` tiene conflicto, se regenera con `pnpm install`.
 - **Ramas:** `feat/u<n>-<tema>` y `feat/w<n>-<tema>`, de vida corta y rebasadas sobre `main` antes del PR.
-- **Fusiones:** solo René fusiona, con CI en verde y con «Create a merge commit». Esto manda sobre lo que diga este archivo de fusionar sin preguntar.
+- **Fusiones:** fusiona tú con «Create a merge commit» cuando CI esté en verde (René, 2026-11-09). Los PR del compañero también, si solo tocan carpetas de W; sus PR `contract:` o `chore:` sobre archivos compartidos se le enseñan a René antes.
 - **Bitácora:** `docs/progress/U.md` y `docs/progress/W.md`, con plan, evidencia, cifras, pendientes, siguiente paso y «Necesito del otro frente». `docs/PROGRESS.md` queda como índice y «Estado actual»; solo lo actualiza U al integrar.
 - **ADR por bloques:** U del 0110 al 0129; W del 0130 al 0169.
 - **Contratos primero:** nadie consume `caso-3d`, el puente ni los campos 2.3.0 antes de que estén en `main`.
@@ -55,7 +55,7 @@ Reglas del visor:
 7. Diseño: §11 de `PLAN.md` es el estándar visual. Nada de estilos por defecto de plantillas, nada de video, maquetas ni imágenes de stock: todo lo que se ve lo calcula el sistema. Inspiración en las presentaciones de lanzamiento de primer nivel, sin copiar logotipos ni recursos de ninguna empresa. Tipografías: se permiten las de licencia libre (SIL Open Font License, Google Fonts), registradas en `assets/ASSETS.md`; lo prohibido es copiar fuentes propietarias de una marca (aclaración de René, 2026-10-24).
 
 ## Autonomía
-Trabajas de forma autónoma. **No pidas visto bueno para planes, decisiones técnicas ni para pasar de fase.** Las pruebas son la aprobación: si una fase cumple su criterio de aceptación con todo en verde, abre su PR y sigue con la siguiente. René fusiona y aprueba las capturas de U2, U3 y U5.
+Trabajas de forma autónoma. **No pidas visto bueno para planes, decisiones técnicas ni para pasar de fase.** Las pruebas son la aprobación: si una fase cumple su criterio de aceptación con todo en verde, fusiona y sigue con la siguiente. Al cerrar cada fase deja el «Resumen para René» con capturas: él revisa cuando puede y se corrige lo que marque. Las capturas de U2, U3, U5 y W4b son las que más le importan.
 
 - Decisiones técnicas: tómalas tú con buen criterio, regístralas en un ADR (`docs/adr/`) y sigue.
 - Decisiones abiertas de `PLAN.md` §16: usa la opción por defecto marcada ahí y regístrala.
@@ -83,7 +83,7 @@ Si algo está bloqueado por el punto 2, **no te detengas**: anótalo en la secci
 4. Escribe solo las pruebas que pide "Para quién y qué tan lejos": unitarias de lógica y cálculos, y una e2e por flujo principal en Chromium.
 5. Corre localmente lint, tipos y esas pruebas (y paridad si tocaste el solver). Las evaluaciones largas solo cuando René las pida.
 6. Actualiza la bitácora de tu frente con: qué se hizo, evidencia (comandos y salidas, capturas), números medidos, pendientes y decisiones.
-7. Con todo en verde y el criterio de aceptación cumplido: abre el PR para que René lo fusione, y empieza la siguiente fase.
+7. Con todo en verde y el criterio de aceptación cumplido: fusiona con «Create a merge commit» y empieza la siguiente fase.
 8. La bitácora de tu frente siempre debe permitir que otra sesión retome el trabajo sin contexto previo: fase actual, siguiente paso concreto y bloqueos.
 9. Al final de cada fase deja en ella un «Resumen para René»: qué quedó, cómo probarlo y qué necesitas de él.
 
