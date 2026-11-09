@@ -99,10 +99,18 @@ const servidor = createServer((req, res) => {
 await new Promise((ok) => servidor.listen(0, "127.0.0.1", ok));
 const url = `http://127.0.0.1:${servidor.address().port}/`;
 
-const paquete = readFileSync(
+// Con escenario (U2): el paquete de `tools/unity/paquetes-d1.ts`. Sin él, el de `fixtures/caso3d/`,
+// que solo trae la escena y el resultado.
+const rutaPaquete = [
+  join(PROYECTO, `Build/casos/${CASO}.json`),
   join(RAIZ, `packages/scene-schema/fixtures/caso3d/${CASO}.json`),
-  "utf8",
-);
+].find(existsSync);
+if (!rutaPaquete) {
+  console.error(`No encuentro el paquete «${CASO}».`);
+  process.exit(1);
+}
+const paquete = readFileSync(rutaPaquete, "utf8");
+const conEscenario = Boolean(JSON.parse(paquete).escenario);
 
 async function corrida(n) {
   const navegador = await chromium.launch({
@@ -202,6 +210,8 @@ const resultado = {
     "los modelos se bajan de Vercel Blob por la red real con el mismo límite. Brotli calidad 9 hecho aquí: " +
     "es referencia, la cifra de producción se mide en U6.",
   caso: CASO,
+  con_escenario: conEscenario,
+  paquete_kb: Math.round(paquete.length / 1024),
   peso: {
     bytes: total("bytes"),
     mb: unDecimal(total("bytes") / 1048576),

@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Croquis · Casos</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,100..900&amp;family=Geist+Mono:wght@400..600&amp;family=Instrument+Sans:wdth,wght@75..100,400..700&amp;family=Instrument+Serif:ital@0;1&amp;family=Manrope:wght@200..800&amp;family=Sora:wght@100..800&amp;display=swap">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:inherit}
+@keyframes lcRise{from{opacity:0;transform:translateY(20px);filter:blur(8px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes lcLine{from{transform:translateY(105%)}to{transform:none}}
+@keyframes lcSheet{from{opacity:0;transform:translateY(40px) rotate(0deg)}to{opacity:1;transform:translateY(0) rotate(-2.5deg)}}
+@keyframes lcSheet2{from{opacity:0;transform:translateY(40px) rotate(0deg)}to{opacity:1;transform:translateY(0) rotate(3deg)}}
+@keyframes lcDraw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.cx-lift{transition:transform 260ms cubic-bezier(.2,.8,.2,1), box-shadow 260ms ease}
+.cx-lift:hover{transform:translateY(-6px) rotate(-1.5deg)}
+.cx-btn{transition:transform 200ms cubic-bezier(.2,.8,.2,1), border-color 200ms ease}
+.cx-btn:hover{transform:translateY(-3px)}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: 1440px; min-height: 1180px; box-sizing: border-box; background: {{t.bg}}; color: {{t.tx}}; font-family: {{s.ui}}; display: flex; flex-direction: column; transition: background 400ms ease, color 400ms ease">
+
+  <header style="height: 72px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 48px">
+    <a href="Lab-Casos.dc.html" aria-label="Croquis, casos" style="display: flex; align-items: center; gap: 12px">
+      <svg width="34" height="34" viewBox="0 0 64 64" aria-hidden="true" style="color: {{t.tx}}"><path d="M 46.86 45.38 A 20 20 0 1 1 46.86 18.62" fill="none" stroke="currentColor" stroke-width="7"></path><path d="M 44 42 A 14.5 14.5 0 1 1 44 22" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.45" stroke-dasharray="2.6 2.6"></path><g stroke="#FF5A1F" fill="none"><circle cx="52" cy="32" r="4.6" stroke-width="2.2"></circle><line x1="52" y1="22.5" x2="52" y2="25.8" stroke-width="2"></line><line x1="52" y1="38.2" x2="52" y2="41.5" stroke-width="2"></line><line x1="58.2" y1="32" x2="61.5" y2="32" stroke-width="2"></line><circle cx="52" cy="32" r="1.5" fill="#FF5A1F" stroke="none"></circle></g></svg>
+      <span style="font-family: 'Anybody', sans-serif; font-weight: 650; font-variation-settings: 'wdth' 132; font-size: 15px; letter-spacing: 0.2em">CROQUIS</span>
+    </a>
+    <nav aria-label="Principal" style="display: flex; gap: 32px; font-size: 14px">
+      <a href="Lab-Casos.dc.html" aria-current="page" style="font-weight: 600; box-shadow: inset 0 -2px 0 {{t.tx}}; padding: 6px 0">Casos</a>
+      <a href="Lab-Contraste.dc.html" style="color: {{t.tx3}}; padding: 6px 0">Reproducción de reportes</a>
+    </nav>
+    <div style="display: flex; align-items: center; gap: 16px">
+      <span style="font-size: 13px; color: {{t.tx3}}">Equipo CESVI</span>
+      <button type="button" onClick="{{toggle}}" aria-label="{{themeLabel}}" style="width: 40px; height: 40px; border-radius: 10px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.tx}}; display: flex; align-items: center; justify-content: center; cursor: pointer">
+        <sc-if value="{{day}}" hint-placeholder-val="{{true}}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"></path></svg></sc-if>
+        <sc-if value="{{night}}" hint-placeholder-val="{{false}}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+      </button>
+    </div>
+  </header>
+
+  <section style="padding: 56px 48px 72px; display: flex; gap: 48px; align-items: center">
+    <div style="flex: 1 1 760px; display: flex; flex-direction: column; gap: 34px">
+      <div style="display: flex; flex-direction: column; gap: 14px">
+        <h1 style="margin: 0; overflow: hidden; font-family: {{s.disp}}; font-weight: {{s.headW}}; font-size: 112px; line-height: 0.95; letter-spacing: -0.04em"><span style="display: block; animation: lcLine 900ms cubic-bezier(.2,.8,.2,1) 80ms both">Casos</span></h1>
+        <div style="font-size: 16px; color: {{t.tx2}}; animation: lcRise 700ms cubic-bezier(.2,.8,.2,1) 250ms both">7 reportes de CESVI de ejemplo · aún no guardas casos propios en este equipo</div>
+      </div>
+      <div style="display: flex; gap: 14px; align-items: stretch; animation: lcRise 800ms cubic-bezier(.2,.8,.2,1) 450ms both">
+        <a href="Lab-Hecho.dc.html" class="cx-btn" style="display: flex; flex-direction: column; justify-content: space-between; gap: 30px; width: 300px; padding: 24px; border-radius: 18px; background: {{t.pri}}; color: {{t.priTx}}">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"></path></svg>
+          <span style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 19px; font-weight: 600">Narrar un hecho nuevo</span><span style="font-size: 13px; opacity: 0.72">Escríbelo o díctalo</span></span>
+        </a>
+        <button type="button" style="flex: 1; max-width: 420px; display: flex; flex-direction: column; justify-content: space-between; gap: 30px; padding: 24px; border-radius: 18px; border: 1.5px dashed {{t.line2}}; background: {{t.surf}}; color: {{t.tx}}; text-align: left; font: inherit; cursor: pointer">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"></path><path d="M14 3v5h5M12 11v6M9.5 13.5L12 11l2.5 2.5"></path></svg>
+          <span style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 19px; font-weight: 600">Cargar un reporte de CESVI</span><span style="font-size: 13px; color: {{t.tx3}}">Suéltalo aquí · PDF, Markdown o texto</span></span>
+        </button>
+        <button type="button" style="width: 200px; display: flex; flex-direction: column; justify-content: space-between; gap: 30px; padding: 24px; border-radius: 18px; border: 1px solid {{t.line}}; background: transparent; color: {{t.tx}}; text-align: left; font: inherit; cursor: pointer">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 7h6l2 2h8v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"></path></svg>
+          <span style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 17px; font-weight: 600">Abrir archivo</span><span style="font-size: 13px; color: {{t.tx3}}">.croquis</span></span>
+        </button>
+      </div>
+    </div>
+
+    <div style="position: relative; flex: 0 0 500px; height: 470px">
+      <div style="position: absolute; left: 56px; top: 26px; width: 400px; height: 420px; border-radius: 18px; background: {{t.surf}}; box-shadow: 0 20px 60px rgba(0,0,0,0.08); opacity: 0.9; animation: lcSheet2 1000ms cubic-bezier(.2,.8,.2,1) 250ms both"></div>
+      <a href="Lab-Reconstruccion.dc.html" onMouseEnter="{{liftOn}}" onMouseLeave="{{liftOff}}" style="position: absolute; left: 24px; top: 6px; transform: {{liftT}}; transition: transform 320ms cubic-bezier(.2,.8,.2,1); width: 430px; height: 440px; box-sizing: border-box; border-radius: 18px; background: {{t.surf}}; box-shadow: {{t.sheetSh}}; padding: 22px; display: flex; flex-direction: column; gap: 14px; animation: lcSheet 1000ms cubic-bezier(.2,.8,.2,1) 400ms backwards; transform-origin: 60% 80%">
+        <div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 13px; color: {{t.tx2}}">Último reproducido</span><span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: {{t.tx3}}">AXA A2010930</span></div>
+        <svg width="100%" height="220" viewBox="0 0 386 220" role="img" aria-label="Croquis generado del caso AXA A2010930" style="border-radius: 12px; background: {{t.surf2}}">
+          <defs><filter id="lcCar" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="5" dy="7" stdDeviation="5" flood-color="{{t.shadow}}" flood-opacity="{{t.shOp}}"></feDropShadow></filter></defs>
+          <g transform="rotate(-14 193 110)">
+            <rect x="136" y="-90" width="52" height="400" fill="{{t.slab}}"></rect><rect x="188" y="-90" width="24" height="400" fill="{{t.median}}"></rect><rect x="212" y="-90" width="52" height="400" fill="{{t.slab}}"></rect>
+            <path d="M162 -90V310M238 -90V310" stroke="{{t.lane}}" stroke-width="1.5" stroke-dasharray="10 12"></path>
+            <path d="M159 230V122" stroke="{{t.speed0}}" stroke-width="2.5" stroke-linecap="round" pathLength="1" stroke-dasharray="1" style="animation: lcDraw 1200ms cubic-bezier(.6,0,.2,1) 900ms both"></path>
+            <g filter="url(#lcCar)"><rect x="162" y="44" width="16" height="48" rx="5" fill="{{t.car}}"></rect><rect x="152" y="92" width="14" height="40" rx="5" fill="{{t.car}}"></rect></g>
+            <circle cx="168" cy="92" r="5" fill="none" stroke="#FF5A1F" stroke-width="2"></circle><circle cx="168" cy="92" r="1.6" fill="#FF5A1F"></circle>
+          </g>
+        </svg>
+        <div style="font-size: 17px; font-weight: 600">Alcance en la México-Nogales, Ahome</div>
+        <div style="display: flex; gap: 32px; margin-top: auto">
+          <div><div style="font-family: {{s.disp}}; font-weight: {{s.numW}}; font-style: {{s.accent}}; font-size: 52px; line-height: 0.9; letter-spacing: -0.03em">1.2 %</div><div style="font-size: 13px; color: {{t.tx3}}; margin-top: 6px">diferencia con CESVI</div></div>
+          <div><div style="font-family: {{s.disp}}; font-weight: {{s.numW}}; font-style: {{s.accent}}; font-size: 52px; line-height: 0.9; letter-spacing: -0.03em">2 de 2</div><div style="font-size: 13px; color: {{t.tx3}}; margin-top: 6px">zonas de contacto</div></div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section style="flex: 1; background: {{t.surf}}; border-top: 1px solid {{t.line}}; padding: 48px 48px 64px; display: flex; flex-direction: column; gap: 24px">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end">
+      <h2 style="margin: 0; font-family: {{s.disp}}; font-weight: {{s.headW}}; font-size: 40px; line-height: 1; letter-spacing: -0.025em">Reportes de CESVI</h2>
+      <div style="display: flex; gap: 24px">
+        <button type="button" style="padding: 6px 0; border: 0; background: transparent; color: {{t.tx}}; font: 600 14px {{s.ui}}; box-shadow: inset 0 -2px 0 {{t.tx}}; cursor: pointer">Todos 7</button>
+        <button type="button" style="padding: 6px 0; border: 0; background: transparent; color: {{t.tx3}}; font: 500 14px {{s.ui}}; cursor: pointer">Alcance 2</button>
+        <button type="button" style="padding: 6px 0; border: 0; background: transparent; color: {{t.tx3}}; font: 500 14px {{s.ui}}; cursor: pointer">Lateral 2</button>
+        <button type="button" style="padding: 6px 0; border: 0; background: transparent; color: {{t.tx3}}; font: 500 14px {{s.ui}}; cursor: pointer">Objeto fijo 2</button>
+        <button type="button" style="padding: 6px 0; border: 0; background: transparent; color: {{t.tx3}}; font: 500 14px {{s.ui}}; cursor: pointer">Otra 1</button>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: 132px minmax(0, 1fr) 160px 120px 220px 32px; gap: 24px; padding: 0 0 10px; border-bottom: 1px solid {{t.line}}; font-size: 12px; color: {{t.tx3}}"><span>Croquis</span><span>Caso</span><span>Modalidad</span><span>Vehículos</span><span>Estado</span><span></span></div>
+    <div style="display: flex; flex-direction: column; margin-top: -24px">
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="7">
+        <a href="Lab-Hecho.dc.html" onMouseEnter="{{r.enter}}" onMouseLeave="{{rowOff}}" style="display: grid; grid-template-columns: 132px minmax(0, 1fr) 160px 120px 220px 32px; gap: 24px; align-items: center; margin: 0 -16px; padding: 14px 16px; border-radius: 14px; background: {{r.bg}}; transition: background 180ms ease; border-bottom: 1px solid {{t.line}}; animation: lcRise 600ms cubic-bezier(.2,.8,.2,1) {{r.delay}} both">
+          <svg width="132" height="72" viewBox="0 0 132 72" aria-hidden="true" style="border-radius: 10px; background: {{t.surf2}}; transform: {{r.sc}}; transition: transform 260ms cubic-bezier(.2,.8,.2,1)">
+            <rect x="0" y="26" width="132" height="20" fill="{{t.slab}}"></rect>
+            <sc-if value="{{r.cross}}" hint-placeholder-val="{{false}}"><rect x="{{r.crossX}}" y="0" width="20" height="72" fill="{{t.slab}}"></rect></sc-if>
+            <path d="M0 36H132" stroke="{{t.lane}}" stroke-dasharray="6 6"></path>
+            <rect x="{{r.ax}}" y="{{r.ay}}" width="{{r.aw}}" height="{{r.ah}}" rx="3" fill="{{t.car}}" stroke="{{t.tx}}" stroke-width="1.2"></rect>
+            <sc-if value="{{r.two}}" hint-placeholder-val="{{true}}"><rect x="{{r.bx}}" y="{{r.by}}" width="{{r.bw}}" height="{{r.bh}}" rx="3" fill="{{t.tx}}"></rect></sc-if>
+            <circle cx="{{r.ix}}" cy="{{r.iy}}" r="4" fill="none" stroke="#FF5A1F" stroke-width="1.8"></circle>
+          </svg>
+          <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span style="font-size: 17px; font-weight: 600">{{r.title}}</span><span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: {{t.tx3}}">{{r.id}}</span></span>
+          <span style="font-size: 14px; color: {{t.tx2}}">{{r.mod}}</span>
+          <span style="font-size: 14px; color: {{t.tx2}}">{{r.veh}}</span>
+          <span style="font-size: 14px; color: {{r.stColor}}; font-weight: {{r.stW}}">{{r.status}}</span>
+          <svg width="22" height="14" viewBox="0 0 22 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" style="transform: {{r.ar}}; transition: transform 260ms cubic-bezier(.2,.8,.2,1)"><path d="M0 7H20M14 1l6 6-6 6"></path></svg>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"tema":{"editor":"enum","options":["Día","Noche"],"default":"Día","section":"Tema"},"pairing":{"editor":"enum","options":["Editorial","Geométrica","Suave"],"default":"Editorial","section":"Tipografía"},"$preview":{"width":1440,"height":1180}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { night: null, row: null, lift: false }; }
+  isNight() { return this.state.night === null ? this.props.tema === 'Noche' : this.state.night; }
+  tokens(n) {
+    if (n) return { bg: '#0A1120', surf: '#111A2C', surf2: '#17223A', line: 'rgba(148,170,210,0.16)', line2: 'rgba(148,170,210,0.3)', tx: '#E8EEF8', tx2: '#B4C0D4', tx3: '#8D9BB4', pri: '#E8EEF8', priTx: '#0A1120', slab: '#1C2944', median: '#131D33', lane: '#3A4A6A', car: '#DCE6F5', shadow: '#000000', shOp: 0.6, speed0: '#8FB4FF', sheetSh: '0 1px 0 rgba(148,170,210,0.12), 0 30px 80px rgba(0,0,0,0.5)' };
+    return { bg: '#F4F5F7', surf: '#FFFFFF', surf2: '#F1F2F4', line: '#E6E8EC', line2: '#C9CDD4', tx: '#0B0D12', tx2: '#3A3F49', tx3: '#5B616C', pri: '#0B0D12', priTx: '#FFFFFF', slab: '#FFFFFF', median: '#E6E7EA', lane: '#CACED5', car: '#FFFFFF', shadow: '#1B2230', shOp: 0.18, speed0: '#0B0D12', sheetSh: '0 1px 0 #E6E8EC, 0 40px 90px rgba(27,34,48,0.16)' };
+  }
+  pairs(p) {
+    var sets = {
+      'Editorial': { disp: "'Instrument Serif', Georgia, serif", ui: "'Instrument Sans', system-ui, sans-serif", headW: 400, numW: 400, accent: 'italic' },
+      'Geométrica': { disp: "'Sora', system-ui, sans-serif", ui: "'Sora', system-ui, sans-serif", headW: 300, numW: 250, accent: 'normal' },
+      'Suave': { disp: "'Manrope', system-ui, sans-serif", ui: "'Manrope', system-ui, sans-serif", headW: 500, numW: 400, accent: 'normal' }
+    };
+    return sets[p] || sets['Editorial'];
+  }
+  renderVals() {
+    var self = this;
+    var night = this.isNight();
+    var t = this.tokens(night);
+    var base = [
+      { title: 'Alcance en la México-Nogales', id: 'AXA · A2010930', mod: 'Alcance', veh: '2 vehículos', status: 'Reproducido · Δ 1.2 %', done: true, two: true, cross: false, crossX: 0, ax: 70, ay: 29, aw: 26, ah: 13, bx: 40, by: 30, bw: 24, bh: 12, ix: 67, iy: 36 },
+      { title: 'Contra objeto fijo', id: 'Reporte 4e4d78', mod: 'Objeto fijo', veh: '1 vehículo', status: 'Listo para reconstruir', done: false, two: false, cross: false, crossX: 0, ax: 70, ay: 28, aw: 26, ah: 13, bx: 0, by: 0, bw: 0, bh: 0, ix: 98, iy: 22 },
+      { title: 'Alcance', id: 'Reporte ec1c39', mod: 'Alcance', veh: '2 vehículos', status: 'Listo para reconstruir', done: false, two: true, cross: false, crossX: 0, ax: 76, ay: 31, aw: 24, ah: 12, bx: 46, by: 31, bw: 24, bh: 12, ix: 73, iy: 37 },
+      { title: 'Lateral', id: 'Reporte 581f3c', mod: 'Lateral', veh: '2 vehículos', status: 'Listo para reconstruir', done: false, two: true, cross: true, crossX: 56, ax: 76, ay: 30, aw: 24, ah: 12, bx: 60, by: 6, bw: 12, bh: 22, ix: 66, iy: 30 },
+      { title: 'Lateral', id: 'Reporte 037dde', mod: 'Lateral', veh: '2 vehículos', status: 'Listo para reconstruir', done: false, two: true, cross: true, crossX: 92, ax: 64, ay: 30, aw: 24, ah: 12, bx: 96, by: 8, bw: 12, bh: 22, ix: 94, iy: 32 },
+      { title: 'Otra modalidad', id: 'Reporte 644837', mod: 'Otra', veh: '2 vehículos', status: 'Listo para reconstruir', done: false, two: true, cross: false, crossX: 0, ax: 76, ay: 33, aw: 24, ah: 12, bx: 44, by: 28, bw: 24, bh: 12, ix: 72, iy: 34 },
+      { title: 'Contra objeto fijo', id: 'Reporte cf708e', mod: 'Objeto fijo', veh: '1 vehículo', status: 'Listo para reconstruir', done: false, two: false, cross: false, crossX: 0, ax: 50, ay: 30, aw: 26, ah: 13, bx: 0, by: 0, bw: 0, bh: 0, ix: 44, iy: 22 }
+    ];
+    var rows = base.map(function (r, i) {
+      return Object.assign({}, r, { delay: (700 + i * 80) + 'ms', stColor: r.done ? t.tx : t.tx3, stW: r.done ? 600 : 400, bg: self.state.row === i ? t.surf2 : 'transparent', sc: self.state.row === i ? 'scale(1.08)' : 'none', ar: self.state.row === i ? 'translateX(6px)' : 'none', enter: function () { self.setState({ row: i }); } });
+    });
+    return {
+      t: t, s: this.pairs(this.props.pairing), night: night, day: !night, rows: rows,
+      rowOff: function () { self.setState({ row: null }); },
+      liftOn: function () { self.setState({ lift: true }); }, liftOff: function () { self.setState({ lift: false }); },
+      liftT: this.state.lift ? 'translateY(-10px) rotate(-1deg)' : 'rotate(-2.5deg)',
+      themeLabel: night ? 'Cambiar a modo día' : 'Cambiar a modo noche',
+      toggle: function () { self.setState({ night: !self.isNight() }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

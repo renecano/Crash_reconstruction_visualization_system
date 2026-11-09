@@ -2,15 +2,21 @@
   "name": "Croquis.EditorTools",
   "rootNamespace": "Croquis.EditorTools",
   "references": [
+    "Croquis.Core",
+    "Croquis.Generated",
     "Croquis.Visor",
     "Unity.RenderPipelines.Core.Runtime",
     "Unity.RenderPipelines.Universal.Runtime"
   ],
-  "includePlatforms": ["Editor"],
+  "includePlatforms": [
+    "Editor"
+  ],
   "excludePlatforms": [],
   "allowUnsafeCode": false,
   "overrideReferences": true,
-  "precompiledReferences": ["Newtonsoft.Json.dll"],
+  "precompiledReferences": [
+    "Newtonsoft.Json.dll"
+  ],
   "autoReferenced": false,
   "defineConstraints": [],
   "versionDefines": [],

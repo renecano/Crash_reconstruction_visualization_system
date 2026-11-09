@@ -11,12 +11,13 @@ import {
   CASO3D_VERSION,
   type Caso3D,
   type Convenciones,
+  type Escenario,
   type Relieve,
 } from "./generated/caso3d.zod";
 import type { EscenaSpec } from "./generated/escena.zod";
 import type { Resultado } from "./generated/resultado.zod";
 
-export { CASO3D_VERSION, type Caso3D, type Convenciones, type Relieve };
+export { CASO3D_VERSION, type Caso3D, type Convenciones, type Escenario, type Relieve };
 
 /** Cómo leer los números del paquete (fijas en esta versión). */
 export const CONVENCIONES: Convenciones = {
@@ -48,6 +49,7 @@ export function armarCaso3d(
   escena: EscenaSpec,
   resultado: Resultado,
   relieve?: Relieve | null,
+  escenario?: Escenario | null,
 ): Caso3D {
   if (resultado.escena_id !== escena.meta.id) {
     throw new Error(
@@ -69,6 +71,7 @@ export function armarCaso3d(
     escena,
     resultado,
     ...(relieve ? { relieve } : {}),
+    ...(escenario ? { escenario } : {}),
     convenciones: CONVENCIONES,
   };
 }

@@ -1,6 +1,6 @@
 # Puente web ↔ visor Unity
 
-**Versión 1.0.0.** Los tipos están en `src/visor-puente.ts` (`VISOR_PUENTE_VERSION`), y una prueba revisa que este documento y los tipos nombren los mismos mensajes. Este contrato solo cambia con un PR `contract:`.
+**Versión 1.1.0.** Los tipos están en `src/visor-puente.ts` (`VISOR_PUENTE_VERSION`), y una prueba revisa que este documento y los tipos nombren los mismos mensajes. Este contrato solo cambia con un PR `contract:`.
 
 ## Cómo viajan los mensajes
 
@@ -10,20 +10,23 @@
 
 ## De la web a Unity
 
-| Mensaje       | Campos                                            | Qué hace                                                       |
-| ------------- | ------------------------------------------------- | -------------------------------------------------------------- |
-| `cargarCaso`  | `json`: el paquete caso-3d, como texto            | Carga el caso. Contesta `cargado` o `error`.                   |
-| `fijarTiempo` | `t`: segundos, 0 es el impacto principal          | Lleva la reproducción a ese instante.                          |
-| `reproducir`  |                                                   | Reproduce.                                                     |
-| `pausar`      |                                                   | Pausa.                                                         |
-| `velocidad`   | `x`: 0.25, 0.5 o 1                                | Cambia la velocidad.                                           |
-| `camara`      | `modo`                                            | Cambia de cámara.                                              |
-| `calidad`     | `nivel`: `baja`, `media`, `alta`, `ultra`, `auto` | Fija el nivel, o lo deja automático.                           |
-| `encuadrar`   | `zona`: `todo` o `impacto`                        | «Ver todo» o «Ir al impacto».                                  |
-| `capturar`    | `vista`, `ancho`, `alto`                          | Toma una foto cuando la escena está lista. Contesta `captura`. |
-| `modoEdicion` | `on`: sí o no                                     | Permite arrastrar objetos y marcar puntos.                     |
+| Mensaje       | Campos                                            | Qué hace                                                                               |
+| ------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `cargarCaso`  | `json`: el paquete caso-3d, como texto            | Carga el caso. Contesta `cargado` o `error`.                                           |
+| `fijarTiempo` | `t`: segundos, 0 es el impacto principal          | Lleva la reproducción a ese instante.                                                  |
+| `reproducir`  |                                                   | Reproduce.                                                                             |
+| `pausar`      |                                                   | Pausa.                                                                                 |
+| `velocidad`   | `x`: 0.25, 0.5 o 1                                | Cambia la velocidad.                                                                   |
+| `camara`      | `modo`                                            | Cambia de cámara.                                                                      |
+| `calidad`     | `nivel`: `baja`, `media`, `alta`, `ultra`, `auto` | Fija el nivel, o lo deja automático.                                                   |
+| `encuadrar`   | `zona`: `todo` o `impacto`                        | «Ver todo» o «Ir al impacto».                                                          |
+| `capturar`    | `vista`, `ancho`, `alto`                          | Toma una foto cuando la escena está lista. Contesta `captura`.                         |
+| `modoEdicion` | `on`: sí o no                                     | Permite arrastrar objetos y marcar puntos.                                             |
+| `marcadores`  | `visibles`: sí o no                               | Muestra u oculta los puntos de C1: primer golpe, choques intermedios y puntos de paso. |
 
-**`modo`:** `cenital`, `cinematica`, `orbita`, `libre` o `conductor:<id del vehículo>`.
+**`modo`:** `cenital`, `cinematica`, `orbita`, `acera`, `libre` o `conductor:<id del vehículo>`. `acera` es de pie junto al árbol más cercano a la acción.
+
+**Cambios de la 1.1.0:** la cámara `acera` y el mensaje `marcadores`.
 
 **`vista`:** `impacto` y `reposo` salen con la cámara cinematográfica; `conductor:<id del vehículo>`, con la de ese conductor.
 

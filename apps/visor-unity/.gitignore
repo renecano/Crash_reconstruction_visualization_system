@@ -38,3 +38,7 @@ crashlytics-build.properties
 # Lo escribe ConstruirVisor desde apps/web/recursos.json en cada build.
 /Assets/Resources/recursos_visor.json
 /Assets/Resources/recursos_visor.json.meta
+
+# Recursos del escenario: los trae tools/unity/recursos.mjs (ADR 0113).
+/Assets/Croquis/Recursos/
+/Assets/Croquis/Recursos.meta

@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Croquis · La reconstrucción</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,100..900&amp;family=Geist+Mono:wght@400..600&amp;family=Instrument+Sans:wdth,wght@75..100,400..700&amp;family=Instrument+Serif:ital@0;1&amp;family=Manrope:wght@200..800&amp;family=Sora:wght@100..800&amp;display=swap">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:inherit}
+.cx-go svg{transition:transform 300ms cubic-bezier(.2,.8,.2,1)}
+.cx-go:hover svg{transform:translateX(6px)}
+.cx-go{transition:transform 200ms ease, box-shadow 200ms ease}
+.cx-go:hover{transform:translateY(-1px)}
+.cx-btn{transition:background 160ms ease, color 160ms ease}
+.cx-hit{cursor:pointer}
+@keyframes lbRise{from{opacity:0;transform:translateY(18px);filter:blur(8px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes lbFade{from{opacity:0}to{opacity:1}}
+@keyframes lbDraw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes lbGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes lbGrowY{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes lbPulse{0%{transform:scale(0.3);opacity:0.9}100%{transform:scale(4);opacity:0}}
+@keyframes lbPop{0%{transform:scale(0);opacity:0}70%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes lbMask{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes lbTip{from{opacity:0;transform:translate(-50%, calc(-100% - 6px))}to{opacity:1;transform:translate(-50%, calc(-100% - 14px))}}
+@keyframes cxDraw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes cxFade{from{opacity:0}to{opacity:1}}
+@keyframes cxPop{0%{transform:scale(0);opacity:0}65%{transform:scale(1.25);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes cxLine{from{transform:translateY(110%)}to{transform:none}}
+@keyframes cxRing{0%{transform:scale(0.6);opacity:0.9}100%{transform:scale(3.4);opacity:0}}
+@keyframes cxOut{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 0 100% 0)}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; background: {{t.bg}}; color: {{t.tx}}; font-family: {{s.ui}}; display: flex; flex-direction: column; overflow: hidden; position: relative">
+
+  <header style="height: 72px; flex: none; position: relative; z-index: 3; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; background: {{t.head}}; border-bottom: 1px solid {{t.line}}">
+    <a href="Lab-Casos.dc.html" aria-label="Volver a casos" style="display: flex; align-items: center; gap: 12px; width: 280px">
+      <svg width="32" height="32" viewBox="0 0 64 64" aria-hidden="true" style="color: {{t.tx}}"><path d="M 46.86 45.38 A 20 20 0 1 1 46.86 18.62" fill="none" stroke="currentColor" stroke-width="7"></path><path d="M 44 42 A 14.5 14.5 0 1 1 44 22" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.45" stroke-dasharray="2.6 2.6"></path><g stroke="#FF5A1F" fill="none"><circle cx="52" cy="32" r="4.6" stroke-width="2.2"></circle><line x1="52" y1="22.5" x2="52" y2="25.8" stroke-width="2"></line><line x1="52" y1="38.2" x2="52" y2="41.5" stroke-width="2"></line><line x1="58.2" y1="32" x2="61.5" y2="32" stroke-width="2"></line><circle cx="52" cy="32" r="1.5" fill="#FF5A1F" stroke="none"></circle></g></svg>
+      <span style="display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'Anybody', sans-serif; font-weight: 650; font-variation-settings: 'wdth' 132; font-size: 14px; letter-spacing: 0.2em">CROQUIS</span><span style="font-family: 'Geist Mono', monospace; font-size: 10px; color: {{t.tx3}}">AXA A2010930 · Ahome, Sin.</span></span>
+    </a>
+    <nav aria-label="Actos del caso" style="width: 660px; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); font-size: 13px; text-align: center">
+        <a href="Lab-Hecho.dc.html" style="color: {{t.tx3}}">El hecho</a>
+        <a href="Lab-Escena.dc.html" style="color: {{t.tx3}}">La escena</a>
+        <a href="Lab-Reconstruccion.dc.html" aria-current="step" style="font-weight: 600">Reconstrucción</a>
+        <a href="Lab-Analisis.dc.html" style="color: {{t.tx3}}">Análisis</a>
+        <a href="Lab-Contraste.dc.html" style="color: {{t.tx3}}">Contra CESVI</a>
+        <a href="Lab-Dictamen.dc.html" style="color: {{t.tx3}}">Dictamen</a>
+      </div>
+      <div style="position: relative; height: 2px; background: {{t.track}}; border-radius: 2px"><div style="position: absolute; left: 0; top: 0; bottom: 0; width: 41.67%; background: {{t.tx}}; border-radius: 2px"></div><div style="position: absolute; left: 41.67%; top: -3px; width: 8px; height: 8px; margin-left: -4px; border-radius: 999px; background: #FF5A1F"></div></div>
+    </nav>
+    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 14px; width: 280px">
+      <button type="button" class="cx-btn" onClick="{{toggle}}" aria-label="{{themeLabel}}" style="width: 40px; height: 40px; border-radius: 10px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.tx}}; display: flex; align-items: center; justify-content: center; cursor: pointer">
+        <sc-if value="{{day}}" hint-placeholder-val="{{true}}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"></path></svg></sc-if>
+        <sc-if value="{{night}}" hint-placeholder-val="{{false}}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></sc-if>
+      </button>
+      <a href="Lab-Presentar.dc.html" style="font-size: 14px">Presentar</a>
+      <button type="button" class="cx-btn" style="height: 40px; padding: 0 16px; border: 1px solid {{t.tx}}; border-radius: 10px; background: transparent; color: {{t.tx}}; font: 600 14px {{s.ui}}; cursor: pointer">Exportar</button>
+    </div>
+  </header>
+
+  <sc-if value="{{show}}" hint-placeholder-val="{{true}}">
+  <div style="position: absolute; left: 0; right: 0; top: 72px; bottom: 0">
+    <svg width="1440" height="828" viewBox="0 0 1440 828" role="img" aria-label="Escena reconstruida desde arriba: trayectoria de B, posiciones cada 0.4 s, impacto contra A y posiciones finales" style="position: absolute; inset: 0">
+      <defs>
+        <radialGradient id="lLight" cx="0.3" cy="0.4" r="0.85"><stop offset="0" stop-color="{{t.lit0}}"></stop><stop offset="1" stop-color="{{t.lit1}}"></stop></radialGradient>
+        <filter id="lCar" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="10" dy="14" stdDeviation="10" flood-color="{{t.shadow}}" flood-opacity="{{t.shOp}}"></feDropShadow></filter>
+        <filter id="lSlab" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0" dy="8" stdDeviation="14" flood-color="{{t.shadow}}" flood-opacity="0.1"></feDropShadow></filter>
+        <pattern id="lDots" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="{{t.median}}"></rect><circle cx="2" cy="2" r="0.8" fill="{{t.medDot}}"></circle></pattern>
+        <linearGradient id="lSpeed" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="{{t.speed0}}"></stop><stop offset="1" stop-color="#FF5A1F"></stop></linearGradient>
+        <linearGradient id="lSpeedH" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{{t.speed0}}"></stop><stop offset="1" stop-color="#FF5A1F"></stop></linearGradient>
+      </defs>
+      <rect width="1440" height="828" fill="url(#lLight)"></rect>
+      <g transform="rotate(-14 470 418)">
+        <g filter="url(#lSlab)">
+          <rect x="326" y="-260" width="114" height="1360" fill="{{t.slab}}"></rect>
+          <rect x="440" y="-260" width="52" height="1360" fill="url(#lDots)"></rect>
+          <rect x="492" y="-260" width="114" height="1360" fill="{{t.slab}}"></rect>
+        </g>
+        <path d="M330 -260V1100M436 -260V1100M496 -260V1100M602 -260V1100" stroke="{{t.edge}}" stroke-width="2"></path>
+        <path d="M383 -260V1100M549 -260V1100" stroke="{{t.lane}}" stroke-width="2" stroke-dasharray="24 28"></path>
+        <g style="animation: lbFade 600ms ease 200ms both">
+          <path d="M330 92H436" stroke="{{t.tx}}" stroke-width="1"></path>
+          <path d="M330 84V100M436 84V100" stroke="{{t.tx}}" stroke-width="1"></path>
+          <text x="383" y="78" font-family="Geist Mono, monospace" font-size="11" fill="{{t.tx}}" text-anchor="middle">6.47 m</text>
+        </g>
+
+        <path d="M374.5 760V398" stroke="url(#lSpeed)" stroke-width="5" stroke-linecap="round" pathLength="1" stroke-dasharray="1" style="animation: lbDraw 1400ms cubic-bezier(.6,0,.2,1) 300ms both"></path>
+        <rect class="cx-hit" x="360" y="632" width="29" height="84" rx="9" fill="{{t.ghostFill}}" stroke="{{g0.stroke}}" stroke-width="{{g0.sw}}" onMouseEnter="{{g0.enter}}" onMouseLeave="{{leave}}" style="opacity: {{g0.op}}; transition: opacity 200ms ease; animation: lbFade 300ms ease 450ms both"></rect>
+        <rect class="cx-hit" x="360" y="562" width="29" height="84" rx="9" fill="{{t.ghostFill}}" stroke="{{g1.stroke}}" stroke-width="{{g1.sw}}" onMouseEnter="{{g1.enter}}" onMouseLeave="{{leave}}" style="opacity: {{g1.op}}; transition: opacity 200ms ease; animation: lbFade 300ms ease 700ms both"></rect>
+        <rect class="cx-hit" x="360" y="492" width="29" height="84" rx="9" fill="{{t.ghostFill}}" stroke="{{g2.stroke}}" stroke-width="{{g2.sw}}" onMouseEnter="{{g2.enter}}" onMouseLeave="{{leave}}" style="opacity: {{g2.op}}; transition: opacity 200ms ease; animation: lbFade 300ms ease 950ms both"></rect>
+        <rect class="cx-hit" x="360" y="422" width="29" height="84" rx="9" fill="{{t.ghostFill}}" stroke="{{g3.stroke}}" stroke-width="{{g3.sw}}" onMouseEnter="{{g3.enter}}" onMouseLeave="{{leave}}" style="opacity: {{g3.op}}; transition: opacity 200ms ease; animation: lbFade 300ms ease 1200ms both"></rect>
+
+        <g style="animation: lbFade 500ms ease 1900ms both">
+          <path d="M393 300 C 394 260, 397 225, 399 196" fill="none" stroke="{{t.tx}}" stroke-width="1.2" stroke-dasharray="2 5"></path>
+          <rect x="383" y="146" width="34" height="102" rx="10" fill="none" stroke="{{t.tx}}" stroke-width="1.2" stroke-dasharray="4 4" transform="rotate(5 400 197)"></rect>
+          <path d="M374 394 C 372 370, 369 350, 366 330" fill="none" stroke="{{t.tx}}" stroke-width="1.2" stroke-dasharray="2 5"></path>
+          <rect x="352" y="290" width="29" height="84" rx="9" fill="none" stroke="{{t.tx}}" stroke-width="1.2" stroke-dasharray="4 4" transform="rotate(10 366 332)"></rect>
+        </g>
+
+        <g class="cx-hit" onMouseEnter="{{hoverA}}" onMouseLeave="{{leave}}">
+          <g filter="url(#lCar)"><rect x="376" y="250" width="34" height="102" rx="10" fill="{{t.car}}"></rect></g>
+          <rect x="381" y="268" width="24" height="11" rx="3" fill="{{t.carD}}"></rect>
+          <rect x="380" y="279" width="26" height="24" rx="4" fill="{{t.carD2}}"></rect>
+          <rect x="381" y="308" width="24" height="40" rx="3" fill="none" stroke="{{t.carD}}" stroke-width="1.4"></rect>
+          <path d="M376 332 V342 Q376 352 386 352 H394 V332 Z" fill="#FF5A1F" opacity="0.45" style="animation: lbFade 400ms ease 1700ms both"></path>
+          <rect x="372" y="246" width="42" height="110" rx="13" fill="none" stroke="{{hiA}}" stroke-width="1.5"></rect>
+        </g>
+
+        <g class="cx-hit" onMouseEnter="{{hoverB}}" onMouseLeave="{{leave}}">
+          <g filter="url(#lCar)"><rect x="360" y="352" width="29" height="84" rx="9" fill="{{t.car}}"></rect></g>
+          <rect x="364" y="368" width="21" height="9" rx="3" fill="{{t.carD}}"></rect>
+          <rect x="363" y="377" width="23" height="19" rx="4" fill="{{t.carD2}}"></rect>
+          <rect x="364" y="400" width="21" height="32" rx="3" fill="none" stroke="{{t.carD}}" stroke-width="1.4"></rect>
+          <path d="M372 352 H380 Q389 352 389 361 V368 H372 Z" fill="#FF5A1F" opacity="0.45" style="animation: lbFade 400ms ease 1700ms both"></path>
+          <rect x="356" y="356" width="37" height="84" rx="12" fill="none" stroke="{{hiB}}" stroke-width="1.5"></rect>
+        </g>
+
+        <circle cx="384" cy="352" r="12" fill="none" stroke="#FF5A1F" stroke-width="1.5" style="transform-box: fill-box; transform-origin: center; animation: lbPulse 1200ms ease-out 1650ms both"></circle>
+        <g class="cx-hit" onMouseEnter="{{hoverX}}" onMouseLeave="{{leave}}" style="transform-box: fill-box; transform-origin: center; animation: lbPop 500ms cubic-bezier(.3,1.5,.5,1) 1600ms both">
+          <circle cx="384" cy="352" r="16" fill="#FF5A1F" opacity="{{hiX}}"></circle>
+          <g stroke="#FF5A1F" fill="none"><circle cx="384" cy="352" r="8" stroke-width="2.4"></circle><path d="M384 334V340M384 364V370M366 352H372M396 352H402" stroke-width="2.2"></path></g>
+          <circle cx="384" cy="352" r="2.2" fill="#FF5A1F"></circle>
+        </g>
+      </g>
+
+      <g font-family="Instrument Sans, sans-serif" style="animation: lbFade 600ms ease 2100ms both; pointer-events: none">
+        <path d="M412 300 L520 236 L700 236" fill="none" stroke="{{t.tx}}" stroke-width="1"></path>
+        <circle cx="412" cy="300" r="3" fill="{{t.tx}}"></circle>
+        <text x="708" y="232" font-size="15" font-weight="600" fill="{{t.tx}}">A · Silverado 2500</text>
+        <text x="708" y="252" font-size="13" fill="{{t.tx3}}">detenido · daño posterior izquierdo</text>
+        <path d="M392 432 L520 500 L700 500" fill="none" stroke="{{t.tx}}" stroke-width="1"></path>
+        <circle cx="392" cy="432" r="3" fill="{{t.tx}}"></circle>
+        <text x="708" y="496" font-size="15" font-weight="600" fill="{{t.tx}}">B · Tacoma</text>
+        <text x="708" y="516" font-size="13" fill="{{t.tx3}}">daño frontal derecho</text>
+        <path d="M376 384 L470 380 L560 380" fill="none" stroke="#FF5A1F" stroke-width="1"></path>
+        <text x="568" y="384" font-size="13" font-weight="600" fill="{{t.impTx}}">Impacto</text>
+      </g>
+      <g style="animation: lbFade 600ms ease 1300ms both; pointer-events: none" font-family="Geist Mono, monospace" font-size="10" fill="{{t.tx3}}">
+        <rect x="560" y="640" width="10" height="16" rx="3" fill="none" stroke="{{t.tx}}" opacity="0.5"></rect>
+        <text x="580" y="652">B cada 0.4 s · pasa el puntero</text>
+        <path d="M560 678H600" stroke="url(#lSpeedH)" stroke-width="5" stroke-linecap="round"></path>
+        <text x="610" y="682">velocidad de B · 37.4 → 34.5 km/h</text>
+      </g>
+    </svg>
+
+    <sc-if value="{{tipOn}}" hint-placeholder-val="{{false}}">
+      <div role="tooltip" style="position: absolute; left: {{tip.x}}; top: {{tip.y}}; z-index: 5; min-width: 220px; max-width: 280px; padding: 12px 14px; border-radius: 12px; background: {{t.tipBg}}; color: {{t.tipTx}}; box-shadow: 0 16px 40px rgba(0,0,0,0.22); pointer-events: none; animation: lbTip 180ms cubic-bezier(.2,.8,.2,1) both">
+        <div style="font-size: 13px; font-weight: 600">{{tip.title}}</div>
+        <sc-for list="{{tip.lines}}" as="l" hint-placeholder-count="2"><div style="display: flex; justify-content: space-between; gap: 14px; margin-top: 6px; font-size: 12px"><span style="opacity: 0.7">{{l.k}}</span><span style="font-family: 'Geist Mono', monospace">{{l.v}}</span></div></sc-for>
+      </div>
+    </sc-if>
+
+    <div style="position: absolute; left: 32px; top: 24px; display: flex; gap: 4px; padding: 4px; border-radius: 12px; background: {{t.surf}}; box-shadow: {{t.chipSh}}; animation: lbRise 700ms cubic-bezier(.2,.8,.2,1) 100ms both">
+      <sc-for list="{{cams}}" as="c" hint-placeholder-count="4">
+        <button type="button" class="cx-btn" onClick="{{c.pick}}" aria-pressed="{{c.on}}" style="height: 36px; padding: 0 14px; border: 0; border-radius: 9px; background: {{c.bg}}; color: {{c.fg}}; font: 500 13px {{s.ui}}; cursor: pointer">{{c.label}}</button>
+      </sc-for>
+    </div>
+
+    <div style="position: absolute; left: 32px; width: 860px; bottom: 28px; box-sizing: border-box; display: flex; align-items: center; gap: 18px; padding: 14px 18px; border-radius: 16px; background: {{t.surf}}; box-shadow: {{t.chipSh}}; animation: lbRise 700ms cubic-bezier(.2,.8,.2,1) 200ms both">
+      <button type="button" class="cx-go" aria-label="Reproducir la reconstrucción" style="width: 44px; height: 44px; flex: none; border: 0; border-radius: 12px; background: {{t.pri}}; color: {{t.priTx}}; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 3l15 9-15 9z"></path></svg></button>
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 6px">
+        <svg width="100%" height="24" viewBox="0 0 700 24" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 18V8M35 18V13M70 18V13M105 18V13M140 18V8M175 18V13M210 18V13M245 18V13M280 18V8M315 18V13M350 18V13M385 18V13M420 18V8M455 18V13M490 18V13M525 18V13M560 18V8M595 18V13M630 18V13M665 18V13M700 18V8" stroke="{{t.tick}}" stroke-width="1"></path>
+          <path d="M0 18H700" stroke="{{t.track}}" stroke-width="3"></path>
+          <path d="M0 18H330" stroke="{{t.tx}}" stroke-width="3" style="transform-origin: left; animation: lbGrow 1400ms cubic-bezier(.6,0,.2,1) 300ms both"></path>
+          <path d="M330 2V24" stroke="#FF5A1F" stroke-width="2" style="animation: lbFade 200ms ease 1600ms both"></path>
+        </svg>
+        <div style="display: flex; justify-content: space-between; font-family: 'Geist Mono', monospace; font-size: 10px; color: {{t.tx3}}"><span>Llegada</span><span style="color: {{t.tx}}">Impacto · t 0.00 s</span><span>Reposo final</span></div>
+      </div>
+      <div style="display: flex; gap: 2px; padding: 3px; border-radius: 10px; background: {{t.surf2}}">
+        <button type="button" class="cx-btn" style="height: 32px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; color: {{t.tx2}}; font: 12px 'Geist Mono', monospace; cursor: pointer">¼×</button>
+        <button type="button" class="cx-btn" style="height: 32px; padding: 0 10px; border: 0; border-radius: 8px; background: {{t.surf}}; color: {{t.tx}}; font: 600 12px 'Geist Mono', monospace; cursor: pointer">1×</button>
+      </div>
+    </div>
+
+    <section style="position: absolute; right: 32px; top: 24px; bottom: 28px; width: 456px; box-sizing: border-box; border-radius: 22px; background: {{t.surf}}; box-shadow: {{t.sheetSh}}; padding: 26px 32px 24px; display: flex; flex-direction: column; animation: lbRise 900ms cubic-bezier(.2,.8,.2,1) 0ms both">
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <span style="font-size: 13px; color: {{t.tx2}}">Solver resuelto · 8 mensajes</span>
+        <button type="button" class="cx-btn" onClick="{{replay}}" style="display: flex; align-items: center; gap: 6px; height: 32px; padding: 0 10px; border: 0; border-radius: 8px; background: {{t.surf2}}; color: {{t.tx}}; font: 500 12px {{s.ui}}; cursor: pointer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"></path></svg>Repetir</button>
+      </div>
+
+      <h1 style="margin: 16px 0 0; font-family: {{s.disp}}; font-weight: {{s.headW}}; font-size: 34px; line-height: 1.04; letter-spacing: -0.02em; animation: lbMask 900ms cubic-bezier(.2,.8,.2,1) 250ms both">Velocidad al impacto</h1>
+
+      <div style="margin-top: 18px; display: flex; align-items: flex-end; gap: 12px; animation: lbRise 700ms cubic-bezier(.2,.8,.2,1) 550ms both">
+        <span style="font-family: {{s.disp}}; font-weight: {{s.numW}}; font-style: {{s.accent}}; font-size: {{s.numSize}}; line-height: 0.8; letter-spacing: -0.045em; font-variant-numeric: tabular-nums">{{num}}</span>
+        <span style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 8px"><span style="font-size: 20px; font-weight: 500">km/h</span><span style="font-size: 13px; color: {{t.tx3}}">B · Tacoma</span></span>
+      </div>
+
+      <div style="position: relative; margin-top: 22px">
+        <div style="font-size: 12px; color: {{t.tx3}}; margin-bottom: 8px">Distribución de las simulaciones · pasa el puntero</div>
+        <div role="img" aria-label="Histograma de la velocidad de B al impacto en las simulaciones del solver" onMouseLeave="{{leaveBin}}" style="height: 62px; display: flex; align-items: flex-end; gap: 1px">
+          <sc-for list="{{bins}}" as="b" hint-placeholder-count="30">
+            <div class="cx-hit" onMouseEnter="{{b.enter}}" style="flex: 1; height: 100%; display: flex; align-items: flex-end"><div style="width: 100%; height: {{b.h}}; border-radius: 2px 2px 0 0; background: {{b.color}}; transform-origin: bottom; transition: background 140ms ease; animation: lbGrowY 600ms cubic-bezier(.2,.8,.2,1) {{b.delay}} both"></div></div>
+          </sc-for>
+        </div>
+        <sc-if value="{{binOn}}" hint-placeholder-val="{{false}}">
+          <div role="tooltip" style="position: absolute; left: {{bin.x}}; top: 18px; padding: 8px 10px; border-radius: 9px; background: {{t.tipBg}}; color: {{t.tipTx}}; font-size: 12px; white-space: nowrap; pointer-events: none; animation: lbTip 160ms cubic-bezier(.2,.8,.2,1) both"><span style="font-family: 'Geist Mono', monospace">{{bin.label}}</span><span style="opacity: 0.7"> · {{bin.note}}</span></div>
+        </sc-if>
+        <svg width="100%" height="34" viewBox="0 0 392 34" aria-hidden="true" style="display: block">
+          <path d="M0 2H392" stroke="{{t.line2}}" stroke-width="1"></path>
+          <path d="M0 2V9M65.3 2V9M130.7 2V9M196 2V9M261.3 2V9M326.7 2V9M392 2V9" stroke="{{t.tick}}" stroke-width="1"></path>
+          <g font-family="Geist Mono, monospace" font-size="9" fill="{{t.tx3}}" text-anchor="middle"><text x="2" y="22" text-anchor="start">20</text><text x="65.3" y="22">25</text><text x="130.7" y="22">30</text><text x="196" y="22">35</text><text x="261.3" y="22">40</text><text x="326.7" y="22">45</text><text x="390" y="22" text-anchor="end">50</text></g>
+        </svg>
+        <div style="display: flex; gap: 6px; margin-top: 2px">
+          <sc-for list="{{pcts}}" as="p" hint-placeholder-count="3">
+            <button type="button" class="cx-btn" onMouseEnter="{{p.enter}}" onMouseLeave="{{leavePct}}" onFocus="{{p.enter}}" onBlur="{{leavePct}}" style="flex: 1; height: 40px; border-radius: 10px; border: 1px solid {{p.border}}; background: {{p.bg}}; color: {{t.tx}}; font: 12px 'Geist Mono', monospace; cursor: help">{{p.label}}</button>
+          </sc-for>
+        </div>
+        <div style="min-height: 38px; margin-top: 8px; font-size: 13px; line-height: 1.45; color: {{t.tx2}}">{{pctText}}</div>
+      </div>
+
+      <dl style="margin: 4px 0 0; display: flex; flex-direction: column; font-size: 14px">
+        <div style="display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-top: 1px solid {{t.line}}; animation: lbRise 600ms cubic-bezier(.2,.8,.2,1) 1700ms both"><dt style="color: {{t.tx3}}">B venía a</dt><dd style="margin: 0; font-family: 'Geist Mono', monospace; font-size: 13px">{{num2}} km/h <span style="color: {{t.tx3}}">· 26.2–44.0</span></dd></div>
+        <div style="display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-top: 1px solid {{t.line}}; animation: lbRise 600ms cubic-bezier(.2,.8,.2,1) 1820ms both"><dt style="color: {{t.tx3}}">A, Silverado</dt><dd style="margin: 0; font-family: 'Geist Mono', monospace; font-size: 13px">0.0 km/h <span style="color: {{t.tx3}}">· detenido</span></dd></div>
+        <div style="display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-top: 1px solid {{t.line}}; border-bottom: 1px solid {{t.line}}; animation: lbRise 600ms cubic-bezier(.2,.8,.2,1) 1940ms both"><dt style="color: {{t.tx3}}">Lo fijan</dt><dd style="margin: 0; text-align: right">5 evidencias · <button type="button" style="padding: 0; border: 0; background: transparent; color: {{t.tx}}; font: 600 14px {{s.ui}}; text-decoration: underline; text-underline-offset: 4px; cursor: pointer">2 decisiones de Croquis</button></dd></div>
+      </dl>
+
+      <a href="Lab-Analisis.dc.html" class="cx-go" style="margin-top: auto; height: 58px; border-radius: 14px; background: {{t.pri}}; color: {{t.priTx}}; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; font-size: 16px; font-weight: 600; animation: lbRise 600ms cubic-bezier(.2,.8,.2,1) 2100ms both">Continuar al análisis<svg width="36" height="14" viewBox="0 0 36 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M0 7H34M28 1l6 6-6 6"></path></svg></a>
+    </section>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{intro}}" hint-placeholder-val="{{false}}">
+    <div aria-hidden="true" style="position: absolute; inset: 0; z-index: 50; background: {{t.bg}}; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; pointer-events: none; animation: cxOut 560ms cubic-bezier(.7,0,.2,1) 860ms both">
+      <svg width="128" height="128" viewBox="0 0 64 64" style="color: {{t.tx}}; overflow: visible">
+        <g opacity="0.55"><g stroke="currentColor" stroke-width="1.1" style="animation: cxFade 300ms ease 60ms both"><line x1="45.65" y1="55.64" x2="46.80" y2="57.63"></line><line x1="39.07" y1="58.37" x2="39.66" y2="60.59"></line><line x1="32.00" y1="58.20" x2="32.00" y2="61.60"></line><line x1="24.93" y1="58.37" x2="24.34" y2="60.59"></line><line x1="18.35" y1="55.64" x2="17.20" y2="57.63"></line><line x1="13.47" y1="50.53" x2="11.07" y2="52.93"></line><line x1="8.36" y1="45.65" x2="6.37" y2="46.80"></line><line x1="5.63" y1="39.07" x2="3.41" y2="39.66"></line><line x1="5.80" y1="32.00" x2="2.40" y2="32.00"></line><line x1="5.63" y1="24.93" x2="3.41" y2="24.34"></line><line x1="8.36" y1="18.35" x2="6.37" y2="17.20"></line><line x1="13.47" y1="13.47" x2="11.07" y2="11.07"></line><line x1="18.35" y1="8.36" x2="17.20" y2="6.37"></line><line x1="24.93" y1="5.63" x2="24.34" y2="3.41"></line><line x1="32.00" y1="5.80" x2="32.00" y2="2.40"></line><line x1="39.07" y1="5.63" x2="39.66" y2="3.41"></line><line x1="45.65" y1="8.36" x2="46.80" y2="6.37"></line></g></g>
+        <path d="M 46.86 45.38 A 20 20 0 1 1 46.86 18.62" fill="none" stroke="currentColor" stroke-width="6.4" pathLength="1" stroke-dasharray="1" style="animation: cxDraw 620ms cubic-bezier(.65,0,.25,1) 80ms both"></path>
+        <g opacity="0.45"><path d="M 43.14 41.94 A 15 15 0 1 1 43.14 22.06" fill="none" stroke="currentColor" stroke-width="0.9" stroke-dasharray="2.2 2.2" style="animation: cxFade 300ms ease 420ms both"></path></g>
+        <g style="transform-box: fill-box; transform-origin: center; animation: cxPop 420ms cubic-bezier(.3,1.6,.5,1) 600ms both"><g stroke="#FF5A1F" fill="none"><circle cx="52" cy="32" r="4.3" stroke-width="1.7"></circle><line x1="52" y1="23.6" x2="52" y2="26.4" stroke-width="1.3"></line><line x1="52" y1="37.6" x2="52" y2="40.4" stroke-width="1.3"></line><line x1="57.6" y1="32" x2="60.4" y2="32" stroke-width="1.3"></line></g><circle cx="52" cy="32" r="1.2" fill="#FF5A1F"></circle></g>
+        <circle cx="52" cy="32" r="4.3" fill="none" stroke="#FF5A1F" stroke-width="0.8" style="transform-box: fill-box; transform-origin: center; animation: cxRing 700ms ease-out 640ms both"></circle>
+      </svg>
+      <div style="display: flex; align-items: baseline; gap: 16px; overflow: hidden; padding-bottom: 6px"><span style="font-family: 'Geist Mono', monospace; font-size: 14px; color: {{t.tx3}}; animation: cxFade 300ms ease 250ms both">03</span><span style="display: block; font-family: {{s.disp}}; font-weight: {{s.headW}}; font-size: 48px; letter-spacing: -0.02em; animation: cxLine 600ms cubic-bezier(.2,.8,.2,1) 220ms both">La reconstrucción</span></div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"tema":{"editor":"enum","options":["Día","Noche"],"default":"Día","section":"Tema"},"pairing":{"editor":"enum","options":["Editorial","Geométrica","Suave"],"default":"Editorial","section":"Tipografía"},"transicion":{"editor":"boolean","default":true,"section":"Movimiento"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    var reduce = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var intro = props.transicion !== false && !reduce;
+    this.state = { night: null, show: !intro, intro: intro, v: 0, v2: 0, tip: null, bin: null, pct: null, cam: 0 };
+  }
+  isNight() { return this.state.night === null ? this.props.tema === 'Noche' : this.state.night; }
+  componentDidMount() {
+    var self = this;
+    if (this.state.intro) {
+      this.t1 = setTimeout(function () { self.setState({ show: true }); self.run(); }, 760);
+      this.t2 = setTimeout(function () { self.setState({ intro: false }); }, 1500);
+    } else { this.run(); }
+  }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); clearTimeout(this.to); clearTimeout(this.t1); clearTimeout(this.t2); }
+  run() {
+    cancelAnimationFrame(this.raf);
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { this.setState({ v: 34.5, v2: 37.4 }); return; }
+    var self = this;
+    var t0 = performance.now() + 550;
+    var step = function (t) {
+      var p = Math.max(0, Math.min(1, (t - t0) / 1500));
+      var e = 1 - Math.pow(1 - p, 4);
+      self.setState({ v: 34.5 * e, v2: 37.4 * e });
+      if (p < 1) self.raf = requestAnimationFrame(step);
+    };
+    this.raf = requestAnimationFrame(step);
+  }
+  replay() {
+    var self = this;
+    this.setState({ show: false, v: 0, v2: 0, tip: null });
+    clearTimeout(this.to);
+    this.to = setTimeout(function () { self.setState({ show: true }); self.run(); }, 60);
+  }
+  tokens(n) {
+    if (n) return { bg: '#0A1120', surf: '#111A2C', surf2: '#17223A', head: 'rgba(10,17,32,0.86)', track: '#1E2A44', line: 'rgba(148,170,210,0.16)', line2: 'rgba(148,170,210,0.3)', tx: '#E8EEF8', tx2: '#B4C0D4', tx3: '#8D9BB4', pri: '#E8EEF8', priTx: '#0A1120', soft: '#1E2B47', tick: '#5C6B87', lit0: '#14213C', lit1: '#070D19', slab: '#1C2944', median: '#131D33', medDot: '#22304E', edge: '#2C3A57', lane: '#3A4A6A', car: '#DCE6F5', carD: '#8FA1BF', carD2: '#C3D0E6', ghostFill: 'rgba(220,230,245,0.14)', speed0: '#8FB4FF', impTx: '#FF8A5C', shadow: '#000000', shOp: 0.6, sheetSh: '0 1px 0 rgba(148,170,210,0.12), 0 30px 80px rgba(0,0,0,0.5)', chipSh: '0 1px 0 rgba(148,170,210,0.12), 0 10px 30px rgba(0,0,0,0.4)', tipBg: '#E8EEF8', tipTx: '#0A1120', bar: '#33456A', barIn: '#8FB4FF', barHi: '#FF5A1F' };
+    return { bg: '#F4F5F7', surf: '#FFFFFF', surf2: '#F1F2F4', head: 'rgba(255,255,255,0.86)', track: '#E1E4E8', line: '#ECEEF1', line2: '#C9CDD4', tx: '#0B0D12', tx2: '#3A3F49', tx3: '#5B616C', pri: '#0B0D12', priTx: '#FFFFFF', soft: '#ECEEF1', tick: '#9CA2AC', lit0: '#FFFFFF', lit1: '#E7E9ED', slab: '#FFFFFF', median: '#ECEDEF', medDot: '#D9DBDF', edge: '#D5D8DE', lane: '#CACED5', car: '#FFFFFF', carD: '#D7DBE1', carD2: '#F1F2F4', ghostFill: '#FFFFFF', speed0: '#0B0D12', impTx: '#C2410C', shadow: '#1B2230', shOp: 0.18, sheetSh: '0 1px 0 #E6E8EC, 0 30px 80px rgba(27,34,48,0.12)', chipSh: '0 1px 0 #E6E8EC, 0 10px 28px rgba(27,34,48,0.08)', tipBg: '#0B0D12', tipTx: '#FFFFFF', bar: '#DDE0E5', barIn: '#0B0D12', barHi: '#FF5A1F' };
+  }
+  pairs(p) {
+    var sets = {
+      'Editorial': { disp: "'Instrument Serif', Georgia, serif", ui: "'Instrument Sans', system-ui, sans-serif", headW: 400, numW: 400, accent: 'italic', numSize: '184px' },
+      'Geométrica': { disp: "'Sora', system-ui, sans-serif", ui: "'Sora', system-ui, sans-serif", headW: 300, numW: 200, accent: 'normal', numSize: '150px' },
+      'Suave': { disp: "'Manrope', system-ui, sans-serif", ui: "'Manrope', system-ui, sans-serif", headW: 500, numW: 300, accent: 'normal', numSize: '158px' }
+    };
+    return sets[p] || sets['Editorial'];
+  }
+  renderVals() {
+    var self = this;
+    var night = this.isNight();
+    var t = this.tokens(night);
+    var tipKey = this.state.tip;
+    var tips = {
+      A: { x: '367px', y: '262px', title: 'A · Chevrolet Silverado 2500 · 2007', lines: [{ k: 'Masa', v: '2,562.1 kg · supuesto' }, { k: 'Al impacto', v: '0.0 km/h' }, { k: 'Daño', v: 'posterior izquierdo' }] },
+      B: { x: '372px', y: '372px', title: 'B · Toyota Tacoma · 1997', lines: [{ k: 'Masa', v: '1,431.083 kg · reporte' }, { k: 'Al impacto', v: '34.5 km/h' }, { k: 'Rango', v: '26.2–44.0' }] },
+      X: { x: '371px', y: '360px', title: 'Impacto 1 · t 0.00 s', lines: [{ k: 'Contacto', v: 'frente B · posterior A' }, { k: 'Punto', v: 'colocado por el perito' }] }
+    };
+    var gy = [632, 562, 492, 422];
+    var gx = [439, 422, 406, 389];
+    var gyy = [662, 594, 526, 458];
+    var gt = ['−1.6 s', '−1.2 s', '−0.8 s', '−0.4 s'];
+    var gop = [0.2, 0.32, 0.45, 0.6];
+    gy.forEach(function (y, i) { tips['G' + i] = { x: gx[i] + 'px', y: (gyy[i] - 30) + 'px', title: 'B · t ' + gt[i], lines: [{ k: 'Posición', v: 'simulada por el solver' }] }; });
+    var ghosts = gy.map(function (y, i) {
+      var on = tipKey === 'G' + i;
+      return { y: y, op: on ? 1 : gop[i], stroke: on ? '#FF5A1F' : t.tx, sw: on ? 1.8 : 1, delay: (450 + i * 250) + 'ms', enter: function () { self.setState({ tip: 'G' + i }); } };
+    });
+    var bins = [];
+    for (var i = 0; i < 30; i++) {
+      var c = 20 + i + 0.5;
+      var sg = c < 34.5 ? 6.5 : 7.4;
+      var h = Math.exp(-0.5 * Math.pow((c - 34.5) / sg, 2));
+      var inBand = c >= 26.2 && c <= 44.0;
+      var on = this.state.bin === i;
+      (function (idx, lo, inB) {
+        bins.push({ h: Math.max(4, Math.round(h * 100)) + '%', color: on ? t.barHi : (inB ? t.barIn : t.bar), delay: (1250 + idx * 16) + 'ms', enter: function () { self.setState({ bin: idx }); }, lo: lo, inB: inB });
+      })(i, 20 + i, inBand);
+    }
+    var binOn = this.state.bin !== null;
+    var bsel = binOn ? bins[this.state.bin] : null;
+    var pctDefs = [
+      { key: 'p10', label: 'p10 · 26.2', text: '9 de cada 10 simulaciones dieron más de 26.2 km/h.' },
+      { key: 'p50', label: 'p50 · 34.5', text: 'La mitad de las simulaciones quedó por debajo de 34.5 km/h y la otra mitad por arriba.' },
+      { key: 'p90', label: 'p90 · 44.0', text: '9 de cada 10 simulaciones dieron menos de 44.0 km/h.' }
+    ];
+    var pcts = pctDefs.map(function (p) {
+      var on = self.state.pct === p.key;
+      return { label: p.label, bg: on ? t.surf2 : 'transparent', border: on ? t.tx : t.line2, enter: function () { self.setState({ pct: p.key }); } };
+    });
+    var pctSel = pctDefs.filter(function (p) { return p.key === self.state.pct; })[0];
+    var camNames = ['Cenital', 'Detrás de B', 'Conductor B', 'Órbita 3D'];
+    var cams = camNames.map(function (n, i) {
+      var on = self.state.cam === i;
+      return { label: n, on: on ? 'true' : 'false', bg: on ? t.pri : 'transparent', fg: on ? t.priTx : t.tx2, pick: function () { self.setState({ cam: i }); } };
+    });
+    return {
+      t: t, s: this.pairs(this.props.pairing), night: night, day: !night,
+      themeLabel: night ? 'Cambiar a modo día' : 'Cambiar a modo noche',
+      toggle: function () { self.setState({ night: !self.isNight() }); },
+      show: this.state.show, intro: this.state.intro,
+      num: this.state.v.toFixed(1), num2: this.state.v2.toFixed(1),
+      replay: function () { self.replay(); },
+      tipOn: !!tipKey && !!tips[tipKey], tip: tips[tipKey] || tips.A,
+      hoverA: function () { self.setState({ tip: 'A' }); },
+      hoverB: function () { self.setState({ tip: 'B' }); },
+      hoverX: function () { self.setState({ tip: 'X' }); },
+      leave: function () { self.setState({ tip: null }); },
+      hiA: tipKey === 'A' ? t.tx : 'none', hiB: tipKey === 'B' ? t.tx : 'none', hiX: tipKey === 'X' ? 0.18 : 0,
+      g0: ghosts[0], g1: ghosts[1], g2: ghosts[2], g3: ghosts[3], bins: bins, binOn: binOn,
+      bin: bsel ? { x: ((this.state.bin + 0.5) / 30 * 100).toFixed(2) + '%', label: bsel.lo + '–' + (bsel.lo + 1) + ' km/h', note: bsel.inB ? 'dentro de p10–p90' : 'fuera del rango central' } : { x: '0%', label: '', note: '' },
+      leaveBin: function () { self.setState({ bin: null }); },
+      pcts: pcts, leavePct: function () { self.setState({ pct: null }); },
+      pctText: pctSel ? pctSel.text : 'Pasa el puntero por un percentil para ver qué significa.',
+      cams: cams
+    };
+  }
+}
+</script>
+</body>
+</html>

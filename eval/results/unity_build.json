@@ -1,6 +1,6 @@
 {
-  "fecha": "2026-11-07T20:50:34.137Z",
-  "commit": "df45916fcb7de851814a58182f8b1efd7d0ad2ff",
+  "fecha": "2026-11-09T22:08:13.691Z",
+  "commit": "97e8c6f6205074f595cef7a1dfbd73eb02b67acc",
   "unity": "6000.3.28f1",
   "maquina": {
     "cpu": "Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz",
@@ -9,72 +9,74 @@
     "so": "Windows_NT 10.0.26200"
   },
   "metodo": "Mediana de 3 corridas con navegador nuevo y sin caché, 20 Mbps y 40 ms al servidor local; los modelos se bajan de Vercel Blob por la red real con el mismo límite. Brotli calidad 9 hecho aquí: es referencia, la cifra de producción se mide en U6.",
-  "caso": "axa_alcance",
+  "caso": "axa-dia",
+  "con_escenario": true,
+  "paquete_kb": 386,
   "peso": {
-    "bytes": 43674539,
-    "mb": 41.7,
-    "br_q9_bytes": 11258019,
-    "br_q9_mb": 10.7,
+    "bytes": 64319574,
+    "mb": 61.3,
+    "br_q9_bytes": 29009611,
+    "br_q9_mb": 27.7,
     "archivos": [
       {
-        "archivo": "Build/20a40c18603966fc2419a0e8d75ce069.data",
-        "bytes": 9810951,
-        "bytes_br_q9": 2517826
+        "archivo": "Build/4a553668c4373905e507a950e1276c52.framework.js",
+        "bytes": 442814,
+        "bytes_br_q9": 81764
       },
       {
-        "archivo": "Build/38a9459f49e54d4b413297a58b7f9e02.loader.js",
+        "archivo": "Build/4e69cf41d156b7e9cd47d683cadd7e92.data",
+        "bytes": 28620807,
+        "bytes_br_q9": 19944091
+      },
+      {
+        "archivo": "Build/7359881a5b9c428e1acad5714abf7ec3.loader.js",
         "bytes": 26983,
-        "bytes_br_q9": 8909
+        "bytes_br_q9": 8908
       },
       {
-        "archivo": "Build/8374d4805ace8548c49377165687fcac.framework.js",
-        "bytes": 441037,
-        "bytes_br_q9": 81674
-      },
-      {
-        "archivo": "Build/cd01b5ab4b8c927261ace3f2fb100226.wasm",
-        "bytes": 33393902,
-        "bytes_br_q9": 8648905
+        "archivo": "Build/97558d0ca9ef88622ccf7c7588da5182.wasm",
+        "bytes": 35227304,
+        "bytes_br_q9": 8974147
       },
       {
         "archivo": "index.html",
         "bytes": 1666,
-        "bytes_br_q9": 705
+        "bytes_br_q9": 701
       }
     ]
   },
   "carga": {
-    "hasta_listo_s": 5.4,
-    "caso_cargado_s": 2.2,
-    "total_s": 7.9,
-    "fps_p50": 58.8
+    "hasta_listo_s": 12.9,
+    "caso_cargado_s": 3.6,
+    "total_s": 17.4,
+    "fps_p50": 35.7
   },
   "corridas": [
     {
-      "hasta_listo_s": 5.4,
-      "caso_cargado_s": 2.2,
-      "total_s": 7.9,
-      "fps_p50": 58.8,
-      "fps_muestras": 3,
-      "heap_js_mb": 17.6,
+      "hasta_listo_s": 12.8,
+      "caso_cargado_s": 3.8,
+      "total_s": 17.5,
+      "fps_p50": 35.7,
+      "fps_muestras": 4,
+      "heap_js_mb": 36.6,
       "errores": []
     },
     {
-      "hasta_listo_s": 5.4,
-      "caso_cargado_s": 2.3,
-      "total_s": 7.9,
-      "fps_p50": 58.8,
-      "fps_muestras": 3,
-      "heap_js_mb": 17.6,
+      "hasta_listo_s": 12.9,
+      "caso_cargado_s": 3.6,
+      "total_s": 17.4,
+      "fps_p50": 36.35,
+      "fps_muestras": 4,
+      "heap_js_mb": 36.6,
       "errores": []
     },
     {
-      "hasta_listo_s": 5.4,
-      "caso_cargado_s": 2.1,
-      "total_s": 7.8,
-      "fps_p50": 58.8,
-      "fps_muestras": 3,
-      "heap_js_mb": 17.5,
+      "hasta_listo_s": 12.9,
+      "caso_cargado_s": 3.4,
+      "total_s": 17.2,
+      "fps_p50": 35.7,
+      "fps_muestras": 4,
+      "heap_js_mb": 36.4,
       "errores": []
     }
   ]
