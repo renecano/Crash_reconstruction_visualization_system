@@ -27,8 +27,6 @@ La meta está en `docs/cesvi/PLAN-CESVI.md` §3.3. Decisiones: ADR 0112 (el esce
   - **El pasto es un plano con textura:** sin matas ni variación; en la autopista de AXA el campo se ve vacío.
   - **Los cerros** se leen, pero como siluetas lisas y pálidas.
   - **De noche** las luminarias queman el piso cerca del poste y el resto queda muy oscuro.
-  - **El tope** sale negro: sus franjas amarillas no se ven.
-  - **La cámara de la acera** a veces queda detrás de un poste.
   - **Sin desgaste:** el asfalto y las rayas no tienen rodadas, parches ni grietas.
 - **Provisional hasta W5:** el solver todavía no entrega altura, cabeceo ni alabeo, así que en la escena de terracería el vehículo se posa sobre el piso dibujado. Su x, su y y su rumbo son los del `Resultado`. Esa escena es el alcance canónico con un terreno agregado para las capturas; la definitiva la deja W5 en `fixtures/`.
 - **Lo que necesito de ti:** ver las capturas y decirme qué corregir primero.
@@ -43,9 +41,9 @@ Unity 6000.3.28f1, esta laptop (i5-10210U, 8 GB, sin tarjeta de video dedicada),
 | Con Brotli calidad 9               | 10.7 MB            | 27.7 MB            |
 | Hasta que Unity arranca, a 20 Mbps | 5.4 s              | 12.9 s             |
 | Hasta que AXA se ve                | 2.2 s más          | 3.6 s más          |
-| fps a 1280 × 720, AXA de día       | 58.8               | 36.4               |
+| fps a 1280 × 720, AXA de día       | 58.8               | 35.7               |
 
-- **fps a 1600 × 900, con el caso quieto:** de 23 a 27 de día y de 12 a 20 de noche, según la escena.
+- **fps a 1600 × 900, con el caso quieto:** de 20 a 27 de día y de 12 a 21 de noche, según la escena.
 - **No cumple §7.8 de `PLAN.md`.** Todavía no hay niveles de calidad: todo corre con lo de alta (sombras de 4096 en 4 cascadas, MSAA 4x, oclusión ambiental, 8 luces por objeto). Los niveles son U5; ahí se recorta densidad en media, no función.
 - **El escenario en el paquete:** de 211 a 324 KB sin comprimir.
 - **Tiempo del build:** 27 min el primero con los recursos nuevos; de 5 a 6 min los siguientes.
@@ -56,7 +54,7 @@ Unity 6000.3.28f1, esta laptop (i5-10210U, 8 GB, sin tarjeta de video dedicada),
 | ------------------------- | -------- | ---------------- | ------------ |
 | Primer build con recursos | 27 min   | 2,770 MB         | 550 MB       |
 | Build de diagnóstico      | 6 min    | 2,627 MB         | 354 MB       |
-| Builds siguientes         | 5 min    | 2,168 a 2,852 MB | 386 a 523 MB |
+| Builds siguientes         | 5 min    | 2,168 a 2,852 MB | 350 a 523 MB |
 
 Con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1` y sin nada más abierto, todos terminaron.
 
@@ -65,6 +63,8 @@ Con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1` y sin nada más abierto, todo
 - **En WebGL el resplandor (bloom) quema toda la imagen en blanco.** En el editor no pasa. Se confirmó con un build de diagnóstico que apaga una cosa a la vez (`depurar` en el puente, fuera del contrato): sin resplandor, el build se ve igual que el editor. Queda apagado solo en WebGL; se revisa en U5.
 - **Un renderer de URP creado por código nace sin datos de posproceso:** sin ellos no había tono de cine. Se le asignan en `PrepararEscenario`.
 - **URP quita del build los modos de niebla que ninguna escena usa:** la escena se guarda con niebla encendida.
+- **Una cara doble que comparte vértices sale negra:** sus normales se anulan. Así salía el tope; `Malla.Cuadro` ahora duplica los vértices.
+- **La cámara de la acera** elige, entre 12 lugares junto al árbol, el que queda fuera de los edificios y más lejos de postes y luminarias.
 - **Las cajas salían con las caras al revés** cuando su segundo eje venía de `Cross(up, eje)`: `Malla.Caja` lo corrige sola.
 - **Los enums de quicktype cambian de nombre** («IndecentTipo») cuando cambia el esquema: los del escenario llevan `title` para que queden fijos.
 
