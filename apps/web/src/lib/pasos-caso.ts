@@ -82,7 +82,13 @@ export const nombrePunto = (orden: number, total: number) =>
 /** Lo que falta para salir de un paso, dicho para el perito (vacío si puede seguir). */
 export function faltaEnPaso(paso: ClavePaso, s: EstadoRecorrido): string[] {
   if (paso === "caso") return s.esperaReporte ? ["cargar el reporte de CESVI"] : [];
-  if (paso === "hecho") return s.expediente ? [] : ["leer la narración del hecho"];
+  if (paso === "hecho") {
+    if (!s.expediente) return ["leer la narración del hecho"];
+    // W2 (plan v4): sin un vehículo no hay nada que reconstruir; lo demás se pregunta o se supone.
+    return s.expediente.vehiculos.length === 0
+      ? ["un relato que diga qué vehículos participaron"]
+      : [];
+  }
   if (!s.expediente) return [];
   if (paso === "lugar") {
     const f = faltaDelLugar(s.expediente, s.finalesDesconocidos);

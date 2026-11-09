@@ -6,6 +6,8 @@
  * mención de un vehículo ilumina su tarjeta, y al revés. Sin mapa en este acto.
  */
 import {
+  minimoParaReconstruir,
+  supuestosDeClase,
   supuestosDeclarados,
   type EscenaNarrada,
   type Expediente,
@@ -15,6 +17,7 @@ import { useMemo, useState, type CSSProperties } from "react";
 import { Linea } from "../movimiento";
 import { siluetaClase } from "@/lib/colocar";
 import { marcarRelato, metaDelHecho, textoDano, tituloDelHecho } from "@/lib/hecho-laboratorio";
+import { enLista } from "@/lib/pasos-caso";
 import { ResumenEscena } from "./pasos";
 import { Pregunta } from "./piezas";
 
@@ -67,10 +70,14 @@ export function HechoLaboratorio({
         narracion,
         escena.lectura ?? [],
         e.vehiculos.map((v) => ({ id: v.id, nombres: [v.modelo?.valor ?? ""] })),
+        escena.menciones ?? [],
       ),
-    [narracion, escena.lectura, e.vehiculos],
+    [narracion, escena.lectura, escena.menciones, e.vehiculos],
   );
   const supuestos = useMemo(() => supuestosDeclarados(e), [e]);
+  const clases = useMemo(() => supuestosDeClase(escena.menciones ?? []), [escena.menciones]);
+  // Lo mínimo para reconstruir (W2): si falta algo, va al frente, antes de las preguntas.
+  const minimo = useMemo(() => minimoParaReconstruir(e, { narracion }), [e, narracion]);
   // Lo leído del lugar y la vía, sin repetir y sin valores vacíos («restos» como valor de «restos»).
   const lugar = (escena.lectura ?? [])
     .filter((d) => d.tipo === "lugar" && d.valor.trim() && d.valor !== d.campo)
@@ -227,6 +234,14 @@ export function HechoLaboratorio({
                   <span className="t-nota">Masa: sin dato</span>
                 )}
                 {s ? <span className="t-nota">{s.justificacion.split(/[:;]/)[0]}</span> : null}
+                {clases
+                  .filter((c) => c.vehiculo === v.id && c.valor)
+                  .map((c) => (
+                    <span key={c.clave} className="t-nota" data-testid={`clase-supuesta-${v.id}`}>
+                      <span className="escena-supuesto mr-1">supuesto</span>
+                      Clase: {c.valor}. {c.justificacion}
+                    </span>
+                  ))}
                 {textoDano(e, v.id) ? (
                   <span className="text-[0.9rem]">{textoDano(e, v.id)}</span>
                 ) : null}
@@ -250,6 +265,21 @@ export function HechoLaboratorio({
           </dl>
         ) : null}
         <div className="solo-trabajar mt-4 flex flex-col gap-3 border-t border-linea-suave pt-4">
+          {minimo.nivel !== "completo" ? (
+            <p className="t-interfaz" role="status" data-testid="minimo-reconstruir">
+              {minimo.nivel === "nada" ? (
+                <>
+                  <b>Con este relato no se puede reconstruir:</b> falta {enLista(minimo.faltan)}.
+                  Edita el relato y cuenta qué vehículos participaron, cómo chocaron y dónde.
+                </>
+              ) : (
+                <>
+                  <b>Se puede seguir, pero el relato no dice {enLista(minimo.faltan)}.</b> Contesta
+                  las preguntas de abajo; lo que no sepas entra como supuesto declarado.
+                </>
+              )}
+            </p>
+          ) : null}
           {preguntas.length ? (
             <>
               <span className="t-interfaz font-semibold">Lo que más cambia la reconstrucción</span>

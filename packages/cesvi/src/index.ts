@@ -11,6 +11,7 @@ export * from "./fichas";
 export * from "./dictamenes-r4";
 export * from "./importar";
 export * from "./escena-narracion";
+export * from "./relato";
 export * from "./reconstruccion";
 export * from "./conductores";
 export * from "./pizarra";

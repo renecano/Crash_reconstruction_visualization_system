@@ -3,7 +3,10 @@
  * que devuelve Claude, tal cual; el navegador arma la escena y revisa cada cita contra el texto
  * (`escenaDeNarracion`). Sin llave, sin tope de gasto o si Claude falla, lo dice y el perito llena la
  * escena a mano. Es pública, como /cesvi; la cuidan el tope de gasto diario y el límite por hora.
+ * Antes de llamar a Claude revisa que el relato tenga contenido real: si no, responde
+ * `relato_insuficiente` con un mensaje para el perito y no gasta.
  */
+import { revisarRelato } from "@croquis/cesvi";
 import { leerEscena } from "@croquis/cesvi/server";
 import { LLMError } from "@croquis/extraction";
 import { z } from "zod";
@@ -33,6 +36,14 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json(
       { error: "Petición inválida.", detalle: parsed.error.issues },
       { status: 422 },
+    );
+  }
+  // O1 (plan v4): un texto sin contenido («gggg…») no gasta API.
+  const revision = revisarRelato(parsed.data.texto);
+  if (!revision.suficiente) {
+    return Response.json(
+      { metodo: "relato_insuficiente", motivo: revision.motivo, mensaje: revision.mensaje },
+      { headers: { "Cache-Control": "no-store" } },
     );
   }
   const deps = defaultDeps();

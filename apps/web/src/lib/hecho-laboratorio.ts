@@ -3,7 +3,7 @@
  * relato con lo que Croquis leyó marcado por estilo (vehículos, daños, lugar y vía, medidas). Todo
  * sale del expediente, de la lectura con sus citas y del texto; nada se inventa.
  */
-import type { DatoLeidoEscena, Expediente } from "@croquis/cesvi";
+import type { DatoLeidoEscena, Expediente, MencionLeida } from "@croquis/cesvi";
 import { callesNarradas } from "./escena-facil";
 
 export type TipoMarca = DatoLeidoEscena["tipo"];
@@ -73,15 +73,16 @@ export function marcarRelato(
   texto: string,
   lectura: readonly DatoLeidoEscena[],
   vehiculos: readonly { id: string; nombres: readonly string[] }[],
+  menciones: readonly MencionLeida[] = [],
 ): { tramos: TramoRelato[]; datos: number; porTipo: Record<TipoMarca, number> } {
   const n = texto.length;
   const tipo: (TipoMarca | null)[] = new Array(n).fill(null);
   const veh: (string | null)[] = new Array(n).fill(null);
   const porTipo: Record<TipoMarca, number> = { vehiculo: 0, dano: 0, lugar: 0, medida: 0 };
-  const marcar = (ini: number, fin: number, t: TipoMarca, v: string | null) => {
+  const marcar = (ini: number, fin: number, t: TipoMarca, v: string | null, manda = false) => {
     for (let k = ini; k < fin; k++) {
       const actual = tipo[k] ?? null;
-      if (actual === null || PRIORIDAD[t] > PRIORIDAD[actual]) {
+      if (actual === null || PRIORIDAD[t] > PRIORIDAD[actual] || (manda && t === actual)) {
         tipo[k] = t;
         veh[k] = v;
       }
@@ -91,7 +92,11 @@ export function marcarRelato(
   for (const d of lectura) {
     const i = texto.indexOf(d.cita);
     if (i < 0) continue;
-    marcar(i, i + d.cita.length, d.tipo, d.vehiculo);
+    // La cita de un vehículo suele abarcar la frase entera, con el otro vehículo adentro: si se sabe
+    // dónde lo nombra el relato, la marca va ahí y no en toda la cita (O5: «una combi colisiona con
+    // un pickup lobo» dejaba la letra A después de «lobo» y a la combi sin letra).
+    const conMencion = d.tipo === "vehiculo" && menciones.some((m) => m.vehiculo === d.vehiculo);
+    if (!conMencion) marcar(i, i + d.cita.length, d.tipo, d.vehiculo);
     porTipo[d.tipo]++;
     datos++;
   }
@@ -105,10 +110,19 @@ export function marcarRelato(
         .map((x) => `\\b${x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`),
     ];
     for (const p of patrones)
-      for (const m of texto.matchAll(new RegExp(p, "g"))) {
-        marcar(m.index!, m.index! + m[0].length, "vehiculo", v.id);
+      for (const m of texto.matchAll(new RegExp(p, "gi"))) {
+        marcar(m.index!, m.index! + m[0].length, "vehiculo", v.id, true);
       }
   });
+  // Cómo lo nombra el relato («combi», «pickup»): todas las veces que aparece esa palabra.
+  for (const m of menciones) {
+    const palabra = texto.slice(m.ini, m.fin);
+    if (!palabra) continue;
+    const seguro = palabra.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    for (const x of texto.matchAll(new RegExp(`(?<![\\p{L}\\d])${seguro}(?![\\p{L}\\d])`, "giu"))) {
+      marcar(x.index, x.index + x[0].length, "vehiculo", m.vehiculo, true);
+    }
+  }
   for (const m of texto.matchAll(MEDIDA)) {
     marcar(m.index!, m.index! + m[0].length, "medida", null);
     porTipo.medida++;
