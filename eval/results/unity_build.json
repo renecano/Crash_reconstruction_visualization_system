@@ -1,6 +1,6 @@
 {
-  "fecha": "2026-11-09T21:46:09.042Z",
-  "commit": "e096538d81ef0ab5be324819be78eec45d91047a",
+  "fecha": "2026-11-09T22:08:13.691Z",
+  "commit": "97e8c6f6205074f595cef7a1dfbd73eb02b67acc",
   "unity": "6000.3.28f1",
   "maquina": {
     "cpu": "Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz",
@@ -13,35 +13,35 @@
   "con_escenario": true,
   "paquete_kb": 386,
   "peso": {
-    "bytes": 64314117,
+    "bytes": 64319574,
     "mb": 61.3,
-    "br_q9_bytes": 29059871,
+    "br_q9_bytes": 29009611,
     "br_q9_mb": 27.7,
     "archivos": [
-      {
-        "archivo": "Build/09794d3039604fee1cccf56d93304146.data",
-        "bytes": 28620156,
-        "bytes_br_q9": 19971943
-      },
       {
         "archivo": "Build/4a553668c4373905e507a950e1276c52.framework.js",
         "bytes": 442814,
         "bytes_br_q9": 81764
       },
       {
-        "archivo": "Build/5ff8417b13f1cbc3baa4d66c1891bc84.loader.js",
+        "archivo": "Build/4e69cf41d156b7e9cd47d683cadd7e92.data",
+        "bytes": 28620807,
+        "bytes_br_q9": 19944091
+      },
+      {
+        "archivo": "Build/7359881a5b9c428e1acad5714abf7ec3.loader.js",
         "bytes": 26983,
         "bytes_br_q9": 8908
       },
       {
-        "archivo": "Build/d2d22557ed6d563aca4b5d15c87ca13e.wasm",
-        "bytes": 35222498,
-        "bytes_br_q9": 8996551
+        "archivo": "Build/97558d0ca9ef88622ccf7c7588da5182.wasm",
+        "bytes": 35227304,
+        "bytes_br_q9": 8974147
       },
       {
         "archivo": "index.html",
         "bytes": 1666,
-        "bytes_br_q9": 705
+        "bytes_br_q9": 701
       }
     ]
   },
@@ -49,16 +49,16 @@
     "hasta_listo_s": 12.9,
     "caso_cargado_s": 3.6,
     "total_s": 17.4,
-    "fps_p50": 36.35
+    "fps_p50": 35.7
   },
   "corridas": [
     {
-      "hasta_listo_s": 12.9,
-      "caso_cargado_s": 3.4,
-      "total_s": 17.2,
-      "fps_p50": 37,
+      "hasta_listo_s": 12.8,
+      "caso_cargado_s": 3.8,
+      "total_s": 17.5,
+      "fps_p50": 35.7,
       "fps_muestras": 4,
-      "heap_js_mb": 36.5,
+      "heap_js_mb": 36.6,
       "errores": []
     },
     {
@@ -67,16 +67,16 @@
       "total_s": 17.4,
       "fps_p50": 36.35,
       "fps_muestras": 4,
-      "heap_js_mb": 36.5,
+      "heap_js_mb": 36.6,
       "errores": []
     },
     {
       "hasta_listo_s": 12.9,
-      "caso_cargado_s": 3.6,
-      "total_s": 17.4,
+      "caso_cargado_s": 3.4,
+      "total_s": 17.2,
       "fps_p50": 35.7,
       "fps_muestras": 4,
-      "heap_js_mb": 36.6,
+      "heap_js_mb": 36.4,
       "errores": []
     }
   ]

@@ -72,8 +72,14 @@ namespace Croquis.Visor
             Triangulo(i, i + 3, i + 2);
             if (dosCaras)
             {
-                Triangulo(i, i + 1, i + 2);
-                Triangulo(i, i + 2, i + 3);
+                // Con sus propios vértices: si las dos caras comparten vértices, sus normales se anulan
+                // y la cara sale negra (así salía el tope).
+                var j = Vertice(a, new Vector2(0, 0));
+                Vertice(b, new Vector2(ancho, 0));
+                Vertice(c, new Vector2(ancho, alto));
+                Vertice(d, new Vector2(0, alto));
+                Triangulo(j, j + 1, j + 2);
+                Triangulo(j, j + 2, j + 3);
             }
         }
 

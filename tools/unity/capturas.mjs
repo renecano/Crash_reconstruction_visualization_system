@@ -110,7 +110,9 @@ try {
   await navegador.close();
   servidor.close();
 }
-writeFileSync(
-  join(SALIDA, "fps.json"),
-  `${JSON.stringify({ fecha: new Date().toISOString(), t: T, fps }, null, 2)}\n`,
+// Las listas de números, en un renglón: así lo deja Prettier, que revisa CI.
+const texto = JSON.stringify({ fecha: new Date().toISOString(), t: T, fps }, null, 2).replace(
+  /\[\s+([\d.,\s]+?)\s+\]/g,
+  (_, n) => `[${n.split(/,\s*/).join(", ")}]`,
 );
+writeFileSync(join(SALIDA, "fps.json"), `${texto}\n`);

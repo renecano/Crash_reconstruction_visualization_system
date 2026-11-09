@@ -87,6 +87,24 @@ namespace Croquis.Visor
             Camara.Vehiculos = vehiculos;
             Camara.Caso = this;
             Camara.Arbol = ArbolCercano(e, Camara.Centro);
+            Camara.Estorbos.Clear();
+            Camara.Bultos.Clear();
+            foreach (var ed in e?.Entorno?.Edificios ?? new EdificioEscenario[0])
+            {
+                // Un círculo que cubre la planta del edificio, con 1 m de holgura.
+                var radio = 0.5f * Mathf.Sqrt((float)(ed.LargoM * ed.LargoM + ed.FondoM * ed.FondoM)) + 1f;
+                Camara.Bultos.Add(new Vector3((float)ed.X, (float)ed.Y, radio));
+            }
+
+            foreach (var l in e?.Luminarias ?? new LuminariaEscenario[0])
+            {
+                Camara.Estorbos.Add(new Vector2((float)l.X, (float)l.Y));
+            }
+
+            foreach (var p in e?.Entorno?.Postes ?? new PosteEscenario[0])
+            {
+                Camara.Estorbos.Add(new Vector2((float)p.X, (float)p.Y));
+            }
             Fijar(inicio);
         }
 

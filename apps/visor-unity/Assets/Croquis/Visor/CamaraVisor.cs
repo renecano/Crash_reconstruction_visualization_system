@@ -29,6 +29,27 @@ namespace Croquis.Visor
         /// <summary>El árbol más cercano a la acción: la cámara de la acera se para junto a él.</summary>
         public Vector3? Arbol { get; set; }
 
+        /// <summary>Postes y luminarias, en planta (x, y): la cámara de la acera no se para detrás de uno.</summary>
+        public List<Vector2> Estorbos { get; } = new List<Vector2>();
+
+        /// <summary>La distancia en planta del estorbo más cercano al tramo que va del ojo a 14 m hacia la mira.</summary>
+        private float Despeje(Vector3 ojo, Vector3 mira)
+        {
+            var a = new Vector2(ojo.x, ojo.z);
+            var dir = new Vector2(mira.x - ojo.x, mira.z - ojo.z).normalized;
+            var menor = float.MaxValue;
+            foreach (var e in Estorbos)
+            {
+                var u = Mathf.Clamp(Vector2.Dot(e - a, dir), 0f, 14f);
+                menor = Mathf.Min(menor, (e - (a + dir * u)).magnitude);
+            }
+
+            return menor;
+        }
+
+        /// <summary>Edificios, como círculos en planta (x, y, radio): la cámara de la acera no se mete en uno.</summary>
+        public List<Vector3> Bultos { get; } = new List<Vector3>();
+
         public Vector3 Centro => new Vector3((float)zona.CentroX, 0f, (float)zona.CentroY);
 
         public bool Cambiar(string nuevo)
@@ -118,8 +139,34 @@ namespace Croquis.Visor
                         haciaCentro.y = 0f;
                         var d = haciaCentro.normalized;
                         var costado = Vector3.Cross(Vector3.up, d);
-                        camara.transform.position = Arbol.Value - d * 9f + costado * 4.5f + Vector3.up * 1.7f;
-                        camara.transform.LookAt(Arbol.Value + d * 6f + Vector3.up * 3.2f);
+                        // De los lugares posibles, el primero fuera de los edificios y más despejado de postes.
+                        var mira = Arbol.Value + d * 6f + Vector3.up * 3.2f;
+                        var ojo = Arbol.Value - d * 9f + costado * 4.5f + Vector3.up * 1.7f;
+                        var mejor = float.MinValue;
+                        foreach (var atras in new[] { 9f, 6f, 12f })
+                        {
+                            foreach (var alLado in new[] { 4.5f, -4.5f, 2.5f, -2.5f })
+                            {
+                                var otro = Arbol.Value - d * atras + costado * alLado + Vector3.up * 1.7f;
+                                var nota = Mathf.Min(Despeje(otro, mira), 1.5f);
+                                foreach (var b in Bultos)
+                                {
+                                    if ((new Vector2(otro.x, otro.z) - new Vector2(b.x, b.y)).magnitude < b.z)
+                                    {
+                                        nota -= 100f;
+                                    }
+                                }
+
+                                if (nota > mejor)
+                                {
+                                    mejor = nota;
+                                    ojo = otro;
+                                }
+                            }
+                        }
+
+                        camara.transform.position = ojo;
+                        camara.transform.LookAt(mira);
                     }
                     else
                     {
