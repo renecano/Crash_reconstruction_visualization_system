@@ -4,8 +4,15 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 
 ## Estado
 
-- **Fase actual:** W1 (dictamen, O2). Es la primera y no depende de U0.
+- **Desde el 2026-11-09, el Claude Code de René lleva también este frente,** porque aquí no se había subido nada. Si eres el Claude Code del compañero: antes de empezar una fase, revisa la tabla de abajo y `git fetch`; si la fase ya está tomada, sigue con la siguiente y anótala aquí.
+- **Fase actual:** W1 (dictamen, O2).
 - **Siguiente paso:** W2.
+
+## Fases tomadas
+
+| Fase               | Quién               | Rama               | Estado                       |
+| ------------------ | ------------------- | ------------------ | ---------------------------- |
+| W1 · Dictamen (O2) | Claude Code de René | `feat/w1-dictamen` | En curso desde el 2026-11-09 |
 
 ## Lo que U deja dicho para W
 
