@@ -47,6 +47,7 @@ export function BarraRecorrido({
   resumen,
   acciones,
   onExportar,
+  exportarBloqueado = null,
   abierto = () => true,
   transiciones = true,
   completo = false,
@@ -64,6 +65,8 @@ export function BarraRecorrido({
   /** Lo que el caso agrega a la barra (estado de la IA, llenar a mano, deshacer…). */
   acciones?: ReactNode;
   onExportar: () => void;
+  /** Por qué todavía no se puede exportar (null si ya se puede). */
+  exportarBloqueado?: string | null;
   /** Si un paso se puede abrir (V2): los futuros esperan a que se complete lo obligatorio. */
   abierto?: (i: number) => boolean;
   /** «Transiciones» entre actos (prompt §5), que el perito puede apagar. */
@@ -195,7 +198,10 @@ export function BarraRecorrido({
         <button
           type="button"
           className="boton-secundario boton-compacto h-9 min-h-9 shrink-0"
-          onClick={onExportar}
+          onClick={exportarBloqueado ? undefined : onExportar}
+          aria-disabled={exportarBloqueado ? true : undefined}
+          title={exportarBloqueado ?? "Ir a las descargas del dictamen"}
+          data-testid="exportar-barra"
         >
           Exportar
         </button>
