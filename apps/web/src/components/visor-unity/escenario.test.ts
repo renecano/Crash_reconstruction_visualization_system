@@ -30,11 +30,16 @@ describe("el escenario del visor Unity (ADR 0112)", () => {
   it("la calzada cubre la plantilla del croquis 2D", () => {
     for (const [f, c] of casos) {
       const layout = roadLayout(c.escena.lugar);
-      const calzada = escenarioDe(c.escena, c.resultado).via.capas.find((k) => k.nombre === "calzada");
+      const calzada = escenarioDe(c.escena, c.resultado).via.capas.find(
+        (k) => k.nombre === "calzada",
+      );
       expect(calzada, f).toBeDefined();
       // Cada franja del croquis tiene su centro sobre algún triángulo de la calzada.
       for (const s of layout.strips) {
-        expect(dentroDeAlguno(calzada!.posiciones, calzada!.indices, s.center.x, s.center.y), f).toBe(true);
+        expect(
+          dentroDeAlguno(calzada!.posiciones, calzada!.indices, s.center.x, s.center.y),
+          f,
+        ).toBe(true);
       }
     }
   });
@@ -63,5 +68,8 @@ function dentroDeAlguno(pos: number[], idx: number[], x: number, y: number): boo
 }
 
 function lado(p: number[], i: number, j: number, x: number, y: number): number {
-  return (p[2 * j]! - p[2 * i]!) * (y - p[2 * i + 1]!) - (p[2 * j + 1]! - p[2 * i + 1]!) * (x - p[2 * i]!);
+  return (
+    (p[2 * j]! - p[2 * i]!) * (y - p[2 * i + 1]!) -
+    (p[2 * j + 1]! - p[2 * i + 1]!) * (x - p[2 * i]!)
+  );
 }

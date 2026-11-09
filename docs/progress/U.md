@@ -4,25 +4,83 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 
 ## Estado
 
-- **Fase actual:** U2 (escenario), en `feat/u2-escenario`. El código está escrito y **sin compilar en Unity**: el sistema detuvo la primera pasada de capturas por falta de memoria (2026-11-09).
-- **Siguiente paso:** correr `Capturas.Tomar` (abajo), corregir lo que salga y seguir con dispositivos, objetos, evidencias y marcadores.
+- **Fase actual:** U2 (escenario). La primera pasada completa está en `feat/u2-escenario`, con capturas del build WebGL. **Todavía no llega a la vara de «juego actual de autos»:** falta una segunda pasada de calidad (abajo) y la revisión de René.
+- **Siguiente paso:** la segunda pasada de U2 con lo que René marque, y después U3.
 
-## U2 · Escenario (en curso)
+## U2 · Escenario
 
 La meta está en `docs/cesvi/PLAN-CESVI.md` §3.3. Decisiones: ADR 0112 (el escenario se calcula en TS) y ADR 0113 (recursos y materiales).
 
-- **Hecho, con pruebas:** `escenarioDe` (`apps/web/src/components/visor-unity/escenario.ts`) arma la vía, el suelo, el entorno procedural, el ambiente y las luminarias con las funciones del croquis 2D y del visor web. Cumple el esquema en los 20 casos y es determinista (4 pruebas).
-- **Peso del escenario en el paquete:** 185 a 323 KB sin comprimir en las 4 escenas de D1 (`tools/unity/paquetes-d1.ts`).
-- **Escrito, sin compilar ni ver:**
-  - `tools/unity/recursos.mjs`: trae a `Assets/Croquis/Recursos/` (fuera de git, 45 MB) las texturas PBR a 1k, las tarjetas de árbol y los cielos HDRI.
-  - `PrepararEscenario.cs` e `ImportarRecursos.cs`: materiales como assets, posproceso (ACES, resplandor, viñeta), oclusión ambiental, sombras suaves en 4 cascadas.
-  - `EscenarioVista.cs`, `EntornoVista.cs`, `Mallas.cs` y `Materiales.cs`: vía con asfalto PBR y mojado, guarniciones, barreras de dos ondas, charcos, suelo con parcelas, árboles de tarjetas, palmeras, edificios con fachada (ventanas, cortina, toldo, pretil, tinacos, varillas), postes con cables, cercas, señales, cerros, perfil urbano, luminarias con luz y lluvia.
-  - `Capturas.cs`: capturas desde el editor en modo batch, para no hacer un build WebGL en cada vuelta.
-- **Cómo retomar:**
-  1. `node tools/unity/recursos.mjs` (si falta `Assets/Croquis/Recursos/`).
-  2. `pnpm --filter @croquis/scene-schema exec tsx ../../tools/unity/paquetes-d1.ts` (los paquetes ya están en `apps/visor-unity/Build/casos/`).
-  3. `Unity.exe -batchmode -projectPath apps/visor-unity -buildTarget WebGL -executeMethod Croquis.EditorTools.Capturas.Tomar -casos <Build/casos> -salida <carpeta> -logFile <log>`, en primer plano y sin nada más abierto.
-- **Falta de U2:** dispositivos (semáforos con fases), objetos colocados, evidencias (huellas, vidrios, restos), marcadores de C1, terreno de C3 (llega con W5), faros de noche, medir con `eval/unity_build.mjs` y las capturas del build WebGL para René.
+### Resumen para René (primera pasada, 2026-11-09)
+
+- **Capturas:** `docs/cesvi/u2/capturas/`, 20 imágenes del build WebGL en esta laptop, a 1600 × 900, en el instante 0.4 s después del impacto. Son las 5 escenas de D1 (AXA, `lateral_interseccion`, `nocturno_lluvia`, carambola y terracería), cada una de día y de noche, con la cámara cinematográfica y la de la acera.
+- **Qué quedó:**
+  - **Vía:** asfalto PBR, mojado cuando llueve, charcos, banquetas y camellones con altura, guarniciones, barreras de dos ondas y rayas.
+  - **Cielo y luz:** cielo HDRI girado al sol del hecho, sombras suaves, oclusión ambiental y tono de cine. De noche, luminarias y faros que iluminan el piso.
+  - **Entorno procedural:** edificios con ventanas, cortinas, toldos, pretil, tinacos y varillas; árboles, palmeras, postes con cables, cercas, señales, cerros y perfil urbano. La leyenda dice que no es el lugar real.
+  - **Del caso:** vehículos con el color del caso, luces de freno cuando frenan y faros de noche; semáforos con su luz en el tiempo; objetos colocados; huellas que aparecen con el tiempo; manchas; vidrios y restos; marcadores de C1 (primer golpe, choques intermedios y puntos de paso), con el mensaje `marcadores` del puente para ocultarlos.
+  - **Terreno de C3:** zonas de otra superficie, ondulación y topes, sobre una función de altura. El escenario entero se arma sobre ella.
+  - **Cámaras:** cinematográfica y de acera (junto al árbol más cercano). El puente pasa a 1.1.0.
+- **Lo que no convence todavía** (mi lectura de las capturas, antes de la tuya):
+  - **Los árboles de cerca se notan como tarjetas cruzadas,** con una costura vertical al centro.
+  - **Los edificios son cajas:** les faltan volúmenes, balcones, puertas distintas y suciedad.
+  - **El pasto es un plano con textura:** sin matas ni variación; en la autopista de AXA el campo se ve vacío.
+  - **Los cerros** se leen, pero como siluetas lisas y pálidas.
+  - **De noche** las luminarias queman el piso cerca del poste y el resto queda muy oscuro.
+  - **El tope** sale negro: sus franjas amarillas no se ven.
+  - **La cámara de la acera** a veces queda detrás de un poste.
+  - **Sin desgaste:** el asfalto y las rayas no tienen rodadas, parches ni grietas.
+- **Provisional hasta W5:** el solver todavía no entrega altura, cabeceo ni alabeo, así que en la escena de terracería el vehículo se posa sobre el piso dibujado. Su x, su y y su rumbo son los del `Resultado`. Esa escena es el alcance canónico con un terreno agregado para las capturas; la definitiva la deja W5 en `fixtures/`.
+- **Lo que necesito de ti:** ver las capturas y decirme qué corregir primero.
+
+### Cifras (`eval/results/unity_build.json` y `docs/cesvi/u2/capturas/fps.json`)
+
+Unity 6000.3.28f1, esta laptop (i5-10210U, 8 GB, sin tarjeta de video dedicada), Chromium.
+
+| Qué | U1 (sin escenario) | U2 (con escenario) |
+| --- | --- | --- |
+| Peso del build | 41.7 MB | 61.3 MB |
+| Con Brotli calidad 9 | 10.7 MB | 27.7 MB |
+| Hasta que Unity arranca, a 20 Mbps | 5.4 s | 12.9 s |
+| Hasta que AXA se ve | 2.2 s más | 3.6 s más |
+| fps a 1280 × 720, AXA de día | 58.8 | 36.4 |
+
+- **fps a 1600 × 900, con el caso quieto:** de 23 a 27 de día y de 12 a 20 de noche, según la escena.
+- **No cumple §7.8 de `PLAN.md`.** Todavía no hay niveles de calidad: todo corre con lo de alta (sombras de 4096 en 4 cascadas, MSAA 4x, oclusión ambiental, 8 luces por objeto). Los niveles son U5; ahí se recorta densidad en media, no función.
+- **El escenario en el paquete:** de 211 a 324 KB sin comprimir.
+- **Tiempo del build:** 27 min el primero con los recursos nuevos; de 5 a 6 min los siguientes.
+
+### Memoria de los builds de U2
+
+| Paso | Duración | Pico de Unity | Mínimo libre |
+| --- | --- | --- | --- |
+| Primer build con recursos | 27 min | 2,770 MB | 550 MB |
+| Build de diagnóstico | 6 min | 2,627 MB | 354 MB |
+| Builds siguientes | 5 min | 2,168 a 2,852 MB | 386 a 523 MB |
+
+Con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1` y sin nada más abierto, todos terminaron.
+
+### Lo que se encontró
+
+- **En WebGL el resplandor (bloom) quema toda la imagen en blanco.** En el editor no pasa. Se confirmó con un build de diagnóstico que apaga una cosa a la vez (`depurar` en el puente, fuera del contrato): sin resplandor, el build se ve igual que el editor. Queda apagado solo en WebGL; se revisa en U5.
+- **Un renderer de URP creado por código nace sin datos de posproceso:** sin ellos no había tono de cine. Se le asignan en `PrepararEscenario`.
+- **URP quita del build los modos de niebla que ninguna escena usa:** la escena se guarda con niebla encendida.
+- **Las cajas salían con las caras al revés** cuando su segundo eje venía de `Cross(up, eje)`: `Malla.Caja` lo corrige sola.
+- **Los enums de quicktype cambian de nombre** («IndecentTipo») cuando cambia el esquema: los del escenario llevan `title` para que queden fijos.
+
+### Cómo repetirlo
+
+1. `node tools/unity/recursos.mjs` (trae los recursos, fuera de git).
+2. `pnpm --filter @croquis/scene-schema exec tsx ../../tools/unity/paquetes-d1.ts` (los 10 paquetes, en `apps/visor-unity/Build/casos/`).
+3. Para iterar: `Unity.exe -batchmode -projectPath apps/visor-unity -buildTarget WebGL -executeMethod Croquis.EditorTools.Capturas.Tomar -casos <Build/casos> -salida <carpeta> -logFile <log>` (unos 3 min).
+4. Para René: `powershell tools/unity/build-web.ps1`, `node tools/unity/capturas.mjs` y `node eval/unity_build.mjs --caso axa-dia`.
+
+### Falta de U2
+
+- La segunda pasada de calidad, con la lista de «Lo que no convence todavía».
+- La red vial de OpenStreetMap: el escenario ya la toma si la escena la trae, pero ninguna de las 5 escenas la trae y no se ha visto.
+- Medir Blob y dejar solo los 2 últimos builds (hoy hay uno publicado, el de U1).
+- Las pruebas EditMode del escenario dentro de Unity.
 
 ## U-pre (hecho, #181)
 
@@ -116,4 +174,4 @@ Nada por ahora.
 
 ## Bloqueado
 
-- **Unity en esta sesión:** Claude Code detuvo la pasada de capturas por memoria. La sesión actual no tiene `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`. René decide si la relanza así o si se corre en primer plano.
+Nada por ahora.

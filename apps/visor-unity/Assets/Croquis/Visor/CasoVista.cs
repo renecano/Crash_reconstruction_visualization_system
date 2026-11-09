@@ -264,8 +264,8 @@ namespace Croquis.Visor
                     var q = lista[k].Esquinas;
                     tiempos[k] = lista[k].T;
                     m.Cuadro(
-                        terreno.P(q[0], q[1], 0.016f), terreno.P(q[2], q[3], 0.016f),
-                        terreno.P(q[4], q[5], 0.016f), terreno.P(q[6], q[7], 0.016f), 1f, true);
+                        terreno.P(q[0], q[1], 0.026f), terreno.P(q[2], q[3], 0.026f),
+                        terreno.P(q[4], q[5], 0.026f), terreno.P(q[6], q[7], 0.026f), 1f, true);
                 }
 
                 var alfa = tipo == TipoHuella.Frenado ? 0.78f : 0.55f;
@@ -298,7 +298,7 @@ namespace Croquis.Visor
                 }
 
                 var go = m.Poner(padre, "mancha", Materiales.Charco, false);
-                go.transform.position = terreno.P(mancha.X, mancha.Y, 0.012f);
+                go.transform.position = terreno.P(mancha.X, mancha.Y, 0.028f);
                 dinamica.Manchas.Add(new EscenaDinamica.Mancha { Objeto = go.transform, T0 = mancha.T0, Radio = (float)mancha.RadioM });
             }
         }
@@ -333,7 +333,7 @@ namespace Croquis.Visor
                         var y = (float)(a.Y + (b.Y - a.Y) * u) + azar.Entre(-0.9f, 0.9f);
                         var tam = ev.Tipo == TipoEvidencia.Vidrios ? azar.Entre(0.012f, 0.04f) : azar.Entre(0.04f, 0.16f);
                         var giro = Dir(azar.Entre(0f, 360f));
-                        var c = terreno.P(x, y, 0.004f);
+                        var c = terreno.P(x, y, 0.024f);
                         if (ev.Tipo == TipoEvidencia.Vidrios)
                         {
                             var ld = Vector3.Cross(Vector3.up, giro);
@@ -350,8 +350,8 @@ namespace Croquis.Visor
 
                 for (var k = 0; k + 1 < p.Length; k++)
                 {
-                    var a = terreno.P(p[k].X, p[k].Y, 0.015f);
-                    var b = terreno.P(p[k + 1].X, p[k + 1].Y, 0.015f);
+                    var a = terreno.P(p[k].X, p[k].Y, 0.025f);
+                    var b = terreno.P(p[k + 1].X, p[k + 1].Y, 0.025f);
                     var d = b - a;
                     if (d.sqrMagnitude < 0.0025f)
                     {

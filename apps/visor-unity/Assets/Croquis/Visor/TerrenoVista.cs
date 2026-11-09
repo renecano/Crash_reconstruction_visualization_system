@@ -81,12 +81,13 @@ namespace Croquis.Visor
                 }
 
                 Triangular(s.Poligono, out var pos, out var idx);
-                m.Planta(pos, idx, 0.006f, terreno, Materiales.Mosaico(nombre));
+                // Sobre las rayas de la vía: una terracería no lleva carriles pintados.
+                m.Planta(pos, idx, 0.02f, terreno, Materiales.Mosaico(nombre));
             }
 
             foreach (var par in porMaterial)
             {
-                var tinte = par.Key == "tierra" ? new Color(0.82f, 0.74f, 0.62f) : Color.white;
+                var tinte = par.Key == "tierra" ? new Color(0.5f, 0.52f, 0.5f) : Color.white;
                 par.Value.Poner(padre, "superficie_" + par.Key, Materiales.Pbr(par.Key, tinte), false);
             }
 
@@ -112,7 +113,7 @@ namespace Croquis.Visor
                         {
                             var d = -medio + 2f * medio * paso / Pasos;
                             var q = a + eje * (ancho * franja / franjas) + marcha * d;
-                            return new Vector3(q.x, terreno.Z(q.x, q.z) + 0.008f, q.z);
+                            return new Vector3(q.x, terreno.Z(q.x, q.z) + 0.03f, q.z);
                         }
 
                         m.Cuadro(P(k, f), P(k, f + 1), P(k + 1, f + 1), P(k + 1, f), 1f, true);

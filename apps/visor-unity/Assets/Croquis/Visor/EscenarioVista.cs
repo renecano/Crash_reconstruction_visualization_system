@@ -135,7 +135,8 @@ namespace Croquis.Visor
                     g.Cuadro(p0, p1, p1 + Vector3.up * alto, p0 + Vector3.up * alto, 0.5f, true);
                 }
 
-                g.Poner(via, "guarniciones", Materiales.Pbr("concreto" + sufijo, new Color(0.86f, 0.86f, 0.86f)));
+                // Lisa: con su mapa de normales, una cara tan angosta centelleaba de noche.
+                g.Poner(via, "guarniciones", Materiales.Liso(new Color(0.42f, 0.41f, 0.39f), 0.15f));
             }
 
             if (v.Barreras.Length > 0)
@@ -385,7 +386,7 @@ namespace Croquis.Visor
                     luz.spotAngle = 128f;
                     luz.innerSpotAngle = 70f;
                     luz.range = alto * 3.4f;
-                    luz.intensity = 1500f;
+                    luz.intensity = 360f;
                     luz.color = new Color(1f, 0.82f, 0.56f);
                     luz.shadows = luces < 2 ? LightShadows.Soft : LightShadows.None;
                     luces++;

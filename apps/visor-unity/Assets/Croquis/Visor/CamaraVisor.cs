@@ -118,7 +118,7 @@ namespace Croquis.Visor
                         haciaCentro.y = 0f;
                         var d = haciaCentro.normalized;
                         var costado = Vector3.Cross(Vector3.up, d);
-                        camara.transform.position = Arbol.Value - d * 7.5f + costado * 3f + Vector3.up * 1.7f;
+                        camara.transform.position = Arbol.Value - d * 9f + costado * 4.5f + Vector3.up * 1.7f;
                         camara.transform.LookAt(Arbol.Value + d * 6f + Vector3.up * 3.2f);
                     }
                     else

@@ -543,8 +543,8 @@ namespace Croquis.Visor
                     var ang = (float)(c.DesdeRad + (c.HastaRad - c.DesdeRad) * k / Math.Max(1, n - 1));
                     var x = Mathf.Cos(ang) * r;
                     var z = Mathf.Sin(ang) * r;
-                    m.Vertice(new Vector3(x, -6f, z), Vector2.zero);
-                    m.Vertice(new Vector3(x * 1.02f, (float)c.AlturasM[k], z * 1.02f), Vector2.zero);
+                    m.Vertice(new Vector3(x, -6f, z), new Vector2(0.5f, 0.02f));
+                    m.Vertice(new Vector3(x * 1.02f, (float)c.AlturasM[k], z * 1.02f), new Vector2(0.5f, 0.98f));
                     if (k > 0)
                     {
                         var b = 2 * (k - 1);
@@ -558,8 +558,23 @@ namespace Croquis.Visor
                 var lejos = Mathf.InverseLerp(400f, 1100f, r);
                 var color = a.Noche
                     ? Color.Lerp(new Color(0.03f, 0.04f, 0.05f), new Color(0.05f, 0.06f, 0.09f), lejos)
-                    : Color.Lerp(new Color(0.24f, 0.31f, 0.22f), new Color(0.42f, 0.5f, 0.56f), lejos);
-                m.Poner(padre, "cerros_" + i, Materiales.Liso(color, 0.02f), false, false);
+                    : Color.Lerp(new Color(0.2f, 0.27f, 0.18f), new Color(0.3f, 0.37f, 0.4f), lejos);
+                // La base se vela un poco con el aire; si se vela de más, el anillo parece una pared clara.
+                var base0 = Color.Lerp(color, RenderSettings.fogColor, 0.25f);
+                var degradado = new Texture2D(1, 32, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
+                for (var y = 0; y < 32; y++)
+                {
+                    degradado.SetPixel(0, y, Color.Lerp(base0, color * 0.8f, Mathf.Pow(y / 31f, 0.7f)));
+                }
+
+                degradado.Apply();
+                var mat = new Material(Materiales.Liso(Color.white, 0.02f)) { name = "cerros_" + i };
+                mat.SetTexture("_BaseMap", degradado);
+                var cerro = m.Poner(padre, "cerros_" + i, mat, false, false);
+                // La niebla por distancia los dejaba del color del cielo: su velo ya va en el degradado.
+                mat.DisableKeyword("FOG_EXP2");
+                mat.SetFloat("_ReceiveFog", 0f);
+                _ = cerro;
             }
 
             if (en.Silueta.Length == 0)

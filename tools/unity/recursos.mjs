@@ -62,8 +62,7 @@ for (const [nombre, t] of Object.entries(texturas)) {
       salidas[0],
       // El aplanado se tiñe con el color de cada fachada: su textura va en gris claro, sin el tono
       // de barro del original, para que el rosa, el azul o el blanco salgan como son.
-      nombre === "yeso" ? await grisClaro(color)
-        : color,
+      nombre === "yeso" ? await grisClaro(color) : color,
     );
     writeFileSync(salidas[1], await bajar(de("nor_gl")));
     // «arm» trae R = oclusión, G = rugosidad, B = metal. URP Lit quiere el metal en R, la oclusión

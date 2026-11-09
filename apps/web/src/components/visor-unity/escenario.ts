@@ -145,7 +145,11 @@ function marcasDe(spec: EscenaSpec, resultado: Resultado) {
   const huellas: Escenario["huellas"] = [
     ...marcas.frenado.map((q) => ({ tipo: "frenado" as const, q })),
     ...marcas.derrape.map((q) => ({ tipo: "derrape" as const, q })),
-  ].map(({ tipo, q }) => ({ tipo, esquinas: q.corners.map(cm), t: mm(q.t) }));
+  ].map(({ tipo, q }) => ({
+    tipo,
+    esquinas: q.corners.map(cm) as Escenario["huellas"][number]["esquinas"],
+    t: mm(q.t),
+  }));
   const manchas: Escenario["manchas"] = marcas.charcos.map((c) => ({
     x: cm(c.x),
     y: cm(c.y),

@@ -38,6 +38,16 @@ namespace Croquis.Visor
         {
             visor = GetComponent<VisorCaso>();
             Application.targetFrameRate = -1;
+            // En WebGL el resplandor quema toda la imagen en blanco (medido el 2026-11-09 con un build de
+            // diagnóstico: sin él, la escena sale igual que en el editor). Se apaga ahí hasta U5.
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
+            {
+                var volumen = FindFirstObjectByType<UnityEngine.Rendering.Volume>();
+                if (volumen != null && volumen.profile.TryGet<UnityEngine.Rendering.Universal.Bloom>(out var resplandor))
+                {
+                    resplandor.active = false;
+                }
+            }
         }
 
         private void Start()
@@ -142,6 +152,63 @@ namespace Croquis.Visor
         public void marcadores(string texto)
         {
             Campos(texto, j => visor.Marcadores((bool)j["visibles"]));
+        }
+
+        /// <summary>
+        /// Diagnóstico del dibujo en un build (no es parte del contrato): apaga una parte del posproceso
+        /// o del ambiente para ver cuál falla en una plataforma.
+        /// </summary>
+        public void depurar(string texto)
+        {
+            Campos(texto, j =>
+            {
+                var camara = Camera.main;
+                var datos = camara.GetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>();
+                if (j["pos"] != null)
+                {
+                    datos.renderPostProcessing = (bool)j["pos"];
+                }
+
+                if (j["hdr"] != null)
+                {
+                    camara.allowHDR = (bool)j["hdr"];
+                }
+
+                if (j["niebla"] != null)
+                {
+                    RenderSettings.fog = (bool)j["niebla"];
+                }
+
+                if (j["msaa"] != null)
+                {
+                    camara.allowMSAA = (bool)j["msaa"];
+                }
+
+                var volumen = FindFirstObjectByType<UnityEngine.Rendering.Volume>();
+                if (volumen != null && j["resplandor"] != null
+                    && volumen.profile.TryGet<UnityEngine.Rendering.Universal.Bloom>(out var bloom))
+                {
+                    bloom.active = (bool)j["resplandor"];
+                }
+
+                if (volumen != null && j["tono"] != null
+                    && volumen.profile.TryGet<UnityEngine.Rendering.Universal.Tonemapping>(out var tono))
+                {
+                    tono.active = (bool)j["tono"];
+                }
+
+                if (j["ambiente_plano"] != null && (bool)j["ambiente_plano"])
+                {
+                    RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+                    RenderSettings.ambientLight = new Color(0.4f, 0.42f, 0.45f);
+                }
+
+                if (j["cielo"] != null && !(bool)j["cielo"])
+                {
+                    camara.clearFlags = CameraClearFlags.SolidColor;
+                    camara.backgroundColor = new Color(0.5f, 0.6f, 0.75f);
+                }
+            });
         }
 
         public void calidad(string texto)

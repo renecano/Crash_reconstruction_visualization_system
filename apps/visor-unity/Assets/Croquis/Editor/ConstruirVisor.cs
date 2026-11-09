@@ -199,6 +199,11 @@ namespace Croquis.EditorTools
             puente.AddComponent<VisorCaso>();
             puente.AddComponent<VisorPuente>();
 
+            // Con niebla en la escena guardada: URP quita del build los modos de niebla que ninguna
+            // escena usa, y el escenario la enciende en tiempo de ejecución.
+            RenderSettings.fog = true;
+            RenderSettings.fogMode = FogMode.ExponentialSquared;
+            RenderSettings.fogDensity = 0.0005f;
             EditorSceneManager.SaveScene(escena, RutaEscena);
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(RutaEscena, true) };
         }
