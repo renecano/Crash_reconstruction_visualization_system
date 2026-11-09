@@ -72,17 +72,22 @@ namespace Croquis.EditorTools
         private static RenderPipelineAsset Canalizacion()
         {
             var ruta = CarpetaRender + "/URP.asset";
-            var actual = AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(ruta);
-            if (actual != null)
+            var asset = AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(ruta);
+            if (asset == null)
             {
-                return actual;
+                Directory.CreateDirectory(CarpetaRender);
+                var datos = ScriptableObject.CreateInstance<UniversalRendererData>();
+                AssetDatabase.CreateAsset(datos, CarpetaRender + "/URP_Renderer.asset");
+                asset = UniversalRenderPipelineAsset.Create(datos);
+                AssetDatabase.CreateAsset(asset, ruta);
             }
 
-            Directory.CreateDirectory(CarpetaRender);
-            var datos = ScriptableObject.CreateInstance<UniversalRendererData>();
-            AssetDatabase.CreateAsset(datos, CarpetaRender + "/URP_Renderer.asset");
-            var asset = UniversalRenderPipelineAsset.Create(datos);
-            AssetDatabase.CreateAsset(asset, ruta);
+            // Luminarias y faros de noche (U2): hasta 8 luces adicionales por objeto, y sombras hasta
+            // 150 m. La calidad por nivel llega en U5.
+            asset.additionalLightsRenderingMode = LightRenderingMode.PerPixel;
+            asset.maxAdditionalLightsCount = 8;
+            asset.shadowDistance = 150f;
+            EditorUtility.SetDirty(asset);
             return asset;
         }
 
@@ -120,6 +125,8 @@ namespace Croquis.EditorTools
                 .Where(r => !r.Contains("/Built-In/") && !r.Contains("/HDRP/") && !r.Contains("/Export/"))
                 .Select(AssetDatabase.LoadAssetAtPath<Shader>)
                 .Append(Shader.Find("Universal Render Pipeline/Lit"))
+                .Append(Shader.Find("Universal Render Pipeline/Particles/Unlit"))
+                .Append(Shader.Find("Skybox/Procedural"))
                 .Where(s => s != null);
             foreach (var s in shaders)
             {

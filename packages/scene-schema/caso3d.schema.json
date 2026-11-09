@@ -7,11 +7,24 @@
   "additionalProperties": false,
   "required": ["version_caso3d", "escena", "resultado", "convenciones"],
   "properties": {
-    "version_caso3d": { "const": "1.0.0" },
-    "escena": { "$ref": "https://croquis.mx/schemas/escena/1.0.0/escena.schema.json" },
-    "resultado": { "$ref": "https://croquis.local/schema/resultado/1.9.0" },
-    "relieve": { "$ref": "#/$defs/Relieve" },
-    "convenciones": { "$ref": "#/$defs/Convenciones" }
+    "version_caso3d": {
+      "const": "1.0.0"
+    },
+    "escena": {
+      "$ref": "https://croquis.mx/schemas/escena/1.0.0/escena.schema.json"
+    },
+    "resultado": {
+      "$ref": "https://croquis.local/schema/resultado/1.9.0"
+    },
+    "relieve": {
+      "$ref": "#/$defs/Relieve"
+    },
+    "escenario": {
+      "$ref": "#/$defs/Escenario"
+    },
+    "convenciones": {
+      "$ref": "#/$defs/Convenciones"
+    }
   },
   "$defs": {
     "OrigenRelieve": {
@@ -20,8 +33,16 @@
       "additionalProperties": false,
       "required": ["lat", "lon", "x", "y"],
       "properties": {
-        "lat": { "type": "number", "minimum": -90, "maximum": 90 },
-        "lon": { "type": "number", "minimum": -180, "maximum": 180 },
+        "lat": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "lon": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
         "x": {
           "type": "number",
           "description": "Metros hacia el este desde el origen de la escena."
@@ -54,7 +75,9 @@
           "maxLength": 80,
           "description": "Lo cita `lugar.terreno.relieve.malla_id`."
         },
-        "origen": { "$ref": "#/$defs/OrigenRelieve" },
+        "origen": {
+          "$ref": "#/$defs/OrigenRelieve"
+        },
         "resolucion_m": {
           "type": "number",
           "exclusiveMinimum": 0,
@@ -75,7 +98,9 @@
         "alturas_m": {
           "type": "array",
           "description": "Alturas en metros, relativas al punto de impacto (allí vale 0).",
-          "items": { "type": "number" },
+          "items": {
+            "type": "number"
+          },
           "minItems": 4,
           "maxItems": 4194304
         },
@@ -85,7 +110,11 @@
           "maxLength": 120,
           "description": "De dónde salieron las alturas (p. ej. el modelo de elevación)."
         },
-        "licencia": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "licencia": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
         "resolucion_nativa_m": {
           "type": "number",
           "exclusiveMinimum": 0,
@@ -99,12 +128,617 @@
       "additionalProperties": false,
       "required": ["ejes", "angulos_resultado", "angulos_escena", "tiempo", "longitud", "unity"],
       "properties": {
-        "ejes": { "const": "x_este_y_norte_z_arriba" },
-        "angulos_resultado": { "const": "radianes_antihorario_desde_x" },
-        "angulos_escena": { "const": "grados_antihorario_desde_x" },
-        "tiempo": { "const": "segundos_t0_impacto_principal" },
-        "longitud": { "const": "metros" },
-        "unity": { "const": "posicion_x_z_y_yaw_90_menos_rumbo_grados" }
+        "ejes": {
+          "const": "x_este_y_norte_z_arriba"
+        },
+        "angulos_resultado": {
+          "const": "radianes_antihorario_desde_x"
+        },
+        "angulos_escena": {
+          "const": "grados_antihorario_desde_x"
+        },
+        "tiempo": {
+          "const": "segundos_t0_impacto_principal"
+        },
+        "longitud": {
+          "const": "metros"
+        },
+        "unity": {
+          "const": "posicion_x_z_y_yaw_90_menos_rumbo_grados"
+        }
+      }
+    },
+    "PuntoPlano": {
+      "title": "PuntoPlano",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y"],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      }
+    },
+    "SegmentoPlano": {
+      "title": "SegmentoPlano",
+      "description": "Un segmento en planta, de a a b.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ax", "ay", "bx", "by"],
+      "properties": {
+        "ax": {
+          "type": "number"
+        },
+        "ay": {
+          "type": "number"
+        },
+        "bx": {
+          "type": "number"
+        },
+        "by": {
+          "type": "number"
+        }
+      }
+    },
+    "CapaEscenario": {
+      "title": "CapaEscenario",
+      "description": "Una malla en planta de la vía.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nombre", "altura_m", "posiciones", "indices"],
+      "properties": {
+        "nombre": {
+          "type": "string",
+          "enum": [
+            "acotamiento",
+            "calzada",
+            "banqueta",
+            "camellon",
+            "rayas_blancas",
+            "rayas_amarillas",
+            "paso_peatonal"
+          ]
+        },
+        "altura_m": {
+          "type": "number",
+          "description": "Altura de la cara de arriba sobre el piso."
+        },
+        "posiciones": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "Vértices (x, y) seguidos, en metros."
+        },
+        "indices": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "Triángulos, antihorarios vistos desde arriba."
+        }
+      }
+    },
+    "SueloEscenario": {
+      "title": "SueloEscenario",
+      "description": "Una malla regular de suelo alrededor de la acción, con el relieve leve procedural.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["centro", "lado_m", "segmentos", "alturas_m", "tonos"],
+      "properties": {
+        "centro": {
+          "$ref": "#/$defs/PuntoPlano"
+        },
+        "lado_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "segmentos": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 512
+        },
+        "hueco_m": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Hueco cuadrado al centro, para no taparse con el parche fino."
+        },
+        "alturas_m": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "Nodo (i, j) en j × (segmentos + 1) + i: i hacia el este, j hacia el norte."
+        },
+        "tonos": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "Tono de parcela por nodo: 0 es pasto y 1 es barbecho."
+        },
+        "seco": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "0 lejos de la vía y 1 en su orilla: tierra seca junto al asfalto."
+        }
+      }
+    },
+    "AmbienteEscenario": {
+      "title": "AmbienteEscenario",
+      "description": "Cielo, luz y clima del hecho, calculados como en el visor web (`environmentFor`).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "noche",
+        "mojado",
+        "superficie",
+        "precipitacion",
+        "luminarias",
+        "sol_azimut_deg",
+        "sol_elevacion_deg",
+        "direccion_luz",
+        "intensidad_sol",
+        "intensidad_ambiente",
+        "color_cielo",
+        "color_ambiente",
+        "color_suelo",
+        "densidad_niebla",
+        "turbidez",
+        "supuestos"
+      ],
+      "properties": {
+        "noche": {
+          "type": "boolean"
+        },
+        "mojado": {
+          "type": "boolean"
+        },
+        "superficie": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "precipitacion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "luminarias": {
+          "type": "boolean",
+          "description": "Si hay alumbrado público encendido."
+        },
+        "sol_azimut_deg": {
+          "type": "number",
+          "description": "Grados desde el norte, en sentido horario."
+        },
+        "sol_elevacion_deg": {
+          "type": "number",
+          "description": "Grados sobre el horizonte; negativo de noche."
+        },
+        "direccion_luz": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3,
+          "description": "Hacia la luz principal (sol, o luna de noche), unitaria, en el marco de la escena."
+        },
+        "intensidad_sol": {
+          "type": "number"
+        },
+        "intensidad_ambiente": {
+          "type": "number"
+        },
+        "color_cielo": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "color_ambiente": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "color_suelo": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "densidad_niebla": {
+          "type": "number"
+        },
+        "turbidez": {
+          "type": "number"
+        },
+        "supuestos": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Lo que se supuso para el cielo, como la hora o la ubicación."
+        }
+      }
+    },
+    "ArbolEscenario": {
+      "title": "ArbolEscenario",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "z", "tronco_m", "copa_m", "rumbo_rad", "tipo"],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        },
+        "tronco_m": {
+          "type": "number"
+        },
+        "copa_m": {
+          "type": "number"
+        },
+        "rumbo_rad": {
+          "type": "number"
+        },
+        "tipo": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2,
+          "description": "0: redondo; 1: alargado; 2: arbusto."
+        },
+        "especie": {
+          "type": "string",
+          "enum": ["jacaranda", "fresno", "pirul", "palmera"]
+        },
+        "altura_m": {
+          "type": "number"
+        }
+      }
+    },
+    "EdificioEscenario": {
+      "title": "EdificioEscenario",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "x",
+        "y",
+        "z",
+        "largo_m",
+        "fondo_m",
+        "alto_m",
+        "rumbo_rad",
+        "frente_rad",
+        "pisos",
+        "color",
+        "material",
+        "cortina",
+        "toldo",
+        "letrero",
+        "tinacos",
+        "antena",
+        "varillas"
+      ],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        },
+        "largo_m": {
+          "type": "number"
+        },
+        "fondo_m": {
+          "type": "number"
+        },
+        "alto_m": {
+          "type": "number"
+        },
+        "rumbo_rad": {
+          "type": "number"
+        },
+        "frente_rad": {
+          "type": "number",
+          "description": "Hacia dónde da la fachada que mira a la calle."
+        },
+        "pisos": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "color": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "material": {
+          "type": "string",
+          "enum": ["yeso", "tabique"]
+        },
+        "cortina": {
+          "type": "boolean"
+        },
+        "toldo": {
+          "type": "boolean"
+        },
+        "letrero": {
+          "type": "boolean"
+        },
+        "tinacos": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "antena": {
+          "type": "boolean"
+        },
+        "varillas": {
+          "type": "boolean"
+        }
+      }
+    },
+    "PosteEscenario": {
+      "title": "PosteEscenario",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "z", "rumbo_rad"],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        },
+        "rumbo_rad": {
+          "type": "number"
+        }
+      }
+    },
+    "SenalEscenario": {
+      "title": "SenalEscenario",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "z", "rumbo_rad", "tipo"],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        },
+        "rumbo_rad": {
+          "type": "number"
+        },
+        "tipo": {
+          "type": "string",
+          "enum": ["alto", "ceda", "velocidad", "informativa"]
+        }
+      }
+    },
+    "CerroEscenario": {
+      "title": "CerroEscenario",
+      "description": "Un anillo de cerros lejanos: altura por segmento.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["radio_m", "desde_rad", "hasta_rad", "alturas_m"],
+      "properties": {
+        "radio_m": {
+          "type": "number"
+        },
+        "desde_rad": {
+          "type": "number"
+        },
+        "hasta_rad": {
+          "type": "number"
+        },
+        "alturas_m": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "SiluetaEscenario": {
+      "title": "SiluetaEscenario",
+      "description": "Un bloque de la silueta urbana lejana.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["angulo_rad", "abertura_rad", "alto_m"],
+      "properties": {
+        "angulo_rad": {
+          "type": "number"
+        },
+        "abertura_rad": {
+          "type": "number"
+        },
+        "alto_m": {
+          "type": "number"
+        }
+      }
+    },
+    "LuminariaEscenario": {
+      "title": "LuminariaEscenario",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "z", "altura_m", "rumbo_deg"],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        },
+        "altura_m": {
+          "type": "number"
+        },
+        "rumbo_deg": {
+          "type": "number",
+          "description": "Hacia dónde apunta el brazo: a la calzada."
+        }
+      }
+    },
+    "Escenario": {
+      "title": "Escenario",
+      "description": "Lo que rodea al choque, calculado en TS con las funciones del croquis 2D y del visor web (ADR 0112). Unity solo lo dibuja. Lo procedural va con la semilla de la escena.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "semilla",
+        "procedural",
+        "centro",
+        "ambiente",
+        "via",
+        "suelo",
+        "entorno",
+        "luminarias"
+      ],
+      "properties": {
+        "version": {
+          "const": "1.0.0"
+        },
+        "semilla": {
+          "type": "integer"
+        },
+        "procedural": {
+          "const": true,
+          "description": "Lo procedural se marca así en la leyenda: no es el lugar real."
+        },
+        "centro": {
+          "$ref": "#/$defs/PuntoPlano"
+        },
+        "ambiente": {
+          "$ref": "#/$defs/AmbienteEscenario"
+        },
+        "via": {
+          "title": "ViaEscenario",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["capas", "guarniciones", "altura_guarnicion_m", "barreras"],
+          "properties": {
+            "capas": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/CapaEscenario"
+              }
+            },
+            "guarniciones": {
+              "description": "Caras verticales de las guarniciones.",
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/SegmentoPlano"
+              }
+            },
+            "altura_guarnicion_m": {
+              "type": "number"
+            },
+            "barreras": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/PuntoPlano"
+                }
+              },
+              "description": "Barreras metálicas, como polilíneas."
+            }
+          }
+        },
+        "suelo": {
+          "description": "Un parche fino alrededor de la acción y el terreno lejano.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SueloEscenario"
+          }
+        },
+        "entorno": {
+          "title": "EntornoEscenario",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "zona",
+            "arboles",
+            "edificios",
+            "postes",
+            "cercas",
+            "senales",
+            "cerros",
+            "silueta"
+          ],
+          "properties": {
+            "zona": {
+              "type": "string",
+              "enum": ["rural", "urbana"]
+            },
+            "arboles": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ArbolEscenario"
+              }
+            },
+            "edificios": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/EdificioEscenario"
+              }
+            },
+            "postes": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/PosteEscenario"
+              }
+            },
+            "cercas": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/SegmentoPlano"
+              }
+            },
+            "senales": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/SenalEscenario"
+              }
+            },
+            "cerros": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/CerroEscenario"
+              }
+            },
+            "silueta": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/SiluetaEscenario"
+              }
+            }
+          }
+        },
+        "luminarias": {
+          "description": "Postes de alumbrado procedurales, si la escena no trae los suyos.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LuminariaEscenario"
+          }
+        }
       }
     }
   }

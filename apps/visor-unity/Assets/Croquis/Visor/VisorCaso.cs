@@ -13,6 +13,8 @@ namespace Croquis.Visor
         private readonly List<VehiculoVista> vehiculos = new List<VehiculoVista>();
         private readonly CargadorModelos modelos = new CargadorModelos();
         private Transform raiz;
+        private GameObject piso;
+        private Light sol;
         private double inicio;
         private double fin;
 
@@ -24,6 +26,8 @@ namespace Croquis.Visor
         private void Awake()
         {
             Camara = GetComponent<CamaraVisor>();
+            piso = GameObject.Find("Piso");
+            sol = FindFirstObjectByType<Light>();
         }
 
         public async Awaitable CargarAsync(Caso3D caso)
@@ -49,8 +53,21 @@ namespace Croquis.Visor
                 vehiculos.Add(vista);
             }
 
+            // Con escenario (ADR 0112) se dibuja lo que calculó TS y se esconde el piso liso de U1.
+            if (caso.Escenario != null)
+            {
+                EscenarioVista.Construir(raiz, caso.Escenario, sol, Camera.main);
+            }
+
+            if (piso != null)
+            {
+                piso.SetActive(caso.Escenario == null);
+            }
+
             Fijar(inicio);
             Camara.Abrir(r);
+            Camara.Vehiculos = vehiculos;
+            Camara.Caso = this;
         }
 
         public void Fijar(double t)

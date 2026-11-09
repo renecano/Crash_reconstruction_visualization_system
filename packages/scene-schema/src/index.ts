@@ -43,6 +43,7 @@ export {
   erroresDeRelieve,
   type Caso3D,
   type Convenciones,
+  type Escenario,
   type Relieve,
 } from "./caso3d";
 export * from "./visor-puente";

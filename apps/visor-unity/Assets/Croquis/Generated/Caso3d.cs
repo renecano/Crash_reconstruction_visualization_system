@@ -30,6 +30,9 @@ namespace Croquis.Generated
         [JsonProperty("escena")]
         public EscenaSpec Escena { get; set; }
 
+        [JsonProperty("escenario", NullValueHandling = NullValueHandling.Ignore)]
+        public Escenario Escenario { get; set; }
+
         [JsonProperty("relieve", NullValueHandling = NullValueHandling.Ignore)]
         public Caso3DRelieve Relieve { get; set; }
 
@@ -37,7 +40,7 @@ namespace Croquis.Generated
         public Caso3DResultado Resultado { get; set; }
 
         [JsonProperty("version_caso3d")]
-        public VersionCaso3D VersionCaso3D { get; set; }
+        public Version VersionCaso3D { get; set; }
     }
 
     /// <summary>
@@ -438,7 +441,7 @@ namespace Croquis.Generated
         public AnchoDanado Largo { get; set; }
 
         [JsonProperty("material", NullValueHandling = NullValueHandling.Ignore)]
-        public Material? Material { get; set; }
+        public ObjetoMaterial? Material { get; set; }
 
         [JsonProperty("posicion")]
         public Posicion Posicion { get; set; }
@@ -2361,6 +2364,438 @@ namespace Croquis.Generated
     }
 
     /// <summary>
+    /// Lo que rodea al choque, calculado en TS con las funciones del croquis 2D y del visor web
+    /// (ADR 0112). Unity solo lo dibuja. Lo procedural va con la semilla de la escena.
+    /// </summary>
+    public partial class Escenario
+    {
+        [JsonProperty("ambiente")]
+        public AmbienteEscenario Ambiente { get; set; }
+
+        [JsonProperty("centro")]
+        public PuntoPlano Centro { get; set; }
+
+        [JsonProperty("entorno")]
+        public EntornoEscenario Entorno { get; set; }
+
+        /// <summary>
+        /// Postes de alumbrado procedurales, si la escena no trae los suyos.
+        /// </summary>
+        [JsonProperty("luminarias")]
+        public LuminariaEscenario[] Luminarias { get; set; }
+
+        /// <summary>
+        /// Lo procedural se marca así en la leyenda: no es el lugar real.
+        /// </summary>
+        [JsonProperty("procedural")]
+        public bool Procedural { get; set; }
+
+        [JsonProperty("semilla")]
+        public long Semilla { get; set; }
+
+        /// <summary>
+        /// Un parche fino alrededor de la acción y el terreno lejano.
+        /// </summary>
+        [JsonProperty("suelo")]
+        public SueloEscenario[] Suelo { get; set; }
+
+        [JsonProperty("version")]
+        public Version Version { get; set; }
+
+        [JsonProperty("via")]
+        public ViaEscenario Via { get; set; }
+    }
+
+    /// <summary>
+    /// Cielo, luz y clima del hecho, calculados como en el visor web (`environmentFor`).
+    /// </summary>
+    public partial class AmbienteEscenario
+    {
+        [JsonProperty("color_ambiente")]
+        public string ColorAmbiente { get; set; }
+
+        [JsonProperty("color_cielo")]
+        public string ColorCielo { get; set; }
+
+        [JsonProperty("color_suelo")]
+        public string ColorSuelo { get; set; }
+
+        [JsonProperty("densidad_niebla")]
+        public double DensidadNiebla { get; set; }
+
+        /// <summary>
+        /// Hacia la luz principal (sol, o luna de noche), unitaria, en el marco de la escena.
+        /// </summary>
+        [JsonProperty("direccion_luz")]
+        public double[] DireccionLuz { get; set; }
+
+        [JsonProperty("intensidad_ambiente")]
+        public double IntensidadAmbiente { get; set; }
+
+        [JsonProperty("intensidad_sol")]
+        public double IntensidadSol { get; set; }
+
+        /// <summary>
+        /// Si hay alumbrado público encendido.
+        /// </summary>
+        [JsonProperty("luminarias")]
+        public bool Luminarias { get; set; }
+
+        [JsonProperty("mojado")]
+        public bool Mojado { get; set; }
+
+        [JsonProperty("noche")]
+        public bool Noche { get; set; }
+
+        [JsonProperty("precipitacion")]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter4))]
+        public string Precipitacion { get; set; }
+
+        /// <summary>
+        /// Grados desde el norte, en sentido horario.
+        /// </summary>
+        [JsonProperty("sol_azimut_deg")]
+        public double SolAzimutDeg { get; set; }
+
+        /// <summary>
+        /// Grados sobre el horizonte; negativo de noche.
+        /// </summary>
+        [JsonProperty("sol_elevacion_deg")]
+        public double SolElevacionDeg { get; set; }
+
+        [JsonProperty("superficie")]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter4))]
+        public string Superficie { get; set; }
+
+        /// <summary>
+        /// Lo que se supuso para el cielo, como la hora o la ubicación.
+        /// </summary>
+        [JsonProperty("supuestos")]
+        public string[] Supuestos { get; set; }
+
+        [JsonProperty("turbidez")]
+        public double Turbidez { get; set; }
+    }
+
+    public partial class PuntoPlano
+    {
+        [JsonProperty("x")]
+        public double X { get; set; }
+
+        [JsonProperty("y")]
+        public double Y { get; set; }
+    }
+
+    public partial class EntornoEscenario
+    {
+        [JsonProperty("arboles")]
+        public ArbolEscenario[] Arboles { get; set; }
+
+        [JsonProperty("cercas")]
+        public SegmentoPlano[] Cercas { get; set; }
+
+        [JsonProperty("cerros")]
+        public CerroEscenario[] Cerros { get; set; }
+
+        [JsonProperty("edificios")]
+        public EdificioEscenario[] Edificios { get; set; }
+
+        [JsonProperty("postes")]
+        public PosteEscenario[] Postes { get; set; }
+
+        [JsonProperty("senales")]
+        public SenalEscenario[] Senales { get; set; }
+
+        [JsonProperty("silueta")]
+        public SiluetaEscenario[] Silueta { get; set; }
+
+        [JsonProperty("zona")]
+        public ZonaEnum Zona { get; set; }
+    }
+
+    public partial class ArbolEscenario
+    {
+        [JsonProperty("altura_m", NullValueHandling = NullValueHandling.Ignore)]
+        public double? AlturaM { get; set; }
+
+        [JsonProperty("copa_m")]
+        public double CopaM { get; set; }
+
+        [JsonProperty("especie", NullValueHandling = NullValueHandling.Ignore)]
+        public Especie? Especie { get; set; }
+
+        [JsonProperty("rumbo_rad")]
+        public double RumboRad { get; set; }
+
+        /// <summary>
+        /// 0: redondo; 1: alargado; 2: arbusto.
+        /// </summary>
+        [JsonProperty("tipo")]
+        public long Tipo { get; set; }
+
+        [JsonProperty("tronco_m")]
+        public double TroncoM { get; set; }
+
+        [JsonProperty("x")]
+        public double X { get; set; }
+
+        [JsonProperty("y")]
+        public double Y { get; set; }
+
+        [JsonProperty("z")]
+        public double Z { get; set; }
+    }
+
+    /// <summary>
+    /// Un segmento en planta, de a a b.
+    /// </summary>
+    public partial class SegmentoPlano
+    {
+        [JsonProperty("ax")]
+        public double Ax { get; set; }
+
+        [JsonProperty("ay")]
+        public double Ay { get; set; }
+
+        [JsonProperty("bx")]
+        public double Bx { get; set; }
+
+        [JsonProperty("by")]
+        public double By { get; set; }
+    }
+
+    /// <summary>
+    /// Un anillo de cerros lejanos: altura por segmento.
+    /// </summary>
+    public partial class CerroEscenario
+    {
+        [JsonProperty("alturas_m")]
+        public double[] AlturasM { get; set; }
+
+        [JsonProperty("desde_rad")]
+        public double DesdeRad { get; set; }
+
+        [JsonProperty("hasta_rad")]
+        public double HastaRad { get; set; }
+
+        [JsonProperty("radio_m")]
+        public double RadioM { get; set; }
+    }
+
+    public partial class EdificioEscenario
+    {
+        [JsonProperty("alto_m")]
+        public double AltoM { get; set; }
+
+        [JsonProperty("antena")]
+        public bool Antena { get; set; }
+
+        [JsonProperty("color")]
+        public string Color { get; set; }
+
+        [JsonProperty("cortina")]
+        public bool Cortina { get; set; }
+
+        [JsonProperty("fondo_m")]
+        public double FondoM { get; set; }
+
+        /// <summary>
+        /// Hacia dónde da la fachada que mira a la calle.
+        /// </summary>
+        [JsonProperty("frente_rad")]
+        public double FrenteRad { get; set; }
+
+        [JsonProperty("largo_m")]
+        public double LargoM { get; set; }
+
+        [JsonProperty("letrero")]
+        public bool Letrero { get; set; }
+
+        [JsonProperty("material")]
+        public EdificioMaterial Material { get; set; }
+
+        [JsonProperty("pisos")]
+        public long Pisos { get; set; }
+
+        [JsonProperty("rumbo_rad")]
+        public double RumboRad { get; set; }
+
+        [JsonProperty("tinacos")]
+        public long Tinacos { get; set; }
+
+        [JsonProperty("toldo")]
+        public bool Toldo { get; set; }
+
+        [JsonProperty("varillas")]
+        public bool Varillas { get; set; }
+
+        [JsonProperty("x")]
+        public double X { get; set; }
+
+        [JsonProperty("y")]
+        public double Y { get; set; }
+
+        [JsonProperty("z")]
+        public double Z { get; set; }
+    }
+
+    public partial class PosteEscenario
+    {
+        [JsonProperty("rumbo_rad")]
+        public double RumboRad { get; set; }
+
+        [JsonProperty("x")]
+        public double X { get; set; }
+
+        [JsonProperty("y")]
+        public double Y { get; set; }
+
+        [JsonProperty("z")]
+        public double Z { get; set; }
+    }
+
+    public partial class SenalEscenario
+    {
+        [JsonProperty("rumbo_rad")]
+        public double RumboRad { get; set; }
+
+        [JsonProperty("tipo")]
+        public SenaleTipo Tipo { get; set; }
+
+        [JsonProperty("x")]
+        public double X { get; set; }
+
+        [JsonProperty("y")]
+        public double Y { get; set; }
+
+        [JsonProperty("z")]
+        public double Z { get; set; }
+    }
+
+    /// <summary>
+    /// Un bloque de la silueta urbana lejana.
+    /// </summary>
+    public partial class SiluetaEscenario
+    {
+        [JsonProperty("abertura_rad")]
+        public double AberturaRad { get; set; }
+
+        [JsonProperty("alto_m")]
+        public double AltoM { get; set; }
+
+        [JsonProperty("angulo_rad")]
+        public double AnguloRad { get; set; }
+    }
+
+    public partial class LuminariaEscenario
+    {
+        [JsonProperty("altura_m")]
+        public double AlturaM { get; set; }
+
+        /// <summary>
+        /// Hacia dónde apunta el brazo: a la calzada.
+        /// </summary>
+        [JsonProperty("rumbo_deg")]
+        public double RumboDeg { get; set; }
+
+        [JsonProperty("x")]
+        public double X { get; set; }
+
+        [JsonProperty("y")]
+        public double Y { get; set; }
+
+        [JsonProperty("z")]
+        public double Z { get; set; }
+    }
+
+    /// <summary>
+    /// Una malla regular de suelo alrededor de la acción, con el relieve leve procedural.
+    /// </summary>
+    public partial class SueloEscenario
+    {
+        /// <summary>
+        /// Nodo (i, j) en j × (segmentos + 1) + i: i hacia el este, j hacia el norte.
+        /// </summary>
+        [JsonProperty("alturas_m")]
+        public double[] AlturasM { get; set; }
+
+        [JsonProperty("centro")]
+        public PuntoPlano Centro { get; set; }
+
+        /// <summary>
+        /// Hueco cuadrado al centro, para no taparse con el parche fino.
+        /// </summary>
+        [JsonProperty("hueco_m", NullValueHandling = NullValueHandling.Ignore)]
+        public double? HuecoM { get; set; }
+
+        [JsonProperty("lado_m")]
+        public double LadoM { get; set; }
+
+        /// <summary>
+        /// 0 lejos de la vía y 1 en su orilla: tierra seca junto al asfalto.
+        /// </summary>
+        [JsonProperty("seco", NullValueHandling = NullValueHandling.Ignore)]
+        public double[] Seco { get; set; }
+
+        [JsonProperty("segmentos")]
+        public long Segmentos { get; set; }
+
+        /// <summary>
+        /// Tono de parcela por nodo: 0 es pasto y 1 es barbecho.
+        /// </summary>
+        [JsonProperty("tonos")]
+        public double[] Tonos { get; set; }
+    }
+
+    public partial class ViaEscenario
+    {
+        [JsonProperty("altura_guarnicion_m")]
+        public double AlturaGuarnicionM { get; set; }
+
+        /// <summary>
+        /// Barreras metálicas, como polilíneas.
+        /// </summary>
+        [JsonProperty("barreras")]
+        public PuntoPlano[][] Barreras { get; set; }
+
+        [JsonProperty("capas")]
+        public CapaEscenario[] Capas { get; set; }
+
+        /// <summary>
+        /// Caras verticales de las guarniciones.
+        /// </summary>
+        [JsonProperty("guarniciones")]
+        public SegmentoPlano[] Guarniciones { get; set; }
+    }
+
+    /// <summary>
+    /// Una malla en planta de la vía.
+    /// </summary>
+    public partial class CapaEscenario
+    {
+        /// <summary>
+        /// Altura de la cara de arriba sobre el piso.
+        /// </summary>
+        [JsonProperty("altura_m")]
+        public double AlturaM { get; set; }
+
+        /// <summary>
+        /// Triángulos, antihorarios vistos desde arriba.
+        /// </summary>
+        [JsonProperty("indices")]
+        public long[] Indices { get; set; }
+
+        [JsonProperty("nombre")]
+        public Nombre Nombre { get; set; }
+
+        /// <summary>
+        /// Vértices (x, y) seguidos, en metros.
+        /// </summary>
+        [JsonProperty("posiciones")]
+        public double[] Posiciones { get; set; }
+    }
+
+    /// <summary>
     /// Malla regular de alturas. Las filas van de sur a norte y, en cada fila, de oeste a este:
     /// alturas_m[fila * ancho + columna].
     /// </summary>
@@ -3956,7 +4391,7 @@ namespace Croquis.Generated
     /// </summary>
     public enum ClaseEnum { Autobus, Bicicleta, CamionUnitario, Hatchback, MicrobusCombi, Motocicleta, Pickup, Scooter, SedanCompacto, SedanMediano, SuvCompacta, SuvGrande, Tractocamion, Van };
 
-    public enum Material { Concreto, Madera, Mamposteria, Metal, Otro, Vegetal };
+    public enum ObjetoMaterial { Concreto, Madera, Mamposteria, Metal, Otro, Vegetal };
 
     public enum PurpleTipo { Arbol, Barda, Barrera, Contenedor, Guarnicion, Muro, Otro, ParadaAutobus, Poste, Puesto, Senal, VehiculoEstacionado };
 
@@ -4077,6 +4512,18 @@ namespace Croquis.Generated
 
     public enum ManiobraValor { CambioCarrilDerecha, CambioCarrilIzquierda, Detenido, Estacionado, Incorporacion, Recto, Reversa, VueltaDerecha, VueltaIzquierda, VueltaU };
 
+    public enum Especie { Fresno, Jacaranda, Palmera, Pirul };
+
+    public enum EdificioMaterial { Tabique, Yeso };
+
+    public enum SenaleTipo { Alto, Ceda, Informativa, Velocidad };
+
+    public enum ZonaEnum { Rural, Urbana };
+
+    public enum Version { The100 };
+
+    public enum Nombre { Acotamiento, Banqueta, Calzada, Camellon, PasoPeatonal, RayasAmarillas, RayasBlancas };
+
     public enum OrigenEnum { Perito, Reaccion, Reconstruccion };
 
     public enum Codigo { DanoNoAlcanzado, DanoVsVelocidad, DetenidoConVelocidad, FueraDeLaViaDelMapa, MarcasVsVelocidad, ProyeccionVsVelocidad, ReposoInalcanzable, ReposoSupuestoVsDano, VelocidadVsEvidencia };
@@ -4111,8 +4558,6 @@ namespace Croquis.Generated
     public enum VersionResultado { The1140 };
 
     public enum TipoObjetivo { Objeto, Persona, Vehiculo };
-
-    public enum VersionCaso3D { The100 };
 
     public partial class Caso3D
     {
@@ -4151,7 +4596,7 @@ namespace Croquis.Generated
                 ClimaValorConverter.Singleton,
                 IluminacionValorConverter.Singleton,
                 ClaseEnumConverter.Singleton,
-                MaterialConverter.Singleton,
+                ObjetoMaterialConverter.Singleton,
                 PurpleTipoConverter.Singleton,
                 TUnidadConverter.Singleton,
                 FluffyTipoConverter.Singleton,
@@ -4200,6 +4645,12 @@ namespace Croquis.Generated
                 DireccionalesConverter.Singleton,
                 EstadoPinturaValorConverter.Singleton,
                 ManiobraValorConverter.Singleton,
+                EspecieConverter.Singleton,
+                EdificioMaterialConverter.Singleton,
+                SenaleTipoConverter.Singleton,
+                ZonaEnumConverter.Singleton,
+                VersionConverter.Singleton,
+                NombreConverter.Singleton,
                 OrigenEnumConverter.Singleton,
                 CodigoConverter.Singleton,
                 TentacledTipoConverter.Singleton,
@@ -4215,7 +4666,6 @@ namespace Croquis.Generated
                 LadoTropiezoConverter.Singleton,
                 VersionResultadoConverter.Singleton,
                 TipoObjetivoConverter.Singleton,
-                VersionCaso3DConverter.Singleton,
                 new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
             },
         };
@@ -5452,9 +5902,9 @@ namespace Croquis.Generated
         public static readonly ClaseEnumConverter Singleton = new ClaseEnumConverter();
     }
 
-    internal class MaterialConverter : JsonConverter
+    internal class ObjetoMaterialConverter : JsonConverter
     {
-        public override bool CanConvert(Type t) => t == typeof(Material) || t == typeof(Material?);
+        public override bool CanConvert(Type t) => t == typeof(ObjetoMaterial) || t == typeof(ObjetoMaterial?);
 
         public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
         {
@@ -5463,19 +5913,19 @@ namespace Croquis.Generated
             switch (value)
             {
                 case "concreto":
-                    return Material.Concreto;
+                    return ObjetoMaterial.Concreto;
                 case "madera":
-                    return Material.Madera;
+                    return ObjetoMaterial.Madera;
                 case "mamposteria":
-                    return Material.Mamposteria;
+                    return ObjetoMaterial.Mamposteria;
                 case "metal":
-                    return Material.Metal;
+                    return ObjetoMaterial.Metal;
                 case "otro":
-                    return Material.Otro;
+                    return ObjetoMaterial.Otro;
                 case "vegetal":
-                    return Material.Vegetal;
+                    return ObjetoMaterial.Vegetal;
             }
-            throw new Exception("Cannot unmarshal type Material");
+            throw new Exception("Cannot unmarshal type ObjetoMaterial");
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -5485,32 +5935,32 @@ namespace Croquis.Generated
                 serializer.Serialize(writer, null);
                 return;
             }
-            var value = (Material)untypedValue;
+            var value = (ObjetoMaterial)untypedValue;
             switch (value)
             {
-                case Material.Concreto:
+                case ObjetoMaterial.Concreto:
                     serializer.Serialize(writer, "concreto");
                     return;
-                case Material.Madera:
+                case ObjetoMaterial.Madera:
                     serializer.Serialize(writer, "madera");
                     return;
-                case Material.Mamposteria:
+                case ObjetoMaterial.Mamposteria:
                     serializer.Serialize(writer, "mamposteria");
                     return;
-                case Material.Metal:
+                case ObjetoMaterial.Metal:
                     serializer.Serialize(writer, "metal");
                     return;
-                case Material.Otro:
+                case ObjetoMaterial.Otro:
                     serializer.Serialize(writer, "otro");
                     return;
-                case Material.Vegetal:
+                case ObjetoMaterial.Vegetal:
                     serializer.Serialize(writer, "vegetal");
                     return;
             }
-            throw new Exception("Cannot marshal type Material");
+            throw new Exception("Cannot marshal type ObjetoMaterial");
         }
 
-        public static readonly MaterialConverter Singleton = new MaterialConverter();
+        public static readonly ObjetoMaterialConverter Singleton = new ObjetoMaterialConverter();
     }
 
     internal class TentacledMinMaxValueCheckConverter : JsonConverter
@@ -9143,6 +9593,290 @@ namespace Croquis.Generated
         public static readonly ManiobraValorConverter Singleton = new ManiobraValorConverter();
     }
 
+    internal class EspecieConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(Especie) || t == typeof(Especie?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "fresno":
+                    return Especie.Fresno;
+                case "jacaranda":
+                    return Especie.Jacaranda;
+                case "palmera":
+                    return Especie.Palmera;
+                case "pirul":
+                    return Especie.Pirul;
+            }
+            throw new Exception("Cannot unmarshal type Especie");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (Especie)untypedValue;
+            switch (value)
+            {
+                case Especie.Fresno:
+                    serializer.Serialize(writer, "fresno");
+                    return;
+                case Especie.Jacaranda:
+                    serializer.Serialize(writer, "jacaranda");
+                    return;
+                case Especie.Palmera:
+                    serializer.Serialize(writer, "palmera");
+                    return;
+                case Especie.Pirul:
+                    serializer.Serialize(writer, "pirul");
+                    return;
+            }
+            throw new Exception("Cannot marshal type Especie");
+        }
+
+        public static readonly EspecieConverter Singleton = new EspecieConverter();
+    }
+
+    internal class EdificioMaterialConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(EdificioMaterial) || t == typeof(EdificioMaterial?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "tabique":
+                    return EdificioMaterial.Tabique;
+                case "yeso":
+                    return EdificioMaterial.Yeso;
+            }
+            throw new Exception("Cannot unmarshal type EdificioMaterial");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (EdificioMaterial)untypedValue;
+            switch (value)
+            {
+                case EdificioMaterial.Tabique:
+                    serializer.Serialize(writer, "tabique");
+                    return;
+                case EdificioMaterial.Yeso:
+                    serializer.Serialize(writer, "yeso");
+                    return;
+            }
+            throw new Exception("Cannot marshal type EdificioMaterial");
+        }
+
+        public static readonly EdificioMaterialConverter Singleton = new EdificioMaterialConverter();
+    }
+
+    internal class SenaleTipoConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(SenaleTipo) || t == typeof(SenaleTipo?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "alto":
+                    return SenaleTipo.Alto;
+                case "ceda":
+                    return SenaleTipo.Ceda;
+                case "informativa":
+                    return SenaleTipo.Informativa;
+                case "velocidad":
+                    return SenaleTipo.Velocidad;
+            }
+            throw new Exception("Cannot unmarshal type SenaleTipo");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (SenaleTipo)untypedValue;
+            switch (value)
+            {
+                case SenaleTipo.Alto:
+                    serializer.Serialize(writer, "alto");
+                    return;
+                case SenaleTipo.Ceda:
+                    serializer.Serialize(writer, "ceda");
+                    return;
+                case SenaleTipo.Informativa:
+                    serializer.Serialize(writer, "informativa");
+                    return;
+                case SenaleTipo.Velocidad:
+                    serializer.Serialize(writer, "velocidad");
+                    return;
+            }
+            throw new Exception("Cannot marshal type SenaleTipo");
+        }
+
+        public static readonly SenaleTipoConverter Singleton = new SenaleTipoConverter();
+    }
+
+    internal class ZonaEnumConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(ZonaEnum) || t == typeof(ZonaEnum?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "rural":
+                    return ZonaEnum.Rural;
+                case "urbana":
+                    return ZonaEnum.Urbana;
+            }
+            throw new Exception("Cannot unmarshal type ZonaEnum");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (ZonaEnum)untypedValue;
+            switch (value)
+            {
+                case ZonaEnum.Rural:
+                    serializer.Serialize(writer, "rural");
+                    return;
+                case ZonaEnum.Urbana:
+                    serializer.Serialize(writer, "urbana");
+                    return;
+            }
+            throw new Exception("Cannot marshal type ZonaEnum");
+        }
+
+        public static readonly ZonaEnumConverter Singleton = new ZonaEnumConverter();
+    }
+
+    internal class VersionConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(Version) || t == typeof(Version?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            if (value == "1.0.0")
+            {
+                return Version.The100;
+            }
+            throw new Exception("Cannot unmarshal type Version");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (Version)untypedValue;
+            if (value == Version.The100)
+            {
+                serializer.Serialize(writer, "1.0.0");
+                return;
+            }
+            throw new Exception("Cannot marshal type Version");
+        }
+
+        public static readonly VersionConverter Singleton = new VersionConverter();
+    }
+
+    internal class NombreConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(Nombre) || t == typeof(Nombre?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "acotamiento":
+                    return Nombre.Acotamiento;
+                case "banqueta":
+                    return Nombre.Banqueta;
+                case "calzada":
+                    return Nombre.Calzada;
+                case "camellon":
+                    return Nombre.Camellon;
+                case "paso_peatonal":
+                    return Nombre.PasoPeatonal;
+                case "rayas_amarillas":
+                    return Nombre.RayasAmarillas;
+                case "rayas_blancas":
+                    return Nombre.RayasBlancas;
+            }
+            throw new Exception("Cannot unmarshal type Nombre");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (Nombre)untypedValue;
+            switch (value)
+            {
+                case Nombre.Acotamiento:
+                    serializer.Serialize(writer, "acotamiento");
+                    return;
+                case Nombre.Banqueta:
+                    serializer.Serialize(writer, "banqueta");
+                    return;
+                case Nombre.Calzada:
+                    serializer.Serialize(writer, "calzada");
+                    return;
+                case Nombre.Camellon:
+                    serializer.Serialize(writer, "camellon");
+                    return;
+                case Nombre.PasoPeatonal:
+                    serializer.Serialize(writer, "paso_peatonal");
+                    return;
+                case Nombre.RayasAmarillas:
+                    serializer.Serialize(writer, "rayas_amarillas");
+                    return;
+                case Nombre.RayasBlancas:
+                    serializer.Serialize(writer, "rayas_blancas");
+                    return;
+            }
+            throw new Exception("Cannot marshal type Nombre");
+        }
+
+        public static readonly NombreConverter Singleton = new NombreConverter();
+    }
+
     internal class OrigenEnumConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(OrigenEnum) || t == typeof(OrigenEnum?);
@@ -10432,39 +11166,5 @@ namespace Croquis.Generated
         }
 
         public static readonly TipoObjetivoConverter Singleton = new TipoObjetivoConverter();
-    }
-
-    internal class VersionCaso3DConverter : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(VersionCaso3D) || t == typeof(VersionCaso3D?);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            if (reader.TokenType == JsonToken.Null) return null;
-            var value = serializer.Deserialize<string>(reader);
-            if (value == "1.0.0")
-            {
-                return VersionCaso3D.The100;
-            }
-            throw new Exception("Cannot unmarshal type VersionCaso3D");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            if (untypedValue == null)
-            {
-                serializer.Serialize(writer, null);
-                return;
-            }
-            var value = (VersionCaso3D)untypedValue;
-            if (value == VersionCaso3D.The100)
-            {
-                serializer.Serialize(writer, "1.0.0");
-                return;
-            }
-            throw new Exception("Cannot marshal type VersionCaso3D");
-        }
-
-        public static readonly VersionCaso3DConverter Singleton = new VersionCaso3DConverter();
     }
 }
