@@ -112,7 +112,7 @@ namespace Croquis.EditorTools
                 // Sin la máscara, la lisura es pareja: una película de agua. La normal se queda, suave.
                 m.SetTexture("_MetallicGlossMap", null);
                 m.DisableKeyword("_METALLICSPECGLOSSMAP");
-                m.SetFloat("_Smoothness", n == "asfalto" ? 0.86f : 0.7f);
+                m.SetFloat("_Smoothness", n == "asfalto" ? 0.72f : 0.6f);
                 m.SetFloat("_BumpScale", 0.45f);
                 Guardar(m, n + "_mojado");
             }
@@ -183,7 +183,9 @@ namespace Croquis.EditorTools
             m.SetFloat("_AlphaClip", 1f);
             m.SetFloat("_Cutoff", 0.4f);
             m.EnableKeyword("_ALPHATEST_ON");
-            m.SetFloat("_Cull", (float)CullMode.Off);
+            // La de frente se ve por los dos lados; la planta solo desde arriba: desde abajo era una
+            // losa oscura sobre la cabeza.
+            m.SetFloat("_Cull", (float)(vista == "planta" ? CullMode.Back : CullMode.Off));
             m.SetFloat("_Smoothness", 0.08f);
             m.SetOverrideTag("RenderType", "TransparentCutout");
             m.renderQueue = (int)RenderQueue.AlphaTest;
@@ -247,16 +249,25 @@ namespace Croquis.EditorTools
             urp.shadowDistance = 150f;
             urp.shadowCascadeCount = 4;
             urp.mainLightShadowmapResolution = 4096;
-            urp.supportsSoftShadows = true;
-            urp.additionalLightsRenderingMode = LightRenderingMode.PerPixel;
             urp.maxAdditionalLightsCount = 8;
             urp.supportsCameraDepthTexture = true;
             var so = new SerializedObject(urp);
+            Poner(so, "m_SoftShadowsSupported", true);
+            Poner(so, "m_AdditionalLightsRenderingMode", (int)LightRenderingMode.PerPixel);
             Poner(so, "m_AdditionalLightShadowsSupported", true);
             Poner(so, "m_AdditionalLightsShadowmapResolution", 2048);
             Poner(so, "m_SoftShadowQuality", 2);
             so.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(urp);
+
+            // Un renderer creado por código nace sin los datos de posproceso: sin ellos no hay tono de
+            // cine ni resplandor.
+            if (renderer.postProcessData == null)
+            {
+                renderer.postProcessData = AssetDatabase.LoadAssetAtPath<PostProcessData>(
+                    "Packages/com.unity.render-pipelines.universal/Runtime/Data/PostProcessData.asset");
+                EditorUtility.SetDirty(renderer);
+            }
 
             // La oclusión ambiental es interna de URP: se agrega por su tipo.
             var tipo = Type.GetType(

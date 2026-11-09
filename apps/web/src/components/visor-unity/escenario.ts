@@ -13,21 +13,27 @@ import {
 } from "@croquis/scene-schema";
 import {
   actionBounds,
+  brakingAt,
   buildMapRoadGeometry,
   buildRoadGeometry,
+  computeGroundMarks,
   corridorsOf,
   CURB_HEIGHT,
   dashPatternFor,
   distanceToRoad,
   environmentFor,
   FACADE_PALETTE_MX,
+  headlightsOn,
+  lampAt,
   markingsFor,
+  phaseChanges,
   planEnvironment,
   proceduralPoles,
   QUALITY_PROFILES,
   roadDecorFor,
   terrainHeightAt,
   type Mesh2D,
+  type SignalPhase,
 } from "@croquis/viewer/puro";
 
 export const ESCENARIO_VERSION = "1.0.0" as const;
@@ -46,6 +52,184 @@ function capa(nombre: CapaEscenario["nombre"], m: Mesh2D, altura: number): CapaE
 /** El color de fachada por su índice en la paleta, como lo pinta el visor web (`facades.ts`). */
 function colorFachada(i: number): string {
   return FACADE_PALETTE_MX[i % FACADE_PALETTE_MX.length] ?? "#d8d2c4";
+}
+
+/** Los tipos de dispositivo que tienen un objeto que dibujar (las rayas ya van en la vía). */
+const DISPOSITIVOS_CON_OBJETO = new Set([
+  "semaforo",
+  "semaforo_peatonal",
+  "alto",
+  "ceda_el_paso",
+  "tope",
+  "limite_velocidad",
+  "no_vuelta",
+  "un_sentido",
+  "otro",
+]);
+
+/** Los dispositivos con posición, con la luz de cada semáforo ya resuelta en el tiempo. */
+function dispositivosDe(spec: EscenaSpec, resultado: Resultado, centro: { x: number; y: number }) {
+  const out: Escenario["dispositivos"] = [];
+  for (const d of spec.lugar.dispositivos ?? []) {
+    if (!d.posicion || !DISPOSITIVOS_CON_OBJETO.has(d.tipo)) continue;
+    const esSemaforo = d.tipo === "semaforo" || d.tipo === "semaforo_peatonal";
+    const f = d.fases?.[0];
+    const fase: SignalPhase | null =
+      esSemaforo && f
+        ? {
+            color: f.color,
+            ...(f.tiempo_en_fase ? { tiempoEnFaseS: f.tiempo_en_fase.valor } : {}),
+          }
+        : null;
+    const luces: Escenario["dispositivos"][number]["luces"] = [];
+    if (fase && fase.color !== "intermitente") {
+      // La luz al inicio y en cada cambio, con las mismas reglas del visor web.
+      const cortes = [
+        resultado.t_inicio,
+        ...phaseChanges(fase, resultado.t_inicio, resultado.t_fin),
+      ];
+      for (const t of cortes) {
+        const luz = lampAt(fase, t + 1e-6) ?? "apagado";
+        if (luces.at(-1)?.luz !== luz) luces.push({ t: mm(t), luz });
+      }
+    }
+    // Sin orientación declarada, mira hacia afuera del cruce: de frente al flujo que llega.
+    const rumbo =
+      d.orientacion_deg ??
+      (Math.atan2(d.posicion.y - centro.y, d.posicion.x - centro.x) * 180) / Math.PI;
+    out.push({
+      id: d.id,
+      tipo: d.tipo as Escenario["dispositivos"][number]["tipo"],
+      x: cm(d.posicion.x),
+      y: cm(d.posicion.y),
+      rumbo_deg: cm(rumbo),
+      luces,
+      intermitente: fase?.color === "intermitente",
+      ...(d.limite_velocidad ? { limite_kmh: cm(velocidadKmh(d.limite_velocidad)) } : {}),
+    });
+  }
+  return out;
+}
+
+/** Las huellas de llanta y las manchas de fluido, de las trayectorias (como el visor web). */
+function marcasDe(spec: EscenaSpec, resultado: Resultado) {
+  const t = (tipo: string) =>
+    new Map(resultado.eventos.filter((e) => e.tipo === tipo).map((e) => [e.actores[0], e.t]));
+  const reposo = t("reposo");
+  const frenado = t("inicio_frenado");
+  const vuelcan = new Set(
+    resultado.eventos.filter((e) => e.tipo === "volcadura").flatMap((e) => e.actores),
+  );
+  const marcas = computeGroundMarks(
+    resultado.vehiculos.map((v) => {
+      const sv = spec.vehiculos.find((x) => x.id === v.id);
+      return {
+        id: v.id,
+        clase: v.clase,
+        dims: {
+          length: v.dimensiones.largo_m,
+          width: v.dimensiones.ancho_m,
+          height: v.dimensiones.alto_m,
+          wheelbase: v.dimensiones.distancia_entre_ejes_m,
+        },
+        track: v.trayectoria,
+        tFrenado: frenado.get(v.id),
+        abs: sv?.frenado?.abs?.valor ?? false,
+        bloqueadas: sv?.frenado?.aplico?.valor ?? false,
+        aplastamientoFrontal: (v.dano.cdc?.lado ?? "F") === "F" ? Math.max(...v.dano.perfil_m) : 0,
+        tReposo: v.involucrado ? reposo.get(v.id) : undefined,
+        volcado: vuelcan.has(v.id),
+      };
+    }),
+  );
+  const huellas: Escenario["huellas"] = [
+    ...marcas.frenado.map((q) => ({ tipo: "frenado" as const, q })),
+    ...marcas.derrape.map((q) => ({ tipo: "derrape" as const, q })),
+  ].map(({ tipo, q }) => ({ tipo, esquinas: q.corners.map(cm), t: mm(q.t) }));
+  const manchas: Escenario["manchas"] = marcas.charcos.map((c) => ({
+    x: cm(c.x),
+    y: cm(c.y),
+    t0: mm(c.t0),
+    radio_m: cm(c.radius),
+  }));
+  return { huellas, manchas };
+}
+
+const EVIDENCIAS_CON_TRAZO = new Set([
+  "marcas_frenado",
+  "marcas_derrape",
+  "restos",
+  "vidrios",
+  "otra",
+]);
+
+/** Los puntos de C1: el primer golpe, los choques que siguieron y los puntos de paso. */
+function marcadoresDe(spec: EscenaSpec, resultado: Resultado): Escenario["marcadores"] {
+  const out: Escenario["marcadores"] = [];
+  const p = resultado.punto_impacto;
+  if (p) out.push({ tipo: "primer_golpe", x: cm(p.x), y: cm(p.y), t: 0 });
+  // Los choques después del principal: dónde estaba el primer actor en ese instante.
+  for (const e of resultado.eventos) {
+    if (!e.tipo.startsWith("impacto_") || e.t <= 1e-6) continue;
+    const v = resultado.vehiculos.find((x) => x.id === e.actores[0]);
+    if (!v) continue;
+    const tr = v.trayectoria;
+    let k = 0;
+    while (k + 1 < tr.t.length && tr.t[k + 1]! <= e.t) k++;
+    out.push({
+      tipo: "choque_intermedio",
+      x: cm(tr.x[k] ?? 0),
+      y: cm(tr.y[k] ?? 0),
+      vehiculo_id: v.id,
+      t: mm(e.t),
+    });
+  }
+  for (const v of spec.vehiculos) {
+    for (const pp of v.puntos_paso ?? []) {
+      out.push({
+        tipo: "punto_paso",
+        x: cm(pp.posicion.x),
+        y: cm(pp.posicion.y),
+        vehiculo_id: v.id,
+        orden: pp.orden,
+        ...(pp.t_s !== undefined ? { t: mm(pp.t_s) } : {}),
+      });
+    }
+  }
+  return out;
+}
+
+/** El color del caso, los faros y cuándo frena cada vehículo. */
+function vehiculosDe(spec: EscenaSpec, resultado: Resultado): Escenario["vehiculos"] {
+  return resultado.vehiculos.map((v) => {
+    const sv = spec.vehiculos.find((x) => x.id === v.id);
+    const impacto = resultado.eventos
+      .filter((e) => e.tipo.startsWith("impacto_") && e.actores.includes(v.id))
+      .map((e) => e.t)
+      .sort((a, b) => a - b)[0];
+    const entrada = {
+      track: v.trayectoria,
+      tFirstImpact: impacto ?? null,
+      bloqueadas: sv?.frenado?.aplico?.valor ?? false,
+    };
+    const frenado: { desde: number; hasta: number }[] = [];
+    let desde: number | null = null;
+    for (const t of v.trayectoria.t) {
+      const frena = brakingAt(entrada, t);
+      if (frena && desde === null) desde = t;
+      if (!frena && desde !== null) {
+        frenado.push({ desde: mm(desde), hasta: mm(t) });
+        desde = null;
+      }
+    }
+    if (desde !== null) frenado.push({ desde: mm(desde), hasta: mm(resultado.t_fin) });
+    return {
+      id: v.id,
+      ...(sv?.color?.hex ? { color: sv.color.hex } : {}),
+      faros: headlightsOn(spec, v.id),
+      frenado,
+    };
+  });
 }
 
 export function escenarioDe(spec: EscenaSpec, resultado: Resultado): Escenario {
@@ -127,7 +311,12 @@ export function escenarioDe(spec: EscenaSpec, resultado: Resultado): Escenario {
     }
     return 0;
   };
-  const suelo = (lado: number, segmentos: number, hueco?: number, conSeco = false): SueloEscenario => {
+  const suelo = (
+    lado: number,
+    segmentos: number,
+    hueco?: number,
+    conSeco = false,
+  ): SueloEscenario => {
     const n = segmentos + 1;
     const alturas: number[] = [];
     const tonos: number[] = [];
@@ -166,7 +355,11 @@ export function escenarioDe(spec: EscenaSpec, resultado: Resultado): Escenario {
       luminarias: env.streetLights,
       sol_azimut_deg: cm(env.sun.azimuth),
       sol_elevacion_deg: cm(env.sun.elevation),
-      direccion_luz: [mm(env.lightDirection[0]), mm(env.lightDirection[1]), mm(env.lightDirection[2])],
+      direccion_luz: [
+        mm(env.lightDirection[0]),
+        mm(env.lightDirection[1]),
+        mm(env.lightDirection[2]),
+      ],
       intensidad_sol: mm(env.sunIntensity),
       intensidad_ambiente: mm(env.ambientIntensity),
       color_cielo: env.skyColor,
@@ -178,7 +371,12 @@ export function escenarioDe(spec: EscenaSpec, resultado: Resultado): Escenario {
     },
     via: {
       capas,
-      guarniciones: road.curbs.map((c) => ({ ax: cm(c.a.x), ay: cm(c.a.y), bx: cm(c.b.x), by: cm(c.b.y) })),
+      guarniciones: road.curbs.map((c) => ({
+        ax: cm(c.a.x),
+        ay: cm(c.a.y),
+        bx: cm(c.b.x),
+        by: cm(c.b.y),
+      })),
       altura_guarnicion_m: CURB_HEIGHT,
       barreras: decor.barriers.map((b) => b.map((p) => ({ x: cm(p.x), y: cm(p.y) }))),
     },
@@ -216,17 +414,68 @@ export function escenarioDe(spec: EscenaSpec, resultado: Resultado): Escenario {
         antena: b.antenna,
         varillas: b.rebar,
       })),
-      postes: plan.poles.map((p) => ({ x: cm(p.x), y: cm(p.y), z: z(p.x, p.y), rumbo_rad: mm(p.yaw) })),
-      cercas: plan.fences.map((f) => ({ ax: cm(f.a.x), ay: cm(f.a.y), bx: cm(f.b.x), by: cm(f.b.y) })),
-      senales: plan.signs.map((s) => ({ x: cm(s.x), y: cm(s.y), z: z(s.x, s.y), rumbo_rad: mm(s.yaw), tipo: s.kind })),
+      postes: plan.poles.map((p) => ({
+        x: cm(p.x),
+        y: cm(p.y),
+        z: z(p.x, p.y),
+        rumbo_rad: mm(p.yaw),
+      })),
+      cercas: plan.fences.map((f) => ({
+        ax: cm(f.a.x),
+        ay: cm(f.a.y),
+        bx: cm(f.b.x),
+        by: cm(f.b.y),
+      })),
+      senales: plan.signs.map((s) => ({
+        x: cm(s.x),
+        y: cm(s.y),
+        z: z(s.x, s.y),
+        rumbo_rad: mm(s.yaw),
+        tipo: s.kind,
+      })),
       cerros: plan.hills.map((h) => ({
         radio_m: h.radius,
         desde_rad: mm(h.from),
         hasta_rad: mm(h.to),
         alturas_m: h.heights.map(cm),
       })),
-      silueta: plan.skyline.map((s) => ({ angulo_rad: mm(s.angle), abertura_rad: mm(s.span), alto_m: cm(s.height) })),
+      silueta: plan.skyline.map((s) => ({
+        angulo_rad: mm(s.angle),
+        abertura_rad: mm(s.span),
+        alto_m: cm(s.height),
+      })),
     },
+    dispositivos: dispositivosDe(spec, resultado, centro),
+    ...marcasDe(spec, resultado),
+    evidencias: (spec.evidencias ?? [])
+      .filter((ev) => EVIDENCIAS_CON_TRAZO.has(ev.tipo) && (ev.puntos?.length ?? 0) > 0)
+      .map((ev) => ({
+        id: ev.id,
+        tipo: ev.tipo as Escenario["evidencias"][number]["tipo"],
+        puntos: (ev.puntos ?? []).map((q) => ({ x: cm(q.x), y: cm(q.y) })),
+      })),
+    marcadores: marcadoresDe(spec, resultado),
+    terreno: {
+      superficies: (lugar.terreno?.superficies ?? []).map((z) => ({
+        tipo: z.tipo,
+        poligono: z.poligono.map((q) => ({ x: cm(q.x), y: cm(q.y) })),
+      })),
+      ondulaciones: (lugar.terreno?.ondulaciones ?? []).map((o) => ({
+        poligono: o.poligono.map((q) => ({ x: cm(q.x), y: cm(q.y) })),
+        amplitud_m: o.amplitud_m,
+        longitud_onda_m: o.longitud_onda_m,
+        rumbo_deg: o.rumbo_deg,
+      })),
+      topes: (lugar.terreno?.topes ?? []).map((tp) => ({
+        ax: cm(tp.linea[0]!.x),
+        ay: cm(tp.linea[0]!.y),
+        bx: cm(tp.linea[1]!.x),
+        by: cm(tp.linea[1]!.y),
+        alto_m: tp.alto_m,
+        largo_m: tp.largo_m,
+      })),
+    },
+    vehiculos: vehiculosDe(spec, resultado),
     luminarias: proceduralPoles(spec, resultado, layout, mapa?.vias).map((p) => ({
       x: cm(p.x),
       y: cm(p.y),

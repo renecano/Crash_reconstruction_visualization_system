@@ -16,8 +16,11 @@ namespace Croquis.Visor
     /// </summary>
     public static class ArmadorVehiculo
     {
-        public static void Armar(Transform destino, Transform plantilla, JObject entrada, string clase, MedidasVehiculo m)
+        public static PartesVehiculo Armar(
+            Transform destino, Transform plantilla, JObject entrada, string clase, MedidasVehiculo m,
+            Dictionary<string, string> papeles, Color? color)
         {
+            var partes = new PartesVehiculo();
             var sx = m.Largo / (double)entrada["largo_m"];
             var sy = m.Alto / (double)entrada["alto_m"];
             var sz = m.Ancho / (double)entrada["ancho_m"];
@@ -92,7 +95,30 @@ namespace Croquis.Visor
                     var q = matriz.MultiplyVector(n);
                     return new Vector3((float)(q.z / sz), (float)(q.y / sy), (float)(-q.x / sx)).normalized;
                 });
-                Pieza(destino, mf.name, malla, mf.GetComponent<MeshRenderer>());
+                var mr = Pieza(destino, mf.name, malla, mf.GetComponent<MeshRenderer>());
+                var papel = PapelDe(mf.transform, papeles);
+                if (papel == "pintura" && color.HasValue)
+                {
+                    // La pintura del caso: el color que dijo el perito, con su barniz.
+                    var pintura = Materiales.Liso(color.Value, 0.88f, 0.28f);
+                    var ms = mr.sharedMaterials;
+                    for (var i = 0; i < ms.Length; i++)
+                    {
+                        ms[i] = pintura;
+                    }
+
+                    mr.sharedMaterials = ms;
+                }
+                else if (papel == "calavera")
+                {
+                    partes.Calaveras.Add(mr);
+                    partes.Originales[mr] = mr.sharedMaterials;
+                }
+                else if (papel == "faro")
+                {
+                    partes.Faros.Add(mr);
+                    partes.Originales[mr] = mr.sharedMaterials;
+                }
             }
 
             foreach (var r in ruedas)
@@ -121,6 +147,22 @@ namespace Croquis.Visor
                     Pieza(rueda, mf.name, malla, mf.GetComponent<MeshRenderer>());
                 }
             }
+
+            return partes;
+        }
+
+        /// <summary>El papel de una pieza: el suyo o el del nodo que la contiene.</summary>
+        private static string PapelDe(Transform t, Dictionary<string, string> papeles)
+        {
+            for (var p = t; p != null; p = p.parent)
+            {
+                if (papeles.TryGetValue(p.name, out var papel))
+                {
+                    return papel;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>Lo que no tiene modelo (bicicleta y scooter) es una caja de sus medidas, hasta U3.</summary>
@@ -198,7 +240,7 @@ namespace Croquis.Visor
             return copia;
         }
 
-        private static void Pieza(Transform padre, string nombre, Mesh malla, MeshRenderer origen)
+        private static MeshRenderer Pieza(Transform padre, string nombre, Mesh malla, MeshRenderer origen)
         {
             var go = new GameObject(nombre);
             go.transform.SetParent(padre, false);
@@ -208,6 +250,8 @@ namespace Croquis.Visor
             {
                 mr.sharedMaterials = origen.sharedMaterials;
             }
+
+            return mr;
         }
     }
 }

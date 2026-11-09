@@ -87,7 +87,6 @@ namespace Croquis.EditorTools
 
             // Luminarias y faros de noche (U2): hasta 8 luces adicionales por objeto, y sombras hasta
             // 150 m. La calidad por nivel llega en U5.
-            asset.additionalLightsRenderingMode = LightRenderingMode.PerPixel;
             asset.maxAdditionalLightsCount = 8;
             asset.shadowDistance = 150f;
             EditorUtility.SetDirty(asset);

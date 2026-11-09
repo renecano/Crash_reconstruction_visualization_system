@@ -30,6 +30,17 @@ const dir = (d) => {
   return d;
 };
 
+/** La textura en gris, con su relieve fino y una media clara (200 de 255). */
+async function grisClaro(jpg) {
+  const gris = await sharp(jpg).grayscale().toBuffer();
+  const media = (await sharp(gris).stats()).channels[0].mean;
+  return sharp(gris)
+    .linear(1, 200 - media)
+    .toColourspace("srgb")
+    .jpeg({ quality: 92 })
+    .toBuffer();
+}
+
 async function bajar(url) {
   const r = await fetch(url);
   if (!r.ok) throw new Error(`${r.status} al bajar ${url}`);
@@ -46,7 +57,14 @@ for (const [nombre, t] of Object.entries(texturas)) {
   if (!salidas.every(existsSync)) {
     const archivos = await (await fetch(`https://api.polyhaven.com/files/${t.polyhaven}`)).json();
     const de = (mapa) => archivos[mapa]["1k"].jpg.url;
-    writeFileSync(salidas[0], await bajar(de("Diffuse")));
+    const color = await bajar(de("Diffuse"));
+    writeFileSync(
+      salidas[0],
+      // El aplanado se tiñe con el color de cada fachada: su textura va en gris claro, sin el tono
+      // de barro del original, para que el rosa, el azul o el blanco salgan como son.
+      nombre === "yeso" ? await grisClaro(color)
+        : color,
+    );
     writeFileSync(salidas[1], await bajar(de("nor_gl")));
     // «arm» trae R = oclusión, G = rugosidad, B = metal. URP Lit quiere el metal en R, la oclusión
     // en G y la lisura (1 − rugosidad) en el alfa.

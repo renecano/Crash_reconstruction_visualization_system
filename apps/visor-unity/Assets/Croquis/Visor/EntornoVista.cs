@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Croquis.Generated;
 using UnityEngine;
+using Material = UnityEngine.Material;
 
 namespace Croquis.Visor
 {
@@ -50,13 +51,13 @@ namespace Croquis.Visor
             foreach (var t in arboles)
             {
                 var p = U(t.X, t.Y, t.Z);
-                if (t.Especie == Especie.Palmera)
+                if (t.Especie == EspecieArbol.Palmera)
                 {
                     Palmera(palmas, troncos, p, t);
                     continue;
                 }
 
-                var especie = t.Tipo == 2 ? "pirul" : (t.Especie ?? Especie.Fresno).ToString().ToLowerInvariant();
+                var especie = t.Tipo == 2 ? "pirul" : (t.Especie ?? EspecieArbol.Fresno).ToString().ToLowerInvariant();
                 var medidas = Materiales.MedidasArbol(especie);
                 var alto = t.Tipo == 2
                     ? (float)t.CopaM * 1.5f
@@ -104,7 +105,7 @@ namespace Croquis.Visor
                 var r0 = Mathf.Lerp(0.2f, 0.12f, k / (float)Tramos);
                 var r1 = Mathf.Lerp(0.2f, 0.12f, (k + 1) / (float)Tramos);
                 troncos.Prisma(q, r0, alto / Tramos, 8, r1);
-                q += Vector3.up * (alto / Tramos) + inclina * k;
+                q += Vector3.up * (alto / Tramos) + inclina * (0.4f * k);
             }
 
             const int Hojas = 11;
@@ -146,14 +147,14 @@ namespace Croquis.Visor
             var fierro = new Malla();
             foreach (var b in edificios)
             {
-                var llave = b.Material == EdificioMaterial.Tabique ? "tabique" : "yeso|" + b.Color;
+                var llave = b.Material == MaterialFachada.Tabique ? "tabique" : "yeso|" + b.Color;
                 if (!muros.TryGetValue(llave, out var muro))
                 {
                     muros[llave] = muro = new Malla();
-                    colores[llave] = b.Material == EdificioMaterial.Tabique
-                        ? Materiales.Pbr("tabique")
+                    colores[llave] = b.Material == MaterialFachada.Tabique
+                        ? Materiales.Pbr("tabique", new Color(1.25f, 0.82f, 0.7f))
                         // El aplanado se tiñe con el color de la fachada; su textura es clara.
-                        : Materiales.Pbr("yeso", Materiales.Hex(b.Color, Color.white) * 2.6f);
+                        : Materiales.Pbr("yeso", Materiales.Hex(b.Color, Color.white));
                 }
 
                 var centro = U(b.X, b.Y, b.Z - 0.3);
@@ -165,27 +166,37 @@ namespace Croquis.Visor
                 var d = (float)b.FondoM;
                 muro.Caja(centro, largo, fondo, w, alto, d, 0.5f);
 
-                // La fachada que da a la calle: de qué lado queda y cuánto mide.
-                var porLargo = Mathf.Abs(Vector3.Dot(frente, fondo)) > Mathf.Abs(Vector3.Dot(frente, largo));
-                var normal = porLargo
-                    ? fondo * Mathf.Sign(Vector3.Dot(frente, fondo))
-                    : largo * Mathf.Sign(Vector3.Dot(frente, largo));
-                var a0 = porLargo ? largo : fondo;
-                var ancho = porLargo ? w : d;
-                var cara = centro + normal * ((porLargo ? d : w) / 2f);
-                var pisos = Mathf.Max(1, (int)b.Pisos);
+                // Las cuatro caras: su normal hacia afuera, el eje a lo largo y su ancho. La que más mira
+                // hacia la calle es la fachada; las demás llevan ventanas más chicas y espaciadas.
+                var caras = new[]
+                {
+                    (n: fondo, eje: largo, ancho: w, lejos: d / 2f),
+                    (n: -fondo, eje: largo, ancho: w, lejos: d / 2f),
+                    (n: largo, eje: fondo, ancho: d, lejos: w / 2f),
+                    (n: -largo, eje: fondo, ancho: d, lejos: w / 2f),
+                };
+                var principal = 0;
+                for (var k = 1; k < caras.Length; k++)
+                {
+                    if (Vector3.Dot(caras[k].n, frente) > Vector3.Dot(caras[principal].n, frente))
+                    {
+                        principal = k;
+                    }
+                }
 
-                Fachada(b, cara, a0, normal, ancho, pisos, a, azar, marcos, vidrios, encendidas, lamina, toldos, concreto);
-                // Las otras tres caras: ventanas más chicas y más espaciadas.
-                foreach (var (n2, eje, an) in new[]
+                var pisos = Mathf.Max(1, (int)b.Pisos);
+                for (var k = 0; k < caras.Length; k++)
                 {
-                    (-normal, a0, ancho),
-                    (Vector3.Cross(Vector3.up, normal), normal, porLargo ? d : w),
-                    (-Vector3.Cross(Vector3.up, normal), normal, porLargo ? d : w),
-                })
-                {
-                    var c2 = centro + n2 * ((Mathf.Abs(Vector3.Dot(n2, largo)) > 0.5f ? w : d) / 2f);
-                    Ventanas(c2, eje, n2, an, pisos, 0, 4.2f, 1.0f, 1.1f, a, azar, marcos, vidrios, encendidas);
+                    var c = caras[k];
+                    var cara = centro + c.n * c.lejos;
+                    if (k == principal)
+                    {
+                        Fachada(b, cara, c.eje, c.n, c.ancho, pisos, a, azar, marcos, vidrios, encendidas, lamina, toldos, concreto);
+                    }
+                    else
+                    {
+                        Ventanas(cara, c.eje, c.n, c.ancho, pisos, 0, 4.2f, 1.0f, 1.1f, a, azar, marcos, vidrios, encendidas);
+                    }
                 }
 
                 Azotea(b, centro, largo, fondo, w, d, alto, azar, concreto, negro, fierro);
@@ -222,7 +233,7 @@ namespace Croquis.Visor
                 var c = piso0 - eje * (ancho * 0.12f) + normal * 0.03f;
                 lamina.Cuadro(
                     c - eje * (wCortina / 2f), c + eje * (wCortina / 2f),
-                    c + eje * (wCortina / 2f) + Vector3.up * 2.6f, c - eje * (wCortina / 2f) + Vector3.up * 2.6f, 0.37f);
+                    c + eje * (wCortina / 2f) + Vector3.up * 2.6f, c - eje * (wCortina / 2f) + Vector3.up * 2.6f, 0.37f, true);
                 Hueco(marcos, c + Vector3.up * 2.6f, eje, normal, wCortina + 0.2f, 0.3f, 0.12f);
                 Puerta(marcos, piso0 + eje * (ancho * 0.34f), eje, normal);
             }
@@ -298,7 +309,7 @@ namespace Croquis.Visor
                     marcos.Caja(c + normal * 0.01f, eje, normal, 0.04f, h, 0.05f);
                     var vidrio = a.Noche && azar.Siguiente() < 0.32f ? encendidas : vidrios;
                     var q = c + normal * 0.025f;
-                    vidrio.Cuadro(q - eje * (w / 2f), q + eje * (w / 2f), q + eje * (w / 2f) + Vector3.up * h, q - eje * (w / 2f) + Vector3.up * h);
+                    vidrio.Cuadro(q - eje * (w / 2f), q + eje * (w / 2f), q + eje * (w / 2f) + Vector3.up * h, q - eje * (w / 2f) + Vector3.up * h, 1f, true);
                 }
             }
         }
@@ -442,7 +453,7 @@ namespace Croquis.Visor
             }
 
             var postes = new Malla();
-            var placas = new Dictionary<SenaleTipo, Malla>();
+            var placas = new Dictionary<TipoSenal, Malla>();
             var reverso = new Malla();
             foreach (var s in senales)
             {
@@ -458,13 +469,13 @@ namespace Croquis.Visor
                 var c = pie + Vector3.up * 2.45f + mira * 0.045f;
                 switch (s.Tipo)
                 {
-                    case SenaleTipo.Alto:
+                    case TipoSenal.Alto:
                         Poligono(placa, reverso, c, lado, mira, 0.38f, 8, Mathf.PI / 8f);
                         break;
-                    case SenaleTipo.Ceda:
+                    case TipoSenal.Ceda:
                         Poligono(placa, reverso, c, lado, mira, 0.46f, 3, -Mathf.PI / 2f);
                         break;
-                    case SenaleTipo.Informativa:
+                    case TipoSenal.Informativa:
                         placa.Cuadro(c - lado * 0.75f - Vector3.up * 0.3f, c + lado * 0.75f - Vector3.up * 0.3f, c + lado * 0.75f + Vector3.up * 0.3f, c - lado * 0.75f + Vector3.up * 0.3f);
                         reverso.Cuadro(c + lado * 0.75f - Vector3.up * 0.3f - mira * 0.01f, c - lado * 0.75f - Vector3.up * 0.3f - mira * 0.01f, c - lado * 0.75f + Vector3.up * 0.3f - mira * 0.01f, c + lado * 0.75f + Vector3.up * 0.3f - mira * 0.01f);
                         break;
@@ -481,10 +492,10 @@ namespace Croquis.Visor
                 Color color;
                 switch (par.Key)
                 {
-                    case SenaleTipo.Alto:
+                    case TipoSenal.Alto:
                         color = new Color(0.62f, 0.07f, 0.07f);
                         break;
-                    case SenaleTipo.Informativa:
+                    case TipoSenal.Informativa:
                         color = new Color(0.06f, 0.32f, 0.17f);
                         break;
                     default:
@@ -539,6 +550,8 @@ namespace Croquis.Visor
                         var b = 2 * (k - 1);
                         m.Triangulo(b, b + 1, b + 2);
                         m.Triangulo(b + 1, b + 3, b + 2);
+                        m.Triangulo(b, b + 2, b + 1);
+                        m.Triangulo(b + 1, b + 2, b + 3);
                     }
                 }
 

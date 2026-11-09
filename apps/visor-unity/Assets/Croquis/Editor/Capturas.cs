@@ -69,7 +69,7 @@ namespace Croquis.EditorTools
                     await visor.CargarAsync(caso);
                     visor.Fijar(t);
                     var conductor = caso.Resultado.Vehiculos.FirstOrDefault(v => v.Involucrado)?.Id;
-                    var vistas = new[] { "orbita", "cenital", "calle" }.Concat(conductor != null ? new[] { "conductor:" + conductor } : new string[0]);
+                    var vistas = new[] { "cinematica", "acera", "cenital" }.Concat(conductor != null ? new[] { "conductor:" + conductor } : new string[0]);
                     foreach (var vista in vistas)
                     {
                         visor.Camara.Cambiar(vista);

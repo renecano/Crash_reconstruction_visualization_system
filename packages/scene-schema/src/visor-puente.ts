@@ -4,13 +4,14 @@
  */
 
 /** Sube cuando cambia un mensaje. Unity la anuncia en `listo`; la web no carga un caso si no coincide. */
-export const VISOR_PUENTE_VERSION = "1.0.0" as const;
+export const VISOR_PUENTE_VERSION = "1.1.0" as const;
 
 export const CALIDADES_VISOR = ["baja", "media", "alta", "ultra", "auto"] as const;
 export type CalidadVisor = (typeof CALIDADES_VISOR)[number];
 
 /** Las cámaras; la del conductor es `conductor:<id del vehículo>`. */
-export type CamaraVisor = "cenital" | "cinematica" | "orbita" | "libre" | `conductor:${string}`;
+export type CamaraVisor =
+  "cenital" | "cinematica" | "orbita" | "acera" | "libre" | `conductor:${string}`;
 
 /** Lo que encuadra el botón: «Ver todo» o «Ir al impacto». */
 export type ZonaEncuadre = "todo" | "impacto";
@@ -31,6 +32,8 @@ export interface MensajesAUnity {
   encuadrar: { zona: ZonaEncuadre };
   capturar: { vista: VistaCaptura; ancho: number; alto: number };
   modoEdicion: { on: boolean };
+  /** Muestra u oculta los puntos de C1 (primer golpe, choques intermedios, puntos de paso). */
+  marcadores: { visibles: boolean };
 }
 
 export const CODIGOS_ERROR_VISOR = [
@@ -94,6 +97,7 @@ export const NOMBRES_A_UNITY = [
   "encuadrar",
   "capturar",
   "modoEdicion",
+  "marcadores",
 ] as const satisfies readonly (keyof MensajesAUnity)[];
 
 export const NOMBRES_DE_UNITY = [

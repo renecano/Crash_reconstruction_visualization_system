@@ -78,6 +78,36 @@ export const Convenciones = z.strictObject({
 });
 export type Convenciones = z.infer<typeof Convenciones>;
 
+/** Un cambio de luz: vale desde `t` hasta el siguiente. */
+export const LuzSemaforo = z.strictObject({
+  t: z.number(),
+  luz: z.enum(["verde", "amarillo", "rojo", "apagado"]),
+});
+export type LuzSemaforo = z.infer<typeof LuzSemaforo>;
+
+/** Un dispositivo de control con posición en la escena. */
+export const DispositivoEscenario = z.strictObject({
+  id: z.string().min(1).max(80),
+  tipo: z.enum([
+    "semaforo",
+    "semaforo_peatonal",
+    "alto",
+    "ceda_el_paso",
+    "tope",
+    "limite_velocidad",
+    "no_vuelta",
+    "un_sentido",
+    "otro",
+  ]),
+  x: z.number(),
+  y: z.number(),
+  rumbo_deg: z.number(),
+  luces: z.array(LuzSemaforo),
+  intermitente: z.boolean(),
+  limite_kmh: z.number().optional(),
+});
+export type DispositivoEscenario = z.infer<typeof DispositivoEscenario>;
+
 export const EdificioEscenario = z.strictObject({
   x: z.number(),
   y: z.number(),
@@ -99,6 +129,34 @@ export const EdificioEscenario = z.strictObject({
 });
 export type EdificioEscenario = z.infer<typeof EdificioEscenario>;
 
+export const PuntoPlano = z.strictObject({ x: z.number(), y: z.number() });
+export type PuntoPlano = z.infer<typeof PuntoPlano>;
+
+/** Una evidencia que el perito declaró con puntos en el lugar. */
+export const EvidenciaEscenario = z.strictObject({
+  id: z.string().min(1).max(80),
+  tipo: z.enum(["marcas_frenado", "marcas_derrape", "restos", "vidrios", "otra"]),
+  puntos: z.array(PuntoPlano),
+});
+export type EvidenciaEscenario = z.infer<typeof EvidenciaEscenario>;
+
+/** Un tramo de huella de llanta, calculado de la trayectoria (`computeGroundMarks`). */
+export const HuellaEscenario = z.strictObject({
+  tipo: z.enum(["frenado", "derrape"]),
+  esquinas: z.tuple([
+    z.number(),
+    z.number(),
+    z.number(),
+    z.number(),
+    z.number(),
+    z.number(),
+    z.number(),
+    z.number(),
+  ]),
+  t: z.number(),
+});
+export type HuellaEscenario = z.infer<typeof HuellaEscenario>;
+
 export const LuminariaEscenario = z.strictObject({
   x: z.number(),
   y: z.number(),
@@ -108,6 +166,26 @@ export const LuminariaEscenario = z.strictObject({
 });
 export type LuminariaEscenario = z.infer<typeof LuminariaEscenario>;
 
+/** Fluido derramado tras el impacto: crece desde `t0`. */
+export const ManchaEscenario = z.strictObject({
+  x: z.number(),
+  y: z.number(),
+  t0: z.number(),
+  radio_m: z.number(),
+});
+export type ManchaEscenario = z.infer<typeof ManchaEscenario>;
+
+/** Un punto de C1: dónde fue el primer golpe, un choque intermedio o un punto de paso. */
+export const MarcadorEscenario = z.strictObject({
+  tipo: z.enum(["primer_golpe", "choque_intermedio", "punto_paso", "punto_inicial"]),
+  x: z.number(),
+  y: z.number(),
+  vehiculo_id: z.string().min(1).max(80).optional(),
+  orden: z.int().min(0).optional(),
+  t: z.number().optional(),
+});
+export type MarcadorEscenario = z.infer<typeof MarcadorEscenario>;
+
 export const PosteEscenario = z.strictObject({
   x: z.number(),
   y: z.number(),
@@ -115,9 +193,6 @@ export const PosteEscenario = z.strictObject({
   rumbo_rad: z.number(),
 });
 export type PosteEscenario = z.infer<typeof PosteEscenario>;
-
-export const PuntoPlano = z.strictObject({ x: z.number(), y: z.number() });
-export type PuntoPlano = z.infer<typeof PuntoPlano>;
 
 /** Un segmento en planta, de a a b. */
 export const SegmentoPlano = z.strictObject({
@@ -157,6 +232,64 @@ export const SueloEscenario = z.strictObject({
 });
 export type SueloEscenario = z.infer<typeof SueloEscenario>;
 
+/** Una zona ondulada: crestas perpendiculares a `rumbo_deg`. */
+export const OndulacionEscenario = z.strictObject({
+  poligono: z.array(PuntoPlano).min(3),
+  amplitud_m: z.number(),
+  longitud_onda_m: z.number(),
+  rumbo_deg: z.number(),
+});
+export type OndulacionEscenario = z.infer<typeof OndulacionEscenario>;
+
+/** Una zona del piso con otra superficie. */
+export const SuperficieEscenario = z.strictObject({
+  tipo: z.enum([
+    "asfalto",
+    "concreto",
+    "adoquin",
+    "empedrado",
+    "terraceria",
+    "grava",
+    "pasto",
+    "tierra",
+    "lodo",
+  ]),
+  poligono: z.array(PuntoPlano).min(3),
+});
+export type SuperficieEscenario = z.infer<typeof SuperficieEscenario>;
+
+/** Un tope: la línea que cruza la vía, su alto y su largo en el sentido de la marcha. */
+export const TopeEscenario = z.strictObject({
+  ax: z.number(),
+  ay: z.number(),
+  bx: z.number(),
+  by: z.number(),
+  alto_m: z.number(),
+  largo_m: z.number(),
+});
+export type TopeEscenario = z.infer<typeof TopeEscenario>;
+
+/** El terreno de C3 que declara la escena (`lugar.terreno`), para dibujarlo. La malla de relieve viaja aparte, en `relieve`. */
+export const TerrenoEscenario = z.strictObject({
+  superficies: z.array(SuperficieEscenario),
+  ondulaciones: z.array(OndulacionEscenario),
+  topes: z.array(TopeEscenario),
+});
+export type TerrenoEscenario = z.infer<typeof TerrenoEscenario>;
+
+/** Un intervalo con las luces de freno encendidas. */
+export const TramoFreno = z.strictObject({ desde: z.number(), hasta: z.number() });
+export type TramoFreno = z.infer<typeof TramoFreno>;
+
+/** Lo que el visor necesita de cada vehículo y no está en su trayectoria. */
+export const VehiculoEscenario = z.strictObject({
+  id: z.string().min(1).max(80),
+  color: z.string().regex(new RegExp("^#[0-9a-fA-F]{6}$")).optional(),
+  faros: z.boolean(),
+  frenado: z.array(TramoFreno),
+});
+export type VehiculoEscenario = z.infer<typeof VehiculoEscenario>;
+
 /** Lo que rodea al choque, calculado en TS con las funciones del croquis 2D y del visor web (ADR 0112). Unity solo lo dibuja. Lo procedural va con la semilla de la escena. */
 export const Escenario = z.strictObject({
   version: z.literal("1.0.0"),
@@ -182,6 +315,13 @@ export const Escenario = z.strictObject({
     silueta: z.array(SiluetaEscenario),
   }),
   luminarias: z.array(LuminariaEscenario),
+  dispositivos: z.array(DispositivoEscenario),
+  huellas: z.array(HuellaEscenario),
+  manchas: z.array(ManchaEscenario),
+  evidencias: z.array(EvidenciaEscenario),
+  marcadores: z.array(MarcadorEscenario),
+  vehiculos: z.array(VehiculoEscenario),
+  terreno: TerrenoEscenario,
 });
 export type Escenario = z.infer<typeof Escenario>;
 

@@ -38,3 +38,6 @@ export { environmentFor, type EnvironmentSettings } from "./environment";
 export { actionBounds } from "./cameras";
 export { headlightsOn, proceduralPoles } from "./night-lights";
 export { QUALITY_PROFILES } from "./quality";
+export { computeGroundMarks } from "./ground-marks";
+export { brakingAt } from "./brake-lights";
+export { lampAt, phaseChanges, type SignalPhase } from "./traffic-signals";

@@ -14,7 +14,7 @@ namespace Croquis.Visor
     public sealed class VisorPuente : MonoBehaviour
     {
         /// <summary>La versión del contrato: debe coincidir con VISOR_PUENTE_VERSION.</summary>
-        public const string Version = "1.0.0";
+        public const string Version = "1.1.0";
 
         private const float SegundosPorReporteFps = 5f;
         private const float SegundosPorReporteTiempo = 0.1f;
@@ -137,6 +137,11 @@ namespace Croquis.Visor
         public void encuadrar(string texto)
         {
             Campos(texto, j => visor.Camara.Encuadrar((string)j["zona"]));
+        }
+
+        public void marcadores(string texto)
+        {
+            Campos(texto, j => visor.Marcadores((bool)j["visibles"]));
         }
 
         public void calidad(string texto)

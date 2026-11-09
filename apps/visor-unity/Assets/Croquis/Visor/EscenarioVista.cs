@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Croquis.Generated;
 using UnityEngine;
+using Material = UnityEngine.Material;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 
@@ -16,11 +17,8 @@ namespace Croquis.Visor
     {
         private const int LuminariasEncendidasMax = 6;
 
-        public static void Construir(Transform raiz, Escenario e, Light sol, Camera camara)
+        public static void Construir(Transform raiz, Escenario e, Light sol, Camera camara, Terreno terreno)
         {
-            // Hoy el piso de la vía es plano; el relieve procedural solo existe fuera de ella y ya viene
-            // en las alturas del suelo. W5 cambia esta función y nada más.
-            var terreno = new Terreno();
             var escenario = new GameObject("escenario").transform;
             escenario.SetParent(raiz, false);
             Ambiente(e.Ambiente, sol, camara);
@@ -52,7 +50,7 @@ namespace Croquis.Visor
             var bajo = !a.Noche && a.SolElevacionDeg < 12.0;
             // Las intensidades del visor web son de three.js; en URP una direccional de 1 ya es sol
             // pleno. Se conserva su proporción entre día, crepúsculo, nublado y noche.
-            sol.intensity = (float)a.IntensidadSol * (a.Noche ? 0.22f : 0.46f);
+            sol.intensity = (float)a.IntensidadSol * (a.Noche ? 0.7f : 0.52f);
             sol.color = a.Noche
                 ? new Color(0.62f, 0.72f, 1f)
                 : Color.Lerp(new Color(1f, 0.74f, 0.52f), new Color(1f, 0.96f, 0.9f), Mathf.Clamp01((float)a.SolElevacionDeg / 28f));
@@ -64,11 +62,11 @@ namespace Croquis.Visor
             var cielo = Materiales.Cielo(nombre, out var azimutHdri);
             // En el HDRI el azimut se mide desde su centro; en la escena, desde el norte hacia el este.
             cielo.SetFloat("_Rotation", Mathf.Repeat(azimutHdri - (float)a.SolAzimutDeg, 360f));
-            cielo.SetFloat("_Exposure", a.Noche ? 0.55f : lluvia ? 0.8f : 1f);
+            cielo.SetFloat("_Exposure", a.Noche ? 0.5f : lluvia ? 0.8f : 1f);
             RenderSettings.skybox = cielo;
             RenderSettings.sun = sol;
             RenderSettings.ambientMode = AmbientMode.Skybox;
-            RenderSettings.ambientIntensity = (float)a.IntensidadAmbiente * (a.Noche ? 1.6f : 1.05f);
+            RenderSettings.ambientIntensity = a.Noche ? (lluvia ? 2.6f : 1.5f) : (float)a.IntensidadAmbiente;
             RenderSettings.defaultReflectionMode = DefaultReflectionMode.Skybox;
             RenderSettings.reflectionIntensity = a.Noche ? 0.6f : 1f;
             camara.clearFlags = CameraClearFlags.Skybox;
@@ -78,7 +76,7 @@ namespace Croquis.Visor
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.ExponentialSquared;
             // Aun sin niebla declarada hay aire: lo lejano se funde con el horizonte.
-            RenderSettings.fogDensity = Mathf.Max((float)a.DensidadNiebla, 0.0011f);
+            RenderSettings.fogDensity = Mathf.Max((float)a.DensidadNiebla, 0.00055f);
             RenderSettings.fogColor = a.Noche
                 ? new Color(0.035f, 0.045f, 0.07f)
                 : Color.Lerp(horizonte, Color.white, lluvia ? 0.25f : 0.4f);
@@ -99,21 +97,21 @@ namespace Croquis.Visor
                 var sombra = false;
                 switch (c.Nombre)
                 {
-                    case Nombre.Calzada:
+                    case NombreCapa.Calzada:
                         mat = Materiales.Pbr("asfalto" + sufijo);
                         m.Planta(c.Posiciones, c.Indices, (float)c.AlturaM, terreno, Materiales.Mosaico("asfalto"));
                         break;
-                    case Nombre.Acotamiento:
+                    case NombreCapa.Acotamiento:
                         mat = Materiales.Pbr("asfalto" + sufijo, new Color(1.5f, 1.45f, 1.38f));
                         m.Planta(c.Posiciones, c.Indices, (float)c.AlturaM, terreno, Materiales.Mosaico("asfalto") * 0.7f);
                         break;
-                    case Nombre.Banqueta:
-                    case Nombre.Camellon:
+                    case NombreCapa.Banqueta:
+                    case NombreCapa.Camellon:
                         mat = Materiales.Pbr("concreto" + sufijo);
                         m.Planta(c.Posiciones, c.Indices, (float)c.AlturaM, terreno, Materiales.Mosaico("concreto"));
                         sombra = true;
                         break;
-                    case Nombre.RayasAmarillas:
+                    case NombreCapa.RayasAmarillas:
                         mat = Materiales.Calca(new Color(0.83f, 0.62f, 0.1f, 0.9f));
                         m.Planta(c.Posiciones, c.Indices, (float)c.AlturaM, terreno, 1f);
                         break;
@@ -206,7 +204,7 @@ namespace Croquis.Visor
             CapaEscenario calzada = null;
             foreach (var c in v.Capas)
             {
-                if (c.Nombre == Nombre.Calzada)
+                if (c.Nombre == NombreCapa.Calzada)
                 {
                     calzada = c;
                 }
@@ -307,7 +305,8 @@ namespace Croquis.Visor
                 }
             }
 
-            var tinte = a.Noche ? new Color(0.75f, 0.8f, 0.85f) : Color.white;
+            // La textura es de hojarasca: se lleva hacia el verde del pasto de temporada.
+            var tinte = a.Noche ? new Color(0.6f, 0.82f, 0.55f) : new Color(0.66f, 0.86f, 0.5f);
             pasto.Poner(padre, lejano ? "suelo_lejano" : "suelo", Materiales.Pbr("pasto", tinte), false);
 
             // Las parcelas (barbecho) y la orilla seca junto a la vía: una capa de tierra cuya
@@ -321,7 +320,7 @@ namespace Croquis.Visor
             {
                 var tono = (float)s.Tonos[k];
                 var seco = s.Seco != null && s.Seco.Length == n * n ? (float)s.Seco[k] : 0f;
-                var alfa = Mathf.Clamp01(Mathf.Max(tono * 0.62f, seco * 0.85f));
+                var alfa = Mathf.Clamp01(Mathf.Max(tono * 0.38f, seco * 0.8f));
                 var c = Color.Lerp(ocre, tierra, seco > tono ? 1f : 0f);
                 c.a = alfa;
                 px[k] = c;
@@ -386,7 +385,7 @@ namespace Croquis.Visor
                     luz.spotAngle = 128f;
                     luz.innerSpotAngle = 70f;
                     luz.range = alto * 3.4f;
-                    luz.intensity = 26f;
+                    luz.intensity = 1500f;
                     luz.color = new Color(1f, 0.82f, 0.56f);
                     luz.shadows = luces < 2 ? LightShadows.Soft : LightShadows.None;
                     luces++;
@@ -409,9 +408,10 @@ namespace Croquis.Visor
         {
             var go = new GameObject("lluvia");
             // La lluvia sigue a la cámara: siempre llueve donde se mira.
-            go.transform.SetParent(camara.transform, false);
-            go.transform.localPosition = Vector3.zero;
-            go.AddComponent<SiempreVertical>().Altura = 16f;
+            go.transform.SetParent(padre, false);
+            var sigue = go.AddComponent<SiempreVertical>();
+            sigue.Altura = 14f;
+            sigue.Camara = camara.transform;
             var ps = go.AddComponent<ParticleSystem>();
             ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             var main = ps.main;
@@ -419,7 +419,7 @@ namespace Croquis.Visor
             main.prewarm = true;
             main.startLifetime = 1.1f;
             main.startSpeed = 19f;
-            main.startSize = new ParticleSystem.MinMaxCurve(0.012f, 0.022f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.006f, 0.011f);
             main.maxParticles = gotas;
             main.simulationSpace = ParticleSystemSimulationSpace.World;
             main.gravityModifier = 0.4f;
@@ -431,7 +431,7 @@ namespace Croquis.Visor
             forma.rotation = new Vector3(90f, 0f, 0f);
             var r = go.GetComponent<ParticleSystemRenderer>();
             r.renderMode = ParticleSystemRenderMode.Stretch;
-            r.lengthScale = 22f;
+            r.lengthScale = 45f;
             r.velocityScale = 0.01f;
             r.sharedMaterial = Materiales.Lluvia;
             r.shadowCastingMode = ShadowCastingMode.Off;
@@ -473,16 +473,18 @@ namespace Croquis.Visor
     public sealed class SiempreVertical : MonoBehaviour
     {
         public float Altura { get; set; }
+        public Transform Camara { get; set; }
 
         private void LateUpdate()
         {
-            var padre = transform.parent;
-            if (padre == null)
+            if (Camara == null)
             {
                 return;
             }
 
-            transform.SetPositionAndRotation(padre.position + padre.forward * 12f + Vector3.up * Altura, Quaternion.identity);
+            var adelante = Camara.forward;
+            adelante.y = 0f;
+            transform.SetPositionAndRotation(Camara.position + adelante.normalized * 16f + Vector3.up * Altura, Quaternion.identity);
         }
     }
 }

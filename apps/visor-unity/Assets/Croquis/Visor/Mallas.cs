@@ -37,7 +37,7 @@ namespace Croquis.Visor
     public sealed class Malla
     {
         /// <summary>Lado máximo de un triángulo en planta cuando el piso tiene relieve (m).</summary>
-        public const float LadoConRelieve = 4f;
+        public const float LadoConRelieve = 1.2f;
 
         private readonly List<Vector3> v = new List<Vector3>();
         private readonly List<Vector2> uv = new List<Vector2>();
@@ -91,9 +91,18 @@ namespace Croquis.Visor
         /// <summary>Una caja orientada: centro de la base, ejes unitarios y medidas. Sin tapa inferior.</summary>
         public void Caja(Vector3 baseCentro, Vector3 ejeX, Vector3 ejeZ, float ancho, float alto, float fondo, float uvPorMetro = 1f)
         {
+            // Las caras miran hacia afuera con cualquier par de ejes: si el par viene al revés (como
+            // el de `Cross(up, eje)`), se voltea uno, que da la misma caja.
+            var arriba = Vector3.Cross(ejeZ, ejeX);
+            if (Vector3.Dot(arriba, Vector3.up) < 0f)
+            {
+                ejeZ = -ejeZ;
+                arriba = -arriba;
+            }
+
             var x = ejeX * (ancho / 2f);
             var z = ejeZ * (fondo / 2f);
-            var y = Vector3.up * alto;
+            var y = arriba.normalized * alto;
             var p = new[]
             {
                 baseCentro - x - z, baseCentro + x - z, baseCentro + x + z, baseCentro - x + z,
