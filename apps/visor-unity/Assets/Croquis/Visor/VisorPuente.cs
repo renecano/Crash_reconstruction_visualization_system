@@ -38,16 +38,6 @@ namespace Croquis.Visor
         {
             visor = GetComponent<VisorCaso>();
             Application.targetFrameRate = -1;
-            // En WebGL el resplandor quema toda la imagen en blanco (medido el 2026-11-09 con un build de
-            // diagnóstico: sin él, la escena sale igual que en el editor). Se apaga ahí hasta U5.
-            if (Application.platform == RuntimePlatform.WebGLPlayer)
-            {
-                var volumen = FindFirstObjectByType<UnityEngine.Rendering.Volume>();
-                if (volumen != null && volumen.profile.TryGet<UnityEngine.Rendering.Universal.Bloom>(out var resplandor))
-                {
-                    resplandor.active = false;
-                }
-            }
         }
 
         private void Start()
@@ -167,6 +157,45 @@ namespace Croquis.Visor
                 if (j["pos"] != null)
                 {
                     datos.renderPostProcessing = (bool)j["pos"];
+                }
+
+                if (j["nan"] != null)
+                {
+                    datos.stopNaN = (bool)j["nan"];
+                }
+
+                if (j["sonda"] != null)
+                {
+                    foreach (var sonda in FindObjectsByType<ReflectionProbe>(FindObjectsSortMode.None))
+                    {
+                        sonda.enabled = (bool)j["sonda"];
+                    }
+                }
+
+                if (j["sombras"] != null)
+                {
+                    foreach (var luz in FindObjectsByType<Light>(FindObjectsSortMode.None))
+                    {
+                        luz.shadows = (bool)j["sombras"] ? LightShadows.Soft : LightShadows.None;
+                    }
+                }
+
+                foreach (var sonda in FindObjectsByType<ReflectionProbe>(FindObjectsSortMode.None))
+                {
+                    if (j["sonda_hdr"] != null)
+                    {
+                        sonda.hdr = (bool)j["sonda_hdr"];
+                    }
+
+                    if (j["sonda_caja"] != null)
+                    {
+                        sonda.boxProjection = (bool)j["sonda_caja"];
+                    }
+
+                    if (j["sonda_tomar"] != null)
+                    {
+                        sonda.RenderProbe();
+                    }
                 }
 
                 if (j["hdr"] != null)

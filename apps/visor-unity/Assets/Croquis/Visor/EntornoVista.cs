@@ -209,7 +209,7 @@ namespace Croquis.Visor
 
             marcos.Poner(padre, "marcos", Materiales.Liso(new Color(0.16f, 0.16f, 0.17f), 0.3f));
             vidrios.Poner(padre, "vidrios", Materiales.Vidrio, false);
-            encendidas.Poner(padre, "ventanas_encendidas", Materiales.Emisivo(new Color(0.95f, 0.8f, 0.55f), new Color(2.6f, 1.9f, 1f)), false);
+            encendidas.Poner(padre, "ventanas_encendidas", Materiales.Emisivo(new Color(0.95f, 0.8f, 0.55f), new Color(1.25f, 0.82f, 0.38f)), false);
             lamina.Poner(padre, "cortinas", Materiales.Pbr("lamina"));
             concreto.Poner(padre, "azoteas", Materiales.Pbr("concreto", new Color(0.8f, 0.8f, 0.8f)));
             negro.Poner(padre, "tinacos", Materiales.Liso(new Color(0.07f, 0.07f, 0.075f), 0.45f));

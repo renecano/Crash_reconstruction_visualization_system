@@ -4,12 +4,35 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 
 ## Estado
 
-- **Fase actual:** U2 (escenario). La primera pasada completa está en `feat/u2-escenario`, con capturas del build WebGL. **Todavía no llega a la vara de «juego actual de autos»:** falta una segunda pasada de calidad (abajo) y la revisión de René.
-- **Siguiente paso:** la segunda pasada de U2 con lo que René marque, y después U3.
+- **Fase actual:** U2 (escenario), segunda pasada, en el orden que fijó René el 2026-11-09: 1 luz y color, 2 calle mexicana, 3 suelo y desgaste, 4 árboles, 5 autopista y cerros.
+- **Hecho:** el punto 1. **En curso:** el punto 2 (`cuadras.ts` y las fachadas por tipo de lote).
+- **Siguiente paso:** cerrar el punto 2 con sus capturas, su build WebGL y su medición. Al terminar los 5: publicar el build en Blob y entregar las 20 capturas nuevas junto a las del 2026-11-09.
+- **Cómo se itera:** capturas del Editor en modo batch (`Capturas.Tomar`, unos 3 min). En esta sesión no hubo herramientas del MCP de Unity. Un build WebGL solo al cerrar cada punto.
 
 ## U2 · Escenario
 
 La meta está en `docs/cesvi/PLAN-CESVI.md` §3.3. Decisiones: ADR 0112 (el escenario se calcula en TS) y ADR 0113 (recursos y materiales).
+
+### Segunda pasada · punto 1: luz y color (2026-11-09)
+
+- **Capturas para comparar** (del Editor, AXA y `lateral_interseccion`, día y noche, cinematográfica y acera): `docs/cesvi/u2/puntos/p0-antes/` y `docs/cesvi/u2/puntos/p1-luz/`.
+- **Qué cambió:** exposición y color por ambiente, oclusión ambiental a escala de calle, sombra de contacto bajo cada vehículo, sonda de reflejos, noche legible (luz ambiente explícita, luna, niebla con tope, luminarias de caída suave con su charco de luz en el piso), y lluvia fina con salpicaduras. El detalle está en el ADR 0113.
+- **El resplandor vuelve a estar encendido en WebGL.** Lo que quemaba la imagen eran pixeles sin número: primero por normales anuladas en caras dobles, y después por la sonda de reflejos con HDR, que en WebGL devuelve NaN (37.5 % de la captura en negro con HDR, 0.5 % sin él). En WebGL la sonda va sin HDR.
+- **Medido al cerrar el punto** (`eval/results/unity_build.json` y `docs/cesvi/u2/puntos/p1-luz/fps-web.json`):
+
+| Qué                                | Primera pasada | Punto 1     |
+| ---------------------------------- | -------------- | ----------- |
+| Peso del build                     | 61.3 MB        | 62.5 MB     |
+| Con Brotli calidad 9               | 27.7 MB        | 28.4 MB     |
+| Hasta que Unity arranca, a 20 Mbps | 12.9 s         | 13.1 s      |
+| Hasta que AXA se ve                | 3.6 s más      | 3.7 s más   |
+| fps a 1280 × 720, AXA de día       | 35.7           | 37.75       |
+| fps a 1600 × 900, de día           | 20 a 27        | 20.8 a 26.3 |
+| fps a 1600 × 900, de noche         | 12 a 21        | 11.4 a 17.2 |
+
+- **La noche bajó de fps** (el mínimo era 12.3 y ahora es 11.4): la sonda, la oclusión más ancha y los charcos de luz cuestan. Sigue sin cumplir §7.8; los niveles son U5.
+- **Ajustado después de este build, sin medir todavía:** los faros bajan de intensidad (a quemarropa tapaban el punto de contacto con un destello) y las gotas pegadas a la cámara tienen tope de tamaño. Se verifican en el build del punto 2.
+- **Queda de este punto:** los cerros de noche salen como silueta negra (se atiende en el punto 5) y los reflejos en el asfalto mojado casi no se notan de noche.
 
 ### Resumen para René (primera pasada, 2026-11-09)
 

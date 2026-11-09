@@ -4,6 +4,7 @@ using Croquis.Generated;
 using UnityEngine;
 using Material = UnityEngine.Material;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 namespace Croquis.Visor
@@ -29,12 +30,14 @@ namespace Croquis.Visor
             }
 
             EntornoVista.Construir(escenario, e.Entorno, e.Ambiente, e.Semilla);
-            Luminarias(escenario, e.Luminarias, e.Ambiente);
+            Luminarias(escenario, e.Luminarias, e.Ambiente, new Vector2((float)e.Centro.X, (float)e.Centro.Y));
             var p = e.Ambiente.Precipitacion;
             if (p.StartsWith("lluvia", StringComparison.Ordinal) || p == "granizo")
             {
                 Lluvia(escenario, e.Centro, p == "lluvia_ligera" ? 2500 : 6000, camara);
             }
+
+            Sonda(escenario, e);
 
             Leyenda(escenario);
         }
@@ -50,7 +53,9 @@ namespace Croquis.Visor
             var bajo = !a.Noche && a.SolElevacionDeg < 12.0;
             // Las intensidades del visor web son de three.js; en URP una direccional de 1 ya es sol
             // pleno. Se conserva su proporción entre día, crepúsculo, nublado y noche.
-            sol.intensity = (float)a.IntensidadSol * (a.Noche ? 0.7f : 0.52f);
+            // De noche la direccional es la luna: tenue y azul, pero suficiente para que la vía y los
+            // vehículos se distingan lejos de las luminarias (es un visor forense, no una postal).
+            sol.intensity = a.Noche ? (lluvia ? 0.16f : 0.3f) : (float)a.IntensidadSol * 0.56f;
             sol.color = a.Noche
                 ? new Color(0.62f, 0.72f, 1f)
                 : Color.Lerp(new Color(1f, 0.74f, 0.52f), new Color(1f, 0.96f, 0.9f), Mathf.Clamp01((float)a.SolElevacionDeg / 28f));
@@ -62,13 +67,31 @@ namespace Croquis.Visor
             var cielo = Materiales.Cielo(nombre, out var azimutHdri);
             // En el HDRI el azimut se mide desde su centro; en la escena, desde el norte hacia el este.
             cielo.SetFloat("_Rotation", Mathf.Repeat(azimutHdri - (float)a.SolAzimutDeg, 360f));
-            cielo.SetFloat("_Exposure", a.Noche ? 0.5f : lluvia ? 0.8f : 1f);
+            cielo.SetFloat("_Exposure", a.Noche ? 0.75f : lluvia ? 0.8f : 1f);
             RenderSettings.skybox = cielo;
             RenderSettings.sun = sol;
-            RenderSettings.ambientMode = AmbientMode.Skybox;
-            RenderSettings.ambientIntensity = a.Noche ? (lluvia ? 2.6f : 1.5f) : (float)a.IntensidadAmbiente;
+            if (a.Noche)
+            {
+                // El HDRI nocturno casi no alumbra: el ambiente es el resplandor del cielo sobre una
+                // ciudad, más claro arriba y con nubes (lluvia) todavía más.
+                var k = lluvia ? 1.35f : 1f;
+                // Como sonda explícita: al cambiar el modo en ejecución, los modos de color no
+                // actualizaban la sonda y las caras sin luz directa salían negras.
+                var sh = new SphericalHarmonicsL2();
+                sh.AddAmbientLight(new Color(0.07f, 0.078f, 0.1f) * k);
+                sh.AddDirectionalLight(Vector3.up, new Color(0.2f, 0.25f, 0.38f) * k, 1f);
+                RenderSettings.ambientMode = AmbientMode.Custom;
+                RenderSettings.ambientProbe = sh;
+            }
+            else
+            {
+                RenderSettings.ambientMode = AmbientMode.Skybox;
+                RenderSettings.ambientIntensity = (float)a.IntensidadAmbiente;
+            }
+
             RenderSettings.defaultReflectionMode = DefaultReflectionMode.Skybox;
-            RenderSettings.reflectionIntensity = a.Noche ? 0.6f : 1f;
+            RenderSettings.reflectionIntensity = a.Noche ? 0.85f : 1f;
+            Gradacion(a, lluvia, bajo);
             camara.clearFlags = CameraClearFlags.Skybox;
             camara.farClipPlane = 3000f;
 
@@ -76,12 +99,96 @@ namespace Croquis.Visor
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.ExponentialSquared;
             // Aun sin niebla declarada hay aire: lo lejano se funde con el horizonte.
-            RenderSettings.fogDensity = Mathf.Max((float)a.DensidadNiebla, 0.00055f);
+            // De noche la niebla tiene tope: con lluvia, la acera de enfrente se perdía en negro.
+            RenderSettings.fogDensity = Mathf.Clamp((float)a.DensidadNiebla, 0.00055f, a.Noche ? 0.004f : 1f);
             RenderSettings.fogColor = a.Noche
-                ? new Color(0.035f, 0.045f, 0.07f)
-                : Color.Lerp(horizonte, Color.white, lluvia ? 0.25f : 0.4f);
+                ? (lluvia ? new Color(0.085f, 0.09f, 0.11f) : new Color(0.04f, 0.05f, 0.075f))
+                : Color.Lerp(horizonte, Color.white, lluvia ? 0.2f : 0.12f);
             DynamicGI.UpdateEnvironment();
         }
+
+        /// <summary>
+        /// La exposición y el color de cada ambiente, sobre el perfil base (tono ACES, resplandor y
+        /// viñeta). Se cambia la copia del volumen, no el asset.
+        /// </summary>
+        private static void Gradacion(AmbienteEscenario a, bool lluvia, bool bajo)
+        {
+            var volumen = UnityEngine.Object.FindFirstObjectByType<Volume>();
+            if (volumen == null || !volumen.profile.TryGet<ColorAdjustments>(out var color))
+            {
+                return;
+            }
+
+            float exposicion, contraste, saturacion;
+            Color filtro;
+            if (a.Noche)
+            {
+                exposicion = lluvia ? 0.95f : 0.75f;
+                contraste = 10f;
+                saturacion = -4f;
+                filtro = new Color(0.94f, 0.97f, 1f);
+            }
+            else if (lluvia || a.Turbidez > 6.0)
+            {
+                exposicion = 0.35f;
+                contraste = 14f;
+                saturacion = -8f;
+                filtro = new Color(0.96f, 0.98f, 1f);
+            }
+            else if (bajo)
+            {
+                exposicion = 0.3f;
+                contraste = 16f;
+                saturacion = 8f;
+                filtro = new Color(1f, 0.96f, 0.9f);
+            }
+            else
+            {
+                exposicion = 0.2f;
+                contraste = 18f;
+                saturacion = 10f;
+                filtro = new Color(1f, 0.985f, 0.96f);
+            }
+
+            color.postExposure.Override(exposicion);
+            color.contrast.Override(contraste);
+            color.saturation.Override(saturacion);
+            color.colorFilter.Override(filtro);
+        }
+
+        /// <summary>
+        /// La sonda de reflejos de la escena: una vez armado el escenario se toma un cubo desde el
+        /// centro de la acción, y la pintura, los vidrios y el asfalto mojado reflejan las fachadas, los
+        /// árboles y las luminarias en vez de solo el cielo. Los vehículos no entran en ella (capa 1):
+        /// se mueven, y la sonda se toma una sola vez.
+        /// </summary>
+        private static void Sonda(Transform padre, Escenario e)
+        {
+            var go = new GameObject("sonda_reflejos");
+            go.transform.SetParent(padre, false);
+            go.transform.position = new Vector3((float)e.Centro.X, 1.6f, (float)e.Centro.Y);
+            var sonda = go.AddComponent<ReflectionProbe>();
+            sonda.mode = ReflectionProbeMode.Realtime;
+            sonda.refreshMode = ReflectionProbeRefreshMode.ViaScripting;
+            sonda.timeSlicingMode = ReflectionProbeTimeSlicingMode.NoTimeSlicing;
+            sonda.resolution = 128;
+            // En WebGL una sonda en tiempo real con HDR devuelve pixeles sin número: todo lo que la usa
+            // salía negro, y con resplandor, blanco (medido el 2026-11-09 con builds de diagnóstico;
+            // ADR 0113). Ahí va sin HDR.
+            sonda.hdr = Application.platform != RuntimePlatform.WebGLPlayer;
+            sonda.boxProjection = true;
+            sonda.size = new Vector3(90f, 40f, 90f);
+            sonda.center = new Vector3(0f, 18.4f, 0f);
+            sonda.blendDistance = 8f;
+            sonda.nearClipPlane = 0.3f;
+            sonda.farClipPlane = 600f;
+            sonda.cullingMask = ~(1 << CapaVehiculos);
+            sonda.shadowDistance = 60f;
+            sonda.RenderProbe();
+        }
+
+        /// <summary>La capa de los vehículos: fuera de la sonda de reflejos.</summary>
+        public const int CapaVehiculos = 1;
 
         // ---- Vía --------------------------------------------------------------------------------------
 
@@ -307,7 +414,7 @@ namespace Croquis.Visor
             }
 
             // La textura es de hojarasca: se lleva hacia el verde del pasto de temporada.
-            var tinte = a.Noche ? new Color(0.6f, 0.82f, 0.55f) : new Color(0.66f, 0.86f, 0.5f);
+            var tinte = a.Noche ? new Color(0.4f, 0.52f, 0.38f) : new Color(0.66f, 0.86f, 0.5f);
             pasto.Poner(padre, lejano ? "suelo_lejano" : "suelo", Materiales.Pbr("pasto", tinte), false);
 
             // Las parcelas (barbecho) y la orilla seca junto a la vía: una capa de tierra cuya
@@ -342,12 +449,21 @@ namespace Croquis.Visor
 
         // ---- Luminarias -------------------------------------------------------------------------------
 
-        private static void Luminarias(Transform padre, LuminariaEscenario[] lista, AmbienteEscenario a)
+        private static void Luminarias(Transform padre, LuminariaEscenario[] lista, AmbienteEscenario a, Vector2 centro)
         {
             if (lista.Length == 0)
             {
                 return;
             }
+
+            // Luz real solo en las más cercanas a la acción; las demás dejan su charco de luz pintado
+            // en el piso, que no cuesta una luz (en WebGL hay pocas por objeto).
+            var orden = new List<LuminariaEscenario>(lista);
+            orden.Sort((p, q) =>
+                (new Vector2((float)p.X, (float)p.Y) - centro).sqrMagnitude.CompareTo(
+                    (new Vector2((float)q.X, (float)q.Y) - centro).sqrMagnitude));
+            var reales = new HashSet<LuminariaEscenario>(orden.GetRange(0, Mathf.Min(LuminariasEncendidasMax, orden.Count)));
+            var halos = new Malla();
 
             var encendidas = a.Noche && a.Luminarias;
             var postes = new Malla();
@@ -377,16 +493,29 @@ namespace Croquis.Visor
                 var cabeza = codo + dir * 2.2f + Vector3.up * 0.38f;
                 postes.Caja(cabeza, lado, dir, 0.3f, 0.1f, 0.7f);
                 focos.Caja(cabeza - Vector3.up * 0.025f, lado, dir, 0.22f, 0.03f, 0.5f);
-                if (encendidas && luces < LuminariasEncendidasMax)
+                if (encendidas)
+                {
+                    // El charco de luz en el piso, bajo la cabeza. En las que llevan luz real es tenue:
+                    // solo alarga su caída más allá del alcance del foco.
+                    var c0 = new Vector3(cabeza.x, (float)l.Z + 0.045f, cabeza.z);
+                    var radio = alto * (reales.Contains(l) ? 2.6f : 1.9f);
+                    halos.Tarjeta(
+                        c0 + new Vector3(-radio, 0f, -radio), c0 + new Vector3(radio, 0f, -radio),
+                        c0 + new Vector3(radio, 0f, radio), c0 + new Vector3(-radio, 0f, radio));
+                }
+
+                if (encendidas && reales.Contains(l))
                 {
                     var luz = new GameObject("luz_luminaria").AddComponent<Light>();
                     luz.transform.SetParent(padre, false);
                     luz.type = LightType.Spot;
                     luz.transform.SetPositionAndRotation(cabeza - Vector3.up * 0.1f, Quaternion.LookRotation(Vector3.down + dir * 0.15f));
-                    luz.spotAngle = 128f;
-                    luz.innerSpotAngle = 70f;
-                    luz.range = alto * 3.4f;
-                    luz.intensity = 360f;
+                    // Cono muy abierto y sin núcleo: la luz cae suave desde el pie del poste, sin el
+                    // círculo quemado de un cono con borde.
+                    luz.spotAngle = 160f;
+                    luz.innerSpotAngle = 8f;
+                    luz.range = alto * 4.5f;
+                    luz.intensity = 190f;
                     luz.color = new Color(1f, 0.82f, 0.56f);
                     luz.shadows = luces < 2 ? LightShadows.Soft : LightShadows.None;
                     luces++;
@@ -394,6 +523,7 @@ namespace Croquis.Visor
             }
 
             postes.Poner(padre, "luminarias", Materiales.Liso(new Color(0.45f, 0.47f, 0.49f), 0.45f, 0.75f));
+            halos.Poner(padre, "charcos_de_luz", Materiales.Halo(new Color(1f, 0.8f, 0.52f, 0.11f)), false, false);
             focos.Poner(
                 padre,
                 "focos",
@@ -420,7 +550,7 @@ namespace Croquis.Visor
             main.prewarm = true;
             main.startLifetime = 1.1f;
             main.startSpeed = 19f;
-            main.startSize = new ParticleSystem.MinMaxCurve(0.006f, 0.011f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.003f, 0.006f);
             main.maxParticles = gotas;
             main.simulationSpace = ParticleSystemSimulationSpace.World;
             main.gravityModifier = 0.4f;
@@ -432,9 +562,54 @@ namespace Croquis.Visor
             forma.rotation = new Vector3(90f, 0f, 0f);
             var r = go.GetComponent<ParticleSystemRenderer>();
             r.renderMode = ParticleSystemRenderMode.Stretch;
-            r.lengthScale = 45f;
+            r.lengthScale = 42f;
+            // Una gota pegada a la cámara no debe verse como un poste.
+            r.maxParticleSize = 0.04f;
             r.velocityScale = 0.01f;
             r.sharedMaterial = Materiales.Lluvia;
+            r.shadowCastingMode = ShadowCastingMode.Off;
+            ps.Play();
+            Salpicaduras(padre, gotas, camara);
+        }
+
+        /// <summary>Las gotas al pegar en el piso: anillos chicos que se abren y se apagan.</summary>
+        private static void Salpicaduras(Transform padre, int gotas, Camera camara)
+        {
+            var go = new GameObject("salpicaduras");
+            go.transform.SetParent(padre, false);
+            var sigue = go.AddComponent<SiempreVertical>();
+            sigue.Altura = 0.05f;
+            sigue.AlPiso = true;
+            sigue.Camara = camara.transform;
+            var ps = go.AddComponent<ParticleSystem>();
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            var main = ps.main;
+            main.loop = true;
+            main.prewarm = true;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(0.18f, 0.32f);
+            main.startSpeed = 0f;
+            main.startSize = new ParticleSystem.MinMaxCurve(0.07f, 0.16f);
+            main.maxParticles = gotas / 2;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            var em = ps.emission;
+            em.rateOverTime = gotas * 1.4f;
+            var forma = ps.shape;
+            forma.shapeType = ParticleSystemShapeType.Box;
+            forma.scale = new Vector3(40f, 40f, 0.01f);
+            forma.rotation = new Vector3(90f, 0f, 0f);
+            var crece = ps.sizeOverLifetime;
+            crece.enabled = true;
+            crece.size = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.Linear(0f, 0.25f, 1f, 1f));
+            var apaga = ps.colorOverLifetime;
+            apaga.enabled = true;
+            var g = new Gradient();
+            g.SetKeys(
+                new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, 1f) },
+                new[] { new GradientAlphaKey(1f, 0f), new GradientAlphaKey(0f, 1f) });
+            apaga.color = g;
+            var r = go.GetComponent<ParticleSystemRenderer>();
+            r.renderMode = ParticleSystemRenderMode.HorizontalBillboard;
+            r.sharedMaterial = Materiales.Salpicadura;
             r.shadowCastingMode = ShadowCastingMode.Off;
             ps.Play();
         }
@@ -474,6 +649,9 @@ namespace Croquis.Visor
     public sealed class SiempreVertical : MonoBehaviour
     {
         public float Altura { get; set; }
+
+        /// <summary>Si va a ras del piso (salpicaduras) en vez de sobre la cámara (gotas).</summary>
+        public bool AlPiso { get; set; }
         public Transform Camara { get; set; }
 
         private void LateUpdate()
@@ -485,7 +663,9 @@ namespace Croquis.Visor
 
             var adelante = Camara.forward;
             adelante.y = 0f;
-            transform.SetPositionAndRotation(Camara.position + adelante.normalized * 16f + Vector3.up * Altura, Quaternion.identity);
+            var p = Camara.position + adelante.normalized * 16f;
+            p.y = AlPiso ? Altura : p.y + Altura;
+            transform.SetPositionAndRotation(p, Quaternion.identity);
         }
     }
 }

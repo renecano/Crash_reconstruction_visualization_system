@@ -23,5 +23,26 @@
 
 - **Los árboles son tarjetas,** no geometría. Los modelos CC0 de origen tienen de 0.3 a 4.6 millones de polígonos y pesan de 60 a 208 MB cada uno: no caben en un build web. El plan del entorno los pone a 22 m o más de la acción. Si de cerca no convencen, la salida es hornear una malla reducida de cada especie con Blender, y se anota para U5.
 - **La palmera no tiene tarjeta:** se arma con geometría (tronco y hojas en arco).
-- **Los reflejos salen del cielo sin girar,** así que el sol reflejado en el asfalto mojado puede no coincidir con el del cielo girado. Se corrige con una sonda de reflexión en U5 si se nota.
 - **Qué funciona en WebGL** se comprueba con el build, no con la documentación: las capturas finales y `eval/unity_build.mjs` salen de ahí.
+
+## Luz y color (segunda pasada de U2, 2026-11-09)
+
+- **Exposición y color por ambiente.** El perfil base lleva tono ACES, resplandor con tope y viñeta. Cada ambiente (día, nublado o lluvia, sol bajo, noche) ajusta exposición, contraste, saturación y filtro sobre la copia del volumen (`EscenarioVista.Gradacion`).
+- **Oclusión ambiental a escala de calle.** El radio de fábrica de URP es 3.5 cm y no oscurece nada a la distancia de una cámara de escena. Va en 0.55 m, a media resolución.
+- **Sombra de contacto.** URP no tiene sombras de contacto. Cada vehículo lleva una mancha suave bajo la carrocería (`sombra_contacto`), que lo asienta con cualquier luz; la sombra del sol sigue saliendo del mapa de sombras, con sesgos bajos.
+- **Sonda de reflejos.** Al armar el escenario se toma un cubo desde el centro de la acción (128 px, proyección de caja de 90 m). La pintura, los vidrios y el asfalto mojado reflejan fachadas, árboles y luminarias. Los vehículos van en la capa 1 y no entran en ella: se mueven y la sonda se toma una vez.
+- **Noche legible.** Es un visor forense: el perito tiene que distinguir vehículos, vía y evidencias.
+  - La luz ambiente es una sonda explícita (`AmbientMode.Custom`): al cambiar el modo en ejecución, los modos de color no la actualizaban y las caras sin luz directa salían negras.
+  - La luna alumbra tenue y azul. La niebla nocturna tiene tope: con lluvia tapaba la acera de enfrente.
+  - Solo las 6 luminarias más cercanas a la acción llevan luz real, con cono abierto y sin núcleo. Todas dejan su charco de luz pintado en el piso (una mancha que se suma), que no cuesta una luz.
+- **Lluvia.** Gotas más finas y transparentes, y salpicaduras: anillos que se abren y se apagan a ras del piso, alrededor de donde mira la cámara.
+
+### Por qué el resplandor quemaba la imagen en WebGL
+
+Se midió con builds de diagnóstico que apagan una cosa a la vez (`depurar` en el puente, fuera del contrato).
+
+- **La causa son pixeles sin número (NaN).** El resplandor reparte cada pixel entre sus vecinos; un solo NaN se riega a toda la imagen, y en WebGL sale blanco. En el Editor (Direct3D) el mismo pixel sale negro y no se riega.
+- **Primera fuente: normales de largo cero.** Una cara doble que compartía vértices anulaba sus normales (así salía negro el tope). `Malla.Cuadro` ahora duplica los vértices.
+- **Segunda fuente: la sonda de reflejos con HDR.** En WebGL, una sonda en tiempo real con HDR devuelve NaN en todo lo que la usa. Con HDR, el 37.5 % de la captura de `lateral_interseccion` salía negra; sin HDR, el 0.5 %. En WebGL la sonda va sin HDR.
+- **Defensas que se quedan:** la cámara corta los NaN antes del posproceso (`stopNaN`) y el resplandor tiene tope (`clamp` 6).
+- **El resplandor queda encendido en WebGL.**

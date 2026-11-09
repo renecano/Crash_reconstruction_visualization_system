@@ -60,6 +60,15 @@ namespace Croquis.Visor
                 vista.Partes = await modelos.ArmarAsync(go.transform, v, color);
                 vista.Frenado = extra?.Frenado;
                 vista.Luces(noche, extra == null || extra.Faros, (float)v.Dimensiones.LargoM);
+                foreach (var tr in go.GetComponentsInChildren<Transform>(true))
+                {
+                    tr.gameObject.layer = EscenarioVista.CapaVehiculos;
+                }
+
+                if (e != null)
+                {
+                    SombraDeContacto(go.transform, (float)v.Dimensiones.LargoM, (float)v.Dimensiones.AnchoM, noche);
+                }
                 vehiculos.Add(vista);
             }
 
@@ -106,6 +115,19 @@ namespace Croquis.Visor
                 Camara.Estorbos.Add(new Vector2((float)p.X, (float)p.Y));
             }
             Fijar(inicio);
+        }
+
+        /// <summary>
+        /// La sombra de contacto: una mancha suave bajo la carrocería, que asienta el vehículo en el piso
+        /// con cualquier luz. La sombra del sol sigue saliendo del mapa de sombras.
+        /// </summary>
+        private static void SombraDeContacto(Transform vehiculo, float largo, float ancho, bool noche)
+        {
+            var m = new Malla();
+            var w = ancho / 2f + 0.3f;
+            var l = largo / 2f + 0.3f;
+            m.Tarjeta(new Vector3(-w, 0.035f, -l), new Vector3(w, 0.035f, -l), new Vector3(w, 0.035f, l), new Vector3(-w, 0.035f, l));
+            m.Poner(vehiculo, "sombra_contacto", Materiales.SombraContacto(noche ? 0.55f : 0.7f), false, false);
         }
 
         /// <summary>El árbol más cercano a la acción, para la cámara de la acera.</summary>
@@ -213,10 +235,11 @@ namespace Croquis.Visor
                 luz.transform.localPosition = new Vector3(lado, 0.68f, largo / 2f - 0.15f);
                 luz.transform.localRotation = Quaternion.Euler(7f, lado * 3f, 0f);
                 luz.type = LightType.Spot;
-                luz.spotAngle = 62f;
-                luz.innerSpotAngle = 30f;
-                luz.range = 48f;
-                luz.intensity = 2600f;
+                luz.spotAngle = 70f;
+                luz.innerSpotAngle = 12f;
+                luz.range = 55f;
+                // Moderada: a quemarropa contra otra carrocería no debe tapar el punto de contacto.
+                luz.intensity = 650f;
                 luz.color = new Color(1f, 0.95f, 0.86f);
                 luz.shadows = LightShadows.None;
             }
