@@ -5,7 +5,9 @@ import {
   citaSupuestos,
   citaVelocidad,
   filasDeLaHoja,
+  citarUnaVez,
   insertarCita,
+  MARCAS_DE_CITA,
   narracionCorta,
 } from "./dictamen-lab";
 
@@ -86,5 +88,46 @@ describe("el dictamen (Laboratorio §8)", () => {
     const t = narracionCorta(`${"palabra ".repeat(40)}`, 30);
     expect(t.endsWith("palabra…")).toBe(true);
     expect(t.length).toBeLessThanOrEqual(31);
+  });
+});
+
+describe("citar sin duplicar (O2, plan v4)", () => {
+  const marca = MARCAS_DE_CITA.velocidad("B");
+  const cita =
+    "Velocidad de B antes del impacto: 71.56 km/h (rango: 68.02–92.81), mejor ajuste de la reconstrucción física de Croquis.";
+
+  it("citar dos veces deja un solo bloque y lo señala", () => {
+    const una = citarUnaVez("Mi conclusión.", cita, marca, 14, 14);
+    expect(una.accion).toBe("insertada");
+    const dos = citarUnaVez(una.texto, cita, marca, una.hasta, una.hasta);
+    expect(dos.accion).toBe("ya_estaba");
+    expect(dos.texto).toBe(una.texto);
+    expect(dos.texto.split("Velocidad de B").length - 1).toBe(1);
+    expect(dos.texto.slice(dos.desde, dos.hasta)).toBe(cita);
+  });
+
+  it("si la cifra cambió, reemplaza la cita vieja y conserva lo demás", () => {
+    const vieja = cita.replace("71.56", "69.00");
+    const texto = `Antes. ${vieja} Después.`;
+    const r = citarUnaVez(texto, cita, marca, 0, 0);
+    expect(r.accion).toBe("reemplazada");
+    expect(r.texto).toBe(`Antes. ${cita} Después.`);
+  });
+
+  it("los supuestos se reemplazan hasta el fin de su renglón", () => {
+    const m = MARCAS_DE_CITA.supuestos();
+    const texto = "Uno.\nSupuestos declarados: masa: 1200 kg.\nDos.";
+    const nueva = "Supuestos declarados: masa: 1300 kg; fricción: 0.7.";
+    const r = citarUnaVez(texto, nueva, m, 0, 0);
+    expect(r.texto).toBe(`Uno.\n${nueva}\nDos.`);
+    expect(citarUnaVez(r.texto, nueva, m, 0, 0).texto).toBe(r.texto);
+  });
+
+  it("cada tipo de cita tiene su bloque: una no pisa a la otra", () => {
+    const sup = "Supuestos declarados: masa: 1200 kg.";
+    const a = citarUnaVez("", cita, marca, 0, 0);
+    const b = citarUnaVez(a.texto, sup, MARCAS_DE_CITA.supuestos(), a.hasta, a.hasta);
+    expect(b.texto).toContain(cita);
+    expect(b.texto).toContain(sup);
   });
 });

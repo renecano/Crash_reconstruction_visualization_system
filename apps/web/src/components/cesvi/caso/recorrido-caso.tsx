@@ -189,6 +189,7 @@ export function RecorridoCaso({
   const [comparacionDeclarada, setComparacionDeclarada] =
     useState<DatosDictamenCaso["declarada"]>(null);
   const [exportApi, setExportApi] = useState<ViewerExportApi | null>(null);
+  const [pedidoExportar, setPedidoExportar] = useState(0);
   const [guardadoId, setGuardadoId] = useState<string | null>(
     inicial.origen === "guardado" ? inicial.id : null,
   );
@@ -1086,6 +1087,7 @@ export function RecorridoCaso({
         verificacion={verificacion}
         declarada={comparacionDeclarada}
         exportApi={vista === "3d" ? exportApi : null}
+        pedidoExportar={pedidoExportar}
         mapa={mapa}
         validacion={validacion}
         onValidacion={setValidacion}
@@ -1264,10 +1266,16 @@ export function RecorridoCaso({
         tema={tema}
         resumen={titulo}
         completo={Boolean(expediente && validacionVigente(validacion, expediente, narracion))}
+        exportarBloqueado={
+          abierto(pasos.length - 1) && r
+            ? null
+            : "Primero reconstruye: el dictamen se arma con la reconstrucción."
+        }
         onExportar={() => {
           if (!abierto(pasos.length - 1)) return;
           setModo("trabajar");
           irA(pasos.length - 1);
+          setPedidoExportar((n) => n + 1);
         }}
       />
       {escenaFacil && expediente && leida ? (

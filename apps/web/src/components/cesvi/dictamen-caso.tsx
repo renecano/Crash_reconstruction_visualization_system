@@ -25,18 +25,33 @@ import { croquisDeReconstruccion } from "@/lib/croquis-caso";
 import { croquisSobreMapa } from "@/lib/croquis-mapa";
 import type { CifraContraste } from "@/lib/contraste-lab";
 import { dictamenCasoPdf, dictamenCasoWord, type DatosDictamenCaso } from "@/lib/dictamen-caso";
-import { citaContraste, citaSupuestos, citaVelocidad, insertarCita } from "@/lib/dictamen-lab";
+import {
+  citaContraste,
+  citarUnaVez,
+  citaSupuestos,
+  citaVelocidad,
+  MARCAS_DE_CITA,
+  type MarcaDeCita,
+} from "@/lib/dictamen-lab";
 import { protagonista } from "@/lib/reconstruccion-lab";
 import { HojaDictamen } from "./caso/hoja-dictamen";
 import { ESTILO_MAPA, ESTILO_MAPA_CLARO } from "./mapa-comun";
 
+/**
+ * Descarga un archivo. El enlace va dentro del documento y la dirección se libera un minuto después:
+ * con el enlace suelto o liberada al segundo, algunos navegadores no alcanzan a guardar el archivo.
+ */
 function descargar(bytes: Uint8Array, nombre: string, tipo: string) {
   const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: tipo }));
   const a = document.createElement("a");
   a.href = url;
   a.download = nombre;
+  a.rel = "noopener";
+  a.style.display = "none";
+  document.body.appendChild(a);
   a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 /**
@@ -103,7 +118,10 @@ export function DictamenCaso({
   contra,
   letraDe,
   acciones,
+  pedidoExportar = 0,
 }: {
+  /** Sube cada vez que el perito pulsa «Exportar» en la barra: lleva la vista a las descargas. */
+  pedidoExportar?: number;
   /** El título del hecho, para la hoja. */
   titulo: string;
   /** El relato del caso, para la hoja (el dictamen de un reporte no lleva `narracion`). */
@@ -146,6 +164,11 @@ export function DictamenCaso({
     ? { perito: guardada.perito, conclusion: guardada.conclusion, fecha: guardada.fecha }
     : null;
   const [estado, setEstado] = useState<string | null>(null);
+  // Qué formato se está armando: su botón lo dice y no se puede pedir dos veces.
+  const [armando, setArmando] = useState<"pdf" | "docx" | null>(null);
+  const [avisoCita, setAvisoCita] = useState<string | null>(null);
+  const descargas = useRef<HTMLDivElement>(null);
+  const botonPdf = useRef<HTMLButtonElement>(null);
   // Qué croquis llevó el último dictamen descargado: sobre el mapa o a escala sin mapa.
   const [croquisUsado, setCroquisUsado] = useState<"mapa" | "escala" | null>(null);
 
@@ -169,6 +192,26 @@ export function DictamenCaso({
       sobreMapa: false,
     };
   };
+  // Las fotos del 3D se toman al abrir el dictamen, no al pedir el archivo (O2, plan v4): con el
+  // visor recién abierto esperan a que termine de compilar, y la descarga parecía no hacer nada.
+  const fotosListas = useRef<{
+    de: unknown;
+    api: ViewerExportApi | null;
+    promesa: ReturnType<typeof cuadros>;
+  } | null>(null);
+  const fotos = () => {
+    const f = fotosListas.current;
+    if (f && f.de === reconstruccion.resultado && f.api === exportApi) return f.promesa;
+    const promesa = cuadros(exportApi, reconstruccion.resultado);
+    fotosListas.current = { de: reconstruccion.resultado, api: exportApi, promesa };
+    return promesa;
+  };
+  useEffect(() => {
+    void fotos();
+    // Solo cuando cambia de qué son las fotos.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exportApi, reconstruccion.resultado]);
+
   const datos = async (): Promise<DatosDictamenCaso> => {
     const c = await croquis();
     return {
@@ -178,7 +221,7 @@ export function DictamenCaso({
       verificacion,
       croquis: c.imagen,
       croquisSobreMapa: c.sobreMapa,
-      cuadros3d: await cuadros(exportApi, reconstruccion.resultado),
+      cuadros3d: await fotos(),
       modelos3d: exportApi ? [...exportApi.vehicleCredits] : [],
       declarada,
       validacion,
@@ -195,7 +238,15 @@ export function DictamenCaso({
   const nombre = (ext: string) => `dictamen-reconstruccion${validacion ? "" : "-borrador"}.${ext}`;
 
   const exportar = async (formato: "pdf" | "docx") => {
-    setEstado(formato === "pdf" ? "Armando el PDF…" : "Armando el Word…");
+    if (armando) return;
+    setArmando(formato);
+    setEstado(
+      exportApi
+        ? "Tomando las fotos del 3D y armando el archivo…"
+        : formato === "pdf"
+          ? "Armando el PDF…"
+          : "Armando el Word…",
+    );
     try {
       const d = await datos();
       setCroquisUsado(d.croquisSobreMapa ? "mapa" : "escala");
@@ -206,11 +257,20 @@ export function DictamenCaso({
           nombre("docx"),
           "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         );
-      setEstado(null);
+      setEstado(`Listo: se descargó ${nombre(formato)}. Búscalo en tus descargas.`);
     } catch (e) {
       setEstado(`No se pudo armar el dictamen: ${(e as Error).message}`);
+    } finally {
+      setArmando(null);
     }
   };
+
+  // «Exportar» de la barra: trae las descargas a la vista y deja el foco en el PDF.
+  useEffect(() => {
+    if (!pedidoExportar) return;
+    descargas.current?.scrollIntoView({ block: "center", behavior: "smooth" });
+    botonPdf.current?.focus({ preventScroll: true });
+  }, [pedidoExportar]);
 
   // Ctrl+P descarga el PDF en este acto, como dice el botón.
   useEffect(() => {
@@ -224,19 +284,35 @@ export function DictamenCaso({
     return () => window.removeEventListener("keydown", alTeclear);
   });
 
-  /** Inserta una cita donde está el cursor. La escribe Croquis solo si el perito la pide. */
-  const citar = (cita: string) => {
+  /**
+   * Pone una cita donde está el cursor, una sola vez (O2, plan v4): si ya está, la resalta; si hay
+   * una anterior del mismo tipo, la reemplaza. La escribe Croquis solo si el perito la pide.
+   */
+  const citar = (cita: string, marca: MarcaDeCita) => {
     const c = campoConclusion.current;
-    const ini = c?.selectionStart ?? conclusion.length;
+    // Al final de lo seleccionado, nunca encima: la cita anterior queda resaltada (seleccionada), y
+    // la siguiente la habría reemplazado.
     const fin = c?.selectionEnd ?? conclusion.length;
-    const nueva = insertarCita(conclusion, cita, ini, fin);
-    setConclusion(nueva.texto);
-    onValidacion(null);
+    const nueva = citarUnaVez(conclusion, cita, marca, fin, fin);
+    if (nueva.accion !== "ya_estaba") {
+      setConclusion(nueva.texto);
+      onValidacion(null);
+    }
+    setAvisoCita(
+      nueva.accion === "ya_estaba"
+        ? "Esa cita ya está en tu conclusión: quedó resaltada."
+        : nueva.accion === "reemplazada"
+          ? "Se actualizó la cita que ya tenías."
+          : "Cita agregada a tu conclusión.",
+    );
     requestAnimationFrame(() => {
       c?.focus();
-      c?.setSelectionRange(nueva.cursor, nueva.cursor);
+      c?.setSelectionRange(nueva.desde, nueva.hasta);
     });
   };
+  const pistaExportar = pedidoExportar
+    ? "Elige cómo exportar: PDF, Word o el archivo .croquis."
+    : null;
   const vPico = protagonista(reconstruccion);
   const idPico = vPico ? String(vPico.vehiculo) : null;
   const citaDeVelocidad = idPico ? citaVelocidad(reconstruccion, idPico, letraDe(idPico)) : null;
@@ -291,7 +367,7 @@ export function DictamenCaso({
             <button
               type="button"
               className="boton-secundario boton-compacto"
-              onClick={() => citar(citaDeVelocidad)}
+              onClick={() => citar(citaDeVelocidad, MARCAS_DE_CITA.velocidad(letraDe(idPico)))}
               data-testid="citar-velocidad"
             >
               Citar velocidad de {letraDe(idPico)}
@@ -301,7 +377,12 @@ export function DictamenCaso({
             <button
               type="button"
               className="boton-secundario boton-compacto"
-              onClick={() => citar(citaContraste(contra, letraDe(contra.vehiculo)))}
+              onClick={() =>
+                citar(
+                  citaContraste(contra, letraDe(contra.vehiculo)),
+                  MARCAS_DE_CITA.contraste(letraDe(contra.vehiculo)),
+                )
+              }
               data-testid="citar-contraste"
             >
               Citar contraste
@@ -311,13 +392,18 @@ export function DictamenCaso({
             <button
               type="button"
               className="boton-secundario boton-compacto"
-              onClick={() => citar(citaDeSupuestos)}
+              onClick={() => citar(citaDeSupuestos, MARCAS_DE_CITA.supuestos())}
               data-testid="citar-supuestos"
             >
               Citar supuestos
             </button>
           ) : null}
         </div>
+        {avisoCita ? (
+          <p role="status" className="solo-trabajar t-nota" data-testid="aviso-cita">
+            {avisoCita}
+          </p>
+        ) : null}
         <div className="flex flex-col gap-1.5">
           <span className="font-semibold">Formato</span>
           <div className="segmentado" role="group" aria-label="Formato del dictamen">
@@ -383,23 +469,34 @@ export function DictamenCaso({
               ? `La validación de ${guardada.perito} era de otras entradas: cambiaron la narración o lo que marcaste. Vuelve a validar.`
               : "Sin validar: el dictamen sale como borrador. Para firmar, escribe tu conclusión y tu nombre."}
         </p>
+        {/* El estado va arriba de los botones: abajo quedaba fuera de la pantalla (O2, plan v4). */}
+        {(estado ?? pistaExportar) ? (
+          <p role="status" className="t-interfaz" data-testid="estado-descarga">
+            {estado ?? pistaExportar}
+          </p>
+        ) : null}
         <button
+          ref={botonPdf}
           type="button"
           className="boton-principal flex items-center justify-between"
           onClick={() => void exportar("pdf")}
+          aria-busy={armando === "pdf"}
+          aria-disabled={armando !== null}
           data-testid="descargar-dictamen-pdf"
         >
-          Descargar el PDF
+          {armando === "pdf" ? "Armando el PDF…" : "Descargar el PDF"}
           <kbd className="font-mono text-[0.6875rem] opacity-70">Ctrl P</kbd>
         </button>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2" ref={descargas}>
           <button
             type="button"
             className="boton-secundario boton-compacto"
             onClick={() => void exportar("docx")}
+            aria-busy={armando === "docx"}
+            aria-disabled={armando !== null}
             data-testid="descargar-dictamen-word"
           >
-            Word
+            {armando === "docx" ? "Armando…" : "Word"}
           </button>
           <button
             type="button"
@@ -421,11 +518,6 @@ export function DictamenCaso({
         {acciones.aviso ? (
           <p role="status" className="t-nota" data-testid="aviso-guardado">
             {acciones.aviso}
-          </p>
-        ) : null}
-        {estado ? (
-          <p role="status" className="t-interfaz">
-            {estado}
           </p>
         ) : null}
       </div>

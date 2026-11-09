@@ -81,6 +81,65 @@ export function insertarCita(
   return { texto: `${antes}${pegado}${despues}`, cursor: antes.length + pegado.length };
 }
 
+/** Cómo reconocer una cita ya puesta: con qué empieza y, si se sabe, con qué termina. */
+export interface MarcaDeCita {
+  inicio: string;
+  fin?: string;
+}
+
+/** Las marcas de cada cita, con las mismas palabras con las que se escriben arriba. */
+export const MARCAS_DE_CITA = {
+  velocidad: (nombre: string): MarcaDeCita => ({
+    inicio: `Velocidad de ${nombre} antes del impacto:`,
+    fin: "reconstrucción física de Croquis.",
+  }),
+  contraste: (nombre: string): MarcaDeCita => ({
+    inicio: `Por deformación, ${nombre}:`,
+    fin: "%).",
+  }),
+  supuestos: (): MarcaDeCita => ({ inicio: "Supuestos declarados:" }),
+};
+
+/**
+ * Pone una cita sin duplicarla (O2, plan v4): si ya está igual, el texto no cambia; si hay una
+ * anterior del mismo tipo (otra cifra, otros supuestos), la reemplaza; si no hay ninguna, la inserta
+ * en el cursor. Devuelve dónde quedó el bloque, para resaltarlo.
+ */
+export function citarUnaVez(
+  texto: string,
+  cita: string,
+  marca: MarcaDeCita,
+  ini: number,
+  fin: number,
+): {
+  texto: string;
+  desde: number;
+  hasta: number;
+  accion: "ya_estaba" | "reemplazada" | "insertada";
+} {
+  const igual = texto.indexOf(cita);
+  if (igual >= 0) {
+    return { texto, desde: igual, hasta: igual + cita.length, accion: "ya_estaba" };
+  }
+  const a = texto.indexOf(marca.inicio);
+  if (a >= 0) {
+    // Hasta su final conocido; si no lo tiene o el perito lo cambió, hasta el fin del renglón.
+    const renglon = texto.indexOf("\n", a);
+    const finRenglon = renglon < 0 ? texto.length : renglon;
+    const f = marca.fin ? texto.indexOf(marca.fin, a) : -1;
+    const b = f >= 0 && f < finRenglon ? f + marca.fin!.length : finRenglon;
+    return {
+      texto: texto.slice(0, a) + cita + texto.slice(b),
+      desde: a,
+      hasta: a + cita.length,
+      accion: "reemplazada",
+    };
+  }
+  const nueva = insertarCita(texto, cita, ini, fin);
+  const desde = nueva.texto.indexOf(cita, Math.max(0, Math.min(ini, nueva.texto.length) - 1));
+  return { texto: nueva.texto, desde, hasta: desde + cita.length, accion: "insertada" };
+}
+
 /** La narración de la hoja, recortada en una palabra entera. */
 export function narracionCorta(narracion: string, max = 240): string {
   const t = narracion.replace(/\s+/g, " ").trim();
