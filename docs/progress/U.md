@@ -37,13 +37,13 @@ La meta está en `docs/cesvi/PLAN-CESVI.md` §3.3. Decisiones: ADR 0112 (el esce
 
 Unity 6000.3.28f1, esta laptop (i5-10210U, 8 GB, sin tarjeta de video dedicada), Chromium.
 
-| Qué | U1 (sin escenario) | U2 (con escenario) |
-| --- | --- | --- |
-| Peso del build | 41.7 MB | 61.3 MB |
-| Con Brotli calidad 9 | 10.7 MB | 27.7 MB |
-| Hasta que Unity arranca, a 20 Mbps | 5.4 s | 12.9 s |
-| Hasta que AXA se ve | 2.2 s más | 3.6 s más |
-| fps a 1280 × 720, AXA de día | 58.8 | 36.4 |
+| Qué                                | U1 (sin escenario) | U2 (con escenario) |
+| ---------------------------------- | ------------------ | ------------------ |
+| Peso del build                     | 41.7 MB            | 61.3 MB            |
+| Con Brotli calidad 9               | 10.7 MB            | 27.7 MB            |
+| Hasta que Unity arranca, a 20 Mbps | 5.4 s              | 12.9 s             |
+| Hasta que AXA se ve                | 2.2 s más          | 3.6 s más          |
+| fps a 1280 × 720, AXA de día       | 58.8               | 36.4               |
 
 - **fps a 1600 × 900, con el caso quieto:** de 23 a 27 de día y de 12 a 20 de noche, según la escena.
 - **No cumple §7.8 de `PLAN.md`.** Todavía no hay niveles de calidad: todo corre con lo de alta (sombras de 4096 en 4 cascadas, MSAA 4x, oclusión ambiental, 8 luces por objeto). Los niveles son U5; ahí se recorta densidad en media, no función.
@@ -52,11 +52,11 @@ Unity 6000.3.28f1, esta laptop (i5-10210U, 8 GB, sin tarjeta de video dedicada),
 
 ### Memoria de los builds de U2
 
-| Paso | Duración | Pico de Unity | Mínimo libre |
-| --- | --- | --- | --- |
-| Primer build con recursos | 27 min | 2,770 MB | 550 MB |
-| Build de diagnóstico | 6 min | 2,627 MB | 354 MB |
-| Builds siguientes | 5 min | 2,168 a 2,852 MB | 386 a 523 MB |
+| Paso                      | Duración | Pico de Unity    | Mínimo libre |
+| ------------------------- | -------- | ---------------- | ------------ |
+| Primer build con recursos | 27 min   | 2,770 MB         | 550 MB       |
+| Build de diagnóstico      | 6 min    | 2,627 MB         | 354 MB       |
+| Builds siguientes         | 5 min    | 2,168 a 2,852 MB | 386 a 523 MB |
 
 Con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1` y sin nada más abierto, todos terminaron.
 

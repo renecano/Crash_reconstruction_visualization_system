@@ -34,7 +34,10 @@ Rama `feat/w1-dictamen`.
   - **Descarga:** el enlace va dentro del documento y su dirección se libera al minuto, no al segundo.
   - **«Exportar»:** lleva a las descargas, deja el foco en el PDF y dice qué elegir. Sin reconstrucción, explica por qué no se puede.
 - **Pruebas:** 4 unitarias de `citarUnaVez` y, en la e2e de AXA (`@flujo`): citar dos veces deja un bloque, «Exportar» responde, el PDF tiene al menos una página, el Word es un zip con `word/document.xml` y el aviso final queda a la vista.
-- **Sin medir:** cuánto tarda ahora la primera descarga con el 3D abierto en producción. Se mide al desplegar.
+- **Medido en producción el 2026-11-09** (Chromium, 1366 × 768, `321dc188`):
+  - Citar dos veces deja un solo bloque, en velocidad y en supuestos.
+  - **La primera descarga con el 3D recién abierto todavía tarda 8.5 s,** ahora con su aviso a la vista («Tomando las fotos del 3D y armando el archivo…»). Las siguientes tardan de 0.9 a 1.2 s.
+  - **Pendiente para U6:** revisarlo otra vez cuando las fotos salgan de Unity con `capturar` (René, 2026-11-09).
 
 ## W2 · El hecho (O1 y O5)
 
