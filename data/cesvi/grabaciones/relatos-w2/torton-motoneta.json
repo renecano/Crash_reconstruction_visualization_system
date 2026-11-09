@@ -1,0 +1,74 @@
+{
+  "narracion": "En la carretera México-Toluca, km 32, un torton golpea con su frente el costado izquierdo de una motoneta que se incorporaba.",
+  "modelo": "claude-sonnet-5-5",
+  "version": "escena-narracion-v2",
+  "grabada": "2026-11-09",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "carretera México-Toluca, km 32",
+        "cita": "En la carretera México-Toluca, km 32, un torton golpea con su frente el costado izquierdo de una motoneta"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "clase",
+        "valor": "camion_unitario",
+        "cita": "un torton golpea con su frente el costado izquierdo de una motoneta"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "clase",
+        "valor": "scooter",
+        "cita": "costado izquierdo de una motoneta que se incorporaba"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "un torton golpea con su frente el costado izquierdo de una motoneta"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 lateral_izquierdo",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "otra",
+        "cita": "costado izquierdo de una motoneta que se incorporaba"
+      }
+    ]
+  }
+}

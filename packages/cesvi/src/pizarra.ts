@@ -12,6 +12,7 @@
  * y el Verificador CESVI (las fórmulas de CESVI). Todo es determinista: el mismo caso con las mismas
  * respuestas da la misma pizarra y la misma bitácora.
  */
+import { conVocabulario } from "./relato";
 import { agrupar, expedienteDeSalida, type Conversion, type SalidaCorpus } from "./corpus";
 import { comparar, type ComparacionDictamen, type Conclusiones } from "./dictamenes-r4";
 import {
@@ -217,7 +218,8 @@ const verificadorCitas: Agente = {
   nombre: "verificador_citas",
   quiere: (p) => p.lecturas.length > p.verificadas,
   actua(p, _ctx, decir) {
-    const s = p.lecturas.at(-1)!;
+    // El vocabulario mexicano le da a cada vehículo su mención y, si falta, su clase (W2, O5).
+    const s = conVocabulario(p.lecturas.at(-1)!, p.narracion!).salida;
     const conv = expedienteDeSalida(s, p.narracion!, "perito");
     const k = conv.conteos;
     decir(
@@ -270,7 +272,12 @@ const validador: Agente = {
     const convertida = escenaDeConversion(p.conversion!);
     // Lo leído con sus citas, de la lectura elegida: El hecho lo marca en el relato.
     const escena = p.salidaElegida
-      ? { ...convertida, lectura: lecturaDeNarracion(p.salidaElegida, p.narracion!) }
+      ? {
+          ...convertida,
+          lectura: lecturaDeNarracion(p.salidaElegida, p.narracion!),
+          // La elegida ya pasó por el vocabulario: aquí solo se leen sus menciones.
+          menciones: conVocabulario(p.salidaElegida, p.narracion!).menciones,
+        }
       : convertida;
     const n = escena.expediente.vehiculos.length;
     decir(

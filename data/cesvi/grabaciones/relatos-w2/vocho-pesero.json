@@ -1,0 +1,82 @@
+{
+  "narracion": "Sobre la avenida Insurgentes, un vocho que circulaba al sur fue impactado por alcance por un pesero en su parte posterior.",
+  "modelo": "claude-sonnet-5-5",
+  "version": "escena-narracion-v2",
+  "grabada": "2026-11-09",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "alcance",
+        "cita": "fue impactado por alcance por un pesero en su parte posterior"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "avenida Insurgentes",
+        "cita": "Sobre la avenida Insurgentes, un vocho que circulaba al sur"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "vocho",
+        "cita": "un vocho que circulaba al sur fue impactado por alcance"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "clase",
+        "valor": "microbus_combi",
+        "cita": "por alcance por un pesero en su parte posterior"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "un vocho que circulaba al sur fue impactado"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "fue impactado por alcance por un pesero en su parte posterior"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 posterior",
+        "cita": "un pesero en su parte posterior"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "un pesero en su parte posterior"
+      }
+    ]
+  }
+}

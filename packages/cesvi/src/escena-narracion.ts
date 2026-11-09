@@ -21,6 +21,8 @@ import {
 } from "./corpus";
 import { GLOSARIO, glosarioParaPrompt } from "./hecho-lectura";
 
+import { conVocabulario, type MencionLeida } from "./relato";
+
 export const VERSION_PROMPT_ESCENA = "escena-narracion-v2";
 
 const lista = (campo: string) => VALORES[campo]!.join(", ");
@@ -152,6 +154,11 @@ export interface DatoLeidoEscena {
 
 export interface EscenaNarrada {
   expediente: Expediente;
+  /**
+   * Dónde nombra el relato a cada vehículo y, si su clase salió del vocabulario mexicano sin ser
+   * exacta, cuál se supuso (W2 del plan v4). Las escenas guardadas antes no lo traen.
+   */
+  menciones?: MencionLeida[];
   /** Lo que Croquis leyó, con sus citas (opcional: las escenas guardadas antes no lo traen). */
   lectura?: DatoLeidoEscena[];
   posiciones: PosicionDescrita[];
@@ -236,9 +243,12 @@ const enPalabras = (z: Zona) =>
   [z.cara.replace("_", " "), z.tercio, z.vertice?.replace("_", " ")].filter(Boolean).join(" ");
 
 export function escenaDeNarracion(s: SalidaCorpus, narracion: string): EscenaNarrada {
+  // El vocabulario mexicano le da a cada vehículo su mención y, si falta, su clase (O5).
+  const v = conVocabulario(s, narracion);
   return {
-    ...escenaDeConversion(expedienteDeSalida(s, narracion, "perito")),
-    lectura: lecturaDeNarracion(s, narracion),
+    ...escenaDeConversion(expedienteDeSalida(v.salida, narracion, "perito")),
+    lectura: lecturaDeNarracion(v.salida, narracion),
+    menciones: v.menciones,
   };
 }
 

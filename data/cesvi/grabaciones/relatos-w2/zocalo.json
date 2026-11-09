@@ -1,0 +1,90 @@
+{
+  "narracion": "En el zócalo de la Ciudad de México una combi colisiona con un pickup lobo en su parte trasera derecha",
+  "modelo": "claude-sonnet-5-5",
+  "version": "escena-narracion-v2",
+  "grabada": "2026-11-09",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "zócalo de la Ciudad de México",
+        "cita": "En el zócalo de la Ciudad de México una combi colisiona con un pickup lobo en su parte trasera derecha"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Ciudad de México",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "clase",
+        "valor": "microbus_combi",
+        "cita": "una combi colisiona con un pickup lobo"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "clase",
+        "valor": "pickup",
+        "cita": "un pickup lobo en su parte trasera derecha"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "lobo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "pickup lobo en su parte trasera derecha"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "tercio",
+        "valor": "derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "una combi colisiona con un pickup lobo en su parte trasera derecha"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 posterior",
+        "cita": "pickup lobo en su parte trasera derecha"
+      }
+    ]
+  }
+}
