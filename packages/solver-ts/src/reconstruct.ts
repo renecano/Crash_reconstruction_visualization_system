@@ -73,6 +73,16 @@ import { laneFollowingPath, roadAxis, type RoadAxis } from "./road";
 import { CG_HEIGHT_FRACTION, type RolloverCheck, rolloverToDict, tripCheck } from "./rollover";
 import { type SceneObject, sceneObjects, sceneObjectToDict } from "./scene-objects";
 import { stiffnessFor, zonaFromCdcSide } from "./stiffness";
+import {
+  BUMP_CONTACT,
+  BUMP_ENERGY,
+  attachedRelief,
+  brakeProfile,
+  bumpCrossings,
+  poseOn as poseOnTerrain,
+  reliefMissing,
+  terrainFromSpec,
+} from "./terrain";
 import { msToKmh } from "./units";
 import {
   Actor,
@@ -188,6 +198,8 @@ export interface VehicleOutcome {
   rollover: RolloverCheck | null;
   /** Daños de impactos posteriores en un vehículo que ya tenía daño (carambola, ADR 0066). */
   laterDamage?: LaterDamage[];
+  /** Con terreno que tiene altura (W5): z, cabeceo y alabeo de cada muestra de la trayectoria. */
+  terrainPose?: [number[], number[], number[]] | null;
 }
 
 /** El daño de un impacto posterior en un vehículo que ya tenía daño (carambola, ADR 0066). */
@@ -371,6 +383,13 @@ function vehicleDict(v: VehicleOutcome): Json {
       vx: tr.vx.map((x) => r6(x)),
       vy: tr.vy.map((x) => r6(x)),
       vel_angular: tr.yawRate.map((x) => r6(x)),
+      ...(v.terrainPose
+        ? {
+            z: v.terrainPose[0].map((x) => r6(x)),
+            cabeceo: v.terrainPose[1].map((x) => r6(x)),
+            alabeo: v.terrainPose[2].map((x) => r6(x)),
+          }
+        : {}),
     },
     v_impacto_kmh: r6(v.vImpactKmh),
     delta_v_kmh: r6(v.deltaVKmh),
@@ -863,7 +882,12 @@ function* product<T>(options: readonly (readonly T[])[]): Generator<T[]> {
  */
 export function reconstruct(
   spec: Json,
-  opts: { dt?: number; downedMu?: number } = {},
+  opts: {
+    dt?: number;
+    downedMu?: number;
+    /** La malla de relieve del paquete caso-3d que cita `lugar.terreno.relieve` (W5). */
+    relieve?: Json | null;
+  } = {},
 ): Reconstruction {
   const dt = opts.dt ?? DT_OUT;
   const banderas: string[] = [];
@@ -884,6 +908,18 @@ export function reconstruct(
   const laneWidth = num(lugar.ancho_carril, LEN, LANE_WIDTH_DEFAULT);
   const grade = lugar.pendiente ? Number((lugar.pendiente as Json).valor) : 0.0;
   const absFactor = absPeakFactor().nominal;
+  // Terreno (C3, W5): null si la escena no declara nada que cambie respecto a un plano, y entonces
+  // todo sigue por el camino de siempre.
+  const relieve = opts.relieve ?? attachedRelief(lugar);
+  const terrain = terrainFromSpec(lugar, relieve);
+  if (reliefMissing(lugar, relieve)) {
+    flag(
+      "relieve_sin_malla",
+      {},
+      "La escena cita el relieve real del lugar, pero su malla no llegó al solver: se " +
+        "reconstruye sin relieve.",
+    );
+  }
   const params: Json = {
     friccion_llanta: {
       valor: mu,
@@ -1059,7 +1095,8 @@ export function reconstruct(
       }
       dBrake = Math.min(dBrake, sImp);
       prof = new SpeedProfile(m.v0, (sImp - dBrake) / m.v0, decel);
-      if (prof.timeToDistance(sImp) === null) {
+      const recortado = prof.timeToDistance(sImp) === null;
+      if (recortado) {
         flag(
           "frenado_detiene_antes",
           { vehiculo: m.id, v_kmh: msToKmh(m.v0), frenado_m: dBrake },
@@ -1068,6 +1105,39 @@ export function reconstruct(
         );
         dBrake = (0.9 * m.v0 * m.v0) / (2 * decel);
         prof = new SpeedProfile(m.v0, (sImp - dBrake) / m.v0, decel);
+      }
+      if (terrain !== null) {
+        // Con terreno, el frenado se integra sobre él: fricción por zona, pendiente y topes.
+        const absK = m.abs ? absFactor : 1.0;
+        const sobreTerreno = (d: number): SpeedProfile =>
+          brakeProfile(
+            paths.get(m.id)!,
+            m.v0,
+            sImp - d,
+            decel,
+            terrain,
+            mu,
+            absK,
+            grade,
+            m.cgFromFront,
+            m.wheelbase,
+          );
+        const dPlano = dBrake;
+        prof = sobreTerreno(dBrake);
+        for (let k = 0; k < 60; k++) {
+          if (prof.timeToDistance(sImp) !== null) break;
+          dBrake *= 0.9;
+          prof = sobreTerreno(dBrake);
+        }
+        if (dBrake !== dPlano && !recortado) {
+          flag(
+            "frenado_detiene_antes",
+            { vehiculo: m.id, v_kmh: msToKmh(m.v0), frenado_m: dPlano },
+            `Vehículo ${m.rol}: con ${pyFixed(msToKmh(m.v0), 0)} km/h y ${pyFixed(dPlano, 1)} m de ` +
+              "frenado sobre este terreno se habría detenido antes del impacto; se " +
+              "recorta el frenado.",
+          );
+        }
       }
     } else {
       prof = new SpeedProfile(m.v0);
@@ -1436,6 +1506,7 @@ export function reconstruct(
       crush: Math.max(0.0, ...crush.get(m.id)![0]),
       crushFace: str((zonas.get(m.id) ?? {}).lado, "F"),
       dragAfterImpact: waits ? drag : null,
+      zoneFriction: !downed,
     };
   };
 
@@ -1485,7 +1556,7 @@ export function reconstruct(
   }
   const [jointResults, jointHits] = integrateJointImpacts(
     [...group.map((i) => postBody(byId.get(i)!)), ...fixed.map((o) => fixedObjectBody(o, mu))],
-    { dtOut: dt, tMax: T_POST_MAX, impacts: plans },
+    { dtOut: dt, tMax: T_POST_MAX, impacts: plans, terrain },
   );
   const jointPost = new Map<string, PostImpactResult>(group.map((i, k) => [i, jointResults[k]!]));
 
@@ -1651,6 +1722,8 @@ export function reconstruct(
         dtOut: dt,
         tMax: T_POST_MAX,
         rollingDrag: pb.rollingDrag,
+        terrain,
+        zoneFriction: pb.zoneFriction ?? true,
       });
     }
     if (resPost !== undefined) {
@@ -1812,6 +1885,44 @@ export function reconstruct(
     }
     const last = full.last();
     const [prof, width, e, origen] = crush.get(m.id)!;
+    let terrainPose: [number[], number[], number[]] | null = null;
+    if (terrain !== null && terrain.hasHeight) {
+      // La pose sobre el terreno, por contacto de las llantas: el visor solo la reproduce.
+      const ruedas = fourWheels(m.wheelbase, m.track, m.cgFromFront).positions;
+      terrainPose = [[], [], []];
+      for (let i = 0; i < full.length; i++) {
+        const [zI, cab, alab] = poseOnTerrain(
+          terrain,
+          ruedas,
+          full.x[i]!,
+          full.y[i]!,
+          full.yaw[i]!,
+        );
+        terrainPose[0].push(zI);
+        terrainPose[1].push(cab);
+        terrainPose[2].push(alab);
+      }
+    }
+    if (terrain !== null && terrain.bumps.length > 0) {
+      for (const [topeId, tCruce, vCruce] of bumpCrossings(
+        terrain,
+        m.cgFromFront,
+        full.t,
+        full.x,
+        full.y,
+        full.yaw,
+        full.vx,
+        full.vy,
+      )) {
+        eventosOut.push({
+          id: `tope-${topeId}-${m.id}`,
+          tipo: "cruce_tope",
+          t: tCruce,
+          actores: [m.id],
+          detalle: { velocidad_cruce_kmh: msToKmh(vCruce) },
+        });
+      }
+    }
     vehiculosOut.push({
       id: m.id,
       rol: m.rol,
@@ -1837,6 +1948,7 @@ export function reconstruct(
       distancePostM: distPost,
       rollover: null,
       laterDamage: laterDamage.get(m.id)!,
+      terrainPose,
     });
     if (m.braking && m.v0 > 0 && sContact.has(m.id)) {
       const tb = profiles.get(m.id)!.tBrake;
@@ -1861,6 +1973,24 @@ export function reconstruct(
         detalle: {},
       });
     }
+  }
+  if (terrain !== null && terrain.bumps.length > 0) {
+    params.perdida_energia_tope = {
+      valor: BUMP_ENERGY[0],
+      rango: [BUMP_ENERGY[1], BUMP_ENERGY[2]],
+      fuente:
+        "Cada eje que cruza un tope disipa esta fracción de (su carga × la altura " +
+        "del tope); no hay una medición que lo fije",
+      tipo: "supuesto",
+    };
+    params.perdida_contacto_tope = {
+      valor: BUMP_CONTACT[0],
+      rango: [BUMP_CONTACT[1], BUMP_CONTACT[2]],
+      fuente:
+        "Fracción de la pérdida de carga de una rueda rígida sobre la cresta del " +
+        "tope (1 − v²/(g·R)); la suspensión la reduce y no se modela",
+      tipo: "supuesto",
+    };
   }
   // ---- volcadura (criterio de tropiezo) -------------------------------------------------
   const declaredRoll = new Set<string>();

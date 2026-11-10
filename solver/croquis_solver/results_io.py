@@ -31,6 +31,7 @@ from croquis_solver.consistency import (
 from croquis_solver.inversion import evidence_from_spec, invert
 from croquis_solver.montecarlo import monte_carlo
 from croquis_solver.reconstruct import reconstruct
+from croquis_solver.terrain import with_relief
 
 REL_TOL = 1e-6
 ABS_TOL = 1e-5
@@ -86,9 +87,11 @@ AGENTS_DIR = FIXTURES_DIR / "agentes"
 AGENT_RESULTS_DIR = AGENTS_DIR / "resultados"
 
 
-def full_result(spec: dict[str, Any]) -> dict[str, Any]:
+def full_result(spec: dict[str, Any], relieve: dict[str, Any] | None = None) -> dict[str, Any]:
     """El resultado completo: reconstrucción, Monte Carlo, inversión (y la hipótesis del reposo
-    supuesto, si hace falta), consistencia y agentes."""
+    supuesto, si hace falta), consistencia y agentes. `relieve` es la malla de relieve que cita
+    la escena (W5), si la hay."""
+    spec = with_relief(spec, relieve)
     rec = reconstruct(spec)
     doc = rec.to_dict()
     doc["incertidumbre"] = monte_carlo(spec).to_dict()

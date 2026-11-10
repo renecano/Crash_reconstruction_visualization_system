@@ -15,7 +15,12 @@
  * (`pymath`). La paridad se mide en E7.
  */
 import { deltaVBarrier, deltaVPair, crushEnergy, uniformCrushEnergy, Stiffness } from "./crash3";
-import { DOWNED_SLIDE_CLASSES, downedMotorcycleFriction, tireFriction } from "./friction";
+import {
+  DOWNED_SLIDE_CLASSES,
+  downedMotorcycleFriction,
+  tireFriction,
+  zoneRanges,
+} from "./friction";
 import { lstsq, matmul, pinv, transpose } from "./linalg";
 import { leastSquaresSoftL1, softL1Cost } from "./lsq";
 import { median, pyMod, pyRound, quantilesInclusive, str } from "./pymath";
@@ -1109,6 +1114,11 @@ export function perturbed(spec: Json, ev: Evidence, rng: Draws): Perturbed {
   ) {
     const md = downedMotorcycleFriction(sup);
     downedMu = rng.uniform(md.low, md.high);
+  }
+  // Terreno (C3, W5): la fricción de cada zona, después de todo lo demás por la misma razón.
+  for (const [k, lo, hi] of zoneRanges(lugar)) {
+    const zonas = (lugar.terreno as Json).superficies as Json[];
+    zonas[k]!.friccion = { valor: rng.uniform(lo, hi), fuente: "supuesto", confianza: 0.5 };
   }
   return { spec: s, evidence: e, downedMu };
 }

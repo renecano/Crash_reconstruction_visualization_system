@@ -49,7 +49,7 @@ Cada dato externo que usa Croquis se registra aquí (CLAUDE.md, regla 4). Format
 
 `solver/croquis_solver/data/yaw_inertia.json`: radio de giro de guiñada sobre largo por grupo de carrocería (mediana, desviación y número de vehículos) y el grupo de cada clase del contrato. Lo escribe `croquis-eval inercia-guinada`.
 
-`solver/croquis_solver/data/friction.json`: rangos de fricción llanta–pavimento y cuerpo–pavimento, factor ABS y tiempo de percepción-reacción con fuente por valor (Fricke 2010 vía secundarias, Mumford 1997, Searle 1983/1993, Olson y Sivak 1986, Green 2000) y el arrastre de una motocicleta caída (Peck, Focha y Gloekler 2014, ifz Forschungsheft 16; ADR 0017). Lo que no tiene fuente accesible está marcado `supuesto`.
+`solver/croquis_solver/data/friction.json`: rangos de fricción llanta–pavimento y cuerpo–pavimento, factor ABS y tiempo de percepción-reacción con fuente por valor (Fricke 2010 vía secundarias, Mumford 1997, Searle 1983/1993, Olson y Sivak 1986, Green 2000) y el arrastre de una motocicleta caída (Peck, Focha y Gloekler 2014, ifz Forschungsheft 16; ADR 0017). Lo que no tiene fuente accesible está marcado `supuesto`. Desde W5 (2026-11-10) lleva también el pasto, como zona del terreno: frenado con llantas bloqueadas de Cenek, Jamieson y McLarin, _Frictional Characteristics of Roadside Grass Types_, Opus Central Laboratories (PDF de saferroadsconference.com, descargado el 2026-11-10; es un artículo de congreso que se cita, no se redistribuye).
 
 `packages/cesvi/src/data/masas-tipicas.json`: la masa típica por clase que ofrece «Usar valor típico» en las preguntas del hecho (comentario de René, 2026-10-24). Sale de dos fuentes ya registradas:
 

@@ -32,6 +32,7 @@ EXPECTED = [
     "peaton_cruce",
     "poste",
     "reversa",
+    "terraceria_topes",
     "volcadura",
 ]
 
@@ -100,8 +101,8 @@ def test_escenas_canonicas_con_ids_unicos() -> None:
     assert names == EXPECTED
     ids = {load_fixture(n)["meta"]["id"] for n in names}
     # Las diez de F1, la de Toluca con vía de OpenStreetMap (F8, ADR 0023), la carambola
-    # (R6, ADR 0066) y la reversa (R4b, ADR 0069).
-    assert len(ids) == 13
+    # (R6, ADR 0066), la reversa (R4b, ADR 0069) y la de terreno (C3, W5, ADR 0131).
+    assert len(ids) == len(EXPECTED)
 
 
 @pytest.mark.parametrize("name", EXPECTED)

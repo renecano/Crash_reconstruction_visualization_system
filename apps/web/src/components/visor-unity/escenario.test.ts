@@ -11,13 +11,14 @@ const casos = readdirSync(DIR)
   .map((f) => [f, JSON.parse(readFileSync(join(DIR, f), "utf8")) as Caso3D] as const);
 
 describe("el escenario del visor Unity (ADR 0112)", () => {
-  it("cumple el esquema del paquete en los 21 casos versionados", () => {
-    expect(casos).toHaveLength(21);
+  it("cumple el esquema del paquete en los 22 casos versionados", () => {
+    expect(casos).toHaveLength(22);
     for (const [f, c] of casos) {
       const p = armarCaso3d(c.escena, c.resultado, null, escenarioDe(c.escena, c.resultado));
       expect(caso3dErrors(p), f).toEqual([]);
     }
-  });
+    // 22 paquetes completos: con toda la suite corriendo pasa de los 5 s por omisión.
+  }, 30_000);
 
   it("da lo mismo dos veces: lo procedural va con la semilla de la escena", () => {
     const [, c] = casos[0]!;

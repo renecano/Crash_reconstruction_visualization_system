@@ -27,6 +27,7 @@ from dataclasses import dataclass, field
 from croquis_solver import dmath
 from croquis_solver.impact import ImpactResult, planar_impact
 from croquis_solver.models import Body2D, G, State2D, Trajectory, Vec, wrap_angle
+from croquis_solver.terrain import TERRAIN_STRIDE, Terrain, WheelContact, read_contact
 
 ROLLING_RESISTANCE = 0.015  # fracción de N (llanta rodando libre, asfalto)
 V_REF_LATERAL = 0.3  # m/s, ancho de la zona lineal de la saturación lateral
@@ -122,19 +123,37 @@ def _advance(
     v: float,
     r: float,
     dt: float,
+    contact: WheelContact | None = None,
 ) -> tuple[float, float, float]:
-    """Un paso de las velocidades (u, v, r), en el marco del cuerpo, con la fricción de llantas."""
+    """Un paso de las velocidades (u, v, r), en el marco del cuerpo, con la fricción de llantas.
+
+    Con `contact` (terreno, W5), cada llanta usa su fricción y su carga, y al final se suma la
+    gravedad a lo largo de la pendiente; sin él, es el plano de siempre.
+    """
     m, inertia = body.mass, body.inertia
     fx_tot = fy_tot = mz = 0.0
-    for (px, py), locked, share in zip(
-        wheels.positions, wheels.locked, wheels.load_fractions, strict=True
-    ):
-        u_c = u - r * py
-        v_c = v + r * px
-        fx, fy = _tire_force(u_c, v_c, m * G * share, mu, locked, rolling_drag)
-        fx_tot += fx
-        fy_tot += fy
-        mz += px * fy - py * fx
+    if contact is None:
+        for (px, py), locked, share in zip(
+            wheels.positions, wheels.locked, wheels.load_fractions, strict=True
+        ):
+            u_c = u - r * py
+            v_c = v + r * px
+            fx, fy = _tire_force(u_c, v_c, m * G * share, mu, locked, rolling_drag)
+            fx_tot += fx
+            fy_tot += fy
+            mz += px * fy - py * fx
+    else:
+        for k, ((px, py), locked, share) in enumerate(
+            zip(wheels.positions, wheels.locked, wheels.load_fractions, strict=True)
+        ):
+            u_c = u - r * py
+            v_c = v + r * px
+            fx, fy = _tire_force(
+                u_c, v_c, m * G * share * contact.load[k], contact.mu[k], locked, rolling_drag
+            )
+            fx_tot += fx
+            fy_tot += fy
+            mz += px * fy - py * fx
     du = (fx_tot / m + r * v) * dt
     dv = (fy_tot / m - r * u) * dt
     dr = (mz / inertia) * dt
@@ -144,7 +163,31 @@ def _advance(
         r_new = 0.0
     else:
         r_new = r + dr
+    if contact is not None:
+        # La fricción no invierte el sentido en un paso; la gravedad sí puede (cuesta abajo).
+        u_new += contact.g_u * dt
+        v_new += contact.g_v * dt
     return u_new, v_new, r_new
+
+
+def _read_terrain(
+    terrain: Terrain,
+    contact: WheelContact,
+    wheels: WheelConfig,
+    pose: tuple[float, float, float, float],
+    vel: tuple[float, float, float],
+    t: float,
+    mu: float,
+    zone_friction: bool,
+) -> tuple[float, float]:
+    """Lee el terreno bajo las llantas y devuelve (u, v) con lo que quitaron los topes cruzados."""
+    left = read_contact(
+        terrain, contact, wheels.positions, wheels.load_fractions, pose, vel, t, mu, zone_friction
+    )
+    if left >= 1.0:
+        return vel[0], vel[1]
+    k = math.sqrt(left)
+    return vel[0] * k, vel[1] * k
 
 
 def integrate(
@@ -157,10 +200,13 @@ def integrate(
     dt_out: float = 0.02,
     t_max: float = 30.0,
     rolling_drag: float = ROLLING_RESISTANCE,
+    terrain: Terrain | None = None,
+    zone_friction: bool = True,
 ) -> PostImpactResult:
     """Integra desde `start` hasta el reposo.
 
-    `start.t` es el instante inicial (por ejemplo, el del impacto).
+    `start.t` es el instante inicial (por ejemplo, el del impacto). Con `terrain` (W5), cada
+    `TERRAIN_STRIDE` pasos se lee el terreno bajo las llantas: fricción por zona, pendiente y topes.
     """
     if dt <= 0 or dt_out < dt:
         msg = "dt debe ser positivo y dt_out ≥ dt"
@@ -180,8 +226,13 @@ def integrate(
     distance = 0.0
     stopped = False
     x_prev, y_prev = x, y
+    contact = WheelContact() if terrain is not None else None
     while t < start.t + t_max - 1e-12:
-        u, v, r = _advance(body, wheels, mu, rolling_drag, u, v, r, dt)
+        if terrain is not None and contact is not None and step % TERRAIN_STRIDE == 0:
+            u, v = _read_terrain(
+                terrain, contact, wheels, (x, y, c, s), (u, v, r), t, mu, zone_friction
+            )
+        u, v, r = _advance(body, wheels, mu, rolling_drag, u, v, r, dt, contact)
         yaw = wrap_angle(yaw + r * dt)
         c, s = dmath.cos(yaw), dmath.sin(yaw)
         vx = u * c - v * s
@@ -229,6 +280,9 @@ class JointBody:
     crush: float = 0.0
     crush_face: str = "F"
     drag_after_impact: float | None = None
+    # Con terreno (W5): si sus llantas usan la fricción de las zonas. Una moto caída no: se arrastra
+    # con su propio factor.
+    zone_friction: bool = True
 
 
 Extents = tuple[float, float, float, float]  # adelante, atrás, izquierda, derecha (m, desde el CG)
@@ -333,6 +387,7 @@ class JointState:
     x_prev: float = 0.0
     y_prev: float = 0.0
     drag: float = 0.0
+    contact: WheelContact | None = None
 
     @classmethod
     def from_body(cls, spec: JointBody) -> JointState:
@@ -546,9 +601,10 @@ def integrate_joint(
     dt: float = 0.002,
     dt_out: float = 0.02,
     t_max: float = 30.0,
+    terrain: Terrain | None = None,
 ) -> list[PostImpactResult]:
     """`integrate_joint_impacts` sin impactos posteriores: solo las trayectorias."""
-    return integrate_joint_impacts(bodies, dt=dt, dt_out=dt_out, t_max=t_max)[0]
+    return integrate_joint_impacts(bodies, dt=dt, dt_out=dt_out, t_max=t_max, terrain=terrain)[0]
 
 
 def integrate_joint_impacts(
@@ -558,6 +614,7 @@ def integrate_joint_impacts(
     dt: float = 0.002,
     dt_out: float = 0.02,
     t_max: float = 30.0,
+    terrain: Terrain | None = None,
 ) -> tuple[list[PostImpactResult], list[JointImpact]]:
     """Integra juntos los vehículos de un choque entre vehículos, con contacto secundario.
 
@@ -592,6 +649,9 @@ def integrate_joint_impacts(
         raise ValueError(msg)
     t0 = bodies[0].start.t if bodies else 0.0
     joints = [JointState.from_body(spec) for spec in bodies]
+    if terrain is not None:
+        for j in joints:
+            j.contact = WheelContact()
     pairs: list[tuple[JointState, JointState]] = []
     allowances: list[float] = []
     axes: list[int | None] = []
@@ -618,7 +678,20 @@ def integrate_joint_impacts(
             if not j.active:
                 continue
             sp = j.spec
-            j.u, j.v, j.r = _advance(sp.body, sp.wheels, sp.mu, j.drag, j.u, j.v, j.r, dt)
+            if terrain is not None and j.contact is not None and step % TERRAIN_STRIDE == 0:
+                j.u, j.v = _read_terrain(
+                    terrain,
+                    j.contact,
+                    sp.wheels,
+                    (j.x, j.y, j.c, j.s),
+                    (j.u, j.v, j.r),
+                    t,
+                    sp.mu,
+                    sp.zone_friction,
+                )
+            j.u, j.v, j.r = _advance(
+                sp.body, sp.wheels, sp.mu, j.drag, j.u, j.v, j.r, dt, j.contact
+            )
             j.yaw = wrap_angle(j.yaw + j.r * dt)
             j.c, j.s = dmath.cos(j.yaw), dmath.sin(j.yaw)
             j.vx = j.u * j.c - j.v * j.s

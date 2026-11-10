@@ -10,12 +10,13 @@ import objetoFijoArbol from "../fixtures/objeto_fijo_arbol.json";
 import peatonCruce from "../fixtures/peaton_cruce.json";
 import poste from "../fixtures/poste.json";
 import reversa from "../fixtures/reversa.json";
+import terraceriaTopes from "../fixtures/terraceria_topes.json";
 import volcadura from "../fixtures/volcadura.json";
 import { EscenaSpecSchema, type EscenaSpec } from "./generated/escena.zod";
 
 /**
  * Nombres de las escenas canónicas: las 10 de F1, la de Toluca con vía de OSM (F8, ADR 0023), la
- * carambola (R6, ADR 0066) y la reversa (R4b, ADR 0069).
+ * carambola (R6, ADR 0066), la reversa (R4b, ADR 0069) y la de terreno (C3, W5).
  */
 export const FIXTURE_NAMES = [
   "alcance",
@@ -31,6 +32,7 @@ export const FIXTURE_NAMES = [
   "interseccion_toluca",
   "carambola",
   "reversa",
+  "terraceria_topes",
 ] as const;
 
 export type FixtureName = (typeof FIXTURE_NAMES)[number];
@@ -50,6 +52,7 @@ export const RAW_FIXTURES: Record<FixtureName, unknown> = {
   interseccion_toluca: interseccionToluca,
   carambola,
   reversa,
+  terraceria_topes: terraceriaTopes,
 };
 
 const cache = new Map<FixtureName, EscenaSpec>();

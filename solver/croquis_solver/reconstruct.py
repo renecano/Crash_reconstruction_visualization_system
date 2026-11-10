@@ -61,6 +61,16 @@ from croquis_solver.preimpact import (
 from croquis_solver.road import RoadAxis, lane_following_path, road_axis
 from croquis_solver.scene_objects import SceneObject, scene_objects
 from croquis_solver.stiffness import stiffness_for, zona_from_cdc_side
+from croquis_solver.terrain import (
+    BUMP_CONTACT,
+    BUMP_ENERGY,
+    Terrain,
+    attached_relief,
+    brake_profile,
+    bump_crossings,
+    pose_on,
+    relief_missing,
+)
 from croquis_solver.units import ms_to_kmh
 
 JsonObj = dict[str, Any]
@@ -154,6 +164,8 @@ class VehicleOutcome:
     distance_post_m: float
     rollover: rollover.RolloverCheck | None = None
     later_damage: list[LaterDamage] = field(default_factory=lambda: list[LaterDamage]())
+    # Con terreno que tiene altura (W5): z, cabeceo y alabeo de cada muestra de la trayectoria.
+    terrain_pose: tuple[list[float], list[float], list[float]] | None = None
 
 
 @dataclass
@@ -391,6 +403,15 @@ def _vehicle_dict(v: VehicleOutcome) -> JsonObj:
             "vx": [_r(x) for x in tr.vx],
             "vy": [_r(x) for x in tr.vy],
             "vel_angular": [_r(x) for x in tr.yaw_rate],
+            **(
+                {}
+                if v.terrain_pose is None
+                else {
+                    "z": [_r(x) for x in v.terrain_pose[0]],
+                    "cabeceo": [_r(x) for x in v.terrain_pose[1]],
+                    "alabeo": [_r(x) for x in v.terrain_pose[2]],
+                }
+            ),
         },
         "v_impacto_kmh": _r(v.v_impact_kmh),
         "delta_v_kmh": _r(v.delta_v_kmh),
@@ -832,12 +853,18 @@ def _sample_path(path: KinPath, prof: SpeedProfile, t_ref: float, times: list[fl
 
 
 def reconstruct(
-    spec: JsonObj, *, dt: float = DT_OUT, downed_mu: float | None = None
+    spec: JsonObj,
+    *,
+    dt: float = DT_OUT,
+    downed_mu: float | None = None,
+    relieve: JsonObj | None = None,
 ) -> Reconstruction:
     """Reconstruye la escena. `spec` debe haber pasado la validación del contrato.
 
     `downed_mu` fija el arrastre de una motocicleta caída (Monte Carlo e inversión lo muestrean);
-    sin él se usa el nominal de la tabla.
+    sin él se usa el nominal de la tabla. `relieve` es la malla de relieve del paquete caso-3d que
+    cita `lugar.terreno.relieve` (W5): no viaja en la escena. También vale adjuntarla antes con
+    `terrain.with_relief`, que es como llega a la inversión y al Monte Carlo.
     """
     banderas: list[str] = []
     avisos: list[Aviso] = []
@@ -856,6 +883,18 @@ def reconstruct(
     lane_width = _num(lugar.get("ancho_carril"), _LEN, LANE_WIDTH_DEFAULT)
     grade = float(lugar["pendiente"]["valor"]) if lugar.get("pendiente") else 0.0
     abs_factor = friction.abs_peak_factor().nominal
+    # Terreno (C3, W5): None si la escena no declara nada que cambie respecto a un plano, y
+    # entonces todo sigue por el camino de siempre.
+    if relieve is None:
+        relieve = attached_relief(lugar)
+    terrain = Terrain.from_spec(lugar, relieve)
+    if relief_missing(lugar, relieve):
+        flag(
+            "relieve_sin_malla",
+            {},
+            "La escena cita el relieve real del lugar, pero su malla no llegó al solver: se "
+            "reconstruye sin relieve.",
+        )
     params: dict[str, Any] = {
         "friccion_llanta": {
             "valor": mu,
@@ -1005,7 +1044,8 @@ def reconstruct(
                 d_brake = m.brake_distance
             d_brake = min(d_brake, s_imp)
             prof = SpeedProfile(m.v0, (s_imp - d_brake) / m.v0, decel)
-            if prof.time_to_distance(s_imp) is None:
+            recortado = prof.time_to_distance(s_imp) is None
+            if recortado:
                 flag(
                     "frenado_detiene_antes",
                     {"vehiculo": m.id, "v_kmh": ms_to_kmh(m.v0), "frenado_m": d_brake},
@@ -1014,6 +1054,46 @@ def reconstruct(
                 )
                 d_brake = 0.9 * m.v0 * m.v0 / (2 * decel)
                 prof = SpeedProfile(m.v0, (s_imp - d_brake) / m.v0, decel)
+            if terrain is not None:
+                # Con terreno, el frenado se integra sobre él: fricción por zona, pendiente y topes.
+                abs_k = abs_factor if m.abs_ else 1.0
+
+                def sobre_terreno(
+                    d: float,
+                    m: VehicleModel = m,
+                    abs_k: float = abs_k,
+                    decel: float = decel,
+                    s_imp: float = s_imp,
+                ) -> SpeedProfile:
+                    assert terrain is not None
+                    return brake_profile(
+                        paths[m.id],
+                        m.v0,
+                        s_imp - d,
+                        decel,
+                        terrain,
+                        mu,
+                        abs_k,
+                        grade,
+                        m.cg_from_front,
+                        m.wheelbase,
+                    )
+
+                d_plano = d_brake
+                prof = sobre_terreno(d_brake)
+                for _ in range(60):
+                    if prof.time_to_distance(s_imp) is not None:
+                        break
+                    d_brake *= 0.9
+                    prof = sobre_terreno(d_brake)
+                if d_brake != d_plano and not recortado:
+                    flag(
+                        "frenado_detiene_antes",
+                        {"vehiculo": m.id, "v_kmh": ms_to_kmh(m.v0), "frenado_m": d_plano},
+                        f"Vehículo {m.rol}: con {ms_to_kmh(m.v0):.0f} km/h y {d_plano:.1f} m de "
+                        "frenado sobre este terreno se habría detenido antes del impacto; se "
+                        "recorta el frenado.",
+                    )
         else:
             prof = SpeedProfile(m.v0)
         profiles[m.id] = prof
@@ -1377,6 +1457,7 @@ def reconstruct(
             max(0.0, *crush[m.id][0]),
             str((zonas.get(m.id) or {}).get("lado", "F")),
             drag if waits else None,
+            zone_friction=not downed,
         )
 
     # Los vehículos de un choque entre vehículos se mueven juntos: si después de separarse se
@@ -1420,6 +1501,7 @@ def reconstruct(
         impacts=plans,
         dt_out=dt,
         t_max=T_POST_MAX,
+        terrain=terrain,
     )
     joint_list = joint_all[: len(group)]
     joint_post: dict[str, PostImpactResult] = dict(zip(group, joint_list, strict=True))
@@ -1584,6 +1666,8 @@ def reconstruct(
                 dt_out=dt,
                 t_max=T_POST_MAX,
                 rolling_drag=pb.rolling_drag,
+                terrain=terrain,
+                zone_friction=pb.zone_friction,
             )
         if res_post is not None:
             post[m.id] = (res_post.trajectory, res_post.stopped, res_post.distance)
@@ -1725,6 +1809,29 @@ def reconstruct(
                 full.append(rest_t.state(i))
         last = full.last()
         prof, width, e, origen = crush[m.id]
+        terrain_pose: tuple[list[float], list[float], list[float]] | None = None
+        if terrain is not None and terrain.has_height:
+            # La pose sobre el terreno, por contacto de las llantas: el visor solo la reproduce.
+            ruedas = WheelConfig.four_wheels(m.wheelbase, m.track, m.cg_from_front).positions
+            terrain_pose = ([], [], [])
+            for i in range(len(full)):
+                z_i, cab, alab = pose_on(terrain, ruedas, full.x[i], full.y[i], full.yaw[i])
+                terrain_pose[0].append(z_i)
+                terrain_pose[1].append(cab)
+                terrain_pose[2].append(alab)
+        if terrain is not None and terrain.bumps:
+            for tope_id, t_cruce, v_cruce in bump_crossings(
+                terrain, m.cg_from_front, full.t, full.x, full.y, full.yaw, full.vx, full.vy
+            ):
+                eventos_out.append(
+                    EventOutcome(
+                        f"tope-{tope_id}-{m.id}",
+                        "cruce_tope",
+                        t_cruce,
+                        [m.id],
+                        {"velocidad_cruce_kmh": ms_to_kmh(v_cruce)},
+                    )
+                )
         vehiculos_out.append(
             VehicleOutcome(
                 id=m.id,
@@ -1750,6 +1857,7 @@ def reconstruct(
                 rest_pose=(last.x, last.y, math.degrees(last.yaw)),
                 distance_post_m=dist_post,
                 later_damage=later_damage[m.id],
+                terrain_pose=terrain_pose,
             )
         )
         if m.braking and m.v0 > 0 and m.id in s_contact:
@@ -1761,6 +1869,21 @@ def reconstruct(
             tr_post = post[m.id][0]
             t_stop = tr_post.t[-1] if len(tr_post) else 0.0
             eventos_out.append(EventOutcome(f"reposo-{m.id}", "reposo", t_stop, [m.id]))
+    if terrain is not None and terrain.bumps:
+        params["perdida_energia_tope"] = {
+            "valor": BUMP_ENERGY[0],
+            "rango": [BUMP_ENERGY[1], BUMP_ENERGY[2]],
+            "fuente": "Cada eje que cruza un tope disipa esta fracción de (su carga × la altura "
+            "del tope); no hay una medición que lo fije",
+            "tipo": "supuesto",
+        }
+        params["perdida_contacto_tope"] = {
+            "valor": BUMP_CONTACT[0],
+            "rango": [BUMP_CONTACT[1], BUMP_CONTACT[2]],
+            "fuente": "Fracción de la pérdida de carga de una rueda rígida sobre la cresta del "
+            "tope (1 − v²/(g·R)); la suspensión la reduce y no se modela",
+            "tipo": "supuesto",
+        }
     # ---- volcadura (criterio de tropiezo) -------------------------------------------------
     declared_roll = {
         a for e in spec["eventos"] if e.get("tipo") == "volcadura" for a in e.get("actores", [])

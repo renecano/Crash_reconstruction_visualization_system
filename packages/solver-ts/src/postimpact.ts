@@ -22,6 +22,7 @@ import {
   wrapAngle,
 } from "./models";
 import { pyRound } from "./pymath";
+import { TERRAIN_STRIDE, type Terrain, WheelContact, readContact } from "./terrain";
 import * as dmath from "./dmath";
 
 /** Fracción de N (llanta rodando libre, asfalto). */
@@ -116,7 +117,11 @@ function stepComponent(value: number, delta: number, other: number): number {
   return value + delta;
 }
 
-/** Un paso de las velocidades (u, v, r), en el marco del cuerpo, con la fricción de llantas. */
+/**
+ * Un paso de las velocidades (u, v, r), en el marco del cuerpo, con la fricción de llantas. Con
+ * `contact` (terreno, W5), cada llanta usa su fricción y su carga, y al final se suma la gravedad a
+ * lo largo de la pendiente; sin él, es el plano de siempre.
+ */
 function advance(
   body: Body2D,
   wheels: WheelConfig,
@@ -126,6 +131,7 @@ function advance(
   v: number,
   r: number,
   dt: number,
+  contact: WheelContact | null = null,
 ): [number, number, number] {
   const m = body.mass;
   const inertia = body.inertia;
@@ -136,14 +142,17 @@ function advance(
     const [px, py] = wheels.positions[k]!;
     const uC = u - r * py;
     const vC = v + r * px;
-    const [fx, fy] = tireForce(
-      uC,
-      vC,
-      m * G * wheels.loadFractions[k]!,
-      mu,
-      wheels.locked[k]!,
-      rollingDrag,
-    );
+    const [fx, fy] =
+      contact === null
+        ? tireForce(uC, vC, m * G * wheels.loadFractions[k]!, mu, wheels.locked[k]!, rollingDrag)
+        : tireForce(
+            uC,
+            vC,
+            m * G * wheels.loadFractions[k]! * contact.load[k]!,
+            contact.mu[k]!,
+            wheels.locked[k]!,
+            rollingDrag,
+          );
     fxTot += fx;
     fyTot += fy;
     mz += px * fy - py * fx;
@@ -151,10 +160,42 @@ function advance(
   const du = (fxTot / m + r * v) * dt;
   const dv = (fyTot / m - r * u) * dt;
   const dr = (mz / inertia) * dt;
-  const uNew = stepComponent(u, du, v);
-  const vNew = stepComponent(v, dv, u);
+  let uNew = stepComponent(u, du, v);
+  let vNew = stepComponent(v, dv, u);
   const rNew = Math.abs(dr) > Math.abs(r) && (r === 0 || sign1(dr) !== sign1(r)) ? 0.0 : r + dr;
+  if (contact !== null) {
+    // La fricción no invierte el sentido en un paso; la gravedad sí puede (cuesta abajo).
+    uNew += contact.gU * dt;
+    vNew += contact.gV * dt;
+  }
   return [uNew, vNew, rNew];
+}
+
+/** Lee el terreno bajo las llantas y devuelve (u, v) con lo que quitaron los topes cruzados. */
+function readTerrain(
+  terrain: Terrain,
+  contact: WheelContact,
+  wheels: WheelConfig,
+  pose: readonly [number, number, number, number],
+  vel: readonly [number, number, number],
+  t: number,
+  mu: number,
+  zoneFriction: boolean,
+): [number, number] {
+  const left = readContact(
+    terrain,
+    contact,
+    wheels.positions,
+    wheels.loadFractions,
+    pose,
+    vel,
+    t,
+    mu,
+    zoneFriction,
+  );
+  if (left >= 1.0) return [vel[0], vel[1]];
+  const k = Math.sqrt(left);
+  return [vel[0] * k, vel[1] * k];
 }
 
 export interface IntegrateOptions {
@@ -162,6 +203,9 @@ export interface IntegrateOptions {
   dtOut?: number;
   tMax?: number;
   rollingDrag?: number;
+  /** Terreno (W5): cada `TERRAIN_STRIDE` pasos se lee bajo las llantas. */
+  terrain?: Terrain | null;
+  zoneFriction?: boolean;
 }
 
 /** Integra desde `start` hasta el reposo (`start.t` es el instante inicial). */
@@ -173,6 +217,8 @@ export function integrate(
   opts: IntegrateOptions = {},
 ): PostImpactResult {
   const { dt = 0.002, dtOut = 0.02, tMax = 30.0, rollingDrag = ROLLING_RESISTANCE } = opts;
+  const terrain = opts.terrain ?? null;
+  const zoneFriction = opts.zoneFriction ?? true;
   if (dt <= 0 || dtOut < dt) throw new Error("dt debe ser positivo y dt_out ≥ dt");
   const m = body.mass;
   const inertia = body.inertia;
@@ -194,8 +240,12 @@ export function integrate(
   let stopped = false;
   let xPrev = x;
   let yPrev = y;
+  const contact = terrain !== null ? new WheelContact() : null;
   while (t < start.t + tMax - 1e-12) {
-    [u, v, r] = advance(body, wheels, mu, rollingDrag, u, v, r, dt);
+    if (terrain !== null && contact !== null && step % TERRAIN_STRIDE === 0) {
+      [u, v] = readTerrain(terrain, contact, wheels, [x, y, c, s], [u, v, r], t, mu, zoneFriction);
+    }
+    [u, v, r] = advance(body, wheels, mu, rollingDrag, u, v, r, dt, contact);
     yaw = wrapAngle(yaw + r * dt);
     c = dmath.cos(yaw);
     s = dmath.sin(yaw);
@@ -251,6 +301,11 @@ export interface JointBody {
   crush?: number;
   crushFace?: string;
   dragAfterImpact?: number | null;
+  /**
+   * Con terreno (W5): si sus llantas usan la fricción de las zonas. Una moto caída no: se arrastra
+   * con su propio factor. Por omisión, sí.
+   */
+  zoneFriction?: boolean;
 }
 
 /** Adelante, atrás, izquierda, derecha (m, desde el CG). */
@@ -350,6 +405,7 @@ export class JointState {
   xPrev = 0.0;
   yPrev = 0.0;
   drag = 0.0;
+  contact: WheelContact | null = null;
 
   private constructor(
     readonly spec: JointBody,
@@ -622,6 +678,8 @@ export interface JointOptions {
   tMax?: number;
   /** Impactos declarados después del primero (carambola, ADR 0066). */
   impacts?: readonly PlannedImpact[];
+  /** Terreno (W5). */
+  terrain?: Terrain | null;
 }
 
 /** `integrateJointImpacts` sin impactos posteriores: solo las trayectorias. */
@@ -643,9 +701,11 @@ export function integrateJointImpacts(
   opts: JointOptions = {},
 ): [PostImpactResult[], JointImpact[]] {
   const { dt = 0.002, dtOut = 0.02, tMax = 30.0, impacts = [] } = opts;
+  const terrain = opts.terrain ?? null;
   if (dt <= 0 || dtOut < dt) throw new Error("dt debe ser positivo y dt_out ≥ dt");
   const t0 = bodies.length > 0 ? bodies[0]!.start.t : 0.0;
   const joints = bodies.map((spec) => JointState.fromBody(spec));
+  if (terrain !== null) for (const j of joints) j.contact = new WheelContact();
   const pairs: [JointState, JointState][] = [];
   const allowances: number[] = [];
   const axes: (number | null)[] = [];
@@ -674,7 +734,19 @@ export function integrateJointImpacts(
     for (const j of joints) {
       if (!j.active) continue;
       const sp = j.spec;
-      [j.u, j.v, j.r] = advance(sp.body, sp.wheels, sp.mu, j.drag, j.u, j.v, j.r, dt);
+      if (terrain !== null && j.contact !== null && step % TERRAIN_STRIDE === 0) {
+        [j.u, j.v] = readTerrain(
+          terrain,
+          j.contact,
+          sp.wheels,
+          [j.x, j.y, j.c, j.s],
+          [j.u, j.v, j.r],
+          t,
+          sp.mu,
+          sp.zoneFriction ?? true,
+        );
+      }
+      [j.u, j.v, j.r] = advance(sp.body, sp.wheels, sp.mu, j.drag, j.u, j.v, j.r, dt, j.contact);
       j.yaw = wrapAngle(j.yaw + j.r * dt);
       j.c = dmath.cos(j.yaw);
       j.s = dmath.sin(j.yaw);

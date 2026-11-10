@@ -348,7 +348,7 @@ export const Relieve = z.strictObject({
   alto: z.int().min(2).max(2048),
   alturas_m: z.array(z.number()).min(4).max(4194304),
   fuente: z.string().min(1).max(120),
-  licencia: z.string().min(1).max(120),
+  licencia: z.string().min(1).max(400),
   resolucion_nativa_m: z.number().gt(0),
 });
 export type Relieve = z.infer<typeof Relieve>;

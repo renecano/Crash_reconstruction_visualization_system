@@ -1171,6 +1171,13 @@ def perturbed(spec: JsonObj, ev: Evidence, rng: Draws) -> Perturbed:
     if any(str(v["clase"]["valor"]) in friction.DOWNED_SLIDE_CLASSES for v in s["vehiculos"]):
         md = friction.downed_motorcycle_friction(lugar["superficie"]["valor"])
         downed_mu = rng.uniform(md.low, md.high)  # al final: no mueve los sorteos de lo demás
+    # Terreno (C3, W5): la fricción de cada zona, después de todo lo demás por la misma razón.
+    for k, lo, hi, _ in friction.zone_ranges(lugar):
+        lugar["terreno"]["superficies"][k]["friccion"] = {
+            "valor": rng.uniform(lo, hi),
+            "fuente": "supuesto",
+            "confianza": 0.5,
+        }
     return Perturbed(s, e, downed_mu)
 
 

@@ -3353,8 +3353,12 @@ namespace Croquis.Generated
         [JsonConverter(typeof(MinMaxLengthCheckConverter1))]
         public string Id { get; set; }
 
+        /// <summary>
+        /// El aviso de la licencia de la fuente, tal como pide mostrarlo (el de Copernicus GLO-30
+        /// pasa de 120 caracteres).
+        /// </summary>
         [JsonProperty("licencia")]
-        [JsonConverter(typeof(MischievousMinMaxLengthCheckConverter))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter7))]
         public string Licencia { get; set; }
 
         [JsonProperty("origen")]
@@ -11086,6 +11090,34 @@ namespace Croquis.Generated
         public static readonly NombreCapaConverter Singleton = new NombreCapaConverter();
     }
 
+    internal class MinMaxLengthCheckConverter7 : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(string);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            var value = serializer.Deserialize<string>(reader);
+            if (value.Length >= 1 && value.Length <= 400)
+            {
+                return value;
+            }
+            throw new Exception("Cannot unmarshal type string");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            var value = (string)untypedValue;
+            if (value.Length >= 1 && value.Length <= 400)
+            {
+                serializer.Serialize(writer, value);
+                return;
+            }
+            throw new Exception("Cannot marshal type string");
+        }
+
+        public static readonly MinMaxLengthCheckConverter7 Singleton = new MinMaxLengthCheckConverter7();
+    }
+
     internal class OrigenEnumConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(OrigenEnum) || t == typeof(OrigenEnum?);
@@ -11198,34 +11230,6 @@ namespace Croquis.Generated
         }
 
         public static readonly IndecentDecodeArrayConverter Singleton = new IndecentDecodeArrayConverter();
-    }
-
-    internal class MinMaxLengthCheckConverter7 : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(string);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            var value = serializer.Deserialize<string>(reader);
-            if (value.Length >= 1 && value.Length <= 400)
-            {
-                return value;
-            }
-            throw new Exception("Cannot unmarshal type string");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            var value = (string)untypedValue;
-            if (value.Length >= 1 && value.Length <= 400)
-            {
-                serializer.Serialize(writer, value);
-                return;
-            }
-            throw new Exception("Cannot marshal type string");
-        }
-
-        public static readonly MinMaxLengthCheckConverter7 Singleton = new MinMaxLengthCheckConverter7();
     }
 
     internal class CodigoConverter : JsonConverter
