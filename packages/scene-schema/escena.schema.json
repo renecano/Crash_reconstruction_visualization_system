@@ -1628,6 +1628,124 @@
       "required": ["vehiculo", "zona", "fuente"],
       "additionalProperties": false
     },
+    "TerrenoExpediente": {
+      "type": "object",
+      "description": "El terreno que declara el perito en la escena (C3): zonas de otra superficie, zonas onduladas, topes y si se usa el relieve real. En la escena va a `lugar.terreno`.",
+      "properties": {
+        "superficies": {
+          "type": "array",
+          "description": "Zonas de otra superficie; fuera de ellas vale la del lugar.",
+          "items": { "$ref": "#/$defs/ZonaTerrenoExpediente" },
+          "maxItems": 32
+        },
+        "ondulaciones": {
+          "type": "array",
+          "description": "Zonas onduladas.",
+          "items": { "$ref": "#/$defs/OndulacionExpediente" },
+          "maxItems": 16
+        },
+        "topes": {
+          "type": "array",
+          "description": "Topes, cada uno como la línea que cruza la vía.",
+          "items": { "$ref": "#/$defs/TopeExpediente" },
+          "maxItems": 32
+        },
+        "relieve": {
+          "type": "object",
+          "description": "El relieve real del lugar: la malla no va aquí, se pide a `/api/relieve` y viaja junto al caso.",
+          "properties": {
+            "fuente": { "type": "string", "enum": ["dem", "plano"] },
+            "malla_id": { "type": "string", "minLength": 1, "maxLength": 80 }
+          },
+          "required": ["fuente"],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "PoligonoExpediente": {
+      "type": "array",
+      "description": "Vértices del polígono en el mapa, sin repetir el primero al final.",
+      "items": { "$ref": "#/$defs/Coordenadas" },
+      "minItems": 3,
+      "maxItems": 64
+    },
+    "IdTerrenoExpediente": {
+      "type": "string",
+      "pattern": "^[a-z0-9_-]{1,40}$",
+      "description": "Identificador estable dentro del expediente."
+    },
+    "ZonaTerrenoExpediente": {
+      "type": "object",
+      "description": "Una zona con otra superficie. Sin `friccion`, vale la de la tabla para esa superficie y el estado del lugar.",
+      "properties": {
+        "id": { "$ref": "#/$defs/IdTerrenoExpediente" },
+        "tipo": {
+          "type": "string",
+          "enum": [
+            "asfalto",
+            "concreto",
+            "adoquin",
+            "empedrado",
+            "terraceria",
+            "grava",
+            "pasto",
+            "tierra",
+            "lodo"
+          ]
+        },
+        "poligono": { "$ref": "#/$defs/PoligonoExpediente" },
+        "friccion": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1.5,
+          "description": "Coeficiente de fricción que fijó el perito."
+        },
+        "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+        "cita": { "$ref": "#/$defs/Cita" }
+      },
+      "required": ["id", "tipo", "poligono", "fuente"],
+      "additionalProperties": false
+    },
+    "OndulacionExpediente": {
+      "type": "object",
+      "description": "Una zona ondulada: crestas perpendiculares al rumbo, con su amplitud (de valle a cresta) y su longitud de onda.",
+      "properties": {
+        "id": { "$ref": "#/$defs/IdTerrenoExpediente" },
+        "poligono": { "$ref": "#/$defs/PoligonoExpediente" },
+        "amplitud_m": { "type": "number", "exclusiveMinimum": 0, "maximum": 2 },
+        "longitud_onda_m": { "type": "number", "exclusiveMinimum": 0, "maximum": 200 },
+        "rumbo_deg": {
+          "type": "number",
+          "minimum": 0,
+          "exclusiveMaximum": 360,
+          "description": "Hacia dónde avanzan las ondas, desde el norte hacia el este."
+        },
+        "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+        "cita": { "$ref": "#/$defs/Cita" }
+      },
+      "required": ["id", "poligono", "amplitud_m", "longitud_onda_m", "rumbo_deg", "fuente"],
+      "additionalProperties": false
+    },
+    "TopeExpediente": {
+      "type": "object",
+      "description": "Un tope: la línea que cruza la vía, su altura y su largo en el sentido del tránsito.",
+      "properties": {
+        "id": { "$ref": "#/$defs/IdTerrenoExpediente" },
+        "linea": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Coordenadas" },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "alto_m": { "type": "number", "exclusiveMinimum": 0, "maximum": 0.5 },
+        "largo_m": { "type": "number", "exclusiveMinimum": 0, "maximum": 20 },
+        "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+        "cita": { "$ref": "#/$defs/Cita" }
+      },
+      "required": ["id", "linea", "alto_m", "largo_m", "fuente"],
+      "additionalProperties": false
+    },
     "ObjetoExpediente": {
       "type": "object",
       "description": "Un objeto del lugar que el perito coloca en la escena (C2): poste, muro o pared, árbol, barrera, guarnición, señal o vehículo estacionado. Está en la escena aunque nadie choque contra él; en la escena va a `entorno.objetos`.",
@@ -1997,6 +2115,7 @@
           "items": { "$ref": "#/$defs/ObjetoExpediente" },
           "maxItems": 60
         },
+        "terreno": { "$ref": "#/$defs/TerrenoExpediente" },
         "versiones": {
           "type": "array",
           "description": "Versiones: la de la evidencia y una por declaración.",

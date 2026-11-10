@@ -732,6 +732,14 @@
         },
         "alcance_deteccion_nocturna": {
           "$ref": "#/$defs/Parametro"
+        },
+        "perdida_energia_tope": {
+          "$ref": "#/$defs/Parametro",
+          "description": "Fracción de (carga del eje × altura del tope) que se disipa cuando un eje cruza un tope (C3, W5). Supuesto declarado con rango."
+        },
+        "perdida_contacto_tope": {
+          "$ref": "#/$defs/Parametro",
+          "description": "Cuánto de la pérdida de contacto de una rueda rígida sobre la cresta del tope se aplica (0, la suspensión la absorbe; 1, rueda rígida) (C3, W5). Supuesto declarado con rango."
         }
       }
     },

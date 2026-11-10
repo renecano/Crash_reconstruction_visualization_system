@@ -815,6 +815,72 @@ export const ResultadoExpediente = z.strictObject({
 });
 export type ResultadoExpediente = z.infer<typeof ResultadoExpediente>;
 
+/** Identificador estable dentro del expediente. */
+export const IdTerrenoExpediente = z.string().regex(new RegExp("^[a-z0-9_-]{1,40}$"));
+export type IdTerrenoExpediente = z.infer<typeof IdTerrenoExpediente>;
+
+/** Vértices del polígono en el mapa, sin repetir el primero al final. */
+export const PoligonoExpediente = z.array(Coordenadas).min(3).max(64);
+export type PoligonoExpediente = z.infer<typeof PoligonoExpediente>;
+
+/** Una zona ondulada: crestas perpendiculares al rumbo, con su amplitud (de valle a cresta) y su longitud de onda. */
+export const OndulacionExpediente = z.strictObject({
+  id: IdTerrenoExpediente,
+  poligono: PoligonoExpediente,
+  amplitud_m: z.number().max(2).gt(0),
+  longitud_onda_m: z.number().max(200).gt(0),
+  rumbo_deg: z.number().min(0).lt(360),
+  fuente: FuenteExpediente,
+  cita: Cita.optional(),
+});
+export type OndulacionExpediente = z.infer<typeof OndulacionExpediente>;
+
+/** Un tope: la línea que cruza la vía, su altura y su largo en el sentido del tránsito. */
+export const TopeExpediente = z.strictObject({
+  id: IdTerrenoExpediente,
+  linea: z.tuple([Coordenadas, Coordenadas]),
+  alto_m: z.number().max(0.5).gt(0),
+  largo_m: z.number().max(20).gt(0),
+  fuente: FuenteExpediente,
+  cita: Cita.optional(),
+});
+export type TopeExpediente = z.infer<typeof TopeExpediente>;
+
+/** Una zona con otra superficie. Sin `friccion`, vale la de la tabla para esa superficie y el estado del lugar. */
+export const ZonaTerrenoExpediente = z.strictObject({
+  id: IdTerrenoExpediente,
+  tipo: z.enum([
+    "asfalto",
+    "concreto",
+    "adoquin",
+    "empedrado",
+    "terraceria",
+    "grava",
+    "pasto",
+    "tierra",
+    "lodo",
+  ]),
+  poligono: PoligonoExpediente,
+  friccion: z.number().max(1.5).gt(0).optional(),
+  fuente: FuenteExpediente,
+  cita: Cita.optional(),
+});
+export type ZonaTerrenoExpediente = z.infer<typeof ZonaTerrenoExpediente>;
+
+/** El terreno que declara el perito en la escena (C3): zonas de otra superficie, zonas onduladas, topes y si se usa el relieve real. En la escena va a `lugar.terreno`. */
+export const TerrenoExpediente = z.strictObject({
+  superficies: z.array(ZonaTerrenoExpediente).max(32).optional(),
+  ondulaciones: z.array(OndulacionExpediente).max(16).optional(),
+  topes: z.array(TopeExpediente).max(32).optional(),
+  relieve: z
+    .strictObject({
+      fuente: z.enum(["dem", "plano"]),
+      malla_id: z.string().min(1).max(80).optional(),
+    })
+    .optional(),
+});
+export type TerrenoExpediente = z.infer<typeof TerrenoExpediente>;
+
 /** Coeficientes de rigidez A (N/m) y B (N/m²) con su fuente. */
 export const Rigidez = z.strictObject({
   A: z.number().min(0),
@@ -918,6 +984,7 @@ export const Expediente = z.strictObject({
   danos: z.array(DanoExpediente).max(200).optional(),
   impactos: z.array(ImpactoExpediente).max(50).optional(),
   objetos: z.array(ObjetoExpediente).max(60).optional(),
+  terreno: TerrenoExpediente.optional(),
   versiones: z.array(VersionExpediente).max(20).optional(),
   evidencias: EvidenciasLugar.optional(),
   calculos: z.array(CalculoExpediente).max(60).optional(),
