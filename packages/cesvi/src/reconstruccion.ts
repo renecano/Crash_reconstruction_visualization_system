@@ -19,6 +19,8 @@ import type { Expediente } from "./corpus";
 import { rigidezEnKilo } from "./verificacion";
 import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from "./geo";
 import { objetosDe, TIPOS_OBJETO } from "./objetos";
+import type { MallaRelieve } from "./relieve";
+import { terrenoDeEscena, terrenoReconstruido, type TerrenoReconstruido } from "./terreno";
 
 type Json = Record<string, unknown>;
 type Id = Expediente["vehiculos"][number]["id"];
@@ -490,6 +492,17 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
     }
   }
 
+  // El terreno que declaró el perito (C3, W5): zonas de otra superficie, ondulaciones, topes y el
+  // relieve real. La fricción de una zona sin fijar es la de la tabla para el estado del lugar.
+  if (origen) {
+    const lugar = spec.lugar as Json & { estado_superficie?: { valor?: string } };
+    const t = terrenoDeEscena(e, local, String(lugar.estado_superficie?.valor ?? "seco"));
+    if (t) {
+      lugar.terreno = t.terreno;
+      limites.push(...t.limites);
+    }
+  }
+
   // La deformación medida (C y L) de cada vehículo: la de la cara del primer impacto o, si el
   // reporte no la dice, la primera. Un reporte mide una sola deformación por vehículo (la del
   // McHenry); si la lectura la repite en otro daño, esa copia no se usa (diagnóstico de AXA, ADR
@@ -741,6 +754,16 @@ export interface Reconstruccion extends EscenaSolver {
   hipotesis: HipotesisReconstruccion[] | null;
   /** La clave que eligió el perito; null mientras no elija (se muestra la primera). */
   elegida: string | null;
+  /**
+   * C3 (W5): los cruces de tope con su velocidad y sus supuestos; null si el terreno no entró.
+   * Un caso guardado antes de W5 no lo trae.
+   */
+  terreno?: TerrenoReconstruido | null;
+  /**
+   * O4 (W5): la malla de relieve con la que se reconstruyó, en metros de la escena; null en plano.
+   * No va en la escena: quien vuelve a reconstruir (la maqueta, el 3D) la pasa junto a ella.
+   */
+  relieve?: MallaRelieve | null;
 }
 
 interface Inversion {
@@ -932,6 +955,11 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
           : null,
     };
   });
+  const terreno = terrenoReconstruido(base.ids, resultado);
+  if (terreno?.relieveFalta)
+    limites.push(
+      "No se pudo obtener el relieve real del lugar: la reconstrucción va en plano. Vuelve a reconstruir cuando haya red.",
+    );
   const alterna = resultado.inversion_reposo_supuesto as Inversion | undefined;
   const todas = alterna
     ? [...hipotesisDe(base, inv, "dano"), ...hipotesisDe(base, alterna, "reposo")]
@@ -946,6 +974,7 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
     evidencia: inv.evidencia,
     hipotesis,
     elegida: null,
+    terreno,
   };
 }
 

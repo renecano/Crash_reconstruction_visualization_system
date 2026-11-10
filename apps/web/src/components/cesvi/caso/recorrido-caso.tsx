@@ -82,6 +82,7 @@ import { ActoDanos } from "./analisis-laboratorio";
 import { ActoContraste, filaDeRestos } from "./contraste-laboratorio";
 import { HechoLaboratorio } from "./hecho-laboratorio";
 import { CifraReconstruccion, DetalleReconstruccion } from "./hoja-reconstruccion";
+import { TerrenoReconstruccion } from "./terreno-reconstruccion";
 import { protagonista, tipImpacto, tipVehiculo } from "@/lib/reconstruccion-lab";
 import { tomarArchivo } from "@/lib/archivo-pendiente";
 import {
@@ -1068,6 +1069,15 @@ export function RecorridoCaso({
                 const h = r.hipotesis?.find((x) => x.clave === clave);
                 if (h) setPizarra((p) => delPerito(p, `Elige la hipótesis «${h.titulo}».`));
               }}
+            />
+          ) : null}
+          {/* W5: lo que el terreno hizo en la reconstrucción (solo si el perito declaró terreno). */}
+          {r ? (
+            <TerrenoReconstruccion
+              r={r}
+              nombres={Object.fromEntries(
+                (expediente?.vehiculos ?? []).map((v) => [v.id, nombreLab(v.id)]),
+              )}
             />
           ) : null}
           {/* Sin reconstruir, o si el caso cambió después, el panel va a la vista con su aviso. */}

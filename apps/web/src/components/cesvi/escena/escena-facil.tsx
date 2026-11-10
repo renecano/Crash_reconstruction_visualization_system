@@ -9,19 +9,32 @@
  */
 import {
   agregarObjeto,
+  agregarOndulacion,
+  agregarTope,
+  agregarZona,
   cambiarTamano,
+  cambiarTerreno,
   conHuella,
   conPosicion,
   conRestos,
   distanciaM,
   empalmesDeObjetos,
+  escalarTerreno,
+  friccionDeTabla,
   girarObjeto,
+  girarTerreno,
   medidasDe,
   moverObjeto,
+  moverTerreno,
+  nombreSuperficie,
   objetosDe,
+  piezasTerreno,
   posicionesEncimadas,
   quitarObjeto,
+  quitarTerreno,
   TIPOS_OBJETO,
+  usarRelieve,
+  usaRelieve,
   type Expediente,
   type PosicionDescrita,
   type TipoObjeto,
@@ -84,7 +97,14 @@ import {
   type RespuestasC1,
 } from "@/lib/escena-facil";
 import { BarraSeleccion, PanelCorregir, type AccionSeleccion } from "./correccion";
-import { MapaFacil, trayectoDeLlegada, type CocheMapa, type FlechaMapa } from "./mapa-facil";
+import {
+  MapaFacil,
+  trayectoDeLlegada,
+  type CocheMapa,
+  type FlechaMapa,
+  type TerrenoMapa,
+} from "./mapa-facil";
+import { medidasDePieza, PreguntaTerreno, type PoniendoTerreno } from "./terreno";
 
 /** Más lejos que esto del choque, un punto de C1 se confirma con una alerta (m). */
 const GOLPE_LEJOS_M = 30;
@@ -174,7 +194,7 @@ export function EscenaFacil({
   const c1 = useMemo(() => estado.c1 ?? {}, [estado.c1]);
   const pasos = pasosEscena(e, impactos, { ...estado, c1 });
   // C1: una pregunta que sigue abierta mientras se agregan choques o puntos, o que se reabre.
-  const [editandoC1, setEditandoC1] = useState<"golpe" | "otros" | "paso" | null>(null);
+  const [editandoC1, setEditandoC1] = useState<"golpe" | "otros" | "paso" | "terreno" | null>(null);
   const [otro, setOtro] = useState<{
     abierto: boolean;
     vehiculo: string | null;
@@ -205,6 +225,10 @@ export function EscenaFacil({
   const [seleccion, setSeleccion] = useState<string | null>(null);
   const [poniendo, setPoniendo] = useState<TipoObjeto | null>(null);
   const objetosColocados = useMemo(() => objetosDe(e), [e]);
+  // C3 (W5): lo que se va a poner en el terreno con el siguiente toque, y lo ya marcado.
+  const [poniendoTerreno, setPoniendoTerreno] = useState<PoniendoTerreno | null>(null);
+  const [otrasSuperficies, setOtrasSuperficies] = useState(false);
+  const terrenoMarcado = useMemo(() => piezasTerreno(e), [e]);
 
   // El paso en curso: el que se edita, el coche que se coloca o el primero sin terminar.
   const actual = useMemo(() => {
@@ -672,6 +696,45 @@ export function EscenaFacil({
     setEditandoC1(null);
   };
 
+  // --- C3 (W5): ¿Cómo es el terreno? -------------------------------------------------------------
+  const ponerTerreno = (p: Punto, todo = false) => {
+    const que = poniendoTerreno;
+    if (!que) return;
+    // Las zonas van a lo largo de la calle; el tope, atravesado.
+    const rumbo = callesMapa.length ? rumboAlineado(callesMapa, p, 0) : 0;
+    let siguiente: Expediente;
+    let texto: string;
+    if (que.clase === "zona") {
+      siguiente = agregarZona(e, que.tipo, p, rumbo, todo).expediente;
+      const nombre = nombreSuperficie(que.tipo).toLowerCase();
+      texto = todo
+        ? `¡Listo! Todo el lugar es de ${nombre}.`
+        : `¡Listo! Marcaste una zona de ${nombre}. Agrega otra cosa o termina con «Listo».`;
+    } else if (que.clase === "ondulacion") {
+      siguiente = agregarOndulacion(e, p, rumbo).expediente;
+      texto = "¡Listo! Marcaste la zona ondulada. Sus medidas son un supuesto hasta que las midas.";
+    } else {
+      siguiente = agregarTope(e, p, rumbo, que.norma).expediente;
+      texto = "¡Listo! El tope quedó atravesado a la calle, con las medidas de la norma.";
+    }
+    cambiar({ ...estado, expediente: siguiente }, exito(texto));
+    setPoniendoTerreno(null);
+    // La pregunta sigue abierta: se puede marcar algo más.
+    setEditandoC1("terreno");
+  };
+  const terrenoTerminado = () => {
+    cambiar(
+      c1Con({ terrenoListo: true }),
+      exito(
+        e.terreno
+          ? "¡Listo! El terreno entra en la reconstrucción."
+          : "Pavimento liso: la reconstrucción va en plano.",
+      ),
+    );
+    setPoniendoTerreno(null);
+    setEditandoC1(null);
+  };
+
   // Un toque en el mapa, según la pregunta en curso.
   const tocar = (p: Punto) => {
     if (poniendo) {
@@ -715,6 +778,10 @@ export function EscenaFacil({
         exito(`¡Listo! Marcaste dónde empezó el ${nombres[v]}.`),
       );
       setHerramienta(null);
+      return;
+    }
+    if (actual?.tipo === "terreno") {
+      ponerTerreno(p);
       return;
     }
     if (actual?.tipo === "golpe") {
@@ -796,6 +863,10 @@ export function EscenaFacil({
     const { tipo, id } = deClave(clave);
     if (tipo === "coche") return `El ${nombres[id] ?? id}`;
     if (tipo === "objeto") return objetosColocados.find((o) => o.id === id)?.nombre ?? "Objeto";
+    if (tipo === "terreno") {
+      const t = terrenoMarcado.find((x) => x.id === id);
+      return t ? `${t.nombre} · ${medidasDePieza(t)}` : "Terreno";
+    }
     if (id === "golpe") return "Primer golpe";
     const q = paso(id);
     if (q) return `Punto ${q[2]} del ${nombres[q[1]!] ?? q[1]}`;
@@ -813,10 +884,14 @@ export function EscenaFacil({
       if (!fin) return;
       x = marcarFinal(e, id, p, fin.rumbo);
     } else if (tipo === "objeto") x = moverObjeto(e, id, p);
+    else if (tipo === "terreno") x = moverTerreno(e, id, p);
     else if (id === "golpe") x = marcarPrimerGolpe(e, impactos, p);
     else if (paso(id)) x = moverPuntoDePaso(e, paso(id)![1]!, Number(paso(id)![2]), p);
     else x = moverChoqueIntermedio(e, Number(id.replace("objeto-", "")), p);
-    cambiar({ ...estado, expediente: x }, exito(`¡Listo! Moviste: ${nombre.toLowerCase()}.`));
+    cambiar(
+      { ...estado, expediente: x },
+      exito(`¡Listo! Moviste: ${nombre.split(" · ")[0]!.toLowerCase()}.`),
+    );
   };
   const accionesDe = (clave: string): AccionSeleccion[] => {
     const { tipo, id } = deClave(clave);
@@ -887,6 +962,117 @@ export function EscenaFacil({
         },
       ];
     }
+    if (tipo === "terreno") {
+      const t = terrenoMarcado.find((x) => x.id === id);
+      if (!t) return [];
+      const giro: AccionSeleccion[] = [
+        {
+          id: "girar-izq",
+          texto: "Girar −15°",
+          hacer: () => hecho(girarTerreno(e, id, -15), "¡Listo! Lo giraste."),
+        },
+        {
+          id: "girar-der",
+          texto: "Girar +15°",
+          hacer: () => hecho(girarTerreno(e, id, 15), "¡Listo! Lo giraste."),
+        },
+        {
+          id: "mas-grande",
+          texto: t.clase === "tope" ? "Más ancho" : "Más grande",
+          hacer: () => hecho(escalarTerreno(e, id, 1.25), "¡Listo! Ahora es más grande."),
+        },
+        {
+          id: "mas-chico",
+          texto: t.clase === "tope" ? "Menos ancho" : "Más chico",
+          hacer: () => hecho(escalarTerreno(e, id, 0.8), "¡Listo! Ahora es más chico."),
+        },
+      ];
+      const quitar: AccionSeleccion = {
+        id: "quitar",
+        texto: "Quitar",
+        peligro: true,
+        hacer: () => hecho(quitarTerreno(e, id), "Lo quitaste.", true),
+      };
+      const medida = (x: Expediente) => hecho(x, "¡Listo! Cambiaste su medida.");
+      if (t.clase === "zona") {
+        // Sin fijar, se parte del valor de la tabla (el lugar, en seco).
+        const mu = t.friccion ?? friccionDeTabla(t.tipo!, "seco").valor;
+        return [
+          ...giro,
+          {
+            id: "friccion-menos",
+            texto: "Fricción −0.05",
+            hacer: () => medida(cambiarTerreno(e, id, { friccion: mu - 0.05 })),
+          },
+          {
+            id: "friccion-mas",
+            texto: "Fricción +0.05",
+            hacer: () => medida(cambiarTerreno(e, id, { friccion: mu + 0.05 })),
+          },
+          ...(t.friccion !== undefined
+            ? [
+                {
+                  id: "friccion-tabla",
+                  texto: "Fricción de la tabla",
+                  hacer: () => medida(cambiarTerreno(e, id, { friccion: null })),
+                },
+              ]
+            : []),
+          quitar,
+        ];
+      }
+      if (t.clase === "ondulacion")
+        return [
+          ...giro,
+          {
+            id: "alto-menos",
+            texto: "Alto −1 cm",
+            hacer: () => medida(cambiarTerreno(e, id, { amplitud_m: t.amplitud_m! - 0.01 })),
+          },
+          {
+            id: "alto-mas",
+            texto: "Alto +1 cm",
+            hacer: () => medida(cambiarTerreno(e, id, { amplitud_m: t.amplitud_m! + 0.01 })),
+          },
+          {
+            id: "crestas-menos",
+            texto: "Crestas más juntas",
+            hacer: () =>
+              medida(cambiarTerreno(e, id, { longitud_onda_m: t.longitud_onda_m! * 0.8 })),
+          },
+          {
+            id: "crestas-mas",
+            texto: "Crestas más separadas",
+            hacer: () =>
+              medida(cambiarTerreno(e, id, { longitud_onda_m: t.longitud_onda_m! * 1.25 })),
+          },
+          quitar,
+        ];
+      return [
+        ...giro,
+        {
+          id: "alto-menos",
+          texto: "Alto −1 cm",
+          hacer: () => medida(cambiarTerreno(e, id, { alto_m: t.alto_m! - 0.01 })),
+        },
+        {
+          id: "alto-mas",
+          texto: "Alto +1 cm",
+          hacer: () => medida(cambiarTerreno(e, id, { alto_m: t.alto_m! + 0.01 })),
+        },
+        {
+          id: "largo-menos",
+          texto: "Largo −10 cm",
+          hacer: () => medida(cambiarTerreno(e, id, { largo_m: t.largo_m! - 0.1 })),
+        },
+        {
+          id: "largo-mas",
+          texto: "Largo +10 cm",
+          hacer: () => medida(cambiarTerreno(e, id, { largo_m: t.largo_m! + 0.1 })),
+        },
+        quitar,
+      ];
+    }
     if (id === "golpe")
       return [
         { id: "cambiar", texto: "Cambiar", hacer: reabrir(() => setEditandoC1("golpe")) },
@@ -930,7 +1116,20 @@ export function EscenaFacil({
     else if (l.tipo === "objeto") setEditandoC1("otros");
     else if (l.tipo === "paso") setEditandoC1("paso");
     else if (l.tipo === "lugar" && l.objeto) setSeleccion(`objeto:${l.objeto}`);
+    else if (l.tipo === "terreno") {
+      if (l.terreno) setSeleccion(`terreno:${l.terreno}`);
+      else setEditandoC1("terreno");
+    }
   };
+  // C3 (W5): el terreno marcado, para el mapa. Las zonas, con su fricción si el perito la fijó.
+  const terrenoMapa: TerrenoMapa[] = terrenoMarcado.map((t) => ({
+    id: t.id,
+    clase: t.clase,
+    tipo: t.tipo,
+    nombre: t.nombre,
+    puntos: t.puntos,
+    centro: t.centro,
+  }));
   const objetosMapa = objetosColocados.map((o) => ({
     id: o.id,
     tipo: o.tipo,
@@ -1377,6 +1576,41 @@ export function EscenaFacil({
         </div>
       </>
     );
+  } else if (actual?.tipo === "terreno") {
+    hoja = (
+      <PreguntaTerreno
+        cabecera={cabecera}
+        piezas={terrenoMarcado}
+        relieve={usaRelieve(e)}
+        poniendo={poniendoTerreno}
+        otras={otrasSuperficies}
+        onOtras={() => setOtrasSuperficies(true)}
+        onElegir={(x) => {
+          setEditandoC1("terreno");
+          setPoniendoTerreno(x);
+        }}
+        onTodoElLugar={() => {
+          const centro = puntoChoque(1) ?? lugarBase;
+          if (centro) ponerTerreno(centro, true);
+        }}
+        onRelieve={(usar) => {
+          cambiar(
+            { ...estado, expediente: usarRelieve(e, usar) },
+            exito(
+              usar
+                ? "¡Listo! La reconstrucción va a usar el relieve real del lugar."
+                : "Listo, sin el relieve real.",
+            ),
+          );
+          setEditandoC1("terreno");
+        }}
+        onQuitar={(id) => {
+          cambiar({ ...estado, expediente: quitarTerreno(e, id) }, exito("Listo, lo quité."));
+          setEditandoC1("terreno");
+        }}
+        onListo={terrenoTerminado}
+      />
+    );
   } else if (actual?.tipo === "vehiculo" && !actual.direccion) {
     const v = actual.vehiculo;
     const sentido = sentidos[v] ?? null;
@@ -1638,6 +1872,7 @@ export function EscenaFacil({
           mapa.current = m;
         }}
         objetos={objetosMapa}
+        terreno={terrenoMapa}
         seleccion={corrigiendo ? seleccion : null}
         onSeleccionar={corrigiendo && !poniendo ? (k) => setSeleccion(k) : undefined}
         onMover={moverSeleccion}
@@ -1688,6 +1923,10 @@ export function EscenaFacil({
           <PanelCorregir
             poniendo={poniendo}
             onElegir={setPoniendo}
+            onTerreno={() => {
+              setPoniendo(null);
+              setEditandoC1("terreno");
+            }}
             onListo={() => {
               setPoniendo(null);
               setListaVista(false);
@@ -1989,7 +2228,9 @@ export function EscenaFacil({
                   ? "Primer golpe"
                   : p.tipo === "otros"
                     ? "Otros choques"
-                    : "Por dónde pasó";
+                    : p.tipo === "paso"
+                      ? "Por dónde pasó"
+                      : "Terreno";
           return (
             <button
               key={k}

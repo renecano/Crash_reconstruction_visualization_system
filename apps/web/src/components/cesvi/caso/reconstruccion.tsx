@@ -23,6 +23,7 @@ import {
   type ContraMetodosCesvi,
   type Expediente,
   type Reconstruccion,
+  usaRelieve,
   type VerificacionVehiculo,
   encabezadoHipotesis,
   supuestosEnUnaLinea,
@@ -40,6 +41,7 @@ import {
 import type { OverpassResponse } from "@croquis/croquis-2d";
 import { conCallesDelMapa, conObjetosDelMapa } from "@/lib/calles-del-mapa";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
+import { relieveDelLugar } from "@/lib/relieve-cliente";
 import { DEFINICION, METODO } from "@/lib/textos-caso";
 
 const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(2));
@@ -86,10 +88,17 @@ export function useReconstruccion(
     setRecalculando(true);
     try {
       const base = especDeExpediente(exp);
-      const resultado = await reconstruirCompletoEnNavegador(base.spec as unknown as EscenaSpec);
+      // W5: el relieve real, si el perito lo pidió. Sin malla (sin red), el solver va en plano y
+      // lo avisa.
+      const malla = usaRelieve(exp) && base.origen ? await relieveDelLugar(base.origen) : null;
+      const resultado = await reconstruirCompletoEnNavegador(
+        base.spec as unknown as EscenaSpec,
+        undefined,
+        malla,
+      );
       if (mio !== turno.current) return;
       const json = resultado as unknown as Record<string, unknown>;
-      setR(interpretarResultado(base, json));
+      setR({ ...interpretarResultado(base, json), relieve: malla });
       setDe(exp);
       setImpactos(impactosEnMapa(base, json));
       setEstado(null);

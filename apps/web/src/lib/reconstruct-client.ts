@@ -70,11 +70,15 @@ function getWorker(cual: "general" | "conductores" = "general"): Worker {
 }
 
 /** Solo la reconstrucción (trayectorias, daño, personas): lo necesario para dibujar. */
-export function reconstruirEnNavegador(spec: EscenaSpec): Promise<Resultado> {
+export function reconstruirEnNavegador(
+  spec: EscenaSpec,
+  /** La malla de relieve que cita la escena (C3, W5), ya en metros de la escena. */
+  relieve?: object | null,
+): Promise<Resultado> {
   return new Promise((resolve, reject) => {
     const id = nextId++;
     pending.set(id, { completo: false, resolve, reject });
-    getWorker().postMessage({ id, spec });
+    getWorker().postMessage({ id, spec, ...(relieve ? { relieve } : {}) });
   });
 }
 
@@ -85,11 +89,13 @@ export function reconstruirEnNavegador(spec: EscenaSpec): Promise<Resultado> {
 export function reconstruirCompletoEnNavegador(
   spec: EscenaSpec,
   onParcial?: (r: Resultado) => void,
+  /** La malla de relieve que cita la escena (C3, W5), ya en metros de la escena. */
+  relieve?: object | null,
 ): Promise<Resultado> {
   return new Promise((resolve, reject) => {
     const id = nextId++;
     pending.set(id, { completo: true, onParcial, resolve, reject });
-    getWorker().postMessage({ id, spec, completo: true });
+    getWorker().postMessage({ id, spec, completo: true, ...(relieve ? { relieve } : {}) });
   });
 }
 

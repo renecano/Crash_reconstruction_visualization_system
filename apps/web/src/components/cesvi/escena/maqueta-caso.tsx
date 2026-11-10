@@ -43,7 +43,8 @@ export function MaquetaCaso({
   const [listo, setListo] = useState<{ spec: EscenaSpec; res: ResultadoMaqueta } | null>(null);
   useEffect(() => {
     let vivo = true;
-    void reconstruirEnNavegador(spec)
+    // Con el relieve con que se reconstruyó (W5): la maqueta va sobre el mismo terreno.
+    void reconstruirEnNavegador(spec, r.relieve)
       .then((res) => {
         if (vivo) setListo({ spec, res: res as unknown as ResultadoMaqueta });
       })
@@ -51,6 +52,7 @@ export function MaquetaCaso({
     return () => {
       vivo = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `spec` cambia con `r`, y con él su relieve
   }, [spec]);
   if (!listo || listo.spec !== spec)
     return (
@@ -67,7 +69,10 @@ export function MaquetaCaso({
   const veloz = [...listo.res.vehiculos].sort(
     (a, b) => kmhAntesDe(b.trayectoria, ti) - kmhAntesDe(a.trayectoria, ti),
   )[0];
-  if (compacta) return <EscenaMaqueta spec={spec} resultado={listo.res} sinEtiquetas />;
+  if (compacta)
+    return (
+      <EscenaMaqueta spec={spec} resultado={listo.res} relieve={r.relieve ?? null} sinEtiquetas />
+    );
   return (
     <div className="relative h-full w-full">
       <ConLineaDeTiempo resultado={listo.res}>
@@ -75,6 +80,7 @@ export function MaquetaCaso({
           <EscenaMaqueta
             spec={spec}
             resultado={listo.res}
+            relieve={r.relieve ?? null}
             nombres={nombres}
             detalles={detalles}
             anchoVia={anchoVia}

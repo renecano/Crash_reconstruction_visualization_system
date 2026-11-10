@@ -1,0 +1,122 @@
+{
+  "que": "Malla de relieve de /api/relieve (600 m de lado) desde los modelos reales, por fuente",
+  "fecha": "2026-11-10",
+  "nota": "Tiempos desde la laptop de desarrollo, con su red y sin nada guardado; en la cadena, a Copernicus se le esperan 12 s. Los lugares son entradas de prueba, no casos. `archivos` es lo que dice el encabezado x-amz-meta-x-imagery-sources de cada mosaico.",
+  "lugares": [
+    {
+      "lugar": "Toluca, centro (aprox.)",
+      "lat": 19.2926,
+      "lon": -99.6569,
+      "cadena": {
+        "fuente": "INEGI, modelo digital de elevación LiDAR de terreno (5 m), por Terrain Tiles",
+        "nodos": "61 × 61",
+        "resolucion_m": 10,
+        "resolucion_nativa_m": 5,
+        "bytes_json": 19979,
+        "desnivel_m": 59.28,
+        "pendiente_en_el_centro_pct": 1.1,
+        "ms": 1106
+      },
+      "terrain_tiles": {
+        "fuente": "INEGI, modelo digital de elevación LiDAR de terreno (5 m), por Terrain Tiles",
+        "nodos": "61 × 61",
+        "resolucion_m": 10,
+        "resolucion_nativa_m": 5,
+        "bytes_json": 19979,
+        "desnivel_m": 59.28,
+        "pendiente_en_el_centro_pct": 1.1,
+        "archivos": [
+          "mx_lidar/889463085577_b.tif"
+        ],
+        "ms": 594
+      },
+      "copernicus_glo30": {
+        "fuente": "Copernicus DEM GLO-30 (modelo de superficie, 30 m)",
+        "nodos": "21 × 21",
+        "resolucion_m": 30,
+        "resolucion_nativa_m": 30,
+        "bytes_json": 2715,
+        "desnivel_m": 58.71,
+        "pendiente_en_el_centro_pct": 4.3,
+        "ms": 60441
+      }
+    },
+    {
+      "lugar": "La Marquesa, carretera México–Toluca (aprox.)",
+      "lat": 19.299,
+      "lon": -99.371,
+      "cadena": {
+        "fuente": "SRTM (30 m), U.S. Geological Survey, por Terrain Tiles",
+        "nodos": "61 × 61",
+        "resolucion_m": 10,
+        "resolucion_nativa_m": 30,
+        "bytes_json": 21786,
+        "desnivel_m": 59.93,
+        "pendiente_en_el_centro_pct": 7.6,
+        "ms": 12534
+      },
+      "terrain_tiles": {
+        "fuente": "SRTM (30 m), U.S. Geological Survey, por Terrain Tiles",
+        "nodos": "61 × 61",
+        "resolucion_m": 10,
+        "resolucion_nativa_m": 30,
+        "bytes_json": 21786,
+        "desnivel_m": 59.93,
+        "pendiente_en_el_centro_pct": 7.6,
+        "archivos": [
+          "srtm/N19W100.tif"
+        ],
+        "ms": 536
+      },
+      "copernicus_glo30": {
+        "fuente": "Copernicus DEM GLO-30 (modelo de superficie, 30 m)",
+        "nodos": "21 × 21",
+        "resolucion_m": 30,
+        "resolucion_nativa_m": 30,
+        "bytes_json": 2959,
+        "desnivel_m": 58.76,
+        "pendiente_en_el_centro_pct": 5.4,
+        "ms": 16023
+      }
+    },
+    {
+      "lugar": "Mérida, centro (aprox.)",
+      "lat": 20.9674,
+      "lon": -89.6237,
+      "cadena": {
+        "fuente": "INEGI, modelo digital de elevación LiDAR de terreno (5 m), por Terrain Tiles",
+        "nodos": "61 × 61",
+        "resolucion_m": 10,
+        "resolucion_nativa_m": 5,
+        "bytes_json": 21199,
+        "desnivel_m": 4.84,
+        "pendiente_en_el_centro_pct": 0.5,
+        "ms": 540
+      },
+      "terrain_tiles": {
+        "fuente": "INEGI, modelo digital de elevación LiDAR de terreno (5 m), por Terrain Tiles",
+        "nodos": "61 × 61",
+        "resolucion_m": 10,
+        "resolucion_nativa_m": 5,
+        "bytes_json": 21199,
+        "desnivel_m": 4.84,
+        "pendiente_en_el_centro_pct": 0.5,
+        "archivos": [
+          "mx_lidar/702825010164_b.tif",
+          "mx_lidar/702825010165_b.tif"
+        ],
+        "ms": 433
+      },
+      "copernicus_glo30": {
+        "fuente": "Copernicus DEM GLO-30 (modelo de superficie, 30 m)",
+        "nodos": "21 × 21",
+        "resolucion_m": 30,
+        "resolucion_nativa_m": 30,
+        "bytes_json": 2790,
+        "desnivel_m": 15.18,
+        "pendiente_en_el_centro_pct": 5.3,
+        "ms": 13302
+      }
+    }
+  ]
+}

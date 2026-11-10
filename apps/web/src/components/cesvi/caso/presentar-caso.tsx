@@ -54,7 +54,7 @@ export function PresentarCaso({
   const [res, setRes] = useState<ResultadoMaqueta | null>(null);
   useEffect(() => {
     let vivo = true;
-    void reconstruirEnNavegador(spec)
+    void reconstruirEnNavegador(spec, r.relieve)
       .then((x) => {
         if (vivo) setRes(x as unknown as ResultadoMaqueta);
       })
@@ -62,7 +62,7 @@ export function PresentarCaso({
     return () => {
       vivo = false;
     };
-  }, [spec]);
+  }, [spec, r.relieve]);
 
   const caps = useMemo(
     () =>

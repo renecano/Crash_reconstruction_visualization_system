@@ -87,6 +87,7 @@ test("@capturas W4: corregir después, para el resumen de René", async ({ page 
   await expect(page.getByTestId("marca-objeto-2")).toHaveCount(1);
   await page.getByTestId("otros-no").click();
   await page.getByTestId("paso-listo").click();
+  await page.getByTestId("terreno-liso").click();
   await expect(page.getByTestId("escena-lista")).toBeVisible();
 
   await foto(page, "1-resumen-con-cambiar");

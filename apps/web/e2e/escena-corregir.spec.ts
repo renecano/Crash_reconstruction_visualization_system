@@ -83,6 +83,7 @@ test("@flujo /cesvi: corregir después — mover el poste y la dirección de un 
   await expect(page.getByTestId("marca-objeto-2")).toHaveCount(1);
   await page.getByTestId("otros-no").click();
   await page.getByTestId("paso-listo").click();
+  await page.getByTestId("terreno-liso").click();
   await expect(page.getByTestId("escena-lista")).toBeVisible();
 
   // Cada línea del resumen lleva «Cambiar».

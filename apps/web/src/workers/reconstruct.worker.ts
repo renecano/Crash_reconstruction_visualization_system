@@ -15,6 +15,7 @@ import {
   reconstruct,
   reconstructionToDict,
   simulateDrivers,
+  withRelief,
 } from "@croquis/solver-ts";
 
 interface Request {
@@ -22,11 +23,14 @@ interface Request {
   spec: Record<string, unknown>;
   completo?: boolean;
   agentes?: boolean;
+  /** La malla de relieve que cita la escena (C3, W5): no viaja en la escena, se adjunta aquí. */
+  relieve?: Record<string, unknown> | null;
 }
 
 self.onmessage = (ev: MessageEvent<Request>) => {
-  const { id, spec, completo, agentes } = ev.data;
+  const { id, completo, agentes } = ev.data;
   try {
+    const spec = withRelief(ev.data.spec, ev.data.relieve ?? null);
     if (agentes) {
       const r = simulateDrivers(spec, reconstruct(spec));
       self.postMessage({ id, fase: "agentes", agentes: r === null ? null : r.toDict() });

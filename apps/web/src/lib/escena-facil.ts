@@ -20,7 +20,9 @@ import {
   enMetros,
   posesDeImpacto,
   objetosDe,
+  piezasTerreno,
   rumboDeg,
+  usaRelieve,
   type Expediente,
   type LonLat,
   type TipoObjeto,
@@ -641,12 +643,17 @@ export interface RespuestasC1 {
   golpeNoSe?: boolean;
   choquesListos?: boolean;
   pasosListos?: boolean;
+  /** C3 (W5): «¿Cómo es el terreno?» ya se contestó (liso, o con lo que quedó marcado). */
+  terrenoListo?: boolean;
 }
 
 export type PasoEscena =
   | { tipo: "choque"; orden: number; hecho: boolean }
-  /** C1: «¿Dónde fue el primer golpe?», «¿Chocó contra algo más?» y «¿Sabes por dónde pasó?». */
-  | { tipo: "golpe" | "otros" | "paso"; hecho: boolean }
+  /**
+   * C1: «¿Dónde fue el primer golpe?», «¿Chocó contra algo más?» y «¿Sabes por dónde pasó?». C3
+   * (W5): «¿Cómo es el terreno?».
+   */
+  | { tipo: "golpe" | "otros" | "paso" | "terreno"; hecho: boolean }
   | {
       tipo: "vehiculo";
       vehiculo: string;
@@ -704,6 +711,7 @@ export function pasosEscena(
       tipo: "paso",
       hecho: omitidas || s.c1.pasosListos === true || puntosDePaso(e).length > 0,
     },
+    { tipo: "terreno", hecho: omitidas || s.c1.terrenoListo === true || Boolean(e.terreno) },
   ];
   return [...choques, ...vehiculos, ...c1];
 }
@@ -964,6 +972,59 @@ export function resumenC1(s: {
       supuesto: null,
     });
   }
+  out.push(...resumenTerreno(s.e, s.c1));
+  return out;
+}
+
+/** C3 (W5): las líneas del terreno para el resumen, con lo que es supuesto dicho como supuesto. */
+export function resumenTerreno(e: Expediente, c1: RespuestasC1): LineaResumen[] {
+  const out: LineaResumen[] = [];
+  const m = (x: number | undefined) => (x ?? 0).toFixed(2);
+  for (const t of piezasTerreno(e)) {
+    if (t.clase === "zona")
+      out.push({
+        tipo: "terreno",
+        terreno: t.id,
+        texto: `Una zona de ${t.nombre.toLowerCase()}, donde la marcaste`,
+        detalle:
+          t.friccion !== undefined
+            ? `Con la fricción que le diste (${m(t.friccion)}).`
+            : "Croquis usa la fricción de la tabla para esa superficie, con su rango.",
+        supuesto: null,
+      });
+    else if (t.clase === "ondulacion")
+      out.push({
+        tipo: "terreno",
+        terreno: t.id,
+        texto: "Una zona ondulada, donde la marcaste",
+        detalle: `${m(t.amplitud_m)} m de valle a cresta, con crestas cada ${m(t.longitud_onda_m)} m.`,
+        supuesto: t.porOmision
+          ? "No mediste la ondulación: esas medidas son un supuesto y el dictamen lo dice."
+          : null,
+      });
+    else
+      out.push({
+        tipo: "terreno",
+        terreno: t.id,
+        texto: "Un tope, donde lo marcaste",
+        detalle: `${m(t.alto_m)} m de alto y ${m(t.largo_m)} m de largo${t.porOmision ? ": las medidas de la norma (NOM-034, tabla 38)." : ", como lo mediste."}`,
+        supuesto: null,
+      });
+  }
+  if (usaRelieve(e))
+    out.push({
+      tipo: "terreno",
+      texto: "El relieve real del lugar",
+      detalle: "Da la pendiente general de la vía; no ve una rampa corta ni un tope.",
+      supuesto: null,
+    });
+  if (!out.length && c1.terrenoListo)
+    out.push({
+      tipo: "terreno",
+      texto: "El terreno es pavimento liso",
+      detalle: "La reconstrucción va en plano.",
+      supuesto: null,
+    });
   return out;
 }
 
@@ -1125,8 +1186,10 @@ export function ponerEnLaCalle(
 // --- El resumen final ----------------------------------------------------------------------------
 
 export interface LineaResumen {
-  tipo: "choque" | "vehiculo" | "golpe" | "objeto" | "paso" | "lugar";
+  tipo: "choque" | "vehiculo" | "golpe" | "objeto" | "paso" | "lugar" | "terreno";
   vehiculo?: string;
+  /** La pieza del terreno de una línea «terreno» (zona, ondulación o tope): para «Cambiar». */
+  terreno?: string;
   /** El choque (su orden) de una línea «choque» u «objeto»: para «Cambiar». */
   orden?: number;
   /** El objeto colocado de una línea «lugar»: para «Cambiar». */

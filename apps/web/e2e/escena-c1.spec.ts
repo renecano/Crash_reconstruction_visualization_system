@@ -97,6 +97,10 @@ test("@flujo /cesvi: el primer golpe, un choque contra algo más y un punto de p
   await expect(page.getByTestId("paso-cuenta")).toContainText("Un punto del Camaro");
   await page.getByTestId("paso-listo").click();
 
+  // La del terreno (C3, W5): aquí, pavimento liso.
+  await expect(pregunta).toHaveText("¿Cómo es el terreno?");
+  await page.getByTestId("terreno-liso").click();
+
   // ¡La escena está lista!, con lo marcado en el resumen.
   await expect(page.getByTestId("escena-lista")).toBeVisible();
   const resumen = page.getByTestId("escena-resumen");

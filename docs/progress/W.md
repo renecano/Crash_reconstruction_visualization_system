@@ -5,9 +5,9 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 ## Estado
 
 - **Desde el 2026-11-09, el Claude Code de René lleva también este frente,** porque aquí no se había subido nada. Si eres el Claude Code del compañero: antes de empezar una fase, revisa la tabla de abajo y `git fetch`; si la fase ya está tomada, sigue con la siguiente y anótala aquí.
-- **Hechas:** W1 (#187), W2 (#188), W3 (#192) y W4 (#195, con su contrato #194), en `main`.
-- **Fase actual:** W4b («Menos ruido visual»), en `feat/w4b-menos-ruido`.
-- **Siguiente paso:** con CI en verde, fusionar W4b. Antes de W5, Claude Code de René se detiene y le avisa a René (2026-11-10).
+- **Hechas:** W1 (#187), W2 (#188), W3 (#192), W4 (#195, con su contrato #194) y W4b (#196), en `main`.
+- **Fase actual:** W5 («Terreno», C3 y O4), en `feat/w5-terreno`, con su contrato (#198) ya en `main`.
+- **Siguiente paso:** con CI en verde, fusionar W5 y seguir con W6.
 
 ## Fases tomadas
 
@@ -17,7 +17,8 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 | W2 · El hecho (O1 y O5)                                      | Claude Code de René | `feat/w2-hecho`        | En `main` (#188)          |
 | W3 · C1: punto inicial, choques intermedios y puntos de paso | Claude Code de René | `feat/w3-puntos`       | En `main` (#192)          |
 | W4 · C2 y «Corregir después»                                 | Claude Code de René | `feat/w4-corregir`     | En `main` (#195)          |
-| W4b · Menos ruido visual                                     | Claude Code de René | `feat/w4b-menos-ruido` | En PR desde el 2026-11-10 |
+| W4b · Menos ruido visual                                     | Claude Code de René | `feat/w4b-menos-ruido` | En `main` (#196)          |
+| W5 · Terreno (C3 y O4)                                       | Claude Code de René | `feat/w5-terreno`      | En PR desde el 2026-11-10 |
 
 ## W1 · Dictamen (O2)
 
@@ -199,6 +200,117 @@ Plan: PLAN-CESVI §3.4. El inventario, por pantalla, con qué se queda y qué se
 
 **Qué necesito de ti.** Que revises el inventario (`docs/cesvi/w4b/inventario.md`) con las capturas de antes y después. Lo que no te convenza se corrige.
 
+## W5 · Terreno (C3 y O4)
+
+Plan: PLAN-CESVI §3.4. Contrato: #198 (`Expediente.terreno` y los dos supuestos del tope en el resultado). Decisiones: ADR 0131. Física: `docs/physics.md`, «Terreno».
+
+### Plan
+
+- **Solver:** `terrain.py` como referencia y `terrain.ts` como port, con paridad en una escena nueva.
+- **Relieve:** `/api/relieve` en TS, con la fuente verificada y medida.
+- **Expediente y escena fácil:** `packages/cesvi/src/terreno.ts` y la pregunta «¿Cómo es el terreno?».
+- **Dónde se ve:** perfil de elevación en Reconstrucción; zonas, topes y curvas de nivel en la maqueta.
+- **Riesgo:** que un terreno plano cambie algún resultado. Se cuida con el camino de siempre cuando no hay terreno y con la regeneración de todas las referencias.
+
+### Qué se hizo
+
+- **Solver (Python y TS, con paridad):**
+  - **gravedad** por la pendiente bajo las llantas, antes y después del impacto;
+  - **fricción por zona**, con su rango en el Monte Carlo y en la inversión;
+  - **topes** como arco de círculo, con pérdida de energía y de contacto como dos supuestos declarados con rango, y el evento `cruce_tope` con su velocidad;
+  - **pose** sobre el terreno (`z`, `cabeceo`, `alabeo`);
+  - **sin terreno, el camino de siempre:** al regenerar las 13 referencias anteriores, ninguna cambió.
+- **Fuentes:**
+  - topes: NOM-034-SCT2/SEDATU-2022, tabla 38;
+  - pasto: Cenek, Jamieson y McLarin (llantas bloqueadas, seco y mojado), nuevo en `friction.json`;
+  - lo demás de las zonas: las filas que ya tenía la tabla.
+- **Relieve real** (`/api/relieve`, `apps/web/src/server/relieve.ts`):
+  - primero el LiDAR de terreno del INEGI (5 m), por los Terrain Tiles de AWS; donde no hay, Copernicus GLO-30; si no responde, SRTM;
+  - la malla lleva su fuente, el aviso de su licencia y su resolución de origen;
+  - el PNG de los mosaicos se decodifica con código propio.
+- **Expediente** (`packages/cesvi/src/terreno.ts` y `relieve.ts`): agregar, mover, girar, cambiar de tamaño, medir y quitar zonas, ondulaciones y topes; pedir el relieve; llevar todo a `lugar.terreno`; la malla en el marco de la escena y sus curvas de nivel.
+- **Escena fácil:** la pregunta «¿Cómo es el terreno?» después de las de C1, el terreno dibujado en el mapa y sus controles en «Corregir la escena».
+- **Reconstrucción:** el bloque «Terreno», con el perfil de elevación de cada vehículo, los cruces de tope y los supuestos.
+- **Maqueta del caso:** zonas, ondulaciones con sus crestas, topes a su tamaño real y curvas de nivel.
+- **Escena de referencia nueva:** `terraceria_topes` (alcance sobre terracería mojada, con ondulación, dos topes y una zona de grava). Es la escena canónica 14 y la quinta de D1.
+
+### Evidencia
+
+- **Escena de referencia** (`fixtures/resultados/terraceria_topes.json`, igual en Python y en TS):
+  - el vehículo A cruza el primer tope a 47.61 km/h, 0.46 s antes del impacto, y llega al impacto a 42.33 km/h;
+  - el vehículo B cruza el segundo tope a 17.06 km/h, 0.73 s después;
+  - la fricción de la zona de grava entra al Monte Carlo en su rango, 0.35 a 0.60.
+- **Relieve real** (`eval/js/w5_relieve.ts` → `eval/results/w5_relieve.json`, desde la laptop):
+
+  | Lugar de prueba | Fuente que eligió                  | Desnivel en 600 m | Pendiente en el punto | Tiempo |
+  | --------------- | ---------------------------------- | ----------------- | --------------------- | ------ |
+  | Toluca, centro  | INEGI LiDAR                        | 59.28 m           | 1.1 %                 | 1.1 s  |
+  | La Marquesa     | SRTM (Copernicus no llegó en 12 s) | 59.93 m           | 7.6 %                 | 12.5 s |
+  | Mérida, centro  | INEGI LiDAR                        | 4.84 m            | 0.5 %                 | 0.5 s  |
+  - Con Copernicus GLO-30, el centro de Mérida da 15.18 m de desnivel y 5.3 % de pendiente: son los edificios. Por eso el LiDAR de terreno va primero.
+  - Copernicus tardó de 13 a 60 s desde esta red. Falta medirlo desde Vercel (ver «Pendiente»).
+
+### Pruebas
+
+- `solver/tests/test_terreno.py` (16 funciones, 23 casos): el frenado en pendiente constante coincide con la fórmula; la distancia va con el inverso de la fricción de la zona; un tope quita la energía declarada; un terreno plano da el resultado de hoy.
+- `packages/solver-ts/src/terreno.test.ts` (21): lo mismo en TS. `parity.test.ts` compara las 14 escenas con Python.
+- `packages/cesvi/src/terreno.test.ts` y `relieve.test.ts` (19): la edición, lo que llega a la `EscenaSpec`, los cruces, el perfil y las curvas de nivel.
+- `apps/web/src/server/relieve.test.ts` (15): la cadena de fuentes y el PNG, con mosaicos sintéticos (CI no sale a la red).
+- `apps/web/e2e/escena-terreno.spec.ts` (`@flujo`): un tope, una zona ondulada, una zona de terracería y el relieve entran en la reconstrucción, y el tope se mide después.
+
+### Resumen para René (W5)
+
+**Qué quedó.** El terreno ya cambia los números de la reconstrucción.
+
+- **Una pregunta nueva en la escena:** «¿Cómo es el terreno?». Si es pavimento liso, un botón y sigues. Si no, eliges terracería, grava, pasto, otra superficie, «Ondulado» o «Tope» y tocas el mapa donde está.
+- **Cada cosa lleva su valor por omisión con fuente,** y lo puedes cambiar:
+  - una zona lleva la fricción de la tabla para esa superficie, con su rango;
+  - un tope lleva las medidas de la NOM-034 (tabla 38);
+  - una zona ondulada lleva 0.10 m de alto y crestas cada 6 m como **supuesto**, y el resumen lo dice hasta que la mides.
+- **«Usar el relieve real del lugar»** baja la pendiente del sitio. En ciudades con LiDAR del INEGI llega en un segundo.
+- **En Reconstrucción** hay un bloque «Terreno»: la altura bajo cada vehículo a lo largo de su camino, a qué velocidad cruzó cada tope y qué supone Croquis al cruzarlo.
+- **En la maqueta** se ven las zonas, los topes a su tamaño y las curvas de nivel.
+
+**Cómo probarlo.**
+
+1. En `/cesvi`, abre un caso nuevo con la narración de ejemplo y coloca la escena.
+2. En «¿Cómo es el terreno?», elige «Tope» y toca el mapa en el camino de un vehículo. Marca también «Usar el relieve real del lugar».
+3. Pulsa «Listo», ve a Reconstrucción y pulsa «Reconstruir». Baja hasta «Terreno».
+4. Regresa a la escena, pulsa «Cambiar algo», toca el tope y cámbiale la altura: la reconstrucción se recalcula sola.
+
+**Capturas** (`docs/cesvi/w5/`; el relieve de estas capturas es una malla de prueba, un plano de 5 %):
+
+1. la pregunta «¿Cómo es el terreno?»;
+2. el tope elegido, con los tres tipos de la norma;
+3. un tope, una zona ondulada y una de terracería marcados;
+4. el resumen con el terreno;
+5. el bloque «Terreno» de Reconstrucción;
+6. la Reconstrucción completa;
+7. el tope seleccionado para corregirlo.
+
+**Lo que no hace, dicho claro.**
+
+- **El relieve no ve lo chico:** una rampa de 2 m, el bombeo o un tope no salen del modelo de elevación. Se marcan a mano.
+- **Fuera de las ciudades con LiDAR,** el relieve es de 30 m y puede tardar hasta 12 s la primera vez.
+- **Los dos números del tope son supuestos** (cuánta energía y cuánto agarre se pierden), con su rango. No encontré una medición que los fije.
+- **El visor de Unity todavía no recibe el relieve desde la web:** entra en U6.
+
+**Qué necesito de ti.** Nada para seguir. Si conoces una medición del efecto de un tope en el frenado, sustituye a los dos supuestos.
+
+### Decisiones que conviene saber
+
+- **El orden de las fuentes del relieve cambió** respecto al plan (ADR 0131, punto 8): el LiDAR del INEGI va antes que Copernicus, por la medición de Mérida.
+- **Los supuestos del tope no se muestrean en el Monte Carlo:** cambiarían la secuencia de números al azar de todas las escenas.
+- **La pregunta del terreno no bloquea:** una escena que llega completa (un reporte importado, un caso guardado) no la hace sola; queda en el avance y en «Corregir la escena».
+- **La maqueta, el 3D de la web y el bloque «Terreno» vuelven a simular** con las velocidades reconstruidas y el mismo relieve: por eso la velocidad de cruce de un tope es la de la reconstrucción y no la de la escena de partida.
+
+### Pendiente
+
+- **Medir `/api/relieve` desde Vercel** cuando W5 esté en producción (tiempo de Copernicus desde la función) y anotarlo aquí.
+- **La fricción de una zona usa el estado «seco» para proponer el paso de ±0.05** en «Corregir»; el solver sí usa el estado del lugar.
+- **Dibujar una zona con varios toques** (polígono libre): hoy es un rectángulo que se mueve, se gira y cambia de tamaño. El contrato ya acepta polígonos.
+- **La volcadura, los peatones y los agentes reactivos** no ven el terreno (ADR 0131, «Límites»).
+
 ## Lo que U deja dicho para W
 
 Viene de U0 (ADR 0111). Vale cuando el PR de contrato 2.3.0 esté en `main`:
@@ -213,4 +325,4 @@ Viene de U0 (ADR 0111). Vale cuando el PR de contrato 2.3.0 esté en `main`:
 
 ## Necesito del otro frente
 
-Nada por ahora.
+- **De W5 para U6:** pasar `Reconstruccion.relieve` a `armarCaso3d` al integrar `<VisorUnity>`, y publicar un build con el tope como arco (`TerrenoVista.cs`). Está anotado en `docs/progress/U.md`.

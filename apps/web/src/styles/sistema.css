@@ -1670,6 +1670,21 @@
     border-radius: 6px;
     cursor: grab;
   }
+  /* W5: la etiqueta de una pieza del terreno, centrada en ella; de ahí se toca y se arrastra. */
+  .escena-etiqueta-terreno {
+    transform: translate(-50%, -50%);
+    border-left: 4px solid var(--color-terreno);
+    padding: 8px 12px;
+  }
+  .escena-seleccionable .escena-etiqueta-terreno {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+  .escena-seleccionado .escena-etiqueta-terreno {
+    outline: 3px solid var(--eleccion);
+    outline-offset: 3px;
+    cursor: grab;
+  }
   .escena-objeto {
     position: relative;
     width: 0;
