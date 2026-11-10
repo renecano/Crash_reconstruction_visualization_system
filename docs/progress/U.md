@@ -90,7 +90,7 @@ René aprobó la segunda pasada con dos ajustes. Los coches chicos en la cinemat
    - Los matorrales de la orilla van en grupos de 2 a 9 estirados a lo largo de la orilla, de 0.5 a 3.4 m (muchos chicos, pocos grandes), con alguno suelto entre grupos.
 
 - **Antes y después:** `docs/cesvi/u2/ajustes/`.
-- **Build:** 5 min, pico de Unity 2,528 MB y mínimo libre 315 MB. El peso no cambia (64.9 MB).
+- **Build:** 5 min, pico de Unity 2,528 MB y mínimo libre 315 MB. El peso no cambia (64.9 MB). Publicado en Blob con la huella `6337b65c1db3110f`.
 - **La carga no se pudo medir.** La red estaba lenta (Blob a unos 230 KB/s) y el tiempo de carga incluye bajar los modelos: el cruce urbano dio de 5 a 37 s entre corridas. `eval/results` se queda con la medición anterior, y se mide otra vez con la red normal (pendiente).
 - **Fps a 1600 × 900** (`docs/cesvi/u2/ajustes/fps-web.json`):
 

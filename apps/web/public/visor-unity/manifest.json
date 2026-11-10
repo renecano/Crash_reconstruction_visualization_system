@@ -1,10 +1,10 @@
 {
-  "huella": "c10ac1849189d3d7",
+  "huella": "6337b65c1db3110f",
   "base": "https://fmb6kf9hhoc8c9mk.public.blob.vercel-storage.com/",
-  "prefijo": "recursos/visor-unity/c10ac1849189d3d7/",
-  "loader": "45621ef024169b63639b9ac34faa7cf7.loader.js",
-  "data": "ea11e13fecde2cced688559c3b1c1262.data",
-  "framework": "0079dcd8990520a9476668a3a222b8eb.framework.js",
-  "code": "1aec216de1a4b3f82ba8d7d3bf13c300.wasm",
+  "prefijo": "recursos/visor-unity/6337b65c1db3110f/",
+  "loader": "34261dcd61bb0b1cc67f4dd83ac8f661.loader.js",
+  "data": "2ddb8fa0aa25564953572c223777f87f.data",
+  "framework": "55c36abf3708a28a394c32ac9161345d.framework.js",
+  "code": "49c587b5996a484414056fc400df64a8.wasm",
   "caso": "axa_alcance.json"
 }
