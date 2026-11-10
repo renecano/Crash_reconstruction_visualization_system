@@ -5,18 +5,19 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 ## Estado
 
 - **Desde el 2026-11-09, el Claude Code de René lleva también este frente,** porque aquí no se había subido nada. Si eres el Claude Code del compañero: antes de empezar una fase, revisa la tabla de abajo y `git fetch`; si la fase ya está tomada, sigue con la siguiente y anótala aquí.
-- **Hechas:** W1 (#187), W2 (#188) y W3 (#192), en `main`. El contrato de W4 (`Expediente.objetos`) también (#194).
-- **Fase actual:** W4 ampliada (C2 y «Corregir después»), en `feat/w4-corregir`.
-- **Siguiente paso:** cerrar W4 (e2e en verde, PR y fusión) y seguir con W4b («Menos ruido visual»). Antes de W5, Claude Code de René se detiene y le avisa a René (2026-11-10).
+- **Hechas:** W1 (#187), W2 (#188), W3 (#192) y W4 (#195, con su contrato #194), en `main`.
+- **Fase actual:** W4b («Menos ruido visual»), en `feat/w4b-menos-ruido`.
+- **Siguiente paso:** con CI en verde, fusionar W4b. Antes de W5, Claude Code de René se detiene y le avisa a René (2026-11-10).
 
 ## Fases tomadas
 
-| Fase                                                         | Quién               | Rama               | Estado                       |
-| ------------------------------------------------------------ | ------------------- | ------------------ | ---------------------------- |
-| W1 · Dictamen (O2)                                           | Claude Code de René | `feat/w1-dictamen` | En `main` (#187)             |
-| W2 · El hecho (O1 y O5)                                      | Claude Code de René | `feat/w2-hecho`    | En `main` (#188)             |
-| W3 · C1: punto inicial, choques intermedios y puntos de paso | Claude Code de René | `feat/w3-puntos`   | En `main` (#192)             |
-| W4 · C2 y «Corregir después»                                 | Claude Code de René | `feat/w4-corregir` | En curso desde el 2026-11-10 |
+| Fase                                                         | Quién               | Rama                   | Estado                    |
+| ------------------------------------------------------------ | ------------------- | ---------------------- | ------------------------- |
+| W1 · Dictamen (O2)                                           | Claude Code de René | `feat/w1-dictamen`     | En `main` (#187)          |
+| W2 · El hecho (O1 y O5)                                      | Claude Code de René | `feat/w2-hecho`        | En `main` (#188)          |
+| W3 · C1: punto inicial, choques intermedios y puntos de paso | Claude Code de René | `feat/w3-puntos`       | En `main` (#192)          |
+| W4 · C2 y «Corregir después»                                 | Claude Code de René | `feat/w4-corregir`     | En `main` (#195)          |
+| W4b · Menos ruido visual                                     | Claude Code de René | `feat/w4b-menos-ruido` | En PR desde el 2026-11-10 |
 
 ## W1 · Dictamen (O2)
 
@@ -170,6 +171,33 @@ Plan: PLAN-CESVI §3.4. Contrato: #194 (`Expediente.objetos[]`, `ObjetoExpedient
 - **Solo se arrastra el vehículo en reposo.** El del impacto se corrige con su pregunta («Cambiar»), porque de él dependen el choque y las flechas de llegada.
 - **Los objetos de la paleta no chocan solos:** están en la escena (el 3D los dibuja y tapan la vista), pero el solver solo choca contra el objeto de un choque intermedio que marcó el perito (W3).
 - **Un tramo** (pared, barrera, guarnición) se coloca a lo largo de la calle más cercana; el tamaño cambia su largo. En un poste, un árbol o una señal, cambia el grosor.
+
+## W4b · Menos ruido visual
+
+Plan: PLAN-CESVI §3.4. El inventario, por pantalla, con qué se queda y qué se pliega, está en `docs/cesvi/w4b/inventario.md`.
+
+### Qué se hizo
+
+- **Reconstrucción:**
+  - a primera vista quedan la velocidad con su rango, el método, el otro vehículo y lo que la fija;
+  - el histograma, los percentiles (repetían el rango), la mediana (repetía al p50) y el estado del solver pasan a «Cómo se reparten las simulaciones».
+- **Análisis:** cada supuesto muestra su valor y su rango; la justificación y la incertidumbre pasan a «Por qué».
+- **Contra CESVI:**
+  - la velocidad del reporte de CESVI sale una sola vez, arriba de las dos lecturas (antes salía en cada una);
+  - «Por qué difieren» y la cuenta por restos van plegados.
+- **Nada se borró:** todo sigue en la página (y en el dictamen), y las pruebas que leen esos datos siguen pasando.
+
+### Capturas
+
+`docs/cesvi/w4b/antes/` y `despues/`: el caso de AXA, de día (`claro-`) y de noche (`oscuro-`), pantalla por pantalla (`e2e/capturas-w4b.spec.ts`, a mano).
+
+### Resumen para René (W4b)
+
+**Qué quedó.** Reconstrucción, Análisis y Contra CESVI enseñan a primera vista solo lo que va en un dictamen de CESVI o lo que el perito decide ahí. Lo demás está a un clic, en «Ver detalle», «Por qué» o «Por qué difieren». El 63.15 de CESVI ya no sale dos veces.
+
+**Cómo probarlo.** Abre AXA en `/cesvi`, reconstruye y recorre Reconstrucción, Análisis y Contra CESVI.
+
+**Qué necesito de ti.** Que revises el inventario (`docs/cesvi/w4b/inventario.md`) con las capturas de antes y después. Lo que no te convenza se corrige.
 
 ## Lo que U deja dicho para W
 

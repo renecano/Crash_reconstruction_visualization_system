@@ -148,9 +148,15 @@ function Lectura({
   prefijo,
   testid,
   nota,
+  cesviArriba = false,
 }: {
   /** Una línea más de esta lectura. */
   nota?: string | null;
+  /**
+   * W4b, un número por cantidad: la cifra del reporte ya está arriba de las dos lecturas; aquí solo
+   * queda para lectores de pantalla.
+   */
+  cesviArriba?: boolean;
   nombre: string;
   que: string;
   etiquetaCroquis: string;
@@ -190,7 +196,7 @@ function Lectura({
             </span>
           ) : null}
         </div>
-        <div className="flex flex-col gap-1">
+        <div className={cesviArriba ? "sr-only" : "flex flex-col gap-1"}>
           <Cuenta
             valor={cesvi}
             decimales={2}
@@ -295,6 +301,14 @@ export function ActoContraste({
     ? conLetra(filaRestos.porQue, String(filaRestos.vehiculo), letraDe(String(filaRestos.vehiculo)))
     : null;
   const citas = reporte.conclusiones.zonas_contacto.filter((z) => z.cita);
+  // W4b, un número por cantidad: si las dos lecturas se comparan contra la misma cifra del reporte,
+  // esa cifra sale una sola vez, arriba de las dos.
+  const cifrasReporte = [f?.cesvi, fisica?.cesvi].filter((x): x is number => x !== undefined);
+  const unaCifra =
+    cifrasReporte.length &&
+    cifrasReporte.every((x) => x.toFixed(2) === cifrasReporte[0]!.toFixed(2))
+      ? cifrasReporte[0]!
+      : null;
   return (
     <div className="flex flex-col gap-5" data-testid="contra-reporte">
       <header className="flex flex-wrap items-end justify-between gap-4">
@@ -316,6 +330,17 @@ export function ActoContraste({
       </header>
 
       <section className="flex flex-col gap-3" data-testid="dos-lecturas">
+        {unaCifra !== null ? (
+          <p className="flex flex-wrap items-baseline gap-x-3 px-1" data-testid="cifra-reporte">
+            <span className="t-nota">
+              Reporte de CESVI · {letraDe((f ?? fisica)!.vehiculo)} · velocidad por deformación
+            </span>
+            <span className="cifra-protagonista text-[2.25rem] leading-none">
+              {unaCifra.toFixed(2)}
+            </span>
+            <span className="t-nota">km/h</span>
+          </p>
+        ) : null}
         <div className="grid gap-5 lg:grid-cols-2">
           {f ? (
             <Lectura
@@ -329,11 +354,7 @@ export function ActoContraste({
               difPct={f.difPct}
               prefijo="cifra-contra"
               testid="lectura-cesvi"
-              nota={
-                restos
-                  ? `Por restos, con los mismos datos: ${restos.croquis.toFixed(2)} contra ${restos.cesvi.toFixed(2)} km/h.`
-                  : null
-              }
+              cesviArriba={unaCifra !== null}
             />
           ) : (
             <p className="escena-hoja t-nota p-8" data-testid="sin-cifra-contra">
@@ -353,6 +374,7 @@ export function ActoContraste({
               difPct={fisica.difPct}
               prefijo="fisica"
               testid="lectura-fisica"
+              cesviArriba={unaCifra !== null}
             />
           ) : (
             <p className="escena-hoja t-nota p-8" data-testid="sin-lectura-fisica">
@@ -363,11 +385,24 @@ export function ActoContraste({
             </p>
           )}
         </div>
-        {fisica ? (
-          <p className="t-nota px-1" data-testid="por-que-difieren">
-            Por qué difieren: {conLetra(fisica.porQue, fisica.vehiculo, letraDe(fisica.vehiculo))}
-            {porQueRestos ? ` ${porQueRestos}` : ""}
-          </p>
+        {fisica || restos ? (
+          <details className="px-1" data-testid="detalle-diferencias">
+            <summary className="t-nota cursor-pointer font-medium text-texto">
+              Por qué difieren
+            </summary>
+            {fisica ? (
+              <p className="t-nota pt-1" data-testid="por-que-difieren">
+                {conLetra(fisica.porQue, fisica.vehiculo, letraDe(fisica.vehiculo))}
+                {porQueRestos ? ` ${porQueRestos}` : ""}
+              </p>
+            ) : null}
+            {restos ? (
+              <p className="t-nota pt-1" data-testid="cifra-contra-nota">
+                Por restos, con los mismos datos: {restos.croquis.toFixed(2)} contra{" "}
+                {restos.cesvi.toFixed(2)} km/h.
+              </p>
+            ) : null}
+          </details>
         ) : null}
       </section>
 
