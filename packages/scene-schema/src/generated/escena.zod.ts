@@ -777,6 +777,27 @@ export const ImpactoExpediente = z.strictObject({
 });
 export type ImpactoExpediente = z.infer<typeof ImpactoExpediente>;
 
+/** Un objeto del lugar que el perito coloca en la escena (C2): poste, muro o pared, árbol, barrera, guarnición, señal o vehículo estacionado. Está en la escena aunque nadie choque contra él; en la escena va a `entorno.objetos`. */
+export const ObjetoExpediente = z.strictObject({
+  id: z.string().regex(new RegExp("^[a-z0-9_-]{1,40}$")),
+  tipo: z.enum([
+    "poste",
+    "muro",
+    "arbol",
+    "barrera",
+    "guarnicion",
+    "senal",
+    "vehiculo_estacionado",
+  ]),
+  punto: Coordenadas,
+  rumbo_deg: z.number().min(0).lt(360).optional(),
+  largo_m: z.number().max(60).gt(0).optional(),
+  ancho_m: z.number().max(20).gt(0).optional(),
+  fuente: FuenteExpediente,
+  cita: Cita.optional(),
+});
+export type ObjetoExpediente = z.infer<typeof ObjetoExpediente>;
+
 /** El resultado: conclusión, sugerencia, decisión del perito, quién validó y la huella de las entradas. */
 export const ResultadoExpediente = z.strictObject({
   conclusion: z
@@ -896,6 +917,7 @@ export const Expediente = z.strictObject({
   vehiculos: z.array(VehiculoExpediente).max(20),
   danos: z.array(DanoExpediente).max(200).optional(),
   impactos: z.array(ImpactoExpediente).max(50).optional(),
+  objetos: z.array(ObjetoExpediente).max(60).optional(),
   versiones: z.array(VersionExpediente).max(20).optional(),
   evidencias: EvidenciasLugar.optional(),
   calculos: z.array(CalculoExpediente).max(60).optional(),

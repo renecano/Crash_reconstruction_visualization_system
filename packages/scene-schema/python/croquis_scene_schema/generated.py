@@ -1500,6 +1500,41 @@ class DanoExpediente(BaseModel):
     cita: Cita | None = None
 
 
+class ObjetoExpediente(BaseModel):
+    """
+    Un objeto del lugar que el perito coloca en la escena (C2): poste, muro o pared, árbol, barrera, guarnición, señal o vehículo estacionado. Está en la escena aunque nadie choque contra él; en la escena va a `entorno.objetos`.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    id: Annotated[str, Field(pattern="^[a-z0-9_-]{1,40}$")]
+    """
+    Identificador estable dentro del expediente.
+    """
+    tipo: Literal[
+        "poste",
+        "muro",
+        "arbol",
+        "barrera",
+        "guarnicion",
+        "senal",
+        "vehiculo_estacionado",
+    ]
+    punto: Coordenadas
+    rumbo_deg: Annotated[float | None, Field(ge=0.0, lt=360.0)] = None
+    """
+    Hacia dónde apunta su largo, desde el norte hacia el este.
+    """
+    largo_m: Annotated[float | None, Field(gt=0.0, le=60.0)] = None
+    ancho_m: Annotated[float | None, Field(gt=0.0, le=20.0)] = None
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+    cita: Cita | None = None
+
+
 class Zona(BaseModel):
     """
     Zona de contacto de un vehículo.
@@ -1955,6 +1990,10 @@ class Expediente(BaseModel):
     impactos: Annotated[list[ImpactoExpediente] | None, Field(max_length=50)] = None
     """
     Impactos en orden.
+    """
+    objetos: Annotated[list[ObjetoExpediente] | None, Field(max_length=60)] = None
+    """
+    Objetos del lugar que colocó el perito (C2).
     """
     versiones: Annotated[list[VersionExpediente] | None, Field(max_length=20)] = None
     """
