@@ -731,12 +731,9 @@ namespace Croquis.Visor
         private static void Horizonte(Transform padre, EntornoEscenario en, AmbienteEscenario a, long semilla)
         {
             // Cada capa es una ladera con pendiente (la luz del sol la modela) y textura de pasto, tierra,
-            // monte y roca. Cuanto más lejos, más se funde con el aire: la perspectiva atmosférica.
-            // De noche la alumbra la luna como al resto del campo: es una ladera oscura que se lee
-            // contra el cielo, no una silueta negra.
-            // De noche el «aire» es un gris azulado claro: con la luna encima queda una ladera oscura
-            // pero con textura; con el azul casi negro del cielo, los cerros lejanos salían negros.
-            var aire = a.Noche ? new Color(0.17f, 0.18f, 0.22f) : Color.Lerp(RenderSettings.fogColor, new Color(0.55f, 0.66f, 0.75f), 0.35f);
+            // monte y roca. La niebla de la escena la funde con el aire cuanto más lejos está. De noche
+            // la alumbra la luna como al resto del campo: es una ladera oscura que se lee contra el
+            // cielo, no una silueta negra.
             var azar = new Azar(semilla + 503);
             for (var i = 0; i < en.Cerros.Length; i++)
             {
@@ -778,7 +775,8 @@ namespace Croquis.Visor
 
                 crestas.Add(((float)c.HastaRad, (float)c.AlturasM[n - 1] * escala));
                 var m = new Malla();
-                var repeticion = Mathf.Max(60f, maximo + 6f) * 1.6f;
+                var lejana = r0 > 450f;
+                var repeticion = Materiales.MedidasLadera(lejana).x;
                 // Cuatro hileras de la base (abajo del piso, más cerca) a la cresta (más lejos).
                 var filas = new[] { 0f, 0.3f, 0.65f, 1f };
                 var recorrido = 0f;
@@ -811,8 +809,7 @@ namespace Croquis.Visor
                     }
                 }
 
-                var lejos = Mathf.InverseLerp(400f, 1100f, r0);
-                var textura = Materiales.Ladera(i, repeticion, maximo + 6f, lejos, aire, a.Noche);
+                var textura = Materiales.Ladera(lejana);
                 var mat = new Material(Materiales.Liso(Color.white, 0.02f)) { name = "cerros_" + i };
                 mat.SetTexture("_BaseMap", textura);
                 m.Poner(padre, "cerros_" + i, mat, false, false);

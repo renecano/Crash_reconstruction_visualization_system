@@ -37,6 +37,14 @@ namespace Croquis.EditorTools
                 return;
             }
 
+            if (assetPath.Contains("/cerros/"))
+            {
+                // Se repiten a lo ancho de la ladera; a lo alto van de la base a la cresta.
+                t.wrapModeU = TextureWrapMode.Repeat;
+                t.wrapModeV = TextureWrapMode.Clamp;
+                t.maxTextureSize = 512;
+            }
+
             t.crunchedCompression = true;
             t.compressionQuality = 70;
             t.textureCompression = TextureImporterCompression.Compressed;

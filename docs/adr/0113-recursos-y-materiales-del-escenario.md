@@ -58,3 +58,19 @@ Las tres tarjetas cruzadas se notaban de cerca: una costura al centro de la copa
 - **Desde arriba** (más de 58° de elevación, o la cámara cenital) el cuadro se pliega y queda la tarjeta de planta, que es la vista real del árbol desde arriba.
 - **Por qué no impostores octaédricos.** Piden un sombreador propio que mezcle tres vistas por píxel. Con 8 vistas a nivel del suelo y la planta se cubre lo que el perito ve (acera, cinematográfica, conductor, cenital) sin ese riesgo en WebGL. El salto entre vistas es de 45° y se nota solo al orbitar despacio junto a un árbol.
 - **El atlas entra a tamaño completo también en WebGL.** A la mitad, un árbol visto desde la acera se veía en manchas.
+
+## Autopista y cerros (segunda pasada de U2, punto 5; 2026-11-10)
+
+- **Solo si la vía trae acotamiento** (`CarreteraVista`). Todo sale de la geometría que ya calculó TS y de la semilla de la escena, nada es dato del caso y nada cae dentro del claro del hecho.
+- **Orillas.** Las aristas de borde del acotamiento que tienen la calzada hacia adentro y no hacia afuera son orillas exteriores; si del otro lado hay otra calzada a menos de 40 m, la orilla da a la mediana. Afuera de cada una va una franja de grava de 0.95 m y, más afuera, tierra suelta que se pierde en el pasto.
+- **Vialetas.** Las rayas vienen en piezas de 1 m. Se juntan por línea (mismo eje a menos de 15 cm, a menos de 14 m) y se recorren en orden: en las discontinuas va una vialeta en medio de cada espacio y, en las continuas, una cada 12 m. De noche su reflejante pasa el umbral del resplandor.
+- **Defensa y fantasmas.** La defensa ya era continua; ahora lleva un reflejante ámbar sobre uno de cada tres postes (cada 12 m). Donde no hay defensa van fantasmas cada 20 m: poste blanco, banda negra y reflejante.
+- **Señalamiento genérico.** Un tablero verde por sentido, entre 90 y 150 m adelante del hecho y a la derecha de quien maneja, con orla, una flecha y franjas blancas. No lleva texto: un nombre de lugar o un límite de velocidad inventados se leerían como datos del sitio, y en un dictamen eso importa.
+- **Matorrales.** Tarjetas cruzadas de 0.9 a 2.3 m, en tres follajes (verde, olivo y seco), de 3 a 14 m afuera del acotamiento y a veces en grupo. Usan el material base de las matas, que ya trae su variante de sombreador para WebGL.
+- **Cerros.** Cada capa es una ladera con pendiente (cuatro hileras de la base a la cresta), con textura procedural de pasto, tierra, manchas de monte que se juntan en las cañadas y roca cerca de la cresta. De noche la alumbra la luna como al resto del campo.
+- **Las texturas de ladera se hornean al preparar el proyecto** (`PrepararEscenario.Laderas`): una para las capas cercanas y otra para las lejanas, de 512 px. Generarlas al cargar el caso, una por capa, subía la carga del caso de AXA de 3.3 a 5.1 s y la del cruce urbano de 4.1 a 6.6 s en WebGL (medido con `eval/unity_build.mjs` el 2026-11-10).
+- **La niebla de URP es global.** Apagar `FOG_EXP2` en el material no la quita: es una palabra clave global que pone la canalización en cada cuadro. Por eso los cerros a 720 y 1,100 m salían del color del aire: azules de día y negros de noche. Las capas a más de 450 m se acercan a menos de 530 m, escaladas para conservar su altura aparente; dentro de la escena la diferencia de paralaje no se nota.
+
+### `Mathf.SmoothStep` no es el `smoothstep` de los sombreadores
+
+`Mathf.SmoothStep(desde, hasta, t)` interpola entre `desde` y `hasta`. No es una rampa de 0 a 1 entre dos bordes. Las texturas de desgaste de los puntos 1 a 3 lo usaban como rampa, y por eso salían como cuadros parejos: una mancha de aceite era un cuadro semitransparente, y en un visor forense un cuadro oscuro en la vía se puede tomar por evidencia. Todas usan ahora `Paso`, el `smoothstep` de verdad. La raya gastada solo se aclara, de 62 % a 100 %: con huecos de verdad, una raya continua se leía discontinua.

@@ -488,31 +488,48 @@ namespace Croquis.Visor
             return m;
         }
 
+        /// <summary>Los dos tamaños de la textura de ladera: (ancho que cubre, alto nominal) en metros.</summary>
+        public static Vector2 MedidasLadera(bool lejos) => lejos ? new Vector2(200f, 110f) : new Vector2(90f, 45f);
+
         /// <summary>
-        /// La ladera de una capa de cerros: pasto y tierra en manchas, matorral y árboles como puntos
-        /// oscuros (más en las cañadas y abajo), y roca clara cerca de la cresta. `metrosPorRepeticion`
-        /// es lo que mide la textura a lo ancho; a lo alto cubre de la base a la cresta. Cuanto más
-        /// lejos (`lejos` de 0 a 1), más se funde con el `aire`.
+        /// La textura de ladera de las capas cercanas o lejanas, horneada por `PrepararEscenario`: generarla
+        /// al cargar el caso costaba casi medio segundo por capa en WebGL (medido el 2026-11-10).
         /// </summary>
-        public static Texture2D Ladera(int capa, float metrosPorRepeticion, float altoM, float lejos, Color aire, bool noche)
+        public static Texture2D Ladera(bool lejos)
         {
-            var n = Calidad.Media ? 256 : 512;
-            var nombre = "ladera_" + capa + "_" + n + "_" + (noche ? "n" : "d");
+            var nombre = "cerros/ladera_" + (lejos ? "lejos" : "cerca");
             if (Texturas.TryGetValue(nombre, out var t))
             {
                 return t;
             }
 
-            var semilla = 1500 + capa * 31;
+            t = Resources.Load<Texture2D>(nombre);
+            if (t == null)
+            {
+                throw new System.InvalidOperationException("Falta la textura «" + nombre + "». Corre «Croquis/Preparar proyecto».");
+            }
+
+            t.wrapModeU = TextureWrapMode.Repeat;
+            t.wrapModeV = TextureWrapMode.Clamp;
+            Texturas[nombre] = t;
+            return t;
+        }
+
+        /// <summary>
+        /// Pinta una ladera de `n` × `n`: pasto y tierra en manchas, manchas de monte de forma irregular
+        /// (más abajo y en las cañadas) y roca clara cerca de la cresta. A lo ancho cubre `metrosPorRepeticion`
+        /// y se repite sin costura; a lo alto va de la base (v = 0) a la cresta (v = 1) de una capa de
+        /// `altoM`. El velo del aire lo pone la niebla de la escena.
+        /// </summary>
+        public static Color[] PintarLadera(int n, float metrosPorRepeticion, float altoM, int semilla)
+        {
             // Manchas de unos 9 m; el ruido se repite a lo ancho y a lo alto se estira a escala.
             var celdasMonte = Mathf.Max(3, Mathf.RoundToInt(metrosPorRepeticion / 9f));
             var aspecto = altoM / metrosPorRepeticion;
-
             var pasto = new Color(0.27f, 0.31f, 0.16f);
             var seco = new Color(0.47f, 0.4f, 0.26f);
             var monte = new Color(0.13f, 0.17f, 0.08f);
             var roca = new Color(0.5f, 0.47f, 0.42f);
-            t = new Texture2D(n, n, TextureFormat.RGBA32, true) { name = nombre, wrapModeU = TextureWrapMode.Repeat, wrapModeV = TextureWrapMode.Clamp };
             var px = new Color[n * n];
             for (var j = 0; j < n; j++)
             {
@@ -537,17 +554,11 @@ namespace Croquis.Visor
                     c = Color.Lerp(c, monte * sombra, arbol * 0.62f);
                     var risco = Paso(0.72f, 0.95f, v) * Paso(0.55f, 0.75f, Ruido(u, v, 21, semilla + 4));
                     c = Color.Lerp(c, roca, risco * (1f - arbol));
-                    // Abajo, la ladera se vela más con el aire (perspectiva atmosférica en la base).
-                    // La niebla de la escena ya vela los cerros; aquí solo un poco más a las capas lejanas.
-                    var velo = Mathf.Lerp(0f, noche ? 0.1f : 0.18f, lejos) * Mathf.Lerp(1.15f, 0.85f, v);
-                    px[j * n + i] = Color.Lerp(c, aire, Mathf.Clamp01(velo));
+                    px[j * n + i] = c;
                 }
             }
 
-            t.SetPixels(px);
-            t.Apply(true, true);
-            Texturas[nombre] = t;
-            return t;
+            return px;
         }
 
         private static Material ConMancha(string llave, string baseMat, Texture2D tex, Color color)

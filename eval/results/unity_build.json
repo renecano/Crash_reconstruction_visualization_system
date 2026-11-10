@@ -1,6 +1,6 @@
 {
-  "fecha": "2026-11-10T13:42:09.938Z",
-  "commit": "85737a4ba382da5d34558749c401a4ff9f3feaf3",
+  "fecha": "2026-11-10T14:31:26.260Z",
+  "commit": "9e91fd99766626edb9a9366e454fe9b0206a8008",
   "unity": "6000.3.28f1",
   "maquina": {
     "cpu": "Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz",
@@ -13,70 +13,70 @@
   "con_escenario": true,
   "paquete_kb": 386,
   "peso": {
-    "bytes": 67866394,
-    "mb": 64.7,
-    "br_q9_bytes": 32493648,
-    "br_q9_mb": 31,
+    "bytes": 68094169,
+    "mb": 64.9,
+    "br_q9_bytes": 32695030,
+    "br_q9_mb": 31.2,
     "archivos": [
       {
-        "archivo": "Build/23db176dae4e2e79e713be978df7772c.data",
-        "bytes": 32071364,
-        "bytes_br_q9": 23375412
+        "archivo": "Build/0079dcd8990520a9476668a3a222b8eb.framework.js",
+        "bytes": 445828,
+        "bytes_br_q9": 81973
       },
       {
-        "archivo": "Build/62e2271be1501316a6e916e5854cd76c.loader.js",
+        "archivo": "Build/1aec216de1a4b3f82ba8d7d3bf13c300.wasm",
+        "bytes": 35369187,
+        "bytes_br_q9": 9020788
+      },
+      {
+        "archivo": "Build/45621ef024169b63639b9ac34faa7cf7.loader.js",
         "bytes": 26983,
-        "bytes_br_q9": 8908
+        "bytes_br_q9": 8909
       },
       {
-        "archivo": "Build/be0fe59762a06d8f848b572567ff9293.framework.js",
-        "bytes": 444028,
-        "bytes_br_q9": 81839
-      },
-      {
-        "archivo": "Build/e183fbdd2f54d9dbf76f3acf2b6d0f60.wasm",
-        "bytes": 35322353,
-        "bytes_br_q9": 9026787
+        "archivo": "Build/ea11e13fecde2cced688559c3b1c1262.data",
+        "bytes": 32250505,
+        "bytes_br_q9": 23582657
       },
       {
         "archivo": "index.html",
         "bytes": 1666,
-        "bytes_br_q9": 702
+        "bytes_br_q9": 703
       }
     ]
   },
   "carga": {
-    "hasta_listo_s": 14.3,
-    "caso_cargado_s": 3.3,
-    "total_s": 18.4,
-    "fps_p50": 47.6
+    "hasta_listo_s": 14.2,
+    "caso_cargado_s": 3.4,
+    "total_s": 18.5,
+    "fps_p50": 43.5
   },
   "corridas": [
     {
-      "hasta_listo_s": 14.4,
-      "caso_cargado_s": 4,
-      "total_s": 19.6,
-      "fps_p50": 40.85,
-      "fps_muestras": 4,
-      "heap_js_mb": 39.8,
-      "errores": []
-    },
-    {
-      "hasta_listo_s": 14.3,
-      "caso_cargado_s": 3,
-      "total_s": 18.2,
-      "fps_p50": 47.6,
+      "hasta_listo_s": 14.2,
+      "caso_cargado_s": 3.4,
+      "total_s": 18.5,
+      "fps_p50": 43.5,
       "fps_muestras": 4,
       "heap_js_mb": 40,
       "errores": []
     },
     {
       "hasta_listo_s": 14.2,
-      "caso_cargado_s": 3.3,
-      "total_s": 18.4,
-      "fps_p50": 50,
+      "caso_cargado_s": 2.9,
+      "total_s": 18,
+      "fps_p50": 43.5,
       "fps_muestras": 4,
       "heap_js_mb": 40.1,
+      "errores": []
+    },
+    {
+      "hasta_listo_s": 14.2,
+      "caso_cargado_s": 3.9,
+      "total_s": 18.9,
+      "fps_p50": 43.5,
+      "fps_muestras": 4,
+      "heap_js_mb": 40.3,
       "errores": []
     }
   ]

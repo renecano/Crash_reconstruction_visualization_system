@@ -47,6 +47,8 @@ namespace Croquis.EditorTools
                 Cielo(c);
             }
 
+            Laderas();
+
             Posproceso();
             AssetDatabase.SaveAssets();
         }
@@ -235,6 +237,32 @@ namespace Croquis.EditorTools
             m.SetOverrideTag("RenderType", "TransparentCutout");
             m.renderQueue = (int)RenderQueue.AlphaTest;
             Guardar(m, "arbol_" + especie + "_" + vista);
+        }
+
+        /// <summary>
+        /// Hornea las dos texturas de ladera de los cerros (cercana y lejana) como PNG de recursos. Solo
+        /// reescribe el archivo si cambió, para no reimportarlo en cada preparación.
+        /// </summary>
+        private static void Laderas()
+        {
+            const int N = 512;
+            foreach (var lejos in new[] { false, true })
+            {
+                var medidas = Croquis.Visor.Materiales.MedidasLadera(lejos);
+                var px = Croquis.Visor.Materiales.PintarLadera(N, medidas.x, medidas.y, lejos ? 1531 : 1500);
+                var png = ImageConversion.EncodeArrayToPNG(
+                    System.Array.ConvertAll(px, c => (Color32)c),
+                    UnityEngine.Experimental.Rendering.GraphicsFormat.R8G8B8A8_SRGB,
+                    N,
+                    N);
+                var ruta = "Assets/Croquis/Recursos/Resources/cerros/ladera_" + (lejos ? "lejos" : "cerca") + ".png";
+                Directory.CreateDirectory(Path.GetDirectoryName(ruta));
+                if (!File.Exists(ruta) || !File.ReadAllBytes(ruta).AsSpan().SequenceEqual(png))
+                {
+                    File.WriteAllBytes(ruta, png);
+                    AssetDatabase.ImportAsset(ruta, ImportAssetOptions.ForceUpdate);
+                }
+            }
         }
 
         private static void Cielo(string nombre)

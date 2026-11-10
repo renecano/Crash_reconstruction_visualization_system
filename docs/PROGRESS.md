@@ -6,6 +6,10 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 ## Estado actual
 
 - **Ahora: plan final v4** (René, 2026-11-07; `docs/cesvi/PLAN-CESVI.md`). CESVI pidió el 3D en Unity, puntos intermedios del choque, objetos que se mueven y un terreno que afecta la física. Trabajan dos frentes en paralelo, con bitácora propia: [`docs/progress/U.md`](progress/U.md) y [`docs/progress/W.md`](progress/W.md). Este archivo queda como índice, y lo que sigue abajo es historia del plan v3 (`docs/historial/PLAN-CESVI-v3.md`).
+  - **U2, segunda pasada del escenario Unity (2026-11-10):**
+    - **Qué cambió:** los 5 puntos (luz, calle mexicana, suelo, árboles impostores, autopista y cerros) están en `main`.
+    - **Dónde está el detalle:** el resumen y las cifras, en [`docs/progress/U.md`](progress/U.md); las 20 capturas lado a lado, en `docs/cesvi/u2/segunda-pasada/lado-a-lado/`.
+    - **Siguiente:** W3 ya está en `main` (#192), y siguen W4 y W4b.
   - **Resumen para René (U-pre, #181, en producción):**
     - **Qué quedó:** AXA abre con su escena colocada y da siempre lo mismo que `eval/results`: V2 71.56 km/h (68.02–92.81), +8.41 km/h y +13.32 % contra 63.15. Ese número es el mismo en Reconstrucción, Contra CESVI, Presentar, el dictamen y el PDF. La mediana (75.2) queda como dato secundario con su nombre, y el histograma marca el mejor ajuste.
     - **Cómo probarlo:** en https://croquis-sage.vercel.app/cesvi abre AXA, ve a Reconstrucción, pulsa «Reconstruir» y sigue hasta Contra CESVI.

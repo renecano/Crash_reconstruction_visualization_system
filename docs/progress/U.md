@@ -4,11 +4,8 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 
 ## Estado
 
-- **Fase actual:** U2 (escenario), segunda pasada, en el orden que fijó René el 2026-11-09: 1 luz y color, 2 calle mexicana, 3 suelo y desgaste, 4 árboles, 5 autopista y cerros.
-- **Hecho:** los puntos 1, 2 y 3, y las notas de René sobre el punto 2 (relieve y desgaste de fachadas, sin rayas de orilla en calles de colonia).
-- **Hecho también:** el perfil «media» para WebGL (la parte de U5 que pidió la regla de fps de René). La noche urbana volvió a quedar arriba de 12 fps.
-- **Retomado el 2026-11-09,** cuando René cerró todo: el build de verificación confirmó las matas, los faros y las gotas en WebGL (abajo). Rama `feat/u2-arboles`.
-- **En curso:** el punto 5 (autopista y cerros). **Después:** publicar en Blob y las 20 capturas lado a lado.
+- **Fase actual:** U2 (escenario), segunda pasada **terminada** (los 5 puntos en el orden que fijó René el 2026-11-09). Build publicado en Blob (huella `c10ac1849189d3d7`) y las 20 capturas lado a lado en `docs/cesvi/u2/segunda-pasada/lado-a-lado/`. Rama `feat/u2-arboles`, PR a `main`.
+- **Siguiente:** W4 y W4b (René, 2026-11-10). Antes de W5, W8 o una parte complicada de U5, detenerse y avisar a René con «Listo para W5: cambia el modelo».
 - **Unity y Blender corren en segundo plano** desde el 2026-11-10: René reabrió la sesión con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`. Sigue la regla de un solo proceso pesado a la vez.
 - **Cómo se itera:** capturas del Editor en modo batch (`Capturas.Tomar`, unos 3 min). En esta sesión no hubo herramientas del MCP de Unity. Un build WebGL solo al cerrar cada punto.
 
@@ -76,6 +73,63 @@ La meta está en `docs/cesvi/PLAN-CESVI.md` §3.3. Decisiones: ADR 0112 (el esce
 - **La noche urbana bajó de 12 fps:** el cruce de noche da de 10.9 a 11.1 fps (antes 12.7). Se activa la regla de René: primero rendimiento, después más detalle.
 - **Este build tardó 74 min** porque la laptop estuvo suspendida a la mitad; los demás tardan de 5 a 8 min.
 - **Una prueba del contrato falló una vez por tiempo** (5.8 s con límite de 5 s) con la laptop cargada; sola pasa. Se confirma en CI.
+
+### Resumen para René (segunda pasada, 2026-11-10)
+
+**Qué quedó.** Los 5 puntos de la segunda pasada, en tu orden: luz y color, calle mexicana, suelo y desgaste, árboles y autopista con cerros. Las 20 capturas WebGL nuevas están junto a las del 2026-11-09 en `docs/cesvi/u2/segunda-pasada/lado-a-lado/` (antes a la izquierda, después a la derecha). Las nuevas, solas, están en `despues/`.
+
+**Cómo probarlo.** `https://croquis-sage.vercel.app/visor-unity/medir.html` abre el build publicado (huella `c10ac1849189d3d7`) con AXA.
+
+**Cifras** (build WebGL con la laptop libre, perfil «media»):
+
+- **Peso:** 64.9 MB (31.2 MB con Brotli). Antes de la segunda pasada eran 61 MB (27.4). Los 3.9 MB de más son los atlas de los árboles a tamaño completo.
+- **Arranque:** 14.2 s, antes 13. AXA carga en 3.4 s más y el cruce urbano en 4.3 s.
+- **Fps:** la noche urbana queda en 23.3 a 25 fps a 1600 × 900, arriba de tus 12. Ninguna escena baja de 22.2.
+
+**Qué necesito de ti.** Que veas las capturas lado a lado y me marques lo que no llegue a la vara.
+
+### Segunda pasada · punto 5: autopista y cerros (2026-11-10)
+
+El detalle está en ADR 0113, «Autopista y cerros».
+
+- **Autopista** (solo cuando la vía trae acotamiento):
+  - orilla de grava y tierra suelta fuera del acotamiento;
+  - vialetas sobre las rayas (una en cada espacio de las discontinuas y una cada 12 m en las continuas);
+  - reflejante ámbar en uno de cada tres postes de la defensa;
+  - fantasmas donde no hay defensa;
+  - un tablero verde genérico por sentido, sin texto, entre 90 y 150 m adelante del hecho;
+  - matorrales a la orilla en tres follajes.
+- **No hay vehículos inventados.** Nada de esto cae dentro del claro del hecho.
+- **Cerros:**
+  - ladera con pendiente y textura de pasto, tierra, monte y roca;
+  - de noche se leen como laderas oscuras, ya no como silueta negra;
+  - las dos texturas se hornean al preparar el proyecto.
+- **Encontrado en el camino:**
+  - **Niebla:** la de URP es global y no se apaga desde el material; por eso los cerros lejanos salían azules de día y negros de noche. Las capas lejanas se acercan, escaladas para conservar su tamaño aparente.
+  - **`Mathf.SmoothStep`:** no es el `smoothstep` de los sombreadores, y las texturas de desgaste de los puntos 1 a 3 salían como cuadros parejos. Se corrigieron todas. La raya gastada solo se aclara: con huecos, una raya continua se leía discontinua.
+- **Carga:**
+  - En el primer build del punto 5, la carga del caso subió de 3.3 a 5.1 s en AXA y de 4.1 a 6.6 s en el cruce urbano. La causa era que las texturas de los cerros se generaban al cargar, una por capa.
+  - Horneadas, la carga quedó en 3.4 y 4.3 s.
+  - En ese primer build los fps también bajaron (cruce urbano de día, de 28 a 19-20). La medición empezó justo al terminar el build, con la laptop caliente: tras 4 min de pausa volvieron a su nivel.
+- **Capturas:** `docs/cesvi/u2/puntos/p5-autopista/` (Editor).
+- **Medido** (`eval/results/unity_build.json`, `unity_build_urbana.json` y `docs/cesvi/u2/segunda-pasada/fps-web.json`):
+  - Peso: 64.9 MB, arranque 14.2 s.
+  - A 1280 × 720: 43.5 fps en AXA de día y 42.6 en el cruce urbano de día.
+  - Build: 11 min (la laptop se suspendió a la mitad), pico de Unity 1,924 MB y mínimo libre 667 MB.
+- **Fps a 1600 × 900, con la laptop libre:**
+
+| Escena                       | Punto 4     | Punto 5     |
+| ---------------------------- | ----------- | ----------- |
+| `axa-dia`                    | 30.3        | 30.3        |
+| `axa-noche`                  | 21.7 a 22.7 | 22.2        |
+| `carambola-dia`              | 27 a 27.8   | 30.3        |
+| `carambola-noche`            | 27.8        | 27          |
+| `lateral_interseccion-dia`   | 27.8 a 29.4 | 27          |
+| `lateral_interseccion-noche` | 19.6 a 20.8 | 23.3 a 25   |
+| `nocturno_lluvia-dia`        | 27 a 28.6   | 32.3 a 33.3 |
+| `nocturno_lluvia-noche`      | 22.7 a 23.3 | 27 a 27.8   |
+| `terraceria-dia`             | 26.3        | 30.3        |
+| `terraceria-noche`           | 22.7        | 24.4 a 25   |
 
 ### Segunda pasada · punto 4: árboles como impostores (2026-11-10)
 
@@ -221,7 +275,10 @@ Con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1` y sin nada más abierto, todo
 
 ### Falta de U2
 
-- La segunda pasada de calidad, con la lista de «Lo que no convence todavía».
+- Lo que René marque de las 20 capturas de la segunda pasada.
+- Rampas en las esquinas de las banquetas y juntas marcadas (hoy solo las da la textura): quedó del punto 2.
+- Las vialetas miden lo de verdad (10 cm): de noche se ven cerca de la cámara, pero a más de 30 m no.
+- Los impostores cambian de vista cada 45°: se nota solo al orbitar despacio junto a un árbol. Mezclar vistas pide un sombreador propio (U5).
 - La red vial de OpenStreetMap: el escenario ya la toma si la escena la trae, pero ninguna de las 5 escenas la trae y no se ha visto.
 - Medir Blob y dejar solo los 2 últimos builds (hoy hay uno publicado, el de U1).
 - Las pruebas EditMode del escenario dentro de Unity.
