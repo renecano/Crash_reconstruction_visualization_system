@@ -7,8 +7,9 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 - **Fase actual:** U2 (escenario), segunda pasada, en el orden que fijó René el 2026-11-09: 1 luz y color, 2 calle mexicana, 3 suelo y desgaste, 4 árboles, 5 autopista y cerros.
 - **Hecho:** los puntos 1, 2 y 3, y las notas de René sobre el punto 2 (relieve y desgaste de fachadas, sin rayas de orilla en calles de colonia).
 - **Hecho también:** el perfil «media» para WebGL (la parte de U5 que pidió la regla de fps de René). La noche urbana volvió a quedar arriba de 12 fps.
-- **Detenido el 2026-11-09 por memoria:** Claude Code paró el build que verificaba el arreglo de las matas en WebGL, porque la sesión se reanudó sin `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1` y con el navegador abierto. No se relanza sin René (ver «Bloqueado»).
-- **Siguiente paso, cuando René reabra la sesión:** repetir ese build (`ConstruirVisor.Web`), revisar AXA de noche en sus capturas (las matas ya no deben salir como cuadros negros) y medir con `eval/unity_build.mjs` (AXA y `--caso lateral_interseccion-dia --nombre unity_build_urbana`). Después el punto 4: correr `node tools/unity/impostores.mjs` (Blender), correr `node tools/unity/recursos.mjs` y aplicar `python -I tools/unity/p4-conectar-impostores.py.txt` (conecta `ArbolesVista.cs`, que ya está en el repo fuera de la compilación con `#if CROQUIS_IMPOSTORES`, y se borra al terminar). Luego el punto 5, publicar en Blob y las 20 capturas lado a lado.
+- **Retomado el 2026-11-09,** cuando René cerró todo: el build de verificación confirmó las matas, los faros y las gotas en WebGL (abajo). Rama `feat/u2-arboles`.
+- **En curso:** el punto 4 (árboles como impostores). **Después:** el punto 5, publicar en Blob y las 20 capturas lado a lado.
+- **Unity corre en primer plano,** en pasos de menos de 10 min: la sesión sigue sin `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1` y un comando en segundo plano se puede parar por memoria.
 - **Cómo se itera:** capturas del Editor en modo batch (`Capturas.Tomar`, unos 3 min). En esta sesión no hubo herramientas del MCP de Unity. Un build WebGL solo al cerrar cada punto.
 
 ## U2 · Escenario
@@ -75,6 +76,32 @@ La meta está en `docs/cesvi/PLAN-CESVI.md` §3.3. Decisiones: ADR 0112 (el esce
 - **La noche urbana bajó de 12 fps:** el cruce de noche da de 10.9 a 11.1 fps (antes 12.7). Se activa la regla de René: primero rendimiento, después más detalle.
 - **Este build tardó 74 min** porque la laptop estuvo suspendida a la mitad; los demás tardan de 5 a 8 min.
 - **Una prueba del contrato falló una vez por tiempo** (5.8 s con límite de 5 s) con la laptop cargada; sola pasa. Se confirma en CI.
+
+### Segunda pasada · verificación en build con la laptop libre (2026-11-09)
+
+Build WebGL de `main` (5 min 42 s; pico de Unity 2,380 MB, mínimo libre 462 MB), capturas de las 10 escenas y medición, sin navegador ni otra sesión abiertos.
+
+- **Matas:** en WebGL ya salen verdes, con su recorte; no hay cuadros negros (AXA de noche).
+- **Faros:** ya no tapan el punto de contacto con un destello (`lateral_interseccion` de noche).
+- **Gotas:** finas, sin rayas gruesas junto a la cámara (`nocturno_lluvia` de noche).
+- **Detalles nuevos, por corregir en esta rama:** de noche las matas brillan de más; en `nocturno_lluvia` la cámara de la acera queda pegada a una fachada.
+- **Medido** (`eval/results/unity_build.json`, `unity_build_urbana.json` y `docs/cesvi/u2/puntos/verificacion/fps-web.json`): 61 MB (27.4 MB con Brotli), 13 s hasta que Unity arranca, 3.3 s más hasta que AXA se ve y 3.9 s más para el cruce urbano. A 1280 × 720: 45.5 fps en AXA de día y 37.75 en el cruce urbano de día.
+- **Los fps anteriores estaban medidos con la laptop ocupada** (René la usaba con el navegador abierto). Con la laptop libre, a 1600 × 900:
+
+| Escena                       | Con «media», laptop ocupada | Con «media», laptop libre |
+| ---------------------------- | --------------------------- | ------------------------- |
+| `axa-dia`                    | 22.7 a 26.3                 | 27 a 29.4                 |
+| `axa-noche`                  | 14.9 a 19.2                 | 20 a 23.8                 |
+| `carambola-dia`              | 20 a 21.7                   | 27.8 a 30.3               |
+| `carambola-noche`            | 15.9 a 18.2                 | 22.7 a 25.6               |
+| `lateral_interseccion-dia`   | 17.9 a 18.5                 | 24.4 a 25                 |
+| `lateral_interseccion-noche` | 13.2 a 13.3                 | 19.6 a 20                 |
+| `nocturno_lluvia-dia`        | 20.8 a 21.7                 | 30.3                      |
+| `nocturno_lluvia-noche`      | 21.3 a 22.2                 | 23.3 a 23.8               |
+| `terraceria-dia`             | 24.4 a 25                   | 27 a 27.8                 |
+| `terraceria-noche`           | 18.2 a 18.9                 | 22.7                      |
+
+- **La noche urbana queda en 19.6 a 20 fps,** con margen sobre los 12 de la regla de René. Para comparar punto contra punto hay que medir siempre con la laptop libre.
 
 ### Segunda pasada · perfil «media» para WebGL (regla de fps de René, 2026-11-09)
 
@@ -263,6 +290,6 @@ La huella `2d5c1a20a446c129` es la de este build. Si se reconstruye, el script i
 
 Nada por ahora.
 
-## Bloqueado — necesita a René
+## Bloqueado
 
-- **Reabrir Claude Code con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1` y sin el navegador abierto** (2026-11-09). La sesión se reanudó sin esa variable y Claude Code paró un build de Unity por memoria baja. Quedaban 644 MB libres con Unity en 1,096 MB y Edge abierto; el build anterior de ese día llegó a un mínimo de 160 MB libres. Unity siguió vivo después de parar el comando y se cerró a mano. No se relanza ningún build, captura ni horneado de Blender hasta que René lo diga.
+Nada por ahora.
