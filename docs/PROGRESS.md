@@ -2413,6 +2413,7 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 
 ### Endurecimiento pendiente
 
+- **E2e de la carambola en la laptop (2026-11-10, W5 y W6):** en la corrida completa de `@flujo`, `cesvi-caso.spec.ts` «una carambola…» esperó más de 60 s la cifra de la reconstrucción dos veces seguidas; sola pasa en 1.6 min y en CI pasa. Es la reconstrucción completa de tres vehículos en el worker, después de la prueba más pesada, en 8 GB. Si llega a fallar en CI, se mide cuánto tarda ahí y se sube la espera con ese número, o se corre esa prueba primero.
 - **Dictamen (Laboratorio §8), sin dictado:** el diseño dice «Escríbela o díctala»; Croquis no tiene entrada por voz, así que el texto dice «Escríbela tú». Se agrega si René la pide (igual que «Dictar un dato» en El hecho).
 - **Contra CESVI (Laboratorio §8):** el esquema de papel de AXA no es el croquis del reporte, que no está en datos. Si se extrae del PDF, se cambia por el real.
 - **Lighthouse de la página del caso (Laboratorio §11):** rendimiento 59 contra la meta de 90 en celular, por el TBT de 6.39 s. Se mide de nuevo cuando el visor de Unity (U6) cambie lo que carga esa página.
