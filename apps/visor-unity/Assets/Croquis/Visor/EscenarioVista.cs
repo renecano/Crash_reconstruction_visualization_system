@@ -83,14 +83,20 @@ namespace Croquis.Visor
             var cielo = Materiales.Cielo(nombre, out var azimutHdri);
             // En el HDRI el azimut se mide desde su centro; en la escena, desde el norte hacia el este.
             cielo.SetFloat("_Rotation", Mathf.Repeat(azimutHdri - (float)a.SolAzimutDeg, 360f));
-            cielo.SetFloat("_Exposure", a.Noche ? 0.75f : lluvia ? 0.8f : 1f);
+            // De noche con lluvia, el cielo nublado no tiene el resplandor del HDRI nocturno: con más
+            // exposición parecía un atardecer (René, 2026-11-10).
+            cielo.SetFloat("_Exposure", a.Noche ? (lluvia ? 0.4f : 0.75f) : lluvia ? 0.8f : 1f);
+            // Y sin el naranja del resplandor de la ciudad: nublado de noche, el cielo es gris azulado.
+            cielo.SetColor("_Tint", a.Noche && lluvia ? new Color(0.3f, 0.33f, 0.4f) : new Color(0.5f, 0.5f, 0.5f));
             RenderSettings.skybox = cielo;
             RenderSettings.sun = sol;
             if (a.Noche)
             {
                 // El HDRI nocturno casi no alumbra: el ambiente es el resplandor del cielo sobre una
                 // ciudad, más claro arriba y con nubes (lluvia) todavía más.
-                var k = lluvia ? 1.35f : 1f;
+                // Con lluvia, un poco más de ambiente que en una noche clara (las nubes reflejan la
+                // ciudad), pero sin aclarar la noche: la luz fuerte es la de luminarias y faros.
+                var k = lluvia ? 1.1f : 1f;
                 // Como sonda explícita: al cambiar el modo en ejecución, los modos de color no
                 // actualizaban la sonda y las caras sin luz directa salían negras.
                 var sh = new SphericalHarmonicsL2();
@@ -120,7 +126,7 @@ namespace Croquis.Visor
             // De día también: con lluvia, la vista cenital quedaba en blanco y no se leía el hecho.
             RenderSettings.fogDensity = Mathf.Clamp((float)a.DensidadNiebla, 0.00055f, a.Noche ? 0.004f : 0.006f);
             RenderSettings.fogColor = a.Noche
-                ? (lluvia ? new Color(0.085f, 0.09f, 0.11f) : new Color(0.04f, 0.05f, 0.075f))
+                ? (lluvia ? new Color(0.05f, 0.055f, 0.068f) : new Color(0.04f, 0.05f, 0.075f))
                 : Color.Lerp(horizonte, Color.white, lluvia ? 0.2f : 0.12f);
             DynamicGI.UpdateEnvironment();
         }
@@ -141,7 +147,7 @@ namespace Croquis.Visor
             Color filtro;
             if (a.Noche)
             {
-                exposicion = lluvia ? 0.95f : 0.75f;
+                exposicion = lluvia ? 0.7f : 0.75f;
                 contraste = 10f;
                 saturacion = -4f;
                 filtro = new Color(0.94f, 0.97f, 1f);
@@ -657,16 +663,38 @@ namespace Croquis.Visor
             var verdes = new Malla { NormalArriba = true };
             var secas = new Malla { NormalArriba = true };
             var Intentos = Calidad.Media ? 7000 : 14000;
+            // En manchones, no regadas parejo (René, 2026-11-10: «puntitos repetidos»): cada manchón
+            // tiene su tamaño, su radio y casi siempre un solo tono (verde o seco), y entre manchones
+            // queda pasto liso. El total de matas es el mismo de antes.
+            var manchon = 0;
+            var cx = 0f;
+            var cy = 0f;
+            var radio = 1f;
+            var escala = 1f;
+            var secoManchon = false;
             for (var k = 0; k < Intentos; k++)
             {
-                // Más cerca del centro que de la orilla del parche.
-                var r = Mathf.Pow(azar.Siguiente(), 1.9f) * lado * 0.48f;
+                if (manchon <= 0)
+                {
+                    // Más cerca del centro que de la orilla del parche.
+                    var rc = Mathf.Pow(azar.Siguiente(), 1.9f) * lado * 0.48f;
+                    var ac = azar.Entre(0f, Mathf.PI * 2f);
+                    cx = (float)s.Centro.X + Mathf.Cos(ac) * rc;
+                    cy = (float)s.Centro.Y + Mathf.Sin(ac) * rc;
+                    manchon = 1 + (int)(Mathf.Pow(azar.Siguiente(), 1.4f) * 16f);
+                    radio = azar.Entre(0.3f, 3.2f);
+                    escala = Mathf.Lerp(0.55f, 1.9f, Mathf.Pow(azar.Siguiente(), 1.6f));
+                    secoManchon = azar.Siguiente() < 0.35f;
+                }
+
+                manchon--;
+                var r = radio * Mathf.Sqrt(azar.Siguiente());
                 var ang = azar.Entre(0f, Mathf.PI * 2f);
-                var x = (float)s.Centro.X + Mathf.Cos(ang) * r;
-                var y = (float)s.Centro.Y + Mathf.Sin(ang) * r;
-                var alto = azar.Entre(0.14f, 0.42f);
+                var x = cx + Mathf.Cos(ang) * r;
+                var y = cy + Mathf.Sin(ang) * r;
+                var alto = azar.Entre(0.12f, 0.36f) * escala;
                 var giro = azar.Entre(0f, Mathf.PI);
-                var esSeca = azar.Siguiente() < 0.3f;
+                var esSeca = azar.Siguiente() < (secoManchon ? 0.85f : 0.12f);
                 var fi = Mathf.Clamp((x - x0) / lado * (n - 1), 0f, n - 1.001f);
                 var fj = Mathf.Clamp((y - y0) / lado * (n - 1), 0f, n - 1.001f);
                 var nodo = Mathf.RoundToInt(fj) * n + Mathf.RoundToInt(fi);
