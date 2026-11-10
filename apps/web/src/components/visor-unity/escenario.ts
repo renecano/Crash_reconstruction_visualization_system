@@ -36,6 +36,8 @@ import {
   type SignalPhase,
 } from "@croquis/viewer/puro";
 
+import { planCuadras, type Lote } from "./cuadras";
+
 export const ESCENARIO_VERSION = "1.0.0" as const;
 
 type CapaEscenario = Escenario["via"]["capas"][number];
@@ -300,6 +302,21 @@ export function escenarioDe(spec: EscenaSpec, resultado: Resultado): Escenario {
     maxTrees: Math.max(0, QUALITY_PROFILES.ultra.maxTrees - declarados),
   });
   const corredores = corridorsOf(layout, mapa?.vias);
+  // En zona urbana, la calle mexicana: cuadras de lotes pegados a la banqueta y más cuadras detrás
+  // (`cuadras.ts`). En rural se quedan los edificios sueltos del plan del visor web.
+  const cuadras =
+    plan.zone === "urbana"
+      ? planCuadras(corredores, { x: accion.cx, y: accion.cy }, spec.meta.semilla)
+      : null;
+  const edificios: Lote[] =
+    cuadras?.lotes ??
+    plan.buildings.map((b) => ({
+      ...b,
+      tipo: "casa" as const,
+      remetimiento: 0,
+      herreria: false,
+      zaguan: false,
+    }));
   const altura = terrainHeightAt(spec.meta.semilla, corredores, plan.zone);
   const seco = (x: number, y: number) =>
     1 - Math.min(1, Math.max(0, (distanceToRoad({ x, y }, corredores) - 1.2) / 4));
@@ -399,7 +416,7 @@ export function escenarioDe(spec: EscenaSpec, resultado: Resultado): Escenario {
         ...(t.species ? { especie: t.species } : {}),
         ...(t.height ? { altura_m: cm(t.height) } : {}),
       })),
-      edificios: plan.buildings.map((b) => ({
+      edificios: edificios.map((b) => ({
         x: cm(b.x),
         y: cm(b.y),
         z: z(b.x, b.y),
@@ -417,8 +434,12 @@ export function escenarioDe(spec: EscenaSpec, resultado: Resultado): Escenario {
         tinacos: b.tinacos,
         antena: b.antenna,
         varillas: b.rebar,
+        tipo: b.tipo,
+        remetimiento_m: cm(b.remetimiento),
+        herreria: b.herreria,
+        zaguan: b.zaguan,
       })),
-      postes: plan.poles.map((p) => ({
+      postes: [...plan.poles, ...(cuadras?.postes ?? [])].map((p) => ({
         x: cm(p.x),
         y: cm(p.y),
         z: z(p.x, p.y),

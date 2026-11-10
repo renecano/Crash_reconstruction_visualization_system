@@ -5,8 +5,8 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 ## Estado
 
 - **Fase actual:** U2 (escenario), segunda pasada, en el orden que fijó René el 2026-11-09: 1 luz y color, 2 calle mexicana, 3 suelo y desgaste, 4 árboles, 5 autopista y cerros.
-- **Hecho:** el punto 1. **En curso:** el punto 2 (`cuadras.ts` y las fachadas por tipo de lote).
-- **Siguiente paso:** cerrar el punto 2 con sus capturas, su build WebGL y su medición. Al terminar los 5: publicar el build en Blob y entregar las 20 capturas nuevas junto a las del 2026-11-09.
+- **Hecho:** los puntos 1 y 2. **En curso:** el punto 3. Su parche está escrito y sin aplicar en el scratchpad de la sesión (`p3a.py`): desgaste con semilla fuera del claro del hecho, rayas gastadas, rodadas (`via.rodadas` en el contrato), matas, tonos del suelo, y baches y rodadas de terracería.
+- **Siguiente paso:** aplicar el punto 3, regenerar el contrato y los paquetes, capturar, y cerrarlo con su build WebGL y su medición. Después, los puntos 4 y 5. Al terminar los 5: publicar el build en Blob y entregar las 20 capturas nuevas junto a las del 2026-11-09.
 - **Cómo se itera:** capturas del Editor en modo batch (`Capturas.Tomar`, unos 3 min). En esta sesión no hubo herramientas del MCP de Unity. Un build WebGL solo al cerrar cada punto.
 
 ## U2 · Escenario
@@ -33,6 +33,17 @@ La meta está en `docs/cesvi/PLAN-CESVI.md` §3.3. Decisiones: ADR 0112 (el esce
 - **La noche bajó de fps** (el mínimo era 12.3 y ahora es 11.4): la sonda, la oclusión más ancha y los charcos de luz cuestan. Sigue sin cumplir §7.8; los niveles son U5.
 - **Ajustado después de este build, sin medir todavía:** los faros bajan de intensidad (a quemarropa tapaban el punto de contacto con un destello) y las gotas pegadas a la cámara tienen tope de tamaño. Se verifican en el build del punto 2.
 - **Queda de este punto:** los cerros de noche salen como silueta negra (se atiende en el punto 5) y los reflejos en el asfalto mojado casi no se notan de noche.
+
+### Segunda pasada · punto 2: calle mexicana (2026-11-09)
+
+- **Capturas para comparar** (del Editor): `docs/cesvi/u2/puntos/p2-calle/`, contra `p1-luz/`.
+- **Qué cambió:** en zona urbana, `cuadras.ts` arma las cuadras con la semilla de la escena, sobre los mismos corredores del croquis 2D: lotes pegados a la banqueta y entre sí (casas de 1 y 2 pisos, comercios con cortina, toldo y letrero sin texto, talleres con portón, baldíos con barda), casas remetidas con reja, herrería en ventanas, zaguanes, esquinas construidas, postes con cables y varias filas de cuadras de fondo, que Unity dibuja como volúmenes baratos. El suelo entre cuadras es grava, no pasto. La guarnición de las esquinas va pintada de amarillo.
+- **Las cámaras ya no se meten en lo construido:** la cinematográfica busca el rumbo más cercano al de siempre desde el que el hecho se ve sin fachadas, copas ni postes en medio, y si no hay lugar sube como grúa.
+- **Arreglo general:** `Malla.Cerrar` separa todo triángulo repetido en sentido contrario (caras dobles): eran la fuente de las piezas negras (toldos, discos de señales).
+- **De día la niebla también tiene tope:** con lluvia, la vista cenital quedaba en blanco.
+- **Medido al cerrar el punto** (`eval/results/unity_build_urbana.json`, escena `lateral_interseccion` de día, y `docs/cesvi/u2/puntos/p2-calle/fps-web.json`): 62.5 MB (28.4 MB con Brotli), 13.1 s hasta que Unity arranca, 4.3 s más hasta que el cruce se ve, 32.8 fps a 1280 × 720. A 1600 × 900: de 21.3 a 27 fps de día y de 12.7 a 18.5 de noche. El peso no cambió.
+- **Falta volver a medir AXA** para `eval/results/unity_build.json` (sigue con la cifra del punto 1).
+- **Queda de este punto:** rampas en las banquetas y juntas marcadas (hoy solo las da la textura).
 
 ### Resumen para René (primera pasada, 2026-11-09)
 

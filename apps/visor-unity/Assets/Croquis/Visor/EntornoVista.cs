@@ -19,7 +19,7 @@ namespace Croquis.Visor
             entorno.SetParent(padre, false);
             var azar = new Azar(semilla + 13);
             Arboles(entorno, en.Arboles);
-            Edificios(entorno, en.Edificios, a, azar);
+            Edificios(entorno, en.Edificios, a, azar, en.Zona == ZonaEntorno.Urbana);
             Postes(entorno, en.Postes);
             Cercas(entorno, en.Cercas);
             Senales(entorno, en.Senales);
@@ -133,8 +133,11 @@ namespace Croquis.Visor
 
         private const float AltoPiso = 3f;
 
-        private static void Edificios(Transform padre, EdificioEscenario[] edificios, AmbienteEscenario a, Azar azar)
+        private static void Edificios(Transform padre, EdificioEscenario[] edificios, AmbienteEscenario a, Azar azar, bool cuadras)
         {
+            var rejas = new Malla();
+            var portones = new Malla();
+            var oscuras = new Malla();
             var muros = new Dictionary<string, Malla>();
             var colores = new Dictionary<string, Material>();
             var marcos = new Malla();
@@ -154,7 +157,7 @@ namespace Croquis.Visor
                     colores[llave] = b.Material == MaterialFachada.Tabique
                         ? Materiales.Pbr("tabique", new Color(1.25f, 0.82f, 0.7f))
                         // El aplanado se tiñe con el color de la fachada; su textura es clara.
-                        : Materiales.Pbr("yeso", Materiales.Hex(b.Color, Color.white));
+                        : Materiales.Pbr("yeso", Color.Lerp(Materiales.Hex(b.Color, Color.white), Color.white, 0.15f));
                 }
 
                 var centro = U(b.X, b.Y, b.Z - 0.3);
@@ -164,6 +167,45 @@ namespace Croquis.Visor
                 var alto = (float)b.AltoM + 0.3f;
                 var w = (float)b.LargoM;
                 var d = (float)b.FondoM;
+                if (cuadras)
+                {
+                    // En la cuadra los lotes van pegados: solo la cara de la calle lleva fachada.
+                    var n = Vector3.Dot(fondo, frente) > 0f ? fondo : -fondo;
+                    if (b.Tipo == TipoLote.Baldio)
+                    {
+                        Barda(b, centro, largo, n, w, d, muro, lamina);
+                        continue;
+                    }
+
+                    muro.Caja(centro, largo, fondo, w, alto, d, 0.5f);
+                    var calle = centro + n * (d / 2f);
+                    var niveles = Mathf.Max(1, (int)b.Pisos);
+                    if (b.Tipo == TipoLote.Fondo)
+                    {
+                        // Las cuadras de atrás: el volumen y sus ventanas como manchas, sin marcos.
+                        for (var piso = 0; piso < niveles; piso++)
+                        {
+                            for (var k = 0; k < 2; k++)
+                            {
+                                var c = calle + largo * ((k - 0.5f) * w * 0.45f) + Vector3.up * (0.3f + piso * AltoPiso + 1.1f) + n * 0.02f;
+                                var m = a.Noche && azar.Siguiente() < 0.25f ? encendidas : oscuras;
+                                m.Cuadro(c - largo * 0.6f, c + largo * 0.6f, c + largo * 0.6f + Vector3.up * 1.2f, c - largo * 0.6f + Vector3.up * 1.2f, 1f, true);
+                            }
+                        }
+
+                        continue;
+                    }
+
+                    Fachada(b, calle, largo, n, w, niveles, a, azar, marcos, vidrios, encendidas, lamina, toldos, concreto, rejas, portones);
+                    Azotea(b, centro, largo, fondo, w, d, alto, azar, concreto, negro, fierro);
+                    if (b.RemetimientoM > 0.2)
+                    {
+                        Reja(calle + n * (float)b.RemetimientoM, largo, n, w, muro, rejas);
+                    }
+
+                    continue;
+                }
+
                 muro.Caja(centro, largo, fondo, w, alto, d, 0.5f);
 
                 // Las cuatro caras: su normal hacia afuera, el eje a lo largo y su ancho. La que más mira
@@ -191,7 +233,7 @@ namespace Croquis.Visor
                     var cara = centro + c.n * c.lejos;
                     if (k == principal)
                     {
-                        Fachada(b, cara, c.eje, c.n, c.ancho, pisos, a, azar, marcos, vidrios, encendidas, lamina, toldos, concreto);
+                        Fachada(b, cara, c.eje, c.n, c.ancho, pisos, a, azar, marcos, vidrios, encendidas, lamina, toldos, concreto, null, null);
                     }
                     else
                     {
@@ -211,6 +253,9 @@ namespace Croquis.Visor
             vidrios.Poner(padre, "vidrios", Materiales.Vidrio, false);
             encendidas.Poner(padre, "ventanas_encendidas", Materiales.Emisivo(new Color(0.95f, 0.8f, 0.55f), new Color(1.25f, 0.82f, 0.38f)), false);
             lamina.Poner(padre, "cortinas", Materiales.Pbr("lamina"));
+            rejas.Poner(padre, "herreria", Materiales.Liso(new Color(0.07f, 0.07f, 0.08f), 0.35f, 0.6f), false);
+            portones.Poner(padre, "zaguanes", Materiales.Pbr("lamina", new Color(0.62f, 0.7f, 0.66f)));
+            oscuras.Poner(padre, "ventanas_de_fondo", Materiales.Liso(new Color(0.05f, 0.06f, 0.07f), 0.8f), false);
             concreto.Poner(padre, "azoteas", Materiales.Pbr("concreto", new Color(0.8f, 0.8f, 0.8f)));
             negro.Poner(padre, "tinacos", Materiales.Liso(new Color(0.07f, 0.07f, 0.075f), 0.45f));
             fierro.Poner(padre, "varillas", Materiales.Liso(new Color(0.3f, 0.2f, 0.15f), 0.2f, 0.6f));
@@ -223,10 +268,33 @@ namespace Croquis.Visor
         private static void Fachada(
             EdificioEscenario b, Vector3 cara, Vector3 eje, Vector3 normal, float ancho, int pisos,
             AmbienteEscenario a, Azar azar, Malla marcos, Malla vidrios, Malla encendidas, Malla lamina,
-            Dictionary<string, Malla> toldos, Malla concreto)
+            Dictionary<string, Malla> toldos, Malla concreto, Malla rejas, Malla portones)
         {
             var piso0 = cara + Vector3.up * 0.3f;
-            if (b.Cortina)
+            if (b.Tipo == TipoLote.Taller && portones != null)
+            {
+                // Taller o bodega: un portón alto de lámina y nada más.
+                var wP = Mathf.Min(ancho * 0.6f, 3.6f);
+                var c = piso0 + normal * 0.03f - eje * (ancho * 0.08f);
+                portones.Cuadro(
+                    c - eje * (wP / 2f), c + eje * (wP / 2f),
+                    c + eje * (wP / 2f) + Vector3.up * 3.2f, c - eje * (wP / 2f) + Vector3.up * 3.2f, 0.37f, true);
+                Hueco(marcos, c + Vector3.up * 3.2f, eje, normal, wP + 0.2f, 0.25f, 0.12f);
+                Puerta(marcos, piso0 + eje * (ancho * 0.38f), eje, normal);
+                return;
+            }
+
+            if (b.Zaguan && portones != null && !b.Cortina)
+            {
+                // Casa con cochera: el zaguán de un lado y la puerta del otro.
+                var c = piso0 + normal * 0.03f - eje * (ancho * 0.2f);
+                portones.Cuadro(
+                    c - eje * 1.3f, c + eje * 1.3f,
+                    c + eje * 1.3f + Vector3.up * 2.3f, c - eje * 1.3f + Vector3.up * 2.3f, 0.37f, true);
+                Hueco(marcos, c + Vector3.up * 2.3f, eje, normal, 2.8f, 0.12f, 0.1f);
+                Puerta(marcos, piso0 + eje * (ancho * 0.36f), eje, normal);
+            }
+            else if (b.Cortina)
             {
                 // Planta baja de local: cortina metálica casi a todo lo ancho y su puerta al lado.
                 var wCortina = Mathf.Min(ancho * 0.55f, 4.2f);
@@ -240,7 +308,7 @@ namespace Croquis.Visor
             else
             {
                 Puerta(marcos, piso0 + eje * (ancho * 0.3f), eje, normal);
-                Ventanas(cara, eje, normal, ancho * 0.55f, 1, 0, 2.8f, 1.5f, 1.3f, a, azar, marcos, vidrios, encendidas, -ancho * 0.18f);
+                Ventanas(cara, eje, normal, ancho * 0.55f, 1, 0, 2.8f, 1.5f, 1.3f, a, azar, marcos, vidrios, encendidas, -ancho * 0.18f, b.Herreria ? rejas : null);
             }
 
             if (b.Toldo)
@@ -276,6 +344,31 @@ namespace Croquis.Visor
             return colores[(int)(azar.Siguiente() * colores.Length) % colores.Length];
         }
 
+        /// <summary>Un terreno baldío: su barda perimetral y el portón de lámina a la calle.</summary>
+        private static void Barda(EdificioEscenario b, Vector3 centro, Vector3 largo, Vector3 n, float w, float d, Malla muro, Malla lamina)
+        {
+            const float H = 2.6f;
+            muro.Caja(centro + n * (d / 2f - 0.08f), largo, n, w, H, 0.16f, 0.5f);
+            muro.Caja(centro - n * (d / 2f - 0.08f), largo, n, w, H, 0.16f, 0.5f);
+            muro.Caja(centro + largo * (w / 2f - 0.08f), n, largo, d, H, 0.16f, 0.5f);
+            muro.Caja(centro - largo * (w / 2f - 0.08f), n, largo, d, H, 0.16f, 0.5f);
+            var p = centro + n * (d / 2f + 0.03f) + Vector3.up * 0.3f + largo * (w * 0.2f);
+            lamina.Cuadro(p - largo * 1.2f, p + largo * 1.2f, p + largo * 1.2f + Vector3.up * 2.1f, p - largo * 1.2f + Vector3.up * 2.1f, 0.37f, true);
+        }
+
+        /// <summary>El frente de una casa remetida: barda baja y reja de herrería hasta 2 m.</summary>
+        private static void Reja(Vector3 linea, Vector3 largo, Vector3 n, float w, Malla muro, Malla rejas)
+        {
+            var pie = linea - n * 0.08f;
+            muro.Caja(pie, largo, n, w, 1.1f, 0.16f, 0.5f);
+            for (var x = -w / 2f + 0.1f; x < w / 2f; x += 0.22f)
+            {
+                rejas.Caja(pie + Vector3.up * 1.1f + largo * x, largo, n, 0.02f, 1.2f, 0.02f);
+            }
+
+            rejas.Caja(pie + Vector3.up * 2.28f, largo, n, w, 0.03f, 0.03f);
+        }
+
         /// <summary>Un marco hundido: el hueco oscuro de una ventana o una puerta.</summary>
         private static void Hueco(Malla marcos, Vector3 baseCentro, Vector3 eje, Vector3 normal, float ancho, float alto, float saliente)
         {
@@ -291,7 +384,7 @@ namespace Croquis.Visor
         private static void Ventanas(
             Vector3 cara, Vector3 eje, Vector3 normal, float ancho, int pisos, int desdePiso, float paso,
             float w, float h, AmbienteEscenario a, Azar azar, Malla marcos, Malla vidrios, Malla encendidas,
-            float corrimiento = 0f)
+            float corrimiento = 0f, Malla rejas = null)
         {
             var n = Mathf.Max(1, Mathf.FloorToInt((ancho - 0.8f) / paso));
             for (var piso = desdePiso; piso < pisos; piso++)
@@ -310,6 +403,18 @@ namespace Croquis.Visor
                     var vidrio = a.Noche && azar.Siguiente() < 0.32f ? encendidas : vidrios;
                     var q = c + normal * 0.025f;
                     vidrio.Cuadro(q - eje * (w / 2f), q + eje * (w / 2f), q + eje * (w / 2f) + Vector3.up * h, q - eje * (w / 2f) + Vector3.up * h, 1f, true);
+                    if (rejas != null)
+                    {
+                        // Protección de herrería: barrotes y dos travesaños, por fuera del marco.
+                        var r0 = c + normal * 0.12f;
+                        for (var r = 0; r <= 6; r++)
+                        {
+                            rejas.Caja(r0 + eje * (-w / 2f + w * r / 6f), eje, normal, 0.022f, h, 0.022f);
+                        }
+
+                        rejas.Caja(r0 + Vector3.up * (h * 0.2f), eje, normal, w, 0.022f, 0.022f);
+                        rejas.Caja(r0 + Vector3.up * (h * 0.8f), eje, normal, w, 0.022f, 0.022f);
+                    }
                 }
             }
         }

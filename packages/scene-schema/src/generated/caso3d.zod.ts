@@ -126,6 +126,10 @@ export const EdificioEscenario = z.strictObject({
   tinacos: z.int().min(0),
   antena: z.boolean(),
   varillas: z.boolean(),
+  tipo: z.enum(["casa", "comercio", "baldio", "taller", "fondo"]),
+  remetimiento_m: z.number(),
+  herreria: z.boolean(),
+  zaguan: z.boolean(),
 });
 export type EdificioEscenario = z.infer<typeof EdificioEscenario>;
 

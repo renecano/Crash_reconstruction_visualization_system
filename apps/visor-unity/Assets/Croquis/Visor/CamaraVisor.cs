@@ -33,22 +33,136 @@ namespace Croquis.Visor
         public List<Vector2> Estorbos { get; } = new List<Vector2>();
 
         /// <summary>La distancia en planta del estorbo más cercano al tramo que va del ojo a 14 m hacia la mira.</summary>
-        private float Despeje(Vector3 ojo, Vector3 mira)
+        private float Despeje(Vector3 ojo, Vector3 mira, float largo = 14f)
         {
             var a = new Vector2(ojo.x, ojo.z);
             var dir = new Vector2(mira.x - ojo.x, mira.z - ojo.z).normalized;
             var menor = float.MaxValue;
             foreach (var e in Estorbos)
             {
-                var u = Mathf.Clamp(Vector2.Dot(e - a, dir), 0f, 14f);
+                var u = Mathf.Clamp(Vector2.Dot(e - a, dir), 0f, largo);
                 menor = Mathf.Min(menor, (e - (a + dir * u)).magnitude);
             }
 
             return menor;
         }
 
-        /// <summary>Edificios, como círculos en planta (x, y, radio): la cámara de la acera no se mete en uno.</summary>
-        public List<Vector3> Bultos { get; } = new List<Vector3>();
+        /// <summary>Un edificio o una barda en planta: centro, eje a lo largo, medias medidas y alto.</summary>
+        public struct Bulto
+        {
+            public Vector2 C;
+            public Vector2 U;
+            public float Hw;
+            public float Hd;
+            public float Alto;
+        }
+
+        /// <summary>Lo construido: ninguna cámara se mete en ello ni mira a través.</summary>
+        public List<Bulto> Bultos { get; } = new List<Bulto>();
+
+        /// <summary>Las copas de los árboles en planta (x, y, radio): la cinematográfica no mira a través.</summary>
+        public List<Vector3> Copas { get; } = new List<Vector3>();
+
+        private float azBase = float.NaN;
+        private float giroMax = 8f;
+        private float distK = 1f;
+        private float altoExtra;
+
+        private bool EnBulto(Vector3 p, float holgura)
+        {
+            foreach (var b in Bultos)
+            {
+                if (p.y > b.Alto + 0.3f)
+                {
+                    continue;
+                }
+
+                var dd = new Vector2(p.x, p.z) - b.C;
+                var u = Vector2.Dot(dd, b.U);
+                var v = -dd.x * b.U.y + dd.y * b.U.x;
+                if (Mathf.Abs(u) < b.Hw + holgura && Mathf.Abs(v) < b.Hd + holgura)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>Si desde `ojo` se ve `mira` sin estar dentro de algo ni con algo en medio.</summary>
+        private bool Despejada(Vector3 ojo, Vector3 mira, bool conCopas = false)
+        {
+            if (EnBulto(ojo, 0.8f))
+            {
+                return false;
+            }
+
+            for (var k = 0; k < 24; k++)
+            {
+                var p = Vector3.Lerp(ojo, mira, k / 24f);
+                if (k > 0 && EnBulto(p, 0.2f))
+                {
+                    return false;
+                }
+
+                if (conCopas && p.y < 10f)
+                {
+                    foreach (var c in Copas)
+                    {
+                        if ((new Vector2(p.x, p.z) - new Vector2(c.x, c.y)).magnitude < c.z)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Dónde se para la cinematográfica: el rumbo más cercano al de siempre desde el que la acción
+        /// se ve entera durante todo el giro. En una calle con fachadas eso es sobre la vía; si no hay
+        /// lugar, se acerca, y al final sube como una grúa.
+        /// </summary>
+        private void Elegir(Vector3 centro, float dist, float alto)
+        {
+            foreach (var extra in new[] { 0f, 4f, 9f })
+            {
+                foreach (var k in new[] { 1f, 0.75f, 0.55f })
+                {
+                    for (var i = 0; i < 72; i++)
+                    {
+                        var a0 = AnguloInicial + ((i + 1) / 2) * 5f * (i % 2 == 0 ? 1f : -1f);
+                        var d = Mathf.Max(8f, dist * k);
+                        // El giro lento mueve la cámara a lo más 1.5 m a cada lado: cabe en una calle.
+                        var g0 = Mathf.Min(8f, Mathf.Atan(1.5f / d) * Mathf.Rad2Deg);
+                        var libre = true;
+                        foreach (var g in new[] { -g0, 0f, g0 })
+                        {
+                            var az = (a0 + g) * Mathf.Deg2Rad;
+                            var ojo = centro + new Vector3(Mathf.Cos(az) * d, alto + extra, Mathf.Sin(az) * d);
+                            libre &= Despejada(ojo, centro + Vector3.up * 0.9f, true);
+                            // Tampoco con un poste en medio.
+                            libre &= Despeje(ojo, centro, d - 3f) > 0.7f;
+                        }
+
+                        if (libre)
+                        {
+                            giroMax = g0;
+                            azBase = a0;
+                            distK = d / dist;
+                            altoExtra = extra;
+                            return;
+                        }
+                    }
+                }
+            }
+
+            azBase = AnguloInicial;
+            distK = 1f;
+            altoExtra = 14f;
+        }
 
         public Vector3 Centro => new Vector3((float)zona.CentroX, 0f, (float)zona.CentroY);
 
@@ -78,6 +192,7 @@ namespace Croquis.Visor
         {
             zona = Encuadre.ZonaDeInteres(r);
             inicio = r.TInicio;
+            azBase = float.NaN;
         }
 
         public void Encuadrar(string _)
@@ -145,16 +260,17 @@ namespace Croquis.Visor
                         var mejor = float.MinValue;
                         foreach (var atras in new[] { 9f, 6f, 12f })
                         {
-                            foreach (var alLado in new[] { 4.5f, -4.5f, 2.5f, -2.5f })
+                            foreach (var alLado in new[] { 4.5f, -4.5f, 2.5f, -2.5f, 1f, -1f })
                             {
                                 var otro = Arbol.Value - d * atras + costado * alLado + Vector3.up * 1.7f;
                                 var nota = Mathf.Min(Despeje(otro, mira), 1.5f);
-                                foreach (var b in Bultos)
+                                if (EnBulto(otro, 1f))
                                 {
-                                    if ((new Vector2(otro.x, otro.z) - new Vector2(b.x, b.y)).magnitude < b.z)
-                                    {
-                                        nota -= 100f;
-                                    }
+                                    nota -= 100f;
+                                }
+                                else if (!Despejada(otro, mira))
+                                {
+                                    nota -= 50f;
                                 }
 
                                 if (nota > mejor)
@@ -202,7 +318,15 @@ namespace Croquis.Visor
                         objetivo = (centro + suma / Vehiculos.Count) / 2f;
                     }
 
-                    var az = (AnguloInicial + 2.2f * t) * Mathf.Deg2Rad;
+                    if (float.IsNaN(azBase))
+                    {
+                        Elegir(centro, dist, alto);
+                    }
+
+                    // Gira despacio con el tiempo del caso, sin salirse del tramo que se revisó.
+                    var az = (azBase + Mathf.Clamp(2.2f * t, -giroMax, giroMax)) * Mathf.Deg2Rad;
+                    dist *= distK;
+                    alto += altoExtra;
                     camara.transform.position = objetivo + new Vector3(Mathf.Cos(az) * dist, alto, Mathf.Sin(az) * dist);
                     camara.transform.LookAt(objetivo + Vector3.up * 0.9f);
                     return;

@@ -98,11 +98,25 @@ namespace Croquis.Visor
             Camara.Arbol = ArbolCercano(e, Camara.Centro);
             Camara.Estorbos.Clear();
             Camara.Bultos.Clear();
+            Camara.Copas.Clear();
+            foreach (var arbol in e?.Entorno?.Arboles ?? new ArbolEscenario[0])
+            {
+                if (arbol.Tipo != 2)
+                {
+                    Camara.Copas.Add(new Vector3((float)arbol.X, (float)arbol.Y, Mathf.Max(1.6f, (float)arbol.CopaM * 1.3f)));
+                }
+            }
+
             foreach (var ed in e?.Entorno?.Edificios ?? new EdificioEscenario[0])
             {
-                // Un círculo que cubre la planta del edificio, con 1 m de holgura.
-                var radio = 0.5f * Mathf.Sqrt((float)(ed.LargoM * ed.LargoM + ed.FondoM * ed.FondoM)) + 1f;
-                Camara.Bultos.Add(new Vector3((float)ed.X, (float)ed.Y, radio));
+                Camara.Bultos.Add(new CamaraVisor.Bulto
+                {
+                    C = new Vector2((float)ed.X, (float)ed.Y),
+                    U = new Vector2(Mathf.Cos((float)ed.RumboRad), Mathf.Sin((float)ed.RumboRad)),
+                    Hw = (float)ed.LargoM / 2f,
+                    Hd = (float)ed.FondoM / 2f,
+                    Alto = ed.Tipo == TipoLote.Baldio ? 2.3f : (float)ed.AltoM,
+                });
             }
 
             foreach (var l in e?.Luminarias ?? new LuminariaEscenario[0])

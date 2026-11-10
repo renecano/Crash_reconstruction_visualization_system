@@ -23,10 +23,11 @@ namespace Croquis.Visor
             var escenario = new GameObject("escenario").transform;
             escenario.SetParent(raiz, false);
             Ambiente(e.Ambiente, sol, camara);
-            Via(escenario, e.Via, e.Ambiente, terreno, e.Semilla);
+            var urbana = e.Entorno.Zona == ZonaEntorno.Urbana;
+            Via(escenario, e.Via, e.Ambiente, terreno, e.Semilla, urbana);
             foreach (var s in e.Suelo)
             {
-                Suelo(escenario, s, e.Ambiente);
+                Suelo(escenario, s, e.Ambiente, urbana);
             }
 
             EntornoVista.Construir(escenario, e.Entorno, e.Ambiente, e.Semilla);
@@ -86,7 +87,8 @@ namespace Croquis.Visor
             else
             {
                 RenderSettings.ambientMode = AmbientMode.Skybox;
-                RenderSettings.ambientIntensity = (float)a.IntensidadAmbiente;
+                // Un poco más de cielo en las sombras: una fachada a contraluz se tiene que leer.
+                RenderSettings.ambientIntensity = (float)a.IntensidadAmbiente * 1.3f;
             }
 
             RenderSettings.defaultReflectionMode = DefaultReflectionMode.Skybox;
@@ -100,7 +102,8 @@ namespace Croquis.Visor
             RenderSettings.fogMode = FogMode.ExponentialSquared;
             // Aun sin niebla declarada hay aire: lo lejano se funde con el horizonte.
             // De noche la niebla tiene tope: con lluvia, la acera de enfrente se perdía en negro.
-            RenderSettings.fogDensity = Mathf.Clamp((float)a.DensidadNiebla, 0.00055f, a.Noche ? 0.004f : 1f);
+            // De día también: con lluvia, la vista cenital quedaba en blanco y no se leía el hecho.
+            RenderSettings.fogDensity = Mathf.Clamp((float)a.DensidadNiebla, 0.00055f, a.Noche ? 0.004f : 0.006f);
             RenderSettings.fogColor = a.Noche
                 ? (lluvia ? new Color(0.085f, 0.09f, 0.11f) : new Color(0.04f, 0.05f, 0.075f))
                 : Color.Lerp(horizonte, Color.white, lluvia ? 0.2f : 0.12f);
@@ -145,7 +148,7 @@ namespace Croquis.Visor
             else
             {
                 exposicion = 0.2f;
-                contraste = 18f;
+                contraste = 13f;
                 saturacion = 10f;
                 filtro = new Color(1f, 0.985f, 0.96f);
             }
@@ -192,7 +195,7 @@ namespace Croquis.Visor
 
         // ---- Vía --------------------------------------------------------------------------------------
 
-        private static void Via(Transform padre, ViaEscenario v, AmbienteEscenario a, Terreno terreno, long semilla)
+        private static void Via(Transform padre, ViaEscenario v, AmbienteEscenario a, Terreno terreno, long semilla, bool urbana)
         {
             var via = new GameObject("via").transform;
             via.SetParent(padre, false);
@@ -234,13 +237,19 @@ namespace Croquis.Visor
             if (v.Guarniciones.Length > 0)
             {
                 var g = new Malla();
+                var pintada = new Malla();
                 var alto = (float)v.AlturaGuarnicionM;
                 foreach (var s in v.Guarniciones)
                 {
                     var p0 = terreno.P(s.Ax, s.Ay);
                     var p1 = terreno.P(s.Bx, s.By);
-                    g.Cuadro(p0, p1, p1 + Vector3.up * alto, p0 + Vector3.up * alto, 0.5f, true);
+                    // En la ciudad, la guarnición de las esquinas va pintada de amarillo. Las esquinas
+                    // son los tramos cortos: los arcos de la vuelta.
+                    var m = urbana && (p1 - p0).magnitude < 1.6f ? pintada : g;
+                    m.Cuadro(p0, p1, p1 + Vector3.up * alto, p0 + Vector3.up * alto, 0.5f, true);
                 }
+
+                pintada.Poner(via, "guarniciones_pintadas", Materiales.Liso(new Color(0.78f, 0.6f, 0.1f), 0.2f));
 
                 // Lisa: con su mapa de normales, una cara tan angosta centelleaba de noche.
                 g.Poner(via, "guarniciones", Materiales.Liso(new Color(0.42f, 0.41f, 0.39f), 0.15f));
@@ -368,7 +377,7 @@ namespace Croquis.Visor
 
         // ---- Suelo ------------------------------------------------------------------------------------
 
-        private static void Suelo(Transform padre, SueloEscenario s, AmbienteEscenario a)
+        private static void Suelo(Transform padre, SueloEscenario s, AmbienteEscenario a, bool urbana)
         {
             var n = (int)s.Segmentos + 1;
             var lado = (float)s.LadoM;
@@ -377,7 +386,9 @@ namespace Croquis.Visor
             var lejano = s.HuecoM.HasValue;
             // El parche fino va 3 cm abajo de la vía y el lejano 5 cm, como en el visor web.
             var bajo = lejano ? -0.05f : -0.03f;
-            var mosaico = Materiales.Mosaico("pasto") * (lejano ? 3f : 1f);
+            // En la ciudad, entre las cuadras hay tierra apisonada, no un prado.
+            var textura = urbana ? "grava" : "pasto";
+            var mosaico = Materiales.Mosaico(textura) * (lejano ? 3f : 1f);
             var pasto = new Malla();
             var capa = new Malla();
             for (var j = 0; j < n; j++)
@@ -415,7 +426,12 @@ namespace Croquis.Visor
 
             // La textura es de hojarasca: se lleva hacia el verde del pasto de temporada.
             var tinte = a.Noche ? new Color(0.4f, 0.52f, 0.38f) : new Color(0.66f, 0.86f, 0.5f);
-            pasto.Poner(padre, lejano ? "suelo_lejano" : "suelo", Materiales.Pbr("pasto", tinte), false);
+            if (urbana)
+            {
+                tinte = a.Noche ? new Color(0.42f, 0.41f, 0.4f) : new Color(0.72f, 0.69f, 0.64f);
+            }
+
+            pasto.Poner(padre, lejano ? "suelo_lejano" : "suelo", Materiales.Pbr(textura, tinte), false);
 
             // Las parcelas (barbecho) y la orilla seca junto a la vía: una capa de tierra cuya
             // transparencia sale de los tonos de cada nodo, suavizada entre nodos.
