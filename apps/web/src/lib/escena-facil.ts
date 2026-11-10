@@ -19,9 +19,11 @@ import {
   distanciaM,
   enMetros,
   posesDeImpacto,
+  objetosDe,
   rumboDeg,
   type Expediente,
   type LonLat,
+  type TipoObjeto,
 } from "@croquis/cesvi";
 import {
   HIGHWAY_RANK,
@@ -810,6 +812,15 @@ export function quitarChoqueIntermedio(e: Expediente, orden: number): Expediente
   return { ...e, impactos: (e.impactos ?? []).filter((i) => i.orden !== orden) };
 }
 
+/** Corregir después (W4): lleva el lugar de un choque intermedio a otro punto. */
+export function moverChoqueIntermedio(e: Expediente, orden: number, p: Punto): Expediente {
+  if (!choquesIntermedios(e).some((c) => c.orden === orden)) return e;
+  return {
+    ...e,
+    impactos: (e.impactos ?? []).map((i) => (i.orden === orden ? { ...i, punto: p } : i)),
+  };
+}
+
 export interface PuntoDePaso {
   vehiculo: string;
   orden: number;
@@ -854,6 +865,44 @@ export function agregarPuntoDePaso(e: Expediente, vehiculo: string, p: Punto): E
   ]);
 }
 
+/** Corregir después (W4): lleva un punto de paso a otro lugar. */
+export function moverPuntoDePaso(
+  e: Expediente,
+  vehiculo: string,
+  orden: number,
+  p: Punto,
+): Expediente {
+  if (!puntosDePaso(e, vehiculo).some((q) => q.orden === orden)) return e;
+  return conPuntosDePaso(e, (previos) =>
+    previos.map((q) => (q.vehiculo === vehiculo && q.orden === orden ? { ...q, punto: p } : q)),
+  );
+}
+
+/** Corregir después (W4): quita un punto de paso y renumera los que siguen de ese vehículo. */
+export function quitarPuntoDePaso(e: Expediente, vehiculo: string, orden: number): Expediente {
+  if (!puntosDePaso(e, vehiculo).some((q) => q.orden === orden)) return e;
+  return conPuntosDePaso(e, (previos) =>
+    previos
+      .filter((q) => !(q.vehiculo === vehiculo && q.orden === orden))
+      .map((q) => (q.vehiculo === vehiculo && q.orden > orden ? { ...q, orden: q.orden - 1 } : q)),
+  );
+}
+
+/** Corregir después (W4): quita el primer golpe marcado (vuelve al lugar del choque). */
+export function quitarPrimerGolpe(e: Expediente): Expediente {
+  const primero = elPrimero(e);
+  if (!primero?.punto || primero.objeto_fijo) return e;
+  return {
+    ...e,
+    impactos: (e.impactos ?? []).map((i) => {
+      if (i !== primero) return i;
+      const resto = { ...i };
+      delete resto.punto;
+      return resto;
+    }),
+  };
+}
+
 /** Quita el último punto de paso de ese vehículo. */
 export function quitarUltimoPuntoDePaso(e: Expediente, vehiculo: string): Expediente {
   return conPuntosDePaso(e, (previos) => {
@@ -886,6 +935,7 @@ export function resumenC1(s: {
     out.push({
       tipo: "objeto",
       vehiculo: c.vehiculo,
+      orden: c.orden,
       texto: `Después, el ${s.nombres[c.vehiculo] ?? c.vehiculo} chocó contra ${objeto}`,
       detalle: "Donde lo marcaste. Croquis usa medidas típicas del objeto y el dictamen lo dice.",
       supuesto: null,
@@ -902,8 +952,24 @@ export function resumenC1(s: {
       supuesto: null,
     });
   }
+  // C2 (W4): los objetos del lugar que colocó el perito.
+  for (const o of objetosDe(s.e)) {
+    out.push({
+      tipo: "lugar",
+      objeto: o.id,
+      texto: `${articuloObjeto(o.tipo)} ${o.nombre.toLowerCase()}, donde lo colocaste`,
+      detalle: o.medido
+        ? "Con las medidas que le diste."
+        : "Croquis usa medidas típicas del objeto y el dictamen lo dice.",
+      supuesto: null,
+    });
+  }
   return out;
 }
+
+/** «Un poste», «Una pared»: el artículo de cada objeto de la paleta. */
+export const articuloObjeto = (t: TipoObjeto) =>
+  t === "muro" || t === "barrera" || t === "guarnicion" || t === "senal" ? "Una" : "Un";
 
 /** El paso en curso: el primero sin terminar (los choques primero). null si todo está listo. */
 export const pasoActual = (pasos: readonly PasoEscena[]) => pasos.find((p) => !p.hecho) ?? null;
@@ -1059,8 +1125,12 @@ export function ponerEnLaCalle(
 // --- El resumen final ----------------------------------------------------------------------------
 
 export interface LineaResumen {
-  tipo: "choque" | "vehiculo" | "golpe" | "objeto" | "paso";
+  tipo: "choque" | "vehiculo" | "golpe" | "objeto" | "paso" | "lugar";
   vehiculo?: string;
+  /** El choque (su orden) de una línea «choque» u «objeto»: para «Cambiar». */
+  orden?: number;
+  /** El objeto colocado de una línea «lugar»: para «Cambiar». */
+  objeto?: string;
   texto: string;
   detalle: string | null;
   /** Lo que la persona no sabía: va con la etiqueta «Supuesto» y su explicación. */
@@ -1096,6 +1166,7 @@ export function resumenEscena(s: {
           : "donde lo marcaste";
     out.push({
       tipo: "choque",
+      orden: i.orden,
       texto: `${s.impactos.length > 1 ? `El choque ${i.orden}` : "El choque"}, ${lugar}`,
       detalle: null,
       supuesto: null,
