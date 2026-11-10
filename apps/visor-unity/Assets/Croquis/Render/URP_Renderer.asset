@@ -14,17 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.ScreenSpaceAmbientOcclusion
   m_Active: 1
   m_Settings:
-    AOMethod: 0
-    Downsample: 1
+    AOMethod: 1
+    Downsample: 0
     AfterOpaque: 0
     Source: 1
     NormalSamples: 1
-    Intensity: 1.6
+    Intensity: 0.9
     DirectLightingStrength: 0.4
-    Radius: 0.55
-    Samples: 1
+    Radius: 0.18
+    Samples: 0
     BlurQuality: 0
-    Falloff: 120
+    Falloff: 70
     SampleCount: -1
 --- !u!114 &11400000
 MonoBehaviour:

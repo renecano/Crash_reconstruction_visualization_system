@@ -92,7 +92,8 @@ namespace Croquis.Visor
         /// <summary>Si desde `ojo` se ve `mira` sin estar dentro de algo ni con algo en medio.</summary>
         private bool Despejada(Vector3 ojo, Vector3 mira, bool conCopas = false)
         {
-            if (EnBulto(ojo, 0.8f))
+            // El ojo nunca va sobre lo construido, a ninguna altura: una azotea llena el cuadro.
+            if (EnBulto(new Vector3(ojo.x, 0f, ojo.z), 0.8f))
             {
                 return false;
             }

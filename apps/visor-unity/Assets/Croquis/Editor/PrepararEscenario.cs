@@ -328,17 +328,22 @@ namespace Croquis.EditorTools
 
         /// <summary>
         /// La oclusión ambiental a escala de calle: el radio de fábrica (3.5 cm) no oscurece nada a la
-        /// distancia de una cámara de escena. Con 0.55 m se marcan los bajos del vehículo, las
-        /// guarniciones y los rincones de las fachadas.
+        /// distancia de una cámara de escena. Con 0.18 m se marcan los bajos del vehículo, las
+        /// guarniciones y los rincones de las fachadas. Más ancho, a media resolución, manchaba la
+        /// carrocería vista de cerca como si tuviera hollín: en un visor forense eso no puede pasar.
         /// </summary>
         private static void Oclusion(ScriptableRendererFeature ssao)
         {
             var so = new SerializedObject(ssao);
-            Poner(so, "m_Settings.Radius", 0.55f);
-            Poner(so, "m_Settings.Intensity", 1.6f);
+            Poner(so, "m_Settings.Radius", 0.18f);
+            Poner(so, "m_Settings.Intensity", 0.9f);
+            // Ruido de gradiente intercalado: con el ruido azul quedaba un moteado en la pintura clara.
+            Poner(so, "m_Settings.AOMethod", 1);
+            Poner(so, "m_Settings.Samples", 0);
+            Poner(so, "m_Settings.BlurQuality", 0);
             Poner(so, "m_Settings.DirectLightingStrength", 0.4f);
-            Poner(so, "m_Settings.Falloff", 120f);
-            Poner(so, "m_Settings.Downsample", true);
+            Poner(so, "m_Settings.Falloff", 70f);
+            Poner(so, "m_Settings.Downsample", false);
             so.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(ssao);
         }

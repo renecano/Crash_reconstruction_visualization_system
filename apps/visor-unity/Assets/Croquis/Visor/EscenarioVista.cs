@@ -18,16 +18,27 @@ namespace Croquis.Visor
     {
         private const int LuminariasEncendidasMax = 6;
 
+        /// <summary>
+        /// El radio, desde el centro de la acción, donde no se dibuja desgaste procedural (grietas,
+        /// parches, manchas): es un visor forense, y una mancha inventada junto al hecho se podría
+        /// confundir con una evidencia. Lo fija `VisorCaso` con la zona de interés del caso.
+        /// </summary>
+        public static float ClaroDelHecho { get; set; } = 14f;
+
+        /// <summary>El centro de la acción, en planta (x, y).</summary>
+        public static Vector2 CentroDelHecho { get; set; }
+
         public static void Construir(Transform raiz, Escenario e, Light sol, Camera camara, Terreno terreno)
         {
             var escenario = new GameObject("escenario").transform;
             escenario.SetParent(raiz, false);
             Ambiente(e.Ambiente, sol, camara);
             var urbana = e.Entorno.Zona == ZonaEntorno.Urbana;
-            Via(escenario, e.Via, e.Ambiente, terreno, e.Semilla, urbana);
+            var centro = new Vector2((float)e.Centro.X, (float)e.Centro.Y);
+            Via(escenario, e.Via, e.Ambiente, terreno, e.Semilla, urbana, centro);
             foreach (var s in e.Suelo)
             {
-                Suelo(escenario, s, e.Ambiente, urbana);
+                Suelo(escenario, s, e.Ambiente, urbana, e.Semilla);
             }
 
             EntornoVista.Construir(escenario, e.Entorno, e.Ambiente, e.Semilla);
@@ -195,7 +206,7 @@ namespace Croquis.Visor
 
         // ---- Vía --------------------------------------------------------------------------------------
 
-        private static void Via(Transform padre, ViaEscenario v, AmbienteEscenario a, Terreno terreno, long semilla, bool urbana)
+        private static void Via(Transform padre, ViaEscenario v, AmbienteEscenario a, Terreno terreno, long semilla, bool urbana, Vector2 centroAccion)
         {
             var via = new GameObject("via").transform;
             via.SetParent(padre, false);
@@ -222,11 +233,11 @@ namespace Croquis.Visor
                         sombra = true;
                         break;
                     case NombreCapa.RayasAmarillas:
-                        mat = Materiales.Calca(new Color(0.83f, 0.62f, 0.1f, 0.9f));
+                        mat = Materiales.RayaGastada(new Color(0.83f, 0.62f, 0.1f, 0.92f));
                         m.Planta(c.Posiciones, c.Indices, (float)c.AlturaM, terreno, 1f);
                         break;
                     default:
-                        mat = Materiales.Calca(new Color(0.86f, 0.86f, 0.82f, 0.9f));
+                        mat = Materiales.RayaGastada(new Color(0.86f, 0.86f, 0.82f, 0.92f));
                         m.Planta(c.Posiciones, c.Indices, (float)c.AlturaM, terreno, 1f);
                         break;
                 }
@@ -264,6 +275,135 @@ namespace Croquis.Visor
             {
                 Charcos(via, v, terreno, semilla);
             }
+
+            Desgaste(via, v, terreno, semilla, centroAccion);
+        }
+
+        /// <summary>
+        /// El desgaste de la calzada: rodadas por carril, grietas, parches de bacheo y manchas de aceite,
+        /// repartidos con la semilla de la escena. Son calcas pegadas al piso (en WebGL no hay
+        /// proyectores de calcas), y ninguna cae dentro del claro del hecho.
+        /// </summary>
+        private static void Desgaste(Transform via, ViaEscenario v, Terreno terreno, long semilla, Vector2 centro)
+        {
+            var rodadas = new Malla();
+            foreach (var r in v.Rodadas ?? new SegmentoPlano[0])
+            {
+                var p0 = new Vector2((float)r.Ax, (float)r.Ay);
+                var p1 = new Vector2((float)r.Bx, (float)r.By);
+                var largo = (p1 - p0).magnitude;
+                if (largo < 1f)
+                {
+                    continue;
+                }
+
+                var dir = (p1 - p0) / largo;
+                var lado = new Vector2(-dir.y, dir.x) * 0.32f;
+                // En tramos de 6 m, para que la rodada siga el relieve.
+                for (var s = 0f; s < largo; s += 6f)
+                {
+                    var a0 = p0 + dir * s;
+                    var a1 = p0 + dir * Mathf.Min(largo, s + 6f);
+                    var i = rodadas.Vertice(terreno.P(a0.x - lado.x, a0.y - lado.y, 0.008f), new Vector2(s / 6f, 0f));
+                    rodadas.Vertice(terreno.P(a1.x - lado.x, a1.y - lado.y, 0.008f), new Vector2(s / 6f + 1f, 0f));
+                    rodadas.Vertice(terreno.P(a1.x + lado.x, a1.y + lado.y, 0.008f), new Vector2(s / 6f + 1f, 1f));
+                    rodadas.Vertice(terreno.P(a0.x + lado.x, a0.y + lado.y, 0.008f), new Vector2(s / 6f, 1f));
+                    rodadas.Triangulo(i, i + 2, i + 1);
+                    rodadas.Triangulo(i, i + 3, i + 2);
+                }
+            }
+
+            rodadas.Poner(via, "rodadas", Materiales.Rodada(new Color(0.015f, 0.015f, 0.018f, 0.36f)), false);
+
+            CapaEscenario calzada = null;
+            foreach (var c in v.Capas)
+            {
+                if (c.Nombre == NombreCapa.Calzada)
+                {
+                    calzada = c;
+                }
+            }
+
+            if (calzada == null || calzada.Indices.Length < 3)
+            {
+                return;
+            }
+
+            // Triángulos de la calzada con su área, para repartir por superficie y no por triángulo.
+            var n = calzada.Indices.Length / 3;
+            var acumulada = new float[n];
+            var total = 0f;
+            Vector2 Vert(int t, int i) => new Vector2(
+                (float)calzada.Posiciones[2 * (int)calzada.Indices[3 * t + i]],
+                (float)calzada.Posiciones[2 * (int)calzada.Indices[3 * t + i] + 1]);
+            for (var t = 0; t < n; t++)
+            {
+                var ab = Vert(t, 1) - Vert(t, 0);
+                var ac = Vert(t, 2) - Vert(t, 0);
+                total += Mathf.Abs(ab.x * ac.y - ab.y * ac.x) / 2f;
+                acumulada[t] = total;
+            }
+
+            var azar = new Azar(semilla + 211);
+            var grietas = new Malla();
+            var parches = new Malla();
+            var aceite = new Malla();
+            // Una pieza cada tantos metros cuadrados, con tope: la densidad no depende del largo de la vía.
+            var piezas = Mathf.Min(220, Mathf.RoundToInt(total / 55f));
+            for (var k = 0; k < piezas; k++)
+            {
+                var objetivo = azar.Siguiente() * total;
+                var t = System.Array.BinarySearch(acumulada, objetivo);
+                t = Mathf.Clamp(t < 0 ? ~t : t, 0, n - 1);
+                var u = azar.Siguiente();
+                var w = azar.Siguiente();
+                if (u + w > 1f)
+                {
+                    u = 1f - u;
+                    w = 1f - w;
+                }
+
+                var c = Vert(t, 0) + (Vert(t, 1) - Vert(t, 0)) * u + (Vert(t, 2) - Vert(t, 0)) * w;
+                var clase = azar.Siguiente();
+                var giro = azar.Entre(0f, Mathf.PI * 2f);
+                var medida = azar.Siguiente();
+                if ((c - centro).magnitude < ClaroDelHecho)
+                {
+                    continue;
+                }
+
+                if (clase < 0.45f)
+                {
+                    Calca(grietas, terreno, c, giro, Mathf.Lerp(1.6f, 3.4f, medida), Mathf.Lerp(1.6f, 3.4f, medida), 0.011f);
+                }
+                else if (clase < 0.62f)
+                {
+                    Calca(parches, terreno, c, Mathf.Round(giro / (Mathf.PI / 2f)) * (Mathf.PI / 2f) + azar.Entre(-0.06f, 0.06f), Mathf.Lerp(1.2f, 3.2f, medida), Mathf.Lerp(0.9f, 1.8f, azar.Siguiente()), 0.009f);
+                }
+                else
+                {
+                    var r = Mathf.Lerp(0.25f, 0.7f, medida);
+                    Calca(aceite, terreno, c, giro, r * 2f, r * azar.Entre(1.2f, 2f), 0.01f);
+                }
+            }
+
+            grietas.Poner(via, "grietas", Materiales.Grietas(), false);
+            parches.Poner(via, "parches", Materiales.Parche(), false);
+            aceite.Poner(via, "manchas_de_aceite", Materiales.ManchaOscura(0.38f), false);
+        }
+
+        /// <summary>Una calca rectangular pegada al piso, girada, con su textura entera.</summary>
+        public static void Calca(Malla m, Terreno terreno, Vector2 c, float giro, float largo, float ancho, float altura)
+        {
+            var u = new Vector2(Mathf.Cos(giro), Mathf.Sin(giro)) * (largo / 2f);
+            var v = new Vector2(-Mathf.Sin(giro), Mathf.Cos(giro)) * (ancho / 2f);
+            Vector3 P(Vector2 q) => terreno.P(q.x, q.y, altura);
+            var i = m.Vertice(P(c - u - v), new Vector2(0f, 0f));
+            m.Vertice(P(c + u - v), new Vector2(1f, 0f));
+            m.Vertice(P(c + u + v), new Vector2(1f, 1f));
+            m.Vertice(P(c - u + v), new Vector2(0f, 1f));
+            m.Triangulo(i, i + 2, i + 1);
+            m.Triangulo(i, i + 3, i + 2);
         }
 
         /// <summary>Barrera metálica de dos ondas sobre postes cada 4 m, como en las autopistas.</summary>
@@ -377,7 +517,7 @@ namespace Croquis.Visor
 
         // ---- Suelo ------------------------------------------------------------------------------------
 
-        private static void Suelo(Transform padre, SueloEscenario s, AmbienteEscenario a, bool urbana)
+        private static void Suelo(Transform padre, SueloEscenario s, AmbienteEscenario a, bool urbana, long semilla)
         {
             var n = (int)s.Segmentos + 1;
             var lado = (float)s.LadoM;
@@ -433,6 +573,42 @@ namespace Croquis.Visor
 
             pasto.Poner(padre, lejano ? "suelo_lejano" : "suelo", Materiales.Pbr(textura, tinte), false);
 
+            // Variación de tono: manchas grandes más secas, para que el suelo no sea de un solo color.
+            var tonos = new Malla();
+            for (var j = 0; j < n; j++)
+            {
+                for (var i = 0; i < n; i++)
+                {
+                    var x = x0 + i * lado / (n - 1);
+                    var y = y0 + j * lado / (n - 1);
+                    tonos.Vertice(new Vector3(x, (float)s.AlturasM[j * n + i] + bajo + 0.006f, y), new Vector2(x, y) / (lejano ? 240f : 70f));
+                }
+            }
+
+            for (var j = 0; j + 1 < n; j++)
+            {
+                for (var i = 0; i + 1 < n; i++)
+                {
+                    var cx = x0 + (i + 0.5f) * lado / (n - 1) - (float)s.Centro.X;
+                    var cy = y0 + (j + 0.5f) * lado / (n - 1) - (float)s.Centro.Y;
+                    if (Mathf.Abs(cx) < hueco && Mathf.Abs(cy) < hueco)
+                    {
+                        continue;
+                    }
+
+                    var a0 = j * n + i;
+                    tonos.Triangulo(a0, a0 + n, a0 + 1);
+                    tonos.Triangulo(a0 + 1, a0 + n, a0 + n + 1);
+                }
+            }
+
+            var tonoSeco = urbana ? new Color(0.3f, 0.27f, 0.23f, 0.4f) : new Color(0.5f, 0.47f, 0.24f, a.Noche ? 0.16f : 0.3f);
+            tonos.Poner(padre, lejano ? "tonos_lejanos" : "tonos", Materiales.Tonos(tonoSeco), false);
+            if (!lejano && !urbana)
+            {
+                Matas(padre, s, bajo, semilla, a.Noche);
+            }
+
             // Las parcelas (barbecho) y la orilla seca junto a la vía: una capa de tierra cuya
             // transparencia sale de los tonos de cada nodo, suavizada entre nodos.
             var tex = new Texture2D(n, n, TextureFormat.RGBA32, true) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Trilinear };
@@ -461,6 +637,54 @@ namespace Croquis.Visor
             var mat = new Material(Materiales.Calca(Color.white, 0.04f)) { name = "parcelas" };
             mat.SetTexture("_BaseMap", tex);
             capa.Poner(padre, lejano ? "parcelas_lejanas" : "parcelas", mat, false);
+        }
+
+        /// <summary>
+        /// Matas de pasto: tarjetas cruzadas chicas sobre el parche fino del suelo, más tupidas cerca de
+        /// la vía, donde las ve la cámara. Con semilla; no van donde el suelo es orilla seca.
+        /// </summary>
+        private static void Matas(Transform padre, SueloEscenario s, float bajo, long semilla, bool noche)
+        {
+            var n = (int)s.Segmentos + 1;
+            var lado = (float)s.LadoM;
+            var x0 = (float)s.Centro.X - lado / 2f;
+            var y0 = (float)s.Centro.Y - lado / 2f;
+            var azar = new Azar(semilla + 307);
+            var verdes = new Malla { NormalArriba = true };
+            var secas = new Malla { NormalArriba = true };
+            const int Intentos = 14000;
+            for (var k = 0; k < Intentos; k++)
+            {
+                // Más cerca del centro que de la orilla del parche.
+                var r = Mathf.Pow(azar.Siguiente(), 1.9f) * lado * 0.48f;
+                var ang = azar.Entre(0f, Mathf.PI * 2f);
+                var x = (float)s.Centro.X + Mathf.Cos(ang) * r;
+                var y = (float)s.Centro.Y + Mathf.Sin(ang) * r;
+                var alto = azar.Entre(0.14f, 0.42f);
+                var giro = azar.Entre(0f, Mathf.PI);
+                var esSeca = azar.Siguiente() < 0.3f;
+                var fi = Mathf.Clamp((x - x0) / lado * (n - 1), 0f, n - 1.001f);
+                var fj = Mathf.Clamp((y - y0) / lado * (n - 1), 0f, n - 1.001f);
+                var nodo = Mathf.RoundToInt(fj) * n + Mathf.RoundToInt(fi);
+                var orilla = s.Seco != null && s.Seco.Length == n * n ? (float)s.Seco[nodo] : 0f;
+                // `seco` vale 1 sobre la vía y junto a ella: ahí no hay pasto.
+                if (orilla > 0.55f)
+                {
+                    continue;
+                }
+
+                var z = (float)s.AlturasM[nodo] + bajo;
+                var m = esSeca ? secas : verdes;
+                for (var h = 0; h < 2; h++)
+                {
+                    var d = new Vector3(Mathf.Cos(giro + h * Mathf.PI / 2f), 0f, Mathf.Sin(giro + h * Mathf.PI / 2f)) * (alto * 0.75f);
+                    var p = new Vector3(x, z, y);
+                    m.Tarjeta(p - d, p + d, p + d + Vector3.up * alto, p - d + Vector3.up * alto);
+                }
+            }
+
+            verdes.Poner(padre, "matas", Materiales.Mata(false), false);
+            secas.Poner(padre, "matas_secas", Materiales.Mata(true), false);
         }
 
         // ---- Luminarias -------------------------------------------------------------------------------

@@ -75,6 +75,9 @@ namespace Croquis.Visor
             // Con escenario (ADR 0112) se dibuja lo que calculó TS y se esconde el piso liso de U1.
             // El piso es plano salvo que la escena declare terreno (C3): entonces todo se arma sobre él.
             var terreno = TerrenoVista.De(e?.Terreno);
+            var zona = Encuadre.ZonaDeInteres(r);
+            EscenarioVista.CentroDelHecho = new Vector2((float)zona.CentroX, (float)zona.CentroY);
+            EscenarioVista.ClaroDelHecho = (float)zona.Lado * 0.6f + 4f;
             if (e != null)
             {
                 EscenarioVista.Construir(raiz, e, sol, Camera.main, terreno);

@@ -5,8 +5,9 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 ## Estado
 
 - **Fase actual:** U2 (escenario), segunda pasada, en el orden que fijó René el 2026-11-09: 1 luz y color, 2 calle mexicana, 3 suelo y desgaste, 4 árboles, 5 autopista y cerros.
-- **Hecho:** los puntos 1 y 2. **En curso:** el punto 3. Su parche está escrito y sin aplicar en el scratchpad de la sesión (`p3a.py`): desgaste con semilla fuera del claro del hecho, rayas gastadas, rodadas (`via.rodadas` en el contrato), matas, tonos del suelo, y baches y rodadas de terracería.
-- **Siguiente paso:** aplicar el punto 3, regenerar el contrato y los paquetes, capturar, y cerrarlo con su build WebGL y su medición. Después, los puntos 4 y 5. Al terminar los 5: publicar el build en Blob y entregar las 20 capturas nuevas junto a las del 2026-11-09.
+- **Hecho:** los puntos 1, 2 y 3, y las notas de René sobre el punto 2 (relieve y desgaste de fachadas, sin rayas de orilla en calles de colonia).
+- **En curso:** la regla de fps de René. Al cerrar el punto 3 la noche urbana bajó de 12 fps en WebGL, así que antes de más detalle se adelanta la parte de U5 que hace falta (perfil «media» para WebGL).
+- **Después:** el punto 4. Su horneado (`tools/unity/impostores.mjs` y `tools/unity/blender/hornear_impostor.py`) y su componente (`ArbolesVista.cs`) ya están escritos; el parche que los conecta está en el scratchpad de la sesión (`p4a.py`) y falta correr Blender. Luego el punto 5, publicar en Blob y las 20 capturas lado a lado.
 - **Cómo se itera:** capturas del Editor en modo batch (`Capturas.Tomar`, unos 3 min). En esta sesión no hubo herramientas del MCP de Unity. Un build WebGL solo al cerrar cada punto.
 
 ## U2 · Escenario
@@ -44,6 +45,35 @@ La meta está en `docs/cesvi/PLAN-CESVI.md` §3.3. Decisiones: ADR 0112 (el esce
 - **Medido al cerrar el punto** (`eval/results/unity_build_urbana.json`, escena `lateral_interseccion` de día, y `docs/cesvi/u2/puntos/p2-calle/fps-web.json`): 62.5 MB (28.4 MB con Brotli), 13.1 s hasta que Unity arranca, 4.3 s más hasta que el cruce se ve, 32.8 fps a 1280 × 720. A 1600 × 900: de 21.3 a 27 fps de día y de 12.7 a 18.5 de noche. El peso no cambió.
 - **Falta volver a medir AXA** para `eval/results/unity_build.json` (sigue con la cifra del punto 1).
 - **Queda de este punto:** rampas en las banquetas y juntas marcadas (hoy solo las da la textura).
+
+### Segunda pasada · punto 3: suelo y desgaste, y las notas de René sobre el punto 2 (2026-11-09)
+
+- **Capturas para comparar** (del Editor): `docs/cesvi/u2/puntos/p3-suelo/`, contra `p2-calle/`.
+- **Desgaste de la calzada, con semilla:** rodadas por carril (`via.rodadas` en el contrato, por corredor: sirven con plantilla y con la red del mapa), grietas, parches de bacheo y manchas de aceite, como calcas pegadas al piso; rayas con la pintura gastada.
+- **Regla forense:** ninguna grieta, parche o mancha procedural cae dentro del claro del hecho (el radio de la zona de interés del caso): una mancha inventada junto al impacto se podría confundir con una evidencia. Las rodadas sí pasan: son desgaste parejo del carril.
+- **Suelo:** manchas grandes de tono y matas de pasto verdes y secas en zona rural; terracería con rodadas marcadas y baches.
+- **Fachadas (nota de René):** molduras en puertas y ventanas, cornisa y remate del pretil, zoclo, escurrimientos bajo el pretil, los tinacos y las ventanas, y pintura descarapelada, todo con la semilla de la escena.
+- **Calles de colonia (nota de René):** en zona urbana de plantilla, con dos carriles a lo más y sin rayas de carril declaradas en la escena, ya no hay raya blanca de orilla (`sinRayasDeOrilla`).
+- **Corregido en el camino:**
+  - La oclusión ambiental manchaba la pintura clara vista de cerca, como hollín. En un visor forense eso no puede pasar: el radio bajó a 0.18 m, con ruido de gradiente intercalado.
+  - La cámara cinematográfica ya nunca se para sobre lo construido, a ninguna altura.
+- **Medido al cerrar el punto** (`eval/results/unity_build.json` para AXA, `unity_build_urbana.json` para el cruce, y `docs/cesvi/u2/puntos/p3-suelo/fps-web.json`):
+
+| Qué                                   | Punto 2     | Punto 3     |
+| ------------------------------------- | ----------- | ----------- |
+| Peso del build                        | 62.5 MB     | 62.1 MB     |
+| Con Brotli calidad 9                  | 28.4 MB     | 27.9 MB     |
+| Hasta que Unity arranca, a 20 Mbps    | 13.1 s      | 12.9 s      |
+| Hasta que AXA se ve                   | sin medir   | 3.5 s más   |
+| Hasta que el cruce urbano se ve       | 4.3 s más   | 5.1 s más   |
+| fps a 1280 × 720, AXA de día          | sin medir   | 29.85       |
+| fps a 1280 × 720, cruce urbano de día | 32.8        | 27          |
+| fps a 1600 × 900, de día              | 21.3 a 27   | 16.1 a 24.4 |
+| fps a 1600 × 900, de noche            | 12.7 a 18.5 | 10.9 a 15.2 |
+
+- **La noche urbana bajó de 12 fps:** el cruce de noche da de 10.9 a 11.1 fps (antes 12.7). Se activa la regla de René: primero rendimiento, después más detalle.
+- **Este build tardó 74 min** porque la laptop estuvo suspendida a la mitad; los demás tardan de 5 a 8 min.
+- **Una prueba del contrato falló una vez por tiempo** (5.8 s con límite de 5 s) con la laptop cargada; sola pasa. Se confirma en CI.
 
 ### Resumen para René (primera pasada, 2026-11-09)
 

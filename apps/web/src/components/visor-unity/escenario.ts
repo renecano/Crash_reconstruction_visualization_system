@@ -22,6 +22,7 @@ import {
   dashPatternFor,
   distanceToRoad,
   environmentFor,
+  zoneFor,
   FACADE_PALETTE_MX,
   headlightsOn,
   lampAt,
@@ -37,6 +38,64 @@ import {
 } from "@croquis/viewer/puro";
 
 import { planCuadras, type Lote } from "./cuadras";
+
+/**
+ * La malla de rayas blancas sin las de orilla: se quita todo triángulo cuyos tres vértices caen en
+ * los 45 cm de adentro del borde de una misma vía. Las rayas de alto, de carril y los pasos tienen
+ * vértices más adentro y se quedan.
+ */
+export function sinRayasDeOrilla(
+  m: Mesh2D,
+  corredores: readonly { a: { x: number; y: number }; b: { x: number; y: number }; half: number }[],
+): Mesh2D {
+  const alBorde = (i: number, c: (typeof corredores)[number]) => {
+    const px = m.positions[2 * i]!;
+    const py = m.positions[2 * i + 1]!;
+    const dx = c.b.x - c.a.x;
+    const dy = c.b.y - c.a.y;
+    const l2 = dx * dx + dy * dy || 1;
+    const t = Math.max(0, Math.min(1, ((px - c.a.x) * dx + (py - c.a.y) * dy) / l2));
+    const d = Math.hypot(px - (c.a.x + t * dx), py - (c.a.y + t * dy)) - c.half;
+    return d >= -0.45 && d <= 0.05;
+  };
+  const indices: number[] = [];
+  for (let k = 0; k + 2 < m.indices.length; k += 3) {
+    const tri = [m.indices[k]!, m.indices[k + 1]!, m.indices[k + 2]!];
+    if (!corredores.some((c) => tri.every((i) => alBorde(i, c)))) indices.push(...tri);
+  }
+  return { positions: m.positions, indices };
+}
+
+/**
+ * El eje de las rodadas de cada tramo de vía: dos por carril, a 0.78 m de su centro. Los carriles se
+ * estiman por el ancho (3.5 m cada uno): es desgaste decorativo, no un dato del hecho.
+ */
+function rodadasDe(
+  corredores: readonly { a: { x: number; y: number }; b: { x: number; y: number }; half: number }[],
+): Escenario["via"]["rodadas"] {
+  const out: Escenario["via"]["rodadas"] = [];
+  for (const c of corredores) {
+    const largo = Math.hypot(c.b.x - c.a.x, c.b.y - c.a.y);
+    if (largo < 2) continue;
+    const ux = (c.b.x - c.a.x) / largo;
+    const uy = (c.b.y - c.a.y) / largo;
+    const ancho = c.half * 2;
+    const carriles = Math.max(1, Math.round(ancho / 3.5));
+    for (let k = 0; k < carriles; k++) {
+      const medio = -c.half + (ancho * (k + 0.5)) / carriles;
+      for (const rueda of [-0.78, 0.78]) {
+        const o = medio + rueda;
+        out.push({
+          ax: cm(c.a.x - uy * o),
+          ay: cm(c.a.y + ux * o),
+          bx: cm(c.b.x - uy * o),
+          by: cm(c.b.y + ux * o),
+        });
+      }
+    }
+  }
+  return out;
+}
 
 export const ESCENARIO_VERSION = "1.0.0" as const;
 
@@ -284,12 +343,21 @@ export function escenarioDe(spec: EscenaSpec, resultado: Resultado): Escenario {
         guarniciones: lugar.guarniciones?.valor ?? false,
       });
   const decor = roadDecorFor(lugar, layout, mapa?.vias);
+  // En una calle de colonia (urbana, de plantilla, de dos carriles a lo más y sin rayas de carril
+  // declaradas en la escena) no hay raya blanca de orilla: en México casi nunca existe ahí.
+  const corredoresVia = corridorsOf(layout, mapa?.vias);
+  const deColonia =
+    !mapa &&
+    zoneFor(lugar) === "urbana" &&
+    layout.strips.every((s) => s.width <= 8) &&
+    !devTipos.some((t) => t === "linea_continua" || t === "linea_discontinua");
+  const blancas = deColonia ? sinRayasDeOrilla(road.whiteLines, corredoresVia) : road.whiteLines;
   const capas = [
     capa("acotamiento", decor.shoulders, 0.004),
     capa("calzada", road.pavement, 0),
     capa("banqueta", road.sidewalk, CURB_HEIGHT),
     capa("camellon", road.medians, CURB_HEIGHT),
-    capa("rayas_blancas", road.whiteLines, 0.012),
+    capa("rayas_blancas", blancas, 0.012),
     capa("rayas_amarillas", road.yellowLines, 0.012),
     capa("paso_peatonal", road.crosswalks, 0.014),
   ].filter((c): c is CapaEscenario => c !== null);
@@ -399,6 +467,7 @@ export function escenarioDe(spec: EscenaSpec, resultado: Resultado): Escenario {
         by: cm(c.b.y),
       })),
       altura_guarnicion_m: CURB_HEIGHT,
+      rodadas: rodadasDe(corredoresVia),
       barreras: decor.barriers.map((b) => b.map((p) => ({ x: cm(p.x), y: cm(p.y) }))),
     },
     // Dos piezas, como el visor web (T1.3b): un parche fino de 320 m y el terreno lejano con hueco.

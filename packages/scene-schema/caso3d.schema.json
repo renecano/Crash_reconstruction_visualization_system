@@ -665,7 +665,7 @@
           "title": "ViaEscenario",
           "type": "object",
           "additionalProperties": false,
-          "required": ["capas", "guarniciones", "altura_guarnicion_m", "barreras"],
+          "required": ["capas", "guarniciones", "altura_guarnicion_m", "barreras", "rodadas"],
           "properties": {
             "capas": {
               "type": "array",
@@ -692,6 +692,13 @@
                 }
               },
               "description": "Barreras metálicas, como polilíneas."
+            },
+            "rodadas": {
+              "description": "Por dónde pisan las llantas en cada carril: el eje de cada rodada. Es decoración del desgaste, no un dato del hecho.",
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/SegmentoPlano"
+              }
             }
           }
         },

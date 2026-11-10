@@ -3051,6 +3051,13 @@ namespace Croquis.Generated
         /// </summary>
         [JsonProperty("guarniciones")]
         public SegmentoPlano[] Guarniciones { get; set; }
+
+        /// <summary>
+        /// Por dónde pisan las llantas en cada carril: el eje de cada rodada. Es decoración del
+        /// desgaste, no un dato del hecho.
+        /// </summary>
+        [JsonProperty("rodadas")]
+        public SegmentoPlano[] Rodadas { get; set; }
     }
 
     /// <summary>

@@ -45,6 +45,12 @@ namespace Croquis.Visor
 
         public int Vertices => v.Count;
 
+        /// <summary>
+        /// Para tarjetas de vegetación: todas las normales hacia arriba, y la tarjeta recibe la luz como
+        /// el suelo donde está, sin una cara clara y otra negra.
+        /// </summary>
+        public bool NormalArriba { get; set; }
+
         public int Vertice(Vector3 p, Vector2 u)
         {
             v.Add(p);
@@ -256,6 +262,17 @@ namespace Croquis.Visor
             m.SetUVs(0, uv);
             m.SetTriangles(t, 0);
             m.RecalculateNormals();
+            if (NormalArriba)
+            {
+                var arriba = new Vector3[v.Count];
+                for (var i = 0; i < arriba.Length; i++)
+                {
+                    arriba[i] = Vector3.up;
+                }
+
+                m.SetNormals(arriba);
+            }
+
             m.RecalculateTangents();
             m.RecalculateBounds();
             return m;

@@ -306,6 +306,7 @@ export const Escenario = z.strictObject({
     guarniciones: z.array(SegmentoPlano),
     altura_guarnicion_m: z.number(),
     barreras: z.array(z.array(PuntoPlano)),
+    rodadas: z.array(SegmentoPlano),
   }),
   suelo: z.array(SueloEscenario),
   entorno: z.strictObject({
