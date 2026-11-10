@@ -18,6 +18,8 @@ camino del vehículo golpeado, a media distancia de su tramo posterior, y su cho
 `fixtures/c1/resultados/alcance_muro.json`.
 
     uv run python eval/w3_fixtures.py
+    pnpm exec prettier --write packages/scene-schema/fixtures/inversion \
+        packages/scene-schema/fixtures/c1
     uv run croquis-solver reconstruct --all   # escribe el resultado de la inversión
 """
 

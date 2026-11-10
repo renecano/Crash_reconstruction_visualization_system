@@ -74,10 +74,7 @@
     },
     "friccion": {
       "valor": 0.5,
-      "rango": [
-        0.4,
-        0.6
-      ],
+      "rango": [0.4, 0.6],
       "fuente": "default",
       "confianza": 0.5,
       "nota": "Asfalto mojado; rango de literatura, se referencia en docs/physics.md (F2)."
@@ -90,10 +87,7 @@
           "x": 12,
           "y": -12.5
         },
-        "aplica_a": [
-          "veh-a",
-          "veh-b"
-        ],
+        "aplica_a": ["veh-a", "veh-b"],
         "fases": [
           {
             "movimiento": "veh-b",
@@ -218,10 +212,7 @@
       "masa": {
         "valor": 1120,
         "unidad": "kg",
-        "rango": [
-          1050,
-          1250
-        ],
+        "rango": [1050, 1250],
         "fuente": "default",
         "confianza": 0.6
       },
@@ -264,10 +255,7 @@
       "velocidad_previa": {
         "valor": 50,
         "unidad": "km/h",
-        "rango": [
-          40,
-          60
-        ],
+        "rango": [40, 60],
         "fuente": "relato",
         "confianza": 0.7,
         "evidencia": [
@@ -294,10 +282,7 @@
         "distancia_antes_impacto": {
           "valor": 8,
           "unidad": "m",
-          "rango": [
-            6,
-            10
-          ],
+          "rango": [6, 10],
           "fuente": "relato",
           "confianza": 0.7,
           "evidencia": [
@@ -344,9 +329,7 @@
           "confianza": 0.4
         }
       },
-      "ocupantes": [
-        "per-a1"
-      ]
+      "ocupantes": ["per-a1"]
     },
     {
       "id": "veh-b",
@@ -382,10 +365,7 @@
       "masa": {
         "valor": 1350,
         "unidad": "kg",
-        "rango": [
-          1200,
-          1550
-        ],
+        "rango": [1200, 1550],
         "fuente": "default",
         "confianza": 0.5
       },
@@ -467,9 +447,7 @@
           "confianza": 0.4
         }
       },
-      "ocupantes": [
-        "per-b1"
-      ]
+      "ocupantes": ["per-b1"]
     }
   ],
   "personas": [
@@ -508,20 +486,14 @@
       "estatura": {
         "valor": 1.7,
         "unidad": "m",
-        "rango": [
-          1.55,
-          1.85
-        ],
+        "rango": [1.55, 1.85],
         "fuente": "default",
         "confianza": 0.3
       },
       "masa": {
         "valor": 75,
         "unidad": "kg",
-        "rango": [
-          55,
-          95
-        ],
+        "rango": [55, 95],
         "fuente": "default",
         "confianza": 0.3
       }
@@ -559,16 +531,11 @@
       "id": "ev-frenado",
       "orden": 0,
       "tipo": "inicio_frenado",
-      "actores": [
-        "veh-a"
-      ],
+      "actores": ["veh-a"],
       "t": {
         "valor": -0.9,
         "unidad": "s",
-        "rango": [
-          -1.3,
-          -0.6
-        ],
+        "rango": [-1.3, -0.6],
         "fuente": "supuesto",
         "confianza": 0.4,
         "nota": "Lo calcula el solver a partir de la marca de frenado; valor inicial."
@@ -589,10 +556,7 @@
       "id": "ev-impacto",
       "orden": 1,
       "tipo": "impacto_vehiculo_vehiculo",
-      "actores": [
-        "veh-a",
-        "veh-b"
-      ],
+      "actores": ["veh-a", "veh-b"],
       "t": {
         "valor": 0,
         "unidad": "s",
@@ -650,17 +614,11 @@
       "id": "ev-reposo",
       "orden": 2,
       "tipo": "reposo",
-      "actores": [
-        "veh-a",
-        "veh-b"
-      ],
+      "actores": ["veh-a", "veh-b"],
       "t": {
         "valor": 1.5,
         "unidad": "s",
-        "rango": [
-          0.8,
-          2.5
-        ],
+        "rango": [0.8, 2.5],
         "fuente": "supuesto",
         "confianza": 0.3
       },
@@ -673,10 +631,7 @@
       "id": "ev-muro",
       "orden": 3,
       "tipo": "impacto_vehiculo_objeto",
-      "actores": [
-        "veh-b",
-        "muro-1"
-      ],
+      "actores": ["veh-b", "muro-1"],
       "procedencia": {
         "fuente": "usuario",
         "confianza": 0.9
@@ -699,9 +654,7 @@
         "fuente": "supuesto",
         "confianza": 0.6
       },
-      "piezas_desprendidas": [
-        "faro"
-      ],
+      "piezas_desprendidas": ["faro"],
       "descripcion": "Cofre doblado y faro derecho roto.",
       "procedencia": {
         "fuente": "relato",
@@ -748,10 +701,7 @@
       "longitud": {
         "valor": 8,
         "unidad": "m",
-        "rango": [
-          6,
-          10
-        ],
+        "rango": [6, 10],
         "fuente": "relato",
         "confianza": 0.7,
         "evidencia": [

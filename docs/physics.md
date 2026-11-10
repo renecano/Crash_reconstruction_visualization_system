@@ -166,6 +166,12 @@ Pruebas (`test_inversion.py`):
 - lo que la evidencia no fija no se reporta como intervalo;
 - la estimación en el límite se marca.
 
+### Puntos de paso y punto inicial (C1, ADR 0130)
+
+- **Punto de paso:** residuos `paso:<id>:x` y `paso:<id>:y`, la diferencia entre el punto de la trayectoria más cercano al punto declarado y ese punto, entre su `precision_m` (1 m si no la trae). Con `t_s`, además `paso:<id>:tx` y `paso:<id>:ty`: la posición en ese instante contra el punto.
+- **Punto inicial del choque:** residuos `punto_inicial:<evento>:x|y`, el punto de impacto de la reconstrucción contra el que marcó el perito (`procedencia.fuente = "usuario"`), entre 1 m. El punto de impacto del relato no es evidencia.
+- Con cualquiera de los dos se ajustan también los rumbos de llegada no declarados (±20°).
+
 ## 11. Monte Carlo (`montecarlo.py`, F7)
 
 Cada campo incierto que usa el solver se muestrea de forma uniforme y con semilla explícita, y la escena se reconstruye con cada muestra (64 por omisión, rejilla de 0.1 s). Rangos cuando el campo no trae `rango` propio (**supuestos** de este módulo):
@@ -212,6 +218,10 @@ Pruebas (`test_consistency.py`): una prueba que dispara cada bandera y otra que 
 7. Salida: documento que cumple `packages/scene-schema/resultado.schema.json` (ADR 0006).
 
 Pruebas (`test_reconstruct.py`, `test_road.py`, `test_results_io.py`): en t = 0 el punto de contacto de cada vehículo coincide con el de impacto (< 0.3 m), el impacto excéntrico genera giro, cada vehículo arranca sobre su carril, ninguna escena tiene zonas inalcanzables, la trayectoria del peatón recorre exactamente la distancia de Searle, los resultados versionados cumplen su esquema y coinciden con el solver; además las 10 escenas canónicas se reconstruyen, trayectorias continuas y finitas, reposo de los involucrados, determinismo bit a bit del JSON, impulsos iguales y opuestos ($m_A \Delta V_A = m_B \Delta V_B$ exacto), PDOF 12/6 en el alcance, árbol/poste concentran el daño, proyección del peatón dentro de las cotas de Searle.
+
+### Choques intermedios contra objetos (C1, ADR 0130)
+
+Un evento `impacto_vehiculo_objeto` posterior al primero, con un vehículo y un objeto declarado, ocurre cuando el contorno del vehículo toca al objeto durante la fase posterior. El objeto entra a la integración conjunta (la de las carambolas) como un cuerpo inmóvil: su caja en planta, masa de 10⁹ kg y sin velocidad. El impulso es el de `planar_impact`. Toda la energía disipada se le atribuye al vehículo (cota superior de su deformación). Si la trayectoria no llega, aviso `impacto_no_ocurre`.
 
 ## Del perfil del solver al daño visual (F4)
 

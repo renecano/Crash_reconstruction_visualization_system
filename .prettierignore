@@ -24,6 +24,7 @@ solver/croquis_solver/data/inversion_calibration.json
 data/vehicles/
 packages/scene-schema/fixtures/resultados/
 packages/scene-schema/fixtures/inversion/resultados/
+packages/scene-schema/fixtures/c1/resultados/
 packages/scene-schema/fixtures/agentes/
 packages/scene-schema/fixtures/caso3d/
 apps/visor-unity/

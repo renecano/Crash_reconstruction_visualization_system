@@ -91,10 +91,7 @@
     },
     "friccion": {
       "valor": 0.75,
-      "rango": [
-        0.65,
-        0.85
-      ],
+      "rango": [0.65, 0.85],
       "fuente": "default",
       "confianza": 0.6
     },
@@ -106,9 +103,7 @@
           "x": 6,
           "y": -5
         },
-        "aplica_a": [
-          "veh-a"
-        ],
+        "aplica_a": ["veh-a"],
         "fases": [
           {
             "movimiento": "veh-a",
@@ -134,9 +129,7 @@
           "x": -5,
           "y": -6
         },
-        "aplica_a": [
-          "veh-b"
-        ],
+        "aplica_a": ["veh-b"],
         "fases": [
           {
             "movimiento": "veh-b",
@@ -263,10 +256,7 @@
       "masa": {
         "valor": 960,
         "unidad": "kg",
-        "rango": [
-          900,
-          1050
-        ],
+        "rango": [900, 1050],
         "fuente": "default",
         "confianza": 0.6
       },
@@ -309,10 +299,7 @@
       "velocidad_previa": {
         "valor": 45,
         "unidad": "km/h",
-        "rango": [
-          35,
-          55
-        ],
+        "rango": [35, 55],
         "fuente": "relato",
         "confianza": 0.7,
         "evidencia": [
@@ -345,10 +332,7 @@
           "confianza": 0.5
         }
       },
-      "ocupantes": [
-        "per-a1",
-        "per-a2"
-      ],
+      "ocupantes": ["per-a1", "per-a2"],
       "puntos_paso": [
         {
           "id": "pp-a-1",
@@ -413,10 +397,7 @@
       "masa": {
         "valor": 1850,
         "unidad": "kg",
-        "rango": [
-          1650,
-          2100
-        ],
+        "rango": [1650, 2100],
         "fuente": "default",
         "confianza": 0.5
       },
@@ -459,10 +440,7 @@
       "velocidad_previa": {
         "valor": 40,
         "unidad": "km/h",
-        "rango": [
-          25,
-          60
-        ],
+        "rango": [25, 60],
         "fuente": "supuesto",
         "confianza": 0.3,
         "nota": "El narrador no estima la velocidad de B; es la primera pregunta por sensibilidad."
@@ -481,9 +459,7 @@
           "confianza": 0.5
         }
       },
-      "ocupantes": [
-        "per-b1"
-      ],
+      "ocupantes": ["per-b1"],
       "puntos_paso": [
         {
           "id": "pp-b-1",
@@ -610,10 +586,7 @@
       "id": "ev-impacto",
       "orden": 0,
       "tipo": "impacto_vehiculo_vehiculo",
-      "actores": [
-        "veh-a",
-        "veh-b"
-      ],
+      "actores": ["veh-a", "veh-b"],
       "t": {
         "valor": 0,
         "unidad": "s",
@@ -664,10 +637,7 @@
       "id": "ev-giro",
       "orden": 1,
       "tipo": "giro",
-      "actores": [
-        "veh-a",
-        "veh-b"
-      ],
+      "actores": ["veh-a", "veh-b"],
       "procedencia": {
         "fuente": "relato",
         "confianza": 0.8,
@@ -684,10 +654,7 @@
       "id": "ev-reposo",
       "orden": 2,
       "tipo": "reposo",
-      "actores": [
-        "veh-a",
-        "veh-b"
-      ],
+      "actores": ["veh-a", "veh-b"],
       "procedencia": {
         "fuente": "relato",
         "confianza": 0.7,
@@ -717,10 +684,7 @@
         "fuente": "supuesto",
         "confianza": 0.5
       },
-      "piezas_desprendidas": [
-        "defensa",
-        "faro"
-      ],
+      "piezas_desprendidas": ["defensa", "faro"],
       "procedencia": {
         "fuente": "supuesto",
         "confianza": 0.5,
@@ -737,10 +701,7 @@
       },
       "severidad": "severo",
       "vidrios": "rotos",
-      "piezas_desprendidas": [
-        "espejo",
-        "puerta"
-      ],
+      "piezas_desprendidas": ["espejo", "puerta"],
       "procedencia": {
         "fuente": "relato",
         "confianza": 0.7,
