@@ -4,8 +4,8 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 
 ## Estado
 
-- **Fase actual:** U2 (escenario), segunda pasada **terminada** (los 5 puntos en el orden que fijó René el 2026-11-09). Build publicado en Blob (huella `c10ac1849189d3d7`) y las 20 capturas lado a lado en `docs/cesvi/u2/segunda-pasada/lado-a-lado/`. Rama `feat/u2-arboles`, PR a `main`.
-- **Siguiente:** W4 y W4b (René, 2026-11-10). Antes de W5, W8 o una parte complicada de U5, detenerse y avisar a René con «Listo para W5: cambia el modelo».
+- **Fase actual:** U3 (personas) y U4 (cámaras y encuadre) **terminadas** en `feat/u3-personas`, con su e2e de cámaras en verde sobre el build WebGL. PR a `main`.
+- **Siguiente:** U5 (calidad y rendimiento). René pidió detenerse antes de U5 y avisarle (2026-11-10). Para medir alta y ultra dará la computadora con tarjeta de video; lo que se mida en media se hace en esta laptop.
 - **Unity y Blender corren en segundo plano** desde el 2026-11-10: René reabrió la sesión con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`. Sigue la regla de un solo proceso pesado a la vez.
 - **Cómo se itera:** capturas del Editor en modo batch (`Capturas.Tomar`, unos 3 min). En esta sesión no hubo herramientas del MCP de Unity. Un build WebGL solo al cerrar cada punto.
 
@@ -315,6 +315,82 @@ Con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1` y sin nada más abierto, todo
 - La red vial de OpenStreetMap: el escenario ya la toma si la escena la trae, pero ninguna de las 5 escenas la trae y no se ha visto.
 - Medir Blob y dejar solo los 2 últimos builds (hoy hay uno publicado, el de U1).
 - Las pruebas EditMode del escenario dentro de Unity.
+
+## U3 · Personas y daño (2026-11-10)
+
+Plan: PLAN-CESVI §3.3. Decisiones: ADR 0114.
+
+### Qué se hizo
+
+- **Personas con trayectoria** (peatones, ciclistas y motociclistas): siguen su trayectoria del `Resultado` con la postura de su fase (caminando, de pie, sentada sobre la moto, en vuelo y tendida).
+- **Ocupantes:** sentados en su asiento, se desplazan lo que dio el solver desde el impacto. Sin cinturón declarado van las dos variantes; la segunda, como maniquí naranja.
+- **Los cuerpos son los de MakeHuman (CC0) del visor web,** con los mismos colores por persona. Se cargan del sitio (`/modelos/personas/`) y se pintan por región leyendo `_REGION` del .glb. Si no bajan, un maniquí de piezas.
+- **Vehículos estacionados** con el modelo de su clase (antes, una caja de tabique: se veía en el peatón del cruce).
+- **El daño con `perfil_m`** ya estaba desde U1, con su prueba de tolerancia (2 cm o 6 %) en CI.
+- **La volcadura no se dibuja:** es un límite del solver, no del visor. El `Resultado` no trae el alabeo en el tiempo y en la escena de referencia el vuelco no se inicia (velocidad lateral 9.74 km/h contra 19.77 km/h crítica). Está en el README y en «Endurecimiento pendiente» (René, 2026-11-10).
+
+### Pruebas (núcleo, `dotnet test` en CI)
+
+- `PersonasTests.cs`: la pose de cada persona en cada muestra es la del `Resultado` (menos de 1 cm); la postura sigue la fase; el motociclista va sobre su moto hasta el impacto; el ocupante va en su asiento y su desplazamiento es el del solver; con cinturón declarado se dibuja solo esa variante.
+- `CuerposTests.cs`: el hash de colores es el del visor web (valores de Node); las regiones salen del .glb real; los triángulos se reparten por región.
+
+## U4 · Cámaras y encuadre (2026-11-10)
+
+### Qué se hizo
+
+- **Cámaras:** cenital, órbita, cinematográfica, acera, la de cada conductor y la libre.
+- **Ratón y dedos:** la órbita gira con el arrastre, se desplaza con el botón derecho o dos dedos y acerca con la rueda o el pellizco; la cenital se desplaza y acerca; la libre gira, avanza con la rueda y con las flechas o WASD.
+- **«Ver todo» e «Ir al impacto»:** la misma caja que en 2D (W6). «Ver todo» desde la cinematográfica, la acera o un conductor pasa a la órbita y se lo dice a la web.
+- **La cinematográfica encuadra los vehículos en el instante:** ya no salen chicos (lo pidió René al aprobar U2).
+- **El conductor** ve a la altura del ojo de `visibilidad`, desde su asiento; en dos ruedas, al centro. No se dibuja lo que está a menos de 0.75 m del ojo (el volante del modelo genérico tapaba el camino) y se esconden los ocupantes de su vehículo.
+- **Minimapa** abajo a la derecha, con «Ver todo», el norte arriba y una flecha donde está la cámara; sin niebla (en lluvia solo se veía su color) y escondido en la cenital.
+- **El puente no cambió:** `orbita`, `libre`, `encuadrar todo` e `impacto` ya estaban en el contrato.
+
+### Pruebas
+
+- **Núcleo (`dotnet test`, CI):** «Ver todo» deja en cuadro las poses finales, el fin de cada trayectoria, el impacto y los marcadores en los 22 paquetes; a la distancia de la lente la caja cabe justa; la caja de los vehículos en un instante los contiene. En total, 25 pruebas.
+- **e2e de cambio de cámaras** (`tools/unity/e2e-camaras.mjs`, sobre el build WebGL, fuera de CI): 19 comprobaciones en verde con el motociclista. Cada cámara contesta `camara` con su modo y se ve distinta; «Ver todo» pasa a la órbita; «Ir al impacto» cambia la vista; el minimapa está en su esquina y se esconde en la cenital; una cámara que no existe contesta con error; sin errores en la página.
+
+### Cifras del build (`eval/unity_build.mjs`, AXA, mediana de 3 corridas, laptop)
+
+|               | Antes (U2, 14:31) | Después (U3 y U4)                  |
+| ------------- | ----------------- | ---------------------------------- |
+| Peso          | 64.9 MB           | 65.0 MB                            |
+| Brotli q9     | 31.2 MB           | 31.2 MB                            |
+| Hasta `listo` | 14.2 s            | 14.4 s                             |
+| Caso cargado  | 3.4 s             | 4.8 s (corridas: 4.8, 2.8 y 5.7 s) |
+| fps p50       | 43.5              | 58.8                               |
+
+- **El peso casi no cambió.** Los cuerpos no van en el build: se bajan del sitio.
+- **La carga del caso varía mucho entre corridas** (2.8 a 5.7 s); AXA no tiene personas, así que no es la descarga de los cuerpos.
+- **Los fps subieron sin una causa en el código:** entran en el ruido térmico que ya se registró (±6 fps) y no se atribuyen a U3 ni a U4. El costo del minimapa, que dibuja la escena dos veces, se mide en U5.
+
+### Resumen para René (U3 y U4)
+
+**Qué quedó.**
+
+- **Personas:** el peatón cruza caminando, sale volando sobre el cofre y queda tendido; el motociclista va sobre su moto y sale proyectado. Son los cuerpos de MakeHuman del visor web, con ropa neutra.
+- **Ocupantes:** van en su asiento y se mueven lo que calcula el solver. Si no se sabe si llevaba cinturón, se ven las dos variantes.
+- **Vehículos estacionados:** el camión estacionado del peatón ya es un camión.
+- **Cámaras:** todas se mueven con el ratón y los dedos, con «Ver todo», «Ir al impacto» y un minimapa. En la cinematográfica los coches ya llenan el cuadro.
+- **Conductor:** ve desde su asiento, a la altura de ojo que usó el análisis de visibilidad.
+- **La volcadura no está:** el solver todavía no la calcula en el tiempo. Quedó dicho en el README como límite del solver.
+
+**Cómo probarlo.** El build está en `apps/visor-unity/Build/web` (sin publicar en Blob: se publica al integrar en U6). Con `node tools/unity/e2e-camaras.mjs` se abre el motociclista y se recorren todas las cámaras.
+
+**Capturas** (del build WebGL):
+
+- `docs/cesvi/u3/`: peatón, motociclista y alcance (ocupantes), con la cinematográfica, en t = −1, 0.3 y 3 s.
+- `docs/cesvi/u4/`: cada cámara (`camara-*.webp`), «Ver todo», «Ir al impacto», el minimapa y la cenital sin minimapa.
+
+**Qué necesito de ti.** La computadora con tarjeta de video para medir alta y ultra en U5.
+
+### Falta de U4
+
+- **El vidrio trasero** de algunos modelos refleja la fachada de enfrente (la sonda de reflejos, desde U2): con fachadas de colores vivos, de lejos parecen bandas de color dentro del vehículo.
+- **En el sedán, la vista del conductor** deja ver el cofre por dentro del corte de 0.75 m: se lee, pero no es bonito.
+- **Las flechas del teclado** mueven la cámara libre; en la órbita y la cenital todavía no.
+- **El paso de los peatones** es un balanceo de piernas, no una animación de marcha.
 
 ## U-pre (hecho, #181)
 

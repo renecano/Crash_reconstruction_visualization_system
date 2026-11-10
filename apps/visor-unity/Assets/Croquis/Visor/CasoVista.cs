@@ -107,6 +107,12 @@ namespace Croquis.Visor
                         break;
                     default:
                     {
+                        // Un vehículo estacionado no es una caja: lo arma `VisorCaso` con el modelo de su clase.
+                        if (o.Tipo == IndigoTipo.VehiculoEstacionado)
+                        {
+                            break;
+                        }
+
                         var m = tipo == "Contenedor" || tipo == "ParadaAutobus" ? metal : muro;
                         m.Caja(pie, eje, lado, (float)o.LargoM, alto, (float)o.AnchoM, 0.5f);
                         break;

@@ -200,7 +200,7 @@ namespace Croquis.Core
                 Opcional(tr.Alabeo, i, f));
         }
 
-        private static double Lineal(double[] v, int i, double f)
+        internal static double Lineal(double[] v, int i, double f)
         {
             if (i + 1 >= v.Length)
             {
@@ -221,7 +221,7 @@ namespace Croquis.Core
             return v == null || v.Length == 0 ? 0.0 : Lineal(v, i, f);
         }
 
-        private static double Angulo(double[] v, int i, double f)
+        internal static double Angulo(double[] v, int i, double f)
         {
             if (i + 1 >= v.Length)
             {
@@ -303,6 +303,182 @@ namespace Croquis.Core
                 Math.Max(maxX - cx, cx - minX),
                 Math.Max(Math.Max(maxY - cy, cy - minY), MediaCajaMinima));
             return new ZonaInteres(cx, cy, 2.0 * media);
+        }
+
+        /// <summary>Margen de «Ver todo» alrededor de lo que importa (m).</summary>
+        public const double MargenVerTodo = 6.0;
+
+        /// <summary>
+        /// «Ver todo» (U4, O3): la caja de las trayectorias completas, los reposos, el punto de impacto,
+        /// las evidencias, los marcadores de C1, los objetos y las personas, con margen. Es lo mismo
+        /// que encuadra la maqueta en 2D (W6, ADR 0132).
+        /// </summary>
+        public static CajaPlano VerTodo(Caso3D caso)
+        {
+            var c = new CajaPlano();
+            var r = caso.Resultado;
+            foreach (var v in r.Vehiculos)
+            {
+                var tr = v.Trayectoria;
+                for (var i = 0; i < tr.T.Length; i++)
+                {
+                    c.Agregar(tr.X[i], tr.Y[i]);
+                }
+
+                if (v.PoseFinal != null)
+                {
+                    c.Agregar(v.PoseFinal.X, v.PoseFinal.Y);
+                }
+            }
+
+            if (r.PuntoImpacto != null)
+            {
+                c.Agregar(r.PuntoImpacto.X, r.PuntoImpacto.Y);
+            }
+
+            foreach (var o in r.Objetos ?? new ResultadoObjeto[0])
+            {
+                c.Agregar(o.X, o.Y);
+            }
+
+            foreach (var p in r.Personas ?? new ResultadoPersona[0])
+            {
+                var tr = p.Trayectoria;
+                for (var i = 0; tr?.T != null && i < tr.T.Length; i++)
+                {
+                    c.Agregar(tr.X[i], tr.Y[i]);
+                }
+            }
+
+            var e = caso.Escenario;
+            foreach (var ev in e?.Evidencias ?? new EvidenciaEscenario[0])
+            {
+                foreach (var q in ev.Puntos ?? new PuntoPlano[0])
+                {
+                    c.Agregar(q.X, q.Y);
+                }
+            }
+
+            foreach (var m in e?.Marcadores ?? new MarcadorEscenario[0])
+            {
+                c.Agregar(m.X, m.Y);
+            }
+
+            c.Expandir(MargenVerTodo, 2.0 * MediaCajaMinima);
+            return c;
+        }
+    }
+
+    /// <summary>Lo que necesitan las cámaras para encuadrar (U4): distancias y cajas, sin Unity.</summary>
+    public static class Lente
+    {
+        /// <summary>
+        /// La distancia, a lo largo del eje de la cámara, a la que un rectángulo de `ancho` × `alto`
+        /// (perpendicular al eje) cabe entero en una cámara de campo vertical `vfovGrados` y proporción
+        /// `aspecto` (ancho / alto de la pantalla).
+        /// </summary>
+        public static double DistanciaParaVer(double ancho, double alto, double vfovGrados, double aspecto)
+        {
+            var tv = Math.Tan(vfovGrados * Math.PI / 360.0);
+            var th = tv * aspecto;
+            return Math.Max(alto / 2.0 / tv, ancho / 2.0 / th);
+        }
+
+        /// <summary>
+        /// La caja de los vehículos involucrados (o de todos) en el instante `t`, más el punto de
+        /// impacto: lo que la cinematográfica debe llenar para que los coches no salgan chicos. Cada
+        /// vehículo cuenta con su largo alrededor de su centro.
+        /// </summary>
+        public static CajaPlano VehiculosEn(Caso3DResultado r, double t)
+        {
+            var c = new CajaPlano();
+            var hayInvolucrados = false;
+            foreach (var v in r.Vehiculos)
+            {
+                hayInvolucrados |= v.Involucrado;
+            }
+
+            foreach (var v in r.Vehiculos)
+            {
+                if (hayInvolucrados && !v.Involucrado)
+                {
+                    continue;
+                }
+
+                var p = Muestreo.Pose(v.Trayectoria, t);
+                var medio = v.Dimensiones.LargoM / 2.0;
+                c.Agregar(p.X - medio, p.Y - medio);
+                c.Agregar(p.X + medio, p.Y + medio);
+            }
+
+            if (r.PuntoImpacto != null)
+            {
+                c.Agregar(r.PuntoImpacto.X, r.PuntoImpacto.Y);
+            }
+
+            return c;
+        }
+    }
+
+    /// <summary>Una caja en planta, en metros de Croquis (X al este, Y al norte).</summary>
+    public sealed class CajaPlano
+    {
+        public double MinX { get; private set; } = double.PositiveInfinity;
+        public double MinY { get; private set; } = double.PositiveInfinity;
+        public double MaxX { get; private set; } = double.NegativeInfinity;
+        public double MaxY { get; private set; } = double.NegativeInfinity;
+
+        public bool Vacia => double.IsInfinity(MinX);
+        public double CentroX => (MinX + MaxX) / 2.0;
+        public double CentroY => (MinY + MaxY) / 2.0;
+        public double Ancho => MaxX - MinX;
+        public double Alto => MaxY - MinY;
+
+        public void Agregar(double x, double y)
+        {
+            if (double.IsNaN(x) || double.IsNaN(y) || double.IsInfinity(x) || double.IsInfinity(y))
+            {
+                return;
+            }
+
+            MinX = Math.Min(MinX, x);
+            MinY = Math.Min(MinY, y);
+            MaxX = Math.Max(MaxX, x);
+            MaxY = Math.Max(MaxY, y);
+        }
+
+        public bool Contiene(double x, double y)
+        {
+            return x >= MinX - 1e-9 && x <= MaxX + 1e-9 && y >= MinY - 1e-9 && y <= MaxY + 1e-9;
+        }
+
+        /// <summary>Agranda la caja `margen` metros por lado, y al menos a `minimo` por lado.</summary>
+        public void Expandir(double margen, double minimo)
+        {
+            if (Vacia)
+            {
+                MinX = MinY = -minimo / 2.0;
+                MaxX = MaxY = minimo / 2.0;
+                return;
+            }
+
+            MinX -= margen;
+            MinY -= margen;
+            MaxX += margen;
+            MaxY += margen;
+            if (Ancho < minimo)
+            {
+                var cx = CentroX;
+                MinX = cx - minimo / 2.0;
+                MaxX = cx + minimo / 2.0;
+            }
+
+            if (Alto < minimo)
+            {
+                var cy = CentroY;
+                MinY = cy - minimo / 2.0;
+                MaxY = cy + minimo / 2.0;
+            }
         }
     }
 }

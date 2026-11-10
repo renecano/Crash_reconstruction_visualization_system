@@ -15,7 +15,7 @@ namespace Croquis.EditorTools
     /// una carpeta, lo pone en el instante pedido y guarda un PNG por cámara.
     ///
     ///   Unity -batchmode -projectPath apps/visor-unity -executeMethod Croquis.EditorTools.Capturas.Tomar
-    ///         -casos &lt;carpeta&gt; -salida &lt;carpeta&gt; [-t 0]
+    ///         -casos &lt;carpeta&gt; -salida &lt;carpeta&gt; [-t 0] (varios instantes: -t -1,0.3,3)
     ///
     /// Las capturas que se le enseñan a René salen del build WebGL (tools/unity/capturas.mjs): estas
     /// son para trabajar.
@@ -58,7 +58,7 @@ namespace Croquis.EditorTools
             {
                 var partes = SessionState.GetString(Clave, "").Split('|');
                 SessionState.EraseString(Clave);
-                var t = double.Parse(partes[2], System.Globalization.CultureInfo.InvariantCulture);
+                var tiempos = partes[2].Split(',').Select(x => double.Parse(x, System.Globalization.CultureInfo.InvariantCulture)).ToArray();
                 Directory.CreateDirectory(partes[1]);
                 // Las capturas muestran el nivel del destino del build: en WebGL, «media».
                 Calidad.Forzada = EditorUserBuildSettings.activeBuildTarget == BuildTarget.WebGL;
@@ -69,11 +69,12 @@ namespace Croquis.EditorTools
                     var nombre = Path.GetFileNameWithoutExtension(archivo);
                     var caso = Paquete.Leer(File.ReadAllText(archivo));
                     await visor.CargarAsync(caso);
-                    visor.Fijar(t);
                     var conductor = caso.Resultado.Vehiculos.FirstOrDefault(v => v.Involucrado)?.Id;
-                    var vistas = new[] { "cinematica", "acera", "cenital" }.Concat(conductor != null ? new[] { "conductor:" + conductor } : new string[0]);
+                    var vistas = new[] { "cinematica", "acera", "cenital", "orbita" }.Concat(conductor != null ? new[] { "conductor:" + conductor } : new string[0]);
+                    foreach (var t in tiempos)
                     foreach (var vista in vistas)
                     {
+                        visor.Fijar(t);
                         visor.Camara.Cambiar(vista);
                         // Unos cuadros para que la cámara se coloque y las sombras se pongan al día.
                         for (var k = 0; k < 4; k++)
@@ -81,7 +82,9 @@ namespace Croquis.EditorTools
                             await Awaitable.NextFrameAsync();
                         }
 
-                        var ruta = Path.Combine(partes[1], nombre + "-" + vista.Replace(":", "-") + ".png");
+                        // Con un solo instante, el nombre de siempre; con varios, también el instante.
+                        var instante = tiempos.Length > 1 ? "-t" + t.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) : "";
+                        var ruta = Path.Combine(partes[1], nombre + instante + "-" + vista.Replace(":", "-") + ".png");
                         Guardar(camara, ruta, 1600, 900);
                         Debug.Log("[captura] " + ruta);
                     }
@@ -103,6 +106,20 @@ namespace Croquis.EditorTools
             camara.targetTexture = rt;
             camara.Render();
             camara.Render();
+            // Lo que va encima de la cámara principal (el minimapa de U4), en su rincón de la imagen.
+            foreach (var otra in Camera.allCameras)
+            {
+                if (otra == camara || !otra.enabled || otra.depth <= camara.depth)
+                {
+                    continue;
+                }
+
+                var suya = otra.targetTexture;
+                otra.targetTexture = rt;
+                otra.Render();
+                otra.targetTexture = suya;
+            }
+
             RenderTexture.active = rt;
             var tex = new Texture2D(ancho, alto, TextureFormat.RGB24, false);
             tex.ReadPixels(new Rect(0, 0, ancho, alto), 0, 0);
