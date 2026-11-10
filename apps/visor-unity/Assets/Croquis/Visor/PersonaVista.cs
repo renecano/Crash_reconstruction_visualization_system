@@ -27,6 +27,9 @@ namespace Croquis.Visor
         /// <summary>El centro de masa, como fracción de la estatura: ahí va el origen del cuerpo.</summary>
         private const float FraccionCg = 0.55f;
 
+        /// <summary>El vehículo del ocupante; null si la persona va por su cuenta.</summary>
+        public string VehiculoId { get; private set; }
+
         private ResultadoPersona persona;
         private VarianteElement variante;
         private (double X, double Y) asiento;
@@ -65,6 +68,7 @@ namespace Croquis.Visor
             go.transform.SetParent(vehiculo, false);
             var vista = go.AddComponent<PersonaVista>();
             vista.persona = p;
+            vista.VehiculoId = v.Id;
             vista.variante = variante;
             vista.asiento = Personas.Asiento(p.Ocupante.Asiento, v.Dimensiones.LargoM, v.Dimensiones.AnchoM);
             // La segunda variante (sin cinturón, cuando no se declaró) es el maniquí de otro color: así se

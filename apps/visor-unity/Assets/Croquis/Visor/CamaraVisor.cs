@@ -66,6 +66,10 @@ namespace Croquis.Visor
         private float ultimaSeparacion;
 
         public List<VehiculoVista> Vehiculos { get; set; } = new List<VehiculoVista>();
+
+        /// <summary>Los ocupantes: en la cámara de un conductor se esconden los de su vehículo (el ojo va
+        /// donde está su cabeza).</summary>
+        public List<PersonaVista> Ocupantes { get; } = new List<PersonaVista>();
         public VisorCaso Caso { get; set; }
 
         /// <summary>El árbol más cercano a la acción: la cámara de la acera se para junto a él.</summary>
@@ -535,6 +539,17 @@ namespace Croquis.Visor
             var lado = (float)zona.Lado;
             var t = Caso != null ? (float)(Caso.Tiempo - inicio) : 0f;
             ActualizarMinimapa();
+            // En la cámara del conductor, lo que está a menos de 0.75 m del ojo (el volante y el tablero
+            // del modelo genérico) no se dibuja: a la altura del ojo de `visibilidad` taparía el camino.
+            camara.nearClipPlane = modo == "conductor" ? 0.75f : 0.1f;
+            foreach (var ocupante in Ocupantes)
+            {
+                if (ocupante != null)
+                {
+                    ocupante.gameObject.SetActive(!(modo == "conductor" && ocupante.VehiculoId == conductor));
+                }
+            }
+
             switch (modo)
             {
                 case "cenital":
@@ -576,7 +591,11 @@ namespace Croquis.Visor
                         camara.fieldOfView = 60f;
                         var tr = v.transform;
                         var asiento = Personas.Asiento(AsientoEnum.Conductor, datos.Dimensiones.LargoM, datos.Dimensiones.AnchoM);
-                        var local = new Vector3(-(float)asiento.Y, AlturaOjo(conductor), (float)asiento.X + 0.15f);
+                        // En dos ruedas se va al centro, montado: el ojo de quien maneja, sobre el asiento.
+                        var dosRuedas = PerfilClase.De(datos.Clase).DosRuedas;
+                        var local = dosRuedas
+                            ? new Vector3(0f, Mathf.Max(AlturaOjo(conductor), 1.45f), -0.1f * (float)datos.Dimensiones.LargoM)
+                            : new Vector3(-(float)asiento.Y, AlturaOjo(conductor), (float)asiento.X + 0.15f);
                         camara.transform.SetPositionAndRotation(
                             tr.TransformPoint(local),
                             Quaternion.LookRotation(tr.forward, Vector3.up) * Quaternion.Euler(3f, 0f, 0f));

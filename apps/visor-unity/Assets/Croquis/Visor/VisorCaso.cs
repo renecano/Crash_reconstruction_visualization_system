@@ -163,6 +163,8 @@ namespace Croquis.Visor
 
             Camara.Abrir(caso);
             Camara.Vehiculos = vehiculos;
+            Camara.Ocupantes.Clear();
+            Camara.Ocupantes.AddRange(personas.FindAll(x => x.VehiculoId != null));
             Camara.Caso = this;
             Camara.Arbol = ArbolCercano(e, Camara.Centro);
             Camara.Estorbos.Clear();
