@@ -13,7 +13,7 @@ import { desdeMetros, enMetros, type LonLat } from "./geo";
 import { medidasDe } from "./poses-impacto";
 
 type Id = Expediente["vehiculos"][number]["id"];
-type Vec = [number, number];
+export type Vec = [number, number];
 
 /** m: la separación que queda entre los dos contornos después de separarlos. */
 export const HOLGURA_M = 0.1;
@@ -34,7 +34,7 @@ export interface Encimadas {
   propuesta: [PoseFinal, PoseFinal];
 }
 
-function esquinas(c: Vec, rumbo: number, largo: number, ancho: number): Vec[] {
+export function esquinas(c: Vec, rumbo: number, largo: number, ancho: number): Vec[] {
   // Rumbo desde el norte, horario: el frente apunta a (sen r, cos r) en (este, norte).
   const r = (rumbo * Math.PI) / 180;
   const f: Vec = [Math.sin(r), Math.cos(r)];
@@ -55,7 +55,7 @@ function esquinas(c: Vec, rumbo: number, largo: number, ancho: number): Vec[] {
 }
 
 /** Traslape de dos rectángulos por el eje de menor traslape, con la normal de A hacia B; o null. */
-function traslape(a: Vec[], b: Vec[]): { prof: number; n: Vec } | null {
+export function traslape(a: Vec[], b: Vec[]): { prof: number; n: Vec } | null {
   let mejor: { prof: number; n: Vec } | null = null;
   for (const poly of [a, b]) {
     for (let i = 0; i < 2; i++) {
