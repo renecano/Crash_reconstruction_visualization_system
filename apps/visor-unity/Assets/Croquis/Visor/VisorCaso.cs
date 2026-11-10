@@ -13,6 +13,7 @@ namespace Croquis.Visor
     public sealed class VisorCaso : MonoBehaviour
     {
         private readonly List<VehiculoVista> vehiculos = new List<VehiculoVista>();
+        private readonly List<PersonaVista> personas = new List<PersonaVista>();
         private readonly CargadorModelos modelos = new CargadorModelos();
         private Transform raiz;
         private GameObject piso;
@@ -42,6 +43,7 @@ namespace Croquis.Visor
             }
 
             vehiculos.Clear();
+            personas.Clear();
             dinamica = null;
             raiz = new GameObject("Caso").transform;
             var r = caso.Resultado;
@@ -88,6 +90,30 @@ namespace Croquis.Visor
             foreach (var v in vehiculos)
             {
                 v.Terreno = terreno;
+            }
+
+            // U3: las personas. Con trayectoria propia, por su cuenta; los ocupantes, en su vehículo.
+            foreach (var p in r.Personas ?? new ResultadoPersona[0])
+            {
+                if (Personas.TieneTrayectoria(p))
+                {
+                    personas.Add(PersonaVista.ConTrayectoria(raiz, p, terreno));
+                    continue;
+                }
+
+                var k = Array.FindIndex(r.Vehiculos, v => v.Id == p.VehiculoId);
+                if (p.Ocupante == null || k < 0)
+                {
+                    continue;
+                }
+
+                var variantes = Personas.VariantesADibujar(p.Ocupante);
+                for (var i = 0; i < variantes.Length; i++)
+                {
+                    // Sin cinturón declarado van las dos variantes; la segunda, de otro color.
+                    var ropa = i == 0 ? PersonaVista.Ropa : PersonaVista.RopaSinCinturon;
+                    personas.Add(PersonaVista.Ocupante(vehiculos[k].transform, p, r.Vehiculos[k], variantes[i], ropa));
+                }
             }
 
             if (piso != null)
@@ -185,6 +211,11 @@ namespace Croquis.Visor
             foreach (var v in vehiculos)
             {
                 v.Colocar(Tiempo);
+            }
+
+            foreach (var p in personas)
+            {
+                p.Colocar(Tiempo);
             }
 
             if (dinamica != null)
