@@ -18,6 +18,7 @@ import { fullResult, PRIORIDAD, reconstruct } from "@croquis/solver-ts";
 import type { Expediente } from "./corpus";
 import { rigidezEnKilo } from "./verificacion";
 import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from "./geo";
+import { objetosDe, TIPOS_OBJETO } from "./objetos";
 
 type Json = Record<string, unknown>;
 type Id = Expediente["vehiculos"][number]["id"];
@@ -456,6 +457,37 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       procedencia:
         imp.fuente === "perito" ? { ...DEL_PERITO } : { fuente: "supuesto", confianza: 0.5 },
     });
+  }
+
+  // Los objetos del lugar que colocó el perito (C2, W4): están en la escena aunque nadie choque
+  // contra ellos. Sus medidas son las del perito o, si no las cambió, las típicas (supuesto).
+  if (origen) {
+    for (const o of objetosDe(e)) {
+      const entorno = spec.entorno as Json & { objetos?: Json[] };
+      const medida = (valor: number) =>
+        o.medido
+          ? { valor, unidad: "m", fuente: "usuario", confianza: 0.9 }
+          : { valor, ...SUPUESTA };
+      const r = rumboEscena(o.rumbo);
+      const tipicas = MEDIDAS_OBJETO[o.tipo] ?? {};
+      const forma = TIPOS_OBJETO.find((t) => t.tipo === o.tipo)!.alargado
+        ? { largo: medida(o.largo), ancho: medida(o.ancho) }
+        : { diametro_tronco: medida(o.ancho) };
+      (entorno.objetos ??= []).push({
+        ...tipicas,
+        id: o.id,
+        tipo: o.tipo,
+        posicion: local(o.punto),
+        rumbo_deg: r > 180 ? r - 360 : r,
+        ...forma,
+        procedencia: {
+          ...DEL_PERITO,
+          nota: o.medido
+            ? "El perito lo colocó en el mapa y le dio sus medidas."
+            : "El perito lo colocó en el mapa; sus medidas son las típicas (supuesto).",
+        },
+      });
+    }
   }
 
   // La deformación medida (C y L) de cada vehículo: la de la cara del primer impacto o, si el

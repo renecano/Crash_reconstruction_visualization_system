@@ -8,14 +8,23 @@
  * solver no cambia. La lógica sin interfaz está en `lib/escena-facil.ts`.
  */
 import {
+  agregarObjeto,
+  cambiarTamano,
   conHuella,
   conPosicion,
   conRestos,
   distanciaM,
+  empalmesDeObjetos,
+  girarObjeto,
   medidasDe,
+  moverObjeto,
+  objetosDe,
   posicionesEncimadas,
+  quitarObjeto,
+  TIPOS_OBJETO,
   type Expediente,
   type PosicionDescrita,
+  type TipoObjeto,
 } from "@croquis/cesvi";
 import type { OverpassResponse } from "@croquis/croquis-2d";
 import type { Map as MapaMl } from "maplibre-gl";
@@ -51,6 +60,7 @@ import {
   textoFlecha,
   textoSentido,
   type ImpactoAColocar,
+  type LineaResumen,
   type Punto,
 } from "@/lib/escena-facil";
 import { siluetaClase } from "@/lib/colocar";
@@ -59,15 +69,21 @@ import {
   agregarChoqueIntermedio,
   agregarPuntoDePaso,
   choquesIntermedios,
+  articuloObjeto,
   marcarPrimerGolpe,
+  moverChoqueIntermedio,
+  moverPuntoDePaso,
   OBJETOS_C1,
   primerGolpe,
   puntosDePaso,
   quitarChoqueIntermedio,
+  quitarPrimerGolpe,
+  quitarPuntoDePaso,
   quitarUltimoPuntoDePaso,
   resumenC1,
   type RespuestasC1,
 } from "@/lib/escena-facil";
+import { BarraSeleccion, PanelCorregir, type AccionSeleccion } from "./correccion";
 import { MapaFacil, trayectoDeLlegada, type CocheMapa, type FlechaMapa } from "./mapa-facil";
 
 /** Más lejos que esto del choque, un punto de C1 se confirma con una alerta (m). */
@@ -113,6 +129,7 @@ export function EscenaFacil({
   onBuscarCalles,
   onVerReconstruccion,
   onNota,
+  recalculo = null,
 }: {
   tema: "claro" | "oscuro";
   estado: EstadoEscena;
@@ -133,6 +150,8 @@ export function EscenaFacil({
   onVerReconstruccion: () => void;
   /** Lo que decide la persona y conviene anotar en la bitácora («No sé dónde quedó…»). */
   onNota: (texto: string) => void;
+  /** W4: si ya hay una reconstrucción, se recalcula sola al corregir; aquí se ve cómo va. */
+  recalculo?: "calculando" | "al_dia" | null;
 }) {
   const e = estado.expediente;
   const callesMapa = useMemo(() => callesDe(calles), [calles]);
@@ -181,6 +200,11 @@ export function EscenaFacil({
   const [estadoBusqueda, setEstadoBusqueda] = useState<string | null>(null);
   const mapa = useRef<MapaMl | null>(null);
   const [pila, setPila] = useState<readonly EstadoEscena[]>([]);
+  // W4: «Rehacer», lo seleccionado para corregir y el objeto que se va a poner con el siguiente toque.
+  const [futuro, setFuturo] = useState<readonly EstadoEscena[]>([]);
+  const [seleccion, setSeleccion] = useState<string | null>(null);
+  const [poniendo, setPoniendo] = useState<TipoObjeto | null>(null);
+  const objetosColocados = useMemo(() => objetosDe(e), [e]);
 
   // El paso en curso: el que se edita, el coche que se coloca o el primero sin terminar.
   const actual = useMemo(() => {
@@ -200,10 +224,13 @@ export function EscenaFacil({
   }, [editando, editandoC1, colocando, pasos]);
   const todoListo =
     pasoActual(pasos) === null && colocando === null && editando === null && editandoC1 === null;
+  /** W4: con la escena lista y la tarjeta cerrada, lo colocado se toca para corregirlo. */
+  const corrigiendo = todoListo && listaVista;
 
   /** Un cambio con su «Deshacer». */
   const cambiar = (siguiente: EstadoEscena, m?: Mensaje | null) => {
     setPila((x) => [...x.slice(-30), estado]);
+    setFuturo([]);
     onEstado(siguiente);
     if (m !== undefined) setMensaje(m);
   };
@@ -211,10 +238,21 @@ export function EscenaFacil({
     const previo = pila.at(-1);
     if (!previo) return;
     setPila((x) => x.slice(0, -1));
+    setFuturo((x) => [...x.slice(-30), estado]);
     onEstado(previo);
     setColocando(null);
     setEditando(null);
-    setListaVista(false);
+    setSeleccion(null);
+    if (!corrigiendo) setListaVista(false);
+    setMensaje(null);
+  };
+  const rehacer = () => {
+    const siguiente = futuro.at(-1);
+    if (!siguiente) return;
+    setFuturo((x) => x.slice(0, -1));
+    setPila((x) => [...x.slice(-30), estado]);
+    onEstado(siguiente);
+    setSeleccion(null);
     setMensaje(null);
   };
   const exito = (texto: string): Mensaje => ({ tipo: "exito", texto, deshacer: true });
@@ -492,6 +530,35 @@ export function EscenaFacil({
         ],
       };
     }
+    // W4: un objeto del lugar encima de un vehículo en reposo o de otro objeto.
+    const emp = empalmesDeObjetos(e).find(
+      (x) => !descartadas.includes(`empalme:${x.objeto}:${x.con}`),
+    );
+    if (emp) {
+      const clave = `empalme:${emp.objeto}:${emp.con}`;
+      const objeto = objetosColocados.find((o) => o.id === emp.objeto);
+      const otro = emp.conVehiculo
+        ? `del ${nombres[emp.con] ?? emp.con}`
+        : `de ${(objetosColocados.find((o) => o.id === emp.con)?.nombre ?? "otro objeto").toLowerCase()}`;
+      return {
+        tipo: "alerta",
+        clave,
+        texto: `Ojo: ${objeto ? `${articuloObjeto(objeto.tipo).toLowerCase()} ${objeto.nombre.toLowerCase()}` : "un objeto"} quedó encima ${otro}.`,
+        acciones: [
+          {
+            texto: "Separarlos",
+            id: "separar-empalme",
+            principal: true,
+            hacer: () =>
+              cambiar(
+                { ...estado, expediente: moverObjeto(e, emp.objeto, emp.propuesta) },
+                exito("¡Listo! Los separamos."),
+              ),
+          },
+          { texto: "Así está bien", id: "empalme-asi", hacer: () => descartar(clave) },
+        ],
+      };
+    }
     const v = colocando;
     const fin = v ? poseDe(e, v, "final") : null;
     if (v && fin && fueraDeLaCalle(callesMapa, fin.punto) && !descartadas.includes(`fuera:${v}`))
@@ -607,6 +674,26 @@ export function EscenaFacil({
 
   // Un toque en el mapa, según la pregunta en curso.
   const tocar = (p: Punto) => {
+    if (poniendo) {
+      // W4: el objeto de la paleta va donde tocó; los tramos, a lo largo de la calle.
+      const tipo = TIPOS_OBJETO.find((t) => t.tipo === poniendo)!;
+      const rumbo = tipo.alargado && callesMapa.length ? rumboAlineado(callesMapa, p, 0) : 0;
+      const { expediente, id } = agregarObjeto(e, poniendo, p, rumbo);
+      cambiar(
+        { ...estado, expediente },
+        exito(
+          `¡Listo! ${articuloObjeto(poniendo)} ${tipo.nombre.toLowerCase()} quedó donde tocaste.`,
+        ),
+      );
+      setPoniendo(null);
+      setSeleccion(`objeto:${id}`);
+      return;
+    }
+    if (corrigiendo) {
+      // Tocar el mapa vacío suelta lo seleccionado.
+      setSeleccion(null);
+      return;
+    }
     if (herramienta === "medir") {
       setMedicion((m) => (m.length >= 2 ? [p] : [...m, p]));
       return;
@@ -698,6 +785,161 @@ export function EscenaFacil({
       setEstadoBusqueda("Sin conexión: no se puede buscar. Mueve el mapa hasta el lugar.");
     }
   };
+
+  // --- W4: corregir después ----------------------------------------------------------------------
+  const deClave = (clave: string) => {
+    const i = clave.indexOf(":");
+    return { tipo: clave.slice(0, i), id: clave.slice(i + 1) };
+  };
+  const paso = (id: string) => /^paso-(.+)-(\d+)$/.exec(id);
+  const nombreDeSeleccion = (clave: string): string => {
+    const { tipo, id } = deClave(clave);
+    if (tipo === "coche") return `El ${nombres[id] ?? id}`;
+    if (tipo === "objeto") return objetosColocados.find((o) => o.id === id)?.nombre ?? "Objeto";
+    if (id === "golpe") return "Primer golpe";
+    const q = paso(id);
+    if (q) return `Punto ${q[2]} del ${nombres[q[1]!] ?? q[1]}`;
+    const orden = Number(id.replace("objeto-", ""));
+    const c = choquesIntermedios(e).find((x) => x.orden === orden);
+    return c ? (OBJETOS_C1.find((o) => o.id === c.objeto)?.texto ?? c.objeto) : "Marca";
+  };
+  /** Al soltar lo seleccionado en otro lugar: se guarda y se dice. */
+  const moverSeleccion = (clave: string, p: Punto) => {
+    const { tipo, id } = deClave(clave);
+    const nombre = nombreDeSeleccion(clave);
+    let x: Expediente = e;
+    if (tipo === "coche") {
+      const fin = poseDe(e, id, "final");
+      if (!fin) return;
+      x = marcarFinal(e, id, p, fin.rumbo);
+    } else if (tipo === "objeto") x = moverObjeto(e, id, p);
+    else if (id === "golpe") x = marcarPrimerGolpe(e, impactos, p);
+    else if (paso(id)) x = moverPuntoDePaso(e, paso(id)![1]!, Number(paso(id)![2]), p);
+    else x = moverChoqueIntermedio(e, Number(id.replace("objeto-", "")), p);
+    cambiar({ ...estado, expediente: x }, exito(`¡Listo! Moviste: ${nombre.toLowerCase()}.`));
+  };
+  const accionesDe = (clave: string): AccionSeleccion[] => {
+    const { tipo, id } = deClave(clave);
+    const hecho = (x: Expediente, texto: string, soltar = false) => {
+      cambiar({ ...estado, expediente: x }, exito(texto));
+      if (soltar) setSeleccion(null);
+    };
+    const reabrir = (f: () => void) => () => {
+      setSeleccion(null);
+      f();
+    };
+    if (tipo === "coche") {
+      const fin = poseDe(e, id, "final");
+      return [
+        ...(fin
+          ? [
+              {
+                id: "girar-izq",
+                texto: "Girar −15°",
+                hacer: () => hecho(girar(e, id, "final", -15), "¡Listo! Lo giraste."),
+              },
+              {
+                id: "girar-der",
+                texto: "Girar +15°",
+                hacer: () => hecho(girar(e, id, "final", 15), "¡Listo! Lo giraste."),
+              },
+            ]
+          : []),
+        {
+          id: "cambiar-direccion",
+          texto: "Cambiar por dónde venía",
+          hacer: reabrir(() => setEditando({ tipo: "direccion", id })),
+        },
+        {
+          id: "cambiar",
+          texto: "Cambiar dónde quedó",
+          hacer: reabrir(() => setEditando({ tipo: "final", id })),
+        },
+      ];
+    }
+    if (tipo === "objeto") {
+      return [
+        {
+          id: "girar-izq",
+          texto: "Girar −15°",
+          hacer: () => hecho(girarObjeto(e, id, -15), "¡Listo! Lo giraste."),
+        },
+        {
+          id: "girar-der",
+          texto: "Girar +15°",
+          hacer: () => hecho(girarObjeto(e, id, 15), "¡Listo! Lo giraste."),
+        },
+        {
+          id: "mas-grande",
+          texto: "Más grande",
+          hacer: () => hecho(cambiarTamano(e, id, 1.25), "¡Listo! Ahora es más grande."),
+        },
+        {
+          id: "mas-chico",
+          texto: "Más chico",
+          hacer: () => hecho(cambiarTamano(e, id, 0.8), "¡Listo! Ahora es más chico."),
+        },
+        {
+          id: "quitar",
+          texto: "Quitar",
+          peligro: true,
+          hacer: () => hecho(quitarObjeto(e, id), "Lo quitaste.", true),
+        },
+      ];
+    }
+    if (id === "golpe")
+      return [
+        { id: "cambiar", texto: "Cambiar", hacer: reabrir(() => setEditandoC1("golpe")) },
+        {
+          id: "quitar",
+          texto: "Quitar",
+          peligro: true,
+          hacer: () =>
+            hecho(quitarPrimerGolpe(e), "Lo quitaste: Croquis usa el lugar del choque.", true),
+        },
+      ];
+    const q = paso(id);
+    if (q)
+      return [
+        { id: "cambiar", texto: "Cambiar", hacer: reabrir(() => setEditandoC1("paso")) },
+        {
+          id: "quitar",
+          texto: "Quitar",
+          peligro: true,
+          hacer: () => hecho(quitarPuntoDePaso(e, q[1]!, Number(q[2])), "Lo quitaste.", true),
+        },
+      ];
+    const orden = Number(id.replace("objeto-", ""));
+    return [
+      { id: "cambiar", texto: "Cambiar", hacer: reabrir(() => setEditandoC1("otros")) },
+      {
+        id: "quitar",
+        texto: "Quitar",
+        peligro: true,
+        hacer: () => hecho(quitarChoqueIntermedio(e, orden), "Lo quitaste.", true),
+      },
+    ];
+  };
+  /** «Cambiar» en una línea del resumen: regresa solo a esa pregunta. */
+  const cambiarLinea = (l: LineaResumen) => {
+    setListaVista(true);
+    if (l.tipo === "choque") setEditando({ tipo: "choque", id: String(l.orden ?? 1) });
+    else if (l.tipo === "vehiculo" && l.vehiculo)
+      setEditando({ tipo: "direccion", id: l.vehiculo });
+    else if (l.tipo === "golpe") setEditandoC1("golpe");
+    else if (l.tipo === "objeto") setEditandoC1("otros");
+    else if (l.tipo === "paso") setEditandoC1("paso");
+    else if (l.tipo === "lugar" && l.objeto) setSeleccion(`objeto:${l.objeto}`);
+  };
+  const objetosMapa = objetosColocados.map((o) => ({
+    id: o.id,
+    tipo: o.tipo,
+    nombre: o.nombre,
+    punto: o.punto,
+    rumbo: o.rumbo,
+    largo: o.largo,
+    ancho: o.ancho,
+  }));
 
   // --- Lo que se dibuja en el mapa ---------------------------------------------------------------
   const coches: CocheMapa[] = vehiculos.flatMap((v) => {
@@ -1395,7 +1637,73 @@ export function EscenaFacil({
         onMapa={(m) => {
           mapa.current = m;
         }}
+        objetos={objetosMapa}
+        seleccion={corrigiendo ? seleccion : null}
+        onSeleccionar={corrigiendo && !poniendo ? (k) => setSeleccion(k) : undefined}
+        onMover={moverSeleccion}
       />
+
+      {/* «Deshacer» y «Rehacer», siempre a la vista (W4), y cómo va el recálculo. */}
+      <div className="pointer-events-none absolute top-4 right-20 z-10 flex flex-col items-end gap-2">
+        <div className="flex gap-2">
+          <button
+            type="button"
+            className="escena-zoom pointer-events-auto px-3 text-[0.9rem] font-semibold"
+            style={{ width: "auto" }}
+            onClick={deshacer}
+            disabled={!pila.length}
+            aria-label="Deshacer"
+            data-testid="deshacer-barra"
+          >
+            ↶ Deshacer
+          </button>
+          <button
+            type="button"
+            className="escena-zoom pointer-events-auto px-3 text-[0.9rem] font-semibold"
+            style={{ width: "auto" }}
+            onClick={rehacer}
+            disabled={!futuro.length}
+            aria-label="Rehacer"
+            data-testid="rehacer"
+          >
+            Rehacer ↷
+          </button>
+        </div>
+        {recalculo ? (
+          <span
+            className="escena-mensaje px-3 py-1 text-[0.85rem]"
+            data-tipo={recalculo === "al_dia" ? "exito" : "alerta"}
+            role="status"
+            data-testid="recalculo"
+            data-estado={recalculo}
+          >
+            {recalculo === "al_dia" ? "Reconstrucción al día" : "Recalculando la reconstrucción…"}
+          </span>
+        ) : null}
+      </div>
+
+      {/* W4: corregir lo colocado y agregar objetos del lugar. */}
+      {corrigiendo && !seleccion ? (
+        <div className="pointer-events-none absolute top-4 left-4 z-10 md:top-6 md:left-6">
+          <PanelCorregir
+            poniendo={poniendo}
+            onElegir={setPoniendo}
+            onListo={() => {
+              setPoniendo(null);
+              setListaVista(false);
+            }}
+          />
+        </div>
+      ) : null}
+      {corrigiendo && seleccion ? (
+        <div className="pointer-events-none absolute right-3 bottom-[84px] left-3 z-20 flex justify-center">
+          <BarraSeleccion
+            nombre={nombreDeSeleccion(seleccion)}
+            acciones={accionesDe(seleccion)}
+            onListo={() => setSeleccion(null)}
+          />
+        </div>
+      ) : null}
 
       {/* El mensaje del momento: éxito, alerta o error. */}
       {visible ? (
@@ -1616,7 +1924,7 @@ export function EscenaFacil({
                       chico
                     />
                   )}
-                  <span className="flex flex-col gap-1">
+                  <span className="flex flex-1 flex-col gap-1">
                     <span className="font-semibold">{l.texto}</span>
                     {l.detalle ? <span className="t-nota">{l.detalle}</span> : null}
                     {l.supuesto ? (
@@ -1626,6 +1934,14 @@ export function EscenaFacil({
                       </>
                     ) : null}
                   </span>
+                  <button
+                    type="button"
+                    className="boton-secundario escena-boton self-start px-3"
+                    onClick={() => cambiarLinea(l)}
+                    data-testid={`cambiar-linea-${k}`}
+                  >
+                    Cambiar
+                  </button>
                 </li>
               ))}
             </ul>

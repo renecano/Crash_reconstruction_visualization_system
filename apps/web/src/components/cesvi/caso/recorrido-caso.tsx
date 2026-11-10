@@ -219,7 +219,7 @@ export function RecorridoCaso({
     valor: String(inicial.ejemplo?.calculos.desplazamiento.D_m.valor ?? ""),
     fuente: "dictamen",
   });
-  const rec = useReconstruccion(expediente);
+  const rec = useReconstruccion(expediente, { alCambiar: true });
   // La pizarra de R12b (ADR 0093): lo que escriben los agentes y su bitácora.
   const [pizarra, setPizarra] = useState<Pizarra>(() =>
     inicial.escena
@@ -1363,6 +1363,13 @@ export function RecorridoCaso({
             onBuscarCalles={setCentroBuscado}
             onVerReconstruccion={() => irA(paso + 1)}
             onNota={(t) => setPizarra((x) => delPerito(x, t))}
+            recalculo={
+              rec.r === null && !rec.recalculando
+                ? null
+                : rec.recalculando || rec.vieja
+                  ? "calculando"
+                  : "al_dia"
+            }
           />
         </div>
       ) : null}

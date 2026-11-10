@@ -30,7 +30,7 @@ import {
 } from "@croquis/cesvi";
 import { LEGEND_TEXT_CESVI, type EscenaSpec } from "@croquis/scene-schema";
 import type { ViewerExportApi } from "@croquis/viewer";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Hipotesis } from "@/components/visor/hypothesis-panel";
 import {
   CONTROLES_INICIALES,
@@ -54,31 +54,69 @@ export interface EstadoReconstruccion {
   estado: string | null;
   impactos: MarcaImpacto[];
   reconstruir: () => Promise<void>;
+  /** W4: se está recalculando solo, después de una corrección. */
+  recalculando: boolean;
 }
 
-export function useReconstruccion(expediente: Expediente | null): EstadoReconstruccion {
+/** Cuánto se espera después del último cambio para recalcular (ms): un arrastre son varios cambios. */
+const ESPERA_RECALCULO_MS = 700;
+
+/**
+ * La reconstrucción del caso. Con `alCambiar` (W4, «al soltar se recalcula»), si ya hubo una y el
+ * expediente cambia, se vuelve a calcular sola: la anterior se sigue viendo hasta que llega la nueva,
+ * y un resultado que llega tarde (de un cambio que ya no es el último) se descarta.
+ */
+export function useReconstruccion(
+  expediente: Expediente | null,
+  opciones: { alCambiar?: boolean } = {},
+): EstadoReconstruccion {
   const [r, setR] = useState<Reconstruccion | null>(null);
   const [de, setDe] = useState<Expediente | null>(null);
   const [estado, setEstado] = useState<string | null>(null);
   const [impactos, setImpactos] = useState<MarcaImpacto[]>([]);
-  const reconstruir = useCallback(async () => {
-    if (!expediente) return;
-    setEstado("Reconstruyendo con el solver…");
-    setR(null);
-    setImpactos([]);
+  const [recalculando, setRecalculando] = useState(false);
+  const turno = useRef(0);
+  const calcular = useCallback(async (exp: Expediente, limpiar: boolean) => {
+    const mio = ++turno.current;
+    if (limpiar) {
+      setEstado("Reconstruyendo con el solver…");
+      setR(null);
+      setImpactos([]);
+    }
+    setRecalculando(true);
     try {
-      const base = especDeExpediente(expediente);
+      const base = especDeExpediente(exp);
       const resultado = await reconstruirCompletoEnNavegador(base.spec as unknown as EscenaSpec);
+      if (mio !== turno.current) return;
       const json = resultado as unknown as Record<string, unknown>;
       setR(interpretarResultado(base, json));
-      setDe(expediente);
+      setDe(exp);
       setImpactos(impactosEnMapa(base, json));
       setEstado(null);
     } catch (e) {
-      setEstado(`El solver no pudo reconstruir la escena: ${(e as Error).message}`);
+      if (mio === turno.current)
+        setEstado(`El solver no pudo reconstruir la escena: ${(e as Error).message}`);
+    } finally {
+      if (mio === turno.current) setRecalculando(false);
     }
-  }, [expediente]);
-  return { r, vieja: r !== null && de !== expediente, estado, impactos, reconstruir };
+  }, []);
+  const reconstruir = useCallback(async () => {
+    if (expediente) await calcular(expediente, true);
+  }, [expediente, calcular]);
+  const alCambiar = opciones.alCambiar ?? false;
+  useEffect(() => {
+    if (!alCambiar || !expediente || de === null || de === expediente) return;
+    const t = setTimeout(() => void calcular(expediente, false), ESPERA_RECALCULO_MS);
+    return () => clearTimeout(t);
+  }, [alCambiar, expediente, de, calcular]);
+  return {
+    r,
+    vieja: r !== null && de !== expediente,
+    estado,
+    impactos,
+    reconstruir,
+    recalculando,
+  };
 }
 
 /** Las velocidades con sus percentiles, la evidencia que las fija y lo que no cubre. */

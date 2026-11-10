@@ -37,6 +37,17 @@ export interface FlechaMapa {
   color: string;
 }
 
+/** Un objeto del lugar que colocó el perito (W4), a escala y girado. */
+export interface ObjetoMapa {
+  id: string;
+  tipo: string;
+  nombre: string;
+  punto: Punto;
+  rumbo: number;
+  largo: number;
+  ancho: number;
+}
+
 export interface LineaMapa {
   puntos: Punto[];
   color: string;
@@ -68,6 +79,15 @@ export interface MapaFacilProps {
   onMapa?: (m: MapaMl | null) => void;
   /** Lo medido en «Más herramientas»: dos puntos y la distancia. */
   medicion?: Punto[];
+  /** W4: los objetos del lugar que colocó el perito. */
+  objetos?: ObjetoMapa[];
+  /**
+   * W4, corregir después: lo ya colocado se toca para seleccionarlo («coche:V1», «objeto:obj-1»,
+   * «marca:golpe», «marca:objeto-2», «marca:paso-V1-1») y lo seleccionado se arrastra.
+   */
+  onSeleccionar?: (clave: string) => void;
+  seleccion?: string | null;
+  onMover?: (clave: string, p: Punto) => void;
 }
 
 const tamano = (m: MapaMl, lat: number, metros: number) =>
@@ -184,7 +204,20 @@ export function MapaFacil(p: MapaFacilProps) {
     };
   }, [listo, p.lineas, p.medicion]);
 
-  // Los marcadores: se rehacen con cada cambio (son pocos) y se escalan con el zoom.
+  // Los marcadores: se rehacen cuando cambia lo que muestran (son pocos) y se escalan con el zoom. Se
+  // comparan por contenido: la escena manda arreglos nuevos en cada render.
+  const claveMarcadores = JSON.stringify([
+    p.choques,
+    p.marcas,
+    p.propuesta,
+    p.flechas,
+    p.coches,
+    p.objetos,
+    p.seleccion,
+    Boolean(p.onSeleccionar),
+    Boolean(p.onMoverCoche),
+    Boolean(p.onGirar),
+  ]);
   useEffect(() => {
     const m = mapa.current;
     const M = MarkerCls.current;
@@ -198,6 +231,40 @@ export function MapaFacil(p: MapaFacilProps) {
         .addTo(m);
       marcas.current.push(mk);
       return mk;
+    };
+    // W4: con `onSeleccionar`, lo ya colocado toma el puntero; lo seleccionado se arrastra.
+    const seleccionable = (el: HTMLElement, clave: string) => {
+      if (!ultimo.current.onSeleccionar) return false;
+      const sel = p.seleccion === clave;
+      el.classList.add("escena-seleccionable");
+      if (sel) el.classList.add("escena-seleccionado");
+      el.setAttribute("data-clave", clave);
+      el.setAttribute("data-seleccionado", sel ? "si" : "no");
+      el.style.pointerEvents = "auto";
+      el.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        ultimo.current.onSeleccionar?.(clave);
+      });
+      return sel;
+    };
+    const arrastrable = (mk: Marker, clave: string) => {
+      mk.setDraggable(true);
+      // Al soltar, una sola vez: con `dragend` o, si MapLibre no lo dispara (el ratón se suelta
+      // fuera de su manejador), con el `pointerup` de la ventana.
+      let arrastrando = false;
+      const soltar = () => {
+        if (!arrastrando) return;
+        arrastrando = false;
+        window.removeEventListener("pointerup", soltar);
+        const ll = mk.getLngLat();
+        mk.getElement().style.pointerEvents = "auto";
+        ultimo.current.onMover?.(clave, { lat: ll.lat, lon: ll.lng });
+      };
+      mk.on("dragstart", () => {
+        arrastrando = true;
+        window.addEventListener("pointerup", soltar);
+      });
+      mk.on("dragend", soltar);
     };
 
     for (const c of p.choques) {
@@ -215,6 +282,7 @@ export function MapaFacil(p: MapaFacilProps) {
       el.setAttribute("data-testid", `marca-${mk.id}`);
       el.style.cssText =
         "pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:2px";
+      const clave = `marca:${mk.id}`;
       const borde = "border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45)";
       const figura =
         mk.tipo === "paso"
@@ -226,7 +294,44 @@ export function MapaFacil(p: MapaFacilProps) {
         mk.tipo === "paso"
           ? figura
           : `${figura}<span class="escena-etiqueta">${escaparHtml(mk.texto)}</span>`;
-      agregar(el, mk.punto);
+      el.firstElementChild?.classList.add("escena-marca-figura");
+      const sel = seleccionable(el, clave);
+      const marcador = agregar(el, mk.punto);
+      if (sel) arrastrable(marcador, clave);
+    }
+
+    for (const o of p.objetos ?? []) {
+      const el = document.createElement("div");
+      el.className = "escena-objeto";
+      el.setAttribute("data-testid", `objeto-${o.id}`);
+      el.setAttribute("aria-label", o.nombre);
+      el.setAttribute("role", "img");
+      el.style.pointerEvents = "none";
+      const cuerpo = document.createElement("div");
+      cuerpo.className = "escena-objeto-cuerpo";
+      cuerpo.dataset.tipo = o.tipo;
+      el.append(cuerpo);
+      const clave = `objeto:${o.id}`;
+      const sel = seleccionable(el, clave);
+      if (sel) {
+        const nombre = document.createElement("span");
+        nombre.className = "escena-etiqueta";
+        nombre.textContent = o.nombre;
+        nombre.style.transform = "translate(16px, -30px)";
+        el.append(nombre);
+      }
+      const marcador = agregar(el, o.punto);
+      if (sel) arrastrable(marcador, clave);
+      const ajustar = () => {
+        // Nunca más chico que un dedo: un poste de 30 cm sigue siendo fácil de tocar.
+        const l = Math.max(tamano(m, o.punto.lat, o.largo), 18);
+        const a = Math.max(tamano(m, o.punto.lat, o.ancho), 12);
+        cuerpo.style.width = `${a}px`;
+        cuerpo.style.height = `${l}px`;
+        cuerpo.style.transform = `translate(-50%, -50%) rotate(${o.rumbo}deg)`;
+      };
+      ajustar();
+      escalar.push(ajustar);
     }
 
     if (p.propuesta) {
@@ -270,9 +375,13 @@ export function MapaFacil(p: MapaFacilProps) {
       nombre.textContent = c.nombre;
       nombre.style.setProperty("--color-coche", c.color);
       el.append(cuerpo, nombre);
+      const clave = `coche:${c.id.replace(/-(final|impacto)$/, "")}`;
+      // Solo el coche en reposo se arrastra al corregir: el del impacto se corrige con su pregunta.
+      const sel = !c.activo && seleccionable(el, clave);
       const mk = agregar(el, c.punto, {
         draggable: Boolean(c.activo && ultimo.current.onMoverCoche),
       });
+      if (sel && c.id.endsWith("-final")) arrastrable(mk, clave);
       if (c.activo && ultimo.current.onMoverCoche) {
         mk.on("dragend", () => {
           const ll = mk.getLngLat();
@@ -328,7 +437,8 @@ export function MapaFacil(p: MapaFacilProps) {
     return () => {
       m.off("zoom", alZoom);
     };
-  }, [listo, p.choques, p.marcas, p.propuesta, p.flechas, p.coches]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- por contenido: rehacer un marcador a media maniobra pierde el arrastre
+  }, [listo, claveMarcadores]);
 
   return (
     <div
