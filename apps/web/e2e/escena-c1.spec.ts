@@ -54,7 +54,11 @@ test("@flujo /cesvi: el primer golpe, un choque contra algo más y un punto de p
   await expect(page.getByTestId("choque-1")).toHaveCount(1);
   await expect(pregunta).toHaveText("¿Por dónde venía el Jetta?");
   await page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]').click();
-  await page.getByTestId("final-junto").click();
+  // El Jetta queda aparte del choque: dos coches «junto al choque» quedan encimados, y esa alerta
+  // se queda a la vista en lugar de los mensajes de éxito de después.
+  await expect(pregunta).toHaveText("¿Dónde quedó después del choque?");
+  await tocarEnMetros(page, "choque-1", 6, 8);
+  await expect(page.getByTestId("coche-V1-final")).toHaveCount(1);
   await page.getByTestId("listo-final").click();
   await expect(pregunta).toHaveText("¿Por dónde venía el Camaro?");
   await page.getByTestId("no-se-direccion").click();
