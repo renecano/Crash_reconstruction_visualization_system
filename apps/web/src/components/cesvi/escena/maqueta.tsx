@@ -17,7 +17,20 @@
 import { curvasDeNivel, intervaloDeCurvas, type MallaRelieve } from "@croquis/cesvi";
 import type { EscenaSpec } from "@croquis/scene-schema";
 import { sceneLayout } from "@croquis/croquis-2d";
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  acercar,
+  conProporcion,
+  desplazar,
+  encajar,
+  escalaGrafica,
+  irAlImpacto,
+  verTodo,
+  type Caja,
+  type EscenaPlano,
+  type Margenes,
+  SIN_MARGENES,
+} from "@/lib/vista-maqueta";
 import { COLOR_CURVA, COLOR_ONDULACION, COLOR_SUPERFICIE, COLOR_TOPE } from "@/lib/terreno-colores";
 import { siluetaClase } from "@/lib/colocar";
 import { m, useReducedMotion } from "motion/react";
@@ -81,7 +94,17 @@ export function EscenaMaqueta({
   tips = {},
   tipDelImpacto = null,
   relieve = null,
+  navegable = false,
+  margenes = SIN_MARGENES,
 }: {
+  /** W6: lo que tapan los paneles de encima, en pixeles: «Ver todo» encaja la escena en el resto. */
+  margenes?: Margenes;
+  /**
+   * W6 (O3): abre con «Ver todo» y se acerca, aleja y desplaza con el ratón, la rueda o los dedos,
+   * con «Ver todo», «Ir al impacto», la escala gráfica y el norte. Sin esto (Presentar, el
+   * dictamen), el encuadre fijo alrededor del impacto.
+   */
+  navegable?: boolean;
   /** Lo que dice cada vehículo al pasar el puntero o con el foco (§9). */
   tips?: Record<string, string>;
   tipDelImpacto?: string | null;
@@ -105,16 +128,34 @@ export function EscenaMaqueta({
   const terreno = (spec.lugar as { terreno?: TerrenoEscena }).terreno ?? null;
   const curvas = useMemo(() => (relieve ? curvasDeNivel(relieve) : []), [relieve]);
   const ti = tImpacto(resultado);
+  // El marco de las coordenadas del SVG: el encuadre alrededor del impacto (lo que se ve sin navegar).
   const [x0, y0, x1, y1] = encuadre(resultado);
   const W = x1 - x0;
   const H = y1 - y0;
   const px = (x: number) => x - x0;
   const py = (y: number) => y1 - y;
+  // W6: lo que se ve, en metros de la escena, con la proporción del contenedor.
+  const {
+    svg: refSvg,
+    caja: refCaja,
+    todo,
+    vista: vistaNav,
+    anchoPx,
+    arrastrando,
+    manejadores,
+    verTodo: alVerTodo,
+    irAlImpacto: alIrAlImpacto,
+    acercar: alAcercar,
+  } = useVistaMaqueta(navegable, spec as unknown as EscenaPlano, resultado, margenes);
+  const vista = navegable ? vistaNav : null;
+  const vw = vista ? vista[2] - vista[0] : W;
+  const vh = vista ? vista[3] - vista[1] : H;
   /** La silueta de un vehículo en una pose: unidad → metros, girada a su rumbo. */
   const colocar = (p: Pose, v: VehiculoResultado) =>
     `translate(${px(p.x)} ${py(p.y)}) rotate(${90 - (p.rumbo * 180) / Math.PI}) scale(${v.dimensiones.ancho_m} ${v.dimensiones.largo_m})`;
   const impacto = resultado.punto_impacto ?? null;
-  const fuente = Math.max(1, Math.min(3, Math.max(W, H) / 40));
+  // Al navegar, las letras guardan su tamaño en pantalla: van con lo que se ve, no con el marco.
+  const fuente = vista ? Math.max(vw, vh) / 55 : Math.max(1, Math.min(3, Math.max(W, H) / 40));
   const ahora = t ?? ti;
   const quieto = useReducedMotion();
   const cota =
@@ -132,12 +173,16 @@ export function EscenaMaqueta({
     return (j >= 0 ? j + 1 : j) * fuente * 3.4;
   };
 
-  return (
+  const svg = (
     <svg
-      viewBox={`0 0 ${W} ${H}`}
+      ref={refSvg}
+      viewBox={vista ? `${px(vista[0])} ${py(vista[3])} ${vw} ${vh}` : `0 0 ${W} ${H}`}
       preserveAspectRatio="xMidYMid meet"
       overflow="visible"
       className="h-full w-full"
+      style={vista ? { touchAction: "none", cursor: arrastrando ? "grabbing" : "grab" } : undefined}
+      {...(vista ? manejadores : {})}
+      data-vista={vista ? vista.map((x) => x.toFixed(1)).join(" ") : undefined}
       role="img"
       aria-label="Escena reconstruida vista desde arriba: la vía, la trayectoria de cada vehículo con su velocidad, sus posiciones cada 0.4 s antes del impacto, el impacto y las posiciones finales."
       data-testid="maqueta"
@@ -161,7 +206,17 @@ export function EscenaMaqueta({
         </filter>
       </defs>
       {/* El fondo sigue más allá del encuadre: la escena va a sangre en cualquier proporción. */}
-      <rect x={-W * 3} y={-H * 3} width={W * 7} height={H * 7} fill="url(#mq-luz)" />
+      {vista ? (
+        <rect
+          x={px(todo[0]) - (todo[2] - todo[0]) * 3}
+          y={py(todo[3]) - (todo[3] - todo[1]) * 3}
+          width={(todo[2] - todo[0]) * 7}
+          height={(todo[3] - todo[1]) * 7}
+          fill="url(#mq-luz)"
+        />
+      ) : (
+        <rect x={-W * 3} y={-H * 3} width={W * 7} height={H * 7} fill="url(#mq-luz)" />
+      )}
 
       {/* La vía: calles del mapa a su ancho; si no hay mapa, la plantilla de la escena. */}
       <g filter="url(#mq-losa)">
@@ -480,5 +535,244 @@ export function EscenaMaqueta({
         </g>
       ) : null}
     </svg>
+  );
+  if (!vista) return svg;
+  return (
+    <div ref={refCaja} className="relative h-full w-full" data-testid="maqueta-navegable">
+      {svg}
+      <ControlesVista
+        vista={vista}
+        anchoPx={anchoPx}
+        onVerTodo={alVerTodo}
+        onIrAlImpacto={alIrAlImpacto}
+        onAcercar={alAcercar}
+      />
+    </div>
+  );
+}
+
+/**
+ * W6: la vista de la maqueta. Abre con «Ver todo», guarda la proporción del contenedor y vuelve a
+ * «Ver todo» cuando llega otro resultado. La rueda acerca alrededor del puntero; un dedo o el ratón
+ * desplazan; dos dedos acercan alrededor de su punto medio.
+ */
+function useVistaMaqueta(
+  activa: boolean,
+  spec: EscenaPlano,
+  r: ResultadoMaqueta,
+  margenes: Margenes,
+) {
+  const svg = useRef<SVGSVGElement | null>(null);
+  const caja = useRef<HTMLDivElement | null>(null);
+  const todo = useMemo(() => verTodo(spec, r), [spec, r]);
+  const [tam, setTam] = useState<{ w: number; h: number } | null>(null);
+  const [propia, setPropia] = useState<{ de: ResultadoMaqueta; v: Caja } | null>(null);
+  const aspecto = tam && tam.h > 0 ? tam.w / tam.h : 16 / 10;
+  const encajada = (c: Caja) =>
+    tam ? encajar(c, tam.w, tam.h, margenes) : conProporcion(c, aspecto);
+  // Sin una vista propia para este resultado, «Ver todo», en lo que no tapan los paneles.
+  const vista = propia?.de === r ? conProporcion(propia.v, aspecto) : encajada(todo);
+  const fijar = useCallback((v: Caja) => setPropia({ de: r, v }), [r]);
+
+  useEffect(() => {
+    const el = caja.current;
+    if (!activa || !el) return undefined;
+    const medir = () => setTam({ w: el.clientWidth, h: el.clientHeight });
+    medir();
+    const obs = new ResizeObserver(medir);
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [activa]);
+
+  /** Del punto en pantalla a metros de la escena. */
+  const aEscena = useCallback(
+    (cx: number, cy: number) => {
+      const el = svg.current;
+      const ctm = el?.getScreenCTM();
+      if (!el || !ctm) return null;
+      const p = new DOMPoint(cx, cy).matrixTransform(ctm.inverse());
+      // El SVG tiene su origen en la esquina del encuadre del impacto, con Y hacia abajo.
+      const [x0, , , y1] = encuadre(r);
+      return { x: p.x + x0, y: y1 - p.y };
+    },
+    [r],
+  );
+  const metrosPorPx = () => {
+    const a = svg.current?.getScreenCTM()?.a;
+    return a ? 1 / a : 0;
+  };
+
+  // La rueda, con un escucha que no es pasivo: si no, la página se desplaza.
+  const vistaRef = useRef(vista);
+  useEffect(() => {
+    vistaRef.current = vista;
+  });
+  useEffect(() => {
+    const el = svg.current;
+    if (!activa || !el) return undefined;
+    const rueda = (ev: WheelEvent) => {
+      ev.preventDefault();
+      const ancla = aEscena(ev.clientX, ev.clientY);
+      if (!ancla) return;
+      fijar(acercar(vistaRef.current, Math.exp(-ev.deltaY * 0.0015), ancla, todo));
+    };
+    el.addEventListener("wheel", rueda, { passive: false });
+    return () => el.removeEventListener("wheel", rueda);
+  }, [activa, aEscena, fijar, todo]);
+
+  const punteros = useRef(new Map<number, { x: number; y: number }>());
+  const [arrastrando, setArrastrando] = useState(false);
+  const manejadores = {
+    onPointerDown: (ev: React.PointerEvent<SVGSVGElement>) => {
+      if (ev.pointerType === "mouse" && ev.button !== 0) return;
+      ev.currentTarget.setPointerCapture(ev.pointerId);
+      punteros.current.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+      setArrastrando(true);
+    },
+    onPointerMove: (ev: React.PointerEvent<SVGSVGElement>) => {
+      const antes = punteros.current.get(ev.pointerId);
+      if (!antes) return;
+      const otros = [...punteros.current.entries()].filter(([id]) => id !== ev.pointerId);
+      const ahora = { x: ev.clientX, y: ev.clientY };
+      if (otros.length === 1) {
+        // Dos dedos: acercar por la razón de sus distancias, alrededor de su punto medio.
+        const o = otros[0]![1];
+        const d0 = Math.hypot(antes.x - o.x, antes.y - o.y);
+        const d1 = Math.hypot(ahora.x - o.x, ahora.y - o.y);
+        const ancla = aEscena((ahora.x + o.x) / 2, (ahora.y + o.y) / 2);
+        if (ancla && d0 > 0) fijar(acercar(vistaRef.current, d1 / d0, ancla, todo));
+      } else if (otros.length === 0) {
+        const m = metrosPorPx();
+        fijar(desplazar(vistaRef.current, -(ahora.x - antes.x) * m, (ahora.y - antes.y) * m, todo));
+      }
+      punteros.current.set(ev.pointerId, ahora);
+    },
+    onPointerUp: (ev: React.PointerEvent<SVGSVGElement>) => {
+      punteros.current.delete(ev.pointerId);
+      if (!punteros.current.size) setArrastrando(false);
+    },
+    onPointerCancel: (ev: React.PointerEvent<SVGSVGElement>) => {
+      punteros.current.delete(ev.pointerId);
+      if (!punteros.current.size) setArrastrando(false);
+    },
+  };
+
+  const centro = { x: (vista[0] + vista[2]) / 2, y: (vista[1] + vista[3]) / 2 };
+  return {
+    svg,
+    caja,
+    todo,
+    vista,
+    anchoPx: tam?.w ?? 0,
+    arrastrando,
+    manejadores,
+    verTodo: () => setPropia(null),
+    irAlImpacto: () => fijar(encajada(irAlImpacto(r))),
+    acercar: (factor: number) => fijar(acercar(vista, factor, centro, todo)),
+  };
+}
+
+/** Los botones de la vista, el norte y la escala gráfica, arriba a la derecha de la maqueta. */
+function ControlesVista({
+  vista,
+  anchoPx,
+  onVerTodo,
+  onIrAlImpacto,
+  onAcercar,
+}: {
+  vista: Caja;
+  anchoPx: number;
+  onVerTodo: () => void;
+  onIrAlImpacto: () => void;
+  onAcercar: (factor: number) => void;
+}) {
+  const ancho = vista[2] - vista[0];
+  const escala = escalaGrafica(ancho);
+  const pxEscala = anchoPx > 0 ? (escala / ancho) * anchoPx : 0;
+  const texto = escala >= 1 ? `${escala} m` : `${Math.round(escala * 100)} cm`;
+  // En una maqueta angosta (el lado a lado de Contra CESVI), los botones van en columna y con
+  // nombres cortos: en fila no caben.
+  const angosta = anchoPx > 0 && anchoPx < 420;
+  return (
+    <div
+      className={`pointer-events-none absolute z-10 flex flex-col items-end gap-2 ${angosta ? "top-2 right-2" : "top-3 right-3"}`}
+      data-angosta={angosta ? "si" : "no"}
+    >
+      <div
+        className={`pointer-events-auto flex gap-1 ${angosta ? "flex-col items-stretch" : ""}`}
+        role="group"
+        aria-label="Encuadre de la maqueta"
+      >
+        <button
+          type="button"
+          className="boton-secundario boton-compacto"
+          onClick={onVerTodo}
+          aria-label="Ver todo"
+          data-testid="maqueta-ver-todo"
+        >
+          {angosta ? "Todo" : "Ver todo"}
+        </button>
+        <button
+          type="button"
+          className="boton-secundario boton-compacto"
+          onClick={onIrAlImpacto}
+          aria-label="Ir al impacto"
+          data-testid="maqueta-ir-impacto"
+        >
+          {angosta ? "Impacto" : "Ir al impacto"}
+        </button>
+        <button
+          type="button"
+          className={`boton-secundario boton-compacto ${angosta ? "" : "w-9"}`}
+          aria-label="Acercar"
+          onClick={() => onAcercar(1.5)}
+          data-testid="maqueta-acercar"
+        >
+          +
+        </button>
+        <button
+          type="button"
+          className={`boton-secundario boton-compacto ${angosta ? "" : "w-9"}`}
+          aria-label="Alejar"
+          onClick={() => onAcercar(1 / 1.5)}
+          data-testid="maqueta-alejar"
+        >
+          −
+        </button>
+      </div>
+      <div
+        className={`vidrio flex items-end rounded-control ${angosta ? "gap-2 px-2 py-1.5" : "gap-3 px-3 py-2"}`}
+        data-testid="maqueta-escala"
+        data-metros={escala}
+      >
+        <svg
+          viewBox="0 0 16 22"
+          width="16"
+          height="22"
+          role="img"
+          aria-label="El norte, hacia arriba"
+        >
+          <path d="M8 1 L14 15 L8 11 L2 15 Z" fill="var(--texto)" />
+          <text
+            x="8"
+            y="21.5"
+            textAnchor="middle"
+            fontSize="7"
+            fontWeight={700}
+            fill="var(--texto)"
+          >
+            N
+          </text>
+        </svg>
+        <div className="flex flex-col items-start gap-0.5">
+          <span className="t-nota font-mono leading-none">{texto}</span>
+          <span
+            className="block h-1.5 border-x-2 border-b-2 border-[var(--texto)]"
+            style={{ width: `${pxEscala.toFixed(1)}px` }}
+            aria-hidden="true"
+          />
+        </div>
+      </div>
+    </div>
   );
 }

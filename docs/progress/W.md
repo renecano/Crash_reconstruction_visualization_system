@@ -6,19 +6,20 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 
 - **Desde el 2026-11-09, el Claude Code de René lleva también este frente,** porque aquí no se había subido nada. Si eres el Claude Code del compañero: antes de empezar una fase, revisa la tabla de abajo y `git fetch`; si la fase ya está tomada, sigue con la siguiente y anótala aquí.
 - **Hechas:** W1 (#187), W2 (#188), W3 (#192), W4 (#195, con su contrato #194) y W4b (#196), en `main`.
-- **Fase actual:** W5 («Terreno», C3 y O4). El contrato (#198) y el solver (#199) ya están en `main`; la parte web va en `feat/w5-terreno-web`.
-- **Siguiente paso:** con CI en verde, fusionar la parte web de W5 y seguir con W6.
+- **Fase actual:** W6 («Encuadre en 2D», O3), en `feat/w6-encuadre`. W5 está completa en `main` (#198, #199 y #200).
+- **Siguiente paso:** con CI en verde, fusionar W6. Después, en el orden del plan: U5, U6, W7; antes de W8 o de una parte difícil de U5, avisar a René.
 
 ## Fases tomadas
 
-| Fase                                                         | Quién               | Rama                                     | Estado                             |
-| ------------------------------------------------------------ | ------------------- | ---------------------------------------- | ---------------------------------- |
-| W1 · Dictamen (O2)                                           | Claude Code de René | `feat/w1-dictamen`                       | En `main` (#187)                   |
-| W2 · El hecho (O1 y O5)                                      | Claude Code de René | `feat/w2-hecho`                          | En `main` (#188)                   |
-| W3 · C1: punto inicial, choques intermedios y puntos de paso | Claude Code de René | `feat/w3-puntos`                         | En `main` (#192)                   |
-| W4 · C2 y «Corregir después»                                 | Claude Code de René | `feat/w4-corregir`                       | En `main` (#195)                   |
-| W4b · Menos ruido visual                                     | Claude Code de René | `feat/w4b-menos-ruido`                   | En `main` (#196)                   |
-| W5 · Terreno (C3 y O4)                                       | Claude Code de René | `feat/w5-terreno`, `feat/w5-terreno-web` | Solver en `main` (#199); web en PR |
+| Fase                                                         | Quién               | Rama                                     | Estado                    |
+| ------------------------------------------------------------ | ------------------- | ---------------------------------------- | ------------------------- |
+| W1 · Dictamen (O2)                                           | Claude Code de René | `feat/w1-dictamen`                       | En `main` (#187)          |
+| W2 · El hecho (O1 y O5)                                      | Claude Code de René | `feat/w2-hecho`                          | En `main` (#188)          |
+| W3 · C1: punto inicial, choques intermedios y puntos de paso | Claude Code de René | `feat/w3-puntos`                         | En `main` (#192)          |
+| W4 · C2 y «Corregir después»                                 | Claude Code de René | `feat/w4-corregir`                       | En `main` (#195)          |
+| W4b · Menos ruido visual                                     | Claude Code de René | `feat/w4b-menos-ruido`                   | En `main` (#196)          |
+| W5 · Terreno (C3 y O4)                                       | Claude Code de René | `feat/w5-terreno`, `feat/w5-terreno-web` | En `main` (#199, #200)    |
+| W6 · Encuadre en 2D (O3)                                     | Claude Code de René | `feat/w6-encuadre`                       | En PR desde el 2026-11-10 |
 
 ## W1 · Dictamen (O2)
 
@@ -310,6 +311,57 @@ Plan: PLAN-CESVI §3.4. Contrato: #198 (`Expediente.terreno` y los dos supuestos
 - **La fricción de una zona usa el estado «seco» para proponer el paso de ±0.05** en «Corregir»; el solver sí usa el estado del lugar.
 - **Dibujar una zona con varios toques** (polígono libre): hoy es un rectángulo que se mueve, se gira y cambia de tamaño. El contrato ya acepta polígonos.
 - **La volcadura, los peatones y los agentes reactivos** no ven el terreno (ADR 0131, «Límites»).
+
+## W6 · Encuadre en 2D (O3)
+
+Plan: PLAN-CESVI §3.4. Decisiones: ADR 0132.
+
+### Plan
+
+- **Lógica sin interfaz** (`apps/web/src/lib/vista-maqueta.ts`): «Ver todo», «Ir al impacto», acercar, alejar, desplazar, encajar entre los paneles y la escala gráfica, con su prueba unitaria.
+- **La maqueta navegable** (`EscenaMaqueta`, propiedad `navegable`): en Reconstrucción y Análisis (la vista cenital de la etapa) y en el lado a lado de Contra CESVI.
+- **Riesgo:** que el croquis del dictamen cambie según dónde dejó el perito la vista. Se evita: el dictamen y Presentar no navegan.
+
+### Qué se hizo
+
+- **«Ver todo» al abrir:** la caja de las trayectorias completas, los reposos, el impacto, la evidencia física, los puntos de paso, los objetos y los topes, encajada en lo que no tapan los paneles (pestañas, botones, leyenda y línea de tiempo).
+- **«Ir al impacto»:** el encuadre de antes, también encajado.
+- **Ratón, rueda y dedos:** la rueda acerca alrededor del puntero; arrastrar desplaza; dos dedos acercan alrededor de su punto medio. Límites: 6 m por lado como mínimo y 4 veces «Ver todo» como máximo; la escena nunca sale del todo de la pantalla.
+- **Escala gráfica y norte** arriba a la derecha, junto a los botones; la escala es de 1, 2 o 5 por una potencia de 10.
+- **Las letras guardan su tamaño en pantalla** al acercar; los trazos siguen a escala real.
+- **En una maqueta angosta** (el lado a lado), los botones van en columna con nombres cortos.
+
+### Pruebas
+
+- `apps/web/src/lib/vista-maqueta.test.ts` (15): «Ver todo» contiene todo lo que importa en cinco escenas canónicas (alcance, carambola, peatón, terreno y árbol), cuenta la evidencia, los puntos de paso, los objetos y los topes, y no se deja comer por una zona de «todo el lugar»; «Ir al impacto» es el encuadre de antes; encajar deja la caja entera en el hueco; acercar deja quieto el punto del puntero y respeta sus límites; desplazar no cambia el tamaño; la escala gráfica.
+- `apps/web/e2e/capturas-w6.spec.ts` (a mano, no `@flujo`): en el caso de AXA, «Ir al impacto» es más chico que «Ver todo», la rueda acerca, el arrastre desplaza sin cambiar el tamaño y «Ver todo» regresa a la vista inicial.
+
+### Resumen para René (W6)
+
+**Qué quedó.** La vista desde arriba del caso ya se recorre:
+
+- **Abre con toda la escena a la vista,** sin que la tapen la línea de tiempo ni las pestañas.
+- **«Ver todo» e «Ir al impacto»** arriba a la derecha, con «+» y «−».
+- **La rueda del ratón acerca** donde está el puntero; **arrastrar** mueve la vista; en el celular, **dos dedos** acercan.
+- **La escala gráfica y el norte** siempre a la vista.
+- Vale en Reconstrucción, en Análisis (vista «Cenital») y en el lado a lado de Contra CESVI. El croquis del dictamen no cambia.
+
+**Cómo probarlo.** En `/cesvi`, abre el caso de AXA, ve a Reconstrucción y pulsa «Reconstruir». En la vista cenital, usa la rueda, arrastra y prueba «Ir al impacto» y «Ver todo».
+
+**Capturas** (`docs/cesvi/w6/`):
+
+1. «Ver todo» al abrir;
+2. «Ir al impacto»;
+3. acercado con la rueda;
+4. desplazado arrastrando;
+5. el lado a lado de Contra CESVI.
+
+**Qué necesito de ti.** Nada para seguir.
+
+### Pendiente
+
+- **El 3D** tiene su propio encuadre: es U4.
+- **Teclado:** «+», «−», «Ver todo» e «Ir al impacto» son botones; las flechas del teclado todavía no desplazan la vista.
 
 ## Lo que U deja dicho para W
 

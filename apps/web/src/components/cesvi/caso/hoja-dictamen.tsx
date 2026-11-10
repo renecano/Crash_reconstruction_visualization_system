@@ -105,7 +105,7 @@ export function HojaDictamen({
       ) : null}
       <div className="grid gap-4 sm:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         <div className="h-40 overflow-hidden rounded border border-[var(--linea)]">
-          <MaquetaCaso r={r} calles={calles} nombres={{}} compacta />
+          <MaquetaCaso r={r} calles={calles} nombres={{}} compacta sinControles />
         </div>
         <section>
           <h3 className="text-[0.6875rem] font-bold tracking-[0.08em] uppercase">Resultados</h3>
