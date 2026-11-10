@@ -13,7 +13,7 @@ namespace Croquis.Visor
     /// </summary>
     public static class EntornoVista
     {
-        public static void Construir(Transform padre, EntornoEscenario en, AmbienteEscenario a)
+        public static void Construir(Transform padre, EntornoEscenario en, AmbienteEscenario a, long semilla)
         {
             var entorno = new GameObject("entorno_procedural").transform;
             entorno.SetParent(padre, false);
@@ -23,7 +23,7 @@ namespace Croquis.Visor
             Postes(entorno, en.Postes);
             Cercas(entorno, en.Cercas);
             Senales(entorno, en.Senales);
-            Horizonte(entorno, en, a);
+            Horizonte(entorno, en, a, semilla);
         }
 
         private static Vector3 U(double x, double y, double z)
@@ -730,50 +730,92 @@ namespace Croquis.Visor
 
         private static void Horizonte(Transform padre, EntornoEscenario en, AmbienteEscenario a, long semilla)
         {
-            // Cada capa de cerros es más clara y azulada cuanto más lejos: la perspectiva del aire.
+            // Cada capa es una ladera con pendiente (la luz del sol la modela) y textura de pasto, tierra,
+            // monte y roca. Cuanto más lejos, más se funde con el aire: la perspectiva atmosférica.
+            // De noche la alumbra la luna como al resto del campo: es una ladera oscura que se lee
+            // contra el cielo, no una silueta negra.
+            // De noche el «aire» es un gris azulado claro: con la luna encima queda una ladera oscura
+            // pero con textura; con el azul casi negro del cielo, los cerros lejanos salían negros.
+            var aire = a.Noche ? new Color(0.17f, 0.18f, 0.22f) : Color.Lerp(RenderSettings.fogColor, new Color(0.55f, 0.66f, 0.75f), 0.35f);
+            var azar = new Azar(semilla + 503);
             for (var i = 0; i < en.Cerros.Length; i++)
             {
                 var c = en.Cerros[i];
-                var m = new Malla();
                 var n = c.AlturasM.Length;
-                var r = (float)c.RadioM;
-                for (var k = 0; k < n; k++)
+                // La niebla de URP es global (el material no la puede apagar) y a 720 o 1,100 m ya los
+                // dejaba del color del aire: azules de día y negros de noche. Las capas lejanas se
+                // acercan a menos de 530 m con la misma altura aparente (todo se escala por `k`); la
+                // diferencia de paralaje no se nota dentro de la escena.
+                var r0 = (float)c.RadioM;
+                var r = r0 <= 450f ? r0 : 450f + (r0 - 450f) * 0.12f;
+                var escala = r / r0;
+                var maximo = 0f;
+                foreach (var h in c.AlturasM)
                 {
-                    var ang = (float)(c.DesdeRad + (c.HastaRad - c.DesdeRad) * k / Math.Max(1, n - 1));
-                    var x = Mathf.Cos(ang) * r;
-                    var z = Mathf.Sin(ang) * r;
-                    m.Vertice(new Vector3(x, -6f, z), new Vector2(0.5f, 0.02f));
-                    m.Vertice(new Vector3(x * 1.02f, (float)c.AlturasM[k], z * 1.02f), new Vector2(0.5f, 0.98f));
-                    if (k > 0)
+                    maximo = Mathf.Max(maximo, (float)h * escala);
+                }
+
+                // La cresta, con tres puntos por cada uno del contrato y un poco de quiebre.
+                const int Sub = 3;
+                var crestas = new List<(float ang, float alto)>();
+                for (var k = 0; k + 1 < n; k++)
+                {
+                    for (var s = 0; s < Sub; s++)
                     {
-                        var b = 2 * (k - 1);
-                        m.Triangulo(b, b + 1, b + 2);
-                        m.Triangulo(b + 1, b + 3, b + 2);
-                        m.Triangulo(b, b + 2, b + 1);
-                        m.Triangulo(b + 1, b + 2, b + 3);
+                        var f = s / (float)Sub;
+                        var ang = (float)(c.DesdeRad + (c.HastaRad - c.DesdeRad) * (k + f) / Math.Max(1, n - 1));
+                        var h0 = (float)c.AlturasM[k] * escala;
+                        var h1 = (float)c.AlturasM[k + 1] * escala;
+                        var alto = Mathf.Lerp(h0, h1, f * f * (3f - 2f * f));
+                        if (s > 0)
+                        {
+                            alto += azar.Entre(-0.012f, 0.012f) * maximo;
+                        }
+
+                        crestas.Add((ang, Mathf.Max(alto, 2f)));
                     }
                 }
 
-                var lejos = Mathf.InverseLerp(400f, 1100f, r);
-                var color = a.Noche
-                    ? Color.Lerp(new Color(0.03f, 0.04f, 0.05f), new Color(0.05f, 0.06f, 0.09f), lejos)
-                    : Color.Lerp(new Color(0.2f, 0.27f, 0.18f), new Color(0.3f, 0.37f, 0.4f), lejos);
-                // La base se vela un poco con el aire; si se vela de más, el anillo parece una pared clara.
-                var base0 = Color.Lerp(color, RenderSettings.fogColor, 0.25f);
-                var degradado = new Texture2D(1, 32, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
-                for (var y = 0; y < 32; y++)
+                crestas.Add(((float)c.HastaRad, (float)c.AlturasM[n - 1] * escala));
+                var m = new Malla();
+                var repeticion = Mathf.Max(60f, maximo + 6f) * 1.6f;
+                // Cuatro hileras de la base (abajo del piso, más cerca) a la cresta (más lejos).
+                var filas = new[] { 0f, 0.3f, 0.65f, 1f };
+                var recorrido = 0f;
+                for (var k = 0; k < crestas.Count; k++)
                 {
-                    degradado.SetPixel(0, y, Color.Lerp(base0, color * 0.8f, Mathf.Pow(y / 31f, 0.7f)));
+                    var (ang, alto) = crestas[k];
+                    if (k > 0)
+                    {
+                        recorrido += Mathf.Abs(ang - crestas[k - 1].ang) * r;
+                    }
+
+                    var dir = new Vector3(Mathf.Cos(ang), 0f, Mathf.Sin(ang));
+                    foreach (var f in filas)
+                    {
+                        var y = Mathf.Lerp(-6f, alto, Mathf.Pow(f, 0.85f));
+                        var radio = r * Mathf.Lerp(0.94f, 1.02f, f);
+                        m.Vertice(dir * radio + Vector3.up * y, new Vector2(recorrido / repeticion, Mathf.Clamp01((y + 6f) / (maximo + 6f))));
+                    }
+
+                    if (k > 0)
+                    {
+                        var b0 = (k - 1) * filas.Length;
+                        var b1 = k * filas.Length;
+                        for (var f = 0; f + 1 < filas.Length; f++)
+                        {
+                            // Mira hacia el centro de la escena.
+                            m.Triangulo(b0 + f, b1 + f, b0 + f + 1);
+                            m.Triangulo(b0 + f + 1, b1 + f, b1 + f + 1);
+                        }
+                    }
                 }
 
-                degradado.Apply();
+                var lejos = Mathf.InverseLerp(400f, 1100f, r0);
+                var textura = Materiales.Ladera(i, repeticion, maximo + 6f, lejos, aire, a.Noche);
                 var mat = new Material(Materiales.Liso(Color.white, 0.02f)) { name = "cerros_" + i };
-                mat.SetTexture("_BaseMap", degradado);
-                var cerro = m.Poner(padre, "cerros_" + i, mat, false, false);
-                // La niebla por distancia los dejaba del color del cielo: su velo ya va en el degradado.
-                mat.DisableKeyword("FOG_EXP2");
-                mat.SetFloat("_ReceiveFog", 0f);
-                _ = cerro;
+                mat.SetTexture("_BaseMap", textura);
+                m.Poner(padre, "cerros_" + i, mat, false, false);
             }
 
             if (en.Silueta.Length == 0)

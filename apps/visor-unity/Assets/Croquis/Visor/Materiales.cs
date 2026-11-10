@@ -172,6 +172,17 @@ namespace Croquis.Visor
             return t;
         }
 
+        /// <summary>
+        /// Rampa suave de 0 (en `desde`) a 1 (en `hasta`), como `smoothstep` de los sombreadores.
+        /// `Mathf.SmoothStep` no es eso: interpola entre sus dos primeros argumentos, y con él las
+        /// texturas de desgaste salían como cuadros parejos (encontrado el 2026-11-10; ADR 0113).
+        /// </summary>
+        private static float Paso(float desde, float hasta, float x)
+        {
+            var t = Mathf.Clamp01((x - desde) / (hasta - desde));
+            return t * t * (3f - 2f * t);
+        }
+
         /// <summary>Ruido de valor que se repite sin costura, en [0, 1]; `celdas` por lado.</summary>
         private static float Ruido(float u, float v, int celdas, int semilla)
         {
@@ -201,7 +212,8 @@ namespace Croquis.Visor
             var tex = Pintar("raya_gastada", 128, true, (u, v) =>
             {
                 var r = 0.6f * Ruido(u, v, 8, 3) + 0.4f * Ruido(u, v, 32, 5);
-                return new Color(1f, 1f, 1f, Mathf.SmoothStep(0.28f, 0.52f, r));
+                // Solo aclara: una raya continua nunca se debe ver cortada (se leería discontinua).
+                return new Color(1f, 1f, 1f, Mathf.Lerp(0.62f, 1f, Paso(0.3f, 0.55f, r)));
             });
             var llave = "raya|" + ColorUtility.ToHtmlStringRGBA(color);
             if (!Cache.TryGetValue(llave, out var m))
@@ -266,7 +278,7 @@ namespace Croquis.Visor
             {
                 var d = Mathf.Max(Mathf.Abs(u - 0.5f), Mathf.Abs(v - 0.5f)) * 2f;
                 var orilla = 0.86f + 0.08f * Ruido(u, v, 6, 9);
-                return new Color(1f, 1f, 1f, 1f - Mathf.SmoothStep(orilla - 0.06f, orilla, d));
+                return new Color(1f, 1f, 1f, 1f - Paso(orilla - 0.06f, orilla, d));
             });
             return ConMancha("parche", "calca", tex, new Color(0.035f, 0.035f, 0.038f, 0.62f));
         }
@@ -278,7 +290,7 @@ namespace Croquis.Visor
             {
                 var r = new Vector2(u * 2f - 1f, v * 2f - 1f).magnitude;
                 var orilla = 0.6f + 0.35f * Ruido(u, v, 5, 21);
-                return new Color(1f, 1f, 1f, 1f - Mathf.SmoothStep(orilla * 0.35f, orilla, r));
+                return new Color(1f, 1f, 1f, 1f - Paso(orilla * 0.35f, orilla, r));
             });
             return ConMancha("mancha_oscura", "calca", tex, new Color(0.02f, 0.02f, 0.022f, fuerza));
         }
@@ -289,7 +301,7 @@ namespace Croquis.Visor
             var tex = Pintar("rodada", 64, true, (u, v) =>
             {
                 var c = 1f - Mathf.Abs(v * 2f - 1f);
-                return new Color(1f, 1f, 1f, Mathf.SmoothStep(0f, 0.8f, c) * (0.75f + 0.25f * Ruido(u, v, 8, 33)));
+                return new Color(1f, 1f, 1f, Paso(0f, 0.8f, c) * (0.75f + 0.25f * Ruido(u, v, 8, 33)));
             });
             return ConMancha("rodada", "calca", tex, color);
         }
@@ -300,7 +312,7 @@ namespace Croquis.Visor
             var tex = Pintar("escurrido", 128, true, (u, v) =>
             {
                 // Vetas verticales (el ruido casi no cambia a lo alto) que se apagan hacia abajo (v = 0).
-                var veta = Mathf.SmoothStep(0.38f, 0.78f, 0.7f * Ruido(u, v * 0.12f, 14, 51) + 0.3f * Ruido(u, v * 0.3f, 40, 53));
+                var veta = Paso(0.38f, 0.78f, 0.7f * Ruido(u, v * 0.12f, 14, 51) + 0.3f * Ruido(u, v * 0.3f, 40, 53));
                 return new Color(1f, 1f, 1f, veta * Mathf.Pow(v, 1.4f));
             });
             tex.wrapModeV = TextureWrapMode.Clamp;
@@ -313,8 +325,8 @@ namespace Croquis.Visor
             var tex = Pintar("descarapelado", 64, false, (u, v) =>
             {
                 var r = 0.6f * Ruido(u, v, 5, 61) + 0.4f * Ruido(u, v, 14, 63);
-                var orilla = 1f - Mathf.SmoothStep(0.65f, 1f, Mathf.Max(Mathf.Abs(u - 0.5f), Mathf.Abs(v - 0.5f)) * 2f);
-                return new Color(1f, 1f, 1f, Mathf.SmoothStep(0.5f, 0.6f, r) * orilla);
+                var orilla = 1f - Paso(0.65f, 1f, Mathf.Max(Mathf.Abs(u - 0.5f), Mathf.Abs(v - 0.5f)) * 2f);
+                return new Color(1f, 1f, 1f, Paso(0.5f, 0.6f, r) * orilla);
             });
             return ConMancha("descarapelado", "calca", tex, new Color(0.6f, 0.58f, 0.54f, 0.92f));
         }
@@ -325,7 +337,7 @@ namespace Croquis.Visor
             var tex = Pintar("tonos", 128, true, (u, v) =>
             {
                 var r = 0.65f * Ruido(u, v, 5, 41) + 0.35f * Ruido(u, v, 17, 43);
-                return new Color(1f, 1f, 1f, Mathf.SmoothStep(0.5f, 0.85f, r));
+                return new Color(1f, 1f, 1f, Paso(0.5f, 0.85f, r));
             });
             return ConMancha("tonos", "calca", tex, color);
         }
@@ -380,6 +392,162 @@ namespace Croquis.Visor
             }
 
             return m;
+        }
+
+        /// <summary>Tierra suelta junto a la orilla de grava: llena junto a la vía y se pierde en el pasto.</summary>
+        public static Material OrillaDeTierra()
+        {
+            var tex = Pintar("orilla_tierra", 128, true, (u, v) =>
+            {
+                // v = 0 junto a la grava, v = 1 hacia el pasto.
+                var r = 0.6f * Ruido(u, v, 10, 71) + 0.4f * Ruido(u, v, 37, 73);
+                var corte = Mathf.Lerp(0.15f, 0.95f, v);
+                return new Color(1f, 1f, 1f, Paso(corte - 0.12f, corte + 0.12f, r) * 0.9f);
+            });
+            tex.wrapModeV = TextureWrapMode.Clamp;
+            return ConMancha("orilla_tierra", "calca", tex, new Color(0.36f, 0.3f, 0.22f, 0.85f));
+        }
+
+        /// <summary>
+        /// Un matorral: racimos de hojas en domo sobre unas ramas, para tarjetas cruzadas. Tres follajes:
+        /// 0 verde, 1 olivo, 2 seco (el de la temporada de secas en el altiplano).
+        /// </summary>
+        public static Material Matorral(int follaje, bool noche = false)
+        {
+            const int N = 128;
+            var nombre = "matorral_" + follaje;
+            if (!Texturas.TryGetValue(nombre, out var tex))
+            {
+                var px = new Color[N * N];
+                var azar = new Azar(1301 + follaje * 17);
+                var baseColor = follaje == 0
+                    ? new Color(0.2f, 0.31f, 0.12f)
+                    : follaje == 1 ? new Color(0.3f, 0.33f, 0.15f) : new Color(0.43f, 0.38f, 0.22f);
+                // Ramas: del pie hacia afuera, oscuras.
+                for (var r = 0; r < 7; r++)
+                {
+                    var x = N * 0.5f + azar.Entre(-4f, 4f);
+                    var ang = Mathf.PI / 2f + azar.Entre(-0.9f, 0.9f);
+                    for (var y = 0f; y < N * 0.7f; y += 1f)
+                    {
+                        var xi = Mathf.RoundToInt(x + Mathf.Cos(ang) / Mathf.Max(0.2f, Mathf.Sin(ang)) * y);
+                        var yi = Mathf.RoundToInt(y);
+                        if (xi >= 0 && xi < N && yi < N)
+                        {
+                            px[yi * N + xi] = new Color(0.16f, 0.12f, 0.08f, 1f);
+                        }
+                    }
+                }
+
+                // Racimos de hojas dentro de un domo; más oscuros abajo y adentro.
+                for (var k = 0; k < 190; k++)
+                {
+                    var cx = azar.Entre(0.1f, 0.9f);
+                    var techo = 0.12f + 0.8f * Mathf.Sqrt(Mathf.Max(0f, 1f - Mathf.Pow((cx - 0.5f) / 0.42f, 2f)));
+                    var cy = azar.Entre(0.1f, 1f) * techo;
+                    var radio = azar.Entre(3f, 7.5f);
+                    var luz = Mathf.Lerp(0.62f, 1.18f, cy / Mathf.Max(techo, 0.01f)) * azar.Entre(0.85f, 1.12f);
+                    var c = baseColor * luz;
+                    for (var dy = -8; dy <= 8; dy++)
+                    {
+                        for (var dx = -8; dx <= 8; dx++)
+                        {
+                            var xi = Mathf.RoundToInt(cx * N) + dx;
+                            var yi = Mathf.RoundToInt(cy * N) + dy;
+                            if (xi < 0 || yi < 0 || xi >= N || yi >= N)
+                            {
+                                continue;
+                            }
+
+                            // Orilla mordida: el racimo es de hojas, no un disco.
+                            var orilla = radio * (0.75f + 0.5f * Ruido(xi / (float)N, yi / (float)N, 32, 1303 + follaje));
+                            if (dx * dx + dy * dy <= orilla * orilla)
+                            {
+                                px[yi * N + xi] = new Color(c.r, c.g, c.b, 1f);
+                            }
+                        }
+                    }
+                }
+
+                tex = new Texture2D(N, N, TextureFormat.RGBA32, true) { wrapMode = TextureWrapMode.Clamp, name = nombre };
+                tex.SetPixels(px);
+                tex.Apply(true, true);
+                Texturas[nombre] = tex;
+            }
+
+            var llave = nombre + (noche ? "|noche" : "");
+            if (!Cache.TryGetValue(llave, out var m))
+            {
+                // Sobre la base de las matas, por la misma razón: la variante del sombreador.
+                m = new Material(Base("mata")) { name = llave };
+                m.SetTexture("_BaseMap", tex);
+                m.SetColor("_BaseColor", noche ? new Color(0.5f, 0.54f, 0.52f) : Color.white);
+                Cache[llave] = m;
+            }
+
+            return m;
+        }
+
+        /// <summary>
+        /// La ladera de una capa de cerros: pasto y tierra en manchas, matorral y árboles como puntos
+        /// oscuros (más en las cañadas y abajo), y roca clara cerca de la cresta. `metrosPorRepeticion`
+        /// es lo que mide la textura a lo ancho; a lo alto cubre de la base a la cresta. Cuanto más
+        /// lejos (`lejos` de 0 a 1), más se funde con el `aire`.
+        /// </summary>
+        public static Texture2D Ladera(int capa, float metrosPorRepeticion, float altoM, float lejos, Color aire, bool noche)
+        {
+            var n = Calidad.Media ? 256 : 512;
+            var nombre = "ladera_" + capa + "_" + n + "_" + (noche ? "n" : "d");
+            if (Texturas.TryGetValue(nombre, out var t))
+            {
+                return t;
+            }
+
+            var semilla = 1500 + capa * 31;
+            // Manchas de unos 9 m; el ruido se repite a lo ancho y a lo alto se estira a escala.
+            var celdasMonte = Mathf.Max(3, Mathf.RoundToInt(metrosPorRepeticion / 9f));
+            var aspecto = altoM / metrosPorRepeticion;
+
+            var pasto = new Color(0.27f, 0.31f, 0.16f);
+            var seco = new Color(0.47f, 0.4f, 0.26f);
+            var monte = new Color(0.13f, 0.17f, 0.08f);
+            var roca = new Color(0.5f, 0.47f, 0.42f);
+            t = new Texture2D(n, n, TextureFormat.RGBA32, true) { name = nombre, wrapModeU = TextureWrapMode.Repeat, wrapModeV = TextureWrapMode.Clamp };
+            var px = new Color[n * n];
+            for (var j = 0; j < n; j++)
+            {
+                var v = (j + 0.5f) / n;
+                for (var i = 0; i < n; i++)
+                {
+                    var u = (i + 0.5f) / n;
+                    var manchas = 0.55f * Ruido(u, v, 6, semilla) + 0.3f * Ruido(u, v, 17, semilla + 1) + 0.15f * Ruido(u, v, 45, semilla + 2);
+                    var c = Color.Lerp(pasto, seco, Paso(0.35f, 0.7f, manchas));
+                    // Cañadas: franjas que bajan (el ruido casi no cambia a lo alto).
+                    var canada = Paso(0.55f, 0.8f, Ruido(u, v * 0.15f, 9, semilla + 3));
+                    // Vegetación: manchas de monte de forma irregular (de unos 5 a 15 m), más tupidas
+                    // abajo y en las cañadas. El ruido va en metros iguales a lo ancho y a lo alto.
+                    var vm = v * aspecto;
+                    var ruido = 0.5f * Ruido(u, vm, celdasMonte, semilla + 5)
+                        + 0.3f * Ruido(u, vm, celdasMonte * 2 + 1, semilla + 6)
+                        + 0.2f * Ruido(u, vm, celdasMonte * 5 + 2, semilla + 8);
+                    var densidad = Mathf.Lerp(0.4f, 0.14f, v) + canada * 0.22f;
+                    // Orilla suave: con un corte seco las manchas parecían de camuflaje.
+                    var arbol = Paso(1f - densidad - 0.12f, 1f - densidad + 0.1f, ruido);
+                    var sombra = 0.8f + 0.4f * Ruido(u, vm, celdasMonte * 6, semilla + 7);
+                    c = Color.Lerp(c, monte * sombra, arbol * 0.62f);
+                    var risco = Paso(0.72f, 0.95f, v) * Paso(0.55f, 0.75f, Ruido(u, v, 21, semilla + 4));
+                    c = Color.Lerp(c, roca, risco * (1f - arbol));
+                    // Abajo, la ladera se vela más con el aire (perspectiva atmosférica en la base).
+                    // La niebla de la escena ya vela los cerros; aquí solo un poco más a las capas lejanas.
+                    var velo = Mathf.Lerp(0f, noche ? 0.1f : 0.18f, lejos) * Mathf.Lerp(1.15f, 0.85f, v);
+                    px[j * n + i] = Color.Lerp(c, aire, Mathf.Clamp01(velo));
+                }
+            }
+
+            t.SetPixels(px);
+            t.Apply(true, true);
+            Texturas[nombre] = t;
+            return t;
         }
 
         private static Material ConMancha(string llave, string baseMat, Texture2D tex, Color color)

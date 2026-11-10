@@ -36,6 +36,10 @@ namespace Croquis.Visor
             var urbana = e.Entorno.Zona == ZonaEntorno.Urbana;
             var centro = new Vector2((float)e.Centro.X, (float)e.Centro.Y);
             Via(escenario, e.Via, e.Ambiente, terreno, e.Semilla, urbana, centro);
+            if (!urbana)
+            {
+                CarreteraVista.Construir(escenario, e.Via, e.Ambiente, terreno, e.Semilla);
+            }
             foreach (var s in e.Suelo)
             {
                 Suelo(escenario, s, e.Ambiente, urbana, e.Semilla);
