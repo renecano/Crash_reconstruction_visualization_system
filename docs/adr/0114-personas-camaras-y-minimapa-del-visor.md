@@ -25,6 +25,13 @@
 10. **El minimapa** es una cámara ortográfica desde arriba en la esquina inferior derecha, con «Ver todo» y el norte arriba. Una flecha naranja, en una capa que solo ve el minimapa (31), marca dónde está la cámara. No proyecta sombras ni lleva posproceso, y la niebla se apaga mientras se dibuja (en una escena de lluvia, desde arriba, solo se veía su color). En la cenital se esconde.
 11. **El contrato del puente no cambia:** `camara` ya admitía `orbita` y `libre`, y `encuadrar` ya admitía `todo` e `impacto`.
 
+## Ajustes de René antes de U5 (2026-11-10)
+
+12. **La vista del conductor no dibuja la carrocería propia,** salvo un contorno tenue (gris, 20 % de opacidad, 7 mm) del borde del cofre y de los postes y el techo del parabrisas, a la medida del vehículo y de su clase. Se ve lo que el conductor alcanzaba a ver. El ojo sigue a la altura de `visibilidad`, y ya no hace falta el recorte de 0.75 m.
+13. **Todo vidrio de los modelos usa un vidrio propio neutro** (`vidrio_vehiculo`: tintado al 62 %, liso y sin el reflejo de la sonda). Con el de los modelos (transmisión o el atlas de luces y vidrio), el medallón reflejaba las fachadas de colores vivos como franjas rojas y azules, de torreta. Se guarda como recurso al preparar el proyecto para que su variante entre al build.
+14. **La moto (y toda dos ruedas que el solver arrastra caída) se tiende desde el impacto,** en 0.35 s y hacia el lado al que se desliza (`Caida`). En reposo lleva el letrero «Posición final ilustrativa». La caída no es un resultado del solver: es un límite suyo, junto a la volcadura (README y «Endurecimiento pendiente»).
+15. **La camisa nunca es color piel:** de la paleta web se quitó el malva `#7d4b55`, a 35 de un tono de piel en RGB; todas las camisas quedan a más de 60, con prueba en el núcleo. La paleta de camisas del visor Unity ya no es idéntica a la de la web (6 colores en vez de 7).
+
 ## Consecuencias
 
 - **El núcleo gana** `Personas`, `Cuerpos`, `Encuadre.VerTodo`, `CajaPlano` y `Lente`, con pruebas en `dotnet test` (CI): pose en cada muestra, postura por fase, ocupantes, regiones del .glb real, el hash de la web, «Ver todo» deja en cuadro reposos e impacto en los 22 paquetes, y la caja de la cinematográfica.

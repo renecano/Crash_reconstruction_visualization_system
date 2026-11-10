@@ -38,6 +38,7 @@ namespace Croquis.Visor
         {
             visor = GetComponent<VisorCaso>();
             Application.targetFrameRate = -1;
+            Calidad.Aplicar();
         }
 
         private void Start()
@@ -49,6 +50,11 @@ namespace Croquis.Visor
         {
             cuadros.Add(Time.unscaledDeltaTime);
             desdeFps += Time.unscaledDeltaTime;
+            if (visor.Cargado)
+            {
+                Calidad.Cuadro(Time.unscaledDeltaTime);
+            }
+
             if (desdeFps >= SegundosPorReporteFps)
             {
                 cuadros.Sort();
@@ -235,6 +241,21 @@ namespace Croquis.Visor
                     tono.active = (bool)j["tono"];
                 }
 
+                if (j["bucle"] != null)
+                {
+                    visor.Bucle = (bool)j["bucle"];
+                }
+
+                if (j["minimapa"] != null)
+                {
+                    visor.Camara.MinimapaVisible = (bool)j["minimapa"];
+                }
+
+                if (j["diagnostico"] != null && PanelDiagnostico.Instancia != null)
+                {
+                    PanelDiagnostico.Instancia.Visible = (bool)j["diagnostico"];
+                }
+
                 if (j["ambiente_plano"] != null && (bool)j["ambiente_plano"])
                 {
                     RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
@@ -249,9 +270,28 @@ namespace Croquis.Visor
             });
         }
 
+        /// <summary>
+        /// Fija el nivel, o lo deja automático (U5). Lo del escenario (matas, luminarias con luz, focos
+        /// de los faros) toma el nivel nuevo al cargar el siguiente caso; la canalización, de inmediato.
+        /// </summary>
         public void calidad(string texto)
         {
-            Error("interno", "Los niveles de calidad llegan en U5.");
+            Campos(texto, j =>
+            {
+                var nivel = (string)j["nivel"];
+                if (nivel == "auto")
+                {
+                    Calidad.Automatico();
+                }
+                else if (Calidades.TryLeer(nivel, out var n))
+                {
+                    Calidad.Fijar(n);
+                }
+                else
+                {
+                    Error("interno", "No hay un nivel de calidad «" + nivel + "».");
+                }
+            });
         }
 
         public void capturar(string texto)

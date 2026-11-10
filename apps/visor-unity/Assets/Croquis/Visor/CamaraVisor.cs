@@ -61,6 +61,9 @@ namespace Croquis.Visor
         private float altoCenital = 40f;
 
         private Camera minimapa;
+
+        /// <summary>El minimapa se puede apagar para medir lo que cuesta (U5).</summary>
+        public bool MinimapaVisible { get; set; } = true;
         private Transform marcador;
         private Vector3 ultimoRaton;
         private float ultimaSeparacion;
@@ -539,9 +542,13 @@ namespace Croquis.Visor
             var lado = (float)zona.Lado;
             var t = Caso != null ? (float)(Caso.Tiempo - inicio) : 0f;
             ActualizarMinimapa();
-            // En la cámara del conductor, lo que está a menos de 0.75 m del ojo (el volante y el tablero
-            // del modelo genérico) no se dibuja: a la altura del ojo de `visibilidad` taparía el camino.
-            camara.nearClipPlane = modo == "conductor" ? 0.75f : 0.1f;
+            // En la cámara del conductor no se dibuja la carrocería propia, salvo un contorno tenue del
+            // cofre y de los postes (René, 2026-11-10): se ve lo que el conductor alcanzaba a ver.
+            foreach (var v in Vehiculos)
+            {
+                v.DesdeElAsiento(modo == "conductor" && v.name == "vehiculo_" + conductor);
+            }
+
             foreach (var ocupante in Ocupantes)
             {
                 if (ocupante != null)
@@ -720,8 +727,18 @@ namespace Croquis.Visor
                     var az = (azBase + Mathf.Clamp(2.2f * t, -giroMax, giroMax)) * Mathf.Deg2Rad;
                     dist *= distK;
                     alto += altoExtra;
-                    camara.transform.position = objetivo + new Vector3(Mathf.Cos(az) * dist, alto, Mathf.Sin(az) * dist);
-                    camara.transform.LookAt(objetivo + Vector3.up * 0.9f);
+                    // La distancia cambia con el instante y el rumbo se revisó con la del principio: si
+                    // ahora algo tapa la vista (una fachada), la cámara se acerca hasta verla libre.
+                    var mira = objetivo + Vector3.up * 0.9f;
+                    var ojo = objetivo + new Vector3(Mathf.Cos(az) * dist, alto, Mathf.Sin(az) * dist);
+                    for (var intento = 0; intento < 12 && dist > 7f && !Despejada(ojo, mira, true); intento++)
+                    {
+                        dist = Mathf.Max(7f, dist * 0.85f);
+                        ojo = objetivo + new Vector3(Mathf.Cos(az) * dist, alto, Mathf.Sin(az) * dist);
+                    }
+
+                    camara.transform.position = ojo;
+                    camara.transform.LookAt(mira);
                     return;
                 }
             }
@@ -754,7 +771,7 @@ namespace Croquis.Visor
                 return;
             }
 
-            minimapa.enabled = modo != "cenital";
+            minimapa.enabled = MinimapaVisible && modo != "cenital";
             if (marcador != null)
             {
                 var p = camara.transform.position;

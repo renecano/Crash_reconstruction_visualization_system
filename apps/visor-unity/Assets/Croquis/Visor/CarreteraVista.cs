@@ -737,7 +737,7 @@ namespace Croquis.Visor
             // Manchones, no puntos sueltos (René, 2026-11-10): unos cuantos grupos por cada 100 m de
             // orilla, de 2 a 9 matorrales cada uno, con tamaños muy distintos (muchos chicos y pocos
             // grandes) y repartidos sin orden; entre grupo y grupo, alguno suelto.
-            var grupos = Mathf.Max(1, Mathf.RoundToInt(total / 100f * (Calidad.Media ? 2.5f : 3.5f)));
+            var grupos = Mathf.Max(1, Mathf.RoundToInt(total / 100f * (float)Calidad.Perfil.MatorralesPor100M));
             for (var k = 0; k < grupos; k++)
             {
                 var s = azar.Siguiente() * total;

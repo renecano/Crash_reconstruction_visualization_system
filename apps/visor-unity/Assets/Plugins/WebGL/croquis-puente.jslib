@@ -6,4 +6,8 @@ mergeInto(LibraryManager.library, {
       window.croquisVisorMensaje(texto);
     }
   },
+  // El dpr de la pantalla, para el tope de dpr de cada nivel de calidad (U5, ADR 0115).
+  CroquisDpr: function () {
+    return window.devicePixelRatio || 1;
+  },
 });

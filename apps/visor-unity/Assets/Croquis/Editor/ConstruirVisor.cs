@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Croquis.Core;
 using Croquis.Visor;
 using Newtonsoft.Json.Linq;
 using UnityEditor;
@@ -25,20 +27,14 @@ namespace Croquis.EditorTools
         [MenuItem("Croquis/Preparar proyecto")]
         public static void Preparar()
         {
-            var pipeline = Canalizacion();
-            GraphicsSettings.defaultRenderPipeline = pipeline;
-            for (var i = 0; i < QualitySettings.names.Length; i++)
-            {
-                QualitySettings.SetQualityLevel(i, false);
-                QualitySettings.renderPipeline = pipeline;
-            }
+            var canalizaciones = Canalizaciones();
+            GraphicsSettings.defaultRenderPipeline = canalizaciones[NivelCalidad.Alta].Urp;
+            Niveles(canalizaciones);
 
             AjustesJugador();
             IncluirShadersDeGltf();
             Recursos();
-            PrepararEscenario.Todo(
-                (UniversalRenderPipelineAsset)pipeline,
-                AssetDatabase.LoadAssetAtPath<UniversalRendererData>(CarpetaRender + "/URP_Renderer.asset"));
+            PrepararEscenario.Todo(canalizaciones);
             Escena();
             AssetDatabase.SaveAssets();
         }
@@ -72,25 +68,99 @@ namespace Croquis.EditorTools
             }
         }
 
-        private static RenderPipelineAsset Canalizacion()
+        /// <summary>
+        /// Una canalización URP por nivel (U5, ADR 0115). Alta conserva `URP.asset` y `URP_Renderer.asset`
+        /// de antes; ultra comparte el renderer de alta (la misma oclusión completa); baja y media tienen
+        /// el suyo, porque la oclusión de media es a media resolución y baja no la lleva.
+        /// </summary>
+        private static Dictionary<NivelCalidad, (UniversalRenderPipelineAsset Urp, UniversalRendererData Renderer)> Canalizaciones()
         {
-            var ruta = CarpetaRender + "/URP.asset";
-            var asset = AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(ruta);
-            if (asset == null)
+            Directory.CreateDirectory(CarpetaRender);
+            UniversalRendererData Renderer(string ruta)
             {
-                Directory.CreateDirectory(CarpetaRender);
-                var datos = ScriptableObject.CreateInstance<UniversalRendererData>();
-                AssetDatabase.CreateAsset(datos, CarpetaRender + "/URP_Renderer.asset");
-                asset = UniversalRenderPipelineAsset.Create(datos);
-                AssetDatabase.CreateAsset(asset, ruta);
+                var r = AssetDatabase.LoadAssetAtPath<UniversalRendererData>(ruta);
+                if (r == null)
+                {
+                    r = ScriptableObject.CreateInstance<UniversalRendererData>();
+                    AssetDatabase.CreateAsset(r, ruta);
+                }
+
+                return r;
             }
 
-            // Luminarias y faros de noche (U2): hasta 8 luces adicionales por objeto, y sombras hasta
-            // 150 m. La calidad por nivel llega en U5.
-            asset.maxAdditionalLightsCount = 8;
-            asset.shadowDistance = 150f;
-            EditorUtility.SetDirty(asset);
-            return asset;
+            UniversalRenderPipelineAsset Urp(string ruta, UniversalRendererData r)
+            {
+                var a = AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(ruta);
+                if (a == null)
+                {
+                    a = UniversalRenderPipelineAsset.Create(r);
+                    AssetDatabase.CreateAsset(a, ruta);
+                }
+
+                return a;
+            }
+
+            var alto = Renderer(CarpetaRender + "/URP_Renderer.asset");
+            var medio = Renderer(CarpetaRender + "/URP_Renderer_media.asset");
+            var bajo = Renderer(CarpetaRender + "/URP_Renderer_baja.asset");
+            return new Dictionary<NivelCalidad, (UniversalRenderPipelineAsset, UniversalRendererData)>
+            {
+                [NivelCalidad.Baja] = (Urp(CarpetaRender + "/URP_baja.asset", bajo), bajo),
+                [NivelCalidad.Media] = (Urp(CarpetaRender + "/URP_media.asset", medio), medio),
+                [NivelCalidad.Alta] = (Urp(CarpetaRender + "/URP.asset", alto), alto),
+                [NivelCalidad.Ultra] = (Urp(CarpetaRender + "/URP_ultra.asset", alto), alto),
+            };
+        }
+
+        /// <summary>
+        /// Los niveles de `QualitySettings`: baja, media, alta y ultra, cada uno con su canalización, sin
+        /// vsync (para medir capacidad; el navegador y la pantalla ya ponen su tope) y con lo demás igual
+        /// en los cuatro (huesos por vértice, texturas completas, sondas en tiempo real). La web arranca
+        /// en media y el escritorio en alta; `Calidad` ajusta según la GPU.
+        /// </summary>
+        private static void Niveles(Dictionary<NivelCalidad, (UniversalRenderPipelineAsset Urp, UniversalRendererData Renderer)> canalizaciones)
+        {
+            var so = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/QualitySettings.asset")[0]);
+            var lista = so.FindProperty("m_QualitySettings");
+            while (lista.arraySize > Calidades.Todos.Count)
+            {
+                lista.DeleteArrayElementAtIndex(0);
+            }
+
+            for (var i = 0; i < Calidades.Todos.Count; i++)
+            {
+                var n = Calidades.Todos[i];
+                var e = lista.GetArrayElementAtIndex(i);
+                e.FindPropertyRelative("name").stringValue = Calidades.Nombre(n);
+                e.FindPropertyRelative("customRenderPipeline").objectReferenceValue = canalizaciones[n].Urp;
+                e.FindPropertyRelative("vSyncCount").intValue = 0;
+                e.FindPropertyRelative("antiAliasing").intValue = 0;
+                e.FindPropertyRelative("skinWeights").intValue = 4;
+                e.FindPropertyRelative("globalTextureMipmapLimit").intValue = 0;
+                e.FindPropertyRelative("anisotropicTextures").intValue = 2;
+                e.FindPropertyRelative("realtimeReflectionProbes").boolValue = true;
+                e.FindPropertyRelative("softParticles").boolValue = true;
+                e.FindPropertyRelative("billboardsFaceCameraPosition").boolValue = true;
+                e.FindPropertyRelative("lodBias").floatValue = 1.5f;
+                e.FindPropertyRelative("maximumLODLevel").intValue = 0;
+                e.FindPropertyRelative("pixelLightCount").intValue = 8;
+                e.FindPropertyRelative("shadows").intValue = 2;
+            }
+
+            so.FindProperty("m_CurrentQuality").intValue = (int)NivelCalidad.Alta;
+            var porPlataforma = so.FindProperty("m_PerPlatformDefaultQuality");
+            for (var i = 0; i < porPlataforma.arraySize; i++)
+            {
+                var par = porPlataforma.GetArrayElementAtIndex(i);
+                var plataforma = par.FindPropertyRelative("first").stringValue;
+                var nivel = plataforma == "WebGL" ? NivelCalidad.Media
+                    : plataforma == "Android" || plataforma == "iPhone" || plataforma == "tvOS" ? NivelCalidad.Baja
+                    : NivelCalidad.Alta;
+                par.FindPropertyRelative("second").intValue = (int)nivel;
+            }
+
+            so.ApplyModifiedPropertiesWithoutUndo();
+            AssetDatabase.SaveAssets();
         }
 
         private static void AjustesJugador()
@@ -114,7 +184,12 @@ namespace Croquis.EditorTools
             PlayerSettings.SetManagedStrippingLevel(NamedBuildTarget.WebGL, ManagedStrippingLevel.Medium);
             PlayerSettings.SetIl2CppCodeGeneration(NamedBuildTarget.WebGL, Il2CppCodeGeneration.OptimizeSize);
 
-            PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone, ScriptingImplementation.IL2CPP);
+            // Mono en escritorio (ADR 0115): IL2CPP necesita las herramientas de C++ de Visual Studio, que
+            // la laptop de desarrollo no tiene; el costo que se mide es de la GPU, igual con los dos.
+            PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone, ScriptingImplementation.Mono2x);
+            PlayerSettings.fullScreenMode = FullScreenMode.FullScreenWindow;
+            PlayerSettings.defaultScreenWidth = 1920;
+            PlayerSettings.defaultScreenHeight = 1080;
         }
 
         /// <summary>glTFast busca sus shaders por nombre al abrir un modelo: deben ir en el build.</summary>
@@ -198,6 +273,8 @@ namespace Croquis.EditorTools
             puente.AddComponent<CamaraVisor>().Asignar(c);
             puente.AddComponent<VisorCaso>();
             puente.AddComponent<VisorPuente>();
+            puente.AddComponent<PanelDiagnostico>();
+            puente.AddComponent<Medicion>();
 
             // Con niebla en la escena guardada: URP quita del build los modos de niebla que ninguna
             // escena usa, y el escenario la enciende en tiempo de ejecución.

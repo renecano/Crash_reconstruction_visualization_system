@@ -60,8 +60,11 @@ namespace Croquis.EditorTools
                 SessionState.EraseString(Clave);
                 var tiempos = partes[2].Split(',').Select(x => double.Parse(x, System.Globalization.CultureInfo.InvariantCulture)).ToArray();
                 Directory.CreateDirectory(partes[1]);
-                // Las capturas muestran el nivel del destino del build: en WebGL, «media».
-                Calidad.Forzada = EditorUserBuildSettings.activeBuildTarget == BuildTarget.WebGL;
+                // Las capturas muestran el nivel del destino del build: en WebGL, «media»; en escritorio, «alta».
+                Calidad.Forzado = EditorUserBuildSettings.activeBuildTarget == BuildTarget.WebGL
+                    ? Croquis.Core.NivelCalidad.Media
+                    : Croquis.Core.NivelCalidad.Alta;
+                Calidad.Aplicar();
                 var visor = UnityEngine.Object.FindFirstObjectByType<VisorCaso>();
                 var camara = Camera.main;
                 foreach (var archivo in Directory.GetFiles(partes[0], "*.json").OrderBy(x => x))

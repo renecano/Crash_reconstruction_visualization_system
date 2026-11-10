@@ -205,6 +205,20 @@ namespace Croquis.Core
         }
 
         /// <summary>
+        /// El punto del ocupante (asiento más desplazamiento, marco del vehículo) dentro de la cabina.
+        /// El desplazamiento del solver es respecto al habitáculo: si pasa de la pared, lo que ocurre es
+        /// un contacto con el interior (`variante.contacto`), no que el cuerpo salga. Se limita a 22 cm de
+        /// la lámina a los lados, al parabrisas adelante y a 20 cm de la parte trasera.
+        /// </summary>
+        public static (double X, double Y) EnCabina((double X, double Y) p, double largo, double ancho)
+        {
+            var lado = Math.Max(0.0, ancho / 2.0 - 0.22);
+            var adelante = 0.22 * largo - 0.1;
+            var atras = -largo / 2.0 + 0.2;
+            return (Math.Min(adelante, Math.Max(atras, p.X)), Math.Min(lado, Math.Max(-lado, p.Y)));
+        }
+
+        /// <summary>
         /// Dónde está el ocupante en el mundo (x, y en metros) a partir de la pose de su vehículo: el
         /// asiento más el desplazamiento, girados con el rumbo.
         /// </summary>

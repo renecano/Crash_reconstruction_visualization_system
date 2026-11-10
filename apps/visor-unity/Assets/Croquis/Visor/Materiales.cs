@@ -111,6 +111,9 @@ namespace Croquis.Visor
         }
 
         public static Material Vidrio => Base("vidrio");
+
+        /// <summary>El vidrio de los vehículos: neutro, sin el reflejo de la sonda (ADR 0114).</summary>
+        public static Material VidrioVehiculo => Base("vidrio_vehiculo");
         public static Material Charco => Base("charco");
         public static Material Lluvia => Base("lluvia");
 

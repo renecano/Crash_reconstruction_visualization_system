@@ -33,6 +33,7 @@ namespace Croquis.Visor
         private ResultadoPersona persona;
         private VarianteElement variante;
         private (double X, double Y) asiento;
+        private (double Largo, double Ancho) cabina;
         private Terreno terreno;
         private Transform cuerpo;
         private float estatura;
@@ -71,6 +72,7 @@ namespace Croquis.Visor
             vista.VehiculoId = v.Id;
             vista.variante = variante;
             vista.asiento = Personas.Asiento(p.Ocupante.Asiento, v.Dimensiones.LargoM, v.Dimensiones.AnchoM);
+            vista.cabina = (v.Dimensiones.LargoM, v.Dimensiones.AnchoM);
             // La segunda variante (sin cinturón, cuando no se declaró) es el maniquí de otro color: así se
             // distinguen las dos sin inventar ropa.
             if (segunda)
@@ -224,7 +226,9 @@ namespace Croquis.Visor
         {
             var d = Personas.Desplazamiento(variante, t);
             var cadera = CaderaEnAsiento + (FraccionCg - 0.5f) * estatura;
-            transform.localPosition = new Vector3(-(float)(asiento.Y + d.Dy), cadera, (float)(asiento.X + d.Dx));
+            // Dentro de la cabina: más allá de la pared, el solver da un contacto, no una salida.
+            var p = Personas.EnCabina((asiento.X + d.Dx, asiento.Y + d.Dy), cabina.Largo, cabina.Ancho);
+            transform.localPosition = new Vector3(-(float)p.Y, cadera, (float)p.X);
             transform.localRotation = Quaternion.identity;
         }
     }

@@ -16,7 +16,6 @@ namespace Croquis.Visor
     /// </summary>
     public static class EscenarioVista
     {
-        private const int LuminariasEncendidasMax = 6;
 
         /// <summary>
         /// El radio, desde el centro de la acción, donde no se dibuja desgaste procedural (grietas,
@@ -195,7 +194,7 @@ namespace Croquis.Visor
             sonda.mode = ReflectionProbeMode.Realtime;
             sonda.refreshMode = ReflectionProbeRefreshMode.ViaScripting;
             sonda.timeSlicingMode = ReflectionProbeTimeSlicingMode.NoTimeSlicing;
-            sonda.resolution = Calidad.Media ? 128 : 256;
+            sonda.resolution = Calidad.Perfil.Sonda;
             // En WebGL una sonda en tiempo real con HDR devuelve pixeles sin número: todo lo que la usa
             // salía negro, y con resplandor, blanco (medido el 2026-11-09 con builds de diagnóstico;
             // ADR 0113). Ahí va sin HDR.
@@ -662,7 +661,7 @@ namespace Croquis.Visor
             var azar = new Azar(semilla + 307);
             var verdes = new Malla { NormalArriba = true };
             var secas = new Malla { NormalArriba = true };
-            var Intentos = Calidad.Media ? 7000 : 14000;
+            var Intentos = Calidad.Perfil.Matas;
             // En manchones, no regadas parejo (René, 2026-11-10: «puntitos repetidos»): cada manchón
             // tiene su tamaño, su radio y casi siempre un solo tono (verde o seco), y entre manchones
             // queda pasto liso. El total de matas es el mismo de antes.
@@ -734,7 +733,7 @@ namespace Croquis.Visor
             orden.Sort((p, q) =>
                 (new Vector2((float)p.X, (float)p.Y) - centro).sqrMagnitude.CompareTo(
                     (new Vector2((float)q.X, (float)q.Y) - centro).sqrMagnitude));
-            var tope = Calidad.Media ? 3 : LuminariasEncendidasMax;
+            var tope = Calidad.Perfil.Luminarias;
             var reales = new HashSet<LuminariaEscenario>(orden.GetRange(0, Mathf.Min(tope, orden.Count)));
             var halos = new Malla();
 
@@ -790,7 +789,7 @@ namespace Croquis.Visor
                     luz.range = alto * 4.5f;
                     luz.intensity = 190f;
                     luz.color = new Color(1f, 0.82f, 0.56f);
-                    luz.shadows = luces < 2 && !Calidad.Media ? LightShadows.Soft : LightShadows.None;
+                    luz.shadows = luces < 2 && Calidad.Perfil.SombrasDeFocos ? LightShadows.Soft : LightShadows.None;
                     luces++;
                 }
             }
