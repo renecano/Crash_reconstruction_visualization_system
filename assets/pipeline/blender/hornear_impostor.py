@@ -40,6 +40,44 @@ def radio_en_planta() -> float:
     return r
 
 
+def solo_el_arbol() -> None:
+    """Esconde todo lo que no es el árbol elegido: los modelos de Poly Haven traen otras copias
+    (instancias de colección, variantes) que no son mallas y que `elegir_lod0` no esconde. De
+    frente quedaban fuera del cuadro; al rodear el árbol, se asomaban por la orilla."""
+    activos = set(base.mallas())
+    for o in bpy.context.scene.objects:
+        if o not in activos and o.type not in {"CAMERA", "LIGHT"}:
+            o.hide_render = True
+            o.hide_viewport = True
+
+
+def centrar_en_tronco(lo: Vector, hi: Vector) -> tuple[Vector, Vector]:
+    """Lleva el pie del tronco al origen.
+
+    `hornear_arbol.centrar` centra la caja del árbol, y una copa cargada a un lado deja el tronco
+    fuera del eje: entre una vista y la siguiente el pie brincaría hasta un décimo del cuadro. El
+    pie es el centro de los vértices del 4 % más bajo del árbol.
+    """
+    alto = hi.z - lo.z
+    sx = sy = 0.0
+    n = 0
+    for o in base.mallas():
+        for v in o.data.vertices:
+            p = o.matrix_world @ v.co
+            if p.z - lo.z < 0.04 * alto:
+                sx += p.x
+                sy += p.y
+                n += 1
+    if n == 0:
+        return lo, hi
+    delta = Vector((-sx / n, -sy / n, 0.0))
+    raices = {o for o in base.mallas() if o.parent is None or o.parent.type != "MESH"}
+    for o in raices:
+        o.location = o.location + delta
+    bpy.context.view_layer.update()
+    return base.caja(base.mallas())
+
+
 def camara(nombre: str, angulo: float, lado: float, alto: float) -> None:
     sc = bpy.context.scene
     datos = bpy.data.cameras.new(nombre)
@@ -62,7 +100,8 @@ def main() -> None:
     salida.mkdir(parents=True, exist_ok=True)
     bpy.ops.wm.open_mainfile(filepath=blend)
     base.elegir_lod0()
-    lo, hi = base.centrar()
+    solo_el_arbol()
+    lo, hi = centrar_en_tronco(*base.centrar())
     alto = hi.z - lo.z
     lado = max(2 * radio_en_planta(), alto) * 1.04
     for modo in ("diff", "nor"):

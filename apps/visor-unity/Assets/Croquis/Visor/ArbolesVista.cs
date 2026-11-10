@@ -1,7 +1,3 @@
-// Punto 4 de la segunda pasada de U2 (árboles sin costura), todavía sin conectar: falta hornear
-// los atlas (`node tools/unity/impostores.mjs`) y aplicar `tools/unity/p4-conectar-impostores.py.txt`,
-// que además quita este `#if`. Mientras, no entra a la compilación.
-#if CROQUIS_IMPOSTORES
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -23,6 +19,9 @@ namespace Croquis.Visor
     {
         /// <summary>Hasta cuánto se inclina el cuadro hacia una cámara alta, para no verse de canto.</summary>
         private const float InclinacionMaxRad = 25f * Mathf.Deg2Rad;
+
+        /// <summary>Desde qué elevación de la cámara se deja solo la tarjeta de planta.</summary>
+        private const float DesdeArribaRad = 58f * Mathf.Deg2Rad;
 
         private struct Arbol
         {
@@ -49,6 +48,7 @@ namespace Croquis.Visor
 
         private readonly Dictionary<string, Grupo> grupos = new Dictionary<string, Grupo>();
         private Vector3 ultima = new Vector3(float.NaN, 0f, 0f);
+        private Vector3 ultimaMira = Vector3.forward;
 
         /// <summary>Un árbol de `alto` metros con el pie en `pie` y su rumbo (rad, en planta).</summary>
         public void Agregar(string especie, Vector3 pie, float alto, float giroRad)
@@ -117,14 +117,24 @@ namespace Croquis.Visor
                 var material = Materiales.Arbol(par.Key, "atlas");
                 mr.sharedMaterial = material;
                 mr.shadowCastingMode = ShadowCastingMode.Off;
-                mr.receiveShadows = true;
+                // No recibe sombra (lo fija su material, `arbol_<especie>_atlas`): sus propias tarjetas
+                // de sombra lo cruzan y le dejaban una franja oscura al centro. Su luz y su volumen
+                // salen de la normal horneada.
+                mr.receiveShadows = false;
                 var sombra = sombras.Poner(transform, "sombras_" + par.Key, material).GetComponent<MeshRenderer>();
                 sombra.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
                 g.Caja = caja;
             }
 
             var camara = Camera.main;
-            Actualizar(camara != null ? camara.transform.position : new Vector3(0f, 2f, -30f));
+            if (camara != null)
+            {
+                Actualizar(camara.transform.position, camara.transform.forward);
+            }
+            else
+            {
+                Actualizar(new Vector3(0f, 2f, -30f), Vector3.forward);
+            }
         }
 
         /// <summary>El rectángulo de la vista `k` en el atlas (la fila 0 es la de arriba de la imagen).</summary>
@@ -141,18 +151,41 @@ namespace Croquis.Visor
             v0 = 1f - (float)(fila + 1) / filas + M;
         }
 
-        private void LateUpdate()
+        private void OnEnable()
         {
-            var camara = Camera.main;
-            if (camara != null && camara.transform.position != ultima)
+            RenderPipelineManager.beginCameraRendering += AntesDeDibujar;
+        }
+
+        private void OnDisable()
+        {
+            RenderPipelineManager.beginCameraRendering -= AntesDeDibujar;
+        }
+
+        /// <summary>
+        /// Los cuadros se orientan justo antes de dibujar, hacia la cámara que va a dibujar: en
+        /// `LateUpdate` podían quedar un cuadro atrás de la cámara del visor, que también se mueve ahí.
+        /// </summary>
+        private void AntesDeDibujar(ScriptableRenderContext contexto, Camera camara)
+        {
+            if (camara.cameraType != CameraType.Game)
             {
-                Actualizar(camara.transform.position);
+                return;
+            }
+
+            var t = camara.transform;
+            if (t.position != ultima || t.forward != ultimaMira)
+            {
+                Actualizar(t.position, t.forward);
             }
         }
 
-        private void Actualizar(Vector3 ojo)
+        private void Actualizar(Vector3 ojo, Vector3 mira)
         {
             ultima = ojo;
+            ultimaMira = mira;
+            // Con la cámara mirando casi a plomo (la cenital), todos los árboles van de planta: los de
+            // la orilla del cuadro se verían acostados hacia afuera.
+            var aPlomo = -mira.y > Mathf.Sin(DesdeArribaRad);
             foreach (var g in grupos.Values)
             {
                 if (g.Malla == null)
@@ -168,7 +201,22 @@ namespace Croquis.Visor
                     var lejos = plano.magnitude;
                     var h = lejos > 0.01f ? plano / lejos : Vector3.forward;
                     // Hacia una cámara alta el cuadro se inclina un poco, con el pie fijo en el suelo.
-                    var inclina = Mathf.Clamp(Mathf.Atan2(haciaOjo.y, Mathf.Max(lejos, 0.01f)) * 0.5f, 0f, InclinacionMaxRad);
+                    var elevacion = Mathf.Atan2(haciaOjo.y, Mathf.Max(lejos, 0.01f));
+                    var j = 4 * i;
+                    if (aPlomo || elevacion > DesdeArribaRad)
+                    {
+                        // Desde arriba el cuadro se vería como un árbol acostado: se pliega en un
+                        // punto y queda la tarjeta de planta.
+                        var punto = a.Pie + Vector3.up * a.Centro;
+                        for (var q = 0; q < 4; q++)
+                        {
+                            g.Vertices[j + q] = punto;
+                        }
+
+                        continue;
+                    }
+
+                    var inclina = Mathf.Clamp(elevacion * 0.5f, 0f, InclinacionMaxRad);
                     var normal = h * Mathf.Cos(inclina) + Vector3.up * Mathf.Sin(inclina);
                     var derecha = Vector3.Cross(h, Vector3.up);
                     var arriba = Vector3.Cross(derecha, normal);
@@ -180,7 +228,6 @@ namespace Croquis.Visor
                     var centro = a.Pie + arriba * a.Centro;
                     var dx = derecha * (a.Lado / 2f);
                     var dy = arriba * (a.Lado / 2f);
-                    var j = 4 * i;
                     g.Vertices[j] = centro - dx - dy;
                     g.Vertices[j + 1] = centro + dx - dy;
                     g.Vertices[j + 2] = centro + dx + dy;
@@ -208,4 +255,3 @@ namespace Croquis.Visor
         }
     }
 }
-#endif

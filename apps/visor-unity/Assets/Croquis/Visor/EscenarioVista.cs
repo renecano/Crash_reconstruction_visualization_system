@@ -683,8 +683,8 @@ namespace Croquis.Visor
                 }
             }
 
-            verdes.Poner(padre, "matas", Materiales.Mata(false), false);
-            secas.Poner(padre, "matas_secas", Materiales.Mata(true), false);
+            verdes.Poner(padre, "matas", Materiales.Mata(false, noche), false);
+            secas.Poner(padre, "matas_secas", Materiales.Mata(true, noche), false);
         }
 
         // ---- Luminarias -------------------------------------------------------------------------------

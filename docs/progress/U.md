@@ -8,8 +8,8 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 - **Hecho:** los puntos 1, 2 y 3, y las notas de René sobre el punto 2 (relieve y desgaste de fachadas, sin rayas de orilla en calles de colonia).
 - **Hecho también:** el perfil «media» para WebGL (la parte de U5 que pidió la regla de fps de René). La noche urbana volvió a quedar arriba de 12 fps.
 - **Retomado el 2026-11-09,** cuando René cerró todo: el build de verificación confirmó las matas, los faros y las gotas en WebGL (abajo). Rama `feat/u2-arboles`.
-- **En curso:** el punto 4 (árboles como impostores). **Después:** el punto 5, publicar en Blob y las 20 capturas lado a lado.
-- **Unity corre en primer plano,** en pasos de menos de 10 min: la sesión sigue sin `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1` y un comando en segundo plano se puede parar por memoria.
+- **En curso:** el punto 5 (autopista y cerros). **Después:** publicar en Blob y las 20 capturas lado a lado.
+- **Unity y Blender corren en segundo plano** desde el 2026-11-10: René reabrió la sesión con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`. Sigue la regla de un solo proceso pesado a la vez.
 - **Cómo se itera:** capturas del Editor en modo batch (`Capturas.Tomar`, unos 3 min). En esta sesión no hubo herramientas del MCP de Unity. Un build WebGL solo al cerrar cada punto.
 
 ## U2 · Escenario
@@ -76,6 +76,32 @@ La meta está en `docs/cesvi/PLAN-CESVI.md` §3.3. Decisiones: ADR 0112 (el esce
 - **La noche urbana bajó de 12 fps:** el cruce de noche da de 10.9 a 11.1 fps (antes 12.7). Se activa la regla de René: primero rendimiento, después más detalle.
 - **Este build tardó 74 min** porque la laptop estuvo suspendida a la mitad; los demás tardan de 5 a 8 min.
 - **Una prueba del contrato falló una vez por tiempo** (5.8 s con límite de 5 s) con la laptop cargada; sola pasa. Se confirma en CI.
+
+### Segunda pasada · punto 4: árboles como impostores (2026-11-10)
+
+Antes, cada árbol eran tres tarjetas cruzadas: de cerca se veía la costura al centro de la copa y, al rodearlo, un árbol plano. Ahora es un impostor de 8 vistas horneadas en Blender desde el modelo CC0. El detalle y por qué no se usaron impostores octaédricos están en ADR 0113, «Árboles como impostores».
+
+- **Horneado:** `node tools/unity/impostores.mjs` (Blender 5.2, de 2 a 4 min por especie), 8 vistas de 1024 px. Atlas en `tools/unity/arboles/` (7.6 MB los tres, en WebP), registrados en `assets/ASSETS.md`.
+- **Corregido en el camino:** el pie del tronco brincaba de una vista a otra (ahora el horneado lo centra en el eje); otras copias del árbol en el archivo `.blend` se asomaban por la orilla del cuadro (ahora se esconden); una franja oscura al centro de la copa (el impostor ya no recibe la sombra de sus propias tarjetas); desde la cenital los árboles se veían acostados (ahora queda la tarjeta de planta); a la mitad de resolución, de cerca se veían manchas (el atlas entra completo también en WebGL).
+- **La cámara de la acera** en `nocturno_lluvia` ya no queda pegada a una fachada: si junto al árbol no hay lugar, lo rodea hasta verlo sin estorbos.
+- **Las matas de noche** ya no brillan de más: su material de noche va más apagado.
+- **Capturas:** `docs/cesvi/u2/puntos/p4-arboles/` (Editor) contra `p3-suelo/`.
+- **Medido** (build WebGL; `eval/results/unity_build.json`, `unity_build_urbana.json` y `docs/cesvi/u2/puntos/p4-arboles/fps-web.json`): peso 64.7 MB (31 MB con Brotli), antes 61 (27.4). Arranque 14.3 s, antes 13. AXA carga en 3.3 s más y el cruce urbano en 4.1 s. A 1280 × 720: 47.6 fps en AXA de día y 42.6 en el cruce urbano de día.
+- **El peso sube 3.7 MB** por los atlas a tamaño completo. A la mitad pesaban la cuarta parte, pero se veían en manchas desde la acera. El build fue de 5 min, con pico de Unity de 2,103 MB y mínimo libre de 499 MB.
+- **Fps a 1600 × 900, con la laptop libre:**
+
+| Escena                       | Antes (verificación) | Con impostores |
+| ---------------------------- | -------------------- | -------------- |
+| `axa-dia`                    | 27 a 29.4            | 30.3           |
+| `axa-noche`                  | 20 a 23.8            | 21.7 a 22.7    |
+| `carambola-dia`              | 27.8 a 30.3          | 27 a 27.8      |
+| `carambola-noche`            | 22.7 a 25.6          | 27.8           |
+| `lateral_interseccion-dia`   | 24.4 a 25            | 27.8 a 29.4    |
+| `lateral_interseccion-noche` | 19.6 a 20            | 19.6 a 20.8    |
+| `nocturno_lluvia-dia`        | 30.3                 | 27 a 28.6      |
+| `nocturno_lluvia-noche`      | 23.3 a 23.8          | 22.7 a 23.3    |
+| `terraceria-dia`             | 27 a 27.8            | 26.3           |
+| `terraceria-noche`           | 22.7                 | 22.7           |
 
 ### Segunda pasada · verificación en build con la laptop libre (2026-11-09)
 

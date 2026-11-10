@@ -26,9 +26,10 @@ const CRUDOS = join(RAIZ, "data/raw/polyhaven-arboles");
 const SALIDA = join(RAIZ, "tools/unity/arboles");
 const VISTAS = 8;
 const COLUMNAS = 4;
-const PX = 512;
+/** 1024 por vista: a la altura de la acera un árbol llena la pantalla. WebGL lo importa a la mitad. */
+const PX = 1024;
 /** La normal va a la mitad: se nota menos y pesa la cuarta parte. */
-const PX_NORMAL = 256;
+const PX_NORMAL = 512;
 
 const especies = JSON.parse(
   readFileSync(join(RAIZ, "apps/web/public/arboles/arboles.json"), "utf8"),

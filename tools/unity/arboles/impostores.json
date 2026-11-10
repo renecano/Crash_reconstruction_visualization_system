@@ -1,0 +1,84 @@
+{
+  "_generado_por": "node tools/unity/impostores.mjs",
+  "_nota": "Árboles CC0 de Poly Haven horneados a impostores de 8 vistas (ADR 0113); ver assets/ASSETS.md.",
+  "especies": {
+    "jacaranda": {
+      "modelo": {
+        "polyhaven": "jacaranda_tree",
+        "autores": "Rob Tuytel, Rico Cilliers",
+        "licencia": "CC0 1.0",
+        "url": "https://polyhaven.com/a/jacaranda_tree"
+      },
+      "vistas": 8,
+      "columnas": 4,
+      "lado_m": 27.219,
+      "alto_m": 19.469,
+      "archivos": {
+        "diff": {
+          "archivo": "jacaranda_atlas_diff.webp",
+          "sha256": "439f12e30bc3bcbbac21968b12f2dbb295720fbb537b84eccbfa84f252ad1487",
+          "bytes": 2119194,
+          "px": [4096, 2048]
+        },
+        "nor": {
+          "archivo": "jacaranda_atlas_nor.webp",
+          "sha256": "e51b6c52c47d7b6f4b64c4986f2010d94b0d832d0b9b21e7aa554ff103386cfa",
+          "bytes": 869500,
+          "px": [2048, 1024]
+        }
+      }
+    },
+    "fresno": {
+      "modelo": {
+        "polyhaven": "tree_small_02",
+        "autores": "Rico Cilliers",
+        "licencia": "CC0 1.0",
+        "url": "https://polyhaven.com/a/tree_small_02"
+      },
+      "vistas": 8,
+      "columnas": 4,
+      "lado_m": 6.097,
+      "alto_m": 4.557,
+      "archivos": {
+        "diff": {
+          "archivo": "fresno_atlas_diff.webp",
+          "sha256": "7c9765008b795c9993be60134a1a051d9bffe8b2ffeb58c32244a80dc8c2f2cd",
+          "bytes": 1317104,
+          "px": [4096, 2048]
+        },
+        "nor": {
+          "archivo": "fresno_atlas_nor.webp",
+          "sha256": "e6b9008185f336ef7988c340b124ec69a0480489e94c378c222ed7a8b4e9b8c5",
+          "bytes": 566346,
+          "px": [2048, 1024]
+        }
+      }
+    },
+    "pirul": {
+      "modelo": {
+        "polyhaven": "island_tree_01",
+        "autores": "Rob Tuytel, Rico Cilliers",
+        "licencia": "CC0 1.0",
+        "url": "https://polyhaven.com/a/island_tree_01"
+      },
+      "vistas": 8,
+      "columnas": 4,
+      "lado_m": 5.855,
+      "alto_m": 5.027,
+      "archivos": {
+        "diff": {
+          "archivo": "pirul_atlas_diff.webp",
+          "sha256": "53009db64457b6d087c9320cabf84d316d3e0c16c28fa3ca9a818dfa6c0379cc",
+          "bytes": 2101780,
+          "px": [4096, 2048]
+        },
+        "nor": {
+          "archivo": "pirul_atlas_nor.webp",
+          "sha256": "0eb3c2813f92fa8e411dde6cb816f76211085680060c4a50a358127a6815d0c3",
+          "bytes": 888314,
+          "px": [2048, 1024]
+        }
+      }
+    }
+  }
+}

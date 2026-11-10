@@ -38,7 +38,7 @@ namespace Croquis.EditorTools
             Simples();
             foreach (var e in new[] { "jacaranda", "fresno", "pirul" })
             {
-                Tarjeta(e, "frente");
+                Tarjeta(e, "atlas");
                 Tarjeta(e, "planta");
             }
 
@@ -224,6 +224,14 @@ namespace Croquis.EditorTools
             // losa oscura sobre la cabeza.
             m.SetFloat("_Cull", (float)(vista == "planta" ? CullMode.Back : CullMode.Off));
             m.SetFloat("_Smoothness", 0.08f);
+            if (vista == "atlas")
+            {
+                // El impostor no recibe sombra: sus tarjetas de sombra lo cruzan por el eje y le
+                // dejaban una franja oscura. En URP esto lo decide el material, no el renderer.
+                m.SetFloat("_ReceiveShadows", 0f);
+                m.EnableKeyword("_RECEIVE_SHADOWS_OFF");
+            }
+
             m.SetOverrideTag("RenderType", "TransparentCutout");
             m.renderQueue = (int)RenderQueue.AlphaTest;
             Guardar(m, "arbol_" + especie + "_" + vista);

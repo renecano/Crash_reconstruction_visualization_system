@@ -51,6 +51,16 @@ namespace Croquis.EditorTools
 
             if (assetPath.Contains("/arboles/"))
             {
+                if (nombre.Contains("_atlas_"))
+                {
+                    // El atlas trae 8 vistas de 1024 px y entra entero: a la mitad, un árbol visto desde
+                    // la acera se veía en manchas. Y con menos pérdida: de cerca, los bloques de la
+                    // compresión se notan en la orilla de las hojas.
+                    t.maxTextureSize = 4096;
+                    t.compressionQuality = 92;
+                    t.ClearPlatformTextureSettings("WebGL");
+                }
+
                 // Las tarjetas no se repiten, y su alfa no debe adelgazar con la distancia.
                 t.wrapMode = TextureWrapMode.Clamp;
                 if (nombre.EndsWith("_diff"))

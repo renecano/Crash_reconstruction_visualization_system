@@ -13,7 +13,7 @@ namespace Croquis.Visor
     /// </summary>
     public static class EntornoVista
     {
-        public static void Construir(Transform padre, EntornoEscenario en, AmbienteEscenario a, long semilla)
+        public static void Construir(Transform padre, EntornoEscenario en, AmbienteEscenario a)
         {
             var entorno = new GameObject("entorno_procedural").transform;
             entorno.SetParent(padre, false);
@@ -39,12 +39,12 @@ namespace Croquis.Visor
         // ---- Árboles ----------------------------------------------------------------------------------
 
         /// <summary>
-        /// Cada árbol son tarjetas horneadas del modelo CC0 de su especie: dos de frente cruzadas, una
-        /// tercera en diagonal para que no se vea plano al rodearlo, y la planta a media copa.
+        /// Cada árbol es un impostor del modelo CC0 de su especie (`ArbolesVista`): un cuadro que mira a
+        /// la cámara con la vista horneada que toca, más la planta a media copa para verlo desde arriba.
         /// </summary>
         private static void Arboles(Transform padre, ArbolEscenario[] arboles)
         {
-            var frentes = new Dictionary<string, Malla>();
+            var impostores = padre.gameObject.AddComponent<ArbolesVista>();
             var plantas = new Dictionary<string, Malla>();
             var palmas = new Malla();
             var troncos = new Malla();
@@ -64,17 +64,12 @@ namespace Croquis.Visor
                     : t.AlturaM.HasValue ? (float)t.AlturaM.Value : (float)(t.TroncoM + 2.0 * t.CopaM);
                 var k = alto / medidas.y;
                 var ancho = medidas.x * k;
-                if (!frentes.TryGetValue(especie, out var f))
+                if (!plantas.ContainsKey(especie))
                 {
-                    frentes[especie] = f = new Malla();
                     plantas[especie] = new Malla();
                 }
 
-                for (var c = 0; c < 3; c++)
-                {
-                    var d = Dir(t.RumboRad + c * Mathf.PI / 3f) * (ancho / 2f);
-                    f.Tarjeta(p - d, p + d, p + d + Vector3.up * alto, p - d + Vector3.up * alto);
-                }
+                impostores.Agregar(especie, p, alto, (float)t.RumboRad);
 
                 // La planta, a media copa: lo que se ve desde arriba y lo que da sombra de copa.
                 var h = p + Vector3.up * (alto * 0.62f);
@@ -83,10 +78,11 @@ namespace Croquis.Visor
                     h + new Vector3(-r, 0, -r), h + new Vector3(r, 0, -r), h + new Vector3(r, 0, r), h + new Vector3(-r, 0, r));
             }
 
-            foreach (var par in frentes)
+            impostores.Cerrar();
+            foreach (var par in plantas)
             {
-                par.Value.Poner(padre, "arboles_" + par.Key, Materiales.Arbol(par.Key, "frente"));
-                plantas[par.Key].Poner(padre, "copas_" + par.Key, Materiales.Arbol(par.Key, "planta"));
+                // La planta ya no da sombra: la dan las tarjetas de sombra del impostor.
+                par.Value.Poner(padre, "copas_" + par.Key, Materiales.Arbol(par.Key, "planta"), false);
             }
 
             palmas.Poner(padre, "palmas", Materiales.Liso(new Color(0.2f, 0.34f, 0.14f), 0.25f));
@@ -732,7 +728,7 @@ namespace Croquis.Visor
 
         // ---- Horizonte --------------------------------------------------------------------------------
 
-        private static void Horizonte(Transform padre, EntornoEscenario en, AmbienteEscenario a)
+        private static void Horizonte(Transform padre, EntornoEscenario en, AmbienteEscenario a, long semilla)
         {
             // Cada capa de cerros es más clara y azulada cuanto más lejos: la perspectiva del aire.
             for (var i = 0; i < en.Cerros.Length; i++)

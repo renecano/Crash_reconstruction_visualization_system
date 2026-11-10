@@ -331,7 +331,7 @@ namespace Croquis.Visor
         }
 
         /// <summary>Una mata de pasto: hojas en abanico sobre transparente, para tarjetas cruzadas.</summary>
-        public static Material Mata(bool seca)
+        public static Material Mata(bool seca, bool noche = false)
         {
             const int N = 64;
             var nombre = seca ? "mata_seca" : "mata";
@@ -368,13 +368,15 @@ namespace Croquis.Visor
                 Texturas[nombre] = tex;
             }
 
-            if (!Cache.TryGetValue(nombre, out var m))
+            var llave = nombre + (noche ? "|noche" : "");
+            if (!Cache.TryGetValue(llave, out var m))
             {
                 // Sobre su material base (`mata`): aquí solo se le pone la textura, sin tocar sus
                 // palabras clave, para que el build traiga la variante del sombreador.
-                m = new Material(Base("mata")) { name = nombre };
+                m = new Material(Base("mata")) { name = llave };
                 m.SetTexture("_BaseMap", tex);
-                Cache[nombre] = m;
+                m.SetColor("_BaseColor", noche ? new Color(0.42f, 0.46f, 0.44f) : Color.white);
+                Cache[llave] = m;
             }
 
             return m;
@@ -434,6 +436,20 @@ namespace Croquis.Visor
             return a == null
                 ? new Vector3(5f, 6f, 5f)
                 : new Vector3((float)a["ancho_m"], (float)a["alto_m"], (float)a["profundidad_m"]);
+        }
+
+        /// <summary>El impostor de una especie: lado del cuadro y alto del modelo (m), vistas y columnas del atlas.</summary>
+        public static Vector4 MedidasImpostor(string especie)
+        {
+            Mosaico("asfalto");
+            var i = manifiesto["arboles"]?[especie]?["impostor"];
+            if (i == null)
+            {
+                throw new System.InvalidOperationException(
+                    "Falta el impostor de «" + especie + "». Corre `node tools/unity/recursos.mjs`.");
+            }
+
+            return new Vector4((float)i["lado_m"], (float)i["alto_m"], (float)i["vistas"], (float)i["columnas"]);
         }
 
         public static Color Hex(string hex, Color siFalla)

@@ -21,7 +21,7 @@
 
 ## Límites
 
-- **Los árboles son tarjetas,** no geometría. Los modelos CC0 de origen tienen de 0.3 a 4.6 millones de polígonos y pesan de 60 a 208 MB cada uno: no caben en un build web. El plan del entorno los pone a 22 m o más de la acción. Si de cerca no convencen, la salida es hornear una malla reducida de cada especie con Blender, y se anota para U5.
+- **Los árboles son impostores,** no geometría (ver «Árboles como impostores»). Los modelos CC0 de origen tienen de 0.3 a 4.6 millones de polígonos y pesan de 60 a 208 MB cada uno: no caben en un build web.
 - **La palmera no tiene tarjeta:** se arma con geometría (tronco y hojas en arco).
 - **Qué funciona en WebGL** se comprueba con el build, no con la documentación: las capturas finales y `eval/unity_build.mjs` salen de ahí.
 
@@ -46,3 +46,15 @@ Se midió con builds de diagnóstico que apagan una cosa a la vez (`depurar` en 
 - **Segunda fuente: la sonda de reflejos con HDR.** En WebGL, una sonda en tiempo real con HDR devuelve NaN en todo lo que la usa. Con HDR, el 37.5 % de la captura de `lateral_interseccion` salía negra; sin HDR, el 0.5 %. En WebGL la sonda va sin HDR.
 - **Defensas que se quedan:** la cámara corta los NaN antes del posproceso (`stopNaN`) y el resplandor tiene tope (`clamp` 6).
 - **El resplandor queda encendido en WebGL.**
+
+## Árboles como impostores (segunda pasada de U2, punto 4; 2026-11-10)
+
+Las tres tarjetas cruzadas se notaban de cerca: una costura al centro de la copa y un árbol plano al rodearlo. Se cambiaron por impostores.
+
+- **Qué es.** Cada árbol es un solo cuadro que gira hacia la cámara y muestra, de un atlas, la vista horneada más cercana a la dirección desde la que se le mira. Son 8 vistas alrededor del árbol, de 1024 px cada una (atlas de 4096 × 2048 de color y de 2048 × 1024 de normal).
+- **Cómo se hornea.** `tools/unity/impostores.mjs` corre Blender (`assets/pipeline/blender/hornear_impostor.py`) sobre el modelo CC0 de Poly Haven y deja el atlas en `tools/unity/arboles/`. El horneado centra el pie del tronco en el eje, para que no brinque de una vista a otra, y esconde las otras copias que trae el archivo. Tarda de 2 a 4 min por especie.
+- **Sin sombreador propio.** Todos los árboles de una especie van en una malla que se rehace en la CPU justo antes de dibujar (`ArbolesVista`, en `beginCameraRendering`): una llamada de dibujo por especie con el material Lit de siempre. Así no hay variantes de sombreador nuevas que puedan faltar en WebGL.
+- **La sombra** la dan dos tarjetas cruzadas fijas que solo proyectan sombra. El impostor no recibe sombra: esas tarjetas lo cruzan por el eje y le dejaban una franja oscura. El costo es que un árbol a la sombra de un edificio se ve iluminado.
+- **Desde arriba** (más de 58° de elevación, o la cámara cenital) el cuadro se pliega y queda la tarjeta de planta, que es la vista real del árbol desde arriba.
+- **Por qué no impostores octaédricos.** Piden un sombreador propio que mezcle tres vistas por píxel. Con 8 vistas a nivel del suelo y la planta se cubre lo que el perito ve (acera, cinematográfica, conductor, cenital) sin ese riesgo en WebGL. El salto entre vistas es de 45° y se nota solo al orbitar despacio junto a un árbol.
+- **El atlas entra a tamaño completo también en WebGL.** A la mitad, un árbol visto desde la acera se veía en manchas.

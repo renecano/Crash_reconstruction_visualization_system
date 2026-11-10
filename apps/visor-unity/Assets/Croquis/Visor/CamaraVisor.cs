@@ -282,6 +282,40 @@ namespace Croquis.Visor
                             }
                         }
 
+                        if (mejor < 0f)
+                        {
+                            // Ningún lugar de esos quedó libre (una calle con fachadas pegadas): se
+                            // rodea el árbol hasta ver su copa sin nada en medio, de preferencia con
+                            // la acción al fondo.
+                            var copa = Arbol.Value + Vector3.up * 3.2f;
+                            var mejorVista = float.MinValue;
+                            foreach (var radio in new[] { 7f, 9f, 5f, 11f })
+                            {
+                                for (var k = 0; k < 24; k++)
+                                {
+                                    var ang = k * Mathf.PI / 12f;
+                                    var otro = Arbol.Value
+                                        + new Vector3(Mathf.Cos(ang), 0f, Mathf.Sin(ang)) * radio
+                                        + Vector3.up * 1.7f;
+                                    if (EnBulto(otro, 0.9f) || !Despejada(otro, copa))
+                                    {
+                                        continue;
+                                    }
+
+                                    var hacia = Arbol.Value - otro;
+                                    hacia.y = 0f;
+                                    var vista = Vector3.Dot(hacia.normalized, d)
+                                        + Mathf.Min(Despeje(otro, copa), 1.5f) * 0.2f;
+                                    if (vista > mejorVista)
+                                    {
+                                        mejorVista = vista;
+                                        ojo = otro;
+                                        mira = copa + d * 2f;
+                                    }
+                                }
+                            }
+                        }
+
                         camara.transform.position = ojo;
                         camara.transform.LookAt(mira);
                     }

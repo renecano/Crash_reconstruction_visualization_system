@@ -15,7 +15,14 @@
  *   node tools/unity/recursos.mjs
  */
 import { createRequire } from "node:module";
-import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import { join, resolve } from "node:path";
 
 const RAIZ = resolve(import.meta.dirname, "../..");
@@ -90,6 +97,8 @@ const arboles = leer(join(WEB, "public/arboles/arboles.json")).especies;
 const dArb = dir(join(DESTINO, "arboles"));
 for (const [especie, a] of Object.entries(arboles)) {
   for (const [clave, f] of Object.entries(a.archivos)) {
+    // El frente ya no se usa: lo sustituye el impostor de 8 vistas. Queda la planta.
+    if (clave.startsWith("frente")) continue;
     const salida = join(dArb, `${especie}_${clave}.png`);
     if (!existsSync(salida)) {
       await sharp(join(WEB, "public/arboles", f.archivo))
@@ -99,6 +108,26 @@ for (const [especie, a] of Object.entries(arboles)) {
     }
   }
   manifiesto.arboles[especie] = a.medidas;
+}
+
+// Los impostores de 8 vistas (`tools/unity/impostores.mjs`), de WebP a PNG.
+const impostores = leer(join(RAIZ, "tools/unity/arboles/impostores.json")).especies;
+for (const [especie, imp] of Object.entries(impostores)) {
+  for (const [mapa, f] of Object.entries(imp.archivos)) {
+    const salida = join(dArb, `${especie}_atlas_${mapa}.png`);
+    const fuente = join(RAIZ, "tools/unity/arboles", f.archivo);
+    // También cuando el atlas se volvió a hornear.
+    if (!existsSync(salida) || statSync(fuente).mtimeMs > statSync(salida).mtimeMs) {
+      await sharp(fuente).png().toFile(salida);
+      console.log(`Impostor ${especie} ${mapa}`);
+    }
+  }
+  manifiesto.arboles[especie].impostor = {
+    lado_m: imp.lado_m,
+    alto_m: imp.alto_m,
+    vistas: imp.vistas,
+    columnas: imp.columnas,
+  };
 }
 
 // --- Cielos --------------------------------------------------------------------------------------
