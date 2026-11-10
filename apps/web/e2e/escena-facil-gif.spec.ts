@@ -2,7 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join, resolve } from "node:path";
 import { expect, test, type Page } from "@playwright/test";
-import { irAPaso } from "./ayuda-recorrido";
+import { contestarC1, irAPaso } from "./ayuda-recorrido";
 
 /**
  * El GIF de la escena fácil (René, 2026-11-05) para «Resumen para René»: el caso de ejemplo (Jetta y
@@ -146,6 +146,7 @@ for (const [nombre, tema, ancho, alto] of [
     await page.getByTestId("listo-final").click();
 
     // 4. ¡La escena está lista!
+    await contestarC1(page);
     await expect(page.getByTestId("escena-lista")).toBeVisible();
     const segundos = (Date.now() - t0) / 1000;
     await cuadro(3000, "6-lista");

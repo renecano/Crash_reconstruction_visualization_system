@@ -626,8 +626,25 @@ export interface ImpactoAColocar {
   vehiculos: string[];
 }
 
+/**
+ * Lo que la persona contestó en las preguntas de C1 (W3), además de lo que queda en el expediente:
+ * «No sé dónde fue el primer golpe», «No chocó contra nada más» y «Listo» en los puntos de paso.
+ */
+export interface RespuestasC1 {
+  /**
+   * La escena llegó completa (un dictamen importado, un caso guardado): las tres preguntas no se
+   * hacen solas, pero siguen disponibles en el avance para marcar algo.
+   */
+  omitidas?: boolean;
+  golpeNoSe?: boolean;
+  choquesListos?: boolean;
+  pasosListos?: boolean;
+}
+
 export type PasoEscena =
   | { tipo: "choque"; orden: number; hecho: boolean }
+  /** C1: «¿Dónde fue el primer golpe?», «¿Chocó contra algo más?» y «¿Sabes por dónde pasó?». */
+  | { tipo: "golpe" | "otros" | "paso"; hecho: boolean }
   | {
       tipo: "vehiculo";
       vehiculo: string;
@@ -650,7 +667,12 @@ export const poseDe = (e: Expediente, v: string, fase: "impacto" | "final" | "in
 export function pasosEscena(
   e: Expediente,
   impactos: readonly ImpactoAColocar[],
-  s: { desconocidos: readonly string[]; direccionesNoSe: readonly string[] },
+  s: {
+    desconocidos: readonly string[];
+    direccionesNoSe: readonly string[];
+    /** Con esto, después de los vehículos van las tres preguntas de C1 (W3). */
+    c1?: RespuestasC1;
+  },
 ): PasoEscena[] {
   const choques: PasoEscena[] = impactos.map((i) => ({
     tipo: "choque",
@@ -666,7 +688,221 @@ export function pasosEscena(
     const final = Boolean(poseDe(e, v, "final")) || s.desconocidos.includes(v);
     return { tipo: "vehiculo", vehiculo: v, direccion, final, hecho: direccion && final };
   });
-  return [...choques, ...vehiculos];
+  if (!s.c1) return [...choques, ...vehiculos];
+  // C1: lo que ya está marcado en el expediente también cuenta como contestado (un caso que se
+  // vuelve a abrir no repite la pregunta).
+  const omitidas = s.c1.omitidas === true;
+  const c1: PasoEscena[] = [
+    { tipo: "golpe", hecho: omitidas || Boolean(primerGolpe(e)) || s.c1.golpeNoSe === true },
+    {
+      tipo: "otros",
+      hecho: omitidas || s.c1.choquesListos === true || choquesIntermedios(e).length > 0,
+    },
+    {
+      tipo: "paso",
+      hecho: omitidas || s.c1.pasosListos === true || puntosDePaso(e).length > 0,
+    },
+  ];
+  return [...choques, ...vehiculos, ...c1];
+}
+
+// --- C1 (W3): el primer golpe, los choques contra algo más y los puntos de paso ------------------
+
+type Impacto = NonNullable<Expediente["impactos"]>[number];
+type IdVehiculo = Expediente["vehiculos"][number]["id"];
+
+/** Los objetos contra los que se puede chocar después del primer golpe, como los ve el perito. */
+export const OBJETOS_C1 = [
+  { id: "poste", texto: "Poste", con: "un poste" },
+  { id: "pared", texto: "Pared o muro", con: "una pared" },
+  { id: "árbol", texto: "Árbol", con: "un árbol" },
+  { id: "barrera", texto: "Barrera", con: "una barrera" },
+  { id: "guarnición", texto: "Guarnición", con: "la guarnición" },
+  { id: "señal", texto: "Señal", con: "una señal" },
+  { id: "vehículo estacionado", texto: "Vehículo estacionado", con: "un vehículo estacionado" },
+] as const;
+
+const elPrimero = (e: Expediente): Impacto | null => {
+  const orden = [...(e.impactos ?? [])].sort((a, b) => a.orden - b.orden);
+  return orden.find((i) => i.orden === 1) ?? orden[0] ?? null;
+};
+
+/** Dónde marcó el perito el primer golpe; null si no lo ha marcado. */
+export function primerGolpe(e: Expediente): Punto | null {
+  const i = elPrimero(e);
+  return i?.punto && !i.objeto_fijo ? i.punto : null;
+}
+
+/**
+ * «¿Dónde fue el primer golpe?»: el punto del primer contacto. Va en el primer impacto del
+ * expediente (se crea con los vehículos del choque si el caso no traía impactos): es evidencia
+ * medida y entra a la reconstrucción.
+ */
+export function marcarPrimerGolpe(
+  e: Expediente,
+  impactos: readonly ImpactoAColocar[],
+  p: Punto,
+): Expediente {
+  const primero = elPrimero(e);
+  if (primero && !primero.objeto_fijo) {
+    return {
+      ...e,
+      impactos: (e.impactos ?? []).map((i) => (i === primero ? { ...i, punto: p } : i)),
+    };
+  }
+  const vehiculos = (impactos[0]?.vehiculos ?? []) as IdVehiculo[];
+  return {
+    ...e,
+    impactos: [{ orden: 1, vehiculos, punto: p, fuente: "perito" }, ...(e.impactos ?? [])],
+  };
+}
+
+export interface ChoqueIntermedio {
+  orden: number;
+  vehiculo: string;
+  objeto: string;
+  punto: Punto;
+}
+
+/** Los choques contra objetos que el perito marcó después del primer golpe, en su orden. */
+export function choquesIntermedios(e: Expediente): ChoqueIntermedio[] {
+  return [...(e.impactos ?? [])]
+    .sort((a, b) => a.orden - b.orden)
+    .flatMap((i) =>
+      i.objeto_fijo && i.punto && (i.vehiculos ?? []).length === 1 && i.orden > 1
+        ? [
+            {
+              orden: i.orden,
+              vehiculo: String(i.vehiculos![0]),
+              objeto: i.objeto_fijo,
+              punto: i.punto,
+            },
+          ]
+        : [],
+    );
+}
+
+/** «¿Chocó contra algo más?» → sí: ese vehículo, contra ese objeto, en ese punto, al final del orden. */
+export function agregarChoqueIntermedio(
+  e: Expediente,
+  vehiculo: string,
+  objeto: string,
+  p: Punto,
+): Expediente {
+  // Nunca con el orden 1: ese es el primer golpe.
+  const orden = Math.max(1, ...(e.impactos ?? []).map((i) => i.orden)) + 1;
+  return {
+    ...e,
+    impactos: [
+      ...(e.impactos ?? []),
+      {
+        orden,
+        vehiculos: [vehiculo as IdVehiculo],
+        objeto_fijo: objeto,
+        punto: p,
+        fuente: "perito",
+      },
+    ],
+  };
+}
+
+export function quitarChoqueIntermedio(e: Expediente, orden: number): Expediente {
+  return { ...e, impactos: (e.impactos ?? []).filter((i) => i.orden !== orden) };
+}
+
+export interface PuntoDePaso {
+  vehiculo: string;
+  orden: number;
+  punto: Punto;
+}
+
+/** Los puntos de paso que el perito marcó (de un vehículo, o de todos), en su orden. */
+export function puntosDePaso(e: Expediente, vehiculo?: string): PuntoDePaso[] {
+  const todos = e.versiones?.find((v) => v.tipo === "evidencia")?.puntos_paso ?? [];
+  return todos
+    .filter((q) => vehiculo === undefined || q.vehiculo === vehiculo)
+    .map((q) => ({ vehiculo: String(q.vehiculo), orden: q.orden, punto: q.punto }))
+    .sort((a, b) => a.vehiculo.localeCompare(b.vehiculo) || a.orden - b.orden);
+}
+
+function conPuntosDePaso(
+  e: Expediente,
+  cambiar: (
+    previos: NonNullable<NonNullable<Expediente["versiones"]>[number]["puntos_paso"]>,
+  ) => NonNullable<NonNullable<Expediente["versiones"]>[number]["puntos_paso"]>,
+): Expediente {
+  const versiones = [...(e.versiones ?? [])];
+  let i = versiones.findIndex((v) => v.tipo === "evidencia");
+  if (i < 0) {
+    versiones.unshift({ tipo: "evidencia" });
+    i = 0;
+  }
+  versiones[i] = { ...versiones[i]!, puntos_paso: cambiar(versiones[i]!.puntos_paso ?? []) };
+  return { ...e, versiones };
+}
+
+/** «¿Sabes por dónde pasó?»: un toque agrega el siguiente punto de ese vehículo. */
+export function agregarPuntoDePaso(e: Expediente, vehiculo: string, p: Punto): Expediente {
+  return conPuntosDePaso(e, (previos) => [
+    ...previos,
+    {
+      vehiculo: vehiculo as IdVehiculo,
+      orden: previos.filter((q) => q.vehiculo === vehiculo).length + 1,
+      punto: p,
+      fuente: "perito",
+    },
+  ]);
+}
+
+/** Quita el último punto de paso de ese vehículo. */
+export function quitarUltimoPuntoDePaso(e: Expediente, vehiculo: string): Expediente {
+  return conPuntosDePaso(e, (previos) => {
+    const suyos = previos.filter((q) => q.vehiculo === vehiculo);
+    const ultimo = suyos.sort((a, b) => a.orden - b.orden).at(-1);
+    return previos.filter((q) => q !== ultimo);
+  });
+}
+
+/** Las líneas de C1 para el resumen «¡La escena está lista!». */
+export function resumenC1(s: {
+  e: Expediente;
+  nombres: Record<string, string>;
+  c1: RespuestasC1;
+}): LineaResumen[] {
+  const out: LineaResumen[] = [];
+  const golpe = primerGolpe(s.e);
+  // Si no se preguntó (la escena llegó completa) y no hay nada marcado, no se dice nada.
+  if (golpe || s.c1.golpeNoSe)
+    out.push({
+      tipo: "golpe",
+      texto: golpe ? "El primer golpe, donde lo marcaste" : "El primer golpe",
+      detalle: null,
+      supuesto: golpe
+        ? null
+        : "No sabías dónde fue el primer golpe: Croquis usa el lugar del choque y el dictamen lo dice.",
+    });
+  for (const c of choquesIntermedios(s.e)) {
+    const objeto = OBJETOS_C1.find((o) => o.id === c.objeto)?.con ?? c.objeto;
+    out.push({
+      tipo: "objeto",
+      vehiculo: c.vehiculo,
+      texto: `Después, el ${s.nombres[c.vehiculo] ?? c.vehiculo} chocó contra ${objeto}`,
+      detalle: "Donde lo marcaste. Croquis usa medidas típicas del objeto y el dictamen lo dice.",
+      supuesto: null,
+    });
+  }
+  const pasos = puntosDePaso(s.e);
+  for (const v of [...new Set(pasos.map((q) => q.vehiculo))]) {
+    const n = pasos.filter((q) => q.vehiculo === v).length;
+    out.push({
+      tipo: "paso",
+      vehiculo: v,
+      texto: `El ${s.nombres[v] ?? v} pasó por ${n === 1 ? "el punto" : `los ${n} puntos`} que marcaste`,
+      detalle: "La reconstrucción pasa por ahí.",
+      supuesto: null,
+    });
+  }
+  return out;
 }
 
 /** El paso en curso: el primero sin terminar (los choques primero). null si todo está listo. */
@@ -823,7 +1059,7 @@ export function ponerEnLaCalle(
 // --- El resumen final ----------------------------------------------------------------------------
 
 export interface LineaResumen {
-  tipo: "choque" | "vehiculo";
+  tipo: "choque" | "vehiculo" | "golpe" | "objeto" | "paso";
   vehiculo?: string;
   texto: string;
   detalle: string | null;

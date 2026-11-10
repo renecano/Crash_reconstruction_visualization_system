@@ -55,7 +55,24 @@ import {
 } from "@/lib/escena-facil";
 import { siluetaClase } from "@/lib/colocar";
 import { interpretarLugar } from "@/lib/lugar-texto";
+import {
+  agregarChoqueIntermedio,
+  agregarPuntoDePaso,
+  choquesIntermedios,
+  marcarPrimerGolpe,
+  OBJETOS_C1,
+  primerGolpe,
+  puntosDePaso,
+  quitarChoqueIntermedio,
+  quitarUltimoPuntoDePaso,
+  resumenC1,
+  type RespuestasC1,
+} from "@/lib/escena-facil";
 import { MapaFacil, trayectoDeLlegada, type CocheMapa, type FlechaMapa } from "./mapa-facil";
+
+/** Más lejos que esto del choque, un punto de C1 se confirma con una alerta (m). */
+const GOLPE_LEJOS_M = 30;
+const C1_LEJOS_M = 150;
 
 /** Lo que la escena cambia: el expediente y lo que la persona no sabía. */
 export interface EstadoEscena {
@@ -68,6 +85,8 @@ export interface EstadoEscena {
   juntoAlChoque: readonly string[];
   /** El punto de cada choque, por orden. */
   puntos: Readonly<Record<number, Punto>>;
+  /** C1 (W3): lo contestado en las preguntas de después de colocar los vehículos. */
+  c1?: RespuestasC1;
 }
 
 type Mensaje = {
@@ -133,7 +152,16 @@ export function EscenaFacil({
       ),
     [vehiculos, narracion],
   );
-  const pasos = pasosEscena(e, impactos, estado);
+  const c1 = useMemo(() => estado.c1 ?? {}, [estado.c1]);
+  const pasos = pasosEscena(e, impactos, { ...estado, c1 });
+  // C1: una pregunta que sigue abierta mientras se agregan choques o puntos, o que se reabre.
+  const [editandoC1, setEditandoC1] = useState<"golpe" | "otros" | "paso" | null>(null);
+  const [otro, setOtro] = useState<{
+    abierto: boolean;
+    vehiculo: string | null;
+    objeto: string | null;
+  }>({ abierto: false, vehiculo: null, objeto: null });
+  const [pasoDe, setPasoDe] = useState<string | null>(null);
   // Mientras coloca dónde quedó un coche, ese paso sigue abierto hasta «Listo, así quedó».
   const [colocando, setColocando] = useState<string | null>(null);
   const [editando, setEditando] = useState<{
@@ -156,6 +184,7 @@ export function EscenaFacil({
 
   // El paso en curso: el que se edita, el coche que se coloca o el primero sin terminar.
   const actual = useMemo(() => {
+    if (editandoC1) return { tipo: editandoC1, hecho: false };
     if (editando) {
       if (editando.tipo === "choque")
         return { tipo: "choque" as const, orden: Number(editando.id), hecho: false };
@@ -168,8 +197,9 @@ export function EscenaFacil({
       if (v && v.tipo === "vehiculo") return { ...v, final: false, hecho: false };
     }
     return pasoActual(pasos);
-  }, [editando, colocando, pasos]);
-  const todoListo = pasoActual(pasos) === null && colocando === null && editando === null;
+  }, [editando, editandoC1, colocando, pasos]);
+  const todoListo =
+    pasoActual(pasos) === null && colocando === null && editando === null && editandoC1 === null;
 
   /** Un cambio con su «Deshacer». */
   const cambiar = (siguiente: EstadoEscena, m?: Mensaje | null) => {
@@ -493,6 +523,88 @@ export function EscenaFacil({
     return null;
   })();
 
+  // --- C1 (W3): el primer golpe, los choques contra algo más y los puntos de paso ---------------
+  const c1Con = (x: Partial<RespuestasC1>): EstadoEscena => ({ ...estado, c1: { ...c1, ...x } });
+  /** Si el punto quedó lejos del choque, cuántos metros (para confirmar con una alerta). */
+  const lejosDelChoque = (p: Punto, limite: number): number | null => {
+    const c = puntoChoque(1);
+    if (!c) return null;
+    const d = distanciaM([c.lon, c.lat], [p.lon, p.lat]);
+    return d > limite ? Math.round(d) : null;
+  };
+  const alertaLejos = (lejos: number): Mensaje => ({
+    tipo: "alerta",
+    texto: `Ese punto quedó a ${lejos} m del choque que marcaste. Si no era ahí, deshazlo y toca otra vez.`,
+    deshacer: true,
+  });
+  const vehiculoOtro = otro.vehiculo ?? (vehiculos.length === 1 ? String(vehiculos[0]!.id) : null);
+  const vehiculoPaso = pasoDe ?? (vehiculos.length === 1 ? String(vehiculos[0]!.id) : null);
+  const marcarGolpe = (p: Punto) => {
+    const lejos = lejosDelChoque(p, GOLPE_LEJOS_M);
+    cambiar(
+      { ...estado, expediente: marcarPrimerGolpe(e, impactos, p), c1: { ...c1, golpeNoSe: false } },
+      lejos ? alertaLejos(lejos) : exito("¡Listo! Marcaste dónde fue el primer golpe."),
+    );
+    setEditandoC1(null);
+  };
+  const golpeNoSe = () => {
+    cambiar(
+      c1Con({ golpeNoSe: true }),
+      exito("Sin problema: Croquis usa el lugar del choque que marcaste y el dictamen lo dice."),
+    );
+    onNota("No sé dónde fue el primer golpe: se usa el lugar del choque (supuesto).");
+    setEditandoC1(null);
+  };
+  const agregarChoque = (v: string, objeto: string, p: Punto) => {
+    const con = OBJETOS_C1.find((o) => o.id === objeto)?.con ?? objeto;
+    const lejos = lejosDelChoque(p, C1_LEJOS_M);
+    setEditandoC1("otros");
+    cambiar(
+      { ...estado, expediente: agregarChoqueIntermedio(e, v, objeto, p) },
+      lejos
+        ? alertaLejos(lejos)
+        : exito(`¡Listo! El ${nombres[v]} chocó contra ${con} ahí. ¿Chocó contra algo más?`),
+    );
+    setOtro({ abierto: false, vehiculo: null, objeto: null });
+  };
+  const choquesTerminados = () => {
+    const n = choquesIntermedios(e).length;
+    cambiar(
+      c1Con({ choquesListos: true }),
+      exito(
+        n
+          ? "¡Listo! Quedaron marcados los choques contra objetos."
+          : "Entendido: no chocó contra nada más.",
+      ),
+    );
+    setOtro({ abierto: false, vehiculo: null, objeto: null });
+    setEditandoC1(null);
+  };
+  const agregarPaso = (v: string, p: Punto) => {
+    const n = puntosDePaso(e, v).length + 1;
+    const lejos = lejosDelChoque(p, C1_LEJOS_M);
+    setEditandoC1("paso");
+    cambiar(
+      { ...estado, expediente: agregarPuntoDePaso(e, v, p) },
+      lejos
+        ? alertaLejos(lejos)
+        : exito(`Punto ${n} del ${nombres[v]}. Toca otro o termina con «Listo».`),
+    );
+  };
+  const pasosTerminados = () => {
+    const n = puntosDePaso(e).length;
+    cambiar(
+      c1Con({ pasosListos: true }),
+      exito(
+        n
+          ? "¡Listo! La reconstrucción va a pasar por esos puntos."
+          : "Sin puntos de paso: Croquis calcula el recorrido con lo demás.",
+      ),
+    );
+    setPasoDe(null);
+    setEditandoC1(null);
+  };
+
   // Un toque en el mapa, según la pregunta en curso.
   const tocar = (p: Punto) => {
     if (herramienta === "medir") {
@@ -516,6 +628,18 @@ export function EscenaFacil({
         exito(`¡Listo! Marcaste dónde empezó el ${nombres[v]}.`),
       );
       setHerramienta(null);
+      return;
+    }
+    if (actual?.tipo === "golpe") {
+      marcarGolpe(p);
+      return;
+    }
+    if (actual?.tipo === "otros") {
+      if (otro.abierto && vehiculoOtro && otro.objeto) agregarChoque(vehiculoOtro, otro.objeto, p);
+      return;
+    }
+    if (actual?.tipo === "paso") {
+      if (vehiculoPaso) agregarPaso(vehiculoPaso, p);
       return;
     }
     if (actual?.tipo === "choque") {
@@ -651,7 +775,9 @@ export function EscenaFacil({
     ? pasos.findIndex((p) =>
         actual.tipo === "choque"
           ? p.tipo === "choque" && p.orden === actual.orden
-          : p.tipo === "vehiculo" && p.vehiculo === actual.vehiculo,
+          : actual.tipo === "vehiculo"
+            ? p.tipo === "vehiculo" && p.vehiculo === actual.vehiculo
+            : p.tipo === actual.tipo,
       )
     : nPasos - 1;
 
@@ -789,6 +915,224 @@ export function EscenaFacil({
             ) : null}
           </form>
         ) : null}
+      </>
+    );
+  } else if (actual?.tipo === "golpe") {
+    const choque = puntoChoque(1);
+    hoja = (
+      <>
+        {cabecera}
+        <h2 className="escena-titulo" data-testid="escena-pregunta">
+          ¿Dónde fue el primer golpe?
+        </h2>
+        <p className="t-cuerpo text-texto-2">
+          Toca en el mapa el punto donde los vehículos se tocaron por primera vez. Croquis lo usa
+          como una medición.
+        </p>
+        <div className="flex flex-col gap-2">
+          {choque ? (
+            <button
+              type="button"
+              className="boton-principal escena-boton w-full"
+              onClick={() => marcarGolpe(choque)}
+              data-testid="golpe-ahi"
+            >
+              Ahí mismo, donde marqué el choque
+            </button>
+          ) : null}
+          <button
+            type="button"
+            className="boton-secundario escena-boton w-full"
+            onClick={golpeNoSe}
+            data-testid="golpe-nose"
+          >
+            No sé
+          </button>
+        </div>
+      </>
+    );
+  } else if (actual?.tipo === "otros") {
+    const marcados = choquesIntermedios(e);
+    const objeto = OBJETOS_C1.find((o) => o.id === otro.objeto) ?? null;
+    hoja = (
+      <>
+        {cabecera}
+        <h2 className="escena-titulo" data-testid="escena-pregunta">
+          ¿Chocó contra algo más?
+        </h2>
+        <p className="t-cuerpo text-texto-2">
+          Después del primer golpe: un poste, una pared, un árbol, un vehículo estacionado…
+        </p>
+        {marcados.length ? (
+          <ul className="flex flex-col gap-1" data-testid="otros-marcados">
+            {marcados.map((c) => (
+              <li
+                key={c.orden}
+                className="flex items-center justify-between gap-2 rounded-control bg-superficie-alta px-3 py-1"
+              >
+                <span className="text-[0.9375rem]">
+                  El {nombres[c.vehiculo]} contra{" "}
+                  {OBJETOS_C1.find((o) => o.id === c.objeto)?.con ?? c.objeto}
+                </span>
+                <button
+                  type="button"
+                  className="t-nota min-h-11 underline"
+                  onClick={() =>
+                    cambiar(
+                      { ...estado, expediente: quitarChoqueIntermedio(e, c.orden) },
+                      exito("Listo, lo quité."),
+                    )
+                  }
+                  data-testid={`otros-quitar-${c.orden}`}
+                >
+                  Quitar
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        {otro.abierto ? (
+          <div className="flex flex-col gap-3 rounded-2xl bg-superficie-alta p-4">
+            {vehiculos.length > 1 ? (
+              <fieldset className="flex flex-col gap-2">
+                <legend className="text-[0.875rem] font-semibold">¿Cuál vehículo?</legend>
+                <div className="flex flex-wrap gap-2">
+                  {vehiculos.map((v) => (
+                    <button
+                      key={v.id}
+                      type="button"
+                      className={`${vehiculoOtro === v.id ? "boton-principal" : "boton-secundario"} escena-boton`}
+                      aria-pressed={vehiculoOtro === v.id}
+                      onClick={() => setOtro((o) => ({ ...o, vehiculo: String(v.id) }))}
+                      data-testid={`otros-vehiculo-${v.id}`}
+                    >
+                      {nombres[v.id]}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+            ) : null}
+            <fieldset className="flex flex-col gap-2">
+              <legend className="text-[0.875rem] font-semibold">¿Contra qué?</legend>
+              <div className="flex flex-wrap gap-2">
+                {OBJETOS_C1.map((o, k) => (
+                  <button
+                    key={o.id}
+                    type="button"
+                    className={`${otro.objeto === o.id ? "boton-principal" : "boton-secundario"} escena-boton`}
+                    aria-pressed={otro.objeto === o.id}
+                    onClick={() => setOtro((x) => ({ ...x, objeto: o.id }))}
+                    data-testid={`otros-objeto-${k}`}
+                  >
+                    {o.texto}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+            <p className="t-nota" role="status" data-testid="otros-toca">
+              {vehiculoOtro && objeto
+                ? `Ahora toca el mapa donde el ${nombres[vehiculoOtro]} chocó contra ${objeto.con}.`
+                : "Elige y después toca el mapa donde fue."}
+            </p>
+            <button
+              type="button"
+              className="t-nota min-h-11 self-start underline"
+              onClick={() => setOtro({ abierto: false, vehiculo: null, objeto: null })}
+              data-testid="otros-cancelar"
+            >
+              Cancelar
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              className="boton-secundario escena-boton"
+              onClick={() => {
+                setEditandoC1("otros");
+                setOtro({ abierto: true, vehiculo: null, objeto: null });
+              }}
+              data-testid="otros-si"
+            >
+              {marcados.length ? "Sí, otro más" : "Sí"}
+            </button>
+            <button
+              type="button"
+              className="boton-principal escena-boton flex-1"
+              onClick={choquesTerminados}
+              data-testid="otros-no"
+            >
+              {marcados.length ? "No, es todo" : "No"}
+            </button>
+          </div>
+        )}
+      </>
+    );
+  } else if (actual?.tipo === "paso") {
+    const v = vehiculoPaso;
+    const suyos = v ? puntosDePaso(e, v) : [];
+    const todos = puntosDePaso(e).length;
+    hoja = (
+      <>
+        {cabecera}
+        <h2 className="escena-titulo" data-testid="escena-pregunta">
+          ¿Sabes por dónde pasó?
+        </h2>
+        <p className="t-cuerpo text-texto-2">
+          Es opcional. Si sabes por dónde pasó un vehículo (una huella, un testigo, una cámara),
+          toca esos puntos en el mapa, en orden.
+        </p>
+        {vehiculos.length > 1 ? (
+          <div className="flex flex-wrap gap-2">
+            {vehiculos.map((x) => (
+              <button
+                key={x.id}
+                type="button"
+                className={`${v === x.id ? "boton-principal" : "boton-secundario"} escena-boton`}
+                aria-pressed={v === x.id}
+                onClick={() => {
+                  setEditandoC1("paso");
+                  setPasoDe(String(x.id));
+                }}
+                data-testid={`paso-vehiculo-${x.id}`}
+              >
+                {nombres[x.id]}
+              </button>
+            ))}
+          </div>
+        ) : null}
+        <p className="t-nota" role="status" data-testid="paso-cuenta">
+          {v
+            ? suyos.length
+              ? `${suyos.length === 1 ? "Un punto" : `${suyos.length} puntos`} del ${nombres[v]}. Toca el mapa para agregar otro.`
+              : `Toca el mapa por donde pasó el ${nombres[v]}.`
+            : "Elige un vehículo para marcar sus puntos."}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {v && suyos.length ? (
+            <button
+              type="button"
+              className="boton-secundario escena-boton"
+              onClick={() =>
+                cambiar(
+                  { ...estado, expediente: quitarUltimoPuntoDePaso(e, v) },
+                  exito("Listo, quité el último punto."),
+                )
+              }
+              data-testid="paso-quitar"
+            >
+              Quitar el último
+            </button>
+          ) : null}
+          <button
+            type="button"
+            className="boton-principal escena-boton flex-1"
+            onClick={pasosTerminados}
+            data-testid="paso-listo"
+          >
+            {todos ? "Listo" : "No sé, seguir sin puntos"}
+          </button>
+        </div>
       </>
     );
   } else if (actual?.tipo === "vehiculo" && !actual.direccion) {
@@ -996,6 +1340,26 @@ export function EscenaFacil({
     direccionesNoSe: estado.direccionesNoSe,
     juntoAlChoque: estado.juntoAlChoque,
   });
+  const resumenCompleto = [...resumen, ...resumenC1({ e, nombres, c1 })];
+  const golpeMarcado = primerGolpe(e);
+  const marcasC1 = [
+    ...(golpeMarcado
+      ? [{ id: "golpe", punto: golpeMarcado, tipo: "golpe" as const, texto: "Primer golpe" }]
+      : []),
+    ...choquesIntermedios(e).map((c) => ({
+      id: `objeto-${c.orden}`,
+      punto: c.punto,
+      tipo: "objeto" as const,
+      texto: OBJETOS_C1.find((o) => o.id === c.objeto)?.texto ?? c.objeto,
+    })),
+    ...puntosDePaso(e).map((q) => ({
+      id: `paso-${q.vehiculo}-${q.orden}`,
+      punto: q.punto,
+      tipo: "paso" as const,
+      texto: String(q.orden),
+      color: colores[q.vehiculo]?.css,
+    })),
+  ];
 
   const medida =
     medicion.length === 2
@@ -1013,6 +1377,7 @@ export function EscenaFacil({
         encuadre={encuadre}
         onToque={tocar}
         choques={choques}
+        marcas={marcasC1}
         propuesta={propuestaVisible}
         flechas={flechasMapa}
         onFlecha={elegirFlecha}
@@ -1235,9 +1600,9 @@ export function EscenaFacil({
               className="flex flex-col divide-y divide-[var(--linea-suave)]"
               data-testid="escena-resumen"
             >
-              {resumen.map((l, k) => (
+              {resumenCompleto.map((l, k) => (
                 <li key={k} className="flex gap-3 py-3">
-                  {l.tipo === "choque" ? (
+                  {!l.vehiculo ? (
                     <svg viewBox="-12 -12 24 24" width="22" height="22" aria-hidden="true">
                       <path
                         d="M0 -11 L3 -4 L10 -6 L5 0 L10 6 L3 4 L0 11 L-3 4 L-10 6 L-5 0 L-10 -6 L-3 -4 Z"
@@ -1302,7 +1667,13 @@ export function EscenaFacil({
               ? impactos.length > 1
                 ? `Choque ${p.orden}`
                 : "El choque"
-              : nombres[p.vehiculo]!;
+              : p.tipo === "vehiculo"
+                ? nombres[p.vehiculo]!
+                : p.tipo === "golpe"
+                  ? "Primer golpe"
+                  : p.tipo === "otros"
+                    ? "Otros choques"
+                    : "Por dónde pasó";
           return (
             <button
               key={k}
@@ -1314,11 +1685,9 @@ export function EscenaFacil({
               onClick={() => {
                 if (!p.hecho) return;
                 setListaVista(true);
-                setEditando(
-                  p.tipo === "choque"
-                    ? { tipo: "choque", id: String(p.orden) }
-                    : { tipo: "final", id: p.vehiculo },
-                );
+                if (p.tipo === "choque") setEditando({ tipo: "choque", id: String(p.orden) });
+                else if (p.tipo === "vehiculo") setEditando({ tipo: "final", id: p.vehiculo });
+                else setEditandoC1(p.tipo);
               }}
               data-testid={`avance-${k}`}
             >
@@ -1413,16 +1782,21 @@ export function ResumenDeLaEscena({
     const p = puntoDe(i.orden);
     return p ? [{ orden: i.orden, punto: p }] : [];
   });
-  const lineas = resumenEscena({
-    e,
-    impactos,
-    puntos: Object.fromEntries(choques.map((c) => [c.orden, c.punto])),
-    callesChoque: Object.fromEntries(choques.map((c) => [c.orden, callesEn(callesMapa, c.punto)])),
-    nombres,
-    desconocidos: estado.desconocidos,
-    direccionesNoSe: estado.direccionesNoSe,
-    juntoAlChoque: estado.juntoAlChoque,
-  });
+  const lineas = [
+    ...resumenEscena({
+      e,
+      impactos,
+      puntos: Object.fromEntries(choques.map((c) => [c.orden, c.punto])),
+      callesChoque: Object.fromEntries(
+        choques.map((c) => [c.orden, callesEn(callesMapa, c.punto)]),
+      ),
+      nombres,
+      desconocidos: estado.desconocidos,
+      direccionesNoSe: estado.direccionesNoSe,
+      juntoAlChoque: estado.juntoAlChoque,
+    }),
+    ...(estado.c1 ? resumenC1({ e, nombres, c1: estado.c1 }) : []),
+  ];
   const falta = pasoActual(pasosEscena(e, impactos, estado)) !== null;
   return (
     <section className="flex flex-col gap-4" data-testid="resumen-escena">
@@ -1435,7 +1809,7 @@ export function ResumenDeLaEscena({
       <ul className="flex flex-col divide-y divide-[var(--linea-suave)]">
         {lineas.map((l, k) => (
           <li key={k} className="flex gap-3 py-3">
-            {l.tipo === "choque" ? (
+            {!l.vehiculo ? (
               <svg viewBox="-12 -12 24 24" width="22" height="22" aria-hidden="true">
                 <path
                   d="M0 -11 L3 -4 L10 -6 L5 0 L10 6 L3 4 L0 11 L-3 4 L-10 6 L-5 0 L-10 -6 L-3 -4 Z"
