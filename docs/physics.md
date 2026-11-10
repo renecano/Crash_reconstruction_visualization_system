@@ -258,7 +258,7 @@ El terreno sale de `lugar.terreno` y, si la escena lo cita, de la malla de relie
 
 **Límites.**
 
-- **Resolución del relieve:** una malla de 30 m no ve una rampa de 2 m. La resolución nativa va en `relieve.resolucion_nativa_m`.
+- **Resolución del relieve:** la malla de `/api/relieve` lleva un nodo cada 10 m donde el INEGI tiene LiDAR de terreno (5 m de origen) y cada 30 m donde no (Copernicus GLO-30, que además es un modelo de superficie: en ciudad incluye edificios). Da la pendiente general de la vía; no ve una rampa de 2 m, el bombeo ni un tope. La resolución de origen va en `relieve.resolucion_nativa_m` (ADR 0131, `eval/results/w5_relieve.json`).
 - **Suspensión:** no se modela. La pose es la del plano de las llantas, y el tope usa los dos supuestos de arriba.
 - **Volcadura:** el criterio de §6 sigue siendo el de un plano; la pendiente de lado no entra.
 - **Peatones y proyecciones:** siguen en plano.

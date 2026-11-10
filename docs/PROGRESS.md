@@ -6,6 +6,10 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 ## Estado actual
 
 - **Ahora: plan final v4** (René, 2026-11-07; `docs/cesvi/PLAN-CESVI.md`). CESVI pidió el 3D en Unity, puntos intermedios del choque, objetos que se mueven y un terreno que afecta la física. Trabajan dos frentes en paralelo, con bitácora propia: [`docs/progress/U.md`](progress/U.md) y [`docs/progress/W.md`](progress/W.md). Este archivo queda como índice, y lo que sigue abajo es historia del plan v3 (`docs/historial/PLAN-CESVI-v3.md`).
+  - **W5, el terreno entra en la física (2026-11-10, C3 y O4):**
+    - **Qué cambió:** pendiente por el relieve real, fricción por zona, topes con pérdida de energía y de contacto, y la pose sobre el terreno, en Python y en TS con paridad. En la escena fácil, «¿Cómo es el terreno?». En Reconstrucción, el perfil de elevación y los cruces de tope.
+    - **Dónde está el detalle:** [`docs/progress/W.md`](progress/W.md), sección W5; ADR 0131; `docs/physics.md`, «Terreno»; las mediciones del relieve, en `eval/results/w5_relieve.json`.
+    - **Instalado:** `geotiff` 3.0.5 en `apps/web` (ADR 0001), para leer por rangos el modelo Copernicus GLO-30 en `/api/relieve`.
   - **U2, segunda pasada del escenario Unity (2026-11-10):**
     - **Qué cambió:** los 5 puntos (luz, calle mexicana, suelo, árboles impostores, autopista y cerros) están en `main`.
     - **Dónde está el detalle:** el resumen y las cifras, en [`docs/progress/U.md`](progress/U.md); las 20 capturas lado a lado, en `docs/cesvi/u2/segunda-pasada/lado-a-lado/`.

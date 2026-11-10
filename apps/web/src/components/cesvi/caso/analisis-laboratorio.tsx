@@ -291,7 +291,7 @@ export function ActoDanos({
   useEffect(() => {
     if (!r || ajustado?.r === r) return undefined;
     let vivo = true;
-    void reconstruirEnNavegador(especReconstruida(r) as unknown as EscenaSpec)
+    void reconstruirEnNavegador(especReconstruida(r) as unknown as EscenaSpec, r.relieve)
       .then((res) => {
         if (vivo) setAjustado({ r, res: res as unknown as Record<string, unknown> });
       })

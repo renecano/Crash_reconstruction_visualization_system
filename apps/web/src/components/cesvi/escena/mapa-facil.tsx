@@ -11,6 +11,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
 import { metrosPorPixel, siluetaClase } from "@/lib/colocar";
 import type { Punto } from "@/lib/escena-facil";
+import { COLOR_ONDULACION, COLOR_SUPERFICIE, COLOR_TOPE } from "@/lib/terreno-colores";
 import { estiloMapaEscena } from "./estilo-mapa-escena";
 
 export interface CocheMapa {
@@ -53,6 +54,18 @@ export interface LineaMapa {
   color: string;
 }
 
+/** Una pieza del terreno que marcó el perito (C3, W5): una zona, una zona ondulada o un tope. */
+export interface TerrenoMapa {
+  id: string;
+  clase: "zona" | "ondulacion" | "tope";
+  /** La superficie de una zona. */
+  tipo?: string;
+  nombre: string;
+  /** El polígono de la zona o los dos extremos del tope. */
+  puntos: Punto[];
+  centro: Punto;
+}
+
 export interface MapaFacilProps {
   tema: "claro" | "oscuro";
   /** Dónde abre: el encuadre de estos puntos (o el centro, si es uno). */
@@ -81,9 +94,12 @@ export interface MapaFacilProps {
   medicion?: Punto[];
   /** W4: los objetos del lugar que colocó el perito. */
   objetos?: ObjetoMapa[];
+  /** W5: las zonas de otra superficie, las zonas onduladas y los topes. */
+  terreno?: TerrenoMapa[];
   /**
    * W4, corregir después: lo ya colocado se toca para seleccionarlo («coche:V1», «objeto:obj-1»,
-   * «marca:golpe», «marca:objeto-2», «marca:paso-V1-1») y lo seleccionado se arrastra.
+   * «marca:golpe», «marca:objeto-2», «marca:paso-V1-1», «terreno:zona-1») y lo seleccionado se
+   * arrastra.
    */
   onSeleccionar?: (clave: string) => void;
   seleccion?: string | null;
@@ -195,14 +211,17 @@ export function MapaFacil(p: MapaFacilProps) {
   useEffect(() => {
     const m = mapa.current;
     if (!m || !listo) return;
-    const dibujar = () =>
+    const dibujar = () => {
+      // El terreno va debajo de las líneas.
+      dibujarTerreno(m, ultimo.current.terreno ?? []);
       dibujarLineas(m, ultimo.current.lineas ?? [], ultimo.current.medicion ?? []);
+    };
     dibujar();
     m.on("style.load", dibujar);
     return () => {
       m.off("style.load", dibujar);
     };
-  }, [listo, p.lineas, p.medicion]);
+  }, [listo, p.lineas, p.medicion, p.terreno]);
 
   // Los marcadores: se rehacen cuando cambia lo que muestran (son pocos) y se escalan con el zoom. Se
   // comparan por contenido: la escena manda arreglos nuevos en cada render.
@@ -213,6 +232,7 @@ export function MapaFacil(p: MapaFacilProps) {
     p.flechas,
     p.coches,
     p.objetos,
+    p.terreno,
     p.seleccion,
     Boolean(p.onSeleccionar),
     Boolean(p.onMoverCoche),
@@ -332,6 +352,23 @@ export function MapaFacil(p: MapaFacilProps) {
       };
       ajustar();
       escalar.push(ajustar);
+    }
+
+    // W5: cada pieza del terreno lleva su etiqueta en el centro; de ahí se toca y se arrastra.
+    for (const t of p.terreno ?? []) {
+      const el = document.createElement("div");
+      el.setAttribute("data-testid", `terreno-${t.id}`);
+      el.setAttribute("data-clase", t.clase);
+      el.style.pointerEvents = "none";
+      const nombre = document.createElement("span");
+      nombre.className = "escena-etiqueta escena-etiqueta-terreno";
+      nombre.textContent = t.nombre;
+      nombre.style.setProperty("--color-terreno", colorTerreno(t));
+      el.append(nombre);
+      const clave = `terreno:${t.id}`;
+      const sel = seleccionable(el, clave);
+      const marcador = agregar(el, t.centro);
+      if (sel) arrastrable(marcador, clave);
     }
 
     if (p.propuesta) {
@@ -517,6 +554,81 @@ function encuadrar(m: MapaMl, puntos: readonly Punto[], animar: boolean) {
       [Math.max(...lons), Math.max(...lats)],
     ],
     { padding, maxZoom: 20.6, animate: animar },
+  );
+}
+
+const colorTerreno = (t: TerrenoMapa) =>
+  t.clase === "tope"
+    ? COLOR_TOPE
+    : t.clase === "ondulacion"
+      ? COLOR_ONDULACION
+      : (COLOR_SUPERFICIE[t.tipo as keyof typeof COLOR_SUPERFICIE] ?? "#8A8F98");
+
+/** El terreno marcado: las zonas como polígonos de su color y los topes como una franja amarilla. */
+function dibujarTerreno(m: MapaMl, terreno: readonly TerrenoMapa[]) {
+  if (!m.isStyleLoaded()) return;
+  const datos = {
+    type: "FeatureCollection" as const,
+    features: terreno.map((t) => ({
+      type: "Feature" as const,
+      properties: { color: colorTerreno(t), clase: t.clase },
+      geometry:
+        t.clase === "tope"
+          ? {
+              type: "LineString" as const,
+              coordinates: t.puntos.map((q) => [q.lon, q.lat]),
+            }
+          : {
+              type: "Polygon" as const,
+              coordinates: [[...t.puntos, t.puntos[0]!].map((q) => [q.lon, q.lat])],
+            },
+    })),
+  };
+  const fuente = m.getSource("escena-terreno") as GeoJSONSource | undefined;
+  if (fuente) {
+    fuente.setData(datos);
+    return;
+  }
+  m.addSource("escena-terreno", { type: "geojson", data: datos });
+  // Debajo de las líneas de los trayectos, si ya están.
+  const antes = m.getLayer("escena-lineas") ? "escena-lineas" : undefined;
+  m.addLayer(
+    {
+      id: "escena-terreno-zonas",
+      type: "fill",
+      source: "escena-terreno",
+      filter: ["!=", ["get", "clase"], "tope"],
+      paint: {
+        "fill-color": ["get", "color"],
+        "fill-opacity": ["case", ["==", ["get", "clase"], "ondulacion"], 0.22, 0.42],
+      },
+    },
+    antes,
+  );
+  m.addLayer(
+    {
+      id: "escena-terreno-orillas",
+      type: "line",
+      source: "escena-terreno",
+      filter: ["!=", ["get", "clase"], "tope"],
+      paint: { "line-color": ["get", "color"], "line-width": 2, "line-dasharray": [2, 1.5] },
+    },
+    antes,
+  );
+  m.addLayer(
+    {
+      id: "escena-terreno-topes",
+      type: "line",
+      source: "escena-terreno",
+      filter: ["==", ["get", "clase"], "tope"],
+      layout: { "line-cap": "butt" },
+      paint: {
+        "line-color": ["get", "color"],
+        // Un tope mide de 1.4 a 5.4 m a lo largo de la vía: que se vea a cualquier acercamiento.
+        "line-width": ["interpolate", ["exponential", 2], ["zoom"], 16, 3, 19, 9, 21, 28],
+      },
+    },
+    antes,
   );
 }
 

@@ -69,13 +69,15 @@ export async function tocarEnMetros(page: Page, desde: string, este: number, nor
 }
 
 /**
- * Las tres preguntas de C1 (W3) y el botón que las contesta sin agregar evidencia: «No sé» dónde fue
- * el primer golpe, «No» chocó contra algo más y seguir sin puntos de paso.
+ * Las tres preguntas de C1 (W3) y la del terreno (C3, W5), con el botón que las contesta sin agregar
+ * evidencia: «No sé» dónde fue el primer golpe, «No» chocó contra algo más, seguir sin puntos de
+ * paso y «Es pavimento liso».
  */
 const BOTON_C1: [RegExp, string][] = [
   [/primer golpe/, "golpe-nose"],
   [/algo más/, "otros-no"],
   [/por dónde pasó/, "paso-listo"],
+  [/Cómo es el terreno/, "terreno-liso"],
 ];
 
 /**
@@ -86,7 +88,7 @@ const BOTON_C1: [RegExp, string][] = [
 export async function contestarC1(page: Page) {
   const lista = page.getByTestId("escena-lista");
   const pregunta = page.getByTestId("escena-pregunta");
-  for (let k = 0; k < 3; k++) {
+  for (let k = 0; k < BOTON_C1.length; k++) {
     // La pregunta anterior tarda un instante en cambiar: se espera a la lista o a una de C1.
     await expect
       .poll(async () => {

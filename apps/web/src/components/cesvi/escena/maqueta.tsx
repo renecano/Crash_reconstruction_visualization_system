@@ -14,9 +14,11 @@
  *
  * Coordenadas: las del solver en metros. El SVG usa metros como unidad, con Y hacia abajo.
  */
+import { curvasDeNivel, intervaloDeCurvas, type MallaRelieve } from "@croquis/cesvi";
 import type { EscenaSpec } from "@croquis/scene-schema";
 import { sceneLayout } from "@croquis/croquis-2d";
 import { useMemo } from "react";
+import { COLOR_CURVA, COLOR_ONDULACION, COLOR_SUPERFICIE, COLOR_TOPE } from "@/lib/terreno-colores";
 import { siluetaClase } from "@/lib/colocar";
 import { m, useReducedMotion } from "motion/react";
 import { Anillo } from "../movimiento";
@@ -49,6 +51,25 @@ function zonaDeContacto(
   return { x: lado === "L" ? -0.5 : 0.3, y: cy - h / 2, w: 0.2, h };
 }
 
+type XY = { x: number; y: number };
+/** `lugar.terreno` de la escena (C3), lo que la maqueta dibuja de él. */
+interface TerrenoEscena {
+  superficies?: {
+    id: string;
+    tipo: keyof typeof COLOR_SUPERFICIE;
+    poligono: XY[];
+    friccion: { valor: number };
+  }[];
+  ondulaciones?: {
+    id: string;
+    poligono: XY[];
+    amplitud_m: number;
+    longitud_onda_m: number;
+    rumbo_deg: number;
+  }[];
+  topes?: { id: string; linea: XY[]; alto_m: number; largo_m: number }[];
+}
+
 export function EscenaMaqueta({
   spec,
   resultado,
@@ -59,10 +80,13 @@ export function EscenaMaqueta({
   sinEtiquetas = false,
   tips = {},
   tipDelImpacto = null,
+  relieve = null,
 }: {
   /** Lo que dice cada vehículo al pasar el puntero o con el foco (§9). */
   tips?: Record<string, string>;
   tipDelImpacto?: string | null;
+  /** O4 (W5): la malla de relieve de la escena; con ella se dibujan las curvas de nivel. */
+  relieve?: MallaRelieve | null;
   /** Sin etiquetas ni cota, para un croquis chico. */
   sinEtiquetas?: boolean;
   /** El ancho de la vía si el caso lo trae medido, con su origen. */
@@ -77,6 +101,9 @@ export function EscenaMaqueta({
   t?: number | null;
 }) {
   const layout = useMemo(() => sceneLayout(spec), [spec]);
+  // C3 y O4 (W5): las zonas de superficie, las ondulaciones, los topes y las curvas de nivel.
+  const terreno = (spec.lugar as { terreno?: TerrenoEscena }).terreno ?? null;
+  const curvas = useMemo(() => (relieve ? curvasDeNivel(relieve) : []), [relieve]);
   const ti = tImpacto(resultado);
   const [x0, y0, x1, y1] = encuadre(resultado);
   const W = x1 - x0;
@@ -171,6 +198,98 @@ export function EscenaMaqueta({
             })
           : null}
       </g>
+
+      {/* W5: el terreno, sobre la vía y debajo de los vehículos. Medidas reales, en metros. */}
+      {curvas.length ? (
+        <g
+          data-testid="maqueta-curvas"
+          data-intervalo={intervaloDeCurvas(relieve!)}
+          stroke={COLOR_CURVA}
+          strokeWidth={0.12}
+          opacity={0.55}
+          fill="none"
+        >
+          {curvas.map((c) => (
+            <path
+              key={c.nivel}
+              strokeWidth={c.nivel === 0 ? 0.22 : 0.12}
+              d={c.tramos
+                .map(([xa, ya, xb, yb]) => `M${px(xa)} ${py(ya)}L${px(xb)} ${py(yb)}`)
+                .join("")}
+            />
+          ))}
+        </g>
+      ) : null}
+      {terreno ? (
+        <g data-testid="maqueta-terreno">
+          {(terreno.superficies ?? []).map((z) => (
+            <polygon
+              key={z.id}
+              data-testid={`maqueta-zona-${z.id}`}
+              points={z.poligono.map((q) => `${px(q.x)},${py(q.y)}`).join(" ")}
+              fill={COLOR_SUPERFICIE[z.tipo] ?? "#8A8F98"}
+              fillOpacity={0.45}
+              stroke={COLOR_SUPERFICIE[z.tipo] ?? "#8A8F98"}
+              strokeWidth={0.15}
+              strokeDasharray="0.9 0.6"
+            >
+              <title>{`Zona de ${z.tipo}: fricción ${z.friccion.valor.toFixed(2)}`}</title>
+            </polygon>
+          ))}
+          {(terreno.ondulaciones ?? []).map((o) => {
+            // Las crestas, atravesadas al rumbo, una por longitud de onda, recortadas a la zona.
+            const r = (o.rumbo_deg * Math.PI) / 180;
+            const u = [Math.cos(r), Math.sin(r)] as const;
+            const s = o.poligono.map((q) => q.x * u[0] + q.y * u[1]);
+            const n = o.poligono.map((q) => -q.x * u[1] + q.y * u[0]);
+            const [n0, n1] = [Math.min(...n), Math.max(...n)];
+            const crestas: number[] = [];
+            const primera = Math.ceil((Math.min(...s) - o.longitud_onda_m / 4) / o.longitud_onda_m);
+            for (let k = primera; ; k++) {
+              const sk = o.longitud_onda_m * (k + 0.25);
+              if (sk > Math.max(...s) || crestas.length > 400) break;
+              crestas.push(sk);
+            }
+            const punto = (sk: number, nk: number) =>
+              `${px(sk * u[0] - nk * u[1])} ${py(sk * u[1] + nk * u[0])}`;
+            return (
+              <g key={o.id} data-testid={`maqueta-ondulacion-${o.id}`}>
+                <clipPath id={`mq-onda-${o.id}`}>
+                  <polygon points={o.poligono.map((q) => `${px(q.x)},${py(q.y)}`).join(" ")} />
+                </clipPath>
+                <polygon
+                  points={o.poligono.map((q) => `${px(q.x)},${py(q.y)}`).join(" ")}
+                  fill={COLOR_ONDULACION}
+                  fillOpacity={0.14}
+                >
+                  <title>{`Zona ondulada: ${o.amplitud_m.toFixed(2)} m de valle a cresta, crestas cada ${o.longitud_onda_m.toFixed(2)} m`}</title>
+                </polygon>
+                <path
+                  clipPath={`url(#mq-onda-${o.id})`}
+                  d={crestas.map((sk) => `M${punto(sk, n0)}L${punto(sk, n1)}`).join("")}
+                  stroke={COLOR_ONDULACION}
+                  strokeWidth={Math.min(0.5, o.longitud_onda_m / 4)}
+                  opacity={0.55}
+                />
+              </g>
+            );
+          })}
+          {(terreno.topes ?? []).map((tp) => (
+            <line
+              key={tp.id}
+              data-testid={`maqueta-tope-${tp.id}`}
+              x1={px(tp.linea[0]!.x)}
+              y1={py(tp.linea[0]!.y)}
+              x2={px(tp.linea[1]!.x)}
+              y2={py(tp.linea[1]!.y)}
+              stroke={COLOR_TOPE}
+              strokeWidth={tp.largo_m}
+            >
+              <title>{`Tope: ${tp.alto_m.toFixed(2)} m de alto y ${tp.largo_m.toFixed(2)} m de largo`}</title>
+            </line>
+          ))}
+        </g>
+      ) : null}
 
       {/* La cota del ancho de la vía (la que se dibuja, del mapa). */}
       {cota && !sinEtiquetas ? (

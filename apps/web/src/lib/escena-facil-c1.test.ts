@@ -5,7 +5,13 @@
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { escenaDeNarracion, especDeExpediente, type SalidaCorpus } from "@croquis/cesvi";
+import {
+  agregarOndulacion,
+  agregarTope,
+  escenaDeNarracion,
+  especDeExpediente,
+  type SalidaCorpus,
+} from "@croquis/cesvi";
 import { describe, expect, it } from "vitest";
 import {
   agregarChoqueIntermedio,
@@ -22,6 +28,7 @@ import {
   quedoJuntoAlChoque,
   quitarChoqueIntermedio,
   quitarUltimoPuntoDePaso,
+  resumenTerreno,
   resumenC1,
 } from "./escena-facil";
 import { faltaDelLugar, impactosAColocar } from "./pasos-caso";
@@ -61,7 +68,7 @@ describe("las preguntas de C1 van después de los vehículos", () => {
     ]);
   });
 
-  it("con `c1`, se agregan las tres, y se preguntan en orden al terminar los vehículos", () => {
+  it("con `c1`, se agregan las tres y la del terreno, y se preguntan en orden al terminar los vehículos", () => {
     const antes = pasosEscena(e0, impactos, { ...base, c1: {} });
     expect(antes.map((p) => p.tipo)).toEqual([
       "choque",
@@ -70,6 +77,7 @@ describe("las preguntas de C1 van después de los vehículos", () => {
       "golpe",
       "otros",
       "paso",
+      "terreno",
     ]);
     expect(pasoActual(antes)!.tipo).toBe("choque");
     const e = colocados();
@@ -83,14 +91,29 @@ describe("las preguntas de C1 van después de los vehículos", () => {
         pasosEscena(e, impactos, { ...base, c1: { golpeNoSe: true, choquesListos: true } }),
       )!.tipo,
     ).toBe("paso");
+    // C3 (W5): al final, «¿Cómo es el terreno?». Se contesta con «Es pavimento liso» o marcando algo.
+    const c1 = { golpeNoSe: true, choquesListos: true, pasosListos: true };
+    expect(pasoActual(pasosEscena(e, impactos, { ...base, c1 }))!.tipo).toBe("terreno");
     expect(
-      pasoActual(
-        pasosEscena(e, impactos, {
-          ...base,
-          c1: { golpeNoSe: true, choquesListos: true, pasosListos: true },
-        }),
-      ),
+      pasoActual(pasosEscena(e, impactos, { ...base, c1: { ...c1, terrenoListo: true } })),
     ).toBeNull();
+    const conTope = agregarTope(e, { lat: 19.3575, lon: -99.0625 }, 0).expediente;
+    expect(pasoActual(pasosEscena(conTope, impactos, { ...base, c1 }))).toBeNull();
+    // El resumen dice lo que es supuesto: las medidas de la norma, hasta que el perito las mide.
+    const lineas = resumenTerreno(
+      agregarOndulacion(conTope, { lat: 19.3577, lon: -99.0625 }, 0).expediente,
+      c1,
+    );
+    expect(lineas.map((l) => l.texto)).toEqual([
+      "Una zona ondulada, donde la marcaste",
+      "Un tope, donde lo marcaste",
+    ]);
+    expect(lineas[0]!.supuesto).toMatch(/supuesto/);
+    expect(lineas[1]!.detalle).toMatch(/NOM-034, tabla 38/);
+    expect(resumenTerreno(e, { ...c1, terrenoListo: true }).map((l) => l.texto)).toEqual([
+      "El terreno es pavimento liso",
+    ]);
+    expect(resumenTerreno(e, c1)).toEqual([]);
   });
 
   it("una escena que llega completa no las pregunta, y no bloquean «Siguiente»", () => {

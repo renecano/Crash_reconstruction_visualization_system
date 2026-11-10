@@ -402,6 +402,11 @@ La huella `2d5c1a20a446c129` es la de este build. Si se reconstruye, el script i
 - **La leyenda ilustrativa** todavía no sale en el visor: llega con el escenario y las cámaras.
 - **La medición en la MacBook M1:** la corre René con la liga.
 
+- **De W5 (2026-11-10), para el siguiente build y para U6:**
+  - `TerrenoVista.cs` ya dibuja el tope como arco de círculo, igual que el solver (antes, cos²). El build publicado (`6337b65c1db3110f`) todavía lleva el anterior: entra en el siguiente.
+  - La quinta escena de D1 (`terraceria`) sale ahora de `fixtures/caso3d/terraceria_topes.json`, con el resultado del solver sobre el terreno (z, cabeceo, alabeo y `cruce_tope`).
+  - En la web, la malla de relieve del caso está en `Reconstruccion.relieve` (en metros de la escena, altura 0 en el impacto). Al integrar `<VisorUnity>` (U6), pásala a `armarCaso3d` como `relieve`.
+
 ## Necesito del otro frente
 
 Nada por ahora.

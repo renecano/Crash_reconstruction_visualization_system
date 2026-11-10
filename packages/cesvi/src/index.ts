@@ -36,3 +36,5 @@ export * from "./recorrido-3d";
 export * from "./poses-impacto";
 export * from "./encimadas";
 export * from "./objetos";
+export * from "./terreno";
+export * from "./relieve";

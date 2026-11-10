@@ -70,10 +70,13 @@ function Silueta({ tipo }: { tipo: TipoObjeto }) {
 export function PanelCorregir({
   poniendo,
   onElegir,
+  onTerreno,
   onListo,
 }: {
   poniendo: TipoObjeto | null;
   onElegir: (t: TipoObjeto | null) => void;
+  /** C3 (W5): volver a «¿Cómo es el terreno?» para marcar una zona, un tope o el relieve. */
+  onTerreno?: () => void;
   onListo: () => void;
 }) {
   return (
@@ -86,8 +89,8 @@ export function PanelCorregir({
         Corregir la escena
       </h2>
       <p className="t-cuerpo text-texto-2">
-        Toca un coche, una marca o un objeto para moverlo, girarlo o quitarlo. O agrega algo que
-        está en el lugar.
+        Toca un coche, una marca, un objeto o una zona del terreno para moverlo, girarlo o quitarlo.
+        O agrega algo que está en el lugar.
       </p>
       <div className="grid grid-cols-2 gap-2" role="group" aria-label="Agregar un objeto del lugar">
         {TIPOS_OBJETO.map((t) => (
@@ -109,6 +112,16 @@ export function PanelCorregir({
           Toca el mapa donde está{" "}
           {TIPOS_OBJETO.find((t) => t.tipo === poniendo)!.nombre.toLowerCase()}.
         </p>
+      ) : null}
+      {onTerreno ? (
+        <button
+          type="button"
+          className="boton-secundario escena-boton"
+          onClick={onTerreno}
+          data-testid="corregir-terreno"
+        >
+          Terreno: superficies, topes y relieve
+        </button>
       ) : null}
       <button
         type="button"
