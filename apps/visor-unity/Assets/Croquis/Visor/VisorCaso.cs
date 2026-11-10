@@ -245,18 +245,19 @@ namespace Croquis.Visor
             }
 
             Calaveras(false);
-            foreach (var lado in new[] { -0.55f, 0.55f })
+            // En media, un solo foco al centro, más abierto: alumbra lo mismo y cuesta la mitad.
+            foreach (var lado in Calidad.Media ? new[] { 0f } : new[] { -0.55f, 0.55f })
             {
                 var luz = new GameObject("faro").AddComponent<Light>();
                 luz.transform.SetParent(transform, false);
                 luz.transform.localPosition = new Vector3(lado, 0.68f, largo / 2f - 0.15f);
                 luz.transform.localRotation = Quaternion.Euler(7f, lado * 3f, 0f);
                 luz.type = LightType.Spot;
-                luz.spotAngle = 70f;
+                luz.spotAngle = Calidad.Media ? 86f : 70f;
                 luz.innerSpotAngle = 12f;
                 luz.range = 55f;
                 // Moderada: a quemarropa contra otra carrocería no debe tapar el punto de contacto.
-                luz.intensity = 650f;
+                luz.intensity = Calidad.Media ? 1050f : 650f;
                 luz.color = new Color(1f, 0.95f, 0.86f);
                 luz.shadows = LightShadows.None;
             }

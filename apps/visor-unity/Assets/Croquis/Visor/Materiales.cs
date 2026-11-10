@@ -370,12 +370,10 @@ namespace Croquis.Visor
 
             if (!Cache.TryGetValue(nombre, out var m))
             {
-                // Sobre la tarjeta de árbol: recorte por alfa y dos caras, que ya van en el build.
-                m = new Material(Base("arbol_fresno_frente")) { name = nombre };
+                // Sobre su material base (`mata`): aquí solo se le pone la textura, sin tocar sus
+                // palabras clave, para que el build traiga la variante del sombreador.
+                m = new Material(Base("mata")) { name = nombre };
                 m.SetTexture("_BaseMap", tex);
-                m.SetTexture("_BumpMap", null);
-                m.DisableKeyword("_NORMALMAP");
-                m.SetColor("_BaseColor", Color.white);
                 Cache[nombre] = m;
             }
 
