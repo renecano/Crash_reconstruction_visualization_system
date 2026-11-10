@@ -1,19 +1,19 @@
-r"""Hornea un árbol de Poly Haven a un impostor de vistas alrededor (U2, segunda pasada). Corre en Blender 5.
+r"""Hornea un árbol de Poly Haven a un impostor de vistas alrededor (U2). Corre en Blender 5.
 
 Uso (lo llama ``node tools/unity/impostores.mjs``):
 
     blender -b --factory-startup -P hornear_impostor.py -- <arbol.blend> <salida/> <px> <vistas>
 
-Reúsa el horneado de tarjetas del visor web (``assets/pipeline/blender/hornear_arbol.py``, ADR 0099):
-el mismo modelo LOD0, centrado con el pie en z = 0, y los mismos dos dibujos por vista (el color sin
-luz y la normal en el espacio de la cámara, con el alfa de las hojas). Lo que cambia es la cámara: en
-vez de un frente y una planta, ``vistas`` cámaras ortográficas a la altura media del árbol, repartidas
-alrededor. La vista 0 mira desde −Y, como el frente de las tarjetas, y las siguientes giran en sentido
-antihorario visto desde arriba.
+Reúsa el horneado de tarjetas del visor web (``hornear_arbol.py``, ADR 0099): el mismo modelo
+LOD0, centrado con el pie en z = 0, y los mismos dos dibujos por vista (el color sin luz y la
+normal en el espacio de la cámara, con el alfa de las hojas). Lo que cambia es la cámara: en vez
+de un frente y una planta, ``vistas`` cámaras ortográficas a la altura media del árbol,
+repartidas alrededor. La vista 0 mira desde −Y, como el frente de las tarjetas, y las siguientes
+giran en sentido antihorario visto desde arriba.
 
-Todas las vistas comparten un cuadro del mismo lado (``lado_m``), centrado en el eje del árbol, para
-que el impostor no cambie de tamaño al girar. ``impostor.json`` guarda ese lado, el alto del modelo y
-cuántas vistas hay.
+Todas las vistas comparten un cuadro del mismo lado (``lado_m``), centrado en el eje del árbol,
+para que el impostor no cambie de tamaño al girar. ``impostor.json`` guarda ese lado, el alto del
+modelo y cuántas vistas hay.
 """
 
 from __future__ import annotations
@@ -26,12 +26,12 @@ from pathlib import Path
 import bpy  # type: ignore[import-not-found]
 from mathutils import Vector  # type: ignore[import-not-found]
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "assets" / "pipeline" / "blender"))
-import hornear_arbol as base  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import hornear_arbol as base
 
 
 def radio_en_planta() -> float:
-    """El punto del árbol más lejos de su eje, en planta: el cuadro tiene que cubrirlo en toda vista."""
+    """El punto del árbol más lejos de su eje, en planta: el cuadro lo cubre en toda vista."""
     r = 0.0
     for o in base.mallas():
         for v in o.data.vertices:

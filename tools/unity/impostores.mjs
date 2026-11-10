@@ -58,7 +58,7 @@ for (const [especie, e] of Object.entries(especies)) {
       "-b",
       "--factory-startup",
       "-P",
-      join(RAIZ, "tools/unity/blender/hornear_impostor.py"),
+      join(RAIZ, "assets/pipeline/blender/hornear_impostor.py"),
       "--",
       blend,
       horneado,

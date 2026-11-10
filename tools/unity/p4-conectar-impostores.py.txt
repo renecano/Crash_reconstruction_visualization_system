@@ -1,7 +1,7 @@
 """Conecta los impostores de árboles (punto 4 de la segunda pasada de U2). Temporal: se borra al aplicarlo.
 
 Antes: `node tools/unity/impostores.mjs` (Blender) y `node tools/unity/recursos.mjs`.
-Uso: `python -I tools/unity/p4-conectar-impostores.py`, y después una pasada de capturas del Editor.
+Uso: `python -I tools/unity/p4-conectar-impostores.py.txt`, y después una pasada de capturas del Editor.
 """
 import glob
 import io

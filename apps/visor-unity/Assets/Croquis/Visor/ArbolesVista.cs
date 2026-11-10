@@ -1,5 +1,5 @@
 // Punto 4 de la segunda pasada de U2 (árboles sin costura), todavía sin conectar: falta hornear
-// los atlas (`node tools/unity/impostores.mjs`) y aplicar `tools/unity/p4-conectar-impostores.py`,
+// los atlas (`node tools/unity/impostores.mjs`) y aplicar `tools/unity/p4-conectar-impostores.py.txt`,
 // que además quita este `#if`. Mientras, no entra a la compilación.
 #if CROQUIS_IMPOSTORES
 using System.Collections.Generic;
