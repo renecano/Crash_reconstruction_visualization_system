@@ -1628,6 +1628,42 @@
       "required": ["vehiculo", "zona", "fuente"],
       "additionalProperties": false
     },
+    "ObjetoExpediente": {
+      "type": "object",
+      "description": "Un objeto del lugar que el perito coloca en la escena (C2): poste, muro o pared, árbol, barrera, guarnición, señal o vehículo estacionado. Está en la escena aunque nadie choque contra él; en la escena va a `entorno.objetos`.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_-]{1,40}$",
+          "description": "Identificador estable dentro del expediente."
+        },
+        "tipo": {
+          "type": "string",
+          "enum": [
+            "poste",
+            "muro",
+            "arbol",
+            "barrera",
+            "guarnicion",
+            "senal",
+            "vehiculo_estacionado"
+          ]
+        },
+        "punto": { "$ref": "#/$defs/Coordenadas" },
+        "rumbo_deg": {
+          "type": "number",
+          "minimum": 0,
+          "exclusiveMaximum": 360,
+          "description": "Hacia dónde apunta su largo, desde el norte hacia el este."
+        },
+        "largo_m": { "type": "number", "exclusiveMinimum": 0, "maximum": 60 },
+        "ancho_m": { "type": "number", "exclusiveMinimum": 0, "maximum": 20 },
+        "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+        "cita": { "$ref": "#/$defs/Cita" }
+      },
+      "required": ["id", "tipo", "punto", "fuente"],
+      "additionalProperties": false
+    },
     "ImpactoExpediente": {
       "type": "object",
       "description": "Un impacto, en orden: qué vehículos u objeto fijo, sus zonas de contacto, dónde y cuándo. Una carambola tiene más de uno.",
@@ -1954,6 +1990,12 @@
           "description": "Impactos en orden.",
           "items": { "$ref": "#/$defs/ImpactoExpediente" },
           "maxItems": 50
+        },
+        "objetos": {
+          "type": "array",
+          "description": "Objetos del lugar que colocó el perito (C2).",
+          "items": { "$ref": "#/$defs/ObjetoExpediente" },
+          "maxItems": 60
         },
         "versiones": {
           "type": "array",
