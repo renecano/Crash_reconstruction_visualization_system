@@ -240,8 +240,8 @@ catalogs:
       specifier: 19.3.0
       version: 19.3.0
     react-dom:
-      specifier: 19.3.0
-      version: 19.3.0
+      specifier: 19.3.1
+      version: 19.3.1
     tailwindcss:
       specifier: 4.3.3
       version: 4.3.3
@@ -333,7 +333,7 @@ importers:
         version: 9.13.0
       geist:
         specifier: 1.8.1
-        version: 1.8.1(next@16.4.2(@babel/core@7.29.7(supports-color@7.2.0))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))
+        version: 1.8.1(next@16.4.2(@babel/core@7.29.7(supports-color@7.2.0))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.0))(react@19.3.0))
       geotiff:
         specifier: 'catalog:'
         version: 3.0.5
@@ -342,10 +342,10 @@ importers:
         version: 6.15.0
       motion:
         specifier: ^14.9.1
-        version: 14.9.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 14.9.1(react-dom@19.3.1(react@19.3.0))(react@19.3.0)
       next:
         specifier: 16.4.2
-        version: 16.4.2(@babel/core@7.29.7(supports-color@7.2.0))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 16.4.2(@babel/core@7.29.7(supports-color@7.2.0))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.0))(react@19.3.0)
       pdfjs-dist:
         specifier: 6.4.299
         version: 6.4.299
@@ -357,7 +357,7 @@ importers:
         version: 19.3.0
       react-dom:
         specifier: 'catalog:'
-        version: 19.3.0(react@19.3.0)
+        version: 19.3.1(react@19.3.0)
       zod:
         specifier: 'catalog:'
         version: 4.6.5
@@ -370,13 +370,13 @@ importers:
         version: 1.64.0
       '@serwist/turbopack':
         specifier: 9.5.13
-        version: 9.5.13(@swc/helpers@0.5.23)(esbuild@0.28.2)(next@16.4.2(@babel/core@7.29.7(supports-color@7.2.0))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)(typescript@6.0.3)
+        version: 9.5.13(@swc/helpers@0.5.23)(esbuild@0.28.2)(next@16.4.2(@babel/core@7.29.7(supports-color@7.2.0))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.0))(react@19.3.0))(react@19.3.0)(typescript@6.0.3)
       '@tailwindcss/turbopack':
         specifier: 'catalog:'
         version: 4.3.3
       '@testing-library/react':
         specifier: 'catalog:'
-        version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.0))(react@19.3.0)
       '@types/geojson':
         specifier: 7946.0.16
         version: 7946.0.16
@@ -520,7 +520,7 @@ importers:
     devDependencies:
       '@testing-library/react':
         specifier: 'catalog:'
-        version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.0))(react@19.3.0)
       '@types/node':
         specifier: 'catalog:'
         version: 24.19.2
@@ -547,7 +547,7 @@ importers:
         version: 19.3.0
       react-dom:
         specifier: 'catalog:'
-        version: 19.3.0(react@19.3.0)
+        version: 19.3.1(react@19.3.0)
       tsx:
         specifier: 'catalog:'
         version: 4.23.15
@@ -608,7 +608,7 @@ importers:
         version: 8.20.0
       ajv-formats:
         specifier: 'catalog:'
-        version: 3.0.1
+        version: 3.0.1(ajv@8.20.0)
       zod:
         specifier: 'catalog:'
         version: 4.6.5
@@ -679,7 +679,7 @@ importers:
         version: 0.21.0
       '@react-three/fiber':
         specifier: 'catalog:'
-        version: 9.8.1(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(three@0.186.1)
+        version: 9.8.1(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.0))(react@19.3.0)(three@0.186.1)
       mediabunny:
         specifier: 1.61.6
         version: 1.61.6
@@ -689,7 +689,7 @@ importers:
     devDependencies:
       '@testing-library/react':
         specifier: 'catalog:'
-        version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.0))(react@19.3.0)
       '@types/node':
         specifier: 'catalog:'
         version: 24.19.2
@@ -719,7 +719,7 @@ importers:
         version: 19.3.0
       react-dom:
         specifier: 'catalog:'
-        version: 19.3.0(react@19.3.0)
+        version: 19.3.1(react@19.3.0)
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -1598,6 +1598,7 @@ packages:
   '@opentelemetry/sdk-trace-base@2.12.0':
     resolution: {integrity: sha512-JOERgZCxRM06FEJ5kEWxlSRChah6MmXDx3KwCruqEv/iEyLkTokCSemf2y1w8oIHtfrr8EVTpzebq/31vn2Cpg==}
     engines: {node: ^18.19.0 || >=20.6.0}
+    deprecated: Use @opentelemetry/sdk-trace package
     peerDependencies:
       '@opentelemetry/api': '>=1.3.0 <1.10.0'
 
@@ -2452,6 +2453,11 @@ packages:
 
   ajv-formats@3.0.1:
     resolution: {integrity: sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ==}
+    peerDependencies:
+      ajv: ^8.0.0
+    peerDependenciesMeta:
+      ajv:
+        optional: true
 
   ajv@6.15.0:
     resolution: {integrity: sha512-fgFx7Hfoq60ytK2c7DhnF8jIvzYgOMxfugjLOSMHjLIPgenqa7S7oaagATUq99mV6IYvN2tRmC0wnTYX6iPbMw==}
@@ -3684,8 +3690,8 @@ packages:
     resolution: {integrity: sha512-MbjN408fEndfiQXbFQ1vnd+1NoLDsnQW41410oQBXiyXDMYH5z505juWa4KUE1LqxRC7DgOgZDbKLxHIwm27hA==}
     engines: {node: '>=0.10'}
 
-  legacy-javascript@0.0.3:
-    resolution: {integrity: sha512-1r6MT4dVaJyXt4G07Cm2cQ0AUaLJdefiEp4SmIAylA++gnEQ82YvmzE58RkM5EP0fk5hROLCslUPGnwIYdZQVA==}
+  legacy-javascript@0.0.4:
+    resolution: {integrity: sha512-UTmeKBVxnfJcpmpOvzzNnLsQT99BXHpPlc/ZKddIRmWmrR0fw6335I3lq4+sJoP60UTbBNaYsGYVPc65YB1x3A==}
 
   lerc@3.0.0:
     resolution: {integrity: sha512-Rm4J/WaHhRa93nCN2mwWDZFoRVF18G1f47C+kvQWyHGEZxFpTUi73p7lMVSAndyxGt6lJ2/CFbOcf9ra5p8aww==}
@@ -4330,10 +4336,10 @@ packages:
     engines: {node: '>=20.19.0'}
     hasBin: true
 
-  react-dom@19.3.0:
-    resolution: {integrity: sha512-JDk8dgif51OjFoDE70+OT9ICyYr+69HlmihNwp1+Nsfbna3t5sIiCa9ZJktDmQ4/1b/rn26hIAR2uYXDMr5r0Q==}
+  react-dom@19.3.1:
+    resolution: {integrity: sha512-Y0bARz53lhEC1NMCASs0/j+faB/zqt3R8hpvg1e8+61ZVJ4UL0UdC4cBbXfZMcIuhrfgeILTLe+ZeBCavQPtKQ==}
     peerDependencies:
-      react: ^19.3.0
+      react: ^19.3.1
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -5995,7 +6001,7 @@ snapshots:
 
   '@paulirish/trace_engine@0.0.65':
     dependencies:
-      legacy-javascript: 0.0.3
+      legacy-javascript: 0.0.4
       third-party-web: 0.30.0
 
   '@petamoriken/float16@3.9.3': {}
@@ -6012,7 +6018,7 @@ snapshots:
       modern-tar: 0.8.6
       yargs: 18.2.0
 
-  '@react-three/fiber@9.8.1(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(three@0.186.1)':
+  '@react-three/fiber@9.8.1(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.0))(react@19.3.0)(three@0.186.1)':
     dependencies:
       '@babel/runtime': 7.29.10
       '@types/webxr': 0.5.24
@@ -6020,14 +6026,14 @@ snapshots:
       buffer: 6.0.3
       its-fine: 2.1.1(@types/react@19.3.0)(react@19.3.0)
       react: 19.3.0
-      react-use-measure: 2.1.7(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      react-use-measure: 2.1.7(react-dom@19.3.1(react@19.3.0))(react@19.3.0)
       scheduler: 0.28.0
       suspend-react: 0.1.3(react@19.3.0)
       three: 0.186.1
       use-sync-external-store: 1.7.0(react@19.3.0)
       zustand: 5.0.15(@types/react@19.3.0)(react@19.3.0)(use-sync-external-store@1.7.0(react@19.3.0))
     optionalDependencies:
-      react-dom: 19.3.0(react@19.3.0)
+      react-dom: 19.3.1(react@19.3.0)
     transitivePeerDependencies:
       - '@types/react'
       - immer
@@ -6142,7 +6148,7 @@ snapshots:
     transitivePeerDependencies:
       - browserslist
 
-  '@serwist/turbopack@9.5.13(@swc/helpers@0.5.23)(esbuild@0.28.2)(next@16.4.2(@babel/core@7.29.7(supports-color@7.2.0))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)(typescript@6.0.3)':
+  '@serwist/turbopack@9.5.13(@swc/helpers@0.5.23)(esbuild@0.28.2)(next@16.4.2(@babel/core@7.29.7(supports-color@7.2.0))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.0))(react@19.3.0))(react@19.3.0)(typescript@6.0.3)':
     dependencies:
       '@serwist/build': 9.5.13(browserslist@4.29.3)(typescript@6.0.3)
       '@serwist/utils': 9.5.13(browserslist@4.29.3)
@@ -6150,7 +6156,7 @@ snapshots:
       '@swc/core': 1.16.13(@swc/helpers@0.5.23)
       browserslist: 4.29.3
       kolorist: 1.8.0
-      next: 16.4.2(@babel/core@7.29.7(supports-color@7.2.0))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      next: 16.4.2(@babel/core@7.29.7(supports-color@7.2.0))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.0))(react@19.3.0)
       react: 19.3.0
       semver: 7.8.5
       serwist: 9.5.13(browserslist@4.29.3)(typescript@6.0.3)
@@ -6325,12 +6331,12 @@ snapshots:
       picocolors: 1.1.1
       pretty-format: 27.5.1
 
-  '@testing-library/react@16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
+  '@testing-library/react@16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.0))(react@19.3.0)':
     dependencies:
       '@babel/runtime': 7.29.10
       '@testing-library/dom': 10.4.2
       react: 19.3.0
-      react-dom: 19.3.0(react@19.3.0)
+      react-dom: 19.3.1(react@19.3.0)
     optionalDependencies:
       '@types/react': 19.3.0
       '@types/react-dom': 19.3.0(@types/react@19.3.0)
@@ -6686,7 +6692,9 @@ snapshots:
 
   acorn@8.19.0: {}
 
-  ajv-formats@3.0.1: {}
+  ajv-formats@3.0.1(ajv@8.20.0):
+    optionalDependencies:
+      ajv: 8.20.0
 
   ajv@6.15.0:
     dependencies:
@@ -7639,14 +7647,14 @@ snapshots:
       cross-spawn: 7.0.6
       signal-exit: 4.1.0
 
-  framer-motion@14.9.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
+  framer-motion@14.9.1(react-dom@19.3.1(react@19.3.0))(react@19.3.0):
     dependencies:
       motion-dom: 14.9.1
       motion-utils: 14.7.0
       tslib: 2.8.1
     optionalDependencies:
       react: 19.3.0
-      react-dom: 19.3.0(react@19.3.0)
+      react-dom: 19.3.1(react@19.3.0)
 
   fsevents@2.3.3:
     optional: true
@@ -7667,9 +7675,9 @@ snapshots:
 
   functions-have-names@1.2.3: {}
 
-  geist@1.8.1(next@16.4.2(@babel/core@7.29.7(supports-color@7.2.0))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)):
+  geist@1.8.1(next@16.4.2(@babel/core@7.29.7(supports-color@7.2.0))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.0))(react@19.3.0)):
     dependencies:
-      next: 16.4.2(@babel/core@7.29.7(supports-color@7.2.0))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      next: 16.4.2(@babel/core@7.29.7(supports-color@7.2.0))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.0))(react@19.3.0)
 
   generator-function@2.0.1: {}
 
@@ -8116,7 +8124,7 @@ snapshots:
     dependencies:
       language-subtag-registry: 0.3.23
 
-  legacy-javascript@0.0.3: {}
+  legacy-javascript@0.0.4: {}
 
   lerc@3.0.0: {}
 
@@ -8143,7 +8151,7 @@ snapshots:
       '@paulirish/trace_engine': 0.0.65
       '@sentry/node': 10.76.2(@opentelemetry/core@2.12.0(@opentelemetry/api@1.9.1))(supports-color@7.2.0)
       ajv: 8.20.0
-      ajv-formats: 3.0.1
+      ajv-formats: 3.0.1(ajv@8.20.0)
       axe-core: 4.14.0
       chrome-launcher: 1.2.2(supports-color@7.2.0)
       configstore: 7.1.0
@@ -8425,13 +8433,13 @@ snapshots:
 
   motion-utils@14.7.0: {}
 
-  motion@14.9.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
+  motion@14.9.1(react-dom@19.3.1(react@19.3.0))(react@19.3.0):
     dependencies:
-      framer-motion: 14.9.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      framer-motion: 14.9.1(react-dom@19.3.1(react@19.3.0))(react@19.3.0)
       tslib: 2.8.1
     optionalDependencies:
       react: 19.3.0
-      react-dom: 19.3.0(react@19.3.0)
+      react-dom: 19.3.1(react@19.3.0)
 
   ms@2.1.3: {}
 
@@ -8468,7 +8476,7 @@ snapshots:
       iota-array: 1.0.0
       is-buffer: 1.1.6
 
-  next@16.4.2(@babel/core@7.29.7(supports-color@7.2.0))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
+  next@16.4.2(@babel/core@7.29.7(supports-color@7.2.0))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.0)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.0))(react@19.3.0):
     dependencies:
       '@next/env': 16.4.2
       '@swc/helpers': 0.5.23
@@ -8476,7 +8484,7 @@ snapshots:
       caniuse-lite: 1.0.30001815
       postcss: 8.5.23
       react: 19.3.0
-      react-dom: 19.3.0(react@19.3.0)
+      react-dom: 19.3.1(react@19.3.0)
       styled-jsx: 5.1.6(@babel/core@7.29.7(supports-color@7.2.0))(react@19.3.0)
     optionalDependencies:
       '@next/swc-darwin-arm64': 16.4.2
@@ -8797,7 +8805,7 @@ snapshots:
       - '@swc/core'
       - '@swc/wasm'
 
-  react-dom@19.3.0(react@19.3.0):
+  react-dom@19.3.1(react@19.3.0):
     dependencies:
       react: 19.3.0
       scheduler: 0.28.0
@@ -8806,11 +8814,11 @@ snapshots:
 
   react-is@17.0.2: {}
 
-  react-use-measure@2.1.7(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
+  react-use-measure@2.1.7(react-dom@19.3.1(react@19.3.0))(react@19.3.0):
     dependencies:
       react: 19.3.0
     optionalDependencies:
-      react-dom: 19.3.0(react@19.3.0)
+      react-dom: 19.3.1(react@19.3.0)
 
   react@19.3.0: {}
 
