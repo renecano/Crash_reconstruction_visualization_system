@@ -4,6 +4,7 @@ using Croquis.Generated;
 using UnityEngine;
 using Material = UnityEngine.Material;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 namespace Croquis.Visor
@@ -17,24 +18,38 @@ namespace Croquis.Visor
     {
         private const int LuminariasEncendidasMax = 6;
 
+        /// <summary>
+        /// El radio, desde el centro de la acción, donde no se dibuja desgaste procedural (grietas,
+        /// parches, manchas): es un visor forense, y una mancha inventada junto al hecho se podría
+        /// confundir con una evidencia. Lo fija `VisorCaso` con la zona de interés del caso.
+        /// </summary>
+        public static float ClaroDelHecho { get; set; } = 14f;
+
+        /// <summary>El centro de la acción, en planta (x, y).</summary>
+        public static Vector2 CentroDelHecho { get; set; }
+
         public static void Construir(Transform raiz, Escenario e, Light sol, Camera camara, Terreno terreno)
         {
             var escenario = new GameObject("escenario").transform;
             escenario.SetParent(raiz, false);
             Ambiente(e.Ambiente, sol, camara);
-            Via(escenario, e.Via, e.Ambiente, terreno, e.Semilla);
+            var urbana = e.Entorno.Zona == ZonaEntorno.Urbana;
+            var centro = new Vector2((float)e.Centro.X, (float)e.Centro.Y);
+            Via(escenario, e.Via, e.Ambiente, terreno, e.Semilla, urbana, centro);
             foreach (var s in e.Suelo)
             {
-                Suelo(escenario, s, e.Ambiente);
+                Suelo(escenario, s, e.Ambiente, urbana, e.Semilla);
             }
 
             EntornoVista.Construir(escenario, e.Entorno, e.Ambiente, e.Semilla);
-            Luminarias(escenario, e.Luminarias, e.Ambiente);
+            Luminarias(escenario, e.Luminarias, e.Ambiente, new Vector2((float)e.Centro.X, (float)e.Centro.Y));
             var p = e.Ambiente.Precipitacion;
             if (p.StartsWith("lluvia", StringComparison.Ordinal) || p == "granizo")
             {
                 Lluvia(escenario, e.Centro, p == "lluvia_ligera" ? 2500 : 6000, camara);
             }
+
+            Sonda(escenario, e);
 
             Leyenda(escenario);
         }
@@ -50,7 +65,9 @@ namespace Croquis.Visor
             var bajo = !a.Noche && a.SolElevacionDeg < 12.0;
             // Las intensidades del visor web son de three.js; en URP una direccional de 1 ya es sol
             // pleno. Se conserva su proporción entre día, crepúsculo, nublado y noche.
-            sol.intensity = (float)a.IntensidadSol * (a.Noche ? 0.7f : 0.52f);
+            // De noche la direccional es la luna: tenue y azul, pero suficiente para que la vía y los
+            // vehículos se distingan lejos de las luminarias (es un visor forense, no una postal).
+            sol.intensity = a.Noche ? (lluvia ? 0.16f : 0.3f) : (float)a.IntensidadSol * 0.56f;
             sol.color = a.Noche
                 ? new Color(0.62f, 0.72f, 1f)
                 : Color.Lerp(new Color(1f, 0.74f, 0.52f), new Color(1f, 0.96f, 0.9f), Mathf.Clamp01((float)a.SolElevacionDeg / 28f));
@@ -62,13 +79,32 @@ namespace Croquis.Visor
             var cielo = Materiales.Cielo(nombre, out var azimutHdri);
             // En el HDRI el azimut se mide desde su centro; en la escena, desde el norte hacia el este.
             cielo.SetFloat("_Rotation", Mathf.Repeat(azimutHdri - (float)a.SolAzimutDeg, 360f));
-            cielo.SetFloat("_Exposure", a.Noche ? 0.5f : lluvia ? 0.8f : 1f);
+            cielo.SetFloat("_Exposure", a.Noche ? 0.75f : lluvia ? 0.8f : 1f);
             RenderSettings.skybox = cielo;
             RenderSettings.sun = sol;
-            RenderSettings.ambientMode = AmbientMode.Skybox;
-            RenderSettings.ambientIntensity = a.Noche ? (lluvia ? 2.6f : 1.5f) : (float)a.IntensidadAmbiente;
+            if (a.Noche)
+            {
+                // El HDRI nocturno casi no alumbra: el ambiente es el resplandor del cielo sobre una
+                // ciudad, más claro arriba y con nubes (lluvia) todavía más.
+                var k = lluvia ? 1.35f : 1f;
+                // Como sonda explícita: al cambiar el modo en ejecución, los modos de color no
+                // actualizaban la sonda y las caras sin luz directa salían negras.
+                var sh = new SphericalHarmonicsL2();
+                sh.AddAmbientLight(new Color(0.07f, 0.078f, 0.1f) * k);
+                sh.AddDirectionalLight(Vector3.up, new Color(0.2f, 0.25f, 0.38f) * k, 1f);
+                RenderSettings.ambientMode = AmbientMode.Custom;
+                RenderSettings.ambientProbe = sh;
+            }
+            else
+            {
+                RenderSettings.ambientMode = AmbientMode.Skybox;
+                // Un poco más de cielo en las sombras: una fachada a contraluz se tiene que leer.
+                RenderSettings.ambientIntensity = (float)a.IntensidadAmbiente * 1.3f;
+            }
+
             RenderSettings.defaultReflectionMode = DefaultReflectionMode.Skybox;
-            RenderSettings.reflectionIntensity = a.Noche ? 0.6f : 1f;
+            RenderSettings.reflectionIntensity = a.Noche ? 0.85f : 1f;
+            Gradacion(a, lluvia, bajo);
             camara.clearFlags = CameraClearFlags.Skybox;
             camara.farClipPlane = 3000f;
 
@@ -76,16 +112,101 @@ namespace Croquis.Visor
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.ExponentialSquared;
             // Aun sin niebla declarada hay aire: lo lejano se funde con el horizonte.
-            RenderSettings.fogDensity = Mathf.Max((float)a.DensidadNiebla, 0.00055f);
+            // De noche la niebla tiene tope: con lluvia, la acera de enfrente se perdía en negro.
+            // De día también: con lluvia, la vista cenital quedaba en blanco y no se leía el hecho.
+            RenderSettings.fogDensity = Mathf.Clamp((float)a.DensidadNiebla, 0.00055f, a.Noche ? 0.004f : 0.006f);
             RenderSettings.fogColor = a.Noche
-                ? new Color(0.035f, 0.045f, 0.07f)
-                : Color.Lerp(horizonte, Color.white, lluvia ? 0.25f : 0.4f);
+                ? (lluvia ? new Color(0.085f, 0.09f, 0.11f) : new Color(0.04f, 0.05f, 0.075f))
+                : Color.Lerp(horizonte, Color.white, lluvia ? 0.2f : 0.12f);
             DynamicGI.UpdateEnvironment();
         }
 
+        /// <summary>
+        /// La exposición y el color de cada ambiente, sobre el perfil base (tono ACES, resplandor y
+        /// viñeta). Se cambia la copia del volumen, no el asset.
+        /// </summary>
+        private static void Gradacion(AmbienteEscenario a, bool lluvia, bool bajo)
+        {
+            var volumen = UnityEngine.Object.FindFirstObjectByType<Volume>();
+            if (volumen == null || !volumen.profile.TryGet<ColorAdjustments>(out var color))
+            {
+                return;
+            }
+
+            float exposicion, contraste, saturacion;
+            Color filtro;
+            if (a.Noche)
+            {
+                exposicion = lluvia ? 0.95f : 0.75f;
+                contraste = 10f;
+                saturacion = -4f;
+                filtro = new Color(0.94f, 0.97f, 1f);
+            }
+            else if (lluvia || a.Turbidez > 6.0)
+            {
+                exposicion = 0.35f;
+                contraste = 14f;
+                saturacion = -8f;
+                filtro = new Color(0.96f, 0.98f, 1f);
+            }
+            else if (bajo)
+            {
+                exposicion = 0.3f;
+                contraste = 16f;
+                saturacion = 8f;
+                filtro = new Color(1f, 0.96f, 0.9f);
+            }
+            else
+            {
+                exposicion = 0.2f;
+                contraste = 13f;
+                saturacion = 10f;
+                filtro = new Color(1f, 0.985f, 0.96f);
+            }
+
+            color.postExposure.Override(exposicion);
+            color.contrast.Override(contraste);
+            color.saturation.Override(saturacion);
+            color.colorFilter.Override(filtro);
+        }
+
+        /// <summary>
+        /// La sonda de reflejos de la escena: una vez armado el escenario se toma un cubo desde el
+        /// centro de la acción, y la pintura, los vidrios y el asfalto mojado reflejan las fachadas, los
+        /// árboles y las luminarias en vez de solo el cielo. Los vehículos no entran en ella (capa 1):
+        /// se mueven, y la sonda se toma una sola vez.
+        /// </summary>
+        private static void Sonda(Transform padre, Escenario e)
+        {
+            var go = new GameObject("sonda_reflejos");
+            go.transform.SetParent(padre, false);
+            go.transform.position = new Vector3((float)e.Centro.X, 1.6f, (float)e.Centro.Y);
+            var sonda = go.AddComponent<ReflectionProbe>();
+            sonda.mode = ReflectionProbeMode.Realtime;
+            sonda.refreshMode = ReflectionProbeRefreshMode.ViaScripting;
+            sonda.timeSlicingMode = ReflectionProbeTimeSlicingMode.NoTimeSlicing;
+            sonda.resolution = Calidad.Media ? 128 : 256;
+            // En WebGL una sonda en tiempo real con HDR devuelve pixeles sin número: todo lo que la usa
+            // salía negro, y con resplandor, blanco (medido el 2026-11-09 con builds de diagnóstico;
+            // ADR 0113). Ahí va sin HDR.
+            sonda.hdr = Application.platform != RuntimePlatform.WebGLPlayer;
+            sonda.boxProjection = true;
+            sonda.size = new Vector3(90f, 40f, 90f);
+            sonda.center = new Vector3(0f, 18.4f, 0f);
+            sonda.blendDistance = 8f;
+            sonda.nearClipPlane = 0.3f;
+            sonda.farClipPlane = 600f;
+            sonda.cullingMask = ~(1 << CapaVehiculos);
+            sonda.shadowDistance = 60f;
+            sonda.RenderProbe();
+        }
+
+        /// <summary>La capa de los vehículos: fuera de la sonda de reflejos.</summary>
+        public const int CapaVehiculos = 1;
+
         // ---- Vía --------------------------------------------------------------------------------------
 
-        private static void Via(Transform padre, ViaEscenario v, AmbienteEscenario a, Terreno terreno, long semilla)
+        private static void Via(Transform padre, ViaEscenario v, AmbienteEscenario a, Terreno terreno, long semilla, bool urbana, Vector2 centroAccion)
         {
             var via = new GameObject("via").transform;
             via.SetParent(padre, false);
@@ -112,11 +233,11 @@ namespace Croquis.Visor
                         sombra = true;
                         break;
                     case NombreCapa.RayasAmarillas:
-                        mat = Materiales.Calca(new Color(0.83f, 0.62f, 0.1f, 0.9f));
+                        mat = Materiales.RayaGastada(new Color(0.83f, 0.62f, 0.1f, 0.92f));
                         m.Planta(c.Posiciones, c.Indices, (float)c.AlturaM, terreno, 1f);
                         break;
                     default:
-                        mat = Materiales.Calca(new Color(0.86f, 0.86f, 0.82f, 0.9f));
+                        mat = Materiales.RayaGastada(new Color(0.86f, 0.86f, 0.82f, 0.92f));
                         m.Planta(c.Posiciones, c.Indices, (float)c.AlturaM, terreno, 1f);
                         break;
                 }
@@ -127,13 +248,19 @@ namespace Croquis.Visor
             if (v.Guarniciones.Length > 0)
             {
                 var g = new Malla();
+                var pintada = new Malla();
                 var alto = (float)v.AlturaGuarnicionM;
                 foreach (var s in v.Guarniciones)
                 {
                     var p0 = terreno.P(s.Ax, s.Ay);
                     var p1 = terreno.P(s.Bx, s.By);
-                    g.Cuadro(p0, p1, p1 + Vector3.up * alto, p0 + Vector3.up * alto, 0.5f, true);
+                    // En la ciudad, la guarnición de las esquinas va pintada de amarillo. Las esquinas
+                    // son los tramos cortos: los arcos de la vuelta.
+                    var m = urbana && (p1 - p0).magnitude < 1.6f ? pintada : g;
+                    m.Cuadro(p0, p1, p1 + Vector3.up * alto, p0 + Vector3.up * alto, 0.5f, true);
                 }
+
+                pintada.Poner(via, "guarniciones_pintadas", Materiales.Liso(new Color(0.78f, 0.6f, 0.1f), 0.2f));
 
                 // Lisa: con su mapa de normales, una cara tan angosta centelleaba de noche.
                 g.Poner(via, "guarniciones", Materiales.Liso(new Color(0.42f, 0.41f, 0.39f), 0.15f));
@@ -148,6 +275,135 @@ namespace Croquis.Visor
             {
                 Charcos(via, v, terreno, semilla);
             }
+
+            Desgaste(via, v, terreno, semilla, centroAccion);
+        }
+
+        /// <summary>
+        /// El desgaste de la calzada: rodadas por carril, grietas, parches de bacheo y manchas de aceite,
+        /// repartidos con la semilla de la escena. Son calcas pegadas al piso (en WebGL no hay
+        /// proyectores de calcas), y ninguna cae dentro del claro del hecho.
+        /// </summary>
+        private static void Desgaste(Transform via, ViaEscenario v, Terreno terreno, long semilla, Vector2 centro)
+        {
+            var rodadas = new Malla();
+            foreach (var r in v.Rodadas ?? new SegmentoPlano[0])
+            {
+                var p0 = new Vector2((float)r.Ax, (float)r.Ay);
+                var p1 = new Vector2((float)r.Bx, (float)r.By);
+                var largo = (p1 - p0).magnitude;
+                if (largo < 1f)
+                {
+                    continue;
+                }
+
+                var dir = (p1 - p0) / largo;
+                var lado = new Vector2(-dir.y, dir.x) * 0.32f;
+                // En tramos de 6 m, para que la rodada siga el relieve.
+                for (var s = 0f; s < largo; s += 6f)
+                {
+                    var a0 = p0 + dir * s;
+                    var a1 = p0 + dir * Mathf.Min(largo, s + 6f);
+                    var i = rodadas.Vertice(terreno.P(a0.x - lado.x, a0.y - lado.y, 0.008f), new Vector2(s / 6f, 0f));
+                    rodadas.Vertice(terreno.P(a1.x - lado.x, a1.y - lado.y, 0.008f), new Vector2(s / 6f + 1f, 0f));
+                    rodadas.Vertice(terreno.P(a1.x + lado.x, a1.y + lado.y, 0.008f), new Vector2(s / 6f + 1f, 1f));
+                    rodadas.Vertice(terreno.P(a0.x + lado.x, a0.y + lado.y, 0.008f), new Vector2(s / 6f, 1f));
+                    rodadas.Triangulo(i, i + 2, i + 1);
+                    rodadas.Triangulo(i, i + 3, i + 2);
+                }
+            }
+
+            rodadas.Poner(via, "rodadas", Materiales.Rodada(new Color(0.015f, 0.015f, 0.018f, 0.36f)), false);
+
+            CapaEscenario calzada = null;
+            foreach (var c in v.Capas)
+            {
+                if (c.Nombre == NombreCapa.Calzada)
+                {
+                    calzada = c;
+                }
+            }
+
+            if (calzada == null || calzada.Indices.Length < 3)
+            {
+                return;
+            }
+
+            // Triángulos de la calzada con su área, para repartir por superficie y no por triángulo.
+            var n = calzada.Indices.Length / 3;
+            var acumulada = new float[n];
+            var total = 0f;
+            Vector2 Vert(int t, int i) => new Vector2(
+                (float)calzada.Posiciones[2 * (int)calzada.Indices[3 * t + i]],
+                (float)calzada.Posiciones[2 * (int)calzada.Indices[3 * t + i] + 1]);
+            for (var t = 0; t < n; t++)
+            {
+                var ab = Vert(t, 1) - Vert(t, 0);
+                var ac = Vert(t, 2) - Vert(t, 0);
+                total += Mathf.Abs(ab.x * ac.y - ab.y * ac.x) / 2f;
+                acumulada[t] = total;
+            }
+
+            var azar = new Azar(semilla + 211);
+            var grietas = new Malla();
+            var parches = new Malla();
+            var aceite = new Malla();
+            // Una pieza cada tantos metros cuadrados, con tope: la densidad no depende del largo de la vía.
+            var piezas = Mathf.Min(220, Mathf.RoundToInt(total / 55f));
+            for (var k = 0; k < piezas; k++)
+            {
+                var objetivo = azar.Siguiente() * total;
+                var t = System.Array.BinarySearch(acumulada, objetivo);
+                t = Mathf.Clamp(t < 0 ? ~t : t, 0, n - 1);
+                var u = azar.Siguiente();
+                var w = azar.Siguiente();
+                if (u + w > 1f)
+                {
+                    u = 1f - u;
+                    w = 1f - w;
+                }
+
+                var c = Vert(t, 0) + (Vert(t, 1) - Vert(t, 0)) * u + (Vert(t, 2) - Vert(t, 0)) * w;
+                var clase = azar.Siguiente();
+                var giro = azar.Entre(0f, Mathf.PI * 2f);
+                var medida = azar.Siguiente();
+                if ((c - centro).magnitude < ClaroDelHecho)
+                {
+                    continue;
+                }
+
+                if (clase < 0.45f)
+                {
+                    Calca(grietas, terreno, c, giro, Mathf.Lerp(1.6f, 3.4f, medida), Mathf.Lerp(1.6f, 3.4f, medida), 0.011f);
+                }
+                else if (clase < 0.62f)
+                {
+                    Calca(parches, terreno, c, Mathf.Round(giro / (Mathf.PI / 2f)) * (Mathf.PI / 2f) + azar.Entre(-0.06f, 0.06f), Mathf.Lerp(1.2f, 3.2f, medida), Mathf.Lerp(0.9f, 1.8f, azar.Siguiente()), 0.009f);
+                }
+                else
+                {
+                    var r = Mathf.Lerp(0.25f, 0.7f, medida);
+                    Calca(aceite, terreno, c, giro, r * 2f, r * azar.Entre(1.2f, 2f), 0.01f);
+                }
+            }
+
+            grietas.Poner(via, "grietas", Materiales.Grietas(), false);
+            parches.Poner(via, "parches", Materiales.Parche(), false);
+            aceite.Poner(via, "manchas_de_aceite", Materiales.ManchaOscura(0.38f), false);
+        }
+
+        /// <summary>Una calca rectangular pegada al piso, girada, con su textura entera.</summary>
+        public static void Calca(Malla m, Terreno terreno, Vector2 c, float giro, float largo, float ancho, float altura)
+        {
+            var u = new Vector2(Mathf.Cos(giro), Mathf.Sin(giro)) * (largo / 2f);
+            var v = new Vector2(-Mathf.Sin(giro), Mathf.Cos(giro)) * (ancho / 2f);
+            Vector3 P(Vector2 q) => terreno.P(q.x, q.y, altura);
+            var i = m.Vertice(P(c - u - v), new Vector2(0f, 0f));
+            m.Vertice(P(c + u - v), new Vector2(1f, 0f));
+            m.Vertice(P(c + u + v), new Vector2(1f, 1f));
+            m.Vertice(P(c - u + v), new Vector2(0f, 1f));
+            m.Triangulo(i, i + 2, i + 1);
+            m.Triangulo(i, i + 3, i + 2);
         }
 
         /// <summary>Barrera metálica de dos ondas sobre postes cada 4 m, como en las autopistas.</summary>
@@ -261,7 +517,7 @@ namespace Croquis.Visor
 
         // ---- Suelo ------------------------------------------------------------------------------------
 
-        private static void Suelo(Transform padre, SueloEscenario s, AmbienteEscenario a)
+        private static void Suelo(Transform padre, SueloEscenario s, AmbienteEscenario a, bool urbana, long semilla)
         {
             var n = (int)s.Segmentos + 1;
             var lado = (float)s.LadoM;
@@ -270,7 +526,9 @@ namespace Croquis.Visor
             var lejano = s.HuecoM.HasValue;
             // El parche fino va 3 cm abajo de la vía y el lejano 5 cm, como en el visor web.
             var bajo = lejano ? -0.05f : -0.03f;
-            var mosaico = Materiales.Mosaico("pasto") * (lejano ? 3f : 1f);
+            // En la ciudad, entre las cuadras hay tierra apisonada, no un prado.
+            var textura = urbana ? "grava" : "pasto";
+            var mosaico = Materiales.Mosaico(textura) * (lejano ? 3f : 1f);
             var pasto = new Malla();
             var capa = new Malla();
             for (var j = 0; j < n; j++)
@@ -307,8 +565,49 @@ namespace Croquis.Visor
             }
 
             // La textura es de hojarasca: se lleva hacia el verde del pasto de temporada.
-            var tinte = a.Noche ? new Color(0.6f, 0.82f, 0.55f) : new Color(0.66f, 0.86f, 0.5f);
-            pasto.Poner(padre, lejano ? "suelo_lejano" : "suelo", Materiales.Pbr("pasto", tinte), false);
+            var tinte = a.Noche ? new Color(0.4f, 0.52f, 0.38f) : new Color(0.66f, 0.86f, 0.5f);
+            if (urbana)
+            {
+                tinte = a.Noche ? new Color(0.42f, 0.41f, 0.4f) : new Color(0.72f, 0.69f, 0.64f);
+            }
+
+            pasto.Poner(padre, lejano ? "suelo_lejano" : "suelo", Materiales.Pbr(textura, tinte), false);
+
+            // Variación de tono: manchas grandes más secas, para que el suelo no sea de un solo color.
+            var tonos = new Malla();
+            for (var j = 0; j < n; j++)
+            {
+                for (var i = 0; i < n; i++)
+                {
+                    var x = x0 + i * lado / (n - 1);
+                    var y = y0 + j * lado / (n - 1);
+                    tonos.Vertice(new Vector3(x, (float)s.AlturasM[j * n + i] + bajo + 0.006f, y), new Vector2(x, y) / (lejano ? 240f : 70f));
+                }
+            }
+
+            for (var j = 0; j + 1 < n; j++)
+            {
+                for (var i = 0; i + 1 < n; i++)
+                {
+                    var cx = x0 + (i + 0.5f) * lado / (n - 1) - (float)s.Centro.X;
+                    var cy = y0 + (j + 0.5f) * lado / (n - 1) - (float)s.Centro.Y;
+                    if (Mathf.Abs(cx) < hueco && Mathf.Abs(cy) < hueco)
+                    {
+                        continue;
+                    }
+
+                    var a0 = j * n + i;
+                    tonos.Triangulo(a0, a0 + n, a0 + 1);
+                    tonos.Triangulo(a0 + 1, a0 + n, a0 + n + 1);
+                }
+            }
+
+            var tonoSeco = urbana ? new Color(0.3f, 0.27f, 0.23f, 0.4f) : new Color(0.5f, 0.47f, 0.24f, a.Noche ? 0.16f : 0.3f);
+            tonos.Poner(padre, lejano ? "tonos_lejanos" : "tonos", Materiales.Tonos(tonoSeco), false);
+            if (!lejano && !urbana)
+            {
+                Matas(padre, s, bajo, semilla, a.Noche);
+            }
 
             // Las parcelas (barbecho) y la orilla seca junto a la vía: una capa de tierra cuya
             // transparencia sale de los tonos de cada nodo, suavizada entre nodos.
@@ -340,14 +639,72 @@ namespace Croquis.Visor
             capa.Poner(padre, lejano ? "parcelas_lejanas" : "parcelas", mat, false);
         }
 
+        /// <summary>
+        /// Matas de pasto: tarjetas cruzadas chicas sobre el parche fino del suelo, más tupidas cerca de
+        /// la vía, donde las ve la cámara. Con semilla; no van donde el suelo es orilla seca.
+        /// </summary>
+        private static void Matas(Transform padre, SueloEscenario s, float bajo, long semilla, bool noche)
+        {
+            var n = (int)s.Segmentos + 1;
+            var lado = (float)s.LadoM;
+            var x0 = (float)s.Centro.X - lado / 2f;
+            var y0 = (float)s.Centro.Y - lado / 2f;
+            var azar = new Azar(semilla + 307);
+            var verdes = new Malla { NormalArriba = true };
+            var secas = new Malla { NormalArriba = true };
+            var Intentos = Calidad.Media ? 7000 : 14000;
+            for (var k = 0; k < Intentos; k++)
+            {
+                // Más cerca del centro que de la orilla del parche.
+                var r = Mathf.Pow(azar.Siguiente(), 1.9f) * lado * 0.48f;
+                var ang = azar.Entre(0f, Mathf.PI * 2f);
+                var x = (float)s.Centro.X + Mathf.Cos(ang) * r;
+                var y = (float)s.Centro.Y + Mathf.Sin(ang) * r;
+                var alto = azar.Entre(0.14f, 0.42f);
+                var giro = azar.Entre(0f, Mathf.PI);
+                var esSeca = azar.Siguiente() < 0.3f;
+                var fi = Mathf.Clamp((x - x0) / lado * (n - 1), 0f, n - 1.001f);
+                var fj = Mathf.Clamp((y - y0) / lado * (n - 1), 0f, n - 1.001f);
+                var nodo = Mathf.RoundToInt(fj) * n + Mathf.RoundToInt(fi);
+                var orilla = s.Seco != null && s.Seco.Length == n * n ? (float)s.Seco[nodo] : 0f;
+                // `seco` vale 1 sobre la vía y junto a ella: ahí no hay pasto.
+                if (orilla > 0.55f)
+                {
+                    continue;
+                }
+
+                var z = (float)s.AlturasM[nodo] + bajo;
+                var m = esSeca ? secas : verdes;
+                for (var h = 0; h < 2; h++)
+                {
+                    var d = new Vector3(Mathf.Cos(giro + h * Mathf.PI / 2f), 0f, Mathf.Sin(giro + h * Mathf.PI / 2f)) * (alto * 0.75f);
+                    var p = new Vector3(x, z, y);
+                    m.Tarjeta(p - d, p + d, p + d + Vector3.up * alto, p - d + Vector3.up * alto);
+                }
+            }
+
+            verdes.Poner(padre, "matas", Materiales.Mata(false), false);
+            secas.Poner(padre, "matas_secas", Materiales.Mata(true), false);
+        }
+
         // ---- Luminarias -------------------------------------------------------------------------------
 
-        private static void Luminarias(Transform padre, LuminariaEscenario[] lista, AmbienteEscenario a)
+        private static void Luminarias(Transform padre, LuminariaEscenario[] lista, AmbienteEscenario a, Vector2 centro)
         {
             if (lista.Length == 0)
             {
                 return;
             }
+
+            // Luz real solo en las más cercanas a la acción; las demás dejan su charco de luz pintado
+            // en el piso, que no cuesta una luz (en WebGL hay pocas por objeto).
+            var orden = new List<LuminariaEscenario>(lista);
+            orden.Sort((p, q) =>
+                (new Vector2((float)p.X, (float)p.Y) - centro).sqrMagnitude.CompareTo(
+                    (new Vector2((float)q.X, (float)q.Y) - centro).sqrMagnitude));
+            var tope = Calidad.Media ? 3 : LuminariasEncendidasMax;
+            var reales = new HashSet<LuminariaEscenario>(orden.GetRange(0, Mathf.Min(tope, orden.Count)));
+            var halos = new Malla();
 
             var encendidas = a.Noche && a.Luminarias;
             var postes = new Malla();
@@ -377,23 +734,37 @@ namespace Croquis.Visor
                 var cabeza = codo + dir * 2.2f + Vector3.up * 0.38f;
                 postes.Caja(cabeza, lado, dir, 0.3f, 0.1f, 0.7f);
                 focos.Caja(cabeza - Vector3.up * 0.025f, lado, dir, 0.22f, 0.03f, 0.5f);
-                if (encendidas && luces < LuminariasEncendidasMax)
+                if (encendidas)
+                {
+                    // El charco de luz en el piso, bajo la cabeza. En las que llevan luz real es tenue:
+                    // solo alarga su caída más allá del alcance del foco.
+                    var c0 = new Vector3(cabeza.x, (float)l.Z + 0.045f, cabeza.z);
+                    var radio = alto * (reales.Contains(l) ? 2.6f : 1.9f);
+                    halos.Tarjeta(
+                        c0 + new Vector3(-radio, 0f, -radio), c0 + new Vector3(radio, 0f, -radio),
+                        c0 + new Vector3(radio, 0f, radio), c0 + new Vector3(-radio, 0f, radio));
+                }
+
+                if (encendidas && reales.Contains(l))
                 {
                     var luz = new GameObject("luz_luminaria").AddComponent<Light>();
                     luz.transform.SetParent(padre, false);
                     luz.type = LightType.Spot;
                     luz.transform.SetPositionAndRotation(cabeza - Vector3.up * 0.1f, Quaternion.LookRotation(Vector3.down + dir * 0.15f));
-                    luz.spotAngle = 128f;
-                    luz.innerSpotAngle = 70f;
-                    luz.range = alto * 3.4f;
-                    luz.intensity = 360f;
+                    // Cono muy abierto y sin núcleo: la luz cae suave desde el pie del poste, sin el
+                    // círculo quemado de un cono con borde.
+                    luz.spotAngle = 160f;
+                    luz.innerSpotAngle = 8f;
+                    luz.range = alto * 4.5f;
+                    luz.intensity = 190f;
                     luz.color = new Color(1f, 0.82f, 0.56f);
-                    luz.shadows = luces < 2 ? LightShadows.Soft : LightShadows.None;
+                    luz.shadows = luces < 2 && !Calidad.Media ? LightShadows.Soft : LightShadows.None;
                     luces++;
                 }
             }
 
             postes.Poner(padre, "luminarias", Materiales.Liso(new Color(0.45f, 0.47f, 0.49f), 0.45f, 0.75f));
+            halos.Poner(padre, "charcos_de_luz", Materiales.Halo(new Color(1f, 0.8f, 0.52f, 0.11f)), false, false);
             focos.Poner(
                 padre,
                 "focos",
@@ -420,7 +791,7 @@ namespace Croquis.Visor
             main.prewarm = true;
             main.startLifetime = 1.1f;
             main.startSpeed = 19f;
-            main.startSize = new ParticleSystem.MinMaxCurve(0.006f, 0.011f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.003f, 0.006f);
             main.maxParticles = gotas;
             main.simulationSpace = ParticleSystemSimulationSpace.World;
             main.gravityModifier = 0.4f;
@@ -432,9 +803,54 @@ namespace Croquis.Visor
             forma.rotation = new Vector3(90f, 0f, 0f);
             var r = go.GetComponent<ParticleSystemRenderer>();
             r.renderMode = ParticleSystemRenderMode.Stretch;
-            r.lengthScale = 45f;
+            r.lengthScale = 42f;
+            // Una gota pegada a la cámara no debe verse como un poste.
+            r.maxParticleSize = 0.04f;
             r.velocityScale = 0.01f;
             r.sharedMaterial = Materiales.Lluvia;
+            r.shadowCastingMode = ShadowCastingMode.Off;
+            ps.Play();
+            Salpicaduras(padre, gotas, camara);
+        }
+
+        /// <summary>Las gotas al pegar en el piso: anillos chicos que se abren y se apagan.</summary>
+        private static void Salpicaduras(Transform padre, int gotas, Camera camara)
+        {
+            var go = new GameObject("salpicaduras");
+            go.transform.SetParent(padre, false);
+            var sigue = go.AddComponent<SiempreVertical>();
+            sigue.Altura = 0.05f;
+            sigue.AlPiso = true;
+            sigue.Camara = camara.transform;
+            var ps = go.AddComponent<ParticleSystem>();
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            var main = ps.main;
+            main.loop = true;
+            main.prewarm = true;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(0.18f, 0.32f);
+            main.startSpeed = 0f;
+            main.startSize = new ParticleSystem.MinMaxCurve(0.07f, 0.16f);
+            main.maxParticles = gotas / 2;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            var em = ps.emission;
+            em.rateOverTime = gotas * 1.4f;
+            var forma = ps.shape;
+            forma.shapeType = ParticleSystemShapeType.Box;
+            forma.scale = new Vector3(40f, 40f, 0.01f);
+            forma.rotation = new Vector3(90f, 0f, 0f);
+            var crece = ps.sizeOverLifetime;
+            crece.enabled = true;
+            crece.size = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.Linear(0f, 0.25f, 1f, 1f));
+            var apaga = ps.colorOverLifetime;
+            apaga.enabled = true;
+            var g = new Gradient();
+            g.SetKeys(
+                new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, 1f) },
+                new[] { new GradientAlphaKey(1f, 0f), new GradientAlphaKey(0f, 1f) });
+            apaga.color = g;
+            var r = go.GetComponent<ParticleSystemRenderer>();
+            r.renderMode = ParticleSystemRenderMode.HorizontalBillboard;
+            r.sharedMaterial = Materiales.Salpicadura;
             r.shadowCastingMode = ShadowCastingMode.Off;
             ps.Play();
         }
@@ -474,6 +890,9 @@ namespace Croquis.Visor
     public sealed class SiempreVertical : MonoBehaviour
     {
         public float Altura { get; set; }
+
+        /// <summary>Si va a ras del piso (salpicaduras) en vez de sobre la cámara (gotas).</summary>
+        public bool AlPiso { get; set; }
         public Transform Camara { get; set; }
 
         private void LateUpdate()
@@ -485,7 +904,9 @@ namespace Croquis.Visor
 
             var adelante = Camara.forward;
             adelante.y = 0f;
-            transform.SetPositionAndRotation(Camara.position + adelante.normalized * 16f + Vector3.up * Altura, Quaternion.identity);
+            var p = Camara.position + adelante.normalized * 16f;
+            p.y = AlPiso ? Altura : p.y + Altura;
+            transform.SetPositionAndRotation(p, Quaternion.identity);
         }
     }
 }

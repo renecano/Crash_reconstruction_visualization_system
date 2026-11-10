@@ -126,6 +126,10 @@ export const EdificioEscenario = z.strictObject({
   tinacos: z.int().min(0),
   antena: z.boolean(),
   varillas: z.boolean(),
+  tipo: z.enum(["casa", "comercio", "baldio", "taller", "fondo"]),
+  remetimiento_m: z.number(),
+  herreria: z.boolean(),
+  zaguan: z.boolean(),
 });
 export type EdificioEscenario = z.infer<typeof EdificioEscenario>;
 
@@ -302,6 +306,7 @@ export const Escenario = z.strictObject({
     guarniciones: z.array(SegmentoPlano),
     altura_guarnicion_m: z.number(),
     barreras: z.array(z.array(PuntoPlano)),
+    rodadas: z.array(SegmentoPlano),
   }),
   suelo: z.array(SueloEscenario),
   entorno: z.strictObject({

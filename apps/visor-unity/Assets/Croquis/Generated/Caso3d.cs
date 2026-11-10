@@ -2679,6 +2679,12 @@ namespace Croquis.Generated
         [JsonProperty("frente_rad")]
         public double FrenteRad { get; set; }
 
+        /// <summary>
+        /// Protecciones de herrería en las ventanas.
+        /// </summary>
+        [JsonProperty("herreria")]
+        public bool Herreria { get; set; }
+
         [JsonProperty("largo_m")]
         public double LargoM { get; set; }
 
@@ -2691,11 +2697,23 @@ namespace Croquis.Generated
         [JsonProperty("pisos")]
         public long Pisos { get; set; }
 
+        /// <summary>
+        /// Cuánto se mete la casa respecto a la banqueta; al frente queda una barda baja con reja.
+        /// </summary>
+        [JsonProperty("remetimiento_m")]
+        public double RemetimientoM { get; set; }
+
         [JsonProperty("rumbo_rad")]
         public double RumboRad { get; set; }
 
         [JsonProperty("tinacos")]
         public long Tinacos { get; set; }
+
+        /// <summary>
+        /// Qué hay en el lote. «fondo» es un volumen sin detalle, de las cuadras de atrás.
+        /// </summary>
+        [JsonProperty("tipo")]
+        public TipoLote Tipo { get; set; }
 
         [JsonProperty("toldo")]
         public bool Toldo { get; set; }
@@ -2711,6 +2729,12 @@ namespace Croquis.Generated
 
         [JsonProperty("z")]
         public double Z { get; set; }
+
+        /// <summary>
+        /// Portón de cochera.
+        /// </summary>
+        [JsonProperty("zaguan")]
+        public bool Zaguan { get; set; }
     }
 
     public partial class PosteEscenario
@@ -3027,6 +3051,13 @@ namespace Croquis.Generated
         /// </summary>
         [JsonProperty("guarniciones")]
         public SegmentoPlano[] Guarniciones { get; set; }
+
+        /// <summary>
+        /// Por dónde pisan las llantas en cada carril: el eje de cada rodada. Es decoración del
+        /// desgaste, no un dato del hecho.
+        /// </summary>
+        [JsonProperty("rodadas")]
+        public SegmentoPlano[] Rodadas { get; set; }
     }
 
     /// <summary>
@@ -4781,6 +4812,11 @@ namespace Croquis.Generated
 
     public enum MaterialFachada { Tabique, Yeso };
 
+    /// <summary>
+    /// Qué hay en el lote. «fondo» es un volumen sin detalle, de las cuadras de atrás.
+    /// </summary>
+    public enum TipoLote { Baldio, Casa, Comercio, Fondo, Taller };
+
     public enum TipoSenal { Alto, Ceda, Informativa, Velocidad };
 
     public enum ZonaEntorno { Rural, Urbana };
@@ -4920,6 +4956,7 @@ namespace Croquis.Generated
                 TipoDispositivoConverter.Singleton,
                 EspecieArbolConverter.Singleton,
                 MaterialFachadaConverter.Singleton,
+                TipoLoteConverter.Singleton,
                 TipoSenalConverter.Singleton,
                 ZonaEntornoConverter.Singleton,
                 TipoEvidenciaConverter.Singleton,
@@ -10086,6 +10123,62 @@ namespace Croquis.Generated
         }
 
         public static readonly MaterialFachadaConverter Singleton = new MaterialFachadaConverter();
+    }
+
+    internal class TipoLoteConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(TipoLote) || t == typeof(TipoLote?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "baldio":
+                    return TipoLote.Baldio;
+                case "casa":
+                    return TipoLote.Casa;
+                case "comercio":
+                    return TipoLote.Comercio;
+                case "fondo":
+                    return TipoLote.Fondo;
+                case "taller":
+                    return TipoLote.Taller;
+            }
+            throw new Exception("Cannot unmarshal type TipoLote");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (TipoLote)untypedValue;
+            switch (value)
+            {
+                case TipoLote.Baldio:
+                    serializer.Serialize(writer, "baldio");
+                    return;
+                case TipoLote.Casa:
+                    serializer.Serialize(writer, "casa");
+                    return;
+                case TipoLote.Comercio:
+                    serializer.Serialize(writer, "comercio");
+                    return;
+                case TipoLote.Fondo:
+                    serializer.Serialize(writer, "fondo");
+                    return;
+                case TipoLote.Taller:
+                    serializer.Serialize(writer, "taller");
+                    return;
+            }
+            throw new Exception("Cannot marshal type TipoLote");
+        }
+
+        public static readonly TipoLoteConverter Singleton = new TipoLoteConverter();
     }
 
     internal class TipoSenalConverter : JsonConverter

@@ -162,7 +162,7 @@ namespace Croquis.EditorTools
             Guardar(calca, "calca");
 
             var lluvia = new Material(Shader.Find("Universal Render Pipeline/Particles/Unlit"));
-            lluvia.SetColor("_BaseColor", new Color(0.8f, 0.85f, 0.92f, 0.3f));
+            lluvia.SetColor("_BaseColor", new Color(0.82f, 0.87f, 0.94f, 0.16f));
             lluvia.SetFloat("_Surface", 1f);
             lluvia.SetFloat("_Blend", 0f);
             lluvia.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
@@ -171,6 +171,43 @@ namespace Croquis.EditorTools
             lluvia.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
             lluvia.renderQueue = (int)RenderQueue.Transparent;
             Guardar(lluvia, "lluvia");
+
+            // Las matas de pasto: recorte por alfa, dos caras y sin mapa de normales. Va como asset
+            // porque esa combinación no la usa ningún otro material: copiando la tarjeta de árbol y
+            // quitándole la normal en ejecución, el build de WebGL no traía la variante y las matas
+            // salían como cuadros negros (visto en el build del 2026-11-09; en el Editor no pasa).
+            var mata = new Material(Lit);
+            mata.SetFloat("_AlphaClip", 1f);
+            mata.SetFloat("_Cutoff", 0.4f);
+            mata.EnableKeyword("_ALPHATEST_ON");
+            mata.SetFloat("_Cull", (float)CullMode.Off);
+            mata.SetFloat("_Smoothness", 0.05f);
+            mata.SetOverrideTag("RenderType", "TransparentCutout");
+            mata.renderQueue = (int)RenderQueue.AlphaTest;
+            Guardar(mata, "mata");
+
+            // La salpicadura de cada gota en el piso: un anillo que se abre y se apaga.
+            var salpica = new Material(lluvia) { name = "salpicadura" };
+            salpica.SetColor("_BaseColor", new Color(0.85f, 0.9f, 0.96f, 0.5f));
+            Guardar(salpica, "salpicadura");
+
+            // La sombra de contacto bajo cada vehículo: una mancha suave, sin luz ni reflejo.
+            var unlit = Shader.Find("Universal Render Pipeline/Unlit");
+            var sombra = new Material(unlit);
+            sombra.SetColor("_BaseColor", Color.black);
+            Transparente(sombra);
+            sombra.SetFloat("_Cull", (float)CullMode.Off);
+            Guardar(sombra, "sombra");
+
+            // El charco de luz de una luminaria lejana: se suma al piso, sin costar una luz real.
+            var halo = new Material(unlit);
+            halo.SetColor("_BaseColor", Color.white);
+            Transparente(halo);
+            halo.SetFloat("_Blend", 2f);
+            halo.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+            halo.SetFloat("_DstBlend", (float)BlendMode.One);
+            halo.SetFloat("_Cull", (float)CullMode.Off);
+            Guardar(halo, "halo");
         }
 
         /// <summary>La tarjeta de un árbol: recorte por alfa, dos caras y su normal horneada.</summary>
@@ -224,9 +261,11 @@ namespace Croquis.EditorTools
             var tono = Componente<Tonemapping>();
             tono.mode.Override(TonemappingMode.ACES);
             var bloom = Componente<Bloom>();
-            bloom.threshold.Override(1.05f);
-            bloom.intensity.Override(0.35f);
-            bloom.scatter.Override(0.6f);
+            bloom.threshold.Override(1.15f);
+            bloom.intensity.Override(0.3f);
+            bloom.scatter.Override(0.62f);
+            // Con tope: un reflejo especular de miles de nits no debe regarse por toda la imagen.
+            bloom.clamp.Override(6f);
             var color = Componente<ColorAdjustments>();
             color.postExposure.Override(0f);
             color.contrast.Override(8f);
@@ -244,19 +283,28 @@ namespace Croquis.EditorTools
         /// </summary>
         private static void Canalizacion(UniversalRenderPipelineAsset urp, UniversalRendererData renderer)
         {
+            // El build de la web es el nivel «media» (`Calidad`): mismo aspecto, menos costo. Medido el
+            // 2026-11-09 en la laptop de 8 GB: con lo de alta, la noche urbana bajaba de 12 fps.
+            var media = EditorUserBuildSettings.activeBuildTarget == BuildTarget.WebGL;
             urp.supportsHDR = true;
-            urp.msaaSampleCount = 4;
-            urp.shadowDistance = 150f;
-            urp.shadowCascadeCount = 4;
-            urp.mainLightShadowmapResolution = 4096;
-            urp.maxAdditionalLightsCount = 8;
+            urp.msaaSampleCount = media ? 2 : 4;
+            urp.shadowDistance = media ? 80f : 110f;
+            urp.shadowCascadeCount = media ? 2 : 4;
+            urp.mainLightShadowmapResolution = media ? 2048 : 4096;
+            urp.maxAdditionalLightsCount = media ? 4 : 8;
             urp.supportsCameraDepthTexture = true;
             var so = new SerializedObject(urp);
             Poner(so, "m_SoftShadowsSupported", true);
             Poner(so, "m_AdditionalLightsRenderingMode", (int)LightRenderingMode.PerPixel);
-            Poner(so, "m_AdditionalLightShadowsSupported", true);
+            Poner(so, "m_AdditionalLightShadowsSupported", !media);
             Poner(so, "m_AdditionalLightsShadowmapResolution", 2048);
-            Poner(so, "m_SoftShadowQuality", 2);
+            Poner(so, "m_SoftShadowQuality", media ? 1 : 2);
+            // Sesgos bajos: la sombra nace pegada a la llanta, no despegada del vehículo.
+            Poner(so, "m_ShadowDepthBias", 0.6f);
+            Poner(so, "m_ShadowNormalBias", 0.35f);
+            // La sonda de reflejos de la escena, con proyección de caja y mezcla con el cielo.
+            Poner(so, "m_ReflectionProbeBlending", true);
+            Poner(so, "m_ReflectionProbeBoxProjection", true);
             so.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(urp);
 
@@ -272,10 +320,17 @@ namespace Croquis.EditorTools
             // La oclusión ambiental es interna de URP: se agrega por su tipo.
             var tipo = Type.GetType(
                 "UnityEngine.Rendering.Universal.ScreenSpaceAmbientOcclusion, Unity.RenderPipelines.Universal.Runtime");
-            if (tipo != null && !renderer.rendererFeatures.Exists(f => f != null && f.GetType() == tipo))
+            var previa = tipo == null ? null : renderer.rendererFeatures.Find(f => f != null && f.GetType() == tipo);
+            if (previa != null)
+            {
+                Oclusion(previa, media);
+            }
+
+            if (tipo != null && previa == null)
             {
                 var ssao = (ScriptableRendererFeature)ScriptableObject.CreateInstance(tipo);
                 ssao.name = "OclusionAmbiental";
+                Oclusion(ssao, media);
                 AssetDatabase.AddObjectToAsset(ssao, renderer);
                 renderer.rendererFeatures.Add(ssao);
                 var datos = new SerializedObject(renderer);
@@ -286,6 +341,28 @@ namespace Croquis.EditorTools
                 datos.ApplyModifiedPropertiesWithoutUndo();
                 EditorUtility.SetDirty(renderer);
             }
+        }
+
+        /// <summary>
+        /// La oclusión ambiental a escala de calle: el radio de fábrica (3.5 cm) no oscurece nada a la
+        /// distancia de una cámara de escena. Con 0.18 m se marcan los bajos del vehículo, las
+        /// guarniciones y los rincones de las fachadas. Más ancho, a media resolución, manchaba la
+        /// carrocería vista de cerca como si tuviera hollín: en un visor forense eso no puede pasar.
+        /// </summary>
+        private static void Oclusion(ScriptableRendererFeature ssao, bool media)
+        {
+            var so = new SerializedObject(ssao);
+            Poner(so, "m_Settings.Radius", 0.18f);
+            Poner(so, "m_Settings.Intensity", 0.9f);
+            // Ruido de gradiente intercalado: con el ruido azul quedaba un moteado en la pintura clara.
+            Poner(so, "m_Settings.AOMethod", 1);
+            Poner(so, "m_Settings.Samples", media ? 1 : 0);
+            Poner(so, "m_Settings.BlurQuality", 0);
+            Poner(so, "m_Settings.DirectLightingStrength", 0.4f);
+            Poner(so, "m_Settings.Falloff", 70f);
+            Poner(so, "m_Settings.Downsample", media);
+            so.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(ssao);
         }
 
         private static void Poner(SerializedObject so, string nombre, object valor)
@@ -301,6 +378,10 @@ namespace Croquis.EditorTools
             {
                 p.boolValue = b;
             }
+            else if (valor is float f)
+            {
+                p.floatValue = f;
+            }
             else
             {
                 p.intValue = (int)valor;
@@ -313,6 +394,9 @@ namespace Croquis.EditorTools
             var datos = camara.GetComponent<UniversalAdditionalCameraData>();
             datos.renderPostProcessing = true;
             datos.antialiasing = AntialiasingMode.None;
+            // Un pixel sin número (una normal de largo cero, una división entre cero) se regaba con el
+            // resplandor a toda la imagen en WebGL: se corta antes del posproceso.
+            datos.stopNaN = true;
             camara.allowHDR = true;
             camara.allowMSAA = true;
             var volumen = new GameObject("Posproceso").AddComponent<Volume>();

@@ -60,12 +60,24 @@ namespace Croquis.Visor
                 vista.Partes = await modelos.ArmarAsync(go.transform, v, color);
                 vista.Frenado = extra?.Frenado;
                 vista.Luces(noche, extra == null || extra.Faros, (float)v.Dimensiones.LargoM);
+                foreach (var tr in go.GetComponentsInChildren<Transform>(true))
+                {
+                    tr.gameObject.layer = EscenarioVista.CapaVehiculos;
+                }
+
+                if (e != null)
+                {
+                    SombraDeContacto(go.transform, (float)v.Dimensiones.LargoM, (float)v.Dimensiones.AnchoM, noche);
+                }
                 vehiculos.Add(vista);
             }
 
             // Con escenario (ADR 0112) se dibuja lo que calculó TS y se esconde el piso liso de U1.
             // El piso es plano salvo que la escena declare terreno (C3): entonces todo se arma sobre él.
             var terreno = TerrenoVista.De(e?.Terreno);
+            var zona = Encuadre.ZonaDeInteres(r);
+            EscenarioVista.CentroDelHecho = new Vector2((float)zona.CentroX, (float)zona.CentroY);
+            EscenarioVista.ClaroDelHecho = (float)zona.Lado * 0.6f + 4f;
             if (e != null)
             {
                 EscenarioVista.Construir(raiz, e, sol, Camera.main, terreno);
@@ -89,11 +101,25 @@ namespace Croquis.Visor
             Camara.Arbol = ArbolCercano(e, Camara.Centro);
             Camara.Estorbos.Clear();
             Camara.Bultos.Clear();
+            Camara.Copas.Clear();
+            foreach (var arbol in e?.Entorno?.Arboles ?? new ArbolEscenario[0])
+            {
+                if (arbol.Tipo != 2)
+                {
+                    Camara.Copas.Add(new Vector3((float)arbol.X, (float)arbol.Y, Mathf.Max(1.6f, (float)arbol.CopaM * 1.3f)));
+                }
+            }
+
             foreach (var ed in e?.Entorno?.Edificios ?? new EdificioEscenario[0])
             {
-                // Un círculo que cubre la planta del edificio, con 1 m de holgura.
-                var radio = 0.5f * Mathf.Sqrt((float)(ed.LargoM * ed.LargoM + ed.FondoM * ed.FondoM)) + 1f;
-                Camara.Bultos.Add(new Vector3((float)ed.X, (float)ed.Y, radio));
+                Camara.Bultos.Add(new CamaraVisor.Bulto
+                {
+                    C = new Vector2((float)ed.X, (float)ed.Y),
+                    U = new Vector2(Mathf.Cos((float)ed.RumboRad), Mathf.Sin((float)ed.RumboRad)),
+                    Hw = (float)ed.LargoM / 2f,
+                    Hd = (float)ed.FondoM / 2f,
+                    Alto = ed.Tipo == TipoLote.Baldio ? 2.3f : (float)ed.AltoM,
+                });
             }
 
             foreach (var l in e?.Luminarias ?? new LuminariaEscenario[0])
@@ -106,6 +132,19 @@ namespace Croquis.Visor
                 Camara.Estorbos.Add(new Vector2((float)p.X, (float)p.Y));
             }
             Fijar(inicio);
+        }
+
+        /// <summary>
+        /// La sombra de contacto: una mancha suave bajo la carrocería, que asienta el vehículo en el piso
+        /// con cualquier luz. La sombra del sol sigue saliendo del mapa de sombras.
+        /// </summary>
+        private static void SombraDeContacto(Transform vehiculo, float largo, float ancho, bool noche)
+        {
+            var m = new Malla();
+            var w = ancho / 2f + 0.3f;
+            var l = largo / 2f + 0.3f;
+            m.Tarjeta(new Vector3(-w, 0.035f, -l), new Vector3(w, 0.035f, -l), new Vector3(w, 0.035f, l), new Vector3(-w, 0.035f, l));
+            m.Poner(vehiculo, "sombra_contacto", Materiales.SombraContacto(noche ? 0.55f : 0.7f), false, false);
         }
 
         /// <summary>El árbol más cercano a la acción, para la cámara de la acera.</summary>
@@ -206,17 +245,19 @@ namespace Croquis.Visor
             }
 
             Calaveras(false);
-            foreach (var lado in new[] { -0.55f, 0.55f })
+            // En media, un solo foco al centro, más abierto: alumbra lo mismo y cuesta la mitad.
+            foreach (var lado in Calidad.Media ? new[] { 0f } : new[] { -0.55f, 0.55f })
             {
                 var luz = new GameObject("faro").AddComponent<Light>();
                 luz.transform.SetParent(transform, false);
                 luz.transform.localPosition = new Vector3(lado, 0.68f, largo / 2f - 0.15f);
                 luz.transform.localRotation = Quaternion.Euler(7f, lado * 3f, 0f);
                 luz.type = LightType.Spot;
-                luz.spotAngle = 62f;
-                luz.innerSpotAngle = 30f;
-                luz.range = 48f;
-                luz.intensity = 2600f;
+                luz.spotAngle = Calidad.Media ? 86f : 70f;
+                luz.innerSpotAngle = 12f;
+                luz.range = 55f;
+                // Moderada: a quemarropa contra otra carrocería no debe tapar el punto de contacto.
+                luz.intensity = Calidad.Media ? 1050f : 650f;
                 luz.color = new Color(1f, 0.95f, 0.86f);
                 luz.shadows = LightShadows.None;
             }

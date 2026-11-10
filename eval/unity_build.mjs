@@ -4,7 +4,7 @@
  * en cargar. El riesgo más grande del plan se mide desde el principio.
  *
  *   powershell tools/unity/build-web.ps1
- *   node eval/unity_build.mjs [--corridas 3] [--caso axa_alcance] [--mbps 20] [--proyecto ruta]
+ *   node eval/unity_build.mjs [--corridas 3] [--caso axa_alcance] [--mbps 20] [--proyecto ruta] [--nombre unity_build_urbana]
  *
  * Por corrida: navegador nuevo y sin caché, con la tarjeta de video de la computadora. Mide hasta
  * `listo` (Unity arrancó) y hasta `cargado` (el caso se ve, con sus modelos bajados de Blob), con el
@@ -24,8 +24,12 @@ import process from "node:process";
 import { brotliCompressSync, constants } from "node:zlib";
 
 const RAIZ = resolve(import.meta.dirname, "..");
-const SALIDA = join(RAIZ, "eval/results/unity_build.json");
-const CAPTURA = join(RAIZ, "eval/results/unity_build.png");
+// `--nombre` guarda la medición de otra escena junto a la principal (AXA), sin pisarla.
+const NOMBRE = process.argv.includes("--nombre")
+  ? process.argv[process.argv.indexOf("--nombre") + 1]
+  : "unity_build";
+const SALIDA = join(RAIZ, `eval/results/${NOMBRE}.json`);
+const CAPTURA = join(RAIZ, `eval/results/${NOMBRE}.png`);
 const require = createRequire(join(RAIZ, "apps/web/package.json"));
 const { chromium } = require("@playwright/test");
 

@@ -85,6 +85,7 @@ namespace Croquis.Visor
                 m.Planta(pos, idx, 0.02f, terreno, Materiales.Mosaico(nombre));
             }
 
+            Terraceria(padre, t, terreno);
             foreach (var par in porMaterial)
             {
                 var tinte = par.Key == "tierra" ? new Color(0.5f, 0.52f, 0.5f) : Color.white;
@@ -123,6 +124,87 @@ namespace Croquis.Visor
 
             amarillo.Poner(padre, "topes_amarillo", Materiales.Liso(new Color(0.85f, 0.66f, 0.08f), mojado ? 0.6f : 0.3f), false);
             negro.Poner(padre, "topes_negro", Materiales.Liso(new Color(0.05f, 0.05f, 0.05f), mojado ? 0.6f : 0.3f), false);
+        }
+
+        /// <summary>
+        /// Lo que hace que una terracería se lea como tal: rodadas marcadas a lo largo y baches. Las
+        /// rodadas siguen el lado más largo de la zona; los baches no caen en el claro del hecho.
+        /// </summary>
+        private static void Terraceria(Transform padre, TerrenoEscenario t, Terreno terreno)
+        {
+            var rodadas = new Malla();
+            var baches = new Malla();
+            var azar = new Azar(431);
+            foreach (var s in t.Superficies)
+            {
+                if (MaterialDe(s.Tipo) != "tierra" || s.Poligono.Length < 3)
+                {
+                    continue;
+                }
+
+                // El eje: el lado más largo del polígono. Sus medidas, sobre ese eje y su normal.
+                var eje = Vector2.right;
+                var mayor = 0f;
+                for (var i = 0; i < s.Poligono.Length; i++)
+                {
+                    var p = s.Poligono[i];
+                    var q = s.Poligono[(i + 1) % s.Poligono.Length];
+                    var d = new Vector2((float)(q.X - p.X), (float)(q.Y - p.Y));
+                    if (d.magnitude > mayor)
+                    {
+                        mayor = d.magnitude;
+                        eje = d.normalized;
+                    }
+                }
+
+                var normal = new Vector2(-eje.y, eje.x);
+                float u0 = float.MaxValue, u1 = float.MinValue, v0 = float.MaxValue, v1 = float.MinValue;
+                foreach (var p in s.Poligono)
+                {
+                    var q = new Vector2((float)p.X, (float)p.Y);
+                    u0 = Mathf.Min(u0, Vector2.Dot(q, eje));
+                    u1 = Mathf.Max(u1, Vector2.Dot(q, eje));
+                    v0 = Mathf.Min(v0, Vector2.Dot(q, normal));
+                    v1 = Mathf.Max(v1, Vector2.Dot(q, normal));
+                }
+
+                var carriles = Mathf.Max(1, Mathf.RoundToInt((v1 - v0) / 3.5f));
+                for (var c = 0; c < carriles; c++)
+                {
+                    var medio = v0 + (v1 - v0) * (c + 0.5f) / carriles;
+                    foreach (var rueda in new[] { -0.78f, 0.78f })
+                    {
+                        for (var u = u0; u < u1; u += 3f)
+                        {
+                            var fin = Mathf.Min(u1, u + 3f);
+                            Vector3 P(float a, float b) => terreno.P((eje * a + normal * b).x, (eje * a + normal * b).y, 0.032f);
+                            var i = rodadas.Vertice(P(u, medio + rueda - 0.3f), new Vector2(u / 3f, 0f));
+                            rodadas.Vertice(P(fin, medio + rueda - 0.3f), new Vector2(fin / 3f, 0f));
+                            rodadas.Vertice(P(fin, medio + rueda + 0.3f), new Vector2(fin / 3f, 1f));
+                            rodadas.Vertice(P(u, medio + rueda + 0.3f), new Vector2(u / 3f, 1f));
+                            rodadas.Triangulo(i, i + 2, i + 1);
+                            rodadas.Triangulo(i, i + 3, i + 2);
+                        }
+                    }
+                }
+
+                var cuantos = Mathf.Min(60, Mathf.RoundToInt((u1 - u0) * (v1 - v0) / 14f));
+                for (var k = 0; k < cuantos; k++)
+                {
+                    var q = eje * azar.Entre(u0 + 0.8f, u1 - 0.8f) + normal * azar.Entre(v0 + 0.5f, v1 - 0.5f);
+                    var r = azar.Entre(0.35f, 0.95f);
+                    var giro = azar.Entre(0f, Mathf.PI);
+                    if ((q - EscenarioVista.CentroDelHecho).magnitude < EscenarioVista.ClaroDelHecho)
+                    {
+                        continue;
+                    }
+
+                    EscenarioVista.Calca(baches, terreno, q, giro, r * 2f, r * azar.Entre(1.1f, 1.7f), 0.034f);
+                }
+            }
+
+            rodadas.Poner(padre, "rodadas_terraceria", Materiales.Rodada(new Color(0.16f, 0.12f, 0.08f, 0.55f)), false);
+            baches.Poner(padre, "baches", Materiales.ManchaOscura(0.5f), false);
         }
 
         private static string MaterialDe(TipoSuperficie tipo)

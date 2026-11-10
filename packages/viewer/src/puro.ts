@@ -29,6 +29,7 @@ export {
   FACADE_PALETTE_MX,
   planEnvironment,
   terrainHeightAt,
+  zoneFor,
   type Building,
   type EnvironmentPlan,
   type HillLayer,

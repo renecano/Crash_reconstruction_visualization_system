@@ -45,6 +45,12 @@ namespace Croquis.Visor
 
         public int Vertices => v.Count;
 
+        /// <summary>
+        /// Para tarjetas de vegetación: todas las normales hacia arriba, y la tarjeta recibe la luz como
+        /// el suelo donde está, sin una cara clara y otra negra.
+        /// </summary>
+        public bool NormalArriba { get; set; }
+
         public int Vertice(Vector3 p, Vector2 u)
         {
             v.Add(p);
@@ -208,6 +214,42 @@ namespace Croquis.Visor
             return new Vector2(a.x - b.x, a.z - b.z).magnitude;
         }
 
+        /// <summary>
+        /// Una cara visible por los dos lados no puede compartir vértices: las normales de sus dos
+        /// sentidos se anulan, el sombreador divide entre cero y el pixel sale sin número (negro en el
+        /// Editor; en WebGL, con resplandor, quemaba toda la imagen). Aquí todo triángulo que repite a
+        /// otro en sentido contrario se pasa a vértices propios, lo haya armado quien lo haya armado.
+        /// </summary>
+        private void SepararReversos()
+        {
+            var vistos = new HashSet<(int, int, int)>();
+            var copias = new Dictionary<int, int>();
+            for (var k = 0; k + 2 < t.Count; k += 3)
+            {
+                int a = t[k], b = t[k + 1], c = t[k + 2];
+                // La misma llave para las tres rotaciones de un sentido: se empieza por el menor.
+                (int, int, int) Llave(int x, int y, int z) => x <= y && x <= z ? (x, y, z) : y <= x && y <= z ? (y, z, x) : (z, x, y);
+                if (vistos.Contains(Llave(a, c, b)))
+                {
+                    for (var i = 0; i < 3; i++)
+                    {
+                        var original = t[k + i];
+                        if (!copias.TryGetValue(original, out var copia))
+                        {
+                            copia = Vertice(v[original], uv[original]);
+                            copias[original] = copia;
+                        }
+
+                        t[k + i] = copia;
+                    }
+                }
+                else
+                {
+                    vistos.Add(Llave(a, b, c));
+                }
+            }
+        }
+
         public Mesh Cerrar(string nombre)
         {
             var m = new Mesh
@@ -215,10 +257,22 @@ namespace Croquis.Visor
                 name = nombre,
                 indexFormat = v.Count > 65000 ? IndexFormat.UInt32 : IndexFormat.UInt16,
             };
+            SepararReversos();
             m.SetVertices(v);
             m.SetUVs(0, uv);
             m.SetTriangles(t, 0);
             m.RecalculateNormals();
+            if (NormalArriba)
+            {
+                var arriba = new Vector3[v.Count];
+                for (var i = 0; i < arriba.Length; i++)
+                {
+                    arriba[i] = Vector3.up;
+                }
+
+                m.SetNormals(arriba);
+            }
+
             m.RecalculateTangents();
             m.RecalculateBounds();
             return m;

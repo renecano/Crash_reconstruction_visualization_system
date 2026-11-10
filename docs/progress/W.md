@@ -5,15 +5,15 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 ## Estado
 
 - **Desde el 2026-11-09, el Claude Code de René lleva también este frente,** porque aquí no se había subido nada. Si eres el Claude Code del compañero: antes de empezar una fase, revisa la tabla de abajo y `git fetch`; si la fase ya está tomada, sigue con la siguiente y anótala aquí.
-- **Fase actual:** W1 (dictamen, O2).
-- **Siguiente paso:** W2.
+- **Hechas:** W1 (#187) y W2 (#188), las dos en `main`.
+- **Siguiente:** W3. No está tomada: no hay rama `feat/w3-*` ni código. Abajo, en «W3 · Lo que hay antes de empezar», está el mapa de lo que toca.
 
 ## Fases tomadas
 
-| Fase                    | Quién               | Rama               | Estado                    |
-| ----------------------- | ------------------- | ------------------ | ------------------------- |
-| W1 · Dictamen (O2)      | Claude Code de René | `feat/w1-dictamen` | PR #187                   |
-| W2 · El hecho (O1 y O5) | Claude Code de René | `feat/w2-hecho`    | En PR desde el 2026-11-09 |
+| Fase                    | Quién               | Rama               | Estado           |
+| ----------------------- | ------------------- | ------------------ | ---------------- |
+| W1 · Dictamen (O2)      | Claude Code de René | `feat/w1-dictamen` | En `main` (#187) |
+| W2 · El hecho (O1 y O5) | Claude Code de René | `feat/w2-hecho`    | En `main` (#188) |
 
 ## W1 · Dictamen (O2)
 
@@ -57,6 +57,21 @@ Rama `feat/w2-hecho`, sobre la de W1.
   - «taxi» llega como participante del impacto sin una sola fila propia: ahora recibe su mención y sedán compacto como supuesto.
 - **Pruebas:** unitarias en `packages/cesvi/src/relato.test.ts` y en `apps/web/src/lib/hecho-letras.test.ts`, entre ellas el zócalo, «gggg…» y la ruta. El prompt no cambió: las grabaciones de antes siguen valiendo.
 - **Límite:** el vocabulario es una lista cerrada. Una palabra que no esté («guayín», «troca») queda sin mención propia y su clase se pregunta, como antes.
+
+## W3 · Lo que hay antes de empezar (leído el 2026-11-09, sin código todavía)
+
+Se revisó el código para saber qué toca W3 (PLAN-CESVI §3.4). Nada de esto está hecho.
+
+- **Contrato.** Lo único nuevo de C1 en la escena 2.3.0 es `vehiculos[].puntos_paso` (`PuntoPaso`: `posicion`, `precision_m`, `t_s`, `orden`). El primer golpe y los choques intermedios usan `eventos[]` con su `punto_impacto`, como antes. El expediente, que es lo que edita la escena fácil, no tiene dónde guardar puntos de paso ni objetos con posición: hace falta un PR `contract:` o guardarlos junto al caso.
+- **Nadie lee `puntos_paso` salvo el visor** (`marcadoresDe`). El solver, `packages/cesvi` y la escena fácil no lo usan.
+- **El punto del primer golpe no entra a la inversión.** Hoy solo fija el origen de la escena y guía la geometría del contacto (`resolve_contact`). Falta su residuo en `_residuals` (Python) y `residuals` (TS).
+- **Los choques intermedios contra objetos se pierden dos veces:** `especDeExpediente` los descarta con un límite, y `_later_impacts` / `laterImpacts` solo aceptan pares de vehículos. Después del impacto principal no hay choque con `entorno.objetos`. Un objeto del impacto principal se coloca en un lugar fijo (6, −6), no donde se marcó.
+- **Los rumbos solo son parámetros de la inversión si hay evidencia de reposo,** y una escena que solo tenga puntos de paso se saltaría el ajuste (`Evidence.empty()`).
+- **Etiquetas de evidencia nuevas** (por ejemplo `paso:<id>`): van en los dos patrones de `resultado.schema.json` (Inversion e InversionAlternativa) y en `evidenciaEnPalabras`. La evidencia del perito lleva `procedencia.fuente = "usuario"`.
+- **La escena fácil ya pregunta «¿Dónde fue el choque?» al principio,** antes de los vehículos. W3 lo pide después de colocarlos: hay que decidir si se mueve o se reutiliza.
+- **La ayuda de las e2e (`colocarTodo`) avanza por el texto de la pregunta** y la usan 12 specs: toda pregunta nueva hay que enseñársela.
+- **Paridad:** `perturbed()` rehace la evidencia en un orden fijo; agregar la de los puntos de paso cambia la secuencia de números al azar, igual en Python y en TS.
+- **ADR:** el bloque de W (0130 a 0169) está vacío; el primero libre es el 0130.
 
 ## Lo que U deja dicho para W
 

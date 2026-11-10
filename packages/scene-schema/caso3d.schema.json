@@ -426,7 +426,11 @@
         "letrero",
         "tinacos",
         "antena",
-        "varillas"
+        "varillas",
+        "tipo",
+        "remetimiento_m",
+        "herreria",
+        "zaguan"
       ],
       "properties": {
         "x": {
@@ -485,6 +489,24 @@
         },
         "varillas": {
           "type": "boolean"
+        },
+        "tipo": {
+          "title": "TipoLote",
+          "description": "Qué hay en el lote. «fondo» es un volumen sin detalle, de las cuadras de atrás.",
+          "type": "string",
+          "enum": ["casa", "comercio", "baldio", "taller", "fondo"]
+        },
+        "remetimiento_m": {
+          "type": "number",
+          "description": "Cuánto se mete la casa respecto a la banqueta; al frente queda una barda baja con reja."
+        },
+        "herreria": {
+          "type": "boolean",
+          "description": "Protecciones de herrería en las ventanas."
+        },
+        "zaguan": {
+          "type": "boolean",
+          "description": "Portón de cochera."
         }
       }
     },
@@ -643,7 +665,7 @@
           "title": "ViaEscenario",
           "type": "object",
           "additionalProperties": false,
-          "required": ["capas", "guarniciones", "altura_guarnicion_m", "barreras"],
+          "required": ["capas", "guarniciones", "altura_guarnicion_m", "barreras", "rodadas"],
           "properties": {
             "capas": {
               "type": "array",
@@ -670,6 +692,13 @@
                 }
               },
               "description": "Barreras metálicas, como polilíneas."
+            },
+            "rodadas": {
+              "description": "Por dónde pisan las llantas en cada carril: el eje de cada rodada. Es decoración del desgaste, no un dato del hecho.",
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/SegmentoPlano"
+              }
             }
           }
         },

@@ -1,0 +1,83 @@
+{
+  "fecha": "2026-11-10T01:50:48.445Z",
+  "commit": "775987d553e2a4bea1498655706c542f30871bec",
+  "unity": "6000.3.28f1",
+  "maquina": {
+    "cpu": "Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz",
+    "nucleos": 8,
+    "ram_gb": 8,
+    "so": "Windows_NT 10.0.26200"
+  },
+  "metodo": "Mediana de 3 corridas con navegador nuevo y sin caché, 20 Mbps y 40 ms al servidor local; los modelos se bajan de Vercel Blob por la red real con el mismo límite. Brotli calidad 9 hecho aquí: es referencia, la cifra de producción se mide en U6.",
+  "caso": "lateral_interseccion-dia",
+  "con_escenario": true,
+  "paquete_kb": 307,
+  "peso": {
+    "bytes": 65149502,
+    "mb": 62.1,
+    "br_q9_bytes": 29269790,
+    "br_q9_mb": 27.9,
+    "archivos": [
+      {
+        "archivo": "Build/0ce03438e8448c87824bd17adc91ccd9.framework.js",
+        "bytes": 444028,
+        "bytes_br_q9": 81834
+      },
+      {
+        "archivo": "Build/9ada47df2284a3c7437cb73497ecae6b.loader.js",
+        "bytes": 26983,
+        "bytes_br_q9": 8908
+      },
+      {
+        "archivo": "Build/c4239460a597057aad159b385d781987.wasm",
+        "bytes": 35309449,
+        "bytes_br_q9": 9002374
+      },
+      {
+        "archivo": "Build/cc059569c711db3f89077ae9e0bb7883.data",
+        "bytes": 29367376,
+        "bytes_br_q9": 20175972
+      },
+      {
+        "archivo": "index.html",
+        "bytes": 1666,
+        "bytes_br_q9": 702
+      }
+    ]
+  },
+  "carga": {
+    "hasta_listo_s": 12.9,
+    "caso_cargado_s": 5.1,
+    "total_s": 19.2,
+    "fps_p50": 27
+  },
+  "corridas": [
+    {
+      "hasta_listo_s": 13.6,
+      "caso_cargado_s": 5.5,
+      "total_s": 21.4,
+      "fps_p50": 27,
+      "fps_muestras": 5,
+      "heap_js_mb": 36.7,
+      "errores": []
+    },
+    {
+      "hasta_listo_s": 12.9,
+      "caso_cargado_s": 5.1,
+      "total_s": 19.2,
+      "fps_p50": 23.3,
+      "fps_muestras": 5,
+      "heap_js_mb": 37,
+      "errores": []
+    },
+    {
+      "hasta_listo_s": 12.9,
+      "caso_cargado_s": 4.6,
+      "total_s": 18.6,
+      "fps_p50": 27.05,
+      "fps_muestras": 4,
+      "heap_js_mb": 36.7,
+      "errores": []
+    }
+  ]
+}
