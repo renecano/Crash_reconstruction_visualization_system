@@ -101,7 +101,7 @@ export function CifraReconstruccion({
                 : " No hay un rango que dar."}
             </p>
           ) : null}
-          {/* W4b: la reparto de las simulaciones no va en un dictamen de CESVI; se pliega. */}
+          {/* W4b: el reparto de las simulaciones no lo lee el perito a primera vista; se pliega. */}
           <details className="group" data-testid="detalle-cifra">
             <summary
               className="t-nota cursor-pointer py-1 font-medium text-texto"
