@@ -115,7 +115,8 @@ test("@flujo /cesvi: corregir después — mover el poste y la dirección de un 
   // 2. Corregir la dirección del Jetta, ya colocado: se toca y «Cambiar por dónde venía».
   await irAPaso(page, 3);
   await page.getByTestId("cambiar-algo").click();
-  await page.getByTestId("coche-V1-final").click();
+  // El marcador del coche no tiene tamaño: se toca su cuerpo, como lo toca el perito.
+  await page.locator('[data-testid="coche-V1-final"] .escena-coche-cuerpo').click();
   await page.getByTestId("sel-cambiar-direccion").click();
   await expect(pregunta).toHaveText("¿Por dónde venía el Jetta?");
   await page.locator('[data-testid^="opcion-flecha-"][data-propuesta="no"]').first().click();

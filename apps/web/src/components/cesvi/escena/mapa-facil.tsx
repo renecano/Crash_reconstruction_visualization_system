@@ -204,7 +204,20 @@ export function MapaFacil(p: MapaFacilProps) {
     };
   }, [listo, p.lineas, p.medicion]);
 
-  // Los marcadores: se rehacen con cada cambio (son pocos) y se escalan con el zoom.
+  // Los marcadores: se rehacen cuando cambia lo que muestran (son pocos) y se escalan con el zoom. Se
+  // comparan por contenido: la escena manda arreglos nuevos en cada render.
+  const claveMarcadores = JSON.stringify([
+    p.choques,
+    p.marcas,
+    p.propuesta,
+    p.flechas,
+    p.coches,
+    p.objetos,
+    p.seleccion,
+    Boolean(p.onSeleccionar),
+    Boolean(p.onMoverCoche),
+    Boolean(p.onGirar),
+  ]);
   useEffect(() => {
     const m = mapa.current;
     const M = MarkerCls.current;
@@ -236,10 +249,22 @@ export function MapaFacil(p: MapaFacilProps) {
     };
     const arrastrable = (mk: Marker, clave: string) => {
       mk.setDraggable(true);
-      mk.on("dragend", () => {
+      // Al soltar, una sola vez: con `dragend` o, si MapLibre no lo dispara (el ratón se suelta
+      // fuera de su manejador), con el `pointerup` de la ventana.
+      let arrastrando = false;
+      const soltar = () => {
+        if (!arrastrando) return;
+        arrastrando = false;
+        window.removeEventListener("pointerup", soltar);
         const ll = mk.getLngLat();
+        mk.getElement().style.pointerEvents = "auto";
         ultimo.current.onMover?.(clave, { lat: ll.lat, lon: ll.lng });
+      };
+      mk.on("dragstart", () => {
+        arrastrando = true;
+        window.addEventListener("pointerup", soltar);
       });
+      mk.on("dragend", soltar);
     };
 
     for (const c of p.choques) {
@@ -412,7 +437,8 @@ export function MapaFacil(p: MapaFacilProps) {
     return () => {
       m.off("zoom", alZoom);
     };
-  }, [listo, p.choques, p.marcas, p.propuesta, p.flechas, p.coches, p.objetos, p.seleccion]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- por contenido: rehacer un marcador a media maniobra pierde el arrastre
+  }, [listo, claveMarcadores]);
 
   return (
     <div

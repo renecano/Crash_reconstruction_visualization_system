@@ -1644,11 +1644,11 @@ export function EscenaFacil({
       />
 
       {/* «Deshacer» y «Rehacer», siempre a la vista (W4), y cómo va el recálculo. */}
-      <div className="absolute top-4 right-20 z-10 flex flex-col items-end gap-2">
+      <div className="pointer-events-none absolute top-4 right-20 z-10 flex flex-col items-end gap-2">
         <div className="flex gap-2">
           <button
             type="button"
-            className="escena-zoom px-3 text-[0.9rem] font-semibold"
+            className="escena-zoom pointer-events-auto px-3 text-[0.9rem] font-semibold"
             style={{ width: "auto" }}
             onClick={deshacer}
             disabled={!pila.length}
@@ -1659,7 +1659,7 @@ export function EscenaFacil({
           </button>
           <button
             type="button"
-            className="escena-zoom px-3 text-[0.9rem] font-semibold"
+            className="escena-zoom pointer-events-auto px-3 text-[0.9rem] font-semibold"
             style={{ width: "auto" }}
             onClick={rehacer}
             disabled={!futuro.length}
@@ -1684,7 +1684,7 @@ export function EscenaFacil({
 
       {/* W4: corregir lo colocado y agregar objetos del lugar. */}
       {corrigiendo && !seleccion ? (
-        <div className="absolute top-4 left-4 z-10 md:top-6 md:left-6">
+        <div className="pointer-events-none absolute top-4 left-4 z-10 md:top-6 md:left-6">
           <PanelCorregir
             poniendo={poniendo}
             onElegir={setPoniendo}
@@ -1696,7 +1696,7 @@ export function EscenaFacil({
         </div>
       ) : null}
       {corrigiendo && seleccion ? (
-        <div className="absolute right-3 bottom-[84px] left-3 z-20 flex justify-center">
+        <div className="pointer-events-none absolute right-3 bottom-[84px] left-3 z-20 flex justify-center">
           <BarraSeleccion
             nombre={nombreDeSeleccion(seleccion)}
             acciones={accionesDe(seleccion)}
