@@ -13,6 +13,17 @@ import { kmhAntesDe, kmhEn, tImpacto, type ResultadoMaqueta } from "@/lib/maquet
 import { reconstruirEnNavegador } from "@/lib/reconstruct-client";
 import { EscenaMaqueta } from "./maqueta";
 
+/**
+ * W6: lo que tapan los paneles de la etapa (las pestañas y la nota de arriba, los botones de la
+ * vista, la leyenda y la línea de tiempo de abajo), para que «Ver todo» encaje la escena en el resto.
+ */
+const MARGENES_ETAPA = { arriba: 150, abajo: 190, izq: 24, der: 24 };
+/**
+ * En el lado a lado de Contra CESVI, los botones de la vista van en columna a la derecha. Si el panel
+ * es tan angosto que no deja la mitad libre, `encajar` ignora el margen.
+ */
+const MARGENES_COMPACTA = { arriba: 16, abajo: 16, izq: 16, der: 92 };
+
 export function MaquetaCaso({
   r,
   calles,
@@ -22,7 +33,10 @@ export function MaquetaCaso({
   compacta = false,
   tips = {},
   tipDelImpacto = null,
+  sinControles = false,
 }: {
+  /** W6: sin «Ver todo», «Ir al impacto», zoom ni desplazamiento (el croquis del dictamen). */
+  sinControles?: boolean;
   tips?: Record<string, string>;
   tipDelImpacto?: string | null;
   /** Solo el croquis, sin línea de tiempo ni leyenda («Lado a lado» de Contra CESVI). */
@@ -71,7 +85,14 @@ export function MaquetaCaso({
   )[0];
   if (compacta)
     return (
-      <EscenaMaqueta spec={spec} resultado={listo.res} relieve={r.relieve ?? null} sinEtiquetas />
+      <EscenaMaqueta
+        spec={spec}
+        resultado={listo.res}
+        relieve={r.relieve ?? null}
+        navegable={!sinControles}
+        margenes={MARGENES_COMPACTA}
+        sinEtiquetas
+      />
     );
   return (
     <div className="relative h-full w-full">
@@ -81,6 +102,8 @@ export function MaquetaCaso({
             spec={spec}
             resultado={listo.res}
             relieve={r.relieve ?? null}
+            navegable={!sinControles}
+            margenes={MARGENES_ETAPA}
             nombres={nombres}
             detalles={detalles}
             anchoVia={anchoVia}
