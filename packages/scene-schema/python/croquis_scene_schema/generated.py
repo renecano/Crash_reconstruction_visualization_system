@@ -1500,6 +1500,107 @@ class DanoExpediente(BaseModel):
     cita: Cita | None = None
 
 
+class Relieve(BaseModel):
+    """
+    El relieve real del lugar: la malla no va aquí, se pide a `/api/relieve` y viaja junto al caso.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    fuente: Literal["dem", "plano"]
+    malla_id: Annotated[str | None, Field(max_length=80, min_length=1)] = None
+
+
+class ZonaTerrenoExpediente(BaseModel):
+    """
+    Una zona con otra superficie. Sin `friccion`, vale la de la tabla para esa superficie y el estado del lugar.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    id: Annotated[str, Field(pattern="^[a-z0-9_-]{1,40}$")]
+    """
+    Identificador estable dentro del expediente.
+    """
+    tipo: Literal[
+        "asfalto",
+        "concreto",
+        "adoquin",
+        "empedrado",
+        "terraceria",
+        "grava",
+        "pasto",
+        "tierra",
+        "lodo",
+    ]
+    poligono: Annotated[list[Coordenadas], Field(max_length=64, min_length=3)]
+    """
+    Vértices del polígono en el mapa, sin repetir el primero al final.
+    """
+    friccion: Annotated[float | None, Field(gt=0.0, le=1.5)] = None
+    """
+    Coeficiente de fricción que fijó el perito.
+    """
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+    cita: Cita | None = None
+
+
+class OndulacionExpediente(BaseModel):
+    """
+    Una zona ondulada: crestas perpendiculares al rumbo, con su amplitud (de valle a cresta) y su longitud de onda.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    id: Annotated[str, Field(pattern="^[a-z0-9_-]{1,40}$")]
+    """
+    Identificador estable dentro del expediente.
+    """
+    poligono: Annotated[list[Coordenadas], Field(max_length=64, min_length=3)]
+    """
+    Vértices del polígono en el mapa, sin repetir el primero al final.
+    """
+    amplitud_m: Annotated[float, Field(gt=0.0, le=2.0)]
+    longitud_onda_m: Annotated[float, Field(gt=0.0, le=200.0)]
+    rumbo_deg: Annotated[float, Field(ge=0.0, lt=360.0)]
+    """
+    Hacia dónde avanzan las ondas, desde el norte hacia el este.
+    """
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+    cita: Cita | None = None
+
+
+class TopeExpediente(BaseModel):
+    """
+    Un tope: la línea que cruza la vía, su altura y su largo en el sentido del tránsito.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    id: Annotated[str, Field(pattern="^[a-z0-9_-]{1,40}$")]
+    """
+    Identificador estable dentro del expediente.
+    """
+    linea: Annotated[list[Coordenadas], Field(max_length=2, min_length=2)]
+    alto_m: Annotated[float, Field(gt=0.0, le=0.5)]
+    largo_m: Annotated[float, Field(gt=0.0, le=20.0)]
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+    cita: Cita | None = None
+
+
 class ObjetoExpediente(BaseModel):
     """
     Un objeto del lugar que el perito coloca en la escena (C2): poste, muro o pared, árbol, barrera, guarnición, señal o vehículo estacionado. Está en la escena aunque nadie choque contra él; en la escena va a `entorno.objetos`.
@@ -1942,6 +2043,32 @@ class Evento(BaseModel):
     procedencia: Procedencia
 
 
+class TerrenoExpediente(BaseModel):
+    """
+    El terreno que declara el perito en la escena (C3): zonas de otra superficie, zonas onduladas, topes y si se usa el relieve real. En la escena va a `lugar.terreno`.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    superficies: Annotated[list[ZonaTerrenoExpediente] | None, Field(max_length=32)] = None
+    """
+    Zonas de otra superficie; fuera de ellas vale la del lugar.
+    """
+    ondulaciones: Annotated[list[OndulacionExpediente] | None, Field(max_length=16)] = None
+    """
+    Zonas onduladas.
+    """
+    topes: Annotated[list[TopeExpediente] | None, Field(max_length=32)] = None
+    """
+    Topes, cada uno como la línea que cruza la vía.
+    """
+    relieve: Relieve | None = None
+    """
+    El relieve real del lugar: la malla no va aquí, se pide a `/api/relieve` y viaja junto al caso.
+    """
+
+
 class VersionExpediente(BaseModel):
     """
     Una versión del hecho: la de la evidencia (la arma el perito) o la de un conductor (cita literal y maniobras).
@@ -1995,6 +2122,7 @@ class Expediente(BaseModel):
     """
     Objetos del lugar que colocó el perito (C2).
     """
+    terreno: TerrenoExpediente | None = None
     versiones: Annotated[list[VersionExpediente] | None, Field(max_length=20)] = None
     """
     Versiones: la de la evidencia y una por declaración.

@@ -456,6 +456,8 @@ export const Parametros = z.strictObject({
   altura_cg_volcadura: Parametro.optional(),
   altura_ojo: Parametro.optional(),
   alcance_deteccion_nocturna: Parametro.optional(),
+  perdida_energia_tope: Parametro.optional(),
+  perdida_contacto_tope: Parametro.optional(),
 });
 export type Parametros = z.infer<typeof Parametros>;
 
