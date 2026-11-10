@@ -20,7 +20,7 @@ const RAIZ = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const SALIDA = join(RAIZ, "apps/visor-unity/Build/casos");
 const leer = <T>(p: string) => JSON.parse(readFileSync(join(RAIZ, p), "utf8")) as T;
 
-/** Las escenas de D1 (plan v4 §1). La de terreno llega con C3. */
+/** Las escenas de D1 (plan v4 §1). */
 const ESCENAS: { nombre: string; escena: () => EscenaSpec; resultado?: () => Resultado }[] = [
   { nombre: "axa", escena: () => leer<EscenaSpec>("demo/escenas-r11/axa.json") },
   ...["lateral_interseccion", "nocturno_lluvia", "carambola"].map((n) => ({
@@ -29,68 +29,14 @@ const ESCENAS: { nombre: string; escena: () => EscenaSpec; resultado?: () => Res
     resultado: () => leer<Caso3D>(`packages/scene-schema/fixtures/caso3d/${n}.json`).resultado,
   })),
   {
+    // La quinta de D1: la escena de referencia de terreno (C3, W5; `eval/w5_fixtures.py`).
     nombre: "terraceria",
-    escena: () => {
-      const c = leer<Caso3D>("packages/scene-schema/fixtures/caso3d/alcance.json");
-      return conTerreno(c.escena, c.resultado);
-    },
-    resultado: () => leer<Caso3D>("packages/scene-schema/fixtures/caso3d/alcance.json").resultado,
+    escena: () =>
+      leer<Caso3D>("packages/scene-schema/fixtures/caso3d/terraceria_topes.json").escena,
+    resultado: () =>
+      leer<Caso3D>("packages/scene-schema/fixtures/caso3d/terraceria_topes.json").resultado,
   },
 ];
-
-/**
- * La quinta escena de D1, provisional hasta que W5 deje la suya en `fixtures/`: el alcance canónico
- * con una zona de terracería ondulada y un tope antes del impacto. El solver todavía no usa el
- * terreno (W5), así que la reconstrucción es la del alcance en plano: sirve para ver cómo se dibuja.
- */
-function conTerreno(escena: EscenaSpec, resultado: Resultado): EscenaSpec {
-  const v = resultado.vehiculos[0]!.trayectoria;
-  const k0 = 0;
-  const k1 = v.t.findIndex((x) => x >= 0);
-  const x0 = v.x[k0]!;
-  const y0 = v.y[k0]!;
-  const dx = Math.cos(v.rumbo[k1]!);
-  const dy = Math.sin(v.rumbo[k1]!);
-  const en = (a: number, l: number) => ({ x: x0 + dx * a - dy * l, y: y0 + dy * a + dx * l });
-  const largo = Math.hypot(v.x[k1]! - x0, v.y[k1]! - y0);
-  const fuente = { fuente: "usuario" as const, confianza: 0.8 };
-  return {
-    ...escena,
-    lugar: {
-      ...escena.lugar,
-      terreno: {
-        superficies: [
-          {
-            id: "terraceria",
-            tipo: "terraceria",
-            poligono: [en(-10, -7), en(largo + 30, -7), en(largo + 30, 7), en(-10, 7)],
-            friccion: { valor: 0.55, fuente: "default", confianza: 0.5 },
-            procedencia: fuente,
-          },
-        ],
-        ondulaciones: [
-          {
-            id: "ondulado",
-            poligono: [en(2, -7), en(largo * 0.55, -7), en(largo * 0.55, 7), en(2, 7)],
-            amplitud_m: 0.12,
-            longitud_onda_m: 7,
-            rumbo_deg: (Math.atan2(dy, dx) * 180) / Math.PI,
-            procedencia: fuente,
-          },
-        ],
-        topes: [
-          {
-            id: "tope",
-            linea: [en(largo * 0.75, -3.5), en(largo * 0.75, 3.5)],
-            alto_m: 0.08,
-            largo_m: 1.5,
-            procedencia: fuente,
-          },
-        ],
-      },
-    },
-  };
-}
 
 /** La misma escena con otra luz: sin hora declarada, el cielo sale de la iluminación. */
 function conLuz(escena: EscenaSpec, luz: "dia" | "noche"): EscenaSpec {

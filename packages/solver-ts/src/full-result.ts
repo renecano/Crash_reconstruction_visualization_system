@@ -8,6 +8,7 @@ import { checkConsistency, inconsistencyToDict } from "./consistency";
 import { invert } from "./inversion";
 import { monteCarlo } from "./montecarlo";
 import { reconstruct, reconstructionToDict } from "./reconstruct";
+import { withRelief } from "./terrain";
 
 type Json = Record<string, unknown>;
 
@@ -16,6 +17,8 @@ export interface FullResultOptions {
   samples?: number;
   /** Muestras del Monte Carlo de los campos inciertos (64 por omisión, como la referencia). */
   mcSamples?: number;
+  /** La malla de relieve del paquete caso-3d que cita la escena (W5), si la hay. */
+  relieve?: Json | null;
 }
 
 /**
@@ -23,9 +26,13 @@ export interface FullResultOptions {
  * rango ya casi no depende de la semilla, y con estas cifras el resultado completo sigue por
  * debajo de 10 s en la laptop (`eval/results/axa_tiempo_navegador.json`).
  */
-export const PRODUCTION_SAMPLES: Required<FullResultOptions> = { samples: 32, mcSamples: 128 };
+export const PRODUCTION_SAMPLES: Required<Omit<FullResultOptions, "relieve">> = {
+  samples: 32,
+  mcSamples: 128,
+};
 
-export function fullResult(spec: Json, opts: FullResultOptions = {}): Json {
+export function fullResult(specIn: Json, opts: FullResultOptions = {}): Json {
+  const spec = withRelief(specIn, opts.relieve ?? null);
   const rec = reconstruct(spec);
   const doc = reconstructionToDict(rec);
   doc.incertidumbre = monteCarlo(spec, { samples: opts.mcSamples }).toDict();

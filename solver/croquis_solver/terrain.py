@@ -272,6 +272,37 @@ class Terrain:
         return None
 
 
+# La malla de relieve no viaja en la escena (ADR 0111): va en el paquete caso-3d. Para que la
+# inversión y el Monte Carlo, que reconstruyen cientos de veces, no tengan que pasarla de mano en
+# mano, quien llama la adjunta en memoria a `lugar.terreno.relieve` con esta llave, que no es del
+# contrato y nunca se guarda.
+ATTACHED = "_malla"
+
+
+def with_relief(spec: JsonObj, relieve: JsonObj | None) -> JsonObj:
+    """La escena con la malla de relieve adjunta en memoria (la original no se toca)."""
+    lugar: JsonObj = spec["lugar"]
+    terreno: JsonObj = lugar.get("terreno") or {}
+    declared: JsonObj = terreno.get("relieve") or {}
+    if relieve is None or not declared:
+        return spec
+    return {
+        **spec,
+        "lugar": {
+            **lugar,
+            "terreno": {**terreno, "relieve": {**declared, ATTACHED: relieve}},
+        },
+    }
+
+
+def attached_relief(lugar: JsonObj) -> JsonObj | None:
+    """La malla adjunta con `with_relief`, si la hay."""
+    terreno: JsonObj = lugar.get("terreno") or {}
+    declared: JsonObj = terreno.get("relieve") or {}
+    malla: JsonObj | None = declared.get(ATTACHED)
+    return malla
+
+
 def relief_mesh(declared: JsonObj | None, relieve: JsonObj | None) -> ReliefMesh | None:
     """La malla que cita la escena, si viene y no es plana. Una malla plana no cambia nada."""
     if not declared or declared.get("fuente") == "plano" or relieve is None:
@@ -660,10 +691,12 @@ __all__ = [
     "Terrain",
     "TerrainProfile",
     "WheelContact",
+    "attached_relief",
     "brake_profile",
     "bump_crossings",
     "pose_on",
     "read_contact",
     "relief_missing",
     "slopes",
+    "with_relief",
 ]

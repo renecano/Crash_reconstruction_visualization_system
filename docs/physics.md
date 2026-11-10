@@ -223,6 +223,56 @@ Pruebas (`test_reconstruct.py`, `test_road.py`, `test_results_io.py`): en t = 0 
 
 Un evento `impacto_vehiculo_objeto` posterior al primero, con un vehículo y un objeto declarado, ocurre cuando el contorno del vehículo toca al objeto durante la fase posterior. El objeto entra a la integración conjunta (la de las carambolas) como un cuerpo inmóvil: su caja en planta, masa de 10⁹ kg y sin velocidad. El impulso es el de `planar_impact`. Toda la energía disipada se le atribuye al vehículo (cota superior de su deformación). Si la trayectoria no llega, aviso `impacto_no_ocurre`.
 
+## Terreno (`terrain.py`, C3 y O4, W5)
+
+El terreno sale de `lugar.terreno` y, si la escena lo cita, de la malla de relieve del paquete caso-3d. Sin ese bloque, con todo vacío o con una malla plana, el solver sigue el camino de siempre y el resultado es idéntico al de antes (prueba: `test_un_terreno_plano_da_exactamente_el_resultado_de_hoy`).
+
+**Altura.** $z(x, y)$ es la suma de tres partes:
+
+- **Relieve:** la malla regular, con interpolación bilineal.
+- **Ondulaciones:** $A\,(\tfrac12 + \tfrac12 \sin(2\pi s/\lambda))$ dentro de su zona, con $s$ la distancia a lo largo de su rumbo. Se desvanece en 3 m hacia la orilla. Es la misma forma con que la dibuja el visor.
+- **Topes:** un arco de círculo de cuerda $L$ (`largo_m`) y flecha $h$ (`alto_m`), con radio $R = (L^2/4 + h^2)/(2h)$. Con las medidas del reductor circular de la NOM-034-SCT2/SEDATU-2022 (tabla 38: 1.40 m y 0.10 m) da su radio de 2.5 m.
+
+**Gravedad.** La pendiente que siente un vehículo es la de sus llantas: a lo largo, $(z_\text{adelante} - z_\text{atrás})/\text{batalla}$; de lado, lo mismo entre el costado izquierdo y el derecho.
+
+- **Antes del impacto**, un vehículo que frena lo hace con $a = g\,(\mu\, f_{ABS} \cos\alpha + \sin\alpha)$ en cada tramo de 5 cm, con $\alpha$ la pendiente entre ejes en su sentido de marcha más la `pendiente` del lugar. Es la fórmula de §1, ahora con $\alpha$ y $\mu$ que cambian a lo largo del camino. En una pendiente constante coincide con ella a 10⁻⁹.
+- **Después del impacto**, cada paso suma $-g\,\nabla z/\sqrt{1+|\nabla z|^2}$ (de magnitud $g \sin\alpha$, cuesta abajo), y la carga de cada llanta baja a $N \cos\alpha$.
+- **Un vehículo que no frena** conserva su velocidad declarada: el conductor la sostiene.
+- **Un vehículo en reposo** se queda en reposo aunque esté en pendiente.
+
+**Fricción por zona.** Bajo cada llanta vale la fricción de la zona que la contiene (la última declarada); fuera de las zonas, la del lugar. Antes del impacto se pesa por la carga de cada eje.
+
+- **De dónde sale el valor:** de `zona.friccion`. Su valor por omisión es el de `friction.json` para el tipo de la zona y el estado del lugar.
+- **Monte Carlo e inversión:** muestrean cada zona en su rango. Es el que declara la zona; si no, ±5 % cuando la fijó el perito, o el de la tabla.
+- **Pasto:** frenado con llantas bloqueadas de Cenek, Jamieson y McLarin. Seco, 0.21 a 0.38 (mediana 0.36); mojado, 0.17 a 0.24 (mediana 0.21).
+- **Grava, tierra y lodo:** las filas de la terracería (grava suelta, estado del lugar y lodo).
+- **Moto caída:** se arrastra con su propio factor, no con el de la zona.
+
+**Topes.** Dos efectos, los dos **supuestos declarados con rango** (`parametros.perdida_energia_tope` y `perdida_contacto_tope`). No se muestrean en el Monte Carlo.
+
+- **Energía:** cada eje que cruza la línea del tope disipa $\eta\, N_\text{eje}\, h$, con $\eta = 1$ (rango 0.5 a 1.5). Es el trabajo de levantar la carga del eje la altura del tope, que la suspensión no devuelve. No hay una medición que lo fije.
+- **Contacto:** mientras una llanta está sobre el tope, su carga se multiplica por $1 - \kappa\,(1 - c)$, con $c = \max(0,\, 1 - v^2/(gR))$ la carga que conserva una rueda rígida en la cresta y $\kappa = 0.5$ (rango 0 a 1: de «la suspensión lo absorbe todo» a «rueda rígida»). Si esa rueda rígida despegaría ($v > \sqrt{gR}$, 17.8 km/h en el reductor circular), sigue con $1 - \kappa$ lo que tarda en caer la altura del tope, $\sqrt{2h/g}$.
+- **Evento:** `cruce_tope`, con la velocidad en `detalle.velocidad_cruce_kmh`, la primera vez que el eje delantero cruza cada tope.
+
+**Pose.** `z`, `cabeceo` y `alabeo` de cada muestra salen del plano que pasa por los contactos de las cuatro llantas: nariz arriba y costado derecho abajo, positivos. El visor solo los reproduce. Solo van en el resultado si el terreno tiene altura.
+
+**Límites.**
+
+- **Resolución del relieve:** una malla de 30 m no ve una rampa de 2 m. La resolución nativa va en `relieve.resolucion_nativa_m`.
+- **Suspensión:** no se modela. La pose es la del plano de las llantas, y el tope usa los dos supuestos de arriba.
+- **Volcadura:** el criterio de §6 sigue siendo el de un plano; la pendiente de lado no entra.
+- **Peatones y proyecciones:** siguen en plano.
+- **Agentes reactivos:** frenan con la desaceleración nominal del lugar.
+- **Terreno entre lecturas:** la integración posterior lee el terreno bajo las llantas cada 5 pasos (0.01 s).
+
+Pruebas (`test_terreno.py`, espejo en `terreno.test.ts`):
+
+- el frenado en pendiente constante coincide con la fórmula, antes y después del impacto;
+- la distancia va con el inverso de la fricción de la zona;
+- cruzar un tope rodando libre quita $\eta\, g\, h$ por unidad de masa;
+- un terreno plano da exactamente el resultado de hoy;
+- la escena de referencia `terraceria_topes` (`eval/w5_fixtures.py`) da lo mismo en Python y en TS.
+
 ## Del perfil del solver al daño visual (F4)
 
 El visor no calcula daño: traduce el perfil CRASH3 del solver (`dano.perfil_m`, `ancho_m`, `centro_m` y zona CDC) a una deformación por vértice:
@@ -254,6 +304,8 @@ El validador semántico (`check.ts` / `check.py`) marca masas, dimensiones y vel
 - NHTSA, DOT HS 811 546, _Development of the WinSMASH 2010 Crash Reconstruction Code_, 2012 (rigideces por categoría y forma $d_0$, $d_1$).
 - 49 CFR 571.214 (FMVSS 214, prueba con barrera móvil deformable), 571.301 (FMVSS 301) y parte 587 (barrera deformable de 3,015 lb), eCFR consultado el 2026-10-15.
 - Fricke, L. B. _Traffic Crash Reconstruction_, 2.ª ed., Northwestern University Center for Public Safety, 2010 (fricción, arrastre post-impacto).
+- Cenek, P. D., Jamieson, N. J. y McLarin, M. W. _Frictional Characteristics of Roadside Grass Types_, Opus International Consultants, Central Laboratories, Nueva Zelanda (sin fecha en el documento; https://saferroadsconference.com/wp-content/uploads/2016/05/Peter-Cenek-Frictional-Characteristics-Roadside-Grass-Types.pdf, consultado el 2026-11-10): frenado con llantas bloqueadas sobre pasto seco y mojado (tabla 4). Su tabla 1 reproduce a Noon, R. K. _Engineering Analysis of Vehicular Accidents_, CRC Press, 1994.
+- NOM-034-SCT2/SEDATU-2022, _Señalización y dispositivos viales para calles y carreteras_, DOF del 19 de septiembre de 2023 (https://www.dof.gob.mx/nota_detalle.php?codigo=5702233&fecha=19/09/2023), inciso 7.10 y tabla 38: dimensiones de los reductores de velocidad (circular: 1.40 m de desarrollo, 0.10 m de alto y radio de 2.5 m; sinusoidal: 0.12 m de alto y de 3.40 a 12 m de largo; trapecial en carretera: 4.50 m de largo y 5 cm de alto).
 - Peck, L. R., Focha, W. y Gloekler, T. L. "Motorcycle Sliding Friction for Accident Investigation", _ifz Forschungsheft_ 16, Institut für Zweiradsicherheit, 2014 (arrastre de la motocicleta caída en 15 choques reales y 14 pruebas controladas).
 - Mumford, D. et al. "Inverted vehicle drag tests", _Accident Investigation Quarterly_ 13, 1997.
 - Searle, J. A. y Searle, A. "The trajectories and landing velocities of pedestrians...", SAE 831622, 1983; Searle, J. A. "The physics of throw distance in accident reconstruction", SAE 930659, 1993.

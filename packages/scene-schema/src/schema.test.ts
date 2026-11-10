@@ -46,13 +46,14 @@ describe("escena.schema.json", () => {
 });
 
 describe("escenas canónicas", () => {
-  it("son las diez de F1, la de Toluca con vía de OSM, la carambola y la reversa, con ids únicos", () => {
-    expect(FIXTURE_NAMES).toHaveLength(13);
+  it("son las diez de F1, la de Toluca con vía de OSM, la carambola, la reversa y la de terreno, con ids únicos", () => {
+    expect(FIXTURE_NAMES).toHaveLength(14);
     expect(FIXTURE_NAMES).toContain("interseccion_toluca");
     expect(FIXTURE_NAMES).toContain("carambola");
+    expect(FIXTURE_NAMES).toContain("terraceria_topes");
     expect(FIXTURE_NAMES).toContain("reversa");
     const ids = FIXTURE_NAMES.map((n) => loadFixture(n).meta.id);
-    expect(new Set(ids).size).toBe(13);
+    expect(new Set(ids).size).toBe(FIXTURE_NAMES.length);
   });
 
   for (const name of FIXTURE_NAMES) {

@@ -65,6 +65,7 @@ from croquis_solver.terrain import (
     BUMP_CONTACT,
     BUMP_ENERGY,
     Terrain,
+    attached_relief,
     brake_profile,
     bump_crossings,
     pose_on,
@@ -862,7 +863,8 @@ def reconstruct(
 
     `downed_mu` fija el arrastre de una motocicleta caída (Monte Carlo e inversión lo muestrean);
     sin él se usa el nominal de la tabla. `relieve` es la malla de relieve del paquete caso-3d que
-    cita `lugar.terreno.relieve` (W5): no viaja en la escena.
+    cita `lugar.terreno.relieve` (W5): no viaja en la escena. También vale adjuntarla antes con
+    `terrain.with_relief`, que es como llega a la inversión y al Monte Carlo.
     """
     banderas: list[str] = []
     avisos: list[Aviso] = []
@@ -883,6 +885,8 @@ def reconstruct(
     abs_factor = friction.abs_peak_factor().nominal
     # Terreno (C3, W5): None si la escena no declara nada que cambie respecto a un plano, y
     # entonces todo sigue por el camino de siempre.
+    if relieve is None:
+        relieve = attached_relief(lugar)
     terrain = Terrain.from_spec(lugar, relieve)
     if relief_missing(lugar, relieve):
         flag(

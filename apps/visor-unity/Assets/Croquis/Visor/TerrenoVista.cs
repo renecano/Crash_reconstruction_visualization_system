@@ -53,8 +53,12 @@ namespace Croquis.Visor
                     var medio = (float)tp.LargoM / 2f;
                     if (d < medio)
                     {
-                        var c = Mathf.Cos(Mathf.PI * d / (2f * medio));
-                        z += (float)tp.AltoM * c * c;
+                        // Un arco de círculo de cuerda `largo` y flecha `alto`, el mismo perfil que
+                        // usa el solver (W5): con 1.40 m y 0.10 m es el reductor circular de la
+                        // NOM-034 (radio de 2.5 m). Así las llantas tocan lo que se dibuja.
+                        var h = (float)tp.AltoM;
+                        var radio = (medio * medio + h * h) / (2f * h);
+                        z += Mathf.Sqrt(radio * radio - d * d) - (radio - h);
                     }
                 }
 

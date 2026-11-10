@@ -4,7 +4,12 @@
  * percentiles p10–p50–p90 de las salidas principales y la lista de campos muestreados con su rango.
  * Mismo orden de sorteos que la referencia.
  */
-import { DOWNED_SLIDE_CLASSES, downedMotorcycleFriction, tireFriction } from "./friction";
+import {
+  DOWNED_SLIDE_CLASSES,
+  downedMotorcycleFriction,
+  tireFriction,
+  zoneRanges,
+} from "./friction";
 import { distribution, type Distribution } from "./inversion";
 import { pyRound, str } from "./pymath";
 import { reconstruct, vehicleClasses, type Reconstruction } from "./reconstruct";
@@ -187,6 +192,9 @@ export function ranges(spec: Json): Sampled[] {
       nota: `arrastre de la moto caída (${md.fuente})`,
     });
   }
+  // Terreno (C3, W5): la fricción de cada zona, al final para no mover los campos de siempre.
+  for (const [k, lo, hi, nota] of zoneRanges(lugar))
+    out.push({ ruta: `lugar.terreno.superficies.${k}.friccion`, minimo: lo, maximo: hi, nota });
   return out;
 }
 
