@@ -251,8 +251,12 @@ function TarjetaSupuesto({ s }: { s: SupuestoDeclarado }) {
           </div>
         </div>
       ) : null}
-      <p className="t-nota">{s.justificacion.replace(" (data/SOURCES.md)", "")}</p>
-      <p className="t-nota text-texto-3">{s.incertidumbre}</p>
+      {/* W4b: a primera vista, el valor y su rango; el porqué, plegado. */}
+      <details data-testid={`por-que-${s.clave}`}>
+        <summary className="t-nota cursor-pointer font-medium text-texto">Por qué</summary>
+        <p className="t-nota pt-1">{s.justificacion.replace(" (data/SOURCES.md)", "")}</p>
+        <p className="t-nota pt-1 text-texto-3">{s.incertidumbre}</p>
+      </details>
     </article>
   );
 }
