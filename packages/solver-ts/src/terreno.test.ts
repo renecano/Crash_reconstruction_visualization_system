@@ -158,7 +158,7 @@ describe("topes", () => {
   });
 
   it("la escena de referencia registra los cruces con su velocidad y lleva la pose", () => {
-    const r = reconstructionToDict(reconstruct(loadFixture("terraceria_topes") as unknown as Json));
+    const r = reconstructionToDict(reconstruct(loadFixture("terraceria_topes")));
     const cruces = (r.eventos as Json[]).filter((e) => e.tipo === "cruce_tope");
     expect(cruces.map((e) => e.id).sort()).toEqual([
       "tope-tope-antes-veh-a",

@@ -259,11 +259,15 @@ export function attachedRelief(lugar: Json): Json | null {
   return (declared[ATTACHED] as Json | undefined) ?? null;
 }
 
+/** El `id` de la malla que cita la escena (una cadena, por contrato), o null si no cita ninguna. */
+const citedMesh = (declared: Json): string | null =>
+  typeof declared.malla_id === "string" ? declared.malla_id : null;
+
 /** La malla que cita la escena, si viene y no es plana. Una malla plana no cambia nada. */
 export function reliefMesh(declared: Json | undefined, relieve: Json | null): ReliefMesh | null {
   if (!declared || declared.fuente === "plano" || relieve === null) return null;
-  const cited = declared.malla_id;
-  if (cited !== undefined && cited !== null && String(cited) !== String(relieve.id)) return null;
+  const cited = citedMesh(declared);
+  if (cited !== null && cited !== relieve.id) return null;
   const heights = (relieve.alturas_m as number[]).map(Number);
   let lo = Infinity;
   let hi = -Infinity;
@@ -323,11 +327,8 @@ export function reliefMissing(lugar: Json, relieve: Json | null): boolean {
   const terreno = (lugar.terreno ?? {}) as Json;
   const declared = (terreno.relieve ?? {}) as Json;
   if (declared.fuente !== "dem" && declared.fuente !== "declarado") return false;
-  const cited = declared.malla_id;
-  return (
-    relieve === null ||
-    (cited !== undefined && cited !== null && String(cited) !== String(relieve.id))
-  );
+  const cited = citedMesh(declared);
+  return relieve === null || (cited !== null && cited !== relieve.id);
 }
 
 // ---- pose sobre el terreno ----------------------------------------------------------------------
