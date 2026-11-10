@@ -1,0 +1,141 @@
+{
+  "que": "Tiempo de /api/relieve en producción: sin caché de la CDN (la función arma la malla) y con caché",
+  "base": "https://croquis-sage.vercel.app",
+  "commit": "c8b03770c1aeb68b3533e056ca9aad948f316493",
+  "fecha": "2026-11-10T20:32:32.427Z",
+  "nota": "Tiempo total visto desde la laptop de desarrollo (incluye su red hasta Vercel). El segundo intento sin caché puede caer en una función ya caliente, con los mosaicos en memoria.",
+  "mediciones": [
+    {
+      "lugar": "Toluca, centro (aprox.)",
+      "lat": 19.2926,
+      "lon": -99.6569,
+      "intento": 1,
+      "sin_cache": {
+        "http": 200,
+        "ms": 463,
+        "bytes": 19979,
+        "cache": "MISS",
+        "fuente": "INEGI, modelo digital de elevación LiDAR de terreno (5 m), por Terrain Tiles",
+        "nodos": "61 × 61"
+      },
+      "con_cache": {
+        "http": 200,
+        "ms": 83,
+        "bytes": 19979,
+        "cache": "HIT",
+        "fuente": "INEGI, modelo digital de elevación LiDAR de terreno (5 m), por Terrain Tiles",
+        "nodos": "61 × 61"
+      }
+    },
+    {
+      "lugar": "Toluca, centro (aprox.)",
+      "lat": 19.2926,
+      "lon": -99.6569,
+      "intento": 2,
+      "sin_cache": {
+        "http": 200,
+        "ms": 189,
+        "bytes": 19979,
+        "cache": "MISS",
+        "fuente": "INEGI, modelo digital de elevación LiDAR de terreno (5 m), por Terrain Tiles",
+        "nodos": "61 × 61"
+      },
+      "con_cache": {
+        "http": 200,
+        "ms": 86,
+        "bytes": 19979,
+        "cache": "HIT",
+        "fuente": "INEGI, modelo digital de elevación LiDAR de terreno (5 m), por Terrain Tiles",
+        "nodos": "61 × 61"
+      }
+    },
+    {
+      "lugar": "La Marquesa, carretera México–Toluca (aprox.)",
+      "lat": 19.299,
+      "lon": -99.371,
+      "intento": 1,
+      "sin_cache": {
+        "http": 200,
+        "ms": 1287,
+        "bytes": 2959,
+        "cache": "MISS",
+        "fuente": "Copernicus DEM GLO-30 (modelo de superficie, 30 m)",
+        "nodos": "21 × 21"
+      },
+      "con_cache": {
+        "http": 200,
+        "ms": 74,
+        "bytes": 2959,
+        "cache": "HIT",
+        "fuente": "Copernicus DEM GLO-30 (modelo de superficie, 30 m)",
+        "nodos": "21 × 21"
+      }
+    },
+    {
+      "lugar": "La Marquesa, carretera México–Toluca (aprox.)",
+      "lat": 19.299,
+      "lon": -99.371,
+      "intento": 2,
+      "sin_cache": {
+        "http": 200,
+        "ms": 488,
+        "bytes": 2959,
+        "cache": "MISS",
+        "fuente": "Copernicus DEM GLO-30 (modelo de superficie, 30 m)",
+        "nodos": "21 × 21"
+      },
+      "con_cache": {
+        "http": 200,
+        "ms": 75,
+        "bytes": 2959,
+        "cache": "HIT",
+        "fuente": "Copernicus DEM GLO-30 (modelo de superficie, 30 m)",
+        "nodos": "21 × 21"
+      }
+    },
+    {
+      "lugar": "Mérida, centro (aprox.)",
+      "lat": 20.9674,
+      "lon": -89.6237,
+      "intento": 1,
+      "sin_cache": {
+        "http": 200,
+        "ms": 169,
+        "bytes": 21199,
+        "cache": "MISS",
+        "fuente": "INEGI, modelo digital de elevación LiDAR de terreno (5 m), por Terrain Tiles",
+        "nodos": "61 × 61"
+      },
+      "con_cache": {
+        "http": 200,
+        "ms": 89,
+        "bytes": 21199,
+        "cache": "HIT",
+        "fuente": "INEGI, modelo digital de elevación LiDAR de terreno (5 m), por Terrain Tiles",
+        "nodos": "61 × 61"
+      }
+    },
+    {
+      "lugar": "Mérida, centro (aprox.)",
+      "lat": 20.9674,
+      "lon": -89.6237,
+      "intento": 2,
+      "sin_cache": {
+        "http": 200,
+        "ms": 151,
+        "bytes": 21199,
+        "cache": "MISS",
+        "fuente": "INEGI, modelo digital de elevación LiDAR de terreno (5 m), por Terrain Tiles",
+        "nodos": "61 × 61"
+      },
+      "con_cache": {
+        "http": 200,
+        "ms": 104,
+        "bytes": 21199,
+        "cache": "HIT",
+        "fuente": "INEGI, modelo digital de elevación LiDAR de terreno (5 m), por Terrain Tiles",
+        "nodos": "61 × 61"
+      }
+    }
+  ]
+}

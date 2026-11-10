@@ -26,6 +26,7 @@ import { leastSquaresSoftL1, softL1Cost } from "./lsq";
 import { median, pyMod, pyRound, quantilesInclusive, str } from "./pymath";
 import { PyRandom } from "./pyrandom";
 import { countDraws, type Draws, LatinHypercube } from "./stratified";
+import { bumpSampler, sampleBumpAssumptions } from "./terrain";
 import { reconstruct, vehicleClasses, type Reconstruction } from "./reconstruct";
 import { sampleStiffness, stiffnessFor, zonaFromCdcSide } from "./stiffness";
 import calibration from "./data/inversion_calibration.json";
@@ -1465,6 +1466,9 @@ function estimate(
     nSamples,
     countDraws((d) => perturbed(spec, ev, d)),
   );
+  // Los dos supuestos del tope (C3, W5), con su propio hipercubo y la semilla del caso: una escena
+  // sin topes conserva sus sorteos.
+  const topes = bumpSampler(spec, nSamples, Number((spec.meta as Json).semilla));
   const xBest = freeParams.map((p) => best.values.get(p.name)!);
   const fixed = new Map([...best.values].filter(([n]) => !free.has(n)));
   let jBest: number[][] = [];
@@ -1475,6 +1479,7 @@ function estimate(
   }
   for (let i = 0; i < nSamples; i++) {
     const pert = perturbed(spec, ev, lhs.sample(i));
+    if (topes !== null) sampleBumpAssumptions(pert.spec, topes.sample(i));
     const { spec: s, evidence: e, downedMu } = pert;
     const prob = new Problem(withMarks(s, e), e, freeParams, fixed, dt, downedMu);
     prob.names.push(...[...best.residuals.keys()].sort());

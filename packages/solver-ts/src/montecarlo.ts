@@ -14,6 +14,7 @@ import { distribution, type Distribution } from "./inversion";
 import { pyRound, str } from "./pymath";
 import { reconstruct, vehicleClasses, type Reconstruction } from "./reconstruct";
 import { LatinHypercube } from "./stratified";
+import { BUMP_CONTACT, BUMP_ENERGY, bumpSampler, sampleBumpAssumptions } from "./terrain";
 
 type Json = Record<string, unknown>;
 
@@ -234,6 +235,8 @@ export function monteCarlo(
   // Hipercubo latino con semilla de diseño fija (T3.1, ADR 0100): cada campo se reparte en
   // `samples` estratos y el rango no depende de la semilla de la escena.
   const lhs = new LatinHypercube(samples, campos.length);
+  // Los dos supuestos del tope (C3, W5), con su propio hipercubo y la semilla del caso.
+  const topes = bumpSampler(spec, samples, seed);
   const accV = new Map<string, Map<string, number[]>>();
   const accP = new Map<string, Map<string, number[]>>();
   const push = (m: Map<string, Map<string, number[]>>, id: string, key: string, x: number) => {
@@ -252,6 +255,7 @@ export function monteCarlo(
       if (c.ruta === DOWNED_RUTA) downed = value;
       else setPath(s, c.ruta, value);
     }
+    if (topes !== null) sampleBumpAssumptions(s, topes.sample(i));
     let r: Reconstruction;
     try {
       r = reconstruct(s, { dt, ...(downed === null ? {} : { downedMu: downed }) });
@@ -277,5 +281,24 @@ export function monteCarlo(
         new Map([...d.entries()].map(([key, xs]) => [key, distribution(xs)])),
       ]),
     );
-  return new Uncertainty(seed, samples, valid, campos, toDists(accV), toDists(accP));
+  const nota = "supuesto declarado; hipercubo aparte con semilla derivada de la del caso";
+  const reportados =
+    topes === null
+      ? campos
+      : [
+          ...campos,
+          {
+            ruta: "parametros.perdida_energia_tope",
+            minimo: BUMP_ENERGY[1],
+            maximo: BUMP_ENERGY[2],
+            nota,
+          },
+          {
+            ruta: "parametros.perdida_contacto_tope",
+            minimo: BUMP_CONTACT[1],
+            maximo: BUMP_CONTACT[2],
+            nota,
+          },
+        ];
+  return new Uncertainty(seed, samples, valid, reportados, toDists(accV), toDists(accP));
 }

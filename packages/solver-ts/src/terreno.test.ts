@@ -6,18 +6,22 @@ import { loadFixture } from "@croquis/scene-schema";
 import { describe, expect, it } from "vitest";
 import { zoneFriction, zoneRanges } from "./friction";
 import { Body2D, G, state } from "./models";
-import { ranges } from "./montecarlo";
+import { monteCarlo, ranges } from "./montecarlo";
 import { fourWheels, integrate } from "./postimpact";
 import { SpeedProfile, StraightPath, brakingDeceleration, skidDistance } from "./preimpact";
 import { reconstruct, reconstructionToDict } from "./reconstruct";
 import {
   BUMP_CONTACT,
   BUMP_ENERGY,
+  BUMP_SAMPLED,
   Bump,
+  bumpSampler,
+  bumpSeed,
   ReliefMesh,
   Terrain,
   brakeProfile,
   poseOn,
+  sampleBumpAssumptions,
   terrainFromSpec,
   withRelief,
 } from "./terrain";
@@ -253,5 +257,43 @@ describe("un terreno plano da exactamente el resultado de hoy", () => {
       expect(prof.timeToDistance(s)!).toBeCloseTo(plano.timeToDistance(s)!, 8);
     expect(prof.timeToDistance(200.0)).toBeNull();
     expect(prof.stopTime).toBeCloseTo(plano.stopTime, 8);
+  });
+});
+
+describe("los supuestos del tope en el Monte Carlo (W5, ADR 0131)", () => {
+  it("van en un generador aparte, con la semilla del caso, igual que en Python", () => {
+    expect(bumpSeed(101)).toBe(121_261_413);
+    expect(bumpSeed(0)).toBe(20_261_110);
+    const spec = loadFixture("terraceria_topes") as unknown as Json;
+    const lhs = bumpSampler(spec, 64, 101)!;
+    const energias: number[] = [];
+    const contactos: number[] = [];
+    for (let i = 0; i < 64; i++) {
+      const s = structuredClone(spec);
+      sampleBumpAssumptions(s, lhs.sample(i));
+      const sorteo = ((s.lugar as Json).terreno as Json)[BUMP_SAMPLED] as Record<string, number>;
+      energias.push(sorteo.energia!);
+      contactos.push(sorteo.contacto!);
+      const t = terrainFromSpec(s.lugar as Json)!;
+      expect([t.bumpEnergy, t.bumpContact]).toEqual([sorteo.energia, sorteo.contacto]);
+    }
+    expect(Math.min(...energias)).toBeLessThan(0.52);
+    expect(Math.max(...energias)).toBeGreaterThan(1.48);
+    expect(Math.min(...contactos)).toBeLessThan(0.02);
+    expect(Math.max(...contactos)).toBeGreaterThan(0.98);
+    const nominal = terrainFromSpec(spec.lugar as Json)!;
+    expect([nominal.bumpEnergy, nominal.bumpContact]).toEqual([BUMP_ENERGY[0], BUMP_CONTACT[0]]);
+  });
+
+  it("una escena sin topes no lo usa, y el Monte Carlo de la escena con topes reporta sus supuestos", () => {
+    for (const n of ["alcance", "carambola"] as const)
+      expect(bumpSampler(loadFixture(n) as unknown as Json, 64, 101)).toBeNull();
+    const spec = loadFixture("terraceria_topes") as unknown as Json;
+    const rutas = monteCarlo(spec, { samples: 8 }).campos.map((c) => c.ruta);
+    expect(rutas.slice(-2)).toEqual([
+      "parametros.perdida_energia_tope",
+      "parametros.perdida_contacto_tope",
+    ]);
+    expect(rutas.slice(0, -2)).toEqual(ranges(spec).map((c) => c.ruta));
   });
 });
