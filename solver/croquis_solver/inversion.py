@@ -65,6 +65,7 @@ from croquis_solver.crash3 import (
 from croquis_solver.lsq import least_squares_soft_l1, soft_l1_cost
 from croquis_solver.stiffness import sample_stiffness, stiffness_for, zona_from_cdc_side
 from croquis_solver.stratified import Draws, LatinHypercube, count_draws
+from croquis_solver.terrain import bump_sampler, sample_bump_assumptions
 
 JsonObj = dict[str, Any]
 KMH = 3.6
@@ -1511,6 +1512,9 @@ def _estimate(
     # depende de la semilla de la escena.
     n_samples = samples if free_params else 0
     lhs = LatinHypercube(n_samples, count_draws(lambda d: perturbed(spec, ev, d)))
+    # Los dos supuestos del tope (C3, W5), con su propio hipercubo y la semilla del caso: una escena
+    # sin topes conserva sus sorteos.
+    topes = bump_sampler(spec, n_samples, int(spec["meta"]["semilla"]))
     x_best = [best.values[p.name] for p in free_params]
     fixed = {n: v for n, v in best.values.items() if n not in free}
     j_best: list[list[float]] = []
@@ -1520,6 +1524,8 @@ def _estimate(
         j_best = prob_best.jac(x_best)
     for i in range(n_samples):
         pert = perturbed(spec, ev, lhs.sample(i))
+        if topes is not None:
+            sample_bump_assumptions(pert.spec, topes.sample(i))
         s, e, dmu = pert.spec, pert.evidence, pert.downed_mu
         prob = _Problem(with_marks(s, e), e, free_params, fixed, dt, dmu)
         prob.names.extend(sorted(best.residuals))

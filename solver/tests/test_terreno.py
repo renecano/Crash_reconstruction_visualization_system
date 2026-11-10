@@ -296,3 +296,68 @@ def test_el_perfil_sobre_terreno_sin_efectos_es_el_analitico() -> None:
         assert prof.time_to_distance(s) == pytest.approx(plano.time_to_distance(s), abs=1e-9)
     assert prof.time_to_distance(200.0) is None
     assert prof.stop_time == pytest.approx(plano.stop_time, abs=1e-9)
+
+
+# ---- los supuestos del tope en el Monte Carlo (W5, ADR 0131) -------------------------------------
+
+
+def test_los_supuestos_del_tope_se_muestrean_con_un_generador_aparte() -> None:
+    from croquis_solver import terrain as tr
+
+    spec = load_fixture("terraceria_topes")
+    # La semilla sale de la del caso y es la misma en TS (`terreno.test.ts`).
+    assert tr.bump_seed(101) == 121_261_413
+    assert tr.bump_seed(0) == 20_261_110
+    lhs = tr.bump_sampler(spec, 64, 101)
+    assert lhs is not None
+    energias: list[float] = []
+    contactos: list[float] = []
+    for i in range(64):
+        s = copy.deepcopy(spec)
+        tr.sample_bump_assumptions(s, lhs.sample(i))
+        sorteo = s["lugar"]["terreno"][tr.BUMP_SAMPLED]
+        energias.append(sorteo["energia"])
+        contactos.append(sorteo["contacto"])
+        t = tr.Terrain.from_spec(s["lugar"])
+        assert t is not None
+        assert (t.bump_energy, t.bump_contact) == (sorteo["energia"], sorteo["contacto"])
+    # Cubre su rango declarado, un estrato por muestra.
+    assert tr.BUMP_ENERGY[1] <= min(energias) < 0.52
+    assert 1.48 < max(energias) <= tr.BUMP_ENERGY[2]
+    assert tr.BUMP_CONTACT[1] <= min(contactos) < 0.02
+    assert 0.98 < max(contactos) <= tr.BUMP_CONTACT[2]
+    # Sin sorteo, el terreno usa los nominales.
+    nominal = tr.Terrain.from_spec(spec["lugar"])
+    assert nominal is not None
+    assert (nominal.bump_energy, nominal.bump_contact) == (tr.BUMP_ENERGY[0], tr.BUMP_CONTACT[0])
+
+
+def test_una_escena_sin_topes_no_usa_el_generador_de_los_topes() -> None:
+    from croquis_solver import terrain as tr
+
+    for nombre in ("alcance", "carambola"):
+        assert tr.bump_sampler(load_fixture(nombre), 64, 101) is None
+    spec = load_fixture("alcance")
+    rutas = [c.ruta for c in montecarlo.monte_carlo(spec, samples=8).campos]
+    assert not any("tope" in r for r in rutas)
+
+
+def test_el_monte_carlo_de_la_escena_con_topes_reporta_y_usa_sus_supuestos() -> None:
+    from croquis_solver import terrain as tr
+
+    spec = load_fixture("terraceria_topes")
+    u = montecarlo.monte_carlo(spec, samples=8)
+    rutas = [c.ruta for c in u.campos]
+    assert rutas[-2:] == ["parametros.perdida_energia_tope", "parametros.perdida_contacto_tope"]
+    # Los mismos sorteos de los demás campos que sin los supuestos: van en otro hipercubo.
+    assert rutas[:-2] == [c.ruta for c in montecarlo.ranges(spec)]
+
+    # Con η y κ en sus extremos, la velocidad al impacto cambia: el supuesto sí entra.
+    def v_impacto(energia: float, contacto: float) -> float:
+        s = copy.deepcopy(spec)
+        s["lugar"]["terreno"][tr.BUMP_SAMPLED] = {"energia": energia, "contacto": contacto}
+        return next(v.v_impact_kmh for v in reconstruct(s).vehiculos if v.id == "veh-a")
+
+    assert v_impacto(tr.BUMP_ENERGY[1], tr.BUMP_CONTACT[1]) != v_impacto(
+        tr.BUMP_ENERGY[2], tr.BUMP_CONTACT[2]
+    )

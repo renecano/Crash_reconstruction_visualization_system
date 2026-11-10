@@ -248,7 +248,7 @@ El terreno sale de `lugar.terreno` y, si la escena lo cita, de la malla de relie
 - **Grava, tierra y lodo:** las filas de la terracería (grava suelta, estado del lugar y lodo).
 - **Moto caída:** se arrastra con su propio factor, no con el de la zona.
 
-**Topes.** Dos efectos, los dos **supuestos declarados con rango** (`parametros.perdida_energia_tope` y `perdida_contacto_tope`). No se muestrean en el Monte Carlo.
+**Topes.** Dos efectos, los dos **supuestos declarados con rango** (`parametros.perdida_energia_tope` y `perdida_contacto_tope`). El Monte Carlo y la inversión los sortean en su rango con un hipercubo latino aparte, sembrado con la semilla del caso: una escena sin topes no cambia (ADR 0131).
 
 - **Energía:** cada eje que cruza la línea del tope disipa $\eta\, N_\text{eje}\, h$, con $\eta = 1$ (rango 0.5 a 1.5). Es el trabajo de levantar la carga del eje la altura del tope, que la suspensión no devuelve. No hay una medición que lo fije.
 - **Contacto:** mientras una llanta está sobre el tope, su carga se multiplica por $1 - \kappa\,(1 - c)$, con $c = \max(0,\, 1 - v^2/(gR))$ la carga que conserva una rueda rígida en la cresta y $\kappa = 0.5$ (rango 0 a 1: de «la suspensión lo absorbe todo» a «rueda rígida»). Si esa rueda rígida despegaría ($v > \sqrt{gR}$, 17.8 km/h en el reductor circular), sigue con $1 - \kappa$ lo que tarda en caer la altura del tope, $\sqrt{2h/g}$.

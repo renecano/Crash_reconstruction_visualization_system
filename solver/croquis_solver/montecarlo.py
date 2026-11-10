@@ -27,6 +27,7 @@ from typing import Any
 from croquis_solver import friction
 from croquis_solver.inversion import Distribution, distribution
 from croquis_solver.stratified import LatinHypercube
+from croquis_solver.terrain import BUMP_CONTACT, BUMP_ENERGY, bump_sampler, sample_bump_assumptions
 
 JsonObj = dict[str, Any]
 DEFAULT_SAMPLES = 64
@@ -193,6 +194,8 @@ def monte_carlo(
     # Hipercubo latino con semilla de diseño fija (T3.1, ADR 0100): cada campo se reparte en
     # `samples` estratos y el rango no depende de la semilla de la escena.
     lhs = LatinHypercube(samples, len(campos))
+    # Los dos supuestos del tope (C3, W5), con su propio hipercubo y la semilla del caso.
+    topes = bump_sampler(spec, samples, seed)
     acc_v: dict[str, dict[str, list[float]]] = {}
     acc_p: dict[str, dict[str, list[float]]] = {}
     valid = 0
@@ -206,6 +209,8 @@ def monte_carlo(
                 downed = value
             else:
                 _set(s, c.ruta, value)
+        if topes is not None:
+            sample_bump_assumptions(s, topes.sample(i))
         try:
             r = reconstruct(s, dt=dt, downed_mu=downed)
         except ValueError, KeyError, ArithmeticError:
@@ -223,6 +228,13 @@ def monte_carlo(
                 acc_p.setdefault(p.id, {}).setdefault("distancia_proyeccion_m", []).append(
                     p.throw.throw_distance_m
                 )
+    if topes is not None:
+        nota = "supuesto declarado; hipercubo aparte con semilla derivada de la del caso"
+        campos = [
+            *campos,
+            Sampled("parametros.perdida_energia_tope", BUMP_ENERGY[1], BUMP_ENERGY[2], nota),
+            Sampled("parametros.perdida_contacto_tope", BUMP_CONTACT[1], BUMP_CONTACT[2], nota),
+        ]
     return Uncertainty(
         semilla=seed,
         muestras=samples,

@@ -31,6 +31,7 @@ from typing import Any
 from croquis_solver import dmath
 from croquis_solver.models import G, Vec
 from croquis_solver.preimpact import Path, ReversePath, SpeedProfile
+from croquis_solver.stratified import Draws, LatinHypercube
 
 JsonObj = dict[str, Any]
 
@@ -205,6 +206,9 @@ class Terrain:
     waves: tuple[Wave, ...]
     bumps: tuple[Bump, ...]
     relief: ReliefMesh | None
+    # Los dos supuestos del tope: el nominal, o el que sorteó el Monte Carlo o la inversión.
+    bump_energy: float = BUMP_ENERGY[0]
+    bump_contact: float = BUMP_CONTACT[0]
 
     @property
     def has_height(self) -> bool:
@@ -247,7 +251,15 @@ class Terrain:
         mesh = relief_mesh(t.get("relieve"), relieve)
         if not zones and not waves and not bumps and mesh is None:
             return None
-        return cls(zones, tuple(waves), tuple(bumps), mesh)
+        sampled: JsonObj = t.get(BUMP_SAMPLED) or {}
+        return cls(
+            zones,
+            tuple(waves),
+            tuple(bumps),
+            mesh,
+            float(sampled.get("energia", BUMP_ENERGY[0])),
+            float(sampled.get("contacto", BUMP_CONTACT[0])),
+        )
 
     def height(self, x: float, y: float) -> float:
         z = 0.0 if self.relief is None else self.relief.height(x, y)
@@ -277,6 +289,36 @@ class Terrain:
 # mano, quien llama la adjunta en memoria a `lugar.terreno.relieve` con esta llave, que no es del
 # contrato y nunca se guarda.
 ATTACHED = "_malla"
+
+
+# ---- los supuestos del tope en el Monte Carlo y la inversión ------------------------------------
+
+BUMP_SAMPLED = "_supuestos_tope"
+"""Llave en memoria de `lugar.terreno` con (energia, contacto) sorteados; no es del contrato."""
+
+
+def bump_seed(semilla: int) -> int:
+    """La semilla del generador de los supuestos del tope, derivada de la del caso."""
+    return (int(semilla) * 1_000_003 + 20_261_110) % 2**31
+
+
+def bump_sampler(spec: JsonObj, samples: int, semilla: int) -> LatinHypercube | None:
+    """Un hipercubo aparte (2 dimensiones: η y κ) para una escena con topes; None si no tiene.
+
+    Va aparte del de los demás campos para que una escena sin topes no cambie ni un decimal: su
+    hipercubo y sus sorteos son los de siempre.
+    """
+    terreno: JsonObj = spec["lugar"].get("terreno") or {}
+    if not terreno.get("topes") or samples <= 0:
+        return None
+    return LatinHypercube(samples, 2, dmath.Random(bump_seed(semilla)))
+
+
+def sample_bump_assumptions(spec: JsonObj, draws: Draws) -> None:
+    """Sortea η y κ en su rango declarado y los adjunta a `lugar.terreno` de `spec` (en sitio)."""
+    energia = draws.uniform(BUMP_ENERGY[1], BUMP_ENERGY[2])
+    contacto = draws.uniform(BUMP_CONTACT[1], BUMP_CONTACT[2])
+    spec["lugar"]["terreno"][BUMP_SAMPLED] = {"energia": energia, "contacto": contacto}
 
 
 def with_relief(spec: JsonObj, relieve: JsonObj | None) -> JsonObj:
@@ -448,15 +490,15 @@ def read_contact(
             over = terrain.bump_over(wx, wy)
             if over is not None:
                 rigid = over.contact(abs(vwx * -over.uy + vwy * over.ux))
-                load *= 1.0 - BUMP_CONTACT[0] * (1.0 - rigid)
+                load *= 1.0 - terrain.bump_contact * (1.0 - rigid)
                 if rigid == 0.0:
                     st.fly_until[k] = t + over.flight_s
             elif t < st.fly_until[k]:
-                load *= 1.0 - BUMP_CONTACT[0]
+                load *= 1.0 - terrain.bump_contact
             if not first:
                 for b in terrain.bumps:
                     if b.crosses(st.prev[k], (wx, wy)):
-                        lost += BUMP_ENERGY[0] * G * shares[k] * b.height
+                        lost += terrain.bump_energy * G * shares[k] * b.height
         st.load[k] = load
     st.prev = now
     if lost <= 0.0 or ke <= 0.0:
@@ -602,16 +644,16 @@ def brake_profile(
             over = terrain.bump_over(q[0], q[1])
             if over is not None:
                 rigid = over.contact(v * abs(tx * -over.uy + ty * over.ux))
-                contact = 1.0 - BUMP_CONTACT[0] * (1.0 - rigid)
+                contact = 1.0 - terrain.bump_contact * (1.0 - rigid)
                 if rigid == 0.0:
                     fly[i] = s + v * over.flight_s
             elif s < fly[i]:
-                contact = 1.0 - BUMP_CONTACT[0]
+                contact = 1.0 - terrain.bump_contact
             grip += share * terrain.mu(q[0], q[1], mu_base) * contact
             if prev:
                 for b in terrain.bumps:
                     if b.crosses(prev[i], q):
-                        v2 -= 2.0 * BUMP_ENERGY[0] * G * share * b.height
+                        v2 -= 2.0 * terrain.bump_energy * G * share * b.height
                         dropped = True
         prev = axles
         if v2 <= 0.0:
@@ -685,6 +727,7 @@ def bump_crossings(
 __all__ = [
     "BUMP_CONTACT",
     "BUMP_ENERGY",
+    "BUMP_SAMPLED",
     "TERRAIN_STRIDE",
     "Bump",
     "ReliefMesh",
@@ -694,9 +737,12 @@ __all__ = [
     "attached_relief",
     "brake_profile",
     "bump_crossings",
+    "bump_sampler",
+    "bump_seed",
     "pose_on",
     "read_contact",
     "relief_missing",
+    "sample_bump_assumptions",
     "slopes",
     "with_relief",
 ]

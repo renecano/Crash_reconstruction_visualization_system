@@ -249,7 +249,18 @@ Plan: PLAN-CESVI §3.4. Contrato: #198 (`Expediente.terreno` y los dos supuestos
   | La Marquesa     | SRTM (Copernicus no llegó en 12 s) | 59.93 m           | 7.6 %                 | 12.5 s |
   | Mérida, centro  | INEGI LiDAR                        | 4.84 m            | 0.5 %                 | 0.5 s  |
   - Con Copernicus GLO-30, el centro de Mérida da 15.18 m de desnivel y 5.3 % de pendiente: son los edificios. Por eso el LiDAR de terreno va primero.
-  - Copernicus tardó de 13 a 60 s desde esta red. Falta medirlo desde Vercel (ver «Pendiente»).
+  - Copernicus tardó de 13 a 60 s desde la red de la laptop. Desde Vercel es otra cosa (abajo).
+
+- **`/api/relieve` en producción** (`eval/w5_relieve_vercel.mjs` → `eval/results/w5_relieve_vercel.json`, commit `c8b03770`, 2026-11-10; tiempo total visto desde la laptop, dos URL nuevas por lugar):
+
+  | Lugar de prueba | Fuente que eligió | Sin caché de la CDN (ms) | Con caché (ms) |
+  | --------------- | ----------------- | ------------------------ | -------------- |
+  | Toluca, centro  | INEGI LiDAR       | 463 y 189                | 83 y 86        |
+  | La Marquesa     | Copernicus GLO-30 | 1287 y 488               | 74 y 75        |
+  | Mérida, centro  | INEGI LiDAR       | 169 y 151                | 89 y 104       |
+  - **Desde Vercel, Copernicus sí responde a tiempo:** en La Marquesa la cadena eligió Copernicus (desde la laptop, en 12 s no llegaba y quedaba SRTM). Los COG y la función están en AWS.
+  - **La función estaba caliente** en esta corrida (justo antes se habían pedido esos lugares): el primer intento por lugar es lo más cercano a «sin nada guardado». Una función fría suma su arranque; no hay forma de forzarlo desde fuera.
+  - **Con la CDN,** la malla llega en menos de 0.11 s.
 
 ### Pruebas
 
@@ -301,13 +312,12 @@ Plan: PLAN-CESVI §3.4. Contrato: #198 (`Expediente.terreno` y los dos supuestos
 ### Decisiones que conviene saber
 
 - **El orden de las fuentes del relieve cambió** respecto al plan (ADR 0131, punto 8): el LiDAR del INEGI va antes que Copernicus, por la medición de Mérida.
-- **Los supuestos del tope no se muestrean en el Monte Carlo:** cambiarían la secuencia de números al azar de todas las escenas.
+- **Los supuestos del tope entran al Monte Carlo y a la inversión** con un generador aparte (semilla derivada de la del caso): en `terraceria_topes` el rango p10–p90 de la velocidad al impacto de A se ensancha 0.98 km/h (+5.3 %), y las escenas sin topes no cambiaron ni un decimal (ADR 0131).
 - **La pregunta del terreno no bloquea:** una escena que llega completa (un reporte importado, un caso guardado) no la hace sola; queda en el avance y en «Corregir la escena».
 - **La maqueta, el 3D de la web y el bloque «Terreno» vuelven a simular** con las velocidades reconstruidas y el mismo relieve: por eso la velocidad de cruce de un tope es la de la reconstrucción y no la de la escena de partida.
 
 ### Pendiente
 
-- **Medir `/api/relieve` desde Vercel** cuando W5 esté en producción (tiempo de Copernicus desde la función) y anotarlo aquí.
 - **La fricción de una zona usa el estado «seco» para proponer el paso de ±0.05** en «Corregir»; el solver sí usa el estado del lugar.
 - **Dibujar una zona con varios toques** (polígono libre): hoy es un rectángulo que se mueve, se gira y cambia de tamaño. El contrato ya acepta polígonos.
 - **La volcadura, los peatones y los agentes reactivos** no ven el terreno (ADR 0131, «Límites»).

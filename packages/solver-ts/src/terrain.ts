@@ -9,6 +9,8 @@ import { G, type Vec } from "./models";
 import { type Path, ReversePath, SpeedProfile } from "./preimpact";
 import { pySum, radians } from "./pymath";
 import * as dmath from "./dmath";
+import { PyRandom } from "./pyrandom";
+import { type Draws, LatinHypercube } from "./stratified";
 
 type Json = Record<string, unknown>;
 
@@ -203,6 +205,9 @@ export class Terrain {
     readonly waves: readonly Wave[],
     readonly bumps: readonly Bump[],
     readonly relief: ReliefMesh | null,
+    /** Los dos supuestos del tope: el nominal, o el que sorteó el Monte Carlo o la inversión. */
+    readonly bumpEnergy: number = BUMP_ENERGY[0],
+    readonly bumpContact: number = BUMP_CONTACT[0],
   ) {}
 
   get hasHeight(): boolean {
@@ -241,6 +246,35 @@ export class Terrain {
 export const ATTACHED = "_malla";
 
 /** La escena con la malla de relieve adjunta en memoria (la original no se toca). */
+// ---- los supuestos del tope en el Monte Carlo y la inversión ------------------------------------
+
+/** Llave en memoria de `lugar.terreno` con (energia, contacto) sorteados; no es del contrato. */
+export const BUMP_SAMPLED = "_supuestos_tope";
+
+/** La semilla del generador de los supuestos del tope, derivada de la del caso. */
+export function bumpSeed(semilla: number): number {
+  const m = 2n ** 31n;
+  const x = (BigInt(Math.trunc(semilla)) * 1_000_003n + 20_261_110n) % m;
+  return Number(x < 0n ? x + m : x);
+}
+
+/**
+ * Un hipercubo aparte (2 dimensiones: η y κ) para una escena con topes; null si no tiene. Va
+ * aparte del de los demás campos para que una escena sin topes no cambie ni un decimal.
+ */
+export function bumpSampler(spec: Json, samples: number, semilla: number): LatinHypercube | null {
+  const terreno = ((spec.lugar as Json).terreno ?? {}) as Json;
+  if (!((terreno.topes ?? []) as Json[]).length || samples <= 0) return null;
+  return new LatinHypercube(samples, 2, new PyRandom(bumpSeed(semilla)));
+}
+
+/** Sortea η y κ en su rango declarado y los adjunta a `lugar.terreno` de `spec` (en sitio). */
+export function sampleBumpAssumptions(spec: Json, draws: Draws): void {
+  const energia = draws.uniform(BUMP_ENERGY[1], BUMP_ENERGY[2]);
+  const contacto = draws.uniform(BUMP_CONTACT[1], BUMP_CONTACT[2]);
+  ((spec.lugar as Json).terreno as Json)[BUMP_SAMPLED] = { energia, contacto };
+}
+
 export function withRelief(spec: Json, relieve: Json | null): Json {
   const lugar = spec.lugar as Json;
   const terreno = (lugar.terreno ?? {}) as Json;
@@ -319,7 +353,15 @@ export function terrainFromSpec(lugar: Json, relieve: Json | null = null): Terra
   }
   const mesh = reliefMesh(t.relieve as Json | undefined, relieve);
   if (!zones.length && !waves.length && !bumps.length && mesh === null) return null;
-  return new Terrain(zones, waves, bumps, mesh);
+  const sampled = (t[BUMP_SAMPLED] ?? {}) as Json;
+  return new Terrain(
+    zones,
+    waves,
+    bumps,
+    mesh,
+    Number(sampled.energia ?? BUMP_ENERGY[0]),
+    Number(sampled.contacto ?? BUMP_CONTACT[0]),
+  );
 }
 
 /** Si la escena cita un relieve real y la malla no llegó (se reconstruye sin relieve). */
@@ -448,14 +490,15 @@ export function readContact(
       const over = terrain.bumpOver(wx, wy);
       if (over !== null) {
         const rigid = over.contact(Math.abs(vwx * -over.uy + vwy * over.ux));
-        load *= 1.0 - BUMP_CONTACT[0] * (1.0 - rigid);
+        load *= 1.0 - terrain.bumpContact * (1.0 - rigid);
         if (rigid === 0.0) st.flyUntil[k] = t + over.flightS;
       } else if (t < st.flyUntil[k]!) {
-        load *= 1.0 - BUMP_CONTACT[0];
+        load *= 1.0 - terrain.bumpContact;
       }
       if (!first) {
         for (const b of terrain.bumps) {
-          if (b.crosses(st.prev[k]!, [wx, wy])) lost += BUMP_ENERGY[0] * G * shares[k]! * b.height;
+          if (b.crosses(st.prev[k]!, [wx, wy]))
+            lost += terrain.bumpEnergy * G * shares[k]! * b.height;
         }
       }
     }
@@ -624,16 +667,16 @@ export function brakeProfile(
       const over = terrain.bumpOver(q[0], q[1]);
       if (over !== null) {
         const rigid = over.contact(v * Math.abs(tx * -over.uy + ty * over.ux));
-        contact = 1.0 - BUMP_CONTACT[0] * (1.0 - rigid);
+        contact = 1.0 - terrain.bumpContact * (1.0 - rigid);
         if (rigid === 0.0) fly[i] = s + v * over.flightS;
       } else if (s < fly[i]!) {
-        contact = 1.0 - BUMP_CONTACT[0];
+        contact = 1.0 - terrain.bumpContact;
       }
       grip += share * terrain.mu(q[0], q[1], muBase) * contact;
       if (prev.length > 0) {
         for (const b of terrain.bumps) {
           if (b.crosses(prev[i]!, q)) {
-            v2 -= 2.0 * BUMP_ENERGY[0] * G * share * b.height;
+            v2 -= 2.0 * terrain.bumpEnergy * G * share * b.height;
             dropped = true;
           }
         }
