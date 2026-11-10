@@ -137,6 +137,34 @@ Plan: PLAN-CESVI §3.4. Contrato: #194 (`Expediente.objetos[]`, `ObjetoExpedient
 - `apps/web/src/lib/escena-facil-w4.test.ts` (4): corregir el primer golpe, un choque intermedio y los puntos de paso, con su efecto en la `EscenaSpec`, y el resumen.
 - `apps/web/e2e/escena-corregir.spec.ts` (`@flujo`): mover el poste de un choque intermedio cambia el resultado, y corregir la dirección del Jetta ya colocado también.
 
+### Resumen para René (W4)
+
+**Qué quedó.** Con la escena lista, «Cambiar algo» abre «Corregir la escena»:
+
+- **Tocar algo ya colocado** lo selecciona: un coche en reposo, el primer golpe, un choque intermedio, un punto de paso o un objeto.
+- **Lo seleccionado** se arrastra y tiene botones grandes: girar ±15°, más grande o más chico, «Cambiar», «Cambiar por dónde venía» y «Quitar».
+- **La paleta** agrega objetos del lugar: poste, pared, árbol, barrera, guarnición, señal y vehículo estacionado.
+- **En el resumen**, cada línea lleva «Cambiar».
+- **«Deshacer» y «Rehacer»** quedan siempre a la vista.
+- **Al soltar,** la reconstrucción se recalcula sola y la escena dice «Reconstrucción al día».
+
+**Cómo probarlo.**
+
+1. En `/cesvi`, abre un caso nuevo con la narración de ejemplo y coloca la escena.
+2. En «¡La escena está lista!», pulsa «Cambiar algo».
+3. Toca el poste o un coche y arrástralo, o agrega una barrera desde la paleta.
+
+**Capturas** (`docs/cesvi/w4/`):
+
+1. el resumen con «Cambiar»;
+2. el panel para corregir;
+3. el poste seleccionado;
+4. el poste movido y recalculado;
+5. una barrera agregada;
+6. el Jetta seleccionado.
+
+**Qué necesito de ti.** Nada para seguir. Si algo de la corrección no te convence, márcalo sobre las capturas.
+
 ### Decisiones que conviene saber
 
 - **Solo se arrastra el vehículo en reposo.** El del impacto se corrige con su pregunta («Cambiar»), porque de él dependen el choque y las flechas de llegada.

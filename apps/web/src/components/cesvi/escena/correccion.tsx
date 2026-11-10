@@ -78,7 +78,7 @@ export function PanelCorregir({
 }) {
   return (
     <section
-      className="escena-hoja pointer-events-auto flex w-[min(420px,calc(100%-2rem))] flex-col gap-3 p-5"
+      className="escena-hoja pointer-events-auto flex max-h-[calc(100dvh-250px)] w-[min(420px,calc(100vw-2rem))] flex-col gap-3 overflow-y-auto p-5"
       aria-labelledby="corregir-titulo"
       data-testid="panel-corregir"
     >
@@ -89,12 +89,12 @@ export function PanelCorregir({
         Toca un coche, una marca o un objeto para moverlo, girarlo o quitarlo. O agrega algo que
         está en el lugar.
       </p>
-      <div className="flex flex-wrap gap-2" role="group" aria-label="Agregar un objeto del lugar">
+      <div className="grid grid-cols-2 gap-2" role="group" aria-label="Agregar un objeto del lugar">
         {TIPOS_OBJETO.map((t) => (
           <button
             key={t.tipo}
             type="button"
-            className="escena-opcion flex min-h-12 items-center gap-2 rounded-xl px-3"
+            className="escena-opcion flex min-h-12 items-center gap-2 rounded-xl px-3 text-left text-[0.95rem]"
             aria-pressed={poniendo === t.tipo}
             onClick={() => onElegir(poniendo === t.tipo ? null : t.tipo)}
             data-testid={`paleta-${t.tipo}`}
