@@ -1,77 +1,124 @@
+using System.Collections.Generic;
 using Croquis.Core;
 using Croquis.Generated;
 using UnityEngine;
+using Postura = Croquis.Core.Postura;
 
 namespace Croquis.Visor
 {
     /// <summary>
-    /// Una persona del Resultado (U3): un maniquí neutro, sin rasgos ni nada gráfico (CLAUDE.md, regla
-    /// 5), a la estatura del Resultado. Los peatones, ciclistas y motociclistas siguen su trayectoria
-    /// con la postura de su fase; los ocupantes van sentados en su asiento y se desplazan lo que dio
-    /// el solver. Unity no calcula nada de esto.
+    /// Una persona del Resultado (U3), con el cuerpo de MakeHuman (CC0) del visor web: sin rasgos y con
+    /// ropa neutra (CLAUDE.md, regla 5), a la estatura del Resultado. Los peatones, ciclistas y
+    /// motociclistas siguen su trayectoria con la postura de su fase; los ocupantes van sentados en su
+    /// asiento y se desplazan lo que dio el solver. Si el cuerpo no se puede bajar, un maniquí de
+    /// piezas. Unity no calcula nada de esto.
     /// </summary>
     public sealed class PersonaVista : MonoBehaviour
     {
-        /// <summary>La ropa del maniquí y la de la variante sin cinturón, cuando no se declaró.</summary>
+        /// <summary>El maniquí de respaldo y la segunda variante del ocupante (sin cinturón).</summary>
         public static readonly Color Ropa = new Color(0.33f, 0.4f, 0.52f);
         public static readonly Color RopaSinCinturon = new Color(0.8f, 0.56f, 0.24f);
         private static readonly Color Piel = new Color(0.7f, 0.6f, 0.52f);
         private static readonly Color Pantalon = new Color(0.22f, 0.25f, 0.3f);
 
-        /// <summary>Altura de la cadera sobre el asiento del vehículo (m), para los ocupantes.</summary>
+        /// <summary>Altura de la cadera sobre el piso del vehículo (m), para los ocupantes.</summary>
         private const float CaderaEnAsiento = 0.52f;
+
+        /// <summary>El centro de masa, como fracción de la estatura: ahí va el origen del cuerpo.</summary>
+        private const float FraccionCg = 0.55f;
 
         private ResultadoPersona persona;
         private VarianteElement variante;
         private (double X, double Y) asiento;
         private Terreno terreno;
         private Transform cuerpo;
-        private Transform piernaIzq;
-        private Transform piernaDer;
         private float estatura;
 
+        // Del maniquí de respaldo.
+        private Transform piernaIzq;
+        private Transform piernaDer;
+
+        // Del cuerpo de MakeHuman: cada hueso con su rotación de reposo y el eje «a la derecha» del cuerpo
+        // en su marco, para doblarlo hacia adelante o hacia atrás.
+        private readonly Dictionary<string, (Transform Hueso, Quaternion Reposo, Vector3 Eje)> huesos =
+            new Dictionary<string, (Transform, Quaternion, Vector3)>();
+
         /// <summary>Peatón, ciclista o motociclista: va por su trayectoria.</summary>
-        public static PersonaVista ConTrayectoria(Transform padre, ResultadoPersona p, Terreno terreno)
+        public static async Awaitable<PersonaVista> ConTrayectoriaAsync(
+            Transform padre, ResultadoPersona p, Terreno terreno, CargadorCuerpos cuerpos)
         {
             var go = new GameObject("persona_" + p.Id);
             go.transform.SetParent(padre, false);
             var vista = go.AddComponent<PersonaVista>();
             vista.persona = p;
             vista.terreno = terreno;
-            vista.Armar((float)p.EstaturaM, Ropa);
+            await vista.ArmarAsync(cuerpos, p.Id, Ropa);
             return vista;
         }
 
         /// <summary>Un ocupante: hijo de su vehículo, sentado, con una variante de su desplazamiento.</summary>
-        public static PersonaVista Ocupante(
-            Transform vehiculo, ResultadoPersona p, ResultadoVehiculo v, VarianteElement variante, Color ropa)
+        public static async Awaitable<PersonaVista> OcupanteAsync(
+            Transform vehiculo, ResultadoPersona p, ResultadoVehiculo v, VarianteElement variante, bool segunda,
+            CargadorCuerpos cuerpos)
         {
             var go = new GameObject("ocupante_" + p.Id + (variante.Cinturon ? "_con_cinturon" : "_sin_cinturon"));
             go.transform.SetParent(vehiculo, false);
-            go.layer = vehiculo.gameObject.layer;
             var vista = go.AddComponent<PersonaVista>();
             vista.persona = p;
             vista.variante = variante;
             vista.asiento = Personas.Asiento(p.Ocupante.Asiento, v.Dimensiones.LargoM, v.Dimensiones.AnchoM);
-            vista.Armar((float)p.EstaturaM, ropa);
-            vista.Sentar();
+            // La segunda variante (sin cinturón, cuando no se declaró) es el maniquí de otro color: así se
+            // distinguen las dos sin inventar ropa.
+            if (segunda)
+            {
+                vista.ArmarManiqui((float)p.EstaturaM, RopaSinCinturon);
+            }
+            else
+            {
+                await vista.ArmarAsync(cuerpos, p.Id, Ropa);
+            }
+
+            vista.Posar(Postura.Sentado, 0.0);
             foreach (var t in go.GetComponentsInChildren<Transform>(true))
             {
-                t.gameObject.layer = go.layer;
+                t.gameObject.layer = vehiculo.gameObject.layer;
             }
 
             return vista;
         }
 
+        private async Awaitable ArmarAsync(CargadorCuerpos cuerpos, string id, Color respaldo)
+        {
+            estatura = Mathf.Max(0.5f, (float)persona.EstaturaM);
+            cuerpo = new GameObject("cuerpo").transform;
+            cuerpo.SetParent(transform, false);
+            var modelo = cuerpos == null ? null : await cuerpos.CrearAsync(cuerpo, Cuerpos.Variante(estatura), id);
+            if (modelo == null)
+            {
+                Destroy(cuerpo.gameObject);
+                ArmarManiqui(estatura, respaldo);
+                return;
+            }
+
+            // Pies en y = 0 y 1 m de alto: a la estatura y con el centro de masa en el origen.
+            modelo.transform.localScale = Vector3.one * estatura;
+            modelo.transform.localPosition = new Vector3(0f, -FraccionCg * estatura, 0f);
+            var derecha = cuerpo.rotation * Vector3.right;
+            foreach (var t in modelo.GetComponentsInChildren<Transform>(true))
+            {
+                huesos[t.name] = (t, t.localRotation, Quaternion.Inverse(t.rotation) * derecha);
+            }
+        }
+
         /// <summary>
-        /// El maniquí con su origen en el centro de masa (al 55 % de la estatura): así la `z` del
-        /// Resultado lo pone a la altura correcta de pie, en el aire o tendido.
+        /// El maniquí de respaldo, con su origen en el centro de masa: así la `z` del Resultado lo pone a
+        /// la altura correcta de pie, en el aire o tendido.
         /// </summary>
-        private void Armar(float h, Color ropa)
+        private void ArmarManiqui(float h, Color ropa)
         {
             estatura = Mathf.Max(0.5f, h);
             h = estatura;
-            var cg = 0.55f * h;
+            var cg = FraccionCg * h;
             cuerpo = new GameObject("cuerpo").transform;
             cuerpo.SetParent(transform, false);
 
@@ -90,7 +137,7 @@ namespace Croquis.Visor
             piernaDer = Pierna(cuerpo, h, cg, 1f);
         }
 
-        /// <summary>Una pierna con su pivote en la cadera, para caminar o sentarse.</summary>
+        /// <summary>Una pierna del maniquí con su pivote en la cadera.</summary>
         private static Transform Pierna(Transform cuerpo, float h, float cg, float lado)
         {
             var cadera = new GameObject(lado < 0f ? "pierna_izquierda" : "pierna_derecha").transform;
@@ -102,15 +149,52 @@ namespace Croquis.Visor
             return cadera;
         }
 
-        /// <summary>Sentado: las piernas hacia adelante, horizontales.</summary>
-        private void Sentar()
+        /// <summary>
+        /// Dobla un hueso alrededor del eje «a la derecha» del cuerpo: negativo, hacia adelante (el
+        /// muslo de quien se sienta); positivo, hacia atrás (la rodilla).
+        /// </summary>
+        private void Doblar(string hueso, float grados)
         {
-            piernaIzq.localRotation = Quaternion.Euler(-90f, 0f, 0f);
-            piernaDer.localRotation = Quaternion.Euler(-90f, 0f, 0f);
+            if (huesos.TryGetValue(hueso, out var h))
+            {
+                h.Hueso.localRotation = h.Reposo * Quaternion.AngleAxis(grados, h.Eje);
+            }
+        }
+
+        private void Posar(Postura postura, double t)
+        {
+            var paso = postura == Postura.Caminando ? 22f * Mathf.Sin((float)t * 2f * Mathf.PI * 0.9f) : 0f;
+            var sentado = postura == Postura.Sentado;
+            if (huesos.Count > 0)
+            {
+                Doblar("muslo_i", sentado ? -85f : paso);
+                Doblar("muslo_d", sentado ? -85f : -paso);
+                Doblar("pierna_i", sentado ? 85f : Mathf.Max(0f, -paso) * 0.8f);
+                Doblar("pierna_d", sentado ? 85f : Mathf.Max(0f, paso) * 0.8f);
+                // Los brazos hacia el manubrio o el volante al ir sentado; al caminar, contrarios a las piernas.
+                Doblar("brazo_i", sentado ? -40f : -paso * 0.7f);
+                Doblar("brazo_d", sentado ? -40f : paso * 0.7f);
+                Doblar("antebrazo_i", sentado ? -30f : 0f);
+                Doblar("antebrazo_d", sentado ? -30f : 0f);
+                return;
+            }
+
+            if (piernaIzq == null)
+            {
+                return;
+            }
+
+            piernaIzq.localRotation = Quaternion.Euler(sentado ? -90f : paso, 0f, 0f);
+            piernaDer.localRotation = Quaternion.Euler(sentado ? -90f : -paso, 0f, 0f);
         }
 
         public void Colocar(double t)
         {
+            if (cuerpo == null)
+            {
+                return;
+            }
+
             if (variante != null)
             {
                 ColocarOcupante(t);
@@ -125,22 +209,7 @@ namespace Croquis.Visor
                 new Vector3(x, suelo + (float)p.Z, y),
                 Quaternion.Euler(0f, 90f - (float)(p.Rumbo * Mathf.Rad2Deg), 0f));
             cuerpo.localRotation = Quaternion.Euler((float)(p.Inclinacion * Mathf.Rad2Deg), 0f, 0f);
-            switch (p.Postura)
-            {
-                case Postura.Sentado:
-                    Sentar();
-                    break;
-                case Postura.Caminando:
-                    // El paso, solo para que se lea que camina: 1.8 pasos por segundo.
-                    var a = 22f * Mathf.Sin((float)t * 2f * Mathf.PI * 0.9f);
-                    piernaIzq.localRotation = Quaternion.Euler(a, 0f, 0f);
-                    piernaDer.localRotation = Quaternion.Euler(-a, 0f, 0f);
-                    break;
-                default:
-                    piernaIzq.localRotation = Quaternion.identity;
-                    piernaDer.localRotation = Quaternion.identity;
-                    break;
-            }
+            Posar(p.Postura, t);
         }
 
         /// <summary>
@@ -150,11 +219,8 @@ namespace Croquis.Visor
         private void ColocarOcupante(double t)
         {
             var d = Personas.Desplazamiento(variante, t);
-            var cadera = CaderaEnAsiento + 0.05f * estatura;
-            transform.localPosition = new Vector3(
-                -(float)(asiento.Y + d.Dy),
-                cadera,
-                (float)(asiento.X + d.Dx));
+            var cadera = CaderaEnAsiento + (FraccionCg - 0.5f) * estatura;
+            transform.localPosition = new Vector3(-(float)(asiento.Y + d.Dy), cadera, (float)(asiento.X + d.Dx));
             transform.localRotation = Quaternion.identity;
         }
     }

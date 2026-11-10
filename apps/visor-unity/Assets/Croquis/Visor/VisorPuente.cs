@@ -129,14 +129,23 @@ namespace Croquis.Visor
                 }
                 else
                 {
-                    Error("interno", "La cámara «" + modo + "» llega en U4.");
+                    Error("interno", "No hay una cámara «" + modo + "».");
                 }
             });
         }
 
         public void encuadrar(string texto)
         {
-            Campos(texto, j => visor.Camara.Encuadrar((string)j["zona"]));
+            Campos(texto, j =>
+            {
+                var antes = visor.Camara.Modo;
+                var ahora = visor.Camara.Encuadrar((string)j["zona"]);
+                if (ahora != antes)
+                {
+                    // «Ver todo» desde la cinematográfica, la acera o un conductor pasa a la órbita.
+                    Enviar("camara", new JObject { { "modo", ahora } });
+                }
+            });
         }
 
         public void marcadores(string texto)

@@ -369,6 +369,57 @@ namespace Croquis.Core
         }
     }
 
+    /// <summary>Lo que necesitan las cámaras para encuadrar (U4): distancias y cajas, sin Unity.</summary>
+    public static class Lente
+    {
+        /// <summary>
+        /// La distancia, a lo largo del eje de la cámara, a la que un rectángulo de `ancho` × `alto`
+        /// (perpendicular al eje) cabe entero en una cámara de campo vertical `vfovGrados` y proporción
+        /// `aspecto` (ancho / alto de la pantalla).
+        /// </summary>
+        public static double DistanciaParaVer(double ancho, double alto, double vfovGrados, double aspecto)
+        {
+            var tv = Math.Tan(vfovGrados * Math.PI / 360.0);
+            var th = tv * aspecto;
+            return Math.Max(alto / 2.0 / tv, ancho / 2.0 / th);
+        }
+
+        /// <summary>
+        /// La caja de los vehículos involucrados (o de todos) en el instante `t`, más el punto de
+        /// impacto: lo que la cinematográfica debe llenar para que los coches no salgan chicos. Cada
+        /// vehículo cuenta con su largo alrededor de su centro.
+        /// </summary>
+        public static CajaPlano VehiculosEn(Caso3DResultado r, double t)
+        {
+            var c = new CajaPlano();
+            var hayInvolucrados = false;
+            foreach (var v in r.Vehiculos)
+            {
+                hayInvolucrados |= v.Involucrado;
+            }
+
+            foreach (var v in r.Vehiculos)
+            {
+                if (hayInvolucrados && !v.Involucrado)
+                {
+                    continue;
+                }
+
+                var p = Muestreo.Pose(v.Trayectoria, t);
+                var medio = v.Dimensiones.LargoM / 2.0;
+                c.Agregar(p.X - medio, p.Y - medio);
+                c.Agregar(p.X + medio, p.Y + medio);
+            }
+
+            if (r.PuntoImpacto != null)
+            {
+                c.Agregar(r.PuntoImpacto.X, r.PuntoImpacto.Y);
+            }
+
+            return c;
+        }
+    }
+
     /// <summary>Una caja en planta, en metros de Croquis (X al este, Y al norte).</summary>
     public sealed class CajaPlano
     {

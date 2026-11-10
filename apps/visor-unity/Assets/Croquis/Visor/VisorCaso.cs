@@ -15,6 +15,7 @@ namespace Croquis.Visor
         private readonly List<VehiculoVista> vehiculos = new List<VehiculoVista>();
         private readonly List<PersonaVista> personas = new List<PersonaVista>();
         private readonly CargadorModelos modelos = new CargadorModelos();
+        private readonly CargadorCuerpos cuerpos = new CargadorCuerpos();
         private Transform raiz;
         private GameObject piso;
         private Light sol;
@@ -92,12 +93,52 @@ namespace Croquis.Visor
                 v.Terreno = terreno;
             }
 
+            // Los vehículos estacionados, con el modelo de su clase y quietos (antes salían como una caja
+            // de tabique). Sus medidas son las del objeto; sin clase, un sedán.
+            foreach (var o in r.Objetos ?? new ResultadoObjeto[0])
+            {
+                if (o.Tipo != IndigoTipo.VehiculoEstacionado)
+                {
+                    continue;
+                }
+
+                var go = new GameObject("estacionado_" + o.Id);
+                go.transform.SetParent(raiz, false);
+                var v = new ResultadoVehiculo
+                {
+                    Id = o.Id,
+                    Clase = string.IsNullOrEmpty(o.ClaseVehiculo) ? "sedan_mediano" : o.ClaseVehiculo,
+                    Dimensiones = new Dimensiones
+                    {
+                        LargoM = o.LargoM,
+                        AnchoM = o.AnchoM,
+                        AltoM = o.AltoM,
+                        DistanciaEntreEjesM = 0.6 * o.LargoM,
+                    },
+                };
+                try
+                {
+                    await modelos.ArmarAsync(go.transform, v, (Color?)null);
+                }
+                catch (ModeloNoCargo ex)
+                {
+                    Debug.LogWarning("[estacionado] " + ex.Message);
+                }
+
+                var pie = terreno.P(o.X, o.Y);
+                go.transform.SetPositionAndRotation(pie, Quaternion.Euler(0f, 90f - (float)o.RumboDeg, 0f));
+                if (e != null)
+                {
+                    SombraDeContacto(go.transform, (float)o.LargoM, (float)o.AnchoM, noche);
+                }
+            }
+
             // U3: las personas. Con trayectoria propia, por su cuenta; los ocupantes, en su vehículo.
             foreach (var p in r.Personas ?? new ResultadoPersona[0])
             {
                 if (Personas.TieneTrayectoria(p))
                 {
-                    personas.Add(PersonaVista.ConTrayectoria(raiz, p, terreno));
+                    personas.Add(await PersonaVista.ConTrayectoriaAsync(raiz, p, terreno, cuerpos));
                     continue;
                 }
 
@@ -111,8 +152,7 @@ namespace Croquis.Visor
                 for (var i = 0; i < variantes.Length; i++)
                 {
                     // Sin cinturón declarado van las dos variantes; la segunda, de otro color.
-                    var ropa = i == 0 ? PersonaVista.Ropa : PersonaVista.RopaSinCinturon;
-                    personas.Add(PersonaVista.Ocupante(vehiculos[k].transform, p, r.Vehiculos[k], variantes[i], ropa));
+                    personas.Add(await PersonaVista.OcupanteAsync(vehiculos[k].transform, p, r.Vehiculos[k], variantes[i], i > 0, cuerpos));
                 }
             }
 
@@ -121,7 +161,7 @@ namespace Croquis.Visor
                 piso.SetActive(e == null);
             }
 
-            Camara.Abrir(r);
+            Camara.Abrir(caso);
             Camara.Vehiculos = vehiculos;
             Camara.Caso = this;
             Camara.Arbol = ArbolCercano(e, Camara.Centro);

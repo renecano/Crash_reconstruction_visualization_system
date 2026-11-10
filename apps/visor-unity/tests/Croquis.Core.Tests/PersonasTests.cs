@@ -180,6 +180,42 @@ namespace Croquis.Core.Tests
         }
 
         [Fact]
+        public void ALaDistanciaDeLaLenteLaCajaCabeJusta()
+        {
+            foreach (var (ancho, alto, fov, aspecto) in new[] { (40.0, 20.0, 40.0, 16.0 / 9.0), (10.0, 30.0, 60.0, 1.0), (5.0, 5.0, 35.0, 0.5) })
+            {
+                var d = Lente.DistanciaParaVer(ancho, alto, fov, aspecto);
+                var tv = Math.Tan(fov * Math.PI / 360.0);
+                var th = tv * aspecto;
+                // Las esquinas caben, y en un sentido llenan el cuadro.
+                Assert.True(alto / 2.0 <= d * tv + 1e-9 && ancho / 2.0 <= d * th + 1e-9);
+                Assert.True(Math.Abs(alto / 2.0 - d * tv) < 1e-9 || Math.Abs(ancho / 2.0 - d * th) < 1e-9);
+            }
+        }
+
+        [Fact]
+        public void LaCajaDeLosVehiculosEnUnInstanteLosContiene()
+        {
+            foreach (var (nombre, caso) in Casos())
+            {
+                var r = caso.Resultado;
+                foreach (var t in new[] { -1.0, 0.0, 1.5 })
+                {
+                    var caja = Lente.VehiculosEn(r, t);
+                    var involucrados = r.Vehiculos.Any(v => v.Involucrado);
+                    foreach (var v in r.Vehiculos.Where(v => !involucrados || v.Involucrado))
+                    {
+                        var p = Muestreo.Pose(v.Trayectoria, t);
+                        Assert.True(caja.Contiene(p.X, p.Y), $"{nombre} {v.Id} en t = {t}");
+                    }
+
+                    // Mucho más chica que «Ver todo» en cuanto la aproximación es larga: los coches llenan más.
+                    Assert.True(caja.Ancho <= Encuadre.VerTodo(caso).Ancho + 1e-9, nombre);
+                }
+            }
+        }
+
+        [Fact]
         public void ConCinturonDeclaradoSeDibujaSoloEsaVariante()
         {
             var o = Caso("peaton_cruce").Resultado.Personas.First(x => x.Ocupante != null).Ocupante;

@@ -2,26 +2,68 @@ using System.Collections.Generic;
 using Croquis.Core;
 using Croquis.Generated;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace Croquis.Visor
 {
     /// <summary>
-    /// Las cámaras del visor: cenital, órbita, cinematográfica, acera y la del conductor. La libre y el
-    /// encuadre fino («Ver todo», «Ir al impacto») llegan en U4. Ninguna depende del reloj de la
-    /// máquina: la pose sale del instante del caso, así una pausa da siempre la misma imagen.
+    /// Las cámaras del visor (U4): cenital, órbita, cinematográfica, acera, la de cada conductor (a la
+    /// altura del ojo que usó `visibilidad`) y la libre. La cenital, la órbita y la libre se mueven con
+    /// el ratón y con los dedos; «Ver todo» e «Ir al impacto» encuadran lo que importa (`Encuadre` del
+    /// núcleo). Un minimapa en la esquina enseña la escena desde arriba y dónde está la cámara. Las
+    /// automáticas no dependen del reloj de la máquina: su pose sale del instante del caso.
     /// </summary>
     public sealed class CamaraVisor : MonoBehaviour
     {
         private const float AnguloInicial = -120f;
-        private const float AlturaOjos = 1.25f;
+
+        /// <summary>El ojo de un conductor de auto (AASHTO), si el Resultado no trae `visibilidad`.</summary>
+        private const float AlturaOjosPorOmision = 1.08f;
+
+        /// <summary>La capa del marcador de la cámara: solo la ve el minimapa.</summary>
+        public const int CapaMinimapa = 31;
+
+        /// <summary>La elevación de la órbita (grados): alta, para ver la calle por encima de las azoteas.</summary>
+        private const float ElevacionOrbita = 50f;
+
+        /// <summary>Qué parte de la pantalla llena lo que se encuadra en la cinematográfica.</summary>
+        private const float LlenadoCinematica = 0.62f;
 
         [SerializeField]
         private Camera camara;
 
         private ZonaInteres zona = new ZonaInteres(0, 0, 20);
+        private CajaPlano todo = new CajaPlano();
+        private Caso3DResultado resultado;
         private string modo = "cinematica";
         private string conductor;
         private double inicio;
+
+        // Lo que se encuadra («Ver todo» o «Ir al impacto»): centro y lado, en metros de Croquis.
+        private Vector3 marcoCentro;
+        private float marcoLado = 20f;
+
+        // La órbita: alrededor de `objetivo`, con rumbo y elevación en grados.
+        private Vector3 objetivo;
+        private float yaw = AnguloInicial;
+        private float pitch = ElevacionOrbita;
+        private float distOrbita = 30f;
+        private bool orbitaTocada;
+
+        // La libre: posición y hacia dónde mira.
+        private Vector3 posLibre;
+        private float yawLibre;
+        private float pitchLibre;
+
+        // La cenital: centro y altura.
+        private Vector3 centroCenital;
+        private float altoCenital = 40f;
+
+        private Camera minimapa;
+        private Transform marcador;
+        private Vector3 ultimoRaton;
+        private float ultimaSeparacion;
 
         public List<VehiculoVista> Vehiculos { get; set; } = new List<VehiculoVista>();
         public VisorCaso Caso { get; set; }
@@ -167,8 +209,22 @@ namespace Croquis.Visor
 
         public Vector3 Centro => new Vector3((float)zona.CentroX, 0f, (float)zona.CentroY);
 
+        /// <summary>El modo de la cámara, como lo nombra el puente.</summary>
+        public string Modo => modo == "conductor" ? "conductor:" + conductor : modo;
+
         public bool Cambiar(string nuevo)
         {
+            if (nuevo == "libre" && camara != null)
+            {
+                // La libre arranca donde está la cámara: el perito sigue desde lo que ya veía.
+                posLibre = camara.transform.position;
+                var e = camara.transform.eulerAngles;
+                yawLibre = e.y;
+                pitchLibre = e.x > 180f ? e.x - 360f : e.x;
+                modo = nuevo;
+                return true;
+            }
+
             if (nuevo == "cenital" || nuevo == "orbita" || nuevo == "cinematica" || nuevo == "acera")
             {
                 modo = nuevo;
@@ -189,15 +245,272 @@ namespace Croquis.Visor
             return false;
         }
 
-        public void Abrir(Caso3DResultado r)
+        public void Abrir(Caso3D caso)
         {
-            zona = Encuadre.ZonaDeInteres(r);
-            inicio = r.TInicio;
+            resultado = caso.Resultado;
+            zona = Encuadre.ZonaDeInteres(resultado);
+            todo = Encuadre.VerTodo(caso);
+            inicio = resultado.TInicio;
             azBase = float.NaN;
+            orbitaTocada = false;
+            yaw = AnguloInicial;
+            pitch = ElevacionOrbita;
+            // Al abrir, el marco es «Ver todo» sin cambiar de cámara: la de arranque sigue siendo la misma.
+            var previo = modo;
+            Encuadrar("todo");
+            modo = previo;
+            Minimapa();
         }
 
-        public void Encuadrar(string _)
+        /// <summary>
+        /// «Ver todo» (`todo`) o «Ir al impacto» (`impacto`). La cenital, la órbita y la libre se
+        /// acomodan a ese marco; desde la cinematográfica, la acera o un conductor se pasa a la órbita.
+        /// Devuelve el modo en que queda la cámara.
+        /// </summary>
+        public string Encuadrar(string que)
         {
+            if (que == "impacto")
+            {
+                marcoCentro = new Vector3((float)zona.CentroX, 0f, (float)zona.CentroY);
+                marcoLado = (float)zona.Lado;
+            }
+            else
+            {
+                marcoCentro = new Vector3((float)todo.CentroX, 0f, (float)todo.CentroY);
+                marcoLado = (float)System.Math.Max(todo.Ancho, todo.Alto);
+            }
+
+            var aspecto = camara != null ? camara.aspect : 16f / 9f;
+            var ancho = que == "impacto" ? marcoLado : (float)todo.Ancho;
+            var alto = que == "impacto" ? marcoLado : (float)todo.Alto;
+            centroCenital = marcoCentro;
+            altoCenital = (float)Lente.DistanciaParaVer(ancho, alto, 40f, aspecto) * 1.05f;
+            objetivo = marcoCentro;
+            // En la órbita, el marco se ve inclinado: su lado mayor a lo ancho y, a lo alto, lo que ocupa
+            // visto con la elevación de la cámara.
+            var mayor = Mathf.Max(ancho, alto);
+            distOrbita = Mathf.Max(8f, (float)Lente.DistanciaParaVer(mayor, mayor * Mathf.Sin(pitch * Mathf.Deg2Rad), 40f, aspecto));
+            if (modo == "libre")
+            {
+                PoseOrbita(out posLibre, out var mira);
+                var r = Quaternion.LookRotation(mira - posLibre).eulerAngles;
+                yawLibre = r.y;
+                pitchLibre = r.x > 180f ? r.x - 360f : r.x;
+            }
+            else if (modo != "cenital" && modo != "orbita")
+            {
+                modo = "orbita";
+            }
+
+            return Modo;
+        }
+
+        private void PoseOrbita(out Vector3 ojo, out Vector3 mira)
+        {
+            var a = yaw * Mathf.Deg2Rad;
+            var e = pitch * Mathf.Deg2Rad;
+            mira = objetivo + Vector3.up * 0.8f;
+            ojo = mira + new Vector3(Mathf.Cos(a) * Mathf.Cos(e), Mathf.Sin(e), Mathf.Sin(a) * Mathf.Cos(e)) * distOrbita;
+        }
+
+        /// <summary>
+        /// El minimapa: una cámara ortográfica desde arriba en la esquina, con «Ver todo» y el norte hacia
+        /// arriba, y una flecha donde está la cámara principal (en una capa que solo ve el minimapa).
+        /// </summary>
+        private void Minimapa()
+        {
+            if (camara == null)
+            {
+                return;
+            }
+
+            camara.cullingMask &= ~(1 << CapaMinimapa);
+            if (minimapa == null)
+            {
+                var go = new GameObject("Minimapa");
+                go.transform.SetParent(transform, false);
+                minimapa = go.AddComponent<Camera>();
+                minimapa.orthographic = true;
+                minimapa.clearFlags = CameraClearFlags.SolidColor;
+                minimapa.backgroundColor = new Color(0.16f, 0.17f, 0.19f);
+                minimapa.depth = camara.depth + 1f;
+                minimapa.nearClipPlane = 1f;
+                minimapa.farClipPlane = 200f;
+                var datos = go.AddComponent<UniversalAdditionalCameraData>();
+                datos.renderShadows = false;
+                datos.renderPostProcessing = false;
+                datos.antialiasing = AntialiasingMode.None;
+
+                var flecha = new Malla();
+                var a = new Vector3(0f, 0f, 1.6f);
+                var b = new Vector3(-0.9f, 0f, -1f);
+                var c = new Vector3(0.9f, 0f, -1f);
+                flecha.NormalArriba = true;
+                flecha.Triangulo(flecha.Vertice(a, Vector2.zero), flecha.Vertice(c, Vector2.zero), flecha.Vertice(b, Vector2.zero));
+                var m = flecha.Poner(transform, "marcador_camara", Materiales.Emisivo(new Color(1f, 0.35f, 0.12f), new Color(1f, 0.35f, 0.12f)), false, false);
+                m.layer = CapaMinimapa;
+                marcador = m.transform;
+            }
+
+            // Abajo a la derecha, un cuarto del alto de la pantalla.
+            var alto = 0.26f;
+            var ancho = alto / Mathf.Max(0.3f, camara.aspect);
+            minimapa.rect = new Rect(1f - ancho - 0.015f, 0.025f, ancho, alto);
+            var lado = Mathf.Max((float)todo.Ancho, (float)todo.Alto);
+            minimapa.orthographicSize = lado / 2f * 1.05f;
+            minimapa.transform.SetPositionAndRotation(
+                new Vector3((float)todo.CentroX, 120f, (float)todo.CentroY),
+                Quaternion.Euler(90f, 0f, 0f));
+            if (marcador != null)
+            {
+                marcador.localScale = Vector3.one * Mathf.Max(1.5f, lado / 28f);
+            }
+        }
+
+        private bool nieblaGuardada;
+
+        private void OnEnable()
+        {
+            RenderPipelineManager.beginCameraRendering += AntesDeDibujar;
+            RenderPipelineManager.endCameraRendering += DespuesDeDibujar;
+        }
+
+        private void OnDisable()
+        {
+            RenderPipelineManager.beginCameraRendering -= AntesDeDibujar;
+            RenderPipelineManager.endCameraRendering -= DespuesDeDibujar;
+        }
+
+        /// <summary>
+        /// La niebla de URP es global: desde arriba, en una escena de lluvia, el minimapa vería solo su
+        /// color. Se apaga mientras se dibuja el minimapa y se devuelve como estaba.
+        /// </summary>
+        private void AntesDeDibujar(ScriptableRenderContext _, Camera c)
+        {
+            if (c != null && c == minimapa)
+            {
+                nieblaGuardada = RenderSettings.fog;
+                RenderSettings.fog = false;
+            }
+        }
+
+        private void DespuesDeDibujar(ScriptableRenderContext _, Camera c)
+        {
+            if (c != null && c == minimapa)
+            {
+                RenderSettings.fog = nieblaGuardada;
+            }
+        }
+
+        /// <summary>El ratón y los dedos: solo en las cámaras que el perito mueve.</summary>
+        private void Update()
+        {
+            if (camara == null || (modo != "orbita" && modo != "cenital" && modo != "libre"))
+            {
+                ultimaSeparacion = 0f;
+                return;
+            }
+
+            var mover = Vector2.zero;
+            var acercar = 0f;
+            var girar = Vector2.zero;
+            if (Input.touchCount == 1)
+            {
+                var d = Input.GetTouch(0).deltaPosition;
+                if (modo == "cenital")
+                {
+                    mover = d;
+                }
+                else
+                {
+                    girar = d;
+                }
+
+                ultimaSeparacion = 0f;
+            }
+            else if (Input.touchCount >= 2)
+            {
+                var t0 = Input.GetTouch(0);
+                var t1 = Input.GetTouch(1);
+                var sep = (t0.position - t1.position).magnitude;
+                if (ultimaSeparacion > 0f)
+                {
+                    acercar = (sep - ultimaSeparacion) / Mathf.Max(80f, Screen.height * 0.25f);
+                }
+
+                ultimaSeparacion = sep;
+                mover = (t0.deltaPosition + t1.deltaPosition) / 2f;
+            }
+            else
+            {
+                ultimaSeparacion = 0f;
+                var raton = Input.mousePosition;
+                var delta = (Vector2)(raton - ultimoRaton);
+                ultimoRaton = raton;
+                if (Input.GetMouseButton(0))
+                {
+                    if (modo == "cenital")
+                    {
+                        mover = delta;
+                    }
+                    else
+                    {
+                        girar = delta;
+                    }
+                }
+                else if (Input.GetMouseButton(1) || Input.GetMouseButton(2))
+                {
+                    mover = delta;
+                }
+
+                acercar = Input.mouseScrollDelta.y * 0.12f;
+            }
+
+            if (girar != Vector2.zero || mover != Vector2.zero || acercar != 0f)
+            {
+                orbitaTocada = true;
+            }
+
+            var escala = Screen.height > 0 ? 1f / Screen.height : 0.001f;
+            switch (modo)
+            {
+                case "orbita":
+                {
+                    yaw -= girar.x * 0.25f;
+                    pitch = Mathf.Clamp(pitch - girar.y * 0.2f, 5f, 85f);
+                    distOrbita = Mathf.Clamp(distOrbita * (1f - acercar), 4f, Mathf.Max(60f, marcoLado * 4f));
+                    if (mover != Vector2.zero)
+                    {
+                        var derecha = camara.transform.right;
+                        var adelante = Vector3.Cross(derecha, Vector3.up);
+                        objetivo -= (derecha * mover.x + adelante * mover.y) * distOrbita * escala;
+                    }
+
+                    break;
+                }
+
+                case "cenital":
+                {
+                    centroCenital -= new Vector3(mover.x, 0f, mover.y) * altoCenital * escala * 0.75f;
+                    altoCenital = Mathf.Clamp(altoCenital * (1f - acercar), 6f, Mathf.Max(80f, marcoLado * 4f));
+                    break;
+                }
+
+                default:
+                {
+                    yawLibre += girar.x * 0.2f;
+                    pitchLibre = Mathf.Clamp(pitchLibre - girar.y * 0.2f, -80f, 85f);
+                    var giro = Quaternion.Euler(pitchLibre, yawLibre, 0f);
+                    var paso = Mathf.Max(2f, posLibre.y) * Time.unscaledDeltaTime * 2.5f;
+                    var teclas = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
+                    posLibre += giro * teclas * paso;
+                    posLibre += giro * Vector3.forward * acercar * Mathf.Max(4f, posLibre.y) * 2f;
+                    posLibre -= (giro * new Vector3(mover.x, mover.y, 0f)) * Mathf.Max(2f, posLibre.y) * escala;
+                    // Nunca bajo el piso ni dentro de lo construido.
+                    posLibre.y = Mathf.Max(0.4f, posLibre.y);
+                    break;
+                }
+            }
         }
 
         public void Asignar(Camera c)
@@ -221,23 +534,52 @@ namespace Croquis.Visor
             var centro = Centro;
             var lado = (float)zona.Lado;
             var t = Caso != null ? (float)(Caso.Tiempo - inicio) : 0f;
+            ActualizarMinimapa();
             switch (modo)
             {
                 case "cenital":
                     camara.fieldOfView = 40f;
-                    camara.transform.SetPositionAndRotation(centro + Vector3.up * lado * 1.5f, Quaternion.Euler(90f, 0f, 0f));
+                    camara.transform.SetPositionAndRotation(centroCenital + Vector3.up * altoCenital, Quaternion.Euler(90f, 0f, 0f));
+                    return;
+                case "orbita":
+                {
+                    camara.fieldOfView = 40f;
+                    // Sin tocarla, gira despacio con el tiempo del caso; tocada, se queda donde la dejó el perito.
+                    var yawAntes = yaw;
+                    if (!orbitaTocada)
+                    {
+                        yaw = AnguloInicial + 3f * t;
+                    }
+
+                    PoseOrbita(out var ojo, out var mira);
+                    if (!orbitaTocada)
+                    {
+                        yaw = yawAntes;
+                    }
+
+                    camara.transform.position = ojo;
+                    camara.transform.LookAt(mira);
+                    return;
+                }
+
+                case "libre":
+                    camara.fieldOfView = 50f;
+                    camara.transform.SetPositionAndRotation(posLibre, Quaternion.Euler(pitchLibre, yawLibre, 0f));
                     return;
                 case "conductor":
                 {
                     var v = Vehiculos.Find(x => x.name == "vehiculo_" + conductor);
-                    if (v != null)
+                    var datos = resultado?.Vehiculos != null ? System.Array.Find(resultado.Vehiculos, x => x.Id == conductor) : null;
+                    if (v != null && datos != null)
                     {
-                        // El ojo va un poco adelante del centro, a la altura de una persona sentada.
+                        // El ojo del conductor: en su asiento y a la altura que usó `visibilidad`.
                         camara.fieldOfView = 60f;
                         var tr = v.transform;
+                        var asiento = Personas.Asiento(AsientoEnum.Conductor, datos.Dimensiones.LargoM, datos.Dimensiones.AnchoM);
+                        var local = new Vector3(-(float)asiento.Y, AlturaOjo(conductor), (float)asiento.X + 0.15f);
                         camara.transform.SetPositionAndRotation(
-                            tr.position + tr.up * AlturaOjos + tr.forward * 0.4f,
-                            Quaternion.LookRotation(tr.forward, Vector3.up) * Quaternion.Euler(4f, 0f, 0f));
+                            tr.TransformPoint(local),
+                            Quaternion.LookRotation(tr.forward, Vector3.up) * Quaternion.Euler(3f, 0f, 0f));
                         return;
                     }
 
@@ -333,25 +675,22 @@ namespace Croquis.Visor
                 case "cinematica":
                 {
                     // Como la del visor web: una lente de 50 mm en acciones chicas y de 35 mm en grandes,
-                    // baja, a tres cuartos, girando despacio con el tiempo del caso.
-                    var k = Mathf.Clamp01((lado - 12f) / 30f);
+                    // baja, a tres cuartos, girando despacio con el tiempo del caso. Encuadra los vehículos
+                    // en el instante (y el impacto) para que llenen el cuadro: antes encuadraba toda la zona
+                    // y los coches salían chicos (René, 2026-11-10).
+                    var caja = resultado != null ? Lente.VehiculosEn(resultado, Caso != null ? Caso.Tiempo : 0.0) : null;
+                    var tam = caja != null && !caja.Vacia ? Mathf.Max((float)caja.Ancho, (float)caja.Alto) : lado;
+                    var k = Mathf.Clamp01((tam - 12f) / 30f);
                     var vfov = CampoDeLente(Mathf.Lerp(50f, 35f, k));
                     camara.fieldOfView = vfov;
-                    var hfov = 2f * Mathf.Atan(Mathf.Tan(vfov * Mathf.Deg2Rad / 2f) * 16f / 9f);
-                    var dist = Mathf.Clamp(lado * 0.5f / Mathf.Tan(hfov / 2f), 12f, 60f);
-                    var alto = Mathf.Lerp(2.4f, 6f, k);
-                    var objetivo = centro;
-                    if (Vehiculos.Count > 0)
-                    {
-                        var suma = Vector3.zero;
-                        foreach (var v in Vehiculos)
-                        {
-                            suma += v.transform.position;
-                        }
-
-                        // A medio camino entre el impacto y los vehículos: el encuadre no brinca.
-                        objetivo = (centro + suma / Vehiculos.Count) / 2f;
-                    }
+                    var dist = Mathf.Clamp(
+                        (float)Lente.DistanciaParaVer(tam / LlenadoCinematica, tam * 0.5f / LlenadoCinematica, vfov, camara.aspect),
+                        7f,
+                        60f);
+                    var alto = Mathf.Lerp(2.2f, 5.5f, k);
+                    var objetivo = caja != null && !caja.Vacia
+                        ? new Vector3((float)caja.CentroX, 0f, (float)caja.CentroY)
+                        : centro;
 
                     if (float.IsNaN(azBase))
                     {
@@ -369,10 +708,42 @@ namespace Croquis.Visor
             }
 
             camara.fieldOfView = 40f;
-            var a = (AnguloInicial + 3f * t) * Mathf.Deg2Rad;
-            var dd = Mathf.Max(14f, lado * 0.9f);
-            camara.transform.position = centro + new Vector3(Mathf.Cos(a) * dd, dd * 0.35f, Mathf.Sin(a) * dd);
-            camara.transform.LookAt(centro + Vector3.up * 0.8f);
+            PoseOrbita(out var o, out var mi);
+            camara.transform.position = o;
+            camara.transform.LookAt(mi);
+        }
+
+        /// <summary>La altura del ojo del conductor en `visibilidad` del Resultado; si no, la de un auto.</summary>
+        private float AlturaOjo(string vehiculo)
+        {
+            foreach (var v in resultado?.Visibilidad ?? new VisibilidadElement[0])
+            {
+                if (v.Observador == vehiculo && v.AlturaOjoM > 0.3)
+                {
+                    return (float)v.AlturaOjoM;
+                }
+            }
+
+            return AlturaOjosPorOmision;
+        }
+
+        /// <summary>El minimapa se ve salvo en la cenital, que ya es la vista desde arriba.</summary>
+        private void ActualizarMinimapa()
+        {
+            if (minimapa == null)
+            {
+                return;
+            }
+
+            minimapa.enabled = modo != "cenital";
+            if (marcador != null)
+            {
+                var p = camara.transform.position;
+                var f = camara.transform.forward;
+                marcador.SetPositionAndRotation(
+                    new Vector3(p.x, 0.6f, p.z),
+                    Quaternion.LookRotation(new Vector3(f.x, 0f, f.z).sqrMagnitude > 1e-4f ? new Vector3(f.x, 0f, f.z) : Vector3.forward, Vector3.up));
+            }
         }
     }
 }
