@@ -6,19 +6,19 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 
 - **Desde el 2026-11-09, el Claude Code de René lleva también este frente,** porque aquí no se había subido nada. Si eres el Claude Code del compañero: antes de empezar una fase, revisa la tabla de abajo y `git fetch`; si la fase ya está tomada, sigue con la siguiente y anótala aquí.
 - **Hechas:** W1 (#187), W2 (#188), W3 (#192), W4 (#195, con su contrato #194) y W4b (#196), en `main`.
-- **Fase actual:** W5 («Terreno», C3 y O4), en `feat/w5-terreno`, con su contrato (#198) ya en `main`.
-- **Siguiente paso:** con CI en verde, fusionar W5 y seguir con W6.
+- **Fase actual:** W5 («Terreno», C3 y O4). El contrato (#198) y el solver (#199) ya están en `main`; la parte web va en `feat/w5-terreno-web`.
+- **Siguiente paso:** con CI en verde, fusionar la parte web de W5 y seguir con W6.
 
 ## Fases tomadas
 
-| Fase                                                         | Quién               | Rama                   | Estado                    |
-| ------------------------------------------------------------ | ------------------- | ---------------------- | ------------------------- |
-| W1 · Dictamen (O2)                                           | Claude Code de René | `feat/w1-dictamen`     | En `main` (#187)          |
-| W2 · El hecho (O1 y O5)                                      | Claude Code de René | `feat/w2-hecho`        | En `main` (#188)          |
-| W3 · C1: punto inicial, choques intermedios y puntos de paso | Claude Code de René | `feat/w3-puntos`       | En `main` (#192)          |
-| W4 · C2 y «Corregir después»                                 | Claude Code de René | `feat/w4-corregir`     | En `main` (#195)          |
-| W4b · Menos ruido visual                                     | Claude Code de René | `feat/w4b-menos-ruido` | En `main` (#196)          |
-| W5 · Terreno (C3 y O4)                                       | Claude Code de René | `feat/w5-terreno`      | En PR desde el 2026-11-10 |
+| Fase                                                         | Quién               | Rama                                     | Estado                             |
+| ------------------------------------------------------------ | ------------------- | ---------------------------------------- | ---------------------------------- |
+| W1 · Dictamen (O2)                                           | Claude Code de René | `feat/w1-dictamen`                       | En `main` (#187)                   |
+| W2 · El hecho (O1 y O5)                                      | Claude Code de René | `feat/w2-hecho`                          | En `main` (#188)                   |
+| W3 · C1: punto inicial, choques intermedios y puntos de paso | Claude Code de René | `feat/w3-puntos`                         | En `main` (#192)                   |
+| W4 · C2 y «Corregir después»                                 | Claude Code de René | `feat/w4-corregir`                       | En `main` (#195)                   |
+| W4b · Menos ruido visual                                     | Claude Code de René | `feat/w4b-menos-ruido`                   | En `main` (#196)                   |
+| W5 · Terreno (C3 y O4)                                       | Claude Code de René | `feat/w5-terreno`, `feat/w5-terreno-web` | Solver en `main` (#199); web en PR |
 
 ## W1 · Dictamen (O2)
 
@@ -285,7 +285,7 @@ Plan: PLAN-CESVI §3.4. Contrato: #198 (`Expediente.terreno` y los dos supuestos
 3. un tope, una zona ondulada y una de terracería marcados;
 4. el resumen con el terreno;
 5. el bloque «Terreno» de Reconstrucción;
-6. la Reconstrucción completa;
+6. los cruces de tope y los supuestos;
 7. el tope seleccionado para corregirlo.
 
 **Lo que no hace, dicho claro.**

@@ -21,14 +21,14 @@ const GRABACION = JSON.parse(
  */
 const DIR_CAPTURAS = join(__dirname, "../../../docs/cesvi/w5");
 type Sharp = (input: Buffer) => { webp(o: { quality: number }): { toBuffer(): Promise<Buffer> } };
-async function foto(page: Page, nombre: string, completa = false) {
+async function foto(page: Page, nombre: string) {
   if (!process.env.CAPTURAS_W5) return;
   const sharp = createRequire(require.resolve("next/package.json"))("sharp") as Sharp;
   mkdirSync(DIR_CAPTURAS, { recursive: true });
   await page.waitForTimeout(800);
   writeFileSync(
     join(DIR_CAPTURAS, `${nombre}.webp`),
-    await sharp(await page.screenshot({ fullPage: completa, animations: "disabled" }))
+    await sharp(await page.screenshot({ animations: "disabled" }))
       .webp({ quality: 82 })
       .toBuffer(),
   );
@@ -177,7 +177,12 @@ test("@flujo /cesvi: ¿cómo es el terreno? — un tope, una zona ondulada y el 
   await expect(page.getByTestId("maqueta-curvas")).toHaveCount(1);
   await terreno.scrollIntoViewIfNeeded();
   await foto(page, "5-reconstruccion-terreno");
-  await foto(page, "6-reconstruccion-completa", true);
+  // Los cruces de tope con su velocidad y lo que supone Croquis al cruzarlos.
+  const supuestos = page.getByTestId("supuestos-tope");
+  await expect(page.getByTestId("cruces-tope")).toBeVisible();
+  await supuestos.locator("summary").click();
+  await supuestos.scrollIntoViewIfNeeded();
+  await foto(page, "6-cruces-y-supuestos");
 
   // Corregir después: se toca el tope y se le da la altura medida; deja de ser «de la norma».
   await irAPaso(page, 3);
