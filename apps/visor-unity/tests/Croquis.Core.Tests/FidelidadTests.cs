@@ -41,7 +41,7 @@ namespace Croquis.Core.Tests
         [Fact]
         public void HayPaquetesDeTodosLosCasos()
         {
-            Assert.Equal(20, Paquetes().Length);
+            Assert.Equal(21, Paquetes().Length);
         }
 
         [Fact]

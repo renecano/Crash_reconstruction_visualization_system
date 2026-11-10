@@ -1400,23 +1400,23 @@ def reconstruct(
                 )
             )
     # Los objetos de los choques intermedios van después de los vehículos, cada uno una vez.
-    fixed: list[SceneObject] = []
-    for e, vid, obj in later_obj:
+    inmoviles: list[SceneObject] = []
+    for e, vid, objeto_c1 in later_obj:
         if vid not in group:
             continue
-        if obj not in fixed:
-            fixed.append(obj)
+        if objeto_c1 not in inmoviles:
+            inmoviles.append(objeto_c1)
         plans.append(
             PlannedImpact(
                 group.index(vid),
-                len(group) + fixed.index(obj),
+                len(group) + inmoviles.index(objeto_c1),
                 str(e["id"]),
                 RESTITUTION_VV,
                 IMPULSE_RATIO,
             )
         )
     joint_all, joint_hits = integrate_joint_impacts(
-        [*(post_body(by_id[i]) for i in group), *(_fixed_object_body(o, mu) for o in fixed)],
+        [*(post_body(by_id[i]) for i in group), *(_fixed_object_body(o, mu) for o in inmoviles)],
         impacts=plans,
         dt_out=dt,
         t_max=T_POST_MAX,
@@ -1438,7 +1438,7 @@ def reconstruct(
             # Contra un objeto fijo: toda la energía que se disipa deforma al vehículo (el objeto
             # se toma rígido, así que es una cota superior de su daño).
             vid_o = group[hit.a]
-            obj = fixed[hit.b - len(group)]
+            objeto_c1 = inmoviles[hit.b - len(group)]
             m_o = by_id[vid_o]
             cdc_o = zonas_ev.get(vid_o) or {"lado": _side_toward(hit.normal, hit.a_before.yaw)}
             k_o = stiffness_for(m_o.clase, zona_from_cdc_side(str(cdc_o.get("lado", "F"))))
@@ -1470,7 +1470,7 @@ def reconstruct(
                     hit.event_id,
                     "impacto_vehiculo_objeto",
                     hit.t,
-                    [vid_o, obj.id],
+                    [vid_o, objeto_c1.id],
                     {
                         "impulso_ns": [res2.impulse[0], res2.impulse[1]],
                         "adherencia": res2.sticking,
@@ -1559,14 +1559,14 @@ def reconstruct(
                 "tocarse.",
             )
 
-    for e, vid, obj in later_obj:
+    for e, vid, objeto_c1 in later_obj:
         if not any(h.event_id == e["id"] for h in joint_hits):
             flag(
                 "impacto_no_ocurre",
-                {"evento": e["id"], "vehiculos": [vid], "objeto": obj.id},
-                f"El choque del vehículo {by_id[vid].rol} contra el objeto {obj.id} declarado "
-                "después del primero no ocurre en la reconstrucción: su trayectoria no llega a "
-                "tocarlo.",
+                {"evento": e["id"], "vehiculos": [vid], "objeto": objeto_c1.id},
+                f"El choque del vehículo {by_id[vid].rol} contra el objeto {objeto_c1.id} "
+                "declarado después del primero no ocurre en la reconstrucción: su trayectoria no "
+                "llega a tocarlo.",
             )
 
     for m in models:

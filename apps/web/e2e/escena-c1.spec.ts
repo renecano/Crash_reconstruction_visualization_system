@@ -64,7 +64,7 @@ test("@flujo /cesvi: el primer golpe, un choque contra algo más y un punto de p
   // 1. El primer golpe: un toque en el mapa, con su mensaje de éxito y su marca.
   await expect(pregunta).toHaveText("¿Dónde fue el primer golpe?");
   await expect(page.getByTestId("escena-lista")).toHaveCount(0);
-  await tocarEnMetros(page, "choque-1", 0.5, 0.5);
+  await tocarEnMetros(page, "choque-1", -7, -6);
   await expect(page.getByTestId("mensaje-exito")).toContainText(
     "Marcaste dónde fue el primer golpe",
   );
