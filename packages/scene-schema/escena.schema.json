@@ -1738,9 +1738,37 @@
           "description": "Posiciones por vehículo y fase.",
           "items": { "$ref": "#/$defs/PosicionExpediente" },
           "maxItems": 60
+        },
+        "puntos_paso": {
+          "type": "array",
+          "description": "Puntos por donde el perito sabe que pasó un vehículo (C1), en su orden.",
+          "items": { "$ref": "#/$defs/PuntoPasoExpediente" },
+          "maxItems": 64
         }
       },
       "required": ["tipo"],
+      "additionalProperties": false
+    },
+    "PuntoPasoExpediente": {
+      "type": "object",
+      "description": "Un punto de paso que marca el perito en el mapa (C1): «el vehículo pasó por aquí». Es evidencia medida: en la escena va a `vehiculos[].puntos_paso`.",
+      "properties": {
+        "vehiculo": { "$ref": "#/$defs/IdVehiculoExpediente" },
+        "orden": { "type": "integer", "minimum": 1, "maximum": 32 },
+        "punto": { "$ref": "#/$defs/Coordenadas" },
+        "precision_m": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Qué tan preciso es el punto (m). Si falta, vale la incertidumbre de una posición medida del solver."
+        },
+        "t_s": {
+          "type": "number",
+          "description": "Segundos respecto al impacto principal (t = 0), si se sabe."
+        },
+        "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+        "cita": { "$ref": "#/$defs/Cita" }
+      },
+      "required": ["vehiculo", "orden", "punto", "fuente"],
       "additionalProperties": false
     },
     "EvidenciasLugar": {

@@ -867,6 +867,18 @@ export const PosicionExpediente = z.strictObject({
 });
 export type PosicionExpediente = z.infer<typeof PosicionExpediente>;
 
+/** Un punto de paso que marca el perito en el mapa (C1): «el vehículo pasó por aquí». Es evidencia medida: en la escena va a `vehiculos[].puntos_paso`. */
+export const PuntoPasoExpediente = z.strictObject({
+  vehiculo: IdVehiculoExpediente,
+  orden: z.int().min(1).max(32),
+  punto: Coordenadas,
+  precision_m: z.number().gt(0).optional(),
+  t_s: z.number().optional(),
+  fuente: FuenteExpediente,
+  cita: Cita.optional(),
+});
+export type PuntoPasoExpediente = z.infer<typeof PuntoPasoExpediente>;
+
 /** Una versión del hecho: la de la evidencia (la arma el perito) o la de un conductor (cita literal y maniobras). */
 export const VersionExpediente = z.strictObject({
   tipo: z.enum(["evidencia", "declarada"]),
@@ -874,6 +886,7 @@ export const VersionExpediente = z.strictObject({
   declaracion: Cita.optional(),
   maniobras: z.array(ManiobraExpediente).max(20).optional(),
   posiciones: z.array(PosicionExpediente).max(60).optional(),
+  puntos_paso: z.array(PuntoPasoExpediente).max(64).optional(),
 });
 export type VersionExpediente = z.infer<typeof VersionExpediente>;
 

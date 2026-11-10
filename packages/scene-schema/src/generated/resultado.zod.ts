@@ -291,7 +291,7 @@ export const InversionAlternativa = z.strictObject({
         .string()
         .regex(
           new RegExp(
-            "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance):[A-Za-z0-9_-]+$",
+            "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance|paso|punto_inicial):[A-Za-z0-9_-]+$",
           ),
         ),
     )
@@ -333,7 +333,7 @@ export const Inversion = z.strictObject({
         .string()
         .regex(
           new RegExp(
-            "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance):[A-Za-z0-9_-]+$",
+            "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance|paso|punto_inicial):[A-Za-z0-9_-]+$",
           ),
         ),
     )
