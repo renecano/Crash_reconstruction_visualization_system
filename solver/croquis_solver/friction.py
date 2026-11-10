@@ -58,6 +58,45 @@ def tire_friction(superficie: str, estado: str) -> RangedValue:
     return _ranged(llanta[superficie][estado])
 
 
+def zone_friction(tipo: str, estado: str) -> RangedValue:
+    """Coeficiente llanta–suelo de una zona del terreno (C3) según su tipo y el estado del lugar.
+
+    Los tipos de la vía usan su fila de la tabla. La grava es la grava suelta de la terracería, el
+    lodo es su lodo y la tierra es la terracería en el estado del lugar. El pasto solo tiene
+    medición en seco y en mojado: con grava suelta vale el seco y, con cualquier otro estado, el
+    mojado.
+    """
+    if tipo == "grava":
+        return tire_friction("terraceria", "grava_suelta")
+    if tipo == "lodo":
+        return tire_friction("terraceria", "lodo")
+    if tipo == "tierra":
+        return tire_friction("terraceria", estado)
+    if tipo == "pasto":
+        return tire_friction("pasto", "seco" if estado in {"seco", "grava_suelta"} else "mojado")
+    return tire_friction(tipo, estado)
+
+
+def zone_ranges(lugar: dict[str, Any]) -> list[tuple[int, float, float, str]]:
+    """(índice de la zona, mínimo, máximo, de dónde sale) de la fricción de cada zona del terreno:
+    el rango que declara la zona; si no, ±5 % si la fijó el perito, o el de la tabla para su tipo
+    y el estado del lugar. Es lo que muestrean el Monte Carlo y la inversión."""
+    out: list[tuple[int, float, float, str]] = []
+    terreno: dict[str, Any] = lugar.get("terreno") or {}
+    for k, z in enumerate(terreno.get("superficies", [])):
+        fz: dict[str, Any] = z["friccion"]
+        if fz.get("rango"):
+            lo, hi = (float(x) for x in fz["rango"])
+            out.append((k, lo, hi, "rango declarado de la zona"))
+        elif fz.get("fuente") == "usuario":
+            val = float(fz["valor"])
+            out.append((k, val * 0.95, val * 1.05, "±5% (usuario)"))
+        else:
+            mu = zone_friction(str(z["tipo"]), str(lugar["estado_superficie"]["valor"]))
+            out.append((k, mu.low, mu.high, f"tabla de fricción ({mu.fuente})"))
+    return out
+
+
 def pedestrian_friction(superficie: str) -> RangedValue:
     cuerpo: dict[str, Any] = _table()["cuerpo_peaton"]
     key = superficie if superficie in cuerpo else "otro"

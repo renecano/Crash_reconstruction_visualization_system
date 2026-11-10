@@ -161,6 +161,9 @@ def ranges(spec: JsonObj) -> list[Sampled]:
         out.append(
             Sampled(DOWNED_RUTA, md.low, md.high, f"arrastre de la moto caída ({md.fuente})")
         )
+    # Terreno (C3, W5): la fricción de cada zona, al final para no mover los campos de siempre.
+    for k, lo, hi, nota in friction.zone_ranges(lugar):
+        out.append(Sampled(f"lugar.terreno.superficies.{k}.friccion", lo, hi, nota))
     return out
 
 

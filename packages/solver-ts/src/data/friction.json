@@ -5,7 +5,8 @@
     "mumford": "Mumford, D. et al. Inverted vehicle drag tests: assessing the effect of speed on deceleration rates. Accident Investigation Quarterly 13, 1997 (asfalto y concreto, seco y mojado: 0.52–0.72 estático; 0.33–0.44 a más de 50 km/h). Vía TRID 476591.",
     "searle": "Searle, J. A. y Searle, A. The trajectories and landing velocities of pedestrians... SAE 831622, 1983; Searle, J. A. The physics of throw distance in accident reconstruction, SAE 930659, 1993 (cuerpo–asfalto 0.66, cuerpo–pasto 0.79; 0.70 citado en SAE 2014-01-0470).",
     "toolbox": "Engineering ToolBox, Friction coefficients for common materials (rubber on asphalt/concrete, dry/wet), engineeringtoolbox.com/friction-coefficients-d_778.html (verificación cruzada, no primaria).",
-    "peck": "Peck, L. R., Focha, W. y Gloekler, T. L. Motorcycle Sliding Friction for Accident Investigation. ifz Forschungsheft 16, Institut für Zweiradsicherheit, 2014 (año por los metadatos del PDF), pp. 62–76. 15 choques reales en pista con GPS: −0.45 g (DE 0.09); 14 pruebas controladas sin deslizadores: −0.48 g (DE 0.08); el único evento en asfalto mojado: −0.41 g. Copia consultada: axiomforensic.com/wp-content/uploads/2017/12/Sliding-Motorcycle-Friction-for-Accident-Investigation.pdf (SHA-256 d267041b537a66d644d92bfb54a3e18adb6f6fc1d1da02a151473f5c87637fe7)."
+    "peck": "Peck, L. R., Focha, W. y Gloekler, T. L. Motorcycle Sliding Friction for Accident Investigation. ifz Forschungsheft 16, Institut für Zweiradsicherheit, 2014 (año por los metadatos del PDF), pp. 62–76. 15 choques reales en pista con GPS: −0.45 g (DE 0.09); 14 pruebas controladas sin deslizadores: −0.48 g (DE 0.08); el único evento en asfalto mojado: −0.41 g. Copia consultada: axiomforensic.com/wp-content/uploads/2017/12/Sliding-Motorcycle-Friction-for-Accident-Investigation.pdf (SHA-256 d267041b537a66d644d92bfb54a3e18adb6f6fc1d1da02a151473f5c87637fe7).",
+    "cenek": "Cenek, P. D., Jamieson, N. J. y McLarin, M. W. Frictional Characteristics of Roadside Grass Types. Opus International Consultants, Central Laboratories, Gracefield, Nueva Zelanda (sin fecha en el documento; saferroadsconference.com/wp-content/uploads/2016/05/Peter-Cenek-Frictional-Characteristics-Roadside-Grass-Types.pdf, consultado el 2026-11-10). Tabla 4, frenado con llantas bloqueadas desde 40 km/h, seco y mojado: trébol blanco 0.21 y 0.17; ballico largo 0.36 y 0.21; ballico corto 0.38 y 0.24. Su tabla 1 reproduce a Noon, R. K. Engineering Analysis of Vehicular Accidents, CRC Press, 1994: campo de pasto mojado 0.20; camino de grava y tierra 0.35."
   },
   "llanta": {
     "asfalto": {
@@ -141,6 +142,21 @@
         "nominal": 0.3,
         "fuente": "fricke (mud 0.20–0.45 vía secundaria)",
         "tipo": "secundaria"
+      }
+    },
+    "pasto": {
+      "_nota": "Solo como zona del terreno (C3): el pasto no es una superficie de la vía. Rango: el mínimo y el máximo de los tres pastos medidos; nominal: su mediana.",
+      "seco": {
+        "rango": [0.21, 0.38],
+        "nominal": 0.36,
+        "fuente": "cenek (tabla 4, seco: 0.21, 0.36 y 0.38)",
+        "tipo": "primaria"
+      },
+      "mojado": {
+        "rango": [0.17, 0.24],
+        "nominal": 0.21,
+        "fuente": "cenek (tabla 4, mojado: 0.17, 0.21 y 0.24; Noon 1994: 0.20)",
+        "tipo": "primaria"
       }
     }
   },
