@@ -1345,7 +1345,7 @@
           "maxItems": 64,
           "items": {
             "type": "string",
-            "pattern": "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance):[A-Za-z0-9_-]+$"
+            "pattern": "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance|paso|punto_inicial):[A-Za-z0-9_-]+$"
           }
         },
         "parametros": {
@@ -1510,7 +1510,7 @@
           "maxItems": 64,
           "items": {
             "type": "string",
-            "pattern": "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance):[A-Za-z0-9_-]+$"
+            "pattern": "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance|paso|punto_inicial):[A-Za-z0-9_-]+$"
           }
         },
         "parametros": {

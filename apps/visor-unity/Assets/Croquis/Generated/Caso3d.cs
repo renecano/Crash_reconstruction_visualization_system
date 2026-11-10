@@ -1332,6 +1332,12 @@ namespace Croquis.Generated
         [JsonProperty("posiciones", NullValueHandling = NullValueHandling.Ignore)]
         public PosicioneElement[] Posiciones { get; set; }
 
+        /// <summary>
+        /// Puntos por donde el perito sabe que pasó un vehículo (C1), en su orden.
+        /// </summary>
+        [JsonProperty("puntos_paso", NullValueHandling = NullValueHandling.Ignore)]
+        public VersionePuntosPaso[] PuntosPaso { get; set; }
+
         [JsonProperty("tipo")]
         public VersioneTipo Tipo { get; set; }
     }
@@ -1378,6 +1384,41 @@ namespace Croquis.Generated
         [JsonProperty("rumbo")]
         [JsonConverter(typeof(FriskyMinMaxValueCheckConverter))]
         public double Rumbo { get; set; }
+
+        [JsonProperty("vehiculo")]
+        public string Vehiculo { get; set; }
+    }
+
+    /// <summary>
+    /// Un punto de paso que marca el perito en el mapa (C1): «el vehículo pasó por aquí». Es
+    /// evidencia medida: en la escena va a `vehiculos[].puntos_paso`.
+    /// </summary>
+    public partial class VersionePuntosPaso
+    {
+        [JsonProperty("cita", NullValueHandling = NullValueHandling.Ignore)]
+        public Cita Cita { get; set; }
+
+        [JsonProperty("fuente")]
+        public ResultadoFuente Fuente { get; set; }
+
+        [JsonProperty("orden")]
+        public long Orden { get; set; }
+
+        /// <summary>
+        /// Qué tan preciso es el punto (m). Si falta, vale la incertidumbre de una posición medida
+        /// del solver.
+        /// </summary>
+        [JsonProperty("precision_m", NullValueHandling = NullValueHandling.Ignore)]
+        public double? PrecisionM { get; set; }
+
+        [JsonProperty("punto")]
+        public Coordenadas Punto { get; set; }
+
+        /// <summary>
+        /// Segundos respecto al impacto principal (t = 0), si se sabe.
+        /// </summary>
+        [JsonProperty("t_s", NullValueHandling = NullValueHandling.Ignore)]
+        public double? TS { get; set; }
 
         [JsonProperty("vehiculo")]
         public string Vehiculo { get; set; }
@@ -2184,7 +2225,7 @@ namespace Croquis.Generated
         /// Puntos por donde se sabe que pasó (C1).
         /// </summary>
         [JsonProperty("puntos_paso", NullValueHandling = NullValueHandling.Ignore)]
-        public PuntosPasoElement[] PuntosPaso { get; set; }
+        public VehiculoPuntosPaso[] PuntosPaso { get; set; }
 
         /// <summary>
         /// Letra con la que se nombra en el croquis (A, B, C…).
@@ -2327,7 +2368,7 @@ namespace Croquis.Generated
     /// distancia mínima de la trayectoria al punto, con su precisión; si trae `t_s`, también la
     /// posición en ese instante.
     /// </summary>
-    public partial class PuntosPasoElement
+    public partial class VehiculoPuntosPaso
     {
         [JsonProperty("id")]
         public string Id { get; set; }

@@ -1601,28 +1601,33 @@ class ManiobraExpediente(BaseModel):
     cita: Cita | None = None
 
 
-class VersionExpediente(BaseModel):
+class PuntoPasoExpediente(BaseModel):
     """
-    Una versión del hecho: la de la evidencia (la arma el perito) o la de un conductor (cita literal y maniobras).
+    Un punto de paso que marca el perito en el mapa (C1): «el vehículo pasó por aquí». Es evidencia medida: en la escena va a `vehiculos[].puntos_paso`.
     """
 
     model_config = ConfigDict(
         extra="forbid",
     )
-    tipo: Literal["evidencia", "declarada"]
-    declarante: Annotated[str | None, Field(pattern="^[A-Z][A-Z0-9]{0,3}$")] = None
+    vehiculo: Annotated[str, Field(pattern="^[A-Z][A-Z0-9]{0,3}$")]
     """
     Identificador del vehículo en el expediente: A, B, C… (o V1, V2… en un dictamen importado).
     """
-    declaracion: Cita | None = None
-    maniobras: Annotated[list[ManiobraExpediente] | None, Field(max_length=20)] = None
+    orden: Annotated[int, Field(ge=1, le=32)]
+    punto: Coordenadas
+    precision_m: Annotated[float | None, Field(gt=0.0)] = None
     """
-    Maniobras en orden.
+    Qué tan preciso es el punto (m). Si falta, vale la incertidumbre de una posición medida del solver.
     """
-    posiciones: Annotated[list[PosicionExpediente] | None, Field(max_length=60)] = None
+    t_s: float | None = None
     """
-    Posiciones por vehículo y fase.
+    Segundos respecto al impacto principal (t = 0), si se sabe.
     """
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+    cita: Cita | None = None
 
 
 class Restos(BaseModel):
@@ -1802,43 +1807,6 @@ class ResultadoExpediente(BaseModel):
     """
 
 
-class Expediente(BaseModel):
-    """
-    El expediente de CESVI (contrato v2, docs/cesvi/PLAN-CESVI.md §4): caso, vehículos 1..N, daños, impactos 1..M en orden, versiones, evidencias del lugar, cálculos, criterios y resultado.
-    """
-
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-    caso: CasoExpediente
-    vehiculos: Annotated[list[VehiculoExpediente], Field(max_length=20)]
-    """
-    Vehículos 1..N.
-    """
-    danos: Annotated[list[DanoExpediente] | None, Field(max_length=200)] = None
-    """
-    Daños por vehículo.
-    """
-    impactos: Annotated[list[ImpactoExpediente] | None, Field(max_length=50)] = None
-    """
-    Impactos en orden.
-    """
-    versiones: Annotated[list[VersionExpediente] | None, Field(max_length=20)] = None
-    """
-    Versiones: la de la evidencia y una por declaración.
-    """
-    evidencias: EvidenciasLugar | None = None
-    calculos: Annotated[list[CalculoExpediente] | None, Field(max_length=60)] = None
-    """
-    Cálculos.
-    """
-    criterios: Annotated[list[CriterioExpediente] | None, Field(max_length=40)] = None
-    """
-    Criterios de correspondencia.
-    """
-    resultado: ResultadoExpediente | None = None
-
-
 class RedVial(BaseModel):
     """
     Calles de OpenStreetMap alrededor de `ubicacion_real`, proyectadas a metros en el marco local de la escena (desde 1.2.0). Se guardan en la escena para que sea determinista y funcione sin red.
@@ -1937,6 +1905,71 @@ class Evento(BaseModel):
     punto_impacto: Punto2D | None = None
     descripcion: Annotated[str | None, Field(max_length=400)] = None
     procedencia: Procedencia
+
+
+class VersionExpediente(BaseModel):
+    """
+    Una versión del hecho: la de la evidencia (la arma el perito) o la de un conductor (cita literal y maniobras).
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    tipo: Literal["evidencia", "declarada"]
+    declarante: Annotated[str | None, Field(pattern="^[A-Z][A-Z0-9]{0,3}$")] = None
+    """
+    Identificador del vehículo en el expediente: A, B, C… (o V1, V2… en un dictamen importado).
+    """
+    declaracion: Cita | None = None
+    maniobras: Annotated[list[ManiobraExpediente] | None, Field(max_length=20)] = None
+    """
+    Maniobras en orden.
+    """
+    posiciones: Annotated[list[PosicionExpediente] | None, Field(max_length=60)] = None
+    """
+    Posiciones por vehículo y fase.
+    """
+    puntos_paso: Annotated[list[PuntoPasoExpediente] | None, Field(max_length=64)] = None
+    """
+    Puntos por donde el perito sabe que pasó un vehículo (C1), en su orden.
+    """
+
+
+class Expediente(BaseModel):
+    """
+    El expediente de CESVI (contrato v2, docs/cesvi/PLAN-CESVI.md §4): caso, vehículos 1..N, daños, impactos 1..M en orden, versiones, evidencias del lugar, cálculos, criterios y resultado.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    caso: CasoExpediente
+    vehiculos: Annotated[list[VehiculoExpediente], Field(max_length=20)]
+    """
+    Vehículos 1..N.
+    """
+    danos: Annotated[list[DanoExpediente] | None, Field(max_length=200)] = None
+    """
+    Daños por vehículo.
+    """
+    impactos: Annotated[list[ImpactoExpediente] | None, Field(max_length=50)] = None
+    """
+    Impactos en orden.
+    """
+    versiones: Annotated[list[VersionExpediente] | None, Field(max_length=20)] = None
+    """
+    Versiones: la de la evidencia y una por declaración.
+    """
+    evidencias: EvidenciasLugar | None = None
+    calculos: Annotated[list[CalculoExpediente] | None, Field(max_length=60)] = None
+    """
+    Cálculos.
+    """
+    criterios: Annotated[list[CriterioExpediente] | None, Field(max_length=40)] = None
+    """
+    Criterios de correspondencia.
+    """
+    resultado: ResultadoExpediente | None = None
 
 
 class Vehiculo(BaseModel):
