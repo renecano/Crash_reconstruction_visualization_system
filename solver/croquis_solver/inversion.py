@@ -84,6 +84,8 @@ SIGMA_THROW_M = 1.5  # incertidumbre de una distancia de proyección declarada (
 SIGMA_SLIDE_M = 1.5
 SPEED_BOUNDS_KMH = (0.0, 200.0)
 STATED = ("relato", "usuario")
+# Lo que el perito marca en el mapa (C1) llega con esta fuente.
+MARKED = "usuario"
 CALIBRATION_PATH = Path(__file__).resolve().parent / "data" / "inversion_calibration.json"
 
 
@@ -281,6 +283,22 @@ def _no_floats() -> dict[str, float]:
 
 
 @dataclass(frozen=True)
+class Waypoint:
+    """Un punto de paso declarado (C1): por dónde se sabe que pasó un vehículo."""
+
+    id: str
+    vehicle: str
+    x: float
+    y: float
+    sigma: float  # su `precision_m`, o la incertidumbre de una posición medida
+    t_s: float | None = None  # el instante, si se sabe (t = 0 es el impacto principal)
+
+
+def _no_waypoints() -> tuple[Waypoint, ...]:
+    return ()
+
+
+@dataclass(frozen=True)
 class Evidence:
     """Lo declarado que el solver debe reproducir."""
 
@@ -303,6 +321,10 @@ class Evidence:
     assumed_as_data: bool = False
     # (el que golpea, el golpeado) si el primer impacto entre vehículos es un alcance.
     rear_end: tuple[tuple[str, str], ...] = ()
+    # Los puntos de paso declarados (C1), en el orden de la escena.
+    waypoints: tuple[Waypoint, ...] = field(default_factory=_no_waypoints)
+    # El punto inicial del choque que marcó el perito (C1): (evento, x, y).
+    impact_point: tuple[str, float, float] | None = None
 
     def empty(self) -> bool:
         return not (
@@ -313,6 +335,8 @@ class Evidence:
             or self.rest_heading
             or self.slide
             or self.rest_assumed
+            or self.waypoints
+            or self.impact_point
         )
 
     def weight(self) -> float:
@@ -332,6 +356,8 @@ class Evidence:
             + [f"dano_minimo:{k}" for k in sorted(self.damage_min)]
             + [f"reposo_supuesto:{k}" for k in sorted(self.rest_assumed)]
             + [f"rumbo_final_supuesto:{k}" for k in sorted(self.heading_assumed)]
+            + [f"paso:{w.id}" for w in self.waypoints]
+            + ([f"punto_inicial:{self.impact_point[0]}"] if self.impact_point else [])
         )
 
 
@@ -340,6 +366,50 @@ def _len_m(campo: JsonObj) -> float:
     return v * {"m": 1.0, "cm": 0.01, "mm": 0.001, "km": 1000.0}.get(
         str(campo.get("unidad", "m")), 1.0
     )
+
+
+def waypoints_from_spec(spec: JsonObj) -> tuple[Waypoint, ...]:
+    """Los puntos de paso declarados (relato o persona usuaria) de cada vehículo, por su `orden`.
+
+    Sin `precision_m` valen la incertidumbre de una posición medida. Un punto supuesto no es
+    evidencia y no entra."""
+    out: list[Waypoint] = []
+    for v in spec["vehiculos"]:
+        puntos: list[JsonObj] = list(v.get("puntos_paso") or [])
+        for pp in sorted(puntos, key=lambda q: (int(q["orden"]), str(q["id"]))):
+            proc: JsonObj = pp.get("procedencia") or {}
+            if proc.get("fuente") not in STATED:
+                continue
+            pos: JsonObj = pp["posicion"]
+            precision = pp.get("precision_m")
+            t_s = pp.get("t_s")
+            out.append(
+                Waypoint(
+                    str(pp["id"]),
+                    str(v["id"]),
+                    float(pos["x"]),
+                    float(pos["y"]),
+                    float(precision) if precision is not None else SIGMA_POSITION_M,
+                    float(t_s) if t_s is not None else None,
+                )
+            )
+    return tuple(out)
+
+
+def impact_point_from_spec(spec: JsonObj) -> tuple[str, float, float] | None:
+    """El punto inicial del choque, si lo marcó el perito (`procedencia.fuente = "usuario"`).
+
+    El `punto_impacto` que sale del relato solo guía la geometría del contacto, como siempre: no
+    es una medición. El que marca el perito en el mapa sí lo es, y entra a la inversión."""
+    eventos: list[JsonObj] = sorted(spec.get("eventos", []), key=lambda e: int(e["orden"]))
+    event: JsonObj | None = next((e for e in eventos if str(e["tipo"]).startswith("impacto")), None)
+    if event is None or not event.get("punto_impacto"):
+        return None
+    proc: JsonObj = event.get("procedencia") or {}
+    if proc.get("fuente") != MARKED:
+        return None
+    punto: JsonObj = event["punto_impacto"]
+    return (str(event["id"]), float(punto["x"]), float(punto["y"]))
 
 
 def evidence_from_spec(
@@ -480,6 +550,8 @@ def evidence_from_spec(
         rest_assumed,
         heading_assumed,
         rear_end=rear_end_pairs(spec),
+        waypoints=waypoints_from_spec(spec),
+        impact_point=impact_point_from_spec(spec),
     )
 
 
@@ -566,8 +638,9 @@ class Param:
 
 
 def parameters(spec: JsonObj, ev: Evidence) -> list[Param]:
-    """Velocidad de cada vehículo en movimiento y, si hay posiciones finales declaradas, el rumbo
-    inicial de los que no lo tienen declarado (±`ANGLE_BOUND_DEG`)."""
+    """Velocidad de cada vehículo en movimiento y, si hay posiciones finales, puntos de paso o el
+    punto inicial declarados, el rumbo inicial de los que no lo tienen declarado
+    (±`ANGLE_BOUND_DEG`)."""
     out: list[Param] = []
     by_id = {v["id"]: v for v in spec["vehiculos"]}
     ids = moving_vehicles(spec)
@@ -576,7 +649,7 @@ def parameters(spec: JsonObj, ev: Evidence) -> list[Param]:
         val = float(vp.get("valor", 40.0)) * (3.6 if vp.get("unidad") == "m/s" else 1.0)
         start = min(max(val, 5.0), SPEED_BOUNDS_KMH[1] - 1)
         out.append(Param("velocidad", vid, start, *SPEED_BOUNDS_KMH, _stated(vp or None)))
-    if ev.rest or ev.rest_heading:
+    if ev.rest or ev.rest_heading or ev.waypoints or ev.impact_point:
         for vid in ids:
             pose: JsonObj = by_id[vid]["posicion_inicial"]
             if _stated_pose(pose):
@@ -626,6 +699,37 @@ class Fit:
     @property
     def headings_deg(self) -> dict[str, float]:
         return {k.split(":", 1)[1]: v for k, v in self.values.items() if k.startswith("rumbo:")}
+
+
+def closest_on_path(xs: list[float], ys: list[float], x: float, y: float) -> tuple[float, float]:
+    """El punto de la trayectoria (la poligonal de sus muestras) más cercano a (x, y).
+
+    Solo sumas, productos y cocientes: da lo mismo, bit a bit, en Python y en TS."""
+    best_x, best_y = xs[0], ys[0]
+    best = (best_x - x) * (best_x - x) + (best_y - y) * (best_y - y)
+    for i in range(len(xs) - 1):
+        ax, ay = xs[i], ys[i]
+        dx, dy = xs[i + 1] - ax, ys[i + 1] - ay
+        l2 = dx * dx + dy * dy
+        u = 0.0 if l2 <= 0.0 else ((x - ax) * dx + (y - ay) * dy) / l2
+        u = 0.0 if u < 0.0 else 1.0 if u > 1.0 else u
+        cx, cy = ax + u * dx, ay + u * dy
+        d2 = (cx - x) * (cx - x) + (cy - y) * (cy - y)
+        if d2 < best:
+            best, best_x, best_y = d2, cx, cy
+    return best_x, best_y
+
+
+def position_at(ts: list[float], xs: list[float], ys: list[float], t: float) -> tuple[float, float]:
+    """La posición en el instante `t`, interpolada entre muestras; fuera del tramo, su extremo."""
+    if t <= ts[0]:
+        return xs[0], ys[0]
+    for i in range(len(ts) - 1):
+        if t <= ts[i + 1]:
+            dt = ts[i + 1] - ts[i]
+            u = 0.0 if dt <= 0.0 else (t - ts[i]) / dt
+            return xs[i] + u * (xs[i + 1] - xs[i]), ys[i] + u * (ys[i + 1] - ys[i])
+    return xs[-1], ys[-1]
 
 
 def _residuals(
@@ -699,6 +803,24 @@ def _residuals(
         if v is None:
             continue
         out[f"rumbo_final_supuesto:{vid}"] = _wrap_deg(v.rest_pose[2] - h) / (SIGMA_HEADING_DEG * w)
+    for wp in ev.waypoints:
+        v = by_v.get(wp.vehicle)
+        if v is None or not v.trajectory.t:
+            continue
+        tr = v.trajectory
+        # Por dónde pasó: lo que le falta a la trayectoria para tocar el punto, en sus dos ejes.
+        cx, cy = closest_on_path(tr.x, tr.y, wp.x, wp.y)
+        out[f"paso:{wp.id}:x"] = (cx - wp.x) / wp.sigma
+        out[f"paso:{wp.id}:y"] = (cy - wp.y) / wp.sigma
+        if wp.t_s is not None:
+            # Y cuándo: dónde estaba en ese instante.
+            px, py = position_at(tr.t, tr.x, tr.y, wp.t_s)
+            out[f"paso:{wp.id}:tx"] = (px - wp.x) / wp.sigma
+            out[f"paso:{wp.id}:ty"] = (py - wp.y) / wp.sigma
+    if ev.impact_point is not None and r.punto_impacto is not None:
+        eid, x, y = ev.impact_point
+        out[f"punto_inicial:{eid}:x"] = (r.punto_impacto[0] - x) / SIGMA_POSITION_M
+        out[f"punto_inicial:{eid}:y"] = (r.punto_impacto[1] - y) / SIGMA_POSITION_M
     return out
 
 
@@ -1008,6 +1130,26 @@ def perturbed(spec: JsonObj, ev: Evidence, rng: Draws) -> Perturbed:
     heading_assumed = {
         k: h + rng.gauss(0, SIGMA_HEADING_DEG * ev.weight()) for k, h in ev.heading_assumed.items()
     }
+    # Lo de C1 se sortea al final de lo declarado: una escena sin puntos de paso ni punto inicial
+    # marcado conserva la misma secuencia de sorteos de siempre.
+    waypoints = tuple(
+        Waypoint(
+            w.id,
+            w.vehicle,
+            w.x + rng.gauss(0, w.sigma),
+            w.y + rng.gauss(0, w.sigma),
+            w.sigma,
+            w.t_s,
+        )
+        for w in ev.waypoints
+    )
+    impact_point = ev.impact_point
+    if impact_point is not None:
+        impact_point = (
+            impact_point[0],
+            impact_point[1] + rng.gauss(0, SIGMA_POSITION_M),
+            impact_point[2] + rng.gauss(0, SIGMA_POSITION_M),
+        )
     # Las marcas de frenado se miden con cinta: se toman tal cual (su incertidumbre entra por la
     # fricción).
     e = Evidence(
@@ -1022,6 +1164,8 @@ def perturbed(spec: JsonObj, ev: Evidence, rng: Draws) -> Perturbed:
         heading_assumed,
         ev.assumed_as_data,
         ev.rear_end,
+        waypoints,
+        impact_point,
     )
     downed_mu: float | None = None
     if any(str(v["clase"]["valor"]) in friction.DOWNED_SLIDE_CLASSES for v in s["vehiculos"]):

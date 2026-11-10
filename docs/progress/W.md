@@ -6,14 +6,16 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 
 - **Desde el 2026-11-09, el Claude Code de René lleva también este frente,** porque aquí no se había subido nada. Si eres el Claude Code del compañero: antes de empezar una fase, revisa la tabla de abajo y `git fetch`; si la fase ya está tomada, sigue con la siguiente y anótala aquí.
 - **Hechas:** W1 (#187) y W2 (#188), las dos en `main`.
-- **Siguiente:** W3. No está tomada: no hay rama `feat/w3-*` ni código. Abajo, en «W3 · Lo que hay antes de empezar», está el mapa de lo que toca.
+- **Fase actual:** W3 (C1), en `feat/w3-puntos`, con su PR abierto. El código y sus pruebas están completos; la e2e nueva (`escena-c1.spec.ts`) corre en CI y falta correrla en la laptop cuando René cierre el navegador.
+- **Siguiente paso:** con CI en verde, fusionar W3. Después, W4 ampliada («Corregir después»), que ya puede partir de `editandoC1` y de los chips del avance de W3.
 
 ## Fases tomadas
 
-| Fase                    | Quién               | Rama               | Estado           |
-| ----------------------- | ------------------- | ------------------ | ---------------- |
-| W1 · Dictamen (O2)      | Claude Code de René | `feat/w1-dictamen` | En `main` (#187) |
-| W2 · El hecho (O1 y O5) | Claude Code de René | `feat/w2-hecho`    | En `main` (#188) |
+| Fase                                                         | Quién               | Rama               | Estado                    |
+| ------------------------------------------------------------ | ------------------- | ------------------ | ------------------------- |
+| W1 · Dictamen (O2)                                           | Claude Code de René | `feat/w1-dictamen` | En `main` (#187)          |
+| W2 · El hecho (O1 y O5)                                      | Claude Code de René | `feat/w2-hecho`    | En `main` (#188)          |
+| W3 · C1: punto inicial, choques intermedios y puntos de paso | Claude Code de René | `feat/w3-puntos`   | En PR desde el 2026-11-09 |
 
 ## W1 · Dictamen (O2)
 
@@ -58,20 +60,54 @@ Rama `feat/w2-hecho`, sobre la de W1.
 - **Pruebas:** unitarias en `packages/cesvi/src/relato.test.ts` y en `apps/web/src/lib/hecho-letras.test.ts`, entre ellas el zócalo, «gggg…» y la ruta. El prompt no cambió: las grabaciones de antes siguen valiendo.
 - **Límite:** el vocabulario es una lista cerrada. Una palabra que no esté («guayín», «troca») queda sin mención propia y su clase se pregunta, como antes.
 
-## W3 · Lo que hay antes de empezar (leído el 2026-11-09, sin código todavía)
+## W3 · Punto inicial, choques intermedios y puntos de paso (C1)
 
-Se revisó el código para saber qué toca W3 (PLAN-CESVI §3.4). Nada de esto está hecho.
+Decisiones en el ADR 0130. Contrato en el PR #191 (ya en `main`).
 
-- **Contrato.** Lo único nuevo de C1 en la escena 2.3.0 es `vehiculos[].puntos_paso` (`PuntoPaso`: `posicion`, `precision_m`, `t_s`, `orden`). El primer golpe y los choques intermedios usan `eventos[]` con su `punto_impacto`, como antes. El expediente, que es lo que edita la escena fácil, no tiene dónde guardar puntos de paso ni objetos con posición: hace falta un PR `contract:` o guardarlos junto al caso.
-- **Nadie lee `puntos_paso` salvo el visor** (`marcadoresDe`). El solver, `packages/cesvi` y la escena fácil no lo usan.
-- **El punto del primer golpe no entra a la inversión.** Hoy solo fija el origen de la escena y guía la geometría del contacto (`resolve_contact`). Falta su residuo en `_residuals` (Python) y `residuals` (TS).
-- **Los choques intermedios contra objetos se pierden dos veces:** `especDeExpediente` los descarta con un límite, y `_later_impacts` / `laterImpacts` solo aceptan pares de vehículos. Después del impacto principal no hay choque con `entorno.objetos`. Un objeto del impacto principal se coloca en un lugar fijo (6, −6), no donde se marcó.
-- **Los rumbos solo son parámetros de la inversión si hay evidencia de reposo,** y una escena que solo tenga puntos de paso se saltaría el ajuste (`Evidence.empty()`).
-- **Etiquetas de evidencia nuevas** (por ejemplo `paso:<id>`): van en los dos patrones de `resultado.schema.json` (Inversion e InversionAlternativa) y en `evidenciaEnPalabras`. La evidencia del perito lleva `procedencia.fuente = "usuario"`.
-- **La escena fácil ya pregunta «¿Dónde fue el choque?» al principio,** antes de los vehículos. W3 lo pide después de colocarlos: hay que decidir si se mueve o se reutiliza.
-- **La ayuda de las e2e (`colocarTodo`) avanza por el texto de la pregunta** y la usan 12 specs: toda pregunta nueva hay que enseñársela.
-- **Paridad:** `perturbed()` rehace la evidencia en un orden fijo; agregar la de los puntos de paso cambia la secuencia de números al azar, igual en Python y en TS.
-- **ADR:** el bloque de W (0130 a 0169) está vacío; el primero libre es el 0130.
+### Qué se hizo
+
+- **Solver, Python y TS con paridad:**
+  - los puntos de paso entran a la inversión como residuo (lo que le falta a la trayectoria para tocar el punto, entre su precisión; con `t_s`, también la posición en ese instante);
+  - el punto inicial del choque entra como evidencia medida cuando lo marcó el perito;
+  - con esa evidencia también se ajustan los rumbos de llegada;
+  - un choque intermedio contra un objeto ocurre contra el objeto marcado, en el lugar marcado: el objeto es un cuerpo inmóvil en la integración de después del impacto. Si la trayectoria no llega, sale un aviso.
+- **`packages/cesvi`:** el primer golpe, los puntos de paso y los choques intermedios del expediente llegan a la escena del solver. Un impacto posterior contra un objeto con su punto ya no se descarta.
+- **Escena fácil:** después de los vehículos, «¿Dónde fue el primer golpe?», «¿Chocó contra algo más?» y «¿Sabes por dónde pasó?», una a la vez, con mensajes de éxito, alerta si el punto queda lejos del choque, marcas en el mapa y sus líneas en el resumen.
+
+### Evidencia
+
+- **Inversión con puntos de paso** (`fixtures/inversion/resultados/lateral_puntos_paso.json`, escena sintética de `eval/w3_fixtures.py`): las velocidades verdaderas eran 55 y 35 km/h; arrancando de 45 y 40, la inversión estima 55.0 y 35.02 km/h y pasa por los cuatro puntos con residuos menores a 0.01 σ.
+- **Choque intermedio** (`fixtures/c1/resultados/alcance_muro.json`): el vehículo golpeado choca contra el muro marcado a los 1.374 s.
+- **Pruebas corridas en la laptop, una suite a la vez:**
+  - `uv run pytest solver/tests/test_inversion.py solver/tests/test_puntos_paso.py solver/tests/test_consistency.py`: 50 en verde.
+  - `uv run pytest solver/tests/test_choque_intermedio.py`: 4 en verde.
+  - `vitest` de `solver-ts`: `puntos-paso.test.ts` (6) y `choque-intermedio.test.ts` (4), los dos con paridad contra Python.
+  - `vitest` de `cesvi`: `reconstruccion.test.ts` y `reconstruccion-c1.test.ts`, 31 en verde.
+  - `vitest` de la web: `escena-facil.test.ts` y `escena-facil-c1.test.ts`, 27 en verde.
+  - `vitest` de `scene-schema`: 175 en verde; `generate:check` al día.
+- **Sin correr en la laptop:**
+  - la comprobación de todos los resultados guardados (`croquis-solver reconstruct --all --check`) tarda más de 9 min aquí y se cortó por tiempo, sin fallo: la corre CI;
+  - la e2e de W3 y las e2e existentes que tocan la escena fácil: las corre CI; en la laptop, cuando René cierre el navegador.
+
+### Decisiones que conviene saber
+
+- **La pregunta del principio, «¿Dónde fue el choque?», se queda.** La del primer golpe va después de los vehículos, como pide el plan, y afina el punto del primer contacto.
+- **Las tres preguntas no bloquean «Siguiente»,** y una escena que llega completa (un dictamen importado) no las hace sola: quedan en el avance.
+- **El punto de impacto del relato no se volvió evidencia.** Solo el que marca el perito. Por eso ningún caso existente cambia de números.
+- **Las e2e que colocan los vehículos a mano** contestan las tres con lo que no agrega evidencia (`contestarC1` en `ayuda-recorrido.ts`): sus cifras no cambian.
+
+### Pendiente
+
+- Guardar con el caso las respuestas «No sé» y «No» de las tres preguntas (hoy se guarda lo marcado, que está en el expediente).
+- El `rumbo_deg` de un punto de paso todavía no entra a la inversión.
+- En el visor, el marcador `punto_inicial` todavía no se emite: el primer golpe se dibuja con el punto de impacto que da el solver (`primer_golpe`).
+- W4: mover, quitar y cambiar lo marcado tocándolo en el mapa. Hoy se corrige desde el avance («Cambiar») y con «Deshacer».
+
+### Resumen para René
+
+- **Qué quedó:** en la escena fácil, después de colocar los vehículos, Croquis pregunta dónde fue el primer golpe, si chocó contra algo más y por dónde pasó. Lo que marcas entra a la reconstrucción como evidencia medida, en el navegador (TS) igual que en la referencia de Python.
+- **Cómo probarlo:** caso nuevo con la narración de ejemplo, coloca los dos vehículos y contesta las tres preguntas (por ejemplo, el Camaro contra un poste y un punto de paso). En la reconstrucción, «Evidencia usada» debe decir «punto del primer golpe que marcó el perito», «punto de paso 1 de V2» y «lugar del choque intermedio (impacto 2)».
+- **Qué necesito de ti:** cuando cierres el navegador, avísame para correr la e2e de W3 en la laptop. En CI corre con cada push.
 
 ## Lo que U deja dicho para W
 

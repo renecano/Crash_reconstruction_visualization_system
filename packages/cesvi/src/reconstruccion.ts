@@ -38,8 +38,67 @@ const OBJETO: [RegExp, string][] = [
   [/muro|pared|guarnici[oó]n|muret/i, "muro"],
   [/se[ñn]al/i, "senal"],
 ];
+/**
+ * Los objetos de un choque intermedio (C1): lo que el perito elige en la escena fácil. Antes que
+ * `OBJETO`, que no distingue la guarnición del muro ni conoce la barrera ni el vehículo estacionado.
+ */
+const OBJETO_INTERMEDIO: [RegExp, string][] = [
+  [/guarnici[oó]n|banqueta/i, "guarnicion"],
+  [/barrera|contenci[oó]n|defensa/i, "barrera"],
+  [/estacionad/i, "vehiculo_estacionado"],
+  ...OBJETO,
+];
+const SUPUESTA = { unidad: "m", fuente: "default", confianza: 0.5 } as const;
+/**
+ * Las medidas de un objeto que el perito marca sin medirlo: valores típicos, declarados como
+ * supuesto. El muro, la barda, la barrera y la guarnición son un tramo de 6 m.
+ */
+const MEDIDAS_OBJETO: Record<string, Json> = {
+  poste: {
+    alto: { valor: 9, ...SUPUESTA },
+    diametro_tronco: { valor: 0.3, ...SUPUESTA },
+    material: "concreto",
+  },
+  arbol: { alto: { valor: 6, ...SUPUESTA }, diametro_tronco: { valor: 0.4, ...SUPUESTA } },
+  muro: {
+    largo: { valor: 6, ...SUPUESTA },
+    ancho: { valor: 0.2, ...SUPUESTA },
+    alto: { valor: 2.5, ...SUPUESTA },
+  },
+  barda: {
+    largo: { valor: 6, ...SUPUESTA },
+    ancho: { valor: 0.2, ...SUPUESTA },
+    alto: { valor: 2.2, ...SUPUESTA },
+  },
+  barrera: {
+    largo: { valor: 6, ...SUPUESTA },
+    ancho: { valor: 0.4, ...SUPUESTA },
+    alto: { valor: 0.8, ...SUPUESTA },
+  },
+  guarnicion: {
+    largo: { valor: 6, ...SUPUESTA },
+    ancho: { valor: 0.3, ...SUPUESTA },
+    alto: { valor: 0.15, ...SUPUESTA },
+  },
+  senal: { alto: { valor: 2.5, ...SUPUESTA }, diametro_tronco: { valor: 0.08, ...SUPUESTA } },
+  vehiculo_estacionado: {
+    clase_vehiculo: { valor: "sedan_compacto", fuente: "default", confianza: 0.5 },
+  },
+  otro: {
+    largo: { valor: 1, ...SUPUESTA },
+    ancho: { valor: 1, ...SUPUESTA },
+    alto: { valor: 1, ...SUPUESTA },
+  },
+};
+/** Los objetos alargados se ponen atravesados al avance; los demás no tienen rumbo que importe. */
+const ATRAVESADOS = new Set(["muro", "barda", "barrera", "guarnicion"]);
 /** Lo que el perito coloca va como declarado en la escena v1. */
 const DEL_PERITO = { fuente: "usuario", confianza: 0.9 } as const;
+/**
+ * Qué tan cerca del punto de un choque intermedio pasa el centro del vehículo (m): medio vehículo.
+ * Es la precisión del punto de paso que lleva a la inversión hasta ese lugar.
+ */
+const PRECISION_CHOQUE_M = 2;
 /** Sin posición inicial del perito, el vehículo empieza 12 m antes del impacto en su rumbo. */
 const ANTES_DEL_IMPACTO_M = 12;
 /** La maniobra de la escena v1 para cada maniobra narrada que cambia la reconstrucción (R4b). */
@@ -270,6 +329,38 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   }
   const evento = spec.eventos[0]!;
   if (origen) evento.punto_impacto = { x: 0, y: 0 };
+  if (origen && primero?.punto) {
+    // El perito marcó dónde fue el primer golpe (C1): entra a la inversión como evidencia medida.
+    evento.punto_impacto = local(primero.punto);
+    evento.procedencia = {
+      ...DEL_PERITO,
+      nota: "El perito marcó en el mapa dónde fue el primer golpe.",
+    };
+  }
+
+  // Los puntos de paso que marcó el perito (C1): por dónde pasó cada vehículo.
+  const pasos = (e.versiones ?? []).find((v) => v.tipo === "evidencia")?.puntos_paso ?? [];
+  if (origen) {
+    for (const v of vehiculos) {
+      const suyos = pasos
+        .filter((q) => q.vehiculo === v.id && q.fuente === "perito")
+        .sort((a, b) => a.orden - b.orden);
+      if (!suyos.length) continue;
+      const sv = spec.vehiculos[orden.indexOf(v.id)]!;
+      sv.puntos_paso = suyos.map((q, k) => ({
+        id: `pp-${String(sv.id)}-${k + 1}`,
+        orden: k + 1,
+        posicion: local(q.punto),
+        ...(q.precision_m !== undefined ? { precision_m: q.precision_m } : {}),
+        ...(q.t_s !== undefined ? { t_s: q.t_s } : {}),
+        procedencia: { ...DEL_PERITO },
+      }));
+    }
+  } else if (pasos.length) {
+    limites.push(
+      "Sin las posiciones de impacto, los puntos de paso no se pueden medir desde el punto de impacto: coloca a los vehículos en el impacto.",
+    );
+  }
   // La zona dentro de la cara que narró el perito (tercio o vértice) va como zona horizontal CDC:
   // con ella el solver centra el daño ahí y el 3D lo deforma en ese lugar.
   for (const z of (evento.zonas_impacto ?? []) as { vehiculo_id: string; cdc: Json }[]) {
@@ -289,6 +380,59 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   for (const imp of impactos) {
     if (imp === primero) continue;
     const par = (imp.vehiculos ?? []).filter((v) => orden.includes(v)).slice(0, 2);
+    if (imp.objeto_fijo && imp.punto && origen && par.length === 1) {
+      // Choque intermedio contra un objeto (C1): el objeto va donde el perito lo marcó, y el
+      // solver hace que el impacto ocurra ahí, cuando el vehículo lo toca.
+      const tipo = OBJETO_INTERMEDIO.find(([rx]) => rx.test(imp.objeto_fijo!))?.[1] ?? "otro";
+      const pos = local(imp.punto);
+      const objetoId = `obj-choque-${imp.orden}`;
+      const entorno = spec.entorno as Json & { objetos?: Json[] };
+      // Un muro o una barrera, atravesado al avance desde el primer golpe: su rumbo no se midió.
+      const atravesado = ATRAVESADOS.has(tipo)
+        ? Math.round(((Math.atan2(pos.y, pos.x) * 180) / Math.PI + 90) * 10) / 10
+        : null;
+      (entorno.objetos ??= []).push({
+        id: objetoId,
+        tipo,
+        posicion: pos,
+        ...(atravesado !== null
+          ? { rumbo_deg: atravesado > 180 ? atravesado - 360 : atravesado }
+          : {}),
+        ...MEDIDAS_OBJETO[tipo],
+        procedencia: {
+          ...DEL_PERITO,
+          nota: "El perito lo marcó en el mapa; sus medidas son las típicas (supuesto).",
+        },
+      });
+      ordenEvento += 1;
+      spec.eventos.push({
+        id: `ev-impacto-${imp.orden}`,
+        orden: ordenEvento,
+        tipo: "impacto_vehiculo_objeto",
+        actores: [idEscena(par[0]!), objetoId],
+        punto_impacto: pos,
+        procedencia: { ...DEL_PERITO },
+      });
+      // Para que la inversión lleve al vehículo hasta ahí: su centro pasa a menos de medio vehículo
+      // del punto del golpe.
+      const sv = spec.vehiculos[orden.indexOf(par[0]!)]!;
+      const previos = (sv.puntos_paso ?? []) as Json[];
+      sv.puntos_paso = [
+        ...previos,
+        {
+          id: `pp-choque-${imp.orden}`,
+          orden: previos.length + 1,
+          posicion: pos,
+          precision_m: PRECISION_CHOQUE_M,
+          nota: "Lugar del choque intermedio que marcó el perito.",
+          procedencia: { ...DEL_PERITO },
+        },
+      ];
+      limites.push(
+        `El objeto del impacto ${imp.orden} (${imp.objeto_fijo}) va con medidas típicas${atravesado !== null ? " y atravesado al avance del vehículo" : ""}: el perito marcó dónde está, no cómo es (supuesto).`,
+      );
+      continue;
+    }
     if (imp.objeto_fijo || par.length < 2) {
       limites.push(
         `El impacto ${imp.orden} no es entre dos vehículos${imp.objeto_fijo ? ` (${imp.objeto_fijo})` : ""}: la reconstrucción no lo calcula.`,
@@ -776,6 +920,16 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
 /** La evidencia del solver en palabras («reposo:veh-a» → «posición final de V1»). */
 export function evidenciaEnPalabras(etiqueta: string, ids: Record<string, Id>): string {
   const [tipo, sid] = etiqueta.split(":");
+  if (tipo === "punto_inicial") return "punto del primer golpe que marcó el perito";
+  if (tipo === "paso") {
+    // «pp-veh-a-2» es el segundo punto de paso de ese vehículo; «pp-choque-3», el lugar del
+    // choque intermedio del impacto 3.
+    const choque = /^pp-choque-(\d+)$/.exec(sid ?? "");
+    if (choque) return `lugar del choque intermedio (impacto ${choque[1]})`;
+    const paso = /^pp-(.+)-(\d+)$/.exec(sid ?? "");
+    if (paso) return `punto de paso ${paso[2]} de ${ids[paso[1]!] ?? paso[1]}`;
+    return `punto de paso ${sid}`;
+  }
   const v = ids[sid ?? ""] ?? sid;
   const nombre: Record<string, string> = {
     reposo: "posición final",

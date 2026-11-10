@@ -2,7 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join, resolve } from "node:path";
 import { expect, type Page, test } from "@playwright/test";
-import { irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
+import { contestarC1, irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
 
 /**
  * Las llantas del caso de ejemplo (VW Jetta 2002 contra GM Camaro 1995; René, 2026-11-05): el mismo
@@ -78,6 +78,7 @@ async function hastaEl3d(page: Page) {
     await expect(page.getByTestId(`coche-${v}-final`)).toHaveCount(1);
     await page.getByTestId("listo-final").click();
   }
+  await contestarC1(page);
   await expect(page.getByTestId("escena-lista")).toBeVisible();
   await irAPaso(page, 4);
   await page.getByTestId("reconstruir").click();

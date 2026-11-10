@@ -675,6 +675,60 @@ def _later_impacts(
     return out
 
 
+# Un objeto fijo no se mueve: en la integración conjunta es un cuerpo de masa enorme, en reposo.
+FIXED_OBJECT_MASS_KG = 1.0e9
+# El contorno mínimo de un objeto en planta (m): una señal o un poste delgado también se tocan.
+FIXED_OBJECT_MIN_SIDE_M = 0.1
+
+
+def _later_object_impacts(
+    spec: JsonObj,
+    primary: JsonObj | None,
+    vehicle_ids: Container[str],
+    objects: dict[str, SceneObject],
+) -> list[tuple[JsonObj, str, SceneObject]]:
+    """Los choques intermedios contra objetos (C1): después del primer impacto, un vehículo
+    contra un objeto del entorno, en el orden declarado.
+
+    Cuentan los eventos `impacto_vehiculo_objeto` o `segundo_impacto` posteriores al primero con
+    exactamente un vehículo y un objeto declarado entre sus actores. El objeto está donde lo
+    marcó el perito (`entorno.objetos[].posicion`): el impacto ocurre cuando el contorno del
+    vehículo lo toca.
+    """
+    if primary is None:
+        return []
+    out: list[tuple[JsonObj, str, SceneObject]] = []
+    for e in sorted(spec["eventos"], key=lambda e: int(e["orden"])):
+        if e is primary or int(e["orden"]) < int(primary["orden"]):
+            continue
+        if e["tipo"] not in ("impacto_vehiculo_objeto", "segundo_impacto"):
+            continue
+        vehs = [str(a) for a in e["actores"] if a in vehicle_ids]
+        objs = [str(a) for a in e["actores"] if a in objects]
+        if len(vehs) == 1 and len(objs) == 1:
+            out.append((e, vehs[0], objects[objs[0]]))
+    return out
+
+
+def _fixed_object_body(o: SceneObject, mu: float) -> JointBody:
+    """El objeto como cuerpo inmóvil de la integración conjunta: su caja en planta (el tronco de
+    un árbol y un poste, como un cuadro de su diámetro), sin velocidad y con masa enorme."""
+    if o.forma in ("arbol", "cilindro", "senal"):
+        largo = ancho = max(2.0 * o.radio, FIXED_OBJECT_MIN_SIDE_M)
+    else:
+        largo = max(o.largo, FIXED_OBJECT_MIN_SIDE_M)
+        ancho = max(o.ancho, FIXED_OBJECT_MIN_SIDE_M)
+    body = Body2D(
+        FIXED_OBJECT_MASS_KG,
+        Body2D.box_inertia(FIXED_OBJECT_MASS_KG, largo, ancho),
+        largo,
+        ancho,
+    )
+    wheels = WheelConfig.four_wheels(largo, ancho, largo / 2.0, locked=True)
+    yaw = math.radians(o.rumbo_deg)
+    return JointBody(body, State2D(o.x, o.y, yaw, 0.0, 0.0, 0.0, 0.0), wheels, mu)
+
+
 def _side_toward(n: Vec, yaw: float) -> str:
     """La cara del vehículo (F, B, L o R) que mira hacia `n` (unitaria, mundo)."""
     c, s = dmath.cos(yaw), dmath.sin(yaw)
@@ -830,6 +884,9 @@ def reconstruct(
     # integran juntos con los del primero; cada impacto ocurre cuando su par se toca.
     later = _later_impacts(spec, event, by_id)
     participantes = set(actores) | {v for e in later for v in _pair(e, by_id)}
+    # Choques intermedios contra objetos (C1): el objeto entra a esa integración como un cuerpo
+    # inmóvil, y el impacto ocurre cuando el vehículo lo toca.
+    later_obj = _later_object_impacts(spec, event, by_id, {o.id: o for o in scene_objects(spec)})
     axis = road_axis(lugar)
     candidates: dict[str, list[KinPath]] = {
         m.id: _path_candidates(m, lane_width, axis) for m in models
@@ -1330,6 +1387,9 @@ def reconstruct(
         for vid in [*(m.id for m in involved[:1]), *(v for e in later for v in _pair(e, by_id))]:
             if vid not in group:
                 group.append(vid)
+    for _, vid, _ in later_obj:
+        if vid in participantes and vid not in group:
+            group.append(vid)
     plans: list[PlannedImpact] = []
     for e in later:
         pa, pb = _pair(e, by_id)
@@ -1339,21 +1399,89 @@ def reconstruct(
                     group.index(pa), group.index(pb), str(e["id"]), RESTITUTION_VV, IMPULSE_RATIO
                 )
             )
-    joint_list, joint_hits = integrate_joint_impacts(
-        [post_body(by_id[i]) for i in group], impacts=plans, dt_out=dt, t_max=T_POST_MAX
+    # Los objetos de los choques intermedios van después de los vehículos, cada uno una vez.
+    inmoviles: list[SceneObject] = []
+    for e, vid, objeto_c1 in later_obj:
+        if vid not in group:
+            continue
+        if objeto_c1 not in inmoviles:
+            inmoviles.append(objeto_c1)
+        plans.append(
+            PlannedImpact(
+                group.index(vid),
+                len(group) + inmoviles.index(objeto_c1),
+                str(e["id"]),
+                RESTITUTION_VV,
+                IMPULSE_RATIO,
+            )
+        )
+    joint_all, joint_hits = integrate_joint_impacts(
+        [*(post_body(by_id[i]) for i in group), *(_fixed_object_body(o, mu) for o in inmoviles)],
+        impacts=plans,
+        dt_out=dt,
+        t_max=T_POST_MAX,
     )
+    joint_list = joint_all[: len(group)]
     joint_post: dict[str, PostImpactResult] = dict(zip(group, joint_list, strict=True))
 
     # Los impactos posteriores que ocurrieron: daño, delta-v y evento, como el primero.
     later_damage: dict[str, list[LaterDamage]] = {m.id: [] for m in models}
     v_impact_at: dict[str, float] = {}
-    later_by_id = {str(e["id"]): e for e in later}
+    later_by_id = {str(e["id"]): e for e in later} | {str(e["id"]): e for e, _, _ in later_obj}
     for hit in joint_hits:
         ev = later_by_id[hit.event_id]
         zonas_ev: dict[str, JsonObj | None] = {
             z["vehiculo_id"]: z.get("cdc") for z in ev.get("zonas_impacto", [])
         }
         res2 = hit.result
+        if hit.b >= len(group):
+            # Contra un objeto fijo: toda la energía que se disipa deforma al vehículo (el objeto
+            # se toma rígido, así que es una cota superior de su daño).
+            vid_o = group[hit.a]
+            objeto_c1 = inmoviles[hit.b - len(group)]
+            m_o = by_id[vid_o]
+            cdc_o = zonas_ev.get(vid_o) or {"lado": _side_toward(hit.normal, hit.a_before.yaw)}
+            k_o = stiffness_for(m_o.clase, zona_from_cdc_side(str(cdc_o.get("lado", "F"))))
+            energy_o = res2.energy_loss
+            shape_o, width_o = _crush_shape_and_width(cdc_o, m_o.body)
+            prof_o = profile_for_energy(energy_o, width_o, k_o.stiffness, shape_o)
+            if crush[vid_o][3] == "sin impacto":
+                crush[vid_o] = (prof_o, width_o, energy_o, k_o.origen)
+                delta_v[vid_o], pdof[vid_o] = res2.delta_v_a, res2.pdof_a_hours
+                zonas[vid_o] = cdc_o
+                v_impact_at[vid_o] = hit.a_before.speed
+            else:
+                later_damage[vid_o].append(
+                    LaterDamage(
+                        hit.event_id,
+                        hit.t,
+                        prof_o,
+                        width_o,
+                        _crush_center(cdc_o, m_o.body, width_o),
+                        energy_o,
+                        k_o.origen,
+                        cdc_o,
+                        ms_to_kmh(res2.delta_v_a),
+                        res2.pdof_a_hours,
+                    )
+                )
+            eventos_out.append(
+                EventOutcome(
+                    hit.event_id,
+                    "impacto_vehiculo_objeto",
+                    hit.t,
+                    [vid_o, objeto_c1.id],
+                    {
+                        "impulso_ns": [res2.impulse[0], res2.impulse[1]],
+                        "adherencia": res2.sticking,
+                        "friccion_contacto_usada": res2.friction_used,
+                        "energia_disipada_j": res2.energy_loss,
+                        "velocidad_cierre_kmh": ms_to_kmh(hit.a_before.speed),
+                        "punto_m": [hit.point[0], hit.point[1]],
+                    },
+                )
+            )
+            continue
         ids2 = (group[hit.a], group[hit.b])
         sides = (
             (ids2[0], hit.a_before, hit.normal, res2.delta_v_a, res2.pdof_a_hours),
@@ -1429,6 +1557,16 @@ def reconstruct(
                 f"El impacto entre los vehículos {by_id[pa].rol} y {by_id[pb].rol} declarado "
                 "después del primero no ocurre en la reconstrucción: sus trayectorias no llegan a "
                 "tocarse.",
+            )
+
+    for e, vid, objeto_c1 in later_obj:
+        if not any(h.event_id == e["id"] for h in joint_hits):
+            flag(
+                "impacto_no_ocurre",
+                {"evento": e["id"], "vehiculos": [vid], "objeto": objeto_c1.id},
+                f"El choque del vehículo {by_id[vid].rol} contra el objeto {objeto_c1.id} "
+                "declarado después del primero no ocurre en la reconstrucción: su trayectoria no "
+                "llega a tocarlo.",
             )
 
     for m in models:

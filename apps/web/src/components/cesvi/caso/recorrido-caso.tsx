@@ -91,7 +91,7 @@ import {
   lecturaFisica,
 } from "@/lib/contraste-lab";
 import { textoDano, tituloDelHecho } from "@/lib/hecho-laboratorio";
-import { nombreVehiculo } from "@/lib/escena-facil";
+import { nombreVehiculo, pasoActual, pasosEscena, type RespuestasC1 } from "@/lib/escena-facil";
 import { PasoCaso, PasoHecho, PasoNumeros, claveItem, type ItemLugar } from "./pasos";
 import { BitacoraAgentes } from "./bitacora";
 import { MapaEscena, type HerramientaMapa, type HuellaMapa } from "./piezas";
@@ -188,6 +188,9 @@ export function RecorridoCaso({
     inicial.direccionesSupuestas ?? [],
   );
   const [juntoAlChoque, setJuntoAlChoque] = useState<readonly string[]>([]);
+  // C1 (W3): lo contestado en las preguntas del primer golpe, los otros choques y los puntos de paso.
+  // null: todavía no se decide si se preguntan (depende de cómo llega la escena al abrir el caso).
+  const [c1, setC1] = useState<RespuestasC1 | null>(null);
   const [callesFallaron, setCallesFallaron] = useState(false);
   const [centroBuscado, setCentroBuscado] = useState<{ lat: number; lon: number } | null>(null);
   const [rumbosImpacto, setRumbosImpacto] = useState<Record<number, number>>({});
@@ -453,6 +456,8 @@ export function RecorridoCaso({
     setHipotesis(c.hipotesisElegida);
     setDesconocidos(c.finalesDesconocidos);
     setDireccionesNoSe(c.direccionesSupuestas);
+    // Las preguntas de C1 se deciden otra vez con la escena de este caso.
+    setC1(null);
     // La bitácora del archivo sigue en la pizarra (R12b): se escribe después de ella.
     setPizarra(
       pizarraDeEscena(c.narracion, c.escena, {
@@ -518,6 +523,17 @@ export function RecorridoCaso({
 
   // --- El paso del lugar (V2) ------------------------------------------------------------------
   const impactos = expediente ? impactosAColocar(expediente) : [];
+  // C1 (W3): las tres preguntas de después de colocar los vehículos se hacen en una escena que se
+  // arma aquí. Si al abrir el caso la escena ya llega completa (un dictamen importado, un caso
+  // guardado), no se hacen solas: quedan en el avance para quien quiera marcar algo.
+  const escenaCompleta =
+    expediente !== null &&
+    leida !== null &&
+    pasoActual(
+      pasosEscena(expediente, impactosAColocar(expediente), { desconocidos, direccionesNoSe }),
+    ) === null;
+  // Se decide una vez por caso, al tener su escena (estado ajustado durante el render, sin efecto).
+  if (c1 === null && expediente && leida) setC1(escenaCompleta ? { omitidas: true } : {});
   const poseDe = (v: string, fase: string) =>
     posiciones.find((p) => p.vehiculo === v && p.fase === fase);
   const requeridos: ItemLugar[] = expediente
@@ -1019,6 +1035,7 @@ export function RecorridoCaso({
             direccionesNoSe,
             juntoAlChoque,
             puntos: puntosImpacto,
+            c1: c1 ?? {},
           }}
           impactos={impactos}
           narracion={texto.trim() || null}
@@ -1322,8 +1339,10 @@ export function RecorridoCaso({
               direccionesNoSe,
               juntoAlChoque,
               puntos: puntosImpacto,
+              c1: c1 ?? {},
             }}
             onEstado={(x) => {
+              setC1(x.c1 ?? {});
               cambiarExpediente(x.expediente);
               setDesconocidos(x.desconocidos);
               setDireccionesNoSe(x.direccionesNoSe);

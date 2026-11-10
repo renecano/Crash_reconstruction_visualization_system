@@ -69,6 +69,44 @@ export async function tocarEnMetros(page: Page, desde: string, este: number, nor
 }
 
 /**
+ * Las tres preguntas de C1 (W3) y el botón que las contesta sin agregar evidencia: «No sé» dónde fue
+ * el primer golpe, «No» chocó contra algo más y seguir sin puntos de paso.
+ */
+const BOTON_C1: [RegExp, string][] = [
+  [/primer golpe/, "golpe-nose"],
+  [/algo más/, "otros-no"],
+  [/por dónde pasó/, "paso-listo"],
+];
+
+/**
+ * Después de colocar a mano los vehículos de un caso nuevo: contesta las tres preguntas de C1 con lo
+ * que no agrega evidencia, hasta «¡La escena está lista!». En una escena que llega completa no se
+ * preguntan y no hace nada.
+ */
+export async function contestarC1(page: Page) {
+  const lista = page.getByTestId("escena-lista");
+  const pregunta = page.getByTestId("escena-pregunta");
+  for (let k = 0; k < 3; k++) {
+    // La pregunta anterior tarda un instante en cambiar: se espera a la lista o a una de C1.
+    await expect
+      .poll(async () => {
+        if (await lista.isVisible()) return true;
+        const t = (await pregunta.textContent()) ?? "";
+        return BOTON_C1.some(([rx]) => rx.test(t));
+      })
+      .toBe(true);
+    if (await lista.isVisible()) return;
+    const texto = (await pregunta.textContent()) ?? "";
+    const c1 = BOTON_C1.find(([rx]) => rx.test(texto));
+    if (!c1) return;
+    await page.getByTestId(c1[1]).click();
+    await expect
+      .poll(async () => (await lista.isVisible()) || (await pregunta.textContent()) !== texto)
+      .toBe(true);
+  }
+}
+
+/**
  * Contesta la escena fácil hasta «¡La escena está lista!», con lo que Croquis propone: cada choque
  * con un toque, por dónde venía cada vehículo con la flecha resaltada y «Quedó junto al choque».
  * Sirve para cualquier caso (dos vehículos, carambola, reporte) cuando la prueba no mira las
@@ -82,7 +120,10 @@ export async function colocarTodo(page: Page) {
   for (let k = 0; k < 20; k++) {
     if (await lista.isVisible()) break;
     const texto = (await pregunta.textContent()) ?? "";
-    if (/^¿Dónde fue/.test(texto)) {
+    const c1 = BOTON_C1.find(([rx]) => rx.test(texto));
+    if (c1) {
+      await page.getByTestId(c1[1]).click();
+    } else if (/^¿Dónde fue/.test(texto)) {
       const caja = (await mapa.boundingBox())!;
       await mapa.click({ position: { x: caja.width * 0.7 + k * 14, y: caja.height * 0.45 } });
     } else if (texto.startsWith("¿Por dónde")) {

@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { expect, test } from "@playwright/test";
-import { irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
+import { contestarC1, irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
 
 // La transición entre actos (ADR 0108) es decorativa: estos flujos prueban la función, y en CI (render
 // por software) la cortina a pantalla completa compite con el 3D. Con movimiento reducido no se monta.
@@ -125,6 +125,7 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await page.getByTestId("final-junto").click();
   await page.getByTestId("listo-final").click();
   // ¡La escena está lista!, con el resumen y el supuesto explicado.
+  await contestarC1(page);
   await expect(page.getByTestId("escena-lista")).toBeVisible();
   const resumen = page.getByTestId("escena-resumen");
   await expect(resumen).toContainText("El Jetta venía del");
@@ -402,6 +403,7 @@ test("@flujo /cesvi: una carambola, con sus impactos en orden hasta el 3D", asyn
     await expect(page.getByTestId(`coche-${nombre}-final`)).toHaveCount(1);
     await page.getByTestId("listo-final").click();
   }
+  await contestarC1(page);
   await expect(page.getByTestId("escena-lista")).toBeVisible();
   await expect(page.getByTestId("avance-ver-reconstruccion")).toBeEnabled();
   const mapa = page.getByTestId("mapa-escena");

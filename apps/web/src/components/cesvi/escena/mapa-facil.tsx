@@ -48,6 +48,14 @@ export interface MapaFacilProps {
   encuadre: Punto[];
   onToque?: (p: Punto) => void;
   choques: { orden: number; punto: Punto }[];
+  /** C1: el primer golpe, los objetos de los choques intermedios y los puntos de paso. */
+  marcas?: {
+    id: string;
+    punto: Punto;
+    tipo: "golpe" | "objeto" | "paso";
+    texto: string;
+    color?: string;
+  }[];
   /** El lugar que propone Croquis para el choque, con su pregunta («¿Aquí? Toca…»). */
   propuesta?: { punto: Punto; texto: string } | null;
   flechas?: FlechaMapa[];
@@ -202,6 +210,25 @@ export function MapaFacil(p: MapaFacilProps) {
       agregar(el, c.punto);
     }
 
+    for (const mk of p.marcas ?? []) {
+      const el = document.createElement("div");
+      el.setAttribute("data-testid", `marca-${mk.id}`);
+      el.style.cssText =
+        "pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:2px";
+      const borde = "border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45)";
+      const figura =
+        mk.tipo === "paso"
+          ? `<span style="display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:${mk.color ?? "#2563EB"};color:#fff;font:700 12px/1 system-ui;${borde}">${escaparHtml(mk.texto)}</span>`
+          : mk.tipo === "golpe"
+            ? `<span style="width:16px;height:16px;transform:rotate(45deg);background:#FF5A1F;${borde}"></span>`
+            : `<span style="width:16px;height:16px;border-radius:3px;background:#1F2937;${borde}"></span>`;
+      el.innerHTML =
+        mk.tipo === "paso"
+          ? figura
+          : `${figura}<span class="escena-etiqueta">${escaparHtml(mk.texto)}</span>`;
+      agregar(el, mk.punto);
+    }
+
     if (p.propuesta) {
       const el = document.createElement("div");
       el.className = "escena-propuesta";
@@ -301,7 +328,7 @@ export function MapaFacil(p: MapaFacilProps) {
     return () => {
       m.off("zoom", alZoom);
     };
-  }, [listo, p.choques, p.propuesta, p.flechas, p.coches]);
+  }, [listo, p.choques, p.marcas, p.propuesta, p.flechas, p.coches]);
 
   return (
     <div
