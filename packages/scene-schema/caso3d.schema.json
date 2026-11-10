@@ -113,7 +113,8 @@
         "licencia": {
           "type": "string",
           "minLength": 1,
-          "maxLength": 120
+          "maxLength": 400,
+          "description": "El aviso de la licencia de la fuente, tal como pide mostrarlo (el de Copernicus GLO-30 pasa de 120 caracteres)."
         },
         "resolucion_nativa_m": {
           "type": "number",
