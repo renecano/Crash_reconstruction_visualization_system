@@ -5,17 +5,18 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 ## Estado
 
 - **Desde el 2026-11-09, el Claude Code de René lleva también este frente,** porque aquí no se había subido nada. Si eres el Claude Code del compañero: antes de empezar una fase, revisa la tabla de abajo y `git fetch`; si la fase ya está tomada, sigue con la siguiente y anótala aquí.
-- **Hechas:** W1 (#187) y W2 (#188), las dos en `main`.
-- **Fase actual:** W3 (C1), en `feat/w3-puntos`, con su PR abierto. El código y sus pruebas están completos; la e2e nueva (`escena-c1.spec.ts`) corre en CI y falta correrla en la laptop cuando René cierre el navegador.
-- **Siguiente paso:** con CI en verde, fusionar W3. Después, W4 ampliada («Corregir después»), que ya puede partir de `editandoC1` y de los chips del avance de W3.
+- **Hechas:** W1 (#187), W2 (#188) y W3 (#192), en `main`. El contrato de W4 (`Expediente.objetos`) también (#194).
+- **Fase actual:** W4 ampliada (C2 y «Corregir después»), en `feat/w4-corregir`.
+- **Siguiente paso:** cerrar W4 (e2e en verde, PR y fusión) y seguir con W4b («Menos ruido visual»). Antes de W5, Claude Code de René se detiene y le avisa a René (2026-11-10).
 
 ## Fases tomadas
 
-| Fase                                                         | Quién               | Rama               | Estado                    |
-| ------------------------------------------------------------ | ------------------- | ------------------ | ------------------------- |
-| W1 · Dictamen (O2)                                           | Claude Code de René | `feat/w1-dictamen` | En `main` (#187)          |
-| W2 · El hecho (O1 y O5)                                      | Claude Code de René | `feat/w2-hecho`    | En `main` (#188)          |
-| W3 · C1: punto inicial, choques intermedios y puntos de paso | Claude Code de René | `feat/w3-puntos`   | En PR desde el 2026-11-09 |
+| Fase                                                         | Quién               | Rama               | Estado                       |
+| ------------------------------------------------------------ | ------------------- | ------------------ | ---------------------------- |
+| W1 · Dictamen (O2)                                           | Claude Code de René | `feat/w1-dictamen` | En `main` (#187)             |
+| W2 · El hecho (O1 y O5)                                      | Claude Code de René | `feat/w2-hecho`    | En `main` (#188)             |
+| W3 · C1: punto inicial, choques intermedios y puntos de paso | Claude Code de René | `feat/w3-puntos`   | En `main` (#192)             |
+| W4 · C2 y «Corregir después»                                 | Claude Code de René | `feat/w4-corregir` | En curso desde el 2026-11-10 |
 
 ## W1 · Dictamen (O2)
 
@@ -108,6 +109,39 @@ Decisiones en el ADR 0130. Contrato en el PR #191 (ya en `main`).
 - **Qué quedó:** en la escena fácil, después de colocar los vehículos, Croquis pregunta dónde fue el primer golpe, si chocó contra algo más y por dónde pasó. Lo que marcas entra a la reconstrucción como evidencia medida, en el navegador (TS) igual que en la referencia de Python.
 - **Cómo probarlo:** caso nuevo con la narración de ejemplo, coloca los dos vehículos y contesta las tres preguntas (por ejemplo, el Camaro contra un poste y un punto de paso). En la reconstrucción, «Evidencia usada» debe decir «punto del primer golpe que marcó el perito», «punto de paso 1 de V2» y «lugar del choque intermedio (impacto 2)».
 - **Qué necesito de ti:** cuando cierres el navegador, avísame para correr la e2e de W3 en la laptop. En CI corre con cada push.
+
+## W4 · Objetos que se mueven (C2) y «Corregir después»
+
+Plan: PLAN-CESVI §3.4. Contrato: #194 (`Expediente.objetos[]`, `ObjetoExpediente`).
+
+### Qué se hizo
+
+- **Objetos del lugar** (`packages/cesvi/src/objetos.ts`):
+  - agregar, mover, girar, cambiar de tamaño y quitar;
+  - empalmes con cajas orientadas contra los vehículos en reposo y contra otros objetos, con la propuesta para separarlos;
+  - `especDeExpediente` los lleva a `entorno.objetos`, con medidas típicas como supuesto o con las del perito como dato suyo.
+- **Corregir después** (`apps/web/src/lib/escena-facil.ts`):
+  - mover y quitar el primer golpe, los choques intermedios y los puntos de paso;
+  - las líneas del resumen saben a qué pregunta regresar.
+- **En la escena fácil:**
+  - con la escena lista, «Cambiar algo» abre «Corregir la escena» con la paleta (poste, pared, árbol, barrera, guarnición, señal, vehículo estacionado);
+  - tocar algo ya colocado lo selecciona y lo deja arrastrar. Los controles grandes son girar ±15°, más grande o más chico, «Cambiar», «Cambiar por dónde venía» y «Quitar»;
+  - si un objeto queda encima de algo, sale la alerta con «Separarlos / Así está bien»;
+  - cada línea de «¡La escena está lista!» lleva «Cambiar»;
+  - «Deshacer» y «Rehacer» quedan siempre a la vista.
+- **Al soltar se recalcula:** `useReconstruccion` recalcula solo 0.7 s después del último cambio, si ya había una reconstrucción. La escena muestra «Recalculando la reconstrucción…» o «Reconstrucción al día».
+
+### Pruebas
+
+- `packages/cesvi/src/objetos.test.ts` (9): edición, empalmes y lo que llega a la `EscenaSpec`.
+- `apps/web/src/lib/escena-facil-w4.test.ts` (4): corregir el primer golpe, un choque intermedio y los puntos de paso, con su efecto en la `EscenaSpec`, y el resumen.
+- `apps/web/e2e/escena-corregir.spec.ts` (`@flujo`): mover el poste de un choque intermedio cambia el resultado, y corregir la dirección del Jetta ya colocado también.
+
+### Decisiones que conviene saber
+
+- **Solo se arrastra el vehículo en reposo.** El del impacto se corrige con su pregunta («Cambiar»), porque de él dependen el choque y las flechas de llegada.
+- **Los objetos de la paleta no chocan solos:** están en la escena (el 3D los dibuja y tapan la vista), pero el solver solo choca contra el objeto de un choque intermedio que marcó el perito (W3).
+- **Un tramo** (pared, barrera, guarnición) se coloca a lo largo de la calle más cercana; el tamaño cambia su largo. En un poste, un árbol o una señal, cambia el grosor.
 
 ## Lo que U deja dicho para W
 

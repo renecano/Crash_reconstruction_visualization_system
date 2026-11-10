@@ -1658,6 +1658,61 @@
   .escena-coche-tenue {
     opacity: 0.55;
   }
+  /* W4: lo que ya está colocado se toca para corregirlo; lo seleccionado lleva un anillo. */
+  .escena-seleccionable {
+    cursor: pointer;
+  }
+  .escena-seleccionado .escena-coche-cuerpo,
+  .escena-seleccionado .escena-objeto-cuerpo,
+  .escena-seleccionado .escena-marca-figura {
+    outline: 3px solid var(--eleccion);
+    outline-offset: 4px;
+    border-radius: 6px;
+    cursor: grab;
+  }
+  .escena-objeto {
+    position: relative;
+    width: 0;
+    height: 0;
+  }
+  .escena-objeto-cuerpo {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border: 2px solid #fff;
+    border-radius: 2px;
+    background: #374151;
+    box-shadow: 0 2px 6px rgba(27, 34, 48, 0.45);
+  }
+  .escena-objeto-cuerpo[data-tipo="arbol"] {
+    border-radius: 999px;
+    background: #3f6212;
+  }
+  .escena-objeto-cuerpo[data-tipo="poste"],
+  .escena-objeto-cuerpo[data-tipo="senal"] {
+    border-radius: 999px;
+  }
+  .escena-objeto-cuerpo[data-tipo="barrera"] {
+    background: #9ca3af;
+  }
+  .escena-objeto-cuerpo[data-tipo="guarnicion"] {
+    background: #d4a017;
+  }
+  .escena-objeto-cuerpo[data-tipo="vehiculo_estacionado"] {
+    border-radius: 6px;
+    background: #6b7280;
+  }
+  .escena-barra-seleccion {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 18px;
+    background: var(--superficie);
+    border: 1px solid var(--linea);
+    box-shadow: 0 10px 30px rgba(27, 34, 48, 0.2);
+  }
   .escena-giro {
     position: relative;
     width: 0;
