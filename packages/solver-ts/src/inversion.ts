@@ -44,6 +44,8 @@ const SIGMA_THROW_M = 1.5;
 const SIGMA_SLIDE_M = 1.5;
 const SPEED_BOUNDS_KMH: readonly [number, number] = [0.0, 200.0];
 const STATED = ["relato", "usuario"];
+/** Lo que el perito marca en el mapa (C1) llega con esta fuente. */
+const MARKED = "usuario";
 
 /** Dispersión del error del modelo de daño (log ΔV), calibrada con CISS dev (E3). */
 export function modelSigma(): number {
@@ -202,6 +204,18 @@ function statedPose(pose: unknown): boolean {
   return STATED.includes(String(proc.fuente));
 }
 
+/** Un punto de paso declarado (C1): por dónde se sabe que pasó un vehículo. */
+export interface Waypoint {
+  id: string;
+  vehicle: string;
+  x: number;
+  y: number;
+  /** Su `precision_m`, o la incertidumbre de una posición medida. */
+  sigma: number;
+  /** El instante, si se sabe (t = 0 es el impacto principal). */
+  tS: number | null;
+}
+
 /** Lo declarado que el solver debe reproducir. */
 export class Evidence {
   constructor(
@@ -220,6 +234,10 @@ export class Evidence {
     readonly assumedAsData = false,
     /** (el que golpea, el golpeado) si el primer impacto entre vehículos es un alcance. */
     readonly rearEnd: [string, string][] = [],
+    /** Los puntos de paso declarados (C1), en el orden de la escena. */
+    readonly waypoints: Waypoint[] = [],
+    /** El punto inicial del choque que marcó el perito (C1): [evento, x, y]. */
+    readonly impactPoint: [string, number, number] | null = null,
   ) {}
 
   empty(): boolean {
@@ -230,7 +248,9 @@ export class Evidence {
       this.damageMin.size ||
       this.restHeading.size ||
       this.slide.size ||
-      this.restAssumed.size
+      this.restAssumed.size ||
+      this.waypoints.length ||
+      this.impactPoint
     );
   }
 
@@ -253,6 +273,8 @@ export class Evidence {
       this.headingAssumed,
       true,
       this.rearEnd,
+      this.waypoints,
+      this.impactPoint,
     );
   }
 
@@ -268,6 +290,8 @@ export class Evidence {
       ...sorted(this.damageMin).map((k) => `dano_minimo:${k}`),
       ...sorted(this.restAssumed).map((k) => `reposo_supuesto:${k}`),
       ...sorted(this.headingAssumed).map((k) => `rumbo_final_supuesto:${k}`),
+      ...this.waypoints.map((w) => `paso:${w.id}`),
+      ...(this.impactPoint ? [`punto_inicial:${this.impactPoint[0]}`] : []),
     ];
   }
 }
@@ -283,6 +307,56 @@ function lenM(campo: Json): number {
 function classMass(clase: string): number {
   const tip = ((vehicleClasses()[clase] ?? {}).tipico ?? {}) as Json;
   return Number(tip.masa_kg ?? 1200.0);
+}
+
+/**
+ * Los puntos de paso declarados (relato o persona usuaria) de cada vehículo, por su `orden`. Sin
+ * `precision_m` valen la incertidumbre de una posición medida. Un punto supuesto no es evidencia.
+ */
+export function waypointsFromSpec(spec: Json): Waypoint[] {
+  const out: Waypoint[] = [];
+  for (const v of spec.vehiculos as Json[]) {
+    const puntos = [...((v.puntos_paso ?? []) as Json[])].sort((a, b) => {
+      const d = Number(a.orden) - Number(b.orden);
+      if (d !== 0) return d;
+      const ia = String(a.id);
+      const ib = String(b.id);
+      return ia < ib ? -1 : ia > ib ? 1 : 0;
+    });
+    for (const pp of puntos) {
+      const proc = (pp.procedencia ?? {}) as Json;
+      if (!STATED.includes(String(proc.fuente))) continue;
+      const pos = pp.posicion as Json;
+      const precision = pp.precision_m;
+      const tS = pp.t_s;
+      out.push({
+        id: String(pp.id),
+        vehicle: String(v.id),
+        x: Number(pos.x),
+        y: Number(pos.y),
+        sigma: precision !== null && precision !== undefined ? Number(precision) : SIGMA_POSITION_M,
+        tS: tS !== null && tS !== undefined ? Number(tS) : null,
+      });
+    }
+  }
+  return out;
+}
+
+/**
+ * El punto inicial del choque, si lo marcó el perito (`procedencia.fuente = "usuario"`). El
+ * `punto_impacto` que sale del relato solo guía la geometría del contacto, como siempre: no es una
+ * medición. El que marca el perito en el mapa sí lo es, y entra a la inversión.
+ */
+export function impactPointFromSpec(spec: Json): [string, number, number] | null {
+  const eventos = [...((spec.eventos ?? []) as Json[])].sort(
+    (a, b) => Number(a.orden) - Number(b.orden),
+  );
+  const event = eventos.find((e) => String(e.tipo).startsWith("impacto"));
+  if (!event || !event.punto_impacto) return null;
+  const proc = (event.procedencia ?? {}) as Json;
+  if (proc.fuente !== MARKED) return null;
+  const punto = event.punto_impacto as Json;
+  return [String(event.id), Number(punto.x), Number(punto.y)];
 }
 
 /** Evidencia declarada de la escena (solo lo que dice el relato o la persona usuaria). */
@@ -416,6 +490,8 @@ export function evidenceFromSpec(spec: Json, seed = EVIDENCE_SEED, nDamage = N_D
     headingAssumed,
     false,
     rearEndPairs(spec),
+    waypointsFromSpec(spec),
+    impactPointFromSpec(spec),
   );
 }
 
@@ -496,7 +572,7 @@ export function parameters(spec: Json, ev: Evidence): Param[] {
       new Param("velocidad", vid, start, SPEED_BOUNDS_KMH[0], SPEED_BOUNDS_KMH[1], declared),
     );
   }
-  if (ev.rest.size || ev.restHeading.size) {
+  if (ev.rest.size || ev.restHeading.size || ev.waypoints.length || ev.impactPoint) {
     for (const vid of ids) {
       const pose = byId.get(vid)!.posicion_inicial as Json;
       if (statedPose(pose)) continue;
@@ -548,6 +624,47 @@ function tryReconstruct(spec: Json, dt: number, downedMu: number | null): Recons
   } catch {
     return null;
   }
+}
+
+/**
+ * El punto de la trayectoria (la poligonal de sus muestras) más cercano a (x, y). Solo sumas,
+ * productos y cocientes: da lo mismo, bit a bit, en Python y en TS.
+ */
+export function closestOnPath(xs: number[], ys: number[], x: number, y: number): [number, number] {
+  let bestX = xs[0]!;
+  let bestY = ys[0]!;
+  let best = (bestX - x) * (bestX - x) + (bestY - y) * (bestY - y);
+  for (let i = 0; i < xs.length - 1; i++) {
+    const ax = xs[i]!;
+    const ay = ys[i]!;
+    const dx = xs[i + 1]! - ax;
+    const dy = ys[i + 1]! - ay;
+    const l2 = dx * dx + dy * dy;
+    let u = l2 <= 0.0 ? 0.0 : ((x - ax) * dx + (y - ay) * dy) / l2;
+    u = u < 0.0 ? 0.0 : u > 1.0 ? 1.0 : u;
+    const cx = ax + u * dx;
+    const cy = ay + u * dy;
+    const d2 = (cx - x) * (cx - x) + (cy - y) * (cy - y);
+    if (d2 < best) {
+      best = d2;
+      bestX = cx;
+      bestY = cy;
+    }
+  }
+  return [bestX, bestY];
+}
+
+/** La posición en el instante `t`, interpolada entre muestras; fuera del tramo, su extremo. */
+export function positionAt(ts: number[], xs: number[], ys: number[], t: number): [number, number] {
+  if (t <= ts[0]!) return [xs[0]!, ys[0]!];
+  for (let i = 0; i < ts.length - 1; i++) {
+    if (t <= ts[i + 1]!) {
+      const dt = ts[i + 1]! - ts[i]!;
+      const u = dt <= 0.0 ? 0.0 : (t - ts[i]!) / dt;
+      return [xs[i]! + u * (xs[i + 1]! - xs[i]!), ys[i]! + u * (ys[i + 1]! - ys[i]!)];
+    }
+  }
+  return [xs[xs.length - 1]!, ys[ys.length - 1]!];
 }
 
 function residuals(
@@ -619,6 +736,26 @@ function residuals(
     const v = byV.get(vid);
     if (!v) continue;
     out.set(`rumbo_final_supuesto:${vid}`, wrapDeg(v.restPose[2] - h) / (SIGMA_HEADING_DEG * w));
+  }
+  for (const wp of ev.waypoints) {
+    const v = byV.get(wp.vehicle);
+    if (!v || v.trajectory.t.length === 0) continue;
+    const tr = v.trajectory;
+    // Por dónde pasó: lo que le falta a la trayectoria para tocar el punto, en sus dos ejes.
+    const [cx, cy] = closestOnPath(tr.x, tr.y, wp.x, wp.y);
+    out.set(`paso:${wp.id}:x`, (cx - wp.x) / wp.sigma);
+    out.set(`paso:${wp.id}:y`, (cy - wp.y) / wp.sigma);
+    if (wp.tS !== null) {
+      // Y cuándo: dónde estaba en ese instante.
+      const [px, py] = positionAt(tr.t, tr.x, tr.y, wp.tS);
+      out.set(`paso:${wp.id}:tx`, (px - wp.x) / wp.sigma);
+      out.set(`paso:${wp.id}:ty`, (py - wp.y) / wp.sigma);
+    }
+  }
+  if (ev.impactPoint !== null && r.puntoImpacto !== null) {
+    const [eid, x, y] = ev.impactPoint;
+    out.set(`punto_inicial:${eid}:x`, (r.puntoImpacto[0] - x) / SIGMA_POSITION_M);
+    out.set(`punto_inicial:${eid}:y`, (r.puntoImpacto[1] - y) / SIGMA_POSITION_M);
   }
   return out;
 }
@@ -937,6 +1074,20 @@ export function perturbed(spec: Json, ev: Evidence, rng: Draws): Perturbed {
   const headingAssumed = new Map<string, number>();
   for (const [k, h] of ev.headingAssumed)
     headingAssumed.set(k, h + rng.gauss(0, SIGMA_HEADING_DEG * ev.weight()));
+  // Lo de C1 se sortea al final de lo declarado: una escena sin puntos de paso ni punto inicial
+  // marcado conserva la misma secuencia de sorteos de siempre.
+  const waypoints: Waypoint[] = [];
+  for (const w of ev.waypoints) {
+    const nx = w.x + rng.gauss(0, w.sigma);
+    const ny = w.y + rng.gauss(0, w.sigma);
+    waypoints.push({ ...w, x: nx, y: ny });
+  }
+  let impactPoint = ev.impactPoint;
+  if (impactPoint !== null) {
+    const nx = impactPoint[1] + rng.gauss(0, SIGMA_POSITION_M);
+    const ny = impactPoint[2] + rng.gauss(0, SIGMA_POSITION_M);
+    impactPoint = [impactPoint[0], nx, ny];
+  }
   const e = new Evidence(
     rest,
     throwM,
@@ -949,6 +1100,8 @@ export function perturbed(spec: Json, ev: Evidence, rng: Draws): Perturbed {
     headingAssumed,
     ev.assumedAsData,
     ev.rearEnd,
+    waypoints,
+    impactPoint,
   );
   let downedMu: number | null = null;
   if (
