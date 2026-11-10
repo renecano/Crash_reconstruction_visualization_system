@@ -74,6 +74,39 @@ La meta está en `docs/cesvi/PLAN-CESVI.md` §3.3. Decisiones: ADR 0112 (el esce
 - **Este build tardó 74 min** porque la laptop estuvo suspendida a la mitad; los demás tardan de 5 a 8 min.
 - **Una prueba del contrato falló una vez por tiempo** (5.8 s con límite de 5 s) con la laptop cargada; sola pasa. Se confirma en CI.
 
+### Ajustes que pidió René al aprobar U2 (2026-11-10)
+
+René aprobó la segunda pasada con dos ajustes. Los coches chicos en la cinematográfica quedan para U4.
+
+1. **`nocturno_lluvia` de noche se veía clara, el cielo como un atardecer.** Ahora:
+   - el cielo nublado de noche va oscuro y gris azulado (exposición 0.4 y tinte), sin el naranja del resplandor del HDRI;
+   - la niebla de lluvia es más oscura y el ambiente baja (1.1 en vez de 1.35 sobre la noche clara);
+   - la exposición final pasa de 0.95 a 0.7.
+
+   La luz fuerte es la de luminarias y faros. Vehículos, vía y evidencias se siguen leyendo.
+
+2. **Los matorrales de AXA se veían como puntitos repetidos.**
+   - Las matas de pasto van en manchones: cada uno con su radio, su tamaño (de 0.55 a 1.9 veces) y casi siempre un solo tono. Entre manchones queda pasto liso, y el total de matas es el mismo.
+   - Los matorrales de la orilla van en grupos de 2 a 9 estirados a lo largo de la orilla, de 0.5 a 3.4 m (muchos chicos, pocos grandes), con alguno suelto entre grupos.
+
+- **Antes y después:** `docs/cesvi/u2/ajustes/`.
+- **Build:** 5 min, pico de Unity 2,528 MB y mínimo libre 315 MB. El peso no cambia (64.9 MB). Publicado en Blob con la huella `6337b65c1db3110f`.
+- **La carga no se pudo medir.** La red estaba lenta (Blob a unos 230 KB/s) y el tiempo de carga incluye bajar los modelos: el cruce urbano dio de 5 a 37 s entre corridas. `eval/results` se queda con la medición anterior, y se mide otra vez con la red normal (pendiente).
+- **Fps a 1600 × 900** (`docs/cesvi/u2/ajustes/fps-web.json`):
+
+| Escena                       | Segunda pasada | Con los ajustes |
+| ---------------------------- | -------------- | --------------- |
+| `axa-dia`                    | 30.3           | 32.3 a 33.3     |
+| `axa-noche`                  | 22.2           | 23.8            |
+| `carambola-dia`              | 30.3           | 31.2 a 32.3     |
+| `carambola-noche`            | 27             | 27              |
+| `lateral_interseccion-dia`   | 27             | 23.3 a 23.8     |
+| `lateral_interseccion-noche` | 23.3 a 25      | 20.8 a 22.7     |
+| `nocturno_lluvia-dia`        | 32.3 a 33.3    | 29.4 a 31.2     |
+| `nocturno_lluvia-noche`      | 27 a 27.8      | 25 a 26.3       |
+| `terraceria-dia`             | 30.3           | 30.3            |
+| `terraceria-noche`           | 24.4 a 25      | 20 a 20.4       |
+
 ### Resumen para René (segunda pasada, 2026-11-10)
 
 **Qué quedó.** Los 5 puntos de la segunda pasada, en tu orden: luz y color, calle mexicana, suelo y desgaste, árboles y autopista con cerros. Las 20 capturas WebGL nuevas están junto a las del 2026-11-09 en `docs/cesvi/u2/segunda-pasada/lado-a-lado/` (antes a la izquierda, después a la derecha). Las nuevas, solas, están en `despues/`.
@@ -275,7 +308,7 @@ Con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1` y sin nada más abierto, todo
 
 ### Falta de U2
 
-- Lo que René marque de las 20 capturas de la segunda pasada.
+- Medir otra vez la carga del build con los ajustes cuando la red esté normal (el 2026-11-10 Blob iba a unos 230 KB/s).
 - Rampas en las esquinas de las banquetas y juntas marcadas (hoy solo las da la textura): quedó del punto 2.
 - Las vialetas miden lo de verdad (10 cm): de noche se ven cerca de la cámara, pero a más de 30 m no.
 - Los impostores cambian de vista cada 45°: se nota solo al orbitar despacio junto a un árbol. Mezclar vistas pide un sombreador propio (U5).

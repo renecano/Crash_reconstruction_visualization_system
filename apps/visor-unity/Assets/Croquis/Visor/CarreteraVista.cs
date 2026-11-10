@@ -699,9 +699,22 @@ namespace Croquis.Visor
 
         // ---- Matorrales --------------------------------------------------------------------------------
 
+        /// <summary>Un matorral: tres tarjetas cruzadas, un poco hundidas para que no floten.</summary>
+        private static void Matorral(Malla m, Terreno terreno, Vector2 p, float ancho, float alto, float giro)
+        {
+            var pie = terreno.P(p.x, p.y, -0.05);
+            for (var h = 0; h < 3; h++)
+            {
+                var ang = giro + h * Mathf.PI / 3f;
+                var d = new Vector3(Mathf.Cos(ang), 0f, Mathf.Sin(ang)) * (ancho / 2f);
+                m.Tarjeta(pie - d, pie + d, pie + d + Vector3.up * alto, pie - d + Vector3.up * alto);
+            }
+        }
+
         /// <summary>
-        /// Matorrales a lo largo de las orillas exteriores, de 3 a 14 m afuera del acotamiento, a veces
-        /// en grupo. Tres tarjetas cruzadas cada uno, con tres follajes (verde, olivo y seco).
+        /// Matorrales a lo largo de las orillas exteriores, de 3 a 18 m afuera del acotamiento, en
+        /// manchones de tamaños distintos. Tres tarjetas cruzadas cada uno, con tres follajes (verde,
+        /// olivo y seco).
         /// </summary>
         private static void Matorrales(Transform padre, List<Orilla> orillas, Terreno terreno, long semilla, bool noche, Vector2 centro, float claro)
         {
@@ -721,8 +734,11 @@ namespace Croquis.Visor
 
             var azar = new Azar(semilla + 409);
             var mallas = new[] { new Malla { NormalArriba = true }, new Malla { NormalArriba = true }, new Malla { NormalArriba = true } };
-            var cuantos = Mathf.RoundToInt(total / 100f * (Calidad.Media ? 7f : 11f));
-            for (var k = 0; k < cuantos; k++)
+            // Manchones, no puntos sueltos (René, 2026-11-10): unos cuantos grupos por cada 100 m de
+            // orilla, de 2 a 9 matorrales cada uno, con tamaños muy distintos (muchos chicos y pocos
+            // grandes) y repartidos sin orden; entre grupo y grupo, alguno suelto.
+            var grupos = Mathf.Max(1, Mathf.RoundToInt(total / 100f * (Calidad.Media ? 2.5f : 3.5f)));
+            for (var k = 0; k < grupos; k++)
             {
                 var s = azar.Siguiente() * total;
                 Orilla o = default;
@@ -742,26 +758,39 @@ namespace Croquis.Visor
                     s -= x.Largo;
                 }
 
-                var q = o.A + o.Dir * Mathf.Min(s, o.Largo) + o.Afuera * azar.Entre(3f, 14f);
-                var grupo = azar.Siguiente() < 0.4f ? 1 + (int)azar.Entre(1f, 3f) : 1;
-                for (var g = 0; g < grupo; g++)
+                // Más cerca de la cerca que de la vía: la distancia afuera no es pareja.
+                var afuera = Mathf.Lerp(3f, 18f, Mathf.Pow(azar.Siguiente(), 0.7f));
+                var centroGrupo = o.A + o.Dir * Mathf.Min(s, o.Largo) + o.Afuera * afuera;
+                var radio = azar.Entre(1.5f, 5.5f);
+                var cuantos = 2 + (int)(Mathf.Pow(azar.Siguiente(), 1.6f) * 8f);
+                var follaje = (int)Mathf.Min(2f, azar.Entre(0f, 3f));
+                // A lo largo de la orilla el grupo se estira: así crece el monte junto a una cerca.
+                var largo = azar.Entre(1f, 2.4f);
+                for (var g = 0; g < cuantos; g++)
                 {
-                    var p = q + new Vector2(azar.Entre(-1.8f, 1.8f), azar.Entre(-1.8f, 1.8f)) * (g == 0 ? 0f : 1f);
-                    var ancho = azar.Entre(0.9f, 2.3f);
-                    var alto = ancho * azar.Entre(0.55f, 0.8f);
-                    var giro = azar.Entre(0f, Mathf.PI);
-                    var cual = (int)Mathf.Min(2f, azar.Entre(0f, 3f));
+                    var ang = azar.Entre(0f, Mathf.PI * 2f);
+                    var r = radio * Mathf.Sqrt(azar.Siguiente());
+                    var p = centroGrupo + o.Dir * (Mathf.Cos(ang) * r * largo) + o.Afuera * (Mathf.Sin(ang) * r);
                     if ((p - centro).magnitude < claro)
                     {
                         continue;
                     }
 
-                    var pie = terreno.P(p.x, p.y, -0.05);
-                    for (var h = 0; h < 3; h++)
+                    // Muchos chicos, pocos grandes: de 0.5 a 3.4 m de ancho.
+                    var ancho = Mathf.Lerp(0.5f, 3.4f, Mathf.Pow(azar.Siguiente(), 2.2f));
+                    var alto = ancho * azar.Entre(0.45f, 0.85f);
+                    var cual = azar.Siguiente() < 0.75f ? follaje : (int)Mathf.Min(2f, azar.Entre(0f, 3f));
+                    Matorral(mallas[cual], terreno, p, ancho, alto, azar.Entre(0f, Mathf.PI));
+                }
+
+                // Uno suelto entre grupos, a veces.
+                if (azar.Siguiente() < 0.5f)
+                {
+                    var p = centroGrupo + o.Dir * azar.Entre(8f, 25f) + o.Afuera * azar.Entre(-2f, 6f);
+                    if ((p - centro).magnitude >= claro)
                     {
-                        var ang = giro + h * Mathf.PI / 3f;
-                        var d = new Vector3(Mathf.Cos(ang), 0f, Mathf.Sin(ang)) * (ancho / 2f);
-                        mallas[cual].Tarjeta(pie - d, pie + d, pie + d + Vector3.up * alto, pie - d + Vector3.up * alto);
+                        var ancho = Mathf.Lerp(0.6f, 2f, azar.Siguiente());
+                        Matorral(mallas[(int)Mathf.Min(2f, azar.Entre(0f, 3f))], terreno, p, ancho, ancho * azar.Entre(0.5f, 0.8f), azar.Entre(0f, Mathf.PI));
                     }
                 }
             }
