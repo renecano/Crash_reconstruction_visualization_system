@@ -38,7 +38,7 @@ namespace Croquis.EditorTools
             Simples();
             foreach (var e in new[] { "jacaranda", "fresno", "pirul" })
             {
-                Tarjeta(e, "frente");
+                Tarjeta(e, "atlas");
                 Tarjeta(e, "planta");
             }
 
@@ -46,6 +46,8 @@ namespace Croquis.EditorTools
             {
                 Cielo(c);
             }
+
+            Laderas();
 
             Posproceso();
             AssetDatabase.SaveAssets();
@@ -224,9 +226,43 @@ namespace Croquis.EditorTools
             // losa oscura sobre la cabeza.
             m.SetFloat("_Cull", (float)(vista == "planta" ? CullMode.Back : CullMode.Off));
             m.SetFloat("_Smoothness", 0.08f);
+            if (vista == "atlas")
+            {
+                // El impostor no recibe sombra: sus tarjetas de sombra lo cruzan por el eje y le
+                // dejaban una franja oscura. En URP esto lo decide el material, no el renderer.
+                m.SetFloat("_ReceiveShadows", 0f);
+                m.EnableKeyword("_RECEIVE_SHADOWS_OFF");
+            }
+
             m.SetOverrideTag("RenderType", "TransparentCutout");
             m.renderQueue = (int)RenderQueue.AlphaTest;
             Guardar(m, "arbol_" + especie + "_" + vista);
+        }
+
+        /// <summary>
+        /// Hornea las dos texturas de ladera de los cerros (cercana y lejana) como PNG de recursos. Solo
+        /// reescribe el archivo si cambió, para no reimportarlo en cada preparación.
+        /// </summary>
+        private static void Laderas()
+        {
+            const int N = 512;
+            foreach (var lejos in new[] { false, true })
+            {
+                var medidas = Croquis.Visor.Materiales.MedidasLadera(lejos);
+                var px = Croquis.Visor.Materiales.PintarLadera(N, medidas.x, medidas.y, lejos ? 1531 : 1500);
+                var png = ImageConversion.EncodeArrayToPNG(
+                    System.Array.ConvertAll(px, c => (Color32)c),
+                    UnityEngine.Experimental.Rendering.GraphicsFormat.R8G8B8A8_SRGB,
+                    N,
+                    N);
+                var ruta = "Assets/Croquis/Recursos/Resources/cerros/ladera_" + (lejos ? "lejos" : "cerca") + ".png";
+                Directory.CreateDirectory(Path.GetDirectoryName(ruta));
+                if (!File.Exists(ruta) || !File.ReadAllBytes(ruta).AsSpan().SequenceEqual(png))
+                {
+                    File.WriteAllBytes(ruta, png);
+                    AssetDatabase.ImportAsset(ruta, ImportAssetOptions.ForceUpdate);
+                }
+            }
         }
 
         private static void Cielo(string nombre)

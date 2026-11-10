@@ -21,7 +21,7 @@
 
 ## Límites
 
-- **Los árboles son tarjetas,** no geometría. Los modelos CC0 de origen tienen de 0.3 a 4.6 millones de polígonos y pesan de 60 a 208 MB cada uno: no caben en un build web. El plan del entorno los pone a 22 m o más de la acción. Si de cerca no convencen, la salida es hornear una malla reducida de cada especie con Blender, y se anota para U5.
+- **Los árboles son impostores,** no geometría (ver «Árboles como impostores»). Los modelos CC0 de origen tienen de 0.3 a 4.6 millones de polígonos y pesan de 60 a 208 MB cada uno: no caben en un build web.
 - **La palmera no tiene tarjeta:** se arma con geometría (tronco y hojas en arco).
 - **Qué funciona en WebGL** se comprueba con el build, no con la documentación: las capturas finales y `eval/unity_build.mjs` salen de ahí.
 
@@ -46,3 +46,31 @@ Se midió con builds de diagnóstico que apagan una cosa a la vez (`depurar` en 
 - **Segunda fuente: la sonda de reflejos con HDR.** En WebGL, una sonda en tiempo real con HDR devuelve NaN en todo lo que la usa. Con HDR, el 37.5 % de la captura de `lateral_interseccion` salía negra; sin HDR, el 0.5 %. En WebGL la sonda va sin HDR.
 - **Defensas que se quedan:** la cámara corta los NaN antes del posproceso (`stopNaN`) y el resplandor tiene tope (`clamp` 6).
 - **El resplandor queda encendido en WebGL.**
+
+## Árboles como impostores (segunda pasada de U2, punto 4; 2026-11-10)
+
+Las tres tarjetas cruzadas se notaban de cerca: una costura al centro de la copa y un árbol plano al rodearlo. Se cambiaron por impostores.
+
+- **Qué es.** Cada árbol es un solo cuadro que gira hacia la cámara y muestra, de un atlas, la vista horneada más cercana a la dirección desde la que se le mira. Son 8 vistas alrededor del árbol, de 1024 px cada una (atlas de 4096 × 2048 de color y de 2048 × 1024 de normal).
+- **Cómo se hornea.** `tools/unity/impostores.mjs` corre Blender (`assets/pipeline/blender/hornear_impostor.py`) sobre el modelo CC0 de Poly Haven y deja el atlas en `tools/unity/arboles/`. El horneado centra el pie del tronco en el eje, para que no brinque de una vista a otra, y esconde las otras copias que trae el archivo. Tarda de 2 a 4 min por especie.
+- **Sin sombreador propio.** Todos los árboles de una especie van en una malla que se rehace en la CPU justo antes de dibujar (`ArbolesVista`, en `beginCameraRendering`): una llamada de dibujo por especie con el material Lit de siempre. Así no hay variantes de sombreador nuevas que puedan faltar en WebGL.
+- **La sombra** la dan dos tarjetas cruzadas fijas que solo proyectan sombra. El impostor no recibe sombra: esas tarjetas lo cruzan por el eje y le dejaban una franja oscura. El costo es que un árbol a la sombra de un edificio se ve iluminado.
+- **Desde arriba** (más de 58° de elevación, o la cámara cenital) el cuadro se pliega y queda la tarjeta de planta, que es la vista real del árbol desde arriba.
+- **Por qué no impostores octaédricos.** Piden un sombreador propio que mezcle tres vistas por píxel. Con 8 vistas a nivel del suelo y la planta se cubre lo que el perito ve (acera, cinematográfica, conductor, cenital) sin ese riesgo en WebGL. El salto entre vistas es de 45° y se nota solo al orbitar despacio junto a un árbol.
+- **El atlas entra a tamaño completo también en WebGL.** A la mitad, un árbol visto desde la acera se veía en manchas.
+
+## Autopista y cerros (segunda pasada de U2, punto 5; 2026-11-10)
+
+- **Solo si la vía trae acotamiento** (`CarreteraVista`). Todo sale de la geometría que ya calculó TS y de la semilla de la escena, nada es dato del caso y nada cae dentro del claro del hecho.
+- **Orillas.** Las aristas de borde del acotamiento que tienen la calzada hacia adentro y no hacia afuera son orillas exteriores; si del otro lado hay otra calzada a menos de 40 m, la orilla da a la mediana. Afuera de cada una va una franja de grava de 0.95 m y, más afuera, tierra suelta que se pierde en el pasto.
+- **Vialetas.** Las rayas vienen en piezas de 1 m. Se juntan por línea (mismo eje a menos de 15 cm, a menos de 14 m) y se recorren en orden: en las discontinuas va una vialeta en medio de cada espacio y, en las continuas, una cada 12 m. De noche su reflejante pasa el umbral del resplandor.
+- **Defensa y fantasmas.** La defensa ya era continua; ahora lleva un reflejante ámbar sobre uno de cada tres postes (cada 12 m). Donde no hay defensa van fantasmas cada 20 m: poste blanco, banda negra y reflejante.
+- **Señalamiento genérico.** Un tablero verde por sentido, entre 90 y 150 m adelante del hecho y a la derecha de quien maneja, con orla, una flecha y franjas blancas. No lleva texto: un nombre de lugar o un límite de velocidad inventados se leerían como datos del sitio, y en un dictamen eso importa.
+- **Matorrales.** Tarjetas cruzadas de 0.9 a 2.3 m, en tres follajes (verde, olivo y seco), de 3 a 14 m afuera del acotamiento y a veces en grupo. Usan el material base de las matas, que ya trae su variante de sombreador para WebGL.
+- **Cerros.** Cada capa es una ladera con pendiente (cuatro hileras de la base a la cresta), con textura procedural de pasto, tierra, manchas de monte que se juntan en las cañadas y roca cerca de la cresta. De noche la alumbra la luna como al resto del campo.
+- **Las texturas de ladera se hornean al preparar el proyecto** (`PrepararEscenario.Laderas`): una para las capas cercanas y otra para las lejanas, de 512 px. Generarlas al cargar el caso, una por capa, subía la carga del caso de AXA de 3.3 a 5.1 s y la del cruce urbano de 4.1 a 6.6 s en WebGL (medido con `eval/unity_build.mjs` el 2026-11-10).
+- **La niebla de URP es global.** Apagar `FOG_EXP2` en el material no la quita: es una palabra clave global que pone la canalización en cada cuadro. Por eso los cerros a 720 y 1,100 m salían del color del aire: azules de día y negros de noche. Las capas a más de 450 m se acercan a menos de 530 m, escaladas para conservar su altura aparente; dentro de la escena la diferencia de paralaje no se nota.
+
+### `Mathf.SmoothStep` no es el `smoothstep` de los sombreadores
+
+`Mathf.SmoothStep(desde, hasta, t)` interpola entre `desde` y `hasta`. No es una rampa de 0 a 1 entre dos bordes. Las texturas de desgaste de los puntos 1 a 3 lo usaban como rampa, y por eso salían como cuadros parejos: una mancha de aceite era un cuadro semitransparente, y en un visor forense un cuadro oscuro en la vía se puede tomar por evidencia. Todas usan ahora `Paso`, el `smoothstep` de verdad. La raya gastada solo se aclara, de 62 % a 100 %: con huecos de verdad, una raya continua se leía discontinua.

@@ -54,7 +54,7 @@ namespace Croquis.Visor
             var muro = new Malla();
             var metal = new Malla();
             var troncos = new Malla();
-            var copas = new Malla();
+            ArbolesVista impostores = null;
             var copasPlanta = new Malla();
             var placas = new Malla();
             foreach (var o in objetos)
@@ -87,11 +87,12 @@ namespace Croquis.Visor
                         troncos.Prisma(pie, radio * 1.2f, tronco + 0.6f, 10, radio * 0.8f);
                         var medidas = Materiales.MedidasArbol("fresno");
                         var ancho = medidas.x * (alto / medidas.y);
-                        for (var c = 0; c < 3; c++)
+                        if (impostores == null)
                         {
-                            var d = Dir(o.RumboDeg + c * 60.0) * (ancho / 2f);
-                            copas.Tarjeta(pie - d, pie + d, pie + d + Vector3.up * alto, pie - d + Vector3.up * alto);
+                            impostores = padre.gameObject.AddComponent<ArbolesVista>();
                         }
+
+                        impostores.Agregar("fresno", pie, alto, (float)(o.RumboDeg * System.Math.PI / 180.0));
 
                         var h = pie + Vector3.up * (alto * 0.62f);
                         var rr = ancho * 0.5f;
@@ -118,8 +119,12 @@ namespace Croquis.Visor
             muro.Poner(padre, "muros_colocados", Materiales.Pbr("tabique", new Color(1.5f, 0.95f, 0.78f)));
             metal.Poner(padre, "metal_colocado", Materiales.Liso(new Color(0.42f, 0.45f, 0.48f), 0.5f, 0.7f));
             troncos.Poner(padre, "troncos_colocados", Materiales.Liso(new Color(0.3f, 0.24f, 0.18f), 0.08f));
-            copas.Poner(padre, "arboles_colocados", Materiales.Arbol("fresno", "frente"));
-            copasPlanta.Poner(padre, "copas_colocadas", Materiales.Arbol("fresno", "planta"));
+            if (impostores != null)
+            {
+                impostores.Cerrar();
+            }
+
+            copasPlanta.Poner(padre, "copas_colocadas", Materiales.Arbol("fresno", "planta"), false);
             placas.Poner(padre, "placas_colocadas", Materiales.Liso(new Color(0.9f, 0.9f, 0.88f), 0.4f));
         }
 

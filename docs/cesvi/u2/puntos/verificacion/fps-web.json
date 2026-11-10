@@ -1,0 +1,16 @@
+{
+  "fecha": "2026-11-10T03:53:05.207Z",
+  "t": 0.4,
+  "fps": {
+    "axa-dia": [29.4, 27],
+    "axa-noche": [23.8, 20],
+    "carambola-dia": [30.3, 27.8, 28.6],
+    "carambola-noche": [25.6, 22.7, 23.3],
+    "lateral_interseccion-dia": [24.4, 25],
+    "lateral_interseccion-noche": [20, 19.6],
+    "nocturno_lluvia-dia": [30.3, 30.3],
+    "nocturno_lluvia-noche": [23.8, 23.3],
+    "terraceria-dia": [27.8, 27],
+    "terraceria-noche": [22.7, 22.7]
+  }
+}
