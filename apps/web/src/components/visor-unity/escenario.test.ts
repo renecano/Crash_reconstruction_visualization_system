@@ -17,7 +17,8 @@ describe("el escenario del visor Unity (ADR 0112)", () => {
       const p = armarCaso3d(c.escena, c.resultado, null, escenarioDe(c.escena, c.resultado));
       expect(caso3dErrors(p), f).toEqual([]);
     }
-  });
+    // 22 paquetes completos: con toda la suite corriendo pasa de los 5 s por omisión.
+  }, 30_000);
 
   it("da lo mismo dos veces: lo procedural va con la semilla de la escena", () => {
     const [, c] = casos[0]!;

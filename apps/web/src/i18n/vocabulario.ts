@@ -175,6 +175,7 @@ export const TITULO_ESCENA_EN: Record<FixtureName, string> = {
   interseccion_toluca: "Side collision at Carranza and Juárez (Toluca, OpenStreetMap street)",
   carambola: "Chain collision on Paseo Tollocan at a red light",
   reversa: "Backing into a stopped pickup on Hidalgo street",
+  terraceria_topes: "Rear-end collision on a wet dirt road with washboard and speed bumps",
 };
 
 /** Título de una escena canónica en el idioma de la página. */
