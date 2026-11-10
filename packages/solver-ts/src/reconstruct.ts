@@ -642,6 +642,67 @@ function laterImpacts(
   );
 }
 
+/** Un objeto fijo no se mueve: en la integración conjunta es un cuerpo de masa enorme, en reposo. */
+const FIXED_OBJECT_MASS_KG = 1.0e9;
+/** El contorno mínimo de un objeto en planta (m): una señal o un poste delgado también se tocan. */
+const FIXED_OBJECT_MIN_SIDE_M = 0.1;
+
+/**
+ * Los choques intermedios contra objetos (C1): después del primer impacto, un vehículo contra un
+ * objeto del entorno, en el orden declarado. Cuentan los eventos `impacto_vehiculo_objeto` o
+ * `segundo_impacto` posteriores al primero con exactamente un vehículo y un objeto declarado
+ * entre sus actores. El objeto está donde lo marcó el perito: el impacto ocurre cuando el contorno
+ * del vehículo lo toca.
+ */
+function laterObjectImpacts(
+  spec: Json,
+  primary: Json | null,
+  vehicleIds: ReadonlyMap<string, unknown>,
+  objects: ReadonlyMap<string, SceneObject>,
+): [Json, string, SceneObject][] {
+  if (primary === null) return [];
+  const eventos = [...(spec.eventos as Json[])].sort(
+    (a, b) => Math.trunc(Number(a.orden)) - Math.trunc(Number(b.orden)),
+  );
+  const out: [Json, string, SceneObject][] = [];
+  for (const e of eventos) {
+    if (e === primary || Math.trunc(Number(e.orden)) < Math.trunc(Number(primary.orden))) continue;
+    if (e.tipo !== "impacto_vehiculo_objeto" && e.tipo !== "segundo_impacto") continue;
+    const actores = (e.actores as unknown[]).map(String);
+    const vehs = actores.filter((a) => vehicleIds.has(a));
+    const objs = actores.filter((a) => objects.has(a));
+    if (vehs.length === 1 && objs.length === 1) out.push([e, vehs[0]!, objects.get(objs[0]!)!]);
+  }
+  return out;
+}
+
+/**
+ * El objeto como cuerpo inmóvil de la integración conjunta: su caja en planta (el tronco de un
+ * árbol y un poste, como un cuadro de su diámetro), sin velocidad y con masa enorme.
+ */
+function fixedObjectBody(o: SceneObject, mu: number): JointBody {
+  let largo: number;
+  let ancho: number;
+  if (o.forma === "arbol" || o.forma === "cilindro" || o.forma === "senal") {
+    largo = ancho = Math.max(2.0 * o.radio, FIXED_OBJECT_MIN_SIDE_M);
+  } else {
+    largo = Math.max(o.largo, FIXED_OBJECT_MIN_SIDE_M);
+    ancho = Math.max(o.ancho, FIXED_OBJECT_MIN_SIDE_M);
+  }
+  const body = new Body2D(
+    FIXED_OBJECT_MASS_KG,
+    Body2D.boxInertia(FIXED_OBJECT_MASS_KG, largo, ancho),
+    largo,
+    ancho,
+  );
+  return {
+    body,
+    start: { x: o.x, y: o.y, yaw: radians(o.rumboDeg), vx: 0.0, vy: 0.0, yawRate: 0.0, t: 0.0 },
+    wheels: fourWheels(largo, ancho, largo / 2.0, true),
+    mu,
+  };
+}
+
 /** La cara del vehículo (F, B, L o R) que mira hacia `n` (unitaria, mundo). */
 function sideToward(n: Vec, yaw: number): string {
   const c = dmath.cos(yaw);
@@ -855,6 +916,14 @@ export function reconstruct(
   // integran juntos con los del primero; cada impacto ocurre cuando su par se toca.
   const later = laterImpacts(spec, event, byId);
   const participantes = new Set([...actores, ...later.flatMap((e) => pairOf(e, byId))]);
+  // Choques intermedios contra objetos (C1): el objeto entra a esa integración como un cuerpo
+  // inmóvil, y el impacto ocurre cuando el vehículo lo toca.
+  const laterObj = laterObjectImpacts(
+    spec,
+    event,
+    byId,
+    new Map(sceneObjects(spec).map((o) => [o.id, o])),
+  );
   const axis = roadAxis(lugar);
   const candidates = new Map(models.map((m) => [m.id, pathCandidates(m, laneWidth, axis)]));
   const paths = new Map(models.map((m) => [m.id, candidates.get(m.id)![0]!]));
@@ -1382,6 +1451,9 @@ export function reconstruct(
       if (!group.includes(vid)) group.push(vid);
     }
   }
+  for (const [, vid] of laterObj) {
+    if (participantes.has(vid) && !group.includes(vid)) group.push(vid);
+  }
   const samePairAsFirst = (pa: string, pb: string): boolean =>
     jointIds.length === 2 && jointIds.includes(pa) && jointIds.includes(pb) && pa !== pb;
   const plans: PlannedImpact[] = [];
@@ -1398,8 +1470,21 @@ export function reconstruct(
       });
     }
   }
+  // Los objetos de los choques intermedios van después de los vehículos, cada uno una vez.
+  const fixed: SceneObject[] = [];
+  for (const [e, vid, obj] of laterObj) {
+    if (!group.includes(vid)) continue;
+    if (!fixed.includes(obj)) fixed.push(obj);
+    plans.push({
+      a: group.indexOf(vid),
+      b: group.length + fixed.indexOf(obj),
+      eventId: String(e.id),
+      restitution: RESTITUTION_VV,
+      friction: IMPULSE_RATIO,
+    });
+  }
   const [jointResults, jointHits] = integrateJointImpacts(
-    group.map((i) => postBody(byId.get(i)!)),
+    [...group.map((i) => postBody(byId.get(i)!)), ...fixed.map((o) => fixedObjectBody(o, mu))],
     { dtOut: dt, tMax: T_POST_MAX, impacts: plans },
   );
   const jointPost = new Map<string, PostImpactResult>(group.map((i, k) => [i, jointResults[k]!]));
@@ -1407,7 +1492,10 @@ export function reconstruct(
   // Los impactos posteriores que ocurrieron: daño, delta-v y evento, como el primero.
   const laterDamage = new Map<string, LaterDamage[]>(models.map((m) => [m.id, []]));
   const vImpactAt = new Map<string, number>();
-  const laterById = new Map(later.map((e) => [String(e.id), e]));
+  const laterById = new Map([
+    ...later.map((e) => [String(e.id), e] as const),
+    ...laterObj.map(([e]) => [String(e.id), e] as const),
+  ]);
   for (const hit of jointHits) {
     const ev = laterById.get(hit.eventId)!;
     const zonasEv = new Map<string, Json | null>();
@@ -1415,6 +1503,54 @@ export function reconstruct(
       zonasEv.set(String(z.vehiculo_id), (z.cdc as Json | undefined) ?? null);
     }
     const res2 = hit.result;
+    if (hit.b >= group.length) {
+      // Contra un objeto fijo: toda la energía que se disipa deforma al vehículo (el objeto se
+      // toma rígido, así que es una cota superior de su daño).
+      const vidO = group[hit.a]!;
+      const obj = fixed[hit.b - group.length]!;
+      const mO = byId.get(vidO)!;
+      const cdcO = zonasEv.get(vidO) ?? { lado: sideToward(hit.normal, hit.aBefore.yaw) };
+      const kO = stiffnessFor(mO.clase, zonaFromCdcSide(str(cdcO.lado, "F")));
+      const energyO = res2.energyLoss;
+      const [shapeO, widthO] = crushShapeAndWidth(cdcO, mO.body);
+      const profO = profileForEnergy(energyO, widthO, kO.stiffness, shapeO);
+      const pdO = pdofHours(res2.pdofADeg);
+      if (crush.get(vidO)![3] === "sin impacto") {
+        crush.set(vidO, [profO, widthO, energyO, kO.origen]);
+        deltaV.set(vidO, res2.deltaVA);
+        pdof.set(vidO, pdO);
+        zonas.set(vidO, cdcO);
+        vImpactAt.set(vidO, stateSpeed(hit.aBefore));
+      } else {
+        laterDamage.get(vidO)!.push({
+          eventId: hit.eventId,
+          t: hit.t,
+          profileM: profO,
+          widthM: widthO,
+          centerM: crushCenter(cdcO, mO.body, widthO),
+          energyJ: energyO,
+          stiffnessOrigen: kO.origen,
+          cdc: cdcO,
+          deltaVKmh: msToKmh(res2.deltaVA),
+          pdofHours: pdO,
+        });
+      }
+      eventosOut.push({
+        id: hit.eventId,
+        tipo: "impacto_vehiculo_objeto",
+        t: hit.t,
+        actores: [vidO, obj.id],
+        detalle: {
+          impulso_ns: [res2.impulse[0], res2.impulse[1]],
+          adherencia: res2.sticking,
+          friccion_contacto_usada: res2.frictionUsed,
+          energia_disipada_j: res2.energyLoss,
+          velocidad_cierre_kmh: msToKmh(stateSpeed(hit.aBefore)),
+          punto_m: [hit.point[0], hit.point[1]],
+        },
+      });
+      continue;
+    }
     const ids2 = [group[hit.a]!, group[hit.b]!] as const;
     const sides = [
       [ids2[0], hit.aBefore, hit.normal, res2.deltaVA, pdofHours(res2.pdofADeg)],
@@ -1489,6 +1625,18 @@ export function reconstruct(
         `El impacto entre los vehículos ${byId.get(pa)!.rol} y ${byId.get(pb)!.rol} declarado ` +
           "después del primero no ocurre en la reconstrucción: sus trayectorias no llegan a " +
           "tocarse.",
+      );
+    }
+  }
+
+  for (const [e, vid, obj] of laterObj) {
+    if (!jointHits.some((h) => h.eventId === String(e.id))) {
+      flag(
+        "impacto_no_ocurre",
+        { evento: e.id, vehiculos: [vid], objeto: obj.id },
+        `El choque del vehículo ${byId.get(vid)!.rol} contra el objeto ${obj.id} declarado ` +
+          "después del primero no ocurre en la reconstrucción: su trayectoria no llega a " +
+          "tocarlo.",
       );
     }
   }
