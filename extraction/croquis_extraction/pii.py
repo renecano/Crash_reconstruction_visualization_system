@@ -24,7 +24,19 @@ from typing import Any
 
 from croquis_extraction.text import fold, load_json, normalize_spaces
 
-MARKERS = ("NOMBRE", "PLACA", "TELEFONO", "CORREO", "CURP", "RFC", "NUMERO")
+MARKERS = (
+    "NOMBRE",
+    "PLACA",
+    "TELEFONO",
+    "CORREO",
+    "CURP",
+    "RFC",
+    "NUMERO",
+    "VIN",
+    "FOLIO",
+    "POLIZA",
+    "SINIESTRO",
+)
 
 _WORD = re.compile(r"[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+")
 _UPPER = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÜÑ")

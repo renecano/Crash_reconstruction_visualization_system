@@ -103,6 +103,7 @@ import {
   Visor3dCaso,
   type PosicionMovil,
 } from "./reconstruccion";
+import { textoParaClaude } from "@/lib/redaccion";
 
 /** De dónde viene la escena de un caso, para la bitácora de la pizarra (R12b). */
 const ORIGEN_ESCENA: Record<CasoExpediente["origen"], string> = {
@@ -371,6 +372,9 @@ export function RecorridoCaso({
     }
     setEditandoRelato(false);
     setEstado("Leyendo la narración…");
+    // A Claude va la narración sin datos personales (PLAN §10), y contra ese mismo texto se revisan
+    // sus citas: tras leer, es la narración del caso.
+    const redactada = textoParaClaude(texto);
     let motivo: string | null = null;
     let insuficiente: string | null = null;
     const leerConClaude: ContextoPizarra["leer"] = async (t, rechazadas) => {
@@ -397,7 +401,7 @@ export function RecorridoCaso({
     };
     try {
       const p = await coordinar(
-        pizarraNueva(texto, { conclusiones: reporte?.conclusiones ?? null }),
+        pizarraNueva(redactada, { conclusiones: reporte?.conclusiones ?? null }),
         { leer: leerConClaude },
       );
       setPizarra(p);
@@ -405,6 +409,7 @@ export function RecorridoCaso({
         setEstado(insuficiente ?? `No se pudo leer con Claude (${motivo ?? "sin respuesta"}).`);
         return;
       }
+      if (redactada !== texto) setTexto(redactada);
       abrirEscena({ ...p.escena, preguntas: p.preguntas });
       setEstado(null);
     } catch {

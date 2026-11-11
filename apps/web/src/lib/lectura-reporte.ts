@@ -10,6 +10,7 @@ import {
   type SalidaCorpus,
   type SalidaNarracion,
 } from "@croquis/cesvi";
+import { textoParaClaude } from "@/lib/redaccion";
 
 /** Lo que acepta `/api/cesvi/importar` (caracteres). */
 export const MIN_REPORTE = 200;
@@ -81,5 +82,9 @@ export async function leerReporte(texto: string, nombre: string): Promise<Result
   if (!r.ok || d?.metodo !== "claude" || !d.corpus || !d.narracion) {
     return { ok: false, motivo: motivoDeFalla(r.ok ? 200 : r.status, d) };
   }
-  return { ok: true, importado: importarDictamen(texto, d.corpus, d.narracion, nombre) };
+  // Las citas salen del texto que vio Claude: el reporte sin datos personales (PLAN §10).
+  return {
+    ok: true,
+    importado: importarDictamen(textoParaClaude(texto), d.corpus, d.narracion, nombre),
+  };
 }

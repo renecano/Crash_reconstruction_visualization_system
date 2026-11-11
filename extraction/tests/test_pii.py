@@ -21,6 +21,13 @@ from croquis_extraction.pii import MARKERS, redact
         ("Mi CURP es PERA800101HMCRZN09", "Mi CURP es [CURP]"),
         ("RFC PERA800101AB1 del dueño", "RFC [RFC] del dueño"),
         ("el teléfono +52 55 1234 5678", "el teléfono [TELEFONO]"),
+        ("VIN 3N1CN7AD5HL800123 del sedán", "VIN [VIN] del sedán"),
+        ("serie 1HGCM82633A004352", "serie [VIN]"),
+        ("Folio 2024-00123 de la carpeta", "Folio [FOLIO] de la carpeta"),
+        ("folio no. 12345", "folio [FOLIO]"),
+        ("póliza número 7712345678 de la aseguradora", "póliza [POLIZA] de la aseguradora"),
+        ("Siniestro: 0412345", "Siniestro: [SINIESTRO]"),
+        ("número de siniestro 04-123456-7", "número de siniestro [SINIESTRO]"),
     ],
 )
 def test_redacta_cada_tipo_de_dato(text: str, expected: str) -> None:
@@ -45,6 +52,15 @@ def test_no_redacta_calles_ni_lugares() -> None:
 def test_nombres_que_son_palabras_comunes_no_se_redactan_solos() -> None:
     text = "La luz estaba en rojo y había una rosa en el parabrisas"
     assert redact(text).text == text
+
+
+def test_siniestro_y_serie_sin_numero_no_se_redactan() -> None:
+    for text in (
+        "Reporté el siniestro a mi aseguradora",
+        "Reporte de siniestro",
+        "una serie de golpes en el portafolio 123",
+    ):
+        assert redact(text).text == text
 
 
 def test_numeros_que_no_son_datos_personales_se_quedan() -> None:

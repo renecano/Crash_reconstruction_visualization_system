@@ -48,6 +48,10 @@ export const TEXTOS_FLUJO = textos(
         CURP: "CURP",
         RFC: "RFC",
         "número de domicilio": "número de domicilio",
+        VIN: "VIN",
+        folio: "folio",
+        póliza: "póliza",
+        siniestro: "número de siniestro",
       },
     },
     progreso: {
@@ -138,6 +142,10 @@ export const TEXTOS_FLUJO = textos(
         CURP: "CURP",
         RFC: "RFC",
         "número de domicilio": "street number",
+        VIN: "VIN",
+        folio: "file number",
+        póliza: "policy number",
+        siniestro: "claim number",
       },
     },
     progreso: {

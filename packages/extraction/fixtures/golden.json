@@ -1,11 +1,61 @@
 {
- "version_pii": "1.1.0",
+ "version_pii": "1.2.0",
  "version_glosario": "1.5.0",
  "plegado": {
   "entrada": " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſƀƁƂƃƄƅƆƇƈƉƊƋƌƍƎƏƐƑƒƓƔƕƖƗƘƙƚƛƜƝƞƟƠơƢƣƤƥƦƧƨƩƪƫƬƭƮƯưƱƲƳƴƵƶƷƸƹƺƻƼƽƾƿǀǁǂǃǄǅǆǇǈǉǊǋǌǍǎǏǐǑǒǓǔǕǖǗǘǙǚǛǜǝǞǟǠǡǢǣǤǥǦǧǨǩǪǫǬǭǮǯǰǱǲǳǴǵǶǷǸǹǺǻǼǽǾǿȀȁȂȃȄȅȆȇȈȉȊȋȌȍȎȏȐȑȒȓȔȕȖȗȘșȚțȜȝȞȟȠȡȢȣȤȥȦȧȨȩȪȫȬȭȮȯȰȱȲȳȴȵȶȷȸȹȺȻȼȽȾȿɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏḀḁḂḃḄḅḆḇḈḉḊḋḌḍḎḏḐḑḒḓḔḕḖḗḘḙḚḛḜḝḞḟḠḡḢḣḤḥḦḧḨḩḪḫḬḭḮḯḰḱḲḳḴḵḶḷḸḹḺḻḼḽḾḿṀṁṂṃṄṅṆṇṈṉṊṋṌṍṎṏṐṑṒṓṔṕṖṗṘṙṚṛṜṝṞṟṠṡṢṣṤṥṦṧṨṩṪṫṬṭṮṯṰṱṲṳṴṵṶṷṸṹṺṻṼṽṾṿẀẁẂẃẄẅẆẇẈẉẊẋẌẍẎẏẐẑẒẓẔẕẖẗẘẙẚẛẜẝẞẟẠạẢảẤấẦầẨẩẪẫẬậẮắẰằẲẳẴẵẶặẸẹẺẻẼẽẾếỀềỂểỄễỆệỈỉỊịỌọỎỏỐốỒồỔổỖỗỘộỚớỜờỞởỠỡỢợỤụỦủỨứỪừỬửỮữỰựỲỳỴỵỶỷỸỹỺỻỼỽỾỿ           ​‌‍‎‏‐‑‒–—―‖‗‘’‚‛“”„‟†‡•‣․‥…‧  ‪‫‬‭‮ ‰‱′″‴‵‶‷‸‹›※‼‽‾‿⁀⁁⁂⁃⁄⁅⁆⁇⁈⁉⁊⁋⁌⁍⁎⁏⁐⁑⁒⁓⁔⁕⁖⁗⁘⁙⁚⁛⁜⁝⁞ ⁠⁡⁢⁣⁤⁥⁦⁧⁨⁩⁪⁫⁬⁭⁮⁯　",
   "salida": " !\"#$%&'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyz[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿aaaaaaæceeeeiiiiðnooooo×øuuuuyþßaaaaaaæceeeeiiiiðnooooo÷øuuuuyþyaaaaaaccccccccddđđeeeeeeeeeegggggggghhħħiiiiiiiiiıĳĳjjkkĸllllllŀŀłłnnnnnnŉŋŋooooooœœrrrrrrssssssssttttŧŧuuuuuuuuuuuuwwyyyzzzzzzſƀɓƃƃƅƅɔƈƈɖɗƌƌƍǝəɛƒƒɠɣƕɩɨƙƙƚƛɯɲƞɵooƣƣƥƥʀƨƨʃƪƫƭƭʈuuʊʋƴƴƶƶʒƹƹƺƻƽƽƾƿǀǁǂǃǆǆǆǉǉǉǌǌǌaaiioouuuuuuuuuuǝaaaaææǥǥggkkooooʒʒjǳǳǳggƕƿnnaaææøøaaaaeeeeiiiioooorrrruuuussttȝȝhhƞȡȣȣȥȥaaeeooooooooyyȴȵȶȷȸȹⱥȼȼƚⱦȿɀɂɂƀʉʌɇɇɉɉɋɋɍɍɏɏaabbbbbbccddddddddddeeeeeeeeeeffgghhhhhhhhhhiiiikkkkkkllllllllmmmmmmnnnnnnnnoooooooopppprrrrrrrrssssssssssttttttttuuuuuuuuuuvvvvwwwwwwwwwwxxxxyyzzzzzzhtwyẚſẜẝßẟaaaaaaaaaaaaaaaaaaaaaaaaeeeeeeeeeeeeeeeeiiiioooooooooooooooooooooooouuuuuuuuuuuuuuyyyyyyyyỻỻỽỽỿỿ           ​‌‍‎‏‐‑‒–—―‖‗‘’‚‛“”„‟†‡•‣․‥…‧  ‪‫‬‭‮ ‰‱′″‴‵‶‷‸‹›※‼‽‾‿⁀⁁⁂⁃⁄⁅⁆⁇⁈⁉⁊⁋⁌⁍⁎⁏⁐⁑⁒⁓⁔⁕⁖⁗⁘⁙⁚⁛⁜⁝⁞ ⁠⁡⁢⁣⁤⁥⁦⁧⁨⁩⁪⁫⁬⁭⁮⁯ "
  },
  "casos": [
+  {
+   "texto": "VIN 3N1CN7AD5HL800123, NIV: 1hgcm82633a004352 y una serie de golpes",
+   "redaccion": "VIN [VIN], NIV: [VIN] y una serie de golpes",
+   "tramos": [
+    [
+     "VIN",
+     4,
+     21
+    ],
+    [
+     "VIN",
+     28,
+     45
+    ]
+   ],
+   "glosario": []
+  },
+  {
+   "texto": "Folio 2024-00123, folio no. 12345, póliza número 7712345678 y siniestro: 04-123456-7",
+   "redaccion": "Folio [FOLIO], folio [FOLIO], póliza [POLIZA] y siniestro: [SINIESTRO]",
+   "tramos": [
+    [
+     "FOLIO",
+     6,
+     16
+    ],
+    [
+     "FOLIO",
+     24,
+     33
+    ],
+    [
+     "POLIZA",
+     42,
+     59
+    ],
+    [
+     "SINIESTRO",
+     73,
+     84
+    ]
+   ],
+   "glosario": []
+  },
+  {
+   "texto": "Reporté el siniestro a mi aseguradora; Reporte de siniestro; portafolio 123",
+   "redaccion": "Reporté el siniestro a mi aseguradora; Reporte de siniestro; portafolio 123",
+   "tramos": [],
+   "glosario": []
+  },
   {
    "texto": "Me llamo Brenda Ruiz y mi tel es 722 123 4567",
    "redaccion": "Me llamo [NOMBRE] y mi tel es [TELEFONO]",

@@ -8,6 +8,7 @@ import { leerDeclaracion } from "@croquis/cesvi/server";
 import { LLMError } from "@croquis/extraction";
 import { z } from "zod";
 import { clientKeyFrom, defaultDeps, llmUnavailable } from "@/server/relato";
+import { redactarValores } from "@/lib/redaccion";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
@@ -39,7 +40,9 @@ export async function POST(request: Request): Promise<Response> {
       { status: 422 },
     );
   }
-  const { texto, vehiculos, declarante } = parsed.data;
+  // Sin datos personales hacia Claude (PLAN §10): ni en la declaración ni en la descripción de los
+  // vehículos (que puede traer la placa). El navegador revisa las citas contra el texto redactado.
+  const { texto, vehiculos, declarante } = redactarValores(parsed.data);
   if (!vehiculos.some((v) => v.id === declarante)) {
     return Response.json({ error: "El declarante no es un vehículo del caso." }, { status: 422 });
   }
