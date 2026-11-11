@@ -63,6 +63,7 @@ import {
   impactosAColocar,
   pasoAbierto,
 } from "@/lib/pasos-caso";
+import type { ResultadoMaqueta } from "@/lib/maqueta";
 import { MODALIDAD } from "@/lib/nombres-cesvi";
 import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
 import { leerTransiciones, useTema, useTransiciones, type Modo } from "@/lib/preferencias-cesvi";
@@ -1590,6 +1591,15 @@ export function RecorridoCaso({
                     return d ? [[resId, d.charAt(0).toLowerCase() + d.slice(1)]] : [];
                   }),
                 )}
+                // T6.2: la versión declarada (R7), también en el croquis 2D y no solo en el 3D.
+                declarada={
+                  declarada
+                    ? {
+                        etiqueta: declarada.etiqueta,
+                        resultado: declarada.resultado as unknown as ResultadoMaqueta,
+                      }
+                    : null
+                }
               />
             </div>
           ) : null}

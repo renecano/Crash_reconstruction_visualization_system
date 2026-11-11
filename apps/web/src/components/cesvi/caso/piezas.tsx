@@ -460,8 +460,17 @@ export function MapaEscena({
         // MapLibre posiciona el marcador con `transform`: el rumbo va en un elemento interior.
         // El color es el del vehículo, como en las posiciones colocadas.
         const el = marcador("", `punto-mapa${claseVehiculo(p.vehiculo)}`);
-        el.title = `${p.vehiculo} en la reconstrucción`;
-        el.dataset.movil = p.vehiculo;
+        if (p.declarada) {
+          // T6.2: la versión declarada (R7), hueca y punteada sobre la reconstruida.
+          el.title = `${p.vehiculo} en la versión declarada`;
+          el.dataset.movilDeclarado = p.vehiculo;
+          el.style.opacity = "0.6";
+          el.style.outline = "2px dashed currentColor";
+          el.style.outlineOffset = "2px";
+        } else {
+          el.title = `${p.vehiculo} en la reconstrucción`;
+          el.dataset.movil = p.vehiculo;
+        }
         el.style.pointerEvents = "none";
         const flecha = document.createElement("span");
         flecha.textContent = "▲";

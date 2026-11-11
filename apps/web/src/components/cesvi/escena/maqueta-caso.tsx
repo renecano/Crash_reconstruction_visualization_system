@@ -34,7 +34,10 @@ export function MaquetaCaso({
   tips = {},
   tipDelImpacto = null,
   sinControles = false,
+  declarada = null,
 }: {
+  /** T6.2: la versión declarada ya simulada (R7), para dibujarla sobre la reconstrucción. */
+  declarada?: { etiqueta: string; resultado: ResultadoMaqueta } | null;
   /** W6: sin «Ver todo», «Ir al impacto», zoom ni desplazamiento (el croquis del dictamen). */
   sinControles?: boolean;
   tips?: Record<string, string>;
@@ -110,6 +113,7 @@ export function MaquetaCaso({
             t={t}
             tips={tips}
             tipDelImpacto={tipDelImpacto}
+            declarada={declarada}
           />
         )}
       </ConLineaDeTiempo>
@@ -131,6 +135,12 @@ export function MaquetaCaso({
         <span className="text-texto-3">
           Más naranja, más rápido · siluetas cada 0.4 s · reposo punteado.
         </span>
+        {declarada ? (
+          <span className="text-texto-3" data-testid="maqueta-leyenda-declarada">
+            En azul punteado, la {declarada.etiqueta}: por dónde va cada vehículo según esa versión,
+            simulada con el mismo método.
+          </span>
+        ) : null}
       </div>
       {conCalles ? null : (
         // Sin las calles del mapa no se dibuja una vía inventada: solo lo que calculó el solver.
