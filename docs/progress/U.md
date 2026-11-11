@@ -391,6 +391,7 @@ Plan: PLAN-CESVI §3.3. Decisiones: ADR 0114.
 - **En el sedán, la vista del conductor** deja ver el cofre por dentro del corte de 0.75 m: se lee, pero no es bonito.
 - **Las flechas del teclado** mueven la cámara libre; en la órbita y la cenital todavía no.
 - **El paso de los peatones** es un balanceo de piernas, no una animación de marcha.
+- **El brazo de un ocupante sale por la ventana** de la camioneta V2 en `lateral_interseccion` (vista del conductor de V1, t = 0.4 s): el cuerpo ya no sale de la cabina (`Personas.EnCabina`), pero el brazo sentado, abierto 40°, cruza la puerta cuando el solver lo lleva contra ella. Se corrige cerrando el brazo del lado de la puerta según el desplazamiento lateral (René, 2026-11-11).
 
 ## U-pre (hecho, #181)
 
