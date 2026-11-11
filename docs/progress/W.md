@@ -6,8 +6,8 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 
 - **Desde el 2026-11-09, el Claude Code de René lleva también este frente,** porque aquí no se había subido nada. Si eres el Claude Code del compañero: antes de empezar una fase, revisa la tabla de abajo y `git fetch`; si la fase ya está tomada, sigue con la siguiente y anótala aquí.
 - **Hechas:** W1 (#187), W2 (#188), W3 (#192), W4 (#195, con su contrato #194) y W4b (#196), en `main`.
-- **Fase actual:** W6 («Encuadre en 2D», O3), en `feat/w6-encuadre`. W5 está completa en `main` (#198, #199 y #200).
-- **Siguiente paso:** con CI en verde, fusionar W6. Después, en el orden del plan: U5, U6, W7; antes de W8 o de una parte difícil de U5, avisar a René.
+- **Fase actual:** W7 («Endurecimiento»: T6.2, T6.3 y T6.4), en `feat/w7-endurecimiento`, con código y pruebas unitarias en verde. Falta correr sus e2e (René pidió no usar Playwright mientras ocupa la computadora, 2026-11-11) y fusionar.
+- **Siguiente paso:** correr `pnpm --filter @croquis/web exec playwright test --project=chromium e2e/orden-impactos.spec.ts e2e/cesvi-caso.spec.ts` cuando René libere la computadora (o leer la CI del PR, que corre el flujo principal); corregir lo que salga y fusionar. Después, en el orden del plan: U5 (la medición quedó en pausa, ver `docs/progress/U.md`), U6 y W8; antes de W8, avisar a René.
 
 ## Fases tomadas
 
@@ -20,6 +20,46 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 | W4b · Menos ruido visual                                     | Claude Code de René | `feat/w4b-menos-ruido`                   | En `main` (#196)          |
 | W5 · Terreno (C3 y O4)                                       | Claude Code de René | `feat/w5-terreno`, `feat/w5-terreno-web` | En `main` (#199, #200)    |
 | W6 · Encuadre en 2D (O3)                                     | Claude Code de René | `feat/w6-encuadre`                       | En PR desde el 2026-11-10 |
+| W7 · Endurecimiento (T6.2, T6.3, T6.4)                       | Claude Code de René | `feat/w7-endurecimiento`                 | En PR desde el 2026-11-11 |
+
+## W7 · Endurecimiento (T6.2, T6.3, T6.4) (2026-11-11)
+
+Decisiones: ADR 0134. Rama `feat/w7-endurecimiento`.
+
+### Plan
+
+- **T6.4:** retomar `fix/agentes-orden-impactos` (commit `c8c8a08`, sin pruebas): escena de prueba donde el orden importa, pruebas en Python y TS, paridad.
+- **T6.3:** que el orden que declare el perito llegue al solver (el primer impacto ya sale de `orden`), que el solver diga si reconstruye otro, y la pregunta en la interfaz.
+- **T6.2:** la versión declarada en la maqueta y en el croquis del mapa.
+- **Riesgo:** sin Playwright, la interfaz de T6.2 y T6.3 queda sin ver; por eso la lógica va en funciones puras con pruebas.
+
+### Qué se hizo
+
+- **T6.4 · Agentes:** los pares cuyo impacto el hecho narra después del primero no se buscan antes de él. Escena nueva `fixtures/agentes/carambola_orden` (una fila detenida con C tocando a B): el primer contacto es el de A con B y los agentes reproducen la reconstrucción. Los cuatro resultados de agentes que ya estaban no cambian.
+- **T6.3 · Solver:** aviso `orden_impactos_distinto` si los impactos posteriores ocurren en otro orden que el declarado, con los dos órdenes. No fuerza el orden. Escena de paridad `fixtures/c1/carambola_cuatro` (`eval/w7_fixtures.py`).
+- **T6.3 · Interfaz:** `packages/cesvi/src/orden-impactos.ts`. Si la narración de una carambola no dice el orden, Croquis lo pregunta con las formas de ordenar los impactos (dos o tres); la respuesta reordena el expediente y el primero pasa a ser el origen de la reconstrucción. La pregunta se cierra al contestarla o con «No sé». Sin cambio de contrato.
+- **T6.2 · Croquis 2D:** `versionDeclaradaEnMaqueta` (`apps/web/src/lib/maqueta.ts`) y `posicionesDeclaradasEnTiempo` (`packages/cesvi`). En la maqueta, la versión declarada va punteada sobre la reconstrucción, con su nombre y su línea en la leyenda; en el mapa, un marcador hueco por vehículo. Solo donde difiere de la reconstruida.
+
+### Evidencia (2026-11-11, en la laptop; solo pruebas unitarias)
+
+- `uv run pytest -q solver/tests/test_agents.py`: 9 en verde. `solver/tests/test_orden_impactos.py`: 5 en verde. `ruff` y `pyright` limpios en lo tocado.
+- `packages/solver-ts`: `agents.test.ts` 7 en verde (paridad con Python en las cinco escenas de agentes); `orden-impactos.test.ts` 4 en verde (paridad en `carambola_cuatro`).
+- `packages/cesvi`: la suite completa, 36 archivos y 381 pruebas en verde antes de T6.2; `declarada-croquis.test.ts`, 5 en verde. `tsc` y eslint limpios.
+- `apps/web`: la suite completa, 66 archivos y 407 pruebas en verde; `tsc` y eslint limpios en lo tocado.
+- Los resultados versionados del solver que revisé (`carambola`, `alcance`, `poste`, `lateral_interseccion`, `motociclista` y los de agentes) no cambian.
+
+### Pendientes
+
+- **Las e2e no se han corrido:** `apps/web/e2e/orden-impactos.spec.ts` (nueva, sin `@flujo`) y la comprobación de la maqueta al final del tramo de la declaración en `cesvi-caso.spec.ts` (flujo principal: la corre la CI del PR).
+- **El marcador de la versión declarada en el croquis del mapa** no tiene e2e: depende del instante en que quede el reloj (en el impacto las dos versiones coinciden y no se dibuja). Tiene prueba unitaria; al correr las e2e, revisarlo a mano.
+- **Con cuatro o más impactos entre vehículos** no se pregunta el orden: queda el leído.
+- **No se corrieron** la suite completa de Python ni la de `packages/solver-ts` (son largas): las corre la CI.
+
+### Resumen para René
+
+- **Qué quedó:** en una carambola, si tu narración no dice qué chocó primero, Croquis te lo pregunta y usa tu orden; si la física da otro orden, lo avisa. Las hipótesis de los conductores ya no «chocan» antes de tiempo a dos coches detenidos en fila. Y la versión declarada de un conductor ya se ve también en la maqueta y en el mapa, punteada sobre la reconstrucción.
+- **Cómo probarlo (cuando esté desplegado):** en «Caso nuevo», escribe «Un tráiler invade el carril contrario en la autopista y choca de frente contra una urvan; atrás venía un rabón que alcanza a la urvan» y lee la narración: sale la pregunta del orden. Para la versión declarada, abre AXA, reconstruye, compara la declaración y cambia a «Maqueta».
+- **Qué necesito de ti:** nada. Falta que yo corra las e2e y fusione.
 
 ## Datos personales fuera de `/api/cesvi` (René, 2026-11-10; ADR 0133)
 
