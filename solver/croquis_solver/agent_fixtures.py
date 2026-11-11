@@ -12,6 +12,9 @@ port TS en la prueba de paridad.
   como agentes y sin hipótesis: deben reproducir la reconstrucción.
 * ``carambola_cadena``: la `carambola` con B y C en movimiento a 40 km/h en el mismo carril. C frena
   (lo dice el perito), B reacciona a C y A reacciona a B: la reacción en cadena.
+* ``carambola_orden``: la `carambola` con su segundo impacto (B contra C) y C colocado pegado a B,
+  como en una fila detenida: sus contornos se tocan desde el principio. Los agentes respetan el
+  orden de impactos del hecho (T6.4): el primer contacto es el de A contra B, no el de B con C.
 
     uv run croquis-solver agent-fixtures
 """
@@ -111,11 +114,30 @@ def carambola_cadena() -> JsonObj:
     return spec
 
 
+def carambola_orden() -> JsonObj:
+    spec = copy.deepcopy(load_fixture("carambola"))
+    _meta(spec, "orden", "Carambola en fila detenida: los agentes respetan el orden de impactos")
+    for v in spec["vehiculos"]:
+        if v["id"] == "veh-a":
+            # Sin hipótesis: debe reproducir la reconstrucción.
+            v["conductor"] = {}
+        if v["id"] == "veh-c":
+            # B mide 4.3 m y C 4.31 m: con C en x = 4.25, sus contornos se enciman 5.5 cm.
+            v["posicion_inicial"]["x"] = 4.25
+            v["posicion_inicial"]["procedencia"] = {
+                "fuente": FUENTE,
+                "confianza": 0.9,
+                "nota": "Pegado a B, como en una fila detenida.",
+            }
+    return spec
+
+
 FIXTURES = {
     "alcance_frena_antes": alcance_frena_antes,
     "alcance_volantea": alcance_volantea,
     "axa_agentes": axa_agentes,
     "carambola_cadena": carambola_cadena,
+    "carambola_orden": carambola_orden,
 }
 
 

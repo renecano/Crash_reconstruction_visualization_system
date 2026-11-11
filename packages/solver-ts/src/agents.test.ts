@@ -27,9 +27,30 @@ describe("los conductores como agentes: paridad con Python", () => {
       "alcance_volantea",
       "axa_agentes",
       "carambola_cadena",
+      "carambola_orden",
     ]);
     for (const n of ESCENAS) expect(hasDrivers(leer(`${n}.json`))).toBe(true);
   });
+
+  it("respetan el orden de impactos del hecho (T6.4): en la fila detenida, primero A contra B", () => {
+    // C quedó colocado tocando a B; el hecho narra el alcance de A a B y después el golpe de B a C.
+    const spec = leer("carambola_orden.json");
+    const d = simulateDrivers(spec, reconstruct(spec))!.toDict() as {
+      resultado: { vehiculos: string[]; t: number };
+      linea_base: unknown;
+      supuestos: string[];
+    };
+    expect(d.resultado.vehiculos).toEqual(["veh-a", "veh-b"]);
+    expect(Math.abs(d.resultado.t)).toBeLessThan(1e-6);
+    expect(d.resultado).toEqual(d.linea_base);
+    expect(d.supuestos.at(-1)).toBe(
+      "Se respeta el orden de impactos del hecho: no se busca contacto entre veh-b y veh-c antes del primer impacto.",
+    );
+    // En la cadena solo se narra un impacto: no hay pares que dejar de buscar ni ese supuesto.
+    const cadena = leer("carambola_cadena.json");
+    const c = simulateDrivers(cadena, reconstruct(cadena))!.toDict() as { supuestos: string[] };
+    expect(c.supuestos.some((s) => s.includes("orden de impactos"))).toBe(false);
+  }, 120_000);
 
   it.each(ESCENAS)(
     "%s da lo mismo que Python",
