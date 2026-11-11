@@ -21,6 +21,60 @@
    - **Escritorio:** el mismo programa mide si se abre con `-caso` (`Medicion`); `tools/unity/medir-escritorio.ps1` corre un proceso por medición y escribe `e6_unity_escritorio.json`. `tools/unity/paquete-escritorio.ps1` arma el paquete que se corre en la computadora con tarjeta de video.
 8. **El escritorio se compila con Mono, no con IL2CPP.** IL2CPP necesita las herramientas de C++ de Visual Studio, que la laptop de desarrollo no tiene. Lo que se mide es el costo de la GPU, que no depende del backend de scripts.
 
+## Optimización de media (2026-11-11, en curso)
+
+La primera E6 dio media entre 13.9 y 23.6 fps a 1080p (`eval/results/e6_unity_web.json`), contra una meta de 60. René pidió optimizar primero sin cambiar el aspecto, midiendo cada cambio; después, escala de dibujo; y, si no alcanza, detenerse con cifras y opciones. Alta y ultra no se tocan.
+
+**Cómo se midió.** `eval/u5_perfil.mjs` (interruptores de `depurar` en un solo build, `Perfilado.cs`), `eval/u5_cpu.mjs` (perfil de CPU de Chromium, con símbolos si el build se hace con `CROQUIS_SIMBOLOS=1`), `eval/u5_diferencia.mjs` (diferencia por pixel contra la captura base; dos tomas de la base dan 0 en escenas sin lluvia) y `eval/e6_unity.mjs` en tres escenas (`axa-dia`, `lateral_interseccion-noche`, `nocturno_lluvia-noche`).
+
+**Qué se encontró.**
+
+- A 1080p manda el costo por pixel. Con el modelo `ms = F + P · escala²`, la media original tenía P de 33 ms de día y 57 de noche, y F (lo que no depende de la resolución) de unos 14 ms.
+- Con todo apagado (sin oclusión, sombras, luces, MSAA, posproceso ni minimapa) y a resolución completa, el cuadro tardaba 18 ms de día y 28 de noche: **a 1080p nativo esta GPU integrada no llega a 60 fps ni con la escena pelada.** La escala de dibujo hace falta en cualquier caso.
+- Cada cuadro repetía la geometría unas 3.6 veces: la pasada de normales para la oclusión, dos cascadas de sombra, la vista y el minimapa.
+- CPU: la piel de las personas se deformaba cada cuadro aunque estuvieran quietas (unos 3 ms, `u5_cpu_1_simbolos_escala025.json`), y la lluvia genera su geometría por cámara (unos 5 ms con el minimapa, `u5_cpu_2_nocturno_lluvia-noche.json`).
+- El suelo se sombreaba tres veces (pasto, tonos y parcelas, cada capa con su iluminación completa).
+
+**Decisiones (baja y media).**
+
+9. **Minimapa con fondo horneado:** la escena fija se dibuja una vez en una textura; por cuadro solo los vehículos, los peatones y las evidencias. Cambia el minimapa en dos detalles: los vehículos se ven aunque pasen bajo un árbol, y de noche no muestra la mancha de los faros.
+10. **Poses fijas:** mientras la postura no cambia, la piel ya deformada se dibuja como malla común. En todos los niveles; se ve igual.
+11. **Una cascada de sombra de 2048 a 70 m** en vez de dos de 1024 a 80 m: diferencia de 0.04 niveles de 255 (`u5_diferencia_pasos_2_a_4.json`).
+12. **Oclusión ligera:** normales reconstruidas de la profundidad, menos muestras, desenfoque medio y aplicada después de los opacos. Diferencia de 0.15 a 0.46 en las escenas sin lluvia.
+13. **FXAA en vez de MSAA 2×.** Con la oclusión ligera evita la pre-pasada de profundidad. Es el único cambio de esta lista que se nota: los bordes cambian (1.3 a 1.8 de diferencia media; 3.8 a 4.5 % de los pixeles cambian más de 8 niveles).
+14. **El suelo en una pasada** (`Croquis/Suelo`): el Lit de URP con otra función de superficie, que mezcla tonos y parcelas antes de iluminar. Diferencia de 0.06 a 0.08 (`u5_diferencia_pasos_5_y_6.json`).
+15. **Sombras unidas** (`SombrasUnidas`): las piezas opacas de cada vehículo y del escenario proyectan con una sola malla. Diferencia de 0 a 0.01 (`u5_diferencia_sombras_unidas.json`).
+16. **El posproceso se interpola solo cuando cambia** (`Calidad.RefrescarPosproceso`), no en cada cuadro y cámara. En todos los niveles.
+17. **La lluvia no se dibuja en el minimapa.**
+18. **De noche la luna no proyecta sombra:** 0.28 de diferencia media en la escena urbana (0.46 % de los pixeles cambian más de 8 niveles).
+
+**Probado y descartado.**
+
+- **Luces por zona (Forward+):** cambia la luz de noche de forma visible y no gana fps; de día cuesta (la ganancia del suelo unido, de 25 a 31 fps en `axa-dia`, se perdía).
+- **IL2CPP optimizado para velocidad y WebAssembly 2023:** sin ganancia medible (`u5_paso8_wasm_2023_*` contra `u5_paso7_wasm_anterior_*`), y el build pesa más.
+- **«Depth priming»:** URP lo desactiva en WebGL.
+- **FSR para reescalar:** URP no lo admite en WebGL 2; la escala de dibujo se reescala con filtro lineal.
+- **Gradación en HDR:** al conmutar en vivo rompe el color; no se siguió.
+
+**Dónde quedó** (mediana de 2 repeticiones, fps a 1080p; `eval/results/u5_paso_*.json`):
+
+| Paso                                                | axa, día | lateral, noche | lluvia, noche |
+| --------------------------------------------------- | -------- | -------------- | ------------- |
+| Base (E6, 3 repeticiones)                           | 22.6     | 13.9           | 18.5          |
+| 1. Minimapa y poses horneados                       | 25.0     | 15.3           | 16.9          |
+| 2. Una cascada                                      | 24.7     | 15.7           | 19.5          |
+| 3. Oclusión desde la profundidad                    | 25.9     | 17.3           | 21.5          |
+| 4. FXAA sin MSAA y oclusión después de los opacos   | 32.5     | 19.4           | 25.0          |
+| 5. Suelo y sombras unidos, posproceso, con Forward+ | 31.0     | 19.3           | 25.2          |
+| 6. Sin sombra de luna (interruptor sobre el paso 5) | 33.8     | 22.0           | 28.2          |
+| 7. Sin Forward+ (una repetición)                    | 35.7     | 23.7           | 26.2          |
+
+En el paso 1 las personas salían gigantes por un error del horneado (malla sin la escala del modelo); se corrigió antes del paso 5, así que los pasos 1 a 4 llevan ese sesgo.
+
+Con el paso 7, una repetición por escala (`eval/results/u5_paso7_wasm_anterior_escala_*.json`): a 0.6, 63.4 / 49.2 / 47.1 fps; a 0.35, 81.9 / 80.4 / 66.9. De ahí, F de 8.9, 8.0 y 11.7 ms y P de 19, 34 y 27 ms: 60 fps pedirían una escala de 0.64, 0.50 y 0.43.
+
+**Falta:** la E6 completa (10 escenas, 3 repeticiones) de media a escala 1, 0.7, 0.6 y 0.5 y de baja, con sus capturas de antes y después; con eso se le presentan a René las opciones. El perfil de media sigue con `DprMaximo = 1` hasta que él elija.
+
 ## Consecuencias
 
 - El build WebGL lleva las variantes de shader de los cuatro niveles (por ejemplo, sombras de focos de alta); su peso se mide en U5 y queda en `docs/progress/U.md`.

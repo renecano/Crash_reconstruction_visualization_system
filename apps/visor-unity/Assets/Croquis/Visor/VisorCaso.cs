@@ -27,6 +27,9 @@ namespace Croquis.Visor
         public double Tiempo { get; private set; }
         public bool Reproduciendo { get; set; }
 
+        /// <summary>La raíz del caso armado (para perfilar).</summary>
+        public Transform Raiz => raiz;
+
         /// <summary>Al llegar al final vuelve al principio (la medición de E6 reproduce sin parar).</summary>
         public bool Bucle { get; set; }
 
@@ -76,6 +79,11 @@ namespace Croquis.Visor
                 foreach (var tr in go.GetComponentsInChildren<Transform>(true))
                 {
                     tr.gameObject.layer = EscenarioVista.CapaVehiculos;
+                }
+
+                if (Calidad.Perfil.SombrasUnidas)
+                {
+                    SombrasUnidas.Unir(go.transform, "sombra_vehiculo");
                 }
 
                 if (e != null)
@@ -210,6 +218,38 @@ namespace Croquis.Visor
                 Camara.Estorbos.Add(new Vector2((float)p.X, (float)p.Y));
             }
             Fijar(inicio);
+            // Lo que se mueve o cambia con el tiempo va en su capa: el minimapa lo dibuja por cuadro
+            // sobre el fondo horneado de la escena fija.
+            foreach (Transform hijo in raiz)
+            {
+                if (hijo.name == "caso" || hijo.name.StartsWith("persona_", StringComparison.Ordinal))
+                {
+                    foreach (var t in hijo.GetComponentsInChildren<Transform>(true))
+                    {
+                        t.gameObject.layer = CamaraVisor.CapaDinamica;
+                    }
+                }
+            }
+
+            if (Calidad.Perfil.SombrasUnidas)
+            {
+                // Lo fijo del escenario; lo del caso (evidencias, semáforos) cambia con el tiempo y se queda.
+                SombrasUnidas.Unir(raiz.Find("escenario"), "sombras_del_escenario");
+                foreach (Transform hijo in raiz)
+                {
+                    if (hijo.name.StartsWith("estacionado_", StringComparison.Ordinal))
+                    {
+                        SombrasUnidas.Unir(hijo, "sombra_vehiculo");
+                    }
+                }
+            }
+
+            if (Calidad.Perfil.MinimapaHorneado)
+            {
+                Camara.HornearMinimapa();
+            }
+
+            Calidad.Aplicar();
             Cargado = true;
             Calidad.Reiniciar();
         }

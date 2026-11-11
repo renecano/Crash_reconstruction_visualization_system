@@ -429,9 +429,29 @@ Build WebGL a 1920 × 1080, cámara cinematográfica en bucle, mediana de 3 repe
 - El build pesa 71 MB sin comprimir (U4: 65 MB): lleva las variantes de shader de los cuatro niveles.
 - Carga del caso hasta que se ve, con el nivel fijo: 10 a 11.4 s en media y 7.9 a 8.9 s en baja (mediana).
 
-### Siguiente paso
+### Optimización de media (2026-11-11, en pausa)
 
-Optimizar media sin cambiar su aspecto (ADR 0026: primero culling de luces, sombras, lotes e instancias, medido antes y después) y, si no alcanza, recortar densidad, nunca función. Es la parte difícil de U5: René pidió avisarle antes de empezarla. Alta y ultra se miden con el paquete de escritorio en la computadora con tarjeta de video.
+Detalle, decisiones y lo descartado: ADR 0115, sección «Optimización de media». Resumen:
+
+- **Hecho en baja y media, sin cambiar el aspecto** (diferencia por pixel medida, `eval/results/u5_diferencia_*.json`): minimapa con fondo horneado, poses fijas, una cascada de sombra, oclusión ligera, suelo en una pasada, sombras unidas, posproceso interpolado solo cuando cambia, lluvia fuera del minimapa y luna sin sombra. **Sí se nota un poco:** FXAA en vez de MSAA 2× (bordes).
+- **Descartado:** Forward+, WebAssembly 2023 con IL2CPP para velocidad, depth priming, FSR y gradación en HDR.
+- **Dónde va** (tres escenas, fps a 1080p): de 22.6 / 13.9 / 18.5 a 35.7 / 23.7 / 26.2. A escala 0.6: 63.4 / 49.2 / 47.1.
+- **Lo que dice el modelo:** a 1080p nativo esta GPU no llega a 60 fps ni con todo apagado. Para 60 harían falta escalas de 0.64 (día), 0.50 (noche urbana) y 0.43 (lluvia de noche).
+
+### Dónde quedó la medición (para retomarla)
+
+René pidió la computadora el 2026-11-11: la cadena se cortó **durante el build**, antes de la e2e, las capturas y la E6. `apps/visor-unity/Build/web` puede estar incompleto: **lo primero es volver a compilar.**
+
+1. `powershell tools/unity/build-web.ps1` (unos 5 min; sin procesos de Unity vivos antes; revertir `Visor.unity` y `UniversalRenderPipelineGlobalSettings.asset` después).
+2. `node tools/unity/e2e-camaras.mjs --caso apps/visor-unity/Build/u3/motociclista.json --t 0.3`.
+3. Capturas de antes y después a 1080p: `node tools/unity/capturas.mjs --casos casos --vistas cinematica --sin-fps --nivel media --ancho 1920 --alto 1080` para las 10 escenas, y para `axa-dia`, `lateral_interseccion-noche` y `nocturno_lluvia-noche` con `--depurar '{"escala":0.8}'`, 0.7, 0.6 y 0.5. El «antes» es la media anterior: `D:\croquis-logs\var1\base` (fuera de git).
+4. E6 completa, 3 repeticiones, con 90 s de pausa entre corridas:
+   - `node eval/e6_unity.mjs --niveles media --nombre e6_unity_media_escala_1`
+   - `node eval/e6_unity.mjs --niveles baja --nombre e6_unity_baja`
+   - `node eval/e6_unity.mjs --niveles media --nombre e6_unity_media_escala_0.7 --depurar '{"escala":0.7}'`, y lo mismo con 0.6 y 0.5.
+5. Con esas cifras, presentarle a René las opciones (escala fija, escala según la escena o recortes de noche) y **no fijar la escala de media sin que él elija**. Al cerrar, `eval/results/e6_unity_web.json` se vuelve a medir con el perfil final.
+
+Pendiente visual que se vio al medir: en el hatchback, la pierna del ocupante asoma por debajo de la puerta (la cadera va a la altura del asiento, pero la pierna doblada cruza el piso del modelo).
 
 ## U-pre (hecho, #181)
 

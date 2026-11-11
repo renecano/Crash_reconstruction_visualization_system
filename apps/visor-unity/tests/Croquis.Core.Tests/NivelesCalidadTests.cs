@@ -102,6 +102,30 @@ namespace Croquis.Core.Tests
         }
 
         [Fact]
+        public void LasOptimizacionesDeU5SoloTocanBajaYMedia()
+        {
+            foreach (var n in new[] { NivelCalidad.Baja, NivelCalidad.Media })
+            {
+                var p = Calidades.Perfil(n);
+                Assert.True(p.SueloEnUnaPasada && p.SombrasUnidas && p.MinimapaHorneado);
+                Assert.False(p.LluviaEnMinimapa || p.SombraDeLuna);
+                Assert.Equal(1, p.Cascadas);
+                Assert.Equal(1, p.Msaa);
+            }
+
+            // Alta y ultra quedan como estaban: nada de lo anterior, y sus sombras y su MSAA de antes.
+            foreach (var n in new[] { NivelCalidad.Alta, NivelCalidad.Ultra })
+            {
+                var p = Calidades.Perfil(n);
+                Assert.False(p.SueloEnUnaPasada || p.SombrasUnidas || p.MinimapaHorneado || p.Fxaa);
+                Assert.True(p.LluviaEnMinimapa && p.SombraDeLuna);
+                Assert.Equal(4, p.Cascadas);
+                Assert.Equal(4, p.Msaa);
+                Assert.Equal(2, p.Oclusion);
+            }
+        }
+
+        [Fact]
         public void LeeLosNombresDelPuente()
         {
             Assert.True(Calidades.TryLeer("ultra", out var n));

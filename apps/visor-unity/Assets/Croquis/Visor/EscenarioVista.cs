@@ -27,6 +27,12 @@ namespace Croquis.Visor
         /// <summary>El centro de la acción, en planta (x, y).</summary>
         public static Vector2 CentroDelHecho { get; set; }
 
+        /// <summary>Para comparar al perfilar: con true el suelo lleva sus capas como mallas aparte.</summary>
+        public static bool CapasSeparadas { get; set; }
+
+        /// <summary>La lluvia cuando no se dibuja en el minimapa (baja y media): su capa propia.</summary>
+        public const int CapaLluvia = 4;
+
         public static void Construir(Transform raiz, Escenario e, Light sol, Camera camara, Terreno terreno)
         {
             var escenario = new GameObject("escenario").transform;
@@ -74,7 +80,9 @@ namespace Croquis.Visor
             sol.color = a.Noche
                 ? new Color(0.62f, 0.72f, 1f)
                 : Color.Lerp(new Color(1f, 0.74f, 0.52f), new Color(1f, 0.96f, 0.9f), Mathf.Clamp01((float)a.SolElevacionDeg / 28f));
-            sol.shadows = LightShadows.Soft;
+            // De noche, en baja y media, la luna no proyecta sombra: no se distingue junto a los faros y
+            // el alumbrado, y su pasada costaba unos 6 ms por cuadro en la GPU integrada (ADR 0115).
+            sol.shadows = a.Noche && !Calidad.Perfil.SombraDeLuna ? LightShadows.None : LightShadows.Soft;
             sol.shadowStrength = lluvia ? 0.55f : a.Noche ? 0.7f : 0.92f;
 
             // El cielo es un HDRI CC0, girado para que su sol caiga donde va el del hecho.
@@ -580,7 +588,15 @@ namespace Croquis.Visor
                 tinte = a.Noche ? new Color(0.42f, 0.41f, 0.4f) : new Color(0.72f, 0.69f, 0.64f);
             }
 
-            pasto.Poner(padre, lejano ? "suelo_lejano" : "suelo", Materiales.Pbr(textura, tinte), false);
+            var suelo = pasto.Poner(padre, lejano ? "suelo_lejano" : "suelo", Materiales.Pbr(textura, tinte), false);
+            // En baja y media, las dos capas de encima (tonos y parcelas) van en el material del suelo: una
+            // pasada en vez de tres con el mismo color. La UV del suelo es (x, y) entre `mosaico`.
+            Material unido = null;
+            if (Calidad.Perfil.SueloEnUnaPasada && !CapasSeparadas)
+            {
+                unido = Materiales.SueloCapas(textura, tinte);
+                suelo.GetComponent<MeshRenderer>().sharedMaterial = unido;
+            }
 
             // Variación de tono: manchas grandes más secas, para que el suelo no sea de un solo color.
             var tonos = new Malla();
@@ -612,7 +628,19 @@ namespace Croquis.Visor
             }
 
             var tonoSeco = urbana ? new Color(0.3f, 0.27f, 0.23f, 0.4f) : new Color(0.5f, 0.47f, 0.24f, a.Noche ? 0.16f : 0.3f);
-            tonos.Poner(padre, lejano ? "tonos_lejanos" : "tonos", Materiales.Tonos(tonoSeco), false);
+            if (unido != null)
+            {
+                var deTonos = Materiales.Tonos(tonoSeco);
+                var cada = lejano ? 240f : 70f;
+                unido.SetTexture("_TonosMap", deTonos.GetTexture("_BaseMap"));
+                unido.SetColor("_TonosColor", tonoSeco);
+                unido.SetVector("_TonosUv", new Vector4(mosaico / cada, mosaico / cada, 0f, 0f));
+                unido.SetFloat("_TonosLisura", deTonos.GetFloat("_Smoothness"));
+            }
+            else
+            {
+                tonos.Poner(padre, lejano ? "tonos_lejanos" : "tonos", Materiales.Tonos(tonoSeco), false);
+            }
             if (!lejano && !urbana)
             {
                 Matas(padre, s, bajo, semilla, a.Noche);
@@ -643,6 +671,16 @@ namespace Croquis.Visor
 
             tex.SetPixels32(px);
             tex.Apply(true, true);
+            if (unido != null)
+            {
+                // La UV de la capa era ((i + 0.5) / n, (j + 0.5) / n) en el nodo (i, j) de la retícula.
+                var k = mosaico * (n - 1) / (lado * n);
+                unido.SetTexture("_ParcelasMap", tex);
+                unido.SetVector("_ParcelasUv", new Vector4(k, k, (0.5f - x0 * (n - 1) / lado) / n, (0.5f - y0 * (n - 1) / lado) / n));
+                unido.SetFloat("_ParcelasLisura", 0.04f);
+                return;
+            }
+
             var mat = new Material(Materiales.Calca(Color.white, 0.04f)) { name = "parcelas" };
             mat.SetTexture("_BaseMap", tex);
             capa.Poner(padre, lejano ? "parcelas_lejanas" : "parcelas", mat, false);
@@ -810,6 +848,7 @@ namespace Croquis.Visor
         private static void Lluvia(Transform padre, PuntoPlano centro, int gotas, Camera camara)
         {
             var go = new GameObject("lluvia");
+            go.layer = Calidad.Perfil.LluviaEnMinimapa ? CamaraVisor.CapaDinamica : CapaLluvia;
             // La lluvia sigue a la cámara: siempre llueve donde se mira.
             go.transform.SetParent(padre, false);
             var sigue = go.AddComponent<SiempreVertical>();
@@ -848,6 +887,7 @@ namespace Croquis.Visor
         private static void Salpicaduras(Transform padre, int gotas, Camera camara)
         {
             var go = new GameObject("salpicaduras");
+            go.layer = Calidad.Perfil.LluviaEnMinimapa ? CamaraVisor.CapaDinamica : CapaLluvia;
             go.transform.SetParent(padre, false);
             var sigue = go.AddComponent<SiempreVertical>();
             sigue.Altura = 0.05f;

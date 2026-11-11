@@ -44,8 +44,35 @@ namespace Croquis.Core
         /// <summary>Calidad del suavizado de sombras de URP: 1 baja, 2 media, 3 alta.</summary>
         public int SombraSuave { get; set; }
 
-        /// <summary>Oclusión ambiental: 0 sin ella, 1 a media resolución, 2 completa.</summary>
+        /// <summary>
+        /// Oclusión ambiental: 0, sin ella; 1, ligera (a media resolución, con las normales sacadas de la
+        /// profundidad y aplicada después de los opacos, sin pasada extra de geometría); 2, completa.
+        /// </summary>
         public int Oclusion { get; set; }
+
+        /// <summary>Suavizado de bordes por posproceso (FXAA), en vez de MSAA.</summary>
+        public bool Fxaa { get; set; }
+
+        /// <summary>
+        /// El suelo con sus capas (tonos y parcelas) en una sola pasada, en vez de tres mallas con su
+        /// sombreado completo cada una. Da el mismo color.
+        /// </summary>
+        public bool SueloEnUnaPasada { get; set; }
+
+        /// <summary>
+        /// La sombra de la luna (la direccional de noche). Junto a faros y luminarias no se distingue
+        /// (0.28 niveles de 255 de diferencia media, `eval/results/u5_diferencia_*`), y su pasada cuesta.
+        /// </summary>
+        public bool SombraDeLuna { get; set; }
+
+        /// <summary>La sombra de las piezas opacas de cada vehículo y del escenario, en una sola malla.</summary>
+        public bool SombrasUnidas { get; set; }
+
+        /// <summary>El minimapa con la escena fija horneada una vez; por cuadro, solo lo que se mueve.</summary>
+        public bool MinimapaHorneado { get; set; }
+
+        /// <summary>Si la lluvia también se dibuja en el minimapa (su geometría se calcula por cámara).</summary>
+        public bool LluviaEnMinimapa { get; set; }
 
         /// <summary>Resplandor de faros y superficies muy brillantes.</summary>
         public bool Resplandor { get; set; }
@@ -89,13 +116,17 @@ namespace Croquis.Core
                     return new PerfilCalidad
                     {
                         Nivel = n, DprMaximo = 0.75, Msaa = 1, DistanciaSombras = 50, Cascadas = 1, MapaSombras = 1024,
+                        SueloEnUnaPasada = true, SombrasUnidas = true, MinimapaHorneado = true,
                         LucesAdicionales = 4, SombrasDeFocos = false, SombraSuave = 1, Oclusion = 0, Resplandor = false,
                         Sonda = 64, Matas = 3500, MatorralesPor100M = 1.5, Luminarias = 2, FocosPorVehiculo = 1,
                     };
                 case NivelCalidad.Media:
                     return new PerfilCalidad
                     {
-                        Nivel = n, DprMaximo = 1.0, Msaa = 2, DistanciaSombras = 80, Cascadas = 2, MapaSombras = 2048,
+                        // U5: una cascada de 2048 a 70 m da la misma sombra que dos de 1024 a 80 m, y FXAA con
+                        // la oclusión ligera evita dos pasadas completas de geometría (medido en ADR 0115).
+                        Nivel = n, DprMaximo = 1.0, Msaa = 1, Fxaa = true, DistanciaSombras = 70, Cascadas = 1, MapaSombras = 2048,
+                        SueloEnUnaPasada = true, SombrasUnidas = true, MinimapaHorneado = true,
                         LucesAdicionales = 4, SombrasDeFocos = false, SombraSuave = 1, Oclusion = 1, Resplandor = true,
                         Sonda = 128, Matas = 7000, MatorralesPor100M = 2.5, Luminarias = 3, FocosPorVehiculo = 1,
                     };
@@ -103,14 +134,14 @@ namespace Croquis.Core
                     return new PerfilCalidad
                     {
                         Nivel = n, DprMaximo = 1.5, Msaa = 4, DistanciaSombras = 110, Cascadas = 4, MapaSombras = 4096,
-                        LucesAdicionales = 8, SombrasDeFocos = true, SombraSuave = 2, Oclusion = 2, Resplandor = true,
+                        LluviaEnMinimapa = true, SombraDeLuna = true, LucesAdicionales = 8, SombrasDeFocos = true, SombraSuave = 2, Oclusion = 2, Resplandor = true,
                         Sonda = 256, Matas = 14000, MatorralesPor100M = 3.5, Luminarias = 6, FocosPorVehiculo = 2,
                     };
                 case NivelCalidad.Ultra:
                     return new PerfilCalidad
                     {
                         Nivel = n, DprMaximo = 2.0, Msaa = 4, DistanciaSombras = 150, Cascadas = 4, MapaSombras = 4096,
-                        LucesAdicionales = 8, SombrasDeFocos = true, SombraSuave = 3, Oclusion = 2, Resplandor = true,
+                        LluviaEnMinimapa = true, SombraDeLuna = true, LucesAdicionales = 8, SombrasDeFocos = true, SombraSuave = 3, Oclusion = 2, Resplandor = true,
                         Sonda = 512, Matas = 18000, MatorralesPor100M = 4.5, Luminarias = 8, FocosPorVehiculo = 2,
                     };
                 default:

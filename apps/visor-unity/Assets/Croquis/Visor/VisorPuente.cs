@@ -167,6 +167,13 @@ namespace Croquis.Visor
         {
             Campos(texto, j =>
             {
+                var perfil = Perfilado.Aplicar(j, visor.Raiz);
+                if (perfil != null)
+                {
+                    perfil["pedido"] = j["pedido"];
+                    Enviar("perfil", perfil);
+                }
+
                 var camara = Camera.main;
                 var datos = camara.GetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>();
                 if (j["pos"] != null)
@@ -266,6 +273,11 @@ namespace Croquis.Visor
                 {
                     camara.clearFlags = CameraClearFlags.SolidColor;
                     camara.backgroundColor = new Color(0.5f, 0.6f, 0.75f);
+                }
+
+                if (j["volumen_por_cuadro"] == null)
+                {
+                    Calidad.RefrescarPosproceso();
                 }
             });
         }

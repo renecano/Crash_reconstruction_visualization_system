@@ -1,0 +1,143 @@
+{
+  "fecha": "2026-11-11T20:45:58.806Z",
+  "metodo": "Capturas del build WebGL a 1920×1080 (tools/unity/capturas.mjs, nivel media, mismo instante y cámara). Diferencia absoluta en gris contra la captura base: media (0 a 255) y porcentaje de pixeles que cambian más de 8 y de 24 niveles. «base2» es otra toma de la base: el piso de ruido.",
+  "sin_minimapa": true,
+  "variantes": {
+    "base2": {
+      "axa-dia-cinematica": {
+        "media": 0,
+        "pct_mas_8": 0,
+        "pct_mas_24": 0
+      },
+      "lateral_interseccion-noche-cinematica": {
+        "media": 0,
+        "pct_mas_8": 0,
+        "pct_mas_24": 0
+      },
+      "nocturno_lluvia-noche-cinematica": {
+        "media": 0.75,
+        "pct_mas_8": 1.97,
+        "pct_mas_24": 1.58
+      }
+    },
+    "cand_07_fsr": {
+      "axa-dia-cinematica": {
+        "media": 3.58,
+        "pct_mas_8": 8.02,
+        "pct_mas_24": 3.31
+      },
+      "lateral_interseccion-noche-cinematica": {
+        "media": 3.87,
+        "pct_mas_8": 10.24,
+        "pct_mas_24": 2.26
+      },
+      "nocturno_lluvia-noche-cinematica": {
+        "media": 2.75,
+        "pct_mas_8": 5.52,
+        "pct_mas_24": 2.5
+      }
+    },
+    "cand_07_lineal": {
+      "axa-dia-cinematica": {
+        "media": 3.58,
+        "pct_mas_8": 8.02,
+        "pct_mas_24": 3.31
+      },
+      "lateral_interseccion-noche-cinematica": {
+        "media": 3.87,
+        "pct_mas_8": 10.24,
+        "pct_mas_24": 2.26
+      },
+      "nocturno_lluvia-noche-cinematica": {
+        "media": 2.76,
+        "pct_mas_8": 5.56,
+        "pct_mas_24": 2.55
+      }
+    },
+    "cascada1_70m": {
+      "axa-dia-cinematica": {
+        "media": 0.04,
+        "pct_mas_8": 0.12,
+        "pct_mas_24": 0.02
+      },
+      "lateral_interseccion-noche-cinematica": {
+        "media": 0.04,
+        "pct_mas_8": 0.01,
+        "pct_mas_24": 0
+      },
+      "nocturno_lluvia-noche-cinematica": {
+        "media": 0.7,
+        "pct_mas_8": 1.82,
+        "pct_mas_24": 1.44
+      }
+    },
+    "fxaa": {
+      "axa-dia-cinematica": {
+        "media": 1.84,
+        "pct_mas_8": 4.5,
+        "pct_mas_24": 2.14
+      },
+      "lateral_interseccion-noche-cinematica": {
+        "media": 1.33,
+        "pct_mas_8": 4,
+        "pct_mas_24": 1.09
+      },
+      "nocturno_lluvia-noche-cinematica": {
+        "media": 1.39,
+        "pct_mas_8": 3.82,
+        "pct_mas_24": 1.84
+      }
+    },
+    "sin_aa": {
+      "axa-dia-cinematica": {
+        "media": 1.44,
+        "pct_mas_8": 3.01,
+        "pct_mas_24": 2.19
+      },
+      "lateral_interseccion-noche-cinematica": {
+        "media": 0.9,
+        "pct_mas_8": 2.48,
+        "pct_mas_24": 1.12
+      },
+      "nocturno_lluvia-noche-cinematica": {
+        "media": 1.33,
+        "pct_mas_8": 3.22,
+        "pct_mas_24": 2.29
+      }
+    },
+    "ssao_prof": {
+      "axa-dia-cinematica": {
+        "media": 0.07,
+        "pct_mas_8": 0.02,
+        "pct_mas_24": 0
+      },
+      "lateral_interseccion-noche-cinematica": {
+        "media": 0.22,
+        "pct_mas_8": 0.19,
+        "pct_mas_24": 0
+      },
+      "nocturno_lluvia-noche-cinematica": {
+        "media": 0.69,
+        "pct_mas_8": 1.75,
+        "pct_mas_24": 1.37
+      }
+    },
+    "ssao_prof_despues": {
+      "axa-dia-cinematica": {
+        "media": 0.15,
+        "pct_mas_8": 0.12,
+        "pct_mas_24": 0
+      },
+      "lateral_interseccion-noche-cinematica": {
+        "media": 0.46,
+        "pct_mas_8": 0.62,
+        "pct_mas_24": 0
+      },
+      "nocturno_lluvia-noche-cinematica": {
+        "media": 0.83,
+        "pct_mas_8": 1.98,
+        "pct_mas_24": 1.5
+      }
+    }
+  }
+}

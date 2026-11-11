@@ -33,6 +33,15 @@ const CASOS = join(BUILD, arg("casos", "casos"));
 const VISTAS = arg("vistas", "cinematica,acera").split(",");
 const TIEMPOS = arg("tiempos", null)?.split(",").map(Number) ?? null;
 const CON_FPS = !process.argv.includes("--sin-fps");
+// U5: el nivel de calidad, el tamaño de la ventana y los interruptores de `depurar` (JSON) con que se
+// toma la captura, para comparar antes y después de una optimización.
+const NIVEL = arg("nivel", null);
+const ANCHO = Number(arg("ancho", 1600));
+const ALTO = Number(arg("alto", 900));
+const DEPURAR = arg("depurar", null);
+const ANTES = arg("antes", null);
+const SOLO = arg("solo", null)?.split(",") ?? null;
+const SIN_PERDIDA = process.argv.includes("--png");
 const PUBLICO = join(RAIZ, "apps/web/public");
 const TIPOS = {
   ".html": "text/html; charset=utf-8",
@@ -41,7 +50,9 @@ const TIPOS = {
   ".glb": "model/gltf-binary",
 };
 
-const casos = readdirSync(CASOS).filter((f) => f.endsWith(".json"));
+const casos = readdirSync(CASOS)
+  .filter((f) => f.endsWith(".json"))
+  .filter((f) => !SOLO || SOLO.includes(f.replace(/\.json$/, "")));
 const servidor = createServer((q, s) => {
   const ruta = decodeURIComponent(new URL(q.url, "http://x").pathname);
   const f = ruta.startsWith("/modelos/")
@@ -61,7 +72,7 @@ const navegador = await chromium.launch({
 const fps = {};
 try {
   const pagina = await (
-    await navegador.newContext({ viewport: { width: 1600, height: 900 } })
+    await navegador.newContext({ viewport: { width: ANCHO, height: ALTO } })
   ).newPage();
   const errores = [];
   pagina.on("pageerror", (e) => errores.push(String(e)));
@@ -90,18 +101,21 @@ try {
     const nombre = f.replace(/\.json$/, "");
     const paquete = readFileSync(join(CASOS, f), "utf8");
     const desde = await pagina.evaluate(() => window.croquisVisorRecibidos.length);
+    if (NIVEL) await enviar("calidad", { nivel: NIVEL });
+    if (ANTES) await enviar("depurar", JSON.parse(ANTES));
     await enviar("cargarCaso", { json: paquete });
     await espera("cargado", desde);
+    if (DEPURAR) await enviar("depurar", JSON.parse(DEPURAR));
     for (const t of TIEMPOS ?? [T])
       for (const vista of VISTAS) {
         await enviar("fijarTiempo", { t });
         await enviar("camara", { modo: vista });
         await pagina.waitForTimeout(2500);
         const instante = TIEMPOS ? `-t${t}` : "";
-        const archivo = join(SALIDA, `${nombre}${instante}-${vista.replace(":", "-")}.webp`);
-        await sharp(await pagina.screenshot())
-          .webp({ quality: 86 })
-          .toFile(archivo);
+        const base = join(SALIDA, `${nombre}${instante}-${vista.replace(":", "-")}`);
+        const archivo = `${base}.${SIN_PERDIDA ? "png" : "webp"}`;
+        const foto = sharp(await pagina.screenshot());
+        await (SIN_PERDIDA ? foto.png() : foto.webp({ quality: 86 })).toFile(archivo);
         console.log(`Captura ${archivo.slice(RAIZ.length + 1)}`);
       }
     // Los fps que reporta Unity con el caso quieto en la cámara cinematográfica (cada 5 s).

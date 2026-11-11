@@ -40,6 +40,15 @@ namespace Croquis.EditorTools
             }
 
             Mojado();
+            // El suelo de baja y media, con sus capas en una pasada (`Croquis/Suelo`): como material
+            // guardado, sus variantes entran al build.
+            foreach (var n in new[] { "pasto", "grava" })
+            {
+                var capas = new Material(Shader.Find("Croquis/Suelo"));
+                capas.CopyPropertiesFromMaterial(AssetDatabase.LoadAssetAtPath<Material>(Carpeta + "/" + n + ".mat"));
+                Guardar(capas, n + "_capas");
+            }
+
             Simples();
             foreach (var e in new[] { "jacaranda", "fresno", "pirul" })
             {
@@ -173,6 +182,9 @@ namespace Croquis.EditorTools
             vidrioVehiculo.EnableKeyword("_ENVIRONMENTREFLECTIONS_OFF");
             Transparente(vidrioVehiculo);
             Guardar(vidrioVehiculo, "vidrio_vehiculo");
+
+            // El fondo horneado del minimapa (U5): como material guardado, su shader entra al build.
+            Guardar(new Material(Shader.Find("Croquis/MinimapaFondo")), "minimapa_fondo");
 
             // Rayas y huellas: geometría pegada al piso, con transparencia para su desgaste.
             var calca = new Material(Lit);
@@ -344,6 +356,10 @@ namespace Croquis.EditorTools
             urp.maxAdditionalLightsCount = p.LucesAdicionales;
             urp.supportsCameraDepthTexture = true;
             urp.renderScale = 1f;
+            // Forward en los cuatro niveles. Las luces por zona (Forward+) se probaron en baja y media
+            // (U5, ADR 0115): cambian la luz de noche y en esta GPU no ganan nada; de día cuestan.
+            renderer.renderingMode = RenderingMode.Forward;
+            EditorUtility.SetDirty(renderer);
             var so = new SerializedObject(urp);
             Poner(so, "m_SoftShadowsSupported", true);
             Poner(so, "m_AdditionalLightsRenderingMode", (int)LightRenderingMode.PerPixel);
@@ -410,8 +426,13 @@ namespace Croquis.EditorTools
             Poner(so, "m_Settings.Intensity", 0.9f);
             // Ruido de gradiente intercalado: con el ruido azul quedaba un moteado en la pintura clara.
             Poner(so, "m_Settings.AOMethod", 1);
-            Poner(so, "m_Settings.Samples", media ? 1 : 0);
-            Poner(so, "m_Settings.BlurQuality", 0);
+            // La ligera (media): normales reconstruidas de la profundidad y aplicada después de los
+            // opacos, así no hace falta otra pasada de geometría; menos muestras y desenfoque medio. A media
+            // resolución, la diferencia con la anterior es de 0.5 niveles de 255 (eval/results/u5_diferencia_*).
+            Poner(so, "m_Settings.Source", media ? 0 : 1);
+            Poner(so, "m_Settings.AfterOpaque", media);
+            Poner(so, "m_Settings.Samples", media ? 2 : 0);
+            Poner(so, "m_Settings.BlurQuality", media ? 1 : 0);
             Poner(so, "m_Settings.DirectLightingStrength", 0.4f);
             Poner(so, "m_Settings.Falloff", 70f);
             Poner(so, "m_Settings.Downsample", media);

@@ -46,6 +46,11 @@ const ANCHO = Number(arg("ancho", 1920));
 const ALTO = Number(arg("alto", 1080));
 const NOMBRE = arg("nombre", "e6_unity_web");
 const MINIMAPA = arg("minimapa", "si") !== "no";
+// Interruptores de `depurar` (JSON) que se dejan puestos al medir: para probar un ajuste de la
+// canalización antes de fijarlo en el nivel. Queda anotado en el resultado.
+const DEPURAR = arg("depurar", null);
+// Lo mismo, pero antes de cargar el caso: para lo que se decide al armar la escena.
+const ANTES = arg("antes", null);
 const CASOS = (
   arg("casos", null)?.split(",") ??
   readdirSync(CASOS_DIR)
@@ -115,7 +120,9 @@ function condiciones() {
       "$p = (powercfg /getactivescheme) -replace '^.*\\((.*)\\).*$', '$1'",
       "[pscustomobject]@{ bateria = $b.EstimatedChargeRemaining; estado_bateria = $b.BatteryStatus; carga_cpu = $c; plan = $p } | ConvertTo-Json -Compress",
     ].join("; ");
-    const j = JSON.parse(execFileSync("powershell", ["-NoProfile", "-Command", ps], { encoding: "utf8" }));
+    const j = JSON.parse(
+      execFileSync("powershell", ["-NoProfile", "-Command", ps], { encoding: "utf8" }),
+    );
     out.conectada = j.estado_bateria === null ? null : j.estado_bateria !== 1;
     out.bateria_pct = j.bateria;
     out.carga_cpu_pct = j.carga_cpu;
@@ -150,10 +157,10 @@ async function medir(caso, nivel) {
       throw new Error(`Sin «${tipo}» en ${ms / 1000} s`);
     };
     const enviar = (metodo, datos) =>
-      pagina.evaluate(([m, d]) => window.unityInstance.SendMessage("VisorPuente", m, d), [
-        metodo,
-        JSON.stringify(datos),
-      ]);
+      pagina.evaluate(
+        ([m, d]) => window.unityInstance.SendMessage("VisorPuente", m, d),
+        [metodo, JSON.stringify(datos)],
+      );
 
     await pagina.goto(url);
     await espera("listo", 300_000);
@@ -164,11 +171,13 @@ async function medir(caso, nivel) {
     });
     // El nivel antes del caso: lo del escenario (matas, luminarias, faros) se arma con él.
     await enviar("calidad", { nivel });
+    if (ANTES) await enviar("depurar", JSON.parse(ANTES));
     if (!MINIMAPA) await enviar("depurar", { minimapa: false });
     const t0 = Date.now();
     await enviar("cargarCaso", { json: paquete });
     await espera("cargado", 300_000);
     const cargaS = (Date.now() - t0) / 1000;
+    if (DEPURAR) await enviar("depurar", JSON.parse(DEPURAR));
     await enviar("camara", { modo: "cinematica" });
     await enviar("depurar", { bucle: true });
     await enviar("reproducir", {});
@@ -271,9 +280,10 @@ for (const nivel of NIVELES) {
   }
 }
 const git = (...a) => execFileSync("git", a, { cwd: RAIZ, encoding: "utf8" }).trim();
-const version = readFileSync(join(RAIZ, "apps/visor-unity/ProjectSettings/ProjectVersion.txt"), "utf8").match(
-  /m_EditorVersion: (.+)/,
-)?.[1];
+const version = readFileSync(
+  join(RAIZ, "apps/visor-unity/ProjectSettings/ProjectVersion.txt"),
+  "utf8",
+).match(/m_EditorVersion: (.+)/)?.[1];
 const doc = {
   fecha: new Date().toISOString(),
   commit: git("rev-parse", "HEAD"),
@@ -285,6 +295,8 @@ const doc = {
     "tiempos de cuadro del navegador (requestAnimationFrame). Se reporta la mediana del promedio de fps. " +
     "Nivel fijo, sin el automático. vsync desactivado (--disable-gpu-vsync --disable-frame-rate-limit) para medir capacidad.",
   minimapa: MINIMAPA,
+  depurar: DEPURAR ? JSON.parse(DEPURAR) : null,
+  antes_de_cargar: ANTES ? JSON.parse(ANTES) : null,
   meta: "PLAN §7.8: media ≥ 60 fps y baja ≥ 30 fps a 1080p; alta y ultra en la laptop solo como información.",
   maquina: {
     cpu: os.cpus()[0]?.model,

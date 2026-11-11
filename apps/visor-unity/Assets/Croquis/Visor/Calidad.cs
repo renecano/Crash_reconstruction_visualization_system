@@ -100,6 +100,23 @@ namespace Croquis.Visor
             automatica?.Reiniciar();
         }
 
+        /// <summary>
+        /// El posproceso (tono, resplandor, exposición) solo cambia al cargar un caso o al cambiar de
+        /// nivel: URP lo interpolaba en cada cuadro y por cada cámara. Aquí se calcula una vez; quien
+        /// cambie el volumen llama a esto.
+        /// </summary>
+        public static void RefrescarPosproceso()
+        {
+            var camara = Camera.main;
+            if (camara == null || !Application.isPlaying || !camara.TryGetComponent<UniversalAdditionalCameraData>(out var datos))
+            {
+                return;
+            }
+
+            camara.SetVolumeFrameworkUpdateMode(VolumeFrameworkUpdateMode.ViaScripting);
+            camara.UpdateVolumeStack(datos);
+        }
+
         /// <summary>Pone el nivel de `QualitySettings` (y con él su canalización) y la escala por el dpr.</summary>
         public static void Aplicar()
         {
@@ -123,6 +140,14 @@ namespace Croquis.Visor
             {
                 bloom.active = perfil.Resplandor;
             }
+
+            var camara = Camera.main;
+            if (camara != null && camara.TryGetComponent<UniversalAdditionalCameraData>(out var datos))
+            {
+                datos.antialiasing = perfil.Fxaa ? AntialiasingMode.FastApproximateAntialiasing : AntialiasingMode.None;
+            }
+
+            RefrescarPosproceso();
 
             Cambio?.Invoke();
         }

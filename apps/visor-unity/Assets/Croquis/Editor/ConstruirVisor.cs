@@ -179,10 +179,18 @@ namespace Croquis.EditorTools
             PlayerSettings.WebGL.nameFilesAsHashes = true;
             PlayerSettings.WebGL.dataCaching = true;
             PlayerSettings.WebGL.exceptionSupport = WebGLExceptionSupport.ExplicitlyThrownExceptionsOnly;
+            // Para perfilar la CPU (eval/u5_cpu.mjs): con CROQUIS_SIMBOLOS=1 el wasm lleva los nombres de
+            // sus funciones. El build de siempre va sin ellos.
+            PlayerSettings.WebGL.debugSymbolMode = System.Environment.GetEnvironmentVariable("CROQUIS_SIMBOLOS") == "1"
+                ? WebGLDebugSymbolMode.Embedded
+                : WebGLDebugSymbolMode.Off;
             PlayerSettings.WebGL.maximumMemorySize = 2048;
             PlayerSettings.SetGraphicsAPIs(BuildTarget.WebGL, new[] { GraphicsDeviceType.OpenGLES3 });
             PlayerSettings.SetManagedStrippingLevel(NamedBuildTarget.WebGL, ManagedStrippingLevel.Medium);
+            // Se probó optimizar el código gestionado para velocidad y WebAssembly 2023 (U5, ADR 0115): en
+            // la laptop no ganan fps y el build pesa más. Se quedan como estaban.
             PlayerSettings.SetIl2CppCodeGeneration(NamedBuildTarget.WebGL, Il2CppCodeGeneration.OptimizeSize);
+            PlayerSettings.WebGL.wasm2023 = false;
 
             // Mono en escritorio (ADR 0115): IL2CPP necesita las herramientas de C++ de Visual Studio, que
             // la laptop de desarrollo no tiene; el costo que se mide es de la GPU, igual con los dos.

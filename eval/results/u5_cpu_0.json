@@ -1,0 +1,237 @@
+{
+  "fecha": "2026-11-11T15:45:48.195Z",
+  "caso": "lateral_interseccion-noche",
+  "nivel": "media",
+  "extra": null,
+  "cuadros": 101,
+  "fps": 16.4,
+  "ms_por_cuadro": 60.83,
+  "ordenes_webgl_ms_por_cuadro": 0.58,
+  "funciones": [
+    {
+      "nombre": "vertexAttribPointer",
+      "ms_por_cuadro": 11.326,
+      "pct": 18.4
+    },
+    {
+      "nombre": "bindBuffer",
+      "ms_por_cuadro": 5.868,
+      "pct": 9.5
+    },
+    {
+      "nombre": "drawElements",
+      "ms_por_cuadro": 3.773,
+      "pct": 6.1
+    },
+    {
+      "nombre": "bindBufferRange",
+      "ms_por_cuadro": 3.647,
+      "pct": 5.9
+    },
+    {
+      "nombre": "wasm-function[63738]",
+      "ms_por_cuadro": 3.511,
+      "pct": 5.7
+    },
+    {
+      "nombre": "(program)",
+      "ms_por_cuadro": 2.618,
+      "pct": 4.2
+    },
+    {
+      "nombre": "bindBufferBase",
+      "ms_por_cuadro": 2.155,
+      "pct": 3.5
+    },
+    {
+      "nombre": "bindTexture",
+      "ms_por_cuadro": 2.045,
+      "pct": 3.3
+    },
+    {
+      "nombre": "uniform4fv",
+      "ms_por_cuadro": 1.844,
+      "pct": 3
+    },
+    {
+      "nombre": "drawArrays",
+      "ms_por_cuadro": 1.543,
+      "pct": 2.5
+    },
+    {
+      "nombre": "wasm-function[63740]",
+      "ms_por_cuadro": 1.012,
+      "pct": 1.6
+    },
+    {
+      "nombre": "wasm-to-js",
+      "ms_por_cuadro": 0.887,
+      "pct": 1.4
+    },
+    {
+      "nombre": "wasm-function[566]",
+      "ms_por_cuadro": 0.88,
+      "pct": 1.4
+    },
+    {
+      "nombre": "bufferSubData",
+      "ms_por_cuadro": 0.845,
+      "pct": 1.4
+    },
+    {
+      "nombre": "invalidateFramebuffer",
+      "ms_por_cuadro": 0.705,
+      "pct": 1.1
+    },
+    {
+      "nombre": "bufferData",
+      "ms_por_cuadro": 0.61,
+      "pct": 1
+    },
+    {
+      "nombre": "drawBuffers",
+      "ms_por_cuadro": 0.551,
+      "pct": 0.9
+    },
+    {
+      "nombre": "wasm-function[78061]",
+      "ms_por_cuadro": 0.513,
+      "pct": 0.8
+    },
+    {
+      "nombre": "activeTexture",
+      "ms_por_cuadro": 0.467,
+      "pct": 0.8
+    },
+    {
+      "nombre": "wasm-function[78565]",
+      "ms_por_cuadro": 0.429,
+      "pct": 0.7
+    },
+    {
+      "nombre": "wasm-function[49710]",
+      "ms_por_cuadro": 0.421,
+      "pct": 0.7
+    },
+    {
+      "nombre": "useProgram",
+      "ms_por_cuadro": 0.347,
+      "pct": 0.6
+    },
+    {
+      "nombre": "bindFramebuffer",
+      "ms_por_cuadro": 0.332,
+      "pct": 0.5
+    },
+    {
+      "nombre": "createBuffer",
+      "ms_por_cuadro": 0.222,
+      "pct": 0.4
+    },
+    {
+      "nombre": "(idle)",
+      "ms_por_cuadro": 0.207,
+      "pct": 0.3
+    },
+    {
+      "nombre": "getParameter",
+      "ms_por_cuadro": 0.206,
+      "pct": 0.3
+    },
+    {
+      "nombre": "wasm-function[64737]",
+      "ms_por_cuadro": 0.203,
+      "pct": 0.3
+    },
+    {
+      "nombre": "wasm-function[78559]",
+      "ms_por_cuadro": 0.196,
+      "pct": 0.3
+    },
+    {
+      "nombre": "wasm-function[78081]",
+      "ms_por_cuadro": 0.193,
+      "pct": 0.3
+    },
+    {
+      "nombre": "wasm-function[78084]",
+      "ms_por_cuadro": 0.182,
+      "pct": 0.3
+    },
+    {
+      "nombre": "wasm-function[588]",
+      "ms_por_cuadro": 0.167,
+      "pct": 0.3
+    },
+    {
+      "nombre": "wasm-function[78669]",
+      "ms_por_cuadro": 0.163,
+      "pct": 0.3
+    },
+    {
+      "nombre": "wasm-function[65854]",
+      "ms_por_cuadro": 0.158,
+      "pct": 0.3
+    },
+    {
+      "nombre": "wasm-function[78656]",
+      "ms_por_cuadro": 0.157,
+      "pct": 0.3
+    },
+    {
+      "nombre": "wasm-function[79406]",
+      "ms_por_cuadro": 0.154,
+      "pct": 0.3
+    },
+    {
+      "nombre": "wasm-function[58786]",
+      "ms_por_cuadro": 0.153,
+      "pct": 0.2
+    },
+    {
+      "nombre": "invoke_iii",
+      "ms_por_cuadro": 0.147,
+      "pct": 0.2
+    },
+    {
+      "nombre": "wasm-function[85034]",
+      "ms_por_cuadro": 0.147,
+      "pct": 0.2
+    },
+    {
+      "nombre": "wasm-function[64128]",
+      "ms_por_cuadro": 0.14,
+      "pct": 0.2
+    },
+    {
+      "nombre": "wasm-function[78762]",
+      "ms_por_cuadro": 0.139,
+      "pct": 0.2
+    },
+    {
+      "nombre": "wasm-function[78996]",
+      "ms_por_cuadro": 0.137,
+      "pct": 0.2
+    },
+    {
+      "nombre": "wasm-function[78746]",
+      "ms_por_cuadro": 0.134,
+      "pct": 0.2
+    },
+    {
+      "nombre": "wasm-function[541]",
+      "ms_por_cuadro": 0.127,
+      "pct": 0.2
+    },
+    {
+      "nombre": "wasm-function[78463]",
+      "ms_por_cuadro": 0.126,
+      "pct": 0.2
+    },
+    {
+      "nombre": "wasm-function[80805]",
+      "ms_por_cuadro": 0.122,
+      "pct": 0.2
+    }
+  ]
+}

@@ -48,6 +48,15 @@ namespace Croquis.Visor
         private readonly Dictionary<string, (Transform Hueso, Quaternion Reposo, Vector3 Eje)> huesos =
             new Dictionary<string, (Transform, Quaternion, Vector3)>();
 
+        // La pose fija (U5, ADR 0115). En WebGL la piel se deforma en la CPU en cada cuadro aunque los
+        // huesos no se muevan: con dos ocupantes por vehículo eran más de 3 ms por cuadro. Mientras la
+        // postura no cambia (sentado, de pie, en vuelo, tendido), la malla ya deformada se guarda y se
+        // dibuja como una malla común; solo al caminar se deforma en vivo. Se ve exactamente igual.
+        private SkinnedMeshRenderer[] pieles = new SkinnedMeshRenderer[0];
+        private MeshRenderer[] fijas = new MeshRenderer[0];
+        private Mesh[] mallasFijas = new Mesh[0];
+        private int poseFija = -1;
+
         /// <summary>Peatón, ciclista o motociclista: va por su trayectoria.</summary>
         public static async Awaitable<PersonaVista> ConTrayectoriaAsync(
             Transform padre, ResultadoPersona p, Terreno terreno, CargadorCuerpos cuerpos)
@@ -115,6 +124,53 @@ namespace Croquis.Visor
             foreach (var t in modelo.GetComponentsInChildren<Transform>(true))
             {
                 huesos[t.name] = (t, t.localRotation, Quaternion.Inverse(t.rotation) * derecha);
+            }
+
+            pieles = modelo.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            fijas = new MeshRenderer[pieles.Length];
+            mallasFijas = new Mesh[pieles.Length];
+            for (var i = 0; i < pieles.Length; i++)
+            {
+                var fija = new GameObject("pose_fija");
+                fija.transform.SetParent(pieles[i].transform, false);
+                mallasFijas[i] = new Mesh { name = "pose_fija" };
+                fija.AddComponent<MeshFilter>().sharedMesh = mallasFijas[i];
+                var mr = fija.AddComponent<MeshRenderer>();
+                mr.sharedMaterials = pieles[i].sharedMaterials;
+                mr.shadowCastingMode = pieles[i].shadowCastingMode;
+                mr.receiveShadows = pieles[i].receiveShadows;
+                mr.enabled = false;
+                fijas[i] = mr;
+            }
+        }
+
+        /// <summary>Con la postura quieta, dibuja la malla ya deformada; al caminar, la piel en vivo.</summary>
+        private void FijarPose(Postura postura)
+        {
+            var viva = postura == Postura.Caminando;
+            var clave = (int)postura;
+            for (var i = 0; i < pieles.Length; i++)
+            {
+                if (pieles[i] == null)
+                {
+                    continue;
+                }
+
+                if (!viva && clave != poseFija)
+                {
+                    // Con la escala: la malla queda en el marco de la piel, que es donde se dibuja.
+                    pieles[i].BakeMesh(mallasFijas[i], true);
+                    mallasFijas[i].RecalculateBounds();
+                }
+
+                fijas[i].gameObject.layer = pieles[i].gameObject.layer;
+                pieles[i].enabled = viva;
+                fijas[i].enabled = !viva;
+            }
+
+            if (!viva)
+            {
+                poseFija = clave;
             }
         }
 
@@ -184,6 +240,7 @@ namespace Croquis.Visor
                 Doblar("brazo_d", sentado ? -40f : paso * 0.7f);
                 Doblar("antebrazo_i", sentado ? -30f : 0f);
                 Doblar("antebrazo_d", sentado ? -30f : 0f);
+                FijarPose(postura);
                 return;
             }
 
