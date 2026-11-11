@@ -11,7 +11,9 @@ import {
   conClase,
   conMasa,
   conMasaTipica,
+  conOrdenImpactos,
   conPrimerImpacto,
+  CLAVE_ORDEN_IMPACTOS,
   conHuella,
   conRestos,
   conZonaImpacto,
@@ -695,7 +697,12 @@ export function Pregunta({
   };
   const elegir = (v: string) => {
     if (p.clave === "impactos") onCambio(conPrimerImpacto(expediente, v));
-    else if (p.clave.startsWith("zona-") && p.vehiculo && p.impacto)
+    else if (p.clave === CLAVE_ORDEN_IMPACTOS) {
+      // T6.3: el orden que declara el perito (cada opción lista los impactos en su orden). Ya
+      // contestada, la pregunta se cierra: su respuesta no deja otra marca en el expediente.
+      onCambio(conOrdenImpactos(expediente, v.split(",").map(Number)));
+      onNoSe();
+    } else if (p.clave.startsWith("zona-") && p.vehiculo && p.impacto)
       onCambio(conZonaImpacto(expediente, p.impacto, p.vehiculo, v));
     else if (p.clave.startsWith("clase-") && p.vehiculo)
       // «Otro» no cambia la clase: la pregunta se da por contestada y la masa se pide sin típica.

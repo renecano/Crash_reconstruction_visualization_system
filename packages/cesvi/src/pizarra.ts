@@ -269,7 +269,7 @@ const validador: Agente = {
   nombre: "validador",
   quiere: (p) => Boolean(p.conversion) && !p.escena && !pendienteRelectura(p),
   actua(p, _ctx, decir) {
-    const convertida = escenaDeConversion(p.conversion!);
+    const convertida = escenaDeConversion(p.conversion!, p.narracion ?? undefined);
     // Lo leído con sus citas, de la lectura elegida: El hecho lo marca en el relato.
     const escena = p.salidaElegida
       ? {
@@ -290,6 +290,20 @@ const validador: Agente = {
     return { ...p, escena, expediente: escena.expediente, preguntasPublicadas: false };
   },
 };
+
+/**
+ * Quita una pregunta de la pizarra y de su escena: la que el perito ya contestó y cuyo estado no
+ * queda en el expediente (el orden de los impactos, T6.3). No se le vuelve a hacer.
+ */
+export function sinPregunta(p: Pizarra, clave: string): Pizarra {
+  const fuera = <T extends { clave: string }>(qs: readonly T[]) =>
+    qs.filter((q) => q.clave !== clave);
+  return {
+    ...p,
+    preguntas: fuera(p.preguntas),
+    escena: p.escena ? { ...p.escena, preguntas: fuera(p.escena.preguntas) } : p.escena,
+  };
+}
 
 /** La pregunta con la que el Preguntador atiende una bandera del Físico. */
 function preguntaPorBandera(codigo: string, v: Id | null): PreguntaEscena | null {

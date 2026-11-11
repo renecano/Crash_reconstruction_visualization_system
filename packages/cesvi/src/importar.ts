@@ -27,7 +27,7 @@ export function importarDictamen(
   archivo = "dictamen",
 ): DictamenImportado {
   return {
-    ...escenaDeConversion(expedienteDeSalida(corpus, texto, "dictamen_importado")),
+    ...escenaDeConversion(expedienteDeSalida(corpus, texto, "dictamen_importado"), texto),
     narracion: narracionDeSalida(narracion, { id: "importado", archivo, texto }),
   };
 }
