@@ -393,6 +393,46 @@ Plan: PLAN-CESVI §3.3. Decisiones: ADR 0114.
 - **El paso de los peatones** es un balanceo de piernas, no una animación de marcha.
 - **El brazo de un ocupante sale por la ventana** de la camioneta V2 en `lateral_interseccion` (vista del conductor de V1, t = 0.4 s): el cuerpo ya no sale de la cabina (`Personas.EnCabina`), pero el brazo sentado, abierto 40°, cruza la puerta cuando el solver lo lleva contra ella. Se corrige cerrando el brazo del lado de la puerta según el desplazamiento lateral (René, 2026-11-11).
 
+## Ajustes de René antes de U5 (2026-11-10)
+
+Conductor sin la carrocería propia (contorno tenue del cofre y los postes), vidrio propio sin el reflejo de la sonda, moto tendida desde el impacto con «Posición final ilustrativa», camisas que nunca son color piel, el ocupante dentro de la cabina y la cinematográfica que se acerca si una fachada la tapa. ADR 0114, decisiones 12 a 15. Capturas del build WebGL en `docs/cesvi/u4/ajustes/` (conductores en AXA y `lateral_interseccion`; vidrios en las 5 escenas de día y de noche; personas a los 3 s). PR #205.
+
+## U5 · Calidad y rendimiento (2026-11-11, en curso)
+
+ADR 0115. Rama `feat/u4-ajustes`, PR #205 (borrador).
+
+### Qué se hizo
+
+- Cuatro niveles de `QualitySettings` (baja, media, alta, ultra), cada uno con su canalización URP; media y alta son los ajustes que tenían el build web y el de escritorio.
+- Calidad automática con las reglas de la web, tope de dpr por nivel, panel de diagnóstico (F3, `?diagnostico=1`, `-diagnostico`).
+- Medición web `eval/e6_unity.mjs` y modo de medición del escritorio (`Medicion`, `tools/unity/medir-escritorio.ps1`, `tools/unity/paquete-escritorio.ps1`).
+- Núcleo: `NivelesCalidad.cs` con 7 pruebas (`dotnet test`: 36 en verde).
+
+### Medido en la laptop (`eval/results/e6_unity_web.json`)
+
+Build WebGL a 1920 × 1080, cámara cinematográfica en bucle, mediana de 3 repeticiones del promedio de fps, modo «Mejor rendimiento», conectada. GPU: Intel UHD Graphics (i5-10210U), Chromium de Playwright sin vsync. Meta de PLAN §7.8: media ≥ 60 y baja ≥ 30.
+
+| Escena                      | Media | Baja |
+| --------------------------- | ----- | ---- |
+| axa, día                    | 22.6  | 42.9 |
+| axa, noche                  | 15.5  | 33   |
+| carambola, día              | 20.2  | 38   |
+| carambola, noche            | 14.7  | 37   |
+| lateral_interseccion, día   | 19    | 41.7 |
+| lateral_interseccion, noche | 13.9  | 28   |
+| nocturno_lluvia, día        | 23.6  | 40.6 |
+| nocturno_lluvia, noche      | 18.5  | 34   |
+| terraceria, día             | 21.5  | 41.9 |
+| terraceria, noche           | 17.4  | 39.4 |
+
+- **Media no cumple en ninguna escena** (13.9 a 23.6 fps; le falta entre 2.5 y 4.3 veces). **Baja cumple en 9 de 10**; `lateral_interseccion` de noche da 28.
+- El build pesa 71 MB sin comprimir (U4: 65 MB): lleva las variantes de shader de los cuatro niveles.
+- Carga del caso hasta que se ve, con el nivel fijo: 10 a 11.4 s en media y 7.9 a 8.9 s en baja (mediana).
+
+### Siguiente paso
+
+Optimizar media sin cambiar su aspecto (ADR 0026: primero culling de luces, sombras, lotes e instancias, medido antes y después) y, si no alcanza, recortar densidad, nunca función. Es la parte difícil de U5: René pidió avisarle antes de empezarla. Alta y ultra se miden con el paquete de escritorio en la computadora con tarjeta de video.
+
 ## U-pre (hecho, #181)
 
 AXA abre con su escena colocada, un número por cantidad y Lighthouse medido. El detalle y las cifras están en `docs/PROGRESS.md`, sección «AXA abre con su escena colocada».
@@ -490,4 +530,4 @@ Nada por ahora.
 
 ## Bloqueado
 
-Nada por ahora.
+- **Alta y ultra (U5):** el paquete `visor-escritorio-u5.zip` se corre en la computadora con tarjeta de video (`medir-escritorio.ps1`) y devuelve `e6_unity_escritorio.json`, que va a `eval/results/`.

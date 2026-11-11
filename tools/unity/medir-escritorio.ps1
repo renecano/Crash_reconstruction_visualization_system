@@ -1,4 +1,4 @@
-# E6 del visor Unity de escritorio en alta y ultra (U5, ADR 0115), para la computadora con tarjeta
+﻿# E6 del visor Unity de escritorio en alta y ultra (U5, ADR 0115), para la computadora con tarjeta
 # de video. Va dentro del paquete `visor-escritorio-u5.zip` junto a VisorCroquis.exe y la carpeta
 # `casos`. En esa computadora:
 #
@@ -20,6 +20,8 @@ param(
     [int] $Alto = 1080
 )
 $ErrorActionPreference = "Stop"
+# Con -File, «-Niveles alta,ultra» llega como un solo texto: se separa por comas.
+$Niveles = @($Niveles | ForEach-Object { $_ -split "," } | ForEach-Object { $_.Trim() } | Where-Object { $_ })
 $aqui = $PSScriptRoot
 $exe = Join-Path $aqui "VisorCroquis.exe"
 if (-not (Test-Path $exe)) { throw "No encuentro VisorCroquis.exe junto a este script." }
@@ -42,13 +44,17 @@ function Condiciones {
 }
 
 # Plan «Alto rendimiento» mientras se mide; se restaura el de antes al terminar, también si falla.
-$planAntes = ((powercfg /getactivescheme) -replace '^.*GUID: ([0-9a-f-]+).*$', '$1').Trim()
+# El GUID del plan activo, en cualquier idioma de Windows.
+$rxGuid = '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'
+$planAntes = [regex]::Match((powercfg /getactivescheme | Out-String), $rxGuid).Value
 $altoRendimiento = "8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c"
 $cambioPlan = $false
-try {
-    powercfg /setactive $altoRendimiento 2>$null
-    $cambioPlan = ($LASTEXITCODE -eq 0)
-} catch { $cambioPlan = $false }
+if ($planAntes -and $planAntes -ne $altoRendimiento) {
+    try {
+        powercfg /setactive $altoRendimiento 2>$null
+        $cambioPlan = ($LASTEXITCODE -eq 0)
+    } catch { $cambioPlan = $false }
+}
 
 $gpus = (Get-CimInstance Win32_VideoController | ForEach-Object { "$($_.Name) ($($_.DriverVersion))" }) -join "; "
 $inicio = Condiciones
