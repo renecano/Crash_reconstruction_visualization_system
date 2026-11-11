@@ -25,6 +25,7 @@ import { useEffect, useState } from "react";
 import type { Hipotesis } from "@/components/visor/hypothesis-panel";
 import type { DatosDictamenCaso } from "@/lib/dictamen-caso";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
+import { textoParaClaude } from "@/lib/redaccion";
 
 type Id = Expediente["vehiculos"][number]["id"];
 
@@ -91,7 +92,8 @@ export function ComparacionDeclaracion({
         setEstado(`No se pudo leer la declaración: ${d.motivo ?? d.error ?? "sin respuesta"}.`);
         return;
       }
-      const v = versionDeclarada(d.salida, texto, declarante, ids);
+      // Las citas salen del texto que vio Claude: la declaración sin datos personales (PLAN §10).
+      const v = versionDeclarada(d.salida, textoParaClaude(texto), declarante, ids);
       setVersion(v);
       setEstado("Simulando la versión declarada…");
       const reconstruidas = new Map(

@@ -198,7 +198,7 @@ describe("corpus de dictámenes de CESVI (C0)", () => {
       "con placas de circulación [PLACA]; otra [PLACA]",
     );
     expect(redactar("la matrícula (123-AB), No. Siniestro N12-3456-78")).toBe(
-      "la matrícula ([PLACA]), No. Siniestro [NUMERO]",
+      "la matrícula ([PLACA]), No. Siniestro [SINIESTRO]",
     );
     // Modelos y normas que parecen placa se conservan.
     expect(redactar("tractocamión tipo FLD-120, según la NOM-012-SCT")).toBe(

@@ -9,6 +9,7 @@ import { leerDictamenImportado } from "@croquis/cesvi/server";
 import { LLMError } from "@croquis/extraction";
 import { z } from "zod";
 import { clientKeyFrom, defaultDeps, llmUnavailable } from "@/server/relato";
+import { textoParaClaude } from "@/lib/redaccion";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -40,7 +41,9 @@ export async function POST(request: Request): Promise<Response> {
     return sinLectura("demasiadas peticiones en la última hora");
   }
   try {
-    const r = await leerDictamenImportado(parsed.data.texto, {
+    // Sin datos personales hacia Claude (PLAN §10); el navegador revisa las citas contra el mismo
+    // texto redactado.
+    const r = await leerDictamenImportado(textoParaClaude(parsed.data.texto), {
       modelo: deps.settings.model,
       presupuestoUsd: deps.settings.budgetUsd,
       gasto: deps.budgetStore,

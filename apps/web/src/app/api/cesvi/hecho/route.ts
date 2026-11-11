@@ -10,6 +10,7 @@ import { leerHecho } from "@croquis/cesvi/server";
 import { LLMError } from "@croquis/extraction";
 import { z } from "zod";
 import { clientKeyFrom, defaultDeps, llmUnavailable } from "@/server/relato";
+import { redactarValores } from "@/lib/redaccion";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
@@ -35,7 +36,9 @@ export async function POST(request: Request): Promise<Response> {
       { status: 422 },
     );
   }
-  const p = parsed.data;
+  // Sin datos personales hacia Claude (PLAN §10), y las reglas leen el mismo texto: las citas de las
+  // dos lecturas se revisan contra el texto redactado.
+  const p = redactarValores(parsed.data);
   const conReglas = (motivo: string) =>
     Response.json(
       {

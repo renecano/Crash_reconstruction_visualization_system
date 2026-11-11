@@ -21,6 +21,12 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 | W5 · Terreno (C3 y O4)                                       | Claude Code de René | `feat/w5-terreno`, `feat/w5-terreno-web` | En `main` (#199, #200)    |
 | W6 · Encuadre en 2D (O3)                                     | Claude Code de René | `feat/w6-encuadre`                       | En PR desde el 2026-11-10 |
 
+## Datos personales fuera de `/api/cesvi` (René, 2026-11-10; ADR 0133)
+
+- **Qué se hizo:** las cinco rutas (`escena`, `hecho`, `importar`, `declaracion`, `consideraciones`) redactan el texto con el `redact()` de `/relato` antes de llamar a Claude. `redact()` suma VIN, folios, pólizas y siniestros (`pii.json` 1.2.0, Python y TS con paridad). El navegador revisa las citas contra el mismo texto redactado; tras leer, la narración del caso queda redactada.
+- **Lecturas grabadas:** ningún texto de origen grabado cambia al redactarlo (escenas, carambola, declaración, hecho A2010930, relatos de W2, reporte importado), así que no hubo que regrabar. `pipeline.golden.json` de Relatos-MX queda igual; `golden.json` solo cambia de versión y suma tres casos de los tipos nuevos.
+- **Pruebas:** `apps/web/src/lib/redaccion.test.ts` (un texto con nombre y placa llega a la API sin ellos, en las cinco rutas, con un doble del cliente), `extraction/tests/test_pii.py` (los tipos nuevos y lo que no se redacta) y la paridad de `packages/extraction`.
+
 ## W1 · Dictamen (O2)
 
 Rama `feat/w1-dictamen`.

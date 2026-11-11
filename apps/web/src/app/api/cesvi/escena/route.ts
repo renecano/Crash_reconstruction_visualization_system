@@ -11,6 +11,7 @@ import { leerEscena } from "@croquis/cesvi/server";
 import { LLMError } from "@croquis/extraction";
 import { z } from "zod";
 import { clientKeyFrom, defaultDeps, llmUnavailable } from "@/server/relato";
+import { textoParaClaude } from "@/lib/redaccion";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
@@ -38,8 +39,12 @@ export async function POST(request: Request): Promise<Response> {
       { status: 422 },
     );
   }
+  // Sin datos personales hacia Claude (PLAN §10): el navegador revisa las citas contra este mismo
+  // texto redactado.
+  const texto = textoParaClaude(parsed.data.texto);
+  const rechazadas = parsed.data.rechazadas?.map(textoParaClaude);
   // O1 (plan v4): un texto sin contenido («gggg…») no gasta API.
-  const revision = revisarRelato(parsed.data.texto);
+  const revision = revisarRelato(texto);
   if (!revision.suficiente) {
     return Response.json(
       { metodo: "relato_insuficiente", motivo: revision.motivo, mensaje: revision.mensaje },
@@ -53,12 +58,12 @@ export async function POST(request: Request): Promise<Response> {
     return sinLectura("demasiadas peticiones en la última hora");
   }
   try {
-    const r = await leerEscena(parsed.data.texto, {
+    const r = await leerEscena(texto, {
       modelo: deps.settings.model,
       presupuestoUsd: deps.settings.budgetUsd,
       gasto: deps.budgetStore,
       cliente: deps.client,
-      rechazadas: parsed.data.rechazadas,
+      rechazadas,
     });
     return Response.json({ metodo: "claude", ...r }, { headers: { "Cache-Control": "no-store" } });
   } catch (e) {

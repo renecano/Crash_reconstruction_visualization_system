@@ -1,7 +1,33 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "descripcion": "Patrones y pistas del redactor de datos personales. Los usan igual la referencia Python (re con ASCII) y el port TS (RegExp sin bandera u): solo \\d, \\s, \\w y \\b ASCII, lookbehind de ancho fijo y sin banderas en línea. 'vista': 'original' corre sobre el texto con espacios Unicode normalizados; 'plegado', sobre el texto plegado (minúsculas, sin acentos, misma longitud).",
   "patrones": [
+    {
+      "tipo": "VIN",
+      "vista": "plegado",
+      "mixto": true,
+      "regex": "(?<![a-z0-9])([a-hj-npr-z0-9]{17})(?![a-z0-9])"
+    },
+    {
+      "tipo": "VIN",
+      "vista": "plegado",
+      "regex": "(?<![a-z])(?:vin|niv|serie)[\\s:]*((?:(?:numero|num\\.?|no\\.?|de|del)\\s*)*[#:.]?\\s*(?=[a-z0-9-]*\\d)[a-z0-9][a-z0-9-]{7,16})(?![a-z0-9])"
+    },
+    {
+      "tipo": "FOLIO",
+      "vista": "plegado",
+      "regex": "(?<![a-z])folios?[\\s:]*((?:(?:numero|num\\.?|no\\.?|de|del)\\s*)*[#:.]?\\s*(?=[a-z0-9/-]*\\d)[a-z0-9][a-z0-9/-]{2,24})"
+    },
+    {
+      "tipo": "POLIZA",
+      "vista": "plegado",
+      "regex": "(?<![a-z])polizas?(?:\\s+de\\s+seguros?)?[\\s:]*((?:(?:numero|num\\.?|no\\.?|de|del)\\s*)*[#:.]?\\s*(?=[a-z0-9/-]*\\d)[a-z0-9][a-z0-9/-]{2,24})"
+    },
+    {
+      "tipo": "SINIESTRO",
+      "vista": "plegado",
+      "regex": "(?<![a-z])siniestros?[\\s:]*((?:(?:numero|num\\.?|no\\.?|de|del)\\s*)*[#:.]?\\s*(?=[a-z0-9/-]*\\d)[a-z0-9][a-z0-9/-]{2,24})"
+    },
     {
       "tipo": "CORREO",
       "vista": "original",
