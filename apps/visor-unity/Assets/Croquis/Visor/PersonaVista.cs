@@ -21,8 +21,6 @@ namespace Croquis.Visor
         private static readonly Color Piel = new Color(0.7f, 0.6f, 0.52f);
         private static readonly Color Pantalon = new Color(0.22f, 0.25f, 0.3f);
 
-        /// <summary>Altura de la cadera sobre el piso del vehículo (m), para los ocupantes.</summary>
-        private const float CaderaEnAsiento = 0.52f;
 
         /// <summary>El centro de masa, como fracción de la estatura: ahí va el origen del cuerpo.</summary>
         private const float FraccionCg = 0.55f;
@@ -34,6 +32,9 @@ namespace Croquis.Visor
         private VarianteElement variante;
         private (double X, double Y) asiento;
         private (double Largo, double Ancho) cabina;
+
+        /// <summary>La altura de la cadera sobre el suelo según la clase del vehículo (`Personas.AlturaCadera`).</summary>
+        private float caderaEnAsiento = 0.52f;
         private Terreno terreno;
         private Transform cuerpo;
         private float estatura;
@@ -73,6 +74,7 @@ namespace Croquis.Visor
             vista.variante = variante;
             vista.asiento = Personas.Asiento(p.Ocupante.Asiento, v.Dimensiones.LargoM, v.Dimensiones.AnchoM);
             vista.cabina = (v.Dimensiones.LargoM, v.Dimensiones.AnchoM);
+            vista.caderaEnAsiento = (float)Personas.AlturaCadera(v.Clase, v.Dimensiones.AltoM);
             // La segunda variante (sin cinturón, cuando no se declaró) es el maniquí de otro color: así se
             // distinguen las dos sin inventar ropa.
             if (segunda)
@@ -225,7 +227,7 @@ namespace Croquis.Visor
         private void ColocarOcupante(double t)
         {
             var d = Personas.Desplazamiento(variante, t);
-            var cadera = CaderaEnAsiento + (FraccionCg - 0.5f) * estatura;
+            var cadera = caderaEnAsiento + (FraccionCg - 0.5f) * estatura;
             // Dentro de la cabina: más allá de la pared, el solver da un contacto, no una salida.
             var p = Personas.EnCabina((asiento.X + d.Dx, asiento.Y + d.Dy), cabina.Largo, cabina.Ancho);
             transform.localPosition = new Vector3(-(float)p.Y, cadera, (float)p.X);

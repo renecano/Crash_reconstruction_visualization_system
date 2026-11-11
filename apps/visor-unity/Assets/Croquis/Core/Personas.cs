@@ -208,11 +208,56 @@ namespace Croquis.Core
         /// El punto del ocupante (asiento más desplazamiento, marco del vehículo) dentro de la cabina.
         /// El desplazamiento del solver es respecto al habitáculo: si pasa de la pared, lo que ocurre es
         /// un contacto con el interior (`variante.contacto`), no que el cuerpo salga. Se limita a 22 cm de
-        /// la lámina a los lados, al parabrisas adelante y a 20 cm de la parte trasera.
+        /// la lámina a los lados (y nunca a más de 0.6 m del eje: el ancho de una camioneta de doble
+        /// rodada es el de sus salpicaderas, no el de su cabina), al parabrisas adelante y a 20 cm de la
+        /// parte trasera.
         /// </summary>
+        /// <summary>
+        /// La altura de la cadera del ocupante sobre el suelo (m), por clase. Es la colocación ilustrativa
+        /// del cuerpo en el asiento, no un dato del solver: un sedán va a la altura de siempre (0.52 m) y
+        /// una camioneta, una van o un camión llevan el asiento más arriba. Nunca pasa de 55 % del alto.
+        /// </summary>
+        public static double AlturaCadera(string clase, double alto)
+        {
+            double h;
+            switch (clase)
+            {
+                case "suv_compacta":
+                    h = 0.68;
+                    break;
+                case "suv_grande":
+                    h = 0.78;
+                    break;
+                case "pickup":
+                    h = 0.86;
+                    break;
+                case "van":
+                case "microbus_combi":
+                    h = 0.82;
+                    break;
+                case "autobus":
+                    h = 1.25;
+                    break;
+                case "camion_unitario":
+                    h = 1.35;
+                    break;
+                case "tractocamion":
+                    h = 1.55;
+                    break;
+                default:
+                    h = 0.52;
+                    break;
+            }
+
+            return Math.Min(h, 0.55 * alto);
+        }
+
+        /// <summary>Hasta dónde llega el centro del cuerpo hacia la puerta: medio ancho de cabina menos el hombro.</summary>
+        public const double MedioAnchoCabina = 0.6;
+
         public static (double X, double Y) EnCabina((double X, double Y) p, double largo, double ancho)
         {
-            var lado = Math.Max(0.0, ancho / 2.0 - 0.22);
+            var lado = Math.Min(MedioAnchoCabina, Math.Max(0.0, ancho / 2.0 - 0.22));
             var adelante = 0.22 * largo - 0.1;
             var atras = -largo / 2.0 + 0.2;
             return (Math.Min(adelante, Math.Max(atras, p.X)), Math.Min(lado, Math.Max(-lado, p.Y)));

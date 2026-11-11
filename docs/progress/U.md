@@ -391,7 +391,7 @@ Plan: PLAN-CESVI §3.3. Decisiones: ADR 0114.
 - **En el sedán, la vista del conductor** deja ver el cofre por dentro del corte de 0.75 m: se lee, pero no es bonito.
 - **Las flechas del teclado** mueven la cámara libre; en la órbita y la cenital todavía no.
 - **El paso de los peatones** es un balanceo de piernas, no una animación de marcha.
-- **El brazo de un ocupante sale por la ventana** de la camioneta V2 en `lateral_interseccion` (vista del conductor de V1, t = 0.4 s): el cuerpo ya no sale de la cabina (`Personas.EnCabina`), pero el brazo sentado, abierto 40°, cruza la puerta cuando el solver lo lleva contra ella. Se corrige cerrando el brazo del lado de la puerta según el desplazamiento lateral (René, 2026-11-11).
+- **Corregido (2026-11-11): el brazo de un ocupante salía por la ventana** de la camioneta V2 en `lateral_interseccion`. Tenía dos causas: el cuerpo iba a la altura de cadera de un sedán (0.52 m) también en una camioneta, y el ancho de una de doble rodada es el de sus salpicaderas. Ahora la cadera va a la altura del asiento de su clase (`Personas.AlturaCadera`, ilustrativa: 0.86 m en una camioneta) y el cuerpo nunca pasa de 0.6 m del eje. Captura del editor: `docs/cesvi/u4/ajustes/conductores/lateral-ocupante-en-cabina-editor.webp`.
 
 ## Ajustes de René antes de U5 (2026-11-10)
 
