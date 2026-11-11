@@ -1712,6 +1712,47 @@ export function reconstruct(
     }
   }
 
+  // El orden declarado de los impactos posteriores (T6.3: el perito puede fijarlo a mano en una
+  // carambola). El solver no los fuerza: cada uno ocurre cuando sus contornos se tocan. Si en la
+  // reconstrucción ocurren en otro orden, se dice con los dos órdenes.
+  const nombreImpacto = new Map<string, string>();
+  for (const e of later) {
+    const [pa, pb] = pairOf(e, byId) as [string, string];
+    nombreImpacto.set(String(e.id), `${byId.get(pa)!.rol} con ${byId.get(pb)!.rol}`);
+  }
+  for (const [e, vid, obj] of laterObj) {
+    nombreImpacto.set(String(e.id), `${byId.get(vid)!.rol} contra ${obj.id}`);
+  }
+  const declarado = [...later, ...laterObj.map(([e]) => e)]
+    .map((e, i) => ({ e, i }))
+    .sort((x, y) => Number(x.e.orden) - Number(y.e.orden) || x.i - y.i)
+    .map(({ e }) => String(e.id));
+  const ocurrido: string[] = [];
+  const enOrden = jointHits
+    .map((h, i) => ({ h, i }))
+    .sort(
+      (x, y) =>
+        x.h.t - y.h.t ||
+        declarado.indexOf(x.h.eventId) - declarado.indexOf(y.h.eventId) ||
+        x.i - y.i,
+    );
+  for (const { h } of enOrden) {
+    if (!ocurrido.includes(h.eventId)) ocurrido.push(h.eventId);
+  }
+  const esperado = declarado.filter((id) => ocurrido.includes(id));
+  if (esperado.some((id, i) => id !== ocurrido[i])) {
+    flag(
+      "orden_impactos_distinto",
+      { declarado: esperado, reconstruido: ocurrido },
+      "Los impactos después del primero ocurren en la reconstrucción en otro orden que el " +
+        "declarado. Declarado: " +
+        esperado.map((id) => nombreImpacto.get(id)!).join("; ") +
+        ". Reconstruido: " +
+        ocurrido.map((id) => nombreImpacto.get(id)!).join("; ") +
+        ".",
+    );
+  }
+
   for (const m of models) {
     if (!participantes.has(m.id)) continue;
     const start = postStart.get(m.id)!;
