@@ -91,6 +91,8 @@ namespace Croquis.Visor
             var r = caso.Resultado;
             var e = caso.Escenario;
             var noche = e != null && e.Ambiente.Noche;
+            // El cielo del caso baja mientras se arman los vehículos (en la web es un archivo aparte).
+            var cielo = e != null ? Cielos.CargarAsync(EscenarioVista.NombreDelCielo(e.Ambiente)) : null;
             inicio = r.TInicio;
             fin = r.TFin;
             foreach (var v in r.Vehiculos)
@@ -132,6 +134,8 @@ namespace Croquis.Visor
             if (e != null)
             {
                 Paso("vehiculos");
+                await cielo;
+                Paso("cielo");
             EscenarioVista.Construir(raiz, e, sol, Camera.main, terreno);
             Paso("escenario");
             }

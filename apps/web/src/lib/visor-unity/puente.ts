@@ -75,6 +75,8 @@ export function urlsDelBuild(m: ManifiestoVisorUnity) {
     dataUrl: base + m.data,
     frameworkUrl: base + m.framework,
     codeUrl: base + m.code,
+    // Los cielos van aparte, uno por AssetBundle, y Unity baja solo el del caso (U6).
+    streamingAssetsUrl: `${m.base}${m.prefijo}StreamingAssets`,
   };
 }
 
@@ -190,6 +192,7 @@ export class PuenteUnity {
             dataUrl: locales?.dataUrl ?? urls.dataUrl,
             frameworkUrl: locales?.frameworkUrl ?? urls.frameworkUrl,
             codeUrl: locales?.codeUrl ?? urls.codeUrl,
+            streamingAssetsUrl: urls.streamingAssetsUrl,
             // Las copias locales ya están en memoria: no se guardan otra vez en IndexedDB.
             ...(locales ? { cacheControl: () => "no-store" } : {}),
             companyName: "Croquis",

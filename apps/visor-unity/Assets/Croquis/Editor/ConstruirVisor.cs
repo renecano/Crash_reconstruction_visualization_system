@@ -53,6 +53,7 @@ namespace Croquis.EditorTools
 
         private static void Construir(BuildTarget objetivo, string salida)
         {
+            var cielos = Cielos(objetivo);
             var reporte = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {
                 scenes = new[] { RutaEscena },
@@ -61,11 +62,52 @@ namespace Croquis.EditorTools
                 options = BuildOptions.None,
             });
             var s = reporte.summary;
+            VariantesDeShaders.EscribirInforme(objetivo);
             Debug.Log($"[build] {s.result}: {s.totalSize} bytes, {s.totalTime}, {s.totalErrors} errores");
             if (s.result != BuildResult.Succeeded)
             {
                 EditorApplication.Exit(1);
+                return;
             }
+
+            // Los AssetBundles de los cielos van en StreamingAssets/cielos, junto al build.
+            var datos = objetivo == BuildTarget.WebGL
+                ? salida
+                : Path.Combine(Path.GetDirectoryName(salida), Path.GetFileNameWithoutExtension(salida) + "_Data");
+            var destino = Path.Combine(datos, "StreamingAssets", "cielos");
+            Directory.CreateDirectory(destino);
+            foreach (var n in Croquis.Visor.Cielos.Nombres)
+            {
+                File.Copy(Path.Combine(cielos, n), Path.Combine(destino, n), true);
+                Debug.Log($"[build] cielo {n}: {new FileInfo(Path.Combine(destino, n)).Length} bytes");
+            }
+        }
+
+        /// <summary>
+        /// Un AssetBundle por cielo (U6): el build ya no los lleva dentro y la web baja solo el del
+        /// caso. Sin compresión propia (Blob los sirve con brotli) y con la misma textura importada.
+        /// </summary>
+        private static string Cielos(BuildTarget objetivo)
+        {
+            var carpeta = Path.Combine("Library", "CroquisCielos", objetivo.ToString());
+            Directory.CreateDirectory(carpeta);
+            var paquetes = Croquis.Visor.Cielos.Nombres.Select(n => new AssetBundleBuild
+            {
+                assetBundleName = n,
+                assetNames = new[] { Croquis.Visor.Cielos.Carpeta + "/cielo_" + n + ".mat" },
+            }).ToArray();
+            var manifiesto = BuildPipeline.BuildAssetBundles(
+                carpeta,
+                paquetes,
+                BuildAssetBundleOptions.UncompressedAssetBundle | BuildAssetBundleOptions.StrictMode,
+                objetivo);
+            if (manifiesto == null)
+            {
+                Debug.LogError("[build] No se armaron los AssetBundles de los cielos.");
+                EditorApplication.Exit(1);
+            }
+
+            return carpeta;
         }
 
         /// <summary>
@@ -184,6 +226,9 @@ namespace Croquis.EditorTools
             PlayerSettings.WebGL.debugSymbolMode = System.Environment.GetEnvironmentVariable("CROQUIS_SIMBOLOS") == "1"
                 ? WebGLDebugSymbolMode.Embedded
                 : WebGLDebugSymbolMode.Off;
+            // Build de prueba de las variantes (VariantesDeShaders): con CROQUIS_VARIANTES=1, si un caso
+            // pide una variante que no está, la consola lo dice en vez de usar la más parecida.
+            PlayerSettings.strictShaderVariantMatching = System.Environment.GetEnvironmentVariable("CROQUIS_VARIANTES") == "1";
             PlayerSettings.WebGL.maximumMemorySize = 2048;
             PlayerSettings.SetGraphicsAPIs(BuildTarget.WebGL, new[] { GraphicsDeviceType.OpenGLES3 });
             PlayerSettings.SetManagedStrippingLevel(NamedBuildTarget.WebGL, ManagedStrippingLevel.Medium);

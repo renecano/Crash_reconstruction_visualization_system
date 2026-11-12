@@ -8,7 +8,8 @@
  *   máscara para URP Lit (R = metal, G = oclusión, A = lisura), armada de su mapa «arm».
  * - **Árboles:** las tarjetas ya horneadas de `apps/web/public/arboles/`, de WebP a PNG (Unity no
  *   importa WebP).
- * - **Cielos HDRI:** los de `apps/web/public/hdri/`, tal cual.
+ * - **Cielos HDRI:** los de `apps/web/public/hdri/`, tal cual, en `Recursos/hdri/` (fuera de
+ *   Resources: van en un AssetBundle por cielo).
  *
  * Lo que ya está no se vuelve a bajar. Unity lo importa con `ImportarRecursos.cs`.
  *
@@ -132,7 +133,8 @@ for (const [especie, imp] of Object.entries(impostores)) {
 
 // --- Cielos --------------------------------------------------------------------------------------
 const hdri = leer(join(WEB, "public/hdri/hdri.json")).hdri;
-const dHdri = dir(join(DESTINO, "hdri"));
+// Fuera de Resources: cada cielo va en su AssetBundle y la web baja solo el del caso (U6).
+const dHdri = dir(join(DESTINO, "..", "hdri"));
 for (const [nombre, h] of Object.entries(hdri)) {
   const salida = join(dHdri, `${nombre}.hdr`);
   if (!existsSync(salida)) {

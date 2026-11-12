@@ -30,6 +30,9 @@ const arg = (n, d) => {
 const SALIDA = resolve(RAIZ, arg("salida", "docs/cesvi/u2/capturas"));
 const T = Number(arg("t", 0.4));
 const CASOS = join(BUILD, arg("casos", "casos"));
+// `--build <carpeta de Build>`: otro build web (por ejemplo, el de producción bajado de Blob) para
+// comparar el aspecto de dos builds con las mismas escenas.
+const WEB = join(BUILD, arg("build", "web"));
 const VISTAS = arg("vistas", "cinematica,acera").split(",");
 const TIEMPOS = arg("tiempos", null)?.split(",").map(Number) ?? null;
 const CON_FPS = !process.argv.includes("--sin-fps");
@@ -63,7 +66,7 @@ const servidor = createServer((q, s) => {
   const ruta = decodeURIComponent(new URL(q.url, "http://x").pathname);
   const f = ruta.startsWith("/modelos/")
     ? join(PUBLICO, ruta)
-    : join(BUILD, "web", ruta === "/" ? "index.html" : ruta);
+    : join(WEB, ruta === "/" ? "index.html" : ruta);
   if (!existsSync(f)) return s.writeHead(404).end();
   s.writeHead(200, { "content-type": TIPOS[extname(f)] ?? "application/octet-stream" });
   s.end(readFileSync(f));
@@ -82,6 +85,13 @@ try {
   ).newPage();
   const errores = [];
   pagina.on("pageerror", (e) => errores.push(String(e)));
+  // U6: con un build de `CROQUIS_VARIANTES=1`, Unity avisa en la consola si una escena pide una
+  // variante de shader que el build no trae; esos avisos quedan en `consola.json`.
+  const variantes = [];
+  pagina.on("console", (m) => {
+    const t = m.text();
+    if (/variant|not found|shader/i.test(t)) variantes.push(t);
+  });
   await pagina.goto(`http://127.0.0.1:${servidor.address().port}/`);
   const espera = async (tipo, desde) => {
     const fin = Date.now() + 180_000;
@@ -145,6 +155,12 @@ try {
     console.log(`fps ${nombre}: ${muestras.join(", ")}`);
   }
   if (errores.length) console.log("Errores de la página:", errores);
+  writeFileSync(
+    join(SALIDA, "consola.json"),
+    `${JSON.stringify({ variantes: [...new Set(variantes)] }, null, 2)}
+`,
+  );
+  if (variantes.length) console.log("Avisos de shaders:", [...new Set(variantes)]);
 } finally {
   await navegador.close();
   servidor.close();
