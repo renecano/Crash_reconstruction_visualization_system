@@ -11,6 +11,7 @@ import {
   type ResultadoMaqueta,
   tImpacto,
   tramosPorVelocidad,
+  versionDeclaradaEnMaqueta,
 } from "./maqueta";
 
 const r = JSON.parse(
@@ -120,5 +121,63 @@ describe("el encuadre de la maqueta", () => {
     // Es más chico que la caja de toda la aproximación (desde t_inicio).
     const [c0, , c1] = cajaDe(r, 8);
     expect(x1 - x0).toBeLessThan(c1 - c0);
+  });
+});
+
+describe("la versión declarada en el croquis 2D (T6.2)", () => {
+  const ti = tImpacto(r);
+  /** La versión declarada: la misma reconstrucción con un vehículo corrido `dy` metros de lado. */
+  const corrida = (id: string, dy: number): ResultadoMaqueta => {
+    const d = structuredClone(r);
+    const v = d.vehiculos.find((x) => x.id === id)!;
+    v.trayectoria.y = v.trayectoria.y.map((y) => y + dy);
+    if (v.pose_final) v.pose_final.y += dy;
+    return d;
+  };
+
+  it("si la versión declarada coincide con la reconstrucción, no se dibuja nada dos veces", () => {
+    expect(versionDeclaradaEnMaqueta(r, structuredClone(r), ti)).toEqual([]);
+  });
+
+  it("devuelve solo el vehículo que en esa versión va por otro lado, con su camino y su pose", () => {
+    const [a, ...otros] = versionDeclaradaEnMaqueta(r, corrida("veh-a", 2), ti);
+    expect(otros).toEqual([]);
+    const rec = r.vehiculos.find((v) => v.id === "veh-a")!;
+    expect(a!.id).toBe("veh-a");
+    expect(a!.rol).toBe(rec.rol);
+    expect(a!.separacionM).toBeCloseTo(2, 6);
+    // Su pose en el impacto: la reconstruida, 2 m al lado.
+    const p = poseEn(rec.trayectoria, ti);
+    expect(a!.pose.x).toBeCloseTo(p.x, 6);
+    expect(a!.pose.y).toBeCloseTo(p.y + 2, 6);
+    // El camino llega hasta el impacto, no más allá.
+    const hastaImpacto = rec.trayectoria.t.filter((t) => t <= ti + 1e-9).length;
+    expect(a!.camino).toHaveLength(hastaImpacto);
+    expect(a!.camino.at(-1)!.y).toBeCloseTo(p.y + 2, 6);
+    expect(a!.final!.y).toBeCloseTo(rec.pose_final!.y + 2, 6);
+    expect(a!.final!.rumbo).toBeCloseTo((rec.pose_final!.rumbo_deg * Math.PI) / 180, 9);
+  });
+
+  it("una separación menor que el umbral no cuenta como otra versión", () => {
+    expect(versionDeclaradaEnMaqueta(r, corrida("veh-a", 0.3), ti)).toEqual([]);
+    expect(versionDeclaradaEnMaqueta(r, corrida("veh-a", 0.3), ti, 0.2)).toHaveLength(1);
+  });
+
+  it("las dos versiones se alinean por su impacto, aunque cada una tenga su reloj", () => {
+    // La declarada con todos sus tiempos 1.5 s después: es la misma, vista con otro reloj.
+    const d = structuredClone(r);
+    for (const v of d.vehiculos) v.trayectoria.t = v.trayectoria.t.map((t) => t + 1.5);
+    d.eventos = (d.eventos ?? []).map((e) => ({ ...e, t: e.t + 1.5 }));
+    d.t_inicio += 1.5;
+    d.t_fin += 1.5;
+    expect(tImpacto(d)).toBeCloseTo(ti + 1.5, 9);
+    expect(versionDeclaradaEnMaqueta(r, d, ti)).toEqual([]);
+    expect(versionDeclaradaEnMaqueta(r, d, ti - 0.8)).toEqual([]);
+  });
+
+  it("un vehículo que la versión declarada no trae no se dibuja", () => {
+    const d = corrida("veh-a", 2);
+    d.vehiculos = d.vehiculos.filter((v) => v.id !== "veh-a");
+    expect(versionDeclaradaEnMaqueta(r, d, ti)).toEqual([]);
   });
 });

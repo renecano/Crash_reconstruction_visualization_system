@@ -14,7 +14,9 @@ import {
   coordinar,
   criteriosVacios,
   conPosicion,
+  CLAVE_ORDEN_IMPACTOS,
   delPerito,
+  sinPregunta,
   medidasDe,
   pizarraDeEscena,
   pizarraNueva,
@@ -61,6 +63,7 @@ import {
   impactosAColocar,
   pasoAbierto,
 } from "@/lib/pasos-caso";
+import type { ResultadoMaqueta } from "@/lib/maqueta";
 import { MODALIDAD } from "@/lib/nombres-cesvi";
 import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
 import { leerTransiciones, useTema, useTransiciones, type Modo } from "@/lib/preferencias-cesvi";
@@ -345,6 +348,21 @@ export function RecorridoCaso({
         posiciones.filter((x) => x.fase === "final"),
       ),
   );
+
+  // «No sé» a una pregunta (o una pregunta que se cierra al contestarla).
+  const cerrarPregunta = (c: string) => {
+    if (c === CLAVE_ORDEN_IMPACTOS) {
+      // El orden de los impactos (T6.3): contestada, o «No sé» y se queda el orden leído. No se vuelve
+      // a hacer: sale de la lista que se guarda con el caso y de la pizarra.
+      setLeida((l) => (l ? { ...l, preguntas: l.preguntas.filter((q) => q.clave !== c) } : l));
+      setPizarra((p) => sinPregunta(p, c));
+      return;
+    }
+    setNoSe((s) => new Set([...s, c]));
+    // A una pregunta del Físico (R12b), «No sé» deja el supuesto con su nombre en la bitácora.
+    const queda = pizarra.pedidoEvidencia ? supuestoAlNoSaber(c, supuestos) : null;
+    if (queda) setPizarra((p) => delPerito(p, `No sé (${c}). ${queda}`));
+  };
 
   const cambiarExpediente = (e: Expediente) => {
     setExpediente(e);
@@ -975,11 +993,7 @@ export function RecorridoCaso({
           editable={editable}
           preguntas={preguntas}
           onExpediente={cambiarExpediente}
-          onNoSe={(c) => {
-            setNoSe((s) => new Set([...s, c]));
-            const queda = pizarra.pedidoEvidencia ? supuestoAlNoSaber(c, supuestos) : null;
-            if (queda) setPizarra((p) => delPerito(p, `No sé (${c}). ${queda}`));
-          }}
+          onNoSe={cerrarPregunta}
           onIrAlMapa={() => irA(2)}
           onEditar={() => setEditandoRelato(true)}
         />
@@ -1019,12 +1033,7 @@ export function RecorridoCaso({
           escena={leida}
           preguntas={preguntas}
           onExpediente={cambiarExpediente}
-          onNoSe={(c) => {
-            setNoSe((s) => new Set([...s, c]));
-            // A una pregunta del Físico (R12b), «No sé» deja el supuesto con su nombre en la bitácora.
-            const queda = pizarra.pedidoEvidencia ? supuestoAlNoSaber(c, supuestos) : null;
-            if (queda) setPizarra((p) => delPerito(p, `No sé (${c}). ${queda}`));
-          }}
+          onNoSe={cerrarPregunta}
           onIrAlMapa={(vehiculo) => {
             setElegido({ tipo: "final", vehiculo });
             irA(2);
@@ -1582,6 +1591,15 @@ export function RecorridoCaso({
                     return d ? [[resId, d.charAt(0).toLowerCase() + d.slice(1)]] : [];
                   }),
                 )}
+                // T6.2: la versión declarada (R7), también en el croquis 2D y no solo en el 3D.
+                declarada={
+                  declarada
+                    ? {
+                        etiqueta: declarada.etiqueta,
+                        resultado: declarada.resultado as unknown as ResultadoMaqueta,
+                      }
+                    : null
+                }
               />
             </div>
           ) : null}

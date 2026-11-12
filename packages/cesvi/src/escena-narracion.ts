@@ -10,6 +10,13 @@
  */
 import MASAS_TIPICAS from "./data/masas-tipicas.json";
 import {
+  CLAVE_ORDEN_IMPACTOS,
+  esCarambola,
+  ordenesPosibles,
+  ordenNarrado,
+  textoOrden,
+} from "./orden-impactos";
+import {
   expedienteDeSalida,
   problemasExpediente,
   VALORES,
@@ -246,7 +253,7 @@ export function escenaDeNarracion(s: SalidaCorpus, narracion: string): EscenaNar
   // El vocabulario mexicano le da a cada vehículo su mención y, si falta, su clase (O5).
   const v = conVocabulario(s, narracion);
   return {
-    ...escenaDeConversion(expedienteDeSalida(v.salida, narracion, "perito")),
+    ...escenaDeConversion(expedienteDeSalida(v.salida, narracion, "perito"), narracion),
     lectura: lecturaDeNarracion(v.salida, narracion),
     menciones: v.menciones,
   };
@@ -333,9 +340,10 @@ export function lecturaDeHecho(
 /**
  * La escena de un expediente ya convertido (la narración del perito o un dictamen importado, R5):
  * las zonas de contacto, el impacto que se puede suponer y lo que más cambia la reconstrucción y el
- * texto no dice.
+ * texto no dice. Con el texto (`narracion`), en una carambola pregunta el orden de los impactos si
+ * el texto no lo dice (T6.3).
  */
-export function escenaDeConversion(c: Conversion): EscenaNarrada {
+export function escenaDeConversion(c: Conversion, narracion?: string): EscenaNarrada {
   const leido = conZonas(c.expediente);
   const preguntas: PreguntaEscena[] = [];
   const propuesto = leido.expediente.impactos?.length ? null : impactoPropuesto(leido.expediente);
@@ -386,6 +394,21 @@ export function escenaDeConversion(c: Conversion): EscenaNarrada {
           },
         },
   );
+  // Carambola (T6.3): si el texto no dice en qué orden ocurrieron los impactos, el orden en que
+  // quedaron al leerlos es un supuesto de Croquis; el perito lo declara. La primera opción es ese.
+  const ordenes = ordenesPosibles(expediente);
+  if (ordenes.length && narracion !== undefined && !ordenNarrado(narracion)) {
+    preguntas.push({
+      clave: CLAVE_ORDEN_IMPACTOS,
+      texto: "La narración no dice en qué orden ocurrieron los impactos. ¿Cuál fue?",
+      porQue:
+        "El primer impacto es el origen de la reconstrucción, y el orden decide qué vehículo empuja a cuál.",
+      control: {
+        tipo: "opciones",
+        opciones: ordenes.map((s) => ({ valor: s.join(","), etiqueta: textoOrden(expediente, s) })),
+      },
+    });
+  }
   for (const [orden, v] of ambiguas) {
     preguntas.push({
       clave: `zona-${orden}-${v}`,
@@ -584,6 +607,9 @@ export function preguntaPendiente(
   if (p.clave === "impacto-propuesto")
     return e.impactos?.some((i) => i.fuente === "supuesto") ?? false;
   if (p.clave === "impactos") return !e.impactos?.length;
+  // El orden de una carambola: mientras siga habiendo más de un impacto entre vehículos. Al
+  // contestarla, quien lleva la lista de preguntas la quita (`sinPregunta`).
+  if (p.clave === CLAVE_ORDEN_IMPACTOS) return esCarambola(e);
   if (p.clave.startsWith("zona-"))
     return !e.impactos
       ?.find((i) => i.orden === p.impacto)

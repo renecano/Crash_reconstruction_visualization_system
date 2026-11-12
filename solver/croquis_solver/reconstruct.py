@@ -1651,6 +1651,36 @@ def reconstruct(
                 "llega a tocarlo.",
             )
 
+    # El orden declarado de los impactos posteriores (T6.3: el perito puede fijarlo a mano en una
+    # carambola). El solver no los fuerza: cada uno ocurre cuando sus contornos se tocan. Si en la
+    # reconstrucción ocurren en otro orden, se dice con los dos órdenes.
+    nombre_impacto: dict[str, str] = {}
+    for e in later:
+        pa, pb = _pair(e, by_id)
+        nombre_impacto[str(e["id"])] = f"{by_id[pa].rol} con {by_id[pb].rol}"
+    for e, vid, objeto_c1 in later_obj:
+        nombre_impacto[str(e["id"])] = f"{by_id[vid].rol} contra {objeto_c1.id}"
+    declarado = [
+        str(e["id"])
+        for e in sorted([*later, *(e for e, _, _ in later_obj)], key=lambda e: int(e["orden"]))
+    ]
+    ocurrido: list[str] = []
+    for hit in sorted(joint_hits, key=lambda h: (h.t, declarado.index(h.event_id))):
+        if hit.event_id not in ocurrido:
+            ocurrido.append(hit.event_id)
+    esperado = [i for i in declarado if i in ocurrido]
+    if esperado != ocurrido:
+        flag(
+            "orden_impactos_distinto",
+            {"declarado": esperado, "reconstruido": ocurrido},
+            "Los impactos después del primero ocurren en la reconstrucción en otro orden que el "
+            "declarado. Declarado: "
+            + "; ".join(nombre_impacto[i] for i in esperado)
+            + ". Reconstruido: "
+            + "; ".join(nombre_impacto[i] for i in ocurrido)
+            + ".",
+        )
+
     for m in models:
         if m.id not in participantes:
             continue

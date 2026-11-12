@@ -44,6 +44,7 @@ import {
   type ResultadoMaqueta,
   tImpacto,
   tramosPorVelocidad,
+  versionDeclaradaEnMaqueta,
   type VehiculoResultado,
 } from "@/lib/maqueta";
 
@@ -96,7 +97,14 @@ export function EscenaMaqueta({
   relieve = null,
   navegable = false,
   margenes = SIN_MARGENES,
+  declarada = null,
 }: {
+  /**
+   * T6.2: la versión declarada de un conductor ya simulada (R7), para dibujarla sobre la
+   * reconstrucción: el camino y la silueta de cada vehículo que en esa versión va por otro lado, en
+   * trazo punteado y con su nombre. Es un complemento opcional; sin culpas.
+   */
+  declarada?: { etiqueta: string; resultado: ResultadoMaqueta } | null;
   /** W6: lo que tapan los paneles de encima, en pixeles: «Ver todo» encaja la escena en el resto. */
   margenes?: Margenes;
   /**
@@ -151,13 +159,18 @@ export function EscenaMaqueta({
   const vw = vista ? vista[2] - vista[0] : W;
   const vh = vista ? vista[3] - vista[1] : H;
   /** La silueta de un vehículo en una pose: unidad → metros, girada a su rumbo. */
-  const colocar = (p: Pose, v: VehiculoResultado) =>
+  const colocar = (p: Pose, v: Pick<VehiculoResultado, "dimensiones">) =>
     `translate(${px(p.x)} ${py(p.y)}) rotate(${90 - (p.rumbo * 180) / Math.PI}) scale(${v.dimensiones.ancho_m} ${v.dimensiones.largo_m})`;
   const impacto = resultado.punto_impacto ?? null;
   // Al navegar, las letras guardan su tamaño en pantalla: van con lo que se ve, no con el marco.
   const fuente = vista ? Math.max(vw, vh) / 55 : Math.max(1, Math.min(3, Math.max(W, H) / 40));
   const ahora = t ?? ti;
   const quieto = useReducedMotion();
+  // T6.2: la versión declarada, alineada por el impacto; solo los vehículos que van por otro lado.
+  const declarados = useMemo(
+    () => (declarada ? versionDeclaradaEnMaqueta(resultado, declarada.resultado, ahora) : []),
+    [declarada, resultado, ahora],
+  );
   const cota =
     layout.mapa && impacto ? cotaDeVia(layout.mapa.vias, impacto, 14, anchoVia?.m) : null;
   // Las etiquetas van en columna a un lado del impacto: los vehículos arriba y abajo, en el orden en
@@ -363,6 +376,64 @@ export function EscenaMaqueta({
             </title>
             {`${cota.ancho.toFixed(2)} m`}
           </text>
+        </g>
+      ) : null}
+
+      {declarados.length ? (
+        <g data-testid="maqueta-declarada" aria-label={declarada!.etiqueta}>
+          {declarados.map((d) => (
+            <g key={d.id} data-testid={`maqueta-declarada-${d.rol}`}>
+              {d.camino.length > 1 ? (
+                <polyline
+                  points={d.camino.map((p) => `${px(p.x)},${py(p.y)}`).join(" ")}
+                  fill="none"
+                  stroke="var(--velocidad-inicio)"
+                  strokeWidth={0.3}
+                  strokeDasharray="0.1 0.7"
+                  strokeLinecap="round"
+                />
+              ) : null}
+              {d.final ? (
+                <path
+                  d={siluetaClase(d.clase)}
+                  transform={colocar(d.final, d)}
+                  fill="none"
+                  stroke="var(--velocidad-inicio)"
+                  strokeWidth={1.2}
+                  strokeDasharray="1 3"
+                  vectorEffect="non-scaling-stroke"
+                  opacity={0.7}
+                  data-testid={`maqueta-declarada-final-${d.rol}`}
+                />
+              ) : null}
+              <path
+                d={siluetaClase(d.clase)}
+                transform={colocar(d.pose, d)}
+                fill="var(--velocidad-inicio)"
+                fillOpacity={0.12}
+                stroke="var(--velocidad-inicio)"
+                strokeWidth={1.6}
+                strokeDasharray="5 3"
+                vectorEffect="non-scaling-stroke"
+                data-tip={`${nombres[d.id] ?? d.rol} · ${declarada!.etiqueta}`}
+              />
+              {sinEtiquetas ? null : (
+                <text
+                  x={px(d.pose.x)}
+                  y={
+                    py(d.pose.y) -
+                    Math.max(d.dimensiones.largo_m, d.dimensiones.ancho_m) / 2 -
+                    fuente * 0.4
+                  }
+                  fontSize={fuente * 0.8}
+                  textAnchor="middle"
+                  fill="var(--texto-2)"
+                >
+                  {declarada!.etiqueta}
+                </text>
+              )}
+            </g>
+          ))}
         </g>
       ) : null}
 

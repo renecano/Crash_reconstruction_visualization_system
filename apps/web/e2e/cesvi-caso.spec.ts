@@ -190,6 +190,16 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await expect(page.getByTestId("decision-sugerencia")).toHaveText(
     "El perito descartó la sugerencia.",
   );
+  // T6.2: la versión declarada también se dibuja en el croquis 2D, no solo en el 3D y en la tabla:
+  // en la maqueta va punteada sobre la reconstrucción, con su nombre en la leyenda.
+  await page.getByTestId("vista-maqueta").click();
+  await expect(page.getByTestId("maqueta-declarada")).toHaveCount(1, { timeout: 30_000 });
+  await expect(page.getByTestId("maqueta-leyenda-declarada")).toContainText(
+    "versión declarada (V2)",
+  );
+  // De vuelta al 3D: el dictamen toma de ahí sus tres cuadros.
+  await page.getByTestId("vista-3d").click();
+  await expect(visor.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
 
   // Los daños que calcula la reconstrucción y, en los números, la verificación CESVI dice qué falta.
   await irAPaso(page, 5);

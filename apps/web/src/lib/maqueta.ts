@@ -95,6 +95,80 @@ export function estela(
   return out.map((o, k) => ({ ...o, opacidad: 0.12 + (0.5 * (k + 1)) / out.length }));
 }
 
+/** Un vehículo de la versión declarada, para dibujarlo sobre la reconstrucción (T6.2). */
+export interface VehiculoDeclarado {
+  id: string;
+  rol: string;
+  clase: string;
+  dimensiones: { largo_m: number; ancho_m: number };
+  /** Su camino hasta el impacto de su versión, en puntos de la escena. */
+  camino: { x: number; y: number }[];
+  /** Su pose en el instante que se dibuja. */
+  pose: Pose;
+  /** Dónde queda al final en su versión (null si el resultado no lo dice). */
+  final: Pose | null;
+  /** Lo más que se separa de la reconstrucción, en metros: en el camino, en ese instante o al final. */
+  separacionM: number;
+}
+
+/** Cada cuánto se comparan las dos versiones a lo largo del camino (s). */
+const PASO_COMPARACION_S = 0.2;
+
+/**
+ * La versión declarada de un conductor sobre la reconstrucción (T6.2): por cada vehículo de la
+ * reconstrucción que también está en la declarada, su camino hasta el impacto, su pose en `t` y su
+ * posición final.
+ *
+ * Las dos versiones se alinean por su impacto: cada resultado tiene el suyo en su propio reloj, así
+ * que `t` (del reloj de la reconstrucción) se lleva al de la declarada. Un vehículo que en la
+ * versión declarada va por donde va en la reconstrucción (menos de `umbralM` de separación en todo
+ * momento) no se devuelve: no se dibuja dos veces lo mismo.
+ */
+export function versionDeclaradaEnMaqueta(
+  reconstruida: ResultadoMaqueta,
+  declarada: ResultadoMaqueta,
+  t: number,
+  umbralM = 0.5,
+): VehiculoDeclarado[] {
+  const tiR = tImpacto(reconstruida);
+  const tiD = tImpacto(declarada);
+  const aDeclarada = (x: number) => x - tiR + tiD;
+  const lejos = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+    Math.hypot(a.x - b.x, a.y - b.y);
+  const out: VehiculoDeclarado[] = [];
+  for (const vr of reconstruida.vehiculos) {
+    const vd = declarada.vehiculos.find((x) => x.id === vr.id);
+    if (!vd || !vd.trayectoria.t.length || !vr.trayectoria.t.length) continue;
+    const tr = vd.trayectoria;
+    let separacion = lejos(poseEn(tr, aDeclarada(t)), poseEn(vr.trayectoria, t));
+    for (let x = reconstruida.t_inicio; x <= reconstruida.t_fin + 1e-9; x += PASO_COMPARACION_S) {
+      separacion = Math.max(
+        separacion,
+        lejos(poseEn(tr, aDeclarada(x)), poseEn(vr.trayectoria, x)),
+      );
+    }
+    const finR = vr.pose_final;
+    const finD = vd.pose_final;
+    if (finR && finD) separacion = Math.max(separacion, lejos(finR, finD));
+    if (separacion < umbralM) continue;
+    const camino: { x: number; y: number }[] = [];
+    for (let i = 0; i < tr.t.length && tr.t[i]! <= tiD + 1e-9; i++) {
+      camino.push({ x: tr.x[i]!, y: tr.y[i]! });
+    }
+    out.push({
+      id: vd.id,
+      rol: vd.rol,
+      clase: vd.clase,
+      dimensiones: vd.dimensiones,
+      camino,
+      pose: poseEn(tr, aDeclarada(t)),
+      final: finD ? { x: finD.x, y: finD.y, rumbo: (finD.rumbo_deg * Math.PI) / 180 } : null,
+      separacionM: separacion,
+    });
+  }
+  return out;
+}
+
 /**
  * La trayectoria hasta el impacto en tramos, cada uno con su fracción de rapidez (0 = la más baja,
  * 1 = la más alta del tramo), para el degradado por velocidad real. Muestra cada `cada` puntos.
