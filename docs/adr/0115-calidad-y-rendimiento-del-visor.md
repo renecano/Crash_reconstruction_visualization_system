@@ -90,7 +90,9 @@ René revisó §7.8 de `PLAN.md`: la meta de media (≥ 60 fps a 1080p) es **en 
 
 **Medición final (2026-11-12, `eval/results/e6_unity_media.json`):** la escena de referencia llega a 64.7 fps de día y 62.1 de noche en media con la escala automática: **cumple §7.8**. 8 de 10 escenas pasan de 60; carambola queda en 59.6 y 56.3 a escala 0.5, el piso. Ninguna baja de 24 fps. Baja: de 41.0 a 62.3 fps. La escala elegida: 0.627 y 0.548 en AXA, 0.5 en las demás. Con 0.5 fija, la ronda de costo fijo pasó de 3 a 7 escenas sobre 60 fps (`e6_unity_media_escala_0.5.json` contra el archivado `u5_estado.ff04482a02.json`).
 
+**Alta y ultra en la computadora con tarjeta de video (2026-11-12, `eval/results/e6_unity_escritorio.json`):** programa de escritorio (Direct3D 12) en una RTX 4070 Laptop con i9-14900HX, 1920×1080, 3 repeticiones: de 290.3 a 414.9 fps en alta y de 289.4 a 410.2 en ultra, con el 1 % más lento en 166.6 o más. **Cumple la meta de §7.8 para la computadora de demo** en las 10 escenas. Alta y ultra dan casi lo mismo porque, con dpr 1, las dos dibujan a escala 1. El build web en esa computadora se mide al cerrar U6.
+
 ## Consecuencias
 
 - El build WebGL lleva las variantes de shader de los cuatro niveles (por ejemplo, sombras de focos de alta); su peso se mide en U5 y queda en `docs/progress/U.md`.
-- La meta de alta y ultra (≥ 60 fps en la computadora de demo) queda en «Bloqueado — necesita a René» hasta que corra el paquete.
+- La meta de alta y ultra (≥ 60 fps en la computadora de demo) se cumple en el programa de escritorio (2026-11-12); falta medir el build web en esa computadora (U6).

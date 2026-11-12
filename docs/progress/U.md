@@ -509,12 +509,34 @@ La cadena reanudable midió el build `e3da8c1317` (70 MB) completo: 90 medicione
 - **Ojo con la carga al empezar:** al empezar media el CPU marcaba 28 % (al final, 3 %); las condiciones quedan en el resultado.
 - **Capturas para juzgar la nitidez** (1080p, WebP de calidad 95): `docs/cesvi/u5/final/escala_1/` y `docs/cesvi/u5/final/escala_elegida/`, las 10 escenas en las dos. A 0.5, los bordes finos (rejas, rines, cables) se ven escalonados y las texturas lejanas, más lisas; los vehículos, las personas, las huellas y las marcas se distinguen igual.
 
+### Alta y ultra en la computadora con tarjeta de video (2026-11-12)
+
+El colaborador de René corrió el paquete `visor-escritorio-u5` (`medir-escritorio.ps1`) en una laptop con RTX 4070 Laptop, i9-14900HX y 32 GB: programa de escritorio en Direct3D 12, 1920×1080 en pantalla completa, un proceso por medición, 3 repeticiones, sin vsync, conectada y en «Alto rendimiento» (`eval/results/e6_unity_escritorio.json`, 60 mediciones, ninguna con error). fps, mediana de 3:
+
+| Escena                      | Alta  | 1 % bajo | Ultra | 1 % bajo |
+| --------------------------- | ----- | -------- | ----- | -------- |
+| axa, día                    | 414.9 | 232.6    | 410.2 | 231.9    |
+| axa, noche                  | 321.4 | 167.1    | 321.9 | 166.6    |
+| carambola, día              | 356.0 | 176.9    | 359.3 | 180.2    |
+| carambola, noche            | 317.2 | 173.4    | 315.5 | 172.2    |
+| lateral_interseccion, día   | 372.4 | 182.9    | 370.7 | 182.9    |
+| lateral_interseccion, noche | 312.1 | 179.2    | 313.1 | 179.4    |
+| nocturno_lluvia, día        | 303.5 | 179.9    | 299.1 | 179.6    |
+| nocturno_lluvia, noche      | 290.3 | 188.4    | 289.4 | 186.0    |
+| terraceria, día             | 388.3 | 189.1    | 392.1 | 190.2    |
+| terraceria, noche           | 320.7 | 174.0    | 317.9 | 174.9    |
+
+- **Cumple la meta de la computadora de demo** (PLAN §7.8: ≥ 60 fps en alta o ultra en todas las escenas canónicas): de 289.4 a 414.9 fps, con el 1 % más lento en 166.6 o más.
+- **Alta y ultra dan casi lo mismo** porque, con una pantalla de dpr 1, las dos dibujan a escala 1 (el tope de dpr de ultra, 2, solo cuenta en pantallas de alta densidad) y sus diferencias (sombras a 150 m, suavizado alto, sonda de 512, más matas y luminarias) le cuestan poco a esta tarjeta. El margen sobre 60 fps es de 5 a 7 veces: la nota de René para después de U6 es usarlo en ultra.
+- **Esto mide el programa de escritorio, no el navegador.** El build web en esa misma computadora se mide al cerrar U6 (el paquete se arma entonces).
+
 ### Resumen para René (U5)
 
 - **Qué quedó:** cuatro niveles de calidad con calidad automática; en media, optimizaciones que no cambian el aspecto, escala de dibujo automática por escena (de 0.5 a 1, nunca menos de 0.5) y una ronda de costo fijo (lluvia en la GPU, vehículos del minimapa en una malla). Alta y ultra no cambian.
 - **Cifras:** la referencia, 64.7 / 62.1 fps en media; carambola, 59.6 / 56.3; baja, de 41 a 62 fps. Tabla arriba.
 - **Cómo verlo:** compara cada par de capturas de `docs/cesvi/u5/final/`. En el visor, F3 abre el panel de diagnóstico, que dice a qué escala va la automática y si llegó.
-- **Qué necesito de ti:** que tu colaborador corra el paquete `visor-escritorio-u5` en la computadora con tarjeta de video y devuelva `e6_unity_escritorio.json` (alta y ultra). Si la nitidez a 0.5 no te convence en alguna escena, dímelo.
+- **Alta y ultra:** medidas por tu colaborador en la RTX 4070 Laptop: de 289 a 415 fps en las 10 escenas (tabla arriba). U5 queda cerrada.
+- **Qué necesito de ti:** nada. Si la nitidez a 0.5 no te convence en alguna escena, dímelo.
 
 ### Para retomar
 
@@ -636,4 +658,4 @@ Nada por ahora.
 
 ## Bloqueado
 
-- **Alta y ultra (U5):** el paquete `visor-escritorio-u5.zip` se corre en la computadora con tarjeta de video (`medir-escritorio.ps1`) y devuelve `e6_unity_escritorio.json`, que va a `eval/results/`.
+- Nada. (La medición de alta y ultra en la computadora con tarjeta de video llegó el 2026-11-12: `eval/results/e6_unity_escritorio.json`.)
