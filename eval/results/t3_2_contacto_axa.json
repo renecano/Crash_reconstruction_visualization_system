@@ -1,0 +1,72 @@
+{
+  "name": "t3_2_contacto_axa",
+  "generated_at": "2026-11-12T23:43:50Z",
+  "punto_impacto_del_evento": {
+    "x": 0,
+    "y": 0
+  },
+  "procedencia_del_evento": {
+    "fuente": "default",
+    "confianza": 0.3
+  },
+  "velocidades_kmh": {
+    "V2": 64.23,
+    "V1": 22.56
+  },
+  "filas": [
+    {
+      "giro_rumbo_v1_deg": 0,
+      "punto_impacto": [
+        0,
+        0
+      ],
+      "distancia_al_punto_declarado_m": 0,
+      "v2_en_su_pose_inicial_t_s": -0.7
+    },
+    {
+      "giro_rumbo_v1_deg": 0.01,
+      "punto_impacto": [
+        -1.42,
+        -5.58
+      ],
+      "distancia_al_punto_declarado_m": 5.76,
+      "v2_en_su_pose_inicial_t_s": -0.3
+    },
+    {
+      "giro_rumbo_v1_deg": 0.045,
+      "punto_impacto": [
+        -2.11,
+        -8.27
+      ],
+      "distancia_al_punto_declarado_m": 8.54,
+      "v2_en_su_pose_inicial_t_s": -0.2
+    },
+    {
+      "giro_rumbo_v1_deg": 0.1,
+      "punto_impacto": [
+        -2.21,
+        -8.7
+      ],
+      "distancia_al_punto_declarado_m": 8.97,
+      "v2_en_su_pose_inicial_t_s": -0.2
+    },
+    {
+      "giro_rumbo_v1_deg": 0.5,
+      "punto_impacto": [
+        -2.28,
+        -8.97
+      ],
+      "distancia_al_punto_declarado_m": 9.26,
+      "v2_en_su_pose_inicial_t_s": -0.2
+    },
+    {
+      "giro_rumbo_v1_deg": 1,
+      "punto_impacto": [
+        -2.29,
+        -9.01
+      ],
+      "distancia_al_punto_declarado_m": 9.29,
+      "v2_en_su_pose_inicial_t_s": -0.2
+    }
+  ]
+}

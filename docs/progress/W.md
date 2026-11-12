@@ -5,22 +5,89 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 ## Estado
 
 - **Desde el 2026-11-09, el Claude Code de René lleva también este frente,** porque aquí no se había subido nada. Si eres el Claude Code del compañero: antes de empezar una fase, revisa la tabla de abajo y `git fetch`; si la fase ya está tomada, sigue con la siguiente y anótala aquí.
-- **Hechas:** W1 (#187), W2 (#188), W3 (#192), W4 (#195, con su contrato #194) y W4b (#196), en `main`.
-- **Fase actual:** W7 («Endurecimiento»: T6.2, T6.3 y T6.4) terminada en `feat/w7-endurecimiento` (PR #206), con sus pruebas unitarias y sus dos e2e en verde en la CI.
-- **Siguiente paso:** fusionar el #206 con su CI en verde. Después, en el orden del plan: cerrar U5 (la medición corre como la tarea de Windows «CroquisU5», ver «Para retomar» en `docs/progress/U.md`), U6 y W8. **Antes de W8, detenerse y avisar a René con «Listo para W8: cambia el modelo».** Las evaluaciones largas de W8 (E-R4 v4) se lanzan como la de U5: reanudables, con su archivo de estado y fuera de la sesión.
+- **Hechas:** W1 (#187), W2 (#188), W3 (#192), W4 (#195, con su contrato #194), W4b (#196), W5 (#199, #200), W6 (#201) y W7 (#206), en `main`.
+- **Fase actual:** W8 (T3.2, T3.3 y T3.5), en Opus por pedido de René (2026-11-12), con cuidado extra: primero el diagnóstico de T3.2 aquí, sin tocar el solver.
+- **Siguiente paso:** ver «W8 · Números defendibles» abajo.
 
 ## Fases tomadas
 
-| Fase                                                         | Quién               | Rama                                     | Estado                    |
-| ------------------------------------------------------------ | ------------------- | ---------------------------------------- | ------------------------- |
-| W1 · Dictamen (O2)                                           | Claude Code de René | `feat/w1-dictamen`                       | En `main` (#187)          |
-| W2 · El hecho (O1 y O5)                                      | Claude Code de René | `feat/w2-hecho`                          | En `main` (#188)          |
-| W3 · C1: punto inicial, choques intermedios y puntos de paso | Claude Code de René | `feat/w3-puntos`                         | En `main` (#192)          |
-| W4 · C2 y «Corregir después»                                 | Claude Code de René | `feat/w4-corregir`                       | En `main` (#195)          |
-| W4b · Menos ruido visual                                     | Claude Code de René | `feat/w4b-menos-ruido`                   | En `main` (#196)          |
-| W5 · Terreno (C3 y O4)                                       | Claude Code de René | `feat/w5-terreno`, `feat/w5-terreno-web` | En `main` (#199, #200)    |
-| W6 · Encuadre en 2D (O3)                                     | Claude Code de René | `feat/w6-encuadre`                       | En PR desde el 2026-11-10 |
-| W7 · Endurecimiento (T6.2, T6.3, T6.4)                       | Claude Code de René | `feat/w7-endurecimiento`                 | En PR (#206)              |
+| Fase                                                         | Quién               | Rama                                     | Estado                 |
+| ------------------------------------------------------------ | ------------------- | ---------------------------------------- | ---------------------- |
+| W1 · Dictamen (O2)                                           | Claude Code de René | `feat/w1-dictamen`                       | En `main` (#187)       |
+| W2 · El hecho (O1 y O5)                                      | Claude Code de René | `feat/w2-hecho`                          | En `main` (#188)       |
+| W3 · C1: punto inicial, choques intermedios y puntos de paso | Claude Code de René | `feat/w3-puntos`                         | En `main` (#192)       |
+| W4 · C2 y «Corregir después»                                 | Claude Code de René | `feat/w4-corregir`                       | En `main` (#195)       |
+| W4b · Menos ruido visual                                     | Claude Code de René | `feat/w4b-menos-ruido`                   | En `main` (#196)       |
+| W5 · Terreno (C3 y O4)                                       | Claude Code de René | `feat/w5-terreno`, `feat/w5-terreno-web` | En `main` (#199, #200) |
+| W6 · Encuadre en 2D (O3)                                     | Claude Code de René | `feat/w6-encuadre`                       | En `main` (#201)       |
+| W7 · Endurecimiento (T6.2, T6.3, T6.4)                       | Claude Code de René | `feat/w7-endurecimiento`                 | En `main` (#206)       |
+| W8 · Números defendibles (T3.2, T3.3, T3.5)                  | Claude Code de René | `feat/w8-numeros`                        | Diagnóstico de T3.2    |
+
+## W8 · Números defendibles (T3.2, T3.3, T3.5) (desde 2026-11-12)
+
+Pedido de René (2026-11-12), en Opus y con cuidado extra:
+
+- Empezar por T3.2 (el rumbo inicial de V2 pegado a +20°): **primero diagnosticar la causa y escribirla aquí, antes de cambiar el solver.**
+- **Si un cambio mueve los números de AXA (71.56 km/h, rango 68.02–92.81) o de cualquier caso que ya vio CESVI, detenerse y darle el antes y el después con la razón, antes de fusionar.**
+- Todo cambio en Python va también al port TS, con paridad. La E-R4 v4 corre con la cadena reanudable, por fuera de la sesión.
+
+### Plan
+
+1. **T3.2, diagnóstico** (`eval/t3_2_rumbo_axa.mts` → `eval/results/t3_2_rumbo_axa.json`, sin tocar el solver): el ajuste de hoy (qué parámetros quedan en el límite y con qué residuos), la geometría (dónde arranca V2 y qué mueve girar su rumbo) y el perfil del rumbo de V2 de −20° a +60° con lo demás reajustado. La causa, aquí.
+2. **T3.2, arreglo** según la causa, en Python y en el port TS con paridad, medido en AXA y en los demás casos de CESVI y escenas de inversión (`rangos_inversion`). Si AXA o un caso de CESVI se mueve: alto y antes/después a René.
+3. **T3.3, reversa:** `sentido_marcha` en el contrato (PR `contract:` aparte), solver Python y TS, la lectura lo marca; E-R4 mide la reversa (`cesvi-3a0125cb81`).
+4. **T3.5, E-R4 v4** con la cadena reanudable fuera de la sesión; se publica junto a v1–v3.
+
+Hay un intento anterior, del 4 de noviembre, en `origin/feat/t3-2-arrastre` (6f4b8516): cambiaba el modelo de arrastre, el pivote del rumbo y los priors a la vez y dejó la paridad en rojo con referencias a medio regenerar. No se retoma tal cual: primero el diagnóstico.
+
+### T3.2 · Diagnóstico (2026-11-12, sin tocar el solver)
+
+**Herramientas:** `eval/t3_2_rumbo_axa.mts` → `eval/results/t3_2_rumbo_axa.json` (el ajuste de hoy, el perfil del rumbo de V2 cada 5° y cada 1°, y el ajuste con el rumbo de V2 fijo sobre la vía) y `eval/t3_2_contacto_axa.mts` → `eval/results/t3_2_contacto_axa.json` (dónde queda el contacto al girar apenas el rumbo de V1). Escena de AXA como la arma la app (`axa-reconstruccion.ts`, `especDeExpediente`); en el solver, V2 es `veh-a` (el que alcanza) y V1, `veh-b`. Se corrió el port TS: es el que usa la app y da lo mismo que Python (paridad E7).
+
+**Lo que se ve:**
+
+1. **El ajuste de hoy:** V2 a 71.56 km/h con el rumbo inicial de V2 en 95.72°, es decir, 20° más que el de la vía (75.72°): justo en el límite (`ANGLE_BOUND_DEG = 20`). Costo 0.03.
+2. **El costo contra el rumbo de V2 es muy irregular** (perfil cada 1°, con todo lo demás reajustado). Hay valles casi igual de buenos:
+
+   | Giro del rumbo de V2 | Costo     | V2 (km/h) |
+   | -------------------- | --------- | --------- |
+   | −21° a −20°          | 0.03      | 71.4–71.5 |
+   | −19° a −13°          | 7.7–9.7   | 92–147    |
+   | −12°                 | 0.15      | 68.7      |
+   | −11° a −1°           | 0.2–20    | 113–186   |
+   | 0° (sobre la vía)    | 0.12      | 64.23     |
+   | +1° a +8°            | 0.4–4.7   | 42–57     |
+   | +9°                  | 0.15      | 68.0      |
+   | +13° a +23°          | 0.03–0.17 | 71.4–77.2 |
+   | +24° y +25°          | 6.5–6.6   | 95–101    |
+
+   Entre 0° (0.12) y +20° (0.03), la diferencia de costo es un Δχ² de unos 0.2: la evidencia no prefiere uno sobre otro. −20° da lo mismo que +20° (V2 71.54 contra 71.56), en espejo. El valle de +13° a +23° tiene su fondo en +20° y +21°, y el límite lo corta en +20°: por eso «pegado a +20°».
+
+3. **Con el rumbo de V2 fijo sobre la vía** (como lo colocó el perito), la inversión da V2 a 64.57 km/h (p10–p90 62.18–86.99), contra 71.56 (68.02–92.81) de hoy. El reporte de CESVI dice 63.15.
+
+**La causa: el punto de contacto de un alcance casi en línea está mal condicionado.**
+
+- El evento de AXA declara el punto de impacto (0, 0) y cada vehículo arranca 12 m antes de su posición de impacto, en el mismo rumbo. El solver busca el contacto con `resolveContact` (`contact.ts`, igual en `contact.py`): proyecta el punto declarado sobre las dos trayectorias y luego `refinePair` minimiza la distancia entre las dos zonas de impacto, sin nada que lo mantenga cerca del punto declarado.
+- Cuando las dos trayectorias van exactamente en la misma línea, todas las posiciones a lo largo de ella tocan igual y el contacto se queda en el punto declarado. Con el menor ángulo entre ellas, `refinePair` corre por el valle hasta donde las dos líneas se cruzan, o hasta el principio de la trayectoria. `t3_2_contacto_axa.json`, con las velocidades de la app:
+
+  | Giro del rumbo de V1 | Contacto       | Distancia al punto declarado | V2 en su pose inicial |
+  | -------------------- | -------------- | ---------------------------- | --------------------- |
+  | 0°                   | (0, 0)         | 0 m                          | 0.7 s antes           |
+  | 0.01°                | (−1.42, −5.58) | 5.76 m                       | 0.3 s antes           |
+  | 0.045°               | (−2.11, −8.27) | 8.54 m                       | 0.2 s antes           |
+  | 1°                   | (−2.29, −9.01) | 9.29 m                       | 0.2 s antes           |
+
+- Así, el rumbo que ajusta la inversión no mueve un poco el choque: lo cambia de lugar, de un alcance en el punto que marcó el perito a uno casi donde arrancan los vehículos, y con eso cambia lo que pasa después (giros y reposos). De ahí el perfil irregular, con saltos de costo de 0.03 a 15 en 1°.
+- El parámetro de rumbo gira la pose inicial alrededor de su posición (`parameters` y `apply_values`): con 20° de giro, V2 llega al choque con 4 m de desplazamiento lateral en 12 m, cruzando un carril de MEX 15D. Eso no lo dice ninguna evidencia: es el valle que encontró el ajuste.
+
+**En resumen:** el +20° no es un rumbo que la evidencia pida; es el fondo de un valle que aparece porque el contacto salta en cuanto las trayectorias dejan de ser exactamente paralelas, y el límite de ±20° lo corta ahí.
+
+**Arreglos posibles** (por decidir; los dos mueven AXA):
+
+1. **Contacto estable:** que `resolveContact` se quede, entre las posiciones donde las zonas se tocan, con la más cercana al punto declarado (en Python y en TS, con paridad). Es la causa de fondo y afecta a todo alcance casi en línea.
+2. **Pivote del rumbo en el punto de impacto declarado:** que el rumbo no declarado gire la llegada alrededor del punto de impacto y no del arranque, para que cambie de dónde venía el vehículo y no dónde chocó (lo intentó `feat/t3-2-arrastre`, mezclado con otros cambios).
+
+Por lo que da el ajuste con el rumbo fijo, AXA pasaría de 71.56 a unos 64.6 km/h (más cerca de los 63.15 de CESVI). **Como mueve AXA, antes de fusionar le doy a René el antes y el después de AXA y de los casos de CESVI con la razón** (su regla del 2026-11-12).
 
 ## W7 · Endurecimiento (T6.2, T6.3, T6.4) (2026-11-11)
 
