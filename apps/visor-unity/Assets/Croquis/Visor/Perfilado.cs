@@ -248,6 +248,12 @@ namespace Croquis.Visor
                 return Estadisticas();
             }
 
+            if (j["carga"] != null)
+            {
+                var visor = UnityEngine.Object.FindFirstObjectByType<VisorCaso>();
+                return visor == null ? new JObject() : JObject.FromObject(visor.PasosDeCarga);
+            }
+
             if (j["tirones"] != null)
             {
                 // La primera vez lo enciende; después devuelve los cuadros lentos desde la consulta anterior.

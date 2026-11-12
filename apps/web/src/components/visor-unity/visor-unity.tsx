@@ -9,6 +9,7 @@
  * pierde el dispositivo), muestra `respaldo`: el visor three.js de siempre.
  */
 import type {
+  Resultado,
   CamaraVisor,
   Caso3D,
   EscenaSpec,
@@ -19,7 +20,7 @@ import type {
 } from "@croquis/scene-schema";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
-import { motivoDe, PuenteUnity, type MotivoRespaldo } from "@/lib/visor-unity/puente";
+import { marcar, motivoDe, PuenteUnity, type MotivoRespaldo } from "@/lib/visor-unity/puente";
 import { paqueteDelCaso, type RelieveCaso } from "@/lib/visor-unity/paquete";
 import type { CanalTiempo } from "@/lib/visor-unity/canal";
 
@@ -119,6 +120,7 @@ export function VisorUnity({
         setPuente(null);
       }
     };
+    marcar("arranque");
     PuenteUnity.arrancar(c, alMensaje, { progreso: (x) => vivo && setProgreso(x) })
       .then((x) => {
         p = x;
@@ -141,16 +143,33 @@ export function VisorUnity({
     if (!puente) return;
     const mio = ++turno.current;
     (async () => {
-      const resultado = await reconstruirCompletoEnNavegador(escena, undefined, relieve);
+      // Unity solo dibuja trayectorias, eventos, daño y personas: la reconstrucción, que llega en
+      // milisegundos. El resultado completo (Monte Carlo, inversión, consistencia) llega después y
+      // solo cambia el paquete que se descarga, sin volver a cargar la escena (U6: antes se esperaba
+      // a Monte Carlo y el 3D tardaba unos 11 s más).
+      marcar("solver");
+      let alParcial!: (r: Resultado) => void;
+      const parcial = new Promise<Resultado>((ok) => (alParcial = ok));
+      const completo = reconstruirCompletoEnNavegador(escena, (r) => alParcial(r), relieve);
+      const resultado = await Promise.race([parcial, completo]);
+      marcar("solver_listo");
       if (mio !== turno.current) return;
       const paquete = paqueteDelCaso(escena, resultado, relieve);
+      marcar("cargar_caso");
       await puente.cargar(paquete);
+      marcar("caso_cargado");
       if (mio !== turno.current) return;
       setCargada(escena);
-      cb.current.onApi?.({
-        capturar: (vista, ancho, alto) => puente.capturar(vista, ancho, alto),
+      const api = {
+        capturar: (vista: VistaCaptura, ancho: number, alto: number) =>
+          puente.capturar(vista, ancho, alto),
         paquete,
-      });
+      };
+      cb.current.onApi?.(api);
+      const final = await completo.catch(() => null);
+      if (final && mio === turno.current && final !== resultado) {
+        cb.current.onApi?.({ ...api, paquete: paqueteDelCaso(escena, final, relieve) });
+      }
     })().catch((e: unknown) => {
       if (mio !== turno.current) return;
       // Un caso que Unity no pudo cargar: el respaldo sí lo dibuja. Unity se cierra.

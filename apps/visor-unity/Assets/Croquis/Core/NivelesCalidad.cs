@@ -30,6 +30,13 @@ namespace Croquis.Core
         /// </summary>
         public double EscalaMinima { get; set; } = 1.0;
 
+        /// <summary>
+        /// Cuántas veces más fino se dibuja de lo que muestra la pantalla, para reducir después
+        /// (sobremuestreo): bordes, rejas, cables y texturas lejanas más limpios. 1 en todos los niveles
+        /// salvo ultra, que usa el margen de la computadora de demo (René, 2026-11-12).
+        /// </summary>
+        public double Sobremuestreo { get; set; } = 1.0;
+
         public double EscalaMaxima { get; set; } = 1.0;
 
         /// <summary>Muestras de MSAA (1: sin antialiasing).</summary>
@@ -165,9 +172,12 @@ namespace Croquis.Core
                 case NivelCalidad.Ultra:
                     return new PerfilCalidad
                     {
-                        Nivel = n, DprMaximo = 2.0, Msaa = 4, DistanciaSombras = 150, Cascadas = 4, MapaSombras = 4096,
+                        // «Ultra con el margen», primer bloque (René, 2026-11-12; docs/cesvi/propuesta-ultra-margen.md):
+                        // dibujar a 1.5× y reducir, sombras de 8192 hasta 250 m y el doble de luminarias con luz
+                        // real. Las luces por objeto se quedan en 8: es el tope de URP en Forward.
+                        Nivel = n, DprMaximo = 2.0, Sobremuestreo = 1.5, Msaa = 4, DistanciaSombras = 250, Cascadas = 4, MapaSombras = 8192,
                         LluviaEnMinimapa = true, SombraDeLuna = true, LucesAdicionales = 8, SombrasDeFocos = true, SombraSuave = 3, Oclusion = 2, Resplandor = true,
-                        Sonda = 512, Matas = 18000, MatorralesPor100M = 4.5, Luminarias = 8, FocosPorVehiculo = 2,
+                        Sonda = 512, Matas = 18000, MatorralesPor100M = 4.5, Luminarias = 16, FocosPorVehiculo = 2,
                     };
                 default:
                     throw new ArgumentOutOfRangeException(nameof(n));
@@ -239,12 +249,14 @@ namespace Croquis.Core
 
         /// <summary>
         /// La escala de dibujo de URP para no pasar el tope de dpr del nivel: con una pantalla de dpr 2
-        /// y media (tope 1), se dibuja a la mitad y se escala. Nunca más de 1: el tope no sobremuestrea.
+        /// y media (tope 1), se dibuja a la mitad y se escala. El tope nunca pasa de 1; lo que sí pasa de 1
+        /// es el sobremuestreo del nivel (ultra, 1.5×), hasta el 2× que admite URP.
         /// </summary>
         public static double EscalaDibujo(PerfilCalidad p, double dprPantalla)
         {
             var dpr = dprPantalla > 0.0 ? dprPantalla : 1.0;
-            return Math.Max(0.25, Math.Min(1.0, p.DprMaximo / dpr));
+            var sobre = p.Sobremuestreo > 0.0 ? p.Sobremuestreo : 1.0;
+            return Math.Max(0.25, Math.Min(2.0, Math.Min(1.0, p.DprMaximo / dpr) * sobre));
         }
     }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Croquis.Core;
 using Croquis.Generated;
@@ -53,8 +54,23 @@ namespace Croquis.Visor
             sol = FindFirstObjectByType<Light>();
         }
 
+        /// <summary>
+        /// Cuánto tardó cada paso de la última carga (ms), para saber en qué se va el tiempo hasta ver
+        /// el caso (U6). Lo contesta `depurar` `{"carga": true}` y queda en la bitácora.
+        /// </summary>
+        public Dictionary<string, double> PasosDeCarga { get; } = new Dictionary<string, double>();
+
+        private System.Diagnostics.Stopwatch reloj;
+
+        private void Paso(string nombre)
+        {
+            PasosDeCarga[nombre] = Math.Round(reloj.Elapsed.TotalMilliseconds, 1);
+        }
+
         public async Awaitable CargarAsync(Caso3D caso)
         {
+            PasosDeCarga.Clear();
+            reloj = System.Diagnostics.Stopwatch.StartNew();
             Reproduciendo = false;
             Cargado = false;
             if (raiz != null)
@@ -109,11 +125,14 @@ namespace Croquis.Visor
             EscenarioVista.ClaroDelHecho = (float)zona.Lado * 0.6f + 4f;
             if (e != null)
             {
-                EscenarioVista.Construir(raiz, e, sol, Camera.main, terreno);
+                Paso("vehiculos");
+            EscenarioVista.Construir(raiz, e, sol, Camera.main, terreno);
+            Paso("escenario");
             }
 
             TerrenoVista.Dibujar(raiz, e?.Terreno, terreno, e != null && e.Ambiente.Mojado);
             dinamica = CasoVista.Construir(raiz, caso, terreno, noche);
+            Paso("caso_y_terreno");
             Editor.Preparar(r.Objetos, terreno);
             foreach (var v in vehiculos)
             {
@@ -188,6 +207,7 @@ namespace Croquis.Visor
                 piso.SetActive(e == null);
             }
 
+            Paso("estacionados_y_personas");
             Camara.Abrir(caso);
             Camara.Vehiculos = vehiculos;
             Camara.Ocupantes.Clear();
@@ -257,6 +277,7 @@ namespace Croquis.Visor
             if (Calidad.Perfil.SombrasUnidas)
             {
                 // Lo fijo del escenario; lo del caso (evidencias, semáforos) cambia con el tiempo y se queda.
+                Paso("antes_de_unir_sombras");
                 SombrasUnidas.Unir(raiz.Find("escenario"), "sombras_del_escenario");
                 foreach (Transform hijo in raiz)
                 {
@@ -269,12 +290,15 @@ namespace Croquis.Visor
 
             if (Calidad.Perfil.MinimapaHorneado)
             {
+                Paso("sombras_unidas");
                 Camara.HornearMinimapa();
             }
 
             Calidad.Aplicar();
             Cargado = true;
             Calidad.Reiniciar();
+            Paso("total");
+            Debug.Log("[carga] " + string.Join(", ", PasosDeCarga.Select(kv => kv.Key + " " + kv.Value + " ms")));
         }
 
         /// <summary>
