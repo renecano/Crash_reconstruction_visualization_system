@@ -68,34 +68,34 @@ describe("edición en el 3D de Unity, llevada al expediente", () => {
   });
 
   it("marca el primer golpe y un punto de paso en el mapa", () => {
-    const golpe = aplicarPuntoMarcado(vacio, ORIGEN, { tipo: "punto_inicial", x: 3, y: -2 });
+    const golpe = aplicarPuntoMarcado(vacio, ORIGEN, { punto: "punto_inicial", x: 3, y: -2 });
     expect(golpe.cambio).toBe(true);
     const punto = golpe.expediente.impactos![0]!.punto!;
     expect(metros(punto).este).toBeCloseTo(3, 6);
     expect(metros(punto).norte).toBeCloseTo(-2, 6);
 
     const paso = aplicarPuntoMarcado(vacio, ORIGEN, {
-      tipo: "punto_paso",
+      punto: "punto_paso",
       vehiculo_id: "V1",
       x: -20,
       y: 0,
     });
     expect(paso.cambio).toBe(true);
-    const sinVehiculo = aplicarPuntoMarcado(vacio, ORIGEN, { tipo: "punto_paso", x: 0, y: 0 });
+    const sinVehiculo = aplicarPuntoMarcado(vacio, ORIGEN, { punto: "punto_paso", x: 0, y: 0 });
     expect(sinVehiculo.cambio).toBe(false);
   });
 
   it("un choque intermedio necesita el objeto tocado, y se nombra como en la escena fácil", () => {
     const { expediente: e, id } = agregarObjeto(vacio, "arbol", en(8, 8));
     const sin = aplicarPuntoMarcado(e, ORIGEN, {
-      tipo: "choque_intermedio",
+      punto: "choque_intermedio",
       vehiculo_id: "V1",
       x: 8,
       y: 8,
     });
     expect(sin.cambio).toBe(false);
     const con = aplicarPuntoMarcado(e, ORIGEN, {
-      tipo: "choque_intermedio",
+      punto: "choque_intermedio",
       vehiculo_id: "V1",
       objeto_id: id,
       x: 8,
@@ -109,7 +109,7 @@ describe("edición en el 3D de Unity, llevada al expediente", () => {
   });
 
   it("sin origen (vehículos sin colocar) no se puede medir nada", () => {
-    expect(aplicarPuntoMarcado(vacio, null, { tipo: "punto_inicial", x: 0, y: 0 }).cambio).toBe(
+    expect(aplicarPuntoMarcado(vacio, null, { punto: "punto_inicial", x: 0, y: 0 }).cambio).toBe(
       false,
     );
   });

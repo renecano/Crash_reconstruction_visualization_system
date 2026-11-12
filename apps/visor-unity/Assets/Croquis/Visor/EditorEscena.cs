@@ -247,7 +247,7 @@ namespace Croquis.Visor
 
             var m = new JObject
             {
-                { "tipo", herramienta },
+                { "punto", herramienta },
                 { "x", Edicion.AlCentimetro(pega.Value.X) },
                 { "y", Edicion.AlCentimetro(pega.Value.Y) },
             };

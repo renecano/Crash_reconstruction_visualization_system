@@ -113,7 +113,7 @@ export function aplicarPuntoMarcado(
     };
   }
   const p = punto(m.x, m.y, origen);
-  if (m.tipo === "punto_inicial") {
+  if (m.punto === "punto_inicial") {
     return {
       expediente: marcarPrimerGolpe(e, impactos, p),
       cambio: true,
@@ -123,7 +123,7 @@ export function aplicarPuntoMarcado(
   if (!m.vehiculo_id) {
     return { expediente: e, cambio: false, mensaje: "Elige primero de qué vehículo es el punto." };
   }
-  if (m.tipo === "punto_paso") {
+  if (m.punto === "punto_paso") {
     return {
       expediente: agregarPuntoDePaso(e, m.vehiculo_id, p),
       cambio: true,

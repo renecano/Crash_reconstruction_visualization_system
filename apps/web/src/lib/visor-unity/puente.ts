@@ -73,27 +73,31 @@ export function hayWebgl2(): boolean {
   }
 }
 
-let cargador: Promise<CrearInstancia> | null = null;
+let cargador: { src: string; listo: Promise<void> } | null = null;
 
-/** Baja el cargador de Unity una sola vez por página. */
-function cargarScript(src: string): Promise<CrearInstancia> {
-  cargador ??= new Promise<CrearInstancia>((ok, falla) => {
-    const s = document.createElement("script");
-    s.src = src;
-    s.async = true;
-    s.onload = () => {
-      const crear = (window as unknown as { createUnityInstance?: CrearInstancia })
-        .createUnityInstance;
-      if (crear) ok(crear);
-      else falla(new Error("El cargador de Unity no definió createUnityInstance"));
-    };
-    s.onerror = () => falla(new Error(`No se pudo bajar ${src}`));
-    document.head.appendChild(s);
-  }).catch((e: unknown) => {
-    cargador = null;
-    throw e;
-  });
-  return cargador;
+/**
+ * Baja el cargador de Unity una sola vez por página y devuelve su `createUnityInstance`, leída al
+ * momento (no la de la primera vez).
+ */
+async function cargarScript(src: string): Promise<CrearInstancia> {
+  if (!cargador || cargador.src !== src) {
+    const listo = new Promise<void>((ok, falla) => {
+      const s = document.createElement("script");
+      s.src = src;
+      s.async = true;
+      s.onload = () => ok();
+      s.onerror = () => falla(new Error(`No se pudo bajar ${src}`));
+      document.head.appendChild(s);
+    });
+    cargador = { src, listo };
+    listo.catch(() => {
+      if (cargador?.listo === listo) cargador = null;
+    });
+  }
+  await cargador.listo;
+  const crear = (window as unknown as { createUnityInstance?: CrearInstancia }).createUnityInstance;
+  if (!crear) throw new Error("El cargador de Unity no definió createUnityInstance");
+  return crear;
 }
 
 type Oyente = (m: MensajeDeUnity) => void;

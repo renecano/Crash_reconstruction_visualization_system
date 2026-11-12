@@ -82,13 +82,27 @@ export function VisorUnity({
 }) {
   const lienzo = useRef<HTMLCanvasElement>(null);
   const [puente, setPuente] = useState<PuenteUnity | null>(null);
-  const [estado, setEstado] = useState<Estado>({ fase: "arrancando", progreso: 0 });
-  const [aviso, setAviso] = useState<string | null>(null);
+  const [progreso, setProgreso] = useState(0);
+  const [respaldoPor, setRespaldoPor] = useState<{ motivo: MotivoRespaldo; aviso?: string } | null>(
+    null,
+  );
+  // La escena que Unity ya tiene cargada: si es la de ahora, el visor está listo.
+  const [cargada, setCargada] = useState<EscenaSpec | null>(null);
   // Los callbacks del padre cambian en cada render: se leen de una referencia.
   const cb = useRef({ onApi, onTiempo, onObjetoEditado, onPuntoMarcado });
-  cb.current = { onApi, onTiempo, onObjetoEditado, onPuntoMarcado };
+  useEffect(() => {
+    cb.current = { onApi, onTiempo, onObjetoEditado, onPuntoMarcado };
+  });
+  const estado: Estado = respaldoPor
+    ? { fase: "respaldo", motivo: respaldoPor.motivo }
+    : !puente
+      ? { fase: "arrancando", progreso }
+      : cargada === escena
+        ? { fase: "listo" }
+        : { fase: "calculando" };
 
-  // Arranca Unity una vez, al montar.
+  // Arranca Unity una vez, al montar. Si algo falla (aquí o después), Unity se cierra y suelta su
+  // memoria, y se muestra el respaldo.
   useEffect(() => {
     const c = lienzo.current;
     if (!c) return;
@@ -98,20 +112,21 @@ export function VisorUnity({
       if (m.tipo === "tiempo") cb.current.onTiempo?.(m.t);
       else if (m.tipo === "objetoEditado") cb.current.onObjetoEditado?.(m);
       else if (m.tipo === "puntoMarcado") cb.current.onPuntoMarcado?.(m);
-      else if (m.tipo === "error" && m.codigo === "dispositivo_perdido") {
-        setEstado({ fase: "respaldo", motivo: "dispositivo_perdido" });
+      else if (m.tipo === "error" && m.codigo === "dispositivo_perdido" && vivo) {
+        setRespaldoPor({ motivo: "dispositivo_perdido" });
+        cb.current.onApi?.(null);
+        if (p) void p.cerrar();
+        setPuente(null);
       }
     };
-    PuenteUnity.arrancar(c, alMensaje, {
-      progreso: (x) => vivo && setEstado({ fase: "arrancando", progreso: x }),
-    })
+    PuenteUnity.arrancar(c, alMensaje, { progreso: (x) => vivo && setProgreso(x) })
       .then((x) => {
         p = x;
         if (vivo) setPuente(x);
         else void x.cerrar();
       })
       .catch((e: unknown) => {
-        if (vivo) setEstado({ fase: "respaldo", motivo: motivoDe(e) });
+        if (vivo) setRespaldoPor({ motivo: motivoDe(e) });
       });
     return () => {
       vivo = false;
@@ -125,57 +140,50 @@ export function VisorUnity({
   useEffect(() => {
     if (!puente) return;
     const mio = ++turno.current;
-    setEstado({ fase: "calculando" });
-    setAviso(null);
     (async () => {
       const resultado = await reconstruirCompletoEnNavegador(escena, undefined, relieve);
       if (mio !== turno.current) return;
       const paquete = paqueteDelCaso(escena, resultado, relieve);
       await puente.cargar(paquete);
       if (mio !== turno.current) return;
-      setEstado({ fase: "listo" });
+      setCargada(escena);
       cb.current.onApi?.({
         capturar: (vista, ancho, alto) => puente.capturar(vista, ancho, alto),
         paquete,
       });
     })().catch((e: unknown) => {
       if (mio !== turno.current) return;
-      // Un caso que Unity no pudo cargar: el respaldo sí lo dibuja.
-      setAviso(e instanceof Error ? e.message : String(e));
-      setEstado({ fase: "respaldo", motivo: "no_cargo" });
+      // Un caso que Unity no pudo cargar: el respaldo sí lo dibuja. Unity se cierra.
+      setRespaldoPor({ motivo: "no_cargo", aviso: e instanceof Error ? e.message : String(e) });
+      cb.current.onApi?.(null);
+      void puente.cerrar();
+      setPuente(null);
     });
   }, [puente, escena, relieve]);
 
-  // En el respaldo, Unity ya no se usa: se cierra y suelta su memoria.
+  const listo = estado.fase === "listo";
   useEffect(() => {
-    if (estado.fase !== "respaldo" || !puente) return;
-    cb.current.onApi?.(null);
-    void puente.cerrar();
-    setPuente(null);
-  }, [estado.fase, puente]);
-
-  useEffect(() => {
-    if (!puente || estado.fase !== "listo") return;
+    if (!puente || !listo) return;
     if (tiempo) {
       puente.enviar("pausar", {});
       return tiempo.oir((t) => puente.enviar("fijarTiempo", { t }));
     }
     puente.enviar(activo ? "reproducir" : "pausar", {});
-  }, [puente, activo, tiempo, estado.fase]);
+  }, [puente, activo, tiempo, listo]);
 
   useEffect(() => {
-    if (!puente || estado.fase !== "listo" || !camara) return;
+    if (!puente || !listo || !camara) return;
     puente.enviar("camara", { modo: camara.modo });
-  }, [puente, camara, estado.fase]);
+  }, [puente, camara, listo]);
 
   useEffect(() => {
-    if (!puente || estado.fase !== "listo") return;
+    if (!puente || !listo) return;
     puente.enviar("modoEdicion", {
       on: edicion?.on ?? false,
       ...(edicion?.herramienta ? { herramienta: edicion.herramienta } : {}),
       ...(edicion?.vehiculo_id ? { vehiculo_id: edicion.vehiculo_id } : {}),
     });
-  }, [puente, edicion?.on, edicion?.herramienta, edicion?.vehiculo_id, estado.fase]);
+  }, [puente, edicion?.on, edicion?.herramienta, edicion?.vehiculo_id, listo]);
 
   if (estado.fase === "respaldo") {
     return (
@@ -186,7 +194,7 @@ export function VisorUnity({
       >
         <p className="t-nota vidrio absolute top-3 left-1/2 z-10 -translate-x-1/2 rounded-control px-3 py-1.5">
           {TEXTO_RESPALDO[estado.motivo]}: se muestra el visor ligero.
-          {aviso ? <span className="sr-only"> {aviso}</span> : null}
+          {respaldoPor?.aviso ? <span className="sr-only"> {respaldoPor.aviso}</span> : null}
         </p>
         {respaldo}
       </div>

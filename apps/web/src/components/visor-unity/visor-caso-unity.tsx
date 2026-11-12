@@ -13,7 +13,7 @@
 import type { Expediente } from "@croquis/cesvi";
 import type { HerramientaEdicion, MensajesDeUnity } from "@croquis/scene-schema";
 import { useSearchParams } from "next/navigation";
-import { useMemo, useRef, useState, type ComponentProps } from "react";
+import { useEffect, useMemo, useRef, useState, type ComponentProps } from "react";
 import { especDel3d, NotasDel3d, Visor3dCaso } from "@/components/cesvi/caso/reconstruccion";
 import { downloadBytes } from "@/lib/download";
 import { impactosAColocar } from "@/lib/pasos-caso";
@@ -78,7 +78,9 @@ export function VisorCasoUnity({
   const [aviso, setAviso] = useState<string | null>(null);
   const [api, setApi] = useState<ApiVisorUnity | null>(null);
   const exp = useRef(expediente);
-  exp.current = expediente;
+  useEffect(() => {
+    exp.current = expediente;
+  }, [expediente]);
 
   const conVehiculo = HERRAMIENTAS.find((h) => h.id === herramienta)?.conVehiculo ?? false;
   // Unity habla con los ids de la escena (`resId`); el expediente, con los suyos.
