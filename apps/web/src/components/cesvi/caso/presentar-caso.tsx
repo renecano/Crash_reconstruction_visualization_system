@@ -145,7 +145,11 @@ export function PresentarCaso({
     >
       {con3d ? (
         // El 3D va detrás (`VisorCasoUnity` en modo Presentar); aquí solo el fondo de la izquierda.
-        <div className="absolute inset-y-0 left-0 w-[30%] bg-fondo" aria-hidden="true" />
+        <>
+          <div className="absolute inset-y-0 left-0 w-[30%] bg-fondo" aria-hidden="true" />
+          {/* La franja de los capítulos va sobre fondo: el 3D termina arriba de ella. */}
+          <div className="absolute inset-x-0 bottom-0 h-28 bg-fondo" aria-hidden="true" />
+        </>
       ) : res && c ? (
         <div className="absolute inset-y-0 right-0 left-[30%]" aria-hidden="true">
           <EscenaMaqueta spec={spec} resultado={res} sinEtiquetas t={tDelCapitulo(c, fraccion)} />

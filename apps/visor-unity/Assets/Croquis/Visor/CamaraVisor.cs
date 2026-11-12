@@ -188,6 +188,38 @@ namespace Croquis.Visor
             return false;
         }
 
+        /// <summary>
+        /// Un ojo despejado para la cinematográfica cuando el rumbo elegido está tapado: primero gira de
+        /// 15 en 15 grados hacia los dos lados (lo más cerca del rumbo elegido gana) y, si nada sirve,
+        /// sube de 3 en 3 metros sobre el rumbo elegido. Si aun así no hay vista libre, vista desde arriba.
+        /// </summary>
+        private Vector3 OtroLado(Vector3 objetivo, Vector3 mira, float az, float dist, float alto)
+        {
+            for (var paso = 1; paso <= 12; paso++)
+            {
+                foreach (var signo in new[] { 1f, -1f })
+                {
+                    var a = az + signo * paso * 15f * Mathf.Deg2Rad;
+                    var ojo = objetivo + new Vector3(Mathf.Cos(a) * dist, alto, Mathf.Sin(a) * dist);
+                    if (Despejada(ojo, mira, true))
+                    {
+                        return ojo;
+                    }
+                }
+            }
+
+            for (var h = alto + 3f; h <= 30f; h += 3f)
+            {
+                var ojo = objetivo + new Vector3(Mathf.Cos(az) * dist, h, Mathf.Sin(az) * dist);
+                if (Despejada(ojo, mira, true))
+                {
+                    return ojo;
+                }
+            }
+
+            return objetivo + new Vector3(Mathf.Cos(az) * 4f, 30f, Mathf.Sin(az) * 4f);
+        }
+
         /// <summary>Si desde `ojo` se ve `mira` sin estar dentro de algo ni con algo en medio.</summary>
         private bool Despejada(Vector3 ojo, Vector3 mira, bool conCopas = false)
         {
@@ -887,6 +919,14 @@ namespace Croquis.Visor
                     {
                         dist = Mathf.Max(7f, dist * 0.85f);
                         ojo = objetivo + new Vector3(Mathf.Cos(az) * dist, alto, Mathf.Sin(az) * dist);
+                    }
+
+                    // Si ni a 7 m se ve (una calle angosta, los vehículos junto a una fachada), se busca
+                    // otro rumbo cerca del elegido y, si tampoco, más alto: la cámara nunca queda dentro
+                    // de un edificio ni con una pared enfrente (U6: así salía la foto «antes» del dictamen).
+                    if (!Despejada(ojo, mira, true))
+                    {
+                        ojo = OtroLado(objetivo, mira, az, Mathf.Max(dist, 9f), alto);
                     }
 
                     camara.transform.position = ojo;

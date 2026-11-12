@@ -125,8 +125,9 @@ export function VisorCasoUnity({
     <div
       className={
         presentar
-          ? // Detrás del diálogo de Presentar (z-50), donde iba la maqueta: el velo de la izquierda lo cubre.
-            "visible pointer-events-none fixed inset-y-0 right-0 left-[30%] z-[49]"
+          ? // Detrás del diálogo de Presentar (z-50), donde iba la maqueta, sobre la franja de los capítulos
+            // (el minimapa de Unity la tapaba): el velo de la izquierda lo cubre.
+            "visible pointer-events-none fixed top-0 right-0 bottom-28 left-[30%] z-[49]"
           : `flex h-full flex-col gap-2 p-3 ${props.expandido ? "pt-40 pb-28" : "pt-16"} ${props.aSangre ? "[&>p]:order-last" : ""}`
       }
       data-testid="visor-caso"
