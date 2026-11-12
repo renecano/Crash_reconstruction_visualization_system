@@ -14,10 +14,15 @@ import { casoConPoste, recibidosDelPuente } from "./visor-unity-ayuda";
  *   pnpm --filter @croquis/web exec playwright test e2e/visor-unity-real.spec.ts --project=chromium --headed
  *
  * Deja capturas en `docs/cesvi/u6/real/` y lo que midió en `eval/results/u6_flujo_unity_real.json`.
+ * Contra el sitio publicado (con el Unity de Blob): `playwright.produccion.config.ts`, que escribe en
+ * `docs/cesvi/u6/produccion/` y `eval/results/u6_flujo_unity_produccion.json`.
  */
 const RAIZ = resolve(__dirname, "../../..");
 const BUILD = join(RAIZ, "apps/visor-unity/Build/web/Build");
-const CAPTURAS = join(RAIZ, "docs/cesvi/u6/real");
+const CAPTURAS = join(
+  RAIZ,
+  process.env.CROQUIS_URL ? "docs/cesvi/u6/produccion" : "docs/cesvi/u6/real",
+);
 const TIPOS: Record<string, string> = {
   ".js": "text/javascript",
   ".wasm": "application/wasm",
@@ -92,13 +97,19 @@ test("/cesvi con el Unity real: mover el poste en 3D, fotos del dictamen y Prese
   page,
 }) => {
   test.setTimeout(600_000);
-  if (!existsSync(BUILD))
+  // Con CROQUIS_URL (`playwright.produccion.config.ts`): el sitio publicado y su Unity de Blob.
+  const publicado = Boolean(process.env.CROQUIS_URL);
+  if (!publicado && !existsSync(BUILD))
     test.skip(true, "Falta el build local de Unity (tools/unity/build-web.ps1)");
   mkdirSync(CAPTURAS, { recursive: true });
   const medido: Record<string, unknown> = { fecha: new Date().toISOString() };
   const errores: string[] = [];
   page.on("pageerror", (e) => errores.push(e.message));
-  await conUnityLocal(page);
+  if (publicado) {
+    await page.addInitScript(() => {
+      (window as unknown as Record<string, unknown>).__croquisVisorUnity = true;
+    });
+  } else await conUnityLocal(page);
   await casoConPoste(page);
   const cifra = page.getByTestId("cifra-reconstruccion");
   const antes = await cifra.innerText();
@@ -204,7 +215,12 @@ test("/cesvi con el Unity real: mover el poste en 3D, fotos del dictamen y Prese
   await page.screenshot({ path: join(CAPTURAS, "6-presentar-impacto.png") });
   medido.errores = errores;
   writeFileSync(
-    join(RAIZ, "eval/results/u6_flujo_unity_real.json"),
+    join(
+      RAIZ,
+      process.env.CROQUIS_URL
+        ? "eval/results/u6_flujo_unity_produccion.json"
+        : "eval/results/u6_flujo_unity_real.json",
+    ),
     `${JSON.stringify(medido, null, 2)}\n`,
   );
   expect(errores).toEqual([]);
