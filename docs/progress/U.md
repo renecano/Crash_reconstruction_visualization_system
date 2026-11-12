@@ -471,7 +471,16 @@ René midió unos 46 s desde Blob, contra unos 14 s de las mediciones anteriores
 | Sitio local con el build de Blob, con la precarga compartida | 18.9 s                                   | esperar el resto de la descarga 4.6, arranque 2.5, solver 0, cargar 10.5                        |
 | Local, build local, con la lectura única                     | 12.6 s                                   | arranque 2.4, solver 0, leer el paquete 0.6, armar el caso 2.35, primer cuadro y aviso el resto |
 
-Las cifras de producción del después van abajo, cuando el cambio esté publicado.
+**En producción, después (#210, build `f12372a6c2d7742c`, primera visita sin caché, red de la laptop de desarrollo):**
+
+| Cuándo se abre el 3D          | Hasta ver el caso    | Desglose                                                                                                                                                                    |
+| ----------------------------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Al terminar la reconstrucción | 36.4 s (antes 46.4)  | esperar el resto de la descarga 24.6, arranque 2.4, solver 0, leer el paquete 0.5, armar el caso 3.3, primer cuadro 4.4 (`eval/results/u6_carga_produccion_inmediato.json`) |
+| 20 s después                  | 35.7 s desde el clic | la descarga completa tardó más de 1 min (`eval/results/u6_carga_produccion_pausa20.json`)                                                                                   |
+
+- **Lo que queda es la red:** en esta conexión (de 0.4 a 1 MB/s) bajar 40 MB toma de 40 s a más de 1 min. Lo demás ya es de unos 10 s (arranque, lectura, armado y primer cuadro).
+- **Segunda visita** (el build ya en la caché del navegador, por ejemplo si el sitio se abre antes de la demo): falta medirla. La corrida se detuvo por falta de memoria en la laptop. La prueba ya lo hace con `CROQUIS_SEGUNDA=1`.
+- **Para la primera visita solo queda achicar el build** (texturas: 25 MB, de ellas 8 MB en los cuatro cielos HDRI; shaders: 8 MB). Opciones, sin hacer: cargar solo el cielo del caso en lugar de los cuatro (−6 MB), compresión con pérdida de texturas (Crunch; cambia un poco el aspecto) y quitar variantes de shaders que no se usan.
 
 ### Resumen para René (U6)
 

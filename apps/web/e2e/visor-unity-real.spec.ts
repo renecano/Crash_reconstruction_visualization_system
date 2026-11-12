@@ -256,6 +256,25 @@ test("/cesvi con el Unity real: mover el poste en 3D, fotos del dictamen y Prese
   await page.keyboard.press("ArrowRight");
   await page.waitForTimeout(4000);
   await page.screenshot({ path: join(CAPTURAS, "6-presentar-impacto.png") });
+  // Con CROQUIS_SEGUNDA=1, la segunda visita: el mismo navegador (con el build en su caché) abre otro
+  // caso y el 3D otra vez. Es lo que vería la demo si el sitio se abrió antes.
+  if (process.env.CROQUIS_SEGUNDA === "1") {
+    await page.keyboard.press("Escape");
+    await casoConPoste(page);
+    const t1 = Date.now();
+    await page.getByTestId("vista-3d").click();
+    await expect(page.getByTestId("visor-unity")).toHaveAttribute("data-fase", "listo", {
+      timeout: 240_000,
+    });
+    medido.segunda_visita_listo_s = (Date.now() - t1) / 1000;
+    medido.segunda_visita_marcas = await page.evaluate(() => {
+      const ms = performance.getEntriesByType("mark").filter((m) => m.name.startsWith("unity:"));
+      const t0 = ms.find((m) => m.name === "unity:arranque")?.startTime ?? 0;
+      return Object.fromEntries(
+        ms.map((m) => [m.name.slice(6), Math.round((m.startTime - t0) / 100) / 10]),
+      );
+    });
+  }
   medido.errores = errores;
   writeFileSync(
     join(RAIZ, `eval/results/u6_flujo_unity_${DONDE}.json`),

@@ -1,0 +1,83 @@
+{
+  "fecha": "2026-11-12T21:15:46.024Z",
+  "cifra_antes": "Repetir\nVelocidad antes del impacto\n\n60.62\nkm/h\nA · Jetta\nrango lineal 55.29–65.95\n\nReconstrucción física de Croquis · mejor ajuste\n\nLas 32 simulaciones dan la misma velocidad: el costo tiene un quiebre en esta solución y no dicen cuánto podría variar. El rango de arriba es la aproximación lineal del solver.\n\nCómo se reparten las simulaciones\nB · Camaro\n0.00 km/h\nLo fijan\n5 evidencias · 1 decisión de Croquis",
+  "pausa_antes_del_3d_s": 20,
+  "unity_listo_s": 35.737,
+  "marcas": {
+    "arranque": 0,
+    "precarga": 0.1,
+    "precarga_lista": 38.1,
+    "cargador": 38.1,
+    "cargador_listo": 38.3,
+    "instancia": 39.3,
+    "listo": 40.5,
+    "solver": 40.5,
+    "solver_listo": 40.6,
+    "cargar_caso": 41,
+    "caso_cargado": 55.3
+  },
+  "pasos_unity": {
+    "leer_sobre": 8,
+    "leer_paquete": 653.3,
+    "caracteres_paquete": 286835,
+    "vehiculos": 5676.3,
+    "escenario": 6265.7,
+    "caso_y_terreno": 6276.4,
+    "estacionados_y_personas": 6277.5,
+    "antes_de_unir_sombras": 6333.6,
+    "sombras_unidas": 6336.2,
+    "total": 6336.5,
+    "primer_cuadro": 12707.1,
+    "segundo_cuadro": 12716.1,
+    "hasta_cargado": 13381.4,
+    "pedido": 56365250,
+    "tipo": "perfil"
+  },
+  "bytes_unity": [
+    {
+      "archivo": "b9ce11fb844ceb0442cfee4ffa2976ee.loader.js",
+      "kb": 0,
+      "s": 0.3
+    },
+    {
+      "archivo": "c6950771d0d375efa668912a3c6413fe.framework.js",
+      "kb": 0,
+      "s": 0.3
+    },
+    {
+      "archivo": "6bc72c7cd85a1502675e07ed19d32638.wasm",
+      "kb": 0,
+      "s": 9.6
+    },
+    {
+      "archivo": "f2fc5f1eeee123311e0f12c82d290f36.data",
+      "kb": 0,
+      "s": 40.5
+    },
+    {
+      "archivo": "b9ce11fb844ceb0442cfee4ffa2976ee.loader.js",
+      "kb": 0,
+      "s": 0.2
+    }
+  ],
+  "poste_antes": {
+    "x": 17.953,
+    "y": 3.741
+  },
+  "cifra_despues": "Repetir\nVelocidad antes del impacto\n\n60.35\nkm/h\nA · Jetta\nrango lineal 56.67–64.03\n\nReconstrucción física de Croquis · mejor ajuste\n\nLas 32 simulaciones dan la misma velocidad: el costo tiene un quiebre en esta solución y no dicen cuánto podría variar. El rango de arriba es la aproximación lineal del solver.\n\nCómo se reparten las simulaciones\nB · Camaro\n0.00 km/h\nLo fijan\n5 evidencias · 1 decisión de Croquis",
+  "fotos": [
+    {
+      "etiqueta": "Antes del impacto (−1 s)",
+      "bytes": 831014
+    },
+    {
+      "etiqueta": "En el impacto (0 s)",
+      "bytes": 871826
+    },
+    {
+      "etiqueta": "En reposo (+4.1 s)",
+      "bytes": 849226
+    }
+  ],
+  "errores": []
+}
