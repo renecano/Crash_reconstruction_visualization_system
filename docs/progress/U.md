@@ -4,8 +4,8 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 
 ## Estado
 
-- **Fase actual:** U3 (personas) y U4 (cámaras y encuadre) **terminadas** en `feat/u3-personas`, con su e2e de cámaras en verde sobre el build WebGL. PR a `main`.
-- **Siguiente:** U5 (calidad y rendimiento). René pidió detenerse antes de U5 y avisarle (2026-11-10). Para medir alta y ultra dará la computadora con tarjeta de video; lo que se mida en media se hace en esta laptop.
+- **Fase actual:** U5 (calidad y rendimiento) en `feat/u4-ajustes` (PR #205, borrador). La medición completa terminó el 2026-11-11: **baja cumple; media no llega a 60 fps a 1080p con ninguna escala medida** (ver «Resultado de la medición»).
+- **Siguiente:** **detenido, en espera de René** («Media no cumple: cambia el modelo»): él elige entre las tres opciones de «Resultado de la medición». No fijar la escala de media ni tocar la meta sin su respuesta. Alta y ultra las mide su colaborador con el paquete `visor-escritorio-u5` (falta `eval/results/e6_unity_escritorio.json`). Después de U5: U6.
 - **Unity y Blender corren en segundo plano** desde el 2026-11-10: René reabrió la sesión con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`. Sigue la regla de un solo proceso pesado a la vez.
 - **Cómo se itera:** capturas del Editor en modo batch (`Capturas.Tomar`, unos 3 min). En esta sesión no hubo herramientas del MCP de Unity. Un build WebGL solo al cerrar cada punto.
 
@@ -429,7 +429,7 @@ Build WebGL a 1920 × 1080, cámara cinematográfica en bucle, mediana de 3 repe
 - El build pesa 71 MB sin comprimir (U4: 65 MB): lleva las variantes de shader de los cuatro niveles.
 - Carga del caso hasta que se ve, con el nivel fijo: 10 a 11.4 s en media y 7.9 a 8.9 s en baja (mediana).
 
-### Optimización de media (2026-11-11, en pausa)
+### Optimización de media (2026-11-11)
 
 Detalle, decisiones y lo descartado: ADR 0115, sección «Optimización de media». Resumen:
 
@@ -437,6 +437,34 @@ Detalle, decisiones y lo descartado: ADR 0115, sección «Optimización de media
 - **Descartado:** Forward+, WebAssembly 2023 con IL2CPP para velocidad, depth priming, FSR y gradación en HDR.
 - **Dónde va** (tres escenas, fps a 1080p): de 22.6 / 13.9 / 18.5 a 35.7 / 23.7 / 26.2. A escala 0.6: 63.4 / 49.2 / 47.1.
 - **Lo que dice el modelo:** a 1080p nativo esta GPU no llega a 60 fps ni con todo apagado. Para 60 harían falta escalas de 0.64 (día), 0.50 (noche urbana) y 0.43 (lluvia de noche).
+
+### Resultado de la medición (2026-11-11): media no cumple, en espera de René
+
+La cadena terminó completa (150 mediciones, ninguna con error ni repetida; equipo conectado, «Mejor rendimiento»; build `ff04482a02` de 70 MB; e2e de cámaras en verde). Cifras: `eval/results/e6_unity_media_escala_{1,0.7,0.6,0.5}.json`, `e6_unity_baja.json` y el resumen `eval/results/u5_opciones.json` (`node eval/u5_opciones.mjs`). fps a 1080p, mediana de 3 repeticiones:
+
+| Escena                      | media ×1 | ×0.7 | ×0.6 | ×0.5 | baja | F (ms) | P (ms) | Escala para 60 |
+| --------------------------- | -------- | ---- | ---- | ---- | ---- | ------ | ------ | -------------- |
+| axa, día                    | 30.4     | 51.9 | 59.6 | 69.9 | 51.3 | 7.7    | 25.0   | 0.60           |
+| axa, noche                  | 25.6     | 46.7 | 57.5 | 70.3 | 42.3 | 5.5    | 33.4   | 0.58           |
+| carambola, día              | 25.1     | 40.4 | 48.8 | 58.6 | 41.5 | 9.6    | 30.3   | 0.48           |
+| carambola, noche            | 21.2     | 38.5 | 47.6 | 57.5 | 39.0 | 6.8    | 40.2   | 0.50           |
+| lateral_interseccion, día   | 27.0     | 42.5 | 52.5 | 61.9 | 46.5 | 9.3    | 27.9   | 0.51           |
+| lateral_interseccion, noche | 21.4     | 35.8 | 46.8 | 56.5 | 37.4 | 8.0    | 38.9   | 0.47           |
+| nocturno_lluvia, día        | 29.7     | 41.4 | 48.8 | 53.4 | 46.1 | 13.7   | 20.1   | 0.38           |
+| nocturno_lluvia, noche      | 24.6     | 41.3 | 43.8 | 50.3 | 36.5 | 12.2   | 28.0   | 0.40           |
+| terraceria, día             | 27.3     | 42.6 | 48.1 | 54.9 | 43.6 | 11.8   | 24.7   | 0.44           |
+| terraceria, noche           | 23.3     | 41.3 | 47.5 | 53.6 | 41.8 | 9.3    | 33.2   | 0.47           |
+
+- **Baja cumple** su meta (≥ 30 fps) en las 10 escenas: de 36.5 a 51.3 fps (antes de optimizar, 9 de 10, de 28 a 42.9).
+- **Media no cumple** (≥ 60 fps) con ninguna escala medida: a escala 1, 0.7 y 0.6, ninguna escena; a 0.5 (960×540 por dentro), 3 de 10, y las otras siete quedan entre 50.3 y 58.6 fps. Antes de optimizar, media a escala 1 daba de 13.9 a 23.6 fps; ahora, de 21.2 a 30.4.
+- **F y P** salen del ajuste `ms = F + P·escala²` sobre las cuatro escalas medidas: F es lo que cuesta el cuadro sin contar pixeles y P, lo que cuestan los pixeles a escala 1. «Escala para 60» es una estimación del ajuste, no una medición. Las escenas con lluvia y la terracería traen el F más alto (11.8 a 13.7 ms de los 16.7 que hay para 60 fps): ahí bajar la escala rinde poco.
+- **Qué tanto se nota la escala** (`eval/results/u5_diferencia_escalas.json`, tres escenas contra la captura a escala 1, sin el minimapa): la diferencia media por pixel va de 2.5 a 6.4 a escala 0.8 y de 3.0 a 7.3 a escala 0.5. Esa cifra **incluye lo que cambia entre dos tomas** (los fragmentos del impacto no caen en el mismo lugar y las capturas son WebP): no hay toma repetida de la base para restarlo, así que sirve para comparar escalas entre sí, no como medida absoluta. A la vista, a 0.5 los bordes finos (rejas, rines, cables) se ven escalonados y las texturas lejanas, más lisas; los vehículos, las personas y las marcas se siguen distinguiendo. Capturas: `docs/cesvi/u5/media/` (escala 1, las 10 escenas) y `docs/cesvi/u5/escalas/escala_{0.8,0.7,0.6,0.5}/`.
+
+**Opciones para René** (no se fija ninguna escala ni se toca la meta sin que él elija; el perfil de media sigue con `DprMaximo = 1`):
+
+1. **Escala fija más baja, alrededor de 0.4** (768×432 por dentro). Según el ajuste, las 10 escenas llegarían a 60 fps (la lluvia pide 0.38 a 0.40). Cuesta: una configuración más en la cadena (unos 20 min de medición) y una imagen claramente más suave que a 0.5 en todas las escenas, también en las que no lo necesitan.
+2. **Escala automática por escena**: el visor ajusta la escala de media entre un piso y un techo (por ejemplo, 0.4 a 0.7) para sostener 60 fps. AXA de día quedaría cerca de 0.6 y la lluvia cerca de 0.4. Cuesta: programar y probar el ajuste (que no oscile ni parpadee) y volver a medir las 10 escenas; la nitidez cambia de una escena a otra.
+3. **Bajar primero el costo fijo** de lluvia y terracería (geometría de la lluvia, piel de las personas, llamadas de dibujo) y después elegir escala: con F por debajo de unos 8 ms, la escala necesaria sube hacia 0.5. Cuesta: otra ronda de perfilado y optimización sin cambiar el aspecto, sin garantía de cuánto se gana; es lo único que mejora las escenas donde la escala ya no rinde. Se puede combinar con 1 o 2.
 
 ### Para retomar
 
@@ -454,7 +482,7 @@ La medición de U5 es una cadena reanudable que corre **fuera de la sesión de C
 - **Si cambian los fuentes de Unity,** la huella cambia: se compila otra vez y lo medido con el build anterior se archiva en `u5_estado.<huella>.json`. No se mezclan cifras de dos builds.
 - **Mientras corre:** la laptop no se suspende ni apaga la pantalla (se restaura sola al terminar o si el proceso muere), y cierra Edge antes de cada medición. Hay que dejarla conectada y con la tapa abierta. **Nada pesado a la vez** (ni otra medición, ni Playwright, ni Unity).
 - **El «antes»** de las comparaciones es la media anterior a la optimización: `D:\croquis-logs\var1\base` (fuera de git).
-- **Al terminar:** presentarle a René las opciones (escala fija, escala según la escena o recortes de noche) y **no fijar la escala de media sin que él elija**. Si media no cumple con ninguna escala, detenerse con «Media no cumple: cambia el modelo». Al cerrar, `eval/results/e6_unity_web.json` se vuelve a medir con el perfil final.
+- **Estado (2026-11-11):** terminada con el build `ff04482a02`; relanzarla no vuelve a medir nada mientras no cambien los fuentes de Unity. Para medir otra escala se agrega a `CONFIGURACIONES` en `eval/u5_cadena.mjs`: solo se mide lo nuevo. Al cerrar U5, `eval/results/e6_unity_web.json` se vuelve a medir con el perfil final.
 
 Las evaluaciones largas de W8 (E-R4 v4) se lanzarán igual: reanudables, con su archivo de estado, y como tarea de Windows.
 

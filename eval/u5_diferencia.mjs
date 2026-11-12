@@ -8,6 +8,9 @@
  *   node eval/u5_diferencia.mjs <carpeta con una subcarpeta por variante> [--base base]
  *                               [--salida eval/results/u5_diferencia.json]
  *
+ * `--base` también puede ser una ruta a otra carpeta (las capturas de la cadena de U5: la base es
+ * `docs/cesvi/u5/media` y las variantes, `docs/cesvi/u5/escalas/*`). Lee PNG y WebP.
+ *
  * Por variante y escena: la diferencia media (0 a 255) y el porcentaje de pixeles que cambian más de
  * 8 y de 24 niveles. Excluye la esquina del minimapa si se pide `--sin-minimapa`.
  */
@@ -58,16 +61,18 @@ async function comparar(a, b) {
   return { media: r(suma / n), pct_mas_8: r((100 * mas8) / n), pct_mas_24: r((100 * mas24) / n) };
 }
 
+// La base: una subcarpeta de la carpeta de variantes o, si no existe ahí, una ruta aparte.
+const carpetaBase = existsSync(join(carpeta, BASE)) ? join(carpeta, BASE) : resolve(BASE);
 const variantes = readdirSync(carpeta).filter(
-  (d) => statSync(join(carpeta, d)).isDirectory() && d !== BASE,
+  (d) => statSync(join(carpeta, d)).isDirectory() && join(carpeta, d) !== carpetaBase,
 );
 const resultado = {};
 for (const v of variantes) {
   resultado[v] = {};
-  for (const f of readdirSync(join(carpeta, BASE)).filter((x) => x.endsWith(".png"))) {
+  for (const f of readdirSync(carpetaBase).filter((x) => /\.(png|webp)$/.test(x))) {
     const otro = join(carpeta, v, f);
     if (!existsSync(otro)) continue;
-    resultado[v][f.replace(/\.png$/, "")] = await comparar(join(carpeta, BASE, f), otro);
+    resultado[v][f.replace(/\.(png|webp)$/, "")] = await comparar(join(carpetaBase, f), otro);
   }
 }
 for (const [v, escenas] of Object.entries(resultado)) {
@@ -84,6 +89,7 @@ if (SALIDA) {
     `${JSON.stringify(
       {
         fecha: new Date().toISOString(),
+        base: carpetaBase.slice(RAIZ.length + 1).replaceAll("\\", "/"),
         metodo:
           "Capturas del build WebGL a 1920×1080 (tools/unity/capturas.mjs, nivel media, mismo instante y " +
           "cámara). Diferencia absoluta en gris contra la captura base: media (0 a 255) y porcentaje de " +

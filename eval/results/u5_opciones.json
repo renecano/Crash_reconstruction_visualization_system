@@ -1,0 +1,603 @@
+{
+  "fecha": "2026-11-12T02:16:09.637Z",
+  "fuente": "eval/results/u5_estado.json (cadena eval/u5_cadena.mjs)",
+  "build": {
+    "huella": "ff04482a02db3be65b195dbb30312e8ae8babd99",
+    "fecha": "2026-11-12T00:42:54.424Z",
+    "mb": 70,
+    "commit": "85b9310975f14da1b4f4f5a919bbe6bc186dfa72"
+  },
+  "cadena_terminada": true,
+  "metodo": "fps: mediana del promedio de las repeticiones, 1920×1080, protocolo de E6 (ADR 0026). El ajuste ms = F + P·escala² es de mínimos cuadrados sobre las escalas medidas; «escala_para_la_meta» es la escala más alta con que el ajuste da 60 fps (una estimación entre puntos medidos, no una medición).",
+  "meta": {
+    "media": 60,
+    "baja": 30
+  },
+  "por_escala": {
+    "1": {
+      "escenas_medidas": 10,
+      "cumplen": 0,
+      "no_cumplen": [
+        "axa-dia",
+        "axa-noche",
+        "carambola-dia",
+        "carambola-noche",
+        "lateral_interseccion-dia",
+        "lateral_interseccion-noche",
+        "nocturno_lluvia-dia",
+        "nocturno_lluvia-noche",
+        "terraceria-dia",
+        "terraceria-noche"
+      ],
+      "peor": "carambola-noche",
+      "fps_peor": 21.2,
+      "resolucion_interna": "1920×1080"
+    },
+    "0.7": {
+      "escenas_medidas": 10,
+      "cumplen": 0,
+      "no_cumplen": [
+        "axa-dia",
+        "axa-noche",
+        "carambola-dia",
+        "carambola-noche",
+        "lateral_interseccion-dia",
+        "lateral_interseccion-noche",
+        "nocturno_lluvia-dia",
+        "nocturno_lluvia-noche",
+        "terraceria-dia",
+        "terraceria-noche"
+      ],
+      "peor": "lateral_interseccion-noche",
+      "fps_peor": 35.8,
+      "resolucion_interna": "1344×756"
+    },
+    "0.6": {
+      "escenas_medidas": 10,
+      "cumplen": 0,
+      "no_cumplen": [
+        "axa-dia",
+        "axa-noche",
+        "carambola-dia",
+        "carambola-noche",
+        "lateral_interseccion-dia",
+        "lateral_interseccion-noche",
+        "nocturno_lluvia-dia",
+        "nocturno_lluvia-noche",
+        "terraceria-dia",
+        "terraceria-noche"
+      ],
+      "peor": "nocturno_lluvia-noche",
+      "fps_peor": 43.8,
+      "resolucion_interna": "1152×648"
+    },
+    "0.5": {
+      "escenas_medidas": 10,
+      "cumplen": 3,
+      "no_cumplen": [
+        "carambola-dia",
+        "carambola-noche",
+        "lateral_interseccion-noche",
+        "nocturno_lluvia-dia",
+        "nocturno_lluvia-noche",
+        "terraceria-dia",
+        "terraceria-noche"
+      ],
+      "peor": "nocturno_lluvia-noche",
+      "fps_peor": 50.3,
+      "resolucion_interna": "960×540"
+    }
+  },
+  "por_escena": {
+    "axa-dia": {
+      "media": {
+        "1": {
+          "fps": 30.4,
+          "fps_1pct_bajo": 14.4,
+          "repeticiones": 3,
+          "minimo": 29,
+          "maximo": 31.2,
+          "cumple": false
+        },
+        "0.7": {
+          "fps": 51.9,
+          "fps_1pct_bajo": 26.7,
+          "repeticiones": 3,
+          "minimo": 50.2,
+          "maximo": 56.6,
+          "cumple": false
+        },
+        "0.6": {
+          "fps": 59.6,
+          "fps_1pct_bajo": 27.8,
+          "repeticiones": 3,
+          "minimo": 54.1,
+          "maximo": 63.9,
+          "cumple": false
+        },
+        "0.5": {
+          "fps": 69.9,
+          "fps_1pct_bajo": 29.6,
+          "repeticiones": 3,
+          "minimo": 67.4,
+          "maximo": 75.4,
+          "cumple": true
+        }
+      },
+      "baja": {
+        "fps": 51.3,
+        "fps_1pct_bajo": 24.3,
+        "repeticiones": 3,
+        "minimo": 47.1,
+        "maximo": 60.4,
+        "cumple": true
+      },
+      "ajuste": {
+        "ms_fijos": 7.68,
+        "ms_por_pixeles_a_escala_1": 25.02,
+        "error_maximo_ms": 0.67,
+        "escala_para_la_meta": 0.6,
+        "fps_tope_sin_pixeles": 130.2
+      }
+    },
+    "axa-noche": {
+      "media": {
+        "1": {
+          "fps": 25.6,
+          "fps_1pct_bajo": 11.2,
+          "repeticiones": 3,
+          "minimo": 21.7,
+          "maximo": 26,
+          "cumple": false
+        },
+        "0.7": {
+          "fps": 46.7,
+          "fps_1pct_bajo": 24.3,
+          "repeticiones": 3,
+          "minimo": 42.7,
+          "maximo": 46.8,
+          "cumple": false
+        },
+        "0.6": {
+          "fps": 57.5,
+          "fps_1pct_bajo": 27.8,
+          "repeticiones": 3,
+          "minimo": 52,
+          "maximo": 64.2,
+          "cumple": false
+        },
+        "0.5": {
+          "fps": 70.3,
+          "fps_1pct_bajo": 29.6,
+          "repeticiones": 3,
+          "minimo": 64,
+          "maximo": 79.5,
+          "cumple": true
+        }
+      },
+      "baja": {
+        "fps": 42.3,
+        "fps_1pct_bajo": 22.4,
+        "repeticiones": 3,
+        "minimo": 40.3,
+        "maximo": 53,
+        "cumple": true
+      },
+      "ajuste": {
+        "ms_fijos": 5.47,
+        "ms_por_pixeles_a_escala_1": 33.44,
+        "error_maximo_ms": 0.44,
+        "escala_para_la_meta": 0.58,
+        "fps_tope_sin_pixeles": 182.8
+      }
+    },
+    "carambola-dia": {
+      "media": {
+        "1": {
+          "fps": 25.1,
+          "fps_1pct_bajo": 12.4,
+          "repeticiones": 3,
+          "minimo": 24.2,
+          "maximo": 25.2,
+          "cumple": false
+        },
+        "0.7": {
+          "fps": 40.4,
+          "fps_1pct_bajo": 22.4,
+          "repeticiones": 3,
+          "minimo": 40.3,
+          "maximo": 45.1,
+          "cumple": false
+        },
+        "0.6": {
+          "fps": 48.8,
+          "fps_1pct_bajo": 25.3,
+          "repeticiones": 3,
+          "minimo": 46.6,
+          "maximo": 57.6,
+          "cumple": false
+        },
+        "0.5": {
+          "fps": 58.6,
+          "fps_1pct_bajo": 27.8,
+          "repeticiones": 3,
+          "minimo": 57.6,
+          "maximo": 66.6,
+          "cumple": false
+        }
+      },
+      "baja": {
+        "fps": 41.5,
+        "fps_1pct_bajo": 19.8,
+        "repeticiones": 3,
+        "minimo": 39.1,
+        "maximo": 52.4,
+        "cumple": true
+      },
+      "ajuste": {
+        "ms_fijos": 9.64,
+        "ms_por_pixeles_a_escala_1": 30.28,
+        "error_maximo_ms": 0.27,
+        "escala_para_la_meta": 0.48,
+        "fps_tope_sin_pixeles": 103.7
+      }
+    },
+    "carambola-noche": {
+      "media": {
+        "1": {
+          "fps": 21.2,
+          "fps_1pct_bajo": 9.8,
+          "repeticiones": 3,
+          "minimo": 20,
+          "maximo": 21.7,
+          "cumple": false
+        },
+        "0.7": {
+          "fps": 38.5,
+          "fps_1pct_bajo": 17.1,
+          "repeticiones": 3,
+          "minimo": 33.9,
+          "maximo": 40.5,
+          "cumple": false
+        },
+        "0.6": {
+          "fps": 47.6,
+          "fps_1pct_bajo": 24.6,
+          "repeticiones": 3,
+          "minimo": 38.9,
+          "maximo": 53.8,
+          "cumple": false
+        },
+        "0.5": {
+          "fps": 57.5,
+          "fps_1pct_bajo": 27.9,
+          "repeticiones": 3,
+          "minimo": 55.3,
+          "maximo": 63.1,
+          "cumple": false
+        }
+      },
+      "baja": {
+        "fps": 39,
+        "fps_1pct_bajo": 19,
+        "repeticiones": 3,
+        "minimo": 36.8,
+        "maximo": 47.4,
+        "cumple": true
+      },
+      "ajuste": {
+        "ms_fijos": 6.79,
+        "ms_por_pixeles_a_escala_1": 40.18,
+        "error_maximo_ms": 0.56,
+        "escala_para_la_meta": 0.5,
+        "fps_tope_sin_pixeles": 147.3
+      }
+    },
+    "lateral_interseccion-dia": {
+      "media": {
+        "1": {
+          "fps": 27,
+          "fps_1pct_bajo": 13,
+          "repeticiones": 3,
+          "minimo": 26.6,
+          "maximo": 28.9,
+          "cumple": false
+        },
+        "0.7": {
+          "fps": 42.5,
+          "fps_1pct_bajo": 21.3,
+          "repeticiones": 3,
+          "minimo": 38.3,
+          "maximo": 47,
+          "cumple": false
+        },
+        "0.6": {
+          "fps": 52.5,
+          "fps_1pct_bajo": 27,
+          "repeticiones": 3,
+          "minimo": 50,
+          "maximo": 57.4,
+          "cumple": false
+        },
+        "0.5": {
+          "fps": 61.9,
+          "fps_1pct_bajo": 28.3,
+          "repeticiones": 3,
+          "minimo": 56.6,
+          "maximo": 64.6,
+          "cumple": true
+        }
+      },
+      "baja": {
+        "fps": 46.5,
+        "fps_1pct_bajo": 19.8,
+        "repeticiones": 3,
+        "minimo": 45.6,
+        "maximo": 51.9,
+        "cumple": true
+      },
+      "ajuste": {
+        "ms_fijos": 9.32,
+        "ms_por_pixeles_a_escala_1": 27.85,
+        "error_maximo_ms": 0.56,
+        "escala_para_la_meta": 0.51,
+        "fps_tope_sin_pixeles": 107.3
+      }
+    },
+    "lateral_interseccion-noche": {
+      "media": {
+        "1": {
+          "fps": 21.4,
+          "fps_1pct_bajo": 9.6,
+          "repeticiones": 3,
+          "minimo": 20.1,
+          "maximo": 22.4,
+          "cumple": false
+        },
+        "0.7": {
+          "fps": 35.8,
+          "fps_1pct_bajo": 15.3,
+          "repeticiones": 3,
+          "minimo": 34.3,
+          "maximo": 35.9,
+          "cumple": false
+        },
+        "0.6": {
+          "fps": 46.8,
+          "fps_1pct_bajo": 23.6,
+          "repeticiones": 3,
+          "minimo": 45.2,
+          "maximo": 46.8,
+          "cumple": false
+        },
+        "0.5": {
+          "fps": 56.5,
+          "fps_1pct_bajo": 27.9,
+          "repeticiones": 3,
+          "minimo": 56.2,
+          "maximo": 58.3,
+          "cumple": false
+        }
+      },
+      "baja": {
+        "fps": 37.4,
+        "fps_1pct_bajo": 15.5,
+        "repeticiones": 3,
+        "minimo": 35.6,
+        "maximo": 37.7,
+        "cumple": true
+      },
+      "ajuste": {
+        "ms_fijos": 8.01,
+        "ms_por_pixeles_a_escala_1": 38.9,
+        "error_maximo_ms": 0.86,
+        "escala_para_la_meta": 0.47,
+        "fps_tope_sin_pixeles": 124.9
+      }
+    },
+    "nocturno_lluvia-dia": {
+      "media": {
+        "1": {
+          "fps": 29.7,
+          "fps_1pct_bajo": 17.1,
+          "repeticiones": 3,
+          "minimo": 29.5,
+          "maximo": 33.2,
+          "cumple": false
+        },
+        "0.7": {
+          "fps": 41.4,
+          "fps_1pct_bajo": 23.4,
+          "repeticiones": 3,
+          "minimo": 41.1,
+          "maximo": 45.8,
+          "cumple": false
+        },
+        "0.6": {
+          "fps": 48.8,
+          "fps_1pct_bajo": 27.5,
+          "repeticiones": 3,
+          "minimo": 43.1,
+          "maximo": 49,
+          "cumple": false
+        },
+        "0.5": {
+          "fps": 53.4,
+          "fps_1pct_bajo": 27.6,
+          "repeticiones": 3,
+          "minimo": 46.1,
+          "maximo": 54,
+          "cumple": false
+        }
+      },
+      "baja": {
+        "fps": 46.1,
+        "fps_1pct_bajo": 24.6,
+        "repeticiones": 3,
+        "minimo": 41.9,
+        "maximo": 49.9,
+        "cumple": true
+      },
+      "ajuste": {
+        "ms_fijos": 13.72,
+        "ms_por_pixeles_a_escala_1": 20.07,
+        "error_maximo_ms": 0.6,
+        "escala_para_la_meta": 0.38,
+        "fps_tope_sin_pixeles": 72.9
+      }
+    },
+    "nocturno_lluvia-noche": {
+      "media": {
+        "1": {
+          "fps": 24.6,
+          "fps_1pct_bajo": 12,
+          "repeticiones": 3,
+          "minimo": 23.7,
+          "maximo": 25.3,
+          "cumple": false
+        },
+        "0.7": {
+          "fps": 41.3,
+          "fps_1pct_bajo": 22.7,
+          "repeticiones": 3,
+          "minimo": 40.3,
+          "maximo": 41.3,
+          "cumple": false
+        },
+        "0.6": {
+          "fps": 43.8,
+          "fps_1pct_bajo": 26,
+          "repeticiones": 3,
+          "minimo": 40,
+          "maximo": 46.8,
+          "cumple": false
+        },
+        "0.5": {
+          "fps": 50.3,
+          "fps_1pct_bajo": 27.2,
+          "repeticiones": 3,
+          "minimo": 47.3,
+          "maximo": 51.9,
+          "cumple": false
+        }
+      },
+      "baja": {
+        "fps": 36.5,
+        "fps_1pct_bajo": 14.2,
+        "repeticiones": 3,
+        "minimo": 34.7,
+        "maximo": 40.5,
+        "cumple": true
+      },
+      "ajuste": {
+        "ms_fijos": 12.2,
+        "ms_por_pixeles_a_escala_1": 27.99,
+        "error_maximo_ms": 1.7,
+        "escala_para_la_meta": 0.4,
+        "fps_tope_sin_pixeles": 82
+      }
+    },
+    "terraceria-dia": {
+      "media": {
+        "1": {
+          "fps": 27.3,
+          "fps_1pct_bajo": 14.2,
+          "repeticiones": 3,
+          "minimo": 27,
+          "maximo": 30,
+          "cumple": false
+        },
+        "0.7": {
+          "fps": 42.6,
+          "fps_1pct_bajo": 22,
+          "repeticiones": 3,
+          "minimo": 41.8,
+          "maximo": 43.7,
+          "cumple": false
+        },
+        "0.6": {
+          "fps": 48.1,
+          "fps_1pct_bajo": 24,
+          "repeticiones": 3,
+          "minimo": 43.9,
+          "maximo": 48.2,
+          "cumple": false
+        },
+        "0.5": {
+          "fps": 54.9,
+          "fps_1pct_bajo": 27.7,
+          "repeticiones": 3,
+          "minimo": 51.6,
+          "maximo": 57.6,
+          "cumple": false
+        }
+      },
+      "baja": {
+        "fps": 43.6,
+        "fps_1pct_bajo": 19.8,
+        "repeticiones": 3,
+        "minimo": 35.1,
+        "maximo": 45.7,
+        "cumple": true
+      },
+      "ajuste": {
+        "ms_fijos": 11.82,
+        "ms_por_pixeles_a_escala_1": 24.68,
+        "error_maximo_ms": 0.44,
+        "escala_para_la_meta": 0.44,
+        "fps_tope_sin_pixeles": 84.6
+      }
+    },
+    "terraceria-noche": {
+      "media": {
+        "1": {
+          "fps": 23.3,
+          "fps_1pct_bajo": 11.4,
+          "repeticiones": 3,
+          "minimo": 22.1,
+          "maximo": 25.4,
+          "cumple": false
+        },
+        "0.7": {
+          "fps": 41.3,
+          "fps_1pct_bajo": 22,
+          "repeticiones": 3,
+          "minimo": 39.1,
+          "maximo": 41.9,
+          "cumple": false
+        },
+        "0.6": {
+          "fps": 47.5,
+          "fps_1pct_bajo": 24.5,
+          "repeticiones": 3,
+          "minimo": 47.5,
+          "maximo": 47.7,
+          "cumple": false
+        },
+        "0.5": {
+          "fps": 53.6,
+          "fps_1pct_bajo": 27.5,
+          "repeticiones": 3,
+          "minimo": 53.3,
+          "maximo": 54.1,
+          "cumple": false
+        }
+      },
+      "baja": {
+        "fps": 41.8,
+        "fps_1pct_bajo": 19.1,
+        "repeticiones": 3,
+        "minimo": 38.4,
+        "maximo": 42.3,
+        "cumple": true
+      },
+      "ajuste": {
+        "ms_fijos": 9.3,
+        "ms_por_pixeles_a_escala_1": 33.17,
+        "error_maximo_ms": 1.34,
+        "escala_para_la_meta": 0.47,
+        "fps_tope_sin_pixeles": 107.5
+      }
+    }
+  }
+}
