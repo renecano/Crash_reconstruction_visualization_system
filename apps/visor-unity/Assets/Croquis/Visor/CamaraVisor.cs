@@ -188,36 +188,61 @@ namespace Croquis.Visor
             return false;
         }
 
+        /// <summary>El desvío de rumbo (grados) con que la cinematográfica encontró vista libre.</summary>
+        private float desvioDespeje;
+
+        private static readonly float[] EscalasDespeje = { 1f, 0.8f, 0.6f, 0.45f };
+
         /// <summary>
-        /// Un ojo despejado para la cinematográfica cuando el rumbo elegido está tapado: primero gira de
-        /// 15 en 15 grados hacia los dos lados (lo más cerca del rumbo elegido gana) y, si nada sirve,
-        /// sube de 3 en 3 metros sobre el rumbo elegido. Si aun así no hay vista libre, vista desde arriba.
+        /// El ojo de la cinematográfica: en el rumbo elegido más el último desvío que sirvió si está
+        /// libre; si no, gira de 15 en 15 grados hacia los dos lados (lo más cerca del rumbo elegido
+        /// gana), primero a la distancia que encuadra y después más cerca (hasta 7 m); si nada sirve,
+        /// sube de 3 en 3 m. Sin vista libre en ningún lado, desde arriba.
         /// </summary>
-        private Vector3 OtroLado(Vector3 objetivo, Vector3 mira, float az, float dist, float alto)
+        private Vector3 Despejar(Vector3 objetivo, Vector3 mira, float az, float dist, float alto)
         {
-            for (var paso = 1; paso <= 12; paso++)
+            Vector3 En(float a, float d, float h) => objetivo + new Vector3(Mathf.Cos(a) * d, h, Mathf.Sin(a) * d);
+            var previo = En(az + desvioDespeje * Mathf.Deg2Rad, dist, alto);
+            if (Despejada(previo, mira, true))
             {
-                foreach (var signo in new[] { 1f, -1f })
+                return previo;
+            }
+
+            foreach (var escala in EscalasDespeje)
+            {
+                var d = Mathf.Max(7f, dist * escala);
+                for (var paso = 0; paso <= 12; paso++)
                 {
-                    var a = az + signo * paso * 15f * Mathf.Deg2Rad;
-                    var ojo = objetivo + new Vector3(Mathf.Cos(a) * dist, alto, Mathf.Sin(a) * dist);
-                    if (Despejada(ojo, mira, true))
+                    for (var lado = 0; lado < (paso == 0 ? 1 : 2); lado++)
                     {
-                        return ojo;
+                        var desvio = (lado == 0 ? 1f : -1f) * paso * 15f;
+                        var ojo = En(az + desvio * Mathf.Deg2Rad, d, alto);
+                        if (Despejada(ojo, mira, true))
+                        {
+                            desvioDespeje = desvio;
+                            return ojo;
+                        }
                     }
+                }
+
+                if (d <= 7f)
+                {
+                    break;
                 }
             }
 
             for (var h = alto + 3f; h <= 30f; h += 3f)
             {
-                var ojo = objetivo + new Vector3(Mathf.Cos(az) * dist, h, Mathf.Sin(az) * dist);
+                var ojo = En(az, dist, h);
                 if (Despejada(ojo, mira, true))
                 {
+                    desvioDespeje = 0f;
                     return ojo;
                 }
             }
 
-            return objetivo + new Vector3(Mathf.Cos(az) * 4f, 30f, Mathf.Sin(az) * 4f);
+            desvioDespeje = 0f;
+            return En(az, 4f, 30f);
         }
 
         /// <summary>Si desde `ojo` se ve `mira` sin estar dentro de algo ni con algo en medio.</summary>
@@ -341,6 +366,7 @@ namespace Croquis.Visor
             todo = Encuadre.VerTodo(caso);
             inicio = resultado.TInicio;
             azBase = float.NaN;
+            desvioDespeje = 0f;
             orbitaTocada = false;
             yaw = AnguloInicial;
             pitch = ElevacionOrbita;
@@ -912,23 +938,13 @@ namespace Croquis.Visor
                     dist *= distK;
                     alto += altoExtra;
                     // La distancia cambia con el instante y el rumbo se revisó con la del principio: si
-                    // ahora algo tapa la vista (una fachada), la cámara se acerca hasta verla libre.
+                    // ahora algo tapa la vista (una fachada), primero se busca otro rumbo a la misma
+                    // distancia, que es la que encuadra a los vehículos; después, más cerca; al final, más
+                    // alto. El desvío que sirvió se conserva mientras siga libre, para que la cámara no
+                    // salte de un lado al otro al reproducir (U6: la foto «antes» del dictamen salía con
+                    // una pared enfrente y sin los vehículos).
                     var mira = objetivo + Vector3.up * 0.9f;
-                    var ojo = objetivo + new Vector3(Mathf.Cos(az) * dist, alto, Mathf.Sin(az) * dist);
-                    for (var intento = 0; intento < 12 && dist > 7f && !Despejada(ojo, mira, true); intento++)
-                    {
-                        dist = Mathf.Max(7f, dist * 0.85f);
-                        ojo = objetivo + new Vector3(Mathf.Cos(az) * dist, alto, Mathf.Sin(az) * dist);
-                    }
-
-                    // Si ni a 7 m se ve (una calle angosta, los vehículos junto a una fachada), se busca
-                    // otro rumbo cerca del elegido y, si tampoco, más alto: la cámara nunca queda dentro
-                    // de un edificio ni con una pared enfrente (U6: así salía la foto «antes» del dictamen).
-                    if (!Despejada(ojo, mira, true))
-                    {
-                        ojo = OtroLado(objetivo, mira, az, Mathf.Max(dist, 9f), alto);
-                    }
-
+                    var ojo = Despejar(objetivo, mira, az, dist, alto);
                     camara.transform.position = ojo;
                     camara.transform.LookAt(mira);
                     return;
