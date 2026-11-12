@@ -74,9 +74,13 @@ namespace Croquis.Core.Tests
             Assert.Equal(1.0, Calidades.EscalaDibujo(media, 1.0));
             Assert.Equal(0.5, Calidades.EscalaDibujo(media, 2.0));
             Assert.Equal(0.75, Calidades.EscalaDibujo(Calidades.Perfil(NivelCalidad.Baja), 1.0));
-            Assert.Equal(1.0, Calidades.EscalaDibujo(Calidades.Perfil(NivelCalidad.Ultra), 1.0));
-            Assert.Equal(1.0, Calidades.EscalaDibujo(Calidades.Perfil(NivelCalidad.Ultra), 2.0));
+            // Ultra sobremuestrea 1.5× (René, 2026-11-12), con el tope de 2× de URP.
+            Assert.Equal(1.5, Calidades.EscalaDibujo(Calidades.Perfil(NivelCalidad.Ultra), 1.0));
+            Assert.Equal(1.5, Calidades.EscalaDibujo(Calidades.Perfil(NivelCalidad.Ultra), 2.0));
+            // Con una pantalla muy densa (dpr 8/3) el tope de dpr baja la escala antes del sobremuestreo.
+            Assert.Equal(1.125, Calidades.EscalaDibujo(Calidades.Perfil(NivelCalidad.Ultra), 8.0 / 3.0), 9);
             Assert.Equal(0.75, Calidades.EscalaDibujo(Calidades.Perfil(NivelCalidad.Alta), 2.0));
+            Assert.True(Calidades.Todos.Where(n => n != NivelCalidad.Ultra).All(n => Calidades.Perfil(n).Sobremuestreo == 1.0));
         }
 
         [Fact]

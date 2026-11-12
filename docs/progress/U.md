@@ -441,6 +441,38 @@ La demo puede ser dentro de Croquis, así que hay que medir el visor en el naveg
 - **Probado en esta laptop** contra un servidor local (una repetición en alta de las 10 escenas): de punta a punta en verde, con plan y preferencia de GPU restaurados al final. Con la Intel UHD, alta da de 6 a 11 fps (no es la meta: alta y ultra son para la computadora de demo).
 - **El paquete:** `tools/unity/paquete-medicion-web.ps1` → release `visor-web-medicion`.
 
+### La carga del 3D: de 46 s a … (René, 2026-11-12)
+
+René midió unos 46 s desde Blob, contra unos 14 s de las mediciones anteriores (`medir.html`, que no corre el solver). El tiempo se mide desde el clic en «Órbita 3D» hasta que Unity muestra el caso, con un navegador sin caché (primera visita), con `e2e/visor-unity-real.spec.ts` y sus marcas (`unity:*` del lado web y `depurar` `carga` dentro de Unity).
+
+**Por qué tardaba:**
+
+| Paso                                | Antes              | Por qué                                                                                                                                                                                                             |
+| ----------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bajar el build                      | dentro de los 46 s | Unos 40 MB comprimidos (`.data` 28.5 MB y `.wasm` 11 MB con brotli; Blob los sirve comprimidos y con un año de caché). Unity no empezaba a bajarlos hasta abrir el 3D, y la red de la laptop da de 0.4 a 0.65 MB/s. |
+| Solver completo, solo para el 3D    | 10.8 s             | Se esperaba a Monte Carlo, inversión y consistencia, que Unity no dibuja.                                                                                                                                           |
+| Leer el paquete en Unity            | parte de unos 7 s  | Se leía tres veces completo (el sobre, la versión y el paquete).                                                                                                                                                    |
+| Armar el caso (modelos y escenario) | 1.7 a 6.5 s        | Los modelos de los vehículos se bajan de Blob; varía con la red.                                                                                                                                                    |
+| El primer cuadro                    | 5.9 s              | Compilar los shaders de la escena y subir sus texturas.                                                                                                                                                             |
+
+**Lo que se cambió:**
+
+1. **Unity carga con la reconstrucción** (las mismas trayectorias y eventos que el resultado completo, en 20 a 58 ms en lugar de 1.2 a 7.2 s). El resultado completo llega después y solo cambia el paquete que se descarga.
+2. **El caso baja el visor de fondo** desde que se abre (el build, los cuerpos y los modelos de sus vehículos), y Unity arranca con esas copias. El primer intento bajaba el `.data` dos veces a la vez (84 s): ahora Unity espera la descarga que ya está en curso.
+3. **El paquete se lee una vez:** el sobre y la versión, con un lector en flujo que se detiene al encontrarlos (pruebas `PaqueteTests`).
+4. **El primer cuadro no se puede quitar**, pero ya no se espera: Unity carga el caso de fondo desde que termina la reconstrucción, con el 3D oculto, mientras el perito lee la cifra.
+
+**Medido (primera visita, sin caché):**
+
+| Dónde                                                        | Clic al 3D al terminar la reconstrucción | Desglose                                                                                        |
+| ------------------------------------------------------------ | ---------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Producción, antes                                            | 46.4 s                                   | (sin marcas)                                                                                    |
+| Local, build local, antes                                    | 21.5 s                                   | arranque 3.4, solver 10.8, cargar el caso 6.9                                                   |
+| Sitio local con el build de Blob, con la precarga compartida | 18.9 s                                   | esperar el resto de la descarga 4.6, arranque 2.5, solver 0, cargar 10.5                        |
+| Local, build local, con la lectura única                     | 12.6 s                                   | arranque 2.4, solver 0, leer el paquete 0.6, armar el caso 2.35, primer cuadro y aviso el resto |
+
+Las cifras de producción del después van abajo, cuando el cambio esté publicado.
+
 ### Resumen para René (U6)
 
 - **Qué quedó:** el visor 3D de `/cesvi` es Unity (Reconstrucción, Números y detrás de Presentar), con respaldo three.js; editar en 3D (mover, girar y alargar objetos; marcar el primer golpe, choques y puntos de paso) recalcula el caso; las fotos del dictamen salen de Unity; «Descargar paquete 3D» y el visor de escritorio que lo abre.

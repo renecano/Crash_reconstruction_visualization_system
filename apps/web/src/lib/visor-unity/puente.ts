@@ -3,6 +3,7 @@
  * Sin React: carga el build desde Vercel Blob con su manifiesto, recibe los mensajes de Unity y
  * manda los de la web. El componente `<VisorUnity>` lo usa; las fotos del dictamen también.
  */
+import { archivosPrecargados } from "./precarga";
 import {
   FUNCION_PUENTE_WEB,
   OBJETO_PUENTE_UNITY,
@@ -54,6 +55,18 @@ export const ESPERA_ARRANQUE_MS = 90_000;
 export const ESPERA_CAPTURA_MS = 30_000;
 
 export const RUTA_MANIFIESTO = "/visor-unity/manifest.json";
+
+/**
+ * Marca un momento de la carga (`performance.mark`, «unity:<paso>»): lo leen las pruebas y el panel
+ * de rendimiento del navegador para saber en qué se va el tiempo hasta ver el 3D.
+ */
+export function marcar(paso: string): void {
+  try {
+    performance.mark(`unity:${paso}`);
+  } catch {
+    /* sin performance (pruebas unitarias) */
+  }
+}
 
 export function urlsDelBuild(m: ManifiestoVisorUnity) {
   const base = `${m.base}${m.prefijo}Build/`;
@@ -136,6 +149,16 @@ export class PuenteUnity {
       }
     }
     const urls = urlsDelBuild(m);
+    // Si la página ya lo estaba bajando de fondo (`precarga.ts`), Unity usa esas copias en vez de
+    // pedirlo otra vez.
+    marcar("precarga");
+    const locales = await Promise.race([
+      archivosPrecargados(urls),
+      new Promise<null>((ok) =>
+        setTimeout(() => ok(null), opciones.esperaMs ?? ESPERA_ARRANQUE_MS),
+      ),
+    ]);
+    marcar("precarga_lista");
     let listo!: (v: string) => void;
     const version = new Promise<string>((ok) => (listo = ok));
     const antes: MensajeDeUnity[] = [];
@@ -157,14 +180,18 @@ export class PuenteUnity {
     );
     let instancia: InstanciaUnity;
     try {
+      marcar("cargador");
       const crear = await Promise.race([cargarScript(urls.loader), plazo]);
+      marcar("cargador_listo");
       instancia = await Promise.race([
         crear(
           lienzo,
           {
-            dataUrl: urls.dataUrl,
-            frameworkUrl: urls.frameworkUrl,
-            codeUrl: urls.codeUrl,
+            dataUrl: locales?.dataUrl ?? urls.dataUrl,
+            frameworkUrl: locales?.frameworkUrl ?? urls.frameworkUrl,
+            codeUrl: locales?.codeUrl ?? urls.codeUrl,
+            // Las copias locales ya están en memoria: no se guardan otra vez en IndexedDB.
+            ...(locales ? { cacheControl: () => "no-store" } : {}),
             companyName: "Croquis",
             productName: "Visor de Croquis",
             productVersion: m.huella,
@@ -177,7 +204,9 @@ export class PuenteUnity {
       if (esMotivo(e)) throw e;
       throw motivo("no_cargo");
     }
+    marcar("instancia");
     const v = await Promise.race([version, plazo]);
+    marcar("listo");
     puente = new PuenteUnity(instancia);
     if (typeof navigator !== "undefined" && navigator.webdriver) puente.paraPruebas();
     for (const x of antes) puente.repartir(x);

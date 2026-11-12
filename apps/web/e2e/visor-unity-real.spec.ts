@@ -19,10 +19,13 @@ import { casoConPoste, recibidosDelPuente } from "./visor-unity-ayuda";
  */
 const RAIZ = resolve(__dirname, "../../..");
 const BUILD = join(RAIZ, "apps/visor-unity/Build/web/Build");
-const CAPTURAS = join(
-  RAIZ,
-  process.env.CROQUIS_URL ? "docs/cesvi/u6/produccion" : "docs/cesvi/u6/real",
-);
+/** De dónde sale Unity: el build local, el de Blob con el sitio local, o el sitio publicado. */
+const DONDE = process.env.CROQUIS_URL
+  ? "produccion"
+  : process.env.CROQUIS_UNITY_BLOB === "1"
+    ? "blob"
+    : "real";
+const CAPTURAS = join(RAIZ, `docs/cesvi/u6/${DONDE}`);
 const TIPOS: Record<string, string> = {
   ".js": "text/javascript",
   ".wasm": "application/wasm",
@@ -98,7 +101,9 @@ test("/cesvi con el Unity real: mover el poste en 3D, fotos del dictamen y Prese
 }) => {
   test.setTimeout(600_000);
   // Con CROQUIS_URL (`playwright.produccion.config.ts`): el sitio publicado y su Unity de Blob.
-  const publicado = Boolean(process.env.CROQUIS_URL);
+  // Con CROQUIS_UNITY_BLOB=1, el sitio local con el build de Unity de Blob (el del manifiesto):
+  // la carga con red, como en producción, para medir el código sin publicarlo.
+  const publicado = Boolean(process.env.CROQUIS_URL) || process.env.CROQUIS_UNITY_BLOB === "1";
   if (!publicado && !existsSync(BUILD))
     test.skip(true, "Falta el build local de Unity (tools/unity/build-web.ps1)");
   mkdirSync(CAPTURAS, { recursive: true });
@@ -115,6 +120,11 @@ test("/cesvi con el Unity real: mover el poste en 3D, fotos del dictamen y Prese
   const antes = await cifra.innerText();
   medido.cifra_antes = antes;
 
+  // Con CROQUIS_PAUSA_3D=<s>, el perito lee la cifra unos segundos antes de abrir el 3D (lo normal):
+  // Unity ya carga el caso de fondo desde la reconstrucción.
+  const pausa = Number(process.env.CROQUIS_PAUSA_3D ?? 0);
+  medido.pausa_antes_del_3d_s = pausa;
+  if (pausa) await page.waitForTimeout(pausa * 1000);
   // El 3D: Unity real arranca, recibe el caso y queda listo.
   const t0 = Date.now();
   await page.getByTestId("vista-3d").click();
@@ -122,6 +132,39 @@ test("/cesvi con el Unity real: mover el poste en 3D, fotos del dictamen y Prese
     timeout: 240_000,
   });
   medido.unity_listo_s = (Date.now() - t0) / 1000;
+  // En qué se fue el tiempo (`marcar` de lib/visor-unity/puente.ts), en s desde «arranque».
+  medido.marcas = await page.evaluate(() => {
+    const ms = performance.getEntriesByType("mark").filter((m) => m.name.startsWith("unity:"));
+    const t0 = ms.find((m) => m.name === "unity:arranque")?.startTime ?? 0;
+    return Object.fromEntries(
+      ms.map((m) => [m.name.slice(6), Math.round((m.startTime - t0) / 100) / 10]),
+    );
+  });
+  // Y dentro de Unity, cada paso de cargar el caso (ms, `VisorCaso.PasosDeCarga`).
+  medido.pasos_unity = await page.evaluate(async () => {
+    const puente = (window as unknown as { __croquisPuente: PuentePruebas }).__croquisPuente;
+    const pedido = Math.floor(Math.random() * 1e9);
+    puente.depurar({ carga: true, pedido });
+    for (let k = 0; k < 100; k++) {
+      const m = puente.recibidos.find((q) => q.tipo === "perfil" && q.pedido === pedido);
+      if (m) return m;
+      await new Promise((ok) => setTimeout(ok, 100));
+    }
+    return null;
+  });
+  medido.bytes_unity = await page.evaluate(() =>
+    performance
+      .getEntriesByType("resource")
+      .filter((r) => /Build\//.test(r.name))
+      .map((r) => {
+        const x = r as PerformanceResourceTiming;
+        return {
+          archivo: x.name.split("/").pop(),
+          kb: Math.round(x.transferSize / 1024),
+          s: Math.round(x.duration / 100) / 10,
+        };
+      }),
+  );
   await page.waitForTimeout(3000);
   await page.screenshot({ path: join(CAPTURAS, "1-reconstruccion-unity.png") });
 
@@ -215,12 +258,7 @@ test("/cesvi con el Unity real: mover el poste en 3D, fotos del dictamen y Prese
   await page.screenshot({ path: join(CAPTURAS, "6-presentar-impacto.png") });
   medido.errores = errores;
   writeFileSync(
-    join(
-      RAIZ,
-      process.env.CROQUIS_URL
-        ? "eval/results/u6_flujo_unity_produccion.json"
-        : "eval/results/u6_flujo_unity_real.json",
-    ),
+    join(RAIZ, `eval/results/u6_flujo_unity_${DONDE}.json`),
     `${JSON.stringify(medido, null, 2)}\n`,
   );
   expect(errores).toEqual([]);

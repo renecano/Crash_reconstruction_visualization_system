@@ -15,7 +15,8 @@ namespace Croquis.Visor
     /// - `reposo`: la cinematográfica al final del Resultado.
     /// - `conductor:<id>`: la cámara de ese conductor en el impacto.
     ///
-    /// La foto se toma a escala de dibujo 1, sin importar la escala automática de media: el dictamen
+    /// La foto se toma al menos a escala de dibujo 1, sin importar la escala automática de media (y con el
+    /// sobremuestreo de ultra, si lo hay): el dictamen
     /// sale nítido aunque el equipo sea modesto. No lleva el minimapa ni el panel de diagnóstico (son
     /// otras cámaras y otra capa); la leyenda ilustrativa la pone la web al pie de cada foto. Al
     /// terminar, la escena vuelve a como estaba: instante, cámara, reproducción y escala.
@@ -89,7 +90,8 @@ namespace Croquis.Visor
                 await Awaitable.EndOfFrameAsync();
                 if (urp != null)
                 {
-                    urp.renderScale = 1f;
+                    // Nunca menos que la escala completa; en ultra se queda el sobremuestreo (1.5×).
+                    urp.renderScale = Mathf.Max(1f, escala);
                 }
 
                 var cam = Camera.main;

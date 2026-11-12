@@ -89,6 +89,7 @@ import { TerrenoReconstruccion } from "./terreno-reconstruccion";
 import { VisorCasoUnity } from "@/components/visor-unity/visor-caso-unity";
 import type { ApiVisorUnity } from "@/components/visor-unity/visor-unity";
 import { CanalTiempo } from "@/lib/visor-unity/canal";
+import { precargarModelos, precargarVisorUnity } from "@/lib/visor-unity/precarga";
 import { protagonista, tipImpacto, tipVehiculo } from "@/lib/reconstruccion-lab";
 import { tomarArchivo } from "@/lib/archivo-pendiente";
 import {
@@ -231,6 +232,17 @@ export function RecorridoCaso({
     fuente: "dictamen",
   });
   const rec = useReconstruccion(expediente, { alCambiar: true });
+  // U6: el visor Unity y los modelos del caso se bajan de fondo mientras el perito trabaja, para que
+  // el 3D abra sin esperar la descarga. Sin clase declarada, el sedán (la de omisión de la escena).
+  useEffect(() => {
+    void precargarVisorUnity();
+  }, []);
+  const clasesDelCaso = (expediente?.vehiculos ?? [])
+    .map((v) => v.clase ?? "sedan_compacto")
+    .join(",");
+  useEffect(() => {
+    if (clasesDelCaso) void precargarModelos(clasesDelCaso.split(","));
+  }, [clasesDelCaso]);
   // La pizarra de R12b (ADR 0093): lo que escriben los agentes y su bitácora.
   const [pizarra, setPizarra] = useState<Pizarra>(() =>
     inicial.escena
