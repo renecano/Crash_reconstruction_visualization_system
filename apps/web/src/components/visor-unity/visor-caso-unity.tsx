@@ -40,7 +40,7 @@ export function VisorCasoUnity({
   ...props
 }: ComponentProps<typeof Visor3dCaso> & {
   /**
-   * En «Presentar» el 3D va detrás de la historia, a la derecha, con la cámara cinematográfica y el
+   * En «Presentar» el 3D va detrás de la historia, a la derecha, con la órbita (toda la escena) y el
    * instante que marca cada capítulo. Sin notas ni botones: la historia los tapa.
    */
   presentar?: CanalTiempo | null;
@@ -66,7 +66,9 @@ export function VisorCasoUnity({
   const camara = useMemo(
     () =>
       presentar
-        ? { modo: "cinematica" as const, n: -1 }
+        ? // La órbita encuadra toda la escena, como la maqueta que iba antes: la historia la
+          // recorre con el reloj y nada queda fuera de cuadro.
+          { modo: "orbita" as const, n: -1 }
         : camaraPedida
           ? { modo: camaraUnity(camaraPedida.camara), n: camaraPedida.n }
           : null,

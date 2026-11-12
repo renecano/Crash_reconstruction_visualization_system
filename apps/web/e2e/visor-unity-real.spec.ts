@@ -199,6 +199,9 @@ test("/cesvi con el Unity real: mover el poste en 3D, fotos del dictamen y Prese
   await expect(page.locator('[data-testid="visor-caso"][data-presentar="si"]')).toHaveCount(1);
   await page.waitForTimeout(4000);
   await page.screenshot({ path: join(CAPTURAS, "5-presentar-unity.png") });
+  await page.keyboard.press("ArrowRight");
+  await page.waitForTimeout(4000);
+  await page.screenshot({ path: join(CAPTURAS, "6-presentar-impacto.png") });
   medido.errores = errores;
   writeFileSync(
     join(RAIZ, "eval/results/u6_flujo_unity_real.json"),
