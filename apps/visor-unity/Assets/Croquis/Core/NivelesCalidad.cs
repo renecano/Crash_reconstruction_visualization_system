@@ -24,6 +24,14 @@ namespace Croquis.Core
         /// <summary>Tope de píxeles por pixel CSS (el dpr): la escala de dibujo nunca lo pasa.</summary>
         public double DprMaximo { get; set; }
 
+        /// <summary>
+        /// Entre qué escalas de dibujo se mueve la escala automática (`EscalaAutomatica`), sobre el tope
+        /// de dpr. Iguales: el nivel dibuja siempre a esa escala.
+        /// </summary>
+        public double EscalaMinima { get; set; } = 1.0;
+
+        public double EscalaMaxima { get; set; } = 1.0;
+
         /// <summary>Muestras de MSAA (1: sin antialiasing).</summary>
         public int Msaa { get; set; }
 
@@ -74,6 +82,18 @@ namespace Croquis.Core
         /// <summary>Si la lluvia también se dibuja en el minimapa (su geometría se calcula por cámara).</summary>
         public bool LluviaEnMinimapa { get; set; }
 
+        /// <summary>
+        /// La lluvia como una malla fija que el shader mueve en la GPU, en vez de partículas que la CPU
+        /// simula y vuelve geometría en cada cuadro. Las mismas gotas, con los mismos números.
+        /// </summary>
+        public bool LluviaEnMalla { get; set; }
+
+        /// <summary>
+        /// En el minimapa, cada vehículo se dibuja con una sola malla (sus piezas opacas, con su color),
+        /// no pieza por pieza: ahí mide unos cuantos pixeles.
+        /// </summary>
+        public bool VehiculosUnidosEnMinimapa { get; set; }
+
         /// <summary>Resplandor de faros y superficies muy brillantes.</summary>
         public bool Resplandor { get; set; }
 
@@ -117,6 +137,7 @@ namespace Croquis.Core
                     {
                         Nivel = n, DprMaximo = 0.75, Msaa = 1, DistanciaSombras = 50, Cascadas = 1, MapaSombras = 1024,
                         SueloEnUnaPasada = true, SombrasUnidas = true, MinimapaHorneado = true,
+                        LluviaEnMalla = true, VehiculosUnidosEnMinimapa = true,
                         LucesAdicionales = 4, SombrasDeFocos = false, SombraSuave = 1, Oclusion = 0, Resplandor = false,
                         Sonda = 64, Matas = 3500, MatorralesPor100M = 1.5, Luminarias = 2, FocosPorVehiculo = 1,
                     };
@@ -125,8 +146,12 @@ namespace Croquis.Core
                     {
                         // U5: una cascada de 2048 a 70 m da la misma sombra que dos de 1024 a 80 m, y FXAA con
                         // la oclusión ligera evita dos pasadas completas de geometría (medido en ADR 0115).
-                        Nivel = n, DprMaximo = 1.0, Msaa = 1, Fxaa = true, DistanciaSombras = 70, Cascadas = 1, MapaSombras = 2048,
+                        // Y la escala de dibujo es automática: cada escena, a la más alta con que el equipo
+                        // sostiene 60 fps, nunca debajo de 0.5 (René, 2026-11-11).
+                        Nivel = n, DprMaximo = 1.0, EscalaMinima = 0.5, EscalaMaxima = 1.0,
+                        Msaa = 1, Fxaa = true, DistanciaSombras = 70, Cascadas = 1, MapaSombras = 2048,
                         SueloEnUnaPasada = true, SombrasUnidas = true, MinimapaHorneado = true,
+                        LluviaEnMalla = true, VehiculosUnidosEnMinimapa = true,
                         LucesAdicionales = 4, SombrasDeFocos = false, SombraSuave = 1, Oclusion = 1, Resplandor = true,
                         Sonda = 128, Matas = 7000, MatorralesPor100M = 2.5, Luminarias = 3, FocosPorVehiculo = 1,
                     };
@@ -204,6 +229,12 @@ namespace Croquis.Core
             }
 
             return memoriaGpuMb > 0 && memoriaGpuMb < 2048;
+        }
+
+        /// <summary>Si el nivel ajusta solo su escala de dibujo (solo media).</summary>
+        public static bool EscalaEsAutomatica(PerfilCalidad p)
+        {
+            return p.EscalaMinima < p.EscalaMaxima;
         }
 
         /// <summary>

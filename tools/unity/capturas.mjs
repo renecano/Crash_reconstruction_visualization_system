@@ -42,6 +42,12 @@ const DEPURAR = arg("depurar", null);
 const ANTES = arg("antes", null);
 const SOLO = arg("solo", null)?.split(",") ?? null;
 const SIN_PERDIDA = process.argv.includes("--png");
+// `--escalas <archivo JSON>`: la escala de dibujo de cada escena ({"axa-dia": 0.56, …}), para tomar
+// cada una a la que eligió la escala automática. `--calidad-webp`: para juzgar nitidez, 95.
+const ESCALAS = arg("escalas", null)
+  ? JSON.parse(readFileSync(resolve(RAIZ, arg("escalas", null)), "utf8"))
+  : null;
+const CALIDAD_WEBP = Number(arg("calidad-webp", 86));
 const PUBLICO = join(RAIZ, "apps/web/public");
 const TIPOS = {
   ".html": "text/html; charset=utf-8",
@@ -106,6 +112,10 @@ try {
     await enviar("cargarCaso", { json: paquete });
     await espera("cargado", desde);
     if (DEPURAR) await enviar("depurar", JSON.parse(DEPURAR));
+    if (ESCALAS) {
+      if (!(ESCALAS[nombre] > 0)) throw new Error(`Sin escala para ${nombre}`);
+      await enviar("depurar", { escala: ESCALAS[nombre] });
+    }
     for (const t of TIEMPOS ?? [T])
       for (const vista of VISTAS) {
         await enviar("fijarTiempo", { t });
@@ -115,7 +125,7 @@ try {
         const base = join(SALIDA, `${nombre}${instante}-${vista.replace(":", "-")}`);
         const archivo = `${base}.${SIN_PERDIDA ? "png" : "webp"}`;
         const foto = sharp(await pagina.screenshot());
-        await (SIN_PERDIDA ? foto.png() : foto.webp({ quality: 86 })).toFile(archivo);
+        await (SIN_PERDIDA ? foto.png() : foto.webp({ quality: CALIDAD_WEBP })).toFile(archivo);
         console.log(`Captura ${archivo.slice(RAIZ.length + 1)}`);
       }
     // Los fps que reporta Unity con el caso quieto en la cámara cinematográfica (cada 5 s).

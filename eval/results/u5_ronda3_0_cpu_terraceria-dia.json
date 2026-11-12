@@ -1,0 +1,426 @@
+{
+  "fecha": "2026-11-12T03:10:43.578Z",
+  "caso": "terraceria-dia",
+  "nivel": "media",
+  "extra": {
+    "escala": 0.25
+  },
+  "cuadros": 331,
+  "fps": 53.8,
+  "ms_por_cuadro": 18.59,
+  "ordenes_webgl_ms_por_cuadro": 0.61,
+  "categorias_ms_por_cuadro": {
+    "skinning de personas": 0,
+    "órdenes de WebGL del navegador": 2.34,
+    "guiones de Croquis": 0.27,
+    "URP y guiones gestionados (C#)": 3.38,
+    "dibujo de Unity (lotes, estado, parámetros)": 6.51,
+    "partículas": 0.28,
+    "memoria": 1.48,
+    "interfaz (UGUI)": 0.05,
+    "transformaciones y animación": 0.16,
+    "otros": 3.93
+  },
+  "funciones": [
+    {
+      "nombre": "(program)",
+      "ms_por_cuadro": 0.935,
+      "pct": 5
+    },
+    {
+      "nombre": "__memcpy",
+      "ms_por_cuadro": 0.549,
+      "pct": 3
+    },
+    {
+      "nombre": "wasm-to-js",
+      "ms_por_cuadro": 0.517,
+      "pct": 2.8
+    },
+    {
+      "nombre": "ParticleSystemGeometryJob::RenderJobCommon(ParticleSystemGeometryJob&, ParticleSystemParticlesTempData&, void*, void*)",
+      "ms_por_cuadro": 0.399,
+      "pct": 2.1
+    },
+    {
+      "nombre": "bufferSubData",
+      "ms_por_cuadro": 0.356,
+      "pct": 1.9
+    },
+    {
+      "nombre": "ParticleGeomWrite(ParticleSortData const*, unsigned long, bool, unsigned char**, unsigned char*, int, int, math::float3x3 const&, math::floatNx3 const&, math::floatNx3 const&, math::floatNx3 const&, math::floatNx3 const&, math::_float4 const&, float*&, math::floatNx3 const*, ColorRGBA32 const*, math::floatNx2 const*, math::floatNx4 const*, math::floatNx3 const&, math::_float4 const&, math::_int4 const*, int)",
+      "ms_por_cuadro": 0.344,
+      "pct": 1.9
+    },
+    {
+      "nombre": "ScriptableBatchRenderer::RenderMultipleMeshes(RenderNodeQueue const&, BatchInstanceDataSRPB const*, int, VertexInputMasks)",
+      "ms_por_cuadro": 0.322,
+      "pct": 1.7
+    },
+    {
+      "nombre": "BufferManagerGLES::AdvanceFrame()",
+      "ms_por_cuadro": 0.283,
+      "pct": 1.5
+    },
+    {
+      "nombre": "Enumerator_MoveNext_m8D8E5E878AF0A88A535AB1AB5BA4F23E151A678A_gshared",
+      "ms_por_cuadro": 0.282,
+      "pct": 1.5
+    },
+    {
+      "nombre": "bindBuffer",
+      "ms_por_cuadro": 0.238,
+      "pct": 1.3
+    },
+    {
+      "nombre": "math::GammaToLinearSpaceApprox(math::_float4 const&)",
+      "ms_por_cuadro": 0.194,
+      "pct": 1
+    },
+    {
+      "nombre": "GfxDeviceGLES::DrawBuffersBatchMode(GfxBatchHeader const&)",
+      "ms_por_cuadro": 0.192,
+      "pct": 1
+    },
+    {
+      "nombre": "PrepareScriptableDrawRenderersJob(ScriptableRenderContextArg*)",
+      "ms_por_cuadro": 0.175,
+      "pct": 0.9
+    },
+    {
+      "nombre": "bindTexture",
+      "ms_por_cuadro": 0.172,
+      "pct": 0.9
+    },
+    {
+      "nombre": "vertexAttribPointer",
+      "ms_por_cuadro": 0.171,
+      "pct": 0.9
+    },
+    {
+      "nombre": "CamaraVisor_EnBulto_m0129A0BB2930DA256DD02CC29E647546D168F75A",
+      "ms_por_cuadro": 0.158,
+      "pct": 0.9
+    },
+    {
+      "nombre": "bufferData",
+      "ms_por_cuadro": 0.147,
+      "pct": 0.8
+    },
+    {
+      "nombre": "void PrepareValueParameters<FullParameterPreparer>(core::vector<GpuProgramParameters::ValueParameter, core::allocator<GpuProgramParameters::ValueParameter, 0ul>> const&, unsigned int, unsigned int, unsigned int, core::vector<unsigned char, core::allocator<unsigned char, 4ul>>&, FullParameterPreparer const&)",
+      "ms_por_cuadro": 0.146,
+      "pct": 0.8
+    },
+    {
+      "nombre": "void PrepareMeshRenderNodes<true>(RenderNodeQueuePrepareThreadContext&)",
+      "ms_por_cuadro": 0.142,
+      "pct": 0.8
+    },
+    {
+      "nombre": "dynCall_iii",
+      "ms_por_cuadro": 0.127,
+      "pct": 0.7
+    },
+    {
+      "nombre": "bindBufferBase",
+      "ms_por_cuadro": 0.124,
+      "pct": 0.7
+    },
+    {
+      "nombre": "RenderingCommandBuffer::ExecuteCommandBufferWithState(ShaderPassContext&, RenderNodeQueue&, RenderingCommandBufferState*, unsigned int, ComputeQueueType) const",
+      "ms_por_cuadro": 0.124,
+      "pct": 0.7
+    },
+    {
+      "nombre": "GfxDeviceGLES::BeforeDrawCall()",
+      "ms_por_cuadro": 0.123,
+      "pct": 0.7
+    },
+    {
+      "nombre": "ShaderLab::GetValueSimple(ShaderPropertySheet const*, ShaderPropertySheet const*, ShaderLab::FastPropertyName, ShaderPropertySheetType, void const*, ShaderPropertySheet const*)",
+      "ms_por_cuadro": 0.121,
+      "pct": 0.7
+    },
+    {
+      "nombre": "unsigned char const* GpuProgram::ApplyValueParameters<GLESGpuProgramApplier>(GLESGpuProgramApplier&, core::vector<GpuProgramParameters::ValueParameter, core::allocator<GpuProgramParameters::ValueParameter, 0ul>> const&, unsigned char const*)",
+      "ms_por_cuadro": 0.118,
+      "pct": 0.6
+    },
+    {
+      "nombre": "RenderObjectSorter::operator()(ScriptableLoopObjectData const&, ScriptableLoopObjectData const&) const",
+      "ms_por_cuadro": 0.115,
+      "pct": 0.6
+    },
+    {
+      "nombre": "drawBuffers",
+      "ms_por_cuadro": 0.113,
+      "pct": 0.6
+    },
+    {
+      "nombre": "createBuffer",
+      "ms_por_cuadro": 0.108,
+      "pct": 0.6
+    },
+    {
+      "nombre": "(idle)",
+      "ms_por_cuadro": 0.107,
+      "pct": 0.6
+    },
+    {
+      "nombre": "ScriptableRenderLoopJob(GfxDeviceAsyncCommand::ArgScratch*, GfxDeviceAsyncCommand::Arg const*)",
+      "ms_por_cuadro": 0.105,
+      "pct": 0.6
+    },
+    {
+      "nombre": "dlmalloc",
+      "ms_por_cuadro": 0.105,
+      "pct": 0.6
+    },
+    {
+      "nombre": "drawElements",
+      "ms_por_cuadro": 0.104,
+      "pct": 0.6
+    },
+    {
+      "nombre": "activeTexture",
+      "ms_por_cuadro": 0.103,
+      "pct": 0.6
+    },
+    {
+      "nombre": "_emscripten_memcpy_big",
+      "ms_por_cuadro": 0.099,
+      "pct": 0.5
+    },
+    {
+      "nombre": "UnityDefaultAllocator<LowLevelAllocator>::RegisterAllocation(void const*)",
+      "ms_por_cuadro": 0.098,
+      "pct": 0.5
+    },
+    {
+      "nombre": "bindFramebuffer",
+      "ms_por_cuadro": 0.098,
+      "pct": 0.5
+    },
+    {
+      "nombre": "GraphicsHelper::PrepareShaderParameterBuffer(core::vector<unsigned char, core::allocator<unsigned char, 4ul>>&, GpuProgram* (&) [7], GpuProgramParameters const* (&) [7], unsigned char const* (&) [7], ShaderLab::SubPrograms const&, DynamicBranchState::AutoReleaseState const&, ShaderPropertySheet const*, ShaderPropertySheet const*)",
+      "ms_por_cuadro": 0.097,
+      "pct": 0.5
+    },
+    {
+      "nombre": "ShaderLab::Pass::ApplyPass(unsigned int, ShaderPropertySheet const*, DynamicBranchState*, ShaderPassContext&, keywords::LocalKeywordState const&, Shader const*, int, int, ShaderLab::GrabPasses const*, ShaderLab::SubPrograms*, DeviceRenderStateBlock const*, ShaderLab::Pass const*, ShaderLab::Pass const*, bool)",
+      "ms_por_cuadro": 0.095,
+      "pct": 0.5
+    },
+    {
+      "nombre": "RenderPassContext::Execute(core::vector<std::__2::pair<ShaderLab::FastPropertyName, RenderTexture*>, core::allocator<std::__2::pair<ShaderLab::FastPropertyName, RenderTexture*>, 0ul>>*)",
+      "ms_por_cuadro": 0.094,
+      "pct": 0.5
+    },
+    {
+      "nombre": "invoke_iii",
+      "ms_por_cuadro": 0.094,
+      "pct": 0.5
+    },
+    {
+      "nombre": "SetVertexStateGLES(ShaderChannelMask, VertexChannelsInfo const&, GfxBuffer* const*, unsigned int const*, int, unsigned int, unsigned long)",
+      "ms_por_cuadro": 0.092,
+      "pct": 0.5
+    },
+    {
+      "nombre": "__memset",
+      "ms_por_cuadro": 0.088,
+      "pct": 0.5
+    },
+    {
+      "nombre": "useProgram",
+      "ms_por_cuadro": 0.087,
+      "pct": 0.5
+    },
+    {
+      "nombre": "bindBufferRange",
+      "ms_por_cuadro": 0.086,
+      "pct": 0.5
+    },
+    {
+      "nombre": "MemoryManager::TryDeallocateWithLabel(void*, MemLabelId, char const*, int)",
+      "ms_por_cuadro": 0.086,
+      "pct": 0.5
+    },
+    {
+      "nombre": "UnityDefaultAllocator<LowLevelAllocator>::Contains(void const*) const",
+      "ms_por_cuadro": 0.084,
+      "pct": 0.4
+    },
+    {
+      "nombre": "getParameter",
+      "ms_por_cuadro": 0.084,
+      "pct": 0.5
+    },
+    {
+      "nombre": "void GenerateParticleGeometry<(ParticleSystemRenderMode)2, false, false, (ParticleSystemRenderSpace)0>(float*, ParticleSystemTempData const&, ParticleSystemRendererData const&, ParticleSystemModules const&, ParticleSystemParticles const&, ParticleSystemParticlesTempData const&)",
+      "ms_por_cuadro": 0.082,
+      "pct": 0.4
+    },
+    {
+      "nombre": "BufferManagerGLES::AcquireBuffer(unsigned long, DataBufferGLES::BufferUsage, GfxBuffer*, bool)",
+      "ms_por_cuadro": 0.078,
+      "pct": 0.4
+    },
+    {
+      "nombre": "GfxDeviceGLES::DrawBufferRanges(GfxBuffer*, unsigned int, GfxBuffer* const*, unsigned int const*, int, DrawBuffersRange const*, int, VertexDeclaration*, unsigned long, int, BufferGLES*, unsigned int)",
+      "ms_por_cuadro": 0.076,
+      "pct": 0.4
+    },
+    {
+      "nombre": "bool BaseRenderer::CanFlattenSharedMaterialData<true>(BaseRenderer const&)",
+      "ms_por_cuadro": 0.076,
+      "pct": 0.4
+    },
+    {
+      "nombre": "void ParticleGeomInit<false>(ParticleSystemParticlesTempData const&, unsigned long, math::floatNx3&, ParticleSystemParticles const&, math::floatNx3&, math::floatNx3&, math::_float4 const&, float const*, math::_float4 const&, float const*, math::_float4 const&, math::_int4 const&, bool, math::_float4 const&)",
+      "ms_por_cuadro": 0.076,
+      "pct": 0.4
+    },
+    {
+      "nombre": "gles::SetTexture(DeviceStateGLES&, unsigned int, unsigned int, unsigned int, InlineSamplerType)",
+      "ms_por_cuadro": 0.075,
+      "pct": 0.4
+    },
+    {
+      "nombre": "dynCall_viii",
+      "ms_por_cuadro": 0.075,
+      "pct": 0.4
+    },
+    {
+      "nombre": "GfxDeviceGLES::SetTextures(ShaderType, int, GfxTextureParam const*)",
+      "ms_por_cuadro": 0.075,
+      "pct": 0.4
+    },
+    {
+      "nombre": "uniform4fv",
+      "ms_por_cuadro": 0.074,
+      "pct": 0.4
+    },
+    {
+      "nombre": "Dictionary_2_FindEntry_m0ACF21DFA8D126AC00883594A96B45296ABDE79A_gshared",
+      "ms_por_cuadro": 0.062,
+      "pct": 0.3
+    },
+    {
+      "nombre": "il2cpp_codegen_is_reference_or_contains_references(MethodInfo const*)",
+      "ms_por_cuadro": 0.062,
+      "pct": 0.3
+    },
+    {
+      "nombre": "dynCall_viiii",
+      "ms_por_cuadro": 0.061,
+      "pct": 0.3
+    },
+    {
+      "nombre": "ParticleSystem::UpdateBounds(ParticleSystem const&, ParticleSystemParticles&, ParticleSystemState&, ParticleSystemReadOnlyState const&)",
+      "ms_por_cuadro": 0.06,
+      "pct": 0.3
+    },
+    {
+      "nombre": "ApplyMaterialPass(SharedMaterialData const&, ShaderPassContext&, Shader const*, ShaderLab::Pass*, int, int, ShaderLab::GrabPasses const*, ShaderLab::SubPrograms*, DeviceRenderStateBlock const*, ShaderLab::Pass const*, ShaderLab::Pass const*)",
+      "ms_por_cuadro": 0.057,
+      "pct": 0.3
+    },
+    {
+      "nombre": "memcmp",
+      "ms_por_cuadro": 0.056,
+      "pct": 0.3
+    },
+    {
+      "nombre": "invalidateFramebuffer",
+      "ms_por_cuadro": 0.05,
+      "pct": 0.3
+    },
+    {
+      "nombre": "ShaderLab::TrySetupPropertyLocation(ShaderLab::shaderprops::PropertyLocationType, ShaderPropertySheet const*, ShaderLab::FastPropertyName, TextureDimension, bool, BuiltinShaderParamValues const*, ShaderLab::shaderprops::PropertyLocation&)",
+      "ms_por_cuadro": 0.049,
+      "pct": 0.3
+    },
+    {
+      "nombre": "void PrepareValueParameters<OverridingParameterPreparer>(core::vector<GpuProgramParameters::ValueParameter, core::allocator<GpuProgramParameters::ValueParameter, 0ul>> const&, unsigned int, unsigned int, unsigned int, core::vector<unsigned char, core::allocator<unsigned char, 4ul>>&, OverridingParameterPreparer const&)",
+      "ms_por_cuadro": 0.046,
+      "pct": 0.2
+    },
+    {
+      "nombre": "ParticleSystem::SimulateParticles(ParticleSystemUpdateData&, ParticleSystemParticles&, unsigned long, unsigned long&, float const&, unsigned long*)",
+      "ms_por_cuadro": 0.046,
+      "pct": 0.2
+    },
+    {
+      "nombre": "GfxDeviceGLES::SetShadersThreadable(GpuProgram**, GpuProgramParameters const**, unsigned char const* const*)",
+      "ms_por_cuadro": 0.045,
+      "pct": 0.2
+    },
+    {
+      "nombre": "List_1_Add_mD4F3498FBD3BDD3F03CBCFB38041CBAC9C28CAFC_gshared",
+      "ms_por_cuadro": 0.044,
+      "pct": 0.2
+    },
+    {
+      "nombre": "GlslGpuProgramGLES::ApplyGpuProgramGLES(unsigned int, GpuProgramParameters const&, unsigned char const*, bool)",
+      "ms_por_cuadro": 0.043,
+      "pct": 0.2
+    },
+    {
+      "nombre": "SharedObjectPool_1_Release_m72F3018B342EE4D7D64C1B37D7A5AF0142AEC5F8_gshared",
+      "ms_por_cuadro": 0.042,
+      "pct": 0.2
+    },
+    {
+      "nombre": "ApiGLES::SetVertexArrayAttrib(unsigned int, unsigned int, VertexFormat, unsigned char, unsigned int, void const*)",
+      "ms_por_cuadro": 0.042,
+      "pct": 0.2
+    },
+    {
+      "nombre": "invoke_viiii",
+      "ms_por_cuadro": 0.041,
+      "pct": 0.2
+    },
+    {
+      "nombre": "js-to-wasm:iiiiiiiiiiifii:i",
+      "ms_por_cuadro": 0.041,
+      "pct": 0.2
+    },
+    {
+      "nombre": "dlfree",
+      "ms_por_cuadro": 0.041,
+      "pct": 0.2
+    },
+    {
+      "nombre": "stackSave",
+      "ms_por_cuadro": 0.04,
+      "pct": 0.2
+    },
+    {
+      "nombre": "GLESRenderTargetSetup::operator<(GLESRenderTargetSetup const&) const",
+      "ms_por_cuadro": 0.04,
+      "pct": 0.2
+    },
+    {
+      "nombre": "MemoryManager::Allocate(unsigned long, unsigned long, MemLabelId, AllocateOptions, char const*, int)",
+      "ms_por_cuadro": 0.04,
+      "pct": 0.2
+    },
+    {
+      "nombre": "StackAllocator<(AllocatorMode)0>::Allocate(unsigned long, int)",
+      "ms_por_cuadro": 0.04,
+      "pct": 0.2
+    },
+    {
+      "nombre": "dynCall_vii",
+      "ms_por_cuadro": 0.04,
+      "pct": 0.2
+    },
+    {
+      "nombre": "BaseRenderer::FlattenBasicData(BaseRenderer const&, unsigned char, LODFadeValue, RenderNode&)",
+      "ms_por_cuadro": 0.039,
+      "pct": 0.2
+    }
+  ]
+}

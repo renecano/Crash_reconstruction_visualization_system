@@ -4,8 +4,8 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 
 ## Estado
 
-- **Fase actual:** U5 (calidad y rendimiento) en `feat/u4-ajustes` (PR #205, borrador). La medición completa terminó el 2026-11-11: **baja cumple; media no llega a 60 fps a 1080p con ninguna escala medida** (ver «Resultado de la medición»).
-- **Siguiente:** **detenido, en espera de René** («Media no cumple: cambia el modelo»): él elige entre las tres opciones de «Resultado de la medición». No fijar la escala de media ni tocar la meta sin su respuesta. Alta y ultra las mide su colaborador con el paquete `visor-escritorio-u5` (falta `eval/results/e6_unity_escritorio.json`). Después de U5: U6.
+- **Fase actual:** U5 (calidad y rendimiento) en `feat/u4-ajustes` (PR #205, borrador). René eligió (2026-11-11): **escala de dibujo automática en media** (entre 0.5 y 1, buscando 60 fps), **una sola ronda de costo fijo** (lluvia, piel de las personas, llamadas de dibujo) y volver a medir. **Criterio de cierre:** la escena de referencia de PLAN §7.8 (`lateral_interseccion`) cumple ≥ 60 fps en media, de día y de noche; las demás quedan con su cifra.
+- **Siguiente:** revisar el resultado de la cadena (`tools/unity/u5-cadena.ps1 -Estado`): si el criterio cumple, cerrar U5 (cifras en ADR 0115 y aquí, «Resumen para René» con las capturas de `docs/cesvi/u5/final/`), fusionar #205 y seguir con U6. Si no cumple, detenerse y avisar a René con las cifras: el piso de 0.5 no se baja. Alta y ultra las mide su colaborador con el paquete `visor-escritorio-u5` (falta `eval/results/e6_unity_escritorio.json`). **Antes de W8, avisar a René para cambiar el modelo.**
 - **Unity y Blender corren en segundo plano** desde el 2026-11-10: René reabrió la sesión con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`. Sigue la regla de un solo proceso pesado a la vez.
 - **Cómo se itera:** capturas del Editor en modo batch (`Capturas.Tomar`, unos 3 min). En esta sesión no hubo herramientas del MCP de Unity. Un build WebGL solo al cerrar cada punto.
 
@@ -466,6 +466,25 @@ La cadena terminó completa (150 mediciones, ninguna con error ni repetida; equi
 2. **Escala automática por escena**: el visor ajusta la escala de media entre un piso y un techo (por ejemplo, 0.4 a 0.7) para sostener 60 fps. AXA de día quedaría cerca de 0.6 y la lluvia cerca de 0.4. Cuesta: programar y probar el ajuste (que no oscile ni parpadee) y volver a medir las 10 escenas; la nitidez cambia de una escena a otra.
 3. **Bajar primero el costo fijo** de lluvia y terracería (geometría de la lluvia, piel de las personas, llamadas de dibujo) y después elegir escala: con F por debajo de unos 8 ms, la escala necesaria sube hacia 0.5. Cuesta: otra ronda de perfilado y optimización sin cambiar el aspecto, sin garantía de cuánto se gana; es lo único que mejora las escenas donde la escala ya no rinde. Se puede combinar con 1 o 2.
 
+### Escala automática y ronda de costo fijo (2026-11-11, tras la decisión de René)
+
+- **La escena de referencia de §7.8** («2 vehículos, 2 personas, intersección con árboles») es `lateral_interseccion`: la única canónica con intersección y árboles, con 2 vehículos; lleva 3 personas, una más que la descripción, así que no es más fácil que ella. Registrado en ADR 0115.
+- **Escala de dibujo automática en media** (`Croquis.Core.EscalaAutomatica`, probada con `dotnet test`): cada caso empieza arriba (en 1, o 15 % por encima de donde quedó el anterior) y baja de un salto a la escala que el cuadro medido indica, hasta sostener 60 fps; deja un margen y se asienta. **Nunca baja de 0.5 y dentro de un caso no sube**, así que no oscila. Ya asentada, solo baja si los fps caen durante 4 s seguidos; si bajar no mejora los fps (la causa no son los pixeles), deshace ese paso y deja de bajar. Al cargar otro caso, cambiar de cámara o de tamaño del lienzo, busca de nuevo. Con el nivel fijado en «media» también corre: se fija el nivel, no la escala. El panel de diagnóstico (F3) dice a qué escala va y si llegó.
+- **Si una escena baja de 24 fps** durante 5 s, la calidad automática pasa a baja, como antes; los cuadros en que la escala se está acomodando no cuentan.
+- **Ronda de costo fijo, una sola** (perfil de CPU con nombres de función, `eval/results/u5_ronda3_0_cpu_*.json`; cada cambio medido contra su versión anterior en la misma sesión, a escala 0.5, `eval/results/u5_ronda3_1_cambios.json`):
+
+  | Cambio (baja y media)                                               | Lluvia, noche | Terracería, día | Referencia, noche | Referencia, día |
+  | ------------------------------------------------------------------- | ------------- | --------------- | ----------------- | --------------- |
+  | Lluvia: malla movida en la GPU en vez de partículas (ms por cuadro) | −2.1          | −0.9            | sin lluvia        | sin lluvia      |
+  | Minimapa: cada vehículo en una sola malla (ms por cuadro)           | −1.1          | −1.2            | −2.3              | −2.4            |
+  | Llamadas de dibujo por cuadro, antes → después                      | 259 → 183     | 278 → 212       | 191 → 138         | 196 → 164       |
+  - **La lluvia** se ve igual (mismas gotas, mismos números y color); de paso ya no salen como «postes» las gotas pegadas a la cámara. Las salpicaduras siguen siendo partículas: medidas, no cuestan.
+  - **El minimapa** dibujaba cada vehículo pieza por pieza (de 30 a 60 llamadas por vehículo) para una figura de unos cuantos pixeles. Ahora es una malla por vehículo con el color de cada pieza, con luz difusa y un piso de claridad para que se distinga de noche. La sombra de contacto ya no queda horneada donde el vehículo empezó.
+  - **La piel de las personas** ya no cuesta: 0.01 ms por cuadro en el perfil (las poses fijas del paso 1 la resolvieron). No había nada que ganar ahí y no se tocó.
+  - **Lo que queda del minimapa** (su cámara, ya con pocas llamadas) son 1.1 a 1.3 ms por cuadro. No se siguió: era una sola ronda.
+
+- **Alta y ultra no cambian:** siguen con partículas, con el minimapa completo y sin escala automática (prueba `LasOptimizacionesDeU5SoloTocanBajaYMedia`).
+
 ### Para retomar
 
 La medición de U5 es una cadena reanudable que corre **fuera de la sesión de Claude Code**, como la tarea de Windows «CroquisU5» (René, 2026-11-11: que no se pierda nada si la sesión se cierra o se corta).
@@ -476,13 +495,14 @@ La medición de U5 es una cadena reanudable que corre **fuera de la sesión de C
 - **Dónde queda cada cosa:**
   - `eval/results/u5_estado.json`: el build (con su huella), la e2e, las capturas y cada medición (escena, nivel, escala y repetición), anotada en cuanto termina.
   - `apps/visor-unity/Logs/u5-cadena.log`: el registro (fuera de git).
-  - `eval/results/e6_unity_<configuración>.json`: el resultado de cada configuración, cuando están sus 30 mediciones.
-  - `docs/cesvi/u5/media/` y `docs/cesvi/u5/escalas/`: las capturas a 1080p.
-- **Qué hace, en orden:** paquetes de las escenas si faltan; build WebGL (no se rehace si `Build/web` existe y la huella de los fuentes es la anotada); e2e de cámaras; capturas de las 10 escenas en media y de tres escenas a escala 0.8, 0.7, 0.6 y 0.5; y la E6 (10 escenas × 3 repeticiones, un navegador nuevo por medición) de media a escala 1, baja y media a 0.7, 0.6 y 0.5, con 90 s de pausa entre configuraciones.
+  - `eval/results/e6_unity_<configuración>.json`: el resultado de cada configuración, cuando están sus 30 mediciones; el de `media` trae el criterio de cierre.
+  - `eval/results/u5_escalas_elegidas.json`: la escala que eligió cada escena (mediana de sus repeticiones).
+  - `docs/cesvi/u5/final/escala_1/` y `docs/cesvi/u5/final/escala_elegida/`: las 10 escenas a 1080p, a escala 1 y a la que eligió cada una, para juzgar la nitidez lado a lado.
+- **Qué hace, en orden:** paquetes de las escenas si faltan; build WebGL (no se rehace si `Build/web` existe y la huella de los fuentes es la anotada); e2e de cámaras; la E6 (10 escenas × 3 repeticiones, un navegador nuevo por medición) de `media` con su escala automática, de `media_escala_0.5` (el control: la misma medición del build anterior, para ver cuánto aportó la ronda) y de `baja`, con 90 s de pausa entre configuraciones; y al final las capturas. En `media` espera a que la escala lleve 8 s asentada antes de contar cuadros.
 - **Si cambian los fuentes de Unity,** la huella cambia: se compila otra vez y lo medido con el build anterior se archiva en `u5_estado.<huella>.json`. No se mezclan cifras de dos builds.
 - **Mientras corre:** la laptop no se suspende ni apaga la pantalla (se restaura sola al terminar o si el proceso muere), y cierra Edge antes de cada medición. Hay que dejarla conectada y con la tapa abierta. **Nada pesado a la vez** (ni otra medición, ni Playwright, ni Unity).
 - **El «antes»** de las comparaciones es la media anterior a la optimización: `D:\croquis-logs\var1\base` (fuera de git).
-- **Estado (2026-11-11):** terminada con el build `ff04482a02`; relanzarla no vuelve a medir nada mientras no cambien los fuentes de Unity. Para medir otra escala se agrega a `CONFIGURACIONES` en `eval/u5_cadena.mjs`: solo se mide lo nuevo. Al cerrar U5, `eval/results/e6_unity_web.json` se vuelve a medir con el perfil final.
+- **La medición a escalas fijas del build anterior** (`ff04482a02`, con la que René eligió) quedó archivada en `eval/results/u5_estado.ff04482a02.json`; `node eval/u5_opciones.mjs --estado eval/results/u5_estado.ff04482a02.json` rehace su resumen. Al cerrar U5, `eval/results/e6_unity_web.json` (la primera E6, de antes de optimizar) se queda como línea base.
 
 Las evaluaciones largas de W8 (E-R4 v4) se lanzarán igual: reanudables, con su archivo de estado, y como tarea de Windows.
 

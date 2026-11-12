@@ -1,0 +1,2146 @@
+{
+  "fecha": "2026-11-12T03:01:25.290Z",
+  "metodo": "Build WebGL local a 1920×1080, nivel media, cámara cinematográfica en bucle. Una sesión por escena; cada experimento cambia una cosa, espera 2 s, mide 4 s de cuadros del navegador y la restaura. «ahorro_ms» es contra el promedio de tres líneas base (inicio, mitad y fin). Sin vsync. Sirve para ordenar qué optimizar, no como cifra de E6.",
+  "maquina": {
+    "cpu": "Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz",
+    "ram_gb": 8
+  },
+  "energia": {
+    "cambiado": true,
+    "antes": {
+      "guid": "ded574b5-45a0-4f42-8737-46345c09c238",
+      "nombre": "mejor_rendimiento"
+    },
+    "durante": {
+      "guid": "ded574b5-45a0-4f42-8737-46345c09c238",
+      "nombre": "mejor_rendimiento"
+    }
+  },
+  "nivel": "media",
+  "extra": {
+    "escala": 0.5
+  },
+  "resultados": [
+    {
+      "caso": "nocturno_lluvia-noche",
+      "base": {
+        "fps": [
+          71.9,
+          76.6
+        ],
+        "ms_promedio": 13.48,
+        "cpu_ms": [
+          13.49,
+          12.59
+        ]
+      },
+      "estadisticas": {
+        "valido": true,
+        "llamadas": 258,
+        "lotes": 258,
+        "pasadas": 70,
+        "triangulos": 379858,
+        "vertices": 515604,
+        "ancho": 1920,
+        "alto": 1080,
+        "escala": 0.5,
+        "pedido": 3,
+        "tipo": "perfil",
+        "ms": 16269.800000000745
+      },
+      "luces": 5,
+      "inventario": {
+        "caso/cajas_semaforo": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "caso/evidencias_marcas": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "caso/evidencias_restos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 520,
+          "llamadas": 1,
+          "con_sombra": 1,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/evidencias_vidrios": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "caso/huellas_derrape": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 1568,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "caso/huellas_frenado": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 528,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "caso/mancha": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 20,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "caso/marcadores": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 154,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/placas_alto": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "caso/placas_blancas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 40,
+          "llamadas": 1,
+          "con_sombra": 1,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/postes_dispositivos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 24,
+          "llamadas": 1,
+          "con_sombra": 1,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/topes": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "charcos_de_luz": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 6,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "entorno_procedural/arboles_fresno": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 14,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/arboles_jacaranda": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 2,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/azoteas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 1930,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/cables": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 192,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/cerros": {
+          "objetos": 4,
+          "renderers": 4,
+          "triangulos": 3276,
+          "llamadas": 4,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 4
+        },
+        "entorno_procedural/copas_fresno": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 14,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/copas_jacaranda": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 2,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/cortinas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 24,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/descarapelados": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 72,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "entorno_procedural/escurrimientos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 212,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "entorno_procedural/herreria": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 3660,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/marcos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 2330,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/molduras": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 2300,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/muros_tabique": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 260,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/muros_yeso": {
+          "objetos": 12,
+          "renderers": 12,
+          "triangulos": 1070,
+          "llamadas": 12,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 12
+        },
+        "entorno_procedural/palmas": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "entorno_procedural/perfil_urbano": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 370,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/postes": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 176,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/postes_senal": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 96,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/reverso_senales": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 33,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/senales_alto": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 8,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/senales_ceda": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 3,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/senales_informativa": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 2,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/senales_velocidad": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 20,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/sombras_fresno": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 28,
+          "llamadas": 1,
+          "con_sombra": 1,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/sombras_jacaranda": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 4,
+          "llamadas": 1,
+          "con_sombra": 1,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/tinacos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 2940,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/toldos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 4,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/troncos_palma": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "entorno_procedural/varillas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 3576,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/ventanas_de_fondo": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 800,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/ventanas_encendidas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 312,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/vidrios": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 112,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "entorno_procedural/zaguanes": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 56,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/zoclos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 104,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "focos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 30,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "leyenda": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "lluvia": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 0,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "luminarias": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 300,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "luz_luminaria": {
+          "objetos": 3,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "salpicaduras": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 0,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "sombras_del_escenario": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 16448,
+          "llamadas": 1,
+          "con_sombra": 1,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "sonda_reflejos": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "suelo": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 18432,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "suelo_lejano": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 12600,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "terreno": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "vehiculo_veh-a": {
+          "objetos": 1,
+          "renderers": 32,
+          "triangulos": 52380,
+          "llamadas": 37,
+          "con_sombra": 15,
+          "transparentes": 8,
+          "materiales": 17
+        },
+        "vehiculo_veh-b": {
+          "objetos": 1,
+          "renderers": 31,
+          "triangulos": 135280,
+          "llamadas": 46,
+          "con_sombra": 25,
+          "transparentes": 6,
+          "materiales": 23
+        },
+        "via/banqueta": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 240,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "via/calzada": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 2,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "via/camellon": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 120,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "via/charcos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 196,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "via/grietas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 18,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "via/guarniciones": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 960,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "via/guarniciones_pintadas": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "via/manchas_de_aceite": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 14,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "via/parches": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 4,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "via/rayasamarillas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 480,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "via/rayasblancas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 608,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "via/rodadas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 480,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        }
+      },
+      "experimentos": []
+    },
+    {
+      "caso": "terraceria-dia",
+      "base": {
+        "fps": [
+          69.8,
+          69.4
+        ],
+        "ms_promedio": 14.37,
+        "cpu_ms": [
+          13.81,
+          13.82
+        ]
+      },
+      "estadisticas": {
+        "valido": true,
+        "llamadas": 275,
+        "lotes": 275,
+        "pasadas": 78,
+        "triangulos": 347517,
+        "vertices": 457733,
+        "ancho": 1920,
+        "alto": 1080,
+        "escala": 0.5,
+        "pedido": 3,
+        "tipo": "perfil",
+        "ms": 17129
+      },
+      "luces": 0,
+      "inventario": {
+        "caso/cajas_semaforo": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 40,
+          "llamadas": 1,
+          "con_sombra": 1,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/evidencias_marcas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 4,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "caso/evidencias_restos": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "caso/evidencias_vidrios": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "caso/huellas_derrape": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 840,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "caso/huellas_frenado": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 480,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "caso/luz_semaforo-1_Amarillo": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 36,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/luz_semaforo-1_Rojo": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 36,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/luz_semaforo-1_Verde": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 36,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/marcadores": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 154,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/placas_alto": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "caso/placas_blancas": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "caso/postes_dispositivos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 30,
+          "llamadas": 1,
+          "con_sombra": 1,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/topes": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "charcos_de_luz": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "entorno_procedural/arboles_fresno": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 16,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/arboles_jacaranda": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 2,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/azoteas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 1810,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/cables": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 192,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/cerros": {
+          "objetos": 2,
+          "renderers": 2,
+          "triangulos": 2916,
+          "llamadas": 2,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 2
+        },
+        "entorno_procedural/copas_fresno": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 16,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/copas_jacaranda": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 2,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/cortinas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 36,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/descarapelados": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 68,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "entorno_procedural/escurrimientos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 164,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "entorno_procedural/herreria": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 3330,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/marcos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 2530,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/molduras": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 2500,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/muros_tabique": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 240,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/muros_yeso": {
+          "objetos": 12,
+          "renderers": 12,
+          "triangulos": 1080,
+          "llamadas": 12,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 12
+        },
+        "entorno_procedural/palmas": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "entorno_procedural/perfil_urbano": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 310,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/postes": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 176,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/postes_senal": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 96,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/reverso_senales": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 33,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/senales_alto": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 8,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/senales_ceda": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 3,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/senales_informativa": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 2,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/senales_velocidad": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 20,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/sombras_fresno": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 32,
+          "llamadas": 1,
+          "con_sombra": 1,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/sombras_jacaranda": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 4,
+          "llamadas": 1,
+          "con_sombra": 1,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/tinacos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 1680,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/toldos": {
+          "objetos": 3,
+          "renderers": 3,
+          "triangulos": 20,
+          "llamadas": 3,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 3
+        },
+        "entorno_procedural/troncos_palma": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "entorno_procedural/varillas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 4106,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/ventanas_de_fondo": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 1064,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/ventanas_encendidas": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "entorno_procedural/vidrios": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 172,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "entorno_procedural/zaguanes": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 24,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/zoclos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 104,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "focos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 30,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "leyenda": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "lluvia": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 0,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "luminarias": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 300,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "salpicaduras": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 0,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "sombras_del_escenario": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 19464,
+          "llamadas": 1,
+          "con_sombra": 1,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "sonda_reflejos": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "suelo": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 18432,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "suelo_lejano": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 12600,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "terreno": {
+          "objetos": 1,
+          "renderers": 3,
+          "triangulos": 2752,
+          "llamadas": 3,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 3
+        },
+        "vehiculo_veh-a": {
+          "objetos": 1,
+          "renderers": 32,
+          "triangulos": 52380,
+          "llamadas": 37,
+          "con_sombra": 15,
+          "transparentes": 8,
+          "materiales": 16
+        },
+        "vehiculo_veh-b": {
+          "objetos": 1,
+          "renderers": 29,
+          "triangulos": 58878,
+          "llamadas": 34,
+          "con_sombra": 15,
+          "transparentes": 8,
+          "materiales": 15
+        },
+        "via/banqueta": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 2880,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "via/calzada": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 2048,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "via/camellon": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 960,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "via/grietas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 34,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "via/guarniciones": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 960,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "via/guarniciones_pintadas": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "via/manchas_de_aceite": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 18,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "via/parches": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 8,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "via/rayasamarillas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 480,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "via/rayasblancas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 1632,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "via/rodadas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 480,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        }
+      },
+      "experimentos": []
+    },
+    {
+      "caso": "lateral_interseccion-noche",
+      "base": {
+        "fps": [
+          63,
+          67.2
+        ],
+        "ms_promedio": 15.37,
+        "cpu_ms": [
+          15.18,
+          14.26
+        ]
+      },
+      "estadisticas": {
+        "valido": true,
+        "llamadas": 217,
+        "lotes": 217,
+        "pasadas": 66,
+        "triangulos": 259868,
+        "vertices": 332995,
+        "ancho": 1920,
+        "alto": 1080,
+        "escala": 0.5,
+        "pedido": 3,
+        "tipo": "perfil",
+        "ms": 17452.699999999255
+      },
+      "luces": 5,
+      "inventario": {
+        "caso/cajas_semaforo": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 80,
+          "llamadas": 1,
+          "con_sombra": 1,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/copas_colocadas": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "caso/crucetas_colocadas": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "caso/evidencias_marcas": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "caso/evidencias_restos": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "caso/evidencias_vidrios": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 1080,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/huellas_derrape": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 1144,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "caso/luz_semaforo-benito-juarez_Amarillo": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 36,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/luz_semaforo-benito-juarez_Rojo": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 36,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/luz_semaforo-benito-juarez_Verde": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 36,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/luz_semaforo-hidalgo_Amarillo": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 36,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/luz_semaforo-hidalgo_Rojo": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 36,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/luz_semaforo-hidalgo_Verde": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 36,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/marcadores": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 154,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/metal_colocado": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "caso/muros_colocados": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 10,
+          "llamadas": 1,
+          "con_sombra": 1,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/placas_alto": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "caso/placas_blancas": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "caso/placas_colocadas": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "caso/postes_colocados": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "caso/postes_dispositivos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 60,
+          "llamadas": 1,
+          "con_sombra": 1,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "caso/topes": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "caso/troncos_colocados": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "charcos_de_luz": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 12,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "entorno_procedural/arboles_fresno": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 8,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/arboles_jacaranda": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 18,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/azoteas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 3630,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/cables": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 448,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/cerros": {
+          "objetos": 5,
+          "renderers": 5,
+          "triangulos": 3708,
+          "llamadas": 5,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 5
+        },
+        "entorno_procedural/copas_fresno": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 8,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/copas_jacaranda": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 18,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/cortinas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 60,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/descarapelados": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 160,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "entorno_procedural/escurrimientos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 296,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "entorno_procedural/herreria": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 4040,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/marcos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 3420,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/molduras": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 3590,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/muros_tabique": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 470,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/muros_yeso": {
+          "objetos": 12,
+          "renderers": 12,
+          "triangulos": 1330,
+          "llamadas": 12,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 12
+        },
+        "entorno_procedural/palmas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 880,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/perfil_urbano": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 280,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/postes": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 352,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/postes_senal": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 192,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/reverso_senales": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 66,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/senales_alto": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 16,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/senales_ceda": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 6,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/senales_informativa": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 4,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/senales_velocidad": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 40,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/sombras_fresno": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 16,
+          "llamadas": 1,
+          "con_sombra": 1,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/sombras_jacaranda": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 36,
+          "llamadas": 1,
+          "con_sombra": 1,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/tinacos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 5040,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/toldos": {
+          "objetos": 4,
+          "renderers": 4,
+          "triangulos": 36,
+          "llamadas": 4,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 4
+        },
+        "entorno_procedural/troncos_palma": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 576,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/varillas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 8352,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/ventanas_de_fondo": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 1044,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/ventanas_encendidas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 360,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/vidrios": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 152,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "entorno_procedural/zaguanes": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 64,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "entorno_procedural/zoclos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 196,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "focos": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 60,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "leyenda": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "luminarias": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 600,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "luz_luminaria": {
+          "objetos": 3,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "sombras_del_escenario": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 30092,
+          "llamadas": 1,
+          "con_sombra": 1,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "sonda_reflejos": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "suelo": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 18432,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "suelo_lejano": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 12600,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "terreno": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "vehiculo_veh-a": {
+          "objetos": 1,
+          "renderers": 35,
+          "triangulos": 86994,
+          "llamadas": 45,
+          "con_sombra": 21,
+          "transparentes": 8,
+          "materiales": 21
+        },
+        "vehiculo_veh-b": {
+          "objetos": 1,
+          "renderers": 35,
+          "triangulos": 80344,
+          "llamadas": 40,
+          "con_sombra": 18,
+          "transparentes": 7,
+          "materiales": 20
+        },
+        "via/banqueta": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 456,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "via/calzada": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 4,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "via/grietas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 12,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "via/guarniciones": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 912,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 1
+        },
+        "via/guarniciones_pintadas": {
+          "objetos": 1,
+          "renderers": 0,
+          "triangulos": 0,
+          "llamadas": 0,
+          "con_sombra": 0,
+          "transparentes": 0,
+          "materiales": 0
+        },
+        "via/manchas_de_aceite": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 16,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "via/parches": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 4,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "via/rayasblancas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 30,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        },
+        "via/rodadas": {
+          "objetos": 1,
+          "renderers": 1,
+          "triangulos": 240,
+          "llamadas": 1,
+          "con_sombra": 0,
+          "transparentes": 1,
+          "materiales": 1
+        }
+      },
+      "experimentos": []
+    }
+  ]
+}

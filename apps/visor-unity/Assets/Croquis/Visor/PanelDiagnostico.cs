@@ -151,7 +151,12 @@ namespace Croquis.Visor
             }
 
             sb.Append($"fps: {promedio:F1}   cuadro: {mediana:F1} ms (p95 {p95:F1} ms)\n");
-            sb.Append($"Pantalla: {Screen.width}×{Screen.height}  dpr {Calidad.Dpr:F2}  escala {Calidad.EscalaDibujo:F2}\n");
+            var auto = Calidad.EscalaAuto;
+            var comoVa = auto == null
+                ? (Calidad.EscalaFija.HasValue ? " (fija)" : string.Empty)
+                : auto.EnElPisoSinLlegar ? " (automática: en el piso, sin llegar a 60 fps)"
+                : auto.Estable ? " (automática)" : " (automática: buscando)";
+            sb.Append($"Pantalla: {Screen.width}×{Screen.height}  dpr {Calidad.Dpr:F2}  escala {Calidad.EscalaDibujo:F2}{comoVa}\n");
             sb.Append($"Sombras {p.DistanciaSombras:F0} m ×{p.Cascadas}  MSAA {p.Msaa}×  luces {p.LucesAdicionales}  oclusión {p.Oclusion}\n");
             sb.Append("GPU: ").Append(SystemInfo.graphicsDeviceName).Append(" · ").Append(SystemInfo.graphicsDeviceType).Append('\n');
             if (llamadas.Valid)

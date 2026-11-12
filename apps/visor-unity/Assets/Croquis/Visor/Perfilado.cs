@@ -34,7 +34,8 @@ namespace Croquis.Visor
             var urp = Urp;
             if (j["escala"] != null && urp != null)
             {
-                urp.renderScale = (float)j["escala"];
+                // Una escala fija apaga la automática de media; `"escala": null` se la devuelve.
+                Calidad.FijarEscala(j["escala"].Type == JTokenType.Null ? (double?)null : (double)j["escala"]);
             }
 
             if (j["sombra_distancia"] != null && urp != null)
@@ -206,6 +207,21 @@ namespace Croquis.Visor
                 Camera.main.farClipPlane = (float)j["lejos"];
             }
 
+            if (j["lluvia_particulas"] != null)
+            {
+                // Baja y media: la lluvia de partículas de antes, para comparar con la malla.
+                EscenarioVista.LluviaDeParticulas?.Invoke((bool)j["lluvia_particulas"]);
+            }
+
+            if (j["minimapa_vehiculos_unidos"] != null)
+            {
+                var camaraVisor = UnityEngine.Object.FindFirstObjectByType<CamaraVisor>();
+                if (camaraVisor != null)
+                {
+                    camaraVisor.VehiculosUnidos = (bool)j["minimapa_vehiculos_unidos"];
+                }
+            }
+
             if (j["inventario"] != null && caso != null)
             {
                 return Inventario(caso);
@@ -214,6 +230,13 @@ namespace Croquis.Visor
             if (j["estadisticas"] != null)
             {
                 return Estadisticas();
+            }
+
+            if (j["tirones"] != null)
+            {
+                // La primera vez lo enciende; después devuelve los cuadros lentos desde la consulta anterior.
+                Tirones.Encender();
+                return Tirones.Informe();
             }
 
             return null;
@@ -419,6 +442,10 @@ namespace Croquis.Visor
                 { "ancho", Screen.width },
                 { "alto", Screen.height },
                 { "escala", Urp != null ? Urp.renderScale : 1f },
+                { "escala_automatica", Calidad.EscalaAuto != null },
+                { "escala_estable", Calidad.EscalaAuto == null || Calidad.EscalaAuto.Estable },
+                { "escala_cambios", Calidad.EscalaAuto?.Cambios ?? 0 },
+                { "escala_en_el_piso_sin_llegar", Calidad.EscalaAuto?.EnElPisoSinLlegar ?? false },
             };
         }
     }

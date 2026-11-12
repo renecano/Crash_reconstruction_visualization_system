@@ -231,6 +231,20 @@ namespace Croquis.Visor
                 }
             }
 
+            Camara.VehiculosDelMinimapa.Clear();
+            if (Calidad.Perfil.VehiculosUnidosEnMinimapa)
+            {
+                // Al final, con el vehículo ya armado: el minimapa lo dibuja con una sola malla.
+                foreach (var v in vehiculos)
+                {
+                    var unido = VehiculoEnMinimapa.Crear(v.transform);
+                    if (unido != null)
+                    {
+                        Camara.VehiculosDelMinimapa.Add(unido);
+                    }
+                }
+            }
+
             if (Calidad.Perfil.SombrasUnidas)
             {
                 // Lo fijo del escenario; lo del caso (evidencias, semáforos) cambia con el tiempo y se queda.
@@ -264,7 +278,13 @@ namespace Croquis.Visor
             var w = ancho / 2f + 0.3f;
             var l = largo / 2f + 0.3f;
             m.Tarjeta(new Vector3(-w, 0.035f, -l), new Vector3(w, 0.035f, -l), new Vector3(w, 0.035f, l), new Vector3(-w, 0.035f, l));
-            m.Poner(vehiculo, "sombra_contacto", Materiales.SombraContacto(noche ? 0.55f : 0.7f), false, false);
+            var sombra = m.Poner(vehiculo, "sombra_contacto", Materiales.SombraContacto(noche ? 0.55f : 0.7f), false, false);
+            if (Calidad.Perfil.MinimapaHorneado)
+            {
+                // En la capa de su vehículo: se mueve con él, y así no queda horneada en el fondo del
+                // minimapa donde el vehículo empezó.
+                sombra.layer = vehiculo.gameObject.layer;
+            }
         }
 
         /// <summary>El árbol más cercano a la acción, para la cámara de la acera.</summary>

@@ -13,10 +13,18 @@ namespace Croquis.Visor
     /// oclusión), que `ConstruirVisor` arma al preparar el proyecto; aquí se elige, se aplica el tope
     /// de dpr y, en automático, se baja un nivel si los fps no llegan a 24 durante 5 s. Lo que es del
     /// escenario (matas, luminarias con luz, focos de los faros, la sonda) se lee al armar el caso.
+    ///
+    /// En media, además, la escala de dibujo se ajusta sola (`EscalaAutomatica`): cada escena, a la
+    /// más alta con que el equipo sostiene 60 fps, entre el piso y el techo del perfil. Eso corre
+    /// también con el nivel fijado a mano: fijar «media» fija el nivel, no la escala.
     /// </summary>
     public static class Calidad
     {
         private static CalidadAutomatica automatica;
+        private static EscalaAutomatica escala;
+        private static NivelCalidad nivelDeLaEscala;
+        private static int anchoMedido;
+        private static int altoMedido;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
         [DllImport("__Internal")]
@@ -42,6 +50,12 @@ namespace Croquis.Visor
         public static string UltimaBajada { get; private set; }
 
         public static double EscalaDibujo { get; private set; } = 1.0;
+
+        /// <summary>Una escala puesta a mano (la medición, `depurar`): apaga la automática.</summary>
+        public static double? EscalaFija { get; private set; }
+
+        /// <summary>La escala automática del nivel actual, o null si el nivel no la lleva o está fijada.</summary>
+        public static EscalaAutomatica EscalaAuto => EscalaFija.HasValue ? null : escala;
 
         public static double Dpr => CroquisDpr();
 
@@ -73,10 +87,47 @@ namespace Croquis.Visor
             Cambio?.Invoke();
         }
 
-        /// <summary>Cada cuadro, en automático: baja un nivel si los últimos 5 s no llegaron a 24 fps.</summary>
+        /// <summary>Fija la escala de dibujo (null: la devuelve al nivel, automática si es media).</summary>
+        public static void FijarEscala(double? valor)
+        {
+            EscalaFija = valor;
+            escala?.Reiniciar();
+            PonerEscala();
+            Cambio?.Invoke();
+        }
+
+        /// <summary>
+        /// Cada cuadro: en media, la escala automática; y, con el nivel en automático, baja un nivel si
+        /// los últimos 5 s no llegaron a 24 fps.
+        /// </summary>
         public static void Cuadro(float dt)
         {
-            if (!Automatica || Forzado.HasValue)
+            if (Forzado.HasValue)
+            {
+                return;
+            }
+
+            var auto = EscalaAuto;
+            if (auto != null)
+            {
+                if (Screen.width != anchoMedido || Screen.height != altoMedido)
+                {
+                    // Otro tamaño de lienzo son otros pixeles: busca de nuevo.
+                    anchoMedido = Screen.width;
+                    altoMedido = Screen.height;
+                    auto.Reiniciar();
+                    PonerEscala();
+                }
+                else if (auto.Cuadro(dt))
+                {
+                    PonerEscala();
+                    // Mientras la escala se acomoda, esos cuadros no cuentan para bajar de nivel.
+                    automatica?.Reiniciar();
+                    Cambio?.Invoke();
+                }
+            }
+
+            if (!Automatica)
             {
                 return;
             }
@@ -94,10 +145,29 @@ namespace Croquis.Visor
 
         public static double UltimosFps => automatica?.UltimosFps ?? double.NaN;
 
-        /// <summary>La carga de un caso no cuenta como dibujo lento.</summary>
+        /// <summary>La carga de un caso no cuenta como dibujo lento, y la escala se busca de nuevo.</summary>
         public static void Reiniciar()
         {
             automatica?.Reiniciar();
+            if (EscalaAuto != null)
+            {
+                escala.Reiniciar();
+                PonerEscala();
+            }
+        }
+
+        /// <summary>
+        /// La escala de URP: el tope de dpr del nivel por la escala automática (o la fijada a mano).
+        /// </summary>
+        private static void PonerEscala()
+        {
+            var perfil = Perfil;
+            var tope = Calidades.EscalaDibujo(perfil, Dpr);
+            EscalaDibujo = EscalaFija ?? (escala != null ? tope * escala.Escala : tope);
+            if (QualitySettings.renderPipeline is UniversalRenderPipelineAsset urp && Application.isPlaying)
+            {
+                urp.renderScale = (float)EscalaDibujo;
+            }
         }
 
         /// <summary>
@@ -128,12 +198,21 @@ namespace Croquis.Visor
                 QualitySettings.SetQualityLevel(indice, true);
             }
 
-            EscalaDibujo = Calidades.EscalaDibujo(perfil, Dpr);
-            if (QualitySettings.renderPipeline is UniversalRenderPipelineAsset urp && Application.isPlaying)
+            if (!Calidades.EscalaEsAutomatica(perfil) || !Application.isPlaying)
             {
-                urp.renderScale = (float)EscalaDibujo;
+                // Las capturas del Editor no ajustan la escala: salen a la del tope de dpr.
+                escala = null;
+            }
+            else if (escala == null || nivelDeLaEscala != perfil.Nivel)
+            {
+                escala = new EscalaAutomatica(perfil.EscalaMinima, perfil.EscalaMaxima);
+                escala.Reiniciar();
+                nivelDeLaEscala = perfil.Nivel;
+                anchoMedido = Screen.width;
+                altoMedido = Screen.height;
             }
 
+            PonerEscala();
             QualitySettings.vSyncCount = 0;
             var volumen = UnityEngine.Object.FindFirstObjectByType<Volume>();
             if (volumen != null && volumen.profile != null && volumen.profile.TryGet<Bloom>(out var bloom))

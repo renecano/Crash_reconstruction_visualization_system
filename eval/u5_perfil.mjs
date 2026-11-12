@@ -130,6 +130,14 @@ const FIJOS = [
       escala: ESCALA,
     },
   ],
+  // La ronda de costo fijo (U5): cada cambio contra lo que había. El ahorro sale negativo: es lo
+  // que costaba de más la versión anterior.
+  ["lluvia_de_particulas", { lluvia_particulas: true }, { lluvia_particulas: false }],
+  [
+    "minimapa_vehiculos_por_piezas",
+    { minimapa_vehiculos_unidos: false },
+    { minimapa_vehiculos_unidos: true },
+  ],
   ["escala_0.75", { escala: 0.75 }, { escala: ESCALA }],
   ["escala_0.5", { escala: 0.5 }, { escala: ESCALA }],
   ["sin_minimapa", { minimapa: false }, { minimapa: true }],
@@ -365,8 +373,32 @@ async function perfilar(caso, navegador) {
   };
 }
 
+const salida = join(RAIZ, `eval/results/${NOMBRE}.json`);
 const energia = useBestPerformance();
 const resultados = [];
+function escribir() {
+  mkdirSync(join(RAIZ, "eval/results"), { recursive: true });
+  writeFileSync(
+    salida,
+    `${JSON.stringify(
+      {
+        fecha: new Date().toISOString(),
+        metodo:
+          `Build WebGL local a ${ANCHO}×${ALTO}, nivel ${NIVEL}, cámara cinematográfica en bucle. Una sesión por ` +
+          `escena; cada experimento cambia una cosa, espera 2 s, mide ${SEGUNDOS} s de cuadros del navegador y la ` +
+          "restaura. «ahorro_ms» es contra el promedio de tres líneas base (inicio, mitad y fin). Sin vsync. " +
+          "Sirve para ordenar qué optimizar, no como cifra de E6.",
+        maquina: { cpu: os.cpus()[0]?.model, ram_gb: Math.round(os.totalmem() / 2 ** 30) },
+        energia: energia.registro,
+        nivel: NIVEL,
+        extra: EXTRA ? JSON.parse(EXTRA) : null,
+        resultados,
+      },
+      null,
+      2,
+    )}\n`,
+  );
+}
 try {
   for (const caso of CASOS) {
     const navegador = await chromium.launch({
@@ -375,6 +407,8 @@ try {
     });
     try {
       resultados.push(await perfilar(caso, navegador));
+      // Cada escena se guarda al terminar: si la corrida se corta, lo medido no se pierde.
+      escribir();
     } finally {
       await navegador.close();
     }
@@ -383,28 +417,6 @@ try {
   servidor.close();
   energia.restore();
 }
-mkdirSync(join(RAIZ, "eval/results"), { recursive: true });
-const salida = join(RAIZ, `eval/results/${NOMBRE}.json`);
-writeFileSync(
-  salida,
-  `${JSON.stringify(
-    {
-      fecha: new Date().toISOString(),
-      metodo:
-        `Build WebGL local a ${ANCHO}×${ALTO}, nivel ${NIVEL}, cámara cinematográfica en bucle. Una sesión por ` +
-        `escena; cada experimento cambia una cosa, espera 2 s, mide ${SEGUNDOS} s de cuadros del navegador y la ` +
-        "restaura. «ahorro_ms» es contra el promedio de tres líneas base (inicio, mitad y fin). Sin vsync. " +
-        "Sirve para ordenar qué optimizar, no como cifra de E6.",
-      maquina: { cpu: os.cpus()[0]?.model, ram_gb: Math.round(os.totalmem() / 2 ** 30) },
-      energia: energia.registro,
-      nivel: NIVEL,
-      extra: EXTRA ? JSON.parse(EXTRA) : null,
-      resultados,
-    },
-    null,
-    2,
-  )}\n`,
-);
 console.log(`Escrito ${salida}`);
 for (const r of resultados) {
   console.log(

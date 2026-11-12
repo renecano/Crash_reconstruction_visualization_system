@@ -53,6 +53,7 @@ namespace Croquis.Visor
             EntornoVista.Construir(escenario, e.Entorno, e.Ambiente, e.Semilla);
             Luminarias(escenario, e.Luminarias, e.Ambiente, new Vector2((float)e.Centro.X, (float)e.Centro.Y));
             var p = e.Ambiente.Precipitacion;
+            LluviaDeParticulas = null;
             if (p.StartsWith("lluvia", StringComparison.Ordinal) || p == "granizo")
             {
                 Lluvia(escenario, e.Centro, p == "lluvia_ligera" ? 2500 : 6000, camara);
@@ -845,7 +846,45 @@ namespace Croquis.Visor
 
         // ---- Lluvia -----------------------------------------------------------------------------------
 
+        /// <summary>
+        /// Para medir (U5): cambia en vivo entre la lluvia en malla y la de partículas. Null si la
+        /// escena no tiene lluvia o el nivel solo lleva partículas.
+        /// </summary>
+        public static System.Action<bool> LluviaDeParticulas { get; private set; }
+
         private static void Lluvia(Transform padre, PuntoPlano centro, int gotas, Camera camara)
+        {
+            LluviaDeParticulas = null;
+            if (Calidad.Perfil.LluviaEnMalla)
+            {
+                // Baja y media: las gotas se mueven en la GPU (`LluviaEnMalla`). Las salpicaduras siguen
+                // siendo partículas: medidas, no cuestan.
+                var malla = LluviaEnMalla.Crear(padre, gotas, camara, CapaLluvia);
+                GameObject particulas = null;
+                LluviaDeParticulas = si =>
+                {
+                    if (si && particulas == null)
+                    {
+                        particulas = Gotas(padre, gotas, camara);
+                        particulas.name = "lluvia_particulas";
+                    }
+
+                    if (particulas != null)
+                    {
+                        particulas.SetActive(si);
+                    }
+
+                    malla.SetActive(!si);
+                };
+                Salpicaduras(padre, gotas, camara);
+                return;
+            }
+
+            Gotas(padre, gotas, camara);
+            Salpicaduras(padre, gotas, camara);
+        }
+
+        private static GameObject Gotas(Transform padre, int gotas, Camera camara)
         {
             var go = new GameObject("lluvia");
             go.layer = Calidad.Perfil.LluviaEnMinimapa ? CamaraVisor.CapaDinamica : CapaLluvia;
@@ -880,7 +919,7 @@ namespace Croquis.Visor
             r.sharedMaterial = Materiales.Lluvia;
             r.shadowCastingMode = ShadowCastingMode.Off;
             ps.Play();
-            Salpicaduras(padre, gotas, camara);
+            return go;
         }
 
         /// <summary>Las gotas al pegar en el piso: anillos chicos que se abren y se apagan.</summary>

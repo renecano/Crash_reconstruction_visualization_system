@@ -9,18 +9,24 @@
  * cumplen y cuál es la peor.
  *
  *   node eval/u5_opciones.mjs            # escribe eval/results/u5_opciones.json y una tabla
+ *   node eval/u5_opciones.mjs --estado eval/results/u5_estado.ff04482a02.json
+ *
+ * Resume la medición a escalas fijas del build `ff04482a02` (2026-11-11), con la que René eligió la
+ * escala automática; ese estado quedó archivado con la huella del build en el nombre.
  */
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { mediana } from "./lib/unity-e6.mjs";
 
 const RAIZ = resolve(import.meta.dirname, "..");
-const ESTADO = join(RAIZ, "eval/results/u5_estado.json");
+const iEstado = process.argv.indexOf("--estado");
+const ESTADO =
+  iEstado > 0 ? resolve(process.argv[iEstado + 1]) : join(RAIZ, "eval/results/u5_estado.json");
 const SALIDA = join(RAIZ, "eval/results/u5_opciones.json");
 const META = { media: 60, baja: 30 };
 const r = (v, d = 1) => (v === null ? null : Math.round(v * 10 ** d) / 10 ** d);
 
-if (!existsSync(ESTADO)) throw new Error("Falta eval/results/u5_estado.json: corre la cadena.");
+if (!existsSync(ESTADO)) throw new Error(`Falta ${ESTADO}: corre la cadena.`);
 const estado = JSON.parse(readFileSync(ESTADO, "utf8"));
 const buenas = estado.mediciones.filter((m) => !m.error);
 const casos = [...new Set(buenas.map((m) => m.caso))].sort();
@@ -103,7 +109,7 @@ for (const c of media) {
 
 const doc = {
   fecha: new Date().toISOString(),
-  fuente: "eval/results/u5_estado.json (cadena eval/u5_cadena.mjs)",
+  fuente: `${ESTADO.slice(RAIZ.length + 1).replaceAll("\\", "/")} (cadena eval/u5_cadena.mjs)`,
   build: estado.build ?? null,
   cadena_terminada: estado.terminada === true,
   metodo:

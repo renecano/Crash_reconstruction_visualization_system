@@ -161,6 +161,12 @@ namespace Croquis.Visor
         public static Material MinimapaFondo => Base("minimapa_fondo");
         public static Material Lluvia => Base("lluvia");
 
+        /// <summary>La lluvia de baja y media: el mismo color, con las gotas movidas en la GPU (`Croquis/Lluvia`).</summary>
+        public static Material LluviaMalla => Base("lluvia_malla");
+
+        /// <summary>El vehículo en el minimapa de baja y media: una malla con el color en los vértices.</summary>
+        public static Material MinimapaVehiculo => Base("minimapa_vehiculo");
+
         /// <summary>Una mancha redonda que se desvanece hacia la orilla (alfa), para sombras y halos.</summary>
         public static Texture2D Mancha(string nombre, float nucleo, float potencia, bool anillo = false)
         {

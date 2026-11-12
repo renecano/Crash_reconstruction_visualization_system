@@ -131,6 +131,8 @@ namespace Croquis.Visor
                 var modo = (string)j["modo"];
                 if (visor.Camara.Cambiar(modo))
                 {
+                    // Otra cámara es otra carga de dibujo: la escala automática se busca de nuevo.
+                    Calidad.Reiniciar();
                     Enviar("camara", new JObject { { "modo", modo } });
                 }
                 else
@@ -149,6 +151,7 @@ namespace Croquis.Visor
                 if (ahora != antes)
                 {
                     // «Ver todo» desde la cinematográfica, la acera o un conductor pasa a la órbita.
+                    Calidad.Reiniciar();
                     Enviar("camara", new JObject { { "modo", ahora } });
                 }
             });

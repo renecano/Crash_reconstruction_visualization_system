@@ -21,7 +21,7 @@
    - **Escritorio:** el mismo programa mide si se abre con `-caso` (`Medicion`); `tools/unity/medir-escritorio.ps1` corre un proceso por medición y escribe `e6_unity_escritorio.json`. `tools/unity/paquete-escritorio.ps1` arma el paquete que se corre en la computadora con tarjeta de video.
 8. **El escritorio se compila con Mono, no con IL2CPP.** IL2CPP necesita las herramientas de C++ de Visual Studio, que la laptop de desarrollo no tiene. Lo que se mide es el costo de la GPU, que no depende del backend de scripts.
 
-## Optimización de media (2026-11-11, en espera de la decisión de René)
+## Optimización de media (2026-11-11)
 
 La primera E6 dio media entre 13.9 y 23.6 fps a 1080p (`eval/results/e6_unity_web.json`), contra una meta de 60. René pidió optimizar primero sin cambiar el aspecto, midiendo cada cambio; después, escala de dibujo; y, si no alcanza, detenerse con cifras y opciones. Alta y ultra no se tocan.
 
@@ -74,6 +74,19 @@ En el paso 1 las personas salían gigantes por un error del horneado (malla sin 
 Con el paso 7, una repetición por escala (`eval/results/u5_paso7_wasm_anterior_escala_*.json`): a 0.6, 63.4 / 49.2 / 47.1 fps; a 0.35, 81.9 / 80.4 / 66.9. De ahí, F de 8.9, 8.0 y 11.7 ms y P de 19, 34 y 27 ms: 60 fps pedirían una escala de 0.64, 0.50 y 0.43.
 
 **E6 completa (2026-11-11, 10 escenas, 3 repeticiones, cadena reanudable `eval/u5_cadena.mjs`):** baja cumple en las 10 escenas (36.5 a 51.3 fps). Media a escala 1 da de 21.2 a 30.4 fps; a 0.7, de 35.8 a 51.9; a 0.6, de 43.8 a 59.6; a 0.5, de 50.3 a 70.3, con 3 de 10 escenas en 60 o más (`eval/results/e6_unity_media_escala_*.json`, `e6_unity_baja.json`). El ajuste por escena (`eval/results/u5_opciones.json`) da F de 5.5 a 13.7 ms y P de 20.1 a 40.2 ms; la escala estimada para 60 fps va de 0.60 (AXA de día) a 0.38 (lluvia de día). **Media no cumple con ninguna escala medida.** Las opciones (escala fija cercana a 0.4, escala automática por escena o bajar antes el costo fijo de lluvia y terracería) están en `docs/progress/U.md`; la decisión es de René y el perfil de media sigue con `DprMaximo = 1` hasta que elija.
+
+## Decisión de René y escala automática (2026-11-11)
+
+René revisó §7.8 de `PLAN.md`: la meta de media (≥ 60 fps a 1080p) es **en la escena de referencia**, no en las diez. Pidió escala de dibujo automática en media con piso de 0.5, una sola ronda de costo fijo y volver a medir; las demás escenas quedan registradas con su cifra.
+
+19. **La escena de referencia es `lateral_interseccion`** (día y noche). §7.8 la describe como «2 vehículos, 2 personas, intersección con árboles». Entre las canónicas medidas es la única con intersección y árboles; lleva 2 vehículos y 3 personas (una más que la descripción), así que no es más ligera que la escena descrita. Las otras: `axa` (vía recta, sin personas), `carambola` (3 vehículos), `nocturno_lluvia` y `terraceria` (vía recta). ADR 0026 había leído «todas las escenas canónicas» porque ninguna coincidía exactamente; con la aclaración de René manda §7.8 tal como está escrito.
+20. **Escala de dibujo automática en media** (`Croquis.Core.EscalaAutomatica`, pruebas en `EscalaAutomaticaTests`): entre 0.5 y 1 sobre el tope de dpr, buscando 60 fps. Empieza arriba, baja de un salto a la escala que el cuadro medido indica (apuntando a 64.8 fps), deja un margen de 6 % y se asienta. **No baja de 0.5 y dentro de un caso no sube**: con la pantalla a 60 Hz no se puede saber cuánta holgura hay sin probar una escala mayor, y probar se ve como un tirón. Ya asentada, solo baja con 4 s seguidos debajo de 59.1 fps; si bajar no mejora los fps, deshace el paso y deja de bajar. Busca de nuevo al cargar otro caso (desde 15 % arriba de donde quedó), al cambiar de cámara o de tamaño. Corre también con «media» fijada a mano. La regla de bajar a baja con menos de 24 fps durante 5 s sigue igual.
+21. **Lluvia como malla movida en la GPU** (`Croquis/Lluvia`, `LluviaEnMalla`), en baja y media: las mismas gotas y números que las partículas de alta y ultra, sin simularlas en la CPU. −2.1 ms por cuadro en lluvia de noche y −0.9 en terracería (`u5_ronda3_1_cambios.json`). Se ve igual; las gotas pegadas a la cámara ya no salen como postes.
+22. **Cada vehículo del minimapa en una sola malla** (`VehiculoEnMinimapa`, `Croquis/MinimapaVehiculo`), en baja y media: de 30 a 60 llamadas por vehículo a una. −1.1 a −2.4 ms por cuadro; de 191 a 138 llamadas en la referencia de noche. Con luz difusa y un piso de claridad: el vehículo se distingue de noche.
+23. **La piel de las personas ya no cuesta** (0.01 ms por cuadro con nombres de función, `u5_ronda3_0_cpu_*.json`): las poses fijas del paso 1 lo resolvieron. No se tocó.
+24. **Lo que queda del costo fijo** es el dibujo de Unity y URP (5 a 6.5 ms y 3 ms por cuadro en el perfil) y la cámara del minimapa (1.1 a 1.3 ms). La ronda era una; no se siguió.
+
+**Medir con la escala automática.** La E6 de media espera a que la escala lleve 8 s asentada antes de contar cuadros y anota la escala de cada medición. La cadena hace antes una pausa de 4 min para que el equipo se enfríe (la primera configuración salía castigada). El promedio de fps es la cifra que vale: el diagnóstico de tirones (`Tirones.cs`) mostró que, visto desde el visor, los cuadros son parejos (12 lentos de 586 en la referencia de noche, contra 65 de 580 en los tiempos de `requestAnimationFrame`), así que la mediana y el 1 % más lento del navegador exageran el vaivén.
 
 ## Consecuencias
 

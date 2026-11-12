@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 /**
- * La cadena de medición de U5 (ADR 0115), reanudable: build WebGL, e2e de cámaras, capturas de antes
- * y después y la E6 del visor Unity en media (a varias escalas de dibujo) y en baja.
+ * La cadena de medición de U5 (ADR 0115), reanudable: build WebGL, e2e de cámaras, la E6 del visor
+ * Unity en media (con su escala de dibujo automática y, de control, a escala fija) y en baja, y las
+ * capturas de cada escena a la escala que eligió, junto a las de escala 1.
+ *
+ * **Criterio de cierre de U5** (René, 2026-11-11; PLAN §7.8): la escena de referencia
+ * (`lateral_interseccion`) cumple ≥ 60 fps en media, de día y de noche. Las demás quedan con su cifra.
  *
  * **A prueba de cierres.** Cada paso que termina queda anotado de inmediato en
  * `eval/results/u5_estado.json` (qué build, qué capturas y qué escena, nivel, escala y repetición ya
@@ -20,6 +24,7 @@
  *   node eval/u5_cadena.mjs            # sigue con lo que falte
  *   node eval/u5_cadena.mjs --estado   # solo dice cómo va (no mide ni compila)
  *   node eval/u5_cadena.mjs --humo     # una medición corta de prueba, sin anotarla
+ *   node eval/u5_cadena.mjs --solo-build   # compila (si hace falta), lo anota y termina
  *
  * Al terminar cada configuración escribe `eval/results/e6_unity_<configuración>.json`.
  */
@@ -56,31 +61,44 @@ const SEGUNDOS = 12;
 const ANCHO = 1920;
 const ALTO = 1080;
 const PAUSA_ENTRE_CONFIGURACIONES_S = 90;
+/**
+ * Antes de la primera medición: el equipo viene de compilar o de otra corrida, y caliente mide
+ * varios fps menos (la primera configuración salía castigada frente a las demás).
+ */
+const PAUSA_INICIAL_S = 240;
 /** Presupuesto de PLAN §7.8 a 1080p. */
 const META = { baja: 30, media: 60 };
 
 /**
  * Lo que se mide, en este orden. `escala` es la escala de dibujo que se deja puesta tras cargar
- * (null: la del perfil del nivel). La escala de media no está decidida: se miden las candidatas
- * para que René elija.
+ * (null: la del perfil del nivel, que en media es la automática, entre 0.5 y 1).
+ * `media_escala_0.5` es el control: la misma medición del build anterior (`u5_estado.ff04482a02.json`),
+ * para ver cuánto aportó la ronda de costo fijo.
  */
 const CONFIGURACIONES = [
-  { nombre: "media_escala_1", nivel: "media", escala: null },
-  { nombre: "baja", nivel: "baja", escala: null },
-  { nombre: "media_escala_0.7", nivel: "media", escala: 0.7 },
-  { nombre: "media_escala_0.6", nivel: "media", escala: 0.6 },
+  { nombre: "media", nivel: "media", escala: null },
   { nombre: "media_escala_0.5", nivel: "media", escala: 0.5 },
+  { nombre: "baja", nivel: "baja", escala: null },
 ];
-/** Las tres escenas de las comparaciones de antes y después. */
-const ESCENAS_DE_MUESTRA = "axa-dia,lateral_interseccion-noche,nocturno_lluvia-noche";
-/** Las capturas a 1080p del build WebGL: las 10 escenas en media y las de muestra por escala. */
+/** La escena de referencia de PLAN §7.8 (2 vehículos, personas, intersección con árboles). */
+const REFERENCIA = ["lateral_interseccion-dia", "lateral_interseccion-noche"];
+/** La escala que eligió cada escena en media (mediana de sus repeticiones): la usan las capturas. */
+const ESCALAS_ELEGIDAS = "eval/results/u5_escalas_elegidas.json";
+/**
+ * Las capturas a 1080p del build WebGL, las 10 escenas dos veces: a escala 1 y a la escala que
+ * eligió cada una, para juzgar la nitidez lado a lado. Se toman después de medir.
+ */
 const CAPTURAS = [
-  { nombre: "media", salida: "docs/cesvi/u5/media", args: [] },
-  ...[0.8, 0.7, 0.6, 0.5].map((e) => ({
-    nombre: `escala_${e}`,
-    salida: `docs/cesvi/u5/escalas/escala_${e}`,
-    args: ["--solo", ESCENAS_DE_MUESTRA, "--depurar", JSON.stringify({ escala: e })],
-  })),
+  {
+    nombre: "escala_1",
+    salida: "docs/cesvi/u5/final/escala_1",
+    args: ["--depurar", JSON.stringify({ escala: 1 })],
+  },
+  {
+    nombre: "escala_elegida",
+    salida: "docs/cesvi/u5/final/escala_elegida",
+    args: ["--escalas", ESCALAS_ELEGIDAS],
+  },
 ];
 /** Lo que entra al build: si algo de aquí cambia, el build ya no es el mismo. */
 const FUENTES_DEL_BUILD = [
@@ -125,7 +143,7 @@ function guardarEstado(e) {
   renameSync(temporal, ESTADO);
 }
 
-/** La huella de los fuentes del build: lo que está en git, lo cambiado sin commit y lo nuevo. */
+/** La huella de los fuentes del build: el contenido de cada archivo, versionado o nuevo. */
 function huellaDelBuild() {
   for (const f of REGENERADOS) {
     try {
@@ -134,15 +152,25 @@ function huellaDelBuild() {
       // No estaba cambiado.
     }
   }
+  // Por contenido, no por lo que diga git: la huella es la misma antes y después de un commit.
+  const archivos = git(
+    "ls-files",
+    "--cached",
+    "--others",
+    "--exclude-standard",
+    "-z",
+    "--",
+    ...FUENTES_DEL_BUILD,
+  )
+    .split("\0")
+    .filter((f) => f && existsSync(join(RAIZ, f)))
+    .sort();
   const h = createHash("sha1");
-  h.update(git("ls-files", "-s", "--", ...FUENTES_DEL_BUILD));
-  h.update(git("diff", "HEAD", "--", ...FUENTES_DEL_BUILD));
-  for (const f of git("ls-files", "--others", "--exclude-standard", "--", ...FUENTES_DEL_BUILD)
-    .split("\n")
-    .filter(Boolean)
-    .sort()) {
+  for (const f of new Set(archivos)) {
     h.update(f);
-    h.update(readFileSync(join(RAIZ, f)));
+    h.update("\0");
+    // Sin retornos de carro: git puede cambiar los fines de línea de la copia de trabajo.
+    h.update(readFileSync(join(RAIZ, f)).filter((byte) => byte !== 13));
   }
   return h.digest("hex");
 }
@@ -167,12 +195,24 @@ function resumen(e) {
     `e2e de cámaras: ${e.e2e ? (e.e2e.ok ? "en verde" : "FALLÓ") : "pendiente"}`,
     `Capturas: ${CAPTURAS.map((c) => `${c.nombre} ${e.capturas?.[c.nombre] ? "✓" : "…"}`).join(", ")}`,
   ];
+  const una = (v) => (v === null || v === undefined ? "–" : Math.round(v * 10) / 10);
   for (const c of CONFIGURACIONES) {
     const hechas = e.mediciones.filter((m) => m.configuracion === c.nombre && !m.error);
     const total = casos.length * REPETICIONES;
     const r = resumenPorEscena(hechas, casos, META[c.nivel]);
-    const fps = casos.map((k) => r[k].fps_promedio_mediana ?? "–").join(" / ");
+    const fps = casos.map((k) => una(r[k].fps_promedio_mediana)).join(" / ");
     lineas.push(`${c.nombre}: ${hechas.length}/${total} mediciones · fps por escena: ${fps}`);
+    if (c.nombre !== "media") continue;
+    const escalas = casos.map((k) => r[k].escala_mediana ?? "–").join(" / ");
+    lineas.push(`media: escala elegida por escena: ${escalas}`);
+    const ref = REFERENCIA.map((k) => `${k} ${una(r[k]?.fps_promedio_mediana)} fps`).join(", ");
+    const completas = REFERENCIA.every((k) => r[k]?.repeticiones === REPETICIONES);
+    const cumple = REFERENCIA.every((k) => (r[k]?.fps_promedio_mediana ?? 0) >= META.media);
+    lineas.push(
+      `Criterio de cierre (referencia ≥ ${META.media} fps de día y de noche): ${
+        completas ? (cumple ? "CUMPLE" : "NO CUMPLE") : "pendiente"
+      } · ${ref}`,
+    );
   }
   const fallas = e.mediciones.filter((m) => m.error).length;
   if (fallas) lineas.push(`Mediciones con error (se reintentan al relanzar): ${fallas}`);
@@ -296,7 +336,25 @@ function e2eCamaras(e) {
   guardarEstado(e);
 }
 
+/** La escala que eligió cada escena en media: la mediana de sus repeticiones. Null si falta alguna. */
+function escalasElegidas(e) {
+  const casos = casosDisponibles();
+  const hechas = e.mediciones.filter((m) => m.configuracion === "media" && !m.error);
+  const r = resumenPorEscena(hechas, casos, META.media);
+  if (!casos.every((k) => r[k].repeticiones === REPETICIONES && r[k].escala_mediana > 0))
+    return null;
+  return Object.fromEntries(casos.map((k) => [k, r[k].escala_mediana]));
+}
+
 function capturas(e) {
+  const elegidas = escalasElegidas(e);
+  if (!elegidas) {
+    decir(
+      "Las capturas esperan a que media esté medida completa (de ahí sale la escala de cada escena).",
+    );
+    return;
+  }
+  writeFileSync(join(RAIZ, ESCALAS_ELEGIDAS), `${JSON.stringify(elegidas, null, 2)}\n`);
   for (const c of CAPTURAS) {
     if (e.capturas[c.nombre]?.huella === e.build.huella) continue;
     cerrarLoQueEstorba();
@@ -316,6 +374,8 @@ function capturas(e) {
         String(ANCHO),
         "--alto",
         String(ALTO),
+        "--calidad-webp",
+        "95",
         "--salida",
         c.salida,
         ...c.args,
@@ -337,6 +397,7 @@ async function medir(e) {
   const servidor = await servirBuild(BUILD, RAIZ);
   const energia = useBestPerformance();
   e.energia = energia.registro;
+  let enfriado = false;
   try {
     for (const c of CONFIGURACIONES) {
       const faltantes = [];
@@ -348,6 +409,11 @@ async function medir(e) {
       }
       if (!faltantes.length) continue;
       decir(`${c.nombre}: faltan ${faltantes.length} mediciones.`);
+      if (!enfriado) {
+        enfriado = true;
+        decir(`Pausa inicial de ${PAUSA_INICIAL_S} s para que el equipo se enfríe.`);
+        await dormir(PAUSA_INICIAL_S);
+      }
       e.condiciones ??= {};
       e.condiciones[c.nombre] ??= { inicio: condiciones() };
       if (e.condiciones[c.nombre].inicio.conectada === false) {
@@ -390,7 +456,12 @@ async function medir(e) {
           ...(r ?? { error }),
         });
         guardarEstado(e);
-        if (r) decir(`${c.nombre} ${caso} rep ${rep}: ${r.fps_promedio} fps`);
+        if (r) {
+          decir(
+            `${c.nombre} ${caso} rep ${rep}: ${r.fps_promedio} fps a escala ${r.escala_fin}` +
+              (r.escala_automatica ? ` (automática; empezó a medir en ${r.escala_inicio})` : ""),
+          );
+        }
       }
       e.condiciones[c.nombre].fin = condiciones();
       guardarEstado(e);
@@ -425,10 +496,21 @@ function escribirResultado(e, c, casos) {
       `en orden alterno; cámara cinematográfica, reproducción en bucle; 3 s de calentamiento y ${SEGUNDOS} s de ` +
       "tiempos de cuadro del navegador (requestAnimationFrame). Se reporta la mediana del promedio de fps. " +
       "Nivel fijo, sin el automático. vsync desactivado (--disable-gpu-vsync --disable-frame-rate-limit) para medir " +
-      "capacidad. Medido con la cadena reanudable eval/u5_cadena.mjs: las mediciones pueden venir de más de una corrida.",
+      "capacidad. Medido con la cadena reanudable eval/u5_cadena.mjs: las mediciones pueden venir de más de una corrida. " +
+      "El promedio de fps es la cifra que vale: los tiempos entre avisos de cuadro del navegador traen un vaivén " +
+      "que no está en el dibujo (visto desde el visor, los cuadros son parejos), así que la mediana de un cuadro " +
+      "y el 1 % más lento exageran hacia arriba y hacia abajo." +
+      (c.nombre === "media"
+        ? " La escala de dibujo es la automática de media (entre 0.5 y 1, buscando 60 fps): antes de contar cuadros " +
+          "se espera una vuelta de la reproducción y a que la escala se asiente; «escala_fin» es la de cada medición."
+        : ""),
     nivel: c.nivel,
-    escala_de_dibujo: c.escala ?? "la del perfil del nivel",
-    meta: "PLAN §7.8: media ≥ 60 fps y baja ≥ 30 fps a 1080p; alta y ultra en la laptop solo como información.",
+    escala_de_dibujo:
+      c.escala ?? (c.nombre === "media" ? "automática, entre 0.5 y 1" : "la del perfil del nivel"),
+    meta:
+      "PLAN §7.8: media ≥ 60 fps y baja ≥ 30 fps a 1080p en la escena de referencia (lateral_interseccion: " +
+      "2 vehículos, personas, intersección con árboles); las demás escenas quedan con su cifra.",
+    escena_de_referencia: REFERENCIA,
     maquina: {
       cpu: os.cpus()[0]?.model,
       nucleos: os.cpus().length,
@@ -444,6 +526,13 @@ function escribirResultado(e, c, casos) {
     },
     resumen: { [c.nivel]: resumenPorEscena(buenas, casos, META[c.nivel]) },
     corridas,
+  };
+  const deReferencia = doc.resumen[c.nivel];
+  doc.criterio_de_cierre = {
+    escenas: REFERENCIA,
+    fps: REFERENCIA.map((k) => deReferencia[k]?.fps_promedio_mediana ?? null),
+    meta_fps: META[c.nivel],
+    cumple: REFERENCIA.every((k) => (deReferencia[k]?.fps_promedio_mediana ?? 0) >= META[c.nivel]),
   };
   const salida = join(RAIZ, `eval/results/e6_unity_${c.nombre}.json`);
   writeFileSync(salida, `${JSON.stringify(doc, null, 2)}\n`);
@@ -461,14 +550,17 @@ if (tiene("humo")) {
   // Una medición corta con el build que haya, sin anotarla: para probar que todo conecta.
   const servidor = await servirBuild(BUILD, RAIZ);
   try {
-    const caso = casosDisponibles()[0];
+    // `--humo <escena>`: por omisión, la de referencia de noche, en media con su escala automática.
+    const pedido = process.argv[process.argv.indexOf("--humo") + 1];
+    const caso = casosDisponibles().includes(pedido) ? pedido : REFERENCIA[1];
     const r = await medirEscena({
       chromium,
       url: servidor.url,
       paquete: readFileSync(join(CASOS_DIR, `${caso}.json`), "utf8"),
       nivel: "media",
-      depurar: { escala: 0.6 },
-      segundos: 3,
+      segundos: 6,
+      sincronizada: tiene("sincronizada"),
+      depurar: tiene("escala-fija") ? { escala: 0.5 } : null,
     });
     console.log(`humo ${caso}:`, JSON.stringify(r));
   } finally {
@@ -503,18 +595,24 @@ try {
   decir(`Cadena de U5, PID ${process.pid}. Estado al empezar:\n${resumen(estado)}`);
   paquetes();
   estado = construir(estado, huellaDelBuild());
+  if (tiene("solo-build")) {
+    decir("Build listo y anotado; la medición no se lanzó (--solo-build).");
+    process.exit(0);
+  }
   e2eCamaras(estado);
-  capturas(estado);
   await medir(estado);
+  capturas(estado);
   const casos = casosDisponibles();
   for (const c of CONFIGURACIONES) escribirResultado(estado, c, casos);
-  estado.terminada = CONFIGURACIONES.every((c) =>
-    casos.every((k) =>
-      Array.from({ length: REPETICIONES }, (_, i) => i + 1).every((rep) =>
-        medida(estado, c.nombre, k, rep),
+  estado.terminada =
+    CAPTURAS.every((c) => estado.capturas[c.nombre]?.huella === estado.build.huella) &&
+    CONFIGURACIONES.every((c) =>
+      casos.every((k) =>
+        Array.from({ length: REPETICIONES }, (_, i) => i + 1).every((rep) =>
+          medida(estado, c.nombre, k, rep),
+        ),
       ),
-    ),
-  );
+    );
   guardarEstado(estado);
   decir(`Fin de la cadena.\n${resumen(estado)}`);
   process.exit(estado.terminada ? 0 : 3);

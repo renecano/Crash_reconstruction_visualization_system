@@ -73,6 +73,40 @@ namespace Croquis.Visor
         private const float AlturaMinimapa = 60f;
         private const int CapasDelMinimapa = (1 << EscenarioVista.CapaVehiculos) | (1 << CapaDinamica) | (1 << CapaMinimapa);
 
+        /// <summary>
+        /// Los vehículos como los dibuja el minimapa de baja y media: una malla por vehículo
+        /// (`VehiculoEnMinimapa`), en la capa del minimapa. Con ellos, el minimapa no dibuja las piezas.
+        /// </summary>
+        public List<GameObject> VehiculosDelMinimapa { get; } = new List<GameObject>();
+
+        private bool vehiculosUnidos = true;
+
+        /// <summary>Para medir (U5): con false, el minimapa vuelve a dibujar los vehículos pieza por pieza.</summary>
+        public bool VehiculosUnidos
+        {
+            get => vehiculosUnidos;
+            set
+            {
+                vehiculosUnidos = value;
+                foreach (var v in VehiculosDelMinimapa)
+                {
+                    if (v != null)
+                    {
+                        v.SetActive(value);
+                    }
+                }
+
+                if (minimapa != null && fondo != null && fondo.activeSelf)
+                {
+                    minimapa.cullingMask = CapasPorCuadro;
+                }
+            }
+        }
+
+        /// <summary>Lo que el minimapa dibuja en cada cuadro sobre su fondo horneado.</summary>
+        private int CapasPorCuadro =>
+            vehiculosUnidos && VehiculosDelMinimapa.Count > 0 ? CapasDelMinimapa & ~(1 << EscenarioVista.CapaVehiculos) : CapasDelMinimapa;
+
         private RenderTexture fondoMinimapa;
         private GameObject fondo;
         private int hornear;
@@ -450,7 +484,7 @@ namespace Croquis.Visor
             minimapa.targetTexture = null;
             minimapa.rect = rect;
             minimapa.enabled = visible;
-            minimapa.cullingMask = CapasDelMinimapa;
+            minimapa.cullingMask = CapasPorCuadro;
             // Más cerca del piso: la niebla global casi no tiñe lo que se dibuja por cuadro.
             minimapa.transform.position = new Vector3(p.x, AlturaMinimapa, p.z);
             foreach (var l in faros)

@@ -90,6 +90,14 @@ export function condiciones() {
  * fijo (sin automático), cámara cinematográfica y reproducción en bucle; 3 s de calentamiento y
  * `segundos` de tiempos de cuadro del navegador. `depurar` son interruptores que se dejan puestos
  * después de cargar (la escala de dibujo, por ejemplo); `antes`, antes de cargar.
+ *
+ * Con la escala automática de media (sin una escala fija en `depurar`), antes de contar cuadros se
+ * espera a que el visor avise que ya encontró su escala y a que la reproducción dé al menos una
+ * vuelta (`esperaEscalaS`); la escala con que empezó y terminó la medición queda en el resultado.
+ *
+ * Para diagnosticar: `sincronizada` (con la sincronía vertical de la pantalla), `sinReproducir` (el
+ * caso en pausa), `conTiempos` (devuelve cada tiempo entre cuadros) y `conTirones` (lo que el visor
+ * midió por dentro, `Tirones.cs`: cuánto duró cada cuadro y en qué tramo se fue).
  */
 export async function medirEscena({
   chromium,
@@ -101,10 +109,20 @@ export async function medirEscena({
   ancho = 1920,
   alto = 1080,
   segundos = 12,
+  esperaEscalaS = 8,
+  sincronizada = false,
+  conTiempos = false,
+  conTirones = false,
+  sinReproducir = false,
 }) {
+  // `sincronizada`: con la sincronía vertical de la pantalla, como lo ve el perito (no mide
+  // capacidad: los fps tienen el tope de la pantalla).
+  const banderas = sincronizada
+    ? MEASURE_ARGS.filter((a) => a !== "--disable-gpu-vsync" && a !== "--disable-frame-rate-limit")
+    : MEASURE_ARGS;
   const navegador = await chromium.launch({
     headless: false,
-    args: [...MEASURE_ARGS, "--use-angle=d3d11", `--window-size=${ancho},${alto + 140}`],
+    args: [...banderas, "--use-angle=d3d11", `--window-size=${ancho},${alto + 140}`],
   });
   try {
     const pagina = await navegador.newPage({ viewport: { width: ancho, height: alto } });
@@ -128,6 +146,23 @@ export async function medirEscena({
         ([m, d]) => window.unityInstance.SendMessage("VisorPuente", m, d),
         [metodo, JSON.stringify(datos)],
       );
+    let pedidos = 0;
+    /** Los contadores del visor (`depurar` `estadisticas`): entre ellos, la escala de dibujo. */
+    const estadisticas = (datos = { estadisticas: true }) => preguntar(datos);
+    const preguntar = async (datos) => {
+      const pedido = ++pedidos;
+      await enviar("depurar", { ...datos, pedido });
+      const fin = Date.now() + 20_000;
+      while (Date.now() < fin) {
+        const m = await pagina.evaluate(
+          (n) => window.croquisVisorRecibidos.find((x) => x.tipo === "perfil" && x.pedido === n),
+          pedido,
+        );
+        if (m) return m;
+        await pagina.waitForTimeout(100);
+      }
+      throw new Error("El visor no contestó la consulta");
+    };
 
     await pagina.goto(url);
     await espera("listo", 300_000);
@@ -146,8 +181,26 @@ export async function medirEscena({
     if (depurar) await enviar("depurar", depurar);
     await enviar("camara", { modo: "cinematica" });
     await enviar("depurar", { bucle: true });
-    await enviar("reproducir", {});
+    if (!sinReproducir) await enviar("reproducir", {});
+    let antesDeMedir = await estadisticas();
+    let esperaS = 0;
+    if (antesDeMedir.escala_automatica) {
+      // La escala automática: se espera a que esté asentada y lleve `esperaEscalaS` sin cambiar (la
+      // reproducción da al menos una vuelta, con su impacto), con un tope de un minuto.
+      const t1 = Date.now();
+      for (;;) {
+        const previa = antesDeMedir;
+        await pagina.waitForTimeout(esperaEscalaS * 1000);
+        antesDeMedir = await estadisticas();
+        const quieta =
+          antesDeMedir.escala_estable && antesDeMedir.escala_cambios === previa.escala_cambios;
+        if (quieta || Date.now() - t1 > 60_000) break;
+      }
+      esperaS = (Date.now() - t1) / 1000;
+    }
     await pagina.waitForTimeout(3000);
+    // El diagnóstico de tirones (`Tirones.cs`): se enciende aquí y se consulta al terminar.
+    if (conTirones) await preguntar({ tirones: true });
     const cuadros = await pagina.evaluate(
       (ms) =>
         new Promise((ok) => {
@@ -164,17 +217,29 @@ export async function medirEscena({
         }),
       segundos * 1000,
     );
+    const tirones = conTirones ? await preguntar({ tirones: true }) : null;
+    const despuesDeMedir = await estadisticas();
     const orden = [...cuadros].sort((a, b) => a - b);
     const total = cuadros.reduce((s, x) => s + x, 0);
     return {
       gpu,
       carga_s: round(cargaS, 1),
+      escala_automatica: antesDeMedir.escala_automatica === true,
+      escala_inicio: round(antesDeMedir.escala, 3),
+      escala_fin: round(despuesDeMedir.escala, 3),
+      escala_estable_al_medir: antesDeMedir.escala_estable !== false,
+      escala_cambios_al_medir:
+        (despuesDeMedir.escala_cambios ?? 0) - (antesDeMedir.escala_cambios ?? 0),
+      escala_en_el_piso_sin_llegar: despuesDeMedir.escala_en_el_piso_sin_llegar === true,
+      espera_escala_s: round(esperaS, 1),
       cuadros: cuadros.length,
       fps_promedio: round((cuadros.length * 1000) / total, 1),
       fps_mediana: round(1000 / percentile(orden, 50), 1),
       fps_1pct_bajo: round(1000 / percentile(orden, 99), 1),
       ms_p95: round(percentile(orden, 95), 1),
       cuadros_mas_50ms: cuadros.filter((x) => x > 50).length,
+      ...(conTiempos ? { tiempos: cuadros } : {}),
+      ...(tirones ? { tirones } : {}),
       errores,
     };
   } finally {
@@ -197,6 +262,7 @@ export function resumenPorEscena(corridas, casos, meta) {
     const promedios = rs.map((c) => c.fps_promedio);
     out[caso] = {
       fps_promedio_mediana: mediana(promedios),
+      escala_mediana: mediana(rs.map((c) => c.escala_fin)),
       fps_mediana_mediana: mediana(rs.map((c) => c.fps_mediana)),
       fps_1pct_bajo_mediana: mediana(rs.map((c) => c.fps_1pct_bajo)),
       carga_s_mediana: mediana(rs.map((c) => c.carga_s)),

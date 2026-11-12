@@ -108,6 +108,7 @@ namespace Croquis.Core.Tests
             {
                 var p = Calidades.Perfil(n);
                 Assert.True(p.SueloEnUnaPasada && p.SombrasUnidas && p.MinimapaHorneado);
+                Assert.True(p.LluviaEnMalla && p.VehiculosUnidosEnMinimapa);
                 Assert.False(p.LluviaEnMinimapa || p.SombraDeLuna);
                 Assert.Equal(1, p.Cascadas);
                 Assert.Equal(1, p.Msaa);
@@ -118,6 +119,7 @@ namespace Croquis.Core.Tests
             {
                 var p = Calidades.Perfil(n);
                 Assert.False(p.SueloEnUnaPasada || p.SombrasUnidas || p.MinimapaHorneado || p.Fxaa);
+                Assert.False(p.LluviaEnMalla || p.VehiculosUnidosEnMinimapa);
                 Assert.True(p.LluviaEnMinimapa && p.SombraDeLuna);
                 Assert.Equal(4, p.Cascadas);
                 Assert.Equal(4, p.Msaa);

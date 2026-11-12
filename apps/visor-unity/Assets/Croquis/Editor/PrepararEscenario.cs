@@ -185,6 +185,7 @@ namespace Croquis.EditorTools
 
             // El fondo horneado del minimapa (U5): como material guardado, su shader entra al build.
             Guardar(new Material(Shader.Find("Croquis/MinimapaFondo")), "minimapa_fondo");
+            Guardar(new Material(Shader.Find("Croquis/MinimapaVehiculo")), "minimapa_vehiculo");
 
             // Rayas y huellas: geometría pegada al piso, con transparencia para su desgaste.
             var calca = new Material(Lit);
@@ -202,6 +203,12 @@ namespace Croquis.EditorTools
             lluvia.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
             lluvia.renderQueue = (int)RenderQueue.Transparent;
             Guardar(lluvia, "lluvia");
+
+            // La lluvia de baja y media (U5): las mismas gotas y el mismo color, movidas en la GPU.
+            var lluviaMalla = new Material(Shader.Find("Croquis/Lluvia"));
+            lluviaMalla.SetColor("_BaseColor", lluvia.GetColor("_BaseColor"));
+            lluviaMalla.renderQueue = (int)RenderQueue.Transparent;
+            Guardar(lluviaMalla, "lluvia_malla");
 
             // Las matas de pasto: recorte por alfa, dos caras y sin mapa de normales. Va como asset
             // porque esa combinación no la usa ningún otro material: copiando la tarjeta de árbol y
