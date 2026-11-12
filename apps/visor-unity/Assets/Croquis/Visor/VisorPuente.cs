@@ -84,9 +84,16 @@ namespace Croquis.Visor
         {
             try
             {
-                var json = (string)JObject.Parse(texto)["json"];
+                // El sobre y el paquete se leen una vez cada uno (U6: antes eran tres lecturas completas).
+                var reloj = System.Diagnostics.Stopwatch.StartNew();
+                var json = Paquete.PropiedadDeTexto(texto, "json");
+                var sobre = reloj.Elapsed.TotalMilliseconds;
                 var caso = Paquete.Leer(json);
+                visor.LecturaDelPaquete = (sobre, reloj.Elapsed.TotalMilliseconds - sobre, json?.Length ?? 0);
                 await visor.CargarAsync(caso);
+                // Cuánto pasó desde que llegó el mensaje hasta avisar «cargado» (incluye el regreso del
+                // await, que en Unity es en el cuadro siguiente: ahí se compilan los shaders de la escena).
+                visor.PasosDeCarga["hasta_cargado"] = Math.Round(reloj.Elapsed.TotalMilliseconds, 1);
                 Enviar("cargado", new JObject { { "escena_id", caso.Resultado.EscenaId } });
             }
             catch (FormatException e)

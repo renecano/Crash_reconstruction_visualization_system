@@ -62,6 +62,9 @@ namespace Croquis.Visor
 
         private System.Diagnostics.Stopwatch reloj;
 
+        /// <summary>Lo que tardó leer el último mensaje `cargarCaso` (ms) y cuánto medía el paquete.</summary>
+        public (double Sobre, double Paquete, int Caracteres) LecturaDelPaquete { get; set; }
+
         private void Paso(string nombre)
         {
             PasosDeCarga[nombre] = Math.Round(reloj.Elapsed.TotalMilliseconds, 1);
@@ -70,6 +73,9 @@ namespace Croquis.Visor
         public async Awaitable CargarAsync(Caso3D caso)
         {
             PasosDeCarga.Clear();
+            PasosDeCarga["leer_sobre"] = Math.Round(LecturaDelPaquete.Sobre, 1);
+            PasosDeCarga["leer_paquete"] = Math.Round(LecturaDelPaquete.Paquete, 1);
+            PasosDeCarga["caracteres_paquete"] = LecturaDelPaquete.Caracteres;
             reloj = System.Diagnostics.Stopwatch.StartNew();
             Reproduciendo = false;
             Cargado = false;
@@ -298,6 +304,11 @@ namespace Croquis.Visor
             Cargado = true;
             Calidad.Reiniciar();
             Paso("total");
+            // El primer cuadro con la escena completa: ahí se compilan sus shaders y se suben sus texturas.
+            await Awaitable.NextFrameAsync();
+            Paso("primer_cuadro");
+            await Awaitable.NextFrameAsync();
+            Paso("segundo_cuadro");
             Debug.Log("[carga] " + string.Join(", ", PasosDeCarga.Select(kv => kv.Key + " " + kv.Value + " ms")));
         }
 

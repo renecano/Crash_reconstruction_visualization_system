@@ -9,6 +9,52 @@ namespace Croquis.Core
     {
         public const string VersionAdmitida = "1.0.0";
 
+        /// <summary>
+        /// El `version_caso3d` del primer nivel, leyendo solo hasta encontrarlo (`armarCaso3d` lo pone
+        /// primero). Null si no lo trae.
+        /// </summary>
+        public static string VersionDe(string json)
+        {
+            using var lector = new JsonTextReader(new System.IO.StringReader(json));
+            while (lector.Read())
+            {
+                if (lector.Depth == 1 && lector.TokenType == JsonToken.PropertyName)
+                {
+                    if ((string)lector.Value == "version_caso3d")
+                    {
+                        return lector.ReadAsString();
+                    }
+
+                    lector.Skip();
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// El texto de una propiedad de primer nivel de un objeto JSON (por ejemplo, el `json` del
+        /// mensaje `cargarCaso`), sin armar el objeto entero. Null si no la trae.
+        /// </summary>
+        public static string PropiedadDeTexto(string json, string nombre)
+        {
+            using var lector = new JsonTextReader(new System.IO.StringReader(json));
+            while (lector.Read())
+            {
+                if (lector.Depth == 1 && lector.TokenType == JsonToken.PropertyName)
+                {
+                    if ((string)lector.Value == nombre)
+                    {
+                        return lector.ReadAsString();
+                    }
+
+                    lector.Skip();
+                }
+            }
+
+            return null;
+        }
+
         /// <summary>Lee el paquete y rechaza lo que el visor dibujaría mal.</summary>
         /// <exception cref="FormatException">El texto no es un paquete que este visor pueda abrir.</exception>
         public static Caso3D Leer(string json)
@@ -17,7 +63,9 @@ namespace Croquis.Core
             try
             {
                 // La versión va primero: el tipo generado solo conoce la suya y, con otra, no diría cuál es.
-                var version = JsonConvert.DeserializeObject<Cabecera>(json)?.Version;
+                // Se lee en flujo y se detiene al encontrarla: leer el paquete entero dos veces costaba
+                // segundos en WebGL (U6).
+                var version = VersionDe(json);
                 if (version != VersionAdmitida)
                 {
                     throw new FormatException(
@@ -43,11 +91,6 @@ namespace Croquis.Core
             return caso;
         }
 
-        private sealed class Cabecera
-        {
-            [JsonProperty("version_caso3d")]
-            public string Version { get; set; }
-        }
     }
 
     /// <summary>La pose de un vehículo en el marco de Croquis: metros y radianes.</summary>
