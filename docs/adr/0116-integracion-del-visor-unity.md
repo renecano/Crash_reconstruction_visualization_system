@@ -6,7 +6,7 @@
 
 ## Decisiones
 
-1. **Puente 1.2.0** (PR `contract:`): la vista `antes` de `capturar` (el dictamen lleva tres fotos: −1 s, 0 s y reposo) y la `herramienta` de `modoEdicion` (`mover`, `punto_inicial`, `choque_intermedio`, `punto_paso`) con su `vehiculo_id`. La 1.1.0 no decía qué marcaba un clic.
+1. **Puente 1.2.0** (PR `contract:` #207): la vista `antes` de `capturar` (el dictamen lleva tres fotos: −1 s, 0 s y reposo), la `herramienta` de `modoEdicion` (`mover`, `punto_inicial`, `choque_intermedio`, `punto_paso`) con su `vehiculo_id`, y el campo `punto` de `puntoMarcado`: en la 1.1.0 se llamaba `tipo` y chocaba con el `tipo` del mensaje, así que la clase de punto se perdía (lo encontró la verificación de tipos).
 2. **Una sola instancia de Unity por página**, montada con el caso (como el visor three.js), oculta cuando no se ve y en pausa. Sirve a Reconstrucción y a Números (el mismo panel) y, en Presentar, se muestra detrás de la historia: Presentar le avisa el instante de cada capítulo por un canal sin React (`CanalTiempo`), para no redibujar la página 60 veces por segundo.
 3. **El paquete lo arma la web** (`paqueteDelCaso`): la escena del 3D (`especDel3d`, la misma del visor three.js), el Resultado completo del solver TS sobre esa escena, el relieve del lugar y el escenario (ADR 0112). Unity no recalcula.
 4. **Respaldo three.js** cuando no hay WebGL 2, no hay manifiesto, el cargador no baja, pasan 90 s, la versión del puente no coincide, Unity pierde el dispositivo o un caso no carga. El aviso dice por qué. `?visor=ligero` lo abre directo.
@@ -14,7 +14,11 @@
 6. **Fotos del dictamen desde Unity** (`Captura`): cámara cinematográfica en el instante de cada vista, dibujada aparte a la escala de dibujo completa (no a la de la escala automática de media), sin minimapa ni panel; la escena vuelve a como estaba. La atribución de los modelos (CC-BY) se arma con el mismo manifiesto `vehiculos.json` que usa Unity.
 7. **«Descargar paquete 3D»** baja el caso-3d del caso; **el visor de escritorio** lo abre (`-abrir <archivo>` o arrastrándolo sobre el programa) y, sin archivo, abre el caso de ejemplo que viaja en el paquete.
 8. **Blob guarda dos builds:** el nuevo y el de producción (el del manifiesto de `origin/main`); `publicar-web.mjs --podar` lista los demás y solo los borra con `--si`.
-9. **Las e2e no bajan el Unity real.** Un navegador automatizado (`navigator.webdriver`) abre el visor ligero, salvo que la prueba pida Unity; la e2e de U6 usa un Unity de mentira (`e2e/unity-falso.js`) que habla el puente. Así CI no baja 70 MB por flujo ni necesita GPU, y se prueba lo que es de la web. El Unity real se revisa a mano en producción, con capturas en la bitácora.
+9. **Lo que encontró la prueba con el Unity real** (`e2e/visor-unity-real.spec.ts`, a mano, con GPU) y se corrigió:
+   - **El entorno procedural tapaba al caso:** un vehículo que termina fuera de la calle tenía casas inventadas encima. Ahora las cuadras, los edificios sueltos y los árboles dejan libre lo que recorre cada vehículo, con su planta y 1.5 m de holgura (`zonasDelCaso`, con prueba). El entorno sigue siendo procedural: la leyenda lo dice.
+   - **La cinematográfica podía quedar con una pared enfrente** (la foto «antes» salía dentro de una fachada). Si el rumbo elegido está tapado, busca otro de 15 en 15 grados a la distancia que encuadra a los vehículos, después más cerca y al final más alto; conserva el desvío que sirvió para no saltar al reproducir.
+   - **En Presentar** el 3D usa la órbita (toda la escena, como la maqueta que había) y queda arriba de la franja de capítulos (el minimapa la tapaba).
+10. **Las e2e no bajan el Unity real.** Un navegador automatizado (`navigator.webdriver`) abre el visor ligero, salvo que la prueba pida Unity; la e2e de U6 usa un Unity de mentira (`e2e/unity-falso.js`) que habla el puente. Así CI no baja 70 MB por flujo ni necesita GPU, y se prueba lo que es de la web. El Unity real se revisa a mano en producción, con capturas en la bitácora.
 
 ## Consecuencias
 
