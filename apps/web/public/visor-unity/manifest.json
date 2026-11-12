@@ -6,5 +6,17 @@
   "data": "a668882176160284a60c2cbadbfd44d8.data",
   "framework": "c6950771d0d375efa668912a3c6413fe.framework.js",
   "code": "803db30cf2fb40a84054da8f7b3dd018.wasm",
-  "caso": "axa_alcance.json"
+  "caso": "axa_alcance.json",
+  "casos": [
+    "axa-dia",
+    "axa-noche",
+    "carambola-dia",
+    "carambola-noche",
+    "lateral_interseccion-dia",
+    "lateral_interseccion-noche",
+    "nocturno_lluvia-dia",
+    "nocturno_lluvia-noche",
+    "terraceria-dia",
+    "terraceria-noche"
+  ]
 }

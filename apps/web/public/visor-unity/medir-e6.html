@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="es-MX">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Medición E6 del visor Unity en el navegador</title>
+    <!--
+      U6: una medición E6 del build web del visor Unity, para la computadora de demo (la abre
+      `medir-web.ps1` con un navegador nuevo por medición). Parámetros en la dirección:
+        caso      la escena de D1 (de las que trae el manifiesto), por ejemplo axa-dia
+        nivel     baja, media, alta o ultra
+        segundos  los segundos de tiempos de cuadro (12)
+        rep       el número de repetición, para el nombre del archivo
+      Carga el build y la escena de Blob (el manifiesto del sitio), fija el nivel, reproduce en bucle
+      con la cámara cinematográfica, espera 3 s (y, en media, a que la escala automática se asiente)
+      y mide los tiempos de cuadro del navegador. Al terminar descarga e6web-<caso>-<nivel>-<rep>.json
+      y pone el título en «LISTO» (o «ERROR»).
+    -->
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #111;
+        color: #ddd;
+        font:
+          14px system-ui,
+          sans-serif;
+      }
+      #unity-canvas {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+      }
+      #estado {
+        position: fixed;
+        left: 12px;
+        top: 12px;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 6px 10px;
+        border-radius: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+    <div id="estado">Cargando…</div>
+    <script>
+      (function () {
+        var q = new URLSearchParams(location.search);
+        var caso = q.get("caso") || "axa-dia";
+        var nivel = q.get("nivel") || "alta";
+        var segundos = Number(q.get("segundos") || 12);
+        var rep = q.get("rep") || "1";
+        var t0 = performance.now();
+        var r = { caso: caso, nivel: nivel, repeticion: Number(rep), errores: [] };
+        var recibidos = [];
+        var pedido = 0;
+        var estado = function (t) {
+          document.getElementById("estado").textContent = t;
+        };
+        var enviar = function (m, d) {
+          window.unityInstance.SendMessage("VisorPuente", m, JSON.stringify(d || {}));
+        };
+        var esperar = function (cumple, ms) {
+          return new Promise(function (ok, falla) {
+            var fin = performance.now() + ms;
+            (function revisar() {
+              var m = recibidos.find(cumple);
+              if (m) return ok(m);
+              var e = recibidos.find(function (x) {
+                return x.tipo === "error";
+              });
+              if (e) return falla(new Error(e.codigo + ": " + e.mensaje));
+              if (performance.now() > fin) return falla(new Error("Sin respuesta de Unity"));
+              setTimeout(revisar, 100);
+            })();
+          });
+        };
+        var estadisticas = function () {
+          var n = ++pedido;
+          enviar("depurar", { estadisticas: true, pedido: n });
+          return esperar(function (m) {
+            return m.tipo === "perfil" && m.pedido === n;
+          }, 20000);
+        };
+        var guardar = function () {
+          var texto = JSON.stringify(r, null, 2);
+          var a = document.createElement("a");
+          a.href = URL.createObjectURL(new Blob([texto], { type: "application/json" }));
+          a.download = "e6web-" + caso + "-" + nivel + "-" + rep + ".json";
+          document.body.appendChild(a);
+          a.click();
+          document.title = r.error ? "ERROR" : "LISTO";
+          estado(
+            (r.error ? "Error: " + r.error : "Listo: " + r.fps_promedio + " fps") +
+              " — puedes cerrar.",
+          );
+        };
+        var p = function (orden, q) {
+          return orden[Math.min(orden.length - 1, Math.max(0, Math.ceil(q * orden.length) - 1))];
+        };
+        window.addEventListener("error", function (e) {
+          r.errores.push(String(e.message).slice(0, 200));
+        });
+        window.croquisVisorMensaje = function (texto) {
+          try {
+            recibidos.push(JSON.parse(texto));
+          } catch (e) {
+            /* no es del puente */
+          }
+        };
+        var medir = async function (man) {
+          var base = man.base + man.prefijo;
+          var gl = document.createElement("canvas").getContext("webgl2");
+          var ext = gl && gl.getExtension("WEBGL_debug_renderer_info");
+          r.gpu = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : null;
+          r.navegador = navigator.userAgent;
+          r.dpr = window.devicePixelRatio;
+          r.ventana = innerWidth + "x" + innerHeight;
+          r.build = man.huella;
+          await new Promise(function (ok, falla) {
+            var s = document.createElement("script");
+            s.src = base + "Build/" + man.loader;
+            s.onload = ok;
+            s.onerror = function () {
+              falla(new Error("No se pudo bajar el cargador de Unity"));
+            };
+            document.body.appendChild(s);
+          });
+          estado("Arrancando Unity…");
+          window.unityInstance = await createUnityInstance(
+            document.getElementById("unity-canvas"),
+            {
+              dataUrl: base + "Build/" + man.data,
+              frameworkUrl: base + "Build/" + man.framework,
+              codeUrl: base + "Build/" + man.code,
+              companyName: "Croquis",
+              productName: "Visor de Croquis",
+              productVersion: man.huella,
+            },
+          );
+          await esperar(function (m) {
+            return m.tipo === "listo";
+          }, 300000);
+          r.hasta_listo_s = Math.round((performance.now() - t0) / 100) / 10;
+          estado("Cargando " + caso + " en " + nivel + "…");
+          var paquete = await (await fetch(base + "casos/" + caso + ".json")).text();
+          enviar("calidad", { nivel: nivel });
+          var t1 = performance.now();
+          enviar("cargarCaso", { json: paquete });
+          await esperar(function (m) {
+            return m.tipo === "cargado";
+          }, 300000);
+          r.carga_s = Math.round((performance.now() - t1) / 100) / 10;
+          enviar("camara", { modo: "cinematica" });
+          enviar("depurar", { bucle: true });
+          enviar("reproducir", {});
+          // En media, la escala automática: se espera a que lleve 8 s quieta (hasta 1 min).
+          var antes = await estadisticas();
+          if (antes.escala_automatica) {
+            var t2 = performance.now();
+            for (;;) {
+              var previa = antes;
+              await new Promise(function (ok) {
+                setTimeout(ok, 8000);
+              });
+              antes = await estadisticas();
+              if (
+                (antes.escala_estable && antes.escala_cambios === previa.escala_cambios) ||
+                performance.now() - t2 > 60000
+              )
+                break;
+            }
+          }
+          await new Promise(function (ok) {
+            setTimeout(ok, 3000);
+          });
+          estado("Midiendo " + segundos + " s…");
+          var cuadros = await new Promise(function (ok) {
+            var ts = [];
+            var previo = performance.now();
+            var fin = previo + segundos * 1000;
+            var paso = function (ahora) {
+              ts.push(ahora - previo);
+              previo = ahora;
+              if (ahora < fin) requestAnimationFrame(paso);
+              else ok(ts);
+            };
+            requestAnimationFrame(paso);
+          });
+          var despues = await estadisticas();
+          var orden = cuadros.slice().sort(function (a, b) {
+            return a - b;
+          });
+          var total = cuadros.reduce(function (s, x) {
+            return s + x;
+          }, 0);
+          var dos = function (x) {
+            return Math.round(x * 10) / 10;
+          };
+          r.escala = despues.escala;
+          r.resolucion = despues.ancho + "x" + despues.alto;
+          r.cuadros = cuadros.length;
+          r.fps_promedio = dos((cuadros.length * 1000) / total);
+          r.fps_mediana = dos(1000 / p(orden, 0.5));
+          r.fps_1pct_bajo = dos(1000 / p(orden, 0.99));
+          r.ms_p95 = dos(p(orden, 0.95));
+          r.cuadros_mas_50ms = cuadros.filter(function (x) {
+            return x > 50;
+          }).length;
+        };
+        fetch("manifest.json", { cache: "no-store" })
+          .then(function (x) {
+            return x.json();
+          })
+          .then(medir)
+          .catch(function (e) {
+            r.error = String(e && e.message ? e.message : e);
+          })
+          .then(guardar);
+      })();
+    </script>
+  </body>
+</html>

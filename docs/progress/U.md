@@ -4,7 +4,7 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 
 ## Estado
 
-- **Fase actual:** U5 cerrada (2026-11-12, criterio de cierre cumplido; ver «Medición final y cierre»). Sigue U6 en `feat/u6-integracion`. Lo de abajo es de antes del cierre: René eligió (2026-11-11): **escala de dibujo automática en media** (entre 0.5 y 1, buscando 60 fps), **una sola ronda de costo fijo** (lluvia, piel de las personas, llamadas de dibujo) y volver a medir. **Criterio de cierre:** la escena de referencia de PLAN §7.8 (`lateral_interseccion`) cumple ≥ 60 fps en media, de día y de noche; las demás quedan con su cifra.
+- **Fase actual:** U5 y U6 cerradas (2026-11-12). Falta la medición del build web en la computadora de demo (paquete `visor-web-medicion`, lo corre el colaborador de René). Después: la propuesta de «ultra con el margen» para René (sin empezarla) y, antes de W8, avisarle para cambiar el modelo. Lo de abajo es de antes del cierre de U5: René eligió (2026-11-11): **escala de dibujo automática en media** (entre 0.5 y 1, buscando 60 fps), **una sola ronda de costo fijo** (lluvia, piel de las personas, llamadas de dibujo) y volver a medir. **Criterio de cierre:** la escena de referencia de PLAN §7.8 (`lateral_interseccion`) cumple ≥ 60 fps en media, de día y de noche; las demás quedan con su cifra.
 - **Siguiente:** revisar el resultado de la cadena (`tools/unity/u5-cadena.ps1 -Estado`): si el criterio cumple, cerrar U5 (cifras en ADR 0115 y aquí, «Resumen para René» con las capturas de `docs/cesvi/u5/final/`), fusionar #205 y seguir con U6. Si no cumple, detenerse y avisar a René con las cifras: el piso de 0.5 no se baja. Alta y ultra las mide su colaborador con el paquete `visor-escritorio-u5` (falta `eval/results/e6_unity_escritorio.json`). **Antes de W8, avisar a René para cambiar el modelo.**
 - **Unity y Blender corren en segundo plano** desde el 2026-11-10: René reabrió la sesión con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`. Sigue la regla de un solo proceso pesado a la vez.
 - **Cómo se itera:** capturas del Editor en modo batch (`Capturas.Tomar`, unos 3 min). En esta sesión no hubo herramientas del MCP de Unity. Un build WebGL solo al cerrar cada punto.
@@ -397,7 +397,7 @@ Plan: PLAN-CESVI §3.3. Decisiones: ADR 0114.
 
 Conductor sin la carrocería propia (contorno tenue del cofre y los postes), vidrio propio sin el reflejo de la sonda, moto tendida desde el impacto con «Posición final ilustrativa», camisas que nunca son color piel, el ocupante dentro de la cabina y la cinematográfica que se acerca si una fachada la tapa. ADR 0114, decisiones 12 a 15. Capturas del build WebGL en `docs/cesvi/u4/ajustes/` (conductores en AXA y `lateral_interseccion`; vidrios en las 5 escenas de día y de noche; personas a los 3 s). PR #205.
 
-## U6 · Puente, builds e integración (2026-11-12, en PR)
+## U6 · Puente, builds e integración (cerrada el 2026-11-12)
 
 Rama `feat/u6-integracion`. Decisiones: ADR 0116.
 
@@ -424,9 +424,31 @@ Rama `feat/u6-integracion`. Decisiones: ADR 0116.
 - e2e `visor-unity.spec.ts` (`@flujo`, Unity de mentira): 2 en verde en local (mover el poste en 3D recalcula y vuelve a Unity; fotos del dictamen desde Unity; respaldo con otra versión del puente).
 - **e2e con el Unity real** (`visor-unity-real.spec.ts`, a mano, Chromium con ventana y la GPU de la laptop): en verde. Unity listo en unos 30 s; el poste se arrastra con el ratón en la cenital, el caso se recalcula (60.62 → 60.35 km/h) y vuelve a Unity; las tres fotos del dictamen salen de Unity y son distintas; Presentar muestra Unity. Corrí la prueba cinco veces: las tres primeras encontraron los problemas del punto 9 de ADR 0116, que se corrigieron. Lo medido, en `eval/results/u6_flujo_unity_real.json`; las capturas, en `docs/cesvi/u6/real/`.
 
-### Siguiente paso
+### En producción (2026-11-12)
 
-- U5 se cerró y se fusionó (#205) el 2026-11-12; el PR `contract:` del puente 1.2.0 es el #207. Ahora: correr `dotnet test`, tipos, lint, las unitarias de la web y la e2e de U6, compilar Unity (WebGL y Windows) y seguir con el punto 6.
+- **#208 fusionado**; producción sirve el build `01fce868922703fd`.
+- **La prueba del flujo completo con el Unity real, contra el sitio publicado** (`playwright.produccion.config.ts`, Chromium con la GPU de la laptop): en verde. Unity listo en 46 s (bajando el build de Blob por primera vez); el poste arrastrado en 3D recalcula (60.62 → 60.35 km/h) y vuelve a Unity; las tres fotos del dictamen salen de Unity; Presentar muestra Unity detrás de la historia. Capturas en `docs/cesvi/u6/produccion/`; lo medido, en `eval/results/u6_flujo_unity_produccion.json`.
+- **El respaldo:** lo prueba la e2e de CI (otra versión del puente abre three.js) y `?visor=ligero` lo abre a mano.
+- **El visor de escritorio** con su caso de ejemplo: release `visor-escritorio-u6` (60 MB). Probado en esta laptop: abre AXA y lo reproduce en bucle.
+
+### Medición del build web en la computadora de demo (punto 3 de René, 2026-11-12)
+
+La demo puede ser dentro de Croquis, así que hay que medir el visor en el navegador en la misma computadora (RTX 4070 Laptop) donde se midió el programa de escritorio.
+
+- **`/visor-unity/medir-e6.html`** (en el sitio): una medición E6 por visita (escena, nivel, segundos y repetición en la dirección). Baja el build y la escena de Blob, fija el nivel, reproduce en bucle con la cinematográfica, espera 3 s (y en media a que la escala se asiente), mide los tiempos de cuadro y descarga el resultado.
+- **`tools/unity/medir-web.ps1`**: abre Chrome nuevo por medición (10 escenas × alta y ultra × 3, en orden alterno), en pantalla completa y sin vsync, con un perfil propio (el build sale de la caché después de la primera vez). Reanudable. Mientras mide pone «Alto rendimiento» y le pide a Windows que Chrome use la tarjeta dedicada; al terminar restaura los dos. Escribe `e6_unity_web_demo.json`.
+- **Las escenas de D1 viven en Blob** junto al build (`casos/`) y el manifiesto las lista (`casos`); `publicar-web.mjs` las sube.
+- **Probado en esta laptop** contra un servidor local (una repetición en alta de las 10 escenas): de punta a punta en verde, con plan y preferencia de GPU restaurados al final. Con la Intel UHD, alta da de 6 a 11 fps (no es la meta: alta y ultra son para la computadora de demo).
+- **El paquete:** `tools/unity/paquete-medicion-web.ps1` → release `visor-web-medicion`.
+
+### Resumen para René (U6)
+
+- **Qué quedó:** el visor 3D de `/cesvi` es Unity (Reconstrucción, Números y detrás de Presentar), con respaldo three.js; editar en 3D (mover, girar y alargar objetos; marcar el primer golpe, choques y puntos de paso) recalcula el caso; las fotos del dictamen salen de Unity; «Descargar paquete 3D» y el visor de escritorio que lo abre.
+- **Cómo probarlo:** abre un caso en croquis-sage.vercel.app, ve a Reconstrucción → «Órbita 3D» → «Editar en 3D», arrastra un objeto y mira cómo cambia la cifra. Las capturas de la prueba con Unity real están en `docs/cesvi/u6/produccion/`.
+- **Lo que encontró la prueba con Unity real y se corrigió:** casas inventadas encima de un vehículo que termina fuera de la calle, la cámara cinematográfica con una pared enfrente y el minimapa tapando Presentar.
+- **Qué necesito de ti:**
+  1. Que tu colaborador corra el paquete `visor-web-medicion` en la RTX 4070 Laptop y te devuelva `e6_unity_web_demo.json` (unos 40 min).
+  2. Si quieres liberar espacio en Blob: `node tools/unity/publicar-web.mjs --podar --si` borra dos builds viejos sin uso (107 MB). No lo corrí: no se deshace.
 
 ## U5 · Calidad y rendimiento (cerrada el 2026-11-12)
 
