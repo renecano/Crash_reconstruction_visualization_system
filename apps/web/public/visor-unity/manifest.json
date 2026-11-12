@@ -1,11 +1,11 @@
 {
-  "huella": "01fce868922703fd",
+  "huella": "f12372a6c2d7742c",
   "base": "https://fmb6kf9hhoc8c9mk.public.blob.vercel-storage.com/",
-  "prefijo": "recursos/visor-unity/01fce868922703fd/",
-  "loader": "97bb6546de8d11eb71ec94630092a5f0.loader.js",
-  "data": "a668882176160284a60c2cbadbfd44d8.data",
+  "prefijo": "recursos/visor-unity/f12372a6c2d7742c/",
+  "loader": "b9ce11fb844ceb0442cfee4ffa2976ee.loader.js",
+  "data": "f2fc5f1eeee123311e0f12c82d290f36.data",
   "framework": "c6950771d0d375efa668912a3c6413fe.framework.js",
-  "code": "803db30cf2fb40a84054da8f7b3dd018.wasm",
+  "code": "6bc72c7cd85a1502675e07ed19d32638.wasm",
   "caso": "axa_alcance.json",
   "casos": [
     "axa-dia",

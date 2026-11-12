@@ -6,7 +6,8 @@
 #   powershell -ExecutionPolicy Bypass -File tools/unity/paquete-escritorio.ps1 [-SinBuild] [-Nombre visor-escritorio]
 #
 # -SinBuild arma el paquete con el build de Windows que ya está en Build\windows.
-param([switch] $SinBuild, [string] $Nombre = "visor-escritorio")
+# -ConWeb agrega medir-web.ps1: la misma computadora mide también el visor en el navegador (U6).
+param([switch] $SinBuild, [string] $Nombre = "visor-escritorio", [switch] $ConWeb)
 . (Join-Path $PSScriptRoot "comun.ps1")
 $ErrorActionPreference = "Stop"
 $build = Join-Path $script:Proyecto "Build"
@@ -20,6 +21,7 @@ Copy-Item -Recurse (Join-Path $build "casos") (Join-Path $destino "casos")
 # El caso que abre el programa al arrancar: AXA de día, con su escenario.
 Copy-Item (Join-Path $build "casos\axa-dia.json") (Join-Path $destino "casos\ejemplo.json")
 Copy-Item (Join-Path $PSScriptRoot "medir-escritorio.ps1") $destino
+if ($ConWeb) { Copy-Item (Join-Path $PSScriptRoot "medir-web.ps1") $destino }
 @"
 Visor de Croquis (escritorio)
 
@@ -43,6 +45,21 @@ Para ver el visor con el panel de diagnóstico (F3 lo abre y lo cierra):
      .\VisorCroquis.exe -caso casos\axa-noche.json -calidad ultra -segundos 600 -diagnostico
 Hace falta conexión a internet: los modelos 3D se bajan de Vercel Blob.
 "@ | Set-Content -Encoding utf8 (Join-Path $destino "LEEME.txt")
+if ($ConWeb) {
+    @"
+
+Medición del visor en el navegador (U6), en esta misma computadora, después de la de escritorio:
+
+4. Cierra Chrome y corre:
+     powershell -ExecutionPolicy Bypass -File .\medir-web.ps1
+   Abre y cierra Chrome 60 veces (10 escenas, alta y ultra, 3 veces cada una): unos 40 minutos.
+   Mientras mide pone «Alto rendimiento» y Chrome en la tarjeta dedicada; al terminar lo restaura.
+5. Devuelve también el archivo e6_unity_web_demo.json.
+
+Este paquete ya trae el primer bloque de «ultra con el margen» (dibujar a 1.5× y reducir, sombras de
+8192 hasta 250 m y 16 luminarias con luz): la medición de ultra dice cuánto cuesta.
+"@ | Add-Content -Encoding utf8 (Join-Path $destino "LEEME.txt")
+}
 $zip = Join-Path $build "$Nombre.zip"
 if (Test-Path $zip) { Remove-Item $zip }
 Compress-Archive -Path (Join-Path $destino "*") -DestinationPath $zip

@@ -1,0 +1,65 @@
+{
+  "fecha": "2026-11-12T19:57:14.914Z",
+  "cifra_antes": "Repetir\nVelocidad antes del impacto\n\n60.62\nkm/h\nA · Jetta\nrango lineal 55.29–65.95\n\nReconstrucción física de Croquis · mejor ajuste\n\nLas 32 simulaciones dan la misma velocidad: el costo tiene un quiebre en esta solución y no dicen cuánto podría variar. El rango de arriba es la aproximación lineal del solver.\n\nCómo se reparten las simulaciones\nB · Camaro\n0.00 km/h\nLo fijan\n5 evidencias · 1 decisión de Croquis",
+  "unity_listo_s": 18.867,
+  "marcas": {
+    "arranque": 0,
+    "precarga": 0.1,
+    "precarga_lista": 4.7,
+    "cargador": 4.7,
+    "cargador_listo": 5,
+    "instancia": 6.2,
+    "listo": 7.2,
+    "solver": 7.2,
+    "solver_listo": 7.2,
+    "cargar_caso": 7.6,
+    "caso_cargado": 18.1
+  },
+  "bytes_unity": [
+    {
+      "archivo": "97bb6546de8d11eb71ec94630092a5f0.loader.js",
+      "kb": 0,
+      "s": 0.3
+    },
+    {
+      "archivo": "c6950771d0d375efa668912a3c6413fe.framework.js",
+      "kb": 0,
+      "s": 0.2
+    },
+    {
+      "archivo": "803db30cf2fb40a84054da8f7b3dd018.wasm",
+      "kb": 0,
+      "s": 4.2
+    },
+    {
+      "archivo": "a668882176160284a60c2cbadbfd44d8.data",
+      "kb": 0,
+      "s": 13.9
+    },
+    {
+      "archivo": "97bb6546de8d11eb71ec94630092a5f0.loader.js",
+      "kb": 0,
+      "s": 0.2
+    }
+  ],
+  "poste_antes": {
+    "x": 17.953,
+    "y": 3.741
+  },
+  "cifra_despues": "Repetir\nVelocidad antes del impacto\n\n60.35\nkm/h\nA · Jetta\nrango lineal 56.67–64.03\n\nReconstrucción física de Croquis · mejor ajuste\n\nLas 32 simulaciones dan la misma velocidad: el costo tiene un quiebre en esta solución y no dicen cuánto podría variar. El rango de arriba es la aproximación lineal del solver.\n\nCómo se reparten las simulaciones\nB · Camaro\n0.00 km/h\nLo fijan\n5 evidencias · 1 decisión de Croquis",
+  "fotos": [
+    {
+      "etiqueta": "Antes del impacto (−1 s)",
+      "bytes": 831014
+    },
+    {
+      "etiqueta": "En el impacto (0 s)",
+      "bytes": 871826
+    },
+    {
+      "etiqueta": "En reposo (+4.1 s)",
+      "bytes": 849226
+    }
+  ],
+  "errores": []
+}
