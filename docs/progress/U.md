@@ -438,18 +438,25 @@ Detalle, decisiones y lo descartado: ADR 0115, sección «Optimización de media
 - **Dónde va** (tres escenas, fps a 1080p): de 22.6 / 13.9 / 18.5 a 35.7 / 23.7 / 26.2. A escala 0.6: 63.4 / 49.2 / 47.1.
 - **Lo que dice el modelo:** a 1080p nativo esta GPU no llega a 60 fps ni con todo apagado. Para 60 harían falta escalas de 0.64 (día), 0.50 (noche urbana) y 0.43 (lluvia de noche).
 
-### Dónde quedó la medición (para retomarla)
+### Para retomar
 
-René pidió la computadora el 2026-11-11: la cadena se cortó **durante el build**, antes de la e2e, las capturas y la E6. `apps/visor-unity/Build/web` puede estar incompleto: **lo primero es volver a compilar.**
+La medición de U5 es una cadena reanudable que corre **fuera de la sesión de Claude Code**, como la tarea de Windows «CroquisU5» (René, 2026-11-11: que no se pierda nada si la sesión se cierra o se corta).
 
-1. `powershell tools/unity/build-web.ps1` (unos 5 min; sin procesos de Unity vivos antes; revertir `Visor.unity` y `UniversalRenderPipelineGlobalSettings.asset` después).
-2. `node tools/unity/e2e-camaras.mjs --caso apps/visor-unity/Build/u3/motociclista.json --t 0.3`.
-3. Capturas de antes y después a 1080p: `node tools/unity/capturas.mjs --casos casos --vistas cinematica --sin-fps --nivel media --ancho 1920 --alto 1080` para las 10 escenas, y para `axa-dia`, `lateral_interseccion-noche` y `nocturno_lluvia-noche` con `--depurar '{"escala":0.8}'`, 0.7, 0.6 y 0.5. El «antes» es la media anterior: `D:\croquis-logs\var1\base` (fuera de git).
-4. E6 completa, 3 repeticiones, con 90 s de pausa entre corridas:
-   - `node eval/e6_unity.mjs --niveles media --nombre e6_unity_media_escala_1`
-   - `node eval/e6_unity.mjs --niveles baja --nombre e6_unity_baja`
-   - `node eval/e6_unity.mjs --niveles media --nombre e6_unity_media_escala_0.7 --depurar '{"escala":0.7}'`, y lo mismo con 0.6 y 0.5.
-5. Con esas cifras, presentarle a René las opciones (escala fija, escala según la escena o recortes de noche) y **no fijar la escala de media sin que él elija**. Al cerrar, `eval/results/e6_unity_web.json` se vuelve a medir con el perfil final.
+- **Empezar o reanudar** (salta lo ya hecho): `powershell -ExecutionPolicy Bypass -File tools/unity/u5-cadena.ps1 -Lanzar`
+- **Ver cómo va:** `powershell -ExecutionPolicy Bypass -File tools/unity/u5-cadena.ps1 -Estado` (o `node eval/u5_cadena.mjs --estado`).
+- **Detenerla** (no borra lo medido): `powershell -ExecutionPolicy Bypass -File tools/unity/u5-cadena.ps1 -Detener`
+- **Dónde queda cada cosa:**
+  - `eval/results/u5_estado.json`: el build (con su huella), la e2e, las capturas y cada medición (escena, nivel, escala y repetición), anotada en cuanto termina.
+  - `apps/visor-unity/Logs/u5-cadena.log`: el registro (fuera de git).
+  - `eval/results/e6_unity_<configuración>.json`: el resultado de cada configuración, cuando están sus 30 mediciones.
+  - `docs/cesvi/u5/media/` y `docs/cesvi/u5/escalas/`: las capturas a 1080p.
+- **Qué hace, en orden:** paquetes de las escenas si faltan; build WebGL (no se rehace si `Build/web` existe y la huella de los fuentes es la anotada); e2e de cámaras; capturas de las 10 escenas en media y de tres escenas a escala 0.8, 0.7, 0.6 y 0.5; y la E6 (10 escenas × 3 repeticiones, un navegador nuevo por medición) de media a escala 1, baja y media a 0.7, 0.6 y 0.5, con 90 s de pausa entre configuraciones.
+- **Si cambian los fuentes de Unity,** la huella cambia: se compila otra vez y lo medido con el build anterior se archiva en `u5_estado.<huella>.json`. No se mezclan cifras de dos builds.
+- **Mientras corre:** la laptop no se suspende ni apaga la pantalla (se restaura sola al terminar o si el proceso muere), y cierra Edge antes de cada medición. Hay que dejarla conectada y con la tapa abierta. **Nada pesado a la vez** (ni otra medición, ni Playwright, ni Unity).
+- **El «antes»** de las comparaciones es la media anterior a la optimización: `D:\croquis-logs\var1\base` (fuera de git).
+- **Al terminar:** presentarle a René las opciones (escala fija, escala según la escena o recortes de noche) y **no fijar la escala de media sin que él elija**. Si media no cumple con ninguna escala, detenerse con «Media no cumple: cambia el modelo». Al cerrar, `eval/results/e6_unity_web.json` se vuelve a medir con el perfil final.
+
+Las evaluaciones largas de W8 (E-R4 v4) se lanzarán igual: reanudables, con su archivo de estado, y como tarea de Windows.
 
 Pendiente visual que se vio al medir: en el hatchback, la pierna del ocupante asoma por debajo de la puerta (la cadera va a la altura del asiento, pero la pierna doblada cruza el piso del modelo).
 
