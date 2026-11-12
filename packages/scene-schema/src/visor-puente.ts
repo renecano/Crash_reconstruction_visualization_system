@@ -81,8 +81,9 @@ export interface MensajesDeUnity {
     largo: number;
     ancho: number;
   };
+  /** `punto` y no `tipo`: el `tipo` del mensaje ya es «puntoMarcado» (desde la 1.2.0). */
   puntoMarcado: {
-    tipo: "punto_inicial" | "choque_intermedio" | "punto_paso";
+    punto: "punto_inicial" | "choque_intermedio" | "punto_paso";
     vehiculo_id?: string;
     objeto_id?: string;
     x: number;

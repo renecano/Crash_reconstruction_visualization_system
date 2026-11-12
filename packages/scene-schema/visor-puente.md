@@ -30,25 +30,25 @@
 
 **Cambios de la 1.1.0:** la cámara `acera` y el mensaje `marcadores`.
 
-**Cambios de la 1.2.0:** la vista `antes` de `capturar` (un segundo antes del impacto: el dictamen lleva tres fotos) y la `herramienta` de `modoEdicion`.
+**Cambios de la 1.2.0:** la vista `antes` de `capturar` (un segundo antes del impacto: el dictamen lleva tres fotos), la `herramienta` de `modoEdicion`, y el campo `tipo` de `puntoMarcado` se llama `punto` (chocaba con el `tipo` del mensaje, y se perdía).
 
 **`vista`:** `antes` (t = −1 s), `impacto` (t = 0) y `reposo` (al final) salen con la cámara cinematográfica; `conductor:<id del vehículo>`, con la de ese conductor en el impacto. La foto se toma a la escala de dibujo completa, sin minimapa ni panel; la leyenda ilustrativa la pone la web al pie.
 
 ## De Unity a la web
 
-| Mensaje         | Campos                                                   | Cuándo                                     |
-| --------------- | -------------------------------------------------------- | ------------------------------------------ |
-| `listo`         | `version`                                                | Al terminar de arrancar.                   |
-| `cargado`       | `escena_id`                                              | El caso ya se puede ver.                   |
-| `tiempo`        | `t`                                                      | Mientras avanza la reproducción.           |
-| `camara`        | `modo`                                                   | Cambió la cámara.                          |
-| `captura`       | `vista`, `png`: base64 sin el prefijo `data:`            | Respuesta a `capturar`.                    |
-| `fps`           | `p50`                                                    | Cada 5 s, para la calidad automática.      |
-| `error`         | `codigo`, `mensaje`                                      | Ver abajo.                                 |
-| `objetoEditado` | `id`, `x`, `y`, `rumbo_deg`, `largo`, `ancho`            | El perito soltó un objeto en modo edición. |
-| `puntoMarcado`  | `tipo`, `vehiculo_id` y `objeto_id` opcionales, `x`, `y` | El perito marcó un punto en modo edición.  |
+| Mensaje         | Campos                                                    | Cuándo                                     |
+| --------------- | --------------------------------------------------------- | ------------------------------------------ |
+| `listo`         | `version`                                                 | Al terminar de arrancar.                   |
+| `cargado`       | `escena_id`                                               | El caso ya se puede ver.                   |
+| `tiempo`        | `t`                                                       | Mientras avanza la reproducción.           |
+| `camara`        | `modo`                                                    | Cambió la cámara.                          |
+| `captura`       | `vista`, `png`: base64 sin el prefijo `data:`             | Respuesta a `capturar`.                    |
+| `fps`           | `p50`                                                     | Cada 5 s, para la calidad automática.      |
+| `error`         | `codigo`, `mensaje`                                       | Ver abajo.                                 |
+| `objetoEditado` | `id`, `x`, `y`, `rumbo_deg`, `largo`, `ancho`             | El perito soltó un objeto en modo edición. |
+| `puntoMarcado`  | `punto`, `vehiculo_id` y `objeto_id` opcionales, `x`, `y` | El perito marcó un punto en modo edición.  |
 
-**`tipo` de `puntoMarcado`:** `punto_inicial`, `choque_intermedio` o `punto_paso`.
+**`punto` de `puntoMarcado`:** `punto_inicial`, `choque_intermedio` o `punto_paso`. Un choque intermedio lleva el `objeto_id` del objeto tocado.
 
 **`codigo` de `error`:** `version_puente`, `caso_invalido`, `modelo_no_cargo`, `dispositivo_perdido`, `captura_fallo` o `interno`. Con `dispositivo_perdido`, o si la carga pasa del límite de `docs/adr/0111-visor-unity.md`, la web abre el visor ligero (three.js) con un aviso.
 
