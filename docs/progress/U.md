@@ -482,6 +482,27 @@ René midió unos 46 s desde Blob, contra unos 14 s de las mediciones anteriores
 - **Segunda visita** (el build ya en la caché del navegador, por ejemplo si el sitio se abre antes de la demo): falta medirla. La corrida se detuvo por falta de memoria en la laptop. La prueba ya lo hace con `CROQUIS_SEGUNDA=1`.
 - **Para la primera visita solo queda achicar el build** (texturas: 25 MB, de ellas 8 MB en los cuatro cielos HDRI; shaders: 8 MB). Opciones, sin hacer: cargar solo el cielo del caso en lugar de los cuatro (−6 MB), compresión con pérdida de texturas (Crunch; cambia un poco el aspecto) y quitar variantes de shaders que no se usan.
 
+### El build web en la computadora de demo (2026-11-12)
+
+El colaborador de René corrió `medir-web.ps1` en la RTX 4070 Laptop (Chrome 140, 1920×1200 con dpr 1.25, ANGLE sobre Direct3D 11 con la NVIDIA). El archivo dice build `01fce868922703fd` porque es el que había al empezar, pero la corrida cruzó el despliegue de #210 (21:11 UTC): la repetición 1 midió `01fce868` y las 2 y 3, `f12372a6c2d7742c`, con el primer bloque de ultra. `eval/e6_web_demo_por_build.mjs` separa las dos (`eval/results/e6_unity_web_demo_por_build.json`). fps, mediana:
+
+| Escena                      | Alta (3) | Ultra con el bloque (2) | Ultra sin el bloque (1) |
+| --------------------------- | -------- | ----------------------- | ----------------------- |
+| axa, día                    | 451.8    | 253.8                   | 468.3                   |
+| axa, noche                  | 379.1    | 195.7                   | 384.9                   |
+| carambola, día              | 276.9    | 270.4                   | 293.8                   |
+| carambola, noche            | 249.6    | 238.1                   | 246.7                   |
+| lateral_interseccion, día   | 338.0    | 243.3                   | 346.3                   |
+| lateral_interseccion, noche | 294.1    | 200.5                   | 308.2                   |
+| nocturno_lluvia, día        | 235.0    | 233.4                   | 248.2                   |
+| nocturno_lluvia, noche      | 215.8    | 215.1                   | 222.2                   |
+| terraceria, día             | 293.2    | 261.6                   | 308.9                   |
+| terraceria, noche           | 279.4    | 227.5                   | 282.9                   |
+
+- **El navegador cumple** con holgura en alta y en ultra, también con el bloque: el peor caso es AXA de noche en ultra, 195.7 fps (1 % más lento: 96.7).
+- **El bloque cuesta** hasta la mitad de los fps en las escenas más ligeras (AXA de día: 468 → 254) y casi nada en las que ya pesaban (lluvia de noche: 222 → 215). Con dpr 1.25, ultra dibuja a 1.5× sobre el lienzo de 1920×1200.
+- **Falta:** el programa de escritorio con el bloque (la parte de escritorio de `visor-rtx-u6`). Ultra en el navegador tiene 2 repeticiones con el bloque; para tener 3, `medir-web.ps1 -Niveles ultra` en una carpeta nueva.
+
 ### Resumen para René (U6)
 
 - **Qué quedó:** el visor 3D de `/cesvi` es Unity (Reconstrucción, Números y detrás de Presentar), con respaldo three.js; editar en 3D (mover, girar y alargar objetos; marcar el primer golpe, choques y puntos de paso) recalcula el caso; las fotos del dictamen salen de Unity; «Descargar paquete 3D» y el visor de escritorio que lo abre.
