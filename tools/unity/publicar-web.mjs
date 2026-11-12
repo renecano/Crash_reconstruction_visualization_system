@@ -30,6 +30,11 @@ const { execFileSync } = await import("node:child_process");
 
 const BUILD = join(RAIZ, "apps/visor-unity/Build/web");
 const CASO = join(RAIZ, "packages/scene-schema/fixtures/caso3d/axa_alcance.json");
+/**
+ * Las escenas de D1 con su escenario (`tools/unity/paquetes-d1.ts`): las usa `medir-e6.html` para
+ * medir el build web en la computadora de demo (U6). Van junto al build, en `casos/`.
+ */
+const CASOS_D1 = join(RAIZ, "apps/visor-unity/Build/casos");
 const BASE = JSON.parse(readFileSync(join(RAIZ, "apps/web/recursos.json"), "utf8")).base;
 const UN_ANO_S = 365 * 24 * 3600;
 const TIPOS = {
@@ -68,9 +73,21 @@ const de = (sufijo) => {
   return f;
 };
 
+const casosD1 = existsSync(CASOS_D1)
+  ? readdirSync(CASOS_D1)
+      .filter((f) => f.endsWith(".json"))
+      .sort()
+  : [];
+if (casosD1.length < 10) {
+  console.error(
+    "Faltan las escenas de D1: pnpm --filter @croquis/scene-schema exec tsx ../../tools/unity/paquetes-d1.ts",
+  );
+  process.exit(1);
+}
 const subir = [
   ...archivosDe(BUILD).map((rel) => [rel, readFileSync(join(BUILD, rel))]),
   ["axa_alcance.json", readFileSync(CASO)],
+  ...casosD1.map((f) => [`casos/${f}`, readFileSync(join(CASOS_D1, f))]),
 ];
 for (const [rel, cuerpo] of subir) {
   const pathname = prefijo + rel;
@@ -99,6 +116,7 @@ const manifiesto = {
   framework: de(".framework.js"),
   code: de(".wasm"),
   caso: "axa_alcance.json",
+  casos: casosD1.map((f) => f.replace(/\.json$/, "")),
 };
 writeFileSync(
   join(RAIZ, "apps/web/public/visor-unity/manifest.json"),
