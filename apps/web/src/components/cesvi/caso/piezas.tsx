@@ -11,7 +11,9 @@ import {
   conClase,
   conMasa,
   conMasaTipica,
+  conOrdenImpactos,
   conPrimerImpacto,
+  CLAVE_ORDEN_IMPACTOS,
   conHuella,
   conRestos,
   conZonaImpacto,
@@ -458,8 +460,17 @@ export function MapaEscena({
         // MapLibre posiciona el marcador con `transform`: el rumbo va en un elemento interior.
         // El color es el del vehículo, como en las posiciones colocadas.
         const el = marcador("", `punto-mapa${claseVehiculo(p.vehiculo)}`);
-        el.title = `${p.vehiculo} en la reconstrucción`;
-        el.dataset.movil = p.vehiculo;
+        if (p.declarada) {
+          // T6.2: la versión declarada (R7), hueca y punteada sobre la reconstruida.
+          el.title = `${p.vehiculo} en la versión declarada`;
+          el.dataset.movilDeclarado = p.vehiculo;
+          el.style.opacity = "0.6";
+          el.style.outline = "2px dashed currentColor";
+          el.style.outlineOffset = "2px";
+        } else {
+          el.title = `${p.vehiculo} en la reconstrucción`;
+          el.dataset.movil = p.vehiculo;
+        }
         el.style.pointerEvents = "none";
         const flecha = document.createElement("span");
         flecha.textContent = "▲";
@@ -695,7 +706,12 @@ export function Pregunta({
   };
   const elegir = (v: string) => {
     if (p.clave === "impactos") onCambio(conPrimerImpacto(expediente, v));
-    else if (p.clave.startsWith("zona-") && p.vehiculo && p.impacto)
+    else if (p.clave === CLAVE_ORDEN_IMPACTOS) {
+      // T6.3: el orden que declara el perito (cada opción lista los impactos en su orden). Ya
+      // contestada, la pregunta se cierra: su respuesta no deja otra marca en el expediente.
+      onCambio(conOrdenImpactos(expediente, v.split(",").map(Number)));
+      onNoSe();
+    } else if (p.clave.startsWith("zona-") && p.vehiculo && p.impacto)
       onCambio(conZonaImpacto(expediente, p.impacto, p.vehiculo, v));
     else if (p.clave.startsWith("clase-") && p.vehiculo)
       // «Otro» no cambia la clase: la pregunta se da por contestada y la masa se pide sin típica.

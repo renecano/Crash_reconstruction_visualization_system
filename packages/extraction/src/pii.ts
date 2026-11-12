@@ -10,7 +10,19 @@ import nombres from "../data/nombres.json";
 import piiData from "../data/pii.json";
 import { escapeRegExp, fold, normalizeSpaces } from "./text";
 
-export const MARKERS = ["NOMBRE", "PLACA", "TELEFONO", "CORREO", "CURP", "RFC", "NUMERO"] as const;
+export const MARKERS = [
+  "NOMBRE",
+  "PLACA",
+  "TELEFONO",
+  "CORREO",
+  "CURP",
+  "RFC",
+  "NUMERO",
+  "VIN",
+  "FOLIO",
+  "POLIZA",
+  "SINIESTRO",
+] as const;
 export type PiiKind = (typeof MARKERS)[number];
 
 export interface Span {

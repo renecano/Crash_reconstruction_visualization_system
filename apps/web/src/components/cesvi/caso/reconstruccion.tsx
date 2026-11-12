@@ -19,6 +19,7 @@ import {
   evidenciaEnPalabras,
   impactosEnMapa,
   interpretarResultado,
+  posicionesDeclaradasEnTiempo,
   posicionesEnTiempo,
   type ContraMetodosCesvi,
   type Expediente,
@@ -46,7 +47,8 @@ import { DEFINICION, METODO } from "@/lib/textos-caso";
 
 const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(2));
 
-export type PosicionMovil = ReturnType<typeof posicionesEnTiempo>[number];
+/** Un vehículo en el croquis del mapa: de la reconstrucción o, con `declarada`, de la versión declarada (T6.2). */
+export type PosicionMovil = ReturnType<typeof posicionesEnTiempo>[number] & { declarada?: true };
 export type MarcaImpacto = ReturnType<typeof impactosEnMapa>[number];
 
 export interface EstadoReconstruccion {
@@ -561,9 +563,21 @@ export function Visor3dCaso({
         activo={activo}
         hipotesisExternas={externas}
         onExportApi={onExportApi}
-        onTiempo={(t, res) =>
-          onPosiciones(posicionesEnTiempo(r, res as unknown as Record<string, unknown>, t))
-        }
+        onTiempo={(t, res) => {
+          const reconstruido = res as unknown as Record<string, unknown>;
+          onPosiciones([
+            ...posicionesEnTiempo(r, reconstruido, t),
+            // T6.2: la versión declarada también va en el croquis 2D, donde difiere.
+            ...(declarada
+              ? posicionesDeclaradasEnTiempo(
+                  r,
+                  reconstruido,
+                  declarada.resultado as unknown as Record<string, unknown>,
+                  t,
+                )
+              : []),
+          ]);
+        }}
         onControl={(k, v) =>
           setControles((c) => {
             if (k === "completa") return { ...c, completa: v !== null };

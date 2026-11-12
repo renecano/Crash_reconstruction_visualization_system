@@ -8,6 +8,7 @@ import { redactarConsideraciones } from "@croquis/cesvi/server";
 import { LLMError } from "@croquis/extraction";
 import { z } from "zod";
 import { clientKeyFrom, defaultDeps, llmUnavailable } from "@/server/relato";
+import { redactarValores } from "@/lib/redaccion";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
@@ -50,12 +51,18 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
   try {
-    const borrador = await redactarConsideraciones(parsed.data.hechos, {
-      modelo: deps.settings.model,
-      presupuestoUsd: deps.settings.budgetUsd,
-      gasto: deps.budgetStore,
-      cliente: deps.client,
-    });
+    // Sin datos personales hacia Claude (PLAN §10): se redacta cada texto de los hechos, salvo el
+    // número de caso, que no es de una persona y con el que se identifica el borrador.
+    const { caso, ...resto } = parsed.data.hechos;
+    const borrador = await redactarConsideraciones(
+      { caso, ...redactarValores(resto) },
+      {
+        modelo: deps.settings.model,
+        presupuestoUsd: deps.settings.budgetUsd,
+        gasto: deps.budgetStore,
+        cliente: deps.client,
+      },
+    );
     return Response.json(borrador, { headers: { "Cache-Control": "no-store" } });
   } catch (e) {
     if (e instanceof LLMError) {

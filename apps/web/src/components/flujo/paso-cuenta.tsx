@@ -26,6 +26,10 @@ const MARCADOR: Record<Span["kind"], keyof (typeof TEXTOS_FLUJO)["es"]["cuenta"]
   CURP: "CURP",
   RFC: "RFC",
   NUMERO: "número de domicilio",
+  VIN: "VIN",
+  FOLIO: "folio",
+  POLIZA: "póliza",
+  SINIESTRO: "siniestro",
 };
 
 /** Un dato entendido con reglas, listo para mostrar: valor en palabras y su cita. */

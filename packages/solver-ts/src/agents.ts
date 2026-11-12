@@ -20,7 +20,14 @@ import { G } from "./models";
 import { travelHeading } from "./preimpact";
 import { pyRound, str } from "./pymath";
 import { PyRandom } from "./pyrandom";
-import { poseAt, type PlanPrevio, type Reconstruction } from "./reconstruct";
+import {
+  laterImpacts,
+  pairOf,
+  poseAt,
+  primaryEvent,
+  type PlanPrevio,
+  type Reconstruction,
+} from "./reconstruct";
 import { Actor, analyzePair, objectOccluders, Observer } from "./visibility";
 
 type Json = Record<string, unknown>;
@@ -313,11 +320,25 @@ function leader(me: Agent, states: Map<string, Estado>, byId: Map<string, Agent>
 
 type Ve = (a: Agent, lead: Agent, t: number, states: Map<string, Estado>) => boolean;
 
+/** Los pares («a|b», ordenados) cuyo impacto narra el hecho después del primero, sin el del primero. */
+function laterPairs(spec: Json, vehicleIds: ReadonlyMap<string, unknown>): Set<string> {
+  const primary = primaryEvent(spec);
+  const first = primary ? [...pairOf(primary, vehicleIds)].sort().join("|") : "";
+  const out = new Set<string>();
+  for (const e of laterImpacts(spec, primary, vehicleIds)) {
+    const k = [...pairOf(e, vehicleIds)].sort().join("|");
+    if (k !== first) out.add(k);
+  }
+  return out;
+}
+
+/** Simula hasta el primer contacto. Los pares de `later` no se buscan (el orden de impactos). */
 function simulate(
   agents: Agent[],
   tEnd: number,
   sees: Ve,
   reaction: Map<string, number>,
+  later: ReadonlySet<string> = new Set(),
 ): Simulacion {
   const byId = new Map(agents.map((a) => [a.id, a]));
   const t0 = agents[0]!.t0;
@@ -338,7 +359,8 @@ function simulate(
     const ids = sortedKeys(rs);
     for (let i = 0; i < ids.length; i++) {
       for (const b of ids.slice(i + 1)) {
-        if (overlap(rs.get(ids[i]!)!, rs.get(b)!)) return [ids[i]!, b];
+        if (!later.has(`${ids[i]!}|${b}`) && overlap(rs.get(ids[i]!)!, rs.get(b)!))
+          return [ids[i]!, b];
       }
     }
     return null;
@@ -392,7 +414,7 @@ function simulate(
     const ids = sortedKeys(rs);
     for (let i = 0; i < ids.length; i++) {
       for (const b of ids.slice(i + 1)) {
-        if (byId.get(ids[i]!)!.v0 > 0 || byId.get(b)!.v0 > 0) {
+        if (!later.has(`${ids[i]!}|${b}`) && (byId.get(ids[i]!)!.v0 > 0 || byId.get(b)!.v0 > 0)) {
           minGap = Math.min(minGap, distance(rs.get(ids[i]!)!, rs.get(b)!));
         }
       }
@@ -508,8 +530,9 @@ export function simulateDrivers(spec: Json, rec: Reconstruction): AgentsResult |
 
   const tEnd = HORIZON_AFTER_S;
   const nominalRt = new Map([...reaction].map(([k, v]) => [k, v[0]]));
-  const sim = simulate(makeAgents(spec, rec, true), tEnd, sees, nominalRt);
-  const base = simulate(makeAgents(spec, rec, false), tEnd, sees, nominalRt);
+  const later = laterPairs(spec, rec.previa);
+  const sim = simulate(makeAgents(spec, rec, true), tEnd, sees, nominalRt, later);
+  const base = simulate(makeAgents(spec, rec, false), tEnd, sees, nominalRt, later);
 
   // Sensibilidad al tiempo de reacción de los que reaccionan (con la semilla de la escena).
   const reactive = [...sim.decisiones.entries()]
@@ -527,7 +550,7 @@ export function simulateDrivers(spec: Json, rec: Reconstruction): AgentsResult |
         const [lo, hi] = reaction.get(vid)![1];
         rt.set(vid, rng.uniform(lo, hi));
       }
-      const s = simulate(makeAgents(spec, rec, true), tEnd, sees, rt);
+      const s = simulate(makeAgents(spec, rec, true), tEnd, sees, rt, later);
       if (s.contacto === null) sinContacto += 1;
       else rel.push(s.contacto.velocidadRelativaKmh);
     }
@@ -543,8 +566,19 @@ export function simulateDrivers(spec: Json, rec: Reconstruction): AgentsResult |
     }
   }
 
-  return new AgentsResult(sim, base, reaction, rec.tInicio, tEnd, rec.semilla, sens, [
+  const supuestos = [
     "Los conductores ven el estado del inicio de cada paso y actúan a la vez.",
     "Frenar usa la desaceleración de la reconstrucción; volantear desplaza un carril con μ·g.",
-  ]);
+  ];
+  if (later.size) {
+    // En el orden de las tuplas de Python: por el primero y luego por el segundo.
+    const pares = [...later]
+      .map((k) => k.split("|") as [string, string])
+      .sort(([a1, b1], [a2, b2]) => (a1 < a2 ? -1 : a1 > a2 ? 1 : b1 < b2 ? -1 : b1 > b2 ? 1 : 0))
+      .map(([a, b]) => `${a} y ${b}`);
+    supuestos.push(
+      `Se respeta el orden de impactos del hecho: no se busca contacto entre ${pares.join(", ")} antes del primer impacto.`,
+    );
+  }
+  return new AgentsResult(sim, base, reaction, rec.tInicio, tEnd, rec.semilla, sens, supuestos);
 }

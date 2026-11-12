@@ -53,6 +53,9 @@ QUESTION_SAMPLE = 30
 FOLD_RANGES = ((0x20, 0x7E), (0xA0, 0x24F), (0x1E00, 0x1EFF), (0x2000, 0x206F), (0x3000, 0x3000))
 
 EDGE_CASES = (
+    "VIN 3N1CN7AD5HL800123, NIV: 1hgcm82633a004352 y una serie de golpes",
+    "Folio 2024-00123, folio no. 12345, póliza número 7712345678 y siniestro: 04-123456-7",
+    "Reporté el siniestro a mi aseguradora; Reporte de siniestro; portafolio 123",
     "Me llamo Brenda Ruiz y mi tel es 722 123 4567",
     "El señor Luis Hernández García iba en la calle Miguel Hidalgo",
     "placas MXA-123-B, correo ana.p@gmail.com",

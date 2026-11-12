@@ -1129,6 +1129,56 @@ export function posicionesEnTiempo(
   );
 }
 
+/** El instante del primer impacto de un resultado del solver (0 si no lo dice). */
+function tPrimerImpacto(resultado: Json): number {
+  const ts = ((resultado.eventos ?? []) as { tipo?: string; t?: number }[])
+    .filter((e) => String(e.tipo ?? "").startsWith("impacto") && typeof e.t === "number")
+    .map((e) => e.t!);
+  return ts.length ? Math.min(...ts) : 0;
+}
+
+/**
+ * T6.2: dónde está cada vehículo según la versión declarada de un conductor (R7), en el instante
+ * `t` de la reconstrucción, para dibujarla en el croquis 2D junto a la reconstruida (antes solo
+ * iba en el 3D y en la tabla).
+ *
+ * Las dos versiones se alinean por su impacto (cada resultado tiene el suyo en su propio reloj).
+ * Solo se devuelven los vehículos que en ese instante están a más de `umbralM` de su posición
+ * reconstruida: lo que coincide no se dibuja dos veces.
+ */
+export function posicionesDeclaradasEnTiempo(
+  base: EscenaSolver,
+  reconstruido: Json,
+  declarado: Json,
+  t: number,
+  umbralM = 0.5,
+): { vehiculo: Id; punto: { lat: number; lon: number }; rumbo: number; declarada: true }[] {
+  if (!base.origen) return [];
+  const origen = base.origen;
+  const tD = t - tPrimerImpacto(reconstruido) + tPrimerImpacto(declarado);
+  const deRec = new Map(
+    ((reconstruido.vehiculos ?? []) as { id: string; trayectoria?: Trayectoria }[]).map((v) => [
+      v.id,
+      v.trayectoria,
+    ]),
+  );
+  return ((declarado.vehiculos ?? []) as { id: string; trayectoria?: Trayectoria }[]).flatMap(
+    (v) => {
+      const tr = v.trayectoria;
+      const rec = deRec.get(v.id);
+      const id = base.ids[v.id];
+      if (!tr?.t?.length || !rec?.t?.length || !id) return [];
+      const x = enT(tr.t, tr.x, tD);
+      const y = enT(tr.t, tr.y, tD);
+      if (Math.hypot(x - enT(rec.t, rec.x, t), y - enT(rec.t, rec.y, t)) <= umbralM) return [];
+      const r = enT(tr.t, tr.rumbo, tD);
+      const [lon, lat] = avanzar(avanzar(origen, 0, y), 90, x);
+      const rumbo = (((90 - (r * 180) / Math.PI) % 360) + 360) % 360;
+      return [{ vehiculo: id, punto: { lat, lon }, rumbo, declarada: true as const }];
+    },
+  );
+}
+
 /** La trayectoria de un vehículo de la reconstrucción en el mapa, con sus tres poses (R8b). */
 export interface TrayectoriaEnMapa {
   vehiculo: Id;
