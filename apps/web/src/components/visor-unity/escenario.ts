@@ -37,7 +37,7 @@ import {
   type SignalPhase,
 } from "@croquis/viewer/puro";
 
-import { planCuadras, type Lote } from "./cuadras";
+import { enElCaso, planCuadras, zonasDelCaso, type Lote } from "./cuadras";
 
 /**
  * La malla de rayas blancas sin las de orilla: se quita todo triángulo cuyos tres vértices caen en
@@ -370,21 +370,28 @@ export function escenarioDe(spec: EscenaSpec, resultado: Resultado): Escenario {
     maxTrees: Math.max(0, QUALITY_PROFILES.ultra.maxTrees - declarados),
   });
   const corredores = corridorsOf(layout, mapa?.vias);
+  // Lo que recorren los vehículos del caso: el entorno procedural no pone casas ni árboles ahí (U6).
+  const libres = zonasDelCaso(resultado.vehiculos);
   // En zona urbana, la calle mexicana: cuadras de lotes pegados a la banqueta y más cuadras detrás
   // (`cuadras.ts`). En rural se quedan los edificios sueltos del plan del visor web.
   const cuadras =
     plan.zone === "urbana"
-      ? planCuadras(corredores, { x: accion.cx, y: accion.cy }, spec.meta.semilla)
+      ? planCuadras(corredores, { x: accion.cx, y: accion.cy }, spec.meta.semilla, libres)
       : null;
   const edificios: Lote[] =
     cuadras?.lotes ??
-    plan.buildings.map((b) => ({
-      ...b,
-      tipo: "casa" as const,
-      remetimiento: 0,
-      herreria: false,
-      zaguan: false,
-    }));
+    plan.buildings
+      .filter(
+        (b) =>
+          !libres.some((z) => Math.hypot(b.x - z.x, b.y - z.y) < z.r + Math.hypot(b.w, b.d) / 2),
+      )
+      .map((b) => ({
+        ...b,
+        tipo: "casa" as const,
+        remetimiento: 0,
+        herreria: false,
+        zaguan: false,
+      }));
   const altura = terrainHeightAt(spec.meta.semilla, corredores, plan.zone);
   const seco = (x: number, y: number) =>
     1 - Math.min(1, Math.max(0, (distanceToRoad({ x, y }, corredores) - 1.2) / 4));
@@ -474,17 +481,19 @@ export function escenarioDe(spec: EscenaSpec, resultado: Resultado): Escenario {
     suelo: [suelo(320, 96, undefined, true), suelo(2400, 80, 300)],
     entorno: {
       zona: plan.zone,
-      arboles: plan.trees.map((t) => ({
-        x: cm(t.x),
-        y: cm(t.y),
-        z: z(t.x, t.y),
-        tronco_m: cm(t.trunk),
-        copa_m: cm(t.crown),
-        rumbo_rad: mm(t.yaw),
-        tipo: t.kind,
-        ...(t.species ? { especie: t.species } : {}),
-        ...(t.height ? { altura_m: cm(t.height) } : {}),
-      })),
+      arboles: plan.trees
+        .filter((t) => !enElCaso(libres, t))
+        .map((t) => ({
+          x: cm(t.x),
+          y: cm(t.y),
+          z: z(t.x, t.y),
+          tronco_m: cm(t.trunk),
+          copa_m: cm(t.crown),
+          rumbo_rad: mm(t.yaw),
+          tipo: t.kind,
+          ...(t.species ? { especie: t.species } : {}),
+          ...(t.height ? { altura_m: cm(t.height) } : {}),
+        })),
       edificios: edificios.map((b) => ({
         x: cm(b.x),
         y: cm(b.y),
