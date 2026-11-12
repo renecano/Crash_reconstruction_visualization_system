@@ -256,6 +256,16 @@ namespace Croquis.Visor
                 m["vehiculo_id"] = vehiculoId;
             }
 
+            // Un choque intermedio es contra algo: el objeto que hay bajo el cursor, si hay.
+            if (herramienta == "choque_intermedio")
+            {
+                var i = Edicion.Elegir(piezas, o.x, o.z, o.y, d.x, d.z, d.y);
+                if (i >= 0)
+                {
+                    m["objeto_id"] = piezas[i].Id;
+                }
+            }
+
             VisorPuente.Avisar("puntoMarcado", m);
         }
 
