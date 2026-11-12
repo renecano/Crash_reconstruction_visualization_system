@@ -1537,7 +1537,6 @@ export function RecorridoCaso({
               <VisorCasoUnity
                 expediente={expediente}
                 onExpediente={(e) => cambiarExpediente(e)}
-                impactos={rec.impactos}
                 // En la reconstrucción, con el perito trabajando: mover objetos y marcar puntos en 3D.
                 editable={actual === 3 && modo === "trabajar"}
                 vehiculos={Object.entries(r.ids).map(([resId, id]) => ({

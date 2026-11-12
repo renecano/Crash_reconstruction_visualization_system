@@ -16,7 +16,7 @@ import { useSearchParams } from "next/navigation";
 import { useMemo, useRef, useState, type ComponentProps } from "react";
 import { especDel3d, NotasDel3d, Visor3dCaso } from "@/components/cesvi/caso/reconstruccion";
 import { downloadBytes } from "@/lib/download";
-import type { ImpactoAColocar } from "@/lib/escena-facil";
+import { impactosAColocar } from "@/lib/pasos-caso";
 import { camaraUnity } from "@/lib/visor-unity/camaras";
 import type { CanalTiempo } from "@/lib/visor-unity/canal";
 import { aplicarObjetoEditado, aplicarPuntoMarcado } from "@/lib/visor-unity/edicion";
@@ -33,7 +33,6 @@ const HERRAMIENTAS: { id: HerramientaEdicion; texto: string; conVehiculo: boolea
 export function VisorCasoUnity({
   expediente,
   onExpediente,
-  impactos = [],
   editable = false,
   vehiculos = [],
   onApiUnity,
@@ -48,7 +47,6 @@ export function VisorCasoUnity({
   expediente: Expediente | null;
   /** Una edición del 3D, ya llevada al expediente: el caso se recalcula y el 3D se vuelve a cargar. */
   onExpediente: (e: Expediente, mensaje: string) => void;
-  impactos?: readonly ImpactoAColocar[];
   /** Si se puede editar aquí (la reconstrucción, con el perito trabajando). */
   editable?: boolean;
   /** Los vehículos del caso, con su letra, para los puntos de C1. */
@@ -110,7 +108,15 @@ export function VisorCasoUnity({
     if (!exp.current) return;
     // El vehículo vuelve a la forma del expediente.
     const id = vehiculos.find((v) => v.resId === m.vehiculo_id)?.id ?? m.vehiculo_id;
-    aplicar(aplicarPuntoMarcado(exp.current, r.origen, { ...m, vehiculo_id: id }, impactos));
+    // El primer golpe, si el caso aún no lo tiene, va con los vehículos del primer impacto.
+    aplicar(
+      aplicarPuntoMarcado(
+        exp.current,
+        r.origen,
+        { ...m, vehiculo_id: id },
+        impactosAColocar(exp.current),
+      ),
+    );
   };
 
   return (
