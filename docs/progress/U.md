@@ -4,7 +4,7 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 
 ## Estado
 
-- **Fase actual:** U5 (calidad y rendimiento) en `feat/u4-ajustes` (PR #205, borrador). René eligió (2026-11-11): **escala de dibujo automática en media** (entre 0.5 y 1, buscando 60 fps), **una sola ronda de costo fijo** (lluvia, piel de las personas, llamadas de dibujo) y volver a medir. **Criterio de cierre:** la escena de referencia de PLAN §7.8 (`lateral_interseccion`) cumple ≥ 60 fps en media, de día y de noche; las demás quedan con su cifra.
+- **Fase actual:** U5 cerrada (2026-11-12, criterio de cierre cumplido; ver «Medición final y cierre»). Sigue U6 en `feat/u6-integracion`. Lo de abajo es de antes del cierre: René eligió (2026-11-11): **escala de dibujo automática en media** (entre 0.5 y 1, buscando 60 fps), **una sola ronda de costo fijo** (lluvia, piel de las personas, llamadas de dibujo) y volver a medir. **Criterio de cierre:** la escena de referencia de PLAN §7.8 (`lateral_interseccion`) cumple ≥ 60 fps en media, de día y de noche; las demás quedan con su cifra.
 - **Siguiente:** revisar el resultado de la cadena (`tools/unity/u5-cadena.ps1 -Estado`): si el criterio cumple, cerrar U5 (cifras en ADR 0115 y aquí, «Resumen para René» con las capturas de `docs/cesvi/u5/final/`), fusionar #205 y seguir con U6. Si no cumple, detenerse y avisar a René con las cifras: el piso de 0.5 no se baja. Alta y ultra las mide su colaborador con el paquete `visor-escritorio-u5` (falta `eval/results/e6_unity_escritorio.json`). **Antes de W8, avisar a René para cambiar el modelo.**
 - **Unity y Blender corren en segundo plano** desde el 2026-11-10: René reabrió la sesión con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`. Sigue la regla de un solo proceso pesado a la vez.
 - **Cómo se itera:** capturas del Editor en modo batch (`Capturas.Tomar`, unos 3 min). En esta sesión no hubo herramientas del MCP de Unity. Un build WebGL solo al cerrar cada punto.
@@ -397,7 +397,7 @@ Plan: PLAN-CESVI §3.3. Decisiones: ADR 0114.
 
 Conductor sin la carrocería propia (contorno tenue del cofre y los postes), vidrio propio sin el reflejo de la sonda, moto tendida desde el impacto con «Posición final ilustrativa», camisas que nunca son color piel, el ocupante dentro de la cabina y la cinematográfica que se acerca si una fachada la tapa. ADR 0114, decisiones 12 a 15. Capturas del build WebGL en `docs/cesvi/u4/ajustes/` (conductores en AXA y `lateral_interseccion`; vidrios en las 5 escenas de día y de noche; personas a los 3 s). PR #205.
 
-## U5 · Calidad y rendimiento (2026-11-11, en curso)
+## U5 · Calidad y rendimiento (cerrada el 2026-11-12)
 
 ADR 0115. Rama `feat/u4-ajustes`, PR #205 (borrador).
 
@@ -484,6 +484,37 @@ La cadena terminó completa (150 mediciones, ninguna con error ni repetida; equi
   - **Lo que queda del minimapa** (su cámara, ya con pocas llamadas) son 1.1 a 1.3 ms por cuadro. No se siguió: era una sola ronda.
 
 - **Alta y ultra no cambian:** siguen con partículas, con el minimapa completo y sin escala automática (prueba `LasOptimizacionesDeU5SoloTocanBajaYMedia`).
+
+### Medición final y cierre (2026-11-12)
+
+La cadena reanudable midió el build `e3da8c1317` (70 MB) completo: 90 mediciones, ninguna con error, e2e de cámaras en verde, equipo conectado y en «Mejor rendimiento» (`eval/results/e6_unity_media.json`, `e6_unity_media_escala_0.5.json`, `e6_unity_baja.json`; estado en `eval/results/u5_estado.json`). fps a 1080p, mediana de 3 repeticiones:
+
+| Escena                          | Media, escala automática | Escala elegida | Media a 0.5 fija (control) | Baja |
+| ------------------------------- | ------------------------ | -------------- | -------------------------- | ---- |
+| axa, día                        | 61.4                     | 0.627          | 71.8                       | 62.3 |
+| axa, noche                      | 68.0                     | 0.548          | 73.8                       | 51.4 |
+| carambola, día                  | 59.6                     | 0.5            | 63.2                       | 47.8 |
+| carambola, noche                | 56.3                     | 0.5            | 64.3                       | 44.5 |
+| **lateral_interseccion, día**   | **64.7**                 | 0.5            | 65.6                       | 53.1 |
+| **lateral_interseccion, noche** | **62.1**                 | 0.5            | 59.4                       | 41.0 |
+| nocturno_lluvia, día            | 61.6                     | 0.5            | 58.6                       | 58.0 |
+| nocturno_lluvia, noche          | 61.0                     | 0.5            | 59.3                       | 47.0 |
+| terraceria, día                 | 64.2                     | 0.5            | 63.7                       | 52.5 |
+| terraceria, noche               | 67.3                     | 0.5            | 63.3                       | 48.1 |
+
+- **Criterio de cierre: cumple.** La escena de referencia de §7.8 llega a 64.7 fps de día y 62.1 de noche en media con su escala automática.
+- **Las demás:** 8 de 10 escenas pasan de 60 en media. Carambola (3 vehículos) queda en 59.6 de día y 56.3 de noche, a 0.5: el piso. Ninguna baja de 24 fps, así que la calidad automática no pasa a baja en ninguna. Baja cumple sus 30 fps en las 10 (de 41.0 a 62.3; antes de esta ronda, de 36.5 a 51.3).
+- **La escala que eligió cada escena** (`eval/results/u5_escalas_elegidas.json`): 0.627 en AXA de día, 0.548 en AXA de noche y 0.5 en las demás. Durante las 30 mediciones de media la escala no cambió ni una vez mientras se contaban cuadros; esperó entre 16 y 32 s a asentarse. En 2 de las 30 quedó en el piso sin llegar (carambola de día y la referencia de noche, una repetición cada una).
+- **El control a 0.5 fija** mide cuánto aportó la ronda de costo fijo con el mismo build: con escala 0.5 y el build anterior, 3 de 10 escenas pasaban de 60 (`e6_unity_media_escala_0.5` del 2026-11-11, archivado en `u5_estado.ff04482a02.json`); ahora, 7 de 10. Entre repeticiones de la misma escena hay hasta 8 fps de diferencia (carambola de noche: 56.3 con la automática y 64.3 con la fija, ambas a 0.5): es el ruido térmico de esta laptop.
+- **Ojo con la carga al empezar:** al empezar media el CPU marcaba 28 % (al final, 3 %); las condiciones quedan en el resultado.
+- **Capturas para juzgar la nitidez** (1080p, WebP de calidad 95): `docs/cesvi/u5/final/escala_1/` y `docs/cesvi/u5/final/escala_elegida/`, las 10 escenas en las dos. A 0.5, los bordes finos (rejas, rines, cables) se ven escalonados y las texturas lejanas, más lisas; los vehículos, las personas, las huellas y las marcas se distinguen igual.
+
+### Resumen para René (U5)
+
+- **Qué quedó:** cuatro niveles de calidad con calidad automática; en media, optimizaciones que no cambian el aspecto, escala de dibujo automática por escena (de 0.5 a 1, nunca menos de 0.5) y una ronda de costo fijo (lluvia en la GPU, vehículos del minimapa en una malla). Alta y ultra no cambian.
+- **Cifras:** la referencia, 64.7 / 62.1 fps en media; carambola, 59.6 / 56.3; baja, de 41 a 62 fps. Tabla arriba.
+- **Cómo verlo:** compara cada par de capturas de `docs/cesvi/u5/final/`. En el visor, F3 abre el panel de diagnóstico, que dice a qué escala va la automática y si llegó.
+- **Qué necesito de ti:** que tu colaborador corra el paquete `visor-escritorio-u5` en la computadora con tarjeta de video y devuelva `e6_unity_escritorio.json` (alta y ultra). Si la nitidez a 0.5 no te convence en alguna escena, dímelo.
 
 ### Para retomar
 

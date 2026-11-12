@@ -88,6 +88,8 @@ René revisó §7.8 de `PLAN.md`: la meta de media (≥ 60 fps a 1080p) es **en 
 
 **Medir con la escala automática.** La E6 de media espera a que la escala lleve 8 s asentada antes de contar cuadros y anota la escala de cada medición. La cadena hace antes una pausa de 4 min para que el equipo se enfríe (la primera configuración salía castigada). El promedio de fps es la cifra que vale: el diagnóstico de tirones (`Tirones.cs`) mostró que, visto desde el visor, los cuadros son parejos (12 lentos de 586 en la referencia de noche, contra 65 de 580 en los tiempos de `requestAnimationFrame`), así que la mediana y el 1 % más lento del navegador exageran el vaivén.
 
+**Medición final (2026-11-12, `eval/results/e6_unity_media.json`):** la escena de referencia llega a 64.7 fps de día y 62.1 de noche en media con la escala automática: **cumple §7.8**. 8 de 10 escenas pasan de 60; carambola queda en 59.6 y 56.3 a escala 0.5, el piso. Ninguna baja de 24 fps. Baja: de 41.0 a 62.3 fps. La escala elegida: 0.627 y 0.548 en AXA, 0.5 en las demás. Con 0.5 fija, la ronda de costo fijo pasó de 3 a 7 escenas sobre 60 fps (`e6_unity_media_escala_0.5.json` contra el archivado `u5_estado.ff04482a02.json`).
+
 ## Consecuencias
 
 - El build WebGL lleva las variantes de shader de los cuatro niveles (por ejemplo, sombras de focos de alta); su peso se mide en U5 y queda en `docs/progress/U.md`.
