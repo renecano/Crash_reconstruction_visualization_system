@@ -222,6 +222,22 @@ namespace Croquis.Visor
                 }
             }
 
+            if (j["pantalla"] != null && Camera.main != null)
+            {
+                // Dónde se ve un punto de la escena (x este, y norte, a ras del piso), como fracción
+                // de la pantalla desde arriba a la izquierda: la e2e con el Unity real arrastra ahí.
+                var cam = Camera.main;
+                var pp = cam.WorldToScreenPoint(new Vector3((float)j["pantalla"]["x"], 0.3f, (float)j["pantalla"]["y"]));
+                var fx = pp.x / cam.pixelWidth;
+                var fy = 1f - pp.y / cam.pixelHeight;
+                return new JObject
+                {
+                    { "fx", fx },
+                    { "fy", fy },
+                    { "visible", pp.z > 0f && fx >= 0f && fx <= 1f && fy >= 0f && fy <= 1f },
+                };
+            }
+
             if (j["inventario"] != null && caso != null)
             {
                 return Inventario(caso);

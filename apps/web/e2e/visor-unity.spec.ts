@@ -2,7 +2,8 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { VISOR_PUENTE_VERSION } from "@croquis/scene-schema";
 import { expect, test, type Page } from "@playwright/test";
-import { irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
+import { irAPaso } from "./ayuda-recorrido";
+import { casoConPoste } from "./visor-unity-ayuda";
 
 /**
  * U6: el visor Unity en `/cesvi`, con un Unity de mentira (`unity-falso.js`) que habla el puente:
@@ -13,12 +14,6 @@ import { irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
  */
 test.use({ reducedMotion: "reduce" });
 
-const GRABACION = JSON.parse(
-  readFileSync(
-    join(__dirname, "../../../data/cesvi/grabaciones/escenas/cesvi-e814f085db.json"),
-    "utf8",
-  ),
-) as { salida: unknown };
 const FALSO = readFileSync(join(__dirname, "unity-falso.js"), "utf8");
 
 interface Recibido {
@@ -56,57 +51,6 @@ const recibidos = (page: Page) =>
   page.evaluate(
     () => (window as unknown as { __unityFalso: { recibidos: Recibido[] } }).__unityFalso.recibidos,
   );
-
-/** La escena de «Corregir después» (W4): dos vehículos y el Camaro contra un poste. */
-async function casoConPoste(page: Page) {
-  await page.route("https://tiles.openfreemap.org/**", (r) =>
-    r.fulfill({
-      contentType: "application/json",
-      body: JSON.stringify({
-        version: 8,
-        sources: {},
-        layers: [{ id: "fondo", type: "background", paint: { "background-color": "#eee" } }],
-      }),
-    }),
-  );
-  await page.route("**/api/cesvi/escena", (r) =>
-    r.fulfill({
-      contentType: "application/json",
-      body: JSON.stringify({ metodo: "claude", salida: GRABACION.salida }),
-    }),
-  );
-  await page.goto("/cesvi");
-  await page.getByTestId("ir-caso-nuevo").click();
-  await irAPaso(page, 2);
-  await page.getByTestId("ejemplo-narracion").click();
-  await page.getByTestId("leer-narracion").click();
-  await expect(page.getByTestId("escena")).toContainText("2 vehículos · 1 impacto");
-  await sinRed(page);
-  await irAPaso(page, 3);
-  const pregunta = page.getByTestId("escena-pregunta");
-  const mapa = await mapaFacil(page);
-  const caja = (await mapa.boundingBox())!;
-  await mapa.click({ position: { x: caja.width * 0.6, y: caja.height * 0.45 } });
-  await expect(pregunta).toHaveText("¿Por dónde venía el Jetta?");
-  await page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]').click();
-  await tocarEnMetros(page, "choque-1", 6, 8);
-  await page.getByTestId("listo-final").click();
-  await page.getByTestId("no-se-direccion").click();
-  await page.getByTestId("final-junto").click();
-  await page.getByTestId("listo-final").click();
-  await page.getByTestId("golpe-nose").click();
-  await page.getByTestId("otros-si").click();
-  await page.getByTestId("otros-vehiculo-V2").click();
-  await page.getByTestId("otros-objeto-0").click();
-  await tocarEnMetros(page, "choque-1", 18, 3);
-  await page.getByTestId("otros-no").click();
-  await page.getByTestId("paso-listo").click();
-  await page.getByTestId("terreno-liso").click();
-  await expect(page.getByTestId("escena-lista")).toBeVisible();
-  await irAPaso(page, 4);
-  await page.getByTestId("reconstruir").click();
-  await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 90_000 });
-}
 
 test("@flujo /cesvi: el 3D en Unity — mover el poste recalcula y las fotos del dictamen salen de Unity (U6)", async ({
   page,

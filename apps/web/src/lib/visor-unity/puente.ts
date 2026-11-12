@@ -179,6 +179,7 @@ export class PuenteUnity {
     }
     const v = await Promise.race([version, plazo]);
     puente = new PuenteUnity(instancia);
+    if (typeof navigator !== "undefined" && navigator.webdriver) puente.paraPruebas();
     for (const x of antes) puente.repartir(x);
     if (v !== VISOR_PUENTE_VERSION) {
       await puente.cerrar();
@@ -188,7 +189,31 @@ export class PuenteUnity {
   }
 
   enviar<K extends keyof MensajesAUnity>(mensaje: K, datos: MensajesAUnity[K]): void {
+    this.registro?.enviados.push({ metodo: mensaje, datos });
     this.instancia.SendMessage(OBJETO_PUENTE_UNITY, mensaje, JSON.stringify(datos));
+  }
+
+  private registro: {
+    enviados: { metodo: string; datos: unknown }[];
+    recibidos: MensajeDeUnity[];
+  } | null = null;
+
+  /**
+   * Solo en un navegador automatizado (las e2e, `navigator.webdriver`): guarda lo que va y viene y
+   * deja el puente en `window.__croquisPuente`, con `depurar` (los interruptores de diagnóstico de
+   * Unity, fuera del contrato) para que la prueba pregunte, por ejemplo, dónde se ve un punto.
+   */
+  paraPruebas(): void {
+    this.registro = { enviados: [], recibidos: [] };
+    const r = this.registro;
+    this.oir((m) => r.recibidos.push(m));
+    (window as unknown as Record<string, unknown>).__croquisPuente = {
+      enviados: r.enviados,
+      recibidos: r.recibidos,
+      enviar: (m: keyof MensajesAUnity, d: never) => this.enviar(m, d),
+      depurar: (d: object) =>
+        this.instancia.SendMessage(OBJETO_PUENTE_UNITY, "depurar", JSON.stringify(d)),
+    };
   }
 
   /** Oye los mensajes de Unity; devuelve cómo dejar de oírlos. */
