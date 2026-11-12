@@ -34,6 +34,8 @@ import {
   type MarcaDeCita,
 } from "@/lib/dictamen-lab";
 import { protagonista } from "@/lib/reconstruccion-lab";
+import { creditosDelVisorUnity } from "@/lib/visor-unity/creditos";
+import type { ApiVisorUnity } from "@/components/visor-unity/visor-unity";
 import { HojaDictamen } from "./caso/hoja-dictamen";
 import { ESTILO_MAPA, ESTILO_MAPA_CLARO } from "./mapa-comun";
 
@@ -67,18 +69,28 @@ function descargar(bytes: Uint8Array, nombre: string, tipo: string) {
  */
 export const PRESUPUESTO_FOTOS_MS = 20_000;
 
-async function cuadros(api: ViewerExportApi | null, resultado: Record<string, unknown>) {
-  if (!api) return [];
+async function cuadros(
+  api: ViewerExportApi | null,
+  resultado: Record<string, unknown>,
+  unity: ApiVisorUnity | null = null,
+) {
+  if (!api && !unity) return [];
   const desde = performance.now();
   const t0 = Number(resultado.t_inicio ?? -1);
   const t1 = Number(resultado.t_fin ?? 1);
   const out: { etiqueta: string; imagen: string }[] = [];
-  for (const { t, etiqueta } of [
-    { t: Math.max(t0, -1), etiqueta: "Antes del impacto (−1 s)" },
-    { t: 0, etiqueta: "En el impacto (0 s)" },
-    { t: t1, etiqueta: `En reposo (+${t1.toFixed(1)} s)` },
+  for (const { t, etiqueta, vista } of [
+    { t: Math.max(t0, -1), etiqueta: "Antes del impacto (−1 s)", vista: "antes" as const },
+    { t: 0, etiqueta: "En el impacto (0 s)", vista: "impacto" as const },
+    { t: t1, etiqueta: `En reposo (+${t1.toFixed(1)} s)`, vista: "reposo" as const },
   ]) {
     try {
+      // U6: con el visor Unity las fotos salen de Unity, con el mismo tamaño y los mismos instantes.
+      if (unity) {
+        out.push({ etiqueta, imagen: await unity.capturar(vista, 960, 540) });
+        continue;
+      }
+      if (!api) continue;
       const c = await api.captureFrameReady({
         t,
         width: 960,
@@ -104,6 +116,7 @@ export function DictamenCaso({
   verificacion,
   declarada,
   exportApi,
+  unity = null,
   mapa = null,
   validacion: guardada,
   onValidacion,
@@ -141,6 +154,8 @@ export function DictamenCaso({
   declarada: DatosDictamenCaso["declarada"];
   /** El visor 3D abierto, para los cuadros (null si el perito no lo abrió). */
   exportApi: ViewerExportApi | null;
+  /** El visor Unity, si es el que está abierto (U6): las fotos salen de él. */
+  unity?: ApiVisorUnity | null;
   /** El mapa de «Caso nuevo»: con él, el croquis va sobre las calles (R8b). */
   mapa?: MapaMl | null;
   /** La validación del perito, que se guarda con el caso (ADR 0075). */
@@ -196,21 +211,22 @@ export function DictamenCaso({
   // visor recién abierto esperan a que termine de compilar, y la descarga parecía no hacer nada.
   const fotosListas = useRef<{
     de: unknown;
-    api: ViewerExportApi | null;
+    api: ViewerExportApi | ApiVisorUnity | null;
     promesa: ReturnType<typeof cuadros>;
   } | null>(null);
   const fotos = () => {
     const f = fotosListas.current;
-    if (f && f.de === reconstruccion.resultado && f.api === exportApi) return f.promesa;
-    const promesa = cuadros(exportApi, reconstruccion.resultado);
-    fotosListas.current = { de: reconstruccion.resultado, api: exportApi, promesa };
+    const api = unity ?? exportApi;
+    if (f && f.de === reconstruccion.resultado && f.api === api) return f.promesa;
+    const promesa = cuadros(exportApi, reconstruccion.resultado, unity);
+    fotosListas.current = { de: reconstruccion.resultado, api, promesa };
     return promesa;
   };
   useEffect(() => {
     void fotos();
     // Solo cuando cambia de qué son las fotos.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [exportApi, reconstruccion.resultado]);
+  }, [exportApi, unity, reconstruccion.resultado]);
 
   const datos = async (): Promise<DatosDictamenCaso> => {
     const c = await croquis();
@@ -222,7 +238,11 @@ export function DictamenCaso({
       croquis: c.imagen,
       croquisSobreMapa: c.sobreMapa,
       cuadros3d: await fotos(),
-      modelos3d: exportApi ? [...exportApi.vehicleCredits] : [],
+      modelos3d: unity
+        ? await creditosDelVisorUnity(unity.paquete.escena).catch(() => [])
+        : exportApi
+          ? [...exportApi.vehicleCredits]
+          : [],
       declarada,
       validacion,
       estructuraCesvi,
@@ -241,7 +261,7 @@ export function DictamenCaso({
     if (armando) return;
     setArmando(formato);
     setEstado(
-      exportApi
+      exportApi || unity
         ? "Tomando las fotos del 3D y armando el archivo…"
         : formato === "pdf"
           ? "Armando el PDF…"

@@ -86,6 +86,8 @@ import { ActoContraste, filaDeRestos } from "./contraste-laboratorio";
 import { HechoLaboratorio } from "./hecho-laboratorio";
 import { CifraReconstruccion, DetalleReconstruccion } from "./hoja-reconstruccion";
 import { TerrenoReconstruccion } from "./terreno-reconstruccion";
+import { VisorCasoUnity } from "@/components/visor-unity/visor-caso-unity";
+import type { ApiVisorUnity } from "@/components/visor-unity/visor-unity";
 import { protagonista, tipImpacto, tipVehiculo } from "@/lib/reconstruccion-lab";
 import { tomarArchivo } from "@/lib/archivo-pendiente";
 import {
@@ -103,7 +105,6 @@ import {
   ElegirHipotesis,
   PanelReconstruccion,
   useReconstruccion,
-  Visor3dCaso,
   type PosicionMovil,
 } from "./reconstruccion";
 import { textoParaClaude } from "@/lib/redaccion";
@@ -212,6 +213,8 @@ export function RecorridoCaso({
   const [comparacionDeclarada, setComparacionDeclarada] =
     useState<DatosDictamenCaso["declarada"]>(null);
   const [exportApi, setExportApi] = useState<ViewerExportApi | null>(null);
+  // U6: el visor Unity (si cargó). Las fotos del dictamen salen de él.
+  const [unityApi, setUnityApi] = useState<ApiVisorUnity | null>(null);
   const [pedidoExportar, setPedidoExportar] = useState(0);
   const [guardadoId, setGuardadoId] = useState<string | null>(
     inicial.origen === "guardado" ? inicial.id : null,
@@ -1162,6 +1165,7 @@ export function RecorridoCaso({
         verificacion={verificacion}
         declarada={comparacionDeclarada}
         exportApi={vista === "3d" ? exportApi : null}
+        unity={vista === "3d" ? unityApi : null}
         pedidoExportar={pedidoExportar}
         mapa={mapa}
         validacion={validacion}
@@ -1526,7 +1530,18 @@ export function RecorridoCaso({
             <div
               className={`absolute inset-0 bg-fondo ${pico ? "lg:right-[488px]" : ""} ${vista === "3d" ? "" : "pointer-events-none invisible"}`}
             >
-              <Visor3dCaso
+              <VisorCasoUnity
+                expediente={expediente}
+                onExpediente={(e) => cambiarExpediente(e)}
+                impactos={rec.impactos}
+                // En la reconstrucción, con el perito trabajando: mover objetos y marcar puntos en 3D.
+                editable={actual === 3 && modo === "trabajar"}
+                vehiculos={Object.entries(r.ids).map(([resId, id]) => ({
+                  id: String(id),
+                  resId,
+                  letra: letraDe(String(id)),
+                }))}
+                onApiUnity={setUnityApi}
                 r={r}
                 activo={visorAlaVista}
                 camaraPedida={camaraPedida}
