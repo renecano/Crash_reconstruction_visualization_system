@@ -4,7 +4,7 @@
  */
 
 /** Sube cuando cambia un mensaje. Unity la anuncia en `listo`; la web no carga un caso si no coincide. */
-export const VISOR_PUENTE_VERSION = "1.1.0" as const;
+export const VISOR_PUENTE_VERSION = "1.2.0" as const;
 
 export const CALIDADES_VISOR = ["baja", "media", "alta", "ultra", "auto"] as const;
 export type CalidadVisor = (typeof CALIDADES_VISOR)[number];
@@ -16,8 +16,23 @@ export type CamaraVisor =
 /** Lo que encuadra el botón: «Ver todo» o «Ir al impacto». */
 export type ZonaEncuadre = "todo" | "impacto";
 
-/** Qué foto del dictamen se pide; la del conductor es `conductor:<id del vehículo>`. */
-export type VistaCaptura = "impacto" | "reposo" | `conductor:${string}`;
+/**
+ * Qué foto del dictamen se pide: un segundo antes del impacto, en el impacto o en reposo (con la
+ * cámara cinematográfica), o la del conductor en el impacto (`conductor:<id del vehículo>`).
+ */
+export type VistaCaptura = "antes" | "impacto" | "reposo" | `conductor:${string}`;
+
+/**
+ * Qué hace el clic del perito en modo edición: mover, girar y cambiar el tamaño de un objeto, o
+ * marcar un punto de C1. Los puntos de un vehículo llevan su `vehiculo_id`.
+ */
+export const HERRAMIENTAS_EDICION = [
+  "mover",
+  "punto_inicial",
+  "choque_intermedio",
+  "punto_paso",
+] as const;
+export type HerramientaEdicion = (typeof HERRAMIENTAS_EDICION)[number];
 
 /** Lo que la web le manda a Unity. */
 export interface MensajesAUnity {
@@ -31,7 +46,8 @@ export interface MensajesAUnity {
   calidad: { nivel: CalidadVisor };
   encuadrar: { zona: ZonaEncuadre };
   capturar: { vista: VistaCaptura; ancho: number; alto: number };
-  modoEdicion: { on: boolean };
+  /** Sin `herramienta`, `mover`. */
+  modoEdicion: { on: boolean; herramienta?: HerramientaEdicion; vehiculo_id?: string };
   /** Muestra u oculta los puntos de C1 (primer golpe, choques intermedios, puntos de paso). */
   marcadores: { visibles: boolean };
 }

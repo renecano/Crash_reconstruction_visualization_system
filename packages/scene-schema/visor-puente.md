@@ -1,6 +1,6 @@
 # Puente web ↔ visor Unity
 
-**Versión 1.1.0.** Los tipos están en `src/visor-puente.ts` (`VISOR_PUENTE_VERSION`), y una prueba revisa que este documento y los tipos nombren los mismos mensajes. Este contrato solo cambia con un PR `contract:`.
+**Versión 1.2.0.** Los tipos están en `src/visor-puente.ts` (`VISOR_PUENTE_VERSION`), y una prueba revisa que este documento y los tipos nombren los mismos mensajes. Este contrato solo cambia con un PR `contract:`.
 
 ## Cómo viajan los mensajes
 
@@ -21,14 +21,18 @@
 | `calidad`     | `nivel`: `baja`, `media`, `alta`, `ultra`, `auto` | Fija el nivel, o lo deja automático.                                                   |
 | `encuadrar`   | `zona`: `todo` o `impacto`                        | «Ver todo» o «Ir al impacto».                                                          |
 | `capturar`    | `vista`, `ancho`, `alto`                          | Toma una foto cuando la escena está lista. Contesta `captura`.                         |
-| `modoEdicion` | `on`: sí o no                                     | Permite arrastrar objetos y marcar puntos.                                             |
+| `modoEdicion` | `on`: sí o no; `herramienta`, `vehiculo_id`       | Permite arrastrar objetos o marcar un punto, según la herramienta.                     |
 | `marcadores`  | `visibles`: sí o no                               | Muestra u oculta los puntos de C1: primer golpe, choques intermedios y puntos de paso. |
 
 **`modo`:** `cenital`, `cinematica`, `orbita`, `acera`, `libre` o `conductor:<id del vehículo>`. `acera` es de pie junto al árbol más cercano a la acción.
 
+**`herramienta`:** `mover` (la de omisión: arrastrar un objeto lo mueve, la rueda o dos dedos lo giran, y con mayúsculas la rueda cambia su largo), `punto_inicial`, `choque_intermedio` o `punto_paso` (un clic en el piso marca ese punto). Los puntos de un vehículo llevan su `vehiculo_id`.
+
 **Cambios de la 1.1.0:** la cámara `acera` y el mensaje `marcadores`.
 
-**`vista`:** `impacto` y `reposo` salen con la cámara cinematográfica; `conductor:<id del vehículo>`, con la de ese conductor.
+**Cambios de la 1.2.0:** la vista `antes` de `capturar` (un segundo antes del impacto: el dictamen lleva tres fotos) y la `herramienta` de `modoEdicion`.
+
+**`vista`:** `antes` (t = −1 s), `impacto` (t = 0) y `reposo` (al final) salen con la cámara cinematográfica; `conductor:<id del vehículo>`, con la de ese conductor en el impacto. La foto se toma a la escala de dibujo completa, sin minimapa ni panel; la leyenda ilustrativa la pone la web al pie.
 
 ## De Unity a la web
 
