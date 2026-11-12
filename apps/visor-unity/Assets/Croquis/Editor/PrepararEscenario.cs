@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using Croquis.Core;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -18,7 +20,7 @@ namespace Croquis.EditorTools
         private const string Carpeta = "Assets/Croquis/Recursos/Resources/materiales";
         private const string RutaPerfil = "Assets/Croquis/Recursos/Resources/posproceso.asset";
 
-        public static void Todo(UniversalRenderPipelineAsset urp, UniversalRendererData renderer)
+        public static void Todo(Dictionary<NivelCalidad, (UniversalRenderPipelineAsset Urp, UniversalRendererData Renderer)> canalizaciones)
         {
             if (!Directory.Exists("Assets/Croquis/Recursos/Resources/texturas"))
             {
@@ -28,13 +30,25 @@ namespace Croquis.EditorTools
 
             AssetDatabase.Refresh();
             Directory.CreateDirectory(Carpeta);
-            Canalizacion(urp, renderer);
+            foreach (var n in Calidades.Todos)
+            {
+                Canalizacion(canalizaciones[n].Urp, canalizaciones[n].Renderer, Calidades.Perfil(n));
+            }
             foreach (var n in new[] { "asfalto", "concreto", "pasto", "grava", "yeso", "tabique", "lamina", "tierra" })
             {
                 Pbr(n);
             }
 
             Mojado();
+            // El suelo de baja y media, con sus capas en una pasada (`Croquis/Suelo`): como material
+            // guardado, sus variantes entran al build.
+            foreach (var n in new[] { "pasto", "grava" })
+            {
+                var capas = new Material(Shader.Find("Croquis/Suelo"));
+                capas.CopyPropertiesFromMaterial(AssetDatabase.LoadAssetAtPath<Material>(Carpeta + "/" + n + ".mat"));
+                Guardar(capas, n + "_capas");
+            }
+
             Simples();
             foreach (var e in new[] { "jacaranda", "fresno", "pirul" })
             {
@@ -157,6 +171,22 @@ namespace Croquis.EditorTools
             Transparente(vidrio);
             Guardar(vidrio, "vidrio");
 
+            // El vidrio de los vehículos (ADR 0114): tintado y neutro, sin el reflejo de la sonda. Con
+            // él, las fachadas de colores vivos salían en el medallón como franjas rojas y azules, de
+            // torreta (René, 2026-11-10). Se guarda aquí, y no se arma al cargar, para que su variante
+            // sin reflejos del entorno entre al build.
+            var vidrioVehiculo = new Material(Lit);
+            vidrioVehiculo.SetColor("_BaseColor", new Color(0.06f, 0.07f, 0.08f, 0.62f));
+            vidrioVehiculo.SetFloat("_Smoothness", 0.82f);
+            vidrioVehiculo.SetFloat("_EnvironmentReflections", 0f);
+            vidrioVehiculo.EnableKeyword("_ENVIRONMENTREFLECTIONS_OFF");
+            Transparente(vidrioVehiculo);
+            Guardar(vidrioVehiculo, "vidrio_vehiculo");
+
+            // El fondo horneado del minimapa (U5): como material guardado, su shader entra al build.
+            Guardar(new Material(Shader.Find("Croquis/MinimapaFondo")), "minimapa_fondo");
+            Guardar(new Material(Shader.Find("Croquis/MinimapaVehiculo")), "minimapa_vehiculo");
+
             // Rayas y huellas: geometría pegada al piso, con transparencia para su desgaste.
             var calca = new Material(Lit);
             calca.SetFloat("_Smoothness", 0.35f);
@@ -173,6 +203,12 @@ namespace Croquis.EditorTools
             lluvia.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
             lluvia.renderQueue = (int)RenderQueue.Transparent;
             Guardar(lluvia, "lluvia");
+
+            // La lluvia de baja y media (U5): las mismas gotas y el mismo color, movidas en la GPU.
+            var lluviaMalla = new Material(Shader.Find("Croquis/Lluvia"));
+            lluviaMalla.SetColor("_BaseColor", lluvia.GetColor("_BaseColor"));
+            lluviaMalla.renderQueue = (int)RenderQueue.Transparent;
+            Guardar(lluviaMalla, "lluvia_malla");
 
             // Las matas de pasto: recorte por alfa, dos caras y sin mapa de normales. Va como asset
             // porque esa combinación no la usa ningún otro material: copiando la tarjeta de árbol y
@@ -313,28 +349,30 @@ namespace Croquis.EditorTools
         }
 
         /// <summary>
-        /// Luz de URP para el escenario: HDR, sombras suaves en 4 cascadas hasta 150 m, luces adicionales
-        /// por pixel con sombra (luminarias y faros) y oclusión ambiental. Todo en Forward: en WebGL 2 no
-        /// hay Deferred. La calidad por nivel llega en U5.
+        /// Luz de URP para el escenario, por nivel (U5, ADR 0115): HDR, sombras suaves, luces adicionales
+        /// por pixel (luminarias y faros) y oclusión ambiental. Todo en Forward: en WebGL 2 no hay
+        /// Deferred. Media y alta son los ajustes que tenían el build web y el de escritorio en U2.
         /// </summary>
-        private static void Canalizacion(UniversalRenderPipelineAsset urp, UniversalRendererData renderer)
+        private static void Canalizacion(UniversalRenderPipelineAsset urp, UniversalRendererData renderer, PerfilCalidad p)
         {
-            // El build de la web es el nivel «media» (`Calidad`): mismo aspecto, menos costo. Medido el
-            // 2026-11-09 en la laptop de 8 GB: con lo de alta, la noche urbana bajaba de 12 fps.
-            var media = EditorUserBuildSettings.activeBuildTarget == BuildTarget.WebGL;
             urp.supportsHDR = true;
-            urp.msaaSampleCount = media ? 2 : 4;
-            urp.shadowDistance = media ? 80f : 110f;
-            urp.shadowCascadeCount = media ? 2 : 4;
-            urp.mainLightShadowmapResolution = media ? 2048 : 4096;
-            urp.maxAdditionalLightsCount = media ? 4 : 8;
+            urp.msaaSampleCount = p.Msaa;
+            urp.shadowDistance = (float)p.DistanciaSombras;
+            urp.shadowCascadeCount = p.Cascadas;
+            urp.mainLightShadowmapResolution = p.MapaSombras;
+            urp.maxAdditionalLightsCount = p.LucesAdicionales;
             urp.supportsCameraDepthTexture = true;
+            urp.renderScale = 1f;
+            // Forward en los cuatro niveles. Las luces por zona (Forward+) se probaron en baja y media
+            // (U5, ADR 0115): cambian la luz de noche y en esta GPU no ganan nada; de día cuestan.
+            renderer.renderingMode = RenderingMode.Forward;
+            EditorUtility.SetDirty(renderer);
             var so = new SerializedObject(urp);
             Poner(so, "m_SoftShadowsSupported", true);
             Poner(so, "m_AdditionalLightsRenderingMode", (int)LightRenderingMode.PerPixel);
-            Poner(so, "m_AdditionalLightShadowsSupported", !media);
-            Poner(so, "m_AdditionalLightsShadowmapResolution", 2048);
-            Poner(so, "m_SoftShadowQuality", media ? 1 : 2);
+            Poner(so, "m_AdditionalLightShadowsSupported", p.SombrasDeFocos);
+            Poner(so, "m_AdditionalLightsShadowmapResolution", p.Nivel == NivelCalidad.Ultra ? 4096 : 2048);
+            Poner(so, "m_SoftShadowQuality", p.SombraSuave);
             // Sesgos bajos: la sombra nace pegada a la llanta, no despegada del vehículo.
             Poner(so, "m_ShadowDepthBias", 0.6f);
             Poner(so, "m_ShadowNormalBias", 0.35f);
@@ -357,9 +395,11 @@ namespace Croquis.EditorTools
             var tipo = Type.GetType(
                 "UnityEngine.Rendering.Universal.ScreenSpaceAmbientOcclusion, Unity.RenderPipelines.Universal.Runtime");
             var previa = tipo == null ? null : renderer.rendererFeatures.Find(f => f != null && f.GetType() == tipo);
+            var media = p.Oclusion == 1;
             if (previa != null)
             {
                 Oclusion(previa, media);
+                previa.SetActive(p.Oclusion > 0);
             }
 
             if (tipo != null && previa == null)
@@ -367,6 +407,7 @@ namespace Croquis.EditorTools
                 var ssao = (ScriptableRendererFeature)ScriptableObject.CreateInstance(tipo);
                 ssao.name = "OclusionAmbiental";
                 Oclusion(ssao, media);
+                ssao.SetActive(p.Oclusion > 0);
                 AssetDatabase.AddObjectToAsset(ssao, renderer);
                 renderer.rendererFeatures.Add(ssao);
                 var datos = new SerializedObject(renderer);
@@ -392,8 +433,13 @@ namespace Croquis.EditorTools
             Poner(so, "m_Settings.Intensity", 0.9f);
             // Ruido de gradiente intercalado: con el ruido azul quedaba un moteado en la pintura clara.
             Poner(so, "m_Settings.AOMethod", 1);
-            Poner(so, "m_Settings.Samples", media ? 1 : 0);
-            Poner(so, "m_Settings.BlurQuality", 0);
+            // La ligera (media): normales reconstruidas de la profundidad y aplicada después de los
+            // opacos, así no hace falta otra pasada de geometría; menos muestras y desenfoque medio. A media
+            // resolución, la diferencia con la anterior es de 0.5 niveles de 255 (eval/results/u5_diferencia_*).
+            Poner(so, "m_Settings.Source", media ? 0 : 1);
+            Poner(so, "m_Settings.AfterOpaque", media);
+            Poner(so, "m_Settings.Samples", media ? 2 : 0);
+            Poner(so, "m_Settings.BlurQuality", media ? 1 : 0);
             Poner(so, "m_Settings.DirectLightingStrength", 0.4f);
             Poner(so, "m_Settings.Falloff", 70f);
             Poner(so, "m_Settings.Downsample", media);

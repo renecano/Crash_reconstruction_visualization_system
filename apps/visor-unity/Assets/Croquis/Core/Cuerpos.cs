@@ -14,10 +14,12 @@ namespace Croquis.Core
         /// <summary>Las regiones del cuerpo, en el orden de `_REGION` (personas.json).</summary>
         public static readonly string[] Regiones = { "piel", "camisa", "pantalon", "zapatos", "cabello", "ojos" };
 
-        private static readonly string[] Piel = { "#f1c9a5", "#e0ac83", "#c68e63", "#a26b45", "#7c4f32", "#5a3826" };
+        public static readonly string[] Piel = { "#f1c9a5", "#e0ac83", "#c68e63", "#a26b45", "#7c4f32", "#5a3826" };
 
-        // Sin tonos cafés ni beige: la camisa no debe confundirse con la piel.
-        private static readonly string[] Camisa = { "#5c6f86", "#7a8b6f", "#6b6f78", "#8c8f94", "#4f6a74", "#7d4b55", "#3f5f8a" };
+        // La camisa nunca se confunde con la piel (René, 2026-11-10: ningún torso color piel, regla 5).
+        // De la paleta web se quitó el malva #7d4b55, a 35 de distancia de un tono de piel; todas
+        // quedan a más de 60 (prueba `LaCamisaNuncaSeConfundeConLaPiel`).
+        public static readonly string[] Camisa = { "#5c6f86", "#7a8b6f", "#6b6f78", "#8c8f94", "#4f6a74", "#3f5f8a" };
         private static readonly string[] Pantalon = { "#2f3742", "#3b3f45", "#4a4f57", "#55503f", "#2b2e33" };
         private static readonly string[] Cabello = { "#241c17", "#3a2a1f", "#1a1716", "#4a3628" };
 

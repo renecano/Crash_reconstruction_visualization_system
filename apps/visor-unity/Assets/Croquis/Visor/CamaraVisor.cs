@@ -61,6 +61,59 @@ namespace Croquis.Visor
         private float altoCenital = 40f;
 
         private Camera minimapa;
+
+        /// <summary>
+        /// Lo que se mueve o cambia con el tiempo y no es un vehículo (peatones, evidencias, semáforos,
+        /// marcadores, lluvia): el minimapa lo dibuja en cada cuadro sobre su fondo horneado.
+        /// </summary>
+        public const int CapaDinamica = 2;
+
+        private const int LadoFondo = 512;
+        private const float AlturaHorneado = 120f;
+        private const float AlturaMinimapa = 60f;
+        private const int CapasDelMinimapa = (1 << EscenarioVista.CapaVehiculos) | (1 << CapaDinamica) | (1 << CapaMinimapa);
+
+        /// <summary>
+        /// Los vehículos como los dibuja el minimapa de baja y media: una malla por vehículo
+        /// (`VehiculoEnMinimapa`), en la capa del minimapa. Con ellos, el minimapa no dibuja las piezas.
+        /// </summary>
+        public List<GameObject> VehiculosDelMinimapa { get; } = new List<GameObject>();
+
+        private bool vehiculosUnidos = true;
+
+        /// <summary>Para medir (U5): con false, el minimapa vuelve a dibujar los vehículos pieza por pieza.</summary>
+        public bool VehiculosUnidos
+        {
+            get => vehiculosUnidos;
+            set
+            {
+                vehiculosUnidos = value;
+                foreach (var v in VehiculosDelMinimapa)
+                {
+                    if (v != null)
+                    {
+                        v.SetActive(value);
+                    }
+                }
+
+                if (minimapa != null && fondo != null && fondo.activeSelf)
+                {
+                    minimapa.cullingMask = CapasPorCuadro;
+                }
+            }
+        }
+
+        /// <summary>Lo que el minimapa dibuja en cada cuadro sobre su fondo horneado.</summary>
+        private int CapasPorCuadro =>
+            vehiculosUnidos && VehiculosDelMinimapa.Count > 0 ? CapasDelMinimapa & ~(1 << EscenarioVista.CapaVehiculos) : CapasDelMinimapa;
+
+        private RenderTexture fondoMinimapa;
+        private GameObject fondo;
+        private int hornear;
+        private bool horneando;
+
+        /// <summary>El minimapa se puede apagar para medir lo que cuesta (U5).</summary>
+        public bool MinimapaVisible { get; set; } = true;
         private Transform marcador;
         private Vector3 ultimoRaton;
         private float ultimaSeparacion;
@@ -363,15 +416,106 @@ namespace Croquis.Visor
             var lado = Mathf.Max((float)todo.Ancho, (float)todo.Alto);
             minimapa.orthographicSize = lado / 2f * 1.05f;
             minimapa.transform.SetPositionAndRotation(
-                new Vector3((float)todo.CentroX, 120f, (float)todo.CentroY),
+                new Vector3((float)todo.CentroX, AlturaHorneado, (float)todo.CentroY),
                 Quaternion.Euler(90f, 0f, 0f));
             if (marcador != null)
             {
                 marcador.localScale = Vector3.one * Mathf.Max(1.5f, lado / 28f);
             }
+
+            // Hasta que se hornee el fondo (o siempre, en alta y ultra), el minimapa dibuja la escena
+            // completa, como antes; la lluvia de baja y media no entra.
+            minimapa.cullingMask = ~(1 << EscenarioVista.CapaLluvia);
+            minimapa.SetVolumeFrameworkUpdateMode(VolumeFrameworkUpdateMode.ViaScripting);
+            if (fondo != null)
+            {
+                fondo.SetActive(false);
+            }
+        }
+
+        /// <summary>
+        /// Pide hornear el fondo del minimapa (U5, ADR 0115): la escena fija se dibuja una sola vez en
+        /// una textura, unos cuadros después de armar el caso, y desde entonces el minimapa solo dibuja
+        /// por cuadro lo que se mueve (vehículos, peatones, evidencias, lluvia) sobre esa imagen. Antes
+        /// dibujaba la escena entera dos veces por cuadro.
+        /// </summary>
+        public void HornearMinimapa()
+        {
+            hornear = 3;
+        }
+
+        private void Hornear()
+        {
+            if (minimapa == null || camara == null)
+            {
+                return;
+            }
+
+            if (fondoMinimapa == null)
+            {
+                fondoMinimapa = new RenderTexture(LadoFondo, LadoFondo, 24) { name = "minimapa_fondo" };
+            }
+
+            // Sin los faros: su mancha de luz quedaría pintada donde estaban los vehículos al hornear.
+            var faros = new List<Light>();
+            foreach (var v in Vehiculos)
+            {
+                foreach (var l in v.GetComponentsInChildren<Light>())
+                {
+                    if (l.enabled)
+                    {
+                        faros.Add(l);
+                        l.enabled = false;
+                    }
+                }
+            }
+
+            var rect = minimapa.rect;
+            var visible = minimapa.enabled;
+            var p = minimapa.transform.position;
+            minimapa.transform.position = new Vector3(p.x, AlturaHorneado, p.z);
+            minimapa.rect = new Rect(0f, 0f, 1f, 1f);
+            minimapa.cullingMask = ~(CapasDelMinimapa | (1 << EscenarioVista.CapaLluvia));
+            minimapa.targetTexture = fondoMinimapa;
+            minimapa.enabled = true;
+            horneando = true;
+            minimapa.Render();
+            horneando = false;
+            minimapa.targetTexture = null;
+            minimapa.rect = rect;
+            minimapa.enabled = visible;
+            minimapa.cullingMask = CapasPorCuadro;
+            // Más cerca del piso: la niebla global casi no tiñe lo que se dibuja por cuadro.
+            minimapa.transform.position = new Vector3(p.x, AlturaMinimapa, p.z);
+            foreach (var l in faros)
+            {
+                l.enabled = true;
+            }
+
+            if (fondo == null)
+            {
+                var m = new Malla();
+                var j = m.Vertice(new Vector3(-1f, 0f, -1f), new Vector2(0f, 0f));
+                m.Vertice(new Vector3(1f, 0f, -1f), new Vector2(1f, 0f));
+                m.Vertice(new Vector3(1f, 0f, 1f), new Vector2(1f, 1f));
+                m.Vertice(new Vector3(-1f, 0f, 1f), new Vector2(0f, 1f));
+                m.Triangulo(j, j + 2, j + 1);
+                m.Triangulo(j, j + 3, j + 2);
+                var material = new UnityEngine.Material(Materiales.MinimapaFondo);
+                material.SetTexture("_BaseMap", fondoMinimapa);
+                fondo = m.Poner(transform, "minimapa_fondo", material, false, false);
+                fondo.layer = CapaMinimapa;
+            }
+
+            // Debajo de todo, del tamaño de lo que ve el minimapa.
+            var s = minimapa.orthographicSize;
+            fondo.transform.SetPositionAndRotation(new Vector3(p.x, -60f, p.z), Quaternion.identity);
+            fondo.transform.localScale = new Vector3(s, 1f, s);
+            fondo.SetActive(true);
         }
 
         private bool nieblaGuardada;
+        private bool nieblaCambiada;
 
         private void OnEnable()
         {
@@ -391,18 +535,21 @@ namespace Croquis.Visor
         /// </summary>
         private void AntesDeDibujar(ScriptableRenderContext _, Camera c)
         {
-            if (c != null && c == minimapa)
+            // Solo al hornear el fondo, o mientras el minimapa todavía dibuja la escena completa.
+            if (c != null && c == minimapa && (horneando || fondo == null || !fondo.activeSelf))
             {
                 nieblaGuardada = RenderSettings.fog;
+                nieblaCambiada = true;
                 RenderSettings.fog = false;
             }
         }
 
         private void DespuesDeDibujar(ScriptableRenderContext _, Camera c)
         {
-            if (c != null && c == minimapa)
+            if (c != null && c == minimapa && nieblaCambiada)
             {
                 RenderSettings.fog = nieblaGuardada;
+                nieblaCambiada = false;
             }
         }
 
@@ -539,9 +686,13 @@ namespace Croquis.Visor
             var lado = (float)zona.Lado;
             var t = Caso != null ? (float)(Caso.Tiempo - inicio) : 0f;
             ActualizarMinimapa();
-            // En la cámara del conductor, lo que está a menos de 0.75 m del ojo (el volante y el tablero
-            // del modelo genérico) no se dibuja: a la altura del ojo de `visibilidad` taparía el camino.
-            camara.nearClipPlane = modo == "conductor" ? 0.75f : 0.1f;
+            // En la cámara del conductor no se dibuja la carrocería propia, salvo un contorno tenue del
+            // cofre y de los postes (René, 2026-11-10): se ve lo que el conductor alcanzaba a ver.
+            foreach (var v in Vehiculos)
+            {
+                v.DesdeElAsiento(modo == "conductor" && v.name == "vehiculo_" + conductor);
+            }
+
             foreach (var ocupante in Ocupantes)
             {
                 if (ocupante != null)
@@ -720,8 +871,18 @@ namespace Croquis.Visor
                     var az = (azBase + Mathf.Clamp(2.2f * t, -giroMax, giroMax)) * Mathf.Deg2Rad;
                     dist *= distK;
                     alto += altoExtra;
-                    camara.transform.position = objetivo + new Vector3(Mathf.Cos(az) * dist, alto, Mathf.Sin(az) * dist);
-                    camara.transform.LookAt(objetivo + Vector3.up * 0.9f);
+                    // La distancia cambia con el instante y el rumbo se revisó con la del principio: si
+                    // ahora algo tapa la vista (una fachada), la cámara se acerca hasta verla libre.
+                    var mira = objetivo + Vector3.up * 0.9f;
+                    var ojo = objetivo + new Vector3(Mathf.Cos(az) * dist, alto, Mathf.Sin(az) * dist);
+                    for (var intento = 0; intento < 12 && dist > 7f && !Despejada(ojo, mira, true); intento++)
+                    {
+                        dist = Mathf.Max(7f, dist * 0.85f);
+                        ojo = objetivo + new Vector3(Mathf.Cos(az) * dist, alto, Mathf.Sin(az) * dist);
+                    }
+
+                    camara.transform.position = ojo;
+                    camara.transform.LookAt(mira);
                     return;
                 }
             }
@@ -754,7 +915,12 @@ namespace Croquis.Visor
                 return;
             }
 
-            minimapa.enabled = modo != "cenital";
+            if (hornear > 0 && --hornear == 0)
+            {
+                Hornear();
+            }
+
+            minimapa.enabled = MinimapaVisible && modo != "cenital";
             if (marcador != null)
             {
                 var p = camara.transform.position;

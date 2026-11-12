@@ -1,0 +1,76 @@
+{
+  "fecha": "2026-11-12T02:16:10.748Z",
+  "base": "docs/cesvi/u5/media",
+  "metodo": "Capturas del build WebGL a 1920×1080 (tools/unity/capturas.mjs, nivel media, mismo instante y cámara). Diferencia absoluta en gris contra la captura base: media (0 a 255) y porcentaje de pixeles que cambian más de 8 y de 24 niveles. «base2» es otra toma de la base: el piso de ruido.",
+  "sin_minimapa": true,
+  "variantes": {
+    "escala_0.5": {
+      "axa-dia-cinematica": {
+        "media": 3.35,
+        "pct_mas_8": 8.11,
+        "pct_mas_24": 2.57
+      },
+      "lateral_interseccion-noche-cinematica": {
+        "media": 7.31,
+        "pct_mas_8": 19.76,
+        "pct_mas_24": 6.62
+      },
+      "nocturno_lluvia-noche-cinematica": {
+        "media": 3.04,
+        "pct_mas_8": 6.03,
+        "pct_mas_24": 2.6
+      }
+    },
+    "escala_0.6": {
+      "axa-dia-cinematica": {
+        "media": 3.02,
+        "pct_mas_8": 7,
+        "pct_mas_24": 2.08
+      },
+      "lateral_interseccion-noche-cinematica": {
+        "media": 7.03,
+        "pct_mas_8": 18.77,
+        "pct_mas_24": 6.36
+      },
+      "nocturno_lluvia-noche-cinematica": {
+        "media": 2.84,
+        "pct_mas_8": 5.35,
+        "pct_mas_24": 2.37
+      }
+    },
+    "escala_0.7": {
+      "axa-dia-cinematica": {
+        "media": 2.8,
+        "pct_mas_8": 6.23,
+        "pct_mas_24": 1.83
+      },
+      "lateral_interseccion-noche-cinematica": {
+        "media": 6.7,
+        "pct_mas_8": 17.69,
+        "pct_mas_24": 6.07
+      },
+      "nocturno_lluvia-noche-cinematica": {
+        "media": 2.54,
+        "pct_mas_8": 4.61,
+        "pct_mas_24": 1.94
+      }
+    },
+    "escala_0.8": {
+      "axa-dia-cinematica": {
+        "media": 2.66,
+        "pct_mas_8": 5.79,
+        "pct_mas_24": 1.62
+      },
+      "lateral_interseccion-noche-cinematica": {
+        "media": 6.44,
+        "pct_mas_8": 16.75,
+        "pct_mas_24": 5.89
+      },
+      "nocturno_lluvia-noche-cinematica": {
+        "media": 2.53,
+        "pct_mas_8": 4.56,
+        "pct_mas_24": 2.01
+      }
+    }
+  }
+}

@@ -39,6 +39,8 @@
         companyName: "{{{ COMPANY_NAME }}}",
         productName: "{{{ PRODUCT_NAME }}}",
         productVersion: "{{{ PRODUCT_VERSION }}}",
+        // El lienzo nunca pasa de dpr 2, el tope de ultra; cada nivel dibuja a su propio tope (ADR 0115).
+        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
       })
         .then(function (instancia) {
           window.unityInstance = instancia;

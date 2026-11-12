@@ -1,0 +1,24 @@
+{
+  "fecha": "2026-11-11T20:47:07.988Z",
+  "metodo": "Capturas del build WebGL a 1920×1080 (tools/unity/capturas.mjs, nivel media, mismo instante y cámara). Diferencia absoluta en gris contra la captura base: media (0 a 255) y porcentaje de pixeles que cambian más de 8 y de 24 niveles. «base2» es otra toma de la base: el piso de ruido.",
+  "sin_minimapa": true,
+  "variantes": {
+    "sombras_separadas": {
+      "axa-dia-cinematica": {
+        "media": 0.01,
+        "pct_mas_8": 0.01,
+        "pct_mas_24": 0.01
+      },
+      "lateral_interseccion-noche-cinematica": {
+        "media": 0,
+        "pct_mas_8": 0,
+        "pct_mas_24": 0
+      },
+      "nocturno_lluvia-noche-cinematica": {
+        "media": 0.66,
+        "pct_mas_8": 1.71,
+        "pct_mas_24": 1.08
+      }
+    }
+  }
+}

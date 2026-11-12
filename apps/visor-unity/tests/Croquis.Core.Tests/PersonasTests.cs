@@ -216,6 +216,47 @@ namespace Croquis.Core.Tests
         }
 
         [Fact]
+        public void ElOcupanteNoSaleDeLaCabinaAunqueElDesplazamientoPaseDeLaPared()
+        {
+            foreach (var (nombre, caso) in Casos())
+            {
+                var r = caso.Resultado;
+                foreach (var p in (r.Personas ?? new ResultadoPersona[0]).Where(x => x.Ocupante != null))
+                {
+                    var v = r.Vehiculos.First(x => x.Id == p.VehiculoId);
+                    var asiento = Personas.Asiento(p.Ocupante.Asiento, v.Dimensiones.LargoM, v.Dimensiones.AnchoM);
+                    foreach (var va in p.Ocupante.Variantes)
+                    {
+                        for (var i = 0; i < va.T.Length; i++)
+                        {
+                            var q = Personas.EnCabina((asiento.X + va.Dx[i], asiento.Y + va.Dy[i]), v.Dimensiones.LargoM, v.Dimensiones.AnchoM);
+                            Assert.True(Math.Abs(q.Y) <= v.Dimensiones.AnchoM / 2.0 - 0.2, $"{nombre} {p.Id}");
+                            Assert.True(q.X < v.Dimensiones.LargoM / 2.0 && q.X > -v.Dimensiones.LargoM / 2.0, $"{nombre} {p.Id}");
+                        }
+                    }
+                }
+            }
+
+            // Dentro de la cabina no cambia nada.
+            Assert.Equal((0.1, 0.3), Personas.EnCabina((0.1, 0.3), 4.4, 1.8));
+            // Un desplazamiento de un metro hacia la puerta se queda en la pared.
+            Assert.Equal(0.6, Personas.EnCabina((0.0, 1.5), 4.4, 1.8).Y, 9);
+            // En una camioneta de doble rodada (2.4 m de salpicadera a salpicadera) tampoco sale de la cabina.
+            Assert.Equal(-0.6, Personas.EnCabina((0.0, -1.5), 6.5, 2.4).Y, 9);
+            Assert.Equal(0.5, Personas.EnCabina((0.0, 0.5), 6.5, 2.4).Y, 9);
+        }
+
+        [Fact]
+        public void ElAsientoDeUnaCamionetaVaMasArribaQueElDeUnSedan()
+        {
+            Assert.Equal(0.52, Personas.AlturaCadera("sedan_mediano", 1.45), 9);
+            Assert.Equal(0.86, Personas.AlturaCadera("pickup", 1.9), 9);
+            Assert.True(Personas.AlturaCadera("tractocamion", 3.8) > Personas.AlturaCadera("pickup", 1.9));
+            // Nunca más arriba que 55 % del alto del vehículo.
+            Assert.Equal(0.55 * 1.4, Personas.AlturaCadera("pickup", 1.4), 9);
+        }
+
+        [Fact]
         public void ConCinturonDeclaradoSeDibujaSoloEsaVariante()
         {
             var o = Caso("peaton_cruce").Resultado.Personas.First(x => x.Ocupante != null).Ocupante;

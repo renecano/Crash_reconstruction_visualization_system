@@ -109,6 +109,18 @@ namespace Croquis.Visor
 
                     mr.sharedMaterials = ms;
                 }
+                else if (papel == "vidrio")
+                {
+                    // Todo vidrio, con el vidrio propio: el de los modelos (transmisión o el atlas de
+                    // luces y vidrio) reflejaba las fachadas como franjas de color.
+                    var ms = mr.sharedMaterials;
+                    for (var i = 0; i < ms.Length; i++)
+                    {
+                        ms[i] = Materiales.VidrioVehiculo;
+                    }
+
+                    mr.sharedMaterials = ms;
+                }
                 else if (papel == "calavera")
                 {
                     partes.Calaveras.Add(mr);

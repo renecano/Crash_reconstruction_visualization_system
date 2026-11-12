@@ -1,0 +1,240 @@
+{
+  "fecha": "2026-11-11T15:46:26.850Z",
+  "caso": "lateral_interseccion-noche",
+  "nivel": "media",
+  "extra": {
+    "escala": 0.25,
+    "pos": false
+  },
+  "cuadros": 353,
+  "fps": 57.8,
+  "ms_por_cuadro": 17.31,
+  "ordenes_webgl_ms_por_cuadro": 0.42,
+  "funciones": [
+    {
+      "nombre": "wasm-function[63738]",
+      "ms_por_cuadro": 1.935,
+      "pct": 11.1
+    },
+    {
+      "nombre": "(program)",
+      "ms_por_cuadro": 0.803,
+      "pct": 4.6
+    },
+    {
+      "nombre": "wasm-function[63740]",
+      "ms_por_cuadro": 0.619,
+      "pct": 3.6
+    },
+    {
+      "nombre": "bufferSubData",
+      "ms_por_cuadro": 0.573,
+      "pct": 3.3
+    },
+    {
+      "nombre": "wasm-function[78061]",
+      "ms_por_cuadro": 0.381,
+      "pct": 2.2
+    },
+    {
+      "nombre": "wasm-function[566]",
+      "ms_por_cuadro": 0.379,
+      "pct": 2.2
+    },
+    {
+      "nombre": "wasm-to-js",
+      "ms_por_cuadro": 0.357,
+      "pct": 2.1
+    },
+    {
+      "nombre": "bindBuffer",
+      "ms_por_cuadro": 0.347,
+      "pct": 2
+    },
+    {
+      "nombre": "wasm-function[78565]",
+      "ms_por_cuadro": 0.238,
+      "pct": 1.4
+    },
+    {
+      "nombre": "wasm-function[78656]",
+      "ms_por_cuadro": 0.225,
+      "pct": 1.3
+    },
+    {
+      "nombre": "wasm-function[49710]",
+      "ms_por_cuadro": 0.22,
+      "pct": 1.3
+    },
+    {
+      "nombre": "vertexAttribPointer",
+      "ms_por_cuadro": 0.217,
+      "pct": 1.3
+    },
+    {
+      "nombre": "wasm-function[78084]",
+      "ms_por_cuadro": 0.158,
+      "pct": 0.9
+    },
+    {
+      "nombre": "wasm-function[588]",
+      "ms_por_cuadro": 0.14,
+      "pct": 0.8
+    },
+    {
+      "nombre": "bindBufferBase",
+      "ms_por_cuadro": 0.127,
+      "pct": 0.7
+    },
+    {
+      "nombre": "wasm-function[78762]",
+      "ms_por_cuadro": 0.125,
+      "pct": 0.7
+    },
+    {
+      "nombre": "bindTexture",
+      "ms_por_cuadro": 0.116,
+      "pct": 0.7
+    },
+    {
+      "nombre": "bindBufferRange",
+      "ms_por_cuadro": 0.11,
+      "pct": 0.6
+    },
+    {
+      "nombre": "invoke_iii",
+      "ms_por_cuadro": 0.109,
+      "pct": 0.6
+    },
+    {
+      "nombre": "wasm-function[78081]",
+      "ms_por_cuadro": 0.108,
+      "pct": 0.6
+    },
+    {
+      "nombre": "wasm-function[85034]",
+      "ms_por_cuadro": 0.104,
+      "pct": 0.6
+    },
+    {
+      "nombre": "wasm-function[64737]",
+      "ms_por_cuadro": 0.101,
+      "pct": 0.6
+    },
+    {
+      "nombre": "drawElements",
+      "ms_por_cuadro": 0.096,
+      "pct": 0.6
+    },
+    {
+      "nombre": "wasm-function[78463]",
+      "ms_por_cuadro": 0.093,
+      "pct": 0.5
+    },
+    {
+      "nombre": "wasm-function[79406]",
+      "ms_por_cuadro": 0.09,
+      "pct": 0.5
+    },
+    {
+      "nombre": "wasm-function[78078]",
+      "ms_por_cuadro": 0.09,
+      "pct": 0.5
+    },
+    {
+      "nombre": "wasm-function[78559]",
+      "ms_por_cuadro": 0.089,
+      "pct": 0.5
+    },
+    {
+      "nombre": "wasm-function[541]",
+      "ms_por_cuadro": 0.086,
+      "pct": 0.5
+    },
+    {
+      "nombre": "wasm-function[65159]",
+      "ms_por_cuadro": 0.086,
+      "pct": 0.5
+    },
+    {
+      "nombre": "drawBuffers",
+      "ms_por_cuadro": 0.085,
+      "pct": 0.5
+    },
+    {
+      "nombre": "wasm-function[78669]",
+      "ms_por_cuadro": 0.084,
+      "pct": 0.5
+    },
+    {
+      "nombre": "bindFramebuffer",
+      "ms_por_cuadro": 0.082,
+      "pct": 0.5
+    },
+    {
+      "nombre": "wasm-function[78640]",
+      "ms_por_cuadro": 0.082,
+      "pct": 0.5
+    },
+    {
+      "nombre": "wasm-function[58786]",
+      "ms_por_cuadro": 0.081,
+      "pct": 0.5
+    },
+    {
+      "nombre": "wasm-function[78996]",
+      "ms_por_cuadro": 0.08,
+      "pct": 0.5
+    },
+    {
+      "nombre": "getParameter",
+      "ms_por_cuadro": 0.08,
+      "pct": 0.5
+    },
+    {
+      "nombre": "wasm-function[85035]",
+      "ms_por_cuadro": 0.077,
+      "pct": 0.4
+    },
+    {
+      "nombre": "_emscripten_memcpy_big",
+      "ms_por_cuadro": 0.077,
+      "pct": 0.4
+    },
+    {
+      "nombre": "wasm-function[65858]",
+      "ms_por_cuadro": 0.072,
+      "pct": 0.4
+    },
+    {
+      "nombre": "useProgram",
+      "ms_por_cuadro": 0.068,
+      "pct": 0.4
+    },
+    {
+      "nombre": "wasm-function[78746]",
+      "ms_por_cuadro": 0.068,
+      "pct": 0.4
+    },
+    {
+      "nombre": "wasm-function[1647]",
+      "ms_por_cuadro": 0.064,
+      "pct": 0.4
+    },
+    {
+      "nombre": "wasm-function[78472]",
+      "ms_por_cuadro": 0.064,
+      "pct": 0.4
+    },
+    {
+      "nombre": "wasm-function[78053]",
+      "ms_por_cuadro": 0.063,
+      "pct": 0.4
+    },
+    {
+      "nombre": "activeTexture",
+      "ms_por_cuadro": 0.059,
+      "pct": 0.3
+    }
+  ]
+}

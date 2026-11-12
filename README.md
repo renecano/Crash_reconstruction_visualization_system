@@ -229,6 +229,7 @@ Detalle y dónde está cada medida: `docs/responsible-ai.md` (PLAN §10).
 - **Escenas ilustrativas:** la volcadura y el movimiento de ocupantes son secuencias ilustrativas.
 - **Datos de otra flota:** los datos de rigidez y validación son de Estados Unidos.
 - **La volcadura es un límite del solver, no del visor:** el solver decide si un vehículo se vuelca (factor de estabilidad y velocidad lateral) y da la velocidad de alabeo al iniciarse, pero no integra el giro en el tiempo: el `Resultado` no trae el alabeo de la volcadura muestra por muestra. En la escena de referencia de volcadura, además, el vuelco no se inicia con los datos declarados. Por eso el visor 3D no dibuja una volcadura (U3, 2026-11-10).
+- **La caída de la moto tampoco la calcula el solver:** después del impacto la arrastra caída (con la fricción de la moto que se desliza de lado), pero no calcula cómo cae ni hacia qué lado. El visor la tiende en 0.35 s hacia el lado al que se desliza y, en reposo, la marca como «posición final ilustrativa».
 
 **Siguiente paso:**
 

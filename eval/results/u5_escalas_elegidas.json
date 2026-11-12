@@ -1,0 +1,12 @@
+{
+  "axa-dia": 0.627,
+  "axa-noche": 0.548,
+  "carambola-dia": 0.5,
+  "carambola-noche": 0.5,
+  "lateral_interseccion-dia": 0.5,
+  "lateral_interseccion-noche": 0.5,
+  "nocturno_lluvia-dia": 0.5,
+  "nocturno_lluvia-noche": 0.5,
+  "terraceria-dia": 0.5,
+  "terraceria-noche": 0.5
+}

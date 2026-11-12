@@ -1,0 +1,217 @@
+{
+  "fecha": "2026-11-11T17:37:33.812Z",
+  "commit": "bf21fad7c4a6b44d0f4045a6e25c763b375ea8f6",
+  "unity": "6000.3.28f1",
+  "navegador": "Chromium de Playwright chromium",
+  "metodo": "Build WebGL servido localmente; 1920×1080; un navegador nuevo por medición; 2 repeticiones en orden alterno; cámara cinematográfica, reproducción en bucle; 3 s de calentamiento y 12 s de tiempos de cuadro del navegador (requestAnimationFrame). Se reporta la mediana del promedio de fps. Nivel fijo, sin el automático. vsync desactivado (--disable-gpu-vsync --disable-frame-rate-limit) para medir capacidad.",
+  "minimapa": true,
+  "depurar": {
+    "volumen_por_cuadro": true
+  },
+  "antes_de_cargar": null,
+  "meta": "PLAN §7.8: media ≥ 60 fps y baja ≥ 30 fps a 1080p; alta y ultra en la laptop solo como información.",
+  "maquina": {
+    "cpu": "Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz",
+    "nucleos": 8,
+    "ram_gb": 8,
+    "so": "Windows_NT 10.0.26200",
+    "gpu": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "condiciones": {
+    "energia": {
+      "cambiado": true,
+      "antes": {
+        "guid": "ded574b5-45a0-4f42-8737-46345c09c238",
+        "nombre": "mejor_rendimiento"
+      },
+      "durante": {
+        "guid": "ded574b5-45a0-4f42-8737-46345c09c238",
+        "nombre": "mejor_rendimiento"
+      }
+    },
+    "inicio": {
+      "momento": "2026-11-11T17:33:54.611Z",
+      "memoria_libre_mb": 3374,
+      "memoria_total_mb": 8020,
+      "conectada": false,
+      "bateria_pct": 92,
+      "carga_cpu_pct": 2,
+      "plan_energia": "Equilibrado"
+    },
+    "fin": {
+      "momento": "2026-11-11T17:37:31.923Z",
+      "memoria_libre_mb": 3513,
+      "memoria_total_mb": 8020,
+      "conectada": false,
+      "bateria_pct": 88,
+      "carga_cpu_pct": 8,
+      "plan_energia": "Equilibrado"
+    },
+    "validas": false
+  },
+  "resumen": {
+    "media": {
+      "axa-dia": {
+        "fps_promedio_mediana": 31.5,
+        "fps_mediana_mediana": 30.45,
+        "fps_1pct_bajo_mediana": 19.6,
+        "carga_s_mediana": 14.7,
+        "repeticiones": 2,
+        "cumple": false
+      },
+      "lateral_interseccion-noche": {
+        "fps_promedio_mediana": 21.05,
+        "fps_mediana_mediana": 20.2,
+        "fps_1pct_bajo_mediana": 11.2,
+        "carga_s_mediana": 13.649999999999999,
+        "repeticiones": 2,
+        "cumple": false
+      },
+      "nocturno_lluvia-noche": {
+        "fps_promedio_mediana": 25.9,
+        "fps_mediana_mediana": 25.3,
+        "fps_1pct_bajo_mediana": 15.149999999999999,
+        "carga_s_mediana": 15.35,
+        "repeticiones": 2,
+        "cumple": false
+      }
+    }
+  },
+  "corridas": [
+    {
+      "repeticion": 1,
+      "intento": 1,
+      "caso": "axa-dia",
+      "nivel": "media",
+      "gpu": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "carga_s": 14.8,
+      "cuadros": 373,
+      "fps_promedio": 31,
+      "fps_mediana": 30.4,
+      "fps_1pct_bajo": 19.5,
+      "ms_p95": 41.3,
+      "cuadros_mas_50ms": 5,
+      "fps_unity_p50": [
+        200,
+        0.1,
+        27.8,
+        31.2,
+        32.3
+      ],
+      "errores": []
+    },
+    {
+      "repeticion": 1,
+      "intento": 1,
+      "caso": "lateral_interseccion-noche",
+      "nivel": "media",
+      "gpu": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "carga_s": 14.2,
+      "cuadros": 250,
+      "fps_promedio": 20.8,
+      "fps_mediana": 20.2,
+      "fps_1pct_bajo": 11.2,
+      "ms_p95": 67.6,
+      "cuadros_mas_50ms": 108,
+      "fps_unity_p50": [
+        200,
+        37,
+        19.2,
+        22.2,
+        19.6,
+        20.8
+      ],
+      "errores": []
+    },
+    {
+      "repeticion": 1,
+      "intento": 1,
+      "caso": "nocturno_lluvia-noche",
+      "nivel": "media",
+      "gpu": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "carga_s": 15.6,
+      "cuadros": 306,
+      "fps_promedio": 25.5,
+      "fps_mediana": 24.8,
+      "fps_1pct_bajo": 15.1,
+      "ms_p95": 60.5,
+      "cuadros_mas_50ms": 43,
+      "fps_unity_p50": [
+        200,
+        35.7,
+        20,
+        23.8,
+        25.6,
+        25.6
+      ],
+      "errores": []
+    },
+    {
+      "repeticion": 2,
+      "intento": 1,
+      "caso": "nocturno_lluvia-noche",
+      "nivel": "media",
+      "gpu": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "carga_s": 15.1,
+      "cuadros": 316,
+      "fps_promedio": 26.3,
+      "fps_mediana": 25.8,
+      "fps_1pct_bajo": 15.2,
+      "ms_p95": 58.6,
+      "cuadros_mas_50ms": 41,
+      "fps_unity_p50": [
+        200,
+        37,
+        18.9,
+        23.8,
+        27,
+        26.3
+      ],
+      "errores": []
+    },
+    {
+      "repeticion": 2,
+      "intento": 1,
+      "caso": "lateral_interseccion-noche",
+      "nivel": "media",
+      "gpu": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "carga_s": 13.1,
+      "cuadros": 256,
+      "fps_promedio": 21.3,
+      "fps_mediana": 20.2,
+      "fps_1pct_bajo": 11.2,
+      "ms_p95": 66.9,
+      "cuadros_mas_50ms": 105,
+      "fps_unity_p50": [
+        200,
+        37,
+        25,
+        19.6,
+        20
+      ],
+      "errores": []
+    },
+    {
+      "repeticion": 2,
+      "intento": 1,
+      "caso": "axa-dia",
+      "nivel": "media",
+      "gpu": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "carga_s": 14.6,
+      "cuadros": 384,
+      "fps_promedio": 32,
+      "fps_mediana": 30.5,
+      "fps_1pct_bajo": 19.7,
+      "ms_p95": 40.8,
+      "cuadros_mas_50ms": 4,
+      "fps_unity_p50": [
+        200,
+        0.1,
+        30.3,
+        33.3,
+        33.3
+      ],
+      "errores": []
+    }
+  ]
+}

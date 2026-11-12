@@ -61,6 +61,47 @@ namespace Croquis.Visor
             return m;
         }
 
+        /// <summary>
+        /// El suelo de baja y media (`Croquis/Suelo`): el material de `Pbr` con sus dos capas encima en la
+        /// misma pasada. Una copia por parche de suelo, porque las capas son suyas.
+        /// </summary>
+        public static Material SueloCapas(string nombre, Color tinte)
+        {
+            var m = new Material(Base(nombre + "_capas")) { name = "suelo|" + nombre };
+            m.SetColor("_BaseColor", Base(nombre).GetColor("_BaseColor") * tinte);
+            m.SetTexture("_TonosMap", Transparente1x1());
+            m.SetTexture("_ParcelasMap", Transparente1x1());
+            return m;
+        }
+
+        private static Texture2D transparente;
+
+        private static Texture2D Transparente1x1()
+        {
+            if (transparente == null)
+            {
+                transparente = new Texture2D(1, 1, TextureFormat.RGBA32, false) { name = "transparente" };
+                transparente.SetPixels32(new[] { new Color32(0, 0, 0, 0) });
+                transparente.Apply(false, true);
+            }
+
+            return transparente;
+        }
+
+        /// <summary>Para las mallas que solo proyectan sombra (`SombrasUnidas`): con el recorte de caras pedido.</summary>
+        public static Material SoloSombra(int recorte)
+        {
+            var llave = "solo_sombra|" + recorte;
+            if (!Cache.TryGetValue(llave, out var m))
+            {
+                m = new Material(Base("liso")) { name = llave };
+                m.SetFloat("_Cull", recorte);
+                Cache[llave] = m;
+            }
+
+            return m;
+        }
+
         /// <summary>Un material opaco de un solo color.</summary>
         public static Material Liso(Color color, float lisura = 0.2f, float metal = 0f)
         {
@@ -111,8 +152,20 @@ namespace Croquis.Visor
         }
 
         public static Material Vidrio => Base("vidrio");
+
+        /// <summary>El vidrio de los vehículos: neutro, sin el reflejo de la sonda (ADR 0114).</summary>
+        public static Material VidrioVehiculo => Base("vidrio_vehiculo");
         public static Material Charco => Base("charco");
+
+        /// <summary>El fondo horneado del minimapa: una textura sin luz ni niebla (`Croquis/MinimapaFondo`).</summary>
+        public static Material MinimapaFondo => Base("minimapa_fondo");
         public static Material Lluvia => Base("lluvia");
+
+        /// <summary>La lluvia de baja y media: el mismo color, con las gotas movidas en la GPU (`Croquis/Lluvia`).</summary>
+        public static Material LluviaMalla => Base("lluvia_malla");
+
+        /// <summary>El vehículo en el minimapa de baja y media: una malla con el color en los vértices.</summary>
+        public static Material MinimapaVehiculo => Base("minimapa_vehiculo");
 
         /// <summary>Una mancha redonda que se desvanece hacia la orilla (alfa), para sombras y halos.</summary>
         public static Texture2D Mancha(string nombre, float nucleo, float potencia, bool anillo = false)

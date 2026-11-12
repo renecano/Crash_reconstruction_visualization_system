@@ -21,8 +21,6 @@ namespace Croquis.Visor
         private static readonly Color Piel = new Color(0.7f, 0.6f, 0.52f);
         private static readonly Color Pantalon = new Color(0.22f, 0.25f, 0.3f);
 
-        /// <summary>Altura de la cadera sobre el piso del vehículo (m), para los ocupantes.</summary>
-        private const float CaderaEnAsiento = 0.52f;
 
         /// <summary>El centro de masa, como fracción de la estatura: ahí va el origen del cuerpo.</summary>
         private const float FraccionCg = 0.55f;
@@ -33,6 +31,10 @@ namespace Croquis.Visor
         private ResultadoPersona persona;
         private VarianteElement variante;
         private (double X, double Y) asiento;
+        private (double Largo, double Ancho) cabina;
+
+        /// <summary>La altura de la cadera sobre el suelo según la clase del vehículo (`Personas.AlturaCadera`).</summary>
+        private float caderaEnAsiento = 0.52f;
         private Terreno terreno;
         private Transform cuerpo;
         private float estatura;
@@ -45,6 +47,15 @@ namespace Croquis.Visor
         // en su marco, para doblarlo hacia adelante o hacia atrás.
         private readonly Dictionary<string, (Transform Hueso, Quaternion Reposo, Vector3 Eje)> huesos =
             new Dictionary<string, (Transform, Quaternion, Vector3)>();
+
+        // La pose fija (U5, ADR 0115). En WebGL la piel se deforma en la CPU en cada cuadro aunque los
+        // huesos no se muevan: con dos ocupantes por vehículo eran más de 3 ms por cuadro. Mientras la
+        // postura no cambia (sentado, de pie, en vuelo, tendido), la malla ya deformada se guarda y se
+        // dibuja como una malla común; solo al caminar se deforma en vivo. Se ve exactamente igual.
+        private SkinnedMeshRenderer[] pieles = new SkinnedMeshRenderer[0];
+        private MeshRenderer[] fijas = new MeshRenderer[0];
+        private Mesh[] mallasFijas = new Mesh[0];
+        private int poseFija = -1;
 
         /// <summary>Peatón, ciclista o motociclista: va por su trayectoria.</summary>
         public static async Awaitable<PersonaVista> ConTrayectoriaAsync(
@@ -71,6 +82,8 @@ namespace Croquis.Visor
             vista.VehiculoId = v.Id;
             vista.variante = variante;
             vista.asiento = Personas.Asiento(p.Ocupante.Asiento, v.Dimensiones.LargoM, v.Dimensiones.AnchoM);
+            vista.cabina = (v.Dimensiones.LargoM, v.Dimensiones.AnchoM);
+            vista.caderaEnAsiento = (float)Personas.AlturaCadera(v.Clase, v.Dimensiones.AltoM);
             // La segunda variante (sin cinturón, cuando no se declaró) es el maniquí de otro color: así se
             // distinguen las dos sin inventar ropa.
             if (segunda)
@@ -111,6 +124,53 @@ namespace Croquis.Visor
             foreach (var t in modelo.GetComponentsInChildren<Transform>(true))
             {
                 huesos[t.name] = (t, t.localRotation, Quaternion.Inverse(t.rotation) * derecha);
+            }
+
+            pieles = modelo.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+            fijas = new MeshRenderer[pieles.Length];
+            mallasFijas = new Mesh[pieles.Length];
+            for (var i = 0; i < pieles.Length; i++)
+            {
+                var fija = new GameObject("pose_fija");
+                fija.transform.SetParent(pieles[i].transform, false);
+                mallasFijas[i] = new Mesh { name = "pose_fija" };
+                fija.AddComponent<MeshFilter>().sharedMesh = mallasFijas[i];
+                var mr = fija.AddComponent<MeshRenderer>();
+                mr.sharedMaterials = pieles[i].sharedMaterials;
+                mr.shadowCastingMode = pieles[i].shadowCastingMode;
+                mr.receiveShadows = pieles[i].receiveShadows;
+                mr.enabled = false;
+                fijas[i] = mr;
+            }
+        }
+
+        /// <summary>Con la postura quieta, dibuja la malla ya deformada; al caminar, la piel en vivo.</summary>
+        private void FijarPose(Postura postura)
+        {
+            var viva = postura == Postura.Caminando;
+            var clave = (int)postura;
+            for (var i = 0; i < pieles.Length; i++)
+            {
+                if (pieles[i] == null)
+                {
+                    continue;
+                }
+
+                if (!viva && clave != poseFija)
+                {
+                    // Con la escala: la malla queda en el marco de la piel, que es donde se dibuja.
+                    pieles[i].BakeMesh(mallasFijas[i], true);
+                    mallasFijas[i].RecalculateBounds();
+                }
+
+                fijas[i].gameObject.layer = pieles[i].gameObject.layer;
+                pieles[i].enabled = viva;
+                fijas[i].enabled = !viva;
+            }
+
+            if (!viva)
+            {
+                poseFija = clave;
             }
         }
 
@@ -180,6 +240,7 @@ namespace Croquis.Visor
                 Doblar("brazo_d", sentado ? -40f : paso * 0.7f);
                 Doblar("antebrazo_i", sentado ? -30f : 0f);
                 Doblar("antebrazo_d", sentado ? -30f : 0f);
+                FijarPose(postura);
                 return;
             }
 
@@ -223,8 +284,10 @@ namespace Croquis.Visor
         private void ColocarOcupante(double t)
         {
             var d = Personas.Desplazamiento(variante, t);
-            var cadera = CaderaEnAsiento + (FraccionCg - 0.5f) * estatura;
-            transform.localPosition = new Vector3(-(float)(asiento.Y + d.Dy), cadera, (float)(asiento.X + d.Dx));
+            var cadera = caderaEnAsiento + (FraccionCg - 0.5f) * estatura;
+            // Dentro de la cabina: más allá de la pared, el solver da un contacto, no una salida.
+            var p = Personas.EnCabina((asiento.X + d.Dx, asiento.Y + d.Dy), cabina.Largo, cabina.Ancho);
+            transform.localPosition = new Vector3(-(float)p.Y, cadera, (float)p.X);
             transform.localRotation = Quaternion.identity;
         }
     }
