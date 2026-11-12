@@ -6,8 +6,8 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 
 - **Desde el 2026-11-09, el Claude Code de René lleva también este frente,** porque aquí no se había subido nada. Si eres el Claude Code del compañero: antes de empezar una fase, revisa la tabla de abajo y `git fetch`; si la fase ya está tomada, sigue con la siguiente y anótala aquí.
 - **Hechas:** W1 (#187), W2 (#188), W3 (#192), W4 (#195, con su contrato #194), W4b (#196), W5 (#199, #200), W6 (#201) y W7 (#206), en `main`.
-- **Fase actual:** W8 (T3.2, T3.3 y T3.5), en Opus por pedido de René (2026-11-12), con cuidado extra: primero el diagnóstico de T3.2 aquí, sin tocar el solver.
-- **Siguiente paso:** ver «W8 · Números defendibles» abajo.
+- **Fase actual:** W8 (T3.2, T3.3 y T3.5), en Opus por pedido de René (2026-11-12), con cuidado extra.
+- **Siguiente paso:** T3.2 está diagnosticado y medido como experimento; **espera a que René elija el arreglo** (mueve AXA). Mientras tanto se puede avanzar T3.3 (reversa), que no toca AXA. Ver «W8 · Números defendibles».
 
 ## Fases tomadas
 
@@ -87,7 +87,26 @@ Hay un intento anterior, del 4 de noviembre, en `origin/feat/t3-2-arrastre` (6f4
 1. **Contacto estable:** que `resolveContact` se quede, entre las posiciones donde las zonas se tocan, con la más cercana al punto declarado (en Python y en TS, con paridad). Es la causa de fondo y afecta a todo alcance casi en línea.
 2. **Pivote del rumbo en el punto de impacto declarado:** que el rumbo no declarado gire la llegada alrededor del punto de impacto y no del arranque, para que cambie de dónde venía el vehículo y no dónde chocó (lo intentó `feat/t3-2-arrastre`, mezclado con otros cambios).
 
-Por lo que da el ajuste con el rumbo fijo, AXA pasaría de 71.56 a unos 64.6 km/h (más cerca de los 63.15 de CESVI). **Como mueve AXA, antes de fusionar le doy a René el antes y el después de AXA y de los casos de CESVI con la razón** (su regla del 2026-11-12).
+### T3.2 · Cuánto movería a AXA cada arreglo (experimento, sin cambiar el solver)
+
+`eval/t3_2_opciones_axa.mts` → `eval/results/t3_2_opciones_axa.json`. Los arreglos están en `eval/t3_2_opciones.patch` (solo el port TS, detrás de una variable); se aplica, se mide y se quita: el solver de `main` no cambia. Resultado completo de producción, como la app. CESVI: V2 a 63.15 km/h.
+
+| Opción                                                             | V2 mejor (p10–p90)  | V1 mejor (p10–p90) | Rumbo inicial de V2                     |
+| ------------------------------------------------------------------ | ------------------- | ------------------ | --------------------------------------- |
+| Hoy                                                                | 71.56 (68.02–92.81) | 25.32 (8.83–26.27) | 95.72°, en el límite                    |
+| 1 · Contacto estable                                               | 76.38 (68.60–93.46) | 21.56 (6.60–25.47) | 92.70°, ya no en el límite              |
+| 2 · Pivote en el punto de impacto                                  | 56.96 (53.53–76.72) | 15.09 (0.80–16.29) | la evidencia no lo fija (no se reporta) |
+| 1 y 2                                                              | 56.87 (54.13–76.80) | 14.98 (0.57–16.25) | la evidencia no lo fija                 |
+| Rumbo de V2 como lo colocó el perito (sobre la vía), sin ajustarlo | 64.57 (61.19–86.80) | 22.70 (4.76–24.55) | 75.72°, el del perito                   |
+
+- **Hoy**, el rango de V2 (68.02–92.81) deja fuera los 63.15 de CESVI.
+- **1 solo** quita el salto, pero el valle oblicuo sigue: V2 llega con 17° de desvío y sube a 76.38.
+- **2** (con o sin 1) deja el choque donde lo marcó el perito y dice con honestidad que la evidencia no fija el rumbo de V2. Pero, como el rumbo queda libre sin que la evidencia lo fije, el ajuste lo usa para bajar el costo y V2 baja a 57 (−20 %).
+- **Rumbo del perito:** V2 a 64.57 (61.19–86.80), con 63.15 dentro del rango (+2.2 %). Es lo que pasa si, cuando la evidencia no fija el rumbo, se deja el que colocó el perito en vez de ajustarlo.
+
+**Mi recomendación:** 1 y 2 en el solver (Python y TS, con paridad), más una regla: si el rumbo inicial no declarado sale no identificable, se queda el que colocó el perito y se declara como supuesto. En AXA eso daría lo de la última fila (64.57); falta medirlo con el código final y en los demás casos.
+
+**Detenido aquí (regla de René, 2026-11-12):** los tres caminos mueven AXA (de 71.56 a entre 56.9 y 76.4) y pueden mover otros casos de CESVI. Antes de implementarlo y fusionarlo, René elige; luego mido el antes y el después de los 13 casos de referencia y de los casos de CESVI con el código final.
 
 ## W7 · Endurecimiento (T6.2, T6.3, T6.4) (2026-11-11)
 
