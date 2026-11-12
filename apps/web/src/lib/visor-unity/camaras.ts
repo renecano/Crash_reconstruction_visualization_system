@@ -12,11 +12,6 @@ export function camaraUnity(pedida: string | null | undefined): CamaraVisor {
   // «Detrás de A» en three.js sigue al vehículo; en Unity la cinematográfica es la que va detrás
   // de la acción.
   if (pedida.startsWith("detras-")) return "cinematica";
-  if (
-    pedida === "cenital" ||
-    pedida === "cinematica" ||
-    pedida === "acera"
-  )
-    return pedida;
+  if (pedida === "cenital" || pedida === "cinematica" || pedida === "acera") return pedida;
   return "cinematica";
 }

@@ -114,7 +114,11 @@ export class PuenteUnity {
   static async arrancar(
     lienzo: HTMLCanvasElement,
     alMensaje: Oyente,
-    opciones: { manifiesto?: ManifiestoVisorUnity; esperaMs?: number; progreso?: (p: number) => void } = {},
+    opciones: {
+      manifiesto?: ManifiestoVisorUnity;
+      esperaMs?: number;
+      progreso?: (p: number) => void;
+    } = {},
   ): Promise<PuenteUnity> {
     if (!hayWebgl2()) throw motivo("sin_webgl2");
     let m = opciones.manifiesto;
@@ -212,8 +216,13 @@ export class PuenteUnity {
 
   /** Carga un paquete caso-3d y espera `cargado`. */
   async cargar(paquete: unknown, ms = ESPERA_ARRANQUE_MS): Promise<void> {
-    const llega = this.esperar((m): m is Extract<MensajeDeUnity, { tipo: "cargado" }> => m.tipo === "cargado", ms);
-    this.enviar("cargarCaso", { json: typeof paquete === "string" ? paquete : JSON.stringify(paquete) });
+    const llega = this.esperar(
+      (m): m is Extract<MensajeDeUnity, { tipo: "cargado" }> => m.tipo === "cargado",
+      ms,
+    );
+    this.enviar("cargarCaso", {
+      json: typeof paquete === "string" ? paquete : JSON.stringify(paquete),
+    });
     await llega;
   }
 

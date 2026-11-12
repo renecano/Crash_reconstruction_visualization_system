@@ -6,6 +6,9 @@
  * el 3D) y «Descargar paquete 3D».
  *
  * `?visor=ligero` en la dirección abre directo el visor three.js (para comparar o diagnosticar).
+ * Un navegador automatizado (las e2e, `navigator.webdriver`) también abre el ligero, salvo que la
+ * prueba pida Unity con `window.__croquisVisorUnity = true`: así CI no baja el build de 70 MB en
+ * cada flujo, y la e2e de U6 usa un Unity de mentira (`e2e/unity-falso.js`).
  */
 import type { Expediente } from "@croquis/cesvi";
 import type { HerramientaEdicion, MensajesDeUnity } from "@croquis/scene-schema";
@@ -54,7 +57,13 @@ export function VisorCasoUnity({
 }) {
   const { r, calles = null, objetos = null, activo = true, camaraPedida = null } = props;
   const sp = useSearchParams();
-  const ligero = sp.get("visor") === "ligero";
+  const [automatizado] = useState(
+    () =>
+      typeof navigator !== "undefined" &&
+      navigator.webdriver &&
+      !(window as unknown as { __croquisVisorUnity?: boolean }).__croquisVisorUnity,
+  );
+  const ligero = sp.get("visor") === "ligero" || (automatizado && sp.get("visor") !== "unity");
   const escena = useMemo(() => especDel3d(r, calles, objetos), [r, calles, objetos]);
   const camara = useMemo(
     () =>
@@ -115,7 +124,9 @@ export function VisorCasoUnity({
       data-testid="visor-caso"
       data-presentar={presentar ? "si" : undefined}
     >
-      {presentar ? null : <NotasDel3d supuestos={props.supuestos} contraCesvi={props.contraCesvi} />}
+      {presentar ? null : (
+        <NotasDel3d supuestos={props.supuestos} contraCesvi={props.contraCesvi} />
+      )}
       <div className={presentar ? "relative h-full w-full" : "relative min-h-0 flex-1"}>
         <VisorUnity
           escena={escena}

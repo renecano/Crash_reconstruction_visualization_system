@@ -19,11 +19,7 @@ import type {
 } from "@croquis/scene-schema";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
-import {
-  motivoDe,
-  PuenteUnity,
-  type MotivoRespaldo,
-} from "@/lib/visor-unity/puente";
+import { motivoDe, PuenteUnity, type MotivoRespaldo } from "@/lib/visor-unity/puente";
 import { paqueteDelCaso, type RelieveCaso } from "@/lib/visor-unity/paquete";
 import type { CanalTiempo } from "@/lib/visor-unity/canal";
 
@@ -183,7 +179,11 @@ export function VisorUnity({
 
   if (estado.fase === "respaldo") {
     return (
-      <div className="relative h-full w-full" data-testid="visor-unity-respaldo" data-motivo={estado.motivo}>
+      <div
+        className="relative h-full w-full"
+        data-testid="visor-unity-respaldo"
+        data-motivo={estado.motivo}
+      >
         <p className="t-nota vidrio absolute top-3 left-1/2 z-10 -translate-x-1/2 rounded-control px-3 py-1.5">
           {TEXTO_RESPALDO[estado.motivo]}: se muestra el visor ligero.
           {aviso ? <span className="sr-only"> {aviso}</span> : null}

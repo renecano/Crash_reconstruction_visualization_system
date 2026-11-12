@@ -46,7 +46,14 @@ describe("edición en el 3D de Unity, llevada al expediente", () => {
 
   it("un poste no cambia de grosor aunque llegue otro largo, y uno del mapa no se toca", () => {
     const { expediente: e, id } = agregarObjeto(vacio, "poste", en(0, 0));
-    const r = aplicarObjetoEditado(e, ORIGEN, { id, x: 1, y: 1, rumbo_deg: 90, largo: 2, ancho: 0.3 });
+    const r = aplicarObjetoEditado(e, ORIGEN, {
+      id,
+      x: 1,
+      y: 1,
+      rumbo_deg: 90,
+      largo: 2,
+      ancho: 0.3,
+    });
     expect(objetosDe(r.expediente)[0]!.largo).toBe(0.3);
     const ajeno = aplicarObjetoEditado(e, ORIGEN, {
       id: "osm-123",
@@ -95,10 +102,15 @@ describe("edición en el 3D de Unity, llevada al expediente", () => {
       y: 8,
     });
     expect(con.cambio).toBe(true);
-    expect(con.expediente.impactos!.at(-1)).toMatchObject({ objeto_fijo: "árbol", fuente: "perito" });
+    expect(con.expediente.impactos!.at(-1)).toMatchObject({
+      objeto_fijo: "árbol",
+      fuente: "perito",
+    });
   });
 
   it("sin origen (vehículos sin colocar) no se puede medir nada", () => {
-    expect(aplicarPuntoMarcado(vacio, null, { tipo: "punto_inicial", x: 0, y: 0 }).cambio).toBe(false);
+    expect(aplicarPuntoMarcado(vacio, null, { tipo: "punto_inicial", x: 0, y: 0 }).cambio).toBe(
+      false,
+    );
   });
 });

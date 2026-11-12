@@ -18,7 +18,9 @@ import type { MensajesDeUnity } from "@croquis/scene-schema";
 import {
   agregarChoqueIntermedio,
   agregarPuntoDePaso,
+  choquesIntermedios,
   marcarPrimerGolpe,
+  moverChoqueIntermedio,
   OBJETOS_C1,
   type ImpactoAColocar,
 } from "@/lib/escena-facil";
@@ -59,12 +61,27 @@ export function aplicarObjetoEditado(
   origen: LonLat | null,
   m: MensajesDeUnity["objetoEditado"],
 ): EdicionAplicada {
+  // El objeto de un choque intermedio (C1): en la escena es `obj-choque-<orden>` y en el
+  // expediente es el punto de ese choque. Moverlo mueve el choque, como en «Corregir después».
+  const choque = /^obj-choque-(\d+)$/.exec(m.id);
+  if (choque && origen) {
+    const orden = Number(choque[1]);
+    const c = choquesIntermedios(e).find((x) => x.orden === orden);
+    if (c) {
+      return {
+        expediente: moverChoqueIntermedio(e, orden, punto(m.x, m.y, origen)),
+        cambio: true,
+        mensaje: `Moviste el lugar del choque contra ${c.objeto}: se recalcula.`,
+      };
+    }
+  }
   const o = objetosDe(e).find((x) => x.id === m.id);
   if (!o || !origen) {
     return {
       expediente: e,
       cambio: false,
-      mensaje: "Ese objeto no lo colocaste tú (viene del mapa o del choque): muévelo en «La escena».",
+      mensaje:
+        "Ese objeto no lo colocaste tú (viene del mapa o del choque): muévelo en «La escena».",
     };
   }
   let x = moverObjeto(e, o.id, punto(m.x, m.y, origen));
@@ -74,7 +91,11 @@ export function aplicarObjetoEditado(
   if (alargado && o.largo > 0 && Math.abs(m.largo - o.largo) > 0.01) {
     x = cambiarTamano(x, o.id, m.largo / o.largo);
   }
-  return { expediente: x, cambio: true, mensaje: `Moviste ${o.nombre.toLowerCase()}: se recalcula.` };
+  return {
+    expediente: x,
+    cambio: true,
+    mensaje: `Moviste ${o.nombre.toLowerCase()}: se recalcula.`,
+  };
 }
 
 /** `puntoMarcado`: el primer golpe, un choque intermedio o un punto de paso, como en la escena fácil. */
