@@ -58,6 +58,8 @@ describe("puente con Unity", () => {
       dataUrl: "https://blob.example/recursos/visor-unity/abc/Build/d.data",
       frameworkUrl: "https://blob.example/recursos/visor-unity/abc/Build/f.framework.js",
       codeUrl: "https://blob.example/recursos/visor-unity/abc/Build/c.wasm",
+      // Los cielos, uno por AssetBundle junto al build (U6).
+      streamingAssetsUrl: "https://blob.example/recursos/visor-unity/abc/StreamingAssets",
     });
   });
 

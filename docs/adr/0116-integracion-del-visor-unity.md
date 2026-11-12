@@ -20,6 +20,8 @@
    - **En Presentar** el 3D usa la órbita (toda la escena, como la maqueta que había) y queda arriba de la franja de capítulos (el minimapa la tapaba).
 10. **Las e2e no bajan el Unity real.** Un navegador automatizado (`navigator.webdriver`) abre el visor ligero, salvo que la prueba pida Unity; la e2e de U6 usa un Unity de mentira (`e2e/unity-falso.js`) que habla el puente. Así CI no baja 70 MB por flujo ni necesita GPU, y se prueba lo que es de la web. El Unity real se revisa a mano en producción, con capturas en la bitácora.
 
+**El build más ligero (René, 2026-11-12).** Para la primera visita, sin cambiar el aspecto: (1) los cuatro cielos HDRI salen del build a un AssetBundle cada uno en `StreamingAssets/cielos/`, y Unity baja solo el del caso mientras arma los vehículos; (2) el build web no lleva las variantes de shaders con palabras clave que el visor nunca enciende (`VariantesDeShaders`, cada una con su motivo; un build de prueba con coincidencia estricta lo comprueba en las 10 escenas y los cuatro niveles). La compresión de texturas con pérdida quedó fuera, por pedido de René. Primera visita: de 37.84 a 31.13 MB por la red (`eval/results/u6_peso_build.json`); las capturas difieren lo mismo que dos corridas del mismo build (`eval/results/u6_comparar_capturas.json`).
+
 ## Consecuencias
 
 - Abrir un caso baja el build de Unity (unos 70 MB, en la caché del navegador después de la primera vez) aunque el perito no abra el 3D: así el 3D está listo al abrirlo, como ya pasaba con los modelos del visor three.js.

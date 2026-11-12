@@ -1,0 +1,101 @@
+{
+  "antes": {
+    "fecha": "2026-11-12T22:25:15.433Z",
+    "huella": "f12372a6c2d7742c",
+    "archivos": {
+      "loader": {
+        "archivo": "b9ce11fb844ceb0442cfee4ffa2976ee.loader.js",
+        "estado": 200,
+        "codificacion": "br",
+        "red": 9940,
+        "sin_comprimir": 26983
+      },
+      "framework": {
+        "archivo": "c6950771d0d375efa668912a3c6413fe.framework.js",
+        "estado": 200,
+        "codificacion": "br",
+        "red": 96515,
+        "sin_comprimir": 448642
+      },
+      "code": {
+        "archivo": "6bc72c7cd85a1502675e07ed19d32638.wasm",
+        "estado": 200,
+        "codificacion": "br",
+        "red": 11040912,
+        "sin_comprimir": 35903538
+      },
+      "data": {
+        "archivo": "f2fc5f1eeee123311e0f12c82d290f36.data",
+        "estado": 200,
+        "codificacion": "br",
+        "red": 28526101,
+        "sin_comprimir": 37040180
+      }
+    },
+    "cielos": {},
+    "primera_visita_mb": 37.84,
+    "nota": "los cuatro cielos van dentro del .data"
+  },
+  "despues": {
+    "fecha": "2026-11-12T23:30:59.825Z",
+    "huella": "dc9c30121a648d63",
+    "archivos": {
+      "loader": {
+        "archivo": "c98f0d6215ea311b58015abfaaec49f5.loader.js",
+        "estado": 200,
+        "codificacion": "br",
+        "red": 9949,
+        "sin_comprimir": 26983
+      },
+      "framework": {
+        "archivo": "1d312128463f885658d7609b01cac408.framework.js",
+        "estado": 200,
+        "codificacion": "br",
+        "red": 96565,
+        "sin_comprimir": 448831
+      },
+      "code": {
+        "archivo": "9db635019469c9e78c2a32e7805db75d.wasm",
+        "estado": 200,
+        "codificacion": "br",
+        "red": 11082821,
+        "sin_comprimir": 36026900
+      },
+      "data": {
+        "archivo": "08efb5089aa828037f24975cf38a62ef.data",
+        "estado": 200,
+        "codificacion": "br",
+        "red": 20349583,
+        "sin_comprimir": 27715022
+      }
+    },
+    "cielos": {
+      "dia": {
+        "estado": 200,
+        "codificacion": "br",
+        "red": 1092944,
+        "sin_comprimir": 2106384
+      },
+      "nublado": {
+        "estado": 200,
+        "codificacion": "br",
+        "red": 1054842,
+        "sin_comprimir": 2106432
+      },
+      "crepusculo": {
+        "estado": 200,
+        "codificacion": "br",
+        "red": 1101473,
+        "sin_comprimir": 2106448
+      },
+      "noche": {
+        "estado": 200,
+        "codificacion": "br",
+        "red": 1054572,
+        "sin_comprimir": 2106432
+      }
+    },
+    "primera_visita_mb": 31.13,
+    "nota": "primera_visita_mb = build + el cielo más pesado (cada caso baja solo el suyo)"
+  }
+}

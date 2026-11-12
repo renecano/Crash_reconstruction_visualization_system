@@ -653,7 +653,7 @@ namespace Croquis.Visor
             var llave = "cielo|" + nombre;
             if (!Cache.TryGetValue(llave, out var m))
             {
-                m = new Material(Base("cielo_" + nombre)) { name = llave };
+                m = new Material(Cielos.Del(nombre)) { name = llave };
                 Cache[llave] = m;
             }
 

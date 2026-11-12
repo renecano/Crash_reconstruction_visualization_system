@@ -1,0 +1,238 @@
+{
+  "fecha": "2026-11-12T23:29:59.070Z",
+  "antes": "/apps/visor-unity/Logs/capturas-u6/antes",
+  "despues": "/apps/visor-unity/Logs/capturas-u6/despues",
+  "umbral_niveles": 8,
+  "peor": {
+    "antes_contra_despues": {
+      "diferencia_media": 5.668,
+      "pixeles_que_cambian_pct": 27.54
+    },
+    "ruido_mismo_build": {
+      "diferencia_media": 5.853,
+      "pixeles_que_cambian_pct": 28.42
+    }
+  },
+  "imagenes": [
+    {
+      "imagen": "axa-dia-acera.png",
+      "antes_contra_despues": {
+        "diferencia_media": 4.091,
+        "pixeles_que_cambian_pct": 17.94
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 4.029,
+        "pixeles_que_cambian_pct": 17.8
+      }
+    },
+    {
+      "imagen": "axa-dia-cinematica.png",
+      "antes_contra_despues": {
+        "diferencia_media": 3.201,
+        "pixeles_que_cambian_pct": 11.4
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 2.961,
+        "pixeles_que_cambian_pct": 10.4
+      }
+    },
+    {
+      "imagen": "axa-noche-acera.png",
+      "antes_contra_despues": {
+        "diferencia_media": 2.617,
+        "pixeles_que_cambian_pct": 8.33
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 3.04,
+        "pixeles_que_cambian_pct": 9.66
+      }
+    },
+    {
+      "imagen": "axa-noche-cinematica.png",
+      "antes_contra_despues": {
+        "diferencia_media": 2.711,
+        "pixeles_que_cambian_pct": 7.67
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 2.61,
+        "pixeles_que_cambian_pct": 7.34
+      }
+    },
+    {
+      "imagen": "carambola-dia-acera.png",
+      "antes_contra_despues": {
+        "diferencia_media": 3.83,
+        "pixeles_que_cambian_pct": 13.9
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 3.763,
+        "pixeles_que_cambian_pct": 13.49
+      }
+    },
+    {
+      "imagen": "carambola-dia-cinematica.png",
+      "antes_contra_despues": {
+        "diferencia_media": 3.221,
+        "pixeles_que_cambian_pct": 8.94
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 3.131,
+        "pixeles_que_cambian_pct": 8.66
+      }
+    },
+    {
+      "imagen": "carambola-noche-acera.png",
+      "antes_contra_despues": {
+        "diferencia_media": 3.119,
+        "pixeles_que_cambian_pct": 12.37
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 3.034,
+        "pixeles_que_cambian_pct": 11.89
+      }
+    },
+    {
+      "imagen": "carambola-noche-cinematica.png",
+      "antes_contra_despues": {
+        "diferencia_media": 3.096,
+        "pixeles_que_cambian_pct": 8.62
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 3.029,
+        "pixeles_que_cambian_pct": 8.42
+      }
+    },
+    {
+      "imagen": "lateral_interseccion-dia-acera.png",
+      "antes_contra_despues": {
+        "diferencia_media": 4.224,
+        "pixeles_que_cambian_pct": 15
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 4.268,
+        "pixeles_que_cambian_pct": 15.28
+      }
+    },
+    {
+      "imagen": "lateral_interseccion-dia-cinematica.png",
+      "antes_contra_despues": {
+        "diferencia_media": 5.668,
+        "pixeles_que_cambian_pct": 27.54
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 5.853,
+        "pixeles_que_cambian_pct": 28.42
+      }
+    },
+    {
+      "imagen": "lateral_interseccion-noche-acera.png",
+      "antes_contra_despues": {
+        "diferencia_media": 3.036,
+        "pixeles_que_cambian_pct": 9.2
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 3.076,
+        "pixeles_que_cambian_pct": 9.13
+      }
+    },
+    {
+      "imagen": "lateral_interseccion-noche-cinematica.png",
+      "antes_contra_despues": {
+        "diferencia_media": 4.865,
+        "pixeles_que_cambian_pct": 20.34
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 4.976,
+        "pixeles_que_cambian_pct": 20.75
+      }
+    },
+    {
+      "imagen": "nocturno_lluvia-dia-acera.png",
+      "antes_contra_despues": {
+        "diferencia_media": 0.189,
+        "pixeles_que_cambian_pct": 0.69
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 0.079,
+        "pixeles_que_cambian_pct": 0.31
+      }
+    },
+    {
+      "imagen": "nocturno_lluvia-dia-cinematica.png",
+      "antes_contra_despues": {
+        "diferencia_media": 2.934,
+        "pixeles_que_cambian_pct": 7.67
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 2.636,
+        "pixeles_que_cambian_pct": 6.49
+      }
+    },
+    {
+      "imagen": "nocturno_lluvia-noche-acera.png",
+      "antes_contra_despues": {
+        "diferencia_media": 0.549,
+        "pixeles_que_cambian_pct": 1.49
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 0.418,
+        "pixeles_que_cambian_pct": 1.06
+      }
+    },
+    {
+      "imagen": "nocturno_lluvia-noche-cinematica.png",
+      "antes_contra_despues": {
+        "diferencia_media": 3.169,
+        "pixeles_que_cambian_pct": 8.54
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 3.089,
+        "pixeles_que_cambian_pct": 8.13
+      }
+    },
+    {
+      "imagen": "terraceria-dia-acera.png",
+      "antes_contra_despues": {
+        "diferencia_media": 4.171,
+        "pixeles_que_cambian_pct": 16.82
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 4.091,
+        "pixeles_que_cambian_pct": 16.26
+      }
+    },
+    {
+      "imagen": "terraceria-dia-cinematica.png",
+      "antes_contra_despues": {
+        "diferencia_media": 3.196,
+        "pixeles_que_cambian_pct": 8.91
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 2.957,
+        "pixeles_que_cambian_pct": 7.93
+      }
+    },
+    {
+      "imagen": "terraceria-noche-acera.png",
+      "antes_contra_despues": {
+        "diferencia_media": 3.857,
+        "pixeles_que_cambian_pct": 16.98
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 3.787,
+        "pixeles_que_cambian_pct": 16.53
+      }
+    },
+    {
+      "imagen": "terraceria-noche-cinematica.png",
+      "antes_contra_despues": {
+        "diferencia_media": 2.913,
+        "pixeles_que_cambian_pct": 8.14
+      },
+      "ruido_mismo_build": {
+        "diferencia_media": 2.641,
+        "pixeles_que_cambian_pct": 6.83
+      }
+    }
+  ]
+}

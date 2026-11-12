@@ -1,43 +1,62 @@
 {
-  "fecha": "2026-11-12T19:57:14.914Z",
+  "fecha": "2026-11-12T23:34:34.157Z",
   "cifra_antes": "Repetir\nVelocidad antes del impacto\n\n60.62\nkm/h\nA · Jetta\nrango lineal 55.29–65.95\n\nReconstrucción física de Croquis · mejor ajuste\n\nLas 32 simulaciones dan la misma velocidad: el costo tiene un quiebre en esta solución y no dicen cuánto podría variar. El rango de arriba es la aproximación lineal del solver.\n\nCómo se reparten las simulaciones\nB · Camaro\n0.00 km/h\nLo fijan\n5 evidencias · 1 decisión de Croquis",
-  "unity_listo_s": 18.867,
+  "pausa_antes_del_3d_s": 0,
+  "unity_listo_s": 18.62,
   "marcas": {
     "arranque": 0,
-    "precarga": 0.1,
-    "precarga_lista": 4.7,
-    "cargador": 4.7,
-    "cargador_listo": 5,
-    "instancia": 6.2,
-    "listo": 7.2,
-    "solver": 7.2,
-    "solver_listo": 7.2,
-    "cargar_caso": 7.6,
-    "caso_cargado": 18.1
+    "precarga": 0,
+    "precarga_lista": 4.1,
+    "cargador": 4.1,
+    "cargador_listo": 4.4,
+    "instancia": 5.3,
+    "listo": 6.4,
+    "solver": 6.4,
+    "solver_listo": 6.4,
+    "cargar_caso": 6.7,
+    "caso_cargado": 18.6
+  },
+  "pasos_unity": {
+    "leer_sobre": 5.9,
+    "leer_paquete": 639.3,
+    "caracteres_paquete": 286835,
+    "vehiculos": 2828.4,
+    "cielo": 2828.5,
+    "escenario": 3448.6,
+    "caso_y_terreno": 3459.6,
+    "estacionados_y_personas": 3460.5,
+    "antes_de_unir_sombras": 3521.5,
+    "sombras_unidas": 3523.8,
+    "total": 3524.2,
+    "primer_cuadro": 10190.5,
+    "segundo_cuadro": 10202.6,
+    "hasta_cargado": 10853.1,
+    "pedido": 54318859,
+    "tipo": "perfil"
   },
   "bytes_unity": [
     {
-      "archivo": "97bb6546de8d11eb71ec94630092a5f0.loader.js",
+      "archivo": "c98f0d6215ea311b58015abfaaec49f5.loader.js",
       "kb": 0,
       "s": 0.3
     },
     {
-      "archivo": "c6950771d0d375efa668912a3c6413fe.framework.js",
+      "archivo": "1d312128463f885658d7609b01cac408.framework.js",
       "kb": 0,
       "s": 0.2
     },
     {
-      "archivo": "803db30cf2fb40a84054da8f7b3dd018.wasm",
+      "archivo": "9db635019469c9e78c2a32e7805db75d.wasm",
       "kb": 0,
-      "s": 4.2
+      "s": 10.8
     },
     {
-      "archivo": "a668882176160284a60c2cbadbfd44d8.data",
+      "archivo": "08efb5089aa828037f24975cf38a62ef.data",
       "kb": 0,
-      "s": 13.9
+      "s": 7.4
     },
     {
-      "archivo": "97bb6546de8d11eb71ec94630092a5f0.loader.js",
+      "archivo": "c98f0d6215ea311b58015abfaaec49f5.loader.js",
       "kb": 0,
       "s": 0.2
     }

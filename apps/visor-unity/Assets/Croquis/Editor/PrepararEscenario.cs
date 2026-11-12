@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Croquis.Core;
+using Croquis.Visor;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -56,7 +57,7 @@ namespace Croquis.EditorTools
                 Tarjeta(e, "planta");
             }
 
-            foreach (var c in new[] { "dia", "nublado", "crepusculo", "noche" })
+            foreach (var c in Cielos.Nombres)
             {
                 Cielo(c);
             }
@@ -301,11 +302,41 @@ namespace Croquis.EditorTools
             }
         }
 
+        /// <summary>
+        /// El material de un cielo, fuera de Resources: cada cielo va en su AssetBundle y en la web se
+        /// baja solo el del caso (`Cielos`, `ConstruirVisor.Cielos`). Los cielos que quedaban en
+        /// Resources de antes se borran, para que no entren otra vez al build.
+        /// </summary>
         private static void Cielo(string nombre)
         {
+            var hdr = "Assets/Croquis/Recursos/hdri/" + nombre + ".hdr";
+            var viejo = "Assets/Croquis/Recursos/Resources/hdri/" + nombre + ".hdr";
+            if (AssetDatabase.LoadAssetAtPath<Cubemap>(viejo) != null)
+            {
+                AssetDatabase.DeleteAsset(viejo);
+            }
+
+            AssetDatabase.DeleteAsset(Carpeta + "/cielo_" + nombre + ".mat");
+            var tex = AssetDatabase.LoadAssetAtPath<Cubemap>(hdr);
+            if (tex == null)
+            {
+                throw new FileNotFoundException("No está el cielo " + hdr + ". Corre `node tools/unity/recursos.mjs`.");
+            }
+
+            Directory.CreateDirectory(Cielos.Carpeta);
             var m = new Material(Shader.Find("Skybox/Cubemap"));
-            m.SetTexture("_Tex", Tex<Cubemap>("hdri/" + nombre + ".hdr"));
-            Guardar(m, "cielo_" + nombre);
+            m.SetTexture("_Tex", tex);
+            var ruta = Cielos.Carpeta + "/cielo_" + nombre + ".mat";
+            var previo = AssetDatabase.LoadAssetAtPath<Material>(ruta);
+            if (previo != null)
+            {
+                previo.CopyPropertiesFromMaterial(m);
+                EditorUtility.SetDirty(previo);
+            }
+            else
+            {
+                AssetDatabase.CreateAsset(m, ruta);
+            }
         }
 
         /// <summary>Tono de cine, un poco de resplandor y viñeta; lo demás lo ajusta cada escena.</summary>

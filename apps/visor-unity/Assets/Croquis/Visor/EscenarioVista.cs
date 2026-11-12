@@ -66,6 +66,14 @@ namespace Croquis.Visor
 
         // ---- Cielo, luz y aire ------------------------------------------------------------------------
 
+        /// <summary>Cuál de los cuatro cielos lleva el caso (`Cielos.CargarAsync` lo baja antes de armarlo).</summary>
+        public static string NombreDelCielo(AmbienteEscenario a)
+        {
+            var lluvia = a.Precipitacion != "ninguna";
+            var bajo = !a.Noche && a.SolElevacionDeg < 12.0;
+            return a.Noche ? "noche" : lluvia || a.Turbidez > 6.0 ? "nublado" : bajo ? "crepusculo" : "dia";
+        }
+
         private static void Ambiente(AmbienteEscenario a, Light sol, Camera camara)
         {
             var d = a.DireccionLuz;
@@ -87,8 +95,7 @@ namespace Croquis.Visor
             sol.shadowStrength = lluvia ? 0.55f : a.Noche ? 0.7f : 0.92f;
 
             // El cielo es un HDRI CC0, girado para que su sol caiga donde va el del hecho.
-            var nombre = a.Noche ? "noche" : lluvia || a.Turbidez > 6.0 ? "nublado" : bajo ? "crepusculo" : "dia";
-            var cielo = Materiales.Cielo(nombre, out var azimutHdri);
+            var cielo = Materiales.Cielo(NombreDelCielo(a), out var azimutHdri);
             // En el HDRI el azimut se mide desde su centro; en la escena, desde el norte hacia el este.
             cielo.SetFloat("_Rotation", Mathf.Repeat(azimutHdri - (float)a.SolAzimutDeg, 360f));
             // De noche con lluvia, el cielo nublado no tiene el resplandor del HDRI nocturno: con más

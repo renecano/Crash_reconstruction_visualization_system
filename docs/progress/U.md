@@ -481,7 +481,35 @@ René midió unos 46 s desde Blob, contra unos 14 s de las mediciones anteriores
 - **Lo que queda es la red:** en esta conexión (de 0.4 a 1 MB/s) bajar 40 MB toma de 40 s a más de 1 min. Lo demás ya es de unos 10 s (arranque, lectura, armado y primer cuadro).
 - **Segunda visita** (el build ya en la caché del navegador, por ejemplo si el sitio se abre antes de la demo): falta medirla; la corrida se detuvo por falta de memoria. René pidió dejarla para cuando diga «ya cerré todo».
   - **Para retomar:** `powershell -ExecutionPolicy Bypass -File tools/unity/carga-cadena.ps1 -Lanzar` (tarea de Windows «CroquisCarga», fuera de la sesión, sin suspensión; tres repeticiones de primera y segunda visita contra producción, unos 15 min). Ver cómo va: `-Estado`; detenerla: `-Detener`. Estado en `eval/results/u6_carga_estado.json`; resultado en `eval/results/u6_carga_segunda_visita.json`.
-- **Para la primera visita solo queda achicar el build** (texturas: 25 MB, de ellas 8 MB en los cuatro cielos HDRI; shaders: 8 MB). Opciones, sin hacer: cargar solo el cielo del caso en lugar de los cuatro (−6 MB), compresión con pérdida de texturas (Crunch; cambia un poco el aspecto) y quitar variantes de shaders que no se usan.
+- **Para la primera visita solo queda achicar el build** (texturas: 25 MB, de ellas 8 MB en los cuatro cielos HDRI; shaders: 8 MB). René (2026-11-12) pidió las dos que no cambian el aspecto: el cielo del caso y quitar variantes de shaders; la compresión con pérdida, no. Ver «El build más ligero».
+
+### El build más ligero (René, 2026-11-12)
+
+**Qué se hizo** (rama `feat/u6-build-ligero`):
+
+1. **Solo el cielo del caso.** Cada uno de los cuatro cielos HDRI es un AssetBundle aparte en `StreamingAssets/cielos/` (`ConstruirVisor.Cielos`, sin compresión propia: Blob lo sirve con brotli). Unity baja el del caso mientras arma los vehículos (`Cielos.CargarAsync`) y lo usa al armar el escenario; los HDR salieron de `Resources` y `recursos.mjs` los copia a `Recursos/hdri/`. Es la misma textura con el mismo importador. La web le dice a Unity dónde están (`streamingAssetsUrl` en `puente.ts`, `medir.html` y `medir-e6.html`). Se agregaron los módulos `assetbundle` y `unitywebrequestassetbundle` (el wasm crece 0.12 MB sin comprimir).
+2. **Sin las variantes de shaders que el visor nunca enciende** (`Editor/VariantesDeShaders.cs`, solo en el build web; cada palabra con su motivo):
+   - posproceso: grano, distorsión de lente, aberración cromática, tono «Neutral», suciedad del resplandor y dithering (el perfil lleva ACES, resplandor sin textura, ajuste de color y viñeta; ninguna cámara enciende el dithering);
+   - Lit, el suelo y los materiales glTF: `_LIGHT_COOKIES` (ninguna luz lleva cookie) y `LOD_FADE_CROSSFADE` (no hay LODGroup).
+   - La niebla (`FOG_EXP2`) se queda con y sin ella: el minimapa la apaga al dibujar.
+   - Variantes: Lit 1 216 → 304, el suelo 256 → 64, UberPost 720 → 18, FinalPost 96 → 24, los tres glTF 64 → 32 cada uno. Shaders del build: 8.0 → 2.5 MB.
+
+**Peso medido** (`eval/u6_peso_build.mjs` → `eval/results/u6_peso_build.json`: lo que baja Chrome de Blob con brotli, archivo por archivo):
+
+| Build                                  | `.data`  | `.wasm`  | Cielo del caso  | Primera visita |
+| -------------------------------------- | -------- | -------- | --------------- | -------------- |
+| Antes (`f12372a6c2d7742c`, producción) | 27.20 MB | 10.53 MB | (en el `.data`) | **37.84 MB**   |
+| Después (`dc9c30121a648d63`)           | 19.41 MB | 10.57 MB | 1.01–1.05 MB    | **31.13 MB**   |
+
+Son 6.71 MB menos (−17.7 %). En la red de la laptop (0.4 a 1 MB/s) eso son de 7 a 17 s menos en la primera visita.
+
+**Se ve igual:**
+
+- **Capturas** (`eval/u6_comparar_capturas.mjs` → `eval/results/u6_comparar_capturas.json`): las 10 escenas de D1, cinematográfica y acera, en media, en PNG, con el build de producción (bajado de Blob) y dos veces con el nuevo. La diferencia entre el de producción y el nuevo es la misma que entre dos corridas del nuevo: en el peor caso, 5.67 contra 5.85 niveles de diferencia media (la vegetación y la lluvia se mueven entre corridas).
+- **Ninguna variante quitada se pide:** un build de prueba con `CROQUIS_VARIANTES=1` (coincidencia estricta de variantes; Unity avisa en la consola si un caso pide una variante que no está) y las 10 escenas en baja, media, alta y ultra (`tools/unity/capturas.mjs`, `consola.json`). Ningún aviso lleva las palabras quitadas. Los únicos avisos son de los materiales glTF con `_TEXTURE_TRANSFORM` y `_OCCLUSION`, que el build nunca ha traído (ninguno de sus materiales las usa); vienen de antes y quedan en «Endurecimiento pendiente» de `docs/PROGRESS.md`.
+- **El flujo completo** con el Unity de Blob y el sitio local (`e2e/visor-unity-real.spec.ts`, `CROQUIS_UNITY_BLOB=1`) pasa: el cielo ya está cuando terminan los vehículos (paso `cielo` de `depurar carga`).
+
+**Builds fuera de la sesión:** `tools/unity/en-tarea.ps1` corre cualquier comando largo (el build, las capturas) como una tarea de Windows, sin suspensión: la sesión cortó un build por falta de memoria y así ya no la afecta.
 
 ### El build web en la computadora de demo (2026-11-12)
 
