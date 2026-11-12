@@ -197,6 +197,9 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await expect(page.getByTestId("maqueta-leyenda-declarada")).toContainText(
     "versión declarada (V2)",
   );
+  // De vuelta al 3D: el dictamen toma de ahí sus tres cuadros.
+  await page.getByTestId("vista-3d").click();
+  await expect(visor.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
 
   // Los daños que calcula la reconstrucción y, en los números, la verificación CESVI dice qué falta.
   await irAPaso(page, 5);
