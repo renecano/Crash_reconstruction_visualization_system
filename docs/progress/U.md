@@ -479,7 +479,8 @@ René midió unos 46 s desde Blob, contra unos 14 s de las mediciones anteriores
 | 20 s después                  | 35.7 s desde el clic | la descarga completa tardó más de 1 min (`eval/results/u6_carga_produccion_pausa20.json`)                                                                                   |
 
 - **Lo que queda es la red:** en esta conexión (de 0.4 a 1 MB/s) bajar 40 MB toma de 40 s a más de 1 min. Lo demás ya es de unos 10 s (arranque, lectura, armado y primer cuadro).
-- **Segunda visita** (el build ya en la caché del navegador, por ejemplo si el sitio se abre antes de la demo): falta medirla. La corrida se detuvo por falta de memoria en la laptop. La prueba ya lo hace con `CROQUIS_SEGUNDA=1`.
+- **Segunda visita** (el build ya en la caché del navegador, por ejemplo si el sitio se abre antes de la demo): falta medirla; la corrida se detuvo por falta de memoria. René pidió dejarla para cuando diga «ya cerré todo».
+  - **Para retomar:** `powershell -ExecutionPolicy Bypass -File tools/unity/carga-cadena.ps1 -Lanzar` (tarea de Windows «CroquisCarga», fuera de la sesión, sin suspensión; tres repeticiones de primera y segunda visita contra producción, unos 15 min). Ver cómo va: `-Estado`; detenerla: `-Detener`. Estado en `eval/results/u6_carga_estado.json`; resultado en `eval/results/u6_carga_segunda_visita.json`.
 - **Para la primera visita solo queda achicar el build** (texturas: 25 MB, de ellas 8 MB en los cuatro cielos HDRI; shaders: 8 MB). Opciones, sin hacer: cargar solo el cielo del caso en lugar de los cuatro (−6 MB), compresión con pérdida de texturas (Crunch; cambia un poco el aspecto) y quitar variantes de shaders que no se usan.
 
 ### El build web en la computadora de demo (2026-11-12)
