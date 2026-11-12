@@ -397,6 +397,27 @@ Plan: PLAN-CESVI §3.3. Decisiones: ADR 0114.
 
 Conductor sin la carrocería propia (contorno tenue del cofre y los postes), vidrio propio sin el reflejo de la sonda, moto tendida desde el impacto con «Posición final ilustrativa», camisas que nunca son color piel, el ocupante dentro de la cabina y la cinematográfica que se acerca si una fachada la tapa. ADR 0114, decisiones 12 a 15. Capturas del build WebGL en `docs/cesvi/u4/ajustes/` (conductores en AXA y `lateral_interseccion`; vidrios en las 5 escenas de día y de noche; personas a los 3 s). PR #205.
 
+## U6 · Puente, builds e integración (2026-11-12, en curso)
+
+Rama `feat/u6-integracion`. Decisiones: ADR 0116.
+
+### Plan
+
+1. **Contrato 1.2.0** (PR `contract:` aparte, antes que lo demás): vista `antes` de `capturar` y `herramienta` de `modoEdicion`.
+2. **Unity:** `capturar` (`Captura.cs`), modo edición (`EditorEscena.cs`, `Croquis.Core.Edicion` con pruebas), abrir un paquete en el escritorio (`Escritorio.cs`).
+3. **Web:** `PuenteUnity` (`lib/visor-unity/puente.ts`), `paqueteDelCaso`, `<VisorUnity>` con respaldo three.js, `<VisorCasoUnity>` en el caso (notas, barra de edición, «Descargar paquete 3D»), ediciones al expediente (`lib/visor-unity/edicion.ts`), fotos y créditos del dictamen desde Unity, Unity detrás de Presentar.
+4. **Builds:** `publicar-web.mjs --podar` (dos builds en Blob), paquete de escritorio con caso de ejemplo y su release de GitHub.
+5. **Pruebas:** unitarias de `puente`, `edicion` y `Croquis.Core.Edicion`; e2e `visor-unity.spec.ts` (`@flujo`) con un Unity de mentira.
+6. **En producción:** publicar el build 1.2.0 en Blob, fusionar y revisar a mano: Unity en Reconstrucción, Análisis y Presentar; mover un poste en 3D; fotos del dictamen; respaldo con `?visor=ligero` y en un navegador sin WebGL 2. Capturas para René.
+
+### Hecho (2026-11-12)
+
+- Código de los puntos 1 a 5 escrito y subido a la rama. **Sin compilar ni probar todavía:** la laptop estaba midiendo U5 (nada pesado al mismo tiempo).
+
+### Siguiente paso
+
+- U5 se cerró y se fusionó (#205) el 2026-11-12; el PR `contract:` del puente 1.2.0 es el #207. Ahora: correr `dotnet test`, tipos, lint, las unitarias de la web y la e2e de U6, compilar Unity (WebGL y Windows) y seguir con el punto 6.
+
 ## U5 · Calidad y rendimiento (cerrada el 2026-11-12)
 
 ADR 0115. Rama `feat/u4-ajustes`, PR #205 (borrador).
