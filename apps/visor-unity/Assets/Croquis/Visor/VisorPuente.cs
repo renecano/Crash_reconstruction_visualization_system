@@ -14,7 +14,7 @@ namespace Croquis.Visor
     public sealed class VisorPuente : MonoBehaviour
     {
         /// <summary>La versión del contrato: debe coincidir con VISOR_PUENTE_VERSION.</summary>
-        public const string Version = "1.1.0";
+        public const string Version = "1.2.0";
 
         private const float SegundosPorReporteFps = 5f;
         private const float SegundosPorReporteTiempo = 0.1f;
@@ -309,9 +309,25 @@ namespace Croquis.Visor
             });
         }
 
+        /// <summary>Una foto del dictamen (`Captura`). Contesta `captura` o `error` con `captura_fallo`.</summary>
         public void capturar(string texto)
         {
-            Error("captura_fallo", "Las fotos del dictamen llegan en U6.");
+            _ = CapturarAsync(texto);
+        }
+
+        private async Awaitable CapturarAsync(string texto)
+        {
+            try
+            {
+                var j = JObject.Parse(texto);
+                var foto = await Captura.TomarAsync(visor, (string)j["vista"], (int?)j["ancho"] ?? 1600, (int?)j["alto"] ?? 900);
+                Enviar("captura", foto);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                Error("captura_fallo", e.Message);
+            }
         }
 
         public void modoEdicion(string texto)

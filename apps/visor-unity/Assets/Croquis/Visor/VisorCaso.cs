@@ -25,6 +25,9 @@ namespace Croquis.Visor
         private double fin;
 
         public double Tiempo { get; private set; }
+
+        /// <summary>El final del Resultado (s): el instante de la foto «en reposo».</summary>
+        public double Fin => fin;
         public bool Reproduciendo { get; set; }
 
         /// <summary>La raíz del caso armado (para perfilar).</summary>
