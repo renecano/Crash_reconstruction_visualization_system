@@ -6,8 +6,8 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 
 - **Desde el 2026-11-09, el Claude Code de René lleva también este frente,** porque aquí no se había subido nada. Si eres el Claude Code del compañero: antes de empezar una fase, revisa la tabla de abajo y `git fetch`; si la fase ya está tomada, sigue con la siguiente y anótala aquí.
 - **Hechas:** W1 (#187), W2 (#188), W3 (#192), W4 (#195, con su contrato #194) y W4b (#196), en `main`.
-- **Fase actual:** W7 («Endurecimiento»: T6.2, T6.3 y T6.4), en `feat/w7-endurecimiento`, con código y pruebas unitarias en verde. Falta correr sus e2e (René pidió no usar Playwright mientras ocupa la computadora, 2026-11-11) y fusionar.
-- **Siguiente paso:** correr `pnpm --filter @croquis/web exec playwright test --project=chromium e2e/orden-impactos.spec.ts e2e/cesvi-caso.spec.ts` cuando René libere la computadora (o leer la CI del PR, que corre el flujo principal); corregir lo que salga y fusionar. Después, en el orden del plan: U5 (la medición quedó en pausa, ver `docs/progress/U.md`), U6 y W8; antes de W8, avisar a René.
+- **Fase actual:** W7 («Endurecimiento»: T6.2, T6.3 y T6.4) terminada en `feat/w7-endurecimiento` (PR #206), con sus pruebas unitarias y sus dos e2e en verde en la CI.
+- **Siguiente paso:** fusionar el #206 con su CI en verde. Después, en el orden del plan: cerrar U5 (la medición corre como la tarea de Windows «CroquisU5», ver «Para retomar» en `docs/progress/U.md`), U6 y W8. **Antes de W8, detenerse y avisar a René con «Listo para W8: cambia el modelo».** Las evaluaciones largas de W8 (E-R4 v4) se lanzan como la de U5: reanudables, con su archivo de estado y fuera de la sesión.
 
 ## Fases tomadas
 
@@ -20,7 +20,7 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 | W4b · Menos ruido visual                                     | Claude Code de René | `feat/w4b-menos-ruido`                   | En `main` (#196)          |
 | W5 · Terreno (C3 y O4)                                       | Claude Code de René | `feat/w5-terreno`, `feat/w5-terreno-web` | En `main` (#199, #200)    |
 | W6 · Encuadre en 2D (O3)                                     | Claude Code de René | `feat/w6-encuadre`                       | En PR desde el 2026-11-10 |
-| W7 · Endurecimiento (T6.2, T6.3, T6.4)                       | Claude Code de René | `feat/w7-endurecimiento`                 | En PR desde el 2026-11-11 |
+| W7 · Endurecimiento (T6.2, T6.3, T6.4)                       | Claude Code de René | `feat/w7-endurecimiento`                 | En PR (#206)              |
 
 ## W7 · Endurecimiento (T6.2, T6.3, T6.4) (2026-11-11)
 
@@ -48,18 +48,24 @@ Decisiones: ADR 0134. Rama `feat/w7-endurecimiento`.
 - `apps/web`: la suite completa, 66 archivos y 407 pruebas en verde; `tsc` y eslint limpios en lo tocado.
 - Los resultados versionados del solver que revisé (`carambola`, `alcance`, `poste`, `lateral_interseccion`, `motociclista` y los de agentes) no cambian.
 
+### e2e (en la CI, 2026-11-11)
+
+René ocupaba la laptop, así que las e2e se verificaron en la CI del PR:
+
+- **Flujo principal** (`cesvi-caso.spec.ts`, `@flujo`): pasa con la comprobación de T6.2 (la versión declarada en la maqueta y su línea en la leyenda). La primera corrida falló más adelante, en el PDF del dictamen: la prueba se quedaba en «Maqueta» y el dictamen toma sus tres cuadros del 3D abierto; ahora regresa al 3D.
+- **Orden de impactos** (`orden-impactos.spec.ts`): no lleva `@flujo`. Para correrla sin la laptop se le puso la marca en un commit (corrida 43131070883: 10 e2e en verde, una más que la anterior) y se le quitó después.
+- **Lo que la CI encontró además:** faltaba el paquete caso-3d de `carambola_orden` y dos pruebas contaban 22 paquetes (ahora 23).
+
 ### Pendientes
 
-- **Las e2e no se han corrido:** `apps/web/e2e/orden-impactos.spec.ts` (nueva, sin `@flujo`) y la comprobación de la maqueta al final del tramo de la declaración en `cesvi-caso.spec.ts` (flujo principal: la corre la CI del PR).
-- **El marcador de la versión declarada en el croquis del mapa** no tiene e2e: depende del instante en que quede el reloj (en el impacto las dos versiones coinciden y no se dibuja). Tiene prueba unitaria; al correr las e2e, revisarlo a mano.
+- **El marcador de la versión declarada en el croquis del mapa** no tiene e2e: depende del instante en que quede el reloj (en el impacto las dos versiones coinciden y no se dibuja). Tiene prueba unitaria; falta verlo a mano.
 - **Con cuatro o más impactos entre vehículos** no se pregunta el orden: queda el leído.
-- **No se corrieron** la suite completa de Python ni la de `packages/solver-ts` (son largas): las corre la CI.
 
 ### Resumen para René
 
 - **Qué quedó:** en una carambola, si tu narración no dice qué chocó primero, Croquis te lo pregunta y usa tu orden; si la física da otro orden, lo avisa. Las hipótesis de los conductores ya no «chocan» antes de tiempo a dos coches detenidos en fila. Y la versión declarada de un conductor ya se ve también en la maqueta y en el mapa, punteada sobre la reconstrucción.
 - **Cómo probarlo (cuando esté desplegado):** en «Caso nuevo», escribe «Un tráiler invade el carril contrario en la autopista y choca de frente contra una urvan; atrás venía un rabón que alcanza a la urvan» y lee la narración: sale la pregunta del orden. Para la versión declarada, abre AXA, reconstruye, compara la declaración y cambia a «Maqueta».
-- **Qué necesito de ti:** nada. Falta que yo corra las e2e y fusione.
+- **Qué necesito de ti:** nada.
 
 ## Datos personales fuera de `/api/cesvi` (René, 2026-11-10; ADR 0133)
 

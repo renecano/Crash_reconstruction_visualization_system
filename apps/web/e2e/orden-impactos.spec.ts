@@ -20,7 +20,7 @@ const GRABACION = JSON.parse(
   ),
 ) as { narracion: string; salida: unknown };
 
-test("@flujo /cesvi: el perito declara el orden de los impactos de una carambola", async ({ page }) => {
+test("/cesvi: el perito declara el orden de los impactos de una carambola", async ({ page }) => {
   test.setTimeout(90_000);
   const errores: string[] = [];
   page.on("pageerror", (e) => errores.push(e.message));
