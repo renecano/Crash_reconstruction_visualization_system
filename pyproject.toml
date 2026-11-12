@@ -32,7 +32,7 @@ dev = [
   "hypothesis>=6.168,<7",
   # Solo referencia en pruebas y evaluaciones; el solver no depende de SciPy (ADR 0027).
   "scipy>=1.18,<2",
-  "ruff>=0.17,<0.18",
+  "ruff>=0.17.2,<0.18",
   "pyright>=1.1.414,<2",
   "datamodel-code-generator>=0.83,<1",
   "pytest-xdist>=3.8,<4",
