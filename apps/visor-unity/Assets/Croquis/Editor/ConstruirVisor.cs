@@ -283,6 +283,7 @@ namespace Croquis.EditorTools
             puente.AddComponent<VisorPuente>();
             puente.AddComponent<PanelDiagnostico>();
             puente.AddComponent<Medicion>();
+            puente.AddComponent<Escritorio>();
 
             // Con niebla en la escena guardada: URP quita del build los modos de niebla que ninguna
             // escena usa, y el escenario la enciende en tiempo de ejecución.

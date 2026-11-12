@@ -442,6 +442,61 @@ export function PanelVerificacion({ verificacion }: { verificacion: Verificacion
 }
 
 /**
+ * La escena que dibuja el 3D: la reconstruida, con las calles y los objetos del mapa (R10). La usan
+ * el visor three.js y el de Unity (U6).
+ */
+export function especDel3d(
+  r: Reconstruccion,
+  calles: OverpassResponse | null,
+  objetos: OverpassResponse | null,
+): EscenaSpec {
+  let s = especReconstruida(r);
+  if (r.origen && calles) s = conCallesDelMapa(s, r.origen, calles);
+  if (r.origen && objetos) s = conObjetosDelMapa(s, r.origen, objetos);
+  return s as unknown as EscenaSpec;
+}
+
+/** Las notas sobre el 3D: de dónde salen las velocidades, los supuestos y la comparación con CESVI. */
+export function NotasDel3d({
+  supuestos = [],
+  contraCesvi = null,
+}: {
+  supuestos?: readonly SupuestoDeclarado[];
+  contraCesvi?: ContraMetodosCesvi | null;
+}) {
+  return (
+    <>
+      <p className="t-nota">
+        Las velocidades del 3D son las que estimó Croquis para reproducir tu evidencia (supuesto,
+        con su rango); lo que el caso no trae va como supuesto declarado. Reconstrucción de apoyo:
+        el dictamen es del perito.
+      </p>
+      {supuestos.length ? (
+        <p className="t-nota" data-testid="supuestos-3d">
+          Supuestos declarados: {supuestosEnUnaLinea(supuestos)}.
+        </p>
+      ) : null}
+      {contraCesvi?.filas
+        .filter((f) => f.croquisKmh !== null)
+        .map((f) => (
+          <p key={f.metodo} className="t-nota" data-testid="contra-cesvi-3d">
+            <span className="cifras">
+              {f.vehiculo}: Croquis {conRango(f.croquisKmh!, f.croquisRango)} km/h · CESVI (
+              {f.metodo}) {f.cesviKmh.toFixed(2)} km/h · {diferenciaEnTexto(f)}.
+            </span>{" "}
+            {f.porQue}
+          </p>
+        ))}
+      {contraCesvi?.avisos.map((a) => (
+        <p key={a} className="t-nota text-senal-texto">
+          {a}
+        </p>
+      ))}
+    </>
+  );
+}
+
+/**
  * El 3D del escenario: la reconstrucción con la cámara cinemática, la versión declarada como
  * fantasma (R7) y la API de exportación para los cuadros del dictamen (R8).
  */
@@ -507,12 +562,7 @@ export function Visor3dCaso({
     setPedidoVisto(camaraPedida.n);
     setControles((c) => ({ ...c, camara: camaraPedida.camara }));
   }
-  const spec3d = useMemo(() => {
-    let s = especReconstruida(r);
-    if (r.origen && calles) s = conCallesDelMapa(s, r.origen, calles);
-    if (r.origen && objetos) s = conObjetosDelMapa(s, r.origen, objetos);
-    return s as unknown as EscenaSpec;
-  }, [r, calles, objetos]);
+  const spec3d = useMemo(() => especDel3d(r, calles, objetos), [r, calles, objetos]);
   // Los archivos de los modelos de los vehículos se bajan en cuanto hay reconstrucción (antes de
   // abrir el 3D): el visor los encuentra en la caché (René, 2026-11-04: ver algo en ≤ 5 s).
   useEffect(() => {
@@ -529,32 +579,7 @@ export function Visor3dCaso({
       className={`flex h-full flex-col gap-2 overflow-y-auto p-3 ${expandido ? "pt-40 pb-28" : "pt-16"} ${aSangre ? "[&>p]:order-last" : ""}`}
       data-testid="visor-caso"
     >
-      <p className="t-nota">
-        Las velocidades del 3D son las que estimó Croquis para reproducir tu evidencia (supuesto,
-        con su rango); lo que el caso no trae va como supuesto declarado. Reconstrucción de apoyo:
-        el dictamen es del perito.
-      </p>
-      {supuestos.length ? (
-        <p className="t-nota" data-testid="supuestos-3d">
-          Supuestos declarados: {supuestosEnUnaLinea(supuestos)}.
-        </p>
-      ) : null}
-      {contraCesvi?.filas
-        .filter((f) => f.croquisKmh !== null)
-        .map((f) => (
-          <p key={f.metodo} className="t-nota" data-testid="contra-cesvi-3d">
-            <span className="cifras">
-              {f.vehiculo}: Croquis {conRango(f.croquisKmh!, f.croquisRango)} km/h · CESVI (
-              {f.metodo}) {f.cesviKmh.toFixed(2)} km/h · {diferenciaEnTexto(f)}.
-            </span>{" "}
-            {f.porQue}
-          </p>
-        ))}
-      {contraCesvi?.avisos.map((a) => (
-        <p key={a} className="t-nota text-senal-texto">
-          {a}
-        </p>
-      ))}
+      <NotasDel3d supuestos={supuestos} contraCesvi={contraCesvi} />
       <VisorEscena
         spec={spec3d}
         escena="propia"

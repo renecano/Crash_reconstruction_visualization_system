@@ -98,15 +98,59 @@ function muestras(r: Rect): Vec2[] {
   return out;
 }
 
+/** Un tramo de lo que recorre un vehículo del caso: el punto y el radio que ocupa (m). */
+export interface ZonaDelCaso {
+  x: number;
+  y: number;
+  r: number;
+}
+
+/**
+ * Por dónde pasa y dónde queda cada vehículo del caso, en puntos a lo más cada `paso` m, con el radio
+ * de su planta más `holgura`. El entorno procedural no pone nada ahí (U6): si el perito deja un
+ * vehículo fuera de la calle, una casa inventada no puede quedarle encima.
+ */
+export function zonasDelCaso(
+  vehiculos: readonly {
+    trayectoria: { x: readonly number[]; y: readonly number[] };
+    dimensiones?: { largo_m: number; ancho_m: number };
+  }[],
+  holgura = 1.5,
+  paso = 1,
+): ZonaDelCaso[] {
+  const out: ZonaDelCaso[] = [];
+  for (const v of vehiculos) {
+    const r =
+      Math.hypot(v.dimensiones?.largo_m ?? 4.5, v.dimensiones?.ancho_m ?? 1.8) / 2 + holgura;
+    const { x, y } = v.trayectoria;
+    let ultimo: Vec2 | null = null;
+    for (let k = 0; k < x.length; k++) {
+      const p = { x: x[k]!, y: y[k]! };
+      const esUltimo = k === x.length - 1;
+      if (!ultimo || esUltimo || Math.hypot(p.x - ultimo.x, p.y - ultimo.y) >= paso) {
+        out.push({ ...p, r });
+        ultimo = p;
+      }
+    }
+  }
+  return out;
+}
+
+/** Si un punto cae en lo que recorre el caso. */
+export function enElCaso(zonas: readonly ZonaDelCaso[], p: Vec2): boolean {
+  return zonas.some((z) => Math.hypot(p.x - z.x, p.y - z.y) < z.r);
+}
+
 /**
  * Las cuadras de una zona urbana. `corredores` son las vías; `centro`, la acción. Los lotes de la
  * primera fila llevan detalle cerca de la acción; lo demás son volúmenes de fondo, que Unity dibuja
- * baratos.
+ * baratos. Ningún lote cae en `libres` (lo que recorren los vehículos del caso).
  */
 export function planCuadras(
   corredores: readonly Corredor[],
   centro: Vec2,
   semilla: number,
+  libres: readonly ZonaDelCaso[] = [],
 ): Cuadras {
   const rng = azar(Math.trunc(semilla) * 53 + 11);
   const lotes: Lote[] = [];
@@ -118,6 +162,8 @@ export function planCuadras(
     const ps = muestras(r);
     // Ningún punto sobre otra calle ni sobre su banqueta.
     if (ps.some((p) => distanceToRoad(p, corredores) < retiro - 0.05)) return false;
+    // Ni sobre lo que recorre un vehículo del caso.
+    if (libres.some((z) => dentro(r, z, z.r))) return false;
     for (const o of ocupados) {
       if (ps.some((p) => dentro(o, p, 0.05))) return false;
       if (dentro(r, { x: o.cx, y: o.cy }, 0.05)) return false;

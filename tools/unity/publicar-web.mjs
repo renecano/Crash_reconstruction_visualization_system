@@ -9,9 +9,13 @@
  * está definido y, si no, del `.env.local` de la raíz, que no se versiona (René, 2026-11-07). Solo se
  * lee en memoria: no se imprime ni se copia a ningún lado (plan v4 §3.2).
  *
- *   node tools/unity/publicar-web.mjs
+ *   node tools/unity/publicar-web.mjs            # sube el build y escribe el manifiesto
+ *   node tools/unity/publicar-web.mjs --podar    # además, dice qué builds viejos borraría
+ *   node tools/unity/publicar-web.mjs --podar --si   # y los borra
  *
- * Guardar solo los 2 últimos builds llega en U6.
+ * **Podar (U6):** en Blob se quedan solo dos builds: el que se acaba de subir y el que usa
+ * producción (el del manifiesto de `origin/main`). Si son el mismo, también el anterior a él, para
+ * poder regresar. Sin `--si` solo los lista: borrar no se deshace.
  */
 import { createRequire } from "node:module";
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -21,7 +25,8 @@ import { archivosDe, huellaCarpeta } from "../../apps/web/scripts/recursos-hash.
 
 const RAIZ = resolve(import.meta.dirname, "../..");
 const require = createRequire(join(RAIZ, "apps/web/package.json"));
-const { head, put } = require("@vercel/blob");
+const { del, head, list, put } = require("@vercel/blob");
+const { execFileSync } = await import("node:child_process");
 
 const BUILD = join(RAIZ, "apps/visor-unity/Build/web");
 const CASO = join(RAIZ, "packages/scene-schema/fixtures/caso3d/axa_alcance.json");
@@ -102,3 +107,70 @@ writeFileSync(
 );
 console.log(`Huella ${huella}`);
 console.log("Medición: https://croquis-sage.vercel.app/visor-unity/medir.html");
+
+if (process.argv.includes("--podar")) await podar(huella);
+
+/** La huella del build que usa producción: la del manifiesto de `origin/main`. */
+function huellaDeProduccion() {
+  try {
+    const texto = execFileSync(
+      "git",
+      ["show", "origin/main:apps/web/public/visor-unity/manifest.json"],
+      { cwd: RAIZ, encoding: "utf8" },
+    );
+    return JSON.parse(texto).huella ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function podar(actual) {
+  const raiz = "recursos/visor-unity/";
+  const porHuella = new Map();
+  let cursor;
+  do {
+    const r = await list({ prefix: raiz, token, cursor, limit: 1000 });
+    for (const b of r.blobs) {
+      const h = b.pathname.slice(raiz.length).split("/")[0];
+      const g = porHuella.get(h) ?? { urls: [], bytes: 0, fecha: 0 };
+      g.urls.push(b.url);
+      g.bytes += b.size;
+      g.fecha = Math.max(g.fecha, new Date(b.uploadedAt).getTime());
+      porHuella.set(h, g);
+    }
+    cursor = r.hasMore ? r.cursor : undefined;
+  } while (cursor);
+  const produccion = huellaDeProduccion();
+  if (!produccion) {
+    console.log("Sin el manifiesto de origin/main no se poda nada (haz git fetch).");
+    return;
+  }
+  const quedan = new Set([actual, produccion]);
+  if (quedan.size === 1) {
+    // El mismo build en los dos: se queda también el anterior, para poder regresar.
+    const anterior = [...porHuella.entries()]
+      .filter(([h]) => h !== actual)
+      .sort((a, b) => b[1].fecha - a[1].fecha)[0];
+    if (anterior) quedan.add(anterior[0]);
+  }
+  const sobran = [...porHuella.entries()].filter(([h]) => !quedan.has(h));
+  console.log(`Se quedan: ${[...quedan].join(", ")}`);
+  if (!sobran.length) {
+    console.log("No hay builds viejos que borrar.");
+    return;
+  }
+  for (const [h, g] of sobran) {
+    console.log(
+      `${process.argv.includes("--si") ? "Borro" : "Borraría"} ${h}: ${g.urls.length} archivos, ` +
+        `${(g.bytes / 1048576).toFixed(1)} MB, subido el ${new Date(g.fecha).toISOString().slice(0, 10)}`,
+    );
+  }
+  if (!process.argv.includes("--si")) {
+    console.log("Para borrarlos: node tools/unity/publicar-web.mjs --podar --si");
+    return;
+  }
+  for (const [, g] of sobran) {
+    for (let i = 0; i < g.urls.length; i += 100) await del(g.urls.slice(i, i + 100), { token });
+  }
+  console.log("Listo.");
+}

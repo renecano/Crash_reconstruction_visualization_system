@@ -14,7 +14,7 @@ namespace Croquis.Visor
     public sealed class VisorPuente : MonoBehaviour
     {
         /// <summary>La versión del contrato: debe coincidir con VISOR_PUENTE_VERSION.</summary>
-        public const string Version = "1.1.0";
+        public const string Version = "1.2.0";
 
         private const float SegundosPorReporteFps = 5f;
         private const float SegundosPorReporteTiempo = 0.1f;
@@ -309,14 +309,47 @@ namespace Croquis.Visor
             });
         }
 
+        /// <summary>Una foto del dictamen (`Captura`). Contesta `captura` o `error` con `captura_fallo`.</summary>
         public void capturar(string texto)
         {
-            Error("captura_fallo", "Las fotos del dictamen llegan en U6.");
+            _ = CapturarAsync(texto);
         }
 
+        private async Awaitable CapturarAsync(string texto)
+        {
+            try
+            {
+                var j = JObject.Parse(texto);
+                var foto = await Captura.TomarAsync(visor, (string)j["vista"], (int?)j["ancho"] ?? 1600, (int?)j["alto"] ?? 900);
+                Enviar("captura", foto);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                Error("captura_fallo", e.Message);
+            }
+        }
+
+        /// <summary>El modo edición (`EditorEscena`): mover objetos o marcar puntos, según la herramienta.</summary>
         public void modoEdicion(string texto)
         {
-            Error("interno", "La edición en 3D llega en U6.");
+            Campos(texto, j =>
+            {
+                var herramienta = (string)j["herramienta"] ?? "mover";
+                if (herramienta != "mover" && herramienta != "punto_inicial" && herramienta != "choque_intermedio" && herramienta != "punto_paso")
+                {
+                    Error("interno", "No hay una herramienta «" + herramienta + "».");
+                    return;
+                }
+
+                visor.Editor.Modo((bool)j["on"], herramienta, (string)j["vehiculo_id"]);
+            });
+        }
+
+        /// <summary>Para lo que habla con la web sin ser el puente (el modo edición).</summary>
+        public static void Avisar(string tipo, JObject campos)
+        {
+            Enviar(tipo, campos);
         }
 
         private void Campos(string texto, Action<JObject> hacer)

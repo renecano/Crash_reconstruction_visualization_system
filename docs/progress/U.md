@@ -397,6 +397,37 @@ Plan: PLAN-CESVI §3.3. Decisiones: ADR 0114.
 
 Conductor sin la carrocería propia (contorno tenue del cofre y los postes), vidrio propio sin el reflejo de la sonda, moto tendida desde el impacto con «Posición final ilustrativa», camisas que nunca son color piel, el ocupante dentro de la cabina y la cinematográfica que se acerca si una fachada la tapa. ADR 0114, decisiones 12 a 15. Capturas del build WebGL en `docs/cesvi/u4/ajustes/` (conductores en AXA y `lateral_interseccion`; vidrios en las 5 escenas de día y de noche; personas a los 3 s). PR #205.
 
+## U6 · Puente, builds e integración (2026-11-12, en PR)
+
+Rama `feat/u6-integracion`. Decisiones: ADR 0116.
+
+### Plan
+
+1. **Contrato 1.2.0** (PR `contract:` aparte, antes que lo demás): vista `antes` de `capturar` y `herramienta` de `modoEdicion`.
+2. **Unity:** `capturar` (`Captura.cs`), modo edición (`EditorEscena.cs`, `Croquis.Core.Edicion` con pruebas), abrir un paquete en el escritorio (`Escritorio.cs`).
+3. **Web:** `PuenteUnity` (`lib/visor-unity/puente.ts`), `paqueteDelCaso`, `<VisorUnity>` con respaldo three.js, `<VisorCasoUnity>` en el caso (notas, barra de edición, «Descargar paquete 3D»), ediciones al expediente (`lib/visor-unity/edicion.ts`), fotos y créditos del dictamen desde Unity, Unity detrás de Presentar.
+4. **Builds:** `publicar-web.mjs --podar` (dos builds en Blob), paquete de escritorio con caso de ejemplo y su release de GitHub.
+5. **Pruebas:** unitarias de `puente`, `edicion` y `Croquis.Core.Edicion`; e2e `visor-unity.spec.ts` (`@flujo`) con un Unity de mentira.
+6. **En producción:** publicar el build 1.2.0 en Blob, fusionar y revisar a mano: Unity en Reconstrucción, Análisis y Presentar; mover un poste en 3D; fotos del dictamen; respaldo con `?visor=ligero` y en un navegador sin WebGL 2. Capturas para René.
+
+### Hecho (2026-11-12)
+
+- **Contrato 1.2.0** fusionado (#207), con el campo `punto` de `puntoMarcado` (el `tipo` chocaba con el del mensaje).
+- **Unity:** fotos del dictamen (`Captura`), modo edición (`EditorEscena`, `Croquis.Core.Edicion`), abrir un paquete en el escritorio (`Escritorio`), y la cinematográfica que busca vista libre.
+- **Web:** `<VisorUnity>` y `<VisorCasoUnity>` en Reconstrucción y Números (el mismo panel) y detrás de Presentar; respaldo three.js; ediciones al expediente; fotos y créditos del dictamen desde Unity; «Descargar paquete 3D»; el entorno procedural deja libre lo que recorre el caso.
+- **Build publicado en Blob:** huella `01fce868922703fd` (`apps/web/public/visor-unity/manifest.json`). `publicar-web.mjs --podar` listaría para borrar dos builds viejos sin uso (`2d5c1a20a446c129`, 41.7 MB; `c10ac1849189d3d7`, 65.0 MB); no los borré: no se deshace y la decisión es de René.
+
+### Pruebas (2026-11-12)
+
+- `dotnet test`: 53 en verde (con `EdicionTests` y `EscalaAutomaticaTests`).
+- Web: tipos y lint en verde; unitarias de `lib/visor-unity` (12) y `components/visor-unity` (10).
+- e2e `visor-unity.spec.ts` (`@flujo`, Unity de mentira): 2 en verde en local (mover el poste en 3D recalcula y vuelve a Unity; fotos del dictamen desde Unity; respaldo con otra versión del puente).
+- **e2e con el Unity real** (`visor-unity-real.spec.ts`, a mano, Chromium con ventana y la GPU de la laptop): en verde. Unity listo en unos 30 s; el poste se arrastra con el ratón en la cenital, el caso se recalcula (60.62 → 60.35 km/h) y vuelve a Unity; las tres fotos del dictamen salen de Unity y son distintas; Presentar muestra Unity. Corrí la prueba cinco veces: las tres primeras encontraron los problemas del punto 9 de ADR 0116, que se corrigieron. Lo medido, en `eval/results/u6_flujo_unity_real.json`; las capturas, en `docs/cesvi/u6/real/`.
+
+### Siguiente paso
+
+- U5 se cerró y se fusionó (#205) el 2026-11-12; el PR `contract:` del puente 1.2.0 es el #207. Ahora: correr `dotnet test`, tipos, lint, las unitarias de la web y la e2e de U6, compilar Unity (WebGL y Windows) y seguir con el punto 6.
+
 ## U5 · Calidad y rendimiento (cerrada el 2026-11-12)
 
 ADR 0115. Rama `feat/u4-ajustes`, PR #205 (borrador).

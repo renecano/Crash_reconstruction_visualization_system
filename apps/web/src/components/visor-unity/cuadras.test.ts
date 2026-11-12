@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { distanceToRoad } from "@croquis/viewer/puro";
-import { ANCHO_BANQUETA_M, planCuadras, RADIO_FONDO_M } from "./cuadras";
+import { ANCHO_BANQUETA_M, enElCaso, planCuadras, RADIO_FONDO_M, zonasDelCaso } from "./cuadras";
 
 /** Un cruce de dos calles de 7 m, de 240 m cada una. */
 const CRUCE = [
@@ -72,5 +72,30 @@ describe("planCuadras", () => {
     );
     const inicio = Math.min(...lado.map((l) => l.x - l.w / 2));
     expect(inicio - (3.5 + ANCHO_BANQUETA_M)).toBeLessThan(1);
+  });
+});
+
+describe("lo que recorre el caso queda libre (U6)", () => {
+  it("ningún lote cae sobre un vehículo que terminó fuera de la calle", () => {
+    // Una calle este-oeste de 7 m y un vehículo que acaba 8 m al norte de su eje, ya en la acera.
+    const calle = [{ a: { x: -120, y: 0 }, b: { x: 120, y: 0 }, half: 3.5 }];
+    const zonas = zonasDelCaso([
+      {
+        trayectoria: { x: [-20, -10, 0, 4, 6], y: [0, 0, 0, 5, 8] },
+        dimensiones: { largo_m: 4.5, ancho_m: 1.8 },
+      },
+    ]);
+    expect(zonas.at(-1)).toMatchObject({ x: 6, y: 8 });
+    const sin = planCuadras(calle, { x: 0, y: 0 }, 7);
+    const con = planCuadras(calle, { x: 0, y: 0 }, 7, zonas);
+    const tapa = (l: { x: number; y: number; w: number; d: number }) =>
+      zonas.some((z) => Math.hypot(l.x - z.x, l.y - z.y) < Math.hypot(l.w, l.d) / 2 + z.r - 2);
+    expect(sin.lotes.some(tapa)).toBe(true);
+    expect(con.lotes.some((l) => Math.hypot(l.x - 6, l.y - 8) < Math.min(l.w, l.d) / 2)).toBe(
+      false,
+    );
+    expect(con.lotes.length).toBeLessThan(sin.lotes.length);
+    expect(enElCaso(zonas, { x: 6, y: 8 })).toBe(true);
+    expect(enElCaso(zonas, { x: 6, y: 30 })).toBe(false);
   });
 });

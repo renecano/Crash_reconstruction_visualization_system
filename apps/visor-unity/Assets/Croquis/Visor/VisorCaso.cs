@@ -25,6 +25,9 @@ namespace Croquis.Visor
         private double fin;
 
         public double Tiempo { get; private set; }
+
+        /// <summary>El final del Resultado (s): el instante de la foto «en reposo».</summary>
+        public double Fin => fin;
         public bool Reproduciendo { get; set; }
 
         /// <summary>La raíz del caso armado (para perfilar).</summary>
@@ -37,6 +40,11 @@ namespace Croquis.Visor
         public bool Cargado { get; private set; }
         public float Velocidad { get; set; } = 1f;
         public CamaraVisor Camara { get; private set; }
+
+        /// <summary>El modo edición en 3D (U6).</summary>
+        public EditorEscena Editor => editor != null ? editor : editor = gameObject.AddComponent<EditorEscena>();
+
+        private EditorEscena editor;
 
         private void Awake()
         {
@@ -106,6 +114,7 @@ namespace Croquis.Visor
 
             TerrenoVista.Dibujar(raiz, e?.Terreno, terreno, e != null && e.Ambiente.Mojado);
             dinamica = CasoVista.Construir(raiz, caso, terreno, noche);
+            Editor.Preparar(r.Objetos, terreno);
             foreach (var v in vehiculos)
             {
                 v.Terreno = terreno;
