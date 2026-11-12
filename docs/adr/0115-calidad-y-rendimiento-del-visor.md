@@ -92,6 +92,8 @@ René revisó §7.8 de `PLAN.md`: la meta de media (≥ 60 fps a 1080p) es **en 
 
 **Alta y ultra en la computadora con tarjeta de video (2026-11-12, `eval/results/e6_unity_escritorio.json`):** programa de escritorio (Direct3D 12) en una RTX 4070 Laptop con i9-14900HX, 1920×1080, 3 repeticiones: de 290.3 a 414.9 fps en alta y de 289.4 a 410.2 en ultra, con el 1 % más lento en 166.6 o más. **Cumple la meta de §7.8 para la computadora de demo** en las 10 escenas. Alta y ultra dan casi lo mismo porque, con dpr 1, las dos dibujan a escala 1. El build web en esa computadora se mide al cerrar U6.
 
+**El build web en la computadora de demo (2026-11-12, `eval/results/e6_unity_web_demo.json`, resumen por build en `e6_unity_web_demo_por_build.json`):** Chrome 140 en la misma RTX 4070 Laptop, pantalla de 1920×1200 con dpr 1.25, 3 repeticiones. La corrida cruzó el despliegue de #210: la primera repetición midió el build `01fce868922703fd` y las otras dos, `f12372a6c2d7742c`, que trae el primer bloque de «ultra con el margen». Alta: de 215.8 a 451.8 fps. Ultra con el bloque (2 repeticiones): de 195.7 a 270.4 fps, con el 1 % más lento en 96.7 o más. Ultra sin el bloque (1 repetición): de 222.2 a 468.3. **Cumple ≥ 60 fps en el navegador en las 10 escenas, también con el bloque.**
+
 ## Consecuencias
 
 - El build WebGL lleva las variantes de shader de los cuatro niveles (por ejemplo, sombras de focos de alta); su peso se mide en U5 y queda en `docs/progress/U.md`.

@@ -1,0 +1,314 @@
+{
+  "fecha": "2026-11-12T22:14:33.228Z",
+  "fuente": "eval/results/e6_unity_web_demo.json",
+  "maquina": {
+    "gpus": "NVIDIA GeForce RTX 4070 Laptop GPU (32.0.16.2101); Intel(R) UHD Graphics (32.0.101.7088)",
+    "cpu": "Intel(R) Core(TM) i9-14900HX",
+    "ram_gb": 32,
+    "so": "Microsoft Windows 11 Home",
+    "chrome": "140.0.7339.208"
+  },
+  "pantalla": [
+    "1920x1200 dpr 1.25"
+  ],
+  "gpu": [
+    "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  ],
+  "nota": "La corrida cruzó el despliegue de #210: repetición 1 con el build 01fce868922703fd (ultra sin el primer bloque), repeticiones 2 y 3 con f12372a6c2d7742c (ultra con el bloque: dibujar a 1.5×, sombras de 8192 hasta 250 m, 16 luminarias). Alta es igual en los dos builds y se resume con las tres.",
+  "alta": {
+    "rango_fps": [
+      215.8,
+      451.8
+    ],
+    "por_escena": {
+      "axa-dia": {
+        "fps_promedio_mediana": 451.8,
+        "fps_1pct_bajo_mediana": 370.4,
+        "escala": [
+          1
+        ],
+        "repeticiones": 3,
+        "cumple": true
+      },
+      "axa-noche": {
+        "fps_promedio_mediana": 379.1,
+        "fps_1pct_bajo_mediana": 303,
+        "escala": [
+          1
+        ],
+        "repeticiones": 3,
+        "cumple": true
+      },
+      "carambola-dia": {
+        "fps_promedio_mediana": 276.9,
+        "fps_1pct_bajo_mediana": 227.3,
+        "escala": [
+          1
+        ],
+        "repeticiones": 3,
+        "cumple": true
+      },
+      "carambola-noche": {
+        "fps_promedio_mediana": 249.6,
+        "fps_1pct_bajo_mediana": 204.1,
+        "escala": [
+          1
+        ],
+        "repeticiones": 3,
+        "cumple": true
+      },
+      "lateral_interseccion-dia": {
+        "fps_promedio_mediana": 338,
+        "fps_1pct_bajo_mediana": 163.9,
+        "escala": [
+          1
+        ],
+        "repeticiones": 3,
+        "cumple": true
+      },
+      "lateral_interseccion-noche": {
+        "fps_promedio_mediana": 294.1,
+        "fps_1pct_bajo_mediana": 156.3,
+        "escala": [
+          1
+        ],
+        "repeticiones": 3,
+        "cumple": true
+      },
+      "nocturno_lluvia-dia": {
+        "fps_promedio_mediana": 235,
+        "fps_1pct_bajo_mediana": 200,
+        "escala": [
+          1
+        ],
+        "repeticiones": 3,
+        "cumple": true
+      },
+      "nocturno_lluvia-noche": {
+        "fps_promedio_mediana": 215.8,
+        "fps_1pct_bajo_mediana": 178.6,
+        "escala": [
+          1
+        ],
+        "repeticiones": 3,
+        "cumple": true
+      },
+      "terraceria-dia": {
+        "fps_promedio_mediana": 293.2,
+        "fps_1pct_bajo_mediana": 232.6,
+        "escala": [
+          1
+        ],
+        "repeticiones": 3,
+        "cumple": true
+      },
+      "terraceria-noche": {
+        "fps_promedio_mediana": 279.4,
+        "fps_1pct_bajo_mediana": 227.3,
+        "escala": [
+          1
+        ],
+        "repeticiones": 3,
+        "cumple": true
+      }
+    }
+  },
+  "ultra_con_bloque": {
+    "build": "f12372a6c2d7742c",
+    "rango_fps": [
+      195.7,
+      270.4
+    ],
+    "por_escena": {
+      "axa-dia": {
+        "fps_promedio_mediana": 253.8,
+        "fps_1pct_bajo_mediana": 178.6,
+        "escala": [
+          1.5
+        ],
+        "repeticiones": 2,
+        "cumple": true
+      },
+      "axa-noche": {
+        "fps_promedio_mediana": 195.7,
+        "fps_1pct_bajo_mediana": 96.7,
+        "escala": [
+          1.5
+        ],
+        "repeticiones": 2,
+        "cumple": true
+      },
+      "carambola-dia": {
+        "fps_promedio_mediana": 270.4,
+        "fps_1pct_bajo_mediana": 200,
+        "escala": [
+          1.5
+        ],
+        "repeticiones": 2,
+        "cumple": true
+      },
+      "carambola-noche": {
+        "fps_promedio_mediana": 238.1,
+        "fps_1pct_bajo_mediana": 130,
+        "escala": [
+          1.5
+        ],
+        "repeticiones": 2,
+        "cumple": true
+      },
+      "lateral_interseccion-dia": {
+        "fps_promedio_mediana": 243.3,
+        "fps_1pct_bajo_mediana": 132.6,
+        "escala": [
+          1.5
+        ],
+        "repeticiones": 2,
+        "cumple": true
+      },
+      "lateral_interseccion-noche": {
+        "fps_promedio_mediana": 200.5,
+        "fps_1pct_bajo_mediana": 129.9,
+        "escala": [
+          1.5
+        ],
+        "repeticiones": 2,
+        "cumple": true
+      },
+      "nocturno_lluvia-dia": {
+        "fps_promedio_mediana": 233.4,
+        "fps_1pct_bajo_mediana": 196.1,
+        "escala": [
+          1.5
+        ],
+        "repeticiones": 2,
+        "cumple": true
+      },
+      "nocturno_lluvia-noche": {
+        "fps_promedio_mediana": 215.1,
+        "fps_1pct_bajo_mediana": 181.8,
+        "escala": [
+          1.5
+        ],
+        "repeticiones": 2,
+        "cumple": true
+      },
+      "terraceria-dia": {
+        "fps_promedio_mediana": 261.6,
+        "fps_1pct_bajo_mediana": 166.7,
+        "escala": [
+          1.5
+        ],
+        "repeticiones": 2,
+        "cumple": true
+      },
+      "terraceria-noche": {
+        "fps_promedio_mediana": 227.5,
+        "fps_1pct_bajo_mediana": 151.6,
+        "escala": [
+          1.5
+        ],
+        "repeticiones": 2,
+        "cumple": true
+      }
+    }
+  },
+  "ultra_sin_bloque": {
+    "build": "01fce868922703fd",
+    "rango_fps": [
+      222.2,
+      468.3
+    ],
+    "por_escena": {
+      "axa-dia": {
+        "fps_promedio_mediana": 468.3,
+        "fps_1pct_bajo_mediana": 370.4,
+        "escala": [
+          1
+        ],
+        "repeticiones": 1,
+        "cumple": true
+      },
+      "axa-noche": {
+        "fps_promedio_mediana": 384.9,
+        "fps_1pct_bajo_mediana": 303,
+        "escala": [
+          1
+        ],
+        "repeticiones": 1,
+        "cumple": true
+      },
+      "carambola-dia": {
+        "fps_promedio_mediana": 293.8,
+        "fps_1pct_bajo_mediana": 238.1,
+        "escala": [
+          1
+        ],
+        "repeticiones": 1,
+        "cumple": true
+      },
+      "carambola-noche": {
+        "fps_promedio_mediana": 246.7,
+        "fps_1pct_bajo_mediana": 185.2,
+        "escala": [
+          1
+        ],
+        "repeticiones": 1,
+        "cumple": true
+      },
+      "lateral_interseccion-dia": {
+        "fps_promedio_mediana": 346.3,
+        "fps_1pct_bajo_mediana": 161.3,
+        "escala": [
+          1
+        ],
+        "repeticiones": 1,
+        "cumple": true
+      },
+      "lateral_interseccion-noche": {
+        "fps_promedio_mediana": 308.2,
+        "fps_1pct_bajo_mediana": 156.3,
+        "escala": [
+          1
+        ],
+        "repeticiones": 1,
+        "cumple": true
+      },
+      "nocturno_lluvia-dia": {
+        "fps_promedio_mediana": 248.2,
+        "fps_1pct_bajo_mediana": 200,
+        "escala": [
+          1
+        ],
+        "repeticiones": 1,
+        "cumple": true
+      },
+      "nocturno_lluvia-noche": {
+        "fps_promedio_mediana": 222.2,
+        "fps_1pct_bajo_mediana": 185.2,
+        "escala": [
+          1
+        ],
+        "repeticiones": 1,
+        "cumple": true
+      },
+      "terraceria-dia": {
+        "fps_promedio_mediana": 308.9,
+        "fps_1pct_bajo_mediana": 250,
+        "escala": [
+          1
+        ],
+        "repeticiones": 1,
+        "cumple": true
+      },
+      "terraceria-noche": {
+        "fps_promedio_mediana": 282.9,
+        "fps_1pct_bajo_mediana": 227.3,
+        "escala": [
+          1
+        ],
+        "repeticiones": 1,
+        "cumple": true
+      }
+    }
+  }
+}
