@@ -330,9 +330,26 @@ namespace Croquis.Visor
             }
         }
 
+        /// <summary>El modo edición (`EditorEscena`): mover objetos o marcar puntos, según la herramienta.</summary>
         public void modoEdicion(string texto)
         {
-            Error("interno", "La edición en 3D llega en U6.");
+            Campos(texto, j =>
+            {
+                var herramienta = (string)j["herramienta"] ?? "mover";
+                if (herramienta != "mover" && herramienta != "punto_inicial" && herramienta != "choque_intermedio" && herramienta != "punto_paso")
+                {
+                    Error("interno", "No hay una herramienta «" + herramienta + "».");
+                    return;
+                }
+
+                visor.Editor.Modo((bool)j["on"], herramienta, (string)j["vehiculo_id"]);
+            });
+        }
+
+        /// <summary>Para lo que habla con la web sin ser el puente (el modo edición).</summary>
+        public static void Avisar(string tipo, JObject campos)
+        {
+            Enviar(tipo, campos);
         }
 
         private void Campos(string texto, Action<JObject> hacer)

@@ -562,6 +562,14 @@ namespace Croquis.Visor
                 return;
             }
 
+            // Mientras el perito arrastra un objeto en modo edición, la cámara se queda quieta.
+            if (EditorEscena.Arrastrando)
+            {
+                ultimoRaton = Input.mousePosition;
+                ultimaSeparacion = 0f;
+                return;
+            }
+
             var mover = Vector2.zero;
             var acercar = 0f;
             var girar = Vector2.zero;
