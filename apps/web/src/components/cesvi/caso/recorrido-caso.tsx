@@ -88,6 +88,7 @@ import { CifraReconstruccion, DetalleReconstruccion } from "./hoja-reconstruccio
 import { TerrenoReconstruccion } from "./terreno-reconstruccion";
 import { VisorCasoUnity } from "@/components/visor-unity/visor-caso-unity";
 import type { ApiVisorUnity } from "@/components/visor-unity/visor-unity";
+import { CanalTiempo } from "@/lib/visor-unity/canal";
 import { protagonista, tipImpacto, tipVehiculo } from "@/lib/reconstruccion-lab";
 import { tomarArchivo } from "@/lib/archivo-pendiente";
 import {
@@ -215,6 +216,8 @@ export function RecorridoCaso({
   const [exportApi, setExportApi] = useState<ViewerExportApi | null>(null);
   // U6: el visor Unity (si cargó). Las fotos del dictamen salen de él.
   const [unityApi, setUnityApi] = useState<ApiVisorUnity | null>(null);
+  // Presentar le avisa a Unity el instante de cada capítulo sin pasar por el estado de la página.
+  const [canalPresentar] = useState(() => new CanalTiempo());
   const [pedidoExportar, setPedidoExportar] = useState(0);
   const [guardadoId, setGuardadoId] = useState<string | null>(
     inicial.origen === "guardado" ? inicial.id : null,
@@ -1329,6 +1332,7 @@ export function RecorridoCaso({
           }
           nombreDe={nombreLab}
           onSalir={() => setModo("trabajar")}
+          con3d={unityApi ? canalPresentar : null}
         />
       ) : null}
       <BarraRecorrido
@@ -1542,6 +1546,7 @@ export function RecorridoCaso({
                   letra: letraDe(String(id)),
                 }))}
                 onApiUnity={setUnityApi}
+                presentar={presentando && unityApi ? canalPresentar : null}
                 r={r}
                 activo={visorAlaVista}
                 camaraPedida={camaraPedida}

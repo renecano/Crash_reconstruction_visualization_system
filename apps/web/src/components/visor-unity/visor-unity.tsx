@@ -25,6 +25,7 @@ import {
   type MotivoRespaldo,
 } from "@/lib/visor-unity/puente";
 import { paqueteDelCaso, type RelieveCaso } from "@/lib/visor-unity/paquete";
+import type { CanalTiempo } from "@/lib/visor-unity/canal";
 
 /** Lo que el visor Unity le ofrece al caso: las fotos del dictamen y el paquete que tiene cargado. */
 export interface ApiVisorUnity {
@@ -59,6 +60,7 @@ export function VisorUnity({
   activo = true,
   camara = null,
   edicion = null,
+  tiempo = null,
   respaldo,
   onApi,
   onTiempo,
@@ -73,6 +75,8 @@ export function VisorUnity({
   /** La cámara pedida por las pestañas; `n` cambia con cada pedido. */
   camara?: { modo: CamaraVisor; n: number } | null;
   edicion?: EdicionUnity | null;
+  /** Con un canal, el instante lo pone quien avisa (Presentar) y Unity no reproduce solo. */
+  tiempo?: CanalTiempo | null;
   /** Lo que se muestra si Unity no puede: el visor three.js. */
   respaldo: ReactNode;
   onApi?: (api: ApiVisorUnity | null) => void;
@@ -156,8 +160,12 @@ export function VisorUnity({
 
   useEffect(() => {
     if (!puente || estado.fase !== "listo") return;
+    if (tiempo) {
+      puente.enviar("pausar", {});
+      return tiempo.oir((t) => puente.enviar("fijarTiempo", { t }));
+    }
     puente.enviar(activo ? "reproducir" : "pausar", {});
-  }, [puente, activo, estado.fase]);
+  }, [puente, activo, tiempo, estado.fase]);
 
   useEffect(() => {
     if (!puente || estado.fase !== "listo" || !camara) return;

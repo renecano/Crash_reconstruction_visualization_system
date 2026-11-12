@@ -15,6 +15,7 @@ import { especDel3d, NotasDel3d, Visor3dCaso } from "@/components/cesvi/caso/rec
 import { downloadBytes } from "@/lib/download";
 import type { ImpactoAColocar } from "@/lib/escena-facil";
 import { camaraUnity } from "@/lib/visor-unity/camaras";
+import type { CanalTiempo } from "@/lib/visor-unity/canal";
 import { aplicarObjetoEditado, aplicarPuntoMarcado } from "@/lib/visor-unity/edicion";
 import { nombreDelPaquete } from "@/lib/visor-unity/paquete";
 import { VisorUnity, type ApiVisorUnity } from "./visor-unity";
@@ -33,8 +34,14 @@ export function VisorCasoUnity({
   editable = false,
   vehiculos = [],
   onApiUnity,
+  presentar = null,
   ...props
 }: ComponentProps<typeof Visor3dCaso> & {
+  /**
+   * En «Presentar» el 3D va detrás de la historia, a la derecha, con la cámara cinematográfica y el
+   * instante que marca cada capítulo. Sin notas ni botones: la historia los tapa.
+   */
+  presentar?: CanalTiempo | null;
   expediente: Expediente | null;
   /** Una edición del 3D, ya llevada al expediente: el caso se recalcula y el 3D se vuelve a cargar. */
   onExpediente: (e: Expediente, mensaje: string) => void;
@@ -50,8 +57,13 @@ export function VisorCasoUnity({
   const ligero = sp.get("visor") === "ligero";
   const escena = useMemo(() => especDel3d(r, calles, objetos), [r, calles, objetos]);
   const camara = useMemo(
-    () => (camaraPedida ? { modo: camaraUnity(camaraPedida.camara), n: camaraPedida.n } : null),
-    [camaraPedida],
+    () =>
+      presentar
+        ? { modo: "cinematica" as const, n: -1 }
+        : camaraPedida
+          ? { modo: camaraUnity(camaraPedida.camara), n: camaraPedida.n }
+          : null,
+    [camaraPedida, presentar],
   );
   const [editando, setEditando] = useState(false);
   const [herramienta, setHerramienta] = useState<HerramientaEdicion>("mover");
@@ -94,17 +106,24 @@ export function VisorCasoUnity({
 
   return (
     <div
-      className={`flex h-full flex-col gap-2 p-3 ${props.expandido ? "pt-40 pb-28" : "pt-16"} ${props.aSangre ? "[&>p]:order-last" : ""}`}
+      className={
+        presentar
+          ? // Detrás del diálogo de Presentar (z-50), donde iba la maqueta: el velo de la izquierda lo cubre.
+            "visible pointer-events-none fixed inset-y-0 right-0 left-[30%] z-[49]"
+          : `flex h-full flex-col gap-2 p-3 ${props.expandido ? "pt-40 pb-28" : "pt-16"} ${props.aSangre ? "[&>p]:order-last" : ""}`
+      }
       data-testid="visor-caso"
+      data-presentar={presentar ? "si" : undefined}
     >
-      <NotasDel3d supuestos={props.supuestos} contraCesvi={props.contraCesvi} />
-      <div className="relative min-h-0 flex-1">
+      {presentar ? null : <NotasDel3d supuestos={props.supuestos} contraCesvi={props.contraCesvi} />}
+      <div className={presentar ? "relative h-full w-full" : "relative min-h-0 flex-1"}>
         <VisorUnity
           escena={escena}
           relieve={r.relieve ?? null}
           activo={activo}
           camara={camara}
-          edicion={edicion}
+          tiempo={presentar}
+          edicion={presentar ? { on: false } : edicion}
           respaldo={<Visor3dCaso {...props} />}
           onApi={(a) => {
             setApi(a);
@@ -113,7 +132,7 @@ export function VisorCasoUnity({
           onObjetoEditado={alObjeto}
           onPuntoMarcado={alPunto}
         />
-        {api ? (
+        {api && !presentar ? (
           <div className="absolute top-3 right-3 z-10 flex flex-wrap items-center justify-end gap-2">
             {editable ? (
               <>
@@ -180,7 +199,7 @@ export function VisorCasoUnity({
             </button>
           </div>
         ) : null}
-        {editando && editable ? (
+        {editando && editable && !presentar ? (
           <p
             className="t-nota vidrio absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-control px-3 py-1.5"
             data-testid="aviso-edicion-3d"

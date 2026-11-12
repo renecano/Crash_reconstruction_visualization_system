@@ -15,6 +15,7 @@ import type { ResultadoMaqueta } from "@/lib/maqueta";
 import { guardarTema, type Tema } from "@/lib/preferencias-cesvi";
 import { capitulos, DURACION_CAPITULO_S, tDelCapitulo } from "@/lib/presentar-lab";
 import { reconstruirEnNavegador } from "@/lib/reconstruct-client";
+import type { CanalTiempo } from "@/lib/visor-unity/canal";
 import { EscenaMaqueta } from "../escena/maqueta";
 import { Linea, Sube } from "../movimiento";
 
@@ -31,7 +32,13 @@ export function PresentarCaso({
   conteo,
   nombreDe,
   onSalir,
+  con3d = null,
 }: {
+  /**
+   * U6: el visor Unity ya cargó y va detrás, a la derecha. Presentar le avisa el instante de cada
+   * capítulo por este canal y no dibuja la maqueta. Sin él, la maqueta de siempre.
+   */
+  con3d?: CanalTiempo | null;
   fisica: LecturaFisica | null;
   letraDe: (id: string) => string;
   r: Reconstruccion;
@@ -122,9 +129,13 @@ export function PresentarCaso({
   }, [fraccion, k, n]);
 
   const c = caps[k];
+  const t = c ? tDelCapitulo(c, fraccion) : null;
+  useEffect(() => {
+    if (con3d && t !== null) con3d.avisar(t);
+  }, [con3d, t]);
   return (
     <div
-      className="fixed inset-0 z-50 overflow-hidden bg-fondo text-texto"
+      className={`fixed inset-0 z-50 overflow-hidden text-texto ${con3d ? "" : "bg-fondo"}`}
       role="dialog"
       aria-modal="true"
       aria-label="Presentar el caso"
@@ -132,7 +143,10 @@ export function PresentarCaso({
       data-capitulo={c?.clave}
       data-corre={corre ? "si" : "no"}
     >
-      {res && c ? (
+      {con3d ? (
+        // El 3D va detrás (`VisorCasoUnity` en modo Presentar); aquí solo el fondo de la izquierda.
+        <div className="absolute inset-y-0 left-0 w-[30%] bg-fondo" aria-hidden="true" />
+      ) : res && c ? (
         <div className="absolute inset-y-0 right-0 left-[30%]" aria-hidden="true">
           <EscenaMaqueta spec={spec} resultado={res} sinEtiquetas t={tDelCapitulo(c, fraccion)} />
         </div>
