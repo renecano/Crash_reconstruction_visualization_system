@@ -120,6 +120,11 @@ test("/cesvi con el Unity real: mover el poste en 3D, fotos del dictamen y Prese
   const antes = await cifra.innerText();
   medido.cifra_antes = antes;
 
+  // Con CROQUIS_PAUSA_3D=<s>, el perito lee la cifra unos segundos antes de abrir el 3D (lo normal):
+  // Unity ya carga el caso de fondo desde la reconstrucción.
+  const pausa = Number(process.env.CROQUIS_PAUSA_3D ?? 0);
+  medido.pausa_antes_del_3d_s = pausa;
+  if (pausa) await page.waitForTimeout(pausa * 1000);
   // El 3D: Unity real arranca, recibe el caso y queda listo.
   const t0 = Date.now();
   await page.getByTestId("vista-3d").click();
