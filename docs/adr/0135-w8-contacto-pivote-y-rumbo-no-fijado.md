@@ -24,7 +24,13 @@ Con los dos, el costo contra el rumbo de V2 tiene saltos de 0.03 a 15 en 1°, y 
 - **Alcance:** solo los impactos entre dos vehículos. Contra un objeto o una persona no cambia nada.
 - **Por qué no el término del experimento:** la medición de opciones (`eval/t3_2_opciones.patch`) usó un término μ·|punto medio − punto del evento|² con μ = 1e-4. μ no sale de ninguna medida y habría que calibrarlo; la tolerancia de la zona sí sale de la geometría.
 
-### 2. El rumbo gira alrededor del punto de impacto
+### 2. El rumbo gira alrededor del punto de impacto (solo si lo dio el perito)
+
+**Corrección del 2026-11-13 (René), después de medir:** el punto del choque se fija (el pivote del rumbo) **solo cuando lo dio el perito**: lo marcó en el mapa (`procedencia.fuente = usuario`, C1) o sale de las posiciones de impacto que colocó en el flujo de CESVI (el punto del evento que arma `especDeExpediente`). Cuando viene del relato (`relato`), es una estimación con su incertidumbre: el rumbo gira desde el arranque, como antes de W8, y solo se corrige el error numérico del contacto (decisión 1). Motivo: en `interseccion_toluca`, `lateral_interseccion` y `glorieta` el punto viene del relato, y con el pivote en él las posiciones finales cabían peor (Toluca, costo de 1.51 a 8.10), porque el solver de `main` corría el choque de 2.6 a 5.4 m del punto del relato para explicarlas. Un punto que el relato estima no tiene por qué ganarle a las posiciones finales.
+
+**Pero no se mueve en silencio:** si en el mejor ajuste el choque queda a más de 2 m del punto que da el relato (el doble de la σ de una posición medida, `SIGMA_POSITION_M` = 1 m), la reconstrucción lo lista entre sus límites, en el paso de Reconstrucción y en el dictamen: «El choque quedó a X m del punto que da el relato: el relato lo estima y la evidencia lo lleva ahí.» (`choqueLejosDelRelato`, `packages/cesvi`).
+
+Lo que sigue de esta sección vale para el punto que dio el perito:
 
 - El rumbo inicial no declarado de un vehículo gira su pose inicial alrededor del punto de impacto del primer evento de impacto en el que participa, si el evento trae `punto_impacto` (sea cual sea su fuente: es el punto con que se busca el contacto). Así, el rumbo cambia de dónde venía el vehículo, no dónde chocó.
 - Sin `punto_impacto`, gira alrededor de su posición inicial, como antes.
@@ -78,6 +84,23 @@ Si en el resultado el mejor rumbo inicial de un vehículo queda en el límite de
 ### 7. Python y TS
 
 Todo va en el solver de referencia (Python) y en el port TS, con paridad E7. Las referencias se regeneran con el código nuevo.
+
+### 8. AXA pasa a dos hipótesis (René, 2026-11-13)
+
+Con el choque donde lo puso el perito, el daño medido deja a V2 a 3.9 m de su reposo supuesto (el del método de restos), y la consistencia pide las dos hipótesis de ADR 0091:
+
+- **Cuadra con el daño medido**: V2 a 56.87 km/h (54.79–78.39). Es la que se ve sin elegir, porque es la medición.
+- **Cuadra con el reposo supuesto**: V2 a 34.44 km/h (30.07–44.44). Va como alternativa, marcada como supuesto, igual en Reconstrucción, Contra CESVI, Presentar y el dictamen.
+
+**Por qué antes había una sola:** la hipótesis única de antes salía del choque corrido 12 m. El contacto saltaba (decisión 1) y el rumbo en el límite movía el choque. Con eso, el daño y el reposo supuesto cabían juntos a 71.56 km/h. No era una solución de la evidencia en el lugar del choque que colocó el perito (`eval/results/w8/discrepancia_axa_*.json`).
+
+### 9. El tiempo del resultado completo
+
+El criterio, la búsqueda rehecha y ahora la segunda hipótesis de AXA cuestan tiempo. Se recortó sin cambiar ningún número (paridad E7 en diferencia 0 y el resultado completo idéntico byte por byte en tres escenas):
+
+- el criterio se decide antes del sorteo del rango, así que si un rumbo vuelve al del perito, el sorteo de la primera pasada ya no se hace;
+- en el navegador, el Monte Carlo y la hipótesis del reposo supuesto corren en otro worker al mismo tiempo que la inversión (`enParalelo`; `fullResult` con `enOtroWorker`);
+- `axisOverlaps` y `pyRound`, los más calientes del perfil, sin arreglos intermedios ni la expansión decimal larga salvo en un posible empate.
 
 ## Consecuencias
 

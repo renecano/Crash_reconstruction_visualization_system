@@ -17,6 +17,8 @@ import {
   conHipotesis,
   encabezadoHipotesis,
   hipotesisVisible,
+  CHOQUE_LEJOS_DEL_RELATO_M,
+  choqueLejosDelRelato,
   especDeExpediente,
   especReconstruida,
   impactosEnMapa,
@@ -630,6 +632,24 @@ describe("lo medido pesa más que lo supuesto: el reposo supuesto y las dos hip�
     expect(elegida.velocidades.find((v) => v.vehiculo === id)!.previa!.mejor).toBe(41.47);
     const con = (especReconstruida(elegida).vehiculos as Json[]).find((v) => v.id === "veh-a")!;
     expect(con.velocidad_previa).toMatchObject({ valor: 41.47 });
+  });
+
+  it("un choque que el ajuste lleva lejos del punto del relato se le dice al perito (ADR 0135)", () => {
+    const F = resolve(dirname(fileURLToPath(import.meta.url)), "../../scene-schema/fixtures");
+    const leerF = (r: string) => JSON.parse(readFileSync(resolve(F, r), "utf8")) as Json;
+    // Un punto del relato y un ajuste que lo deja lejos: la moto.
+    const moto = leerF("motociclista.json");
+    const lejos = choqueLejosDelRelato(
+      moto,
+      leerF("resultados/motociclista.json").inversion as never,
+    );
+    expect(lejos).not.toBeNull();
+    expect(lejos!).toBeGreaterThan(CHOQUE_LEJOS_DEL_RELATO_M);
+    // El punto que colocó el perito (AXA) no es del relato: no se avisa.
+    const axa = leerF("inversion/axa_alcance.json");
+    expect(
+      choqueLejosDelRelato(axa, leerF("inversion/resultados/axa_alcance.json").inversion as never),
+    ).toBeNull();
   });
 
   it("un rumbo de llegada en el límite de búsqueda sale como aviso para el perito (ADR 0135)", () => {

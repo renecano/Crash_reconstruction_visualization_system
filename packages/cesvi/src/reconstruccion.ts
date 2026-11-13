@@ -14,7 +14,44 @@
  * eventos posteriores (`segundo_impacto`); el solver los resuelve cuando el par se toca.
  */
 import { buildSpec, fact, emptyFacts, type Fact } from "@croquis/extraction";
-import { ANGLE_BOUND_DEG, fullResult, PRIORIDAD, reconstruct } from "@croquis/solver-ts";
+import {
+  ANGLE_BOUND_DEG,
+  applyValues,
+  fullResult,
+  PRIORIDAD,
+  reconstruct,
+  SIGMA_POSITION_M,
+} from "@croquis/solver-ts";
+
+/**
+ * A partir de qué distancia se le dice al perito que el choque del mejor ajuste quedó lejos del punto
+ * que da el relato (ADR 0135, decisión 2): el doble de la σ de una posición medida.
+ */
+export const CHOQUE_LEJOS_DEL_RELATO_M = 2 * SIGMA_POSITION_M;
+
+/**
+ * Dónde quedó el choque en el mejor ajuste, si el punto del evento viene del relato (una estimación,
+ * no lo que marcó el perito) y quedó a más de `CHOQUE_LEJOS_DEL_RELATO_M`: la distancia en metros.
+ * null si el punto no viene del relato, si no hay ajuste o si quedó cerca.
+ */
+export function choqueLejosDelRelato(spec: Json, inv: Inversion): number | null {
+  const ev = ((spec.eventos ?? []) as Json[])
+    .filter((e) => String(e.tipo).startsWith("impacto"))
+    .sort((a, b) => Number(a.orden) - Number(b.orden))[0];
+  const punto = ev?.punto_impacto as { x: number; y: number } | undefined;
+  if (!ev || !punto || (ev.procedencia as Json | undefined)?.fuente !== "relato") return null;
+  const valores = new Map<string, number>();
+  for (const p of inv.parametros) {
+    if (!p.identificable || !p.estimacion) continue;
+    const k = p.parametro === "velocidad_previa" ? "velocidad" : "rumbo";
+    valores.set(`${k}:${p.vehiculo}`, p.estimacion.mejor);
+  }
+  if (!valores.size) return null;
+  const r = reconstruct(applyValues(spec, valores));
+  if (!r.puntoImpacto) return null;
+  const d = Math.hypot(r.puntoImpacto[0] - punto.x, r.puntoImpacto[1] - punto.y);
+  return d > CHOQUE_LEJOS_DEL_RELATO_M ? d : null;
+}
 import type { Expediente } from "./corpus";
 import { rigidezEnKilo } from "./verificacion";
 import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from "./geo";
@@ -945,6 +982,12 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
       `El impacto ${ev.id.replace("ev-impacto-", "")} (${vs.join(" con ")}) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.`,
     );
   }
+  // Si el punto del choque es la estimación del relato, no se mueve en silencio (ADR 0135).
+  const lejos = choqueLejosDelRelato(base.spec as Json, inv);
+  if (lejos !== null)
+    limites.push(
+      `El choque quedó a ${lejos.toFixed(1)} m del punto que da el relato: el relato lo estima y la evidencia lo lleva ahí.`,
+    );
   // Un rumbo de llegada que la evidencia empuja contra el límite de búsqueda se le dice al perito,
   // no se queda como un número callado (ADR 0135).
   for (const p of inv.parametros) {

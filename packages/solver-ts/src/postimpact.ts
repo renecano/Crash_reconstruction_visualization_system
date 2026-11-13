@@ -367,10 +367,24 @@ export function axisOverlaps(a: readonly Vec[], b: readonly Vec[]): [number, Vec
       const ln = dmath.hypot(nx, ny);
       const ex = nx / ln;
       const ey = ny / ln;
-      const pa = a.map(([vx, vy]) => vx * ex + vy * ey);
-      const pb = b.map(([vx, vy]) => vx * ex + vy * ey);
-      const forward = Math.max(...pa) - Math.min(...pb);
-      const backward = Math.max(...pb) - Math.min(...pa);
+      // Las mismas proyecciones que antes, sin arreglos intermedios (W8: es el ciclo más caliente
+      // de la inversión); el máximo y el mínimo de cuatro números son exactos de cualquier forma.
+      let maxA = -Infinity;
+      let minA = Infinity;
+      let maxB = -Infinity;
+      let minB = Infinity;
+      for (let k = 0; k < 4; k++) {
+        const va = a[k]!;
+        const vb = b[k]!;
+        const ta = va[0] * ex + va[1] * ey;
+        const tb = vb[0] * ex + vb[1] * ey;
+        if (ta > maxA) maxA = ta;
+        if (ta < minA) minA = ta;
+        if (tb > maxB) maxB = tb;
+        if (tb < minB) minB = tb;
+      }
+      const forward = maxA - minB;
+      const backward = maxB - minA;
       if (forward <= 0 || backward <= 0) return null;
       out.push([forward, [ex, ey]]);
       out.push([backward, [-ex, -ey]]);
