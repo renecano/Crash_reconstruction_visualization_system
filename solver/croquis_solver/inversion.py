@@ -64,7 +64,7 @@ from croquis_solver.crash3 import (
 )
 from croquis_solver.lsq import least_squares_soft_l1, soft_l1_cost
 from croquis_solver.stiffness import sample_stiffness, stiffness_for, zona_from_cdc_side
-from croquis_solver.stratified import Draws, LatinHypercube, count_draws
+from croquis_solver.stratified import DESIGN_SEED, Draws, LatinHypercube, count_draws
 from croquis_solver.terrain import bump_sampler, sample_bump_assumptions
 
 JsonObj = dict[str, Any]
@@ -1543,20 +1543,19 @@ def assumed_heading_vehicles(spec: JsonObj) -> list[str]:
     ]
 
 
-def heading_seed(semilla: int) -> int:
-    """La semilla del hipercubo de los rumbos supuestos, derivada de la del caso (ADR 0135)."""
-    return (int(semilla) * 1_000_033 + 20_261_112) % 2**31
+# Semilla de diseño del hipercubo de los rumbos supuestos: fija, como la del rango (T3.1, ADR 0100),
+# para que el rango no dependa de la semilla de la escena; distinta de la del hipercubo principal.
+HEADING_DESIGN_SEED = DESIGN_SEED + 7919
 
 
 def heading_sampler(spec: JsonObj, samples: int) -> LatinHypercube | None:
     """Un hipercubo aparte, una dimensión por rumbo supuesto; None si no hay. Una escena sin rumbos
-    supuestos conserva sus sorteos."""
+    supuestos conserva sus sorteos, y el diseño es fijo: el rango no depende de la semilla."""
     vids = assumed_heading_vehicles(spec)
     if not vids or samples <= 0:
         return None
-    return LatinHypercube(
-        samples, len(vids), dmath.Random(heading_seed(int(spec["meta"]["semilla"])))
-    )
+    rng = dmath.Random(HEADING_DESIGN_SEED + samples * 1009 + len(vids))
+    return LatinHypercube(samples, len(vids), rng)
 
 
 def sample_assumed_headings(spec: JsonObj, draws: Draws) -> None:
