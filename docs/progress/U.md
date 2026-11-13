@@ -542,6 +542,27 @@ El colaborador de René corrió `medir-web.ps1` en la RTX 4070 Laptop (Chrome 14
 - **El bloque cuesta** hasta la mitad de los fps en las escenas más ligeras (AXA de día: 468 → 254) y casi nada en las que ya pesaban (lluvia de noche: 222 → 215). Con dpr 1.25, ultra dibuja a 1.5× sobre el lienzo de 1920×1200.
 - **Falta:** el programa de escritorio con el bloque (la parte de escritorio de `visor-rtx-u6`). Ultra en el navegador tiene 2 repeticiones con el bloque; para tener 3, `medir-web.ps1 -Niveles ultra` en una carpeta nueva.
 
+### El programa de escritorio con el primer bloque de ultra (2026-11-12, noche)
+
+El colaborador de René corrió `medir-escritorio.ps1` del release `visor-rtx-u6` → `eval/results/e6_unity_escritorio_bloque1.json` (RTX 4070 Laptop, 1920×1080, 3 repeticiones, 11 escenas con el caso de ejemplo). fps, mediana:
+
+| Escena                      | Ultra sin el bloque | Ultra con el bloque | Alta  |
+| --------------------------- | ------------------- | ------------------- | ----- |
+| axa, día                    | 410.2               | 279.4               | 414.1 |
+| axa, noche                  | 321.9               | 207.4               | 323.3 |
+| carambola, día              | 359.3               | 273.0               | 396.2 |
+| carambola, noche            | 315.5               | 233.9               | 326.6 |
+| lateral_interseccion, día   | 370.7               | 260.8               | 369.5 |
+| lateral_interseccion, noche | 313.1               | 217.2               | 311.0 |
+| nocturno_lluvia, día        | 299.1               | 254.0               | 360.5 |
+| nocturno_lluvia, noche      | 289.4               | 230.4               | 295.1 |
+| terraceria, día             | 392.1               | 272.4               | 393.6 |
+| terraceria, noche           | 317.9               | 237.3               | 323.7 |
+| ejemplo                     | —                   | 279.7               | 413.1 |
+
+- **Ultra con el bloque cumple con holgura:** de 207.4 a 279.7 fps; el 1 % más lento, 138.2 o más. En el navegador, de 195.7 a 270.4 (`e6_unity_web_demo_por_build.json`).
+- El bloque cuesta de 45 a 131 fps por escena; alta queda igual que antes (295.1–414.1).
+
 ### Resumen para René (U6)
 
 - **Qué quedó:** el visor 3D de `/cesvi` es Unity (Reconstrucción, Números y detrás de Presentar), con respaldo three.js; editar en 3D (mover, girar y alargar objetos; marcar el primer golpe, choques y puntos de paso) recalcula el caso; las fotos del dictamen salen de Unity; «Descargar paquete 3D» y el visor de escritorio que lo abre.
