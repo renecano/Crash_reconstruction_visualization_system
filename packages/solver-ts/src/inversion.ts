@@ -52,6 +52,8 @@ const SPEED_BOUNDS_KMH: readonly [number, number] = [0.0, 200.0];
 const STATED = ["relato", "usuario"];
 /** Lo que el perito marca en el mapa (C1) llega con esta fuente. */
 const MARKED = "usuario";
+/** Un punto de impacto que sale del relato es una estimación: no se fija al girar un rumbo (ADR 0135, decisión 2). */
+const ESTIMATED_POINT = "relato";
 
 /** Dispersión del error del modelo de daño (log ΔV), calibrada con CISS dev (E3). */
 export function modelSigma(): number {
@@ -624,7 +626,8 @@ export function applyValues(spec: Json, values: Map<string, number>): Json {
 
 /**
  * El punto alrededor del cual gira el rumbo inicial de `vid`: el `punto_impacto` del primer evento
- * de impacto en el que participa (ADR 0135). null si no lo trae.
+ * de impacto en el que participa, si lo dio el perito (ADR 0135, decisión 2). null si no lo trae o si
+ * viene del relato: entonces es una estimación y el rumbo gira desde el arranque.
  */
 export function headingPivot(spec: Json, vid: string): [number, number] | null {
   const eventos = [...((spec.eventos ?? []) as Json[])].sort(
@@ -634,7 +637,8 @@ export function headingPivot(spec: Json, vid: string): [number, number] | null {
     if (!String(e.tipo).startsWith("impacto") || !((e.actores ?? []) as string[]).includes(vid))
       continue;
     const punto = (e.punto_impacto ?? null) as Json | null;
-    return punto ? [Number(punto.x), Number(punto.y)] : null;
+    if (!punto || ((e.procedencia ?? {}) as Json).fuente === ESTIMATED_POINT) return null;
+    return [Number(punto.x), Number(punto.y)];
   }
   return null;
 }
@@ -716,12 +720,13 @@ export function unfixedHeadings(
   spec: Json,
   ev: Evidence,
   params: Param[],
-  inv: Inversion,
+  estimates: Estimate[],
+  best: Fit,
   dt = 0.1,
 ): Estimate[] {
   if (ev.empty()) return [];
   const candidates: Estimate[] = [];
-  for (const e of inv.estimates) {
+  for (const e of estimates) {
     const p = e.param;
     if (p.kind !== "rumbo") continue;
     if (!e.identifiable || e.best === null) {
@@ -731,10 +736,10 @@ export function unfixedHeadings(
     const free = new Set(params.map((q) => q.name).filter((n) => n !== p.name));
     for (const side of [-1.0, 1.0]) {
       const target = Math.min(Math.max(e.best + side * IDENT_MAX.rumbo!, p.lo), p.hi);
-      const start = new Map(inv.best.values);
+      const start = new Map(best.values);
       start.set(p.name, target);
       const f = fitEvidence(spec, ev, { dt, start, free });
-      if (f.cost - inv.best.cost < MODE_MARGIN) {
+      if (f.cost - best.cost < MODE_MARGIN) {
         candidates.push(e);
         break;
       }
@@ -743,12 +748,12 @@ export function unfixedHeadings(
   if (!candidates.length) return [];
   /** Cuánto sube el costo con esos rumbos en el valor del perito y lo demás reajustado. */
   const riseAtPerito = (names: string[]): number => {
-    const start = new Map(inv.best.values);
+    const start = new Map(best.values);
     for (const e of candidates)
       if (names.includes(e.param.name)) start.set(e.param.name, e.param.start);
     const free = new Set(params.map((q) => q.name).filter((n) => !names.includes(n)));
     const f = fitEvidence(spec, ev, { dt, start, free });
-    return f.cost - inv.best.cost;
+    return f.cost - best.cost;
   };
   const scored = candidates
     .map((e, i) => ({ rise: riseAtPerito([e.param.name]), i, e }))
@@ -1565,10 +1570,11 @@ export function invert(
   const modes = findModes(spec, ev, params, dt);
   const bestCost = modes[0]!.fit.cost;
   const est = (m: Mode) => estimate(spec, ev, params, m.fit, { seed, samples, dt, assumedAsData });
-  const out = est(modes[0]!);
   // Un rumbo inicial que la evidencia no fija vuelve al del perito, como supuesto, y se rehace la
-  // búsqueda sin él (ADR 0135).
-  const loose = unfixedHeadings(spec, ev, params, out, dt);
+  // búsqueda sin él (ADR 0135). Se decide antes del sorteo del rango: si vuelve, ese sorteo no se
+  // usaría.
+  const prep = prepare(spec, ev, params, modes[0]!.fit, dt);
+  const loose = unfixedHeadings(spec, ev, params, prep.estimates(params), prep.best, dt);
   if (loose.length) {
     const again = invert(
       assumeHeadings(
@@ -1583,6 +1589,13 @@ export function invert(
     again.estimates.sort((a, b) => orden.indexOf(a.param.name) - orden.indexOf(b.param.name));
     return again;
   }
+  const out = estimate(spec, ev, params, modes[0]!.fit, {
+    seed,
+    samples,
+    dt,
+    assumedAsData,
+    prepared: prep,
+  });
   out.modes = modes;
   out.alternatives = modes
     .slice(1)
@@ -1595,14 +1608,18 @@ export function invert(
  * Estimación alrededor de un modo: qué fija la evidencia (Laplace), el reajuste de lo que no fija y
  * el rango con entradas perturbadas, cada muestra reajustada desde ese modo.
  */
-function estimate(
-  spec: Json,
-  ev: Evidence,
-  params: Param[],
-  bestFull: Fit,
-  opts: { seed: number; samples: number; dt: number; assumedAsData: boolean },
-): Inversion {
-  const { seed, samples, dt, assumedAsData } = opts;
+/** Lo que se decide de un modo antes del sorteo del rango: qué fija la evidencia y el ajuste. */
+interface Prepared {
+  sigma: Map<string, number>;
+  ident: Map<string, boolean>;
+  free: Set<string>;
+  full: Fit | null;
+  best: Fit;
+  estimates(params: Param[]): Estimate[];
+}
+
+/** Qué fija la evidencia (Laplace), el reajuste de lo que no fija y el pulido del modo. */
+function prepare(spec: Json, ev: Evidence, params: Param[], bestFull: Fit, dt: number): Prepared {
   let best = bestFull;
   const sigma = !ev.empty()
     ? localSigma(spec, ev, best, dt)
@@ -1626,6 +1643,43 @@ function estimate(
     params.filter((p) => free.has(p.name)),
     dt,
   );
+  const fin = best;
+  return {
+    sigma,
+    ident,
+    free,
+    full,
+    best,
+    estimates: (ps: Param[]) =>
+      ps.map(
+        (p) =>
+          new Estimate(
+            p,
+            sigma.get(p.name) ?? Infinity,
+            ident.get(p.name)!,
+            ident.get(p.name) ? (fin.values.get(p.name) ?? null) : null,
+            null,
+          ),
+      ),
+  };
+}
+
+function estimate(
+  spec: Json,
+  ev: Evidence,
+  params: Param[],
+  bestFull: Fit,
+  opts: {
+    seed: number;
+    samples: number;
+    dt: number;
+    assumedAsData: boolean;
+    prepared?: Prepared;
+  },
+): Inversion {
+  const { seed, samples, dt, assumedAsData } = opts;
+  const prep = opts.prepared ?? prepare(spec, ev, params, bestFull, dt);
+  const { sigma, ident, free, full, best } = prep;
   const fits: Fit[] = [];
   const impacts = new Map<string, number[]>();
   const freeParams = params.filter((p) => free.has(p.name));

@@ -87,6 +87,9 @@ SPEED_BOUNDS_KMH = (0.0, 200.0)
 STATED = ("relato", "usuario")
 # Lo que el perito marca en el mapa (C1) llega con esta fuente.
 MARKED = "usuario"
+# Un punto de impacto que sale del relato es una estimación: no se fija al girar un rumbo
+# (ADR 0135, decisión 2).
+ESTIMATED_POINT = "relato"
 CALIBRATION_PATH = Path(__file__).resolve().parent / "data" / "inversion_calibration.json"
 
 
@@ -688,13 +691,16 @@ def apply_values(spec: JsonObj, values: dict[str, float]) -> JsonObj:
 
 def heading_pivot(spec: JsonObj, vid: str) -> tuple[float, float] | None:
     """El punto alrededor del cual gira el rumbo inicial de `vid`: el `punto_impacto` del primer
-    evento de impacto en el que participa (ADR 0135). None si no lo trae."""
+    evento de impacto en el que participa, si lo dio el perito (ADR 0135, decisión 2). None si no lo
+    trae o si viene del relato: entonces es una estimación y el rumbo gira desde el arranque."""
     eventos: list[JsonObj] = sorted(spec.get("eventos", []), key=lambda e: int(e["orden"]))
     for e in eventos:
         if not str(e["tipo"]).startswith("impacto") or vid not in e.get("actores", []):
             continue
         punto: JsonObj | None = e.get("punto_impacto")
-        return (float(punto["x"]), float(punto["y"])) if punto else None
+        if not punto or (e.get("procedencia") or {}).get("fuente") == ESTIMATED_POINT:
+            return None
+        return (float(punto["x"]), float(punto["y"]))
     return None
 
 
@@ -1497,10 +1503,11 @@ def invert(
     params = parameters(with_marks(spec, ev), ev)
     modes = find_modes(spec, ev, params, dt=dt)
     best_cost = modes[0].fit.cost
-    out = _estimate(spec, ev, params, modes[0].fit, seed=seed, samples=samples, dt=dt)
     # Un rumbo inicial que la evidencia no fija vuelve al del perito, como supuesto, y se rehace la
-    # búsqueda sin él (ADR 0135).
-    loose = unfixed_headings(spec, ev, params, out, dt=dt)
+    # búsqueda sin él (ADR 0135). Se decide antes del sorteo del rango: si vuelve, ese sorteo no se
+    # usaría.
+    prep = _prepare(spec, ev, params, modes[0].fit, dt)
+    loose = unfixed_headings(spec, ev, params, prep.estimates(params), prep.best, dt=dt)
     if loose:
         again = invert(
             assume_headings(spec, [e.param.vehicle for e in loose]),
@@ -1513,6 +1520,9 @@ def invert(
         again.estimates.extend(Estimate(e.param, e.sigma_local, False, None, None) for e in loose)
         again.estimates.sort(key=lambda e: [p.name for p in params].index(e.param.name))
         return again
+    out = _estimate(
+        spec, ev, params, modes[0].fit, seed=seed, samples=samples, dt=dt, prepared=prep
+    )
     out.assumed_as_data = assumed_as_data
     out.modes = modes
     out.alternatives = [
@@ -1567,7 +1577,13 @@ def sample_assumed_headings(spec: JsonObj, draws: Draws) -> None:
 
 
 def unfixed_headings(
-    spec: JsonObj, ev: Evidence, params: list[Param], inv: Inversion, *, dt: float = 0.1
+    spec: JsonObj,
+    ev: Evidence,
+    params: list[Param],
+    estimates: list[Estimate],
+    best: Fit,
+    *,
+    dt: float = 0.1,
 ) -> list[Estimate]:
     """Los rumbos iniciales que vuelven al del perito (ADR 0135, versión 2 del criterio).
 
@@ -1580,7 +1596,7 @@ def unfixed_headings(
     if ev.empty():
         return []
     candidates: list[Estimate] = []
-    for e in inv.estimates:
+    for e in estimates:
         p = e.param
         if p.kind != "rumbo":
             continue
@@ -1590,9 +1606,9 @@ def unfixed_headings(
         free = {q.name for q in params if q.name != p.name}
         for side in (-1.0, 1.0):
             target = min(max(e.best + side * IDENT_MAX["rumbo"], p.lo), p.hi)
-            start = {**inv.best.values, p.name: target}
+            start = {**best.values, p.name: target}
             f = fit_evidence(spec, ev, dt=dt, start=start, free=free)
-            if f.cost - inv.best.cost < MODE_MARGIN:
+            if f.cost - best.cost < MODE_MARGIN:
                 candidates.append(e)
                 break
     if not candidates:
@@ -1600,13 +1616,13 @@ def unfixed_headings(
 
     def rise_at_perito(names: list[str]) -> float:
         """Cuánto sube el costo con esos rumbos en el valor del perito y lo demás reajustado."""
-        start = dict(inv.best.values)
+        start = dict(best.values)
         for e in candidates:
             if e.param.name in names:
                 start[e.param.name] = e.param.start
         free = {q.name for q in params if q.name not in names}
         f = fit_evidence(spec, ev, dt=dt, start=start, free=free)
-        return f.cost - inv.best.cost
+        return f.cost - best.cost
 
     scored = sorted(
         ((rise_at_perito([e.param.name]), i, e) for i, e in enumerate(candidates)),
@@ -1625,20 +1641,31 @@ def unfixed_headings(
     return out
 
 
-def _estimate(
-    spec: JsonObj,
-    ev: Evidence,
-    params: list[Param],
-    best: Fit,
-    *,
-    seed: int,
-    samples: int,
-    dt: float,
-) -> Inversion:
-    """Estimación alrededor de un modo: qué fija la evidencia (Laplace), el reajuste de lo que no
-    fija y el rango con entradas perturbadas, cada muestra reajustada desde ese modo."""
-    from croquis_solver.reconstruct import reconstruct
+@dataclass(frozen=True)
+class _Prepared:
+    """Lo que se decide de un modo antes del sorteo del rango: qué fija la evidencia y el ajuste."""
 
+    sigma: dict[str, float]
+    ident: dict[str, bool]
+    free: set[str]
+    full: Fit | None
+    best: Fit
+
+    def estimates(self, params: list[Param]) -> list[Estimate]:
+        return [
+            Estimate(
+                p,
+                self.sigma.get(p.name, math.inf),
+                self.ident[p.name],
+                self.best.values.get(p.name) if self.ident[p.name] else None,
+                None,
+            )
+            for p in params
+        ]
+
+
+def _prepare(spec: JsonObj, ev: Evidence, params: list[Param], best: Fit, dt: float) -> _Prepared:
+    """Qué fija la evidencia (Laplace), el reajuste de lo que no fija y el pulido del modo."""
     sigma = (
         local_sigma(spec, ev, best, dt=dt)
         if not ev.empty()
@@ -1654,6 +1681,26 @@ def _estimate(
         start = {p.name: (best.values[p.name] if p.name in free else p.start) for p in params}
         best = fit_evidence(spec, ev, dt=dt, start=start, free=free)
     best = _polish(spec, ev, best, [p for p in params if p.name in free], dt)
+    return _Prepared(sigma, ident, free, full, best)
+
+
+def _estimate(
+    spec: JsonObj,
+    ev: Evidence,
+    params: list[Param],
+    best: Fit,
+    *,
+    seed: int,
+    samples: int,
+    dt: float,
+    prepared: _Prepared | None = None,
+) -> Inversion:
+    """Estimación alrededor de un modo: qué fija la evidencia (Laplace), el reajuste de lo que no
+    fija y el rango con entradas perturbadas, cada muestra reajustada desde ese modo."""
+    from croquis_solver.reconstruct import reconstruct
+
+    prep = prepared or _prepare(spec, ev, params, best, dt)
+    sigma, ident, free, full, best = prep.sigma, prep.ident, prep.free, prep.full, prep.best
     fits: list[Fit] = []
     impacts: dict[str, list[float]] = {}
     free_params = [p for p in params if p.name in free]

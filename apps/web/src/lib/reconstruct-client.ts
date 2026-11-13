@@ -6,9 +6,11 @@ import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
 
 interface Reply {
   id: number;
-  fase?: "reconstruccion" | "completo" | "agentes";
+  fase?: "reconstruccion" | "completo" | "agentes" | "paralelo";
   resultado?: Resultado;
   agentes?: Record<string, unknown> | null;
+  incertidumbre?: Record<string, unknown>;
+  reposoSupuesto?: Record<string, unknown> | null;
   error?: string;
 }
 
@@ -21,17 +23,27 @@ interface Pending {
   onAgentes?: (a: Record<string, unknown> | null) => void;
   /** Si va al worker de los conductores. */
   agentes?: boolean;
+  /** Para lo que corre en paralelo: el Monte Carlo y la hipótesis del reposo supuesto. */
+  onParalelo?: (r: Paralelo) => void;
+  /** Si va al worker de las hipótesis. */
+  hipotesis?: boolean;
 }
 
 /**
- * Dos workers del mismo archivo: el de las reconstrucciones y el de las pruebas de los conductores
- * (R12a), que tardan menos de un segundo y no deben esperar detrás de un resultado completo.
+ * Tres workers del mismo archivo: el de las reconstrucciones, el de las pruebas de los conductores
+ * (R12a), que tardan menos de un segundo y no deben esperar detrás de un resultado completo, y el de
+ * la hipótesis del reposo supuesto, que corre al mismo tiempo que el resultado completo (W8).
  */
-const workers: Partial<Record<"general" | "conductores", Worker>> = {};
+type Cual = "general" | "conductores" | "hipotesis";
+interface Paralelo {
+  incertidumbre: Record<string, unknown>;
+  reposoSupuesto: Record<string, unknown> | null;
+}
+const workers: Partial<Record<Cual, Worker>> = {};
 let nextId = 1;
 const pending = new Map<number, Pending>();
 
-function getWorker(cual: "general" | "conductores" = "general"): Worker {
+function getWorker(cual: Cual = "general"): Worker {
   const existente = workers[cual];
   if (existente) return existente;
   // Archivo propio en `public/` (lo empaqueta `scripts/build-worker.mjs`): el service worker lo
@@ -45,6 +57,14 @@ function getWorker(cual: "general" | "conductores" = "general"): Worker {
     if (fase === "agentes" && p.onAgentes) {
       pending.delete(ev.data.id);
       p.onAgentes(ev.data.agentes ?? null);
+      return;
+    }
+    if (fase === "paralelo" && p.onParalelo) {
+      pending.delete(ev.data.id);
+      p.onParalelo({
+        incertidumbre: ev.data.incertidumbre ?? {},
+        reposoSupuesto: ev.data.reposoSupuesto ?? null,
+      });
       return;
     }
     if (!resultado) {
@@ -61,7 +81,8 @@ function getWorker(cual: "general" | "conductores" = "general"): Worker {
   };
   worker.onerror = (ev) => {
     for (const [id, p] of pending) {
-      if ((p.agentes ?? false) !== (cual === "conductores")) continue;
+      const suyo = p.agentes ? "conductores" : p.hipotesis ? "hipotesis" : "general";
+      if (suyo !== cual) continue;
       p.reject(new Error(ev.message || "El solver falló."));
       pending.delete(id);
     }
@@ -92,10 +113,45 @@ export function reconstruirCompletoEnNavegador(
   /** La malla de relieve que cita la escena (C3, W5), ya en metros de la escena. */
   relieve?: object | null,
 ): Promise<Resultado> {
-  return new Promise((resolve, reject) => {
+  // El Monte Carlo y la hipótesis «cuadra con el reposo supuesto» corren al mismo tiempo en otro
+  // worker; la hipótesis se agrega solo si la consistencia la pide, igual que la agregaría
+  // `fullResult` (los mismos números).
+  const paralelo = new Promise<Paralelo>((resolve, reject) => {
+    const id = nextId++;
+    pending.set(id, {
+      completo: false,
+      resolve: () => resolve({ incertidumbre: {}, reposoSupuesto: null }),
+      reject,
+      onParalelo: resolve,
+      hipotesis: true,
+    });
+    getWorker("hipotesis").postMessage({
+      id,
+      spec,
+      paralelo: true,
+      ...(relieve ? { relieve } : {}),
+    });
+  });
+  const principal = new Promise<Resultado>((resolve, reject) => {
     const id = nextId++;
     pending.set(id, { completo: true, onParcial, resolve, reject });
-    getWorker().postMessage({ id, spec, completo: true, ...(relieve ? { relieve } : {}) });
+    getWorker().postMessage({
+      id,
+      spec,
+      completo: true,
+      enOtroWorker: true,
+      ...(relieve ? { relieve } : {}),
+    });
+  });
+  return Promise.all([principal, paralelo]).then(([r, p]) => {
+    const pide = ((r.consistencia ?? []) as { codigo: string }[]).some(
+      (f) => f.codigo === "reposo_supuesto_vs_dano",
+    );
+    return {
+      ...r,
+      incertidumbre: p.incertidumbre,
+      ...(pide && p.reposoSupuesto ? { inversion_reposo_supuesto: p.reposoSupuesto } : {}),
+    } as Resultado;
   });
 }
 
