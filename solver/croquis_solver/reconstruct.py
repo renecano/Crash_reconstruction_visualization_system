@@ -1024,7 +1024,8 @@ def reconstruct(
         impact_point = sol.point
         for m, s_m in zip(targets, sol.params, strict=False):
             s_contact[m.id] = s_m
-        if sol.gap > CONTACT_GAP_FLAG_M:
+        # Dentro de la tolerancia de la zona, las zonas se tocan: no se avisa (ADR 0135).
+        if sol.gap > max(CONTACT_GAP_FLAG_M, tolerance):
             flag(
                 "zonas_no_se_tocan",
                 {"separacion_m": sol.gap},

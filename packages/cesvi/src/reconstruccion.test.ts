@@ -632,6 +632,37 @@ describe("lo medido pesa más que lo supuesto: el reposo supuesto y las dos hip�
     expect(con.velocidad_previa).toMatchObject({ valor: 41.47 });
   });
 
+  it("un rumbo de llegada en el límite de búsqueda sale como aviso para el perito (ADR 0135)", () => {
+    const base = especDeExpediente(colocado());
+    const rumbo = (en_limite: boolean) => ({
+      parametro: "rumbo_inicial",
+      vehiculo: "veh-a",
+      unidad: "deg",
+      inicial: 75.72,
+      inicial_declarado: false,
+      identificable: true,
+      sigma_local: 3,
+      en_limite,
+      estimacion: { mejor: 95.72, p10: 90, p50: 94, p90: 95.72 },
+    });
+    const con = (en_limite: boolean) =>
+      interpretarResultado(base, {
+        vehiculos: [],
+        eventos: [],
+        inversion: {
+          evidencia: ["reposo:veh-b"],
+          parametros: [rumbo(en_limite)],
+          velocidad_impacto: [],
+          residuos: [],
+        },
+      });
+    const id = base.ids["veh-a"]!;
+    const aviso = con(true).limites.find((l) => l.startsWith(`${id}:`));
+    expect(aviso).toContain("la evidencia empuja el rumbo fuera del rango permitido");
+    expect(aviso).toContain("95.7°");
+    expect(con(false).limites.some((l) => l.includes("rumbo fuera del rango"))).toBe(false);
+  });
+
   it("otro modo del multiarranque dentro del margen va como hipótesis, con su costo y sus números", () => {
     const base = especDeExpediente(colocado());
     const param = (vid: string, mejor: number) => ({

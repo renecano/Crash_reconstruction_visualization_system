@@ -231,6 +231,10 @@ ANGLE_BOUND_DEG = 20.0  # desvío máximo que se ajusta al rumbo inicial no decl
 # supuesto declarado, y en el rango se sortea uniforme en ±ANGLE_BOUND_DEG. Llave en memoria de
 # `posicion_inicial`; no es del contrato.
 HEADING_ASSUMED = "_rumbo_supuesto"
+# Cuánto puede subir el costo al fijar un rumbo en el valor del perito para que vuelva a él
+# (ADR 0135, versión 2): `MODE_MARGIN`, un Δχ² de 1. Es una variable del módulo solo para la
+# prueba de robustez (Δχ² = 2.71, `eval/w8_robustez.py`); el criterio se queda en 1.
+HEADING_LR_MARGIN = 0.5
 # Pasos de diferencias finitas y escalas de cada tipo de parámetro (km/h y grados).
 JAC_STEP = {"velocidad": 1.0, "rumbo": 1.0}
 # Distancia al límite de búsqueda por debajo de la cual el mejor ajuste "quedó en el límite", en las
@@ -1566,18 +1570,23 @@ def sample_assumed_headings(spec: JsonObj, draws: Draws) -> None:
 def unfixed_headings(
     spec: JsonObj, ev: Evidence, params: list[Param], inv: Inversion, *, dt: float = 0.1
 ) -> list[Estimate]:
-    """Los rumbos iniciales que la evidencia no fija (ADR 0135): (a) Laplace, σ local mayor que
-    `IDENT_MAX["rumbo"]`, o (b) perfil: moverlo `IDENT_MAX["rumbo"]` hacia algún lado (sin salir de
-    los límites) y reajustar lo demás sube el costo menos de `MODE_MARGIN` (un Δχ² de 1)."""
+    """Los rumbos iniciales que vuelven al del perito (ADR 0135, versión 2 del criterio).
+
+    Candidatos, los que la evidencia no fija: (a) Laplace, σ local mayor que `IDENT_MAX["rumbo"]`,
+    o (b) perfil, moverlo `IDENT_MAX["rumbo"]` hacia algún lado (sin salir de los límites) y
+    reajustar lo demás sube el costo menos de `MODE_MARGIN`. De esos, vuelve al del perito solo el
+    que la evidencia explica casi igual de bien en ese valor: fijándolo ahí (con los que ya
+    volvieron) y reajustando lo demás, el costo sube menos de `HEADING_LR_MARGIN` (Δχ² de 1). Se
+    prueban de uno en uno, del que menos sube al que más, y se para en el primero que no pasa."""
     if ev.empty():
         return []
-    out: list[Estimate] = []
+    candidates: list[Estimate] = []
     for e in inv.estimates:
         p = e.param
         if p.kind != "rumbo":
             continue
         if not e.identifiable or e.best is None:
-            out.append(e)
+            candidates.append(e)
             continue
         free = {q.name for q in params if q.name != p.name}
         for side in (-1.0, 1.0):
@@ -1585,8 +1594,35 @@ def unfixed_headings(
             start = {**inv.best.values, p.name: target}
             f = fit_evidence(spec, ev, dt=dt, start=start, free=free)
             if f.cost - inv.best.cost < MODE_MARGIN:
-                out.append(e)
+                candidates.append(e)
                 break
+    if not candidates:
+        return []
+
+    def rise_at_perito(names: list[str]) -> float:
+        """Cuánto sube el costo con esos rumbos en el valor del perito y lo demás reajustado."""
+        start = dict(inv.best.values)
+        for e in candidates:
+            if e.param.name in names:
+                start[e.param.name] = e.param.start
+        free = {q.name for q in params if q.name not in names}
+        f = fit_evidence(spec, ev, dt=dt, start=start, free=free)
+        return f.cost - inv.best.cost
+
+    scored = sorted(
+        ((rise_at_perito([e.param.name]), i, e) for i, e in enumerate(candidates)),
+        key=lambda x: (x[0], x[1]),
+    )
+    out: list[Estimate] = []
+    names: list[str] = []
+    for rise, _, e in scored:
+        trial = [*names, e.param.name]
+        if len(trial) > 1:
+            rise = rise_at_perito(trial)
+        if rise >= HEADING_LR_MARGIN:
+            break
+        names = trial
+        out.append(e)
     return out
 
 

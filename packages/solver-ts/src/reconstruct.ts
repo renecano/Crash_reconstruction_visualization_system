@@ -1069,7 +1069,8 @@ export function reconstruct(
     targets.forEach((m, i) => {
       if (i < sol.params.length) sContact.set(m.id, sol.params[i]!);
     });
-    if (sol.gap > CONTACT_GAP_FLAG_M) {
+    // Dentro de la tolerancia de la zona, las zonas se tocan: no se avisa (ADR 0135).
+    if (sol.gap > Math.max(CONTACT_GAP_FLAG_M, tolerance)) {
       flag(
         "zonas_no_se_tocan",
         { separacion_m: sol.gap },
