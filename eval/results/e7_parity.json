@@ -1,7 +1,7 @@
 {
   "name": "e7_parity",
-  "generated_at": "2026-11-13T13:48:12+00:00",
-  "git_commit": "2695bd44",
+  "generated_at": "2026-11-13T22:28:08+00:00",
+  "git_commit": "42087016",
   "seed": null,
   "descripcion": "E7: paridad del solver TS (packages/solver-ts) con la referencia Python en las escenas canónicas. Se comparan todos los números del resultado completo (trayectorias, impactos, daño, personas, ocupantes, visibilidad, eventos, parámetros, Monte Carlo, inversión y consistencia) y los textos.",
   "tolerancia": {
@@ -21,7 +21,7 @@
   "max_rel_valores_mayores_a_una_milesima": 0,
   "diferencias_de_estructura_o_texto": 0,
   "bloques_de_ajuste": {
-    "numeros_comparados": 546,
+    "numeros_comparados": 515,
     "max_abs": 0,
     "peor_ruta": ""
   },
@@ -40,7 +40,7 @@
         "peor_ruta": "",
         "estructura": []
       },
-      "ms_ts": 376.9
+      "ms_ts": 953.1
     },
     {
       "escena": "lateral_interseccion",
@@ -50,13 +50,13 @@
       "peor_ruta": "",
       "estructura": [],
       "ajuste": {
-        "numeros": 85,
+        "numeros": 86,
         "max_abs": 0,
         "max_rel": 0,
         "peor_ruta": "",
         "estructura": []
       },
-      "ms_ts": 8077.6
+      "ms_ts": 11752.1
     },
     {
       "escena": "frontal_curva",
@@ -72,7 +72,7 @@
         "peor_ruta": "",
         "estructura": []
       },
-      "ms_ts": 1173.4
+      "ms_ts": 3678.7
     },
     {
       "escena": "peaton_cruce",
@@ -88,7 +88,7 @@
         "peor_ruta": "",
         "estructura": []
       },
-      "ms_ts": 507.8
+      "ms_ts": 1431.4
     },
     {
       "escena": "motociclista",
@@ -98,13 +98,13 @@
       "peor_ruta": "",
       "estructura": [],
       "ajuste": {
-        "numeros": 88,
+        "numeros": 94,
         "max_abs": 0,
         "max_rel": 0,
         "peor_ruta": "",
         "estructura": []
       },
-      "ms_ts": 5353.1
+      "ms_ts": 15207.8
     },
     {
       "escena": "objeto_fijo_arbol",
@@ -120,7 +120,7 @@
         "peor_ruta": "",
         "estructura": []
       },
-      "ms_ts": 2074.2
+      "ms_ts": 5334.9
     },
     {
       "escena": "poste",
@@ -136,7 +136,7 @@
         "peor_ruta": "",
         "estructura": []
       },
-      "ms_ts": 955.4
+      "ms_ts": 2805.2
     },
     {
       "escena": "volcadura",
@@ -146,13 +146,13 @@
       "peor_ruta": "",
       "estructura": [],
       "ajuste": {
-        "numeros": 69,
+        "numeros": 70,
         "max_abs": 0,
         "max_rel": 0,
         "peor_ruta": "",
         "estructura": []
       },
-      "ms_ts": 6285.5
+      "ms_ts": 9533.7
     },
     {
       "escena": "nocturno_lluvia",
@@ -168,7 +168,7 @@
         "peor_ruta": "",
         "estructura": []
       },
-      "ms_ts": 721.9
+      "ms_ts": 1036.6
     },
     {
       "escena": "glorieta",
@@ -178,13 +178,13 @@
       "peor_ruta": "",
       "estructura": [],
       "ajuste": {
-        "numeros": 64,
+        "numeros": 65,
         "max_abs": 0,
         "max_rel": 0,
         "peor_ruta": "",
         "estructura": []
       },
-      "ms_ts": 11324
+      "ms_ts": 21908.2
     },
     {
       "escena": "interseccion_toluca",
@@ -194,13 +194,13 @@
       "peor_ruta": "",
       "estructura": [],
       "ajuste": {
-        "numeros": 125,
+        "numeros": 85,
         "max_abs": 0,
         "max_rel": 0,
         "peor_ruta": "",
         "estructura": []
       },
-      "ms_ts": 7931.7
+      "ms_ts": 12697.8
     },
     {
       "escena": "carambola",
@@ -216,7 +216,7 @@
         "peor_ruta": "",
         "estructura": []
       },
-      "ms_ts": 508.5
+      "ms_ts": 860.4
     },
     {
       "escena": "reversa",
@@ -232,7 +232,7 @@
         "peor_ruta": "",
         "estructura": []
       },
-      "ms_ts": 231.9
+      "ms_ts": 380.4
     },
     {
       "escena": "terraceria_topes",
@@ -248,7 +248,7 @@
         "peor_ruta": "",
         "estructura": []
       },
-      "ms_ts": 619.7
+      "ms_ts": 1193.1
     }
   ]
 }
