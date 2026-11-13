@@ -479,8 +479,18 @@ René midió unos 46 s desde Blob, contra unos 14 s de las mediciones anteriores
 | 20 s después                  | 35.7 s desde el clic | la descarga completa tardó más de 1 min (`eval/results/u6_carga_produccion_pausa20.json`)                                                                                   |
 
 - **Lo que queda es la red:** en esta conexión (de 0.4 a 1 MB/s) bajar 40 MB toma de 40 s a más de 1 min. Lo demás ya es de unos 10 s (arranque, lectura, armado y primer cuadro).
-- **Segunda visita** (el build ya en la caché del navegador, por ejemplo si el sitio se abre antes de la demo): falta medirla; la corrida se detuvo por falta de memoria. René pidió dejarla para cuando diga «ya cerré todo».
-  - **Para retomar:** `powershell -ExecutionPolicy Bypass -File tools/unity/carga-cadena.ps1 -Lanzar` (tarea de Windows «CroquisCarga», fuera de la sesión, sin suspensión; tres repeticiones de primera y segunda visita contra producción, unos 15 min). Ver cómo va: `-Estado`; detenerla: `-Detener`. Estado en `eval/results/u6_carga_estado.json`; resultado en `eval/results/u6_carga_segunda_visita.json`.
+- **Primera y segunda visita, con el build más ligero** (#212, build `dc9c30121a648d63`; 2026-11-12, de noche, con «ya cerré todo» de René): `tools/unity/carga-cadena.ps1` (tarea de Windows, fuera de la sesión) → `eval/results/u6_carga_segunda_visita.json`, 3 repeticiones contra producción, cada una con un perfil de Chrome nuevo con caché en disco, como el navegador de la demo:
+
+  | Repetición | Primera visita (sin caché) | Esperar la descarga | Segunda visita (build en la caché) |
+  | ---------- | -------------------------- | ------------------- | ---------------------------------- |
+  | 1          | 28.7 s                     | 13.1 s              | 7.8 s                              |
+  | 2          | 15.7 s                     | 2.2 s               | 15.0 s                             |
+  | 3          | 14.9 s                     | 2.0 s               | 7.7 s                              |
+  | Mediana    | **15.7 s**                 |                     | **7.8 s**                          |
+  - **La primera visita depende de la red:** de 15 a 29 s en esta corrida, contra 36.4 s de la corrida de la tarde con el build anterior. La red de la noche fue más rápida, así que la diferencia no es solo del build; lo que sí es del build son los 6.71 MB menos (−17.7 %).
+  - **Para la demo:** si el sitio se abre una vez antes, el 3D sale en unos 8 s. En la repetición 2, la segunda visita esperó 8.9 s a la precarga; no se repitió en las otras dos.
+  - **Primera medición con incógnito, descartada como cifra de demo:** el contexto de siempre de Playwright es de incógnito, con una caché en memoria que no guarda archivos de 20 a 35 MB, y la segunda visita volvía a bajar todo (mediana de 20.7 s; `eval/results/u6_carga_segunda_visita_incognito.json`). La prueba ahora usa un perfil con caché en disco cuando mide la segunda visita (`CROQUIS_SEGUNDA=1`).
+
 - **Para la primera visita solo queda achicar el build** (texturas: 25 MB, de ellas 8 MB en los cuatro cielos HDRI; shaders: 8 MB). René (2026-11-12) pidió las dos que no cambian el aspecto: el cielo del caso y quitar variantes de shaders; la compresión con pérdida, no. Ver «El build más ligero».
 
 ### El build más ligero (René, 2026-11-12)
