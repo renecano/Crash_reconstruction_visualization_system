@@ -55,10 +55,15 @@ describe("qué daño cuenta (ADR 0091)", () => {
     expect(evidenceFromSpec(solo, 1).damageMin).toEqual(evidenceFromSpec(spec, 1).damageMin);
   });
 
-  it("en AXA, con el mejor ajuste del multiarranque, el reposo supuesto de V2 cabe con la deformación (ADR 0091)", () => {
+  it("en AXA, con el choque donde lo puso el perito, el reposo supuesto de V2 no cabe con la deformación: dos hipótesis (ADR 0135)", () => {
+    // Antes de W8 había una sola hipótesis porque el contacto se corría 12 m del punto del perito y
+    // así el daño y el reposo supuesto cabían juntos (ADR 0135). Con el choque en su lugar, el daño
+    // deja a V2 a unos 4 m de su reposo supuesto y el perito elige; sin elegir, la del daño medido.
     const golden = leer("resultados/axa_alcance.json");
-    expect(golden.consistencia).toEqual([]);
-    expect(golden.inversion_reposo_supuesto).toBeUndefined();
+    expect((golden.consistencia as { codigo: string }[]).map((c) => c.codigo)).toEqual([
+      "reposo_supuesto_vs_dano",
+    ]);
+    expect(golden.inversion_reposo_supuesto).toBeDefined();
     const modos = (golden.inversion as { multiarranque: { modos: unknown[] } }).multiarranque.modos;
     expect(modos).toHaveLength(1);
   });

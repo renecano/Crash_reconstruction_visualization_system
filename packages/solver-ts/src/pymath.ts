@@ -30,6 +30,14 @@ export function pyRound(x: number, nd = 0): number {
   if (!Number.isFinite(x) || nd < 0 || Math.abs(x) >= 1e21) return x;
   const mag = Math.abs(x);
   const up = mag.toFixed(nd);
+  // Un empate exacto (…5000… en la expansión decimal exacta) da un 5 en el dígito nd + 1 al
+  // redondear a nd + 1 cifras; si ese dígito no es 5, no hay empate y `toFixed` ya redondeó como
+  // Python. Solo los posibles empates pagan la expansión de 40 dígitos (W8).
+  const siguiente = mag.toFixed(nd + 1);
+  if (siguiente[siguiente.length - 1] !== "5") {
+    const v = Number(up);
+    return x < 0 ? -v : v;
+  }
   const exact = mag.toFixed(Math.min(100, nd + 40));
   const dot = exact.indexOf(".");
   const tail = exact.slice(dot + 1 + nd);
