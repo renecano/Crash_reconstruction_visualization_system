@@ -448,9 +448,10 @@ test("@flujo /cesvi: una carambola, con sus impactos en orden hasta el 3D", asyn
     "V3 frena en −2.50 s (la hipótesis del perito)",
   );
   await expect(page.getByTestId("contacto-sin")).not.toBeEmpty();
-  // Si sin la hipótesis el primer contacto no es el primer impacto reconstruido, se avisa (ADR 0088).
-  await expect(page.getByTestId("linea-base-distinta")).toContainText(
-    "la reconstrucción tiene primero V1 con V2",
-  );
+  // Sin la hipótesis, los conductores chocan primero V1 con V2 en el mismo instante que la
+  // reconstrucción, así que no hay aviso de línea base distinta (ADR 0088). Antes de W8 el contacto
+  // se corría a lo largo de la fila de la carambola y el aviso salía (ADR 0135, decisión 1).
+  await expect(page.getByTestId("contacto-sin")).toContainText("V1 con V2");
+  await expect(page.getByTestId("linea-base-distinta")).toHaveCount(0);
   expect(errores).toEqual([]);
 });

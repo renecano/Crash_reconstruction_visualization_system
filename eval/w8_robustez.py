@@ -14,6 +14,7 @@ import json
 import sys
 import time
 from pathlib import Path
+from typing import Any
 
 from croquis_solver import inversion
 
@@ -28,9 +29,12 @@ ESCENAS = (
 UMBRALES = {"chi2_1": 0.5, "chi2_2_71": 2.71 / 2}
 
 
-def resumen(spec: dict) -> dict:
+JsonObj = dict[str, Any]
+
+
+def resumen(spec: JsonObj) -> JsonObj:
     d = inversion.invert(spec).to_dict()
-    out = {}
+    out: JsonObj = {}
     for p in d["parametros"]:
         clave = f"{p['parametro']}:{p['vehiculo']}"
         e = p.get("estimacion")
@@ -47,10 +51,10 @@ ESTADO = RAIZ / "eval/results/w8/robustez_estado.json"
 
 def main() -> None:
     # Reanudable: cada escena se guarda en cuanto termina y al relanzar se salta.
-    hechas: dict[str, dict] = (
+    hechas: dict[str, JsonObj] = (
         json.loads(ESTADO.read_text(encoding="utf-8")) if ESTADO.exists() else {}
     )
-    filas = []
+    filas: list[JsonObj] = []
     for ruta in ESCENAS:
         clave = str(ruta.relative_to(F)).replace("\\", "/")
         if clave in hechas:
@@ -62,19 +66,19 @@ def main() -> None:
         if inversion.evidence_from_spec(spec).empty():
             continue
         t = time.time()
-        por = {}
+        por: dict[str, JsonObj] = {}
         for nombre, margen in UMBRALES.items():
             inversion.HEADING_LR_MARGIN = margen
             por[nombre] = resumen(spec)
         inversion.HEADING_LR_MARGIN = UMBRALES["chi2_1"]
         cambia = por["chi2_1"] != por["chi2_2_71"]
-        fila = {
+        fila: JsonObj = {
             "escena": str(ruta.relative_to(F)).replace("\\", "/"),
             "cambia": cambia,
             "s": round(time.time() - t, 1),
             **por,
         }
-        sys.stdout.write(("CAMBIA " if cambia else "igual  ") + fila["escena"] + "\n")
+        sys.stdout.write(("CAMBIA " if cambia else "igual  ") + clave + "\n")
         sys.stdout.flush()
         filas.append(fila)
         hechas[clave] = fila

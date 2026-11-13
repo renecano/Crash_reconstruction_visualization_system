@@ -698,7 +698,8 @@ def heading_pivot(spec: JsonObj, vid: str) -> tuple[float, float] | None:
         if not str(e["tipo"]).startswith("impacto") or vid not in e.get("actores", []):
             continue
         punto: JsonObj | None = e.get("punto_impacto")
-        if not punto or (e.get("procedencia") or {}).get("fuente") == ESTIMATED_POINT:
+        proc: JsonObj = e.get("procedencia") or {}
+        if not punto or proc.get("fuente") == ESTIMATED_POINT:
             return None
         return (float(punto["x"]), float(punto["y"]))
     return None
@@ -1546,11 +1547,12 @@ def assume_headings(spec: JsonObj, vehicles: Sequence[str]) -> JsonObj:
 
 
 def assumed_heading_vehicles(spec: JsonObj) -> list[str]:
-    return [
-        str(v["id"])
-        for v in spec["vehiculos"]
-        if (v.get("posicion_inicial") or {}).get(HEADING_ASSUMED)
-    ]
+    out: list[str] = []
+    for v in spec["vehiculos"]:
+        pose: JsonObj = v.get("posicion_inicial") or {}
+        if pose.get(HEADING_ASSUMED):
+            out.append(str(v["id"]))
+    return out
 
 
 # Semilla de diseño del hipercubo de los rumbos supuestos: fija, como la del rango (T3.1, ADR 0100),

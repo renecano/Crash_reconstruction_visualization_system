@@ -13,7 +13,8 @@ import { VEHICLE_CLASSES } from "@croquis/scene-schema";
 import {
   type ContactSolution,
   contactOffset,
-  contactTolerance,
+  contactZone,
+  type ContactZone,
   Locus,
   resolveContact,
 } from "./contact";
@@ -1004,10 +1005,13 @@ export function reconstruct(
       ]),
     );
     // Entre dos vehículos, las zonas se tocan dentro de su tolerancia (ADR 0135).
-    const tolerance =
+    const zones: [ContactZone, ContactZone] | null =
       tipoEvento === "impacto_vehiculo_vehiculo" && targets.length === 2
-        ? pySum(targets.map((m) => contactTolerance(zonas.get(m.id), m.body.length, m.body.width)))
-        : 0.0;
+        ? [
+            contactZone(zonas.get(targets[0]!.id), targets[0]!.body.length, targets[0]!.body.width),
+            contactZone(zonas.get(targets[1]!.id), targets[1]!.body.length, targets[1]!.body.width),
+          ]
+        : null;
     const locusFor = (m: VehicleModel, path: KinPath): Locus => {
       if (m.v0 <= 0) {
         const p0 = m.pose0;
@@ -1037,7 +1041,7 @@ export function reconstruct(
         const fixed = decl;
         loci.push(new Locus(() => [fixed[0], fixed[1], 0.0], [0.0, 0.0], 0.0));
       }
-      const sol = resolveContact(loci, decl, tolerance);
+      const sol = resolveContact(loci, decl, zones);
       const rank = combo.reduce((acc, path, i) => acc + options[i]!.indexOf(path), 0);
       if (
         best === null ||
@@ -1069,8 +1073,8 @@ export function reconstruct(
     targets.forEach((m, i) => {
       if (i < sol.params.length) sContact.set(m.id, sol.params[i]!);
     });
-    // Dentro de la tolerancia de la zona, las zonas se tocan: no se avisa (ADR 0135).
-    if (sol.gap > Math.max(CONTACT_GAP_FLAG_M, tolerance)) {
+    // Lo que separa las zonas fuera de lo que se extienden a lo largo de sus caras (ADR 0135).
+    if (sol.zoneGap > CONTACT_GAP_FLAG_M) {
       flag(
         "zonas_no_se_tocan",
         { separacion_m: sol.gap },

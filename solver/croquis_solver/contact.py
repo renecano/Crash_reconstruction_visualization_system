@@ -10,9 +10,10 @@ parámetros (las proyecciones alternadas convergen lento si los lugares se cruza
 como en un cambio de carril). Resultado: su intersección si existe y, si no, los puntos más
 cercanos (vehículos en la misma línea). Así ningún vehículo se encima en t = 0.
 
-Entre dos vehículos, cada punto de contacto es el centro de una zona de un tercio de su cara: si al
-refinar las zonas se tocan (sus puntos quedan a no más de la tolerancia de la zona), el contacto es,
-de los que siguen tocándose, el más cercano al punto declarado. Sin esto, dos trayectorias casi
+Entre dos vehículos, cada punto de contacto es el centro de una zona de un tercio de su cara: las
+zonas se tocan si la separación de sus puntos cabe en lo que cada zona se extiende a lo largo de su
+cara, con no más de `TOUCH_NORMAL_M` de holgura fuera de ellas. Si al refinar se tocan, el contacto
+es, de los que siguen tocándose, el más cercano al punto declarado. Sin esto, dos trayectorias casi
 paralelas llevaban el contacto hasta donde se cruzan sus líneas, metros lejos del punto declarado,
 y saltaba al cambiar un rumbo una centésima de grado (T3.2, ADR 0135).
 """
@@ -34,6 +35,9 @@ REFINE_ITERATIONS = 50
 ALTERNATING_ITERATIONS = 12
 LM_ITERATIONS = 100
 TOUCH_BISECTIONS = 40  # pasos de la bisección hacia el punto declarado (ADR 0135)
+# Lo que puede quedar entre las zonas fuera de lo que se extienden a lo largo de sus caras (m): una
+# separación de pintura, no un hueco (ADR 0135).
+TOUCH_NORMAL_M = 0.05
 
 # Posición a lo largo de la cara como fracción de su longitud (positivo = izquierda o adelante).
 _ALONG_FRONT_BACK = {"L": 1 / 3, "C": 0.0, "R": -1 / 3, "Y": 1 / 6, "Z": -1 / 6, "D": 0.0}
@@ -59,11 +63,22 @@ def contact_offset(
     return (x, sign * (width / 2 + standoff))
 
 
-def contact_tolerance(cdc: Mapping[str, Any] | None, length: float, width: float) -> float:
-    """La mitad del ancho de la zona de impacto: un tercio de su cara (SAE J224), así que un sexto
-    del ancho en el frente o la parte trasera y un sexto del largo en un costado (ADR 0135)."""
+@dataclass(frozen=True)
+class Zone:
+    """La zona de impacto a lo largo de su cara: su mitad (m) y la dirección de la cara (unitaria,
+    en el marco del cuerpo)."""
+
+    half: float
+    along: Vec
+
+
+def contact_zone(cdc: Mapping[str, Any] | None, length: float, width: float) -> Zone:
+    """La zona de impacto como un tercio de su cara (SAE J224): a lo ancho en el frente o la parte
+    trasera, a lo largo en un costado (ADR 0135)."""
     lado = str((cdc or {}).get("lado", "F"))
-    return (length if lado in {"L", "R"} else width) / 6.0
+    if lado in {"L", "R"}:
+        return Zone(length / 6.0, (1.0, 0.0))
+    return Zone(width / 6.0, (0.0, 1.0))
 
 
 @dataclass(frozen=True)
@@ -131,13 +146,18 @@ class ContactSolution:
     point: Vec  # punto de impacto común
     params: tuple[float, ...]  # parámetro s de cada lugar geométrico
     gap: float  # distancia entre los puntos de contacto de los cuerpos (0 si se tocan)
+    # Lo que queda entre las zonas fuera de lo que se extienden a lo largo de sus caras (= `gap` sin
+    # zonas): lo que dice si se tocan.
+    zone_gap: float = -1.0
 
 
-def resolve_contact(loci: list[Locus], declared: Vec, tolerance: float = 0.0) -> ContactSolution:
+def resolve_contact(
+    loci: list[Locus], declared: Vec, zones: tuple[Zone, Zone] | None = None
+) -> ContactSolution:
     """Punto de impacto común para uno o más lugares geométricos (proyecciones alternadas).
 
-    `tolerance` (dos vehículos): a qué distancia entre sus puntos de contacto las zonas ya se tocan;
-    con ella, el contacto es el más cercano al punto declarado entre los que se tocan (ADR 0135)."""
+    `zones` (dos vehículos): sus zonas de impacto; con ellas, el contacto es el más cercano al punto
+    declarado entre los que se tocan (ADR 0135)."""
     if not loci:
         msg = "Se necesita al menos un cuerpo"
         raise ValueError(msg)
@@ -151,39 +171,86 @@ def resolve_contact(loci: list[Locus], declared: Vec, tolerance: float = 0.0) ->
     if len(loci) == 2:
         sa0, sb0 = params[0], params[1]
         params[0], params[1] = _refine_pair(loci[0], loci[1], params[0], params[1])
-        if tolerance > 0.0:
+        if zones is not None:
             params[0], params[1] = _toward_declared(
-                loci[0], loci[1], (params[0], params[1]), (sa0, sb0), tolerance
+                loci[0], loci[1], (params[0], params[1]), (sa0, sb0), zones
             )
         points = [loci[0].point(params[0]), loci[1].point(params[1])]
     cx = sum(q[0] for q in points) / len(points)
     cy = sum(q[1] for q in points) / len(points)
     gap = max(dmath.hypot(q[0] - points[0][0], q[1] - points[0][1]) for q in points)
-    return ContactSolution((cx, cy), tuple(params), gap)
+    zone_gap = gap
+    if zones is not None and len(loci) == 2:
+        zone_gap = _zone_gap(loci[0], loci[1], params[0], params[1], zones)
+    return ContactSolution((cx, cy), tuple(params), gap, zone_gap)
 
 
-def _pair_gap(la: Locus, lb: Locus, sa: float, sb: float) -> float:
+def _segment_distance(p: Vec, a: Vec, b: Vec) -> float:
+    """Distancia del punto `p` al segmento de `a` a `b`."""
+    ex, ey = b[0] - a[0], b[1] - a[1]
+    den = ex * ex + ey * ey
+    t = 0.0 if den <= 0.0 else ((p[0] - a[0]) * ex + (p[1] - a[1]) * ey) / den
+    t = min(1.0, max(0.0, t))
+    return dmath.hypot(p[0] - (a[0] + t * ex), p[1] - (a[1] + t * ey))
+
+
+def _to_parallelogram(d: Vec, u: Vec, v: Vec) -> float:
+    """Distancia de `d` al paralelogramo {a·u + b·v : |a| ≤ 1, |b| ≤ 1} (0 si cae dentro)."""
+    det = u[0] * v[1] - u[1] * v[0]
+    if abs(det) > 1e-12:
+        a = (d[0] * v[1] - d[1] * v[0]) / det
+        b = (u[0] * d[1] - u[1] * d[0]) / det
+        if abs(a) <= 1.0 and abs(b) <= 1.0:
+            return 0.0
+    best = math.inf
+    for sg in (-1.0, 1.0):
+        best = min(
+            best,
+            _segment_distance(
+                d, (sg * u[0] - v[0], sg * u[1] - v[1]), (sg * u[0] + v[0], sg * u[1] + v[1])
+            ),
+            _segment_distance(
+                d, (sg * v[0] - u[0], sg * v[1] - u[1]), (sg * v[0] + u[0], sg * v[1] + u[1])
+            ),
+        )
+    return best
+
+
+def _zone_gap(la: Locus, lb: Locus, sa: float, sb: float, zones: tuple[Zone, Zone]) -> float:
+    """Lo que separa las dos zonas fuera de lo que se extienden a lo largo de sus caras: la
+    distancia de la separación de sus puntos al paralelogramo de las dos zonas (ADR 0135)."""
     pa, pb = la.point(sa), lb.point(sb)
-    return dmath.hypot(pa[0] - pb[0], pa[1] - pb[1])
+    za, zb = zones
+    ua = rot(za.along, la.pose(sa)[2])
+    ub = rot(zb.along, lb.pose(sb)[2])
+    return _to_parallelogram(
+        (pb[0] - pa[0], pb[1] - pa[1]),
+        (ua[0] * za.half, ua[1] * za.half),
+        (ub[0] * zb.half, ub[1] * zb.half),
+    )
 
 
 def _toward_declared(
-    la: Locus, lb: Locus, refined: tuple[float, float], near: tuple[float, float], tolerance: float
+    la: Locus,
+    lb: Locus,
+    refined: tuple[float, float],
+    near: tuple[float, float],
+    zones: tuple[Zone, Zone],
 ) -> tuple[float, float]:
     """Del contacto refinado hacia la proyección del punto declarado, lo más lejos que las zonas
-    sigan tocándose (distancia entre sus puntos ≤ `tolerance`). Si el refinado no toca, se queda."""
+    sigan tocándose (`_zone_gap` ≤ `TOUCH_NORMAL_M`). Si el refinado no toca, se queda."""
     sa1, sb1 = refined
     sa0, sb0 = near
-    if _pair_gap(la, lb, sa1, sb1) > tolerance:
+    if _zone_gap(la, lb, sa1, sb1, zones) > TOUCH_NORMAL_M:
         return refined
-    if _pair_gap(la, lb, sa0, sb0) <= tolerance:
+    if _zone_gap(la, lb, sa0, sb0, zones) <= TOUCH_NORMAL_M:
         return near
     lo, hi = 0.0, 1.0  # fracción del camino del refinado (0) a la proyección (1)
     for _ in range(TOUCH_BISECTIONS):
         mid = (lo + hi) / 2.0
         sa = sa1 + (sa0 - sa1) * mid
         sb = sb1 + (sb0 - sb1) * mid
-        if _pair_gap(la, lb, sa, sb) <= tolerance:
+        if _zone_gap(la, lb, sa, sb, zones) <= TOUCH_NORMAL_M:
             lo = mid
         else:
             hi = mid
