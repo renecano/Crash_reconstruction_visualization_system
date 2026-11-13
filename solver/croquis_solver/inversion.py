@@ -227,8 +227,8 @@ def delta_v_from_damage(
 
 SIGMA_HEADING_DEG = 20.0  # incertidumbre de un rumbo final declarado (supuesto)
 ANGLE_BOUND_DEG = 20.0  # desvío máximo que se ajusta al rumbo inicial no declarado (supuesto)
-# Un rumbo inicial que la evidencia no fija (ADR 0135): vuelve al que colocó el perito, como supuesto
-# declarado, y en el rango se sortea uniforme en ±ANGLE_BOUND_DEG. Llave en memoria de
+# Un rumbo inicial que la evidencia no fija (ADR 0135): vuelve al que colocó el perito, como
+# supuesto declarado, y en el rango se sortea uniforme en ±ANGLE_BOUND_DEG. Llave en memoria de
 # `posicion_inicial`; no es del contrato.
 HEADING_ASSUMED = "_rumbo_supuesto"
 # Pasos de diferencias finitas y escalas de cada tipo de parámetro (km/h y grados).
