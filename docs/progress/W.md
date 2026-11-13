@@ -7,7 +7,7 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 - **Desde el 2026-11-09, el Claude Code de René lleva también este frente,** porque aquí no se había subido nada. Si eres el Claude Code del compañero: antes de empezar una fase, revisa la tabla de abajo y `git fetch`; si la fase ya está tomada, sigue con la siguiente y anótala aquí.
 - **Hechas:** W1 (#187), W2 (#188), W3 (#192), W4 (#195, con su contrato #194), W4b (#196), W5 (#199, #200), W6 (#201) y W7 (#206), en `main`.
 - **Fase actual:** W8 (T3.2, T3.3 y T3.5), en Opus por pedido de René (2026-11-12), con cuidado extra.
-- **Siguiente paso:** T3.2 implementado según el ADR 0135 pero **detenido**: dos escenas de referencia empeoran sin razón física por dos huecos del criterio; espera que René apruebe el ajuste del criterio (ver «T3.2 · Primera implementación (ADR 0135) y alto»).
+- **Siguiente paso:** T3.2 con el criterio v2, medido y **detenido otra vez**: AXA pasa a dos hipótesis, tres referencias tienen peor costo porque el choque ya no se corre del punto del relato, y el resultado completo tarda 12.96 s. Espera la decisión de René (ver «T3.2 · Criterio v2, nueva medición y segundo alto»).
 
 ## Fases tomadas
 
@@ -139,6 +139,60 @@ René eligió «1 y 2» más la regla, con condiciones (2026-11-12). El ADR 0135
 **Propuesta para René** (cambiar el criterio después de ver resultados: por eso no lo aplico sin su visto bueno): un rumbo vuelve al del perito **solo si la evidencia explica ese valor casi igual de bien**. Con ese rumbo, y los que ya volvieron, en el valor del perito, y lo demás reajustado, el costo debe subir menos de `MODE_MARGIN` (Δχ² de 1). Se prueban de uno en uno, del que menos sube al que más, y se detiene en el primero que no pasa. Es la prueba de razón de verosimilitudes en el valor del perito, que es justo lo que se quiere saber, y cubre los dos huecos. Además, corregir la bandera de `nocturno_lluvia`: no avisar si la distancia queda dentro de la tolerancia de la zona.
 
 **Detenido aquí** (regla de René: «si algún caso empeora sin razón física, detente»). Falta, después de su respuesta: aplicar el criterio, volver a medir todo, la paridad E7, el tiempo en el navegador, cambiar la cifra de AXA en todas partes a la vez y el PR.
+
+### T3.2 · Criterio v2, nueva medición y segundo alto (2026-11-13)
+
+René aprobó la versión 2 del criterio (2026-11-12) con condiciones; quedaron escritas en el ADR 0135 (versión 1, qué falló, versión 2 y por qué no es un ajuste para AXA). Rama `feat/w8-numeros`, sin fusionar.
+
+**Cambios desde la versión 1:** el criterio v2 (prueba de razón de verosimilitudes en el valor del perito, de uno en uno); el aviso «la evidencia empuja el rumbo fuera del rango permitido» en los límites de la reconstrucción (paso de Reconstrucción y dictamen) cuando un rumbo queda en ±20°; la bandera «las zonas no se tocan» ya no sale dentro de la tolerancia de la zona; y la semilla del hipercubo del rumbo supuesto es de diseño, fija. Con una derivada de la del caso, el rango de AXA se movía con la semilla (p10 de 53.97 a 55.77 en 20 semillas), contra T3.1.
+
+**La discrepancia de AXA** (`eval/t3_2_discrepancia_axa.mts` → `eval/results/w8/discrepancia_axa_{solver_de_main,solver_nuevo}.json`). El experimento de ayer, «se deja el rumbo que colocó el perito», corrió sobre el solver de `main`, sin los arreglos 1 y 2:
+
+| Solver                          | Rumbo de V2      | V2 (km/h)           | Rumbo de V1 ajustado | Choque en el mejor ajuste                  |
+| ------------------------------- | ---------------- | ------------------- | -------------------- | ------------------------------------------ |
+| `main` (el experimento de ayer) | el del perito    | 64.57 (61.19–86.80) | 75.77° (+0.05°)      | a 8.68 m del punto donde lo puso el perito |
+| `main` (la app hoy)             | ajustado: 95.72° | 71.56 (68.02–92.81) | 87.16°               | a 12.03 m                                  |
+| nuevo                           | el del perito    | 56.87               | 75.72°               | en el punto del perito (0 m)               |
+
+Con el solver de `main`, 0.05° en el rumbo de V1 bastaban para que el contacto se corriera 8.68 m (arreglo 1): los 64.57 eran un choque en otro lugar. Con el contacto estable, el mismo «rumbo del perito» da 56.87, igual que la regla.
+
+**AXA ahora tiene dos hipótesis** (`eval/w8_axa_hipotesis.mts` → `eval/results/w8/axa_hipotesis.json`, resultado completo de producción):
+
+| Hipótesis                              | V2                      | V1                  | Reposo de V2         |
+| -------------------------------------- | ----------------------- | ------------------- | -------------------- |
+| Cuadra con el daño medido (sin elegir) | **56.87** (54.79–78.39) | 14.98 (0.80–16.45)  | a 3.9 m del supuesto |
+| Cuadra con el reposo supuesto          | 34.44 (30.07–44.44)     | 29.90 (21.38–31.63) | a 0.2 m              |
+
+- Antes había una sola (71.56), porque el contacto corrido 12 m dejaba que el daño y el reposo supuesto (método de restos) cupieran juntos. Con el choque donde lo puso el perito, el daño medido deja a V2 a 3.9 m de su reposo supuesto, y la consistencia lo dice: «Hay dos hipótesis… el perito elige» (ADR 0091).
+- La de 56.87 es la que se ve sin elegir. CESVI: 63.15, dentro de su rango.
+- En las 20 semillas, AXA da lo mismo: 56.87 (54.79–78.39) y dos hipótesis.
+
+**Escenas de referencia** (`eval/results/w8/referencias.json`, contra `origin/main`): cambian 10 de 25. Con la versión 2:
+
+- **`motociclista` ya no empeora:** el rumbo de A sigue en el límite (200°) y sale el aviso. A, de 36.79 a 42.19 km/h.
+- **`volcadura` mejora:** el rumbo deja el límite (−7.46°); 84.46 km/h (el relato dice 90). Costo de 7.83 a 0.76.
+- **`interseccion_toluca`, `lateral_interseccion` y `glorieta` siguen peor en costo** (Toluca 1.51 → 8.10; glorieta 3.09 → 4.57), pero ahora se sabe por qué (`eval/w8_choque_referencias.mts`):
+
+  | Escena                 | Choque en el mejor ajuste, solver de `main` | Con el nuevo | Costo `main` → nuevo |
+  | ---------------------- | ------------------------------------------- | ------------ | -------------------- |
+  | `interseccion_toluca`  | a 5.27 m del punto del relato               | a 0.02 m     | 1.51 → 8.10          |
+  | `lateral_interseccion` | a 5.37 m                                    | a 0.01 m     | 3.57 → 3.35          |
+  | `glorieta`             | a 2.61 m                                    | a 0.06 m     | 3.09 → 4.57          |
+  | `motociclista`         | a 9.32 m                                    | a 5.89 m     | 1.84 → 2.59          |
+  | `volcadura`            | a 0.05 m                                    | a 0 m        | 7.83 → 0.76          |
+
+  Los ajustes «buenos» de `main` lo eran porque corrían el choque de 2.6 a 9.3 m del punto que dice el relato. Con el choque fijo en ese punto, los reposos caben peor. En estas escenas el punto viene **del relato** (`procedencia: relato`), y el solver lo trata como guía, no como medición (solo el que marca el perito entra a la inversión, `impact_point_from_spec`). En AXA, en cambio, el punto sale de donde el perito colocó los vehículos.
+
+- `frontal_curva` y `nocturno_lluvia` (sin inversión): el contacto queda más cerca del punto del relato (de 10.2 a 7.0 m y de 13.0 a 3.1 m). Ya sin la bandera falsa.
+
+**Las demás mediciones:**
+
+- **E-R4 (prueba, 205), las 205 narraciones de CESVI y las 33 carambolas:** no cambia nada.
+- **Paridad:** E7, 89 549 números en las 14 escenas, diferencia máxima 0 (`eval/results/e7_parity.json`). Pruebas TS: 228 de 229. La que falla dice «AXA: una sola hipótesis» (`inversion-un-dano.test.ts`): es la expectativa que cambia con las dos hipótesis.
+- **Robustez** (Δχ² = 2.71 contra 1, `eval/results/w8/robustez.json`): de 13 escenas con evidencia, solo cambia `lateral_interseccion`. Con 2.71, el rumbo de A vuelve al del perito y A queda en 84.92 en lugar de 98.78. El criterio se queda en 1.
+- **Tiempo en el navegador** (`eval/results/w8/tiempo_navegador.json`, worker de producción en Chromium, mediana de 3): la reconstrucción, igual (57 → 54 ms; Unity carga con ella). **El resultado completo, de 5.51 a 12.96 s: pasa la meta de 10 s.** Cuesta el criterio (ajustes extra), la búsqueda rehecha y la segunda hipótesis.
+
+**Segundo alto:** para que René decida (1) si acepta que AXA pase a dos hipótesis; (2) si el pivote y el contacto en el punto deben valer también cuando el punto viene del relato o solo cuando lo marcó o lo colocó el perito; y (3) que el resultado completo pase de 10 s (hay que optimizarlo antes de fusionar).
 
 ## W7 · Endurecimiento (T6.2, T6.3, T6.4) (2026-11-11)
 

@@ -1,0 +1,47 @@
+{
+ "name": "axa_tiempo_navegador",
+ "descripcion": "AXA A2010930 en el Web Worker del solver de producción, en Chromium (Playwright) en la laptop de desarrollo (Windows, 8 GB de RAM): cuándo llega la reconstrucción y cuándo el resultado completo. Tres corridas por versión, cada una en una pestaña nueva.",
+ "chromium": "156.0.8078.4",
+ "antes": {
+  "generated_at": "2026-11-13T13:50:04Z",
+  "worker": "el de producción (https://croquis-sage.vercel.app/workers/reconstruct.js)",
+  "git_commit": "2695bd44",
+  "corridas": [
+   {
+    "reconstruccion_ms": 101,
+    "completo_ms": 5510
+   },
+   {
+    "reconstruccion_ms": 57,
+    "completo_ms": 5543
+   },
+   {
+    "reconstruccion_ms": 54,
+    "completo_ms": 5421
+   }
+  ],
+  "mediana_reconstruccion_ms": 57,
+  "mediana_completo_ms": 5510
+ },
+ "despues": {
+  "generated_at": "2026-11-13T13:50:51Z",
+  "worker": "apps/web/public/workers/reconstruct.js, construido con el código de este commit",
+  "git_commit": "2695bd44",
+  "corridas": [
+   {
+    "reconstruccion_ms": 53,
+    "completo_ms": 12887
+   },
+   {
+    "reconstruccion_ms": 61,
+    "completo_ms": 12958
+   },
+   {
+    "reconstruccion_ms": 54,
+    "completo_ms": 13422
+   }
+  ],
+  "mediana_reconstruccion_ms": 54,
+  "mediana_completo_ms": 12958
+ }
+}
