@@ -1,0 +1,69 @@
+{
+  "name": "t3_2_discrepancia_axa",
+  "etiqueta": "solver_de_main",
+  "generated_at": "2026-11-13T03:02:51Z",
+  "con_el_rumbo_del_perito": {
+    "rumbo_de_v2": "fijo en el del perito (75.72°)",
+    "V2": {
+      "mejor": 64.57,
+      "p10": 61.19,
+      "p50": 66.39,
+      "p90": 86.8,
+      "muestras": 32
+    },
+    "V1": {
+      "mejor": 22.7,
+      "p10": 4.76,
+      "p50": 19.21,
+      "p90": 24.55,
+      "muestras": 32
+    },
+    "rumbo_inicial": {
+      "V2": null,
+      "V1": {
+        "identificable": true,
+        "mejor": 75.77,
+        "inicial": 75.72
+      }
+    },
+    "choque_en_el_mejor_ajuste": [
+      -2.14,
+      -8.41
+    ],
+    "distancia_al_punto_del_perito_m": 8.68
+  },
+  "como_la_app": {
+    "rumbo_de_v2": "como lo decide la inversión",
+    "V2": {
+      "mejor": 71.56,
+      "p10": 68.02,
+      "p50": 75.2,
+      "p90": 92.81,
+      "muestras": 32
+    },
+    "V1": {
+      "mejor": 25.32,
+      "p10": 8.83,
+      "p50": 19.61,
+      "p90": 26.27,
+      "muestras": 32
+    },
+    "rumbo_inicial": {
+      "V2": {
+        "identificable": true,
+        "mejor": 95.72,
+        "inicial": 75.72
+      },
+      "V1": {
+        "identificable": true,
+        "mejor": 87.16,
+        "inicial": 75.72
+      }
+    },
+    "choque_en_el_mejor_ajuste": [
+      -3.16,
+      -11.61
+    ],
+    "distancia_al_punto_del_perito_m": 12.03
+  }
+}

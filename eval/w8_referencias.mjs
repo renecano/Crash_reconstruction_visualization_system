@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
  * W8 · T3.2 (ADR 0135): el antes y el después de las escenas de referencia. Compara los resultados
- * guardados en git (`HEAD`, el solver de antes) con los regenerados en la copia de trabajo
+ * guardados en `origin/main` (el solver de antes; o la referencia que se pase) con los regenerados en la copia de trabajo
  * (`uv run croquis-solver reconstruct --all`, el solver nuevo): las 14 escenas canónicas, las 4 de
  * la inversión y las 5 de los agentes.
  *
- *   node eval/w8_referencias.mjs → eval/results/w8/referencias.json
+ *   node eval/w8_referencias.mjs [ref] → eval/results/w8/referencias.json
  *
  * Por escena: el punto de impacto, la velocidad al impacto, el ΔV y la pose final de cada vehículo,
  * lo que estimó la inversión (mejor, p10, p90 e identificable) y las banderas que aparecen o se van.
@@ -22,12 +22,13 @@ const CARPETAS = [
   `${F}/agentes/resultados`,
   `${F}/c1/resultados`,
 ];
+const REF = process.argv[2] ?? "origin/main";
 const r2 = (x) => (typeof x === "number" ? Math.round(x * 100) / 100 : x);
 
 function antes(ruta) {
   try {
     return JSON.parse(
-      execSync(`git show HEAD:${ruta}`, { cwd: RAIZ, maxBuffer: 1 << 28 }).toString(),
+      execSync(`git show ${REF}:${ruta}`, { cwd: RAIZ, maxBuffer: 1 << 28 }).toString(),
     );
   } catch {
     return null;
@@ -89,7 +90,7 @@ writeFileSync(
   `${JSON.stringify(
     {
       fecha: new Date().toISOString(),
-      antes: execSync("git rev-parse --short HEAD", { cwd: RAIZ }).toString().trim(),
+      antes: execSync(`git rev-parse --short ${REF}`, { cwd: RAIZ }).toString().trim(),
       cambian: filas.filter((f) => f.cambia).map((f) => f.escena),
       escenas: filas,
     },
