@@ -11,6 +11,7 @@ cuánto se mueven las velocidades. El criterio se queda en 1.
 from __future__ import annotations
 
 import json
+import sys
 import time
 from pathlib import Path
 
@@ -62,7 +63,9 @@ def main() -> None:
             "s": round(time.time() - t, 1),
             **por,
         }
-        print(("CAMBIA " if cambia else "igual  ") + fila["escena"], flush=True)
+        sys.stdout.write(("CAMBIA " if cambia else "igual  ") + fila["escena"] + "
+")
+        sys.stdout.flush()
         filas.append(fila)
     salida = RAIZ / "eval/results/w8/robustez.json"
     salida.parent.mkdir(parents=True, exist_ok=True)
