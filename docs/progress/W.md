@@ -194,6 +194,31 @@ Con el solver de `main`, 0.05° en el rumbo de V1 bastaban para que el contacto 
 
 **Segundo alto:** para que René decida (1) si acepta que AXA pase a dos hipótesis; (2) si el pivote y el contacto en el punto deben valer también cuando el punto viene del relato o solo cuando lo marcó o lo colocó el perito; y (3) que el resultado completo pase de 10 s (hay que optimizarlo antes de fusionar).
 
+### T3.2 · Decisiones de René, medición final y cierre (2026-11-13)
+
+**Decisiones (René, 2026-11-13), en el ADR 0135:**
+
+- AXA con dos hipótesis: se ve sin elegir «cuadra con el daño medido» y la del reposo supuesto va como alternativa marcada como supuesto (decisión 8).
+- El punto del choque se fija solo si lo dio el perito; si viene del relato, es una estimación, y un choque a más de 2 m de él se avisa (decisión 2).
+- El tiempo se recorta sin cambiar números (decisión 9).
+
+**Antes y después** (`eval/results/w8/`, contra `origin/main`):
+
+- **AXA, como la app:** V2 de 71.56 (68.02–92.81) a **56.87 (54.79–78.39)**: −6.28 km/h, −9.94 % contra 63.15, que queda dentro del rango. V1 de 25.32 a 14.98. Alternativa con el reposo supuesto: V2 a 34.44 (30.07–44.44). En las 20 semillas da lo mismo.
+- **Escenas de referencia:** cambian 6 de 25:
+  - AXA y sus dos variantes;
+  - `frontal_curva` y `nocturno_lluvia`, donde solo cambia el contacto (más cerca del punto del relato y sin la bandera falsa);
+  - `motociclista`, en una centésima del p10 de un rumbo que sigue en el límite, ahora con aviso.
+- **Toluca, lateral y glorieta ya no empeoran:** dan lo mismo que en `main`. Su choque queda a 5.27, 5.37 y 2.61 m del punto del relato, y ahora se avisa.
+- **E-R4 (prueba, 205), las 205 narraciones de CESVI y las 33 carambolas:** sin cambio.
+- **Paridad E7:** 89 549 números, diferencia 0. Pruebas TS: 229 de 229 en el solver; en `packages/cesvi`, todas. Una prueba sube su tope de 20 a 60 s, porque la inversión ahora hace más trabajo: 19 s en la laptop.
+- **Robustez** (Δχ² = 2.71 contra 1): no cambia ninguna escena.
+- **Tiempo en el navegador:** igual que el worker de producción en las mismas condiciones (`eval/results/w8/tiempo_navegador_rondas.json`; mediana 12.15 s el de producción contra 12.91 s el nuevo en tres rondas alternadas). Ese día la laptop iba al doble de lento: el de producción daba 5.51 s en la mañana. El resultado completo llega sin números distintos: salida idéntica byte por byte en tres escenas.
+
+**La cifra de AXA, en todas partes a la vez:** `eval/results/axa_rango_estable.json` (que leen las pruebas de la app y la e2e), las pruebas con la cifra de ejemplo, los comentarios, la escena de demostración, los paquetes caso-3d y la línea de estado de `PLAN-CESVI.md` y `PROGRESS.md`. La alternativa sale en Reconstrucción (con la marca «supuesto»), Contra CESVI (nota de la lectura física), Presentar (fila «Alternativa con el reposo supuesto (supuesto)») y el dictamen (tabla de hipótesis y nota de Contra CESVI).
+
+**Siguiente:** T3.3 (reversa). Antes, René cambia el modelo: «Listo para T3.3: cambia el modelo».
+
 ## W7 · Endurecimiento (T6.2, T6.3, T6.4) (2026-11-11)
 
 Decisiones: ADR 0134. Rama `feat/w7-endurecimiento`.

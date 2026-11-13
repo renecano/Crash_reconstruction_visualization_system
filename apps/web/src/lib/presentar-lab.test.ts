@@ -23,8 +23,8 @@ const res = {
 const r = {
   ids: { "veh-a": "V2", "veh-b": "V1" },
   velocidades: [
-    { vehiculo: "V1", previa: { mejor: 25.32, p10: 8.83, p90: 26.27 }, impacto: { p50: 20 } },
-    { vehiculo: "V2", previa: { mejor: 71.56, p10: 68.02, p90: 92.81 }, impacto: { p50: 75.2 } },
+    { vehiculo: "V1", previa: { mejor: 14.98, p10: 0.8, p90: 16.45 }, impacto: { p50: 20 } },
+    { vehiculo: "V2", previa: { mejor: 56.87, p10: 54.79, p90: 78.39 }, impacto: { p50: 60.33 } },
   ],
 } as unknown as Reconstruccion;
 const nombreDe = (id: string) => (id === "V1" ? "A · Silverado" : "B · Tacoma");
@@ -53,13 +53,13 @@ describe("Presentar (Laboratorio §8)", () => {
     const c = capitulos({ ...base, contra: null, conteo: null })[1]!;
     expect(c.filas[0]).toEqual({
       etiqueta: "B · Tacoma antes del impacto",
-      valor: "71.56 km/h",
+      valor: "56.87 km/h",
       grande: true,
     });
-    expect(c.filas[1]).toEqual({ etiqueta: "Rango", valor: "68.02–92.81" });
+    expect(c.filas[1]).toEqual({ etiqueta: "Rango", valor: "54.79–78.39" });
     expect(c.filas[2]).toMatchObject({
       etiqueta: "A · Silverado antes del impacto",
-      valor: "25.32 km/h",
+      valor: "14.98 km/h",
     });
   });
 
