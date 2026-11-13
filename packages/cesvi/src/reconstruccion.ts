@@ -947,6 +947,31 @@ export function hipotesisVisible(r: Reconstruccion): HipotesisReconstruccion | n
 }
 
 /**
+ * La hipótesis «cuadra con el reposo supuesto» cuando no es la que se ve (ADR 0135, decisión 8): va
+ * como alternativa, marcada como supuesto, junto a la del daño medido en Reconstrucción, Contra
+ * CESVI, Presentar y el dictamen. Su texto, una sola frase con las velocidades y su p10–p90.
+ */
+export function alternativaSupuesta(
+  r: Reconstruccion,
+  letraDe: (id: string) => string = (id) => id,
+): { clave: string; titulo: string; texto: string; corto: string } | null {
+  if (!r.hipotesis) return null;
+  const vista = hipotesisVisible(r);
+  const alt = r.hipotesis.find((h) => h !== vista && h.familia === "reposo" && h.modo === 1);
+  if (!alt) return null;
+  const conVel = alt.velocidades.filter((v) => v.kmh !== null);
+  const vel = (v: (typeof conVel)[number]) =>
+    `${letraDe(String(v.vehiculo))} ${v.kmh!.toFixed(2)} km/h${v.fijada && v.rango ? ` (${v.rango[0].toFixed(2)}–${v.rango[1].toFixed(2)})` : ""}`;
+  const mayor = [...conVel].sort((a, b) => b.kmh! - a.kmh!)[0];
+  return {
+    clave: alt.clave,
+    titulo: alt.titulo,
+    texto: `Alternativa, con el reposo supuesto como dato (supuesto, no medición): ${conVel.map(vel).join(", ")}.`,
+    corto: mayor ? `${letraDe(String(mayor.vehiculo))} ${mayor.kmh!.toFixed(2)} km/h` : "",
+  };
+}
+
+/**
  * Lee el resultado completo del solver (`fullResult`, en el servidor de pruebas o en el Web Worker
  * del navegador) en términos del expediente: velocidades por vehículo y lo que no fija la evidencia.
  */

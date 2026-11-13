@@ -14,6 +14,7 @@ import {
 import { distanciaM } from "./geo";
 import { mcHenry } from "./metodo";
 import {
+  alternativaSupuesta,
   conHipotesis,
   encabezadoHipotesis,
   hipotesisVisible,
@@ -625,6 +626,16 @@ describe("lo medido pesa más que lo supuesto: el reposo supuesto y las dos hip�
     expect(hip("reposo").velocidades.find((v) => v.vehiculo === id)!.rango).toEqual([39.47, 43.47]);
     expect(hip("dano").velocidades.find((v) => v.vehiculo === id)!.rango).toBeNull();
     expect(hip("reposo").alcanzaDano).toBe(false);
+    // Sin elegir se ve la del daño medido; la del reposo supuesto va como alternativa, marcada como
+    // supuesto (ADR 0135, decisión 8). Si se elige la del reposo, ya no es alternativa.
+    const alt = alternativaSupuesta(r)!;
+    expect(alt.clave).toBe("reposo");
+    expect(
+      alt.texto.startsWith(
+        "Alternativa, con el reposo supuesto como dato (supuesto, no medición): ",
+      ),
+    ).toBe(true);
+    expect(alternativaSupuesta(conHipotesis(r, "reposo"))).toBeNull();
     // Sin elegir, el 3D lleva el ajuste conjunto de la del daño, dicho así.
     const sin = (especReconstruida(r).vehiculos as Json[]).find((v) => v.id === "veh-a")!;
     expect(sin.velocidad_previa).toMatchObject({ valor: 66.25, fuente: "supuesto" });
@@ -708,7 +719,7 @@ describe("lo medido pesa más que lo supuesto: el reposo supuesto y las dos hip�
       vehiculos: [],
       eventos: [],
       inversion: {
-        ...inversion(71.56, 25.32),
+        ...inversion(56.87, 14.98),
         multiarranque: { margen_costo: 0.5, modos },
         alternativas: [inversion(78.98, 19.63)],
       },
@@ -723,7 +734,7 @@ describe("lo medido pesa más que lo supuesto: el reposo supuesto y las dos hip�
       "Más de una solución reproduce la evidencia con un costo parecido",
     );
     // Sin elegir se ve la de menor costo; al elegir la otra, sus números y su rango.
-    expect(r.velocidades.find((v) => v.vehiculo === id)!.previa!.mejor).toBe(71.56);
+    expect(r.velocidades.find((v) => v.vehiculo === id)!.previa!.mejor).toBe(56.87);
     const otra = conHipotesis(r, "evidencia-2");
     expect(otra.elegida).toBe("evidencia-2");
     expect(otra.velocidades.find((v) => v.vehiculo === id)!.previa).toMatchObject({
@@ -737,7 +748,7 @@ describe("lo medido pesa más que lo supuesto: el reposo supuesto y las dos hip�
       vehiculos: [],
       eventos: [],
       inversion: {
-        ...inversion(71.56, 25.32),
+        ...inversion(56.87, 14.98),
         multiarranque: { margen_costo: 0.5, modos: [modos[0]] },
       },
     });

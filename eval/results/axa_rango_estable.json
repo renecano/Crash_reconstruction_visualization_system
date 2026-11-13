@@ -1,8 +1,8 @@
 {
  "name": "axa_rango_estable",
  "etiqueta": "despues",
- "generated_at": "2026-11-03T22:13:22Z",
- "git_commit": "38a0354",
+ "generated_at": "2026-11-13T22:50:36Z",
+ "git_commit": "a59241ad",
  "descripcion": "AXA A2010930 como la reconstruye la app, con la semilla de la app y 19 más: cuánto se mueven el p10 y el p90 de la velocidad previa de V2 entre semillas (meta de T3.1: ≤ 1 km/h).",
  "spec_id_app": "caso-nuevo",
  "semilla_app": 719300,
@@ -33,364 +33,364 @@
  "V2": {
   "mejor": {
    "semillas": 20,
-   "min": 71.56,
-   "max": 71.56,
+   "min": 56.87,
+   "max": 56.87,
    "movimiento_kmh": 0
   },
   "p10": {
    "semillas": 20,
-   "min": 68.02,
-   "max": 68.02,
+   "min": 54.79,
+   "max": 54.79,
    "movimiento_kmh": 0
   },
   "p90": {
    "semillas": 20,
-   "min": 92.81,
-   "max": 92.81,
+   "min": 78.39,
+   "max": 78.39,
    "movimiento_kmh": 0
   }
  },
  "V1": {
   "mejor": {
    "semillas": 20,
-   "min": 25.32,
-   "max": 25.32,
+   "min": 14.98,
+   "max": 14.98,
    "movimiento_kmh": 0
   },
   "p10": {
    "semillas": 20,
-   "min": 8.83,
-   "max": 8.83,
+   "min": 0.8,
+   "max": 0.8,
    "movimiento_kmh": 0
   },
   "p90": {
    "semillas": 20,
-   "min": 26.27,
-   "max": 26.27,
+   "min": 16.45,
+   "max": 16.45,
    "movimiento_kmh": 0
   }
  },
- "mediana_ms": 10819,
+ "mediana_ms": 31957,
  "filas": [
   {
    "semilla": 719300,
    "es_la_de_la_app": true,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 11564
+   "ms": 47685
   },
   {
    "semilla": 1,
    "es_la_de_la_app": false,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 9869
+   "ms": 92239
   },
   {
    "semilla": 2,
    "es_la_de_la_app": false,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 10326
+   "ms": 44093
   },
   {
    "semilla": 3,
    "es_la_de_la_app": false,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 10747
+   "ms": 47785
   },
   {
    "semilla": 4,
    "es_la_de_la_app": false,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 10676
+   "ms": 51168
   },
   {
    "semilla": 5,
    "es_la_de_la_app": false,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 13106
+   "ms": 27084
   },
   {
    "semilla": 6,
    "es_la_de_la_app": false,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 13558
+   "ms": 27829
   },
   {
    "semilla": 7,
    "es_la_de_la_app": false,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 11169
+   "ms": 29848
   },
   {
    "semilla": 8,
    "es_la_de_la_app": false,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 12017
+   "ms": 36750
   },
   {
    "semilla": 9,
    "es_la_de_la_app": false,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 10642
+   "ms": 40579
   },
   {
    "semilla": 10,
    "es_la_de_la_app": false,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 10692
+   "ms": 32695
   },
   {
    "semilla": 11,
    "es_la_de_la_app": false,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 10831
+   "ms": 30481
   },
   {
    "semilla": 12,
    "es_la_de_la_app": false,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 10727
+   "ms": 29651
   },
   {
    "semilla": 13,
    "es_la_de_la_app": false,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 10804
+   "ms": 32495
   },
   {
    "semilla": 14,
    "es_la_de_la_app": false,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 10819
+   "ms": 31957
   },
   {
    "semilla": 15,
    "es_la_de_la_app": false,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 10468
+   "ms": 28929
   },
   {
    "semilla": 16,
    "es_la_de_la_app": false,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 12361
+   "ms": 22987
   },
   {
    "semilla": 17,
    "es_la_de_la_app": false,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 10741
+   "ms": 25532
   },
   {
    "semilla": 18,
    "es_la_de_la_app": false,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 10924
+   "ms": 22527
   },
   {
    "semilla": 19,
    "es_la_de_la_app": false,
-   "hipotesis": 1,
+   "hipotesis": 2,
    "V2": {
-    "mejor": 71.56,
-    "p10": 68.02,
-    "p90": 92.81
+    "mejor": 56.87,
+    "p10": 54.79,
+    "p90": 78.39
    },
    "V1": {
-    "mejor": 25.32,
-    "p10": 8.83,
-    "p90": 26.27
+    "mejor": 14.98,
+    "p10": 0.8,
+    "p90": 16.45
    },
-   "ms": 11057
+   "ms": 22379
   }
  ]
 }
