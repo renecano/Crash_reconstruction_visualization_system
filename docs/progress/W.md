@@ -7,7 +7,7 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 - **Desde el 2026-11-09, el Claude Code de René lleva también este frente,** porque aquí no se había subido nada. Si eres el Claude Code del compañero: antes de empezar una fase, revisa la tabla de abajo y `git fetch`; si la fase ya está tomada, sigue con la siguiente y anótala aquí.
 - **Hechas:** W1 (#187), W2 (#188), W3 (#192), W4 (#195, con su contrato #194), W4b (#196), W5 (#199, #200), W6 (#201) y W7 (#206), en `main`.
 - **Fase actual:** W8 (T3.2, T3.3 y T3.5), en Opus por pedido de René (2026-11-12), con cuidado extra.
-- **Siguiente paso:** T3.2 está diagnosticado y medido como experimento; **espera a que René elija el arreglo** (mueve AXA). Mientras tanto se puede avanzar T3.3 (reversa), que no toca AXA. Ver «W8 · Números defendibles».
+- **Siguiente paso:** T3.2 implementado según el ADR 0135 pero **detenido**: dos escenas de referencia empeoran sin razón física por dos huecos del criterio; espera que René apruebe el ajuste del criterio (ver «T3.2 · Primera implementación (ADR 0135) y alto»).
 
 ## Fases tomadas
 
@@ -107,6 +107,38 @@ Hay un intento anterior, del 4 de noviembre, en `origin/feat/t3-2-arrastre` (6f4
 **Mi recomendación:** 1 y 2 en el solver (Python y TS, con paridad), más una regla: si el rumbo inicial no declarado sale no identificable, se queda el que colocó el perito y se declara como supuesto. En AXA eso daría lo de la última fila (64.57); falta medirlo con el código final y en los demás casos.
 
 **Detenido aquí (regla de René, 2026-11-12):** los tres caminos mueven AXA (de 71.56 a entre 56.9 y 76.4) y pueden mover otros casos de CESVI. Antes de implementarlo y fusionarlo, René elige; luego mido el antes y el después de los 13 casos de referencia y de los casos de CESVI con el código final.
+
+### T3.2 · Primera implementación (ADR 0135) y alto (2026-11-12, noche)
+
+René eligió «1 y 2» más la regla, con condiciones (2026-11-12). El ADR 0135 se escribió y se subió antes de cambiar el solver (`65b8811b`). La implementación (Python y TS, idénticos en AXA) está en `feat/w8-numeros` (`ad87f384`) **sin fusionar**.
+
+**Mediciones** (`eval/w8_comparar.mjs` y `eval/w8_referencias.mjs` → `eval/results/w8/`):
+
+- **AXA** (como la app, resultado completo de producción): V2 de 71.56 (68.02–92.81) a **56.87 (53.97–77.44)**; V1 de 25.32 a 14.98. El rumbo de V2 queda como supuesto (75.72°, el del perito). CESVI: 63.15, ahora dentro del rango; el error del mejor valor pasa de +13.3 % a −9.9 %.
+- **E-R4 (prueba, 205 dictámenes), las 205 narraciones de CESVI por la inversión y las 33 carambolas de prueba:** no cambia nada (solo el tiempo de cómputo).
+- **Escenas de referencia:** cambian 10 de 25 resultados (14 canónicas, 4 de inversión, 5 de agentes y 2 de C1):
+
+  | Escena                 | Qué cambia                                                                                                            | Juicio                                     |
+  | ---------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+  | `axa_alcance`          | V2 71.56 → 56.87; el rumbo de V2 deja el límite (supuesto del perito)                                                 | mejor                                      |
+  | `axa_reposo_lejano`    | V2 64.28 → 56.89; el rumbo de V1 pasa a supuesto                                                                      | coherente con AXA                          |
+  | `volcadura`            | el rumbo deja el límite de +20° (queda en −7.46°); la velocidad, 51.03 → 84.46 (el relato dice 90)                    | mejor                                      |
+  | `frontal_curva`        | el contacto queda a 7.0 m del punto del relato (antes 10.2 m); el ΔV de A, 58.12 → 44.08                              | esperado (contacto)                        |
+  | `nocturno_lluvia`      | el contacto queda a 3.1 m del punto del relato (antes 13.0 m), pero aparece «las zonas no se tocan»                   | error mío: la bandera no usa la tolerancia |
+  | `glorieta`             | V-A deja el 0 km/h del límite (17.98); V-B ya no se fija; el rumbo final de A empeora (−2.87σ → −5.21σ)               | mixto                                      |
+  | `lateral_interseccion` | V-A pasa de «no se fija» a 84.92 km/h (el relato dice 45); el rumbo final de B empeora (1.34σ → 3.54σ)                | **peor**                                   |
+  | `interseccion_toluca`  | los dos rumbos pasan a supuesto; los residuos suben (reposo de A, −3.47σ; antes, menos de 0.3σ)                       | **peor, sin razón física**                 |
+  | `motociclista`         | el rumbo de A (en el límite) pasa a supuesto; A queda en 0 km/h en el límite y las marcas de B, −3.94σ (antes −0.30σ) | **peor, sin razón física**                 |
+  | `lateral_puntos_paso`  | cambios de centésimas                                                                                                 | igual                                      |
+
+**Por qué empeoran** (el criterio del ADR 0135 tiene dos huecos; ninguno sale de AXA):
+
+1. **Rumbos ligados:** el criterio prueba cada rumbo solo, con los demás libres. En `interseccion_toluca` cada uno, por separado, parece no fijado, porque el otro compensa. Pero devolver los dos a la vez al valor del perito empeora la evidencia (residuos de hasta 3.5σ).
+2. **El límite cuenta como plano:** con el mejor valor en el límite, el lado que da hacia afuera no tiene espacio, y el ADR lo mide «hasta el límite», es decir, sin moverse, así que el costo no sube y el rumbo pasa por no fijado. En `motociclista` la evidencia empuja el rumbo de A más allá del límite, y volver al del perito rompe las marcas de B (3.94σ).
+
+**Propuesta para René** (cambiar el criterio después de ver resultados: por eso no lo aplico sin su visto bueno): un rumbo vuelve al del perito **solo si la evidencia explica ese valor casi igual de bien**. Con ese rumbo, y los que ya volvieron, en el valor del perito, y lo demás reajustado, el costo debe subir menos de `MODE_MARGIN` (Δχ² de 1). Se prueban de uno en uno, del que menos sube al que más, y se detiene en el primero que no pasa. Es la prueba de razón de verosimilitudes en el valor del perito, que es justo lo que se quiere saber, y cubre los dos huecos. Además, corregir la bandera de `nocturno_lluvia`: no avisar si la distancia queda dentro de la tolerancia de la zona.
+
+**Detenido aquí** (regla de René: «si algún caso empeora sin razón física, detente»). Falta, después de su respuesta: aplicar el criterio, volver a medir todo, la paridad E7, el tiempo en el navegador, cambiar la cifra de AXA en todas partes a la vez y el PR.
 
 ## W7 · Endurecimiento (T6.2, T6.3, T6.4) (2026-11-11)
 
