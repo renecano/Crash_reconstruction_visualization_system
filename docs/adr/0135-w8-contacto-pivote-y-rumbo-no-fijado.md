@@ -58,6 +58,6 @@ Todo va en el solver de referencia (Python) y en el port TS, con paridad E7. Las
 ## Consecuencias
 
 - El número de AXA será el que salga de este código, sea cual sea (condición de René). La medición de opciones daba unos 64.6 km/h, pero era un experimento con otro arreglo 1; la cifra final sale de la corrida con este código.
-- Antes de fusionar, René recibe el antes y el después de las 13 escenas de referencia, de los casos de CESVI y del efecto en la E-R4. Si un caso empeora sin una razón física, se detiene.
+- Antes de fusionar, René recibe el antes y el después de las 14 escenas de referencia (las 13 de antes y `terraceria_topes`, de W5), de los casos de CESVI y del efecto en la E-R4. Si un caso empeora sin una razón física, se detiene.
 - Al fusionar, la cifra de AXA cambia a la vez en todas partes: Reconstrucción, Contra CESVI, Presentar, dictamen, README y pruebas.
 - El criterio (b) cuesta dos ajustes más por rumbo no declarado, y rehacer los modos cuando un rumbo no queda fijado cuesta otra búsqueda. Se mide el tiempo del resultado completo en el navegador (meta: por debajo de 10 s, T3.1).

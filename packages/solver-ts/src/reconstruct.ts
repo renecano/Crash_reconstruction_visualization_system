@@ -10,7 +10,13 @@
  * inversión y consistencia, que llegan al port en F9).
  */
 import { VEHICLE_CLASSES } from "@croquis/scene-schema";
-import { type ContactSolution, contactOffset, Locus, resolveContact } from "./contact";
+import {
+  type ContactSolution,
+  contactOffset,
+  contactTolerance,
+  Locus,
+  resolveContact,
+} from "./contact";
 import { profileForEnergy, TRIANGULAR_SHAPES } from "./crash3";
 import { narrowObject } from "./fixed-object";
 import {
@@ -997,6 +1003,11 @@ export function reconstruct(
         contactOffset(zonas.get(m.id), m.body.length, m.body.width, standoff),
       ]),
     );
+    // Entre dos vehículos, las zonas se tocan dentro de su tolerancia (ADR 0135).
+    const tolerance =
+      tipoEvento === "impacto_vehiculo_vehiculo" && targets.length === 2
+        ? pySum(targets.map((m) => contactTolerance(zonas.get(m.id), m.body.length, m.body.width)))
+        : 0.0;
     const locusFor = (m: VehicleModel, path: KinPath): Locus => {
       if (m.v0 <= 0) {
         const p0 = m.pose0;
@@ -1026,7 +1037,7 @@ export function reconstruct(
         const fixed = decl;
         loci.push(new Locus(() => [fixed[0], fixed[1], 0.0], [0.0, 0.0], 0.0));
       }
-      const sol = resolveContact(loci, decl);
+      const sol = resolveContact(loci, decl, tolerance);
       const rank = combo.reduce((acc, path, i) => acc + options[i]!.indexOf(path), 0);
       if (
         best === null ||

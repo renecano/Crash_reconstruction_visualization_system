@@ -23,7 +23,13 @@ from pathlib import Path
 from typing import Any
 
 from croquis_solver import dmath, fixed_object, friction, occupant, pedestrian, rollover, visibility
-from croquis_solver.contact import ContactSolution, Locus, contact_offset, resolve_contact
+from croquis_solver.contact import (
+    ContactSolution,
+    Locus,
+    contact_offset,
+    contact_tolerance,
+    resolve_contact,
+)
 from croquis_solver.crash3 import TRIANGULAR_SHAPES, Stiffness, crush_energy, profile_for_energy
 from croquis_solver.impact import ImpactResult, planar_impact
 from croquis_solver.inertia import body_for
@@ -959,6 +965,13 @@ def reconstruct(
             for m in targets
         }
 
+        # Entre dos vehículos, las zonas se tocan dentro de su tolerancia (ADR 0135).
+        tolerance = (
+            sum(contact_tolerance(zonas.get(m.id), m.body.length, m.body.width) for m in targets)
+            if tipo_evento == "impacto_vehiculo_vehiculo" and len(targets) == 2
+            else 0.0
+        )
+
         def locus_for(m: VehicleModel, path: KinPath) -> Locus:
             if m.v0 <= 0:
                 pose0 = m.pose0
@@ -982,7 +995,7 @@ def reconstruct(
             if tipo_evento != "impacto_vehiculo_vehiculo":
                 fixed = declared
                 loci.append(Locus(lambda _s, p=fixed: (p[0], p[1], 0.0), (0.0, 0.0), 0.0))
-            sol = resolve_contact(loci, declared)
+            sol = resolve_contact(loci, declared, tolerance)
             rank = sum(opts.index(path) for opts, path in zip(options, combo, strict=True))
             if (
                 best is None

@@ -9,6 +9,12 @@ partiendo del punto declarado, y para dos cuerpos se refina con Levenberg-Marqua
 parámetros (las proyecciones alternadas convergen lento si los lugares se cruzan en ángulo bajo,
 como en un cambio de carril). Resultado: su intersección si existe y, si no, los puntos más
 cercanos (vehículos en la misma línea). Así ningún vehículo se encima en t = 0.
+
+Entre dos vehículos, cada punto de contacto es el centro de una zona de un tercio de su cara: si al
+refinar las zonas se tocan (sus puntos quedan a no más de la tolerancia de la zona), el contacto es,
+de los que siguen tocándose, el más cercano al punto declarado. Sin esto, dos trayectorias casi
+paralelas llevaban el contacto hasta donde se cruzan sus líneas, metros lejos del punto declarado,
+y saltaba al cambiar un rumbo una centésima de grado (T3.2, ADR 0135).
 """
 
 from __future__ import annotations
@@ -27,6 +33,7 @@ LOCAL_WINDOW_M = 10.0
 REFINE_ITERATIONS = 50
 ALTERNATING_ITERATIONS = 12
 LM_ITERATIONS = 100
+TOUCH_BISECTIONS = 40  # pasos de la bisección hacia el punto declarado (ADR 0135)
 
 # Posición a lo largo de la cara como fracción de su longitud (positivo = izquierda o adelante).
 _ALONG_FRONT_BACK = {"L": 1 / 3, "C": 0.0, "R": -1 / 3, "Y": 1 / 6, "Z": -1 / 6, "D": 0.0}
@@ -50,6 +57,13 @@ def contact_offset(
     sign = 1.0 if lado == "L" else -1.0
     x = _ALONG_SIDE.get(zona, 0.0) * length
     return (x, sign * (width / 2 + standoff))
+
+
+def contact_tolerance(cdc: Mapping[str, Any] | None, length: float, width: float) -> float:
+    """La mitad del ancho de la zona de impacto: un tercio de su cara (SAE J224), así que un sexto
+    del ancho en el frente o la parte trasera y un sexto del largo en un costado (ADR 0135)."""
+    lado = str((cdc or {}).get("lado", "F"))
+    return (length if lado in {"L", "R"} else width) / 6.0
 
 
 @dataclass(frozen=True)
@@ -119,8 +133,11 @@ class ContactSolution:
     gap: float  # distancia entre los puntos de contacto de los cuerpos (0 si se tocan)
 
 
-def resolve_contact(loci: list[Locus], declared: Vec) -> ContactSolution:
-    """Punto de impacto común para uno o más lugares geométricos (proyecciones alternadas)."""
+def resolve_contact(loci: list[Locus], declared: Vec, tolerance: float = 0.0) -> ContactSolution:
+    """Punto de impacto común para uno o más lugares geométricos (proyecciones alternadas).
+
+    `tolerance` (dos vehículos): a qué distancia entre sus puntos de contacto las zonas ya se tocan;
+    con ella, el contacto es el más cercano al punto declarado entre los que se tocan (ADR 0135)."""
     if not loci:
         msg = "Se necesita al menos un cuerpo"
         raise ValueError(msg)
@@ -132,12 +149,45 @@ def resolve_contact(loci: list[Locus], declared: Vec) -> ContactSolution:
             params[i], points[i] = locus.project(p, None if it == 0 else params[i])
             p = points[i]
     if len(loci) == 2:
+        sa0, sb0 = params[0], params[1]
         params[0], params[1] = _refine_pair(loci[0], loci[1], params[0], params[1])
+        if tolerance > 0.0:
+            params[0], params[1] = _toward_declared(
+                loci[0], loci[1], (params[0], params[1]), (sa0, sb0), tolerance
+            )
         points = [loci[0].point(params[0]), loci[1].point(params[1])]
     cx = sum(q[0] for q in points) / len(points)
     cy = sum(q[1] for q in points) / len(points)
     gap = max(dmath.hypot(q[0] - points[0][0], q[1] - points[0][1]) for q in points)
     return ContactSolution((cx, cy), tuple(params), gap)
+
+
+def _pair_gap(la: Locus, lb: Locus, sa: float, sb: float) -> float:
+    pa, pb = la.point(sa), lb.point(sb)
+    return dmath.hypot(pa[0] - pb[0], pa[1] - pb[1])
+
+
+def _toward_declared(
+    la: Locus, lb: Locus, refined: tuple[float, float], near: tuple[float, float], tolerance: float
+) -> tuple[float, float]:
+    """Del contacto refinado hacia la proyección del punto declarado, lo más lejos que las zonas
+    sigan tocándose (distancia entre sus puntos ≤ `tolerance`). Si el refinado no toca, se queda."""
+    sa1, sb1 = refined
+    sa0, sb0 = near
+    if _pair_gap(la, lb, sa1, sb1) > tolerance:
+        return refined
+    if _pair_gap(la, lb, sa0, sb0) <= tolerance:
+        return near
+    lo, hi = 0.0, 1.0  # fracción del camino del refinado (0) a la proyección (1)
+    for _ in range(TOUCH_BISECTIONS):
+        mid = (lo + hi) / 2.0
+        sa = sa1 + (sa0 - sa1) * mid
+        sb = sb1 + (sb0 - sb1) * mid
+        if _pair_gap(la, lb, sa, sb) <= tolerance:
+            lo = mid
+        else:
+            hi = mid
+    return (sa1 + (sa0 - sa1) * lo, sb1 + (sb0 - sb1) * lo)
 
 
 def _derivative(locus: Locus, s: float) -> Vec:
