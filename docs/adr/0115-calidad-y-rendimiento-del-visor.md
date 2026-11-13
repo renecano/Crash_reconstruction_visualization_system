@@ -94,6 +94,8 @@ René revisó §7.8 de `PLAN.md`: la meta de media (≥ 60 fps a 1080p) es **en 
 
 **El build web en la computadora de demo (2026-11-12, `eval/results/e6_unity_web_demo.json`, resumen por build en `e6_unity_web_demo_por_build.json`):** Chrome 140 en la misma RTX 4070 Laptop, pantalla de 1920×1200 con dpr 1.25, 3 repeticiones. La corrida cruzó el despliegue de #210: la primera repetición midió el build `01fce868922703fd` y las otras dos, `f12372a6c2d7742c`, que trae el primer bloque de «ultra con el margen». Alta: de 215.8 a 451.8 fps. Ultra con el bloque (2 repeticiones): de 195.7 a 270.4 fps, con el 1 % más lento en 96.7 o más. Ultra sin el bloque (1 repetición): de 222.2 a 468.3. **Cumple ≥ 60 fps en el navegador en las 10 escenas, también con el bloque.**
 
+**El programa de escritorio con el primer bloque de «ultra con el margen» (2026-11-12, noche; `eval/results/e6_unity_escritorio_bloque1.json`):** misma RTX 4070 Laptop, 1920×1080, 3 repeticiones, ahora con 11 escenas (las 10 y el caso de ejemplo del programa). Alta: de 295.1 a 414.1 fps (antes, de 290.3 a 414.9). **Ultra, con el bloque** (dibujar a 1.5×, sombras de 8192 hasta 250 m y 16 luminarias): de 207.4 a 279.7 fps, con el 1 % más lento en 138.2 o más (antes del bloque, de 289.4 a 410.2). El bloque cuesta de 45 a 131 fps según la escena, y **ultra sigue cumpliendo ≥ 60 fps** en todas, con más del triple de margen. El archivo anterior, sin el bloque, se queda en `e6_unity_escritorio.json`.
+
 ## Consecuencias
 
 - El build WebGL lleva las variantes de shader de los cuatro niveles (por ejemplo, sombras de focos de alta); su peso se mide en U5 y queda en `docs/progress/U.md`.
