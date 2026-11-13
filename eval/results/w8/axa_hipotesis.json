@@ -1,0 +1,185 @@
+{
+  "name": "w8_axa_hipotesis",
+  "generated_at": "2026-11-13T13:51:38Z",
+  "consistencia": [
+    {
+      "codigo": "reposo_supuesto_vs_dano",
+      "mensaje": "Con la deformación medida, el vehículo A termina a unos 4 m de su posición final supuesta: el daño y ese reposo no caben juntos. Hay dos hipótesis, «cuadra con el daño medido» y «cuadra con el reposo supuesto»; el perito elige.",
+      "datos": {
+        "vehiculo": "veh-a",
+        "distancia_m": 3.92
+      }
+    }
+  ],
+  "encabezado": 2,
+  "hipotesis": [
+    {
+      "clave": "dano",
+      "titulo": "Cuadra con el daño medido",
+      "velocidades": [
+        {
+          "vehiculo": "V2",
+          "kmh": 56.87,
+          "fijada": true,
+          "sigmaKmh": 2.25,
+          "rango": [
+            54.79,
+            78.39
+          ]
+        },
+        {
+          "vehiculo": "V1",
+          "kmh": 14.98,
+          "fijada": true,
+          "sigmaKmh": 1.63,
+          "rango": [
+            0.8,
+            16.45
+          ]
+        }
+      ],
+      "reposos": [
+        {
+          "vehiculo": "V2",
+          "m": 3.9
+        }
+      ]
+    },
+    {
+      "clave": "reposo",
+      "titulo": "Cuadra con el reposo supuesto",
+      "velocidades": [
+        {
+          "vehiculo": "V2",
+          "kmh": 34.44,
+          "fijada": true,
+          "sigmaKmh": 8.4,
+          "rango": [
+            30.07,
+            44.44
+          ]
+        },
+        {
+          "vehiculo": "V1",
+          "kmh": 29.9,
+          "fijada": true,
+          "sigmaKmh": 4.44,
+          "rango": [
+            21.38,
+            31.63
+          ]
+        }
+      ],
+      "reposos": [
+        {
+          "vehiculo": "V2",
+          "m": 0.2
+        }
+      ]
+    }
+  ],
+  "velocidades_sin_elegir": [
+    {
+      "vehiculo": "V2",
+      "previa": {
+        "mejor": 56.87,
+        "p10": 54.79,
+        "p50": 60.33,
+        "p90": 78.39,
+        "muestras": 32
+      },
+      "impacto": {
+        "p10": 54.79,
+        "p50": 60.33,
+        "p90": 78.39,
+        "valores": [
+          52.69,
+          53.94,
+          54.17,
+          54.75,
+          55.13,
+          55.5,
+          56.18,
+          56.6,
+          57.15,
+          57.64,
+          58.11,
+          58.27,
+          58.32,
+          58.83,
+          59.07,
+          59.58,
+          61.08,
+          62.29,
+          62.61,
+          64.02,
+          66.39,
+          69.49,
+          70.78,
+          72.58,
+          74.27,
+          76.18,
+          77.78,
+          77.88,
+          78.44,
+          78.94,
+          79.37,
+          84.23
+        ]
+      }
+    },
+    {
+      "vehiculo": "V1",
+      "previa": {
+        "mejor": 14.98,
+        "p10": 0.8,
+        "p50": 12.97,
+        "p90": 16.45,
+        "muestras": 32
+      },
+      "impacto": {
+        "p10": 0.8,
+        "p50": 12.97,
+        "p90": 16.45,
+        "valores": [
+          0.15,
+          0.35,
+          0.47,
+          0.76,
+          1.17,
+          1.22,
+          4.64,
+          5.67,
+          7.21,
+          7.76,
+          9.73,
+          10.96,
+          11.98,
+          12.1,
+          12.18,
+          12.77,
+          13.17,
+          13.66,
+          13.72,
+          14.54,
+          14.79,
+          15.01,
+          15.35,
+          15.46,
+          15.53,
+          16.19,
+          16.39,
+          16.41,
+          16.46,
+          16.84,
+          19.36,
+          28.62
+        ]
+      }
+    }
+  ],
+  "limites": [
+    "El reporte no da las zonas del impacto de V2 y V1: se toma la cara de su primer daño.",
+    "V2: el reporte trae medidas de deformación en 2 daños; se usa la de la cara del impacto (frontal)."
+  ]
+}

@@ -1,0 +1,127 @@
+{
+  "etiqueta": "solver_nuevo",
+  "generated_at": "2026-11-13T13:49:07Z",
+  "escenas": [
+    {
+      "escena": "interseccion_toluca",
+      "punto_declarado": [
+        0,
+        2.5
+      ],
+      "fuente_del_punto": "relato",
+      "valores": {
+        "velocidad:veh-a": 26.26,
+        "velocidad:veh-b": 47.25
+      },
+      "costo": 8.1,
+      "residuos_mayores": {
+        "reposo:veh-a:x": -3.47,
+        "reposo:veh-a:y": 0.57,
+        "reposo:veh-b:y": -2.17,
+        "rumbo_final:veh-a": 3.11,
+        "rumbo_final:veh-b": 2.44
+      },
+      "choque_en_el_mejor_ajuste": [
+        0,
+        2.52
+      ],
+      "distancia_al_punto_declarado_m": 0.02
+    },
+    {
+      "escena": "lateral_interseccion",
+      "punto_declarado": [
+        -0.93,
+        -1.65
+      ],
+      "fuente_del_punto": "relato",
+      "valores": {
+        "velocidad:veh-a": 98.78,
+        "velocidad:veh-b": 2.02,
+        "rumbo:veh-a": 20,
+        "rumbo:veh-b": 102.15
+      },
+      "costo": 3.35,
+      "residuos_mayores": {
+        "reposo:veh-a:x": -0.89,
+        "reposo:veh-a:y": -0.37,
+        "reposo:veh-b:x": 2.73,
+        "reposo:veh-b:y": -0.3,
+        "rumbo_final:veh-a": -0.96,
+        "rumbo_final:veh-b": 1.25
+      },
+      "choque_en_el_mejor_ajuste": [
+        -0.93,
+        -1.65
+      ],
+      "distancia_al_punto_declarado_m": 0.01
+    },
+    {
+      "escena": "glorieta",
+      "punto_declarado": [
+        1.75,
+        0.9
+      ],
+      "fuente_del_punto": "relato",
+      "valores": {
+        "velocidad:veh-b": 25,
+        "velocidad:veh-a": 17.98
+      },
+      "costo": 4.57,
+      "residuos_mayores": {
+        "reposo:veh-a:y": 0.75,
+        "rumbo_final:veh-a": -5.21
+      },
+      "choque_en_el_mejor_ajuste": [
+        1.75,
+        0.96
+      ],
+      "distancia_al_punto_declarado_m": 0.06
+    },
+    {
+      "escena": "motociclista",
+      "punto_declarado": [
+        0,
+        -1.7
+      ],
+      "fuente_del_punto": "relato",
+      "valores": {
+        "velocidad:veh-a": 42.19,
+        "velocidad:veh-b": 35.4,
+        "rumbo:veh-a": 200,
+        "rumbo:veh-b": 1.22
+      },
+      "costo": 2.59,
+      "residuos_mayores": {
+        "marcas_despues:veh-b": -1.92,
+        "reposo:veh-b:y": -2.18
+      },
+      "choque_en_el_mejor_ajuste": [
+        5.89,
+        -1.57
+      ],
+      "distancia_al_punto_declarado_m": 5.89
+    },
+    {
+      "escena": "volcadura",
+      "punto_declarado": [
+        0,
+        -13.75
+      ],
+      "fuente_del_punto": "relato",
+      "valores": {
+        "velocidad:veh-b": 80,
+        "velocidad:veh-a": 84.46,
+        "rumbo:veh-a": -7.46
+      },
+      "costo": 0.76,
+      "residuos_mayores": {
+        "rumbo_final:veh-a": 1.44
+      },
+      "choque_en_el_mejor_ajuste": [
+        0,
+        -13.75
+      ],
+      "distancia_al_punto_declarado_m": 0
+    }
+  ]
+}
