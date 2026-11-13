@@ -983,7 +983,7 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
     );
   }
   // Si el punto del choque es la estimación del relato, no se mueve en silencio (ADR 0135).
-  const lejos = choqueLejosDelRelato(base.spec as Json, inv);
+  const lejos = choqueLejosDelRelato(base.spec, inv);
   if (lejos !== null)
     limites.push(
       `El choque quedó a ${lejos.toFixed(1)} m del punto que da el relato: el relato lo estima y la evidencia lo lleva ahí.`,
