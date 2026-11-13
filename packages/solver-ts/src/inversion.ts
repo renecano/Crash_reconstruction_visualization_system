@@ -25,7 +25,7 @@ import { lstsq, matmul, pinv, transpose } from "./linalg";
 import { leastSquaresSoftL1, softL1Cost } from "./lsq";
 import { median, pyMod, pyRound, quantilesInclusive, radians, str } from "./pymath";
 import { PyRandom } from "./pyrandom";
-import { countDraws, type Draws, LatinHypercube } from "./stratified";
+import { countDraws, DESIGN_SEED, type Draws, LatinHypercube } from "./stratified";
 import { bumpSampler, sampleBumpAssumptions } from "./terrain";
 import { reconstruct, vehicleClasses, type Reconstruction } from "./reconstruct";
 import { sampleStiffness, stiffnessFor, zonaFromCdcSide } from "./stiffness";
@@ -677,12 +677,11 @@ export function assumedHeadingVehicles(spec: Json): string[] {
     .map((v) => String(v.id));
 }
 
-/** La semilla del hipercubo de los rumbos supuestos, derivada de la del caso (ADR 0135). */
-export function headingSeed(semilla: number): number {
-  const m = 2n ** 31n;
-  const x = (BigInt(Math.trunc(semilla)) * 1_000_033n + 20_261_112n) % m;
-  return Number(x < 0n ? x + m : x);
-}
+/**
+ * Semilla de diseño del hipercubo de los rumbos supuestos: fija, como la del rango (T3.1, ADR
+ * 0100), para que el rango no dependa de la semilla de la escena; distinta de la del principal.
+ */
+const HEADING_DESIGN_SEED = DESIGN_SEED + 7919;
 
 /**
  * Un hipercubo aparte, una dimensión por rumbo supuesto; null si no hay. Una escena sin rumbos
@@ -691,11 +690,8 @@ export function headingSeed(semilla: number): number {
 export function headingSampler(spec: Json, samples: number): LatinHypercube | null {
   const vids = assumedHeadingVehicles(spec);
   if (!vids.length || samples <= 0) return null;
-  return new LatinHypercube(
-    samples,
-    vids.length,
-    new PyRandom(headingSeed(Number((spec.meta as Json).semilla))),
-  );
+  const rng = new PyRandom(HEADING_DESIGN_SEED + samples * 1009 + vids.length);
+  return new LatinHypercube(samples, vids.length, rng);
 }
 
 /** Sortea cada rumbo supuesto en ±ANGLE_BOUND_DEG alrededor del de la escena (en sitio). */
