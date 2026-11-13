@@ -27,7 +27,7 @@ from croquis_solver.contact import (
     ContactSolution,
     Locus,
     contact_offset,
-    contact_tolerance,
+    contact_zone,
     resolve_contact,
 )
 from croquis_solver.crash3 import TRIANGULAR_SHAPES, Stiffness, crush_energy, profile_for_energy
@@ -965,11 +965,18 @@ def reconstruct(
             for m in targets
         }
 
-        # Entre dos vehículos, las zonas se tocan dentro de su tolerancia (ADR 0135).
-        tolerance = (
-            sum(contact_tolerance(zonas.get(m.id), m.body.length, m.body.width) for m in targets)
+        # Entre dos vehículos, las zonas se tocan a lo largo de sus caras (ADR 0135).
+        zones = (
+            (
+                contact_zone(
+                    zonas.get(targets[0].id), targets[0].body.length, targets[0].body.width
+                ),
+                contact_zone(
+                    zonas.get(targets[1].id), targets[1].body.length, targets[1].body.width
+                ),
+            )
             if tipo_evento == "impacto_vehiculo_vehiculo" and len(targets) == 2
-            else 0.0
+            else None
         )
 
         def locus_for(m: VehicleModel, path: KinPath) -> Locus:
@@ -995,7 +1002,7 @@ def reconstruct(
             if tipo_evento != "impacto_vehiculo_vehiculo":
                 fixed = declared
                 loci.append(Locus(lambda _s, p=fixed: (p[0], p[1], 0.0), (0.0, 0.0), 0.0))
-            sol = resolve_contact(loci, declared, tolerance)
+            sol = resolve_contact(loci, declared, zones)
             rank = sum(opts.index(path) for opts, path in zip(options, combo, strict=True))
             if (
                 best is None
@@ -1024,8 +1031,8 @@ def reconstruct(
         impact_point = sol.point
         for m, s_m in zip(targets, sol.params, strict=False):
             s_contact[m.id] = s_m
-        # Dentro de la tolerancia de la zona, las zonas se tocan: no se avisa (ADR 0135).
-        if sol.gap > max(CONTACT_GAP_FLAG_M, tolerance):
+        # Lo que separa las zonas fuera de lo que se extienden a lo largo de sus caras (ADR 0135).
+        if sol.zone_gap > CONTACT_GAP_FLAG_M:
             flag(
                 "zonas_no_se_tocan",
                 {"separacion_m": sol.gap},

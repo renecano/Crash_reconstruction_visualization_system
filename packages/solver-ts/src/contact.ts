@@ -17,6 +17,11 @@ const ALTERNATING_ITERATIONS = 12;
 const LM_ITERATIONS = 100;
 /** Pasos de la bisección hacia el punto declarado (ADR 0135). */
 const TOUCH_BISECTIONS = 40;
+/**
+ * Lo que puede quedar entre las zonas fuera de lo que se extienden a lo largo de sus caras (m): una
+ * separación de pintura, no un hueco (ADR 0135).
+ */
+const TOUCH_NORMAL_M = 0.05;
 
 // Posición a lo largo de la cara como fracción de su longitud (positivo = izquierda o adelante).
 const ALONG_FRONT_BACK: Readonly<Record<string, number>> = {
@@ -37,16 +42,26 @@ const ALONG_SIDE: Readonly<Record<string, number>> = {
 };
 
 /**
- * La mitad del ancho de la zona de impacto: un tercio de su cara (SAE J224), así que un sexto del
- * ancho en el frente o la parte trasera y un sexto del largo en un costado (ADR 0135).
+ * La zona de impacto a lo largo de su cara: su mitad (m) y la dirección de la cara (unitaria, en el
+ * marco del cuerpo).
  */
-export function contactTolerance(
+export interface ContactZone {
+  half: number;
+  along: Vec;
+}
+
+/**
+ * La zona de impacto como un tercio de su cara (SAE J224): a lo ancho en el frente o la parte
+ * trasera, a lo largo en un costado (ADR 0135).
+ */
+export function contactZone(
   cdc: Record<string, unknown> | null | undefined,
   length: number,
   width: number,
-): number {
+): ContactZone {
   const lado = str(cdc?.lado, "F");
-  return (lado === "L" || lado === "R" ? length : width) / 6.0;
+  if (lado === "L" || lado === "R") return { half: length / 6.0, along: [1.0, 0.0] };
+  return { half: width / 6.0, along: [0.0, 1.0] };
 }
 
 /**
@@ -156,17 +171,22 @@ export interface ContactSolution {
   params: number[];
   /** Distancia entre los puntos de contacto de los cuerpos (0 si se tocan). */
   gap: number;
+  /**
+   * Lo que queda entre las zonas fuera de lo que se extienden a lo largo de sus caras (= `gap` sin
+   * zonas): lo que dice si se tocan.
+   */
+  zoneGap: number;
 }
 
 /**
  * Punto de impacto común para uno o más lugares geométricos (proyecciones alternadas).
- * `tolerance` (dos vehículos): a qué distancia entre sus puntos de contacto las zonas ya se tocan;
- * con ella, el contacto es el más cercano al punto declarado entre los que se tocan (ADR 0135).
+ * `zones` (dos vehículos): sus zonas de impacto; con ellas, el contacto es el más cercano al punto
+ * declarado entre los que se tocan (ADR 0135).
  */
 export function resolveContact(
   loci: readonly Locus[],
   declared: Vec,
-  tolerance = 0.0,
+  zones: readonly [ContactZone, ContactZone] | null = null,
 ): ContactSolution {
   if (loci.length === 0) throw new Error("Se necesita al menos un cuerpo");
   let p = declared;
@@ -184,8 +204,8 @@ export function resolveContact(
     const sa0 = params[0]!;
     const sb0 = params[1]!;
     let [sa, sb] = refinePair(loci[0]!, loci[1]!, params[0]!, params[1]!);
-    if (tolerance > 0.0) {
-      [sa, sb] = towardDeclared(loci[0]!, loci[1]!, [sa, sb], [sa0, sb0], tolerance);
+    if (zones !== null) {
+      [sa, sb] = towardDeclared(loci[0]!, loci[1]!, [sa, sb], [sa0, sb0], zones);
     }
     params[0] = sa;
     params[1] = sb;
@@ -195,37 +215,95 @@ export function resolveContact(
   const cy = pySum(points.map((q) => q[1])) / points.length;
   const p0 = points[0]!;
   const gap = Math.max(...points.map((q) => dmath.hypot(q[0] - p0[0], q[1] - p0[1])));
-  return { point: [cx, cy], params, gap };
+  const zoneGap =
+    zones !== null && loci.length === 2
+      ? zonePairGap(loci[0]!, loci[1]!, params[0]!, params[1]!, zones)
+      : gap;
+  return { point: [cx, cy], params, gap, zoneGap };
 }
 
-function pairGap(la: Locus, lb: Locus, sa: number, sb: number): number {
+/** Distancia del punto `p` al segmento de `a` a `b`. */
+function segmentDistance(p: Vec, a: Vec, b: Vec): number {
+  const ex = b[0] - a[0];
+  const ey = b[1] - a[1];
+  const den = ex * ex + ey * ey;
+  let t = den <= 0.0 ? 0.0 : ((p[0] - a[0]) * ex + (p[1] - a[1]) * ey) / den;
+  t = Math.min(1.0, Math.max(0.0, t));
+  return dmath.hypot(p[0] - (a[0] + t * ex), p[1] - (a[1] + t * ey));
+}
+
+/** Distancia de `d` al paralelogramo {a·u + b·v : |a| ≤ 1, |b| ≤ 1} (0 si cae dentro). */
+function toParallelogram(d: Vec, u: Vec, v: Vec): number {
+  const det = u[0] * v[1] - u[1] * v[0];
+  if (Math.abs(det) > 1e-12) {
+    const a = (d[0] * v[1] - d[1] * v[0]) / det;
+    const b = (u[0] * d[1] - u[1] * d[0]) / det;
+    if (Math.abs(a) <= 1.0 && Math.abs(b) <= 1.0) return 0.0;
+  }
+  let best = Infinity;
+  for (const sg of [-1.0, 1.0]) {
+    best = Math.min(
+      best,
+      segmentDistance(
+        d,
+        [sg * u[0] - v[0], sg * u[1] - v[1]],
+        [sg * u[0] + v[0], sg * u[1] + v[1]],
+      ),
+      segmentDistance(
+        d,
+        [sg * v[0] - u[0], sg * v[1] - u[1]],
+        [sg * v[0] + u[0], sg * v[1] + u[1]],
+      ),
+    );
+  }
+  return best;
+}
+
+/**
+ * Lo que separa las dos zonas fuera de lo que se extienden a lo largo de sus caras: la distancia de
+ * la separación de sus puntos al paralelogramo de las dos zonas (ADR 0135).
+ */
+function zonePairGap(
+  la: Locus,
+  lb: Locus,
+  sa: number,
+  sb: number,
+  zones: readonly [ContactZone, ContactZone],
+): number {
   const pa = la.point(sa);
   const pb = lb.point(sb);
-  return dmath.hypot(pa[0] - pb[0], pa[1] - pb[1]);
+  const [za, zb] = zones;
+  const ua = rot(za.along, la.pose(sa)[2]);
+  const ub = rot(zb.along, lb.pose(sb)[2]);
+  return toParallelogram(
+    [pb[0] - pa[0], pb[1] - pa[1]],
+    [ua[0] * za.half, ua[1] * za.half],
+    [ub[0] * zb.half, ub[1] * zb.half],
+  );
 }
 
 /**
  * Del contacto refinado hacia la proyección del punto declarado, lo más lejos que las zonas sigan
- * tocándose (distancia entre sus puntos ≤ `tolerance`). Si el refinado no toca, se queda.
+ * tocándose (`zonePairGap` ≤ `TOUCH_NORMAL_M`). Si el refinado no toca, se queda.
  */
 function towardDeclared(
   la: Locus,
   lb: Locus,
   refined: [number, number],
   near: [number, number],
-  tolerance: number,
+  zones: readonly [ContactZone, ContactZone],
 ): [number, number] {
   const [sa1, sb1] = refined;
   const [sa0, sb0] = near;
-  if (pairGap(la, lb, sa1, sb1) > tolerance) return refined;
-  if (pairGap(la, lb, sa0, sb0) <= tolerance) return near;
+  if (zonePairGap(la, lb, sa1, sb1, zones) > TOUCH_NORMAL_M) return refined;
+  if (zonePairGap(la, lb, sa0, sb0, zones) <= TOUCH_NORMAL_M) return near;
   let lo = 0.0;
   let hi = 1.0;
   for (let i = 0; i < TOUCH_BISECTIONS; i++) {
     const mid = (lo + hi) / 2.0;
     const sa = sa1 + (sa0 - sa1) * mid;
     const sb = sb1 + (sb0 - sb1) * mid;
-    if (pairGap(la, lb, sa, sb) <= tolerance) lo = mid;
+    if (zonePairGap(la, lb, sa, sb, zones) <= TOUCH_NORMAL_M) lo = mid;
     else hi = mid;
   }
   return [sa1 + (sa0 - sa1) * lo, sb1 + (sb0 - sb1) * lo];
