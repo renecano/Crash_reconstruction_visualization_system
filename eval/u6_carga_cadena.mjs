@@ -87,8 +87,9 @@ const doc = {
   fecha: new Date().toISOString(),
   sitio: SITIO,
   metodo:
-    "e2e/visor-unity-real.spec.ts contra el sitio publicado, Chromium con ventana y la GPU de la laptop de " +
-    "desarrollo, perfil nuevo en cada repetición: primera visita (sin caché) y, en el mismo navegador, segunda " +
+    "e2e/visor-unity-real.spec.ts contra el sitio publicado, Chromium con ventana, la GPU de la laptop de " +
+    "desarrollo y un perfil con caché en disco (como el navegador de la demo) nuevo en cada repetición: " +
+    "primera visita (sin caché) y, en el mismo navegador, segunda " +
     "visita (otro caso, con el build en la caché). Tiempo desde el clic en el 3D, justo al terminar la " +
     `reconstrucción, hasta ver el caso. Mediana de ${REPETICIONES}.`,
   ...resumen(e),

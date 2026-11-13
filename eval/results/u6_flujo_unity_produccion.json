@@ -1,7 +1,66 @@
 {
-  "fecha": "2026-11-12T19:11:21.065Z",
+  "fecha": "2026-11-13T00:06:24.479Z",
   "cifra_antes": "Repetir\nVelocidad antes del impacto\n\n60.62\nkm/h\nA · Jetta\nrango lineal 55.29–65.95\n\nReconstrucción física de Croquis · mejor ajuste\n\nLas 32 simulaciones dan la misma velocidad: el costo tiene un quiebre en esta solución y no dicen cuánto podría variar. El rango de arriba es la aproximación lineal del solver.\n\nCómo se reparten las simulaciones\nB · Camaro\n0.00 km/h\nLo fijan\n5 evidencias · 1 decisión de Croquis",
-  "unity_listo_s": 46.373,
+  "pausa_antes_del_3d_s": 0,
+  "unity_listo_s": 14.859,
+  "marcas": {
+    "arranque": 0,
+    "precarga": 0.1,
+    "precarga_lista": 2.1,
+    "cargador": 2.1,
+    "cargador_listo": 2.4,
+    "instancia": 3.3,
+    "listo": 4.1,
+    "solver": 4.2,
+    "solver_listo": 4.2,
+    "cargar_caso": 4.4,
+    "caso_cargado": 14.4
+  },
+  "pasos_unity": {
+    "leer_sobre": 4.2,
+    "leer_paquete": 407,
+    "caracteres_paquete": 286835,
+    "vehiculos": 2674.6,
+    "cielo": 2674.7,
+    "escenario": 3205.9,
+    "caso_y_terreno": 3215.3,
+    "estacionados_y_personas": 3216.2,
+    "antes_de_unir_sombras": 3263.7,
+    "sombras_unidas": 3265.8,
+    "total": 3266.1,
+    "primer_cuadro": 8831.4,
+    "segundo_cuadro": 8845.8,
+    "hasta_cargado": 9261.5,
+    "pedido": 981675976,
+    "tipo": "perfil"
+  },
+  "bytes_unity": [
+    {
+      "archivo": "c98f0d6215ea311b58015abfaaec49f5.loader.js",
+      "kb": 0,
+      "s": 0.3
+    },
+    {
+      "archivo": "1d312128463f885658d7609b01cac408.framework.js",
+      "kb": 0,
+      "s": 0.2
+    },
+    {
+      "archivo": "9db635019469c9e78c2a32e7805db75d.wasm",
+      "kb": 0,
+      "s": 2.7
+    },
+    {
+      "archivo": "08efb5089aa828037f24975cf38a62ef.data",
+      "kb": 0,
+      "s": 10.3
+    },
+    {
+      "archivo": "c98f0d6215ea311b58015abfaaec49f5.loader.js",
+      "kb": 0,
+      "s": 0.2
+    }
+  ],
   "poste_antes": {
     "x": 17.953,
     "y": 3.741
@@ -21,5 +80,19 @@
       "bytes": 849226
     }
   ],
+  "segunda_visita_listo_s": 7.746,
+  "segunda_visita_marcas": {
+    "arranque": 0,
+    "precarga": 0.1,
+    "precarga_lista": 1,
+    "cargador": 1,
+    "cargador_listo": 1.1,
+    "instancia": 1.7,
+    "listo": 2.3,
+    "solver": 2.3,
+    "solver_listo": 2.3,
+    "cargar_caso": 2.6,
+    "caso_cargado": 7.6
+  },
   "errores": []
 }

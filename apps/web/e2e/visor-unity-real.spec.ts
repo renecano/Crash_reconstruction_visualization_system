@@ -1,6 +1,7 @@
-import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { extname, join, resolve } from "node:path";
-import { expect, test, type Page } from "@playwright/test";
+import { chromium, expect, test as base, type BrowserContext, type Page } from "@playwright/test";
 import { irAPaso } from "./ayuda-recorrido";
 import { casoConPoste, recibidosDelPuente } from "./visor-unity-ayuda";
 
@@ -32,10 +33,41 @@ const TIPOS: Record<string, string> = {
   ".data": "application/octet-stream",
 };
 
+const ARGS = ["--use-angle=d3d11", "--ignore-gpu-blocklist"];
+
+/**
+ * Con CROQUIS_SEGUNDA=1, un perfil de Chrome con caché en disco, como el navegador de la demo: el
+ * contexto de siempre de Playwright es de incógnito, con una caché en memoria que no guarda archivos
+ * de 20 a 35 MB, y la segunda visita volvía a bajar todo el build (U6, 2026-11-12).
+ */
+const test =
+  process.env.CROQUIS_SEGUNDA === "1"
+    ? base.extend<{ context: BrowserContext; page: Page }>({
+        context: async ({ baseURL }, entregar) => {
+          const perfil = mkdtempSync(join(tmpdir(), "croquis-perfil-"));
+          const ctx = await chromium.launchPersistentContext(perfil, {
+            headless: false,
+            args: ARGS,
+            baseURL,
+            locale: "es-MX",
+            serviceWorkers: "block",
+            reducedMotion: "reduce",
+            viewport: { width: 1600, height: 900 },
+          });
+          await entregar(ctx);
+          await ctx.close();
+          rmSync(perfil, { recursive: true, force: true });
+        },
+        page: async ({ context }, entregar) => {
+          await entregar(context.pages()[0] ?? (await context.newPage()));
+        },
+      })
+    : base;
+
 test.use({
   reducedMotion: "reduce",
   viewport: { width: 1600, height: 900 },
-  launchOptions: { args: ["--use-angle=d3d11", "--ignore-gpu-blocklist"] },
+  launchOptions: { args: ARGS },
 });
 
 /** El build local en lugar del de Blob: el manifiesto apunta a una ruta que se sirve de disco. */

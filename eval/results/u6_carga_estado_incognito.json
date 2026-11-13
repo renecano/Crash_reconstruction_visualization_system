@@ -1,0 +1,303 @@
+{
+  "repeticiones": [
+    {
+      "repeticion": 1,
+      "fecha": "2026-11-12T23:51:01.209Z",
+      "cifra_antes": "Repetir\nVelocidad antes del impacto\n\n60.62\nkm/h\nA · Jetta\nrango lineal 55.29–65.95\n\nReconstrucción física de Croquis · mejor ajuste\n\nLas 32 simulaciones dan la misma velocidad: el costo tiene un quiebre en esta solución y no dicen cuánto podría variar. El rango de arriba es la aproximación lineal del solver.\n\nCómo se reparten las simulaciones\nB · Camaro\n0.00 km/h\nLo fijan\n5 evidencias · 1 decisión de Croquis",
+      "pausa_antes_del_3d_s": 0,
+      "unity_listo_s": 16.236,
+      "marcas": {
+        "arranque": 0,
+        "precarga": 0.1,
+        "precarga_lista": 4,
+        "cargador": 4,
+        "cargador_listo": 4.2,
+        "instancia": 5.2,
+        "listo": 6,
+        "solver": 6,
+        "solver_listo": 6.1,
+        "cargar_caso": 6.3,
+        "caso_cargado": 16.2
+      },
+      "pasos_unity": {
+        "leer_sobre": 4.2,
+        "leer_paquete": 422.7,
+        "caracteres_paquete": 286835,
+        "vehiculos": 2611.7,
+        "cielo": 2611.8,
+        "escenario": 3119.7,
+        "caso_y_terreno": 3129.2,
+        "estacionados_y_personas": 3130.1,
+        "antes_de_unir_sombras": 3178.7,
+        "sombras_unidas": 3180.6,
+        "total": 3180.9,
+        "primer_cuadro": 8547.1,
+        "segundo_cuadro": 8557,
+        "hasta_cargado": 8987.7,
+        "pedido": 343460338,
+        "tipo": "perfil"
+      },
+      "bytes_unity": [
+        {
+          "archivo": "c98f0d6215ea311b58015abfaaec49f5.loader.js",
+          "kb": 0,
+          "s": 0.4
+        },
+        {
+          "archivo": "1d312128463f885658d7609b01cac408.framework.js",
+          "kb": 0,
+          "s": 0.2
+        },
+        {
+          "archivo": "9db635019469c9e78c2a32e7805db75d.wasm",
+          "kb": 0,
+          "s": 4.9
+        },
+        {
+          "archivo": "08efb5089aa828037f24975cf38a62ef.data",
+          "kb": 0,
+          "s": 10.5
+        },
+        {
+          "archivo": "c98f0d6215ea311b58015abfaaec49f5.loader.js",
+          "kb": 0,
+          "s": 0.2
+        }
+      ],
+      "poste_antes": {
+        "x": 17.953,
+        "y": 3.741
+      },
+      "cifra_despues": "Repetir\nVelocidad antes del impacto\n\n60.35\nkm/h\nA · Jetta\nrango lineal 56.67–64.03\n\nReconstrucción física de Croquis · mejor ajuste\n\nLas 32 simulaciones dan la misma velocidad: el costo tiene un quiebre en esta solución y no dicen cuánto podría variar. El rango de arriba es la aproximación lineal del solver.\n\nCómo se reparten las simulaciones\nB · Camaro\n0.00 km/h\nLo fijan\n5 evidencias · 1 decisión de Croquis",
+      "fotos": [
+        {
+          "etiqueta": "Antes del impacto (−1 s)",
+          "bytes": 831014
+        },
+        {
+          "etiqueta": "En el impacto (0 s)",
+          "bytes": 871826
+        },
+        {
+          "etiqueta": "En reposo (+4.1 s)",
+          "bytes": 849226
+        }
+      ],
+      "segunda_visita_listo_s": 20.738,
+      "segunda_visita_marcas": {
+        "arranque": 0,
+        "precarga": 0.1,
+        "precarga_lista": 13.7,
+        "cargador": 13.7,
+        "cargador_listo": 13.8,
+        "instancia": 14.3,
+        "listo": 14.7,
+        "solver": 14.7,
+        "solver_listo": 14.7,
+        "cargar_caso": 15,
+        "caso_cargado": 20.6
+      },
+      "errores": []
+    },
+    {
+      "repeticion": 2,
+      "fecha": "2026-11-12T23:53:42.996Z",
+      "cifra_antes": "Repetir\nVelocidad antes del impacto\n\n60.62\nkm/h\nA · Jetta\nrango lineal 55.29–65.95\n\nReconstrucción física de Croquis · mejor ajuste\n\nLas 32 simulaciones dan la misma velocidad: el costo tiene un quiebre en esta solución y no dicen cuánto podría variar. El rango de arriba es la aproximación lineal del solver.\n\nCómo se reparten las simulaciones\nB · Camaro\n0.00 km/h\nLo fijan\n5 evidencias · 1 decisión de Croquis",
+      "pausa_antes_del_3d_s": 0,
+      "unity_listo_s": 11.363,
+      "marcas": {
+        "arranque": 0,
+        "precarga": 0.1,
+        "precarga_lista": 0.1,
+        "cargador": 0.1,
+        "cargador_listo": 0.3,
+        "instancia": 1.2,
+        "listo": 2.1,
+        "solver": 2.1,
+        "solver_listo": 2.1,
+        "cargar_caso": 2.4,
+        "caso_cargado": 10.9
+      },
+      "pasos_unity": {
+        "leer_sobre": 4.2,
+        "leer_paquete": 452.9,
+        "caracteres_paquete": 286835,
+        "vehiculos": 2442.6,
+        "cielo": 2442.6,
+        "escenario": 2852.4,
+        "caso_y_terreno": 2859.7,
+        "estacionados_y_personas": 2860.4,
+        "antes_de_unir_sombras": 2898.1,
+        "sombras_unidas": 2899.7,
+        "total": 2900,
+        "primer_cuadro": 7459.1,
+        "segundo_cuadro": 7469.2,
+        "hasta_cargado": 7929.7,
+        "pedido": 84870498,
+        "tipo": "perfil"
+      },
+      "bytes_unity": [
+        {
+          "archivo": "c98f0d6215ea311b58015abfaaec49f5.loader.js",
+          "kb": 0,
+          "s": 0.5
+        },
+        {
+          "archivo": "1d312128463f885658d7609b01cac408.framework.js",
+          "kb": 0,
+          "s": 0.2
+        },
+        {
+          "archivo": "9db635019469c9e78c2a32e7805db75d.wasm",
+          "kb": 0,
+          "s": 2.6
+        },
+        {
+          "archivo": "08efb5089aa828037f24975cf38a62ef.data",
+          "kb": 0,
+          "s": 6.3
+        },
+        {
+          "archivo": "c98f0d6215ea311b58015abfaaec49f5.loader.js",
+          "kb": 0,
+          "s": 0.2
+        }
+      ],
+      "poste_antes": {
+        "x": 17.953,
+        "y": 3.741
+      },
+      "cifra_despues": "Repetir\nVelocidad antes del impacto\n\n60.35\nkm/h\nA · Jetta\nrango lineal 56.67–64.03\n\nReconstrucción física de Croquis · mejor ajuste\n\nLas 32 simulaciones dan la misma velocidad: el costo tiene un quiebre en esta solución y no dicen cuánto podría variar. El rango de arriba es la aproximación lineal del solver.\n\nCómo se reparten las simulaciones\nB · Camaro\n0.00 km/h\nLo fijan\n5 evidencias · 1 decisión de Croquis",
+      "fotos": [
+        {
+          "etiqueta": "Antes del impacto (−1 s)",
+          "bytes": 831014
+        },
+        {
+          "etiqueta": "En el impacto (0 s)",
+          "bytes": 871826
+        },
+        {
+          "etiqueta": "En reposo (+4.1 s)",
+          "bytes": 849226
+        }
+      ],
+      "segunda_visita_listo_s": 26.133,
+      "segunda_visita_marcas": {
+        "arranque": 0,
+        "precarga": 0.1,
+        "precarga_lista": 20.1,
+        "cargador": 20.1,
+        "cargador_listo": 20.2,
+        "instancia": 20.7,
+        "listo": 21.1,
+        "solver": 21.1,
+        "solver_listo": 21.2,
+        "cargar_caso": 21.4,
+        "caso_cargado": 26.1
+      },
+      "errores": []
+    },
+    {
+      "repeticion": 3,
+      "fecha": "2026-11-12T23:56:25.087Z",
+      "cifra_antes": "Repetir\nVelocidad antes del impacto\n\n60.62\nkm/h\nA · Jetta\nrango lineal 55.29–65.95\n\nReconstrucción física de Croquis · mejor ajuste\n\nLas 32 simulaciones dan la misma velocidad: el costo tiene un quiebre en esta solución y no dicen cuánto podría variar. El rango de arriba es la aproximación lineal del solver.\n\nCómo se reparten las simulaciones\nB · Camaro\n0.00 km/h\nLo fijan\n5 evidencias · 1 decisión de Croquis",
+      "pausa_antes_del_3d_s": 0,
+      "unity_listo_s": 22.61,
+      "marcas": {
+        "arranque": 0,
+        "precarga": 0.1,
+        "precarga_lista": 7.7,
+        "cargador": 7.7,
+        "cargador_listo": 7.9,
+        "instancia": 8.9,
+        "listo": 9.7,
+        "solver": 9.7,
+        "solver_listo": 9.8,
+        "cargar_caso": 10,
+        "caso_cargado": 22.5
+      },
+      "pasos_unity": {
+        "leer_sobre": 4.9,
+        "leer_paquete": 422.4,
+        "caracteres_paquete": 286835,
+        "vehiculos": 6004.9,
+        "cielo": 6005,
+        "escenario": 6530.4,
+        "caso_y_terreno": 6539.3,
+        "estacionados_y_personas": 6540.1,
+        "antes_de_unir_sombras": 6588.4,
+        "sombras_unidas": 6590.7,
+        "total": 6590.9,
+        "primer_cuadro": 11429.5,
+        "segundo_cuadro": 11439.6,
+        "hasta_cargado": 11870.4,
+        "pedido": 504589108,
+        "tipo": "perfil"
+      },
+      "bytes_unity": [
+        {
+          "archivo": "c98f0d6215ea311b58015abfaaec49f5.loader.js",
+          "kb": 0,
+          "s": 0.3
+        },
+        {
+          "archivo": "1d312128463f885658d7609b01cac408.framework.js",
+          "kb": 0,
+          "s": 0.2
+        },
+        {
+          "archivo": "9db635019469c9e78c2a32e7805db75d.wasm",
+          "kb": 0,
+          "s": 8.5
+        },
+        {
+          "archivo": "08efb5089aa828037f24975cf38a62ef.data",
+          "kb": 0,
+          "s": 10.2
+        },
+        {
+          "archivo": "c98f0d6215ea311b58015abfaaec49f5.loader.js",
+          "kb": 0,
+          "s": 0.2
+        }
+      ],
+      "poste_antes": {
+        "x": 17.953,
+        "y": 3.741
+      },
+      "cifra_despues": "Repetir\nVelocidad antes del impacto\n\n60.35\nkm/h\nA · Jetta\nrango lineal 56.67–64.03\n\nReconstrucción física de Croquis · mejor ajuste\n\nLas 32 simulaciones dan la misma velocidad: el costo tiene un quiebre en esta solución y no dicen cuánto podría variar. El rango de arriba es la aproximación lineal del solver.\n\nCómo se reparten las simulaciones\nB · Camaro\n0.00 km/h\nLo fijan\n5 evidencias · 1 decisión de Croquis",
+      "fotos": [
+        {
+          "etiqueta": "Antes del impacto (−1 s)",
+          "bytes": 831014
+        },
+        {
+          "etiqueta": "En el impacto (0 s)",
+          "bytes": 871826
+        },
+        {
+          "etiqueta": "En reposo (+4.1 s)",
+          "bytes": 849226
+        }
+      ],
+      "segunda_visita_listo_s": 12.477,
+      "segunda_visita_marcas": {
+        "arranque": 0,
+        "precarga": 0.1,
+        "precarga_lista": 6,
+        "cargador": 6,
+        "cargador_listo": 6.1,
+        "instancia": 6.7,
+        "listo": 7.1,
+        "solver": 7.1,
+        "solver_listo": 7.1,
+        "cargar_caso": 7.3,
+        "caso_cargado": 12.7
+      },
+      "errores": []
+    }
+  ],
+  "sitio": "https://croquis-sage.vercel.app",
+  "actualizado": "2026-11-12T23:58:01.550Z"
+}
