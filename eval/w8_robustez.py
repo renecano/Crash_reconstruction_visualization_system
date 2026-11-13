@@ -63,8 +63,7 @@ def main() -> None:
             "s": round(time.time() - t, 1),
             **por,
         }
-        sys.stdout.write(("CAMBIA " if cambia else "igual  ") + fila["escena"] + "
-")
+        sys.stdout.write(("CAMBIA " if cambia else "igual  ") + fila["escena"] + "\n")
         sys.stdout.flush()
         filas.append(fila)
     salida = RAIZ / "eval/results/w8/robustez.json"
