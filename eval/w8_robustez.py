@@ -42,9 +42,20 @@ def resumen(spec: dict) -> dict:
     return out
 
 
+ESTADO = RAIZ / "eval/results/w8/robustez_estado.json"
+
+
 def main() -> None:
+    # Reanudable: cada escena se guarda en cuanto termina y al relanzar se salta.
+    hechas: dict[str, dict] = (
+        json.loads(ESTADO.read_text(encoding="utf-8")) if ESTADO.exists() else {}
+    )
     filas = []
     for ruta in ESCENAS:
+        clave = str(ruta.relative_to(F)).replace("\\", "/")
+        if clave in hechas:
+            filas.append(hechas[clave])
+            continue
         spec = json.loads(ruta.read_text(encoding="utf-8"))
         if "vehiculos" not in spec or not spec.get("vehiculos"):
             continue
@@ -66,6 +77,9 @@ def main() -> None:
         sys.stdout.write(("CAMBIA " if cambia else "igual  ") + fila["escena"] + "\n")
         sys.stdout.flush()
         filas.append(fila)
+        hechas[clave] = fila
+        ESTADO.parent.mkdir(parents=True, exist_ok=True)
+        ESTADO.write_text(json.dumps(hechas, ensure_ascii=False), encoding="utf-8")
     salida = RAIZ / "eval/results/w8/robustez.json"
     salida.parent.mkdir(parents=True, exist_ok=True)
     salida.write_text(

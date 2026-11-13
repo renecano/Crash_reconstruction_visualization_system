@@ -1,6 +1,6 @@
 {
-  "fecha": "2026-11-13T02:45:53.301Z",
-  "antes": "5b92e014",
+  "fecha": "2026-11-13T04:01:22.047Z",
+  "antes": "ff598324",
   "cambian": [
     "resultados/frontal_curva.json",
     "resultados/glorieta.json",
@@ -336,8 +336,8 @@
         "inversion": {
           "velocidad_previa:veh-a": {
             "mejor": 17.98,
-            "p10": 8.16,
-            "p90": 26.51,
+            "p10": 8.91,
+            "p90": 23.5,
             "en_limite": false
           },
           "velocidad_previa:veh-b": {
@@ -440,14 +440,14 @@
         "inversion": {
           "velocidad_previa:veh-a": {
             "mejor": 26.26,
-            "p10": 19.65,
-            "p90": 36.75,
+            "p10": 17.11,
+            "p90": 32.88,
             "en_limite": false
           },
           "velocidad_previa:veh-b": {
             "mejor": 47.25,
-            "p10": 33.29,
-            "p90": 51.38,
+            "p10": 32.06,
+            "p90": 52.88,
             "en_limite": false
           },
           "rumbo_inicial:veh-a": {
@@ -543,25 +543,27 @@
         },
         "inversion": {
           "velocidad_previa:veh-a": {
-            "mejor": 84.92,
-            "p10": 73.9,
-            "p90": 86.34,
+            "mejor": 98.78,
+            "p10": 84.23,
+            "p90": 98.78,
             "en_limite": false
           },
           "velocidad_previa:veh-b": {
-            "mejor": 21.89,
-            "p10": 9.25,
-            "p90": 26.74,
+            "mejor": 2.02,
+            "p10": 1.58,
+            "p90": 2.77,
             "en_limite": false
           },
           "rumbo_inicial:veh-a": {
-            "identificable": false,
-            "inicial": 0
+            "mejor": 20,
+            "p10": 6.42,
+            "p90": 20,
+            "en_limite": true
           },
           "rumbo_inicial:veh-b": {
-            "mejor": 88.84,
-            "p10": 77.98,
-            "p90": 95.75,
+            "mejor": 102.15,
+            "p10": 101.96,
+            "p90": 103.92,
             "en_limite": false
           }
         },
@@ -653,25 +655,27 @@
         },
         "inversion": {
           "velocidad_previa:veh-a": {
-            "mejor": 0,
-            "p10": 0,
-            "p90": 9,
-            "en_limite": true
+            "mejor": 42.19,
+            "p10": 39.94,
+            "p90": 44.84,
+            "en_limite": false
           },
           "velocidad_previa:veh-b": {
-            "mejor": 35.44,
-            "p10": 30.85,
-            "p90": 40.02,
+            "mejor": 35.4,
+            "p10": 30.58,
+            "p90": 38.9,
             "en_limite": false
           },
           "rumbo_inicial:veh-a": {
-            "identificable": false,
-            "inicial": 180
+            "mejor": 200,
+            "p10": 184.97,
+            "p90": 200,
+            "en_limite": true
           },
           "rumbo_inicial:veh-b": {
-            "mejor": -5.47,
-            "p10": -5.47,
-            "p90": -5.03,
+            "mejor": 1.22,
+            "p10": -1.02,
+            "p90": 5.74,
             "en_limite": false
           }
         },
@@ -758,7 +762,6 @@
           }
         },
         "banderas": [
-          null,
           null
         ]
       }
@@ -1263,14 +1266,14 @@
         "inversion": {
           "velocidad_previa:veh-a": {
             "mejor": 56.87,
-            "p10": 54.97,
-            "p90": 81.1,
+            "p10": 54.92,
+            "p90": 77.56,
             "en_limite": false
           },
           "velocidad_previa:veh-b": {
             "mejor": 14.98,
-            "p10": 2.48,
-            "p90": 17.28,
+            "p10": 2.98,
+            "p90": 17.32,
             "en_limite": false
           },
           "rumbo_inicial:veh-a": {
@@ -1279,8 +1282,8 @@
           },
           "rumbo_inicial:veh-b": {
             "mejor": 75.72,
-            "p10": 68.82,
-            "p90": 84.89,
+            "p10": 68.68,
+            "p90": 84.91,
             "en_limite": false
           }
         },
@@ -1325,14 +1328,14 @@
         "inversion": {
           "velocidad_previa:veh-a": {
             "mejor": 56.89,
-            "p10": 47.7,
-            "p90": 79.83,
+            "p10": 51.71,
+            "p90": 79.73,
             "en_limite": false
           },
           "velocidad_previa:veh-b": {
             "mejor": 15.06,
-            "p10": 5.32,
-            "p90": 25.12,
+            "p10": 1.71,
+            "p90": 25.33,
             "en_limite": false
           },
           "rumbo_inicial:veh-a": {
