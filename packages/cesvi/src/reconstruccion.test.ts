@@ -275,10 +275,11 @@ describe("del expediente a la escena del solver (R2)", () => {
   });
 
   // Corre el solver completo (Monte Carlo e inversión) dos veces: más que los 5 s por omisión en
-  // la laptop de desarrollo.
+  // la laptop de desarrollo. Desde W8 la inversión decide además qué rumbos fija la evidencia y
+  // rehace la búsqueda sin los que no (ADR 0135): unos 19 s aquí, así que el tope es de 60 s.
   it(
     "sin evidencia no inventa velocidades; con las posiciones del perito las fija con rangos",
-    { timeout: 20_000 },
+    { timeout: 60_000 },
     () => {
       const sin = reconstruirExpediente(base);
       expect(sin.evidencia).toEqual([]);

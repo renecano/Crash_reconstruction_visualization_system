@@ -1,7 +1,7 @@
 {
  "name": "cesvi_r4_inversion",
- "generated_at": "2026-11-13T03:42:30Z",
- "git_commit": "e97494cb",
+ "generated_at": "2026-11-13T20:31:11Z",
+ "git_commit": "42087016",
  "descripcion": "E-R4 (prueba congelada, lecturas v2 grabadas) con lo que reconstruye el solver: velocidad previa de la inversión contra las velocidades del dictamen, impactos contra la secuencia de CESVI y banderas de consistencia.",
  "narraciones": 205,
  "reconstruidas": 205,

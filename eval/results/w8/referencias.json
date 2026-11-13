@@ -1,14 +1,10 @@
 {
-  "fecha": "2026-11-13T04:01:22.047Z",
+  "fecha": "2026-11-13T21:18:42.319Z",
   "antes": "ff598324",
   "cambian": [
     "resultados/frontal_curva.json",
-    "resultados/glorieta.json",
-    "resultados/interseccion_toluca.json",
-    "resultados/lateral_interseccion.json",
     "resultados/motociclista.json",
     "resultados/nocturno_lluvia.json",
-    "resultados/volcadura.json",
     "inversion/resultados/axa_alcance.json",
     "inversion/resultados/axa_reposo_lejano.json",
     "inversion/resultados/lateral_puntos_paso.json"
@@ -256,7 +252,7 @@
     },
     {
       "escena": "resultados/glorieta.json",
-      "cambia": true,
+      "cambia": false,
       "antes": {
         "punto_impacto": [
           1.75,
@@ -335,22 +331,26 @@
         },
         "inversion": {
           "velocidad_previa:veh-a": {
-            "mejor": 17.98,
-            "p10": 8.91,
-            "p90": 23.5,
-            "en_limite": false
+            "mejor": 0,
+            "p10": 0,
+            "p90": 12.07,
+            "en_limite": true
           },
           "velocidad_previa:veh-b": {
-            "identificable": false,
-            "inicial": 25
+            "mejor": 27.98,
+            "p10": 20.08,
+            "p90": 35.89,
+            "en_limite": false
           },
           "rumbo_inicial:veh-a": {
             "identificable": false,
             "inicial": -44.6
           },
           "rumbo_inicial:veh-b": {
-            "identificable": false,
-            "inicial": 90
+            "mejor": 80.38,
+            "p10": 73.79,
+            "p90": 86.96,
+            "en_limite": false
           }
         },
         "banderas": []
@@ -358,7 +358,7 @@
     },
     {
       "escena": "resultados/interseccion_toluca.json",
-      "cambia": true,
+      "cambia": false,
       "antes": {
         "punto_impacto": [
           0,
@@ -439,24 +439,28 @@
         },
         "inversion": {
           "velocidad_previa:veh-a": {
-            "mejor": 26.26,
-            "p10": 17.11,
-            "p90": 32.88,
+            "mejor": 19,
+            "p10": 13.54,
+            "p90": 24.47,
             "en_limite": false
           },
           "velocidad_previa:veh-b": {
-            "mejor": 47.25,
-            "p10": 32.06,
-            "p90": 52.88,
+            "mejor": 1.91,
+            "p10": 0,
+            "p90": 17.65,
             "en_limite": false
           },
           "rumbo_inicial:veh-a": {
-            "identificable": false,
-            "inicial": 0
+            "mejor": -8.4,
+            "p10": -12.58,
+            "p90": -4.22,
+            "en_limite": false
           },
           "rumbo_inicial:veh-b": {
-            "identificable": false,
-            "inicial": -90
+            "mejor": -84.43,
+            "p10": -87.3,
+            "p90": -81.56,
+            "en_limite": false
           }
         },
         "banderas": []
@@ -464,7 +468,7 @@
     },
     {
       "escena": "resultados/lateral_interseccion.json",
-      "cambia": true,
+      "cambia": false,
       "antes": {
         "punto_impacto": [
           -0.92,
@@ -543,27 +547,25 @@
         },
         "inversion": {
           "velocidad_previa:veh-a": {
-            "mejor": 98.78,
-            "p10": 84.23,
-            "p90": 98.78,
-            "en_limite": false
+            "identificable": false,
+            "inicial": 45
           },
           "velocidad_previa:veh-b": {
-            "mejor": 2.02,
-            "p10": 1.58,
-            "p90": 2.77,
+            "mejor": 3.51,
+            "p10": 0.61,
+            "p90": 9.98,
             "en_limite": false
           },
           "rumbo_inicial:veh-a": {
-            "mejor": 20,
-            "p10": 6.42,
-            "p90": 20,
-            "en_limite": true
+            "mejor": 5.76,
+            "p10": 3.13,
+            "p90": 7.34,
+            "en_limite": false
           },
           "rumbo_inicial:veh-b": {
-            "mejor": 102.15,
-            "p10": 101.96,
-            "p90": 103.92,
+            "mejor": 78.94,
+            "p10": 78.73,
+            "p90": 80.38,
             "en_limite": false
           }
         },
@@ -655,27 +657,27 @@
         },
         "inversion": {
           "velocidad_previa:veh-a": {
-            "mejor": 42.19,
-            "p10": 39.94,
-            "p90": 44.84,
+            "mejor": 36.79,
+            "p10": 35.01,
+            "p90": 39.21,
             "en_limite": false
           },
           "velocidad_previa:veh-b": {
-            "mejor": 35.4,
-            "p10": 30.58,
-            "p90": 38.9,
+            "mejor": 35.41,
+            "p10": 30.55,
+            "p90": 38.91,
             "en_limite": false
           },
           "rumbo_inicial:veh-a": {
             "mejor": 200,
-            "p10": 184.97,
+            "p10": 188.5,
             "p90": 200,
             "en_limite": true
           },
           "rumbo_inicial:veh-b": {
-            "mejor": 1.22,
-            "p10": -1.02,
-            "p90": 5.74,
+            "mejor": 1.32,
+            "p10": -0.06,
+            "p90": 1.96,
             "en_limite": false
           }
         },
@@ -1094,7 +1096,7 @@
     },
     {
       "escena": "resultados/volcadura.json",
-      "cambia": true,
+      "cambia": false,
       "antes": {
         "punto_impacto": [
           0,
@@ -1174,9 +1176,9 @@
         },
         "inversion": {
           "velocidad_previa:veh-a": {
-            "mejor": 84.46,
-            "p10": 73.61,
-            "p90": 84.45,
+            "mejor": 51.03,
+            "p10": 44.09,
+            "p90": 51.4,
             "en_limite": false
           },
           "velocidad_previa:veh-b": {
@@ -1184,10 +1186,10 @@
             "inicial": 80
           },
           "rumbo_inicial:veh-a": {
-            "mejor": -7.46,
-            "p10": -9.07,
-            "p90": -6.31,
-            "en_limite": false
+            "mejor": 20,
+            "p10": 18.18,
+            "p90": 20,
+            "en_limite": true
           },
           "rumbo_inicial:veh-b": {
             "identificable": false,
