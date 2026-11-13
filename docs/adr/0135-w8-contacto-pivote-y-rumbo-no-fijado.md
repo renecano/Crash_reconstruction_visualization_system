@@ -32,7 +32,7 @@ Con los dos, el costo contra el rumbo de V2 tiene saltos de 0.03 a 15 en 1°, y 
 
 ### 3. Cuándo la evidencia no fija un rumbo (criterio general)
 
-Un rumbo inicial no declarado queda **fijado por la evidencia** solo si se cumplen las dos condiciones. Las dos usan constantes que ya estaban antes de AXA y de T3.2:
+**Versión 1** (la que se escribió antes de cambiar el solver, el 2026-11-12; la versión 2, la que vale, está más abajo). Un rumbo inicial no declarado queda **fijado por la evidencia** solo si se cumplen las dos condiciones. Las dos usan constantes que ya estaban antes de AXA y de T3.2:
 
 - **(a) Laplace** (ADR 0010, desde F7): su desviación local es de a lo más `IDENT_MAX["rumbo"]` = 15°.
 - **(b) Perfil:** al mover ese rumbo 15° hacia cada lado de su mejor valor, sin salir de los límites de búsqueda (si el límite queda más cerca, hasta el límite), y reajustar todo lo demás, el costo sube al menos `MODE_MARGIN` = 0.5 de cada lado.
@@ -41,6 +41,22 @@ Un rumbo inicial no declarado queda **fijado por la evidencia** solo si se cumpl
   - Se pide de los dos lados porque basta un lado plano para que el intervalo pase de ±15°.
 
 (b) existe porque Laplace es local y, con un costo irregular, puede dar una curvatura alta en un valle estrecho que la evidencia no prefiere. La regla se aplica igual a todos los vehículos y escenas, y se decide sobre el mejor modo.
+
+**Qué falló de la versión 1** (medido con el código, `eval/results/w8/referencias.json` del commit `3c8935ff`; René lo vio el 2026-11-12). La versión 1 devolvía al del perito todo rumbo que no fijara la evidencia, sin preguntar si la evidencia aceptaba el valor del perito. En tres escenas de referencia el resultado empeoró sin razón física:
+
+- **`interseccion_toluca` (rumbos ligados):** probados uno por uno, con el otro libre, cada uno de los dos rumbos parecía no fijado, porque el otro lo compensaba. Pero devolver los dos a la vez al valor del perito empeoró la evidencia: el reposo de A pasó de menos de 0.3σ a −3.47σ, y el de B, de −0.68σ a −2.18σ.
+- **`motociclista` (el límite contado como plano):** el mejor rumbo de A estaba en el límite (+20°). El lado de afuera no tenía espacio y, medido «hasta el límite», el costo no subía, así que contó como no fijado. Al volver al del perito, A quedó en 0 km/h (en el límite) y las marcas de B pasaron de −0.30σ a −3.94σ. La evidencia sí decía algo, y era que el rumbo iba más allá del límite.
+- **`lateral_interseccion`:** al volver el rumbo de A al del perito, la velocidad de A pasó de «no se fija» a 84.92 km/h (el relato dice 45), y el rumbo final de B, de 1.34σ a 3.54σ.
+
+**Versión 2** (René, 2026-11-12, después de ver estos resultados). Los candidatos son los mismos de la versión 1 (los que (a) o (b) dicen no fijados), pero un candidato **vuelve al del perito solo si la evidencia explica ese valor casi igual de bien**:
+
+- **Prueba de razón de verosimilitudes en el valor del perito:** con ese rumbo fijo en el valor del perito (y los que ya volvieron, también en el suyo) y todo lo demás reajustado, el costo sube menos de Δχ² = 1 (`HEADING_LR_MARGIN` = `MODE_MARGIN` = 0.5) sobre el mejor ajuste.
+- **De uno en uno:** primero se mide esa subida para cada candidato solo; se prueban del que menos sube al que más, cada uno junto con los que ya volvieron, y se para en el primero que no pasa. Así, dos rumbos ligados no vuelven juntos si juntos la evidencia ya no cabe.
+- **Un candidato que no pasa se queda con su mejor ajuste.** Si ese ajuste está en el límite de ±20°, el perito ve el aviso «la evidencia empuja el rumbo fuera del rango permitido» (decisión 6), no un número callado.
+
+**Por qué no es un ajuste para AXA:** la versión 2 cambia la pregunta, no un número. Usa la misma constante de antes (Δχ² = 1, de ADR 0091, anterior a AXA y a T3.2). Las escenas que la motivaron son de referencia (Toluca, la moto y el lateral), no AXA. Y no se eligió por cómo deja a AXA: en AXA, la versión 1 ya devolvía el rumbo de V2 al del perito, y la versión 2 hace lo mismo si la evidencia lo acepta. **Se cambió después de ver resultados, y por eso se deja escrita la versión 1 con lo que falló.**
+
+**Prueba de robustez, no ajuste:** con Δχ² = 2.71 (el 90 % de un parámetro) en lugar de 1 se informa qué casos cambiarían (`eval/w8_robustez.py`). El criterio se queda en 1.
 
 ### 4. Si no lo fija: el rumbo del perito, como supuesto declarado, en el rango
 
@@ -51,7 +67,15 @@ Un rumbo inicial no declarado queda **fijado por la evidencia** solo si se cumpl
   - El sorteo va en un hipercubo latino aparte, con una semilla derivada de la del caso, como los supuestos del tope (ADR 0131). Una escena sin rumbos no fijados conserva sus sorteos: no cambia ni un decimal por esta regla.
 - El Monte Carlo «hacia adelante» (`resultado.incertidumbre`, que muestrea los datos de la escena) no cambia: el rango de la velocidad que ve el perito es el de la inversión.
 
-### 5. Python y TS
+### 5. El aviso de «las zonas no se tocan»
+
+La bandera `zonas_no_se_tocan` avisa solo si la distancia entre los puntos de contacto pasa de la tolerancia de la zona (decisión 1) y de los 0.5 m de siempre: dentro de la tolerancia, las zonas sí se tocan. Con la versión 1 salía en `nocturno_lluvia` aunque las zonas se tocaban.
+
+### 6. El rumbo en el límite se le dice al perito
+
+Si en el resultado el mejor rumbo inicial de un vehículo queda en el límite de ±20° (`en_limite`), la reconstrucción del caso lo lista entre sus límites, visible en el paso de Reconstrucción y en el dictamen: «V2: la evidencia empuja el rumbo fuera del rango permitido (±20° sobre el que se colocó en el mapa). El mejor ajuste queda en el límite, …°, así que no cabe bien con lo demás: conviene revisar las posiciones y el rumbo de llegada.»
+
+### 7. Python y TS
 
 Todo va en el solver de referencia (Python) y en el port TS, con paridad E7. Las referencias se regeneran con el código nuevo.
 

@@ -179,6 +179,11 @@ export const ANGLE_BOUND_DEG = 20.0;
  * `posicion_inicial`; no es del contrato.
  */
 export const HEADING_ASSUMED = "_rumbo_supuesto";
+/**
+ * Cuánto puede subir el costo al fijar un rumbo en el valor del perito para que vuelva a él (ADR
+ * 0135, versión 2): `MODE_MARGIN`, un Δχ² de 1.
+ */
+const HEADING_LR_MARGIN = 0.5;
 const JAC_STEP: Record<string, number> = { velocidad: 1.0, rumbo: 1.0 };
 const BOUND_TOL: Record<string, number> = { velocidad: 0.1, rumbo: 0.1 };
 export const SCALE: Record<string, number> = { velocidad: 10.0, rumbo: 10.0 };
@@ -703,9 +708,13 @@ export function sampleAssumedHeadings(spec: Json, draws: Draws): void {
 }
 
 /**
- * Los rumbos iniciales que la evidencia no fija (ADR 0135): (a) Laplace, σ local mayor que
- * `IDENT_MAX.rumbo`, o (b) perfil: moverlo `IDENT_MAX.rumbo` hacia algún lado (sin salir de los
- * límites) y reajustar lo demás sube el costo menos de `MODE_MARGIN` (un Δχ² de 1).
+ * Los rumbos iniciales que vuelven al del perito (ADR 0135, versión 2 del criterio). Candidatos, los
+ * que la evidencia no fija: (a) Laplace, σ local mayor que `IDENT_MAX.rumbo`, o (b) perfil,
+ * moverlo `IDENT_MAX.rumbo` hacia algún lado (sin salir de los límites) y reajustar lo demás sube
+ * el costo menos de `MODE_MARGIN`. De esos, vuelve al del perito solo el que la evidencia explica
+ * casi igual de bien en ese valor: fijándolo ahí (con los que ya volvieron) y reajustando lo
+ * demás, el costo sube menos de `HEADING_LR_MARGIN` (Δχ² de 1). Se prueban de uno en uno, del que
+ * menos sube al que más, y se para en el primero que no pasa.
  */
 export function unfixedHeadings(
   spec: Json,
@@ -715,12 +724,12 @@ export function unfixedHeadings(
   dt = 0.1,
 ): Estimate[] {
   if (ev.empty()) return [];
-  const out: Estimate[] = [];
+  const candidates: Estimate[] = [];
   for (const e of inv.estimates) {
     const p = e.param;
     if (p.kind !== "rumbo") continue;
     if (!e.identifiable || e.best === null) {
-      out.push(e);
+      candidates.push(e);
       continue;
     }
     const free = new Set(params.map((q) => q.name).filter((n) => n !== p.name));
@@ -730,10 +739,32 @@ export function unfixedHeadings(
       start.set(p.name, target);
       const f = fitEvidence(spec, ev, { dt, start, free });
       if (f.cost - inv.best.cost < MODE_MARGIN) {
-        out.push(e);
+        candidates.push(e);
         break;
       }
     }
+  }
+  if (!candidates.length) return [];
+  /** Cuánto sube el costo con esos rumbos en el valor del perito y lo demás reajustado. */
+  const riseAtPerito = (names: string[]): number => {
+    const start = new Map(inv.best.values);
+    for (const e of candidates)
+      if (names.includes(e.param.name)) start.set(e.param.name, e.param.start);
+    const free = new Set(params.map((q) => q.name).filter((n) => !names.includes(n)));
+    const f = fitEvidence(spec, ev, { dt, start, free });
+    return f.cost - inv.best.cost;
+  };
+  const scored = candidates
+    .map((e, i) => ({ rise: riseAtPerito([e.param.name]), i, e }))
+    .sort((a, b) => a.rise - b.rise || a.i - b.i);
+  const out: Estimate[] = [];
+  let names: string[] = [];
+  for (const { rise: first, e } of scored) {
+    const trial = [...names, e.param.name];
+    const rise = trial.length > 1 ? riseAtPerito(trial) : first;
+    if (rise >= HEADING_LR_MARGIN) break;
+    names = trial;
+    out.push(e);
   }
   return out;
 }

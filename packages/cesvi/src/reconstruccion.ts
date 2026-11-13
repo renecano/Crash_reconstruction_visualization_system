@@ -14,7 +14,7 @@
  * eventos posteriores (`segundo_impacto`); el solver los resuelve cuando el par se toca.
  */
 import { buildSpec, fact, emptyFacts, type Fact } from "@croquis/extraction";
-import { fullResult, PRIORIDAD, reconstruct } from "@croquis/solver-ts";
+import { ANGLE_BOUND_DEG, fullResult, PRIORIDAD, reconstruct } from "@croquis/solver-ts";
 import type { Expediente } from "./corpus";
 import { rigidezEnKilo } from "./verificacion";
 import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from "./geo";
@@ -772,6 +772,8 @@ interface Inversion {
     parametro: string;
     vehiculo: string;
     identificable: boolean;
+    inicial?: number;
+    en_limite?: boolean;
     sigma_local?: number;
     estimacion?: {
       mejor: number;
@@ -941,6 +943,15 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
     if (vs.every((v) => primerPar.has(v))) continue; // el mismo par: es el contacto de siempre
     limites.push(
       `El impacto ${ev.id.replace("ev-impacto-", "")} (${vs.join(" con ")}) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.`,
+    );
+  }
+  // Un rumbo de llegada que la evidencia empuja contra el límite de búsqueda se le dice al perito,
+  // no se queda como un número callado (ADR 0135).
+  for (const p of inv.parametros) {
+    const id = base.ids[p.vehiculo];
+    if (p.parametro !== "rumbo_inicial" || !p.en_limite || !p.estimacion || !id) continue;
+    limites.push(
+      `${id}: la evidencia empuja el rumbo fuera del rango permitido (±${ANGLE_BOUND_DEG}° sobre el que se colocó en el mapa). El mejor ajuste queda en el límite, ${p.estimacion.mejor.toFixed(1)}°, así que no cabe bien con lo demás: conviene revisar las posiciones y el rumbo de llegada.`,
     );
   }
   const velocidades = Object.entries(base.ids).map(([sid, id]) => {
