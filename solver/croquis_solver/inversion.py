@@ -227,6 +227,10 @@ def delta_v_from_damage(
 
 SIGMA_HEADING_DEG = 20.0  # incertidumbre de un rumbo final declarado (supuesto)
 ANGLE_BOUND_DEG = 20.0  # desvío máximo que se ajusta al rumbo inicial no declarado (supuesto)
+# Un rumbo inicial que la evidencia no fija (ADR 0135): vuelve al que colocó el perito, como supuesto
+# declarado, y en el rango se sortea uniforme en ±ANGLE_BOUND_DEG. Llave en memoria de
+# `posicion_inicial`; no es del contrato.
+HEADING_ASSUMED = "_rumbo_supuesto"
 # Pasos de diferencias finitas y escalas de cada tipo de parámetro (km/h y grados).
 JAC_STEP = {"velocidad": 1.0, "rumbo": 1.0}
 # Distancia al límite de búsqueda por debajo de la cual el mejor ajuste "quedó en el límite", en las
@@ -653,7 +657,7 @@ def parameters(spec: JsonObj, ev: Evidence) -> list[Param]:
     if ev.rest or ev.rest_heading or ev.waypoints or ev.impact_point:
         for vid in ids:
             pose: JsonObj = by_id[vid]["posicion_inicial"]
-            if _stated_pose(pose):
+            if _stated_pose(pose) or pose.get(HEADING_ASSUMED):
                 continue
             h = float(pose["rumbo_deg"])
             out.append(Param("rumbo", vid, h, h - ANGLE_BOUND_DEG, h + ANGLE_BOUND_DEG, False))
@@ -674,8 +678,35 @@ def apply_values(spec: JsonObj, values: dict[str, float]) -> JsonObj:
                 "confianza": 0.5,
             }
         elif kind == "rumbo":
-            by_id[vid]["posicion_inicial"]["rumbo_deg"] = max(-360.0, min(360.0, float(x)))
+            set_heading(s, vid, max(-360.0, min(360.0, float(x))))
     return s
+
+
+def heading_pivot(spec: JsonObj, vid: str) -> tuple[float, float] | None:
+    """El punto alrededor del cual gira el rumbo inicial de `vid`: el `punto_impacto` del primer
+    evento de impacto en el que participa (ADR 0135). None si no lo trae."""
+    eventos: list[JsonObj] = sorted(spec.get("eventos", []), key=lambda e: int(e["orden"]))
+    for e in eventos:
+        if not str(e["tipo"]).startswith("impacto") or vid not in e.get("actores", []):
+            continue
+        punto: JsonObj | None = e.get("punto_impacto")
+        return (float(punto["x"]), float(punto["y"])) if punto else None
+    return None
+
+
+def set_heading(spec: JsonObj, vid: str, heading_deg: float) -> None:
+    """Pone el rumbo inicial de `vid` en `spec` (en sitio). Con punto de impacto, la pose gira
+    alrededor de él: cambia de dónde venía el vehículo, no dónde chocó (ADR 0135)."""
+    v = next(x for x in spec["vehiculos"] if x["id"] == vid)
+    pose: JsonObj = v["posicion_inicial"]
+    pivot = heading_pivot(spec, vid)
+    if pivot is not None:
+        d = math.radians(heading_deg - float(pose["rumbo_deg"]))
+        c, sn = dmath.cos(d), dmath.sin(d)
+        ox, oy = float(pose["x"]) - pivot[0], float(pose["y"]) - pivot[1]
+        pose["x"] = pivot[0] + (ox * c - oy * sn)
+        pose["y"] = pivot[1] + (ox * sn + oy * c)
+    pose["rumbo_deg"] = heading_deg
 
 
 def with_speeds(spec: JsonObj, ids: list[str], speeds_kmh: Sequence[float]) -> JsonObj:
@@ -1463,6 +1494,21 @@ def invert(
     modes = find_modes(spec, ev, params, dt=dt)
     best_cost = modes[0].fit.cost
     out = _estimate(spec, ev, params, modes[0].fit, seed=seed, samples=samples, dt=dt)
+    # Un rumbo inicial que la evidencia no fija vuelve al del perito, como supuesto, y se rehace la
+    # búsqueda sin él (ADR 0135).
+    loose = unfixed_headings(spec, ev, params, out, dt=dt)
+    if loose:
+        again = invert(
+            assume_headings(spec, [e.param.vehicle for e in loose]),
+            seed=seed,
+            samples=samples,
+            dt=dt,
+            assumed_as_data=assumed_as_data,
+            evidence_seed=evidence_seed,
+        )
+        again.estimates.extend(Estimate(e.param, e.sigma_local, False, None, None) for e in loose)
+        again.estimates.sort(key=lambda e: [p.name for p in params].index(e.param.name))
+        return again
     out.assumed_as_data = assumed_as_data
     out.modes = modes
     out.alternatives = [
@@ -1472,6 +1518,75 @@ def invert(
     ]
     for alt in out.alternatives:
         alt.assumed_as_data = assumed_as_data
+    return out
+
+
+def assume_headings(spec: JsonObj, vehicles: Sequence[str]) -> JsonObj:
+    """La escena con el rumbo inicial de `vehicles` como supuesto: deja de ser incógnita y en el
+    rango se sortea en ±ANGLE_BOUND_DEG (ADR 0135)."""
+    s = copy.deepcopy(spec)
+    for v in s["vehiculos"]:
+        if v["id"] in vehicles:
+            v["posicion_inicial"][HEADING_ASSUMED] = True
+    return s
+
+
+def assumed_heading_vehicles(spec: JsonObj) -> list[str]:
+    return [
+        str(v["id"])
+        for v in spec["vehiculos"]
+        if (v.get("posicion_inicial") or {}).get(HEADING_ASSUMED)
+    ]
+
+
+def heading_seed(semilla: int) -> int:
+    """La semilla del hipercubo de los rumbos supuestos, derivada de la del caso (ADR 0135)."""
+    return (int(semilla) * 1_000_033 + 20_261_112) % 2**31
+
+
+def heading_sampler(spec: JsonObj, samples: int) -> LatinHypercube | None:
+    """Un hipercubo aparte, una dimensión por rumbo supuesto; None si no hay. Una escena sin rumbos
+    supuestos conserva sus sorteos."""
+    vids = assumed_heading_vehicles(spec)
+    if not vids or samples <= 0:
+        return None
+    return LatinHypercube(
+        samples, len(vids), dmath.Random(heading_seed(int(spec["meta"]["semilla"])))
+    )
+
+
+def sample_assumed_headings(spec: JsonObj, draws: Draws) -> None:
+    """Sortea cada rumbo supuesto en ±ANGLE_BOUND_DEG alrededor del de la escena (en sitio)."""
+    for vid in assumed_heading_vehicles(spec):
+        v = next(x for x in spec["vehiculos"] if x["id"] == vid)
+        h0 = float(v["posicion_inicial"]["rumbo_deg"])
+        set_heading(spec, vid, h0 + draws.uniform(-ANGLE_BOUND_DEG, ANGLE_BOUND_DEG))
+
+
+def unfixed_headings(
+    spec: JsonObj, ev: Evidence, params: list[Param], inv: Inversion, *, dt: float = 0.1
+) -> list[Estimate]:
+    """Los rumbos iniciales que la evidencia no fija (ADR 0135): (a) Laplace, σ local mayor que
+    `IDENT_MAX["rumbo"]`, o (b) perfil: moverlo `IDENT_MAX["rumbo"]` hacia algún lado (sin salir de
+    los límites) y reajustar lo demás sube el costo menos de `MODE_MARGIN` (un Δχ² de 1)."""
+    if ev.empty():
+        return []
+    out: list[Estimate] = []
+    for e in inv.estimates:
+        p = e.param
+        if p.kind != "rumbo":
+            continue
+        if not e.identifiable or e.best is None:
+            out.append(e)
+            continue
+        free = {q.name for q in params if q.name != p.name}
+        for side in (-1.0, 1.0):
+            target = min(max(e.best + side * IDENT_MAX["rumbo"], p.lo), p.hi)
+            start = {**inv.best.values, p.name: target}
+            f = fit_evidence(spec, ev, dt=dt, start=start, free=free)
+            if f.cost - inv.best.cost < MODE_MARGIN:
+                out.append(e)
+                break
     return out
 
 
@@ -1515,6 +1630,8 @@ def _estimate(
     # Los dos supuestos del tope (C3, W5), con su propio hipercubo y la semilla del caso: una escena
     # sin topes conserva sus sorteos.
     topes = bump_sampler(spec, n_samples, int(spec["meta"]["semilla"]))
+    # Y los rumbos que la evidencia no fija, en el suyo (ADR 0135).
+    rumbos = heading_sampler(spec, n_samples)
     x_best = [best.values[p.name] for p in free_params]
     fixed = {n: v for n, v in best.values.items() if n not in free}
     j_best: list[list[float]] = []
@@ -1526,6 +1643,8 @@ def _estimate(
         pert = perturbed(spec, ev, lhs.sample(i))
         if topes is not None:
             sample_bump_assumptions(pert.spec, topes.sample(i))
+        if rumbos is not None:
+            sample_assumed_headings(pert.spec, rumbos.sample(i))
         s, e, dmu = pert.spec, pert.evidence, pert.downed_mu
         prob = _Problem(with_marks(s, e), e, free_params, fixed, dt, dmu)
         prob.names.extend(sorted(best.residuals))

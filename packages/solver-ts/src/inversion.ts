@@ -23,7 +23,7 @@ import {
 } from "./friction";
 import { lstsq, matmul, pinv, transpose } from "./linalg";
 import { leastSquaresSoftL1, softL1Cost } from "./lsq";
-import { median, pyMod, pyRound, quantilesInclusive, str } from "./pymath";
+import { median, pyMod, pyRound, quantilesInclusive, radians, str } from "./pymath";
 import { PyRandom } from "./pyrandom";
 import { countDraws, type Draws, LatinHypercube } from "./stratified";
 import { bumpSampler, sampleBumpAssumptions } from "./terrain";
@@ -173,6 +173,12 @@ export function deltaVFromDamage(
 
 const SIGMA_HEADING_DEG = 20.0;
 export const ANGLE_BOUND_DEG = 20.0;
+/**
+ * Un rumbo inicial que la evidencia no fija (ADR 0135): vuelve al que colocó el perito, como
+ * supuesto declarado, y en el rango se sortea uniforme en ±ANGLE_BOUND_DEG. Llave en memoria de
+ * `posicion_inicial`; no es del contrato.
+ */
+export const HEADING_ASSUMED = "_rumbo_supuesto";
 const JAC_STEP: Record<string, number> = { velocidad: 1.0, rumbo: 1.0 };
 const BOUND_TOL: Record<string, number> = { velocidad: 0.1, rumbo: 0.1 };
 export const SCALE: Record<string, number> = { velocidad: 10.0, rumbo: 10.0 };
@@ -581,7 +587,7 @@ export function parameters(spec: Json, ev: Evidence): Param[] {
   if (ev.rest.size || ev.restHeading.size || ev.waypoints.length || ev.impactPoint) {
     for (const vid of ids) {
       const pose = byId.get(vid)!.posicion_inicial as Json;
-      if (statedPose(pose)) continue;
+      if (statedPose(pose) || pose[HEADING_ASSUMED]) continue;
       const h = Number(pose.rumbo_deg);
       out.push(new Param("rumbo", vid, h, h - ANGLE_BOUND_DEG, h + ANGLE_BOUND_DEG, false));
     }
@@ -605,10 +611,131 @@ export function applyValues(spec: Json, values: Map<string, number>): Json {
         confianza: 0.5,
       };
     } else if (kind === "rumbo") {
-      (byId.get(vid)!.posicion_inicial as Json).rumbo_deg = Math.max(-360.0, Math.min(360.0, x));
+      setHeading(s, vid, Math.max(-360.0, Math.min(360.0, x)));
     }
   }
   return s;
+}
+
+/**
+ * El punto alrededor del cual gira el rumbo inicial de `vid`: el `punto_impacto` del primer evento
+ * de impacto en el que participa (ADR 0135). null si no lo trae.
+ */
+export function headingPivot(spec: Json, vid: string): [number, number] | null {
+  const eventos = [...((spec.eventos ?? []) as Json[])].sort(
+    (a, b) => Number(a.orden) - Number(b.orden),
+  );
+  for (const e of eventos) {
+    if (!String(e.tipo).startsWith("impacto") || !((e.actores ?? []) as string[]).includes(vid))
+      continue;
+    const punto = (e.punto_impacto ?? null) as Json | null;
+    return punto ? [Number(punto.x), Number(punto.y)] : null;
+  }
+  return null;
+}
+
+/**
+ * Pone el rumbo inicial de `vid` en `spec` (en sitio). Con punto de impacto, la pose gira alrededor
+ * de él: cambia de dónde venía el vehículo, no dónde chocó (ADR 0135).
+ */
+export function setHeading(spec: Json, vid: string, headingDeg: number): void {
+  const v = (spec.vehiculos as Json[]).find((x) => x.id === vid)!;
+  const pose = v.posicion_inicial as Json;
+  const pivot = headingPivot(spec, vid);
+  if (pivot !== null) {
+    const d = radians(headingDeg - Number(pose.rumbo_deg));
+    const c = dmath.cos(d);
+    const sn = dmath.sin(d);
+    const ox = Number(pose.x) - pivot[0];
+    const oy = Number(pose.y) - pivot[1];
+    pose.x = pivot[0] + (ox * c - oy * sn);
+    pose.y = pivot[1] + (ox * sn + oy * c);
+  }
+  pose.rumbo_deg = headingDeg;
+}
+
+/**
+ * La escena con el rumbo inicial de `vehicles` como supuesto: deja de ser incógnita y en el rango
+ * se sortea en ±ANGLE_BOUND_DEG (ADR 0135).
+ */
+export function assumeHeadings(spec: Json, vehicles: readonly string[]): Json {
+  const s = structuredClone(spec);
+  for (const v of s.vehiculos as Json[]) {
+    if (vehicles.includes(String(v.id))) (v.posicion_inicial as Json)[HEADING_ASSUMED] = true;
+  }
+  return s;
+}
+
+export function assumedHeadingVehicles(spec: Json): string[] {
+  return (spec.vehiculos as Json[])
+    .filter((v) => ((v.posicion_inicial ?? {}) as Json)[HEADING_ASSUMED])
+    .map((v) => String(v.id));
+}
+
+/** La semilla del hipercubo de los rumbos supuestos, derivada de la del caso (ADR 0135). */
+export function headingSeed(semilla: number): number {
+  const m = 2n ** 31n;
+  const x = (BigInt(Math.trunc(semilla)) * 1_000_033n + 20_261_112n) % m;
+  return Number(x < 0n ? x + m : x);
+}
+
+/**
+ * Un hipercubo aparte, una dimensión por rumbo supuesto; null si no hay. Una escena sin rumbos
+ * supuestos conserva sus sorteos.
+ */
+export function headingSampler(spec: Json, samples: number): LatinHypercube | null {
+  const vids = assumedHeadingVehicles(spec);
+  if (!vids.length || samples <= 0) return null;
+  return new LatinHypercube(
+    samples,
+    vids.length,
+    new PyRandom(headingSeed(Number((spec.meta as Json).semilla))),
+  );
+}
+
+/** Sortea cada rumbo supuesto en ±ANGLE_BOUND_DEG alrededor del de la escena (en sitio). */
+export function sampleAssumedHeadings(spec: Json, draws: Draws): void {
+  for (const vid of assumedHeadingVehicles(spec)) {
+    const v = (spec.vehiculos as Json[]).find((x) => x.id === vid)!;
+    const h0 = Number((v.posicion_inicial as Json).rumbo_deg);
+    setHeading(spec, vid, h0 + draws.uniform(-ANGLE_BOUND_DEG, ANGLE_BOUND_DEG));
+  }
+}
+
+/**
+ * Los rumbos iniciales que la evidencia no fija (ADR 0135): (a) Laplace, σ local mayor que
+ * `IDENT_MAX.rumbo`, o (b) perfil: moverlo `IDENT_MAX.rumbo` hacia algún lado (sin salir de los
+ * límites) y reajustar lo demás sube el costo menos de `MODE_MARGIN` (un Δχ² de 1).
+ */
+export function unfixedHeadings(
+  spec: Json,
+  ev: Evidence,
+  params: Param[],
+  inv: Inversion,
+  dt = 0.1,
+): Estimate[] {
+  if (ev.empty()) return [];
+  const out: Estimate[] = [];
+  for (const e of inv.estimates) {
+    const p = e.param;
+    if (p.kind !== "rumbo") continue;
+    if (!e.identifiable || e.best === null) {
+      out.push(e);
+      continue;
+    }
+    const free = new Set(params.map((q) => q.name).filter((n) => n !== p.name));
+    for (const side of [-1.0, 1.0]) {
+      const target = Math.min(Math.max(e.best + side * IDENT_MAX.rumbo!, p.lo), p.hi);
+      const start = new Map(inv.best.values);
+      start.set(p.name, target);
+      const f = fitEvidence(spec, ev, { dt, start, free });
+      if (f.cost - inv.best.cost < MODE_MARGIN) {
+        out.push(e);
+        break;
+      }
+    }
+  }
+  return out;
 }
 
 function wrapDeg(a: number): number {
@@ -1412,6 +1539,23 @@ export function invert(
   const bestCost = modes[0]!.fit.cost;
   const est = (m: Mode) => estimate(spec, ev, params, m.fit, { seed, samples, dt, assumedAsData });
   const out = est(modes[0]!);
+  // Un rumbo inicial que la evidencia no fija vuelve al del perito, como supuesto, y se rehace la
+  // búsqueda sin él (ADR 0135).
+  const loose = unfixedHeadings(spec, ev, params, out, dt);
+  if (loose.length) {
+    const again = invert(
+      assumeHeadings(
+        spec,
+        loose.map((e) => e.param.vehicle),
+      ),
+      opts,
+    );
+    for (const e of loose)
+      again.estimates.push(new Estimate(e.param, e.sigmaLocal, false, null, null));
+    const orden = params.map((p) => p.name);
+    again.estimates.sort((a, b) => orden.indexOf(a.param.name) - orden.indexOf(b.param.name));
+    return again;
+  }
   out.modes = modes;
   out.alternatives = modes
     .slice(1)
@@ -1469,6 +1613,8 @@ function estimate(
   // Los dos supuestos del tope (C3, W5), con su propio hipercubo y la semilla del caso: una escena
   // sin topes conserva sus sorteos.
   const topes = bumpSampler(spec, nSamples, Number((spec.meta as Json).semilla));
+  // Y los rumbos que la evidencia no fija, en el suyo (ADR 0135).
+  const rumbos = headingSampler(spec, nSamples);
   const xBest = freeParams.map((p) => best.values.get(p.name)!);
   const fixed = new Map([...best.values].filter(([n]) => !free.has(n)));
   let jBest: number[][] = [];
@@ -1480,6 +1626,7 @@ function estimate(
   for (let i = 0; i < nSamples; i++) {
     const pert = perturbed(spec, ev, lhs.sample(i));
     if (topes !== null) sampleBumpAssumptions(pert.spec, topes.sample(i));
+    if (rumbos !== null) sampleAssumedHeadings(pert.spec, rumbos.sample(i));
     const { spec: s, evidence: e, downedMu } = pert;
     const prob = new Problem(withMarks(s, e), e, freeParams, fixed, dt, downedMu);
     prob.names.push(...[...best.residuals.keys()].sort());

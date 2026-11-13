@@ -15,6 +15,8 @@ const LOCAL_WINDOW_M = 10.0;
 const REFINE_ITERATIONS = 50;
 const ALTERNATING_ITERATIONS = 12;
 const LM_ITERATIONS = 100;
+/** Pasos de la bisección hacia el punto declarado (ADR 0135). */
+const TOUCH_BISECTIONS = 40;
 
 // Posición a lo largo de la cara como fracción de su longitud (positivo = izquierda o adelante).
 const ALONG_FRONT_BACK: Readonly<Record<string, number>> = {
@@ -33,6 +35,19 @@ const ALONG_SIDE: Readonly<Record<string, number>> = {
   Z: -1 / 6,
   D: 0.0,
 };
+
+/**
+ * La mitad del ancho de la zona de impacto: un tercio de su cara (SAE J224), así que un sexto del
+ * ancho en el frente o la parte trasera y un sexto del largo en un costado (ADR 0135).
+ */
+export function contactTolerance(
+  cdc: Record<string, unknown> | null | undefined,
+  length: number,
+  width: number,
+): number {
+  const lado = str(cdc?.lado, "F");
+  return (lado === "L" || lado === "R" ? length : width) / 6.0;
+}
 
 /**
  * Punto de contacto en el marco del vehículo para una zona CDC. `standoff` aleja el punto de la
@@ -143,8 +158,16 @@ export interface ContactSolution {
   gap: number;
 }
 
-/** Punto de impacto común para uno o más lugares geométricos (proyecciones alternadas). */
-export function resolveContact(loci: readonly Locus[], declared: Vec): ContactSolution {
+/**
+ * Punto de impacto común para uno o más lugares geométricos (proyecciones alternadas).
+ * `tolerance` (dos vehículos): a qué distancia entre sus puntos de contacto las zonas ya se tocan;
+ * con ella, el contacto es el más cercano al punto declarado entre los que se tocan (ADR 0135).
+ */
+export function resolveContact(
+  loci: readonly Locus[],
+  declared: Vec,
+  tolerance = 0.0,
+): ContactSolution {
   if (loci.length === 0) throw new Error("Se necesita al menos un cuerpo");
   let p = declared;
   const params = loci.map(() => 0.0);
@@ -158,7 +181,12 @@ export function resolveContact(loci: readonly Locus[], declared: Vec): ContactSo
     });
   }
   if (loci.length === 2) {
-    const [sa, sb] = refinePair(loci[0]!, loci[1]!, params[0]!, params[1]!);
+    const sa0 = params[0]!;
+    const sb0 = params[1]!;
+    let [sa, sb] = refinePair(loci[0]!, loci[1]!, params[0]!, params[1]!);
+    if (tolerance > 0.0) {
+      [sa, sb] = towardDeclared(loci[0]!, loci[1]!, [sa, sb], [sa0, sb0], tolerance);
+    }
     params[0] = sa;
     params[1] = sb;
     points = [loci[0]!.point(sa), loci[1]!.point(sb)];
@@ -168,6 +196,39 @@ export function resolveContact(loci: readonly Locus[], declared: Vec): ContactSo
   const p0 = points[0]!;
   const gap = Math.max(...points.map((q) => dmath.hypot(q[0] - p0[0], q[1] - p0[1])));
   return { point: [cx, cy], params, gap };
+}
+
+function pairGap(la: Locus, lb: Locus, sa: number, sb: number): number {
+  const pa = la.point(sa);
+  const pb = lb.point(sb);
+  return dmath.hypot(pa[0] - pb[0], pa[1] - pb[1]);
+}
+
+/**
+ * Del contacto refinado hacia la proyección del punto declarado, lo más lejos que las zonas sigan
+ * tocándose (distancia entre sus puntos ≤ `tolerance`). Si el refinado no toca, se queda.
+ */
+function towardDeclared(
+  la: Locus,
+  lb: Locus,
+  refined: [number, number],
+  near: [number, number],
+  tolerance: number,
+): [number, number] {
+  const [sa1, sb1] = refined;
+  const [sa0, sb0] = near;
+  if (pairGap(la, lb, sa1, sb1) > tolerance) return refined;
+  if (pairGap(la, lb, sa0, sb0) <= tolerance) return near;
+  let lo = 0.0;
+  let hi = 1.0;
+  for (let i = 0; i < TOUCH_BISECTIONS; i++) {
+    const mid = (lo + hi) / 2.0;
+    const sa = sa1 + (sa0 - sa1) * mid;
+    const sb = sb1 + (sb0 - sb1) * mid;
+    if (pairGap(la, lb, sa, sb) <= tolerance) lo = mid;
+    else hi = mid;
+  }
+  return [sa1 + (sa0 - sa1) * lo, sb1 + (sb0 - sb1) * lo];
 }
 
 function derivative(locus: Locus, s: number): Vec {
