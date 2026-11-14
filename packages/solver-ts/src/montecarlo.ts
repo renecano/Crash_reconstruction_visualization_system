@@ -226,7 +226,16 @@ function setPath(spec: Json, ruta: string, value: number): void {
 /** Percentiles de las salidas principales del solver sobre `samples` muestras con semilla. */
 export function monteCarlo(
   spec: Json,
-  opts: { samples?: number; seed?: number | null; dt?: number } = {},
+  opts: {
+    samples?: number;
+    seed?: number | null;
+    dt?: number;
+    /**
+     * Cada muestra válida, como salió (para dibujarlas: la nube del material promocional, U6). No
+     * cambia nada del cálculo; la referencia Python no lo tiene porque no lo necesita.
+     */
+    alMuestra?: (i: number, r: Reconstruction) => void;
+  } = {},
 ): Uncertainty {
   const samples = opts.samples ?? DEFAULT_SAMPLES;
   const dt = opts.dt ?? SAMPLE_DT;
@@ -263,6 +272,7 @@ export function monteCarlo(
       continue;
     }
     valid += 1;
+    opts.alMuestra?.(i, r);
     for (const v of r.vehiculos) {
       push(accV, v.id, "v_impacto_kmh", v.vImpactKmh);
       push(accV, v.id, "delta_v_kmh", v.deltaVKmh);

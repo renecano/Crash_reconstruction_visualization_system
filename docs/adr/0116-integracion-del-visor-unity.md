@@ -35,6 +35,8 @@
   - **En reposo** un ocupante puede quedar unos centímetros más adentro que su asiento si sus hombros tocarían el vidrio: 6.8 cm para un conductor de 1.70 m en el hatchback de la prueba del núcleo; en `lateral_interseccion`, la copiloto va a 0.305 m del eje en vez de 0.367 (medido en el visor).
 - **Pruebas en el núcleo** (`dotnet test`, CI): en los 23 paquetes caso-3d versionados, cada ocupante, cada variante y cada instante (cada 0.01 s, de 0.5 s antes a 0.5 s después de sus muestras), cada centímetro de altura de su cuerpo queda dentro de la cabina a esa altura; en las 11 clases con medidas de ejemplo, con estaturas de 1.5, 1.7 y 1.9 m, en cada asiento y con desplazamientos de hasta ±2 m, lo mismo.
 
+**Modo foto para el material promocional (René, 2026-11-13).** El programa de escritorio, solo con `-fotos <tomas.json>`, dibuja una lista de tomas a la resolución pedida (`Fotos.cs`), con la leyenda ilustrativa y sin el resto de la interfaz. Las capas de ingeniería (`CapasIngenieria.cs`) se dibujan solo con datos del Resultado; donde el Resultado no trae algo, se dice en la foto de dónde sale (el centro de masa es el supuesto del solver; el impulso es m·ΔV en la dirección del PDOF, no una fuerza máxima, que el solver no calcula). La nube de incertidumbre usa las muestras del mismo Monte Carlo, que se pueden mirar con el gancho opcional `alMuestra` de `monteCarlo` sin cambiar su resultado. No toca el visor del perito ni sus números.
+
 ## Consecuencias
 
 - Abrir un caso baja el build de Unity (unos 70 MB, en la caché del navegador después de la primera vez) aunque el perito no abra el 3D: así el 3D está listo al abrirlo, como ya pasaba con los modelos del visor three.js.

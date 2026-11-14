@@ -586,6 +586,17 @@ En `lateral_interseccion`, de día y de noche, la copiloto del hatchback rojo sa
 - **De paso:** el cargador de modelos usa el mismo mapa clase → modelo que la cabina (`Cabina.ModeloDeClase`).
 - **Pendiente** (en «Endurecimiento pendiente»): los peatones que caminan siguen con los brazos en la pose A, abiertos; el arreglo de los brazos solo se aplica sentado, que es lo que se pidió.
 
+### Material promocional (René, 2026-11-13)
+
+Solo para publicidad: no cambia ningún número ni el flujo del perito, y las imágenes no entran al repo.
+
+- **Modo foto del visor de escritorio** (`Fotos.cs`, ADR 0116): `VisorCroquis.exe -fotos tomas.json -salida fotos -ancho 3840 -alto 2160 -calidad ultra`. Cada toma abre su paquete, fija el instante y la cámara y se dibuja aparte a la resolución pedida, sin minimapa, panel ni desenfoque, con la leyenda ilustrativa pequeña en una esquina. Sin `-fotos`, el visor es el de siempre.
+- **Tomas de ingeniería** (`CapasIngenieria.cs`), todas con datos del Resultado y cada una también «-limpia» con la misma cámara: rayos X (carrocería translúcida, `perfil_m` como mapa de calor con `CampoDano` y la flecha del impulso m·ΔV en la dirección del PDOF), estroboscópica (cada 0.1 s, color por rapidez), nube de incertidumbre, terreno en alambre con la pendiente en color, ficha técnica (largo, ancho, alto, entre ejes; el centro de masa en el centro de la huella y a 0.37 del alto, el supuesto del solver) y el cono de visibilidad del análisis.
+- **La nube** son las poses finales de cada muestra del mismo Monte Carlo del Resultado: `monteCarlo` gana un gancho opcional `alMuestra` que no cambia nada (prueba `montecarlo-muestras.test.ts`), y `tools/unity/paquetes-promo.mts` comprueba que sus medianas sean las del Resultado (lateral 64, carambola 64 y AXA 128 muestras: iguales).
+- **Paquetes y tomas:** `tools/unity/paquetes-promo.mts` (incluye la hora dorada, con la iluminación «atardecer»: sol a 8.55°, y AXA con el relieve real de `/api/relieve`, casi plano: pendiente < 1 %). El paquete para la RTX: `tools/unity/paquete-fotos-promo.ps1` → release `fotos-promo`, con `generar-fotos.ps1`.
+- **Prueba en la laptop:** las 15 tomas (24 PNG con las limpias) en 60 s a 1280×720 en alta, sin errores (Intel UHD).
+- **El recorrido de la app** (parte B): `apps/web/e2e/promo-recorrido.spec.ts` con `playwright.promo.config.ts`, contra producción con el Unity real, 2560×1440 con dpr 2, de día y de noche: 54 PNG en `D:\Croquis-promo\recorrido` (lista en su `LEEME.md`).
+
 ### Resumen para René (U6)
 
 - **Qué quedó:** el visor 3D de `/cesvi` es Unity (Reconstrucción, Números y detrás de Presentar), con respaldo three.js; editar en 3D (mover, girar y alargar objetos; marcar el primer golpe, choques y puntos de paso) recalcula el caso; las fotos del dictamen salen de Unity; «Descargar paquete 3D» y el visor de escritorio que lo abre.

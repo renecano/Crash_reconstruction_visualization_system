@@ -45,7 +45,8 @@ namespace Croquis.Visor
 
         private async void Start()
         {
-            if (Application.isEditor || Application.platform == RuntimePlatform.WebGLPlayer || Medicion.Pedida)
+            if (Application.isEditor || Application.platform == RuntimePlatform.WebGLPlayer || Medicion.Pedida
+                || Fotos.Pedidas)
             {
                 enabled = false;
                 return;
