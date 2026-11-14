@@ -7,7 +7,7 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 - **Desde el 2026-11-09, el Claude Code de René lleva también este frente,** porque aquí no se había subido nada. Si eres el Claude Code del compañero: antes de empezar una fase, revisa la tabla de abajo y `git fetch`; si la fase ya está tomada, sigue con la siguiente y anótala aquí.
 - **Hechas:** W1 (#187), W2 (#188), W3 (#192), W4 (#195, con su contrato #194), W4b (#196), W5 (#199, #200), W6 (#201) y W7 (#206), en `main`.
 - **Fase actual:** W8 (T3.2, T3.3 y T3.5), en Opus por pedido de René (2026-11-12), con cuidado extra.
-- **Siguiente paso:** T3.2 con el criterio v2, medido y **detenido otra vez**: AXA pasa a dos hipótesis, tres referencias tienen peor costo porque el choque ya no se corre del punto del relato, y el resultado completo tarda 12.96 s. Espera la decisión de René (ver «T3.2 · Criterio v2, nueva medición y segundo alto»).
+- **Siguiente paso:** T3.2 cerrada con las decisiones de René (#215). Sigue T3.3 (reversa), **después de que René cambie el modelo** («Listo para T3.3: cambia el modelo»), y con la misma regla: detenerse y enseñarle el antes y el después antes de fusionar.
 
 ## Fases tomadas
 
@@ -21,7 +21,7 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 | W5 · Terreno (C3 y O4)                                       | Claude Code de René | `feat/w5-terreno`, `feat/w5-terreno-web` | En `main` (#199, #200) |
 | W6 · Encuadre en 2D (O3)                                     | Claude Code de René | `feat/w6-encuadre`                       | En `main` (#201)       |
 | W7 · Endurecimiento (T6.2, T6.3, T6.4)                       | Claude Code de René | `feat/w7-endurecimiento`                 | En `main` (#206)       |
-| W8 · Números defendibles (T3.2, T3.3, T3.5)                  | Claude Code de René | `feat/w8-numeros`                        | Diagnóstico de T3.2    |
+| W8 · Números defendibles (T3.2, T3.3, T3.5)                  | Claude Code de René | `feat/w8-numeros`                        | T3.2 en `main` (#215)  |
 
 ## W8 · Números defendibles (T3.2, T3.3, T3.5) (desde 2026-11-12)
 
@@ -207,15 +207,25 @@ Con el solver de `main`, 0.05° en el rumbo de V1 bastaban para que el contacto 
 - **AXA, como la app:** V2 de 71.56 (68.02–92.81) a **56.87 (54.79–78.39)**: −6.28 km/h, −9.94 % contra 63.15, que queda dentro del rango. V1 de 25.32 a 14.98. Alternativa con el reposo supuesto: V2 a 34.44 (30.07–44.44). En las 20 semillas da lo mismo.
 - **Escenas de referencia:** cambian 6 de 25:
   - AXA y sus dos variantes;
-  - `frontal_curva` y `nocturno_lluvia`, donde solo cambia el contacto (más cerca del punto del relato y sin la bandera falsa);
+  - `frontal_curva` y `nocturno_lluvia`, donde solo cambia el contacto (más cerca del punto del relato y sin la bandera falsa). Con el contacto a lo largo de las caras (la corrección del ADR 0135, decisión 1), las velocidades de impacto no cambian y:
+    - `frontal_curva`: el choque queda a 7.0 m del punto del relato (antes 10.2 m); ΔV de A 58.12 → 44.08 km/h y de B 35.66 → 27.05 km/h.
+    - `nocturno_lluvia`: a 10.5 m (antes 13.0 m; con la primera tolerancia, que dejaba el frente de A a 1.28 m a través del costado de B, eran 3.1 m); ΔV de A 22.34 → 22.09 y de B 10.40 → 10.28 km/h.
+    - En las dos, el choque queda a más de 2 m del punto del relato, así que el perito ve el aviso.
   - `motociclista`, en una centésima del p10 de un rumbo que sigue en el límite, ahora con aviso.
 - **Toluca, lateral y glorieta ya no empeoran:** dan lo mismo que en `main`. Su choque queda a 5.27, 5.37 y 2.61 m del punto del relato, y ahora se avisa.
 - **E-R4 (prueba, 205), las 205 narraciones de CESVI y las 33 carambolas:** sin cambio.
-- **Paridad E7:** 89 549 números, diferencia 0. Pruebas TS: 229 de 229 en el solver; en `packages/cesvi`, todas. Una prueba sube su tope de 20 a 60 s, porque la inversión ahora hace más trabajo: 19 s en la laptop.
+- **Paridad E7:** 89 710 números, diferencia 0 (`eval/results/e7_parity.json`). Pruebas TS: 229 de 229 en el solver; en `packages/cesvi`, todas. Una prueba sube su tope de 20 a 60 s, porque la inversión ahora hace más trabajo: 19 s en la laptop.
 - **Robustez** (Δχ² = 2.71 contra 1): no cambia ninguna escena.
 - **Tiempo en el navegador:** igual que el worker de producción en las mismas condiciones (`eval/results/w8/tiempo_navegador_rondas.json`; mediana 12.15 s el de producción contra 12.91 s el nuevo en tres rondas alternadas). Ese día la laptop iba al doble de lento: el de producción daba 5.51 s en la mañana. El resultado completo llega sin números distintos: salida idéntica byte por byte en tres escenas.
 
 **La cifra de AXA, en todas partes a la vez:** `eval/results/axa_rango_estable.json` (que leen las pruebas de la app y la e2e), las pruebas con la cifra de ejemplo, los comentarios, la escena de demostración, los paquetes caso-3d y la línea de estado de `PLAN-CESVI.md` y `PROGRESS.md`. La alternativa sale en Reconstrucción (con la marca «supuesto»), Contra CESVI (nota de la lectura física), Presentar (fila «Alternativa con el reposo supuesto (supuesto)») y el dictamen (tabla de hipótesis y nota de Contra CESVI).
+
+**En CI (2026-11-14):**
+
+- La tarea de Python pasó del límite de 10 minutos (la corrida 43552472991 se canceló en el 98 %; en `main` ya tardaba 8 min 48 s). Las pruebas más lentas en la laptop: las preguntas de extracción (281 s), la incertidumbre de los puntos de paso (233 s), el reposo inalcanzable (205 s) y los resultados versionados de glorieta y de las variantes de AXA (158–177 s). Ninguna se quitó: el PR `chore:` #216 reparte las 952 pruebas en dos tareas en paralelo (163 + 789).
+- La e2e de la carambola esperaba que sin la hipótesis del conductor el primer contacto fuera V1 con V2. Con el solver final da V1 con V3 en −0.47 s, igual que en `main`, así que el aviso de «línea base distinta» (ADR 0088) sale como antes y la prueba vuelve a la versión de `main`.
+
+**Tiempo en el navegador, sin cumplir la meta de ≤ 10 s:** en tres rondas alternadas con el worker de producción, el nuevo tardó lo mismo (12.91 contra 12.15 s de mediana), con la laptop al doble de lento que en la mañana. Los recortes de la decisión 9 dejan cada número igual (paridad 0), pero no muestran ≤ 10 s en esa medición. Pendiente en «Endurecimiento pendiente»: volver a medir con la laptop en estado normal (`tools/unity/medir-tiempo-solver.ps1`).
 
 **Siguiente:** T3.3 (reversa). Antes, René cambia el modelo: «Listo para T3.3: cambia el modelo».
 

@@ -2555,9 +2555,12 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
   - si ninguna muestra se aparta de la solución, el rango es el lineal (`rango_por: "laplace"`);
   - rangos de ancho cero: de 5 a 0. Mejor fuera de su rango: de 3 a 2, los dos pegados al borde en `axa_alcance` (rango de un solo lado);
   - E-R4 idéntico; AXA sin cambios.
-- **El rumbo inicial de V2 en AXA** queda en el límite de búsqueda (+20° sobre el que colocó el perito). Revisar si ese límite es el correcto o si la posición inicial supuesta de V2 está mal orientada.
+- **El rumbo inicial de V2 en AXA** quedaba en el límite de búsqueda (+20° sobre el que colocó el perito).
+  - **Hecho (W8, T3.2, ADR 0135):** cuando la evidencia no fija el rumbo, se usa el del perito como supuesto declarado y su incertidumbre entra al Monte Carlo; si el mejor rumbo queda en el límite, el perito ve un aviso.
+  - **Falta:** el tiempo del resultado completo en el navegador no mostró ≤ 10 s (12.91 s contra 12.15 s del worker de producción, con la laptop al doble de lento ese día). Volver a medir con la laptop en estado normal (`tools/unity/medir-tiempo-solver.ps1`) y, si no llega, buscar más recortes sin cambiar números.
 - **Las hipótesis por modo** (otro mínimo dentro del margen de costo) solo las ejercita la prueba unitaria: ninguna escena versionada ni AXA tiene hoy un segundo modo dentro del margen.
-- **Python en CI tarda 8 min** con el multiarranque y `pytest -n auto` (el límite es 10). Si crece, hay que acelerar la referencia Python o repartir más los resultados versionados.
+- **Python en CI tardaba 8 min** con el multiarranque y `pytest -n auto` (el límite es 10); con W8 pasó del límite.
+  - **Hecho (2026-11-14, #216):** las 952 pruebas van en dos tareas en paralelo. Si una de las dos vuelve a acercarse a 10 min, acelerar la referencia Python (las preguntas de extracción y los resultados versionados de AXA son lo más lento).
 - **Las relecturas de R12b no están grabadas** (ADR 0093): en E-R4 el Verificador de citas pidió releer en 2 narraciones, pero sin respuesta grabada no se puede medir si la relectura mejora algo. Grabarlas (con la API) y medir.
 - **El arrastre después del impacto es una fracción fija** (0.35 de la fricción): su incertidumbre solo entra por μ. Muestrearla en su rango cuando haya una fuente para él (ADR 0091).
 - **La línea base de los conductores no siempre es la reconstrucción** (ADR 0088): en una carambola colocada a mano, los agentes sin hipótesis encontraron a V2 con V3 en −0.40 s, antes del primer impacto reconstruido (V1 con V2 en 0 s).
