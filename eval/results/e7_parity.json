@@ -1,7 +1,7 @@
 {
   "name": "e7_parity",
-  "generated_at": "2026-10-17T23:20:32+00:00",
-  "git_commit": "c2e94ea",
+  "generated_at": "2026-11-14T02:47:41+00:00",
+  "git_commit": "5d38cc67",
   "seed": null,
   "descripcion": "E7: paridad del solver TS (packages/solver-ts) con la referencia Python en las escenas canónicas. Se comparan todos los números del resultado completo (trayectorias, impactos, daño, personas, ocupantes, visibilidad, eventos, parámetros, Monte Carlo, inversión y consistencia) y los textos.",
   "tolerancia": {
@@ -16,115 +16,19 @@
     "absoluta": 0.011,
     "motivo": "gauss usa cos, sin y log, que pueden diferir en el último bit entre V8 y CPython; el optimizador lo amplifica hasta el último decimal reportado (ADR 0027)"
   },
-  "numeros_comparados": 68557,
-  "max_abs": 0.000041000000237545464,
-  "max_rel_valores_mayores_a_una_milesima": 0.00003177225646568596,
+  "numeros_comparados": 89710,
+  "max_abs": 0,
+  "max_rel_valores_mayores_a_una_milesima": 0,
   "diferencias_de_estructura_o_texto": 0,
   "bloques_de_ajuste": {
-    "numeros_comparados": 217,
-    "max_abs": 0.010000000000019327,
-    "peor_ruta": "motociclista/inversion/parametros/2/estimacion/p50"
+    "numeros_comparados": 515,
+    "max_abs": 0,
+    "peor_ruta": ""
   },
   "escenas": [
     {
       "escena": "alcance",
       "numeros": 6498,
-      "max_abs": 0,
-      "max_rel": 0,
-      "peor_ruta": "",
-      "estructura": [],
-      "ajuste": {
-        "numeros": 3,
-        "max_abs": 0,
-        "max_rel": 0,
-        "peor_ruta": "",
-        "estructura": []
-      },
-      "ms_ts": 268.5
-    },
-    {
-      "escena": "lateral_interseccion",
-      "numeros": 7317,
-      "max_abs": 0,
-      "max_rel": 0,
-      "peor_ruta": "",
-      "estructura": [],
-      "ajuste": {
-        "numeros": 44,
-        "max_abs": 0,
-        "max_rel": 0,
-        "peor_ruta": "",
-        "estructura": []
-      },
-      "ms_ts": 1738.3
-    },
-    {
-      "escena": "frontal_curva",
-      "numeros": 5374,
-      "max_abs": 0.000041000000237545464,
-      "max_rel": 0.00003177225646568596,
-      "peor_ruta": "/eventos/2/detalle/impulso_ns/1",
-      "estructura": [],
-      "ajuste": {
-        "numeros": 4,
-        "max_abs": 0,
-        "max_rel": 0,
-        "peor_ruta": "",
-        "estructura": []
-      },
-      "ms_ts": 774.2
-    },
-    {
-      "escena": "peaton_cruce",
-      "numeros": 4222,
-      "max_abs": 0,
-      "max_rel": 0,
-      "peor_ruta": "",
-      "estructura": [],
-      "ajuste": {
-        "numeros": 18,
-        "max_abs": 0,
-        "max_rel": 0,
-        "peor_ruta": "",
-        "estructura": []
-      },
-      "ms_ts": 258.4
-    },
-    {
-      "escena": "motociclista",
-      "numeros": 7784,
-      "max_abs": 0,
-      "max_rel": 0,
-      "peor_ruta": "",
-      "estructura": [],
-      "ajuste": {
-        "numeros": 42,
-        "max_abs": 0.010000000000019327,
-        "max_rel": 0.008771929824561412,
-        "peor_ruta": "/inversion/parametros/2/estimacion/p50",
-        "estructura": []
-      },
-      "ms_ts": 931.2
-    },
-    {
-      "escena": "objeto_fijo_arbol",
-      "numeros": 2627,
-      "max_abs": 0,
-      "max_rel": 0,
-      "peor_ruta": "",
-      "estructura": [],
-      "ajuste": {
-        "numeros": 9,
-        "max_abs": 0,
-        "max_rel": 0,
-        "peor_ruta": "",
-        "estructura": []
-      },
-      "ms_ts": 363.2
-    },
-    {
-      "escena": "poste",
-      "numeros": 2292,
       "max_abs": 0,
       "max_rel": 0,
       "peor_ruta": "",
@@ -136,55 +40,151 @@
         "peor_ruta": "",
         "estructura": []
       },
-      "ms_ts": 355.6
+      "ms_ts": 793.7
     },
     {
-      "escena": "volcadura",
-      "numeros": 9337,
-      "max_abs": 0.000014000004739500582,
-      "max_rel": 0.000021984786527744804,
-      "peor_ruta": "/eventos/0/detalle/energia_disipada_j",
-      "estructura": [],
-      "ajuste": {
-        "numeros": 30,
-        "max_abs": 0,
-        "max_rel": 0,
-        "peor_ruta": "",
-        "estructura": []
-      },
-      "ms_ts": 1609.7
-    },
-    {
-      "escena": "nocturno_lluvia",
-      "numeros": 9697,
+      "escena": "lateral_interseccion",
+      "numeros": 7317,
       "max_abs": 0,
       "max_rel": 0,
       "peor_ruta": "",
       "estructura": [],
       "ajuste": {
-        "numeros": 4,
+        "numeros": 86,
         "max_abs": 0,
         "max_rel": 0,
         "peor_ruta": "",
         "estructura": []
       },
-      "ms_ts": 367.6
+      "ms_ts": 7768.9
+    },
+    {
+      "escena": "frontal_curva",
+      "numeros": 5747,
+      "max_abs": 0,
+      "max_rel": 0,
+      "peor_ruta": "",
+      "estructura": [],
+      "ajuste": {
+        "numeros": 9,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 1941.6
+    },
+    {
+      "escena": "peaton_cruce",
+      "numeros": 4222,
+      "max_abs": 0,
+      "max_rel": 0,
+      "peor_ruta": "",
+      "estructura": [],
+      "ajuste": {
+        "numeros": 34,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 929.3
+    },
+    {
+      "escena": "motociclista",
+      "numeros": 7784,
+      "max_abs": 0,
+      "max_rel": 0,
+      "peor_ruta": "",
+      "estructura": [],
+      "ajuste": {
+        "numeros": 94,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 8085
+    },
+    {
+      "escena": "objeto_fijo_arbol",
+      "numeros": 2627,
+      "max_abs": 0,
+      "max_rel": 0,
+      "peor_ruta": "",
+      "estructura": [],
+      "ajuste": {
+        "numeros": 16,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 3060.6
+    },
+    {
+      "escena": "poste",
+      "numeros": 2292,
+      "max_abs": 0,
+      "max_rel": 0,
+      "peor_ruta": "",
+      "estructura": [],
+      "ajuste": {
+        "numeros": 16,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 1566.7
+    },
+    {
+      "escena": "volcadura",
+      "numeros": 9337,
+      "max_abs": 0,
+      "max_rel": 0,
+      "peor_ruta": "",
+      "estructura": [],
+      "ajuste": {
+        "numeros": 70,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 6275.9
+    },
+    {
+      "escena": "nocturno_lluvia",
+      "numeros": 7352,
+      "max_abs": 0,
+      "max_rel": 0,
+      "peor_ruta": "",
+      "estructura": [],
+      "ajuste": {
+        "numeros": 9,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 705.2
     },
     {
       "escena": "glorieta",
       "numeros": 7151,
-      "max_abs": 0.0000010000003385357559,
-      "max_rel": 0.00000135211328549839,
-      "peor_ruta": "/eventos/0/detalle/energia_disipada_j",
+      "max_abs": 0,
+      "max_rel": 0,
+      "peor_ruta": "",
       "estructura": [],
       "ajuste": {
-        "numeros": 12,
+        "numeros": 65,
         "max_abs": 0,
         "max_rel": 0,
         "peor_ruta": "",
         "estructura": []
       },
-      "ms_ts": 1032.2
+      "ms_ts": 11929.7
     },
     {
       "escena": "interseccion_toluca",
@@ -194,13 +194,61 @@
       "peor_ruta": "",
       "estructura": [],
       "ajuste": {
-        "numeros": 43,
+        "numeros": 85,
         "max_abs": 0,
         "max_rel": 0,
         "peor_ruta": "",
         "estructura": []
       },
-      "ms_ts": 1878.7
+      "ms_ts": 8198.9
+    },
+    {
+      "escena": "carambola",
+      "numeros": 8158,
+      "max_abs": 0,
+      "max_rel": 0,
+      "peor_ruta": "",
+      "estructura": [],
+      "ajuste": {
+        "numeros": 8,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 648.8
+    },
+    {
+      "escena": "reversa",
+      "numeros": 5123,
+      "max_abs": 0,
+      "max_rel": 0,
+      "peor_ruta": "",
+      "estructura": [],
+      "ajuste": {
+        "numeros": 7,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 279.4
+    },
+    {
+      "escena": "terraceria_topes",
+      "numeros": 9844,
+      "max_abs": 0,
+      "max_rel": 0,
+      "peor_ruta": "",
+      "estructura": [],
+      "ajuste": {
+        "numeros": 8,
+        "max_abs": 0,
+        "max_rel": 0,
+        "peor_ruta": "",
+        "estructura": []
+      },
+      "ms_ts": 814
     }
   ]
 }

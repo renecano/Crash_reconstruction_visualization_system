@@ -3,7 +3,7 @@
  * datos y el instante de la maqueta en cada momento. Todo sale de la reconstrucción y de la
  * comparación con el reporte: si algo no se sabe, el capítulo lo dice.
  */
-import type { Reconstruccion } from "@croquis/cesvi";
+import { alternativaSupuesta, type Reconstruccion } from "@croquis/cesvi";
 import {
   conLetra,
   conSigno,
@@ -113,6 +113,13 @@ export function capitulos({
     filasImpacto.push({
       etiqueta: "Velocidad antes del impacto",
       valor: "la evidencia no la fija",
+    });
+  // La otra hipótesis, con el reposo supuesto como dato, marcada como supuesto (ADR 0135).
+  const alternativa = alternativaSupuesta(r, (id) => nombreDe(id));
+  if (alternativa)
+    filasImpacto.push({
+      etiqueta: "Alternativa con el reposo supuesto (supuesto)",
+      valor: alternativa.corto,
     });
   const impacto: Capitulo = {
     clave: "impacto",

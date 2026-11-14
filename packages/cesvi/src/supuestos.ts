@@ -99,13 +99,20 @@ export function supuestosDeclarados(
       { procedencia?: { fuente?: string; nota?: string } } | undefined;
     const id = r.ids[String(sv.id)];
     if (!id || pi?.procedencia?.fuente !== "supuesto") continue;
+    // El rumbo que la evidencia no fija se queda en el del mapa y entra al rango (ADR 0135).
+    const rumbo = (
+      (r.resultado?.inversion as { parametros?: Json[] } | undefined)?.parametros ?? []
+    ).find((p) => p.parametro === "rumbo_inicial" && p.vehiculo === sv.id);
+    const rumboSupuesto = rumbo !== undefined && rumbo.identificable === false;
     out.push({
       clave: `inicio-${id}`,
       que: `Posición inicial de ${id}`,
       valor: pi.procedencia.nota?.replace(/\.$/, "") ?? "supuesta por Croquis",
       vehiculo: id,
       justificacion: "El reporte no la da: es el punto de partida de la reconstrucción.",
-      incertidumbre: `La inversión ajusta su velocidad y su rumbo de llegada (±${ANGLE_BOUND_DEG}°).`,
+      incertidumbre: rumboSupuesto
+        ? `La evidencia no fija su rumbo de llegada: se usa el que se colocó en el mapa (${Number(rumbo.inicial).toFixed(1)}°) y en el rango se sortea ±${ANGLE_BOUND_DEG}° alrededor de él. La inversión ajusta su velocidad.`
+        : `La inversión ajusta su velocidad y su rumbo de llegada (±${ANGLE_BOUND_DEG}°).`,
     });
   }
   const parametros = (r.resultado?.parametros ?? {}) as Record<

@@ -14,7 +14,44 @@
  * eventos posteriores (`segundo_impacto`); el solver los resuelve cuando el par se toca.
  */
 import { buildSpec, fact, emptyFacts, type Fact } from "@croquis/extraction";
-import { fullResult, PRIORIDAD, reconstruct } from "@croquis/solver-ts";
+import {
+  ANGLE_BOUND_DEG,
+  applyValues,
+  fullResult,
+  PRIORIDAD,
+  reconstruct,
+  SIGMA_POSITION_M,
+} from "@croquis/solver-ts";
+
+/**
+ * A partir de qué distancia se le dice al perito que el choque del mejor ajuste quedó lejos del punto
+ * que da el relato (ADR 0135, decisión 2): el doble de la σ de una posición medida.
+ */
+export const CHOQUE_LEJOS_DEL_RELATO_M = 2 * SIGMA_POSITION_M;
+
+/**
+ * Dónde quedó el choque en el mejor ajuste, si el punto del evento viene del relato (una estimación,
+ * no lo que marcó el perito) y quedó a más de `CHOQUE_LEJOS_DEL_RELATO_M`: la distancia en metros.
+ * null si el punto no viene del relato, si no hay ajuste o si quedó cerca.
+ */
+export function choqueLejosDelRelato(spec: Json, inv: Inversion): number | null {
+  const ev = ((spec.eventos ?? []) as Json[])
+    .filter((e) => String(e.tipo).startsWith("impacto"))
+    .sort((a, b) => Number(a.orden) - Number(b.orden))[0];
+  const punto = ev?.punto_impacto as { x: number; y: number } | undefined;
+  if (!ev || !punto || (ev.procedencia as Json | undefined)?.fuente !== "relato") return null;
+  const valores = new Map<string, number>();
+  for (const p of inv.parametros) {
+    if (!p.identificable || !p.estimacion) continue;
+    const k = p.parametro === "velocidad_previa" ? "velocidad" : "rumbo";
+    valores.set(`${k}:${p.vehiculo}`, p.estimacion.mejor);
+  }
+  if (!valores.size) return null;
+  const r = reconstruct(applyValues(spec, valores));
+  if (!r.puntoImpacto) return null;
+  const d = Math.hypot(r.puntoImpacto[0] - punto.x, r.puntoImpacto[1] - punto.y);
+  return d > CHOQUE_LEJOS_DEL_RELATO_M ? d : null;
+}
 import type { Expediente } from "./corpus";
 import { rigidezEnKilo } from "./verificacion";
 import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from "./geo";
@@ -772,6 +809,8 @@ interface Inversion {
     parametro: string;
     vehiculo: string;
     identificable: boolean;
+    inicial?: number;
+    en_limite?: boolean;
     sigma_local?: number;
     estimacion?: {
       mejor: number;
@@ -908,6 +947,31 @@ export function hipotesisVisible(r: Reconstruccion): HipotesisReconstruccion | n
 }
 
 /**
+ * La hipótesis «cuadra con el reposo supuesto» cuando no es la que se ve (ADR 0135, decisión 8): va
+ * como alternativa, marcada como supuesto, junto a la del daño medido en Reconstrucción, Contra
+ * CESVI, Presentar y el dictamen. Su texto, una sola frase con las velocidades y su p10–p90.
+ */
+export function alternativaSupuesta(
+  r: Reconstruccion,
+  letraDe: (id: string) => string = (id) => id,
+): { clave: string; titulo: string; texto: string; corto: string } | null {
+  if (!r.hipotesis) return null;
+  const vista = hipotesisVisible(r);
+  const alt = r.hipotesis.find((h) => h !== vista && h.familia === "reposo" && h.modo === 1);
+  if (!alt) return null;
+  const conVel = alt.velocidades.filter((v) => v.kmh !== null);
+  const vel = (v: (typeof conVel)[number]) =>
+    `${letraDe(String(v.vehiculo))} ${v.kmh!.toFixed(2)} km/h${v.fijada && v.rango ? ` (${v.rango[0].toFixed(2)}–${v.rango[1].toFixed(2)})` : ""}`;
+  const mayor = [...conVel].sort((a, b) => b.kmh! - a.kmh!)[0];
+  return {
+    clave: alt.clave,
+    titulo: alt.titulo,
+    texto: `Alternativa, con el reposo supuesto como dato (supuesto, no medición): ${conVel.map(vel).join(", ")}.`,
+    corto: mayor ? `${letraDe(String(mayor.vehiculo))} ${mayor.kmh!.toFixed(2)} km/h` : "",
+  };
+}
+
+/**
  * Lee el resultado completo del solver (`fullResult`, en el servidor de pruebas o en el Web Worker
  * del navegador) en términos del expediente: velocidades por vehículo y lo que no fija la evidencia.
  */
@@ -941,6 +1005,21 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
     if (vs.every((v) => primerPar.has(v))) continue; // el mismo par: es el contacto de siempre
     limites.push(
       `El impacto ${ev.id.replace("ev-impacto-", "")} (${vs.join(" con ")}) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.`,
+    );
+  }
+  // Si el punto del choque es la estimación del relato, no se mueve en silencio (ADR 0135).
+  const lejos = choqueLejosDelRelato(base.spec, inv);
+  if (lejos !== null)
+    limites.push(
+      `El choque quedó a ${lejos.toFixed(1)} m del punto que da el relato: el relato lo estima y la evidencia lo lleva ahí.`,
+    );
+  // Un rumbo de llegada que la evidencia empuja contra el límite de búsqueda se le dice al perito,
+  // no se queda como un número callado (ADR 0135).
+  for (const p of inv.parametros) {
+    const id = base.ids[p.vehiculo];
+    if (p.parametro !== "rumbo_inicial" || !p.en_limite || !p.estimacion || !id) continue;
+    limites.push(
+      `${id}: la evidencia empuja el rumbo fuera del rango permitido (±${ANGLE_BOUND_DEG}° sobre el que se colocó en el mapa). El mejor ajuste queda en el límite, ${p.estimacion.mejor.toFixed(1)}°, así que no cabe bien con lo demás: conviene revisar las posiciones y el rumbo de llegada.`,
     );
   }
   const velocidades = Object.entries(base.ids).map(([sid, id]) => {

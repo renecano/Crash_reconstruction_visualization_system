@@ -5,22 +5,219 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 ## Estado
 
 - **Desde el 2026-11-09, el Claude Code de René lleva también este frente,** porque aquí no se había subido nada. Si eres el Claude Code del compañero: antes de empezar una fase, revisa la tabla de abajo y `git fetch`; si la fase ya está tomada, sigue con la siguiente y anótala aquí.
-- **Hechas:** W1 (#187), W2 (#188), W3 (#192), W4 (#195, con su contrato #194) y W4b (#196), en `main`.
-- **Fase actual:** W7 («Endurecimiento»: T6.2, T6.3 y T6.4) terminada en `feat/w7-endurecimiento` (PR #206), con sus pruebas unitarias y sus dos e2e en verde en la CI.
-- **Siguiente paso:** fusionar el #206 con su CI en verde. Después, en el orden del plan: cerrar U5 (la medición corre como la tarea de Windows «CroquisU5», ver «Para retomar» en `docs/progress/U.md`), U6 y W8. **Antes de W8, detenerse y avisar a René con «Listo para W8: cambia el modelo».** Las evaluaciones largas de W8 (E-R4 v4) se lanzan como la de U5: reanudables, con su archivo de estado y fuera de la sesión.
+- **Hechas:** W1 (#187), W2 (#188), W3 (#192), W4 (#195, con su contrato #194), W4b (#196), W5 (#199, #200), W6 (#201) y W7 (#206), en `main`.
+- **Fase actual:** W8 (T3.2, T3.3 y T3.5), en Opus por pedido de René (2026-11-12), con cuidado extra.
+- **Siguiente paso:** T3.2 con el criterio v2, medido y **detenido otra vez**: AXA pasa a dos hipótesis, tres referencias tienen peor costo porque el choque ya no se corre del punto del relato, y el resultado completo tarda 12.96 s. Espera la decisión de René (ver «T3.2 · Criterio v2, nueva medición y segundo alto»).
 
 ## Fases tomadas
 
-| Fase                                                         | Quién               | Rama                                     | Estado                    |
-| ------------------------------------------------------------ | ------------------- | ---------------------------------------- | ------------------------- |
-| W1 · Dictamen (O2)                                           | Claude Code de René | `feat/w1-dictamen`                       | En `main` (#187)          |
-| W2 · El hecho (O1 y O5)                                      | Claude Code de René | `feat/w2-hecho`                          | En `main` (#188)          |
-| W3 · C1: punto inicial, choques intermedios y puntos de paso | Claude Code de René | `feat/w3-puntos`                         | En `main` (#192)          |
-| W4 · C2 y «Corregir después»                                 | Claude Code de René | `feat/w4-corregir`                       | En `main` (#195)          |
-| W4b · Menos ruido visual                                     | Claude Code de René | `feat/w4b-menos-ruido`                   | En `main` (#196)          |
-| W5 · Terreno (C3 y O4)                                       | Claude Code de René | `feat/w5-terreno`, `feat/w5-terreno-web` | En `main` (#199, #200)    |
-| W6 · Encuadre en 2D (O3)                                     | Claude Code de René | `feat/w6-encuadre`                       | En PR desde el 2026-11-10 |
-| W7 · Endurecimiento (T6.2, T6.3, T6.4)                       | Claude Code de René | `feat/w7-endurecimiento`                 | En PR (#206)              |
+| Fase                                                         | Quién               | Rama                                     | Estado                 |
+| ------------------------------------------------------------ | ------------------- | ---------------------------------------- | ---------------------- |
+| W1 · Dictamen (O2)                                           | Claude Code de René | `feat/w1-dictamen`                       | En `main` (#187)       |
+| W2 · El hecho (O1 y O5)                                      | Claude Code de René | `feat/w2-hecho`                          | En `main` (#188)       |
+| W3 · C1: punto inicial, choques intermedios y puntos de paso | Claude Code de René | `feat/w3-puntos`                         | En `main` (#192)       |
+| W4 · C2 y «Corregir después»                                 | Claude Code de René | `feat/w4-corregir`                       | En `main` (#195)       |
+| W4b · Menos ruido visual                                     | Claude Code de René | `feat/w4b-menos-ruido`                   | En `main` (#196)       |
+| W5 · Terreno (C3 y O4)                                       | Claude Code de René | `feat/w5-terreno`, `feat/w5-terreno-web` | En `main` (#199, #200) |
+| W6 · Encuadre en 2D (O3)                                     | Claude Code de René | `feat/w6-encuadre`                       | En `main` (#201)       |
+| W7 · Endurecimiento (T6.2, T6.3, T6.4)                       | Claude Code de René | `feat/w7-endurecimiento`                 | En `main` (#206)       |
+| W8 · Números defendibles (T3.2, T3.3, T3.5)                  | Claude Code de René | `feat/w8-numeros`                        | Diagnóstico de T3.2    |
+
+## W8 · Números defendibles (T3.2, T3.3, T3.5) (desde 2026-11-12)
+
+Pedido de René (2026-11-12), en Opus y con cuidado extra:
+
+- Empezar por T3.2 (el rumbo inicial de V2 pegado a +20°): **primero diagnosticar la causa y escribirla aquí, antes de cambiar el solver.**
+- **Si un cambio mueve los números de AXA (71.56 km/h, rango 68.02–92.81) o de cualquier caso que ya vio CESVI, detenerse y darle el antes y el después con la razón, antes de fusionar.**
+- Todo cambio en Python va también al port TS, con paridad. La E-R4 v4 corre con la cadena reanudable, por fuera de la sesión.
+
+### Plan
+
+1. **T3.2, diagnóstico** (`eval/t3_2_rumbo_axa.mts` → `eval/results/t3_2_rumbo_axa.json`, sin tocar el solver): el ajuste de hoy (qué parámetros quedan en el límite y con qué residuos), la geometría (dónde arranca V2 y qué mueve girar su rumbo) y el perfil del rumbo de V2 de −20° a +60° con lo demás reajustado. La causa, aquí.
+2. **T3.2, arreglo** según la causa, en Python y en el port TS con paridad, medido en AXA y en los demás casos de CESVI y escenas de inversión (`rangos_inversion`). Si AXA o un caso de CESVI se mueve: alto y antes/después a René.
+3. **T3.3, reversa:** `sentido_marcha` en el contrato (PR `contract:` aparte), solver Python y TS, la lectura lo marca; E-R4 mide la reversa (`cesvi-3a0125cb81`).
+4. **T3.5, E-R4 v4** con la cadena reanudable fuera de la sesión; se publica junto a v1–v3.
+
+Hay un intento anterior, del 4 de noviembre, en `origin/feat/t3-2-arrastre` (6f4b8516): cambiaba el modelo de arrastre, el pivote del rumbo y los priors a la vez y dejó la paridad en rojo con referencias a medio regenerar. No se retoma tal cual: primero el diagnóstico.
+
+### T3.2 · Diagnóstico (2026-11-12, sin tocar el solver)
+
+**Herramientas:** `eval/t3_2_rumbo_axa.mts` → `eval/results/t3_2_rumbo_axa.json` (el ajuste de hoy, el perfil del rumbo de V2 cada 5° y cada 1°, y el ajuste con el rumbo de V2 fijo sobre la vía) y `eval/t3_2_contacto_axa.mts` → `eval/results/t3_2_contacto_axa.json` (dónde queda el contacto al girar apenas el rumbo de V1). Escena de AXA como la arma la app (`axa-reconstruccion.ts`, `especDeExpediente`); en el solver, V2 es `veh-a` (el que alcanza) y V1, `veh-b`. Se corrió el port TS: es el que usa la app y da lo mismo que Python (paridad E7).
+
+**Lo que se ve:**
+
+1. **El ajuste de hoy:** V2 a 71.56 km/h con el rumbo inicial de V2 en 95.72°, es decir, 20° más que el de la vía (75.72°): justo en el límite (`ANGLE_BOUND_DEG = 20`). Costo 0.03.
+2. **El costo contra el rumbo de V2 es muy irregular** (perfil cada 1°, con todo lo demás reajustado). Hay valles casi igual de buenos:
+
+   | Giro del rumbo de V2 | Costo     | V2 (km/h) |
+   | -------------------- | --------- | --------- |
+   | −21° a −20°          | 0.03      | 71.4–71.5 |
+   | −19° a −13°          | 7.7–9.7   | 92–147    |
+   | −12°                 | 0.15      | 68.7      |
+   | −11° a −1°           | 0.2–20    | 113–186   |
+   | 0° (sobre la vía)    | 0.12      | 64.23     |
+   | +1° a +8°            | 0.4–4.7   | 42–57     |
+   | +9°                  | 0.15      | 68.0      |
+   | +13° a +23°          | 0.03–0.17 | 71.4–77.2 |
+   | +24° y +25°          | 6.5–6.6   | 95–101    |
+
+   Entre 0° (0.12) y +20° (0.03), la diferencia de costo es un Δχ² de unos 0.2: la evidencia no prefiere uno sobre otro. −20° da lo mismo que +20° (V2 71.54 contra 71.56), en espejo. El valle de +13° a +23° tiene su fondo en +20° y +21°, y el límite lo corta en +20°: por eso «pegado a +20°».
+
+3. **Con el rumbo de V2 fijo sobre la vía** (como lo colocó el perito), la inversión da V2 a 64.57 km/h (p10–p90 62.18–86.99), contra 71.56 (68.02–92.81) de hoy. El reporte de CESVI dice 63.15.
+
+**La causa: el punto de contacto de un alcance casi en línea está mal condicionado.**
+
+- El evento de AXA declara el punto de impacto (0, 0) y cada vehículo arranca 12 m antes de su posición de impacto, en el mismo rumbo. El solver busca el contacto con `resolveContact` (`contact.ts`, igual en `contact.py`): proyecta el punto declarado sobre las dos trayectorias y luego `refinePair` minimiza la distancia entre las dos zonas de impacto, sin nada que lo mantenga cerca del punto declarado.
+- Cuando las dos trayectorias van exactamente en la misma línea, todas las posiciones a lo largo de ella tocan igual y el contacto se queda en el punto declarado. Con el menor ángulo entre ellas, `refinePair` corre por el valle hasta donde las dos líneas se cruzan, o hasta el principio de la trayectoria. `t3_2_contacto_axa.json`, con las velocidades de la app:
+
+  | Giro del rumbo de V1 | Contacto       | Distancia al punto declarado | V2 en su pose inicial |
+  | -------------------- | -------------- | ---------------------------- | --------------------- |
+  | 0°                   | (0, 0)         | 0 m                          | 0.7 s antes           |
+  | 0.01°                | (−1.42, −5.58) | 5.76 m                       | 0.3 s antes           |
+  | 0.045°               | (−2.11, −8.27) | 8.54 m                       | 0.2 s antes           |
+  | 1°                   | (−2.29, −9.01) | 9.29 m                       | 0.2 s antes           |
+
+- Así, el rumbo que ajusta la inversión no mueve un poco el choque: lo cambia de lugar, de un alcance en el punto que marcó el perito a uno casi donde arrancan los vehículos, y con eso cambia lo que pasa después (giros y reposos). De ahí el perfil irregular, con saltos de costo de 0.03 a 15 en 1°.
+- El parámetro de rumbo gira la pose inicial alrededor de su posición (`parameters` y `apply_values`): con 20° de giro, V2 llega al choque con 4 m de desplazamiento lateral en 12 m, cruzando un carril de MEX 15D. Eso no lo dice ninguna evidencia: es el valle que encontró el ajuste.
+
+**En resumen:** el +20° no es un rumbo que la evidencia pida; es el fondo de un valle que aparece porque el contacto salta en cuanto las trayectorias dejan de ser exactamente paralelas, y el límite de ±20° lo corta ahí.
+
+**Arreglos posibles** (por decidir; los dos mueven AXA):
+
+1. **Contacto estable:** que `resolveContact` se quede, entre las posiciones donde las zonas se tocan, con la más cercana al punto declarado (en Python y en TS, con paridad). Es la causa de fondo y afecta a todo alcance casi en línea.
+2. **Pivote del rumbo en el punto de impacto declarado:** que el rumbo no declarado gire la llegada alrededor del punto de impacto y no del arranque, para que cambie de dónde venía el vehículo y no dónde chocó (lo intentó `feat/t3-2-arrastre`, mezclado con otros cambios).
+
+### T3.2 · Cuánto movería a AXA cada arreglo (experimento, sin cambiar el solver)
+
+`eval/t3_2_opciones_axa.mts` → `eval/results/t3_2_opciones_axa.json`. Los arreglos están en `eval/t3_2_opciones.patch` (solo el port TS, detrás de una variable); se aplica, se mide y se quita: el solver de `main` no cambia. Resultado completo de producción, como la app. CESVI: V2 a 63.15 km/h.
+
+| Opción                                                             | V2 mejor (p10–p90)  | V1 mejor (p10–p90) | Rumbo inicial de V2                     |
+| ------------------------------------------------------------------ | ------------------- | ------------------ | --------------------------------------- |
+| Hoy                                                                | 71.56 (68.02–92.81) | 25.32 (8.83–26.27) | 95.72°, en el límite                    |
+| 1 · Contacto estable                                               | 76.38 (68.60–93.46) | 21.56 (6.60–25.47) | 92.70°, ya no en el límite              |
+| 2 · Pivote en el punto de impacto                                  | 56.96 (53.53–76.72) | 15.09 (0.80–16.29) | la evidencia no lo fija (no se reporta) |
+| 1 y 2                                                              | 56.87 (54.13–76.80) | 14.98 (0.57–16.25) | la evidencia no lo fija                 |
+| Rumbo de V2 como lo colocó el perito (sobre la vía), sin ajustarlo | 64.57 (61.19–86.80) | 22.70 (4.76–24.55) | 75.72°, el del perito                   |
+
+- **Hoy**, el rango de V2 (68.02–92.81) deja fuera los 63.15 de CESVI.
+- **1 solo** quita el salto, pero el valle oblicuo sigue: V2 llega con 17° de desvío y sube a 76.38.
+- **2** (con o sin 1) deja el choque donde lo marcó el perito y dice con honestidad que la evidencia no fija el rumbo de V2. Pero, como el rumbo queda libre sin que la evidencia lo fije, el ajuste lo usa para bajar el costo y V2 baja a 57 (−20 %).
+- **Rumbo del perito:** V2 a 64.57 (61.19–86.80), con 63.15 dentro del rango (+2.2 %). Es lo que pasa si, cuando la evidencia no fija el rumbo, se deja el que colocó el perito en vez de ajustarlo.
+
+**Mi recomendación:** 1 y 2 en el solver (Python y TS, con paridad), más una regla: si el rumbo inicial no declarado sale no identificable, se queda el que colocó el perito y se declara como supuesto. En AXA eso daría lo de la última fila (64.57); falta medirlo con el código final y en los demás casos.
+
+**Detenido aquí (regla de René, 2026-11-12):** los tres caminos mueven AXA (de 71.56 a entre 56.9 y 76.4) y pueden mover otros casos de CESVI. Antes de implementarlo y fusionarlo, René elige; luego mido el antes y el después de los 13 casos de referencia y de los casos de CESVI con el código final.
+
+### T3.2 · Primera implementación (ADR 0135) y alto (2026-11-12, noche)
+
+René eligió «1 y 2» más la regla, con condiciones (2026-11-12). El ADR 0135 se escribió y se subió antes de cambiar el solver (`65b8811b`). La implementación (Python y TS, idénticos en AXA) está en `feat/w8-numeros` (`ad87f384`) **sin fusionar**.
+
+**Mediciones** (`eval/w8_comparar.mjs` y `eval/w8_referencias.mjs` → `eval/results/w8/`):
+
+- **AXA** (como la app, resultado completo de producción): V2 de 71.56 (68.02–92.81) a **56.87 (53.97–77.44)**; V1 de 25.32 a 14.98. El rumbo de V2 queda como supuesto (75.72°, el del perito). CESVI: 63.15, ahora dentro del rango; el error del mejor valor pasa de +13.3 % a −9.9 %.
+- **E-R4 (prueba, 205 dictámenes), las 205 narraciones de CESVI por la inversión y las 33 carambolas de prueba:** no cambia nada (solo el tiempo de cómputo).
+- **Escenas de referencia:** cambian 10 de 25 resultados (14 canónicas, 4 de inversión, 5 de agentes y 2 de C1):
+
+  | Escena                 | Qué cambia                                                                                                            | Juicio                                     |
+  | ---------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+  | `axa_alcance`          | V2 71.56 → 56.87; el rumbo de V2 deja el límite (supuesto del perito)                                                 | mejor                                      |
+  | `axa_reposo_lejano`    | V2 64.28 → 56.89; el rumbo de V1 pasa a supuesto                                                                      | coherente con AXA                          |
+  | `volcadura`            | el rumbo deja el límite de +20° (queda en −7.46°); la velocidad, 51.03 → 84.46 (el relato dice 90)                    | mejor                                      |
+  | `frontal_curva`        | el contacto queda a 7.0 m del punto del relato (antes 10.2 m); el ΔV de A, 58.12 → 44.08                              | esperado (contacto)                        |
+  | `nocturno_lluvia`      | el contacto queda a 3.1 m del punto del relato (antes 13.0 m), pero aparece «las zonas no se tocan»                   | error mío: la bandera no usa la tolerancia |
+  | `glorieta`             | V-A deja el 0 km/h del límite (17.98); V-B ya no se fija; el rumbo final de A empeora (−2.87σ → −5.21σ)               | mixto                                      |
+  | `lateral_interseccion` | V-A pasa de «no se fija» a 84.92 km/h (el relato dice 45); el rumbo final de B empeora (1.34σ → 3.54σ)                | **peor**                                   |
+  | `interseccion_toluca`  | los dos rumbos pasan a supuesto; los residuos suben (reposo de A, −3.47σ; antes, menos de 0.3σ)                       | **peor, sin razón física**                 |
+  | `motociclista`         | el rumbo de A (en el límite) pasa a supuesto; A queda en 0 km/h en el límite y las marcas de B, −3.94σ (antes −0.30σ) | **peor, sin razón física**                 |
+  | `lateral_puntos_paso`  | cambios de centésimas                                                                                                 | igual                                      |
+
+**Por qué empeoran** (el criterio del ADR 0135 tiene dos huecos; ninguno sale de AXA):
+
+1. **Rumbos ligados:** el criterio prueba cada rumbo solo, con los demás libres. En `interseccion_toluca` cada uno, por separado, parece no fijado, porque el otro compensa. Pero devolver los dos a la vez al valor del perito empeora la evidencia (residuos de hasta 3.5σ).
+2. **El límite cuenta como plano:** con el mejor valor en el límite, el lado que da hacia afuera no tiene espacio, y el ADR lo mide «hasta el límite», es decir, sin moverse, así que el costo no sube y el rumbo pasa por no fijado. En `motociclista` la evidencia empuja el rumbo de A más allá del límite, y volver al del perito rompe las marcas de B (3.94σ).
+
+**Propuesta para René** (cambiar el criterio después de ver resultados: por eso no lo aplico sin su visto bueno): un rumbo vuelve al del perito **solo si la evidencia explica ese valor casi igual de bien**. Con ese rumbo, y los que ya volvieron, en el valor del perito, y lo demás reajustado, el costo debe subir menos de `MODE_MARGIN` (Δχ² de 1). Se prueban de uno en uno, del que menos sube al que más, y se detiene en el primero que no pasa. Es la prueba de razón de verosimilitudes en el valor del perito, que es justo lo que se quiere saber, y cubre los dos huecos. Además, corregir la bandera de `nocturno_lluvia`: no avisar si la distancia queda dentro de la tolerancia de la zona.
+
+**Detenido aquí** (regla de René: «si algún caso empeora sin razón física, detente»). Falta, después de su respuesta: aplicar el criterio, volver a medir todo, la paridad E7, el tiempo en el navegador, cambiar la cifra de AXA en todas partes a la vez y el PR.
+
+### T3.2 · Criterio v2, nueva medición y segundo alto (2026-11-13)
+
+René aprobó la versión 2 del criterio (2026-11-12) con condiciones; quedaron escritas en el ADR 0135 (versión 1, qué falló, versión 2 y por qué no es un ajuste para AXA). Rama `feat/w8-numeros`, sin fusionar.
+
+**Cambios desde la versión 1:** el criterio v2 (prueba de razón de verosimilitudes en el valor del perito, de uno en uno); el aviso «la evidencia empuja el rumbo fuera del rango permitido» en los límites de la reconstrucción (paso de Reconstrucción y dictamen) cuando un rumbo queda en ±20°; la bandera «las zonas no se tocan» ya no sale dentro de la tolerancia de la zona; y la semilla del hipercubo del rumbo supuesto es de diseño, fija. Con una derivada de la del caso, el rango de AXA se movía con la semilla (p10 de 53.97 a 55.77 en 20 semillas), contra T3.1.
+
+**La discrepancia de AXA** (`eval/t3_2_discrepancia_axa.mts` → `eval/results/w8/discrepancia_axa_{solver_de_main,solver_nuevo}.json`). El experimento de ayer, «se deja el rumbo que colocó el perito», corrió sobre el solver de `main`, sin los arreglos 1 y 2:
+
+| Solver                          | Rumbo de V2      | V2 (km/h)           | Rumbo de V1 ajustado | Choque en el mejor ajuste                  |
+| ------------------------------- | ---------------- | ------------------- | -------------------- | ------------------------------------------ |
+| `main` (el experimento de ayer) | el del perito    | 64.57 (61.19–86.80) | 75.77° (+0.05°)      | a 8.68 m del punto donde lo puso el perito |
+| `main` (la app hoy)             | ajustado: 95.72° | 71.56 (68.02–92.81) | 87.16°               | a 12.03 m                                  |
+| nuevo                           | el del perito    | 56.87               | 75.72°               | en el punto del perito (0 m)               |
+
+Con el solver de `main`, 0.05° en el rumbo de V1 bastaban para que el contacto se corriera 8.68 m (arreglo 1): los 64.57 eran un choque en otro lugar. Con el contacto estable, el mismo «rumbo del perito» da 56.87, igual que la regla.
+
+**AXA ahora tiene dos hipótesis** (`eval/w8_axa_hipotesis.mts` → `eval/results/w8/axa_hipotesis.json`, resultado completo de producción):
+
+| Hipótesis                              | V2                      | V1                  | Reposo de V2         |
+| -------------------------------------- | ----------------------- | ------------------- | -------------------- |
+| Cuadra con el daño medido (sin elegir) | **56.87** (54.79–78.39) | 14.98 (0.80–16.45)  | a 3.9 m del supuesto |
+| Cuadra con el reposo supuesto          | 34.44 (30.07–44.44)     | 29.90 (21.38–31.63) | a 0.2 m              |
+
+- Antes había una sola (71.56), porque el contacto corrido 12 m dejaba que el daño y el reposo supuesto (método de restos) cupieran juntos. Con el choque donde lo puso el perito, el daño medido deja a V2 a 3.9 m de su reposo supuesto, y la consistencia lo dice: «Hay dos hipótesis… el perito elige» (ADR 0091).
+- La de 56.87 es la que se ve sin elegir. CESVI: 63.15, dentro de su rango.
+- En las 20 semillas, AXA da lo mismo: 56.87 (54.79–78.39) y dos hipótesis.
+
+**Escenas de referencia** (`eval/results/w8/referencias.json`, contra `origin/main`): cambian 10 de 25. Con la versión 2:
+
+- **`motociclista` ya no empeora:** el rumbo de A sigue en el límite (200°) y sale el aviso. A, de 36.79 a 42.19 km/h.
+- **`volcadura` mejora:** el rumbo deja el límite (−7.46°); 84.46 km/h (el relato dice 90). Costo de 7.83 a 0.76.
+- **`interseccion_toluca`, `lateral_interseccion` y `glorieta` siguen peor en costo** (Toluca 1.51 → 8.10; glorieta 3.09 → 4.57), pero ahora se sabe por qué (`eval/w8_choque_referencias.mts`):
+
+  | Escena                 | Choque en el mejor ajuste, solver de `main` | Con el nuevo | Costo `main` → nuevo |
+  | ---------------------- | ------------------------------------------- | ------------ | -------------------- |
+  | `interseccion_toluca`  | a 5.27 m del punto del relato               | a 0.02 m     | 1.51 → 8.10          |
+  | `lateral_interseccion` | a 5.37 m                                    | a 0.01 m     | 3.57 → 3.35          |
+  | `glorieta`             | a 2.61 m                                    | a 0.06 m     | 3.09 → 4.57          |
+  | `motociclista`         | a 9.32 m                                    | a 5.89 m     | 1.84 → 2.59          |
+  | `volcadura`            | a 0.05 m                                    | a 0 m        | 7.83 → 0.76          |
+
+  Los ajustes «buenos» de `main` lo eran porque corrían el choque de 2.6 a 9.3 m del punto que dice el relato. Con el choque fijo en ese punto, los reposos caben peor. En estas escenas el punto viene **del relato** (`procedencia: relato`), y el solver lo trata como guía, no como medición (solo el que marca el perito entra a la inversión, `impact_point_from_spec`). En AXA, en cambio, el punto sale de donde el perito colocó los vehículos.
+
+- `frontal_curva` y `nocturno_lluvia` (sin inversión): el contacto queda más cerca del punto del relato (de 10.2 a 7.0 m y de 13.0 a 3.1 m). Ya sin la bandera falsa.
+
+**Las demás mediciones:**
+
+- **E-R4 (prueba, 205), las 205 narraciones de CESVI y las 33 carambolas:** no cambia nada.
+- **Paridad:** E7, 89 549 números en las 14 escenas, diferencia máxima 0 (`eval/results/e7_parity.json`). Pruebas TS: 228 de 229. La que falla dice «AXA: una sola hipótesis» (`inversion-un-dano.test.ts`): es la expectativa que cambia con las dos hipótesis.
+- **Robustez** (Δχ² = 2.71 contra 1, `eval/results/w8/robustez.json`): de 13 escenas con evidencia, solo cambia `lateral_interseccion`. Con 2.71, el rumbo de A vuelve al del perito y A queda en 84.92 en lugar de 98.78. El criterio se queda en 1.
+- **Tiempo en el navegador** (`eval/results/w8/tiempo_navegador.json`, worker de producción en Chromium, mediana de 3): la reconstrucción, igual (57 → 54 ms; Unity carga con ella). **El resultado completo, de 5.51 a 12.96 s: pasa la meta de 10 s.** Cuesta el criterio (ajustes extra), la búsqueda rehecha y la segunda hipótesis.
+
+**Segundo alto:** para que René decida (1) si acepta que AXA pase a dos hipótesis; (2) si el pivote y el contacto en el punto deben valer también cuando el punto viene del relato o solo cuando lo marcó o lo colocó el perito; y (3) que el resultado completo pase de 10 s (hay que optimizarlo antes de fusionar).
+
+### T3.2 · Decisiones de René, medición final y cierre (2026-11-13)
+
+**Decisiones (René, 2026-11-13), en el ADR 0135:**
+
+- AXA con dos hipótesis: se ve sin elegir «cuadra con el daño medido» y la del reposo supuesto va como alternativa marcada como supuesto (decisión 8).
+- El punto del choque se fija solo si lo dio el perito; si viene del relato, es una estimación, y un choque a más de 2 m de él se avisa (decisión 2).
+- El tiempo se recorta sin cambiar números (decisión 9).
+
+**Antes y después** (`eval/results/w8/`, contra `origin/main`):
+
+- **AXA, como la app:** V2 de 71.56 (68.02–92.81) a **56.87 (54.79–78.39)**: −6.28 km/h, −9.94 % contra 63.15, que queda dentro del rango. V1 de 25.32 a 14.98. Alternativa con el reposo supuesto: V2 a 34.44 (30.07–44.44). En las 20 semillas da lo mismo.
+- **Escenas de referencia:** cambian 6 de 25:
+  - AXA y sus dos variantes;
+  - `frontal_curva` y `nocturno_lluvia`, donde solo cambia el contacto (más cerca del punto del relato y sin la bandera falsa);
+  - `motociclista`, en una centésima del p10 de un rumbo que sigue en el límite, ahora con aviso.
+- **Toluca, lateral y glorieta ya no empeoran:** dan lo mismo que en `main`. Su choque queda a 5.27, 5.37 y 2.61 m del punto del relato, y ahora se avisa.
+- **E-R4 (prueba, 205), las 205 narraciones de CESVI y las 33 carambolas:** sin cambio.
+- **Paridad E7:** 89 549 números, diferencia 0. Pruebas TS: 229 de 229 en el solver; en `packages/cesvi`, todas. Una prueba sube su tope de 20 a 60 s, porque la inversión ahora hace más trabajo: 19 s en la laptop.
+- **Robustez** (Δχ² = 2.71 contra 1): no cambia ninguna escena.
+- **Tiempo en el navegador:** igual que el worker de producción en las mismas condiciones (`eval/results/w8/tiempo_navegador_rondas.json`; mediana 12.15 s el de producción contra 12.91 s el nuevo en tres rondas alternadas). Ese día la laptop iba al doble de lento: el de producción daba 5.51 s en la mañana. El resultado completo llega sin números distintos: salida idéntica byte por byte en tres escenas.
+
+**La cifra de AXA, en todas partes a la vez:** `eval/results/axa_rango_estable.json` (que leen las pruebas de la app y la e2e), las pruebas con la cifra de ejemplo, los comentarios, la escena de demostración, los paquetes caso-3d y la línea de estado de `PLAN-CESVI.md` y `PROGRESS.md`. La alternativa sale en Reconstrucción (con la marca «supuesto»), Contra CESVI (nota de la lectura física), Presentar (fila «Alternativa con el reposo supuesto (supuesto)») y el dictamen (tabla de hipótesis y nota de Contra CESVI).
+
+**Siguiente:** T3.3 (reversa). Antes, René cambia el modelo: «Listo para T3.3: cambia el modelo».
 
 ## W7 · Endurecimiento (T6.2, T6.3, T6.4) (2026-11-11)
 

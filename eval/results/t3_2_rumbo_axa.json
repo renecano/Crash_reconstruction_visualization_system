@@ -1,0 +1,1575 @@
+{
+  "name": "t3_2_rumbo_axa",
+  "generated_at": "2026-11-12T23:41:19Z",
+  "git_commit": "e37e53eb",
+  "ids": {
+    "V1": "veh-b",
+    "V2": "veh-a"
+  },
+  "ajuste": {
+    "evidencia": [
+      "reposo:veh-b",
+      "rumbo_final:veh-b",
+      "dano_minimo:veh-a",
+      "reposo_supuesto:veh-a",
+      "rumbo_final_supuesto:veh-a"
+    ],
+    "parametros": [
+      {
+        "parametro": "velocidad_previa",
+        "vehiculo": "V2",
+        "identificable": true,
+        "en_limite": false,
+        "mejor": 71.56,
+        "p10": 72.07,
+        "p90": 92.17
+      },
+      {
+        "parametro": "velocidad_previa",
+        "vehiculo": "V1",
+        "identificable": true,
+        "en_limite": false,
+        "mejor": 25.32,
+        "p10": 8.47,
+        "p90": 27.28
+      },
+      {
+        "parametro": "rumbo_inicial",
+        "vehiculo": "V2",
+        "identificable": true,
+        "en_limite": true,
+        "mejor": 95.72,
+        "p10": 81.65,
+        "p90": 95.72
+      },
+      {
+        "parametro": "rumbo_inicial",
+        "vehiculo": "V1",
+        "identificable": true,
+        "en_limite": false,
+        "mejor": 87.16,
+        "p10": 78.67,
+        "p90": 89.32
+      }
+    ],
+    "limites": [
+      {
+        "parametro": "velocidad:veh-a",
+        "inicio": 40,
+        "lo": 0,
+        "hi": 200
+      },
+      {
+        "parametro": "velocidad:veh-b",
+        "inicio": 40,
+        "lo": 0,
+        "hi": 200
+      },
+      {
+        "parametro": "rumbo:veh-a",
+        "inicio": 75.72,
+        "lo": 55.72,
+        "hi": 95.72
+      },
+      {
+        "parametro": "rumbo:veh-b",
+        "inicio": 75.72,
+        "lo": 55.72,
+        "hi": 95.72
+      }
+    ],
+    "residuos": [
+      {
+        "nombre": "dano_minimo:veh-a",
+        "sigma": 0
+      },
+      {
+        "nombre": "orden_alcance:veh-a",
+        "sigma": 0
+      },
+      {
+        "nombre": "reposo:veh-b:x",
+        "sigma": -0.002
+      },
+      {
+        "nombre": "reposo:veh-b:y",
+        "sigma": 0.022
+      },
+      {
+        "nombre": "reposo_supuesto:veh-a:x",
+        "sigma": -0.17
+      },
+      {
+        "nombre": "reposo_supuesto:veh-a:y",
+        "sigma": -0.15
+      },
+      {
+        "nombre": "rumbo_final:veh-b",
+        "sigma": -0.082
+      },
+      {
+        "nombre": "rumbo_final_supuesto:veh-a",
+        "sigma": -0.018
+      }
+    ]
+  },
+  "geometria": {
+    "V1": {
+      "inicial": {
+        "x": -2.302,
+        "y": -9.042,
+        "rumbo_deg": 75.71537756298898,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "12 m antes de la posición de impacto que colocó el perito, en su rumbo."
+        }
+      },
+      "final": {
+        "x": 4.579,
+        "y": 17.986,
+        "rumbo_deg": 75.71537756298898,
+        "procedencia": {
+          "fuente": "usuario",
+          "confianza": 0.9
+        }
+      }
+    },
+    "V2": {
+      "inicial": {
+        "x": -3.62,
+        "y": -14.216,
+        "rumbo_deg": 75.71537756298898,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "12 m antes de la posición de impacto que colocó el perito, en su rumbo."
+        }
+      },
+      "final": {
+        "x": 3.262,
+        "y": 12.811,
+        "rumbo_deg": 75.71537756298898,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "Reposo supuesto por el perito: el reporte no lo da."
+        }
+      }
+    },
+    "punto_impacto_reconstruido": [
+      -0.00012088725461123495,
+      0.00003077869835799163
+    ],
+    "nota": "rumbo_deg en el marco de la escena (grados desde +x hacia +y). El parámetro de rumbo gira la pose inicial alrededor de su posición: a d metros del impacto, girar θ mueve el impacto d·sen θ de lado."
+  },
+  "perfil": [
+    {
+      "giro_deg": -20,
+      "rumbo_deg": 55.72,
+      "costo": 0.03,
+      "v2_kmh": 71.54,
+      "v1_kmh": 25.33,
+      "rumbo_v1_deg": 64.27,
+      "residuos_mayores": {
+        "reposo_supuesto:V2:y": -0.21,
+        "reposo_supuesto:V2:x": 0.08,
+        "rumbo_final:V1": 0.08,
+        "reposo:V1:y": 0.02,
+        "rumbo_final_supuesto:V2": 0.02,
+        "reposo:V1:x": 0.01
+      }
+    },
+    {
+      "giro_deg": -15,
+      "rumbo_deg": 60.72,
+      "costo": 9.61,
+      "v2_kmh": 111.05,
+      "v1_kmh": 31.53,
+      "rumbo_v1_deg": 69.51,
+      "residuos_mayores": {
+        "rumbo_final:V1": 8.61,
+        "reposo:V1:x": -2.07,
+        "reposo_supuesto:V2:y": 1.26,
+        "reposo_supuesto:V2:x": 0.25,
+        "reposo:V1:y": 0.12,
+        "rumbo_final_supuesto:V2": 0.05
+      }
+    },
+    {
+      "giro_deg": -10,
+      "rumbo_deg": 65.72,
+      "costo": 15.16,
+      "v2_kmh": 159.93,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 56.29,
+      "residuos_mayores": {
+        "rumbo_final:V1": -7.73,
+        "reposo:V1:y": -6.61,
+        "reposo:V1:x": 2.88,
+        "reposo_supuesto:V2:y": -1.02,
+        "reposo_supuesto:V2:x": 0.62,
+        "rumbo_final_supuesto:V2": -0.21
+      }
+    },
+    {
+      "giro_deg": -5,
+      "rumbo_deg": 70.72,
+      "costo": 2.78,
+      "v2_kmh": 176.36,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 55.72,
+      "residuos_mayores": {
+        "reposo:V1:x": 2.72,
+        "rumbo_final:V1": 1.35,
+        "reposo_supuesto:V2:x": 0.46,
+        "reposo:V1:y": 0.44,
+        "rumbo_final_supuesto:V2": 0.08,
+        "reposo_supuesto:V2:y": 0.02
+      }
+    },
+    {
+      "giro_deg": 0,
+      "rumbo_deg": 75.72,
+      "costo": 0.12,
+      "v2_kmh": 64.23,
+      "v1_kmh": 22.56,
+      "rumbo_v1_deg": 75.76,
+      "residuos_mayores": {
+        "reposo_supuesto:V2:y": -0.47,
+        "reposo_supuesto:V2:x": -0.12,
+        "dano_minimo:V2": -0.08,
+        "reposo:V1:y": 0.06,
+        "reposo:V1:x": -0.01,
+        "orden_alcance:V2": 0
+      }
+    },
+    {
+      "giro_deg": 5,
+      "rumbo_deg": 80.72,
+      "costo": 2.36,
+      "v2_kmh": 41.81,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 82.02,
+      "residuos_mayores": {
+        "reposo:V1:x": -3.07,
+        "rumbo_final:V1": 0.32,
+        "reposo_supuesto:V2:x": -0.27,
+        "reposo:V1:y": 0.25,
+        "reposo_supuesto:V2:y": -0.18,
+        "dano_minimo:V2": -0.04
+      }
+    },
+    {
+      "giro_deg": 10,
+      "rumbo_deg": 85.72,
+      "costo": 15.75,
+      "v2_kmh": 53.41,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 87.54,
+      "residuos_mayores": {
+        "reposo:V1:y": 11.8,
+        "reposo:V1:x": -5.25,
+        "reposo_supuesto:V2:y": 0.85,
+        "rumbo_final:V1": 0.61,
+        "reposo_supuesto:V2:x": -0.42,
+        "rumbo_final_supuesto:V2": 0.05
+      }
+    },
+    {
+      "giro_deg": 15,
+      "rumbo_deg": 90.72,
+      "costo": 0.11,
+      "v2_kmh": 77.22,
+      "v1_kmh": 20.54,
+      "rumbo_v1_deg": 84.17,
+      "residuos_mayores": {
+        "reposo_supuesto:V2:x": -0.35,
+        "reposo_supuesto:V2:y": -0.33,
+        "rumbo_final:V1": -0.05,
+        "reposo:V1:y": 0.04,
+        "rumbo_final_supuesto:V2": 0.02,
+        "dano_minimo:V2": 0
+      }
+    },
+    {
+      "giro_deg": 20,
+      "rumbo_deg": 95.72,
+      "costo": 0.03,
+      "v2_kmh": 71.56,
+      "v1_kmh": 25.32,
+      "rumbo_v1_deg": 87.16,
+      "residuos_mayores": {
+        "reposo_supuesto:V2:x": -0.17,
+        "reposo_supuesto:V2:y": -0.15,
+        "rumbo_final:V1": -0.08,
+        "reposo:V1:y": 0.02,
+        "rumbo_final_supuesto:V2": -0.02,
+        "dano_minimo:V2": 0
+      }
+    },
+    {
+      "giro_deg": 25,
+      "rumbo_deg": 100.72,
+      "costo": 6.47,
+      "v2_kmh": 95.1,
+      "v1_kmh": 44.86,
+      "rumbo_v1_deg": 91.21,
+      "residuos_mayores": {
+        "rumbo_final:V1": -6.44,
+        "reposo:V1:x": 0.87,
+        "reposo_supuesto:V2:x": -0.74,
+        "reposo:V1:y": -0.72,
+        "rumbo_final_supuesto:V2": -0.54,
+        "reposo_supuesto:V2:y": 0.22
+      }
+    },
+    {
+      "giro_deg": 30,
+      "rumbo_deg": 105.72,
+      "costo": 6.78,
+      "v2_kmh": 91.92,
+      "v1_kmh": 46.99,
+      "rumbo_v1_deg": 95.72,
+      "residuos_mayores": {
+        "rumbo_final:V1": -6,
+        "dano_minimo:V2": -1.55,
+        "reposo_supuesto:V2:x": -1.18,
+        "rumbo_final_supuesto:V2": -0.61,
+        "reposo:V1:x": -0.35,
+        "reposo:V1:y": -0.29
+      }
+    },
+    {
+      "giro_deg": 35,
+      "rumbo_deg": 110.72,
+      "costo": 12.04,
+      "v2_kmh": 81.09,
+      "v1_kmh": 54.13,
+      "rumbo_v1_deg": 95.72,
+      "residuos_mayores": {
+        "dano_minimo:V2": -7.22,
+        "rumbo_final:V1": -5.84,
+        "reposo_supuesto:V2:x": -1.06,
+        "rumbo_final_supuesto:V2": -0.56,
+        "reposo_supuesto:V2:y": 0.54,
+        "reposo:V1:x": -0.3
+      }
+    },
+    {
+      "giro_deg": 40,
+      "rumbo_deg": 115.72,
+      "costo": 9.24,
+      "v2_kmh": 105.65,
+      "v1_kmh": 45.53,
+      "rumbo_v1_deg": 91.4,
+      "residuos_mayores": {
+        "rumbo_final:V1": 5.77,
+        "reposo_supuesto:V2:x": -3.17,
+        "reposo_supuesto:V2:y": 2.05,
+        "dano_minimo:V2": -0.9,
+        "reposo:V1:x": -0.68,
+        "rumbo_final_supuesto:V2": -0.67
+      }
+    },
+    {
+      "giro_deg": 45,
+      "rumbo_deg": 120.72,
+      "costo": 13.55,
+      "v2_kmh": 102.71,
+      "v1_kmh": 47.04,
+      "rumbo_v1_deg": 92.53,
+      "residuos_mayores": {
+        "rumbo_final:V1": 6.59,
+        "reposo_supuesto:V2:x": -3.64,
+        "dano_minimo:V2": -3.23,
+        "reposo_supuesto:V2:y": 2.58,
+        "reposo:V1:x": -1.41,
+        "rumbo_final_supuesto:V2": -0.69
+      }
+    },
+    {
+      "giro_deg": 50,
+      "rumbo_deg": 125.72,
+      "costo": 6.61,
+      "v2_kmh": 115.54,
+      "v1_kmh": 46.55,
+      "rumbo_v1_deg": 70.99,
+      "residuos_mayores": {
+        "reposo_supuesto:V2:x": -3.65,
+        "dano_minimo:V2": -2.77,
+        "reposo_supuesto:V2:y": 2.29,
+        "rumbo_final:V1": -0.59,
+        "reposo:V1:y": -0.45,
+        "reposo:V1:x": -0.38
+      }
+    },
+    {
+      "giro_deg": 55,
+      "rumbo_deg": 130.72,
+      "costo": 9.71,
+      "v2_kmh": 97.69,
+      "v1_kmh": 61.2,
+      "rumbo_v1_deg": 70.67,
+      "residuos_mayores": {
+        "dano_minimo:V2": -6.24,
+        "reposo_supuesto:V2:x": -3.73,
+        "reposo_supuesto:V2:y": 1.73,
+        "rumbo_final:V1": 0.83,
+        "reposo:V1:x": 0.63,
+        "rumbo_final_supuesto:V2": 0.27
+      }
+    },
+    {
+      "giro_deg": 60,
+      "rumbo_deg": 135.72,
+      "costo": 17.59,
+      "v2_kmh": 73.2,
+      "v1_kmh": 56.17,
+      "rumbo_v1_deg": 74.25,
+      "residuos_mayores": {
+        "rumbo_final:V1": -8.95,
+        "dano_minimo:V2": -8.42,
+        "reposo_supuesto:V2:x": -2.74,
+        "rumbo_final_supuesto:V2": -0.61,
+        "reposo:V1:x": 0.12,
+        "reposo_supuesto:V2:y": -0.11
+      }
+    }
+  ],
+  "perfil_fino": [
+    {
+      "giro_deg": -25,
+      "costo": 0.42,
+      "v2_kmh": 72.85,
+      "v1_kmh": 26.06,
+      "rumbo_v1_deg": 59.84,
+      "punto_impacto": [
+        -2.75,
+        -11.69
+      ],
+      "reposo_v1": [
+        4.58,
+        17.96,
+        78.55
+      ],
+      "reposo_v2": [
+        -0.86,
+        4.81,
+        125.65
+      ]
+    },
+    {
+      "giro_deg": -24,
+      "costo": 0.3,
+      "v2_kmh": 72.37,
+      "v1_kmh": 25.98,
+      "rumbo_v1_deg": 60.79,
+      "punto_impacto": [
+        -2.76,
+        -11.7
+      ],
+      "reposo_v1": [
+        4.57,
+        17.95,
+        78.22
+      ],
+      "reposo_v2": [
+        -1.09,
+        6.83,
+        114.53
+      ]
+    },
+    {
+      "giro_deg": -23,
+      "costo": 0.17,
+      "v2_kmh": 71.96,
+      "v1_kmh": 25.9,
+      "rumbo_v1_deg": 61.71,
+      "punto_impacto": [
+        -2.76,
+        -11.7
+      ],
+      "reposo_v1": [
+        4.57,
+        17.95,
+        77.87
+      ],
+      "reposo_v2": [
+        -0.34,
+        8.7,
+        103.28
+      ]
+    },
+    {
+      "giro_deg": -22,
+      "costo": 0.08,
+      "v2_kmh": 71.68,
+      "v1_kmh": 25.77,
+      "rumbo_v1_deg": 62.62,
+      "punto_impacto": [
+        -2.77,
+        -11.7
+      ],
+      "reposo_v1": [
+        4.57,
+        17.96,
+        77.8
+      ],
+      "reposo_v2": [
+        1.04,
+        10.03,
+        93.01
+      ]
+    },
+    {
+      "giro_deg": -21,
+      "costo": 0.03,
+      "v2_kmh": 71.43,
+      "v1_kmh": 25.66,
+      "rumbo_v1_deg": 63.49,
+      "punto_impacto": [
+        -2.77,
+        -11.7
+      ],
+      "reposo_v1": [
+        4.59,
+        17.99,
+        77.56
+      ],
+      "reposo_v2": [
+        2.8,
+        10.69,
+        84.56
+      ]
+    },
+    {
+      "giro_deg": -20,
+      "costo": 0.03,
+      "v2_kmh": 71.54,
+      "v1_kmh": 25.33,
+      "rumbo_v1_deg": 64.27,
+      "punto_impacto": [
+        -2.78,
+        -11.7
+      ],
+      "reposo_v1": [
+        4.59,
+        18,
+        77.36
+      ],
+      "reposo_v2": [
+        4.08,
+        10.68,
+        79.15
+      ]
+    },
+    {
+      "giro_deg": -19,
+      "costo": 7.73,
+      "v2_kmh": 135.3,
+      "v1_kmh": 7.86,
+      "rumbo_v1_deg": 67.14,
+      "punto_impacto": [
+        -2.75,
+        -11.74
+      ],
+      "reposo_v1": [
+        4.2,
+        18.07,
+        -95.95
+      ],
+      "reposo_v2": [
+        3.69,
+        12.64,
+        113.13
+      ]
+    },
+    {
+      "giro_deg": -18,
+      "costo": 9.69,
+      "v2_kmh": 92.61,
+      "v1_kmh": 40.6,
+      "rumbo_v1_deg": 70.07,
+      "punto_impacto": [
+        -2.7,
+        -11.76
+      ],
+      "reposo_v1": [
+        1.77,
+        17.91,
+        -113.62
+      ],
+      "reposo_v2": [
+        4.55,
+        17.28,
+        88.58
+      ]
+    },
+    {
+      "giro_deg": -17,
+      "costo": 7.85,
+      "v2_kmh": 142.15,
+      "v1_kmh": 2.34,
+      "rumbo_v1_deg": 67.95,
+      "punto_impacto": [
+        -2.77,
+        -11.72
+      ],
+      "reposo_v1": [
+        4.3,
+        18.16,
+        -98.95
+      ],
+      "reposo_v2": [
+        4.17,
+        12.43,
+        100.14
+      ]
+    },
+    {
+      "giro_deg": -16,
+      "costo": 9.44,
+      "v2_kmh": 111.09,
+      "v1_kmh": 30.53,
+      "rumbo_v1_deg": 69.37,
+      "punto_impacto": [
+        -2.76,
+        -11.73
+      ],
+      "reposo_v1": [
+        3.35,
+        17.32,
+        -109.04
+      ],
+      "reposo_v2": [
+        6.81,
+        27.44,
+        84.36
+      ]
+    },
+    {
+      "giro_deg": -15,
+      "costo": 9.61,
+      "v2_kmh": 111.05,
+      "v1_kmh": 31.53,
+      "rumbo_v1_deg": 69.51,
+      "punto_impacto": [
+        -2.78,
+        -11.72
+      ],
+      "reposo_v1": [
+        2.51,
+        18.1,
+        -112.06
+      ],
+      "reposo_v2": [
+        5.79,
+        25.41,
+        84.74
+      ]
+    },
+    {
+      "giro_deg": -14,
+      "costo": 9.16,
+      "v2_kmh": 120.53,
+      "v1_kmh": 26.64,
+      "rumbo_v1_deg": 69.96,
+      "punto_impacto": [
+        -2.79,
+        -11.71
+      ],
+      "reposo_v1": [
+        3.95,
+        18,
+        -116.66
+      ],
+      "reposo_v2": [
+        9.41,
+        34.22,
+        79.59
+      ]
+    },
+    {
+      "giro_deg": -13,
+      "costo": 7.86,
+      "v2_kmh": 147.46,
+      "v1_kmh": 4.49,
+      "rumbo_v1_deg": 69.23,
+      "punto_impacto": [
+        -2.82,
+        -11.69
+      ],
+      "reposo_v1": [
+        4.61,
+        17.93,
+        -110.58
+      ],
+      "reposo_v2": [
+        0.33,
+        16.35,
+        103.28
+      ]
+    },
+    {
+      "giro_deg": -12,
+      "costo": 0.15,
+      "v2_kmh": 68.69,
+      "v1_kmh": 25.29,
+      "rumbo_v1_deg": 70.72,
+      "punto_impacto": [
+        -2.81,
+        -11.69
+      ],
+      "reposo_v1": [
+        4.59,
+        18.01,
+        76.2
+      ],
+      "reposo_v2": [
+        6.59,
+        8.27,
+        66
+      ]
+    },
+    {
+      "giro_deg": -11,
+      "costo": 15.66,
+      "v2_kmh": 162.5,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 55.72,
+      "punto_impacto": [
+        -3.14,
+        -11.52
+      ],
+      "reposo_v1": [
+        8.92,
+        11.59,
+        -63.51
+      ],
+      "reposo_v2": [
+        11.94,
+        3.66,
+        38.33
+      ]
+    },
+    {
+      "giro_deg": -10,
+      "costo": 15.16,
+      "v2_kmh": 159.93,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 56.29,
+      "punto_impacto": [
+        -3.15,
+        -11.52
+      ],
+      "reposo_v1": [
+        7.45,
+        11.37,
+        -78.97
+      ],
+      "reposo_v2": [
+        9.45,
+        2.62,
+        33.01
+      ]
+    },
+    {
+      "giro_deg": -9,
+      "costo": 20.2,
+      "v2_kmh": 112.63,
+      "v1_kmh": 19.11,
+      "rumbo_v1_deg": 55.72,
+      "punto_impacto": [
+        0.16,
+        -5.43
+      ],
+      "reposo_v1": [
+        14.02,
+        14.17,
+        -111.18
+      ],
+      "reposo_v2": [
+        10.92,
+        27.75,
+        71.82
+      ]
+    },
+    {
+      "giro_deg": -8,
+      "costo": 12.09,
+      "v2_kmh": 157.99,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 55.72,
+      "punto_impacto": [
+        -0.29,
+        -6.09
+      ],
+      "reposo_v1": [
+        15.49,
+        16.93,
+        117.92
+      ],
+      "reposo_v2": [
+        -0.8,
+        9.78,
+        -141.97
+      ]
+    },
+    {
+      "giro_deg": -7,
+      "costo": 10.9,
+      "v2_kmh": 186.02,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 55.72,
+      "punto_impacto": [
+        -3.22,
+        -11.48
+      ],
+      "reposo_v1": [
+        11.72,
+        21.05,
+        133.93
+      ],
+      "reposo_v2": [
+        10.51,
+        11.13,
+        -177.32
+      ]
+    },
+    {
+      "giro_deg": -6,
+      "costo": 5.67,
+      "v2_kmh": 178.79,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 55.72,
+      "punto_impacto": [
+        -3.24,
+        -11.46
+      ],
+      "reposo_v1": [
+        9.09,
+        18.91,
+        123.13
+      ],
+      "reposo_v2": [
+        7.88,
+        13.37,
+        106.99
+      ]
+    },
+    {
+      "giro_deg": -5,
+      "costo": 2.78,
+      "v2_kmh": 176.36,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 55.72,
+      "punto_impacto": [
+        -3.26,
+        -11.44
+      ],
+      "reposo_v1": [
+        7.3,
+        18.43,
+        102.8
+      ],
+      "reposo_v2": [
+        7.87,
+        12.98,
+        91.84
+      ]
+    },
+    {
+      "giro_deg": -4,
+      "costo": 1.27,
+      "v2_kmh": 173.13,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 55.72,
+      "punto_impacto": [
+        -3.28,
+        -11.42
+      ],
+      "reposo_v1": [
+        6.14,
+        18.06,
+        92.46
+      ],
+      "reposo_v2": [
+        7.88,
+        13.73,
+        79.61
+      ]
+    },
+    {
+      "giro_deg": -3,
+      "costo": 0.52,
+      "v2_kmh": 169.68,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 55.72,
+      "punto_impacto": [
+        -3.3,
+        -11.41
+      ],
+      "reposo_v1": [
+        5.39,
+        17.97,
+        87.38
+      ],
+      "reposo_v2": [
+        7.28,
+        12.83,
+        73.02
+      ]
+    },
+    {
+      "giro_deg": -2,
+      "costo": 0.19,
+      "v2_kmh": 166.49,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 55.72,
+      "punto_impacto": [
+        -3.32,
+        -11.39
+      ],
+      "reposo_v1": [
+        4.91,
+        17.97,
+        84.12
+      ],
+      "reposo_v2": [
+        6.27,
+        11.95,
+        69.93
+      ]
+    },
+    {
+      "giro_deg": -1,
+      "costo": 0.19,
+      "v2_kmh": 162.92,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 55.72,
+      "punto_impacto": [
+        -3.34,
+        -11.37
+      ],
+      "reposo_v1": [
+        4.52,
+        17.53,
+        82.31
+      ],
+      "reposo_v2": [
+        5.03,
+        10.85,
+        67.7
+      ]
+    },
+    {
+      "giro_deg": 0,
+      "costo": 0.12,
+      "v2_kmh": 64.23,
+      "v1_kmh": 22.56,
+      "rumbo_v1_deg": 75.76,
+      "punto_impacto": [
+        -2.09,
+        -8.19
+      ],
+      "reposo_v1": [
+        4.57,
+        18.05,
+        75.76
+      ],
+      "reposo_v2": [
+        2.06,
+        8.08,
+        75.71
+      ]
+    },
+    {
+      "giro_deg": 1,
+      "costo": 0.39,
+      "v2_kmh": 57.39,
+      "v1_kmh": 15.95,
+      "rumbo_v1_deg": 77.35,
+      "punto_impacto": [
+        -0.43,
+        -0.72
+      ],
+      "reposo_v1": [
+        3.79,
+        18.22,
+        77.45
+      ],
+      "reposo_v2": [
+        1.88,
+        9.05,
+        76.67
+      ]
+    },
+    {
+      "giro_deg": 2,
+      "costo": 0.78,
+      "v2_kmh": 52.17,
+      "v1_kmh": 10.24,
+      "rumbo_v1_deg": 78.5,
+      "punto_impacto": [
+        0.42,
+        4.34
+      ],
+      "reposo_v1": [
+        3.22,
+        18.23,
+        78.63
+      ],
+      "reposo_v2": [
+        1.6,
+        9.73,
+        77.65
+      ]
+    },
+    {
+      "giro_deg": 3,
+      "costo": 1.18,
+      "v2_kmh": 42.83,
+      "v1_kmh": 0.98,
+      "rumbo_v1_deg": 79.51,
+      "punto_impacto": [
+        1.37,
+        10.8
+      ],
+      "reposo_v1": [
+        2.74,
+        18.24,
+        79.63
+      ],
+      "reposo_v2": [
+        1.41,
+        10.96,
+        78.64
+      ]
+    },
+    {
+      "giro_deg": 4,
+      "costo": 1.77,
+      "v2_kmh": 42.79,
+      "v1_kmh": 0.95,
+      "rumbo_v1_deg": 80.78,
+      "punto_impacto": [
+        0.92,
+        10.79
+      ],
+      "reposo_v1": [
+        2.12,
+        18.24,
+        80.94
+      ],
+      "reposo_v2": [
+        0.95,
+        10.93,
+        79.61
+      ]
+    },
+    {
+      "giro_deg": 5,
+      "costo": 2.36,
+      "v2_kmh": 41.81,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 82.02,
+      "punto_impacto": [
+        0.55,
+        11.28
+      ],
+      "reposo_v1": [
+        1.51,
+        18.23,
+        82.21
+      ],
+      "reposo_v2": [
+        0.52,
+        11.04,
+        80.59
+      ]
+    },
+    {
+      "giro_deg": 6,
+      "costo": 2.98,
+      "v2_kmh": 41.76,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 83.28,
+      "punto_impacto": [
+        0.09,
+        11.27
+      ],
+      "reposo_v1": [
+        0.9,
+        18.23,
+        83.51
+      ],
+      "reposo_v2": [
+        0.06,
+        11.03,
+        81.56
+      ]
+    },
+    {
+      "giro_deg": 7,
+      "costo": 3.83,
+      "v2_kmh": 52.51,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 84.78,
+      "punto_impacto": [
+        -0.66,
+        8.95
+      ],
+      "reposo_v1": [
+        0.17,
+        18.44,
+        85.2
+      ],
+      "reposo_v2": [
+        -0.49,
+        10.12,
+        82.46
+      ]
+    },
+    {
+      "giro_deg": 8,
+      "costo": 4.73,
+      "v2_kmh": 52.53,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 86.01,
+      "punto_impacto": [
+        -1.01,
+        9.49
+      ],
+      "reposo_v1": [
+        -0.39,
+        19,
+        86.5
+      ],
+      "reposo_v2": [
+        -0.86,
+        10.67,
+        83.43
+      ]
+    },
+    {
+      "giro_deg": 9,
+      "costo": 0.15,
+      "v2_kmh": 68.01,
+      "v1_kmh": 25.25,
+      "rumbo_v1_deg": 78.81,
+      "punto_impacto": [
+        -3.1,
+        -11.61
+      ],
+      "reposo_v1": [
+        4.59,
+        18.02,
+        75.46
+      ],
+      "reposo_v2": [
+        -1.14,
+        9.5,
+        83.86
+      ]
+    },
+    {
+      "giro_deg": 10,
+      "costo": 15.75,
+      "v2_kmh": 53.41,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 87.54,
+      "punto_impacto": [
+        -1.05,
+        20.02
+      ],
+      "reposo_v1": [
+        -0.67,
+        29.78,
+        87.91
+      ],
+      "reposo_v2": [
+        -0.94,
+        21.32,
+        85.49
+      ]
+    },
+    {
+      "giro_deg": 11,
+      "costo": 7.87,
+      "v2_kmh": 52.33,
+      "v1_kmh": 0,
+      "rumbo_v1_deg": 89.63,
+      "punto_impacto": [
+        -2.17,
+        10.99
+      ],
+      "reposo_v1": [
+        -2.18,
+        20.45,
+        90.34
+      ],
+      "reposo_v2": [
+        -2.08,
+        12.16,
+        86.35
+      ]
+    },
+    {
+      "giro_deg": 12,
+      "costo": 5.7,
+      "v2_kmh": 71.57,
+      "v1_kmh": 25.32,
+      "rumbo_v1_deg": 87,
+      "punto_impacto": [
+        -2.98,
+        -11.58
+      ],
+      "reposo_v1": [
+        0.03,
+        20.68,
+        85.54
+      ],
+      "reposo_v2": [
+        2.21,
+        9.64,
+        73.35
+      ]
+    },
+    {
+      "giro_deg": 13,
+      "costo": 0.15,
+      "v2_kmh": 72.96,
+      "v1_kmh": 22.79,
+      "rumbo_v1_deg": 82.03,
+      "punto_impacto": [
+        -3.12,
+        -11.61
+      ],
+      "reposo_v1": [
+        4.58,
+        18.02,
+        75.1
+      ],
+      "reposo_v2": [
+        -1.58,
+        10.02,
+        84.31
+      ]
+    },
+    {
+      "giro_deg": 14,
+      "costo": 0.14,
+      "v2_kmh": 76.95,
+      "v1_kmh": 20.48,
+      "rumbo_v1_deg": 83.35,
+      "punto_impacto": [
+        -3.11,
+        -11.61
+      ],
+      "reposo_v1": [
+        4.58,
+        18.03,
+        74.94
+      ],
+      "reposo_v2": [
+        -0.79,
+        9.45,
+        81.24
+      ]
+    },
+    {
+      "giro_deg": 15,
+      "costo": 0.11,
+      "v2_kmh": 77.22,
+      "v1_kmh": 20.54,
+      "rumbo_v1_deg": 84.17,
+      "punto_impacto": [
+        -3.11,
+        -11.61
+      ],
+      "reposo_v1": [
+        4.58,
+        18.03,
+        74.8
+      ],
+      "reposo_v2": [
+        -0.26,
+        9.53,
+        79.13
+      ]
+    },
+    {
+      "giro_deg": 16,
+      "costo": 0.09,
+      "v2_kmh": 76.57,
+      "v1_kmh": 21.18,
+      "rumbo_v1_deg": 84.88,
+      "punto_impacto": [
+        -3.12,
+        -11.61
+      ],
+      "reposo_v1": [
+        4.58,
+        18.02,
+        74.66
+      ],
+      "reposo_v2": [
+        0.19,
+        9.78,
+        77.35
+      ]
+    },
+    {
+      "giro_deg": 17,
+      "costo": 0.07,
+      "v2_kmh": 75.4,
+      "v1_kmh": 22.16,
+      "rumbo_v1_deg": 85.5,
+      "punto_impacto": [
+        -3.13,
+        -11.61
+      ],
+      "reposo_v1": [
+        4.58,
+        18.02,
+        74.52
+      ],
+      "reposo_v2": [
+        0.54,
+        10.15,
+        76.02
+      ]
+    },
+    {
+      "giro_deg": 18,
+      "costo": 0.06,
+      "v2_kmh": 74.17,
+      "v1_kmh": 23.19,
+      "rumbo_v1_deg": 86.08,
+      "punto_impacto": [
+        -3.14,
+        -11.61
+      ],
+      "reposo_v1": [
+        4.58,
+        18.02,
+        74.38
+      ],
+      "reposo_v2": [
+        0.89,
+        10.53,
+        74.68
+      ]
+    },
+    {
+      "giro_deg": 19,
+      "costo": 0.04,
+      "v2_kmh": 72.87,
+      "v1_kmh": 24.25,
+      "rumbo_v1_deg": 86.64,
+      "punto_impacto": [
+        -3.15,
+        -11.61
+      ],
+      "reposo_v1": [
+        4.58,
+        18.01,
+        74.23
+      ],
+      "reposo_v2": [
+        1.22,
+        10.93,
+        73.41
+      ]
+    },
+    {
+      "giro_deg": 20,
+      "costo": 0.03,
+      "v2_kmh": 71.56,
+      "v1_kmh": 25.32,
+      "rumbo_v1_deg": 87.16,
+      "punto_impacto": [
+        -3.16,
+        -11.61
+      ],
+      "reposo_v1": [
+        4.58,
+        18.01,
+        74.08
+      ],
+      "reposo_v2": [
+        1.56,
+        11.31,
+        72.14
+      ]
+    },
+    {
+      "giro_deg": 21,
+      "costo": 0.03,
+      "v2_kmh": 71.36,
+      "v1_kmh": 25.69,
+      "rumbo_v1_deg": 87.92,
+      "punto_impacto": [
+        -3.16,
+        -11.6
+      ],
+      "reposo_v1": [
+        4.58,
+        17.98,
+        73.87
+      ],
+      "reposo_v2": [
+        2.63,
+        10.76,
+        66.99
+      ]
+    },
+    {
+      "giro_deg": 22,
+      "costo": 0.08,
+      "v2_kmh": 71.61,
+      "v1_kmh": 25.82,
+      "rumbo_v1_deg": 88.79,
+      "punto_impacto": [
+        -3.17,
+        -11.6
+      ],
+      "reposo_v1": [
+        4.58,
+        17.96,
+        73.62
+      ],
+      "reposo_v2": [
+        3.87,
+        9.37,
+        58.64
+      ]
+    },
+    {
+      "giro_deg": 23,
+      "costo": 0.17,
+      "v2_kmh": 71.92,
+      "v1_kmh": 25.92,
+      "rumbo_v1_deg": 89.71,
+      "punto_impacto": [
+        -3.17,
+        -11.6
+      ],
+      "reposo_v1": [
+        4.58,
+        17.95,
+        73.53
+      ],
+      "reposo_v2": [
+        4.46,
+        7.51,
+        48.24
+      ]
+    },
+    {
+      "giro_deg": 24,
+      "costo": 6.61,
+      "v2_kmh": 100.59,
+      "v1_kmh": 42.22,
+      "rumbo_v1_deg": 91.39,
+      "punto_impacto": [
+        -3.16,
+        -11.58
+      ],
+      "reposo_v1": [
+        5.44,
+        17.61,
+        -57.73
+      ],
+      "reposo_v2": [
+        -5.09,
+        14.31,
+        -40.06
+      ]
+    },
+    {
+      "giro_deg": 25,
+      "costo": 6.47,
+      "v2_kmh": 95.1,
+      "v1_kmh": 44.86,
+      "rumbo_v1_deg": 91.21,
+      "punto_impacto": [
+        -3.18,
+        -11.59
+      ],
+      "reposo_v1": [
+        5.45,
+        17.27,
+        -53.01
+      ],
+      "reposo_v2": [
+        -4.12,
+        15.01,
+        -33.24
+      ]
+    }
+  ],
+  "rumbo_fijo_sobre_la_via": {
+    "parametros": [
+      {
+        "parametro": "velocidad_previa",
+        "vehiculo": "V2",
+        "en_limite": false,
+        "mejor": 64.57,
+        "p10": 62.18,
+        "p90": 86.99
+      },
+      {
+        "parametro": "velocidad_previa",
+        "vehiculo": "V1",
+        "en_limite": false,
+        "mejor": 22.7,
+        "p10": 4.7,
+        "p90": 24.99
+      },
+      {
+        "parametro": "rumbo_inicial",
+        "vehiculo": "V1",
+        "en_limite": false,
+        "mejor": 75.77,
+        "p10": 73.92,
+        "p90": 78.24
+      }
+    ],
+    "residuos": [
+      {
+        "nombre": "dano_minimo:veh-a",
+        "sigma": -0.016
+      },
+      {
+        "nombre": "orden_alcance:veh-a",
+        "sigma": 0
+      },
+      {
+        "nombre": "reposo:veh-b:x",
+        "sigma": -0.013
+      },
+      {
+        "nombre": "reposo:veh-b:y",
+        "sigma": 0.076
+      },
+      {
+        "nombre": "reposo_supuesto:veh-a:x",
+        "sigma": -0.121
+      },
+      {
+        "nombre": "reposo_supuesto:veh-a:y",
+        "sigma": -0.477
+      },
+      {
+        "nombre": "rumbo_final:veh-b",
+        "sigma": 0.003
+      },
+      {
+        "nombre": "rumbo_final_supuesto:veh-a",
+        "sigma": 0
+      }
+    ]
+  }
+}

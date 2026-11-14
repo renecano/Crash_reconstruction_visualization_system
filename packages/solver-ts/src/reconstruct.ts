@@ -10,7 +10,14 @@
  * inversión y consistencia, que llegan al port en F9).
  */
 import { VEHICLE_CLASSES } from "@croquis/scene-schema";
-import { type ContactSolution, contactOffset, Locus, resolveContact } from "./contact";
+import {
+  type ContactSolution,
+  contactOffset,
+  contactZone,
+  type ContactZone,
+  Locus,
+  resolveContact,
+} from "./contact";
 import { profileForEnergy, TRIANGULAR_SHAPES } from "./crash3";
 import { narrowObject } from "./fixed-object";
 import {
@@ -997,6 +1004,14 @@ export function reconstruct(
         contactOffset(zonas.get(m.id), m.body.length, m.body.width, standoff),
       ]),
     );
+    // Entre dos vehículos, las zonas se tocan dentro de su tolerancia (ADR 0135).
+    const zones: [ContactZone, ContactZone] | null =
+      tipoEvento === "impacto_vehiculo_vehiculo" && targets.length === 2
+        ? [
+            contactZone(zonas.get(targets[0]!.id), targets[0]!.body.length, targets[0]!.body.width),
+            contactZone(zonas.get(targets[1]!.id), targets[1]!.body.length, targets[1]!.body.width),
+          ]
+        : null;
     const locusFor = (m: VehicleModel, path: KinPath): Locus => {
       if (m.v0 <= 0) {
         const p0 = m.pose0;
@@ -1026,7 +1041,7 @@ export function reconstruct(
         const fixed = decl;
         loci.push(new Locus(() => [fixed[0], fixed[1], 0.0], [0.0, 0.0], 0.0));
       }
-      const sol = resolveContact(loci, decl);
+      const sol = resolveContact(loci, decl, zones);
       const rank = combo.reduce((acc, path, i) => acc + options[i]!.indexOf(path), 0);
       if (
         best === null ||
@@ -1058,7 +1073,8 @@ export function reconstruct(
     targets.forEach((m, i) => {
       if (i < sol.params.length) sContact.set(m.id, sol.params[i]!);
     });
-    if (sol.gap > CONTACT_GAP_FLAG_M) {
+    // Lo que separa las zonas fuera de lo que se extienden a lo largo de sus caras (ADR 0135).
+    if (sol.zoneGap > CONTACT_GAP_FLAG_M) {
       flag(
         "zonas_no_se_tocan",
         { separacion_m: sol.gap },

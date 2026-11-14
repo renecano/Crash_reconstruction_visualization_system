@@ -245,7 +245,7 @@ export function TablaVelocidades({ r }: { r: Reconstruccion }) {
   );
 }
 
-/** «71.56 (62.40–90.00)»: el valor con su p10–p90, si lo hay. */
+/** «56.87 (54.79–78.39)»: el valor con su p10–p90, si lo hay. */
 export function conRango(kmh: number, rango: [number, number] | null): string {
   return rango
     ? `${kmh.toFixed(2)} (${rango[0].toFixed(2)}–${rango[1].toFixed(2)})`
@@ -352,7 +352,14 @@ export function ElegirHipotesis({
             style={elegida === h.clave ? { outline: "2px solid var(--acento)" } : undefined}
             data-testid={`hipotesis-${h.clave}`}
           >
-            <span className="t-interfaz font-semibold">{h.titulo}</span>
+            <span className="t-interfaz font-semibold">
+              {h.titulo}
+              {h.familia === "reposo" ? (
+                <span className="t-nota ml-2 font-normal" data-testid={`supuesta-${h.clave}`}>
+                  supuesto
+                </span>
+              ) : null}
+            </span>
             <ul className="cifras t-cuerpo flex flex-col gap-1">
               {h.costo !== null ? (
                 <li data-testid={`costo-${h.clave}`}>Costo del ajuste: {h.costo.toFixed(3)}</li>

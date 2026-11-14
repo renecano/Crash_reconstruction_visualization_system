@@ -49,20 +49,34 @@ const corridas = [];
 for (let k = 0; k < 3; k++) {
   const pagina = await navegador.newPage();
   await pagina.goto(url);
+  // Como el cliente de la app (`reconstruct-client.ts`): desde W8, la hipótesis del reposo supuesto
+  // va en otro worker al mismo tiempo. El worker de producción de antes no la sabe pedir aparte.
+  const paralelo = etiqueta !== "antes";
   const t = await pagina.evaluate(
-    (texto) =>
+    ([texto, enParalelo]) =>
       new Promise((ok, mal) => {
         const w = new Worker("/workers/reconstruct.js");
         const t0 = performance.now();
         let reconstruccion = null;
-        w.onmessage = (ev) => {
+        const reposo = new Promise((listo) => {
+          if (!enParalelo) return listo(null);
+          const h = new Worker("/workers/reconstruct.js");
+          h.onmessage = (ev) => (ev.data.error ? mal(new Error(ev.data.error)) : listo(ev.data));
+          h.postMessage({ id: 2, spec: JSON.parse(texto), paralelo: true });
+        });
+        w.onmessage = async (ev) => {
           if (ev.data.error) return mal(new Error(ev.data.error));
-          if (ev.data.fase === "reconstruccion") reconstruccion = performance.now() - t0;
-          else ok({ reconstruccion_ms: reconstruccion, completo_ms: performance.now() - t0 });
+          if (ev.data.fase === "reconstruccion") {
+            reconstruccion = performance.now() - t0;
+            return;
+          }
+          // El Monte Carlo llega del otro worker siempre; la hipótesis, si hace falta.
+          if (enParalelo) await reposo;
+          ok({ reconstruccion_ms: reconstruccion, completo_ms: performance.now() - t0 });
         };
-        w.postMessage({ id: 1, spec: JSON.parse(texto), completo: true });
+        w.postMessage({ id: 1, spec: JSON.parse(texto), completo: true, enOtroWorker: enParalelo });
       }),
-    spec,
+    [spec, paralelo],
   );
   corridas.push({
     reconstruccion_ms: Math.round(t.reconstruccion_ms),

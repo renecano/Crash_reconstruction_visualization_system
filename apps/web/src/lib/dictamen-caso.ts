@@ -16,6 +16,7 @@
  */
 import { conSigno as conSignoContra, pctConSigno } from "./contraste-lab";
 import {
+  alternativaSupuesta,
   modalidadInferida,
   reconstruccionContraCesvi,
   type Expediente,
@@ -106,7 +107,7 @@ function tabla(encabezados: string[], filas: TableCell[][]): Content {
 
 const enPalabras = (s: string) => s.replaceAll("_", " ");
 const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(2));
-/** «71.56 (62.40–90.00)»: el valor con su p10–p90 alrededor de la solución elegida, si lo hay. */
+/** «56.87 (54.79–78.39)»: el valor con su p10–p90 alrededor de la solución elegida, si lo hay. */
 const rangoTexto = (kmh: number, rango: [number, number] | null) =>
   rango ? `${kmh.toFixed(2)} (${rango[0].toFixed(2)}–${rango[1].toFixed(2)})` : kmh.toFixed(2);
 const conSigno = (x: number) => `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(2)}`;
@@ -137,7 +138,7 @@ function hipotesis(d: DatosDictamenCaso): Content[] {
         "Deformación medida",
       ],
       hs.map((h) => [
-        h.titulo,
+        h.familia === "reposo" ? `${h.titulo} (supuesto)` : h.titulo,
         h.costo === null ? "—" : h.costo.toFixed(3),
         h.velocidades
           .map(
@@ -182,6 +183,10 @@ function contraReporte(d: DatosDictamenCaso): Content[] {
       : []),
     ...k.filas.map((f) => nota(`${f.metodo}: ${f.porQue}`)),
     ...k.avisos.map((a) => parrafo(a)),
+    // La otra hipótesis, con el reposo supuesto como dato, marcada como supuesto (ADR 0135).
+    ...(alternativaSupuesta(d.reconstruccion)
+      ? [nota(alternativaSupuesta(d.reconstruccion)!.texto)]
+      : []),
   ];
 }
 const ESTADO: Record<FilaDeclarada["estado"], string> = {
