@@ -163,6 +163,7 @@ def main() -> None:
         )
         + "\n",
         encoding="utf-8",
+        newline="\n",
     )
     if len(args) > 2:
         escribir_cs(Path(args[2]), modelos)
@@ -197,7 +198,7 @@ def escribir_cs(ruta: Path, modelos: list[dict[str, object]]) -> None:
         vals = ", ".join(f"{p['medio_ancho']:.4f}" for p in m["perfil"])  # type: ignore[index, union-attr]
         lineas.append(f'            {{ "{m["modelo"]}", new[] {{ {vals} }} }},')
     lineas += ["        };", "    }", "}", ""]
-    ruta.write_text(chr(10).join(lineas), encoding="utf-8")
+    ruta.write_text("\n".join(lineas), encoding="utf-8", newline="\n")
 
 
 main()
