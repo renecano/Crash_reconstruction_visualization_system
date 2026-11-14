@@ -1,5 +1,5 @@
 {
- "fecha": "2026-11-13T20:32:30.072Z",
+ "fecha": "2026-11-14T00:10:07.952Z",
  "particion": "prueba",
  "descripcion": "E-R4: a Croquis se le da solo la narración sin conclusiones (R0); Claude la lee a escena como en «Caso nuevo» (R1) y Croquis la compara con lo que concluyó CESVI (R0). Líneas base: la modalidad más frecuente y la velocidad promedio por deformación, de desarrollo.",
  "version_prompt": "escena-narracion-v2",
@@ -12,7 +12,7 @@
  "sin_leer": [],
  "escenas_validas": 205,
  "reconstruidas_en_3d": 205,
- "ms_mediana": 322,
+ "ms_mediana": 451,
  "costo_lecturas_usd": 2.6626,
  "resumen": {
   "dictamenes": 205,
@@ -221,7 +221,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 420
+    "ms": 506
    },
    "costo_usd": 0.0108288,
    "bitacora": {
@@ -261,7 +261,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 703
+    "ms": 834
    },
    "costo_usd": 0.0115228,
    "bitacora": {
@@ -301,7 +301,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 468
+    "ms": 548
    },
    "costo_usd": 0.0157608,
    "bitacora": {
@@ -341,7 +341,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 392
+    "ms": 476
    },
    "costo_usd": 0.0120968,
    "bitacora": {
@@ -381,7 +381,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 397
+    "ms": 458
    },
    "costo_usd": 0.0113178,
    "bitacora": {
@@ -421,7 +421,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 24
+    "ms": 16
    },
    "costo_usd": 0.0207828,
    "bitacora": {
@@ -461,7 +461,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 24
+    "ms": 15
    },
    "costo_usd": 0.0137028,
    "bitacora": {
@@ -501,7 +501,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 402
+    "ms": 451
    },
    "costo_usd": 0.0145388,
    "bitacora": {
@@ -541,7 +541,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 344
+    "ms": 598
    },
    "costo_usd": 0.0078198,
    "bitacora": {
@@ -581,7 +581,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 23
    },
    "costo_usd": 0.0049538,
    "bitacora": {
@@ -621,7 +621,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 344
+    "ms": 390
    },
    "costo_usd": 0.0129038,
    "bitacora": {
@@ -661,7 +661,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 289
+    "ms": 328
    },
    "costo_usd": 0.0152158,
    "bitacora": {
@@ -701,7 +701,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 359
+    "ms": 410
    },
    "costo_usd": 0.0154398,
    "bitacora": {
@@ -741,7 +741,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 311
+    "ms": 432
    },
    "costo_usd": 0.0168908,
    "bitacora": {
@@ -781,7 +781,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 230
+    "ms": 258
    },
    "costo_usd": 0.0036518,
    "bitacora": {
@@ -821,7 +821,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 377
+    "ms": 494
    },
    "costo_usd": 0.0095488,
    "bitacora": {
@@ -861,7 +861,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 342
+    "ms": 464
    },
    "costo_usd": 0.0146388,
    "bitacora": {
@@ -901,7 +901,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 12
+    "ms": 13
    },
    "costo_usd": 0.0072478,
    "bitacora": {
@@ -950,7 +950,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 795
+    "ms": 857
    },
    "costo_usd": 0.0122298,
    "bitacora": {
@@ -990,7 +990,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 730
+    "ms": 963
    },
    "costo_usd": 0.0176408,
    "bitacora": {
@@ -1030,7 +1030,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 353
+    "ms": 524
    },
    "costo_usd": 0.0190888,
    "bitacora": {
@@ -1070,7 +1070,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 322
+    "ms": 492
    },
    "costo_usd": 0.0070488,
    "bitacora": {
@@ -1110,7 +1110,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 19
+    "ms": 15
    },
    "costo_usd": 0.0128708,
    "bitacora": {
@@ -1150,7 +1150,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 12
+    "ms": 13
    },
    "costo_usd": 0.0019438,
    "bitacora": {
@@ -1190,7 +1190,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 214
+    "ms": 236
    },
    "costo_usd": 0.0077748,
    "bitacora": {
@@ -1230,7 +1230,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 360
+    "ms": 426
    },
    "costo_usd": 0.0139698,
    "bitacora": {
@@ -1270,7 +1270,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 12
+    "ms": 20
    },
    "costo_usd": 0.0105238,
    "bitacora": {
@@ -1310,7 +1310,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 261
+    "ms": 508
    },
    "costo_usd": 0.0174368,
    "bitacora": {
@@ -1350,7 +1350,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 11
+    "ms": 19
    },
    "costo_usd": 0.0059298,
    "bitacora": {
@@ -1390,7 +1390,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 239
+    "ms": 371
    },
    "costo_usd": 0.0096808,
    "bitacora": {
@@ -1430,7 +1430,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 14
+    "ms": 11
    },
    "costo_usd": 0.0036578,
    "bitacora": {
@@ -1470,7 +1470,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 318
+    "ms": 467
    },
    "costo_usd": 0.0177768,
    "bitacora": {
@@ -1510,7 +1510,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 377
+    "ms": 424
    },
    "costo_usd": 0.0192478,
    "bitacora": {
@@ -1550,7 +1550,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 11
+    "ms": 18
    },
    "costo_usd": 0.0079488,
    "bitacora": {
@@ -1590,7 +1590,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 320
+    "ms": 492
    },
    "costo_usd": 0.0146988,
    "bitacora": {
@@ -1630,7 +1630,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 676
+    "ms": 564
    },
    "costo_usd": 0.0099018,
    "bitacora": {
@@ -1670,7 +1670,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 719
+    "ms": 819
    },
    "costo_usd": 0.0206668,
    "bitacora": {
@@ -1710,7 +1710,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 249
+    "ms": 263
    },
    "costo_usd": 0.0126798,
    "bitacora": {
@@ -1750,7 +1750,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 316
+    "ms": 352
    },
    "costo_usd": 0.0103518,
    "bitacora": {
@@ -1790,7 +1790,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 18
+    "ms": 13
    },
    "costo_usd": 0.0021228,
    "bitacora": {
@@ -1830,7 +1830,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 267
+    "ms": 395
    },
    "costo_usd": 0.0153248,
    "bitacora": {
@@ -1870,7 +1870,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 325
+    "ms": 483
    },
    "costo_usd": 0.0170958,
    "bitacora": {
@@ -1910,7 +1910,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 268
+    "ms": 363
    },
    "costo_usd": 0.0085598,
    "bitacora": {
@@ -1950,7 +1950,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 328
+    "ms": 493
    },
    "costo_usd": 0.0123158,
    "bitacora": {
@@ -1990,7 +1990,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 11
+    "ms": 20
    },
    "costo_usd": 0.0134898,
    "bitacora": {
@@ -2030,7 +2030,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 306
+    "ms": 497
    },
    "costo_usd": 0.0123618,
    "bitacora": {
@@ -2070,7 +2070,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 263
+    "ms": 512
    },
    "costo_usd": 0.0107178,
    "bitacora": {
@@ -2110,7 +2110,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 478
+    "ms": 556
    },
    "costo_usd": 0.0173858,
    "bitacora": {
@@ -2150,7 +2150,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 354
+    "ms": 393
    },
    "costo_usd": 0.0143798,
    "bitacora": {
@@ -2190,7 +2190,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 318
+    "ms": 459
    },
    "costo_usd": 0.0132428,
    "bitacora": {
@@ -2230,7 +2230,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 537
+    "ms": 691
    },
    "costo_usd": 0.0180388,
    "bitacora": {
@@ -2270,7 +2270,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 370
+    "ms": 547
    },
    "costo_usd": 0.0175708,
    "bitacora": {
@@ -2310,7 +2310,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 404
+    "ms": 470
    },
    "costo_usd": 0.0111228,
    "bitacora": {
@@ -2350,7 +2350,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 355
+    "ms": 530
    },
    "costo_usd": 0.0100318,
    "bitacora": {
@@ -2390,7 +2390,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 19
    },
    "costo_usd": 0.0177068,
    "bitacora": {
@@ -2430,7 +2430,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 208
+    "ms": 323
    },
    "costo_usd": 0.0116238,
    "bitacora": {
@@ -2470,7 +2470,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 296
+    "ms": 496
    },
    "costo_usd": 0.0137808,
    "bitacora": {
@@ -2510,7 +2510,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 278
+    "ms": 484
    },
    "costo_usd": 0.0155248,
    "bitacora": {
@@ -2550,7 +2550,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 11
+    "ms": 20
    },
    "costo_usd": 0.0036878,
    "bitacora": {
@@ -2590,7 +2590,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 350
+    "ms": 539
    },
    "costo_usd": 0.0174708,
    "bitacora": {
@@ -2630,7 +2630,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 218
+    "ms": 382
    },
    "costo_usd": 0.0160688,
    "bitacora": {
@@ -2670,7 +2670,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 11
+    "ms": 21
    },
    "costo_usd": 0.0156948,
    "bitacora": {
@@ -2710,7 +2710,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 10
+    "ms": 22
    },
    "costo_usd": 0.0126458,
    "bitacora": {
@@ -2750,7 +2750,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 373
+    "ms": 508
    },
    "costo_usd": 0.0181438,
    "bitacora": {
@@ -2799,7 +2799,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 412
+    "ms": 662
    },
    "costo_usd": 0.0164568,
    "bitacora": {
@@ -2839,7 +2839,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 362
+    "ms": 563
    },
    "costo_usd": 0.0204498,
    "bitacora": {
@@ -2879,7 +2879,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 11
+    "ms": 14
    },
    "costo_usd": 0.0077508,
    "bitacora": {
@@ -2919,7 +2919,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 227
+    "ms": 295
    },
    "costo_usd": 0.0211088,
    "bitacora": {
@@ -2959,7 +2959,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 11
+    "ms": 12
    },
    "costo_usd": 0.0137098,
    "bitacora": {
@@ -2999,7 +2999,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 245
+    "ms": 320
    },
    "costo_usd": 0.0151038,
    "bitacora": {
@@ -3039,7 +3039,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 269
+    "ms": 488
    },
    "costo_usd": 0.0161378,
    "bitacora": {
@@ -3079,7 +3079,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 11
+    "ms": 22
    },
    "costo_usd": 0.0087328,
    "bitacora": {
@@ -3119,7 +3119,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 415
+    "ms": 474
    },
    "costo_usd": 0.0145928,
    "bitacora": {
@@ -3159,7 +3159,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 18
+    "ms": 22
    },
    "costo_usd": 0.0151608,
    "bitacora": {
@@ -3199,7 +3199,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 19
+    "ms": 13
    },
    "costo_usd": 0.0077098,
    "bitacora": {
@@ -3239,7 +3239,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 11
+    "ms": 22
    },
    "costo_usd": 0.0114298,
    "bitacora": {
@@ -3279,7 +3279,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 11
+    "ms": 23
    },
    "costo_usd": 0.0121118,
    "bitacora": {
@@ -3319,7 +3319,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 304
+    "ms": 436
    },
    "costo_usd": 0.0144378,
    "bitacora": {
@@ -3359,7 +3359,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 271
+    "ms": 426
    },
    "costo_usd": 0.0127628,
    "bitacora": {
@@ -3399,7 +3399,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 282
+    "ms": 371
    },
    "costo_usd": 0.0147058,
    "bitacora": {
@@ -3439,7 +3439,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 12
+    "ms": 20
    },
    "costo_usd": 0.0174008,
    "bitacora": {
@@ -3479,7 +3479,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 151
+    "ms": 288
    },
    "costo_usd": 0.0085478,
    "bitacora": {
@@ -3519,7 +3519,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 10
+    "ms": 21
    },
    "costo_usd": 0.0075398,
    "bitacora": {
@@ -3559,7 +3559,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 516
+    "ms": 784
    },
    "costo_usd": 0.0174168,
    "bitacora": {
@@ -3639,7 +3639,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 465
+    "ms": 686
    },
    "costo_usd": 0.0128148,
    "bitacora": {
@@ -3679,7 +3679,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 344
+    "ms": 515
    },
    "costo_usd": 0.0081078,
    "bitacora": {
@@ -3719,7 +3719,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 368
+    "ms": 359
    },
    "costo_usd": 0.0109578,
    "bitacora": {
@@ -3759,7 +3759,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 269
+    "ms": 428
    },
    "costo_usd": 0.0147298,
    "bitacora": {
@@ -3799,7 +3799,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 334
+    "ms": 624
    },
    "costo_usd": 0.0111068,
    "bitacora": {
@@ -3839,7 +3839,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 415
+    "ms": 536
    },
    "costo_usd": 0.0117898,
    "bitacora": {
@@ -3879,7 +3879,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 464
+    "ms": 699
    },
    "costo_usd": 0.0193328,
    "bitacora": {
@@ -3919,7 +3919,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 358
+    "ms": 520
    },
    "costo_usd": 0.0153488,
    "bitacora": {
@@ -3959,7 +3959,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 329
+    "ms": 443
    },
    "costo_usd": 0.0309168,
    "bitacora": {
@@ -3999,7 +3999,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 2270
+    "ms": 3214
    },
    "costo_usd": 0.0262208,
    "bitacora": {
@@ -4039,7 +4039,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 1408
+    "ms": 2202
    },
    "costo_usd": 0.0231638,
    "bitacora": {
@@ -4079,7 +4079,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 371
+    "ms": 591
    },
    "costo_usd": 0.0165418,
    "bitacora": {
@@ -4119,7 +4119,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 268
+    "ms": 435
    },
    "costo_usd": 0.0131018,
    "bitacora": {
@@ -4159,7 +4159,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 260
+    "ms": 503
    },
    "costo_usd": 0.0210368,
    "bitacora": {
@@ -4199,7 +4199,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 249
+    "ms": 362
    },
    "costo_usd": 0.0081808,
    "bitacora": {
@@ -4239,7 +4239,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 347
+    "ms": 632
    },
    "costo_usd": 0.0184568,
    "bitacora": {
@@ -4279,7 +4279,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 342
+    "ms": 613
    },
    "costo_usd": 0.0134258,
    "bitacora": {
@@ -4319,7 +4319,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 11
+    "ms": 14
    },
    "costo_usd": 0.0098488,
    "bitacora": {
@@ -4359,7 +4359,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 355
+    "ms": 457
    },
    "costo_usd": 0.0119968,
    "bitacora": {
@@ -4399,7 +4399,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 421
+    "ms": 627
    },
    "costo_usd": 0.0134238,
    "bitacora": {
@@ -4439,7 +4439,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 493
+    "ms": 650
    },
    "costo_usd": 0.0313678,
    "bitacora": {
@@ -4479,7 +4479,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 15
+    "ms": 20
    },
    "costo_usd": 0.0110568,
    "bitacora": {
@@ -4519,7 +4519,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 390
+    "ms": 555
    },
    "costo_usd": 0.0125058,
    "bitacora": {
@@ -4559,7 +4559,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 11
+    "ms": 12
    },
    "costo_usd": 0.0104098,
    "bitacora": {
@@ -4599,7 +4599,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 289
+    "ms": 426
    },
    "costo_usd": 0.0145028,
    "bitacora": {
@@ -4639,7 +4639,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 22
    },
    "costo_usd": 0.0166578,
    "bitacora": {
@@ -4679,7 +4679,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 19
+    "ms": 14
    },
    "costo_usd": 0.0087248,
    "bitacora": {
@@ -4719,7 +4719,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 330
+    "ms": 411
    },
    "costo_usd": 0.0113148,
    "bitacora": {
@@ -4759,7 +4759,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 482
+    "ms": 712
    },
    "costo_usd": 0.0133168,
    "bitacora": {
@@ -4799,7 +4799,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 417
+    "ms": 576
    },
    "costo_usd": 0.0125498,
    "bitacora": {
@@ -4839,7 +4839,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 548
+    "ms": 585
    },
    "costo_usd": 0.0170068,
    "bitacora": {
@@ -4879,7 +4879,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 421
+    "ms": 502
    },
    "costo_usd": 0.0099878,
    "bitacora": {
@@ -4919,7 +4919,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 790
+    "ms": 966
    },
    "costo_usd": 0.0204118,
    "bitacora": {
@@ -4959,7 +4959,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 396
+    "ms": 669
    },
    "costo_usd": 0.0148128,
    "bitacora": {
@@ -4999,7 +4999,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 239
+    "ms": 322
    },
    "costo_usd": 0.0139948,
    "bitacora": {
@@ -5039,7 +5039,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 382
+    "ms": 635
    },
    "costo_usd": 0.0110308,
    "bitacora": {
@@ -5079,7 +5079,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 391
+    "ms": 527
    },
    "costo_usd": 0.0169098,
    "bitacora": {
@@ -5119,7 +5119,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 679
+    "ms": 762
    },
    "costo_usd": 0.0148378,
    "bitacora": {
@@ -5159,7 +5159,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 340
+    "ms": 535
    },
    "costo_usd": 0.0047138,
    "bitacora": {
@@ -5199,7 +5199,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 297
+    "ms": 495
    },
    "costo_usd": 0.0098518,
    "bitacora": {
@@ -5239,7 +5239,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 564
+    "ms": 710
    },
    "costo_usd": 0.0136698,
    "bitacora": {
@@ -5279,7 +5279,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 19
+    "ms": 12
    },
    "costo_usd": 0.0110268,
    "bitacora": {
@@ -5319,7 +5319,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 18
+    "ms": 14
    },
    "costo_usd": 0.0097538,
    "bitacora": {
@@ -5359,7 +5359,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 430
+    "ms": 436
    },
    "costo_usd": 0.0112938,
    "bitacora": {
@@ -5399,7 +5399,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 336
+    "ms": 424
    },
    "costo_usd": 0.0141908,
    "bitacora": {
@@ -5439,7 +5439,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 282
+    "ms": 254
    },
    "costo_usd": 0.0144878,
    "bitacora": {
@@ -5479,7 +5479,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 295
+    "ms": 383
    },
    "costo_usd": 0.0134988,
    "bitacora": {
@@ -5519,7 +5519,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 18
+    "ms": 12
    },
    "costo_usd": 0.0100358,
    "bitacora": {
@@ -5559,7 +5559,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 17
+    "ms": 12
    },
    "costo_usd": 0.0061978,
    "bitacora": {
@@ -5599,7 +5599,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 443
+    "ms": 381
    },
    "costo_usd": 0.0134278,
    "bitacora": {
@@ -5639,7 +5639,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 191
+    "ms": 228
    },
    "costo_usd": 0.0085828,
    "bitacora": {
@@ -5679,7 +5679,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 428
+    "ms": 506
    },
    "costo_usd": 0.0088228,
    "bitacora": {
@@ -5719,7 +5719,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 344
+    "ms": 376
    },
    "costo_usd": 0.0136048,
    "bitacora": {
@@ -5759,7 +5759,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 403
+    "ms": 451
    },
    "costo_usd": 0.0164068,
    "bitacora": {
@@ -5799,7 +5799,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 274
+    "ms": 163
    },
    "costo_usd": 0.0109458,
    "bitacora": {
@@ -5839,7 +5839,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 377
+    "ms": 500
    },
    "costo_usd": 0.0100078,
    "bitacora": {
@@ -5888,7 +5888,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 11
+    "ms": 20
    },
    "costo_usd": 0.0111378,
    "bitacora": {
@@ -5928,7 +5928,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 582
+    "ms": 516
    },
    "costo_usd": 0.0106758,
    "bitacora": {
@@ -5968,7 +5968,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 347
+    "ms": 461
    },
    "costo_usd": 0.0155658,
    "bitacora": {
@@ -6008,7 +6008,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 13
+    "ms": 16
    },
    "costo_usd": 0.0101688,
    "bitacora": {
@@ -6048,7 +6048,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 430
+    "ms": 610
    },
    "costo_usd": 0.0177578,
    "bitacora": {
@@ -6088,7 +6088,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 300
+    "ms": 518
    },
    "costo_usd": 0.0144188,
    "bitacora": {
@@ -6128,7 +6128,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 507
+    "ms": 531
    },
    "costo_usd": 0.0178948,
    "bitacora": {
@@ -6185,7 +6185,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 337
+    "ms": 548
    },
    "costo_usd": 0.0121888,
    "bitacora": {
@@ -6225,7 +6225,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 281
+    "ms": 466
    },
    "costo_usd": 0.0141238,
    "bitacora": {
@@ -6265,7 +6265,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 354
+    "ms": 377
    },
    "costo_usd": 0.0150788,
    "bitacora": {
@@ -6305,7 +6305,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 425
+    "ms": 465
    },
    "costo_usd": 0.0132118,
    "bitacora": {
@@ -6345,7 +6345,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 327
+    "ms": 502
    },
    "costo_usd": 0.0139588,
    "bitacora": {
@@ -6385,7 +6385,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 352
+    "ms": 473
    },
    "costo_usd": 0.0102668,
    "bitacora": {
@@ -6425,7 +6425,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 341
+    "ms": 523
    },
    "costo_usd": 0.0052288,
    "bitacora": {
@@ -6465,7 +6465,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 614
+    "ms": 901
    },
    "costo_usd": 0.0202608,
    "bitacora": {
@@ -6505,7 +6505,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 496
+    "ms": 579
    },
    "costo_usd": 0.0114008,
    "bitacora": {
@@ -6545,7 +6545,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 308
+    "ms": 639
    },
    "costo_usd": 0.0231728,
    "bitacora": {
@@ -6585,7 +6585,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 11
+    "ms": 22
    },
    "costo_usd": 0.0161728,
    "bitacora": {
@@ -6625,7 +6625,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 10
+    "ms": 17
    },
    "costo_usd": 0.0096588,
    "bitacora": {
@@ -6665,7 +6665,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 392
+    "ms": 487
    },
    "costo_usd": 0.0098398,
    "bitacora": {
@@ -6705,7 +6705,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 432
+    "ms": 582
    },
    "costo_usd": 0.0078588,
    "bitacora": {
@@ -6745,7 +6745,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 322
+    "ms": 910
    },
    "costo_usd": 0.0101518,
    "bitacora": {
@@ -6785,7 +6785,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 312
+    "ms": 935
    },
    "costo_usd": 0.0040538,
    "bitacora": {
@@ -6825,7 +6825,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 276
+    "ms": 570
    },
    "costo_usd": 0.0137868,
    "bitacora": {
@@ -6865,7 +6865,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 319
+    "ms": 480
    },
    "costo_usd": 0.0122538,
    "bitacora": {
@@ -6905,7 +6905,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 380
+    "ms": 447
    },
    "costo_usd": 0.0122228,
    "bitacora": {
@@ -6945,7 +6945,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 454
+    "ms": 579
    },
    "costo_usd": 0.0153288,
    "bitacora": {
@@ -6985,7 +6985,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 10
+    "ms": 20
    },
    "costo_usd": 0.0100308,
    "bitacora": {
@@ -7025,7 +7025,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 449
+    "ms": 527
    },
    "costo_usd": 0.0161088,
    "bitacora": {
@@ -7065,7 +7065,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 424
+    "ms": 423
    },
    "costo_usd": 0.0127758,
    "bitacora": {
@@ -7105,7 +7105,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 17
+    "ms": 20
    },
    "costo_usd": 0.0072438,
    "bitacora": {
@@ -7145,7 +7145,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 380
+    "ms": 433
    },
    "costo_usd": 0.0136658,
    "bitacora": {
@@ -7185,7 +7185,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 369
+    "ms": 439
    },
    "costo_usd": 0.0135068,
    "bitacora": {
@@ -7225,7 +7225,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 725
+    "ms": 899
    },
    "costo_usd": 0.0201168,
    "bitacora": {
@@ -7265,7 +7265,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 291
+    "ms": 457
    },
    "costo_usd": 0.0134898,
    "bitacora": {
@@ -7305,7 +7305,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 444
+    "ms": 541
    },
    "costo_usd": 0.0094008,
    "bitacora": {
@@ -7345,7 +7345,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 356
+    "ms": 397
    },
    "costo_usd": 0.0163688,
    "bitacora": {
@@ -7385,7 +7385,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 18
+    "ms": 19
    },
    "costo_usd": 0.0153998,
    "bitacora": {
@@ -7425,7 +7425,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 19
+    "ms": 20
    },
    "costo_usd": 0.0091498,
    "bitacora": {
@@ -7465,7 +7465,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 270
+    "ms": 405
    },
    "costo_usd": 0.0089148,
    "bitacora": {
@@ -7505,7 +7505,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 294
+    "ms": 461
    },
    "costo_usd": 0.0128458,
    "bitacora": {
@@ -7545,7 +7545,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 282
+    "ms": 501
    },
    "costo_usd": 0.0109108,
    "bitacora": {
@@ -7585,7 +7585,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 10
+    "ms": 20
    },
    "costo_usd": 0.0128998,
    "bitacora": {
@@ -7625,7 +7625,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 10
+    "ms": 18
    },
    "costo_usd": 0.0093298,
    "bitacora": {
@@ -7665,7 +7665,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 467
+    "ms": 593
    },
    "costo_usd": 0.0149288,
    "bitacora": {
@@ -7705,7 +7705,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 18
+    "ms": 20
    },
    "costo_usd": 0.0064368,
    "bitacora": {
@@ -7745,7 +7745,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 560
+    "ms": 588
    },
    "costo_usd": 0.0116958,
    "bitacora": {
@@ -7785,7 +7785,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 19
+    "ms": 15
    },
    "costo_usd": 0.0026678,
    "bitacora": {
@@ -7825,7 +7825,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 19
+    "ms": 23
    },
    "costo_usd": 0.0109708,
    "bitacora": {
@@ -7865,7 +7865,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 475
+    "ms": 535
    },
    "costo_usd": 0.0116118,
    "bitacora": {
@@ -7905,7 +7905,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 368
+    "ms": 432
    },
    "costo_usd": 0.0157058,
    "bitacora": {
@@ -7945,7 +7945,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 426
+    "ms": 353
    },
    "costo_usd": 0.0102588,
    "bitacora": {
@@ -7985,7 +7985,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 478
+    "ms": 410
    },
    "costo_usd": 0.0126198,
    "bitacora": {
@@ -8025,7 +8025,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 422
+    "ms": 449
    },
    "costo_usd": 0.0152778,
    "bitacora": {
@@ -8065,7 +8065,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 354
+    "ms": 456
    },
    "costo_usd": 0.0149898,
    "bitacora": {
@@ -8105,7 +8105,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 509
+    "ms": 480
    },
    "costo_usd": 0.0190808,
    "bitacora": {
@@ -8145,7 +8145,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 346
+    "ms": 418
    },
    "costo_usd": 0.0131968,
    "bitacora": {
@@ -8265,7 +8265,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 375
+    "ms": 489
    },
    "costo_usd": 0.0173475,
    "bitacora": {
@@ -8305,7 +8305,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 18
+    "ms": 12
    },
    "costo_usd": 0.0042858,
    "bitacora": {
@@ -8345,7 +8345,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 10
+    "ms": 18
    },
    "costo_usd": 0.0115148,
    "bitacora": {
@@ -8385,7 +8385,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 271
+    "ms": 468
    },
    "costo_usd": 0.0085958,
    "bitacora": {
@@ -8425,7 +8425,7 @@
    "reconstruccion": {
     "reconstruida": true,
     "en_3d": true,
-    "ms": 295
+    "ms": 524
    },
    "costo_usd": 0.0145408,
    "bitacora": {

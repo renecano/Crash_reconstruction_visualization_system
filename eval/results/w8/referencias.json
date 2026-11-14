@@ -1,6 +1,6 @@
 {
-  "fecha": "2026-11-13T21:18:42.319Z",
-  "antes": "ff598324",
+  "fecha": "2026-11-14T01:56:11.531Z",
+  "antes": "972a7260",
   "cambian": [
     "resultados/frontal_curva.json",
     "resultados/motociclista.json",
@@ -730,26 +730,26 @@
       },
       "despues": {
         "punto_impacto": [
-          3.12,
-          -7.24
+          10.52,
+          -6.77
         ],
         "vehiculos": {
           "veh-a": {
             "v_impacto_kmh": 55,
-            "delta_v_kmh": 20.36,
+            "delta_v_kmh": 22.09,
             "pose_final": [
-              16.57,
-              -5.56,
-              -119.64
+              24.95,
+              -5.72,
+              -71.07
             ]
           },
           "veh-b": {
             "v_impacto_kmh": 25.14,
-            "delta_v_kmh": 9.48,
+            "delta_v_kmh": 10.28,
             "pose_final": [
-              16.37,
-              -9.36,
-              -17.31
+              24.48,
+              -9.17,
+              -10.18
             ]
           }
         },
