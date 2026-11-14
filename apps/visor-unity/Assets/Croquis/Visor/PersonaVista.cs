@@ -31,7 +31,17 @@ namespace Croquis.Visor
         private ResultadoPersona persona;
         private VarianteElement variante;
         private (double X, double Y) asiento;
-        private (double Largo, double Ancho) cabina;
+
+        // La cabina del vehículo y hasta dónde llega el cuerpo sentado (René, 2026-11-13): ningún
+        // punto del cuerpo sale de la cabina en ningún instante (`Personas.EnCabina`).
+        private Cabina cabina;
+        private Envolvente envolvente;
+
+        /// <summary>Cuánto dobla la rodilla al ir sentado (°): 85, la espinilla vertical, en la moto o la bici.</summary>
+        private float rodilla = 85f;
+
+        /// <summary>Cuánto se recarga hacia atrás, alrededor de la cadera, para caber bajo el techo (°).</summary>
+        private float recargue;
 
         /// <summary>La altura de la cadera sobre el suelo según la clase del vehículo (`Personas.AlturaCadera`).</summary>
         private float caderaEnAsiento = 0.52f;
@@ -47,6 +57,13 @@ namespace Croquis.Visor
         // en su marco, para doblarlo hacia adelante o hacia atrás.
         private readonly Dictionary<string, (Transform Hueso, Quaternion Reposo, Vector3 Eje)> huesos =
             new Dictionary<string, (Transform, Quaternion, Vector3)>();
+
+        /// <summary>
+        /// Lo que gira cada brazo (en su marco) para bajar de la pose A del modelo, abierto unos 42°, a
+        /// colgar junto al cuerpo. Sentado, el brazo baja primero y luego se dobla hacia el volante: sin
+        /// esto, las manos quedaban por fuera de la puerta (U6, ADR 0116).
+        /// </summary>
+        private readonly Dictionary<string, Quaternion> aducciones = new Dictionary<string, Quaternion>();
 
         // La pose fija (U5, ADR 0115). En WebGL la piel se deforma en la CPU en cada cuadro aunque los
         // huesos no se muevan: con dos ocupantes por vehículo eran más de 3 ms por cuadro. Mientras la
@@ -81,9 +98,14 @@ namespace Croquis.Visor
             vista.persona = p;
             vista.VehiculoId = v.Id;
             vista.variante = variante;
-            vista.asiento = Personas.Asiento(p.Ocupante.Asiento, v.Dimensiones.LargoM, v.Dimensiones.AnchoM);
-            vista.cabina = (v.Dimensiones.LargoM, v.Dimensiones.AnchoM);
-            vista.caderaEnAsiento = (float)Personas.AlturaCadera(v.Clase, v.Dimensiones.AltoM);
+            var dim = v.Dimensiones;
+            vista.asiento = Personas.Asiento(p.Ocupante.Asiento, dim.LargoM, dim.AnchoM, v.Clase);
+            vista.cabina = Cabina.De(v.Clase, dim.LargoM, dim.AnchoM, dim.AltoM);
+            var sentado = Personas.Sentar(vista.cabina, v.Clase, dim.AltoM, p.EstaturaM);
+            vista.caderaEnAsiento = (float)sentado.Cadera;
+            vista.rodilla = (float)sentado.Rodilla;
+            vista.recargue = (float)sentado.Recargue;
+            vista.envolvente = sentado.Envolvente;
             // La segunda variante (sin cinturón, cuando no se declaró) es el maniquí de otro color: así se
             // distinguen las dos sin inventar ropa.
             if (segunda)
@@ -96,6 +118,8 @@ namespace Croquis.Visor
             }
 
             vista.Posar(Postura.Sentado, 0.0);
+            // Lo que de verdad ocupa el cuerpo ya sentado (su malla, con la piel), sumado al estimado.
+            vista.envolvente = vista.envolvente.Union(vista.MedirEnvolvente());
             foreach (var t in go.GetComponentsInChildren<Transform>(true))
             {
                 t.gameObject.layer = vehiculo.gameObject.layer;
@@ -124,6 +148,24 @@ namespace Croquis.Visor
             foreach (var t in modelo.GetComponentsInChildren<Transform>(true))
             {
                 huesos[t.name] = (t, t.localRotation, Quaternion.Inverse(t.rotation) * derecha);
+            }
+
+            // Del hombro al codo, en el plano de frente del cuerpo: el giro que lo deja colgando.
+            var arriba = cuerpo.rotation * Vector3.up;
+            var adelante = cuerpo.rotation * Vector3.forward;
+            foreach (var lado in new[] { "_i", "_d" })
+            {
+                if (huesos.TryGetValue("brazo" + lado, out var brazo) && huesos.TryGetValue("antebrazo" + lado, out var codo))
+                {
+                    var d = codo.Hueso.position - brazo.Hueso.position;
+                    d -= adelante * Vector3.Dot(d, adelante);
+                    if (d.sqrMagnitude > 1e-8f)
+                    {
+                        var giro = Quaternion.FromToRotation(d, -arriba);
+                        var r = brazo.Hueso.rotation;
+                        aducciones["brazo" + lado] = Quaternion.Inverse(r) * giro * r;
+                    }
+                }
             }
 
             pieles = modelo.GetComponentsInChildren<SkinnedMeshRenderer>(true);
@@ -217,11 +259,13 @@ namespace Croquis.Visor
         /// Dobla un hueso alrededor del eje «a la derecha» del cuerpo: negativo, hacia adelante (el
         /// muslo de quien se sienta); positivo, hacia atrás (la rodilla).
         /// </summary>
-        private void Doblar(string hueso, float grados)
+        private void Doblar(string hueso, float grados, bool bajarBrazo = false)
         {
             if (huesos.TryGetValue(hueso, out var h))
             {
-                h.Hueso.localRotation = h.Reposo * Quaternion.AngleAxis(grados, h.Eje);
+                // Primero baja el brazo (si se pide) y luego se dobla, los dos en el marco del cuerpo.
+                var baja = bajarBrazo && aducciones.TryGetValue(hueso, out var a) ? a : Quaternion.identity;
+                h.Hueso.localRotation = h.Reposo * Quaternion.AngleAxis(grados, h.Eje) * baja;
             }
         }
 
@@ -233,11 +277,11 @@ namespace Croquis.Visor
             {
                 Doblar("muslo_i", sentado ? -85f : paso);
                 Doblar("muslo_d", sentado ? -85f : -paso);
-                Doblar("pierna_i", sentado ? 85f : Mathf.Max(0f, -paso) * 0.8f);
-                Doblar("pierna_d", sentado ? 85f : Mathf.Max(0f, paso) * 0.8f);
+                Doblar("pierna_i", sentado ? rodilla : Mathf.Max(0f, -paso) * 0.8f);
+                Doblar("pierna_d", sentado ? rodilla : Mathf.Max(0f, paso) * 0.8f);
                 // Los brazos hacia el manubrio o el volante al ir sentado; al caminar, contrarios a las piernas.
-                Doblar("brazo_i", sentado ? -40f : -paso * 0.7f);
-                Doblar("brazo_d", sentado ? -40f : paso * 0.7f);
+                Doblar("brazo_i", sentado ? -40f : -paso * 0.7f, sentado);
+                Doblar("brazo_d", sentado ? -40f : paso * 0.7f, sentado);
                 Doblar("antebrazo_i", sentado ? -30f : 0f);
                 Doblar("antebrazo_d", sentado ? -30f : 0f);
                 FijarPose(postura);
@@ -284,11 +328,73 @@ namespace Croquis.Visor
         private void ColocarOcupante(double t)
         {
             var d = Personas.Desplazamiento(variante, t);
-            var cadera = caderaEnAsiento + (FraccionCg - 0.5f) * estatura;
-            // Dentro de la cabina: más allá de la pared, el solver da un contacto, no una salida.
-            var p = Personas.EnCabina((asiento.X + d.Dx, asiento.Y + d.Dy), cabina.Largo, cabina.Ancho);
-            transform.localPosition = new Vector3(-(float)p.Y, cadera, (float)p.X);
-            transform.localRotation = Quaternion.identity;
+            // Todo el cuerpo dentro de la cabina: más allá de la puerta, el techo o el tablero, el solver
+            // da un contacto con el interior, no una salida. El recorte es del dibujo (límite
+            // ilustrativo); el desplazamiento del solver no cambia.
+            var p = Personas.EnCabina((asiento.X + d.Dx, asiento.Y + d.Dy), caderaEnAsiento, cabina, envolvente);
+            // Recargado hacia atrás alrededor de la cadera: el origen del cuerpo (su centro de masa) va
+            // (0.55 − 0.5) estaturas sobre la cadera, en el marco del cuerpo.
+            var giro = Quaternion.Euler(-recargue, 0f, 0f);
+            var cadera = new Vector3(-(float)p.Y, (float)p.Z, (float)p.X);
+            transform.localPosition = cadera + giro * new Vector3(0f, (FraccionCg - 0.5f) * estatura, 0f);
+            transform.localRotation = giro;
+        }
+
+        /// <summary>
+        /// Hasta dónde llega la malla del cuerpo ya posado (vértices, con la piel), desde la cadera y en
+        /// el marco del vehículo (x adelante, y a la izquierda, z arriba). El origen del ocupante va
+        /// (0.55 − 0.5) estaturas sobre la cadera.
+        /// </summary>
+        private Envolvente MedirEnvolvente()
+        {
+            // En el marco del cuerpo (sin el recargue), desde la cadera; luego se recarga como en el núcleo.
+            var sube = (FraccionCg - 0.5f) * estatura;
+            var c = Mathf.Cos(recargue * Mathf.Deg2Rad);
+            var s = Mathf.Sin(recargue * Mathf.Deg2Rad);
+            float xMin = float.MaxValue, xMax = float.MinValue, yMax = 0f, zMin = float.MaxValue, zMax = float.MinValue;
+            // Arriba del cuello (el del núcleo, ya recargado), la cabeza: se mide aparte, es más angosta.
+            var cuello = (float)envolvente.ZCuello;
+            var yCabeza = 0f;
+            var hay = false;
+            foreach (var mf in GetComponentsInChildren<MeshFilter>(true))
+            {
+                if (mf.sharedMesh == null)
+                {
+                    continue;
+                }
+
+                var aLocal = transform.worldToLocalMatrix * mf.transform.localToWorldMatrix;
+                foreach (var v in mf.sharedMesh.vertices)
+                {
+                    // Unity: +Z adelante, +X a la derecha (la y de Croquis va a la izquierda), +Y arriba.
+                    var q = aLocal.MultiplyPoint3x4(v);
+                    var x = q.z;
+                    var z = q.y + sube;
+                    var xr = x * c - z * s;
+                    var zr = x * s + z * c;
+                    xMin = Mathf.Min(xMin, xr);
+                    xMax = Mathf.Max(xMax, xr);
+                    zMin = Mathf.Min(zMin, zr);
+                    zMax = Mathf.Max(zMax, zr);
+                    if (zr >= cuello)
+                    {
+                        yCabeza = Mathf.Max(yCabeza, Mathf.Abs(q.x));
+                    }
+                    else
+                    {
+                        yMax = Mathf.Max(yMax, Mathf.Abs(q.x));
+                    }
+
+                    hay = true;
+                }
+            }
+
+            if (!hay)
+            {
+                return envolvente;
+            }
+
+            return new Envolvente(xMin, xMax, Mathf.Max(yMax, yCabeza), zMin, zMax, cuello, yCabeza);
         }
     }
 }

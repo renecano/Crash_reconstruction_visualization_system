@@ -133,11 +133,31 @@ namespace Croquis.Core
         /// adelante, un poco detrás del centro; atrás, a un cuarto del largo; el conductor a la
         /// izquierda (México).
         /// </summary>
-        public static (double X, double Y) Asiento(AsientoEnum asiento, double largo, double ancho)
+        public static (double X, double Y) Asiento(AsientoEnum asiento, double largo, double ancho, string clase = null)
         {
             var adelante = -0.04 * largo;
             var atras = -0.27 * largo;
             var lado = 0.22 * ancho;
+            // En una camioneta la fila de atrás va en la cabina, no en la caja; en un camión o un
+            // tractocamión, las dos van al frente, en su cabina; en un autobús, el chofer al frente y
+            // los demás a media nave (`Cabina.De`).
+            switch (clase)
+            {
+                case "pickup":
+                    atras = -0.10 * largo;
+                    break;
+                case "camion_unitario":
+                case "tractocamion":
+                    adelante = largo / 2.0 - 1.55;
+                    atras = largo / 2.0 - 2.0;
+                    lado = Math.Min(lado, 0.45);
+                    break;
+                case "autobus":
+                    adelante = largo / 2.0 - 1.3;
+                    atras = 0.0;
+                    lado = Math.Min(lado, 0.45);
+                    break;
+            }
             switch (asiento)
             {
                 case AsientoEnum.Conductor:
@@ -205,14 +225,6 @@ namespace Croquis.Core
         }
 
         /// <summary>
-        /// El punto del ocupante (asiento más desplazamiento, marco del vehículo) dentro de la cabina.
-        /// El desplazamiento del solver es respecto al habitáculo: si pasa de la pared, lo que ocurre es
-        /// un contacto con el interior (`variante.contacto`), no que el cuerpo salga. Se limita a 22 cm de
-        /// la lámina a los lados (y nunca a más de 0.6 m del eje: el ancho de una camioneta de doble
-        /// rodada es el de sus salpicaderas, no el de su cabina), al parabrisas adelante y a 20 cm de la
-        /// parte trasera.
-        /// </summary>
-        /// <summary>
         /// La altura de la cadera del ocupante sobre el suelo (m), por clase. Es la colocación ilustrativa
         /// del cuerpo en el asiento, no un dato del solver: un sedán va a la altura de siempre (0.52 m) y
         /// una camioneta, una van o un camión llevan el asiento más arriba. Nunca pasa de 55 % del alto.
@@ -252,15 +264,222 @@ namespace Croquis.Core
             return Math.Min(h, 0.55 * alto);
         }
 
-        /// <summary>Hasta dónde llega el centro del cuerpo hacia la puerta: medio ancho de cabina menos el hombro.</summary>
-        public const double MedioAnchoCabina = 0.6;
-
-        public static (double X, double Y) EnCabina((double X, double Y) p, double largo, double ancho)
+        /// <summary>
+        /// De la cadera (punto H) al talón, en vertical, por clase (m): un auto lleva las piernas más
+        /// estiradas que una camioneta o un camión. Fija dónde queda el piso de la cabina.
+        /// </summary>
+        public static double CaderaAlTalon(string clase)
         {
-            var lado = Math.Min(MedioAnchoCabina, Math.Max(0.0, ancho / 2.0 - 0.22));
-            var adelante = 0.22 * largo - 0.1;
-            var atras = -largo / 2.0 + 0.2;
-            return (Math.Min(adelante, Math.Max(atras, p.X)), Math.Min(lado, Math.Max(-lado, p.Y)));
+            switch (clase)
+            {
+                case "suv_compacta":
+                case "suv_grande":
+                case "pickup":
+                case "van":
+                    return 0.36;
+                case "microbus_combi":
+                    return 0.38;
+                case "autobus":
+                case "camion_unitario":
+                case "tractocamion":
+                    return 0.45;
+                default:
+                    return 0.27;
+            }
+        }
+
+        // Longitudes de los segmentos como fracción de la estatura (Drillis y Contini, 1966, en Winter,
+        // «Biomechanics and Motor Control of Human Movement», 4.ª ed., 2009, fig. 4.1).
+        private const double Muslo = 0.245;
+        private const double Pierna = 0.246;
+        private const double Pie = 0.152;
+        private const double BrazoSuperior = 0.186;
+        private const double Antebrazo = 0.146;
+        private const double Mano = 0.108;
+        private const double MedioHombros = 0.259 / 2.0;
+        private const double HombroSobreCadera = 0.818 - 0.530;
+        private const double CabezaSobreCadera = 1.0 - 0.530;
+
+        /// <summary>
+        /// Donde empieza el cuello, sobre la cadera: arriba de 0.86 de la estatura, los cuerpos que
+        /// dibuja el visor (MakeHuman: adulto, mayor y niño) miden a lo más 0.058 de la estatura de
+        /// medio ancho; los hombros, 0.13 a 0.14 (U6, medido en los .glb de `modelos/personas`).
+        /// </summary>
+        private const double CuelloSobreCadera = 0.86 - 0.530;
+
+        /// <summary>El medio ancho de la cabeza y el cuello (de la misma medición, redondeado arriba).</summary>
+        private const double MedioAnchoCabeza = 0.06;
+
+        /// <summary>El grueso del brazo hacia afuera del hombro y la espalda detrás de la cadera (fracción).</summary>
+        private const double BrazoAfuera = 0.035;
+
+        private const double EspaldaAtras = 0.10;
+
+        /// <summary>Lo que la piel y la ropa sobresalen de los huesos (m).</summary>
+        public const double Piel = 0.04;
+
+        /// <summary>El muslo sentado, desde la vertical (°): como lo dobla el visor.</summary>
+        public const double MusloSentado = 85.0;
+
+        /// <summary>El brazo hacia el volante desde la vertical, y el antebrazo, 30° más (°).</summary>
+        public const double BrazoSentado = 40.0;
+
+        public const double AntebrazoSentado = 30.0;
+
+        private static double Rad(double grados) => grados * Math.PI / 180.0;
+
+        /// <summary>Lo más que se recarga el respaldo para que la cabeza quepa bajo el techo (°).</summary>
+        public const double RecargueMaximo = 30.0;
+
+        /// <summary>
+        /// Los puntos del cuerpo sentado como lo dibuja el visor (muslo a 85°, la rodilla doblada
+        /// `rodilla` grados, brazos al volante), desde la cadera, en (x adelante, z arriba), recargado
+        /// `recargue` grados hacia atrás alrededor de la cadera, como un respaldo inclinado.
+        /// </summary>
+        private static (double X, double Z)[] PuntosSentado(double h, double rodilla, double recargue)
+        {
+            var muslo = Rad(MusloSentado);
+            var rodX = Muslo * h * Math.Sin(muslo);
+            var rodZ = -Muslo * h * Math.Cos(muslo);
+            var espinilla = Rad(MusloSentado - rodilla);
+            var tobX = rodX + Pierna * h * Math.Sin(espinilla);
+            var tobZ = rodZ - Pierna * h * Math.Cos(espinilla);
+            var puntaX = tobX + Pie * h * Math.Cos(espinilla);
+            var puntaZ = tobZ + Pie * h * Math.Sin(espinilla);
+            var hombroZ = HombroSobreCadera * h;
+            var codoX = BrazoSuperior * h * Math.Sin(Rad(BrazoSentado));
+            var codoZ = hombroZ - BrazoSuperior * h * Math.Cos(Rad(BrazoSentado));
+            var mano = Rad(BrazoSentado + AntebrazoSentado);
+            var manoX = codoX + (Antebrazo + Mano) * h * Math.Sin(mano);
+            var manoZ = codoZ - (Antebrazo + Mano) * h * Math.Cos(mano);
+            var puntos = new[]
+            {
+                (rodX, rodZ), (tobX, tobZ - 0.03), (puntaX, puntaZ - 0.03), (codoX, codoZ), (manoX, manoZ),
+                (0.0, hombroZ), (0.0, CabezaSobreCadera * h), (-EspaldaAtras * h, 0.0),
+                (-EspaldaAtras * h, hombroZ), (-EspaldaAtras * h * 0.6, CabezaSobreCadera * h),
+            };
+            // Recargado hacia atrás: lo de arriba de la cadera va hacia atrás y lo de adelante sube.
+            var c = Math.Cos(Rad(recargue));
+            var s = Math.Sin(Rad(recargue));
+            return Array.ConvertAll(puntos, q => (q.Item1 * c - q.Item2 * s, q.Item1 * s + q.Item2 * c));
+        }
+
+        /// <summary>
+        /// Hasta dónde llega un cuerpo sentado como lo dibuja el visor, desde la cadera, con la piel
+        /// encima (ver `PuntosSentado`).
+        /// </summary>
+        public static Envolvente EnvolventeSentado(double estatura, double rodilla, double recargue = 0.0)
+        {
+            var pts = PuntosSentado(estatura, rodilla, recargue);
+            double xMin = double.MaxValue, xMax = double.MinValue, zMin = double.MaxValue, zMax = double.MinValue;
+            foreach (var (x, z) in pts)
+            {
+                xMin = Math.Min(xMin, x);
+                xMax = Math.Max(xMax, x);
+                zMin = Math.Min(zMin, z);
+                zMax = Math.Max(zMax, z);
+            }
+
+            // El cuello, recargado como lo demás: solo su altura cuenta.
+            var cuello = CuelloSobreCadera * estatura * Math.Cos(Rad(recargue));
+            return new Envolvente(
+                xMin - Piel,
+                xMax + Piel,
+                (MedioHombros + BrazoAfuera) * estatura + Piel,
+                zMin - Piel,
+                zMax + Piel,
+                cuello,
+                MedioAnchoCabeza * estatura + Piel);
+        }
+
+        /// <summary>
+        /// Cuánto se dobla la rodilla (°, desde la pierna estirada en la línea del muslo; 85, la
+        /// espinilla vertical) para que la planta del pie quede sobre el piso: lo más doblada que
+        /// todavía deja el pie a `caida` metros o menos bajo la cadera. Con la pierna estirada y el pie
+        /// todavía bajo el piso, 0.
+        /// </summary>
+        public static double RodillaSentado(double estatura, double caida, double recargue = 0.0)
+        {
+            bool Cabe(double k) => -EnvolventeSentado(estatura, k, recargue).ZMin <= caida;
+            if (Cabe(MusloSentado))
+            {
+                return MusloSentado;
+            }
+
+            double lo = 0.0, hi = MusloSentado;
+            for (var i = 0; i < 40; i++)
+            {
+                var mid = (lo + hi) / 2.0;
+                if (Cabe(mid))
+                {
+                    lo = mid;
+                }
+                else
+                {
+                    hi = mid;
+                }
+            }
+
+            return lo;
+        }
+
+        /// <summary>
+        /// Cómo va sentado un ocupante en su cabina: si con su estatura la cabeza tocaría el techo, el
+        /// respaldo se recarga hacia atrás (hasta `RecargueMaximo`) y, si aun así no cabe, la cadera
+        /// baja; la rodilla se dobla lo que deja el pie sobre el piso. Es la colocación ilustrativa del
+        /// cuerpo, no un dato del solver.
+        /// </summary>
+        public static (double Cadera, double Rodilla, double Recargue, Envolvente Envolvente) Sentar(
+            Cabina c, string clase, double alto, double estatura)
+        {
+            var cadera = AlturaCadera(clase, alto);
+            var recargue = 0.0;
+            double Cabeza(double r) => EnvolventeSentado(estatura, MusloSentado, r).ZMax;
+            if (cadera + Cabeza(0.0) > c.ZMax)
+            {
+                double lo = 0.0, hi = RecargueMaximo;
+                for (var i = 0; i < 40; i++)
+                {
+                    var mid = (lo + hi) / 2.0;
+                    if (cadera + Cabeza(mid) > c.ZMax)
+                    {
+                        lo = mid;
+                    }
+                    else
+                    {
+                        hi = mid;
+                    }
+                }
+
+                recargue = hi;
+                cadera = Math.Min(cadera, c.ZMax - Cabeza(recargue));
+            }
+
+            var rodilla = RodillaSentado(estatura, cadera - c.ZMin, recargue);
+            return (cadera, rodilla, recargue, EnvolventeSentado(estatura, rodilla, recargue));
+        }
+
+        /// <summary>
+        /// Dónde va la cadera del ocupante (marco del vehículo) para que todo su cuerpo quede dentro de
+        /// la cabina: el asiento más el desplazamiento del solver, recortado. El desplazamiento es
+        /// respecto al habitáculo; si llevaría el cuerpo más allá de la puerta, el techo o el tablero, lo
+        /// que ocurre es un contacto con el interior (`variante.contacto`), no una salida. El recorte es
+        /// del dibujo (`Limitado`); el número del solver no cambia.
+        /// </summary>
+        public static (double X, double Y, double Z, bool Limitado) EnCabina(
+            (double X, double Y) deseado, double cadera, Cabina c, Envolvente e)
+        {
+            double Acotar(double v, double lo, double hi) => lo > hi ? (lo + hi) / 2.0 : Math.Min(hi, Math.Max(lo, v));
+            var x = Acotar(deseado.X, c.XMin - e.XMin, c.XMax - e.XMax);
+            var z = Acotar(cadera, c.ZMin - e.ZMin, c.ZMax - e.ZMax);
+            // A lo ancho, lo que deja la cabina en cada franja del cuerpo: hasta el cuello, los hombros
+            // contra la puerta y el vidrio; arriba, la cabeza contra el vidrio y el techo.
+            var lado = Math.Min(
+                c.MedioAnchoMinimo(z + e.ZMin, z + e.ZCuello) - e.YMax,
+                c.MedioAnchoMinimo(z + e.ZCuello, z + e.ZMax) - e.YCabeza);
+            var y = Acotar(deseado.Y, -lado, lado);
+            var limitado = Math.Abs(x - deseado.X) > 1e-6 || Math.Abs(y - deseado.Y) > 1e-6;
+            return (x, y, z, limitado);
         }
 
         /// <summary>

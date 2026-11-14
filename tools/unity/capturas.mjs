@@ -132,7 +132,7 @@ try {
         await enviar("camara", { modo: vista });
         await pagina.waitForTimeout(2500);
         const instante = TIEMPOS ? `-t${t}` : "";
-        const base = join(SALIDA, `${nombre}${instante}-${vista.replace(":", "-")}`);
+        const base = join(SALIDA, `${nombre}${instante}-${vista.replaceAll(":", "-")}`);
         const archivo = `${base}.${SIN_PERDIDA ? "png" : "webp"}`;
         const foto = sharp(await pagina.screenshot());
         await (SIN_PERDIDA ? foto.png() : foto.webp({ quality: CALIDAD_WEBP })).toFile(archivo);

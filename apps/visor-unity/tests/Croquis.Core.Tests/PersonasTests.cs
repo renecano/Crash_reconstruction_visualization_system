@@ -215,35 +215,176 @@ namespace Croquis.Core.Tests
             }
         }
 
-        [Fact]
-        public void ElOcupanteNoSaleDeLaCabinaAunqueElDesplazamientoPaseDeLaPared()
+        /// <summary>
+        /// El cuerpo (la cadera más su envolvente) dentro de la cabina: sus esquinas a lo largo, a cada
+        /// centímetro de altura, con el ancho de los hombros hasta el cuello y el de la cabeza arriba.
+        /// </summary>
+        private static void TodoDentro(Cabina c, Envolvente e, (double X, double Y, double Z) h, string que)
         {
+            void Franja(double z0, double z1, double medio)
+            {
+                for (var z = z0; ; z = Math.Min(z + 0.01, z1))
+                {
+                    foreach (var x in new[] { h.X + e.XMin, h.X + e.XMax })
+                    {
+                        foreach (var y in new[] { h.Y - medio, h.Y + medio })
+                        {
+                            Assert.True(c.Contiene(x, y, z), $"{que}: ({x:F3}, {y:F3}, {z:F3}) fuera de la cabina");
+                        }
+                    }
+
+                    if (z >= z1)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            Franja(h.Z + e.ZMin, h.Z + e.ZCuello, e.YMax);
+            Franja(h.Z + e.ZCuello, h.Z + e.ZMax, e.YCabeza);
+        }
+
+        [Fact]
+        public void ElPerfilDeLaCabinaEsElMedidoEnLosModelos()
+        {
+            // `PerfilCabina.cs` lo genera tools/blender/medir_cabina.py junto con su resultado.
+            var json = Newtonsoft.Json.Linq.JObject.Parse(File.ReadAllText(
+                Path.Combine(Raiz(), "eval", "results", "u6_cabina_perfil.json")));
+            var modelos = (Newtonsoft.Json.Linq.JArray)json["modelos"];
+            Assert.Equal(modelos.Count, PerfilCabina.MedioAncho.Count);
+            foreach (var m in modelos)
+            {
+                var perfil = (Newtonsoft.Json.Linq.JArray)m["perfil"];
+                var tabla = PerfilCabina.MedioAncho[(string)m["modelo"]];
+                Assert.Equal(perfil.Count, tabla.Length);
+                for (var i = 0; i < perfil.Count; i++)
+                {
+                    Assert.Equal((double)perfil[i]["z"], PerfilCabina.Z[i], 6);
+                    Assert.Equal((double)perfil[i]["medio_ancho"], tabla[i], 6);
+                }
+            }
+
+            // Cada clase con modelo tiene perfil (la moto no tiene cabina).
+            foreach (var par in Cabina.ModeloDeClase.Where(x => x.Value != "moto"))
+            {
+                Assert.True(PerfilCabina.MedioAncho.ContainsKey(par.Value), par.Key);
+            }
+        }
+
+        [Fact]
+        public void ArribaDelCinturonLaCabinaDelHatchbackEsMasAngostaQueLaPuerta()
+        {
+            // El caso de René (2026-11-13): la mano asomaba por el vidrio porque la caja usaba el ancho
+            // de la puerta hasta el techo.
+            var c = Cabina.De("hatchback", 4.07, 1.75, 1.46);
+            var cadera = Personas.AlturaCadera("hatchback", 1.46);
+            Assert.Equal(c.YMax, c.MedioAncho(cadera), 9);
+            Assert.True(c.MedioAncho(cadera + 0.49) < c.YMax - 0.08, $"{c.MedioAncho(cadera + 0.49)} contra {c.YMax}");
+            Assert.True(c.MedioAncho(c.ZMax) < c.MedioAncho(cadera + 0.49));
+        }
+
+        [Fact]
+        public void EnTodosLosCasosYEnCadaInstanteElCuerpoDelOcupanteQuedaDentroDeSuCabina()
+        {
+            // René, 2026-11-13: ningún punto del cuerpo sale de la cabina de su clase en ningún instante.
+            var revisados = 0;
             foreach (var (nombre, caso) in Casos())
             {
                 var r = caso.Resultado;
                 foreach (var p in (r.Personas ?? new ResultadoPersona[0]).Where(x => x.Ocupante != null))
                 {
                     var v = r.Vehiculos.First(x => x.Id == p.VehiculoId);
-                    var asiento = Personas.Asiento(p.Ocupante.Asiento, v.Dimensiones.LargoM, v.Dimensiones.AnchoM);
+                    var d = v.Dimensiones;
+                    var cabina = Cabina.De(v.Clase, d.LargoM, d.AnchoM, d.AltoM);
+                    var sentado = Personas.Sentar(cabina, v.Clase, d.AltoM, p.EstaturaM);
+                    var asiento = Personas.Asiento(p.Ocupante.Asiento, d.LargoM, d.AnchoM, v.Clase);
                     foreach (var va in p.Ocupante.Variantes)
                     {
-                        for (var i = 0; i < va.T.Length; i++)
+                        // Cada muestra y a la mitad entre muestras: lo que dibuja el visor en cualquier instante.
+                        var t0 = va.T.Length > 0 ? va.T[0] : 0.0;
+                        var t1 = va.T.Length > 0 ? va.T[va.T.Length - 1] : 0.0;
+                        for (var t = t0 - 0.5; t <= t1 + 0.5; t += 0.01)
                         {
-                            var q = Personas.EnCabina((asiento.X + va.Dx[i], asiento.Y + va.Dy[i]), v.Dimensiones.LargoM, v.Dimensiones.AnchoM);
-                            Assert.True(Math.Abs(q.Y) <= v.Dimensiones.AnchoM / 2.0 - 0.2, $"{nombre} {p.Id}");
-                            Assert.True(q.X < v.Dimensiones.LargoM / 2.0 && q.X > -v.Dimensiones.LargoM / 2.0, $"{nombre} {p.Id}");
+                            var des = Personas.Desplazamiento(va, t);
+                            var h = Personas.EnCabina((asiento.X + des.Dx, asiento.Y + des.Dy), sentado.Cadera, cabina, sentado.Envolvente);
+                            TodoDentro(cabina, sentado.Envolvente, (h.X, h.Y, h.Z), $"{nombre} {p.Id} t={t:F2}");
+                            revisados++;
                         }
                     }
                 }
             }
 
-            // Dentro de la cabina no cambia nada.
-            Assert.Equal((0.1, 0.3), Personas.EnCabina((0.1, 0.3), 4.4, 1.8));
-            // Un desplazamiento de un metro hacia la puerta se queda en la pared.
-            Assert.Equal(0.6, Personas.EnCabina((0.0, 1.5), 4.4, 1.8).Y, 9);
-            // En una camioneta de doble rodada (2.4 m de salpicadera a salpicadera) tampoco sale de la cabina.
-            Assert.Equal(-0.6, Personas.EnCabina((0.0, -1.5), 6.5, 2.4).Y, 9);
-            Assert.Equal(0.5, Personas.EnCabina((0.0, 0.5), 6.5, 2.4).Y, 9);
+            Assert.True(revisados > 100, "Los casos versionados traen ocupantes");
+        }
+
+        [Fact]
+        public void EnCadaClaseElCuerpoQuedaDentroAunqueElDesplazamientoLoLleveLejos()
+        {
+            // Medidas de cada clase: las de los caso-3d versionados y, para las pesadas, las de respaldo
+            // del croquis 2D (`packages/croquis-2d/src/layout.ts`) con su alto típico.
+            var clases = new (string Clase, double Largo, double Ancho, double Alto)[]
+            {
+                ("hatchback", 4.07, 1.75, 1.46),
+                ("sedan_compacto", 4.5, 1.74, 1.49),
+                ("sedan_mediano", 4.67, 1.8, 1.41),
+                ("suv_compacta", 4.3, 1.76, 1.6),
+                ("suv_grande", 5.35, 2.06, 1.93),
+                ("pickup", 5.34, 1.86, 1.85),
+                ("van", 5.23, 1.88, 2.28),
+                ("microbus_combi", 5.9, 1.99, 2.6),
+                ("camion_unitario", 8.0, 2.4, 3.2),
+                ("tractocamion", 16.0, 2.6, 3.8),
+                ("autobus", 12.0, 2.55, 3.2),
+            };
+            var asientos = (AsientoEnum[])Enum.GetValues(typeof(AsientoEnum));
+            foreach (var (clase, largo, ancho, alto) in clases)
+            {
+                var cabina = Cabina.De(clase, largo, ancho, alto);
+                foreach (var estatura in new[] { 1.5, 1.7, 1.9 })
+                {
+                    var sentado = Personas.Sentar(cabina, clase, alto, estatura);
+                    foreach (var a in asientos)
+                    {
+                        var asiento = Personas.Asiento(a, largo, ancho, clase);
+                        for (var dx = -2.0; dx <= 2.0; dx += 0.5)
+                        {
+                            for (var dy = -2.0; dy <= 2.0; dy += 0.25)
+                            {
+                                var h = Personas.EnCabina((asiento.X + dx, asiento.Y + dy), sentado.Cadera, cabina, sentado.Envolvente);
+                                TodoDentro(cabina, sentado.Envolvente, (h.X, h.Y, h.Z), $"{clase} {estatura} {a} ({dx}, {dy})");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        [Fact]
+        public void SinDesplazamientoElOcupanteVaEnSuAsientoYSoloSeRecortaLoQueSaldria()
+        {
+            var cabina = Cabina.De("hatchback", 4.07, 1.75, 1.46);
+            var sentado = Personas.Sentar(cabina, "hatchback", 1.46, 1.7);
+            var asiento = Personas.Asiento(AsientoEnum.Conductor, 4.07, 1.75, "hatchback");
+            var quieto = Personas.EnCabina(asiento, sentado.Cadera, cabina, sentado.Envolvente);
+            Assert.Equal(asiento.X, quieto.X, 9);
+            // A lo ancho, el asiento o, si los hombros tocarían el vidrio, lo justo hacia adentro.
+            var e = sentado.Envolvente;
+            var lado = Math.Min(
+                cabina.MedioAnchoMinimo(quieto.Z + e.ZMin, quieto.Z + e.ZCuello) - e.YMax,
+                cabina.MedioAnchoMinimo(quieto.Z + e.ZCuello, quieto.Z + e.ZMax) - e.YCabeza);
+            Assert.Equal(Math.Min(asiento.Y, lado), quieto.Y, 9);
+            Assert.True(asiento.Y - quieto.Y < 0.10, $"en reposo se mueve {asiento.Y - quieto.Y:F3} m");
+            // Un desplazamiento de un metro hacia la puerta: el cuerpo llega a la cara de adentro de la
+            // puerta y del vidrio y se queda ahí (del dibujo; el desplazamiento del solver no cambia).
+            var puerta = Personas.EnCabina((asiento.X, asiento.Y + 1.0), sentado.Cadera, cabina, sentado.Envolvente);
+            Assert.True(puerta.Limitado);
+            Assert.Equal(lado, puerta.Y, 9);
+            // Y hacia el otro lado, igual.
+            var otro = Personas.EnCabina((asiento.X, asiento.Y - 2.0), sentado.Cadera, cabina, sentado.Envolvente);
+            Assert.Equal(-lado, otro.Y, 9);
+            // La planta del pie queda sobre el piso y la cabeza bajo el techo.
+            Assert.True(sentado.Cadera + sentado.Envolvente.ZMin >= cabina.ZMin - 1e-9);
+            Assert.True(sentado.Cadera + sentado.Envolvente.ZMax <= cabina.ZMax + 1e-9);
         }
 
         [Fact]
