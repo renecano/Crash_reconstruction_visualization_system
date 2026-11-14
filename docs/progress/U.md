@@ -563,6 +563,29 @@ El colaborador de René corrió `medir-escritorio.ps1` del release `visor-rtx-u6
 - **Ultra con el bloque cumple con holgura:** de 207.4 a 279.7 fps; el 1 % más lento, 138.2 o más. En el navegador, de 195.7 a 270.4 (`e6_unity_web_demo_por_build.json`).
 - El bloque cuesta de 45 a 131 fps por escena; alta queda igual que antes (295.1–414.1).
 
+### El ocupante que atravesaba la puerta (René, 2026-11-13; ADR 0116)
+
+En `lateral_interseccion`, de día y de noche, la copiloto del hatchback rojo sacaba el brazo y la pierna por la puerta.
+
+- **Causa:** el visor, no el solver. Fueron tres cosas:
+  1. El solver desplaza a la copiloto hasta 0.30 m hacia su puerta (de 0.367 a 0.667 m del eje). El visor solo limitaba la **cadera** a 0.6 m del eje; los hombros, el brazo y la rodilla quedaban unos 0.3 m más afuera.
+  2. Los brazos del modelo MakeHuman parten en pose A, abiertos 42°. Sentado, el visor los doblaba hacia el volante desde ahí, y las manos quedaban hacia afuera: la malla sentada llegaba a 0.538 m del centro del cuerpo (medido en el visor con un registro temporal), contra 0.32 m de la cuenta con las proporciones.
+  3. Del cinturón para arriba la carrocería se mete hacia adentro: con la caja al ancho de la puerta, la mano todavía asomaba por el vidrio (primer intento, `docs/cesvi/u6/ocupante/primer-intento/`).
+- **Arreglo:**
+  - **Cabina por clase** (`Croquis.Core.Cabina`): tablero, pared de atrás, piso, techo y la cara de adentro de la puerta.
+  - **El ancho del habitáculo a cada altura**, medido en el modelo 3D de cada clase con `tools/blender/medir_cabina.py` → `eval/results/u6_cabina_perfil.json` y la tabla generada `PerfilCabina.cs`. En el hatchback de `lateral_interseccion`, a la altura de los hombros de la copiloto (1.01 m) la carrocería mide 0.82 de su medio ancho, contra 0.93 a media puerta.
+  - **El cuerpo en dos franjas** (hombros con brazos hasta el cuello; la cabeza arriba), con lo más grande entre las proporciones y la malla ya posada.
+  - **Sentado, los brazos bajan antes de doblarse:** la malla pasa de 0.538 a 0.284 m.
+  - **El desplazamiento del solver se recorta al interior** (límite ilustrativo; el número del solver no cambia). La nota del 3D lo dice cuando el caso trae ocupantes.
+  - En reposo, un ocupante puede ir unos centímetros más adentro que su asiento: la copiloto va a 0.305 m del eje en vez de 0.367.
+- **Pruebas** (`dotnet test`, 60 de 60):
+  - en los 23 caso-3d versionados, cada ocupante y variante, cada 0.01 s, cada centímetro de altura del cuerpo dentro de la cabina a esa altura;
+  - las 11 clases (sedán compacto y mediano, hatchback, SUV compacta y grande, pickup, van, combi, camión, tractocamión y autobús), con 1.5, 1.7 y 1.9 m de estatura, en cada asiento y con desplazamientos de hasta ±2 m;
+  - la tabla generada coincide con `eval/results/u6_cabina_perfil.json`.
+- **Capturas** (build web local, nivel alta, vista «cerca» del hatchback; nueva en `CamaraVisor`, `cerca:<id>:<azimut>:<distancia>:<altura>`): `docs/cesvi/u6/ocupante/antes/` y `despues/`, de día y de noche, a 0.3 s (lado de la copiloto, 40° y desde arriba) y a 0.6 s. Las 40 de cada tanda (5 instantes × 4 vistas × día y noche) están en `apps/visor-unity/Logs/capturas-ocupante/` (fuera de git).
+- **De paso:** el cargador de modelos usa el mismo mapa clase → modelo que la cabina (`Cabina.ModeloDeClase`).
+- **Pendiente** (en «Endurecimiento pendiente»): los peatones que caminan siguen con los brazos en la pose A, abiertos; el arreglo de los brazos solo se aplica sentado, que es lo que se pidió.
+
 ### Resumen para René (U6)
 
 - **Qué quedó:** el visor 3D de `/cesvi` es Unity (Reconstrucción, Números y detrás de Presentar), con respaldo three.js; editar en 3D (mover, girar y alargar objetos; marcar el primer golpe, choques y puntos de paso) recalcula el caso; las fotos del dictamen salen de Unity; «Descargar paquete 3D» y el visor de escritorio que lo abre.

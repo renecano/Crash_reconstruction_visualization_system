@@ -38,6 +38,13 @@ namespace Croquis.Visor
         private Caso3DResultado resultado;
         private string modo = "cinematica";
         private string conductor;
+
+        // La cámara «cerca» (capturas y modo foto): junto a un vehículo, a un azimut desde su frente, a una
+        // distancia y una altura, mirando su cabina. `cerca:<id>:<azimut°>:<distancia m>:<altura m>`.
+        private string cercaDe;
+        private float cercaAzimut;
+        private float cercaDistancia = 3.5f;
+        private float cercaAltura = 1.6f;
         private double inicio;
 
         // Lo que se encuadra («Ver todo» o «Ir al impacto»): centro y lado, en metros de Croquis.
@@ -324,7 +331,11 @@ namespace Croquis.Visor
         public Vector3 Centro => new Vector3((float)zona.CentroX, 0f, (float)zona.CentroY);
 
         /// <summary>El modo de la cámara, como lo nombra el puente.</summary>
-        public string Modo => modo == "conductor" ? "conductor:" + conductor : modo;
+        public string Modo => modo == "conductor"
+            ? "conductor:" + conductor
+            : modo == "cerca"
+                ? System.FormattableString.Invariant($"cerca:{cercaDe}:{cercaAzimut}:{cercaDistancia}:{cercaAltura}")
+                : modo;
 
         public bool Cambiar(string nuevo)
         {
@@ -352,6 +363,24 @@ namespace Croquis.Visor
                 {
                     modo = "conductor";
                     conductor = id;
+                    return true;
+                }
+            }
+
+            if (nuevo != null && nuevo.StartsWith("cerca:"))
+            {
+                var partes = nuevo.Split(':');
+                var inv = System.Globalization.CultureInfo.InvariantCulture;
+                if (partes.Length == 5 && Vehiculos.Exists(v => v.name == "vehiculo_" + partes[1])
+                    && float.TryParse(partes[2], System.Globalization.NumberStyles.Float, inv, out var az)
+                    && float.TryParse(partes[3], System.Globalization.NumberStyles.Float, inv, out var dist)
+                    && float.TryParse(partes[4], System.Globalization.NumberStyles.Float, inv, out var alt))
+                {
+                    modo = "cerca";
+                    cercaDe = partes[1];
+                    cercaAzimut = az;
+                    cercaDistancia = Mathf.Clamp(dist, 0.5f, 60f);
+                    cercaAltura = Mathf.Clamp(alt, 0.1f, 40f);
                     return true;
                 }
             }
@@ -798,6 +827,23 @@ namespace Croquis.Visor
                     camara.fieldOfView = 50f;
                     camara.transform.SetPositionAndRotation(posLibre, Quaternion.Euler(pitchLibre, yawLibre, 0f));
                     return;
+                case "cerca":
+                {
+                    var v = Vehiculos.Find(x => x.name == "vehiculo_" + cercaDe);
+                    if (v != null)
+                    {
+                        // Sigue al vehículo: el azimut se cuenta desde su frente, hacia su derecha.
+                        camara.fieldOfView = 45f;
+                        var tr = v.transform;
+                        var dir = Quaternion.Euler(0f, tr.eulerAngles.y + cercaAzimut, 0f) * Vector3.forward;
+                        var mira = tr.position + Vector3.up * 0.9f;
+                        var ojo = tr.position + dir * cercaDistancia + Vector3.up * cercaAltura;
+                        camara.transform.SetPositionAndRotation(ojo, Quaternion.LookRotation(mira - ojo, Vector3.up));
+                        return;
+                    }
+
+                    break;
+                }
                 case "conductor":
                 {
                     var v = Vehiculos.Find(x => x.name == "vehiculo_" + conductor);
@@ -807,7 +853,7 @@ namespace Croquis.Visor
                         // El ojo del conductor: en su asiento y a la altura que usó `visibilidad`.
                         camara.fieldOfView = 60f;
                         var tr = v.transform;
-                        var asiento = Personas.Asiento(AsientoEnum.Conductor, datos.Dimensiones.LargoM, datos.Dimensiones.AnchoM);
+                        var asiento = Personas.Asiento(AsientoEnum.Conductor, datos.Dimensiones.LargoM, datos.Dimensiones.AnchoM, datos.Clase);
                         // En dos ruedas se va al centro, montado: el ojo de quien maneja, sobre el asiento.
                         var dosRuedas = PerfilClase.De(datos.Clase).DosRuedas;
                         var local = dosRuedas

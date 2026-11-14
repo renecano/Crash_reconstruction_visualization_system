@@ -467,9 +467,12 @@ export function especDel3d(
 export function NotasDel3d({
   supuestos = [],
   contraCesvi = null,
+  conOcupantes = false,
 }: {
   supuestos?: readonly SupuestoDeclarado[];
   contraCesvi?: ContraMetodosCesvi | null;
+  /** Si el caso trae ocupantes: su límite ilustrativo en el 3D (U6, ADR 0116). */
+  conOcupantes?: boolean;
 }) {
   return (
     <>
@@ -478,6 +481,13 @@ export function NotasDel3d({
         con su rango); lo que el caso no trae va como supuesto declarado. Reconstrucción de apoyo:
         el dictamen es del perito.
       </p>
+      {conOcupantes ? (
+        <p className="t-nota" data-testid="ocupantes-3d">
+          Los ocupantes se dibujan dentro de su cabina: si el desplazamiento que calcula el solver
+          los llevaría más allá de la puerta, el techo o el tablero, el 3D lo limita al interior
+          (límite ilustrativo; los números del solver no cambian).
+        </p>
+      ) : null}
       {supuestos.length ? (
         <p className="t-nota" data-testid="supuestos-3d">
           Supuestos declarados: {supuestosEnUnaLinea(supuestos)}.

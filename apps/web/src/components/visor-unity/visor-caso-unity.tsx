@@ -136,7 +136,13 @@ export function VisorCasoUnity({
       data-presentar={presentar ? "si" : undefined}
     >
       {presentar ? null : (
-        <NotasDel3d supuestos={props.supuestos} contraCesvi={props.contraCesvi} />
+        <NotasDel3d
+          supuestos={props.supuestos}
+          contraCesvi={props.contraCesvi}
+          conOcupantes={((r?.resultado?.personas ?? []) as { ocupante?: unknown }[]).some(
+            (p) => p.ocupante,
+          )}
+        />
       )}
       <div className={presentar ? "relative h-full w-full" : "relative min-h-0 flex-1"}>
         <VisorUnity

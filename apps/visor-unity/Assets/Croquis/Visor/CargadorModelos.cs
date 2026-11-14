@@ -23,22 +23,11 @@ namespace Croquis.Visor
     /// </summary>
     public sealed class CargadorModelos
     {
-        /// <summary>La clase que dibuja cada modelo; bicicleta y scooter no tienen.</summary>
-        private static readonly Dictionary<string, string> ModeloDeClase = new Dictionary<string, string>
-        {
-            { "sedan_compacto", "sedan" },
-            { "sedan_mediano", "sedan" },
-            { "hatchback", "hatchback" },
-            { "suv_compacta", "suv" },
-            { "suv_grande", "suv" },
-            { "pickup", "pickup" },
-            { "camion_unitario", "camion" },
-            { "motocicleta", "moto" },
-            { "van", "van" },
-            { "microbus_combi", "combi" },
-            { "autobus", "autobus" },
-            { "tractocamion", "tracto" },
-        };
+        /// <summary>
+        /// La clase que dibuja cada modelo; bicicleta y scooter no tienen. Es el mismo mapa con el que
+        /// el núcleo mide la cabina de cada clase (`Cabina.ModeloDeClase`).
+        /// </summary>
+        private static IReadOnlyDictionary<string, string> ModeloDeClase => Cabina.ModeloDeClase;
 
         private readonly Dictionary<string, GltfImport> plantillas = new Dictionary<string, GltfImport>();
         private JObject manifiesto;
