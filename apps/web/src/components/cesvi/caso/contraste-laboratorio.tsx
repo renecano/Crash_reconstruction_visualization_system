@@ -5,6 +5,7 @@
  * citas exactas del reporte. La tabla con cada número queda en el detalle.
  */
 import {
+  alternativaSupuesta,
   reproducir,
   type CasoCesvi,
   type ComparacionDictamen,
@@ -373,6 +374,7 @@ export function ActoContraste({
               difKmh={fisica.difKmh}
               difPct={fisica.difPct}
               prefijo="fisica"
+              nota={r ? (alternativaSupuesta(r, letraDe)?.texto ?? null) : null}
               testid="lectura-fisica"
               cesviArriba={unaCifra !== null}
             />

@@ -1,0 +1,83 @@
+diff --git a/packages/solver-ts/src/contact.ts b/packages/solver-ts/src/contact.ts
+index 996d98d7..fb0c6f4c 100644
+--- a/packages/solver-ts/src/contact.ts
++++ b/packages/solver-ts/src/contact.ts
+@@ -158,7 +158,7 @@ export function resolveContact(loci: readonly Locus[], declared: Vec): ContactSo
+     });
+   }
+   if (loci.length === 2) {
+-    const [sa, sb] = refinePair(loci[0]!, loci[1]!, params[0]!, params[1]!);
++    const [sa, sb] = refinePair(loci[0]!, loci[1]!, params[0]!, params[1]!, declared);
+     params[0] = sa;
+     params[1] = sb;
+     points = [loci[0]!.point(sa), loci[1]!.point(sb)];
+@@ -181,13 +181,22 @@ function derivative(locus: Locus, s: number): Vec {
+ }
+ 
+ /** Minimiza |c_a(s_a) − c_b(s_b)|² con Levenberg-Marquardt (parámetros acotados). */
+-function refinePair(la: Locus, lb: Locus, saIn: number, sbIn: number): [number, number] {
++function refinePair(
++  la: Locus,
++  lb: Locus,
++  saIn: number,
++  sbIn: number,
++  decl: Vec,
++): [number, number] {
++  const MU = process.env.CROQUIS_T32 === "contacto" || process.env.CROQUIS_T32 === "ambos" ? Number(process.env.CROQUIS_T32_MU ?? 1e-4) : 0;
+   let sa = saIn;
+   let sb = sbIn;
+   const cost = (x: number, y: number): number => {
+     const pa = la.point(x);
+     const pb = lb.point(y);
+-    return (pa[0] - pb[0]) ** 2 + (pa[1] - pb[1]) ** 2;
++    const mx = (pa[0] + pb[0]) / 2 - decl[0];
++    const my = (pa[1] + pb[1]) / 2 - decl[1];
++    return (pa[0] - pb[0]) ** 2 + (pa[1] - pb[1]) ** 2 + MU * (mx * mx + my * my);
+   };
+   let lam = 1e-3;
+   let current = cost(sa, sb);
+@@ -198,11 +207,15 @@ function refinePair(la: Locus, lb: Locus, saIn: number, sbIn: number): [number,
+     const r: Vec = [pa[0] - pb[0], pa[1] - pb[1]];
+     const da = derivative(la, sa);
+     const db = derivative(lb, sb);
+-    const a11 = da[0] * da[0] + da[1] * da[1] + lam;
+-    const a22 = db[0] * db[0] + db[1] * db[1] + lam;
+-    const a12 = -(da[0] * db[0] + da[1] * db[1]);
+-    const g1 = da[0] * r[0] + da[1] * r[1];
+-    const g2 = -(db[0] * r[0] + db[1] * r[1]);
++    const m: Vec = [(pa[0] + pb[0]) / 2 - decl[0], (pa[1] + pb[1]) / 2 - decl[1]];
++    const daa = da[0] * da[0] + da[1] * da[1];
++    const dbb = db[0] * db[0] + db[1] * db[1];
++    const dab = da[0] * db[0] + da[1] * db[1];
++    const a11 = daa * (1 + MU / 4) + lam;
++    const a22 = dbb * (1 + MU / 4) + lam;
++    const a12 = -dab + (MU / 4) * dab;
++    const g1 = da[0] * r[0] + da[1] * r[1] + (MU / 2) * (da[0] * m[0] + da[1] * m[1]);
++    const g2 = -(db[0] * r[0] + db[1] * r[1]) + (MU / 2) * (db[0] * m[0] + db[1] * m[1]);
+     const det = a11 * a22 - a12 * a12;
+     if (det <= 0) {
+       lam *= 10.0;
+diff --git a/packages/solver-ts/src/inversion.ts b/packages/solver-ts/src/inversion.ts
+index ffc721b9..665e928a 100644
+--- a/packages/solver-ts/src/inversion.ts
++++ b/packages/solver-ts/src/inversion.ts
+@@ -605,7 +605,18 @@ export function applyValues(spec: Json, values: Map<string, number>): Json {
+         confianza: 0.5,
+       };
+     } else if (kind === "rumbo") {
+-      (byId.get(vid)!.posicion_inicial as Json).rumbo_deg = Math.max(-360.0, Math.min(360.0, x));
++      const pose = byId.get(vid)!.posicion_inicial as Json;
++      const pi = ((s.eventos as Json[] | undefined)?.[0]?.punto_impacto ?? null) as Json | null;
++      if ((process.env.CROQUIS_T32 === "pivote" || process.env.CROQUIS_T32 === "ambos") && pi) {
++        const d = ((Math.max(-360.0, Math.min(360.0, x)) - Number(pose.rumbo_deg)) * Math.PI) / 180;
++        const px = Number(pi.x);
++        const py = Number(pi.y);
++        const ox = Number(pose.x) - px;
++        const oy = Number(pose.y) - py;
++        pose.x = px + ox * Math.cos(d) - oy * Math.sin(d);
++        pose.y = py + ox * Math.sin(d) + oy * Math.cos(d);
++      }
++      pose.rumbo_deg = Math.max(-360.0, Math.min(360.0, x));
+     }
+   }
+   return s;

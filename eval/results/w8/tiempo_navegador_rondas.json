@@ -1,0 +1,127 @@
+﻿{
+    "descripcion":  "AXA, resultado completo en Chromium: worker de producción (antes) contra el de la copia de trabajo (despues), rondas alternadas, plan Alto rendimiento mientras mide (restaurado al terminar), 3 corridas por medición.",
+    "fecha":  "2026-11-13T14:20:17",
+    "plan_restaurado":  "381b4222-f694-41f0-9685-ff5bb260df2e",
+    "filas":  [
+                  {
+                      "ronda":  1,
+                      "worker":  "antes",
+                      "mediana_completo_ms":  12149,
+                      "mediana_reconstruccion_ms":  113,
+                      "corridas":  [
+                                       {
+                                           "reconstruccion_ms":  184,
+                                           "completo_ms":  12849
+                                       },
+                                       {
+                                           "reconstruccion_ms":  113,
+                                           "completo_ms":  12149
+                                       },
+                                       {
+                                           "reconstruccion_ms":  108,
+                                           "completo_ms":  11263
+                                       }
+                                   ]
+                  },
+                  {
+                      "ronda":  1,
+                      "worker":  "despues",
+                      "mediana_completo_ms":  13099,
+                      "mediana_reconstruccion_ms":  107,
+                      "corridas":  [
+                                       {
+                                           "reconstruccion_ms":  126,
+                                           "completo_ms":  13099
+                                       },
+                                       {
+                                           "reconstruccion_ms":  98,
+                                           "completo_ms":  12662
+                                       },
+                                       {
+                                           "reconstruccion_ms":  107,
+                                           "completo_ms":  13605
+                                       }
+                                   ]
+                  },
+                  {
+                      "ronda":  2,
+                      "worker":  "antes",
+                      "mediana_completo_ms":  11999,
+                      "mediana_reconstruccion_ms":  119,
+                      "corridas":  [
+                                       {
+                                           "reconstruccion_ms":  140,
+                                           "completo_ms":  13295
+                                       },
+                                       {
+                                           "reconstruccion_ms":  100,
+                                           "completo_ms":  11999
+                                       },
+                                       {
+                                           "reconstruccion_ms":  119,
+                                           "completo_ms":  11107
+                                       }
+                                   ]
+                  },
+                  {
+                      "ronda":  2,
+                      "worker":  "despues",
+                      "mediana_completo_ms":  12910,
+                      "mediana_reconstruccion_ms":  114,
+                      "corridas":  [
+                                       {
+                                           "reconstruccion_ms":  125,
+                                           "completo_ms":  12646
+                                       },
+                                       {
+                                           "reconstruccion_ms":  109,
+                                           "completo_ms":  12910
+                                       },
+                                       {
+                                           "reconstruccion_ms":  114,
+                                           "completo_ms":  13550
+                                       }
+                                   ]
+                  },
+                  {
+                      "ronda":  3,
+                      "worker":  "antes",
+                      "mediana_completo_ms":  13676,
+                      "mediana_reconstruccion_ms":  137,
+                      "corridas":  [
+                                       {
+                                           "reconstruccion_ms":  146,
+                                           "completo_ms":  14014
+                                       },
+                                       {
+                                           "reconstruccion_ms":  129,
+                                           "completo_ms":  13228
+                                       },
+                                       {
+                                           "reconstruccion_ms":  137,
+                                           "completo_ms":  13676
+                                       }
+                                   ]
+                  },
+                  {
+                      "ronda":  3,
+                      "worker":  "despues",
+                      "mediana_completo_ms":  11942,
+                      "mediana_reconstruccion_ms":  106,
+                      "corridas":  [
+                                       {
+                                           "reconstruccion_ms":  112,
+                                           "completo_ms":  11942
+                                       },
+                                       {
+                                           "reconstruccion_ms":  96,
+                                           "completo_ms":  11807
+                                       },
+                                       {
+                                           "reconstruccion_ms":  106,
+                                           "completo_ms":  12691
+                                       }
+                                   ]
+                  }
+              ]
+}

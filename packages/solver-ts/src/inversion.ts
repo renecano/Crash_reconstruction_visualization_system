@@ -23,9 +23,9 @@ import {
 } from "./friction";
 import { lstsq, matmul, pinv, transpose } from "./linalg";
 import { leastSquaresSoftL1, softL1Cost } from "./lsq";
-import { median, pyMod, pyRound, quantilesInclusive, str } from "./pymath";
+import { median, pyMod, pyRound, quantilesInclusive, radians, str } from "./pymath";
 import { PyRandom } from "./pyrandom";
-import { countDraws, type Draws, LatinHypercube } from "./stratified";
+import { countDraws, DESIGN_SEED, type Draws, LatinHypercube } from "./stratified";
 import { bumpSampler, sampleBumpAssumptions } from "./terrain";
 import { reconstruct, vehicleClasses, type Reconstruction } from "./reconstruct";
 import { sampleStiffness, stiffnessFor, zonaFromCdcSide } from "./stiffness";
@@ -52,6 +52,8 @@ const SPEED_BOUNDS_KMH: readonly [number, number] = [0.0, 200.0];
 const STATED = ["relato", "usuario"];
 /** Lo que el perito marca en el mapa (C1) llega con esta fuente. */
 const MARKED = "usuario";
+/** Un punto de impacto que sale del relato es una estimación: no se fija al girar un rumbo (ADR 0135, decisión 2). */
+const ESTIMATED_POINT = "relato";
 
 /** Dispersión del error del modelo de daño (log ΔV), calibrada con CISS dev (E3). */
 export function modelSigma(): number {
@@ -173,6 +175,17 @@ export function deltaVFromDamage(
 
 const SIGMA_HEADING_DEG = 20.0;
 export const ANGLE_BOUND_DEG = 20.0;
+/**
+ * Un rumbo inicial que la evidencia no fija (ADR 0135): vuelve al que colocó el perito, como
+ * supuesto declarado, y en el rango se sortea uniforme en ±ANGLE_BOUND_DEG. Llave en memoria de
+ * `posicion_inicial`; no es del contrato.
+ */
+export const HEADING_ASSUMED = "_rumbo_supuesto";
+/**
+ * Cuánto puede subir el costo al fijar un rumbo en el valor del perito para que vuelva a él (ADR
+ * 0135, versión 2): `MODE_MARGIN`, un Δχ² de 1.
+ */
+const HEADING_LR_MARGIN = 0.5;
 const JAC_STEP: Record<string, number> = { velocidad: 1.0, rumbo: 1.0 };
 const BOUND_TOL: Record<string, number> = { velocidad: 0.1, rumbo: 0.1 };
 export const SCALE: Record<string, number> = { velocidad: 10.0, rumbo: 10.0 };
@@ -581,7 +594,7 @@ export function parameters(spec: Json, ev: Evidence): Param[] {
   if (ev.rest.size || ev.restHeading.size || ev.waypoints.length || ev.impactPoint) {
     for (const vid of ids) {
       const pose = byId.get(vid)!.posicion_inicial as Json;
-      if (statedPose(pose)) continue;
+      if (statedPose(pose) || pose[HEADING_ASSUMED]) continue;
       const h = Number(pose.rumbo_deg);
       out.push(new Param("rumbo", vid, h, h - ANGLE_BOUND_DEG, h + ANGLE_BOUND_DEG, false));
     }
@@ -605,10 +618,156 @@ export function applyValues(spec: Json, values: Map<string, number>): Json {
         confianza: 0.5,
       };
     } else if (kind === "rumbo") {
-      (byId.get(vid)!.posicion_inicial as Json).rumbo_deg = Math.max(-360.0, Math.min(360.0, x));
+      setHeading(s, vid, Math.max(-360.0, Math.min(360.0, x)));
     }
   }
   return s;
+}
+
+/**
+ * El punto alrededor del cual gira el rumbo inicial de `vid`: el `punto_impacto` del primer evento
+ * de impacto en el que participa, si lo dio el perito (ADR 0135, decisión 2). null si no lo trae o si
+ * viene del relato: entonces es una estimación y el rumbo gira desde el arranque.
+ */
+export function headingPivot(spec: Json, vid: string): [number, number] | null {
+  const eventos = [...((spec.eventos ?? []) as Json[])].sort(
+    (a, b) => Number(a.orden) - Number(b.orden),
+  );
+  for (const e of eventos) {
+    if (!String(e.tipo).startsWith("impacto") || !((e.actores ?? []) as string[]).includes(vid))
+      continue;
+    const punto = (e.punto_impacto ?? null) as Json | null;
+    if (!punto || ((e.procedencia ?? {}) as Json).fuente === ESTIMATED_POINT) return null;
+    return [Number(punto.x), Number(punto.y)];
+  }
+  return null;
+}
+
+/**
+ * Pone el rumbo inicial de `vid` en `spec` (en sitio). Con punto de impacto, la pose gira alrededor
+ * de él: cambia de dónde venía el vehículo, no dónde chocó (ADR 0135).
+ */
+export function setHeading(spec: Json, vid: string, headingDeg: number): void {
+  const v = (spec.vehiculos as Json[]).find((x) => x.id === vid)!;
+  const pose = v.posicion_inicial as Json;
+  const pivot = headingPivot(spec, vid);
+  if (pivot !== null) {
+    const d = radians(headingDeg - Number(pose.rumbo_deg));
+    const c = dmath.cos(d);
+    const sn = dmath.sin(d);
+    const ox = Number(pose.x) - pivot[0];
+    const oy = Number(pose.y) - pivot[1];
+    pose.x = pivot[0] + (ox * c - oy * sn);
+    pose.y = pivot[1] + (ox * sn + oy * c);
+  }
+  pose.rumbo_deg = headingDeg;
+}
+
+/**
+ * La escena con el rumbo inicial de `vehicles` como supuesto: deja de ser incógnita y en el rango
+ * se sortea en ±ANGLE_BOUND_DEG (ADR 0135).
+ */
+export function assumeHeadings(spec: Json, vehicles: readonly string[]): Json {
+  const s = structuredClone(spec);
+  for (const v of s.vehiculos as Json[]) {
+    if (vehicles.includes(String(v.id))) (v.posicion_inicial as Json)[HEADING_ASSUMED] = true;
+  }
+  return s;
+}
+
+export function assumedHeadingVehicles(spec: Json): string[] {
+  return (spec.vehiculos as Json[])
+    .filter((v) => ((v.posicion_inicial ?? {}) as Json)[HEADING_ASSUMED])
+    .map((v) => String(v.id));
+}
+
+/**
+ * Semilla de diseño del hipercubo de los rumbos supuestos: fija, como la del rango (T3.1, ADR
+ * 0100), para que el rango no dependa de la semilla de la escena; distinta de la del principal.
+ */
+const HEADING_DESIGN_SEED = DESIGN_SEED + 7919;
+
+/**
+ * Un hipercubo aparte, una dimensión por rumbo supuesto; null si no hay. Una escena sin rumbos
+ * supuestos conserva sus sorteos.
+ */
+export function headingSampler(spec: Json, samples: number): LatinHypercube | null {
+  const vids = assumedHeadingVehicles(spec);
+  if (!vids.length || samples <= 0) return null;
+  const rng = new PyRandom(HEADING_DESIGN_SEED + samples * 1009 + vids.length);
+  return new LatinHypercube(samples, vids.length, rng);
+}
+
+/** Sortea cada rumbo supuesto en ±ANGLE_BOUND_DEG alrededor del de la escena (en sitio). */
+export function sampleAssumedHeadings(spec: Json, draws: Draws): void {
+  for (const vid of assumedHeadingVehicles(spec)) {
+    const v = (spec.vehiculos as Json[]).find((x) => x.id === vid)!;
+    const h0 = Number((v.posicion_inicial as Json).rumbo_deg);
+    setHeading(spec, vid, h0 + draws.uniform(-ANGLE_BOUND_DEG, ANGLE_BOUND_DEG));
+  }
+}
+
+/**
+ * Los rumbos iniciales que vuelven al del perito (ADR 0135, versión 2 del criterio). Candidatos, los
+ * que la evidencia no fija: (a) Laplace, σ local mayor que `IDENT_MAX.rumbo`, o (b) perfil,
+ * moverlo `IDENT_MAX.rumbo` hacia algún lado (sin salir de los límites) y reajustar lo demás sube
+ * el costo menos de `MODE_MARGIN`. De esos, vuelve al del perito solo el que la evidencia explica
+ * casi igual de bien en ese valor: fijándolo ahí (con los que ya volvieron) y reajustando lo
+ * demás, el costo sube menos de `HEADING_LR_MARGIN` (Δχ² de 1). Se prueban de uno en uno, del que
+ * menos sube al que más, y se para en el primero que no pasa.
+ */
+export function unfixedHeadings(
+  spec: Json,
+  ev: Evidence,
+  params: Param[],
+  estimates: Estimate[],
+  best: Fit,
+  dt = 0.1,
+): Estimate[] {
+  if (ev.empty()) return [];
+  const candidates: Estimate[] = [];
+  for (const e of estimates) {
+    const p = e.param;
+    if (p.kind !== "rumbo") continue;
+    if (!e.identifiable || e.best === null) {
+      candidates.push(e);
+      continue;
+    }
+    const free = new Set(params.map((q) => q.name).filter((n) => n !== p.name));
+    for (const side of [-1.0, 1.0]) {
+      const target = Math.min(Math.max(e.best + side * IDENT_MAX.rumbo!, p.lo), p.hi);
+      const start = new Map(best.values);
+      start.set(p.name, target);
+      const f = fitEvidence(spec, ev, { dt, start, free });
+      if (f.cost - best.cost < MODE_MARGIN) {
+        candidates.push(e);
+        break;
+      }
+    }
+  }
+  if (!candidates.length) return [];
+  /** Cuánto sube el costo con esos rumbos en el valor del perito y lo demás reajustado. */
+  const riseAtPerito = (names: string[]): number => {
+    const start = new Map(best.values);
+    for (const e of candidates)
+      if (names.includes(e.param.name)) start.set(e.param.name, e.param.start);
+    const free = new Set(params.map((q) => q.name).filter((n) => !names.includes(n)));
+    const f = fitEvidence(spec, ev, { dt, start, free });
+    return f.cost - best.cost;
+  };
+  const scored = candidates
+    .map((e, i) => ({ rise: riseAtPerito([e.param.name]), i, e }))
+    .sort((a, b) => a.rise - b.rise || a.i - b.i);
+  const out: Estimate[] = [];
+  let names: string[] = [];
+  for (const { rise: first, e } of scored) {
+    const trial = [...names, e.param.name];
+    const rise = trial.length > 1 ? riseAtPerito(trial) : first;
+    if (rise >= HEADING_LR_MARGIN) break;
+    names = trial;
+    out.push(e);
+  }
+  return out;
 }
 
 function wrapDeg(a: number): number {
@@ -1411,7 +1570,32 @@ export function invert(
   const modes = findModes(spec, ev, params, dt);
   const bestCost = modes[0]!.fit.cost;
   const est = (m: Mode) => estimate(spec, ev, params, m.fit, { seed, samples, dt, assumedAsData });
-  const out = est(modes[0]!);
+  // Un rumbo inicial que la evidencia no fija vuelve al del perito, como supuesto, y se rehace la
+  // búsqueda sin él (ADR 0135). Se decide antes del sorteo del rango: si vuelve, ese sorteo no se
+  // usaría.
+  const prep = prepare(spec, ev, params, modes[0]!.fit, dt);
+  const loose = unfixedHeadings(spec, ev, params, prep.estimates(params), prep.best, dt);
+  if (loose.length) {
+    const again = invert(
+      assumeHeadings(
+        spec,
+        loose.map((e) => e.param.vehicle),
+      ),
+      opts,
+    );
+    for (const e of loose)
+      again.estimates.push(new Estimate(e.param, e.sigmaLocal, false, null, null));
+    const orden = params.map((p) => p.name);
+    again.estimates.sort((a, b) => orden.indexOf(a.param.name) - orden.indexOf(b.param.name));
+    return again;
+  }
+  const out = estimate(spec, ev, params, modes[0]!.fit, {
+    seed,
+    samples,
+    dt,
+    assumedAsData,
+    prepared: prep,
+  });
   out.modes = modes;
   out.alternatives = modes
     .slice(1)
@@ -1424,14 +1608,18 @@ export function invert(
  * Estimación alrededor de un modo: qué fija la evidencia (Laplace), el reajuste de lo que no fija y
  * el rango con entradas perturbadas, cada muestra reajustada desde ese modo.
  */
-function estimate(
-  spec: Json,
-  ev: Evidence,
-  params: Param[],
-  bestFull: Fit,
-  opts: { seed: number; samples: number; dt: number; assumedAsData: boolean },
-): Inversion {
-  const { seed, samples, dt, assumedAsData } = opts;
+/** Lo que se decide de un modo antes del sorteo del rango: qué fija la evidencia y el ajuste. */
+interface Prepared {
+  sigma: Map<string, number>;
+  ident: Map<string, boolean>;
+  free: Set<string>;
+  full: Fit | null;
+  best: Fit;
+  estimates(params: Param[]): Estimate[];
+}
+
+/** Qué fija la evidencia (Laplace), el reajuste de lo que no fija y el pulido del modo. */
+function prepare(spec: Json, ev: Evidence, params: Param[], bestFull: Fit, dt: number): Prepared {
   let best = bestFull;
   const sigma = !ev.empty()
     ? localSigma(spec, ev, best, dt)
@@ -1455,6 +1643,43 @@ function estimate(
     params.filter((p) => free.has(p.name)),
     dt,
   );
+  const fin = best;
+  return {
+    sigma,
+    ident,
+    free,
+    full,
+    best,
+    estimates: (ps: Param[]) =>
+      ps.map(
+        (p) =>
+          new Estimate(
+            p,
+            sigma.get(p.name) ?? Infinity,
+            ident.get(p.name)!,
+            ident.get(p.name) ? (fin.values.get(p.name) ?? null) : null,
+            null,
+          ),
+      ),
+  };
+}
+
+function estimate(
+  spec: Json,
+  ev: Evidence,
+  params: Param[],
+  bestFull: Fit,
+  opts: {
+    seed: number;
+    samples: number;
+    dt: number;
+    assumedAsData: boolean;
+    prepared?: Prepared;
+  },
+): Inversion {
+  const { seed, samples, dt, assumedAsData } = opts;
+  const prep = opts.prepared ?? prepare(spec, ev, params, bestFull, dt);
+  const { sigma, ident, free, full, best } = prep;
   const fits: Fit[] = [];
   const impacts = new Map<string, number[]>();
   const freeParams = params.filter((p) => free.has(p.name));
@@ -1469,6 +1694,8 @@ function estimate(
   // Los dos supuestos del tope (C3, W5), con su propio hipercubo y la semilla del caso: una escena
   // sin topes conserva sus sorteos.
   const topes = bumpSampler(spec, nSamples, Number((spec.meta as Json).semilla));
+  // Y los rumbos que la evidencia no fija, en el suyo (ADR 0135).
+  const rumbos = headingSampler(spec, nSamples);
   const xBest = freeParams.map((p) => best.values.get(p.name)!);
   const fixed = new Map([...best.values].filter(([n]) => !free.has(n)));
   let jBest: number[][] = [];
@@ -1480,6 +1707,7 @@ function estimate(
   for (let i = 0; i < nSamples; i++) {
     const pert = perturbed(spec, ev, lhs.sample(i));
     if (topes !== null) sampleBumpAssumptions(pert.spec, topes.sample(i));
+    if (rumbos !== null) sampleAssumedHeadings(pert.spec, rumbos.sample(i));
     const { spec: s, evidence: e, downedMu } = pert;
     const prob = new Problem(withMarks(s, e), e, freeParams, fixed, dt, downedMu);
     prob.names.push(...[...best.residuals.keys()].sort());

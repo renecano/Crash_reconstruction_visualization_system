@@ -14,9 +14,12 @@ import {
 import { distanciaM } from "./geo";
 import { mcHenry } from "./metodo";
 import {
+  alternativaSupuesta,
   conHipotesis,
   encabezadoHipotesis,
   hipotesisVisible,
+  CHOQUE_LEJOS_DEL_RELATO_M,
+  choqueLejosDelRelato,
   especDeExpediente,
   especReconstruida,
   impactosEnMapa,
@@ -273,10 +276,11 @@ describe("del expediente a la escena del solver (R2)", () => {
   });
 
   // Corre el solver completo (Monte Carlo e inversión) dos veces: más que los 5 s por omisión en
-  // la laptop de desarrollo.
+  // la laptop de desarrollo. Desde W8 la inversión decide además qué rumbos fija la evidencia y
+  // rehace la búsqueda sin los que no (ADR 0135): unos 19 s aquí, así que el tope es de 60 s.
   it(
     "sin evidencia no inventa velocidades; con las posiciones del perito las fija con rangos",
-    { timeout: 20_000 },
+    { timeout: 60_000 },
     () => {
       const sin = reconstruirExpediente(base);
       expect(sin.evidencia).toEqual([]);
@@ -622,6 +626,16 @@ describe("lo medido pesa más que lo supuesto: el reposo supuesto y las dos hip�
     expect(hip("reposo").velocidades.find((v) => v.vehiculo === id)!.rango).toEqual([39.47, 43.47]);
     expect(hip("dano").velocidades.find((v) => v.vehiculo === id)!.rango).toBeNull();
     expect(hip("reposo").alcanzaDano).toBe(false);
+    // Sin elegir se ve la del daño medido; la del reposo supuesto va como alternativa, marcada como
+    // supuesto (ADR 0135, decisión 8). Si se elige la del reposo, ya no es alternativa.
+    const alt = alternativaSupuesta(r)!;
+    expect(alt.clave).toBe("reposo");
+    expect(
+      alt.texto.startsWith(
+        "Alternativa, con el reposo supuesto como dato (supuesto, no medición): ",
+      ),
+    ).toBe(true);
+    expect(alternativaSupuesta(conHipotesis(r, "reposo"))).toBeNull();
     // Sin elegir, el 3D lleva el ajuste conjunto de la del daño, dicho así.
     const sin = (especReconstruida(r).vehiculos as Json[]).find((v) => v.id === "veh-a")!;
     expect(sin.velocidad_previa).toMatchObject({ valor: 66.25, fuente: "supuesto" });
@@ -630,6 +644,55 @@ describe("lo medido pesa más que lo supuesto: el reposo supuesto y las dos hip�
     expect(elegida.velocidades.find((v) => v.vehiculo === id)!.previa!.mejor).toBe(41.47);
     const con = (especReconstruida(elegida).vehiculos as Json[]).find((v) => v.id === "veh-a")!;
     expect(con.velocidad_previa).toMatchObject({ valor: 41.47 });
+  });
+
+  it("un choque que el ajuste lleva lejos del punto del relato se le dice al perito (ADR 0135)", () => {
+    const F = resolve(dirname(fileURLToPath(import.meta.url)), "../../scene-schema/fixtures");
+    const leerF = (r: string) => JSON.parse(readFileSync(resolve(F, r), "utf8")) as Json;
+    // Un punto del relato y un ajuste que lo deja lejos: la moto.
+    const moto = leerF("motociclista.json");
+    const lejos = choqueLejosDelRelato(
+      moto,
+      leerF("resultados/motociclista.json").inversion as never,
+    );
+    expect(lejos).not.toBeNull();
+    expect(lejos!).toBeGreaterThan(CHOQUE_LEJOS_DEL_RELATO_M);
+    // El punto que colocó el perito (AXA) no es del relato: no se avisa.
+    const axa = leerF("inversion/axa_alcance.json");
+    expect(
+      choqueLejosDelRelato(axa, leerF("inversion/resultados/axa_alcance.json").inversion as never),
+    ).toBeNull();
+  });
+
+  it("un rumbo de llegada en el límite de búsqueda sale como aviso para el perito (ADR 0135)", () => {
+    const base = especDeExpediente(colocado());
+    const rumbo = (en_limite: boolean) => ({
+      parametro: "rumbo_inicial",
+      vehiculo: "veh-a",
+      unidad: "deg",
+      inicial: 75.72,
+      inicial_declarado: false,
+      identificable: true,
+      sigma_local: 3,
+      en_limite,
+      estimacion: { mejor: 95.72, p10: 90, p50: 94, p90: 95.72 },
+    });
+    const con = (en_limite: boolean) =>
+      interpretarResultado(base, {
+        vehiculos: [],
+        eventos: [],
+        inversion: {
+          evidencia: ["reposo:veh-b"],
+          parametros: [rumbo(en_limite)],
+          velocidad_impacto: [],
+          residuos: [],
+        },
+      });
+    const id = base.ids["veh-a"]!;
+    const aviso = con(true).limites.find((l) => l.startsWith(`${id}:`));
+    expect(aviso).toContain("la evidencia empuja el rumbo fuera del rango permitido");
+    expect(aviso).toContain("95.7°");
+    expect(con(false).limites.some((l) => l.includes("rumbo fuera del rango"))).toBe(false);
   });
 
   it("otro modo del multiarranque dentro del margen va como hipótesis, con su costo y sus números", () => {
@@ -656,7 +719,7 @@ describe("lo medido pesa más que lo supuesto: el reposo supuesto y las dos hip�
       vehiculos: [],
       eventos: [],
       inversion: {
-        ...inversion(71.56, 25.32),
+        ...inversion(56.87, 14.98),
         multiarranque: { margen_costo: 0.5, modos },
         alternativas: [inversion(78.98, 19.63)],
       },
@@ -671,7 +734,7 @@ describe("lo medido pesa más que lo supuesto: el reposo supuesto y las dos hip�
       "Más de una solución reproduce la evidencia con un costo parecido",
     );
     // Sin elegir se ve la de menor costo; al elegir la otra, sus números y su rango.
-    expect(r.velocidades.find((v) => v.vehiculo === id)!.previa!.mejor).toBe(71.56);
+    expect(r.velocidades.find((v) => v.vehiculo === id)!.previa!.mejor).toBe(56.87);
     const otra = conHipotesis(r, "evidencia-2");
     expect(otra.elegida).toBe("evidencia-2");
     expect(otra.velocidades.find((v) => v.vehiculo === id)!.previa).toMatchObject({
@@ -685,7 +748,7 @@ describe("lo medido pesa más que lo supuesto: el reposo supuesto y las dos hip�
       vehiculos: [],
       eventos: [],
       inversion: {
-        ...inversion(71.56, 25.32),
+        ...inversion(56.87, 14.98),
         multiarranque: { margen_costo: 0.5, modos: [modos[0]] },
       },
     });

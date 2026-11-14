@@ -19,8 +19,8 @@ const conVelocidades = (velocidades: Reconstruccion["velocidades"]) =>
 describe("la reconstrucción (Laboratorio §8)", () => {
   it("la protagonista es la más rápida que la evidencia fija; sin ninguna, nada", () => {
     const r = conVelocidades([
-      { vehiculo: "V1", previa: { mejor: 25.32 }, impacto: { p50: 90 } },
-      { vehiculo: "V2", previa: { mejor: 71.56 }, impacto: { p50: 75.2 } },
+      { vehiculo: "V1", previa: { mejor: 14.98 }, impacto: { p50: 90 } },
+      { vehiculo: "V2", previa: { mejor: 56.87 }, impacto: { p50: 60.33 } },
     ]);
     // Se decide por el mejor ajuste, no por la mediana de las simulaciones.
     expect(protagonista(r)?.vehiculo).toBe("V2");
@@ -39,8 +39,8 @@ describe("la reconstrucción (Laboratorio §8)", () => {
     expect(sinDispersion(v)).toBe(true);
     expect(rangoDeVelocidad(v)).toEqual({ p10: 27.2, p90: 55.7, lineal: true });
     // Con dispersión real, el de las muestras.
-    const con = { ...v, previa: { mejor: 71.56, p10: 68.02, p90: 92.81 } };
-    expect(rangoDeVelocidad(con)).toEqual({ p10: 68.02, p90: 92.81, lineal: false });
+    const con = { ...v, previa: { mejor: 56.87, p10: 54.79, p90: 78.39 } };
+    expect(rangoDeVelocidad(con)).toEqual({ p10: 54.79, p90: 78.39, lineal: false });
     // Sin un rango que dar, no se inventa.
     expect(rangoDeVelocidad({ ...v, previa: { mejor: 41.5 } })).toBeNull();
     expect(rangoDeVelocidad({ ...v, previa: { mejor: 41.5, p10: 41.5, p90: 41.5 } })).toBeNull();
@@ -78,11 +78,11 @@ describe("la reconstrucción (Laboratorio §8)", () => {
         nombre: "A · Silverado 2500",
         masaKg: 2562.1,
         masaDe: "supuesto",
-        kmh: 25.32,
+        kmh: 14.98,
         dano: "daño posterior",
       }),
     ).toBe(
-      "A · Silverado 2500 · masa 2,562.1 kg (supuesto) · antes del impacto 25.32 km/h · daño posterior",
+      "A · Silverado 2500 · masa 2,562.1 kg (supuesto) · antes del impacto 14.98 km/h · daño posterior",
     );
     expect(tipVehiculo({ nombre: "B", masaKg: null, masaDe: null, kmh: null, dano: null })).toBe(
       "B · masa: sin dato · la evidencia no fija su velocidad",

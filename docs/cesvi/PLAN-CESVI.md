@@ -28,7 +28,7 @@ Esta es la recta final: lo que no está aquí no entra en esta versión.
   - E-R4 publicada: modalidad 58.3 % contra 37.2 % de la línea base.
 - **AXA con sus dos lecturas:**
   - método de CESVI: 60.27 = 60.27 y 63.90 contra 63.15;
-  - reconstrucción física: 71.56 km/h (68.02–92.81), +13.32 %.
+  - reconstrucción física (desde W8, ADR 0135): 56.87 km/h (54.79–78.39), −6.28 km/h y −9.94 % contra 63.15, la hipótesis «cuadra con el daño medido»; la alternativa con el reposo supuesto, 34.44 km/h. Antes de W8 era 71.56 (68.02–92.81), con el choque corrido 12 m.
 - **Interfaz:**
   - rediseño Laboratorio de `/cesvi` (#178);
   - escena fácil, una pregunta a la vez;

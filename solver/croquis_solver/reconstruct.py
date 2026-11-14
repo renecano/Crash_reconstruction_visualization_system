@@ -23,7 +23,13 @@ from pathlib import Path
 from typing import Any
 
 from croquis_solver import dmath, fixed_object, friction, occupant, pedestrian, rollover, visibility
-from croquis_solver.contact import ContactSolution, Locus, contact_offset, resolve_contact
+from croquis_solver.contact import (
+    ContactSolution,
+    Locus,
+    contact_offset,
+    contact_zone,
+    resolve_contact,
+)
 from croquis_solver.crash3 import TRIANGULAR_SHAPES, Stiffness, crush_energy, profile_for_energy
 from croquis_solver.impact import ImpactResult, planar_impact
 from croquis_solver.inertia import body_for
@@ -959,6 +965,20 @@ def reconstruct(
             for m in targets
         }
 
+        # Entre dos vehículos, las zonas se tocan a lo largo de sus caras (ADR 0135).
+        zones = (
+            (
+                contact_zone(
+                    zonas.get(targets[0].id), targets[0].body.length, targets[0].body.width
+                ),
+                contact_zone(
+                    zonas.get(targets[1].id), targets[1].body.length, targets[1].body.width
+                ),
+            )
+            if tipo_evento == "impacto_vehiculo_vehiculo" and len(targets) == 2
+            else None
+        )
+
         def locus_for(m: VehicleModel, path: KinPath) -> Locus:
             if m.v0 <= 0:
                 pose0 = m.pose0
@@ -982,7 +1002,7 @@ def reconstruct(
             if tipo_evento != "impacto_vehiculo_vehiculo":
                 fixed = declared
                 loci.append(Locus(lambda _s, p=fixed: (p[0], p[1], 0.0), (0.0, 0.0), 0.0))
-            sol = resolve_contact(loci, declared)
+            sol = resolve_contact(loci, declared, zones)
             rank = sum(opts.index(path) for opts, path in zip(options, combo, strict=True))
             if (
                 best is None
@@ -1011,7 +1031,8 @@ def reconstruct(
         impact_point = sol.point
         for m, s_m in zip(targets, sol.params, strict=False):
             s_contact[m.id] = s_m
-        if sol.gap > CONTACT_GAP_FLAG_M:
+        # Lo que separa las zonas fuera de lo que se extienden a lo largo de sus caras (ADR 0135).
+        if sol.zone_gap > CONTACT_GAP_FLAG_M:
             flag(
                 "zonas_no_se_tocan",
                 {"separacion_m": sol.gap},
