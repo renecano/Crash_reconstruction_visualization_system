@@ -1,5 +1,5 @@
 {
- "fecha": "2026-11-13T20:33:35.951Z",
+ "fecha": "2026-11-14T00:12:08.202Z",
  "descripcion": "E-R6 v2 (R4b): los expedientes de C0 con 3 o más vehículos de una partición, por «escenaDeConversion» como en «Caso nuevo»; los vehículos que solo están en impactos posteriores, colocados en la trayectoria del que los golpea (supuesto). Al lado, la v1 de la misma partición.",
  "expedientes": 33,
  "por_vehiculos": {
@@ -15,8 +15,8 @@
  "con_impactos_posteriores": 24,
  "impactos_posteriores_en_escena": 31,
  "impactos_posteriores_ocurridos": 20,
- "ms_mediana": 754,
- "ms_maximo": 9768,
+ "ms_mediana": 2152,
+ "ms_maximo": 14356,
  "detalle": [
   {
    "id": "cesvi-aee9753bf1",
@@ -34,7 +34,7 @@
     "El reporte no da las zonas del impacto de V1 y V2: se toma la cara de su primer daño.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 680
+   "ms": 795
   },
   {
    "id": "cesvi-eed00406c6",
@@ -51,7 +51,7 @@
    "limites": [
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 1038
+   "ms": 1130
   },
   {
    "id": "cesvi-a8b1cf4c43",
@@ -68,7 +68,7 @@
    "limites": [
     "El reporte no da las zonas del impacto de V3 y V2: se toma la cara de su primer daño."
    ],
-   "ms": 754
+   "ms": 1044
   },
   {
    "id": "cesvi-cade1c89cb",
@@ -89,7 +89,7 @@
     "El impacto 2 (V2 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.",
     "El impacto 3 (V2 con V4) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
    ],
-   "ms": 5572
+   "ms": 7197
   },
   {
    "id": "cesvi-bb774b3897",
@@ -107,7 +107,7 @@
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
     "El impacto 2 (V1 con V6) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
    ],
-   "ms": 9443
+   "ms": 11056
   },
   {
    "id": "cesvi-16eb0fba1f",
@@ -125,7 +125,7 @@
     "El reporte no da las zonas del impacto de V1 y V2: se toma la cara de su primer daño.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 579
+   "ms": 716
   },
   {
    "id": "cesvi-7b8ab3e55e",
@@ -143,7 +143,7 @@
     "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 476
+   "ms": 632
   },
   {
    "id": "cesvi-257e1374a0",
@@ -162,7 +162,7 @@
     "V1: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 556
+   "ms": 707
   },
   {
    "id": "cesvi-9ab47f7f37",
@@ -185,7 +185,7 @@
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
     "El impacto 4 (V2 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
    ],
-   "ms": 722
+   "ms": 1090
   },
   {
    "id": "cesvi-c0bc4df135",
@@ -204,7 +204,7 @@
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 488
+   "ms": 700
   },
   {
    "id": "cesvi-0b1f65a976",
@@ -223,7 +223,7 @@
     "V3, V5: sin sus posiciones en el mapa, Croquis los coloca detenidos en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 2649
+   "ms": 3133
   },
   {
    "id": "cesvi-2a83292792",
@@ -243,7 +243,7 @@
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
     "El impacto 3 (V2 con V6) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
    ],
-   "ms": 9768
+   "ms": 10742
   },
   {
    "id": "cesvi-58c038ffdf",
@@ -262,7 +262,7 @@
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 612
+   "ms": 659
   },
   {
    "id": "cesvi-b9f5a5ca1f",
@@ -281,7 +281,7 @@
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 544
+   "ms": 633
   },
   {
    "id": "cesvi-928c1a7646",
@@ -301,7 +301,7 @@
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
     "El impacto 2 (V2 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
    ],
-   "ms": 3977
+   "ms": 14356
   },
   {
    "id": "cesvi-d4772dda4f",
@@ -319,7 +319,7 @@
     "El reporte no da las zonas del impacto de V3 y V4: se toma la cara de su primer daño.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 510
+   "ms": 1345
   },
   {
    "id": "cesvi-f7779cef54",
@@ -336,7 +336,7 @@
    "limites": [
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 367
+   "ms": 1384
   },
   {
    "id": "cesvi-d646b64594",
@@ -356,7 +356,7 @@
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
     "El impacto 2 (V1 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
    ],
-   "ms": 3908
+   "ms": 9694
   },
   {
    "id": "cesvi-85090bf850",
@@ -374,7 +374,7 @@
     "El impacto 2 no es entre dos vehículos (valla metálica): la reconstrucción no lo calcula.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 411
+   "ms": 2830
   },
   {
    "id": "cesvi-e9aed4ab5b",
@@ -393,7 +393,7 @@
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 804
+   "ms": 1801
   },
   {
    "id": "cesvi-736d92094b",
@@ -412,7 +412,7 @@
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 833
+   "ms": 2400
   },
   {
    "id": "cesvi-cdaf2821ca",
@@ -431,7 +431,7 @@
     "El impacto 2 no es entre dos vehículos (poste): la reconstrucción no lo calcula.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 516
+   "ms": 996
   },
   {
    "id": "cesvi-818c2eb6d6",
@@ -450,7 +450,7 @@
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 583
+   "ms": 2152
   },
   {
    "id": "cesvi-e53c722cc2",
@@ -469,7 +469,7 @@
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 600
+   "ms": 4246
   },
   {
    "id": "cesvi-316a61cb43",
@@ -488,7 +488,7 @@
     "V3, V4: sin sus posiciones en el mapa, Croquis los coloca detenidos en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 912
+   "ms": 3923
   },
   {
    "id": "cesvi-b1ab1b00df",
@@ -507,7 +507,7 @@
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 548
+   "ms": 1038
   },
   {
    "id": "cesvi-feb7aaa0e1",
@@ -527,7 +527,7 @@
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
     "El impacto 2 (V1 con V2) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
    ],
-   "ms": 2518
+   "ms": 4838
   },
   {
    "id": "cesvi-17afa381e4",
@@ -547,7 +547,7 @@
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
     "El impacto 2 (V1 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
    ],
-   "ms": 2864
+   "ms": 4621
   },
   {
    "id": "cesvi-c6e5335493",
@@ -566,7 +566,7 @@
     "V3, V4: sin sus posiciones en el mapa, Croquis los coloca detenidos en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 985
+   "ms": 1735
   },
   {
    "id": "cesvi-5becbd0fbb",
@@ -586,7 +586,7 @@
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
     "El impacto 2 (V1 con V2) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
    ],
-   "ms": 3405
+   "ms": 5609
   },
   {
    "id": "cesvi-4ef2a9d90b",
@@ -605,7 +605,7 @@
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 564
+   "ms": 3667
   },
   {
    "id": "cesvi-923e562683",
@@ -624,7 +624,7 @@
     "V3, V4: sin sus posiciones en el mapa, Croquis los coloca detenidos en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
    ],
-   "ms": 1166
+   "ms": 2420
   },
   {
    "id": "cesvi-3fb401796c",
@@ -644,7 +644,7 @@
     "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
     "El impacto 2 (V3 con V1) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
    ],
-   "ms": 3689
+   "ms": 7101
   }
  ],
  "particion": "prueba",
