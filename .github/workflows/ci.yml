@@ -77,17 +77,37 @@ jobs:
           path: apps/web/playwright-report
           retention-days: 7
 
+  # Las pruebas de Python van en dos tareas en paralelo para que CI siga bajo 10 minutos: con W8 la
+  # inversión hace más trabajo y una sola tarea pasaba del límite (2026-11-14). Se corren todas; solo
+  # se reparten. `worksteal` reparte la cola de las pruebas largas entre los procesos libres.
   python:
-    name: Python (ruff, pyright, pytest)
+    name: Python (ruff, pyright, pytest ${{ matrix.parte }})
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Los resultados versionados del solver y la extracción.
+          - parte: "1/2"
+            pruebas: >-
+              solver/tests/test_results_io.py extraction/tests
+          # El resto del solver y lo demás.
+          - parte: "2/2"
+            pruebas: >-
+              solver/tests --ignore=solver/tests/test_results_io.py
+              packages/scene-schema/python/tests data/tests eval/tests
+              assets/pipeline/tests tools/blender/tests
     steps:
       - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v10.3.0
         with:
           enable-cache: true
       - run: uv sync --all-packages --all-groups --locked
-      - run: uv run ruff check .
-      - run: uv run ruff format --check .
-      - run: uv run pyright
-      - run: uv run pytest -n auto
+      - if: matrix.parte == '1/2'
+        run: uv run ruff check .
+      - if: matrix.parte == '1/2'
+        run: uv run ruff format --check .
+      - if: matrix.parte == '2/2'
+        run: uv run pyright
+      - run: uv run pytest -n auto --dist worksteal ${{ matrix.pruebas }}
