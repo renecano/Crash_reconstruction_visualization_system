@@ -94,7 +94,11 @@ export async function dictamenDocx(contenido: Content[], pie: string): Promise<U
             new d.ImageRun({
               type: "png",
               data: bytesDeDataUrl(o.image),
-              transformation: { width: ancho, height: Math.round(ancho * 0.56) },
+              // Las fotos del 3D son 16:9; una imagen que trae su alto (el logo) lo conserva.
+              transformation: {
+                width: ancho,
+                height: typeof o.height === "number" ? o.height : Math.round(ancho * 0.56),
+              },
             }),
           ],
         }),

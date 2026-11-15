@@ -74,6 +74,54 @@ try {
     }
     await contexto.close();
   }
+  // Las transiciones y la apertura: el logo animado. Con movimiento (sin «reducir movimiento»),
+  // varias capturas a media animación.
+  {
+    const contexto = await navegador.newContext({
+      viewport: { width: 1440, height: 900 },
+      deviceScaleFactor: 1,
+      colorScheme: "dark",
+      serviceWorkers: "block",
+    });
+    const page = await contexto.newPage();
+    const centro = { x: 320, y: 120, width: 800, height: 620 };
+    // Las capturas se cuentan desde que la animación está en pantalla, no desde el clic: así los
+    // instantes son comparables entre producción y el servidor local.
+    const rafaga = async (nombre, instantes, selector = '[data-testid="transicion-acto"]') => {
+      await page
+        .waitForSelector(selector, { state: "attached", timeout: 30_000 })
+        .catch(() => null);
+      const t0 = Date.now();
+      for (const ms of instantes) {
+        const falta = ms - (Date.now() - t0);
+        if (falta > 0) await page.waitForTimeout(falta);
+        await page.screenshot({
+          path: join(DIR, `transicion-${nombre}-${ms}ms.png`),
+          clip: centro,
+        });
+      }
+    };
+    // La apertura de la portada.
+    await page.goto(BASE + "/", { waitUntil: "commit", timeout: 120_000 });
+    await rafaga("portada-apertura", [900, 1700, 2500], "#intro .intro-word");
+    // Entrar a un caso: la transición completa.
+    await page.goto(BASE + "/cesvi", { waitUntil: "load", timeout: 120_000 });
+    await page.waitForTimeout(3000);
+    await page.getByTestId("ir-axa").click();
+    await rafaga("entrar-al-caso", [150, 450, 750, 1050]);
+    await page.waitForTimeout(2500);
+    // Entre actos: la corta.
+    await page.getByTestId("siguiente").click();
+    await rafaga("entre-actos", [40, 160, 300]);
+    await page.waitForTimeout(2000);
+    // Al presentar.
+    await page.getByTestId("modo-presentar").click();
+    await rafaga("presentar", [150, 450, 750, 1050]);
+    informe.transiciones = await page.evaluate(() => ({
+      monta: !!document.querySelector('[data-testid="transicion-acto"]'),
+    }));
+    await contexto.close();
+  }
   // Los archivos de la marca tal cual, sobre su fondo.
   const contexto = await navegador.newContext({ viewport: { width: 900, height: 300 } });
   const page = await contexto.newPage();

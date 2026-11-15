@@ -1,11 +1,12 @@
 {
-  "descripcion": "La única fuente del logo de Croquis (René, 2026-11-15): la marca de la portada pública. De aquí salen los SVG de assets/brand (tools/make_brand.py), los símbolos que dibuja la portada (portada-v3.tsx) y, de los SVG, los íconos, la imagen para redes y la textura del visor. No se redibuja en ningún otro lugar.",
+  "descripcion": "La única fuente del logo de Croquis (René, 2026-11-15). La forma es la de la marca de la portada pública; los colores son tokens del sistema de la app (tokens.json), no valores propios. De aquí salen los SVG de assets/brand (tools/make_brand.py), los símbolos que se dibujan en línea para animarlos (la transición entre actos, la apertura de la portada, la entrada del video) y, de los SVG, los íconos, la imagen para redes y el logo del dictamen. No se redibuja en ningún otro lugar.",
   "lienzo": 64,
   "colores": {
-    "sobre_oscuro": "#ece8df",
-    "sobre_claro": "#15181B",
-    "senal": "#ff5a1f",
-    "fondo_icono": "#0B0D0F"
+    "nota": "Nombres de token de tokens.json. La señal es una sola: «senal».",
+    "sobre_oscuro": "blanco",
+    "sobre_claro": "tinta",
+    "senal": "senal",
+    "fondo_icono": "grafito"
   },
   "arco": "M 46.86 45.38 A 20 20 0 1 1 46.86 18.62",
   "centro": [32, 32],
