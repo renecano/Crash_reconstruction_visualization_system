@@ -6,8 +6,8 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 
 - **Desde el 2026-11-09, el Claude Code de René lleva también este frente,** porque aquí no se había subido nada. Si eres el Claude Code del compañero: antes de empezar una fase, revisa la tabla de abajo y `git fetch`; si la fase ya está tomada, sigue con la siguiente y anótala aquí.
 - **Hechas:** W1 (#187), W2 (#188), W3 (#192), W4 (#195, con su contrato #194), W4b (#196), W5 (#199, #200), W6 (#201) y W7 (#206), en `main`.
-- **Fase actual:** W8 (T3.2, T3.3 y T3.5), en Opus por pedido de René (2026-11-12), con cuidado extra.
-- **Siguiente paso:** T3.2 cerrada con las decisiones de René (#215). Sigue T3.3 (reversa), **después de que René cambie el modelo** («Listo para T3.3: cambia el modelo»), y con la misma regla: detenerse y enseñarle el antes y el después antes de fusionar.
+- **Fase actual:** W8 (T3.2, T3.3 y T3.5), con cuidado extra por pedido de René (2026-11-12). T3.3 empezó el 2026-11-14, cuando René cambió el modelo.
+- **Siguiente paso:** T3.3 (reversa), en `feat/w8-reversa`: diagnóstico hecho (abajo); sigue el contrato (`contract/w8-sentido-marcha`), el solver con paridad, la app y la medición. Misma regla: si se mueve AXA o un caso que ya vio CESVI, alto con el antes y el después.
 
 ## Fases tomadas
 
@@ -228,6 +228,48 @@ Con el solver de `main`, 0.05° en el rumbo de V1 bastaban para que el contacto 
 **Tiempo en el navegador, sin cumplir la meta de ≤ 10 s:** en tres rondas alternadas con el worker de producción, el nuevo tardó lo mismo (12.91 contra 12.15 s de mediana), con la laptop al doble de lento que en la mañana. Los recortes de la decisión 9 dejan cada número igual (paridad 0), pero no muestran ≤ 10 s en esa medición. Pendiente en «Endurecimiento pendiente»: volver a medir con la laptop en estado normal (`tools/unity/medir-tiempo-solver.ps1`).
 
 **Siguiente:** T3.3 (reversa). Antes, René cambia el modelo: «Listo para T3.3: cambia el modelo».
+
+### T3.3 · Diagnóstico de la reversa (2026-11-14, sin tocar el solver)
+
+**Herramienta:** `eval/t3_3_reversa.mts` → `eval/results/w8/t3_3_reversa_antes.json` (el «antes», con el solver de `main`, 75a86237). Corre el port TS, que es el de la app y da lo mismo que Python (paridad E7).
+
+**El caso:** `cesvi-3a0125cb81` (Yecapixtla). El conductor de A (Grand Cherokee) declara que puso en marcha hacia atrás su vehículo sin ver a B (Sentra), que estaba detrás. La narración de R0 no trae esa dinámica, así que la reversa entra como la narraría el perito en «Caso nuevo»; las posiciones, como las pondría en el mapa (A mira al norte y B está detrás).
+
+**Lo que se ve hoy:**
+
+| Entrada                                       | Lo que arma la app                                | Lo que reconstruye                                                                                       |
+| --------------------------------------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| 1. La lectura de R0, sin dinámica             | Los dos «recto» a 40 km/h, uno detrás del otro    | No hay choque: ΔV 0 y aplastamiento 0. Es lo que anotó PROGRESS el 22 de octubre («las dos en 40 km/h»)  |
+| 2. Con la reversa narrada                     | A en reversa a **40 km/h** (supuesto); B detenido | A se mueve hacia atrás (−11.11 m/s sobre su frente) y pega con su parte posterior: eso ya funciona (R4b) |
+| 3. Con las posiciones de impacto              | A empieza 12 m delante del impacto                | Igual: ΔV 22 km/h en cada uno, 0.16 m de aplastamiento en A y B empujado 7.77 m                          |
+| 4. Con reposos supuestos (B desplazado 0.5 m) | Lo mismo                                          | La inversión no fija nada y se queda en 40 km/h: B termina a 7.77 m, no a 0.5 m                          |
+| 5. Con reposos medidos (B desplazado 6 m)     | Lo mismo                                          | La inversión da **34.73 km/h en reversa** (31.06–37.85) y no avisa nada                                  |
+
+**Las causas, en orden de importancia:**
+
+1. **La velocidad en reversa se supone igual que hacia adelante: 40 km/h.** Sale del valor por omisión de `buildSpec` para cualquier vehículo en movimiento. Con eso, la reversa de Yecapixtla deja 0.16 m de aplastamiento en la parte posterior de A, cuando el reporte describe «hundimiento de muy baja magnitud», y empuja a B casi 8 m.
+   - El propio CESVI supone 10 km/h en reversa en `cesvi-73aef4cf09` («Considerando que la masa es de 8 toneladas y la velocidad de 10 km/h en reversa»).
+   - Fuente publicada: NHTSA, DOT HS 811 024 (Mazzae, Barickman, Baldwin y Ranney, 2008), 6 145 maniobras de reversa en uso real de 37 conductores. La velocidad máxima de cada maniobra (tabla 10, 6 037 maniobras): mediana 3.532 mph (5.68 km/h), p10 1.899 mph (3.06 km/h), p90 5.633 mph (9.07 km/h), p95 6.275 mph (10.10 km/h) y máxima observada 14.291 mph (23.00 km/h).
+2. **La inversión acepta cualquier velocidad en reversa** (busca de 0 a 200 km/h, como hacia adelante) y no dice cuándo el resultado queda por encima de lo que se ha observado en una reversa (entrada 5).
+3. **El contrato no separa el sentido de marcha de la maniobra.** «Reversa» es un valor más de `maniobra`, junto a las vueltas y los cambios de carril, así que un vehículo no puede retroceder dando vuelta (salir en reversa de un cajón o de una cochera, el caso más común).
+   - Si la narración dice las dos cosas, la app se queda con la primera y pierde la otra: «reversa, vira a la izquierda» queda como reversa recta, y «vira a la izquierda, reversa», como vuelta hacia adelante.
+   - La escena rechaza `sentido_marcha` («must NOT have additional properties»).
+   - El solver ya tiene la pieza (`ReversePath` envuelve cualquier trayectoria), pero solo se usa con la recta.
+4. **El resultado no dice quién iba en reversa.** El 3D, el croquis y el dictamen solo lo pueden saber releyendo la escena.
+5. **Los metros de reversa no se usan.** Si la narración dice «retrocedió 3 m», el vehículo igual arranca 12 m antes.
+
+**En el corpus** (`data/cesvi/corpus/expedientes.jsonl`): de 671 reportes, 44 tienen la modalidad «reversa» y 50 traen una maniobra de reversa en alguna versión (52 con alguna de las dos). No es un caso raro.
+
+**Lo que no es un defecto del solver:** en la E-R4, la reversa se queda en 0 de 9 porque la narración de R0 no dice que alguien retrocedía (ADR 0069). Eso no se arregla en el solver. Lo que sí se puede medir es si, dado quién retrocede según el propio reporte, Croquis reconstruye la reversa.
+
+**Plan de T3.3** (ADR 0136):
+
+1. **Contrato** (PR `contract:` aparte, aditivo y opcional, sin subir versión, como #191 y #194): `sentido_marcha` («adelante» o «reversa») en el vehículo de la escena, en la maniobra del expediente y en el vehículo del resultado. `maniobra: "reversa"` sigue valiendo: es la reversa recta.
+2. **Solver, Python y TS con paridad:** la reversa sale de `sentido_marcha` o de la maniobra «reversa»; cualquier maniobra se puede recorrer en reversa (vueltas, cambio de carril y seguir el carril); el resultado dice el sentido de marcha; aviso si la velocidad en reversa pasa de la máxima observada.
+3. **La app:** la velocidad en reversa que no dio el perito entra como supuesto con su fuente y su rango (mediana y p10–p90 de NHTSA); la reversa con vuelta llega a la escena; los metros narrados fijan dónde arranca.
+4. **La lectura lo marca** sin cambiar el prompt (no se gasta API): una vuelta cuya cita habla de reversa queda con `sentido_marcha: "reversa"`.
+5. **E-R4 mide la reversa:** en los reportes de reversa, con quién retrocede según el reporte, cuántos reconstruyen al que retrocede.
+6. **Antes y después** de las escenas de referencia, AXA, la E-R4 de prueba y las carambolas. Si AXA o un caso que ya vio CESVI se mueve: alto.
 
 ## W7 · Endurecimiento (T6.2, T6.3, T6.4) (2026-11-11)
 
