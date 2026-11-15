@@ -6,11 +6,13 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 ## Estado actual
 
 - **Ahora: plan final v4** (René, 2026-11-07; `docs/cesvi/PLAN-CESVI.md`). CESVI pidió el 3D en Unity, puntos intermedios del choque, objetos que se mueven y un terreno que afecta la física. Trabajan dos frentes en paralelo, con bitácora propia: [`docs/progress/U.md`](progress/U.md) y [`docs/progress/W.md`](progress/W.md). Este archivo queda como índice, y lo que sigue abajo es historia del plan v3 (`docs/historial/PLAN-CESVI-v3.md`).
-  - **Auditoría del 2026-11-15 · Tanda 4 (proceso y seguridad), casi completa:**
+  - **Auditoría del 2026-11-15 · Tanda 4 (proceso y seguridad), hecha:**
     - **Páginas (#231):** `/demo`, `/relato`, `/visor`, `/croquis`, `/publico` e `/historia` llevan a la portada (también en `/en`), sin borrar su código; `/recorrido` se queda con un aviso de versión anterior; el manifiesto y la imagen para redes ya no dicen «a partir de un relato»; `robots.txt` y `sitemap.xml`.
     - **Encabezados de seguridad (#232):** `nosniff` y `Referrer-Policy` en todas las rutas; la política de contenido va en modo de solo reporte (avisa en la consola, no bloquea).
     - **Tope de gasto de Claude (#232, ADR 0140):** se reserva lo más que puede costar cada lectura antes de llamar y al terminar queda cobrado lo real, también si la respuesta no sirve; el día corta a la medianoche de México; las rutas exigen JSON y origen propio; cada ruta tiene su límite por hora; importar acepta hasta 100,000 caracteres. Detalle en [`docs/progress/W.md`](progress/W.md), «Tanda 4».
-    - **Falta:** protección de `main`, limpieza de ramas y Dependabot (I5, I8); volver obligatoria la política de contenido cuando el recorrido completo pase sin avisos.
+    - **Protección de `main` (I5):** un ruleset de GitHub («main protegida») exige los cinco checks de CI y bloquea el force-push y el borrado; las ramas se borran solas al fusionar su PR.
+    - **Dependencias (I8):** alertas de seguridad activadas; Dependabot agrupa parches y versiones menores en un PR por ecosistema.
+    - **Falta:** fusionar los PR agrupados de Dependabot cuando lleguen en verde; volver obligatoria la política de contenido cuando el recorrido completo pase sin avisos; borrar las ramas remotas ya fusionadas (lista explícita, con el visto bueno de René).
   - **Auditoría del 2026-11-15 · Tanda 2 (lo que el perito ve en el 3D), código en `main` (#230, ADR 0117):**
     - **Qué cambió:** el visor de Unity deforma la carrocería con el perfil de daño del solver (antes no lo aplicaba); el 3D tiene barra de reproducción (pausar, deslizador, ¼× ½× 1×, «Ir al impacto», «Ver todo», «Repetir»); la leyenda ilustrativa va siempre.
     - **Lo que ya se ve en producción:** los controles (usan el build publicado). **Lo que no:** el daño, hasta que haya build nuevo.

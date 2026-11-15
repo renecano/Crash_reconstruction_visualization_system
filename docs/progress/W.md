@@ -913,7 +913,7 @@ Rama `fix/t3-cifras`. Lo último hecho: N4 y la escena de la demo regeneradas. S
 
 ## Auditoría del 2026-11-15 · Tanda 4 (proceso y seguridad)
 
-**Estado (2026-11-15):** páginas en `main` (#231); encabezados y tope de gasto en el #232. Falta la protección de `main`, la limpieza de ramas y Dependabot.
+**Estado (2026-11-15):** hecha. Páginas (#231), encabezados y tope de gasto (#232), protección de `main` y Dependabot agrupado. Verificado en producción el mismo día: los tres encabezados llegan, una petición que no es JSON recibe 415, una de otro origen 403 y `/publico` redirige a la portada.
 
 ### Qué se hizo
 
@@ -947,9 +947,17 @@ La reserva es una cota del costo, no el costo. Lo que cambia para el perito: una
 - `apps/web/src/lib/paginas-anteriores.test.ts`: redirecciones, manifiesto, robots y mapa del sitio, encabezados.
 - La e2e de la portada revisa que `/publico` lleve a la portada.
 
+### Proceso (I5 e I8)
+
+- **Ruleset «main protegida»** (GitHub, id 27338684): exige los cinco checks de CI (sin pedir que la rama esté al día), bloquea el force-push y el borrado de `main`. Se quita o edita en Settings → Rules.
+- **Las ramas se borran solas al fusionar su PR** (`delete_branch_on_merge`). Las ramas `resultados/*` del colaborador no pasan por PR y no se tocan.
+- **Alertas de seguridad de dependencias activadas.**
+- **Dependabot agrupado** (`.github/dependabot.yml`): parches y versiones menores en un PR por ecosistema; las mayores, una por una. Los 11 PR sueltos que había los reemplaza Dependabot en su siguiente corrida.
+
 ### Pendientes
 
-- Protección de `main`, limpieza de ramas y Dependabot (I5, I8).
+- Fusionar los PR agrupados de Dependabot cuando lleguen en verde (revisar antes `pnpm-workspace.yaml` y `allowBuilds`). El de `anthropic` 1.13 → 2.1 (Python) es una versión mayor: va aparte.
+- Borrar las ramas remotas ya fusionadas: no se hizo. Borrar pide una lista explícita y el visto bueno de René.
 - Lo anotado en `docs/PROGRESS.md`, «Endurecimiento pendiente» (política de contenido obligatoria, rutas sin uso, referencia en Python, precio de caché, límite por IP).
 
 ### Necesito de René
