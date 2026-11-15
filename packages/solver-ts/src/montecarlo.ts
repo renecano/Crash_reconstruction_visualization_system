@@ -15,6 +15,14 @@ import { pyRound, str } from "./pymath";
 import { reconstruct, vehicleClasses, type Reconstruction } from "./reconstruct";
 import { LatinHypercube } from "./stratified";
 import { BUMP_CONTACT, BUMP_ENERGY, bumpSampler, sampleBumpAssumptions } from "./terrain";
+import {
+  IMPACT_NOTE,
+  impactSampler,
+  IMPULSE_RATIO_RANGE,
+  POST_IMPACT_DRAG,
+  RESTITUTION,
+  sampleImpactAssumptions,
+} from "./impact-assumptions";
 
 type Json = Record<string, unknown>;
 
@@ -246,6 +254,8 @@ export function monteCarlo(
   const lhs = new LatinHypercube(samples, campos.length);
   // Los dos supuestos del tope (C3, W5), con su propio hipercubo y la semilla del caso.
   const topes = bumpSampler(spec, samples, seed);
+  // Restitución, razón de impulso y arrastre (ADR 0139), en su propio hipercubo de diseño fijo.
+  const choque = impactSampler(samples);
   const accV = new Map<string, Map<string, number[]>>();
   const accP = new Map<string, Map<string, number[]>>();
   const push = (m: Map<string, Map<string, number[]>>, id: string, key: string, x: number) => {
@@ -265,6 +275,7 @@ export function monteCarlo(
       else setPath(s, c.ruta, value);
     }
     if (topes !== null) sampleBumpAssumptions(s, topes.sample(i));
+    if (choque !== null) sampleImpactAssumptions(s, choque.sample(i));
     let r: Reconstruction;
     try {
       r = reconstruct(s, { dt, ...(downed === null ? {} : { downedMu: downed }) });
@@ -310,5 +321,29 @@ export function monteCarlo(
             nota,
           },
         ];
-  return new Uncertainty(seed, samples, valid, reportados, toDists(accV), toDists(accP));
+  const conChoque =
+    choque === null
+      ? reportados
+      : [
+          ...reportados,
+          {
+            ruta: "parametros.restitucion_vehiculo_vehiculo",
+            minimo: RESTITUTION[1],
+            maximo: RESTITUTION[2],
+            nota: IMPACT_NOTE,
+          },
+          {
+            ruta: "parametros.relacion_impulso_tangencial",
+            minimo: IMPULSE_RATIO_RANGE[1],
+            maximo: IMPULSE_RATIO_RANGE[2],
+            nota: IMPACT_NOTE,
+          },
+          {
+            ruta: "parametros.arrastre_post_impacto",
+            minimo: POST_IMPACT_DRAG[1],
+            maximo: POST_IMPACT_DRAG[2],
+            nota: IMPACT_NOTE,
+          },
+        ];
+  return new Uncertainty(seed, samples, valid, conChoque, toDists(accV), toDists(accP));
 }

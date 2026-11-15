@@ -28,6 +28,7 @@ import { median, pyMod, pyRound, quantilesInclusive, radians, str } from "./pyma
 import { PyRandom } from "./pyrandom";
 import { countDraws, DESIGN_SEED, type Draws, LatinHypercube } from "./stratified";
 import { bumpSampler, sampleBumpAssumptions } from "./terrain";
+import { impactSampler, sampleImpactAssumptions } from "./impact-assumptions";
 import { reconstruct, vehicleClasses, type Reconstruction } from "./reconstruct";
 import { sampleStiffness, stiffnessFor, zonaFromCdcSide } from "./stiffness";
 import calibration from "./data/inversion_calibration.json";
@@ -1692,6 +1693,8 @@ function estimate(
   // Los dos supuestos del tope (C3, W5), con su propio hipercubo y la semilla del caso: una escena
   // sin topes conserva sus sorteos.
   const topes = bumpSampler(spec, nSamples, Number((spec.meta as Json).semilla));
+  // Restitución, razón de impulso y arrastre (ADR 0139), en el suyo, de diseño fijo.
+  const choque = impactSampler(nSamples);
   // Y los rumbos que la evidencia no fija, en el suyo (ADR 0135).
   const rumbos = headingSampler(spec, nSamples);
   const xBest = freeParams.map((p) => best.values.get(p.name)!);
@@ -1705,6 +1708,7 @@ function estimate(
   for (let i = 0; i < nSamples; i++) {
     const pert = perturbed(spec, ev, lhs.sample(i));
     if (topes !== null) sampleBumpAssumptions(pert.spec, topes.sample(i));
+    if (choque !== null) sampleImpactAssumptions(pert.spec, choque.sample(i));
     if (rumbos !== null) sampleAssumedHeadings(pert.spec, rumbos.sample(i));
     const { spec: s, evidence: e, downedMu } = pert;
     const prob = new Problem(withMarks(s, e), e, freeParams, fixed, dt, downedMu);

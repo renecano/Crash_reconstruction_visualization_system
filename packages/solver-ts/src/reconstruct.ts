@@ -104,6 +104,15 @@ import {
   SAMPLE_DT,
 } from "./visibility";
 import * as dmath from "./dmath";
+import {
+  impactAssumptions,
+  IMPULSE_RATIO_RANGE,
+  IMPULSE_RATIO_SOURCE,
+  POST_IMPACT_DRAG,
+  POST_IMPACT_DRAG_SOURCE,
+  RESTITUTION,
+  RESTITUTION_SOURCE,
+} from "./impact-assumptions";
 
 type Json = Record<string, unknown>;
 
@@ -113,9 +122,9 @@ const T_PRE_MAX = 6.0;
 const T_PRE_MIN = 3.0;
 const T_HOLD_AFTER_REST = 2.0;
 const T_POST_MAX = 30.0;
-export const RESTITUTION_VV = 0.1;
-export const IMPULSE_RATIO = 0.4;
-const POST_IMPACT_DRAG_FRACTION = 0.35;
+// Los nominales; el rango de cada uno lo sortea el muestreo (impact-assumptions.ts, ADR 0139).
+export const RESTITUTION_VV = RESTITUTION[0];
+export const IMPULSE_RATIO = IMPULSE_RATIO_RANGE[0];
 const TURN_RADIUS_M = 8.0;
 const LANE_CHANGE_LENGTH_M = 40.0;
 const LANE_WIDTH_DEFAULT = 3.5;
@@ -937,6 +946,8 @@ export function reconstruct(
   const meta = spec.meta as Json;
   const seed = Math.trunc(Number(meta.semilla));
   const lugar = spec.lugar as Json;
+  // Restitución, razón de impulso y arrastre: los nominales, o los que sorteó el muestreo.
+  const sup = impactAssumptions(lugar);
   const clases = classes();
   const muTire = tireFriction(
     String((lugar.superficie as Json).valor),
@@ -965,9 +976,24 @@ export function reconstruct(
       fuente: muTire.fuente,
       tipo: muTire.tipo,
     },
-    restitucion_vehiculo_vehiculo: { valor: RESTITUTION_VV, tipo: "supuesto" },
-    relacion_impulso_tangencial: { valor: IMPULSE_RATIO, tipo: "supuesto" },
-    arrastre_post_impacto: { valor: POST_IMPACT_DRAG_FRACTION, tipo: "supuesto" },
+    restitucion_vehiculo_vehiculo: {
+      valor: sup.restitution,
+      rango: [RESTITUTION[1], RESTITUTION[2]],
+      fuente: RESTITUTION_SOURCE,
+      tipo: "supuesto",
+    },
+    relacion_impulso_tangencial: {
+      valor: sup.impulseRatio,
+      rango: [IMPULSE_RATIO_RANGE[1], IMPULSE_RATIO_RANGE[2]],
+      fuente: IMPULSE_RATIO_SOURCE,
+      tipo: "supuesto",
+    },
+    arrastre_post_impacto: {
+      valor: sup.dragFraction,
+      rango: [POST_IMPACT_DRAG[1], POST_IMPACT_DRAG[2]],
+      fuente: POST_IMPACT_DRAG_SOURCE,
+      tipo: "supuesto",
+    },
     factor_abs: { valor: absFactor, tipo: absPeakFactor().tipo },
   };
 
@@ -1312,8 +1338,8 @@ export function reconstruct(
       normal = rel[0] || rel[1] ? [-rel[0], -rel[1]] : rot([1.0, 0.0], sa.yaw);
     }
     const res: ImpactResult = planarImpact(a.body, sa, b.body, sb, impactPoint, normal, {
-      restitution: RESTITUTION_VV,
-      friction: IMPULSE_RATIO,
+      restitution: sup.restitution,
+      friction: sup.impulseRatio,
     });
     jointIds = [a.id, b.id];
     postStart.set(a.id, res.aAfter);
@@ -1405,8 +1431,8 @@ export function reconstruct(
       const cdcO = zonas.get(a.id);
       const normal = barrierNormal(obj, impactPoint, axis, sa);
       const resO = planarImpact(a.body, sa, null, null, impactPoint, normal, {
-        restitution: RESTITUTION_VV,
-        friction: IMPULSE_RATIO,
+        restitution: sup.restitution,
+        friction: sup.impulseRatio,
       });
       const k = stiffnessFor(a.clase, zonaFromCdcSide(str((cdcO ?? {}).lado, "F")));
       const [shape, width] = crushShapeAndWidth(cdcO, a.body);
@@ -1540,7 +1566,7 @@ export function reconstruct(
     const drag =
       m.braking || downed
         ? ROLLING_RESISTANCE
-        : Math.max(ROLLING_RESISTANCE, POST_IMPACT_DRAG_FRACTION * mu);
+        : Math.max(ROLLING_RESISTANCE, sup.dragFraction * mu);
     const muPost = downed ? (opts.downedMu ?? muDowned.nominal) : mu;
     // Un vehículo que todavía no choca (solo está en un impacto posterior) rueda libre hasta su
     // primer impacto (ADR 0066).
@@ -1584,8 +1610,8 @@ export function reconstruct(
         a: group.indexOf(pa),
         b: group.indexOf(pb),
         eventId: String(e.id),
-        restitution: RESTITUTION_VV,
-        friction: IMPULSE_RATIO,
+        restitution: sup.restitution,
+        friction: sup.impulseRatio,
       });
     }
   }
@@ -1598,8 +1624,8 @@ export function reconstruct(
       a: group.indexOf(vid),
       b: group.length + fixed.indexOf(obj),
       eventId: String(e.id),
-      restitution: RESTITUTION_VV,
-      friction: IMPULSE_RATIO,
+      restitution: sup.restitution,
+      friction: sup.impulseRatio,
     });
   }
   const [jointResults, jointHits] = integrateJointImpacts(

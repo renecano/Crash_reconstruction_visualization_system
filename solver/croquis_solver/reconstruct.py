@@ -32,6 +32,17 @@ from croquis_solver.contact import (
 )
 from croquis_solver.crash3 import TRIANGULAR_SHAPES, Stiffness, crush_energy, profile_for_energy
 from croquis_solver.impact import ImpactResult, planar_impact
+from croquis_solver.impact_assumptions import (
+    IMPULSE_RATIO as IMPULSE_RATIO_RANGE,
+)
+from croquis_solver.impact_assumptions import (
+    IMPULSE_RATIO_SOURCE,
+    POST_IMPACT_DRAG,
+    POST_IMPACT_DRAG_SOURCE,
+    RESTITUTION,
+    RESTITUTION_SOURCE,
+    impact_assumptions,
+)
 from croquis_solver.inertia import body_for
 from croquis_solver.models import Body2D, State2D, Trajectory, Vec, rot, wrap_angle
 from croquis_solver.person_motion import (
@@ -88,9 +99,9 @@ T_PRE_MAX = 6.0
 T_PRE_MIN = 3.0  # contexto mínimo antes del impacto para el visor
 T_HOLD_AFTER_REST = 2.0  # la escena sigue 2 s después del último reposo
 T_POST_MAX = 30.0
-RESTITUTION_VV = 0.1  # vehículo–vehículo (Brach: 0.05–0.3 a velocidades urbanas)
-IMPULSE_RATIO = 0.4  # fricción de contacto (impulso tangencial / normal)
-POST_IMPACT_DRAG_FRACTION = 0.35  # fracción de μ como arrastre si las ruedas no van bloqueadas
+RESTITUTION_VV = RESTITUTION[0]  # vehículo–vehículo: nominal; el rango lo sortea el muestreo
+IMPULSE_RATIO = IMPULSE_RATIO_RANGE[0]  # fricción de contacto (impulso tangencial / normal)
+POST_IMPACT_DRAG_FRACTION = POST_IMPACT_DRAG[0]  # fracción de μ si las ruedas no van bloqueadas
 TURN_RADIUS_M = 8.0  # radio típico de vuelta en intersección urbana
 LANE_CHANGE_LENGTH_M = 40.0
 LANE_WIDTH_DEFAULT = 3.5
@@ -916,6 +927,8 @@ def reconstruct(
 
     seed = int(spec["meta"]["semilla"])
     lugar = spec["lugar"]
+    # Restitución, razón de impulso y arrastre: los nominales, o los que sorteó el muestreo.
+    sup = impact_assumptions(lugar)
     clases = _classes()
     mu_tire = friction.tire_friction(
         lugar["superficie"]["valor"], lugar["estado_superficie"]["valor"]
@@ -943,9 +956,24 @@ def reconstruct(
             "fuente": mu_tire.fuente,
             "tipo": mu_tire.tipo,
         },
-        "restitucion_vehiculo_vehiculo": {"valor": RESTITUTION_VV, "tipo": "supuesto"},
-        "relacion_impulso_tangencial": {"valor": IMPULSE_RATIO, "tipo": "supuesto"},
-        "arrastre_post_impacto": {"valor": POST_IMPACT_DRAG_FRACTION, "tipo": "supuesto"},
+        "restitucion_vehiculo_vehiculo": {
+            "valor": sup.restitution,
+            "rango": [RESTITUTION[1], RESTITUTION[2]],
+            "fuente": RESTITUTION_SOURCE,
+            "tipo": "supuesto",
+        },
+        "relacion_impulso_tangencial": {
+            "valor": sup.impulse_ratio,
+            "rango": [IMPULSE_RATIO_RANGE[1], IMPULSE_RATIO_RANGE[2]],
+            "fuente": IMPULSE_RATIO_SOURCE,
+            "tipo": "supuesto",
+        },
+        "arrastre_post_impacto": {
+            "valor": sup.drag_fraction,
+            "rango": [POST_IMPACT_DRAG[1], POST_IMPACT_DRAG[2]],
+            "fuente": POST_IMPACT_DRAG_SOURCE,
+            "tipo": "supuesto",
+        },
         "factor_abs": {"valor": abs_factor, "tipo": friction.abs_peak_factor().tipo},
     }
 
@@ -1276,8 +1304,8 @@ def reconstruct(
             sb,
             impact_point,
             normal,
-            restitution=RESTITUTION_VV,
-            friction=IMPULSE_RATIO,
+            restitution=sup.restitution,
+            friction=sup.impulse_ratio,
         )
         assert res.b_after is not None
         joint_ids = [a.id, b.id]
@@ -1368,8 +1396,8 @@ def reconstruct(
                 None,
                 impact_point,
                 normal,
-                restitution=RESTITUTION_VV,
-                friction=IMPULSE_RATIO,
+                restitution=sup.restitution,
+                friction=sup.impulse_ratio,
             )
             k = stiffness_for(a.clase, zona_from_cdc_side(str((cdc_o or {}).get("lado", "F"))))
             shape, width = _crush_shape_and_width(cdc_o, a.body)
@@ -1499,7 +1527,7 @@ def reconstruct(
         drag = (
             ROLLING_RESISTANCE
             if m.braking or downed
-            else max(ROLLING_RESISTANCE, POST_IMPACT_DRAG_FRACTION * mu)
+            else max(ROLLING_RESISTANCE, sup.drag_fraction * mu)
         )
         mu_post = (mu_downed.nominal if downed_mu is None else downed_mu) if downed else mu
         # Un vehículo que todavía no choca (solo está en un impacto posterior) rueda libre hasta
@@ -1534,7 +1562,11 @@ def reconstruct(
         if {pa, pb} != set(joint_ids):  # el mismo par del primero: lo cubre el contacto secundario
             plans.append(
                 PlannedImpact(
-                    group.index(pa), group.index(pb), str(e["id"]), RESTITUTION_VV, IMPULSE_RATIO
+                    group.index(pa),
+                    group.index(pb),
+                    str(e["id"]),
+                    sup.restitution,
+                    sup.impulse_ratio,
                 )
             )
     # Los objetos de los choques intermedios van después de los vehículos, cada uno una vez.
@@ -1549,8 +1581,8 @@ def reconstruct(
                 group.index(vid),
                 len(group) + inmoviles.index(objeto_c1),
                 str(e["id"]),
-                RESTITUTION_VV,
-                IMPULSE_RATIO,
+                sup.restitution,
+                sup.impulse_ratio,
             )
         )
     joint_all, joint_hits = integrate_joint_impacts(

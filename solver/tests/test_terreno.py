@@ -348,9 +348,17 @@ def test_el_monte_carlo_de_la_escena_con_topes_reporta_y_usa_sus_supuestos() -> 
     spec = load_fixture("terraceria_topes")
     u = montecarlo.monte_carlo(spec, samples=8)
     rutas = [c.ruta for c in u.campos]
-    assert rutas[-2:] == ["parametros.perdida_energia_tope", "parametros.perdida_contacto_tope"]
+    # Al final van los supuestos de hipercubo aparte: los dos del tope y los tres del impacto
+    # (ADR 0139).
+    assert rutas[-5:] == [
+        "parametros.perdida_energia_tope",
+        "parametros.perdida_contacto_tope",
+        "parametros.restitucion_vehiculo_vehiculo",
+        "parametros.relacion_impulso_tangencial",
+        "parametros.arrastre_post_impacto",
+    ]
     # Los mismos sorteos de los demás campos que sin los supuestos: van en otro hipercubo.
-    assert rutas[:-2] == [c.ruta for c in montecarlo.ranges(spec)]
+    assert rutas[:-5] == [c.ruta for c in montecarlo.ranges(spec)]
 
     # Con η y κ en sus extremos, la velocidad al impacto cambia: el supuesto sí entra.
     def v_impacto(energia: float, contacto: float) -> float:
