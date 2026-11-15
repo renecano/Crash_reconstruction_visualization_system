@@ -1,0 +1,313 @@
+[2026-11-15T23:19:31.238Z] AXA…
+{"semilla":719300,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":4348}
+{"semilla":1,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":4199}
+{"semilla":2,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":4256}
+{"semilla":3,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":4173}
+{"semilla":4,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":4055}
+{"semilla":5,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":4103}
+{"semilla":6,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":4061}
+{"semilla":7,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":4027}
+{"semilla":8,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":4080}
+{"semilla":9,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":4032}
+{"semilla":10,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":4050}
+{"semilla":11,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":4106}
+{"semilla":12,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":4079}
+{"semilla":13,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":4045}
+{"semilla":14,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":4101}
+{"semilla":15,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":4136}
+{"semilla":16,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":4101}
+{"semilla":17,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":4129}
+{"semilla":18,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":4005}
+{"semilla":19,"V2":{"mejor":56.87,"p10":55.11,"p90":78.06},"V1":{"mejor":14.98,"p10":1.04,"p90":21.38},"ms":3966}
+{
+ "name": "axa_rango_estable",
+ "etiqueta": "cesvi",
+ "generated_at": "2026-11-15T23:20:54Z",
+ "git_commit": "44e7bf67",
+ "descripcion": "AXA A2010930 como la reconstruye la app, con la semilla de la app y 19 más: cuánto se mueven el p10 y el p90 de la velocidad previa de V2 entre semillas (meta de T3.1: ≤ 1 km/h).",
+ "spec_id_app": "caso-nuevo",
+ "semilla_app": 719300,
+ "semillas": [
+  719300,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19
+ ],
+ "meta_kmh": 1,
+ "cumple": true,
+ "V2": {
+  "mejor": {
+   "semillas": 20,
+   "min": 56.87,
+   "max": 56.87,
+   "movimiento_kmh": 0
+  },
+  "p10": {
+   "semillas": 20,
+   "min": 55.11,
+   "max": 55.11,
+   "movimiento_kmh": 0
+  },
+  "p90": {
+   "semillas": 20,
+   "min": 78.06,
+   "max": 78.06,
+   "movimiento_kmh": 0
+  }
+ },
+ "V1": {
+  "mejor": {
+   "semillas": 20,
+   "min": 14.98,
+   "max": 14.98,
+   "movimiento_kmh": 0
+  },
+  "p10": {
+   "semillas": 20,
+   "min": 1.04,
+   "max": 1.04,
+   "movimiento_kmh": 0
+  },
+  "p90": {
+   "semillas": 20,
+   "min": 21.38,
+   "max": 21.38,
+   "movimiento_kmh": 0
+  }
+ },
+ "mediana_ms": 4101
+}
+[2026-11-15T23:20:54.989Z] AXA: 1.4 min
+[2026-11-15T23:20:54.989Z] inversión en las narraciones de CESVI…
+{
+ "name": "cesvi_r4_inversion",
+ "generated_at": "2026-11-15T23:21:10Z",
+ "git_commit": "44e7bf67",
+ "descripcion": "E-R4 (prueba congelada, lecturas v2 grabadas) con lo que reconstruye el solver: velocidad previa de la inversión contra las velocidades del dictamen, impactos contra la secuencia de CESVI y banderas de consistencia.",
+ "narraciones": 205,
+ "reconstruidas": 205,
+ "con_evidencia": 1,
+ "con_alguna_velocidad_fijada": 0,
+ "velocidades": {
+  "del_dictamen_con_vehiculo": 19,
+  "comparables": 0,
+  "mediana_error_abs_kmh": null,
+  "mediana_error_abs_pct": null
+ },
+ "impactos": {
+  "mismo_numero": {
+   "k": 71,
+   "n": 135,
+   "pct": 52.59
+  },
+  "primero_coincide": {
+   "k": 96,
+   "n": 110,
+   "pct": 87.27
+  }
+ },
+ "banderas": {}
+}
+[2026-11-15T23:21:10.269Z] inversión en las narraciones de CESVI: 0.3 min
+[2026-11-15T23:21:10.270Z] E-R4 (prueba)…
+{
+ "particion": "prueba",
+ "leidos": 205,
+ "resumen": {
+  "dictamenes": 205,
+  "modalidad": {
+   "croquis": {
+    "k": 80,
+    "n": 190,
+    "pct": 42.1
+   },
+   "sin_inferir": 10,
+   "otra_predicha": {
+    "k": 6,
+    "n": 10,
+    "pct": 60
+   },
+   "fisicas": {
+    "croquis": {
+     "k": 74,
+     "n": 123,
+     "pct": 60.2
+    },
+    "linea_base": {
+     "modalidad": "alcance",
+     "k": 46,
+     "n": 123,
+     "pct": 37.4
+    }
+   },
+   "linea_base": {
+    "modalidad": "otra",
+    "k": 67,
+    "n": 190,
+    "pct": 35.3
+   },
+   "por_modalidad": {
+    "alcance": {
+     "k": 37,
+     "n": 46,
+     "pct": 80.4
+    },
+    "frontal": {
+     "k": 5,
+     "n": 6,
+     "pct": 83.3
+    },
+    "lateral": {
+     "k": 16,
+     "n": 25,
+     "pct": 64
+    },
+    "objeto_fijo": {
+     "k": 9,
+     "n": 17,
+     "pct": 52.9
+    },
+    "otra": {
+     "k": 6,
+     "n": 67,
+     "pct": 9
+    },
+    "reversa": {
+     "k": 0,
+     "n": 9,
+     "pct": 0
+    },
+    "salida_de_camino": {
+     "k": 1,
+     "n": 10,
+     "pct": 10
+    },
+    "volcadura": {
+     "k": 6,
+     "n": 10,
+     "pct": 60
+    }
+   },
+   "precision_por_modalidad": {
+    "alcance": {
+     "k": 37,
+     "n": 58,
+     "pct": 63.8
+    },
+    "frontal": {
+     "k": 5,
+     "n": 14,
+     "pct": 35.7
+    },
+    "lateral": {
+     "k": 16,
+     "n": 57,
+     "pct": 28.1
+    },
+    "objeto_fijo": {
+     "k": 9,
+     "n": 24,
+     "pct": 37.5
+    },
+    "otra": {
+     "k": 6,
+     "n": 10,
+     "pct": 60
+    },
+    "salida_de_camino": {
+     "k": 1,
+     "n": 3,
+     "pct": 33.3
+    },
+    "volcadura": {
+     "k": 6,
+     "n": 14,
+     "pct": 42.9
+    }
+   }
+  },
+  "zonas": {
+   "dictamenes_con_zonas": 152,
+   "exhaustividad": {
+    "k": 222,
+    "n": 312,
+    "pct": 71.2
+   },
+   "precision": {
+    "k": 222,
+    "n": 362,
+    "pct": 61.3
+   },
+   "tercio": {
+    "k": 13,
+    "n": 14,
+    "pct": 92.9
+   }
+  },
+  "secuencia": {
+   "dictamenes_con_secuencia": 135,
+   "primer_impacto": {
+    "k": 92,
+    "n": 135,
+    "pct": 68.1
+   },
+   "completa": {
+    "k": 69,
+    "n": 135,
+    "pct": 51.1
+   },
+   "mismo_numero": {
+    "k": 72,
+    "n": 135,
+    "pct": 53.3
+   }
+  },
+  "velocidades": {
+   "del_dictamen_por_deformacion": 5,
+   "croquis_calcula": 0,
+   "error_abs_mediana_kmh": null,
+   "error_pct_abs_mediana": null,
+   "dentro_de_5_pct": {
+    "k": 0,
+    "n": 0,
+    "pct": null
+   },
+   "linea_base": {
+    "velocidad_kmh": 61.62,
+    "error_abs_mediana_kmh": 11.716874999999995,
+    "error_pct_abs_mediana": 23.480711422845683
+   }
+  },
+  "posiciones_finales": {
+   "dictamenes_con_posiciones": 46,
+   "croquis_las_tiene": {
+    "k": 29,
+    "n": 58,
+    "pct": 50
+   }
+  }
+ }
+}
+[2026-11-15T23:21:27.011Z] E-R4 (prueba): 0.3 min
+[2026-11-15T23:21:27.011Z] carambolas (prueba)…
+33/33 reconstruidas (33 válidas, 33 en 3D); impactos posteriores: 20 de 31 ocurren; mediana 163 ms
+[2026-11-15T23:21:43.300Z] carambolas (prueba): 0.3 min
+Listo.
+(node:22236) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
