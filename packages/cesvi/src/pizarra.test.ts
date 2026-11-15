@@ -166,7 +166,7 @@ describe("la pizarra y el coordinador (R12b)", () => {
       ["fisico", "preguntador", "pide"],
       ["preguntador", "fisico", "escribe"],
     ]);
-    expect(nuevos[1]!.texto).toBe("Reconstrucción: V1 a 52.40 km/h (48.10–57.90).");
+    expect(nuevos[1]!.texto).toBe("Reconstrucción: V1 a 52 km/h (48–58).");
     // El pedido va en palabras: la bitácora entra al dictamen y no lleva identificadores internos.
     expect(nuevos[2]!.texto).toBe(
       "La física no cuadra o no alcanza (la velocidad declarada no cuadra con la evidencia física): pide evidencia al perito.",

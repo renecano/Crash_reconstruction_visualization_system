@@ -10,6 +10,7 @@
  *   validó y cuándo.
  */
 import type { ComparacionVelocidades } from "./metodo";
+import { metros, porcentaje } from "./formato";
 
 export const CRITERIOS = [
   {
@@ -158,8 +159,8 @@ export function sugerir(e: EntradaSugerencia): Sugerencia {
       clave: "velocidades",
       sentido: c.significativa ? "a_favor_declarada" : "contra_declarada",
       texto: c.significativa
-        ? `La velocidad de impacto y la de desplazamiento difieren ${c.diferenciaPct.toFixed(2)} %, más que el umbral de ${c.umbralPct} %: no confirman que los daños y el desplazamiento vengan del mismo alcance.`
-        : `La velocidad de impacto y la de desplazamiento difieren ${c.diferenciaPct.toFixed(2)} %, dentro del umbral de ${c.umbralPct} %: daños y desplazamiento son consistentes con un alcance.`,
+        ? `La velocidad de impacto y la de desplazamiento difieren ${porcentaje(c.diferenciaPct, 2)}, más que el umbral de ${c.umbralPct} %: no confirman que los daños y el desplazamiento vengan del mismo alcance.`
+        : `La velocidad de impacto y la de desplazamiento difieren ${porcentaje(c.diferenciaPct, 2)}, dentro del umbral de ${c.umbralPct} %: daños y desplazamiento son consistentes con un alcance.`,
       evidencia: "Cálculos 1, 2 y 3",
     });
   }
@@ -175,7 +176,7 @@ export function sugerir(e: EntradaSugerencia): Sugerencia {
     razones.push({
       clave: "desplazamiento",
       sentido: "contra_declarada",
-      texto: `Los restos están separados ${e.distanciaRestos.toFixed(2)} m (${e.fuenteDistancia}). En una reversa no habría desplazamiento entre los vehículos, o sería mínimo, y los restos quedarían en la posición final. Si el perito considera mínima esa separación, esta razón no aplica.`,
+      texto: `Los restos están separados ${metros(e.distanciaRestos)} (${e.fuenteDistancia}). En una reversa no habría desplazamiento entre los vehículos, o sería mínimo, y los restos quedarían en la posición final. Si el perito considera mínima esa separación, esta razón no aplica.`,
       evidencia: "Zona de restos y cálculo 2",
     });
   } else {

@@ -60,6 +60,7 @@ import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from 
 import { objetosDe, TIPOS_OBJETO } from "./objetos";
 import type { MallaRelieve } from "./relieve";
 import { terrenoDeEscena, terrenoReconstruido, type TerrenoReconstruido } from "./terreno";
+import { grados, kmhConUnidad, metros, rangoKmh } from "./formato";
 
 type Json = Record<string, unknown>;
 type Id = Expediente["vehiculos"][number]["id"];
@@ -1045,13 +1046,15 @@ export function alternativaSupuesta(
   if (!alt) return null;
   const conVel = alt.velocidades.filter((v) => v.kmh !== null);
   const vel = (v: (typeof conVel)[number]) =>
-    `${letraDe(String(v.vehiculo))} ${v.kmh!.toFixed(2)} km/h${v.fijada && v.rango ? ` (${v.rango[0].toFixed(2)}–${v.rango[1].toFixed(2)})` : ""}`;
+    `${letraDe(String(v.vehiculo))} ${kmhConUnidad(v.kmh, "reconstruccion")}${v.fijada && v.rango ? ` (${rangoKmh(v.rango[0], v.rango[1], "reconstruccion")})` : ""}`;
   const mayor = [...conVel].sort((a, b) => b.kmh! - a.kmh!)[0];
   return {
     clave: alt.clave,
     titulo: alt.titulo,
     texto: `Alternativa, con el reposo supuesto como dato (supuesto, no medición): ${conVel.map(vel).join(", ")}.`,
-    corto: mayor ? `${letraDe(String(mayor.vehiculo))} ${mayor.kmh!.toFixed(2)} km/h` : "",
+    corto: mayor
+      ? `${letraDe(String(mayor.vehiculo))} ${kmhConUnidad(mayor.kmh, "reconstruccion")}`
+      : "",
   };
 }
 
@@ -1095,7 +1098,7 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
   const lejos = choqueLejosDelRelato(base.spec, inv);
   if (lejos !== null)
     limites.push(
-      `El choque quedó a ${lejos.toFixed(1)} m del punto que da el relato: el relato lo estima y la evidencia lo lleva ahí.`,
+      `El choque quedó a ${metros(lejos, 1)} del punto que da el relato: el relato lo estima y la evidencia lo lleva ahí.`,
     );
   // Un rumbo de llegada que la evidencia empuja contra el límite de búsqueda se le dice al perito,
   // no se queda como un número callado (ADR 0135).
@@ -1103,7 +1106,7 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
     const id = base.ids[p.vehiculo];
     if (p.parametro !== "rumbo_inicial" || !p.en_limite || !p.estimacion || !id) continue;
     limites.push(
-      `${id}: la evidencia empuja el rumbo fuera del rango permitido (±${ANGLE_BOUND_DEG}° sobre el que se colocó en el mapa). El mejor ajuste queda en el límite, ${p.estimacion.mejor.toFixed(1)}°, así que no cabe bien con lo demás: conviene revisar las posiciones y el rumbo de llegada.`,
+      `${id}: la evidencia empuja el rumbo fuera del rango permitido (±${ANGLE_BOUND_DEG}° sobre el que se colocó en el mapa). El mejor ajuste queda en el límite, ${grados(p.estimacion.mejor)}, así que no cabe bien con lo demás: conviene revisar las posiciones y el rumbo de llegada.`,
     );
   }
   const velocidades = Object.entries(base.ids).map(([sid, id]) => {

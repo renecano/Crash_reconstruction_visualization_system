@@ -26,6 +26,7 @@ import type { Reconstruccion } from "./reconstruccion";
 import { supuestosDeclarados, supuestosEnUnaLinea } from "./supuestos";
 import type { PasoVelocidad } from "./formulas";
 import { verificacionCesvi, type VerificacionVehiculo } from "./verificacion";
+import { kmhConUnidad, velocidad } from "./formato";
 
 type Expediente = Conversion["expediente"];
 type Id = Expediente["vehiculos"][number]["id"];
@@ -176,7 +177,8 @@ type Decir = (para: MensajeBitacora["para"], tipo: MensajeBitacora["tipo"], text
 
 const pendienteRelectura = (p: Pizarra) =>
   Boolean(p.pedidoRelectura && !p.pedidoRelectura.atendido);
-const kmh = (x: number) => `${x.toFixed(2)} km/h`;
+// Un paso del método de CESVI: dos decimales.
+const kmh = (x: number) => kmhConUnidad(x, "metodo");
 const plural = (n: number, uno: string, varios: string) => `${n} ${n === 1 ? uno : varios}`;
 
 /** Las citas de una lectura que no están en la narración, en el orden en que vienen. */
@@ -404,7 +406,7 @@ const fisico: Agente = {
       "pizarra",
       "escribe",
       fijadas.length
-        ? `Reconstrucción: ${fijadas.map((v) => `${v.vehiculo} a ${kmh(v.previa!.mejor)}${v.previa!.p10 !== undefined && v.previa!.p90 !== undefined ? ` (${v.previa!.p10.toFixed(2)}–${v.previa!.p90.toFixed(2)})` : ""}`).join(", ")}.`
+        ? `Reconstrucción: ${fijadas.map((v) => `${v.vehiculo} a ${velocidad(v.previa!)}`).join(", ")}.`
         : "Reconstrucción hecha; la evidencia todavía no fija ninguna velocidad.",
     );
     // Lo que el reporte no trae entra como supuesto declarado, con su justificación (ADR 0091).

@@ -6,6 +6,7 @@
  */
 import type { CasoCesvi } from "./caso";
 import { DISCREPANCIA_A2010930 } from "./discrepancia";
+import { diferenciaPct, kmhConUnidad, metros } from "./formato";
 
 export interface FilaContraDictamen {
   clave: "modalidad" | "deformacion" | "restos" | "dinamica";
@@ -51,7 +52,8 @@ const EN_FRASE: Record<FilaContraDictamen["clave"], string> = {
   dinamica: "la dinámica del impacto",
 };
 const pct = (croquis: number, cesvi: number) => (100 * (croquis - cesvi)) / cesvi;
-const kmh = (x: number) => `${x.toFixed(2)} km/h`;
+// La tabla que reproduce el método de CESVI: dos decimales.
+const kmh = (x: number) => kmhConUnidad(x, "metodo");
 const normal = (t: string) =>
   t
     .normalize("NFD")
@@ -115,7 +117,7 @@ export function croquisContraDictamen(c: CasoCesvi, d: DeCroquis): ContraDictame
       `Dinámica del impacto: ${c.vehiculos.B.tipo} alcanza a ${c.vehiculos.A.tipo} y la desplaza`,
       restos,
       d.restosM,
-      (x) => `${x.toFixed(2)} m de restos`,
+      (x) => `${metros(x)} de restos`,
       "Separación de los restos del reporte · reconstrucción de Croquis en el mapa",
     ),
   ];
@@ -135,7 +137,7 @@ export function croquisContraDictamen(c: CasoCesvi, d: DeCroquis): ContraDictame
     .map((f) =>
       f.diferenciaPct === null
         ? EN_FRASE[f.clave]
-        : `${EN_FRASE[f.clave]} (${f.diferenciaPct >= 0 ? "+" : "−"}${Math.abs(f.diferenciaPct).toFixed(2)} %)`,
+        : `${EN_FRASE[f.clave]} (${diferenciaPct(f.diferenciaPct, "metodo")})`,
     );
   const resumen = [
     coinciden.length

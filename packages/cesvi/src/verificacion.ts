@@ -7,6 +7,7 @@ import type { Expediente } from "./corpus";
 import { formulaEbs, formulaMcHenry, type PasoEnergia, type PasoVelocidad } from "./formulas";
 import { MEDIDAS_PERMITIDAS } from "./metodo";
 import { rigidezPorVehiculo, type Rigidez } from "./rigidez";
+import { fijo } from "./formato";
 
 type Id = Expediente["vehiculos"][number]["id"];
 
@@ -89,10 +90,10 @@ export function verificacionCesvi(e: Expediente): VerificacionVehiculo[] {
           ? formulaEbs(
               mc.calculo.energia,
               masaKg / 1000,
-              mc.calculo.energia.toFixed(3),
+              fijo(mc.calculo.energia, 3),
               String(masaKg / 1000),
             )
-          : formulaEbs(mc.calculo.energia, masaKg, mc.calculo.energia.toFixed(1)),
+          : formulaEbs(mc.calculo.energia, masaKg, fijo(mc.calculo.energia, 1)),
       });
     }
     return { vehiculo: v.id, pasos, rigidez, falta, notas };

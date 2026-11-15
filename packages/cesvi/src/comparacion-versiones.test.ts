@@ -31,7 +31,7 @@ describe("qué cambia entre versiones (ADR 0057)", () => {
     ]);
     expect(r.filas[0]).toMatchObject({ declarada: "0.00 m", evidencia: "15.89 m" });
     expect(r.filas[1]!.evidencia).toBe("posterior izquierda");
-    expect(r.filas[3]!.evidencia).toBe("60–63 km/h");
+    expect(r.filas[3]!.evidencia).toBe("60.27–63.15 km/h");
     expect(r.resumen).toBe("3 de 4 no coinciden con la versión declarada.");
   });
 

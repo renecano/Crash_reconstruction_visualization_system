@@ -6,6 +6,7 @@
  */
 import { NOMBRE_ZONA, type Zona } from "./correspondencia";
 import type { Maniobra } from "./hecho-lectura";
+import { metros, rangoKmh } from "./formato";
 
 export type EstadoFila = "coincide" | "no_coincide" | "sin_dato";
 
@@ -65,8 +66,8 @@ export function compararVersiones(e: EntradaComparacion): Comparacion {
       ? {
           clave: "restos",
           concepto: "Restos",
-          declarada: `${e.restos.declarada.toFixed(2)} m`,
-          evidencia: `${e.restos.evidencia.toFixed(2)} m`,
+          declarada: metros(e.restos.declarada),
+          evidencia: metros(e.restos.evidencia),
           estado:
             Math.abs(e.restos.declarada - e.restos.evidencia) <= tol ? "coincide" : "no_coincide",
           fuente: "Geometría de cada versión en el croquis",
@@ -100,7 +101,7 @@ export function compararVersiones(e: EntradaComparacion): Comparacion {
   }
   const v = e.velocidades;
   const rango = v
-    ? `${Math.min(v.deformacion, v.desplazamiento).toFixed(0)}–${Math.max(v.deformacion, v.desplazamiento).toFixed(0)} km/h`
+    ? `${rangoKmh(Math.min(v.deformacion, v.desplazamiento), Math.max(v.deformacion, v.desplazamiento), "metodo")} km/h`
     : "sin cálculo";
   filas.push({
     clave: "velocidad_b",

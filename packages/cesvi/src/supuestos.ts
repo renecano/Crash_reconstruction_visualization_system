@@ -12,6 +12,7 @@ import type { Expediente } from "./corpus";
 import { masaTipica } from "./escena-narracion";
 import { fichaDe } from "./fichas";
 import type { Reconstruccion } from "./reconstruccion";
+import { grados, numero } from "./formato";
 
 type Id = Expediente["vehiculos"][number]["id"];
 type Json = Record<string, unknown>;
@@ -111,7 +112,7 @@ export function supuestosDeclarados(
       vehiculo: id,
       justificacion: "El reporte no la da: es el punto de partida de la reconstrucción.",
       incertidumbre: rumboSupuesto
-        ? `La evidencia no fija su rumbo de llegada: se usa el que se colocó en el mapa (${Number(rumbo.inicial).toFixed(1)}°) y en el rango se sortea ±${ANGLE_BOUND_DEG}° alrededor de él. La inversión ajusta su velocidad.`
+        ? `La evidencia no fija su rumbo de llegada: se usa el que se colocó en el mapa (${grados(Number(rumbo.inicial))}) y en el rango se sortea ±${ANGLE_BOUND_DEG}° alrededor de él. La inversión ajusta su velocidad.`
         : `La inversión ajusta su velocidad y su rumbo de llegada (±${ANGLE_BOUND_DEG}°).`,
     });
   }
@@ -126,15 +127,15 @@ export function supuestosDeclarados(
       clave: "friccion",
       que: "Fricción llanta–pavimento",
       valor: `μ = ${mu.valor}`,
-      corto: `μ ${mu.valor.toFixed(2)}`,
+      corto: `μ ${numero(mu.valor, 2)}`,
       ...(mu.rango
         ? {
             rango: {
               min: mu.rango[0],
               max: mu.rango[1],
               valor: mu.valor,
-              minTexto: mu.rango[0].toFixed(2),
-              maxTexto: mu.rango[1].toFixed(2),
+              minTexto: numero(mu.rango[0], 2),
+              maxTexto: numero(mu.rango[1], 2),
             },
           }
         : {}),
@@ -155,15 +156,15 @@ export function supuestosDeclarados(
               min: arrastre.valor * mu.rango[0],
               max: arrastre.valor * mu.rango[1],
               valor: arrastre.valor * mu.valor,
-              minTexto: (arrastre.valor * mu.rango[0]).toFixed(2),
-              maxTexto: (arrastre.valor * mu.rango[1]).toFixed(2),
+              minTexto: numero(arrastre.valor * mu.rango[0], 2),
+              maxTexto: numero(arrastre.valor * mu.rango[1], 2),
             },
           }
         : {}),
       justificacion:
         "Supuesto del solver: el reporte no trae huellas de arrastre que digan que las llantas deslizaron.",
       incertidumbre: mu?.rango
-        ? `La fracción es fija; varía con la fricción (de ${(arrastre.valor * mu.rango[0]).toFixed(2)} a ${(arrastre.valor * mu.rango[1]).toFixed(2)}).`
+        ? `La fracción es fija; varía con la fricción (de ${numero(arrastre.valor * mu.rango[0], 2)} a ${numero(arrastre.valor * mu.rango[1], 2)}).`
         : "La fracción es fija.",
     });
   return out;

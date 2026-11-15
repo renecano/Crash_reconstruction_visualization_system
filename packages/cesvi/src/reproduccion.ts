@@ -5,6 +5,7 @@
  */
 import type { CasoCesvi } from "./caso";
 import { ebs, mcHenry, velocidadDesplazamiento } from "./metodo";
+import { fijo } from "./formato";
 
 export interface FilaReproduccion {
   clave: string;
@@ -45,7 +46,7 @@ function fila(
   const diferencia = croquis - reporte;
   const escala = 10 ** d;
   const iguales = (x: number) => Math.abs(x - reporte) < 0.5 / escala / 1000;
-  const coincide = iguales(Number(croquis.toFixed(d)))
+  const coincide = iguales(Number(fijo(croquis, d)))
     ? "redondeo"
     : iguales(Math.trunc(croquis * escala + 1e-9) / escala)
       ? "truncamiento"
