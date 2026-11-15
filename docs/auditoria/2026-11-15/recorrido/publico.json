@@ -1,0 +1,296 @@
+{
+  "nombre": "publico",
+  "fecha": "2026-11-15T15:23:55.315Z",
+  "pasos": [
+    {
+      "paso": "portada",
+      "ms": 8324,
+      "url": "https://croquis-sage.vercel.app/",
+      "captura": "publico-01-portada.jpg",
+      "texto": "EL HECHO\nCROQUIS\nRECONSTRUCCIÓN PERICIAL\nEl hecho\nEl problema\nLa prueba\nCómo funciona\nPreguntas\nENTRAR A CROQUIS\nRECONSTRUCCIÓN DE HECHOS DE TRÁNSITO\nRECONSTRUYE EL HECHO.\nDEFIENDE EL DICTAMEN.\nNarra el choque con tu lenguaje técnico. Lo ubicas en el lugar real; Croquis lo reconstruye con física verificable y arma tu dictamen, con la fuente de cada número.\nACCESO PARA PERITOS\nENTRAR A CROQUIS\nCómo funciona\nDel relato a la firma\nCada número con su fuente\nEl dictamen siempre es del perito\nC\n¿QUÉ SIGNIFICA CROQUIS?\nABRIR EL EXPEDIENTE\nHOY UN DICTAMEN SE ARMA CON PIEZAS SUELTAS.\nA MANO\nCROQUIS\nEL CROQUIS, A MANO\nPosiciones, distancias y trayectorias dibujadas aparte, sin el lugar real debajo.\n¿Escala? ¿Orientación?\nHOJA DE CÁLCULO\nVELOCIDADES\nLOS CÁLCULOS, EN OTRA HOJA\nMcHenry, desplazamiento y frenado se capturan a mano; un dígito mal copiado cambia la conclusión.\n63.15\n→ 63.51\nPROCESADOR DE TEXTO\nDICTAMEN\nEL DICTAMEN, DESDE CERO\nSe redacta copiando de todo lo anterior, sin una traza de dónde salió cada número.\nFuente: sin registro\nCroquis lo une en un solo flujo, del relato a la firma.\nTOMAMOS UNO DE SUS REPORTES. CROQUIS LLEGÓ A LO MISMO.\nAXA A2010930 · un alcance en Ahome, Sinaloa · mismos datos, mismo método.\nCONCEPTO\tREPORTE DE CESVI\tCROQUIS\tDIFERENCIA\nModalidad\tAlcance\tAlcance\tCOINCIDE\nVelocidad por restos\t60.27\t60.27\t0.00 %\nVelocidad por deformación\t63.15\t63.90\t+1.19 %\nVelocidades en km/h. La diferencia de 1.19 % viene de los datos impresos en el reporte; Croquis la muestra en lugar de esconderla.\n671\nreportes de CESVI estudiados para construirlo\n205\nreconstruidos a ciegas, sin ver sus conclusiones\nCroquis\n58.3 %\nRegla simple\n37.2 %\nModalidades correctas sobre los 205 reportes reconstruidos a ciegas.\nNARRA. UBICA. RECONSTRUYE.\n1\nRELATO\nNARRA COMO SIEMPRE\nCroquis entiende modalidad, zonas de contacto y restos, y solo pregunta lo que falta.\nHecho de tránsito en la modalidad de alcance en el arroyo que corre de sur a norte de la carretera México-Nogales, a la altura del km 47+800, tramo Los Mochis–Navojoa.\nMODALIDAD\nVÍA\nUBICACIÓN\n2\nLUGAR\nMARCA EL IMPACTO\nSobre el mapa real. Croquis propone dónde iba cada vehículo; tú solo ajustas.\nPunto\nImpacto\nSentido\nSur → norte\nV1\nPropuesto · ajustable\nV2\nPropuesto · ajustable\n3\nFIRMA\nFIRMA EL DICTAMEN\nVelocidades con su rango, verificación con el método de CESVI y el documento en PDF o Word.\nVELOCIDAD POR RESTOS\n60.27km/h\nFuente: reporte\nMétodo: CESVI\nValidó\nPerito\nNADA SE INVENTA.\nCada dato dice si viene del perito, del reporte o de un supuesto. Lo que falta, se pregunta.\nPERITO · REPORTE · SUPUESTO\nSIEMPRE DA LO MISMO.\nEl mismo caso produce el mismo resultado, con su huella de entradas para repetirlo.\nHUELLA DE ENTRADAS\nLA FIRMA ES TUYA.\nCroquis reconstruye y sugiere. El perito revisa, decide y valida el dictamen.\nREVISA · DECIDE · VALIDA\nPREGUNTAS DE PERITOS.\n¿Croquis firma el dictamen?\nNo. Croquis reconstruye y sugiere; el perito revisa, decide y valida. La firma siempre es del perito.\n¿De dónde sale cada número?\n¿Qué pasa si al relato le falta un dato?\n¿Si reconstruyo el mismo caso dos veces, cambia el resultado?\n¿Qué tan seguido acierta la modalidad?\n¿En qué formato sale el dictamen?\nSIETE LETRAS. UN MÉTODO.\nCroquis no es solo el dibujo del perito. Cada letra es un paso de la reconstrucción. Toca una letra para leerla.\nDESCIFRAR CROQUIS\nC\n: ver significado\nCUENTA\nNarra el hecho con tu lenguaje técnico, como siempre.\nR\n: ver significado\nRECONOCE\nIdentifica modalidad, zonas de contacto y restos.\nO\n: ver significado\nORDENA\nAcomoda cada dato con su fuente: perito, reporte o supuesto.\nQ\n: ver significado\n¿QUÉ FALTA?\nPregunta solo lo que el relato no dice.\nU\n: ver significado\nUBICA\nSitúa el hecho sobre el lugar real.\nI\n: ver significado\nIMPACTA\nCalcula el impacto con física verificable.\nS\n: ver significado\nSIMULA\nReconstruye el hecho y arma el dictamen para tu firma.\nEN INGLÉS\nCrash Reconstruction from Oral Queries Using Impact Simulation\nDEL RELATO A LA FIRMA.\nACCESO PARA PERITOS\nENTRAR A CROQUIS\nCómo funciona\nTodo lo que ves es una reconstrucción calculada por Croquis (ilustrativa; el dictamen es del perito). Calles © colaboradores de OpenStreetMap (ODbL). Portada anterior · English",
+      "cifras": ["0.00 %", "1.19 %", "58.3 %", "37.2 %", "60.27km/h"],
+      "notas": {
+        "carga_ms": 8051,
+        "enlaces": [
+          {
+            "texto": "CroquisReconstrucción pericial",
+            "href": "#hecho"
+          },
+          {
+            "texto": "El hecho",
+            "href": "#hecho"
+          },
+          {
+            "texto": "El problema",
+            "href": "#problema"
+          },
+          {
+            "texto": "La prueba",
+            "href": "#prueba"
+          },
+          {
+            "texto": "Cómo funciona",
+            "href": "#metodo"
+          },
+          {
+            "texto": "Preguntas",
+            "href": "#preguntas"
+          },
+          {
+            "texto": "Entrar a Croquis",
+            "href": "/cesvi"
+          },
+          {
+            "texto": "Acceso para peritosEntrar a Croquis",
+            "href": "/cesvi"
+          },
+          {
+            "texto": "Cómo funciona",
+            "href": "#metodo"
+          },
+          {
+            "texto": "C¿Qué significa Croquis?",
+            "href": "#significado"
+          },
+          {
+            "texto": "Abrir el expediente",
+            "href": "#problema"
+          },
+          {
+            "texto": "Acceso para peritosEntrar a Croquis",
+            "href": "/cesvi"
+          },
+          {
+            "texto": "Cómo funciona",
+            "href": "#metodo"
+          },
+          {
+            "texto": "Portada anterior",
+            "href": "/publico"
+          },
+          {
+            "texto": "English",
+            "href": "/en"
+          }
+        ]
+      }
+    },
+    {
+      "paso": "portada-problema",
+      "ms": 3988,
+      "url": "https://croquis-sage.vercel.app/",
+      "captura": "publico-02-portada-problema.jpg",
+      "texto": "HOY UN DICTAMEN SE ARMA CON PIEZAS SUELTAS.\nA MANO\nCROQUIS\nEL CROQUIS, A MANO\nPosiciones, distancias y trayectorias dibujadas aparte, sin el lugar real debajo.\n¿Escala? ¿Orientación?\nHOJA DE CÁLCULO\nVELOCIDADES\nLOS CÁLCULOS, EN OTRA HOJA\nMcHenry, desplazamiento y frenado se capturan a mano; un dígito mal copiado cambia la conclusión.\n63.15\n→ 63.51\nPROCESADOR DE TEXTO\nDICTAMEN\nEL DICTAMEN, DESDE CERO\nSe redacta copiando de todo lo anterior, sin una traza de dónde salió cada número.\nFuente: sin registro\nCroquis lo une en un solo flujo, del relato a la firma.",
+      "cifras": [],
+      "notas": {}
+    },
+    {
+      "paso": "portada-prueba",
+      "ms": 3905,
+      "url": "https://croquis-sage.vercel.app/",
+      "captura": "publico-03-portada-prueba.jpg",
+      "texto": "TOMAMOS UNO DE SUS REPORTES. CROQUIS LLEGÓ A LO MISMO.\nAXA A2010930 · un alcance en Ahome, Sinaloa · mismos datos, mismo método.\nCONCEPTO\tREPORTE DE CESVI\tCROQUIS\tDIFERENCIA\nModalidad\tAlcance\tAlcance\tCOINCIDE\nVelocidad por restos\t60.27\t60.27\t0.00 %\nVelocidad por deformación\t63.15\t63.90\t+1.19 %\nVelocidades en km/h. La diferencia de 1.19 % viene de los datos impresos en el reporte; Croquis la muestra en lugar de esconderla.\n671\nreportes de CESVI estudiados para construirlo\n205\nreconstruidos a ciegas, sin ver sus conclusiones\nCroquis\n58.3 %\nRegla simple\n37.2 %\nModalidades correctas sobre los 205 reportes reconstruidos a ciegas.",
+      "cifras": ["0.00 %", "1.19 %", "58.3 %", "37.2 %"],
+      "notas": {}
+    },
+    {
+      "paso": "portada-preguntas",
+      "ms": 3885,
+      "url": "https://croquis-sage.vercel.app/",
+      "captura": "publico-04-portada-preguntas.jpg",
+      "texto": "PREGUNTAS DE PERITOS.\n¿Croquis firma el dictamen?\nNo. Croquis reconstruye y sugiere; el perito revisa, decide y valida. La firma siempre es del perito.\n¿De dónde sale cada número?\n¿Qué pasa si al relato le falta un dato?\n¿Si reconstruyo el mismo caso dos veces, cambia el resultado?\n¿Qué tan seguido acierta la modalidad?\n¿En qué formato sale el dictamen?",
+      "cifras": [],
+      "notas": {}
+    },
+    {
+      "paso": "pagina-recorrido",
+      "ms": 5772,
+      "url": "https://croquis-sage.vercel.app/recorrido",
+      "captura": "publico-05-pagina-recorrido.jpg",
+      "texto": "Cómo sabemos lo que sabemos\nLa IA solo traduce el relato a datos; la física decide qué pasó y el visor lo muestra. Cada pieza se mide contra una alternativa simple, con un script cuyo resultado está versionado. Los tests se congelaron antes de medir y se corrieron una vez. Donde Croquis pierde, se dice.\nE1\nE2\nE3\nE4\nE5\nE6\nE7\nE8\nE9\nE1\nLa IA entiende el relato\n¿Qué tan bien convierte el relato en datos, campo por campo?\nTest congelado de Relatos-MX (160 relatos)\nClaude Sonnet\n0.924★\nmejor valor\nClaude Haiku\n0.902\nReglas\n0.714\nF1 micro: más es mejor. ★ mejor valor.\nTest CISS: verdad de los campos codificados de NHTSA (150 relatos)\nClaude Sonnet\n0.993★\nmejor valor\nClaude Haiku\n0.987\nReglas\n0.69\nF1 micro: más es mejor. ★ mejor valor.\nLos relatos del primer test los escribieron agentes de IA: mide español escrito por un modelo. E9 lo contrastará con personas.\nResultado: eval/results/e1_extraction_v3.json, eval/results/e1_extraction_ciss_v3.json\nE2\nLa rigidez de cada clase de vehículo\n¿Qué tan bien estima la velocidad a partir del aplastamiento en pruebas de choque reales?\nBarrera frontal rígida, dejar uno fuera (1,316 pruebas de NHTSA)\nCroquis\n8.1km/h★\nmejor valor\nRecta global\n9.03km/h\nRegla de Emori\n27.74km/h\nError absoluto medio: menos es mejor. ★ mejor valor.\nBarrera móvil y trasera: ΔV de cada prueba con la rigidez de las demás de su clase\nLateral (1,265)\nCroquis\n6.19km/h★\nmejor valor\nRespaldo genérico\n14.95km/h\nTrasera (134)\nCroquis\n4.57km/h★\nmejor valor\nRespaldo genérico\n33.94km/h\nError absoluto medio: menos es mejor. ★ mejor valor.\nLa dispersión de rigidez dentro de cada clase domina el error; por eso Croquis reporta rangos.\nResultado: eval/results/e2_barrier.json, eval/results/e2_mdb.json\nE3\nΔV contra la caja negra del auto\n¿Qué tan cerca queda el ΔV estimado desde el daño del que registró el EDR en choques reales?\nTest CISS 2022–2024 (2,205 vehículos)\nCroquis\n8.85km/h\nWinSMASH\n8.19km/h★\nmejor valor\nError absoluto medio: menos es mejor. ★ mejor valor.\nWinSMASH, el programa con el que la propia NHTSA reconstruye estos casos, se equivoca un poco menos en promedio; Croquis tiene menos sesgo.\nResultado: eval/results/e3_ciss.json\nE4\nAtropellamiento: velocidad desde la distancia de proyección\n¿Qué tan bien recupera la velocidad del vehículo a partir de dónde quedó el peatón?\nCasos publicados en el dominio del modelo (17)\nCroquis\n5.215km/h★\nmejor valor\nSearle sola\n5.813km/h\nWood\n6.156km/h\nError absoluto medio: menos es mejor. ★ mejor valor.\nMuestra pequeña: los intervalos importan más que el promedio.\nResultado: eval/results/e4_pedestrian.json\nE5\nLa deformación contra autos reales\n¿Se parece la malla deformada del visor al aplastamiento medido en el auto real?\nTest CISS: error por punto, por tipo de impacto (casos con el orden de los puntos conocido)\nFrontal (1,027)\nCroquis\n8.26cm\nUniforme\n8.27cm\nLineal simple\n8.18cm★\nmejor valor\nDesplazado (827)\nCroquis\n6.97cm★\nmejor valor\nUniforme\n7.17cm\nLineal simple\n7.99cm\nLateral (726)\nCroquis\n5.38cm★\nmejor valor\nUniforme\n5.68cm\nLineal simple\n6cm\nAlcance (382)\nCroquis\n9.29cm★\nmejor valor\nUniforme\n9.43cm\nLineal simple\n10.73cm\nPoste (246)\nCroquis\n14.32cm★\nmejor valor\nUniforme\n14.89cm\nLineal simple\n14.6cm\nError por punto, mediana: menos es mejor. ★ mejor valor.\nProfundidad máxima, todos los tipos\nCISS (3,889)\nCroquis\n9.77cm\nUniforme\n9.66cm\nLineal simple\n8.81cm★\nmejor valor\nNHTSA (1,371)\nCroquis\n11.38cm\nUniforme\n11.99cm\nLineal simple\n8.71cm★\nmejor valor\nError, mediana: menos es mejor. ★ mejor valor.\nCroquis gana en el perfil punto por punto, pero el perfil triangular predice mejor la profundidad máxima y el ancho. El test se corrió una sola vez.\nResultado: eval/results/e5.json, docs/galeria-e5/README.md\nE6\nRendimiento en una laptop de 8 GB\n¿Cuántos cuadros por segundo da el visor en la escena más lenta?\nModo automático, 1920×1080, Intel Core i5-10210U\nCalidad baja\n104.5fps★\nmejor valor\nCalidad media\n69.8fps\nMeta baja: 30 fps · Meta media: 60 fps\nfps mínimo entre escenas: más es mejor. ★ mejor valor.\nAlta y ultra se miden en la computadora de demo (pendiente).\nResultado: eval/results/e6_performance.json\nE7\nEl solver del navegador es el de referencia\n¿Da lo mismo el solver TS de producción que la referencia en Python?\nNúmeros comparados\n68,557\nDiferencia máxima\n4.1 × 10⁻⁵\nDiferencias de estructura o texto\n0\nLas 11 escenas canónicas, completas: trayectorias, daño, personas, visibilidad, Monte Carlo, inversión y consistencia.\nResultado: eval/results/e7_parity.json\nE8\nEl mismo resultado en todos los navegadores\n¿Sale idéntico, bit a bit, en Chromium, Firefox y WebKit?\nEscenas del solver idénticas\n11 de 11\nHorneados con Rapier idénticos\n11 de 11\nNavegadores\n3\nCon funciones matemáticas propias (fdlibm en TypeScript), porque Math.sin y compañía cambian entre motores.\nResultado: eval/results/e8_determinism.json\nE9\nPersonas reales\n¿Cuánto tarda alguien en llegar a su primera reconstrucción y qué tan usable le resulta?\nPendiente: necesita a cinco o más personas reales (F11).\nReconstrucción ilustrativa generada a partir de un relato. No es un peritaje.",
+      "cifras": [
+        "8.1km/h",
+        "9.03km/h",
+        "27.74km/h",
+        "6.19km/h",
+        "14.95km/h",
+        "4.57km/h",
+        "33.94km/h",
+        "8.85km/h",
+        "8.19km/h",
+        "5.215km/h",
+        "5.813km/h",
+        "6.156km/h",
+        "104.5fps",
+        "69.8fps",
+        "30 fps",
+        "60 fps"
+      ],
+      "notas": {
+        "estados": {
+          "/cesvi": 200,
+          "/cesvi/reproduccion": 200,
+          "/historia": 200,
+          "/recorrido": 200,
+          "/demo": 200,
+          "/relato": 200,
+          "/visor": 200,
+          "/croquis": 200,
+          "/publico": 200,
+          "/cuenta": 200,
+          "/en": 200,
+          "/en/cesvi": 404,
+          "/robots.txt": 404,
+          "/sitemap.xml": 404,
+          "/api/version": 200
+        }
+      }
+    },
+    {
+      "paso": "pagina-historia",
+      "ms": 3462,
+      "url": "https://croquis-sage.vercel.app/historia",
+      "captura": "publico-06-pagina-historia.jpg",
+      "texto": "Cuenta. Reconoce. Ordena.\nCrash Reconstruction from Oral Queries Using Impact Simulation\nUna tarde nublada en Toluca\nMariana es una persona ficticia. Maneja su Versa gris por Benito Juárez hacia el sur, en el segundo carril, como a 35. El semáforo está en verde. En el cruce con Venustiano Carranza un taxi blanco entra al cruce y le pega del lado de la puerta del chofer. Su auto se va de lado y queda en el carril de la derecha.\nY luego hay que contarlo\nEl ajustador pregunta a cuánto iba. El agente de tránsito, de dónde venía el taxi. En el ministerio público le piden que lo dibuje. Su familia quiere entender cómo quedó así la puerta. Mariana recuerda fragmentos: el verde, el golpe, el giro. Cada vez lo cuenta un poco distinto, y cada quien se imagina algo diferente.\nNo es un caso raro\n380,391\nEn 2025, el INEGI registró 380,391 hechos de tránsito en zonas urbanas y suburbanas de México. El 58.4 % fueron colisiones con otro vehículo, como la de Mariana. El Estado de México fue el primer lugar del país en personas fallecidas en el lugar del accidente (460).\nHechos de tránsito por año, 1997–2025\n1997\n2025\nColisión con vehículo automotor\n222,241 (58.4 %)\nColisión con motocicleta\n68,505 (18 %)\nColisión con objeto fijo\n43,336 (11.4 %)\nVolcadura\n15,412 (4.1 %)\nColisión con peatón (atropellamiento)\n10,612 (2.8 %)\nFuente: INEGI, Accidentes de Tránsito Terrestre en Zonas Urbanas y Suburbanas (ATUS), datos abiertos 1997–2025 (descarga). Se excluyen los registros 'Certificado cero'. 'Muertos' son fallecidos en el lugar del accidente, como define ATUS. Resultado: eval/results/atus_summary.json.\nUn croquis a mano no basta. Una animación genérica, tampoco\nUn dibujo a mano no tiene escala ni física: ¿cabe ese giro a 35 km/h? Una animación hecha a ojo se ve convincente, pero no sale de lo que Mariana dijo, y nadie sabe qué parte es dato y qué parte es relleno.\nCroquis hace otra cosa. Cada dato sale de una frase del relato, o se marca como supuesto. La física decide el choque y su incertidumbre se reporta como rango. Cada pieza se mide contra casos reales.\nA\nB\n?\nAsí funciona\nC\nCuenta\nLo dices con tus palabras, como se lo contarías a alguien. Croquis intenta tachar tus datos personales en tu propio dispositivo antes de que el texto salga (cuánto se le escapa está en el recorrido técnico, E1).\nContar qué pasó\nR\nReconoce\nLa IA convierte tu relato en datos y marca de qué frase salió cada uno. Lo que no dijiste queda marcado como supuesto, y cada cita se verifica contra tu texto.\nVer qué entiende\nO\nOrdena\nArma la línea de tiempo: lo que pasó antes, el impacto y lo que pasó después, con las marcas en el piso en su lugar.\nVer una línea de tiempo\nQ\n¿Qué falta?\nTe pregunta solo lo que de verdad cambia el resultado, como mucho tres cosas por ronda.\nProbar las preguntas\nU\nUbica\nAcomodas autos, personas y calles en el croquis, sobre una calle real de OpenStreetMap si quieres.\nAbrir el croquis\nI\nImpacta\nLa física calcula el choque, la deformación y hacia dónde salió cada quien, con la rigidez medida en miles de pruebas de choque.\nVer cómo se mide\nS\nSimula\nLo ves pasar en 3D, desde cualquier ángulo y en cámara lenta, y comparas hipótesis: ¿y si iba a 50 en vez de 35?\nVer la escena de Toluca\nLo que Croquis no es\nNo es un peritaje: es una reconstrucción ilustrativa, y lo dice en cada imagen.\nNo decide quién tuvo la culpa: muestra lo que el relato y la física permiten.\nNo estima lesiones.\nCuenta qué pasó\nVer un ejemplo\nVer la escena de Toluca\nCómo se mide\nReconstrucción ilustrativa generada a partir de un relato. No es un peritaje.\nLas imágenes de Toluca contienen información de OpenStreetMap, disponible en openstreetmap.org bajo la Open Database License (ODbL).",
+      "cifras": ["58.4 %", "18 %", "11.4 %", "4.1 %", "2.8 %", "35 km/h"],
+      "notas": {
+        "estados": {
+          "/cesvi": 200,
+          "/cesvi/reproduccion": 200,
+          "/historia": 200,
+          "/recorrido": 200,
+          "/demo": 200,
+          "/relato": 200,
+          "/visor": 200,
+          "/croquis": 200,
+          "/publico": 200,
+          "/cuenta": 200,
+          "/en": 200,
+          "/en/cesvi": 404,
+          "/robots.txt": 404,
+          "/sitemap.xml": 404,
+          "/api/version": 200
+        }
+      }
+    },
+    {
+      "paso": "pagina-cesvi-reproduccion",
+      "ms": 3382,
+      "url": "https://croquis-sage.vercel.app/cesvi/reproduccion",
+      "captura": "publico-07-pagina-cesvi-reproduccion.jpg",
+      "texto": "CROQUIS PARA CESVI · REPRODUCCIÓN DE REPORTES\nEsto lo analizaron ustedes; esto lo reconstruyó Croquis\nCroquis recibió solo la narración de cada reporte de CESVI, sin sus conclusiones. Leyó la escena, la reconstruyó y aquí se compara con lo que concluyó CESVI. Son reportes de la prueba congelada, que no se usaron para ajustar las reglas.\nLa modalidad, contra dos referencias\nContra el título del reporte\n58.3 %\n91 de 156 reportes con título comparable\nLínea base («Alcance» siempre): 37.2 %. Lo que CESVI escribe en el título; los títulos genéricos no se comparan.\nContra la etiqueta de las conclusiones (R0)\n42.1 %\n80 de 190 reportes\nLínea base («Otra» siempre): 35.3 %. Lo que Claude leyó en las conclusiones de cada reporte.\nZonas de contacto (las de CESVI que Croquis tiene)\n71.2 %\n222 de 312\nPrecisión: 61.3 % (222 de 362).\nPrimer impacto (quiénes participan)\n68.1 %\n92 de 135\nSecuencia completa: 51.1 %.\nPosiciones finales que Croquis tiene\n50.0 %\n29 de 58\nVelocidades por deformación: Croquis calcula 0 de 5; las narraciones casi no traen el ancho dañado L.\n205 reportes de la prueba; 205 se reconstruyen y están abajo. Mediciones: eval/results/cesvi_r4_v4_reproduccion_prueba.json (2026-11-15) y eval/results/cesvi_r4c_titulo_prueba.json (2026-11-15).\nModalidad que concluyó CESVI\nTodas\nAlcance\nFrontal\nLateral\nContra objeto fijo\nOtra\nReversa\nSalida del camino\nVolcadura\nCroquis\nCoincida o no\nCoincide\nNo coincide\n205 de 205 reportes\nReporte\tModalidad de CESVI\tTítulo del reporte\tCroquis\tZonas de contacto\tPrimer impacto\nReporte 4e4d78\tContra objeto fijo\tContra objeto fijo\tContra objeto fijo · coincide\t1 de 2 (V1 frente, V1 costado derecho)\tcoincide\nReporte ec1c39\tAlcance\tAlcance\tAlcance · coincide\t2 de 2 (V1 frente, V2 parte posterior)\tcoincide\nReporte 644837\tOtra\tFrontal\tAlcance · no coincide\t—\t—\nReporte 581f3c\tLateral\tLateral\tLateral · coincide\t2 de 2 (V1 costado derecho, V2 frente)\t—\nReporte 037dde\tLateral\tLateral\tLateral · coincide\t1 de 2 (V1 frente, V2 costado izquierdo)\t—\nReporte cf708e\tContra objeto fijo\tContra objeto fijo\tContra objeto fijo · coincide\t1 de 1 (V1 frente)\tcoincide\nReporte cb04fd\tContra objeto fijo\t—\tVolcadura · no coincide\t1 de 2 (V1 frente, V1 costado derecho)\tno coincide\nReporte 12f0cd\tAlcance\tAlcance\tAlcance · coincide\t2 de 2 (V1 frente, V2 parte posterior)\tcoincide\nReporte e9c4e0\tOtra\tAlcance\tAlcance · no coincide\t—\t—\nReporte 285a38\t—\tOtra\tContra objeto fijo · —\t—\t—\nReporte cd894d\tOtra\tLateral\tLateral · no coincide\t2 de 2 (V1 costado derecho, V2 frente)\tcoincide\nReporte 7968cc\tReversa\t—\tAlcance · no coincide\t1 de 2 (V1 parte posterior, V2 costado izquierdo)\tcoincide\nReporte 352e08\tOtra\tLateral\tLateral · no coincide\t2 de 2 (V1 frente, V2 costado derecho)\t—\nReporte 5863ef\tAlcance\tAlcance\tAlcance · coincide\t2 de 2 (V1 frente, V2 parte posterior)\tcoincide\nReporte f344a4\tOtra\tOtra\tContra objeto fijo · no coincide\t1 de 1 (V1 parte inferior)\tcoincide\nReporte aee975\tOtra\tReversa\tAlcance · no coincide\t2 de 2 (V1 parte posterior, V2 frente)\tcoincide\nReporte d8a73c\tAlcance\tAlcance\tAlcance · coincide\t—\t—\nReporte c9ea86\tOtra\tAlcance\tContra objeto fijo · no coincide\t1 de 1 (V1 frente)\tno coincide\nReporte eed004\tContra objeto fijo\tContra objeto fijo\tLateral · no coincide\t0 de 2 (V1 parte posterior, V2 costado derecho)\tno coincide\nReporte a8b1cf\tLateral\tLateral\tFrontal · no coincide\t0 de 2 (V1 costado derecho, V2 costado derecho)\tno coincide\nReporte 84cfa7\tOtra\t—\tLateral · no coincide\t—\t—\nReporte b7834f\tOtra\t—\tsin inferir · no coincide\t0 de 2 (V1 frente, V2 costado izquierdo)\tcoincide\nReporte 52de2b\tOtra\tOtra\tContra objeto fijo · no coincide\t0 de 1 (V1 parte inferior)\tno coincide\nReporte ce2e6c\t—\t—\tsin inferir · —\t—\t—\nReporte 639ce6\tOtra\tOtra\tContra objeto fijo · no coincide\t1 de 2 (V1 parte inferior, V1 costado izquierdo)\tcoincide\nReporte 059b27\tOtra\tAlcance\tAlcance · no coincide\t—\t—\nReporte 460d7f\tOtra\tContra objeto fijo\tVolcadura · no coincide\t1 de 2 (V1 frente, V1 techo)\tcoincide\nReporte 73ea76\tLateral\tLateral\tAlcance · no coincide\t—\t—\nReporte b641fb\tOtra\tOtra\tVolcadura · no coincide\t—\t—\nReporte 9f1552\tOtra\t—\tLateral · no coincide\t2 de 2 (V1 frente, V2 costado izquierdo)\tcoincide\nReporte 6256db\tOtra\tOtra\tOtra · coincide\t—\t—\nReporte d2c5ce\tOtra\t—\tLateral · no coincide\t1 de 1 (V2 frente)\t—\nReporte ab666b\tOtra\t—\tLateral · no coincide\t2 de 3 (V1 frente, V2 costado izquierdo, V2 frente)\tcoincide\nReporte faa8a2\t—\tOtra\tContra objeto fijo · —\t—\t—\nReporte 7d5dbd\tLateral\tLateral\tLateral · coincide\t2 de 2 (V1 costado derecho, V2 frente)\t—\nReporte 662e6d\tLateral\tLateral\tFrontal · no coincide\t2 de 2 (V1 frente, V2 frente)\tcoincide\nReporte cade1c\tOtra\tLateral\tLateral · no coincide\t3 de 5 (V1 costado izquierdo, V2 costado izquierdo, V2 frente, V3 frente, V4 costado izquierdo)\tno coincide\nReporte 1bc282\tSalida del camino\tLateral\tContra objeto fijo · no coincide\t1 de 2 (V1 costado derecho, V1 frente)\tcoincide\nReporte 85b5b8\tAlcance\tAlcance\tAlcance · coincide\t2 de 2 (V1 frente, V2 parte posterior)\tcoincide\nReporte 920098\t—\t—\tOtra · —\t—\t—\nVer 40 más",
+      "cifras": [
+        "58.3 %",
+        "37.2 %",
+        "42.1 %",
+        "35.3 %",
+        "71.2 %",
+        "61.3 %",
+        "68.1 %",
+        "51.1 %",
+        "50.0 %",
+        "40 m"
+      ],
+      "notas": {
+        "estados": {
+          "/cesvi": 200,
+          "/cesvi/reproduccion": 200,
+          "/historia": 200,
+          "/recorrido": 200,
+          "/demo": 200,
+          "/relato": 200,
+          "/visor": 200,
+          "/croquis": 200,
+          "/publico": 200,
+          "/cuenta": 200,
+          "/en": 200,
+          "/en/cesvi": 404,
+          "/robots.txt": 404,
+          "/sitemap.xml": 404,
+          "/api/version": 200
+        }
+      }
+    },
+    {
+      "paso": "telefono-",
+      "ms": 5347,
+      "url": "https://croquis-sage.vercel.app/",
+      "captura": "publico-08-telefono-.jpg",
+      "texto": "EL HECHO\nCROQUIS\nENTRAR A CROQUIS\nRECONSTRUCCIÓN DE HECHOS DE TRÁNSITO\nRECONSTRUYE EL HECHO.\nDEFIENDE EL DICTAMEN.\nNarra el choque con tu lenguaje técnico. Lo ubicas en el lugar real; Croquis lo reconstruye con física verificable y arma tu dictamen, con la fuente de cada número.\nACCESO PARA PERITOS\nENTRAR A CROQUIS\nCómo funciona\nDel relato a la firma\nCada número con su fuente\nEl dictamen siempre es del perito\nC\n¿QUÉ SIGNIFICA CROQUIS?\nHOY UN DICTAMEN SE ARMA CON PIEZAS SUELTAS.\nA MANO\nCROQUIS\nEL CROQUIS, A MANO\nPosiciones, distancias y trayectorias dibujadas aparte, sin el lugar real debajo.\n¿Escala? ¿Orientación?\nHOJA DE CÁLCULO\nVELOCIDADES\nLOS CÁLCULOS, EN OTRA HOJA\nMcHenry, desplazamiento y frenado se capturan a mano; un dígito mal copiado cambia la conclusión.\n63.15\n→ 63.51\nPROCESADOR DE TEXTO\nDICTAMEN\nEL DICTAMEN, DESDE CERO\nSe redacta copiando de todo lo anterior, sin una traza de dónde salió cada número.\nFuente: sin registro\nCroquis lo une en un solo flujo, del relato a la firma.\nTOMAMOS UNO DE SUS REPORTES. CROQUIS LLEGÓ A LO MISMO.\nAXA A2010930 · un alcance en Ahome, Sinaloa · mismos datos, mismo método.\nCONCEPTO\tREPORTE DE CESVI\tCROQUIS\tDIFERENCIA\nModalidad\tAlcance\tAlcance\tCOINCIDE\nVelocidad por restos\t60.27\t60.27\t0.00 %\nVelocidad por deformación\t63.15\t63.90\t+1.19 %\nVelocidades en km/h. La diferencia de 1.19 % viene de los datos impresos en el reporte; Croquis la muestra en lugar de esconderla.\n671\nreportes de CESVI estudiados para construirlo\n205\nreconstruidos a ciegas, sin ver sus conclusiones\nCroquis\n58.3 %\nRegla simple\n37.2 %\nModalidades correctas sobre los 205 reportes reconstruidos a ciegas.\nNARRA. UBICA. RECONSTRUYE.\n1\nRELATO\nNARRA COMO SIEMPRE\nCroquis entiende modalidad, zonas de contacto y restos, y solo pregunta lo que falta.\nHecho de tránsito en la modalidad de alcance en el arroyo que corre de sur a norte de la carretera México-Nogales, a la altura del km 47+800, tramo Los Mochis–Navojoa.\nMODALIDAD\nVÍA\nUBICACIÓN\n2\nLUGAR\nMARCA EL IMPACTO\nSobre el mapa real. Croquis propone dónde iba cada vehículo; tú solo ajustas.\nPunto\nImpacto\nSentido\nSur → norte\nV1\nPropuesto · ajustable\nV2\nPropuesto · ajustable\n3\nFIRMA\nFIRMA EL DICTAMEN\nVelocidades con su rango, verificación con el método de CESVI y el documento en PDF o Word.\nVELOCIDAD POR RESTOS\n60.27km/h\nFuente: reporte\nMétodo: CESVI\nValidó\nPerito\nNADA SE INVENTA.\nCada dato dice si viene del perito, del reporte o de un supuesto. Lo que falta, se pregunta.\nPERITO · REPORTE · SUPUESTO\nSIEMPRE DA LO MISMO.\nEl mismo caso produce el mismo resultado, con su huella de entradas para repetirlo.\nHUELLA DE ENTRADAS\nLA FIRMA ES TUYA.\nCroquis reconstruye y sugiere. El perito revisa, decide y valida el dictamen.\nREVISA · DECIDE · VALIDA\nPREGUNTAS DE PERITOS.\n¿Croquis firma el dictamen?\nNo. Croquis reconstruye y sugiere; el perito revisa, decide y valida. La firma siempre es del perito.\n¿De dónde sale cada número?\n¿Qué pasa si al relato le falta un dato?\n¿Si reconstruyo el mismo caso dos veces, cambia el resultado?\n¿Qué tan seguido acierta la modalidad?\n¿En qué formato sale el dictamen?\nSIETE LETRAS. UN MÉTODO.\nCroquis no es solo el dibujo del perito. Cada letra es un paso de la reconstrucción. Toca una letra para leerla.\nDESCIFRAR CROQUIS\nC\n: ver significado\nCUENTA\nR\n: ver significado\nRECONOCE\nO\n: ver significado\nORDENA\nQ\n: ver significado\n¿QUÉ FALTA?\nU\n: ver significado\nUBICA\nI\n: ver significado\nIMPACTA\nS\n: ver significado\nSIMULA\nEN INGLÉS\nCrash Reconstruction from Oral Queries Using Impact Simulation\nDEL RELATO A LA FIRMA.\nACCESO PARA PERITOS\nENTRAR A CROQUIS\nCómo funciona\nTodo lo que ves es una reconstrucción calculada por Croquis (ilustrativa; el dictamen es del perito). Calles © colaboradores de OpenStreetMap (ODbL). Portada anterior · English",
+      "cifras": ["0.00 %", "1.19 %", "58.3 %", "37.2 %", "60.27km/h"],
+      "notas": {
+        "desborde": {
+          "ancho": 375,
+          "ventana": 390
+        }
+      }
+    },
+    {
+      "paso": "telefono-cesvi",
+      "ms": 5321,
+      "url": "https://croquis-sage.vercel.app/cesvi",
+      "captura": "publico-09-telefono-cesvi.jpg",
+      "texto": "Casos\nReproducción de reportes\nPresentar\nTrabajar\n◐\nCasos\n7 reportes de CESVI de ejemplo · aún no guardas casos propios en este equipo\nNarrar un hecho nuevo\nEscríbelo con tus palabras\nCargar un reporte de CESVI\nSuéltalo aquí · PDF, Markdown o texto\nAbrir archivo\n.croquis\nCaso reproducido\nAXA · A2010930\nAlcance en la carretera México-Nogales, km 47+800\n+1.19 %\ncon CESVI: 63.90 contra 63.15 km/h\n2 de 2\nzonas de contacto\nReportes de CESVI\nTodos 7\nAlcance 2\nContra objeto fijo 2\nLateral 2\nOtra 1\nAlcance en la carretera México-Nogales, km 47+800\nAXA · A2010930\nAlcance\n2 vehículos\nReproducido · Δ +1.19 %\n→\nReporte 4e4d78\nContra objeto fijo\n1 vehículo\nModalidad coincide\n→\nReporte ec1c39\nAlcance\n2 vehículos\nModalidad coincide\n→\nReporte 644837\nOtra\n2 vehículos\nModalidad distinta\n→\nReporte 581f3c\nLateral\n2 vehículos\nModalidad coincide\n→\nReporte 037dde\nLateral\n2 vehículos\nModalidad coincide\n→\nReporte cf708e\nContra objeto fijo\n1 vehículo\nModalidad coincide\n→\nVer los 205 reportes de la reproducción y cuánto acierta Croquis\nReconstrucción de apoyo · el dictamen es del perito.",
+      "cifras": ["1.19 %", "63.15 km/h"],
+      "notas": {
+        "desborde": {
+          "ancho": 409,
+          "ventana": 390
+        }
+      }
+    },
+    {
+      "paso": "telefono-cesvi-casos-a2010930",
+      "ms": 5583,
+      "url": "https://croquis-sage.vercel.app/cesvi/casos/a2010930/hecho",
+      "captura": "publico-10-telefono-cesvi-casos-a2010930.jpg",
+      "texto": "El hecho\nLa escena\nReconstrucción\nAnálisis\nContra CESVI\nDictamen\nPaso 1 de 8: El caso\nPresentar\nTrabajar\n◐\n✦\nExportar\nACTO 1 DE 6 · EL HECHO · 1 DE 2: EL CASO\nCaso de ejemplo · alcance\nAXA · A2010930\nDos vehículos, un choque. Revisa quiénes participaron y completa lo que falta antes de reconstruir.\nV1\nChevrolet Silverado 2500\n2007 · pickup\n2,562.1 kg supuesto\nV2\nToyota Tacoma\n1997 · pickup\n1,431.083 kg del reporte\n4/4\n✓\nNarración del hecho\n✓\nVehículos\n✓\nLugar en el mapa\n✓\nDónde quedó cada vehículo\nVer detalle\n← Anterior\nContinuar al hecho\n→\n1\n1\n2\n2\nBuscar el lugar\n© OpenStreetMap · OpenFreeMap · OpenMapTiles\n⤢ Expandir\nReconstrucción de apoyo · el dictamen es del perito.",
+      "cifras": ["562.1 kg", "431.083 kg"],
+      "notas": {
+        "desborde": {
+          "ancho": 390,
+          "ventana": 390
+        }
+      }
+    }
+  ],
+  "consola": [
+    {
+      "tipo": "warning",
+      "texto": "Service Worker registration blocked by Playwright"
+    },
+    {
+      "tipo": "warning",
+      "texto": "Service Worker registration blocked by Playwright"
+    },
+    {
+      "tipo": "warning",
+      "texto": "Service Worker registration blocked by Playwright"
+    },
+    {
+      "tipo": "warning",
+      "texto": "Service Worker registration blocked by Playwright"
+    },
+    {
+      "tipo": "warning",
+      "texto": "Service Worker registration blocked by Playwright"
+    },
+    {
+      "tipo": "warning",
+      "texto": "Service Worker registration blocked by Playwright"
+    },
+    {
+      "tipo": "warning",
+      "texto": "Service Worker registration blocked by Playwright"
+    },
+    {
+      "tipo": "warning",
+      "texto": "layers[highway-shield-non-us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false."
+    },
+    {
+      "tipo": "warning",
+      "texto": "layers[highway-shield-us-interstate].filter[1]: Expected value to be of type number, but found null instead. Falling back to false."
+    }
+  ],
+  "fallidas": []
+}

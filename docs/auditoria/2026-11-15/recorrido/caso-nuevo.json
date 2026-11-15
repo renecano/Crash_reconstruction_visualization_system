@@ -1,0 +1,421 @@
+{
+  "nombre": "caso-nuevo",
+  "fecha": "2026-11-15T16:31:54.288Z",
+  "pasos": [
+    {
+      "paso": "narracion-vacia",
+      "ms": 2093,
+      "url": "https://croquis-sage.vercel.app/cesvi/casos/nuevo/hecho",
+      "captura": "caso-nuevo-01-narracion-vacia.jpg",
+      "texto": "ACTO 1 DE 5 · EL HECHO · 2 DE 2: EL HECHO\nEl hecho\nEscribe la narración técnica como en un reporte de CESVI: lugar, vehículos, daños, restos, huellas y posiciones. La IA no produce números: los que no están en tu texto se descartan.\nEscribe al menos 20 caracteres (llevas 0).\nLeer la narración\nUsar una narración de ejemplo\nPara seguir falta: leer la narración del hecho.\n← Anterior\nContinuar a la escena\n→",
+      "cifras": [],
+      "notas": {
+        "controles": [
+          "ir-a-casos",
+          "volver-a-casos",
+          "paso-1",
+          "paso-3",
+          "paso-4",
+          "paso-5",
+          "paso-7",
+          "barra-avance",
+          "modo-presentar",
+          "modo-trabajar",
+          "tema",
+          "transiciones",
+          "exportar-barra",
+          "panel-paso",
+          "rotulo-acto",
+          "narracion",
+          "conteo-narracion",
+          "leer-narracion",
+          "ejemplo-narracion",
+          "falta-para-seguir",
+          "anterior",
+          "siguiente"
+        ]
+      }
+    },
+    {
+      "paso": "narracion-ejemplo",
+      "ms": 2598,
+      "url": "https://croquis-sage.vercel.app/cesvi/casos/nuevo/hecho",
+      "captura": "caso-nuevo-02-narracion-ejemplo.jpg",
+      "texto": "ACTO 1 DE 5 · EL HECHO · 2 DE 2: EL HECHO\nEl hecho\nEscribe la narración técnica como en un reporte de CESVI: lugar, vehículos, daños, restos, huellas y posiciones. La IA no produce números: los que no están en tu texto se descartan.\n2,493 de 12,000 caracteres\nCroquis ve sin IA: 2 vehículos: A (VW Jetta 2002), B (GM Camaro 1995) · lugar · hora 22:30 · 5 medidas · huellas · restos.\nLeer la narración\nUsar una narración de ejemplo\nPara seguir falta: leer la narración del hecho.\n← Anterior\nContinuar a la escena\n→",
+      "cifras": [],
+      "notas": {}
+    },
+    {
+      "paso": "lectura",
+      "ms": 15119,
+      "url": "https://croquis-sage.vercel.app/cesvi/casos/nuevo/hecho",
+      "captura": "caso-nuevo-03-lectura.jpg",
+      "texto": "ACTO 1 DE 5 · EL HECHO · 2 DE 2: EL HECHO\nCrucero en calle Azucena y Av. Reforma\nIztapalapa\n·\n2 vehículos · 1 impacto\n19 datos leídos\nA\nvehículos\ndaños\nlugar y vía\nmedidas\nEl hecho se ubica en el crucero de la calle Azucena esquina con Av. Reforma, colonia Lomas San Lorenzo, delegación Iztapalapa, aproximadamente a las 22:30 horas. La calle Azucena consta de un arroyo de circulación con dos carriles asfaltados, con sentido de circulación de Sureste a Noroeste y viceversa; los carriles adyacentes se ocupan de estacionamiento. La Av. Reforma consta de un arroyo de circulación de cuatro carriles asfaltados, divididos por líneas longitudinales de color blanco, con sentido de circulación de Sur a Norte. Se observan dos vehículos: el vehículo A, marca VW, tipo Jetta, modelo 2002, color azulA, de servicio particular, y el vehículo B, marca GM, tipo Camaro, modelo 1995, color rojoB, de servicio particular. El vehículo A presenta en la parte frontal un daño con características de hundimiento en dirección de adelante hacia atrás, acentuado sobre su costado delantero derecho y en el vértice delantero izquierdo, a una altura de 0.80 metros con respecto del piso. Presenta también un daño tipo tallón en dirección de adelante hacia atrás, con desprendimiento de pintura, sobre el vértice delantero inferior de la fascia. El conjunto de luces de ambos lados, la fascia y la parrilla se observan desacoplados de su posición original. En el vértice delantero izquierdo se describe además un hundimiento con desprendimiento de pintura a una altura de 0.73 metros, y en otra fotografía una altura de 0.72 metros. En el costado derecho no se aprecian daños por impacto contra cuerpo duro y se observa la ausencia del cuarto delantero derecho. En el habitáculo, las bolsas de aire del conductor y del copiloto se encuentran activadas. En el daño del vehículo AA solo se observa desprendimiento de material, sin restos de pintura color rojo. El vehículo BB no presenta daños por impacto contra cuerpo duro en los costados delantero y medio derechos. En la parte posterior derecha se observa un ligero daño tipo hundimiento sobre la salpicadera posterior, en dirección de derecha a izquierda, con un daño tipo tallón en dirección de adelante hacia atrás con desprendimiento de pintura. Se observa también desprendimiento de pintura sobre la parte media de la puerta y la parte media de la salpicadera trasera, este último a una altura de 0.73 metros. En otra medición se registra el daño a una altura de 0.67 metros con respecto del piso. No se describen restos de pintura color azul sobre el vehículo BB. No se describen huellas de frenado, restos ni posiciones finales.\nVer lo leído en detalle\nEditar el relato\nLo que Croquis leyó\nA\nVehículo A\nVW Jetta · 2002\nMasa: sin dato\nDaño frontal\nB\nVehículo B\nGM Camaro · 1995\nMasa: sin dato\nDaño en el costado derecho\ncrucero\nmodalidad\ncrucero de la calle Azucena esquina con Av. Reforma, colonia Lomas San Lorenzo\nlugar\nIztapalapa\nmunicipio\nLo que más cambia la reconstrucción\nLa narración no dice qué entró en contacto. Por los daños, Croquis supone un impacto entre V1 en su frontal y V2 en su lateral derecho. ¿Es correcto?\nSin los impactos no hay reconstrucción; este es un supuesto hasta que el perito lo confirme.\nSí, confirmar\nNo, fue otro\nNo sé\n¿Qué tipo de vehículo es V1?\nLa clase da sus medidas y su masa típica, y la rigidez de su carrocería.\nSedán\nHatchback\nSUV\nPickup\nCamión\nMoto\nOtro\nNo sé\n¿Cuál es la masa de V1?\nLa masa reparte la cantidad de movimiento y cambia las velocidades.\nkg\nUsar\nNo sé\n¿Qué tipo de vehículo es V2?\nLa clase da sus medidas y su masa típica, y la rigidez de su carrocería.\nSedán\nHatchback\nSUV\nPickup\nCamión\nMoto\nOtro\nNo sé\n¿Cuál es la masa de V2?\nLa masa reparte la cantidad de movimiento y cambia las velocidades.\nkg\nUsar\nNo sé\n¿Qué longitud tiene la zona de restos?\nLos restos fijan el desplazamiento después del impacto.\nm\nUsar\nNo sé\n¿Dónde quedó V1 al final?\nLa posición final es evidencia para la inversión de velocidades.\nColocarlo en el mapa\nNo sé\n¿Dónde quedó V2 al final?\nLa posición final es evidencia para la inversión de velocidades.\nColocarlo en el mapa\nNo sé\n← Anterior\nContinuar a la escena\n→",
+      "cifras": [],
+      "notas": {
+        "lectura_ms": 15083
+      }
+    },
+    {
+      "paso": "pregunta-1",
+      "ms": 5522,
+      "url": "https://croquis-sage.vercel.app/cesvi/casos/nuevo/escena",
+      "captura": "caso-nuevo-04-pregunta-1.jpg",
+      "texto": "← Casos\nEl hecho\nLa escena\nReconstrucción\nAnálisis\nDictamen\nPaso 3 de 7: El lugar\nPresentar\nTrabajar\n◐\n✦\nExportar\n¿Aquí? Toca para marcar el choque\n+\n−\n© OpenStreetMap · OpenFreeMap\n↶ Deshacer\nRehacer ↷\nPaso 1 de 7\n¿Dónde fue el choque?\nToca el lugar en el mapa. Puedes moverte arrastrando y acercarte con la rueda del ratón o con dos dedos.\nLa narración dice\n«… ubica en el crucero de la calle Azucena esquina con Av. Reforma …»\nEn el mapa está calle Azucena, pero no Av. Reforma. Croquis te propone su cruce más cercano: Avenida del Árbol y Calle Azucena.\nSí, fue ahí\nNo, lo marco yo\n¿No aparece el lugar? Búscalo\nBuscar\nMás herramientas\n1\nEl choque\n(ahora)\n2\nJetta\n3\nCamaro\n4\nPrimer golpe\n5\nOtros choques\n6\nPor dónde pasó\n7\nTerreno\nVer la reconstrucción →",
+      "cifras": [],
+      "notas": {}
+    },
+    {
+      "paso": "pregunta-2",
+      "ms": 266,
+      "url": "https://croquis-sage.vercel.app/cesvi/casos/nuevo/escena",
+      "captura": "caso-nuevo-05-pregunta-2.jpg",
+      "texto": "← Casos\nEl hecho\nLa escena\nReconstrucción\nAnálisis\nDictamen\nPaso 3 de 7: El lugar\nPresentar\nTrabajar\n◐\n✦\nExportar\nChoque\nDel suroeste\nDel noroeste\nDel noreste\nDel sureste\nJetta\n+\n−\n© OpenStreetMap · OpenFreeMap\n↶ Deshacer\nRehacer ↷\n✓\n¡Listo! El choque quedó en Avenida del Árbol y Calle Azucena.\nDeshacer\n×\nPaso 2 de 7\n¿Por dónde venía el Jetta?\nToca la flecha de la calle por donde llegaba al choque.\nDel suroeste, por Avenida del Árbol\nDel noroeste, por Calle Azucena\nDel noreste, por Avenida del Árbol\n✓\nDel sureste, por Calle Azucena\nCroquis lo sugiere por las zonas de daño de los dos coches.\nNo sé por dónde venía\nMás herramientas\n✓\nEl choque\n(listo)\n2\nJetta\n(ahora)\n3\nCamaro\n4\nPrimer golpe\n5\nOtros choques\n6\nPor dónde pasó\n7\nTerreno\nVer la reconstrucción →",
+      "cifras": [],
+      "notas": {}
+    },
+    {
+      "paso": "pregunta-3",
+      "ms": 162,
+      "url": "https://croquis-sage.vercel.app/cesvi/casos/nuevo/escena",
+      "captura": "caso-nuevo-06-pregunta-3.jpg",
+      "texto": "← Casos\nEl hecho\nLa escena\nReconstrucción\nAnálisis\nDictamen\nPaso 3 de 7: El lugar\nPresentar\nTrabajar\n◐\n✦\nExportar\nChoque\nJetta\n+\n−\n© OpenStreetMap · OpenFreeMap\n↶ Deshacer\nRehacer ↷\n✓\n¡Listo! El Jetta venía del sureste, por Calle Azucena.\nDeshacer\n×\nPaso 2 de 7\nEl Jetta\n✓\nVenía del sureste, por Calle Azucena\nCambiar\n¿Dónde quedó después del choque?\n✓\nLo marco en el mapa\nToca el lugar donde se detuvo, o arrastra el coche.\nQuedó junto al choque\nNo sé dónde quedó\nCroquis lo calcula y lo anota como supuesto en el dictamen.\nListo, así quedó\nToca el mapa donde se detuvo el Jetta.\nMás herramientas\n✓\nEl choque\n(listo)\n2\nJetta\n(ahora)\n3\nCamaro\n4\nPrimer golpe\n5\nOtros choques\n6\nPor dónde pasó\n7\nTerreno\nVer la reconstrucción →",
+      "cifras": [],
+      "notas": {}
+    },
+    {
+      "paso": "pregunta-4",
+      "ms": 208,
+      "url": "https://croquis-sage.vercel.app/cesvi/casos/nuevo/escena",
+      "captura": "caso-nuevo-07-pregunta-4.jpg",
+      "texto": "← Casos\nEl hecho\nLa escena\nReconstrucción\nAnálisis\nDictamen\nPaso 3 de 7: El lugar\nPresentar\nTrabajar\n◐\n✦\nExportar\nChoque\nDel suroeste\nDel noroeste\nDel noreste\nDel sureste\nJetta\nCamaro\n+\n−\n© OpenStreetMap · OpenFreeMap\n↶ Deshacer\nRehacer ↷\n✓\n¡Listo! El Jetta quedó junto al choque.\nDeshacer\n×\nPaso 3 de 7\n¿Por dónde venía el Camaro?\nToca la flecha de la calle por donde llegaba al choque.\n✓\nDel suroeste, por Avenida del Árbol\nCroquis lo sugiere por las zonas de daño de los dos coches.\nDel noroeste, por Calle Azucena\nDel noreste, por Avenida del Árbol\nDel sureste, por Calle Azucena\nNo sé por dónde venía\nMás herramientas\n✓\nEl choque\n(listo)\n✓\nJetta\n(listo)\n3\nCamaro\n(ahora)\n4\nPrimer golpe\n5\nOtros choques\n6\nPor dónde pasó\n7\nTerreno\nVer la reconstrucción →",
+      "cifras": [],
+      "notas": {}
+    },
+    {
+      "paso": "pregunta-5",
+      "ms": 125,
+      "url": "https://croquis-sage.vercel.app/cesvi/casos/nuevo/escena",
+      "captura": "caso-nuevo-08-pregunta-5.jpg",
+      "texto": "← Casos\nEl hecho\nLa escena\nReconstrucción\nAnálisis\nDictamen\nPaso 3 de 7: El lugar\nPresentar\nTrabajar\n◐\n✦\nExportar\nChoque\nJetta\nCamaro\n+\n−\n© OpenStreetMap · OpenFreeMap\n↶ Deshacer\nRehacer ↷\n✓\n¡Listo! El Camaro venía del suroeste, por Avenida del Árbol.\nDeshacer\n×\nPaso 3 de 7\nEl Camaro\n✓\nVenía del suroeste, por Avenida del Árbol\nCambiar\n¿Dónde quedó después del choque?\n✓\nLo marco en el mapa\nToca el lugar donde se detuvo, o arrastra el coche.\nQuedó junto al choque\nNo sé dónde quedó\nCroquis lo calcula y lo anota como supuesto en el dictamen.\nListo, así quedó\nToca el mapa donde se detuvo el Camaro.\nMás herramientas\n✓\nEl choque\n(listo)\n✓\nJetta\n(listo)\n3\nCamaro\n(ahora)\n4\nPrimer golpe\n5\nOtros choques\n6\nPor dónde pasó\n7\nTerreno\nVer la reconstrucción →",
+      "cifras": [],
+      "notas": {}
+    },
+    {
+      "paso": "pregunta-6",
+      "ms": 152,
+      "url": "https://croquis-sage.vercel.app/cesvi/casos/nuevo/escena",
+      "captura": "caso-nuevo-09-pregunta-6.jpg",
+      "texto": "← Casos\nEl hecho\nLa escena\nReconstrucción\nAnálisis\nDictamen\nPaso 3 de 7: El lugar\nPresentar\nTrabajar\n◐\n✦\nExportar\nChoque\nJetta\nCamaro\n+\n−\n© OpenStreetMap · OpenFreeMap\n↶ Deshacer\nRehacer ↷\n!\nOjo: el Camaro quedó encima del Jetta. Dos coches no pueden quedar en el mismo lugar.\nSepararlos\nAsí está bien\nPaso 4 de 7\n¿Dónde fue el primer golpe?\nToca en el mapa el punto donde los vehículos se tocaron por primera vez. Croquis lo usa como una medición.\nAhí mismo, donde marqué el choque\nNo sé\nMás herramientas\n✓\nEl choque\n(listo)\n✓\nJetta\n(listo)\n✓\nCamaro\n(listo)\n4\nPrimer golpe\n(ahora)\n5\nOtros choques\n6\nPor dónde pasó\n7\nTerreno\nVer la reconstrucción →",
+      "cifras": [],
+      "notas": {}
+    },
+    {
+      "paso": "escena-lista",
+      "ms": 2819,
+      "url": "https://croquis-sage.vercel.app/cesvi/casos/nuevo/escena",
+      "captura": "caso-nuevo-10-escena-lista.jpg",
+      "texto": "← Casos\nEl hecho\nLa escena\nReconstrucción\nAnálisis\nDictamen\nPaso 3 de 7: El lugar\nPresentar\nTrabajar\n◐\n✦\nExportar\nChoque\nPrimer golpe\nJetta\nCamaro\n+\n−\n© OpenStreetMap · OpenFreeMap\n↶ Deshacer\nRehacer ↷\n!\nOjo: el Camaro quedó encima del Jetta. Dos coches no pueden quedar en el mismo lugar.\nSepararlos\nAsí está bien\n✓\n¡La escena está lista!\nEsto es lo que marcaste. Con esto Croquis ya puede reconstruir el choque.\nEl choque, en Avenida del Árbol y Calle Azucena\nCambiar\nEl Jetta venía del sureste\nQuedó junto al choque.\nCambiar\nEl Camaro venía del suroeste\nQuedó junto al choque.\nCambiar\nEl primer golpe, donde lo marcaste\nCambiar\nEl terreno es pavimento liso\nLa reconstrucción va en plano.\nCambiar\nVer la reconstrucción\n→\nCambiar algo\n✓\nEl choque\n(listo)\n✓\nJetta\n(listo)\n✓\nCamaro\n(listo)\n✓\nPrimer golpe\n(listo)\n✓\nOtros choques\n(listo)\n✓\nPor dónde pasó\n(listo)\n✓\nTerreno\n(listo)\nVer la reconstrucción →",
+      "cifras": [],
+      "notas": {
+        "preguntas": [
+          "¿Dónde fue el choque?",
+          "¿Por dónde venía el Jetta?",
+          "¿Dónde quedó después del choque?",
+          "¿Por dónde venía el Camaro?",
+          "¿Dónde quedó después del choque?",
+          "¿Dónde fue el primer golpe?",
+          "¿Chocó contra algo más?"
+        ]
+      }
+    },
+    {
+      "paso": "resultado",
+      "ms": 19063,
+      "url": "https://croquis-sage.vercel.app/cesvi/casos/nuevo/reconstruccion",
+      "captura": "caso-nuevo-11-resultado.jpg",
+      "texto": "Acto 3 de 5 · Reconstrucción\nRepetir\nVelocidad antes del impacto\n17.65\nkm/h\nA · Jetta\nrango 1.47–29.98\nReconstrucción física de Croquis · mejor ajuste\nCómo se reparten las simulaciones\nB · Camaro\n11.17 km/h\nLo fijan\n5 evidencias\nVer el detalle: velocidades, evidencia, límites y bitácora\nV1 y V2 quedaron encimados en su posición final (1.62 m). Dos vehículos en reposo no ocupan el mismo lugar.\nSepararlos\n←\nContinuar al análisis\n→",
+      "cifras": ["17.65\nkm/h", "11.17 km/h", "1.62 m"],
+      "notas": {
+        "cifra_ms": 13851,
+        "cifra": "Repetir\nVelocidad antes del impacto\n\n17.65\nkm/h\nA · Jetta\nrango 1.47–29.98\n\nReconstrucción física de Croquis · mejor ajuste\n\nCómo se reparten las simulaciones\nB · Camaro\n11.17 km/h\nLo fijan\n5 evidencias",
+        "limites": null
+      }
+    },
+    {
+      "paso": "los-danos",
+      "ms": 5215,
+      "url": "https://croquis-sage.vercel.app/cesvi/casos/nuevo/analisis",
+      "captura": "caso-nuevo-12-los-danos.jpg",
+      "texto": "Acto 4 de 5 · Análisis · 1 de 2: Los daños\nDaños\nA · Jetta\nB · Camaro\nA · cara frontal\nel reporte no trae medidas de la deformación\n2.8\nkJ\nenergía de deformación\n9.0\nkm/h\ncambio de velocidad (Δv)\nReconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 0 · 0 · 0 · 0 · 0 · 0 cm (rigidez típica de la clase (NHTSA)).\nNarrados: frontal; frontal.\nDel reporte: sin dato (el reporte no trae la medida de la deformación de V1).\nSupuestos\nya dentro del rango\nPosición inicial de A y B\n12 m antes\nPor qué\nFricción llanta–pavimento\nμ 0.70\n0.55\n0.80\nPor qué\nDespués del impacto\n0.35 × μ\n0.19\n0.28\nPor qué\n← Anterior\nContinuar a los números\n→",
+      "cifras": ["9.0\nkm/h", "12 m"],
+      "notas": {
+        "controles": [
+          "ir-a-casos",
+          "volver-a-casos",
+          "paso-1",
+          "paso-3",
+          "paso-4",
+          "paso-5",
+          "paso-7",
+          "barra-avance",
+          "modo-presentar",
+          "modo-trabajar",
+          "tema",
+          "transiciones",
+          "exportar-barra",
+          "panel-paso",
+          "rotulo-acto",
+          "danos-caso",
+          "pestana-dano-V1",
+          "pestana-dano-V2",
+          "dano-V1",
+          "dano-calculado-V1",
+          "dano-medido-V1",
+          "supuestos",
+          "supuesto-inicio",
+          "por-que-inicio",
+          "supuesto-friccion",
+          "por-que-friccion",
+          "supuesto-arrastre",
+          "por-que-arrastre",
+          "anterior",
+          "siguiente"
+        ]
+      }
+    },
+    {
+      "paso": "los-numeros",
+      "ms": 5234,
+      "url": "https://croquis-sage.vercel.app/cesvi/casos/nuevo/analisis",
+      "captura": "caso-nuevo-13-los-numeros.jpg",
+      "texto": "ACTO 4 DE 5 · ANÁLISIS · 2 DE 2: LOS NÚMEROS\nLos números\nReconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.\nVehículo\tVelocidad previa (km/h)\tAl contacto en las simulaciones, p10–p50–p90 (km/h)\nV1\t17.65 (1.47–29.98)\t1.47–15.27–29.98\nV2\t11.17 (4.44–15.10)\t4.44–11.42–15.10\nProbar una hipótesis sobre un conductor\nElige un conductor, qué hace y cuándo; Croquis simula a todos los conductores con esa decisión y compara el contacto con el que dan los mismos conductores sin ella.\nConductor de\nV1\nV2\nDecide\nFrenar\nVolantear a la izquierda\nVolantear a la derecha\nSeguir sin frenar\nSegundos antes del impacto\nTiempo de reacción (s)\nProbar\nVerificación con el método de CESVI\nMétodo de CESVI: energía de deformación (McHenry) y velocidad equivalente de barrera (EBS), con las medidas del reporte. No es la misma velocidad que la de la reconstrucción física de croquis.\nV1\nFalta: las medidas C (2, 4 o 6) y L de la deformación; la masa.\nV2\nFalta: las medidas C (2, 4 o 6) y L de la deformación; la masa.\n← Anterior\nContinuar al dictamen\n→",
+      "cifras": [],
+      "notas": {
+        "controles": [
+          "ir-a-casos",
+          "volver-a-casos",
+          "paso-1",
+          "paso-3",
+          "paso-4",
+          "paso-5",
+          "paso-7",
+          "barra-avance",
+          "modo-presentar",
+          "modo-trabajar",
+          "tema",
+          "transiciones",
+          "exportar-barra",
+          "panel-paso",
+          "rotulo-acto",
+          "velocidades",
+          "metodo-velocidades",
+          "velocidad-V1",
+          "velocidad-V2",
+          "probar-conductores",
+          "conductor-vehiculo",
+          "conductor-decision",
+          "conductor-instante",
+          "conductor-reaccion",
+          "conductor-probar",
+          "verificacion-cesvi",
+          "metodo-verificacion",
+          "anterior",
+          "siguiente",
+          "escenario",
+          "mapa-escena",
+          "buscar-lugar",
+          "visor-caso",
+          "supuestos-3d",
+          "visor-unity",
+          "descargar-paquete-3d",
+          "vista-maqueta",
+          "vista-3d",
+          "vista-mapa",
+          "expandir-mapa"
+        ]
+      }
+    },
+    {
+      "paso": "contra-cesvi",
+      "ms": 11481,
+      "url": "https://croquis-sage.vercel.app/cesvi/casos/nuevo/analisis",
+      "captura": "caso-nuevo-14-contra-cesvi.jpg",
+      "texto": "ACTO 4 DE 5 · ANÁLISIS · 2 DE 2: LOS NÚMEROS\nLos números\nReconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.\nVehículo\tVelocidad previa (km/h)\tAl contacto en las simulaciones, p10–p50–p90 (km/h)\nV1\t17.65 (1.47–29.98)\t1.47–15.27–29.98\nV2\t11.17 (4.44–15.10)\t4.44–11.42–15.10\nProbar una hipótesis sobre un conductor\nElige un conductor, qué hace y cuándo; Croquis simula a todos los conductores con esa decisión y compara el contacto con el que dan los mismos conductores sin ella.\nConductor de\nV1\nV2\nDecide\nFrenar\nVolantear a la izquierda\nVolantear a la derecha\nSeguir sin frenar\nSegundos antes del impacto\nTiempo de reacción (s)\nProbar\nVerificación con el método de CESVI\nMétodo de CESVI: energía de deformación (McHenry) y velocidad equivalente de barrera (EBS), con las medidas del reporte. No es la misma velocidad que la de la reconstrucción física de croquis.\nV1\nFalta: las medidas C (2, 4 o 6) y L de la deformación; la masa.\nV2\nFalta: las medidas C (2, 4 o 6) y L de la deformación; la masa.\n← Anterior\nContinuar al dictamen\n→",
+      "cifras": [],
+      "notas": {
+        "controles": [
+          "ir-a-casos",
+          "volver-a-casos",
+          "paso-1",
+          "paso-3",
+          "paso-4",
+          "paso-5",
+          "paso-7",
+          "barra-avance",
+          "modo-presentar",
+          "modo-trabajar",
+          "tema",
+          "transiciones",
+          "exportar-barra",
+          "panel-paso",
+          "rotulo-acto",
+          "velocidades",
+          "metodo-velocidades",
+          "velocidad-V1",
+          "velocidad-V2",
+          "probar-conductores",
+          "conductor-vehiculo",
+          "conductor-decision",
+          "conductor-instante",
+          "conductor-reaccion",
+          "conductor-probar",
+          "verificacion-cesvi",
+          "metodo-verificacion",
+          "anterior",
+          "siguiente",
+          "escenario",
+          "mapa-escena",
+          "buscar-lugar",
+          "visor-caso",
+          "supuestos-3d",
+          "visor-unity",
+          "descargar-paquete-3d",
+          "vista-maqueta",
+          "vista-3d",
+          "vista-mapa",
+          "expandir-mapa"
+        ]
+      }
+    },
+    {
+      "paso": "dictamen",
+      "ms": 5268,
+      "url": "https://croquis-sage.vercel.app/cesvi/casos/nuevo/dictamen",
+      "captura": "caso-nuevo-15-dictamen.jpg",
+      "texto": "Acto 5 de 5 · Dictamen\nBorrador\nDICTAMEN\nDictamen de hecho de tránsito: crucero en calle Azucena y Av. Reforma\nIztapalapa · Perito: [nombre del perito] · [fecha de emisión]\nNARRACIÓN\nEl hecho se ubica en el crucero de la calle Azucena esquina con Av. Reforma, colonia Lomas San Lorenzo, delegación Iztapalapa, aproximadamente a las 22:30 horas. La calle Azucena consta de un arroyo de circulación con dos carriles…\nRESULTADOS\nA antes del impacto\n17.65 km/h · 1.47–29.98\nB antes del impacto\n11.17 km/h · 4.44–15.10\nCONCLUSIÓN DEL PERITO\nAquí aparece lo que escribas a la derecha.\nFirma del perito\nVista previa. El archivo lleva: Objetivos · Fundamentos · Características de los vehículos · Daños · Lugar · Consideraciones · Conclusiones · Validación. Reconstrucción de apoyo: el dictamen es del perito.\nDictamen\nTu conclusión\nCitar velocidad de A\nCitar supuestos\nFormato\nEstructura de CESVI\nCroquis completo\nNombre del perito\nValidar y firmar\nSin validar: el dictamen sale como borrador. Para firmar, escribe tu conclusión y tu nombre.\nDescargar el PDF\nCtrl P\nWord\n.croquis\nGuardar aquí\n← Anterior",
+      "cifras": ["17.65 km/h", "11.17 km/h"],
+      "notas": {
+        "controles": [
+          "ir-a-casos",
+          "volver-a-casos",
+          "paso-1",
+          "paso-3",
+          "paso-4",
+          "paso-5",
+          "paso-7",
+          "barra-avance",
+          "modo-presentar",
+          "modo-trabajar",
+          "tema",
+          "transiciones",
+          "exportar-barra",
+          "panel-paso",
+          "rotulo-acto",
+          "dictamen-caso",
+          "hoja-dictamen",
+          "marca-borrador",
+          "titulo-hoja",
+          "maqueta",
+          "maqueta-A",
+          "maqueta-final-A",
+          "maqueta-dano-A",
+          "maqueta-B",
+          "maqueta-final-B",
+          "maqueta-dano-B",
+          "maqueta-impacto",
+          "resultados-hoja",
+          "secciones-hoja",
+          "conclusion-perito",
+          "citas-dictamen",
+          "citar-velocidad",
+          "citar-supuestos",
+          "formato-cesvi",
+          "formato-completo",
+          "nombre-perito",
+          "validar-dictamen",
+          "estado-validacion",
+          "descargar-dictamen-pdf",
+          "descargar-dictamen-word",
+          "guardar-caso",
+          "guardar-en-equipo",
+          "anterior",
+          "escenario",
+          "mapa-escena",
+          "buscar-lugar",
+          "visor-caso",
+          "supuestos-3d",
+          "visor-unity",
+          "descargar-paquete-3d",
+          "vista-maqueta",
+          "vista-3d",
+          "vista-mapa",
+          "expandir-mapa"
+        ]
+      }
+    }
+  ],
+  "consola": [
+    {
+      "tipo": "warning",
+      "texto": "Service Worker registration blocked by Playwright"
+    },
+    {
+      "tipo": "warning",
+      "texto": "layers[highway-shield-non-us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false."
+    },
+    {
+      "tipo": "warning",
+      "texto": "layers[highway-shield-us-interstate].filter[1]: Expected value to be of type number, but found null instead. Falling back to false."
+    },
+    {
+      "tipo": "warning",
+      "texto": "layers[road_shield_us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false."
+    },
+    {
+      "tipo": "warning",
+      "texto": "WebGL: INVALID_ENUM: getInternalformatParameter: invalid internalformat"
+    },
+    {
+      "tipo": "warning",
+      "texto": "WebGL: INVALID_ENUM: getInternalformatParameter: invalid internalformat"
+    },
+    {
+      "tipo": "warning",
+      "texto": "WebGL: INVALID_ENUM: getInternalformatParameter: invalid internalformat"
+    },
+    {
+      "tipo": "warning",
+      "texto": "WebGL: INVALID_ENUM: getInternalformatParameter: invalid internalformat"
+    },
+    {
+      "tipo": "warning",
+      "texto": "WebGL: INVALID_ENUM: getInternalformatParameter: invalid internalformat"
+    },
+    {
+      "tipo": "warning",
+      "texto": "WebGL: INVALID_ENUM: getInternalformatParameter: invalid internalformat"
+    },
+    {
+      "tipo": "error",
+      "texto": "UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.\n"
+    },
+    {
+      "tipo": "error",
+      "texto": "UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.\n"
+    },
+    {
+      "tipo": "warning",
+      "texto": "[UnityCache] Response is served without Content-Length header. Please reconfigure server to include valid Content-Length for better download performance."
+    },
+    {
+      "tipo": "warning",
+      "texto": "[UnityCache] Response is served without Content-Length header. Please reconfigure server to include valid Content-Length for better download performance."
+    },
+    {
+      "tipo": "warning",
+      "texto": "[UnityCache] Response is served without Content-Length header. Please reconfigure server to include valid Content-Length for better download performance."
+    }
+  ],
+  "fallidas": []
+}

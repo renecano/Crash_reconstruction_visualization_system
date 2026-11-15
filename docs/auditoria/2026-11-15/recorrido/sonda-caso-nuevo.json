@@ -1,0 +1,210 @@
+{
+  "unity": true,
+  "antes_de_reconstruir": {
+    "cuadros_en_3s": {
+      "cuadros": 180,
+      "lienzos": [
+        {
+          "w": 1440,
+          "h": 828,
+          "visible": true
+        },
+        {
+          "w": 400,
+          "h": 300,
+          "visible": false
+        }
+      ]
+    },
+    "captura": "sale"
+  },
+  "cifra": "Repetir | Velocidad antes del impacto | 1.23 | km/h | A · Jetta | rango 1.47–29.98 | Reconstrucción física de Croquis · mejor ajuste | Cómo se reparten las simulaciones | B · Camaro | 11.17 km/h | Lo fijan | 5 evidencias",
+  "serie": [
+    {
+      "s": 4,
+      "cuadros_en_3s": 34,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 12,
+      "cuadros_en_3s": 125,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 18,
+      "cuadros_en_3s": 181,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 24,
+      "cuadros_en_3s": 181,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 30,
+      "cuadros_en_3s": 180,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 36,
+      "cuadros_en_3s": 181,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 43,
+      "cuadros_en_3s": 181,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 49,
+      "cuadros_en_3s": 181,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 55,
+      "cuadros_en_3s": 181,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 61,
+      "cuadros_en_3s": 180,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 67,
+      "cuadros_en_3s": 180,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 73,
+      "cuadros_en_3s": 180,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 79,
+      "cuadros_en_3s": 180,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 85,
+      "cuadros_en_3s": 181,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 91,
+      "cuadros_en_3s": 180,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 97,
+      "cuadros_en_3s": 181,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 103,
+      "cuadros_en_3s": 180,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 109,
+      "cuadros_en_3s": 180,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 115,
+      "cuadros_en_3s": 181,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 121,
+      "cuadros_en_3s": 181,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 127,
+      "cuadros_en_3s": 181,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 133,
+      "cuadros_en_3s": 181,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 139,
+      "cuadros_en_3s": 180,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 145,
+      "cuadros_en_3s": 181,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 151,
+      "cuadros_en_3s": 181,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 157,
+      "cuadros_en_3s": 180,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 163,
+      "cuadros_en_3s": 178,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 169,
+      "cuadros_en_3s": 181,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 175,
+      "cuadros_en_3s": 181,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    },
+    {
+      "s": 181,
+      "cuadros_en_3s": 174,
+      "cifra": "Repetir Velocidad antes del impacto 17.65 km/h A · Jetta rango 1.47–29.98 Reconstrucción física de Croquis · m"
+    }
+  ],
+  "despues_de_reconstruir": {
+    "cuadros_en_3s": {
+      "cuadros": 177,
+      "lienzos": [
+        {
+          "w": 952,
+          "h": 828,
+          "visible": true
+        },
+        {
+          "w": 928,
+          "h": 639,
+          "visible": true
+        }
+      ]
+    },
+    "captura": "sale"
+  },
+  "sin_lienzos": {
+    "cuadros_en_3s": {
+      "cuadros": 173,
+      "lienzos": [
+        {
+          "w": 952,
+          "h": 828,
+          "visible": false
+        },
+        {
+          "w": 928,
+          "h": 639,
+          "visible": false
+        }
+      ]
+    },
+    "captura": "sale"
+  }
+}
