@@ -455,6 +455,27 @@ class CampoManiobra(BaseModel):
     nota: Annotated[str | None, Field(max_length=300)] = None
 
 
+class CampoSentidoMarcha(BaseModel):
+    """
+    El sentido de marcha, aparte del rumbo del frente (`posicion_inicial.rumbo_deg`) y de la forma de la maniobra: «reversa» si el vehículo recorre su maniobra con la parte posterior por delante.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    valor: Literal["adelante", "reversa"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
+    """
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
+    """
+    confianza: Annotated[float, Field(ge=0.0, le=1.0)]
+    """
+    Confianza en el valor, de 0 (adivinado) a 1 (seguro).
+    """
+    evidencia: Annotated[list[EvidenciaTexto] | None, Field(max_length=8)] = None
+    nota: Annotated[str | None, Field(max_length=300)] = None
+
+
 class CampoEstadoPintura(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
@@ -1734,6 +1755,10 @@ class ManiobraExpediente(BaseModel):
     """
     Metros, si se dicen.
     """
+    sentido_marcha: Literal["adelante", "reversa"] | None = None
+    """
+    El sentido de marcha en esta maniobra, si se dice: una vuelta o un cambio de carril hechos en reversa. Con `tipo: "reversa"` no hace falta.
+    """
     cita: Cita | None = None
 
 
@@ -2165,6 +2190,10 @@ class Vehiculo(BaseModel):
     voladizo_delantero: CampoLongitud | None = None
     voladizo_trasero: CampoLongitud | None = None
     maniobra: CampoManiobra
+    sentido_marcha: CampoSentidoMarcha | None = None
+    """
+    Si falta, el vehículo avanza de frente, salvo que la maniobra sea «reversa» (la reversa recta). Con «reversa», cualquier maniobra se recorre hacia atrás: en una vuelta o un cambio de carril, izquierda y derecha son las del conductor.
+    """
     velocidad_previa: CampoVelocidad
     frenado: Frenado | None = None
     aceleracion: CampoAceleracion | None = None
