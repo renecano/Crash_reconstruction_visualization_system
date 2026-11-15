@@ -1,5 +1,5 @@
 {
- "fecha": "2026-11-15T13:44:52.603Z",
+ "fecha": "2026-11-15T23:21:51.166Z",
  "particion": "desarrollo",
  "descripcion": "E-R4: a Croquis se le da solo la narración sin conclusiones (R0); Claude la lee a escena como en «Caso nuevo» (R1) y Croquis la compara con lo que concluyó CESVI (R0). Líneas base: la modalidad más frecuente y la velocidad promedio por deformación, de desarrollo.",
  "version_prompt": "escena-narracion-v2",
