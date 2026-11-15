@@ -9,8 +9,8 @@ describe("portada de CESVI: las cifras salen de los datos (punto 4 de René)", (
   it("cada cifra es la de su resultado de evaluación", () => {
     expect(d.reportes).toBe(corpus.dictamenes);
     expect(d.aCiegas).toBe(PAGINA.dictamenes);
-    expect(d.modalidadPct).toBe(TITULO.v3.titulo_del_reporte.croquis.pct);
-    expect(d.reglaPct).toBe(TITULO.v3.titulo_del_reporte.linea_base.pct);
+    expect(d.modalidadPct).toBe(TITULO.v4.titulo_del_reporte.croquis.pct);
+    expect(d.reglaPct).toBe(TITULO.v4.titulo_del_reporte.linea_base.pct);
   });
 
   it("AXA: lo de CESVI contra lo de Croquis, con su diferencia en %", () => {

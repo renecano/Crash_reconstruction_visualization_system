@@ -59,6 +59,7 @@ from croquis_solver.preimpact import (
     SpeedProfile,
     StraightPath,
     braking_deceleration,
+    is_reverse,
     travel_heading,
 )
 from croquis_solver.preimpact import (
@@ -142,6 +143,9 @@ class VehicleModel:
     braking: bool
     brake_distance: float | None
     abs_: bool
+    # Sentido de marcha (T3.3): recorre su maniobra con la parte posterior por delante. El rumbo de
+    # `pose0` es siempre el del frente.
+    reverse: bool = False
 
 
 @dataclass
@@ -172,6 +176,8 @@ class VehicleOutcome:
     later_damage: list[LaterDamage] = field(default_factory=lambda: list[LaterDamage]())
     # Con terreno que tiene altura (W5): z, cabeceo y alabeo de cada muestra de la trayectoria.
     terrain_pose: tuple[list[float], list[float], list[float]] | None = None
+    # Llegó al impacto en reversa (T3.3).
+    reverse: bool = False
 
 
 @dataclass
@@ -394,6 +400,7 @@ def _vehicle_dict(v: VehicleOutcome) -> JsonObj:
         "rol": v.rol,
         "clase": v.clase,
         "involucrado": v.involucrado,
+        **({"sentido_marcha": "reversa"} if v.reverse else {}),
         "dimensiones": {
             "largo_m": _r(v.length),
             "ancho_m": _r(v.width),
@@ -546,6 +553,7 @@ def _vehicle_model(v: JsonObj, clases: dict[str, Any], flag: _Flag) -> VehicleMo
     v0 = _num(v.get("velocidad_previa"), _SPEED, 0.0)
     if maniobra in {"detenido", "estacionado"}:
         v0 = 0.0
+    reverse = is_reverse(v)
     if not clases.get(clase) and v.get("masa") is None:
         flag(
             "clase_sin_tabla",
@@ -567,6 +575,7 @@ def _vehicle_model(v: JsonObj, clases: dict[str, Any], flag: _Flag) -> VehicleMo
         braking=braking,
         brake_distance=_num(dist, _LEN, 0.0) if dist else None,
         abs_=bool(abs_campo.get("valor", False)),
+        reverse=reverse,
     )
 
 
@@ -576,24 +585,37 @@ def _then_straight(part: KinPath, extra: float = 400.0) -> KinPath:
     return CompositePath((part, StraightPath((end.x, end.y), end.heading, extra)))
 
 
-def _path_for(m: VehicleModel, lane_width: float) -> KinPath:
+def _travel_pose(m: VehicleModel) -> tuple[float, float, float]:
+    """La pose inicial con el rumbo del movimiento: el del frente, o el contrario en reversa."""
     x, y, yaw = m.pose0
+    return (x, y, wrap_angle(yaw + math.pi)) if m.reverse else (x, y, yaw)
+
+
+def _path_for(m: VehicleModel, lane_width: float) -> KinPath:
+    """La geometría literal de la maniobra. En reversa (T3.3) se traza en el sentido de marcha y
+    el vehículo la recorre con la parte posterior por delante; izquierda y derecha son las del
+    conductor, así que en el sentido de marcha quedan al revés."""
+    x, y, yaw = _travel_pose(m)
+    izquierda = not m.reverse  # ¿la izquierda del conductor es la del sentido de marcha?
     quarter = 0.5 * math.pi * TURN_RADIUS_M  # vuelta de 90°
+    path: KinPath
     if m.maniobra == "vuelta_izquierda":
-        return _then_straight(ArcPath((x, y), yaw, TURN_RADIUS_M, quarter, left=True))
-    if m.maniobra == "vuelta_derecha":
-        return _then_straight(ArcPath((x, y), yaw, TURN_RADIUS_M, quarter, left=False))
-    if m.maniobra == "vuelta_u":
+        path = _then_straight(ArcPath((x, y), yaw, TURN_RADIUS_M, quarter, left=izquierda))
+    elif m.maniobra == "vuelta_derecha":
+        path = _then_straight(ArcPath((x, y), yaw, TURN_RADIUS_M, quarter, left=not izquierda))
+    elif m.maniobra == "vuelta_u":
         r = 0.75 * TURN_RADIUS_M
-        return _then_straight(ArcPath((x, y), yaw, r, math.pi * r, left=True))
-    if m.maniobra == "cambio_carril_izquierda":
-        return _then_straight(LaneChangePath((x, y), yaw, LANE_CHANGE_LENGTH_M, lane_width))
-    if m.maniobra == "cambio_carril_derecha":
-        return _then_straight(LaneChangePath((x, y), yaw, LANE_CHANGE_LENGTH_M, -lane_width))
-    if m.maniobra == "reversa":
-        # Hacia atrás con el frente donde lo dejó el perito (sentido de marcha ≠ rumbo del frente).
-        return ReversePath(StraightPath((x, y), wrap_angle(yaw + math.pi), 500.0))
-    return StraightPath((x, y), yaw, 500.0)
+        path = _then_straight(ArcPath((x, y), yaw, r, math.pi * r, left=izquierda))
+    elif m.maniobra == "cambio_carril_izquierda":
+        lateral = lane_width if izquierda else -lane_width
+        path = _then_straight(LaneChangePath((x, y), yaw, LANE_CHANGE_LENGTH_M, lateral))
+    elif m.maniobra == "cambio_carril_derecha":
+        lateral = -lane_width if izquierda else lane_width
+        path = _then_straight(LaneChangePath((x, y), yaw, LANE_CHANGE_LENGTH_M, lateral))
+    else:
+        path = StraightPath((x, y), yaw, 500.0)
+    # Hacia atrás con el frente donde lo dejó el perito (sentido de marcha ≠ rumbo del frente).
+    return ReversePath(path) if m.reverse else path
 
 
 def _barrier_normal(obj: JsonObj | None, point: Vec, axis: RoadAxis, state: State2D) -> Vec:
@@ -624,11 +646,10 @@ def _target_path(m: VehicleModel, target: Vec, offset: Vec) -> KinPath | None:
     Se usa solo cuando ni el carril ni la maniobra literal alcanzan el punto declarado (por
     ejemplo, un volantazo hacia la banqueta); el orquestador lo marca como inferido.
     """
-    x, y, yaw = m.pose0
+    x, y, yaw = _travel_pose(m)
     # En reversa el desvío se traza en el sentido de marcha, con el desfase del contacto girado.
-    reverse = m.maniobra == "reversa"
+    reverse = m.reverse
     if reverse:
-        yaw = wrap_angle(yaw + math.pi)
         offset = (-offset[0], -offset[1])
     dx, dy = target[0] - x, target[1] - y
     fwd = dx * dmath.cos(yaw) + dy * dmath.sin(yaw)
@@ -653,10 +674,24 @@ def _path_candidates(m: VehicleModel, lane_width: float, axis: RoadAxis) -> list
     lateral = {"recto": 0.0, "cambio_carril_izquierda": lane_width}.get(m.maniobra)
     if m.maniobra == "cambio_carril_derecha":
         lateral = -lane_width
-    if lateral is None:
+    if not m.reverse:
+        if lateral is None:
+            return [literal]
+        follow = lane_following_path(
+            axis, m.pose0, lateral=lateral, change_length=LANE_CHANGE_LENGTH_M
+        )
+        return [follow, literal] if follow is not None else [literal]
+    # En reversa (T3.3) también sigue el carril de una vía curva, en el sentido de marcha y con el
+    # lado del conductor al revés. En una glorieta no: ahí el carril tiene un solo sentido y el
+    # que retrocede va contra él, así que vale la geometría literal.
+    if m.maniobra == "reversa":
+        lateral = 0.0
+    if lateral is None or axis.kind == "anillo":
         return [literal]
-    follow = lane_following_path(axis, m.pose0, lateral=lateral, change_length=LANE_CHANGE_LENGTH_M)
-    return [follow, literal] if follow is not None else [literal]
+    back = lane_following_path(
+        axis, _travel_pose(m), lateral=-lateral, change_length=LANE_CHANGE_LENGTH_M
+    )
+    return [ReversePath(back), literal] if back is not None else [literal]
 
 
 def _pose_at(path: KinPath, s: float) -> tuple[float, float, float, float]:
@@ -1026,7 +1061,8 @@ def reconstruct(
                 {"vehiculo": targets[0].id, "lateral_m": lateral},
                 f"Vehículo {targets[0].rol}: para alcanzar el punto de impacto declarado se "
                 f"infiere un desvío lateral de {abs(lateral):.1f} m "
-                f"hacia la {'izquierda' if lateral > 0 else 'derecha'}.",
+                # El lado es el del conductor: en reversa, el contrario al del sentido de marcha.
+                f"hacia la {'izquierda' if (lateral > 0) != targets[0].reverse else 'derecha'}.",
             )
         impact_point = sol.point
         for m, s_m in zip(targets, sol.params, strict=False):
@@ -1889,6 +1925,7 @@ def reconstruct(
                 rol=m.rol,
                 clase=m.clase,
                 involucrado=m.id in participantes,
+                reverse=m.reverse and m.v0 > 0,
                 length=m.body.length,
                 width=m.body.width,
                 height=m.height,

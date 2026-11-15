@@ -1,0 +1,776 @@
+{
+  "fuente": "eval/t3_3_reversa.mts",
+  "commit": "75a86237",
+  "caso": "cesvi-3a0125cb81",
+  "entradas": [
+    {
+      "entrada": "1. La lectura de la narración de R0, sin dinámica",
+      "escena_valida": true,
+      "escena": [
+        {
+          "vehiculo": "V1",
+          "maniobra": "recto",
+          "sentido_marcha": null,
+          "velocidad_previa_kmh": 40,
+          "velocidad_previa_fuente": "supuesto",
+          "velocidad_previa_nota": null,
+          "inicial": {
+            "x": -30,
+            "y": -1.75,
+            "rumbo_deg": 0,
+            "procedencia": {
+              "fuente": "supuesto",
+              "confianza": 0.3,
+              "nota": "Disposición genérica; ajústala en el croquis."
+            }
+          },
+          "final": null
+        },
+        {
+          "vehiculo": "V2",
+          "maniobra": "recto",
+          "sentido_marcha": null,
+          "velocidad_previa_kmh": 40,
+          "velocidad_previa_fuente": "supuesto",
+          "velocidad_previa_nota": null,
+          "inicial": {
+            "x": -48,
+            "y": -1.75,
+            "rumbo_deg": 0,
+            "procedencia": {
+              "fuente": "supuesto",
+              "confianza": 0.3,
+              "nota": "Disposición genérica; ajústala en el croquis."
+            }
+          },
+          "final": null
+        }
+      ],
+      "limites": [
+        "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+        "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+      ],
+      "resultado": [
+        {
+          "vehiculo": "V1",
+          "sentido_marcha": null,
+          "v_impacto_kmh": 40,
+          "delta_v_kmh": 0,
+          "pdof_horas": 6,
+          "cara_de_contacto": "B",
+          "aplastamiento_medio_m": 0,
+          "distancia_post_m": 25.68,
+          "pose_final": {
+            "x": -4.319551,
+            "y": -1.75,
+            "rumbo_deg": 0
+          }
+        },
+        {
+          "vehiculo": "V2",
+          "sentido_marcha": null,
+          "v_impacto_kmh": 40,
+          "delta_v_kmh": 0,
+          "pdof_horas": 0,
+          "cara_de_contacto": "F",
+          "aplastamiento_medio_m": 0,
+          "distancia_post_m": 25.68,
+          "pose_final": {
+            "x": -8.819551,
+            "y": -1.75,
+            "rumbo_deg": 0
+          }
+        }
+      ],
+      "marcha_de_V1_antes_del_impacto": {
+        "muestras": 148,
+        "avance_min_ms": 11.11,
+        "avance_max_ms": 11.11
+      },
+      "banderas": [],
+      "inversion": {
+        "evidencia": [],
+        "parametros": [
+          {
+            "parametro": "velocidad_previa",
+            "vehiculo": "V1",
+            "inicial": 40,
+            "identificable": false,
+            "en_limite": null,
+            "mejor": null,
+            "p10": null,
+            "p90": null
+          },
+          {
+            "parametro": "velocidad_previa",
+            "vehiculo": "V2",
+            "inicial": 40,
+            "identificable": false,
+            "en_limite": null,
+            "mejor": null,
+            "p10": null,
+            "p90": null
+          }
+        ],
+        "limites_de_busqueda": [
+          {
+            "parametro": "velocidad:veh-a",
+            "vehiculo": "V1",
+            "inicio": 40,
+            "lo": 0,
+            "hi": 200
+          },
+          {
+            "parametro": "velocidad:veh-b",
+            "vehiculo": "V2",
+            "inicio": 40,
+            "lo": 0,
+            "hi": 200
+          }
+        ]
+      },
+      "velocidades": [
+        {
+          "vehiculo": "V1",
+          "previa": null,
+          "impacto": null
+        },
+        {
+          "vehiculo": "V2",
+          "previa": null,
+          "impacto": null
+        }
+      ],
+      "hipotesis": []
+    },
+    {
+      "entrada": "2. Con la reversa narrada (A retrocede, B detenido)",
+      "escena_valida": true,
+      "escena": [
+        {
+          "vehiculo": "V1",
+          "maniobra": "reversa",
+          "sentido_marcha": null,
+          "velocidad_previa_kmh": 40,
+          "velocidad_previa_fuente": "supuesto",
+          "velocidad_previa_nota": null,
+          "inicial": {
+            "x": -30,
+            "y": -1.75,
+            "rumbo_deg": 0,
+            "procedencia": {
+              "fuente": "supuesto",
+              "confianza": 0.3,
+              "nota": "Disposición genérica; ajústala en el croquis."
+            }
+          },
+          "final": null
+        },
+        {
+          "vehiculo": "V2",
+          "maniobra": "detenido",
+          "sentido_marcha": null,
+          "velocidad_previa_kmh": 0,
+          "velocidad_previa_fuente": "default",
+          "velocidad_previa_nota": null,
+          "inicial": {
+            "x": -48,
+            "y": -1.75,
+            "rumbo_deg": 0,
+            "procedencia": {
+              "fuente": "supuesto",
+              "confianza": 0.3,
+              "nota": "Disposición genérica; ajústala en el croquis."
+            }
+          },
+          "final": null
+        }
+      ],
+      "limites": [
+        "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+        "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+      ],
+      "resultado": [
+        {
+          "vehiculo": "V1",
+          "sentido_marcha": null,
+          "v_impacto_kmh": 40,
+          "delta_v_kmh": 22,
+          "pdof_horas": 6,
+          "cara_de_contacto": "B",
+          "aplastamiento_medio_m": 0.16,
+          "distancia_post_m": 5.2,
+          "pose_final": {
+            "x": -48.697243,
+            "y": -1.75,
+            "rumbo_deg": 0
+          }
+        },
+        {
+          "vehiculo": "V2",
+          "sentido_marcha": null,
+          "v_impacto_kmh": 0,
+          "delta_v_kmh": 22,
+          "pdof_horas": 0,
+          "cara_de_contacto": "F",
+          "aplastamiento_medio_m": 0.03,
+          "distancia_post_m": 7.77,
+          "pose_final": {
+            "x": -55.765314,
+            "y": -1.75,
+            "rumbo_deg": 0
+          }
+        }
+      ],
+      "marcha_de_V1_antes_del_impacto": {
+        "muestras": 148,
+        "avance_min_ms": -11.11,
+        "avance_max_ms": -11.11
+      },
+      "banderas": [],
+      "inversion": {
+        "evidencia": [],
+        "parametros": [
+          {
+            "parametro": "velocidad_previa",
+            "vehiculo": "V1",
+            "inicial": 40,
+            "identificable": false,
+            "en_limite": null,
+            "mejor": null,
+            "p10": null,
+            "p90": null
+          }
+        ],
+        "limites_de_busqueda": [
+          {
+            "parametro": "velocidad:veh-a",
+            "vehiculo": "V1",
+            "inicio": 40,
+            "lo": 0,
+            "hi": 200
+          }
+        ]
+      },
+      "velocidades": [
+        {
+          "vehiculo": "V1",
+          "previa": null,
+          "impacto": null
+        },
+        {
+          "vehiculo": "V2",
+          "previa": null,
+          "impacto": null
+        }
+      ],
+      "hipotesis": []
+    },
+    {
+      "entrada": "3. Con las posiciones de impacto del perito",
+      "escena_valida": true,
+      "escena": [
+        {
+          "vehiculo": "V1",
+          "maniobra": "reversa",
+          "sentido_marcha": null,
+          "velocidad_previa_kmh": 40,
+          "velocidad_previa_fuente": "supuesto",
+          "velocidad_previa_nota": null,
+          "inicial": {
+            "x": 0,
+            "y": 14.297,
+            "rumbo_deg": 90,
+            "procedencia": {
+              "fuente": "supuesto",
+              "confianza": 0.5,
+              "nota": "12 m delante de la posición de impacto que colocó el perito: llega en reversa."
+            }
+          },
+          "final": null
+        },
+        {
+          "vehiculo": "V2",
+          "maniobra": "detenido",
+          "sentido_marcha": null,
+          "velocidad_previa_kmh": 0,
+          "velocidad_previa_fuente": "default",
+          "velocidad_previa_nota": null,
+          "inicial": {
+            "x": 0,
+            "y": -2.297,
+            "rumbo_deg": 90,
+            "procedencia": {
+              "fuente": "supuesto",
+              "confianza": 0.5,
+              "nota": "Detenido en la posición de impacto que colocó el perito."
+            }
+          },
+          "final": null
+        }
+      ],
+      "limites": [
+        "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+        "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+      ],
+      "resultado": [
+        {
+          "vehiculo": "V1",
+          "sentido_marcha": null,
+          "v_impacto_kmh": 40,
+          "delta_v_kmh": 22,
+          "pdof_horas": 6,
+          "cara_de_contacto": "B",
+          "aplastamiento_medio_m": 0.16,
+          "distancia_post_m": 5.2,
+          "pose_final": {
+            "x": 0,
+            "y": -2.994243,
+            "rumbo_deg": 90
+          }
+        },
+        {
+          "vehiculo": "V2",
+          "sentido_marcha": null,
+          "v_impacto_kmh": 0,
+          "delta_v_kmh": 22,
+          "pdof_horas": 0,
+          "cara_de_contacto": "F",
+          "aplastamiento_medio_m": 0.03,
+          "distancia_post_m": 7.77,
+          "pose_final": {
+            "x": 0,
+            "y": -10.062314,
+            "rumbo_deg": 90
+          }
+        }
+      ],
+      "marcha_de_V1_antes_del_impacto": {
+        "muestras": 148,
+        "avance_min_ms": -11.11,
+        "avance_max_ms": -11.11
+      },
+      "banderas": [],
+      "inversion": {
+        "evidencia": [],
+        "parametros": [
+          {
+            "parametro": "velocidad_previa",
+            "vehiculo": "V1",
+            "inicial": 40,
+            "identificable": false,
+            "en_limite": null,
+            "mejor": null,
+            "p10": null,
+            "p90": null
+          }
+        ],
+        "limites_de_busqueda": [
+          {
+            "parametro": "velocidad:veh-a",
+            "vehiculo": "V1",
+            "inicio": 40,
+            "lo": 0,
+            "hi": 200
+          }
+        ]
+      },
+      "velocidades": [
+        {
+          "vehiculo": "V1",
+          "previa": null,
+          "impacto": null
+        },
+        {
+          "vehiculo": "V2",
+          "previa": null,
+          "impacto": null
+        }
+      ],
+      "hipotesis": []
+    },
+    {
+      "entrada": "4. Con los reposos supuestos (B desplazado 0.5 m)",
+      "escena_valida": true,
+      "escena": [
+        {
+          "vehiculo": "V1",
+          "maniobra": "reversa",
+          "sentido_marcha": null,
+          "velocidad_previa_kmh": 40,
+          "velocidad_previa_fuente": "supuesto",
+          "velocidad_previa_nota": null,
+          "inicial": {
+            "x": 0,
+            "y": 14.297,
+            "rumbo_deg": 90,
+            "procedencia": {
+              "fuente": "supuesto",
+              "confianza": 0.5,
+              "nota": "12 m delante de la posición de impacto que colocó el perito: llega en reversa."
+            }
+          },
+          "final": {
+            "x": 0,
+            "y": 2.198,
+            "rumbo_deg": 90,
+            "procedencia": {
+              "fuente": "supuesto",
+              "confianza": 0.5,
+              "nota": "Reposo supuesto por el perito: el reporte no lo da."
+            }
+          }
+        },
+        {
+          "vehiculo": "V2",
+          "maniobra": "detenido",
+          "sentido_marcha": null,
+          "velocidad_previa_kmh": 0,
+          "velocidad_previa_fuente": "default",
+          "velocidad_previa_nota": null,
+          "inicial": {
+            "x": 0,
+            "y": -2.297,
+            "rumbo_deg": 90,
+            "procedencia": {
+              "fuente": "supuesto",
+              "confianza": 0.5,
+              "nota": "Detenido en la posición de impacto que colocó el perito."
+            }
+          },
+          "final": {
+            "x": 0,
+            "y": -2.797,
+            "rumbo_deg": 90,
+            "procedencia": {
+              "fuente": "supuesto",
+              "confianza": 0.5,
+              "nota": "Reposo supuesto por el perito: el reporte no lo da."
+            }
+          }
+        }
+      ],
+      "limites": [
+        "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño."
+      ],
+      "resultado": [
+        {
+          "vehiculo": "V1",
+          "sentido_marcha": null,
+          "v_impacto_kmh": 40,
+          "delta_v_kmh": 22,
+          "pdof_horas": 6,
+          "cara_de_contacto": "B",
+          "aplastamiento_medio_m": 0.16,
+          "distancia_post_m": 5.2,
+          "pose_final": {
+            "x": 0,
+            "y": -2.994243,
+            "rumbo_deg": 90
+          }
+        },
+        {
+          "vehiculo": "V2",
+          "sentido_marcha": null,
+          "v_impacto_kmh": 0,
+          "delta_v_kmh": 22,
+          "pdof_horas": 0,
+          "cara_de_contacto": "F",
+          "aplastamiento_medio_m": 0.03,
+          "distancia_post_m": 7.77,
+          "pose_final": {
+            "x": 0,
+            "y": -10.062314,
+            "rumbo_deg": 90
+          }
+        }
+      ],
+      "marcha_de_V1_antes_del_impacto": {
+        "muestras": 148,
+        "avance_min_ms": -11.11,
+        "avance_max_ms": -11.11
+      },
+      "banderas": [],
+      "inversion": {
+        "evidencia": [
+          "reposo_supuesto:veh-a",
+          "reposo_supuesto:veh-b",
+          "rumbo_final_supuesto:veh-a",
+          "rumbo_final_supuesto:veh-b"
+        ],
+        "parametros": [
+          {
+            "parametro": "velocidad_previa",
+            "vehiculo": "V1",
+            "inicial": 40,
+            "identificable": false,
+            "en_limite": null,
+            "mejor": null,
+            "p10": null,
+            "p90": null
+          }
+        ],
+        "limites_de_busqueda": [
+          {
+            "parametro": "velocidad:veh-a",
+            "vehiculo": "V1",
+            "inicio": 40,
+            "lo": 0,
+            "hi": 200
+          }
+        ]
+      },
+      "velocidades": [
+        {
+          "vehiculo": "V1",
+          "previa": null,
+          "impacto": null
+        },
+        {
+          "vehiculo": "V2",
+          "previa": null,
+          "impacto": null
+        }
+      ],
+      "hipotesis": []
+    },
+    {
+      "entrada": "5. Con reposos medidos por el perito y B desplazado 6 m",
+      "escena_valida": true,
+      "escena": [
+        {
+          "vehiculo": "V1",
+          "maniobra": "reversa",
+          "sentido_marcha": null,
+          "velocidad_previa_kmh": 40,
+          "velocidad_previa_fuente": "supuesto",
+          "velocidad_previa_nota": null,
+          "inicial": {
+            "x": 0,
+            "y": 14.297,
+            "rumbo_deg": 90,
+            "procedencia": {
+              "fuente": "supuesto",
+              "confianza": 0.5,
+              "nota": "12 m delante de la posición de impacto que colocó el perito: llega en reversa."
+            }
+          },
+          "final": {
+            "x": 0,
+            "y": -1.498,
+            "rumbo_deg": 90,
+            "procedencia": {
+              "fuente": "usuario",
+              "confianza": 0.9
+            }
+          }
+        },
+        {
+          "vehiculo": "V2",
+          "maniobra": "detenido",
+          "sentido_marcha": null,
+          "velocidad_previa_kmh": 0,
+          "velocidad_previa_fuente": "default",
+          "velocidad_previa_nota": null,
+          "inicial": {
+            "x": 0,
+            "y": -2.297,
+            "rumbo_deg": 90,
+            "procedencia": {
+              "fuente": "supuesto",
+              "confianza": 0.5,
+              "nota": "Detenido en la posición de impacto que colocó el perito."
+            }
+          },
+          "final": {
+            "x": 0,
+            "y": -8.291,
+            "rumbo_deg": 90,
+            "procedencia": {
+              "fuente": "usuario",
+              "confianza": 0.9
+            }
+          }
+        }
+      ],
+      "limites": [
+        "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño."
+      ],
+      "resultado": [
+        {
+          "vehiculo": "V1",
+          "sentido_marcha": null,
+          "v_impacto_kmh": 40,
+          "delta_v_kmh": 22,
+          "pdof_horas": 6,
+          "cara_de_contacto": "B",
+          "aplastamiento_medio_m": 0.16,
+          "distancia_post_m": 5.2,
+          "pose_final": {
+            "x": 0,
+            "y": -2.994243,
+            "rumbo_deg": 90
+          }
+        },
+        {
+          "vehiculo": "V2",
+          "sentido_marcha": null,
+          "v_impacto_kmh": 0,
+          "delta_v_kmh": 22,
+          "pdof_horas": 0,
+          "cara_de_contacto": "F",
+          "aplastamiento_medio_m": 0.03,
+          "distancia_post_m": 7.77,
+          "pose_final": {
+            "x": 0,
+            "y": -10.062314,
+            "rumbo_deg": 90
+          }
+        }
+      ],
+      "marcha_de_V1_antes_del_impacto": {
+        "muestras": 148,
+        "avance_min_ms": -11.11,
+        "avance_max_ms": -11.11
+      },
+      "banderas": [],
+      "inversion": {
+        "evidencia": [
+          "reposo:veh-a",
+          "reposo:veh-b",
+          "rumbo_final:veh-a",
+          "rumbo_final:veh-b"
+        ],
+        "parametros": [
+          {
+            "parametro": "velocidad_previa",
+            "vehiculo": "V1",
+            "inicial": 40,
+            "identificable": true,
+            "en_limite": false,
+            "mejor": 34.73,
+            "p10": 31.06,
+            "p90": 37.85
+          },
+          {
+            "parametro": "rumbo_inicial",
+            "vehiculo": "V1",
+            "inicial": 90,
+            "identificable": true,
+            "en_limite": false,
+            "mejor": 89.86,
+            "p10": 79.95,
+            "p90": 98.1
+          }
+        ],
+        "limites_de_busqueda": [
+          {
+            "parametro": "velocidad:veh-a",
+            "vehiculo": "V1",
+            "inicio": 40,
+            "lo": 0,
+            "hi": 200
+          },
+          {
+            "parametro": "rumbo:veh-a",
+            "vehiculo": "V1",
+            "inicio": 90,
+            "lo": 70,
+            "hi": 110
+          }
+        ]
+      },
+      "velocidades": [
+        {
+          "vehiculo": "V1",
+          "previa": {
+            "mejor": 34.73,
+            "p10": 31.06,
+            "p50": 34.35,
+            "p90": 37.85,
+            "muestras": 12
+          },
+          "impacto": {
+            "p10": 31.06,
+            "p50": 34.35,
+            "p90": 37.85,
+            "valores": [
+              27.68,
+              31.03,
+              31.3,
+              31.8,
+              32.71,
+              34.26,
+              34.45,
+              35.1,
+              35.64,
+              36.3,
+              38.02,
+              38.56
+            ]
+          }
+        },
+        {
+          "vehiculo": "V2",
+          "previa": null,
+          "impacto": {
+            "p10": 0,
+            "p50": 0,
+            "p90": 0,
+            "valores": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "hipotesis": []
+    }
+  ],
+  "reversa_con_vuelta": [
+    {
+      "narrado": [
+        "reversa",
+        "vira_izquierda"
+      ],
+      "maniobra": "reversa",
+      "sentido_marcha": null
+    },
+    {
+      "narrado": [
+        "vira_izquierda",
+        "reversa"
+      ],
+      "maniobra": "vuelta_izquierda",
+      "sentido_marcha": null
+    }
+  ],
+  "corpus_cesvi": {
+    "reportes": 671,
+    "con_modalidad_reversa": 44,
+    "con_maniobra_de_reversa_declarada": 50,
+    "con_alguna_de_las_dos": 52,
+    "velocidad_en_reversa_que_supone_cesvi": [
+      {
+        "id": "cesvi-73aef4cf09",
+        "cita": "Considerando que la masa es de 8 toneladas y la velocidad de 10 km/h en reversa Ec= 0.5* 8000* 2.782 =30,913 Joules"
+      }
+    ]
+  },
+  "contrato": {
+    "acepta_sentido_marcha": false,
+    "errores": [
+      "/vehiculos/0: must NOT have additional properties (sentido_marcha)"
+    ]
+  }
+}

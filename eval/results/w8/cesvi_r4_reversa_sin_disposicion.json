@@ -1,0 +1,737 @@
+{
+  "fuente": "eval/cesvi_r4_reversa.mts",
+  "commit": "a5ffc2c8",
+  "que_mide": "Dado quién retrocede según el reporte (maniobras de C0), si Croquis reconstruye la reversa con la narración de R0 leída como en la E-R4.",
+  "velocidad_en_reversa_kmh": {
+    "p10": 3.06,
+    "p50": 5.68,
+    "p90": 9.07,
+    "max": 23
+  },
+  "reportes_con_reversa": 50,
+  "desarrollo": {
+    "reportes": 38,
+    "vehiculos_que_retroceden": 38,
+    "medidos": 37,
+    "sin_medir": {
+      "la narración no trae a ese vehículo": 1
+    },
+    "retrocede": 37,
+    "retrocede_y_choca": 34,
+    "con_dano_posterior_en_el_reporte": 26,
+    "de_esos_pegan_con_la_parte_posterior": 4
+  },
+  "prueba": {
+    "reportes": 12,
+    "vehiculos_que_retroceden": 12,
+    "medidos": 12,
+    "sin_medir": {},
+    "retrocede": 12,
+    "retrocede_y_choca": 11,
+    "con_dano_posterior_en_el_reporte": 12,
+    "de_esos_pegan_con_la_parte_posterior": 0
+  },
+  "filas": [
+    {
+      "id": "cesvi-4bdaf95881",
+      "particion": "desarrollo",
+      "vehiculo": "V2",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": []
+    },
+    {
+      "id": "cesvi-3a735f207f",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 1.64,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": []
+    },
+    {
+      "id": "cesvi-3a0125cb81",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 25.12,
+      "choca": true,
+      "cara_reconstruida": "B",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-c574cb9e08",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 1.64,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": []
+    },
+    {
+      "id": "cesvi-b62c02ae9d",
+      "particion": "desarrollo",
+      "vehiculo": "V3",
+      "sin_medir": "la narración no trae a ese vehículo"
+    },
+    {
+      "id": "cesvi-7968cc5df9",
+      "particion": "prueba",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 3.12,
+      "choca": true,
+      "cara_reconstruida": "F",
+      "caras_del_reporte": [
+        "posterior",
+        "lateral_izquierdo"
+      ]
+    },
+    {
+      "id": "cesvi-c5aa28fb91",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-aee9753bf1",
+      "particion": "prueba",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "frontal",
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-09d688be8b",
+      "particion": "desarrollo",
+      "vehiculo": "V2",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 1.26,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-4dcc3ceaf6",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 7.35,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "posterior",
+        "lateral_izquierdo"
+      ]
+    },
+    {
+      "id": "cesvi-61d0d1144e",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 1.64,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": []
+    },
+    {
+      "id": "cesvi-6e823d9c4f",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 3.12,
+      "choca": true,
+      "cara_reconstruida": "F",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-bf10fcba2f",
+      "particion": "prueba",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 5.96,
+      "choca": true,
+      "cara_reconstruida": "F",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-309d760bc2",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "lateral_derecho",
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-051c73af54",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 17.2,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "frontal"
+      ]
+    },
+    {
+      "id": "cesvi-d4b38174d1",
+      "particion": "prueba",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "frontal",
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-a6c1f37083",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "frontal",
+        "lateral_derecho"
+      ]
+    },
+    {
+      "id": "cesvi-1f9706bd8e",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "frontal",
+        "posterior",
+        "lateral_izquierdo"
+      ]
+    },
+    {
+      "id": "cesvi-2276b03fc0",
+      "particion": "prueba",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-11c923df96",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 2.63,
+      "choca": true,
+      "cara_reconstruida": "F",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-62d28f0343",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "frontal",
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-8a2add84c0",
+      "particion": "desarrollo",
+      "vehiculo": "V2",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 17.2,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-b708c737d6",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 4.5,
+      "choca": true,
+      "cara_reconstruida": "B",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-31fcbca870",
+      "particion": "prueba",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 0,
+      "choca": false,
+      "cara_reconstruida": null,
+      "caras_del_reporte": [
+        "lateral_derecho",
+        "posterior",
+        "inferior"
+      ]
+    },
+    {
+      "id": "cesvi-59baa0a3cc",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "lateral_derecho",
+        "lateral_izquierdo",
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-f816e596d7",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-a6a54c8ba9",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "frontal",
+        "posterior",
+        "lateral_izquierdo"
+      ]
+    },
+    {
+      "id": "cesvi-130329aeb3",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 5.54,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": []
+    },
+    {
+      "id": "cesvi-2c66e4462d",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "lateral_izquierdo"
+      ]
+    },
+    {
+      "id": "cesvi-d77feee851",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-cb0029733c",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 25.12,
+      "choca": true,
+      "cara_reconstruida": "B",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-039991d092",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 0,
+      "choca": false,
+      "cara_reconstruida": null,
+      "caras_del_reporte": [
+        "posterior",
+        "lateral_izquierdo"
+      ]
+    },
+    {
+      "id": "cesvi-0f0cc2d51b",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "posterior",
+        "inferior"
+      ]
+    },
+    {
+      "id": "cesvi-ed88385e8a",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "frontal",
+        "lateral_derecho",
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-73aef4cf09",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 1.72,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-2aa502fe04",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 25.12,
+      "choca": true,
+      "cara_reconstruida": "B",
+      "caras_del_reporte": [
+        "frontal"
+      ]
+    },
+    {
+      "id": "cesvi-cc81cc9bea",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-f6bafdd302",
+      "particion": "prueba",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-697d4ae885",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": []
+    },
+    {
+      "id": "cesvi-16c23ff0f7",
+      "particion": "prueba",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-332609d0b4",
+      "particion": "desarrollo",
+      "vehiculo": "V2",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 1.26,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-c3af05ad39",
+      "particion": "prueba",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "frontal",
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-2361a7b6ce",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-a4177250d4",
+      "particion": "prueba",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "frontal",
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-f0edc1d21d",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 0,
+      "choca": false,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-bdf8899ada",
+      "particion": "prueba",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-3d103699b5",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 25.12,
+      "choca": true,
+      "cara_reconstruida": "B",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-1d0753c9ba",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 0,
+      "choca": false,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    },
+    {
+      "id": "cesvi-a7899a3e70",
+      "particion": "desarrollo",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 0.17,
+      "choca": true,
+      "cara_reconstruida": "F",
+      "caras_del_reporte": [
+        "lateral_derecho"
+      ]
+    },
+    {
+      "id": "cesvi-b37686e37c",
+      "particion": "prueba",
+      "vehiculo": "V1",
+      "maniobra": "reversa",
+      "velocidad_kmh": 5.68,
+      "retrocede": true,
+      "delta_v_kmh": 6.7,
+      "choca": true,
+      "cara_reconstruida": "L",
+      "caras_del_reporte": [
+        "posterior"
+      ]
+    }
+  ]
+}

@@ -21,7 +21,7 @@
  *
  * Uso (desde packages/cesvi; con la llave en el entorno para estimar, piloto, lote y recoger):
  *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts piloto <n>     n de desarrollo, sin lotes
- *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts comparar        v1, v2 y v3 de la prueba
+ *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts comparar        v1 a v4 de la prueba
  *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts estimar <desarrollo|prueba>
  *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts lote <desarrollo|prueba> <tope_usd>
  *   pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts recoger <id_lote>
@@ -74,11 +74,12 @@ const LECTURAS = join(
 );
 /**
  * Prefijo de los resultados: cada versión de las reglas escribe los suyos y los anteriores se quedan
- * como están (v1: `cesvi_r4_`, ADR 0067; v2: `cesvi_r4b_`, ADR 0069). Las reglas vigentes son las
- * v3 de R4d (ADR 0076): las mismas lecturas v2, con las modalidades flojas trabajadas.
+ * como están (v1: `cesvi_r4_`, ADR 0067; v2: `cesvi_r4b_`, ADR 0069; v3: `cesvi_r4d_`, R4d, ADR
+ * 0076: las mismas lecturas v2, con las modalidades flojas trabajadas). La vigente es la v4 (T3.5,
+ * W8): las reglas de la v3 y las mismas lecturas, con el solver de hoy (C1, C3, T3.1, T3.2 y T3.3).
  */
 const RESULTADO = (p: string) =>
-  join(RAIZ, `eval/results/${V1 ? "cesvi_r4_reproduccion" : "cesvi_r4d_reproduccion"}_${p}.json`);
+  join(RAIZ, `eval/results/${V1 ? "cesvi_r4_reproduccion" : "cesvi_r4_v4_reproduccion"}_${p}.json`);
 const LOTES = join(RAIZ, "data/raw/cesvi/r4");
 /** Los datos de la página «Reproducción de dictámenes» (solo los de la prueba que se reconstruyen). */
 const PAGINA = join(RAIZ, "data/cesvi/r4/pagina.json");
@@ -432,9 +433,9 @@ async function piloto(n: number) {
 }
 
 /**
- * Las versiones de la prueba lado a lado: v1 (ADR 0067), v2 (R4b, ADR 0069) y v3 (R4d, ADR 0076),
- * cada una medida una sola vez. eval/results/cesvi_r4d_comparacion.json; la de R4b
- * (cesvi_r4b_comparacion.json, v1 y v2) se queda como se publicó.
+ * Las versiones de la prueba lado a lado: v1 (ADR 0067), v2 (R4b, ADR 0069), v3 (R4d, ADR 0076) y
+ * v4 (T3.5, W8). eval/results/cesvi_r4_v4_comparacion.json; las de R4b y R4d
+ * (cesvi_r4b_comparacion.json y cesvi_r4d_comparacion.json) se quedan como se publicaron.
  */
 function compararVersiones() {
   const leer = (f: string) =>
@@ -449,7 +450,23 @@ function compararVersiones() {
     v1: leer("cesvi_r4_reproduccion_prueba.json"),
     v2: leer("cesvi_r4b_reproduccion_prueba.json"),
     v3: leer("cesvi_r4d_reproduccion_prueba.json"),
+    v4: leer("cesvi_r4_v4_reproduccion_prueba.json"),
   };
+  // ¿En qué ejes de la E-R4 cambia la v4 respecto a la v3? Las dos usan las mismas lecturas y las
+  // mismas reglas; lo que cambió entre una y otra es el solver.
+  const ejes = Object.keys(versiones.v4.resumen) as (keyof typeof versiones.v4.resumen)[];
+  const cambia = ejes.filter(
+    (k) => JSON.stringify(versiones.v3.resumen[k]) !== JSON.stringify(versiones.v4.resumen[k]),
+  );
+  // El eje nuevo de la v4: la reversa, dado quién retrocede según el reporte (T3.3, ADR 0136).
+  const rutaReversa = join(RAIZ, "eval/results/cesvi_r4_reversa.json");
+  const reversa = existsSync(rutaReversa)
+    ? (JSON.parse(readFileSync(rutaReversa, "utf8")) as {
+        que_mide: string;
+        desarrollo: unknown;
+        prueba: unknown;
+      })
+    : null;
   const lista = Object.entries(versiones);
   const modalidades = [
     ...new Set(lista.flatMap(([, r]) => Object.keys(r.resumen.modalidad.por_modalidad))),
@@ -457,8 +474,24 @@ function compararVersiones() {
   const out = {
     fecha: new Date().toISOString(),
     descripcion:
-      "E-R4 en la prueba congelada: la v1 (reglas de ADR 0067, escena-narracion-v1), la v2 (R4b, ADR 0069, escena-narracion-v2) y la v3 (R4d, ADR 0076: las mismas lecturas v2 con las modalidades flojas trabajadas), medidas una sola vez cada una, con las mismas líneas base de desarrollo.",
+      "E-R4 en la prueba congelada: la v1 (reglas de ADR 0067, escena-narracion-v1), la v2 (R4b, ADR 0069, escena-narracion-v2), la v3 (R4d, ADR 0076: las mismas lecturas v2 con las modalidades flojas trabajadas) y la v4 (T3.5, W8: las reglas y las lecturas de la v3 con el solver de hoy: C1, C3, T3.1, T3.2 y T3.3), con las mismas líneas base de desarrollo. Entre la v3 y la v4 no se ajustó ninguna regla.",
     lineas_base: versiones.v1.lineas_base,
+    v4_contra_v3: {
+      ejes_comparados: ejes,
+      ejes_que_cambian: cambia,
+      reconstruidas_en_3d: {
+        v3: versiones.v3.reconstruidas_en_3d ?? null,
+        v4: versiones.v4.reconstruidas_en_3d ?? null,
+      },
+    },
+    reversa: reversa
+      ? {
+          fuente: "eval/results/cesvi_r4_reversa.json",
+          que_mide: reversa.que_mide,
+          desarrollo: reversa.desarrollo,
+          prueba: reversa.prueba,
+        }
+      : null,
     por_modalidad: Object.fromEntries(
       modalidades.map((k) => [
         k,
@@ -480,10 +513,10 @@ function compararVersiones() {
     ),
   };
   writeFileSync(
-    join(RAIZ, "eval/results/cesvi_r4d_comparacion.json"),
+    join(RAIZ, "eval/results/cesvi_r4_v4_comparacion.json"),
     `${JSON.stringify(out, null, 1)}\n`,
   );
-  console.log(JSON.stringify(out.por_modalidad, null, 1));
+  console.log(JSON.stringify({ v4_contra_v3: out.v4_contra_v3, reversa: out.reversa }, null, 1));
 }
 
 const [modo, arg, arg2] = process.argv.slice(2);

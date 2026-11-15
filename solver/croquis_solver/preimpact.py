@@ -11,6 +11,7 @@ from __future__ import annotations
 import bisect
 import math
 from dataclasses import dataclass
+from typing import Any
 
 from croquis_solver import dmath
 from croquis_solver.models import G, State2D, Trajectory, Vec, wrap_angle
@@ -125,6 +126,14 @@ class ReversePath(Path):
     def pose(self, s: float) -> Pose:
         p = self.inner.pose(s)
         return Pose(p.x, p.y, wrap_angle(p.heading + math.pi), p.curvature)
+
+
+def is_reverse(v: dict[str, Any]) -> bool:
+    """¿El vehículo de la escena va en reversa (T3.3)? Lo dice `sentido_marcha` o, sin él, la
+    maniobra «reversa» (la reversa recta)."""
+    sentido: dict[str, Any] = v.get("sentido_marcha") or {}
+    maniobra: dict[str, Any] = v.get("maniobra") or {}
+    return sentido.get("valor") == "reversa" or maniobra.get("valor") == "reversa"
 
 
 def travel_heading(path: Path, heading: float) -> float:

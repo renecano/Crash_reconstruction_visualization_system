@@ -63,6 +63,7 @@ from croquis_solver.crash3 import (
     uniform_crush_energy,
 )
 from croquis_solver.lsq import least_squares_soft_l1, soft_l1_cost
+from croquis_solver.preimpact import is_reverse
 from croquis_solver.stiffness import sample_stiffness, stiffness_for, zona_from_cdc_side
 from croquis_solver.stratified import DESIGN_SEED, Draws, LatinHypercube, count_draws
 from croquis_solver.terrain import bump_sampler, sample_bump_assumptions
@@ -579,12 +580,9 @@ def rear_end_pairs(spec: JsonObj) -> tuple[tuple[str, str], ...]:
     lado = {str(z["vehiculo_id"]): str(z["cdc"]["lado"]) for z in zonas if z.get("cdc")}
     golpea = [v for v, x in lado.items() if x == "F"]
     golpeado = [v for v, x in lado.items() if x == "B"]
-    maniobra: dict[str, str] = {}
-    for v in spec["vehiculos"]:
-        m: JsonObj = v.get("maniobra") or {}
-        maniobra[str(v["id"])] = str(m.get("valor", ""))
+    en_reversa = {str(v["id"]) for v in spec["vehiculos"] if is_reverse(v)}
     if len(golpea) == 1 and len(golpeado) == 1 and golpea[0] != golpeado[0]:
-        if "reversa" in (maniobra.get(golpea[0]), maniobra.get(golpeado[0])):
+        if golpea[0] in en_reversa or golpeado[0] in en_reversa:
             return ()
         return ((golpea[0], golpeado[0]),)
     return ()

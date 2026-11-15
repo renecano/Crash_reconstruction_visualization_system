@@ -95,6 +95,12 @@ const SECCIONES = Object.keys(CAMPOS_POR_SECCION) as Seccion[];
 const CAMPOS = [...new Set(Object.values(CAMPOS_POR_SECCION).flat())];
 
 /** Los valores permitidos de los campos cerrados (los del contrato). */
+/** Las maniobras con forma propia que un vehículo puede hacer en reversa (T3.3). */
+const FORMAS_EN_REVERSA = new Set(["vira_izquierda", "vira_derecha", "cambia_carril"]);
+/** La cita de una maniobra dice que el vehículo retrocedía (sin acentos y en minúsculas). */
+const RX_MARCHA_ATRAS = /\b(en reversa|de reversa|dando reversa|marcha atras|retroced\w*)\b/;
+const sinAcentos = (t: string) => t.toLowerCase().normalize("NFD").replace(/\p{M}/gu, "");
+
 export const VALORES: Record<string, readonly string[]> = {
   modalidad: MODALIDADES,
   clase: enumDe("VehiculoExpediente", "clase"),
@@ -721,6 +727,20 @@ export function expedienteDeSalida(
     .filter((g) => g.vehiculo && uno(g, "maniobra"))
     .map((g) => {
       const c = cita(g);
+      // T3.3: quien retrocede dando vuelta o cambiando de carril conserva las dos cosas. La forma
+      // queda en `tipo` y la reversa, en `sentido_marcha`. Lo dice una segunda fila «reversa» del
+      // mismo grupo o la cita de la maniobra.
+      const todas = varios(g, "maniobra");
+      const forma = todas.find((t) => FORMAS_EN_REVERSA.has(t));
+      const retrocede =
+        todas.includes("reversa") || (c ? RX_MARCHA_ATRAS.test(sinAcentos(c.texto)) : false);
+      if (forma && retrocede)
+        return {
+          vehiculo: g.vehiculo!,
+          tipo: forma,
+          sentido_marcha: "reversa" as const,
+          ...(c && { cita: c }),
+        };
       return { vehiculo: g.vehiculo!, tipo: uno(g, "maniobra"), ...(c && { cita: c }) };
     });
   const evidencia = movimientos.length

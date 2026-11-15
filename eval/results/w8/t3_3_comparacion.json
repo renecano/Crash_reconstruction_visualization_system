@@ -1,0 +1,29 @@
+{
+  "fuente": "eval/w8_t3_3_comparar.py",
+  "commit": "be6f335c",
+  "antes": "eval/results/w8/despues (cierre de T3.2)",
+  "despues": "eval/results/w8/t3_3",
+  "archivos": {
+    "axa_rango_estable.json": {
+      "numeros_comparados": 206,
+      "diferencias": 0,
+      "primeras": []
+    },
+    "cesvi_r4_inversion.json": {
+      "numeros_comparados": 646,
+      "diferencias": 0,
+      "primeras": []
+    },
+    "e_r4_prueba.json": {
+      "numeros_comparados": 2358,
+      "diferencias": 0,
+      "primeras": []
+    },
+    "carambolas_prueba.json": {
+      "numeros_comparados": 181,
+      "diferencias": 0,
+      "primeras": []
+    }
+  },
+  "sin_cambio": true
+}
