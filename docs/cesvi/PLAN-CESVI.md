@@ -67,7 +67,7 @@ Están en `docs/cesvi/entrante/notas-sugerencias-croquis-cesvi.pdf`, con captura
 | T5 README y `ESTADO.md` | U7 |
 | T6.2 versión declarada en el croquis 2D, T6.3 orden de impactos a mano, T6.4 los agentes respetan el orden | W7 |
 | T6.5 y T6.6 relecturas R12b y prompt del corpus (con aprobación de API de René) | W9 |
-| En curso en el Claude Code de René: `feat/axa-escena-colocada`, la cifra grande 71.56, Lighthouse | U-pre |
+| En curso en el Claude Code de René: `feat/axa-escena-colocada`, la cifra grande (71.56 entonces, antes de W8), Lighthouse | U-pre |
 
 ---
 
@@ -210,7 +210,7 @@ Lo sube U0 como PR `contract:`. Zod, Pydantic y C# se regeneran, y los fixtures 
 - **Presupuesto:** después de cada subetapa se miden peso, tiempo de carga y fps con `eval/unity_build.mjs` en la laptop. Si media no cumple §7.8 de `PLAN.md`, se recorta densidad en media, nunca función; alta y ultra conservan todo.
 - **La física no cambia de lugar:** Unity solo reproduce el `Resultado`.
 
-**U-pre. Cerrar lo que está en curso.** `feat/axa-escena-colocada`, la cifra grande 71.56 (con la mediana 75.2 como dato secundario), Lighthouse y el «Resumen para René». Se fusiona.
+**U-pre. Cerrar lo que está en curso.** `feat/axa-escena-colocada`, la cifra grande (71.56 entonces, antes de W8; con la mediana 75.2 como dato secundario), Lighthouse y el «Resumen para René». Se fusiona.
 
 **U0. Contratos y organización.** Desbloquea a W. Medio día.
 - Contrato 2.3.0 de §2.2, con migración de fixtures.

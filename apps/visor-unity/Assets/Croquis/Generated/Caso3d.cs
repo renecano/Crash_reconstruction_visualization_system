@@ -3493,7 +3493,7 @@ namespace Croquis.Generated
         /// <summary>
         /// La hipótesis «cuadra con el reposo supuesto» (ADR 0091): solo si un reposo supuesto no
         /// cabe con la deformación medida (bandera reposo_supuesto_vs_dano). La inversión principal
-        /// es «cuadra con el daño medido»; el perito elige.
+        /// es «la más cercana al daño medido»; el perito elige.
         /// </summary>
         [JsonProperty("inversion_reposo_supuesto", NullValueHandling = NullValueHandling.Ignore)]
         public Inversion InversionReposoSupuesto { get; set; }
@@ -3898,7 +3898,7 @@ namespace Croquis.Generated
     ///
     /// La hipótesis «cuadra con el reposo supuesto» (ADR 0091): solo si un reposo supuesto no
     /// cabe con la deformación medida (bandera reposo_supuesto_vs_dano). La inversión principal
-    /// es «cuadra con el daño medido»; el perito elige.
+    /// es «la más cercana al daño medido»; el perito elige.
     /// </summary>
     public partial class Inversion
     {
