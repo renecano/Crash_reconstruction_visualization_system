@@ -14,10 +14,7 @@
           "ancho": 125
         }
       ],
-      "texto": [
-        "Croquis",
-        ""
-      ],
+      "texto": ["Croquis", ""],
       "iconos": [
         "/favicon.ico",
         "/marca/favicon.svg",
