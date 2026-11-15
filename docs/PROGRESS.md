@@ -8,6 +8,12 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 > **El estado en dos páginas está en [`docs/ESTADO.md`](ESTADO.md).** Esta sección conserva, además, la historia de cada tramo: lo vigente es el primer bloque («Ahora») y lo que diga `ESTADO.md`.
 
 - **Ahora: plan final v4** (René, 2026-11-07; `docs/cesvi/PLAN-CESVI.md`). CESVI pidió el 3D en Unity, puntos intermedios del choque, objetos que se mueven y un terreno que afecta la física. Trabajan dos frentes en paralelo, con bitácora propia: [`docs/progress/U.md`](progress/U.md) y [`docs/progress/W.md`](progress/W.md). Este archivo queda como índice, y lo que sigue abajo es historia del plan v3 (`docs/historial/PLAN-CESVI-v3.md`).
+  - **Auditoría del 2026-11-15 · Tanda 5 (cierre, con U7), hecha en lo que no depende del build ni del colaborador:**
+    - README nuevo y [`docs/ESTADO.md`](ESTADO.md); `physics.md` §10–12 al día con el código; tabla del embudo del corpus en `data.md`.
+    - Dos e2e nuevas: la reversa y «Claude no disponible».
+    - E8 de nuevo: Chromium 156.0.8078.4, Firefox 157.0 y WebKit 27.2; solver idéntico en 14 de 14 escenas y horneado en 14 de 14 (cumple).
+    - Detalle en [`docs/progress/W.md`](progress/W.md), «Tanda 5».
+    - **Falta:** el ensayo del guion de la demo y lo de `ESTADO.md`, «Qué falta».
   - **Auditoría del 2026-11-15 · Tanda 4 (proceso y seguridad), hecha:**
     - **Páginas (#231):** `/demo`, `/relato`, `/visor`, `/croquis`, `/publico` e `/historia` llevan a la portada (también en `/en`), sin borrar su código; `/recorrido` se queda con un aviso de versión anterior; el manifiesto y la imagen para redes ya no dicen «a partir de un relato»; `robots.txt` y `sitemap.xml`.
     - **Encabezados de seguridad (#232):** `nosniff` y `Referrer-Policy` en todas las rutas; la política de contenido va en modo de solo reporte (avisa en la consola, no bloquea).

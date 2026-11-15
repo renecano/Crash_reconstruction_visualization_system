@@ -29,18 +29,19 @@ Sitio: <https://croquis-sage.vercel.app/cesvi>.
 | 3 · Números defendibles          | Formateador único, índice de cifras con verificador, supuestos del impacto en el rango, energía contra daño, cobertura | Hecha (#227 a #229). Falta la corrida completa del colaborador |
 | 2 · Lo que el perito ve en el 3D | Daño del solver en Unity, controles de reproducción, leyenda siempre                                                   | Código hecho (#230). Faltan el build, las capturas y las fotos |
 | 4 · Proceso y seguridad          | Páginas anteriores, encabezados, tope de gasto, protección de `main`, Dependabot                                       | Hecha (#231 a #233)                                            |
-| 5 · Cierre (U7)                  | README, este archivo, `physics.md`, pruebas de reversa y de «Claude no disponible»                                     | En curso                                                       |
+| 5 · Cierre (U7)                  | README, este archivo, `physics.md`, E8 de nuevo, pruebas de reversa y de «Claude no disponible»                        | Hecha, salvo el ensayo del guion de la demo                    |
 
 ## Medido
 
-| Qué                                                      | Resultado                                                                                                                                                                    | Archivo en `eval/results/`  |
-| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
-| Paridad del solver TS con la referencia Python           | <!--cifra:paridad.numeros-->89,710<!--/cifra--> números en <!--cifra:paridad.escenas-->14<!--/cifra--> escenas, diferencia máxima <!--cifra:paridad.max_abs-->0<!--/cifra--> | `e7_parity.json`            |
-| AXA, estabilidad entre 20 semillas                       | 0 km/h de diferencia en el mejor ajuste y en el rango                                                                                                                        | `axa_rango_estable.json`    |
-| AXA, resultado completo en el navegador (laptop de 8 GB) | mediana de 5.1 s en tres corridas (2026-11-15)                                                                                                                               | `axa_tiempo_navegador.json` |
-| Tanda 3 contra las referencias                           | solo cambian rangos; ningún mejor ajuste se mueve                                                                                                                            | `w8/t3_comparacion.json`    |
-| Visor Unity web, nivel medio, Intel UHD, 1080p           | 64.7 y 62.1 fps en la escena de referencia; 59.6 y 56.3 en carambola                                                                                                         | `e6_unity_media.json`       |
-| Reserva del tope de gasto por lectura                    | narración 0.37 USD; importar, 0.77 USD de mediana                                                                                                                            | `reserva_tope.json`         |
+| Qué                                                               | Resultado                                                                                                                                                                    | Archivo en `eval/results/`  |
+| ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| Paridad del solver TS con la referencia Python                    | <!--cifra:paridad.numeros-->89,710<!--/cifra--> números en <!--cifra:paridad.escenas-->14<!--/cifra--> escenas, diferencia máxima <!--cifra:paridad.max_abs-->0<!--/cifra--> | `e7_parity.json`            |
+| AXA, estabilidad entre 20 semillas                                | 0 km/h de diferencia en el mejor ajuste y en el rango                                                                                                                        | `axa_rango_estable.json`    |
+| AXA, resultado completo en el navegador (laptop de 8 GB)          | mediana de 5.1 s en tres corridas (2026-11-15)                                                                                                                               | `axa_tiempo_navegador.json` |
+| El mismo resultado en Chromium, Firefox y WebKit (E8, 2026-11-15) | idéntico bit a bit en 14 de 14 escenas, el solver y el horneado                                                                                                              | `e8_determinism.json`       |
+| Tanda 3 contra las referencias                                    | solo cambian rangos; ningún mejor ajuste se mueve                                                                                                                            | `w8/t3_comparacion.json`    |
+| Visor Unity web, nivel medio, Intel UHD, 1080p                    | 64.7 y 62.1 fps en la escena de referencia; 59.6 y 56.3 en carambola                                                                                                         | `e6_unity_media.json`       |
+| Reserva del tope de gasto por lectura                             | narración 0.37 USD; importar, 0.77 USD de mediana                                                                                                                            | `reserva_tope.json`         |
 
 CI: cinco checks obligatorios (lint, tipos y pruebas de TS; Python en dos partes; `Croquis.Core`; e2e de los flujos principales en Chromium), con la regla de que el CI completo tarde menos de 10 minutos. Los builds de Unity no corren en CI.
 
@@ -48,11 +49,10 @@ CI: cinco checks obligatorios (lint, tipos y pruebas de TS; Python en dos partes
 
 1. **Build web del visor con el daño,** publicarlo, y las capturas de AXA después del impacto. Con eso se arma el paquete de fotos del colaborador (15 del modo foto y el recorrido de día y de noche).
 2. **La corrida del colaborador de la Tanda 3** (E-R4 completa, carambolas y cobertura con 200 casos). Al llegar la rama `resultados/t3-<fecha>`: `python eval/t3_comparar.py t3 t3_rtx` y `node eval/cifras.mjs`; la cifra de cobertura se actualiza sola.
-3. **E8 de nuevo** (determinismo en tres navegadores): la última corrida es del 18 de octubre, anterior al hipercubo, al multiarranque y a la reversa. Es pesada: va en el paquete del colaborador.
-4. **`eval/results/laboratorio_axa.json`:** lo escribe una e2e manual; se vuelve a correr antes de la demo.
-5. **W9:** las relecturas grabadas y el prompt del corpus, con tope de 20 USD. Incluye rehacer el corpus con el redactor nuevo.
-6. **Ensayo del guion de la demo** con CESVI.
-7. **Lo menor:** fusionar los PR agrupados de Dependabot cuando lleguen en verde; volver obligatoria la política de contenido; lo demás está en `docs/PROGRESS.md`, «Endurecimiento pendiente».
+3. **`eval/results/laboratorio_axa.json`:** lo escribe una e2e manual; se vuelve a correr antes de la demo.
+4. **W9:** las relecturas grabadas y el prompt del corpus, con tope de 20 USD. Incluye rehacer el corpus con el redactor nuevo.
+5. **Ensayo del guion de la demo** con CESVI.
+6. **Lo menor:** fusionar los PR agrupados de Dependabot cuando lleguen en verde; volver obligatoria la política de contenido; lo demás está en `docs/PROGRESS.md`, «Endurecimiento pendiente».
 
 ## Bloqueado: necesita a René
 

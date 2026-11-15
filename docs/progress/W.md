@@ -964,6 +964,37 @@ La reserva es una cota del costo, no el costo. Lo que cambia para el perito: una
 
 - Revisar `CROQUIS_LLM_DAILY_BUDGET_USD` en Vercel con las reservas de arriba (fila en «Bloqueado — necesita a René»).
 
+## Auditoría del 2026-11-15 · Tanda 5 (cierre, con U7)
+
+**Estado (2026-11-15):** hecho lo que no depende del build de Unity ni del colaborador. Falta el ensayo del guion de la demo y lo que está en `docs/ESTADO.md`, «Qué falta».
+
+### Qué se hizo
+
+- **README** (I7): el borrador de U7 puesto al día con las Tandas 1 a 4. Las cifras principales van marcadas y las revisa `eval/verificar_cifras.mjs`. Dice que el daño en el 3D está en el código y todavía no en el build publicado. El README anterior a CESVI pasó a `docs/historial/README-v1.md`.
+- **`docs/ESTADO.md`** (I9): el estado en dos páginas. `docs/PROGRESS.md` apunta a él.
+- **`docs/physics.md` §10–12** (I9): describe el método de hoy, comprobado contra el código: ajuste propio (`lsq.py`), multiarranque, banda del daño, dos hipótesis, hipercubo latino, las tres banderas que faltaban y la tolerancia de paridad vigente.
+- **`docs/data.md`:** la tabla del embudo del corpus (671, 668, 664, 459 y 205) y de dónde sale cada denominador de la E-R4.
+- **`docs/progress/U.md`:** el estado ya no se contradice.
+- **Dos e2e nuevas** (I10; `apps/web/e2e/cesvi-reversa-y-sin-claude.spec.ts`, 13 s entre las dos en local):
+  - un vehículo en reversa dice a qué velocidad se supone y de dónde sale el supuesto;
+  - si Claude no está disponible, el perito lee el motivo y conserva su narración.
+
+### Medido
+
+- **E8 de nuevo** (`node eval/e8_determinism.mjs` → `eval/results/e8_determinism.json`, 2026-11-15): Chromium 156.0.8078.4, Firefox 157.0 y WebKit 27.2, 2 repeticiones. Resultado del solver idéntico en 14 de 14 escenas; horneado idéntico en 14 de 14. Criterio: cumple. La corrida anterior era del 18 de octubre, con 11 escenas.
+- **Tiempo del resultado completo de AXA en el navegador** (`eval/axa_tiempo_navegador.mjs`): 5,232, 5,132 y 5,149 ms; mediana 5,149 ms. La medición de la mañana del mismo día, antes de la Tanda 3 y con otro guion, daba de 9.25 a 9.56 s; no se investigó la causa de la diferencia.
+
+### Lo que se encontró
+
+- **El guion de E8 estaba roto** desde que los recursos del visor pasaron a Blob (ADR 0107): el paquete del horneado leía `process.env` y no cargaba en el navegador. Se arregló el guion (define esas variables vacías y ahora reporta los errores de la página); el trabajo manual `completo.yml` usa el mismo guion.
+- **Ningún reporte de los 205 que sirve la app trae una reversa en su expediente:** la lectura de la narración sin conclusiones no dice quién retrocedía (es el «0 de 9» de la E-R4). Por eso la e2e de reversa entra por «Caso nuevo», con la frase que escribiría el perito.
+
+### Pendientes
+
+- Ensayo del guion de la demo.
+- `eval/results/laboratorio_axa.json` (e2e manual, antes de la demo).
+- Estado por acto de `recorrido-caso.tsx` y `escena-facil.tsx` en hooks con pruebas (I10): no se hizo; el flujo lo protegen las e2e.
+
 ## Lo que U deja dicho para W
 
 Viene de U0 (ADR 0111). Vale cuando el PR de contrato 2.3.0 esté en `main`:
