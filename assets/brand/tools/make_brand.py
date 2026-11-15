@@ -2,7 +2,8 @@
 
 Uso: python -I make_brand.py <ruta de la fuente Anybody variable> [carpeta de salida]
 
-`marca.json` es la única fuente del logo (René, 2026-11-15: el logo es el de la portada pública).
+`marca.json` es la única fuente del logo (René, 2026-11-15): la forma es la de la portada pública
+y los colores son tokens del sistema (`tokens.json`), no valores propios.
 De ahí salen el símbolo, la palabra CROQUIS y los colores. La palabra se convierte a contornos para
 no depender de que la fuente esté instalada: Anybody (SIL OFL 1.1) con el peso, el ancho y el
 espaciado que dice `marca.json`, los mismos con que la portada la escribe.
@@ -25,12 +26,19 @@ FONT = Path(sys.argv[1])
 OUT = Path(sys.argv[2]) if len(sys.argv) > 2 else AQUI
 OUT.mkdir(parents=True, exist_ok=True)
 M = json.loads((AQUI / "marca.json").read_text(encoding="utf-8"))
+TOKENS = json.loads((AQUI / "tokens.json").read_text(encoding="utf-8"))["color"]
+
+
+def token(clave: str) -> str:
+    """El color del logo: el valor del token del sistema que nombra `marca.json`."""
+    return TOKENS[M["colores"][clave]]["value"]
+
 
 L = float(M["lienzo"])
-CLARO = M["colores"]["sobre_oscuro"]
-TINTA = M["colores"]["sobre_claro"]
-SENAL = M["colores"]["senal"]
-FONDO_ICONO = M["colores"]["fondo_icono"]
+CLARO = token("sobre_oscuro")
+TINTA = token("sobre_claro")
+SENAL = token("senal")
+FONDO_ICONO = token("fondo_icono")
 MX, MY = M["mira"]
 CX, CY = M["centro"]
 MEDIDAS: dict[str, dict[str, float]] = {}

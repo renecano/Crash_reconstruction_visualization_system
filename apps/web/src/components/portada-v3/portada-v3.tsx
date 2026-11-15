@@ -62,7 +62,8 @@ const DETALLE = MARCA.simbolo_detalle;
 const CHICO = MARCA.simbolo;
 const [CX, CY] = MARCA.centro as [number, number];
 const [MX, MY] = MARCA.mira as [number, number];
-const SENAL = MARCA.colores.senal;
+/** El color del logo es un token del sistema (`tokens.json`), no un valor de la portada. */
+const SENAL = "var(--marca-senal)";
 const VISTA = `0 0 ${MARCA.lienzo} ${MARCA.lienzo}`;
 type Raya = [number, number, number, number];
 
@@ -229,8 +230,10 @@ export function PortadaV3({ t, tomas }: { t: TextosPortadaV3; tomas: TomaPortada
           >
             <use href="#mark" />
           </svg>
-          <div className="intro-word" aria-label="Croquis">
-            Croquis
+          {/* El nombre es el logo (palabra.svg), no texto. */}
+          <div className="intro-word">
+            {/* eslint-disable-next-line @next/next/no-img-element -- SVG de marca tal cual */}
+            <img src="/marca/palabra.svg" alt="Croquis" />
           </div>
           <div className="intro-meta">{t.marca}</div>
         </div>

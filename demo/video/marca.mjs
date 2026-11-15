@@ -19,8 +19,10 @@ const origen = /<g transform="(translate\([^)]*\))"/.exec(logotipo)[1];
 const S = MARCA.simbolo;
 const ARCO = MARCA.arco;
 const [MX, MY] = MARCA.mira;
-const CLARO = MARCA.colores.sobre_oscuro;
-const SENAL = MARCA.colores.senal;
+/** Los colores del logo son tokens del sistema (`tokens.json`), nombrados en `marca.json`. */
+const TOKENS = JSON.parse(readFileSync(join(RAIZ, "assets/brand/tokens.json"), "utf8")).color;
+const CLARO = TOKENS[MARCA.colores.sobre_oscuro].value;
+const SENAL = TOKENS[MARCA.colores.senal].value;
 const MIRA =
   `<circle cx="${MX}" cy="${MY}" r="${S.mira.radio}" fill="none" stroke="${SENAL}" stroke-width="${S.mira.grosor}"/>` +
   S.mira.rayas

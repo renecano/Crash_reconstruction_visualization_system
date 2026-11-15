@@ -31,6 +31,7 @@ import {
 import type { Content, TableCell, TDocumentDefinitions } from "pdfmake/interfaces";
 import { LEYENDA_DICTAMEN } from "./dictamen-cesvi";
 import { dictamenDocx } from "./exportar-cesvi";
+import { ANCHO_LOGO, PROPORCION_LOGO } from "./marca-dictamen";
 import { pdfBytes } from "./pdf";
 
 type Id = Expediente["vehiculos"][number]["id"];
@@ -47,6 +48,8 @@ export interface DatosDictamenCaso {
   croquisSobreMapa?: boolean;
   /** Cuadros del 3D (PNG, data URL), si el perito abrió el 3D. */
   cuadros3d: { etiqueta: string; imagen: string }[];
+  /** El logo de la marca como PNG (`logoDictamen`), para la cabecera; sin él, el dictamen va sin logo. */
+  logo?: string | null;
   /** La atribución de los vehículos de Sketchfab que se ven en esos cuadros (R10, CC-BY). */
   modelos3d?: { modelo: string; autor: string; licencia: string; url: string }[];
   /** La comparación con la declaración del conductor (R7), si la usó. */
@@ -415,6 +418,22 @@ function secciones(d: DatosDictamenCaso) {
 
 /** El contenido del dictamen (el mismo para el PDF y el Word). */
 export function dictamenCasoContenido(d: DatosDictamenCaso): Content[] {
+  const cuerpo = cuerpoDelDictamen(d);
+  // La cabecera: el logo de la marca, tal cual (assets/brand/marca.json).
+  return d.logo
+    ? [
+        {
+          image: d.logo,
+          width: ANCHO_LOGO,
+          height: Math.round(ANCHO_LOGO * PROPORCION_LOGO),
+          margin: [0, 0, 0, 10],
+        } as Content,
+        ...cuerpo,
+      ]
+    : cuerpo;
+}
+
+function cuerpoDelDictamen(d: DatosDictamenCaso): Content[] {
   const s = secciones(d);
   const m = modalidadDelDictamen(d.expediente, d.narracion);
   const modalidad = m.modalidad ? enPalabras(m.modalidad) : null;

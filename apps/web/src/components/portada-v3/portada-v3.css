@@ -1124,13 +1124,15 @@ html:has(.pv3) {
   height: auto;
 }
 .pv3 .intro-word {
+  /* El nombre es el logo (palabra.svg): la letra solo da la escala de la imagen. */
   font: 650 clamp(22px, 3.2vw, 34px)/1 var(--f-display);
-  font-variation-settings: "wdth" 140;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  padding-left: 0.32em;
   clip-path: inset(0 100% 0 0);
   animation: pv3-reveal 0.9s 1.35s cubic-bezier(0.7, 0, 0.2, 1) forwards;
+}
+.pv3 .intro-word img {
+  display: block;
+  height: 0.675em;
+  width: auto;
 }
 .pv3 .intro-meta {
   font: 500 10px/1 var(--f-mono);

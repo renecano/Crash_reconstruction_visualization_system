@@ -82,3 +82,5 @@ solver/tests/data/dmath_ts.json
 data/cesvi/r4/pagina.json
 # Escenas de la computadora de la demo, generadas por tools/demo/escena-axa.mts
 demo/escenas-r11/*.json
+# Generado por apps/web/scripts/tokens.mjs: se compara byte a byte con el generador
+apps/web/src/styles/tokens.css

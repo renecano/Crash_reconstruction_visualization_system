@@ -3,7 +3,8 @@
  * La firma de Croquis al entrar a un acto (prompt §5, con los cambios de René del 2026-11-04):
  *
  * 1. una cortina del color de fondo cubre el recorrido;
- * 2. la C del símbolo aparece trazándose (de izquierda a derecha, con `clip-path`);
+ * 2. la C del símbolo aparece trazándose (de izquierda a derecha, con `clip-path`). El símbolo es el
+ *    de `assets/brand/marca.json`, la única fuente del logo: aquí se dibuja en línea porque se anima;
  * 3. el número del acto en mono y su nombre en Instrument Serif suben desde una máscara;
  * 4. la mira naranja golpea (escala 0 → 1.25 → 1) y suelta un anillo;
  * 5. la cortina sube (`clip-path`) y deja ver el acto, que ya estaba montado debajo.
@@ -13,6 +14,11 @@
  * `prefers-reduced-motion` o con «Transiciones» apagado no se monta.
  */
 import { useEffect } from "react";
+import MARCA from "../../../../../../assets/brand/marca.json";
+
+const SIMBOLO = MARCA.simbolo;
+const [MX, MY] = MARCA.mira as [number, number];
+type Raya = [number, number, number, number];
 
 /** Duración total de la completa (ms) y factor de la corta (la corta dura ≤ 500 ms). */
 export const DURACION_COMPLETA_MS = 1420;
@@ -60,33 +66,43 @@ export function TransicionActo({
       }
     >
       <div className="flex flex-col items-center gap-6">
-        <svg viewBox="0 0 120 120" className="h-24 w-24 overflow-visible">
-          <g className="ta-trazo">
+        <svg
+          viewBox={`0 0 ${MARCA.lienzo} ${MARCA.lienzo}`}
+          className="h-24 w-24 overflow-visible"
+          data-marca="marca.json"
+        >
+          <g className="ta-trazo" fill="none" stroke="currentColor">
+            <path d={MARCA.arco} strokeWidth={SIMBOLO.arco_grosor} />
             <path
-              d="M91.11 28.89 A44 44 0 1 0 91.11 91.11"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="13"
-              strokeDasharray="52 25.6"
+              d={SIMBOLO.interior.d}
+              strokeWidth={SIMBOLO.interior.grosor}
+              opacity={SIMBOLO.interior.opacidad}
+              strokeDasharray={SIMBOLO.interior.guiones}
             />
           </g>
           <circle
             className="ta-anillo"
-            cx="100"
-            cy="60"
-            r="12"
+            cx={MX}
+            cy={MY}
+            r={SIMBOLO.mira.radio + 2.4}
             fill="none"
             stroke="var(--senal)"
-            strokeWidth="2"
+            strokeWidth="1"
           />
-          <path
-            className="ta-mira"
-            d="M91 51 L109 69 M109 51 L91 69"
-            fill="none"
-            stroke="var(--senal)"
-            strokeWidth="6"
-            strokeLinecap="round"
-          />
+          <g className="ta-mira" fill="none" stroke="var(--senal)">
+            <circle cx={MX} cy={MY} r={SIMBOLO.mira.radio} strokeWidth={SIMBOLO.mira.grosor} />
+            {(SIMBOLO.mira.rayas as Raya[]).map(([x1, y1, x2, y2]) => (
+              <line
+                key={`${x1}-${y1}`}
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
+                strokeWidth={SIMBOLO.mira.rayas_grosor}
+              />
+            ))}
+            <circle cx={MX} cy={MY} r={SIMBOLO.mira.punto} fill="var(--senal)" stroke="none" />
+          </g>
         </svg>
         <div className="flex flex-col items-center gap-1 overflow-hidden">
           <span className="ta-titulo t-rotulo cifras">Acto {numero}</span>

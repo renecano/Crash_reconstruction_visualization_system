@@ -25,6 +25,7 @@ import { croquisDeReconstruccion } from "@/lib/croquis-caso";
 import { croquisSobreMapa } from "@/lib/croquis-mapa";
 import type { CifraContraste } from "@/lib/contraste-lab";
 import { dictamenCasoPdf, dictamenCasoWord, type DatosDictamenCaso } from "@/lib/dictamen-caso";
+import { logoDictamen } from "@/lib/marca-dictamen";
 import {
   citaContraste,
   citarUnaVez,
@@ -238,6 +239,7 @@ export function DictamenCaso({
       croquis: c.imagen,
       croquisSobreMapa: c.sobreMapa,
       cuadros3d: await fotos(),
+      logo: await logoDictamen(),
       modelos3d: unity
         ? await creditosDelVisorUnity(unity.paquete.escena).catch(() => [])
         : exportApi
