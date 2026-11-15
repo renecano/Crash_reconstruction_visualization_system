@@ -10,10 +10,10 @@
  */
 import Anthropic from "@anthropic-ai/sdk";
 import {
-  BudgetExceededError,
   costUsd,
   DEFAULT_EFFORT,
   DEFAULT_MODEL,
+  errorCobrado,
   LLMError,
   MAX_TOKENS,
   outputSchema,
@@ -24,7 +24,7 @@ import {
   type ClaudeOutput,
 } from "../claude-output";
 import { sha256Hex } from "../hash";
-import { budgetUsd, type BudgetStore } from "./budget";
+import { budgetUsd, conReserva, costoMaximoUsd, type BudgetStore } from "./budget";
 import { loadRecording, RECORDINGS, saveRecording, type Recording } from "./recordings";
 
 export type Effort = "low" | "medium" | "high" | "xhigh" | "max";
@@ -98,20 +98,6 @@ export async function callClaude(
   if (onProgress) stream.on("text", (_delta, snapshot) => onProgress(snapshot.length));
   const resp = await stream.finalMessage();
   const latencyMs = performance.now() - t0;
-  if (resp.stop_reason === "refusal") {
-    throw new LLMError(
-      `El modelo declinó la petición (${JSON.stringify(resp.stop_details ?? null)}).`,
-    );
-  }
-  if (resp.stop_reason === "max_tokens")
-    throw new LLMError("La respuesta se truncó en max_tokens.");
-  const body = resp.content.find((b) => b.type === "text")?.text ?? "";
-  let salida: ClaudeOutput;
-  try {
-    salida = JSON.parse(body) as ClaudeOutput;
-  } catch {
-    throw new LLMError("La salida estructurada no es JSON válido.");
-  }
   const u = resp.usage;
   const usage = {
     input_tokens: u.input_tokens ?? 0,
@@ -121,6 +107,23 @@ export async function callClaude(
   };
   const served = String(resp.model);
   const priced = served in PRICES ? served : model;
+  // Una respuesta que no sirve se paga igual: el error lleva su costo para el tope de gasto.
+  const costo = costUsd(priced, usage);
+  if (resp.stop_reason === "refusal") {
+    throw errorCobrado(
+      `El modelo declinó la petición (${JSON.stringify(resp.stop_details ?? null)}).`,
+      costo,
+    );
+  }
+  if (resp.stop_reason === "max_tokens")
+    throw errorCobrado("La respuesta se truncó en max_tokens.", costo);
+  const body = resp.content.find((b) => b.type === "text")?.text ?? "";
+  let salida: ClaudeOutput;
+  try {
+    salida = JSON.parse(body) as ClaudeOutput;
+  } catch {
+    throw errorCobrado("La salida estructurada no es JSON válido.", costo);
+  }
   return {
     modelo: model,
     modelo_respuesta: served,
@@ -132,7 +135,7 @@ export async function callClaude(
     usage,
     latencia_ms: Math.round(latencyMs * 10) / 10,
     // Si el respaldo sirvió con un modelo sin precio registrado, se estima con el pedido.
-    costo_usd: costUsd(priced, usage),
+    costo_usd: costo,
     costo_estimado_con: priced,
     request_id: stream.request_id ?? null,
     grabado: isoSeconds(),
@@ -165,21 +168,21 @@ export async function extract(
   if (mode === "replay") return loadRecording(model, key, text, root, prompt);
   if (mode !== "record" && mode !== "live") throw new LLMError(`Modo desconocido: ${String(mode)}`);
   const cap = opts.budget ?? budgetUsd();
-  if (cap <= 0 || (await opts.budgetStore.spentToday()) >= cap) {
-    throw new BudgetExceededError(
-      `Tope de gasto diario alcanzado o sin configurar (CROQUIS_LLM_DAILY_BUDGET_USD=${cap}).`,
-    );
-  }
+  if (!(model in PRICES)) throw new LLMError(`Modelo no soportado: ${model}`);
   const client = opts.client ?? new Anthropic();
-  const rec = await callClaude(
-    client,
-    text,
-    model,
-    opts.effort ?? DEFAULT_EFFORT,
-    opts.onProgress,
-    prompt,
+  // El tope es de verdad (auditoría del 2026-11-15, I1): se reserva lo más que puede costar la
+  // llamada antes de hacerla y al terminar queda cobrado lo que costó.
+  const rec = await conReserva(
+    opts.budgetStore,
+    cap,
+    costoMaximoUsd(
+      model,
+      [systemPrompt(prompt), "Relato:", text, outputSchema(prompt)],
+      MAX_TOKENS,
+    ),
+    () => callClaude(client, text, model, opts.effort ?? DEFAULT_EFFORT, opts.onProgress, prompt),
+    (r) => r.costo_usd,
   );
-  await opts.budgetStore.charge(rec.costo_usd);
   if (mode === "record") saveRecording(rec, key, root);
   return rec;
 }

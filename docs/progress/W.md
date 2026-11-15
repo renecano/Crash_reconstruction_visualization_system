@@ -911,6 +911,51 @@ Solo cambian rangos. Las cifras de la portada (91 de 156, 205, 671) no se mueven
 
 Rama `fix/t3-cifras`. Lo último hecho: N4 y la escena de la demo regeneradas. Sigue: capturas de AXA antes y después, esta bitácora al día y esperar el visto bueno de René y el resultado del colaborador. Si René aprueba: marcar #227 como listo, esperar el CI del commit exacto y fusionar; después, el PR `chore:` de PLAN-CESVI.
 
+## Auditoría del 2026-11-15 · Tanda 4 (proceso y seguridad)
+
+**Estado (2026-11-15):** páginas en `main` (#231); encabezados y tope de gasto en el #232. Falta la protección de `main`, la limpieza de ramas y Dependabot.
+
+### Qué se hizo
+
+- **Páginas del producto anterior (I7, decisión 3 de René; #231).** `/demo`, `/relato`, `/visor`, `/croquis`, `/publico` e `/historia` redirigen a la portada en los dos idiomas (temporales; el código se conserva). `/recorrido` lleva un aviso de versión anterior. La portada y el encabezado y el pie viejos ya no enlazan a esas páginas. Manifiesto e imagen para redes sin «a partir de un relato». `robots.txt` deja fuera `/cesvi`, `/api/` y lo interno; `sitemap.xml` lista la portada.
+- **Encabezados de seguridad (I6).** `next.config.ts` manda `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin` y `Content-Security-Policy-Report-Only` en todas las rutas. La política solo reporta: no bloquea nada.
+- **Tope de gasto con reserva (I1; ADR 0140).**
+  - `conReserva` y `costoMaximoUsd` en `packages/extraction/src/server/budget.ts`; los usan `extract` (relato), `leerEscena`, `leerDeclaracion`, `leerDictamenImportado` (una reserva por lectura), `leerHecho` y `redactarConsideraciones`.
+  - Una negativa, una respuesta truncada o un JSON inválido quedan cobrados (`LLMError.costoUsd`, `errorCobrado`).
+  - El día del tope corta a la medianoche de `America/Mexico_City`.
+  - `apps/web/src/server/pedido.ts`: `rechazoDePedido` (JSON y origen propio) y un límite por hora por ruta (`limitadorDe`; importar, la mitad).
+  - Importar acepta hasta 100,000 caracteres (`MAX_REPORTE`; la ruta y la pantalla usan la misma constante).
+
+### Medido
+
+`cd packages/cesvi && pnpm exec tsx ../../eval/reserva_tope.mts` → `eval/results/reserva_tope.json` (sin llamar a la API; solo conteos y cifras):
+
+| Lectura                                                  | Reserva (USD) |
+| -------------------------------------------------------- | ------------- |
+| Narración del tamaño máximo (12,000 caracteres)          | 0.37          |
+| Importar un reporte, mediana de los 671                  | 0.77          |
+| Importar un reporte, percentil 90                        | 0.82          |
+| Importar el reporte más largo (77,430 caracteres)        | 1.09          |
+| Importar un texto del tamaño máximo (100,000 caracteres) | 1.18          |
+
+La reserva es una cota del costo, no el costo. Lo que cambia para el perito: una lectura se niega cuando lo gastado en el día más su reserva pasa del tope.
+
+### Pruebas
+
+- `packages/extraction/src/server/reserva.test.ts`: dos peticiones a la vez no pasan juntas del tope; lo pagado sin servir queda cobrado; un fallo sin costo devuelve la reserva; la cota; el día de México.
+- `apps/web/src/server/pedido.test.ts`: JSON y origen; el host detrás del proxy; el límite por ruta.
+- `apps/web/src/lib/paginas-anteriores.test.ts`: redirecciones, manifiesto, robots y mapa del sitio, encabezados.
+- La e2e de la portada revisa que `/publico` lleve a la portada.
+
+### Pendientes
+
+- Protección de `main`, limpieza de ramas y Dependabot (I5, I8).
+- Lo anotado en `docs/PROGRESS.md`, «Endurecimiento pendiente» (política de contenido obligatoria, rutas sin uso, referencia en Python, precio de caché, límite por IP).
+
+### Necesito de René
+
+- Revisar `CROQUIS_LLM_DAILY_BUDGET_USD` en Vercel con las reservas de arriba (fila en «Bloqueado — necesita a René»).
+
 ## Lo que U deja dicho para W
 
 Viene de U0 (ADR 0111). Vale cuando el PR de contrato 2.3.0 esté en `main`:

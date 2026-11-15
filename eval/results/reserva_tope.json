@@ -1,0 +1,23 @@
+{
+  "descripcion": "Lo que reserva del tope de gasto diario cada lectura con Claude antes de hacerse (auditoría del 2026-11-15, I1). Es una cota del costo, no el costo: al terminar se cobra lo real. Calculado sin llamar a la API.",
+  "script": "eval/reserva_tope.mts",
+  "modelo": "claude-sonnet-5-5",
+  "narracion": {
+    "caracteres_maximos": 12000,
+    "max_tokens": 32000,
+    "reserva_usd": 0.3737
+  },
+  "importar": {
+    "reportes": 671,
+    "caracteres_maximos_de_la_ruta": 100000,
+    "caracteres_del_mas_largo": 77430,
+    "reportes_que_no_caben": 0,
+    "lecturas_por_reporte": 2,
+    "reserva_usd": {
+      "mediana": 0.7698,
+      "p90": 0.8176,
+      "maxima": 1.0917
+    },
+    "reserva_usd_con_el_texto_maximo": 1.1829
+  }
+}

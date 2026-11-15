@@ -6,7 +6,7 @@
  */
 import Anthropic from "@anthropic-ai/sdk";
 import { LLMError, PRICES } from "@croquis/extraction";
-import type { BudgetStore } from "@croquis/extraction/server";
+import { conReserva, costoMaximoUsd, type BudgetStore } from "@croquis/extraction/server";
 import { ESQUEMA_CORPUS, type Expediente, type SalidaCorpus } from "../corpus";
 import {
   mensajeDeclaracion,
@@ -40,20 +40,21 @@ export async function leerDeclaracion(
   o: OpcionesDeclaracion,
 ): Promise<LecturaDeclaracion> {
   if (!(o.modelo in PRICES)) throw new LLMError(`Modelo no soportado: ${o.modelo}`);
-  if ((await o.gasto.spentToday()) >= o.presupuestoUsd) {
-    throw new LLMError("Se alcanzó el tope de gasto diario de la API de Claude.");
-  }
   const cliente = o.cliente ?? new Anthropic();
-  const stream = cliente.messages.stream(
-    pedidoLectura(
-      SISTEMA_DECLARACION,
-      mensajeDeclaracion(declaracion, vehiculos, declarante),
-      ESQUEMA_CORPUS as unknown as Record<string, unknown>,
-      o.modelo,
-    ),
+  const pedido = pedidoLectura(
+    SISTEMA_DECLARACION,
+    mensajeDeclaracion(declaracion, vehiculos, declarante),
+    ESQUEMA_CORPUS,
+    o.modelo,
   );
-  const l = lecturaDeMensaje<SalidaCorpus>(await stream.finalMessage(), false);
-  await o.gasto.charge(l.costoUsd);
+  const l = await conReserva(
+    o.gasto,
+    o.presupuestoUsd,
+    costoMaximoUsd(o.modelo, pedido, pedido.max_tokens),
+    async () =>
+      lecturaDeMensaje<SalidaCorpus>(await cliente.messages.stream(pedido).finalMessage(), false),
+    (x) => x.costoUsd,
+  );
   return {
     salida: l.salida,
     modelo: o.modelo,

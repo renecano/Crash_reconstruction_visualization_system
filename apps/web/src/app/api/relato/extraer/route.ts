@@ -4,6 +4,7 @@
  * Claude escribe y `resultado` (o `error`). El streaming mantiene viva la conexión y deja ver el
  * avance (Vercel lo recomienda para respuestas largas sobre HTTP/1.1).
  */
+import { rechazoDePedido } from "@/server/pedido";
 import { clientKeyFrom, defaultDeps, ExtraerIn, extraerEventos } from "@/server/relato";
 
 export const runtime = "nodejs";
@@ -12,6 +13,8 @@ export const runtime = "nodejs";
 export const maxDuration = 120;
 
 export async function POST(request: Request): Promise<Response> {
+  const rechazo = rechazoDePedido(request);
+  if (rechazo) return rechazo;
   let body: unknown;
   try {
     body = await request.json();

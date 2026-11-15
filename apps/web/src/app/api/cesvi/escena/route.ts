@@ -10,6 +10,7 @@ import { revisarRelato } from "@croquis/cesvi";
 import { leerEscena } from "@croquis/cesvi/server";
 import { LLMError } from "@croquis/extraction";
 import { z } from "zod";
+import { limitadorDe, rechazoDePedido } from "@/server/pedido";
 import { clientKeyFrom, defaultDeps, llmUnavailable } from "@/server/relato";
 import { textoParaClaude } from "@/lib/redaccion";
 
@@ -26,6 +27,8 @@ const sinLectura = (motivo: string) =>
   Response.json({ metodo: "no_disponible", motivo }, { headers: { "Cache-Control": "no-store" } });
 
 export async function POST(request: Request): Promise<Response> {
+  const rechazo = rechazoDePedido(request);
+  if (rechazo) return rechazo;
   let body: unknown;
   try {
     body = await request.json();
@@ -54,7 +57,7 @@ export async function POST(request: Request): Promise<Response> {
   const deps = defaultDeps();
   const motivo = llmUnavailable(deps.settings);
   if (motivo) return sinLectura(motivo);
-  if (!(await deps.limiter.allow(clientKeyFrom(request.headers)))) {
+  if (!(await limitadorDe(deps, "escena").allow(clientKeyFrom(request.headers)))) {
     return sinLectura("demasiadas peticiones en la última hora");
   }
   try {

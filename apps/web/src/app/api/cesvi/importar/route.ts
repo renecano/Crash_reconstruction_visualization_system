@@ -8,19 +8,23 @@
 import { leerDictamenImportado } from "@croquis/cesvi/server";
 import { LLMError } from "@croquis/extraction";
 import { z } from "zod";
+import { limitadorDe, rechazoDePedido } from "@/server/pedido";
 import { clientKeyFrom, defaultDeps, llmUnavailable } from "@/server/relato";
+import { MAX_REPORTE, MIN_REPORTE } from "@/lib/lectura-reporte";
 import { textoParaClaude } from "@/lib/redaccion";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
 
-/** Un dictamen largo de CESVI cabe holgado: el más largo del corpus tiene 76,701 caracteres. */
-const PedidoIn = z.object({ texto: z.string().trim().min(200).max(200_000) });
+/** El tamaño que acepta es el mismo que dice la pantalla (`lectura-reporte.ts`). */
+const PedidoIn = z.object({ texto: z.string().trim().min(MIN_REPORTE).max(MAX_REPORTE) });
 
 const sinLectura = (motivo: string) =>
   Response.json({ metodo: "no_disponible", motivo }, { headers: { "Cache-Control": "no-store" } });
 
 export async function POST(request: Request): Promise<Response> {
+  const rechazo = rechazoDePedido(request);
+  if (rechazo) return rechazo;
   let body: unknown;
   try {
     body = await request.json();
@@ -37,7 +41,7 @@ export async function POST(request: Request): Promise<Response> {
   const deps = defaultDeps();
   const motivo = llmUnavailable(deps.settings);
   if (motivo) return sinLectura(motivo);
-  if (!(await deps.limiter.allow(clientKeyFrom(request.headers)))) {
+  if (!(await limitadorDe(deps, "importar").allow(clientKeyFrom(request.headers)))) {
     return sinLectura("demasiadas peticiones en la última hora");
   }
   try {

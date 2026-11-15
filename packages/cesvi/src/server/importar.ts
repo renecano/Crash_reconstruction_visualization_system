@@ -8,7 +8,7 @@
  */
 import Anthropic from "@anthropic-ai/sdk";
 import { LLMError, PRICES } from "@croquis/extraction";
-import type { BudgetStore } from "@croquis/extraction/server";
+import { conReserva, costoMaximoUsd, type BudgetStore } from "@croquis/extraction/server";
 import { VERSION_PROMPT_CORPUS, type SalidaCorpus } from "../corpus";
 import { VERSION_PROMPT_NARRACION, type SalidaNarracion } from "../narracion";
 import type { ClienteClaude } from "./consideraciones";
@@ -35,18 +35,21 @@ export async function leerDictamenImportado(
   o: OpcionesImportar,
 ): Promise<LecturaImportada> {
   if (!(o.modelo in PRICES)) throw new LLMError(`Modelo no soportado: ${o.modelo}`);
-  if ((await o.gasto.spentToday()) >= o.presupuestoUsd) {
-    throw new LLMError("Se alcanzó el tope de gasto diario de la API de Claude.");
-  }
   const cliente = o.cliente ?? new Anthropic();
-  const [c, n] = await Promise.all([
-    cliente.messages.stream(pedidoCorpus(texto, o.modelo)).finalMessage(),
-    cliente.messages.stream(pedidoNarracion(texto, o.modelo)).finalMessage(),
+  // Cada lectura reserva y cobra lo suyo: si una falla, la otra queda cobrada igual.
+  const leer = <T>(pedido: ReturnType<typeof pedidoCorpus>) =>
+    conReserva(
+      o.gasto,
+      o.presupuestoUsd,
+      costoMaximoUsd(o.modelo, pedido, pedido.max_tokens),
+      async () => lecturaDeMensaje<T>(await cliente.messages.stream(pedido).finalMessage(), false),
+      (x) => x.costoUsd,
+    );
+  const [lc, ln] = await Promise.all([
+    leer<SalidaCorpus>(pedidoCorpus(texto, o.modelo)),
+    leer<SalidaNarracion>(pedidoNarracion(texto, o.modelo)),
   ]);
-  const lc = lecturaDeMensaje<SalidaCorpus>(c, false);
-  const ln = lecturaDeMensaje<SalidaNarracion>(n, false);
   const costoUsd = lc.costoUsd + ln.costoUsd;
-  await o.gasto.charge(costoUsd);
   return {
     corpus: lc.salida,
     narracion: ln.salida,

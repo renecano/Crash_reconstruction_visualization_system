@@ -12,9 +12,13 @@ import {
 } from "@croquis/cesvi";
 import { textoParaClaude } from "@/lib/redaccion";
 
-/** Lo que acepta `/api/cesvi/importar` (caracteres). */
+/**
+ * Lo que acepta `/api/cesvi/importar` (caracteres). Los 671 reportes de CESVI caben: el más largo
+ * tiene 77,430 (`eval/results/reserva_tope.json`). Antes eran 200,000; con el tope de gasto con
+ * reserva (auditoría del 2026-11-15, I1), cada carácter de más es dinero que se aparta del día.
+ */
 export const MIN_REPORTE = 200;
-export const MAX_REPORTE = 200_000;
+export const MAX_REPORTE = 100_000;
 
 /**
  * Si un texto pegado como narración es un reporte completo de CESVI: largo y con varias de sus

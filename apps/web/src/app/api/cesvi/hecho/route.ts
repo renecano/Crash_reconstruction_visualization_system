@@ -9,6 +9,7 @@ import { leerConReglas } from "@croquis/cesvi";
 import { leerHecho } from "@croquis/cesvi/server";
 import { LLMError } from "@croquis/extraction";
 import { z } from "zod";
+import { limitadorDe, rechazoDePedido } from "@/server/pedido";
 import { clientKeyFrom, defaultDeps, llmUnavailable } from "@/server/relato";
 import { redactarValores } from "@/lib/redaccion";
 
@@ -23,6 +24,8 @@ const PedidoIn = z.object({
 });
 
 export async function POST(request: Request): Promise<Response> {
+  const rechazo = rechazoDePedido(request);
+  if (rechazo) return rechazo;
   let body: unknown;
   try {
     body = await request.json();
@@ -51,7 +54,7 @@ export async function POST(request: Request): Promise<Response> {
   const deps = defaultDeps();
   const motivo = llmUnavailable(deps.settings);
   if (motivo) return conReglas(motivo);
-  if (!(await deps.limiter.allow(clientKeyFrom(request.headers)))) {
+  if (!(await limitadorDe(deps, "hecho").allow(clientKeyFrom(request.headers)))) {
     return conReglas("demasiadas peticiones en la última hora");
   }
   try {

@@ -8,8 +8,8 @@
  * que el perito los revise.
  */
 import Anthropic from "@anthropic-ai/sdk";
-import { costUsd, LLMError, PRICES } from "@croquis/extraction";
-import type { BudgetStore } from "@croquis/extraction/server";
+import { costUsd, errorCobrado, LLMError, PRICES } from "@croquis/extraction";
+import { conReserva, costoMaximoUsd, type BudgetStore } from "@croquis/extraction/server";
 
 export const VERSION_PROMPT = "consideraciones-v3";
 
@@ -92,9 +92,6 @@ export async function redactarConsideraciones(
   o: OpcionesBorrador,
 ): Promise<Borrador> {
   if (!(o.modelo in PRICES)) throw new LLMError(`Modelo no soportado: ${o.modelo}`);
-  if ((await o.gasto.spentToday()) >= o.presupuestoUsd) {
-    throw new LLMError("Se alcanzó el tope de gasto diario de la API de Claude.");
-  }
   const cliente = o.cliente ?? new Anthropic();
   const params = {
     model: o.modelo,
@@ -105,43 +102,54 @@ export async function redactarConsideraciones(
     messages: [{ role: "user" as const, content: mensaje(hechos) }],
     output_config: { effort: "medium" as const },
   };
-  // Respaldo del servidor si los clasificadores declinan (como en las demás llamadas a Claude).
-  const stream =
-    o.modelo === "claude-sonnet-5-5"
-      ? cliente.beta.messages.stream({
-          ...params,
-          betas: ["server-side-fallback-2026-07-01"],
-          fallbacks: "default",
-        } as unknown as Parameters<ClienteClaude["beta"]["messages"]["stream"]>[0])
-      : cliente.messages.stream(params);
-  const r = (await stream.finalMessage()) as unknown as MensajeFinal;
-  if (r.stop_reason === "refusal") {
-    throw new LLMError(
-      `El modelo declinó la petición (${JSON.stringify(r.stop_details ?? null)}).`,
-    );
-  }
-  if (r.stop_reason === "max_tokens") throw new LLMError("El borrador se truncó en max_tokens.");
-  const texto = r.content
-    .filter((b) => b.type === "text")
-    .map((b) => b.text ?? "")
-    .join("")
-    .trim();
-  const usage = {
-    input_tokens: r.usage.input_tokens ?? 0,
-    output_tokens: r.usage.output_tokens ?? 0,
-    cache_creation_input_tokens: r.usage.cache_creation_input_tokens ?? 0,
-    cache_read_input_tokens: r.usage.cache_read_input_tokens ?? 0,
-  };
-  const servido = String(r.model);
-  const costo = costUsd(servido in PRICES ? servido : o.modelo, usage);
-  await o.gasto.charge(costo);
-  return {
-    texto,
-    numerosNoReconocidos: numerosNoReconocidos(texto, hechos),
-    modelo: o.modelo,
-    modeloRespuesta: servido,
-    version: VERSION_PROMPT,
-    costoUsd: costo,
-    requestId: (stream as unknown as { request_id?: string | null }).request_id ?? null,
-  };
+  // El tope es de verdad (auditoría del 2026-11-15, I1): se reserva lo más que puede costar la
+  // llamada antes de hacerla y al terminar queda cobrado lo que costó, aunque la respuesta no sirva.
+  return conReserva(
+    o.gasto,
+    o.presupuestoUsd,
+    costoMaximoUsd(o.modelo, params, params.max_tokens),
+    async () => {
+      // Respaldo del servidor si los clasificadores declinan (como en las demás llamadas a Claude).
+      const stream =
+        o.modelo === "claude-sonnet-5-5"
+          ? cliente.beta.messages.stream({
+              ...params,
+              betas: ["server-side-fallback-2026-07-01"],
+              fallbacks: "default",
+            } as unknown as Parameters<ClienteClaude["beta"]["messages"]["stream"]>[0])
+          : cliente.messages.stream(params);
+      const r = (await stream.finalMessage()) as unknown as MensajeFinal;
+      const usage = {
+        input_tokens: r.usage.input_tokens ?? 0,
+        output_tokens: r.usage.output_tokens ?? 0,
+        cache_creation_input_tokens: r.usage.cache_creation_input_tokens ?? 0,
+        cache_read_input_tokens: r.usage.cache_read_input_tokens ?? 0,
+      };
+      const servido = String(r.model);
+      const costo = costUsd(servido in PRICES ? servido : o.modelo, usage);
+      if (r.stop_reason === "refusal") {
+        throw errorCobrado(
+          `El modelo declinó la petición (${JSON.stringify(r.stop_details ?? null)}).`,
+          costo,
+        );
+      }
+      if (r.stop_reason === "max_tokens")
+        throw errorCobrado("El borrador se truncó en max_tokens.", costo);
+      const texto = r.content
+        .filter((b) => b.type === "text")
+        .map((b) => b.text ?? "")
+        .join("")
+        .trim();
+      return {
+        texto,
+        numerosNoReconocidos: numerosNoReconocidos(texto, hechos),
+        modelo: o.modelo,
+        modeloRespuesta: servido,
+        version: VERSION_PROMPT,
+        costoUsd: costo,
+        requestId: (stream as unknown as { request_id?: string | null }).request_id ?? null,
+      };
+    },
+    (x) => x.costoUsd,
+  );
 }

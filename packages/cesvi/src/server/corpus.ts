@@ -4,7 +4,7 @@
  * para scripts locales: usa la llave de la API.
  */
 import Anthropic from "@anthropic-ai/sdk";
-import { costUsd, LLMError, PRICES } from "@croquis/extraction";
+import { costUsd, errorCobrado, PRICES } from "@croquis/extraction";
 import { ESQUEMA_CORPUS, mensajeCorpus, SISTEMA_CORPUS, type SalidaCorpus } from "../corpus";
 import { ESQUEMA_NARRACION, mensajeNarracion, SISTEMA_NARRACION } from "../narracion";
 import type { ClienteClaude } from "./consideraciones";
@@ -96,26 +96,30 @@ export function lecturaDeMensaje<T = SalidaCorpus>(
   r: MensajeFinal,
   lote: boolean,
 ): LecturaDictamen<T> {
-  if (r.stop_reason === "refusal") {
-    throw new LLMError(
-      `El modelo declinó la petición (${JSON.stringify(r.stop_details ?? null)}).`,
-    );
-  }
-  if (r.stop_reason === "max_tokens") throw new LLMError("La lectura se truncó en max_tokens.");
-  const cuerpo = r.content.find((b) => b.type === "text")?.text ?? "";
-  let salida: T;
-  try {
-    salida = JSON.parse(cuerpo) as T;
-  } catch {
-    throw new LLMError("La salida estructurada no es JSON válido.");
-  }
   const uso: UsoTokens = {
     input_tokens: r.usage.input_tokens ?? 0,
     output_tokens: r.usage.output_tokens ?? 0,
     cache_creation_input_tokens: r.usage.cache_creation_input_tokens ?? 0,
     cache_read_input_tokens: r.usage.cache_read_input_tokens ?? 0,
   };
-  return { salida, modeloRespuesta: r.model, uso, costoUsd: costoCorpus(r.model, uso, lote) };
+  // Una respuesta que no sirve se paga igual: el error lleva su costo para el tope de gasto.
+  const costoUsd = costoCorpus(r.model, uso, lote);
+  if (r.stop_reason === "refusal") {
+    throw errorCobrado(
+      `El modelo declinó la petición (${JSON.stringify(r.stop_details ?? null)}).`,
+      costoUsd,
+    );
+  }
+  if (r.stop_reason === "max_tokens")
+    throw errorCobrado("La lectura se truncó en max_tokens.", costoUsd);
+  const cuerpo = r.content.find((b) => b.type === "text")?.text ?? "";
+  let salida: T;
+  try {
+    salida = JSON.parse(cuerpo) as T;
+  } catch {
+    throw errorCobrado("La salida estructurada no es JSON válido.", costoUsd);
+  }
+  return { salida, modeloRespuesta: r.model, uso, costoUsd };
 }
 
 /** Lee un dictamen con la API normal (para el piloto). */
