@@ -103,7 +103,7 @@
     },
     "inversion_reposo_supuesto": {
       "$ref": "#/$defs/Inversion",
-      "description": "La hipótesis «cuadra con el reposo supuesto» (ADR 0091): solo si un reposo supuesto no cabe con la deformación medida (bandera reposo_supuesto_vs_dano). La inversión principal es «cuadra con el daño medido»; el perito elige."
+      "description": "La hipótesis «cuadra con el reposo supuesto» (ADR 0091): solo si un reposo supuesto no cabe con la deformación medida (bandera reposo_supuesto_vs_dano). La inversión principal es «la más cercana al daño medido»; el perito elige."
     },
     "consistencia": {
       "type": "array",

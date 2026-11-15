@@ -40,7 +40,7 @@ const VIGENTES = [
   { ruta: "docs/data.md" },
   // Solo el bloque «Ahora»: desde «Antes: …» la sección es la bitácora de las fases anteriores.
   { ruta: "docs/PROGRESS.md", seccion: "## Estado actual", hasta: /^- \*\*Antes/ },
-  // docs/cesvi/PLAN-CESVI.md entra con el PR `chore:` que corrige sus dos líneas (archivo compartido).
+  { ruta: "docs/cesvi/PLAN-CESVI.md" },
 ];
 
 /** Las líneas del documento (o de su sección), con su número. */
