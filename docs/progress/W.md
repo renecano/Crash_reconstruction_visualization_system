@@ -849,6 +849,64 @@ La pantalla de carga de Unity y su plantilla WebGL solo dicen «Cargando el viso
 - **Qué no se movió:** ningún número del solver ni de AXA; la Tanda 1 no toca la física.
 - **Qué necesito de ti:** nada. Sigue la reversa declarada y después la Tanda 3, que se detiene con el antes y el después de AXA.
 
+## Auditoría del 2026-11-15 · Tanda 3 (números defendibles)
+
+**Estado: en la rama `fix/t3-cifras` (PR #227, en borrador). No se fusiona sin el visto bueno de René** (regla de W8: cambia lo que ve CESVI).
+
+### Qué se hizo
+
+- **Un solo formateador (punto 12, ADR 0138):** `packages/cesvi/src/formato.ts`. La conclusión de la reconstrucción va en enteros con su rango; la tabla que reproduce el método de CESVI conserva dos decimales. Pantalla, PDF y Word pasan por ahí: `formato.test.ts` falla si queda un `toFixed` fuera en el flujo de CESVI.
+- **Un índice de cifras publicadas (punto 12):** `eval/cifras.mjs` genera `eval/results/cifras.json` (cada cifra con su valor, su denominador, sus simulaciones y el archivo y el campo de donde sale). `eval/verificar_cifras.mjs` falla si un documento vigente trae una cifra distinta o una retirada sin su fecha; corre con las pruebas (`cifras.test.ts`).
+- **Las simulaciones, en el dato (N3):** cada rango dice de cuántas simulaciones sale (32 en la app, 12 en las evaluaciones); el dictamen lo escribe.
+- **Los tres supuestos del impacto entran al rango (punto 9, ADR 0139):** restitución (0 a 0.3), razón de impulso (0.29 a 0.49) y arrastre después del impacto (0.3 a 0.5 de la fricción). Los nominales no cambian, así que el mejor ajuste no se mueve. Python y TS, con paridad en las 14 escenas.
+- **La deformación medida contra la reconstrucción (punto 10):** en vez de «Alcanza la deformación medida», cada hipótesis dice el cambio de velocidad del vehículo, lo que pide su deformación (p10–p90 y mediana) y qué parte de la energía de la mediana explica (`packages/cesvi/src/dano-energia.ts`).
+- **Cobertura sintética (punto 11):** `eval/t3_cobertura.mts` fabrica casos con velocidad verdadera conocida y mide si el p10–p90 la contiene.
+- **De paso:** la escena «AXA con agentes» sale otra vez de su generador (N4) y la escena del video lleva el rango de la app (N3).
+
+### Antes y después
+
+**AXA, como la reconstruye la app** (32 simulaciones, 20 semillas; `eval/results/w8/t3_3/` contra `eval/results/w8/t3/`):
+
+| AXA                       | Antes (en producción)                   | Después del solver  | Como se leerá en pantalla                                                                                                            |
+| ------------------------- | --------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| V2 (B), antes del impacto | 56.87 km/h (54.79–78.39)                | 56.87 (55.11–78.06) | 57 km/h (55–78)                                                                                                                      |
+| V1 (A), antes del impacto | 14.98 km/h (0.80–16.45)                 | 14.98 (1.04–21.38)  | 15 km/h (1–21)                                                                                                                       |
+| Hipótesis                 | 2                                       | 2                   | 2                                                                                                                                    |
+| Método de CESVI (tabla)   | 63.90 contra 63.15, +0.75 km/h, +1.19 % | igual               | igual, con dos decimales                                                                                                             |
+| Deformación medida de B   | «Alcanza la deformación medida»         | —                   | «Queda en el borde bajo…: 30 km/h de cambio de velocidad contra al menos 30–90 (mediana 51). Es el 34 % de la energía de la mediana» |
+
+**Las referencias** (`eval/results/w8/t3_comparacion.json`, de `eval/t3_comparar.py`):
+
+| Medición                                   | Números comparados | Cambian          | De ellos, centrales |
+| ------------------------------------------ | ------------------ | ---------------- | ------------------- |
+| AXA, 20 semillas                           | 206                | 88 (percentiles) | 0                   |
+| Inversión en las 205 narraciones de prueba | 646                | 0                | 0                   |
+| E-R4, prueba                               | 2,358              | 0                | 0                   |
+| Carambolas, prueba                         | 181                | 0                | 0                   |
+
+Solo cambian rangos. Las cifras de la portada (91 de 156, 205, 671) no se mueven.
+
+**Cobertura sintética, corrida reducida** (40 casos por escena, 116 velocidades; `eval/results/t3/cobertura_40.json`): el p10–p90 contuvo la velocidad verdadera el 62 % de las veces con los tres supuestos fijos (intervalo al 95 %: 53–70) y el 71 % con ellos sorteados (62–78). Lo esperado es cerca de 80 %. Mejora, y sigue corto: la corrida de 200 casos va en el paquete del colaborador para tener el intervalo más cerrado.
+
+### Decisiones que conviene saber
+
+- **La razón de impulso es un supuesto declarado.** No encontré un rango absoluto publicado; se arma con dos mediciones (ADR 0139). Si René prefiere dejarla fija, es quitar una dimensión.
+- **El rango de V2 en AXA casi no cambió** (la auditoría esperaba que se ensanchara): en la hipótesis visible su velocidad la fija la deformación, no el tramo después del impacto. El de V1 sí se ensancha.
+- **El redondeo a enteros es el usual,** no hacia afuera (ADR 0138).
+- **`eval/results/` no se reorganizó por fechas:** el índice de cifras dice cuáles son las vigentes.
+
+### Pendiente de esta tanda
+
+- **Paquete del colaborador (PR #228):** una sola corrida de cerca de 1 hora con la E-R4 completa (desarrollo y prueba), las carambolas, las referencias y la cobertura de 200 casos. Al llegar `resultados/t3-<fecha>`: `python eval/t3_comparar.py t3 t3_rtx` debe dar cero diferencias contra lo medido en la laptop.
+- **Capturas de AXA antes y después** (Reconstrucción, Contra CESVI, hipótesis, dictamen) y `eval/results/laboratorio_axa.json` (N5), con la e2e manual `laboratorio-axa.spec.ts`.
+- **`docs/cesvi/PLAN-CESVI.md`** tiene dos líneas con el 71.56 en presente: van en un PR `chore:` propio (archivo compartido), que además lo mete al verificador.
+- **El corpus con el redactor nuevo** cambia las narraciones, y las lecturas grabadas de la E-R4 son de las narraciones viejas: volver a leerlas gasta API. Va con W9 (tope de 20 USD).
+- **Las capas de ingeniería del modo foto de Unity** escriben sus números en C#: se alinean con el formateador al rehacer las fotos (Tanda 2).
+
+### Para retomar
+
+Rama `fix/t3-cifras`. Lo último hecho: N4 y la escena de la demo regeneradas. Sigue: capturas de AXA antes y después, esta bitácora al día y esperar el visto bueno de René y el resultado del colaborador. Si René aprueba: marcar #227 como listo, esperar el CI del commit exacto y fusionar; después, el PR `chore:` de PLAN-CESVI.
+
 ## Lo que U deja dicho para W
 
 Viene de U0 (ADR 0111). Vale cuando el PR de contrato 2.3.0 esté en `main`:
