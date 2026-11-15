@@ -9,6 +9,7 @@ import { describe, expect, it } from "vitest";
 import type { Expediente, SalidaCorpus } from "./corpus";
 import { conPosicion, conReposoSupuesto, escenaDeNarracion } from "./escena-narracion";
 import { conMasasDeFicha } from "./fichas";
+import type { Reconstruccion } from "./reconstruccion";
 import { supuestoAlNoSaber, supuestosDeclarados } from "./supuestos";
 
 const grabacion = JSON.parse(
@@ -77,6 +78,60 @@ describe("los supuestos declarados", () => {
     expect(conRestos.incertidumbre).toMatch(/^±10 m: 10 veces la de una posición medida/);
     const sinRestos = supuestosDeclarados(caso(false)).find((x) => x.clave === "reposo-V2")!;
     expect(sinRestos.justificacion).toBe("Lo supone el perito: el reporte no da dónde quedó.");
+  });
+
+  it("los tres supuestos del impacto van con su rango y su fuente (ADR 0139)", () => {
+    // Lo que trae el resultado del solver desde la Tanda 3.
+    const parametros = {
+      friccion_llanta: { valor: 0.7, rango: [0.55, 0.8], fuente: "tabla", tipo: "secundaria" },
+      restitucion_vehiculo_vehiculo: {
+        valor: 0.1,
+        rango: [0, 0.3],
+        fuente: "Brach, Brach y Pongetti 2014 (SAE 2014-01-0469)",
+        tipo: "supuesto",
+      },
+      relacion_impulso_tangencial: {
+        valor: 0.4,
+        rango: [0.29, 0.49],
+        fuente: "supuesto declarado: razón crítica…",
+        tipo: "supuesto",
+      },
+      arrastre_post_impacto: {
+        valor: 0.35,
+        rango: [0.3, 0.5],
+        fuente: "Fricke 2010: de 0.3 a 0.5 de la fricción llanta–pavimento",
+        tipo: "supuesto",
+      },
+    };
+    const r = { resultado: { parametros } } as unknown as Reconstruccion;
+    const s = supuestosDeclarados(caso(false), r);
+    const de = (clave: string) => s.find((x) => x.clave === clave)!;
+    expect(de("restitucion").rango).toMatchObject({ min: 0, max: 0.3, valor: 0.1 });
+    expect(de("restitucion").justificacion).toContain("SAE 2014-01-0469");
+    expect(de("razon_impulso").rango).toMatchObject({ min: 0.29, max: 0.49, valor: 0.4 });
+    expect(de("razon_impulso").justificacion).toContain("No hay un rango tabulado");
+    // El arrastre: la fracción y la fricción, las dos en su rango.
+    expect(de("arrastre").incertidumbre).toBe(
+      "En el rango de las velocidades, la fracción va de 0.3 a 0.5 y la fricción de 0.55 a 0.8: el arrastre, de 0.17 a 0.40.",
+    );
+    expect(de("arrastre").justificacion).toContain("Fricke 2010");
+
+    // Un resultado guardado antes de la Tanda 3 no trae los rangos: se describe como entonces.
+    const viejo = {
+      resultado: {
+        parametros: {
+          friccion_llanta: parametros.friccion_llanta,
+          restitucion_vehiculo_vehiculo: { valor: 0.1, tipo: "supuesto" },
+          relacion_impulso_tangencial: { valor: 0.4, tipo: "supuesto" },
+          arrastre_post_impacto: { valor: 0.35, tipo: "supuesto" },
+        },
+      },
+    } as unknown as Reconstruccion;
+    const antes = supuestosDeclarados(caso(false), viejo);
+    expect(antes.some((x) => x.clave === "restitucion" || x.clave === "razon_impulso")).toBe(false);
+    expect(antes.find((x) => x.clave === "arrastre")!.incertidumbre).toMatch(
+      /^La fracción es fija/,
+    );
   });
 
   it("nada dice «pendiente» ni «falta pedir»", () => {
