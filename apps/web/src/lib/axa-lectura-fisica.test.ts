@@ -1,9 +1,11 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
+  danoEnTexto,
   especDeExpediente,
   formato as F,
   interpretarResultado,
+  lecturasDeDano,
   reconstruccionContraCesvi,
 } from "@croquis/cesvi";
 import { fullResult, PRODUCTION_SAMPLES } from "../../../../packages/solver-ts/src/full-result";
@@ -64,4 +66,20 @@ describe("la lectura física de AXA", () => {
     ).toContain(texto);
     expect(citaVelocidad(r, "V2", "B")).toContain(texto);
   });
+
+  it("dice cuánto de la deformación medida de B explica la reconstrucción visible (auditoría, C5)", () => {
+    const base = especDeExpediente(casoAxa().escena!.expediente);
+    const r = interpretarResultado(base, fullResult(base.spec, PRODUCTION_SAMPLES));
+    const [b] = lecturasDeDano(r);
+    // Solo B trae deformación medida: su banda es un mínimo, y la reconstrucción queda en su borde.
+    expect(b).toMatchObject({ vehiculo: "V2", minimo: true, estado: "borde_bajo" });
+    expect(b!.reconstruccionKmh).toBeGreaterThanOrEqual(b!.banda.p10 - 0.5);
+    expect(b!.reconstruccionKmh).toBeLessThan(b!.banda.p50);
+    expect(b!.energiaPct).toBeGreaterThan(20);
+    expect(b!.energiaPct).toBeLessThan(50);
+    expect(danoEnTexto(b!, "B")).toMatch(/^Queda en el borde bajo de la deformación medida de B/);
+    // La otra hipótesis (el reposo supuesto como dato) no la alcanza.
+    const otra = r.hipotesis!.find((h) => h.familia === "reposo")!;
+    expect(lecturasDeDano(r, otra.clave)[0]!.estado).toBe("debajo");
+  }, 120_000);
 });

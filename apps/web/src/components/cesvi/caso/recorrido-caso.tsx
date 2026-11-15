@@ -105,6 +105,7 @@ import { PasoCaso, PasoHecho, PasoNumeros, claveItem, type ItemLugar } from "./p
 import { BitacoraAgentes } from "./bitacora";
 import { MapaEscena, type HerramientaMapa, type HuellaMapa } from "./piezas";
 import {
+  DanoContraReconstruccion,
   ElegirHipotesis,
   PanelReconstruccion,
   useReconstruccion,
@@ -1091,6 +1092,14 @@ export function RecorridoCaso({
                 ...desconocidos.map((v) => `dónde quedó ${nombreLab(v)}`),
               ]}
               onRepetir={() => void rec.reconstruir()}
+            />
+          ) : null}
+          {r && !r.hipotesis ? (
+            <DanoContraReconstruccion
+              r={r}
+              nombres={Object.fromEntries(
+                (expediente?.vehiculos ?? []).map((v) => [v.id, nombreLab(v.id)]),
+              )}
             />
           ) : null}
           {r?.hipotesis ? (

@@ -28,6 +28,9 @@ import {
   encabezadoHipotesis,
   enPalabras,
   mensajeEnPalabras,
+  danoEnCorto,
+  danoEnTexto,
+  lecturasDeDano,
   notaDeMuestras,
 } from "@croquis/cesvi";
 import type { Content, TableCell, TDocumentDefinitions } from "pdfmake/interfaces";
@@ -153,7 +156,10 @@ function hipotesis(d: DatosDictamenCaso): Content[] {
           )
           .join("; "),
         h.reposos.map((x) => `${x.vehiculo} a ${F.metros(x.m, 1)}`).join("; ") || "—",
-        h.alcanzaDano ? "La alcanza" : "No la alcanza",
+        // Cuánto de la deformación medida explica cada hipótesis (auditoría, C5).
+        lecturasDeDano(r, h.clave)
+          .map((l) => `${l.vehiculo}: ${danoEnCorto(l)}`)
+          .join("; ") || (h.alcanzaDano ? "La alcanza" : "No la alcanza"),
       ]),
     ),
     nota(
@@ -289,6 +295,8 @@ function secciones(d: DatosDictamenCaso) {
         v.impacto ? `${kmh(v.impacto.p10)}–${kmh(v.impacto.p50)}–${kmh(v.impacto.p90)}` : "—",
       ]),
     ),
+    // La deformación medida contra la reconstrucción que se ve, con sus números.
+    ...lecturasDeDano(r).map((l) => parrafo(danoEnTexto(l))),
     // Cada rango dice de cuántas simulaciones sale, y por qué va en enteros.
     nota(
       `El rango entre paréntesis es el ${notaDeMuestras(r)}. Las velocidades de la reconstrucción van en enteros: el rango cambia cerca de 1 km/h entre corridas y varios km/h con los supuestos.`,

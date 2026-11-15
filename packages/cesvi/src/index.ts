@@ -16,6 +16,7 @@ export * from "./relato";
 export * from "./reconstruccion";
 export * from "./reversa";
 export * from "./conductores";
+export * from "./dano-energia";
 export * as formato from "./formato";
 export * from "./palabras";
 export * from "./pizarra";

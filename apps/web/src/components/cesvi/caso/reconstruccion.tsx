@@ -14,6 +14,8 @@ import {
  * los métodos de CESVI; `Visor3dCaso` es el 3D del escenario.
  */
 import {
+  danoEnTexto,
+  lecturasDeDano,
   formato as F,
   especDeExpediente,
   especReconstruida,
@@ -318,6 +320,30 @@ export function TablaContraCesvi({ contra }: { contra: ContraMetodosCesvi }) {
 }
 
 /**
+ * La deformación medida contra la reconstrucción que se ve, cuando no hay hipótesis entre las que
+ * elegir (con hipótesis, cada tarjeta lo dice). Nada si ningún vehículo trae deformación medida.
+ */
+export function DanoContraReconstruccion({
+  r,
+  nombres = {},
+}: {
+  r: Reconstruccion;
+  nombres?: Record<string, string>;
+}) {
+  const lecturas = useMemo(() => lecturasDeDano(r), [r]);
+  if (!lecturas.length) return null;
+  return (
+    <ul className="t-nota flex flex-col gap-1" data-testid="dano-contra-reconstruccion">
+      {lecturas.map((l) => (
+        <li key={l.vehiculo} data-estado={l.estado} data-energia-pct={F.fijo(l.energiaPct, 1)}>
+          {danoEnTexto(l, nombres[l.vehiculo] ?? l.vehiculo)}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/**
  * Las hipótesis (ADR 0091): un reposo supuesto que no cabe con la deformación medida, u otro
  * mínimo del multiarranque con un costo parecido al del mejor. Cada una con sus números y su
  * costo. El perito elige; Croquis no elige por él.
@@ -331,6 +357,11 @@ export function ElegirHipotesis({
   elegida: string | null;
   onElegir: (clave: string) => void;
 }) {
+  // La deformación medida contra cada hipótesis, con sus números (auditoría, C5).
+  const dano = useMemo(
+    () => new Map((r.hipotesis ?? []).map((h) => [h.clave, lecturasDeDano(r, h.clave)])),
+    [r],
+  );
   if (!r.hipotesis) return null;
   const hs = r.hipotesis;
   const vista = hs.find((h) => h.clave === elegida);
@@ -377,11 +408,25 @@ export function ElegirHipotesis({
                   {x.vehiculo} termina a {F.metros(x.m, 1)} de su reposo supuesto
                 </li>
               ))}
-              <li>
-                {h.alcanzaDano
-                  ? "Alcanza la deformación medida"
-                  : "No alcanza la deformación medida"}
-              </li>
+              {(dano.get(h.clave) ?? []).length ? (
+                (dano.get(h.clave) ?? []).map((l) => (
+                  <li
+                    key={l.vehiculo}
+                    className="font-sans"
+                    data-testid={`dano-${h.clave}-${l.vehiculo}`}
+                    data-estado={l.estado}
+                    data-energia-pct={F.fijo(l.energiaPct, 1)}
+                  >
+                    {danoEnTexto(l)}
+                  </li>
+                ))
+              ) : (
+                <li>
+                  {h.alcanzaDano
+                    ? "Alcanza la deformación medida"
+                    : "No alcanza la deformación medida"}
+                </li>
+              )}
             </ul>
             <button
               type="button"
