@@ -1,0 +1,143 @@
+{
+  "descripcion": "Las cifras publicadas de Croquis, cada una con el archivo y el campo de donde sale. Generado por eval/cifras.mjs; no se edita a mano.",
+  "retiradas": [
+    {
+      "texto": "71.56",
+      "que": "AXA antes de W8 (T3.2, 2026-11-12)"
+    },
+    {
+      "texto": "68.02",
+      "que": "AXA antes de W8: p10"
+    },
+    {
+      "texto": "92.81",
+      "que": "AXA antes de W8: p90"
+    },
+    {
+      "texto": "63.17",
+      "que": "AXA con la inversión de octubre"
+    },
+    {
+      "texto": "113.09",
+      "que": "AXA con la inversión de octubre: p90"
+    },
+    {
+      "texto": "68,557",
+      "que": "Paridad antes de las 14 escenas"
+    },
+    {
+      "texto": "68 557",
+      "que": "Paridad antes de las 14 escenas"
+    },
+    {
+      "texto": "68557",
+      "que": "Paridad antes de las 14 escenas"
+    }
+  ],
+  "cifras": {
+    "corpus.reportes": {
+      "que": "Reportes de CESVI estudiados",
+      "valor": 671,
+      "texto": "671",
+      "fuente": "eval/results/cesvi_corpus_extraccion.json",
+      "campo": "dictamenes"
+    },
+    "corpus.validos": {
+      "que": "Reportes leídos con un expediente válido",
+      "valor": 668,
+      "texto": "668",
+      "fuente": "eval/results/cesvi_corpus_extraccion.json",
+      "campo": "validos"
+    },
+    "er4.prueba": {
+      "que": "Reportes de la prueba, reconstruidos a ciegas",
+      "valor": 205,
+      "texto": "205",
+      "fuente": "data/cesvi/r4/pagina.json",
+      "campo": "dictamenes"
+    },
+    "er4.modalidad_titulo": {
+      "que": "Modalidad acertada contra el título del reporte (prueba; solo los reportes que la dicen en su título)",
+      "k": 91,
+      "n": 156,
+      "pct": 58.3,
+      "texto": "91 de 156 (58.3 %)",
+      "fuente": "eval/results/cesvi_r4c_titulo_prueba.json",
+      "campo": "v4.titulo_del_reporte.croquis"
+    },
+    "er4.regla_simple": {
+      "que": "La regla simple (decir siempre la modalidad más frecuente), sobre los mismos reportes",
+      "k": 58,
+      "n": 156,
+      "pct": 37.2,
+      "texto": "58 de 156 (37.2 %)",
+      "fuente": "eval/results/cesvi_r4c_titulo_prueba.json",
+      "campo": "v4.titulo_del_reporte.linea_base"
+    },
+    "axa.v2": {
+      "que": "AXA A2010930: velocidad de V2 (B) antes del impacto, reconstrucción física de la app",
+      "mejor": 56.87,
+      "p10": 54.79,
+      "p90": 78.39,
+      "unidad": "km/h",
+      "muestras": 32,
+      "juego_de_muestras": "producción",
+      "texto": "57 km/h (55–78)",
+      "texto_completo": "56.87 km/h (54.79–78.39)",
+      "fuente": "eval/results/axa_rango_estable.json",
+      "campo": "filas.0.V2"
+    },
+    "axa.v1": {
+      "que": "AXA A2010930: velocidad de V1 (A) antes del impacto, reconstrucción física de la app",
+      "mejor": 14.98,
+      "p10": 0.8,
+      "p90": 16.45,
+      "unidad": "km/h",
+      "muestras": 32,
+      "juego_de_muestras": "producción",
+      "texto": "15 km/h (1–16)",
+      "texto_completo": "14.98 km/h (0.80–16.45)",
+      "fuente": "eval/results/axa_rango_estable.json",
+      "campo": "filas.0.V1"
+    },
+    "axa.hipotesis": {
+      "que": "AXA A2010930: hipótesis que muestra la reconstrucción",
+      "valor": 2,
+      "texto": "2",
+      "fuente": "eval/results/axa_rango_estable.json",
+      "campo": "filas.0.hipotesis"
+    },
+    "paridad.numeros": {
+      "que": "Números comparados entre el solver TS y la referencia Python (E7)",
+      "valor": 89710,
+      "texto": "89,710",
+      "fuente": "eval/results/e7_parity.json",
+      "campo": "numeros_comparados"
+    },
+    "paridad.escenas": {
+      "que": "Escenas canónicas de la paridad (E7)",
+      "valor": 14,
+      "texto": "14",
+      "fuente": "eval/results/e7_parity.json",
+      "campo": "escenas.length"
+    },
+    "paridad.max_abs": {
+      "que": "Mayor diferencia absoluta de la paridad (E7)",
+      "valor": 0,
+      "texto": "0",
+      "fuente": "eval/results/e7_parity.json",
+      "campo": "max_abs"
+    },
+    "reversa.velocidad": {
+      "que": "Velocidad supuesta de un vehículo en reversa: mediana y p10–p90 de la velocidad máxima de maniobras reales",
+      "mejor": 5.68,
+      "p10": 3.06,
+      "p90": 9.07,
+      "unidad": "km/h",
+      "texto": "5.68 km/h (3.06–9.07)",
+      "fuente": "packages/cesvi/src/data/reversa-nhtsa.json",
+      "campo": "velocidad_maxima_mph.{p10,p50,p90}",
+      "cita": "NHTSA, DOT HS 811 024: Mazzae, Barickman, Baldwin y Ranney (2008), «On-Road Study of Drivers' Use of Rearview Video Systems (ORSDURVS)»"
+    }
+  }
+}
