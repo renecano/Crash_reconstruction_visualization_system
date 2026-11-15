@@ -1,254 +1,209 @@
 # Croquis
 
-> Reconstrucción 3D de percances viales a partir del relato de quien los vivió.
-> _Crash Reconstruction from Oral Queries Using Impact Simulation._ Cuenta. Reconoce. Ordena. ¿Qué falta? Ubica. Impacta. Simula.
-> **Reconstrucción ilustrativa. No es un peritaje, una prueba legal ni un dictamen de responsabilidad.**
+> Reconstrucción de hechos de tránsito con física, a partir de lo que narra el perito, para los peritos de **CESVI México**.
+> **Reconstrucción ilustrativa. No asigna culpa ni estima lesiones; el dictamen lo firma el perito.**
 
-Croquis toma lo que una persona cuenta ("iba por Tollocan, el de la camioneta gris se me cerró…"), lo convierte con un LLM en una escena estructurada donde cada dato está ligado a la frase que lo respalda o marcado como supuesto, lo deja corregir en un croquis 2D, reconstruye la física con un solver propio y lo muestra en 3D en el navegador. **La IA traduce, la física decide y el visor muestra.**
+El perito narra el hecho como lo escribe en sus reportes. Croquis lo ordena en una escena donde cada dato lleva su cita o queda marcado como supuesto, la reconstruye con un solver propio, la muestra en 3D y arma un dictamen con la estructura de los reportes de CESVI. **La IA ordena lo narrado, la física decide los números y el 3D solo reproduce.**
 
-Estado: **F11 — Producto final** (ver `docs/PROGRESS.md`). Toda cifra que aparece aquí sale de un script en `eval/` con su salida versionada en `eval/results/`, y cada decisión técnica tiene su ADR en `docs/adr/`.
+- **En vivo:** <https://croquis-sage.vercel.app/cesvi>
+- **Estado en dos páginas:** [`docs/ESTADO.md`](docs/ESTADO.md)
+- **Plan vigente:** [`docs/cesvi/PLAN-CESVI.md`](docs/cesvi/PLAN-CESVI.md) (v4)
 
-## Problema
+Toda cifra de este archivo sale de un script de `eval/` cuya salida está versionada en `eval/results/`; las principales están atadas al índice [`eval/results/cifras.json`](eval/results/cifras.json) y `node eval/verificar_cifras.mjs` falla si alguna deja de coincidir. Cada decisión técnica tiene su ADR en `docs/adr/`.
 
-Cifras calculadas desde los datos abiertos de INEGI ATUS 1997–2025 con `uv run croquis-eval atus-summary` (fuente y definiciones en `data/SOURCES.md`; salida en [`eval/results/atus_summary.json`](eval/results/atus_summary.json)).
+![AXA en el visor Unity, de día](docs/cesvi/u5/final/escala_elegida/axa-dia-cinematica.webp)
 
-| Indicador (zonas urbanas y suburbanas de México) |    2024 |    2025 |   Cambio |
-| ------------------------------------------------ | ------: | ------: | -------: |
-| Accidentes de tránsito registrados               | 374,949 | 380,391 |  +1.45 % |
-| Personas fallecidas en el lugar                  |   4,656 |   4,571 |  −1.83 % |
-| Personas heridas                                 |  85,980 |  86,956 |  +1.14 % |
-| Colisiones con motocicleta                       |  61,869 |  68,505 | +10.73 % |
-| Volcaduras                                       |  13,371 |  15,412 | +15.26 % |
-| Peatones fallecidos en el lugar                  |     901 |     776 | −13.87 % |
-| Pasajeros fallecidos en el lugar                 |     972 |   1,004 |  +3.29 % |
+## El problema
 
-- En 2025 el **Estado de México** fue la entidad con más personas fallecidas en el lugar (460, con 25,032 accidentes), seguido de Jalisco (391), Puebla (291), Chihuahua (271) y Ciudad de México (269).
-- Distribución por tipo en 2025: colisión con vehículo automotor 58.4 %, con motocicleta 18.0 %, con objeto fijo 11.4 %, volcadura 4.1 %, con peatón 2.8 %, salida del camino 2.6 %, con ciclista 1.1 %. Esta distribución guía la composición del benchmark Relatos-MX (F6).
-- El total de 2021 recalculado desde el archivo (340,415) coincide con la cifra publicada por el INEGI que citaba el plan.
+Un perito de CESVI recibe un siniestro, revisa daños, posiciones y huellas, calcula velocidades y escribe un reporte. Lo hace a mano, con hojas de cálculo y un croquis. CESVI entregó **<!--cifra:corpus.reportes-->671<!--/cifra--> reportes** para este proyecto ([`eval/results/cesvi_corpus_extraccion.json`](eval/results/cesvi_corpus_extraccion.json)); de ahí salen el vocabulario, la estructura del dictamen y los casos con los que se mide Croquis.
 
-Después de un percance, quien lo vivió tiene que explicarlo (a su aseguradora, al ajustador, al otro conductor, a su familia) con palabras y, a lo mucho, un croquis a mano. Las herramientas profesionales de reconstrucción son caras, cerradas y para peritos; las animaciones genéricas no respetan la física.
+CESVI pidió cuatro cosas para esta versión (plan v4): el 3D en Unity, los puntos intermedios y el punto inicial del choque, objetos que se pueden mover y un terreno que afecta la reconstrucción.
 
-## Qué hay hoy
+## Qué hace
 
-- **El contrato `EscenaSpec` v1** (`packages/scene-schema/escena.schema.json`): cada dato lleva `fuente` (relato, usuario, supuesto o default), `confianza` y el fragmento literal del relato que lo respalda. Zod y Pydantic se generan desde el esquema y CI verifica que estén al día.
-- **Once escenas canónicas** con relato (alcance, lateral en intersección, frontal en curva, peatón en cruce, motociclista, árbol, poste, volcadura, nocturno con lluvia, glorieta y un cruce de Toluca sobre una vía real de OpenStreetMap) que validan en TypeScript y en Python.
-- **Un validador semántico** con paridad TS ↔ Python: referencias rotas, evidencia faltante, rangos declarados, masas y dimensiones fuera de la clase (tabla construida desde 47 fichas técnicas), velocidades implausibles, vehículos encimados, roles y eventos incoherentes. Los mensajes nunca asignan culpa.
-- **El visor 3D** (`/visor`): las once escenas reconstruidas por el solver en el navegador, con vía, banquetas y rayas del mismo modelo que el croquis, vehículos genéricos sin marcas a sus dimensiones reales, personas articuladas, sol según fecha, hora y lugar, línea de tiempo con cámara lenta y cuadro por cuadro, cámaras libre, cenital, del conductor (con lo que podía ver), cinematográfica, de daño y que sigue a la persona, y la tabla de ΔV, dirección de la fuerza y energía con la fuente de cada parámetro. Usa `WebGPURenderer` de three.js y elige por medición entre WebGPU y WebGL 2.
-- **El daño** que calcula el solver se ve en cada vehículo: la carrocería se hunde con la forma y la profundidad del perfil de aplastamiento C1–C6 (una prueba lo mide sobre la malla), con pintura transferida, rayones, parabrisas agrietado, vidrios y piezas desprendidas simulados con Rapier, bolsas de aire con umbrales del IIHS y marcas de frenado y derrape sacadas de las trayectorias. Las reglas que no salen del solver están marcadas como ilustrativas.
-- **Las personas** son cuerpos de MakeHuman (CC0), sin rasgos de sexo ni etnia y con ropa neutra; la edad elige la variante y la complexión sale de la masa y la estatura. Quien camina lo hace con una marcha de curvas biomecánicas publicadas. Quien es golpeado sale proyectado con un ragdoll de Rapier que cae dentro de los límites de Searle. Los ocupantes van en su asiento y se mueven en el impacto según el solver (con y sin cinturón), con aros azules neutros donde tocan el interior; Croquis no estima lesiones. La cámara del conductor marca qué podía ver y qué lo tapaba, y la volcadura se ve como secuencia ilustrativa.
-- **El croquis 2D** (`/croquis`): arrastra y gira vehículos, personas, objetos y marcas; el JSON y el dibujo son la misma escena y lo que la persona mueve queda marcado como suyo.
-- **El relato** (`/relato`): la persona escribe con sus palabras. Los nombres, placas, teléfonos, correos, CURP, RFC y números de domicilio se quitan en el navegador antes de enviar (el mismo redactor en Python y en TypeScript, con paridad probada en 517 textos). Un glosario de español mexicano reconoce expresiones como "se me cerró" o "le di un alcance". La extracción usa Claude con salida estructurada cuando hay llave (si no, una línea base de reglas) y siempre termina en el mismo constructor de `EscenaSpec`: cada dato del relato lleva su cita literal y lo que no tiene cita baja a `supuesto`. Después se pregunta, como máximo tres veces por ronda, solo lo que más cambia la reconstrucción (contradicciones que detecta el solver y sensibilidad con semilla), sin culpar a nadie, y la escena se abre en el croquis.
-- **Relatos-MX** (`data/relatos-mx`): 320 relatos sintéticos con su `EscenaSpec` de referencia, distribuidos como los tipos de accidente de ATUS, en cinco registros (coloquial, formal, con faltas, desordenado, breve), con datos personales sintéticos y 197 variantes contrafactuales. El test (160) está congelado por hash. Un segundo test congelado, de 150 relatos, toma la verdad de los campos codificados de NHTSA CISS 2024 y no de quien escribe (ADR 0012).
-- **Rangos, inversión y consistencia** (F7): cada resultado trae el intervalo del 80 % (Monte Carlo con semilla sobre velocidades, masas, fricción y frenado). La inversión busca las velocidades y direcciones con las que el solver reproduce la evidencia declarada (posiciones y orientación final, marcas de frenado, distancia de proyección, daño), y dice cuándo la evidencia no basta para estimar algo. Lo declarado que no cabe en ninguna solución física se marca en lenguaje llano, sin culpar, y en `/relato` se convierte en pregunta. En el visor se comparan hasta tres hipótesis ("¿y si iba a 60?") como vehículos fantasma, con la diferencia en un panel.
-- **Todo corre en Vercel** (ADR 0011): la comprensión del relato y el solver tienen port en TypeScript con paridad probada contra la referencia Python. La extracción coincide en todo Relatos-MX, con reglas y con las respuestas grabadas de Claude (E1 da las mismas métricas con los dos pipelines) y el solver reproduce las once escenas (E7). Las rutas del relato son Route Handlers de Next.js, con la extracción en streaming. Las hipótesis y la escena propia del visor se reconstruyen en el navegador, en un Web Worker, y el resultado es el mismo en Chromium, Firefox y WebKit (E8, ADR 0029).
-- **Sin red** (F9, ADR 0030): un service worker precarga la demo (páginas, solver, visor, Rapier, resultados, cuerpos y texturas), que abre y reconstruye sin conexión. Solo entender el relato con Claude pide red, y la página lo dice.
-- **Exportaciones** (F9, ADR 0031), generadas en el navegador y siempre con la marca «Reconstrucción ilustrativa generada a partir de un relato. No es un peritaje.», la semilla y el hash de entradas:
-  - **Informe PDF:** croquis, línea de tiempo, resultados con su rango del 80 %, lo que dice la evidencia, avisos, parámetros con su fuente, supuestos e identificación.
-  - **Video MP4 o WebM:** se dibuja cuadro por cuadro con WebCodecs.
-  - **Cuadros PNG** de hasta 4K.
-  - **Escena glTF:** con la animación de vehículos, restos, personas y daño.
-  - **Croquis:** en SVG, PNG y PDF, con norte y barra de escala.
-- **Validación del daño contra autos reales** (F10, E5): el visor deforma la malla y se mide en los puntos donde se midió cada auto real.
-  - **Muestra:** pruebas de choque de NHTSA y choques reales de CISS.
-  - **Partición:** congelada antes de medir.
-  - **Ajuste:** solo con la partición de desarrollo; el test se corrió una sola vez.
-  - **Galería:** fotos reales junto a Croquis ([`docs/galeria-e5`](docs/galeria-e5/README.md)).
-- **Páginas para entender el proyecto** (F11):
-  - [historia](https://croquis-sage.vercel.app/historia): por qué existe Croquis, con datos de ATUS;
-  - [recorrido técnico](https://croquis-sage.vercel.app/recorrido): E1–E9 con gráficas generadas desde `eval/results/`;
-  - [demo «Tú eres…»](https://croquis-sage.vercel.app/demo): relatos de ejemplo con la respuesta grabada de Claude. Se contesta, se corrige y se ve en 3D sin servidor y sin red.
-- **El solver de referencia** (`solver/croquis_solver`): impacto por impulso entre cuerpos rígidos planos, energía de deformación CRASH3 con rigidez por clase medida en pruebas de NHTSA, frenado y trayectorias previas, movimiento posterior hasta el reposo, objetos fijos, proyección de peatones y jinetes (Searle), cinemática de ocupantes, visibilidad desde el ojo de cada conductor y criterio de inicio de volcadura. Reconstruye las once escenas de forma determinista; la conservación de momento se prueba con Hypothesis.
+1. **Narrar.** El perito escribe o pega su narración. Antes de salir del navegador se quitan nombres, teléfonos, placas, VIN, folios, pólizas y números de siniestro; las cifras del hecho (masas, distancias, años) se conservan. Claude ordena el texto en datos con su cita literal; un verificador descarta toda cita que no esté en el texto.
+2. **Colocar.** En el mapa, una pregunta a la vez: dónde fue, posiciones de impacto y finales, el primer golpe, puntos de paso, objetos y terreno (superficies, topes, relieve real).
+3. **Reconstruir.** El solver busca las velocidades que reproducen la evidencia y da su rango. Dice qué evidencia fija cada número, qué queda como supuesto y qué parte de la deformación medida explica la reconstrucción. Si dos hipótesis no caben juntas, muestra las dos y el perito elige.
+4. **Ver.** El visor Unity reproduce el resultado: trayectorias, personas, día y noche, lluvia, y edición en 3D que vuelve a correr el solver. El perito pausa, repite, cambia la velocidad y va al instante del impacto. La carrocería se deforma con el perfil de aplastamiento del solver; eso está en el código desde el 2026-11-15 y todavía no en el build publicado (ver «Límites»).
+5. **Comparar.** Contra el reporte de CESVI, con el valor y el porcentaje de cada diferencia; y, si se quiere, contra la versión que declara un conductor.
+6. **Dictaminar.** El dictamen sale en PDF y Word con la estructura de los reportes de CESVI, con las fotos del 3D, los supuestos y la leyenda ilustrativa.
+
+![Edición en 3D: al mover un objeto, el caso se vuelve a calcular](docs/cesvi/u6/produccion/2-arrastrando-poste.png)
+
+## Qué no hace
+
+- No asigna culpa ni dice quién miente.
+- No estima lesiones ni muestra contenido gráfico de personas lesionadas.
+- No inventa números: lo que el reporte o el perito no dan entra como supuesto declarado, con su justificación y su rango.
+- No sustituye al perito: él elige entre hipótesis, corrige la escena y firma.
+- Unity no calcula: todo movimiento sale del resultado del solver.
 
 ## Cómo probarlo
 
+### En vivo
+
+<https://croquis-sage.vercel.app/cesvi>. Abre el caso de AXA (A2010930) o empieza un «Caso nuevo». La [reproducción de reportes](https://croquis-sage.vercel.app/cesvi/reproduccion) muestra los <!--cifra:er4.prueba-->205<!--/cifra--> casos de la prueba congelada. Las páginas del producto anterior (`/demo`, `/relato`, `/visor`, `/croquis`, `/publico`, `/historia`) llevan a la portada.
+
 ### En local (Windows, PowerShell)
 
-Requisitos: Node 24, pnpm 12, Python 3.14 y uv 0.13 (ver `docs/adr/0001-stack.md`).
+Requisitos: Node 24.12, pnpm 12, Python 3.14 y uv (versiones en [`docs/adr/0001-stack.md`](docs/adr/0001-stack.md)).
 
 ```powershell
 pnpm install
 uv sync --all-packages --all-groups
-pnpm dev            # web y API en http://localhost:3000 (/demo, /relato, /croquis, /visor, /historia, /recorrido)
-                    # con ANTHROPIC_API_KEY en .env.local el relato usa Claude; sin ella, la línea base de reglas
-uv run pytest       # pruebas Python (referencia del solver y de la extracción)
-pnpm test           # pruebas TypeScript
-pnpm --filter @croquis/web test:e2e   # Playwright (requiere `playwright install chromium`)
+pnpm dev                      # http://localhost:3000/cesvi
 ```
 
-Cada evaluación se reproduce con el comando que aparece junto a su resultado en «Resultados medidos».
+- **Sin llave de Claude,** el caso de AXA y la reproducción de reportes funcionan completos; leer una narración nueva con Claude necesita la llave.
+- **Con llave:** copia `.env.example` a `.env.local` y pon tu `ANTHROPIC_API_KEY`. Hay un tope de gasto diario, que reserva el costo máximo de cada lectura antes de hacerla ([ADR 0140](docs/adr/0140-tope-de-gasto-con-reserva.md)), y un límite de peticiones por hora por ruta.
+- **El 3D** baja el build de Unity y los modelos de Vercel Blob; sin red se usa el visor three.js de respaldo.
 
-### En vivo
+Pruebas:
 
-Producción: https://croquis-sage.vercel.app ([demo «Tú eres…»](https://croquis-sage.vercel.app/demo) · [historia](https://croquis-sage.vercel.app/historia) · [recorrido técnico](https://croquis-sage.vercel.app/recorrido)), desplegada desde `main` en Vercel (web y API como Route Handlers; ADR 0011). Cada rama tiene su vista previa. La extracción usa Claude con un tope de gasto diario y un límite por hora (ver `.env.example`).
+```powershell
+pnpm test                                   # TypeScript (Vitest)
+uv run pytest -n auto                       # Python (referencia del solver)
+pnpm --filter @croquis/web test:e2e         # Playwright, una e2e por flujo principal
+dotnet test apps/visor-unity/tests/Croquis.Core.Tests -c Release   # núcleo del visor
+node eval/verificar_cifras.mjs              # las cifras publicadas contra eval/results
+```
+
+El visor de escritorio y los builds de Unity no se compilan en CI; se publican con `tools/unity/` (ver [`docs/progress/U.md`](docs/progress/U.md)).
 
 ## Resultados medidos
 
-Cada evaluación tiene un script en `eval/`, su salida versionada en `eval/results/` y una alternativa simple contra la que se compara (PLAN §8).
+### Contra los reportes de CESVI (E-R4 v4)
 
-| ID  | Qué se mide                                                                                                                                                                                                                                                                                                                   | Croquis                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Alternativa simple                                                                                                              |
-| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| E2  | Velocidad de impacto a partir del aplastamiento, contra barrera rígida frontal; coeficientes CRASH3 por clase, dejar-uno-fuera (1316 pruebas de NHTSA, 8 clases)                                                                                                                                                              | error absoluto medio **8.1 km/h**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | recta global ΔV = c·C̄ sin clase ni masa: 9.03 km/h; regla de Emori (1 mph por pulgada): 27.74 km/h                              |
-| E2  | Aplastamiento medio a partir de la velocidad, mismas pruebas                                                                                                                                                                                                                                                                  | error absoluto medio **75.4 mm**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | recta global: 74.4 mm                                                                                                           |
-| E4  | Velocidad de impacto a partir de la distancia de proyección de un peatón, 17 casos publicados (impactos escenificados del IPTM, pruebas con maniquí y casos reales)                                                                                                                                                           | error absoluto medio **5.215 km/h**; el intervalo cubre **65 %** de los casos (ancho medio 12.685 km/h)                                                                                                                                                                                                                                                                                                                                                                                                                                               | Searle sola: 5.813 km/h, cobertura 24 % (ancho 5.831 km/h); Wood: 6.156 km/h                                                    |
-| E4  | Distancia de proyección a partir de la velocidad medida, mismos casos                                                                                                                                                                                                                                                         | error absoluto medio **2.543 m**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Searle sola: 2.912 m                                                                                                            |
-| F5  | Ragdoll del visor dentro de los límites de Searle (460 corridas con semilla: escenas canónicas y barrido de 20 a 70 km/h con tres cuerpos)                                                                                                                                                                                    | **100 %** con la calibración; **94.6 %** con la física sola                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | criterio de PLAN §13: ≥ 95 %                                                                                                    |
-| F7  | Inercia de guiñada medida: radio de giro proporcional al largo por grupo de carrocería, desde la base de parámetros inerciales de NHTSA (164 vehículos medidos, dejar uno fuera; ADR 0015)                                                                                                                                    | error relativo medio de la inercia **5.3 %**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | placa uniforme que usaba el solver: 10.0 % (sobreestima 7.5 %); $I_z = m\,a\,b$: 7.8 %                                          |
-| E6  | Rendimiento del visor con daño y personas en la laptop de referencia (i5-10210U, Intel UHD, 8 GB): 11 escenas a 1920×1080, cámara en movimiento, sin tope de vsync; mediana de 3 repeticiones, navegador nuevo por medición, modo de energía «Mejor rendimiento» y condiciones registradas (ADR 0026)                         | modo automático: calidad baja **104.5 fps** y media **69.8 fps** de mínimo entre escenas; carga inicial **3.13 MB**. Alta y ultra se miden en la computadora de demo (pendiente)                                                                                                                                                                                                                                                                                                                                                                      | PLAN §7.8: en la laptop, baja ≥ 30 y media ≥ 60 fps, y carga ≤ 8 MB; alta y ultra ≥ 60 fps en la computadora de demo            |
-| E1  | Extracción del relato en el test congelado de Relatos-MX (160 relatos sintéticos de 9 tipos de ATUS y 5 registros); prompt v3 de producción, medido después de decidirlo (ADR 0019); verificador de evidencia                                                                                                                 | **Claude Sonnet 5.5**: F1 micro **0.924** (macro 0.930), clase 0.921, vehículos exactos 91.3 %; **Claude Haiku 5.5**: 0.902 (macro 0.904), clase 0.894, 93.1 %. Con v2: 0.919 y 0.896; con v1: 0.875 y 0.852. Citas sin respaldo literal antes del verificador: Sonnet 1 de 1579, Haiku 9 de 1518; después: **0**                                                                                                                                                                                                                                     | línea base de reglas: F1 micro 0.714 (macro 0.557), clase 0.802, vehículos exactos 69.4 %                                       |
-| E1  | Costo y latencia de la extracción, mismo test                                                                                                                                                                                                                                                                                 | Sonnet **$9.49** por 1,000 relatos, p50 5.0 s (p95 10.0 s); Haiku $1.31, p50 10.5 s (p95 13.9 s)                                                                                                                                                                                                                                                                                                                                                                                                                                                      | reglas: $0, p50 2.1 ms                                                                                                          |
-| E1  | Fuga de datos personales del redactor en el navegador, mismo test (110 datos sintéticos; es común a los tres métodos)                                                                                                                                                                                                         | **7.3 %** se filtran (6 nombres, 2 placas); 2 tramos redactados de más                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | sin redactor: 100 %                                                                                                             |
-| E1  | Diferencia contrafactual: cambiar sexo, edad o vehículo no debe cambiar velocidades ni maniobras (56, 52 y 52 pares), pareada con repetir el mismo relato (McNemar exacto); prompt v3                                                                                                                                         | Ningún tipo difiere del ruido. Sonnet: sexo, 4 pares cambian solo en el contrafactual contra 2 solo al repetir (p = 0.69); edad, 4 contra 3 (p = 1.0); vehículo, 3 contra 5 (p = 0.73). Haiku: edad, 5 contra 0 (p = 0.06). En los pares de sexo con velocidad distinta, Sonnet da más rápido al hombre en 1 y a la mujer en 0; Haiku, 2 y 1 (p = 1.0)                                                                                                                                                                                                | reglas (deterministas): el vehículo cambia la salida en 6 de 52 pares (p = 0.03)                                                |
-| E1  | Preguntas (≤ 3 por ronda): errores de extracción en velocidad, maniobra, frenado, clase y estado del piso que cubren, y preguntas no redundantes; prompt v3                                                                                                                                                                   | sobre Sonnet: 15.4 % de 26 errores, 92.1 % no redundantes; sobre Haiku: 19.7 % de 61, 92.5 %                                                                                                                                                                                                                                                                                                                                                                                                                                                          | sobre reglas: 34.5 % de 174, 94.7 %                                                                                             |
-| E1  | Versiones del prompt en el dev de Relatos-MX (190 relatos: los 160 originales y 30 con marcas en el piso, ADR 0019). Criterio fijado antes de medir: cada versión pasa a producción si no empeora en dev y después en el test CISS                                                                                            | F1 micro sin la fase de las marcas, v1 → v2 → v3: Sonnet 0.895 → 0.936 → **0.939**; Haiku 0.869 → 0.913 → **0.921**. Clase, v1 → v2: Sonnet 0.649 → 0.943, Haiku 0.650 → 0.920. Fase de las marcas (30 relatos, solo v3): Sonnet F1 **0.824**, Haiku **0.868**, sin ninguna inventada. **v4** (semáforo peatonal, ADR 0043; dev de 220): lo lee con F1 0.978 en los dos modelos, pero con Sonnet baja el F1 micro común de 0.9354 a 0.9328 y no pasa el criterio, así que **no pasa a producción** (la diferencia entre dos corridas de v3 es 0.0054) | reglas: F1 micro sin la fase 0.752; fase 0.182 (encuentran el largo de las marcas en 4 de 36)                                   |
-| E1  | Extracción del relato en el test CISS de Relatos-MX: 150 relatos cuya verdad sale de los campos codificados de NHTSA CISS 2024, no del texto (ADR 0012); prompt v3 de producción, que en este test debía no empeorar a v2 (ADR 0019)                                                                                          | **Sonnet**: F1 micro **0.993** (macro 0.996), clase 0.973, vehículos exactos 100 %; **Haiku**: 0.987 (macro 0.991), clase 0.975, 100 %. Con v2: 0.993 y 0.986; con v1: 0.978 y 0.968. Citas sin respaldo antes del verificador: Sonnet 1 de 1526, Haiku 4 de 1539; después: **0**                                                                                                                                                                                                                                                                     | reglas: F1 micro 0.690 (macro 0.679), clase 0.514, vehículos exactos 53.3 %                                                     |
-| E1  | Velocidad de quien narra contra la del EDR de NHTSA, mismo test (113 relatos la dicen, redondeada a 5 km/h)                                                                                                                                                                                                                   | Sonnet y Haiku la extraen en los 113: error medio **1.47 km/h** contra el EDR, el mismo piso que pone el redondeo (1.47 km/h)                                                                                                                                                                                                                                                                                                                                                                                                                         | reglas: la extraen en 104, error medio 3.09 km/h                                                                                |
-| E1  | Costo, latencia, fuga de datos personales y diferencia contrafactual, mismo test (163 datos sintéticos; 65 pares contrafactuales); prompt v3                                                                                                                                                                                  | Sonnet **$9.25** por 1,000 relatos, p50 4.2 s (p95 8.4 s); Haiku $1.07, p50 8.0 s (p95 11.6 s). Fuga del redactor: **1.2 %** (2 nombres). Contrafactual: 0 de 65 pares cambia en Sonnet y 2 en Haiku; al repetir el mismo relato, 2 y 5 de 150                                                                                                                                                                                                                                                                                                        | reglas: $0; contrafactual 0 de 65                                                                                               |
-| E2  | Rigidez lateral desde pruebas de barrera móvil de NHTSA (FMVSS 214 y NCAP lateral, 1,265 pruebas, 8 clases; ADR 0013): ΔV de cada prueba con la mediana de las demás de su clase, con el mismo cálculo del solver                                                                                                             | error absoluto medio **6.19 km/h**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | respaldo genérico que se usaba antes: 14.95 km/h                                                                                |
-| E2  | Rigidez trasera desde pruebas FMVSS 301 con barrera rígida (136 pruebas de modelos 1975–2004, 6 clases; ADR 0014): ΔV de cada prueba con la mediana de las demás de su clase                                                                                                                                                  | error absoluto medio **4.57 km/h**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | respaldo genérico: 33.94 km/h                                                                                                   |
-| E3  | ΔV a partir del aplastamiento medido, contra el ΔV que registró el EDR, en NHTSA CISS: test 2022–2024 (2,205 vehículos con EDR y ΔV de WinSMASH); la única constante libre se calibró con 2017–2021                                                                                                                           | error absoluto medio **8.85 km/h** (mediano 6.22), sesgo −0.57 km/h, 68.8 % a ±10 km/h; el intervalo p10–p90 cubre **81.5 %** de los casos                                                                                                                                                                                                                                                                                                                                                                                                            | WinSMASH (lo reconstruye CISS): 8.19 km/h (mediano 5.70), sesgo −3.45, 72.6 % a ±10 km/h                                        |
-| E3  | Por grupo, mismos casos                                                                                                                                                                                                                                                                                                       | EDR ≥ 48 km/h (254): **16.26 km/h**, sesgo −11.90; frontales (1455): 9.17; laterales (494): 8.50, sesgo +2.41; traseros (256): **7.68**, sesgo −0.75                                                                                                                                                                                                                                                                                                                                                                                                  | WinSMASH: 17.54, sesgo −14.37; 8.65; 7.32; 7.26, sesgo +1.87                                                                    |
-| E7  | Paridad del solver TS (el de producción, en el navegador y en Vercel) con la referencia Python: el resultado completo de las <!--cifra:paridad.escenas-->14<!--/cifra--> escenas canónicas (trayectorias, daño, personas, visibilidad, Monte Carlo, inversión y consistencia), incluida la de Toluca con vía de OpenStreetMap | **<!--cifra:paridad.numeros-->89,710<!--/cifra-->** números comparados con diferencia máxima **<!--cifra:paridad.max_abs-->0<!--/cifra-->** y **0** diferencias de estructura o texto; inversión y consistencia: **515** números con diferencia máxima **0**                                                                                                                                                                                                                                                                                          | relativa 1e-6, absoluta 1e-5; inversión y consistencia, una unidad de su resolución reportada (0.011)                           |
-| E8  | Determinismo entre navegadores (Chromium 156, Firefox 157 y WebKit 27.2, dos repeticiones cada uno): el resultado completo del solver TS en las 11 escenas canónicas y el horneado con Rapier del visor (restos, volcaduras y ragdolls calibrados)                                                                            | Solver: **11 de 11** escenas con el mismo SHA-256 en los tres motores (antes de `dmath`, 8 de 11). Horneado: **11 de 11**, igual en calidad baja, media y ultra. Costo del solver completo en V8: **×1.22**, con el resultado idéntico bit a bit al anterior                                                                                                                                                                                                                                                                                          | `Math` nativo: 8 de 11 (Firefox difiere en `frontal_curva`, `glorieta` y `motociclista`)                                        |
-| E5  | Perfil de aplastamiento de la malla deformada del visor contra el medido en choques reales: test congelado de NHTSA CISS 2022–2024 (3,889 vehículos; 3,208 con el orden de C1–C6 conocido). Energía del ΔV del EDR; forma y ancho de Croquis por zona del CDC (ADR 0032 y 0033); medido en las estaciones reales              | error por punto mediano **7.50 cm** (IC 90 % 7.33–7.70); profundidad máxima 9.77 cm; ancho dañado 52.24 cm; área 6.63 cm·m                                                                                                                                                                                                                                                                                                                                                                                                                            | misma energía, ancho y centro. Uniforme: 7.69, 9.66, 50.57 y 6.79. Lineal simple (triangular): 8.03, **8.81**, **45.91** y 6.97 |
-| E5  | Error por punto por tipo de impacto, mismo test de CISS                                                                                                                                                                                                                                                                       | frontal (1,027 casos) 8.26; desplazado (827) **6.97**; lateral (726) **5.38**; alcance (382) **9.29**; poste (246) **14.32**                                                                                                                                                                                                                                                                                                                                                                                                                          | uniforme: 8.27, 7.17, 5.68, 9.43 y 14.89; lineal: 8.18, 7.99, 6.00, 10.73 y 14.60                                               |
-| E5  | Test congelado de NHTSA (1,371 pruebas de choque del 40 % de los vehículos, separados por marca, modelo y año). La rigidez se calibró con NHTSA (E2), así que la magnitud está dentro de muestra; sin posición ni orden de los puntos (ADR 0032)                                                                              | profundidad máxima **11.38 cm**; ancho 32.51 cm; área 13.76 cm·m                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | uniforme: 11.99, 35.40 y 13.98; lineal: **8.71**, **30.34** y **13.22**                                                         |
-| E9  | Usabilidad con personas reales                                                                                                                                                                                                                                                                                                | pendientes (F11)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |                                                                                                                                 |
+A Croquis se le da solo la narración de cada reporte, sin sus conclusiones, y lo que obtiene se compara con lo que concluyó CESVI. La prueba son 205 reportes apartados antes de ajustar nada. Medición: [`eval/results/cesvi_r4_v4_reproduccion_prueba.json`](eval/results/cesvi_r4_v4_reproduccion_prueba.json); las cuatro versiones lado a lado, en [`cesvi_r4_v4_comparacion.json`](eval/results/cesvi_r4_v4_comparacion.json).
 
-Scripts: `pnpm --filter @croquis/solver-ts e7` → [`eval/results/e7_parity.json`](eval/results/e7_parity.json); `node eval/e8_determinism.mjs` → [`eval/results/e8_determinism.json`](eval/results/e8_determinism.json) (antes: [`e8_determinism_antes_dmath.json`](eval/results/e8_determinism_antes_dmath.json)); `node eval/e8_costo_dmath.mjs` → [`eval/results/e8_costo_dmath.json`](eval/results/e8_costo_dmath.json); `uv run croquis-eval e2-barrier` → [`eval/results/e2_barrier.json`](eval/results/e2_barrier.json); `uv run croquis-eval inercia-guinada` (tras `uv run croquis-data inercia download` y `build`) → [`eval/results/inercia_guinada.json`](eval/results/inercia_guinada.json); `uv run croquis-eval e2-mdb` (tras `uv run croquis-data nhtsa download --config ITV` y `process --config ITV`) → [`eval/results/e2_mdb.json`](eval/results/e2_mdb.json); `uv run croquis-eval e3-ciss` (tras `uv run croquis-data ciss download` y `build`) → [`eval/results/e3_ciss.json`](eval/results/e3_ciss.json); `uv run croquis-eval e5-casos` y `pnpm --filter @croquis/eval-js e5 -- --test-final` → [`eval/results/e5.json`](eval/results/e5.json) (se corrió una vez; el desarrollo, sin `--test-final`, → [`e5_desarrollo.json`](eval/results/e5_desarrollo.json)); `node eval/e6_performance.mjs` (tras `pnpm --filter @croquis/web build`) → [`eval/results/e6_performance.json`](eval/results/e6_performance.json). E6 mide ambos backends; el modo automático decide en cada escena: WebGPU si alcanza 60 fps y, si no, el más rápido. Las comparaciones antes y después usan `node eval/e6_ab.mjs`.
+| Qué se compara                                          | Croquis                                                          | Línea base                                                                       |
+| ------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Modalidad, contra el título del reporte                 | <!--cifra:er4.modalidad_titulo-->91 de 156 (58.3 %)<!--/cifra--> | <!--cifra:er4.regla_simple-->58 de 156 (37.2 %)<!--/cifra--> (siempre «alcance») |
+| Modalidad, contra la etiqueta de la lectura del reporte | 80 de 190 (42.1 %)                                               | 35.3 % (siempre «otra»)                                                          |
+| Modalidades con choque entre vehículos u objetos        | 74 de 123 (60.2 %)                                               | 37.4 % (siempre «alcance»)                                                       |
+| Zonas de contacto que da el reporte y Croquis encuentra | 222 de 312 (71.2 %)                                              | —                                                                                |
+| Zonas que da Croquis y están en el reporte              | 222 de 362 (61.3 %)                                              | —                                                                                |
+| Primer impacto de la secuencia                          | 92 de 135 (68.1 %)                                               | —                                                                                |
+| Secuencia completa                                      | 69 de 135 (51.1 %)                                               | —                                                                                |
+| Reportes que se reconstruyen y se ven en 3D             | 205 de 205                                                       | —                                                                                |
+| Velocidades por deformación                             | 0 de 5                                                           | Las narraciones no traen el ancho L                                              |
 
-Lectura honesta de E1:
+La modalidad contra el título sale de [`cesvi_r4c_titulo_prueba.json`](eval/results/cesvi_r4c_titulo_prueba.json). La v4 da lo mismo que la v3 en todos estos ejes: entre una y otra cambió el solver, no la lectura ni las reglas.
 
-- **Quién escribió el benchmark:** lo escribieron agentes de IA (los lotes de test, agentes que no vieron la línea base, y otros que los auditaron). Mide español escrito por un modelo, no por personas; E9 lo contrastará con relatos reales.
-- **Brecha dev–test:** la línea base y el redactor se ajustaron solo con el dev. Allí dan F1 0.745 (0.752 sin la fase de las marcas, que no puntúa el test) y 0 % de fuga, contra 0.714 y 7.3 % en el test congelado. El dev creció de 160 a 190 relatos con el lote de marcas (ADR 0019).
-- **Clase de vehículo:** con el prompt v1 era el único campo donde Claude quedaba por debajo de las reglas en el primer test (F1 0.638 Sonnet, 0.614 Haiku, 0.802 reglas); con v2, 0.921 y 0.882. Cuando el relato solo nombra el modelo ("Aveo", "Jetta"), v1 no le da la tabla de modelos y le pide no precisar lo que no se dice, así que omite la clase. Se descubrió con ese test, así que no se corrigió contra él (PLAN §5.2).
-- **Prompt v2:** agrega la tabla `modelos.json` y la regla de usarla. Pasó el criterio en el dev y después se midió en el test CISS, que ningún prompt había visto: la clase sube de 0.851 a 0.975 en Sonnet y de 0.819 a 0.942 en Haiku. Ese test exige que la clase de un modelo de la tabla coincida con la tabla, así que mide que el modelo la use, no que la tabla acierte (sale de fichas técnicas de fabricantes). En el primer test se midió después de decidir: F1 0.919 en Sonnet y 0.896 en Haiku (ADR 0012 §10).
-- **El test CISS no es más difícil que el primero:** con v1, Claude saca 0.978 en CISS y 0.875 en el primero. No se midió por qué. Los dos números no se comparan entre sí: el primer test mide los relatos que escribió el mismo agente de la línea base y el CISS, una verdad que no depende de quien escribe.
-- **Prompt v3:** v2 más la fase de las marcas en el piso (antes o después del impacto), que usa el solver desde el contrato 1.1.0. Pasó el criterio en el dev, donde la fase está anotada, y en el test CISS. Los tests congelados no anotan la fase, así que E1 solo la puntúa en el dev (ADR 0019).
-- **Contrafactuales:** con v2, en el primer test las diferencias crudas de Sonnet subieron a 31 de 160 pares, contra 20 al repetir (con v1, 18 y 18). Con v3 quedan en 21 contra 20. La prueba pareada no encuentra un efecto en ningún tipo con ninguna versión. En los pares de sexo en que la velocidad cambió, con v3 la versión con hombre salió más rápida en 1 de 1 con Sonnet y en 2 de 3 con Haiku: no es concluyente y se sigue midiendo. Las reglas, en cambio, sí dependen del modelo del vehículo en 6 pares, y son lo que responde sin Claude.
-- **Velocidad contra el EDR:** el relato dice la velocidad del EDR redondeada a 5 km/h, como la diría una persona. Claude reproduce lo narrado sin error, así que su distancia al EDR es justo la del redondeo; con menos que eso no se puede medir mejor.
-- **Scripts:** `uv run croquis-eval e1-extraction --split test` → [`eval/results/e1_extraction_v3.json`](eval/results/e1_extraction_v3.json) (v3); con `--prompt extraccion_v2` → [`e1_extraction_v2.json`](eval/results/e1_extraction_v2.json) y con `--prompt extraccion_v1` → [`e1_extraction.json`](eval/results/e1_extraction.json). Mide el pipeline TypeScript que se despliega; con `--pipeline py` la referencia Python da las mismas métricas ([`e1_extraction_py.json`](eval/results/e1_extraction_py.json)), salvo la latencia de las reglas. Dev: `--split dev` con cada prompt (con `dev-007`, `--sufijo _dev007` → [`e1_extraction_dev_v3_dev007.json`](eval/results/e1_extraction_dev_v3_dev007.json) y [`e1_extraction_dev_v4_dev007.json`](eval/results/e1_extraction_dev_v4_dev007.json)) → [`e1_extraction_dev.json`](eval/results/e1_extraction_dev.json) (v1), [`e1_extraction_dev_v2.json`](eval/results/e1_extraction_dev_v2.json) (v2), [`e1_extraction_dev_v3.json`](eval/results/e1_extraction_dev_v3.json) (v3). CISS: `--split ciss` con cada prompt → [`e1_extraction_ciss.json`](eval/results/e1_extraction_ciss.json) (v1), [`e1_extraction_ciss_v2.json`](eval/results/e1_extraction_ciss_v2.json) (v2), [`e1_extraction_ciss_v3.json`](eval/results/e1_extraction_ciss_v3.json) (v3). Las respuestas de Claude están grabadas en `packages/extraction/grabaciones` (las de v2 y v3, en `grabaciones/extraccion_v2` y `grabaciones/extraccion_v3`) y CI las reproduce sin llamar a la API.
+**Reversa** ([`cesvi_r4_reversa.json`](eval/results/cesvi_r4_reversa.json)). La narración sin conclusiones no dice quién retrocedía, así que la modalidad «reversa» queda en 0 de 9. Dado quién retrocede según el propio reporte, el golpe queda en la parte posterior del vehículo en 9 de 12 reportes de la prueba (21 de 26 en desarrollo) de los que tienen daño posterior.
 
-Lectura honesta de E5 ([galería: fotos reales junto a Croquis](docs/galeria-e5/README.md)):
+**Carambolas** ([`cesvi_r4b_carambolas_prueba.json`](eval/results/cesvi_r4b_carambolas_prueba.json)). De 33 reportes de la prueba con tres o más vehículos, los 33 se reconstruyen y se ven en 3D; ocurren 21 de 31 impactos posteriores (con la primera versión, 2 de 32).
 
-- **Qué compara:** la malla 3D que dibuja el visor contra el perfil que midieron los investigadores en el auto real, en los mismos seis puntos. Croquis no recibe el ancho ni la posición medidos.
-  - **Fidelidad de la malla:** en desarrollo, la malla reproduce el perfil del solver con una mediana por zona de 0.04 a 0.86 cm por estación (`e5_desarrollo.json`). El error que se ve es del modelo de forma, no de la malla.
-- **Dónde gana Croquis:**
-  - **Error por punto en CISS:** mejora a la lineal simple; la diferencia pareada es +0.11 cm, con IC 90 % de 0.06 a 0.16.
-  - **Contra la uniforme:** la mediana pareada es 0, porque en la zona D del frente la forma de Croquis es la uniforme. Croquis acierta mejor que la uniforme en 1,630 de los 3,208 casos y que la lineal en 1,741.
-  - **Por tipo:** gana sobre todo en los laterales y en el desplazado.
-- **Dónde pierde:**
-  - **Profundidad máxima y ancho:** la lineal simple los predice mejor, en las dos fuentes. Los perfiles reales tienen un pico más marcado que las formas de Croquis.
-  - **Cuándo se supo:** ya se veía en desarrollo y no se ajustó después del test. Queda como pendiente, con una validación nueva (`docs/PROGRESS.md`).
-  - **Poste en NHTSA:** queda peor que la uniforme, con 39 pruebas e IC amplio.
-- **NHTSA no es independiente en la magnitud:** la rigidez se calibró con esas pruebas (E2).
-  - **Convención de energía:** E2 usó la energía de CRASH3 y el solver la disipada. Esa diferencia explica −4.3 cm de aplastamiento medio en desarrollo; con la de CRASH3 serían +0.4 cm (`uv run croquis-eval e5-energia` → [`e5_convencion_energia.json`](eval/results/e5_convencion_energia.json)).
-  - **Por qué no se cambió:** con la convención actual no hay sesgo en los choques reales (área en CISS; E3).
-- **Ajuste:** se hizo solo con desarrollo (CISS 2017–2021 y el 60 % de los vehículos de NHTSA), con una regla fijada antes: ningún cambio podía empeorar una métrica (ADR 0033).
-  - **Antes y después:** `e5_desarrollo_antes_ajuste.json` y `e5_desarrollo.json`.
-  - **El test** se corrió una sola vez, con todo fijo.
+### AXA A2010930, con sus dos lecturas
 
-Lectura honesta de E3:
+| Lectura                                                | CESVI      | Croquis                                         | Diferencia                               |
+| ------------------------------------------------------ | ---------- | ----------------------------------------------- | ---------------------------------------- |
+| Método de CESVI, por la separación de los restos       | 60.27 km/h | 60.27 km/h                                      | 0                                        |
+| Método de CESVI, por deformación                       | 63.15 km/h | 63.90 km/h                                      | +0.75 km/h                               |
+| Reconstrucción física, «La más cercana al daño medido» | 63.15 km/h | <!--cifra:axa.v2-->57 km/h (55–78)<!--/cifra--> | −6.28 km/h, −9.94 % (56.87 contra 63.15) |
+| Alternativa, «Cuadra con el reposo supuesto»           | 63.15 km/h | 34.44 km/h                                      | supuesto                                 |
 
-- **Croquis queda detrás de WinSMASH en conjunto** (8.85 contra 8.19 km/h). WinSMASH usa rigidez por vehículo y años de ajuste de NHTSA; Croquis usa rigidez por clase y un modelo abierto. La ventaja está en los choques fuertes: con ΔV del EDR de 48 km/h o más, Croquis se equivoca 16.26 km/h y WinSMASH 17.54, y los dos subestiman (11.90 y 14.37 km/h en promedio).
-- **Costados y traseros salen de pruebas de NHTSA, no del EDR de CISS.** Los costados vienen de 1,265 pruebas de barrera móvil (ADR 0013): el error bajó de 11.04 a 8.50 km/h, contra 7.32 de WinSMASH. Los traseros vienen de 136 pruebas FMVSS 301 con barrera rígida (ADR 0014): de 16.45 a 7.68 km/h, contra 7.26.
-- **Cómo se decidió la trasera:** la regla (adoptarla solo si mejora el dev de E3, 2017–2021) se fijó antes de correrla; el test solo se reporta.
-- **El límite de la trasera:** sus pruebas son de modelos 1975–2004, porque las modernas no traen el perfil en la API; la flota de CISS es más nueva.
-- **Baja velocidad:** con EDR de 0 a 16 km/h Croquis sobreestima 9.16 km/h. El umbral sin deformación permanente ($b_0$) es el de literatura y no se ajustó con estos datos.
-- **El intervalo sí es honesto:** el p10–p90 cubre el 81.5 % de los casos de test, contra el 80 % que se fijó en desarrollo. Por eso el visor muestra rangos y no un solo número.
+- **De dónde sale:** la reproducción del método, de [`axa_diagnostico.json`](eval/results/axa_diagnostico.json); la reconstrucción física, de [`axa_rango_estable.json`](eval/results/axa_rango_estable.json) (20 semillas, 32 simulaciones); las dos hipótesis, de [`w8/axa_hipotesis.json`](eval/results/w8/axa_hipotesis.json), del 14 de noviembre: después solo cambiaron los rangos ([`w8/t3_comparacion.json`](eval/results/w8/t3_comparacion.json)).
+- **Decimales:** la reconstrucción se muestra en enteros y el método de CESVI con dos decimales ([ADR 0138](docs/adr/0138-formateador-unico-y-cifras-publicadas.md)).
+- **Estabilidad:** con 20 semillas, el mejor ajuste y su rango no se mueven (0 km/h de diferencia entre semillas).
+- **Por qué dos hipótesis:** el reposo que el reporte no da (supuesto) y la deformación medida no caben juntos. El perito elige; mientras no elija, se ve la más cercana al daño medido. Se llama así, y no «cuadra con el daño», porque queda en el borde bajo de lo que explica esa deformación; la app lo dice junto a la cifra.
+- **El rango no es una garantía.** En casos fabricados con velocidad verdadera conocida, el p10–p90 la contuvo <!--cifra:cobertura.rango-->82 de 116 (70.7 %)<!--/cifra--> de las veces, y lo esperado es cerca de 80 % ([`t3/cobertura_40.json`](eval/results/t3/cobertura_40.json), corrida reducida). El perito lo lee entre los límites y en el dictamen.
+- **Supuestos sorteados:** la restitución, la razón de impulso y el arrastre después del impacto entran al rango con sus intervalos ([ADR 0139](docs/adr/0139-supuestos-del-impacto-en-el-rango.md)).
+- Nada se ajusta para coincidir con el reporte.
 
-Lectura honesta de E2: separar por clase y normalizar por masa y ancho mejora la estimación de velocidad frente a la mejor recta global, pero no la de aplastamiento. La dispersión de rigidez dentro de cada clase domina el error (desviación mediana por clase en `e2_barrier.json`). Por eso el solver reportará rangos en F7 y marca el origen de cada coeficiente.
+### Solver y visor
+
+| Qué                                                             | Resultado                                                                                                                           | Dónde                                                                 |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Paridad del solver TS con la referencia Python                  | <!--cifra:paridad.numeros-->89,710<!--/cifra--> números en <!--cifra:paridad.escenas-->14<!--/cifra--> escenas, diferencia máxima 0 | [`e7_parity.json`](eval/results/e7_parity.json)                       |
+| El mismo resultado en Chromium, Firefox y WebKit (E8)           | idéntico bit a bit en 14 de 14 escenas, el solver y el horneado (2026-11-15)                                                        | [`e8_determinism.json`](eval/results/e8_determinism.json)             |
+| Resultado completo de AXA en el navegador (laptop de 8 GB)      | mediana de 5.1 s en tres corridas (2026-11-15), meta ≤ 10 s                                                                         | [`axa_tiempo_navegador.json`](eval/results/axa_tiempo_navegador.json) |
+| Visor Unity en la web, nivel medio, laptop con Intel UHD, 1080p | 64.7 y 62.1 fps en la escena de referencia (día/noche)                                                                              | [`e6_unity_media.json`](eval/results/e6_unity_media.json)             |
+| Lo mismo en carambola (la escena más pesada)                    | 59.6 y 56.3 fps: no llega a 60                                                                                                      | [`e6_unity_media.json`](eval/results/e6_unity_media.json)             |
+| Visor de escritorio, nivel alto, RTX 4070 Laptop, 1080p         | de 312 a 415 fps en AXA, carambola y lateral                                                                                        | [`e6_unity_escritorio.json`](eval/results/e6_unity_escritorio.json)   |
+
+Las cifras de fps son del build publicado, anterior al daño en la carrocería.
+
+La reversa se reconstruye a la velocidad de una maniobra de reversa (<!--cifra:reversa.velocidad-->5.68 km/h (3.06–9.07)<!--/cifra-->; NHTSA, DOT HS 811 024) cuando el perito no la da: [`t3_3_reversa.json`](eval/results/t3_3_reversa.json).
+
+Las evaluaciones anteriores al trabajo con CESVI (E1 a E9: extracción de relatos, rigidez por clase, proyección de peatones, daño contra autos reales) siguen en `eval/results/` y se describen en [`docs/historial/README-v1.md`](docs/historial/README-v1.md).
 
 ## Mapa del repo
 
-Ver PLAN §3.2.
+Dos frentes con carpetas propias (plan v4, §3):
 
-- **Web y API:**
-  - `apps/web`: Next.js, con las páginas, el visor, el croquis, el relato, la demo y la historia;
-  - `apps/web/src/app/api`: Route Handlers del relato.
-- **Paquetes TS:**
-  - `packages/scene-schema`: contrato, generadores, fixtures y validador;
-  - `packages/croquis-2d`: editor 2D;
-  - `packages/solver-ts`: solver de producción, con paridad E7 y determinismo E8;
-  - `packages/extraction`: comprensión del relato (redactor, extracción con Claude, verificador y preguntas);
-  - `packages/viewer`: visor 3D, daño, personas y exportaciones.
-- **Referencias Python, que no se despliegan:** `solver` y `extraction`.
-- **Datos y evidencia:** `data`, con fuentes y procesamiento, y `eval`, con scripts y `eval/results/`.
-- **Assets:** `assets`, con su registro.
-- **Documentación:** `docs`.
-  - **Decisiones:** cada una tiene su ADR en `docs/adr/`.
-  - **Respaldo técnico:** la física, en `docs/physics.md`; los datos y su cobertura, en `docs/data.md`; la IA responsable, en `docs/responsible-ai.md`.
-  - **Bitácora:** `docs/PROGRESS.md`, con la evidencia de cada fase.
+- **U · visor Unity, contratos e integración**
+  - `apps/visor-unity`: el visor. `Croquis.Core` no depende de Unity y se prueba con `dotnet test`.
+  - `tools/unity`: builds, publicación en Blob, mediciones y el modo foto.
+  - `packages/scene-schema`: los contratos (`escena`, `resultado` y `caso3d`) en JSON Schema. Zod, Pydantic y C# se generan; no se editan a mano.
+- **W · web y física**
+  - `apps/web`: Next.js. `/cesvi` es el producto; `/api/cesvi` y `/api/relieve`, sus rutas.
+  - `packages/cesvi`: del expediente a la escena, reconstrucción, hipótesis, comparación con el reporte y dictamen.
+  - `packages/solver-ts`: el solver de producción. `solver/`: la referencia en Python.
+  - `packages/extraction` y `packages/croquis-2d`: lectura de la narración y croquis 2D.
+  - `eval`: scripts de evaluación y `eval/results/`. `data`: datos con su registro de fuentes.
+- **Documentación**
+  - [`docs/ESTADO.md`](docs/ESTADO.md): qué existe, qué falta y qué está bloqueado.
+  - `docs/progress/U.md` y `docs/progress/W.md`: bitácoras por frente. `docs/PROGRESS.md`: índice.
+  - `docs/adr/`: decisiones. `docs/physics.md`: la física, con sus fuentes.
+  - `docs/historial/`: planes anteriores y el README de antes de CESVI.
 
-## Pruebas
+`packages/viewer` (el visor three.js) queda congelado como respaldo.
 
-- **TypeScript:** Vitest en cada paquete y en la web, con unitarias, de propiedades, de paridad y de componentes.
-- **Python:** pytest con Hypothesis para las propiedades físicas.
-- **e2e:** Playwright, con capturas de referencia generadas en Linux y la prueba de la demo sin red.
-- **CI** (`.github/workflows/ci.yml`, en cada PR y en `main`), en trabajos separados:
-  - formato, lint, tipos y pruebas TS, más el build;
-  - verificación de que lo generado está al día: Zod y Pydantic desde el contrato, prompts, tablas del solver, datos de las páginas y casos de la demo;
-  - Python en Ubuntu y Windows: ruff, pyright y pytest, con la reproducibilidad de los datos fijada por SHA-256;
-  - Playwright;
-  - E8 en Chromium, Firefox y WebKit.
-- **Sin API en CI:** nunca se llama a la API de Claude; se usan respuestas grabadas.
-- **Merge:** nada se fusiona a `main` con CI en rojo.
+## Datos y recursos
 
-## Datos y lo que no cubren
+Registro completo: [`data/SOURCES.md`](data/SOURCES.md) (datos) y [`assets/ASSETS.md`](assets/ASSETS.md) (recursos), con origen, URL, fecha, licencia y script.
 
-- **Registro:** `data/SOURCES.md` lleva origen, URL, fecha, licencia y script de cada dato; `assets/ASSETS.md` hace lo mismo con cada asset. `docs/data.md` describe el procesamiento y el tamaño de muestra.
-- **ATUS (INEGI):** cuenta lo reportado por autoridades municipales en zonas urbanas y suburbanas. No incluye carreteras federales ni percances no reportados.
-- **NHTSA y CISS:** son vehículos y choques de Estados Unidos. La rigidez por clase y la validación del daño y del ΔV vienen de esa flota, no de la mexicana.
-  - **E5:** NHTSA está dentro de muestra en la magnitud, porque la rigidez se calibró con sus pruebas.
-  - **Galería:** frontal desplazado y alcance no tienen foto verificable en el test.
-- **Relatos-MX:** son relatos sintéticos escritos por agentes de IA. Miden español escrito por un modelo; E9 lo contrastará con personas.
-- **Fichas técnicas:** las masas y dimensiones de cada clase salen de fichas públicas de los fabricantes, con la URL por modelo.
+| Qué                                            | Fuente                                    | Licencia o condición                                                      |
+| ---------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------- |
+| 671 reportes de hechos de tránsito             | CESVI México                              | De uso libre para este proyecto; los lotes crudos no van a git por tamaño |
+| Rigidez por clase, inercias, pruebas de choque | NHTSA (Vehicle Crash Test Database, CISS) | Dominio público de EE. UU.                                                |
+| Velocidad en reversa                           | NHTSA, DOT HS 811 024                     | Dominio público de EE. UU.                                                |
+| Fricción, percepción-reacción, proyección      | Literatura citada en `docs/physics.md`    | Se cita; no se redistribuye                                               |
+| Calles y mapas                                 | OpenStreetMap                             | ODbL, con atribución en cada vista                                        |
+| Relieve                                        | INEGI, Copernicus GLO-30 y SRTM           | Abiertos; condiciones de cada uno en `data/SOURCES.md`                    |
+| Cuerpos de las personas                        | MakeHuman                                 | CC0                                                                       |
+| Texturas, árboles y cielos                     | Poly Haven                                | CC0                                                                       |
+| Tipografías                                    | Geist y Roboto                            | SIL OFL 1.1                                                               |
+
+Los modelos de vehículos son genéricos por clase, sin logotipos ni marcas.
 
 ## IA responsable
 
-Detalle y dónde está cada medida: `docs/responsible-ai.md` (PLAN §10).
+Detalle en [`docs/responsible-ai.md`](docs/responsible-ai.md).
 
-- **La IA solo traduce:** produce `EscenaSpec`. La geometría, las trayectorias y los números físicos los decide el solver.
-- **Cada dato lleva su fuente:** la cita literal del relato, o se marca como supuesto. Un verificador revisa cada cita contra el texto.
-- **Nunca** asigna culpa ni estima lesiones, nunca se presenta como peritaje y no muestra contenido gráfico de personas lesionadas.
-- **Leyenda:** cada vista y cada exportación lleva «Reconstrucción ilustrativa generada a partir de un relato. No es un peritaje.», con la semilla y el hash de entradas.
-- **Datos personales:** se intentan quitar en el navegador antes de enviar el relato. Cuánto se escapa está medido en E1.
+- **La IA solo ordena:** produce la escena. No genera geometría, trayectorias ni números físicos.
+- **Cada dato lleva su fuente:** la cita literal, o la marca de supuesto con su justificación.
+- **Datos personales:** se quitan en el navegador antes de enviar el texto a Claude.
+- **Sin culpas ni diagnósticos:** los avisos dicen qué no cabe con la evidencia y qué conviene revisar, nunca quién tuvo la culpa.
+- **Leyenda ilustrativa** en cada vista y en cada exportación.
+- **Toda diferencia con un reporte de CESVI** se muestra con su valor y su porcentaje.
 
-## Límites y siguiente paso
+## Límites
 
-**Límites medidos** (detalle en «Resultados medidos» y en el [recorrido técnico](https://croquis-sage.vercel.app/recorrido)):
+- **La narración manda.** Si no dice quién retrocedía o no trae el ancho dañado, Croquis no lo adivina: por eso la reversa y las velocidades por deformación quedan en cero en la E-R4.
+- **Rigidez de otra flota.** La rigidez por clase viene de pruebas de vehículos de Estados Unidos.
+- **Volcadura.** El solver decide si un vehículo se vuelca, pero no integra el giro en el tiempo; el 3D lo ilustra.
+- **Reversa.** El vehículo llega a velocidad constante: no se modela el arranque desde detenido. La velocidad supuesta sale de maniobras rutinarias de reversa, no de reversas que terminaron en choque.
+- **Daño en el 3D.** El visor ya deforma la carrocería con el perfil del solver ([ADR 0117](docs/adr/0117-el-dano-del-solver-en-unity.md)), pero el build publicado es anterior: hasta publicar uno nuevo, el 3D de producción muestra los vehículos sin deformar.
+- **El rango.** Contuvo la velocidad verdadera menos veces de lo esperado en la prueba de cobertura (arriba); falta la corrida completa de 200 casos.
+- **Rendimiento.** En la laptop de 8 GB, la carambola en nivel medio queda en 56 a 60 fps.
+- **Acceso.** `/cesvi` es público y no hay cuentas; cuando los peritos usen sus propios casos hará falta autenticación. El límite de lecturas por hora es por dirección IP.
+- **Tope de gasto.** Una lectura con Claude se niega cuando lo que queda del tope diario no cubre su reserva, aunque su costo real sea menor ([`reserva_tope.json`](eval/results/reserva_tope.json)).
 
-- **E3:** WinSMASH estima el ΔV un poco mejor en promedio, y los choques con EDR ≥ 48 km/h se subestiman mucho.
-- **E5:** el perfil triangular simple predice mejor que Croquis la profundidad máxima y el ancho del daño. Croquis solo gana en el perfil punto por punto.
-- **E4:** se evaluó con pocos casos publicados.
-- **E6:** alta y ultra no se han medido: falta la computadora de demo.
-- **E9** (personas reales) sigue pendiente.
+La lista completa de lo pospuesto está en `docs/PROGRESS.md`, «Endurecimiento pendiente».
 
-**Límites de diseño:**
+## Siguiente paso
 
-- **Vehículos:** son genéricos por clase, sin marcas ni modelos.
-- **Escenas ilustrativas:** la volcadura y el movimiento de ocupantes son secuencias ilustrativas.
-- **Datos de otra flota:** los datos de rigidez y validación son de Estados Unidos.
-- **La volcadura es un límite del solver, no del visor:** el solver decide si un vehículo se vuelca (factor de estabilidad y velocidad lateral) y da la velocidad de alabeo al iniciarse, pero no integra el giro en el tiempo: el `Resultado` no trae el alabeo de la volcadura muestra por muestra. En la escena de referencia de volcadura, además, el vuelco no se inicia con los datos declarados. Por eso el visor 3D no dibuja una volcadura (U3, 2026-11-10).
-- **La caída de la moto tampoco la calcula el solver:** después del impacto la arrastra caída (con la fricción de la moto que se desliza de lado), pero no calcula cómo cae ni hacia qué lado. El visor la tiende en 0.35 s hacia el lado al que se desliza y, en reposo, la marca como «posición final ilustrativa».
-
-**Siguiente paso:**
-
-1. **E9 con personas reales,** con el protocolo listo para correrlo.
-2. **E6 en alta y ultra** en la computadora de demo.
-3. **Un modelo de forma del daño con el pico más marcado,** validado con datos que E5 no haya visto.
-4. **Entrada por fotos del daño** (PLAN §16, decisión 6).
-5. **Comparar la deformación contra elementos finitos** con software libre (OpenRadioss y modelos públicos de vehículos) cuando haya una máquina potente (PLAN §15).
+1. Publicar el build del visor con el daño y tomar las capturas de AXA después del impacto.
+2. La demo con CESVI y sus comentarios.
+3. W9: las relecturas grabadas y el prompt del corpus (gasta API; lo autoriza René).
+4. La segunda ronda con personas y sus tres problemas más frecuentes.
 
 ## Licencia y atribución
 
 - **Código:** MIT (`LICENSE`).
-- **Relatos-MX:** CC BY 4.0 (`data/relatos-mx/LICENSE`).
-- **Datos:**
-  - **INEGI ATUS:** Términos de Libre Uso del INEGI.
-  - **NHTSA:** Vehicle Crash Test Database, CISS y base de inercias; datos públicos del gobierno de EE. UU., se cita a NHTSA. Las fotos de la galería son derivados reducidos con la prueba citada.
-  - **OpenStreetMap:** © colaboradores de OpenStreetMap, bajo la Open Database License (ODbL). La atribución va en cada vista y exportación que usa una vía de OSM.
-- **Assets** (`assets/ASSETS.md`):
-  - **Cuerpos:** MakeHuman, CC0.
-  - **Texturas:** Poly Haven, CC0.
-  - **Fuentes:** Geist y Roboto, SIL OFL 1.1.
-  - **Vehículos:** son geometría procedural propia, sin marcas.
+- **Reportes de CESVI:** de uso libre para este proyecto, por entrega de CESVI México.
+- **OpenStreetMap:** © colaboradores de OpenStreetMap, ODbL.
+- **NHTSA:** datos públicos del gobierno de EE. UU.; se cita a NHTSA.
+- **Recursos:** ver [`assets/ASSETS.md`](assets/ASSETS.md).

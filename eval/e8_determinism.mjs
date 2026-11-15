@@ -89,6 +89,12 @@ async function iife(entry, globalName) {
     platform: "browser",
     target: "es2022",
     logLevel: "silent",
+    // El visor lee de dónde bajar los recursos de variables que Next reemplaza al compilar (ADR
+    // 0107). Aquí no hay Next: van vacías, como en local y en CI (los recursos salen de `public/`).
+    define: {
+      "process.env.CROQUIS_RECURSOS_HDRI": '""',
+      "process.env.CROQUIS_RECURSOS_VEHICULOS": '""',
+    },
     nodePaths: [
       join(ROOT, "packages", "viewer", "node_modules"),
       join(ROOT, "packages", "scene-schema", "node_modules"),
@@ -101,6 +107,8 @@ async function iife(entry, globalName) {
 /** Página en un origen propio (`page.route`): los dos paquetes y los cuerpos de MakeHuman. */
 async function openPage(browser, files) {
   const page = await browser.newPage();
+  // Si un paquete no carga en el navegador, que se sepa por qué (y no solo que falta su global).
+  page.on("pageerror", (e) => console.error(`[${browser.browserType().name()}] ${e.message}`));
   await page.route(`${ORIGIN}/**`, async (route) => {
     const path = new URL(route.request().url()).pathname;
     if (path === "/") {

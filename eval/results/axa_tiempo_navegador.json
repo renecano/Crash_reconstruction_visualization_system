@@ -24,24 +24,24 @@
   "mediana_completo_ms": 7126
  },
  "despues": {
-  "generated_at": "2026-11-03T22:45:44Z",
+  "generated_at": "2026-11-15T23:35:51Z",
   "worker": "apps/web/public/workers/reconstruct.js, construido con el código de este commit",
-  "git_commit": "38a0354",
+  "git_commit": "31e8f6b6",
   "corridas": [
    {
-    "reconstruccion_ms": 149,
-    "completo_ms": 10094
+    "reconstruccion_ms": 49,
+    "completo_ms": 5232
    },
    {
-    "reconstruccion_ms": 74,
-    "completo_ms": 7539
+    "reconstruccion_ms": 50,
+    "completo_ms": 5132
    },
    {
-    "reconstruccion_ms": 64,
-    "completo_ms": 7184
+    "reconstruccion_ms": 51,
+    "completo_ms": 5149
    }
   ],
-  "mediana_reconstruccion_ms": 74,
-  "mediana_completo_ms": 7539
+  "mediana_reconstruccion_ms": 50,
+  "mediana_completo_ms": 5149
  }
 }

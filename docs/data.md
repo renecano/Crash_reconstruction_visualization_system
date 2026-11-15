@@ -128,3 +128,24 @@ Mapeo de carrocería NHTSA a clases del contrato (`classify` en `eval/croquis_ev
 - Motocicletas, bicicletas, scooters, autobuses y tractocamiones: no hay pruebas frontales de barrera rígida utilizables. Camión unitario tiene 5, apenas el mínimo para evaluar.
 - La flota mexicana: son vehículos vendidos en EE. UU. Las clases se definen por geometría y masa, no por marca.
 - Velocidades fuera de 40–65 km/h: el modelo lineal de CRASH3 se extrapola fuera de ese rango.
+
+## Reportes de CESVI: de cuántos se habla en cada cifra
+
+CESVI México entregó sus reportes para este proyecto (registro en `data/SOURCES.md`; los lotes crudos no van a git por tamaño). Los números que aparecen en la app y en los documentos son pasos del mismo embudo:
+
+| Paso                                                    | Cuántos                                      | Archivo en `eval/results/`                 |
+| ------------------------------------------------------- | -------------------------------------------- | ------------------------------------------ |
+| Reportes entregados y leídos                            | <!--cifra:corpus.reportes-->671<!--/cifra--> | `cesvi_corpus_extraccion.json`             |
+| Con lectura válida                                      | <!--cifra:corpus.validos-->668<!--/cifra-->  | `cesvi_corpus_extraccion.json`             |
+| Con narración limpia (sin las conclusiones del reporte) | 664                                          | `cesvi_narraciones.json`                   |
+| De esos, en desarrollo                                  | 459                                          | `cesvi_r4_v4_reproduccion_desarrollo.json` |
+| De esos, en la prueba congelada                         | <!--cifra:er4.prueba-->205<!--/cifra-->      | `cesvi_r4_v4_reproduccion_prueba.json`     |
+
+Dentro de la prueba, cada comparación tiene su propio denominador, porque no todos los reportes traen el dato que se compara:
+
+- **156:** reportes cuyo título dice la modalidad (`cesvi_r4c_titulo_prueba.json`).
+- **190:** reportes con etiqueta de modalidad en la lectura de sus conclusiones.
+- **123:** de esos, los de choque entre vehículos o contra objetos.
+- **135:** reportes que dan la secuencia de impactos.
+
+Por eso una tasa siempre se escribe completa («91 de 156»), nunca como un porcentaje junto a otro total.

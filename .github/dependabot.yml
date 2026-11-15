@@ -1,10 +1,16 @@
 version: 2
+# Los parches y las versiones menores llegan en un solo PR por ecosistema (auditoría del 2026-11-15,
+# I8): había 11 PR sueltos sin atender y el límite de PR abiertos no dejaba llegar más. Las versiones
+# mayores siguen llegando una por una, para revisarlas con calma.
 updates:
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    groups:
+      npm-menores-y-parches:
+        update-types: ["minor", "patch"]
     ignore:
       # Los tipos de Node siguen la versión LTS que usamos (24); ver docs/adr/0001-stack.md.
       - dependency-name: "@types/node"
@@ -17,7 +23,13 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    groups:
+      uv-menores-y-parches:
+        update-types: ["minor", "patch"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
+    groups:
+      acciones:
+        patterns: ["*"]
