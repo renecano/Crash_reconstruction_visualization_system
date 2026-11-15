@@ -7,7 +7,7 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 - **Desde el 2026-11-09, el Claude Code de René lleva también este frente,** porque aquí no se había subido nada. Si eres el Claude Code del compañero: antes de empezar una fase, revisa la tabla de abajo y `git fetch`; si la fase ya está tomada, sigue con la siguiente y anótala aquí.
 - **Hechas:** W1 (#187), W2 (#188), W3 (#192), W4 (#195, con su contrato #194), W4b (#196), W5 (#199, #200), W6 (#201) y W7 (#206), en `main`.
 - **Fase actual:** W8 (T3.2, T3.3 y T3.5), con cuidado extra por pedido de René (2026-11-12). T3.3 empezó el 2026-11-14, cuando René cambió el modelo.
-- **Siguiente paso:** T3.3 (reversa), en `feat/w8-reversa`: diagnóstico hecho (abajo); sigue el contrato (`contract/w8-sentido-marcha`), el solver con paridad, la app y la medición. Misma regla: si se mueve AXA o un caso que ya vio CESVI, alto con el antes y el después.
+- **Siguiente paso:** T3.3 (reversa) cerrada el 2026-11-14 (contrato #219, ADR 0136; ver «T3.3 · Qué se hizo, medición y cierre»): no movió AXA ni ningún caso que ya vio CESVI. Sigue T3.5, la E-R4 v4 completa, con la cadena reanudable fuera de la sesión. Queda una decisión de René sobre la versión declarada («Para decidir»).
 
 ## Fases tomadas
 
@@ -21,7 +21,7 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 | W5 · Terreno (C3 y O4)                                       | Claude Code de René | `feat/w5-terreno`, `feat/w5-terreno-web` | En `main` (#199, #200) |
 | W6 · Encuadre en 2D (O3)                                     | Claude Code de René | `feat/w6-encuadre`                       | En `main` (#201)       |
 | W7 · Endurecimiento (T6.2, T6.3, T6.4)                       | Claude Code de René | `feat/w7-endurecimiento`                 | En `main` (#206)       |
-| W8 · Números defendibles (T3.2, T3.3, T3.5)                  | Claude Code de René | `feat/w8-numeros`                        | T3.2 en `main` (#215)  |
+| W8 · Números defendibles (T3.2, T3.3, T3.5)                  | Claude Code de René | `feat/w8-numeros`, `feat/w8-reversa`     | T3.2 y T3.3 en `main`  |
 
 ## W8 · Números defendibles (T3.2, T3.3, T3.5) (desde 2026-11-12)
 
@@ -270,6 +270,70 @@ Con el solver de `main`, 0.05° en el rumbo de V1 bastaban para que el contacto 
 4. **La lectura lo marca** sin cambiar el prompt (no se gasta API): una vuelta cuya cita habla de reversa queda con `sentido_marcha: "reversa"`.
 5. **E-R4 mide la reversa:** en los reportes de reversa, con quién retrocede según el reporte, cuántos reconstruyen al que retrocede.
 6. **Antes y después** de las escenas de referencia, AXA, la E-R4 de prueba y las carambolas. Si AXA o un caso que ya vio CESVI se mueve: alto.
+
+### T3.3 · Qué se hizo, medición y cierre (2026-11-14)
+
+Decisiones: ADR 0136. Contrato: #219 (en `main`). Rama: `feat/w8-reversa`.
+
+**Qué se hizo:**
+
+- **Contrato:** `sentido_marcha` («adelante» o «reversa») en el vehículo de la escena, en la maniobra del expediente y en el vehículo del resultado. Aditivo y opcional. `maniobra: "reversa"` sigue siendo la reversa recta.
+- **Solver (Python y TS):** cualquier maniobra se recorre en reversa (vueltas, cambio de carril y seguir el carril de una curva), con la izquierda y la derecha del conductor. El resultado dice quién llegó en reversa. No cambia el choque, el daño, el movimiento posterior ni la inversión.
+- **La velocidad en reversa que no dio el perito** es un supuesto con fuente: 5.68 km/h, con rango de 3.06 a 9.07 (mediana y p10–p90 de la velocidad máxima de 6 037 maniobras de reversa en uso real; NHTSA, DOT HS 811 024). Antes eran 40 km/h, como cualquier vehículo que avanza. El perito lo lee en los límites.
+- **Aviso** cuando una reversa sale más rápida que la más rápida de las medidas (23 km/h). No es un tope: la inversión sigue buscando en todo el rango.
+- **La reversa con vuelta** llega a la escena en cualquier orden, y la lectura la marca sin cambiar el prompt (dos filas de maniobra del mismo vehículo, o una vuelta cuya cita dice que iba en reversa).
+- **Sin posiciones del perito, quien retrocede llega de espaldas al otro.** Lo encontró la medición sobre los reportes: la disposición genérica supone que todos avanzan, y el que retrocedía se alejaba del otro. Ahora se suponen las caras de contacto que falten (la parte posterior del que retrocede; el primer daño del otro) y se voltea al que se alejaría.
+- **La versión declarada** lleva su propio sentido de marcha. Su velocidad no cambia (ver «Para decidir»).
+
+**Antes y después en el caso `cesvi-3a0125cb81`** (`eval/results/w8/t3_3_reversa_antes.json` contra `eval/results/t3_3_reversa.json`; A retrocede y B está detenido detrás):
+
+| Medida                                    | Antes                | Después                                    |
+| ----------------------------------------- | -------------------- | ------------------------------------------ |
+| Velocidad de A en reversa                 | 40 km/h (supuesto)   | 5.68 km/h (supuesto con fuente, 3.06–9.07) |
+| ΔV de cada vehículo                       | 22 km/h              | 3.12 km/h                                  |
+| Aplastamiento medio en la parte posterior | 0.16 m               | menos de 0.005 m                           |
+| Recorrido de B después del golpe          | 7.77 m               | 0.16 m                                     |
+| El resultado dice que A iba en reversa    | No                   | Sí                                         |
+| Reversa con vuelta en la escena           | Se pierde una de dos | Se conservan las dos                       |
+| Con reposos medidos a 6 m (34.73 km/h)    | Sin aviso            | Aviso: pasa de la más rápida medida        |
+
+El reporte describe en A un «hundimiento de muy baja magnitud» y dice que en una reversa el desplazamiento sería mínimo: el después cabe con eso; el antes, no.
+
+**La reversa en los reportes de CESVI** (`eval/cesvi_r4_reversa.mts` → `eval/results/cesvi_r4_reversa.json`). A la lectura grabada de la narración de R0 (la misma de la E-R4, sin API) se le agrega un solo dato que esa narración no trae: quién retrocede, según las maniobras que C0 leyó en el reporte. Son 50 reportes; no se ajustó nada con ninguna de las dos particiones.
+
+| Partición  | Vehículos que retroceden | Reconstruidos retrocediendo | Con daño posterior en el reporte | De esos, el golpe queda en su parte posterior |
+| ---------- | ------------------------ | --------------------------- | -------------------------------- | --------------------------------------------- |
+| Desarrollo | 38 (37 medidos)          | 37                          | 26                               | 21 (antes de la disposición nueva: 4)         |
+| Prueba     | 12                       | 12                          | 12                               | 9 (antes: 0)                                  |
+
+- El «antes» de la última columna es con el solver y la velocidad ya cambiados, pero con la disposición genérica de siempre (`eval/results/w8/cesvi_r4_reversa_sin_disposicion.json`).
+- Uno de desarrollo no se mide: la narración no trae al vehículo que retrocede.
+- Los que no quedan en la parte posterior son, sobre todo, casos donde el otro vehículo tiene el daño en un costado y la disposición genérica lo pone cruzando.
+- La modalidad «reversa» de la E-R4 sigue en 0 de 9: la narración de R0 no dice que alguien retrocedía (ADR 0069). Esto no la cambia ni pretende cambiarla.
+
+**Lo que ya vio CESVI no se movió** (`eval/w8_t3_3_comparar.py` → `eval/results/w8/t3_3_comparacion.json`, contra lo medido al cierre de T3.2):
+
+- AXA como la app, 20 semillas: 206 números, 0 diferencias. Sigue en 56.87 km/h (54.79–78.39).
+- La inversión en las 205 narraciones de prueba: 646 números, 0 diferencias.
+- E-R4 de prueba: 2 358 números, 0 diferencias.
+- Carambolas de prueba: 181 números, 0 diferencias.
+- Escenas de referencia (`croquis-solver reconstruct --all`): solo cambia `reversa`, y solo por el campo nuevo `sentido_marcha` en el vehículo A.
+- Paridad E7: 89 710 números, diferencia 0.
+
+Como nada de eso se movió, no hubo alto antes de fusionar.
+
+**Pruebas:** `solver/tests/test_reversa.py` (8) y las demás del solver en Python, en verde; `packages/solver-ts/src/reversa.test.ts` (6); `packages/scene-schema/src/sentido-marcha.test.ts` (3); `packages/cesvi/src/reversa.test.ts` (16) y las 404 de `packages/cesvi`.
+
+**Para decidir (René):** la versión declarada de una reversa sin velocidad sigue yendo a la velocidad de la reconstrucción de ese vehículo, como en R7. Lo coherente sería suponerle la velocidad de una reversa (5.68 km/h), pero eso cambia la comparación con la declaración en AXA, donde el conductor declara una reversa. No lo cambié.
+
+**Pendiente** (en «Endurecimiento pendiente»): el arranque desde detenido (los metros de reversa no cambian la velocidad), el flujo de relatos de la v1, un campo propio en el prompt y las luces de reversa en el 3D.
+
+### Resumen para René (T3.3)
+
+- **Qué quedó:** si el perito narra que un vehículo retrocedía, Croquis lo reconstruye a la velocidad de una reversa y no a 40 km/h, también si retrocedía dando vuelta, y lo dice en el resultado. Si la evidencia pide una reversa más rápida que cualquiera de las medidas, avisa.
+- **Cómo probarlo:** en «Caso nuevo», narrar «El vehículo A retrocedía y golpeó con su parte posterior el frente del vehículo B, que estaba detenido». En Reconstrucción, los límites dicen la velocidad supuesta y su fuente, y el 3D muestra a A llegando de espaldas.
+- **Qué necesito de ti:** la decisión de arriba sobre la versión declarada. Lo demás no cambió ningún número de AXA ni de los casos de CESVI.
+- **Siguiente:** T3.5 (E-R4 v4 completa), con la cadena reanudable fuera de la sesión.
 
 ## W7 · Endurecimiento (T6.2, T6.3, T6.4) (2026-11-11)
 
