@@ -23,6 +23,7 @@ import {
   especReconstruida,
   reconstruirExpediente,
 } from "../../packages/cesvi/src/index.ts";
+import { PRODUCTION_SAMPLES } from "../../packages/solver-ts/src/full-result.ts";
 
 const RAIZ = join(import.meta.dirname, "../..");
 const leer = (ruta: string) => JSON.parse(readFileSync(join(RAIZ, ruta), "utf8")) as unknown;
@@ -35,7 +36,9 @@ console.log(
 // varias hipótesis. Sin argumento, la que se ve sin elegir: la de menor costo del multiarranque
 // (ADR 0091); con argumento, la de esa clave («dano-2», «reposo»…).
 // La semilla de la app: el identificador por omisión de `especDeExpediente`.
-const r0 = reconstruirExpediente(expedienteAxaReconstruccion());
+// Con las simulaciones de producción, para que el rango de la escena sea el que ve el perito en la
+// app (auditoría del 2026-11-15, N3: antes llevaba el de las muestras de referencia).
+const r0 = reconstruirExpediente(expedienteAxaReconstruccion(), undefined, PRODUCTION_SAMPLES);
 const h = r0.hipotesis?.find((x) => x.clave === process.argv[2]) ?? r0.hipotesis?.[0];
 const r = h ? conHipotesis(r0, h.clave) : r0;
 for (const x of r0.hipotesis ?? [])

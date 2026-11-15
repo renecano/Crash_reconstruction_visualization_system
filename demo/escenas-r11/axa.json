@@ -133,8 +133,8 @@
         "valor": 56.87,
         "unidad": "km/h",
         "rango": [
-          54.92,
-          77.56
+          55.11,
+          78.06
         ],
         "fuente": "supuesto",
         "confianza": 0.7,
@@ -193,8 +193,8 @@
         "valor": 14.98,
         "unidad": "km/h",
         "rango": [
-          2.98,
-          17.32
+          1.04,
+          21.38
         ],
         "fuente": "supuesto",
         "confianza": 0.7,

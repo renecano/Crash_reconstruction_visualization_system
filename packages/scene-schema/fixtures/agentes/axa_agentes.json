@@ -111,7 +111,7 @@
   "vehiculos": [
     {
       "id": "veh-a",
-      "rol": "A",
+      "rol": "B",
       "clase": {
         "valor": "pickup",
         "fuente": "supuesto",
@@ -131,11 +131,11 @@
         "confianza": 0.3
       },
       "velocidad_previa": {
-        "valor": 63.17,
+        "valor": 56.87,
         "unidad": "km/h",
         "rango": [
-          60.77,
-          113.09
+          55.11,
+          78.06
         ],
         "fuente": "supuesto",
         "confianza": 0.7,
@@ -172,7 +172,7 @@
     },
     {
       "id": "veh-b",
-      "rol": "B",
+      "rol": "A",
       "clase": {
         "valor": "pickup",
         "fuente": "supuesto",
@@ -192,11 +192,11 @@
         "confianza": 0.3
       },
       "velocidad_previa": {
-        "valor": 23.35,
+        "valor": 14.98,
         "unidad": "km/h",
         "rango": [
-          0,
-          25.65
+          1.04,
+          21.38
         ],
         "fuente": "supuesto",
         "confianza": 0.7,
