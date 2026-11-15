@@ -237,6 +237,35 @@ describe("la versión declarada lleva su propio sentido de marcha", () => {
     expect(isReverse(v1De(decl))).toBe(false);
   });
 
+  it("una reversa declarada sin velocidad va a la de una reversa, no a la de la reconstrucción", () => {
+    const base = especDeExpediente(caso([{ vehiculo: "V2", tipo: "se_detiene" }]));
+    // La reconstrucción trae a V1 avanzando a 35 km/h.
+    const decl = especDeclarada(base, declara("reversa"), new Map([["V1", 35]]));
+    expect(validateEscena(decl.spec).ok).toBe(true);
+    expect(v1De(decl).velocidad_previa).toMatchObject({
+      valor: REVERSA_KMH.p50,
+      rango: [REVERSA_KMH.p10, REVERSA_KMH.p90],
+      fuente: "supuesto",
+    });
+    expect(decl.limites.some((l) => l.startsWith("V1: el conductor declara una reversa"))).toBe(
+      true,
+    );
+    expect(decl.limites.some((l) => l.includes("va la de la reconstrucción"))).toBe(false);
+  });
+
+  it("una reversa declarada con su velocidad conserva la que dijo el conductor", () => {
+    const base = especDeExpediente(caso([{ vehiculo: "V2", tipo: "se_detiene" }]));
+    const v = { ...declara("reversa"), velocidades: [{ vehiculo: "V1", kmh: 12, cita: "" }] };
+    const decl = especDeclarada(base, v, new Map([["V1", 35]]));
+    expect(v1De(decl).velocidad_previa).toMatchObject({ valor: 12, fuente: "usuario" });
+  });
+
+  it("quien declara que circulaba sigue yendo a la velocidad de la reconstrucción", () => {
+    const base = especDeExpediente(caso([{ vehiculo: "V2", tipo: "se_detiene" }]));
+    const decl = especDeclarada(base, declara("circula"), new Map([["V1", 35]]));
+    expect(v1De(decl).velocidad_previa).toMatchObject({ valor: 35, fuente: "supuesto" });
+  });
+
   it("si el conductor declara la reversa, va en reversa", () => {
     const base = especDeExpediente(caso([{ vehiculo: "V2", tipo: "se_detiene" }]));
     const decl = especDeclarada(base, declara("reversa"));

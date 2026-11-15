@@ -133,7 +133,7 @@ function tabla(
  * Roboto (la fuente del PDF) no trae la flecha «→», que viene en los datos del caso («sur→norte»):
  * en el PDF se escribe «a» («sur a norte») en lugar de un cuadro vacío.
  */
-function conGlifosDeRoboto<T>(c: T): T {
+export function conGlifosDeRoboto<T>(c: T): T {
   if (typeof c === "string") return c.replace(/\s*→\s*/g, " a ") as T;
   if (Array.isArray(c)) return c.map(conGlifosDeRoboto) as T;
   if (c && typeof c === "object" && !(c instanceof Uint8Array)) {

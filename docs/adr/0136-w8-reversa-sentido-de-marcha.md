@@ -67,7 +67,7 @@ La medición sobre los reportes de CESVI (`eval/cesvi_r4_reversa.mts`) encontró
 ### 7. La versión declarada
 
 - La versión que declara un conductor (R7) lleva su propio sentido de marcha: si declara una reversa, va en reversa; si declara otra maniobra, no hereda la reversa de la evidencia.
-- **No se cambia su velocidad.** Una reversa declarada sin velocidad sigue yendo a la velocidad de la reconstrucción de ese vehículo, como en R7. Lo coherente con la decisión 3 sería suponerle la velocidad de una reversa, pero eso cambia la comparación con la declaración en casos que CESVI ya vio (AXA, donde el conductor declara una reversa). Queda como decisión de René, con el antes y el después medidos cuando la tome.
+- **Una reversa declarada sin velocidad va a la velocidad medida de una reversa** (5.68 km/h, de 3.06 a 9.07; la misma fuente de la decisión 3), no a la de la reconstrucción de ese vehículo. Decisión de René del 2026-11-15, con el antes y el después medidos en AXA, donde el conductor de A declara una reversa (`eval/results/w8/reversa_declarada_antes.json` contra `eval/results/w8_reversa_declarada.json`): la velocidad de A en la versión declarada pasa de 15 a 5.68 km/h y la de cierre, de 71.9 a 62.58 km/h; ninguna fila de «Qué cambia entre versiones» cambia de estado y la sugerencia es la misma. La reconstrucción física no se toca: AXA sigue en 56.87 km/h (54.79–78.39) en 20 semillas (`eval/results/w8/declarada/axa_rango_estable.json`). Si el conductor declara una velocidad, se usa la suya.
 
 ## Límites
 

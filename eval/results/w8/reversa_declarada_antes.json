@@ -1,0 +1,178 @@
+{
+  "fuente": "eval/w8_reversa_declarada.mts",
+  "commit": "588a69b8",
+  "caso": "A2010930",
+  "reconstruccion_fisica": {
+    "hipotesis_visible": "Cuadra con el daño medido",
+    "velocidades": [
+      {
+        "vehiculo": "V2",
+        "kmh": 56.87,
+        "rango": [
+          54.92,
+          77.56
+        ]
+      },
+      {
+        "vehiculo": "V1",
+        "kmh": 14.98,
+        "rango": [
+          2.98,
+          17.32
+        ]
+      }
+    ],
+    "todas": [
+      {
+        "clave": "dano",
+        "velocidades": [
+          [
+            "V2",
+            56.87,
+            [
+              54.92,
+              77.56
+            ]
+          ],
+          [
+            "V1",
+            14.98,
+            [
+              2.98,
+              17.32
+            ]
+          ]
+        ]
+      },
+      {
+        "clave": "reposo",
+        "velocidades": [
+          [
+            "V2",
+            34.44,
+            [
+              30.34,
+              41.42
+            ]
+          ],
+          [
+            "V1",
+            29.9,
+            [
+              25.27,
+              31.51
+            ]
+          ]
+        ]
+      }
+    ]
+  },
+  "version_declarada": {
+    "declaracion": "me paré, reversié unos metros cuando llegó la camioneta y me impactó",
+    "escena": [
+      {
+        "vehiculo": "V2",
+        "maniobra": "recto",
+        "sentido_marcha": null,
+        "velocidad_kmh": 56.9,
+        "velocidad_rango": null,
+        "velocidad_nota": "La de la reconstrucción: el conductor no la declara."
+      },
+      {
+        "vehiculo": "V1",
+        "maniobra": "reversa",
+        "sentido_marcha": "reversa",
+        "velocidad_kmh": 15,
+        "velocidad_rango": null,
+        "velocidad_nota": "La de la reconstrucción: el conductor no la declara."
+      }
+    ],
+    "limites": [
+      "V2: el conductor no declara su velocidad; va la de la reconstrucción.",
+      "V1: el conductor no declara su velocidad; va la de la reconstrucción."
+    ],
+    "resultado": [
+      {
+        "vehiculo": "V2",
+        "sentido_marcha": null,
+        "v_impacto_kmh": 56.9,
+        "delta_v_kmh": 50.75,
+        "distancia_post_m": 0.61,
+        "pose_final": {
+          "x": -3.470498,
+          "y": -13.628646,
+          "rumbo_deg": 75.714344
+        }
+      },
+      {
+        "vehiculo": "V1",
+        "sentido_marcha": "reversa",
+        "v_impacto_kmh": 15,
+        "delta_v_kmh": 28.34,
+        "distancia_post_m": 2.86,
+        "pose_final": {
+          "x": -1.597451,
+          "y": -6.275061,
+          "rumbo_deg": 75.7148
+        }
+      }
+    ],
+    "velocidad_de_cierre_kmh": 71.9
+  },
+  "que_cambia_entre_versiones": [
+    {
+      "clave": "posicion_final",
+      "vehiculo": "V1",
+      "declarada": "a 34.8 m de la reconstruida",
+      "evidencia": "la de la reconstrucción",
+      "estado": "no_coincide"
+    },
+    {
+      "clave": "zona",
+      "vehiculo": "V1",
+      "declarada": "posterior",
+      "evidencia": "posterior, lateral izquierdo",
+      "estado": "coincide"
+    },
+    {
+      "clave": "direccion",
+      "vehiculo": "V1",
+      "declarada": "de atras hacia adelante",
+      "evidencia": "de atras hacia adelante, de izquierda a derecha",
+      "estado": "coincide"
+    },
+    {
+      "clave": "posicion_final",
+      "vehiculo": "V2",
+      "declarada": "a 37.1 m de la reconstruida",
+      "evidencia": "la de la reconstrucción",
+      "estado": "no_coincide"
+    },
+    {
+      "clave": "zona",
+      "vehiculo": "V2",
+      "declarada": "frontal",
+      "evidencia": "frontal, lateral derecho, lateral izquierdo",
+      "estado": "coincide"
+    },
+    {
+      "clave": "direccion",
+      "vehiculo": "V2",
+      "declarada": "de adelante hacia atras",
+      "evidencia": "de adelante hacia atras",
+      "estado": "coincide"
+    },
+    {
+      "clave": "altura",
+      "vehiculo": "V1",
+      "declarada": "—",
+      "evidencia": "—",
+      "estado": "sin_dato"
+    }
+  ],
+  "sugerencia": {
+    "texto": "Los indicadores no alcanzan para decir si la versión declarada es compatible con la evidencia.",
+    "en_contra": 2,
+    "a_favor": 4
+  }
+}

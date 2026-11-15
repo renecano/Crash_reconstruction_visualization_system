@@ -330,8 +330,10 @@ describe("el dictamen de una reconstrucción (R8)", () => {
       "huella de las entradas abc123def456",
       "Bitácora de los agentes",
       "1 · Lector IA (escribe): Lectura: 30 filas con su cita.",
-      "2 · Físico → Preguntador (pide): La física no cuadra",
+      "2 · Físico a Preguntador (pide): La física no cuadra",
     ]);
+    // La fuente del PDF (Roboto) no trae flechas: salían como un hueco («Físico  Preguntador»).
+    expect(t).not.toMatch(/[\u2190-\u21ff]/);
     expect(texto(datos())).not.toContain("Bitácora de los agentes");
   });
 });

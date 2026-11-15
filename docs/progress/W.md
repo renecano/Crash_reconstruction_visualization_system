@@ -324,7 +324,7 @@ Como nada de eso se movió, no hubo alto antes de fusionar.
 
 **Pruebas:** `solver/tests/test_reversa.py` (8) y las demás del solver en Python, en verde; `packages/solver-ts/src/reversa.test.ts` (6); `packages/scene-schema/src/sentido-marcha.test.ts` (3); `packages/cesvi/src/reversa.test.ts` (16) y las 404 de `packages/cesvi`.
 
-**Para decidir (René):** la versión declarada de una reversa sin velocidad sigue yendo a la velocidad de la reconstrucción de ese vehículo, como en R7. Lo coherente sería suponerle la velocidad de una reversa (5.68 km/h), pero eso cambia la comparación con la declaración en AXA, donde el conductor declara una reversa. No lo cambié.
+**Decidido por René (2026-11-15):** una reversa declarada sin velocidad va a la velocidad medida de una reversa (5.68 km/h); el detalle, en «La reversa en la versión declarada».
 
 **Pendiente** (en «Endurecimiento pendiente»): el arranque desde detenido (los metros de reversa no cambian la velocidad), el flujo de relatos de la v1, un campo propio en el prompt y las luces de reversa en el 3D.
 
@@ -364,6 +364,29 @@ pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts comparar
 **La página y la portada toman la v4:** `/cesvi/reproduccion` y la portada de CESVI leen `data/cesvi/r4/pagina.json` y la v4 de `cesvi_r4c_titulo_prueba.json` al compilar. Las cifras que muestran son las mismas de antes. En `pagina.json` cambian la fecha y la clase de un vehículo en 4 de los 205 casos (`cesvi-2a83292792`, `cesvi-928c1a7646`, `cesvi-9b2fc2ffc7` y `cesvi-f9de9836d6`), que la lectura de hoy sí reconoce.
 
 **D5 del plan:** T3.2, T3.3 y T3.5 están en `eval/results/`, y la portada toma de ahí sus cifras. El README no cita cifras de CESVI; se revisa en U7.
+
+### La reversa en la versión declarada (2026-11-15)
+
+René aceptó la decisión 7 del ADR 0136: una reversa declarada sin velocidad va a la velocidad medida de una reversa (5.68 km/h, de 3.06 a 9.07), no a la de la reconstrucción de ese vehículo.
+
+**Hecho** (rama `feat/w8-reversa-declarada`; René pidió fusionarla después de la Tanda 1 de la auditoría):
+
+- `especDeclarada` (`packages/cesvi/src/comparacion-declarada.ts`) y sus pruebas (`reversa.test.ts`, 21 pruebas).
+- **Antes y después en AXA** (`eval/w8_reversa_declarada.mts`; `eval/results/w8/reversa_declarada_antes.json` contra `eval/results/w8_reversa_declarada.json`). El conductor de A declara «me paré, reversié unos metros cuando llegó la camioneta y me impactó»:
+
+  | Versión declarada de AXA              | Antes                    | Después                          |
+  | ------------------------------------- | ------------------------ | -------------------------------- |
+  | Velocidad de A en reversa             | 15 km/h (reconstrucción) | 5.68 km/h (supuesto, 3.06–9.07)  |
+  | Velocidad de cierre                   | 71.9 km/h                | 62.58 km/h                       |
+  | ΔV de A y de B                        | 28.34 y 50.75 km/h       | 24.67 y 44.17 km/h               |
+  | Reposo de A, lejos del reconstruido   | 34.8 m                   | 31.9 m                           |
+  | Reposo de B, lejos del reconstruido   | 37.1 m                   | 35.1 m                           |
+  | Filas de «Qué cambia entre versiones» | 2 no coinciden, 4 sí     | Las mismas: ningún estado cambia |
+  | Sugerencia                            | «No alcanzan para decir» | La misma                         |
+
+- **El 56.87 de AXA no se mueve:** la reconstrucción física es idéntica en ese guion, y con la medición de la app (`eval/axa_rango_estable.mts`, 20 semillas, `eval/results/w8/declarada/axa_rango_estable.json`) da 56.87 km/h (54.79–78.39) en las 20, igual que al cierre de T3.3.
+
+**Cierre:** la decisión 7 del ADR 0136 quedó actualizada y la fila de «Bloqueado» de `docs/PROGRESS.md`, retirada. La versión declarada no entra en la E-R4 ni en las carambolas (`especDeclarada` solo la usa `comparacion-declaracion.tsx`), así que no hizo falta volver a medirlas.
 
 ### Resumen para René (W8)
 
