@@ -1,0 +1,181 @@
+{
+  "fuente": "eval/w8_reversa_declarada.mts",
+  "commit": "588a69b8",
+  "caso": "A2010930",
+  "reconstruccion_fisica": {
+    "hipotesis_visible": "Cuadra con el daño medido",
+    "velocidades": [
+      {
+        "vehiculo": "V2",
+        "kmh": 56.87,
+        "rango": [
+          54.92,
+          77.56
+        ]
+      },
+      {
+        "vehiculo": "V1",
+        "kmh": 14.98,
+        "rango": [
+          2.98,
+          17.32
+        ]
+      }
+    ],
+    "todas": [
+      {
+        "clave": "dano",
+        "velocidades": [
+          [
+            "V2",
+            56.87,
+            [
+              54.92,
+              77.56
+            ]
+          ],
+          [
+            "V1",
+            14.98,
+            [
+              2.98,
+              17.32
+            ]
+          ]
+        ]
+      },
+      {
+        "clave": "reposo",
+        "velocidades": [
+          [
+            "V2",
+            34.44,
+            [
+              30.34,
+              41.42
+            ]
+          ],
+          [
+            "V1",
+            29.9,
+            [
+              25.27,
+              31.51
+            ]
+          ]
+        ]
+      }
+    ]
+  },
+  "version_declarada": {
+    "declaracion": "me paré, reversié unos metros cuando llegó la camioneta y me impactó",
+    "escena": [
+      {
+        "vehiculo": "V2",
+        "maniobra": "recto",
+        "sentido_marcha": null,
+        "velocidad_kmh": 56.9,
+        "velocidad_rango": null,
+        "velocidad_nota": "La de la reconstrucción: el conductor no la declara."
+      },
+      {
+        "vehiculo": "V1",
+        "maniobra": "reversa",
+        "sentido_marcha": "reversa",
+        "velocidad_kmh": 5.68,
+        "velocidad_rango": [
+          3.06,
+          9.07
+        ],
+        "velocidad_nota": "Supuesto: mediana de la velocidad máxima en 6 037 maniobras de reversa en uso real (NHTSA, DOT HS 811 024); rango p10–p90."
+      }
+    ],
+    "limites": [
+      "V2: el conductor no declara su velocidad; va la de la reconstrucción.",
+      "V1: el conductor declara una reversa y no dice a qué velocidad; se suponen 5.68 km/h (de 3.06 a 9.07), lo que se mide en maniobras de reversa en uso real (NHTSA, DOT HS 811 024)."
+    ],
+    "resultado": [
+      {
+        "vehiculo": "V2",
+        "sentido_marcha": null,
+        "v_impacto_kmh": 56.9,
+        "delta_v_kmh": 44.17,
+        "distancia_post_m": 2.6,
+        "pose_final": {
+          "x": -2.978704,
+          "y": -11.697235,
+          "rumbo_deg": 75.714478
+        }
+      },
+      {
+        "vehiculo": "V1",
+        "sentido_marcha": "reversa",
+        "v_impacto_kmh": 5.68,
+        "delta_v_kmh": 24.67,
+        "distancia_post_m": 5.79,
+        "pose_final": {
+          "x": -0.874512,
+          "y": -3.435745,
+          "rumbo_deg": 75.714875
+        }
+      }
+    ],
+    "velocidad_de_cierre_kmh": 62.58
+  },
+  "que_cambia_entre_versiones": [
+    {
+      "clave": "posicion_final",
+      "vehiculo": "V1",
+      "declarada": "a 31.9 m de la reconstruida",
+      "evidencia": "la de la reconstrucción",
+      "estado": "no_coincide"
+    },
+    {
+      "clave": "zona",
+      "vehiculo": "V1",
+      "declarada": "posterior",
+      "evidencia": "posterior, lateral izquierdo",
+      "estado": "coincide"
+    },
+    {
+      "clave": "direccion",
+      "vehiculo": "V1",
+      "declarada": "de atras hacia adelante",
+      "evidencia": "de atras hacia adelante, de izquierda a derecha",
+      "estado": "coincide"
+    },
+    {
+      "clave": "posicion_final",
+      "vehiculo": "V2",
+      "declarada": "a 35.1 m de la reconstruida",
+      "evidencia": "la de la reconstrucción",
+      "estado": "no_coincide"
+    },
+    {
+      "clave": "zona",
+      "vehiculo": "V2",
+      "declarada": "frontal",
+      "evidencia": "frontal, lateral derecho, lateral izquierdo",
+      "estado": "coincide"
+    },
+    {
+      "clave": "direccion",
+      "vehiculo": "V2",
+      "declarada": "de adelante hacia atras",
+      "evidencia": "de adelante hacia atras",
+      "estado": "coincide"
+    },
+    {
+      "clave": "altura",
+      "vehiculo": "V1",
+      "declarada": "—",
+      "evidencia": "—",
+      "estado": "sin_dato"
+    }
+  ],
+  "sugerencia": {
+    "texto": "Los indicadores no alcanzan para decir si la versión declarada es compatible con la evidencia.",
+    "en_contra": 2,
+    "a_favor": 4
+  }
+}

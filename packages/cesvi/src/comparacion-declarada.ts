@@ -13,6 +13,7 @@ import type { Expediente } from "./corpus";
 import type { VersionDeclarada } from "./declaracion";
 import { enPalabras } from "./palabras";
 import type { EscenaSolver, Reconstruccion } from "./reconstruccion";
+import { REVERSA_FUENTE, REVERSA_KMH, velocidadSupuestaEnReversa } from "./reversa";
 
 type Json = Record<string, unknown>;
 type Id = Expediente["vehiculos"][number]["id"];
@@ -48,7 +49,8 @@ const DEL_CONDUCTOR = { fuente: "usuario", confianza: 0.6, nota: "Lo declara el 
 
 /**
  * La escena de la versión declarada. Sin velocidad declarada, un vehículo va a la que fijó la
- * reconstrucción (si la fija), marcada como tal.
+ * reconstrucción (si la fija), marcada como tal; salvo quien declara una reversa, que va a la
+ * velocidad medida de una reversa (ADR 0136, decisión 7).
  */
 export function especDeclarada(
   base: EscenaSolver,
@@ -74,6 +76,14 @@ export function especDeclarada(
       sv.velocidad_previa = { valor: 0, unidad: "km/h", ...DEL_CONDUCTOR };
     } else if (vel) {
       sv.velocidad_previa = { valor: vel.kmh, unidad: "km/h", ...DEL_CONDUCTOR };
+    } else if (k === "reversa") {
+      // Una reversa declarada sin velocidad no va a la velocidad con que la reconstrucción trae a
+      // ese vehículo (casi siempre, avanzando): va a la de una maniobra de reversa, como supuesto
+      // con su fuente y su rango (ADR 0136, decisión 7; René, 2026-11-15).
+      sv.velocidad_previa = velocidadSupuestaEnReversa();
+      limites.push(
+        `${id}: el conductor declara una reversa y no dice a qué velocidad; se suponen ${REVERSA_KMH.p50} km/h (de ${REVERSA_KMH.p10} a ${REVERSA_KMH.p90}), lo que se mide en maniobras de reversa en uso real (${REVERSA_FUENTE}).`,
+      );
     } else if (reconstruidas.has(id)) {
       sv.velocidad_previa = {
         valor: Math.round(reconstruidas.get(id)! * 10) / 10,

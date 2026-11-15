@@ -365,6 +365,29 @@ pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts comparar
 
 **D5 del plan:** T3.2, T3.3 y T3.5 están en `eval/results/`, y la portada toma de ahí sus cifras. El README no cita cifras de CESVI; se revisa en U7.
 
+### La reversa en la versión declarada (2026-11-15, en pausa por la auditoría)
+
+René aceptó la decisión 7 del ADR 0136: una reversa declarada sin velocidad va a la velocidad medida de una reversa (5.68 km/h, de 3.06 a 9.07), no a la de la reconstrucción de ese vehículo.
+
+**Hecho, en la rama `feat/w8-reversa-declarada`:**
+
+- `especDeclarada` (`packages/cesvi/src/comparacion-declarada.ts`) y sus pruebas (`reversa.test.ts`, 21 pruebas).
+- **Antes y después en AXA** (`eval/w8_reversa_declarada.mts`; `eval/results/w8/reversa_declarada_antes.json` contra `eval/results/w8_reversa_declarada.json`). El conductor de A declara «me paré, reversié unos metros cuando llegó la camioneta y me impactó»:
+
+  | Versión declarada de AXA              | Antes                    | Después                          |
+  | ------------------------------------- | ------------------------ | -------------------------------- |
+  | Velocidad de A en reversa             | 15 km/h (reconstrucción) | 5.68 km/h (supuesto, 3.06–9.07)  |
+  | Velocidad de cierre                   | 71.9 km/h                | 62.58 km/h                       |
+  | ΔV de A y de B                        | 28.34 y 50.75 km/h       | 24.67 y 44.17 km/h               |
+  | Reposo de A, lejos del reconstruido   | 34.8 m                   | 31.9 m                           |
+  | Reposo de B, lejos del reconstruido   | 37.1 m                   | 35.1 m                           |
+  | Filas de «Qué cambia entre versiones» | 2 no coinciden, 4 sí     | Las mismas: ningún estado cambia |
+  | Sugerencia                            | «No alcanzan para decir» | La misma                         |
+
+- **El 56.87 de AXA no se mueve:** la reconstrucción física es idéntica en ese guion, y con la medición de la app (`eval/axa_rango_estable.mts`, 20 semillas, `eval/results/w8/declarada/axa_rango_estable.json`) da 56.87 km/h (54.79–78.39) en las 20, igual que al cierre de T3.3.
+
+**Para retomar:** actualizar la decisión 7 del ADR 0136 y quitar la fila de «Bloqueado» en `docs/PROGRESS.md`; correr lint y tipos de `packages/cesvi`; abrir el PR, esperar el CI del commit exacto y fusionar. La versión declarada no entra en la E-R4 ni en las carambolas (`especDeclarada` solo la usa `comparacion-declaracion.tsx`), así que no hace falta volver a medirlas.
+
 ### Resumen para René (W8)
 
 - **Qué quedó:** W8 completa.
