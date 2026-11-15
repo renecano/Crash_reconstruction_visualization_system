@@ -1,0 +1,29 @@
+{
+  "fuente": "NHTSA, DOT HS 811 024: Mazzae, Barickman, Baldwin y Ranney (2008), «On-Road Study of Drivers' Use of Rearview Video Systems (ORSDURVS)»",
+  "url": "https://rosap.ntl.bts.gov/view/dot/63329",
+  "consultado": "2026-11-14",
+  "licencia": "Obra del gobierno de Estados Unidos: dominio público",
+  "que_es": "Maniobras de reversa en uso real (entradas de cochera, cocheras y cajones de estacionamiento), medidas en los vehículos de los participantes.",
+  "conductores": 37,
+  "maniobras": 6145,
+  "velocidad_maxima_mph": {
+    "tabla": "Tabla 10: cuantiles de la velocidad máxima de cada maniobra (6 037 maniobras)",
+    "p01": 1.16,
+    "p05": 1.572,
+    "p10": 1.899,
+    "p25": 2.581,
+    "p50": 3.532,
+    "p75": 4.649,
+    "p90": 5.633,
+    "p95": 6.275,
+    "p99": 7.542,
+    "max": 14.291
+  },
+  "medias": {
+    "tabla": "Tabla 7: las 6 145 maniobras",
+    "velocidad_maxima_mph": 3.64,
+    "velocidad_media_mph": 2.26,
+    "distancia_ft": 33.97,
+    "duracion_s": 10.08
+  }
+}

@@ -18,10 +18,12 @@ import {
   ANGLE_BOUND_DEG,
   applyValues,
   fullResult,
+  isReverse,
   PRIORIDAD,
   reconstruct,
   SIGMA_POSITION_M,
 } from "@croquis/solver-ts";
+import { avisoReversaRapida, limiteVelocidadSupuesta, velocidadSupuestaEnReversa } from "./reversa";
 
 /**
  * A partir de qué distancia se le dice al perito que el choque del mejor ajuste quedó lejos del punto
@@ -225,10 +227,22 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   // 1. Base válida con buildSpec, con la maniobra que dice la narración (R4b): quien retrocede va en
   // reversa (avanza con la parte posterior por delante) y quien estaba detenido empieza quieto.
   const maniobraNarrada = new Map<Id, string>();
-  for (const m of (e.versiones ?? []).find((v) => v.tipo === "evidencia")?.maniobras ?? []) {
+  const narradas = (e.versiones ?? []).find((v) => v.tipo === "evidencia")?.maniobras ?? [];
+  // El sentido de marcha va aparte de la forma de la maniobra (T3.3): quien retrocede dando vuelta
+  // conserva las dos cosas.
+  const enReversa = new Set<Id>(
+    narradas
+      .filter((m) => m.tipo === "reversa" || m.sentido_marcha === "reversa")
+      .map((m) => m.vehiculo),
+  );
+  for (const m of narradas) {
     const k = MANIOBRA_ESCENA[m.tipo];
-    if (k && !maniobraNarrada.has(m.vehiculo)) maniobraNarrada.set(m.vehiculo, k);
+    if (!k || maniobraNarrada.has(m.vehiculo)) continue;
+    // De quien retrocede cuenta la forma (recta o vuelta), no que antes estuviera detenido.
+    if (enReversa.has(m.vehiculo) && (k === "reversa" || k === "detenido")) continue;
+    maniobraNarrada.set(m.vehiculo, k);
   }
+  for (const v of enReversa) if (!maniobraNarrada.has(v)) maniobraNarrada.set(v, "reversa");
   const facts = emptyFacts();
   for (const v of vehiculos) {
     const m = new Map<string, Fact>();
@@ -305,6 +319,21 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
         nota: "Lo dice la narración del perito.",
       };
     }
+    if (enReversa.has(v.id)) {
+      sv.sentido_marcha = {
+        valor: "reversa",
+        fuente: "usuario",
+        confianza: 0.8,
+        nota: "Lo dice la narración del perito.",
+      };
+      // La velocidad en reversa que no dio el perito no es la de un vehículo que avanza: va la que
+      // se mide en maniobras de reversa, como supuesto con su fuente y su rango (ADR 0136).
+      const vp = sv.velocidad_previa as Json | undefined;
+      if (!vp || !["usuario", "relato"].includes(String(vp.fuente))) {
+        sv.velocidad_previa = velocidadSupuestaEnReversa();
+        limites.push(limiteVelocidadSupuesta(v.id));
+      }
+    }
     if (!origen) continue;
     const imp = deImpacto.find((p) => p.vehiculo === v.id);
     if (imp && enImpacto.length && !enImpacto.includes(v.id)) {
@@ -328,9 +357,9 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       const r = rumboEscena(imp.rumbo);
       const rad = (r * Math.PI) / 180;
       const man = maniobraNarrada.get(v.id);
+      const reversa = enReversa.has(v.id);
       // En reversa llega de frente a su rumbo (avanza hacia atrás); detenido, ya está ahí.
-      const d =
-        man === "detenido" ? 0 : man === "reversa" ? -ANTES_DEL_IMPACTO_M : ANTES_DEL_IMPACTO_M;
+      const d = man === "detenido" ? 0 : reversa ? -ANTES_DEL_IMPACTO_M : ANTES_DEL_IMPACTO_M;
       sv.posicion_inicial = {
         x: Math.round((x - d * Math.cos(rad)) * 1000) / 1000,
         y: Math.round((y - d * Math.sin(rad)) * 1000) / 1000,
@@ -341,7 +370,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
           nota:
             man === "detenido"
               ? "Detenido en la posición de impacto que colocó el perito."
-              : man === "reversa"
+              : reversa
                 ? `${ANTES_DEL_IMPACTO_M} m delante de la posición de impacto que colocó el perito: llega en reversa.`
                 : `${ANTES_DEL_IMPACTO_M} m antes de la posición de impacto que colocó el perito, en su rumbo.`,
         },
@@ -1034,6 +1063,16 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
           : null,
     };
   });
+  // Una reversa más rápida que cualquiera de las medidas en uso real se le dice al perito (T3.3).
+  for (const sv of (base.spec.vehiculos ?? []) as Json[]) {
+    const id = base.ids[String(sv.id)];
+    if (!id || !isReverse(sv)) continue;
+    const vp = sv.velocidad_previa as Json | undefined;
+    const dicha = vp && ["usuario", "relato"].includes(String(vp.fuente)) ? Number(vp.valor) : null;
+    const estimada = velocidades.find((x) => x.vehiculo === id)?.previa?.mejor ?? null;
+    const aviso = avisoReversaRapida(id, estimada ?? dicha ?? 0);
+    if (aviso) limites.push(aviso);
+  }
   const terreno = terrenoReconstruido(base.ids, resultado);
   if (terreno?.relieveFalta)
     limites.push(

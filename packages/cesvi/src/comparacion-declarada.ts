@@ -65,6 +65,9 @@ export function especDeclarada(
     const man = v.maniobras.find((m) => m.vehiculo === id);
     const k = man ? MANIOBRA[man.tipo] : undefined;
     if (k) sv.maniobra = { valor: k, ...DEL_CONDUCTOR };
+    // El sentido de marcha es el que declara el conductor, no el de la reconstrucción (T3.3).
+    if (k === "reversa") sv.sentido_marcha = { valor: "reversa", ...DEL_CONDUCTOR };
+    else if (k) delete sv.sentido_marcha;
     const vel = v.velocidades.find((x) => x.vehiculo === id);
     if (k === "detenido") {
       sv.velocidad_previa = { valor: 0, unidad: "km/h", ...DEL_CONDUCTOR };

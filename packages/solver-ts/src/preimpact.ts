@@ -121,6 +121,16 @@ export class ReversePath implements Path {
   }
 }
 
+/**
+ * ¿El vehículo de la escena va en reversa (T3.3)? Lo dice `sentido_marcha` o, sin él, la maniobra
+ * «reversa» (la reversa recta).
+ */
+export function isReverse(v: Record<string, unknown>): boolean {
+  const sentido = (v.sentido_marcha ?? {}) as Record<string, unknown>;
+  const maniobra = (v.maniobra ?? {}) as Record<string, unknown>;
+  return sentido.valor === "reversa" || maniobra.valor === "reversa";
+}
+
 /** El rumbo del movimiento a partir del rumbo del frente: el mismo, salvo en reversa. */
 export function travelHeading(path: Path, heading: number): number {
   return path instanceof ReversePath ? wrapAngle(heading + Math.PI) : heading;

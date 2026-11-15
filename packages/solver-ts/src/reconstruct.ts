@@ -71,6 +71,7 @@ import {
   LaneChangePath,
   type Path as KinPath,
   ReversePath,
+  isReverse,
   SpeedProfile,
   StraightPath,
   travelHeading,
@@ -177,6 +178,11 @@ interface VehicleModel {
   braking: boolean;
   brakeDistance: number | null;
   abs: boolean;
+  /**
+   * Sentido de marcha (T3.3): recorre su maniobra con la parte posterior por delante. El rumbo de
+   * `pose0` es siempre el del frente.
+   */
+  reverse: boolean;
 }
 
 export interface VehicleOutcome {
@@ -207,6 +213,8 @@ export interface VehicleOutcome {
   laterDamage?: LaterDamage[];
   /** Con terreno que tiene altura (W5): z, cabeceo y alabeo de cada muestra de la trayectoria. */
   terrainPose?: [number[], number[], number[]] | null;
+  /** Llegó al impacto en reversa (T3.3). */
+  reverse?: boolean;
 }
 
 /** El daño de un impacto posterior en un vehículo que ya tenía daño (carambola, ADR 0066). */
@@ -375,6 +383,7 @@ function vehicleDict(v: VehicleOutcome): Json {
     rol: v.rol,
     clase: v.clase,
     involucrado: v.involucrado,
+    ...(v.reverse ? { sentido_marcha: "reversa" } : {}),
     dimensiones: {
       largo_m: r6(v.length),
       ancho_m: r6(v.width),
@@ -529,6 +538,7 @@ function vehicleModel(v: Json, clases: Record<string, Json>, flag: Flag): Vehicl
     braking,
     brakeDistance: dist ? num(dist, LEN, 0.0) : null,
     abs: Boolean(absCampo.valor ?? false),
+    reverse: isReverse(v),
   };
 }
 
@@ -538,30 +548,40 @@ function thenStraight(part: KinPath, extra = 400.0): CompositePath {
   return new CompositePath([part, new StraightPath([end.x, end.y], end.heading, extra)]);
 }
 
-function pathFor(m: VehicleModel, laneWidth: number): KinPath {
+/** La pose inicial con el rumbo del movimiento: el del frente, o el contrario en reversa. */
+function travelPose(m: VehicleModel): readonly [number, number, number] {
   const [x, y, yaw] = m.pose0;
+  return m.reverse ? [x, y, wrapAngle(yaw + Math.PI)] : m.pose0;
+}
+
+/**
+ * La geometría literal de la maniobra. En reversa (T3.3) se traza en el sentido de marcha y el
+ * vehículo la recorre con la parte posterior por delante; izquierda y derecha son las del
+ * conductor, así que en el sentido de marcha quedan al revés.
+ */
+function pathFor(m: VehicleModel, laneWidth: number): KinPath {
+  const [x, y, yaw] = travelPose(m);
+  const izquierda = !m.reverse; // ¿la izquierda del conductor es la del sentido de marcha?
   const quarter = 0.5 * Math.PI * TURN_RADIUS_M;
+  let path: KinPath;
   if (m.maniobra === "vuelta_izquierda") {
-    return thenStraight(new ArcPath([x, y], yaw, TURN_RADIUS_M, quarter, true));
-  }
-  if (m.maniobra === "vuelta_derecha") {
-    return thenStraight(new ArcPath([x, y], yaw, TURN_RADIUS_M, quarter, false));
-  }
-  if (m.maniobra === "vuelta_u") {
+    path = thenStraight(new ArcPath([x, y], yaw, TURN_RADIUS_M, quarter, izquierda));
+  } else if (m.maniobra === "vuelta_derecha") {
+    path = thenStraight(new ArcPath([x, y], yaw, TURN_RADIUS_M, quarter, !izquierda));
+  } else if (m.maniobra === "vuelta_u") {
     const r = 0.75 * TURN_RADIUS_M;
-    return thenStraight(new ArcPath([x, y], yaw, r, Math.PI * r, true));
+    path = thenStraight(new ArcPath([x, y], yaw, r, Math.PI * r, izquierda));
+  } else if (m.maniobra === "cambio_carril_izquierda") {
+    const lateral = izquierda ? laneWidth : -laneWidth;
+    path = thenStraight(new LaneChangePath([x, y], yaw, LANE_CHANGE_LENGTH_M, lateral));
+  } else if (m.maniobra === "cambio_carril_derecha") {
+    const lateral = izquierda ? -laneWidth : laneWidth;
+    path = thenStraight(new LaneChangePath([x, y], yaw, LANE_CHANGE_LENGTH_M, lateral));
+  } else {
+    path = new StraightPath([x, y], yaw, 500.0);
   }
-  if (m.maniobra === "cambio_carril_izquierda") {
-    return thenStraight(new LaneChangePath([x, y], yaw, LANE_CHANGE_LENGTH_M, laneWidth));
-  }
-  if (m.maniobra === "cambio_carril_derecha") {
-    return thenStraight(new LaneChangePath([x, y], yaw, LANE_CHANGE_LENGTH_M, -laneWidth));
-  }
-  if (m.maniobra === "reversa") {
-    // Hacia atrás con el frente donde lo dejó el perito (sentido de marcha ≠ rumbo del frente).
-    return new ReversePath(new StraightPath([x, y], wrapAngle(yaw + Math.PI), 500.0));
-  }
-  return new StraightPath([x, y], yaw, 500.0);
+  // Hacia atrás con el frente donde lo dejó el perito (sentido de marcha ≠ rumbo del frente).
+  return m.reverse ? new ReversePath(path) : path;
 }
 
 /** Normal de una superficie fija, del vehículo hacia la superficie. */
@@ -585,10 +605,9 @@ function barrierNormal(obj: Json | null, point: Vec, axis: RoadAxis, st: State2D
 
 /** Desvío suave que lleva el punto de contacto al objetivo (cuando nada más lo alcanza). */
 function targetPath(m: VehicleModel, target: Vec, offset: Vec): KinPath | null {
-  const [x, y, yaw0] = m.pose0;
+  const [x, y, yaw] = travelPose(m);
   // En reversa el desvío se traza en el sentido de marcha, con el desfase del contacto girado.
-  const reverse = m.maniobra === "reversa";
-  const yaw = reverse ? wrapAngle(yaw0 + Math.PI) : yaw0;
+  const reverse = m.reverse;
   if (reverse) offset = [-offset[0], -offset[1]];
   const dx = target[0] - x;
   const dy = target[1] - y;
@@ -611,12 +630,24 @@ function pathCandidates(m: VehicleModel, laneWidth: number, axis: RoadAxis): Kin
     { recto: 0.0, cambio_carril_izquierda: laneWidth } as Record<string, number>
   )[m.maniobra];
   if (m.maniobra === "cambio_carril_derecha") lateral = -laneWidth;
-  if (lateral === undefined) return [literal];
-  const follow = laneFollowingPath(axis, m.pose0, {
-    lateral,
+  if (!m.reverse) {
+    if (lateral === undefined) return [literal];
+    const follow = laneFollowingPath(axis, m.pose0, {
+      lateral,
+      changeLength: LANE_CHANGE_LENGTH_M,
+    });
+    return follow !== null ? [follow, literal] : [literal];
+  }
+  // En reversa (T3.3) también sigue el carril de una vía curva, en el sentido de marcha y con el
+  // lado del conductor al revés. En una glorieta no: ahí el carril tiene un solo sentido y el que
+  // retrocede va contra él, así que vale la geometría literal.
+  if (m.maniobra === "reversa") lateral = 0.0;
+  if (lateral === undefined || axis.kind === "anillo") return [literal];
+  const back = laneFollowingPath(axis, travelPose(m), {
+    lateral: -lateral,
     changeLength: LANE_CHANGE_LENGTH_M,
   });
-  return follow !== null ? [follow, literal] : [literal];
+  return back !== null ? [new ReversePath(back), literal] : [literal];
 }
 
 /** (x, y, rumbo, curvatura) para cualquier s; antes de s = 0 se extrapola en línea recta. */
@@ -1066,7 +1097,8 @@ export function reconstruct(
         { vehiculo: targets[0]!.id, lateral_m: lateral },
         `Vehículo ${targets[0]!.rol}: para alcanzar el punto de impacto declarado se ` +
           `infiere un desvío lateral de ${pyFixed(Math.abs(lateral), 1)} m ` +
-          `hacia la ${lateral > 0 ? "izquierda" : "derecha"}.`,
+          // El lado es el del conductor: en reversa, el contrario al del sentido de marcha.
+          `hacia la ${lateral > 0 !== targets[0]!.reverse ? "izquierda" : "derecha"}.`,
       );
     }
     impactPoint = sol.point;
@@ -1985,6 +2017,7 @@ export function reconstruct(
       rol: m.rol,
       clase: m.clase,
       involucrado: participantes.has(m.id),
+      reverse: m.reverse && m.v0 > 0,
       length: m.body.length,
       width: m.body.width,
       height: m.height,

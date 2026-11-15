@@ -23,6 +23,7 @@ import {
 } from "./friction";
 import { lstsq, matmul, pinv, transpose } from "./linalg";
 import { leastSquaresSoftL1, softL1Cost } from "./lsq";
+import { isReverse } from "./preimpact";
 import { median, pyMod, pyRound, quantilesInclusive, radians, str } from "./pymath";
 import { PyRandom } from "./pyrandom";
 import { countDraws, DESIGN_SEED, type Draws, LatinHypercube } from "./stratified";
@@ -528,14 +529,11 @@ export function rearEndPairs(spec: Json): [string, string][] {
     if (z.cdc) lado.set(String(z.vehiculo_id), String((z.cdc as Json).lado));
   const golpea = [...lado].filter(([, x]) => x === "F").map(([v]) => v);
   const golpeado = [...lado].filter(([, x]) => x === "B").map(([v]) => v);
-  const maniobra = new Map(
-    (spec.vehiculos as Json[]).map((v) => [
-      String(v.id),
-      str((v.maniobra as Json | undefined)?.valor, ""),
-    ]),
+  const enReversa = new Set(
+    (spec.vehiculos as Json[]).filter((v) => isReverse(v)).map((v) => String(v.id)),
   );
   if (golpea.length !== 1 || golpeado.length !== 1 || golpea[0] === golpeado[0]) return [];
-  if (maniobra.get(golpea[0]!) === "reversa" || maniobra.get(golpeado[0]!) === "reversa") return [];
+  if (enReversa.has(golpea[0]!) || enReversa.has(golpeado[0]!)) return [];
   return [[golpea[0]!, golpeado[0]!]];
 }
 

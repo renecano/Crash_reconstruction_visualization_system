@@ -14,6 +14,7 @@ export * from "./escena-narracion";
 export * from "./orden-impactos";
 export * from "./relato";
 export * from "./reconstruccion";
+export * from "./reversa";
 export * from "./conductores";
 export * from "./pizarra";
 export * from "./supuestos";
