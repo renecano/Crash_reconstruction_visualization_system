@@ -63,7 +63,6 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi) {
       lang,
       inicio: "/en",
       otroIdioma: { texto: "Español", href: "/" },
-      publico: "/en/publico",
       marca: "Crash reconstruction for experts",
       nav: [
         ["hecho", "The crash"],
@@ -263,7 +262,6 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi) {
       cierreH: ["From narrative", "to signature."],
       creditos:
         "Everything you see is a reconstruction computed by Croquis (illustrative; the report belongs to the expert). Streets © OpenStreetMap contributors (ODbL).",
-      anterior: "Previous home page",
       toastSketch:
         "<b>Hand-drawn sketch mode.</b> This is how it used to be drawn. Type “croquis” again to go back.",
       toastVuelta: "<b>Back to the case file.</b> Croquis does it for you.",
@@ -276,7 +274,6 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi) {
     lang,
     inicio: "/",
     otroIdioma: { texto: "English", href: "/en" },
-    publico: "/publico",
     marca: "Reconstrucción pericial",
     nav: [
       ["hecho", "El hecho"],
@@ -479,7 +476,6 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi) {
     cierreH: ["Del relato", "a la firma."],
     creditos:
       "Todo lo que ves es una reconstrucción calculada por Croquis (ilustrativa; el dictamen es del perito). Calles © colaboradores de OpenStreetMap (ODbL).",
-    anterior: "Portada anterior",
     toastSketch:
       "<b>Modo croquis a mano.</b> Así se dibujaba antes. Escribe “croquis” otra vez para volver.",
     toastVuelta: "<b>De vuelta al expediente.</b> Croquis lo hace por ti.",

@@ -49,7 +49,7 @@ const manifiesto = {
   name: "Croquis",
   short_name: "Croquis",
   description:
-    "Cuenta un percance vial con tus palabras y Croquis lo reconstruye en 3D con física real. Reconstrucción ilustrativa, no un peritaje.",
+    "Reconstrucción de hechos de tránsito para peritos: narra el hecho, ubícalo y Croquis lo reconstruye con física y en 3D. Reconstrucción ilustrativa de apoyo; el dictamen es del perito.",
   lang: "es-MX",
   start_url: "/",
   scope: "/",

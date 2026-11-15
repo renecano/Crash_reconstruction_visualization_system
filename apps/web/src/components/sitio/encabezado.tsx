@@ -31,9 +31,7 @@ export function Encabezado({ sobreEscena = false }: { sobreEscena?: boolean }) {
   const otro = lang === "es" ? "en" : "es";
   const enlaces = [
     { href: ruta("/cuenta"), texto: t.sitio.nav.cuenta },
-    { href: ruta("/demo"), texto: t.sitio.nav.ejemplo },
     { href: ruta("/recorrido"), texto: t.sitio.nav.mide },
-    { href: ruta("/historia"), texto: t.sitio.nav.historia },
   ];
   const transparente = sobreEscena && !desplazado && !abierto;
 

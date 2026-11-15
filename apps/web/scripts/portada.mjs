@@ -145,7 +145,7 @@ if (check) {
         "node_modules/@fontsource-variable/anybody/files/anybody-latin-standard-normal.woff2",
       ),
     ).toString("base64");
-    const leyenda = "Reconstrucción ilustrativa generada a partir de un relato. No es un peritaje.";
+    const leyenda = "Reconstrucción ilustrativa de apoyo al perito. No sustituye su dictamen.";
     const comp = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
     await comp.setContent(`<!doctype html><html><head><style>
     @font-face { font-family: Anybody; src: url(data:font/woff2;base64,${fuente}) format("woff2"); font-weight: 100 900; font-stretch: 50% 150%; }

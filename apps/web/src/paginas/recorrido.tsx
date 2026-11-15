@@ -28,6 +28,8 @@ const T = textos(
       "La IA solo traduce el relato a datos; la física decide qué pasó y el visor lo muestra. Cada pieza se mide contra una alternativa simple, con un script cuyo resultado está versionado. Los tests se congelaron antes de medir y se corrieron una vez. Donde Croquis pierde, se dice.",
     indice: "Evaluaciones",
     resultado: "Resultado:",
+    anterior:
+      "Esta página es de la versión anterior de Croquis (el producto público de octubre de 2026, que reconstruía un relato). Sus evaluaciones siguen siendo las del solver, pero no describen el flujo actual para los peritos de CESVI.",
   },
   {
     titulo: "How we know what we know",
@@ -35,6 +37,8 @@ const T = textos(
       "The AI only translates the narrative into data; physics decides what happened and the viewer shows it. Each piece is measured against a simple alternative, with a script whose result is versioned. The tests were frozen before measuring and run once. Where Croquis loses, it says so.",
     indice: "Evaluations",
     resultado: "Result:",
+    anterior:
+      "This page belongs to the previous version of Croquis (the public product of October 2026, which reconstructed a narrative). Its evaluations are still those of the solver, but they do not describe the current workflow for CESVI's experts.",
   },
 );
 
@@ -43,6 +47,13 @@ export default function RecorridoPage({ lang }: { lang: Lang }) {
   return (
     <Marco lang={lang}>
       <div className="pagina flex flex-col gap-12 py-10 md:py-14">
+        <p
+          role="note"
+          className="t-interfaz rounded-control border border-linea bg-superficie px-4 py-3 text-texto-2"
+          data-testid="aviso-version-anterior"
+        >
+          {t.anterior}
+        </p>
         <CabeceraPagina titulo={t.titulo} intro={t.intro}>
           <nav aria-label={t.indice} className="flex flex-wrap gap-2">
             {evaluaciones.map((e) => (

@@ -676,7 +676,7 @@ export function PortadaV3({ t, tomas }: { t: TextosPortadaV3; tomas: TomaPortada
               </div>
             </div>
             <p className="credits">
-              {t.creditos} <a href={t.publico}>{t.anterior}</a> ·{" "}
+              {t.creditos}{" "}
               <a href={t.otroIdioma.href} hrefLang={t.lang === "es" ? "en" : "es-MX"}>
                 {t.otroIdioma.texto}
               </a>
