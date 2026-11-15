@@ -17,6 +17,7 @@ import { iniciarPortadaV3, type TomaPortada } from "./comportamiento";
 import { FUENTES_PORTADA_V3 } from "./fuentes";
 import type { TextosPortadaV3 } from "./textos";
 import "./portada-v3.css";
+import MARCA from "../../../../../assets/brand/marca.json";
 
 type Estilo = CSSProperties & Record<`--${string}`, string | number>;
 
@@ -52,18 +53,31 @@ function Partido({ partes }: { partes: { texto: string; clase?: string; em?: boo
   );
 }
 
+/**
+ * La geometría del logo sale de `assets/brand/marca.json`, la única fuente (René, 2026-11-15): de
+ * ahí salen también los SVG de la marca que usa el resto del sitio. Aquí se dibuja en línea porque
+ * la apertura anima sus partes.
+ */
+const DETALLE = MARCA.simbolo_detalle;
+const CHICO = MARCA.simbolo;
+const [CX, CY] = MARCA.centro as [number, number];
+const [MX, MY] = MARCA.mira as [number, number];
+const SENAL = MARCA.colores.senal;
+const VISTA = `0 0 ${MARCA.lienzo} ${MARCA.lienzo}`;
+type Raya = [number, number, number, number];
+
 /** La escala de transportador del símbolo grande. */
 const MARCAS: { x1: string; y1: string; x2: string; y2: string }[] = [];
-for (let a = 60; a <= 300; a += 15) {
+for (let a = DETALLE.escala.desde; a <= DETALLE.escala.hasta; a += DETALLE.escala.paso) {
   const r = (a * Math.PI) / 180;
   const c = Math.cos(r);
   const s = Math.sin(r);
-  const r1 = a % 45 === 0 ? 26.2 : 27.3;
+  const r1 = a % DETALLE.escala.mayor_cada === 0 ? DETALLE.escala.r_mayor : DETALLE.escala.r_menor;
   MARCAS.push({
-    x1: (32 + r1 * c).toFixed(2),
-    y1: (32 + r1 * s).toFixed(2),
-    x2: (32 + 29.6 * c).toFixed(2),
-    y2: (32 + 29.6 * s).toFixed(2),
+    x1: (CX + r1 * c).toFixed(2),
+    y1: (CY + r1 * s).toFixed(2),
+    x2: (CX + DETALLE.escala.r_fuera * c).toFixed(2),
+    y2: (CY + DETALLE.escala.r_fuera * s).toFixed(2),
   });
 }
 
@@ -121,13 +135,13 @@ export function PortadaV3({ t, tomas }: { t: TextosPortadaV3; tomas: TomaPortada
       {/* símbolo: C de trayectoria + escala de transportador + punto de impacto */}
       <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
         <defs>
-          <symbol id="mark" viewBox="0 0 64 64">
+          <symbol id="mark" viewBox={VISTA}>
             <g
               className="ticks"
               stroke="currentColor"
-              strokeWidth="1.1"
+              strokeWidth={DETALLE.escala.grosor}
               strokeLinecap="butt"
-              opacity=".55"
+              opacity={DETALLE.escala.opacidad}
             >
               {MARCAS.map((m, k) => (
                 <line key={k} {...m} />
@@ -135,57 +149,71 @@ export function PortadaV3({ t, tomas }: { t: TextosPortadaV3; tomas: TomaPortada
             </g>
             <path
               className="arc"
-              d="M 46.86 45.38 A 20 20 0 1 1 46.86 18.62"
+              d={MARCA.arco}
               fill="none"
               stroke="currentColor"
-              strokeWidth="6.4"
+              strokeWidth={DETALLE.arco_grosor}
             />
             <path
-              d="M 43.14 41.94 A 15 15 0 1 1 43.14 22.06"
+              d={DETALLE.interior.d}
               fill="none"
               stroke="currentColor"
-              strokeWidth=".9"
-              opacity=".45"
-              strokeDasharray="2.2 2.2"
+              strokeWidth={DETALLE.interior.grosor}
+              opacity={DETALLE.interior.opacidad}
+              strokeDasharray={DETALLE.interior.guiones}
             />
-            <g className="tgt" stroke="#ff5a1f" fill="none">
-              <circle cx="52" cy="32" r="4.3" strokeWidth="1.7" />
-              <line x1="52" y1="23.6" x2="52" y2="26.4" strokeWidth="1.3" />
-              <line x1="52" y1="37.6" x2="52" y2="40.4" strokeWidth="1.3" />
-              <line x1="57.6" y1="32" x2="60.4" y2="32" strokeWidth="1.3" />
-              <circle cx="52" cy="32" r="1.2" fill="#ff5a1f" stroke="none" />
+            <g className="tgt" stroke={SENAL} fill="none">
+              <circle cx={MX} cy={MY} r={DETALLE.mira.radio} strokeWidth={DETALLE.mira.grosor} />
+              {(DETALLE.mira.rayas as Raya[]).map(([x1, y1, x2, y2]) => (
+                <line
+                  key={`${x1}-${y1}`}
+                  x1={x1}
+                  y1={y1}
+                  x2={x2}
+                  y2={y2}
+                  strokeWidth={DETALLE.mira.rayas_grosor}
+                />
+              ))}
+              <circle cx={MX} cy={MY} r={DETALLE.mira.punto} fill={SENAL} stroke="none" />
             </g>
             <circle
               className="ring"
-              cx="52"
-              cy="32"
-              r="4.3"
+              cx={MX}
+              cy={MY}
+              r={DETALLE.mira.radio}
               fill="none"
-              stroke="#ff5a1f"
+              stroke={SENAL}
               strokeWidth=".8"
             />
           </symbol>
-          <symbol id="mark-sm" viewBox="0 0 64 64">
+          <symbol id="mark-sm" viewBox={VISTA}>
             <path
-              d="M 46.86 45.38 A 20 20 0 1 1 46.86 18.62"
+              d={MARCA.arco}
               fill="none"
               stroke="currentColor"
-              strokeWidth="7"
+              strokeWidth={CHICO.arco_grosor}
             />
             <path
-              d="M 44 42 A 14.5 14.5 0 1 1 44 22"
+              d={CHICO.interior.d}
               fill="none"
               stroke="currentColor"
-              strokeWidth="1.4"
-              opacity=".45"
-              strokeDasharray="2.6 2.6"
+              strokeWidth={CHICO.interior.grosor}
+              opacity={CHICO.interior.opacidad}
+              strokeDasharray={CHICO.interior.guiones}
             />
-            <g stroke="#ff5a1f" fill="none">
-              <circle cx="52" cy="32" r="4.6" strokeWidth="2.2" />
-              <line x1="52" y1="22.5" x2="52" y2="25.8" strokeWidth="2" />
-              <line x1="52" y1="38.2" x2="52" y2="41.5" strokeWidth="2" />
-              <line x1="58.2" y1="32" x2="61.5" y2="32" strokeWidth="2" />
-              <circle cx="52" cy="32" r="1.5" fill="#ff5a1f" stroke="none" />
+            <g stroke={SENAL} fill="none">
+              <circle cx={MX} cy={MY} r={CHICO.mira.radio} strokeWidth={CHICO.mira.grosor} />
+              {(CHICO.mira.rayas as Raya[]).map(([x1, y1, x2, y2]) => (
+                <line
+                  key={`${x1}-${y1}`}
+                  x1={x1}
+                  y1={y1}
+                  x2={x2}
+                  y2={y2}
+                  strokeWidth={CHICO.mira.rayas_grosor}
+                />
+              ))}
+              <circle cx={MX} cy={MY} r={CHICO.mira.punto} fill={SENAL} stroke="none" />
             </g>
           </symbol>
         </defs>
@@ -243,7 +271,11 @@ export function PortadaV3({ t, tomas }: { t: TextosPortadaV3; tomas: TomaPortada
             <use href="#mark-sm" />
           </svg>
           <span>
-            <span className="wordmark">Croquis</span>
+            {/* El nombre es el logo, no texto: la palabra en contornos de la misma fuente. */}
+            <span className="wordmark">
+              {/* eslint-disable-next-line @next/next/no-img-element -- SVG de marca tal cual */}
+              <img src="/marca/palabra.svg" alt="" />
+            </span>
             <small>{t.marca}</small>
           </span>
         </a>

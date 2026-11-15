@@ -1,0 +1,74 @@
+{
+  "simbolo": {
+    "w": 64.0,
+    "h": 64.0
+  },
+  "simbolo-sobre-claro": {
+    "w": 64.0,
+    "h": 64.0
+  },
+  "simbolo-blanco": {
+    "w": 64.0,
+    "h": 64.0
+  },
+  "simbolo-negro": {
+    "w": 64.0,
+    "h": 64.0
+  },
+  "simbolo-detalle": {
+    "w": 64.0,
+    "h": 64.0
+  },
+  "simbolo-detalle-sobre-claro": {
+    "w": 64.0,
+    "h": 64.0
+  },
+  "simbolo-efectos": {
+    "w": 64.0,
+    "h": 64.0
+  },
+  "logotipo": {
+    "w": 284.99,
+    "h": 70.0
+  },
+  "logotipo-sobre-claro": {
+    "w": 284.99,
+    "h": 70.0
+  },
+  "logotipo-blanco": {
+    "w": 284.99,
+    "h": 70.0
+  },
+  "logotipo-negro": {
+    "w": 284.99,
+    "h": 70.0
+  },
+  "logotipo-efectos": {
+    "w": 284.99,
+    "h": 70.0
+  },
+  "logotipo-integrado": {
+    "w": 204.92,
+    "h": 39.0
+  },
+  "logotipo-integrado-sobre-claro": {
+    "w": 204.92,
+    "h": 39.0
+  },
+  "palabra": {
+    "w": 195.79,
+    "h": 18.36
+  },
+  "palabra-sobre-claro": {
+    "w": 195.79,
+    "h": 18.36
+  },
+  "favicon": {
+    "w": 64.0,
+    "h": 64.0
+  },
+  "app-icon": {
+    "w": 1024,
+    "h": 1024
+  }
+}

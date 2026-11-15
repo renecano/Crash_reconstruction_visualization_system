@@ -1,0 +1,106 @@
+{
+  "etiqueta": "antes",
+  "base": "https://croquis-sage.vercel.app",
+  "fecha": "2026-11-15T15:06:01.186Z",
+  "paginas": [
+    {
+      "nombre": "portada",
+      "ruta": "/",
+      "tema": "oscuro",
+      "archivo": "portada-oscuro.png",
+      "imagenes": [],
+      "texto": ["Croquis", "Croquis"],
+      "iconos": [
+        "/favicon.ico",
+        "/marca/favicon.svg",
+        "/iconos/icono-32.png",
+        "/iconos/icono-16.png",
+        "/iconos/icono-180.png"
+      ]
+    },
+    {
+      "nombre": "app-inicio",
+      "ruta": "/cesvi",
+      "tema": "oscuro",
+      "archivo": "app-inicio-oscuro.png",
+      "imagenes": [
+        {
+          "src": "/marca/logotipo.svg",
+          "ancho": 120
+        }
+      ],
+      "texto": [],
+      "iconos": []
+    },
+    {
+      "nombre": "app-caso-axa",
+      "ruta": "/cesvi/casos/a2010930",
+      "tema": "oscuro",
+      "archivo": "app-caso-axa-oscuro.png",
+      "imagenes": [
+        {
+          "src": "/marca/logotipo.svg",
+          "ancho": 120
+        }
+      ],
+      "texto": [],
+      "iconos": []
+    },
+    {
+      "nombre": "app-reproduccion",
+      "ruta": "/cesvi/reproduccion",
+      "tema": "oscuro",
+      "archivo": "app-reproduccion-oscuro.png",
+      "imagenes": [
+        {
+          "src": "/marca/logotipo.svg",
+          "ancho": 120
+        }
+      ],
+      "texto": [],
+      "iconos": []
+    },
+    {
+      "nombre": "app-inicio",
+      "ruta": "/cesvi",
+      "tema": "claro",
+      "archivo": "app-inicio-claro.png",
+      "imagenes": [
+        {
+          "src": "/marca/logotipo-sobre-claro.svg",
+          "ancho": 120
+        }
+      ],
+      "texto": [],
+      "iconos": []
+    },
+    {
+      "nombre": "app-caso-axa",
+      "ruta": "/cesvi/casos/a2010930",
+      "tema": "claro",
+      "archivo": "app-caso-axa-claro.png",
+      "imagenes": [
+        {
+          "src": "/marca/logotipo-sobre-claro.svg",
+          "ancho": 120
+        }
+      ],
+      "texto": [],
+      "iconos": []
+    },
+    {
+      "nombre": "app-reproduccion",
+      "ruta": "/cesvi/reproduccion",
+      "tema": "claro",
+      "archivo": "app-reproduccion-claro.png",
+      "imagenes": [
+        {
+          "src": "/marca/logotipo-sobre-claro.svg",
+          "ancho": 120
+        }
+      ],
+      "texto": [],
+      "iconos": []
+    }
+  ]
+}

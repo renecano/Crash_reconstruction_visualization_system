@@ -201,6 +201,18 @@ html:has(.pv3) {
   text-transform: uppercase;
   padding-top: 1px;
 }
+/* El nombre es el logo (assets/brand/marca.json → palabra.svg): la altura de sus mayúsculas, 0.675
+   de la letra, para que mida lo mismo que cuando era texto. */
+.pv3 .wordmark {
+  display: flex;
+  align-items: center;
+  height: 1em;
+}
+.pv3 .wordmark img {
+  display: block;
+  height: 0.675em;
+  width: auto;
+}
 .pv3 .brand small {
   display: block;
   font: 500 8.5px/1 var(--f-mono);

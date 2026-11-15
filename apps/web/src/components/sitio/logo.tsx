@@ -1,10 +1,12 @@
 /**
- * El logo de Croquis: siempre el SVG de `assets/brand/` (copiado tal cual a `public/marca/`).
- * Nunca se escribe "CROQUIS" con la fuente ni se redibuja (BRAND.md).
+ * El logo de Croquis: siempre los SVG de `assets/brand/` (copiados tal cual a `public/marca/`), que
+ * salen de `assets/brand/marca.json`, la única fuente del logo (el de la portada pública). Nunca se
+ * escribe "CROQUIS" con la fuente ni se redibuja (BRAND.md).
  */
+import medidas from "../../../../../assets/brand/medidas.json";
 
-/** Proporciones de los SVG maestros (su `viewBox`). */
-const LOGOTIPO = { w: 809.04, h: 128 };
+/** Proporciones de los SVG maestros (su `viewBox`), como las escribe `make_brand.py`. */
+const LOGOTIPO = medidas.logotipo;
 
 type Variante = "logotipo" | "logotipo-efectos" | "logotipo-sobre-claro";
 
