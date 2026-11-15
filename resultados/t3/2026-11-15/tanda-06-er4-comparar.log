@@ -1,0 +1,43 @@
+{
+ "v4_contra_v3": {
+  "ejes_comparados": [
+   "dictamenes",
+   "modalidad",
+   "zonas",
+   "secuencia",
+   "velocidades",
+   "posiciones_finales"
+  ],
+  "ejes_que_cambian": [],
+  "reconstruidas_en_3d": {
+   "v3": 205,
+   "v4": 205
+  }
+ },
+ "reversa": {
+  "fuente": "eval/results/cesvi_r4_reversa.json",
+  "que_mide": "Dado quién retrocede según el reporte (maniobras de C0), si Croquis reconstruye la reversa con la narración de R0 leída como en la E-R4.",
+  "desarrollo": {
+   "reportes": 38,
+   "vehiculos_que_retroceden": 38,
+   "medidos": 37,
+   "sin_medir": {
+    "la narración no trae a ese vehículo": 1
+   },
+   "retrocede": 37,
+   "retrocede_y_choca": 33,
+   "con_dano_posterior_en_el_reporte": 26,
+   "de_esos_pegan_con_la_parte_posterior": 21
+  },
+  "prueba": {
+   "reportes": 12,
+   "vehiculos_que_retroceden": 12,
+   "medidos": 12,
+   "sin_medir": {},
+   "retrocede": 12,
+   "retrocede_y_choca": 11,
+   "con_dano_posterior_en_el_reporte": 12,
+   "de_esos_pegan_con_la_parte_posterior": 9
+  }
+ }
+}
