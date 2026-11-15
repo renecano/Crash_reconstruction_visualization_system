@@ -74,6 +74,8 @@ class _Rules:
     place_preps: frozenset[str]
     place_prefixes: frozenset[str]
     not_plate: frozenset[str]
+    before_year: frozenset[str]
+    models: dict[str, frozenset[str]]
 
 
 @cache
@@ -93,6 +95,8 @@ def _rules() -> _Rules:
         place_preps=frozenset(d["preposiciones_lugar"]),
         place_prefixes=frozenset(d["prefijos_lugar"]),
         not_plate=frozenset(d["palabras_no_placa"]["palabras"]),
+        before_year=frozenset(d["antes_de_ano"]["palabras"]),
+        models={m: frozenset(c) for m, c in d["modelos_no_placa"]["modelos"].items()},
     )
 
 
@@ -232,22 +236,33 @@ def _name_spans(text: str, folded: str) -> list[tuple[int, int]]:
     return spans
 
 
-def _word_with_figure(original: str, folded: str, upper: bool) -> bool:
+def _word_with_figure(original: str, folded: str, upper: bool, previous: str) -> bool:
     """¿El tramo es una palabra común junto a una cifra, y no una placa? «con 1450», «250 mts»,
     «del 2010»: una de sus partes separadas por espacio está en `palabras_no_placa`. Para no dejar
     pasar una placa escrita con espacio («CON 1450»), la palabra en mayúsculas solo cuenta como
-    palabra si todo el texto va en mayúsculas."""
+    palabra si todo el texto va en mayúsculas o si antes viene un mes, «modelo» o «año» («AGOSTO
+    DEL 2019»). También es cifra el modelo de un vehículo («Ram 2500»)."""
     parts = folded.split(" ")
     if len(parts) < 2:
         return False
+    rules = _rules()
+    if len(parts) == 2 and parts[1] in rules.models.get(parts[0], frozenset()):
+        return True
     raw_parts = re.split(r"\s", original)
+    after_date = previous in rules.before_year
     for k, p in enumerate(parts):
-        if p not in _rules().not_plate:
+        if p not in rules.not_plate:
             continue
         raw = raw_parts[k] if k < len(raw_parts) else ""
-        if upper or raw != raw.upper():
+        if upper or after_date or raw != raw.upper():
             return True
     return False
+
+
+def _previous_word(folded: str, i: int) -> str:
+    """La palabra (plegada) que va justo antes de la posición `i`; "" si no hay."""
+    m = re.search(r"([a-z]+)\s+$", folded[max(0, i - 24) : i], re.ASCII)
+    return m.group(1) if m else ""
 
 
 def _mostly_upper(text: str) -> bool:
@@ -281,7 +296,11 @@ def redact(raw: str, *, conservar_cifras: bool = False) -> Redaction:
             seg = raw[s:e]
             if p.get("mixto") and not (re.search(r"[0-9]", seg) and re.search(r"[A-Za-z]", seg)):
                 continue
-            if conservar_cifras and p.get("mixto") and _word_with_figure(seg, folded[s:e], upper):
+            if (
+                conservar_cifras
+                and p.get("mixto")
+                and _word_with_figure(seg, folded[s:e], upper, _previous_word(folded, s))
+            ):
                 continue
             if "digitos" in p and len(re.sub(r"[^0-9]", "", seg)) not in p["digitos"]:
                 continue

@@ -28,6 +28,12 @@ export const CASOS: [string, string, string][] = [
     "El 12 de agosto del 2019, en el kilometro 47+800 del tramo.",
     "El 12 de agosto [PLACA], en el kilometro 47+[PLACA] tramo.",
   ],
+  // El año tras un mes escrito en mayúsculas, y el modelo de la camioneta.
+  [
+    "Ocurrió el 12 DE AGOSTO DEL 2019. Una Dodge Ram 2500 modelo DEL 2010 y una RAM 4000.",
+    "Ocurrió el 12 DE AGOSTO DEL 2019. Una Dodge Ram 2500 modelo DEL 2010 y una RAM 4000.",
+    "Ocurrió el 12 DE AGOSTO [PLACA]. Una Dodge [PLACA] modelo [PLACA] y una [PLACA].",
+  ],
   // Las placas se siguen borrando: tras la palabra «placas», con guiones, con espacios y aunque sus
   // letras formen una palabra común escrita en mayúsculas.
   [

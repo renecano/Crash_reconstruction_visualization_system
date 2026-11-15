@@ -55,6 +55,30 @@
       "va"
     ]
   },
+  "antes_de_ano": {
+    "nota": "Tras una de estas palabras, «DEL 2019» o «DE 2019» es un año aunque vaya en mayúsculas dentro de un texto en minúsculas («12 DE AGOSTO DEL 2019», «MODELO DEL 2010»).",
+    "palabras": [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "setiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+      "modelo",
+      "ano"
+    ]
+  },
+  "modelos_no_placa": {
+    "nota": "Modelos de vehículo con la forma de una placa: «Ram 2500» es la camioneta, no una placa. Solo con esas cifras, y solo con la opción «conservar cifras».",
+    "modelos": { "ram": ["700", "1200", "1500", "2500", "3500", "4000", "5500"] }
+  },
   "patrones": [
     {
       "tipo": "VIN",
