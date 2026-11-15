@@ -1,6 +1,6 @@
 {
   "fuente": "eval/cesvi_r4_reversa.mts",
-  "commit": "b8955a29",
+  "commit": "be6f335c",
   "que_mide": "Dado quién retrocede según el reporte (maniobras de C0), si Croquis reconstruye la reversa con la narración de R0 leída como en la E-R4.",
   "velocidad_en_reversa_kmh": {
     "p10": 3.06,

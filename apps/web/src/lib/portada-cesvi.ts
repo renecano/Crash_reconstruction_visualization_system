@@ -6,7 +6,7 @@
  * - **671:** los reportes de CESVI del corpus (`eval/results/cesvi_corpus_extraccion.json`).
  * - **205:** los de la prueba reconstruidos a ciegas (`data/cesvi/r4/pagina.json`, de E-R4).
  * - **58.3 % y 37.2 %:** la modalidad de Croquis contra el título del reporte y la de la regla simple
- *   (siempre alcance), en la prueba (`eval/results/cesvi_r4c_titulo_prueba.json`, v3).
+ *   (siempre alcance), en la prueba (`eval/results/cesvi_r4c_titulo_prueba.json`, v4).
  * - **AXA A2010930:** lo que concluyó CESVI (los valores impresos del caso) contra lo que obtiene
  *   Croquis con el mismo método (`reproducir`), la modalidad que infiere Croquis de la narración
  *   (`modalidadInferida`).
@@ -56,14 +56,14 @@ export function datosPortadaCesvi(): DatosPortadaCesvi {
   const axa = casoAxa();
   if (!axa.escena) throw new Error("El caso de AXA no trae su escena");
   const modalidad = modalidadInferida(axa.escena.expediente, axa.narracion ?? "").modalidad;
-  const v3 = TITULO.v3.titulo_del_reporte;
-  if (v3.croquis.pct === null || v3.linea_base.pct === null)
+  const v4 = TITULO.v4.titulo_del_reporte;
+  if (v4.croquis.pct === null || v4.linea_base.pct === null)
     throw new Error("Falta la medición de la modalidad contra el título");
   return {
     reportes: corpus.dictamenes,
     aCiegas: PAGINA.dictamenes,
-    modalidadPct: v3.croquis.pct,
-    reglaPct: v3.linea_base.pct,
+    modalidadPct: v4.croquis.pct,
+    reglaPct: v4.linea_base.pct,
     axa: {
       id: c.id,
       lugar: c.lugar.municipio ? `${c.lugar.municipio}, ${c.lugar.estado}` : "",

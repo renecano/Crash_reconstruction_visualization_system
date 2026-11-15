@@ -5,9 +5,9 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 ## Estado
 
 - **Desde el 2026-11-09, el Claude Code de René lleva también este frente,** porque aquí no se había subido nada. Si eres el Claude Code del compañero: antes de empezar una fase, revisa la tabla de abajo y `git fetch`; si la fase ya está tomada, sigue con la siguiente y anótala aquí.
-- **Hechas:** W1 (#187), W2 (#188), W3 (#192), W4 (#195, con su contrato #194), W4b (#196), W5 (#199, #200), W6 (#201) y W7 (#206), en `main`.
-- **Fase actual:** W8 (T3.2, T3.3 y T3.5), con cuidado extra por pedido de René (2026-11-12). T3.3 empezó el 2026-11-14, cuando René cambió el modelo.
-- **Siguiente paso:** T3.3 (reversa) cerrada el 2026-11-14 (contrato #219, ADR 0136; ver «T3.3 · Qué se hizo, medición y cierre»): no movió AXA ni ningún caso que ya vio CESVI. Sigue T3.5, la E-R4 v4 completa, con la cadena reanudable fuera de la sesión. Queda una decisión de René sobre la versión declarada («Para decidir»).
+- **Hechas:** W1 (#187), W2 (#188), W3 (#192), W4 (#195, con su contrato #194), W4b (#196), W5 (#199, #200), W6 (#201), W7 (#206) y W8 (#215, #219 y #220), en `main`.
+- **Fase actual:** ninguna en curso. W9 necesita la autorización de René para gastar API.
+- **Siguiente paso:** W8 cerrada el 2026-11-15: T3.2 (#215), T3.3 (contrato #219 y #220, ADR 0136) y T3.5 (E-R4 v4, igual a la v3 más el eje de la reversa). Nada de eso movió AXA ni un caso que ya vio CESVI después de T3.2. Queda una decisión de René sobre la versión declarada (sección T3.3, «Para decidir»). W9 (T6.5 y T6.6) espera su autorización de gasto de API.
 
 ## Fases tomadas
 
@@ -21,7 +21,7 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 | W5 · Terreno (C3 y O4)                                       | Claude Code de René | `feat/w5-terreno`, `feat/w5-terreno-web` | En `main` (#199, #200) |
 | W6 · Encuadre en 2D (O3)                                     | Claude Code de René | `feat/w6-encuadre`                       | En `main` (#201)       |
 | W7 · Endurecimiento (T6.2, T6.3, T6.4)                       | Claude Code de René | `feat/w7-endurecimiento`                 | En `main` (#206)       |
-| W8 · Números defendibles (T3.2, T3.3, T3.5)                  | Claude Code de René | `feat/w8-numeros`, `feat/w8-reversa`     | T3.2 y T3.3 en `main`  |
+| W8 · Números defendibles (T3.2, T3.3, T3.5)                  | Claude Code de René | `feat/w8-numeros`, `feat/w8-reversa`     | En `main` (#215, #220) |
 
 ## W8 · Números defendibles (T3.2, T3.3, T3.5) (desde 2026-11-12)
 
@@ -333,7 +333,47 @@ Como nada de eso se movió, no hubo alto antes de fusionar.
 - **Qué quedó:** si el perito narra que un vehículo retrocedía, Croquis lo reconstruye a la velocidad de una reversa y no a 40 km/h, también si retrocedía dando vuelta, y lo dice en el resultado. Si la evidencia pide una reversa más rápida que cualquiera de las medidas, avisa.
 - **Cómo probarlo:** en «Caso nuevo», narrar «El vehículo A retrocedía y golpeó con su parte posterior el frente del vehículo B, que estaba detenido». En Reconstrucción, los límites dicen la velocidad supuesta y su fuente, y el 3D muestra a A llegando de espaldas.
 - **Qué necesito de ti:** la decisión de arriba sobre la versión declarada. Lo demás no cambió ningún número de AXA ni de los casos de CESVI.
-- **Siguiente:** T3.5 (E-R4 v4 completa), con la cadena reanudable fuera de la sesión.
+- **Siguiente:** T3.5 (abajo).
+
+### T3.5 · E-R4 v4 (2026-11-15)
+
+**Qué es la v4:** las mismas lecturas grabadas (`escena-narracion-v2`) y las mismas reglas de la v3 (R4d, ADR 0076), medidas con el solver de hoy: C1, C3, T3.1, T3.2 y T3.3. Entre la v3 y la v4 no se ajustó ninguna regla y no se gastó API. Corrió como tarea de Windows, fuera de la sesión (`tarea-w8-t3-5`).
+
+**Cómo se corre** (desde `packages/cesvi`):
+
+```
+pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts medir desarrollo
+pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts medir prueba
+pnpm exec tsx ../../eval/cesvi_r4c_titulo.mts medir desarrollo
+pnpm exec tsx ../../eval/cesvi_r4c_titulo.mts medir prueba
+pnpm exec tsx ../../eval/cesvi_r4_reversa.mts
+pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts comparar
+```
+
+**Dónde queda:** `eval/results/cesvi_r4_v4_reproduccion_{desarrollo,prueba}.json` y, lado a lado con v1–v3, `eval/results/cesvi_r4_v4_comparacion.json`. Los resultados de v1, v2 y v3 se quedan como se publicaron.
+
+**Resultado:**
+
+- **La v4 da lo mismo que la v3 en todos los ejes de la E-R4,** en desarrollo (459 narraciones) y en la prueba (205): modalidad, zonas, secuencia, velocidades y posiciones finales, fila por fila. Es lo esperado: esos ejes salen de la lectura, las reglas y la verificación de CESVI, no de la física que cambió.
+  - Prueba: modalidad 80 de 190 (42.1 %) contra 35.3 % de «siempre otra»; modalidades físicas 74 de 123 (60.2 %) contra 37.4 % de «siempre alcance».
+  - Contra el título del reporte (`eval/results/cesvi_r4c_titulo_prueba.json`): 91 de 156 (58.3 %) contra 37.2 % de la regla simple.
+  - Las 205 de la prueba se reconstruyen y se pueden ver en 3D, igual que en la v3.
+- **Lo nuevo de la v4 es el eje de la reversa** (`eval/results/cesvi_r4_reversa.json`, sección T3.3): dado quién retrocede según el reporte, el golpe queda en la parte posterior en 21 de 26 (desarrollo) y 9 de 12 (prueba) de los que tienen daño posterior. La modalidad «reversa» sigue en 0 de 9, porque la narración de R0 no la dice.
+- **La inversión en las 205 narraciones y las carambolas** no cambiaron con T3.3 (`eval/results/w8/t3_3_comparacion.json`).
+
+**La página y la portada toman la v4:** `/cesvi/reproduccion` y la portada de CESVI leen `data/cesvi/r4/pagina.json` y la v4 de `cesvi_r4c_titulo_prueba.json` al compilar. Las cifras que muestran son las mismas de antes. En `pagina.json` cambian la fecha y la clase de un vehículo en 4 de los 205 casos (`cesvi-2a83292792`, `cesvi-928c1a7646`, `cesvi-9b2fc2ffc7` y `cesvi-f9de9836d6`), que la lectura de hoy sí reconoce.
+
+**D5 del plan:** T3.2, T3.3 y T3.5 están en `eval/results/`, y la portada toma de ahí sus cifras. El README no cita cifras de CESVI; se revisa en U7.
+
+### Resumen para René (W8)
+
+- **Qué quedó:** W8 completa.
+  - T3.2 (ADR 0135): AXA en 56.87 km/h (54.79–78.39) con dos hipótesis.
+  - T3.3 (ADR 0136): la reversa se reconstruye a la velocidad de una reversa, también con vuelta, y avisa si la evidencia pide más de lo que se ha medido.
+  - T3.5: la E-R4 v4 publicada junto a v1–v3; da lo mismo que la v3 y añade el eje de la reversa.
+- **Cómo probarlo:** `/cesvi/reproduccion` (mismas cifras, medición del 2026-11-15) y, en «Caso nuevo», una narración con un vehículo que retrocede.
+- **Qué necesito de ti:** la decisión sobre la velocidad de una reversa en la versión declarada (sección T3.3, «Para decidir»).
+- **Siguiente:** W9 necesita tu autorización de gasto de API antes de empezar (T6.5 y T6.6). Mientras, sigue lo que no dependa de eso.
 
 ## W7 · Endurecimiento (T6.2, T6.3, T6.4) (2026-11-11)
 

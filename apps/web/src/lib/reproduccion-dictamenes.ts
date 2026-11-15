@@ -48,8 +48,8 @@ export interface Tasa {
  */
 export interface MedicionTitulo {
   fecha: string;
-  /** Las reglas vigentes de Croquis (R4d, ADR 0076). */
-  v3: {
+  /** La versión vigente (T3.5, W8): las reglas de R4d (ADR 0076) con el solver de hoy. */
+  v4: {
     con_modalidad_en_el_titulo: number;
     reportes: number;
     titulo_del_reporte: {

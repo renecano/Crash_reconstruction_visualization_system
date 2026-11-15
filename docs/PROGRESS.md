@@ -10,7 +10,8 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
     - **Qué cambió:** el sentido de marcha va aparte del rumbo y de la maniobra (contrato #219), así que un vehículo puede retroceder dando vuelta; la velocidad en reversa que no da el perito es un supuesto con fuente (5.68 km/h, de 3.06 a 9.07; NHTSA, DOT HS 811 024) y no los 40 km/h de un vehículo que avanza; aviso si la reversa sale más rápida que la más rápida medida (23 km/h); sin posiciones del perito, quien retrocede llega de espaldas al otro.
     - **Lo que no se movió:** AXA (56.87 km/h, 54.79–78.39), las 205 narraciones de prueba, la E-R4 y las carambolas dan exactamente lo mismo (`eval/results/w8/t3_3_comparacion.json`).
     - **Dónde está el detalle:** [`docs/progress/W.md`](progress/W.md), secciones «T3.3»; `eval/results/t3_3_reversa.json` y `eval/results/cesvi_r4_reversa.json`.
-    - **Siguiente:** T3.5, la E-R4 v4 completa.
+    - **T3.5, E-R4 v4 (2026-11-15):** las lecturas y las reglas de la v3 con el solver de hoy. Da lo mismo que la v3 en todos los ejes, en desarrollo y en la prueba, y añade el eje de la reversa. Publicada junto a v1–v3 en `eval/results/cesvi_r4_v4_comparacion.json`; la página y la portada toman la v4.
+    - **Siguiente:** W8 queda cerrada. W9 espera la autorización de René para gastar API.
   - **W5, el terreno entra en la física (2026-11-10, C3 y O4):**
     - **Qué cambió:** pendiente por el relieve real, fricción por zona, topes con pérdida de energía y de contacto, y la pose sobre el terreno, en Python y en TS con paridad. En la escena fácil, «¿Cómo es el terreno?». En Reconstrucción, el perfil de elevación y los cruces de tope.
     - **Dónde está el detalle:** [`docs/progress/W.md`](progress/W.md), sección W5; ADR 0131; `docs/physics.md`, «Terreno»; las mediciones del relieve, en `eval/results/w5_relieve.json`.

@@ -114,10 +114,12 @@ function medir(p: Particion) {
           ["v1", "cesvi_r4_reproduccion_prueba.json"],
           ["v2", "cesvi_r4b_reproduccion_prueba.json"],
           ["v3", "cesvi_r4d_reproduccion_prueba.json"],
+          ["v4", "cesvi_r4_v4_reproduccion_prueba.json"],
         ]
       : [
           ["v2", "cesvi_r4b_reproduccion_desarrollo.json"],
           ["v3", "cesvi_r4d_reproduccion_desarrollo.json"],
+          ["v4", "cesvi_r4_v4_reproduccion_desarrollo.json"],
         ];
   const out: Record<string, unknown> = {
     fecha: new Date().toISOString(),

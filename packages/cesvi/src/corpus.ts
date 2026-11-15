@@ -98,8 +98,7 @@ const CAMPOS = [...new Set(Object.values(CAMPOS_POR_SECCION).flat())];
 /** Las maniobras con forma propia que un vehículo puede hacer en reversa (T3.3). */
 const FORMAS_EN_REVERSA = new Set(["vira_izquierda", "vira_derecha", "cambia_carril"]);
 /** La cita de una maniobra dice que el vehículo retrocedía (sin acentos y en minúsculas). */
-const RX_MARCHA_ATRAS =
-  /\b(en reversa|de reversa|dando reversa|marcha atras|retroced\w*)\b/;
+const RX_MARCHA_ATRAS = /\b(en reversa|de reversa|dando reversa|marcha atras|retroced\w*)\b/;
 const sinAcentos = (t: string) => t.toLowerCase().normalize("NFD").replace(/\p{M}/gu, "");
 
 export const VALORES: Record<string, readonly string[]> = {
