@@ -46,7 +46,16 @@ const nextConfig: NextConfig = {
   },
   // /cesvi como una sola aplicación (ADR 0079): las rutas viejas llevan a su caso en el recorrido.
   async redirects() {
+    // Las páginas del producto anterior (el público de octubre de 2026) llevan a la portada
+    // (decisión de René del 2026-11-15, auditoría I7). Temporales: su código se conserva.
+    const anteriores = ["demo", "relato", "visor", "croquis", "publico", "historia"].flatMap(
+      (p) => [
+        { source: `/${p}`, destination: "/", permanent: false },
+        { source: `/en/${p}`, destination: "/en", permanent: false },
+      ],
+    );
     return [
+      ...anteriores,
       { source: "/cesvi/caso", destination: "/cesvi/casos/nuevo", permanent: false },
       { source: "/cesvi/importar", destination: "/cesvi/casos/importar", permanent: false },
       {

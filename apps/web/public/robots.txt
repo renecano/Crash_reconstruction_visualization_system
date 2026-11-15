@@ -1,0 +1,14 @@
+# Croquis: la portada es pública; la aplicación de los peritos y lo interno no se indexan.
+User-agent: *
+Allow: /
+Disallow: /cesvi
+Disallow: /api/
+Disallow: /visor-unity/
+Disallow: /medicion
+Disallow: /en/medicion
+Disallow: /e9
+Disallow: /en/e9
+Disallow: /cuenta
+Disallow: /en/cuenta
+
+Sitemap: https://croquis-sage.vercel.app/sitemap.xml
