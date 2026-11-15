@@ -14,8 +14,8 @@ describe("portada v3: los textos llevan las cifras de los datos", () => {
     for (const lang of ["es", "en"] as const) {
       const t = textosPortadaV3(lang, d);
       expect(t.cifras.map(([n]) => n)).toEqual([d.reportes, d.aCiegas]);
-      expect(t.cifraModalidad).toBe(d.modalidadPct);
-      expect(t.cifraRegla).toBe(d.reglaPct);
+      expect(t.cifraModalidad).toBe(d.modalidad.pct);
+      expect(t.cifraRegla).toBe(d.regla.pct);
       expect(t.cifraRestos).toBe(Math.round(d.axa.restos.croquis * 100) / 100);
       const [, restos, deformacion] = t.filas;
       expect(restos!.cesvi).toBe(d.axa.restos.cesvi.toFixed(2));
@@ -23,7 +23,40 @@ describe("portada v3: los textos llevan las cifras de los datos", () => {
       expect(restos!.dif).toBe("0.00 %");
       expect(deformacion!.croquis).toBe(d.axa.deformacion.croquis.toFixed(2));
       expect(deformacion!.dif).toBe(`+${d.axa.deformacion.pct.toFixed(2)} %`);
-      expect(t.faq.flat().join(" ")).toContain(`${d.modalidadPct.toFixed(1)} %`);
+      expect(t.faq.flat().join(" ")).toContain(`${d.modalidad.pct.toFixed(1)} %`);
+    }
+  });
+
+  it("la tasa de la modalidad va completa: «k de n», con su denominador, en los dos idiomas", () => {
+    // Auditoría del 2026-11-15, C3: el porcentaje es sobre los reportes con la modalidad en su
+    // título (n), no sobre todos los reconstruidos a ciegas.
+    expect(d.modalidad.n).toBeGreaterThan(0);
+    expect(d.modalidad.n).toBeLessThanOrEqual(d.aCiegas);
+    expect(d.regla.n).toBe(d.modalidad.n);
+    expect(d.modalidad.pct).toBeCloseTo((100 * d.modalidad.k) / d.modalidad.n, 1);
+    expect(d.regla.pct).toBeCloseTo((100 * d.regla.k) / d.regla.n, 1);
+    for (const [lang, de] of [
+      ["es", "de"],
+      ["en", "of"],
+    ] as const) {
+      const t = textosPortadaV3(lang, d);
+      const tasa = `${d.modalidad.k} ${de} ${d.modalidad.n}`;
+      const regla = `${d.regla.k} ${de} ${d.regla.n}`;
+      const pregunta = t.faq.find((f) => f[1].includes(`${d.modalidad.pct.toFixed(1)} %`))!;
+      for (const texto of [t.versus.aria, pregunta[1]]) {
+        expect(texto, lang).toContain(tasa);
+        expect(texto, lang).toContain(regla);
+      }
+      expect(t.versus.nota, lang).toMatch(
+        new RegExp(`${d.modalidad.k} ${de} (los |the )?${d.modalidad.n}`),
+      );
+      expect(t.versus.nota, lang).toContain(regla);
+      // Ningún texto con el porcentaje lo deja sin su denominador.
+      const todos = JSON.stringify(t);
+      for (const m of todos.matchAll(/[^"]*\d+\.\d (%|por ciento|percent)[^"]*/g)) {
+        if (m[0].includes(d.modalidad.pct.toFixed(1)))
+          expect(m[0], lang).toContain(String(d.modalidad.n));
+      }
     }
   });
 

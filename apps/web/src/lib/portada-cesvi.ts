@@ -26,8 +26,14 @@ export interface FilaAxa {
 export interface DatosPortadaCesvi {
   reportes: number;
   aCiegas: number;
-  modalidadPct: number;
-  reglaPct: number;
+  /**
+   * La modalidad acertada, como tasa completa: k de n y su porcentaje. El denominador son los
+   * reportes de la prueba que traen la modalidad en su título, no todos los reconstruidos a ciegas
+   * (auditoría del 2026-11-15, C3): la portada dice «k de n», nunca el porcentaje solo.
+   */
+  modalidad: { k: number; n: number; pct: number };
+  /** La regla simple (decir siempre la modalidad más frecuente), sobre el mismo denominador. */
+  regla: { k: number; n: number; pct: number };
   axa: {
     id: string;
     lugar: string;
@@ -62,8 +68,8 @@ export function datosPortadaCesvi(): DatosPortadaCesvi {
   return {
     reportes: corpus.dictamenes,
     aCiegas: PAGINA.dictamenes,
-    modalidadPct: v4.croquis.pct,
-    reglaPct: v4.linea_base.pct,
+    modalidad: { k: v4.croquis.k, n: v4.croquis.n, pct: v4.croquis.pct },
+    regla: { k: v4.linea_base.k, n: v4.linea_base.n, pct: v4.linea_base.pct },
     axa: {
       id: c.id,
       lugar: c.lugar.municipio ? `${c.lugar.municipio}, ${c.lugar.estado}` : "",

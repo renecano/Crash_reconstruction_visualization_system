@@ -9,8 +9,11 @@ describe("portada de CESVI: las cifras salen de los datos (punto 4 de René)", (
   it("cada cifra es la de su resultado de evaluación", () => {
     expect(d.reportes).toBe(corpus.dictamenes);
     expect(d.aCiegas).toBe(PAGINA.dictamenes);
-    expect(d.modalidadPct).toBe(TITULO.v4.titulo_del_reporte.croquis.pct);
-    expect(d.reglaPct).toBe(TITULO.v4.titulo_del_reporte.linea_base.pct);
+    // La tasa va completa (k de n): el denominador son los reportes con la modalidad en su título.
+    const { croquis, linea_base } = TITULO.v4.titulo_del_reporte;
+    expect(d.modalidad).toEqual({ k: croquis.k, n: croquis.n, pct: croquis.pct });
+    expect(d.regla).toEqual({ k: linea_base.k, n: linea_base.n, pct: linea_base.pct });
+    expect(d.modalidad.n).toBe(TITULO.v4.con_modalidad_en_el_titulo);
   });
 
   it("AXA: lo de CESVI contra lo de Croquis, con su diferencia en %", () => {
