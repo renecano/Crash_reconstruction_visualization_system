@@ -36,6 +36,9 @@ jobs:
       - run: pnpm test
       # Zod, los tipos C# y los paquetes caso-3d, al día con los esquemas (ADR 0111).
       - run: pnpm --filter @croquis/scene-schema generate:check
+      # Los generados de la web, al día con sus fuentes: datos de las páginas (eval/results), tokens e
+      # íconos de la marca, imagen para redes y fuente (auditoría del 2026-11-15, I4).
+      - run: pnpm --filter @croquis/web generate:check
 
   visor:
     name: Visor Unity (Croquis.Core, fidelidad)
