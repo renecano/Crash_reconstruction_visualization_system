@@ -57,6 +57,7 @@ interface PiiData {
   enlaces_lugar: string[];
   preposiciones_lugar: string[];
   prefijos_lugar: string[];
+  palabras_no_placa: { palabras: string[] };
 }
 
 interface Rules {
@@ -72,6 +73,7 @@ interface Rules {
   names: ReadonlySet<string>;
   ambiguous: ReadonlySet<string>;
   surnames: ReadonlySet<string>;
+  notPlate: ReadonlySet<string>;
 }
 
 const WORD = /[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+/g;
@@ -102,6 +104,7 @@ function rules(): Rules {
     names: new Set(n.nombres),
     ambiguous: new Set(n.ambiguos),
     surnames: new Set(n.apellidos_frecuentes),
+    notPlate: new Set(d.palabras_no_placa.palabras),
   };
   return cached;
 }
@@ -239,10 +242,51 @@ function nameSpans(text: string, folded: string): [number, number][] {
   return spans;
 }
 
+/**
+ * ¿El tramo es una palabra común junto a una cifra, y no una placa? «con 1450», «250 mts», «del
+ * 2010»: una de sus partes separadas por espacio es una palabra de `palabras_no_placa`. Para no
+ * dejar pasar una placa escrita con espacio («CON 1450»), la palabra en mayúsculas solo cuenta
+ * como palabra si todo el texto va en mayúsculas.
+ */
+function palabraConCifra(original: string, plegado: string, enMayusculas: boolean): boolean {
+  const partes = plegado.split(" ");
+  if (partes.length < 2) return false;
+  const crudas = original.split(/\s/);
+  return partes.some((p, k) => {
+    if (!rules().notPlate.has(p)) return false;
+    const cruda = crudas[k] ?? "";
+    return enMayusculas || cruda !== cruda.toUpperCase();
+  });
+}
+
+/** ¿El texto va escrito en mayúsculas? Más de 7 de cada 10 letras lo son. */
+function textoEnMayusculas(text: string): boolean {
+  let letras = 0;
+  let altas = 0;
+  for (const c of text) {
+    const baja = c.toLowerCase();
+    const alta = c.toUpperCase();
+    if (baja === alta) continue;
+    letras++;
+    if (c === alta) altas++;
+  }
+  return letras > 0 && altas * 10 > letras * 7;
+}
+
+export interface OpcionesRedaccion {
+  /**
+   * No borrar como placa una palabra común junto a una cifra («con 1450 kg», «250 mts», «del
+   * 2010»): son números de la narración. La usa el flujo de CESVI (auditoría del 2026-11-15, C1).
+   * Sin ella, el redactor se comporta como cuando se congeló Relatos-MX.
+   */
+  conservarCifras?: boolean;
+}
+
 /** Redacta datos personales; los tramos no se traslapan (gana el que empieza antes). */
-export function redact(raw: string): Redaction {
+export function redact(raw: string, opciones: OpcionesRedaccion = {}): Redaction {
   const text = normalizeSpaces(raw);
   const folded = fold(text);
+  const enMayusculas = textoEnMayusculas(text);
   const found: Span[] = [];
   for (const { spec, rx } of rules().patterns) {
     const view = spec.vista === "plegado" ? folded : text;
@@ -251,6 +295,12 @@ export function redact(raw: string): Redaction {
       const [s, e] = group ?? [m.index, m.index + m[0].length];
       const seg = raw.slice(s, e);
       if (spec.mixto && !(/[0-9]/.test(seg) && /[A-Za-z]/.test(seg))) continue;
+      if (
+        opciones.conservarCifras &&
+        spec.mixto &&
+        palabraConCifra(seg, folded.slice(s, e), enMayusculas)
+      )
+        continue;
       if (spec.digitos && !spec.digitos.includes(seg.replace(/[^0-9]/g, "").length)) continue;
       found.push({ kind: spec.tipo, start: s, end: e, original: seg });
     }

@@ -424,7 +424,7 @@ const modeloONorma = (antes: string) => /(?:\b(?:tipo|modelo)\s+|\bNOM-?)$/i.tes
  * «modelo» es el modelo («tipo FLD-120»), y «NOM-012» es una norma: también se conservan.
  */
 export function redactar(t: string): string {
-  const r = redact(t);
+  const r = redact(t, { conservarCifras: true });
   let out = "";
   let pos = 0;
   for (const sp of r.spans) {
