@@ -778,6 +778,48 @@ Plan: PLAN-CESVI §3.4. Decisiones: ADR 0132.
 - **El 3D** tiene su propio encuadre: es U4.
 - **Teclado:** «+», «−», «Ver todo» e «Ir al impacto» son botones; las flechas del teclado todavía no desplazan la vista.
 
+## Auditoría del 2026-11-15 · Tanda 1 (confianza inmediata)
+
+Plan aprobado por René el 2026-11-15 (`docs/auditoria/2026-11-15-fable.md`, sección 5): Tanda 1 → 3 → 2 → 4 → 5. Las pruebas pesadas van en la computadora del colaborador; en la laptop solo unitarias, paridad, lint y tipos.
+
+### Qué se hizo
+
+- **Logo en todos lados (#223, decisión 6):** la transición entre actos dibujaba el logo anterior; ahora lee `assets/brand/marca.json`. El nombre de la apertura de la portada es el logo (`palabra.svg`) y no texto. El PDF y el Word del dictamen llevan el logotipo en la cabecera. Los colores del logo son tokens del sistema y la señal es una sola, `#FF5B2E` (`lab-impacto` valía `#FF5A1F`). `logo.test.ts` falla si algo dibuja el logo fuera de la fuente única.
+- **Redactor (C1):** con la opción `conservarCifras` (TS) o `conservar_cifras` (Python), una palabra común junto a una cifra ya no se borra como placa: «con 1450 kg», «250 mts», «del 2010», el año tras un mes en mayúsculas («AGOSTO DEL 2019») y el modelo «Ram 2500». La usan las rutas de `/api/cesvi` (`textoParaClaude`) y `redactar` del corpus. Sin la opción el redactor hace lo mismo que antes: las grabaciones de Relatos-MX se indexan por el texto redactado y siguen valiendo. Addendum en el ADR 0133.
+- **Portada (C3):** la tasa de modalidad va completa, «91 de 156», con su denominador (los reportes que dicen la modalidad en su título) y la regla simple sobre el mismo. Una prueba exige el «k de n» en los dos idiomas.
+- **Generados de la web (I4):** `generate:check` vuelve a pasar: `recorrido.json` regenerado, `tokens.css` igual a su generador byte por byte, y la comprobación de la portada cubre solo la imagen para redes. Falta meterlo a `ci.yml` (PR `chore:` aparte, por ser archivo compartido).
+- **Dictamen (I2):** cada cuadro del 3D lleva «Reconstrucción ilustrativa; el entorno es procedural: no es el lugar real.»; el pedido del Físico va en palabras y no con el código de la bandera; el lugar ya no une una oración con comas; la zona nombra sus partes («tercio», «vértice») y los valores del contrato llevan acento («de atrás hacia adelante»).
+- **Repositorio público (C4):** resuelto por decisión de René; ADR 0137 y nota en la auditoría.
+
+### Evidencia
+
+- **Redactor, medido** (`eval/redactor_cifras.mts` → `eval/results/redactor_cifras.json`; solo conteos, ningún texto de los reportes):
+  - En los 671 reportes crudos de CESVI las marcas `[PLACA]` bajan de 5,577 a 4,829: 748 cifras dejan de borrarse, en 240 reportes. Las más frecuentes: «del» (287), «ram» (270) y «con» (62).
+  - En Relatos-MX (797 textos) las placas anotadas a mano se borran igual con la opción y sin ella: 96 de 98. Las marcas bajan de 114 a 101.
+- **Portada:** `eval/results/cesvi_r4c_titulo_prueba.json` (v4): Croquis 91 de 156 (58.3 %); regla simple 58 de 156 (37.2 %); 205 reportes reconstruidos a ciegas.
+- **Capturas del logo:** `docs/cesvi/logo/transiciones-antes/` y `transiciones-despues/` (`tools/demo/capturas-logo.mjs`).
+  - Entrar a un caso: producción antes (`main` en 56565741) y después (d011595d).
+  - Cambio de acto y apertura de la portada: el «después» es de producción; el «antes», del servidor local con los archivos anteriores, porque producción ya llevaba el cambio. La transición corta dura menos de 500 ms: la captura la detiene y fija la animación en cada instante.
+- **Pruebas:** `packages/extraction` 862, `packages/cesvi` 404 y las de la web tocadas (logo, portada, dictamen), en verde; pytest del redactor y su espejo, en verde; lint y tipos de la web, de `packages/cesvi` y de `extraction`.
+
+### Lo que no dibuja el logo (revisado)
+
+La pantalla de carga de Unity y su plantilla WebGL solo dicen «Cargando el visor 3D…»; el visor y sus fotos llevan la leyenda ilustrativa, no el logo; la pantalla de inicio de Unity está apagada; no hay Lottie ni video del logo en la app.
+
+### Pendiente
+
+- **El corpus versionado se armó con el redactor anterior** (`data/cesvi/corpus`): la auditoría contó 193 marcas `[PLACA]` en los expedientes y 94 en las narraciones, casi todas cifras. Rearmarlo cambia las narraciones que mide la E-R4, así que va con la Tanda 3 y su regla de antes y después.
+- **Los cuadros de la portada anterior** (`/publico`) quedaron desactualizados con los contratos 2.3.0. No se regeneran: la página se redirige en la Tanda 4 y ahí se retiran con su comprobación (`portada.mjs --check` completo).
+- **El video publicado y el recorrido promocional** llevan el logo anterior: se rehacen con el paquete del colaborador al cerrar la Tanda 2 (decisión 9).
+- **En desarrollo la transición de entrada no se monta** (el efecto corre dos veces con StrictMode). En producción sí; solo afecta a quien prueba en `pnpm dev`.
+
+### Resumen para René (Tanda 1)
+
+- **Qué quedó:** el logo sale de un solo archivo en todas partes (también en las transiciones, el PDF y el Word); el redactor ya no borra masas, distancias ni años antes de la lectura; la portada dice «91 de 156»; el dictamen avisa que el entorno del 3D no es el lugar real y ya no trae identificadores internos.
+- **Cómo verlo:** las capturas de `docs/cesvi/logo/transiciones-antes/` contra `transiciones-despues/` (las que más importan: `transicion-entrar-al-caso-750ms.png` y `transicion-entre-actos-250ms.png`). En producción, abrir AXA y descargar el PDF.
+- **Qué no se movió:** ningún número del solver ni de AXA; la Tanda 1 no toca la física.
+- **Qué necesito de ti:** nada. Sigue la reversa declarada y después la Tanda 3, que se detiene con el antes y el después de AXA.
+
 ## Lo que U deja dicho para W
 
 Viene de U0 (ADR 0111). Vale cuando el PR de contrato 2.3.0 esté en `main`:
