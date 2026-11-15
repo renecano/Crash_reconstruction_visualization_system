@@ -1,8 +1,8 @@
 {
   "fuente": "eval/t3_comparar.py",
-  "commit": "8baa6d36",
-  "antes": "eval/results/w8/t3_3 (cierre de T3.3, antes de la Tanda 3)",
-  "despues": "eval/results/w8/t3 (ADR 0139)",
+  "commit": "3fca4387",
+  "antes": "eval/results/w8/t3_3",
+  "despues": "eval/results/w8/t3",
   "archivos": {
     "axa_rango_estable.json": {
       "numeros_comparados": 206,
