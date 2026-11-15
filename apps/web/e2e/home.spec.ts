@@ -20,8 +20,8 @@ const sinIntro = (page: Page) => expect(page.locator("#intro")).toBeHidden({ tim
 /**
  * La portada v3 (`docs/cesvi/rediseno/Portada-v3.html`): carga sin errores de consola, con las
  * cifras de `eval/results` (aquí se leen de los mismos archivos, no se escriben), y cada «Entrar a
- * Croquis» (barra, encabezado y cierre) lleva a /cesvi. «Cómo funciona» baja a su sección, la
- * portada para el público queda en /publico con su liga en el pie y, con movimiento reducido, el
+ * Croquis» (barra, encabezado y cierre) lleva a /cesvi. «Cómo funciona» baja a su sección, las
+ * páginas del producto anterior (/publico…) llevan a la portada y, con movimiento reducido, el
  * fondo es solo el póster.
  */
 test("@flujo la portada v3 carga sin errores y lleva a /cesvi", async ({ page }) => {
@@ -70,12 +70,12 @@ test("@flujo la portada v3 carga sin errores y lleva a /cesvi", async ({ page })
   await page.getByTestId("entrar").nth(1).click();
   await expect(page).toHaveURL(/\/cesvi$/);
 
-  // La portada de antes, para el público, desde el pie.
-  await page.goto("/");
+  // Las páginas del producto anterior llevan a la portada, y la portada ya no las enlaza (auditoría
+  // del 2026-11-15, I7).
+  await page.goto("/publico");
+  await expect(page).toHaveURL(/localhost:\d+\/$/);
   await sinIntro(page);
-  await page.getByRole("link", { name: "Portada anterior" }).click();
-  await expect(page).toHaveURL(/\/publico$/);
-  await expect(page.getByTestId("cta-publico")).toHaveText("Cuenta qué pasó");
+  await expect(page.getByRole("link", { name: "Portada anterior" })).toHaveCount(0);
 
   // Movimiento reducido: sin video, solo el póster de la primera toma.
   await page.emulateMedia({ reducedMotion: "reduce" });

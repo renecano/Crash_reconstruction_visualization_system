@@ -22,12 +22,6 @@ export function Pie({ lang }: { lang: Lang }) {
           <h2 className="t-interfaz mb-3 text-texto">{t.pie.herramientas}</h2>
           <ul className="t-nota flex flex-col gap-1 [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center">
             <li>
-              <Link href={r("/visor")}>{t.pie.visor}</Link>
-            </li>
-            <li>
-              <Link href={r("/croquis")}>{t.pie.croquis}</Link>
-            </li>
-            <li>
               <Link href={r("/medicion")}>{t.pie.medicion}</Link>
             </li>
           </ul>
@@ -35,9 +29,6 @@ export function Pie({ lang }: { lang: Lang }) {
         <nav aria-label={t.pie.proyecto} className="md:col-span-2">
           <h2 className="t-interfaz mb-3 text-texto">{t.pie.proyecto}</h2>
           <ul className="t-nota flex flex-col gap-1 [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center">
-            <li>
-              <Link href={r("/historia")}>{t.nav.historia}</Link>
-            </li>
             <li>
               <Link href={r("/recorrido")}>{t.nav.mide}</Link>
             </li>
