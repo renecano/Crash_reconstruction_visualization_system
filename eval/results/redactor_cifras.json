@@ -1,0 +1,44 @@
+{
+  "descripcion": "Marcas [PLACA] del redactor sin la opción «conservar cifras» y con ella (auditoría del 2026-11-15, C1). Solo conteos: ningún texto de los reportes.",
+  "version_pii": "1.2.0",
+  "script": "eval/redactor_cifras.mts",
+  "reportes_cesvi": {
+    "textos": 671,
+    "textos_con_cambio": 240,
+    "placas_sin_opcion": 5577,
+    "placas_con_opcion": 4829,
+    "cifras_conservadas": 748,
+    "por_palabra": {
+      "del": 287,
+      "ram": 270,
+      "con": 62,
+      "de": 30,
+      "sin": 26,
+      "cms": 15,
+      "mts": 14,
+      "que": 12,
+      "kgs": 9,
+      "por": 7,
+      "los": 6,
+      "ano": 4,
+      "al": 2,
+      "cm": 2,
+      "rpm": 1,
+      "son": 1
+    }
+  },
+  "relatos_mx": {
+    "textos": 797,
+    "textos_con_cambio": 13,
+    "placas_sin_opcion": 114,
+    "placas_con_opcion": 101,
+    "cifras_conservadas": 13,
+    "por_palabra": {
+      "ram": 9,
+      "que": 4
+    },
+    "placas_anotadas": 98,
+    "placas_anotadas_borradas_sin_opcion": 96,
+    "placas_anotadas_borradas_con_opcion": 96
+  }
+}

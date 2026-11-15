@@ -1,0 +1,10 @@
+{
+  "etiqueta": "transiciones-despues",
+  "base": "https://croquis-sage.vercel.app",
+  "fecha": "2026-11-15T18:43:55.982Z",
+  "paginas": [],
+  "acto": "escena",
+  "transiciones": {
+    "monta": true
+  }
+}

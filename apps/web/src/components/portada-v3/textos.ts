@@ -53,8 +53,8 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi) {
   // lectura de Croquis extrae (modalidad, vía y ubicación).
   const narracion = segmentosNarracion(a.narracion, a.modalidad.cesvi ?? "");
   const cifras = {
-    cifraModalidad: d.modalidadPct,
-    cifraRegla: d.reglaPct,
+    cifraModalidad: d.modalidad.pct,
+    cifraRegla: d.regla.pct,
     cifraRestos: Math.round(a.restos.croquis * 100) / 100,
   };
   if (lang === "en") {
@@ -159,10 +159,10 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi) {
         [d.aCiegas, "reconstructed blind, without seeing their conclusions"],
       ] as [number, string][],
       versus: {
-        aria: `Correct collision type in ${entero(d.aCiegas)} reports: Croquis ${n(d.modalidadPct, 1)} percent, simple rule ${n(d.reglaPct, 1)} percent`,
+        aria: `Correct collision type in the ${entero(d.modalidad.n)} reports that state it in their title: Croquis ${entero(d.modalidad.k)} of ${entero(d.modalidad.n)} (${n(d.modalidad.pct, 1)} percent), simple rule ${entero(d.regla.k)} of ${entero(d.regla.n)} (${n(d.regla.pct, 1)} percent)`,
         croquis: "Croquis",
         regla: "Simple rule",
-        nota: `Correct collision types over the ${entero(d.aCiegas)} reports reconstructed blind.`,
+        nota: `Correct collision types: ${entero(d.modalidad.k)} of the ${entero(d.modalidad.n)} reports that state the type in their title (out of the ${entero(d.aCiegas)} reconstructed blind); the simple rule gets ${entero(d.regla.k)} of ${entero(d.regla.n)}.`,
       },
       metodoH: ["Narrate. Place.", "Reconstruct."],
       pasos: [
@@ -236,7 +236,7 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi) {
         ],
         [
           "How often does it get the collision type right?",
-          `In ${entero(d.aCiegas)} reports reconstructed blind it got ${n(d.modalidadPct, 1)} % of the collision types right, against ${n(d.reglaPct, 1)} % for a simple rule.`,
+          `Of the ${entero(d.aCiegas)} reports reconstructed blind, ${entero(d.modalidad.n)} state the collision type in their title. Croquis got ${entero(d.modalidad.k)} of ${entero(d.modalidad.n)} right (${n(d.modalidad.pct, 1)} %), against ${entero(d.regla.k)} of ${entero(d.regla.n)} (${n(d.regla.pct, 1)} %) for a simple rule.`,
         ],
         [
           "In what format does the report come out?",
@@ -373,10 +373,10 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi) {
       [d.aCiegas, "reconstruidos a ciegas, sin ver sus conclusiones"],
     ] as [number, string][],
     versus: {
-      aria: `Modalidad correcta en ${entero(d.aCiegas)} reportes: Croquis ${n(d.modalidadPct, 1)} por ciento, regla simple ${n(d.reglaPct, 1)} por ciento`,
+      aria: `Modalidad correcta en los ${entero(d.modalidad.n)} reportes que la dicen en su título: Croquis ${entero(d.modalidad.k)} de ${entero(d.modalidad.n)} (${n(d.modalidad.pct, 1)} por ciento), regla simple ${entero(d.regla.k)} de ${entero(d.regla.n)} (${n(d.regla.pct, 1)} por ciento)`,
       croquis: "Croquis",
       regla: "Regla simple",
-      nota: `Modalidades correctas sobre los ${entero(d.aCiegas)} reportes reconstruidos a ciegas.`,
+      nota: `Modalidades correctas: ${entero(d.modalidad.k)} de los ${entero(d.modalidad.n)} reportes que dicen la modalidad en su título (de los ${entero(d.aCiegas)} reconstruidos a ciegas); la regla simple acierta ${entero(d.regla.k)} de ${entero(d.regla.n)}.`,
     },
     metodoH: ["Narra. Ubica.", "Reconstruye."],
     pasos: [
@@ -453,7 +453,7 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi) {
       ],
       [
         "¿Qué tan seguido acierta la modalidad?",
-        `En ${entero(d.aCiegas)} reportes reconstruidos a ciegas acertó ${n(d.modalidadPct, 1)} % de las modalidades, contra ${n(d.reglaPct, 1)} % de una regla simple.`,
+        `De los ${entero(d.aCiegas)} reportes reconstruidos a ciegas, ${entero(d.modalidad.n)} dicen la modalidad en su título. Croquis acertó ${entero(d.modalidad.k)} de ${entero(d.modalidad.n)} (${n(d.modalidad.pct, 1)} %), contra ${entero(d.regla.k)} de ${entero(d.regla.n)} (${n(d.regla.pct, 1)} %) de una regla simple.`,
       ],
       [
         "¿En qué formato sale el dictamen?",

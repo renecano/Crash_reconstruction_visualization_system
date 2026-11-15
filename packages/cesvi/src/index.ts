@@ -16,6 +16,7 @@ export * from "./relato";
 export * from "./reconstruccion";
 export * from "./reversa";
 export * from "./conductores";
+export * from "./palabras";
 export * from "./pizarra";
 export * from "./supuestos";
 export * from "./verificacion";

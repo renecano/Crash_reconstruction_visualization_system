@@ -12,7 +12,7 @@ import { redact } from "@croquis/extraction";
 
 /** El texto como lo ve Claude. */
 export function textoParaClaude(texto: string): string {
-  return redact(texto).text;
+  return redact(texto, { conservarCifras: true }).text;
 }
 
 /** Redacta cada texto de un valor JSON (objetos y listas, a cualquier profundidad). */

@@ -15,3 +15,12 @@
 
 - Prueba: `apps/web/src/lib/redaccion.test.ts` manda a cada ruta un texto con nombre y placa con un doble del cliente de Anthropic, y revisa que ninguna petición los lleve.
 - La redacción por reglas no es perfecta (por ejemplo, un nombre sin pista ni mayúscula que no está en la lista): es la misma cobertura que ya tiene `/relato`.
+
+## Addendum (2026-11-15): las cifras de la narración se conservan
+
+La auditoría del 2026-11-15 (C1) encontró que el patrón de placa escrita con espacios borraba cifras: «con 1450 kg» salía «[PLACA] kg», y «del 2010», «[PLACA]».
+
+- **Decisión:** `redact()` acepta la opción `conservarCifras` (`conservar_cifras` en Python). Con ella, una coincidencia del patrón de placa no se borra si una de sus partes separadas por espacio es una palabra común de `palabras_no_placa` (`pii.json`), si es un año tras un mes, «modelo» o «año», o si es un modelo con forma de placa («Ram 2500»).
+- **Para no dejar pasar placas:** la palabra en mayúsculas dentro de un texto en minúsculas sigue contando como placa («otra CON 1450»); con guion o pegada también; y lo que viene tras «placa» o «placas» va por su propio patrón.
+- **Quién la usa:** `textoParaClaude` (las cinco rutas de `/api/cesvi` y la revisión de citas en el navegador) y `redactar` del corpus. `/api/relato` y Relatos-MX no: sus grabaciones se indexan por el texto redactado, y por eso la versión de `pii.json` no cambia.
+- **Medido:** `eval/results/redactor_cifras.json`. Las placas anotadas a mano en Relatos-MX se borran igual con la opción y sin ella.
