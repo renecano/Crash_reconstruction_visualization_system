@@ -7,7 +7,7 @@ import { validateEscena } from "@croquis/scene-schema";
 import { describe, expect, it } from "vitest";
 import { expedienteDeSalida, type Expediente } from "./corpus";
 import tabla from "./data/reversa-nhtsa.json";
-import { isReverse } from "@croquis/solver-ts";
+import { isReverse, reconstruct } from "@croquis/solver-ts";
 import { especDeclarada } from "./comparacion-declarada";
 import type { VersionDeclarada } from "./declaracion";
 import { especDeExpediente, type EscenaSolver } from "./reconstruccion";
@@ -108,6 +108,110 @@ describe("la reversa en la escena del perito", () => {
     expect(aviso).toContain("34.7 km/h en reversa");
     expect(aviso).toContain("23 km/h");
     expect(aviso).toContain("NHTSA");
+  });
+});
+
+describe("sin posiciones del perito, quien retrocede llega de espaldas al otro", () => {
+  /** Dos vehículos sin impacto narrado: solo sus daños y quién retrocede. */
+  function suelto(danos: [string, string][], maniobras: Json[]) {
+    const e = {
+      caso: {},
+      vehiculos: [
+        { id: "V1", clase: "sedan_compacto" },
+        { id: "V2", clase: "sedan_compacto" },
+      ],
+      danos: danos.map(([vehiculo, cara]) => ({ vehiculo, zona: { cara }, fuente: "perito" })),
+      versiones: [{ tipo: "evidencia", maniobras }],
+    } as unknown as Expediente;
+    const base = especDeExpediente(e);
+    expect(validateEscena(base.spec).ok).toBe(true);
+    const de = (v: string) =>
+      (base.spec.vehiculos as Json[]).find(
+        (x) => x.id === Object.keys(base.ids).find((k) => base.ids[k] === v),
+      )!;
+    const pose = (v: string) =>
+      de(v).posicion_inicial as { x: number; y: number; rumbo_deg: number };
+    /** ¿Retrocediendo se acerca al otro? */
+    const seAcerca = (v: string, otro: string) => {
+      const p = pose(v);
+      const q = pose(otro);
+      const rad = (p.rumbo_deg * Math.PI) / 180;
+      return -(Math.cos(rad) * (q.x - p.x) + Math.sin(rad) * (q.y - p.y)) > 0;
+    };
+    const zonas: Record<string, string> = Object.fromEntries(
+      (
+        ((base.spec.eventos as Json[])[0]!.zonas_impacto ?? []) as {
+          vehiculo_id: string;
+          cdc: { lado: string };
+        }[]
+      ).map((z): [string, string] => [String(base.ids[z.vehiculo_id]), z.cdc.lado]),
+    );
+    return { base, seAcerca, zonas };
+  }
+
+  it("con daño posterior en uno y frontal en el otro, toca con su parte posterior", () => {
+    const { base, seAcerca, zonas } = suelto(
+      [
+        ["V1", "posterior"],
+        ["V2", "frontal"],
+      ],
+      [{ vehiculo: "V1", tipo: "reversa" }],
+    );
+    expect(zonas).toEqual({ V1: "B", V2: "F" });
+    expect(seAcerca("V1", "V2")).toBe(true);
+    expect(base.limites.some((l) => l.includes("se supone que toca con su parte posterior"))).toBe(
+      true,
+    );
+    const r = reconstruct(base.spec);
+    expect(r.banderas.some((b) => b.includes("no llegan a tocarse"))).toBe(false);
+    expect(r.vehiculos.every((v) => v.deltaVKmh > 0)).toBe(true);
+  });
+
+  it("si el otro tiene el daño en un costado o no tiene daños, también se acerca retrocediendo", () => {
+    for (const danos of [[["V2", "lateral_izquierdo"]], [["V2", "lateral_derecho"]], []] as [
+      string,
+      string,
+    ][][]) {
+      const { seAcerca, zonas } = suelto(danos, [{ vehiculo: "V1", tipo: "reversa" }]);
+      expect(zonas.V1).toBe("B");
+      expect(seAcerca("V1", "V2")).toBe(true);
+    }
+  });
+
+  it("si los dos retroceden, se acercan de espaldas", () => {
+    const { seAcerca, zonas } = suelto(
+      [],
+      [
+        { vehiculo: "V1", tipo: "reversa" },
+        { vehiculo: "V2", tipo: "reversa" },
+      ],
+    );
+    expect(zonas).toEqual({ V1: "B", V2: "B" });
+    expect(seAcerca("V1", "V2")).toBe(true);
+    expect(seAcerca("V2", "V1")).toBe(true);
+  });
+
+  it("quien retrocede con el daño solo en un costado conserva esa cara", () => {
+    const { zonas } = suelto(
+      [
+        ["V1", "lateral_derecho"],
+        ["V2", "frontal"],
+      ],
+      [{ vehiculo: "V1", tipo: "reversa" }],
+    );
+    expect(zonas).toEqual({ V1: "R", V2: "F" });
+  });
+
+  it("sin nadie en reversa, la disposición genérica queda como estaba", () => {
+    const { base, zonas } = suelto(
+      [
+        ["V1", "posterior"],
+        ["V2", "frontal"],
+      ],
+      [{ vehiculo: "V2", tipo: "se_detiene" }],
+    );
+    expect(zonas).toEqual({});
+    expect(base.limites.some((l) => l.includes("caras de contacto"))).toBe(false);
   });
 });
 

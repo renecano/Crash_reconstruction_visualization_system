@@ -2537,10 +2537,11 @@ Lo que se pospone por el trabajo con CESVI no se borra: queda aquí para despué
   - **La página:**
     - reconstruye con la disposición genérica;
     - un enlace para abrir el caso en «Caso nuevo» y colocar a los vehículos.
-- **Reversa en la reconstrucción** (encontrado al grabar el video, 2026-10-22):
-  - **El caso:** en `cesvi-3a0125cb81`, A mira al norte y retrocede hacia el sur hasta pegar con B.
-  - **Lo que pasa:** con esas posiciones, la inversión no identifica ninguna velocidad y deja las dos en el valor por defecto de 40 km/h. La página lo dice («la evidencia no la fija»), pero no reconstruye la maniobra.
-  - **Lo que falta:** el contrato y el solver necesitan el sentido de marcha separado del rumbo del frente. Va con R4 o R6, junto con las otras modalidades del corpus.
+- ~~**Reversa en la reconstrucción**~~ (encontrado al grabar el video, 2026-10-22). Hecho el 2026-11-14 (T3.3, ADR 0136): el sentido de marcha va aparte del rumbo y de la maniobra, y `cesvi-3a0125cb81` reconstruye al que retrocede a la velocidad de una reversa. Lo que queda de la reversa:
+  - **El arranque desde detenido.** El vehículo en reversa llega a velocidad constante, así que los metros de reversa que diga la narración no cambian la velocidad. Haría falta un perfil que arranque de cero, con una aceleración con fuente.
+  - **El flujo de relatos de la v1** (`buildSpec`): un vehículo en reversa sin velocidad sigue con los 40 km/h por omisión. El supuesto de NHTSA solo entra en el flujo de CESVI (`especDeExpediente`), para no mover las evaluaciones congeladas de Relatos-MX.
+  - **La lectura:** el prompt no tiene un campo para el sentido de marcha; la reversa con vuelta se marca con dos filas de maniobra o con la cita. Un campo propio va cuando se vuelva a leer con API (W9).
+  - **El 3D:** las luces de reversa del vehículo que retrocede (frente U). El resultado ya dice quién va en reversa (`sentido_marcha`).
 - **Del prototipo de CESVI:** el mapa con mosaicos propios (privacidad completa), la importación automática de cualquier dictamen, interpenetración, impactos múltiples y generalidad del método; autenticación con cuentas para cuando los peritos usen sus propios casos (hoy el acceso es con usuario y clave, ADR 0049).
 
 - ~~**Alcance sin el orden de velocidades en la inversión**~~ Hecho el 2026-10-26 (ADR 0091, `eval/results/alcance_orden.json`):

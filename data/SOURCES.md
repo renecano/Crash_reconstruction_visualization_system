@@ -61,6 +61,15 @@ Cada dato externo que usa Croquis se registra aquí (CLAUDE.md, regla 4). Format
 
 Se genera con `node data/cesvi/scripts/masas-tipicas.mjs` (`--check` comprueba que esté al día), y una prueba de `packages/cesvi` la compara con E2. Al usarla, la masa queda como supuesto.
 
+`packages/cesvi/src/data/reversa-nhtsa.json`: la velocidad máxima de una maniobra de reversa en uso real, para el supuesto de T3.3 (W8, ADR 0136).
+
+- **Origen:** Mazzae, E. N., Barickman, F., Baldwin, G. H. S. y Ranney, T. (2008). _On-Road Study of Drivers' Use of Rearview Video Systems (ORSDURVS)_. NHTSA, DOT HS 811 024.
+- **URL:** <https://rosap.ntl.bts.gov/view/dot/63329> (PDF `dot_63329_DS1.pdf`, 140 páginas).
+- **Consultado:** 2026-11-14. No se redistribuye el PDF: se transcriben a mano los cuantiles de la tabla 10 (velocidad máxima de cada maniobra, 6 037 maniobras) y las medias de la tabla 7 (6 145 maniobras, 37 conductores).
+- **Licencia:** obra del gobierno de Estados Unidos, de dominio público.
+- **Uso:** en `packages/cesvi/src/reversa.ts`. La mediana (3.532 mph) es la velocidad que se supone a un vehículo en reversa cuando el perito no la da, con el p10–p90 como rango; la máxima observada (14.291 mph) es el umbral del aviso. Una prueba de `packages/cesvi` comprueba la conversión a km/h.
+- **Límite:** son conductores de Estados Unidos en sus trayectos de todos los días (entradas de cochera, cocheras y cajones). Al usarla, la velocidad queda como supuesto.
+
 ## Notas sobre ATUS
 
 - **Qué cuenta ATUS:** hechos de tránsito en zonas urbanas y suburbanas (vías no federales) captados de autoridades municipales. No incluye carreteras federales ni percances no reportados.

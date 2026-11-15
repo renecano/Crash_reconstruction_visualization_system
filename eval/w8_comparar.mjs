@@ -4,7 +4,7 @@
  * para el antes y el después que pidió René antes de fusionar. Sin API: todo con lecturas grabadas.
  * Reanudable: un paso cuya salida ya existe no se repite.
  *
- *   node eval/w8_comparar.mjs <antes|despues>   → eval/results/w8/<etiqueta>/
+ *   node eval/w8_comparar.mjs <antes|despues|t3_3>   → eval/results/w8/<etiqueta>/
  *
  * - `axa_rango_estable.json`: AXA como la app (resultado completo de producción), 20 semillas.
  * - `cesvi_r4_inversion.json`: las 205 narraciones de prueba de CESVI, leídas, por la inversión.
@@ -21,8 +21,10 @@ import process from "node:process";
 const RAIZ = resolve(import.meta.dirname, "..");
 const CESVI = join(RAIZ, "packages/cesvi");
 const etiqueta = process.argv[2];
-if (!["antes", "despues"].includes(etiqueta)) {
-  console.error("Uso: node eval/w8_comparar.mjs <antes|despues>");
+// «antes» y «despues» son los de T3.2; «t3_3» es el después de T3.3 (ADR 0136), cuyo antes es el
+// «despues» de T3.2: entre los dos no cambió el solver.
+if (!["antes", "despues", "t3_3"].includes(etiqueta)) {
+  console.error("Uso: node eval/w8_comparar.mjs <antes|despues|t3_3>");
   process.exit(1);
 }
 const DIR = join(RAIZ, "eval/results/w8", etiqueta);

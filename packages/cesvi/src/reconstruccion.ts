@@ -257,6 +257,34 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
     if (k >= 0 && lado && ["F", "B", "L", "R"].includes(lado))
       facts.zonas.set(k, fact(lado, null, "supuesto"));
   }
+  // Con alguien en reversa, las caras de contacto que la narración no da se suponen (T3.3): sin
+  // ellas la escena supone el frente de los dos, que en una reversa va atrás. Quien retrocede toca
+  // con su parte posterior, salvo que sus daños estén solo en otra cara; el otro, con la cara de su
+  // primer daño.
+  const supuestas: string[] = [];
+  if (orden.slice(0, 2).some((v) => enReversa.has(v))) {
+    orden.slice(0, 2).forEach((v, k) => {
+      if (facts.zonas.has(k)) return;
+      const caras = (e.danos ?? [])
+        .filter((d) => d.vehiculo === v)
+        .map((d) => LADO[d.zona.cara])
+        .filter((l): l is string => !!l && ["F", "B", "L", "R"].includes(l));
+      const lado = enReversa.has(v)
+        ? !caras.length || caras.includes("B")
+          ? "B"
+          : caras[0]!
+        : caras[0];
+      if (!lado) return;
+      facts.zonas.set(k, fact(lado, null, "supuesto"));
+      supuestas.push(
+        enReversa.has(v) && lado === "B"
+          ? `${v} va en reversa: se supone que toca con su parte posterior`
+          : `de ${v} se toma la cara de su primer daño`,
+      );
+    });
+  }
+  if (supuestas.length)
+    limites.push(`La narración no da las caras de contacto: ${supuestas.join("; ")}.`);
   const objeto = primero?.objeto_fijo
     ? (OBJETO.find(([rx]) => rx.test(primero.objeto_fijo!))?.[1] ?? "otro")
     : null;
@@ -395,6 +423,33 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
         rumbo_deg: rumboEscena(fin.rumbo),
         procedencia: { ...DEL_PERITO },
       };
+  }
+  // Sin posiciones del perito, la disposición genérica supone que todos avanzan. Quien retrocede
+  // y con eso se alejaría del otro se voltea (T3.3): mismo lugar y mismo recorrido, con la parte
+  // posterior por delante.
+  if (!origen) {
+    type Pose = { x: number; y: number; rumbo_deg: number; procedencia?: Json };
+    const par = spec.vehiculos.slice(0, 2);
+    const objeto0 = ((spec.entorno as Json | undefined)?.objetos as Json[] | undefined)?.[0];
+    par.forEach((sv, k) => {
+      if (!enReversa.has(orden[k]!)) return;
+      const hacia = (par[1 - k]?.posicion_inicial ?? objeto0?.posicion) as
+        { x: number; y: number } | undefined;
+      if (!hacia) return;
+      const pose = sv.posicion_inicial as Pose;
+      const rad = (pose.rumbo_deg * Math.PI) / 180;
+      // El sentido de marcha es el contrario al frente.
+      const seAcerca =
+        -(Math.cos(rad) * (hacia.x - pose.x) + Math.sin(rad) * (hacia.y - pose.y)) >= 0;
+      if (seAcerca) return;
+      const r = pose.rumbo_deg + 180;
+      pose.rumbo_deg = r > 180 ? r - 360 : r;
+      pose.procedencia = {
+        fuente: "supuesto",
+        confianza: 0.3,
+        nota: "Disposición genérica, llegando en reversa; ajústala en el croquis.",
+      };
+    });
   }
   const evento = spec.eventos[0]!;
   if (origen) evento.punto_impacto = { x: 0, y: 0 };
