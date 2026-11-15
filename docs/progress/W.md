@@ -802,6 +802,12 @@ Plan aprobado por René el 2026-11-15 (`docs/auditoria/2026-11-15-fable.md`, sec
   - Cambio de acto y apertura de la portada: el «después» es de producción; el «antes», del servidor local con los archivos anteriores, porque producción ya llevaba el cambio. La transición corta dura menos de 500 ms: la captura la detiene y fija la animación en cada instante.
 - **Pruebas:** `packages/extraction` 862, `packages/cesvi` 404 y las de la web tocadas (logo, portada, dictamen), en verde; pytest del redactor y su espejo, en verde; lint y tipos de la web, de `packages/cesvi` y de `extraction`.
 
+### Paquete del colaborador (decisión 8)
+
+- **Qué es:** `CORRER-TANDA-EN-RTX.bat` (doble clic, sin preguntas ni llaves), `LEEME-TANDA-RTX.md` (3 pasos) y `tools/colaborador/tanda.ps1`, que corre los pasos de la tanda vigente (`tools/colaborador/tandas.json`) y sube los resultados a `resultados/<tanda>-<fecha>` sin tocar la copia de trabajo ni `main`.
+- **La Tanda 1 no tiene nada pesado:** todo lo cubre el CI. Por eso la tanda vigente es la prueba de 2 minutos, que René pidió antes del primer paquete.
+- **Probado en la laptop (2026-11-15):** el modo de prueba corrió completo en 0.4 min, con la subida a su rama (la rama de esa prueba se borró para no confundirla con la del colaborador). Falta que corra en la computadora del colaborador.
+
 ### Lo que no dibuja el logo (revisado)
 
 La pantalla de carga de Unity y su plantilla WebGL solo dicen «Cargando el visor 3D…»; el visor y sus fotos llevan la leyenda ilustrativa, no el logo; la pantalla de inicio de Unity está apagada; no hay Lottie ni video del logo en la app.

@@ -1,0 +1,28 @@
+{
+  "nota": "Lo pesado de cada tanda de la auditoría del 2026-11-15, para la computadora del colaborador (tools/colaborador/tanda.ps1). «vigente» es la que corre CORRER-TANDA-EN-RTX.bat con doble clic. Cada paso: un comando que corre en la raíz del repositorio, sin preguntas y sin llaves; «minutos» es lo estimado (el tope es 4 veces eso, y al menos 10 min); «salidas» son las rutas que se suben además de los registros.",
+  "vigente": "prueba",
+  "tandas": {
+    "prueba": {
+      "titulo": "Prueba del mecanismo (2 minutos)",
+      "pasos": [
+        {
+          "nombre": "dependencias",
+          "comando": "pnpm install --frozen-lockfile",
+          "minutos": 1,
+          "salidas": []
+        },
+        {
+          "nombre": "solver-en-reversa",
+          "comando": "pnpm --filter @croquis/cesvi exec vitest run src/reversa.test.ts",
+          "minutos": 1,
+          "salidas": []
+        }
+      ]
+    },
+    "t1": {
+      "titulo": "Tanda 1 · Confianza inmediata",
+      "nota": "Todo lo de la Tanda 1 lo cubre el CI de GitHub: no hay nada que correr aquí.",
+      "pasos": []
+    }
+  }
+}
