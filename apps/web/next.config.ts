@@ -11,6 +11,26 @@ const remotos: Record<string, string> = existsSync(".recursos-remotos.json")
   ? (JSON.parse(readFileSync(".recursos-remotos.json", "utf-8")) as Record<string, string>)
   : {};
 
+/**
+ * Lo que la app carga hoy: lo propio; el visor de Unity y los modelos, de Vercel Blob (con WebAssembly
+ * y workers desde blob:); los mosaicos y las consultas del mapa, por https; y las imágenes y fuentes
+ * que arma en memoria (data: y blob:).
+ */
+const POLITICA_DE_CONTENIDO = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data:",
+  "connect-src 'self' https: blob: data:",
+  "worker-src 'self' blob:",
+  "media-src 'self' blob: https://*.public.blob.vercel-storage.com",
+  "frame-ancestors 'self'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "object-src 'none'",
+].join("; ");
+
 const nextConfig: NextConfig = {
   env: {
     CROQUIS_RECURSOS_VEHICULOS: remotos["modelos/vehiculos"] ?? "",
@@ -43,6 +63,21 @@ const nextConfig: NextConfig = {
       "../../packages/scene-schema/fixtures/**",
       "../../**/*.test.*",
     ],
+  },
+  // Encabezados de seguridad (auditoría del 2026-11-15, I6). La política de contenido va en modo de
+  // solo reporte: el navegador avisa en la consola lo que la violaría y no bloquea nada. Se vuelve
+  // obligatoria cuando el recorrido completo (mapa, 3D de Unity, PDF) pase sin avisos.
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Content-Security-Policy-Report-Only", value: POLITICA_DE_CONTENIDO },
+        ],
+      },
+    ];
   },
   // /cesvi como una sola aplicación (ADR 0079): las rutas viejas llevan a su caso en el recorrido.
   async redirects() {
