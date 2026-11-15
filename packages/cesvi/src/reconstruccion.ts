@@ -20,6 +20,7 @@ import {
   fullResult,
   isReverse,
   PRIORIDAD,
+  PRODUCTION_SAMPLES,
   reconstruct,
   SIGMA_POSITION_M,
 } from "@croquis/solver-ts";
@@ -1179,10 +1180,56 @@ export function evidenciaEnPalabras(etiqueta: string, ids: Record<string, Id>): 
   return `${nombre[tipo ?? ""] ?? tipo} de ${v}`;
 }
 
-/** Corre el solver de producción (port TS) sobre la escena del expediente. */
-export function reconstruirExpediente(e: Expediente, specId?: string): Reconstruccion {
+/**
+ * Corre el solver (port TS) sobre la escena del expediente. Por omisión usa las muestras de
+ * **referencia** (12 de la inversión y 64 del Monte Carlo), que son las de las pruebas y las
+ * evaluaciones. La app reconstruye en su worker con las de **producción** (`PRODUCTION_SAMPLES`: 32
+ * y 128), así que su rango no es idéntico al de aquí (auditoría del 2026-11-15, N3): para el número
+ * que ve el perito, pasa `PRODUCTION_SAMPLES`. El resultado dice con cuántas se calculó
+ * (`muestrasDe`).
+ */
+export function reconstruirExpediente(
+  e: Expediente,
+  specId?: string,
+  muestras: { samples?: number; mcSamples?: number } = {},
+): Reconstruccion {
   const base = especDeExpediente(e, specId);
-  return interpretarResultado(base, fullResult(base.spec));
+  return interpretarResultado(base, fullResult(base.spec, muestras));
+}
+
+/** Las simulaciones con las que se calculó un rango, y cuál de los dos juegos son. */
+export interface MuestrasReconstruccion {
+  /** Las de la inversión: de ellas sale el p10–p90 de cada velocidad. */
+  inversion: number;
+  juego: "producción" | "referencia" | "otro";
+}
+
+/**
+ * Con cuántas simulaciones se calculó el rango de una reconstrucción (lo dice su resultado). Todo
+ * rango que se publica lleva este dato: «p10–p90 de 32 simulaciones» (auditoría del 2026-11-15, N3).
+ * null si el resultado no lo trae.
+ */
+export function muestrasDe(r: Pick<Reconstruccion, "resultado">): MuestrasReconstruccion | null {
+  const n = (r.resultado.inversion as { muestras?: unknown } | undefined)?.muestras;
+  if (typeof n !== "number") return null;
+  return {
+    inversion: n,
+    juego:
+      n === PRODUCTION_SAMPLES.samples
+        ? "producción"
+        : n === MUESTRAS_DE_REFERENCIA
+          ? "referencia"
+          : "otro",
+  };
+}
+
+/** Las muestras de la inversión cuando nadie pide otras (la referencia Python usa las mismas). */
+export const MUESTRAS_DE_REFERENCIA = 12;
+
+/** «p10–p90 de 32 simulaciones»; sin el dato, «p10–p90 de las simulaciones». */
+export function notaDeMuestras(r: Pick<Reconstruccion, "resultado">): string {
+  const m = muestrasDe(r);
+  return m ? `p10–p90 de ${m.inversion} simulaciones` : "p10–p90 de las simulaciones";
 }
 
 /**

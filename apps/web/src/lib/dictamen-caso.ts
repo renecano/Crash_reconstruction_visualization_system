@@ -28,6 +28,7 @@ import {
   encabezadoHipotesis,
   enPalabras,
   mensajeEnPalabras,
+  notaDeMuestras,
 } from "@croquis/cesvi";
 import type { Content, TableCell, TDocumentDefinitions } from "pdfmake/interfaces";
 import { conGlifosDeRoboto, LEYENDA_DICTAMEN } from "./dictamen-cesvi";
@@ -287,6 +288,10 @@ function secciones(d: DatosDictamenCaso) {
           : "la evidencia no la fija",
         v.impacto ? `${kmh(v.impacto.p10)}–${kmh(v.impacto.p50)}–${kmh(v.impacto.p90)}` : "—",
       ]),
+    ),
+    // Cada rango dice de cuántas simulaciones sale, y por qué va en enteros.
+    nota(
+      `El rango entre paréntesis es el ${notaDeMuestras(r)}. Las velocidades de la reconstrucción van en enteros: el rango cambia cerca de 1 km/h entre corridas y varios km/h con los supuestos.`,
     ),
     ...(d.supuestos?.length
       ? [
