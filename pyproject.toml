@@ -27,14 +27,14 @@ members = ["packages/scene-schema/python", "solver", "extraction", "data", "eval
 
 [dependency-groups]
 dev = [
-  "pytest>=9.1,<10",
+  "pytest>=9.2.0,<10",
   "pytest-cov>=7.1,<8",
-  "hypothesis>=6.168,<7",
+  "hypothesis>=6.170.15,<7",
   # Solo referencia en pruebas y evaluaciones; el solver no depende de SciPy (ADR 0027).
   "scipy>=1.18,<2",
-  "ruff>=0.17,<0.18",
+  "ruff>=0.17.5,<0.18",
   "pyright>=1.1.414,<2",
-  "datamodel-code-generator>=0.83,<1",
+  "datamodel-code-generator>=0.95.0,<1",
   "pytest-xdist>=3.8,<4",
 ]
 
