@@ -160,5 +160,16 @@ namespace Croquis.Core.Tests
             Assert.Contains("DanoDelCaso.Campo(", dano);
             Assert.Contains("DanoDelCaso.Deformar(", dano);
         }
+
+        /// <summary>La leyenda ilustrativa va en toda vista del visor, con escenario o sin él (§2.3).</summary>
+        [Fact]
+        public void LaLeyendaVaConEscenarioYSinEl()
+        {
+            var visor = Path.Combine(Raiz(), "apps", "visor-unity", "Assets", "Croquis", "Visor");
+            Assert.Contains("EscenarioVista.Leyenda(raiz, false)", File.ReadAllText(Path.Combine(visor, "VisorCaso.cs")));
+            var escenario = File.ReadAllText(Path.Combine(visor, "EscenarioVista.cs"));
+            Assert.Contains("Leyenda(escenario);", escenario);
+            Assert.Contains("Reconstrucción ilustrativa", escenario);
+        }
     }
 }

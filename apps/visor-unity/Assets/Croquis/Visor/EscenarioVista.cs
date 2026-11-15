@@ -974,8 +974,11 @@ namespace Croquis.Visor
 
         // ---- Leyenda ----------------------------------------------------------------------------------
 
-        /// <summary>La leyenda de cada vista (IA responsable, §10): ilustrativa, y el entorno es procedural.</summary>
-        private static void Leyenda(Transform padre)
+        /// <summary>
+        /// La leyenda de cada vista (IA responsable, §10): ilustrativa y, si hay entorno dibujado, que es
+        /// procedural. Va siempre, también en un caso sin escenario (auditoría del 2026-11-15, §2.3).
+        /// </summary>
+        public static void Leyenda(Transform padre, bool entornoProcedural = true)
         {
             var go = new GameObject("leyenda");
             go.transform.SetParent(padre, false);
@@ -991,7 +994,9 @@ namespace Croquis.Visor
             texto.fontSize = 14;
             texto.color = new Color(1f, 1f, 1f, 0.88f);
             texto.alignment = TextAnchor.LowerLeft;
-            texto.text = "Reconstrucción ilustrativa · entorno procedural: no es el lugar real";
+            texto.text = entornoProcedural
+                ? "Reconstrucción ilustrativa · entorno procedural: no es el lugar real"
+                : "Reconstrucción ilustrativa";
             var rt = texto.rectTransform;
             rt.anchorMin = new Vector2(0f, 0f);
             rt.anchorMax = new Vector2(1f, 0f);

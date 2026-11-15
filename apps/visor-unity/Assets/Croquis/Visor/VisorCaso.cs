@@ -141,6 +141,11 @@ namespace Croquis.Visor
             EscenarioVista.Construir(raiz, e, sol, Camera.main, terreno);
             Paso("escenario");
             }
+            else
+            {
+                // Sin escenario no hay entorno que aclarar, pero la vista sigue siendo ilustrativa.
+                EscenarioVista.Leyenda(raiz, false);
+            }
 
             TerrenoVista.Dibujar(raiz, e?.Terreno, terreno, e != null && e.Ambiente.Mojado);
             dinamica = CasoVista.Construir(raiz, caso, terreno, noche);
