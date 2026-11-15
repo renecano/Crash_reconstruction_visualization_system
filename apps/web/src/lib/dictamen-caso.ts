@@ -26,6 +26,7 @@ import {
   type SupuestoDeclarado,
   type VerificacionVehiculo,
   encabezadoHipotesis,
+  enPalabras,
   mensajeEnPalabras,
 } from "@croquis/cesvi";
 import type { Content, TableCell, TDocumentDefinitions } from "pdfmake/interfaces";
@@ -108,7 +109,6 @@ function tabla(encabezados: string[], filas: TableCell[][]): Content {
   };
 }
 
-const enPalabras = (s: string) => s.replaceAll("_", " ");
 const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(2));
 /** «56.87 (54.79–78.39)»: el valor con su p10–p90 alrededor de la solución elegida, si lo hay. */
 const rangoTexto = (kmh: number, rango: [number, number] | null) =>
@@ -228,7 +228,12 @@ function secciones(d: DatosDictamenCaso) {
           ["Vehículo", "Zona", "Dirección de la deformación", "Magnitud", "Medidas"],
           (e.danos ?? []).map((x) => [
             x.vehiculo,
-            [enPalabras(x.zona.cara), x.zona.tercio, x.zona.vertice && enPalabras(x.zona.vertice)]
+            // Cada parte con su nombre: «posterior, posterior izquierdo» parecía una repetición.
+            [
+              enPalabras(x.zona.cara),
+              x.zona.tercio && `tercio ${x.zona.tercio}`,
+              x.zona.vertice && `vértice ${enPalabras(x.zona.vertice)}`,
+            ]
               .filter(Boolean)
               .join(", ") + (x.dano_previo ? " (previo)" : ""),
             (x.direcciones ?? []).map(enPalabras).join(", ") || "—",
@@ -241,14 +246,16 @@ function secciones(d: DatosDictamenCaso) {
       ]
     : [parrafo("La narración no describe daños.")];
   const lugar: Content[] = [
+    // El municipio y el estado, y aparte la descripción (que es una oración con su punto): unidos
+    // con comas salía «…no da coordenadas., Ahome».
     parrafo(
       [
-        e.caso.lugar?.descripcion?.valor,
-        e.caso.lugar?.municipio?.valor,
-        e.caso.lugar?.estado?.valor,
+        [e.caso.lugar?.municipio?.valor, e.caso.lugar?.estado?.valor].filter(Boolean).join(", "),
+        e.caso.lugar?.descripcion?.valor?.trim(),
       ]
-        .filter(Boolean)
-        .join(", ") || "La narración no da el lugar.",
+        .filter((p): p is string => Boolean(p))
+        .map((p) => (/[.!?]$/.test(p) ? p : `${p}.`))
+        .join(" ") || "La narración no da el lugar.",
     ),
     ...(d.croquis
       ? [
@@ -309,9 +316,11 @@ function secciones(d: DatosDictamenCaso) {
     ...(d.cuadros3d.length
       ? [
           subtitulo("Cuadros del 3D"),
+          // Cada cuadro lleva la leyenda del visor (que es una capa de pantalla y no sale en la
+          // captura): si el perito copia la imagen a su reporte, la nota va con ella.
           ...d.cuadros3d.flatMap((c): Content[] => [
             { image: c.imagen, width: 420, margin: [0, 2, 0, 2] },
-            nota(c.etiqueta),
+            nota(`${c.etiqueta}. ${LEYENDA_3D}`),
           ]),
           ...(d.modelos3d?.length
             ? [
@@ -417,6 +426,13 @@ function secciones(d: DatosDictamenCaso) {
 }
 
 /** El contenido del dictamen (el mismo para el PDF y el Word). */
+/**
+ * La leyenda de los cuadros del 3D (IA responsable, PLAN §10): la misma idea que la del visor
+ * («Reconstrucción ilustrativa · entorno procedural: no es el lugar real»), en una oración.
+ */
+export const LEYENDA_3D =
+  "Reconstrucción ilustrativa; el entorno es procedural: no es el lugar real.";
+
 export function dictamenCasoContenido(d: DatosDictamenCaso): Content[] {
   const cuerpo = cuerpoDelDictamen(d);
   // La cabecera: el logo de la marca, tal cual (assets/brand/marca.json).

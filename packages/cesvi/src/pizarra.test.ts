@@ -167,6 +167,11 @@ describe("la pizarra y el coordinador (R12b)", () => {
       ["preguntador", "fisico", "escribe"],
     ]);
     expect(nuevos[1]!.texto).toBe("Reconstrucción: V1 a 52.40 km/h (48.10–57.90).");
+    // El pedido va en palabras: la bitácora entra al dictamen y no lleva identificadores internos.
+    expect(nuevos[2]!.texto).toBe(
+      "La física no cuadra o no alcanza (la velocidad declarada no cuadra con la evidencia física): pide evidencia al perito.",
+    );
+    for (const m of p.bitacora) expect(m.texto, m.texto).not.toMatch(/[a-z]_[a-z]/);
     expect(p.preguntas.at(-1)).toMatchObject({ clave: "huella-V1", control: { tipo: "numero" } });
     // Volver a coordinar sin cambios no repite nada: espera al perito.
     const otra = await coordinar(p, { leer: grabado(grabacion.salida), reconstruir });

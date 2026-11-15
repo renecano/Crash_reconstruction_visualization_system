@@ -11,6 +11,7 @@
  */
 import type { Expediente } from "./corpus";
 import type { VersionDeclarada } from "./declaracion";
+import { enPalabras } from "./palabras";
 import type { EscenaSolver, Reconstruccion } from "./reconstruccion";
 
 type Json = Record<string, unknown>;
@@ -142,8 +143,6 @@ interface VehiculoResultado {
   dano?: { cdc?: { lado?: string } | null };
   pose_final?: { x: number; y: number };
 }
-
-const enPalabras = (s: string) => s.replaceAll("_", " ");
 
 /**
  * «Qué cambia entre versiones» (R7): la versión declarada (simulada) contra la reconstrucción y los

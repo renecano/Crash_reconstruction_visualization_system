@@ -15,7 +15,12 @@ import {
 } from "@croquis/cesvi";
 import { fullResult } from "@croquis/solver-ts";
 import { describe, expect, it } from "vitest";
-import { dictamenCasoContenido, dictamenCasoWord, type DatosDictamenCaso } from "./dictamen-caso";
+import {
+  dictamenCasoContenido,
+  dictamenCasoWord,
+  LEYENDA_3D,
+  type DatosDictamenCaso,
+} from "./dictamen-caso";
 import { terminosProhibidos } from "./terminologia";
 
 /** Todo el texto de un contenido de pdfmake, en orden. */
@@ -159,6 +164,54 @@ describe("el dictamen de una reconstrucción (R8)", () => {
       "Conclusiones",
       "Validación del perito",
     ]);
+  });
+
+  it("cada cuadro del 3D dice que es ilustrativo y que el entorno no es el lugar real", () => {
+    // Auditoría del 2026-11-15, I2: la leyenda del visor no sale en la captura.
+    expect(LEYENDA_3D).toMatch(/ilustrativa/);
+    expect(LEYENDA_3D).toMatch(/procedural/);
+    expect(LEYENDA_3D).toMatch(/no es el lugar real/);
+    const cuadros3d = ["Antes del impacto (−1 s)", "En el impacto (0 s)", "En reposo (+3.2 s)"].map(
+      (etiqueta) => ({ etiqueta, imagen: "data:image/png;base64,AAAA" }),
+    );
+    const t = texto(datos({ cuadros3d }));
+    for (const c of cuadros3d) expect(t).toContain(`${c.etiqueta}. ${LEYENDA_3D}`);
+    expect(texto(datos())).not.toContain(LEYENDA_3D);
+  });
+
+  it("el lugar, las zonas y las direcciones van bien escritos", () => {
+    // Las erratas del dictamen de AXA: «…no da coordenadas., Ahome», «de atras» y «posterior,
+    // posterior izquierdo».
+    const conLugar: Expediente = {
+      ...e,
+      caso: {
+        ...e.caso,
+        lugar: {
+          ...e.caso.lugar,
+          descripcion: {
+            valor: "Ubicación ilustrativa sobre MEX 15D: el reporte no da coordenadas.",
+            fuente: "supuesto",
+          },
+          municipio: { valor: "Ahome", fuente: "narracion" },
+          estado: { valor: "Sinaloa", fuente: "narracion" },
+        },
+      },
+      danos: [
+        {
+          vehiculo: "V1",
+          zona: { cara: "posterior", tercio: "izquierdo", vertice: "posterior_izquierdo" },
+          direcciones: ["de_atras_hacia_adelante"],
+        },
+      ],
+    } as unknown as Expediente;
+    const t = texto(datos({ expediente: conLugar }));
+    expect(t).toContain(
+      "Ahome, Sinaloa. Ubicación ilustrativa sobre MEX 15D: el reporte no da coordenadas.",
+    );
+    expect(t).not.toMatch(/\.,/);
+    expect(t).toContain("posterior, tercio izquierdo, vértice posterior izquierdo");
+    expect(t).toContain("de atrás hacia adelante");
+    expect(t).not.toContain("atras");
   });
 
   it("con cuadros del 3D, la atribución CC-BY de los vehículos de Sketchfab (R10)", () => {

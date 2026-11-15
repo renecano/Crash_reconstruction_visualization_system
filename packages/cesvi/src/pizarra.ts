@@ -69,6 +69,17 @@ const BANDERAS_DE_EVIDENCIA = new Set([
   "velocidad_vs_evidencia",
 ]);
 
+/**
+ * Cada bandera, en palabras: la bitácora entra al dictamen que firma el perito y no lleva
+ * identificadores internos (auditoría del 2026-11-15, I2).
+ */
+const MOTIVO_BANDERA: Record<string, string> = {
+  reposo_inalcanzable: "ninguna velocidad lleva al vehículo a la posición final dada",
+  reposo_supuesto_vs_dano:
+    "la posición final supuesta queda lejos de la que cuadra con el daño medido",
+  velocidad_vs_evidencia: "la velocidad declarada no cuadra con la evidencia física",
+};
+
 export interface MensajeBitacora {
   /** Orden en la bitácora, desde 1. */
   n: number;
@@ -414,6 +425,10 @@ const fisico: Agente = {
         codigo: c.codigo,
         vehiculo: c.datos?.vehiculo ? (r.ids[c.datos.vehiculo] ?? null) : null,
       }));
+    const motivos = [...new Set(banderas.map((b) => b.codigo))].map(
+      (c) => MOTIVO_BANDERA[c] ?? "la física no cuadra",
+    );
+    if (!fijadas.length) motivos.push("la evidencia todavía no fija ninguna velocidad");
     if (!fijadas.length)
       for (const v of Object.values(r.ids))
         if (!banderas.some((b) => b.vehiculo === v))
@@ -423,7 +438,7 @@ const fisico: Agente = {
       decir(
         "preguntador",
         "pide",
-        `La física no cuadra o no alcanza (${[...new Set(banderas.map((b) => b.codigo))].join(", ")}): pide evidencia al perito.`,
+        `La física no cuadra o no alcanza (${motivos.join("; ")}): pide evidencia al perito.`,
       );
       q = { ...q, pedidoEvidencia: { banderas, atendido: false } };
     }
