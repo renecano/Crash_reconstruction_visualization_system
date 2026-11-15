@@ -365,6 +365,8 @@ pnpm exec tsx ../../eval/cesvi_r4_reproduccion.mts comparar
 
 **D5 del plan:** T3.2, T3.3 y T3.5 están en `eval/results/`, y la portada toma de ahí sus cifras. El README no cita cifras de CESVI; se revisa en U7.
 
+**El tiempo en el navegador ya cumple ≤ 10 s (2026-11-15).** Era el pendiente de T3.2. Con la laptop en estado normal, en tres rondas alternadas de tres corridas (`eval/results/w8/tiempo_navegador_rondas.json`): el worker que sirve producción da medianas de 9.35, 9.56 y 9.25 s (la corrida más lenta, 9.72 s), y el mismo código construido en la laptop, 8.43, 6.68 y 7.42 s. Esta vez los dos workers son el mismo código (el de `main`, 588a69b8): la medición no compara un antes y un después, repite la misma. El margen del worker de producción es corto, menos de 1 s.
+
 ### Resumen para René (W8)
 
 - **Qué quedó:** W8 completa.
