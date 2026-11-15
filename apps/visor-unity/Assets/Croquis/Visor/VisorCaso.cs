@@ -106,6 +106,8 @@ namespace Croquis.Visor
                 var extra = e?.Vehiculos != null ? Array.Find(e.Vehiculos, x => x.Id == v.Id) : null;
                 var color = extra?.Color != null ? Materiales.Hex(extra.Color, Color.gray) : (Color?)null;
                 vista.Partes = await modelos.ArmarAsync(go.transform, v, color);
+                // El daño del solver sobre la carrocería: se prepara aquí y se ve desde su impacto.
+                vista.Dano = DanoVista.Preparar(go.transform, v, r);
                 vista.Frenado = extra?.Frenado;
                 vista.Luces(noche, extra == null || extra.Faros, (float)v.Dimensiones.LargoM);
                 foreach (var tr in go.GetComponentsInChildren<Transform>(true))
@@ -427,6 +429,9 @@ namespace Croquis.Visor
         public ResultadoVehiculo Datos { get; set; }
         public PartesVehiculo Partes { get; set; }
 
+        /// <summary>La carrocería deformada con el daño del Resultado; nulo si no trae daño que dibujar.</summary>
+        public DanoVista Dano { get; set; }
+
         /// <summary>
         /// Si se tiende después del impacto (dos ruedas que el solver arrastra caídas) y hacia qué lado:
         /// ±1; 0, no. La caída es ilustrativa: el solver no la calcula (ADR 0114).
@@ -513,6 +518,7 @@ namespace Croquis.Visor
 
         public void Colocar(double t)
         {
+            Dano?.Mostrar(t);
             var p = Ejes.AUnity(Muestreo.Pose(Trayectoria, t));
             var posicion = new Vector3((float)p.Px, (float)p.Py, (float)p.Pz);
             var giro = Quaternion.Euler((float)p.EulerX, (float)p.EulerY, (float)p.EulerZ);
