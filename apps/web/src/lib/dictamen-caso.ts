@@ -30,7 +30,7 @@ import {
   mensajeEnPalabras,
 } from "@croquis/cesvi";
 import type { Content, TableCell, TDocumentDefinitions } from "pdfmake/interfaces";
-import { LEYENDA_DICTAMEN } from "./dictamen-cesvi";
+import { conGlifosDeRoboto, LEYENDA_DICTAMEN } from "./dictamen-cesvi";
 import { dictamenDocx } from "./exportar-cesvi";
 import { ANCHO_LOGO, PROPORCION_LOGO } from "./marca-dictamen";
 import { pdfBytes } from "./pdf";
@@ -434,7 +434,8 @@ export const LEYENDA_3D =
   "Reconstrucción ilustrativa; el entorno es procedural: no es el lugar real.";
 
 export function dictamenCasoContenido(d: DatosDictamenCaso): Content[] {
-  const cuerpo = cuerpoDelDictamen(d);
+  // Roboto no trae «→» (la bitácora dice «Físico → Preguntador»): en el dictamen va «a».
+  const cuerpo = conGlifosDeRoboto(cuerpoDelDictamen(d));
   // La cabecera: el logo de la marca, tal cual (assets/brand/marca.json).
   return d.logo
     ? [
