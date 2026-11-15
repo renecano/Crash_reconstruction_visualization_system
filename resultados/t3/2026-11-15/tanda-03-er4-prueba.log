@@ -1,0 +1,179 @@
+Página: 205 casos en C:\Users\MrKan\Documents\reto cesvi v4\Croquis\data\cesvi\r4\pagina.json
+{
+ "particion": "prueba",
+ "leidos": 205,
+ "resumen": {
+  "dictamenes": 205,
+  "modalidad": {
+   "croquis": {
+    "k": 80,
+    "n": 190,
+    "pct": 42.1
+   },
+   "sin_inferir": 10,
+   "otra_predicha": {
+    "k": 6,
+    "n": 10,
+    "pct": 60
+   },
+   "fisicas": {
+    "croquis": {
+     "k": 74,
+     "n": 123,
+     "pct": 60.2
+    },
+    "linea_base": {
+     "modalidad": "alcance",
+     "k": 46,
+     "n": 123,
+     "pct": 37.4
+    }
+   },
+   "linea_base": {
+    "modalidad": "otra",
+    "k": 67,
+    "n": 190,
+    "pct": 35.3
+   },
+   "por_modalidad": {
+    "alcance": {
+     "k": 37,
+     "n": 46,
+     "pct": 80.4
+    },
+    "frontal": {
+     "k": 5,
+     "n": 6,
+     "pct": 83.3
+    },
+    "lateral": {
+     "k": 16,
+     "n": 25,
+     "pct": 64
+    },
+    "objeto_fijo": {
+     "k": 9,
+     "n": 17,
+     "pct": 52.9
+    },
+    "otra": {
+     "k": 6,
+     "n": 67,
+     "pct": 9
+    },
+    "reversa": {
+     "k": 0,
+     "n": 9,
+     "pct": 0
+    },
+    "salida_de_camino": {
+     "k": 1,
+     "n": 10,
+     "pct": 10
+    },
+    "volcadura": {
+     "k": 6,
+     "n": 10,
+     "pct": 60
+    }
+   },
+   "precision_por_modalidad": {
+    "alcance": {
+     "k": 37,
+     "n": 58,
+     "pct": 63.8
+    },
+    "frontal": {
+     "k": 5,
+     "n": 14,
+     "pct": 35.7
+    },
+    "lateral": {
+     "k": 16,
+     "n": 57,
+     "pct": 28.1
+    },
+    "objeto_fijo": {
+     "k": 9,
+     "n": 24,
+     "pct": 37.5
+    },
+    "otra": {
+     "k": 6,
+     "n": 10,
+     "pct": 60
+    },
+    "salida_de_camino": {
+     "k": 1,
+     "n": 3,
+     "pct": 33.3
+    },
+    "volcadura": {
+     "k": 6,
+     "n": 14,
+     "pct": 42.9
+    }
+   }
+  },
+  "zonas": {
+   "dictamenes_con_zonas": 152,
+   "exhaustividad": {
+    "k": 222,
+    "n": 312,
+    "pct": 71.2
+   },
+   "precision": {
+    "k": 222,
+    "n": 362,
+    "pct": 61.3
+   },
+   "tercio": {
+    "k": 13,
+    "n": 14,
+    "pct": 92.9
+   }
+  },
+  "secuencia": {
+   "dictamenes_con_secuencia": 135,
+   "primer_impacto": {
+    "k": 92,
+    "n": 135,
+    "pct": 68.1
+   },
+   "completa": {
+    "k": 69,
+    "n": 135,
+    "pct": 51.1
+   },
+   "mismo_numero": {
+    "k": 72,
+    "n": 135,
+    "pct": 53.3
+   }
+  },
+  "velocidades": {
+   "del_dictamen_por_deformacion": 5,
+   "croquis_calcula": 0,
+   "error_abs_mediana_kmh": null,
+   "error_pct_abs_mediana": null,
+   "dentro_de_5_pct": {
+    "k": 0,
+    "n": 0,
+    "pct": null
+   },
+   "linea_base": {
+    "velocidad_kmh": 61.62,
+    "error_abs_mediana_kmh": 11.716874999999995,
+    "error_pct_abs_mediana": 23.480711422845683
+   }
+  },
+  "posiciones_finales": {
+   "dictamenes_con_posiciones": 46,
+   "croquis_las_tiene": {
+    "k": 29,
+    "n": 58,
+    "pct": 50
+   }
+  }
+ }
+}
