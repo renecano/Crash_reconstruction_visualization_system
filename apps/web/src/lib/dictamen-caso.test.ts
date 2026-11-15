@@ -333,7 +333,7 @@ describe("el dictamen de una reconstrucción (R8)", () => {
       "2 · Físico a Preguntador (pide): La física no cuadra",
     ]);
     // La fuente del PDF (Roboto) no trae flechas: salían como un hueco («Físico  Preguntador»).
-    expect(t).not.toMatch(/[←-⇿]/);
+    expect(t).not.toMatch(/[\u2190-\u21ff]/);
     expect(texto(datos())).not.toContain("Bitácora de los agentes");
   });
 });
