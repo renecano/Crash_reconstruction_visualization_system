@@ -1,0 +1,51 @@
+{
+    "tanda":  "t3",
+    "titulo":  "Tanda 3 · Números defendibles (el solver sortea restitución, razón de impulso y arrastre)",
+    "fecha":  "2026-11-15",
+    "commit":  "44e7bf673549ba2f142b261cf118da9018d16eb9",
+    "rama_del_repositorio":  "main",
+    "archivos_con_cambios":  0,
+    "duracion_min":  0.7,
+    "equipo":  {
+                   "tarjetas_de_video":  [
+                                             "NVIDIA GeForce RTX 4070 Laptop GPU",
+                                             "Intel(R) UHD Graphics"
+                                         ],
+                   "memoria_gb":  31.7,
+                   "procesador":  "Intel(R) Core(TM) i9-14900HX",
+                   "nucleos_logicos":  32,
+                   "disco_libre_gb":  285.8,
+                   "windows":  "Microsoft Windows 11 Home",
+                   "git":  "git version 2.55.0.windows.5",
+                   "node":  "v26.13.1",
+                   "pnpm":  "12.11.2",
+                   "uv":  null,
+                   "python":  "Python 3.13.15",
+                   "dotnet":  "11.0.100",
+                   "unity_instalados":  [
+                                            "6000.6.8f1"
+                                        ],
+                   "unity_del_proyecto":  "6000.3.28f1",
+                   "unity_coincide":  false,
+                   "instalado_en_esta_corrida":  [
+                                                     "node",
+                                                     "pnpm"
+                                                 ]
+               },
+    "pasos":  [
+                  {
+                      "grupo":  "comprobacion",
+                      "paso":  "dependencias",
+                      "estado":  "ok",
+                      "minutos":  0.6,
+                      "codigo":  0
+                  },
+                  {
+                      "grupo":  "comprobacion",
+                      "paso":  "solver-en-reversa",
+                      "estado":  "ok",
+                      "minutos":  0,
+                      "codigo":  0
+                  }
+              ]
+}
