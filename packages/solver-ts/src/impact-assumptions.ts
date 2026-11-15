@@ -62,9 +62,26 @@ export function impactAssumptions(lugar: Json): ImpactAssumptions {
   };
 }
 
+let fijos = false;
+
+/**
+ * Solo para evaluaciones: corre `f` con los tres supuestos fijos en su nominal, como antes de este
+ * cambio, para medir el antes y el después (la cobertura sintética de `eval/t3_cobertura.mts`). La
+ * app nunca lo usa.
+ */
+export function conSupuestosFijos<T>(f: () => T): T {
+  const previo = fijos;
+  fijos = true;
+  try {
+    return f();
+  } finally {
+    fijos = previo;
+  }
+}
+
 /** El hipercubo aparte de los tres supuestos (3 dimensiones); null sin muestras. */
 export function impactSampler(samples: number): LatinHypercube | null {
-  if (samples <= 0) return null;
+  if (fijos || samples <= 0) return null;
   return new LatinHypercube(samples, 3, new PyRandom(IMPACT_DESIGN_SEED));
 }
 
