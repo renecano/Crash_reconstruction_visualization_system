@@ -720,7 +720,7 @@
                 "es": "Números comparados",
                 "en": "Numbers compared"
               },
-              "valor": 68557,
+              "valor": 89710,
               "formato": "entero"
             },
             {
@@ -728,7 +728,7 @@
                 "es": "Diferencia máxima",
                 "en": "Maximum difference"
               },
-              "valor": 0.000041000000237545464,
+              "valor": 0,
               "formato": "cientifico"
             },
             {

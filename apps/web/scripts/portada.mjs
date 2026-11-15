@@ -11,7 +11,10 @@
  * Necesita la app corriendo (`pnpm dev` o `pnpm start`): `node scripts/portada.mjs [--url URL]`.
  * Los JPEG dependen de la GPU y del sistema, así que `--check` no compara bytes: comprueba que estén
  * todos con sus medidas y que la escena, su resultado, la cámara y el logotipo sean los mismos con
- * que se generaron (`public/portada/fuente.json`).
+ * que se generaron (`public/portada/fuente.json`). `--check --solo-redes` comprueba solo la imagen
+ * para redes y su logo: es lo que entra en `generate:check` (y en CI). Los cuadros son de la portada
+ * anterior (`/publico`), cuya escena cambió con los contratos 2.3.0; no se regeneran porque esa
+ * página se retira (auditoría del 2026-11-15, decisión 3 de René).
  */
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -89,10 +92,14 @@ if (check) {
   } catch {
     errores.push("falta public/portada/fuente.json");
   }
-  for (const f of FUENTES) {
+  // Con `--solo-redes` solo se comprueba la imagen para redes (su medida y el logo con que se
+  // compuso): es lo que sigue vivo. Los cuadros son de la portada anterior (`/publico`), que se
+  // retira al redirigir las páginas del producto anterior (auditoría del 2026-11-15, Tanda 4).
+  const LOGO = "assets/brand/logotipo-efectos.svg";
+  for (const f of soloRedes ? [LOGO] : FUENTES) {
     if (guardada[f] !== huella[f]) errores.push(`${f} cambió desde que se generaron los cuadros`);
   }
-  for (const c of CAPITULOS) {
+  for (const c of soloRedes ? [] : CAPITULOS) {
     for (const f of FORMATOS) {
       const nombre = `${c}-${f.sufijo}.jpg`;
       try {
@@ -116,7 +123,9 @@ if (check) {
     process.exit(1);
   }
   console.log(
-    `Cuadros de la portada al día: ${CAPITULOS.length * FORMATOS.length} JPEG y redes.png.`,
+    soloRedes
+      ? "Imagen para redes al día: redes.png con el logo actual."
+      : `Cuadros de la portada al día: ${CAPITULOS.length * FORMATOS.length} JPEG y redes.png.`,
   );
 } else {
   const { chromium } = createRequire(join(WEB, "package.json"))("@playwright/test");
