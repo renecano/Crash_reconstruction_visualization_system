@@ -6,6 +6,7 @@ import {
   formato as F,
   interpretarResultado,
   lecturasDeDano,
+  limiteDeCobertura,
   reconstruccionContraCesvi,
 } from "@croquis/cesvi";
 import { fullResult, PRODUCTION_SAMPLES } from "../../../../packages/solver-ts/src/full-result";
@@ -81,5 +82,15 @@ describe("la lectura física de AXA", () => {
     // La otra hipótesis (el reposo supuesto como dato) no la alcanza.
     const otra = r.hipotesis!.find((h) => h.familia === "reposo")!;
     expect(lecturasDeDano(r, otra.clave)[0]!.estado).toBe("debajo");
+    // Por eso la visible se llama «La más cercana al daño medido»: lo es, sin alcanzar su mediana.
+    expect(r.hipotesis![0]).toMatchObject({
+      familia: "dano",
+      titulo: "La más cercana al daño medido",
+    });
+    expect(b!.reconstruccionKmh).toBeGreaterThan(
+      lecturasDeDano(r, otra.clave)[0]!.reconstruccionKmh,
+    );
+    // Y el límite de cobertura del rango va con los límites que ve el perito.
+    expect(r.limites).toContain(limiteDeCobertura());
   }, 120_000);
 });

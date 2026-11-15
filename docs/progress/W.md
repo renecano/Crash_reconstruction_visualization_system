@@ -851,7 +851,11 @@ La pantalla de carga de Unity y su plantilla WebGL solo dicen «Cargando el viso
 
 ## Auditoría del 2026-11-15 · Tanda 3 (números defendibles)
 
-**Estado: en la rama `fix/t3-cifras` (PR #227, en borrador). No se fusiona sin el visto bueno de René** (regla de W8: cambia lo que ve CESVI).
+**Estado: aprobada por René el 2026-11-15, con dos cambios que ya están hechos** (addendum del ADR 0139):
+
+- La hipótesis visible se llama «La más cercana al daño medido» (antes «Cuadra con el daño medido») en todas las vistas, en el mensaje del solver y en el índice de cifras.
+- El límite de cobertura del rango va en los límites que ve el perito y en el dictamen, con la cifra del índice único (hoy 82 de 116, 70.7 %; lo esperado es cerca de 80 %).
+- La razón de impulso se queda sorteada (0.29 a 0.49) como supuesto declarado.
 
 ### Qué se hizo
 

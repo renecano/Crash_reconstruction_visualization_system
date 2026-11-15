@@ -61,6 +61,7 @@ import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from 
 import { objetosDe, TIPOS_OBJETO } from "./objetos";
 import type { MallaRelieve } from "./relieve";
 import { terrenoDeEscena, terrenoReconstruido, type TerrenoReconstruido } from "./terreno";
+import { limiteDeCobertura } from "./cobertura";
 import { grados, kmhConUnidad, metros, rangoKmh } from "./formato";
 
 type Json = Record<string, unknown>;
@@ -819,7 +820,7 @@ export interface ImpactoReconstruido {
 
 /**
  * De qué inversión sale una hipótesis (ADR 0091): si un reposo supuesto no cabe con la deformación
- * medida, «cuadra con el daño medido» (la deformación como restricción, el reposo supuesto blando)
+ * medida, «la más cercana al daño medido» (la deformación como restricción, el reposo supuesto blando)
  * o «cuadra con el reposo supuesto» (el supuesto pesa como dato); si no, la única inversión
  * («evidencia»).
  */
@@ -924,8 +925,14 @@ interface Inversion {
   alternativas?: Inversion[];
 }
 
-const TITULOS: Record<FamiliaHipotesis, string> = {
-  dano: "Cuadra con el daño medido",
+/**
+ * Cómo se llama cada hipótesis en todas las vistas. La de la deformación como restricción se llama
+ * «La más cercana al daño medido» y no «Cuadra con el daño medido» (René, 2026-11-15): puede quedar
+ * en el borde bajo de lo que pide la deformación (AXA: 34 % de la energía de la mediana), y la
+ * misma pantalla lo dice (`dano-energia.ts`).
+ */
+export const TITULOS_DE_HIPOTESIS: Record<FamiliaHipotesis, string> = {
+  dano: "La más cercana al daño medido",
   reposo: "Cuadra con el reposo supuesto",
   evidencia: "La que mejor cuadra con la evidencia",
 };
@@ -963,7 +970,10 @@ function leerHipotesis(
     clave: modo === 1 ? familia : `${familia}-${modo}`,
     familia,
     modo,
-    titulo: modo === 1 ? TITULOS[familia] : `${TITULOS[familia]} · otra solución`,
+    titulo:
+      modo === 1
+        ? TITULOS_DE_HIPOTESIS[familia]
+        : `${TITULOS_DE_HIPOTESIS[familia]} · otra solución`,
     costo,
     velocidades: Object.entries(base.ids).map(([sid, id]) => {
       const p = inv.parametros.find(
@@ -1122,6 +1132,9 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
           : null,
     };
   });
+  // Un rango no es una garantía: su cobertura medida va con los límites (René, 2026-11-15).
+  if (velocidades.some((v) => v.previa?.p10 !== undefined && v.previa.p90 !== undefined))
+    limites.push(limiteDeCobertura());
   // Una reversa más rápida que cualquiera de las medidas en uso real se le dice al perito (T3.3).
   for (const sv of (base.spec.vehiculos ?? []) as Json[]) {
     const id = base.ids[String(sv.id)];

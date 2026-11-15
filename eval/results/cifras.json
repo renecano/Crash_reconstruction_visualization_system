@@ -107,6 +107,27 @@
       "fuente": "eval/results/axa_rango_estable.json",
       "campo": "filas.0.hipotesis"
     },
+    "axa.hipotesis_visible": {
+      "que": "AXA A2010930: cómo se llama la hipótesis que se ve sin elegir (la deformación como restricción)",
+      "texto": "La más cercana al daño medido",
+      "fuente": "packages/cesvi/src/reconstruccion.ts",
+      "campo": "TITULOS_DE_HIPOTESIS.dano"
+    },
+    "cobertura.rango": {
+      "que": "Cobertura sintética del p10–p90 de la inversión: de las velocidades verdaderas conocidas, cuántas cayeron dentro del rango",
+      "k": 82,
+      "n": 116,
+      "pct": 70.7,
+      "esperado_pct": 80,
+      "ic95_pct": [
+        61.85,
+        78.2
+      ],
+      "casos_por_escena": 40,
+      "texto": "82 de 116 (70.7 %)",
+      "fuente": "eval/results/t3/cobertura_40.json",
+      "campo": "total.supuestos_sorteados"
+    },
     "paridad.numeros": {
       "que": "Números comparados entre el solver TS y la referencia Python (E7)",
       "valor": 89710,

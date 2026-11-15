@@ -4,6 +4,8 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { tasa, velocidad, type Tasa } from "./formato";
+import { coberturaDelRango, limiteDeCobertura } from "./cobertura";
+import { TITULOS_DE_HIPOTESIS } from "./reconstruccion";
 import { REVERSA_KMH } from "./reversa";
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -53,6 +55,21 @@ describe("las cifras publicadas (eval/results/cifras.json)", () => {
       expect(c.texto, clave).toBe(velocidad(v));
       expect(c.texto_completo, clave).toBe(velocidad(v, "metodo"));
     }
+  });
+
+  it("el nombre de la hipótesis visible es el que escribe la app", () => {
+    expect(cifras["axa.hipotesis_visible"]!.texto).toBe(TITULOS_DE_HIPOTESIS.dano);
+    // René, 2026-11-15: ya no «Cuadra con el daño medido», porque puede quedar en su borde bajo.
+    expect(TITULOS_DE_HIPOTESIS.dano).toBe("La más cercana al daño medido");
+  });
+
+  it("el límite de cobertura que ve el perito lleva la cifra del índice", () => {
+    const c = cifras["cobertura.rango"]!;
+    expect(c.texto).toBe(tasa(c as unknown as Tasa));
+    expect(c.fuente).toMatch(/^eval\/results\/(t3_cobertura|t3\/cobertura_40)\.json$/);
+    expect(coberturaDelRango()).toMatchObject({ k: c.k, n: c.n, pct: c.pct });
+    expect(limiteDeCobertura()).toContain(c.texto);
+    expect(limiteDeCobertura()).toContain("cerca de 80 %");
   });
 
   it("la reversa del índice es la que usa la app", () => {

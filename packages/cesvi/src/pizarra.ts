@@ -77,7 +77,7 @@ const BANDERAS_DE_EVIDENCIA = new Set([
 const MOTIVO_BANDERA: Record<string, string> = {
   reposo_inalcanzable: "ninguna velocidad lleva al vehículo a la posición final dada",
   reposo_supuesto_vs_dano:
-    "la posición final supuesta queda lejos de la que cuadra con el daño medido",
+    "la posición final supuesta queda lejos de la que deja la reconstrucción más cercana al daño medido",
   velocidad_vs_evidencia: "la velocidad declarada no cuadra con la evidencia física",
 };
 

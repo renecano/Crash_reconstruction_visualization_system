@@ -382,7 +382,7 @@ export function checkAssumedRest(spec: Json, inv: Inversion): Inconsistency[] {
       mensaje:
         `Con la deformación medida, ${name(byId.get(vid)!)} termina a unos ${pyFixed(miss, 0)} m de ` +
         "su posición final supuesta: el daño y ese reposo no caben juntos. Hay dos " +
-        "hipótesis, «cuadra con el daño medido» y «cuadra con el reposo supuesto»; el " +
+        "hipótesis, «la más cercana al daño medido» y «cuadra con el reposo supuesto»; el " +
         "perito elige.",
       datos: { vehiculo: vid, distancia_m: miss },
     });

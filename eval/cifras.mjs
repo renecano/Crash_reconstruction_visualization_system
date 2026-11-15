@@ -11,7 +11,7 @@
  *
  * Solo lee archivos del repositorio: no corre el solver ni llama a ninguna API.
  */
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -140,6 +140,47 @@ function construir() {
       texto: String(doc.filas[i].hipotesis),
       fuente: archivo,
       campo: `filas.${i}.hipotesis`,
+    });
+  }
+
+  // --- La hipótesis que se ve en AXA sin elegir: su nombre, del código que lo escribe ---
+  {
+    const archivo = "packages/cesvi/src/reconstruccion.ts";
+    const m = /TITULOS_DE_HIPOTESIS[^=]*=\s*\{\s*dano:\s*"([^"]+)"/.exec(
+      readFileSync(join(RAIZ, archivo), "utf8"),
+    );
+    if (!m) throw new Error(`${archivo}: no encuentro el nombre de la hipótesis del daño`);
+    pon("axa.hipotesis_visible", {
+      que: "AXA A2010930: cómo se llama la hipótesis que se ve sin elegir (la deformación como restricción)",
+      texto: m[1],
+      fuente: archivo,
+      campo: "TITULOS_DE_HIPOTESIS.dano",
+    });
+  }
+
+  // --- La cobertura del rango: casos fabricados con velocidad verdadera conocida ---
+  {
+    // La corrida completa (200 casos por escena, de la computadora del colaborador) si ya llegó; si
+    // no, la reducida de la laptop.
+    const completa = "eval/results/t3_cobertura.json";
+    const reducida = "eval/results/t3/cobertura_40.json";
+    const archivo = existsSync(join(RAIZ, completa)) ? completa : reducida;
+    const doc = leer(archivo);
+    const t = doc.total.supuestos_sorteados;
+    const c = {
+      k: t.dentro,
+      n: t.velocidades,
+      pct: Math.round((1000 * t.dentro) / t.velocidades) / 10,
+    };
+    pon("cobertura.rango", {
+      que: "Cobertura sintética del p10–p90 de la inversión: de las velocidades verdaderas conocidas, cuántas cayeron dentro del rango",
+      ...c,
+      esperado_pct: doc.esperado_pct,
+      ic95_pct: t.ic95_pct,
+      casos_por_escena: doc.casos_por_escena,
+      texto: tasaTexto(c),
+      fuente: archivo,
+      campo: "total.supuestos_sorteados",
     });
   }
 

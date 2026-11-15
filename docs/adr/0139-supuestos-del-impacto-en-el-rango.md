@@ -48,3 +48,14 @@ El rango de V2 casi no se mueve: en la hipótesis visible su velocidad la fija l
 - Se regeneraron los resultados de referencia (14 escenas, inversión, choque intermedio) y los paquetes caso-3d.
 - **Falta medir en la computadora del colaborador** (pesado): la E-R4 (205 narraciones de prueba y 459 de desarrollo) y las carambolas con el solver nuevo. Sus cifras publicadas son de modalidad y de reproducción del método, que no dependen del rango; se confirma con la corrida.
 - La escena «AXA con agentes» (N4 de la auditoría) se regenera al final de la tanda, con la inversión ya definitiva.
+
+## Addendum (2026-11-15): visto bueno de René, con dos cambios
+
+René aprobó la tanda y pidió dos cambios antes de fusionar:
+
+1. **El nombre de la hipótesis visible.** Ya no se llama «Cuadra con el daño medido»: la misma pantalla dice que queda en el borde bajo de lo que pide la deformación (en AXA, 30 km/h de cambio de velocidad contra al menos 30–90; 34 % de la energía de la mediana). Se llama **«La más cercana al daño medido»** en Reconstrucción, Contra CESVI, Presentar, el dictamen (PDF y Word), el mensaje del solver (Python y TS) y el índice de cifras (`axa.hipotesis_visible`). Sigue siendo la más cercana: la otra, «Cuadra con el reposo supuesto», da a B un cambio de velocidad de 3 km/h y no alcanza la banda. Esa conserva su nombre, porque sí cuadra con el reposo (queda a 0.2 m).
+2. **El límite de cobertura, a la vista.** Cuando hay un rango, los límites de la reconstrucción (y con ellos el dictamen) dicen cuántas veces el p10–p90 contuvo la velocidad verdadera en los casos fabricados, contra el 80 % esperado. La cifra sale del índice único (`cobertura.rango` en `eval/results/cifras.json`): hoy, la corrida reducida (82 de 116, 70.7 %). Cuando llegue la de 200 casos por escena (`eval/results/t3_cobertura.json`), `node eval/cifras.mjs` la toma y el texto cambia solo; el verificador falla si el índice no se regeneró.
+
+**La razón de impulso se queda sorteada** (0.29 a 0.49) como supuesto declarado.
+
+Las descripciones de `resultado.schema.json` y `caso3d.schema.json` todavía dicen «cuadra con el daño medido»: son archivos compartidos y se corrigen en el PR `chore:` que sigue.
