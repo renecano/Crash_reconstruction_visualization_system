@@ -33,6 +33,7 @@ import {
   UpstashRateLimiter,
 } from "@croquis/extraction/server";
 import { InvalidSpecError, responder, type ResponderOut } from "@/lib/responder";
+import { limiteDe, type RutaClaude } from "@/server/pedido";
 import { join } from "node:path";
 import { z } from "zod";
 
@@ -87,10 +88,21 @@ export function llmUnavailable(s: Settings): string | null {
 export interface Deps {
   settings: Settings;
   budgetStore: BudgetStore;
+  /** El límite por hora del relato, y el de una ruta de /api/cesvi que no tenga el suyo. */
   limiter: RateLimiter;
+  /** El límite por hora de cada ruta de /api/cesvi (auditoría del 2026-11-15, I1). */
+  porRuta?: Partial<Record<RutaClaude, RateLimiter>>;
   /** Cliente de Anthropic (las pruebas inyectan un doble). */
   client?: ClientLike;
 }
+
+const RUTAS_CESVI: readonly RutaClaude[] = [
+  "escena",
+  "declaracion",
+  "importar",
+  "hecho",
+  "consideraciones",
+];
 
 let shared: Deps | null = null;
 
@@ -107,6 +119,17 @@ export function defaultDeps(): Deps {
     limiter: redis
       ? new UpstashRateLimiter(redis, settings.rateLimitPerHour, "croquis:relato")
       : new MemoryRateLimiter(settings.rateLimitPerHour),
+    porRuta: Object.fromEntries(
+      RUTAS_CESVI.map((ruta) => {
+        const limite = limiteDe(ruta, settings.rateLimitPerHour);
+        return [
+          ruta,
+          redis
+            ? new UpstashRateLimiter(redis, limite, `croquis:cesvi:${ruta}`)
+            : new MemoryRateLimiter(limite),
+        ];
+      }),
+    ),
   };
   return shared;
 }

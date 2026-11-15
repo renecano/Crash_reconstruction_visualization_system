@@ -22,7 +22,7 @@ describe("un reporte completo pegado como narración (A3)", () => {
         motivo: "Claude no está configurado en este servidor",
       }),
     ).toBe("No se pudo leer con Claude: Claude no está configurado en este servidor.");
-    expect(motivoDeFalla(422, null)).toBe("El texto debe tener entre 200 y 200,000 caracteres.");
+    expect(motivoDeFalla(422, null)).toBe("El texto debe tener entre 200 y 100,000 caracteres.");
     expect(motivoDeFalla(429, null)).toContain("Demasiadas lecturas");
     expect(motivoDeFalla(504, null)).toContain("tardó más de lo permitido");
     expect(motivoDeFalla(500, null)).toContain("El servidor falló");

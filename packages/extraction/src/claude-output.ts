@@ -105,8 +105,21 @@ const EVENT_TYPES = [
   "arrastre",
 ];
 
-export class LLMError extends Error {}
+export class LLMError extends Error {
+  /**
+   * Lo que la API cobró por la llamada aunque no sirviera (negativa, respuesta truncada o JSON
+   * inválido): se paga igual, así que se descuenta del tope de gasto (auditoría del 2026-11-15, I1).
+   */
+  costoUsd = 0;
+}
 export class BudgetExceededError extends LLMError {}
+
+/** El error de una llamada que la API sí cobró. */
+export function errorCobrado(mensaje: string, costoUsd: number): LLMError {
+  const e = new LLMError(mensaje);
+  e.costoUsd = costoUsd;
+  return e;
+}
 
 type SchemaDefs = Record<string, { properties: Record<string, { enum?: string[] }> }>;
 

@@ -124,7 +124,7 @@ describe("extracción (servidor)", () => {
     });
     const evs2 = await collect(extraerEventos({ texto: TEXTO, metodo: "auto" }, "1.1.1.1", d2));
     const r2 = evs2.find((e) => e.tipo === "resultado");
-    expect(r2?.tipo === "resultado" && r2.datos.motivo).toMatch(/Tope de gasto/);
+    expect(r2?.tipo === "resultado" && r2.datos.motivo).toMatch(/tope de gasto/);
   });
 
   it("en Vercel sin Upstash no gasta en Claude (no hay dónde llevar el tope)", () => {
@@ -191,6 +191,7 @@ describe("Route Handlers", () => {
     const res = await extraerPOST(
       new Request("http://localhost/api/relato/extraer", {
         method: "POST",
+        headers: { "content-type": "application/json" },
         body: JSON.stringify({ texto: redact(TEXTO).text, metodo: "reglas" }),
       }),
     );
@@ -206,10 +207,19 @@ describe("Route Handlers", () => {
     const bad = await extraerPOST(
       new Request("http://localhost/api/relato/extraer", {
         method: "POST",
+        headers: { "content-type": "application/json" },
         body: JSON.stringify({ texto: "" }),
       }),
     );
     expect(bad.status).toBe(422);
+    // Sin `Content-Type: application/json` no se lee el cuerpo (auditoría del 2026-11-15, I1).
+    const sinTipo = await extraerPOST(
+      new Request("http://localhost/api/relato/extraer", {
+        method: "POST",
+        body: JSON.stringify({ texto: "x" }),
+      }),
+    );
+    expect(sinTipo.status).toBe(415);
     const notJson = await responderPOST(
       new Request("http://localhost/api/relato/responder", { method: "POST", body: "{" }),
     );
