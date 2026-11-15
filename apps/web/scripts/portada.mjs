@@ -24,6 +24,9 @@ const RAIZ = resolve(WEB, "..", "..");
 const PUB = join(WEB, "public");
 const OUT = join(PUB, "portada");
 const check = process.argv.includes("--check");
+// Solo la imagen para redes, sobre el cuadro «q» ya grabado: para cuando cambia el logo y no la
+// escena (no necesita el servidor ni vuelve a grabar los cuadros).
+const soloRedes = process.argv.includes("--solo-redes");
 const iUrl = process.argv.indexOf("--url");
 const URL_BASE = iUrl > 0 ? process.argv[iUrl + 1] : "http://localhost:3000";
 
@@ -123,6 +126,47 @@ if (check) {
   });
   mkdirSync(OUT, { recursive: true });
 
+  /** La imagen para redes: el logotipo con efectos, sin redibujar, sobre un cuadro de la escena. */
+  async function componerRedes(fondoUrl) {
+    const [w, h] = REDES.lado;
+    const logo = readFileSync(join(RAIZ, "assets/brand/logotipo-efectos.svg")).toString("base64");
+    const fuente = readFileSync(
+      join(
+        WEB,
+        "node_modules/@fontsource-variable/anybody/files/anybody-latin-standard-normal.woff2",
+      ),
+    ).toString("base64");
+    const leyenda = "Reconstrucción ilustrativa generada a partir de un relato. No es un peritaje.";
+    const comp = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
+    await comp.setContent(`<!doctype html><html><head><style>
+    @font-face { font-family: Anybody; src: url(data:font/woff2;base64,${fuente}) format("woff2"); font-weight: 100 900; font-stretch: 50% 150%; }
+    html, body { margin: 0; width: ${w}px; height: ${h}px; overflow: hidden; background: #0B0D0F; }
+    .fondo { position: absolute; inset: 0; background: url(${fondoUrl}) center / cover; }
+    .velo { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(11,13,15,.72), rgba(11,13,15,.25) 70%, rgba(11,13,15,.1)); }
+    .logo { position: absolute; left: 50%; top: 46%; width: 660px; transform: translate(-50%, -50%); }
+    .leyenda { position: absolute; left: 32px; bottom: 24px; font: 500 16px/1.3 Anybody; color: #B7BCC1; }
+  </style></head><body><div class="fondo"></div><div class="velo"></div>
+  <img class="logo" alt="" src="data:image/svg+xml;base64,${logo}"><p class="leyenda">${leyenda}</p></body></html>`);
+    await comp.evaluate(() => document.fonts.ready);
+    await comp.screenshot({ path: join(PUB, "redes.png"), type: "png" });
+    await comp.close();
+  }
+
+  if (soloRedes) {
+    const cuadro = readFileSync(join(OUT, `${REDES.capitulo}-ancho.jpg`)).toString("base64");
+    await componerRedes(`data:image/jpeg;base64,${cuadro}`);
+    await browser.close();
+    // Solo cambia la huella del logo: los cuadros siguen siendo los de las demás fuentes.
+    const guardada = JSON.parse(readFileSync(join(OUT, "fuente.json"), "utf8"));
+    const logo = "assets/brand/logotipo-efectos.svg";
+    writeFileSync(
+      join(OUT, "fuente.json"),
+      `${JSON.stringify({ ...guardada, [logo]: huella[logo] }, null, 2)}\n`,
+    );
+    console.log("Listo: redes.png con el logo actual.");
+    process.exit(0);
+  }
+
   /** Abre la portada en `calidad=media`, sin texto ni capas encima, con el 3D listo. */
   async function abrir(viewport, escala) {
     const page = await browser.newPage({ viewport, deviceScaleFactor: escala });
@@ -161,26 +205,7 @@ if (check) {
   await irA(page, REDES.capitulo);
   const fondo = (await page.screenshot({ type: "png" })).toString("base64");
   await page.close();
-  const logo = readFileSync(join(RAIZ, "assets/brand/logotipo-efectos.svg")).toString("base64");
-  const fuente = readFileSync(
-    join(
-      WEB,
-      "node_modules/@fontsource-variable/anybody/files/anybody-latin-standard-normal.woff2",
-    ),
-  ).toString("base64");
-  const leyenda = "Reconstrucción ilustrativa generada a partir de un relato. No es un peritaje.";
-  const comp = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
-  await comp.setContent(`<!doctype html><html><head><style>
-    @font-face { font-family: Anybody; src: url(data:font/woff2;base64,${fuente}) format("woff2"); font-weight: 100 900; font-stretch: 50% 150%; }
-    html, body { margin: 0; width: ${w}px; height: ${h}px; overflow: hidden; background: #0B0D0F; }
-    .fondo { position: absolute; inset: 0; background: url(data:image/png;base64,${fondo}) center / cover; }
-    .velo { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(11,13,15,.72), rgba(11,13,15,.25) 70%, rgba(11,13,15,.1)); }
-    .logo { position: absolute; left: 50%; top: 46%; width: 660px; transform: translate(-50%, -50%); }
-    .leyenda { position: absolute; left: 32px; bottom: 24px; font: 500 16px/1.3 Anybody; color: #B7BCC1; }
-  </style></head><body><div class="fondo"></div><div class="velo"></div>
-  <img class="logo" alt="" src="data:image/svg+xml;base64,${logo}"><p class="leyenda">${leyenda}</p></body></html>`);
-  await comp.evaluate(() => document.fonts.ready);
-  await comp.screenshot({ path: join(PUB, "redes.png"), type: "png" });
+  await componerRedes(`data:image/png;base64,${fondo}`);
   await browser.close();
 
   writeFileSync(join(OUT, "fuente.json"), `${JSON.stringify(huella, null, 2)}\n`);
