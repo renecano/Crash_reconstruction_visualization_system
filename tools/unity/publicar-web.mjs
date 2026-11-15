@@ -3,7 +3,8 @@
  * Sube el build WebGL del visor a Vercel Blob, en una ruta con la huella de su carpeta (como los
  * modelos, ADR 0107), junto con el paquete de AXA, y escribe `apps/web/public/visor-unity/manifest.json`
  * con dónde quedó. Blob entrega el HTML como descarga, así que las páginas que lo usan viven en el sitio
- * (ADR 0111): la de medición es `/visor-unity/medir.html`.
+ * (ADR 0111). La página de medición manual (`tools/unity/medir.html`) ya no se publica (auditoría del
+ * 2026-11-15, §2.3): se abre en local; la de la computadora de demo es `/visor-unity/medir-e6.html`.
  *
  * Usa RECURSOS_READ_WRITE_TOKEN, el mismo token de `apps/web/scripts/recursos.mjs`: de la terminal si
  * está definido y, si no, del `.env.local` de la raíz, que no se versiona (René, 2026-11-07). Solo se
@@ -124,7 +125,9 @@ writeFileSync(
 `,
 );
 console.log(`Huella ${huella}`);
-console.log("Medición: https://croquis-sage.vercel.app/visor-unity/medir.html");
+console.log(
+  "Medición (computadora de demo): https://croquis-sage.vercel.app/visor-unity/medir-e6.html",
+);
 
 if (process.argv.includes("--podar")) await podar(huella);
 

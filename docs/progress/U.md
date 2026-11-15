@@ -326,7 +326,7 @@ Plan: PLAN-CESVI §3.3. Decisiones: ADR 0114.
 - **Ocupantes:** sentados en su asiento, se desplazan lo que dio el solver desde el impacto. Sin cinturón declarado van las dos variantes; la segunda, como maniquí naranja.
 - **Los cuerpos son los de MakeHuman (CC0) del visor web,** con los mismos colores por persona. Se cargan del sitio (`/modelos/personas/`) y se pintan por región leyendo `_REGION` del .glb. Si no bajan, un maniquí de piezas.
 - **Vehículos estacionados** con el modelo de su clase (antes, una caja de tabique: se veía en el peatón del cruce).
-- **El daño con `perfil_m`** ya estaba desde U1, con su prueba de tolerancia (2 cm o 6 %) en CI.
+- **El daño con `perfil_m`:** el algoritmo (`CampoDano`) estaba desde U1, con su prueba de tolerancia (2 cm o 6 %) en CI, pero el visor no lo aplicaba al dibujar (auditoría del 2026-11-15, C2). Se corrigió en U8 (ADR 0117).
 - **La volcadura no se dibuja:** es un límite del solver, no del visor. El `Resultado` no trae el alabeo en el tiempo y en la escena de referencia el vuelco no se inicia (velocidad lateral 9.74 km/h contra 19.77 km/h crítica). Está en el README y en «Endurecimiento pendiente» (René, 2026-11-10).
 
 ### Pruebas (núcleo, `dotnet test` en CI)
@@ -392,6 +392,32 @@ Plan: PLAN-CESVI §3.3. Decisiones: ADR 0114.
 - **Las flechas del teclado** mueven la cámara libre; en la órbita y la cenital todavía no.
 - **El paso de los peatones** es un balanceo de piernas, no una animación de marcha.
 - **Corregido (2026-11-11): el brazo de un ocupante salía por la ventana** de la camioneta V2 en `lateral_interseccion`. Tenía dos causas: el cuerpo iba a la altura de cadera de un sedán (0.52 m) también en una camioneta, y el ancho de una de doble rodada es el de sus salpicaderas. Ahora la cadera va a la altura del asiento de su clase (`Personas.AlturaCadera`, ilustrativa: 0.86 m en una camioneta) y el cuerpo nunca pasa de 0.6 m del eje. Captura del editor: `docs/cesvi/u4/ajustes/conductores/lateral-ocupante-en-cabina-editor.webp`.
+
+## U8 · El daño del solver en Unity y los controles del 3D (auditoría del 2026-11-15, Tanda 2)
+
+**Estado: código y pruebas listos en `feat/u8-dano-en-unity`. Falta el build web y publicarlo** (ADR 0117).
+
+### Qué se hizo
+
+- **El daño (C2):** el visor deforma la carrocería con el perfil de aplastamiento del `Resultado`. Lo que se puede probar sin Unity está en `Croquis.Core/DanoDelCaso.cs`; `Visor/DanoVista.cs` prepara la malla deformada al armar el vehículo y `VehiculoVista.Colocar` la muestra desde su impacto.
+- **Los controles (I3):** barra de reproducción en `<VisorUnity>` (reproducir, deslizador, ¼× ½× 1×, «Ir al impacto», «Ver todo», «Repetir»). Funciona con el build publicado: usa mensajes del puente que ya existían.
+- **La leyenda (§2.3):** va también en un caso sin escenario. `medir.html` ya no se publica.
+
+### Evidencia
+
+- `dotnet test apps/visor-unity/tests/Croquis.Core.Tests -c Release`: 66 de 66.
+- Unity 6000.3.28f1 en modo batch en la laptop (`-runTests -testPlatform EditMode`): compila sin errores y pasan 6 de 6 (3 nuevas, `DanoEnUnityTests`). Tardó menos de 2 minutos y no quedó ningún proceso de Unity vivo.
+- Web: `reproduccion.test.ts` y `barra-reproduccion.test.tsx`, tipos y lint.
+
+### Pendiente
+
+- **Build web y publicación,** y las capturas de AXA después del impacto (las que le importan a René). El build va en la computadora del colaborador; publicar necesita `RECURSOS_READ_WRITE_TOKEN`, que solo está en la laptop de René.
+- **El paquete del colaborador de la Tanda 2** (decisión 9): el build, las 15 tomas del modo foto y el recorrido de la app en producción, ya con el daño visible.
+- La sombra unida de baja y media no sigue al daño.
+
+### Para retomar
+
+Rama `feat/u8-dano-en-unity`. Sigue: decidir con René dónde se hace el build (ver «Bloqueado» en `docs/PROGRESS.md`), publicarlo y tomar las capturas.
 
 ## Ajustes de René antes de U5 (2026-11-10)
 

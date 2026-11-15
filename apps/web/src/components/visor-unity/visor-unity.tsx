@@ -23,6 +23,14 @@ import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
 import { marcar, motivoDe, PuenteUnity, type MotivoRespaldo } from "@/lib/visor-unity/puente";
 import { paqueteDelCaso, type RelieveCaso } from "@/lib/visor-unity/paquete";
 import type { CanalTiempo } from "@/lib/visor-unity/canal";
+import {
+  ESTADO_INICIAL,
+  reproducir,
+  type Accion,
+  type EstadoReproduccion,
+  type Intervalo,
+} from "@/lib/visor-unity/reproduccion";
+import { BarraReproduccion } from "./barra-reproduccion";
 
 /** Lo que el visor Unity le ofrece al caso: las fotos del dictamen y el paquete que tiene cargado. */
 export interface ApiVisorUnity {
@@ -89,6 +97,10 @@ export function VisorUnity({
   );
   // La escena que Unity ya tiene cargada: si es la de ahora, el visor está listo.
   const [cargada, setCargada] = useState<EscenaSpec | null>(null);
+  // La reproducción que maneja el perito con la barra (I3): pausa, instante y velocidad.
+  const [rep, setRep] = useState<EstadoReproduccion>(ESTADO_INICIAL);
+  const repActual = useRef(rep);
+  const [intervalo, setIntervalo] = useState<Intervalo | null>(null);
   // Los callbacks del padre cambian en cada render: se leen de una referencia.
   const cb = useRef({ onApi, onTiempo, onObjetoEditado, onPuntoMarcado });
   useEffect(() => {
@@ -110,8 +122,14 @@ export function VisorUnity({
     let vivo = true;
     let p: PuenteUnity | null = null;
     const alMensaje = (m: MensajeDeUnity) => {
-      if (m.tipo === "tiempo") cb.current.onTiempo?.(m.t);
-      else if (m.tipo === "objetoEditado") cb.current.onObjetoEditado?.(m);
+      if (m.tipo === "tiempo") {
+        cb.current.onTiempo?.(m.t);
+        // El deslizador sigue a Unity, sin redibujar la página en cada cuadro.
+        if (vivo && Math.abs(m.t - repActual.current.t) >= 0.04) {
+          repActual.current = { ...repActual.current, t: m.t };
+          setRep(repActual.current);
+        }
+      } else if (m.tipo === "objetoEditado") cb.current.onObjetoEditado?.(m);
       else if (m.tipo === "puntoMarcado") cb.current.onPuntoMarcado?.(m);
       else if (m.tipo === "error" && m.codigo === "dispositivo_perdido" && vivo) {
         setRespaldoPor({ motivo: "dispositivo_perdido" });
@@ -160,6 +178,10 @@ export function VisorUnity({
       marcar("caso_cargado");
       if (mio !== turno.current) return;
       setCargada(escena);
+      // Un caso recién cargado empieza a reproducirse desde su inicio, a velocidad normal.
+      repActual.current = { ...ESTADO_INICIAL, t: resultado.t_inicio };
+      setRep(repActual.current);
+      setIntervalo({ inicio: resultado.t_inicio, fin: resultado.t_fin });
       const api = {
         capturar: (vista: VistaCaptura, ancho: number, alto: number) =>
           puente.capturar(vista, ancho, alto),
@@ -187,8 +209,21 @@ export function VisorUnity({
       puente.enviar("pausar", {});
       return tiempo.oir((t) => puente.enviar("fijarTiempo", { t }));
     }
-    puente.enviar(activo ? "reproducir" : "pausar", {});
-  }, [puente, activo, tiempo, listo]);
+    puente.enviar(activo && !rep.pausado ? "reproducir" : "pausar", {});
+  }, [puente, activo, tiempo, listo, rep.pausado]);
+
+  // Lo que pide la barra: el estado que sigue y sus mensajes a Unity. Reproducir y pausar los manda
+  // el efecto de arriba (dependen también de si el 3D está a la vista).
+  const alControl = (a: Accion) => {
+    if (!puente || !intervalo) return;
+    const { estado: sigue, ordenes } = reproducir(repActual.current, a, intervalo);
+    repActual.current = sigue;
+    setRep(sigue);
+    for (const o of ordenes) {
+      if (o.mensaje === "reproducir" || o.mensaje === "pausar") continue;
+      puente.enviar(o.mensaje, o.datos as never);
+    }
+  };
 
   useEffect(() => {
     if (!puente || !listo || !camara) return;
@@ -230,6 +265,15 @@ export function VisorUnity({
         // Unity lee el tamaño del lienzo; sin esto toma 300×150.
         style={{ width: "100%", height: "100%" }}
       />
+      {/* Sin la barra al presentar (el instante lo pone el capítulo) y al editar en 3D. */}
+      {listo && intervalo && !tiempo && !edicion?.on ? (
+        <BarraReproduccion
+          estado={rep}
+          intervalo={intervalo}
+          corre={activo && !rep.pausado}
+          onAccion={alControl}
+        />
+      ) : null}
       {estado.fase !== "listo" ? (
         <p
           className="t-nota vidrio absolute bottom-4 left-1/2 -translate-x-1/2 rounded-control px-3 py-1.5"
