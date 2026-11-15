@@ -6,6 +6,7 @@
  * nadie: dice qué pasa con esa decisión, no si alguien debió tomarla.
  */
 import {
+  formato as F,
   DECISIONES_CONDUCTOR,
   DECISION_EN_PALABRAS,
   decisionEnPalabras,
@@ -31,22 +32,25 @@ const NOMBRE_DECISION: Record<DecisionConductor, string> = {
   seguir: "Seguir sin frenar",
 };
 
-const segundos = (t: number) => `${t < 0 ? "−" : "+"}${Math.abs(t).toFixed(2)} s`;
-const conSigno = (x: number) => `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(2)}`;
+const segundos = (t: number) => F.instante(t);
 
 function Contacto({ c }: { c: ContactoConductores }) {
   if (!c.contacto)
     return (
       <>
-        Sin contacto: quedan a{" "}
-        <span className="cifras">{(c.distanciaMinimaM ?? 0).toFixed(2)} m</span> como mínimo
+        Sin contacto: quedan a <span className="cifras">{F.metros(c.distanciaMinimaM ?? 0)}</span>{" "}
+        como mínimo
       </>
     );
   return (
     <>
       {c.vehiculos.join(" con ")} en <span className="cifras">{segundos(c.t!)}</span> a{" "}
-      <span className="cifras">{c.relativaKmh!.toFixed(2)} km/h</span> de velocidad relativa (
-      {c.velocidades.map((v) => `${v.vehiculo} a ${v.kmh.toFixed(2)} km/h`).join(", ")})
+      <span className="cifras">{F.kmhConUnidad(c.relativaKmh, "reconstruccion")}</span> de velocidad
+      relativa (
+      {c.velocidades
+        .map((v) => `${v.vehiculo} a ${F.kmhConUnidad(v.kmh, "reconstruccion")}`)
+        .join(", ")}
+      )
     </>
   );
 }
@@ -75,7 +79,8 @@ export function ResultadoConductores({ p }: { p: PruebaConductores }) {
               <th className="py-2 pr-3 text-left font-medium">Diferencia</th>
               <td className="py-2" data-testid="diferencia-conductores">
                 <span className="cifras">
-                  {conSigno(d.kmh)} km/h{d.pct === null ? "" : ` (${conSigno(d.pct)} %)`}
+                  {F.diferenciaKmh(d.kmh, "reconstruccion")}
+                  {d.pct === null ? "" : ` (${F.diferenciaPct(d.pct, "reconstruccion")})`}
                 </span>{" "}
                 de velocidad relativa al contacto
               </td>
@@ -110,15 +115,16 @@ export function ResultadoConductores({ p }: { p: PruebaConductores }) {
         <p className="t-nota" data-testid="sensibilidad-conductores">
           Con el tiempo de reacción de los que reaccionan sorteado en su rango (
           {p.sensibilidad.muestras} muestras), la velocidad relativa va de{" "}
-          <span className="cifras">{p.sensibilidad.p10.toFixed(2)}</span> a{" "}
-          <span className="cifras">{p.sensibilidad.p90.toFixed(2)} km/h</span> (p10–p90)
+          <span className="cifras">{F.kmh(p.sensibilidad.p10, "reconstruccion")}</span> a{" "}
+          <span className="cifras">{F.kmhConUnidad(p.sensibilidad.p90, "reconstruccion")}</span>{" "}
+          (p10–p90)
           {p.sensibilidad.sinContacto ? `; en ${p.sensibilidad.sinContacto} no hay contacto` : ""}.
         </p>
       ) : null}
       <p className="t-nota">
         Tiempo de reacción:{" "}
         {p.tiemposReaccion
-          .map((t) => `${t.vehiculo} ${t.s.toFixed(2)} s (${t.rango[0]}–${t.rango[1]} s)`)
+          .map((t) => `${t.vehiculo} ${F.segundos(t.s)} (${t.rango[0]}–${t.rango[1]} s)`)
           .join("; ")}
         . El típico es un supuesto con su fuente; los demás conductores hacen lo que reconstruyó la
         evidencia o reaccionan al de adelante cuando lo ven frenar. Es una prueba ilustrativa de la
@@ -252,7 +258,7 @@ export function ProbarConductores({
         <>
           <p className="t-interfaz font-medium" data-testid="hipotesis-probada">
             Si el conductor de {prueba.h.vehiculo} {DECISION_EN_PALABRAS[prueba.h.decision]}{" "}
-            {prueba.h.segundosAntes.toFixed(2)} s antes del impacto:
+            {F.segundos(prueba.h.segundosAntes)} antes del impacto:
           </p>
           <ResultadoConductores p={prueba.p} />
         </>

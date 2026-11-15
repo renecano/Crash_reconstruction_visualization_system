@@ -142,7 +142,7 @@ for (const tema of ["claro", "oscuro"] as const) {
     await expect(page.getByTestId("lectura-fisica")).toContainText(
       "Reconstrucción física de Croquis",
     );
-    await expect(page.getByTestId("fisica-pct")).toHaveText(/^[+−]\d+\.\d\d %$/);
+    await expect(page.getByTestId("fisica-pct")).toHaveText(/^[+−]\d+ %$/);
     await expect(page.getByTestId("por-que-difieren")).toContainText("la masa de B sola");
     medido[`lectura_fisica_${tema}`] = {
       croquis_kmh: await page.getByTestId("fisica-croquis").textContent(),

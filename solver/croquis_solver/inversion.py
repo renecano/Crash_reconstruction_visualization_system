@@ -62,6 +62,7 @@ from croquis_solver.crash3 import (
     delta_v_pair,
     uniform_crush_energy,
 )
+from croquis_solver.impact_assumptions import impact_sampler, sample_impact_assumptions
 from croquis_solver.lsq import least_squares_soft_l1, soft_l1_cost
 from croquis_solver.preimpact import is_reverse
 from croquis_solver.stiffness import sample_stiffness, stiffness_for, zona_from_cdc_side
@@ -1712,6 +1713,8 @@ def _estimate(
     # Los dos supuestos del tope (C3, W5), con su propio hipercubo y la semilla del caso: una escena
     # sin topes conserva sus sorteos.
     topes = bump_sampler(spec, n_samples, int(spec["meta"]["semilla"]))
+    # Restitución, razón de impulso y arrastre (ADR 0139), en el suyo, de diseño fijo.
+    choque = impact_sampler(n_samples)
     # Y los rumbos que la evidencia no fija, en el suyo (ADR 0135).
     rumbos = heading_sampler(spec, n_samples)
     x_best = [best.values[p.name] for p in free_params]
@@ -1725,6 +1728,8 @@ def _estimate(
         pert = perturbed(spec, ev, lhs.sample(i))
         if topes is not None:
             sample_bump_assumptions(pert.spec, topes.sample(i))
+        if choque is not None:
+            sample_impact_assumptions(pert.spec, choque.sample(i))
         if rumbos is not None:
             sample_assumed_headings(pert.spec, rumbos.sample(i))
         s, e, dmu = pert.spec, pert.evidence, pert.downed_mu

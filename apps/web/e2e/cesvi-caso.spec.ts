@@ -140,7 +140,7 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await irAPaso(page, 4);
   await page.getByTestId("reconstruir").click();
   await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 60_000 });
-  await expect(page.getByTestId("velocidad-V1")).toContainText(/\d+\.\d\d \(/);
+  await expect(page.getByTestId("velocidad-V1")).toContainText(/\d+ \(/);
   await expect(page.getByTestId("evidencia-usada")).toContainText("posición final de V1");
   // La bitácora de la pizarra (R12b): el Lector leyó la narración y el Físico reconstruyó.
   const bitacora = page.getByTestId("bitacora-agentes");
@@ -425,7 +425,7 @@ test("@flujo /cesvi: una carambola, con sus impactos en orden hasta el 3D", asyn
   const impactos = page.getByTestId("impactos-reconstruidos");
   await expect(impactos.locator('[data-impacto="1"]')).toContainText("V1 con V2");
   await expect(impactos.locator('[data-impacto="2"]')).toContainText("V2 con V3");
-  await expect(impactos.locator('[data-impacto="2"]')).toContainText(/\+\d\.\d\d s/);
+  await expect(impactos.locator('[data-impacto="2"]')).toContainText(/(\+\d\.\d\d|0\.00) s/);
   await expect(mapa.locator('[data-impacto="1"]')).toHaveText("X1");
   await expect(mapa.locator('[data-impacto="2"]')).toHaveText("X2");
   await expect(page.getByTestId("limites")).toContainText("V3: solo está en un impacto posterior");

@@ -25,6 +25,14 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from croquis_solver import friction
+from croquis_solver.impact_assumptions import (
+    IMPACT_NOTE,
+    IMPULSE_RATIO,
+    POST_IMPACT_DRAG,
+    RESTITUTION,
+    impact_sampler,
+    sample_impact_assumptions,
+)
 from croquis_solver.inversion import Distribution, distribution
 from croquis_solver.stratified import LatinHypercube
 from croquis_solver.terrain import BUMP_CONTACT, BUMP_ENERGY, bump_sampler, sample_bump_assumptions
@@ -196,6 +204,8 @@ def monte_carlo(
     lhs = LatinHypercube(samples, len(campos))
     # Los dos supuestos del tope (C3, W5), con su propio hipercubo y la semilla del caso.
     topes = bump_sampler(spec, samples, seed)
+    # Restitución, razón de impulso y arrastre (ADR 0139), en su propio hipercubo de diseño fijo.
+    choque = impact_sampler(samples)
     acc_v: dict[str, dict[str, list[float]]] = {}
     acc_p: dict[str, dict[str, list[float]]] = {}
     valid = 0
@@ -211,6 +221,8 @@ def monte_carlo(
                 _set(s, c.ruta, value)
         if topes is not None:
             sample_bump_assumptions(s, topes.sample(i))
+        if choque is not None:
+            sample_impact_assumptions(s, choque.sample(i))
         try:
             r = reconstruct(s, dt=dt, downed_mu=downed)
         except ValueError, KeyError, ArithmeticError:
@@ -234,6 +246,28 @@ def monte_carlo(
             *campos,
             Sampled("parametros.perdida_energia_tope", BUMP_ENERGY[1], BUMP_ENERGY[2], nota),
             Sampled("parametros.perdida_contacto_tope", BUMP_CONTACT[1], BUMP_CONTACT[2], nota),
+        ]
+    if choque is not None:
+        campos = [
+            *campos,
+            Sampled(
+                "parametros.restitucion_vehiculo_vehiculo",
+                RESTITUTION[1],
+                RESTITUTION[2],
+                IMPACT_NOTE,
+            ),
+            Sampled(
+                "parametros.relacion_impulso_tangencial",
+                IMPULSE_RATIO[1],
+                IMPULSE_RATIO[2],
+                IMPACT_NOTE,
+            ),
+            Sampled(
+                "parametros.arrastre_post_impacto",
+                POST_IMPACT_DRAG[1],
+                POST_IMPACT_DRAG[2],
+                IMPACT_NOTE,
+            ),
         ]
     return Uncertainty(
         semilla=seed,

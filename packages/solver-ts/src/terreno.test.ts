@@ -290,10 +290,15 @@ describe("los supuestos del tope en el Monte Carlo (W5, ADR 0131)", () => {
       expect(bumpSampler(loadFixture(n) as unknown as Json, 64, 101)).toBeNull();
     const spec = loadFixture("terraceria_topes") as unknown as Json;
     const rutas = monteCarlo(spec, { samples: 8 }).campos.map((c) => c.ruta);
-    expect(rutas.slice(-2)).toEqual([
+    // Al final van los supuestos de hipercubo aparte: los dos del tope y los tres del impacto
+    // (ADR 0139).
+    expect(rutas.slice(-5)).toEqual([
       "parametros.perdida_energia_tope",
       "parametros.perdida_contacto_tope",
+      "parametros.restitucion_vehiculo_vehiculo",
+      "parametros.relacion_impulso_tangencial",
+      "parametros.arrastre_post_impacto",
     ]);
-    expect(rutas.slice(0, -2)).toEqual(ranges(spec).map((c) => c.ruta));
+    expect(rutas.slice(0, -5)).toEqual(ranges(spec).map((c) => c.ruta));
   });
 });

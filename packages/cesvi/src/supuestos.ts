@@ -12,6 +12,7 @@ import type { Expediente } from "./corpus";
 import { masaTipica } from "./escena-narracion";
 import { fichaDe } from "./fichas";
 import type { Reconstruccion } from "./reconstruccion";
+import { grados, numero } from "./formato";
 
 type Id = Expediente["vehiculos"][number]["id"];
 type Json = Record<string, unknown>;
@@ -111,7 +112,7 @@ export function supuestosDeclarados(
       vehiculo: id,
       justificacion: "El reporte no la da: es el punto de partida de la reconstrucción.",
       incertidumbre: rumboSupuesto
-        ? `La evidencia no fija su rumbo de llegada: se usa el que se colocó en el mapa (${Number(rumbo.inicial).toFixed(1)}°) y en el rango se sortea ±${ANGLE_BOUND_DEG}° alrededor de él. La inversión ajusta su velocidad.`
+        ? `La evidencia no fija su rumbo de llegada: se usa el que se colocó en el mapa (${grados(Number(rumbo.inicial))}) y en el rango se sortea ±${ANGLE_BOUND_DEG}° alrededor de él. La inversión ajusta su velocidad.`
         : `La inversión ajusta su velocidad y su rumbo de llegada (±${ANGLE_BOUND_DEG}°).`,
     });
   }
@@ -126,15 +127,15 @@ export function supuestosDeclarados(
       clave: "friccion",
       que: "Fricción llanta–pavimento",
       valor: `μ = ${mu.valor}`,
-      corto: `μ ${mu.valor.toFixed(2)}`,
+      corto: `μ ${numero(mu.valor, 2)}`,
       ...(mu.rango
         ? {
             rango: {
               min: mu.rango[0],
               max: mu.rango[1],
               valor: mu.valor,
-              minTexto: mu.rango[0].toFixed(2),
-              maxTexto: mu.rango[1].toFixed(2),
+              minTexto: numero(mu.rango[0], 2),
+              maxTexto: numero(mu.rango[1], 2),
             },
           }
         : {}),
@@ -143,7 +144,10 @@ export function supuestosDeclarados(
         ? `En el rango de las velocidades, μ de ${mu.rango[0]} a ${mu.rango[1]}.`
         : "Sin rango.",
     });
-  if (arrastre?.valor !== undefined)
+  if (arrastre?.valor !== undefined) {
+    // Desde la Tanda 3 (ADR 0139) la fracción también se sortea en su rango; un resultado guardado
+    // antes no trae `rango` y se describe como entonces: fracción fija.
+    const [fMin, fMax] = arrastre.rango ?? [arrastre.valor, arrastre.valor];
     out.push({
       clave: "arrastre",
       que: "Después del impacto",
@@ -152,19 +156,60 @@ export function supuestosDeclarados(
       ...(mu?.valor !== undefined && mu.rango
         ? {
             rango: {
-              min: arrastre.valor * mu.rango[0],
-              max: arrastre.valor * mu.rango[1],
+              min: fMin * mu.rango[0],
+              max: fMax * mu.rango[1],
               valor: arrastre.valor * mu.valor,
-              minTexto: (arrastre.valor * mu.rango[0]).toFixed(2),
-              maxTexto: (arrastre.valor * mu.rango[1]).toFixed(2),
+              minTexto: numero(fMin * mu.rango[0], 2),
+              maxTexto: numero(fMax * mu.rango[1], 2),
             },
           }
         : {}),
-      justificacion:
-        "Supuesto del solver: el reporte no trae huellas de arrastre que digan que las llantas deslizaron.",
-      incertidumbre: mu?.rango
-        ? `La fracción es fija; varía con la fricción (de ${(arrastre.valor * mu.rango[0]).toFixed(2)} a ${(arrastre.valor * mu.rango[1]).toFixed(2)}).`
-        : "La fracción es fija.",
+      justificacion: arrastre.rango
+        ? `Supuesto del solver: el reporte no trae huellas de arrastre que digan que las llantas deslizaron. La fracción sale de la literatura (${arrastre.fuente ?? "Fricke 2010"}).`
+        : "Supuesto del solver: el reporte no trae huellas de arrastre que digan que las llantas deslizaron.",
+      incertidumbre: arrastre.rango
+        ? mu?.rango
+          ? `En el rango de las velocidades, la fracción va de ${arrastre.rango[0]} a ${arrastre.rango[1]} y la fricción de ${mu.rango[0]} a ${mu.rango[1]}: el arrastre, de ${numero(fMin * mu.rango[0], 2)} a ${numero(fMax * mu.rango[1], 2)}.`
+          : `En el rango de las velocidades, la fracción va de ${arrastre.rango[0]} a ${arrastre.rango[1]}.`
+        : mu?.rango
+          ? `La fracción es fija; varía con la fricción (de ${numero(arrastre.valor * mu.rango[0], 2)} a ${numero(arrastre.valor * mu.rango[1], 2)}).`
+          : "La fracción es fija.",
+    });
+  }
+  // Los otros dos supuestos del impacto (ADR 0139): solo si el resultado ya los trae con su rango.
+  const restitucion = parametros.restitucion_vehiculo_vehiculo;
+  if (restitucion?.valor !== undefined && restitucion.rango)
+    out.push({
+      clave: "restitucion",
+      que: "Restitución del choque",
+      valor: `e = ${restitucion.valor}`,
+      corto: `e ${numero(restitucion.valor, 2)}`,
+      rango: {
+        min: restitucion.rango[0],
+        max: restitucion.rango[1],
+        valor: restitucion.valor,
+        minTexto: numero(restitucion.rango[0], 2),
+        maxTexto: numero(restitucion.rango[1], 2),
+      },
+      justificacion: `Supuesto del solver: cuánto rebotan los vehículos al separarse. El rango sale de pruebas de choque (${restitucion.fuente ?? "literatura"}).`,
+      incertidumbre: `En el rango de las velocidades, e de ${restitucion.rango[0]} a ${restitucion.rango[1]}.`,
+    });
+  const razon = parametros.relacion_impulso_tangencial;
+  if (razon?.valor !== undefined && razon.rango)
+    out.push({
+      clave: "razon_impulso",
+      que: "Fricción entre los vehículos durante el choque",
+      valor: `razón de impulso de ${razon.valor}`,
+      corto: `razón ${numero(razon.valor, 2)}`,
+      rango: {
+        min: razon.rango[0],
+        max: razon.rango[1],
+        valor: razon.valor,
+        minTexto: numero(razon.rango[0], 2),
+        maxTexto: numero(razon.rango[1], 2),
+      },
+      justificacion: `Supuesto del solver: el tope del impulso tangencial entre el normal; solo pesa si los vehículos deslizan uno contra otro. No hay un rango tabulado: ${razon.fuente ?? "se declara con su justificación"}.`,
+      incertidumbre: `En el rango de las velocidades, de ${razon.rango[0]} a ${razon.rango[1]}.`,
     });
   return out;
 }

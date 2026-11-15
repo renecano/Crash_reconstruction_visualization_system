@@ -5,6 +5,7 @@
  * significativa»; cada fórmula se muestra con sus valores sustituidos, como en el dictamen.
  */
 import {
+  formato as F,
   compararVelocidades,
   formulaDesplazamiento,
   formulaEbs,
@@ -37,7 +38,7 @@ function iniciales(c: CasoCesvi): Datos {
     L: String(d.L_m.valor),
     A: String(d.A.valor),
     B: String(d.B.valor),
-    C: d.C_m.map((x) => x.valor.toFixed(2)),
+    C: d.C_m.map((x) => F.fijo(x.valor, 2)),
     masaKg: String(c.vehiculos.B.masa_kg?.valor ?? ""),
     a: String(z.a.valor),
     g: String(z.g_ms2.valor),
@@ -137,7 +138,7 @@ export function Calculos({
             formulaEbs(
               mc.valor.calculo.energia,
               masaT,
-              mc.valor.calculo.energia.toFixed(3),
+              F.fijo(mc.valor.calculo.energia, 3),
               String(masaT),
             ),
           )
@@ -175,10 +176,11 @@ export function Calculos({
     const r = compararVelocidades(v1, v3.valor.calculo.kmh, umbral);
     return (
       <li className="t-interfaz" data-testid={testid}>
-        {etiqueta}: <span className="cifras">{v1.toFixed(2)}</span> contra{" "}
-        <span className="cifras">{v3.valor.calculo.kmh.toFixed(2)} km/h</span>, diferencia de{" "}
+        {etiqueta}: <span className="cifras">{F.kmh(v1, "metodo")}</span> contra{" "}
+        <span className="cifras">{F.kmhConUnidad(v3.valor.calculo.kmh, "metodo")}</span>, diferencia
+        de{" "}
         <span className="cifras">
-          {r.diferenciaKmh.toFixed(2)} km/h ({r.diferenciaPct.toFixed(2)} %)
+          {F.numero(r.diferenciaKmh, 2)} km/h ({F.porcentaje(r.diferenciaPct, 2)})
         </span>
         :{" "}
         <strong className="font-semibold">

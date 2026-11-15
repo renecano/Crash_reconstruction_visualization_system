@@ -18,6 +18,7 @@ import { FUENTES_PORTADA_V3 } from "./fuentes";
 import type { TextosPortadaV3 } from "./textos";
 import "./portada-v3.css";
 import MARCA from "../../../../../assets/brand/marca.json";
+import { formato as F } from "@croquis/cesvi";
 
 type Estilo = CSSProperties & Record<`--${string}`, string | number>;
 
@@ -75,10 +76,10 @@ for (let a = DETALLE.escala.desde; a <= DETALLE.escala.hasta; a += DETALLE.escal
   const s = Math.sin(r);
   const r1 = a % DETALLE.escala.mayor_cada === 0 ? DETALLE.escala.r_mayor : DETALLE.escala.r_menor;
   MARCAS.push({
-    x1: (CX + r1 * c).toFixed(2),
-    y1: (CY + r1 * s).toFixed(2),
-    x2: (CX + DETALLE.escala.r_fuera * c).toFixed(2),
-    y2: (CY + DETALLE.escala.r_fuera * s).toFixed(2),
+    x1: F.fijo(CX + r1 * c, 2),
+    y1: F.fijo(CY + r1 * s, 2),
+    x2: F.fijo(CX + DETALLE.escala.r_fuera * c, 2),
+    y2: F.fijo(CY + DETALLE.escala.r_fuera * s, 2),
   });
 }
 
@@ -461,7 +462,7 @@ export function PortadaV3({ t, tomas }: { t: TextosPortadaV3; tomas: TomaPortada
                     </div>
                     <b>
                       <span data-count={v} data-dec="1">
-                        {v.toFixed(1)}
+                        {F.fijo(v, 1)}
                       </span>{" "}
                       %
                     </b>
@@ -540,7 +541,7 @@ export function PortadaV3({ t, tomas }: { t: TextosPortadaV3; tomas: TomaPortada
                   </span>
                   <span className="v">
                     <span data-count={t.cifraRestos} data-dec="2">
-                      {t.cifraRestos.toFixed(2)}
+                      {F.kmh(t.cifraRestos, "metodo")}
                     </span>
                     <small>km/h</small>
                   </span>

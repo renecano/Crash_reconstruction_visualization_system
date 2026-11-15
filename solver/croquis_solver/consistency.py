@@ -407,7 +407,7 @@ def check_assumed_rest(spec: JsonObj, inv: Inversion) -> list[Inconsistency]:
                 "reposo_supuesto_vs_dano",
                 f"Con la deformación medida, {_name(by_id[vid])} termina a unos {miss:.0f} m de "
                 "su posición final supuesta: el daño y ese reposo no caben juntos. Hay dos "
-                "hipótesis, «cuadra con el daño medido» y «cuadra con el reposo supuesto»; el "
+                "hipótesis, «la más cercana al daño medido» y «cuadra con el reposo supuesto»; el "
                 "perito elige.",
                 {"vehiculo": vid, "distancia_m": miss},
             )

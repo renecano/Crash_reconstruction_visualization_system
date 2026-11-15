@@ -88,7 +88,7 @@ export interface LecturaDictamen<T = SalidaCorpus> {
 /** Costo de una respuesta; la API de lotes cobra la mitad de cada token. */
 export function costoCorpus(modelo: string, uso: UsoTokens, lote: boolean): number {
   const c = costUsd(modelo in PRICES ? modelo : MODELO_CORPUS, uso);
-  return lote ? Number((c / 2).toFixed(8)) : c;
+  return lote ? Math.round((c / 2) * 1e8) / 1e8 : c;
 }
 
 /** La respuesta del modelo como salida estructurada (falla si se negó, se truncó o no es JSON). */

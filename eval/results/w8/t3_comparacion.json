@@ -1,0 +1,82 @@
+{
+  "fuente": "eval/t3_comparar.py",
+  "commit": "3fca4387",
+  "antes": "eval/results/w8/t3_3",
+  "despues": "eval/results/w8/t3",
+  "archivos": {
+    "axa_rango_estable.json": {
+      "numeros_comparados": 206,
+      "diferencias": 88,
+      "de_rango": 88,
+      "centrales": 0,
+      "primeras_centrales": [],
+      "primeras_de_rango": [
+        {
+          "ruta": "/V1/p10/max",
+          "antes": 0.8,
+          "despues": 1.04
+        },
+        {
+          "ruta": "/V1/p10/min",
+          "antes": 0.8,
+          "despues": 1.04
+        },
+        {
+          "ruta": "/V1/p90/max",
+          "antes": 16.45,
+          "despues": 21.38
+        },
+        {
+          "ruta": "/V1/p90/min",
+          "antes": 16.45,
+          "despues": 21.38
+        },
+        {
+          "ruta": "/V2/p10/max",
+          "antes": 54.79,
+          "despues": 55.11
+        },
+        {
+          "ruta": "/V2/p10/min",
+          "antes": 54.79,
+          "despues": 55.11
+        },
+        {
+          "ruta": "/V2/p90/max",
+          "antes": 78.39,
+          "despues": 78.06
+        },
+        {
+          "ruta": "/V2/p90/min",
+          "antes": 78.39,
+          "despues": 78.06
+        }
+      ]
+    },
+    "cesvi_r4_inversion.json": {
+      "numeros_comparados": 646,
+      "diferencias": 0,
+      "de_rango": 0,
+      "centrales": 0,
+      "primeras_centrales": [],
+      "primeras_de_rango": []
+    },
+    "e_r4_prueba.json": {
+      "numeros_comparados": 2358,
+      "diferencias": 0,
+      "de_rango": 0,
+      "centrales": 0,
+      "primeras_centrales": [],
+      "primeras_de_rango": []
+    },
+    "carambolas_prueba.json": {
+      "numeros_comparados": 181,
+      "diferencias": 0,
+      "de_rango": 0,
+      "centrales": 0,
+      "primeras_centrales": [],
+      "primeras_de_rango": []
+    }
+  },
+  "solo_cambian_rangos": true
+}

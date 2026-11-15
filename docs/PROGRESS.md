@@ -6,6 +6,10 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 ## Estado actual
 
 - **Ahora: plan final v4** (René, 2026-11-07; `docs/cesvi/PLAN-CESVI.md`). CESVI pidió el 3D en Unity, puntos intermedios del choque, objetos que se mueven y un terreno que afecta la física. Trabajan dos frentes en paralelo, con bitácora propia: [`docs/progress/U.md`](progress/U.md) y [`docs/progress/W.md`](progress/W.md). Este archivo queda como índice, y lo que sigue abajo es historia del plan v3 (`docs/historial/PLAN-CESVI-v3.md`).
+  - **Auditoría del 2026-11-15 · Tanda 3 (números defendibles), en rama y sin fusionar:**
+    - **Qué trae:** un solo formateador (la reconstrucción en enteros; el método de CESVI con dos decimales), un índice de cifras publicadas con verificador, y la restitución, la razón de impulso y el arrastre sorteados en el rango (ADR 0138 y 0139).
+    - **Medido:** el mejor ajuste no se mueve; solo cambian rangos (`eval/results/w8/t3_comparacion.json`). El detalle del antes y el después está en [`docs/progress/W.md`](progress/W.md), «Auditoría del 2026-11-15 · Tanda 3».
+    - **Siguiente:** espera el visto bueno de René (PR #227) y la corrida del colaborador (PR #228).
   - **Auditoría del 2026-11-15 · Tanda 1 (confianza inmediata):**
     - **Qué cambió:** el logo sale de `assets/brand/marca.json` en todas partes, con el color del sistema (#223); el redactor conserva las cifras de la narración en el flujo de CESVI; la portada dice «91 de 156»; el dictamen avisa que el entorno del 3D es procedural y no trae identificadores internos; `generate:check` de la web pasa; el repositorio público queda autorizado (ADR 0137).
     - **Medido:** 748 cifras dejan de borrarse en 240 de los 671 reportes, y las placas anotadas de Relatos-MX se borran igual (96 de 98), en `eval/results/redactor_cifras.json`.

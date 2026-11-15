@@ -1,11 +1,10 @@
 import type { ComparacionDictamen } from "@croquis/cesvi";
 import { describe, expect, it } from "vitest";
+import { formato as F } from "@croquis/cesvi";
 import {
   cifraContraste,
   conLetra,
-  conSigno,
   lecturaFisica,
-  pctConSigno,
   conteoCriterios,
   criteriosContraste,
   reglaContraste,
@@ -52,11 +51,12 @@ describe("Contra CESVI (Laboratorio §8)", () => {
     const f = cifraContraste(axa)!;
     expect(f.croquis.toFixed(2)).toBe("63.90");
     expect(f.cesvi.toFixed(2)).toBe("63.15");
-    expect(conSigno(f.difKmh)).toBe("+0.75");
-    expect(pctConSigno(f.difPct)).toBe("+1.19 %");
-    // Si Croquis queda abajo, el signo lo dice.
-    expect(conSigno(-13.94)).toBe("−13.94");
-    expect(pctConSigno(-22.07)).toBe("−22.07 %");
+    // La tabla del método de CESVI: dos decimales.
+    expect(F.diferenciaKmh(f.difKmh, "metodo")).toBe("+0.75 km/h");
+    expect(F.diferenciaPct(f.difPct, "metodo")).toBe("+1.19 %");
+    // Si Croquis queda abajo, el signo lo dice; contra la reconstrucción física, en enteros.
+    expect(F.diferenciaKmh(-13.94, "reconstruccion")).toBe("−14 km/h");
+    expect(F.diferenciaPct(-22.07, "reconstruccion")).toBe("−22 %");
   });
 
   it("sin una velocidad que Croquis calcule no hay cifra (no se inventa)", () => {

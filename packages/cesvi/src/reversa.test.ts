@@ -105,7 +105,7 @@ describe("la reversa en la escena del perito", () => {
     expect(avisoReversaRapida("V1", REVERSA_KMH.max)).toBeNull();
     expect(avisoReversaRapida("V1", 9)).toBeNull();
     const aviso = avisoReversaRapida("V1", 34.73)!;
-    expect(aviso).toContain("34.7 km/h en reversa");
+    expect(aviso).toContain("35 km/h en reversa");
     expect(aviso).toContain("23 km/h");
     expect(aviso).toContain("NHTSA");
   });

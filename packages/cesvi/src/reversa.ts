@@ -5,6 +5,7 @@
  * vehículo que avanza.
  */
 import tabla from "./data/reversa-nhtsa.json";
+import { kmhConUnidad } from "./formato";
 
 const MPH_A_KMH = 1.609344;
 const kmh = (mph: number) => Math.round(mph * MPH_A_KMH * 100) / 100;
@@ -49,5 +50,5 @@ export function limiteVelocidadSupuesta(vehiculo: string): string {
  */
 export function avisoReversaRapida(vehiculo: string, velocidadKmh: number): string | null {
   if (!(velocidadKmh > REVERSA_KMH.max)) return null;
-  return `${vehiculo}: ${velocidadKmh.toFixed(1)} km/h en reversa es más que la maniobra más rápida de ${REVERSA_MANIOBRAS} medidas en uso real (${REVERSA_KMH.max} km/h; ${REVERSA_FUENTE}). Conviene revisar el sentido de marcha y las posiciones finales.`;
+  return `${vehiculo}: ${kmhConUnidad(velocidadKmh, "reconstruccion")} en reversa es más que la maniobra más rápida de ${REVERSA_MANIOBRAS} medidas en uso real (${REVERSA_KMH.max} km/h; ${REVERSA_FUENTE}). Conviene revisar el sentido de marcha y las posiciones finales.`;
 }

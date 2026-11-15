@@ -14,6 +14,7 @@
 import { zoneFriction } from "@croquis/solver-ts";
 import type { Expediente } from "./corpus";
 import { desdeMetros, enMetros, type LonLat } from "./geo";
+import { metros } from "./formato";
 
 export type TerrenoExpediente = NonNullable<Expediente["terreno"]>;
 export type ZonaTerreno = NonNullable<TerrenoExpediente["superficies"]>[number];
@@ -434,7 +435,7 @@ export function terrenoDeEscena(
     const supuesta = o.fuente === "supuesto";
     if (supuesta)
       limites.push(
-        `La zona ondulada lleva medidas supuestas (${o.amplitud_m.toFixed(2)} m de valle a cresta, crestas cada ${o.longitud_onda_m.toFixed(1)} m): mídelas en el lugar y corrígelas.`,
+        `La zona ondulada lleva medidas supuestas (${metros(o.amplitud_m)} de valle a cresta, crestas cada ${metros(o.longitud_onda_m, 1)}): mídelas en el lugar y corrígelas.`,
       );
     // Del rumbo del mapa (desde el norte, horario) al de la escena (desde +X, antihorario).
     const r = normalizar(90 - o.rumbo_deg);

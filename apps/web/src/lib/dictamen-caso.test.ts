@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  formato as F,
   compararDeclarada,
   conPosicion,
   escenaDeNarracion,
@@ -103,7 +104,10 @@ describe("el dictamen de una reconstrucción (R8)", () => {
     ]);
     expect(t).toContain("vehículo A, marca VW, tipo Jetta");
     const v1 = r.velocidades.find((x) => x.vehiculo === "V1")!.previa!;
-    expect(t).toContain(`${v1.mejor.toFixed(2)} (${v1.p10!.toFixed(2)}–${v1.p90!.toFixed(2)})`);
+    // La conclusión de la reconstrucción va en enteros, con su rango.
+    expect(t).toContain(
+      `${F.kmh(v1.mejor, "reconstruccion")} (${F.rangoKmh(v1.p10, v1.p90, "reconstruccion")})`,
+    );
     expect(t).toContain("BORRADOR");
     expect(t).toContain("[el perito debe concluir]");
   }, 60_000);
@@ -122,15 +126,11 @@ describe("el dictamen de una reconstrucción (R8)", () => {
       ],
     };
     const t = texto(datos({ expediente: conCalculo }));
-    const v1 =
-      Math.round(r.velocidades.find((x) => x.vehiculo === "V1")!.previa!.mejor * 100) / 100;
-    const dif = Math.round((v1 - 50) * 100) / 100;
-    const pct = Math.round(((v1 - 50) / 50) * 10000) / 100;
-    const signo = (x: number) => `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(2)}`;
+    const v1 = r.velocidades.find((x) => x.vehiculo === "V1")!.previa!.mejor;
     enOrden(t, [
       "Reconstrucción física",
       "La reconstrucción contra el reporte de CESVI",
-      `${signo(dif)} km/h (${signo(pct)} %)`,
+      `${F.diferenciaKmh(v1 - 50, "reconstruccion")} (${F.diferenciaPct(((v1 - 50) / 50) * 100, "reconstruccion")})`,
       "CESVI convierte la energía de la deformación de V1",
       "Verificación con el método de CESVI",
     ]);

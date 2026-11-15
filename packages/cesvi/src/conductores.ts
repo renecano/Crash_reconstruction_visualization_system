@@ -11,6 +11,7 @@
  */
 import type { Expediente } from "./corpus";
 import { especReconstruida, type Reconstruccion } from "./reconstruccion";
+import { instante, metros, segundos } from "./formato";
 
 type Json = Record<string, unknown>;
 type Id = Expediente["vehiculos"][number]["id"];
@@ -142,7 +143,7 @@ export interface PruebaConductores {
 const r2 = (x: number) => Math.round(x * 100) / 100;
 /** Diferencia de instante con la que el primer contacto ya no es el impacto reconstruido (s). */
 const TOLERANCIA_CONTACTO_S = 0.1;
-const enSegundos = (t: number) => `${t < 0 ? "−" : "+"}${Math.abs(t).toFixed(2)} s`;
+const enSegundos = (t: number) => instante(t);
 const par = (vs: readonly string[]) => [...vs].sort().join("|");
 
 /** El primer contacto sin la hipótesis contra el primer impacto de la reconstrucción. */
@@ -160,7 +161,7 @@ function contraLaReconstruccion(
   return {
     sinHipotesis: sin.contacto
       ? `${sin.vehiculos.join(" con ")} en ${enSegundos(sin.t!)}`
-      : `ningún contacto (quedan a ${(sin.distanciaMinimaM ?? 0).toFixed(2)} m)`,
+      : `ningún contacto (quedan a ${metros(sin.distanciaMinimaM ?? 0)})`,
     reconstruccion: `${primero.vehiculos.join(" con ")} en ${enSegundos(primero.t)}`,
   };
 }
@@ -256,11 +257,11 @@ export function leerPruebaConductores(r: Reconstruccion, agentes: Json): PruebaC
 
 /** Una decisión en palabras: «V1 frena en −1.40 s, 1.10 s después de ver frenar a V2 (−2.50 s)». */
 export function decisionEnPalabras(d: DecisionLeida): string {
-  const cuando = `en ${d.t < 0 ? "−" : "+"}${Math.abs(d.t).toFixed(2)} s`;
+  const cuando = `en ${instante(d.t)}`;
   const que = `${d.vehiculo} ${DECISION_EN_PALABRAS[d.tipo]} ${cuando}`;
   if (d.origen === "perito") return `${que} (la hipótesis del perito)`;
   if (d.origen === "reconstruccion") return `${que} (como en la reconstrucción)`;
   if (d.ante && d.percibioT !== null)
-    return `${que}, ${(d.t - d.percibioT).toFixed(2)} s después de ver frenar a ${d.ante} (${d.percibioT < 0 ? "−" : "+"}${Math.abs(d.percibioT).toFixed(2)} s)`;
+    return `${que}, ${segundos(d.t - d.percibioT)} después de ver frenar a ${d.ante} (${instante(d.percibioT)})`;
   return que;
 }

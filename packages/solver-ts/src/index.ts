@@ -27,5 +27,6 @@ export * from "./montecarlo";
 export * from "./agents";
 export * from "./full-result";
 export * from "./terrain";
+export * from "./impact-assumptions";
 /** Funciones trascendentes deterministas (E8, ADR 0029); también las usa el horneado del visor. */
 export * as dmath from "./dmath";

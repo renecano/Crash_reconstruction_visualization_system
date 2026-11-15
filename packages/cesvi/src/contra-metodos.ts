@@ -8,6 +8,7 @@
 import { reconstruct, reconstructionToDict } from "@croquis/solver-ts";
 import type { Expediente } from "./corpus";
 import { especReconstruida, rangoInformativo, type Reconstruccion } from "./reconstruccion";
+import { kmhConUnidad, rangoKmh } from "./formato";
 
 type Id = Expediente["vehiculos"][number]["id"];
 type Json = Record<string, unknown>;
@@ -144,7 +145,7 @@ export function reconstruccionContraCesvi(
       };
       const v = r.ids[d.vehiculo] ?? d.vehiculo;
       const [p10, p90] = d.dano_minimo_kmh;
-      return `La reconstrucción no alcanza la deformación medida de ${v}: solo con ella, su cambio de velocidad sería de al menos ${p10!.toFixed(0)}–${p90!.toFixed(0)} km/h, y en la reconstrucción que reproduce las posiciones finales es de ${d.reconstruccion_kmh.toFixed(0)} km/h. Revisa las posiciones finales que sean supuestos: con ellas, la velocidad de ${v} sale baja para ese daño.`;
+      return `La reconstrucción no alcanza la deformación medida de ${v}: solo con ella, su cambio de velocidad sería de al menos ${rangoKmh(p10, p90, "reconstruccion")} km/h, y en la reconstrucción que reproduce las posiciones finales es de ${kmhConUnidad(d.reconstruccion_kmh, "reconstruccion")}. Revisa las posiciones finales que sean supuestos: con ellas, la velocidad de ${v} sale baja para ese daño.`;
     });
   return { filas, avisos };
 }

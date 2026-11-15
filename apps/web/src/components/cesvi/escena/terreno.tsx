@@ -6,6 +6,7 @@
  * (`terreno.ts`); aquí van las opciones con su muestra y la lista de lo marcado.
  */
 import {
+  formato as F,
   LIMITE_RELIEVE,
   SUPERFICIES_TERRENO,
   TOPES_NORMA,
@@ -93,7 +94,7 @@ function Muestra({ que }: { que: TipoSuperficie | "liso" | "ondulacion" | "tope"
   );
 }
 
-const m2 = (x: number | undefined) => (x ?? 0).toFixed(2);
+const m2 = (x: number | undefined) => F.numero(x ?? 0, 2);
 
 /** Lo que mide o vale una pieza, en una línea («0.10 m de alto × 1.40 m de largo»). */
 export function medidasDePieza(t: PiezaTerreno): string {

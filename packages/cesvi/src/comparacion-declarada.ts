@@ -12,6 +12,7 @@
 import type { Expediente } from "./corpus";
 import type { VersionDeclarada } from "./declaracion";
 import { enPalabras } from "./palabras";
+import { metros, velocidad } from "./formato";
 import type { EscenaSolver, Reconstruccion } from "./reconstruccion";
 import { REVERSA_FUENTE, REVERSA_KMH, velocidadSupuestaEnReversa } from "./reversa";
 
@@ -189,9 +190,7 @@ export function compararDeclarada(e: {
         vehiculo: id,
         concepto: "Velocidad previa",
         declarada: `${vel.kmh} km/h`,
-        evidencia: rec
-          ? `${rec.mejor.toFixed(1)} km/h (${rec.p10?.toFixed(1) ?? "—"}–${rec.p90?.toFixed(1) ?? "—"})`
-          : "la evidencia no la fija",
+        evidencia: rec ? velocidad(rec) : "la evidencia no la fija",
         estado: dentro === null ? "sin_dato" : dentro ? "coincide" : "no_coincide",
         fuente:
           "Lo que declara el conductor · la inversión de la reconstrucción con la evidencia del perito",
@@ -206,7 +205,7 @@ export function compararDeclarada(e: {
         clave: "posicion_final",
         vehiculo: id,
         concepto: "Posición final",
-        declarada: `a ${d.toFixed(1)} m de la reconstruida`,
+        declarada: `a ${metros(d, 1)} de la reconstruida`,
         evidencia: "la de la reconstrucción",
         estado: d <= largo ? "coincide" : "no_coincide",
         fuente: "La versión declarada simulada con el solver · la reconstrucción",

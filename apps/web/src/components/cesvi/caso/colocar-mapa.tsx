@@ -22,7 +22,7 @@
  * Las siluetas son por clase, la trayectoria de cada uno va punteada (inicio → impacto → reposo) y la
  * leyenda se queda fija en una esquina.
  */
-import { distanciaM } from "@croquis/cesvi";
+import { formato as F, distanciaM } from "@croquis/cesvi";
 import type { Map as MapaMl } from "maplibre-gl";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
@@ -127,7 +127,7 @@ function callesCerca(m: MapaMl, x: number, y: number): [number, number][][] {
 }
 
 const distanciaTexto = (a: Punto, b: Punto) =>
-  `a ${distanciaM([a.lon, a.lat], [b.lon, b.lat]).toFixed(1)} m del impacto`;
+  `a ${F.metros(distanciaM([a.lon, a.lat], [b.lon, b.lat]), 1)} del impacto`;
 
 export function ColocarMapa({
   mapa,

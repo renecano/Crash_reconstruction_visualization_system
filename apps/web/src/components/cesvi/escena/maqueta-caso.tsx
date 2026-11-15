@@ -3,7 +3,7 @@
  * La maqueta de un caso reconstruido: la escena con las velocidades reconstruidas (la misma que el
  * 3D), calculada en el worker para no bloquear la página, y con las calles del mapa si ya llegaron.
  */
-import { especReconstruida, type Reconstruccion } from "@croquis/cesvi";
+import { formato as F, especReconstruida, type Reconstruccion } from "@croquis/cesvi";
 import type { OverpassResponse } from "@croquis/croquis-2d";
 import type { EscenaSpec } from "@croquis/scene-schema";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
@@ -124,8 +124,9 @@ export function MaquetaCaso({
       >
         {veloz ? (
           <span className="font-mono text-texto" data-testid="maqueta-velocidad">
-            velocidad de {nombres[veloz.id] ?? veloz.rol} · {kmhEn(veloz.trayectoria, 0).toFixed(2)}{" "}
-            → {kmhAntesDe(veloz.trayectoria, ti).toFixed(2)} km/h
+            velocidad de {nombres[veloz.id] ?? veloz.rol} ·{" "}
+            {F.kmh(kmhEn(veloz.trayectoria, 0), "reconstruccion")} →{" "}
+            {F.kmhConUnidad(kmhAntesDe(veloz.trayectoria, ti), "reconstruccion")}
           </span>
         ) : null}
         <span>
@@ -221,7 +222,7 @@ function ConLineaDeTiempo({
             step={0.01}
             value={t}
             aria-label="Instante de la reconstrucción"
-            aria-valuetext={`${t.toFixed(2)} segundos`}
+            aria-valuetext={`${F.numero(t, 2)} segundos`}
             onChange={(e) => {
               setCorre(false);
               setT(Number(e.target.value));
@@ -240,7 +241,7 @@ function ConLineaDeTiempo({
           <div className="relative mt-0.5 h-4 font-mono text-[0.6875rem] text-texto-3">
             <span className="absolute left-0">Llegada</span>
             <span className="absolute -translate-x-1/2" style={{ left: `${fraccion(ti)}%` }}>
-              Impacto · t {(t - ti).toFixed(2)} s
+              Impacto · t {F.segundos(t - ti)}
             </span>
             <span className="absolute right-0">Reposo final</span>
           </div>

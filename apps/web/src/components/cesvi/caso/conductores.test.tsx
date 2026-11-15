@@ -47,9 +47,9 @@ describe("probar una hipótesis sobre un conductor (paso 6, R12a)", () => {
       "Si el conductor de V2 frena 1.50 s antes del impacto:",
     );
     expect(screen.getByTestId("diferencia-conductores").textContent).toBe(
-      "−14.00 km/h (−36.36 %) de velocidad relativa al contacto",
+      "−14 km/h (−36 %) de velocidad relativa al contacto",
     );
-    expect(screen.getByTestId("contacto-sin").textContent).toMatch(/38\.51 km\/h/);
+    expect(screen.getByTestId("contacto-sin").textContent).toMatch(/39 km\/h/);
   });
 
   it("no deja probar un instante fuera de rango y dice por qué", () => {

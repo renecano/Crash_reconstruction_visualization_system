@@ -14,6 +14,9 @@ import {
  * los métodos de CESVI; `Visor3dCaso` es el 3D del escenario.
  */
 import {
+  danoEnTexto,
+  lecturasDeDano,
+  formato as F,
   especDeExpediente,
   especReconstruida,
   evidenciaEnPalabras,
@@ -45,7 +48,7 @@ import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
 import { relieveDelLugar } from "@/lib/relieve-cliente";
 import { DEFINICION, METODO } from "@/lib/textos-caso";
 
-const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(2));
+const kmh = (x?: number) => F.kmh(x, "reconstruccion");
 
 /** Un vehículo en el croquis del mapa: de la reconstrucción o, con `declarada`, de la versión declarada (T6.2). */
 export type PosicionMovil = ReturnType<typeof posicionesEnTiempo>[number] & { declarada?: true };
@@ -173,8 +176,7 @@ export function PanelReconstruccion({ rec }: { rec: EstadoReconstruccion }) {
               {r.impactos.map((i) => (
                 <li key={i.numero} data-impacto={i.numero}>
                   <span className="font-medium text-texto">X{i.numero}</span> ·{" "}
-                  <span className="cifras">{i.t === 0 ? "0.00 s" : `+${i.t.toFixed(2)} s`}</span> ·{" "}
-                  {i.vehiculos.join(" con ")}
+                  <span className="cifras">{F.instante(i.t)}</span> · {i.vehiculos.join(" con ")}
                 </li>
               ))}
             </ol>
@@ -224,7 +226,7 @@ export function TablaVelocidades({ r }: { r: Reconstruccion }) {
             <td className="py-2.5 text-right">
               {v.previa ? (
                 <>
-                  {v.previa.mejor.toFixed(2)}{" "}
+                  {kmh(v.previa.mejor)}{" "}
                   <span className="text-texto-3">
                     ({kmh(v.previa.p10)}–{kmh(v.previa.p90)})
                   </span>
@@ -245,20 +247,18 @@ export function TablaVelocidades({ r }: { r: Reconstruccion }) {
   );
 }
 
-/** «56.87 (54.79–78.39)»: el valor con su p10–p90, si lo hay. */
+/** «57 (55–78)»: el valor de la reconstrucción con su p10–p90, si lo hay. */
 export function conRango(kmh: number, rango: [number, number] | null): string {
   return rango
-    ? `${kmh.toFixed(2)} (${rango[0].toFixed(2)}–${rango[1].toFixed(2)})`
-    : kmh.toFixed(2);
+    ? `${F.kmh(kmh, "reconstruccion")} (${F.rangoKmh(rango[0], rango[1], "reconstruccion")})`
+    : F.kmh(kmh, "reconstruccion");
 }
 
-const conSigno = (x: number, d: number) => `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(d)}`;
-
-/** Una diferencia de velocidad con su valor y su porcentaje («−19.76 km/h (−31.29 %)»). */
+/** Una diferencia de velocidad con su valor y su porcentaje («−20 km/h (−31 %)»). */
 export function diferenciaEnTexto(f: ContraMetodosCesvi["filas"][number]): string {
   return f.diferenciaKmh === null || f.diferenciaPct === null
     ? "—"
-    : `${conSigno(f.diferenciaKmh, 2)} km/h (${conSigno(f.diferenciaPct, 2)} %)`;
+    : `${F.diferenciaKmh(f.diferenciaKmh, "reconstruccion")} (${F.diferenciaPct(f.diferenciaPct, "reconstruccion")})`;
 }
 
 /**
@@ -284,7 +284,7 @@ export function TablaContraCesvi({ contra }: { contra: ContraMetodosCesvi }) {
               <td className="py-2 font-sans">
                 {f.metodo} <span className="t-nota">{f.cesviQue}</span>
               </td>
-              <td className="py-2 text-right">{f.cesviKmh.toFixed(2)}</td>
+              <td className="py-2 text-right">{F.kmh(f.cesviKmh, "metodo")}</td>
               <td className="py-2 text-right">
                 {f.croquisKmh === null ? (
                   <span className="font-sans text-texto-3">la evidencia no la fija</span>
@@ -320,6 +320,30 @@ export function TablaContraCesvi({ contra }: { contra: ContraMetodosCesvi }) {
 }
 
 /**
+ * La deformación medida contra la reconstrucción que se ve, cuando no hay hipótesis entre las que
+ * elegir (con hipótesis, cada tarjeta lo dice). Nada si ningún vehículo trae deformación medida.
+ */
+export function DanoContraReconstruccion({
+  r,
+  nombres = {},
+}: {
+  r: Reconstruccion;
+  nombres?: Record<string, string>;
+}) {
+  const lecturas = useMemo(() => lecturasDeDano(r), [r]);
+  if (!lecturas.length) return null;
+  return (
+    <ul className="t-nota flex flex-col gap-1" data-testid="dano-contra-reconstruccion">
+      {lecturas.map((l) => (
+        <li key={l.vehiculo} data-estado={l.estado} data-energia-pct={F.fijo(l.energiaPct, 1)}>
+          {danoEnTexto(l, nombres[l.vehiculo] ?? l.vehiculo)}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/**
  * Las hipótesis (ADR 0091): un reposo supuesto que no cabe con la deformación medida, u otro
  * mínimo del multiarranque con un costo parecido al del mejor. Cada una con sus números y su
  * costo. El perito elige; Croquis no elige por él.
@@ -333,6 +357,11 @@ export function ElegirHipotesis({
   elegida: string | null;
   onElegir: (clave: string) => void;
 }) {
+  // La deformación medida contra cada hipótesis, con sus números (auditoría, C5).
+  const dano = useMemo(
+    () => new Map((r.hipotesis ?? []).map((h) => [h.clave, lecturasDeDano(r, h.clave)])),
+    [r],
+  );
   if (!r.hipotesis) return null;
   const hs = r.hipotesis;
   const vista = hs.find((h) => h.clave === elegida);
@@ -362,7 +391,7 @@ export function ElegirHipotesis({
             </span>
             <ul className="cifras t-cuerpo flex flex-col gap-1">
               {h.costo !== null ? (
-                <li data-testid={`costo-${h.clave}`}>Costo del ajuste: {h.costo.toFixed(3)}</li>
+                <li data-testid={`costo-${h.clave}`}>Costo del ajuste: {F.numero(h.costo, 3)}</li>
               ) : null}
               {h.velocidades.map((v) => (
                 <li key={v.vehiculo}>
@@ -371,19 +400,33 @@ export function ElegirHipotesis({
                     ? "sin velocidad"
                     : v.fijada
                       ? `${conRango(v.kmh, v.rango)} km/h`
-                      : `${v.kmh.toFixed(2)} km/h (mejor ajuste; la evidencia medida no la fija)`}
+                      : `${F.kmhConUnidad(v.kmh, "reconstruccion")} (mejor ajuste; la evidencia medida no la fija)`}
                 </li>
               ))}
               {h.reposos.map((x) => (
                 <li key={x.vehiculo}>
-                  {x.vehiculo} termina a {x.m.toFixed(1)} m de su reposo supuesto
+                  {x.vehiculo} termina a {F.metros(x.m, 1)} de su reposo supuesto
                 </li>
               ))}
-              <li>
-                {h.alcanzaDano
-                  ? "Alcanza la deformación medida"
-                  : "No alcanza la deformación medida"}
-              </li>
+              {(dano.get(h.clave) ?? []).length ? (
+                (dano.get(h.clave) ?? []).map((l) => (
+                  <li
+                    key={l.vehiculo}
+                    className="font-sans"
+                    data-testid={`dano-${h.clave}-${l.vehiculo}`}
+                    data-estado={l.estado}
+                    data-energia-pct={F.fijo(l.energiaPct, 1)}
+                  >
+                    {danoEnTexto(l)}
+                  </li>
+                ))
+              ) : (
+                <li>
+                  {h.alcanzaDano
+                    ? "Alcanza la deformación medida"
+                    : "No alcanza la deformación medida"}
+                </li>
+              )}
             </ul>
             <button
               type="button"
@@ -499,7 +542,7 @@ export function NotasDel3d({
           <p key={f.metodo} className="t-nota" data-testid="contra-cesvi-3d">
             <span className="cifras">
               {f.vehiculo}: Croquis {conRango(f.croquisKmh!, f.croquisRango)} km/h · CESVI (
-              {f.metodo}) {f.cesviKmh.toFixed(2)} km/h · {diferenciaEnTexto(f)}.
+              {f.metodo}) {F.kmhConUnidad(f.cesviKmh, "metodo")} · {diferenciaEnTexto(f)}.
             </span>{" "}
             {f.porQue}
           </p>

@@ -7,6 +7,7 @@
  * el orden de los reportes de CESVI.
  */
 import {
+  formato as F,
   impactosEnMapa,
   trayectoriasEnMapa,
   VERSION_PROMPT_ESCENA,
@@ -83,7 +84,7 @@ async function cuadros(
   for (const { t, etiqueta, vista } of [
     { t: Math.max(t0, -1), etiqueta: "Antes del impacto (−1 s)", vista: "antes" as const },
     { t: 0, etiqueta: "En el impacto (0 s)", vista: "impacto" as const },
-    { t: t1, etiqueta: `En reposo (+${t1.toFixed(1)} s)`, vista: "reposo" as const },
+    { t: t1, etiqueta: `En reposo (${F.instante(t1, 1)})`, vista: "reposo" as const },
   ]) {
     try {
       // U6: con el visor Unity las fotos salen de Unity, con el mismo tamaño y los mismos instantes.

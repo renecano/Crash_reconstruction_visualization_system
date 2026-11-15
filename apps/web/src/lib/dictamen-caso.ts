@@ -14,8 +14,8 @@
  * lugar, consideraciones, conclusiones). Los números salen del solver y del módulo de cálculo; la
  * conclusión la escribe el perito. Sin validación, el documento es un borrador.
  */
-import { conSigno as conSignoContra, pctConSigno } from "./contraste-lab";
 import {
+  formato as F,
   alternativaSupuesta,
   modalidadInferida,
   reconstruccionContraCesvi,
@@ -28,6 +28,10 @@ import {
   encabezadoHipotesis,
   enPalabras,
   mensajeEnPalabras,
+  danoEnCorto,
+  danoEnTexto,
+  lecturasDeDano,
+  notaDeMuestras,
 } from "@croquis/cesvi";
 import type { Content, TableCell, TDocumentDefinitions } from "pdfmake/interfaces";
 import { conGlifosDeRoboto, LEYENDA_DICTAMEN } from "./dictamen-cesvi";
@@ -109,11 +113,13 @@ function tabla(encabezados: string[], filas: TableCell[][]): Content {
   };
 }
 
-const kmh = (x?: number) => (x === undefined ? "—" : x.toFixed(2));
-/** «56.87 (54.79–78.39)»: el valor con su p10–p90 alrededor de la solución elegida, si lo hay. */
+const kmh = (x?: number) => F.kmh(x, "reconstruccion");
+/** «57 (55–78)»: el valor con su p10–p90 alrededor de la solución elegida, si lo hay. */
 const rangoTexto = (kmh: number, rango: [number, number] | null) =>
-  rango ? `${kmh.toFixed(2)} (${rango[0].toFixed(2)}–${rango[1].toFixed(2)})` : kmh.toFixed(2);
-const conSigno = (x: number) => `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(2)}`;
+  rango
+    ? `${F.kmh(kmh, "reconstruccion")} (${F.rangoKmh(rango[0], rango[1], "reconstruccion")})`
+    : F.kmh(kmh, "reconstruccion");
+// La reconstrucción contra una cifra del reporte: la diferencia va en enteros, como la reconstrucción.
 
 /**
  * La velocidad de la reconstrucción contra la de cada método del reporte (ADR 0091), con su
@@ -142,15 +148,18 @@ function hipotesis(d: DatosDictamenCaso): Content[] {
       ],
       hs.map((h) => [
         h.familia === "reposo" ? `${h.titulo} (supuesto)` : h.titulo,
-        h.costo === null ? "—" : h.costo.toFixed(3),
+        h.costo === null ? "—" : F.numero(h.costo, 3),
         h.velocidades
           .map(
             (v) =>
-              `${v.vehiculo}: ${v.kmh === null ? "—" : `${v.fijada ? rangoTexto(v.kmh, v.rango) : v.kmh.toFixed(2)} km/h`}${v.fijada || v.kmh === null ? "" : " (mejor ajuste; la evidencia medida no la fija)"}`,
+              `${v.vehiculo}: ${v.kmh === null ? "—" : `${v.fijada ? rangoTexto(v.kmh, v.rango) : F.kmh(v.kmh, "reconstruccion")} km/h`}${v.fijada || v.kmh === null ? "" : " (mejor ajuste; la evidencia medida no la fija)"}`,
           )
           .join("; "),
-        h.reposos.map((x) => `${x.vehiculo} a ${x.m.toFixed(1)} m`).join("; ") || "—",
-        h.alcanzaDano ? "La alcanza" : "No la alcanza",
+        h.reposos.map((x) => `${x.vehiculo} a ${F.metros(x.m, 1)}`).join("; ") || "—",
+        // Cuánto de la deformación medida explica cada hipótesis (auditoría, C5).
+        lecturasDeDano(r, h.clave)
+          .map((l) => `${l.vehiculo}: ${danoEnCorto(l)}`)
+          .join("; ") || (h.alcanzaDano ? "La alcanza" : "No la alcanza"),
       ]),
     ),
     nota(
@@ -168,13 +177,13 @@ function contraReporte(d: DatosDictamenCaso): Content[] {
       ["Método del reporte", "CESVI (km/h)", "Croquis (km/h)", "Diferencia"],
       k.filas.map((f) => [
         `${f.metodo}: ${f.cesviQue}`,
-        f.cesviKmh.toFixed(2),
+        F.kmh(f.cesviKmh, "metodo"),
         f.croquisKmh === null
           ? "la evidencia no la fija"
           : rangoTexto(f.croquisKmh, f.croquisRango),
         f.diferenciaKmh === null || f.diferenciaPct === null
           ? "—"
-          : `${conSigno(f.diferenciaKmh)} km/h (${conSigno(f.diferenciaPct)} %)`,
+          : `${F.diferenciaKmh(f.diferenciaKmh, "reconstruccion")} (${F.diferenciaPct(f.diferenciaPct, "reconstruccion")})`,
       ]),
     ),
     ...(k.filas.some((f) => f.croquisRango)
@@ -281,10 +290,16 @@ function secciones(d: DatosDictamenCaso) {
       r.velocidades.map((v) => [
         v.vehiculo,
         v.previa
-          ? `${v.previa.mejor.toFixed(2)} (${kmh(v.previa.p10)}–${kmh(v.previa.p90)})`
+          ? `${kmh(v.previa.mejor)} (${kmh(v.previa.p10)}–${kmh(v.previa.p90)})`
           : "la evidencia no la fija",
         v.impacto ? `${kmh(v.impacto.p10)}–${kmh(v.impacto.p50)}–${kmh(v.impacto.p90)}` : "—",
       ]),
+    ),
+    // La deformación medida contra la reconstrucción que se ve, con sus números.
+    ...lecturasDeDano(r).map((l) => parrafo(danoEnTexto(l))),
+    // Cada rango dice de cuántas simulaciones sale, y por qué va en enteros.
+    nota(
+      `El rango entre paréntesis es el ${notaDeMuestras(r)}. Las velocidades de la reconstrucción van en enteros: el rango cambia cerca de 1 km/h entre corridas y varios km/h con los supuestos.`,
     ),
     ...(d.supuestos?.length
       ? [
@@ -303,7 +318,7 @@ function secciones(d: DatosDictamenCaso) {
     ...(r.impactos.length > 1
       ? [
           parrafo(
-            `Impactos: ${r.impactos.map((i) => `X${i.numero} (${i.t === 0 ? "0.00 s" : `+${i.t.toFixed(2)} s`}, ${i.vehiculos.join(" con ")})`).join("; ")}.`,
+            `Impactos: ${r.impactos.map((i) => `X${i.numero} (${F.instante(i.t)}, ${i.vehiculos.join(" con ")})`).join("; ")}.`,
           ),
         ]
       : []),
@@ -347,7 +362,7 @@ function secciones(d: DatosDictamenCaso) {
     ...(d.contraDeformacion?.vehiculo === v.vehiculo
       ? [
           parrafo(
-            `Método de CESVI con los datos del reporte: Croquis ${d.contraDeformacion.croquis.toFixed(2)} km/h y el reporte ${d.contraDeformacion.cesvi.toFixed(2)} km/h, con las mismas medidas y el mismo método; diferencia de ${conSignoContra(d.contraDeformacion.difKmh)} km/h (${pctConSigno(d.contraDeformacion.difPct)}).`,
+            `Método de CESVI con los datos del reporte: Croquis ${F.kmhConUnidad(d.contraDeformacion.croquis, "metodo")} y el reporte ${F.kmhConUnidad(d.contraDeformacion.cesvi, "metodo")}, con las mismas medidas y el mismo método; diferencia de ${F.diferenciaKmh(d.contraDeformacion.difKmh, "metodo")} (${F.diferenciaPct(d.contraDeformacion.difPct, "metodo")}).`,
           ),
         ]
       : []),

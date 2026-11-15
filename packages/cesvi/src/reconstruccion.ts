@@ -20,6 +20,7 @@ import {
   fullResult,
   isReverse,
   PRIORIDAD,
+  PRODUCTION_SAMPLES,
   reconstruct,
   SIGMA_POSITION_M,
 } from "@croquis/solver-ts";
@@ -60,6 +61,8 @@ import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from 
 import { objetosDe, TIPOS_OBJETO } from "./objetos";
 import type { MallaRelieve } from "./relieve";
 import { terrenoDeEscena, terrenoReconstruido, type TerrenoReconstruido } from "./terreno";
+import { limiteDeCobertura } from "./cobertura";
+import { grados, kmhConUnidad, metros, rangoKmh } from "./formato";
 
 type Json = Record<string, unknown>;
 type Id = Expediente["vehiculos"][number]["id"];
@@ -817,7 +820,7 @@ export interface ImpactoReconstruido {
 
 /**
  * De qué inversión sale una hipótesis (ADR 0091): si un reposo supuesto no cabe con la deformación
- * medida, «cuadra con el daño medido» (la deformación como restricción, el reposo supuesto blando)
+ * medida, «la más cercana al daño medido» (la deformación como restricción, el reposo supuesto blando)
  * o «cuadra con el reposo supuesto» (el supuesto pesa como dato); si no, la única inversión
  * («evidencia»).
  */
@@ -922,8 +925,14 @@ interface Inversion {
   alternativas?: Inversion[];
 }
 
-const TITULOS: Record<FamiliaHipotesis, string> = {
-  dano: "Cuadra con el daño medido",
+/**
+ * Cómo se llama cada hipótesis en todas las vistas. La de la deformación como restricción se llama
+ * «La más cercana al daño medido» y no «Cuadra con el daño medido» (René, 2026-11-15): puede quedar
+ * en el borde bajo de lo que pide la deformación (AXA: 34 % de la energía de la mediana), y la
+ * misma pantalla lo dice (`dano-energia.ts`).
+ */
+export const TITULOS_DE_HIPOTESIS: Record<FamiliaHipotesis, string> = {
+  dano: "La más cercana al daño medido",
   reposo: "Cuadra con el reposo supuesto",
   evidencia: "La que mejor cuadra con la evidencia",
 };
@@ -961,7 +970,10 @@ function leerHipotesis(
     clave: modo === 1 ? familia : `${familia}-${modo}`,
     familia,
     modo,
-    titulo: modo === 1 ? TITULOS[familia] : `${TITULOS[familia]} · otra solución`,
+    titulo:
+      modo === 1
+        ? TITULOS_DE_HIPOTESIS[familia]
+        : `${TITULOS_DE_HIPOTESIS[familia]} · otra solución`,
     costo,
     velocidades: Object.entries(base.ids).map(([sid, id]) => {
       const p = inv.parametros.find(
@@ -1045,13 +1057,15 @@ export function alternativaSupuesta(
   if (!alt) return null;
   const conVel = alt.velocidades.filter((v) => v.kmh !== null);
   const vel = (v: (typeof conVel)[number]) =>
-    `${letraDe(String(v.vehiculo))} ${v.kmh!.toFixed(2)} km/h${v.fijada && v.rango ? ` (${v.rango[0].toFixed(2)}–${v.rango[1].toFixed(2)})` : ""}`;
+    `${letraDe(String(v.vehiculo))} ${kmhConUnidad(v.kmh, "reconstruccion")}${v.fijada && v.rango ? ` (${rangoKmh(v.rango[0], v.rango[1], "reconstruccion")})` : ""}`;
   const mayor = [...conVel].sort((a, b) => b.kmh! - a.kmh!)[0];
   return {
     clave: alt.clave,
     titulo: alt.titulo,
     texto: `Alternativa, con el reposo supuesto como dato (supuesto, no medición): ${conVel.map(vel).join(", ")}.`,
-    corto: mayor ? `${letraDe(String(mayor.vehiculo))} ${mayor.kmh!.toFixed(2)} km/h` : "",
+    corto: mayor
+      ? `${letraDe(String(mayor.vehiculo))} ${kmhConUnidad(mayor.kmh, "reconstruccion")}`
+      : "",
   };
 }
 
@@ -1095,7 +1109,7 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
   const lejos = choqueLejosDelRelato(base.spec, inv);
   if (lejos !== null)
     limites.push(
-      `El choque quedó a ${lejos.toFixed(1)} m del punto que da el relato: el relato lo estima y la evidencia lo lleva ahí.`,
+      `El choque quedó a ${metros(lejos, 1)} del punto que da el relato: el relato lo estima y la evidencia lo lleva ahí.`,
     );
   // Un rumbo de llegada que la evidencia empuja contra el límite de búsqueda se le dice al perito,
   // no se queda como un número callado (ADR 0135).
@@ -1103,7 +1117,7 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
     const id = base.ids[p.vehiculo];
     if (p.parametro !== "rumbo_inicial" || !p.en_limite || !p.estimacion || !id) continue;
     limites.push(
-      `${id}: la evidencia empuja el rumbo fuera del rango permitido (±${ANGLE_BOUND_DEG}° sobre el que se colocó en el mapa). El mejor ajuste queda en el límite, ${p.estimacion.mejor.toFixed(1)}°, así que no cabe bien con lo demás: conviene revisar las posiciones y el rumbo de llegada.`,
+      `${id}: la evidencia empuja el rumbo fuera del rango permitido (±${ANGLE_BOUND_DEG}° sobre el que se colocó en el mapa). El mejor ajuste queda en el límite, ${grados(p.estimacion.mejor)}, así que no cabe bien con lo demás: conviene revisar las posiciones y el rumbo de llegada.`,
     );
   }
   const velocidades = Object.entries(base.ids).map(([sid, id]) => {
@@ -1118,6 +1132,9 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
           : null,
     };
   });
+  // Un rango no es una garantía: su cobertura medida va con los límites (René, 2026-11-15).
+  if (velocidades.some((v) => v.previa?.p10 !== undefined && v.previa.p90 !== undefined))
+    limites.push(limiteDeCobertura());
   // Una reversa más rápida que cualquiera de las medidas en uso real se le dice al perito (T3.3).
   for (const sv of (base.spec.vehiculos ?? []) as Json[]) {
     const id = base.ids[String(sv.id)];
@@ -1176,10 +1193,56 @@ export function evidenciaEnPalabras(etiqueta: string, ids: Record<string, Id>): 
   return `${nombre[tipo ?? ""] ?? tipo} de ${v}`;
 }
 
-/** Corre el solver de producción (port TS) sobre la escena del expediente. */
-export function reconstruirExpediente(e: Expediente, specId?: string): Reconstruccion {
+/**
+ * Corre el solver (port TS) sobre la escena del expediente. Por omisión usa las muestras de
+ * **referencia** (12 de la inversión y 64 del Monte Carlo), que son las de las pruebas y las
+ * evaluaciones. La app reconstruye en su worker con las de **producción** (`PRODUCTION_SAMPLES`: 32
+ * y 128), así que su rango no es idéntico al de aquí (auditoría del 2026-11-15, N3): para el número
+ * que ve el perito, pasa `PRODUCTION_SAMPLES`. El resultado dice con cuántas se calculó
+ * (`muestrasDe`).
+ */
+export function reconstruirExpediente(
+  e: Expediente,
+  specId?: string,
+  muestras: { samples?: number; mcSamples?: number } = {},
+): Reconstruccion {
   const base = especDeExpediente(e, specId);
-  return interpretarResultado(base, fullResult(base.spec));
+  return interpretarResultado(base, fullResult(base.spec, muestras));
+}
+
+/** Las simulaciones con las que se calculó un rango, y cuál de los dos juegos son. */
+export interface MuestrasReconstruccion {
+  /** Las de la inversión: de ellas sale el p10–p90 de cada velocidad. */
+  inversion: number;
+  juego: "producción" | "referencia" | "otro";
+}
+
+/**
+ * Con cuántas simulaciones se calculó el rango de una reconstrucción (lo dice su resultado). Todo
+ * rango que se publica lleva este dato: «p10–p90 de 32 simulaciones» (auditoría del 2026-11-15, N3).
+ * null si el resultado no lo trae.
+ */
+export function muestrasDe(r: Pick<Reconstruccion, "resultado">): MuestrasReconstruccion | null {
+  const n = (r.resultado.inversion as { muestras?: unknown } | undefined)?.muestras;
+  if (typeof n !== "number") return null;
+  return {
+    inversion: n,
+    juego:
+      n === PRODUCTION_SAMPLES.samples
+        ? "producción"
+        : n === MUESTRAS_DE_REFERENCIA
+          ? "referencia"
+          : "otro",
+  };
+}
+
+/** Las muestras de la inversión cuando nadie pide otras (la referencia Python usa las mismas). */
+export const MUESTRAS_DE_REFERENCIA = 12;
+
+/** «p10–p90 de 32 simulaciones»; sin el dato, «p10–p90 de las simulaciones». */
+export function notaDeMuestras(r: Pick<Reconstruccion, "resultado">): string {
+  const m = muestrasDe(r);
+  return m ? `p10–p90 de ${m.inversion} simulaciones` : "p10–p90 de las simulaciones";
 }
 
 /**

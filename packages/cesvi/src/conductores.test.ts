@@ -131,8 +131,8 @@ describe("la hipótesis del perito sobre un conductor (R12a)", () => {
     // La línea base de la carambola es A con B en 0 s: la misma que el primer impacto.
     expect(leerPruebaConductores(conImpacto(["V2", "V1"]), agentes).lineaBaseDistinta).toBeNull();
     expect(leerPruebaConductores(conImpacto(["V2", "V3"]), agentes).lineaBaseDistinta).toEqual({
-      sinHipotesis: "V1 con V2 en +0.00 s",
-      reconstruccion: "V2 con V3 en +0.00 s",
+      sinHipotesis: "V1 con V2 en 0.00 s",
+      reconstruccion: "V2 con V3 en 0.00 s",
     });
     // Sin impactos reconstruidos no hay con qué comparar.
     expect(leerPruebaConductores(conNombres(ids), agentes).lineaBaseDistinta).toBeNull();

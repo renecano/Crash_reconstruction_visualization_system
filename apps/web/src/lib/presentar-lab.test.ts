@@ -53,13 +53,13 @@ describe("Presentar (Laboratorio §8)", () => {
     const c = capitulos({ ...base, contra: null, conteo: null })[1]!;
     expect(c.filas[0]).toEqual({
       etiqueta: "B · Tacoma antes del impacto",
-      valor: "56.87 km/h",
+      valor: "57 km/h",
       grande: true,
     });
-    expect(c.filas[1]).toEqual({ etiqueta: "Rango", valor: "54.79–78.39" });
+    expect(c.filas[1]).toEqual({ etiqueta: "Rango", valor: "55–78" });
     expect(c.filas[2]).toMatchObject({
       etiqueta: "A · Silverado antes del impacto",
-      valor: "14.98 km/h",
+      valor: "15 km/h",
     });
   });
 
@@ -77,7 +77,7 @@ describe("Presentar (Laboratorio §8)", () => {
     const c = capitulos({ ...base, r: quieta, contra: null, conteo: null })[1]!;
     expect(c.filas[1]).toEqual({
       etiqueta: "Rango por aproximación lineal",
-      valor: "27.20–55.70",
+      valor: "27–56",
     });
   });
 
@@ -108,10 +108,10 @@ describe("Presentar (Laboratorio §8)", () => {
     expect(c.filas).toEqual([
       { etiqueta: "Método de CESVI con los datos del reporte", valor: "+1.19 %", grande: true },
       { etiqueta: "Croquis contra el reporte", valor: "63.90 contra 63.15 km/h · +0.75 km/h" },
-      { etiqueta: "Reconstrucción física de Croquis", valor: "−22.07 %", grande: true },
+      { etiqueta: "Reconstrucción física de Croquis", valor: "−22 %", grande: true },
       {
         etiqueta: "Croquis contra el reporte",
-        valor: "49.21 (47.32–49.21) contra 63.15 km/h · −13.94 km/h",
+        valor: "49 (47–49) contra 63.15 km/h · −14 km/h",
       },
       { etiqueta: "Criterios", valor: "3 coinciden · 0 difieren · 1 sin dato" },
     ]);

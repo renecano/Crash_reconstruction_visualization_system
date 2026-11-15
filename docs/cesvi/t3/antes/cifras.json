@@ -1,0 +1,21 @@
+{
+  "etiqueta": "antes",
+  "base": "https://croquis-sage.vercel.app",
+  "fecha": "2026-11-15T21:08:39.857Z",
+  "reconstruccion": {
+    "cifra": "56.87",
+    "rango": "rango 54.79–78.39",
+    "mediana": "",
+    "hipotesis": "Dos hipótesis: el reposo supuesto y el daño medido no caben juntos\n\nElige una. Mientras no elijas, se ve «Cuadra con el daño medido» (lo medido pesa más que lo supuesto y es la de menor costo), y el dictamen dice que falta tu elección.\n\nCuadra con el daño medido\nCosto del ajuste: 0.075\nV2: 56.87 (54.79–78.39) km/h\nV1: 14.98 (0.80–16.45) km/h\nV2 termina a 3.9 m de su reposo supuesto\nAlcanza la deformación medida\nElegir esta\nCuadra con el reposo supuestosupuesto\nCosto del ajuste: 0.555\nV2: 34.44 (30.07–44.44) km/h\nV1: 29.90 (21.38–31.63) km/h\nV2 termina a 0.2 m de su reposo supuesto\nNo alcanza la deformación medida\nElegir esta\n\nEl costo mide qué tan bien reproduce cada solución la evidencia: menor es mejor. Solo se comparan los de la misma hipótesis, porque cada una pesa distinto el reposo supuesto. Entre paréntesis, el p10–p90 de cada velocidad con las entradas perturbadas (medidas, fricción, masas y reposo supuesto) alrededor de esa solución. Si con eso la solución no se mueve (el costo tiene un quiebre ahí), es su aproximación lineal."
+  },
+  "contra_cesvi": {
+    "metodo_croquis": "63.90",
+    "metodo_cesvi": "63.15",
+    "metodo_kmh": "diferencia · +0.75 km/h",
+    "metodo_pct": "+1.19 %",
+    "fisica_croquis": "56.87",
+    "fisica_rango": "rango 54.79–78.39",
+    "fisica_kmh": "diferencia · −6.28 km/h",
+    "fisica_pct": "−9.94 %"
+  }
+}

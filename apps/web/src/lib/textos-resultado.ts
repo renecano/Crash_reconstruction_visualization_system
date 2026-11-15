@@ -173,6 +173,11 @@ function notaIncierta(nota: string, lang: Lang): string {
   if (lang === "es") return nota;
   if (nota === "rango declarado") return "stated range";
   if (nota === "rango de la clase") return "range for the vehicle class";
+  // Los supuestos que se sortean en un hipercubo aparte (topes, W5; impacto, ADR 0139).
+  if (nota === "supuesto con rango de la literatura; hipercubo aparte de diseño fijo")
+    return "assumption with a range from the literature; separate fixed-design hypercube";
+  if (nota === "supuesto declarado; hipercubo aparte con semilla derivada de la del caso")
+    return "declared assumption; separate hypercube seeded from the case";
   const pct = /^±(\d+(?:\.\d+)?%) \((.+)\)$/.exec(nota);
   if (pct) return `±${pct[1]} (${FUENTE[pct[2]!] ? palabra(FUENTE, pct[2], "en") : pct[2]})`;
   const tabla = /^tabla de fricción \((.+)\)$/.exec(nota);

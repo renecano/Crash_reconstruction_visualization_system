@@ -9,6 +9,7 @@
  * redacción de las consideraciones, revisada por el perito.
  */
 import {
+  formato as F,
   CRITERIOS,
   NOMBRE_ZONA,
   type CasoCesvi,
@@ -264,7 +265,7 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
         `${nombreVehiculo(c, "B")}. Mapa © OpenStreetMap (ODbL), mosaicos OpenFreeMap / OpenMapTiles.`,
         ...(d.croquis.punto
           ? [
-              ` Punto de impacto: ${d.croquis.punto.lat.toFixed(5)}, ${d.croquis.punto.lon.toFixed(5)}${
+              ` Punto de impacto: ${F.fijo(d.croquis.punto.lat, 5)}, ${F.fijo(d.croquis.punto.lon, 5)}${
                 d.croquis.punto.ilustrativo
                   ? ` (ubicación ilustrativa: el reporte de CESVI no da coordenadas del km ${c.lugar.kilometro}; no es el lugar real).`
                   : " (marcado por el perito)."
@@ -341,10 +342,10 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
       ["Concepto", "Original", "Croquis", "Diferencia", "%"],
       d.reproduccion.map((f) => [
         `${f.concepto} (${f.partida.toLowerCase()})`,
-        `${f.reporte.toFixed(f.decimalesReporte)} ${f.unidad}`,
-        `${f.croquis.toFixed(Math.min(f.decimalesReporte + 2, 4))} ${f.unidad}`,
-        f.diferencia.toFixed(Math.min(f.decimalesReporte + 2, 4)),
-        `${f.diferenciaPct.toFixed(Math.abs(f.diferenciaPct) < 0.01 ? 4 : 2)} %`,
+        `${F.fijo(f.reporte, f.decimalesReporte)} ${f.unidad}`,
+        `${F.fijo(f.croquis, Math.min(f.decimalesReporte + 2, 4))} ${f.unidad}`,
+        F.fijo(f.diferencia, Math.min(f.decimalesReporte + 2, 4)),
+        `${F.fijo(f.diferenciaPct, Math.abs(f.diferenciaPct) < 0.01 ? 4 : 2)} %`,
       ]),
       ["*", 70, 70, 55, 45],
     ),
@@ -378,10 +379,10 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
   out.push(titulo("Conclusiones"));
   const conclusiones = [
     d.calculos.ebsReporte
-      ? `De acuerdo con la magnitud y profundidad de los daños del vehículo B, su velocidad de impacto es de ${d.calculos.ebsReporte.calculo.kmh.toFixed(2)} km/h (partiendo de la energía del reporte de CESVI; con los datos impresos, ${d.calculos.ebsDatos ? `${d.calculos.ebsDatos.calculo.kmh.toFixed(2)} km/h` : "sin calcular"}).`
+      ? `De acuerdo con la magnitud y profundidad de los daños del vehículo B, su velocidad de impacto es de ${F.kmhConUnidad(d.calculos.ebsReporte.calculo.kmh, "metodo")} (partiendo de la energía del reporte de CESVI; con los datos impresos, ${d.calculos.ebsDatos ? `${F.kmh(d.calculos.ebsDatos.calculo.kmh, "metodo")} km/h` : "sin calcular"}).`
       : null,
     d.calculos.v3
-      ? `De acuerdo con la separación de los restos, el vehículo A fue desplazado con una velocidad de ${d.calculos.v3.calculo.kmh.toFixed(2)} km/h.`
+      ? `De acuerdo con la separación de los restos, el vehículo A fue desplazado con una velocidad de ${F.kmhConUnidad(d.calculos.v3.calculo.kmh, "metodo")}.`
       : null,
     validado
       ? d.validacion!.conclusion
@@ -404,14 +405,14 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
               ? f.coincide
                 ? "Coincide"
                 : "Difiere"
-              : `${f.diferenciaPct >= 0 ? "+" : "−"}${Math.abs(f.diferenciaPct).toFixed(2)} %`,
+              : F.diferenciaPct(f.diferenciaPct, "metodo"),
         ]),
         ["*", 95, 95, 60],
       ),
     );
     if (cd.energia) {
       out.push({
-        text: `Diferencia de energía: con los datos impresos la energía de deformación es ${cd.energia.croquis.toFixed(3)} y el reporte de CESVI imprime ${cd.energia.dictamen.toFixed(3)} (${cd.energia.diferenciaPct >= 0 ? "+" : "−"}${Math.abs(cd.energia.diferenciaPct).toFixed(2)} %). ${cd.energia.lectura}`,
+        text: `Diferencia de energía: con los datos impresos la energía de deformación es ${F.fijo(cd.energia.croquis, 3)} y el reporte de CESVI imprime ${F.fijo(cd.energia.dictamen, 3)} (${F.diferenciaPct(cd.energia.diferenciaPct, "metodo")}). ${cd.energia.lectura}`,
         fontSize: 8,
         color: "#444444",
         margin: [0, 4, 0, 8],

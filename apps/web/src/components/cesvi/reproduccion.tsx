@@ -4,6 +4,7 @@
  * segunda opinión de Croquis, aparte (docs/cesvi/PROTOTIPO.md, ADR 0048).
  */
 import {
+  formato as F,
   DISCREPANCIA_A2010930,
   PREGUNTAS_PARA_CESVI,
   reproducir,
@@ -15,7 +16,7 @@ import { Desplazable } from "@/components/sitio/desplazable";
 
 /** Decimales para el número de Croquis: dos más que el reporte para ver la diferencia, hasta 4. */
 const decimalesCroquis = (f: FilaReproduccion) => Math.min(f.decimalesReporte + 2, 4);
-const signo = (x: number, d: number) => `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(d)}`;
+const signo = (x: number, d: number) => F.conSigno(x, d);
 /** Porcentaje con 2 decimales, o con 4 si es menor que 0.01 % (para que no se lea «0.00»). */
 const pct = (x: number) => signo(x, Math.abs(x) < 0.01 ? 4 : 2);
 
@@ -68,10 +69,10 @@ export function Reproduccion({ caso }: { caso: CasoCesvi }) {
                 <td className="py-2 pr-4">{f.concepto}</td>
                 <td className="t-nota py-2 pr-4 text-texto-2">{f.partida}</td>
                 <td className="cifras py-2 pr-4 text-right">
-                  {f.reporte.toFixed(f.decimalesReporte)} {f.unidad}
+                  {F.fijo(f.reporte, f.decimalesReporte)} {f.unidad}
                 </td>
                 <td className="cifras py-2 pr-4 text-right">
-                  {f.croquis.toFixed(decimalesCroquis(f))} {f.unidad}
+                  {F.fijo(f.croquis, decimalesCroquis(f))} {f.unidad}
                 </td>
                 <td className="cifras py-2 pr-4 text-right">
                   {signo(f.diferencia, decimalesCroquis(f))}
@@ -92,7 +93,7 @@ export function Reproduccion({ caso }: { caso: CasoCesvi }) {
         </h3>
         <p className="t-cuerpo max-w-[72ch]">
           Con la fórmula de 4 medidas que imprime el reporte y sus propios datos, la energía es{" "}
-          <span className="cifras">{d.energiaDatosImpresos.toFixed(3)} kJ</span>, no{" "}
+          <span className="cifras">{F.fijo(d.energiaDatosImpresos, 3)} kJ</span>, no{" "}
           <span className="cifras">{d.energiaReporte}</span> (
           <span className="cifras">{signo(d.diferenciaPct, 2)} %</span>). El paso de energía a
           velocidad del reporte sí es exacto: partiendo de su energía, Croquis da los mismos 63.15
@@ -101,19 +102,19 @@ export function Reproduccion({ caso }: { caso: CasoCesvi }) {
         <ul className="t-cuerpo flex max-w-[72ch] list-disc flex-col gap-1 pl-5">
           <li>
             Si las C impresas estuvieran redondeadas (±0.005 m), la energía quedaría entre{" "}
-            <span className="cifras">{d.redondeoC.minimo.toFixed(3)}</span> y{" "}
-            <span className="cifras">{d.redondeoC.maximo.toFixed(3)} kJ</span>:{" "}
+            <span className="cifras">{F.fijo(d.redondeoC.minimo, 3)}</span> y{" "}
+            <span className="cifras">{F.fijo(d.redondeoC.maximo, 3)} kJ</span>:{" "}
             {d.redondeoC.contieneAlReporte ? "contiene" : "no contiene"} la del reporte.
           </li>
           <li>
             Un dígito mal leído en L, A o B: el más cercano ({d.digitoMasCercano.parametro} ={" "}
             <span className="cifras">{d.digitoMasCercano.leido}</span> en lugar de{" "}
             <span className="cifras">{d.digitoMasCercano.impreso}</span>) da{" "}
-            <span className="cifras">{d.digitoMasCercano.energia.toFixed(3)} kJ</span>.
+            <span className="cifras">{F.fijo(d.digitoMasCercano.energia, 3)} kJ</span>.
           </li>
           <li>
             Variantes de la fórmula (pesos, productos vecinos, término A²/2B): la más cercana queda
-            a <span className="cifras">{d.varianteMasCercana.toFixed(3)} kJ</span>, y ninguna da los
+            a <span className="cifras">{F.fijo(d.varianteMasCercana, 3)} kJ</span>, y ninguna da los
             7 decimales impresos.
           </li>
         </ul>
@@ -148,20 +149,20 @@ export function Reproduccion({ caso }: { caso: CasoCesvi }) {
           La misma deformación con la rigidez que Croquis midió para pickups en{" "}
           <span className="cifras">{segunda.pruebas}</span> pruebas de choque frontales de NHTSA, en
           lugar de los coeficientes del reporte: A ={" "}
-          <span className="cifras">{(segunda.A / 1000).toFixed(1)} kN/m</span> y B ={" "}
-          <span className="cifras">{(segunda.B / 1000).toFixed(1)} kN/m²</span> (mediana), contra{" "}
+          <span className="cifras">{F.fijo(segunda.A / 1000, 1)} kN/m</span> y B ={" "}
+          <span className="cifras">{F.fijo(segunda.B / 1000, 1)} kN/m²</span> (mediana), contra{" "}
           <span className="cifras">{deformacion.A.valor}</span> y{" "}
           <span className="cifras">{deformacion.B.valor}</span> del reporte.
         </p>
         <p className="t-interfaz" data-testid="segunda-opinion">
-          Energía de <span className="cifras">{(segunda.energiaJ / 1000).toFixed(1)} kJ</span> y
-          velocidad de impacto de <span className="cifras">{segunda.kmh.toFixed(1)} km/h</span>
+          Energía de <span className="cifras">{F.fijo(segunda.energiaJ / 1000, 1)} kJ</span> y
+          velocidad de impacto de <span className="cifras">{F.fijo(segunda.kmh, 1)} km/h</span>
           {segunda.intervaloKmh ? (
             <>
               {" "}
               (80 % de las pruebas entre{" "}
-              <span className="cifras">{segunda.intervaloKmh[0].toFixed(1)}</span> y{" "}
-              <span className="cifras">{segunda.intervaloKmh[1].toFixed(1)} km/h</span>)
+              <span className="cifras">{F.fijo(segunda.intervaloKmh[0], 1)}</span> y{" "}
+              <span className="cifras">{F.fijo(segunda.intervaloKmh[1], 1)} km/h</span>)
             </>
           ) : null}
           .

@@ -19,10 +19,11 @@ import {
   type ResultadoMcHenry,
   type Velocidad,
 } from "./metodo";
+import { fijo } from "./formato";
 
 /** Cifra con `d` decimales, punto decimal y sin separador de miles (como en los dictámenes). */
 export function cifra(x: number, d: number): string {
-  return x.toFixed(d);
+  return fijo(x, d);
 }
 
 /** Un dato tal como se capturó: sin perder ni agregar decimales. */

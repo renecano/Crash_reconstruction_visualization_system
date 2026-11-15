@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { expect, test } from "@playwright/test";
 import { irAPaso, sinIdentificadoresDeFuente } from "./ayuda-recorrido";
+import * as F from "../../../packages/cesvi/src/formato";
 
 // La transición entre actos (ADR 0108) es decorativa: estos flujos prueban la función, y en CI (render
 // por software) la cortina a pantalla completa compite con el 3D. Con movimiento reducido no se monta.
@@ -26,14 +27,14 @@ const V2 = (() => {
   const cesvi = leer<{
     calculos: { deformacion_B: { reporte: { ebs_kmh: { valor: number } } } };
   }>("data/cesvi/casos/A2010930.json").calculos.deformacion_B.reporte.ebs_kmh.valor;
-  const r2 = (x: number) => Math.round(x * 100) / 100;
-  const signo = (x: number) => `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(2)}`;
+  // Como lo escribe la app (formato.ts): la reconstrucción en enteros y la cifra de CESVI con dos
+  // decimales. El número completo es el de eval/results.
   return {
-    texto: m.mejor.toFixed(2),
-    rango: `${m.p10.toFixed(2)}–${m.p90.toFixed(2)}`,
-    cesvi: cesvi.toFixed(2),
-    difKmh: signo(r2(m.mejor - cesvi)),
-    difPct: signo(r2((100 * (m.mejor - cesvi)) / cesvi)),
+    texto: F.kmh(m.mejor, "reconstruccion"),
+    rango: F.rangoKmh(m.p10, m.p90, "reconstruccion"),
+    cesvi: F.kmh(cesvi, "metodo"),
+    difKmh: F.conSigno(m.mejor - cesvi, 0),
+    difPct: F.conSigno((100 * (m.mejor - cesvi)) / cesvi, 0),
   };
 })();
 
@@ -116,7 +117,7 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   await expect(page.getByTestId("cifra-reconstruida")).toHaveText(V2.texto);
   await expect(page.getByTestId("cifra-rango")).toHaveText(`rango ${V2.rango}`);
   await expect(page.getByTestId("metodo-cifra")).toContainText("mejor ajuste");
-  await expect(page.getByTestId("fila-mediana")).toHaveText(/^\d+\.\d\d km\/h$/);
+  await expect(page.getByTestId("fila-mediana")).toHaveText(/^\d+ km\/h$/);
   await expect(page.getByTestId("marca-mejor-ajuste")).toHaveAttribute(
     "data-tip",
     `Mejor ajuste: ${V2.texto} km/h`,
