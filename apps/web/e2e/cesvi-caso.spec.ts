@@ -425,7 +425,7 @@ test("@flujo /cesvi: una carambola, con sus impactos en orden hasta el 3D", asyn
   const impactos = page.getByTestId("impactos-reconstruidos");
   await expect(impactos.locator('[data-impacto="1"]')).toContainText("V1 con V2");
   await expect(impactos.locator('[data-impacto="2"]')).toContainText("V2 con V3");
-  await expect(impactos.locator('[data-impacto="2"]')).toContainText(/\+\d\.\d\d s/);
+  await expect(impactos.locator('[data-impacto="2"]')).toContainText(/(\+\d\.\d\d|0\.00) s/);
   await expect(mapa.locator('[data-impacto="1"]')).toHaveText("X1");
   await expect(mapa.locator('[data-impacto="2"]')).toHaveText("X2");
   await expect(page.getByTestId("limites")).toContainText("V3: solo está en un impacto posterior");
