@@ -90,7 +90,13 @@ describe("el formateador único de las cifras (decisión 5 de René, ADR 0138)",
       for (const e of readdirSync(join(RAIZ, dir), { withFileTypes: true })) {
         const ruta = `${dir}/${e.name}`;
         if (e.isDirectory()) recorre(ruta, siempre);
-        else if (EXT.test(e.name) && !/\.test\.tsx?$/.test(e.name) && !ruta.endsWith("/formato.ts"))
+        else if (
+          EXT.test(e.name) &&
+          !/\.test\.tsx?$/.test(e.name) &&
+          !ruta.endsWith("/formato.ts") &&
+          // La animación de la portada redondea posiciones de CSS, no cifras.
+          !ruta.endsWith("portada-v3/comportamiento.ts")
+        )
           revisa(ruta, siempre);
       }
     };

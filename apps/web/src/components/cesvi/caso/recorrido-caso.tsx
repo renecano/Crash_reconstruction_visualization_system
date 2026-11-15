@@ -10,6 +10,7 @@
  */
 import { LEGEND_TEXT_CESVI } from "@croquis/scene-schema";
 import {
+  formato as F,
   comparar,
   coordinar,
   criteriosVacios,
@@ -608,7 +609,7 @@ export function RecorridoCaso({
   // cruce y las flechas con ellas.
   const origenCalles = puntoDe(1) ?? centroBuscado ?? expediente?.caso.lugar?.coordenadas ?? null;
   const claveCalles = origenCalles
-    ? `${origenCalles.lon.toFixed(3)},${origenCalles.lat.toFixed(3)}`
+    ? `${F.fijo(origenCalles.lon, 3)},${F.fijo(origenCalles.lat, 3)}`
     : null;
   useEffect(() => {
     if (!claveCalles) return;
@@ -1449,8 +1450,8 @@ export function RecorridoCaso({
                       <b className="text-texto">
                         {enc.vehiculos[0]} y {enc.vehiculos[1]} quedaron encimados
                       </b>{" "}
-                      en su posición final ({enc.traslape_m.toFixed(2)} m). Dos vehículos en reposo
-                      no ocupan el mismo lugar.
+                      en su posición final ({F.metros(enc.traslape_m)}). Dos vehículos en reposo no
+                      ocupan el mismo lugar.
                     </p>
                     <button
                       type="button"

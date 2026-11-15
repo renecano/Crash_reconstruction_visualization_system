@@ -14,6 +14,7 @@
  * Rumbos en grados desde el norte, en sentido horario (0 = norte, 90 = este), como el expediente.
  */
 import {
+  formato as F,
   avanzar,
   conPosicion,
   distanciaM,
@@ -979,7 +980,7 @@ export function resumenC1(s: {
 /** C3 (W5): las líneas del terreno para el resumen, con lo que es supuesto dicho como supuesto. */
 export function resumenTerreno(e: Expediente, c1: RespuestasC1): LineaResumen[] {
   const out: LineaResumen[] = [];
-  const m = (x: number | undefined) => (x ?? 0).toFixed(2);
+  const m = (x: number | undefined) => F.numero(x ?? 0, 2);
   for (const t of piezasTerreno(e)) {
     if (t.clase === "zona")
       out.push({

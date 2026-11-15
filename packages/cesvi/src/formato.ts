@@ -124,3 +124,12 @@ export function segundos(t: number, decimales = 2): string {
 export function grados(x: number, decimales = 1): string {
   return `${numero(x, decimales)}°`;
 }
+
+/**
+ * `x` redondeado a `decimales`, como número: para geometría y posiciones en pantalla (un porcentaje
+ * de CSS, una coordenada de SVG), no para escribir una cifra.
+ */
+export function redondea(x: number, decimales: number): number {
+  const e = 10 ** decimales;
+  return Math.round(x * e) / e;
+}

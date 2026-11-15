@@ -5,6 +5,7 @@
  * «Caso nuevo» (N vehículos, carambolas, 3D, declaración y dictamen).
  */
 import {
+  formato as F,
   conMasa,
   type ComparacionDictamen,
   type ContraMetodosCesvi,
@@ -570,18 +571,18 @@ export function DetalleContraReporte({
                 <td className="py-2 font-sans">
                   {v.vehiculo} <span className="t-nota">{v.que}</span>
                 </td>
-                <td className="py-2 text-right">{v.cesvi_kmh.toFixed(2)}</td>
+                <td className="py-2 text-right">{F.kmh(v.cesvi_kmh, "metodo")}</td>
                 <td className="py-2 text-right">
                   {v.croquis_kmh === null ? (
                     <span className="font-sans text-texto-3">sin las medidas</span>
                   ) : (
-                    v.croquis_kmh.toFixed(2)
+                    F.kmh(v.croquis_kmh, "metodo")
                   )}
                 </td>
                 <td className="py-2 text-right">
                   {v.error_kmh === null
                     ? "—"
-                    : `${v.error_kmh.toFixed(2)} km/h (${(v.error_pct ?? 0).toFixed(1)} %)`}
+                    : `${F.numero(v.error_kmh, 2)} km/h (${F.porcentaje(v.error_pct ?? 0, 1)})`}
                 </td>
               </tr>
             ))}

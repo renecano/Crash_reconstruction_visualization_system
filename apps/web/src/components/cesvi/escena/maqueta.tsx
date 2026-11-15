@@ -14,7 +14,7 @@
  *
  * Coordenadas: las del solver en metros. El SVG usa metros como unidad, con Y hacia abajo.
  */
-import { curvasDeNivel, intervaloDeCurvas, type MallaRelieve } from "@croquis/cesvi";
+import { formato as F, curvasDeNivel, intervaloDeCurvas, type MallaRelieve } from "@croquis/cesvi";
 import type { EscenaSpec } from "@croquis/scene-schema";
 import { sceneLayout } from "@croquis/croquis-2d";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -195,7 +195,7 @@ export function EscenaMaqueta({
       className="h-full w-full"
       style={vista ? { touchAction: "none", cursor: arrastrando ? "grabbing" : "grab" } : undefined}
       {...(vista ? manejadores : {})}
-      data-vista={vista ? vista.map((x) => x.toFixed(1)).join(" ") : undefined}
+      data-vista={vista ? vista.map((x) => F.fijo(x, 1)).join(" ") : undefined}
       role="img"
       aria-label="Escena reconstruida vista desde arriba: la vía, la trayectoria de cada vehículo con su velocidad, sus posiciones cada 0.4 s antes del impacto, el impacto y las posiciones finales."
       data-testid="maqueta"
@@ -301,7 +301,7 @@ export function EscenaMaqueta({
               strokeWidth={0.15}
               strokeDasharray="0.9 0.6"
             >
-              <title>{`Zona de ${z.tipo}: fricción ${z.friccion.valor.toFixed(2)}`}</title>
+              <title>{`Zona de ${z.tipo}: fricción ${F.numero(z.friccion.valor, 2)}`}</title>
             </polygon>
           ))}
           {(terreno.ondulaciones ?? []).map((o) => {
@@ -330,7 +330,7 @@ export function EscenaMaqueta({
                   fill={COLOR_ONDULACION}
                   fillOpacity={0.14}
                 >
-                  <title>{`Zona ondulada: ${o.amplitud_m.toFixed(2)} m de valle a cresta, crestas cada ${o.longitud_onda_m.toFixed(2)} m`}</title>
+                  <title>{`Zona ondulada: ${F.metros(o.amplitud_m)} de valle a cresta, crestas cada ${F.metros(o.longitud_onda_m)}`}</title>
                 </polygon>
                 <path
                   clipPath={`url(#mq-onda-${o.id})`}
@@ -353,7 +353,7 @@ export function EscenaMaqueta({
               stroke={COLOR_TOPE}
               strokeWidth={tp.largo_m}
             >
-              <title>{`Tope: ${tp.alto_m.toFixed(2)} m de alto y ${tp.largo_m.toFixed(2)} m de largo`}</title>
+              <title>{`Tope: ${F.metros(tp.alto_m)} de alto y ${F.metros(tp.largo_m)} de largo`}</title>
             </line>
           ))}
         </g>
@@ -374,7 +374,7 @@ export function EscenaMaqueta({
             <title>
               {anchoVia ? `Ancho de la vía ${anchoVia.de}` : "Ancho de la vía del mapa"}
             </title>
-            {`${cota.ancho.toFixed(2)} m`}
+            {F.metros(cota.ancho)}
           </text>
         </g>
       ) : null}
@@ -475,7 +475,7 @@ export function EscenaMaqueta({
                 strokeWidth={1}
                 vectorEffect="non-scaling-stroke"
                 opacity={e.opacidad}
-                data-tip={`${nombres[v.id] ?? v.rol} · t ${(e.t - ti).toFixed(2)} s`}
+                data-tip={`${nombres[v.id] ?? v.rol} · t ${F.segundos(e.t - ti)}`}
               />
             ))}
             {/* La posición final, punteada, con la línea desde el impacto. */}
@@ -839,7 +839,7 @@ function ControlesVista({
           <span className="t-nota font-mono leading-none">{texto}</span>
           <span
             className="block h-1.5 border-x-2 border-b-2 border-[var(--texto)]"
-            style={{ width: `${pxEscala.toFixed(1)}px` }}
+            style={{ width: `${F.fijo(pxEscala, 1)}px` }}
             aria-hidden="true"
           />
         </div>

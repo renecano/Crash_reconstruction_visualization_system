@@ -3,7 +3,8 @@
  * conteo real, el estado de cada reporte y su mini croquis, generado de su modalidad.
  */
 import type { ComparacionDictamen } from "@croquis/cesvi";
-import { cifraContraste, pctConSigno } from "./contraste-lab";
+import { formato as F } from "@croquis/cesvi";
+import { cifraContraste } from "./contraste-lab";
 
 /** «7 reportes de CESVI de ejemplo · aún no guardas casos propios en este equipo». */
 export function lineaDeEstado(reportes: number, guardados: number | null): string {
@@ -43,7 +44,7 @@ export function filtrar<T extends { modalidad: string }>(
 export function estadoDeReporte(k: ComparacionDictamen | undefined): string {
   if (!k) return "Sin comparar";
   const c = cifraContraste(k);
-  if (c) return `Reproducido · Δ ${pctConSigno(c.difPct)}`;
+  if (c) return `Reproducido · Δ ${F.diferenciaPct(c.difPct, "metodo")}`;
   if (k.modalidad.coincide === true) return "Modalidad coincide";
   if (k.modalidad.coincide === false) return "Modalidad distinta";
   return "Sin modalidad concluida";

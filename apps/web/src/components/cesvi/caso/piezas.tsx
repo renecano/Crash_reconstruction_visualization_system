@@ -6,6 +6,7 @@
  */
 import { FUENTE, palabra } from "@/i18n/vocabulario";
 import {
+  formato as F,
   avanzar,
   confirmarImpacto,
   conClase,
@@ -509,7 +510,7 @@ export function MapaEscena({
           className="vidrio absolute top-16 left-1/2 -translate-x-1/2 rounded-full px-4 py-1.5 text-[0.8125rem] font-semibold"
           data-testid="medida-mapa"
         >
-          <span className="cifras">{medidaM.toFixed(2)} m</span>
+          <span className="cifras">{F.metros(medidaM)}</span>
         </p>
       ) : null}
       {listo && onDeshacer ? (

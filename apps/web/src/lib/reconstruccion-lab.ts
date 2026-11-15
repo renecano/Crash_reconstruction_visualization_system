@@ -4,6 +4,7 @@
  * solver; si no fija una velocidad, se dice y no se muestra un número.
  */
 import type { Reconstruccion, VelocidadReconstruida } from "@croquis/cesvi";
+import { formato as F } from "@croquis/cesvi";
 
 /**
  * El vehículo protagonista: el más rápido entre los que la evidencia fija (el que llega, en un
@@ -100,7 +101,7 @@ export function marcasDelEje(barras: readonly BarraHistograma[]): number[] {
   return out;
 }
 
-const fmt = (x: number) => x.toFixed(2);
+const fmt = (x: number) => F.kmh(x, "reconstruccion");
 
 /** Qué significa cada percentil de las simulaciones, en una frase. */
 export function frasePercentil(cual: "p10" | "p50" | "p90", valor: number): string {

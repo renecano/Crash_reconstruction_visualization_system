@@ -8,6 +8,7 @@
  * solver no cambia. La lógica sin interfaz está en `lib/escena-facil.ts`.
  */
 import {
+  formato as F,
   agregarObjeto,
   agregarOndulacion,
   agregarTope,
@@ -2034,14 +2035,14 @@ export function EscenaFacil({
                 ) : null}
                 {medida !== null ? (
                   <div className="flex flex-wrap items-center gap-2" data-testid="medida">
-                    <span className="font-mono font-semibold">{medida.toFixed(2)} m</span>
+                    <span className="font-mono font-semibold">{F.metros(medida)}</span>
                     <button
                       type="button"
                       className="boton-secundario escena-boton"
                       onClick={() =>
                         cambiar(
-                          { ...estado, expediente: conRestos(e, Number(medida.toFixed(2))) },
-                          exito(`¡Listo! Los restos miden ${medida.toFixed(2)} m.`),
+                          { ...estado, expediente: conRestos(e, F.redondea(medida, 2)) },
+                          exito(`¡Listo! Los restos miden ${F.metros(medida)}.`),
                         )
                       }
                     >
@@ -2056,10 +2057,10 @@ export function EscenaFacil({
                           cambiar(
                             {
                               ...estado,
-                              expediente: conHuella(e, v.id, Number(medida.toFixed(2))),
+                              expediente: conHuella(e, v.id, F.redondea(medida, 2)),
                             },
                             exito(
-                              `¡Listo! La huella de frenado del ${nombres[v.id]} mide ${medida.toFixed(2)} m.`,
+                              `¡Listo! La huella de frenado del ${nombres[v.id]} mide ${F.metros(medida)}.`,
                             ),
                           )
                         }

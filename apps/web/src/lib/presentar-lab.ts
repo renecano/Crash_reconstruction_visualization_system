@@ -3,11 +3,9 @@
  * datos y el instante de la maqueta en cada momento. Todo sale de la reconstrucción y de la
  * comparación con el reporte: si algo no se sabe, el capítulo lo dice.
  */
-import { alternativaSupuesta, type Reconstruccion } from "@croquis/cesvi";
+import { formato as F, alternativaSupuesta, type Reconstruccion } from "@croquis/cesvi";
 import {
   conLetra,
-  conSigno,
-  pctConSigno,
   type CifraContraste,
   type conteoCriterios,
   type LecturaFisica,
@@ -50,7 +48,7 @@ export function recorridoTrasImpacto(res: ResultadoMaqueta, id: string): number 
   return Math.hypot(b.x - a.x, b.y - a.y);
 }
 
-const f1 = (x: number) => x.toFixed(1);
+const f1 = (x: number) => F.numero(x, 1);
 
 export function capitulos({
   r,
@@ -99,14 +97,14 @@ export function capitulos({
   fijadas.forEach((v, k) => {
     filasImpacto.push({
       etiqueta: `${nombreDe(String(v.vehiculo))} antes del impacto`,
-      valor: `${v.previa!.mejor.toFixed(2)} km/h`,
+      valor: F.kmhConUnidad(v.previa!.mejor, "reconstruccion"),
       grande: k === 0,
     });
     const rango = k === 0 ? rangoDeVelocidad(v) : null;
     if (rango)
       filasImpacto.push({
         etiqueta: rango.lineal ? "Rango por aproximación lineal" : "Rango",
-        valor: `${rango.p10.toFixed(2)}–${rango.p90.toFixed(2)}`,
+        valor: F.rangoKmh(rango.p10, rango.p90, "reconstruccion"),
       });
   });
   if (!filasImpacto.length)
@@ -148,10 +146,14 @@ export function capitulos({
     const filas: FilaCapitulo[] = [];
     if (contra) {
       filas.push(
-        { etiqueta: METODO.cesviConReporte, valor: pctConSigno(contra.difPct), grande: true },
+        {
+          etiqueta: METODO.cesviConReporte,
+          valor: F.diferenciaPct(contra.difPct, "metodo"),
+          grande: true,
+        },
         {
           etiqueta: "Croquis contra el reporte",
-          valor: `${contra.croquis.toFixed(2)} contra ${contra.cesvi.toFixed(2)} km/h · ${conSigno(contra.difKmh)} km/h`,
+          valor: `${F.kmh(contra.croquis, "metodo")} contra ${F.kmhConUnidad(contra.cesvi, "metodo")} · ${F.diferenciaKmh(contra.difKmh, "metodo")}`,
         },
       );
     }
@@ -159,15 +161,18 @@ export function capitulos({
       filas.push(
         {
           etiqueta: METODO.reconstruccion,
-          valor: fisica.difPct === null ? "la evidencia no la fija" : pctConSigno(fisica.difPct),
+          valor:
+            fisica.difPct === null
+              ? "la evidencia no la fija"
+              : F.diferenciaPct(fisica.difPct, "reconstruccion"),
           grande: fisica.difPct !== null,
         },
         {
           etiqueta: "Croquis contra el reporte",
           valor:
             fisica.croquis === null
-              ? `sin velocidad contra ${fisica.cesvi.toFixed(2)} km/h`
-              : `${fisica.croquis.toFixed(2)}${fisica.rango ? ` (${fisica.rango[0].toFixed(2)}–${fisica.rango[1].toFixed(2)})` : ""} contra ${fisica.cesvi.toFixed(2)} km/h · ${conSigno(fisica.difKmh ?? 0)} km/h`,
+              ? `sin velocidad contra ${F.kmhConUnidad(fisica.cesvi, "metodo")}`
+              : `${F.kmh(fisica.croquis, "reconstruccion")}${fisica.rango ? ` (${F.rangoKmh(fisica.rango[0], fisica.rango[1], "reconstruccion")})` : ""} contra ${F.kmhConUnidad(fisica.cesvi, "metodo")} · ${F.diferenciaKmh(fisica.difKmh ?? 0, "reconstruccion")}`,
         },
       );
     }

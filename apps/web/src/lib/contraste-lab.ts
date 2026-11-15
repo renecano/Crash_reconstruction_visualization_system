@@ -6,6 +6,7 @@
 import type { ComparacionDictamen, ContraMetodosCesvi } from "@croquis/cesvi";
 import { MODALIDAD } from "./nombres-cesvi";
 import { textoPosicionesFinales } from "./textos-caso";
+import { formato as F } from "@croquis/cesvi";
 
 export type EstadoCriterio = "coincide" | "difiere" | "sin_dato";
 
@@ -73,13 +74,6 @@ export interface CifraContraste {
   difKmh: number;
   difPct: number;
 }
-
-/** Una diferencia con su signo: «+0.75», «−13.94». */
-export const conSigno = (x: number, decimales = 2): string =>
-  `${x >= 0 ? "+" : "−"}${Math.abs(x).toFixed(decimales)}`;
-
-/** «+1.19 %». */
-export const pctConSigno = (x: number): string => `${conSigno(x)} %`;
 
 /** La velocidad comparable: la primera por deformación que Croquis también calcula. */
 export function cifraContraste(k: ComparacionDictamen): CifraContraste | null {
@@ -154,7 +148,7 @@ export function reglaContraste(
   const paso = max - min <= 8 ? 2 : Math.ceil((max - min) / 4 / 5) * 5;
   const ini = Math.floor((min - paso) / paso) * paso;
   const fin = Math.max(Math.ceil((max + paso) / paso) * paso, ini + 4 * paso);
-  const pos = (x: number) => Number((((x - ini) / (fin - ini)) * 100).toFixed(2));
+  const pos = (x: number) => F.redondea(((x - ini) / (fin - ini)) * 100, 2);
   const marcas: ReglaContraste["marcas"] = [];
   for (let k = ini; k <= fin + 1e-9; k += paso) marcas.push({ kmh: k, pos: pos(k) });
   return { marcas, croquis: pos(croquis), cesvi: pos(cesvi), pos };

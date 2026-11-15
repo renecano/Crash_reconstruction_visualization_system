@@ -35,7 +35,7 @@ describe("el dictamen (Laboratorio §8)", () => {
   it("la hoja lleva cada velocidad con su rango, y lo que la evidencia no fija lo dice", () => {
     expect(filasDeLaHoja(r, letra, null)).toEqual([
       { etiqueta: "A antes del impacto", valor: "la evidencia no la fija" },
-      { etiqueta: "B antes del impacto", valor: "56.87 km/h · 54.79–78.39" },
+      { etiqueta: "B antes del impacto", valor: "57 km/h · 55–78" },
     ]);
   });
 
@@ -49,10 +49,8 @@ describe("el dictamen (Laboratorio §8)", () => {
         },
       ],
     } as unknown as Reconstruccion;
-    expect(filasDeLaHoja(quieta, letra, null)[0]!.valor).toBe("41.50 km/h · 27.20–55.70 (lineal)");
-    expect(citaVelocidad(quieta, "V2", "B")).toContain(
-      "rango por aproximación lineal: 27.20–55.70",
-    );
+    expect(filasDeLaHoja(quieta, letra, null)[0]!.valor).toBe("42 km/h · 27–56 (lineal)");
+    expect(citaVelocidad(quieta, "V2", "B")).toContain("rango por aproximación lineal: 27–56");
   });
 
   it("la comparación con CESVI va con su valor y su porcentaje", () => {
@@ -63,7 +61,7 @@ describe("el dictamen (Laboratorio §8)", () => {
 
   it("las citas llevan el dato con su método; sin dato no hay cita", () => {
     expect(citaVelocidad(r, "V2", "B · Tacoma")).toBe(
-      "Velocidad de B · Tacoma antes del impacto: 56.87 km/h (rango: 54.79–78.39), mejor ajuste de la reconstrucción física de Croquis.",
+      "Velocidad de B · Tacoma antes del impacto: 57 km/h (rango: 55–78), mejor ajuste de la reconstrucción física de Croquis.",
     );
     expect(citaVelocidad(r, "V1", "A")).toBeNull();
     expect(citaContraste(contra, "B")).toContain("63.90 km/h");
@@ -94,7 +92,7 @@ describe("el dictamen (Laboratorio §8)", () => {
 describe("citar sin duplicar (O2, plan v4)", () => {
   const marca = MARCAS_DE_CITA.velocidad("B");
   const cita =
-    "Velocidad de B antes del impacto: 56.87 km/h (rango: 54.79–78.39), mejor ajuste de la reconstrucción física de Croquis.";
+    "Velocidad de B antes del impacto: 57 km/h (rango: 55–78), mejor ajuste de la reconstrucción física de Croquis.";
 
   it("citar dos veces deja un solo bloque y lo señala", () => {
     const una = citarUnaVez("Mi conclusión.", cita, marca, 14, 14);
@@ -107,7 +105,7 @@ describe("citar sin duplicar (O2, plan v4)", () => {
   });
 
   it("si la cifra cambió, reemplaza la cita vieja y conserva lo demás", () => {
-    const vieja = cita.replace("56.87", "69.00");
+    const vieja = cita.replace("57 km/h", "69 km/h");
     const texto = `Antes. ${vieja} Después.`;
     const r = citarUnaVez(texto, cita, marca, 0, 0);
     expect(r.accion).toBe("reemplazada");

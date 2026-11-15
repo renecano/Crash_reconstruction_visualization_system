@@ -82,7 +82,7 @@ describe("la reconstrucción (Laboratorio §8)", () => {
         dano: "daño posterior",
       }),
     ).toBe(
-      "A · Silverado 2500 · masa 2,562.1 kg (supuesto) · antes del impacto 14.98 km/h · daño posterior",
+      "A · Silverado 2500 · masa 2,562.1 kg (supuesto) · antes del impacto 15 km/h · daño posterior",
     );
     expect(tipVehiculo({ nombre: "B", masaKg: null, masaDe: null, kmh: null, dano: null })).toBe(
       "B · masa: sin dato · la evidencia no fija su velocidad",
@@ -94,9 +94,9 @@ describe("la reconstrucción (Laboratorio §8)", () => {
   });
 
   it("cada percentil se explica en una frase, y cada barra en palabras", () => {
-    expect(frasePercentil("p10", 26.2)).toContain("más de 26.20 km/h");
+    expect(frasePercentil("p10", 26.2)).toContain("más de 26 km/h");
     expect(frasePercentil("p50", 75.2)).toContain("es la mediana de las simulaciones");
-    expect(frasePercentil("p90", 44)).toContain("menos de 44.00 km/h");
+    expect(frasePercentil("p90", 44)).toContain("menos de 44 km/h");
     expect(textoBarra({ desde: 34, n: 1, enRango: true })).toBe(
       "34–35 km/h: 1 simulación, dentro de p10–p90",
     );

@@ -5,6 +5,7 @@
  * citas exactas del reporte. La tabla con cada número queda en el detalle.
  */
 import {
+  formato as F,
   alternativaSupuesta,
   reproducir,
   type CasoCesvi,
@@ -17,7 +18,6 @@ import type { ReporteCesvi } from "@/lib/caso-guardado";
 import {
   cifraContraste,
   conLetra,
-  conSigno,
   conteoCriterios,
   criteriosContraste,
   lecturaFisica,
@@ -150,7 +150,10 @@ function Lectura({
   testid,
   nota,
   cesviArriba = false,
+  precision,
 }: {
+  /** Cómo se escribe la cifra de Croquis: en enteros si es la reconstrucción física. */
+  precision: F.Precision;
   /** Una línea más de esta lectura. */
   nota?: string | null;
   /**
@@ -185,7 +188,12 @@ function Lectura({
               la evidencia no la fija
             </span>
           ) : (
-            <Cuenta valor={croquis} decimales={2} className={cifra} testid={`${prefijo}-croquis`} />
+            <Cuenta
+              valor={croquis}
+              decimales={F.DECIMALES[precision]}
+              className={cifra}
+              testid={`${prefijo}-croquis`}
+            />
           )}
           <span className="t-nota">{etiquetaCroquis}</span>
           {rango ? (
@@ -193,14 +201,14 @@ function Lectura({
               className="font-mono text-[0.75rem] text-texto-2"
               data-testid={`${prefijo}-rango`}
             >
-              rango {rango[0].toFixed(2)}–{rango[1].toFixed(2)}
+              rango {F.rangoKmh(rango[0], rango[1], precision)}
             </span>
           ) : null}
         </div>
         <div className={cesviArriba ? "sr-only" : "flex flex-col gap-1"}>
           <Cuenta
             valor={cesvi}
-            decimales={2}
+            decimales={F.DECIMALES.metodo}
             className={`${cifra} text-texto-2`}
             testid={`${prefijo}-cesvi`}
           />
@@ -210,11 +218,11 @@ function Lectura({
       {difKmh !== null && difPct !== null ? (
         <div className="flex items-baseline justify-between gap-4 border-t border-linea-suave pt-3">
           <span className="t-nota" data-testid={`${prefijo}-kmh`}>
-            diferencia · {conSigno(difKmh)} km/h
+            diferencia · {F.diferenciaKmh(difKmh, precision)}
           </span>
           <Cuenta
             valor={Math.abs(difPct)}
-            decimales={2}
+            decimales={F.DECIMALES[precision]}
             prefijo={difPct >= 0 ? "+" : "−"}
             sufijo=" %"
             className="cifra-protagonista text-[2.5rem] leading-none"
@@ -258,12 +266,12 @@ function Lectura({
           <Desliza
             pos={regla.cesvi}
             className="absolute top-0 h-6 w-0.5 -translate-x-1/2 bg-texto-2"
-            tip={`Reporte de CESVI: ${cesvi.toFixed(2)} km/h, de su conclusión`}
+            tip={`Reporte de CESVI: ${F.kmhConUnidad(cesvi, "metodo")}, de su conclusión`}
           />
           <Desliza
             pos={regla.croquis}
             className="absolute top-0 h-6 w-0.5 -translate-x-1/2 bg-texto"
-            tip={`${nombre}: ${croquis.toFixed(2)} km/h`}
+            tip={`${nombre}: ${F.kmhConUnidad(croquis, precision)}`}
           />
         </div>
       ) : null}
@@ -307,7 +315,7 @@ export function ActoContraste({
   const cifrasReporte = [f?.cesvi, fisica?.cesvi].filter((x): x is number => x !== undefined);
   const unaCifra =
     cifrasReporte.length &&
-    cifrasReporte.every((x) => x.toFixed(2) === cifrasReporte[0]!.toFixed(2))
+    cifrasReporte.every((x) => F.kmh(x, "metodo") === F.kmh(cifrasReporte[0], "metodo"))
       ? cifrasReporte[0]!
       : null;
   return (
@@ -337,7 +345,7 @@ export function ActoContraste({
               Reporte de CESVI · {letraDe((f ?? fisica)!.vehiculo)} · velocidad por deformación
             </span>
             <span className="cifra-protagonista text-[2.25rem] leading-none">
-              {unaCifra.toFixed(2)}
+              {F.kmh(unaCifra, "metodo")}
             </span>
             <span className="t-nota">km/h</span>
           </p>
@@ -354,6 +362,7 @@ export function ActoContraste({
               difKmh={f.difKmh}
               difPct={f.difPct}
               prefijo="cifra-contra"
+              precision="metodo"
               testid="lectura-cesvi"
               cesviArriba={unaCifra !== null}
             />
@@ -374,6 +383,7 @@ export function ActoContraste({
               difKmh={fisica.difKmh}
               difPct={fisica.difPct}
               prefijo="fisica"
+              precision="reconstruccion"
               nota={r ? (alternativaSupuesta(r, letraDe)?.texto ?? null) : null}
               testid="lectura-fisica"
               cesviArriba={unaCifra !== null}
@@ -400,8 +410,8 @@ export function ActoContraste({
             ) : null}
             {restos ? (
               <p className="t-nota pt-1" data-testid="cifra-contra-nota">
-                Por restos, con los mismos datos: {restos.croquis.toFixed(2)} contra{" "}
-                {restos.cesvi.toFixed(2)} km/h.
+                Por restos, con los mismos datos: {F.kmh(restos.croquis, "metodo")} contra{" "}
+                {F.kmhConUnidad(restos.cesvi, "metodo")}.
               </p>
             ) : null}
           </details>

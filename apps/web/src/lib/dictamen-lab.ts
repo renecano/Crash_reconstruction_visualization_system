@@ -4,8 +4,9 @@
  * inserta datos con su referencia, y solo al pedirlo el perito.
  */
 import type { Reconstruccion, SupuestoDeclarado } from "@croquis/cesvi";
-import { conSigno, pctConSigno, type CifraContraste } from "./contraste-lab";
+import type { CifraContraste } from "./contraste-lab";
 import { rangoDeVelocidad } from "./reconstruccion-lab";
+import { formato as F } from "@croquis/cesvi";
 
 export interface FilaHoja {
   etiqueta: string;
@@ -23,19 +24,19 @@ export function filasDeLaHoja(
     if (!v.previa) return { etiqueta, valor: "la evidencia no la fija" };
     const r10 = rangoDeVelocidad(v);
     const rango = r10
-      ? ` · ${r10.p10.toFixed(2)}–${r10.p90.toFixed(2)}${r10.lineal ? " (lineal)" : ""}`
+      ? ` · ${F.rangoKmh(r10.p10, r10.p90, "reconstruccion")}${r10.lineal ? " (lineal)" : ""}`
       : "";
-    return { etiqueta, valor: `${v.previa.mejor.toFixed(2)} km/h${rango}` };
+    return { etiqueta, valor: `${F.kmhConUnidad(v.previa.mejor, "reconstruccion")}${rango}` };
   });
   if (contra) {
     filas.push(
       {
         etiqueta: `${letraDe(contra.vehiculo)} por deformación`,
-        valor: `${contra.croquis.toFixed(2)} km/h`,
+        valor: F.kmhConUnidad(contra.croquis, "metodo"),
       },
       {
         etiqueta: "Contra CESVI",
-        valor: `Δ ${pctConSigno(contra.difPct)} · ${conSigno(contra.difKmh)} km/h`,
+        valor: `Δ ${F.diferenciaPct(contra.difPct, "metodo")} · ${F.diferenciaKmh(contra.difKmh, "metodo")}`,
       },
     );
   }
@@ -49,15 +50,15 @@ export function citaVelocidad(r: Reconstruccion, id: string, nombre: string): st
   const r10 = rangoDeVelocidad(v);
   const rango = r10
     ? r10.lineal
-      ? ` (rango por aproximación lineal: ${r10.p10.toFixed(2)}–${r10.p90.toFixed(2)})`
-      : ` (rango: ${r10.p10.toFixed(2)}–${r10.p90.toFixed(2)})`
+      ? ` (rango por aproximación lineal: ${F.rangoKmh(r10.p10, r10.p90, "reconstruccion")})`
+      : ` (rango: ${F.rangoKmh(r10.p10, r10.p90, "reconstruccion")})`
     : "";
-  return `Velocidad de ${nombre} antes del impacto: ${v.previa.mejor.toFixed(2)} km/h${rango}, mejor ajuste de la reconstrucción física de Croquis.`;
+  return `Velocidad de ${nombre} antes del impacto: ${F.kmhConUnidad(v.previa.mejor, "reconstruccion")}${rango}, mejor ajuste de la reconstrucción física de Croquis.`;
 }
 
 /** La cita de la comparación: las dos cifras y la diferencia, con su valor y su porcentaje. */
 export function citaContraste(c: CifraContraste, nombre: string): string {
-  return `Por deformación, ${nombre}: Croquis ${c.croquis.toFixed(2)} km/h con las medidas del reporte y el reporte de CESVI ${c.cesvi.toFixed(2)} km/h; diferencia de ${conSigno(c.difKmh)} km/h (${pctConSigno(c.difPct)}).`;
+  return `Por deformación, ${nombre}: Croquis ${F.kmhConUnidad(c.croquis, "metodo")} con las medidas del reporte y el reporte de CESVI ${F.kmhConUnidad(c.cesvi, "metodo")}; diferencia de ${F.diferenciaKmh(c.difKmh, "metodo")} (${F.diferenciaPct(c.difPct, "metodo")}).`;
 }
 
 /** La cita de los supuestos que entraron a la reconstrucción. */

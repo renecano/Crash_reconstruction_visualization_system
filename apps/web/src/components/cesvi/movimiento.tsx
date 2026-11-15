@@ -7,6 +7,7 @@
 import { animate, LazyMotion, domAnimation, m, useReducedMotion } from "motion/react";
 import { useEffect, useRef, type ReactNode } from "react";
 import { CURVA, curvaCuenta, textoContado } from "@/lib/movimiento";
+import { formato as F } from "@croquis/cesvi";
 
 export function Movimiento({ children }: { children: ReactNode }) {
   return <LazyMotion features={domAnimation}>{children}</LazyMotion>;
@@ -77,7 +78,7 @@ export function Cuenta({
 }) {
   const quieto = useReducedMotion();
   const nodo = useRef<HTMLSpanElement>(null);
-  const final = `${prefijo}${valor.toFixed(decimales)}${sufijo}`;
+  const final = `${prefijo}${F.fijo(valor, decimales)}${sufijo}`;
   useEffect(() => {
     const n = nodo.current;
     if (!n) return undefined;

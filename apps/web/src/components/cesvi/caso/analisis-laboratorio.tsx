@@ -6,6 +6,7 @@
  * trae dice «sin dato» con su motivo; nunca un cero.
  */
 import {
+  formato as F,
   especReconstruida,
   type ClaveCriterio,
   type CriterioMarcado,
@@ -203,7 +204,7 @@ function TarjetaDano({
                 <span className="cifras">{medido.cCm.join(" · ")} cm</span>
                 {medido.lM !== null ? (
                   <>
-                    ; L <span className="cifras">{medido.lM.toFixed(2)} m</span>
+                    ; L <span className="cifras">{F.metros(medido.lM)}</span>
                   </>
                 ) : null}
                 .

@@ -5,7 +5,12 @@
  * narración con lo que concluyó CESVI). Cada cita se revisa contra el texto. El expediente abre en
  * «Caso nuevo» para colocar a los vehículos y reconstruir, con lo que concluyó CESVI al lado.
  */
-import { type Conclusiones, resumenTexto, type DictamenImportado } from "@croquis/cesvi";
+import {
+  formato as F,
+  type Conclusiones,
+  resumenTexto,
+  type DictamenImportado,
+} from "@croquis/cesvi";
 import { useEffect, useRef, useState } from "react";
 import ejemplo from "../../../../../data/cesvi/grabaciones/importar/ejemplo.json";
 import { tomarArchivo } from "@/lib/archivo-pendiente";
@@ -60,8 +65,8 @@ export function ConclusionesCesvi({ conclusiones: c }: { conclusiones: Conclusio
           <ul className="flex flex-col gap-1.5" data-testid="velocidades-cesvi">
             {c.velocidades.map((v, i) => (
               <li key={i} className="t-interfaz">
-                {v.vehiculo ?? "—"} · <span className="cifras">{v.kmh.toFixed(2)} km/h</span> ·{" "}
-                {v.que}
+                {v.vehiculo ?? "—"} ·{" "}
+                <span className="cifras">{F.kmhConUnidad(v.kmh, "metodo")}</span> · {v.que}
                 <Cita texto={v.cita} />
               </li>
             ))}

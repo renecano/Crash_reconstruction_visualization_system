@@ -5,7 +5,7 @@
  * las flechas de llegada (botones grandes), los coches como coches (silueta vista desde arriba, a
  * escala, de su color, con su nombre y una flecha en el frente) y los botones redondos para girar.
  */
-import { avanzar, type LonLat } from "@croquis/cesvi";
+import { formato as F, avanzar, type LonLat } from "@croquis/cesvi";
 import type { GeoJSONSource, Map as MapaMl, Marker } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
@@ -172,7 +172,7 @@ export function MapaFacil(p: MapaFacilProps) {
       const escala = () => {
         const i = instancia;
         if (!i || !raiz.current) return;
-        raiz.current.dataset.mPorPx = metrosPorPixel(i.getCenter().lat, i.getZoom()).toFixed(5);
+        raiz.current.dataset.mPorPx = F.fijo(metrosPorPixel(i.getCenter().lat, i.getZoom()), 5);
       };
       instancia.on("moveend", escala);
       instancia.on("load", () => {
@@ -201,7 +201,7 @@ export function MapaFacil(p: MapaFacilProps) {
   }, [p.tema, listo]);
 
   // El encuadre cambia cuando cambia la pregunta (el choque marcado, un coche nuevo).
-  const claveEncuadre = p.encuadre.map((x) => `${x.lat.toFixed(5)},${x.lon.toFixed(5)}`).join("|");
+  const claveEncuadre = p.encuadre.map((x) => `${F.fijo(x.lat, 5)},${F.fijo(x.lon, 5)}`).join("|");
   useEffect(() => {
     if (listo && mapa.current) encuadrar(mapa.current, p.encuadre, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- solo cuando cambian los puntos

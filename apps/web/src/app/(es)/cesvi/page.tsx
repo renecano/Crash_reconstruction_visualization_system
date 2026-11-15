@@ -3,12 +3,12 @@
  * guardado o de ejemplo) se abre en el mismo recorrido de pasos.
  */
 import type { Metadata } from "next";
-import { caso, CASO_INICIAL, comparar } from "@croquis/cesvi";
+import { caso, CASO_INICIAL, comparar, formato as F } from "@croquis/cesvi";
 import { ListaCasos } from "@/components/cesvi/lista-casos";
 import { MarcoCesvi } from "@/components/cesvi/marco-cesvi";
 import { casoAxa } from "@/lib/axa-reconstruccion";
 import { estadoDeReporte } from "@/lib/casos-lab";
-import { cifraContraste, pctConSigno } from "@/lib/contraste-lab";
+import { cifraContraste } from "@/lib/contraste-lab";
 import { tituloDelHecho } from "@/lib/hecho-laboratorio";
 import { MODALIDAD, PAGINA } from "@/lib/reproduccion-dictamenes";
 
@@ -66,7 +66,7 @@ export default function CesviPage() {
           vehiculos: vehiculosAxa,
           croquisKmh: cifra ? cifra.croquis.toFixed(2) : null,
           cesviKmh: cifra ? cifra.cesvi.toFixed(2) : null,
-          difPct: cifra ? pctConSigno(cifra.difPct) : null,
+          difPct: cifra ? F.diferenciaPct(cifra.difPct, "metodo") : null,
           zonas: `${k.zonas.coinciden} de ${k.zonas.cesvi}`,
         }}
         reportes={reportes}

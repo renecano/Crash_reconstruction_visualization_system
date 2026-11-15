@@ -4,7 +4,7 @@
  * impacto del vehículo protagonista, el histograma de las simulaciones reales (una barra por km/h),
  * los percentiles con lo que significan y lo que fija el resultado. Toda cifra lleva su método.
  */
-import { evidenciaEnPalabras, type Reconstruccion } from "@croquis/cesvi";
+import { formato as F, evidenciaEnPalabras, type Reconstruccion } from "@croquis/cesvi";
 import type { ReactNode } from "react";
 import {
   frasePercentil,
@@ -69,7 +69,7 @@ export function CifraReconstruccion({
           <p className="flex items-end gap-3">
             <Cuenta
               valor={mejor}
-              decimales={2}
+              decimales={F.DECIMALES.reconstruccion}
               className="cifra-protagonista text-[clamp(5rem,10.6vw,9.5rem)]"
               testid="cifra-reconstruida"
             />
@@ -83,8 +83,8 @@ export function CifraReconstruccion({
                   className="font-mono text-[0.75rem] whitespace-nowrap text-texto-2"
                   data-testid="cifra-rango"
                 >
-                  {rango.lineal ? "rango lineal" : "rango"} {rango.p10.toFixed(2)}–
-                  {rango.p90.toFixed(2)}
+                  {rango.lineal ? "rango lineal" : "rango"}{" "}
+                  {F.rangoKmh(rango.p10, rango.p90, "reconstruccion")}
                 </span>
               ) : null}
             </span>
@@ -149,7 +149,7 @@ export function CifraReconstruccion({
                         className="absolute inset-y-0 z-10 flex w-2.5 -translate-x-1/2 justify-center"
                         style={{ left: `${posMejor}%` }}
                         tabIndex={0}
-                        data-tip={`Mejor ajuste: ${mejor!.toFixed(2)} km/h`}
+                        data-tip={`Mejor ajuste: ${F.kmhConUnidad(mejor, "reconstruccion")}`}
                         data-testid="marca-mejor-ajuste"
                       >
                         <span className="h-full w-0.5 bg-senal" />
@@ -182,7 +182,7 @@ export function CifraReconstruccion({
                       data-tip={frasePercentil(p, i[p])}
                       data-testid={`percentil-${p}`}
                     >
-                      {p} · {i[p].toFixed(2)}
+                      {p} · {F.kmh(i[p], "reconstruccion")}
                     </button>
                   ) : null,
                 )}
@@ -196,7 +196,7 @@ export function CifraReconstruccion({
                 <p className="flex items-baseline justify-between gap-3">
                   <span className="t-nota">Mediana de las simulaciones</span>
                   <span className="font-mono text-[0.875rem]" data-testid="fila-mediana">
-                    {i.p50.toFixed(2)} km/h
+                    {F.kmhConUnidad(i.p50, "reconstruccion")}
                   </span>
                 </p>
               ) : null}
@@ -217,7 +217,9 @@ export function CifraReconstruccion({
           <div key={o.vehiculo} className="flex items-baseline justify-between gap-3 py-2">
             <dt className="t-nota">{nombres[o.vehiculo] ?? o.vehiculo}</dt>
             <dd className="font-mono text-[0.875rem]">
-              {o.previa ? `${o.previa.mejor.toFixed(2)} km/h` : "la evidencia no la fija"}
+              {o.previa
+                ? F.kmhConUnidad(o.previa.mejor, "reconstruccion")
+                : "la evidencia no la fija"}
             </dd>
           </div>
         ))}

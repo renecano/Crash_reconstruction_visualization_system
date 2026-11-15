@@ -1,6 +1,11 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { interpretarResultado, especDeExpediente, reconstruccionContraCesvi } from "@croquis/cesvi";
+import {
+  especDeExpediente,
+  formato as F,
+  interpretarResultado,
+  reconstruccionContraCesvi,
+} from "@croquis/cesvi";
 import { fullResult, PRODUCTION_SAMPLES } from "../../../../packages/solver-ts/src/full-result";
 import { describe, expect, it } from "vitest";
 import { casoAxa, expedienteAxaReconstruccion } from "./axa-reconstruccion";
@@ -52,7 +57,8 @@ describe("la lectura física de AXA", () => {
     expect(v.vehiculo).toBe("V2");
     expect(v.previa!.mejor.toFixed(2)).toBe(medida.V2.mejor.toFixed(2));
     expect(rangoDeVelocidad(v)).toMatchObject({ p10: medida.V2.p10, p90: medida.V2.p90 });
-    const texto = `${medida.V2.mejor.toFixed(2)} km/h`;
+    // En pantalla la conclusión va en enteros; el número completo es el de eval/results.
+    const texto = F.kmhConUnidad(medida.V2.mejor, "reconstruccion");
     expect(
       filasDeLaHoja(r, (id) => id, null).find((x) => x.etiqueta.startsWith("V2"))!.valor,
     ).toContain(texto);

@@ -9,6 +9,7 @@
  * impacto y los topes marcados y rotulados, y la lectura bajo el puntero.
  */
 import {
+  formato as F,
   especReconstruida,
   LIMITE_RELIEVE,
   perfilesDeElevacion,
@@ -59,10 +60,10 @@ function Perfil({ p, nombre }: { p: PerfilDeElevacion; nombre: string }) {
   const paso = Math.max(1, Math.floor(p.s.length / 500));
   const linea = p.s
     .flatMap((s, i) =>
-      i % paso === 0 || i === p.s.length - 1 ? [`${x(s).toFixed(1)},${y(p.z[i]!).toFixed(1)}`] : [],
+      i % paso === 0 || i === p.s.length - 1 ? [`${F.fijo(x(s), 1)},${F.fijo(y(p.z[i]!), 1)}`] : [],
     )
     .join(" ");
-  const cm = (z: number) => `${z >= 0 ? "+" : "−"}${Math.abs(z).toFixed(2)} m`;
+  const cm = (z: number) => `${F.conSigno(z, 2)} m`;
   const final = p.z[p.z.length - 1]! - p.z[0]!;
   return (
     <figure className="flex flex-col gap-1" data-testid={`perfil-${p.vehiculo}`}>
@@ -70,17 +71,17 @@ function Perfil({ p, nombre }: { p: PerfilDeElevacion; nombre: string }) {
         <span className="text-[0.9375rem] font-semibold">{nombre}</span>
         <span className="t-nota">
           {p.pendientePct !== null
-            ? `Antes del impacto: ${p.pendientePct === 0 ? "a nivel" : `${Math.abs(p.pendientePct).toFixed(1)} % de ${p.pendientePct > 0 ? "subida" : "bajada"}`}`
+            ? `Antes del impacto: ${p.pendientePct === 0 ? "a nivel" : `${F.porcentaje(Math.abs(p.pendientePct), 1)} de ${p.pendientePct > 0 ? "subida" : "bajada"}`}`
             : "Casi no avanzó antes del impacto"}
           {" · "}altura exagerada ×
-          {exageracion >= 10 ? Math.round(exageracion) : exageracion.toFixed(1)}
+          {exageracion >= 10 ? Math.round(exageracion) : F.numero(exageracion, 1)}
         </span>
       </figcaption>
       <svg
         viewBox={`0 0 ${W} ${H}`}
         className="w-full"
         role="img"
-        aria-label={`Perfil de elevación del camino de ${nombre}: recorrió ${sMax.toFixed(1)} m y terminó ${cm(final)} respecto a donde empezó${p.cruces.length ? `; cruzó ${p.cruces.length === 1 ? "un tope" : `${p.cruces.length} topes`}` : ""}.`}
+        aria-label={`Perfil de elevación del camino de ${nombre}: recorrió ${F.metros(sMax, 1)} y terminó ${cm(final)} respecto a donde empezó${p.cruces.length ? `; cruzó ${p.cruces.length === 1 ? "un tope" : `${p.cruces.length} topes`}` : ""}.`}
         onPointerMove={(ev) => {
           const caja = ev.currentTarget.getBoundingClientRect();
           const s = (((ev.clientX - caja.left) / caja.width) * W - M.izq) / (W - M.izq - M.der);
@@ -111,7 +112,7 @@ function Perfil({ p, nombre }: { p: PerfilDeElevacion; nombre: string }) {
           ) : null}
           {W - M.der - x(p.sImpacto) > CERCA ? (
             <text x={W - M.der} y={H - 6} textAnchor="end">
-              {sMax.toFixed(1)} m
+              {F.metros(sMax, 1)}
             </text>
           ) : null}
         </g>
@@ -155,7 +156,7 @@ function Perfil({ p, nombre }: { p: PerfilDeElevacion; nombre: string }) {
               fontSize={11}
               fill="var(--texto-2)"
             >
-              Tope · {c.kmh.toFixed(1)} km/h
+              Tope · {F.kmhConUnidad(c.kmh, "reconstruccion")}
             </text>
           </g>
         ))}
@@ -189,8 +190,8 @@ function Perfil({ p, nombre }: { p: PerfilDeElevacion; nombre: string }) {
       </svg>
       <p className="t-nota min-h-5 font-mono" aria-live="off" data-testid="perfil-lectura">
         {sobre !== null
-          ? `A ${p.s[sobre]!.toFixed(1)} m de donde empezó: ${cm(p.z[sobre]!)}`
-          : `Recorrió ${sMax.toFixed(1)} m; terminó ${cm(final)} respecto a donde empezó.`}
+          ? `A ${F.metros(p.s[sobre]!, 1)} de donde empezó: ${cm(p.z[sobre]!)}`
+          : `Recorrió ${F.metros(sMax, 1)}; terminó ${cm(final)} respecto a donde empezó.`}
       </p>
     </figure>
   );
@@ -267,8 +268,8 @@ export function TerrenoReconstruccion({
               {cruces.map((c, k) => (
                 <li key={k} className="t-cuerpo">
                   {nombre(c.vehiculo)} cruzó un tope a{" "}
-                  <span className="font-mono">{c.kmh.toFixed(1)} km/h</span>,{" "}
-                  {Math.abs(c.t).toFixed(2)} s {c.t < 0 ? "antes" : "después"} del impacto.
+                  <span className="font-mono">{F.kmhConUnidad(c.kmh, "reconstruccion")}</span>,{" "}
+                  {F.segundos(Math.abs(c.t))} {c.t < 0 ? "antes" : "después"} del impacto.
                 </li>
               ))}
             </ul>

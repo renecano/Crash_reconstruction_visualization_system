@@ -3,6 +3,7 @@
  * con las C reales, la barra de rango de cada supuesto y el contador de criterios marcados.
  */
 import type { CriterioMarcado, SupuestoDeclarado } from "@croquis/cesvi";
+import { formato as F } from "@croquis/cesvi";
 
 export interface PerfilDibujado {
   /** El contorno lleno del hundimiento, del borde izquierdo de la cara al derecho. */
@@ -30,7 +31,7 @@ export function perfilDeformacion(
     cm,
     nombre: `C${i + 1}`,
   }));
-  const f = (v: number) => Number(v.toFixed(2));
+  const f = (v: number) => F.redondea(v, 2);
   // La curva pasa por cada medida (Catmull-Rom a Bézier, sin rebasar la base).
   const curva = puntos.slice(1).map((p, k) => {
     const p1 = puntos[k]!;
@@ -65,8 +66,8 @@ export function barraDeRango(min: number, max: number, valor: number): BarraDeRa
   const holgura = (max - min) / 5;
   const ini = min - holgura;
   const total = max + holgura - ini;
-  const pct = (x: number) => Number((((x - ini) / total) * 100).toFixed(2));
-  return { izq: pct(min), ancho: Number((pct(max) - pct(min)).toFixed(2)), marca: pct(valor) };
+  const pct = (x: number) => F.redondea(((x - ini) / total) * 100, 2);
+  return { izq: pct(min), ancho: F.redondea(pct(max) - pct(min), 2), marca: pct(valor) };
 }
 
 /** «1 de 2 criterios marcados». */
