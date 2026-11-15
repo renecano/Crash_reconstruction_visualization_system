@@ -28,7 +28,6 @@
     },
     "t3": {
       "titulo": "Tanda 3 · Números defendibles (el solver sortea restitución, razón de impulso y arrastre)",
-      "rama": "fix/t3-cifras",
       "pasos": [
         {
           "nombre": "referencias-de-prueba",

@@ -8,7 +8,7 @@ port TS en la prueba de paridad.
   evidencia («¿y si A frenaba 0.5 s antes?»).
 * ``alcance_volantea``: la misma escena, con A volanteando a la izquierda en vez de frenar.
 * ``axa_agentes``: AXA A2010930 (un reporte del corpus de CESVI), la escena del video de R11 con
-  las velocidades de la inversión («cuadra con el daño medido», ADR 0091), con los dos conductores
+  las velocidades de la inversión («la más cercana al daño», ADR 0091), con los dos conductores
   como agentes y sin hipótesis: deben reproducir la reconstrucción.
 * ``carambola_cadena``: la `carambola` con B y C en movimiento a 40 km/h en el mismo carril. C frena
   (lo dice el perito), B reacciona a C y A reacciona a B: la reacción en cadena.
