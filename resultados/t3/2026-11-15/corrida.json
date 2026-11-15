@@ -67,6 +67,13 @@
                       "estado":  "ok",
                       "minutos":  0.3,
                       "codigo":  0
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "er4-titulo",
+                      "estado":  "falló (código 1)",
+                      "minutos":  0,
+                      "codigo":  1
                   }
               ]
 }
