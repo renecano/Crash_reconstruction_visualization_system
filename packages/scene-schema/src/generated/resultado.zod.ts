@@ -540,6 +540,7 @@ export const VehiculoResultado = z.strictObject({
   rol: z.string().regex(new RegExp("^[A-H]$")),
   clase: z.string().min(1).max(40),
   involucrado: z.boolean(),
+  sentido_marcha: z.enum(["adelante", "reversa"]).optional(),
   dimensiones: Dimensiones,
   trayectoria: TrayectoriaVehiculo,
   v_impacto_kmh: z.number().min(0),

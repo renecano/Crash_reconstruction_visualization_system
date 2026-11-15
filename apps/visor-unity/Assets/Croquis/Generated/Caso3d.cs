@@ -1544,6 +1544,13 @@ namespace Croquis.Generated
         [JsonConverter(typeof(MinMaxValueCheckConverter3))]
         public double? Metros { get; set; }
 
+        /// <summary>
+        /// El sentido de marcha en esta maniobra, si se dice: una vuelta o un cambio de carril
+        /// hechos en reversa. Con `tipo: "reversa"` no hace falta.
+        /// </summary>
+        [JsonProperty("sentido_marcha", NullValueHandling = NullValueHandling.Ignore)]
+        public SentidoMarchaEnum? SentidoMarcha { get; set; }
+
         [JsonProperty("tipo")]
         public ManiobraTipo Tipo { get; set; }
 
@@ -2420,6 +2427,14 @@ namespace Croquis.Generated
         [JsonProperty("rol")]
         public string Rol { get; set; }
 
+        /// <summary>
+        /// Si falta, el vehículo avanza de frente, salvo que la maniobra sea «reversa» (la reversa
+        /// recta). Con «reversa», cualquier maniobra se recorre hacia atrás: en una vuelta o un
+        /// cambio de carril, izquierda y derecha son las del conductor.
+        /// </summary>
+        [JsonProperty("sentido_marcha", NullValueHandling = NullValueHandling.Ignore)]
+        public SentidoMarchaClass SentidoMarcha { get; set; }
+
         [JsonProperty("velocidad_previa")]
         public LimiteVelocidad VelocidadPrevia { get; set; }
 
@@ -2589,6 +2604,35 @@ namespace Croquis.Generated
         /// </summary>
         [JsonProperty("t_s", NullValueHandling = NullValueHandling.Ignore)]
         public double? TS { get; set; }
+    }
+
+    /// <summary>
+    /// Si falta, el vehículo avanza de frente, salvo que la maniobra sea «reversa» (la reversa
+    /// recta). Con «reversa», cualquier maniobra se recorre hacia atrás: en una vuelta o un
+    /// cambio de carril, izquierda y derecha son las del conductor.
+    ///
+    /// El sentido de marcha, aparte del rumbo del frente (`posicion_inicial.rumbo_deg`) y de la
+    /// forma de la maniobra: «reversa» si el vehículo recorre su maniobra con la parte posterior
+    /// por delante.
+    /// </summary>
+    public partial class SentidoMarchaClass
+    {
+        [JsonProperty("confianza")]
+        [JsonConverter(typeof(PurpleMinMaxValueCheckConverter))]
+        public double Confianza { get; set; }
+
+        [JsonProperty("evidencia", NullValueHandling = NullValueHandling.Ignore)]
+        public VisibilidadEvidencia[] Evidencia { get; set; }
+
+        [JsonProperty("fuente")]
+        public VisibilidadFuente Fuente { get; set; }
+
+        [JsonProperty("nota", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(FluffyMinMaxLengthCheckConverter))]
+        public string Nota { get; set; }
+
+        [JsonProperty("valor")]
+        public SentidoMarchaEnum Valor { get; set; }
     }
 
     /// <summary>
@@ -4576,6 +4620,13 @@ namespace Croquis.Generated
         [JsonProperty("rol")]
         public string Rol { get; set; }
 
+        /// <summary>
+        /// El sentido de marcha antes del impacto. Solo va cuando es «reversa»: el vehículo llegó
+        /// con la parte posterior por delante.
+        /// </summary>
+        [JsonProperty("sentido_marcha", NullValueHandling = NullValueHandling.Ignore)]
+        public SentidoMarchaEnum? SentidoMarcha { get; set; }
+
         [JsonProperty("trayectoria")]
         public VehiculoTrayectoria Trayectoria { get; set; }
 
@@ -5006,6 +5057,15 @@ namespace Croquis.Generated
     /// </summary>
     public enum FluffyFuente { Dictamen, NhtsaE2, Perito, TablaCesvi };
 
+    /// <summary>
+    /// El sentido de marcha en esta maniobra, si se dice: una vuelta o un cambio de carril
+    /// hechos en reversa. Con `tipo: "reversa"` no hace falta.
+    ///
+    /// El sentido de marcha antes del impacto. Solo va cuando es «reversa»: el vehículo llegó
+    /// con la parte posterior por delante.
+    /// </summary>
+    public enum SentidoMarchaEnum { Adelante, Reversa };
+
     public enum ManiobraTipo { CambiaCarril, Circula, Evasiva, Frena, Otra, Reversa, SeDetiene, ViraDerecha, ViraIzquierda };
 
     public enum PosicioneFase { Final, Impacto, Inicial };
@@ -5183,6 +5243,7 @@ namespace Croquis.Generated
                 PurpleFuenteConverter.Singleton,
                 TipoSuperficieConverter.Singleton,
                 FluffyFuenteConverter.Singleton,
+                SentidoMarchaEnumConverter.Singleton,
                 ManiobraTipoConverter.Singleton,
                 PosicioneFaseConverter.Singleton,
                 VersioneTipoConverter.Singleton,
@@ -8783,6 +8844,47 @@ namespace Croquis.Generated
         }
 
         public static readonly MinMaxValueCheckConverter3 Singleton = new MinMaxValueCheckConverter3();
+    }
+
+    internal class SentidoMarchaEnumConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(SentidoMarchaEnum) || t == typeof(SentidoMarchaEnum?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "adelante":
+                    return SentidoMarchaEnum.Adelante;
+                case "reversa":
+                    return SentidoMarchaEnum.Reversa;
+            }
+            throw new Exception("Cannot unmarshal type SentidoMarchaEnum");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (SentidoMarchaEnum)untypedValue;
+            switch (value)
+            {
+                case SentidoMarchaEnum.Adelante:
+                    serializer.Serialize(writer, "adelante");
+                    return;
+                case SentidoMarchaEnum.Reversa:
+                    serializer.Serialize(writer, "reversa");
+                    return;
+            }
+            throw new Exception("Cannot marshal type SentidoMarchaEnum");
+        }
+
+        public static readonly SentidoMarchaEnumConverter Singleton = new SentidoMarchaEnumConverter();
     }
 
     internal class ManiobraTipoConverter : JsonConverter

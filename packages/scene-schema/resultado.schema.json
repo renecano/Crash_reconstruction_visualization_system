@@ -320,6 +320,11 @@
         "involucrado": {
           "type": "boolean"
         },
+        "sentido_marcha": {
+          "type": "string",
+          "enum": ["adelante", "reversa"],
+          "description": "El sentido de marcha antes del impacto. Solo va cuando es «reversa»: el vehículo llegó con la parte posterior por delante."
+        },
         "dimensiones": {
           "$ref": "#/$defs/Dimensiones"
         },

@@ -408,6 +408,19 @@
         "nota": { "type": "string", "maxLength": 300 }
       }
     },
+    "CampoSentidoMarcha": {
+      "type": "object",
+      "description": "El sentido de marcha, aparte del rumbo del frente (`posicion_inicial.rumbo_deg`) y de la forma de la maniobra: «reversa» si el vehículo recorre su maniobra con la parte posterior por delante.",
+      "additionalProperties": false,
+      "required": ["valor", "fuente", "confianza"],
+      "properties": {
+        "valor": { "type": "string", "enum": ["adelante", "reversa"] },
+        "fuente": { "$ref": "#/$defs/Fuente" },
+        "confianza": { "$ref": "#/$defs/Confianza" },
+        "evidencia": { "$ref": "#/$defs/ListaEvidencia" },
+        "nota": { "type": "string", "maxLength": 300 }
+      }
+    },
     "CampoEstadoPintura": {
       "type": "object",
       "additionalProperties": false,
@@ -1006,6 +1019,10 @@
         "voladizo_delantero": { "$ref": "#/$defs/CampoLongitud" },
         "voladizo_trasero": { "$ref": "#/$defs/CampoLongitud" },
         "maniobra": { "$ref": "#/$defs/CampoManiobra" },
+        "sentido_marcha": {
+          "$ref": "#/$defs/CampoSentidoMarcha",
+          "description": "Si falta, el vehículo avanza de frente, salvo que la maniobra sea «reversa» (la reversa recta). Con «reversa», cualquier maniobra se recorre hacia atrás: en una vuelta o un cambio de carril, izquierda y derecha son las del conductor."
+        },
         "velocidad_previa": { "$ref": "#/$defs/CampoVelocidad" },
         "frenado": { "$ref": "#/$defs/Frenado" },
         "aceleracion": { "$ref": "#/$defs/CampoAceleracion" },
@@ -1868,6 +1885,11 @@
           "description": "Metros, si se dicen.",
           "minimum": 0,
           "maximum": 10000
+        },
+        "sentido_marcha": {
+          "type": "string",
+          "enum": ["adelante", "reversa"],
+          "description": "El sentido de marcha en esta maniobra, si se dice: una vuelta o un cambio de carril hechos en reversa. Con `tipo: \"reversa\"` no hace falta."
         },
         "cita": { "$ref": "#/$defs/Cita" }
       },

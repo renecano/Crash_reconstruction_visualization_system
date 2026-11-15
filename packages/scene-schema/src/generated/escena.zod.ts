@@ -320,6 +320,16 @@ export const CampoRolPersona = z.strictObject({
 });
 export type CampoRolPersona = z.infer<typeof CampoRolPersona>;
 
+/** El sentido de marcha, aparte del rumbo del frente (`posicion_inicial.rumbo_deg`) y de la forma de la maniobra: «reversa» si el vehículo recorre su maniobra con la parte posterior por delante. */
+export const CampoSentidoMarcha = z.strictObject({
+  valor: z.enum(["adelante", "reversa"]),
+  fuente: Fuente,
+  confianza: Confianza,
+  evidencia: ListaEvidencia.optional(),
+  nota: z.string().max(300).optional(),
+});
+export type CampoSentidoMarcha = z.infer<typeof CampoSentidoMarcha>;
+
 export const CampoSentidos = z.strictObject({
   valor: z.enum(["un_sentido", "doble_sentido"]),
   fuente: Fuente,
@@ -940,6 +950,7 @@ export const ManiobraExpediente = z.strictObject({
     "otra",
   ]),
   metros: z.number().min(0).max(10000).optional(),
+  sentido_marcha: z.enum(["adelante", "reversa"]).optional(),
   cita: Cita.optional(),
 });
 export type ManiobraExpediente = z.infer<typeof ManiobraExpediente>;
@@ -1197,6 +1208,7 @@ export const Vehiculo = z.strictObject({
   voladizo_delantero: CampoLongitud.optional(),
   voladizo_trasero: CampoLongitud.optional(),
   maniobra: CampoManiobra,
+  sentido_marcha: CampoSentidoMarcha.optional(),
   velocidad_previa: CampoVelocidad,
   frenado: Frenado.optional(),
   aceleracion: CampoAceleracion.optional(),
