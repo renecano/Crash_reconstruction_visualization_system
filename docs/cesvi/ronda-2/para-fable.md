@@ -11,7 +11,7 @@ Esta nota es para que arranques sin releer la conversación.
 
 | Bloque                                              | Qué                                                      | Dónde                                                                           |
 | --------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| A (A2, A3, A4, A5, A7)                              | Hecho y probado                                          | PR #248 (`feat/ronda2-a`); evidencia en `docs/cesvi/ronda-2/evidencia/a/`       |
+| A (A2, A3, A4, A5, A7)                              | Hecho y fusionado                                        | PR #248 (`feat/ronda2-a`); evidencia en `docs/cesvi/ronda-2/evidencia/a/`       |
 | B (pasada)                                          | Correcciones hechas                                      | PR #249 (`feat/ronda2-b`); la lista completa, en `docs/cesvi/ronda-2/pasada.md` |
 | C (narraciones)                                     | Solo planeación: tabla y borradores. **No se gastó API** | `docs/cesvi/ronda-2/narraciones.md`                                             |
 | A1, A6, dirección visual, narraciones en producción | **Para ti, sin empezar**                                 | abajo                                                                           |
