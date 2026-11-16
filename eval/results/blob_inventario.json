@@ -1,0 +1,66 @@
+{
+  "descripcion": "Lo que hay en el Vercel Blob de Croquis, por carpeta y por build, con su tamaño (MiB) y qué usa producción. Solo lectura: no se subió ni se borró nada.",
+  "script": "tools/unity/publicar-web.mjs --inventario",
+  "fecha": "2026-11-16T02:19:35.280Z",
+  "visor_en_produccion": "e06bdd73b0ce3706",
+  "visor_en_origin_main": "e06bdd73b0ce3706",
+  "total_mb": 461.8,
+  "grupos": [
+    {
+      "clave": "recursos/visor-unity/f12372a6c2d7742c",
+      "archivos": 16,
+      "mb": 73.4,
+      "subido": "2026-11-12",
+      "usa": null
+    },
+    {
+      "clave": "recursos/visor-unity/01fce868922703fd",
+      "archivos": 16,
+      "mb": 73.4,
+      "subido": "2026-11-12",
+      "usa": null
+    },
+    {
+      "clave": "recursos/visor-unity/e06bdd73b0ce3706",
+      "archivos": 20,
+      "mb": 72.8,
+      "subido": "2026-11-16",
+      "usa": "visor que sirve croquis-sage.vercel.app"
+    },
+    {
+      "clave": "recursos/visor-unity/abbbeec49fbae3c6",
+      "archivos": 20,
+      "mb": 72.7,
+      "subido": "2026-11-14",
+      "usa": null
+    },
+    {
+      "clave": "recursos/visor-unity/dc9c30121a648d63",
+      "archivos": 20,
+      "mb": 72.7,
+      "subido": "2026-11-12",
+      "usa": null
+    },
+    {
+      "clave": "recursos/visor-unity/6337b65c1db3110f",
+      "archivos": 6,
+      "mb": 65,
+      "subido": "2026-11-10",
+      "usa": null
+    },
+    {
+      "clave": "recursos/modelos/vehiculos/be5de74b8e245430",
+      "archivos": 31,
+      "mb": 26.4,
+      "subido": "2026-11-05",
+      "usa": "apps/web/recursos.json (modelos/vehiculos)"
+    },
+    {
+      "clave": "recursos/hdri/e603e19a28cef179",
+      "archivos": 5,
+      "mb": 5.3,
+      "subido": "2026-11-05",
+      "usa": "apps/web/recursos.json (hdri)"
+    }
+  ]
+}
