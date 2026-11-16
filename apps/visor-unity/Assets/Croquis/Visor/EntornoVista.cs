@@ -13,17 +13,26 @@ namespace Croquis.Visor
     /// </summary>
     public static class EntornoVista
     {
-        public static void Construir(Transform padre, EntornoEscenario en, AmbienteEscenario a, long semilla)
+        /// <summary>El entorno por partes, cediendo el cuadro entre una y otra (y entre edificios).</summary>
+        public static async Awaitable ConstruirAsync(Transform padre, EntornoEscenario en, AmbienteEscenario a, long semilla, Func<Awaitable> ceder)
         {
             var entorno = new GameObject("entorno_procedural").transform;
             entorno.SetParent(padre, false);
             var azar = new Azar(semilla + 13);
             Arboles(entorno, en.Arboles);
-            Edificios(entorno, en.Edificios, a, azar, en.Zona == ZonaEntorno.Urbana);
+            Cronometro.Paso("ent_arboles");
+            await ceder();
+            await Edificios(entorno, en.Edificios, a, azar, en.Zona == ZonaEntorno.Urbana, ceder);
+            Cronometro.Paso("ent_edificios");
+            await ceder();
             Postes(entorno, en.Postes);
             Cercas(entorno, en.Cercas);
             Senales(entorno, en.Senales);
+            Cronometro.Paso("ent_postes_cercas_senales");
+            await ceder();
             Horizonte(entorno, en, a, semilla);
+            Cronometro.Paso("ent_horizonte");
+            await ceder();
         }
 
         private static Vector3 U(double x, double y, double z)
@@ -129,7 +138,7 @@ namespace Croquis.Visor
 
         private const float AltoPiso = 3f;
 
-        private static void Edificios(Transform padre, EdificioEscenario[] edificios, AmbienteEscenario a, Azar azar, bool cuadras)
+        private static async Awaitable Edificios(Transform padre, EdificioEscenario[] edificios, AmbienteEscenario a, Azar azar, bool cuadras, Func<Awaitable> ceder)
         {
             var rejas = new Malla();
             var portones = new Malla();
@@ -147,6 +156,8 @@ namespace Croquis.Visor
             var fierro = new Malla();
             foreach (var b in edificios)
             {
+                // Cada edificio solo suma a las mallas (el azar va en el mismo orden): ceder aquí no cambia nada.
+                await ceder();
                 var llave = b.Material == MaterialFachada.Tabique ? "tabique" : "yeso|" + b.Color;
                 if (!muros.TryGetValue(llave, out var muro))
                 {

@@ -12,6 +12,7 @@ import {
   type MensajesAUnity,
   type VistaCaptura,
 } from "@croquis/scene-schema";
+import { adelantarProgramas } from "./programas";
 
 /** Dónde quedó el build publicado (`tools/unity/publicar-web.mjs` escribe `/visor-unity/manifest.json`). */
 export interface ManifiestoVisorUnity {
@@ -22,6 +23,8 @@ export interface ManifiestoVisorUnity {
   data: string;
   framework: string;
   code: string;
+  /** Los programas de shaders del build, para compilarlos de antemano (`programas.ts`, ADR 0119). */
+  programas?: string;
 }
 
 /** Lo que `createUnityInstance` devuelve y usamos. */
@@ -153,6 +156,14 @@ export class PuenteUnity {
       }
     }
     const urls = urlsDelBuild(m);
+    // Los shaders del build se mandan a compilar en cuanto Unity crea su contexto, sin trabar la
+    // página (ADR 0119). Lo que queda a la vista para medir: cuántos se adelantaron y usaron.
+    const programas = adelantarProgramas(
+      lienzo,
+      m.programas ? `${m.base}${m.prefijo}${m.programas}` : null,
+      m.code,
+    );
+    (window as unknown as { croquisProgramas?: unknown }).croquisProgramas = programas;
     // Si la página ya lo estaba bajando de fondo (`precarga.ts`), Unity usa esas copias en vez de
     // pedirlo otra vez.
     marcar("precarga");
@@ -277,7 +288,6 @@ export class PuenteUnity {
     });
   }
 
-  /** Carga un paquete caso-3d y espera `cargado`. */
   /**
    * Detiene el ciclo de dibujo de Unity: con el 3D oculto, Unity seguía dibujando cada cuadro en el
    * hilo principal y la página dejaba de responder (René, 2026-11-16). Los mensajes siguen llegando.
@@ -291,15 +301,46 @@ export class PuenteUnity {
     this.instancia.Module?.resumeMainLoop?.();
   }
 
-  async cargar(paquete: unknown, ms = ESPERA_ARRANQUE_MS): Promise<void> {
-    const llega = this.esperar(
+  /**
+   * Carga un paquete caso-3d. Unity lo arma por partes (1.3.0): primero lo que se ve y el entorno
+   * después. Se resuelve cuando el caso ya se ve (`visible`, o `cargado` si llega antes) y devuelve
+   * `completo`, que se resuelve con `cargado`. `alAvanzar` recibe el avance de 0 a 1.
+   */
+  async cargar(
+    paquete: unknown,
+    ms = ESPERA_ARRANQUE_MS,
+    alAvanzar?: (fraccion: number) => void,
+  ): Promise<{ completo: Promise<void> }> {
+    const quitar = alAvanzar
+      ? this.oir((m) => {
+          if (m.tipo === "progreso") alAvanzar(m.fraccion);
+        })
+      : () => false;
+    const completo = this.esperar(
       (m): m is Extract<MensajeDeUnity, { tipo: "cargado" }> => m.tipo === "cargado",
       ms,
+    ).then(
+      () => {
+        quitar();
+      },
+      (e: unknown) => {
+        quitar();
+        throw e;
+      },
     );
-    this.enviar("cargarCaso", {
-      json: typeof paquete === "string" ? paquete : JSON.stringify(paquete),
-    });
-    await llega;
+    // Quien no espere `completo` no deja una promesa rechazada sin atender.
+    completo.catch(() => undefined);
+    const visible = this.esperar(
+      (m): m is Extract<MensajeDeUnity, { tipo: "visible" | "cargado" }> =>
+        m.tipo === "visible" || m.tipo === "cargado",
+      ms,
+    );
+    const json = typeof paquete === "string" ? paquete : JSON.stringify(paquete);
+    marcar("caso_serializado");
+    this.enviar("cargarCaso", { json });
+    marcar("caso_enviado");
+    await visible;
+    return { completo };
   }
 
   /**

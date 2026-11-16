@@ -27,9 +27,15 @@
         window.__unityFalso.recibidos.push({ objeto: objeto, metodo: metodo, datos: datos });
         if (metodo === "cargarCaso") {
           var caso = JSON.parse(datos.json);
+          // Como el Unity real desde el puente 1.3.0: avance, «visible» y, después, «cargado».
           setTimeout(function () {
+            decir({ tipo: "progreso", fraccion: 0.5 });
+            decir({ tipo: "visible", escena_id: caso.resultado.escena_id });
+          }, 20);
+          setTimeout(function () {
+            decir({ tipo: "progreso", fraccion: 1 });
             decir({ tipo: "cargado", escena_id: caso.resultado.escena_id });
-          }, 30);
+          }, 60);
         } else if (metodo === "capturar") {
           setTimeout(function () {
             decir({

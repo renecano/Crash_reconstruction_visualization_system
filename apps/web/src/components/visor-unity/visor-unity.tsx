@@ -22,7 +22,8 @@ import type {
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
 import { marcar, motivoDe, PuenteUnity, type MotivoRespaldo } from "@/lib/visor-unity/puente";
-import { paqueteDelCaso, type RelieveCaso } from "@/lib/visor-unity/paquete";
+import type { RelieveCaso } from "@/lib/visor-unity/paquete";
+import { paqueteEnWorker, prepararPaqueteEnWorker } from "@/lib/visor-unity/paquete-en-worker";
 import type { CanalTiempo } from "@/lib/visor-unity/canal";
 import {
   ESTADO_INICIAL,
@@ -106,6 +107,21 @@ function SelectorCamara({
   );
 }
 
+/**
+ * El aviso mientras carga, con el avance real (René, 2026-11-16): la primera vez, la descarga del
+ * motor llena hasta el 40 % y el armado del caso hasta que se ve, el resto; después, solo el armado.
+ */
+function textoDeCarga(estado: Estado, primera: boolean, avance: number): string {
+  const armado = Math.min(1, avance / FRACCION_VISIBLE);
+  if (estado.fase === "arrancando")
+    return `Cargando el visor 3D… ${Math.round(estado.progreso * 40)} %`;
+  if (primera) return `Cargando el visor 3D… ${Math.round(40 + armado * 60)} %`;
+  return `Preparando la escena… ${Math.round(armado * 100)} %`;
+}
+
+/** El avance con el que Unity avisa que el caso ya se ve (`VisorCaso`: vehículos, vía y cámara). */
+const FRACCION_VISIBLE = 0.7;
+
 export function VisorUnity({
   escena,
   relieve = null,
@@ -148,6 +164,8 @@ export function VisorUnity({
   const lienzo = useRef<HTMLCanvasElement>(null);
   const [puente, setPuente] = useState<PuenteUnity | null>(null);
   const [progreso, setProgreso] = useState(0);
+  // El armado del caso en Unity, de 0 a 1 (puente 1.3.0); a 0.7 el caso ya se ve.
+  const [avance, setAvance] = useState(0);
   const [respaldoPor, setRespaldoPor] = useState<{ motivo: MotivoRespaldo; aviso?: string } | null>(
     null,
   );
@@ -195,6 +213,8 @@ export function VisorUnity({
       }
     };
     marcar("arranque");
+    // El worker del paquete arranca junto con Unity: compila el esquema mientras Unity se descarga.
+    prepararPaqueteEnWorker();
     PuenteUnity.arrancar(c, alMensaje, { progreso: (x) => vivo && setProgreso(x) })
       .then((x) => {
         p = x;
@@ -217,6 +237,31 @@ export function VisorUnity({
   const pedida = useRef<{ escena: EscenaSpec; relieve: RelieveCaso } | null>(null);
   const cargando = useRef(false);
   const [vueltas, setVueltas] = useState(0);
+  // El solver corre en cuanto se pide el 3D, a la par que Unity se baja y arranca (antes esperaba a
+  // que Unity estuviera listo: ~1 s más en la laptop; ADR 0119). La carga solo espera su resultado.
+  const calculo = useRef<{
+    escena: EscenaSpec;
+    relieve: RelieveCaso;
+    primero: Promise<Resultado>;
+    completo: Promise<Resultado>;
+  } | null>(null);
+  const calcular = (e: EscenaSpec, r: RelieveCaso) => {
+    const c = calculo.current;
+    if (c && c.escena === e && c.relieve === r) return c;
+    let alParcial!: (x: Resultado) => void;
+    const parcial = new Promise<Resultado>((ok) => (alParcial = ok));
+    const completo = reconstruirCompletoEnNavegador(e, (x) => alParcial(x), r);
+    const primero = Promise.race([parcial, completo]);
+    // Si la carga no llega a esperarlos (Unity falló), no quedan rechazos sin atender.
+    primero.catch(() => undefined);
+    completo.catch(() => undefined);
+    calculo.current = { escena: e, relieve: r, primero, completo };
+    return calculo.current;
+  };
+  useEffect(() => {
+    if (dormir) return;
+    calcular(escena, relieve);
+  }, [escena, relieve, dormir]);
   useEffect(() => {
     if (!puente || dormir) return;
     if (pedida.current?.escena === escena && pedida.current.relieve === relieve) return;
@@ -230,15 +275,20 @@ export function VisorUnity({
       // solo cambia el paquete que se descarga, sin volver a cargar la escena (U6: antes se esperaba
       // a Monte Carlo y el 3D tardaba unos 11 s más).
       marcar("solver");
-      let alParcial!: (r: Resultado) => void;
-      const parcial = new Promise<Resultado>((ok) => (alParcial = ok));
-      const completo = reconstruirCompletoEnNavegador(escena, (r) => alParcial(r), relieve);
-      const resultado = await Promise.race([parcial, completo]);
+      const { primero, completo } = calcular(escena, relieve);
+      const resultado = await primero;
       marcar("solver_listo");
       if (mio !== turno.current) return;
-      const paquete = paqueteDelCaso(escena, resultado, relieve);
+      // Se arma y se valida en un worker: en el hilo principal compilaba el esquema (ADR 0119).
+      const json = await paqueteEnWorker(escena, resultado, relieve);
+      if (mio !== turno.current) return;
+      const paquete = JSON.parse(json) as Caso3D;
       marcar("cargar_caso");
-      await puente.cargar(paquete);
+      setAvance(0);
+      const { completo: armado } = await puente.cargar(json, undefined, (f) => {
+        if (mio === turno.current) setAvance(f);
+      });
+      void armado.then(() => marcar("caso_completo")).catch(() => undefined);
       marcar("caso_cargado");
       if (mio !== turno.current) return;
       setCargada(escena);
@@ -256,8 +306,12 @@ export function VisorUnity({
       cb.current.onApi?.(api);
       const final = await completo.catch(() => null);
       if (final && mio === turno.current && final !== resultado) {
-        cb.current.onApi?.({ ...api, paquete: paqueteDelCaso(escena, final, relieve) });
+        const completoJson = await paqueteEnWorker(escena, final, relieve).catch(() => null);
+        if (completoJson && mio === turno.current)
+          cb.current.onApi?.({ ...api, paquete: JSON.parse(completoJson) as Caso3D });
       }
+      // El entorno se sigue armando después de que el caso ya se ve: Unity no se duerme hasta terminar.
+      await armado.catch(() => undefined);
     })()
       .finally(() => {
         if (mio !== turno.current) return;
@@ -374,9 +428,7 @@ export function VisorUnity({
           className="t-nota vidrio absolute bottom-4 left-1/2 -translate-x-1/2 rounded-control px-3 py-1.5"
           data-testid="visor-unity-cargando"
         >
-          {estado.fase === "arrancando"
-            ? `Cargando el visor 3D… ${Math.round(estado.progreso * 100)} %`
-            : "Preparando la escena…"}
+          {textoDeCarga(estado, cargada === null, avance)}
         </p>
       ) : null}
     </div>

@@ -114,6 +114,36 @@ describe("puente con Unity", () => {
     expect(enviados[1]!.datos).toEqual({ vista: "antes", ancho: 960, alto: 540 });
   });
 
+  it("con el armado por partes (1.3.0) avisa el avance y sigue hasta que el caso se ve", async () => {
+    conWebgl2();
+    const decir = (m: object) =>
+      (window as unknown as Record<string, (t: string) => void>)[FUNCION_PUENTE_WEB]!(
+        JSON.stringify(m),
+      );
+    unityFalso(VISOR_PUENTE_VERSION, (metodo) => {
+      if (metodo !== "cargarCaso") return null;
+      setTimeout(() => decir({ tipo: "progreso", fraccion: 0.4 }), 0);
+      setTimeout(() => decir({ tipo: "visible", escena_id: "x" }), 0);
+      setTimeout(() => decir({ tipo: "progreso", fraccion: 0.9 }), 5);
+      setTimeout(() => decir({ tipo: "cargado", escena_id: "x" }), 10);
+      return null;
+    });
+    const p = await PuenteUnity.arrancar(document.createElement("canvas"), () => {}, {
+      manifiesto: MANIFIESTO,
+    });
+    const avances: number[] = [];
+    let completo = false;
+    const { completo: armado } = await p.cargar({ version_caso3d: "1" }, 1000, (f) =>
+      avances.push(f),
+    );
+    void armado.then(() => (completo = true));
+    // Ya se ve, pero el entorno sigue armándose.
+    expect(avances).toEqual([0.4]);
+    expect(completo).toBe(false);
+    await armado;
+    expect(avances).toEqual([0.4, 0.9]);
+  });
+
   it("una foto que falla no detiene las siguientes", async () => {
     conWebgl2();
     unityFalso(VISOR_PUENTE_VERSION, (metodo, datos) => {

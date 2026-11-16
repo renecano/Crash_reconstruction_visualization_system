@@ -10,6 +10,7 @@
  * está definido y, si no, del `.env.local` de la raíz, que no se versiona (René, 2026-11-07). Solo se
  * lee en memoria: no se imprime ni se copia a ningún lado (plan v4 §3.2).
  *
+ *   node tools/unity/grabar-programas.mjs        # antes: los programas de shaders del build
  *   node tools/unity/publicar-web.mjs            # sube el build y escribe el manifiesto
  *   node tools/unity/publicar-web.mjs --podar    # además, dice qué builds viejos borraría
  *   node tools/unity/publicar-web.mjs --podar --si   # y los borra
@@ -44,6 +45,7 @@ const TIPOS = {
   ".wasm": "application/wasm",
   ".data": "application/octet-stream",
   ".json": "application/json",
+  ".gz": "application/gzip",
 };
 
 function leerToken() {
@@ -217,6 +219,18 @@ if (casosD1.length < 10) {
   );
   process.exit(1);
 }
+// Los programas de shaders del build (`grabar-programas.mjs`, ADR 0119): sin ellos el 3D vuelve a
+// trabar la página al compilar. Si son de otro build (otro .wasm), no se publica.
+const PROGRAMAS = join(BUILD, "programas.json.gz");
+if (!existsSync(PROGRAMAS)) {
+  console.error("Faltan los programas de shaders: node tools/unity/grabar-programas.mjs");
+  process.exit(1);
+}
+const { gunzipSync } = await import("node:zlib");
+if (JSON.parse(gunzipSync(readFileSync(PROGRAMAS)).toString("utf8")).code !== de(".wasm")) {
+  console.error("Los programas de shaders son de otro build: node tools/unity/grabar-programas.mjs");
+  process.exit(1);
+}
 const subir = [
   ...archivosDe(BUILD).map((rel) => [rel, readFileSync(join(BUILD, rel))]),
   ["axa_alcance.json", readFileSync(CASO)],
@@ -248,6 +262,7 @@ const manifiesto = {
   data: de(".data"),
   framework: de(".framework.js"),
   code: de(".wasm"),
+  programas: "programas.json.gz",
   caso: "axa_alcance.json",
   casos: casosD1.map((f) => f.replace(/\.json$/, "")),
 };

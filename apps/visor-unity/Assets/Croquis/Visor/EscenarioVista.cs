@@ -33,25 +33,50 @@ namespace Croquis.Visor
         /// <summary>La lluvia cuando no se dibuja en el minimapa (baja y media): su capa propia.</summary>
         public const int CapaLluvia = 4;
 
-        public static void Construir(Transform raiz, Escenario e, Light sol, Camera camara, Terreno terreno)
+        /// <summary>
+        /// Lo que se ve primero (René, 2026-11-16: armar por partes, primero la cámara inicial y los
+        /// vehículos): la luz, la vía, la carretera, el suelo y la leyenda ilustrativa. Cede el cuadro entre
+        /// una parte y otra. Devuelve el padre «escenario»; el entorno se arma después en él.
+        /// </summary>
+        public static async Awaitable<Transform> ConstruirBaseAsync(Transform raiz, Escenario e, Light sol, Camera camara, Terreno terreno, Func<Awaitable> ceder)
         {
             var escenario = new GameObject("escenario").transform;
             escenario.SetParent(raiz, false);
             Ambiente(e.Ambiente, sol, camara);
+            Cronometro.Paso("esc_ambiente");
+            await ceder();
             var urbana = e.Entorno.Zona == ZonaEntorno.Urbana;
             var centro = new Vector2((float)e.Centro.X, (float)e.Centro.Y);
             Via(escenario, e.Via, e.Ambiente, terreno, e.Semilla, urbana, centro);
+            Cronometro.Paso("esc_via");
+            await ceder();
             if (!urbana)
             {
                 CarreteraVista.Construir(escenario, e.Via, e.Ambiente, terreno, e.Semilla);
             }
+            Cronometro.Paso("esc_carretera");
+            await ceder();
             foreach (var s in e.Suelo)
             {
                 Suelo(escenario, s, e.Ambiente, urbana, e.Semilla);
+                await ceder();
             }
 
-            EntornoVista.Construir(escenario, e.Entorno, e.Ambiente, e.Semilla);
+            Cronometro.Paso("esc_suelo");
+            Leyenda(escenario);
+            return escenario;
+        }
+
+        /// <summary>
+        /// El entorno, después de lo que se ve primero: árboles, edificios, postes, horizonte, luminarias,
+        /// lluvia. La sonda de reflejos va al final (<see cref="TomarSonda"/>), con la escena completa.
+        /// </summary>
+        public static async Awaitable ConstruirEntornoAsync(Transform escenario, Escenario e, Camera camara, Func<Awaitable> ceder)
+        {
+            await EntornoVista.ConstruirAsync(escenario, e.Entorno, e.Ambiente, e.Semilla, ceder);
             Luminarias(escenario, e.Luminarias, e.Ambiente, new Vector2((float)e.Centro.X, (float)e.Centro.Y));
+            Cronometro.Paso("esc_luminarias");
+            await ceder();
             var p = e.Ambiente.Precipitacion;
             LluviaDeParticulas = null;
             if (p.StartsWith("lluvia", StringComparison.Ordinal) || p == "granizo")
@@ -59,9 +84,16 @@ namespace Croquis.Visor
                 Lluvia(escenario, e.Centro, p == "lluvia_ligera" ? 2500 : 6000, camara);
             }
 
-            Sonda(escenario, e);
+        }
 
-            Leyenda(escenario);
+        /// <summary>
+        /// La sonda de reflejos. Se toma con lo mismo que veía antes de armar por partes, cuando se tomaba
+        /// al terminar el escenario: el escenario completo y el piso liso, sin el terreno, el caso ni las
+        /// personas (quien llama los apaga mientras tanto). Comparado con capturas antes y después.
+        /// </summary>
+        public static void TomarSonda(Transform escenario, Escenario e)
+        {
+            Sonda(escenario, e);
         }
 
         // ---- Cielo, luz y aire ------------------------------------------------------------------------

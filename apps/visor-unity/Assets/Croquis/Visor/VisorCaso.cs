@@ -70,15 +70,124 @@ namespace Croquis.Visor
             PasosDeCarga[nombre] = Math.Round(reloj.Elapsed.TotalMilliseconds, 1);
         }
 
-        public async Awaitable CargarAsync(Caso3D caso)
+        /// <summary>
+        /// Cuánto puede ocupar el armado un cuadro antes de ceder (ms). Con esto ninguna tarea del hilo
+        /// principal pasa de unos cientos de ms (René, 2026-11-16), y cada parte nueva se dibuja (y compila
+        /// sus shaders) en su propio cuadro, en vez de todo en el primero.
+        /// </summary>
+        public const double PresupuestoPorCuadroMs = 40.0;
+
+        private readonly System.Diagnostics.Stopwatch cuadro = System.Diagnostics.Stopwatch.StartNew();
+        private int turnoDeCarga;
+        private bool pisoAlEmpezar;
+
+        /// <summary>El avance de la carga (0 a 1) y si el caso ya se ve (los vehículos, la vía y la cámara).</summary>
+        public Action<double, bool> AlAvanzar { get; set; }
+
+        /// <summary>
+        /// Cede el cuadro si el armado ya ocupó su presupuesto. Si mientras tanto llegó otro caso, esta carga
+        /// se abandona (la otra manda).
+        /// </summary>
+        public async Awaitable Ceder(int turno)
         {
+            if (cuadro.Elapsed.TotalMilliseconds >= PresupuestoPorCuadroMs)
+            {
+                await Awaitable.NextFrameAsync();
+                cuadro.Restart();
+            }
+
+            if (turno != turnoDeCarga)
+            {
+                throw new OperationCanceledException("Llegó otro caso.");
+            }
+        }
+
+        /// <summary>
+        /// Un turno nuevo de carga: las anteriores que sigan armando se abandonan al ceder. Mientras se
+        /// arma lo que todavía no se ve, la cámara no dibuja la escena (cada cuadro la dibujaba a medias y
+        /// la carga tardaba el doble en la laptop); vuelve a dibujarla en cuanto el caso se ve.
+        /// </summary>
+        public int NuevoTurno()
+        {
+            Armando = true;
+            ApagarCamaras();
+            return ++turnoDeCarga;
+        }
+
+        private Camera camaraEnPausa;
+        private int mascaraGuardada;
+
+        /// <summary>
+        /// La cámara principal deja de dibujar capas mientras se arma (sigue encendida: el armado la usa).
+        /// Al volver, su máscara es la de antes sin la capa del minimapa, como la deja `CamaraVisor.Abrir`.
+        /// </summary>
+        private void ApagarCamaras()
+        {
+            var c = Camera.main;
+            if (c == null || camaraEnPausa != null)
+            {
+                return;
+            }
+
+            camaraEnPausa = c;
+            mascaraGuardada = c.cullingMask;
+            c.cullingMask = 0;
+        }
+
+        private void EncenderCamaras()
+        {
+            if (camaraEnPausa == null)
+            {
+                return;
+            }
+
+            camaraEnPausa.cullingMask = mascaraGuardada & ~(1 << CamaraVisor.CapaMinimapa);
+            camaraEnPausa = null;
+        }
+
+        /// <summary>Baja el manifiesto de modelos al arrancar, mientras la web calcula el caso.</summary>
+        public void PrecargarManifiesto()
+        {
+            _ = modelos.PrecargarManifiesto().ContinueWith(
+                t => Debug.LogWarning("[modelos] " + t.Exception?.GetBaseException().Message),
+                System.Threading.Tasks.TaskContinuationOptions.OnlyOnFaulted);
+        }
+
+        /// <summary>Hay un caso armándose (las fotos lo esperan).</summary>
+        public bool Armando { get; private set; }
+
+        /// <summary>Terminó (bien o mal) la carga de ese turno; si es la vigente, ya no se arma nada.</summary>
+        public void TerminarTurno(int turno)
+        {
+            if (turno == turnoDeCarga)
+            {
+                Armando = false;
+                EncenderCamaras();
+            }
+        }
+
+        private void Avance(double f, bool visible = false)
+        {
+            AlAvanzar?.Invoke(Math.Min(1.0, Math.Max(0.0, f)), visible);
+        }
+
+        public async Awaitable CargarAsync(Caso3D caso, int turno = -1)
+        {
+            if (turno < 0)
+            {
+                turno = NuevoTurno();
+            }
+
+            Func<Awaitable> ceder = () => Ceder(turno);
             PasosDeCarga.Clear();
             PasosDeCarga["leer_sobre"] = Math.Round(LecturaDelPaquete.Sobre, 1);
             PasosDeCarga["leer_paquete"] = Math.Round(LecturaDelPaquete.Paquete, 1);
             PasosDeCarga["caracteres_paquete"] = LecturaDelPaquete.Caracteres;
             reloj = System.Diagnostics.Stopwatch.StartNew();
+            Cronometro.Marca = Paso;
             Reproduciendo = false;
             Cargado = false;
+            pisoAlEmpezar = piso != null && piso.activeSelf;
             if (raiz != null)
             {
                 Destroy(raiz.gameObject);
@@ -95,6 +204,9 @@ namespace Croquis.Visor
             var cielo = e != null ? Cielos.CargarAsync(EscenarioVista.NombreDelCielo(e.Ambiente)) : null;
             inicio = r.TInicio;
             fin = r.TFin;
+            // Los modelos de los vehículos se bajan y se abren a la vez, no uno tras otro.
+            modelos.Precargar(r.Vehiculos.Select(v => v.Clase));
+            var k0 = 0;
             foreach (var v in r.Vehiculos)
             {
                 var go = new GameObject("vehiculo_" + v.Id);
@@ -106,6 +218,8 @@ namespace Croquis.Visor
                 var extra = e?.Vehiculos != null ? Array.Find(e.Vehiculos, x => x.Id == v.Id) : null;
                 var color = extra?.Color != null ? Materiales.Hex(extra.Color, Color.gray) : (Color?)null;
                 vista.Partes = await modelos.ArmarAsync(go.transform, v, color);
+                Paso("modelo_" + v.Id);
+                await ceder();
                 // El daño del solver sobre la carrocería: se prepara aquí y se ve desde su impacto.
                 vista.Dano = DanoVista.Preparar(go.transform, v, r);
                 vista.Frenado = extra?.Frenado;
@@ -125,6 +239,8 @@ namespace Croquis.Visor
                     SombraDeContacto(go.transform, (float)v.Dimensiones.LargoM, (float)v.Dimensiones.AnchoM, noche);
                 }
                 vehiculos.Add(vista);
+                Avance(0.1 + 0.3 * ++k0 / Math.Max(1, r.Vehiculos.Length));
+                await ceder();
             }
 
             // Con escenario (ADR 0112) se dibuja lo que calculó TS y se esconde el piso liso de U1.
@@ -133,13 +249,16 @@ namespace Croquis.Visor
             var zona = Encuadre.ZonaDeInteres(r);
             EscenarioVista.CentroDelHecho = new Vector2((float)zona.CentroX, (float)zona.CentroY);
             EscenarioVista.ClaroDelHecho = (float)zona.Lado * 0.6f + 4f;
+            Transform escenario = null;
             if (e != null)
             {
                 Paso("vehiculos");
                 await cielo;
+                await ceder();
                 Paso("cielo");
-            EscenarioVista.Construir(raiz, e, sol, Camera.main, terreno);
-            Paso("escenario");
+                // Primero lo que se ve con la cámara inicial: la vía, el suelo y la leyenda.
+                escenario = await EscenarioVista.ConstruirBaseAsync(raiz, e, sol, Camera.main, terreno, ceder);
+                Paso("escenario_base");
             }
             else
             {
@@ -147,53 +266,15 @@ namespace Croquis.Visor
                 EscenarioVista.Leyenda(raiz, false);
             }
 
+            Avance(0.5);
             TerrenoVista.Dibujar(raiz, e?.Terreno, terreno, e != null && e.Ambiente.Mojado);
             dinamica = CasoVista.Construir(raiz, caso, terreno, noche);
             Paso("caso_y_terreno");
+            await ceder();
             Editor.Preparar(r.Objetos, terreno);
             foreach (var v in vehiculos)
             {
                 v.Terreno = terreno;
-            }
-
-            // Los vehículos estacionados, con el modelo de su clase y quietos (antes salían como una caja
-            // de tabique). Sus medidas son las del objeto; sin clase, un sedán.
-            foreach (var o in r.Objetos ?? new ResultadoObjeto[0])
-            {
-                if (o.Tipo != IndigoTipo.VehiculoEstacionado)
-                {
-                    continue;
-                }
-
-                var go = new GameObject("estacionado_" + o.Id);
-                go.transform.SetParent(raiz, false);
-                var v = new ResultadoVehiculo
-                {
-                    Id = o.Id,
-                    Clase = string.IsNullOrEmpty(o.ClaseVehiculo) ? "sedan_mediano" : o.ClaseVehiculo,
-                    Dimensiones = new Dimensiones
-                    {
-                        LargoM = o.LargoM,
-                        AnchoM = o.AnchoM,
-                        AltoM = o.AltoM,
-                        DistanciaEntreEjesM = 0.6 * o.LargoM,
-                    },
-                };
-                try
-                {
-                    await modelos.ArmarAsync(go.transform, v, (Color?)null);
-                }
-                catch (ModeloNoCargo ex)
-                {
-                    Debug.LogWarning("[estacionado] " + ex.Message);
-                }
-
-                var pie = terreno.P(o.X, o.Y);
-                go.transform.SetPositionAndRotation(pie, Quaternion.Euler(0f, 90f - (float)o.RumboDeg, 0f));
-                if (e != null)
-                {
-                    SombraDeContacto(go.transform, (float)o.LargoM, (float)o.AnchoM, noche);
-                }
             }
 
             // U3: las personas. Con trayectoria propia, por su cuenta; los ocupantes, en su vehículo.
@@ -201,7 +282,10 @@ namespace Croquis.Visor
             {
                 if (Personas.TieneTrayectoria(p))
                 {
-                    personas.Add(await PersonaVista.ConTrayectoriaAsync(raiz, p, terreno, cuerpos));
+                    // Después de cada espera, primero se revisa que este caso siga siendo el vigente.
+                    var conTrayectoria = await PersonaVista.ConTrayectoriaAsync(raiz, p, terreno, cuerpos);
+                    await ceder();
+                    personas.Add(conTrayectoria);
                     continue;
                 }
 
@@ -215,7 +299,9 @@ namespace Croquis.Visor
                 for (var i = 0; i < variantes.Length; i++)
                 {
                     // Sin cinturón declarado van las dos variantes; la segunda, de otro color.
-                    personas.Add(await PersonaVista.OcupanteAsync(vehiculos[k].transform, p, r.Vehiculos[k], variantes[i], i > 0, cuerpos));
+                    var ocupante = await PersonaVista.OcupanteAsync(vehiculos[k].transform, p, r.Vehiculos[k], variantes[i], i > 0, cuerpos);
+                    await ceder();
+                    personas.Add(ocupante);
                 }
             }
 
@@ -224,7 +310,7 @@ namespace Croquis.Visor
                 piso.SetActive(e == null);
             }
 
-            Paso("estacionados_y_personas");
+            Paso("personas");
             Camara.Abrir(caso);
             Camara.Vehiculos = vehiculos;
             Camara.Ocupantes.Clear();
@@ -279,6 +365,64 @@ namespace Croquis.Visor
                 }
             }
 
+            Paso("camara");
+            // El caso ya se ve: los vehículos, la vía y la cámara. El entorno sigue armándose por partes.
+            EncenderCamaras();
+            Avance(0.7, true);
+            await ceder();
+
+            if (e != null)
+            {
+                await EscenarioVista.ConstruirEntornoAsync(escenario, e, Camera.main, ceder);
+                TomarSondaComoAntes(escenario, e);
+                Paso("escenario");
+            }
+
+            Avance(0.85);
+            // Los vehículos estacionados, con el modelo de su clase y quietos (antes salían como una caja
+            // de tabique). Sus medidas son las del objeto; sin clase, un sedán.
+            foreach (var o in r.Objetos ?? new ResultadoObjeto[0])
+            {
+                if (o.Tipo != IndigoTipo.VehiculoEstacionado)
+                {
+                    continue;
+                }
+
+                var go = new GameObject("estacionado_" + o.Id);
+                go.transform.SetParent(raiz, false);
+                var v = new ResultadoVehiculo
+                {
+                    Id = o.Id,
+                    Clase = string.IsNullOrEmpty(o.ClaseVehiculo) ? "sedan_mediano" : o.ClaseVehiculo,
+                    Dimensiones = new Dimensiones
+                    {
+                        LargoM = o.LargoM,
+                        AnchoM = o.AnchoM,
+                        AltoM = o.AltoM,
+                        DistanciaEntreEjesM = 0.6 * o.LargoM,
+                    },
+                };
+                try
+                {
+                    await modelos.ArmarAsync(go.transform, v, (Color?)null);
+                }
+                catch (ModeloNoCargo ex)
+                {
+                    Debug.LogWarning("[estacionado] " + ex.Message);
+                }
+
+                await ceder();
+                var pie = terreno.P(o.X, o.Y);
+                go.transform.SetPositionAndRotation(pie, Quaternion.Euler(0f, 90f - (float)o.RumboDeg, 0f));
+                if (e != null)
+                {
+                    SombraDeContacto(go.transform, (float)o.LargoM, (float)o.AnchoM, noche);
+                }
+
+                await ceder();
+            }
+
+            Paso("estacionados");
             Camara.VehiculosDelMinimapa.Clear();
             if (Calidad.Perfil.VehiculosUnidosEnMinimapa)
             {
@@ -290,6 +434,8 @@ namespace Croquis.Visor
                     {
                         Camara.VehiculosDelMinimapa.Add(unido);
                     }
+
+                    await ceder();
                 }
             }
 
@@ -305,24 +451,78 @@ namespace Croquis.Visor
                         SombrasUnidas.Unir(hijo, "sombra_vehiculo");
                     }
                 }
+
+                await ceder();
             }
 
             if (Calidad.Perfil.MinimapaHorneado)
             {
                 Paso("sombras_unidas");
                 Camara.HornearMinimapa();
+                Paso("minimapa_horneado");
             }
 
             Calidad.Aplicar();
+            Paso("calidad");
             Cargado = true;
             Calidad.Reiniciar();
             Paso("total");
+            Cronometro.Marca = null;
+            TerminarTurno(turno);
+            Avance(1.0);
             // El primer cuadro con la escena completa: ahí se compilan sus shaders y se suben sus texturas.
             await Awaitable.NextFrameAsync();
             Paso("primer_cuadro");
             await Awaitable.NextFrameAsync();
             Paso("segundo_cuadro");
             Debug.Log("[carga] " + string.Join(", ", PasosDeCarga.Select(kv => kv.Key + " " + kv.Value + " ms")));
+        }
+
+        /// <summary>
+        /// La sonda de reflejos con lo que había cuando se tomaba antes de armar por partes: el escenario,
+        /// los vehículos (que la sonda no ve por su capa) y el piso liso como estaba al empezar; sin el terreno,
+        /// el caso ni las personas, que entonces aún no existían.
+        /// </summary>
+        private void TomarSondaComoAntes(Transform escenario, Escenario e)
+        {
+            var apagados = new List<GameObject>();
+            foreach (Transform hijo in raiz)
+            {
+                if (hijo != escenario && !hijo.name.StartsWith("vehiculo_", StringComparison.Ordinal) && hijo.gameObject.activeSelf)
+                {
+                    apagados.Add(hijo.gameObject);
+                }
+            }
+
+            foreach (var p in personas)
+            {
+                if (p != null && p.gameObject.activeSelf && !apagados.Contains(p.gameObject))
+                {
+                    apagados.Add(p.gameObject);
+                }
+            }
+
+            foreach (var g in apagados)
+            {
+                g.SetActive(false);
+            }
+
+            var pisoEncendido = piso != null && piso.activeSelf;
+            if (piso != null)
+            {
+                piso.SetActive(pisoAlEmpezar);
+            }
+
+            EscenarioVista.TomarSonda(escenario, e);
+            if (piso != null)
+            {
+                piso.SetActive(pisoEncendido);
+            }
+
+            foreach (var g in apagados)
+            {
+                g.SetActive(true);
+            }
         }
 
         /// <summary>

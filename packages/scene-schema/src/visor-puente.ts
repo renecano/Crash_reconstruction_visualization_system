@@ -4,7 +4,7 @@
  */
 
 /** Sube cuando cambia un mensaje. Unity la anuncia en `listo`; la web no carga un caso si no coincide. */
-export const VISOR_PUENTE_VERSION = "1.2.0" as const;
+export const VISOR_PUENTE_VERSION = "1.3.0" as const;
 
 export const CALIDADES_VISOR = ["baja", "media", "alta", "ultra", "auto"] as const;
 export type CalidadVisor = (typeof CALIDADES_VISOR)[number];
@@ -75,6 +75,13 @@ export type CodigoErrorVisor = (typeof CODIGOS_ERROR_VISOR)[number];
 export interface MensajesDeUnity {
   listo: { version: string };
   cargado: { escena_id: string };
+  /**
+   * Desde la 1.3.0: el avance de la carga, de 0 a 1. Unity arma el caso por partes, en varios cuadros:
+   * primero lo que se ve (vehículos, vía, cámara) y el entorno después.
+   */
+  progreso: { fraccion: number };
+  /** Desde la 1.3.0: el caso ya se ve (vehículos, vía y cámara); el entorno sigue armándose hasta `cargado`. */
+  visible: { escena_id: string };
   tiempo: { t: number };
   camara: { modo: CamaraVisor };
   /** `png` es la imagen en base64, sin el prefijo `data:`. */
@@ -129,6 +136,8 @@ export const NOMBRES_A_UNITY = [
 export const NOMBRES_DE_UNITY = [
   "listo",
   "cargado",
+  "progreso",
+  "visible",
   "tiempo",
   "camara",
   "captura",

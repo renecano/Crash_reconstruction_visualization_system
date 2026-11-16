@@ -15,6 +15,20 @@ import { build } from "esbuild";
 const WEB = join(dirname(fileURLToPath(import.meta.url)), "..");
 const out = join(WEB, "public", "workers", "reconstruct.js");
 mkdirSync(dirname(out), { recursive: true });
+// El del paquete caso-3d (ADR 0119): arma y valida el paquete del visor Unity fuera del hilo principal.
+const paquete = join(WEB, "public", "workers", "paquete.js");
+await build({
+  entryPoints: [join(WEB, "src", "workers", "paquete.worker.ts")],
+  outfile: paquete,
+  bundle: true,
+  format: "iife",
+  platform: "browser",
+  target: "es2022",
+  minify: true,
+  legalComments: "inline",
+  logLevel: "warning",
+});
+console.log(`worker del paquete → ${paquete}`);
 await build({
   entryPoints: [join(WEB, "src", "workers", "reconstruct.worker.ts")],
   outfile: out,

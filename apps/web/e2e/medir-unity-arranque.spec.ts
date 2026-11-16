@@ -6,7 +6,7 @@ import { colocarTodo, irAPaso } from "./ayuda-recorrido";
 
 /**
  * El arranque del 3D de Unity al abrirlo, por partes (René, 2026-11-16): descarga, compilación del
- * WebAssembly, arranque del motor, carga del caso y primer cuadro, en la primera visita (perfil
+ * WebAssembly, arranque del motor, carga del caso (hasta que se ve), primer cuadro y caso completo, en la primera visita (perfil
  * nuevo) y en la segunda (mismo perfil, con caché), con la tarea larga más larga del hilo principal
  * de cada una. Chromium con ventana y la GPU de la laptop, con el visor Unity, como un perito. No
  * corre en CI.
@@ -59,6 +59,11 @@ function instrumentar() {
 }
 
 async function abrir3d(page: Page, caso: "axa" | "nuevo") {
+  // El desglose que escribe Unity al terminar de armar («[carga] paso ms, …», acumulado).
+  const consola: string[] = [];
+  page.on("console", (m) => {
+    if (m.text().includes("[carga]")) consola.push(m.text());
+  });
   await page.goto("/cesvi");
   if (caso === "axa") {
     await page.getByTestId("ir-axa").click();
@@ -91,8 +96,15 @@ async function abrir3d(page: Page, caso: "axa" | "nuevo") {
     () => new Promise<number>((ok) => requestAnimationFrame(() => ok(performance.now()))),
   );
   const ms = Date.now() - reloj;
+  // Desde el puente 1.3.0 el entorno se sigue armando después de que el caso se ve: las tareas largas
+  // se cuentan hasta que queda completo («caso_completo»), y 2 s más.
+  await page
+    .waitForFunction(() => performance.getEntriesByName("unity:caso_completo").length > 0, null, {
+      timeout: 120_000,
+    })
+    .catch(() => undefined);
   await page.waitForTimeout(2000);
-  return page.evaluate(
+  const datos = await page.evaluate(
     ({ t0, primerCuadro, ms }) => {
       const w = window as unknown as {
         __largas: { t: number; d: number }[];
@@ -124,17 +136,32 @@ async function abrir3d(page: Page, caso: "axa" | "nuevo") {
           wasm_listo: rel(w.__wasm.compilado ?? w.__wasm.instanciado),
           motor_listo: rel(marca("instancia")),
           solver_listo: rel(marca("solver_listo")),
+          // El caso ya se ve (antes del puente 1.3.0, también completo).
+          paquete_armado: rel(marca("cargar_caso")),
+          caso_serializado: rel(marca("caso_serializado")),
+          caso_enviado: rel(marca("caso_enviado")),
           caso_cargado: rel(marca("caso_cargado")),
           primer_cuadro: rel(primerCuadro),
+          // El entorno terminado (puente 1.3.0); con un build anterior, null.
+          caso_completo: rel(marca("caso_completo")),
         },
         recursos,
+        // Los shaders adelantados (ADR 0119): cuántos se compilaron de antemano y cuántos usó Unity.
+        programas:
+          (window as unknown as { croquisProgramas?: { estado: unknown } | null }).croquisProgramas
+            ?.estado ?? null,
         tarea_mas_larga_ms: Math.max(0, ...largas.map((x) => x.d)),
+        tareas_de_mas_de_200_ms: largas.filter((x) => x.d > 200).length,
+        tareas_largas: largas
+          .filter((x) => x.d > 100)
+          .map((x) => ({ desde_el_clic_ms: Math.round(x.t - t0), ms: x.d })),
         tareas_de_mas_de_100_ms: largas.filter((x) => x.d > 100).length,
         tiempo_bloqueado_ms: largas.reduce((a, x) => a + Math.max(0, x.d - 50), 0),
       };
     },
     { t0, primerCuadro, ms },
   );
+  return { ...datos, unity_carga: consola.at(-1)?.replace(/^.*\[carga\]\s*/, "") ?? null };
 }
 
 /** La máquina en que se mide: núcleos, memoria y la tarjeta que usa WebGL. */
@@ -155,7 +182,11 @@ test("el arranque del 3D de Unity, por partes", async ({ baseURL }) => {
   const resultado: Record<string, unknown> = {};
   let equipo: unknown = null;
   // Cada caso con su perfil: la primera visita sin caché y la segunda con ella.
-  for (const caso of ["axa", "nuevo"] as const) {
+  // CROQUIS_ARRANQUE_CASOS=axa mide solo uno (para iterar); la tabla completa lleva los dos.
+  const casos = (process.env.CROQUIS_ARRANQUE_CASOS?.split(",") ?? ["axa", "nuevo"]) as (
+    "axa" | "nuevo"
+  )[];
+  for (const caso of casos) {
     const perfil = mkdtempSync(join(tmpdir(), "croquis-unity-arranque-"));
     const ctx = await chromium.launchPersistentContext(perfil, {
       headless: false,
@@ -188,7 +219,7 @@ test("el arranque del 3D de Unity, por partes", async ({ baseURL }) => {
     `${JSON.stringify(
       {
         descripcion:
-          "El arranque del 3D de Unity al abrirlo (clic en «3D» con el caso reconstruido), por etapas, en ms desde el clic: descarga del build (precarga), compilación del WebAssembly, arranque del motor (instancia), solver del caso, carga del caso y primer cuadro. AXA y un caso nuevo (la narración de ejemplo grabada); primera visita con un perfil nuevo, segunda con otra pestaña del mismo perfil (caché). Tareas largas del hilo principal (Long Tasks API). Chromium con ventana y GPU (ANGLE d3d11), 1440×900.",
+          "El arranque del 3D de Unity al abrirlo (clic en «3D» con el caso reconstruido), por etapas, en ms desde el clic: descarga del build (precarga), compilación del WebAssembly, arranque del motor (instancia), solver del caso, carga del caso hasta que se ve, primer cuadro y caso completo (desde el puente 1.3.0 el entorno se arma después de que el caso se ve; con un build anterior, `caso_completo` es null y «cargado» ya es la escena completa). AXA y un caso nuevo (la narración de ejemplo grabada); primera visita con un perfil nuevo, segunda con otra pestaña del mismo perfil (caché). Tareas largas del hilo principal (Long Tasks API). Chromium con ventana y GPU (ANGLE d3d11), 1440×900.",
         script: "apps/web/e2e/medir-unity-arranque.spec.ts",
         sitio: baseURL,
         fecha: new Date().toISOString(),

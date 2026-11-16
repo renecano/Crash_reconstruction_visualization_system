@@ -1,0 +1,647 @@
+{
+  "descripcion": "El arranque del 3D de Unity al abrirlo (clic en «3D» con el caso reconstruido), por etapas, en ms desde el clic: descarga del build (precarga), compilación del WebAssembly, arranque del motor (instancia), solver del caso, carga del caso hasta que se ve, primer cuadro y caso completo (desde el puente 1.3.0 el entorno se arma después de que el caso se ve; con un build anterior, `caso_completo` es null y «cargado» ya es la escena completa). AXA y un caso nuevo (la narración de ejemplo grabada); primera visita con un perfil nuevo, segunda con otra pestaña del mismo perfil (caché). Tareas largas del hilo principal (Long Tasks API). Chromium con ventana y GPU (ANGLE d3d11), 1440×900.",
+  "script": "apps/web/e2e/medir-unity-arranque.spec.ts",
+  "sitio": "http://localhost:3000",
+  "fecha": "2026-11-16T20:54:26.617Z",
+  "maquina": {
+    "nucleos": 8,
+    "memoria_gb": 8,
+    "gpu": "ANGLE (Intel, Intel(R) UHD Graphics (0x00009B41) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "axa": {
+    "primera_visita": {
+      "ms_hasta_listo": 25360,
+      "etapas_ms_desde_el_clic": {
+        "precarga": 91,
+        "precarga_lista": 94,
+        "cargador_listo": 307,
+        "wasm_compila": 442,
+        "wasm_listo": 694,
+        "motor_listo": 2741,
+        "solver_listo": 5538,
+        "caso_cargado": 24122,
+        "primer_cuadro": 25360,
+        "caso_completo": 25798
+      },
+      "recursos": [
+        {
+          "archivo": "*.loader.js",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": -15695,
+          "duracion_ms": 209
+        },
+        {
+          "archivo": "*.framework.js",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": -15355,
+          "duracion_ms": 559
+        },
+        {
+          "archivo": "*.wasm",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": -14603,
+          "duracion_ms": 3872
+        },
+        {
+          "archivo": "*.data",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": -10679,
+          "duracion_ms": 4111
+        },
+        {
+          "archivo": "*.loader.js",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": 94,
+          "duracion_ms": 209
+        }
+      ],
+      "tarea_mas_larga_ms": 6966,
+      "tareas_de_mas_de_200_ms": 12,
+      "tareas_largas": [
+        {
+          "desde_el_clic_ms": 444,
+          "ms": 150
+        },
+        {
+          "desde_el_clic_ms": 1472,
+          "ms": 1270
+        },
+        {
+          "desde_el_clic_ms": 2751,
+          "ms": 2683
+        },
+        {
+          "desde_el_clic_ms": 5538,
+          "ms": 1380
+        },
+        {
+          "desde_el_clic_ms": 7132,
+          "ms": 113
+        },
+        {
+          "desde_el_clic_ms": 7935,
+          "ms": 106
+        },
+        {
+          "desde_el_clic_ms": 8042,
+          "ms": 115
+        },
+        {
+          "desde_el_clic_ms": 8864,
+          "ms": 148
+        },
+        {
+          "desde_el_clic_ms": 10339,
+          "ms": 514
+        },
+        {
+          "desde_el_clic_ms": 11316,
+          "ms": 181
+        },
+        {
+          "desde_el_clic_ms": 11533,
+          "ms": 1465
+        },
+        {
+          "desde_el_clic_ms": 13001,
+          "ms": 207
+        },
+        {
+          "desde_el_clic_ms": 13210,
+          "ms": 125
+        },
+        {
+          "desde_el_clic_ms": 13421,
+          "ms": 995
+        },
+        {
+          "desde_el_clic_ms": 14419,
+          "ms": 1982
+        },
+        {
+          "desde_el_clic_ms": 16402,
+          "ms": 754
+        },
+        {
+          "desde_el_clic_ms": 17156,
+          "ms": 6966
+        },
+        {
+          "desde_el_clic_ms": 24233,
+          "ms": 134
+        },
+        {
+          "desde_el_clic_ms": 24418,
+          "ms": 809
+        },
+        {
+          "desde_el_clic_ms": 25404,
+          "ms": 395
+        },
+        {
+          "desde_el_clic_ms": 27043,
+          "ms": 136
+        }
+      ],
+      "tareas_de_mas_de_100_ms": 21,
+      "tiempo_bloqueado_ms": 20269
+    },
+    "segunda_visita": {
+      "ms_hasta_listo": 14817,
+      "etapas_ms_desde_el_clic": {
+        "precarga": 91,
+        "precarga_lista": 97,
+        "cargador_listo": 195,
+        "wasm_compila": 356,
+        "wasm_listo": 821,
+        "motor_listo": 2112,
+        "solver_listo": 3611,
+        "caso_cargado": 14023,
+        "primer_cuadro": 14806,
+        "caso_completo": 37529
+      },
+      "recursos": [
+        {
+          "archivo": "*.loader.js",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": -21897,
+          "duracion_ms": 148
+        },
+        {
+          "archivo": "*.framework.js",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": -21543,
+          "duracion_ms": 198
+        },
+        {
+          "archivo": "*.wasm",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": -21182,
+          "duracion_ms": 2665
+        },
+        {
+          "archivo": "*.data",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": -18475,
+          "duracion_ms": 3742
+        },
+        {
+          "archivo": "*.loader.js",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": 98,
+          "duracion_ms": 95
+        }
+      ],
+      "tarea_mas_larga_ms": 2812,
+      "tareas_de_mas_de_200_ms": 14,
+      "tareas_largas": [
+        {
+          "desde_el_clic_ms": 357,
+          "ms": 180
+        },
+        {
+          "desde_el_clic_ms": 543,
+          "ms": 284
+        },
+        {
+          "desde_el_clic_ms": 834,
+          "ms": 1278
+        },
+        {
+          "desde_el_clic_ms": 2120,
+          "ms": 1182
+        },
+        {
+          "desde_el_clic_ms": 3610,
+          "ms": 1476
+        },
+        {
+          "desde_el_clic_ms": 5184,
+          "ms": 106
+        },
+        {
+          "desde_el_clic_ms": 5385,
+          "ms": 106
+        },
+        {
+          "desde_el_clic_ms": 5492,
+          "ms": 101
+        },
+        {
+          "desde_el_clic_ms": 5594,
+          "ms": 107
+        },
+        {
+          "desde_el_clic_ms": 6520,
+          "ms": 106
+        },
+        {
+          "desde_el_clic_ms": 7983,
+          "ms": 454
+        },
+        {
+          "desde_el_clic_ms": 8897,
+          "ms": 364
+        },
+        {
+          "desde_el_clic_ms": 9264,
+          "ms": 275
+        },
+        {
+          "desde_el_clic_ms": 9541,
+          "ms": 140
+        },
+        {
+          "desde_el_clic_ms": 9752,
+          "ms": 534
+        },
+        {
+          "desde_el_clic_ms": 10293,
+          "ms": 269
+        },
+        {
+          "desde_el_clic_ms": 10866,
+          "ms": 334
+        },
+        {
+          "desde_el_clic_ms": 11216,
+          "ms": 2812
+        },
+        {
+          "desde_el_clic_ms": 14028,
+          "ms": 156
+        },
+        {
+          "desde_el_clic_ms": 14184,
+          "ms": 121
+        },
+        {
+          "desde_el_clic_ms": 14333,
+          "ms": 363
+        },
+        {
+          "desde_el_clic_ms": 14812,
+          "ms": 658
+        },
+        {
+          "desde_el_clic_ms": 15511,
+          "ms": 166
+        },
+        {
+          "desde_el_clic_ms": 15753,
+          "ms": 121
+        },
+        {
+          "desde_el_clic_ms": 17104,
+          "ms": 224
+        }
+      ],
+      "tareas_de_mas_de_100_ms": 25,
+      "tiempo_bloqueado_ms": 11282
+    }
+  },
+  "nuevo": {
+    "primera_visita": {
+      "ms_hasta_listo": 28020,
+      "etapas_ms_desde_el_clic": {
+        "precarga": 478,
+        "precarga_lista": 481,
+        "cargador_listo": 728,
+        "wasm_compila": 1984,
+        "wasm_listo": 3424,
+        "motor_listo": 5638,
+        "solver_listo": 9016,
+        "caso_cargado": 27614,
+        "primer_cuadro": 28026,
+        "caso_completo": 30347
+      },
+      "recursos": [
+        {
+          "archivo": "*.loader.js",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": -17082,
+          "duracion_ms": 215
+        },
+        {
+          "archivo": "*.framework.js",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": -16680,
+          "duracion_ms": 153
+        },
+        {
+          "archivo": "*.wasm",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": -16333,
+          "duracion_ms": 3283
+        },
+        {
+          "archivo": "*.data",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": -12981,
+          "duracion_ms": 5066
+        },
+        {
+          "archivo": "*.loader.js",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": 482,
+          "duracion_ms": 240
+        }
+      ],
+      "tarea_mas_larga_ms": 5853,
+      "tareas_de_mas_de_200_ms": 15,
+      "tareas_largas": [
+        {
+          "desde_el_clic_ms": 957,
+          "ms": 545
+        },
+        {
+          "desde_el_clic_ms": 1573,
+          "ms": 282
+        },
+        {
+          "desde_el_clic_ms": 2065,
+          "ms": 134
+        },
+        {
+          "desde_el_clic_ms": 2339,
+          "ms": 229
+        },
+        {
+          "desde_el_clic_ms": 2926,
+          "ms": 498
+        },
+        {
+          "desde_el_clic_ms": 3528,
+          "ms": 2109
+        },
+        {
+          "desde_el_clic_ms": 5665,
+          "ms": 3197
+        },
+        {
+          "desde_el_clic_ms": 9015,
+          "ms": 1497
+        },
+        {
+          "desde_el_clic_ms": 10620,
+          "ms": 135
+        },
+        {
+          "desde_el_clic_ms": 11048,
+          "ms": 127
+        },
+        {
+          "desde_el_clic_ms": 11368,
+          "ms": 105
+        },
+        {
+          "desde_el_clic_ms": 11571,
+          "ms": 101
+        },
+        {
+          "desde_el_clic_ms": 12660,
+          "ms": 171
+        },
+        {
+          "desde_el_clic_ms": 14135,
+          "ms": 451
+        },
+        {
+          "desde_el_clic_ms": 15203,
+          "ms": 1520
+        },
+        {
+          "desde_el_clic_ms": 16727,
+          "ms": 138
+        },
+        {
+          "desde_el_clic_ms": 16896,
+          "ms": 102
+        },
+        {
+          "desde_el_clic_ms": 17003,
+          "ms": 1148
+        },
+        {
+          "desde_el_clic_ms": 18155,
+          "ms": 2373
+        },
+        {
+          "desde_el_clic_ms": 20635,
+          "ms": 1122
+        },
+        {
+          "desde_el_clic_ms": 21762,
+          "ms": 5853
+        },
+        {
+          "desde_el_clic_ms": 27872,
+          "ms": 154
+        },
+        {
+          "desde_el_clic_ms": 28131,
+          "ms": 949
+        },
+        {
+          "desde_el_clic_ms": 29266,
+          "ms": 1082
+        },
+        {
+          "desde_el_clic_ms": 31570,
+          "ms": 143
+        }
+      ],
+      "tareas_de_mas_de_100_ms": 25,
+      "tiempo_bloqueado_ms": 23685
+    },
+    "segunda_visita": {
+      "ms_hasta_listo": 17151,
+      "etapas_ms_desde_el_clic": {
+        "precarga": 121,
+        "precarga_lista": 124,
+        "cargador_listo": 247,
+        "wasm_compila": 913,
+        "wasm_listo": 1790,
+        "motor_listo": 3211,
+        "solver_listo": 4864,
+        "caso_cargado": 16870,
+        "primer_cuadro": 17135,
+        "caso_completo": 40540
+      },
+      "recursos": [
+        {
+          "archivo": "*.loader.js",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": -17559,
+          "duracion_ms": 267
+        },
+        {
+          "archivo": "*.framework.js",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": -17196,
+          "duracion_ms": 147
+        },
+        {
+          "archivo": "*.wasm",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": -17015,
+          "duracion_ms": 5446
+        },
+        {
+          "archivo": "*.data",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": -11517,
+          "duracion_ms": 4667
+        },
+        {
+          "archivo": "*.loader.js",
+          "mb": 0,
+          "de_red_mb": 0,
+          "inicio_ms": 125,
+          "duracion_ms": 117
+        }
+      ],
+      "tarea_mas_larga_ms": 2939,
+      "tareas_de_mas_de_200_ms": 16,
+      "tareas_largas": [
+        {
+          "desde_el_clic_ms": 309,
+          "ms": 167
+        },
+        {
+          "desde_el_clic_ms": 509,
+          "ms": 345
+        },
+        {
+          "desde_el_clic_ms": 920,
+          "ms": 419
+        },
+        {
+          "desde_el_clic_ms": 1353,
+          "ms": 443
+        },
+        {
+          "desde_el_clic_ms": 1815,
+          "ms": 1395
+        },
+        {
+          "desde_el_clic_ms": 3226,
+          "ms": 1509
+        },
+        {
+          "desde_el_clic_ms": 4864,
+          "ms": 1329
+        },
+        {
+          "desde_el_clic_ms": 6396,
+          "ms": 110
+        },
+        {
+          "desde_el_clic_ms": 6694,
+          "ms": 113
+        },
+        {
+          "desde_el_clic_ms": 7192,
+          "ms": 112
+        },
+        {
+          "desde_el_clic_ms": 8254,
+          "ms": 107
+        },
+        {
+          "desde_el_clic_ms": 10047,
+          "ms": 542
+        },
+        {
+          "desde_el_clic_ms": 11042,
+          "ms": 394
+        },
+        {
+          "desde_el_clic_ms": 11440,
+          "ms": 107
+        },
+        {
+          "desde_el_clic_ms": 11712,
+          "ms": 666
+        },
+        {
+          "desde_el_clic_ms": 12387,
+          "ms": 661
+        },
+        {
+          "desde_el_clic_ms": 13051,
+          "ms": 123
+        },
+        {
+          "desde_el_clic_ms": 13333,
+          "ms": 592
+        },
+        {
+          "desde_el_clic_ms": 13932,
+          "ms": 2939
+        },
+        {
+          "desde_el_clic_ms": 16908,
+          "ms": 111
+        },
+        {
+          "desde_el_clic_ms": 17030,
+          "ms": 105
+        },
+        {
+          "desde_el_clic_ms": 17140,
+          "ms": 335
+        },
+        {
+          "desde_el_clic_ms": 17524,
+          "ms": 163
+        },
+        {
+          "desde_el_clic_ms": 17708,
+          "ms": 1226
+        },
+        {
+          "desde_el_clic_ms": 18945,
+          "ms": 107
+        },
+        {
+          "desde_el_clic_ms": 19166,
+          "ms": 420
+        },
+        {
+          "desde_el_clic_ms": 20471,
+          "ms": 198
+        },
+        {
+          "desde_el_clic_ms": 20803,
+          "ms": 324
+        },
+        {
+          "desde_el_clic_ms": 40437,
+          "ms": 102
+        }
+      ],
+      "tareas_de_mas_de_100_ms": 29,
+      "tiempo_bloqueado_ms": 14393
+    }
+  }
+}

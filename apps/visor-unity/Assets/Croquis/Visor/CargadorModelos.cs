@@ -30,8 +30,89 @@ namespace Croquis.Visor
         private static IReadOnlyDictionary<string, string> ModeloDeClase => Cabina.ModeloDeClase;
 
         private readonly Dictionary<string, GltfImport> plantillas = new Dictionary<string, GltfImport>();
+
+        /// <summary>Los modelos que se están bajando y abriendo, por modelo (René, 2026-11-16: a la vez).</summary>
+        private readonly Dictionary<string, System.Threading.Tasks.Task<GltfImport>> enCamino =
+            new Dictionary<string, System.Threading.Tasks.Task<GltfImport>>();
+
         private JObject manifiesto;
+        private System.Threading.Tasks.Task manifiestoEnCamino;
         private string baseUrl;
+
+        /// <summary>
+        /// Empieza a bajar y abrir, todos a la vez, los modelos de esas clases (los vehículos del caso),
+        /// para que cada vehículo no espere al anterior. Una falla se reporta cuando se arma el vehículo.
+        /// </summary>
+        public void Precargar(IEnumerable<string> clases)
+        {
+            foreach (var clase in clases)
+            {
+                if (clase != null && ModeloDeClase.TryGetValue(clase, out var modelo))
+                {
+                    _ = PlantillaAsync(modelo).ContinueWith(
+                        t => { _ = t.Exception; },
+                        System.Threading.Tasks.TaskContinuationOptions.OnlyOnFaulted);
+                }
+            }
+        }
+
+        /// <summary>Baja el manifiesto de modelos de antemano (al arrancar el visor).</summary>
+        public System.Threading.Tasks.Task PrecargarManifiesto()
+        {
+            return LeerManifiestoAsync();
+        }
+
+        private System.Threading.Tasks.Task<GltfImport> PlantillaAsync(string modelo)
+        {
+            if (plantillas.TryGetValue(modelo, out var lista))
+            {
+                return System.Threading.Tasks.Task.FromResult(lista);
+            }
+
+            if (!enCamino.TryGetValue(modelo, out var tarea))
+            {
+                enCamino[modelo] = tarea = BajarYAbrirAsync(modelo);
+            }
+
+            return tarea;
+        }
+
+        private async System.Threading.Tasks.Task<GltfImport> BajarYAbrirAsync(string modelo)
+        {
+            try
+            {
+                await LeerManifiestoAsync();
+                var entrada = manifiesto["clases"]?[modelo] as JObject;
+                if (entrada == null)
+                {
+                    throw new ModeloNoCargo("El manifiesto no trae el modelo «" + modelo + "».");
+                }
+
+                var gltf = new GltfImport();
+                var url = baseUrl + (string)entrada["archivos"]["alta"]["archivo"];
+                using var pedido = UnityWebRequest.Get(url);
+                await pedido.SendWebRequest();
+                if (pedido.result != UnityWebRequest.Result.Success)
+                {
+                    throw new ModeloNoCargo("No se pudo bajar " + url + ": " + pedido.error);
+                }
+
+                var bytes = pedido.downloadHandler.data;
+                papeles[modelo] = PapelesDe(bytes);
+                if (!await gltf.Load(bytes, new Uri(url)))
+                {
+                    throw new ModeloNoCargo("No se pudo abrir " + url);
+                }
+
+                plantillas[modelo] = gltf;
+                return gltf;
+            }
+            finally
+            {
+                // Si falló, el siguiente pedido lo vuelve a intentar.
+                enCamino.Remove(modelo);
+            }
+        }
 
         /// <summary>El papel de cada pieza de un modelo (pintura, faro, calavera…), por su nombre.</summary>
         private readonly Dictionary<string, Dictionary<string, string>> papeles =
@@ -69,33 +150,8 @@ namespace Croquis.Visor
                 return null;
             }
 
-            await LeerManifiestoAsync();
-            var entrada = manifiesto["clases"]?[modelo] as JObject;
-            if (entrada == null)
-            {
-                throw new ModeloNoCargo("El manifiesto no trae el modelo «" + modelo + "».");
-            }
-
-            if (!plantillas.TryGetValue(modelo, out var gltf))
-            {
-                gltf = new GltfImport();
-                var url = baseUrl + (string)entrada["archivos"]["alta"]["archivo"];
-                using var pedido = UnityWebRequest.Get(url);
-                await pedido.SendWebRequest();
-                if (pedido.result != UnityWebRequest.Result.Success)
-                {
-                    throw new ModeloNoCargo("No se pudo bajar " + url + ": " + pedido.error);
-                }
-
-                var bytes = pedido.downloadHandler.data;
-                papeles[modelo] = PapelesDe(bytes);
-                if (!await gltf.Load(bytes, new Uri(url)))
-                {
-                    throw new ModeloNoCargo("No se pudo abrir " + url);
-                }
-
-                plantillas[modelo] = gltf;
-            }
+            var gltf = await PlantillaAsync(modelo);
+            var entrada = (JObject)manifiesto["clases"][modelo];
 
             var plantilla = new GameObject("plantilla");
             plantilla.SetActive(false);
@@ -114,13 +170,31 @@ namespace Croquis.Visor
             }
         }
 
-        private async Awaitable LeerManifiestoAsync()
+        private System.Threading.Tasks.Task LeerManifiestoAsync()
         {
             if (manifiesto != null)
             {
-                return;
+                return System.Threading.Tasks.Task.CompletedTask;
             }
 
+            return manifiestoEnCamino ??= BajarManifiestoAsync();
+        }
+
+        private async System.Threading.Tasks.Task BajarManifiestoAsync()
+        {
+            try
+            {
+                await BajarManifiestoUnaVezAsync();
+            }
+            finally
+            {
+                // Si falló, el siguiente pedido lo vuelve a intentar.
+                manifiestoEnCamino = null;
+            }
+        }
+
+        private async System.Threading.Tasks.Task BajarManifiestoUnaVezAsync()
+        {
             var recursos = Resources.Load<TextAsset>("recursos_visor");
             if (recursos == null)
             {

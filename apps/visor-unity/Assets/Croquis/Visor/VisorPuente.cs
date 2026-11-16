@@ -14,7 +14,7 @@ namespace Croquis.Visor
     public sealed class VisorPuente : MonoBehaviour
     {
         /// <summary>La versión del contrato: debe coincidir con VISOR_PUENTE_VERSION.</summary>
-        public const string Version = "1.2.0";
+        public const string Version = "1.3.0";
 
         private const float SegundosPorReporteFps = 5f;
         private const float SegundosPorReporteTiempo = 0.1f;
@@ -44,6 +44,25 @@ namespace Croquis.Visor
         private void Start()
         {
             Enviar("listo", new JObject { { "version", Version } });
+            visor.PrecargarManifiesto();
+            _ = PrecalentarAsync();
+        }
+
+        /// <summary>
+        /// Mientras la web calcula el caso, se resuelve de antemano cómo se lee cada tipo del paquete, por
+        /// partes: la primera lectura en una instancia nueva costaba un segundo más (René, 2026-11-16).
+        /// </summary>
+        private async Awaitable PrecalentarAsync()
+        {
+            var cuadro = System.Diagnostics.Stopwatch.StartNew();
+            foreach (var _ in Paquete.Precalentar())
+            {
+                if (cuadro.Elapsed.TotalMilliseconds >= VisorCaso.PresupuestoPorCuadroMs)
+                {
+                    await Awaitable.NextFrameAsync();
+                    cuadro.Restart();
+                }
+            }
         }
 
         private void Update()
@@ -82,19 +101,51 @@ namespace Croquis.Visor
 
         private async Awaitable CargarAsync(string texto)
         {
+            var turno = -1;
             try
             {
                 // El sobre y el paquete se leen una vez cada uno (U6: antes eran tres lecturas completas).
                 var reloj = System.Diagnostics.Stopwatch.StartNew();
+                turno = visor.NuevoTurno();
                 var json = Paquete.PropiedadDeTexto(texto, "json");
                 var sobre = reloj.Elapsed.TotalMilliseconds;
-                var caso = Paquete.Leer(json);
+                // Por partes (René, 2026-11-16): el suelo y la vía del escenario, cada uno en su cuadro.
+                var lectura = new Paquete.LecturaPorPartes();
+                var avisado = System.Diagnostics.Stopwatch.StartNew();
+                var leidos = 0;
+                foreach (var _ in Paquete.LeerPorPartes(json, lectura))
+                {
+                    leidos++;
+                    // El avance, a lo más cada 100 ms: cada aviso vuelve a dibujar la barra en la web.
+                    if (avisado.ElapsedMilliseconds >= 100)
+                    {
+                        avisado.Restart();
+                        Enviar("progreso", new JObject { { "fraccion", Math.Round(0.1 * Math.Min(1.0, leidos / 600.0), 3) } });
+                    }
+
+                    await visor.Ceder(turno);
+                }
+
+                var caso = lectura.Caso;
                 visor.LecturaDelPaquete = (sobre, reloj.Elapsed.TotalMilliseconds - sobre, json?.Length ?? 0);
-                await visor.CargarAsync(caso);
+                var escenaId = caso.Resultado.EscenaId;
+                visor.AlAvanzar = (f, visible) =>
+                {
+                    Enviar("progreso", new JObject { { "fraccion", Math.Round(f, 3) } });
+                    if (visible)
+                    {
+                        Enviar("visible", new JObject { { "escena_id", escenaId } });
+                    }
+                };
+                await visor.CargarAsync(caso, turno);
                 // Cuánto pasó desde que llegó el mensaje hasta avisar «cargado» (incluye el regreso del
                 // await, que en Unity es en el cuadro siguiente: ahí se compilan los shaders de la escena).
                 visor.PasosDeCarga["hasta_cargado"] = Math.Round(reloj.Elapsed.TotalMilliseconds, 1);
                 Enviar("cargado", new JObject { { "escena_id", caso.Resultado.EscenaId } });
+            }
+            catch (OperationCanceledException)
+            {
+                // Llegó otro caso mientras este se armaba: el otro manda y este no avisa nada.
             }
             catch (FormatException e)
             {
@@ -108,6 +159,11 @@ namespace Croquis.Visor
             {
                 Debug.LogException(e);
                 Error("interno", e.Message);
+            }
+            finally
+            {
+                // Si llegó otro caso, el turno ya es otro y esto no lo toca.
+                visor.TerminarTurno(turno);
             }
         }
 
@@ -327,6 +383,12 @@ namespace Croquis.Visor
             try
             {
                 var j = JObject.Parse(texto);
+                // La foto es de la escena completa: si el entorno todavía se arma, se espera.
+                while (!visor.Cargado && visor.Armando)
+                {
+                    await Awaitable.NextFrameAsync();
+                }
+
                 var foto = await Captura.TomarAsync(visor, (string)j["vista"], (int?)j["ancho"] ?? 1600, (int?)j["alto"] ?? 900);
                 Enviar("captura", foto);
             }

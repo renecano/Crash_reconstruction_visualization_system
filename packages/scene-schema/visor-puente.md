@@ -1,6 +1,6 @@
 # Puente web ↔ visor Unity
 
-**Versión 1.2.0.** Los tipos están en `src/visor-puente.ts` (`VISOR_PUENTE_VERSION`), y una prueba revisa que este documento y los tipos nombren los mismos mensajes. Este contrato solo cambia con un PR `contract:`.
+**Versión 1.3.0.** Los tipos están en `src/visor-puente.ts` (`VISOR_PUENTE_VERSION`), y una prueba revisa que este documento y los tipos nombren los mismos mensajes. Este contrato solo cambia con un PR `contract:`.
 
 ## Cómo viajan los mensajes
 
@@ -12,7 +12,7 @@
 
 | Mensaje       | Campos                                            | Qué hace                                                                               |
 | ------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `cargarCaso`  | `json`: el paquete caso-3d, como texto            | Carga el caso. Contesta `cargado` o `error`.                                           |
+| `cargarCaso`  | `json`: el paquete caso-3d, como texto            | Carga el caso. Contesta `progreso`, `visible` y `cargado`, o `error`.                  |
 | `fijarTiempo` | `t`: segundos, 0 es el impacto principal          | Lleva la reproducción a ese instante.                                                  |
 | `reproducir`  |                                                   | Reproduce.                                                                             |
 | `pausar`      |                                                   | Pausa.                                                                                 |
@@ -39,7 +39,9 @@
 | Mensaje         | Campos                                                    | Cuándo                                     |
 | --------------- | --------------------------------------------------------- | ------------------------------------------ |
 | `listo`         | `version`                                                 | Al terminar de arrancar.                   |
-| `cargado`       | `escena_id`                                               | El caso ya se puede ver.                   |
+| `cargado`       | `escena_id`                                               | El caso está completo, con su entorno.     |
+| `progreso`      | `fraccion`: de 0 a 1                                      | Mientras se arma el caso (desde 1.3.0).    |
+| `visible`       | `escena_id`                                               | El caso ya se ve (desde 1.3.0).            |
 | `tiempo`        | `t`                                                       | Mientras avanza la reproducción.           |
 | `camara`        | `modo`                                                    | Cambió la cámara.                          |
 | `captura`       | `vista`, `png`: base64 sin el prefijo `data:`             | Respuesta a `capturar`.                    |

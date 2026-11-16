@@ -55,6 +55,207 @@ namespace Croquis.Core
             return null;
         }
 
+        /// <summary>Lo que deja <see cref="LeerPorPartes"/> al terminar.</summary>
+        public sealed class LecturaPorPartes
+        {
+            public Caso3D Caso { get; internal set; }
+        }
+
+        private static JsonSerializerSettings ajustes;
+
+        /// <summary>Los mismos ajustes que usa <c>Caso3D.FromJson</c> (el convertidor generado es interno).</summary>
+        private static JsonSerializerSettings Ajustes => ajustes ??= (JsonSerializerSettings)typeof(Caso3D).Assembly
+            .GetType("Croquis.Generated.Converter", true)
+            .GetField("Settings", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)
+            .GetValue(null);
+
+        /// <summary>
+        /// Lo mismo que <see cref="Leer"/>, por partes (René, 2026-11-16: ninguna tarea del hilo principal de
+        /// más de 200 ms): un paso por cada sección del paquete y por cada sección del escenario (el suelo y la
+        /// vía son lo más pesado), para que quien lee ceda el cuadro entre uno y otro. Al terminar deja el caso
+        /// en <paramref name="lectura"/>; con un paquete inválido lanza <see cref="FormatException"/>.
+        /// </summary>
+        public static System.Collections.Generic.IEnumerable<string> LeerPorPartes(string json, LecturaPorPartes lectura)
+        {
+            var version = VersionDe(json);
+            if (version != VersionAdmitida)
+            {
+                throw new FormatException(
+                    "Este visor abre paquetes " + VersionAdmitida + " y el archivo es " + (version ?? "sin versión") + ".");
+            }
+
+            var serializador = JsonSerializer.Create(Ajustes);
+            var lector = new JsonTextReader(new System.IO.StringReader(json)) { DateParseHandling = DateParseHandling.None };
+            Paso(() => lector.Read());
+            if (lector.TokenType != JsonToken.StartObject)
+            {
+                throw new FormatException("El archivo no es un paquete caso-3d: no es un objeto.");
+            }
+
+            object leido = null;
+            foreach (var parte in Valor(lector, typeof(Caso3D), serializador, "", 0, v => leido = v))
+            {
+                yield return parte;
+            }
+
+            var caso = (Caso3D)leido;
+            if (caso.Escena == null || caso.Resultado == null)
+            {
+                throw new FormatException("El paquete caso-3d no trae escena o resultado.");
+            }
+
+            lectura.Caso = caso;
+        }
+
+        /// <summary>Hasta qué profundidad se baja por partes; más abajo, cada valor se lee de una vez.</summary>
+        private const int ProfundidadPorPartes = 4;
+
+        /// <summary>
+        /// Lee el valor donde está el lector (ya en su primer token) como <paramref name="tipo"/>. Los objetos
+        /// del paquete van propiedad por propiedad y los arreglos elemento por elemento, hasta
+        /// <see cref="ProfundidadPorPartes"/>; cada hoja leída es un paso.
+        /// </summary>
+        private static System.Collections.Generic.IEnumerable<string> Valor(
+            JsonReader lector, Type tipo, JsonSerializer serializador, string ruta, int profundidad, Action<object> poner)
+        {
+            var conConvertidor = false;
+            foreach (var cv in serializador.Converters)
+            {
+                conConvertidor |= cv.CanConvert(tipo);
+            }
+
+            if (!conConvertidor && profundidad < ProfundidadPorPartes && lector.TokenType == JsonToken.StartObject
+                && serializador.ContractResolver.ResolveContract(tipo) is Newtonsoft.Json.Serialization.JsonObjectContract contrato
+                && contrato.Converter == null && contrato.DefaultCreator != null)
+            {
+                var destino = contrato.DefaultCreator();
+                var vistas = new System.Collections.Generic.HashSet<string>();
+                while (Paso(() => lector.Read()) && lector.TokenType == JsonToken.PropertyName)
+                {
+                    var nombre = (string)lector.Value;
+                    Paso(() => lector.Read());
+                    var propiedad = contrato.Properties.GetClosestMatchProperty(nombre);
+                    if (propiedad != null)
+                    {
+                        vistas.Add(propiedad.PropertyName);
+                    }
+
+                    if (propiedad == null || propiedad.Ignored || !propiedad.Writable)
+                    {
+                        Paso(() => lector.Skip());
+                        continue;
+                    }
+
+                    if (propiedad.Converter != null)
+                    {
+                        var v = Paso(() => propiedad.Converter.ReadJson(lector, propiedad.PropertyType, null, serializador));
+                        propiedad.ValueProvider.SetValue(destino, v);
+                        yield return ruta + nombre;
+                        continue;
+                    }
+
+                    foreach (var parte in Valor(lector, propiedad.PropertyType, serializador, ruta + nombre + ".", profundidad + 1,
+                                 v => propiedad.ValueProvider.SetValue(destino, v)))
+                    {
+                        yield return parte;
+                    }
+                }
+
+                // Lo mismo que exige la lectura de una vez: las propiedades obligatorias del esquema.
+                foreach (var pr in contrato.Properties)
+                {
+                    var obligatoria = pr.Required == Required.Always || pr.Required == Required.AllowNull;
+                    if (obligatoria && !vistas.Contains(pr.PropertyName))
+                    {
+                        throw new FormatException("El archivo no es un paquete caso-3d: falta «" + ruta + pr.PropertyName + "».");
+                    }
+
+                    if ((pr.Required == Required.Always || pr.Required == Required.DisallowNull) && vistas.Contains(pr.PropertyName)
+                        && pr.ValueProvider.GetValue(destino) == null)
+                    {
+                        throw new FormatException("El archivo no es un paquete caso-3d: «" + ruta + pr.PropertyName + "» no puede ser nulo.");
+                    }
+                }
+
+                poner(destino);
+                yield break;
+            }
+
+            var elemento = tipo.IsArray ? tipo.GetElementType()
+                : tipo.IsGenericType && tipo.GetGenericTypeDefinition() == typeof(System.Collections.Generic.List<>) ? tipo.GetGenericArguments()[0]
+                : null;
+            if (!conConvertidor && profundidad < ProfundidadPorPartes && lector.TokenType == JsonToken.StartArray && elemento != null
+                && serializador.ContractResolver.ResolveContract(tipo).Converter == null)
+            {
+                var lista = (System.Collections.IList)Activator.CreateInstance(typeof(System.Collections.Generic.List<>).MakeGenericType(elemento));
+                while (Paso(() => lector.Read()) && lector.TokenType != JsonToken.EndArray)
+                {
+                    foreach (var parte in Valor(lector, elemento, serializador, ruta, profundidad + 1, v => lista.Add(v)))
+                    {
+                        yield return parte;
+                    }
+                }
+
+                if (tipo.IsArray)
+                {
+                    var arreglo = Array.CreateInstance(elemento, lista.Count);
+                    lista.CopyTo(arreglo, 0);
+                    poner(arreglo);
+                }
+                else
+                {
+                    poner(lista);
+                }
+
+                yield break;
+            }
+
+            var hoja = Paso(() => serializador.Deserialize(lector, tipo));
+            poner(hoja);
+            yield return ruta.TrimEnd('.');
+        }
+
+        private static T Paso<T>(Func<T> f)
+        {
+            try
+            {
+                return f();
+            }
+            catch (Exception e) when (!(e is FormatException))
+            {
+                // Como Leer: cualquier falla al leer (también la de un convertidor) es un paquete inválido.
+                throw new FormatException("El archivo no es un paquete caso-3d: " + e.Message, e);
+            }
+        }
+
+        private static void Paso(Action f)
+        {
+            Paso(() =>
+            {
+                f();
+                return 0;
+            });
+        }
+
+        /// <summary>
+        /// Resuelve de antemano cómo se lee cada tipo del paquete, uno por paso: la primera lectura en una
+        /// instancia nueva costaba un segundo más que las siguientes. El visor lo hace mientras espera el caso.
+        /// </summary>
+        public static System.Collections.Generic.IEnumerable<string> Precalentar()
+        {
+            var resolvedor = JsonSerializer.Create(Ajustes).ContractResolver;
+            foreach (var t in typeof(Caso3D).Assembly.GetTypes())
+            {
+                if (!t.IsPublic || t.IsAbstract || t.IsInterface || t.IsGenericTypeDefinition)
+                {
+                    continue;
+                }
+
+                resolvedor.ResolveContract(t);
+                yield return t.Name;
+            }
+        }
+
         /// <summary>Lee el paquete y rechaza lo que el visor dibujaría mal.</summary>
         /// <exception cref="FormatException">El texto no es un paquete que este visor pueda abrir.</exception>
         public static Caso3D Leer(string json)
