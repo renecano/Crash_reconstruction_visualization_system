@@ -2459,7 +2459,7 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 
 ### Endurecimiento pendiente
 
-- **Pasar de «Daños» a «Los números» congela la página más de 15 s** (pasada de la ronda 2, 2026-11-16; `docs/cesvi/ronda-2/capturas/antes/claro/pasada.json`, en producción y en el build local). Sospecha: `reconstruccionContraCesvi` corre el solver en el hilo principal. Medirlo y moverlo a un worker no cambia ninguna cifra.
+- **MapLibre compila sus programas de WebGL en el hilo principal la primera vez que dibuja un mapa** (2026-11-16, `eval/results/pasos_hilo_despues.json`): unos 230–280 ms al aparecer el mapa del paso 1 y el de «La escena». No se puede llevar a un worker. Para bajarlo: un solo mapa para todo el caso (el del paso 1 no sirve: A1, Fable) en lugar de uno nuevo por paso. El congelamiento de más de 15 s al pasar de «Daños» a «Los números» era Unity dibujando y arrancando en segundo plano; quedó resuelto (#250).
 - **Tanda 4 (2026-11-15), lo que queda del tope de gasto y los encabezados:**
   - La política de contenido (`Content-Security-Policy`) está en modo de solo reporte. Falta recorrer un caso completo (mapa, 3D de Unity, PDF) con la consola abierta y, sin avisos, volverla obligatoria.
   - `/api/cesvi/hecho` y `/api/cesvi/consideraciones` no las llama ninguna pantalla. Quedan protegidas como las demás; falta decidir si se retiran.

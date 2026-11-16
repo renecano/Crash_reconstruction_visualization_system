@@ -5,6 +5,7 @@
  * huella de las entradas, se quita la marca y la firma aparece en itálica. Es una vista previa: el
  * archivo que se descarga lleva todas las secciones.
  */
+import { HUELLA_PARA_QUE, huellaLetraChica } from "@/lib/huella-documento";
 import type { Reconstruccion } from "@croquis/cesvi";
 import type { OverpassResponse } from "@croquis/croquis-2d";
 import { Logotipo } from "@/components/sitio/logo";
@@ -57,7 +58,8 @@ export function HojaDictamen({
           data-testid="sello-validado"
         >
           <span className="text-[1.1rem] font-bold tracking-[0.2em]">VALIDADO</span>
-          <span className="font-mono text-[0.625rem]">Huella digital (SHA-256) {firma.huella}</span>
+          <span className="text-[0.625rem]">Huella del documento</span>
+          <span className="font-mono text-[0.5625rem]">{firma.huella}</span>
         </div>
       ) : (
         // Un dibujo, no un texto: es una marca de agua y no se lee como parte del dictamen.
@@ -150,6 +152,14 @@ export function HojaDictamen({
         ) : null}
         <span className="text-[0.6875rem] text-[var(--texto-2)]">Firma del perito</span>
       </footer>
+      {firma ? (
+        <div className="flex flex-col gap-1" data-testid="huella-documento">
+          <p className="text-[0.75rem] text-[var(--texto-2)]">{HUELLA_PARA_QUE}</p>
+          <p className="text-[0.625rem] leading-snug text-[var(--texto-3)]">
+            {huellaLetraChica(firma.huella)}
+          </p>
+        </div>
+      ) : null}
       <p className="text-[0.6875rem] text-[var(--texto-3)]" data-testid="secciones-hoja">
         Vista previa. El archivo lleva: {SECCIONES_DICTAMEN[formato].join(" · ")}. Reconstrucción de
         apoyo: el dictamen es del perito.

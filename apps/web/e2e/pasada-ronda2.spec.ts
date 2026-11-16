@@ -38,6 +38,7 @@ test.use({
 
 interface Pantalla {
   n: string;
+  tarea_mas_larga_ms: number;
   url: string;
   captura: string;
   jerga: string[];
@@ -65,7 +66,7 @@ async function simular(page: Page) {
   );
 }
 
-test("pasada de la ronda 2", async ({ page }) => {
+test("pasada de la ronda 2", async ({ page, context }) => {
   test.setTimeout(1_200_000);
   mkdirSync(SALIDA, { recursive: true });
   const pantallas: Pantalla[] = [];
@@ -73,6 +74,14 @@ test("pasada de la ronda 2", async ({ page }) => {
   const errores: string[] = [];
   page.on("pageerror", (e) => errores.push(e.message.slice(0, 300)));
   await simular(page);
+  // Las tareas largas del hilo principal: si el recorrido se traba, ¿es la página o la captura?
+  await page.addInitScript(() => {
+    const w = window as unknown as { __largas: number[] };
+    w.__largas = [];
+    new PerformanceObserver((l) => {
+      for (const e of l.getEntries()) w.__largas.push(Math.round(e.duration));
+    }).observe({ type: "longtask", buffered: true });
+  });
   // El visor Unity, como en el ensayo de la demo (sin esto, un navegador automatizado usa el de respaldo).
   await page.addInitScript(() => {
     (window as unknown as Record<string, unknown>).__croquisVisorUnity = true;
@@ -83,6 +92,15 @@ test("pasada de la ronda 2", async ({ page }) => {
       join(SALIDA, "pasada.json"),
       `${JSON.stringify({ cual: CUAL, variante: VARIANTE, fecha: new Date().toISOString(), fallas, errores, pantallas }, null, 2)}\n`,
     );
+  // Con CROQUIS_PERFIL, un perfil de CPU continuo: cuando una pantalla tiene una tarea de más de
+  // 1 s, se guardan las funciones que más tiempo ocuparon.
+  const cdp = process.env.CROQUIS_PERFIL ? await context.newCDPSession(page) : null;
+  const perfiles: { pantalla: string; funciones: string[] }[] = [];
+  if (cdp) {
+    await cdp.send("Profiler.enable");
+    await cdp.send("Profiler.setSamplingInterval", { interval: 2000 });
+    await cdp.send("Profiler.start");
+  }
   const anota = async (nombre: string) => {
     await page.waitForTimeout(400);
     const n = `${String(pantallas.length + 1).padStart(2, "0")}-${nombre}`;
@@ -94,32 +112,86 @@ test("pasada de la ronda 2", async ({ page }) => {
         .innerText()
         .catch(() => "")) ?? "";
     // Textos que se salen de su caja o quedan tapados (ancho de contenido mayor que el visible).
-    const cortados = await page.evaluate(() => {
-      const r: string[] = [];
-      for (const el of Array.from(
-        document.querySelectorAll("button, a, label, p, span, h1, h2, h3, li"),
-      )) {
-        const h = el as HTMLElement;
-        if (!h.offsetParent || !h.innerText?.trim()) continue;
-        // Lo que es solo para lectores de pantalla (recortado a propósito) no cuenta.
-        const caja = h.getBoundingClientRect();
-        if (caja.width <= 2 || caja.height <= 2 || h.closest(".sr-only")) continue;
-        const s = getComputedStyle(h);
-        if (s.overflow === "visible" && s.textOverflow !== "ellipsis") {
-          if (
-            h.scrollWidth > h.clientWidth + 2 &&
-            h.children.length === 0 &&
-            s.whiteSpace === "nowrap"
-          )
-            r.push(h.innerText.trim().slice(0, 80));
-          continue;
-        }
-        if (h.scrollWidth > h.clientWidth + 2 || h.scrollHeight > h.clientHeight + 2)
-          r.push(h.innerText.trim().slice(0, 80));
+    const cortados = process.env.CROQUIS_SIN_CORTADOS
+      ? []
+      : await page.evaluate(() => {
+          const r: string[] = [];
+          for (const el of Array.from(
+            document.querySelectorAll("button, a, label, p, span, h1, h2, h3, li"),
+          )) {
+            const h = el as HTMLElement;
+            if (!h.offsetParent || !h.innerText?.trim()) continue;
+            // Lo que es solo para lectores de pantalla (recortado a propósito) no cuenta.
+            const caja = h.getBoundingClientRect();
+            if (caja.width <= 2 || caja.height <= 2 || h.closest(".sr-only")) continue;
+            const s = getComputedStyle(h);
+            if (s.overflow === "visible" && s.textOverflow !== "ellipsis") {
+              if (
+                h.scrollWidth > h.clientWidth + 2 &&
+                h.children.length === 0 &&
+                s.whiteSpace === "nowrap"
+              )
+                r.push(h.innerText.trim().slice(0, 80));
+              continue;
+            }
+            if (h.scrollWidth > h.clientWidth + 2 || h.scrollHeight > h.clientHeight + 2)
+              r.push(h.innerText.trim().slice(0, 80));
+          }
+          return [...new Set(r)].slice(0, 30);
+        });
+    const largas = await page
+      .evaluate(() => {
+        const w = window as unknown as { __largas: number[] };
+        const l = w.__largas ?? [];
+        w.__largas = [];
+        return l;
+      })
+      .catch(() => [] as number[]);
+    if (cdp) {
+      const { profile } = (await cdp.send("Profiler.stop")) as unknown as {
+        profile: {
+          nodes: {
+            id: number;
+            callFrame: { functionName: string; url: string; lineNumber: number };
+            children?: number[];
+          }[];
+          samples: number[];
+          timeDeltas: number[];
+        };
+      };
+      if (Math.max(0, ...largas) > 1000) {
+        const porId = new Map(profile.nodes.map((x) => [x.id, x]));
+        const padre = new Map<number, number>();
+        for (const x of profile.nodes) for (const h of x.children ?? []) padre.set(h, x.id);
+        const total = new Map<string, number>();
+        profile.samples.forEach((id, i) => {
+          const vistos = new Set<string>();
+          for (let x: number | undefined = id; x !== undefined; x = padre.get(x)) {
+            const f = porId.get(x)!.callFrame;
+            if (!f.url) continue;
+            const k = `${f.functionName || "(anónima)"} ${f.url.split("/").slice(-1)[0]}:${f.lineNumber}`;
+            if (vistos.has(k)) continue;
+            vistos.add(k);
+            total.set(k, (total.get(k) ?? 0) + (profile.timeDeltas[i] ?? 0) / 1000);
+          }
+        });
+        perfiles.push({
+          pantalla: n,
+          funciones: [...total]
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 40)
+            .map(([k, v]) => `${Math.round(v)} ms ${k}`),
+        });
+        writeFileSync(
+          join(SALIDA, "perfiles.json"),
+          `${JSON.stringify(perfiles, null, 1)}
+`,
+        );
       }
-      return [...new Set(r)].slice(0, 30);
-    });
+      await cdp.send("Profiler.start");
+    }
     pantallas.push({
+      tarea_mas_larga_ms: Math.max(0, ...largas),
       n,
       url: page.url(),
       captura: `${n}.jpg`,

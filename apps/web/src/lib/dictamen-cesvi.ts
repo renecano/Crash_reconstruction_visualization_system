@@ -454,7 +454,7 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
   if (d.trazabilidad) {
     const t = d.trazabilidad;
     out.push({
-      text: `Trazabilidad: método ${t.metodo} · huella digital de los datos (SHA-256) ${t.huella} · comparación ${t.comparacion} · validó ${t.valido}.`,
+      text: `Trazabilidad: método ${t.metodo} · comparación ${t.comparacion} · validó ${t.valido}. Huella del documento: sirve para comprobar que nadie modificó este dictamen después de firmarlo. Código: ${t.huella} (SHA-256 de los datos validados). Para comprobarla, abre en Croquis el archivo del caso: si nada cambió desde la firma, el sello «Validado» aparece con este mismo código; si algo cambió, Croquis avisa que la validación ya no corresponde.`,
       fontSize: 7,
       color: "#555555",
       margin: [0, 12, 0, 0],

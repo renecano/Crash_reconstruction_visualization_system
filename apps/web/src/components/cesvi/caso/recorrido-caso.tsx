@@ -221,6 +221,10 @@ export function RecorridoCaso({
   const [unityApi, setUnityApi] = useState<ApiVisorUnity | null>(null);
   // Presentar le avisa a Unity el instante de cada capítulo sin pasar por el estado de la página.
   const [canalPresentar] = useState(() => new CanalTiempo());
+  // Unity arranca la primera vez que el perito pide el 3D, no en segundo plano: su arranque ocupa el
+  // hilo principal unos segundos y dejaba la página sin responder al cambiar de paso (René,
+  // 2026-11-16). Una vez arrancado se queda montado; con el 3D oculto duerme.
+  const [pidioUnity, setPidioUnity] = useState(false);
   const [pedidoExportar, setPedidoExportar] = useState(0);
   const [guardadoId, setGuardadoId] = useState<string | null>(
     inicial.origen === "guardado" ? inicial.id : null,
@@ -1233,6 +1237,9 @@ export function RecorridoCaso({
   const verMapa = vista === "mapa" || !r;
   // Presentar a pantalla completa necesita la reconstrucción; sin ella, se consulta el recorrido.
   const presentando = modo === "presentar" && r !== null && !rec.vieja;
+  // El 3D (o Presentar, que lo usa) pedido por primera vez: ahora sí arranca Unity (se ajusta al
+  // dibujar, sin un efecto que vuelva a dibujar todo).
+  if (!pidioUnity && (vista === "3d" || presentando)) setPidioUnity(true);
   // La reconstrucción (el pico, Laboratorio §8): la escena a sangre y la hoja encima.
   const pico = actual === 3 && !expandido;
   // Los daños y Contra CESVI ocupan todo el ancho, sin mapa (Laboratorio §8).
@@ -1555,7 +1562,7 @@ export function RecorridoCaso({
               onDeshacer={actual === 2 && modo === "trabajar" ? deshacer : undefined}
             />
           </div>
-          {r ? (
+          {r && pidioUnity ? (
             <div
               className={`absolute inset-0 bg-fondo ${pico ? "lg:right-[488px]" : ""} ${vista === "3d" ? "" : "pointer-events-none invisible"}`}
             >

@@ -14,6 +14,7 @@
  * lugar, consideraciones, conclusiones). Los números salen del solver y del módulo de cálculo; la
  * conclusión la escribe el perito. Sin validación, el documento es un borrador.
  */
+import { HUELLA_PARA_QUE, huellaLetraChica } from "./huella-documento";
 import {
   formato as F,
   alternativaSupuesta,
@@ -94,6 +95,14 @@ const nota = (t: string): Content => ({
   text: t,
   fontSize: 8,
   color: "#555555",
+  margin: [0, 0, 0, 6],
+});
+
+/** La letra chica (el código de la huella y cómo comprobarla). */
+const letraChica = (t: string): Content => ({
+  text: t,
+  fontSize: 6.5,
+  color: "#666666",
   margin: [0, 0, 0, 6],
 });
 
@@ -420,8 +429,10 @@ function secciones(d: DatosDictamenCaso) {
       ];
   const trazabilidad: Content[] = [
     nota(
-      `Método: ${d.trazabilidad.metodo} · huella digital de los datos (SHA-256) ${d.trazabilidad.huella} · validó ${d.validacion ? `${d.validacion.perito}, ${d.validacion.fecha}` : "pendiente"}.`,
+      `Método: ${d.trazabilidad.metodo} · validó ${d.validacion ? `${d.validacion.perito}, ${d.validacion.fecha}` : "pendiente"}.`,
     ),
+    ...(d.validacion ? [nota(HUELLA_PARA_QUE)] : []),
+    letraChica(huellaLetraChica(d.trazabilidad.huella)),
   ];
   return {
     caracteristicas,

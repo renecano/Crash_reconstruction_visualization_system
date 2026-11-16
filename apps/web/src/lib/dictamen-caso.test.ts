@@ -101,7 +101,7 @@ describe("el dictamen de una reconstrucción (R8)", () => {
       "Verificación con el método de CESVI",
       "Conclusión del perito",
       "Validación",
-      "huella digital de los datos (SHA-256) abc123def456",
+      "Código de la huella: abc123def456",
     ]);
     expect(t).toContain("vehículo A, marca VW, tipo Jetta");
     const v1 = r.velocidades.find((x) => x.vehiculo === "V1")!.previa!;
@@ -256,6 +256,25 @@ describe("el dictamen de una reconstrucción (R8)", () => {
     expect(t).not.toContain("BORRADOR");
     expect(t).toContain("Conclusión de prueba del perito.");
     expect(t).toContain("Validó: Perito de prueba");
+  });
+
+  it("firmado, la huella dice para qué sirve; el código y el SHA-256, en letra chica (René, 2026-11-16)", () => {
+    const firmado = texto(
+      datos({
+        validacion: {
+          perito: "Perito de prueba",
+          conclusion: "Conclusión de prueba del perito.",
+          fecha: "2026-10-23T10:00:00Z",
+        },
+      }),
+    );
+    expect(firmado).toContain(
+      "Huella del documento: sirve para comprobar que nadie modificó este dictamen después de firmarlo.",
+    );
+    expect(firmado).toContain("Código de la huella: abc123def456 (SHA-256");
+    expect(firmado).toContain("abre en Croquis el archivo del caso");
+    // Sin firmar no hay sello: solo el código, en letra chica.
+    expect(texto(datos())).not.toContain("Huella del documento:");
   });
 
   it("lleva la comparación con la declaración si se usó, y la sugerencia solo si se pidió", () => {

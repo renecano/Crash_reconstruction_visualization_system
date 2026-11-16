@@ -28,6 +28,8 @@ export interface ManifiestoVisorUnity {
 export interface InstanciaUnity {
   SendMessage(objeto: string, metodo: string, valor?: string): void;
   Quit(): Promise<void>;
+  /** El módulo de Emscripten del build: trae `pauseMainLoop` y `resumeMainLoop`. */
+  Module?: { pauseMainLoop?: () => void; resumeMainLoop?: () => void };
 }
 
 type CrearInstancia = (
@@ -276,6 +278,19 @@ export class PuenteUnity {
   }
 
   /** Carga un paquete caso-3d y espera `cargado`. */
+  /**
+   * Detiene el ciclo de dibujo de Unity: con el 3D oculto, Unity seguía dibujando cada cuadro en el
+   * hilo principal y la página dejaba de responder (René, 2026-11-16). Los mensajes siguen llegando.
+   */
+  dormir(): void {
+    this.instancia.Module?.pauseMainLoop?.();
+  }
+
+  /** Reanuda el ciclo de dibujo (el 3D vuelve a la vista o hay que cargar un caso). */
+  despertar(): void {
+    this.instancia.Module?.resumeMainLoop?.();
+  }
+
   async cargar(paquete: unknown, ms = ESPERA_ARRANQUE_MS): Promise<void> {
     const llega = this.esperar(
       (m): m is Extract<MensajeDeUnity, { tipo: "cargado" }> => m.tipo === "cargado",
