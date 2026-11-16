@@ -29,7 +29,7 @@ Sitio: <https://croquis-sage.vercel.app/cesvi>.
 | 3 · Números defendibles          | Formateador único, índice de cifras con verificador, supuestos del impacto en el rango, energía contra daño, cobertura | Hecha (#227 a #229). Falta la corrida completa del colaborador                            |
 | 2 · Lo que el perito ve en el 3D | Daño del solver en Unity, controles de reproducción, leyenda siempre                                                   | Hecha (#230 y el build publicado). Faltan las fotos de promoción y volver a medir los fps |
 | 4 · Proceso y seguridad          | Páginas anteriores, encabezados, tope de gasto, protección de `main`, Dependabot                                       | Hecha (#231 a #233)                                                                       |
-| 5 · Cierre (U7)                  | README, este archivo, `physics.md`, E8 de nuevo, pruebas de reversa y de «Claude no disponible»                        | Hecha, salvo el ensayo del guion de la demo                                               |
+| 5 · Cierre (U7)                  | README, este archivo, `physics.md`, E8 de nuevo, pruebas de reversa y de «Claude no disponible», ensayo de la demo     | Hecha                                                                                     |
 
 ## Medido
 
@@ -92,7 +92,7 @@ Captura de René del 2026-11-15 (últimos 30 días). Meta: por debajo de 70 % de
 2. **La corrida del colaborador de la Tanda 3** (E-R4 completa, carambolas y cobertura con 200 casos). Al llegar la rama `resultados/t3-<fecha>`: `python eval/t3_comparar.py t3 t3_rtx` y `node eval/cifras.mjs`; la cifra de cobertura se actualiza sola.
 3. **`eval/results/laboratorio_axa.json`:** lo escribe una e2e manual; se vuelve a correr antes de la demo.
 4. **W9:** las relecturas grabadas y el prompt del corpus, con tope de 20 USD. Incluye rehacer el corpus con el redactor nuevo.
-5. **Ensayo del guion de la demo** con CESVI.
+5. **Ensayo de la demo: hecho** (2026-11-15, en producción; `docs/cesvi/demo/guion.md`, `eval/results/ensayo_demo.json`). Lo que queda de él: la nota del 3D de V1 que no dice que 31 km/h es la velocidad de salida (N13 de la auditoría) y la leyenda del 3D con poco contraste.
 6. **Lo menor:** fusionar los PR agrupados de Dependabot cuando lleguen en verde; volver obligatoria la política de contenido; lo demás está en `docs/PROGRESS.md`, «Endurecimiento pendiente».
 
 ## Bloqueado: necesita a René

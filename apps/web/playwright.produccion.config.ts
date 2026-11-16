@@ -10,7 +10,7 @@ import { defineConfig, devices } from "@playwright/test";
  */
 export default defineConfig({
   testDir: "./e2e",
-  testMatch: /(visor-unity-real|blob-transferencia)\.spec\.ts$/,
+  testMatch: /(visor-unity-real|blob-transferencia|ensayo-demo)\.spec\.ts$/,
   workers: 1,
   reporter: "line",
   use: {
