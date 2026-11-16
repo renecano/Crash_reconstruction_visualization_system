@@ -18,6 +18,7 @@ export * from "./reversa";
 export * from "./conductores";
 export * from "./cobertura";
 export * from "./dano-energia";
+export * from "./mejor-fuera";
 export * as formato from "./formato";
 export * from "./palabras";
 export * from "./pizarra";

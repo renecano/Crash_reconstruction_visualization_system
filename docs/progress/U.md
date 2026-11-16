@@ -414,6 +414,7 @@ Plan: PLAN-CESVI §3.3. Decisiones: ADR 0114.
 - **Dónde se compiló:** en la laptop, como los builds anteriores (`tools/unity/en-tarea.ps1 -Nombre build-web`), con el equipo libre y Edge cerrado. Tardó 7.1 minutos, terminó con código 0 y no quedó ningún proceso de Unity vivo. El plan de la auditoría lo ponía en la computadora del colaborador; publicar necesita el token que solo está aquí, así que se hizo aquí (decisión técnica, anotada en el ADR 0117).
 - **Comprobado antes de publicar:** `node tools/unity/e2e-camaras.mjs` sobre el build, todo en verde y sin errores en la página.
 - **Publicado:** `node tools/unity/publicar-web.mjs`, sin podar: el build anterior (`abbbeec49fbae3c6`) sigue en Blob y se regresa a él con solo restaurar `apps/web/public/visor-unity/manifest.json`.
+- **Comprobado en producción** (2026-11-15, `CROQUIS_URL=https://croquis-sage.vercel.app` con `playwright.produccion.config.ts`): el flujo completo pasa en 51 s; Unity queda listo en 11.8 s. Capturas en `docs/cesvi/u6/produccion/` y cifras en `eval/results/u6_flujo_unity_produccion.json`.
 - **Medido** (`node eval/unity_build.mjs --caso axa-dia` → `eval/results/unity_build.json`; mediana de 3 corridas, navegador nuevo y sin caché, 20 Mbps): 69.4 MB (31.2 MB con Brotli), 12.7 s hasta que Unity arranca y 8.9 s más hasta que se ve el caso. Sin errores.
 - **No se volvió a medir:** los fps de la E6 (`e6_unity_media.json` es del build anterior). El daño se prepara al armar el vehículo y no trabaja en cada cuadro, pero eso no sustituye a la medición.
 
@@ -433,6 +434,7 @@ Plan: PLAN-CESVI §3.3. Decisiones: ADR 0114.
 - **El paquete del colaborador de la Tanda 2** (decisión 9): las 15 tomas del modo foto (visor de escritorio, que también hay que compilar con el daño) y el recorrido de la app en producción.
 - **Volver a medir los fps** con este build (E6) en la laptop y en la computadora de demo.
 - La sombra unida de baja y media no sigue al daño.
+- La barra de reproducción tapa una esquina del minimapa en la vista de órbita (se ve en `docs/cesvi/u6/produccion/1-reconstruccion-unity.png`).
 
 ## Ajustes de René antes de U5 (2026-11-10)
 

@@ -4,7 +4,12 @@
  * impacto del vehículo protagonista, el histograma de las simulaciones reales (una barra por km/h),
  * los percentiles con lo que significan y lo que fija el resultado. Toda cifra lleva su método.
  */
-import { formato as F, evidenciaEnPalabras, type Reconstruccion } from "@croquis/cesvi";
+import {
+  formato as F,
+  evidenciaEnPalabras,
+  mejorFueraDelRango,
+  type Reconstruccion,
+} from "@croquis/cesvi";
 import type { ReactNode } from "react";
 import {
   frasePercentil,
@@ -47,6 +52,8 @@ export function CifraReconstruccion({
   const n = r.evidencia.length;
   const quieta = v ? sinDispersion(v) : false;
   const rango = v ? rangoDeVelocidad(v) : null;
+  // Si el rango es el lineal, va centrado en el mejor ajuste y no lo deja fuera.
+  const fuera = rango && !rango.lineal ? mejorFueraDelRango(v?.previa) : null;
   const ini = barras[0]?.desde ?? 0;
   const anchoEje = barras.length ? barras.length : 1;
   return (
@@ -92,6 +99,13 @@ export function CifraReconstruccion({
           <p className="t-nota" data-testid="metodo-cifra">
             {METODO.reconstruccion} · mejor ajuste
           </p>
+          {fuera ? (
+            <p className="t-nota text-senal-texto" role="note" data-testid="mejor-fuera-del-rango">
+              El mejor ajuste queda {fuera === "arriba" ? "por arriba" : "por debajo"} del rango: el
+              rango es donde cae el 80 % de las simulaciones, y aquí la solución depende mucho de la
+              evidencia y de los supuestos. Revisa los límites antes de citar la cifra.
+            </p>
+          ) : null}
           {quieta ? (
             <p className="t-nota" data-testid="sin-dispersion">
               Las {muestras} simulaciones dan la misma velocidad: el costo tiene un quiebre en esta

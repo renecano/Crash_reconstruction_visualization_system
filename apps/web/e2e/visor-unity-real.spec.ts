@@ -90,6 +90,16 @@ async function conUnityLocal(page: Page) {
       },
     }),
   );
+  // Los cielos van aparte desde U6, uno por AssetBundle, en `StreamingAssets/cielos/`: sin esta
+  // ruta Unity no baja el del caso y la app cae al visor ligero (visto el 2026-11-15).
+  await page.route("**/unity-local/StreamingAssets/**", (r) => {
+    const relativa = decodeURIComponent(new URL(r.request().url()).pathname).split(
+      "/unity-local/StreamingAssets/",
+    )[1]!;
+    const archivo = join(BUILD, "..", "StreamingAssets", relativa);
+    if (relativa.includes("..") || !existsSync(archivo)) return r.fulfill({ status: 404 });
+    return r.fulfill({ path: archivo, contentType: "application/octet-stream" });
+  });
   await page.route("**/unity-local/Build/**", (r) => {
     const nombre = decodeURIComponent(new URL(r.request().url()).pathname.split("/").pop()!);
     const archivo = join(BUILD, nombre);

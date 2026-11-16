@@ -1,62 +1,62 @@
 {
-  "fecha": "2026-11-13T00:06:24.479Z",
-  "cifra_antes": "Repetir\nVelocidad antes del impacto\n\n60.62\nkm/h\nA · Jetta\nrango lineal 55.29–65.95\n\nReconstrucción física de Croquis · mejor ajuste\n\nLas 32 simulaciones dan la misma velocidad: el costo tiene un quiebre en esta solución y no dicen cuánto podría variar. El rango de arriba es la aproximación lineal del solver.\n\nCómo se reparten las simulaciones\nB · Camaro\n0.00 km/h\nLo fijan\n5 evidencias · 1 decisión de Croquis",
+  "fecha": "2026-11-16T00:29:09.076Z",
+  "cifra_antes": "Repetir\nVelocidad antes del impacto\n\n102\nkm/h\nB · Camaro\nrango 72–99\n\nReconstrucción física de Croquis · mejor ajuste\n\nCómo se reparten las simulaciones\nA · Jetta\n40 km/h\nLo fijan\n5 evidencias · 1 decisión de Croquis",
   "pausa_antes_del_3d_s": 0,
-  "unity_listo_s": 14.859,
+  "unity_listo_s": 11.792,
   "marcas": {
     "arranque": 0,
     "precarga": 0.1,
-    "precarga_lista": 2.1,
-    "cargador": 2.1,
-    "cargador_listo": 2.4,
-    "instancia": 3.3,
-    "listo": 4.1,
-    "solver": 4.2,
-    "solver_listo": 4.2,
-    "cargar_caso": 4.4,
-    "caso_cargado": 14.4
+    "precarga_lista": 0.1,
+    "cargador": 0.1,
+    "cargador_listo": 0.3,
+    "instancia": 1.3,
+    "listo": 2.2,
+    "solver": 2.2,
+    "solver_listo": 2.2,
+    "cargar_caso": 2.8,
+    "caso_cargado": 11.6
   },
   "pasos_unity": {
-    "leer_sobre": 4.2,
-    "leer_paquete": 407,
-    "caracteres_paquete": 286835,
-    "vehiculos": 2674.6,
-    "cielo": 2674.7,
-    "escenario": 3205.9,
-    "caso_y_terreno": 3215.3,
-    "estacionados_y_personas": 3216.2,
-    "antes_de_unir_sombras": 3263.7,
-    "sombras_unidas": 3265.8,
-    "total": 3266.1,
-    "primer_cuadro": 8831.4,
-    "segundo_cuadro": 8845.8,
-    "hasta_cargado": 9261.5,
-    "pedido": 981675976,
+    "leer_sobre": 7.6,
+    "leer_paquete": 706.5,
+    "caracteres_paquete": 293479,
+    "vehiculos": 1723.7,
+    "cielo": 1723.8,
+    "escenario": 2212.2,
+    "caso_y_terreno": 2222.3,
+    "estacionados_y_personas": 2223.1,
+    "antes_de_unir_sombras": 2271.4,
+    "sombras_unidas": 2274.4,
+    "total": 2274.9,
+    "primer_cuadro": 7434.7,
+    "segundo_cuadro": 7450.6,
+    "hasta_cargado": 8169.2,
+    "pedido": 846293570,
     "tipo": "perfil"
   },
   "bytes_unity": [
     {
-      "archivo": "c98f0d6215ea311b58015abfaaec49f5.loader.js",
+      "archivo": "1407f62e0aade1e7f9b0bca1b6902696.loader.js",
       "kb": 0,
       "s": 0.3
     },
     {
-      "archivo": "1d312128463f885658d7609b01cac408.framework.js",
+      "archivo": "7951c035bbf9749819daba5d4e3f9ef0.framework.js",
       "kb": 0,
-      "s": 0.2
+      "s": 0.4
     },
     {
-      "archivo": "9db635019469c9e78c2a32e7805db75d.wasm",
+      "archivo": "15a48099c86e3d4c5b49e84643c915be.wasm",
       "kb": 0,
-      "s": 2.7
+      "s": 2.3
     },
     {
-      "archivo": "08efb5089aa828037f24975cf38a62ef.data",
+      "archivo": "48665d24501cf08c456adfc9e5b9a2a7.data",
       "kb": 0,
-      "s": 10.3
+      "s": 3.2
     },
     {
-      "archivo": "c98f0d6215ea311b58015abfaaec49f5.loader.js",
+      "archivo": "1407f62e0aade1e7f9b0bca1b6902696.loader.js",
       "kb": 0,
       "s": 0.2
     }
@@ -65,34 +65,20 @@
     "x": 17.953,
     "y": 3.741
   },
-  "cifra_despues": "Repetir\nVelocidad antes del impacto\n\n60.35\nkm/h\nA · Jetta\nrango lineal 56.67–64.03\n\nReconstrucción física de Croquis · mejor ajuste\n\nLas 32 simulaciones dan la misma velocidad: el costo tiene un quiebre en esta solución y no dicen cuánto podría variar. El rango de arriba es la aproximación lineal del solver.\n\nCómo se reparten las simulaciones\nB · Camaro\n0.00 km/h\nLo fijan\n5 evidencias · 1 decisión de Croquis",
+  "cifra_despues": "Repetir\nVelocidad antes del impacto\n\n48\nkm/h\nA · Jetta\nrango 43–53\n\nReconstrucción física de Croquis · mejor ajuste\n\nCómo se reparten las simulaciones\nB · Camaro\n27 km/h\nLo fijan\n5 evidencias · 1 decisión de Croquis",
   "fotos": [
     {
       "etiqueta": "Antes del impacto (−1 s)",
-      "bytes": 831014
+      "bytes": 973690
     },
     {
       "etiqueta": "En el impacto (0 s)",
-      "bytes": 871826
+      "bytes": 947590
     },
     {
       "etiqueta": "En reposo (+4.1 s)",
-      "bytes": 849226
+      "bytes": 970734
     }
   ],
-  "segunda_visita_listo_s": 7.746,
-  "segunda_visita_marcas": {
-    "arranque": 0,
-    "precarga": 0.1,
-    "precarga_lista": 1,
-    "cargador": 1,
-    "cargador_listo": 1.1,
-    "instancia": 1.7,
-    "listo": 2.3,
-    "solver": 2.3,
-    "solver_listo": 2.3,
-    "cargar_caso": 2.6,
-    "caso_cargado": 7.6
-  },
   "errores": []
 }
