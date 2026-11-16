@@ -15,7 +15,7 @@ Sitio: <https://croquis-sage.vercel.app/cesvi>.
 - **La reproducción de reportes:** los <!--cifra:er4.prueba-->205<!--/cifra--> de la prueba congelada se reconstruyen y se ven en 3D. La modalidad coincide con el título del reporte en <!--cifra:er4.modalidad_titulo-->91 de 156 (58.3 %)<!--/cifra-->.
 - **El visor Unity en la web,** con edición en 3D que vuelve a correr el solver, con controles de reproducción (pausar, deslizador, ¼× ½× 1×, ir al impacto, ver todo, repetir) y con el daño del solver en la carrocería después del impacto (U8, ADR 0117; build `e06bdd73b0ce3706`). El visor de escritorio está en un release de GitHub y es anterior al daño.
 - **La reversa:** quien retrocede sin velocidad dicha se reconstruye a <!--cifra:reversa.velocidad-->5.68 km/h (3.06–9.07)<!--/cifra-->, como supuesto con su fuente.
-- **Lo que el perito lee sobre la confianza:** qué evidencia fija cada número, qué es supuesto, qué parte de la deformación medida explica la reconstrucción y que el rango contuvo la velocidad verdadera <!--cifra:cobertura.rango-->82 de 116 (70.7 %)<!--/cifra--> de las veces (lo esperado es cerca de 80 %).
+- **Lo que el perito lee sobre la confianza:** qué evidencia fija cada número, qué es supuesto, qué parte de la deformación medida explica la reconstrucción y que el rango contuvo la velocidad verdadera <!--cifra:cobertura.rango-->410 de 578 (70.9 %)<!--/cifra--> de las veces (lo esperado es cerca de 80 %).
 
 ## Qué está en el código y todavía no en producción
 
