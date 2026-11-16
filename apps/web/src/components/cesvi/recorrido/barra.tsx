@@ -6,7 +6,7 @@
  * Presentar / Trabajar, las acciones del caso, el tema, «Transiciones» y «Exportar».
  */
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { Logotipo } from "@/components/sitio/logo";
 import { RUTAS } from "@/lib/casos";
 import type { ActoDelCaso } from "@/lib/actos";
@@ -108,8 +108,18 @@ export function BarraRecorrido({
         ) : null}
         <nav aria-label="Actos del recorrido" className="relative min-w-0 flex-1 self-stretch">
           <ol
-            className="grid h-full items-center"
-            style={{ gridTemplateColumns: `repeat(${actos.length}, minmax(0, 1fr))` }}
+            className="grid h-full grid-cols-[var(--actos-chica)] items-center lg:grid-cols-[var(--actos)]"
+            // En una ventana chica, el acto actual toma el ancho de su nombre y los demás van con su
+            // número; así ningún nombre se corta (ronda 2, B). En grande, columnas iguales: el punto
+            // naranja del avance queda bajo el acto actual.
+            style={
+              {
+                "--actos": `repeat(${actos.length}, minmax(0, 1fr))`,
+                "--actos-chica": actos
+                  .map((_, k) => (k === actual ? "auto" : "minmax(0, 1fr)"))
+                  .join(" "),
+              } as CSSProperties
+            }
           >
             {actos.map((a, k) => {
               const primero = a.pasos[0]!;
@@ -135,7 +145,7 @@ export function BarraRecorrido({
                     {/* En una ventana chica, los demás actos van con su número: los nombres se pisaban
                         (ronda 2, B). El nombre completo sigue en la etiqueta del botón. */}
                     {esActual ? (
-                      <span className="truncate whitespace-nowrap">{a.nombre}</span>
+                      <span className="whitespace-nowrap">{a.nombre}</span>
                     ) : (
                       <>
                         <span className="hidden whitespace-nowrap lg:inline">{a.nombre}</span>

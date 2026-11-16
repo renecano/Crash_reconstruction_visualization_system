@@ -2313,7 +2313,7 @@ export function EscenaFacil({
               <span className="escena-chip-numero" aria-hidden="true">
                 {p.hecho ? "✓" : k + 1}
               </span>
-              {nombre}
+              <span className="escena-chip-nombre">{nombre}</span>
               <span className="sr-only">{p.hecho ? " (listo)" : esActual ? " (ahora)" : ""}</span>
             </button>
           );

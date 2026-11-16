@@ -950,7 +950,7 @@ export function RecorridoCaso({
           Escribir la narración del hecho
         </button>
         <label className="boton-secundario cursor-pointer">
-          Abrir un caso guardado (.croquis)
+          Abrir un caso guardado
           <input
             type="file"
             accept={ACEPTA_CASO}
@@ -963,9 +963,6 @@ export function RecorridoCaso({
             data-testid="abrir-caso"
           />
         </label>
-        <span className="t-nota w-full text-texto-3">
-          Los archivos de caso de antes (.json) también se abren.
-        </span>
       </div>
     ) : null;
 

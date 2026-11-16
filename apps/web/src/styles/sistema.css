@@ -1356,6 +1356,24 @@
     color: var(--texto-2);
     white-space: nowrap;
   }
+  /*
+   * En una ventana chica, solo la pregunta actual dice su nombre: las demás van con su número o su
+   * palomita (el nombre sigue para los lectores de pantalla) y «Ver la reconstrucción» queda a la
+   * vista (ronda 2, B).
+   */
+  @media (max-width: 1023px) {
+    .escena-chip:not([aria-current="step"]) .escena-chip-nombre {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .escena-chip:not([aria-current="step"]) {
+      padding: 0 6px;
+    }
+  }
   .escena-chip[aria-current="step"] {
     background: var(--superficie-alta);
     color: var(--texto);
