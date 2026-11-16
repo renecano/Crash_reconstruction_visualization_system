@@ -111,7 +111,9 @@ for (const tema of ["claro", "oscuro"] as const) {
     await expect(page.getByTestId("linea-de-tiempo")).toBeVisible({ timeout: 60_000 });
     await revisa("3-reconstruccion");
 
-    // Los tooltips salen con el foco (§9). Sin dispersión no hay percentiles: se dice otra cosa.
+    // Los tooltips salen con el foco (§9). Sin dispersión no hay percentiles: se dice otra cosa. El
+    // reparto de las simulaciones va plegado (W4b): se abre primero.
+    await page.getByTestId("ver-detalle-cifra").click();
     if (await page.getByTestId("percentil-p50").isVisible()) {
       await page.getByTestId("percentil-p50").focus();
       await expect(page.getByTestId("tooltip")).toContainText("La mitad queda abajo");

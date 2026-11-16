@@ -382,7 +382,7 @@ namespace Croquis.Visor
                     }
 
                     var etiqueta = Letrero(raiz, vista.transform.position + Vector3.up * (float)(d.AltoM + 0.45),
-                        "aplastamiento máx. " + F(maximo * 100.0, "0") + " cm (C1–C6 del solver)", 0.1f, Calor(1f), camara);
+                        "aplastamiento máx. " + F(maximo * 100.0, "0") + " cm (C1–C6 de Croquis)", 0.1f, Calor(1f), camara);
                     etiqueta.transform.SetParent(raiz, true);
                 }
             }
@@ -597,7 +597,7 @@ namespace Croquis.Visor
 
         /// <summary>
         /// Las medidas del vehículo acotadas (largo, ancho, alto y distancia entre ejes del Resultado) y
-        /// su centro de masa: en planta, el centro de la huella (el punto que sigue el solver); en
+        /// su centro de masa: en planta, el centro de la huella (el punto que sigue Croquis); en
         /// altura, 0.37 del alto (el supuesto del solver, `rollover.py`). Esconde el escenario.
         /// </summary>
         public static Capa Ficha(VisorCaso visor, string id, bool lateral, Camera camara)
@@ -653,7 +653,7 @@ namespace Croquis.Visor
                 Letrero(raiz, P(x, H / 2f, L / 2f + 0.9f), "alto " + F(H) + " m", alto, Color.white, camara);
                 Linea(raiz, P(x, 0.12f, (float)tras), P(x, 0.12f, (float)del), G, Brillo(new Color(1f, 0.85f, 0.3f)));
                 Letrero(raiz, P(x, 0.3f, (float)((del + tras) / 2.0)), "entre ejes " + F(d.DistanciaEntreEjesM) + " m", alto, new Color(1f, 0.85f, 0.3f), camara);
-                Marca(raiz, P(x, cgAlto, 0f), camara, "CG · h = 0.37 × alto (supuesto del solver)");
+                Marca(raiz, P(x, cgAlto, 0f), camara, "CG · h = 0.37 × alto (supuesto de Croquis)");
             }
             else
             {
@@ -665,7 +665,7 @@ namespace Croquis.Visor
                 Letrero(raiz, P(0f, y, -L / 2f - 0.6f), "ancho " + F(W) + " m", alto, Color.white, camara);
                 Linea(raiz, P(W / 2f + 0.15f, y, (float)tras), P(W / 2f + 0.15f, y, (float)del), G, Brillo(new Color(1f, 0.85f, 0.3f)));
                 Letrero(raiz, P(W / 2f + 0.9f, y, (float)((del + tras) / 2.0)), "entre ejes " + F(d.DistanciaEntreEjesM) + " m", alto, new Color(1f, 0.85f, 0.3f), camara);
-                Marca(raiz, P(0f, y, 0f), camara, "CG · centro de la huella (el punto que sigue el solver)");
+                Marca(raiz, P(0f, y, 0f), camara, "CG · centro de la huella (el punto que sigue Croquis)");
             }
 
             Letrero(raiz, P(0f, H + 0.6f, 0f), v.Clase.Replace('_', ' ') + " · " + F(d.MasaKg, "0") + " kg", alto * 1.2f, Color.white, camara);
