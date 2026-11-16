@@ -683,9 +683,44 @@ function dibujarTerreno(m: MapaMl, terreno: readonly TerrenoMapa[]) {
   );
 }
 
+/**
+ * Dibuja en cuanto se pueda: si el mapa aún carga (teselas, el estilo), lo último que se pidió se
+ * dibuja cuando queda quieto. Antes se saltaba y la línea no aparecía hasta el siguiente cambio
+ * (ronda 2, A5).
+ */
+const pendientes = new WeakMap<MapaMl, Map<string, () => void>>();
+function cuandoSePueda(m: MapaMl, clave: string, dibujar: () => void) {
+  if (m.isStyleLoaded()) {
+    dibujar();
+    return;
+  }
+  let p = pendientes.get(m);
+  if (!p) {
+    p = new Map();
+    pendientes.set(m, p);
+  }
+  const habia = p.size > 0;
+  p.set(clave, dibujar);
+  if (habia) return;
+  const intentar = () => {
+    const q = pendientes.get(m);
+    if (!q) return;
+    try {
+      for (const f of q.values()) f();
+      pendientes.delete(m);
+    } catch {
+      // El estilo todavía no está: se intenta en el siguiente momento quieto.
+      m.once("idle", intentar);
+    }
+  };
+  m.once("idle", intentar);
+}
+
 /** La medida (A5): la línea sólida en el color de señal y los extremos numerados. */
 function dibujarMedida(m: MapaMl, datos: ReturnType<typeof dibujoMedicion>["geojson"]) {
-  if (!m.isStyleLoaded()) return;
+  cuandoSePueda(m, "medida", () => ponerMedida(m, datos));
+}
+function ponerMedida(m: MapaMl, datos: ReturnType<typeof dibujoMedicion>["geojson"]) {
   const fuente = m.getSource("escena-medida") as GeoJSONSource | undefined;
   if (fuente) {
     fuente.setData(datos);
@@ -719,7 +754,9 @@ function dibujarMedida(m: MapaMl, datos: ReturnType<typeof dibujoMedicion>["geoj
 }
 
 function dibujarLineas(m: MapaMl, lineas: readonly LineaMapa[]) {
-  if (!m.isStyleLoaded()) return;
+  cuandoSePueda(m, "lineas", () => ponerLineas(m, lineas));
+}
+function ponerLineas(m: MapaMl, lineas: readonly LineaMapa[]) {
   const datos = {
     type: "FeatureCollection" as const,
     features: [
