@@ -5,7 +5,7 @@
     "commit":  "44e7bf673549ba2f142b261cf118da9018d16eb9",
     "rama_del_repositorio":  "main",
     "archivos_con_cambios":  7,
-    "duracion_min":  2.7,
+    "duracion_min":  2.8,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "NVIDIA GeForce RTX 4070 Laptop GPU",
@@ -66,6 +66,13 @@
                       "estado":  "ok",
                       "minutos":  0.3,
                       "codigo":  0
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "er4-titulo",
+                      "estado":  "falló (código 1)",
+                      "minutos":  0,
+                      "codigo":  1
                   }
               ]
 }
