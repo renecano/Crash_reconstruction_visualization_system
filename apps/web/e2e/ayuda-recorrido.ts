@@ -25,6 +25,8 @@ export async function irAPaso(page: Page, n: number) {
     const boton = page.getByTestId(actual < n ? "siguiente" : "anterior");
     await expect(boton).toBeEnabled();
     await boton.click();
+    // «El trazo» (A1) se recoge antes de pasar a la narración: se espera el cambio de paso.
+    await expect(panel).not.toHaveAttribute("data-paso", String(actual), { timeout: 3000 });
   }
   await expect(panel).toHaveAttribute("data-paso", String(n));
 }
