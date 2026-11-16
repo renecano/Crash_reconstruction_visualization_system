@@ -115,17 +115,17 @@
     },
     "cobertura.rango": {
       "que": "Cobertura sintética del p10–p90 de la inversión: de las velocidades verdaderas conocidas, cuántas cayeron dentro del rango",
-      "k": 82,
-      "n": 116,
-      "pct": 70.7,
+      "k": 410,
+      "n": 578,
+      "pct": 70.9,
       "esperado_pct": 80,
       "ic95_pct": [
-        61.85,
-        78.2
+        67.1,
+        74.49
       ],
-      "casos_por_escena": 40,
-      "texto": "82 de 116 (70.7 %)",
-      "fuente": "eval/results/t3/cobertura_40.json",
+      "casos_por_escena": 200,
+      "texto": "410 de 578 (70.9 %)",
+      "fuente": "eval/results/t3_cobertura.json",
       "campo": "total.supuestos_sorteados"
     },
     "paridad.numeros": {
