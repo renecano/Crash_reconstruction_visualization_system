@@ -190,6 +190,26 @@ export function citasRechazadas(s: SalidaCorpus, narracion: string): string[] {
 }
 
 const rechazos = (c: Conversion) => c.conteos.citas_fuera + c.conteos.numeros_fuera;
+/** Los datos que pasaron la revisión: citas encontradas y números escritos en su cita. */
+const verificados = (c: Conversion) =>
+  c.conteos.citas - c.conteos.citas_fuera + (c.conteos.numeros - c.conteos.numeros_fuera);
+
+/** El prefijo con que un número descartado viaja junto a las citas rechazadas (W9). */
+export const PREFIJO_NUMERO = "número: ";
+
+/**
+ * Lo que se le dice al Lector al pedir que relea (W9, T6.5): las citas que no están en la narración
+ * y los números que no están escritos en su cita. Antes solo iban las citas, y si lo rechazado eran
+ * números la relectura era la misma petición que la primera lectura.
+ */
+export function rechazosParaReleer(s: SalidaCorpus, narracion: string, conv: Conversion): string[] {
+  const out = citasRechazadas(s, narracion);
+  for (const n of conv.numerosFuera ?? []) {
+    const texto = `${PREFIJO_NUMERO}${n.numero}${n.cita ? ` (no está escrito en «${n.cita}»)` : ""}`;
+    if (!out.includes(texto)) out.push(texto);
+  }
+  return out;
+}
 
 const lector: Agente = {
   nombre: "lector",
@@ -242,8 +262,10 @@ const verificadorCitas: Agente = {
     );
     let conversion = conv;
     if (p.conversion) {
-      // La relectura: se queda con la que tenga menos datos rechazados (en empate, la primera).
-      if (rechazos(conv) < rechazos(p.conversion))
+      // La relectura: se queda con ella si rechaza menos datos **y** no trae menos datos verificados
+      // (W9: una relectura que rechaza menos porque trae menos datos, por ejemplo sin las caras de
+      // contacto, era peor). En cualquier otro caso, la primera.
+      if (rechazos(conv) < rechazos(p.conversion) && verificados(conv) >= verificados(p.conversion))
         decir(
           "pizarra",
           "escribe",
@@ -251,7 +273,13 @@ const verificadorCitas: Agente = {
         );
       else {
         conversion = p.conversion;
-        decir("pizarra", "escribe", "La relectura no rechaza menos: se queda la primera lectura.");
+        decir(
+          "pizarra",
+          "escribe",
+          rechazos(conv) < rechazos(p.conversion)
+            ? "La relectura rechaza menos, pero trae menos datos verificados: se queda la primera lectura."
+            : "La relectura no rechaza menos: se queda la primera lectura.",
+        );
       }
     }
     let q: Pizarra = {
@@ -261,7 +289,7 @@ const verificadorCitas: Agente = {
       salidaElegida: conversion === p.conversion ? p.salidaElegida : s,
       escena: conversion === p.conversion ? p.escena : null,
     };
-    const fuera = citasRechazadas(s, p.narracion!);
+    const fuera = rechazosParaReleer(s, p.narracion!, conv);
     if (rechazos(conv) > 0 && p.relecturas < MAX_RELECTURAS) {
       decir(
         "lector",

@@ -1,0 +1,79 @@
+{
+  "descripcion": "Ensayo del guion de la demo con CESVI en producción (docs/cesvi/demo/guion.md): cada tramo con su tiempo, si salió y una captura. Incluye una lectura en vivo de una narración y una importación en vivo de un reporte.",
+  "sitio": "https://croquis-sage.vercel.app",
+  "fecha": "2026-11-16T02:40:11.207Z",
+  "total_segundos": 93.85899999999998,
+  "tramos": [
+    {
+      "tramo": "0-portada",
+      "segundos": 1.484,
+      "ok": true,
+      "nota": "portada",
+      "captura": "docs/cesvi/demo/ensayo/0-portada.jpg"
+    },
+    {
+      "tramo": "1a-axa-reconstruccion",
+      "segundos": 8.639,
+      "ok": true,
+      "nota": "Repetir Velocidad antes del impacto 26 km/h B · Tacoma rango 55–78 Reconstrucción física de Croquis · mejor ajuste Cómo se reparten las simulaciones A · Silverado 2500 15 km/h Lo fijan 5 evidencias",
+      "captura": "docs/cesvi/demo/ensayo/1a-axa-reconstruccion.jpg"
+    },
+    {
+      "tramo": "1b-axa-3d",
+      "segundos": 13.811,
+      "ok": true,
+      "nota": "Unity listo en 10.6 s (primera visita); «Ir al impacto»",
+      "captura": "docs/cesvi/demo/ensayo/1b-axa-3d-impacto.jpg"
+    },
+    {
+      "tramo": "1c-axa-contra-cesvi",
+      "segundos": 1.066,
+      "ok": true,
+      "nota": "Acto 5 de 6 · Contra CESVI Contra el reporte de CESVI 3 coinciden 0 difieren 1 sin dato Reporte de CESVI · B · velocidad por deformación 63.15 km/h Método de CESVI con los datos del reporte B · velocidad de impacto por d",
+      "captura": "docs/cesvi/demo/ensayo/1c-axa-contra-cesvi.jpg"
+    },
+    {
+      "tramo": "1d-axa-dictamen",
+      "segundos": 1.04,
+      "ok": true,
+      "nota": "paso del dictamen",
+      "captura": "docs/cesvi/demo/ensayo/1d-axa-dictamen.jpg"
+    },
+    {
+      "tramo": "2a-nuevo-lectura-en-vivo",
+      "segundos": 14.838,
+      "ok": true,
+      "nota": "Claude leyó la narración en 13.1 s",
+      "captura": "docs/cesvi/demo/ensayo/2a-nuevo-lectura.jpg"
+    },
+    {
+      "tramo": "2b-nuevo-colocar-y-reconstruir",
+      "segundos": 7.398,
+      "ok": true,
+      "nota": "Repetir Velocidad antes del impacto 12 km/h A · Jetta rango 10–20 Reconstrucción física de Croquis · mejor ajuste Cómo se reparten las simulaciones B · Camaro 7 km/h Lo fijan 4 evidencias",
+      "captura": "docs/cesvi/demo/ensayo/2b-nuevo-reconstruccion.jpg"
+    },
+    {
+      "tramo": "2c-nuevo-3d",
+      "segundos": 5.401,
+      "ok": true,
+      "nota": "Unity listo en 3.3 s (segunda visita)",
+      "captura": "docs/cesvi/demo/ensayo/2c-nuevo-3d.jpg"
+    },
+    {
+      "tramo": "3-importar-en-vivo",
+      "segundos": 23.463,
+      "ok": true,
+      "nota": "Claude leyó el reporte en 21.7 s",
+      "captura": "docs/cesvi/demo/ensayo/3-importar.jpg"
+    },
+    {
+      "tramo": "4-carambola-3d",
+      "segundos": 16.719,
+      "ok": true,
+      "nota": "Unity listo en 4.1 s",
+      "captura": "docs/cesvi/demo/ensayo/4-carambola-3d.jpg"
+    }
+  ],
+  "errores_de_pagina": []
+}

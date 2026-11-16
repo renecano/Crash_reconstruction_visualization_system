@@ -1032,7 +1032,18 @@ Al comprobar el build nuevo del visor con la e2e del flujo completo (`visor-unit
 - **Conteo** (`eval/mejor_fuera.mts` → `eval/results/mejor_fuera.json`): en los 205 reportes de la prueba, reconstruidos solo con su narración, ninguno tiene rango, así que el aviso no aparece ahí. Tardó 69 s.
 - **La e2e con el Unity local** (`visor-unity-real.spec.ts`) no servía `StreamingAssets`, donde van los cielos desde U6: en modo local Unity caía al visor ligero. Se agregó la ruta. Contra Blob y contra producción la prueba pasa (52 s y 51 s).
 
-### Para René
+### Decisión de René (2026-11-15) y lo medido
+
+René pidió ofrecer la segunda solución como alternativa, como las dos hipótesis de AXA, solo si es físicamente válida y cuadra con la evidencia; si no, se queda el aviso. Medido con `eval/caso_poste_modos.mts` (`eval/results/caso_poste_modos.json`):
+
+| Solución   | A · Jetta | B · Camaro | Impactos que ocurren                      | Residuo mayor               | Físicamente válida | Cuadra (≤ 3 σ) |
+| ---------- | --------- | ---------- | ----------------------------------------- | --------------------------- | ------------------ | -------------- |
+| La elegida | 40.40     | 102.07     | los 2 (entre vehículos y contra el poste) | 6.88 σ                      | sí                 | no             |
+| La segunda | 33.73     | 27.10      | 1 (el Camaro ya no llega al poste)        | 6.69 σ (el punto del poste) | no                 | no             |
+
+**Resultado:** la segunda no cumple; se queda el aviso. Antes y después, la pantalla es la misma: no hay nada que aprobar. No se agregó la regla general al solver: hoy ningún caso medido la activaría (AXA queda dentro de su rango; los 205 reportes no tienen rango), y agregarla toca el solver y su paridad antes de la demo. Si aparece un caso real que la necesite, se agrega con su antes y después.
+
+### Lo que se le preguntó a René
 
 1. **¿Te parece bien el aviso,** o prefieres que en estos casos se muestre la segunda solución como alternativa (hoy solo se ofrece si su costo queda a menos de 0.5 de la primera)? Lo segundo cambia lo que ve el perito.
 2. **El caso de ejemplo con poste ya no da 60.62.** Si esa cifra se usó en alguna demo con CESVI, conviene saberlo antes de la siguiente.
@@ -1043,6 +1054,36 @@ Al comprobar el build nuevo del visor con la e2e del flujo completo (`visor-unit
 - **Causa:** el #119 (`c80e10e4`, 2026-10-24, ADR 0089), que deshace en 0.04 s el encimamiento de los contornos después de cada impacto con la caja sin deformar. En una carambola sin posiciones del perito, los vehículos de los impactos posteriores van en la trayectoria del que los golpea (supuesto); separar antes los contornos cambia si esa trayectoria los alcanza. Búsqueda binaria con el código de cada commit en su propio worktree e instalación: `412bf43e` y `25df0592` dan 21; `c80e10e4`, `1a5d5391` y `80df35f4` dan 20, con los mismos cinco casos (pierden su impacto posterior `3fb401796c`, `5becbd0fbb` y `cade1c89cb`; lo ganan `d646b64594` y `e9aed4ab5b`).
 - **Por qué no se vio antes:** los archivos oficiales no se regeneraban desde el 2026-10-23; las comparaciones de W8 y de la Tanda 3 usaban sus propias copias en `eval/results/w8/`, que ya daban 20.
 - **Medido en:** la corrida del colaborador del 2026-11-15 (`resultados/t3-2026-11-15`, RTX).
+
+## W9 · T6.5: las relecturas de R12b, grabadas y medidas (2026-11-15)
+
+**Estado:** hecho. T6.6 espera la decisión de René (abajo).
+
+### Qué se hizo
+
+- **La relectura ya no puede ser la misma petición.** La pizarra pedía releer cuando había números que no estaban escritos en su cita, pero solo le mandaba al Lector las citas no encontradas; si no había ninguna, la relectura era idéntica a la primera lectura. Ahora le dice también qué números se descartaron (`rechazosParaReleer`, `pizarra.ts`; `mensajeEscena`, `escena-narracion.ts`). Viajan en la misma lista que las citas, con su prefijo: el contrato de `/api/cesvi/escena` no cambia.
+- **Grabadas:** las 12 relecturas que pide la E-R4 (2 de la prueba y 10 de desarrollo), en `data/cesvi/r4/relecturas-v2.jsonl`, con `eval/cesvi_r4_reproduccion.mts relecturas <tope> <partición>`, que no llama a la API si lo gastado más lo que puede costar la llamada pasa del tope. Costo real: 0.1845 USD.
+- **La regla para usar una relectura cambió.** Antes se usaba si rechazaba menos datos; las relecturas rechazaban menos porque traían menos datos (perdían las caras de contacto). Ahora se usa solo si rechaza menos **y** no trae menos datos verificados.
+
+### Medido (`eval/results/w9_relecturas.json`)
+
+|                  | Regla de antes                                                                                                                     | Regla nueva    |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| Prueba (205)     | cambian 2 narraciones y 19 cifras; la modalidad contra la etiqueta baja de 80 a 79 de 190 (se pierde un «alcance» que estaba bien) | ninguna cambia |
+| Desarrollo (459) | cambian 5 narraciones; 453 → 455 escenas válidas                                                                                   | ninguna cambia |
+
+Con la regla nueva ninguna de las 12 relecturas se usa: todas traían menos datos verificados que la primera lectura. Ninguna cifra que ve CESVI cambia.
+
+### Gasto de W9 (`eval/results/w9_gasto.json`)
+
+0.538 USD de 20: las 12 relecturas (0.1845 USD, costo real de la API) y las 5 lecturas de la auditoría por la ruta de producción (0.3535 USD, estimadas con el máximo medido de una lectura porque su costo real no se registró).
+
+### T6.6 y el corpus con el redactor nuevo: para René
+
+- **T6.6:** los prompts del corpus (`SISTEMA_CORPUS`, 13 veces) y de la narración (`SISTEMA_NARRACION`, 11 veces) dicen «dictamen» donde CESVI dice «reporte». Son los prompts que usa en vivo la importación de un reporte.
+- **Releer el corpus** con ese cambio y con el redactor nuevo (que ya no borra las cifras) cuesta, por lotes, unos 14.4 USD la lectura completa de los 671 reportes y 10.1 USD la de narraciones: 24.5 USD, más que lo que queda del tope (19.46 USD).
+- **Lo que sí cabe:** solo la prueba congelada (205 reportes: unos 7.5 USD) y volver a leer sus narraciones a escena (unos 2.6 USD), en total unos 10.1 USD. Mueve cifras de la E-R4 que ve CESVI: va con su antes y después antes de fusionar.
+- **Lo más barato:** cambiar solo la palabra en los prompts y medirlo en 20 reportes de la prueba (menos de 1 USD), sin rehacer el corpus.
 
 ## Lo que U deja dicho para W
 

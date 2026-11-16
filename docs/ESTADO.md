@@ -29,7 +29,7 @@ Sitio: <https://croquis-sage.vercel.app/cesvi>.
 | 3 · Números defendibles          | Formateador único, índice de cifras con verificador, supuestos del impacto en el rango, energía contra daño, cobertura | Hecha (#227 a #229). Falta la corrida completa del colaborador                            |
 | 2 · Lo que el perito ve en el 3D | Daño del solver en Unity, controles de reproducción, leyenda siempre                                                   | Hecha (#230 y el build publicado). Faltan las fotos de promoción y volver a medir los fps |
 | 4 · Proceso y seguridad          | Páginas anteriores, encabezados, tope de gasto, protección de `main`, Dependabot                                       | Hecha (#231 a #233)                                                                       |
-| 5 · Cierre (U7)                  | README, este archivo, `physics.md`, E8 de nuevo, pruebas de reversa y de «Claude no disponible»                        | Hecha, salvo el ensayo del guion de la demo                                               |
+| 5 · Cierre (U7)                  | README, este archivo, `physics.md`, E8 de nuevo, pruebas de reversa y de «Claude no disponible», ensayo de la demo     | Hecha                                                                                     |
 
 ## Medido
 
@@ -46,22 +46,61 @@ Sitio: <https://croquis-sage.vercel.app/cesvi>.
 
 CI: cinco checks obligatorios (lint, tipos y pruebas de TS; Python en dos partes; `Croquis.Core`; e2e de los flujos principales en Chromium), con la regla de que el CI completo tarde menos de 10 minutos. Los builds de Unity no corren en CI.
 
+## Uso de Vercel (plan Hobby)
+
+Captura de René del 2026-11-15 (últimos 30 días). Meta: por debajo de 70 % de cada límite, sobre todo en la semana de la demo.
+
+| Métrica                  | Uso       | Límite | %    | Meta (70 %) | De dónde sale                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------ | --------- | ------ | ---- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Deployment Storage       | 6.46 GB   | 10 GB  | 65 % | 7 GB        | Cada merge a `main` es un despliegue de unos 70.6 MB (`eval/results/despliegue_peso.json`: 23.3 de estáticos, 33.3 de funciones, el resto de `public/`). Hubo 190 merges y 198 despliegues de producción en 30 días, más 193 de Preview del 15 al 23 de octubre (antes de que el #101 los apagara); Vercel los guarda 30 días                                   |
+| Blob Data Transfer       | 5.07 GB   | 10 GB  | 51 % | 7 GB        | Una primera visita al 3D baja 34.6 MB de Blob; la segunda, 0 (`eval/results/blob_transferencia.json`). Lo grande fueron nuestras mediciones con navegador nuevo contra producción: la E6 en la computadora de demo, 60 corridas (unos 2.1 GB); las de carga del U6, unas 15 visitas sin caché (unos 0.5 GB); las pruebas de hoy, unos 0.2 GB. El resto, visitas |
+| Blob Data Storage        | 474.69 MB | 1 GB   | 47 % | 700 MB      | Seis builds de Unity de 65 a 73 MiB cada uno, los modelos de vehículos (26.4 MiB) y los cielos HDRI (5.3 MiB): 461.8 MiB en total (`eval/results/blob_inventario.json`)                                                                                                                                                                                         |
+| Fast Origin Transfer     | 1.83 GB   | 10 GB  | 18 % | 7 GB        | Las páginas y las rutas de la app                                                                                                                                                                                                                                                                                                                               |
+| Fast Data Transfer       | 7.24 GB   | 100 GB | 7 %  | 70 GB       | Lo que sirve el CDN del sitio                                                                                                                                                                                                                                                                                                                                   |
+| CDN Requests             | 258 K     | 1 M    | 26 % | 700 K       |                                                                                                                                                                                                                                                                                                                                                                 |
+| ISR Reads                | 141 K     | 1 M    | 14 % | 700 K       |                                                                                                                                                                                                                                                                                                                                                                 |
+| Fluid Active CPU         | 28 m 50 s | 4 h    | 12 % | 2 h 48 m    | Las rutas de `/api`                                                                                                                                                                                                                                                                                                                                             |
+| CDN Request CPU          | 4 m 22 s  | 1 h    | 7 %  | 42 m        |                                                                                                                                                                                                                                                                                                                                                                 |
+| Blob Advanced Operations | 242       | 2 K    | 12 % | 1.4 K       | Subir builds y listar (cada `list` cuenta)                                                                                                                                                                                                                                                                                                                      |
+
+**Capacidad del 3D:** con 7 GB al mes (la meta) caben unas 200 primeras visitas al 3D (7 GB ÷ 34.6 MB). Una segunda visita en el mismo navegador no baja nada de Blob. Publicar un build nuevo hace que cada visitante lo baje una vez más.
+
+**Lo que ya está bien:** el build va comprimido con Brotli por Blob y con `Cache-Control: public, max-age=31536000` en archivos con huella en el nombre; la segunda visita sale entera de la caché (medido). Blob no deja poner `immutable` (solo `max-age`), y no hace falta: la segunda visita ya es 0.
+
+**Recortar el build sin bajar calidad:** ya está optimizado (código para tamaño, texturas comprimidas, variantes de shaders recortadas). Lo que queda es poco y con riesgo: las 10 texturas de grano de película de URP (unos 2.5 MB, el efecto está apagado) vienen de los recursos globales de URP y quitarlas exige tocar el paquete; subir el recorte de código de Medium a High podría ahorrar algo del wasm (9.3 MB con Brotli), pero puede romper la lectura de JSON por reflexión. Ninguno va antes de la demo.
+
+**Reglas desde hoy:**
+
+- Las mediciones con navegador nuevo (E6, tiempos de carga, primera visita) se hacen con el build local, no contra producción. `visor-unity-real.spec.ts` ya sirve el build local completo.
+- No se publica un build de Unity nuevo en la semana de la demo, salvo una corrección.
+- Menos merges a `main`: los cambios que solo tocan documentos se juntan.
+
+**Revisión semanal (2 minutos):**
+
+1. En Vercel, la página del equipo → **Usage**, últimos 30 días. Tómale captura.
+2. Compara cada fila con la columna «Meta» de arriba. Si alguna pasa de su meta: Deployment Storage → aplica la retención de abajo y junta merges; Blob Data Transfer → ninguna medición con navegador nuevo contra producción esa semana; Blob Data Storage → `node tools/unity/publicar-web.mjs --inventario` y poda de builds viejos.
+3. Pon la captura y los números en esta tabla, con la fecha.
+
+**Propuestas que esperan el visto bueno de René** (detalle en `docs/PROGRESS.md`, «Bloqueado — necesita a René»):
+
+- **Blob:** borrar cuatro builds de Unity que nada usa (`f12372a6c2d7742c`, `01fce868922703fd`, `dc9c30121a648d63`, `6337b65c1db3110f`; 284.5 MiB). Quedan el vigente (`e06bdd73b0ce3706`) y el anterior (`abbbeec49fbae3c6`). Blob pasaría a unos 177 MiB (19 %).
+- **Despliegues:** acortar la retención en el panel. Vercel nunca borra el despliegue que tiene el dominio de producción, ni los 3 últimos de producción listos, ni los 3 últimos creados.
+
 ## Qué falta, en orden
 
 1. **Las fotos de promoción con el daño** (15 del modo foto, con el visor de escritorio recompilado, y el recorrido de día y de noche), y **volver a medir los fps** con el build publicado.
 2. **La corrida del colaborador de la Tanda 3** (E-R4 completa, carambolas y cobertura con 200 casos). Al llegar la rama `resultados/t3-<fecha>`: `python eval/t3_comparar.py t3 t3_rtx` y `node eval/cifras.mjs`; la cifra de cobertura se actualiza sola.
 3. **`eval/results/laboratorio_axa.json`:** lo escribe una e2e manual; se vuelve a correr antes de la demo.
 4. **W9:** las relecturas grabadas y el prompt del corpus, con tope de 20 USD. Incluye rehacer el corpus con el redactor nuevo.
-5. **Ensayo del guion de la demo** con CESVI.
+5. **Ensayo de la demo: hecho** (2026-11-15, en producción; `docs/cesvi/demo/guion.md`, `eval/results/ensayo_demo.json`). Lo que queda de él: la nota del 3D de V1 que no dice que 31 km/h es la velocidad de salida (N13 de la auditoría) y la leyenda del 3D con poco contraste.
 6. **Lo menor:** fusionar los PR agrupados de Dependabot cuando lleguen en verde; volver obligatoria la política de contenido; lo demás está en `docs/PROGRESS.md`, «Endurecimiento pendiente».
 
 ## Bloqueado: necesita a René
 
-| Qué                                                                                                                                                                                     | Para qué                                           |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| Visto bueno al antes y después de ofrecer la segunda solución como alternativa cuando el mejor ajuste queda fuera de su rango (solo si es físicamente válida y cuadra con la evidencia) | Que una cifra y su rango no parezcan contradecirse |
-| Visto bueno para borrar las ramas remotas ya fusionadas                                                                                                                                 | Orden del repositorio                              |
-| Que el colaborador corra el paquete de la Tanda 3 (`CORRER-TANDA-EN-RTX.bat`)                                                                                                           | Cerrar la Tanda 3 con la corrida completa          |
+| Qué                                                                           | Para qué                                  |
+| ----------------------------------------------------------------------------- | ----------------------------------------- |
+| Visto bueno para borrar las ramas remotas ya fusionadas                       | Orden del repositorio                     |
+| Que el colaborador corra el paquete de la Tanda 3 (`CORRER-TANDA-EN-RTX.bat`) | Cerrar la Tanda 3 con la corrida completa |
 
 La tabla completa, con fechas, está en `docs/PROGRESS.md`, «Bloqueado — necesita a René».
 
@@ -69,7 +108,7 @@ La tabla completa, con fechas, está en `docs/PROGRESS.md`, «Bloqueado — nece
 
 - La narración manda: si no dice quién retrocedía o no trae el ancho dañado, Croquis no lo adivina.
 - El rango no es una garantía (cobertura de arriba) y la rigidez por clase viene de pruebas de vehículos de Estados Unidos.
-- El mejor ajuste puede quedar fuera de su rango cuando la solución depende mucho de los supuestos; la app lo avisa con las dos cifras (ADR 0141). El caso de ejemplo con poste es así desde W8.
+- El mejor ajuste puede quedar fuera de su rango cuando la solución depende mucho de los supuestos; la app lo avisa con las dos cifras (ADR 0141). En el caso de ejemplo con poste, la segunda solución no es físicamente válida ni cuadra con la evidencia (`eval/results/caso_poste_modos.json`), así que se queda el aviso.
 - Una volcadura se decide, pero su giro no se integra en el tiempo; el 3D la ilustra.
 - `/cesvi` es público y no hay cuentas.
 

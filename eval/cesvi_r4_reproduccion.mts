@@ -64,6 +64,8 @@ import {
   tokensDePedido,
   type UsoTokens,
 } from "../packages/cesvi/src/server/corpus";
+import { LLMError } from "../packages/extraction/src/claude-output";
+import { costoMaximoUsd } from "../packages/extraction/src/server/budget";
 
 const RAIZ = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const CORPUS = join(RAIZ, "data/cesvi/corpus");
@@ -81,6 +83,10 @@ const LECTURAS = join(
 const RESULTADO = (p: string) =>
   join(RAIZ, `eval/results/${V1 ? "cesvi_r4_reproduccion" : "cesvi_r4_v4_reproduccion"}_${p}.json`);
 const LOTES = join(RAIZ, "data/raw/cesvi/r4");
+/** Las relecturas de R12b grabadas (W9, T6.5): lo que contesta Claude cuando se le rechazan citas. */
+const RELECTURAS = join(RAIZ, "data/cesvi/r4/relecturas-v2.jsonl");
+/** El libro de gasto de W9: todo lo que se gasta de API contra el tope que autorizó René. */
+const GASTO_W9 = join(RAIZ, "eval/results/w9_gasto.json");
 /** Los datos de la página «Reproducción de dictámenes» (solo los de la prueba que se reconstruyen). */
 const PAGINA = join(RAIZ, "data/cesvi/r4/pagina.json");
 const GRABACIONES_R1 = join(RAIZ, "data/cesvi/grabaciones/escenas");
@@ -145,6 +151,142 @@ export function muestra(p: Particion): Narracion[] {
 
 export function lecturas(): Map<string, Lectura> {
   return new Map(jsonl<Lectura>(LECTURAS).map((l) => [l.id, l]));
+}
+
+/** Una relectura grabada: la narración, las citas rechazadas con que se pidió y lo que contestó. */
+export interface Relectura {
+  id: string;
+  version_prompt: string;
+  modelo: string;
+  rechazadas: string[];
+  uso: UsoTokens;
+  costo_usd: number;
+  fecha: string;
+  salida: SalidaCorpus;
+}
+
+/** Una relectura es de una narración **y** de las citas rechazadas: con otras citas es otra petición. */
+const claveRelectura = (id: string, rechazadas: readonly string[]) =>
+  `${id}|${sha256Hex(JSON.stringify(rechazadas))}`;
+
+export function relecturas(): Map<string, Relectura> {
+  return new Map(jsonl<Relectura>(RELECTURAS).map((r) => [claveRelectura(r.id, r.rechazadas), r]));
+}
+
+function guardarRelecturas(m: Map<string, Relectura>) {
+  mkdirSync(dirname(RELECTURAS), { recursive: true });
+  const filas = [...m.values()].sort((a, b) => a.id.localeCompare(b.id));
+  writeFileSync(RELECTURAS, `${filas.map((r) => JSON.stringify(r)).join("\n")}\n`);
+}
+
+interface LibroW9 {
+  descripcion: string;
+  tope_usd: number;
+  movimientos: { fecha: string; que: string; usd: number; cota?: boolean }[];
+  total_usd: number;
+}
+
+/**
+ * El libro de gasto de W9. Empieza con las cinco lecturas que la auditoría del 2026-11-15 hizo por
+ * la ruta de producción: su costo real no se registró, así que entran con el máximo medido de una
+ * lectura de narración a precio normal (0.0707 USD, 664 lecturas con el prompt vigente).
+ */
+function libroW9(): LibroW9 {
+  if (existsSync(GASTO_W9)) return JSON.parse(readFileSync(GASTO_W9, "utf8")) as LibroW9;
+  const maximo = 0.0707;
+  return {
+    descripcion:
+      "Gasto de API de W9 contra el tope de 20 USD que autorizó René. Cada movimiento es el costo real que reportó la API, salvo los marcados como estimados.",
+    tope_usd: 20,
+    movimientos: [
+      {
+        fecha: "2026-11-15",
+        que: "Auditoría: 5 lecturas de la narración de ejemplo por la ruta de producción (costo real sin registrar; va el máximo medido de una lectura, 0.0707 USD cada una)",
+        usd: Math.round(5 * maximo * 1e4) / 1e4,
+        cota: true,
+      },
+    ],
+    total_usd: Math.round(5 * maximo * 1e4) / 1e4,
+  };
+}
+
+function anotarW9(libro: LibroW9, que: string, usd: number) {
+  libro.movimientos.push({ fecha: new Date().toISOString(), que, usd });
+  libro.total_usd = Math.round(libro.movimientos.reduce((a, m) => a + m.usd, 0) * 1e4) / 1e4;
+  writeFileSync(GASTO_W9, `${JSON.stringify(libro, null, 2)}\n`);
+}
+
+/**
+ * Graba las relecturas que pide el Verificador de citas en la prueba congelada (W9, T6.5). Cada
+ * narración pasa por la pizarra sin el Físico; cuando se pide releer y no hay respuesta grabada para
+ * esas mismas citas, se llama a la API **solo si lo gastado más la reserva máxima de la llamada cabe
+ * en el tope**. Lo grabado no se vuelve a pedir. Con tope 0 no llama: solo dice qué pediría.
+ */
+async function grabarRelecturas(topeUsd: number, p: Particion = "prueba") {
+  const hechas = lecturas();
+  const rel = relecturas();
+  const libro = libroW9();
+  const c = topeUsd > 0 ? clienteCorpus() : null;
+  const cuenta = { pedidas: 0, en_cache: 0, grabadas: 0, sin_tope: 0, fallidas: 0 };
+  for (const n of muestra(p).filter((x) => hechas.has(x.id))) {
+    const l = hechas.get(n.id)!;
+    await coordinar(pizarraNueva(n.descripcion, { conclusiones: n.conclusiones }), {
+      leer: async (_texto, rechazadas) => {
+        if (!rechazadas) return l.salida;
+        cuenta.pedidas++;
+        const clave = claveRelectura(n.id, rechazadas);
+        const ya = rel.get(clave);
+        if (ya) {
+          cuenta.en_cache++;
+          return ya.salida;
+        }
+        const ped = pedidoLectura(
+          SISTEMA_ESCENA,
+          mensajeEscena(n.descripcion, rechazadas),
+          ESQUEMA_CORPUS as unknown as Record<string, unknown>,
+          MODELO_CORPUS,
+        );
+        const reserva = costoMaximoUsd(MODELO_CORPUS, ped, ped.max_tokens);
+        if (!c || libro.total_usd + reserva > topeUsd) {
+          cuenta.sin_tope++;
+          console.log(
+            `${n.id}: pide releer ${rechazadas.length} citas; no se llama (gastado ${libro.total_usd} + reserva ${reserva.toFixed(4)} contra tope ${topeUsd})`,
+          );
+          return null;
+        }
+        try {
+          const r = await leerConPedido<SalidaCorpus>(ped, c);
+          anotarW9(
+            libro,
+            `Relectura de ${n.id} (${rechazadas.length} citas rechazadas)`,
+            r.costoUsd,
+          );
+          rel.set(clave, {
+            id: n.id,
+            version_prompt: VERSION_PROMPT_ESCENA,
+            modelo: r.modeloRespuesta,
+            rechazadas: [...rechazadas],
+            uso: r.uso,
+            costo_usd: r.costoUsd,
+            fecha: new Date().toISOString(),
+            salida: r.salida,
+          });
+          guardarRelecturas(rel);
+          cuenta.grabadas++;
+          console.log(`${n.id}: relectura grabada, ${r.costoUsd.toFixed(4)} USD`);
+          return r.salida;
+        } catch (e) {
+          // Una respuesta que no sirve también se paga: queda en el libro.
+          cuenta.fallidas++;
+          if (e instanceof LLMError && e.costoUsd > 0)
+            anotarW9(libro, `Relectura fallida de ${n.id}: ${e.message}`, e.costoUsd);
+          console.log(`${n.id}: la relectura falló (${(e as Error).message})`);
+          return null;
+        }
+      },
+    });
+  }
+  console.log(JSON.stringify({ ...cuenta, gastado_usd: libro.total_usd, tope_usd: topeUsd }));
 }
 
 function guardarLecturas(m: Map<string, Lectura>) {
@@ -274,13 +416,19 @@ async function medir(p: Particion, salida?: string) {
   );
   const casos = muestra(p);
   const sinLeer = casos.filter((n) => !hechas.has(n.id)).map((n) => n.id);
+  // Las relecturas grabadas (W9, T6.5). Con CROQUIS_SIN_RELECTURAS=1 se mide como antes de tenerlas.
+  const rel =
+    process.env.CROQUIS_SIN_RELECTURAS === "1" ? new Map<string, Relectura>() : relecturas();
   const filas = [];
   for (const n of casos.filter((x) => hechas.has(x.id))) {
     const l = hechas.get(n.id)!;
     let ms = 0;
     let fallo = false;
     const pizarra = await coordinar(pizarraNueva(n.descripcion, { conclusiones: n.conclusiones }), {
-      leer: (_texto, rechazadas) => Promise.resolve(rechazadas ? null : l.salida),
+      leer: (_texto, rechazadas) =>
+        Promise.resolve(
+          rechazadas ? (rel.get(claveRelectura(n.id, rechazadas))?.salida ?? null) : l.salida,
+        ),
       ...(p === "prueba"
         ? {
             fisicoAutomatico: true,
@@ -326,6 +474,7 @@ async function medir(p: Particion, salida?: string) {
       bitacora: {
         mensajes: pizarra.bitacora.length,
         relectura_pedida: pizarra.relecturas > 0,
+        relectura_grabada: [...rel.values()].some((r) => r.id === n.id),
       },
     });
   }
@@ -527,7 +676,9 @@ else if (modo === "lote") await lote(particion, Number(arg2));
 else if (modo === "recoger") await recoger(arg!);
 else if (modo === "medir") await medir(particion, arg2);
 else if (modo === "comparar") compararVersiones();
+else if (modo === "relecturas")
+  await grabarRelecturas(Number(arg ?? 0), arg2 === "desarrollo" ? "desarrollo" : "prueba");
 else
   console.error(
-    "Uso: estimar | piloto <n> | lote <particion> <tope> | recoger <lote> | medir <particion> | comparar",
+    "Uso: estimar | piloto <n> | lote <particion> <tope> | recoger <lote> | medir <particion> | comparar | relecturas <tope USD>",
   );

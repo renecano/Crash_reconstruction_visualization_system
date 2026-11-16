@@ -141,6 +141,35 @@ describe("la pizarra y el coordinador (R12b)", () => {
     expect(p.escena).toEqual(escenaDeNarracion(grabacion.salida, grabacion.narracion));
   });
 
+  it("una relectura que rechaza menos porque trae menos datos no se usa (W9)", async () => {
+    const conCitaFalsa: SalidaCorpus = {
+      datos: [
+        ...grabacion.salida.datos,
+        {
+          seccion: "restos",
+          n: 9,
+          vehiculo: "ninguno",
+          campo: "longitud",
+          valor: "12 m",
+          cita: "una cita que no está",
+        },
+      ],
+    };
+    // La relectura no rechaza nada, pero perdió las filas de los daños (como las caras de contacto
+    // que se perdían en la E-R4 del 2026-11-15).
+    const pobre: SalidaCorpus = {
+      datos: grabacion.salida.datos.filter((f) => f.seccion !== "dano"),
+    };
+    const p = await coordinar(pizarraNueva(grabacion.narracion), {
+      leer: grabado(conCitaFalsa, pobre),
+    });
+    expect(p.lecturas).toHaveLength(2);
+    expect(p.bitacora.map((m) => m.texto)).toContain(
+      "La relectura rechaza menos, pero trae menos datos verificados: se queda la primera lectura.",
+    );
+    expect(p.escena).toEqual(escenaDeNarracion(conCitaFalsa, grabacion.narracion));
+  });
+
   it("cuando la física no cuadra, el Físico le pide evidencia al Preguntador", async () => {
     const leida = await coordinar(pizarraNueva(grabacion.narracion), {
       leer: grabado(grabacion.salida),
@@ -183,6 +212,12 @@ describe("la pizarra y el coordinador (R12b)", () => {
     const relectura = mensajeEscena("Texto.", ["una cita"]);
     expect(relectura.startsWith("Narración del perito:\n\nTexto.\n\n")).toBe(true);
     expect(relectura).toContain("- «una cita»");
+    // W9: si lo rechazado son números, la relectura los dice (antes era la misma petición).
+    const conNumero = mensajeEscena("Texto.", ["número: 60 (no está escrito en «a unos 60»)"]);
+    expect(conNumero).toContain("estos números no estaban escritos en su cita");
+    expect(conNumero).toContain("- 60 (no está escrito en «a unos 60»)");
+    expect(conNumero).not.toContain("estas citas no estaban");
+    expect(conNumero).not.toBe(mensajeEscena("Texto."));
   });
 
   it("un caso que abre con su escena ya leída no vuelve a leer: el Físico actúa directo", async () => {

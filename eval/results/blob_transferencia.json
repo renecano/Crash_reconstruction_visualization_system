@@ -1,0 +1,41 @@
+{
+  "descripcion": "Bytes que llegan por la red (comprimidos, como los cobra Vercel) al abrir AXA hasta ver el 3D de Unity, por servidor, en un perfil de Chrome con caché en disco: primera visita y, en el mismo navegador, segunda.",
+  "sitio": "https://croquis-sage.vercel.app",
+  "fecha": "2026-11-16T02:17:27.633Z",
+  "blob_primera_mb": 34.61,
+  "blob_segunda_mb": 0,
+  "primera": {
+    "fmb6kf9hhoc8c9mk.public.blob.vercel-storage.com": {
+      "red_mb": 34.61,
+      "peticiones_red": 7,
+      "de_cache": 3
+    },
+    "croquis-sage.vercel.app": {
+      "red_mb": 2.79,
+      "peticiones_red": 63,
+      "de_cache": 0
+    },
+    "tiles.openfreemap.org": {
+      "red_mb": 0.27,
+      "peticiones_red": 7,
+      "de_cache": 0
+    }
+  },
+  "segunda": {
+    "croquis-sage.vercel.app": {
+      "red_mb": 0.03,
+      "peticiones_red": 23,
+      "de_cache": 40
+    },
+    "fmb6kf9hhoc8c9mk.public.blob.vercel-storage.com": {
+      "red_mb": 0,
+      "peticiones_red": 0,
+      "de_cache": 10
+    },
+    "tiles.openfreemap.org": {
+      "red_mb": 0,
+      "peticiones_red": 0,
+      "de_cache": 9
+    }
+  }
+}
