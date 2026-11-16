@@ -110,8 +110,8 @@
       ]
     },
     "t4": {
-      "titulo": "Tanda 4 · Referencias completas, fps con el daño y la cámara de personas (web y escritorio, baja a ultra) y las fotos promo",
-      "nota": "Una sola corrida, unas 2 h 40 min. Las referencias son las de la Tanda 3 que quedaron pendientes. Los fps miden el sitio publicado y el visor de escritorio del release rtx-t4. Las fotos quedan en un zip en el Escritorio para mandárselo a René: no van a git.",
+      "titulo": "Tanda 4 · Referencias completas, arranque del 3D, fps con el daño y la cámara de personas (web y escritorio, baja a ultra) y las fotos promo",
+      "nota": "Una sola corrida, unas 2 h 45 min. Las referencias son las de la Tanda 3 que quedaron pendientes. El arranque del 3D y los fps miden el sitio publicado; los fps de escritorio, el visor del release rtx-t4. Las fotos quedan en un zip en el Escritorio para mandárselo a René: no van a git.",
       "pasos": [
         {
           "nombre": "referencias-de-prueba",
@@ -190,6 +190,12 @@
           "comando": "node eval/verificar_cifras.mjs",
           "minutos": 1,
           "salidas": []
+        },
+        {
+          "nombre": "arranque-3d",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/arranque-3d.ps1",
+          "minutos": 6,
+          "salidas": ["eval/results/rtx-t4/unity_arranque.json"]
         },
         {
           "nombre": "fps-web",

@@ -1,6 +1,6 @@
 {
   "descripcion": "Render de prueba del tráiler (Remotion 4.0.539): cuánto tarda por segundo de video. Las texturas generadas en código y, si la hay, una toma del 3D de una escena sintética.",
-  "script": "apps/traler/render.mjs",
+  "script": "apps/trailer/render.mjs",
   "fecha": "2026-11-16T18:46:25.446Z",
   "composicion": "Prueba",
   "ancho": 1920,
@@ -16,5 +16,5 @@
     "nucleos": 8,
     "memoria_gb": 8
   },
-  "salida": "D:/Croquis-traler/prueba-1920x1080.mp4"
+  "salida": "D:/Croquis-trailer/prueba-1920x1080.mp4"
 }

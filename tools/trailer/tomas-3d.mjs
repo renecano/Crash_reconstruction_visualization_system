@@ -7,9 +7,9 @@
  *
  *   powershell tools/unity/build-web.ps1                      (si no hay build web)
  *   pnpm --filter @croquis/scene-schema exec tsx ../../tools/unity/paquetes-d1.ts
- *   node tools/traler/tomas-3d.mjs [plan.json] [--salida D:\Croquis-traler\tomas] [--nivel ultra]
+ *   node tools/trailer/tomas-3d.mjs [plan.json] [--salida D:\Croquis-trailer\tomas] [--nivel ultra]
  *
- * El plan (por defecto `apps/traler/tomas.json`) es una lista de tomas:
+ * El plan (por defecto `apps/trailer/tomas.json`) es una lista de tomas:
  *   { "escena": "lateral_interseccion-dia", "camara": "cinematica", "t": [0, 0.5, 1] }
  * `camara` es un modo del puente (`cinematica`, `orbita`, `cenital`, `acera`, `conductor:<id>`,
  * `cerca:<id>:<azimut>:<distancia>:<altura>`, `persona:<id>`); `t` son segundos del Resultado
@@ -27,13 +27,13 @@ const arg = (n, d) => {
 const planRuta =
   process.argv[2] && !process.argv[2].startsWith("--")
     ? process.argv[2]
-    : join(RAIZ, "apps/traler/tomas.json");
+    : join(RAIZ, "apps/trailer/tomas.json");
 const SALIDA = resolve(
   arg(
     "salida",
-    process.env.CROQUIS_TRALER
-      ? join(process.env.CROQUIS_TRALER, "tomas")
-      : "D:\\Croquis-traler\\tomas",
+    process.env.CROQUIS_TRAILER
+      ? join(process.env.CROQUIS_TRAILER, "tomas")
+      : "D:\\Croquis-trailer\\tomas",
   ),
 );
 const NIVEL = arg("nivel", "ultra");
