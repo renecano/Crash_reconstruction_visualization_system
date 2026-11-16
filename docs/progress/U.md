@@ -4,8 +4,8 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 
 ## Estado
 
-- **Fase actual (2026-11-15):** U8 con el código en `main` (#230, ADR 0117): el visor deforma la carrocería con el daño del solver y el 3D tiene controles de reproducción. U5 y U6 cerraron el 2026-11-12. U7 (cierre) va con la Tanda 5 de la auditoría.
-- **Siguiente:** el build web con el daño y su publicación en Blob (espera la decisión de René sobre dónde se compila; ver `docs/PROGRESS.md`, «Bloqueado — necesita a René»). Después, las capturas de AXA tras el impacto y el paquete de fotos del colaborador. El detalle está abajo, en «U8».
+- **Fase actual (2026-11-15):** U8 cerrada: el visor deforma la carrocería con el daño del solver, el 3D tiene controles de reproducción y el build con el daño (huella `e06bdd73b0ce3706`) está publicado. U5 y U6 cerraron el 2026-11-12. U7 (cierre) va con la Tanda 5 de la auditoría.
+- **Siguiente:** el paquete de fotos del colaborador (15 tomas del modo foto y el recorrido de la app, ya con el daño) y volver a medir los fps con este build. El detalle está abajo, en «U8».
 - **Unity y Blender corren en segundo plano** desde el 2026-11-10: René reabrió la sesión con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`. Sigue la regla de un solo proceso pesado a la vez.
 - **Cómo se itera:** capturas del Editor en modo batch (`Capturas.Tomar`, unos 3 min). En esta sesión no hubo herramientas del MCP de Unity. Un build WebGL solo al cerrar cada punto.
 
@@ -395,7 +395,7 @@ Plan: PLAN-CESVI §3.3. Decisiones: ADR 0114.
 
 ## U8 · El daño del solver en Unity y los controles del 3D (auditoría del 2026-11-15, Tanda 2)
 
-**Estado: código y pruebas listos en `feat/u8-dano-en-unity`. Falta el build web y publicarlo** (ADR 0117).
+**Estado: cerrada (2026-11-15).** Código en `main` (#230, ADR 0117) y build web con el daño publicado (huella `e06bdd73b0ce3706`).
 
 ### Qué se hizo
 
@@ -409,15 +409,30 @@ Plan: PLAN-CESVI §3.3. Decisiones: ADR 0114.
 - Unity 6000.3.28f1 en modo batch en la laptop (`-runTests -testPlatform EditMode`): compila sin errores y pasan 6 de 6 (3 nuevas, `DanoEnUnityTests`). Tardó menos de 2 minutos y no quedó ningún proceso de Unity vivo.
 - Web: `reproduccion.test.ts` y `barra-reproduccion.test.tsx`, tipos y lint.
 
+### El build con el daño (2026-11-15)
+
+- **Dónde se compiló:** en la laptop, como los builds anteriores (`tools/unity/en-tarea.ps1 -Nombre build-web`), con el equipo libre y Edge cerrado. Tardó 7.1 minutos, terminó con código 0 y no quedó ningún proceso de Unity vivo. El plan de la auditoría lo ponía en la computadora del colaborador; publicar necesita el token que solo está aquí, así que se hizo aquí (decisión técnica, anotada en el ADR 0117).
+- **Comprobado antes de publicar:** `node tools/unity/e2e-camaras.mjs` sobre el build, todo en verde y sin errores en la página.
+- **Publicado:** `node tools/unity/publicar-web.mjs`, sin podar: el build anterior (`abbbeec49fbae3c6`) sigue en Blob y se regresa a él con solo restaurar `apps/web/public/visor-unity/manifest.json`.
+- **Medido** (`node eval/unity_build.mjs --caso axa-dia` → `eval/results/unity_build.json`; mediana de 3 corridas, navegador nuevo y sin caché, 20 Mbps): 69.4 MB (31.2 MB con Brotli), 12.7 s hasta que Unity arranca y 8.9 s más hasta que se ve el caso. Sin errores.
+- **No se volvió a medir:** los fps de la E6 (`e6_unity_media.json` es del build anterior). El daño se prepara al armar el vehículo y no trabaja en cada cuadro, pero eso no sustituye a la medición.
+
+### Resumen para René
+
+- **Qué quedó:** en el 3D de producción, cada vehículo se ve sin deformar hasta su primer impacto y deformado después, con el perfil de aplastamiento que calculó el solver. Unity no calcula nada.
+- **Qué vas a ver en AXA:** la parte trasera de la pickup golpeada queda hundida unos 18 cm y el frente de la otra, unos 5 cm. Es lo que da el solver: un perfil estimado, parejo en todo el ancho. Por eso el cambio es discreto y no una lámina arrugada. Si el perito captura las medidas C1–C6, el 3D las sigue.
+- **Capturas** (del build publicado, nivel alta, 1600 × 900; `docs/cesvi/u8/capturas/`):
+  - antes del impacto: `axa-dia-t-1-cerca-veh-b-200-6-1.6.webp` y `axa-dia-t-1-cerca-veh-a-20-6-1.6.webp`;
+  - a 3 s: `axa-dia-t3-cerca-veh-b-200-6-1.6.webp`, `axa-dia-t3-cerca-veh-a-20-6-1.6.webp` y `axa-dia-t3-cinematica.webp`;
+  - en el impacto: `axa-dia-t0.4-cinematica.webp`; de noche: `axa-noche-t3-cerca-veh-b-200-6-1.6.webp` y `axa-noche-t3-cinematica.webp`.
+- **Cómo probarlo:** <https://croquis-sage.vercel.app/cesvi>, caso de AXA, «Ver en 3D», y mover el deslizador de antes a después del impacto.
+- **Lo que se nota en las capturas y no es del daño:** de noche, a 3 s, los faros del vehículo de atrás queman de blanco la caja de la pickup de adelante.
+
 ### Pendiente
 
-- **Build web y publicación,** y las capturas de AXA después del impacto (las que le importan a René). El build va en la computadora del colaborador; publicar necesita `RECURSOS_READ_WRITE_TOKEN`, que solo está en la laptop de René.
-- **El paquete del colaborador de la Tanda 2** (decisión 9): el build, las 15 tomas del modo foto y el recorrido de la app en producción, ya con el daño visible.
+- **El paquete del colaborador de la Tanda 2** (decisión 9): las 15 tomas del modo foto (visor de escritorio, que también hay que compilar con el daño) y el recorrido de la app en producción.
+- **Volver a medir los fps** con este build (E6) en la laptop y en la computadora de demo.
 - La sombra unida de baja y media no sigue al daño.
-
-### Para retomar
-
-Rama `feat/u8-dano-en-unity`. Sigue: decidir con René dónde se hace el build (ver «Bloqueado» en `docs/PROGRESS.md`), publicarlo y tomar las capturas.
 
 ## Ajustes de René antes de U5 (2026-11-10)
 

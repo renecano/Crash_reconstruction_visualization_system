@@ -24,11 +24,12 @@ CESVI pidió cuatro cosas para esta versión (plan v4): el 3D en Unity, los punt
 1. **Narrar.** El perito escribe o pega su narración. Antes de salir del navegador se quitan nombres, teléfonos, placas, VIN, folios, pólizas y números de siniestro; las cifras del hecho (masas, distancias, años) se conservan. Claude ordena el texto en datos con su cita literal; un verificador descarta toda cita que no esté en el texto.
 2. **Colocar.** En el mapa, una pregunta a la vez: dónde fue, posiciones de impacto y finales, el primer golpe, puntos de paso, objetos y terreno (superficies, topes, relieve real).
 3. **Reconstruir.** El solver busca las velocidades que reproducen la evidencia y da su rango. Dice qué evidencia fija cada número, qué queda como supuesto y qué parte de la deformación medida explica la reconstrucción. Si dos hipótesis no caben juntas, muestra las dos y el perito elige.
-4. **Ver.** El visor Unity reproduce el resultado: trayectorias, personas, día y noche, lluvia, y edición en 3D que vuelve a correr el solver. El perito pausa, repite, cambia la velocidad y va al instante del impacto. La carrocería se deforma con el perfil de aplastamiento del solver; eso está en el código desde el 2026-11-15 y todavía no en el build publicado (ver «Límites»).
+4. **Ver.** El visor Unity reproduce el resultado: trayectorias, personas, día y noche, lluvia, y edición en 3D que vuelve a correr el solver. El perito pausa, repite, cambia la velocidad y va al instante del impacto. Después de su primer impacto, cada vehículo se ve deformado con el perfil de aplastamiento que calculó el solver.
 5. **Comparar.** Contra el reporte de CESVI, con el valor y el porcentaje de cada diferencia; y, si se quiere, contra la versión que declara un conductor.
 6. **Dictaminar.** El dictamen sale en PDF y Word con la estructura de los reportes de CESVI, con las fotos del 3D, los supuestos y la leyenda ilustrativa.
 
 ![Edición en 3D: al mover un objeto, el caso se vuelve a calcular](docs/cesvi/u6/produccion/2-arrastrando-poste.png)
+![AXA a 3 s del impacto: la parte trasera de la pickup golpeada, con el daño del solver](docs/cesvi/u8/capturas/axa-dia-t3-cerca-veh-b-200-6-1.6.webp)
 
 ## Qué no hace
 
@@ -122,7 +123,7 @@ La modalidad contra el título sale de [`cesvi_r4c_titulo_prueba.json`](eval/res
 | Lo mismo en carambola (la escena más pesada)                    | 59.6 y 56.3 fps: no llega a 60                                                                                                      | [`e6_unity_media.json`](eval/results/e6_unity_media.json)             |
 | Visor de escritorio, nivel alto, RTX 4070 Laptop, 1080p         | de 312 a 415 fps en AXA, carambola y lateral                                                                                        | [`e6_unity_escritorio.json`](eval/results/e6_unity_escritorio.json)   |
 
-Las cifras de fps son del build publicado, anterior al daño en la carrocería.
+Las cifras de fps son del build anterior al que hoy está publicado, que ya trae el daño en la carrocería; con el actual no se han vuelto a medir. El actual pesa 69.4 MB (31.2 MB con Brotli) y en la laptop arranca en 12.7 s ([`unity_build.json`](eval/results/unity_build.json)).
 
 La reversa se reconstruye a la velocidad de una maniobra de reversa (<!--cifra:reversa.velocidad-->5.68 km/h (3.06–9.07)<!--/cifra-->; NHTSA, DOT HS 811 024) cuando el perito no la da: [`t3_3_reversa.json`](eval/results/t3_3_reversa.json).
 
@@ -185,7 +186,7 @@ Detalle en [`docs/responsible-ai.md`](docs/responsible-ai.md).
 - **Rigidez de otra flota.** La rigidez por clase viene de pruebas de vehículos de Estados Unidos.
 - **Volcadura.** El solver decide si un vehículo se vuelca, pero no integra el giro en el tiempo; el 3D lo ilustra.
 - **Reversa.** El vehículo llega a velocidad constante: no se modela el arranque desde detenido. La velocidad supuesta sale de maniobras rutinarias de reversa, no de reversas que terminaron en choque.
-- **Daño en el 3D.** El visor ya deforma la carrocería con el perfil del solver ([ADR 0117](docs/adr/0117-el-dano-del-solver-en-unity.md)), pero el build publicado es anterior: hasta publicar uno nuevo, el 3D de producción muestra los vehículos sin deformar.
+- **Daño en el 3D.** El visor deforma la carrocería con el perfil del solver ([ADR 0117](docs/adr/0117-el-dano-del-solver-en-unity.md)). Cuando el perito no captura las medidas C1–C6, ese perfil es una estimación pareja en todo el ancho: el daño se ve como un hundimiento uniforme, no como la lámina real.
 - **El rango.** Contuvo la velocidad verdadera menos veces de lo esperado en la prueba de cobertura (arriba); falta la corrida completa de 200 casos.
 - **Rendimiento.** En la laptop de 8 GB, la carambola en nivel medio queda en 56 a 60 fps.
 - **Acceso.** `/cesvi` es público y no hay cuentas; cuando los peritos usen sus propios casos hará falta autenticación. El límite de lecturas por hora es por dirección IP.
@@ -195,7 +196,7 @@ La lista completa de lo pospuesto está en `docs/PROGRESS.md`, «Endurecimiento 
 
 ## Siguiente paso
 
-1. Publicar el build del visor con el daño y tomar las capturas de AXA después del impacto.
+1. Volver a medir los fps con el build que ya trae el daño, y las fotos de promoción con ese build.
 2. La demo con CESVI y sus comentarios.
 3. W9: las relecturas grabadas y el prompt del corpus (gasta API; lo autoriza René).
 4. La segunda ronda con personas y sus tres problemas más frecuentes.

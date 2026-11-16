@@ -41,3 +41,7 @@ La regla del proyecto dice que en Unity todo movimiento sale del `Resultado` y e
 - **El build web y su publicación.** El daño no se ve en producción hasta entonces. El build es pesado (va en la computadora del colaborador) y publicar necesita el token de René.
 - **Verlo sobre los modelos reales.** Las pruebas usan una rejilla; la tolerancia de 2 cm o 6 % está medida en una caja con la densidad del visor. Faltan capturas de AXA después del impacto.
 - **La sombra unida** con la carrocería deformada.
+
+## Adenda (2026-11-15): dónde se compiló el build
+
+El build web con el daño se compiló en la laptop de René, en modo batch y como tarea de Windows, igual que los builds anteriores: 7.1 minutos, sin errores. Arriba se decía que iría en la computadora del colaborador; publicar necesita `RECURSOS_READ_WRITE_TOKEN`, que solo está en la laptop, y hacerlo en dos máquinas pedía mover el build entre ellas. Quedó publicado con la huella `e06bdd73b0ce3706`; el build anterior sigue en Blob.
