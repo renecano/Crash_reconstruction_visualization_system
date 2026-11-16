@@ -2,7 +2,7 @@
 
 Las pruebas y mediciones pesadas de Croquis no corren en la laptop de René. Esta computadora las corre con un doble clic y sube los resultados a GitHub.
 
-**Es una sola corrida.** Primero comprueba que todo sirve (unos 2 minutos) y, si pasa, sigue sola con lo pesado. La Tanda 3 tarda **cerca de media hora en total** (estimado: 31 minutos; el 15 de noviembre tardó 16.6 en esta computadora); la ventana dice el tiempo estimado al empezar y, cada 30 segundos, cuánto lleva el paso y la última línea que escribió.
+**Es una sola corrida.** Primero comprueba que todo sirve (unos 2 minutos) y, si pasa, sigue sola con lo pesado. La Tanda 4 tarda **cerca de 2 h 40 min en total** (estimado: 145 minutos de pasos, más la comprobación y la descarga de dos paquetes de 60 MB). La ventana dice el tiempo estimado al empezar y, cada 30 segundos, cuánto lleva el paso y la última línea que escribió.
 
 ## Los 3 pasos
 
@@ -28,6 +28,11 @@ Las pruebas y mediciones pesadas de Croquis no corren en la laptop de René. Est
 | Instala las dependencias del repositorio (`pnpm install`)                                                         | Tener internet y la computadora conectada a la corriente                                                                                            |
 | Se cambia a la rama de la tanda si todavía no está en `main`, y al terminar vuelve a la que estaba                | No tener cambios sin guardar en la carpeta. Si los hay, lo dice y se detiene                                                                        |
 | Sube los resultados con el inicio de sesión normal de GitHub                                                      | Si Git abre el navegador, **inicia sesión en GitHub** con tu cuenta (la que René invitó al repositorio). Nunca pide ni guarda tokens ni contraseñas |
+
+**Lo de la Tanda 4 que te toca a ti:**
+
+- **No uses la computadora mientras mide** (unos 95 minutos de fps en el navegador y en el visor de escritorio): abre ventanas a pantalla completa y cualquier otra cosa cambia los números. Déjala conectada a la corriente.
+- **Al final, manda a René el archivo `croquis-fotos-promo-t4.zip`** que queda en tu Escritorio (por Drive o WeTransfer). Son las fotos del modo foto en 4K: no van a GitHub.
 
 **Lo que no puede hacer sola:**
 

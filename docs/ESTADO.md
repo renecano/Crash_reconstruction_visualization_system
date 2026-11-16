@@ -46,6 +46,41 @@ Sitio: <https://croquis-sage.vercel.app/cesvi>.
 
 CI: cinco checks obligatorios (lint, tipos y pruebas de TS; Python en dos partes; `Croquis.Core`; e2e de los flujos principales en Chromium), con la regla de que el CI completo tarde menos de 10 minutos. Los builds de Unity no corren en CI.
 
+## El arranque del 3D de Unity, por partes (2026-11-16)
+
+Desde el #250, Unity arranca cuando el perito abre el 3D, no en segundo plano: ningún cambio de paso deja tareas largas del paso 4 en adelante (`eval/results/pasos_hilo_despues_produccion.json`).
+
+**Qué pasa al abrir el 3D.** AXA reconstruido, clic en «3D», en la laptop con GPU, en producción (`eval/results/unity_arranque.json`, `apps/web/e2e/medir-unity-arranque.spec.ts`). Milisegundos desde el clic:
+
+| Etapa                                                 | Primera visita | Segunda visita (caché) |
+| ----------------------------------------------------- | -------------- | ---------------------- |
+| Cargador de Unity listo                               | 307            | 245                    |
+| WebAssembly compilado                                 | 544            | 431                    |
+| Motor de Unity listo                                  | 1,293          | 841                    |
+| Solver del caso listo (en un worker)                  | 2,260          | 1,263                  |
+| Caso cargado en Unity (escenario y modelos)           | 13,099         | 8,523                  |
+| Primer cuadro                                         | 13,413         | 8,979                  |
+| Tarea más larga del hilo principal                    | 6,547          | 3,508                  |
+| Tareas de más de 100 ms                               | 7              | 6                      |
+| Tiempo bloqueado (lo que pasa de 50 ms en cada tarea) | 10.6 s         | 6.3 s                  |
+
+- **Descarga:** el `.wasm` tardó 3.9 s y el `.data`, 6.1 s en la primera visita; 3.5 y 5.6 s en la segunda (Blob no expone los bytes entre orígenes). Corren en paralelo y no bloquean la página.
+- **Lo que traba la página es armar la escena del caso** dentro de Unity (escenario procedural y modelos): de 1.3 a 13.1 s en la primera visita. Corre en el hilo principal de la página porque Unity WebGL vive ahí. No es la descarga ni la compilación.
+
+**Aislarlo en un iframe de otro dominio (estimación; no implementado).** Chrome, Edge y Firefox de escritorio ponen un iframe de otro sitio en su propio proceso. Su hilo principal es otro: el arranque y los cuadros de Unity ya no trabarían la página.
+
+- **Qué habría que hacer:**
+  1. **Una página anfitriona** con el cargador de Unity y un relevo de mensajes, publicada en otro sitio. `*.vercel.app` está en la lista de sufijos públicos, así que `croquis-3d.vercel.app` ya cuenta como otro sitio, pero es otro proyecto de Vercel y necesita la cuenta de René. La otra opción es servirla desde Blob, comprobando antes que Blob la sirva como HTML.
+  2. **El puente** (`PuenteUnity`), por `postMessage`: `enviar`, `cargar` (el paquete del caso, de varios MB, va por clonado estructurado), los avisos de Unity (`tiempo`, `objetoEditado`, `puntoMarcado`, `error`), `capturar` (las fotos del dictamen) y `dormir`/`despertar`.
+  3. **La edición en 3D y el teclado**, que ya caen en el iframe. Las barras de React siguen encima.
+  4. **Las pruebas con el Unity falso** (`unity-falso.js`), con el relevo.
+  5. **Medir antes y después** con `medir-pasos` y `medir-unity-arranque`.
+- **Costo estimado:** 3 a 4 días de trabajo. Puente y relevo, 1 día; página anfitriona, publicación y caché, medio día; edición, fotos del dictamen y Presentar, 1 día; pruebas y medición, de medio a 1 día.
+- **Riesgos:**
+  - Un segundo proceso de navegador pesa de 150 a 300 MB más en una laptop de 8 GB.
+  - Safari no aísla iframes en otro proceso: ahí seguiría igual que hoy.
+  - La caché del build queda partida por sitio anfitrión, igual en cada visita, así que la segunda visita sigue sin bajar nada.
+
 ## Uso de Vercel (plan Hobby)
 
 Captura de René del 2026-11-15 (últimos 30 días). Meta: por debajo de 70 % de cada límite, sobre todo en la semana de la demo.

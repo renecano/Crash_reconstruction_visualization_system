@@ -1,0 +1,29 @@
+{
+  "name": "@croquis/traler",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Base técnica del tráiler de Croquis (Remotion): texturas generadas en código, tomas del 3D y el render. Sin decisiones creativas: el storyboard es aparte.",
+  "type": "module",
+  "scripts": {
+    "estudio": "remotion studio src/index.ts",
+    "render:prueba": "node render.mjs Prueba",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.539",
+    "@remotion/bundler": "4.0.539",
+    "@remotion/renderer": "4.0.539",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "remotion": "4.0.539"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "eslint": "catalog:"
+  }
+}

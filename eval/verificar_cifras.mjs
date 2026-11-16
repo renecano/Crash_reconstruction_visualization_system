@@ -13,6 +13,12 @@
  *
  * Documentos vigentes: los que describen el estado de hoy. Las bitácoras y los ADR cuentan lo que
  * pasó y pueden citar cifras de su fecha.
+ *
+ * 4. Una cifra retirada aparece en cualquier otro archivo del repo que describa el presente (René,
+ *    2026-11-16: «que no encuentre nada viejo en todo el repo»): el código, las herramientas, los
+ *    documentos que no son historia y los resultados que miden el estado de hoy. Quedan fuera las
+ *    bitácoras, los ADR, la auditoría, los planes archivados, los resultados de una fecha (cada
+ *    `eval/results` es la medición de su día) y los números que solo coinciden (fixtures y pruebas).
  */
 import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
@@ -44,6 +50,13 @@ const VIGENTES = [
 ];
 
 /** Las líneas del documento (o de su sección), con su número. */
+// 4. Todo el repo. Lo que es historia o solo coincide en el número no cuenta.
+const HISTORIA =
+  /^(docs\/(adr|progress|historial|auditoria|cesvi\/entrante)\/|docs\/PROGRESS\.md$|eval\/results\/|eval\/(cifras|verificar_cifras)\.mjs$)|\.test\.|\/fixtures\/|\.(png|jpe?g|webp|gif|glb|gltf|pdf|docx|wasm|data|zip|ico|woff2?|ttf|lock|yaml)$/;
+// Los resultados que describen el estado de hoy (se regeneran con la app vigente).
+const RESULTADOS_VIGENTES = ["eval/results/laboratorio_axa.json"];
+const VISTOS = new Set();
+
 function lineasDe({ ruta, seccion, hasta }) {
   const todas = readFileSync(join(RAIZ, ruta), "utf8").split("\n");
   if (!seccion) return todas.map((texto, i) => ({ n: i + 1, texto }));
@@ -100,10 +113,41 @@ for (const doc of VIGENTES) {
   }
 }
 
+for (const v of VIGENTES) VISTOS.add(v.ruta);
+const archivos = spawnSync("git", ["ls-files"], { cwd: RAIZ, encoding: "utf8" })
+  .stdout.split("\n")
+  .filter(Boolean)
+  .filter((f) => !VISTOS.has(f) && (!HISTORIA.test(f) || RESULTADOS_VIGENTES.includes(f)));
+let revisados = 0;
+for (const ruta of archivos) {
+  let texto;
+  try {
+    texto = readFileSync(join(RAIZ, ruta), "utf8");
+  } catch {
+    continue;
+  }
+  if (texto.includes("\u0000")) continue;
+  revisados++;
+  texto.split("\n").forEach((linea, i) => {
+    for (const r of retiradas) {
+      const k = linea.indexOf(r.texto);
+      if (k < 0) continue;
+      if (/[0-9]/.test(linea[k + r.texto.length] ?? "")) continue;
+      if (
+        /[0-9]/.test(linea[k - 1] ?? "") ||
+        (/[.,]/.test(linea[k - 1] ?? "") && /[0-9]/.test(linea[k - 2] ?? ""))
+      )
+        continue;
+      if (!DE_OTRO_MOMENTO.test(linea))
+        errores.push(`${ruta}:${i + 1}: trae «${r.texto}» (${r.que}), una cifra retirada`);
+    }
+  });
+}
+
 if (errores.length) {
   console.error(`Cifras: ${errores.length} problema(s).\n- ${errores.join("\n- ")}`);
   process.exit(1);
 }
 console.log(
-  `Cifras verificadas: ${Object.keys(cifras).length} en el índice, ${marcadas} marcadas en los documentos, ninguna retirada sin su fecha.`,
+  `Cifras verificadas: ${Object.keys(cifras).length} en el índice, ${marcadas} marcadas en los documentos, ninguna retirada sin su fecha; ${revisados} archivos más del repo, sin cifras retiradas.`,
 );

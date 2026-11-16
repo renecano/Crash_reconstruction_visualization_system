@@ -1,10 +1,10 @@
 {
   "lectura_fisica_claro": {
-    "croquis_kmh": "71.56",
-    "rango": "rango 68.02–92.81",
+    "croquis_kmh": "57",
+    "rango": "rango 55–78",
     "cesvi_kmh": "63.15",
-    "diferencia_kmh": "diferencia · +8.41 km/h",
-    "diferencia_pct": "+13.32 %"
+    "diferencia_kmh": "diferencia · −6 km/h",
+    "diferencia_pct": "−10 %"
   },
   "claro": {
     "casos": "con CESVI: 63.90 contra 63.15 km/h",
@@ -27,13 +27,13 @@
     },
     "errores_de_pagina": []
   },
-  "fecha": "2026-11-07",
+  "fecha": "2026-11-16",
   "lectura_fisica_oscuro": {
-    "croquis_kmh": "71.56",
-    "rango": "rango 68.02–92.81",
+    "croquis_kmh": "57",
+    "rango": "rango 55–78",
     "cesvi_kmh": "63.15",
-    "diferencia_kmh": "diferencia · +8.41 km/h",
-    "diferencia_pct": "+13.32 %"
+    "diferencia_kmh": "diferencia · −6 km/h",
+    "diferencia_pct": "−10 %"
   },
   "oscuro": {
     "casos": "con CESVI: 63.90 contra 63.15 km/h",

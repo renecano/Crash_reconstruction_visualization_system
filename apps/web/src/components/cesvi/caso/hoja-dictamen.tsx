@@ -54,7 +54,7 @@ export function HojaDictamen({
     >
       {firma ? (
         <div
-          className="sello-validado absolute right-10 bottom-32 flex rotate-[-8deg] flex-col items-center gap-0.5 rounded-md border-2 border-[var(--senal)] px-4 py-2 text-[var(--senal)]"
+          className="sello-validado absolute right-10 bottom-32 flex rotate-[-8deg] flex-col items-center gap-0.5 rounded-md border-2 border-[var(--senal)] px-4 py-2 text-[var(--senal-texto)]"
           data-testid="sello-validado"
         >
           <span className="text-[1.1rem] font-bold tracking-[0.2em]">VALIDADO</span>

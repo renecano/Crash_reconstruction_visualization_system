@@ -6,8 +6,8 @@
  *
  * - La reconstrucción de cada escena es la de siempre (el Resultado versionado o el del solver de
  *   producción); solo cambia con qué luz se dibuja (día, noche o la hora dorada: «atardecer»).
- * - AXA con su relieve real: el de `/api/relieve` del sitio publicado para su `ubicacion_real`, con
- *   el que el solver recalcula el caso (W5), como en la app.
+ * - Sin AXA ni casos reales (René, 2026-11-16): la toma del relieve real es una curva sintética con el
+ *   relieve de un tramo de montaña cualquiera (`/api/relieve`), con el que el solver recalcula (W5).
  * - La nube: el mismo Monte Carlo del Resultado (`monteCarlo`, misma semilla y muestras), mirando
  *   cada muestra con `alMuestra`. Se comprueba que sus percentiles sean los del Resultado.
  *
@@ -121,28 +121,29 @@ const carambola = fixture("carambola");
 paquete("carambola-dia", carambola.escena, carambola.resultado, "dia");
 nube("carambola", carambola.escena, carambola.resultado);
 
-// AXA: como la abre la app (la escena de la demostración y el solver de producción).
-const axa = leer<EscenaSpec>("demo/escenas-r11/axa.json");
-const axaR = fullResult(axa as unknown as Json, PRODUCTION_SAMPLES) as unknown as Resultado;
-paquete("axa-noche", axa, axaR, "noche");
-paquete("axa-dia", axa, axaR, "dia");
-nube("axa", axa, axaR);
-
-// AXA con el relieve real de su lugar.
-const u = (axa.lugar as unknown as { ubicacion_real?: { lat: number; lon: number } })
-  .ubicacion_real;
-if (u) {
-  const resp = await fetch(`${SITIO}/api/relieve?lat=${u.lat}&lon=${u.lon}&lado_m=600`);
+// Sin AXA ni ningún caso real en el material promocional (René, 2026-11-16): un alcance sintético
+// de noche y una curva sintética con el relieve real de un tramo de montaña cualquiera (un lugar, no
+// un caso: el de la carretera federal 95 cerca de Tres Marías, Morelos).
+const alcance = fixture("alcance");
+paquete("alcance-noche", alcance.escena, alcance.resultado, "noche");
+const curva = fixture("frontal_curva");
+const RELIEVE = { lat: 19.0418, lon: -99.2391 };
+{
+  const resp = await fetch(`${SITIO}/api/relieve?lat=${RELIEVE.lat}&lon=${RELIEVE.lon}&lado_m=600`);
   if (!resp.ok) throw new Error(`/api/relieve respondió ${resp.status}`);
   const relieve = (await resp.json()) as Json;
-  const conRelieve = fullResult(axa as unknown as Json, {
+  const conRelieve = fullResult(curva.escena as unknown as Json, {
     ...PRODUCTION_SAMPLES,
     relieve: relieve as never,
   }) as unknown as Resultado;
-  paquete("axa-relieve-dia", axa, conRelieve, "dia", relieve);
+  paquete("curva-relieve-dia", curva.escena, conRelieve, "dia", relieve);
   writeFileSync(
-    join(SALIDA, "relieve-axa.json"),
-    JSON.stringify({ fuente: relieve.fuente ?? null, licencia: relieve.licencia ?? null }, null, 2),
+    join(SALIDA, "relieve-curva.json"),
+    JSON.stringify(
+      { lugar: RELIEVE, fuente: relieve.fuente ?? null, licencia: relieve.licencia ?? null },
+      null,
+      2,
+    ),
   );
 }
 
@@ -164,8 +165,8 @@ const tomas = [
     camara: { objetivo: "impacto", azimut: 265, distancia: 26, altura: 4.5, mira: 1, fov: 30 },
   },
   {
-    id: "03-axa-noche-faros",
-    caso: "casos/axa-noche.json",
+    id: "03-alcance-noche-faros",
+    caso: "casos/alcance-noche.json",
     t: -0.8,
     camara: {
       objetivo: "veh-a",
@@ -240,7 +241,7 @@ const tomas = [
   },
   {
     id: "15-terreno-relieve-real",
-    caso: "casos/axa-relieve-dia.json",
+    caso: "casos/curva-relieve-dia.json",
     t: 0,
     capa: "alambre",
     lado: 80,

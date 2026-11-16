@@ -1550,6 +1550,9 @@
 
   /* La hoja del dictamen: papel, también de noche. */
   .hoja-papel {
+    /* El papel es claro en los dos temas: el texto de señal (el sello) va en su tono para texto, que
+       pasa AA sobre el papel (René, 2026-11-16). */
+    --senal-texto: var(--marca-claro-senal-texto);
     --fondo: #fbfaf6;
     --superficie: #fbfaf6;
     --superficie-alta: #eeece6;
