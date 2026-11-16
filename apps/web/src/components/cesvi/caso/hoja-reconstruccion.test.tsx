@@ -25,7 +25,6 @@ const pintar = (r: Reconstruccion) =>
     <CifraReconstruccion
       r={r}
       nombres={{ V2: "B · Camaro" }}
-      mensajes={0}
       decisiones={[]}
       onRepetir={() => undefined}
     />,

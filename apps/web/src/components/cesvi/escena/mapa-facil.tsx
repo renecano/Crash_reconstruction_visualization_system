@@ -11,6 +11,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
 import { metrosPorPixel, siluetaClase } from "@/lib/colocar";
 import type { Punto } from "@/lib/escena-facil";
+import { COLOR_MEDIDA, dibujoMedicion } from "@/lib/medir";
 import { COLOR_ONDULACION, COLOR_SUPERFICIE, COLOR_TOPE } from "@/lib/terreno-colores";
 import { estiloMapaEscena } from "./estilo-mapa-escena";
 
@@ -92,6 +93,8 @@ export interface MapaFacilProps {
   onMapa?: (m: MapaMl | null) => void;
   /** Lo medido en «Más herramientas»: dos puntos y la distancia. */
   medicion?: Punto[];
+  /** El modo de medición está activo (A5): cursor en cruz y la línea que sigue al puntero. */
+  midiendo?: boolean;
   /** W4: los objetos del lugar que colocó el perito. */
   objetos?: ObjetoMapa[];
   /** W5: las zonas de otra superficie, las zonas onduladas y los topes. */
@@ -214,14 +217,62 @@ export function MapaFacil(p: MapaFacilProps) {
     const dibujar = () => {
       // El terreno va debajo de las líneas.
       dibujarTerreno(m, ultimo.current.terreno ?? []);
-      dibujarLineas(m, ultimo.current.lineas ?? [], ultimo.current.medicion ?? []);
+      dibujarLineas(m, ultimo.current.lineas ?? []);
     };
     dibujar();
     m.on("style.load", dibujar);
     return () => {
       m.off("style.load", dibujar);
     };
-  }, [listo, p.lineas, p.medicion, p.terreno]);
+  }, [listo, p.lineas, p.terreno]);
+
+  // La medición (ronda 2, A5): con el modo activo, el cursor es una cruz y, desde el primer extremo,
+  // la línea sigue al puntero con los metros en vivo.
+  const [puntero, setPuntero] = useState<Punto | null>(null);
+  const etiquetaMedida = useRef<Marker | null>(null);
+  useEffect(() => {
+    const m = mapa.current;
+    if (!m || !listo || !p.midiendo) {
+      setPuntero(null);
+      return;
+    }
+    const lienzo = m.getCanvas();
+    const mover = (ev: { lngLat: { lat: number; lng: number } }) =>
+      setPuntero({ lat: ev.lngLat.lat, lon: ev.lngLat.lng });
+    const salir = () => setPuntero(null);
+    lienzo.style.cursor = "crosshair";
+    m.on("mousemove", mover);
+    lienzo.addEventListener("mouseleave", salir);
+    return () => {
+      lienzo.style.cursor = "";
+      m.off("mousemove", mover);
+      lienzo.removeEventListener("mouseleave", salir);
+    };
+  }, [listo, p.midiendo]);
+  useEffect(() => {
+    const m = mapa.current;
+    const M = MarkerCls.current;
+    if (!m || !M || !listo) return;
+    const { geojson, etiqueta } = dibujoMedicion(p.medicion ?? [], p.midiendo ? puntero : null);
+    const dibujar = () => dibujarMedida(m, geojson);
+    dibujar();
+    m.on("style.load", dibujar);
+    if (etiqueta) {
+      if (!etiquetaMedida.current) {
+        const el = document.createElement("div");
+        el.className = "escena-medida-etiqueta";
+        el.setAttribute("data-testid", "medida-mapa");
+        etiquetaMedida.current = new M({ element: el, anchor: "bottom-left", offset: [10, -8] });
+      }
+      const el = etiquetaMedida.current.getElement();
+      el.textContent = etiqueta.texto;
+      el.dataset.viva = etiqueta.viva ? "si" : "no";
+      etiquetaMedida.current.setLngLat([etiqueta.en.lon, etiqueta.en.lat]).addTo(m);
+    } else etiquetaMedida.current?.remove();
+    return () => {
+      m.off("style.load", dibujar);
+    };
+  }, [listo, p.medicion, p.midiendo, puntero]);
 
   // Los marcadores: se rehacen cuando cambia lo que muestran (son pocos) y se escalan con el zoom. Se
   // comparan por contenido: la escena manda arreglos nuevos en cada render.
@@ -632,8 +683,80 @@ function dibujarTerreno(m: MapaMl, terreno: readonly TerrenoMapa[]) {
   );
 }
 
-function dibujarLineas(m: MapaMl, lineas: readonly LineaMapa[], medicion: readonly Punto[]) {
-  if (!m.isStyleLoaded()) return;
+/**
+ * Dibuja en cuanto se pueda: si el mapa aún carga (teselas, el estilo), lo último que se pidió se
+ * dibuja cuando queda quieto. Antes se saltaba y la línea no aparecía hasta el siguiente cambio
+ * (ronda 2, A5).
+ */
+const pendientes = new WeakMap<MapaMl, Map<string, () => void>>();
+function cuandoSePueda(m: MapaMl, clave: string, dibujar: () => void) {
+  if (m.isStyleLoaded()) {
+    dibujar();
+    return;
+  }
+  let p = pendientes.get(m);
+  if (!p) {
+    p = new Map();
+    pendientes.set(m, p);
+  }
+  const habia = p.size > 0;
+  p.set(clave, dibujar);
+  if (habia) return;
+  const intentar = () => {
+    const q = pendientes.get(m);
+    if (!q) return;
+    try {
+      for (const f of q.values()) f();
+      pendientes.delete(m);
+    } catch {
+      // El estilo todavía no está: se intenta en el siguiente momento quieto.
+      m.once("idle", intentar);
+    }
+  };
+  m.once("idle", intentar);
+}
+
+/** La medida (A5): la línea sólida en el color de señal y los extremos numerados. */
+function dibujarMedida(m: MapaMl, datos: ReturnType<typeof dibujoMedicion>["geojson"]) {
+  cuandoSePueda(m, "medida", () => ponerMedida(m, datos));
+}
+function ponerMedida(m: MapaMl, datos: ReturnType<typeof dibujoMedicion>["geojson"]) {
+  const fuente = m.getSource("escena-medida") as GeoJSONSource | undefined;
+  if (fuente) {
+    fuente.setData(datos);
+    return;
+  }
+  m.addSource("escena-medida", { type: "geojson", data: datos });
+  m.addLayer({
+    id: "escena-medida-linea",
+    type: "line",
+    source: "escena-medida",
+    filter: ["==", ["get", "tipo"], "linea"],
+    layout: { "line-cap": "round" },
+    paint: {
+      "line-color": COLOR_MEDIDA,
+      "line-width": ["interpolate", ["linear"], ["zoom"], 16, 3, 20, 5],
+      "line-opacity": ["case", ["get", "viva"], 0.75, 1],
+    },
+  });
+  m.addLayer({
+    id: "escena-medida-extremo",
+    type: "circle",
+    source: "escena-medida",
+    filter: ["==", ["get", "tipo"], "extremo"],
+    paint: {
+      "circle-radius": 7,
+      "circle-color": "#FFFFFF",
+      "circle-stroke-color": COLOR_MEDIDA,
+      "circle-stroke-width": 3,
+    },
+  });
+}
+
+function dibujarLineas(m: MapaMl, lineas: readonly LineaMapa[]) {
+  cuandoSePueda(m, "lineas", () => ponerLineas(m, lineas));
+}
+function ponerLineas(m: MapaMl, lineas: readonly LineaMapa[]) {
   const datos = {
     type: "FeatureCollection" as const,
     features: [
@@ -647,18 +770,6 @@ function dibujarLineas(m: MapaMl, lineas: readonly LineaMapa[], medicion: readon
             coordinates: l.puntos.map((p) => [p.lon, p.lat]),
           },
         })),
-      ...(medicion.length === 2
-        ? [
-            {
-              type: "Feature" as const,
-              properties: { color: "#0B0D12", tipo: "medida" },
-              geometry: {
-                type: "LineString" as const,
-                coordinates: medicion.map((p) => [p.lon, p.lat]),
-              },
-            },
-          ]
-        : []),
     ],
   };
   const fuente = m.getSource("escena-lineas") as GeoJSONSource | undefined;

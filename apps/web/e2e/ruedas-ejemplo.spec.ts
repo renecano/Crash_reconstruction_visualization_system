@@ -53,7 +53,7 @@ async function hastaEl3d(page: Page) {
   await irAPaso(page, 2);
   await page.getByTestId("ejemplo-narracion").click();
   await page.getByTestId("leer-narracion").click();
-  await expect(page.getByTestId("vehiculos")).toContainText("V1 · VW Jetta 2002");
+  await expect(page.getByTestId("vehiculos")).toContainText("VW Jetta · 2002");
   await page.getByTestId("confirmar-impacto").click();
   await page.getByTestId("opcion-clase-V1-sedan_compacto").click();
   await page.getByTestId("no-se-masa-V1").click();

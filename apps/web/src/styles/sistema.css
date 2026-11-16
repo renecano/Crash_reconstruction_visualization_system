@@ -1192,6 +1192,13 @@
     border-radius: 22px;
     box-shadow: var(--sombra-hoja, 0 30px 80px rgba(27, 34, 48, 0.12));
   }
+  /*
+   * La hoja de la pregunta es una columna con scroll: ningún renglón se encoge para caber (con su
+   * altura mínima, una opción con texto largo quedaba tapada por el botón de abajo; ronda 2, A4).
+   */
+  .escena-hoja > * {
+    flex-shrink: 0;
+  }
   .escena-titulo {
     font-family: var(--fuente);
     font-weight: 650;
@@ -1236,6 +1243,52 @@
     border-color: var(--eleccion);
     background: var(--eleccion);
     color: #fff;
+  }
+  /* El modo de medición (ronda 2, A5). */
+  .escena-medir {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    width: 100%;
+    border: 2px solid var(--senal);
+    border-radius: 16px;
+    padding: 10px 12px 10px 16px;
+    background: var(--superficie);
+    color: var(--texto);
+    box-shadow: 0 10px 30px rgba(27, 34, 48, 0.16);
+  }
+  .escena-medir > svg {
+    color: var(--senal);
+  }
+  .escena-tecla {
+    margin-left: 6px;
+    border: 1px solid currentColor;
+    border-radius: 6px;
+    padding: 0 5px;
+    font-family: var(--fuente-mono, ui-monospace, monospace);
+    font-size: 0.75rem;
+    opacity: 0.8;
+  }
+  .escena-boton-medir[aria-pressed="true"] {
+    border-color: var(--senal);
+    background: color-mix(in srgb, var(--senal) 12%, var(--superficie));
+  }
+  .escena-medida-etiqueta {
+    pointer-events: none;
+    border-radius: 999px;
+    padding: 3px 10px;
+    background: var(--texto);
+    color: var(--fondo);
+    font-family: var(--fuente-mono, ui-monospace, monospace);
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  }
+  .escena-medida-etiqueta[data-viva="si"] {
+    background: var(--senal);
+    color: #0b0d12;
   }
   .escena-boton {
     min-height: 48px;

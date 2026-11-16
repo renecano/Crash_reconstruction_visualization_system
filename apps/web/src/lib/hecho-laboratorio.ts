@@ -61,6 +61,44 @@ export function metaDelHecho(e: Expediente, narracion: string | null): string[] 
   ].filter(Boolean);
 }
 
+/** La cara de un vehículo, como la dice el perito. */
+const CARA_IMPACTO: Record<string, string> = {
+  frontal: "frente",
+  posterior: "parte trasera",
+  lateral_izquierdo: "costado izquierdo",
+  lateral_derecho: "costado derecho",
+};
+
+/**
+ * Los impactos en orden, con la letra de cada vehículo como en el panel («A con B: frente de A con
+ * costado derecho de B»), y si el impacto es un supuesto de Croquis (la narración no lo dijo).
+ */
+export function impactosEnPalabras(
+  e: Expediente,
+): { orden: number; texto: string; supuesto: boolean }[] {
+  const letra = (id: string) => {
+    const k = e.vehiculos.findIndex((v) => v.id === id);
+    return k >= 0 ? String.fromCharCode(65 + k) : id;
+  };
+  return (e.impactos ?? []).map((i) => {
+    const quienes = (i.vehiculos ?? []).map(letra);
+    const contra = i.objeto_fijo
+      ? `${quienes.join(" y ")} contra ${i.objeto_fijo}`
+      : quienes.join(" con ");
+    const zonas = (i.zonas ?? [])
+      .map(
+        (z) =>
+          `${CARA_IMPACTO[z.zona.cara] ?? z.zona.cara.replaceAll("_", " ")} de ${letra(z.vehiculo)}`,
+      )
+      .join(" con ");
+    return {
+      orden: i.orden,
+      texto: zonas ? `${contra}: ${zonas}` : contra,
+      supuesto: i.fuente === "supuesto",
+    };
+  });
+}
+
 const PRIORIDAD: Record<TipoMarca, number> = { lugar: 1, dano: 2, vehiculo: 3, medida: 4 };
 const MEDIDA = /\b\d+(?:[.,]\d+)?\s*(?:m|cm|metros|centímetros|km\/h|kg)\b/gi;
 
