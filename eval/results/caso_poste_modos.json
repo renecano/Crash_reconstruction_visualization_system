@@ -1,0 +1,61 @@
+{
+  "descripcion": "Las soluciones del multiarranque en el caso de ejemplo con poste, con sus residuos y los impactos que ocurren: si la segunda es físicamente válida y cuadra con la evidencia, se ofrece como alternativa; si no, se queda el aviso (ADR 0141). Sin llamar a la API.",
+  "script": "eval/caso_poste_modos.mts",
+  "fecha": "2026-11-16T02:25:28.526Z",
+  "impactos_de_la_escena": 2,
+  "limite_sigma": 3,
+  "modos": [
+    {
+      "velocidades_kmh": {
+        "velocidad:veh-a": 40.4,
+        "velocidad:veh-b": 102.07
+      },
+      "costo": 19,
+      "elegido": true,
+      "impactos_que_ocurren": [
+        "impacto_vehiculo_vehiculo: veh-a + veh-b",
+        "impacto_vehiculo_objeto: veh-b + obj-choque-2"
+      ],
+      "residuos_sigma": {
+        "reposo:veh-a:x": -3.39,
+        "reposo:veh-a:y": -6.88,
+        "reposo:veh-b:x": 6.63,
+        "reposo:veh-b:y": -1.16,
+        "rumbo_final:veh-a": -4.97,
+        "rumbo_final:veh-b": 0.05,
+        "paso:pp-choque-2:x": -0.63,
+        "paso:pp-choque-2:y": -0.23
+      },
+      "residuo_mayor_sigma": 6.88,
+      "fisicamente_valida": true,
+      "cuadra_con_la_evidencia": false,
+      "se_ofrece_como_alternativa": false
+    },
+    {
+      "velocidades_kmh": {
+        "velocidad:veh-a": 33.73,
+        "velocidad:veh-b": 27.1
+      },
+      "costo": 20.35,
+      "elegido": false,
+      "impactos_que_ocurren": [
+        "impacto_vehiculo_vehiculo: veh-a + veh-b"
+      ],
+      "residuos_sigma": {
+        "reposo:veh-a:x": -4.69,
+        "reposo:veh-a:y": -6.39,
+        "reposo:veh-b:x": 3.07,
+        "reposo:veh-b:y": 1.97,
+        "rumbo_final:veh-a": -0.93,
+        "rumbo_final:veh-b": -2.32,
+        "paso:pp-choque-2:x": -6.69,
+        "paso:pp-choque-2:y": -0.08
+      },
+      "residuo_mayor_sigma": 6.69,
+      "fisicamente_valida": false,
+      "cuadra_con_la_evidencia": false,
+      "se_ofrece_como_alternativa": false
+    }
+  ],
+  "decision": "Ninguna otra solución cumple: se queda el aviso."
+}

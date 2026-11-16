@@ -65,6 +65,101 @@ if (!token) {
   process.exit(1);
 }
 
+if (process.argv.includes("--inventario")) {
+  await inventario();
+  // Una pausa corta: en Windows, salir con la conexión del fetch cerrándose aborta Node.
+  await new Promise((ok) => setTimeout(ok, 300));
+  process.exit(0);
+}
+
+/**
+ * Solo lee (René, 2026-11-15): qué hay en el Blob, por carpeta y por build, con su tamaño, y qué usa
+ * producción (el manifiesto del sitio publicado, el de `origin/main` y `apps/web/recursos.json`).
+ * No sube ni borra nada. Escribe `eval/results/blob_inventario.json` (rutas y tamaños, sin URLs).
+ *
+ *   node tools/unity/publicar-web.mjs --inventario
+ */
+async function inventario() {
+  const grupos = new Map();
+  let cursor;
+  let llamadas = 0;
+  do {
+    const r = await list({ token, cursor, limit: 1000 });
+    llamadas++;
+    for (const b of r.blobs) {
+      const partes = b.pathname.split("/");
+      // recursos/visor-unity/<huella>, recursos/<carpeta>/<huella> o la primera carpeta.
+      // recursos/modelos/vehiculos/<huella>: un nivel más.
+      const niveles = partes[0] === "recursos" && partes[1] === "modelos" ? 4 : 3;
+      const clave =
+        partes[0] === "recursos" && partes.length > niveles
+          ? partes.slice(0, niveles).join("/")
+          : partes.slice(0, Math.min(2, partes.length - 1)).join("/") || b.pathname;
+      const g = grupos.get(clave) ?? { archivos: 0, bytes: 0, subido: "" };
+      g.archivos++;
+      g.bytes += b.size;
+      const fecha = new Date(b.uploadedAt).toISOString().slice(0, 10);
+      if (fecha > g.subido) g.subido = fecha;
+      grupos.set(clave, g);
+    }
+    cursor = r.hasMore ? r.cursor : undefined;
+  } while (cursor);
+
+  let sitio = null;
+  try {
+    const r = await fetch("https://croquis-sage.vercel.app/visor-unity/manifest.json");
+    sitio = (await r.json()).huella ?? null;
+  } catch {
+    // Sin red al sitio: se queda la del repositorio.
+  }
+  const enMain = huellaDeProduccion();
+  const recursos = JSON.parse(readFileSync(join(RAIZ, "apps/web/recursos.json"), "utf8")).carpetas;
+  const usa = new Map();
+  if (sitio) usa.set(`recursos/visor-unity/${sitio}`, "visor que sirve croquis-sage.vercel.app");
+  if (enMain && enMain !== sitio)
+    usa.set(`recursos/visor-unity/${enMain}`, "visor del manifiesto de origin/main");
+  for (const [carpeta, h] of Object.entries(recursos))
+    usa.set(`recursos/${carpeta}/${h}`, `apps/web/recursos.json (${carpeta})`);
+
+  const filas = [...grupos.entries()]
+    .map(([clave, g]) => ({
+      clave,
+      ...g,
+      mb: Math.round((g.bytes / 1048576) * 10) / 10,
+      usa: usa.get(clave) ?? null,
+    }))
+    .sort((a, b) => b.bytes - a.bytes);
+  const total = filas.reduce((a, f) => a + f.bytes, 0);
+  for (const f of filas)
+    console.log(
+      `${String(f.mb).padStart(7)} MB  ${String(f.archivos).padStart(4)}  ${f.subido}  ${f.clave}${f.usa ? `  ← ${f.usa}` : ""}`,
+    );
+  console.log(`${(total / 1048576).toFixed(1)} MB en total; ${llamadas} llamada(s) de listado.`);
+  writeFileSync(
+    join(RAIZ, "eval/results/blob_inventario.json"),
+    `${JSON.stringify(
+      {
+        descripcion:
+          "Lo que hay en el Vercel Blob de Croquis, por carpeta y por build, con su tamaño (MiB) y qué usa producción. Solo lectura: no se subió ni se borró nada.",
+        script: "tools/unity/publicar-web.mjs --inventario",
+        fecha: new Date().toISOString(),
+        visor_en_produccion: sitio,
+        visor_en_origin_main: enMain,
+        total_mb: Math.round((total / 1048576) * 10) / 10,
+        grupos: filas.map(({ clave, archivos, mb, subido, usa: u }) => ({
+          clave,
+          archivos,
+          mb,
+          subido,
+          usa: u,
+        })),
+      },
+      null,
+      2,
+    )}\n`,
+  );
+}
+
 const huella = huellaCarpeta(BUILD);
 const prefijo = `recursos/visor-unity/${huella}/`;
 const enBuild = readdirSync(join(BUILD, "Build"));
