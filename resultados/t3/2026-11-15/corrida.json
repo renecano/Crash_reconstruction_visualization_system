@@ -5,7 +5,7 @@
     "commit":  "44e7bf673549ba2f142b261cf118da9018d16eb9",
     "rama_del_repositorio":  "main",
     "archivos_con_cambios":  7,
-    "duracion_min":  4.5,
+    "duracion_min":  0.1,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "NVIDIA GeForce RTX 4070 Laptop GPU",
@@ -14,7 +14,7 @@
                    "memoria_gb":  31.7,
                    "procesador":  "Intel(R) Core(TM) i9-14900HX",
                    "nucleos_logicos":  32,
-                   "disco_libre_gb":  285.8,
+                   "disco_libre_gb":  282.4,
                    "windows":  "Microsoft Windows 11 Home",
                    "git":  "git version 2.55.0.windows.5",
                    "node":  "v26.13.1",
@@ -28,8 +28,7 @@
                    "unity_del_proyecto":  "6000.3.28f1",
                    "unity_coincide":  false,
                    "instalado_en_esta_corrida":  [
-                                                     "node",
-                                                     "pnpm"
+
                                                  ]
                },
     "pasos":  [
@@ -37,7 +36,7 @@
                       "grupo":  "comprobacion",
                       "paso":  "dependencias",
                       "estado":  "ok",
-                      "minutos":  0.6,
+                      "minutos":  0,
                       "codigo":  0
                   },
                   {
@@ -45,55 +44,6 @@
                       "paso":  "solver-en-reversa",
                       "estado":  "ok",
                       "minutos":  0,
-                      "codigo":  0
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "referencias-de-prueba",
-                      "estado":  "ok",
-                      "minutos":  2.2,
-                      "codigo":  0
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "er4-desarrollo",
-                      "estado":  "ok",
-                      "minutos":  0.1,
-                      "codigo":  0
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "er4-prueba",
-                      "estado":  "ok",
-                      "minutos":  0.3,
-                      "codigo":  0
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "er4-titulo",
-                      "estado":  "falló (código 1)",
-                      "minutos":  0,
-                      "codigo":  1
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "er4-reversa",
-                      "estado":  "ok",
-                      "minutos":  0,
-                      "codigo":  0
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "er4-comparar",
-                      "estado":  "ok",
-                      "minutos":  0,
-                      "codigo":  0
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "carambolas",
-                      "estado":  "ok",
-                      "minutos":  0.6,
                       "codigo":  0
                   }
               ]

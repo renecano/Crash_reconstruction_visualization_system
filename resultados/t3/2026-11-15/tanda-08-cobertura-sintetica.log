@@ -1,0 +1,71 @@
+alcance: 10 de 200 casos (11 s)
+alcance: 20 de 200 casos (21 s)
+alcance: 30 de 200 casos (32 s)
+alcance: 40 de 200 casos (42 s)
+alcance: 50 de 200 casos (53 s)
+alcance: 60 de 200 casos (64 s)
+alcance: 70 de 200 casos (75 s)
+alcance: 80 de 200 casos (84 s)
+alcance: 90 de 200 casos (94 s)
+alcance: 100 de 200 casos (105 s)
+alcance: 110 de 200 casos (115 s)
+alcance: 120 de 200 casos (125 s)
+alcance: 130 de 200 casos (136 s)
+alcance: 140 de 200 casos (146 s)
+alcance: 150 de 200 casos (156 s)
+alcance: 160 de 200 casos (166 s)
+alcance: 170 de 200 casos (176 s)
+alcance: 180 de 200 casos (186 s)
+alcance: 190 de 200 casos (197 s)
+alcance: 200 de 200 casos (209 s)
+lateral_interseccion: 10 de 200 casos (236 s)
+lateral_interseccion: 20 de 200 casos (264 s)
+lateral_interseccion: 30 de 200 casos (292 s)
+lateral_interseccion: 40 de 200 casos (322 s)
+lateral_interseccion: 50 de 200 casos (349 s)
+lateral_interseccion: 60 de 200 casos (377 s)
+lateral_interseccion: 70 de 200 casos (406 s)
+lateral_interseccion: 80 de 200 casos (433 s)
+lateral_interseccion: 90 de 200 casos (461 s)
+lateral_interseccion: 100 de 200 casos (488 s)
+lateral_interseccion: 110 de 200 casos (517 s)
+lateral_interseccion: 120 de 200 casos (544 s)
+lateral_interseccion: 130 de 200 casos (573 s)
+lateral_interseccion: 140 de 200 casos (600 s)
+lateral_interseccion: 150 de 200 casos (627 s)
+lateral_interseccion: 160 de 200 casos (654 s)
+lateral_interseccion: 170 de 200 casos (681 s)
+lateral_interseccion: 180 de 200 casos (707 s)
+lateral_interseccion: 190 de 200 casos (735 s)
+lateral_interseccion: 200 de 200 casos (762 s)
+{
+ "total": {
+  "supuestos_fijos": {
+   "velocidades": 578,
+   "dentro": 345,
+   "cobertura_pct": 59.69,
+   "ic95_pct": [
+    55.64,
+    63.61
+   ],
+   "ancho_mediano_kmh": 11.27,
+   "error_absoluto_mediano_kmh": 4.78,
+   "verdad_abajo_del_rango": 105,
+   "verdad_arriba_del_rango": 125
+  },
+  "supuestos_sorteados": {
+   "velocidades": 578,
+   "dentro": 410,
+   "cobertura_pct": 70.93,
+   "ic95_pct": [
+    67.1,
+    74.49
+   ],
+   "ancho_mediano_kmh": 13.09,
+   "error_absoluto_mediano_kmh": 4.78,
+   "verdad_abajo_del_rango": 79,
+   "verdad_arriba_del_rango": 88
+  }
+ },
+ "segundos": 762
+}
