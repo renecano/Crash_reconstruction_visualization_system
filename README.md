@@ -93,7 +93,7 @@ La modalidad contra el título sale de [`cesvi_r4c_titulo_prueba.json`](eval/res
 
 **Reversa** ([`cesvi_r4_reversa.json`](eval/results/cesvi_r4_reversa.json)). La narración sin conclusiones no dice quién retrocedía, así que la modalidad «reversa» queda en 0 de 9. Dado quién retrocede según el propio reporte, el golpe queda en la parte posterior del vehículo en 9 de 12 reportes de la prueba (21 de 26 en desarrollo) de los que tienen daño posterior.
 
-**Carambolas** ([`cesvi_r4b_carambolas_prueba.json`](eval/results/cesvi_r4b_carambolas_prueba.json)). De 33 reportes de la prueba con tres o más vehículos, los 33 se reconstruyen y se ven en 3D; ocurren 20 de 31 impactos posteriores (con la primera versión, 2 de 32). Hasta el 2026-11-15 aquí decía 21 de 31: era la medición del 23 de octubre, y desde el 24 de octubre (#119, que separa los contornos de los vehículos después de cada impacto) da 20.
+**Carambolas** ([`cesvi_r4b_carambolas_prueba.json`](eval/results/cesvi_r4b_carambolas_prueba.json)). De 33 reportes de la prueba con tres o más vehículos, los 33 se reconstruyen y se ven en 3D; ocurren <!--cifra:carambolas.prueba-->20 de 31<!--/cifra--> impactos posteriores (en desarrollo, <!--cifra:carambolas.desarrollo-->40 de 55<!--/cifra-->; con la primera versión, 2 de 32). Hasta el 2026-11-15 aquí decía 21 de 31: era la medición del 23 de octubre, y desde el 24 de octubre (#119, que separa los contornos de los vehículos justo después de cada impacto) da 20.
 
 ### AXA A2010930, con sus dos lecturas
 
