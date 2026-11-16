@@ -1,0 +1,194 @@
+{
+  "descripcion": "W9 (T6.5): las relecturas de R12b grabadas (12: 2 de la prueba y 10 de desarrollo) y su efecto en la E-R4, con la regla de antes (la relectura se usa si rechaza menos datos) y con la regla nueva (si rechaza menos y no trae menos datos verificados). Sin relecturas es la E-R4 vigente.",
+  "script": "eval/cesvi_r4_reproduccion.mts relecturas <tope> <particion> y medir <particion> <salida>",
+  "fecha": "2026-11-15",
+  "relecturas_grabadas": 12,
+  "costo_real_usd": 0.1845,
+  "particiones": {
+    "prueba": {
+      "escenas_validas": {
+        "sin_relecturas": 205,
+        "regla_de_antes": 205,
+        "regla_nueva": 205
+      },
+      "regla_de_antes": {
+        "narraciones_que_cambian": [
+          "cesvi-2276b03fc0",
+          "cesvi-feb7aaa0e1"
+        ],
+        "cifras_que_cambian": {
+          ".modalidad.croquis.k": [
+            80,
+            79
+          ],
+          ".modalidad.croquis.pct": [
+            42.1,
+            41.6
+          ],
+          ".modalidad.sin_inferir": [
+            10,
+            12
+          ],
+          ".modalidad.fisicas.croquis.k": [
+            74,
+            73
+          ],
+          ".modalidad.fisicas.croquis.pct": [
+            60.2,
+            59.3
+          ],
+          ".modalidad.por_modalidad.alcance.k": [
+            37,
+            36
+          ],
+          ".modalidad.por_modalidad.alcance.pct": [
+            80.4,
+            78.3
+          ],
+          ".modalidad.precision_por_modalidad.alcance.k": [
+            37,
+            36
+          ],
+          ".modalidad.precision_por_modalidad.alcance.n": [
+            58,
+            57
+          ],
+          ".modalidad.precision_por_modalidad.alcance.pct": [
+            63.8,
+            63.2
+          ],
+          ".modalidad.precision_por_modalidad.lateral.n": [
+            57,
+            56
+          ],
+          ".modalidad.precision_por_modalidad.lateral.pct": [
+            28.1,
+            28.6
+          ],
+          ".zonas.exhaustividad.k": [
+            222,
+            219
+          ],
+          ".zonas.exhaustividad.pct": [
+            71.2,
+            70.2
+          ],
+          ".zonas.precision.k": [
+            222,
+            219
+          ],
+          ".zonas.precision.n": [
+            362,
+            358
+          ],
+          ".zonas.precision.pct": [
+            61.3,
+            61.2
+          ],
+          ".secuencia.primer_impacto.k": [
+            92,
+            93
+          ],
+          ".secuencia.primer_impacto.pct": [
+            68.1,
+            68.9
+          ]
+        }
+      },
+      "regla_nueva": {
+        "narraciones_que_cambian": [],
+        "cifras_que_cambian": {}
+      }
+    },
+    "desarrollo": {
+      "escenas_validas": {
+        "sin_relecturas": 453,
+        "regla_de_antes": 455,
+        "regla_nueva": 453
+      },
+      "regla_de_antes": {
+        "narraciones_que_cambian": [
+          "cesvi-24dea99d84",
+          "cesvi-f046c2675a",
+          "cesvi-3187c0665b",
+          "cesvi-31bfdf3ac3",
+          "cesvi-8886dafddf"
+        ],
+        "cifras_que_cambian": {
+          ".modalidad.precision_por_modalidad.frontal.n": [
+            17,
+            16
+          ],
+          ".modalidad.precision_por_modalidad.frontal.pct": [
+            35.3,
+            37.5
+          ],
+          ".modalidad.precision_por_modalidad.objeto_fijo.n": [
+            70,
+            71
+          ],
+          ".modalidad.precision_por_modalidad.objeto_fijo.pct": [
+            41.4,
+            40.8
+          ],
+          ".zonas.exhaustividad.k": [
+            473,
+            474
+          ],
+          ".zonas.exhaustividad.pct": [
+            75.6,
+            75.7
+          ],
+          ".zonas.precision.k": [
+            473,
+            474
+          ],
+          ".zonas.precision.n": [
+            766,
+            761
+          ],
+          ".zonas.precision.pct": [
+            61.7,
+            62.3
+          ],
+          ".secuencia.primer_impacto.k": [
+            193,
+            194
+          ],
+          ".secuencia.primer_impacto.pct": [
+            66.8,
+            67.1
+          ],
+          ".secuencia.completa.k": [
+            158,
+            159
+          ],
+          ".secuencia.completa.pct": [
+            54.7,
+            55
+          ],
+          ".secuencia.mismo_numero.k": [
+            169,
+            168
+          ],
+          ".secuencia.mismo_numero.pct": [
+            58.5,
+            58.1
+          ],
+          ".posiciones_finales.croquis_las_tiene.k": [
+            86,
+            85
+          ],
+          ".posiciones_finales.croquis_las_tiene.pct": [
+            62.3,
+            61.6
+          ]
+        }
+      },
+      "regla_nueva": {
+        "narraciones_que_cambian": [],
+        "cifras_que_cambian": {}
+      }
+    }
+  }
+}

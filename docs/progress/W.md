@@ -1044,6 +1044,36 @@ Al comprobar el build nuevo del visor con la e2e del flujo completo (`visor-unit
 - **Por qué no se vio antes:** los archivos oficiales no se regeneraban desde el 2026-10-23; las comparaciones de W8 y de la Tanda 3 usaban sus propias copias en `eval/results/w8/`, que ya daban 20.
 - **Medido en:** la corrida del colaborador del 2026-11-15 (`resultados/t3-2026-11-15`, RTX).
 
+## W9 · T6.5: las relecturas de R12b, grabadas y medidas (2026-11-15)
+
+**Estado:** hecho. T6.6 espera la decisión de René (abajo).
+
+### Qué se hizo
+
+- **La relectura ya no puede ser la misma petición.** La pizarra pedía releer cuando había números que no estaban escritos en su cita, pero solo le mandaba al Lector las citas no encontradas; si no había ninguna, la relectura era idéntica a la primera lectura. Ahora le dice también qué números se descartaron (`rechazosParaReleer`, `pizarra.ts`; `mensajeEscena`, `escena-narracion.ts`). Viajan en la misma lista que las citas, con su prefijo: el contrato de `/api/cesvi/escena` no cambia.
+- **Grabadas:** las 12 relecturas que pide la E-R4 (2 de la prueba y 10 de desarrollo), en `data/cesvi/r4/relecturas-v2.jsonl`, con `eval/cesvi_r4_reproduccion.mts relecturas <tope> <partición>`, que no llama a la API si lo gastado más lo que puede costar la llamada pasa del tope. Costo real: 0.1845 USD.
+- **La regla para usar una relectura cambió.** Antes se usaba si rechazaba menos datos; las relecturas rechazaban menos porque traían menos datos (perdían las caras de contacto). Ahora se usa solo si rechaza menos **y** no trae menos datos verificados.
+
+### Medido (`eval/results/w9_relecturas.json`)
+
+|                  | Regla de antes                                                                                                                     | Regla nueva    |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| Prueba (205)     | cambian 2 narraciones y 19 cifras; la modalidad contra la etiqueta baja de 80 a 79 de 190 (se pierde un «alcance» que estaba bien) | ninguna cambia |
+| Desarrollo (459) | cambian 5 narraciones; 453 → 455 escenas válidas                                                                                   | ninguna cambia |
+
+Con la regla nueva ninguna de las 12 relecturas se usa: todas traían menos datos verificados que la primera lectura. Ninguna cifra que ve CESVI cambia.
+
+### Gasto de W9 (`eval/results/w9_gasto.json`)
+
+0.538 USD de 20: las 12 relecturas (0.1845 USD, costo real de la API) y las 5 lecturas de la auditoría por la ruta de producción (0.3535 USD, estimadas con el máximo medido de una lectura porque su costo real no se registró).
+
+### T6.6 y el corpus con el redactor nuevo: para René
+
+- **T6.6:** los prompts del corpus (`SISTEMA_CORPUS`, 13 veces) y de la narración (`SISTEMA_NARRACION`, 11 veces) dicen «dictamen» donde CESVI dice «reporte». Son los prompts que usa en vivo la importación de un reporte.
+- **Releer el corpus** con ese cambio y con el redactor nuevo (que ya no borra las cifras) cuesta, por lotes, unos 14.4 USD la lectura completa de los 671 reportes y 10.1 USD la de narraciones: 24.5 USD, más que lo que queda del tope (19.46 USD).
+- **Lo que sí cabe:** solo la prueba congelada (205 reportes: unos 7.5 USD) y volver a leer sus narraciones a escena (unos 2.6 USD), en total unos 10.1 USD. Mueve cifras de la E-R4 que ve CESVI: va con su antes y después antes de fusionar.
+- **Lo más barato:** cambiar solo la palabra en los prompts y medirlo en 20 reportes de la prueba (menos de 1 USD), sin rehacer el corpus.
+
 ## Lo que U deja dicho para W
 
 Viene de U0 (ADR 0111). Vale cuando el PR de contrato 2.3.0 esté en `main`:

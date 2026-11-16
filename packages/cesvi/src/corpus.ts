@@ -385,6 +385,11 @@ export interface PosicionDescrita {
 export interface Conversion {
   expediente: Expediente;
   conteos: Conteos;
+  /**
+   * Los números que la lectura dio y no están escritos en su cita (se descartaron), con la primera
+   * cita encontrada de su grupo. Los usa la relectura (R12b, W9).
+   */
+  numerosFuera?: { numero: number; cita: string | null }[];
   /** Las posiciones que describe el texto; no van al contrato, que las pide con coordenadas. */
   posiciones: PosicionDescrita[];
 }
@@ -542,6 +547,7 @@ export function expedienteDeSalida(
     numeros_fuera: 0,
   };
 
+  const numerosFuera: { numero: number; cita: string | null }[] = [];
   // Las citas encontradas de cada grupo: la primera se guarda (redactada); todas sirven para los números.
   const encontradas = new Map<Grupo, string[]>();
   for (const g of grupos) {
@@ -566,6 +572,7 @@ export function expedienteDeSalida(
     const escritos = encontradas.get(g)!.flatMap(numerosEnCita);
     if (escritos.some((x) => Math.abs(x - n) < 1e-9)) return n;
     conteos.numeros_fuera++;
+    numerosFuera.push({ numero: n, cita: encontradas.get(g)![0] ?? g.citas[0] ?? null });
     return undefined;
   };
   const uno = (g: Grupo, campo: string) => g.valores.get(campo)?.[0] ?? "";
@@ -850,7 +857,7 @@ export function expedienteDeSalida(
         ...(c && { cita: c }),
       };
     });
-  return { expediente, conteos, posiciones };
+  return { expediente, conteos, posiciones, numerosFuera };
 }
 
 /** Problemas del expediente: el JSON Schema y, si pasa, los errores semánticos. */

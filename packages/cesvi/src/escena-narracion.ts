@@ -69,7 +69,19 @@ ${glosarioParaPrompt()}`;
 export function mensajeEscena(narracion: string, rechazadas: readonly string[] = []): string {
   const base = `Narración del perito:\n\n${narracion}`;
   if (!rechazadas.length) return base;
-  return `${base}\n\nEn una lectura anterior, estas citas no estaban en la narración y sus datos se descartaron. Vuelve a leer y copia cada cita literal del texto:\n${rechazadas.map((c) => `- «${c}»`).join("\n")}`;
+  // Las citas y los números descartados viajan en la misma lista; los números llevan su prefijo (W9).
+  const numeros = rechazadas.filter((c) => c.startsWith("número: ")).map((c) => c.slice(8));
+  const citas = rechazadas.filter((c) => !c.startsWith("número: "));
+  const partes = [base];
+  if (citas.length)
+    partes.push(
+      `En una lectura anterior, estas citas no estaban en la narración y sus datos se descartaron. Vuelve a leer y copia cada cita literal del texto:\n${citas.map((c) => `- «${c}»`).join("\n")}`,
+    );
+  if (numeros.length)
+    partes.push(
+      `En una lectura anterior, estos números no estaban escritos en su cita y se descartaron. Vuelve a leer y, para cada dato con número, pon como cita el fragmento literal donde está escrito ese número:\n${numeros.map((n) => `- ${n}`).join("\n")}`,
+    );
+  return partes.join("\n\n");
 }
 
 type Id = Expediente["vehiculos"][number]["id"];

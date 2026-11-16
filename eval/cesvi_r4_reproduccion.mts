@@ -188,25 +188,25 @@ interface LibroW9 {
 
 /**
  * El libro de gasto de W9. Empieza con las cinco lecturas que la auditoría del 2026-11-15 hizo por
- * la ruta de producción: su costo real no se registró, así que entran por su cota (la reserva
- * máxima de una narración, `eval/results/reserva_tope.json`).
+ * la ruta de producción: su costo real no se registró, así que entran con el máximo medido de una
+ * lectura de narración a precio normal (0.0707 USD, 664 lecturas con el prompt vigente).
  */
 function libroW9(): LibroW9 {
   if (existsSync(GASTO_W9)) return JSON.parse(readFileSync(GASTO_W9, "utf8")) as LibroW9;
-  const cota = 0.3737;
+  const maximo = 0.0707;
   return {
     descripcion:
-      "Gasto de API de W9 contra el tope de 20 USD que autorizó René. Cada movimiento es el costo real que reportó la API, salvo los marcados como cota.",
+      "Gasto de API de W9 contra el tope de 20 USD que autorizó René. Cada movimiento es el costo real que reportó la API, salvo los marcados como estimados.",
     tope_usd: 20,
     movimientos: [
       {
         fecha: "2026-11-15",
-        que: "Auditoría: 5 lecturas de la narración de ejemplo por la ruta de producción (costo real sin registrar; va la reserva máxima de cada una)",
-        usd: Math.round(5 * cota * 1e4) / 1e4,
+        que: "Auditoría: 5 lecturas de la narración de ejemplo por la ruta de producción (costo real sin registrar; va el máximo medido de una lectura, 0.0707 USD cada una)",
+        usd: Math.round(5 * maximo * 1e4) / 1e4,
         cota: true,
       },
     ],
-    total_usd: Math.round(5 * cota * 1e4) / 1e4,
+    total_usd: Math.round(5 * maximo * 1e4) / 1e4,
   };
 }
 
