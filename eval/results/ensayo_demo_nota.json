@@ -1,0 +1,44 @@
+{
+  "descripcion": "Tramos 1a a 1e del ensayo de la demo (AXA: reconstrucción, 3D, Contra CESVI, dictamen y Presentar), vueltos a correr en producción tras corregir la nota del 3D y la leyenda (commit c42b01b, build d18f1f3aebbfe08c). Sin lecturas de API. CROQUIS_TRAMOS=1.",
+  "sitio": "https://croquis-sage.vercel.app",
+  "fecha": "2026-11-16T03:45:21.649Z",
+  "total_segundos": 39.861,
+  "tramos": [
+    {
+      "tramo": "1a-axa-reconstruccion",
+      "segundos": 12.565,
+      "ok": true,
+      "nota": "Repetir Velocidad antes del impacto 12 km/h B · Tacoma rango 55–78 Reconstrucción física de Croquis · mejor ajuste Cómo se reparten las simulaciones A · Silverado 2500 15 km/h Lo fijan 5 evidencias",
+      "captura": "docs/cesvi/demo/nota/despues/1a-axa-reconstruccion.jpg"
+    },
+    {
+      "tramo": "1b-axa-3d",
+      "segundos": 22.564,
+      "ok": true,
+      "nota": "Unity listo en 19.2 s (primera visita); «Ir al impacto». Notas: B · Tacoma (V2) antes del impacto: Croquis 57 km/h (55–78) · CESVI 63.15 km/h de barrera equivalente por la deformación (EBS) · −6 km/h (−10 %) | A · Silverado 2500 (V1) al salir del impacto: Croquis 31 km/h · CESVI 60.27 km/h por los restos (desplazamiento) · −29 km/h (−48 %)",
+      "captura": "docs/cesvi/demo/nota/despues/1b-axa-3d-impacto.jpg"
+    },
+    {
+      "tramo": "1c-axa-contra-cesvi",
+      "segundos": 1.185,
+      "ok": true,
+      "nota": "Acto 5 de 6 · Contra CESVI Contra el reporte de CESVI 3 coinciden 0 difieren 1 sin dato Reporte de CESVI · B · velocidad por deformación 63.15 km/h Método de CESVI con los datos del reporte B · velocidad de impacto por d",
+      "captura": "docs/cesvi/demo/nota/despues/1c-axa-contra-cesvi.jpg"
+    },
+    {
+      "tramo": "1d-axa-dictamen",
+      "segundos": 1.059,
+      "ok": true,
+      "nota": "B antes del impacto | A antes del impacto",
+      "captura": "docs/cesvi/demo/nota/despues/1d-axa-dictamen.jpg"
+    },
+    {
+      "tramo": "1e-axa-presentar",
+      "segundos": 2.488,
+      "ok": true,
+      "nota": "Método de CESVI con los datos del reporte +1.19 % Croquis contra el reporte 63.90 contra 63.15 km/h · +0.75 km/h Reconstrucción física de Croquis −10 % B · Tacoma (V2) antes del impacto 57 (55–78) contra 63.15 km/h · −6 km/h Criterios 3 coinciden · 0 difieren · 1 sin dato",
+      "captura": "docs/cesvi/demo/nota/despues/1e-axa-presentar-contra.jpg"
+    }
+  ],
+  "errores_de_pagina": []
+}

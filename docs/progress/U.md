@@ -436,6 +436,7 @@ Plan: PLAN-CESVI §3.3. Decisiones: ADR 0114.
 - La sombra unida de baja y media no sigue al daño.
 - La barra de reproducción tapa una esquina del minimapa en la vista de órbita (se ve en `docs/cesvi/u6/produccion/1-reconstruccion-unity.png`).
 - **La leyenda del 3D con recuadro** (René, 2026-11-15): texto blanco opaco sobre un recuadro del color de fondo de la app al 78 % (`Croquis.Core/Leyenda3d.cs`, que prueba con `dotnet test` el contraste WCAG: más de 10:1 con blanco puro detrás). Medido en capturas del build `d18f1f3aebbfe08c` (`docs/cesvi/demo/leyenda/antes` y `despues`): antes, 2.64:1 sobre techos claros en órbita y 4.24:1 en la escena urbana de día; después, de 4.87 a 7.42:1 en las siete capturas (la medición incluye los bordes suavizados de las letras, así que se queda corta). Build de 7.4 min en la laptop; e2e de cámaras en verde.
+- **La nota bajo el 3D dice qué velocidad es** (René, 2026-11-15): «A · Silverado 2500 (V1) al salir del impacto: Croquis 31 km/h · CESVI 60.27 km/h por los restos (desplazamiento) · −29 km/h (−48 %)» y «B · Tacoma (V2) antes del impacto: Croquis 57 km/h (55–78) · CESVI 63.15 km/h de barrera equivalente por la deformación (EBS) · −6 km/h (−10 %)», con el nombre del panel; Presentar y la tabla del dictamen nombran igual (#246). Ensayo de los tramos 1a a 1e en producción antes y después: `docs/cesvi/demo/nota/antes` y `despues`, `eval/results/ensayo_demo_nota.json` (5 de 5, sin errores de página).
 
 ## Ajustes de René antes de U5 (2026-11-10)
 

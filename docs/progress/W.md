@@ -1057,7 +1057,7 @@ René pidió ofrecer la segunda solución como alternativa, como las dos hipóte
 
 ## W9 · T6.5: las relecturas de R12b, grabadas y medidas (2026-11-15)
 
-**Estado:** hecho. T6.6 espera la decisión de René (abajo).
+**Estado:** hecho. T6.6 quedó medida y descartada (sección siguiente).
 
 ### Qué se hizo
 
@@ -1084,6 +1084,31 @@ Con la regla nueva ninguna de las 12 relecturas se usa: todas traían menos dato
 - **Releer el corpus** con ese cambio y con el redactor nuevo (que ya no borra las cifras) cuesta, por lotes, unos 14.4 USD la lectura completa de los 671 reportes y 10.1 USD la de narraciones: 24.5 USD, más que lo que queda del tope (19.46 USD).
 - **Lo que sí cabe:** solo la prueba congelada (205 reportes: unos 7.5 USD) y volver a leer sus narraciones a escena (unos 2.6 USD), en total unos 10.1 USD. Mueve cifras de la E-R4 que ve CESVI: va con su antes y después antes de fusionar.
 - **Lo más barato:** cambiar solo la palabra en los prompts y medirlo en 20 reportes de la prueba (menos de 1 USD), sin rehacer el corpus.
+
+## W9 · T6.6 (a): «reporte» en vez de «dictamen» en los prompts, medido (2026-11-15)
+
+**Estado:** hecho. **(a) no mejora**, así que no se hace (b), como pidió René («si (a) no mejora, no hagas (b) y anótalo»). (c) no se hace. Los prompts de la app no cambian (siguen `corpus-cesvi-v4` y `narracion-cesvi-v1`); la variante con «reporte» vive solo en el script, para repetir la medición.
+
+### Cómo se midió (`eval/t6_6_reporte.mts` → `eval/results/t6_6_reporte.json`)
+
+- **El «antes»** son las lecturas guardadas con los prompts vigentes (con «dictamen»), del mismo modelo: no se pagaron otra vez. **El «después»** se leyó por lotes con los mismos prompts cambiando solo la palabra (también el encabezado «Reporte:»), sobre el mismo texto de entrada. Las dos se convierten con el código de hoy.
+- **18 reportes, no 20:** con la entrada contada exacta, las 40 lecturas nuevas salían en unos 1.07 USD, más que el tope de 1 USD. Se mandaron por tandas con un candado (no se manda si lo gastado más lo estimado pasa de 1 USD): 10 y luego 8; los 2 últimos no cupieron. Son los 18 reportes que ya tenían lectura con el prompt vigente, primero los de la prueba congelada: 14 de la prueba y 4 de desarrollo (en la prueba solo hay 14 con esa lectura).
+- **Costo real:** 0.8686 USD (0.4791 + 0.3895). Gasto de W9: 1.4066 de 20 USD.
+
+### Medido (suma de los 18)
+
+|                                                  | Con «dictamen» | Con «reporte» |
+| ------------------------------------------------ | -------------- | ------------- |
+| Corpus: datos                                    | 837            | 827           |
+| Corpus: citas que no están en el reporte         | 13 de 464      | 7 de 457      |
+| Corpus: números que no están escritos en su cita | 61 de 187      | 43 de 160     |
+| Corpus: números verificados                      | 126            | 117           |
+| Narración: citas que no están en el reporte      | 6 de 90        | 7 de 94       |
+| Narración: velocidades que no están en su cita   | 3 de 18        | 4 de 22       |
+| Narración: fugas de conclusiones                 | 0              | 0             |
+
+- **Por reporte**, con la regla de T6.5 (mejor si rechaza menos y no trae menos números verificados): 6 mejores, 6 iguales y 6 peores.
+- **Por qué no mejora:** rechaza menos porque trae menos números (160 contra 187), y trae 9 números verificados menos. La narración queda igual o un poco peor. Con una lectura por lado, el reparto 6 / 6 / 6 no se distingue del ruido del modelo.
 
 ## Lo que U deja dicho para W
 

@@ -25,6 +25,7 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 
 - **El 3D reproduce el resultado:** no calcula nada. Después del impacto, la carrocería se deforma con el perfil de daño del solver. Pausar, ¼×, «Ir al impacto», «Ver todo».
 - **Leyenda:** reconstrucción ilustrativa; el entorno es procedural, no el lugar real.
+- **La nota bajo el 3D** dice de qué vehículo y qué velocidad es, con el nombre del panel: «B · Tacoma (V2) antes del impacto: Croquis 57 km/h (55–78) · CESVI 63.15 km/h de barrera equivalente por la deformación (EBS)» y «A · Silverado 2500 (V1) al salir del impacto: Croquis 31 km/h · CESVI 60.27 km/h por los restos». Presentar y el dictamen lo nombran igual.
 
 > Paso 7, «Contra CESVI».
 
@@ -32,8 +33,6 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 - **Toda diferencia va con su valor y su porcentaje.**
 
 > Paso 8, el dictamen (PDF y Word).
-
-**La nota bajo el 3D** dice de qué vehículo y qué velocidad es, con el nombre del panel: «B · Tacoma (V2) antes del impacto: Croquis 57 km/h (55–78) · CESVI 63.15 km/h de barrera equivalente por la deformación (EBS)» y «A · Silverado 2500 (V1) al salir del impacto: Croquis 31 km/h · CESVI 60.27 km/h por los restos». Presentar y el dictamen lo nombran igual.
 
 ## 2 · Un caso nuevo, en vivo (4 min)
 

@@ -1,0 +1,814 @@
+{
+  "descripcion": "W9 · T6.6 (a): los prompts del corpus y de la narración con «dictamen» (las lecturas guardadas de corpus-cesvi-v4 y narracion-cesvi-v1) contra los mismos prompts con «reporte» (corpus-cesvi-v5 y narracion-cesvi-v2, leídos ahora por lotes), sobre los mismos 20 reportes y el mismo texto de entrada, convertidos con el código de hoy. Corpus: datos, citas que no están en el reporte, números que no están escritos en su cita y números verificados. Narración: citas, velocidades y fugas de conclusiones. Una lectura por lado: la diferencia incluye el ruido del modelo.",
+  "script": "eval/t6_6_reporte.mts",
+  "modelo": "claude-sonnet-5-5",
+  "versiones": {
+    "antes": [
+      "corpus-cesvi-v4",
+      "narracion-cesvi-v1"
+    ],
+    "despues": [
+      "corpus-cesvi-v4 con «reporte»",
+      "narracion-cesvi-v1 con «reporte»"
+    ]
+  },
+  "fecha": "2026-11-16T03:53:34.708Z",
+  "reportes": 18,
+  "reportes_en_prueba": 14,
+  "costo_usd": 0.8686,
+  "costo_por_lote": {
+    "msgbatch_01DW19P1TRwEYjGydDg2LKbs": 0.4791,
+    "msgbatch_01Q8H5JW2CTiA1CRE5MYrnmJ": 0.3895
+  },
+  "tope_usd": 1,
+  "resumen": {
+    "corpus": {
+      "dictamen": {
+        "datos": 837,
+        "invalidos": 2,
+        "citas": 464,
+        "citas_fuera": 13,
+        "numeros": 187,
+        "numeros_fuera": 61,
+        "numeros_verificados": 126,
+        "vehiculos": 36,
+        "errores": 0
+      },
+      "reporte": {
+        "datos": 827,
+        "invalidos": 1,
+        "citas": 457,
+        "citas_fuera": 7,
+        "numeros": 160,
+        "numeros_fuera": 43,
+        "numeros_verificados": 117,
+        "vehiculos": 36,
+        "errores": 0
+      }
+    },
+    "narracion": {
+      "dictamen": {
+        "citas": 90,
+        "citas_fuera": 6,
+        "velocidades": 18,
+        "velocidades_fuera": 3,
+        "fugas": 0,
+        "errores": 0
+      },
+      "reporte": {
+        "citas": 94,
+        "citas_fuera": 7,
+        "velocidades": 22,
+        "velocidades_fuera": 4,
+        "fugas": 0,
+        "errores": 0
+      }
+    },
+    "por_reporte_corpus": {
+      "mejor": 6,
+      "igual": 6,
+      "peor": 6,
+      "sin_dato": 0
+    }
+  },
+  "por_reporte": {
+    "cesvi-31fcbca870": {
+      "en_prueba": {
+        "valor": true
+      },
+      "narracion_dictamen": {
+        "citas": 3,
+        "citas_fuera": 0,
+        "velocidades": 0,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "narracion_reporte": {
+        "citas": 3,
+        "citas_fuera": 0,
+        "velocidades": 0,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "corpus_dictamen": {
+        "datos": 36,
+        "invalidos": 0,
+        "citas": 24,
+        "citas_fuera": 0,
+        "numeros": 12,
+        "numeros_fuera": 1,
+        "numeros_verificados": 11,
+        "vehiculos": 1
+      },
+      "corpus_reporte": {
+        "datos": 34,
+        "invalidos": 0,
+        "citas": 23,
+        "citas_fuera": 0,
+        "numeros": 7,
+        "numeros_fuera": 0,
+        "numeros_verificados": 7,
+        "vehiculos": 1
+      }
+    },
+    "cesvi-bdf8899ada": {
+      "en_prueba": {
+        "valor": true
+      },
+      "narracion_dictamen": {
+        "citas": 6,
+        "citas_fuera": 6,
+        "velocidades": 2,
+        "velocidades_fuera": 2,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "narracion_reporte": {
+        "citas": 7,
+        "citas_fuera": 7,
+        "velocidades": 2,
+        "velocidades_fuera": 2,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "corpus_dictamen": {
+        "datos": 37,
+        "invalidos": 0,
+        "citas": 22,
+        "citas_fuera": 9,
+        "numeros": 7,
+        "numeros_fuera": 5,
+        "numeros_verificados": 2,
+        "vehiculos": 2
+      },
+      "corpus_reporte": {
+        "datos": 19,
+        "invalidos": 0,
+        "citas": 10,
+        "citas_fuera": 2,
+        "numeros": 3,
+        "numeros_fuera": 0,
+        "numeros_verificados": 3,
+        "vehiculos": 2
+      }
+    },
+    "cesvi-0221ee4ec4": {
+      "en_prueba": {
+        "valor": true
+      },
+      "corpus_dictamen": {
+        "datos": 47,
+        "invalidos": 0,
+        "citas": 26,
+        "citas_fuera": 0,
+        "numeros": 10,
+        "numeros_fuera": 3,
+        "numeros_verificados": 7,
+        "vehiculos": 2
+      },
+      "corpus_reporte": {
+        "datos": 45,
+        "invalidos": 0,
+        "citas": 26,
+        "citas_fuera": 1,
+        "numeros": 8,
+        "numeros_fuera": 2,
+        "numeros_verificados": 6,
+        "vehiculos": 2
+      },
+      "narracion_dictamen": {
+        "citas": 4,
+        "citas_fuera": 0,
+        "velocidades": 0,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "narracion_reporte": {
+        "citas": 4,
+        "citas_fuera": 0,
+        "velocidades": 0,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      }
+    },
+    "cesvi-65daf4b688": {
+      "en_prueba": {
+        "valor": true
+      },
+      "narracion_dictamen": {
+        "citas": 4,
+        "citas_fuera": 0,
+        "velocidades": 0,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "narracion_reporte": {
+        "citas": 4,
+        "citas_fuera": 0,
+        "velocidades": 0,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "corpus_dictamen": {
+        "datos": 49,
+        "invalidos": 0,
+        "citas": 23,
+        "citas_fuera": 0,
+        "numeros": 4,
+        "numeros_fuera": 0,
+        "numeros_verificados": 4,
+        "vehiculos": 2
+      },
+      "corpus_reporte": {
+        "datos": 49,
+        "invalidos": 0,
+        "citas": 25,
+        "citas_fuera": 0,
+        "numeros": 5,
+        "numeros_fuera": 0,
+        "numeros_verificados": 5,
+        "vehiculos": 2
+      }
+    },
+    "cesvi-5242a129c5": {
+      "en_prueba": {
+        "valor": true
+      },
+      "narracion_dictamen": {
+        "citas": 0,
+        "citas_fuera": 0,
+        "velocidades": 0,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "narracion_reporte": {
+        "citas": 5,
+        "citas_fuera": 0,
+        "velocidades": 4,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "corpus_dictamen": {
+        "datos": 55,
+        "invalidos": 0,
+        "citas": 20,
+        "citas_fuera": 0,
+        "numeros": 14,
+        "numeros_fuera": 1,
+        "numeros_verificados": 13,
+        "vehiculos": 2
+      },
+      "corpus_reporte": {
+        "datos": 53,
+        "invalidos": 0,
+        "citas": 26,
+        "citas_fuera": 0,
+        "numeros": 14,
+        "numeros_fuera": 0,
+        "numeros_verificados": 14,
+        "vehiculos": 2
+      }
+    },
+    "cesvi-2251d90ba3": {
+      "en_prueba": {
+        "valor": true
+      },
+      "narracion_dictamen": {
+        "citas": 3,
+        "citas_fuera": 0,
+        "velocidades": 0,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "narracion_reporte": {
+        "citas": 1,
+        "citas_fuera": 0,
+        "velocidades": 0,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "corpus_dictamen": {
+        "datos": 66,
+        "invalidos": 0,
+        "citas": 31,
+        "citas_fuera": 0,
+        "numeros": 5,
+        "numeros_fuera": 0,
+        "numeros_verificados": 5,
+        "vehiculos": 2
+      },
+      "corpus_reporte": {
+        "datos": 62,
+        "invalidos": 0,
+        "citas": 27,
+        "citas_fuera": 0,
+        "numeros": 5,
+        "numeros_fuera": 0,
+        "numeros_verificados": 5,
+        "vehiculos": 2
+      }
+    },
+    "cesvi-a8b1cf4c43": {
+      "en_prueba": {
+        "valor": true
+      },
+      "corpus_dictamen": {
+        "datos": 78,
+        "invalidos": 0,
+        "citas": 47,
+        "citas_fuera": 0,
+        "numeros": 24,
+        "numeros_fuera": 15,
+        "numeros_verificados": 9,
+        "vehiculos": 4
+      },
+      "corpus_reporte": {
+        "datos": 73,
+        "invalidos": 0,
+        "citas": 45,
+        "citas_fuera": 1,
+        "numeros": 21,
+        "numeros_fuera": 7,
+        "numeros_verificados": 14,
+        "vehiculos": 4
+      },
+      "narracion_dictamen": {
+        "citas": 8,
+        "citas_fuera": 0,
+        "velocidades": 2,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "narracion_reporte": {
+        "citas": 9,
+        "citas_fuera": 0,
+        "velocidades": 3,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      }
+    },
+    "cesvi-eed00406c6": {
+      "en_prueba": {
+        "valor": true
+      },
+      "corpus_dictamen": {
+        "datos": 40,
+        "invalidos": 0,
+        "citas": 22,
+        "citas_fuera": 3,
+        "numeros": 8,
+        "numeros_fuera": 5,
+        "numeros_verificados": 3,
+        "vehiculos": 4
+      },
+      "corpus_reporte": {
+        "datos": 58,
+        "invalidos": 0,
+        "citas": 36,
+        "citas_fuera": 2,
+        "numeros": 9,
+        "numeros_fuera": 4,
+        "numeros_verificados": 5,
+        "vehiculos": 4
+      },
+      "narracion_dictamen": {
+        "citas": 7,
+        "citas_fuera": 0,
+        "velocidades": 2,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "narracion_reporte": {
+        "citas": 9,
+        "citas_fuera": 0,
+        "velocidades": 3,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      }
+    },
+    "cesvi-9babee8d11": {
+      "en_prueba": {
+        "valor": true
+      },
+      "narracion_dictamen": {
+        "citas": 7,
+        "citas_fuera": 0,
+        "velocidades": 0,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "narracion_reporte": {
+        "citas": 6,
+        "citas_fuera": 0,
+        "velocidades": 0,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "corpus_dictamen": {
+        "datos": 41,
+        "invalidos": 0,
+        "citas": 20,
+        "citas_fuera": 0,
+        "numeros": 4,
+        "numeros_fuera": 0,
+        "numeros_verificados": 4,
+        "vehiculos": 2
+      },
+      "corpus_reporte": {
+        "datos": 39,
+        "invalidos": 0,
+        "citas": 19,
+        "citas_fuera": 0,
+        "numeros": 4,
+        "numeros_fuera": 0,
+        "numeros_verificados": 4,
+        "vehiculos": 2
+      }
+    },
+    "cesvi-b641fb6657": {
+      "en_prueba": {
+        "valor": true
+      },
+      "narracion_dictamen": {
+        "citas": 1,
+        "citas_fuera": 0,
+        "velocidades": 0,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "narracion_reporte": {
+        "citas": 1,
+        "citas_fuera": 0,
+        "velocidades": 0,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "corpus_dictamen": {
+        "datos": 26,
+        "invalidos": 1,
+        "citas": 13,
+        "citas_fuera": 0,
+        "numeros": 1,
+        "numeros_fuera": 0,
+        "numeros_verificados": 1,
+        "vehiculos": 1
+      },
+      "corpus_reporte": {
+        "datos": 24,
+        "invalidos": 0,
+        "citas": 14,
+        "citas_fuera": 0,
+        "numeros": 1,
+        "numeros_fuera": 0,
+        "numeros_verificados": 1,
+        "vehiculos": 1
+      }
+    },
+    "cesvi-b7ca573795": {
+      "en_prueba": {
+        "valor": true
+      },
+      "corpus_dictamen": {
+        "datos": 60,
+        "invalidos": 0,
+        "citas": 32,
+        "citas_fuera": 1,
+        "numeros": 14,
+        "numeros_fuera": 2,
+        "numeros_verificados": 12,
+        "vehiculos": 2
+      },
+      "corpus_reporte": {
+        "datos": 55,
+        "invalidos": 0,
+        "citas": 30,
+        "citas_fuera": 1,
+        "numeros": 14,
+        "numeros_fuera": 3,
+        "numeros_verificados": 11,
+        "vehiculos": 2
+      },
+      "narracion_dictamen": {
+        "citas": 7,
+        "citas_fuera": 0,
+        "velocidades": 1,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "narracion_reporte": {
+        "citas": 7,
+        "citas_fuera": 0,
+        "velocidades": 1,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      }
+    },
+    "cesvi-5db0896348": {
+      "en_prueba": {
+        "valor": true
+      },
+      "narracion_dictamen": {
+        "citas": 7,
+        "citas_fuera": 0,
+        "velocidades": 2,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "narracion_reporte": {
+        "citas": 8,
+        "citas_fuera": 0,
+        "velocidades": 1,
+        "velocidades_fuera": 1,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "corpus_dictamen": {
+        "datos": 42,
+        "invalidos": 0,
+        "citas": 37,
+        "citas_fuera": 0,
+        "numeros": 15,
+        "numeros_fuera": 5,
+        "numeros_verificados": 10,
+        "vehiculos": 2
+      },
+      "corpus_reporte": {
+        "datos": 38,
+        "invalidos": 1,
+        "citas": 28,
+        "citas_fuera": 0,
+        "numeros": 11,
+        "numeros_fuera": 4,
+        "numeros_verificados": 7,
+        "vehiculos": 2
+      }
+    },
+    "cesvi-31bfdf3ac3": {
+      "en_prueba": {
+        "valor": false
+      },
+      "narracion_dictamen": {
+        "citas": 7,
+        "citas_fuera": 0,
+        "velocidades": 3,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "narracion_reporte": {
+        "citas": 7,
+        "citas_fuera": 0,
+        "velocidades": 3,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "corpus_dictamen": {
+        "datos": 31,
+        "invalidos": 0,
+        "citas": 18,
+        "citas_fuera": 0,
+        "numeros": 16,
+        "numeros_fuera": 9,
+        "numeros_verificados": 7,
+        "vehiculos": 1
+      },
+      "corpus_reporte": {
+        "datos": 36,
+        "invalidos": 0,
+        "citas": 17,
+        "citas_fuera": 0,
+        "numeros": 16,
+        "numeros_fuera": 8,
+        "numeros_verificados": 8,
+        "vehiculos": 1
+      }
+    },
+    "cesvi-d6cb01f497": {
+      "en_prueba": {
+        "valor": false
+      },
+      "corpus_dictamen": {
+        "datos": 43,
+        "invalidos": 0,
+        "citas": 23,
+        "citas_fuera": 0,
+        "numeros": 6,
+        "numeros_fuera": 1,
+        "numeros_verificados": 5,
+        "vehiculos": 2
+      },
+      "corpus_reporte": {
+        "datos": 46,
+        "invalidos": 0,
+        "citas": 26,
+        "citas_fuera": 0,
+        "numeros": 6,
+        "numeros_fuera": 2,
+        "numeros_verificados": 4,
+        "vehiculos": 2
+      },
+      "narracion_dictamen": {
+        "citas": 4,
+        "citas_fuera": 0,
+        "velocidades": 1,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "narracion_reporte": {
+        "citas": 3,
+        "citas_fuera": 0,
+        "velocidades": 1,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      }
+    },
+    "cesvi-abd8e947a8": {
+      "en_prueba": {
+        "valor": false
+      },
+      "narracion_dictamen": {
+        "citas": 10,
+        "citas_fuera": 0,
+        "velocidades": 4,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "narracion_reporte": {
+        "citas": 8,
+        "citas_fuera": 0,
+        "velocidades": 2,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "corpus_dictamen": {
+        "datos": 68,
+        "invalidos": 0,
+        "citas": 43,
+        "citas_fuera": 0,
+        "numeros": 22,
+        "numeros_fuera": 2,
+        "numeros_verificados": 20,
+        "vehiculos": 2
+      },
+      "corpus_reporte": {
+        "datos": 66,
+        "invalidos": 0,
+        "citas": 34,
+        "citas_fuera": 0,
+        "numeros": 16,
+        "numeros_fuera": 6,
+        "numeros_verificados": 10,
+        "vehiculos": 2
+      }
+    },
+    "cesvi-af2196f0fc": {
+      "en_prueba": {
+        "valor": true
+      },
+      "corpus_dictamen": {
+        "datos": 43,
+        "invalidos": 0,
+        "citas": 20,
+        "citas_fuera": 0,
+        "numeros": 2,
+        "numeros_fuera": 0,
+        "numeros_verificados": 2,
+        "vehiculos": 2
+      },
+      "corpus_reporte": {
+        "datos": 42,
+        "invalidos": 0,
+        "citas": 19,
+        "citas_fuera": 0,
+        "numeros": 2,
+        "numeros_fuera": 0,
+        "numeros_verificados": 2,
+        "vehiculos": 2
+      },
+      "narracion_dictamen": {
+        "citas": 4,
+        "citas_fuera": 0,
+        "velocidades": 0,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "narracion_reporte": {
+        "citas": 4,
+        "citas_fuera": 0,
+        "velocidades": 0,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      }
+    },
+    "cesvi-aaf88fb889": {
+      "en_prueba": {
+        "valor": false
+      },
+      "narracion_dictamen": {
+        "citas": 6,
+        "citas_fuera": 0,
+        "velocidades": 1,
+        "velocidades_fuera": 1,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "narracion_reporte": {
+        "citas": 6,
+        "citas_fuera": 0,
+        "velocidades": 2,
+        "velocidades_fuera": 1,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "corpus_dictamen": {
+        "datos": 58,
+        "invalidos": 1,
+        "citas": 32,
+        "citas_fuera": 0,
+        "numeros": 22,
+        "numeros_fuera": 12,
+        "numeros_verificados": 10,
+        "vehiculos": 2
+      },
+      "corpus_reporte": {
+        "datos": 67,
+        "invalidos": 0,
+        "citas": 38,
+        "citas_fuera": 0,
+        "numeros": 17,
+        "numeros_fuera": 7,
+        "numeros_verificados": 10,
+        "vehiculos": 2
+      }
+    },
+    "cesvi-6f70c56733": {
+      "en_prueba": {
+        "valor": true
+      },
+      "narracion_dictamen": {
+        "citas": 2,
+        "citas_fuera": 0,
+        "velocidades": 0,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "narracion_reporte": {
+        "citas": 2,
+        "citas_fuera": 0,
+        "velocidades": 0,
+        "velocidades_fuera": 0,
+        "fugas": 0,
+        "solo_conclusiones": false
+      },
+      "corpus_dictamen": {
+        "datos": 17,
+        "invalidos": 0,
+        "citas": 11,
+        "citas_fuera": 0,
+        "numeros": 1,
+        "numeros_fuera": 0,
+        "numeros_verificados": 1,
+        "vehiculos": 1
+      },
+      "corpus_reporte": {
+        "datos": 21,
+        "invalidos": 0,
+        "citas": 14,
+        "citas_fuera": 0,
+        "numeros": 1,
+        "numeros_fuera": 0,
+        "numeros_verificados": 1,
+        "vehiculos": 1
+      }
+    }
+  }
+}
