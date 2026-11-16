@@ -35,7 +35,7 @@ export function velocidadSupuestaEnReversa(): Record<string, unknown> {
     rango: [REVERSA_KMH.p10, REVERSA_KMH.p90],
     fuente: "supuesto",
     confianza: 0.5,
-    nota: `Supuesto: mediana de la velocidad máxima en ${REVERSA_MANIOBRAS} maniobras de reversa en uso real (${REVERSA_FUENTE}); rango p10–p90.`,
+    nota: `Supuesto: mediana de la velocidad máxima en ${REVERSA_MANIOBRAS} maniobras de reversa en uso real (${REVERSA_FUENTE}); el rango es donde cae el 80 % de las maniobras.`,
   };
 }
 

@@ -8,6 +8,7 @@ Reglas de trabajo: `CLAUDE.md`. Especificación: `PLAN.md`.
 > **El estado en dos páginas está en [`docs/ESTADO.md`](ESTADO.md).** Esta sección conserva, además, la historia de cada tramo: lo vigente es el primer bloque («Ahora») y lo que diga `ESTADO.md`.
 
 - **Ahora: plan final v4** (René, 2026-11-07; `docs/cesvi/PLAN-CESVI.md`). CESVI pidió el 3D en Unity, puntos intermedios del choque, objetos que se mueven y un terreno que afecta la física. Trabajan dos frentes en paralelo, con bitácora propia: [`docs/progress/U.md`](progress/U.md) y [`docs/progress/W.md`](progress/W.md). Este archivo queda como índice, y lo que sigue abajo es historia del plan v3 (`docs/historial/PLAN-CESVI-v3.md`).
+  - **Ronda 2 con personas (René, 2026-11-16):** Opus hizo el bloque A (A2, A3, A4, A5 y A7: #248) y la pasada B de correcciones (`docs/cesvi/ronda-2/pasada.md`), y dejó C planeado sin gastar API (`docs/cesvi/ronda-2/narraciones.md`). A1, A6, la dirección visual y las narraciones en producción son de Fable: `docs/cesvi/ronda-2/para-fable.md`.
   - **W9 · T6.5 (2026-11-15):** las 12 relecturas de R12b grabadas (0.1845 USD reales). La relectura dice también los números descartados, y solo se usa si rechaza menos y no trae menos datos verificados: con eso ninguna cifra de la E-R4 cambia. Gasto de W9: 0.538 de 20 USD. Detalle en [`docs/progress/W.md`](progress/W.md), «W9».
   - **W9 · T6.6 (a) (2026-11-15):** «reporte» en vez de «dictamen» en los prompts, medido en 18 reportes (0.8686 USD reales; los 2 restantes no cabían bajo 1 USD): rechaza menos (números fuera 61 → 43) pero trae menos números verificados (126 → 117), y por reporte salen 6 mejores, 6 iguales y 6 peores. No mejora: no se hace (b) y los prompts no cambian. Gasto de W9: 1.4066 de 20 USD. Detalle en [`docs/progress/W.md`](progress/W.md).
   - **Tope de Claude (René, 2026-11-15):** `CROQUIS_LLM_DAILY_BUDGET_USD` = 10 USD en Vercel (Production). `/api/version` dice el tope con que quedó cada despliegue. Costo real medido de la secuencia de la demo (caso nuevo, una importación y dos relecturas): unos 0.20 USD.
@@ -2458,6 +2459,7 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 
 ### Endurecimiento pendiente
 
+- **Pasar de «Daños» a «Los números» congela la página más de 15 s** (pasada de la ronda 2, 2026-11-16; `docs/cesvi/ronda-2/capturas/antes/claro/pasada.json`, en producción y en el build local). Sospecha: `reconstruccionContraCesvi` corre el solver en el hilo principal. Medirlo y moverlo a un worker no cambia ninguna cifra.
 - **Tanda 4 (2026-11-15), lo que queda del tope de gasto y los encabezados:**
   - La política de contenido (`Content-Security-Policy`) está en modo de solo reporte. Falta recorrer un caso completo (mapa, 3D de Unity, PDF) con la consola abierta y, sin avisos, volverla obligatoria.
   - `/api/cesvi/hecho` y `/api/cesvi/consideraciones` no las llama ninguna pantalla. Quedan protegidas como las demás; falta decidir si se retiran.

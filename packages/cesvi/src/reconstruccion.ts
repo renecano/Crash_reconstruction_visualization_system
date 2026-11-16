@@ -1248,7 +1248,7 @@ export const MUESTRAS_DE_REFERENCIA = 12;
 /** «p10–p90 de 32 simulaciones»; sin el dato, «p10–p90 de las simulaciones». */
 export function notaDeMuestras(r: Pick<Reconstruccion, "resultado">): string {
   const m = muestrasDe(r);
-  return m ? `p10–p90 de ${m.inversion} simulaciones` : "p10–p90 de las simulaciones";
+  return m ? `rango del 80 % de ${m.inversion} simulaciones` : "rango del 80 % de las simulaciones";
 }
 
 /**
@@ -1291,7 +1291,7 @@ export function especReconstruida(r: Reconstruccion): Json {
         : {}),
       fuente: "supuesto",
       confianza: 0.7,
-      nota: "Velocidad que reproduce la evidencia del perito (inversión de Croquis, p10–p90 en el rango).",
+      nota: "Velocidad que reproduce la evidencia del perito (Croquis la ajusta a la evidencia; el rango es donde cae el 80 % de las simulaciones).",
     };
   }
   return spec;

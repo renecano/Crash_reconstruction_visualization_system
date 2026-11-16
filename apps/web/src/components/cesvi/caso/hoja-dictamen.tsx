@@ -57,7 +57,7 @@ export function HojaDictamen({
           data-testid="sello-validado"
         >
           <span className="text-[1.1rem] font-bold tracking-[0.2em]">VALIDADO</span>
-          <span className="font-mono text-[0.625rem]">SHA-256 {firma.huella}</span>
+          <span className="font-mono text-[0.625rem]">Huella digital (SHA-256) {firma.huella}</span>
         </div>
       ) : (
         // Un dibujo, no un texto: es una marca de agua y no se lee como parte del dictamen.

@@ -10,7 +10,6 @@ import {
   formato as F,
   impactosEnMapa,
   trayectoriasEnMapa,
-  VERSION_PROMPT_ESCENA,
   type Expediente,
   type Reconstruccion,
   type SupuestoDeclarado,
@@ -247,7 +246,7 @@ export function DictamenCaso({
       estructuraCesvi,
       contraDeformacion: contra,
       trazabilidad: {
-        metodo: `solver de Croquis ${String(reconstruccion.resultado.version_resultado ?? "")}, lectura ${VERSION_PROMPT_ESCENA}, verificación con el método de CESVI`,
+        metodo: `reconstrucción física de Croquis (versión ${String(reconstruccion.resultado.version_resultado ?? "")}) y verificación con el método de CESVI`,
         huella: huellaDelCaso(expediente, narracion),
       },
       supuestos: supuestos ?? [],
@@ -329,7 +328,7 @@ export function DictamenCaso({
     });
   };
   const pistaExportar = pedidoExportar
-    ? "Elige cómo exportar: PDF, Word o el archivo .croquis."
+    ? "Elige cómo exportar: PDF, Word o el archivo del caso."
     : null;
   const vPico = protagonista(reconstruccion);
   const idPico = vPico ? String(vPico.vehiculo) : null;
@@ -521,16 +520,18 @@ export function DictamenCaso({
             className="boton-secundario boton-compacto"
             onClick={acciones.guardarArchivo}
             data-testid="guardar-caso"
+            title="Descarga el caso completo para abrirlo después en Croquis"
           >
-            .croquis
+            Descargar el caso
           </button>
           <button
             type="button"
             className="boton-secundario boton-compacto"
             onClick={acciones.guardarAqui}
             data-testid="guardar-en-equipo"
+            title="Lo guarda en este navegador, en la lista de casos"
           >
-            Guardar aquí
+            Guardar en este navegador
           </button>
         </div>
         {acciones.aviso ? (

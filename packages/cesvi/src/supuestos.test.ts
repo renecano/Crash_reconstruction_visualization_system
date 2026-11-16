@@ -77,7 +77,7 @@ describe("los supuestos declarados", () => {
     expect(conRestos.justificacion).toMatch(/^Supuesto del método de restos de CESVI/);
     expect(conRestos.incertidumbre).toMatch(/^±10 m: 10 veces la de una posición medida/);
     const sinRestos = supuestosDeclarados(caso(false)).find((x) => x.clave === "reposo-V2")!;
-    expect(sinRestos.justificacion).toBe("Lo supone el perito: el reporte no da dónde quedó.");
+    expect(sinRestos.justificacion).toBe("Lo supone el perito: el caso no dice dónde quedó.");
   });
 
   it("los tres supuestos del impacto van con su rango y su fuente (ADR 0139)", () => {

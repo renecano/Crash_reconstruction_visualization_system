@@ -950,7 +950,7 @@ export function RecorridoCaso({
           Escribir la narración del hecho
         </button>
         <label className="boton-secundario cursor-pointer">
-          Abrir un caso guardado (.croquis)
+          Abrir un caso guardado
           <input
             type="file"
             accept={ACEPTA_CASO}
@@ -963,9 +963,6 @@ export function RecorridoCaso({
             data-testid="abrir-caso"
           />
         </label>
-        <span className="t-nota w-full text-texto-3">
-          Los archivos de caso de antes (.json) también se abren.
-        </span>
       </div>
     ) : null;
 
@@ -1109,6 +1106,9 @@ export function RecorridoCaso({
           {r?.hipotesis ? (
             <ElegirHipotesis
               r={r}
+              nombres={Object.fromEntries(
+                (expediente?.vehiculos ?? []).map((v) => [v.id, nombreLab(v.id)]),
+              )}
               elegida={hipotesis}
               onElegir={(clave) => {
                 setHipotesis(clave);
@@ -1434,7 +1434,7 @@ export function RecorridoCaso({
       >
         <main
           ref={panelPaso}
-          className={`flex min-h-0 min-w-0 flex-col gap-5 lg:overflow-y-auto ${pico ? "escena-hoja z-10 gap-3 p-5 lg:w-[456px] lg:shrink-0 lg:px-7 lg:pt-5 lg:pb-7" : grande ? "lg:w-[440px] lg:shrink-0" : "lg:flex-1"} ${hojaAncha ? "lg:-mx-7 lg:-my-7 lg:px-7 lg:py-7" : ""}`}
+          className={`flex min-h-0 min-w-0 shrink-0 flex-col gap-5 lg:shrink lg:overflow-y-auto ${pico ? "escena-hoja z-10 gap-3 p-5 lg:w-[456px] lg:shrink-0 lg:px-7 lg:pt-5 lg:pb-7" : grande ? "lg:w-[440px] lg:shrink-0" : "lg:flex-1"} ${hojaAncha ? "lg:-mx-7 lg:-my-7 lg:px-7 lg:py-7" : ""}`}
           aria-label={pasos[paso]}
           data-testid="panel-paso"
           data-paso={actual + 1}
@@ -1459,7 +1459,8 @@ export function RecorridoCaso({
                   >
                     <p className="t-nota">
                       <b className="text-texto">
-                        {enc.vehiculos[0]} y {enc.vehiculos[1]} quedaron encimados
+                        {nombreLab(enc.vehiculos[0]!)} y {nombreLab(enc.vehiculos[1]!)} quedaron
+                        encimados
                       </b>{" "}
                       en su posición final ({F.metros(enc.traslape_m)}). Dos vehículos en reposo no
                       ocupan el mismo lugar.

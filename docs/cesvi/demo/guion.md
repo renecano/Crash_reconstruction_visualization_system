@@ -38,9 +38,12 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 
 > Lista → «Narrar un hecho nuevo» → paso 2 → «Usar una narración de ejemplo» (o una narración que dicte un perito) → «Leer» (Claude, unos 13 s).
 
-- **Cada dato con su cita:** lo que la narración no dice queda como supuesto, a la vista. Los datos personales se quitan antes de enviar el texto.
-- **Colocar:** una pregunta a la vez en el mapa (dónde fue, por dónde venía cada vehículo, dónde quedó).
-- **Reconstruir y ver en 3D** (unos 5 s; el 3D ya está en caché).
+- **Cada dato con su cita:** lo que la narración no dice queda como supuesto, a la vista. Los datos personales se quitan antes de enviar el texto. «Lo que Croquis leyó» enseña los vehículos y los impactos en orden, con la letra de cada vehículo y su «supuesto».
+- **Las preguntas no sacan del cuestionario:** «Lo coloco en el mapa» se anota y la colocación se hace en «La escena».
+- **Colocar:** una pregunta a la vez en el mapa (dónde fue, por dónde venía cada vehículo, dónde quedó). Si conviene, «Más herramientas» → «Medir una distancia»: la línea sigue al puntero con los metros en vivo; Esc termina.
+- **Reconstruir y ver en 3D** (unos 5 s; el 3D ya está en caché). La reconstrucción ya no enseña la bitácora de los agentes: es un registro interno.
+
+**Ejemplos para elegir (pendiente):** cuando Fable los pruebe en producción, «Usar una narración de ejemplo» ofrecerá cinco, cada uno con una línea de lo que muestra (`docs/cesvi/ronda-2/narraciones.md`). Para la demo: el 2 (alcance con la deformación medida: el método de CESVI y dos hipótesis) o el 3 (carambola de noche con lluvia). Hasta entonces, la del Jetta y el Camaro.
 
 **Plan B:** si Claude no responde, la pantalla lo dice y conserva la narración; se sigue con el caso de AXA o se llena la escena a mano.
 

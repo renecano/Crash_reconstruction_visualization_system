@@ -130,8 +130,8 @@ export function MaquetaCaso({
           </span>
         ) : null}
         <span>
-          {METODO.reconstruccion}: la simulación con las velocidades ajustadas; puede diferir del
-          p50 de las simulaciones con incertidumbre.
+          {METODO.reconstruccion}: la simulación con las velocidades ajustadas; puede diferir de la
+          mediana de las simulaciones con incertidumbre.
         </span>
         <span className="text-texto-3">
           Más naranja, más rápido · siluetas cada 0.4 s · reposo punteado.

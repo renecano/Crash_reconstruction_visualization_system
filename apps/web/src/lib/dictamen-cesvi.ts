@@ -454,7 +454,7 @@ export function dictamenContenido(d: DatosDictamen): Content[] {
   if (d.trazabilidad) {
     const t = d.trazabilidad;
     out.push({
-      text: `Trazabilidad: método ${t.metodo} · huella de entradas ${t.huella} · comparación ${t.comparacion} · validó ${t.valido}.`,
+      text: `Trazabilidad: método ${t.metodo} · huella digital de los datos (SHA-256) ${t.huella} · comparación ${t.comparacion} · validó ${t.valido}.`,
       fontSize: 7,
       color: "#555555",
       margin: [0, 12, 0, 0],

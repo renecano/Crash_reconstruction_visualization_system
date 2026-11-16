@@ -203,7 +203,7 @@ export function ListaCasos({
               data-testid="abrir-archivo-casos"
             >
               <span className="text-[1.2rem] font-semibold">Abrir archivo</span>
-              <span className="t-nota">.croquis</span>
+              <span className="t-nota">Un caso que descargaste de Croquis</span>
               <input
                 type="file"
                 accept=".croquis,.json,application/json"

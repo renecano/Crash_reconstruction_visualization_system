@@ -5,6 +5,7 @@ import { escenaDeNarracion, type SalidaCorpus } from "@croquis/cesvi";
 import { describe, expect, it } from "vitest";
 import { casoAxa } from "./axa-reconstruccion";
 import {
+  conNombres,
   impactosEnPalabras,
   marcarRelato,
   metaDelHecho,
@@ -53,6 +54,23 @@ describe("El hecho (Laboratorio §8)", () => {
     expect(i[0]!.texto).not.toMatch(/V\d|_/);
     // En AXA, B alcanza a A: el orden de los vehículos es el del impacto leído.
     expect(impactosEnPalabras(axa.escena!.expediente)[0]!.texto).toMatch(/^B con A/);
+  });
+
+  it("el tramo es un nombre, no una frase del relato (ronda 2, B)", () => {
+    const e = ejemplo.expediente;
+    expect(metaDelHecho(e, "El tramo está construido en concreto hidráulico.")).not.toContainEqual(
+      expect.stringMatching(/^Tramo/),
+    );
+    expect(metaDelHecho(e, "Sobre el tramo Los Mochis-Navojoa, en Ahome.")).toContain(
+      "Tramo Los Mochis-Navojoa",
+    );
+  });
+
+  it("los ids internos se dicen con el nombre y la letra del panel (ronda 2, B)", () => {
+    const e = ejemplo.expediente;
+    expect(conNombres("¿Dónde quedó V1 al final?", e)).toBe("¿Dónde quedó VW Jetta (A) al final?");
+    expect(conNombres("V1 con V2, luego V3 con V2", e, true)).toBe("A con B, luego V3 con B");
+    expect(conNombres("Sin ids.", e)).toBe("Sin ids.");
   });
 
   it("el relato marcado: cada cita leída, cada vehículo y cada medida, sin perder texto", () => {

@@ -45,7 +45,7 @@ const usaMetodoDeRestos = (e: Expediente) =>
 export function justificacionReposo(e: Expediente): string {
   return usaMetodoDeRestos(e)
     ? "Supuesto del método de restos de CESVI: los vehículos se desplazan juntos después del impacto, así que queda junto al otro."
-    : "Lo supone el perito: el reporte no da dónde quedó.";
+    : "Lo supone el perito: el caso no dice dónde quedó.";
 }
 
 /** La incertidumbre de un reposo supuesto: `PRIORIDAD` veces la de una posición medida. */
@@ -74,7 +74,7 @@ export function supuestosDeclarados(
         ? `Ficha técnica de ${titulo(`${f.marca} ${f.modelo}`)} ${f.anio}: ${f.regla} (data/SOURCES.md).`
         : tipica && tipica.valor === v.masa.valor
           ? `Valor típico de su clase (${tipica.fuente}).`
-          : "Supuesta: el reporte no la da.",
+          : "Supuesta: el caso no la da.",
       incertidumbre: f
         ? `La ficha va de ${kg(f.peso_vacio_kg[0]!)} a ${kg(f.peso_vacio_kg[1]!)}; en el rango de las velocidades, ${pct(MASS_SPREAD)}.`
         : `En el rango de las velocidades, ${pct(MASS_SPREAD)}.`,
@@ -90,7 +90,7 @@ export function supuestosDeclarados(
       corto: `±${SIGMA_REPOSO_SUPUESTO_M} m`,
       vehiculo: p.vehiculo,
       justificacion: justificacionReposo(e),
-      incertidumbre: `±${SIGMA_REPOSO_SUPUESTO_M} m: ${PRIORIDAD} veces la de una posición medida, así que la deformación medida pesa más (ADR 0091).`,
+      incertidumbre: `±${SIGMA_REPOSO_SUPUESTO_M} m: ${PRIORIDAD} veces la de una posición medida, así que la deformación medida pesa más.`,
     });
   }
   if (!r) return out;
@@ -110,7 +110,7 @@ export function supuestosDeclarados(
       que: `Posición inicial de ${id}`,
       valor: pi.procedencia.nota?.replace(/\.$/, "") ?? "supuesta por Croquis",
       vehiculo: id,
-      justificacion: "El reporte no la da: es el punto de partida de la reconstrucción.",
+      justificacion: "El caso no la da: es el punto de partida de la reconstrucción.",
       incertidumbre: rumboSupuesto
         ? `La evidencia no fija su rumbo de llegada: se usa el que se colocó en el mapa (${grados(Number(rumbo.inicial))}) y en el rango se sortea ±${ANGLE_BOUND_DEG}° alrededor de él. La inversión ajusta su velocidad.`
         : `La inversión ajusta su velocidad y su rumbo de llegada (±${ANGLE_BOUND_DEG}°).`,
@@ -139,7 +139,7 @@ export function supuestosDeclarados(
             },
           }
         : {}),
-      justificacion: `Valor de la literatura para la superficie del caso (${mu.fuente ?? "tabla de fricción del solver"}).`,
+      justificacion: `Valor de la literatura para la superficie del caso (${mu.fuente ?? "tabla de fricción de Croquis"}).`,
       incertidumbre: mu.rango
         ? `En el rango de las velocidades, μ de ${mu.rango[0]} a ${mu.rango[1]}.`
         : "Sin rango.",
@@ -165,8 +165,8 @@ export function supuestosDeclarados(
           }
         : {}),
       justificacion: arrastre.rango
-        ? `Supuesto del solver: el reporte no trae huellas de arrastre que digan que las llantas deslizaron. La fracción sale de la literatura (${arrastre.fuente ?? "Fricke 2010"}).`
-        : "Supuesto del solver: el reporte no trae huellas de arrastre que digan que las llantas deslizaron.",
+        ? `Supuesto de Croquis: el caso no trae huellas de arrastre que digan que las llantas deslizaron. La fracción sale de la literatura (${arrastre.fuente ?? "Fricke 2010"}).`
+        : "Supuesto de Croquis: el caso no trae huellas de arrastre que digan que las llantas deslizaron.",
       incertidumbre: arrastre.rango
         ? mu?.rango
           ? `En el rango de las velocidades, la fracción va de ${arrastre.rango[0]} a ${arrastre.rango[1]} y la fricción de ${mu.rango[0]} a ${mu.rango[1]}: el arrastre, de ${numero(fMin * mu.rango[0], 2)} a ${numero(fMax * mu.rango[1], 2)}.`
@@ -191,7 +191,7 @@ export function supuestosDeclarados(
         minTexto: numero(restitucion.rango[0], 2),
         maxTexto: numero(restitucion.rango[1], 2),
       },
-      justificacion: `Supuesto del solver: cuánto rebotan los vehículos al separarse. El rango sale de pruebas de choque (${restitucion.fuente ?? "literatura"}).`,
+      justificacion: `Supuesto de Croquis: cuánto rebotan los vehículos al separarse. El rango sale de pruebas de choque (${restitucion.fuente ?? "literatura"}).`,
       incertidumbre: `En el rango de las velocidades, e de ${restitucion.rango[0]} a ${restitucion.rango[1]}.`,
     });
   const razon = parametros.relacion_impulso_tangencial;
@@ -208,7 +208,7 @@ export function supuestosDeclarados(
         minTexto: numero(razon.rango[0], 2),
         maxTexto: numero(razon.rango[1], 2),
       },
-      justificacion: `Supuesto del solver: el tope del impulso tangencial entre el normal; solo pesa si los vehículos deslizan uno contra otro. No hay un rango tabulado: ${razon.fuente ?? "se declara con su justificación"}.`,
+      justificacion: `Supuesto de Croquis: el tope del impulso tangencial entre el normal; solo pesa si los vehículos deslizan uno contra otro. No hay un rango tabulado: ${razon.fuente ?? "se declara con su justificación"}.`,
       incertidumbre: `En el rango de las velocidades, de ${razon.rango[0]} a ${razon.rango[1]}.`,
     });
   return out;

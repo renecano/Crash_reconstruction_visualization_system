@@ -101,7 +101,7 @@ describe("el dictamen de una reconstrucción (R8)", () => {
       "Verificación con el método de CESVI",
       "Conclusión del perito",
       "Validación",
-      "huella de las entradas abc123def456",
+      "huella digital de los datos (SHA-256) abc123def456",
     ]);
     expect(t).toContain("vehículo A, marca VW, tipo Jetta");
     const v1 = r.velocidades.find((x) => x.vehiculo === "V1")!.previa!;

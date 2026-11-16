@@ -264,7 +264,7 @@ export function Calculos({
           El reporte imprime A y B en «N/m» y la energía en «Julios», pero divide entre la masa en
           toneladas: eso solo es consistente con A en kN/m, B en kN/m² y la energía en kJ, y así se
           muestran aquí. La de 6 medidas va en su forma de libro, sin las erratas de la fórmula
-          impresa (ADR 0048).
+          impresa.
         </p>
         {mc.ok ? (
           <Formula paso={mc.valor} etiqueta="Con los datos capturados" />

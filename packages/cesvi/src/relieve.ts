@@ -26,7 +26,7 @@ export interface MallaRelieve {
 
 /** Lo que hay que decirle al perito del relieve, siempre junto a él. */
 export const LIMITE_RELIEVE =
-  "Da la pendiente general de la vía, con una muestra cada 10 m (cada 30 m donde el INEGI no tiene LiDAR). No ve una rampa corta, el bombeo ni un tope: esos se marcan aparte.";
+  "Da la pendiente general de la vía, con una muestra cada 10 m (cada 30 m donde el INEGI no tiene levantamiento láser). No ve una rampa corta, el bombeo ni un tope: esos se marcan aparte.";
 
 /**
  * El punto para pedir la malla: el origen de la escena redondeado a 4 decimales (unos 11 m), para

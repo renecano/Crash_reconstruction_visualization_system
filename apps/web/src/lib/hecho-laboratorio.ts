@@ -51,7 +51,8 @@ export function tituloDelHecho(e: Expediente, narracion: string | null): string 
 export function metaDelHecho(e: Expediente, narracion: string | null): string[] {
   const l = e.caso.lugar;
   const lugar = [l?.municipio?.valor, l?.estado?.valor].filter(Boolean).join(", ");
-  const tramo = narracion?.match(/\btramo\s+([^,.;]+)/i)?.[1]?.trim();
+  // Solo el nombre de un tramo («tramo Los Mochis–Navojoa»), no una frase («el tramo está…»).
+  const tramo = narracion?.match(/\b[Tt]ramo\s+([A-ZÁÉÍÓÚÑ][^,.;]*)/)?.[1]?.trim();
   const n = e.vehiculos.length;
   const i = e.impactos?.length ?? 0;
   return [
@@ -59,6 +60,22 @@ export function metaDelHecho(e: Expediente, narracion: string | null): string[] 
     tramo ? `Tramo ${tramo}` : "",
     `${n} ${n === 1 ? "vehículo" : "vehículos"} · ${i} ${i === 1 ? "impacto" : "impactos"}`,
   ].filter(Boolean);
+}
+
+/**
+ * Los ids internos de los vehículos («V1») en un texto para el perito, con el nombre del panel
+ * (ronda 2, B): «¿Dónde quedó VW Jetta (A) al final?». En corto, solo la letra («A con B»).
+ */
+export function conNombres(texto: string, e: Expediente, corto = false): string {
+  return texto.replace(/\bV(\d+)\b/g, (id) => {
+    const k = e.vehiculos.findIndex((v) => v.id === id);
+    if (k < 0) return id;
+    const letra = String.fromCharCode(65 + k);
+    if (corto) return letra;
+    const v = e.vehiculos[k]!;
+    const nombre = [v.marca?.valor, v.modelo?.valor].filter(Boolean).join(" ");
+    return nombre ? `${nombre} (${letra})` : `el vehículo ${letra}`;
+  });
 }
 
 /** La cara de un vehículo, como la dice el perito. */

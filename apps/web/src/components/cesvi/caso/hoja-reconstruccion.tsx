@@ -105,10 +105,10 @@ export function CifraReconstruccion({
           ) : null}
           {quieta ? (
             <p className="t-nota" data-testid="sin-dispersion">
-              Las {muestras} simulaciones dan la misma velocidad: el costo tiene un quiebre en esta
-              solución y no dicen cuánto podría variar.
+              Las {muestras} simulaciones dan la misma velocidad: el ajuste a la evidencia tiene un
+              quiebre en esta solución y no dicen cuánto podría variar.
               {rango?.lineal
-                ? " El rango de arriba es la aproximación lineal del solver."
+                ? " El rango de arriba es una aproximación del cálculo."
                 : " No hay un rango que dar."}
             </p>
           ) : null}

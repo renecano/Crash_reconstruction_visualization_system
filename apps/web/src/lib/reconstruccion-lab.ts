@@ -142,5 +142,5 @@ export function tipImpacto(contacto: string, fuente: string | null): string {
 /** La barra del histograma, en palabras (para su etiqueta). */
 export function textoBarra(b: BarraHistograma): string {
   const sim = `${b.n} ${b.n === 1 ? "simulación" : "simulaciones"}`;
-  return `${b.desde}–${b.desde + 1} km/h: ${sim}, ${b.enRango ? "dentro" : "fuera"} de p10–p90`;
+  return `${b.desde}–${b.desde + 1} km/h: ${sim}, ${b.enRango ? "dentro" : "fuera"} del rango del 80 %`;
 }

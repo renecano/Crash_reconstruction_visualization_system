@@ -2,7 +2,7 @@
 /**
  * R7 (ADR 0070): comparar la declaración de un conductor con la reconstrucción, como complemento
  * opcional. El perito pega la declaración y elige qué vehículo conducía el declarante; Croquis la
- * lee, simula esa versión con el mismo solver y muestra «Qué cambia entre versiones». La versión
+ * lee, simula esa versión con la misma física y muestra «Qué cambia entre versiones». La versión
  * declarada entra al 3D como hipótesis (fantasmas o lado a lado). La sugerencia sale solo si el
  * perito la pide, y él la confirma o la descarta. Sin culpas.
  */
@@ -150,7 +150,7 @@ export function ComparacionDeclaracion({
       {abierta ? (
         <>
           <p className="t-nota">
-            Pega lo que declaró un conductor. Croquis arma esa versión con el mismo solver y la
+            Pega lo que declaró un conductor. Croquis arma esa versión con la misma física y la
             muestra al lado de la reconstrucción. Es lo que dice el conductor, no evidencia; Croquis
             no dice quién tiene razón.
           </p>
