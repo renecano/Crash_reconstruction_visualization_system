@@ -149,6 +149,7 @@ export function VisorCasoUnity({
           escena={escena}
           relieve={r.relieve ?? null}
           activo={activo}
+          dormir={!activo && !presentar}
           camara={camara}
           tiempo={presentar}
           edicion={presentar ? { on: false } : edicion}

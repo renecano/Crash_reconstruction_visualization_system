@@ -165,7 +165,7 @@ for (const tema of ["claro", "oscuro"] as const) {
     await page.getByTestId("nombre-perito").fill("Perito de prueba");
     await page.getByTestId("validar-dictamen").focus();
     await page.keyboard.press("Enter");
-    await expect(page.getByTestId("sello-validado")).toContainText("SHA-256");
+    await expect(page.getByTestId("sello-validado")).toContainText("Huella del documento");
     await expect(page.getByTestId("marca-borrador")).toHaveCount(0);
     await revisa("6-dictamen-firmado");
 

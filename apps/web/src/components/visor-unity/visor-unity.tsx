@@ -63,6 +63,7 @@ export function VisorUnity({
   escena,
   relieve = null,
   activo = true,
+  dormir = false,
   camara = null,
   edicion = null,
   tiempo = null,
@@ -77,6 +78,11 @@ export function VisorUnity({
   relieve?: RelieveCaso;
   /** El 3D está a la vista: si no, la reproducción se pausa. */
   activo?: boolean;
+  /**
+   * Nadie mira el 3D (ni el perito ni Presentar): Unity no dibuja y no carga casos; el último que
+   * llegó se carga al volver, solo si cambió (René, 2026-11-16: la página nunca sin responder).
+   */
+  dormir?: boolean;
   /** La cámara pedida por las pestañas; `n` cambia con cada pedido. */
   camara?: { modo: CamaraVisor; n: number } | null;
   edicion?: EdicionUnity | null;
@@ -155,11 +161,19 @@ export function VisorUnity({
     };
   }, []);
 
-  // Cada escena nueva: el Resultado completo, el paquete y a Unity. El último pedido gana.
+  // Cada escena nueva: el Resultado completo, el paquete y a Unity. El último pedido gana. Con el 3D
+  // dormido se espera; al despertar, solo se carga si la escena o el relieve cambiaron.
   const turno = useRef(0);
+  const pedida = useRef<{ escena: EscenaSpec; relieve: RelieveCaso } | null>(null);
+  const cargando = useRef(false);
+  const [vueltas, setVueltas] = useState(0);
   useEffect(() => {
-    if (!puente) return;
+    if (!puente || dormir) return;
+    if (pedida.current?.escena === escena && pedida.current.relieve === relieve) return;
+    pedida.current = { escena, relieve };
     const mio = ++turno.current;
+    cargando.current = true;
+    puente.despertar();
     (async () => {
       // Unity solo dibuja trayectorias, eventos, daño y personas: la reconstrucción, que llega en
       // milisegundos. El resultado completo (Monte Carlo, inversión, consistencia) llega después y
@@ -192,15 +206,29 @@ export function VisorUnity({
       if (final && mio === turno.current && final !== resultado) {
         cb.current.onApi?.({ ...api, paquete: paqueteDelCaso(escena, final, relieve) });
       }
-    })().catch((e: unknown) => {
-      if (mio !== turno.current) return;
-      // Un caso que Unity no pudo cargar: el respaldo sí lo dibuja. Unity se cierra.
-      setRespaldoPor({ motivo: "no_cargo", aviso: e instanceof Error ? e.message : String(e) });
-      cb.current.onApi?.(null);
-      void puente.cerrar();
-      setPuente(null);
-    });
-  }, [puente, escena, relieve]);
+    })()
+      .finally(() => {
+        if (mio !== turno.current) return;
+        cargando.current = false;
+        // El ciclo de dibujo vuelve a decidirse ahora que terminó la carga.
+        setVueltas((v) => v + 1);
+      })
+      .catch((e: unknown) => {
+        if (mio !== turno.current) return;
+        // Un caso que Unity no pudo cargar: el respaldo sí lo dibuja. Unity se cierra.
+        setRespaldoPor({ motivo: "no_cargo", aviso: e instanceof Error ? e.message : String(e) });
+        cb.current.onApi?.(null);
+        void puente.cerrar();
+        setPuente(null);
+      });
+  }, [puente, escena, relieve, dormir]);
+
+  // Sin nadie mirando y sin una carga en curso, Unity no dibuja: el hilo principal queda libre.
+  useEffect(() => {
+    if (!puente) return;
+    if (dormir && !cargando.current) puente.dormir();
+    else puente.despertar();
+  }, [puente, dormir, vueltas]);
 
   const listo = estado.fase === "listo";
   useEffect(() => {

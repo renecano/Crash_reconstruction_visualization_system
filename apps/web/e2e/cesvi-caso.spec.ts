@@ -223,7 +223,11 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await page.getByTestId("validar-dictamen").click();
   await expect(page.getByTestId("estado-validacion")).toContainText("Validó Perito de prueba");
   // Al firmar cae el sello con la huella y se quita la marca de agua.
-  await expect(page.getByTestId("sello-validado")).toContainText("SHA-256");
+  // René, 2026-11-16: «Huella del documento» en el sello; para qué sirve y cómo comprobarla, abajo.
+  await expect(page.getByTestId("sello-validado")).toContainText("Huella del documento");
+  await expect(page.getByTestId("huella-documento")).toContainText(
+    "sirve para comprobar que nadie modificó este dictamen después de firmarlo",
+  );
   await expect(page.getByTestId("marca-borrador")).toHaveCount(0);
   await expect(page.getByTestId("firma-hoja")).toHaveText("Perito de prueba");
   await page.getByTestId("formato-cesvi").click();

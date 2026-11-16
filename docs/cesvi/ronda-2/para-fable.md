@@ -21,7 +21,13 @@ Esta nota es para que arranques sin releer la conversación.
 - **A1 y A6: primero tres propuestas.** Antes de construir, René quiere tres propuestas para cada pantalla, distintas entre sí de verdad (no variaciones de lo mismo). Cada una con una maqueta o captura, el concepto en dos líneas y qué la hace memorable. Él elige y luego se construye.
   - Nada genérico de IA: ni gradientes morados, ni tarjetas con sombra suave y emojis, ni «✨ IA», ni textos de marketing.
   - Dentro del sistema de diseño: color de señal #FF5B2E, la tipografía y el logo actuales.
-  - René pidió cargar «la skill de diseño de frontend». En esta sesión no hay una con ese nombre: las que hay son `artifact-design` (para páginas de Artifact) y `motionsites-web-builder` (para portadas). Revisa cuáles tienes tú.
+  - **Principios de diseño** (René, 2026-11-16, en lugar de la skill de diseño de frontend, que no existe en estas sesiones):
+    - Una idea visual fuerte por pantalla, no muchas chicas.
+    - Tipografía con jerarquía clara: la cifra o la decisión importante, grande; lo secundario, discreto.
+    - Movimiento que explica (algo que se dibuja, se coloca o se calcula frente al perito), no adorno.
+    - Nada de lo genérico de IA: gradientes morados, tarjetas con sombra suave y emojis, «✨ IA», textos de marketing.
+    - Usar lo que ya es único de Croquis: el mapa real, el croquis de trazo, el 3D con daño, las citas del reporte.
+    - El sistema de la app manda: #FF5B2E, la tipografía y el logo actuales.
 - **A1, «Caso nuevo» (la primera pantalla del hecho):** que en 5 segundos se entienda qué hace Croquis, qué va a pasar paso a paso y qué botón tocar primero.
   - Hoy es `PasoCaso` (`apps/web/src/components/cesvi/caso/pasos.tsx`), que arma `recorrido-caso.tsx` con `actual === 0`.
   - Hoy tiene a la derecha un mapa con «El lugar aún no está marcado · Lo marcas en el paso 3», que ocupa media pantalla y no sirve en ese momento.
@@ -59,11 +65,8 @@ Esta nota es para que arranques sin releer la conversación.
 
 ## Pendientes que no son de diseño
 
-- **Pasar de «Daños» a «Los números» congela la página más de 15 s.**
-  - En el recorrido automático, el clic en «Continuar a los números» se ejecuta y la página deja de responder: ni siquiera se puede capturar. Pasa igual en producción (`capturas/antes/claro/pasada.json`, fallas «paso 6»).
-  - Sospecha: `reconstruccionContraCesvi` corre el solver en el hilo principal (`packages/cesvi/src/contra-metodos.ts` importa `reconstruct`).
-  - Para medirlo y moverlo a un worker no se cambia ninguna cifra. Anotado en `docs/PROGRESS.md`, «Endurecimiento pendiente».
-- **La huella SHA-256 del dictamen firmado se quedó, y René tiene que decidir.** Pidió quitar los hashes, pero el sello «Validado con la huella SHA-256» está en su diseño del dictamen (`docs/cesvi/rediseno/laboratorio/prompt-laboratorio.md`). El CLAUDE.md pide preguntarle antes de quitar algo que está en `docs/cesvi`. Opus solo cambió las palabras a «huella digital (SHA-256)».
+- **Resuelto (#250): la página ya no se congela al cambiar de paso.** Era Unity, no un cálculo: arrancaba y dibujaba en segundo plano. Ahora arranca cuando el perito pide el 3D (o Presentar) y duerme cuando no se ve. Queda MapLibre: su primer dibujo de cada mapa toma unos 230–280 ms (ver «Endurecimiento pendiente»). Mídelo con `apps/web/e2e/medir-pasos.spec.ts` si tocas pasos o mapas: la meta de René es ninguna tarea de más de 100 ms.
+- **El sello del dictamen se queda** (René, 2026-11-16): «Huella del documento: sirve para comprobar que nadie modificó este dictamen después de firmarlo», con el código, el SHA-256 y cómo comprobarla en letra chica (`apps/web/src/lib/huella-documento.ts`).
 
 ## C: las narraciones
 

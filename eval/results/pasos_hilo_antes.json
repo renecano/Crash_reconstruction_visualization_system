@@ -1,0 +1,125 @@
+{
+  "descripcion": "Cuánto se queda sin responder la página al pasar de un paso a otro: la tarea larga más larga del hilo principal (Long Tasks API) en los 3 s que siguen a cada clic en «Siguiente», y cuánto tardó en llegar el paso. AXA y un caso nuevo (narración de ejemplo grabada), con el visor Unity, en Chromium con ventana y GPU (ANGLE d3d11) a 1440×900 en la laptop de René. Meta: ninguna tarea de más de 100 ms.",
+  "script": "apps/web/e2e/medir-pasos.spec.ts",
+  "sitio": "https://croquis-sage.vercel.app",
+  "fecha": "2026-11-16T17:03:03.506Z",
+  "cambios": [
+    {
+      "caso": "axa",
+      "de": 1,
+      "a": 2,
+      "ms_hasta_el_paso": 280,
+      "tarea_mas_larga_ms": 136,
+      "tareas_de_mas_de_100_ms": 1
+    },
+    {
+      "caso": "axa",
+      "de": 2,
+      "a": 3,
+      "ms_hasta_el_paso": 198,
+      "tarea_mas_larga_ms": 121,
+      "tareas_de_mas_de_100_ms": 1
+    },
+    {
+      "caso": "axa",
+      "de": 4,
+      "a": 5,
+      "ms_hasta_el_paso": 584,
+      "tarea_mas_larga_ms": 4902,
+      "tareas_de_mas_de_100_ms": 5,
+      "funciones": [
+        "6184 ms (anónima) f8420cc3-75d9-4ffc-9395-33ee7d7438c6:8",
+        "6173 ms js-to-wasm:iiiiiiiiiiifii:i aee49e70-bce5-4904-8d99-d735e16ff1c1:0",
+        "6173 ms wasm-function[85519] aee49e70-bce5-4904-8d99-d735e16ff1c1:0",
+        "6173 ms wasm-function[85807] aee49e70-bce5-4904-8d99-d735e16ff1c1:0",
+        "6172 ms _JS_CallAsLongAsNoExceptionsSeen f8420cc3-75d9-4ffc-9395-33ee7d7438c6:8",
+        "6168 ms callUserCallback f8420cc3-75d9-4ffc-9395-33ee7d7438c6:8",
+        "6160 ms wasm-function[85520] aee49e70-bce5-4904-8d99-d735e16ff1c1:0",
+        "6158 ms browserIterationFunc f8420cc3-75d9-4ffc-9395-33ee7d7438c6:8",
+        "6158 ms runIter f8420cc3-75d9-4ffc-9395-33ee7d7438c6:8",
+        "6157 ms Browser_mainLoop_runner f8420cc3-75d9-4ffc-9395-33ee7d7438c6:8",
+        "6154 ms wasm-function[81516] aee49e70-bce5-4904-8d99-d735e16ff1c1:0",
+        "6146 ms wasm-function[85804] aee49e70-bce5-4904-8d99-d735e16ff1c1:0",
+        "6145 ms wasm-function[63212] aee49e70-bce5-4904-8d99-d735e16ff1c1:0",
+        "6145 ms invoke_iiii f8420cc3-75d9-4ffc-9395-33ee7d7438c6:8",
+        "6145 ms wasm-function[63197] aee49e70-bce5-4904-8d99-d735e16ff1c1:0",
+        "6145 ms wasm-function[1293] aee49e70-bce5-4904-8d99-d735e16ff1c1:0",
+        "6145 ms wasm-function[82201] aee49e70-bce5-4904-8d99-d735e16ff1c1:0",
+        "6141 ms wasm-function[82204] aee49e70-bce5-4904-8d99-d735e16ff1c1:0",
+        "5064 ms wasm-function[79439] aee49e70-bce5-4904-8d99-d735e16ff1c1:0",
+        "4937 ms wasm-function[66748] aee49e70-bce5-4904-8d99-d735e16ff1c1:0",
+        "4868 ms wasm-function[85815] aee49e70-bce5-4904-8d99-d735e16ff1c1:0",
+        "4868 ms invoke_viiii f8420cc3-75d9-4ffc-9395-33ee7d7438c6:8",
+        "4627 ms wasm-function[24779] aee49e70-bce5-4904-8d99-d735e16ff1c1:0",
+        "4627 ms wasm-function[2726] aee49e70-bce5-4904-8d99-d735e16ff1c1:0",
+        "4627 ms wasm-function[2761] aee49e70-bce5-4904-8d99-d735e16ff1c1:0"
+      ]
+    },
+    {
+      "caso": "axa",
+      "de": 5,
+      "a": 6,
+      "ms_hasta_el_paso": 145,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "axa",
+      "de": 6,
+      "a": 7,
+      "ms_hasta_el_paso": 140,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "axa",
+      "de": 7,
+      "a": 8,
+      "ms_hasta_el_paso": 152,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "nuevo",
+      "de": 1,
+      "a": 2,
+      "ms_hasta_el_paso": 51,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "nuevo",
+      "de": 2,
+      "a": 3,
+      "ms_hasta_el_paso": 105,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "nuevo",
+      "de": 4,
+      "a": 5,
+      "ms_hasta_el_paso": 149,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "nuevo",
+      "de": 5,
+      "a": 6,
+      "ms_hasta_el_paso": 130,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "nuevo",
+      "de": 6,
+      "a": 8,
+      "ms_hasta_el_paso": 127,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    }
+  ],
+  "tarea_mas_larga_de_los_cambios_ms": 4902,
+  "tarea_mas_larga_de_la_visita_ms": 1375
+}
