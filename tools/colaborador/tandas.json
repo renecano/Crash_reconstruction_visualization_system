@@ -33,7 +33,8 @@
           "nombre": "referencias-de-prueba",
           "comando": "node eval/w8_comparar.mjs t3_rtx",
           "minutos": 4,
-          "salidas": ["eval/results/w8/t3_rtx"]
+          "salidas": ["eval/results/w8/t3_rtx"],
+          "limpiar": ["eval/results/w8/t3_rtx"]
         },
         {
           "nombre": "er4-desarrollo",

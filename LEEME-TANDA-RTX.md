@@ -6,7 +6,15 @@ Las pruebas y mediciones pesadas de Croquis no corren en la laptop de René. Est
 
 ## Los 3 pasos
 
-1. **Trae lo último.** En la carpeta del repositorio de Croquis: `git pull` (o el botón de actualizar de tu programa de Git).
+1. **Trae lo último** (solo la primera vez con esta versión; después lo hace sola). En la carpeta del repositorio de Croquis, en una terminal:
+
+   ```
+   git stash push --include-untracked -m "resultados de la corrida anterior"
+   git pull --ff-only
+   ```
+
+   El primer comando guarda aparte los resultados que dejó la corrida anterior (ya están en GitHub; no se borran) para que `git pull` no se niegue. Desde esta versión, el doble clic hace eso solo cuando lo único que estorba son resultados, y se vuelve a lanzar con lo último.
+
 2. **Doble clic en `CORRER-TANDA-EN-RTX.bat`.** Se abre una ventana negra que dice qué paso va y cuánto lleva. No pregunta nada. No la cierres.
 3. **Cuando diga «Avísale a René que ya terminó», avísale.** Los resultados ya están en GitHub, en una rama `resultados/<tanda>-<fecha>` (nunca en `main`). Presiona una tecla para cerrar la ventana.
 
