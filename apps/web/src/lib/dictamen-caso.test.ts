@@ -7,6 +7,7 @@ import {
   conPosicion,
   escenaDeNarracion,
   especDeclarada,
+  limiteDeCobertura,
   especDeExpediente,
   reconstruirExpediente,
   verificacionCesvi,
@@ -111,6 +112,13 @@ describe("el dictamen de una reconstrucción (R8)", () => {
     expect(t).toContain("BORRADOR");
     expect(t).toContain("[el perito debe concluir]");
   }, 60_000);
+
+  it("lleva el límite de cobertura del rango, con la cifra del índice único (Tanda 3)", () => {
+    // La cifra no se escribe aquí: sale de eval/results/cifras.json y cambia sola con cada corrida.
+    expect(r.limites).toContain(limiteDeCobertura());
+    expect(texto(datos())).toContain(limiteDeCobertura().replace(/\s+/g, " "));
+    expect(limiteDeCobertura()).toMatch(/\d+ de \d+ \(\d+\.\d %\)/);
+  });
 
   it("con un cálculo del reporte, la reconstrucción contra él con su diferencia y su porcentaje (ADR 0091)", () => {
     expect(texto(datos())).not.toContain("La reconstrucción contra el reporte de CESVI");
