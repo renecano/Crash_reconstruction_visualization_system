@@ -24,7 +24,7 @@
 | `modoEdicion` | `on`: sí o no; `herramienta`, `vehiculo_id`       | Permite arrastrar objetos o marcar un punto, según la herramienta.                     |
 | `marcadores`  | `visibles`: sí o no                               | Muestra u oculta los puntos de C1: primer golpe, choques intermedios y puntos de paso. |
 
-**`modo`:** `cenital`, `cinematica`, `orbita`, `acera`, `libre` o `conductor:<id del vehículo>`. `acera` es de pie junto al árbol más cercano a la acción.
+**`modo`:** `cenital`, `cinematica`, `orbita`, `acera`, `libre`, `conductor:<id del vehículo>`, `cerca:<id del vehículo>:<azimut°>:<distancia m>:<altura m>` o `persona:<id de la persona>`. `acera` es de pie junto al árbol más cercano a la acción. `cerca` sigue al vehículo desde un azimut contado desde su frente hacia su derecha (la web la usa para «Detrás de A» y para el daño). `persona` sigue a quien va a pie, en bici o en moto, desde su costado.
 
 **`herramienta`:** `mover` (la de omisión: arrastrar un objeto lo mueve, la rueda o dos dedos lo giran, y con mayúsculas la rueda cambia su largo), `punto_inicial`, `choque_intermedio` o `punto_paso` (un clic en el piso marca ese punto). Los puntos de un vehículo llevan su `vehiculo_id`.
 

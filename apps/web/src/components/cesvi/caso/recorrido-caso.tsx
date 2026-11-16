@@ -221,6 +221,12 @@ export function RecorridoCaso({
   const [unityApi, setUnityApi] = useState<ApiVisorUnity | null>(null);
   // Presentar le avisa a Unity el instante de cada capítulo sin pasar por el estado de la página.
   const [canalPresentar] = useState(() => new CanalTiempo());
+  // El instante que comparten la maqueta (2D) y el 3D: al cambiar de pestaña se conserva (A6).
+  const instante = useRef<number | null>(null);
+  const [instanteMaqueta, setInstanteMaqueta] = useState<number | null>(null);
+  const alInstante = useCallback((t: number) => {
+    instante.current = t;
+  }, []);
   // Unity arranca la primera vez que el perito pide el 3D, no en segundo plano: su arranque ocupa el
   // hilo principal unos segundos y dejaba la página sin responder al cambiar de paso (René,
   // 2026-11-16). Una vez arrancado se queda montado; con el 3D oculto duerme.
@@ -1577,6 +1583,7 @@ export function RecorridoCaso({
                   letra: letraDe(String(id)),
                 }))}
                 onApiUnity={setUnityApi}
+                onInstante={alInstante}
                 presentar={presentando && unityApi ? canalPresentar : null}
                 r={r}
                 activo={visorAlaVista}
@@ -1605,6 +1612,8 @@ export function RecorridoCaso({
             >
               <MaquetaCaso
                 r={r}
+                tInicial={instanteMaqueta}
+                onInstante={alInstante}
                 calles={calles}
                 nombres={Object.fromEntries(
                   Object.entries(r.ids).map(([resId, id]) => [resId, nombreLab(String(id))]),
@@ -1743,6 +1752,11 @@ export function RecorridoCaso({
                     className="px-3"
                     onClick={() => {
                       if (v === "mapa") setMoviles([]);
+                      // Del 2D al 3D, el 3D va al instante en que se quedó la maqueta.
+                      if (v === "3d" && vista !== "3d" && instante.current !== null)
+                        unityApi?.ir?.(instante.current);
+                      // Del 3D al 2D, la maqueta empieza donde se quedó el 3D.
+                      if (v === "maqueta") setInstanteMaqueta(instante.current);
                       setVista(v);
                       if (camara) setCamaraPedida((c) => ({ camara, n: (c?.n ?? 0) + 1 }));
                     }}

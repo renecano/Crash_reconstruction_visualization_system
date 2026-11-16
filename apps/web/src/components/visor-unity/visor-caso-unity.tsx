@@ -17,7 +17,8 @@ import { useEffect, useMemo, useRef, useState, type ComponentProps } from "react
 import { especDel3d, NotasDel3d, Visor3dCaso } from "@/components/cesvi/caso/reconstruccion";
 import { downloadBytes } from "@/lib/download";
 import { impactosAColocar } from "@/lib/pasos-caso";
-import { camaraUnity } from "@/lib/visor-unity/camaras";
+import { nombreVehiculo } from "@/lib/escena-facil";
+import { camarasDelCaso, camaraUnity } from "@/lib/visor-unity/camaras";
 import type { CanalTiempo } from "@/lib/visor-unity/canal";
 import { aplicarObjetoEditado, aplicarPuntoMarcado } from "@/lib/visor-unity/edicion";
 import { nombreDelPaquete } from "@/lib/visor-unity/paquete";
@@ -37,8 +38,11 @@ export function VisorCasoUnity({
   vehiculos = [],
   onApiUnity,
   presentar = null,
+  onInstante,
   ...props
 }: ComponentProps<typeof Visor3dCaso> & {
+  /** Por dónde va el 3D, para el instante que comparten el 2D y el 3D (A6). */
+  onInstante?: (t: number) => void;
   /**
    * En «Presentar» el 3D va detrás de la historia, a la derecha, con la órbita (toda la escena) y el
    * instante que marca cada capítulo. Sin notas ni botones: la historia los tapa.
@@ -62,6 +66,29 @@ export function VisorCasoUnity({
   );
   const ligero = sp.get("visor") === "ligero" || (automatizado && sp.get("visor") !== "unity");
   const escena = useMemo(() => especDel3d(r, calles, objetos), [r, calles, objetos]);
+  // Todas las cámaras del caso (A6): generales, por vehículo y por persona, con el nombre del panel.
+  const camaras = useMemo(() => {
+    const res = r.resultado as unknown as {
+      vehiculos?: { id: string; dimensiones?: { largo_m?: number } }[];
+      personas?: { id: string; rol?: string }[];
+    };
+    const vs = expediente?.vehiculos ?? [];
+    return camarasDelCaso(
+      vehiculos.map((v) => {
+        const ev = vs.find((x) => x.id === v.id);
+        return {
+          resId: v.resId,
+          letra: v.letra,
+          nombre: ev ? `${v.letra} · ${nombreVehiculo(ev, vs)}` : `Vehículo ${v.letra}`,
+          cara:
+            (expediente?.danos ?? []).find((d) => d.vehiculo === v.id && !d.dano_previo)?.zona
+              .cara ?? null,
+          largoM: res.vehiculos?.find((x) => x.id === v.resId)?.dimensiones?.largo_m,
+        };
+      }),
+      (res.personas ?? []).map((p) => ({ id: p.id, rol: p.rol ?? "" })),
+    );
+  }, [r, vehiculos, expediente]);
   const camara = useMemo(
     () =>
       presentar
@@ -148,6 +175,8 @@ export function VisorCasoUnity({
         <VisorUnity
           escena={escena}
           relieve={r.relieve ?? null}
+          camaras={camaras}
+          onTiempo={onInstante}
           activo={activo}
           dormir={!activo && !presentar}
           camara={camara}

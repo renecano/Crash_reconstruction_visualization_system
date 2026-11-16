@@ -8,6 +8,7 @@
  * Si Unity no puede (sin WebGL 2, sin manifiesto, versión del puente distinta, tarda demasiado o
  * pierde el dispositivo), muestra `respaldo`: el visor three.js de siempre.
  */
+import type { CamaraDelCaso } from "@/lib/visor-unity/camaras";
 import type {
   Resultado,
   CamaraVisor,
@@ -36,6 +37,8 @@ import { BarraReproduccion } from "./barra-reproduccion";
 export interface ApiVisorUnity {
   capturar(vista: VistaCaptura, ancho: number, alto: number): Promise<string>;
   readonly paquete: Caso3D;
+  /** Lleva el 3D a un instante (al volver del 2D se conserva el instante; A6). */
+  ir?(t: number): void;
 }
 
 export interface EdicionUnity {
@@ -59,12 +62,57 @@ const TEXTO_RESPALDO: Record<MotivoRespaldo, string> = {
   dispositivo_perdido: "La tarjeta de video se reinició",
 };
 
+/**
+ * El selector de cámara del 3D (René, 2026-11-16, A6): las generales y, por vehículo y por persona,
+ * las suyas, a un clic. Funcional; su diseño final es de la pantalla de Reconstrucción (Fable).
+ */
+function SelectorCamara({
+  camaras,
+  elegida,
+  onElegir,
+}: {
+  camaras: readonly CamaraDelCaso[];
+  elegida: string | null;
+  onElegir: (c: CamaraDelCaso) => void;
+}) {
+  const grupos = new Map<string, CamaraDelCaso[]>();
+  for (const c of camaras) grupos.set(c.grupoNombre, [...(grupos.get(c.grupoNombre) ?? []), c]);
+  return (
+    <label className="vidrio absolute top-3 left-3 z-10 flex items-center gap-2 rounded-control px-3 py-1.5 text-[0.8125rem]">
+      <span className="font-medium">Cámara</span>
+      <select
+        className="bg-transparent font-medium"
+        value={camaras.some((c) => c.modo === elegida) ? (elegida ?? "") : ""}
+        onChange={(e) => {
+          const c = camaras.find((x) => x.modo === e.target.value);
+          if (c) onElegir(c);
+        }}
+        data-testid="selector-camara"
+      >
+        <option value="" disabled>
+          Elige una cámara
+        </option>
+        {[...grupos].map(([g, cs]) => (
+          <optgroup key={g} label={g}>
+            {cs.map((c) => (
+              <option key={c.modo} value={c.modo}>
+                {c.nombre}
+              </option>
+            ))}
+          </optgroup>
+        ))}
+      </select>
+    </label>
+  );
+}
+
 export function VisorUnity({
   escena,
   relieve = null,
   activo = true,
   dormir = false,
   camara = null,
+  camaras = [],
   edicion = null,
   tiempo = null,
   respaldo,
@@ -85,6 +133,8 @@ export function VisorUnity({
   dormir?: boolean;
   /** La cámara pedida por las pestañas; `n` cambia con cada pedido. */
   camara?: { modo: CamaraVisor; n: number } | null;
+  /** Las cámaras del caso para el selector del 3D (A6); sin ellas no hay selector. */
+  camaras?: readonly CamaraDelCaso[];
   edicion?: EdicionUnity | null;
   /** Con un canal, el instante lo pone quien avisa (Presentar) y Unity no reproduce solo. */
   tiempo?: CanalTiempo | null;
@@ -200,6 +250,8 @@ export function VisorUnity({
         capturar: (vista: VistaCaptura, ancho: number, alto: number) =>
           puente.capturar(vista, ancho, alto),
         paquete,
+        // Unity avisa el tiempo nuevo y la barra lo sigue (el aviso «tiempo»).
+        ir: (t: number) => puente.enviar("fijarTiempo", { t }),
       };
       cb.current.onApi?.(api);
       const final = await completo.catch(() => null);
@@ -258,6 +310,18 @@ export function VisorUnity({
     puente.enviar("camara", { modo: camara.modo });
   }, [puente, camara, listo]);
 
+  // La cámara que se ve: la última que pidieron las pestañas o el selector (A6).
+  const [elegida, setElegida] = useState<{ modo: CamaraVisor; n: number } | null>(null);
+  if (camara && (elegida === null || camara.n > elegida.n))
+    setElegida({ modo: camara.modo, n: camara.n });
+  const elegirCamara = (c: CamaraDelCaso) => {
+    if (!puente) return;
+    puente.enviar("camara", { modo: c.modo });
+    setElegida((e) => ({ modo: c.modo, n: Math.max(e?.n ?? 0, camara?.n ?? 0) }));
+    // La del daño se ve en el impacto: como «Ir al impacto».
+    if (c.alImpacto) alControl({ tipo: "impacto" });
+  };
+
   useEffect(() => {
     if (!puente || !listo) return;
     puente.enviar("modoEdicion", {
@@ -294,6 +358,9 @@ export function VisorUnity({
         style={{ width: "100%", height: "100%" }}
       />
       {/* Sin la barra al presentar (el instante lo pone el capítulo) y al editar en 3D. */}
+      {listo && camaras.length && !tiempo && !edicion?.on ? (
+        <SelectorCamara camaras={camaras} elegida={elegida?.modo ?? null} onElegir={elegirCamara} />
+      ) : null}
       {listo && intervalo && !tiempo && !edicion?.on ? (
         <BarraReproduccion
           estado={rep}

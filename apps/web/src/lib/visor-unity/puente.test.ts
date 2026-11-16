@@ -140,7 +140,8 @@ describe("cámaras de las pestañas en Unity", () => {
     expect(camaraUnity(null)).toBe("cinematica");
     expect(camaraUnity("libre")).toBe("orbita");
     expect(camaraUnity("conductor-veh-a")).toBe("conductor:veh-a");
-    expect(camaraUnity("detras-veh-b")).toBe("cinematica");
+    // «Detrás de B» lo sigue de verdad (René, 2026-11-16, A6).
+    expect(camaraUnity("detras-veh-b")).toBe("cerca:veh-b:180:8:2.6");
     expect(camaraUnity("cenital")).toBe("cenital");
   });
 });

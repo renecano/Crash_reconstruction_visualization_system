@@ -1,0 +1,98 @@
+{
+  "descripcion": "Cuánto se queda sin responder la página al pasar de un paso a otro: la tarea larga más larga del hilo principal (Long Tasks API) en los 3 s que siguen a cada clic en «Siguiente», y cuánto tardó en llegar el paso. AXA y un caso nuevo (narración de ejemplo grabada), con el visor Unity, en Chromium con ventana y GPU (ANGLE d3d11) a 1440×900 en la laptop de René. Meta: ninguna tarea de más de 100 ms.",
+  "script": "apps/web/e2e/medir-pasos.spec.ts",
+  "sitio": "https://croquis-sage.vercel.app",
+  "fecha": "2026-11-16T17:43:45.951Z",
+  "cambios": [
+    {
+      "caso": "axa",
+      "de": 1,
+      "a": 2,
+      "ms_hasta_el_paso": 141,
+      "tarea_mas_larga_ms": 214,
+      "tareas_de_mas_de_100_ms": 1
+    },
+    {
+      "caso": "axa",
+      "de": 2,
+      "a": 3,
+      "ms_hasta_el_paso": 264,
+      "tarea_mas_larga_ms": 96,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "axa",
+      "de": 4,
+      "a": 5,
+      "ms_hasta_el_paso": 80,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "axa",
+      "de": 5,
+      "a": 6,
+      "ms_hasta_el_paso": 87,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "axa",
+      "de": 6,
+      "a": 7,
+      "ms_hasta_el_paso": 93,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "axa",
+      "de": 7,
+      "a": 8,
+      "ms_hasta_el_paso": 118,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "nuevo",
+      "de": 1,
+      "a": 2,
+      "ms_hasta_el_paso": 128,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "nuevo",
+      "de": 2,
+      "a": 3,
+      "ms_hasta_el_paso": 121,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "nuevo",
+      "de": 4,
+      "a": 5,
+      "ms_hasta_el_paso": 68,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "nuevo",
+      "de": 5,
+      "a": 6,
+      "ms_hasta_el_paso": 63,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "nuevo",
+      "de": 6,
+      "a": 8,
+      "ms_hasta_el_paso": 90,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    }
+  ],
+  "tarea_mas_larga_de_los_cambios_ms": 214,
+  "tarea_mas_larga_de_la_visita_ms": 288
+}

@@ -35,7 +35,15 @@ export function MaquetaCaso({
   tipDelImpacto = null,
   sinControles = false,
   declarada = null,
+  tInicial = null,
+  onInstante,
 }: {
+  /**
+   * El instante compartido con el 3D (A6): la maqueta empieza donde se quedó el 3D y avisa por dónde
+   * va, para que al volver al 3D se conserve.
+   */
+  tInicial?: number | null;
+  onInstante?: (t: number) => void;
   /** T6.2: la versión declarada ya simulada (R7), para dibujarla sobre la reconstrucción. */
   declarada?: { etiqueta: string; resultado: ResultadoMaqueta } | null;
   /** W6: sin «Ver todo», «Ir al impacto», zoom ni desplazamiento (el croquis del dictamen). */
@@ -99,7 +107,7 @@ export function MaquetaCaso({
     );
   return (
     <div className="relative h-full w-full">
-      <ConLineaDeTiempo resultado={listo.res}>
+      <ConLineaDeTiempo resultado={listo.res} tInicial={tInicial} onInstante={onInstante}>
         {(t) => (
           <EscenaMaqueta
             spec={spec}
@@ -163,13 +171,22 @@ export function MaquetaCaso({
 function ConLineaDeTiempo({
   resultado,
   children,
+  tInicial = null,
+  onInstante,
 }: {
   resultado: ResultadoMaqueta;
+  tInicial?: number | null;
+  onInstante?: (t: number) => void;
   children: (t: number) => ReactNode;
 }) {
   const ti = tImpacto(resultado);
   const { t_inicio: ini, t_fin: fin } = resultado;
-  const [t, setT] = useState(ti);
+  const [t, setT] = useState(() =>
+    tInicial !== null ? Math.min(fin, Math.max(ini, tInicial)) : ti,
+  );
+  useEffect(() => {
+    onInstante?.(t);
+  }, [onInstante, t]);
   const [corre, setCorre] = useState(false);
   const [velocidad, setVelocidad] = useState<1 | 0.25>(1);
   const ultimo = useRef(0);

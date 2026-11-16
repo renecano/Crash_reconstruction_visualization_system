@@ -38,6 +38,7 @@ namespace Croquis.Visor
         private Caso3DResultado resultado;
         private string modo = "cinematica";
         private string conductor;
+        private string persona;
 
         // La cámara «cerca» (capturas y modo foto): junto a un vehículo, a un azimut desde su frente, a una
         // distancia y una altura, mirando su cabina. `cerca:<id>:<azimut°>:<distancia m>:<altura m>`.
@@ -130,6 +131,10 @@ namespace Croquis.Visor
         /// <summary>Los ocupantes: en la cámara de un conductor se esconden los de su vehículo (el ojo va
         /// donde está su cabeza).</summary>
         public List<PersonaVista> Ocupantes { get; } = new List<PersonaVista>();
+
+        /// <summary>Quienes van por su cuenta (peatón, ciclista sin vehículo del caso): la cámara
+        /// «persona» los sigue (René, 2026-11-16).</summary>
+        public List<PersonaVista> Peatones { get; } = new List<PersonaVista>();
         public VisorCaso Caso { get; set; }
 
         /// <summary>El árbol más cercano a la acción: la cámara de la acera se para junto a él.</summary>
@@ -333,9 +338,18 @@ namespace Croquis.Visor
         /// <summary>El modo de la cámara, como lo nombra el puente.</summary>
         public string Modo => modo == "conductor"
             ? "conductor:" + conductor
+            : modo == "persona"
+            ? "persona:" + persona
             : modo == "cerca"
                 ? System.FormattableString.Invariant($"cerca:{cercaDe}:{cercaAzimut}:{cercaDistancia}:{cercaAltura}")
                 : modo;
+
+        /// <summary>La persona con ese id: un peatón, o quien va en una bici o una moto del caso.</summary>
+        private PersonaVista PersonaDe(string id)
+        {
+            return Peatones.Find(x => x != null && x.name == "persona_" + id)
+                ?? Ocupantes.Find(x => x != null && x.name == "persona_" + id);
+        }
 
         public bool Cambiar(string nuevo)
         {
@@ -363,6 +377,17 @@ namespace Croquis.Visor
                 {
                     modo = "conductor";
                     conductor = id;
+                    return true;
+                }
+            }
+
+            if (nuevo != null && nuevo.StartsWith("persona:"))
+            {
+                var id = nuevo.Substring("persona:".Length);
+                if (PersonaDe(id) != null)
+                {
+                    modo = "persona";
+                    persona = id;
                     return true;
                 }
             }
@@ -844,6 +869,34 @@ namespace Croquis.Visor
 
                     break;
                 }
+                case "persona":
+                {
+                    // Sigue a la persona desde su costado derecho y un poco atrás, a la altura de un
+                    // adulto parado: se ve su recorrido, el golpe y dónde queda (como la de three.js).
+                    var p = PersonaDe(persona);
+                    if (p != null)
+                    {
+                        camara.fieldOfView = 45f;
+                        var tr = p.transform;
+                        var frente = tr.forward;
+                        frente.y = 0f;
+                        if (frente.sqrMagnitude < 1e-4f)
+                        {
+                            frente = Vector3.forward;
+                        }
+
+                        frente.Normalize();
+                        var derecha = Vector3.Cross(Vector3.up, frente);
+                        var suelo = new Vector3(tr.position.x, 0f, tr.position.z);
+                        var mira = suelo + Vector3.up * 0.9f;
+                        var ojo = suelo + derecha * 6f - frente * 2f + Vector3.up * 2.4f;
+                        camara.transform.SetPositionAndRotation(ojo, Quaternion.LookRotation(mira - ojo, Vector3.up));
+                        return;
+                    }
+
+                    break;
+                }
+
                 case "conductor":
                 {
                     var v = Vehiculos.Find(x => x.name == "vehiculo_" + conductor);
