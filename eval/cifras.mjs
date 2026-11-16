@@ -210,6 +210,24 @@ function construir() {
     });
   }
 
+  // --- Las carambolas: impactos posteriores que ocurren en la reconstrucción (E-R6 v2) ---
+  for (const p of ["prueba", "desarrollo"]) {
+    const archivo = `eval/results/cesvi_r4b_carambolas_${p}.json`;
+    const doc = leer(archivo);
+    const k = doc.impactos_posteriores_ocurridos;
+    const n = doc.impactos_posteriores_en_escena;
+    if (!(n > 0) || !(k >= 0)) throw new Error(`${archivo}: sin impactos posteriores`);
+    pon(`carambolas.${p}`, {
+      que: `Carambolas (${p}): impactos posteriores entre vehículos que ocurren en la reconstrucción, de los que pasan a la escena`,
+      k,
+      n,
+      pct: Math.round((1000 * k) / n) / 10,
+      texto: `${k} de ${n}`,
+      fuente: archivo,
+      campo: "impactos_posteriores_ocurridos / impactos_posteriores_en_escena",
+    });
+  }
+
   // --- La reversa (supuesto con fuente) ---
   {
     const archivo = "packages/cesvi/src/data/reversa-nhtsa.json";
@@ -244,6 +262,11 @@ function construir() {
       { texto: "68,557", que: "Paridad antes de las 14 escenas" },
       { texto: "68 557", que: "Paridad antes de las 14 escenas" },
       { texto: "68557", que: "Paridad antes de las 14 escenas" },
+      {
+        texto: "21 de 31",
+        que: "Carambolas de prueba medidas el 2026-10-23, antes del #119 (2026-10-24)",
+      },
+      { texto: "43 de 55", que: "Carambolas de desarrollo medidas el 2026-10-23, antes del #119" },
     ],
     cifras,
   };

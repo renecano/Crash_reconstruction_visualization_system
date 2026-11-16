@@ -1037,6 +1037,13 @@ Al comprobar el build nuevo del visor con la e2e del flujo completo (`visor-unit
 1. **¿Te parece bien el aviso,** o prefieres que en estos casos se muestre la segunda solución como alternativa (hoy solo se ofrece si su costo queda a menos de 0.5 de la primera)? Lo segundo cambia lo que ve el perito.
 2. **El caso de ejemplo con poste ya no da 60.62.** Si esa cifra se usó en alguna demo con CESVI, conviene saberlo antes de la siguiente.
 
+## Carambolas medidas otra vez (2026-11-15; aprobado por René el mismo día)
+
+- **Cifras:** en la prueba ocurren 20 de 31 impactos posteriores (antes decía 21 de 31); en desarrollo, 40 de 55 (antes 43 de 55). Las reconstruidas y en 3D no cambian (33 de 33 y 68 de 68). Van en el índice único (`carambolas.prueba`, `carambolas.desarrollo`), con las de antes como retiradas.
+- **Causa:** el #119 (`c80e10e4`, 2026-10-24, ADR 0089), que deshace en 0.04 s el encimamiento de los contornos después de cada impacto con la caja sin deformar. En una carambola sin posiciones del perito, los vehículos de los impactos posteriores van en la trayectoria del que los golpea (supuesto); separar antes los contornos cambia si esa trayectoria los alcanza. Búsqueda binaria con el código de cada commit en su propio worktree e instalación: `412bf43e` y `25df0592` dan 21; `c80e10e4`, `1a5d5391` y `80df35f4` dan 20, con los mismos cinco casos (pierden su impacto posterior `3fb401796c`, `5becbd0fbb` y `cade1c89cb`; lo ganan `d646b64594` y `e9aed4ab5b`).
+- **Por qué no se vio antes:** los archivos oficiales no se regeneraban desde el 2026-10-23; las comparaciones de W8 y de la Tanda 3 usaban sus propias copias en `eval/results/w8/`, que ya daban 20.
+- **Medido en:** la corrida del colaborador del 2026-11-15 (`resultados/t3-2026-11-15`, RTX).
+
 ## Lo que U deja dicho para W
 
 Viene de U0 (ADR 0111). Vale cuando el PR de contrato 2.3.0 esté en `main`:
