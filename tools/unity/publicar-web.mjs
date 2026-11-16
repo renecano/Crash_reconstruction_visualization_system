@@ -72,12 +72,19 @@ const iBorrar = process.argv.indexOf("--borrar");
 if (iBorrar > 0) {
   const lista = (process.argv[iBorrar + 1] ?? "").split(",").filter(Boolean);
   const iConservar = process.argv.indexOf("--conservar");
-  const conservar = iConservar > 0 ? (process.argv[iConservar + 1] ?? "").split(",").filter(Boolean) : [];
+  const conservar =
+    iConservar > 0 ? (process.argv[iConservar + 1] ?? "").split(",").filter(Boolean) : [];
   const r = await fetch("https://croquis-sage.vercel.app/visor-unity/manifest.json");
   const sitio = (await r.json()).huella;
   const protegidas = new Set([sitio, huellaDeProduccion(), ...conservar].filter(Boolean));
-  if (!sitio || !lista.length || lista.some((h) => !/^[0-9a-f]{16}$/.test(h) || protegidas.has(h))) {
-    console.error(`No borro: lista inválida o protegida (protegidas: ${[...protegidas].join(", ")}).`);
+  if (
+    !sitio ||
+    !lista.length ||
+    lista.some((h) => !/^[0-9a-f]{16}$/.test(h) || protegidas.has(h))
+  ) {
+    console.error(
+      `No borro: lista inválida o protegida (protegidas: ${[...protegidas].join(", ")}).`,
+    );
     process.exit(1);
   }
   for (const h of lista) {
