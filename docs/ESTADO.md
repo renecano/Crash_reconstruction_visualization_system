@@ -97,11 +97,10 @@ Captura de René del 2026-11-15 (últimos 30 días). Meta: por debajo de 70 % de
 
 ## Bloqueado: necesita a René
 
-| Qué                                                                                                                                                                                     | Para qué                                           |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| Visto bueno al antes y después de ofrecer la segunda solución como alternativa cuando el mejor ajuste queda fuera de su rango (solo si es físicamente válida y cuadra con la evidencia) | Que una cifra y su rango no parezcan contradecirse |
-| Visto bueno para borrar las ramas remotas ya fusionadas                                                                                                                                 | Orden del repositorio                              |
-| Que el colaborador corra el paquete de la Tanda 3 (`CORRER-TANDA-EN-RTX.bat`)                                                                                                           | Cerrar la Tanda 3 con la corrida completa          |
+| Qué                                                                           | Para qué                                  |
+| ----------------------------------------------------------------------------- | ----------------------------------------- |
+| Visto bueno para borrar las ramas remotas ya fusionadas                       | Orden del repositorio                     |
+| Que el colaborador corra el paquete de la Tanda 3 (`CORRER-TANDA-EN-RTX.bat`) | Cerrar la Tanda 3 con la corrida completa |
 
 La tabla completa, con fechas, está en `docs/PROGRESS.md`, «Bloqueado — necesita a René».
 
@@ -109,7 +108,7 @@ La tabla completa, con fechas, está en `docs/PROGRESS.md`, «Bloqueado — nece
 
 - La narración manda: si no dice quién retrocedía o no trae el ancho dañado, Croquis no lo adivina.
 - El rango no es una garantía (cobertura de arriba) y la rigidez por clase viene de pruebas de vehículos de Estados Unidos.
-- El mejor ajuste puede quedar fuera de su rango cuando la solución depende mucho de los supuestos; la app lo avisa con las dos cifras (ADR 0141). El caso de ejemplo con poste es así desde W8.
+- El mejor ajuste puede quedar fuera de su rango cuando la solución depende mucho de los supuestos; la app lo avisa con las dos cifras (ADR 0141). En el caso de ejemplo con poste, la segunda solución no es físicamente válida ni cuadra con la evidencia (`eval/results/caso_poste_modos.json`), así que se queda el aviso.
 - Una volcadura se decide, pero su giro no se integra en el tiempo; el 3D la ilustra.
 - `/cesvi` es público y no hay cuentas.
 

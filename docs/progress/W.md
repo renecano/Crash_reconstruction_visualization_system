@@ -1032,7 +1032,18 @@ Al comprobar el build nuevo del visor con la e2e del flujo completo (`visor-unit
 - **Conteo** (`eval/mejor_fuera.mts` → `eval/results/mejor_fuera.json`): en los 205 reportes de la prueba, reconstruidos solo con su narración, ninguno tiene rango, así que el aviso no aparece ahí. Tardó 69 s.
 - **La e2e con el Unity local** (`visor-unity-real.spec.ts`) no servía `StreamingAssets`, donde van los cielos desde U6: en modo local Unity caía al visor ligero. Se agregó la ruta. Contra Blob y contra producción la prueba pasa (52 s y 51 s).
 
-### Para René
+### Decisión de René (2026-11-15) y lo medido
+
+René pidió ofrecer la segunda solución como alternativa, como las dos hipótesis de AXA, solo si es físicamente válida y cuadra con la evidencia; si no, se queda el aviso. Medido con `eval/caso_poste_modos.mts` (`eval/results/caso_poste_modos.json`):
+
+| Solución   | A · Jetta | B · Camaro | Impactos que ocurren                      | Residuo mayor               | Físicamente válida | Cuadra (≤ 3 σ) |
+| ---------- | --------- | ---------- | ----------------------------------------- | --------------------------- | ------------------ | -------------- |
+| La elegida | 40.40     | 102.07     | los 2 (entre vehículos y contra el poste) | 6.88 σ                      | sí                 | no             |
+| La segunda | 33.73     | 27.10      | 1 (el Camaro ya no llega al poste)        | 6.69 σ (el punto del poste) | no                 | no             |
+
+**Resultado:** la segunda no cumple; se queda el aviso. Antes y después, la pantalla es la misma: no hay nada que aprobar. No se agregó la regla general al solver: hoy ningún caso medido la activaría (AXA queda dentro de su rango; los 205 reportes no tienen rango), y agregarla toca el solver y su paridad antes de la demo. Si aparece un caso real que la necesite, se agrega con su antes y después.
+
+### Lo que se le preguntó a René
 
 1. **¿Te parece bien el aviso,** o prefieres que en estos casos se muestre la segunda solución como alternativa (hoy solo se ofrece si su costo queda a menos de 0.5 de la primera)? Lo segundo cambia lo que ve el perito.
 2. **El caso de ejemplo con poste ya no da 60.62.** Si esa cifra se usó en alguna demo con CESVI, conviene saberlo antes de la siguiente.
