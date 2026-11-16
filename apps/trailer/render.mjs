@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
  * Render de una composición del tráiler con Remotion, midiendo cuánto tarda por segundo de video
- * (René, 2026-11-16). Los videos y las tomas del 3D van fuera del repo, en `D:\Croquis-traler`
- * (`CROQUIS_TRALER` para otra carpeta); la medición, en `eval/results/traler_render.json`.
+ * (René, 2026-11-16). Los videos y las tomas del 3D van fuera del repo, en `D:\Croquis-trailer`
+ * (`CROQUIS_TRAILER` para otra carpeta); la medición, en `eval/results/trailer_render.json`.
  *
- *   pnpm --filter @croquis/traler render:prueba
+ *   pnpm --filter @croquis/trailer render:prueba
  *
  * La carpeta `tomas/` de esa ruta es la carpeta pública del bundle: `staticFile("x.png")` lee
- * `D:\Croquis-traler\tomas\x.png`. Las tomas del 3D salen de `tools/traler/tomas-3d.mjs`.
+ * `D:\Croquis-trailer\tomas\x.png`. Las tomas del 3D salen de `tools/trailer/tomas-3d.mjs`.
  */
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import { cpus, totalmem } from "node:os";
@@ -20,7 +20,7 @@ import { renderMedia, selectComposition } from "@remotion/renderer";
 
 const AQUI = dirname(fileURLToPath(import.meta.url));
 const RAIZ = resolve(AQUI, "../..");
-const FUERA = process.env.CROQUIS_TRALER ?? "D:\\Croquis-traler";
+const FUERA = process.env.CROQUIS_TRAILER ?? "D:\\Croquis-trailer";
 const TOMAS = join(FUERA, "tomas");
 const id = process.argv[2] ?? "Prueba";
 mkdirSync(TOMAS, { recursive: true });
@@ -51,7 +51,7 @@ const segundos = composicion.durationInFrames / composicion.fps;
 const resultado = {
   descripcion:
     "Render de prueba del tráiler (Remotion 4.0.539): cuánto tarda por segundo de video. Las texturas generadas en código y, si la hay, una toma del 3D de una escena sintética.",
-  script: "apps/traler/render.mjs",
+  script: "apps/trailer/render.mjs",
   fecha: new Date().toISOString(),
   composicion: id,
   ancho: composicion.width,
@@ -67,7 +67,7 @@ const resultado = {
   salida: salida.replace(/\\/g, "/"),
 };
 writeFileSync(
-  join(RAIZ, "eval/results/traler_render.json"),
+  join(RAIZ, "eval/results/trailer_render.json"),
   `${JSON.stringify(resultado, null, 2)}\n`,
 );
 process.stdout.write(`${JSON.stringify(resultado, null, 2)}

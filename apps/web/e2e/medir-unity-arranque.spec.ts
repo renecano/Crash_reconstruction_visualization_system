@@ -1,8 +1,8 @@
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { chromium, expect, test, type Page } from "@playwright/test";
-import { irAPaso } from "./ayuda-recorrido";
+import { colocarTodo, irAPaso } from "./ayuda-recorrido";
 
 /**
  * El arranque del 3D de Unity al abrirlo, por partes (René, 2026-11-16): descarga, compilación del
@@ -16,6 +16,15 @@ import { irAPaso } from "./ayuda-recorrido";
  *     → eval/results/unity_arranque.json
  */
 const RAIZ = resolve(__dirname, "../../..");
+/** Dónde escribe (la tanda de la RTX lo manda a eval/results/rtx-t4). */
+const SALIDA = resolve(
+  RAIZ,
+  process.env.CROQUIS_ARRANQUE_SALIDA ?? "eval/results/unity_arranque.json",
+);
+/** La lectura grabada de la narración de ejemplo: el caso nuevo no gasta API. */
+const ESCENA = JSON.parse(
+  readFileSync(join(RAIZ, "data/cesvi/grabaciones/escenas/cesvi-e814f085db.json"), "utf8"),
+) as { salida: unknown };
 
 /** Lo que se instala antes de que cargue la página: marcas de WebAssembly y tareas largas. */
 function instrumentar() {
@@ -49,11 +58,25 @@ function instrumentar() {
   envolver("compileStreaming");
 }
 
-async function abrir3d(page: Page) {
+async function abrir3d(page: Page, caso: "axa" | "nuevo") {
   await page.goto("/cesvi");
-  await page.getByTestId("ir-axa").click();
-  await expect(page.getByTestId("recorrido-caso")).toBeVisible();
-  await irAPaso(page, 4);
+  if (caso === "axa") {
+    await page.getByTestId("ir-axa").click();
+    await expect(page.getByTestId("recorrido-caso")).toBeVisible();
+    await irAPaso(page, 4);
+  } else {
+    // Un caso nuevo con la narración de ejemplo (leída de la grabación), colocado en el mapa.
+    await page.getByTestId("ir-caso-nuevo").click();
+    await expect(page.getByTestId("recorrido-caso")).toBeVisible();
+    await irAPaso(page, 2);
+    await page.getByTestId("ejemplo-narracion").click();
+    await page.getByTestId("leer-narracion").click();
+    await expect(page.getByTestId("escena")).toContainText("vehículos", { timeout: 60_000 });
+    await irAPaso(page, 3);
+    await colocarTodo(page);
+    await page.getByTestId("avance-ver-reconstruccion").click();
+    await expect(page.getByTestId("panel-paso")).toHaveAttribute("data-paso", "4");
+  }
   await page.getByTestId("reconstruir").click();
   await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 180_000 });
   await page.waitForTimeout(2000);
@@ -114,43 +137,67 @@ async function abrir3d(page: Page) {
   );
 }
 
-test("el arranque del 3D de Unity, por partes", async ({ baseURL }) => {
-  test.setTimeout(1_200_000);
-  const perfil = mkdtempSync(join(tmpdir(), "croquis-unity-arranque-"));
-  const ctx = await chromium.launchPersistentContext(perfil, {
-    headless: false,
-    args: ["--use-angle=d3d11", "--ignore-gpu-blocklist"],
-    baseURL,
-    locale: "es-MX",
-    serviceWorkers: "block",
-    viewport: { width: 1440, height: 900 },
-    reducedMotion: "reduce",
+/** La máquina en que se mide: núcleos, memoria y la tarjeta que usa WebGL. */
+async function maquina(page: Page) {
+  return page.evaluate(() => {
+    const gl = document.createElement("canvas").getContext("webgl");
+    const ext = gl?.getExtension("WEBGL_debug_renderer_info");
+    return {
+      nucleos: navigator.hardwareConcurrency,
+      memoria_gb: (navigator as unknown as { deviceMemory?: number }).deviceMemory ?? null,
+      gpu: ext && gl ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : null,
+    };
   });
-  await ctx.addInitScript(instrumentar);
-  await ctx.route("**/api/osm?**", (r) => r.fulfill({ json: { elements: [] } }));
-  try {
-    const primera = await abrir3d(ctx.pages()[0] ?? (await ctx.newPage()));
-    // La segunda visita: otra pestaña del mismo perfil (el build ya está en la caché).
-    for (const p of ctx.pages()) await p.close();
-    const segunda = await abrir3d(await ctx.newPage());
-    writeFileSync(
-      join(RAIZ, "eval/results/unity_arranque.json"),
-      `${JSON.stringify(
-        {
-          descripcion:
-            "El arranque del 3D de Unity al abrirlo (clic en «3D» con AXA reconstruido), por etapas, en ms desde el clic: descarga del build (precarga), compilación del WebAssembly, arranque del motor (instancia), solver del caso, carga del caso y primer cuadro. Primera visita con un perfil nuevo; segunda, otra pestaña del mismo perfil (caché). Tareas largas del hilo principal (Long Tasks API). Chromium con ventana y GPU (ANGLE d3d11), 1440×900, en la laptop de René.",
-          script: "apps/web/e2e/medir-unity-arranque.spec.ts",
-          sitio: baseURL,
-          fecha: new Date().toISOString(),
-          primera_visita: primera,
-          segunda_visita: segunda,
-        },
-        null,
-        2,
-      )}\n`,
+}
+
+test("el arranque del 3D de Unity, por partes", async ({ baseURL }) => {
+  test.setTimeout(1_800_000);
+  const resultado: Record<string, unknown> = {};
+  let equipo: unknown = null;
+  // Cada caso con su perfil: la primera visita sin caché y la segunda con ella.
+  for (const caso of ["axa", "nuevo"] as const) {
+    const perfil = mkdtempSync(join(tmpdir(), "croquis-unity-arranque-"));
+    const ctx = await chromium.launchPersistentContext(perfil, {
+      headless: false,
+      args: ["--use-angle=d3d11", "--ignore-gpu-blocklist"],
+      baseURL,
+      locale: "es-MX",
+      serviceWorkers: "block",
+      viewport: { width: 1440, height: 900 },
+      reducedMotion: "reduce",
+    });
+    await ctx.addInitScript(instrumentar);
+    await ctx.route("**/api/osm?**", (r) => r.fulfill({ json: { elements: [] } }));
+    await ctx.route("**/api/lugar?**", (r) => r.fulfill({ json: { resultados: [] } }));
+    await ctx.route("**/api/cesvi/escena", (r) =>
+      r.fulfill({ json: { metodo: "claude", salida: ESCENA.salida } }),
     );
-  } finally {
-    await ctx.close();
-    rmSync(perfil, { recursive: true, force: true });
+    try {
+      const primera = await abrir3d(ctx.pages()[0] ?? (await ctx.newPage()), caso);
+      equipo ??= await maquina(ctx.pages()[0]!);
+      for (const p of ctx.pages()) await p.close();
+      const segunda = await abrir3d(await ctx.newPage(), caso);
+      resultado[caso] = { primera_visita: primera, segunda_visita: segunda };
+    } finally {
+      await ctx.close();
+      rmSync(perfil, { recursive: true, force: true });
+    }
   }
+  writeFileSync(
+    SALIDA,
+    `${JSON.stringify(
+      {
+        descripcion:
+          "El arranque del 3D de Unity al abrirlo (clic en «3D» con el caso reconstruido), por etapas, en ms desde el clic: descarga del build (precarga), compilación del WebAssembly, arranque del motor (instancia), solver del caso, carga del caso y primer cuadro. AXA y un caso nuevo (la narración de ejemplo grabada); primera visita con un perfil nuevo, segunda con otra pestaña del mismo perfil (caché). Tareas largas del hilo principal (Long Tasks API). Chromium con ventana y GPU (ANGLE d3d11), 1440×900.",
+        script: "apps/web/e2e/medir-unity-arranque.spec.ts",
+        sitio: baseURL,
+        fecha: new Date().toISOString(),
+        maquina: equipo,
+        ...resultado,
+      },
+      null,
+      2,
+    )}
+`,
+  );
 });
