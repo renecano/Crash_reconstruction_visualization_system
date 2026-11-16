@@ -11,7 +11,16 @@ export type CalidadVisor = (typeof CALIDADES_VISOR)[number];
 
 /** Las cámaras; la del conductor es `conductor:<id del vehículo>`. */
 export type CamaraVisor =
-  "cenital" | "cinematica" | "orbita" | "acera" | "libre" | `conductor:${string}`;
+  | "cenital"
+  | "cinematica"
+  | "orbita"
+  | "acera"
+  | "libre"
+  | `conductor:${string}`
+  /** Junto a un vehículo, siguiéndolo: `cerca:<id>:<azimut°>:<distancia m>:<altura m>`. */
+  | `cerca:${string}`
+  /** Sigue a una persona que no va dentro de un vehículo (peatón, ciclista, motociclista). */
+  | `persona:${string}`;
 
 /** Lo que encuadra el botón: «Ver todo» o «Ir al impacto». */
 export type ZonaEncuadre = "todo" | "impacto";

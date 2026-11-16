@@ -44,6 +44,30 @@ Esta nota es para que arranques sin releer la conversación.
   - las cinco narraciones con lo que muestra cada una;
   - qué decidiste sobre la pantalla de Reconstruir y por qué.
 
+## A6, lo que agregó René (2026-11-16) y lo que ya hizo Opus
+
+René: «no toques el diseño de pantalla, pero el trabajo concreto sí lo puedes hacer en Opus».
+
+**Hecho por Opus (rama `feat/a6-camaras`):**
+
+- **Todas las cámaras del 3D, para todos los vehículos:**
+  - generales: alrededor de la escena (órbita, se puede girar), desde arriba, cinematográfica y desde la acera;
+  - por cada vehículo: detrás de él (lo sigue de verdad: la cámara «cerca» de Unity, ya no la cinematográfica), lo que veía su conductor y el daño en el impacto (frente a la cara golpeada, abierto 60°, a 32°, y el 3D va al instante del impacto);
+  - por cada peatón, ciclista o motociclista, la que lo sigue (modo `persona:<id>`, nuevo en Unity).
+- **El catálogo** (`apps/web/src/lib/visor-unity/camaras.ts`, `camarasDelCaso`) da el nombre para el perito y el grupo de cada cámara.
+- **Un selector funcional** en el 3D, «Cámara», agrupado en Generales, uno por vehículo y Personas. Su diseño final es tuyo.
+- **El instante se conserva** al pasar entre la maqueta (2D) y el 3D, en los dos sentidos.
+- **Unity:** build `64b29e877ba9c856` publicado en Blob.
+- **Capturas de cada cámara** en AXA, la carambola de tres vehículos y el peatón: `docs/cesvi/ronda-2/camaras/` (`camaras.json` dice qué archivo es qué cámara). Se rehacen con `tools/unity/paquetes-camaras.ts` y `tools/unity/camaras-capturas.mjs`.
+
+**Para ti (diseño de la pantalla de Reconstrucción):**
+
+- **Dos pestañas claras arriba del visor: «3D» y «2D».** Hoy están revueltas en una sola fila (Cenital, Detrás de B, Conductor B, Órbita 3D, Mapa).
+  - **2D:** el croquis cenital con sus etiquetas, trayectorias, siluetas y escala, y un interruptor «Mapa» dentro de 2D (no otra pestaña).
+  - **3D:** Unity con todas sus cámaras dentro. El selector de Opus es funcional, no el diseño final: que todas queden a uno o dos clics, limpias (generales arriba y un selector por vehículo, por ejemplo).
+- **Los controles de reproducción** (play, línea de tiempo, velocidad, Ir al impacto, Ver todo) tienen que servir igual en 2D y en 3D. Hoy cada uno tiene su barra. El instante ya se comparte (`instante` en `recorrido-caso.tsx`, `onInstante` y `tInicial` en la maqueta, `ApiVisorUnity.ir`).
+- **Ajuste fino visto en las capturas:** «Detrás de C» queda muy pegado al techo cuando el vehículo está al final de la fila.
+
 ## Lo que la pasada encontró y pide rediseño (no corrección)
 
 1. **El paso 1 del caso** (A1, arriba).

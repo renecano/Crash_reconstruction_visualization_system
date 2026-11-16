@@ -1,0 +1,169 @@
+{
+  "axa": [
+    {
+      "modo": "orbita",
+      "nombre": "Alrededor de la escena (se puede girar)",
+      "archivo": "axa-t1-orbita.webp"
+    },
+    {
+      "modo": "cenital",
+      "nombre": "Desde arriba",
+      "archivo": "axa-t1-cenital.webp"
+    },
+    {
+      "modo": "cinematica",
+      "nombre": "Cinematográfica (automática)",
+      "archivo": "axa-t1-cinematica.webp"
+    },
+    {
+      "modo": "acera",
+      "nombre": "Desde la acera",
+      "archivo": "axa-t1-acera.webp"
+    },
+    {
+      "modo": "cerca:veh-a:180:8:2.6",
+      "nombre": "Detrás de Vehículo A",
+      "archivo": "axa-t1-cerca-veh-a-180-8-2.6.webp"
+    },
+    {
+      "modo": "conductor:veh-a",
+      "nombre": "Lo que veía el conductor de A",
+      "archivo": "axa-t1-conductor-veh-a.webp"
+    },
+    {
+      "modo": "cerca:veh-a:60:7.7:4.81",
+      "nombre": "El daño de A, en el impacto",
+      "alImpacto": true,
+      "archivo": "axa-t0-cerca-veh-a-60-7.7-4.81.webp"
+    },
+    {
+      "modo": "cerca:veh-b:180:8:2.6",
+      "nombre": "Detrás de Vehículo B",
+      "archivo": "axa-t1-cerca-veh-b-180-8-2.6.webp"
+    },
+    {
+      "modo": "conductor:veh-b",
+      "nombre": "Lo que veía el conductor de B",
+      "archivo": "axa-t1-conductor-veh-b.webp"
+    },
+    {
+      "modo": "cerca:veh-b:240:7.7:4.81",
+      "nombre": "El daño de B, en el impacto",
+      "alImpacto": true,
+      "archivo": "axa-t0-cerca-veh-b-240-7.7-4.81.webp"
+    }
+  ],
+  "carambola": [
+    {
+      "modo": "orbita",
+      "nombre": "Alrededor de la escena (se puede girar)",
+      "archivo": "carambola-t1-orbita.webp"
+    },
+    {
+      "modo": "cenital",
+      "nombre": "Desde arriba",
+      "archivo": "carambola-t1-cenital.webp"
+    },
+    {
+      "modo": "cinematica",
+      "nombre": "Cinematográfica (automática)",
+      "archivo": "carambola-t1-cinematica.webp"
+    },
+    {
+      "modo": "acera",
+      "nombre": "Desde la acera",
+      "archivo": "carambola-t1-acera.webp"
+    },
+    {
+      "modo": "cerca:veh-a:180:8:2.6",
+      "nombre": "Detrás de Vehículo A",
+      "archivo": "carambola-t1-cerca-veh-a-180-8-2.6.webp"
+    },
+    {
+      "modo": "conductor:veh-a",
+      "nombre": "Lo que veía el conductor de A",
+      "archivo": "carambola-t1-conductor-veh-a.webp"
+    },
+    {
+      "modo": "cerca:veh-a:60:6.49:4.05",
+      "nombre": "El daño de A, en el impacto",
+      "alImpacto": true,
+      "archivo": "carambola-t0-cerca-veh-a-60-6.49-4.05.webp"
+    },
+    {
+      "modo": "cerca:veh-b:180:8:2.6",
+      "nombre": "Detrás de Vehículo B",
+      "archivo": "carambola-t1-cerca-veh-b-180-8-2.6.webp"
+    },
+    {
+      "modo": "conductor:veh-b",
+      "nombre": "Lo que veía el conductor de B",
+      "archivo": "carambola-t1-conductor-veh-b.webp"
+    },
+    {
+      "modo": "cerca:veh-b:240:6.2:3.87",
+      "nombre": "El daño de B, en el impacto",
+      "alImpacto": true,
+      "archivo": "carambola-t0-cerca-veh-b-240-6.2-3.87.webp"
+    },
+    {
+      "modo": "cerca:veh-c:180:8:2.6",
+      "nombre": "Detrás de Vehículo C",
+      "archivo": "carambola-t1-cerca-veh-c-180-8-2.6.webp"
+    },
+    {
+      "modo": "conductor:veh-c",
+      "nombre": "Lo que veía el conductor de C",
+      "archivo": "carambola-t1-conductor-veh-c.webp"
+    },
+    {
+      "modo": "cerca:veh-c:240:6.21:3.88",
+      "nombre": "El daño de C, en el impacto",
+      "alImpacto": true,
+      "archivo": "carambola-t0-cerca-veh-c-240-6.21-3.88.webp"
+    }
+  ],
+  "peaton_cruce": [
+    {
+      "modo": "orbita",
+      "nombre": "Alrededor de la escena (se puede girar)",
+      "archivo": "peaton_cruce-t1-orbita.webp"
+    },
+    {
+      "modo": "cenital",
+      "nombre": "Desde arriba",
+      "archivo": "peaton_cruce-t1-cenital.webp"
+    },
+    {
+      "modo": "cinematica",
+      "nombre": "Cinematográfica (automática)",
+      "archivo": "peaton_cruce-t1-cinematica.webp"
+    },
+    {
+      "modo": "acera",
+      "nombre": "Desde la acera",
+      "archivo": "peaton_cruce-t1-acera.webp"
+    },
+    {
+      "modo": "cerca:veh-a:180:8:2.6",
+      "nombre": "Detrás de Vehículo A",
+      "archivo": "peaton_cruce-t1-cerca-veh-a-180-8-2.6.webp"
+    },
+    {
+      "modo": "conductor:veh-a",
+      "nombre": "Lo que veía el conductor de A",
+      "archivo": "peaton_cruce-t1-conductor-veh-a.webp"
+    },
+    {
+      "modo": "cerca:veh-a:60:6.2:3.87",
+      "nombre": "El daño de A, en el impacto",
+      "alImpacto": true,
+      "archivo": "peaton_cruce-t0-cerca-veh-a-60-6.2-3.87.webp"
+    },
+    {
+      "modo": "persona:per-peaton",
+      "nombre": "Peatón",
+      "archivo": "peaton_cruce-t1-persona-per-peaton.webp"
+    }
+  ]
+}
