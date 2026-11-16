@@ -105,6 +105,7 @@ import {
   type FlechaMapa,
   type TerrenoMapa,
 } from "./mapa-facil";
+import { textoMedicion } from "@/lib/medir";
 import { medidasDePieza, PreguntaTerreno, type PoniendoTerreno } from "./terreno";
 
 /** Más lejos que esto del choque, un punto de C1 se confirma con una alerta (m). */
@@ -216,6 +217,17 @@ export function EscenaFacil({
   const [mas, setMas] = useState(false);
   const [herramienta, setHerramienta] = useState<"medir" | { inicial: string } | null>(null);
   const [medicion, setMedicion] = useState<Punto[]>([]);
+  // Esc termina la medición (ronda 2, A5), como dice su banda.
+  useEffect(() => {
+    if (herramienta !== "medir") return;
+    const tecla = (ev: KeyboardEvent) => {
+      if (ev.key !== "Escape") return;
+      setHerramienta(null);
+      setMedicion([]);
+    };
+    window.addEventListener("keydown", tecla);
+    return () => window.removeEventListener("keydown", tecla);
+  }, [herramienta]);
   const [busqueda, setBusqueda] = useState(descripcionLugar ?? "");
   const [resultados, setResultados] = useState<{ nombre: string; lat: number; lon: number }[]>([]);
   const [estadoBusqueda, setEstadoBusqueda] = useState<string | null>(null);
@@ -1861,6 +1873,7 @@ export function EscenaFacil({
         coches={coches}
         lineas={lineas}
         medicion={medicion}
+        midiendo={herramienta === "medir"}
         onMoverCoche={(id, p) => {
           const v = id.replace(/-final$/, "");
           colocarFinal(v, p);
@@ -1945,8 +1958,54 @@ export function EscenaFacil({
         </div>
       ) : null}
 
+      {/* El modo de medición (ronda 2, A5): qué tocar, la medida, cómo borrar y cómo terminar. */}
+      {herramienta === "medir" ? (
+        <div className="pointer-events-none absolute top-4 left-1/2 z-20 flex w-[min(640px,calc(100%-2rem))] -translate-x-1/2 justify-center md:left-[calc(50%+210px)] md:w-[min(600px,calc(100%-480px))]">
+          <div
+            className="escena-medir pointer-events-auto"
+            role="status"
+            data-testid="medir-banda"
+            data-puntos={medicion.length}
+          >
+            <svg viewBox="0 0 24 24" width={22} height={22} aria-hidden="true" className="shrink-0">
+              <path
+                d="M3 16.5 16.5 3 21 7.5 7.5 21Z M7 12.5l1.8 1.8 M9.5 10l2.5 2.5 M12 7.5l1.8 1.8 M14.5 5l2.5 2.5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.6}
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span className="min-w-0 flex-1 text-[0.95rem]">
+              <b>Midiendo</b> · {textoMedicion(medicion)}
+            </span>
+            {medicion.length ? (
+              <button
+                type="button"
+                className="boton-secundario boton-compacto"
+                onClick={() => setMedicion([])}
+                data-testid="medir-borrar"
+              >
+                Borrar
+              </button>
+            ) : null}
+            <button
+              type="button"
+              className="boton-principal boton-compacto"
+              onClick={() => {
+                setHerramienta(null);
+                setMedicion([]);
+              }}
+              data-testid="medir-terminar"
+            >
+              Terminar <kbd className="escena-tecla">Esc</kbd>
+            </button>
+          </div>
+        </div>
+      ) : null}
+
       {/* El mensaje del momento: éxito, alerta o error. */}
-      {visible ? (
+      {visible && herramienta !== "medir" ? (
         <div className="pointer-events-none absolute top-4 left-1/2 z-20 flex w-[min(640px,calc(100%-2rem))] -translate-x-1/2 flex-col items-center gap-2 md:left-[calc(50%+210px)] md:w-[min(560px,calc(100%-480px))]">
           <div
             className="escena-mensaje pointer-events-auto w-full flex-wrap"
@@ -2018,7 +2077,7 @@ export function EscenaFacil({
               <div className="flex flex-col gap-2">
                 <button
                   type="button"
-                  className="boton-secundario escena-boton self-start"
+                  className="boton-secundario escena-boton escena-boton-medir self-start"
                   aria-pressed={herramienta === "medir"}
                   onClick={() => {
                     setHerramienta(herramienta === "medir" ? null : "medir");
@@ -2030,7 +2089,8 @@ export function EscenaFacil({
                 </button>
                 {herramienta === "medir" ? (
                   <span>
-                    Toca los dos extremos de lo que mides (restos, una huella de frenado).
+                    Toca en el mapa los dos extremos de lo que mides (restos, una huella de
+                    frenado). La medida se puede usar abajo.
                   </span>
                 ) : null}
                 {medida !== null ? (

@@ -685,14 +685,17 @@ export function Pregunta({
   expediente,
   onCambio,
   onNoSe,
-  onIrAlMapa,
+  onAlMapa,
 }: {
   p: PreguntaEscena;
   expediente: Expediente;
   onCambio: (e: Expediente) => void;
   onNoSe: () => void;
-  /** Para «¿Dónde quedó…?»: lleva al paso del lugar con ese vehículo listo para colocarlo. */
-  onIrAlMapa?: (vehiculo: string) => void;
+  /**
+   * Para «¿Dónde quedó…?» (ronda 2, A3): la respuesta se anota y el perito sigue con las demás
+   * preguntas; la colocación se hace en el mapa, cuando llega a «La escena».
+   */
+  onAlMapa?: () => void;
 }) {
   const [valor, setValor] = useState("");
   const numero = Number(valor.replace(",", "."));
@@ -796,14 +799,14 @@ export function Pregunta({
             ) : null}
           </>
         ) : null}
-        {c.tipo === "mapa" && p.vehiculo && onIrAlMapa ? (
+        {c.tipo === "mapa" && p.vehiculo && onAlMapa ? (
           <button
             type="button"
             className="boton-secundario boton-compacto"
-            onClick={() => onIrAlMapa(p.vehiculo!)}
+            onClick={onAlMapa}
             data-testid={`colocar-${p.clave}`}
           >
-            Colocarlo en el mapa
+            Lo coloco en el mapa
           </button>
         ) : null}
         <button

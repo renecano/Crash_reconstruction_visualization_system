@@ -316,32 +316,8 @@ describe("el dictamen de una reconstrucción (R8)", () => {
     expect(texto(datos())).not.toContain("Supuestos declarados");
   });
 
-  it("lleva la bitácora de los agentes en la trazabilidad (R12b), en orden", () => {
-    const bitacora = [
-      {
-        n: 1,
-        de: "lector" as const,
-        para: "pizarra" as const,
-        tipo: "escribe" as const,
-        texto: "Lectura: 30 filas con su cita.",
-      },
-      {
-        n: 2,
-        de: "fisico" as const,
-        para: "preguntador" as const,
-        tipo: "pide" as const,
-        texto: "La física no cuadra (velocidad_vs_evidencia): pide evidencia al perito.",
-      },
-    ];
-    const t = texto(datos({ bitacora }));
-    enOrden(t, [
-      "huella de las entradas abc123def456",
-      "Bitácora de los agentes",
-      "1 · Lector IA (escribe): Lectura: 30 filas con su cita.",
-      "2 · Físico a Preguntador (pide): La física no cuadra",
-    ]);
-    // La fuente del PDF (Roboto) no trae flechas: salían como un hueco («Físico  Preguntador»).
-    expect(t).not.toMatch(/[\u2190-\u21ff]/);
-    expect(texto(datos())).not.toContain("Bitácora de los agentes");
+  it("no lleva la bitácora de los agentes: el registro es interno (ronda 2, A7)", () => {
+    const t = texto(datos());
+    expect(t).not.toMatch(/Bitácora|agentes|pizarra|Lector IA|Preguntador/);
   });
 });

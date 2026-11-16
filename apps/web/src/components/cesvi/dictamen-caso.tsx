@@ -12,7 +12,6 @@ import {
   trayectoriasEnMapa,
   VERSION_PROMPT_ESCENA,
   type Expediente,
-  type MensajeBitacora,
   type Reconstruccion,
   type SupuestoDeclarado,
   type VerificacionVehiculo,
@@ -123,7 +122,6 @@ export function DictamenCaso({
   validacion: guardada,
   onValidacion,
   tema,
-  bitacora,
   supuestos,
   titulo,
   casoId,
@@ -165,8 +163,6 @@ export function DictamenCaso({
   onValidacion: (v: ValidacionPerito | null) => void;
   /** El tema del mapa del perito: el croquis se toma con el estilo claro y se regresa a este. */
   tema: "claro" | "oscuro";
-  /** La bitácora de los agentes de la pizarra (R12b): va en la trazabilidad. */
-  bitacora?: readonly MensajeBitacora[];
   /** Lo que el caso no trae, como supuesto declarado (ADR 0091). */
   supuestos?: readonly SupuestoDeclarado[];
 }) {
@@ -254,7 +250,6 @@ export function DictamenCaso({
         metodo: `solver de Croquis ${String(reconstruccion.resultado.version_resultado ?? "")}, lectura ${VERSION_PROMPT_ESCENA}, verificación con el método de CESVI`,
         huella: huellaDelCaso(expediente, narracion),
       },
-      bitacora: bitacora ?? [],
       supuestos: supuestos ?? [],
     };
   };

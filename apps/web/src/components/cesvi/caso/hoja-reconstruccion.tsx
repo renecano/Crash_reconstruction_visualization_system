@@ -27,15 +27,12 @@ import { Crece, Cuenta } from "../movimiento";
 export function CifraReconstruccion({
   r,
   nombres,
-  mensajes,
   decisiones,
   onRepetir,
 }: {
   r: Reconstruccion;
   /** Cómo se llama cada vehículo en pantalla («B · Tacoma»), por su id. */
   nombres: Record<string, string>;
-  /** Los mensajes de la bitácora. */
-  mensajes: number;
   /** Lo que Croquis decidió porque el perito no lo sabía («por dónde venía B · Tacoma»). */
   decisiones: readonly string[];
   onRepetir: () => void;
@@ -214,9 +211,6 @@ export function CifraReconstruccion({
                   </span>
                 </p>
               ) : null}
-              <p className="t-nota">
-                Solver resuelto · {mensajes} {mensajes === 1 ? "mensaje" : "mensajes"}
-              </p>
             </div>
           </details>
         </>
@@ -266,8 +260,7 @@ export function CifraReconstruccion({
 }
 
 /**
- * Lo demás del acto (la tabla de velocidades, la evidencia, los límites, la bitácora y la
- * declaración): plegado cuando ya hay una cifra; sin ella, a la vista.
+ * Lo demás del acto (la tabla de velocidades, la evidencia, los límites y la declaración): plegado cuando ya hay una cifra; sin ella, a la vista.
  */
 export function DetalleReconstruccion({
   plegado,
@@ -283,7 +276,7 @@ export function DetalleReconstruccion({
         className="t-nota cursor-pointer py-1 font-medium text-texto"
         data-testid="ver-detalle-reconstruccion"
       >
-        Ver el detalle: velocidades, evidencia, límites y bitácora
+        Ver el detalle: velocidades, evidencia y límites
       </summary>
       <div className="flex flex-col gap-5 pt-3">{children}</div>
     </details>

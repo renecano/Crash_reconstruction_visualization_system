@@ -18,7 +18,7 @@ import {
 import { useState, type ReactNode } from "react";
 import type { ReporteCesvi } from "@/lib/caso-guardado";
 import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
-import { CARA, Fuente, Pregunta } from "./piezas";
+import { Fuente, Pregunta } from "./piezas";
 import { ProbarConductores } from "./conductores";
 import { PanelVerificacion, TablaContraCesvi, TablaVelocidades } from "./reconstruccion";
 import { ConclusionesCesvi } from "../importar-dictamen";
@@ -30,61 +30,7 @@ import {
   textoConteo,
 } from "@/lib/narracion-local";
 import { pareceReporteCompleto } from "@/lib/lectura-reporte";
-
-/** Vehículos, impactos y validez de la escena: lo que Croquis leyó del caso. */
-export function ResumenEscena({ escena }: { escena: EscenaNarrada }) {
-  const e = escena.expediente;
-  const n = e.impactos?.length ?? 0;
-  return (
-    <div className="flex flex-col gap-3" data-testid="escena">
-      <h3 className="t-interfaz font-semibold">
-        {e.vehiculos.length} vehículo{e.vehiculos.length === 1 ? "" : "s"} · {n} impacto
-        {n === 1 ? "" : "s"}
-      </h3>
-      <ul className="flex flex-col gap-2" data-testid="vehiculos">
-        {e.vehiculos.map((v) => (
-          <li key={v.id} className="flex flex-col gap-0.5">
-            <span className="t-interfaz font-medium">
-              {v.id} ·{" "}
-              {[v.marca?.valor, v.modelo?.valor, v.anio].filter(Boolean).join(" ") || "sin datos"}
-            </span>
-            <span className="t-nota">
-              Masa:{" "}
-              {v.masa ? (
-                <>
-                  {v.masa.valor} {v.masa.unidad} <Fuente f={v.masa.fuente} />
-                </>
-              ) : (
-                "falta"
-              )}
-            </span>
-          </li>
-        ))}
-      </ul>
-      <ul className="flex flex-col gap-1.5" data-testid="impactos">
-        {(e.impactos ?? []).map((i) => (
-          <li key={i.orden} className="t-interfaz flex flex-wrap items-center gap-2">
-            Impacto {i.orden}: {(i.vehiculos ?? []).join(" y ")}
-            {i.objeto_fijo ? ` contra ${i.objeto_fijo}` : ""}
-            {i.zonas?.length
-              ? ` (${i.zonas.map((z) => `${z.vehiculo} ${CARA[z.zona.cara] ?? z.zona.cara}`).join(", ")})`
-              : ""}
-            <Fuente f={i.fuente} />
-          </li>
-        ))}
-      </ul>
-      {/* El detalle técnico, a un clic (V2): en pantalla, solo lo que el perito usa. */}
-      <details className="t-nota" open={escena.problemas.length > 0}>
-        <summary className="cursor-pointer">Ver detalle</summary>
-        <p className="mt-2" data-testid="validez">
-          {escena.problemas.length
-            ? `La escena tiene ${escena.problemas.length} problema${escena.problemas.length === 1 ? "" : "s"}: ${escena.problemas.join("; ")}`
-            : "La escena es válida contra el contrato."}
-        </p>
-      </details>
-    </div>
-  );
-}
+import { AlMapa } from "./hecho-laboratorio";
 
 /** Cómo se dice cada clase de vehículo en pantalla. */
 const NOMBRE_CLASE: Record<string, string> = {
@@ -322,22 +268,21 @@ export function PasoCaso({
         </section>
       ) : null}
       <AnilloAvance items={avance} />
-      {escena ? (
+      {escena && reporte ? (
+        <p className="t-nota" data-testid="caso-con-reporte">
+          Trae el reporte de CESVI ({reporte.nombre}): en «Contra CESVI» se compara la
+          reconstrucción con lo que concluyó.
+        </p>
+      ) : null}
+      {escena && extra ? (
         <details className="t-nota">
-          <summary className="cursor-pointer" data-testid="ver-detalle-caso">
-            Ver detalle
+          <summary
+            className="min-h-11 cursor-pointer content-center"
+            data-testid="ver-detalle-caso"
+          >
+            Ver los datos del reporte
           </summary>
-          <div className="mt-3 flex flex-col gap-2">
-            <p>{detalle}</p>
-            {reporte ? (
-              <p data-testid="caso-con-reporte">
-                Tiene el reporte de CESVI ({reporte.nombre}): el paso «Croquis contra el reporte de
-                CESVI» compara la reconstrucción con lo que concluyó.
-              </p>
-            ) : null}
-            <ResumenEscena escena={escena} />
-            {extra}
-          </div>
+          <div className="mt-3 flex flex-col gap-2">{extra}</div>
         </details>
       ) : null}
     </div>
@@ -386,7 +331,8 @@ export function PasoHecho({
   preguntas,
   onExpediente,
   onNoSe,
-  onIrAlMapa,
+  onAlMapa,
+  alMapa = [],
   onCargarReporte,
 }: {
   narracion: string;
@@ -400,7 +346,8 @@ export function PasoHecho({
   preguntas: PreguntaEscena[];
   onExpediente: (e: Expediente) => void;
   onNoSe: (clave: string) => void;
-  onIrAlMapa?: (vehiculo: string) => void;
+  onAlMapa?: (clave: string) => void;
+  alMapa?: PreguntaEscena[];
   /** Si lo pegado es un reporte completo de CESVI, cargarlo como reporte (A3). */
   onCargarReporte?: () => void;
 }) {
@@ -481,7 +428,6 @@ export function PasoHecho({
           </p>
         </section>
       ) : null}
-      {escena ? <ResumenEscena escena={escena} /> : null}
       {escena ? (
         <div className="solo-trabajar flex flex-col gap-3">
           <h3 className="t-interfaz font-semibold">Lo que más cambia la reconstrucción</h3>
@@ -494,15 +440,16 @@ export function PasoHecho({
                   expediente={escena.expediente}
                   onCambio={onExpediente}
                   onNoSe={() => onNoSe(p.clave)}
-                  onIrAlMapa={onIrAlMapa}
+                  onAlMapa={onAlMapa ? () => onAlMapa(p.clave) : undefined}
                 />
               ))}
             </ol>
-          ) : (
+          ) : alMapa.length ? null : (
             <p className="t-nota" data-testid="sin-preguntas">
               No falta nada que pregunte Croquis.
             </p>
           )}
+          {alMapa.length ? <AlMapa preguntas={alMapa} /> : null}
         </div>
       ) : null}
     </div>

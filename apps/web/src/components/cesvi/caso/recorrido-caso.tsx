@@ -102,7 +102,6 @@ import {
 import { textoDano, tituloDelHecho } from "@/lib/hecho-laboratorio";
 import { nombreVehiculo, pasoActual, pasosEscena, type RespuestasC1 } from "@/lib/escena-facil";
 import { PasoCaso, PasoHecho, PasoNumeros, claveItem, type ItemLugar } from "./pasos";
-import { BitacoraAgentes } from "./bitacora";
 import { MapaEscena, type HerramientaMapa, type HuellaMapa } from "./piezas";
 import {
   DanoContraReconstruccion,
@@ -181,6 +180,7 @@ export function RecorridoCaso({
   // El hecho (Laboratorio §8): leído, se ve el relato marcado; «Editar el relato» abre el editor.
   const [editandoRelato, setEditandoRelato] = useState(false);
   const [noSe, setNoSe] = useState<Set<string>>(new Set());
+  const [alMapa, setAlMapa] = useState<Set<string>>(new Set());
   // El paso del lugar (V2): la herramienta del mapa, el elemento elegido de la lista guiada, el
   // punto y el rumbo de cada impacto (para su flecha), lo que se deshace y lo último medido.
   const [herramientaMapa, setHerramientaMapa] = useState<HerramientaMapa>("colocar");
@@ -358,7 +358,7 @@ export function RecorridoCaso({
     [inicial.comparacion, reporte, expediente, leida, texto],
   );
   // Las que siguen pendientes con lo que ya tiene el expediente (y las que no dijo «No sé»).
-  const preguntas = (leida?.preguntas ?? []).filter(
+  const pendientes = (leida?.preguntas ?? []).filter(
     (p) =>
       !noSe.has(p.clave) &&
       expediente !== null &&
@@ -368,6 +368,11 @@ export function RecorridoCaso({
         posiciones.filter((x) => x.fase === "final"),
       ),
   );
+  // «Lo coloco en el mapa» (ronda 2, A3): la pregunta sale del cuestionario y se contesta en «La
+  // escena»; mientras no se coloque, queda en la lista de lo que va al mapa.
+  const preguntas = pendientes.filter((p) => !alMapa.has(p.clave));
+  const preguntasAlMapa = pendientes.filter((p) => alMapa.has(p.clave));
+  const anotarAlMapa = (clave: string) => setAlMapa((s) => new Set([...s, clave]));
 
   // «No sé» a una pregunta (o una pregunta que se cierra al contestarla).
   const cerrarPregunta = (c: string) => {
@@ -392,6 +397,7 @@ export function RecorridoCaso({
     setLeida(e);
     setExpediente(e.expediente);
     setNoSe(new Set());
+    setAlMapa(new Set());
     setValidacion(null);
     setElegido(null);
     setPuntosImpacto({});
@@ -1014,7 +1020,8 @@ export function RecorridoCaso({
           preguntas={preguntas}
           onExpediente={cambiarExpediente}
           onNoSe={cerrarPregunta}
-          onIrAlMapa={() => irA(2)}
+          onAlMapa={anotarAlMapa}
+          alMapa={preguntasAlMapa}
           onEditar={() => setEditandoRelato(true)}
         />
       );
@@ -1054,10 +1061,8 @@ export function RecorridoCaso({
           preguntas={preguntas}
           onExpediente={cambiarExpediente}
           onNoSe={cerrarPregunta}
-          onIrAlMapa={(vehiculo) => {
-            setElegido({ tipo: "final", vehiculo });
-            irA(2);
-          }}
+          onAlMapa={anotarAlMapa}
+          alMapa={preguntasAlMapa}
         />
       );
     if (!expediente || !leida) return sinEscena;
@@ -1086,7 +1091,6 @@ export function RecorridoCaso({
               nombres={Object.fromEntries(
                 (expediente?.vehiculos ?? []).map((v) => [v.id, nombreLab(v.id)]),
               )}
-              mensajes={pizarra.bitacora.length}
               decisiones={[
                 ...direccionesNoSe.map((v) => `por dónde venía ${nombreLab(v)}`),
                 ...desconocidos.map((v) => `dónde quedó ${nombreLab(v)}`),
@@ -1126,7 +1130,6 @@ export function RecorridoCaso({
           {!r || rec.vieja ? <PanelReconstruccion rec={rec} /> : null}
           <DetalleReconstruccion plegado={r !== null}>
             {r && !rec.vieja ? <PanelReconstruccion rec={rec} /> : null}
-            <BitacoraAgentes bitacora={pizarra.bitacora} />
             {r ? (
               <ComparacionDeclaracion
                 expediente={expediente}
@@ -1196,7 +1199,6 @@ export function RecorridoCaso({
         validacion={validacion}
         onValidacion={setValidacion}
         tema={tema}
-        bitacora={pizarra.bitacora}
         supuestos={supuestos}
         titulo={tituloDelHecho(expediente, texto.trim() || null)}
         relato={texto.trim() || null}

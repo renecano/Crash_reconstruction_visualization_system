@@ -16,9 +16,14 @@ import {
 import { useMemo, useState, type CSSProperties } from "react";
 import { Linea } from "../movimiento";
 import { siluetaClase } from "@/lib/colocar";
-import { marcarRelato, metaDelHecho, textoDano, tituloDelHecho } from "@/lib/hecho-laboratorio";
+import {
+  impactosEnPalabras,
+  marcarRelato,
+  metaDelHecho,
+  textoDano,
+  tituloDelHecho,
+} from "@/lib/hecho-laboratorio";
 import { enLista } from "@/lib/pasos-caso";
-import { ResumenEscena } from "./pasos";
 import { Pregunta } from "./piezas";
 
 const ETIQUETA_FUENTE: Record<string, string> = {
@@ -50,7 +55,8 @@ export function HechoLaboratorio({
   preguntas,
   onExpediente,
   onNoSe,
-  onIrAlMapa,
+  onAlMapa,
+  alMapa = [],
   onEditar,
 }: {
   escena: EscenaNarrada;
@@ -59,7 +65,10 @@ export function HechoLaboratorio({
   preguntas: PreguntaEscena[];
   onExpediente: (e: Expediente) => void;
   onNoSe: (clave: string) => void;
-  onIrAlMapa?: (vehiculo: string) => void;
+  /** «Lo coloco en el mapa» (A3): la pregunta se anota y sale de la lista. */
+  onAlMapa?: (clave: string) => void;
+  /** Las preguntas que el perito dejó para el mapa. */
+  alMapa?: PreguntaEscena[];
   onEditar: () => void;
 }) {
   const e = escena.expediente;
@@ -84,6 +93,7 @@ export function HechoLaboratorio({
     .filter((d, k, xs) => xs.findIndex((x) => x.valor === d.valor) === k)
     .slice(0, 4);
   const titulo = tituloDelHecho(e, narracion);
+  const impactos = impactosEnPalabras(e);
   const meta = metaDelHecho(e, narracion);
   const marca = (v: string | null) => ({
     onMouseEnter: () => setActivo(v),
@@ -104,7 +114,10 @@ export function HechoLaboratorio({
         >
           <Linea>{titulo}</Linea>
         </h2>
-        <p className="flex flex-wrap gap-x-3 gap-y-1 text-[0.95rem] text-texto-2">
+        <p
+          className="flex flex-wrap gap-x-3 gap-y-1 text-[0.95rem] text-texto-2"
+          data-testid="escena"
+        >
           {meta.map((m, k) => (
             <span key={k} className="flex gap-3">
               {k > 0 ? <span aria-hidden="true">·</span> : null}
@@ -161,14 +174,6 @@ export function HechoLaboratorio({
             );
           })}
         </p>
-        <details className="t-nota" data-testid="detalle-leido">
-          <summary className="min-h-11 cursor-pointer content-center">
-            Ver lo leído en detalle
-          </summary>
-          <div className="mt-3">
-            <ResumenEscena escena={escena} />
-          </div>
-        </details>
         {editable ? (
           <div className="solo-trabajar mt-auto flex flex-wrap gap-3 pt-4">
             <button
@@ -188,67 +193,88 @@ export function HechoLaboratorio({
         aria-label="Lo que Croquis leyó"
       >
         <span className="t-nota mb-2">Lo que Croquis leyó</span>
-        {e.vehiculos.map((v, k) => {
-          const s = supuestos.find((x) => x.clave === `masa-${v.id}`);
-          const nombre = [v.marca?.valor, v.modelo?.valor].filter(Boolean).join(" ");
-          const fuente = v.masa?.fuente ?? "";
-          return (
-            <section
-              key={v.id}
-              className="flex gap-4 rounded-2xl p-3 transition-colors data-[activo=si]:bg-superficie-alta"
-              data-activo={activo === v.id ? "si" : "no"}
-              data-testid={`tarjeta-${v.id}`}
-              {...marca(v.id)}
-              tabIndex={0}
-            >
-              <VistaSuperior e={e} vehiculo={v.id} clase={v.clase} />
-              <div className="flex min-w-0 flex-col gap-1">
-                <span className="flex items-center gap-2 text-[0.8125rem] text-texto-3">
-                  <span className="relato-insignia" aria-hidden="true">
-                    {letra(k)}
+        <div className="flex flex-col gap-1" data-testid="vehiculos">
+          {e.vehiculos.map((v, k) => {
+            const s = supuestos.find((x) => x.clave === `masa-${v.id}`);
+            const nombre = [v.marca?.valor, v.modelo?.valor].filter(Boolean).join(" ");
+            const fuente = v.masa?.fuente ?? "";
+            return (
+              <section
+                key={v.id}
+                className="flex gap-4 rounded-2xl p-3 transition-colors data-[activo=si]:bg-superficie-alta"
+                data-activo={activo === v.id ? "si" : "no"}
+                data-testid={`tarjeta-${v.id}`}
+                {...marca(v.id)}
+                tabIndex={0}
+              >
+                <VistaSuperior e={e} vehiculo={v.id} clase={v.clase} />
+                <div className="flex min-w-0 flex-col gap-1">
+                  <span className="flex items-center gap-2 text-[0.8125rem] text-texto-3">
+                    <span className="relato-insignia" aria-hidden="true">
+                      {letra(k)}
+                    </span>
+                    Vehículo {letra(k)}
                   </span>
-                  Vehículo {letra(k)}
-                </span>
-                <span className="text-[1.15rem] font-semibold">
-                  {nombre || `Vehículo ${letra(k)}`}
-                  {v.anio ? ` · ${v.anio}` : ""}
-                </span>
-                {v.masa ? (
-                  <span className="flex flex-wrap items-baseline gap-2">
-                    <span className="cifra-protagonista font-[family-name:var(--fuente-titulo)] text-[2.4rem] leading-none">
-                      {v.masa.valor.toLocaleString("es-MX", { maximumFractionDigits: 3 })}
-                    </span>
-                    <span className="text-texto-3">{v.masa.unidad}</span>
-                    <span
-                      className={
-                        fuente === "supuesto"
-                          ? "escena-supuesto"
-                          : "rounded-full bg-superficie-alta px-2 py-0.5 text-[0.75rem] font-semibold"
-                      }
-                      data-fuente={fuente}
-                    >
-                      {ETIQUETA_FUENTE[fuente] ?? fuente}
-                    </span>
+                  <span className="text-[1.15rem] font-semibold">
+                    {nombre || `Vehículo ${letra(k)}`}
+                    {v.anio ? ` · ${v.anio}` : ""}
                   </span>
-                ) : (
-                  <span className="t-nota">Masa: sin dato</span>
-                )}
-                {s ? <span className="t-nota">{s.justificacion.split(/[:;]/)[0]}</span> : null}
-                {clases
-                  .filter((c) => c.vehiculo === v.id && c.valor)
-                  .map((c) => (
-                    <span key={c.clave} className="t-nota" data-testid={`clase-supuesta-${v.id}`}>
-                      <span className="escena-supuesto mr-1">supuesto</span>
-                      Clase: {c.valor}. {c.justificacion}
+                  {v.masa ? (
+                    <span className="flex flex-wrap items-baseline gap-2">
+                      <span className="cifra-protagonista font-[family-name:var(--fuente-titulo)] text-[2.4rem] leading-none">
+                        {v.masa.valor.toLocaleString("es-MX", { maximumFractionDigits: 3 })}
+                      </span>
+                      <span className="text-texto-3">{v.masa.unidad}</span>
+                      <span
+                        className={
+                          fuente === "supuesto"
+                            ? "escena-supuesto"
+                            : "rounded-full bg-superficie-alta px-2 py-0.5 text-[0.75rem] font-semibold"
+                        }
+                        data-fuente={fuente}
+                      >
+                        {ETIQUETA_FUENTE[fuente] ?? fuente}
+                      </span>
                     </span>
-                  ))}
-                {textoDano(e, v.id) ? (
-                  <span className="text-[0.9rem]">{textoDano(e, v.id)}</span>
+                  ) : (
+                    <span className="t-nota">Masa: sin dato</span>
+                  )}
+                  {s ? <span className="t-nota">{s.justificacion.split(/[:;]/)[0]}</span> : null}
+                  {clases
+                    .filter((c) => c.vehiculo === v.id && c.valor)
+                    .map((c) => (
+                      <span key={c.clave} className="t-nota" data-testid={`clase-supuesta-${v.id}`}>
+                        <span className="escena-supuesto mr-1">supuesto</span>
+                        Clase: {c.valor}. {c.justificacion}
+                      </span>
+                    ))}
+                  {textoDano(e, v.id) ? (
+                    <span className="text-[0.9rem]">{textoDano(e, v.id)}</span>
+                  ) : null}
+                </div>
+              </section>
+            );
+          })}
+        </div>
+        {impactos.length ? (
+          <ol
+            className="mt-3 flex flex-col gap-1.5 border-t border-linea-suave pt-4"
+            aria-label="Los impactos, en orden"
+            data-testid="impactos"
+          >
+            {impactos.map((i) => (
+              <li key={i.orden} className="flex flex-wrap items-baseline gap-2 text-[0.95rem]">
+                <span className="font-mono text-[0.8125rem] text-texto-3">{i.orden}</span>
+                <span>{i.texto}</span>
+                {i.supuesto ? (
+                  <span className="escena-supuesto" data-fuente="supuesto">
+                    supuesto
+                  </span>
                 ) : null}
-              </div>
-            </section>
-          );
-        })}
+              </li>
+            ))}
+          </ol>
+        ) : null}
         {lugar.length ? (
           <dl
             className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-linea-suave pt-4"
@@ -291,18 +317,36 @@ export function HechoLaboratorio({
                     expediente={e}
                     onCambio={onExpediente}
                     onNoSe={() => onNoSe(p.clave)}
-                    onIrAlMapa={onIrAlMapa}
+                    onAlMapa={onAlMapa ? () => onAlMapa(p.clave) : undefined}
                   />
                 ))}
               </ol>
             </>
-          ) : (
+          ) : alMapa.length ? null : (
             <p className="t-nota" data-testid="sin-preguntas">
               Sin preguntas pendientes
             </p>
           )}
+          {alMapa.length ? <AlMapa preguntas={alMapa} /> : null}
         </div>
       </aside>
+    </div>
+  );
+}
+
+/** Lo que el perito dejó para colocar en el mapa (A3): se hace en «La escena». */
+export function AlMapa({ preguntas }: { preguntas: PreguntaEscena[] }) {
+  return (
+    <div className="hundido flex flex-col gap-1 p-4" role="status" data-testid="al-mapa">
+      <span className="t-interfaz font-medium">Para colocar en el mapa</span>
+      <ul className="t-nota flex flex-col gap-0.5">
+        {preguntas.map((p) => (
+          <li key={p.clave}>{p.texto.replace(/^¿/, "").replace(/\?.*$/, "")}</li>
+        ))}
+      </ul>
+      <span className="t-nota text-texto-3">
+        Lo colocas en «La escena», el siguiente paso: Croquis te lo pide en su turno.
+      </span>
     </div>
   );
 }

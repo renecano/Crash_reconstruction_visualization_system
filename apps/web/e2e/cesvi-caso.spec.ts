@@ -67,14 +67,14 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await page.getByTestId("leer-narracion").click();
   const escena = page.getByTestId("escena");
   await expect(escena).toContainText("2 vehículos · 1 impacto");
-  await expect(page.getByTestId("vehiculos")).toContainText("V1 · VW Jetta 2002");
+  await expect(page.getByTestId("vehiculos")).toContainText("VW Jetta · 2002");
   await expect(page.getByTestId("impactos")).toContainText("supuesto");
-  await expect(page.getByTestId("validez")).toHaveText("La escena es válida contra el contrato.");
+  // Sin «Ver detalle» ni jerga interna (ronda 2, A2).
+  await expect(page.getByText(/contra el contrato|Ver lo leído en detalle/)).toHaveCount(0);
 
   // 2. Lo que más cambia la reconstrucción: el impacto supuesto se confirma; una masa con «No sé».
   await page.getByTestId("confirmar-impacto").click();
   await expect(page.getByTestId("impactos")).not.toContainText("supuesto");
-  await expect(page.getByTestId("impactos")).toContainText("perito");
   // Una pregunta = un dato, con su control además de «No sé»: primero el tipo de vehículo (opciones)
   // y luego la masa, que ya ofrece el valor típico de su clase (E2).
   await expect(page.getByTestId("usar-tipico-masa-V1")).toHaveCount(0);
@@ -88,7 +88,7 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
     .getByTestId("pregunta-masa-V2")
     .getByRole("button", { name: "Usar", exact: true })
     .click();
-  await expect(page.getByTestId("vehiculos")).toContainText("1450 kg");
+  await expect(page.getByTestId("vehiculos")).toContainText(/1,?450\s*kg/);
 
   await sinRed(page);
   await irAPaso(page, 3);
@@ -142,10 +142,8 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 60_000 });
   await expect(page.getByTestId("velocidad-V1")).toContainText(/\d+ \(/);
   await expect(page.getByTestId("evidencia-usada")).toContainText("posición final de V1");
-  // La bitácora de la pizarra (R12b): el Lector leyó la narración y el Físico reconstruyó.
-  const bitacora = page.getByTestId("bitacora-agentes");
-  await expect(bitacora.locator('[data-de="lector"]').first()).toContainText("Lectura:");
-  await expect(bitacora.locator('[data-de="fisico"]').first()).toContainText("Reconstrucción");
+  // La bitácora de los agentes es interna: el perito no la ve (ronda 2, A7).
+  await expect(page.getByText(/Bitácora de los agentes/)).toHaveCount(0);
 
   // El 3D de la reconstrucción (R3): el visor dibuja la escena con las velocidades estimadas.
   await page.getByTestId("vista-3d").click();

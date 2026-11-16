@@ -50,8 +50,9 @@ test("/cesvi: el perito declara el orden de los impactos de una carambola", asyn
   await page.getByTestId("leer-narracion").click();
   await expect(page.getByTestId("escena")).toContainText("3 vehículos · 2 impactos");
   const impactos = page.getByTestId("impactos");
-  await expect(impactos).toContainText("Impacto 1: V1 y V2");
-  await expect(impactos).toContainText("Impacto 2: V3 y V2");
+  // Con la letra de cada vehículo, como en el panel (ronda 2, A2): V1 es A, V2 es B y V3 es C.
+  await expect(impactos.locator("li").nth(0)).toContainText("A con B");
+  await expect(impactos.locator("li").nth(1)).toContainText("C con B");
 
   // Croquis pregunta el orden, con el que leyó como primera opción.
   const pregunta = page.getByTestId("pregunta-orden-impactos");
@@ -64,8 +65,8 @@ test("/cesvi: el perito declara el orden de los impactos de una carambola", asyn
 
   // El perito declara el otro: primero el alcance del rabón, después el choque de frente.
   await page.getByTestId("opcion-orden-impactos-2,1").click();
-  await expect(impactos).toContainText("Impacto 1: V3 y V2");
-  await expect(impactos).toContainText("Impacto 2: V1 y V2");
+  await expect(impactos.locator("li").nth(0)).toContainText("C con B");
+  await expect(impactos.locator("li").nth(1)).toContainText("A con B");
   // Contestada, no se vuelve a hacer; las demás preguntas siguen.
   await expect(pregunta).toHaveCount(0);
   await expect(page.locator('[data-testid^="pregunta-"]').first()).toBeVisible();

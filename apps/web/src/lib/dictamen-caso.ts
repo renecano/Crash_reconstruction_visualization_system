@@ -22,12 +22,10 @@ import {
   type Expediente,
   type FilaDeclarada,
   type Reconstruccion,
-  type MensajeBitacora,
   type SupuestoDeclarado,
   type VerificacionVehiculo,
   encabezadoHipotesis,
   enPalabras,
-  mensajeEnPalabras,
   danoEnCorto,
   danoEnTexto,
   lecturasDeDano,
@@ -80,8 +78,6 @@ export interface DatosDictamenCaso {
   /** Con la estructura de los reportes de CESVI (si el perito la pide). */
   estructuraCesvi: boolean;
   trazabilidad: { metodo: string; huella: string };
-  /** La bitácora de los agentes de la pizarra (R12b, ADR 0093), en orden. */
-  bitacora?: readonly MensajeBitacora[];
   /** Lo que el caso no trae, como supuesto declarado con su justificación (ADR 0091). */
   supuestos?: readonly SupuestoDeclarado[];
 }
@@ -426,15 +422,6 @@ function secciones(d: DatosDictamenCaso) {
     nota(
       `Método: ${d.trazabilidad.metodo} · huella de las entradas ${d.trazabilidad.huella} · validó ${d.validacion ? `${d.validacion.perito}, ${d.validacion.fecha}` : "pendiente"}.`,
     ),
-    ...(d.bitacora?.length
-      ? [
-          subtitulo("Bitácora de los agentes"),
-          nota(
-            "Quién escribió qué en la pizarra del caso y qué se pidieron los agentes, en orden. La IA solo lee la narración; los números los calculan el solver y el método de CESVI.",
-          ),
-          ...d.bitacora.map((m) => nota(mensajeEnPalabras(m))),
-        ]
-      : []),
   ];
   return {
     caracteristicas,
@@ -458,7 +445,7 @@ export const LEYENDA_3D =
   "Reconstrucción ilustrativa; el entorno es procedural: no es el lugar real.";
 
 export function dictamenCasoContenido(d: DatosDictamenCaso): Content[] {
-  // Roboto no trae «→» (la bitácora dice «Físico → Preguntador»): en el dictamen va «a».
+  // Roboto no trae algunas flechas: en el dictamen van en palabras.
   const cuerpo = conGlifosDeRoboto(cuerpoDelDictamen(d));
   // La cabecera: el logo de la marca, tal cual (assets/brand/marca.json).
   return d.logo
