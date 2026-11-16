@@ -111,7 +111,7 @@ export function useReconstruccion(
       setEstado(null);
     } catch (e) {
       if (mio === turno.current)
-        setEstado(`El solver no pudo reconstruir la escena: ${(e as Error).message}`);
+        setEstado(`Croquis no pudo reconstruir la escena: ${(e as Error).message}`);
     } finally {
       if (mio === turno.current) setRecalculando(false);
     }
@@ -152,8 +152,8 @@ export function PanelReconstruccion({ rec }: { rec: EstadoReconstruccion }) {
         </button>
       </div>
       <p className="t-nota">
-        El solver de Croquis ajusta las velocidades para que la simulación reproduzca la evidencia
-        que colocaste. Lo que la evidencia no fija se dice así; ningún número se inventa.
+        Croquis ajusta las velocidades para que la simulación reproduzca la evidencia que colocaste.
+        Lo que la evidencia no fija se dice así; ningún número se inventa.
       </p>
       {rec.estado ? (
         <p role="status" className="t-interfaz">
@@ -301,10 +301,10 @@ export function TablaContraCesvi({ contra }: { contra: ContraMetodosCesvi }) {
       </table>
       {contra.filas.some((f) => f.croquisRango) ? (
         <p className="t-nota">
-          Entre paréntesis, el p10–p90: la velocidad que reproduce la evidencia cuando sus entradas
-          (medidas, fricción, masas y reposo supuesto) varían dentro de su incertidumbre, alrededor
-          de la solución elegida. Si con eso la solución no se mueve (el costo tiene un quiebre
-          ahí), es su aproximación lineal.
+          Entre paréntesis, el rango donde cae el 80 % de las simulaciones: la velocidad que
+          reproduce la evidencia cuando sus entradas (medidas, fricción, masas y reposo supuesto)
+          varían dentro de su incertidumbre, alrededor de la solución elegida. Si con eso la
+          solución no se mueve, el rango es una aproximación del cálculo.
         </p>
       ) : null}
       {contra.filas.map((f) => (
@@ -354,10 +354,13 @@ export function ElegirHipotesis({
   r,
   elegida,
   onElegir,
+  nombres = {},
 }: {
   r: Reconstruccion;
   elegida: string | null;
   onElegir: (clave: string) => void;
+  /** Cómo se llama cada vehículo en pantalla («B · Tacoma»), como en el panel. */
+  nombres?: Record<string, string>;
 }) {
   // La deformación medida contra cada hipótesis, con sus números (auditoría, C5).
   const dano = useMemo(
@@ -373,7 +376,7 @@ export function ElegirHipotesis({
       <p className="t-nota">
         {vista
           ? `Elegiste «${vista.titulo}»: los números, el 3D y el dictamen la siguen.`
-          : `Elige una. Mientras no elijas, se ve «${hs[0]!.titulo}» (${hs[0]!.familia === "dano" ? "lo medido pesa más que lo supuesto y es la de menor costo" : "la de menor costo"}), y el dictamen dice que falta tu elección.`}
+          : `Elige una. Mientras no elijas, se ve «${hs[0]!.titulo}» (${hs[0]!.familia === "dano" ? "lo medido pesa más que lo supuesto y es la que menos se aparta de la evidencia" : "la que menos se aparta de la evidencia"}), y el dictamen dice que falta tu elección.`}
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
         {hs.map((h) => (
@@ -393,11 +396,13 @@ export function ElegirHipotesis({
             </span>
             <ul className="cifras t-cuerpo flex flex-col gap-1">
               {h.costo !== null ? (
-                <li data-testid={`costo-${h.clave}`}>Costo del ajuste: {F.numero(h.costo, 3)}</li>
+                <li data-testid={`costo-${h.clave}`}>
+                  Desajuste con la evidencia: {F.numero(h.costo, 3)}
+                </li>
               ) : null}
               {h.velocidades.map((v) => (
                 <li key={v.vehiculo}>
-                  {v.vehiculo}:{" "}
+                  {nombres[v.vehiculo] ?? v.vehiculo}:{" "}
                   {v.kmh === null
                     ? "sin velocidad"
                     : v.fijada
@@ -407,7 +412,8 @@ export function ElegirHipotesis({
               ))}
               {h.reposos.map((x) => (
                 <li key={x.vehiculo}>
-                  {x.vehiculo} termina a {F.metros(x.m, 1)} de su reposo supuesto
+                  {nombres[x.vehiculo] ?? x.vehiculo} termina a {F.metros(x.m, 1)} de su reposo
+                  supuesto
                 </li>
               ))}
               {(dano.get(h.clave) ?? []).length ? (
@@ -419,7 +425,7 @@ export function ElegirHipotesis({
                     data-estado={l.estado}
                     data-energia-pct={F.fijo(l.energiaPct, 1)}
                   >
-                    {danoEnTexto(l)}
+                    {danoEnTexto(l, nombres[l.vehiculo] ?? l.vehiculo)}
                   </li>
                 ))
               ) : (
@@ -446,11 +452,11 @@ export function ElegirHipotesis({
         ))}
       </div>
       <p className="t-nota">
-        El costo mide qué tan bien reproduce cada solución la evidencia: menor es mejor. Solo se
+        El desajuste mide qué tanto se aparta cada solución de la evidencia: menor es mejor. Solo se
         comparan los de la misma hipótesis, porque cada una pesa distinto el reposo supuesto. Entre
-        paréntesis, el p10–p90 de cada velocidad con las entradas perturbadas (medidas, fricción,
-        masas y reposo supuesto) alrededor de esa solución. Si con eso la solución no se mueve (el
-        costo tiene un quiebre ahí), es su aproximación lineal.
+        paréntesis, el rango donde cae el 80 % de las simulaciones de cada velocidad con las
+        entradas variadas (medidas, fricción, masas y reposo supuesto) alrededor de esa solución. Si
+        con eso la solución no se mueve, el rango es una aproximación del cálculo.
       </p>
     </div>
   );

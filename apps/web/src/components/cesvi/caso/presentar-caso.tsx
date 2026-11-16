@@ -240,7 +240,9 @@ export function PresentarCaso({
         className="absolute right-8 bottom-16 text-[0.8125rem] text-texto-2 md:right-14"
         data-testid="aviso-apoyo"
       >
-        Reconstrucción de apoyo · el dictamen es del perito
+        {con3d
+          ? "Reconstrucción ilustrativa · entorno procedural: no es el lugar real · el dictamen es del perito"
+          : "Reconstrucción de apoyo · el dictamen es del perito"}
       </p>
       <footer className="absolute inset-x-0 bottom-0 flex items-end gap-6 px-8 pb-7 md:px-14">
         <ol className="flex min-w-0 flex-1 gap-3">

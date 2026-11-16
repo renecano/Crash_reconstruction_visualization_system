@@ -133,13 +133,13 @@ function hipotesis(d: DatosDictamenCaso): Content[] {
     parrafo(
       vista
         ? `El perito eligió «${vista.titulo}»; los números de este dictamen son los de esa hipótesis.`
-        : `El perito no eligió hipótesis: los números son los de «${hs[0]!.titulo}» (${hs[0]!.familia === "dano" ? "lo medido pesa más que lo supuesto y es la de menor costo" : "la de menor costo"}). Falta su elección.`,
+        : `El perito no eligió hipótesis: los números son los de «${hs[0]!.titulo}» (${hs[0]!.familia === "dano" ? "lo medido pesa más que lo supuesto y es la que menos se aparta de la evidencia" : "la que menos se aparta de la evidencia"}). Falta su elección.`,
     ),
     tabla(
       [
         "Hipótesis",
-        "Costo del ajuste",
-        "Velocidades previas (p10–p90)",
+        "Desajuste con la evidencia",
+        "Velocidades antes del impacto (rango del 80 %)",
         "Reposo supuesto",
         "Deformación medida",
       ],
@@ -160,7 +160,7 @@ function hipotesis(d: DatosDictamenCaso): Content[] {
       ]),
     ),
     nota(
-      "El costo mide qué tan bien reproduce cada solución la evidencia (menor es mejor); solo se comparan los de la misma hipótesis. El p10–p90 sale de las entradas perturbadas (medidas, fricción, masas y reposo supuesto) alrededor de cada solución. Si con eso la solución no se mueve (el costo tiene un quiebre ahí), es su aproximación lineal.",
+      "El desajuste mide qué tanto se aparta cada solución de la evidencia (menor es mejor); solo se comparan los de la misma hipótesis. El rango es donde cae el 80 % de las simulaciones con las entradas variadas (medidas, fricción, masas y reposo supuesto) alrededor de cada solución. Si con eso la solución no se mueve, el rango es una aproximación del cálculo.",
     ),
   ];
 }
@@ -194,7 +194,7 @@ function contraReporte(d: DatosDictamenCaso): Content[] {
     ...(k.filas.some((f) => f.croquisRango)
       ? [
           nota(
-            "Entre paréntesis, el p10–p90: la velocidad que reproduce la evidencia cuando sus entradas (medidas, fricción, masas y reposo supuesto) varían dentro de su incertidumbre, alrededor de la solución elegida. Si con eso la solución no se mueve (el costo tiene un quiebre ahí), es su aproximación lineal.",
+            "Entre paréntesis, el rango donde cae el 80 % de las simulaciones: la velocidad que reproduce la evidencia cuando sus entradas (medidas, fricción, masas y reposo supuesto) varían dentro de su incertidumbre, alrededor de la solución elegida. Si con eso la solución no se mueve, el rango es una aproximación del cálculo.",
           ),
         ]
       : []),
@@ -284,7 +284,7 @@ function secciones(d: DatosDictamenCaso) {
   ];
   const reconstruccion: Content[] = [
     parrafo(
-      "El solver de Croquis ajusta las velocidades para que la simulación reproduzca la evidencia que colocó el perito. Lo que la evidencia no fija se dice así; ningún número se inventa.",
+      "Croquis ajusta las velocidades para que la simulación reproduzca la evidencia que colocó el perito. Lo que la evidencia no fija se dice así; ningún número se inventa.",
     ),
     tabla(
       [
@@ -375,7 +375,7 @@ function secciones(d: DatosDictamenCaso) {
   const declarada: Content[] = d.declarada
     ? [
         parrafo(
-          `Versión que declara el conductor de ${d.declarada.declarante}, simulada con el mismo solver. Es lo que dice el conductor, no evidencia.`,
+          `Versión que declara el conductor de ${d.declarada.declarante}, simulada con la misma física. Es lo que dice el conductor, no evidencia.`,
         ),
         tabla(
           ["Vehículo", "Concepto", "Versión declarada", "Evidencia y reconstrucción", "Estado"],
@@ -420,7 +420,7 @@ function secciones(d: DatosDictamenCaso) {
       ];
   const trazabilidad: Content[] = [
     nota(
-      `Método: ${d.trazabilidad.metodo} · huella de las entradas ${d.trazabilidad.huella} · validó ${d.validacion ? `${d.validacion.perito}, ${d.validacion.fecha}` : "pendiente"}.`,
+      `Método: ${d.trazabilidad.metodo} · huella digital de los datos (SHA-256) ${d.trazabilidad.huella} · validó ${d.validacion ? `${d.validacion.perito}, ${d.validacion.fecha}` : "pendiente"}.`,
     ),
   ];
   return {

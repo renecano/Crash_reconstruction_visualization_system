@@ -1960,7 +1960,7 @@ export function EscenaFacil({
 
       {/* El modo de medición (ronda 2, A5): qué tocar, la medida, cómo borrar y cómo terminar. */}
       {herramienta === "medir" ? (
-        <div className="pointer-events-none absolute top-4 left-1/2 z-20 flex w-[min(640px,calc(100%-2rem))] -translate-x-1/2 justify-center md:left-[calc(50%+210px)] md:w-[min(600px,calc(100%-480px))]">
+        <div className="pointer-events-none absolute top-4 left-1/2 z-20 flex w-[min(640px,calc(100%-2rem))] -translate-x-1/2 md:top-[72px] justify-center md:left-[calc(50%+210px)] md:w-[min(600px,calc(100%-480px))]">
           <div
             className="escena-medir pointer-events-auto"
             role="status"
@@ -2006,7 +2006,7 @@ export function EscenaFacil({
 
       {/* El mensaje del momento: éxito, alerta o error. */}
       {visible && herramienta !== "medir" ? (
-        <div className="pointer-events-none absolute top-4 left-1/2 z-20 flex w-[min(640px,calc(100%-2rem))] -translate-x-1/2 flex-col items-center gap-2 md:left-[calc(50%+210px)] md:w-[min(560px,calc(100%-480px))]">
+        <div className="pointer-events-none absolute top-4 left-1/2 z-20 flex w-[min(640px,calc(100%-2rem))] -translate-x-1/2 md:top-[72px] flex-col items-center gap-2 md:left-[calc(50%+210px)] md:w-[min(560px,calc(100%-480px))]">
           <div
             className="escena-mensaje pointer-events-auto w-full flex-wrap"
             data-tipo={visible.tipo}
@@ -2184,9 +2184,10 @@ export function EscenaFacil({
 
       {/* La tarjeta final. */}
       {todoListo && !listaVista ? (
-        <div className="absolute inset-0 z-20 grid place-items-center bg-[color-mix(in_srgb,var(--fondo)_45%,transparent)] p-4">
+        // Arriba de la barra de avance de abajo: sus botones no quedan tapados (ronda 2, B).
+        <div className="absolute inset-0 z-20 grid place-items-center bg-[color-mix(in_srgb,var(--fondo)_45%,transparent)] p-4 pb-[104px]">
           <section
-            className="escena-hoja flex max-h-[calc(100%-120px)] w-[min(560px,100%)] flex-col gap-4 overflow-y-auto p-7"
+            className="escena-hoja flex max-h-full w-[min(560px,100%)] flex-col gap-4 overflow-y-auto p-7"
             role="dialog"
             aria-modal="false"
             aria-labelledby="escena-lista-titulo"

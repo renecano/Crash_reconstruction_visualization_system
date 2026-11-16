@@ -47,6 +47,6 @@ export async function traerCalles(
     throw new MapaError(e instanceof Error ? e.message : String(e));
   }
   const v = validateEscena(applied.spec);
-  if (!v.ok) throw new MapaError("La escena con las calles no cumple el contrato.");
+  if (!v.ok) throw new MapaError("No se pudo armar la escena con las calles del lugar.");
   return { spec: v.spec, vias: applied.vias };
 }

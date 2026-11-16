@@ -132,7 +132,18 @@ export function BarraRecorrido({
                     data-testid={`paso-${primero + 1}`}
                     data-acto={a.clave}
                   >
-                    <span className="whitespace-nowrap">{a.nombre}</span>
+                    {/* En una ventana chica, los demás actos van con su número: los nombres se pisaban
+                        (ronda 2, B). El nombre completo sigue en la etiqueta del botón. */}
+                    {esActual ? (
+                      <span className="truncate whitespace-nowrap">{a.nombre}</span>
+                    ) : (
+                      <>
+                        <span className="hidden whitespace-nowrap lg:inline">{a.nombre}</span>
+                        <span className="font-mono lg:hidden" aria-hidden="true">
+                          {k + 1}
+                        </span>
+                      </>
+                    )}
                   </button>
                 </li>
               );

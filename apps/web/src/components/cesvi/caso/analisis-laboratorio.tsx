@@ -188,16 +188,18 @@ function TarjetaDano({
         <div className="flex flex-col gap-1">
           <p className="t-nota">
             {narrados.length
-              ? `Narrados: ${narrados
-                  .map(
-                    (d) =>
-                      `${CARA[d.zona.cara] ?? d.zona.cara}${d.zona.tercio ? ` (${d.zona.tercio})` : ""}${d.magnitud?.cualitativa ? `, ${d.magnitud.cualitativa}` : ""}${d.dano_previo ? ", daño previo" : ""}`,
-                  )
-                  .join("; ")}.`
+              ? `Daños narrados: ${[
+                  ...new Set(
+                    narrados.map(
+                      (d) =>
+                        `${CARA[d.zona.cara] ?? d.zona.cara}${d.zona.tercio ? ` (${d.zona.tercio})` : ""}${d.magnitud?.cualitativa ? `, ${d.magnitud.cualitativa}` : ""}${d.dano_previo ? ", daño previo" : ""}`,
+                    ),
+                  ),
+                ].join("; ")}.`
               : "La narración no describe sus daños."}
           </p>
           <p className="t-nota" data-testid={`dano-medido-${v}`}>
-            Del reporte:{" "}
+            Deformación medida:{" "}
             {medido ? (
               <>
                 {medido.cara}; C1–C{medido.cCm.length}{" "}
@@ -369,7 +371,7 @@ export function ActoDanos({
             <h2 className="font-[family-name:var(--fuente-titulo)] text-[2.5rem] leading-none font-normal tracking-[-0.03em]">
               Supuestos
             </h2>
-            <span className="t-nota">ya dentro del rango</span>
+            <span className="t-nota">cada uno varía dentro de su rango</span>
           </header>
           {tarjetas.map((s) => (
             <TarjetaSupuesto key={s.clave} s={s} />

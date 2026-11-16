@@ -20,9 +20,9 @@ describe("las simulaciones de un rango van en el dato", () => {
   });
 
   it("la nota lleva el número; sin el dato no lo inventa", () => {
-    expect(notaDeMuestras(con(32))).toBe("p10–p90 de 32 simulaciones");
+    expect(notaDeMuestras(con(32))).toBe("rango del 80 % de 32 simulaciones");
     expect(muestrasDe(con())).toBeNull();
-    expect(notaDeMuestras(con())).toBe("p10–p90 de las simulaciones");
-    expect(notaDeMuestras({ resultado: {} })).toBe("p10–p90 de las simulaciones");
+    expect(notaDeMuestras(con())).toBe("rango del 80 % de las simulaciones");
+    expect(notaDeMuestras({ resultado: {} })).toBe("rango del 80 % de las simulaciones");
   });
 });

@@ -4,6 +4,7 @@
  * 0061): el mapa donde el perito coloca a cada vehículo, las preguntas de lo que más cambia la
  * reconstrucción y la fuente de cada dato.
  */
+import { conNombres } from "@/lib/hecho-laboratorio";
 import { FUENTE, palabra } from "@/i18n/vocabulario";
 import {
   formato as F,
@@ -731,8 +732,8 @@ export function Pregunta({
         : null;
   return (
     <li className="hundido flex flex-col gap-2 p-4" data-testid={`pregunta-${p.clave}`}>
-      <p className="t-interfaz font-medium">{p.texto}</p>
-      <p className="t-nota">{p.porQue}</p>
+      <p className="t-interfaz font-medium">{conNombres(p.texto, expediente)}</p>
+      <p className="t-nota">{conNombres(p.porQue, expediente)}</p>
       <div className="flex flex-wrap items-center gap-2">
         {c.tipo === "sino" && p.impacto ? (
           <>
@@ -755,7 +756,11 @@ export function Pregunta({
           </>
         ) : null}
         {c.tipo === "opciones" ? (
-          <div className="flex flex-wrap gap-2" role="group" aria-label={p.texto}>
+          <div
+            className="flex flex-wrap gap-2"
+            role="group"
+            aria-label={conNombres(p.texto, expediente)}
+          >
             {c.opciones.map((o) => (
               <button
                 key={o.valor}
@@ -764,7 +769,7 @@ export function Pregunta({
                 onClick={() => elegir(o.valor)}
                 data-testid={`opcion-${p.clave}-${o.valor.replace(/[|:]/g, "-")}`}
               >
-                {o.etiqueta}
+                {conNombres(o.etiqueta, expediente, true)}
               </button>
             ))}
           </div>

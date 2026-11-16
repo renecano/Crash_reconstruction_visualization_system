@@ -86,7 +86,10 @@ export function capitulos({
       ...ids
         .map(([, id]) => id)
         .sort((a, b) => a.localeCompare(b, "en", { numeric: true }))
-        .map((id, k) => ({ etiqueta: `Vehículo ${k + 1}`, valor: nombreDe(id) })),
+        .map((id, k) => ({
+          etiqueta: `Vehículo ${String.fromCharCode(65 + k)}`,
+          valor: nombreDe(id).replace(/^[A-Z] · /, ""),
+        })),
     ],
   };
 

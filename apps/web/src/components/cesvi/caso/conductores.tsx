@@ -116,8 +116,8 @@ export function ResultadoConductores({ p }: { p: PruebaConductores }) {
           Con el tiempo de reacción de los que reaccionan sorteado en su rango (
           {p.sensibilidad.muestras} muestras), la velocidad relativa va de{" "}
           <span className="cifras">{F.kmh(p.sensibilidad.p10, "reconstruccion")}</span> a{" "}
-          <span className="cifras">{F.kmhConUnidad(p.sensibilidad.p90, "reconstruccion")}</span>{" "}
-          (p10–p90)
+          <span className="cifras">{F.kmhConUnidad(p.sensibilidad.p90, "reconstruccion")}</span> (el
+          rango donde cae el 80 % de las muestras)
           {p.sensibilidad.sinContacto ? `; en ${p.sensibilidad.sinContacto} no hay contacto` : ""}.
         </p>
       ) : null}
@@ -165,7 +165,7 @@ export function ProbarConductores({
     setPrueba(null);
     try {
       const agentes = await probar(especConConductor(r, h));
-      if (!agentes) throw new Error("el solver no devolvió a los conductores");
+      if (!agentes) throw new Error("la simulación no devolvió a los conductores");
       setPrueba({ h, p: leerPruebaConductores(r, agentes) });
       setEstado(null);
     } catch (e) {

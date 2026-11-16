@@ -71,7 +71,7 @@ export function filasDano(
         }
       : {
           tipo: "sin_dato",
-          motivo: `el reporte no trae la medida de la deformación de ${v.id}`,
+          motivo: "el texto no trae la medida de la deformación",
         };
     const c = calculados.find((x) => ids[x.id] === v.id);
     const energia = c?.dano?.energia_j;

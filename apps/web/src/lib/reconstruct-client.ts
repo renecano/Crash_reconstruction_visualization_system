@@ -69,7 +69,7 @@ function getWorker(cual: Cual = "general"): Worker {
     }
     if (!resultado) {
       pending.delete(ev.data.id);
-      p.reject(new Error(error ?? "El solver no devolvió resultado."));
+      p.reject(new Error(error ?? "La reconstrucción no devolvió resultado."));
       return;
     }
     if (p.completo && fase === "reconstruccion") {
@@ -83,7 +83,7 @@ function getWorker(cual: Cual = "general"): Worker {
     for (const [id, p] of pending) {
       const suyo = p.agentes ? "conductores" : p.hipotesis ? "hipotesis" : "general";
       if (suyo !== cual) continue;
-      p.reject(new Error(ev.message || "El solver falló."));
+      p.reject(new Error(ev.message || "La reconstrucción falló."));
       pending.delete(id);
     }
   };

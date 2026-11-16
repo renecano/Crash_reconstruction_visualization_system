@@ -25,5 +25,5 @@ export function coberturaDelRango(): CifraDeCobertura {
 /** El límite, en una oración para el perito. */
 export function limiteDeCobertura(): string {
   const c = coberturaDelRango();
-  return `El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el p10–p90 la contuvo ${tasa(c)} de las veces, y lo esperado es cerca de ${c.esperado_pct} %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre.`;
+  return `El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo ${tasa(c)} de las veces, y lo esperado es cerca de ${c.esperado_pct} %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre.`;
 }

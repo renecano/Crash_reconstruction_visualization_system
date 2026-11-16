@@ -208,7 +208,7 @@ export function compararDeclarada(e: {
         declarada: `a ${metros(d, 1)} de la reconstruida`,
         evidencia: "la de la reconstrucción",
         estado: d <= largo ? "coincide" : "no_coincide",
-        fuente: "La versión declarada simulada con el solver · la reconstrucción",
+        fuente: "La versión declarada, simulada con la misma física · la reconstrucción",
         indicador: true,
       });
     }

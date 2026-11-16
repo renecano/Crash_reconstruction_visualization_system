@@ -98,7 +98,7 @@ describe("la reconstrucción (Laboratorio §8)", () => {
     expect(frasePercentil("p50", 75.2)).toContain("es la mediana de las simulaciones");
     expect(frasePercentil("p90", 44)).toContain("menos de 44 km/h");
     expect(textoBarra({ desde: 34, n: 1, enRango: true })).toBe(
-      "34–35 km/h: 1 simulación, dentro de p10–p90",
+      "34–35 km/h: 1 simulación, dentro del rango del 80 %",
     );
   });
 });
