@@ -171,5 +171,24 @@ namespace Croquis.Core.Tests
             Assert.Contains("Leyenda(escenario);", escenario);
             Assert.Contains("Reconstrucción ilustrativa", escenario);
         }
+
+        /// <summary>
+        /// La leyenda se lee sobre cualquier fondo (René, 2026-11-15): WCAG AA (4.5:1) con un fondo blanco,
+        /// negro, gris o del color de los techos detrás del recuadro, y el visor la dibuja con esos colores.
+        /// </summary>
+        [Fact]
+        public void LaLeyendaCumpleAaSobreCualquierFondo()
+        {
+            foreach (var detras in new[] { (1.0, 1.0, 1.0), (0.0, 0.0, 0.0), (0.5, 0.5, 0.5), (0.95, 0.55, 0.3), (0.8, 0.9, 0.6) })
+            {
+                Assert.True(Leyenda3d.Contraste(detras) >= Leyenda3d.MinimoAa, $"contraste {Leyenda3d.Contraste(detras):F2} con {detras}");
+            }
+
+            // El peor caso es el blanco puro detrás del recuadro.
+            Assert.True(Leyenda3d.Contraste((1.0, 1.0, 1.0)) > 10.0);
+            var escenario = File.ReadAllText(Path.Combine(Raiz(), "apps", "visor-unity", "Assets", "Croquis", "Visor", "EscenarioVista.cs"));
+            Assert.Contains("Croquis.Core.Leyenda3d.Fondo", escenario);
+            Assert.Contains("Croquis.Core.Leyenda3d.Texto", escenario);
+        }
     }
 }

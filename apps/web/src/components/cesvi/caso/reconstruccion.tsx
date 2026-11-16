@@ -32,6 +32,7 @@ import {
   encabezadoHipotesis,
   supuestosEnUnaLinea,
   type SupuestoDeclarado,
+  lineaContraCesvi,
 } from "@croquis/cesvi";
 import { LEGEND_TEXT_CESVI, type EscenaSpec } from "@croquis/scene-schema";
 import type { ViewerExportApi } from "@croquis/viewer";
@@ -46,6 +47,7 @@ import type { OverpassResponse } from "@croquis/croquis-2d";
 import { conCallesDelMapa, conObjetosDelMapa } from "@/lib/calles-del-mapa";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
 import { relieveDelLugar } from "@/lib/relieve-cliente";
+import { nombreVehiculo } from "@/lib/escena-facil";
 import { DEFINICION, METODO } from "@/lib/textos-caso";
 
 const kmh = (x?: number) => F.kmh(x, "reconstruccion");
@@ -511,12 +513,19 @@ export function NotasDel3d({
   supuestos = [],
   contraCesvi = null,
   conOcupantes = false,
+  expediente = null,
 }: {
   supuestos?: readonly SupuestoDeclarado[];
   contraCesvi?: ContraMetodosCesvi | null;
+  /** Para nombrar a cada vehículo como el panel («A · Silverado 2500»). */
+  expediente?: Expediente | null;
   /** Si el caso trae ocupantes: su límite ilustrativo en el 3D (U6, ADR 0116). */
   conOcupantes?: boolean;
 }) {
+  const vs = expediente?.vehiculos ?? [];
+  const nombres: Record<string, string> = Object.fromEntries(
+    vs.map((v, i) => [v.id, `${String.fromCharCode(65 + i)} · ${nombreVehiculo(v, vs)}`]),
+  );
   return (
     <>
       <p className="t-nota">
@@ -540,10 +549,7 @@ export function NotasDel3d({
         .filter((f) => f.croquisKmh !== null)
         .map((f) => (
           <p key={f.metodo} className="t-nota" data-testid="contra-cesvi-3d">
-            <span className="cifras">
-              {f.vehiculo}: Croquis {conRango(f.croquisKmh!, f.croquisRango)} km/h · CESVI (
-              {f.metodo}) {F.kmhConUnidad(f.cesviKmh, "metodo")} · {diferenciaEnTexto(f)}.
-            </span>{" "}
+            <span className="cifras">{lineaContraCesvi(f, nombres[f.vehiculo] ?? "")}.</span>{" "}
             {f.porQue}
           </p>
         ))}
@@ -563,6 +569,7 @@ export function NotasDel3d({
 export function Visor3dCaso({
   r,
   contraCesvi = null,
+  expediente = null,
   declarada,
   onExportApi,
   onPosiciones,
@@ -574,6 +581,8 @@ export function Visor3dCaso({
   camaraPedida = null,
   aSangre = false,
 }: {
+  /** Para nombrar a cada vehículo de las notas como el panel. */
+  expediente?: Expediente | null;
   /** En la reconstrucción la escena va primero: las notas quedan debajo de los controles. */
   aSangre?: boolean;
   r: Reconstruccion;
@@ -639,7 +648,7 @@ export function Visor3dCaso({
       className={`flex h-full flex-col gap-2 overflow-y-auto p-3 ${expandido ? "pt-40 pb-28" : "pt-16"} ${aSangre ? "[&>p]:order-last" : ""}`}
       data-testid="visor-caso"
     >
-      <NotasDel3d supuestos={supuestos} contraCesvi={contraCesvi} />
+      <NotasDel3d supuestos={supuestos} contraCesvi={contraCesvi} expediente={expediente} />
       <VisorEscena
         spec={spec3d}
         escena="propia"

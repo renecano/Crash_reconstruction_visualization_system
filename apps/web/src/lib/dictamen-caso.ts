@@ -35,6 +35,7 @@ import {
 } from "@croquis/cesvi";
 import type { Content, TableCell, TDocumentDefinitions } from "pdfmake/interfaces";
 import { conGlifosDeRoboto, LEYENDA_DICTAMEN } from "./dictamen-cesvi";
+import { nombreVehiculo } from "./escena-facil";
 import { dictamenDocx } from "./exportar-cesvi";
 import { ANCHO_LOGO, PROPORCION_LOGO } from "./marca-dictamen";
 import { pdfBytes } from "./pdf";
@@ -168,6 +169,14 @@ function hipotesis(d: DatosDictamenCaso): Content[] {
   ];
 }
 
+/** «A · Silverado 2500 (V1)»: el vehículo como en el panel del caso, con su id. */
+function nombreDelVehiculo(d: DatosDictamenCaso, id: string): string {
+  const vs = d.expediente.vehiculos;
+  const i = vs.findIndex((v) => v.id === id);
+  if (i < 0) return id;
+  return `${String.fromCharCode(65 + i)} · ${nombreVehiculo(vs[i]!, vs)} (${id})`;
+}
+
 function contraReporte(d: DatosDictamenCaso): Content[] {
   const k = reconstruccionContraCesvi(d.expediente, d.reconstruccion);
   if (!k.filas.length) return [];
@@ -176,7 +185,7 @@ function contraReporte(d: DatosDictamenCaso): Content[] {
     tabla(
       ["Método del reporte", "CESVI (km/h)", "Croquis (km/h)", "Diferencia"],
       k.filas.map((f) => [
-        `${f.metodo}: ${f.cesviQue}`,
+        `${nombreDelVehiculo(d, f.vehiculo)} ${f.momento} · CESVI ${f.cesviComo}`,
         F.kmh(f.cesviKmh, "metodo"),
         f.croquisKmh === null
           ? "la evidencia no la fija"

@@ -988,23 +988,44 @@ namespace Croquis.Visor
             var escala = go.AddComponent<CanvasScaler>();
             escala.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             escala.referenceResolution = new Vector2(1280, 720);
+            // Un recuadro oscuro detrás del texto: contraste WCAG AA sobre cualquier fondo, de día y de
+            // noche (`Croquis.Core.Leyenda3d`, que lo prueba con dotnet test). Se ajusta al texto.
+            var fondo = new GameObject("fondo").AddComponent<Image>();
+            fondo.transform.SetParent(go.transform, false);
+            var f = Croquis.Core.Leyenda3d.Fondo;
+            fondo.color = new Color((float)f.R, (float)f.G, (float)f.B, (float)f.A);
+            fondo.raycastTarget = false;
+            var caja = fondo.gameObject.AddComponent<HorizontalLayoutGroup>();
+            caja.padding = new RectOffset(
+                Croquis.Core.Leyenda3d.MargenX,
+                Croquis.Core.Leyenda3d.MargenX,
+                Croquis.Core.Leyenda3d.MargenY,
+                Croquis.Core.Leyenda3d.MargenY);
+            caja.childControlWidth = true;
+            caja.childControlHeight = true;
+            caja.childForceExpandWidth = false;
+            caja.childForceExpandHeight = false;
+            var ajuste = fondo.gameObject.AddComponent<ContentSizeFitter>();
+            ajuste.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            ajuste.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            var rf = fondo.rectTransform;
+            rf.anchorMin = new Vector2(0f, 0f);
+            rf.anchorMax = new Vector2(0f, 0f);
+            rf.pivot = new Vector2(0f, 0f);
+            rf.anchoredPosition = new Vector2(12f, 10f);
+
             var texto = new GameObject("texto").AddComponent<Text>();
-            texto.transform.SetParent(go.transform, false);
+            texto.transform.SetParent(fondo.transform, false);
             texto.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             texto.fontSize = 14;
-            texto.color = new Color(1f, 1f, 1f, 0.88f);
-            texto.alignment = TextAnchor.LowerLeft;
+            var t = Croquis.Core.Leyenda3d.Texto;
+            texto.color = new Color((float)t.R, (float)t.G, (float)t.B, (float)t.A);
+            texto.alignment = TextAnchor.MiddleLeft;
+            texto.horizontalOverflow = HorizontalWrapMode.Overflow;
+            texto.raycastTarget = false;
             texto.text = entornoProcedural
                 ? "Reconstrucción ilustrativa · entorno procedural: no es el lugar real"
                 : "Reconstrucción ilustrativa";
-            var rt = texto.rectTransform;
-            rt.anchorMin = new Vector2(0f, 0f);
-            rt.anchorMax = new Vector2(1f, 0f);
-            rt.pivot = new Vector2(0f, 0f);
-            rt.anchoredPosition = new Vector2(16f, 12f);
-            rt.sizeDelta = new Vector2(-32f, 24f);
-            var sombra = texto.gameObject.AddComponent<Shadow>();
-            sombra.effectColor = new Color(0f, 0f, 0f, 0.65f);
         }
     }
 

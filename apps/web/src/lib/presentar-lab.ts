@@ -168,7 +168,7 @@ export function capitulos({
           grande: fisica.difPct !== null,
         },
         {
-          etiqueta: "Croquis contra el reporte",
+          etiqueta: `${nombreDe(fisica.vehiculo)} (${fisica.vehiculo}) antes del impacto`,
           valor:
             fisica.croquis === null
               ? `sin velocidad contra ${F.kmhConUnidad(fisica.cesvi, "metodo")}`

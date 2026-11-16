@@ -65,6 +65,43 @@ if (!token) {
   process.exit(1);
 }
 
+// `--borrar h1,h2 --conservar h3`: borra exactamente esos builds de Unity (lista explícita, René
+// 2026-11-15). Se niega si alguno es el que sirve producción, el del manifiesto de `origin/main` o uno
+// de los que se piden conservar (el anterior, para poder regresar).
+const iBorrar = process.argv.indexOf("--borrar");
+if (iBorrar > 0) {
+  const lista = (process.argv[iBorrar + 1] ?? "").split(",").filter(Boolean);
+  const iConservar = process.argv.indexOf("--conservar");
+  const conservar =
+    iConservar > 0 ? (process.argv[iConservar + 1] ?? "").split(",").filter(Boolean) : [];
+  const r = await fetch("https://croquis-sage.vercel.app/visor-unity/manifest.json");
+  const sitio = (await r.json()).huella;
+  const protegidas = new Set([sitio, huellaDeProduccion(), ...conservar].filter(Boolean));
+  if (
+    !sitio ||
+    !lista.length ||
+    lista.some((h) => !/^[0-9a-f]{16}$/.test(h) || protegidas.has(h))
+  ) {
+    console.error(
+      `No borro: lista inválida o protegida (protegidas: ${[...protegidas].join(", ")}).`,
+    );
+    process.exit(1);
+  }
+  for (const h of lista) {
+    const urls = [];
+    let cursor;
+    do {
+      const l = await list({ prefix: `recursos/visor-unity/${h}/`, token, cursor, limit: 1000 });
+      urls.push(...l.blobs.map((b) => b.url));
+      cursor = l.hasMore ? l.cursor : undefined;
+    } while (cursor);
+    for (let i = 0; i < urls.length; i += 100) await del(urls.slice(i, i + 100), { token });
+    console.log(`Borré ${h}: ${urls.length} archivos.`);
+  }
+  await new Promise((ok) => setTimeout(ok, 300));
+  process.exit(0);
+}
+
 if (process.argv.includes("--inventario")) {
   await inventario();
   // Una pausa corta: en Windows, salir con la conexión del fetch cerrándose aborta Node.

@@ -435,6 +435,7 @@ Plan: PLAN-CESVI §3.3. Decisiones: ADR 0114.
 - **Volver a medir los fps** con este build (E6) en la laptop y en la computadora de demo.
 - La sombra unida de baja y media no sigue al daño.
 - La barra de reproducción tapa una esquina del minimapa en la vista de órbita (se ve en `docs/cesvi/u6/produccion/1-reconstruccion-unity.png`).
+- **La leyenda del 3D con recuadro** (René, 2026-11-15): texto blanco opaco sobre un recuadro del color de fondo de la app al 78 % (`Croquis.Core/Leyenda3d.cs`, que prueba con `dotnet test` el contraste WCAG: más de 10:1 con blanco puro detrás). Medido en capturas del build `d18f1f3aebbfe08c` (`docs/cesvi/demo/leyenda/antes` y `despues`): antes, 2.64:1 sobre techos claros en órbita y 4.24:1 en la escena urbana de día; después, de 4.87 a 7.42:1 en las siete capturas (la medición incluye los bordes suavizados de las letras, así que se queda corta). Build de 7.4 min en la laptop; e2e de cámaras en verde.
 
 ## Ajustes de René antes de U5 (2026-11-10)
 

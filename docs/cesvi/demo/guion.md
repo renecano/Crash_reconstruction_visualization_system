@@ -33,7 +33,7 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 
 > Paso 8, el dictamen (PDF y Word).
 
-**Si preguntan por la nota bajo el 3D de V1** («Croquis 31 km/h · CESVI 60.27, −48 %»): el 31 es la velocidad de V1 **al salir** del impacto en la reconstrucción; el 60.27 es la de CESVI por los restos. La nota todavía no lo aclara (pendiente N13 de la auditoría).
+**La nota bajo el 3D** dice de qué vehículo y qué velocidad es, con el nombre del panel: «B · Tacoma (V2) antes del impacto: Croquis 57 km/h (55–78) · CESVI 63.15 km/h de barrera equivalente por la deformación (EBS)» y «A · Silverado 2500 (V1) al salir del impacto: Croquis 31 km/h · CESVI 60.27 km/h por los restos». Presentar y el dictamen lo nombran igual.
 
 ## 2 · Un caso nuevo, en vivo (4 min)
 
@@ -70,4 +70,4 @@ Croquis lee el reporte completo de CESVI y arma el expediente con la cita de cad
 
 - **Tope de Claude:** 10 USD diarios (`/api/version`). La secuencia de arriba cuesta unos 0.20 USD; con el ensayo del mismo día, sobra.
 - **Sin red:** el caso de AXA y la reproducción funcionan sin llamar a Claude; el 3D necesita haberse abierto una vez antes.
-- **Detalles que se notan en pantalla:** la leyenda ilustrativa del 3D tiene poco contraste sobre los edificios; la barra de reproducción tapa una esquina del minimapa.
+- **Detalle que se nota en pantalla:** la barra de reproducción tapa una esquina del minimapa. La leyenda ilustrativa del 3D ya lleva su recuadro y se lee sobre cualquier fondo (WCAG AA).
