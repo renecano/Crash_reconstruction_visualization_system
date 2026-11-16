@@ -32,6 +32,14 @@
     {
       "texto": "68557",
       "que": "Paridad antes de las 14 escenas"
+    },
+    {
+      "texto": "21 de 31",
+      "que": "Carambolas de prueba medidas el 2026-10-23, antes del #119 (2026-10-24)"
+    },
+    {
+      "texto": "43 de 55",
+      "que": "Carambolas de desarrollo medidas el 2026-10-23, antes del #119"
     }
   ],
   "cifras": {
@@ -115,17 +123,17 @@
     },
     "cobertura.rango": {
       "que": "Cobertura sintética del p10–p90 de la inversión: de las velocidades verdaderas conocidas, cuántas cayeron dentro del rango",
-      "k": 82,
-      "n": 116,
-      "pct": 70.7,
+      "k": 410,
+      "n": 578,
+      "pct": 70.9,
       "esperado_pct": 80,
       "ic95_pct": [
-        61.85,
-        78.2
+        67.1,
+        74.49
       ],
-      "casos_por_escena": 40,
-      "texto": "82 de 116 (70.7 %)",
-      "fuente": "eval/results/t3/cobertura_40.json",
+      "casos_por_escena": 200,
+      "texto": "410 de 578 (70.9 %)",
+      "fuente": "eval/results/t3_cobertura.json",
       "campo": "total.supuestos_sorteados"
     },
     "paridad.numeros": {
@@ -148,6 +156,24 @@
       "texto": "0",
       "fuente": "eval/results/e7_parity.json",
       "campo": "max_abs"
+    },
+    "carambolas.prueba": {
+      "que": "Carambolas (prueba): impactos posteriores entre vehículos que ocurren en la reconstrucción, de los que pasan a la escena",
+      "k": 20,
+      "n": 31,
+      "pct": 64.5,
+      "texto": "20 de 31",
+      "fuente": "eval/results/cesvi_r4b_carambolas_prueba.json",
+      "campo": "impactos_posteriores_ocurridos / impactos_posteriores_en_escena"
+    },
+    "carambolas.desarrollo": {
+      "que": "Carambolas (desarrollo): impactos posteriores entre vehículos que ocurren en la reconstrucción, de los que pasan a la escena",
+      "k": 40,
+      "n": 55,
+      "pct": 72.7,
+      "texto": "40 de 55",
+      "fuente": "eval/results/cesvi_r4b_carambolas_desarrollo.json",
+      "campo": "impactos_posteriores_ocurridos / impactos_posteriores_en_escena"
     },
     "reversa.velocidad": {
       "que": "Velocidad supuesta de un vehículo en reversa: mediana y p10–p90 de la velocidad máxima de maniobras reales",

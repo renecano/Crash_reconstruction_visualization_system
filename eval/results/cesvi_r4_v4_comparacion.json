@@ -1,5 +1,5 @@
 {
- "fecha": "2026-11-15T13:48:42.173Z",
+ "fecha": "2026-11-16T00:35:56.046Z",
  "descripcion": "E-R4 en la prueba congelada: la v1 (reglas de ADR 0067, escena-narracion-v1), la v2 (R4b, ADR 0069, escena-narracion-v2), la v3 (R4d, ADR 0076: las mismas lecturas v2 con las modalidades flojas trabajadas) y la v4 (T3.5, W8: las reglas y las lecturas de la v3 con el solver de hoy: C1, C3, T3.1, T3.2 y T3.3), con las mismas líneas base de desarrollo. Entre la v3 y la v4 no se ajustó ninguna regla.",
  "lineas_base": {
   "modalidad": "otra",

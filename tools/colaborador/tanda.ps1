@@ -25,6 +25,7 @@
     -Prueba              solo la comprobación del mecanismo
     -SinSubir            no hace commit ni push (los resultados quedan en la carpeta)
     -Lista               solo dice qué tandas hay y qué pasos tienen
+    -Solo LISTA          de lo pesado, solo esos pasos (nombres con comas), para probar
     -SimularFalta LISTA  hace como si faltaran esas herramientas (git, node, pnpm; con comas), para
                          probar la instalación. Git y Node no se instalan de verdad en la simulación:
                          solo se muestra lo que haría
@@ -35,7 +36,10 @@ param(
   [switch]$SinSubir,
   [switch]$Lista,
   [string]$SimularFalta = "",
-  [switch]$EnSuRama
+  [string]$Solo = "",
+  [switch]$EnSuRama,
+  # Lo pone el propio script al volver a lanzarse después de traer lo último de main.
+  [switch]$YaAlDia
 )
 
 $ErrorActionPreference = "Stop"
@@ -270,11 +274,59 @@ if ($ramaDeLaTanda -and -not $EnSuRama -and $ramaActual -ne $ramaDeLaTanda) {
   }
   exit $codigo
 }
-# Lo último de main, solo si no estorba: en main, sin cambios y sin rama propia de la tanda.
-if (-not $EnSuRama -and $ramaActual -eq "main") {
-  $sucio = SalidaDe "git" @("-C", $Repo, "status", "--porcelain", "--untracked-files=no")
-  if (-not $sucio -and (Nativo "git" @("-C", $Repo, "pull", "--ff-only", "origin", "main")) -eq 0) {
-    Escribir "Repositorio al día con main."
+# --- Al día con main ------------------------------------------------------------------------------
+# Una corrida anterior deja en la copia los resultados que ya subió (archivos cambiados y nuevos), y con
+# ellos `git pull` se niega. Si lo único que estorba son resultados de las tandas, se guardan en un
+# stash (no se borran: `git stash list` los muestra) y se trae lo último de main. Si llegó una versión
+# nueva, el script se vuelve a lanzar con ella. Si hay otros cambios, no toca nada y sigue como está.
+function EsResultado([string]$ruta) {
+  $ruta = $ruta.Trim('"').Replace("\", "/")
+  if ($ruta.StartsWith("eval/results/") -or $ruta.StartsWith("resultados/")) { return $true }
+  foreach ($t in $Config.tandas.PSObject.Properties) {
+    foreach ($p in @($t.Value.pasos)) {
+      foreach ($s in @($p.salidas)) {
+        if ($s -and ($ruta -eq [string]$s -or $ruta.StartsWith(([string]$s).TrimEnd("/") + "/"))) { return $true }
+      }
+    }
+  }
+  return $false
+}
+if (-not $EnSuRama -and -not $YaAlDia -and $ramaActual -eq "main") {
+  $antes = SalidaDe "git" @("-C", $Repo, "rev-parse", "HEAD")
+  $estado = SalidaDe "git" @("-C", $Repo, "status", "--porcelain", "--untracked-files=all")
+  $cambios = @()
+  if ($estado) { $cambios = @($estado -split "`r?`n" | Where-Object { $_.Trim() } | ForEach-Object { $_ -replace '^\s*\S{1,2}\s+', '' }) }
+  $ajenos = @($cambios | Where-Object { -not (EsResultado $_) })
+  $alDia = $false
+  if ($ajenos.Count -gt 0) {
+    Escribir "Hay cambios en la carpeta que no son resultados de una tanda ($($ajenos[0])...): no la actualizo." "Yellow"
+  } else {
+    if ($cambios.Count -gt 0) {
+      $mensaje = "Croquis: resultados de una corrida anterior, ya subidos ($(Get-Date -Format 'yyyy-MM-dd HH:mm'))"
+      if ((Nativo "git" @("-C", $Repo, "stash", "push", "--include-untracked", "-m", $mensaje)) -eq 0) {
+        Escribir "Guardé en un stash los $($cambios.Count) archivos de resultados que dejó una corrida anterior (ya están en GitHub)."
+      } else {
+        Escribir "No pude guardar los resultados de la corrida anterior: no actualizo la carpeta." "Yellow"
+        $cambios = $null
+      }
+    }
+    if ($null -ne $cambios -and (Nativo "git" @("-C", $Repo, "pull", "--ff-only", "origin", "main")) -eq 0) {
+      $alDia = $true
+      Escribir "Repositorio al día con main."
+    } elseif ($null -ne $cambios) {
+      Escribir "No pude traer lo último de main (¿hay internet?): sigo con la versión que hay." "Yellow"
+    }
+  }
+  $despues = SalidaDe "git" @("-C", $Repo, "rev-parse", "HEAD")
+  if ($alDia -and $despues -ne $antes) {
+    # Llegó una versión nueva: se corre esa, no la que ya estaba cargada en memoria.
+    $argumentos = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $PSCommandPath, "-YaAlDia")
+    if ($Tanda -ne $Config.vigente) { $argumentos += @("-Tanda", $Tanda) }
+    if ($Prueba) { $argumentos += "-Prueba" }
+    if ($SinSubir) { $argumentos += "-SinSubir" }
+    if ($Solo) { $argumentos += @("-Solo", $Solo) }
+    & powershell.exe @argumentos
+    exit $LASTEXITCODE
   }
 }
 
@@ -400,44 +452,137 @@ function Subir([string]$motivo, [string[]]$salidas) {
 }
 
 # --- Un paso -----------------------------------------------------------------------------------------
-# Corre el comando en la raíz del repositorio con la salida a un archivo. Avisa cada 30 s cuánto
-# lleva. Si pasa de su tope (4 veces lo estimado, y al menos 10 minutos) lo detiene. Devuelve su estado.
+# El registro de cada paso existe antes de arrancarlo (con el comando, la carpeta y la hora): si el paso
+# no arranca o falla al instante, ahí queda por qué. El comando corre desde un .cmd temporal, con la
+# carpeta del repositorio entre comillas, así que funciona en rutas con espacios y en PowerShell 5.1.
+# Cada 30 s la ventana dice cuánto lleva y la última línea que escribió. Si pasa de su tope (4 veces
+# lo estimado, y al menos 10 minutos) lo detiene. Un paso que necesita datos que no van en git (por
+# ejemplo, los reportes crudos de CESVI) se omite y lo dice: se corre en la laptop de René.
+
+$Utf8SinBom = New-Object Text.UTF8Encoding $false
+$CarpetaCmd = Join-Path ([IO.Path]::GetTempPath()) "croquis-tanda"
+
+function AgregarAlRegistro([string]$registro, [string[]]$lineas) {
+  [IO.File]::AppendAllText($registro, (($lineas -join "`r`n") + "`r`n"), $Utf8SinBom)
+}
+
+# La última línea con texto de un registro que otro proceso sigue escribiendo.
+function UltimaLinea([string]$registro) {
+  try {
+    $f = [IO.File]::Open($registro, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::ReadWrite)
+    try {
+      $largo = [Math]::Min(8192, $f.Length)
+      if ($largo -le 0) { return "" }
+      [void]$f.Seek(-$largo, [IO.SeekOrigin]::End)
+      $buffer = New-Object byte[] $largo
+      [void]$f.Read($buffer, 0, $largo)
+    } finally { $f.Dispose() }
+    $texto = $Utf8SinBom.GetString($buffer) -replace "`e\[[0-9;]*[A-Za-z]", ""
+    $lineas = @($texto -split "[`r`n]+" | Where-Object { $_.Trim() -ne "" })
+    if ($lineas.Count -eq 0) { return "" }
+    $ultima = $lineas[$lineas.Count - 1].Trim()
+    if ($ultima.Length -gt 110) { $ultima = $ultima.Substring(0, 107) + "..." }
+    return $ultima
+  } catch { return "" }
+}
+
 function CorrerPaso([string]$grupo, [int]$numero, [int]$total, $paso) {
   $nombre = [string]$paso.nombre
+  $comando = [string]$paso.comando
   $registro = Join-Path $Salida ("{0}-{1:D2}-{2}.log" -f $grupo, $numero, $nombre)
   $estimado = [double]$paso.minutos
   $tope = [math]::Max(10, 4 * $estimado)
   Escribir ""
   Escribir "[$grupo $numero/$total] $nombre (unos $estimado min; tope $tope min)" "White"
-  $argumentos = '/d /s /c "' + [string]$paso.comando + ' > "' + $registro + '" 2>&1"'
+  [IO.File]::WriteAllText($registro, (@(
+        "# Paso: $nombre",
+        "# Comando: $comando",
+        "# Carpeta: $Repo",
+        "# Inicio: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')",
+        ""
+      ) -join "`r`n") + "`r`n", $Utf8SinBom)
   $t0 = Get-Date
   $estado = "ok"
   $codigo = $null
-  try {
-    $proceso = Start-Process -FilePath $env:ComSpec -ArgumentList $argumentos -WorkingDirectory $Repo -NoNewWindow -PassThru
-    # Sin esto, PowerShell 5.1 no siempre guarda el código de salida de Start-Process.
-    $null = $proceso.Handle
-    while (-not $proceso.WaitForExit(30000)) {
-      $lleva = (Get-Date) - $t0
-      if ($lleva.TotalMinutes -gt $tope) {
-        & taskkill.exe /PID $proceso.Id /T /F 2>$null | Out-Null
-        $estado = "detenido por pasar de $tope min"
-        break
+
+  # Lo que el paso escribe desde cero (una carpeta de resultados que se reanuda): se vacía antes.
+  foreach ($l in @($paso.limpiar)) {
+    if (-not $l) { continue }
+    $relativa = ([string]$l).Replace("\", "/")
+    if (-not $relativa.StartsWith("eval/results/")) { continue }
+    $ruta = Join-Path $Repo $relativa
+    if (Test-Path -LiteralPath $ruta) {
+      Remove-Item -LiteralPath $ruta -Recurse -Force
+      AgregarAlRegistro $registro @("# Vacié $relativa para empezar de cero.")
+    }
+  }
+
+  # Datos que no van en git: sin ellos el paso no se intenta.
+  $faltan = @()
+  foreach ($r in @($paso.requiere)) {
+    if ($r -and -not (Test-Path -LiteralPath (Join-Path $Repo $r))) { $faltan += [string]$r }
+  }
+  if ($faltan.Count -gt 0) {
+    $estado = "omitido: falta $($faltan -join ', ') (no va en git; se corre en la laptop de René)"
+    AgregarAlRegistro $registro @("# $estado")
+  } else {
+    try {
+      New-Item -ItemType Directory -Force $CarpetaCmd | Out-Null
+      $archivoCmd = Join-Path $CarpetaCmd ("{0}-{1:D2}-{2}.cmd" -f $grupo, $numero, $nombre)
+      # chcp primero: el resto del .cmd (rutas con acentos) se lee como UTF-8.
+      [IO.File]::WriteAllText($archivoCmd, (@(
+            "@echo off",
+            "chcp 65001 >nul",
+            "cd /d `"$Repo`"",
+            "$comando >> `"$registro`" 2>&1",
+            "exit /b %ERRORLEVEL%"
+          ) -join "`r`n") + "`r`n", $Utf8SinBom)
+      $psi = New-Object Diagnostics.ProcessStartInfo
+      $psi.FileName = $env:ComSpec
+      # /s con comillas dobles alrededor: cmd quita las de afuera y deja la ruta entre comillas.
+      $psi.Arguments = "/d /s /c `"`"$archivoCmd`"`""
+      $psi.WorkingDirectory = $Repo
+      $psi.UseShellExecute = $false
+      $proceso = [Diagnostics.Process]::Start($psi)
+      while (-not $proceso.WaitForExit(30000)) {
+        $lleva = (Get-Date) - $t0
+        if ($lleva.TotalMinutes -gt $tope) {
+          & taskkill.exe /PID $proceso.Id /T /F 2>$null | Out-Null
+          $estado = "detenido por pasar de $tope min"
+          AgregarAlRegistro $registro @("", "# $estado")
+          break
+        }
+        $ultima = UltimaLinea $registro
+        if ($ultima -and -not $ultima.StartsWith("# ")) {
+          Escribir ("   lleva {0} min de unos {1} · {2}" -f (Minutos $lleva), $estimado, $ultima)
+        } else {
+          Escribir ("   lleva {0} min de unos {1}" -f (Minutos $lleva), $estimado)
+        }
       }
-      Escribir ("   lleva {0} min de unos {1}" -f (Minutos $lleva), $estimado)
+      if ($estado -eq "ok") {
+        $proceso.WaitForExit()
+        $codigo = $proceso.ExitCode
+        if ($codigo -ne 0) { $estado = "falló (código $codigo)" }
+      }
+      Remove-Item -LiteralPath $archivoCmd -Force -ErrorAction SilentlyContinue
+    } catch {
+      $estado = "no arrancó: $($_.Exception.Message)"
+      AgregarAlRegistro $registro @("", "# $estado")
     }
-    if ($estado -eq "ok") {
-      $proceso.WaitForExit()
-      $codigo = $proceso.ExitCode
-      if ($codigo -ne 0) { $estado = "falló (código $codigo)" }
-    }
-  } catch {
-    $estado = "no arrancó: $($_.Exception.Message)"
   }
   $duracion = Minutos ((Get-Date) - $t0)
+  AgregarAlRegistro $registro @("", "# Fin: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') · $estado · $duracion min")
   $color = "Green"
-  if ($estado -ne "ok") { $color = "Yellow" }
+  if ($estado.StartsWith("omitido")) { $color = "Cyan" }
+  elseif ($estado -ne "ok") { $color = "Yellow" }
   Escribir "   $estado, en $duracion min. Salida: $Relativa/$(Split-Path $registro -Leaf)" $color
+  if ($estado -ne "ok" -and -not $estado.StartsWith("omitido")) {
+    # Lo último que dijo el paso, para que la foto de la ventana ya traiga la pista.
+    try {
+      $cola = @(Get-Content -LiteralPath $registro -Encoding UTF8 -Tail 6 | Where-Object { $_.Trim() -ne "" -and -not $_.StartsWith("# Fin:") })
+      foreach ($l in $cola) { Escribir "     | $l" "Yellow" }
+    } catch { }
+  }
   [void]$Pasos.Add([ordered]@{ grupo = $grupo; paso = $nombre; estado = $estado; minutos = $duracion; codigo = $codigo })
   return $estado
 }
@@ -445,6 +590,10 @@ function CorrerPaso([string]$grupo, [int]$numero, [int]$total, $paso) {
 # --- La corrida --------------------------------------------------------------------------------------
 $Comprobacion = @($Config.comprobacion.pasos)
 $Pesados = @($Definicion.pasos)
+if ($Solo) {
+  $pedidos = @($Solo -split "," | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+  $Pesados = @($Pesados | Where-Object { $pedidos -contains [string]$_.nombre })
+}
 if ($Prueba) { $Pesados = @() }
 $estimadoTotal = 0
 foreach ($p in ($Comprobacion + $Pesados)) { $estimadoTotal += [double]$p.minutos }
@@ -506,10 +655,13 @@ Escribir ""
 Escribir "Resumen ($(Minutos ((Get-Date) - $Inicio)) min):" "White"
 foreach ($p in $Pasos) {
   $color = "Green"
-  if ($p.estado -ne "ok") { $color = "Yellow" }
+  if (([string]$p.estado).StartsWith("omitido")) { $color = "Cyan" }
+  elseif ($p.estado -ne "ok") { $color = "Yellow" }
   Escribir ("  {0,-13} {1,-26} {2}  ({3} min)" -f $p.grupo, $p.paso, $p.estado, $p.minutos) $color
 }
-$fallas = @($Pasos | Where-Object { $_.estado -ne "ok" }).Count
+$fallas = @($Pasos | Where-Object { $_.estado -ne "ok" -and -not ([string]$_.estado).StartsWith("omitido") }).Count
+$omitidos = @($Pasos | Where-Object { ([string]$_.estado).StartsWith("omitido") }).Count
+if ($omitidos -gt 0) { Escribir "$omitidos paso(s) se omitieron porque necesitan datos que no van en git: no es una falla." "Cyan" }
 if ($SinSubir) { Escribir "No se subió nada (-SinSubir): los resultados están en $Salida." }
 else { Escribir "Los resultados están en la rama $Rama. Avísale a René que ya terminó." "White" }
 if ($fallas -gt 0) {

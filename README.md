@@ -93,7 +93,7 @@ La modalidad contra el título sale de [`cesvi_r4c_titulo_prueba.json`](eval/res
 
 **Reversa** ([`cesvi_r4_reversa.json`](eval/results/cesvi_r4_reversa.json)). La narración sin conclusiones no dice quién retrocedía, así que la modalidad «reversa» queda en 0 de 9. Dado quién retrocede según el propio reporte, el golpe queda en la parte posterior del vehículo en 9 de 12 reportes de la prueba (21 de 26 en desarrollo) de los que tienen daño posterior.
 
-**Carambolas** ([`cesvi_r4b_carambolas_prueba.json`](eval/results/cesvi_r4b_carambolas_prueba.json)). De 33 reportes de la prueba con tres o más vehículos, los 33 se reconstruyen y se ven en 3D; ocurren 21 de 31 impactos posteriores (con la primera versión, 2 de 32).
+**Carambolas** ([`cesvi_r4b_carambolas_prueba.json`](eval/results/cesvi_r4b_carambolas_prueba.json)). De 33 reportes de la prueba con tres o más vehículos, los 33 se reconstruyen y se ven en 3D; ocurren <!--cifra:carambolas.prueba-->20 de 31<!--/cifra--> impactos posteriores (en desarrollo, <!--cifra:carambolas.desarrollo-->40 de 55<!--/cifra-->; con la primera versión, 2 de 32). Hasta el 2026-11-15 aquí decía 21 de 31: era la medición del 23 de octubre, y desde el 24 de octubre (#119, que separa los contornos de los vehículos justo después de cada impacto) da 20.
 
 ### AXA A2010930, con sus dos lecturas
 
@@ -108,7 +108,7 @@ La modalidad contra el título sale de [`cesvi_r4c_titulo_prueba.json`](eval/res
 - **Decimales:** la reconstrucción se muestra en enteros y el método de CESVI con dos decimales ([ADR 0138](docs/adr/0138-formateador-unico-y-cifras-publicadas.md)).
 - **Estabilidad:** con 20 semillas, el mejor ajuste y su rango no se mueven (0 km/h de diferencia entre semillas).
 - **Por qué dos hipótesis:** el reposo que el reporte no da (supuesto) y la deformación medida no caben juntos. El perito elige; mientras no elija, se ve la más cercana al daño medido. Se llama así, y no «cuadra con el daño», porque queda en el borde bajo de lo que explica esa deformación; la app lo dice junto a la cifra.
-- **El rango no es una garantía.** En casos fabricados con velocidad verdadera conocida, el p10–p90 la contuvo <!--cifra:cobertura.rango-->82 de 116 (70.7 %)<!--/cifra--> de las veces, y lo esperado es cerca de 80 % ([`t3/cobertura_40.json`](eval/results/t3/cobertura_40.json), corrida reducida). El perito lo lee entre los límites y en el dictamen.
+- **El rango no es una garantía.** En casos fabricados con velocidad verdadera conocida, el p10–p90 la contuvo <!--cifra:cobertura.rango-->410 de 578 (70.9 %)<!--/cifra--> de las veces, y lo esperado es cerca de 80 % ([`t3_cobertura.json`](eval/results/t3_cobertura.json), 200 casos por escena; con los supuestos del impacto fijos, como antes de la Tanda 3, eran 345 de 578, 59.7 %). El perito lo lee entre los límites y en el dictamen.
 - **Supuestos sorteados:** la restitución, la razón de impulso y el arrastre después del impacto entran al rango con sus intervalos ([ADR 0139](docs/adr/0139-supuestos-del-impacto-en-el-rango.md)).
 - Nada se ajusta para coincidir con el reporte.
 
@@ -187,7 +187,7 @@ Detalle en [`docs/responsible-ai.md`](docs/responsible-ai.md).
 - **Volcadura.** El solver decide si un vehículo se vuelca, pero no integra el giro en el tiempo; el 3D lo ilustra.
 - **Reversa.** El vehículo llega a velocidad constante: no se modela el arranque desde detenido. La velocidad supuesta sale de maniobras rutinarias de reversa, no de reversas que terminaron en choque.
 - **Daño en el 3D.** El visor deforma la carrocería con el perfil del solver ([ADR 0117](docs/adr/0117-el-dano-del-solver-en-unity.md)). Cuando el perito no captura las medidas C1–C6, ese perfil es una estimación pareja en todo el ancho: el daño se ve como un hundimiento uniforme, no como la lámina real.
-- **El rango.** Contuvo la velocidad verdadera menos veces de lo esperado en la prueba de cobertura (arriba); falta la corrida completa de 200 casos.
+- **El rango.** Contuvo la velocidad verdadera menos veces de lo esperado en la prueba de cobertura (arriba). Esa prueba mide la incertidumbre dentro del modelo, no su parecido con un choque real.
 - **Rendimiento.** En la laptop de 8 GB, la carambola en nivel medio queda en 56 a 60 fps.
 - **Acceso.** `/cesvi` es público y no hay cuentas; cuando los peritos usen sus propios casos hará falta autenticación. El límite de lecturas por hora es por dirección IP.
 - **Tope de gasto.** Una lectura con Claude se niega cuando lo que queda del tope diario no cubre su reserva, aunque su costo real sea menor ([`reserva_tope.json`](eval/results/reserva_tope.json)).
