@@ -995,6 +995,48 @@ La reserva es una cota del costo, no el costo. Lo que cambia para el perito: una
 - `eval/results/laboratorio_axa.json` (e2e manual, antes de la demo).
 - Estado por acto de `recorrido-caso.tsx` y `escena-facil.tsx` en hooks con pruebas (I10): no se hizo; el flujo lo protegen las e2e.
 
+## Hallazgo del 2026-11-15 · El caso de ejemplo cambió de cifra con W8, y un mejor ajuste puede quedar fuera de su rango
+
+**Estado:** medido y avisado en pantalla (ADR 0141). Queda una decisión para René.
+
+### Cómo salió
+
+Al comprobar el build nuevo del visor con la e2e del flujo completo (`visor-unity-real.spec.ts`), la cifra del caso de ejemplo con poste ya no era la del 12 de noviembre:
+
+| Fecha                                                             | Lo que mostraba la app                              |
+| ----------------------------------------------------------------- | --------------------------------------------------- |
+| 12 nov (`eval/results/u6_flujo_unity_produccion.json` de ese día) | A · Jetta 60.62 km/h, rango lineal 55.29–65.95      |
+| 15 nov, producción                                                | B · Camaro 102 km/h, rango 72–99; A · Jetta 40 km/h |
+
+### Qué cambio la movió
+
+`eval/caso_poste_historia.mts` corre **la misma escena** (la que la app publicada le manda a su solver, `eval/results/caso_poste_escena.json`) con el solver de cuatro fechas. Resultado en `eval/results/caso_poste_historia.json`:
+
+| Solver                                   | A · Jetta                   | B · Camaro            |
+| ---------------------------------------- | --------------------------- | --------------------- |
+| 12 nov, antes de W8 (`972a7260`)         | 60.62 (55.29–65.95, lineal) | 0 (0–6.10, lineal)    |
+| 14 nov, tras W8 (`84c9d559`, ADR 0135)   | 40.40 (9.84–42.67)          | 102.07 (69.91–100.31) |
+| 15 nov, antes de la Tanda 3 (`588a69b8`) | 40.40 (9.84–42.67)          | 102.07 (69.91–100.31) |
+| Hoy, con los supuestos del impacto fijos | 40.40 (9.84–42.67)          | 102.07 (69.91–100.31) |
+| Hoy                                      | 40.40 (9.11–39.69)          | 102.07 (71.68–99.05)  |
+
+- **La cifra cambió con W8** (#215, ADR 0135): antes el solver ajustaba libremente los rumbos de llegada (70° y −16°) y encontraba a A en 60.62 con B detenido; desde W8, un rumbo que la evidencia no fija vuelve al que se colocó en el mapa, y la solución es otra.
+- **La Tanda 3 no movió el mejor ajuste;** solo estrechó un poco los rangos.
+- **El caso no cuadra bien con ninguna solución:** residuos de hasta 6.9 σ (7.5 antes de W8) y dos modos casi empatados (costo 19.0 y 20.35). Es un caso armado con toques de prueba, no un caso real; las posiciones finales que pone la prueba no se alcanzan.
+- **En W8 no se reportó este caso** porque no está entre las referencias que se comparan (AXA, las 14 escenas canónicas, la E-R4 y las carambolas).
+
+### Qué se hizo
+
+- **El aviso** (ADR 0141): `packages/cesvi/src/mejor-fuera.ts`. Si el mejor ajuste queda más de 0.5 km/h fuera del p10–p90, va un límite con las dos cifras (pantalla y dictamen) y una nota junto a la cifra. Ningún número cambia.
+- **Pruebas:** `mejor-fuera.test.ts` (incluye que AXA queda dentro) y `hoja-reconstruccion.test.tsx`.
+- **Conteo** (`eval/mejor_fuera.mts` → `eval/results/mejor_fuera.json`): en los 205 reportes de la prueba, reconstruidos solo con su narración, ninguno tiene rango, así que el aviso no aparece ahí. Tardó 69 s.
+- **La e2e con el Unity local** (`visor-unity-real.spec.ts`) no servía `StreamingAssets`, donde van los cielos desde U6: en modo local Unity caía al visor ligero. Se agregó la ruta. Contra Blob y contra producción la prueba pasa (52 s y 51 s).
+
+### Para René
+
+1. **¿Te parece bien el aviso,** o prefieres que en estos casos se muestre la segunda solución como alternativa (hoy solo se ofrece si su costo queda a menos de 0.5 de la primera)? Lo segundo cambia lo que ve el perito.
+2. **El caso de ejemplo con poste ya no da 60.62.** Si esa cifra se usó en alguna demo con CESVI, conviene saberlo antes de la siguiente.
+
 ## Lo que U deja dicho para W
 
 Viene de U0 (ADR 0111). Vale cuando el PR de contrato 2.3.0 esté en `main`:

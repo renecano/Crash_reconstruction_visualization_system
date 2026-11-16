@@ -1,0 +1,20 @@
+{
+  "descripcion": "Casos en los que el mejor ajuste de una velocidad queda fuera del p10–p90 de sus simulaciones (más de la holgura). Los 205 reportes de la prueba congelada, con el expediente leído de la narración (como la E-R4) y las simulaciones de producción. Sin llamar a la API. Si `casos_con_rango` es 0, la narración sola no trae evidencia que fije una velocidad (posiciones, reposos), así que ningún reporte tiene rango y el aviso no puede aparecer: solo aparece en casos que el perito coloca en el mapa.",
+  "script": "eval/mejor_fuera.mts",
+  "fecha": "2026-11-16T00:41:29.147Z",
+  "muestras": {
+    "samples": 32,
+    "mcSamples": 128
+  },
+  "holgura_kmh": 0.5,
+  "segundos": 69,
+  "casos": 205,
+  "no_se_reconstruyen": 0,
+  "casos_con_rango": 0,
+  "casos_con_el_mejor_ajuste_fuera": 0,
+  "vehiculos_con_rango": 0,
+  "vehiculos_fuera": 0,
+  "por_arriba": 0,
+  "por_debajo": 0,
+  "fuera": []
+}

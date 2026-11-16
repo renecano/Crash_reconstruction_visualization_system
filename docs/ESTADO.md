@@ -57,11 +57,12 @@ CI: cinco checks obligatorios (lint, tipos y pruebas de TS; Python en dos partes
 
 ## Bloqueado: necesita a René
 
-| Qué                                                                                         | Para qué                                                        |
-| ------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| Revisar el tope de gasto diario de Claude en Vercel (hoy 2 USD) contra las reservas medidas | Que no se niegue una lectura con presupuesto todavía disponible |
-| Visto bueno para borrar las ramas remotas ya fusionadas                                     | Orden del repositorio                                           |
-| Que el colaborador corra el paquete de la Tanda 3 (`CORRER-TANDA-EN-RTX.bat`)               | Cerrar la Tanda 3 con la corrida completa                       |
+| Qué                                                                                                                                                                                        | Para qué                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| Revisar el tope de gasto diario de Claude en Vercel (hoy 2 USD) contra las reservas medidas                                                                                                | Que no se niegue una lectura con presupuesto todavía disponible |
+| Decidir cómo se muestra un caso cuyo mejor ajuste queda fuera de su rango (hoy lleva un aviso, ADR 0141), y confirmar si el 60.62 km/h del caso de ejemplo con poste se usó en alguna demo | Que una cifra y su rango no parezcan contradecirse              |
+| Visto bueno para borrar las ramas remotas ya fusionadas                                                                                                                                    | Orden del repositorio                                           |
+| Que el colaborador corra el paquete de la Tanda 3 (`CORRER-TANDA-EN-RTX.bat`)                                                                                                              | Cerrar la Tanda 3 con la corrida completa                       |
 
 La tabla completa, con fechas, está en `docs/PROGRESS.md`, «Bloqueado — necesita a René».
 
@@ -69,6 +70,7 @@ La tabla completa, con fechas, está en `docs/PROGRESS.md`, «Bloqueado — nece
 
 - La narración manda: si no dice quién retrocedía o no trae el ancho dañado, Croquis no lo adivina.
 - El rango no es una garantía (cobertura de arriba) y la rigidez por clase viene de pruebas de vehículos de Estados Unidos.
+- El mejor ajuste puede quedar fuera de su rango cuando la solución depende mucho de los supuestos; la app lo avisa con las dos cifras (ADR 0141). El caso de ejemplo con poste es así desde W8.
 - Una volcadura se decide, pero su giro no se integra en el tiempo; el 3D la ilustra.
 - `/cesvi` es público y no hay cuentas.
 

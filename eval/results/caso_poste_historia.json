@@ -1,0 +1,237 @@
+{
+  "descripcion": "La misma escena (el caso de ejemplo con poste de la e2e de U6, como la manda la app publicada el 2026-11-15) con el solver de varias fechas. Sin llamar a la API.",
+  "script": "eval/caso_poste_historia.mts",
+  "escena": "eval/results/caso_poste_escena.json",
+  "fecha": "2026-11-16T00:40:03.659Z",
+  "filas": [
+    {
+      "solver": "12 nov, antes de W8",
+      "commit": "972a7260",
+      "muestras": {
+        "samples": 32,
+        "mcSamples": 128
+      },
+      "velocidades": [
+        {
+          "vehiculo": "veh-a",
+          "identificable": true,
+          "mejor_kmh": 60.62,
+          "p10_kmh": 55.29,
+          "p90_kmh": 65.95,
+          "rango_por": "laplace"
+        },
+        {
+          "vehiculo": "veh-b",
+          "identificable": true,
+          "mejor_kmh": 0,
+          "p10_kmh": 0,
+          "p90_kmh": 6.1,
+          "rango_por": "laplace"
+        }
+      ],
+      "modos": [
+        {
+          "valores": [
+            "rumbo:veh-a=70.27",
+            "rumbo:veh-b=-16.2",
+            "velocidad:veh-a=60.62",
+            "velocidad:veh-b=0"
+          ],
+          "costo": 17.48,
+          "elegido": true
+        },
+        {
+          "valores": [
+            "rumbo:veh-a=89.88",
+            "rumbo:veh-b=0.04",
+            "velocidad:veh-a=41.21",
+            "velocidad:veh-b=101.69"
+          ],
+          "costo": 19.42,
+          "elegido": false
+        }
+      ],
+      "residuo_mayor_sigmas": 7.5
+    },
+    {
+      "solver": "14 nov, tras W8 (ADR 0135)",
+      "commit": "84c9d559",
+      "muestras": {
+        "samples": 32,
+        "mcSamples": 128
+      },
+      "velocidades": [
+        {
+          "vehiculo": "veh-a",
+          "identificable": true,
+          "mejor_kmh": 40.4,
+          "p10_kmh": 9.84,
+          "p90_kmh": 42.67,
+          "rango_por": "simulaciones"
+        },
+        {
+          "vehiculo": "veh-b",
+          "identificable": true,
+          "mejor_kmh": 102.07,
+          "p10_kmh": 69.91,
+          "p90_kmh": 100.31,
+          "rango_por": "simulaciones"
+        }
+      ],
+      "modos": [
+        {
+          "valores": [
+            "velocidad:veh-a=40.4",
+            "velocidad:veh-b=102.07"
+          ],
+          "costo": 19,
+          "elegido": true
+        },
+        {
+          "valores": [
+            "velocidad:veh-a=33.73",
+            "velocidad:veh-b=27.1"
+          ],
+          "costo": 20.35,
+          "elegido": false
+        }
+      ],
+      "residuo_mayor_sigmas": 6.88
+    },
+    {
+      "solver": "15 nov, antes de la Tanda 3",
+      "commit": "588a69b8",
+      "muestras": {
+        "samples": 32,
+        "mcSamples": 128
+      },
+      "velocidades": [
+        {
+          "vehiculo": "veh-a",
+          "identificable": true,
+          "mejor_kmh": 40.4,
+          "p10_kmh": 9.84,
+          "p90_kmh": 42.67,
+          "rango_por": "simulaciones"
+        },
+        {
+          "vehiculo": "veh-b",
+          "identificable": true,
+          "mejor_kmh": 102.07,
+          "p10_kmh": 69.91,
+          "p90_kmh": 100.31,
+          "rango_por": "simulaciones"
+        }
+      ],
+      "modos": [
+        {
+          "valores": [
+            "velocidad:veh-a=40.4",
+            "velocidad:veh-b=102.07"
+          ],
+          "costo": 19,
+          "elegido": true
+        },
+        {
+          "valores": [
+            "velocidad:veh-a=33.73",
+            "velocidad:veh-b=27.1"
+          ],
+          "costo": 20.35,
+          "elegido": false
+        }
+      ],
+      "residuo_mayor_sigmas": 6.88
+    },
+    {
+      "solver": "hoy (supuestos fijos)",
+      "commit": "53c55280",
+      "muestras": {
+        "samples": 32,
+        "mcSamples": 128
+      },
+      "velocidades": [
+        {
+          "vehiculo": "veh-a",
+          "identificable": true,
+          "mejor_kmh": 40.4,
+          "p10_kmh": 9.84,
+          "p90_kmh": 42.67,
+          "rango_por": "simulaciones"
+        },
+        {
+          "vehiculo": "veh-b",
+          "identificable": true,
+          "mejor_kmh": 102.07,
+          "p10_kmh": 69.91,
+          "p90_kmh": 100.31,
+          "rango_por": "simulaciones"
+        }
+      ],
+      "modos": [
+        {
+          "valores": [
+            "velocidad:veh-a=40.4",
+            "velocidad:veh-b=102.07"
+          ],
+          "costo": 19,
+          "elegido": true
+        },
+        {
+          "valores": [
+            "velocidad:veh-a=33.73",
+            "velocidad:veh-b=27.1"
+          ],
+          "costo": 20.35,
+          "elegido": false
+        }
+      ],
+      "residuo_mayor_sigmas": 6.88
+    },
+    {
+      "solver": "hoy",
+      "commit": "53c55280",
+      "muestras": {
+        "samples": 32,
+        "mcSamples": 128
+      },
+      "velocidades": [
+        {
+          "vehiculo": "veh-a",
+          "identificable": true,
+          "mejor_kmh": 40.4,
+          "p10_kmh": 9.11,
+          "p90_kmh": 39.69,
+          "rango_por": "simulaciones"
+        },
+        {
+          "vehiculo": "veh-b",
+          "identificable": true,
+          "mejor_kmh": 102.07,
+          "p10_kmh": 71.68,
+          "p90_kmh": 99.05,
+          "rango_por": "simulaciones"
+        }
+      ],
+      "modos": [
+        {
+          "valores": [
+            "velocidad:veh-a=40.4",
+            "velocidad:veh-b=102.07"
+          ],
+          "costo": 19,
+          "elegido": true
+        },
+        {
+          "valores": [
+            "velocidad:veh-a=33.73",
+            "velocidad:veh-b=27.1"
+          ],
+          "costo": 20.35,
+          "elegido": false
+        }
+      ],
+      "residuo_mayor_sigmas": 6.88
+    }
+  ]
+}

@@ -24,6 +24,7 @@ import {
   reconstruct,
   SIGMA_POSITION_M,
 } from "@croquis/solver-ts";
+import { limiteMejorFuera } from "./mejor-fuera";
 import { avisoReversaRapida, limiteVelocidadSupuesta, velocidadSupuestaEnReversa } from "./reversa";
 
 /**
@@ -1135,6 +1136,11 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
   // Un rango no es una garantía: su cobertura medida va con los límites (René, 2026-11-15).
   if (velocidades.some((v) => v.previa?.p10 !== undefined && v.previa.p90 !== undefined))
     limites.push(limiteDeCobertura());
+  // Un mejor ajuste fuera de su propio rango se dice, con las dos cifras (hallado el 2026-11-15).
+  for (const v of velocidades) {
+    const fuera = limiteMejorFuera(v.vehiculo, v.previa);
+    if (fuera) limites.push(fuera);
+  }
   // Una reversa más rápida que cualquiera de las medidas en uso real se le dice al perito (T3.3).
   for (const sv of (base.spec.vehiculos ?? []) as Json[]) {
     const id = base.ids[String(sv.id)];
