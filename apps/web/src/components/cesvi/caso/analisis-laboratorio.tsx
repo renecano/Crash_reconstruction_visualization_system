@@ -171,8 +171,14 @@ function TarjetaDano({
               </div>
               <p className="t-nota">
                 {METODO.reconstruccion}, con las velocidades reconstruidas; perfil estimado{" "}
-                <span className="cifras">{c.perfilCm.join(" · ")} cm</span> ({c.rigidez})
-                {medido ? "; no es la medida del reporte" : ""}.
+                {c.perfilCm.every((x) => x === 0) ? (
+                  // Con poca energía, la deformación queda por debajo de medio centímetro y redondea
+                  // a cero: se dice así, sin una fila de ceros (ronda 2, B).
+                  <span className="cifras">menos de 0.5 cm en todo el ancho</span>
+                ) : (
+                  <span className="cifras">{c.perfilCm.join(" · ")} cm</span>
+                )}{" "}
+                ({c.rigidez}){medido ? "; no es la medida del reporte" : ""}.
               </p>
             </>
           ) : !r ? (

@@ -137,10 +137,10 @@ test("pasada de la ronda 2", async ({ page }) => {
       await anota("medir-activo");
       const mapa = page.getByTestId("mapa-facil");
       const caja = (await mapa.boundingBox())!;
-      await mapa.click({ position: { x: caja.width * 0.3, y: caja.height * 0.6 } });
-      await page.mouse.move(caja.x + caja.width * 0.5, caja.y + caja.height * 0.5);
+      await mapa.click({ position: { x: caja.width * 0.55, y: caja.height * 0.62 } });
+      await page.mouse.move(caja.x + caja.width * 0.66, caja.y + caja.height * 0.5);
       await anota("medir-un-punto");
-      await mapa.click({ position: { x: caja.width * 0.55, y: caja.height * 0.4 } });
+      await mapa.click({ position: { x: caja.width * 0.75, y: caja.height * 0.42 } });
       await anota("medir-dos-puntos");
       await page.getByTestId("herramienta-medir").filter({ visible: true }).click();
     } catch (e) {
@@ -169,10 +169,19 @@ test("pasada de la ronda 2", async ({ page }) => {
       try {
         await irAPaso(page, p);
       } catch (e) {
-        fallas.push(
-          `${prefijo} paso ${p}: ${(e as Error).message.split(/\r?\n/)[0]!.slice(0, 160)}`,
-        );
-        continue;
+        // El motivo completo (quién tapa el botón), para la pasada; y se avanza con el evento.
+        const m = (e as Error).message.replace(/\s+/g, " ");
+        fallas.push(`${prefijo} paso ${p}: ${m.slice(0, 700)}`);
+        try {
+          for (let k = 0; k < 3; k++) {
+            const actual = Number(await page.getByTestId("panel-paso").getAttribute("data-paso"));
+            if (actual >= p) break;
+            await page.getByTestId("siguiente").dispatchEvent("click");
+            await page.waitForTimeout(800);
+          }
+        } catch {
+          continue;
+        }
       }
       await page.waitForTimeout(600);
       if (
