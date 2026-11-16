@@ -37,7 +37,9 @@ param(
   [switch]$Lista,
   [string]$SimularFalta = "",
   [string]$Solo = "",
-  [switch]$EnSuRama
+  [switch]$EnSuRama,
+  # Lo pone el propio script al volver a lanzarse después de traer lo último de main.
+  [switch]$YaAlDia
 )
 
 $ErrorActionPreference = "Stop"
@@ -272,11 +274,59 @@ if ($ramaDeLaTanda -and -not $EnSuRama -and $ramaActual -ne $ramaDeLaTanda) {
   }
   exit $codigo
 }
-# Lo último de main, solo si no estorba: en main, sin cambios y sin rama propia de la tanda.
-if (-not $EnSuRama -and $ramaActual -eq "main") {
-  $sucio = SalidaDe "git" @("-C", $Repo, "status", "--porcelain", "--untracked-files=no")
-  if (-not $sucio -and (Nativo "git" @("-C", $Repo, "pull", "--ff-only", "origin", "main")) -eq 0) {
-    Escribir "Repositorio al día con main."
+# --- Al día con main ------------------------------------------------------------------------------
+# Una corrida anterior deja en la copia los resultados que ya subió (archivos cambiados y nuevos), y con
+# ellos `git pull` se niega. Si lo único que estorba son resultados de las tandas, se guardan en un
+# stash (no se borran: `git stash list` los muestra) y se trae lo último de main. Si llegó una versión
+# nueva, el script se vuelve a lanzar con ella. Si hay otros cambios, no toca nada y sigue como está.
+function EsResultado([string]$ruta) {
+  $ruta = $ruta.Trim('"').Replace("\", "/")
+  if ($ruta.StartsWith("eval/results/") -or $ruta.StartsWith("resultados/")) { return $true }
+  foreach ($t in $Config.tandas.PSObject.Properties) {
+    foreach ($p in @($t.Value.pasos)) {
+      foreach ($s in @($p.salidas)) {
+        if ($s -and ($ruta -eq [string]$s -or $ruta.StartsWith(([string]$s).TrimEnd("/") + "/"))) { return $true }
+      }
+    }
+  }
+  return $false
+}
+if (-not $EnSuRama -and -not $YaAlDia -and $ramaActual -eq "main") {
+  $antes = SalidaDe "git" @("-C", $Repo, "rev-parse", "HEAD")
+  $estado = SalidaDe "git" @("-C", $Repo, "status", "--porcelain", "--untracked-files=all")
+  $cambios = @()
+  if ($estado) { $cambios = @($estado -split "`r?`n" | Where-Object { $_.Trim() } | ForEach-Object { $_ -replace '^\s*\S{1,2}\s+', '' }) }
+  $ajenos = @($cambios | Where-Object { -not (EsResultado $_) })
+  $alDia = $false
+  if ($ajenos.Count -gt 0) {
+    Escribir "Hay cambios en la carpeta que no son resultados de una tanda ($($ajenos[0])...): no la actualizo." "Yellow"
+  } else {
+    if ($cambios.Count -gt 0) {
+      $mensaje = "Croquis: resultados de una corrida anterior, ya subidos ($(Get-Date -Format 'yyyy-MM-dd HH:mm'))"
+      if ((Nativo "git" @("-C", $Repo, "stash", "push", "--include-untracked", "-m", $mensaje)) -eq 0) {
+        Escribir "Guardé en un stash los $($cambios.Count) archivos de resultados que dejó una corrida anterior (ya están en GitHub)."
+      } else {
+        Escribir "No pude guardar los resultados de la corrida anterior: no actualizo la carpeta." "Yellow"
+        $cambios = $null
+      }
+    }
+    if ($null -ne $cambios -and (Nativo "git" @("-C", $Repo, "pull", "--ff-only", "origin", "main")) -eq 0) {
+      $alDia = $true
+      Escribir "Repositorio al día con main."
+    } elseif ($null -ne $cambios) {
+      Escribir "No pude traer lo último de main (¿hay internet?): sigo con la versión que hay." "Yellow"
+    }
+  }
+  $despues = SalidaDe "git" @("-C", $Repo, "rev-parse", "HEAD")
+  if ($alDia -and $despues -ne $antes) {
+    # Llegó una versión nueva: se corre esa, no la que ya estaba cargada en memoria.
+    $argumentos = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $PSCommandPath, "-YaAlDia")
+    if ($Tanda -ne $Config.vigente) { $argumentos += @("-Tanda", $Tanda) }
+    if ($Prueba) { $argumentos += "-Prueba" }
+    if ($SinSubir) { $argumentos += "-SinSubir" }
+    if ($Solo) { $argumentos += @("-Solo", $Solo) }
+    & powershell.exe @argumentos
+    exit $LASTEXITCODE
   }
 }
 
@@ -454,6 +504,18 @@ function CorrerPaso([string]$grupo, [int]$numero, [int]$total, $paso) {
   $t0 = Get-Date
   $estado = "ok"
   $codigo = $null
+
+  # Lo que el paso escribe desde cero (una carpeta de resultados que se reanuda): se vacía antes.
+  foreach ($l in @($paso.limpiar)) {
+    if (-not $l) { continue }
+    $relativa = ([string]$l).Replace("\", "/")
+    if (-not $relativa.StartsWith("eval/results/")) { continue }
+    $ruta = Join-Path $Repo $relativa
+    if (Test-Path -LiteralPath $ruta) {
+      Remove-Item -LiteralPath $ruta -Recurse -Force
+      AgregarAlRegistro $registro @("# Vacié $relativa para empezar de cero.")
+    }
+  }
 
   # Datos que no van en git: sin ellos el paso no se intenta.
   $faltan = @()

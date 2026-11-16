@@ -57,12 +57,11 @@ CI: cinco checks obligatorios (lint, tipos y pruebas de TS; Python en dos partes
 
 ## Bloqueado: necesita a René
 
-| Qué                                                                                                                                                                                        | Para qué                                                        |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
-| Revisar el tope de gasto diario de Claude en Vercel (hoy 2 USD) contra las reservas medidas                                                                                                | Que no se niegue una lectura con presupuesto todavía disponible |
-| Decidir cómo se muestra un caso cuyo mejor ajuste queda fuera de su rango (hoy lleva un aviso, ADR 0141), y confirmar si el 60.62 km/h del caso de ejemplo con poste se usó en alguna demo | Que una cifra y su rango no parezcan contradecirse              |
-| Visto bueno para borrar las ramas remotas ya fusionadas                                                                                                                                    | Orden del repositorio                                           |
-| Que el colaborador corra el paquete de la Tanda 3 (`CORRER-TANDA-EN-RTX.bat`)                                                                                                              | Cerrar la Tanda 3 con la corrida completa                       |
+| Qué                                                                                                                                                                                     | Para qué                                           |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| Visto bueno al antes y después de ofrecer la segunda solución como alternativa cuando el mejor ajuste queda fuera de su rango (solo si es físicamente válida y cuadra con la evidencia) | Que una cifra y su rango no parezcan contradecirse |
+| Visto bueno para borrar las ramas remotas ya fusionadas                                                                                                                                 | Orden del repositorio                              |
+| Que el colaborador corra el paquete de la Tanda 3 (`CORRER-TANDA-EN-RTX.bat`)                                                                                                           | Cerrar la Tanda 3 con la corrida completa          |
 
 La tabla completa, con fechas, está en `docs/PROGRESS.md`, «Bloqueado — necesita a René».
 
