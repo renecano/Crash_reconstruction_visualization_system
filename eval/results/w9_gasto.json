@@ -67,7 +67,17 @@
       "fecha": "2026-11-16T02:29:49.395Z",
       "que": "Relectura de cesvi-57efa125e2 (1 citas rechazadas)",
       "usd": 0.0184492
+    },
+    {
+      "fecha": "2026-11-16T03:45:45.629Z",
+      "que": "T6.6 (a): lecturas con «reporte» por lotes (msgbatch_01DW19P1TRwEYjGydDg2LKbs)",
+      "usd": 0.4791
+    },
+    {
+      "fecha": "2026-11-16T03:52:25.480Z",
+      "que": "T6.6 (a): lecturas con «reporte» por lotes (msgbatch_01Q8H5JW2CTiA1CRE5MYrnmJ)",
+      "usd": 0.3895
     }
   ],
-  "total_usd": 0.538
+  "total_usd": 1.4066
 }
