@@ -73,6 +73,13 @@
                       "estado":  "falló (código 1)",
                       "minutos":  0,
                       "codigo":  1
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "er4-reversa",
+                      "estado":  "ok",
+                      "minutos":  0,
+                      "codigo":  0
                   }
               ]
 }
