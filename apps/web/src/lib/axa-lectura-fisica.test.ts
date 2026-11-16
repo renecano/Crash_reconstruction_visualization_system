@@ -7,12 +7,15 @@ import {
   interpretarResultado,
   lecturasDeDano,
   limiteDeCobertura,
+  lineaContraCesvi,
   reconstruccionContraCesvi,
+  verificacionCesvi,
 } from "@croquis/cesvi";
 import { fullResult, PRODUCTION_SAMPLES } from "../../../../packages/solver-ts/src/full-result";
 import { describe, expect, it } from "vitest";
 import { casoAxa, expedienteAxaReconstruccion } from "./axa-reconstruccion";
 import { lecturaFisica } from "./contraste-lab";
+import { dictamenCasoContenido } from "./dictamen-caso";
 import { citaVelocidad, filasDeLaHoja } from "./dictamen-lab";
 import { protagonista, rangoDeVelocidad } from "./reconstruccion-lab";
 
@@ -67,6 +70,42 @@ describe("la lectura física de AXA", () => {
     ).toContain(texto);
     expect(citaVelocidad(r, "V2", "B")).toContain(texto);
   });
+
+  it(
+    "la nota del 3D, Presentar y el dictamen dicen de qué vehículo y qué velocidad es (René, 2026-11-15)",
+    { timeout: 120_000 },
+    () => {
+      const e = casoAxa().escena!.expediente;
+      const base = especDeExpediente(e);
+      const r = interpretarResultado(base, fullResult(base.spec, PRODUCTION_SAMPLES));
+      const k = reconstruccionContraCesvi(e, r);
+      const restos = k.filas.find((f) => f.metodo.startsWith("Restos"))!;
+      expect(lineaContraCesvi(restos, "A · Silverado 2500")).toMatch(
+        /^A · Silverado 2500 \(V1\) al salir del impacto: Croquis \d+ km\/h · CESVI 60\.27 km\/h por los restos/,
+      );
+      const ebs = k.filas.find((f) => f.metodo.startsWith("Deformación"))!;
+      expect(lineaContraCesvi(ebs, "B · Tacoma")).toContain(
+        "B · Tacoma (V2) antes del impacto: Croquis 57 km/h (55–78)",
+      );
+      // El dictamen: la misma forma de nombrar.
+      const texto = JSON.stringify(
+        dictamenCasoContenido({
+          expediente: e,
+          narracion: null,
+          reconstruccion: r,
+          verificacion: verificacionCesvi(e),
+          croquis: null,
+          cuadros3d: [],
+          declarada: null,
+          validacion: null,
+          estructuraCesvi: false,
+          trazabilidad: { metodo: "prueba", huella: "abc" },
+        }),
+      );
+      expect(texto).toMatch(/A · [^"]+ \(V1\) al salir del impacto · CESVI por los restos/);
+      expect(texto).toMatch(/B · [^"]+ \(V2\) antes del impacto · CESVI de barrera equivalente/);
+    },
+  );
 
   it("dice cuánto de la deformación medida de B explica la reconstrucción visible (auditoría, C5)", () => {
     const base = especDeExpediente(casoAxa().escena!.expediente);

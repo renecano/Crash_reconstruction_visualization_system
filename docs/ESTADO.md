@@ -92,7 +92,7 @@ Captura de René del 2026-11-15 (últimos 30 días). Meta: por debajo de 70 % de
 2. **La corrida del colaborador de la Tanda 3** (E-R4 completa, carambolas y cobertura con 200 casos). Al llegar la rama `resultados/t3-<fecha>`: `python eval/t3_comparar.py t3 t3_rtx` y `node eval/cifras.mjs`; la cifra de cobertura se actualiza sola.
 3. **`eval/results/laboratorio_axa.json`:** lo escribe una e2e manual; se vuelve a correr antes de la demo.
 4. **W9:** las relecturas grabadas y el prompt del corpus, con tope de 20 USD. Incluye rehacer el corpus con el redactor nuevo.
-5. **Ensayo de la demo: hecho** (2026-11-15, en producción; `docs/cesvi/demo/guion.md`, `eval/results/ensayo_demo.json`). Lo que queda de él: la nota del 3D de V1 que no dice que 31 km/h es la velocidad de salida (N13 de la auditoría) y la leyenda del 3D con poco contraste.
+5. **Ensayo de la demo: hecho** (2026-11-15, en producción; `docs/cesvi/demo/guion.md`, `eval/results/ensayo_demo.json`). Sus dos detalles quedaron corregidos: la nota del 3D dice qué velocidad es y nombra el vehículo como el panel (también en Presentar y el dictamen), y la leyenda del 3D cumple WCAG AA sobre cualquier fondo (build `d18f1f3aebbfe08c`).
 6. **Lo menor:** fusionar los PR agrupados de Dependabot cuando lleguen en verde; volver obligatoria la política de contenido; lo demás está en `docs/PROGRESS.md`, «Endurecimiento pendiente».
 
 ## Bloqueado: necesita a René

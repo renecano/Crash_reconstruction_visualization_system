@@ -8,7 +8,7 @@
 import { reconstruct, reconstructionToDict } from "@croquis/solver-ts";
 import type { Expediente } from "./corpus";
 import { especReconstruida, rangoInformativo, type Reconstruccion } from "./reconstruccion";
-import { kmhConUnidad, rangoKmh } from "./formato";
+import { diferenciaKmh, diferenciaPct, kmhConUnidad, rangoKmh } from "./formato";
 
 type Id = Expediente["vehiculos"][number]["id"];
 type Json = Record<string, unknown>;
@@ -33,6 +33,32 @@ export interface FilaMetodoCesvi {
   diferenciaPct: number | null;
   /** Por qué los métodos no miden lo mismo, en una línea. */
   porQue: string;
+  /** De qué momento es la velocidad que se compara («antes del impacto», «al salir del impacto»). */
+  momento: "antes del impacto" | "al salir del impacto";
+  /** Cómo la calcula CESVI, en palabras del perito. */
+  cesviComo: string;
+}
+
+/**
+ * Una fila en una línea (la nota bajo el 3D, Presentar y el dictamen dicen lo mismo; René,
+ * 2026-11-15): el vehículo como en el panel, qué velocidad es, la de Croquis, la de CESVI y cómo la
+ * calcula, y la diferencia con su porcentaje.
+ *
+ *   «A · Silverado 2500 (V1) al salir del impacto: Croquis 31 km/h · CESVI 60.27 km/h por los restos
+ *    (desplazamiento) · −29 km/h (−48 %)»
+ */
+export function lineaContraCesvi(f: FilaMetodoCesvi, nombre: string): string {
+  const quien =
+    nombre && nombre !== String(f.vehiculo) ? `${nombre} (${f.vehiculo})` : String(f.vehiculo);
+  const croquis =
+    f.croquisKmh === null
+      ? "la evidencia no la fija"
+      : `${kmhConUnidad(f.croquisKmh, "reconstruccion")}${f.croquisRango ? ` (${rangoKmh(f.croquisRango[0], f.croquisRango[1], "reconstruccion")})` : ""}`;
+  const dif =
+    f.diferenciaKmh === null || f.diferenciaPct === null
+      ? ""
+      : ` · ${diferenciaKmh(f.diferenciaKmh, "reconstruccion")} (${diferenciaPct(f.diferenciaPct, "reconstruccion")})`;
+  return `${quien} ${f.momento}: Croquis ${croquis} · CESVI ${kmhConUnidad(f.cesviKmh, "metodo")} ${f.cesviComo}${dif}`;
 }
 
 export interface ContraMetodosCesvi {
@@ -102,6 +128,8 @@ export function reconstruccionContraCesvi(
       filas.push({
         vehiculo: v,
         metodo: "Deformación (EBS)",
+        momento: "antes del impacto",
+        cesviComo: "de barrera equivalente por la deformación (EBS)",
         cesviQue: `velocidad equivalente de barrera de ${v}`,
         cesviKmh: res.valor,
         croquisQue: `velocidad de ${v} antes del impacto`,
@@ -118,6 +146,8 @@ export function reconstruccionContraCesvi(
       filas.push({
         vehiculo: v,
         metodo: "Restos (desplazamiento)",
+        momento: "al salir del impacto",
+        cesviComo: "por los restos (desplazamiento)",
         cesviQue: `velocidad de ${v} al salir del impacto`,
         cesviKmh: res.valor,
         croquisQue: `velocidad de ${v} al salir del impacto`,

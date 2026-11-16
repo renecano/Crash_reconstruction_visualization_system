@@ -1,23 +1,16 @@
 {
   "descripcion": "Lo que hay en el Vercel Blob de Croquis, por carpeta y por build, con su tamaño (MiB) y qué usa producción. Solo lectura: no se subió ni se borró nada.",
   "script": "tools/unity/publicar-web.mjs --inventario",
-  "fecha": "2026-11-16T02:19:35.280Z",
+  "fecha": "2026-11-16T03:26:33.415Z",
   "visor_en_produccion": "e06bdd73b0ce3706",
   "visor_en_origin_main": "e06bdd73b0ce3706",
-  "total_mb": 461.8,
+  "total_mb": 250.1,
   "grupos": [
     {
-      "clave": "recursos/visor-unity/f12372a6c2d7742c",
-      "archivos": 16,
-      "mb": 73.4,
-      "subido": "2026-11-12",
-      "usa": null
-    },
-    {
-      "clave": "recursos/visor-unity/01fce868922703fd",
-      "archivos": 16,
-      "mb": 73.4,
-      "subido": "2026-11-12",
+      "clave": "recursos/visor-unity/d18f1f3aebbfe08c",
+      "archivos": 20,
+      "mb": 72.8,
+      "subido": "2026-11-16",
       "usa": null
     },
     {
@@ -32,20 +25,6 @@
       "archivos": 20,
       "mb": 72.7,
       "subido": "2026-11-14",
-      "usa": null
-    },
-    {
-      "clave": "recursos/visor-unity/dc9c30121a648d63",
-      "archivos": 20,
-      "mb": 72.7,
-      "subido": "2026-11-12",
-      "usa": null
-    },
-    {
-      "clave": "recursos/visor-unity/6337b65c1db3110f",
-      "archivos": 6,
-      "mb": 65,
-      "subido": "2026-11-10",
       "usa": null
     },
     {

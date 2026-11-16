@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { Expediente } from "./corpus";
-import { reconstruccionContraCesvi } from "./contra-metodos";
+import {
+  lineaContraCesvi,
+  reconstruccionContraCesvi,
+  type FilaMetodoCesvi,
+} from "./contra-metodos";
 import type { Reconstruccion } from "./reconstruccion";
 
 /** Los cálculos de AXA A2010930 como los lee el importador (reporte de CESVI). */
@@ -101,5 +105,54 @@ describe("la reconstrucción contra los métodos del reporte de CESVI (ADR 0091)
     expect(aviso).toContain("deformación medida de V2");
     expect(aviso).toContain("30–82 km/h");
     expect(aviso).toContain("es de 3 km/h");
+  });
+});
+
+describe("la línea contra CESVI (René, 2026-11-15)", () => {
+  const fila = (o: Partial<FilaMetodoCesvi>): FilaMetodoCesvi => ({
+    vehiculo: "V1",
+    metodo: "Restos (desplazamiento)",
+    cesviQue: "velocidad de V1 al salir del impacto",
+    cesviKmh: 60.27,
+    croquisQue: "velocidad de V1 al salir del impacto",
+    croquisKmh: 31.32,
+    croquisRango: null,
+    diferenciaKmh: -28.95,
+    diferenciaPct: -48.03,
+    porQue: "",
+    momento: "al salir del impacto",
+    cesviComo: "por los restos (desplazamiento)",
+    ...o,
+  });
+
+  it("dice de qué vehículo y qué velocidad es, con el nombre del panel", () => {
+    expect(lineaContraCesvi(fila({}), "A · Silverado 2500")).toBe(
+      "A · Silverado 2500 (V1) al salir del impacto: Croquis 31 km/h · CESVI 60.27 km/h por los restos (desplazamiento) · −29 km/h (−48 %)",
+    );
+    expect(
+      lineaContraCesvi(
+        fila({
+          vehiculo: "V2",
+          momento: "antes del impacto",
+          cesviComo: "de barrera equivalente por la deformación (EBS)",
+          cesviKmh: 63.15,
+          croquisKmh: 56.87,
+          croquisRango: [55.11, 78.06],
+          diferenciaKmh: -6.28,
+          diferenciaPct: -9.94,
+        }),
+        "B · Tacoma",
+      ),
+    ).toBe(
+      "B · Tacoma (V2) antes del impacto: Croquis 57 km/h (55–78) · CESVI 63.15 km/h de barrera equivalente por la deformación (EBS) · −6 km/h (−10 %)",
+    );
+  });
+
+  it("sin nombre, solo el id; sin velocidad, lo dice", () => {
+    expect(
+      lineaContraCesvi(fila({ croquisKmh: null, diferenciaKmh: null, diferenciaPct: null }), ""),
+    ).toBe(
+      "V1 al salir del impacto: Croquis la evidencia no la fija · CESVI 60.27 km/h por los restos (desplazamiento)",
+    );
   });
 });

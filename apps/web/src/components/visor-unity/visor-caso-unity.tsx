@@ -44,7 +44,6 @@ export function VisorCasoUnity({
    * instante que marca cada capítulo. Sin notas ni botones: la historia los tapa.
    */
   presentar?: CanalTiempo | null;
-  expediente: Expediente | null;
   /** Una edición del 3D, ya llevada al expediente: el caso se recalcula y el 3D se vuelve a cargar. */
   onExpediente: (e: Expediente, mensaje: string) => void;
   /** Si se puede editar aquí (la reconstrucción, con el perito trabajando). */
@@ -99,7 +98,7 @@ export function VisorCasoUnity({
     [editable, editando, herramienta, conVehiculo, vResId],
   );
 
-  if (ligero) return <Visor3dCaso {...props} />;
+  if (ligero) return <Visor3dCaso {...props} expediente={expediente} />;
 
   const aplicar = (r2: { expediente: Expediente; mensaje: string; cambio: boolean }) => {
     setAviso(r2.mensaje);
@@ -139,6 +138,7 @@ export function VisorCasoUnity({
         <NotasDel3d
           supuestos={props.supuestos}
           contraCesvi={props.contraCesvi}
+          expediente={expediente}
           conOcupantes={((r?.resultado?.personas ?? []) as { ocupante?: unknown }[]).some(
             (p) => p.ocupante,
           )}
@@ -152,7 +152,7 @@ export function VisorCasoUnity({
           camara={camara}
           tiempo={presentar}
           edicion={presentar ? { on: false } : edicion}
-          respaldo={<Visor3dCaso {...props} />}
+          respaldo={<Visor3dCaso {...props} expediente={expediente} />}
           onApi={(a) => {
             setApi(a);
             onApiUnity(a);

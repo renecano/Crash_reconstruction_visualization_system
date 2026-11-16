@@ -17,8 +17,8 @@ import { colocarTodo, irAPaso } from "./ayuda-recorrido";
  *     → eval/results/ensayo_demo.json y docs/cesvi/demo/ensayo/
  */
 const RAIZ = resolve(__dirname, "../../..");
-const CAPTURAS = join(RAIZ, "docs/cesvi/demo/ensayo");
-const SALIDA = join(RAIZ, "eval/results/ensayo_demo.json");
+const CAPTURAS = join(RAIZ, process.env.CROQUIS_CAPTURAS ?? "docs/cesvi/demo/ensayo");
+const SALIDA = process.env.CROQUIS_SALIDA ?? join(RAIZ, "eval/results/ensayo_demo.json");
 const REPORTE_AXA = join(RAIZ, "data/cesvi/grabaciones/importar/dictamen-a2010930.md");
 /** Una carambola de la prueba cuyo impacto posterior ocurre (`cesvi_r4b_carambolas_prueba.json`). */
 const CARAMBOLA = "cesvi-257e1374a0";
@@ -35,7 +35,7 @@ interface Tramo {
 async function captura(page: Page, nombre: string): Promise<string> {
   const archivo = `${nombre}.jpg`;
   await page.screenshot({ path: join(CAPTURAS, archivo), type: "jpeg", quality: 70 });
-  return `docs/cesvi/demo/ensayo/${archivo}`;
+  return `${process.env.CROQUIS_CAPTURAS ?? "docs/cesvi/demo/ensayo"}/${archivo}`;
 }
 
 async function verEn3D(page: Page): Promise<number> {
@@ -66,7 +66,10 @@ test("ensayo de la demo con CESVI, en producción", async ({ baseURL }) => {
   await ctx.addInitScript(() => {
     (window as unknown as Record<string, unknown>).__croquisVisorUnity = true;
   });
+  // CROQUIS_TRAMOS=1,2c: solo los tramos que empiezan así (para repetir los que tocan una pantalla).
+  const solo = (process.env.CROQUIS_TRAMOS ?? "").split(",").filter(Boolean);
   const tramo = async (nombre: string, f: () => Promise<{ nota: string; captura?: string }>) => {
+    if (solo.length && !solo.some((p) => nombre.startsWith(p))) return;
     const t0 = Date.now();
     try {
       const r = await f();
@@ -112,8 +115,11 @@ test("ensayo de la demo con CESVI, en producción", async ({ baseURL }) => {
       await page.getByTestId("ir-al-impacto-unity").click();
       await page.waitForTimeout(3000);
       await expect(page.getByTestId("visor-caso")).toContainText(LEYENDA);
+      const notas = (await page.getByTestId("contra-cesvi-3d").allInnerTexts()).map(
+        (x) => x.split(". ")[0],
+      );
       return {
-        nota: `Unity listo en ${s.toFixed(1)} s (primera visita); «Ir al impacto»`,
+        nota: `Unity listo en ${s.toFixed(1)} s (primera visita); «Ir al impacto». Notas: ${notas.join(" | ")}`,
         captura: await captura(page, "1b-axa-3d-impacto"),
       };
     });
@@ -125,7 +131,29 @@ test("ensayo de la demo con CESVI, en producción", async ({ baseURL }) => {
     await tramo("1d-axa-dictamen", async () => {
       await irAPaso(page, 8);
       await expect(page.getByTestId("panel-paso")).toContainText(/Dictamen|dictamen/);
-      return { nota: "paso del dictamen", captura: await captura(page, "1d-axa-dictamen") };
+      // Las filas contra CESVI de la vista previa del dictamen, tal como se leen.
+      const t = (await page.getByTestId("panel-paso").innerText()).split(/\r?\n/);
+      const filas = t.filter((l) =>
+        /salir del impacto|antes del impacto|Restos|Deformación/.test(l),
+      );
+      return {
+        nota: filas.join(" | ").slice(0, 400),
+        captura: await captura(page, "1d-axa-dictamen"),
+      };
+    });
+    await tramo("1e-axa-presentar", async () => {
+      await page.getByTestId("modo-presentar").click();
+      await expect(page.getByTestId("capitulo-titulo")).toBeVisible({ timeout: 60_000 });
+      for (let k = 0; k < 6; k++) {
+        if ((await page.getByTestId("capitulo-titulo").innerText()).includes("Contra CESVI")) break;
+        await page.keyboard.press("ArrowRight");
+        await page.waitForTimeout(600);
+      }
+      await expect(page.getByTestId("capitulo-titulo")).toContainText("Contra CESVI");
+      const datos = (await page.getByTestId("capitulo-datos").innerText()).replace(/\s+/g, " ");
+      const c = await captura(page, "1e-axa-presentar-contra");
+      await page.keyboard.press("Escape");
+      return { nota: datos.slice(0, 400), captura: c };
     });
 
     // 2. Un caso nuevo en vivo: Claude lee la narración.

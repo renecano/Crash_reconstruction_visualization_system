@@ -110,7 +110,8 @@ describe("Presentar (Laboratorio §8)", () => {
       { etiqueta: "Croquis contra el reporte", valor: "63.90 contra 63.15 km/h · +0.75 km/h" },
       { etiqueta: "Reconstrucción física de Croquis", valor: "−22 %", grande: true },
       {
-        etiqueta: "Croquis contra el reporte",
+        // De qué vehículo y qué velocidad es, como en el panel (René, 2026-11-15).
+        etiqueta: `${base.nombreDe("V2")} (V2) antes del impacto`,
         valor: "49 (47–49) contra 63.15 km/h · −14 km/h",
       },
       { etiqueta: "Criterios", valor: "3 coinciden · 0 difieren · 1 sin dato" },
