@@ -14,6 +14,7 @@
  * El «antes» se corre con el solver de `main` (los cambios del solver apartados con `git stash`).
  */
 import { spawnSync } from "node:child_process";
+import { createRequire } from "node:module";
 import { copyFileSync, existsSync, mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import process from "node:process";
@@ -30,6 +31,10 @@ if (!["antes", "despues", "t3_3", "t3", "t3_rtx"].includes(etiqueta)) {
   process.exit(1);
 }
 const DIR = join(RAIZ, "eval/results/w8", etiqueta);
+// tsx por Node, sin shell: con `shell: true` una ruta con espacios («reto cesvi v4») se partía en
+// varios argumentos y los resultados se escribían en otra parte (corrida del colaborador del
+// 2026-11-15).
+const TSX = createRequire(join(CESVI, "package.json")).resolve("tsx/cli");
 mkdirSync(DIR, { recursive: true });
 
 function correr(nombre, args, salida, despues) {
@@ -40,11 +45,7 @@ function correr(nombre, args, salida, despues) {
   }
   console.log(`[${new Date().toISOString()}] ${nombre}…`);
   const t = Date.now();
-  const r = spawnSync("pnpm", ["exec", "tsx", ...args], {
-    cwd: CESVI,
-    shell: true,
-    stdio: "inherit",
-  });
+  const r = spawnSync(process.execPath, [TSX, ...args], { cwd: CESVI, stdio: "inherit" });
   if (r.status !== 0) {
     console.error(`${nombre} terminó con ${r.status}`);
     process.exit(3);
