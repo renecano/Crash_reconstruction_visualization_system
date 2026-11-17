@@ -9,8 +9,10 @@
  *
  * - `total_mb`: cada archivo una sola vez (los enlaces simbólicos no suman: así comparte Vercel las
  *   funciones idénticas).
- * - Cada función: todo lo que hay en su carpeta `.func`, siguiendo sus enlaces (lo que se carga al
- *   arrancarla).
+ * - Cada función: lo que hay en su carpeta `.func` más los archivos del repo que nombra su
+ *   `.vc-config.json` (`filePathMap`: `vercel build` no los copia, los sube al desplegar). Las funciones
+ *   que son un enlace a otra (una por página prerenderizada) no suman otra vez.
+ * - `total_mb`: la salida más los archivos de las funciones, cada uno una vez.
  * - Sale con 1 si el total pasa de `--limite-total` MB o una función de `--limite-funcion` MB.
  */
 import {
@@ -21,6 +23,7 @@ import {
   statSync,
   writeFileSync,
 } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import process from "node:process";
 
@@ -83,6 +86,9 @@ for (const a of todos) {
 }
 
 // Cada función, con lo que lleva (siguiendo enlaces), y qué la llena.
+const RAIZ = resolve(SALIDA, "..", "..");
+/** Los archivos del repo que llevan las funciones, una vez cada uno. */
+const delRepo = new Map();
 const funciones = [];
 (function busca(dir) {
   for (const n of readdirSync(dir)) {
@@ -94,6 +100,18 @@ const funciones = [];
         ? relative(SALIDA, resolve(dirname(p), readlinkSync(p)))
         : null;
       const contenido = archivos(real, true);
+      // Los archivos del repo que `vercel build` solo nombra (`filePathMap`): se suben al desplegar.
+      const config = join(real, ".vc-config.json");
+      const mapa = existsSync(config)
+        ? (JSON.parse(readFileSync(config, "utf8")).filePathMap ?? {})
+        : {};
+      for (const [dentroDeLaFuncion, enElRepo] of Object.entries(mapa)) {
+        const f = resolve(RAIZ, enElRepo);
+        if (!existsSync(f)) continue;
+        const b = statSync(f).size;
+        contenido.push({ ruta: join(real, dentroDeLaFuncion), real: f, bytes: b });
+        if (!l.isSymbolicLink()) delRepo.set(f, b);
+      }
       const bytes = contenido.reduce((s, a) => s + a.bytes, 0);
       const dentro = {};
       for (const a of contenido) {
@@ -121,14 +139,17 @@ const funciones = [];
 })(join(SALIDA, "functions"));
 funciones.sort((a, b) => b.mb - a.mb);
 
+const deFunciones = [...delRepo.values()].reduce((s, b) => s + b, 0);
 const grandes = [...todos].sort((a, b) => b.bytes - a.bytes).slice(0, 25);
 const r = {
   descripcion:
     "Peso de un despliegue de Croquis medido sobre la salida de `vercel build` (.vercel/output): lo que guarda Vercel.",
   script: "tools/vercel/peso-salida.mjs",
   fecha: new Date().toISOString(),
-  total_mb: MB(total),
-  archivos: todos.length,
+  total_mb: MB(total + deFunciones),
+  salida_mb: MB(total),
+  archivos_de_las_funciones_mb: MB(deFunciones),
+  archivos: todos.length + delRepo.size,
   limite_total_mb: LIMITE_TOTAL,
   limite_funcion_mb: LIMITE_FUNCION,
   por_carpeta_mb: Object.fromEntries(
@@ -144,6 +165,8 @@ const r = {
       .map(([k, v]) => [k, MB(v)]),
   ),
   funciones_total: funciones.length,
+  // Cuánto sumarían las funciones si cada entrada guardara su copia (cota de arriba).
+  funciones_suma_por_entrada_mb: MB(funciones.reduce((s, f) => s + f.mb * 1e6, 0)),
   funciones_con_carpeta_propia: funciones.filter((f) => !f.enlazada_a).length,
   funciones,
   archivos_mas_grandes: grandes.map((a) => ({
@@ -156,11 +179,11 @@ if (destino) writeFileSync(destino, `${JSON.stringify(r, null, 2)}\n`);
 
 process.stdout.write(
   `Despliegue: ${r.total_mb} MB en ${r.archivos} archivos (límite ${LIMITE_TOTAL} MB). ` +
-    `Funciones: ${funciones.length} (${r.funciones_con_carpeta_propia} con carpeta propia).\n`,
+    `Funciones: ${funciones.length} (${r.funciones_con_carpeta_propia} con carpeta propia; sus archivos, ${r.archivos_de_las_funciones_mb} MB).\n`,
 );
 for (const [k, v] of Object.entries(r.por_carpeta_mb).slice(0, 10))
   process.stdout.write(`  ${String(v).padStart(8)} MB  ${k}\n`);
-for (const f of funciones.slice(0, 8))
+for (const f of funciones.filter((x) => !x.enlazada_a).slice(0, 8))
   process.stdout.write(
     `  función ${String(f.mb).padStart(7)} MB  ${f.funcion}${f.enlazada_a ? " (enlace)" : ""}\n`,
   );

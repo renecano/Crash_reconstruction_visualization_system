@@ -42,7 +42,7 @@ export const NUNCA_AL_SITIO = [
   /^apps\/web\/playwright[^/]*\.config\.ts$/,
   /^apps\/visor-unity\//,
   /^apps\/trailer\//,
-  /^tools\/(?!blender\/|vercel\/)/,
+  /^tools\/(?!blender\/|vercel\/construir\.mjs$)/,
   /^solver\//,
   /^extraction\//,
   /^resultados\//,
