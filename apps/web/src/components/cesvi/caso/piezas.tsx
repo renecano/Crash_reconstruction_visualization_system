@@ -33,6 +33,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState, type ComponentProps } from "react";
 import { contornoVehiculo } from "@/lib/colocar";
 import { interpretarLugar } from "@/lib/lugar-texto";
+import { tomarMapa, type MapaPrestado } from "@/lib/mapa-compartido";
 import { ESTILO_MAPA, ESTILO_MAPA_CLARO, marcador } from "../mapa-comun";
 import { ColocarMapa } from "./colocar-mapa";
 import type { MarcaImpacto, PosicionMovil } from "./reconstruccion";
@@ -258,39 +259,39 @@ export function MapaEscena({
   }, [onClic, onMapa, onFlecha, onMedida, herramienta, huellas, flecha]);
   useEffect(() => {
     let vivo = true;
-    let instancia: MapaMl | null = null;
-    void import("maplibre-gl").then(({ Map, getVersion, setWorkerUrl }) => {
-      if (!vivo || !contenedor.current) return;
-      setWorkerUrl(`/maplibre/worker-${getVersion()}.mjs`);
-      instancia = new Map({
-        container: contenedor.current,
-        style: estiloInicial.current,
-        center: [-99.13, 19.43],
-        zoom: 11,
-        attributionControl: false,
-      });
-      instancia.on("click", (e) => {
-        // Con Espacio sostenido el clic solo termina de mover el mapa.
-        if (espacio.current) return;
-        if (modo.current === "colocar") clic.current({ lat: e.lngLat.lat, lon: e.lngLat.lng });
-        else if (modo.current === "medir") {
-          const ps = medicion.current.length >= 2 ? [] : medicion.current;
-          medicion.current = [...ps, [e.lngLat.lng, e.lngLat.lat]];
-          if (medicion.current.length === 2) {
-            const d = distanciaM(medicion.current[0]!, medicion.current[1]!);
-            setMedidaM(d);
-            medida.current?.(d);
-          } else setMedidaM(null);
-          dibujarCroquis(
-            mapa.current,
-            datos.current.huellas,
-            datos.current.flecha,
-            medicion.current,
-          );
+    let prestado: MapaPrestado | null = null;
+    if (!contenedor.current) return undefined;
+    // El mapa es uno solo para todo el caso (`mapa-compartido`): aquí se toma prestado.
+    void tomarMapa(
+      contenedor.current,
+      { style: estiloInicial.current, center: [-99.13, 19.43], zoom: 11, girar: true },
+      (p) => {
+        prestado = p;
+        if (!vivo) {
+          p.soltar();
+          return;
         }
-      });
-      instancia.on("load", () => {
-        if (!vivo || !instancia) return;
+        const instancia = p.mapa;
+        p.oir("click", (e) => {
+          // Con Espacio sostenido el clic solo termina de mover el mapa.
+          if (espacio.current) return;
+          if (modo.current === "colocar") clic.current({ lat: e.lngLat.lat, lon: e.lngLat.lng });
+          else if (modo.current === "medir") {
+            const ps = medicion.current.length >= 2 ? [] : medicion.current;
+            medicion.current = [...ps, [e.lngLat.lng, e.lngLat.lat]];
+            if (medicion.current.length === 2) {
+              const d = distanciaM(medicion.current[0]!, medicion.current[1]!);
+              setMedidaM(d);
+              medida.current?.(d);
+            } else setMedidaM(null);
+            dibujarCroquis(
+              mapa.current,
+              datos.current.huellas,
+              datos.current.flecha,
+              medicion.current,
+            );
+          }
+        });
         // Abre en el caso: sus posiciones, o sus coordenadas; si no hay ninguna, se busca.
         const { posiciones: ps, inicio: i0 } = arranque.current;
         if (ps.length) {
@@ -309,12 +310,18 @@ export function MapaEscena({
         avisar.current?.(instancia);
         setInstancia(instancia);
         setListo(true);
-      });
-    });
+      },
+      () => vivo,
+    );
     return () => {
       vivo = false;
       avisar.current?.(null);
-      instancia?.remove();
+      // Lo que se puso encima se quita antes de devolverlo.
+      for (const x of [...marcas.current, ...marcasMoviles.current, ...marcasImpacto.current])
+        x.remove();
+      punta.current?.remove();
+      if (mapa.current) mapa.current.getCanvas().style.cursor = "";
+      prestado?.soltar();
       mapa.current = null;
     };
   }, []);

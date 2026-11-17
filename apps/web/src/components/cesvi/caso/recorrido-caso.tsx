@@ -1319,6 +1319,9 @@ export function RecorridoCaso({
   const grande = actual === 2 || actual === 3;
   // En el primer paso, sin nada colocado, el mapa no dice nada: no se muestra (A1).
   const sinMapaAlInicio = actual === 0 && !posiciones.length && !expandido;
+  // Un solo mapa por caso (`mapa-compartido`): este se monta cuando ya hay algo que ver en él y no
+  // lo tiene la escena fácil. Antes de colocar nada (el trazo, la narración) no existe.
+  const montarMapa = !escenaFacil && (expandido || actual >= 2 || posiciones.length > 0);
   const lugar = expediente?.caso.lugar;
   const lugarTexto = [lugar?.descripcion?.valor, lugar?.municipio?.valor, lugar?.estado?.valor]
     .filter(Boolean)
@@ -1555,7 +1558,7 @@ export function RecorridoCaso({
               >
                 {pico ? "←" : "← Anterior"}
               </button>
-              {siguienteNombre ? (
+              {siguienteNombre && !enTrazo ? (
                 <button
                   type="button"
                   className={`boton-principal boton-continuar ${pico ? "flex-1" : ""}`}
@@ -1591,25 +1594,27 @@ export function RecorridoCaso({
           <div
             className={`absolute inset-0 ${pico ? "lg:right-[488px]" : ""} ${verMapa ? "" : "invisible"}`}
           >
-            <MapaEscena
-              tema={tema}
-              onMapa={setMapa}
-              posiciones={posiciones}
-              moviles={moviles}
-              impactos={rec.impactos}
-              onClic={colocar}
-              inicio={lugar?.coordenadas ?? null}
-              lugarTexto={lugarTexto}
-              lugarZona={{ municipio: lugar?.municipio?.valor, estado: lugar?.estado?.valor }}
-              herramienta={actual === 2 && modo === "trabajar" ? herramientaMapa : "mover"}
-              pedirLugar={actual === 2 || expandido}
-              huellas={huellas}
-              flecha={colocacion ? null : flecha}
-              colocacion={colocacion}
-              onFlecha={girar}
-              onMedida={setMedida}
-              onDeshacer={actual === 2 && modo === "trabajar" ? deshacer : undefined}
-            />
+            {montarMapa ? (
+              <MapaEscena
+                tema={tema}
+                onMapa={setMapa}
+                posiciones={posiciones}
+                moviles={moviles}
+                impactos={rec.impactos}
+                onClic={colocar}
+                inicio={lugar?.coordenadas ?? null}
+                lugarTexto={lugarTexto}
+                lugarZona={{ municipio: lugar?.municipio?.valor, estado: lugar?.estado?.valor }}
+                herramienta={actual === 2 && modo === "trabajar" ? herramientaMapa : "mover"}
+                pedirLugar={actual === 2 || expandido}
+                huellas={huellas}
+                flecha={colocacion ? null : flecha}
+                colocacion={colocacion}
+                onFlecha={girar}
+                onMedida={setMedida}
+                onDeshacer={actual === 2 && modo === "trabajar" ? deshacer : undefined}
+              />
+            ) : null}
           </div>
           {r && pidioUnity ? (
             <div
