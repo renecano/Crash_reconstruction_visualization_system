@@ -1,0 +1,50 @@
+{
+    "tanda":  "t4",
+    "titulo":  "Tanda 4 · Referencias completas, arranque del 3D, fps con el daño y la cámara de personas (web y escritorio, baja a ultra), las fotos promo, las tomas del tráiler y la demo local",
+    "fecha":  "2026-11-17",
+    "commit":  "25876f4470247b0ed15299406444de5f0a6c50e2",
+    "rama_del_repositorio":  "main",
+    "archivos_con_cambios":  0,
+    "duracion_min":  0.2,
+    "equipo":  {
+                   "tarjetas_de_video":  [
+                                             "NVIDIA GeForce RTX 4070 Laptop GPU",
+                                             "Intel(R) UHD Graphics"
+                                         ],
+                   "memoria_gb":  31.7,
+                   "procesador":  "Intel(R) Core(TM) i9-14900HX",
+                   "nucleos_logicos":  32,
+                   "disco_libre_gb":  267,
+                   "windows":  "Microsoft Windows 11 Home",
+                   "git":  "git version 2.55.0.windows.5",
+                   "node":  "v26.13.1",
+                   "pnpm":  "12.11.2",
+                   "uv":  null,
+                   "python":  "Python 3.13.15",
+                   "dotnet":  "11.0.100",
+                   "unity_instalados":  [
+                                            "6000.6.8f1"
+                                        ],
+                   "unity_del_proyecto":  "6000.3.28f1",
+                   "unity_coincide":  false,
+                   "instalado_en_esta_corrida":  [
+
+                                                 ]
+               },
+    "pasos":  [
+                  {
+                      "grupo":  "comprobacion",
+                      "paso":  "dependencias",
+                      "estado":  "ok",
+                      "minutos":  0.1,
+                      "codigo":  0
+                  },
+                  {
+                      "grupo":  "comprobacion",
+                      "paso":  "solver-en-reversa",
+                      "estado":  "ok",
+                      "minutos":  0,
+                      "codigo":  0
+                  }
+              ]
+}
