@@ -1,10 +1,10 @@
 {
   "descripcion": "Lo que hay en el Vercel Blob de Croquis, por carpeta y por build, con su tamaño (MiB) y qué usa producción. Solo lectura: no se subió ni se borró nada.",
   "script": "tools/unity/publicar-web.mjs --inventario",
-  "fecha": "2026-11-16T03:26:33.415Z",
-  "visor_en_produccion": "e06bdd73b0ce3706",
-  "visor_en_origin_main": "e06bdd73b0ce3706",
-  "total_mb": 250.1,
+  "fecha": "2026-11-17T03:56:17.174Z",
+  "visor_en_produccion": "64b29e877ba9c856",
+  "visor_en_origin_main": "64b29e877ba9c856",
+  "total_mb": 322.9,
   "grupos": [
     {
       "clave": "recursos/visor-unity/d18f1f3aebbfe08c",
@@ -14,11 +14,18 @@
       "usa": null
     },
     {
-      "clave": "recursos/visor-unity/e06bdd73b0ce3706",
+      "clave": "recursos/visor-unity/64b29e877ba9c856",
       "archivos": 20,
       "mb": 72.8,
       "subido": "2026-11-16",
       "usa": "visor que sirve croquis-sage.vercel.app"
+    },
+    {
+      "clave": "recursos/visor-unity/e06bdd73b0ce3706",
+      "archivos": 20,
+      "mb": 72.8,
+      "subido": "2026-11-16",
+      "usa": null
     },
     {
       "clave": "recursos/visor-unity/abbbeec49fbae3c6",

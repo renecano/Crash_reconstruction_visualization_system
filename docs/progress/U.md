@@ -6,6 +6,7 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 
 - **Fase actual (2026-11-15):** U8 cerrada: el visor deforma la carrocería con el daño del solver, el 3D tiene controles de reproducción y el build con el daño (huella `e06bdd73b0ce3706`) está publicado. U5 y U6 cerraron el 2026-11-12. U7 (cierre) va con la Tanda 5 de la auditoría.
 - **Siguiente:** el paquete de fotos del colaborador (15 tomas del modo foto y el recorrido de la app, ya con el daño) y volver a medir los fps con este build. El detalle está abajo, en «U8».
+- **Tráiler (2026-11-16):** construido en `apps/trailer`, con previos en los tres formatos. Faltan las tomas reales del 3D, que salen de la tanda 4 de la RTX. El detalle está abajo, en «Tráiler».
 - **Unity y Blender corren en segundo plano** desde el 2026-11-10: René reabrió la sesión con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`. Sigue la regla de un solo proceso pesado a la vez.
 - **Cómo se itera:** capturas del Editor en modo batch (`Capturas.Tomar`, unos 3 min). En esta sesión no hubo herramientas del MCP de Unity. Un build WebGL solo al cerrar cada punto.
 
@@ -889,6 +890,7 @@ La huella `2d5c1a20a446c129` es la de este build. Si se reconstruye, el script i
 
 ### Instalado
 
+- **Tipografías del tráiler** (2026-11-16): `@fontsource/instrument-serif`, `@fontsource-variable/instrument-sans` y `@fontsource-variable/geist-mono`, las tres 5.3.0, en `apps/trailer`. Son las mismas de la app (SIL OFL 1.1; `assets/ASSETS.md`).
 - **Unity 6000.3.28f1** en `D:\Unity\Editor`, con WebGL y Windows IL2CPP.
 - **Unity 6000.4.2f1** se queda instalada: la usa el proyecto de prueba de la carpeta del Tec, y René decidió dejarla (2026-11-07).
 - **.NET SDK 10.0.403** en `D:\dotnet-sdk`.
@@ -905,6 +907,40 @@ La huella `2d5c1a20a446c129` es la de este build. Si se reconstruye, el script i
   - `TerrenoVista.cs` ya dibuja el tope como arco de círculo, igual que el solver (antes, cos²). El build publicado (`6337b65c1db3110f`) todavía lleva el anterior: entra en el siguiente.
   - La quinta escena de D1 (`terraceria`) sale ahora de `fixtures/caso3d/terraceria_topes.json`, con el resultado del solver sobre el terreno (z, cabeceo, alabeo y `cruce_tope`).
   - En la web, la malla de relieve del caso está en `Reconstruccion.relieve` (en metros de la escena, altura 0 en el impacto). Al integrar `<VisorUnity>` (U6), pásala a `armarCaso3d` como `relieve`.
+
+## Tráiler (2026-11-16, ADR 0119)
+
+René aprobó el storyboard versión 2 (28 s, «más épico», sin la mancha negra del impacto) y pidió construirlo. El storyboard está en https://claude.ai/artifact/31WivpWPStddS7SBaGJ5F1.
+
+### Qué quedó
+
+- **La composición** (`apps/trailer/src/Trailer.tsx`), la misma para los tres formatos (`Trailer`, `Trailer4K`, `TrailerVertical`):
+  - `escenas/Papel.tsx`, de 0 a 18 s: el trazo que se vuelve calle, los vehículos hasta el contacto, el mundo que se invierte a noche con la onda del golpe, la evidencia que cae en sus casillas y las simulaciones que se reducen a una.
+  - `escenas/Frases.tsx`, de 18 a 23.5 s: «La IA lee. La física decide. El perito firma.», con el relato y sus citas, la nube de simulaciones y la hoja firmada.
+  - `escenas/Logo.tsx`, de 23.5 a 28 s: el logotipo de la marca, armado pieza por pieza.
+- **El pulso** (`ritmo.json`): una sola rejilla para la imagen y la música.
+- **Los datos** (`datos/caso.json`, de `tools/trailer/datos-caso.mts`): la escena inventada `nocturno_lluvia`, su Resultado y el Monte Carlo del solver. Ningún número a mano.
+- **La música** (`tools/trailer/musica.mjs`): original, compuesta en código. Sale idéntica con la misma semilla.
+- **Las tomas del 3D para la RTX** (`tools/trailer/tomas-rtx.mjs` y `tools/colaborador/desde-release.ps1 -Paso trailer`, un paso más de la tanda 4): seis secuencias a 3840×2160 en ultra, con el visor de escritorio del release `rtx-t4`.
+
+### Evidencia
+
+- Pruebas unitarias de `apps/trailer` (la cámara, el pulso, los datos y los cortes): en verde.
+- La música: el silencio antes del golpe final es real y el golpe empieza en el segundo que marca `ritmo.json` (comprobado en el audio del archivo renderizado).
+- Los renders de previo y lo que tardó cada uno: `eval/results/trailer_render_trailer.json`, `trailer_render_trailervertical.json` y `trailer_render_trailer4k.json`.
+
+### Lo que falta
+
+- **Las tomas reales del 3D.** Los archivos que hay en `D:\Croquis-trailer` son previos (`-previo` en el nombre): en los huecos del 3D llevan las fotos de prueba a 720p que se tomaron en la laptop el 2026-11-14, de otras escenas inventadas. Sirven para revisar el ritmo, no para entregar.
+- **Para terminar:** que el colaborador corra la tanda 4 y mande `croquis-tomas-trailer.zip`. Se descomprime en `D:\Croquis-trailer\tomas\` y se corre `node render.mjs Trailer`, `Trailer4K` y `TrailerVertical` (sin `--previo`) desde `apps/trailer`.
+- **El modo foto con secuencias no se ha probado en la RTX.** El plan usa los mismos campos de las 15 fotos promo; si alguna cámara no encuadra bien, se ajusta en `tomas-rtx.mjs`.
+- **Nadie ha oído la música.** Se revisó por números (el arco de fuerza, el silencio, los golpes en su sitio y que haya medios para bocinas chicas). René la tiene que oír.
+
+### Resumen para René
+
+- **Qué quedó:** el tráiler completo en código, con música original, en los tres formatos. Los previos están en `D:\Croquis-trailer`.
+- **Cómo probarlo:** abre `D:\Croquis-trailer\croquis-trailer-previo-1920x1080.mp4`. Para volver a renderizar: `cd apps/trailer` y `node render.mjs Trailer --previo`.
+- **Qué necesito de ti:** que oigas la música y me digas qué cambiar, y las tomas de la RTX (la tanda 4).
 
 ## Necesito del otro frente
 

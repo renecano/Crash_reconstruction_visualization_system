@@ -1,0 +1,37 @@
+{
+  "descripcion": "Render del tráiler (Remotion 4.0.539): cuánto tarda por segundo de video, con qué tomas del 3D y si lleva la música.",
+  "script": "apps/trailer/render.mjs",
+  "fecha": "2026-11-17T04:22:40.407Z",
+  "composicion": "Trailer",
+  "ancho": 1920,
+  "alto": 1080,
+  "fps": 30,
+  "segundos_de_video": 28,
+  "tomas_3d": {
+    "heroe": 1,
+    "faros": 1,
+    "impacto": 1,
+    "aerea": 1,
+    "detalle-1": 1,
+    "detalle-2": 1
+  },
+  "tomas_de_prueba": [
+    "heroe",
+    "faros",
+    "impacto",
+    "aerea",
+    "detalle-1",
+    "detalle-2"
+  ],
+  "huecos_sin_toma": [],
+  "con_musica": true,
+  "bundle_s": 4.2,
+  "render_s": 164.2,
+  "render_s_por_segundo_de_video": 5.86,
+  "concurrencia": 2,
+  "maquina": {
+    "nucleos": 8,
+    "memoria_gb": 8
+  },
+  "salida": "D:/Croquis-trailer/croquis-trailer-previo-1920x1080.mp4"
+}
