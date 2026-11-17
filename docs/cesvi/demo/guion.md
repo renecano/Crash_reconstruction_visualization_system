@@ -2,10 +2,12 @@
 
 Para la demo en vivo con los peritos de CESVI. El video grabado tiene su propio guion (`docs/cesvi/video/guion.md`, del 23 de octubre, sin el 3D).
 
-- **Ensayado** el 2026-11-15 en producción con `apps/web/e2e/ensayo-demo.spec.ts` (`eval/results/ensayo_demo.json`, `docs/cesvi/demo/ensayo/`). Eso fue antes de la ronda 2: con las pantallas nuevas (la primera del caso nuevo, la de antes de reconstruir, las pestañas «3D» y «2D») falta repetir el ensayo. Los cinco ejemplos sí se recorrieron de punta a punta en producción el 2026-11-16, sin el 3D de Unity (`eval/results/ronda2_ejemplos.json`).
+- **Ensayado** el 2026-11-15 en producción con `apps/web/e2e/ensayo-demo.spec.ts` (`eval/results/ensayo_demo.json`, `docs/cesvi/demo/ensayo/`). Eso fue antes de la ronda 2: con las pantallas nuevas (A1 «El trazo», A6 «La incógnita», las pestañas «3D» y «2D», el selector de cámaras y los arreglos del Dictamen) falta repetir el ensayo con el Unity real. Los cinco ejemplos sí se recorrieron de punta a punta en producción el 2026-11-16, sin el 3D de Unity (`eval/results/ronda2_ejemplos.json`).
+- **Actualizado** el 2026-11-17 con lo que cambió en la ronda 2 y el respaldo sin red (la demo local).
 - **Cifras:** solo las que muestra la pantalla. Las de abajo son las del 2026-11-15; si la pantalla dice otra cosa, manda la pantalla.
 - **Nada juzga al conductor:** el perito concluye. Croquis es una reconstrucción de apoyo.
 - **Antes de empezar:** Chrome con caché (no incógnito), la laptop conectada a la corriente, y el 3D de AXA abierto una vez antes (así el build ya está en caché: la primera carga tarda unos 10 s; las siguientes, 3 a 4 s).
+- **Los actos** (la barra de arriba): «El hecho», «La escena», «Reconstrucción», «Análisis», «Contra CESVI» y «Dictamen». En ventanas de menos de 1280 px de ancho, la barra muestra el nombre del acto actual y los demás con su número.
 
 ## 0 · Apertura (1 min)
 
@@ -15,9 +17,11 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 
 ## 1 · AXA A2010930: un caso que CESVI ya analizó (5 min)
 
-> Lista de casos → AXA. Pasos 1 a 3 de corrido; en «Reconstrucción», la pantalla plantea la pregunta («¿A qué velocidad venían?») con lo que se colocó y de dónde salió cada cosa; «Reconstruir» (unos 9 s).
+> Lista de casos → AXA. «El hecho» y «La escena» de corrido (AXA abre con su escena colocada); en «Reconstrucción», la pantalla plantea la incógnita antes de calcular; «Reconstruir» (unos 9 s).
 
-- **La cifra:** V2 a 57 km/h, con su rango de 55 a 78. Es el mejor ajuste de la física, no un promedio. Debajo, cada punto de la gráfica es una simulación; el corchete marca el rango.
+- **La incógnita (A6):** a la izquierda, el croquis de lo que se colocó, con el origen de cada cosa («lo marcaste», «narración» o «supuesto») y por dónde llegó cada vehículo, punteado, con su «? km/h». A la derecha, la pregunta («¿A qué velocidad venían?»), «Reconstruir» y lo marcado contra lo supuesto. Antes de calcular no aparece ningún número; la cifra sale en el lugar del signo.
+
+- **La cifra:** V2 a 57 km/h, con su rango de 55 a 78. Es el mejor ajuste de la física, no un promedio. Debajo, a la vista, la nube de puntos: cada punto es una simulación del caso, el corchete bajo el eje es el rango (donde cae el 80 %) y el punto naranja, el mejor ajuste. Los percentiles siguen plegados.
 - **Dos hipótesis:** el reposo que el reporte no da (supuesto) y la deformación medida no caben juntos. Se ve «La más cercana al daño medido»; la otra, «Cuadra con el reposo supuesto» (34 km/h), va marcada como supuesto. El perito elige.
 - **Lo que explica el daño:** queda en el borde bajo de la energía que da la deformación medida. Croquis lo dice; no lo esconde.
 
@@ -25,27 +29,33 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 
 - **El 3D reproduce el resultado:** no calcula nada. Después del impacto, la carrocería se deforma con el perfil de daño del solver.
 - **Una sola barra de reproducción** para 3D y 2D: pausar, ¼× ½× 1×, «Ir al impacto», «Ver todo», «Repetir». Al cambiar de pestaña se conserva el instante.
-- **Cámara:** las generales a un clic («Alrededor», «Desde arriba», «Cinematográfica», «Desde la acera»); cada vehículo abre las suyas («Detrás, siguiéndolo», «Lo que veía su conductor», «Su daño, en el impacto»).
+- **Cámara** (el selector arriba a la izquierda del 3D): las cuatro generales a un clic («Alrededor», «Desde arriba», «Cinematográfica», «Desde la acera»); un botón por vehículo («B · Tacoma») abre sus tres vistas («Detrás, siguiéndolo», «Lo que veía su conductor», «Su daño, en el impacto»), a dos clics; las personas a pie, en bici o en moto, a un clic. «Detrás, siguiéndolo» se aleja más en las camionetas grandes. Esc cierra el menú.
 - **Leyenda:** reconstrucción ilustrativa; el entorno es procedural, no el lugar real.
 - **La nota bajo el 3D** dice de qué vehículo y qué velocidad es, con el nombre del panel: «B · Tacoma (V2) antes del impacto: Croquis 57 km/h (55–78) · CESVI 63.15 km/h de barrera equivalente por la deformación (EBS)» y «A · Silverado 2500 (V1) al salir del impacto: Croquis 31 km/h · CESVI 60.27 km/h por los restos». Presentar y el dictamen lo nombran igual.
 
-> Paso 7, «Contra CESVI».
+> Acto «Contra CESVI».
 
 - **El método de CESVI con los datos del reporte:** 63.90 km/h por deformación, contra los 63.15 de su reporte (+0.75 km/h, +1.19 %); por la separación de los restos, 60.27, igual que el reporte.
 - **Toda diferencia va con su valor y su porcentaje.**
 
-> Paso 8, el dictamen (PDF y Word).
+> Acto «Dictamen» (PDF y Word).
+
+- **Tu conclusión:** se escribe aunque el 3D esté abierto (antes, con Unity cargado, el campo no dejaba escribir). Se puede citar el resultado y el cursor queda al final de la cita.
+- **«Validar y firmar»** dice qué falta junto al botón («Escribe tu conclusión y tu nombre para firmar») y se activa en cuanto están los dos.
+- **Abajo:** «Word» y «Descargar el caso» en una fila, «Guardar en este navegador» en otra.
 
 ## 2 · Un caso nuevo, en vivo (4 min)
 
-> Lista → «Narrar un hecho nuevo». La primera pantalla dice en una línea lo que va a pasar (narras, colocas, se reconstruye, comparas, firmas) → «Escribir la narración del hecho» → un ejemplo de la lista (o una narración que dicte un perito) → «Leer la narración».
+> Lista → «Narrar un hecho nuevo». La primera pantalla es «El trazo» (A1) → «Escribir la narración del hecho» → un ejemplo de la lista (o una narración que dicte un perito) → «Leer la narración».
+
+- **«El trazo»:** el titular «Narra el hecho. Croquis lo reconstruye.» y una línea que pasa por cinco estaciones (narras, colocas, se reconstruye, comparas, firmas), cada una con quién actúa («Tú» o «Croquis»). Un solo botón principal; al lado, «Usar un ejemplo» (lleva a la lista de los cinco) y «Abrir un caso guardado (.croquis)». No lleva cifras ni mapa: el mapa aparece hasta «La escena».
 
 - **Un ejemplo sin cambios usa su lectura guardada** (hecha con Claude) y la pantalla lo dice: no espera ni gasta. Una narración dictada, o un ejemplo con un cambio, sí se lee con Claude (unos 13 s).
 
 - **Cada dato con su cita:** lo que la narración no dice queda como supuesto, a la vista. Los datos personales se quitan antes de enviar el texto. «Lo que Croquis leyó» enseña los vehículos y los impactos en orden, con la letra de cada vehículo y su «supuesto».
 - **Las preguntas no sacan del cuestionario:** «Lo coloco en el mapa» se anota y la colocación se hace en «La escena».
 - **Colocar:** una pregunta a la vez en el mapa (dónde fue, por dónde venía cada vehículo, dónde quedó). Si conviene, «Más herramientas» → «Medir una distancia»: la línea sigue al puntero con los metros en vivo; Esc termina.
-- **Reconstruir y ver en 3D** (unos 5 s; el 3D ya está en caché).
+- **Reconstruir y ver en 3D** (unos 5 s; el 3D ya está en caché). Antes de reconstruir sale la misma incógnita que en AXA, ahora con lo que colocó el perito.
 
 **Los cinco ejemplos** (`docs/cesvi/ronda-2/narraciones.md`; cifras del 2026-11-16 en producción, con la escena colocada como dice cada narración):
 
@@ -57,7 +67,7 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 | Reversa en una calle con tope                   | La reversa como supuesto con su fuente; un tope con las medidas de la norma | B · Versa a 21 km/h (20–26)  |
 | Choque en un entronque y salida contra un poste | Punto de paso, terracería y un objeto fijo                                  | B · Sentra a 36 km/h (31–38) |
 
-Para la demo: la carambola (los dos impactos en orden, de noche con lluvia en el 3D) o el alcance (la deformación medida). **Dos hipótesis** solo se ven en AXA: ninguno de los ejemplos las da. En el del poste, la app dice que el golpe contra el poste no lo calcula (sí el choque entre los dos vehículos).
+Para la demo: la carambola (los dos impactos en orden, de noche con lluvia en el 3D) o el alcance (la deformación medida). **Dos hipótesis** solo se ven en AXA: ninguno de los ejemplos las da. En el del poste, la app dice que el golpe contra el poste no lo calcula (sí el choque entre los dos vehículos). Un ejemplo sin cambios no gasta API; los cinco aún no se han visto con el 3D real de Unity.
 
 **Plan B:** si Claude no responde, la pantalla lo dice y conserva la narración; se sigue con el caso de AXA o se llena la escena a mano.
 
@@ -85,5 +95,8 @@ Croquis lee el reporte completo de CESVI y arma el expediente con la cita de cad
 ## Antes y durante la demo
 
 - **Tope de Claude:** 10 USD diarios (`/api/version`). La secuencia de arriba cuesta unos 0.20 USD; con el ensayo del mismo día, sobra.
-- **Sin red:** el caso de AXA y la reproducción funcionan sin llamar a Claude; el 3D necesita haberse abierto una vez antes.
+- **Sin red, o si Vercel falla: la demo local** (`LEEME-DEMO-LOCAL.md`). El día anterior, con internet, doble clic en `CORRER-DEMO-LOCAL.bat` (Windows) o `CORRER-DEMO-LOCAL.command` (Mac con Apple Silicon); el día de la demo, otra vez, y se abre `http://localhost:3000/cesvi`. El 3D y los modelos salen de la computadora.
+  - Sin internet funcionan completos AXA, los cinco ejemplos (con su lectura guardada), la reconstrucción, el 3D de Unity y el dictamen.
+  - Necesitan internet: la lectura con IA de una narración nueva o de un reporte importado, los mosaicos del mapa (sin red sale en blanco, pero se coloca la escena) y buscar un lugar por nombre.
+  - Probada en la laptop de René con la red cortada en el navegador; en Mac, solo en una Mac de CI.
 - **Detalle que se nota en pantalla:** en el 3D, la barra de reproducción tapa una esquina del minimapa. La leyenda ilustrativa del 3D ya lleva su recuadro y se lee sobre cualquier fondo (WCAG AA).
