@@ -2,11 +2,11 @@
 
 Pedido de René (2026-11-16): «Usar una narración de ejemplo» traía solo la del Jetta y el Camaro. Ahora son cinco, cada una con una línea de lo que muestra, en la narración del caso nuevo.
 
-**Estado (2026-11-16):** hechas, leídas con Claude y probadas de punta a punta en el build local (`eval/results/ronda2_ejemplos.json`). Falta repetir la prueba en producción y verlas en el 3D de Unity (ver «Lo que falta»).
+**Estado (2026-11-16):** en producción (#258). Leídas con Claude y probadas de punta a punta en producción, sin el 3D de Unity (`eval/results/ronda2_ejemplos.json`): ninguna llamada a Claude y ningún error de página. Falta verlas en el 3D de Unity (ver «Lo que falta»).
 
 ## Qué muestra cada una
 
-| #   | En el selector                                                                                                                         | Qué da (build local, `ronda2_ejemplos.json`)                                                                                                                               | Qué capacidades cubre                                                                                                         |
+| #   | En el selector                                                                                                                         | Qué da (producción, `ronda2_ejemplos.json`)                                                                                                                                | Qué capacidades cubre                                                                                                         |
 | --- | -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | 1   | **Crucero de noche en Iztapalapa.** Dos autos en un crucero urbano, con alturas de daño.                                               | A · Jetta a 16 km/h (7–24); B · Camaro a 12 km/h (3–19)                                                                                                                    | Lectura con cita de cada dato, preguntas de lo que falta, de noche (22:30). Es un reporte de CESVI (`cesvi-e814f085db`)       |
 | 2   | **Alcance en carretera con la deformación medida.** La deformación medida (C1–C6) en los dos vehículos: energía y cambio de velocidad. | A · NP300 a 62 km/h (53–62); B · Vento a 0 km/h (0–10). «Los daños» muestra el perfil C1–C6, la energía de deformación y el cambio de velocidad de los dos                 | Medidas de deformación completas (C1–C6 y L) en los dos vehículos, que entran como evidencia junto con las posiciones finales |
@@ -37,7 +37,6 @@ Siete lecturas (las cuatro nuevas y la relectura de las tres que se reescribiero
 
 ## Lo que falta
 
-- Repetir `ejemplos-ronda2.spec.ts` contra producción cuando el bloque esté desplegado.
 - Verlas en el 3D de Unity (`CROQUIS_UNITY=1`): no se hizo en la laptop de René, que se quedó sin memoria con Unity.
 
 ## Reglas de los textos

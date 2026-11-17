@@ -14,7 +14,7 @@ Esta nota es para que arranques sin releer la conversación.
 | A (A2, A3, A4, A5, A7)                              | Hecho y fusionado                                        | PR #248 (`feat/ronda2-a`); evidencia en `docs/cesvi/ronda-2/evidencia/a/`       |
 | B (pasada)                                          | Correcciones hechas                                      | PR #249 (`feat/ronda2-b`); la lista completa, en `docs/cesvi/ronda-2/pasada.md` |
 | C (narraciones)                                     | Solo planeación: tabla y borradores. **No se gastó API** | `docs/cesvi/ronda-2/narraciones.md`                                             |
-| A1, A6, dirección visual, narraciones en producción | **Para ti, sin empezar**                                 | abajo                                                                           |
+| A1, A6, dirección visual, narraciones en producción | Hecho y fusionado (2026-11-16)                           | PR #256, #257 y #258; el registro está en `fable.md`                            |
 
 ## Lo que pidió René y que sigue en pie
 
