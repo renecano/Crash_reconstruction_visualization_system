@@ -1,0 +1,68 @@
+{
+  "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+  "calidad": "ultra",
+  "resolucion": "3840x2160",
+  "tomas": [
+    {
+      "id": "01-lateral-a-ras-del-piso",
+      "s": 3.0
+    },
+    {
+      "id": "02-lateral-hora-dorada",
+      "s": 0.9
+    },
+    {
+      "id": "03-alcance-noche-faros",
+      "s": 1.0
+    },
+    {
+      "id": "04-lluvia-reflejos",
+      "s": 1.0
+    },
+    {
+      "id": "05-terraceria-topes",
+      "s": 0.9
+    },
+    {
+      "id": "06-carambola-aerea",
+      "s": 1.0
+    },
+    {
+      "id": "11-rayos-x",
+      "s": 1.4
+    },
+    {
+      "id": "12-estroboscopica",
+      "s": 1.1
+    },
+    {
+      "id": "13-nube-incertidumbre",
+      "s": 1.1
+    },
+    {
+      "id": "14-terreno-topes",
+      "s": 1.7
+    },
+    {
+      "id": "15-terreno-relieve-real",
+      "s": 1.9
+    },
+    {
+      "id": "16-ficha-lateral",
+      "s": 1.1
+    },
+    {
+      "id": "17-ficha-planta",
+      "s": 0.7
+    },
+    {
+      "id": "18-conductor-visibilidad",
+      "s": 1.0
+    },
+    {
+      "id": "19-conductor-vista",
+      "s": 0.9
+    }
+  ],
+  "segundos": 18.5
+}
