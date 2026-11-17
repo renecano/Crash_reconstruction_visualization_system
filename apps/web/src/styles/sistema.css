@@ -2317,3 +2317,88 @@
     }
   }
 }
+
+/* El selector «Cámara» del 3D y el interruptor «Mapa» del 2D (ronda 2, A6). */
+@layer components {
+  .selector-camaras .sc-boton {
+    display: inline-flex;
+    min-height: 34px;
+    align-items: center;
+    gap: 6px;
+    padding: 0 12px;
+    border-radius: 999px;
+    color: var(--texto-2);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .selector-camaras .sc-boton:hover {
+    color: var(--texto);
+  }
+  .selector-camaras .sc-boton[aria-pressed="true"] {
+    background: var(--texto);
+    color: var(--superficie);
+    font-weight: 600;
+  }
+  .selector-camaras .sc-vehiculo {
+    border: 1px solid var(--linea);
+  }
+  .selector-camaras .sc-separador {
+    width: 1px;
+    height: 20px;
+    margin-inline: 4px;
+    background: var(--linea);
+  }
+  .selector-camaras .sc-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 20;
+    display: flex;
+    min-width: 232px;
+    flex-direction: column;
+    padding: 6px;
+    border-radius: 14px;
+    background: var(--superficie);
+    box-shadow: 0 16px 40px rgba(27, 34, 48, 0.2);
+  }
+  .selector-camaras .sc-menu > button {
+    min-height: 40px;
+    padding: 0 12px;
+    border-radius: 9px;
+    color: var(--texto);
+    font-size: 0.875rem;
+    text-align: left;
+  }
+  .selector-camaras .sc-menu > button:hover,
+  .selector-camaras .sc-menu > button[aria-checked="true"] {
+    background: var(--superficie-alta);
+  }
+  .selector-camaras .sc-menu > button[aria-checked="true"] {
+    font-weight: 600;
+  }
+  .interruptor {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 10px;
+    padding: 0 6px;
+    border-radius: var(--radio-control);
+    font-size: var(--t-interfaz);
+    font-weight: 500;
+  }
+  .interruptor::before {
+    content: "";
+    width: 38px;
+    height: 22px;
+    border-radius: 999px;
+    background:
+      radial-gradient(circle at 11px 11px, var(--superficie) 0 8px, transparent 8.5px),
+      var(--texto-3);
+    transition: background-position var(--transicion);
+  }
+  .interruptor[aria-checked="true"]::before {
+    background:
+      radial-gradient(circle at 27px 11px, var(--superficie) 0 8px, transparent 8.5px), var(--texto);
+  }
+}

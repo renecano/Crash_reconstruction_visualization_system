@@ -79,7 +79,7 @@ import { leerReporte } from "@/lib/lectura-reporte";
 import { actoDePaso, actosDelCaso, continuarA, rutaDeActo, type ClaveActo } from "@/lib/actos";
 import { BarraRecorrido, PASOS } from "../recorrido/barra";
 import { TransicionActo } from "../recorrido/transicion-acto";
-import { MaquetaCaso } from "../escena/maqueta-caso";
+import { MaquetaCaso, RelojDelMapa } from "../escena/maqueta-caso";
 import { EscenaFacil, ResumenDeLaEscena, lineasDeLaEscena } from "../escena/escena-facil";
 import { PresentarCaso } from "./presentar-caso";
 import { ActoDanos } from "./analisis-laboratorio";
@@ -90,8 +90,9 @@ import { TerrenoReconstruccion } from "./terreno-reconstruccion";
 import { VisorCasoUnity } from "@/components/visor-unity/visor-caso-unity";
 import type { ApiVisorUnity } from "@/components/visor-unity/visor-unity";
 import { CanalTiempo } from "@/lib/visor-unity/canal";
+import { Canal } from "@/lib/canal";
 import { precargarModelos, precargarVisorUnity } from "@/lib/visor-unity/precarga";
-import { protagonista, tipImpacto, tipVehiculo } from "@/lib/reconstruccion-lab";
+import { tipImpacto, tipVehiculo } from "@/lib/reconstruccion-lab";
 import { tomarArchivo } from "@/lib/archivo-pendiente";
 import {
   cifraContraste,
@@ -220,7 +221,7 @@ export function RecorridoCaso({
   const [moviles, setMoviles] = useState<PosicionMovil[]>([]);
   // La vista del escenario: la que se eligió o, al reconstruir, la maqueta (Laboratorio §8).
   const [vistaElegida, setVista] = useState<"mapa" | "3d" | "maqueta" | null>(null);
-  const [camaraPedida, setCamaraPedida] = useState<{ camara: string; n: number } | null>(null);
+  const [camaraPedida] = useState<{ camara: string; n: number } | null>(null);
   const [declarada, setDeclarada] = useState<Hipotesis | null>(null);
   const [comparacionDeclarada, setComparacionDeclarada] =
     useState<DatosDictamenCaso["declarada"]>(null);
@@ -229,6 +230,8 @@ export function RecorridoCaso({
   const [unityApi, setUnityApi] = useState<ApiVisorUnity | null>(null);
   // Presentar le avisa a Unity el instante de cada capítulo sin pasar por el estado de la página.
   const [canalPresentar] = useState(() => new CanalTiempo());
+  // Las posiciones de los vehículos sobre el mapa, en cada instante de la barra (A6).
+  const [canalMoviles] = useState(() => new Canal<PosicionMovil[]>());
   // El instante que comparten la maqueta (2D) y el 3D: al cambiar de pestaña se conserva (A6).
   const instante = useRef<number | null>(null);
   const [instanteMaqueta, setInstanteMaqueta] = useState<number | null>(null);
@@ -1324,9 +1327,6 @@ export function RecorridoCaso({
   // El 3D solo dibuja cuando se ve: oculto seguía a todo ritmo y ahogaba la página (la foto del
   // dictamen lo despierta si le hace falta).
   const visorAlaVista = vista === "3d" && !presentando && !hojaAncha && actual !== 1;
-  const vPico = r ? protagonista(r) : null;
-  const idPico =
-    r && vPico ? Object.entries(r.ids).find(([, id]) => id === vPico.vehiculo)?.[0] : null;
   // Lo obligatorio de cada paso (V2): «Siguiente» dice qué falta y los pasos futuros esperan.
   const claves = pasos.map((n) => CLAVES_PASOS[PASOS.indexOf(n)]!);
   const estadoPasos = {
@@ -1631,7 +1631,9 @@ export function RecorridoCaso({
                 tema={tema}
                 onMapa={setMapa}
                 posiciones={posiciones}
-                moviles={moviles}
+                // Con la reconstrucción, los vehículos en movimiento llegan por el canal de la barra.
+                moviles={r ? [] : moviles}
+                canalMoviles={canalMoviles}
                 impactos={rec.impactos}
                 onClic={colocar}
                 inicio={lugar?.coordenadas ?? null}
@@ -1706,6 +1708,21 @@ export function RecorridoCaso({
                 objetos={objetos}
                 expandido={expandido}
                 supuestos={supuestos}
+              />
+            </div>
+          ) : null}
+          {/* El 2D sobre el mapa real: la misma barra mueve los vehículos en el mapa (A6). */}
+          {r && vista === "mapa" && !expandido ? (
+            // Solo sobre el mapa: la barra no tapa la hoja de la derecha ni deja de pasar los clics
+            // al mapa.
+            <div
+              className={`pointer-events-none absolute inset-0 [&>*]:pointer-events-auto ${pico ? "lg:right-[488px]" : ""}`}
+            >
+              <RelojDelMapa
+                r={r}
+                tInicial={instanteMaqueta}
+                onInstante={alInstante}
+                canal={canalMoviles}
               />
             </div>
           ) : null}
@@ -1811,60 +1828,60 @@ export function RecorridoCaso({
           ) : null}
           <div className={`absolute z-10 flex gap-2 ${pico ? "top-4 left-4" : "top-3 right-3"}`}>
             {r ? (
-              <div
-                className={`segmentado ${pico ? "segmentado-tinta" : ""}`}
-                role="tablist"
-                aria-label="Vista"
-              >
-                {(
-                  [
-                    ["maqueta", "maqueta", pico ? "Cenital" : "Maqueta", null],
-                    ...(pico && idPico && vPico
-                      ? ([
-                          [
-                            "detras",
-                            "3d",
-                            `Detrás de ${letraDe(vPico.vehiculo)}`,
-                            `detras-${idPico}`,
-                          ],
-                          [
-                            "conductor",
-                            "3d",
-                            `Conductor ${letraDe(vPico.vehiculo)}`,
-                            `conductor-${idPico}`,
-                          ],
-                        ] as const)
-                      : []),
-                    ["3d", "3d", pico ? "Órbita 3D" : "3D", pico ? "libre" : null],
-                    ["mapa", "mapa", "Mapa", null],
-                  ] as const
-                ).map(([id, v, nombre, camara]) => (
+              <>
+                {/* A6: dos pestañas, «3D» y «2D». El mapa real es un fondo del 2D, no otra pestaña. */}
+                <div
+                  className={`segmentado ${pico ? "segmentado-tinta" : ""}`}
+                  role="tablist"
+                  aria-label="Vista"
+                >
                   <button
-                    key={id}
                     type="button"
                     role="tab"
-                    aria-selected={
-                      camara
-                        ? vista === "3d" && camaraPedida?.camara === camara
-                        : vista === v && (v !== "3d" || !pico)
-                    }
-                    className="px-3"
+                    aria-selected={vista === "3d"}
+                    className="px-5"
                     onClick={() => {
-                      if (v === "mapa") setMoviles([]);
-                      // Del 2D al 3D, el 3D va al instante en que se quedó la maqueta.
-                      if (v === "3d" && vista !== "3d" && instante.current !== null)
+                      // Del 2D al 3D, el 3D va al instante en que se quedó el 2D.
+                      if (vista !== "3d" && instante.current !== null)
                         unityApi?.ir?.(instante.current);
-                      // Del 3D al 2D, la maqueta empieza donde se quedó el 3D.
-                      if (v === "maqueta") setInstanteMaqueta(instante.current);
-                      setVista(v);
-                      if (camara) setCamaraPedida((c) => ({ camara, n: (c?.n ?? 0) + 1 }));
+                      setVista("3d");
                     }}
-                    data-testid={`vista-${id}`}
+                    data-testid="vista-3d"
                   >
-                    {nombre}
+                    3D
                   </button>
-                ))}
-              </div>
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={vista !== "3d"}
+                    className="px-5"
+                    onClick={() => {
+                      if (vista !== "3d") return;
+                      // Del 3D al 2D, el 2D empieza donde se quedó el 3D.
+                      setInstanteMaqueta(instante.current);
+                      setVista("maqueta");
+                    }}
+                    data-testid="vista-maqueta"
+                  >
+                    2D
+                  </button>
+                </div>
+                {vista !== "3d" ? (
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={vista === "mapa"}
+                    className={`interruptor ${pico ? "" : "vidrio px-3"}`}
+                    onClick={() => {
+                      setInstanteMaqueta(instante.current);
+                      setVista(vista === "mapa" ? "maqueta" : "mapa");
+                    }}
+                    data-testid="vista-mapa"
+                  >
+                    Mapa
+                  </button>
+                ) : null}
+              </>
             ) : null}
             {pico ? null : (
               <button

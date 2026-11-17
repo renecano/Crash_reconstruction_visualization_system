@@ -1,11 +1,12 @@
 "use client";
 
 /**
- * La barra de reproducción del 3D de Unity (auditoría del 2026-11-15, I3): la misma de la maqueta 2D
- * (reproducir, deslizador y velocidad) más «Ir al impacto», «Ver todo» y «Repetir». Solo manda
- * mensajes que el puente ya tenía; Unity sigue reproduciendo el Resultado, sin calcular nada.
+ * La barra de reproducción, una sola para el 3D y el 2D (ronda 2, A6): reproducir, línea de tiempo,
+ * velocidad, «Ir al impacto», «Ver todo» y «Repetir», con los mismos controles en el mismo lugar. En
+ * el 3D manda mensajes que el puente ya tenía (Unity sigue reproduciendo el Resultado, sin calcular
+ * nada); en el 2D mueve el reloj de la maqueta. El instante se conserva al cambiar de pestaña.
  *
- * Va arriba de la leyenda del visor («Reconstrucción ilustrativa…»), que nunca se tapa.
+ * En el 3D va arriba de la leyenda del visor («Reconstrucción ilustrativa…»), que nunca se tapa.
  */
 import { formato as F } from "@croquis/cesvi";
 import {
@@ -21,7 +22,10 @@ export function BarraReproduccion({
   intervalo,
   corre,
   onAccion,
+  de = "unity",
 }: {
+  /** De qué vista es: cambia dónde se apoya y sus nombres para las pruebas. */
+  de?: "unity" | "maqueta";
   estado: EstadoReproduccion;
   intervalo: Intervalo;
   /** Si Unity está reproduciendo ahora (el 3D a la vista y sin pausar). */
@@ -32,8 +36,8 @@ export function BarraReproduccion({
   const fraccion = (x: number) => (fin > inicio ? ((x - inicio) / (fin - inicio)) * 100 : 0);
   return (
     <div
-      className="escena-avance absolute right-4 bottom-14 left-4 z-10 flex flex-wrap items-center gap-3 p-3"
-      data-testid="controles-unity"
+      className={`escena-avance absolute right-4 left-4 z-10 flex flex-wrap items-center gap-3 p-3 ${de === "unity" ? "bottom-14" : "bottom-4"}`}
+      data-testid={de === "unity" ? "controles-unity" : "linea-de-tiempo"}
       data-t={F.fijo(estado.t, 2)}
       data-pausado={estado.pausado ? "si" : "no"}
     >
@@ -42,7 +46,7 @@ export function BarraReproduccion({
         className="boton-principal grid h-11 w-11 shrink-0 place-items-center rounded-control p-0"
         aria-label={corre ? "Pausar" : "Reproducir"}
         onClick={() => onAccion({ tipo: "alternar" })}
-        data-testid="reproducir-unity"
+        data-testid={`reproducir-${de}`}
       >
         {corre ? "❚❚" : "▶"}
       </button>
@@ -57,7 +61,7 @@ export function BarraReproduccion({
           aria-label="Instante de la reconstrucción"
           aria-valuetext={`${F.numero(estado.t, 2)} segundos respecto al impacto`}
           onChange={(e) => onAccion({ tipo: "ir", t: Number(e.target.value) })}
-          data-testid="tiempo-unity"
+          data-testid={`tiempo-${de}`}
         />
         <span
           className="pointer-events-none absolute top-0 h-3 w-0.5 bg-senal"
@@ -80,7 +84,7 @@ export function BarraReproduccion({
             className="px-3"
             aria-pressed={estado.velocidad === v}
             onClick={() => onAccion({ tipo: "velocidad", x: v })}
-            data-testid={`velocidad-unity-${v}`}
+            data-testid={`velocidad-${de}-${v}`}
           >
             {etiquetaVelocidad(v)}
           </button>
@@ -91,7 +95,7 @@ export function BarraReproduccion({
           type="button"
           className="boton-secundario boton-compacto"
           onClick={() => onAccion({ tipo: "impacto" })}
-          data-testid="ir-al-impacto-unity"
+          data-testid={`ir-al-impacto-${de}`}
         >
           Ir al impacto
         </button>
@@ -99,7 +103,7 @@ export function BarraReproduccion({
           type="button"
           className="boton-secundario boton-compacto"
           onClick={() => onAccion({ tipo: "todo" })}
-          data-testid="ver-todo-unity"
+          data-testid={`ver-todo-${de}`}
         >
           Ver todo
         </button>
@@ -107,7 +111,7 @@ export function BarraReproduccion({
           type="button"
           className="boton-secundario boton-compacto"
           onClick={() => onAccion({ tipo: "repetir" })}
-          data-testid="repetir-unity"
+          data-testid={`repetir-${de}`}
         >
           Repetir
         </button>
