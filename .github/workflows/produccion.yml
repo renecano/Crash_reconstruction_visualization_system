@@ -6,6 +6,11 @@
 # Vercel no lo ha publicado y el repositorio tiene el secreto VERCEL_DEPLOY_HOOK_MAIN (un Deploy
 # Hook de main, creado en el panel de Vercel), lo dispara una vez. Si al final no coincide, falla:
 # la marca roja queda en el commit de main y GitHub le avisa a René por correo.
+#
+# Desde el 2026-11-17 (René) Vercel no construye los merges que no tocan el sitio
+# (`tools/vercel/construir.mjs`, el «Ignored Build Step»). Con la misma regla, este flujo no espera
+# un despliegue que no va a llegar: si nada de lo que va al sitio cambió desde el commit que sirve
+# producción, termina en verde.
 name: Producción = main
 
 on:
@@ -36,6 +41,11 @@ jobs:
           URL: https://croquis-sage.vercel.app/api/version
         run: |
           disparado=no
+          sirve=$(curl -fsS -H "Cache-Control: no-cache" "$URL?t=$(date +%s)" | jq -r '.commit // empty' || true)
+          if [ -n "$sirve" ] && [ "$sirve" != "$SHA" ] && git cat-file -e "$sirve^{commit}" 2>/dev/null             && git merge-base --is-ancestor "$sirve" "$SHA"             && node tools/vercel/construir.mjs --desde "$sirve" --hasta "$SHA"; then
+            echo "Este merge no cambia nada del sitio: producción sigue en $sirve y no se espera despliegue."
+            exit 0
+          fi
           for i in $(seq 1 50); do
             sirve=$(curl -fsS -H "Cache-Control: no-cache" "$URL?t=$(date +%s)" | jq -r '.commit // empty' || true)
             if [ "$sirve" = "$SHA" ]; then
