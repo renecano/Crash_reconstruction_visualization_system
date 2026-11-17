@@ -26,7 +26,8 @@ const n = (x: number) => Number(x.toFixed(2));
  */
 export function camaraDetras(resId: string, largoM = 4.5): CamaraVisor {
   const distancia = Math.max(DETRAS.distancia, (DETRAS.distancia * largoM) / 4.5);
-  const altura = Math.max(DETRAS.altura, 0.36 * distancia);
+  // La misma proporción de siempre, y 0.3 m más arriba por cada metro extra de largo.
+  const altura = (DETRAS.altura * distancia) / DETRAS.distancia + 0.3 * Math.max(0, largoM - 4.5);
   return `cerca:${resId}:${DETRAS.azimut}:${n(distancia)}:${n(altura)}`;
 }
 

@@ -40,7 +40,7 @@ describe("las cámaras del 3D (René, 2026-11-16, A6)", () => {
     // sube (antes quedaba pegada a su techo; ronda 2, A6).
     expect(c.find((x) => x.nombre === "Detrás de A · Jetta")?.modo).toBe("cerca:veh-a:180:8:2.6");
     expect(c.find((x) => x.nombre === "Detrás de C · Ranger")?.modo).toBe(
-      "cerca:veh-c:180:9.42:3.39",
+      "cerca:veh-c:180:9.42:3.3",
     );
     expect(c.find((x) => x.nombre === "El daño de B, en el impacto")?.alImpacto).toBe(true);
     // El conductor va dentro de su vehículo: no lleva cámara de persona; el peatón sí.
