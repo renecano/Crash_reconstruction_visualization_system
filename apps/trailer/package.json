@@ -12,8 +12,11 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
-    "@remotion/cli": "4.0.539",
+    "@fontsource-variable/geist-mono": "5.3.0",
+    "@fontsource-variable/instrument-sans": "5.3.0",
+    "@fontsource/instrument-serif": "5.3.0",
     "@remotion/bundler": "4.0.539",
+    "@remotion/cli": "4.0.539",
     "@remotion/renderer": "4.0.539",
     "react": "catalog:",
     "react-dom": "catalog:",
@@ -22,8 +25,8 @@
   "devDependencies": {
     "@types/node": "catalog:",
     "@types/react": "catalog:",
+    "eslint": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:",
-    "eslint": "catalog:"
+    "vitest": "catalog:"
   }
 }

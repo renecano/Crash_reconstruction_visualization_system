@@ -84,3 +84,6 @@ data/cesvi/r4/pagina.json
 demo/escenas-r11/*.json
 # Generado por apps/web/scripts/tokens.mjs: se compara byte a byte con el generador
 apps/web/src/styles/tokens.css
+
+# Datos generados del tráiler (tools/trailer/datos-caso.mts): una sola línea, no se formatean.
+apps/trailer/src/datos/
