@@ -87,7 +87,7 @@ $marca = Join-Path $Web ".next\croquis-visor-local"
 $commit = (& git -C $Repo rev-parse HEAD).Trim()
 # Compilada para esta versión y en modo local: el build trae la reescritura al manifiesto local (si
 # después alguien compiló en modo normal, la marca puede seguir ahí, pero la reescritura no).
-$rutas = Join-Path $Web ".nextoutes-manifest.json"
+$rutas = Join-Path (Join-Path $Web ".next") "routes-manifest.json"
 $modoLocal = (Test-Path $rutas) -and ((Get-Content $rutas -Raw) -match "visor-unity/local/manifest\.json")
 $compilada = $modoLocal -and (Test-Path $marca) -and ((Get-Content $marca -Raw).Trim() -eq $commit) -and (Test-Path (Join-Path $Web ".next\BUILD_ID"))
 if ($compilada) {

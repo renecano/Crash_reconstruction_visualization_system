@@ -1,4 +1,6 @@
 #!/bin/sh
 # Ganchos de Croquis (los activa `pnpm install`: tools/git/instalar-ganchos.mjs).
 # Ningún video ni audio entra al repositorio fuera de apps/web/public/portada/ (René, 2026-11-17).
-exec node tools/git/sin-medios.mjs --por-subir
+# Ningún carácter de control dentro de una línea de un script (René, 2026-11-17).
+node tools/git/sin-medios.mjs --por-subir || exit 1
+exec node tools/git/sin-control.mjs --por-subir
