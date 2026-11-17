@@ -1,0 +1,106 @@
+# Paso: arranque-3d
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/arranque-3d.ps1
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v4\Croquis
+# Inicio: 2026-11-17 11:41:38
+
+Instalando Chromium para Playwright (si falta)...
+Downloading Chrome for Testing 156.0.8078.4 (playwright chromium v1248)[2m from https://cdn.playwright.dev/builds/cft/156.0.8078.4/win64/chrome-win64.zip[22m
+|                                                                                |   0% of 197.5 MiB
+|■■■■■■■■                                                                        |  10% of 197.5 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 197.5 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 197.5 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 197.5 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 197.5 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 197.5 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 197.5 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 197.5 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 197.5 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 197.5 MiB
+Chrome for Testing 156.0.8078.4 (playwright chromium v1248) downloaded to C:\Users\MrKan\AppData\Local\ms-playwright\chromium-1248
+Downloading FFmpeg (playwright ffmpeg v1013)[2m from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1013/ffmpeg-win64.zip[22m
+|                                                                                |   0% of 1.6 MiB
+|■■■■■■■■                                                                        |  10% of 1.6 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 1.6 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 1.6 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 1.6 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 1.6 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 1.6 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 1.6 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 1.6 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 1.6 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 1.6 MiB
+FFmpeg (playwright ffmpeg v1013) downloaded to C:\Users\MrKan\AppData\Local\ms-playwright\ffmpeg-1013
+Downloading Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248)[2m from https://cdn.playwright.dev/builds/cft/156.0.8078.4/win64/chrome-headless-shell-win64.zip[22m
+|                                                                                |   0% of 118.1 MiB
+|■■■■■■■■                                                                        |  10% of 118.1 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 118.1 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 118.1 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 118.1 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 118.1 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 118.1 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 118.1 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 118.1 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 118.1 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 118.1 MiB
+Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) downloaded to C:\Users\MrKan\AppData\Local\ms-playwright\chromium_headless_shell-1248
+Downloading Winldd (playwright winldd v1007)[2m from https://cdn.playwright.dev/dbazure/download/playwright/builds/winldd/1007/winldd-win64.zip[22m
+|■■■■■■■■                                                                        |  12% of 0.1 MiB
+|■■■■■■■■■■■■■■■■                                                                |  25% of 0.1 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  41% of 0.1 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  54% of 0.1 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 0.1 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  73% of 0.1 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  89% of 0.1 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 0.1 MiB
+Winldd (playwright winldd v1007) downloaded to C:\Users\MrKan\AppData\Local\ms-playwright\winldd-1007
+
+Running 1 test using 1 worker
+
+[1/1] [chromium] › e2e\medir-unity-arranque.spec.ts:155:5 › el arranque del 3D de Unity, por partes
+  1) [chromium] › e2e\medir-unity-arranque.spec.ts:155:5 › el arranque del 3D de Unity, por partes ─
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator: getByTestId('visor-unity')
+    Expected: "listo"
+    Timeout: 300000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveAttribute" getByTestId('visor-unity') with timeout 300000ms
+      - waiting for getByTestId('visor-unity')
+        4 × locator resolved to <div data-fase="arrancando" data-testid="visor-unity" class="relative h-full w-full">…</div>
+          - unexpected value "arrancando"
+
+
+      86 |   const reloj = Date.now();
+      87 |   await page.getByTestId("vista-3d").click();
+    > 88 |   await expect(page.getByTestId("visor-unity")).toHaveAttribute("data-fase", "listo", {
+         |                                                 ^
+      89 |     timeout: 300_000,
+      90 |   });
+      91 |   // El primer cuadro con el caso: el siguiente cuadro después de «caso cargado».
+        at abrir3d (C:\Users\MrKan\Documents\reto cesvi v4\Croquis\apps\web\e2e\medir-unity-arranque.spec.ts:88:49)
+        at C:\Users\MrKan\Documents\reto cesvi v4\Croquis\apps\web\e2e\medir-unity-arranque.spec.ts:182:23
+
+    Error Context: test-results\medir-unity-arranque-el-arranque-del-3D-de-Unity-por-partes-chromium\error-context.md
+
+
+  Slow test file: [chromium] › e2e\medir-unity-arranque.spec.ts (5.5m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 failed
+    [chromium] › e2e\medir-unity-arranque.spec.ts:155:5 › el arranque del 3D de Unity, por partes ──
+Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
+
+  × "pnpm recursive exec" failed in C:\Users\MrKan\Documents\reto cesvi
+  │ v4\Croquis\apps\web
+
+la mediciÃ³n del arranque terminÃ³ con el cÃ³digo 1
+En C:\Users\MrKan\Documents\reto cesvi v4\Croquis\tools\colaborador\arranque-3d.ps1: 16 Carácter: 22
++ ... EXITCODE) { throw "la mediciÃ³n del arranque terminÃ³ con el cÃ³digo  ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (la mediciÃ³n de...on el cÃ³digo 1:String) [], RuntimeException
+    + FullyQualifiedErrorId : la mediciÃ³n del arranque terminÃ³ con el cÃ³digo 1
+ 
+
+# Fin: 2026-11-17 11:59:42 · falló (código 1) · 18.1 min
