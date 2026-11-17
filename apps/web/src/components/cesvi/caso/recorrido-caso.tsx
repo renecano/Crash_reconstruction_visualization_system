@@ -80,7 +80,7 @@ import { actoDePaso, actosDelCaso, continuarA, rutaDeActo, type ClaveActo } from
 import { BarraRecorrido, PASOS } from "../recorrido/barra";
 import { TransicionActo } from "../recorrido/transicion-acto";
 import { MaquetaCaso } from "../escena/maqueta-caso";
-import { EscenaFacil, ResumenDeLaEscena } from "../escena/escena-facil";
+import { EscenaFacil, ResumenDeLaEscena, lineasDeLaEscena } from "../escena/escena-facil";
 import { PresentarCaso } from "./presentar-caso";
 import { ActoDanos } from "./analisis-laboratorio";
 import { ActoContraste, filaDeRestos } from "./contraste-laboratorio";
@@ -100,8 +100,15 @@ import {
   lecturaFisica,
 } from "@/lib/contraste-lab";
 import { textoDano, tituloDelHecho } from "@/lib/hecho-laboratorio";
-import { nombreVehiculo, pasoActual, pasosEscena, type RespuestasC1 } from "@/lib/escena-facil";
+import {
+  callesDe,
+  nombreVehiculo,
+  pasoActual,
+  pasosEscena,
+  type RespuestasC1,
+} from "@/lib/escena-facil";
 import { PasoCaso, PasoHecho, PasoNumeros, claveItem, type ItemLugar } from "./pasos";
+import { CroquisPlanteamiento, PanelIncognita } from "./planteamiento";
 import { TrazoInicio } from "./trazo-inicio";
 import { MapaEscena, type HerramientaMapa, type HuellaMapa } from "./piezas";
 import {
@@ -346,6 +353,8 @@ export function RecorridoCaso({
     () => (expediente ? verificacionCesvi(expediente) : []),
     [expediente],
   );
+  // Las calles del mapa como líneas, para el croquis del planteamiento (A6).
+  const callesDelCroquis = useMemo(() => callesDe(calles), [calles]);
   // Lo que el caso no trae, como supuesto declarado con su justificación (ADR 0091).
   const supuestos = useMemo(
     () =>
@@ -751,6 +760,7 @@ export function RecorridoCaso({
             ...medidasDe(v),
             clase: v.clase ?? "sedan_mediano",
             color: colorDeVehiculo(p.vehiculo),
+            fuente: p.fuente,
           },
         ];
       })
@@ -1175,8 +1185,27 @@ export function RecorridoCaso({
               )}
             />
           ) : null}
-          {/* Sin reconstruir, o si el caso cambió después, el panel va a la vista con su aviso. */}
-          {!r || rec.vieja ? <PanelReconstruccion rec={rec} /> : null}
+          {/* Sin reconstruir: «La incógnita», el planteamiento (ronda 2, A6). */}
+          {!r && expediente ? (
+            <PanelIncognita
+              nombres={expediente.vehiculos.map((v) => nombreLab(v.id))}
+              lineas={lineasDeLaEscena(
+                {
+                  expediente,
+                  desconocidos,
+                  direccionesNoSe,
+                  juntoAlChoque,
+                  puntos: puntosImpacto,
+                  c1: c1 ?? {},
+                },
+                impactos,
+                calles,
+              )}
+              rec={rec}
+            />
+          ) : null}
+          {/* Si el caso cambió después de reconstruir, el panel va a la vista con su aviso. */}
+          {r && rec.vieja ? <PanelReconstruccion rec={rec} /> : null}
           <DetalleReconstruccion plegado={r !== null}>
             {r && !rec.vieja ? <PanelReconstruccion rec={rec} /> : null}
             {r ? (
@@ -1279,7 +1308,10 @@ export function RecorridoCaso({
     );
   })();
 
-  const verMapa = vista === "mapa" || !r;
+  // «La incógnita» (A6): en la reconstrucción, antes de reconstruir, va el croquis del planteamiento
+  // en lugar del mapa lejano.
+  const planteando = actual === 3 && !r && expediente !== null && !expandido;
+  const verMapa = (vista === "mapa" || !r) && !planteando;
   // Presentar a pantalla completa necesita la reconstrucción; sin ella, se consulta el recorrido.
   const presentando = modo === "presentar" && r !== null && !rec.vieja;
   // El 3D (o Presentar, que lo usa) pedido por primera vez: ahora sí arranca Unity (se ajusta al
@@ -1616,6 +1648,31 @@ export function RecorridoCaso({
               />
             ) : null}
           </div>
+          {planteando ? (
+            <div className={`absolute inset-0 bg-fondo ${pico ? "lg:right-[488px]" : ""}`}>
+              <CroquisPlanteamiento
+                huellas={huellas}
+                impactos={impactos.flatMap((i) => {
+                  const punto = puntoDe(i.orden);
+                  const pose = posiciones.find(
+                    (p) => p.fase === "impacto" && i.vehiculos.includes(p.vehiculo),
+                  );
+                  return punto
+                    ? [
+                        {
+                          orden: i.orden,
+                          punto,
+                          fuente: puntosImpacto[i.orden] ? "perito" : pose?.fuente,
+                        },
+                      ]
+                    : [];
+                })}
+                calles={callesDelCroquis}
+                letraDe={letraDe}
+                nombreDe={nombreLab}
+              />
+            </div>
+          ) : null}
           {r && pidioUnity ? (
             <div
               className={`absolute inset-0 bg-fondo ${pico ? "lg:right-[488px]" : ""} ${vista === "3d" ? "" : "pointer-events-none invisible"}`}
@@ -1862,7 +1919,7 @@ export function RecorridoCaso({
                 </div>
               ) : null}
             </>
-          ) : verMapa ? (
+          ) : verMapa || planteando ? (
             // En el 3D la leyenda de CESVI va en la banda del visor (y no tapa sus controles).
             <p
               className={`vidrio pointer-events-none absolute bottom-3 z-10 px-2 py-1 text-[0.6875rem] text-texto-2 ${pico ? "right-3 lg:right-[500px]" : "right-3"}`}

@@ -86,6 +86,8 @@ export interface HuellaMapa {
   color: string;
   /** La clase, para dibujar su silueta (B); sin ella, un rectángulo. */
   clase?: string;
+  /** De dónde salió la posición (el perito, la narración o un supuesto): la dice el planteamiento. */
+  fuente?: string;
 }
 
 /** Largo de la flecha del rumbo sobre el mapa (m): se arrastra su punta para girar. */

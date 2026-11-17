@@ -14,12 +14,9 @@ import type { ReactNode } from "react";
 import {
   frasePercentil,
   histograma,
-  marcasDelEje,
   protagonista,
-  posEnHistograma,
   rangoDeVelocidad,
   sinDispersion,
-  textoBarra,
 } from "@/lib/reconstruccion-lab";
 import { METODO } from "@/lib/textos-caso";
 import { Cuenta } from "../movimiento";

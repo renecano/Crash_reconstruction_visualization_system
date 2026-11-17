@@ -100,8 +100,8 @@ export function NubeSimulaciones({
         {nube.porPunto === 1
           ? `Cada punto es una de las ${muestras} simulaciones`
           : `Cada punto son ${nube.porPunto} de las ${muestras} simulaciones`}
-        : el mismo choque con lo incierto (masas, fricción, frenado) dentro de su rango, al
-        contacto. {conRango ? "El corchete es el rango, donde cae el 80 %. " : ""}
+        , al contacto: el mismo choque con lo incierto dentro de su rango.{" "}
+        {conRango ? "El corchete marca donde cae el 80 %. " : ""}
         <span
           className="inline-block h-2 w-2 translate-y-[-1px] rounded-full bg-senal"
           aria-hidden="true"
