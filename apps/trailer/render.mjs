@@ -19,7 +19,15 @@
  * escena de papel sigue, y el archivo sale con «-sin-3d» en el nombre para que no se confunda con el
  * tráiler terminado. La música es `musica/croquis-trailer.wav` (`node tools/trailer/musica.mjs`).
  */
-import { copyFileSync, existsSync, mkdirSync, readdirSync, statSync, writeFileSync } from "node:fs";
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import { cpus, totalmem } from "node:os";
 import { dirname, join, relative, resolve } from "node:path";
 import { performance } from "node:perf_hooks";
@@ -33,6 +41,10 @@ const RAIZ = resolve(AQUI, "../..");
 const FUERA = process.env.CROQUIS_TRAILER ?? join(RAIZ, "trailer-salida");
 const TOMAS = join(FUERA, "tomas");
 const MUSICA = join(FUERA, "musica", "croquis-trailer.wav");
+// Los modelos de los vehículos para la tinta (`node tools/trailer/modelos-tinta.mjs`).
+const MODELOS = join(FUERA, "modelos");
+// Los autos se dibujan con three.js: Chrome con ANGLE usa la tarjeta de video si la hay.
+const chromiumOptions = { gl: "angle" };
 const id = process.argv[2] && !process.argv[2].startsWith("--") ? process.argv[2] : "Prueba";
 const opcion = (n) => {
   const i = process.argv.indexOf(`--${n}`);
@@ -98,11 +110,23 @@ const tomaDePrueba = readdirSync(TOMAS).find(esImagen) ?? null;
 const t0 = performance.now();
 const servido = await bundle({ entryPoint: join(AQUI, "src/index.ts"), publicDir: TOMAS });
 if (conMusica) copyFileSync(MUSICA, join(servido, "public", "croquis-trailer.wav"));
+let modelos = null;
+if (esTrailer && existsSync(join(MODELOS, "modelos.json"))) {
+  modelos = JSON.parse(readFileSync(join(MODELOS, "modelos.json"), "utf8"));
+  mkdirSync(join(servido, "public", "modelos"), { recursive: true });
+  for (const m of Object.values(modelos))
+    copyFileSync(join(FUERA, m.archivo), join(servido, "public", m.archivo));
+}
 const tBundle = performance.now() - t0;
 const inputProps = esTrailer
-  ? { tomas, musica: conMusica ? "croquis-trailer.wav" : null }
+  ? { tomas, musica: conMusica ? "croquis-trailer.wav" : null, modelos }
   : { toma3d: tomaDePrueba };
-const composicion = await selectComposition({ serveUrl: servido, id, inputProps });
+const composicion = await selectComposition({
+  serveUrl: servido,
+  id,
+  inputProps,
+  chromiumOptions,
+});
 
 if (cuadros?.length) {
   const carpeta = join(FUERA, "cuadros");
@@ -115,6 +139,7 @@ if (cuadros?.length) {
       output: salida,
       frame: n,
       inputProps,
+      chromiumOptions,
     });
     process.stdout.write(`${salida}\n`);
   }
@@ -139,6 +164,7 @@ await renderMedia({
   outputLocation: salida,
   inputProps,
   concurrency: concurrencia,
+  chromiumOptions,
   onProgress: ({ renderedFrames }) => {
     if (renderedFrames - ultimo >= 120) {
       ultimo = renderedFrames;
@@ -147,6 +173,21 @@ await renderMedia({
   },
 });
 const tRender = performance.now() - t1;
+// El texto para la descripción del video donde se publique: el crédito de los modelos (CC-BY).
+if (modelos)
+  writeFileSync(
+    join(FUERA, "DESCRIPCION.txt"),
+    [
+      "Croquis · Reconstrucción de hechos de tránsito para peritos",
+      "",
+      "Créditos",
+      ...Object.values(modelos).map(
+        (m) => `Modelo 3D «${m.nombre}», de ${m.autor}, licencia ${m.licencia}: ${m.url}`,
+      ),
+      "Dibujados en tinta a partir de su geometría. Música original, compuesta en código.",
+      "",
+    ].join("\n"),
+  );
 const segundos = composicion.durationInFrames / composicion.fps;
 const resultado = {
   descripcion:

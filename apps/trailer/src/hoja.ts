@@ -3,7 +3,7 @@
  * en perspectiva (con las líneas finas solo donde se distinguen), la paleta que va de papel a noche y
  * la onda del impacto, que dobla la cuadrícula. Todo en código: ninguna imagen.
  */
-import type { Proyector } from "./camara";
+import type { Proyector, PuntoEnPantalla } from "./camara";
 
 export interface Paleta {
   fondo: string;
@@ -243,4 +243,97 @@ export function rectanguloEnPantalla(
     out.push({ x: q.x, y: q.y });
   }
   return out;
+}
+
+/** Ruido suave de una dimensión, entre 0 y 1, con semilla (para la presión del lápiz). */
+export function ruidoSuave(x: number, semilla: number): number {
+  const dado = (n: number) => {
+    const v = Math.sin(n * 127.1 + semilla * 311.7) * 43758.5453;
+    return v - Math.floor(v);
+  };
+  const i = Math.floor(x);
+  const f = x - i;
+  const u = f * f * (3 - 2 * f);
+  return dado(i) * (1 - u) + dado(i + 1) * u;
+}
+
+/**
+ * Un trazo de lápiz: la línea no es pareja, cambia de grueso y de tono con la presión de la mano, y el
+ * grafito deja granos y pequeños huecos sobre el papel. `hasta` es la fracción dibujada (0 a 1).
+ */
+export function trazoDeGrafito(
+  ctx: CanvasRenderingContext2D,
+  p: Proyector,
+  puntos: readonly (readonly [number, number])[],
+  o: {
+    /** El grueso medio, en px. */
+    grueso: number;
+    opacidad: number;
+    semilla: number;
+    hasta?: number;
+    onda?: Onda | null;
+    /** Cada cuántos metros cambia el trazo (más chico, más fino el grano). */
+    paso?: number;
+  },
+): void {
+  if (puntos.length < 2) return;
+  const paso = o.paso ?? 0.3;
+  const onda = o.onda ?? null;
+  const largos: number[] = [0];
+  for (let i = 1; i < puntos.length; i++)
+    largos.push(
+      largos[i - 1]! +
+        Math.hypot(puntos[i]![0] - puntos[i - 1]![0], puntos[i]![1] - puntos[i - 1]![1]),
+    );
+  const total = largos[largos.length - 1]!;
+  const tope = total * Math.min(1, Math.max(0, o.hasta ?? 1));
+  const en = (d: number): [number, number] => {
+    let i = 1;
+    while (i < puntos.length - 1 && largos[i]! < d) i++;
+    const u = (d - largos[i - 1]!) / Math.max(1e-9, largos[i]! - largos[i - 1]!);
+    return [
+      puntos[i - 1]![0] + (puntos[i]![0] - puntos[i - 1]![0]) * u,
+      puntos[i - 1]![1] + (puntos[i]![1] - puntos[i - 1]![1]) * u,
+    ];
+  };
+  ctx.save();
+  // Sin remates redondos: con ellos, cada unión de dos tramos translúcidos dejaba un punto oscuro.
+  ctx.lineCap = "butt";
+  const tramo = (a: PuntoEnPantalla, b: PuntoEnPantalla, corrida: number) => {
+    // La corrida va perpendicular al trazo, en la pantalla.
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const n = Math.hypot(dx, dy) || 1;
+    const ox = (-dy / n) * corrida;
+    const oy = (dx / n) * corrida;
+    ctx.beginPath();
+    ctx.moveTo(a.x + ox, a.y + oy);
+    ctx.lineTo(b.x + ox, b.y + oy);
+    ctx.stroke();
+  };
+  for (let d = 0; d < tope; d += paso) {
+    const d2 = Math.min(tope, d + paso * 1.04);
+    const [ax, ay] = conOnda(onda, ...en(d));
+    const [bx, by] = conOnda(onda, ...en(d2));
+    const s = p.segmento([ax, ay], [bx, by]);
+    if (!s) continue;
+    // La presión: sube y baja despacio a lo largo del trazo, con un temblor fino encima.
+    const presion =
+      0.62 * ruidoSuave(d * 0.21, o.semilla) + 0.38 * ruidoSuave(d * 1.7, o.semilla + 5);
+    // Un hueco de vez en cuando: el grafito no agarra parejo en el papel.
+    if (ruidoSuave(d * 1.3, o.semilla + 11) > 0.965) continue;
+    const grueso = o.grueso * (0.6 + 0.8 * presion);
+    // El centro del trazo, y dos orillas que a ratos faltan: el borde queda irregular, como grafito.
+    ctx.globalAlpha = o.opacidad * (0.52 + 0.48 * presion);
+    ctx.lineWidth = grueso * 0.62;
+    tramo(s[0], s[1], 0);
+    for (const lado of [-1, 1]) {
+      const grano = ruidoSuave(d * 2.9 + lado * 40, o.semilla + 23);
+      if (grano < 0.3) continue;
+      ctx.globalAlpha = o.opacidad * (0.22 + 0.5 * grano * presion);
+      ctx.lineWidth = grueso * 0.3;
+      tramo(s[0], s[1], lado * grueso * 0.36);
+    }
+  }
+  ctx.restore();
 }

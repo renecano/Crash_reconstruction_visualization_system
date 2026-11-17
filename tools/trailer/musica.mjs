@@ -3,7 +3,8 @@
  * La música del tráiler, compuesta en código (René, 2026-11-16): original, sin grabaciones, muestras
  * ni melodías de terceros. Todo sale de senos, ruido con semilla y filtros sencillos, sobre la misma
  * rejilla de pulsos que la imagen (`apps/trailer/src/ritmo.json`): latido, impacto, casi silencio,
- * subida, tres golpes con percusión, corte a silencio y golpe final.
+ * subida, tres golpes con percusión, una toma de aire, el golpe y el logo que se escribe nota por
+ * nota hasta su acorde final (René, 2026-11-17: nada de silencio al final).
  *
  *   node tools/trailer/musica.mjs [--salida trailer-salida/musica/croquis-trailer.wav]
  *
@@ -232,7 +233,8 @@ export function componer() {
       vol *= 1 - 0.75 * entre(t, M.contacto + 0.2, 9);
       vol += 0.5 * entre(t, 13, 18) ** 2;
       vol = t >= 18 ? 0.42 : vol;
-      if (t >= M.corte_a_silencio) vol = 0;
+      // Se va en la toma de aire: el logo trae su propia armonía.
+      vol *= 1 - entre(t, M.toma_de_aire - 0.1, M.toma_de_aire + 0.3);
       if (vol <= 0) continue;
       // El brillo crece con la subida.
       const brillo = 0.42 - 0.2 * entre(t, 13, 18) - (t >= 18 ? 0.2 : 0);
@@ -326,9 +328,11 @@ export function componer() {
   ruido(
     seca,
     M.del_papel_al_3d - 0.5,
-    M.corte_a_silencio - M.del_papel_al_3d + 0.5,
+    M.toma_de_aire - M.del_papel_al_3d + 0.5,
     0.075,
-    (x) => entre(x, 0, 1.5),
+    (x) =>
+      entre(x, 0, 1.5) *
+      (1 - entre(x, M.toma_de_aire - M.del_papel_al_3d, M.toma_de_aire - M.del_papel_al_3d + 0.5)),
     { bajos: 7000, altos: 2600, semilla: 51 },
   );
 
@@ -343,7 +347,7 @@ export function componer() {
     tambor(golpes, t, 46, 1, { caida: 1 });
     seno(golpes, t, 1.2, 80, 34, 0.7, { caida: 1 });
   });
-  for (let t = 18; t < M.corte_a_silencio - 1e-9; t += pulso / 2) {
+  for (let t = 18; t < M.toma_de_aire - 1e-9; t += pulso / 2) {
     const k = Math.round((t - 18) / (pulso / 2));
     if (M.frases.some((f) => Math.abs(f - t) < 1e-6)) continue;
     const fuerte = k % 2 === 0;
@@ -354,36 +358,84 @@ export function componer() {
     if (fuerte) seno(golpes, t, 0.22, RE * 2, RE * 2, 0.3, { caida: 0.2 });
   }
   // El último medio segundo antes del corte: un redoble que crece.
-  for (let t = M.corte_a_silencio - 0.5; t < M.corte_a_silencio - 1e-9; t += pulso / 4)
-    tambor(golpes, t, 70, 0.5 + 0.9 * entre(t, M.corte_a_silencio - 0.5, M.corte_a_silencio), {
+  for (let t = M.toma_de_aire - 0.5; t < M.toma_de_aire - 1e-9; t += pulso / 4)
+    tambor(golpes, t, 70, 0.5 + 0.9 * entre(t, M.toma_de_aire - 0.5, M.toma_de_aire), {
       caida: 0.2,
     });
 
-  // --- El golpe final, el más fuerte, y su cola.
-  tambor(final, M.golpe_final, 40, 1.3, { caida: 1.6 });
-  seno(final, M.golpe_final, 3.4, 88, 24, 1, { caida: 3 });
-  metales(final, M.golpe_final, 4.2, [RE, RE * 2, RE * 3, RE * 4, RE * 6], 0.6, {
-    caida: 4.4,
-    ataque: 0.03,
-  });
-  ruido(final, M.golpe_final, 1.6, 0.6, (x) => 10 ** (-3 * (x / 1.3)), {
+  // --- La toma de aire: medio segundo en que todo sube hacia el golpe (no hay silencio).
+  {
+    const d = M.golpe_final - M.toma_de_aire;
+    ruido(seca, M.toma_de_aire, d, 0.5, (x) => (x / d) ** 2.6, {
+      bajos: 6000,
+      altos: 900,
+      semilla: 71,
+    });
+    let fase = 0;
+    const desde = Math.round(M.toma_de_aire * FRECUENCIA);
+    for (let k = 0; k < d * FRECUENCIA; k++) {
+      const x = k / (d * FRECUENCIA);
+      fase += (TAU * RE * 2 * 2 ** x) / FRECUENCIA;
+      const v = Math.sin(fase) * 0.3 * x ** 2;
+      seca.i[desde + k] += v;
+      seca.d[desde + k] += v;
+    }
+  }
+
+  // --- El golpe: con él aparece el logo. Fuerte, pero ya no es el final.
+  tambor(final, M.golpe_final, 40, 1.25, { caida: 1.3 });
+  seno(final, M.golpe_final, 2, 88, 30, 0.9, { caida: 1.7 });
+  metales(final, M.golpe_final, 2, [RE, RE * 2, RE * 3, RE * 4], 0.5, { caida: 1.8, ataque: 0.03 });
+  ruido(final, M.golpe_final, 1.2, 0.5, (x) => 10 ** (-3 * x), {
     bajos: 5200,
     altos: 300,
     semilla: 61,
   });
 
-  // --- La mezcla: la sala, el corte a silencio y el límite.
+  // --- El logo se escribe: la música sigue. Un acorde sostenido (re mayor: la resolución), un latido
+  // suave por pulso y una nota por letra, que suben por la escala hasta el acorde final.
+  const MAYOR = [RE * 2, RE * 3, RE * 4, RE * 5]; // re, la, re y fa sostenido (el quinto armónico)
+  metales(final, M.golpe_final + 0.25, M.acorde_final - M.golpe_final, MAYOR, 0.2, {
+    ataque: 0.5,
+    caida: 6,
+  });
+  for (let t = M.letras[0]; t < M.acorde_final - 1e-9; t += pulso) latido(final, t, 0.34);
+  // Re mayor pentatónica, hacia arriba: re, mi, fa sostenido, la, si, re, fa sostenido.
+  const ESCALA = [8, 9, 10, 12, 27 / 2, 16, 20].map((n) => RE * n);
+  M.letras.forEach((t, k) => {
+    const pan = -0.6 + (1.2 * k) / (M.letras.length - 1);
+    seno(final, t, 0.7, ESCALA[k], ESCALA[k], 0.3, { caida: 0.6, pan, ataque: 0.003 });
+    seno(final, t, 0.4, ESCALA[k] * 2, ESCALA[k] * 2, 0.09, { caida: 0.3, pan, ataque: 0.002 });
+    seno(final, t, 0.5, ESCALA[k] * 3, ESCALA[k] * 3, 0.025, { caida: 0.25, pan });
+    ruido(final, t, 0.02, 0.12, (x) => 10 ** (-3 * (x / 0.012)), {
+      bajos: 7000,
+      altos: 1500,
+      semilla: 80 + k,
+      ancho: 0.3,
+    });
+  });
+
+  // --- El acorde final: llega con el lema y se apaga solo, sin corte.
+  metales(final, M.acorde_final, 1.48, MAYOR, 0.42, { caida: 2.4, ataque: 0.04 });
+  seno(final, M.acorde_final, 1.48, RE, RE, 0.7, { caida: 2.2, ataque: 0.01 });
+  tambor(final, M.acorde_final, 46, 0.7, { caida: 0.9 });
+  for (const [n, a] of [
+    [16, 0.11],
+    [24, 0.07],
+    [32, 0.04],
+  ])
+    seno(final, M.acorde_final, 1.45, RE * n, RE * n, a, { caida: 2, ataque: 0.004 });
+
+  // --- La mezcla: la sala y el límite. Nada se corta: lo que venía sonando se funde con el golpe.
   const enSala = sala(golpes, { realimentacion: 0.82, mezcla: 0.22 });
-  const cola = sala(final, { realimentacion: 0.93, mezcla: 0.5 });
+  const cola = sala(final, { realimentacion: 0.88, mezcla: 0.34 });
   const mezclaFinal = pista(dur);
-  const corte = M.corte_a_silencio;
   for (let j = 0; j < mezclaFinal.n; j++) {
     const t = j / FRECUENCIA;
-    // Antes del golpe final todo se corta de tajo (8 ms): medio segundo de silencio de verdad.
-    const puerta = 1 - entre(t, corte, corte + 0.008);
-    const fin = 1 - entre(t, dur - 1.2, dur - 0.15);
+    // El final es la cola del acorde; solo se asegura que el archivo termine en cero.
+    const fin = 1 - entre(t, dur - 0.25, dur - 0.02);
     for (const c of ["i", "d"]) {
-      const x = (seca[c][j] + enSala[c][j]) * puerta + cola[c][j];
+      const x = seca[c][j] + enSala[c][j] + cola[c][j];
       mezclaFinal[c][j] = Math.tanh(x * 0.9) * fin;
     }
   }
