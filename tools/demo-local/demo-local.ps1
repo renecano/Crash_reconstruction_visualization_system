@@ -32,6 +32,8 @@ try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch { }
 
 $Repo = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
 $Web = Join-Path $Repo "apps\web"
+# Una ruta de salida relativa es desde la raíz del repo (la prueba corre en apps/web; René, 2026-11-17).
+if ($Salida -and -not [System.IO.Path]::IsPathRooted($Salida)) { $Salida = Join-Path $Repo $Salida }
 $Puerto = 3000
 $Url = "http://localhost:$Puerto"
 Set-Location $Repo
