@@ -58,7 +58,7 @@ jobs:
       - name: Medir .vercel/output
         run: node tools/vercel/peso-salida.mjs .vercel/output --salida peso-despliegue.json --limite-total 200 --limite-funcion 50
       - if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: peso-despliegue
           path: peso-despliegue.json
