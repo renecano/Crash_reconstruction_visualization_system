@@ -330,7 +330,9 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await expect(guardado).toContainText("validado");
   await guardado.click();
   await expect(page.getByTestId("recorrido-caso")).toHaveAttribute("data-origen", "guardado");
-  await irAPaso(page, 3);
+  // Las posiciones regresan: se cuentan en el mapa del caso, que desde «un solo mapa por caso» (A1)
+  // se monta a partir de la reconstrucción (en «La escena» el mapa lo tiene la escena fácil).
+  await irAPaso(page, 4);
   await expect(page.getByTestId("mapa-escena").locator("[data-posicion]")).toHaveCount(4);
 
   // El archivo del caso, abierto en otra visita: regresan la narración, las posiciones y la
@@ -343,7 +345,9 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await irAPaso(page, 2);
   // El hecho, ya leído: el relato marcado (Laboratorio §8).
   await expect(page.getByTestId("relato")).toContainText("Jetta");
-  await irAPaso(page, 3);
+  // Las posiciones regresan: se cuentan en el mapa del caso, que desde «un solo mapa por caso» (A1)
+  // se monta a partir de la reconstrucción (en «La escena» el mapa lo tiene la escena fácil).
+  await irAPaso(page, 4);
   await expect(page.getByTestId("mapa-escena").locator("[data-posicion]")).toHaveCount(4);
   expect(errores).toEqual([]);
 });

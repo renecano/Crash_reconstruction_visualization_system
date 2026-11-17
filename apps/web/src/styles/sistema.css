@@ -1929,3 +1929,249 @@
     vertical-align: 0.15em;
   }
 }
+
+/* «El trazo»: la primera pantalla de un caso nuevo (ronda 2, A1; `TrazoInicio`). Una sola línea que
+   se dibuja y pasa por cinco viñetas. Solo anima `stroke-dashoffset`, `transform` y `opacity`. */
+@layer components {
+  .trazo-inicio {
+    /* El alto de las viñetas sigue al de la ventana: en una chica todo cabe sin desplazarse. */
+    --tz-alto: clamp(92px, 20vh, 184px);
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: clamp(14px, 3vh, 40px);
+  }
+  .trazo-inicio .tz-titular {
+    margin-top: 2px;
+    font-family: var(--fuente-titulo, var(--fuente));
+    font-size: clamp(2.25rem, 5.5vw, 5rem);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .trazo-inicio .tz-ruta {
+    position: relative;
+    margin-block: auto;
+  }
+  /* La línea sale de la pantalla por los dos lados, como la de la barra de arriba. */
+  .trazo-inicio .tz-linea {
+    position: absolute;
+    top: calc(var(--tz-alto) + 6px);
+    left: -28px;
+    width: calc(100% + 56px);
+    height: 40px;
+    overflow: visible;
+    transform-origin: 50% 0;
+  }
+  .trazo-inicio .tz-linea path {
+    fill: none;
+    stroke: var(--texto);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+  .trazo-inicio .tz-estaciones {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .trazo-inicio .tz-estaciones li {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: center;
+    padding-inline: 10px;
+    text-align: center;
+  }
+  .trazo-inicio .tz-vineta {
+    width: 100%;
+    max-width: calc(var(--tz-alto) * 1.125);
+    height: var(--tz-alto);
+    overflow: visible;
+  }
+  .trazo-inicio .tz-texto {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin-top: clamp(44px, 7vh, 64px);
+  }
+  .trazo-inicio .tz-quien[data-quien="croquis"] {
+    color: var(--senal-texto);
+  }
+  .trazo-inicio .tz-verbo {
+    font-family: var(--fuente-titulo, var(--fuente));
+    font-size: clamp(1.5rem, 2.3vw, 2.125rem);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+  }
+  .trazo-inicio .tz-que {
+    max-width: 24ch;
+    color: var(--texto-2);
+    font-size: var(--t-nota);
+    line-height: 1.4;
+  }
+  .trazo-inicio .tz-d {
+    fill: none;
+    stroke: var(--texto);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .trazo-inicio .tz-g {
+    fill: none;
+    stroke: color-mix(in srgb, var(--texto-3) 42%, transparent);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+  .trazo-inicio .tz-o {
+    fill: none;
+    stroke: var(--senal);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+  }
+  .trazo-inicio .tz-tray {
+    stroke-width: 5;
+    opacity: 0.8;
+  }
+  .trazo-inicio .tz-punto {
+    fill: var(--senal);
+  }
+  .trazo-inicio .tz-marca {
+    fill: color-mix(in srgb, var(--senal) 22%, transparent);
+  }
+  .trazo-inicio .tz-a {
+    stroke: var(--vehiculo-a);
+  }
+  .trazo-inicio .tz-b {
+    stroke: var(--vehiculo-b);
+  }
+  .trazo-inicio .tz-fantasma {
+    stroke: color-mix(in srgb, var(--texto-3) 42%, transparent);
+  }
+  .trazo-inicio .tz-lleno {
+    fill: var(--fondo);
+  }
+  .trazo-inicio .tz-reporte {
+    stroke-dasharray: 3 4;
+  }
+  .trazo-inicio .tz-unidad {
+    fill: var(--texto);
+    font-family: var(--fuente-titulo, var(--fuente));
+    font-size: 64px;
+    font-style: italic;
+    letter-spacing: -0.03em;
+  }
+  .trazo-inicio .tz-rotulo {
+    fill: var(--texto-3);
+    font-family: var(--fuente-mono);
+    font-size: 10.5px;
+  }
+  .trazo-inicio .tz-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 14px;
+    /* Siempre a la vista, también si la lista se desplaza en un teléfono. */
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+    padding-block: 10px 2px;
+    background: var(--fondo);
+  }
+  .trazo-inicio .tz-empezar {
+    min-height: 56px;
+    padding-inline: 30px;
+    font-size: 1.0625rem;
+  }
+  .trazo-inicio .tz-abrir {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    padding-inline: 8px;
+    border-radius: var(--radio-control);
+    color: var(--texto-2);
+    font-size: var(--t-interfaz);
+    text-decoration: underline;
+    text-decoration-color: var(--linea);
+    text-underline-offset: 4px;
+  }
+  .trazo-inicio .tz-abrir:hover {
+    color: var(--texto);
+  }
+  .trazo-inicio .tz-abrir:focus-within {
+    outline: 2px solid var(--foco);
+    outline-offset: 2px;
+  }
+  .trazo-inicio[data-animar="si"] .tz-linea path {
+    animation: tz-trazo 2.6s cubic-bezier(0.6, 0.05, 0.3, 1) var(--tz-retraso, 0ms) both;
+  }
+  /* Al empezar, el trazo se recoge hacia la barra de arriba, que es la misma línea. */
+  .trazo-inicio[data-saliendo="si"] .tz-linea {
+    opacity: 0;
+    transform: translateY(-46vh) scaleY(0.2);
+    transition:
+      transform 260ms cubic-bezier(0.7, 0, 0.2, 1),
+      opacity 260ms ease-in;
+  }
+  .trazo-inicio[data-saliendo="si"] .tz-estaciones,
+  .trazo-inicio[data-saliendo="si"] .tz-titular {
+    opacity: 0.35;
+    transition: opacity 200ms ease-out;
+  }
+  @keyframes tz-trazo {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  /* En pantallas angostas las estaciones van en lista, cada una con su viñeta al lado. */
+  @media (max-width: 759px) {
+    .trazo-inicio .tz-ruta {
+      margin-block: 0;
+    }
+    .trazo-inicio .tz-linea {
+      display: none;
+    }
+    .trazo-inicio .tz-estaciones {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+    }
+    .trazo-inicio .tz-estaciones li {
+      flex-direction: row;
+      gap: 14px;
+      padding-inline: 0;
+      text-align: left;
+    }
+    .trazo-inicio .tz-vineta {
+      width: 72px;
+      max-width: none;
+      height: 64px;
+      flex: none;
+    }
+    .trazo-inicio .tz-texto {
+      align-items: flex-start;
+      margin-top: 0;
+    }
+    .trazo-inicio .tz-que {
+      max-width: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .trazo-inicio .tz-linea path {
+      animation: none !important;
+    }
+    .trazo-inicio .tz-linea,
+    .trazo-inicio .tz-estaciones,
+    .trazo-inicio .tz-titular {
+      transition: none !important;
+    }
+  }
+}

@@ -102,6 +102,7 @@ import {
 import { textoDano, tituloDelHecho } from "@/lib/hecho-laboratorio";
 import { nombreVehiculo, pasoActual, pasosEscena, type RespuestasC1 } from "@/lib/escena-facil";
 import { PasoCaso, PasoHecho, PasoNumeros, claveItem, type ItemLugar } from "./pasos";
+import { TrazoInicio } from "./trazo-inicio";
 import { MapaEscena, type HerramientaMapa, type HuellaMapa } from "./piezas";
 import {
   DanoContraReconstruccion,
@@ -993,7 +994,45 @@ export function RecorridoCaso({
     String.fromCharCode(65 + Math.max(0, expediente?.vehiculos.findIndex((v) => v.id === id) ?? 0));
   const nombreLab = (id: string) => `${letraDe(id)} · ${nombresPantalla[id] ?? id}`;
 
+  // A1 (ronda 2): un caso nuevo sin leer abre con «El trazo», no con la ficha del caso.
+  const enTrazo = actual === 0 && inicial.origen === "nuevo" && !leida;
   const cuerpo = (() => {
+    if (enTrazo)
+      return (
+        <>
+          <TrazoInicio
+            animar={transicionesActivas}
+            // El trazo espera a que suba la cortina del acto (la completa, al entrar al caso).
+            retrasoMs={transicionesActivas ? 1100 : 0}
+            onEscribir={() => irA(1)}
+            onEjemplo={() => {
+              setTexto(ejemplo.narracion);
+              irA(1);
+            }}
+            abrir={
+              <label className="tz-abrir cursor-pointer">
+                Abrir un caso guardado (.croquis)
+                <input
+                  type="file"
+                  accept={ACEPTA_CASO}
+                  className="sr-only"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) void abrirArchivo(f);
+                    e.target.value = "";
+                  }}
+                  data-testid="abrir-caso"
+                />
+              </label>
+            }
+          />
+          {avisoGuardado ? (
+            <p role="status" className="t-nota" data-testid="caso-abierto">
+              {avisoGuardado}
+            </p>
+          ) : null}
+        </>
+      );
     if (actual === 0)
       return (
         <PasoCaso
@@ -1278,6 +1317,11 @@ export function RecorridoCaso({
   const siguienteNombre = pasos[paso + 1];
   // El mapa es el contenido en el lugar y la reconstrucción; en los demás pasos, una tarjeta.
   const grande = actual === 2 || actual === 3;
+  // En el primer paso, sin nada colocado, el mapa no dice nada: no se muestra (A1).
+  const sinMapaAlInicio = actual === 0 && !posiciones.length && !expandido;
+  // Un solo mapa por caso (`mapa-compartido`): este se monta cuando ya hay algo que ver en él y no
+  // lo tiene la escena fácil. Antes de colocar nada (el trazo, la narración) no existe.
+  const montarMapa = !escenaFacil && (expandido || actual >= 2 || posiciones.length > 0);
   const lugar = expediente?.caso.lugar;
   const lugarTexto = [lugar?.descripcion?.valor, lugar?.municipio?.valor, lugar?.estado?.valor]
     .filter(Boolean)
@@ -1453,14 +1497,16 @@ export function RecorridoCaso({
           data-paso={actual + 1}
         >
           <p className={pico || hojaAncha ? "sr-only" : "t-rotulo"} data-testid="rotulo-acto">
+            {enTrazo ? "Caso nuevo · " : ""}
             Acto {actoIdx + 1} de {actos.length} · {actos[actoIdx]?.nombre}
-            {(actos[actoIdx]?.pasos.length ?? 0) > 1
+            {(actos[actoIdx]?.pasos.length ?? 0) > 1 && !enTrazo
               ? ` · ${(actos[actoIdx]?.pasos.indexOf(paso) ?? 0) + 1} de ${actos[actoIdx]?.pasos.length}: ${pasos[paso]}`
               : ""}
           </p>
           {cuerpo}
           <div
-            className={`mt-auto flex flex-col gap-2 ${pico ? "pt-3" : "pt-4"} ${pico ? "sticky -bottom-5 z-10 -mx-5 -mb-5 bg-superficie px-5 pb-5 lg:-bottom-7 lg:-mx-7 lg:-mb-7 lg:px-7 lg:pb-7" : ""}`}
+            // En «El trazo» no va: su botón es lo único que hay que tocar (A1).
+            className={`mt-auto flex flex-col gap-2 ${pico ? "pt-3" : "pt-4"} ${pico ? "sticky -bottom-5 z-10 -mx-5 -mb-5 bg-superficie px-5 pb-5 lg:-bottom-7 lg:-mx-7 lg:-mb-7 lg:px-7 lg:pb-7" : ""} ${enTrazo ? "hidden" : ""}`}
           >
             {(actual === 2 || actual === 3) && modo === "trabajar"
               ? encimadas.map((enc) => (
@@ -1512,7 +1558,7 @@ export function RecorridoCaso({
               >
                 {pico ? "←" : "← Anterior"}
               </button>
-              {siguienteNombre ? (
+              {siguienteNombre && !enTrazo ? (
                 <button
                   type="button"
                   className={`boton-principal boton-continuar ${pico ? "flex-1" : ""}`}
@@ -1537,7 +1583,7 @@ export function RecorridoCaso({
                 // cargarlo al llegar al lugar (MapLibre se ajusta solo al reaparecer).
                 pico
                 ? "relative order-first min-h-[60vh] overflow-hidden lg:absolute lg:inset-0 lg:min-h-0"
-                : `relative min-h-[50vh] overflow-hidden rounded-panel border border-linea-suave ${grande ? "lg:flex-1" : "lg:h-[460px] lg:w-[420px] lg:shrink-0 lg:self-start"} ${actual === 7 ? "pointer-events-none invisible absolute! h-[460px] w-[640px]" : actual === 1 || hojaAncha ? "hidden" : ""}`
+                : `relative min-h-[50vh] overflow-hidden rounded-panel border border-linea-suave ${grande ? "lg:flex-1" : "lg:h-[460px] lg:w-[420px] lg:shrink-0 lg:self-start"} ${actual === 7 ? "pointer-events-none invisible absolute! h-[460px] w-[640px]" : actual === 1 || hojaAncha || sinMapaAlInicio ? "hidden" : ""}`
           }
           aria-label="Mapa"
           data-testid="escenario"
@@ -1548,25 +1594,27 @@ export function RecorridoCaso({
           <div
             className={`absolute inset-0 ${pico ? "lg:right-[488px]" : ""} ${verMapa ? "" : "invisible"}`}
           >
-            <MapaEscena
-              tema={tema}
-              onMapa={setMapa}
-              posiciones={posiciones}
-              moviles={moviles}
-              impactos={rec.impactos}
-              onClic={colocar}
-              inicio={lugar?.coordenadas ?? null}
-              lugarTexto={lugarTexto}
-              lugarZona={{ municipio: lugar?.municipio?.valor, estado: lugar?.estado?.valor }}
-              herramienta={actual === 2 && modo === "trabajar" ? herramientaMapa : "mover"}
-              pedirLugar={actual === 2 || expandido}
-              huellas={huellas}
-              flecha={colocacion ? null : flecha}
-              colocacion={colocacion}
-              onFlecha={girar}
-              onMedida={setMedida}
-              onDeshacer={actual === 2 && modo === "trabajar" ? deshacer : undefined}
-            />
+            {montarMapa ? (
+              <MapaEscena
+                tema={tema}
+                onMapa={setMapa}
+                posiciones={posiciones}
+                moviles={moviles}
+                impactos={rec.impactos}
+                onClic={colocar}
+                inicio={lugar?.coordenadas ?? null}
+                lugarTexto={lugarTexto}
+                lugarZona={{ municipio: lugar?.municipio?.valor, estado: lugar?.estado?.valor }}
+                herramienta={actual === 2 && modo === "trabajar" ? herramientaMapa : "mover"}
+                pedirLugar={actual === 2 || expandido}
+                huellas={huellas}
+                flecha={colocacion ? null : flecha}
+                colocacion={colocacion}
+                onFlecha={girar}
+                onMedida={setMedida}
+                onDeshacer={actual === 2 && modo === "trabajar" ? deshacer : undefined}
+              />
+            ) : null}
           </div>
           {r && pidioUnity ? (
             <div
@@ -1661,12 +1709,6 @@ export function RecorridoCaso({
                     : null
                 }
               />
-            </div>
-          ) : null}
-          {!posiciones.length && !grande && !expandido ? (
-            <div className="vidrio pointer-events-none absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 rounded-panel px-5 py-4 text-center">
-              <span className="t-interfaz font-semibold">El lugar aún no está marcado</span>
-              <span className="t-nota">Lo marcas en el paso 3.</span>
             </div>
           ) : null}
           {actual === 2 && modo === "trabajar" && verMapa ? (

@@ -11,6 +11,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
 import { metrosPorPixel, siluetaClase } from "@/lib/colocar";
 import type { Punto } from "@/lib/escena-facil";
+import { tomarMapa, type MapaPrestado } from "@/lib/mapa-compartido";
 import { COLOR_MEDIDA, dibujoMedicion } from "@/lib/medir";
 import { COLOR_ONDULACION, COLOR_SUPERFICIE, COLOR_TOPE } from "@/lib/terreno-colores";
 import { estiloMapaEscena } from "./estilo-mapa-escena";
@@ -140,57 +141,70 @@ export function MapaFacil(p: MapaFacilProps) {
     ultimo.current = p;
   });
   const marcas = useRef<Marker[]>([]);
+  // La etiqueta de «Medir»; se declara aquí porque el mapa la quita al devolverse.
+  const etiquetaMedida = useRef<Marker | null>(null);
   const MarkerCls = useRef<typeof Marker | null>(null);
 
   // El mapa: una vez. Sin giro (el norte siempre arriba: las flechas dicen «del sur» de verdad).
   useEffect(() => {
     let vivo = true;
-    let instancia: MapaMl | null = null;
+    let prestado: MapaPrestado | null = null;
     let observador: ResizeObserver | null = null;
-    void import("maplibre-gl").then(({ Map, Marker: M, getVersion, setWorkerUrl }) => {
-      if (!vivo || !contenedor.current) return;
-      setWorkerUrl(`/maplibre/worker-${getVersion()}.mjs`);
+    const anfitrion = contenedor.current;
+    if (!anfitrion) return undefined;
+    const e = ultimo.current.encuadre;
+    void import("maplibre-gl").then(({ Marker: M }) => {
       MarkerCls.current = M;
-      const e = ultimo.current.encuadre;
-      instancia = new Map({
-        container: contenedor.current,
+    });
+    // El mapa es uno solo para todo el caso (`mapa-compartido`): aquí se toma prestado.
+    void tomarMapa(
+      anfitrion,
+      {
         style: estiloMapaEscena(ultimo.current.tema),
         center: e[0] ? [e[0].lon, e[0].lat] : [-99.13, 19.43],
         zoom: e[0] ? 19 : 11,
         maxZoom: 21.5,
-        attributionControl: false,
-        dragRotate: false,
-        pitchWithRotate: false,
-      });
-      instancia.touchZoomRotate.disableRotation();
-      instancia.keyboard.disableRotation();
-      instancia.on("click", (ev) => {
-        ultimo.current.onToque?.({ lat: ev.lngLat.lat, lon: ev.lngLat.lng });
-      });
-      // El contenedor puede nacer sin tamaño (la pantalla aún se acomoda): el mapa se ajusta solo.
-      const obs = new ResizeObserver(() => instancia?.resize());
-      obs.observe(contenedor.current);
-      observador = obs;
-      // La escala a la vista (para las pruebas: tocar a tantos metros de algo).
-      const escala = () => {
-        const i = instancia;
-        if (!i || !raiz.current) return;
-        raiz.current.dataset.mPorPx = F.fijo(metrosPorPixel(i.getCenter().lat, i.getZoom()), 5);
-      };
-      instancia.on("moveend", escala);
-      instancia.on("load", () => {
-        if (!vivo || !instancia) return;
+        girar: false,
+      },
+      (p) => {
+        prestado = p;
+        if (!vivo) {
+          p.soltar();
+          return;
+        }
+        const instancia = p.mapa;
+        p.oir("click", (ev) => {
+          ultimo.current.onToque?.({ lat: ev.lngLat.lat, lon: ev.lngLat.lng });
+        });
+        // El contenedor puede nacer sin tamaño (la pantalla aún se acomoda): el mapa se ajusta solo.
+        const obs = new ResizeObserver(() => instancia.resize());
+        obs.observe(anfitrion);
+        observador = obs;
+        // La escala a la vista (para las pruebas: tocar a tantos metros de algo).
+        const escala = () => {
+          if (!raiz.current) return;
+          raiz.current.dataset.mPorPx = F.fijo(
+            metrosPorPixel(instancia.getCenter().lat, instancia.getZoom()),
+            5,
+          );
+        };
+        p.oir("moveend", escala);
         encuadrar(instancia, ultimo.current.encuadre, false);
         mapa.current = instancia;
         ultimo.current.onMapa?.(instancia);
         setListo(true);
-      });
-    });
+      },
+      () => vivo,
+    );
     return () => {
       vivo = false;
       observador?.disconnect();
       ultimo.current.onMapa?.(null);
-      instancia?.remove();
+      // Lo que se puso encima se quita antes de devolverlo.
+      for (const x of marcas.current) x.remove();
+      etiquetaMedida.current?.remove();
+      if (mapa.current) mapa.current.getCanvas().style.cursor = "";
+      prestado?.soltar();
       mapa.current = null;
     };
   }, []);
@@ -229,7 +243,6 @@ export function MapaFacil(p: MapaFacilProps) {
   // La medición (ronda 2, A5): con el modo activo, el cursor es una cruz y, desde el primer extremo,
   // la línea sigue al puntero con los metros en vivo.
   const [puntero, setPuntero] = useState<Punto | null>(null);
-  const etiquetaMedida = useRef<Marker | null>(null);
   useEffect(() => {
     const m = mapa.current;
     if (!m || !listo || !p.midiendo) {
