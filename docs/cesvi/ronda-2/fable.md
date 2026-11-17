@@ -90,7 +90,7 @@ El detalle, los textos y los límites están en [`narraciones.md`](narraciones.m
 - En «El trazo», «Usar un ejemplo» lleva a esa lista.
 - Un ejemplo leído sin cambios usa su lectura guardada (hecha con Claude con el prompt de la app) y la pantalla lo dice. Con un cambio en el texto, se lee con Claude.
 
-**Las cinco, con lo que muestra cada una** (build local, la escena colocada como dice cada narración; `eval/results/ronda2_ejemplos.json`):
+**Las cinco, con lo que muestra cada una** (en producción, la escena colocada como dice cada narración; `eval/results/ronda2_ejemplos.json`; el build local dio lo mismo):
 
 | Ejemplo                                         | Qué muestra                                                                 | Lo que da                    |
 | ----------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------- |
@@ -115,5 +115,25 @@ El detalle, los textos y los límites están en [`narraciones.md`](narraciones.m
 
 ## Lo que falta de la parte 1
 
+Los tres bloques están en producción (#256, #257 y #258). Los cinco ejemplos se recorrieron ahí de punta a punta sin el 3D de Unity.
+
 - **Ver los ejemplos y el visor nuevo en el 3D real de Unity,** y el ensayo completo de la demo en producción con Unity. No se hizo en la laptop de René porque se quedó sin memoria con Unity; queda a su decisión correrlo ahí (con Edge cerrado) o en la RTX del colaborador.
 - **La rama `perf/unity-armado-por-partes` (Opus)** toca `visor-unity.tsx`, igual que A6 (ahí se cambió el selector de cámaras y su import). Al retomarla hay que traerle `main` y resolver ese archivo.
+
+## Errores del paso Dictamen (René, 2026-11-16)
+
+René los encontró probando en modo oscuro. Son arreglos, sin rediseño. Capturas antes y después en `docs/cesvi/ronda-2/evidencia/dictamen/`.
+
+1. **«Tu conclusión» no dejaba escribir.** La causa no estaba en el campo: Unity Web oye el teclado de toda la ventana y cancela cada tecla, tenga o no el foco (`WebGLInput.captureAllKeyboardInput`, activo por defecto; lo dice su documentación y se ve en el framework del build publicado, que registra una función `jsEventHandler` en `window`). Con el 3D ya cargado no se podía escribir en ningún campo de la página; lo que René alcanzó a teclear entró antes de que Unity terminara de arrancar.
+   - **Arreglo, del lado de la web** (`apps/web/src/lib/visor-unity/teclado.ts`, sin build nuevo de Unity): antes de crear la instancia se envuelven los oyentes de teclado de Unity para que no vean lo que es de la página: lo que se escribe en un campo, el tabulador, e Intro o espacio sobre un control. Lo demás le sigue llegando (las flechas de la cámara libre, Mayús y Esc al editar en 3D).
+   - Vale para todos los campos de todos los pasos (la narración, la declaración, el nombre del perito, las medidas), no solo para la conclusión.
+   - Al citar, el cursor queda al final de la cita nueva: antes la cita quedaba seleccionada y la siguiente tecla la borraba. Si la cita ya estaba, se sigue resaltando.
+   - **Prueba:** `e2e/dictamen-escribir.spec.ts`. El Unity de mentira ahora se queda con el teclado como el real; la prueba escribe dos párrafos con teclas de verdad, borra, pega, cita, firma y comprueba el texto completo en la vista previa, el PDF y el Word. Con el build anterior, el mismo recorrido dejaba el nombre vacío y la conclusión casi vacía.
+2. **Los botones de abajo se encimaban.** Iban en tres columnas iguales y «Guardar en este navegador» no cabía en la suya. Ahora se acomodan solos: «Word» y «Descargar el caso» en una fila y «Guardar en este navegador» en otra. Su ayuda pasa a la capa de ayudas de la app, que no se sale de la ventana y también aparece con el teclado.
+3. **«Validar y firmar» se veía apagado** porque estaba deshabilitado sin decir por qué. Ahora lo dice junto al botón («Escribe tu conclusión y tu nombre para firmar», o solo lo que falte) y se activa en cuanto están los dos.
+4. **Revisión del paso en claro y oscuro, en ventana chica y grande.**
+   - Contraste: se midió en la página cada texto del paso, en los dos temas, y todos pasan AA.
+   - En la barra de arriba, en ventanas de poco más de 1024 px de ancho los nombres de los actos se pisaban. Ahora los nombres completos salen desde 1280 px; abajo de eso va el nombre del acto actual y los demás con su número, como ya pasaba en ventanas más chicas.
+   - En una ventana angosta, «Validar y firmar» baja a su propia fila y el campo del nombre ya no corta su texto de ejemplo.
+
+**Lo que falta:** comprobarlo con el Unity real en producción (en la laptop de René no se carga Unity). Es una prueba de un minuto: abrir el 3D de un caso, ir al Dictamen y escribir.

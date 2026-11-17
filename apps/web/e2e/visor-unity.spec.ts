@@ -1,9 +1,7 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import { VISOR_PUENTE_VERSION } from "@croquis/scene-schema";
 import { expect, test, type Page } from "@playwright/test";
 import { irAPaso } from "./ayuda-recorrido";
-import { casoConPoste } from "./visor-unity-ayuda";
+import { casoConPoste, conUnityFalso } from "./visor-unity-ayuda";
 
 /**
  * U6: el visor Unity en `/cesvi`, con un Unity de mentira (`unity-falso.js`) que habla el puente:
@@ -14,37 +12,9 @@ import { casoConPoste } from "./visor-unity-ayuda";
  */
 test.use({ reducedMotion: "reduce" });
 
-const FALSO = readFileSync(join(__dirname, "unity-falso.js"), "utf8");
-
 interface Recibido {
   metodo: string;
   datos: Record<string, unknown>;
-}
-
-async function conUnityFalso(page: Page, version: string) {
-  await page.addInitScript(
-    ([v]) => {
-      (window as unknown as Record<string, unknown>).__croquisVisorUnity = true;
-      (window as unknown as Record<string, unknown>).__unityFalsoVersion = v;
-    },
-    [version],
-  );
-  await page.route("**/visor-unity/manifest.json", (r) =>
-    r.fulfill({
-      json: {
-        huella: "e2e",
-        base: "http://localhost:3000/",
-        prefijo: "unity-falso/",
-        loader: "cargador.js",
-        data: "x.data",
-        framework: "x.framework.js",
-        code: "x.wasm",
-      },
-    }),
-  );
-  await page.route("**/unity-falso/Build/cargador.js", (r) =>
-    r.fulfill({ contentType: "text/javascript", body: FALSO }),
-  );
 }
 
 const recibidos = (page: Page) =>

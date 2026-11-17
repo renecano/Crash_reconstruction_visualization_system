@@ -4,6 +4,7 @@
  * manda los de la web. El componente `<VisorUnity>` lo usa; las fotos del dictamen también.
  */
 import { archivosPrecargados } from "./precarga";
+import { protegerTecladoDeLaPagina } from "./teclado";
 import {
   FUNCION_PUENTE_WEB,
   OBJETO_PUENTE_UNITY,
@@ -184,6 +185,8 @@ export class PuenteUnity {
     );
     let instancia: InstanciaUnity;
     try {
+      // Antes de que Unity registre sus oyentes: lo que se escribe en la página no es suyo.
+      protegerTecladoDeLaPagina();
       marcar("cargador");
       const crear = await Promise.race([cargarScript(urls.loader), plazo]);
       marcar("cargador_listo");
