@@ -68,6 +68,7 @@ describe("qué cambios despliegan el sitio", () => {
       "uv.lock",
       ".gitignore",
       "CORRER-TANDA-EN-RTX.bat",
+      "CORRER-DEMO-LOCAL.command",
     ])
       expect(vaAlSitio(r), r).toBe(false);
   });

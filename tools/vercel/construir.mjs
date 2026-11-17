@@ -56,7 +56,7 @@ export const NUNCA_AL_SITIO = [
   /\.py$/,
   /^(pyproject\.toml|uv\.lock|\.python-version)$/,
   /^(\.gitignore|\.gitattributes|\.prettierignore|\.prettierrc[^/]*|eslint\.config\.[cm]?js)$/,
-  /^(LICENSE|[A-Z-]+\.bat)$/,
+  /^(LICENSE|[A-Z-]+\.(bat|command))$/,
 ];
 
 /**
