@@ -90,6 +90,34 @@ export function posEnHistograma(barras: readonly BarraHistograma[], x: number): 
   return pos < 0 || pos > 100 ? null : pos;
 }
 
+export interface NubeDeSimulaciones {
+  /** Cuántas simulaciones representa cada punto (1 salvo que una columna no quepa). */
+  porPunto: number;
+  /** Una columna por km/h, con sus puntos apilados. */
+  columnas: { desde: number; puntos: number; enRango: boolean }[];
+}
+
+/**
+ * La nube de puntos de las simulaciones (ronda 2, A6): el mismo reparto del histograma, con un punto
+ * por simulación. Si la columna más alta no cabe en `filasMax`, cada punto vale varias simulaciones
+ * (y se dice); una columna con simulaciones nunca se queda sin punto.
+ */
+export function nubeDeSimulaciones(
+  barras: readonly BarraHistograma[],
+  filasMax = 12,
+): NubeDeSimulaciones {
+  const tope = Math.max(0, ...barras.map((b) => b.n));
+  const porPunto = Math.max(1, Math.ceil(tope / filasMax));
+  return {
+    porPunto,
+    columnas: barras.map((b) => ({
+      desde: b.desde,
+      puntos: b.n ? Math.max(1, Math.round(b.n / porPunto)) : 0,
+      enRango: b.enRango,
+    })),
+  };
+}
+
 /** Las marcas del eje del histograma: cada 5 km/h (cada 2 si el rango es angosto). */
 export function marcasDelEje(barras: readonly BarraHistograma[]): number[] {
   if (!barras.length) return [];
