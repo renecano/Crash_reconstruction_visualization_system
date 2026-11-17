@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * Render de una composición del tráiler con Remotion (René, 2026-11-16). Los videos, las tomas del 3D
- * y la música van fuera del repo, en `D:\Croquis-trailer` (`CROQUIS_TRAILER` para otra carpeta); la
+ * y la música van en `trailer-salida/`, en la raíz del repo, que git ignora completa
+ * (`CROQUIS_TRAILER` para otra carpeta); la
  * medición de cada render, en `eval/results/trailer_render.json`.
  *
  *   node render.mjs Trailer                    el tráiler a 1920×1080
@@ -20,7 +21,7 @@
  */
 import { copyFileSync, existsSync, mkdirSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { cpus, totalmem } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { performance } from "node:perf_hooks";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
@@ -29,7 +30,7 @@ import { renderMedia, renderStill, selectComposition } from "@remotion/renderer"
 
 const AQUI = dirname(fileURLToPath(import.meta.url));
 const RAIZ = resolve(AQUI, "../..");
-const FUERA = process.env.CROQUIS_TRAILER ?? "D:\\Croquis-trailer";
+const FUERA = process.env.CROQUIS_TRAILER ?? join(RAIZ, "trailer-salida");
 const TOMAS = join(FUERA, "tomas");
 const MUSICA = join(FUERA, "musica", "croquis-trailer.wav");
 const id = process.argv[2] && !process.argv[2].startsWith("--") ? process.argv[2] : "Prueba";
@@ -170,7 +171,8 @@ const resultado = {
   render_s_por_segundo_de_video: Number((tRender / 1000 / segundos).toFixed(2)),
   concurrencia,
   maquina: { nucleos: cpus().length, memoria_gb: Math.round(totalmem() / 2 ** 30) },
-  salida: salida.replace(/\\/g, "/"),
+  // Relativa a la raíz del repo: el registro no depende de dónde esté clonado.
+  salida: relative(RAIZ, salida).replace(/\\/g, "/"),
 };
 // Una entrada por composición: la medición de la prueba técnica no se pierde al renderizar el tráiler.
 const archivo = join(

@@ -91,6 +91,5 @@ apps/web/.recursos-remotos.json
 # Las capturas del recorrido de los ejemplos (ronda 2, C) se regeneran; a git van las de evidencia/c.
 docs/cesvi/ronda-2/ejemplos/
 
-# El video de referencia y la música del tráiler viven en D:\Croquis-trailer, nunca en el repo.
-/video_referencia.*
-/musica_video.*
+# Todo lo del tráiler que no es código (videos, tomas del 3D, música y la referencia): nunca va a git.
+/trailer-salida/

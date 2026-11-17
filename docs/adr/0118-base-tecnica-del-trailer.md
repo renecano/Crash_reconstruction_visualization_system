@@ -26,7 +26,7 @@ René quiere un tráiler de Croquis. El storyboard y las decisiones creativas qu
 - **Tomas del 3D** (`tools/trailer/tomas-3d.mjs`): reusa el capturador del build web (`tools/unity/capturas.mjs`) a 3840×2160, en PNG y en nivel ultra.
   - Cada toma lleva su cámara (cualquier modo del puente, incluidas «cerca» y «persona») y su instante, o una lista de instantes para una secuencia.
   - Rechaza cualquier escena que no sea sintética de referencia (nada de AXA ni de casos reales).
-- **Fuera del repo:** los videos y las tomas van a `D:\Croquis-trailer` (o a la carpeta de `CROQUIS_TRAILER`). En el repo solo va el código y la medición (`eval/results/trailer_render.json`).
+- **Fuera de git:** los videos y las tomas van a `trailer-salida/`, en la raíz del repo, que git ignora completa (o a la carpeta de `CROQUIS_TRAILER`). Hasta el 2026-11-17 iban a `D:\Croquis-trailer`; René pidió tenerlos dentro de la carpeta del proyecto. En el repo solo va el código y la medición (`eval/results/trailer_render.json`).
 
 ## Consecuencias
 

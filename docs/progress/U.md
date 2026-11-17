@@ -931,15 +931,15 @@ René aprobó el storyboard versión 2 (28 s, «más épico», sin la mancha neg
 
 ### Lo que falta
 
-- **Las tomas reales del 3D.** Los archivos que hay en `D:\Croquis-trailer` son previos (`-previo` en el nombre): en los huecos del 3D llevan las fotos de prueba a 720p que se tomaron en la laptop el 2026-11-14, de otras escenas inventadas. Sirven para revisar el ritmo, no para entregar.
-- **Para terminar:** que el colaborador corra la tanda 4 y mande `croquis-tomas-trailer.zip`. Se descomprime en `D:\Croquis-trailer\tomas\` y se corre `node render.mjs Trailer`, `Trailer4K` y `TrailerVertical` (sin `--previo`) desde `apps/trailer`.
+- **Las tomas reales del 3D.** Los archivos que hay en `trailer-salida/` son previos (`-previo` en el nombre): en los huecos del 3D llevan las fotos de prueba a 720p que se tomaron en la laptop el 2026-11-14, de otras escenas inventadas. Sirven para revisar el ritmo, no para entregar.
+- **Para terminar:** que el colaborador corra la tanda 4 y mande `croquis-tomas-trailer.zip`. Se descomprime en `trailer-salida/tomas/` y se corre `node render.mjs Trailer`, `Trailer4K` y `TrailerVertical` (sin `--previo`) desde `apps/trailer`.
 - **El modo foto con secuencias no se ha probado en la RTX.** El plan usa los mismos campos de las 15 fotos promo; si alguna cámara no encuadra bien, se ajusta en `tomas-rtx.mjs`.
 - **Nadie ha oído la música.** Se revisó por números (el arco de fuerza, el silencio, los golpes en su sitio y que haya medios para bocinas chicas). René la tiene que oír.
 
 ### Resumen para René
 
-- **Qué quedó:** el tráiler completo en código, con música original, en los tres formatos. Los previos están en `D:\Croquis-trailer`.
-- **Cómo probarlo:** abre `D:\Croquis-trailer\croquis-trailer-previo-1920x1080.mp4`. Para volver a renderizar: `cd apps/trailer` y `node render.mjs Trailer --previo`.
+- **Qué quedó:** el tráiler completo en código, con música original, en los tres formatos. Los previos están en `trailer-salida/`.
+- **Cómo probarlo:** abre `trailer-salida/croquis-trailer-previo-1920x1080.mp4`. Para volver a renderizar: `cd apps/trailer` y `node render.mjs Trailer --previo`.
 - **Qué necesito de ti:** que oigas la música y me digas qué cambiar, y las tomas de la RTX (la tanda 4).
 
 ## Necesito del otro frente

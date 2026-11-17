@@ -33,5 +33,5 @@
     "nucleos": 8,
     "memoria_gb": 8
   },
-  "salida": "D:/Croquis-trailer/croquis-trailer-previo-1080x1920.mp4"
+  "salida": "trailer-salida/croquis-trailer-previo-1080x1920.mp4"
 }

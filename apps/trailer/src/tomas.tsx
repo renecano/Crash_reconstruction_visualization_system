@@ -1,6 +1,6 @@
 /**
  * Las tomas reales del 3D (Unity) dentro del tráiler. Cada hueco tiene un nombre; `render.mjs` busca
- * en `D:\Croquis-trailer\tomas` una secuencia (`<hueco>/0001.png`…) o una foto (`<hueco>.png`) y le
+ * en `trailer-salida/tomas` una secuencia (`<hueco>/0001.png`…) o una foto (`<hueco>.png`) y le
  * pasa a la composición lo que encontró. Si un hueco no tiene toma, la escena de papel sigue: nunca
  * se pone una imagen de relleno.
  */

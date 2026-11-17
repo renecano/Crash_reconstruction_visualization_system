@@ -41,13 +41,16 @@ if ($Paso -eq "escritorio") {
   Write-Host "Listo: eval\results\rtx-t4\fps_escritorio.json"
 } elseif ($Paso -eq "trailer") {
   # Las tomas del 3D para el tráiler (René, 2026-11-16): secuencias a 3840x2160 en ultra de la
-  # escena inventada de noche con lluvia. Quedan en un zip en el Escritorio: no van a git.
+  # escena inventada de noche con lluvia. Quedan en trailer-salida\tomas del repositorio (que git
+  # ignora completa) y en un zip en el Escritorio para mandárselo a René: no van a git.
   $plan = Join-Path $trabajo "tomas-trailer.json"
   & node (Join-Path $repo "tools\trailer\tomas-rtx.mjs") $plan
   if ($LASTEXITCODE) { throw "tomas-rtx.mjs terminó con el código $LASTEXITCODE" }
-  $salida = Join-Path $trabajo "tomas-trailer"
-  if (Test-Path $salida) { Remove-Item $salida -Recurse -Force }
+  $salida = Join-Path $repo "trailer-salida\tomas"
   New-Item -ItemType Directory -Force $salida | Out-Null
+  # Solo se quita el informe anterior: si el visor falla, no se toma por bueno uno viejo.
+  $viejo = Join-Path $salida "fotos.json"
+  if (Test-Path $viejo) { Remove-Item $viejo -Force }
   $argumentos = @(
     "-screen-width", "1920", "-screen-height", "1080", "-screen-fullscreen", "0",
     "-fotos", $plan, "-salida", $salida,
@@ -62,7 +65,7 @@ if ($Paso -eq "escritorio") {
   $escritorio = [Environment]::GetFolderPath("Desktop")
   $entrega = Join-Path $escritorio "croquis-tomas-trailer.zip"
   if (Test-Path $entrega) { Remove-Item $entrega -Force }
-  Compress-Archive -Path (Join-Path $salida "*") -DestinationPath $entrega
+  Compress-Archive -Path (Join-Path $salida "*_*.png"), $informe -DestinationPath $entrega
   Write-Host ""
   Write-Host "Las tomas del tráiler quedaron en $entrega. Mándale ese archivo a René (por Drive o WeTransfer): no va a git."
 } else {
