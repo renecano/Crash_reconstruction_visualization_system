@@ -138,3 +138,55 @@ describe("entorno procedural (T1.3)", () => {
     expect(maxAbs).toBeLessThanOrEqual(RELIEF_MAX_M);
   });
 });
+
+describe("los corredores siguen las curvas y las glorietas (René, 2026-11-17)", () => {
+  /** Puntos sobre la calzada de los arcos y anillos del trazado, del centro a casi la orilla. */
+  function puntosDeCalzada(layout: ReturnType<typeof roadLayout>) {
+    const puntos: { x: number; y: number }[] = [];
+    const sobre = (cx: number, cy: number, r: number, desde: number, hasta: number) => {
+      for (let k = 0; k <= 60; k++) {
+        const a = ((desde + ((hasta - desde) * k) / 60) * Math.PI) / 180;
+        puntos.push({ x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) });
+      }
+    };
+    for (const a of layout.arcs)
+      for (const f of [-0.45, 0, 0.45])
+        sobre(a.center.x, a.center.y, a.radius + f * a.width, a.from, a.to);
+    for (const r of layout.rings)
+      for (const f of [0.05, 0.5, 0.95])
+        sobre(r.center.x, r.center.y, r.innerRadius + f * (r.outerRadius - r.innerRadius), 0, 360);
+    return puntos;
+  }
+
+  for (const fixture of ["frontal_curva", "glorieta"] as const) {
+    it(`${fixture}: toda la calzada queda dentro de un corredor y el relieve es 0 sobre ella`, () => {
+      const spec = loadFixture(fixture);
+      const layout = roadLayout(spec.lugar);
+      expect(layout.arcs.length + layout.rings.length).toBeGreaterThan(0);
+      const corridors = corridorsOf(layout);
+      const altura = terrainHeightAt(spec.meta.semilla, corridors, zoneFor(spec.lugar));
+      for (const p of puntosDeCalzada(layout)) {
+        expect(distanceToRoad(p, corridors)).toBeLessThanOrEqual(0);
+        expect(altura(p.x, p.y)).toBe(0);
+      }
+    });
+
+    it(`${fixture}: ningún árbol ni edificio cae sobre la calzada curva`, () => {
+      const spec = loadFixture(fixture);
+      const layout = roadLayout(spec.lugar);
+      const corridors = corridorsOf(layout);
+      const plan = planEnvironment(spec.lugar, layout, undefined, {
+        seed: spec.meta.semilla,
+        center,
+        maxTrees: 400,
+      });
+      for (const t of plan.trees) expect(distanceToRoad(t, corridors)).toBeGreaterThan(0);
+      for (const b of plan.buildings) expect(distanceToRoad(b, corridors)).toBeGreaterThan(0);
+    });
+  }
+
+  it("sin arcos ni anillos, los corredores son los mismos de antes", () => {
+    const layout = roadLayout(loadFixture("lateral_interseccion").lugar);
+    expect(corridorsOf({ strips: layout.strips })).toEqual(corridorsOf(layout));
+  });
+});
