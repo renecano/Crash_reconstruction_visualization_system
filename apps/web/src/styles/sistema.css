@@ -1431,7 +1431,8 @@
   .tooltip-lab {
     position: fixed;
     z-index: 70;
-    max-width: 22rem;
+    /* Nunca más ancho que la ventana: en una ventana chica la ayuda se cortaba. */
+    max-width: min(22rem, calc(100vw - 16px));
     pointer-events: none;
     border-radius: 10px;
     background: var(--tip-fondo, #0b0d12);

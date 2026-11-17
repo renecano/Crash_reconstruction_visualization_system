@@ -108,10 +108,11 @@ export function BarraRecorrido({
         ) : null}
         <nav aria-label="Actos del recorrido" className="relative min-w-0 flex-1 self-stretch">
           <ol
-            className="grid h-full grid-cols-[var(--actos-chica)] items-center lg:grid-cols-[var(--actos)]"
+            className="grid h-full grid-cols-[var(--actos-chica)] items-center xl:grid-cols-[var(--actos)]"
             // En una ventana chica, el acto actual toma el ancho de su nombre y los demás van con su
             // número; así ningún nombre se corta (ronda 2, B). En grande, columnas iguales: el punto
-            // naranja del avance queda bajo el acto actual.
+            // naranja del avance queda bajo el acto actual. «Grande» es desde 1280 px: poco arriba
+            // de 1024 los seis nombres se pisaban (René, 2026-11-16).
             style={
               {
                 "--actos": `repeat(${actos.length}, minmax(0, 1fr))`,
@@ -148,8 +149,8 @@ export function BarraRecorrido({
                       <span className="whitespace-nowrap">{a.nombre}</span>
                     ) : (
                       <>
-                        <span className="hidden whitespace-nowrap lg:inline">{a.nombre}</span>
-                        <span className="font-mono lg:hidden" aria-hidden="true">
+                        <span className="hidden whitespace-nowrap xl:inline">{a.nombre}</span>
+                        <span className="font-mono xl:hidden" aria-hidden="true">
                           {k + 1}
                         </span>
                       </>

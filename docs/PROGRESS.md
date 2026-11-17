@@ -2460,6 +2460,7 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 
 ### Endurecimiento pendiente
 
+- **El teclado con Unity vivo** (2026-11-16): Unity Web se queda con el teclado de toda la página. Hoy lo resuelve la web (`apps/web/src/lib/visor-unity/teclado.ts`), que reconoce los oyentes de Unity por su nombre (`jsEventHandler`). En el siguiente build de Unity conviene además `WebGLInput.captureAllKeyboardInput = false` y comprobar que las flechas de la cámara libre y Mayús al editar siguen funcionando con el foco en el lienzo. Falta comprobar el arreglo de la web con el Unity real en producción.
 - **MapLibre compila sus programas de WebGL en el hilo principal la primera vez que dibuja un mapa.** Desde la ronda 2 (A1, #256) hay un solo mapa por caso (`apps/web/src/lib/mapa-compartido.ts`) y esa compilación ocurre una vez: en la laptop de René, 169 ms al cambiar de paso (antes 214) y 55 ms al llegar a «La escena» (antes 96), en `eval/results/pasos_hilo_ronda2_a1.json`. Sigue por arriba de la meta de 100 ms; no se puede llevar a un worker.
 - **E2E manuales con las pestañas viejas del visor** (ronda 2, A6): `promo-recorrido.spec.ts` y `auditoria-recorrido.spec.ts` buscan `vista-detras` y `vista-conductor`, que ya no existen. Hay que pasarlas al selector de cámaras (`camaras-de-<vehículo>` y `camara-<modo>`) antes de volver a correrlas. No corren en CI.
 - **Límites que dejaron ver las narraciones de ejemplo** (ronda 2, C; `docs/cesvi/ronda-2/narraciones.md`):
