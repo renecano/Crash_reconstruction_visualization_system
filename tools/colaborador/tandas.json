@@ -111,7 +111,7 @@
     },
     "t4": {
       "titulo": "Tanda 4 · Referencias completas, arranque del 3D, fps con el daño y la cámara de personas (web y escritorio, baja a ultra), las fotos promo, las tomas del tráiler y la demo local",
-      "nota": "Una sola corrida, unas 3 h 10 min. Las referencias son las de la Tanda 3 que quedaron pendientes. Nada baja de Vercel Blob (René, 2026-11-17): el visor de Unity sale de una copia local (del release de GitHub), los fps web se miden contra el sitio compilado en modo local, el arranque del 3D sirve el build desde esa copia y el visor de escritorio pide los modelos a esta máquina. Los fps de escritorio, las fotos y las tomas usan el visor del release rtx-t4. Las fotos y las tomas del tráiler quedan en dos zip en el Escritorio para mandárselos a René: no van a git.",
+      "nota": "Una sola corrida, cerca de 3 horas. Las referencias son las de la Tanda 3 que quedaron pendientes. Nada baja de Vercel Blob (René, 2026-11-17): el visor de Unity sale de una copia local (del release de GitHub), los fps web se miden contra el sitio compilado en modo local, el arranque del 3D sirve el build desde esa copia y el visor de escritorio pide los modelos a esta máquina. Los fps de escritorio, las fotos y las tomas usan el visor del release rtx-t4. Las fotos y las tomas del tráiler quedan en dos zip en el Escritorio para mandárselos a René: no van a git.",
       "pasos": [
         {
           "nombre": "referencias-de-prueba",
