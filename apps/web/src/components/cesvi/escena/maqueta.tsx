@@ -84,6 +84,12 @@ interface TerrenoEscena {
   topes?: { id: string; linea: XY[]; alto_m: number; largo_m: number }[];
 }
 
+/** Lo que la barra de reproducción le pide a la vista 2D. */
+export interface PedidoVista {
+  tipo: "todo" | "impacto";
+  n: number;
+}
+
 export function EscenaMaqueta({
   spec,
   resultado,
@@ -96,6 +102,8 @@ export function EscenaMaqueta({
   tipDelImpacto = null,
   relieve = null,
   navegable = false,
+  pedidoVista = null,
+  conBarra = false,
   margenes = SIN_MARGENES,
   declarada = null,
 }: {
@@ -113,6 +121,10 @@ export function EscenaMaqueta({
    * dictamen), el encuadre fijo alrededor del impacto.
    */
   navegable?: boolean;
+  /** La barra de reproducción ya trae «Ver todo» e «Ir al impacto»: arriba solo queda el zoom. */
+  conBarra?: boolean;
+  /** Lo que pide la barra de reproducción a la vista; `n` cambia con cada pedido. */
+  pedidoVista?: PedidoVista | null;
   /** Lo que dice cada vehículo al pasar el puntero o con el foco (§9). */
   tips?: Record<string, string>;
   tipDelImpacto?: string | null;
@@ -155,6 +167,15 @@ export function EscenaMaqueta({
     irAlImpacto: alIrAlImpacto,
     acercar: alAcercar,
   } = useVistaMaqueta(navegable, spec as unknown as EscenaPlano, resultado, margenes);
+  // Lo que pide la barra de reproducción (A6): encuadrar todo o ir al impacto.
+  const pedidoVisto = useRef(0);
+  useEffect(() => {
+    if (!pedidoVista || pedidoVista.n === pedidoVisto.current) return;
+    pedidoVisto.current = pedidoVista.n;
+    if (pedidoVista.tipo === "todo") alVerTodo();
+    else alIrAlImpacto();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- solo cuando llega un pedido nuevo
+  }, [pedidoVista]);
   const vista = navegable ? vistaNav : null;
   const vw = vista ? vista[2] - vista[0] : W;
   const vh = vista ? vista[3] - vista[1] : H;
@@ -615,6 +636,7 @@ export function EscenaMaqueta({
         vista={vista}
         anchoPx={anchoPx}
         onVerTodo={alVerTodo}
+        soloZoom={conBarra}
         onIrAlImpacto={alIrAlImpacto}
         onAcercar={alAcercar}
       />
@@ -750,12 +772,14 @@ function ControlesVista({
   onVerTodo,
   onIrAlImpacto,
   onAcercar,
+  soloZoom = false,
 }: {
   vista: Caja;
   anchoPx: number;
   onVerTodo: () => void;
   onIrAlImpacto: () => void;
   onAcercar: (factor: number) => void;
+  soloZoom?: boolean;
 }) {
   const ancho = vista[2] - vista[0];
   const escala = escalaGrafica(ancho);
@@ -774,24 +798,28 @@ function ControlesVista({
         role="group"
         aria-label="Encuadre de la maqueta"
       >
-        <button
-          type="button"
-          className="boton-secundario boton-compacto"
-          onClick={onVerTodo}
-          aria-label="Ver todo"
-          data-testid="maqueta-ver-todo"
-        >
-          {angosta ? "Todo" : "Ver todo"}
-        </button>
-        <button
-          type="button"
-          className="boton-secundario boton-compacto"
-          onClick={onIrAlImpacto}
-          aria-label="Ir al impacto"
-          data-testid="maqueta-ir-impacto"
-        >
-          {angosta ? "Impacto" : "Ir al impacto"}
-        </button>
+        {soloZoom ? null : (
+          <>
+            <button
+              type="button"
+              className="boton-secundario boton-compacto"
+              onClick={onVerTodo}
+              aria-label="Ver todo"
+              data-testid="maqueta-ver-todo"
+            >
+              {angosta ? "Todo" : "Ver todo"}
+            </button>
+            <button
+              type="button"
+              className="boton-secundario boton-compacto"
+              onClick={onIrAlImpacto}
+              aria-label="Ir al impacto"
+              data-testid="maqueta-ir-impacto"
+            >
+              {angosta ? "Impacto" : "Ir al impacto"}
+            </button>
+          </>
+        )}
         <button
           type="button"
           className={`boton-secundario boton-compacto ${angosta ? "" : "w-9"}`}

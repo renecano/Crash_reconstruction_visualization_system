@@ -22,7 +22,7 @@ describe("las cámaras del 3D (René, 2026-11-16, A6)", () => {
       [
         { resId: "veh-a", nombre: "A · Jetta", letra: "A", cara: "frontal" },
         { resId: "veh-b", nombre: "B · Camaro", letra: "B", cara: "lateral_derecho" },
-        { resId: "veh-c", nombre: "C · Ranger", letra: "C" },
+        { resId: "veh-c", nombre: "C · Ranger", letra: "C", largoM: 5.3 },
       ],
       [
         { id: "per-a1", rol: "conductor" },
@@ -36,7 +36,12 @@ describe("las cámaras del 3D (René, 2026-11-16, A6)", () => {
       "acera",
     ]);
     expect(c.filter((x) => x.grupo === "vehiculo")).toHaveLength(9);
-    expect(c.find((x) => x.nombre === "Detrás de C · Ranger")?.modo).toBe("cerca:veh-c:180:8:2.6");
+    // Un sedán conserva 8 m atrás y 2.6 m arriba; detrás de una camioneta, la cámara se aleja y
+    // sube (antes quedaba pegada a su techo; ronda 2, A6).
+    expect(c.find((x) => x.nombre === "Detrás de A · Jetta")?.modo).toBe("cerca:veh-a:180:8:2.6");
+    expect(c.find((x) => x.nombre === "Detrás de C · Ranger")?.modo).toBe(
+      "cerca:veh-c:180:9.42:3.3",
+    );
     expect(c.find((x) => x.nombre === "El daño de B, en el impacto")?.alImpacto).toBe(true);
     // El conductor va dentro de su vehículo: no lleva cámara de persona; el peatón sí.
     expect(c.filter((x) => x.grupo === "persona")).toEqual([

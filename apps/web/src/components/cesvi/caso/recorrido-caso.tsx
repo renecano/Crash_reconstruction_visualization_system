@@ -79,8 +79,8 @@ import { leerReporte } from "@/lib/lectura-reporte";
 import { actoDePaso, actosDelCaso, continuarA, rutaDeActo, type ClaveActo } from "@/lib/actos";
 import { BarraRecorrido, PASOS } from "../recorrido/barra";
 import { TransicionActo } from "../recorrido/transicion-acto";
-import { MaquetaCaso } from "../escena/maqueta-caso";
-import { EscenaFacil, ResumenDeLaEscena } from "../escena/escena-facil";
+import { MaquetaCaso, RelojDelMapa } from "../escena/maqueta-caso";
+import { EscenaFacil, ResumenDeLaEscena, lineasDeLaEscena } from "../escena/escena-facil";
 import { PresentarCaso } from "./presentar-caso";
 import { ActoDanos } from "./analisis-laboratorio";
 import { ActoContraste, filaDeRestos } from "./contraste-laboratorio";
@@ -90,8 +90,9 @@ import { TerrenoReconstruccion } from "./terreno-reconstruccion";
 import { VisorCasoUnity } from "@/components/visor-unity/visor-caso-unity";
 import type { ApiVisorUnity } from "@/components/visor-unity/visor-unity";
 import { CanalTiempo } from "@/lib/visor-unity/canal";
+import { Canal } from "@/lib/canal";
 import { precargarModelos, precargarVisorUnity } from "@/lib/visor-unity/precarga";
-import { protagonista, tipImpacto, tipVehiculo } from "@/lib/reconstruccion-lab";
+import { tipImpacto, tipVehiculo } from "@/lib/reconstruccion-lab";
 import { tomarArchivo } from "@/lib/archivo-pendiente";
 import {
   cifraContraste,
@@ -100,8 +101,15 @@ import {
   lecturaFisica,
 } from "@/lib/contraste-lab";
 import { textoDano, tituloDelHecho } from "@/lib/hecho-laboratorio";
-import { nombreVehiculo, pasoActual, pasosEscena, type RespuestasC1 } from "@/lib/escena-facil";
+import {
+  callesDe,
+  nombreVehiculo,
+  pasoActual,
+  pasosEscena,
+  type RespuestasC1,
+} from "@/lib/escena-facil";
 import { PasoCaso, PasoHecho, PasoNumeros, claveItem, type ItemLugar } from "./pasos";
+import { CroquisPlanteamiento, PanelIncognita } from "./planteamiento";
 import { TrazoInicio } from "./trazo-inicio";
 import { MapaEscena, type HerramientaMapa, type HuellaMapa } from "./piezas";
 import {
@@ -213,7 +221,7 @@ export function RecorridoCaso({
   const [moviles, setMoviles] = useState<PosicionMovil[]>([]);
   // La vista del escenario: la que se eligió o, al reconstruir, la maqueta (Laboratorio §8).
   const [vistaElegida, setVista] = useState<"mapa" | "3d" | "maqueta" | null>(null);
-  const [camaraPedida, setCamaraPedida] = useState<{ camara: string; n: number } | null>(null);
+  const [camaraPedida] = useState<{ camara: string; n: number } | null>(null);
   const [declarada, setDeclarada] = useState<Hipotesis | null>(null);
   const [comparacionDeclarada, setComparacionDeclarada] =
     useState<DatosDictamenCaso["declarada"]>(null);
@@ -222,6 +230,8 @@ export function RecorridoCaso({
   const [unityApi, setUnityApi] = useState<ApiVisorUnity | null>(null);
   // Presentar le avisa a Unity el instante de cada capítulo sin pasar por el estado de la página.
   const [canalPresentar] = useState(() => new CanalTiempo());
+  // Las posiciones de los vehículos sobre el mapa, en cada instante de la barra (A6).
+  const [canalMoviles] = useState(() => new Canal<PosicionMovil[]>());
   // El instante que comparten la maqueta (2D) y el 3D: al cambiar de pestaña se conserva (A6).
   const instante = useRef<number | null>(null);
   const [instanteMaqueta, setInstanteMaqueta] = useState<number | null>(null);
@@ -346,6 +356,8 @@ export function RecorridoCaso({
     () => (expediente ? verificacionCesvi(expediente) : []),
     [expediente],
   );
+  // Las calles del mapa como líneas, para el croquis del planteamiento (A6).
+  const callesDelCroquis = useMemo(() => callesDe(calles), [calles]);
   // Lo que el caso no trae, como supuesto declarado con su justificación (ADR 0091).
   const supuestos = useMemo(
     () =>
@@ -751,6 +763,7 @@ export function RecorridoCaso({
             ...medidasDe(v),
             clase: v.clase ?? "sedan_mediano",
             color: colorDeVehiculo(p.vehiculo),
+            fuente: p.fuente,
           },
         ];
       })
@@ -1175,8 +1188,27 @@ export function RecorridoCaso({
               )}
             />
           ) : null}
-          {/* Sin reconstruir, o si el caso cambió después, el panel va a la vista con su aviso. */}
-          {!r || rec.vieja ? <PanelReconstruccion rec={rec} /> : null}
+          {/* Sin reconstruir: «La incógnita», el planteamiento (ronda 2, A6). */}
+          {!r && expediente ? (
+            <PanelIncognita
+              nombres={expediente.vehiculos.map((v) => nombreLab(v.id))}
+              lineas={lineasDeLaEscena(
+                {
+                  expediente,
+                  desconocidos,
+                  direccionesNoSe,
+                  juntoAlChoque,
+                  puntos: puntosImpacto,
+                  c1: c1 ?? {},
+                },
+                impactos,
+                calles,
+              )}
+              rec={rec}
+            />
+          ) : null}
+          {/* Si el caso cambió después de reconstruir, el panel va a la vista con su aviso. */}
+          {r && rec.vieja ? <PanelReconstruccion rec={rec} /> : null}
           <DetalleReconstruccion plegado={r !== null}>
             {r && !rec.vieja ? <PanelReconstruccion rec={rec} /> : null}
             {r ? (
@@ -1279,7 +1311,10 @@ export function RecorridoCaso({
     );
   })();
 
-  const verMapa = vista === "mapa" || !r;
+  // «La incógnita» (A6): en la reconstrucción, antes de reconstruir, va el croquis del planteamiento
+  // en lugar del mapa lejano.
+  const planteando = actual === 3 && !r && expediente !== null && !expandido;
+  const verMapa = (vista === "mapa" || !r) && !planteando;
   // Presentar a pantalla completa necesita la reconstrucción; sin ella, se consulta el recorrido.
   const presentando = modo === "presentar" && r !== null && !rec.vieja;
   // El 3D (o Presentar, que lo usa) pedido por primera vez: ahora sí arranca Unity (se ajusta al
@@ -1292,9 +1327,6 @@ export function RecorridoCaso({
   // El 3D solo dibuja cuando se ve: oculto seguía a todo ritmo y ahogaba la página (la foto del
   // dictamen lo despierta si le hace falta).
   const visorAlaVista = vista === "3d" && !presentando && !hojaAncha && actual !== 1;
-  const vPico = r ? protagonista(r) : null;
-  const idPico =
-    r && vPico ? Object.entries(r.ids).find(([, id]) => id === vPico.vehiculo)?.[0] : null;
   // Lo obligatorio de cada paso (V2): «Siguiente» dice qué falta y los pasos futuros esperan.
   const claves = pasos.map((n) => CLAVES_PASOS[PASOS.indexOf(n)]!);
   const estadoPasos = {
@@ -1582,7 +1614,7 @@ export function RecorridoCaso({
               : // En el hecho no hay mapa (A5): se queda montado pero oculto, para no volver a
                 // cargarlo al llegar al lugar (MapLibre se ajusta solo al reaparecer).
                 pico
-                ? "relative order-first min-h-[60vh] overflow-hidden lg:absolute lg:inset-0 lg:min-h-0"
+                ? `relative order-first ${planteando ? "min-h-[40vh]" : "min-h-[60vh]"} overflow-hidden lg:absolute lg:inset-0 lg:min-h-0`
                 : `relative min-h-[50vh] overflow-hidden rounded-panel border border-linea-suave ${grande ? "lg:flex-1" : "lg:h-[460px] lg:w-[420px] lg:shrink-0 lg:self-start"} ${actual === 7 ? "pointer-events-none invisible absolute! h-[460px] w-[640px]" : actual === 1 || hojaAncha || sinMapaAlInicio ? "hidden" : ""}`
           }
           aria-label="Mapa"
@@ -1599,7 +1631,9 @@ export function RecorridoCaso({
                 tema={tema}
                 onMapa={setMapa}
                 posiciones={posiciones}
-                moviles={moviles}
+                // Con la reconstrucción, los vehículos en movimiento llegan por el canal de la barra.
+                moviles={r ? [] : moviles}
+                canalMoviles={canalMoviles}
                 impactos={rec.impactos}
                 onClic={colocar}
                 inicio={lugar?.coordenadas ?? null}
@@ -1616,6 +1650,31 @@ export function RecorridoCaso({
               />
             ) : null}
           </div>
+          {planteando ? (
+            <div className={`absolute inset-0 bg-fondo ${pico ? "lg:right-[488px]" : ""}`}>
+              <CroquisPlanteamiento
+                huellas={huellas}
+                impactos={impactos.flatMap((i) => {
+                  const punto = puntoDe(i.orden);
+                  const pose = posiciones.find(
+                    (p) => p.fase === "impacto" && i.vehiculos.includes(p.vehiculo),
+                  );
+                  return punto
+                    ? [
+                        {
+                          orden: i.orden,
+                          punto,
+                          fuente: puntosImpacto[i.orden] ? "perito" : pose?.fuente,
+                        },
+                      ]
+                    : [];
+                })}
+                calles={callesDelCroquis}
+                letraDe={letraDe}
+                nombreDe={nombreLab}
+              />
+            </div>
+          ) : null}
           {r && pidioUnity ? (
             <div
               className={`absolute inset-0 bg-fondo ${pico ? "lg:right-[488px]" : ""} ${vista === "3d" ? "" : "pointer-events-none invisible"}`}
@@ -1649,6 +1708,21 @@ export function RecorridoCaso({
                 objetos={objetos}
                 expandido={expandido}
                 supuestos={supuestos}
+              />
+            </div>
+          ) : null}
+          {/* El 2D sobre el mapa real: la misma barra mueve los vehículos en el mapa (A6). */}
+          {r && vista === "mapa" && !expandido ? (
+            // Solo sobre el mapa: la barra no tapa la hoja de la derecha ni deja de pasar los clics
+            // al mapa.
+            <div
+              className={`pointer-events-none absolute inset-0 [&>*]:pointer-events-auto ${pico ? "lg:right-[488px]" : ""}`}
+            >
+              <RelojDelMapa
+                r={r}
+                tInicial={instanteMaqueta}
+                onInstante={alInstante}
+                canal={canalMoviles}
               />
             </div>
           ) : null}
@@ -1754,60 +1828,60 @@ export function RecorridoCaso({
           ) : null}
           <div className={`absolute z-10 flex gap-2 ${pico ? "top-4 left-4" : "top-3 right-3"}`}>
             {r ? (
-              <div
-                className={`segmentado ${pico ? "segmentado-tinta" : ""}`}
-                role="tablist"
-                aria-label="Vista"
-              >
-                {(
-                  [
-                    ["maqueta", "maqueta", pico ? "Cenital" : "Maqueta", null],
-                    ...(pico && idPico && vPico
-                      ? ([
-                          [
-                            "detras",
-                            "3d",
-                            `Detrás de ${letraDe(vPico.vehiculo)}`,
-                            `detras-${idPico}`,
-                          ],
-                          [
-                            "conductor",
-                            "3d",
-                            `Conductor ${letraDe(vPico.vehiculo)}`,
-                            `conductor-${idPico}`,
-                          ],
-                        ] as const)
-                      : []),
-                    ["3d", "3d", pico ? "Órbita 3D" : "3D", pico ? "libre" : null],
-                    ["mapa", "mapa", "Mapa", null],
-                  ] as const
-                ).map(([id, v, nombre, camara]) => (
+              <>
+                {/* A6: dos pestañas, «3D» y «2D». El mapa real es un fondo del 2D, no otra pestaña. */}
+                <div
+                  className={`segmentado ${pico ? "segmentado-tinta" : ""}`}
+                  role="tablist"
+                  aria-label="Vista"
+                >
                   <button
-                    key={id}
                     type="button"
                     role="tab"
-                    aria-selected={
-                      camara
-                        ? vista === "3d" && camaraPedida?.camara === camara
-                        : vista === v && (v !== "3d" || !pico)
-                    }
-                    className="px-3"
+                    aria-selected={vista === "3d"}
+                    className="px-5"
                     onClick={() => {
-                      if (v === "mapa") setMoviles([]);
-                      // Del 2D al 3D, el 3D va al instante en que se quedó la maqueta.
-                      if (v === "3d" && vista !== "3d" && instante.current !== null)
+                      // Del 2D al 3D, el 3D va al instante en que se quedó el 2D.
+                      if (vista !== "3d" && instante.current !== null)
                         unityApi?.ir?.(instante.current);
-                      // Del 3D al 2D, la maqueta empieza donde se quedó el 3D.
-                      if (v === "maqueta") setInstanteMaqueta(instante.current);
-                      setVista(v);
-                      if (camara) setCamaraPedida((c) => ({ camara, n: (c?.n ?? 0) + 1 }));
+                      setVista("3d");
                     }}
-                    data-testid={`vista-${id}`}
+                    data-testid="vista-3d"
                   >
-                    {nombre}
+                    3D
                   </button>
-                ))}
-              </div>
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={vista !== "3d"}
+                    className="px-5"
+                    onClick={() => {
+                      if (vista !== "3d") return;
+                      // Del 3D al 2D, el 2D empieza donde se quedó el 3D.
+                      setInstanteMaqueta(instante.current);
+                      setVista("maqueta");
+                    }}
+                    data-testid="vista-maqueta"
+                  >
+                    2D
+                  </button>
+                </div>
+                {vista !== "3d" ? (
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={vista === "mapa"}
+                    className={`interruptor ${pico ? "" : "vidrio px-3"}`}
+                    onClick={() => {
+                      setInstanteMaqueta(instante.current);
+                      setVista(vista === "mapa" ? "maqueta" : "mapa");
+                    }}
+                    data-testid="vista-mapa"
+                  >
+                    Mapa
+                  </button>
+                ) : null}
+              </>
             ) : null}
             {pico ? null : (
               <button
@@ -1862,10 +1936,10 @@ export function RecorridoCaso({
                 </div>
               ) : null}
             </>
-          ) : verMapa ? (
+          ) : verMapa || planteando ? (
             // En el 3D la leyenda de CESVI va en la banda del visor (y no tapa sus controles).
             <p
-              className={`vidrio pointer-events-none absolute bottom-3 z-10 px-2 py-1 text-[0.6875rem] text-texto-2 ${pico ? "right-3 lg:right-[500px]" : "right-3"}`}
+              className={`vidrio pointer-events-none absolute z-10 px-2 py-1 text-[0.6875rem] text-texto-2 ${r && vista === "mapa" ? "bottom-[5.75rem]" : "bottom-3"} ${pico ? "right-3 lg:right-[500px]" : "right-3"}`}
             >
               {LEGEND_TEXT_CESVI}
             </p>

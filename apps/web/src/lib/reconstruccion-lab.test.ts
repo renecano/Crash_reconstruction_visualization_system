@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   frasePercentil,
   histograma,
+  nubeDeSimulaciones,
   marcasDelEje,
   protagonista,
   posEnHistograma,
@@ -45,6 +46,20 @@ describe("la reconstrucción (Laboratorio §8)", () => {
     expect(rangoDeVelocidad({ ...v, previa: { mejor: 41.5 } })).toBeNull();
     expect(rangoDeVelocidad({ ...v, previa: { mejor: 41.5, p10: 41.5, p90: 41.5 } })).toBeNull();
     expect(rangoDeVelocidad({ ...v, previa: null })).toBeNull();
+  });
+
+  it("la nube: un punto por simulación; si una columna no cabe, cada punto vale varias", () => {
+    const b = histograma([30.2, 30.9, 31.5, 33.1, 34], 30.5, 33.5);
+    const n = nubeDeSimulaciones(b);
+    expect(n.porPunto).toBe(1);
+    expect(n.columnas.map((c) => c.puntos)).toEqual(b.map((x) => x.n));
+    expect(n.columnas.reduce((a, c) => a + c.puntos, 0)).toBe(5);
+    // 30 simulaciones en un mismo km/h y una sola en otro, con 12 filas: cada punto vale 3, y la
+    // columna de una simulación conserva su punto.
+    const alta = histograma([...Array.from({ length: 30 }, () => 40.5), 42.2], 40, 41);
+    const m = nubeDeSimulaciones(alta, 12);
+    expect(m.porPunto).toBe(3);
+    expect(m.columnas.map((c) => c.puntos)).toEqual([10, 0, 1]);
   });
 
   it("el histograma: una barra por km/h, las del rango marcadas, ninguna simulación se pierde", () => {

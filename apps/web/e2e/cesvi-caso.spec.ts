@@ -152,6 +152,8 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await expect(visor.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
   // El croquis 2D sigue al reloj del 3D: al volver al mapa (el mapa se desmonta mientras el 3D
   // está a la vista, ADR 0104), los vehículos de la reconstrucción están donde quedó el reloj.
+  // A6: el mapa real es un fondo del 2D (interruptor «Mapa»), no otra pestaña.
+  await page.getByTestId("vista-maqueta").click();
   await page.getByTestId("vista-mapa").click();
   await expect(mapa.locator('[data-movil="V1"]')).toHaveCount(1, { timeout: 30_000 });
   await expect(mapa.locator('[data-movil="V2"]')).toHaveCount(1);
@@ -440,6 +442,8 @@ test("@flujo /cesvi: una carambola, con sus impactos en orden hasta el 3D", asyn
   await page.getByTestId("vista-3d").click();
   const visor = page.getByTestId("visor-caso");
   await expect(visor.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
+  // A6: el mapa real es un fondo del 2D (interruptor «Mapa»), no otra pestaña.
+  await page.getByTestId("vista-maqueta").click();
   await page.getByTestId("vista-mapa").click();
   await expect(mapa.locator('[data-movil="V3"]')).toHaveCount(1, { timeout: 30_000 });
 
