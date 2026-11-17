@@ -90,7 +90,7 @@ El detalle, los textos y los límites están en [`narraciones.md`](narraciones.m
 - En «El trazo», «Usar un ejemplo» lleva a esa lista.
 - Un ejemplo leído sin cambios usa su lectura guardada (hecha con Claude con el prompt de la app) y la pantalla lo dice. Con un cambio en el texto, se lee con Claude.
 
-**Las cinco, con lo que muestra cada una** (build local, la escena colocada como dice cada narración; `eval/results/ronda2_ejemplos.json`):
+**Las cinco, con lo que muestra cada una** (en producción, la escena colocada como dice cada narración; `eval/results/ronda2_ejemplos.json`; el build local dio lo mismo):
 
 | Ejemplo                                         | Qué muestra                                                                 | Lo que da                    |
 | ----------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------- |
@@ -114,6 +114,8 @@ El detalle, los textos y los límites están en [`narraciones.md`](narraciones.m
 **Evidencia:** `evidencia/c/`.
 
 ## Lo que falta de la parte 1
+
+Los tres bloques están en producción (#256, #257 y #258). Los cinco ejemplos se recorrieron ahí de punta a punta sin el 3D de Unity.
 
 - **Ver los ejemplos y el visor nuevo en el 3D real de Unity,** y el ensayo completo de la demo en producción con Unity. No se hizo en la laptop de René porque se quedó sin memoria con Unity; queda a su decisión correrlo ahí (con Edge cerrado) o en la RTX del colaborador.
 - **La rama `perf/unity-armado-por-partes` (Opus)** toca `visor-unity.tsx`, igual que A6 (ahí se cambió el selector de cámaras y su import). Al retomarla hay que traerle `main` y resolver ese archivo.

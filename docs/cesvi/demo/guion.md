@@ -2,7 +2,7 @@
 
 Para la demo en vivo con los peritos de CESVI. El video grabado tiene su propio guion (`docs/cesvi/video/guion.md`, del 23 de octubre, sin el 3D).
 
-- **Ensayado** el 2026-11-15 en producción con `apps/web/e2e/ensayo-demo.spec.ts` (`eval/results/ensayo_demo.json`, `docs/cesvi/demo/ensayo/`). Eso fue antes de la ronda 2: con las pantallas nuevas (la primera del caso nuevo, la de antes de reconstruir, las pestañas «3D» y «2D») falta repetir el ensayo. Los cinco ejemplos sí se recorrieron de punta a punta, sin el 3D de Unity (`eval/results/ronda2_ejemplos.json`).
+- **Ensayado** el 2026-11-15 en producción con `apps/web/e2e/ensayo-demo.spec.ts` (`eval/results/ensayo_demo.json`, `docs/cesvi/demo/ensayo/`). Eso fue antes de la ronda 2: con las pantallas nuevas (la primera del caso nuevo, la de antes de reconstruir, las pestañas «3D» y «2D») falta repetir el ensayo. Los cinco ejemplos sí se recorrieron de punta a punta en producción el 2026-11-16, sin el 3D de Unity (`eval/results/ronda2_ejemplos.json`).
 - **Cifras:** solo las que muestra la pantalla. Las de abajo son las del 2026-11-15; si la pantalla dice otra cosa, manda la pantalla.
 - **Nada juzga al conductor:** el perito concluye. Croquis es una reconstrucción de apoyo.
 - **Antes de empezar:** Chrome con caché (no incógnito), la laptop conectada a la corriente, y el 3D de AXA abierto una vez antes (así el build ya está en caché: la primera carga tarda unos 10 s; las siguientes, 3 a 4 s).
@@ -47,7 +47,7 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 - **Colocar:** una pregunta a la vez en el mapa (dónde fue, por dónde venía cada vehículo, dónde quedó). Si conviene, «Más herramientas» → «Medir una distancia»: la línea sigue al puntero con los metros en vivo; Esc termina.
 - **Reconstruir y ver en 3D** (unos 5 s; el 3D ya está en caché).
 
-**Los cinco ejemplos** (`docs/cesvi/ronda-2/narraciones.md`; cifras del 2026-11-16 con la escena colocada como dice cada narración):
+**Los cinco ejemplos** (`docs/cesvi/ronda-2/narraciones.md`; cifras del 2026-11-16 en producción, con la escena colocada como dice cada narración):
 
 | Ejemplo                                         | Qué muestra                                                                 | Lo que da                    |
 | ----------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------- |
