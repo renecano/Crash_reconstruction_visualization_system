@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 import { simularApi, SPEC_GLORIETA as spec } from "./api-simulada";
 
 test("flujo guiado: redacta en el navegador, pregunta, acomoda el croquis y llega al 3D", async ({

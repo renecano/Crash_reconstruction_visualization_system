@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { VISOR_PUENTE_VERSION } from "@croquis/scene-schema";
-import { expect, test, type Page } from "@playwright/test";
+import { type Page } from "@playwright/test";
+import { expect, test } from "./base";
 import { sinEspacios, textoDelPdf, textoDelWord } from "./ayuda-documentos";
 import { irAPaso } from "./ayuda-recorrido";
 import { conUnityFalso } from "./visor-unity-ayuda";

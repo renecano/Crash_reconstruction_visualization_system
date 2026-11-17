@@ -1,5 +1,6 @@
 import { VISOR_PUENTE_VERSION } from "@croquis/scene-schema";
-import { expect, test, type Page } from "@playwright/test";
+import { type Page } from "@playwright/test";
+import { expect, test } from "./base";
 import { irAPaso } from "./ayuda-recorrido";
 import { casoConPoste, conUnityFalso } from "./visor-unity-ayuda";
 

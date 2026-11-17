@@ -1,6 +1,7 @@
 import { execFileSync } from "node:child_process";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
+import process from "node:process";
 import { describe, expect, it } from "vitest";
 import { decidir, vaAlSitio } from "./construir.mjs";
 
@@ -21,6 +22,7 @@ describe("qué cambios despliegan el sitio", () => {
       "eval/results/osm_instancias_1.json",
       "assets/brand/marca.json",
       "tools/blender/croquis_render.py",
+      "tools/unity/visor-local.mjs",
       "tools/vercel/construir.mjs",
       "pnpm-lock.yaml",
       "package.json",

@@ -62,6 +62,8 @@ const nextConfig: NextConfig = {
       "../../packages/*/grabaciones/**",
       "../../packages/scene-schema/fixtures/**",
       "../../**/*.test.*",
+      // La copia local del build de Unity (demo local, plan B) se sirve como estático, no desde funciones.
+      "./public/visor-unity/local/**",
     ],
   },
   // Encabezados de seguridad (auditoría del 2026-11-15, I6). La política de contenido va en modo de
@@ -78,6 +80,24 @@ const nextConfig: NextConfig = {
         ],
       },
     ];
+  },
+  // Demo local (René, 2026-11-17): con `CROQUIS_VISOR=local` al compilar, el visor Unity y los modelos
+  // salen de la propia máquina (`tools/unity/visor-local.mjs preparar`), sin Vercel Blob.
+  // Va antes que los archivos de public/: si no, se serviría el manifiesto de siempre.
+  async rewrites() {
+    return {
+      beforeFiles:
+        process.env.CROQUIS_VISOR === "local"
+          ? [
+              {
+                source: "/visor-unity/manifest.json",
+                destination: "/visor-unity/local/manifest.json",
+              },
+            ]
+          : [],
+      afterFiles: [],
+      fallback: [],
+    };
   },
   // /cesvi como una sola aplicación (ADR 0079): las rutas viejas llevan a su caso en el recorrido.
   async redirects() {

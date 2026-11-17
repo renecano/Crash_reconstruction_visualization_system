@@ -1,4 +1,5 @@
-import { expect, test, type Page } from "@playwright/test";
+import { type Page } from "@playwright/test";
+import { expect, test } from "./base";
 
 /**
  * Demo sin red (F9, ADR 0030): con el service worker instalado y la red cortada, la demo abre,

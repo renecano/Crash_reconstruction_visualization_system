@@ -1,7 +1,9 @@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { chromium, expect, test, type Page } from "@playwright/test";
+import { chromium, type Page } from "@playwright/test";
+import { expect, test } from "./base";
+import { sinBlob } from "./sin-blob";
 import { colocarTodo, irAPaso } from "./ayuda-recorrido";
 
 /**
@@ -59,6 +61,7 @@ test("ensayo de la demo con CESVI, en producción", async ({ baseURL }) => {
     serviceWorkers: "block",
     viewport: { width: 1600, height: 900 },
   });
+  await sinBlob(ctx);
   const tramos: Tramo[] = [];
   const errores: string[] = [];
   const page = ctx.pages()[0] ?? (await ctx.newPage());

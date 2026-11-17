@@ -1,7 +1,9 @@
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { extname, join, resolve } from "node:path";
-import { chromium, expect, test as base, type BrowserContext, type Page } from "@playwright/test";
+import { chromium, type BrowserContext, type Page } from "@playwright/test";
+import { expect, test as base } from "./base";
+import { sinBlob } from "./sin-blob";
 import { irAPaso } from "./ayuda-recorrido";
 import { casoConPoste, recibidosDelPuente } from "./visor-unity-ayuda";
 
@@ -54,6 +56,7 @@ const test =
             reducedMotion: "reduce",
             viewport: { width: 1600, height: 900 },
           });
+          await sinBlob(ctx);
           await entregar(ctx);
           await ctx.close();
           rmSync(perfil, { recursive: true, force: true });

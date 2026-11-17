@@ -1,4 +1,4 @@
-# Croquis, tanda t4 (René, 2026-11-16): baja del release `rtx-t4` el paquete de escritorio o el de
+﻿# Croquis, tanda t4 (René, 2026-11-16): baja del release `rtx-t4` el paquete de escritorio o el de
 # fotos, lo corre y deja su resultado chico en eval/results/rtx-t4 (lo que sube la tanda). El build y
 # las fotos no van a git: las fotos quedan en un zip en el Escritorio para mandárselo a René.
 #
@@ -32,6 +32,15 @@ if (-not (Test-Path (Join-Path $trabajo "VisorCroquis.exe"))) {
 }
 $destino = Join-Path $repo "eval\results\rtx-t4"
 New-Item -ItemType Directory -Force $destino | Out-Null
+
+# Sin Vercel Blob (René, 2026-11-17): el visor pide los modelos de los vehículos a esta máquina. Se
+# cambia la dirección en su resources.assets (mismo largo; tools/unity/visor-local.mjs escritorio) y
+# se sirven los modelos del repositorio mientras corre el paso.
+& node (Join-Path $repo "tools\unity\visor-local.mjs") escritorio (Join-Path $trabajo "VisorCroquis_Data")
+if ($LASTEXITCODE) { throw "No se pudo cambiar la dirección de los modelos del visor de escritorio." }
+$modelos = Start-Process -FilePath "node" -ArgumentList "`"$(Join-Path $repo 'tools\unity\visor-local.mjs')`" servir-modelos" -WindowStyle Hidden -PassThru
+Start-Sleep -Seconds 2
+try {
 
 if ($Paso -eq "escritorio") {
   # Los cuatro niveles, en las escenas de referencia del paquete; tres repeticiones (el protocolo E6).
@@ -79,4 +88,8 @@ if ($Paso -eq "escritorio") {
   Compress-Archive -Path (Join-Path $fotos "*") -DestinationPath $entrega
   Write-Host ""
   Write-Host "Las fotos quedaron en $entrega. Mándale ese archivo a René (por Drive o WeTransfer): no va a git."
+}
+} finally {
+  # Los modelos dejan de servirse al terminar el paso, salga bien o mal.
+  if ($modelos -and -not $modelos.HasExited) { try { Stop-Process -Id $modelos.Id -Force } catch { } }
 }

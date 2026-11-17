@@ -15,8 +15,16 @@ import { MODEL_FOR_CLASS } from "@croquis/viewer";
 import recursos from "../../../recursos.json";
 import { RUTA_MANIFIESTO, urlsDelBuild, type ManifiestoVisorUnity } from "./puente";
 
-/** Los mismos modelos que baja Unity (`CargadorModelos`, versión «alta»). */
+/**
+ * Los mismos modelos que baja Unity (`CargadorModelos`, versión «alta»): de Blob o, si el manifiesto
+ * dice `modelos` (demo local, plan B), del sitio.
+ */
 const BASE_VEHICULOS = `${recursos.base}/recursos/modelos/vehiculos/${recursos.carpetas["modelos/vehiculos"]}/`;
+let manifiesto: Promise<ManifiestoVisorUnity | null> | null = null;
+const leerManifiesto = () =>
+  (manifiesto ??= fetch(RUTA_MANIFIESTO, { cache: "no-store" })
+    .then((r) => (r.ok ? (r.json() as Promise<ManifiestoVisorUnity>) : null))
+    .catch(() => null));
 const CUERPOS = ["adulto", "mayor", "nino"].map((v) => `/modelos/personas/${v}.glb`);
 
 const pedidos = new Set<string>();
@@ -72,9 +80,9 @@ function copia(url: string, tipo: string): Promise<Blob> {
 export async function precargarVisorUnity(): Promise<void> {
   if (!sePuede()) return;
   try {
-    const r = await fetch(RUTA_MANIFIESTO, { cache: "no-store" });
-    if (!r.ok) return;
-    const u = urlsDelBuild((await r.json()) as ManifiestoVisorUnity);
+    const m = await leerManifiesto();
+    if (!m) return;
+    const u = urlsDelBuild(m);
     // Primero lo chico; el .wasm y el .data, uno tras otro, para no competir con lo que pide la página.
     await Promise.all([bajar(u.loader), ...CUERPOS.map(bajar)]);
     await copia(u.frameworkUrl, "text/javascript");
@@ -119,7 +127,8 @@ export async function precargarModelos(clases: readonly (string | undefined)[]):
   );
   if (!modelos.length) return;
   try {
-    manifiestoVehiculos ??= fetch(`${BASE_VEHICULOS}vehiculos.json`)
+    const base = (await leerManifiesto())?.modelos ?? BASE_VEHICULOS;
+    manifiestoVehiculos ??= fetch(`${base}vehiculos.json`)
       .then(
         (r) =>
           r.json() as Promise<{
@@ -131,7 +140,7 @@ export async function precargarModelos(clases: readonly (string | undefined)[]):
     await Promise.all(
       modelos.map((m) => {
         const archivo = clases[m]?.archivos.alta.archivo;
-        return archivo ? bajar(BASE_VEHICULOS + archivo) : undefined;
+        return archivo ? bajar(base + archivo) : undefined;
       }),
     );
   } catch {

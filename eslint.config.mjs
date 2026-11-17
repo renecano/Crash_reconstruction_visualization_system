@@ -73,6 +73,8 @@ export default tseslint.config(
       "**/dist/**",
       "**/coverage/**",
       "**/.venv/**",
+      ".cache/**",
+      "trailer-salida/**",
       "apps/web/**",
     ],
   },

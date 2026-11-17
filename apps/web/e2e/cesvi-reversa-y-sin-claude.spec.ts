@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 import { colocarTodo, irAPaso } from "./ayuda-recorrido";
 
 // Como en los demás flujos: la transición entre actos es decorativa y compite con el 3D en CI.

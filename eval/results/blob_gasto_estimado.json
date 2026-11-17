@@ -1,0 +1,83 @@
+{
+  "descripcion": "Estimación de la transferencia de Vercel Blob por actividad (número de cargas × MB de cada una) del 2026-11-15 al 2026-11-17, contra lo que subió en el panel.",
+  "script": "eval/blob_gasto.mjs",
+  "generated_at": "2026-11-17T15:20:06.469Z",
+  "mb_por_tipo_de_carga": {
+    "primera_visita_al_3d": 34.61,
+    "modelos_de_un_caso_de_dos_vehiculos": 2.6,
+    "un_cielo_hdri": 1.7,
+    "copia_local_del_build": 76.3
+  },
+  "filas": [
+    {
+      "que": "Copia local del build de producción para no volver a usar Blob (una sola vez)",
+      "cargas": 1,
+      "mb_por_carga": 76.3,
+      "evidencia": "publicar-web.mjs --bajar 64b29e877ba9c856, 2026-11-17",
+      "mb": 76.3
+    },
+    {
+      "que": "Flujo con el Unity real contra producción (visor-unity-real.spec.ts)",
+      "cargas": 3,
+      "mb_por_carga": 34.6,
+      "evidencia": "u6_flujo_unity_produccion.json (2026-11-16T00:29:09.076Z): una corrida buena y dos mal invocadas ese día (memoria del proyecto), cada una con perfil nuevo",
+      "mb": 103.8
+    },
+    {
+      "que": "Medición de la transferencia de una visita al 3D (blob-transferencia.spec.ts)",
+      "cargas": 1,
+      "mb_por_carga": 34.6,
+      "evidencia": "blob_transferencia.json (2026-11-16T02:17:27.633Z): primera visita; la segunda salió de la caché (0 MB)",
+      "mb": 34.6
+    },
+    {
+      "que": "Ensayos de la demo en producción (ensayo-demo.spec.ts)",
+      "cargas": 2,
+      "mb_por_carga": 34.6,
+      "evidencia": "ensayo_demo.json (2026-11-16T02:40:11.207Z) y ensayo_demo_nota.json (2026-11-16T03:45:21.649Z), perfil nuevo cada uno",
+      "mb": 69.2
+    },
+    {
+      "que": "Medición del hilo principal al cambiar de paso con Unity (medir-pasos.spec.ts)",
+      "cargas": 4,
+      "mb_por_carga": 34.6,
+      "evidencia": "pasos_hilo_antes, pasos_hilo_despues, pasos_hilo_despues_produccion y pasos_hilo_ronda2_a1: contexto nuevo cada uno; aun con el sitio local, el build de Unity salía de Blob",
+      "mb": 138.4
+    },
+    {
+      "que": "Arranque del 3D por partes (medir-unity-arranque.spec.ts)",
+      "cargas": 1,
+      "mb_por_carga": 37.2,
+      "evidencia": "unity_arranque.json (2026-11-16T18:23:32.496Z): primera visita sin caché y un caso nuevo; la segunda visita, de la caché",
+      "mb": 37.2
+    },
+    {
+      "que": "Recorrido de los cinco ejemplos en producción, sin Unity (ejemplos-ronda2.spec.ts)",
+      "cargas": 5,
+      "mb_por_carga": 4.3,
+      "evidencia": "ronda2_ejemplos.json (2026-11-17T02:43:08.174Z): el visor ligero baja de Blob los modelos y el cielo de cada caso",
+      "mb": 21.6
+    },
+    {
+      "que": "Perfil de carga de Unity con el build local (perfil-carga.mjs, rama de Opus)",
+      "cargas": 3,
+      "mb_por_carga": 2.6,
+      "evidencia": "el build era local, pero Unity pide los modelos de los vehículos a Blob: tres corridas",
+      "mb": 7.8
+    }
+  ],
+  "contado_mb": 489,
+  "panel": {
+    "antes_gb": 5.07,
+    "despues_gb": 8.8,
+    "fechas": "2026-11-15 → 2026-11-17 (capturas de René)"
+  },
+  "subida_en_el_panel_mb": 3730,
+  "sin_explicar_mb": 3241,
+  "primeras_visitas_al_3d_equivalentes_sin_explicar": 94,
+  "lo_que_explica_el_resto": [
+    "La página baja de fondo el build de Unity completo en cuanto alguien abre cualquier caso, aunque no abra el 3D (precarga.ts). Cada navegador nuevo que abre un caso gasta casi una visita al 3D.",
+    "Se publicaron tres builds de Unity en esos dos días (e06bdd73, d18f1f3a y 64b29e87): cada uno hace que todos los navegadores lo vuelvan a bajar una vez.",
+    "Las pruebas con personas de la ronda 2 y las visitas de René en varios navegadores y dispositivos."
+  ]
+}

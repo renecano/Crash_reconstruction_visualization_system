@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 import { irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
 
 // La transición entre actos (ADR 0108) es decorativa; con movimiento reducido no se monta.

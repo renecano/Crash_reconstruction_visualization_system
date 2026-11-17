@@ -93,3 +93,7 @@ docs/cesvi/ronda-2/ejemplos/
 
 # Todo lo del tráiler que no es código (videos, tomas del 3D, música y la referencia): nunca va a git.
 /trailer-salida/
+# Copias locales de lo que vive en Blob (el build de Unity de producción): nunca va a git.
+/.cache/
+# El build de Unity servido desde el sitio (demo local y plan B): lo copia tools/unity/visor-local.mjs.
+apps/web/public/visor-unity/local/

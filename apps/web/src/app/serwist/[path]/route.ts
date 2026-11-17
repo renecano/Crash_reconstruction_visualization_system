@@ -40,6 +40,9 @@ export const { dynamic, dynamicParams, revalidate, generateStaticParams, GET } =
       "public/decodificadores/**",
       "public/blender/**",
       "public/hdri/**",
+      // El build de Unity servido desde el sitio (demo local, plan B): unos 70 MB que Unity pide al
+      // abrir el 3D.
+      "public/visor-unity/local/**",
     ],
     // Rapier trae su WASM dentro de un trozo de JavaScript de más de 4 MB; el límite por omisión
     // (2 MiB) lo dejaría fuera y el horneado no funcionaría sin red.

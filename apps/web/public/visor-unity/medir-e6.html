@@ -113,6 +113,23 @@
         };
         var medir = async function (man) {
           var base = man.base + man.prefijo;
+          // Demo local y plan B: los modelos, del sitio y no de Blob (src/lib/visor-unity/modelos-locales.ts).
+          if (man.modelos && man.modelosEnBlob) {
+            var cambia = function (u) {
+              return typeof u === "string" && u.indexOf(man.modelosEnBlob) === 0
+                ? man.modelos + u.slice(man.modelosEnBlob.length)
+                : u;
+            };
+            var f0 = window.fetch.bind(window);
+            window.fetch = function (e, i) {
+              return f0(typeof e === "string" ? cambia(e) : e, i);
+            };
+            var a0 = XMLHttpRequest.prototype.open;
+            XMLHttpRequest.prototype.open = function (m, u) {
+              var resto = Array.prototype.slice.call(arguments, 2);
+              return a0.apply(this, [m, cambia(String(u))].concat(resto));
+            };
+          }
           var gl = document.createElement("canvas").getContext("webgl2");
           var ext = gl && gl.getExtension("WEBGL_debug_renderer_info");
           r.gpu = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : null;

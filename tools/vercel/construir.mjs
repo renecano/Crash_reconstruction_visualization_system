@@ -59,8 +59,14 @@ export const NUNCA_AL_SITIO = [
   /^(LICENSE|[A-Z-]+\.bat)$/,
 ];
 
-/** `tools/blender/croquis_render.py` sí va al sitio (se copia a `public/blender/`). */
-const EXCEPCIONES_AL_SITIO = [/^tools\/blender\/croquis_render\.py$/];
+/**
+ * Lo de `tools/` que sí va al sitio: el script de Blender (se copia a `public/blender/`) y el que
+ * prepara el visor de Unity desde el propio sitio (lo usa el build con el plan B).
+ */
+const EXCEPCIONES_AL_SITIO = [
+  /^tools\/blender\/croquis_render\.py$/,
+  /^tools\/unity\/visor-local\.mjs$/,
+];
 
 /**
  * Los archivos de `eval/results/` que nombra el código del sitio (la web, sus scripts y los paquetes),
@@ -87,7 +93,7 @@ export function resultadosQueLeeElSitio(raiz = RAIZ) {
     textos.push(readFileSync(join(raiz, "apps/web/next.config.ts"), "utf8"));
     const patrones = new Set();
     for (const t of textos)
-      for (const m of t.matchAll(/eval\/results\/([A-Za-z0-9_.*\/-]+)/g))
+      for (const m of t.matchAll(/eval\/results\/([A-Za-z0-9_.*/-]+)/g))
         patrones.add(m[1].replace(/[.)]+$/, ""));
     return [...patrones].map(
       (pt) =>

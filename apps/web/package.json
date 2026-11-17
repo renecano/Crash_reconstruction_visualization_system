@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "node scripts/build-worker.mjs && node scripts/maplibre-worker.mjs && node scripts/pdfjs-worker.mjs && node scripts/blender-script.mjs && node scripts/decodificadores.mjs && next dev",
-    "build": "node scripts/build-worker.mjs && node scripts/maplibre-worker.mjs && node scripts/pdfjs-worker.mjs && node scripts/blender-script.mjs && node scripts/decodificadores.mjs && node scripts/recursos.mjs preparar && next build && node scripts/css-check.mjs",
+    "build": "node scripts/build-worker.mjs && node scripts/maplibre-worker.mjs && node scripts/pdfjs-worker.mjs && node scripts/blender-script.mjs && node scripts/decodificadores.mjs && node scripts/recursos.mjs preparar && next build && node scripts/podar-estaticos.mjs && node scripts/css-check.mjs",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
