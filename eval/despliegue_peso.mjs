@@ -9,10 +9,19 @@
  *
  * Es una estimación del lado de lo que se sube: Vercel no publica el desglose por despliegue en el
  * plan Hobby, y su almacenamiento puede comprimir o deduplicar.
+ *
+ * Desde el 2026-11-17 (René) también dice:
+ * - lo que sumaría el plan B (el build de Unity y los modelos dentro del despliegue, sin Blob): la
+ *   copia de `public/visor-unity/local/` que deja `tools/unity/visor-local.mjs preparar` no cuenta en
+ *   el despliegue normal (git la ignora) y se reporta aparte;
+ * - cuántos merges a `main` de los últimos 30 días habrían desplegado con el «Ignored Build Step»
+ *   (`tools/vercel/construir.mjs`), comparando cada uno con el anterior.
  */
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
+import { execFileSync } from "node:child_process";
 import { CARPETAS_REMOTAS } from "../apps/web/scripts/recursos-hash.mjs";
+import { cambiosEntre, decidir } from "../tools/vercel/construir.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const WEB = join(ROOT, "apps/web");
@@ -46,9 +55,14 @@ if (!existsSync(join(WEB, ".next/BUILD_ID"))) {
 
 // public/ por carpeta de primer nivel; las remotas, por su ruta completa.
 const publico = {};
+// La copia local del build de Unity (demo local, plan B): git la ignora, no va en el despliegue normal.
+const VISOR_LOCAL = join(WEB, "public", "visor-unity", "local");
+const visorLocal = peso(VISOR_LOCAL);
 for (const n of readdirSync(join(WEB, "public"))) {
   const p = join(WEB, "public", n);
-  publico[n] = statSync(p).isDirectory() ? peso(p) : statSync(p).size;
+  publico[n] =
+    (statSync(p).isDirectory() ? peso(p) : statSync(p).size) -
+    (n === "visor-unity" ? visorLocal : 0);
 }
 const remotas = Object.fromEntries(CARPETAS_REMOTAS.map((c) => [c, peso(join(WEB, "public", c))]));
 
@@ -77,6 +91,24 @@ const remotoTotal = Object.values(remotas).reduce((a, b) => a + b, 0);
 const antes = publicoTotal + estaticos + funciones;
 const despues = antes - remotoTotal;
 
+// Los merges a main de los últimos 30 días y cuáles habrían desplegado con la regla nueva.
+const merges = execFileSync(
+  "git",
+  ["log", "origin/main", "--first-parent", "--since=30 days ago", "--format=%H"],
+  { cwd: ROOT, encoding: "utf8" },
+)
+  .split("\n")
+  .filter(Boolean);
+let conDespliegue = 0;
+let sinSaber = 0;
+for (const sha of merges) {
+  const cambiados = cambiosEntre(`${sha}^1`, sha);
+  if (cambiados === null) {
+    sinSaber++;
+    conDespliegue++;
+  } else if (decidir(cambiados).construir) conDespliegue++;
+}
+
 const r = {
   name: "despliegue_peso",
   descripcion:
@@ -99,6 +131,20 @@ const r = {
   despliegue_antes_mb: MB(antes),
   despliegue_despues_mb: MB(despues),
   ahorro_por_despliegue_pct: Math.round((remotoTotal / antes) * 1000) / 10,
+  plan_b: {
+    nota: "El build de Unity y los modelos dentro del despliegue, sin Blob (preparado, sin activar).",
+    build_unity_mb: MB(visorLocal),
+    carpetas_que_regresan_mb: MB(remotoTotal),
+    suma_al_despliegue_mb: MB(visorLocal + remotoTotal),
+    despliegue_con_plan_b_mb: MB(despues + visorLocal + remotoTotal),
+  },
+  merges_30_dias: {
+    nota: "Merges a main (primer padre) de los últimos 30 días, comparando cada uno con el anterior con tools/vercel/construir.mjs.",
+    total: merges.length,
+    habrian_desplegado: conDespliegue,
+    no_habrian_desplegado: merges.length - conDespliegue,
+    sin_poder_comparar: sinSaber,
+  },
 };
 writeFileSync(SALIDA, `${JSON.stringify(r, null, 1)}\n`);
 console.log(JSON.stringify(r, null, 1));

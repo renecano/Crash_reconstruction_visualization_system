@@ -14,11 +14,17 @@
  *   node tools/unity/publicar-web.mjs            # sube el build y escribe el manifiesto
  *   node tools/unity/publicar-web.mjs --podar    # además, dice qué builds viejos borraría
  *   node tools/unity/publicar-web.mjs --podar --si   # y los borra
+ *   node tools/unity/publicar-web.mjs --bajar <huella>  # copia ese build a .cache/visor-unity/<huella>
+ *
+ * **Bajar (René, 2026-11-17):** una sola copia local del build que sirve producción, para que ninguna
+ * prueba, medición ni la demo local vuelva a bajarlo de Blob (`tools/unity/visor-local.mjs`). Cuenta
+ * lo que bajó: cada byte es transferencia de Blob. Si la copia ya está completa, no baja nada.
  *
  * **Podar (U6):** en Blob se quedan solo dos builds: el que se acaba de subir y el que usa
  * producción (el del manifiesto de `origin/main`). Si son el mismo, también el anterior a él, para
  * poder regresar. Sin `--si` solo los lista: borrar no se deshace.
  */
+import { Buffer } from "node:buffer";
 import { createRequire } from "node:module";
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { extname, join, resolve } from "node:path";
@@ -100,6 +106,54 @@ if (iBorrar > 0) {
     for (let i = 0; i < urls.length; i += 100) await del(urls.slice(i, i + 100), { token });
     console.log(`Borré ${h}: ${urls.length} archivos.`);
   }
+  await new Promise((ok) => setTimeout(ok, 300));
+  process.exit(0);
+}
+
+const iBajar = process.argv.indexOf("--bajar");
+if (iBajar > 0) {
+  const h = process.argv[iBajar + 1] ?? "";
+  if (!/^[0-9a-f]{16}$/.test(h)) {
+    console.error("Uso: --bajar <huella de 16 caracteres>");
+    process.exit(1);
+  }
+  const prefijo = `recursos/visor-unity/${h}/`;
+  const destino = join(RAIZ, ".cache", "visor-unity", h);
+  const blobs = [];
+  let cursor;
+  do {
+    const l = await list({ prefix: prefijo, token, cursor, limit: 1000 });
+    blobs.push(...l.blobs);
+    cursor = l.hasMore ? l.cursor : undefined;
+  } while (cursor);
+  if (!blobs.length) {
+    console.error(`No hay archivos en ${prefijo}.`);
+    process.exit(1);
+  }
+  const { mkdirSync, statSync } = await import("node:fs");
+  const { dirname } = await import("node:path");
+  let bajados = 0;
+  let red = 0;
+  for (const b of blobs) {
+    const rel = b.pathname.slice(prefijo.length);
+    const local = join(destino, ...rel.split("/"));
+    if (existsSync(local) && statSync(local).size === b.size) continue;
+    mkdirSync(dirname(local), { recursive: true });
+    const r = await fetch(b.url);
+    if (!r.ok) throw new Error(`${r.status} al bajar ${rel}`);
+    const bytes = Buffer.from(await r.arrayBuffer());
+    if (bytes.length !== b.size)
+      throw new Error(`${rel}: ${bytes.length} bytes, se esperaban ${b.size}`);
+    writeFileSync(local, bytes);
+    bajados++;
+    // Lo que cobró Blob: el cuerpo tal como viajó (comprimido, si lo comprimió).
+    red += Number(r.headers.get("content-length") ?? bytes.length);
+  }
+  const total = blobs.reduce((t, b) => t + b.size, 0);
+  console.log(
+    `Copia de ${h} en ${destino}: ${blobs.length} archivos, ${(total / 2 ** 20).toFixed(1)} MiB. ` +
+      `Bajados ahora: ${bajados} (unos ${(red / 2 ** 20).toFixed(1)} MiB de transferencia de Blob).`,
+  );
   await new Promise((ok) => setTimeout(ok, 300));
   process.exit(0);
 }

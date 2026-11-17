@@ -1431,7 +1431,8 @@
   .tooltip-lab {
     position: fixed;
     z-index: 70;
-    max-width: 22rem;
+    /* Nunca más ancho que la ventana: en una ventana chica la ayuda se cortaba. */
+    max-width: min(22rem, calc(100vw - 16px));
     pointer-events: none;
     border-radius: 10px;
     background: var(--tip-fondo, #0b0d12);
@@ -1927,5 +1928,518 @@
     color: var(--superficie);
     font: 700 0.65rem/1 var(--fuente);
     vertical-align: 0.15em;
+  }
+}
+
+/* «El trazo»: la primera pantalla de un caso nuevo (ronda 2, A1; `TrazoInicio`). Una sola línea que
+   se dibuja y pasa por cinco viñetas. Solo anima `stroke-dashoffset`, `transform` y `opacity`. */
+@layer components {
+  .trazo-inicio {
+    /* El alto de las viñetas sigue al de la ventana: en una chica todo cabe sin desplazarse. */
+    --tz-alto: clamp(92px, 20vh, 184px);
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: clamp(14px, 3vh, 40px);
+  }
+  .trazo-inicio .tz-titular {
+    margin-top: 2px;
+    font-family: var(--fuente-titulo, var(--fuente));
+    font-size: clamp(2.25rem, 5.5vw, 5rem);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .trazo-inicio .tz-ruta {
+    position: relative;
+    margin-block: auto;
+  }
+  /* La línea sale de la pantalla por los dos lados, como la de la barra de arriba. */
+  .trazo-inicio .tz-linea {
+    position: absolute;
+    top: calc(var(--tz-alto) + 6px);
+    left: -28px;
+    width: calc(100% + 56px);
+    height: 40px;
+    overflow: visible;
+    transform-origin: 50% 0;
+  }
+  .trazo-inicio .tz-linea path {
+    fill: none;
+    stroke: var(--texto);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+  .trazo-inicio .tz-estaciones {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .trazo-inicio .tz-estaciones li {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: center;
+    padding-inline: 10px;
+    text-align: center;
+  }
+  .trazo-inicio .tz-vineta {
+    width: 100%;
+    max-width: calc(var(--tz-alto) * 1.125);
+    height: var(--tz-alto);
+    overflow: visible;
+  }
+  .trazo-inicio .tz-texto {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin-top: clamp(44px, 7vh, 64px);
+  }
+  .trazo-inicio .tz-quien[data-quien="croquis"] {
+    color: var(--senal-texto);
+  }
+  .trazo-inicio .tz-verbo {
+    font-family: var(--fuente-titulo, var(--fuente));
+    font-size: clamp(1.5rem, 2.3vw, 2.125rem);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+  }
+  .trazo-inicio .tz-que {
+    max-width: 24ch;
+    color: var(--texto-2);
+    font-size: var(--t-nota);
+    line-height: 1.4;
+  }
+  .trazo-inicio .tz-d {
+    fill: none;
+    stroke: var(--texto);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .trazo-inicio .tz-g {
+    fill: none;
+    stroke: color-mix(in srgb, var(--texto-3) 42%, transparent);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+  .trazo-inicio .tz-o {
+    fill: none;
+    stroke: var(--senal);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+  }
+  .trazo-inicio .tz-tray {
+    stroke-width: 5;
+    opacity: 0.8;
+  }
+  .trazo-inicio .tz-punto {
+    fill: var(--senal);
+  }
+  .trazo-inicio .tz-marca {
+    fill: color-mix(in srgb, var(--senal) 22%, transparent);
+  }
+  .trazo-inicio .tz-a {
+    stroke: var(--vehiculo-a);
+  }
+  .trazo-inicio .tz-b {
+    stroke: var(--vehiculo-b);
+  }
+  .trazo-inicio .tz-fantasma {
+    stroke: color-mix(in srgb, var(--texto-3) 42%, transparent);
+  }
+  .trazo-inicio .tz-lleno {
+    fill: var(--fondo);
+  }
+  .trazo-inicio .tz-reporte {
+    stroke-dasharray: 3 4;
+  }
+  .trazo-inicio .tz-unidad {
+    fill: var(--texto);
+    font-family: var(--fuente-titulo, var(--fuente));
+    font-size: 64px;
+    font-style: italic;
+    letter-spacing: -0.03em;
+  }
+  .trazo-inicio .tz-rotulo {
+    fill: var(--texto-3);
+    font-family: var(--fuente-mono);
+    font-size: 10.5px;
+  }
+  .trazo-inicio .tz-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 14px;
+    /* Siempre a la vista, también si la lista se desplaza en un teléfono. */
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+    padding-block: 10px 2px;
+    background: var(--fondo);
+  }
+  .trazo-inicio .tz-empezar {
+    min-height: 56px;
+    padding-inline: 30px;
+    font-size: 1.0625rem;
+  }
+  .trazo-inicio .tz-abrir {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    padding-inline: 8px;
+    border-radius: var(--radio-control);
+    color: var(--texto-2);
+    font-size: var(--t-interfaz);
+    text-decoration: underline;
+    text-decoration-color: var(--linea);
+    text-underline-offset: 4px;
+  }
+  .trazo-inicio .tz-abrir:hover {
+    color: var(--texto);
+  }
+  .trazo-inicio .tz-abrir:focus-within {
+    outline: 2px solid var(--foco);
+    outline-offset: 2px;
+  }
+  .trazo-inicio[data-animar="si"] .tz-linea path {
+    animation: tz-trazo 2.6s cubic-bezier(0.6, 0.05, 0.3, 1) var(--tz-retraso, 0ms) both;
+  }
+  /* Al empezar, el trazo se recoge hacia la barra de arriba, que es la misma línea. */
+  .trazo-inicio[data-saliendo="si"] .tz-linea {
+    opacity: 0;
+    transform: translateY(-46vh) scaleY(0.2);
+    transition:
+      transform 260ms cubic-bezier(0.7, 0, 0.2, 1),
+      opacity 260ms ease-in;
+  }
+  .trazo-inicio[data-saliendo="si"] .tz-estaciones,
+  .trazo-inicio[data-saliendo="si"] .tz-titular {
+    opacity: 0.35;
+    transition: opacity 200ms ease-out;
+  }
+  @keyframes tz-trazo {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  /* En pantallas angostas las estaciones van en lista, cada una con su viñeta al lado. */
+  @media (max-width: 759px) {
+    .trazo-inicio .tz-ruta {
+      margin-block: 0;
+    }
+    .trazo-inicio .tz-linea {
+      display: none;
+    }
+    .trazo-inicio .tz-estaciones {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+    }
+    .trazo-inicio .tz-estaciones li {
+      flex-direction: row;
+      gap: 14px;
+      padding-inline: 0;
+      text-align: left;
+    }
+    .trazo-inicio .tz-vineta {
+      width: 72px;
+      max-width: none;
+      height: 64px;
+      flex: none;
+    }
+    .trazo-inicio .tz-texto {
+      align-items: flex-start;
+      margin-top: 0;
+    }
+    .trazo-inicio .tz-que {
+      max-width: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .trazo-inicio .tz-linea path {
+      animation: none !important;
+    }
+    .trazo-inicio .tz-linea,
+    .trazo-inicio .tz-estaciones,
+    .trazo-inicio .tz-titular {
+      transition: none !important;
+    }
+  }
+}
+
+/* La nube de puntos de las simulaciones (ronda 2, A6; `NubeSimulaciones`). */
+@layer components {
+  .nube-simulaciones .nube-punto {
+    display: block;
+    width: min(8px, 100%);
+    aspect-ratio: 1;
+    flex: none;
+    border-radius: 999px;
+    background: var(--texto);
+    animation: nube-cae 420ms cubic-bezier(0.2, 0.8, 0.2, 1) calc(var(--i, 0) * 9ms) both;
+  }
+  .nube-simulaciones .nube-punto[data-en-rango="no"] {
+    background: color-mix(in srgb, var(--texto-3) 55%, transparent);
+  }
+  .nube-simulaciones .nube-corchete {
+    height: 7px;
+    border: 1.5px solid var(--texto);
+    border-top: 0;
+  }
+  @keyframes nube-cae {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nube-simulaciones .nube-punto {
+      animation: none;
+    }
+  }
+}
+
+/* «La incógnita»: el croquis del planteamiento antes de reconstruir (ronda 2, A6). */
+@layer components {
+  .planteamiento .pl-calle {
+    fill: none;
+    stroke: var(--superficie);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .planteamiento .pl-llegada {
+    fill: none;
+    stroke: var(--texto-3);
+    stroke-width: 1.6;
+    stroke-dasharray: 3 8;
+    stroke-linecap: round;
+  }
+  .planteamiento .pl-punta {
+    fill: var(--texto-3);
+  }
+  .planteamiento .pl-incognita {
+    fill: var(--texto);
+    font-family: var(--fuente-titulo, var(--fuente));
+    font-size: 2rem;
+    font-style: italic;
+    paint-order: stroke;
+    stroke: var(--fondo);
+    stroke-width: 6px;
+    stroke-linejoin: round;
+  }
+  .planteamiento .pl-anillo {
+    fill: none;
+    stroke: var(--senal);
+    stroke-width: 2;
+  }
+  .planteamiento .pl-punto {
+    fill: var(--senal);
+  }
+  .planteamiento .pl-vehiculo {
+    fill: var(--superficie);
+    stroke: var(--texto);
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+  }
+  .planteamiento .pl-letra {
+    fill: var(--texto);
+    font-family: var(--fuente-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  .planteamiento .pl-guia {
+    fill: none;
+    stroke: var(--texto-2);
+    stroke-width: 0.9;
+  }
+  .planteamiento .pl-guia-senal {
+    stroke: var(--senal);
+  }
+  .planteamiento .pl-etiqueta {
+    fill: var(--texto);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+  .planteamiento .pl-etiqueta-senal {
+    fill: var(--senal-texto);
+  }
+  .planteamiento .pl-origen {
+    fill: var(--texto-3);
+    font-family: var(--fuente-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.09em;
+  }
+  .planteamiento .pl-escala {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: var(--radio-control);
+    background: var(--superficie);
+    font-family: var(--fuente-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+  }
+  .planteamiento .pl-barra {
+    display: block;
+    height: 6px;
+    border: 1.5px solid var(--texto);
+    border-top: 0;
+  }
+  /* El signo late mientras se calcula; quieto con movimiento reducido. */
+  .incognita-signo[data-calculando="si"] {
+    animation: incognita-late 1.1s ease-in-out infinite;
+  }
+  @keyframes incognita-late {
+    50% {
+      opacity: 0.35;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .incognita-signo[data-calculando="si"] {
+      animation: none;
+    }
+  }
+}
+
+/* El selector «Cámara» del 3D y el interruptor «Mapa» del 2D (ronda 2, A6). */
+@layer components {
+  .selector-camaras .sc-boton {
+    display: inline-flex;
+    min-height: 34px;
+    align-items: center;
+    gap: 6px;
+    padding: 0 12px;
+    border-radius: 999px;
+    color: var(--texto-2);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .selector-camaras .sc-boton:hover {
+    color: var(--texto);
+  }
+  .selector-camaras .sc-boton[aria-pressed="true"] {
+    background: var(--texto);
+    color: var(--superficie);
+    font-weight: 600;
+  }
+  .selector-camaras .sc-vehiculo {
+    border: 1px solid var(--linea);
+  }
+  .selector-camaras .sc-separador {
+    width: 1px;
+    height: 20px;
+    margin-inline: 4px;
+    background: var(--linea);
+  }
+  .selector-camaras .sc-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 20;
+    display: flex;
+    min-width: 232px;
+    flex-direction: column;
+    padding: 6px;
+    border-radius: 14px;
+    background: var(--superficie);
+    box-shadow: 0 16px 40px rgba(27, 34, 48, 0.2);
+  }
+  .selector-camaras .sc-menu > button {
+    min-height: 40px;
+    padding: 0 12px;
+    border-radius: 9px;
+    color: var(--texto);
+    font-size: 0.875rem;
+    text-align: left;
+  }
+  .selector-camaras .sc-menu > button:hover,
+  .selector-camaras .sc-menu > button[aria-checked="true"] {
+    background: var(--superficie-alta);
+  }
+  .selector-camaras .sc-menu > button[aria-checked="true"] {
+    font-weight: 600;
+  }
+  .interruptor {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 10px;
+    padding: 0 6px;
+    border-radius: var(--radio-control);
+    font-size: var(--t-interfaz);
+    font-weight: 500;
+  }
+  .interruptor::before {
+    content: "";
+    width: 38px;
+    height: 22px;
+    border-radius: 999px;
+    background:
+      radial-gradient(circle at 11px 11px, var(--superficie) 0 8px, transparent 8.5px),
+      var(--texto-3);
+    transition: background-position var(--transicion);
+  }
+  .interruptor[aria-checked="true"]::before {
+    background:
+      radial-gradient(circle at 27px 11px, var(--superficie) 0 8px, transparent 8.5px), var(--texto);
+  }
+}
+
+/* Las narraciones de ejemplo, cada una con lo que muestra (ronda 2, C). */
+@layer components {
+  .lista-ejemplos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .lista-ejemplos button {
+    display: flex;
+    width: 100%;
+    min-height: 60px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    padding: 10px 14px;
+    border: 1px solid var(--linea);
+    border-radius: var(--radio-control);
+    background: var(--superficie);
+    text-align: left;
+  }
+  .lista-ejemplos button:hover {
+    border-color: var(--texto-3);
+  }
+  .lista-ejemplos button[aria-pressed="true"] {
+    border-color: var(--texto);
+    box-shadow: inset 0 0 0 1px var(--texto);
+  }
+  .lista-ejemplos b {
+    font-size: var(--t-interfaz);
+    font-weight: 600;
+  }
+  .lista-ejemplos span {
+    color: var(--texto-2);
+    font-size: var(--t-nota);
   }
 }

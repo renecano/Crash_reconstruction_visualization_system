@@ -14,15 +14,13 @@ import type { ReactNode } from "react";
 import {
   frasePercentil,
   histograma,
-  marcasDelEje,
   protagonista,
-  posEnHistograma,
   rangoDeVelocidad,
   sinDispersion,
-  textoBarra,
 } from "@/lib/reconstruccion-lab";
 import { METODO } from "@/lib/textos-caso";
-import { Crece, Cuenta } from "../movimiento";
+import { Cuenta } from "../movimiento";
+import { NubeSimulaciones } from "./nube-simulaciones";
 
 export function CifraReconstruccion({
   r,
@@ -41,9 +39,6 @@ export function CifraReconstruccion({
   const i = v?.impacto ?? null;
   const mejor = v?.previa?.mejor;
   const barras = histograma(i?.valores ?? [], i?.p10, i?.p90, mejor);
-  const posMejor = mejor === undefined ? null : posEnHistograma(barras, mejor);
-  const marcas = marcasDelEje(barras);
-  const tope = Math.max(1, ...barras.map((b) => b.n));
   const muestras = i?.valores?.length ?? 0;
   const otras = r.velocidades.filter((x) => x.vehiculo !== v?.vehiculo);
   const n = r.evidencia.length;
@@ -51,8 +46,6 @@ export function CifraReconstruccion({
   const rango = v ? rangoDeVelocidad(v) : null;
   // Si el rango es el lineal, va centrado en el mejor ajuste y no lo deja fuera.
   const fuera = rango && !rango.lineal ? mejorFueraDelRango(v?.previa) : null;
-  const ini = barras[0]?.desde ?? 0;
-  const anchoEje = barras.length ? barras.length : 1;
   return (
     <section className="flex flex-col gap-3" data-testid="cifra-reconstruccion">
       <div className="flex items-center justify-end gap-3">
@@ -112,74 +105,25 @@ export function CifraReconstruccion({
                 : " No hay un rango que dar."}
             </p>
           ) : null}
-          {/* W4b: el reparto de las simulaciones no lo lee el perito a primera vista; se pliega. */}
+          {/* A6 (ronda 2): la nube de puntos va a la vista; cada punto es una simulación real. */}
+          {quieta || !barras.length ? null : (
+            <NubeSimulaciones
+              barras={barras}
+              muestras={muestras}
+              mejor={mejor}
+              p10={i?.p10}
+              p90={i?.p90}
+            />
+          )}
+          {/* Los percentiles y la mediana siguen plegados (W4b). */}
           <details className="group" data-testid="detalle-cifra">
             <summary
               className="t-nota cursor-pointer py-1 font-medium text-texto"
               data-testid="ver-detalle-cifra"
             >
-              Cómo se reparten las simulaciones
+              Los percentiles de las simulaciones
             </summary>
             <div className="flex flex-col gap-3 pt-2">
-              {quieta ? null : barras.length ? (
-                <div className="flex flex-col gap-1" data-testid="histograma">
-                  <span className="t-nota flex items-center gap-1.5">
-                    <span>Las {muestras} simulaciones, al contacto ·</span>
-                    <span className="inline-block h-3 w-0.5 bg-senal" aria-hidden="true" />
-                    <span>mejor ajuste</span>
-                  </span>
-                  <div className="relative h-16">
-                    <div
-                      className="flex h-full items-end gap-px"
-                      role="list"
-                      aria-label="Histograma"
-                    >
-                      {barras.map((b, k) => (
-                        <button
-                          key={b.desde}
-                          type="button"
-                          role="listitem"
-                          className="h-full min-w-0 flex-1 cursor-default bg-transparent p-0"
-                          aria-label={textoBarra(b)}
-                          data-tip={textoBarra(b)}
-                          data-en-rango={b.enRango ? "si" : "no"}
-                        >
-                          <Crece
-                            i={k}
-                            className={`block w-full ${b.enRango ? "bg-texto" : "bg-linea"}`}
-                            style={{
-                              height: `${(b.n / tope) * 100}%`,
-                              marginTop: `${(1 - b.n / tope) * 4}rem`,
-                            }}
-                          />
-                        </button>
-                      ))}
-                    </div>
-                    {posMejor !== null ? (
-                      <span
-                        className="absolute inset-y-0 z-10 flex w-2.5 -translate-x-1/2 justify-center"
-                        style={{ left: `${posMejor}%` }}
-                        tabIndex={0}
-                        data-tip={`Mejor ajuste: ${F.kmhConUnidad(mejor, "reconstruccion")}`}
-                        data-testid="marca-mejor-ajuste"
-                      >
-                        <span className="h-full w-0.5 bg-senal" />
-                      </span>
-                    ) : null}
-                  </div>
-                  <div className="relative h-4 border-t border-linea font-mono text-[0.6875rem] text-texto-3">
-                    {marcas.map((m) => (
-                      <span
-                        key={m}
-                        className="absolute top-0.5 -translate-x-1/2"
-                        style={{ left: `${((m - ini) / anchoEje) * 100}%` }}
-                      >
-                        {m}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
               <div
                 className={quieta ? "hidden" : "grid grid-cols-3 gap-2"}
                 data-testid="percentiles"

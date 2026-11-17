@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 import { colocarTodo, irAPaso } from "./ayuda-recorrido";
 
 // Como en los demás flujos: la transición entre actos es decorativa y compite con el 3D en CI.
@@ -115,6 +115,11 @@ test("@flujo /cesvi: si Claude no está disponible, el perito lee por qué y con
   await page.getByTestId("ejemplo-narracion").click();
   const narracion = page.getByTestId("narracion");
   await expect(narracion).toHaveValue(/vehículo A, marca VW, tipo Jetta/);
+  // Un ejemplo sin cambios usa su lectura guardada y no llama a Claude (ronda 2, C): con una frase
+  // más ya es la narración del perito, y se manda a leer.
+  await narracion.fill(
+    `${await narracion.inputValue()} El vehículo A circulaba con las luces encendidas.`,
+  );
   await page.getByTestId("leer-narracion").click();
   await expect(
     page.getByTestId("panel-paso").getByRole("status").filter({ hasText: "No se pudo leer" }),

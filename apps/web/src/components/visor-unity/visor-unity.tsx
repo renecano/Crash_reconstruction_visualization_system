@@ -33,6 +33,7 @@ import {
   type Intervalo,
 } from "@/lib/visor-unity/reproduccion";
 import { BarraReproduccion } from "./barra-reproduccion";
+import { SelectorCamaras } from "./selector-camaras";
 
 /** Lo que el visor Unity le ofrece al caso: las fotos del dictamen y el paquete que tiene cargado. */
 export interface ApiVisorUnity {
@@ -62,50 +63,6 @@ const TEXTO_RESPALDO: Record<MotivoRespaldo, string> = {
   version_puente: "El visor publicado es de otra versión",
   dispositivo_perdido: "La tarjeta de video se reinició",
 };
-
-/**
- * El selector de cámara del 3D (René, 2026-11-16, A6): las generales y, por vehículo y por persona,
- * las suyas, a un clic. Funcional; su diseño final es de la pantalla de Reconstrucción (Fable).
- */
-function SelectorCamara({
-  camaras,
-  elegida,
-  onElegir,
-}: {
-  camaras: readonly CamaraDelCaso[];
-  elegida: string | null;
-  onElegir: (c: CamaraDelCaso) => void;
-}) {
-  const grupos = new Map<string, CamaraDelCaso[]>();
-  for (const c of camaras) grupos.set(c.grupoNombre, [...(grupos.get(c.grupoNombre) ?? []), c]);
-  return (
-    <label className="vidrio absolute top-3 left-3 z-10 flex items-center gap-2 rounded-control px-3 py-1.5 text-[0.8125rem]">
-      <span className="font-medium">Cámara</span>
-      <select
-        className="bg-transparent font-medium"
-        value={camaras.some((c) => c.modo === elegida) ? (elegida ?? "") : ""}
-        onChange={(e) => {
-          const c = camaras.find((x) => x.modo === e.target.value);
-          if (c) onElegir(c);
-        }}
-        data-testid="selector-camara"
-      >
-        <option value="" disabled>
-          Elige una cámara
-        </option>
-        {[...grupos].map(([g, cs]) => (
-          <optgroup key={g} label={g}>
-            {cs.map((c) => (
-              <option key={c.modo} value={c.modo}>
-                {c.nombre}
-              </option>
-            ))}
-          </optgroup>
-        ))}
-      </select>
-    </label>
-  );
-}
 
 /**
  * El aviso mientras carga, con el avance real (René, 2026-11-16): la primera vez, la descarga del
@@ -413,7 +370,11 @@ export function VisorUnity({
       />
       {/* Sin la barra al presentar (el instante lo pone el capítulo) y al editar en 3D. */}
       {listo && camaras.length && !tiempo && !edicion?.on ? (
-        <SelectorCamara camaras={camaras} elegida={elegida?.modo ?? null} onElegir={elegirCamara} />
+        <SelectorCamaras
+          camaras={camaras}
+          elegida={elegida?.modo ?? null}
+          onElegir={elegirCamara}
+        />
       ) : null}
       {listo && intervalo && !tiempo && !edicion?.on ? (
         <BarraReproduccion

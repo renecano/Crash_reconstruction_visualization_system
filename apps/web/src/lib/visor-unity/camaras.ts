@@ -19,6 +19,18 @@ const AZIMUT_CARA: Record<string, number> = {
 
 const n = (x: number) => Number(x.toFixed(2));
 
+/**
+ * «Detrás de A», siguiéndolo. La distancia y la altura crecen con el largo del vehículo: con las de
+ * un sedán, detrás de una camioneta la cámara quedaba pegada a su techo (ronda 2, A6: «Detrás de C»).
+ * Un sedán de 4.5 m conserva los 8 m y 2.6 m de siempre.
+ */
+export function camaraDetras(resId: string, largoM = 4.5): CamaraVisor {
+  const distancia = Math.max(DETRAS.distancia, (DETRAS.distancia * largoM) / 4.5);
+  // La misma proporción de siempre, y 0.3 m más arriba por cada metro extra de largo.
+  const altura = (DETRAS.altura * distancia) / DETRAS.distancia + 0.3 * Math.max(0, largoM - 4.5);
+  return `cerca:${resId}:${DETRAS.azimut}:${n(distancia)}:${n(altura)}`;
+}
+
 export function camaraUnity(pedida: string | null | undefined): CamaraVisor {
   if (!pedida) return "cinematica";
   if (pedida === "libre" || pedida === "orbita") return "orbita";
@@ -105,7 +117,7 @@ export function camarasDelCaso(
   ];
   const porVehiculo = vehiculos.flatMap((v): CamaraDelCaso[] => [
     {
-      modo: camaraUnity(`detras-${v.resId}`),
+      modo: camaraDetras(v.resId, v.largoM),
       nombre: `Detrás de ${v.nombre}`,
       grupo: "vehiculo",
       grupoNombre: v.nombre,

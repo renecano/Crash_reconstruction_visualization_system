@@ -1,0 +1,34 @@
+{
+  "descripcion": "El pulso del tráiler: una sola rejilla para la imagen y la música (storyboard versión 2, aprobado por René el 2026-11-16). 120 pulsos por minuto: un pulso dura medio segundo, así que todo corte cae en un múltiplo de 0.5 s; los más rápidos, en un sexto de pulso (5 cuadros exactos a 30 por segundo). Los tiempos van en segundos.",
+  "pulsos_por_minuto": 120,
+  "cuadros_por_segundo": 30,
+  "duracion": 28,
+  "tramos": [
+    { "clave": "trazo", "desde": 0, "hasta": 5, "nota": "El trazo que se vuelve calle" },
+    { "clave": "impacto", "desde": 5, "hasta": 9, "nota": "El impacto congela el tiempo" },
+    { "clave": "evidencia", "desde": 9, "hasta": 13, "nota": "Cada choque deja evidencia" },
+    {
+      "clave": "trayectorias",
+      "desde": 13,
+      "hasta": 18,
+      "nota": "Cientos de trayectorias; solo una cabe"
+    },
+    {
+      "clave": "frases",
+      "desde": 18,
+      "hasta": 23.5,
+      "nota": "La IA lee. La física decide. El perito firma."
+    },
+    { "clave": "logo", "desde": 23.5, "hasta": 28, "nota": "Un golpe, silencio, y CROQUIS" }
+  ],
+  "momentos": {
+    "latidos": [1, 2, 3, 4, 5, 5.5, 6, 6.5, 7, 7.166666666666667, 7.333333333333333],
+    "contacto": 7.5,
+    "piezas_de_evidencia": [9.5, 10, 10.5, 11, 11.5, 12],
+    "la_que_cabe": 15.5,
+    "del_papel_al_3d": 16,
+    "frases": [18, 19.5, 21],
+    "corte_a_silencio": 23,
+    "golpe_final": 23.5
+  }
+}

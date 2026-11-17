@@ -13,7 +13,8 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { expect, test, type Page } from "@playwright/test";
+import { type Page } from "@playwright/test";
+import { expect, test } from "./base";
 import { colocarTodo, irAPaso } from "./ayuda-recorrido";
 
 const ROOT = resolve(__dirname, "../../..");

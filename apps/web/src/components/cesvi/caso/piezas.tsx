@@ -33,6 +33,8 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState, type ComponentProps } from "react";
 import { contornoVehiculo } from "@/lib/colocar";
 import { interpretarLugar } from "@/lib/lugar-texto";
+import type { Canal } from "@/lib/canal";
+import { tomarMapa, type MapaPrestado } from "@/lib/mapa-compartido";
 import { ESTILO_MAPA, ESTILO_MAPA_CLARO, marcador } from "../mapa-comun";
 import { ColocarMapa } from "./colocar-mapa";
 import type { MarcaImpacto, PosicionMovil } from "./reconstruccion";
@@ -75,6 +77,31 @@ function claseVehiculo(id: string): string {
 export type HerramientaMapa = "colocar" | "mover" | "medir";
 
 /** La huella de un vehículo colocado: su contorno visto desde arriba, en su color. */
+/** El marcador de un vehículo en un instante de la reconstrucción: su flecha lleva el rumbo. */
+function marcaMovil(p: PosicionMovil, MarkerCls: typeof Marker): Marker {
+  // MapLibre posiciona el marcador con `transform`: el rumbo va en un elemento interior.
+  // El color es el del vehículo, como en las posiciones colocadas.
+  const el = marcador("", `punto-mapa${claseVehiculo(p.vehiculo)}`);
+  if (p.declarada) {
+    // T6.2: la versión declarada (R7), hueca y punteada sobre la reconstruida.
+    el.title = `${p.vehiculo} en la versión declarada`;
+    el.dataset.movilDeclarado = p.vehiculo;
+    el.style.opacity = "0.6";
+    el.style.outline = "2px dashed currentColor";
+    el.style.outlineOffset = "2px";
+  } else {
+    el.title = `${p.vehiculo} en la reconstrucción`;
+    el.dataset.movil = p.vehiculo;
+  }
+  el.style.pointerEvents = "none";
+  const flecha = document.createElement("span");
+  flecha.textContent = "▲";
+  flecha.style.display = "inline-block";
+  flecha.style.transform = `rotate(${p.rumbo}deg)`;
+  el.appendChild(flecha);
+  return new MarkerCls({ element: el }).setLngLat([p.punto.lon, p.punto.lat]);
+}
+
 export interface HuellaMapa {
   vehiculo: string;
   fase: string;
@@ -85,6 +112,8 @@ export interface HuellaMapa {
   color: string;
   /** La clase, para dibujar su silueta (B); sin ella, un rectángulo. */
   clase?: string;
+  /** De dónde salió la posición (el perito, la narración o un supuesto): la dice el planteamiento. */
+  fuente?: string;
 }
 
 /** Largo de la flecha del rumbo sobre el mapa (m): se arrastra su punta para girar. */
@@ -177,6 +206,7 @@ function dibujarCroquis(
 export function MapaEscena({
   posiciones,
   moviles = [],
+  canalMoviles = null,
   impactos = [],
   onClic,
   onMapa,
@@ -196,6 +226,8 @@ export function MapaEscena({
   posiciones: { vehiculo: Id; fase: string; punto: { lat: number; lon: number } }[];
   /** Los vehículos en el instante del 3D (el croquis sigue al reloj de la reconstrucción). */
   moviles?: PosicionMovil[];
+  /** Las posiciones en cada instante, por canal (la barra de reproducción sobre el mapa; A6). */
+  canalMoviles?: Canal<PosicionMovil[]> | null;
   /** Los impactos de la reconstrucción, en orden: X1, X2… (R6). */
   impactos?: MarcaImpacto[];
   onClic: (p: { lat: number; lon: number }) => void;
@@ -258,39 +290,39 @@ export function MapaEscena({
   }, [onClic, onMapa, onFlecha, onMedida, herramienta, huellas, flecha]);
   useEffect(() => {
     let vivo = true;
-    let instancia: MapaMl | null = null;
-    void import("maplibre-gl").then(({ Map, getVersion, setWorkerUrl }) => {
-      if (!vivo || !contenedor.current) return;
-      setWorkerUrl(`/maplibre/worker-${getVersion()}.mjs`);
-      instancia = new Map({
-        container: contenedor.current,
-        style: estiloInicial.current,
-        center: [-99.13, 19.43],
-        zoom: 11,
-        attributionControl: false,
-      });
-      instancia.on("click", (e) => {
-        // Con Espacio sostenido el clic solo termina de mover el mapa.
-        if (espacio.current) return;
-        if (modo.current === "colocar") clic.current({ lat: e.lngLat.lat, lon: e.lngLat.lng });
-        else if (modo.current === "medir") {
-          const ps = medicion.current.length >= 2 ? [] : medicion.current;
-          medicion.current = [...ps, [e.lngLat.lng, e.lngLat.lat]];
-          if (medicion.current.length === 2) {
-            const d = distanciaM(medicion.current[0]!, medicion.current[1]!);
-            setMedidaM(d);
-            medida.current?.(d);
-          } else setMedidaM(null);
-          dibujarCroquis(
-            mapa.current,
-            datos.current.huellas,
-            datos.current.flecha,
-            medicion.current,
-          );
+    let prestado: MapaPrestado | null = null;
+    if (!contenedor.current) return undefined;
+    // El mapa es uno solo para todo el caso (`mapa-compartido`): aquí se toma prestado.
+    void tomarMapa(
+      contenedor.current,
+      { style: estiloInicial.current, center: [-99.13, 19.43], zoom: 11, girar: true },
+      (p) => {
+        prestado = p;
+        if (!vivo) {
+          p.soltar();
+          return;
         }
-      });
-      instancia.on("load", () => {
-        if (!vivo || !instancia) return;
+        const instancia = p.mapa;
+        p.oir("click", (e) => {
+          // Con Espacio sostenido el clic solo termina de mover el mapa.
+          if (espacio.current) return;
+          if (modo.current === "colocar") clic.current({ lat: e.lngLat.lat, lon: e.lngLat.lng });
+          else if (modo.current === "medir") {
+            const ps = medicion.current.length >= 2 ? [] : medicion.current;
+            medicion.current = [...ps, [e.lngLat.lng, e.lngLat.lat]];
+            if (medicion.current.length === 2) {
+              const d = distanciaM(medicion.current[0]!, medicion.current[1]!);
+              setMedidaM(d);
+              medida.current?.(d);
+            } else setMedidaM(null);
+            dibujarCroquis(
+              mapa.current,
+              datos.current.huellas,
+              datos.current.flecha,
+              medicion.current,
+            );
+          }
+        });
         // Abre en el caso: sus posiciones, o sus coordenadas; si no hay ninguna, se busca.
         const { posiciones: ps, inicio: i0 } = arranque.current;
         if (ps.length) {
@@ -301,7 +333,7 @@ export function MapaEscena({
               [Math.min(...lons), Math.min(...lats)],
               [Math.max(...lons), Math.max(...lats)],
             ],
-            { padding: 80, maxZoom: 19, animate: false },
+            { padding: 80, maxZoom: 20.5, animate: false },
           );
         } else if (i0) instancia.jumpTo({ center: [i0.lon, i0.lat], zoom: 17 });
         else setBuscar(true);
@@ -309,12 +341,18 @@ export function MapaEscena({
         avisar.current?.(instancia);
         setInstancia(instancia);
         setListo(true);
-      });
-    });
+      },
+      () => vivo,
+    );
     return () => {
       vivo = false;
       avisar.current?.(null);
-      instancia?.remove();
+      // Lo que se puso encima se quita antes de devolverlo.
+      for (const x of [...marcas.current, ...marcasMoviles.current, ...marcasImpacto.current])
+        x.remove();
+      punta.current?.remove();
+      if (mapa.current) mapa.current.getCanvas().style.cursor = "";
+      prestado?.soltar();
       mapa.current = null;
     };
   }, []);
@@ -444,7 +482,7 @@ export function MapaEscena({
           [Math.min(...lons), Math.min(...lats)],
           [Math.max(...lons), Math.max(...lats)],
         ],
-        { padding: 80, maxZoom: 19, animate: false },
+        { padding: 80, maxZoom: 20.5, animate: false },
       );
       encuadrado.current = true;
     };
@@ -458,31 +496,50 @@ export function MapaEscena({
     if (!m || !listo) return;
     void import("maplibre-gl").then(({ Marker }) => {
       for (const x of marcasMoviles.current) x.remove();
-      marcasMoviles.current = moviles.map((p) => {
-        // MapLibre posiciona el marcador con `transform`: el rumbo va en un elemento interior.
-        // El color es el del vehículo, como en las posiciones colocadas.
-        const el = marcador("", `punto-mapa${claseVehiculo(p.vehiculo)}`);
-        if (p.declarada) {
-          // T6.2: la versión declarada (R7), hueca y punteada sobre la reconstruida.
-          el.title = `${p.vehiculo} en la versión declarada`;
-          el.dataset.movilDeclarado = p.vehiculo;
-          el.style.opacity = "0.6";
-          el.style.outline = "2px dashed currentColor";
-          el.style.outlineOffset = "2px";
-        } else {
-          el.title = `${p.vehiculo} en la reconstrucción`;
-          el.dataset.movil = p.vehiculo;
-        }
-        el.style.pointerEvents = "none";
-        const flecha = document.createElement("span");
-        flecha.textContent = "▲";
-        flecha.style.display = "inline-block";
-        flecha.style.transform = `rotate(${p.rumbo}deg)`;
-        el.appendChild(flecha);
-        return new Marker({ element: el }).setLngLat([p.punto.lon, p.punto.lat]).addTo(m);
-      });
+      marcasMoviles.current = moviles.map((p) => marcaMovil(p, Marker).addTo(m));
     });
   }, [moviles, listo]);
+  // A6: con la barra de reproducción sobre el mapa, las posiciones llegan por un canal y los
+  // marcadores se mueven aquí mismo, sin volver a dibujar la página en cada cuadro.
+  useEffect(() => {
+    const m = mapa.current;
+    if (!m || !listo || !canalMoviles) return undefined;
+    let vivo = true;
+    let marcas: { clave: string; mk: Marker }[] = [];
+    let MarkerCls: typeof Marker | null = null;
+    let pendiente: PosicionMovil[] | null = null;
+    const claveDe = (p: PosicionMovil) => `${p.vehiculo}${p.declarada ? "*" : ""}`;
+    const pintar = (ps: PosicionMovil[]) => {
+      if (!MarkerCls) {
+        pendiente = ps;
+        return;
+      }
+      const iguales =
+        ps.length === marcas.length && ps.every((p, k) => marcas[k]!.clave === claveDe(p));
+      if (!iguales) {
+        for (const x of marcas) x.mk.remove();
+        marcas = ps.map((p) => ({ clave: claveDe(p), mk: marcaMovil(p, MarkerCls!).addTo(m) }));
+        return;
+      }
+      ps.forEach((p, k) => {
+        const mk = marcas[k]!.mk;
+        mk.setLngLat([p.punto.lon, p.punto.lat]);
+        const flecha = mk.getElement().firstElementChild as HTMLElement | null;
+        if (flecha) flecha.style.transform = `rotate(${p.rumbo}deg)`;
+      });
+    };
+    void import("maplibre-gl").then(({ Marker: M }) => {
+      if (!vivo) return;
+      MarkerCls = M;
+      if (pendiente) pintar(pendiente);
+    });
+    const dejar = canalMoviles.oir(pintar);
+    return () => {
+      vivo = false;
+      dejar();
+      for (const x of marcas) x.mk.remove();
+    };
+  }, [canalMoviles, listo]);
   useEffect(() => {
     const m = mapa.current;
     if (!m || !listo) return;

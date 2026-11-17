@@ -2,6 +2,7 @@
 // habla el puente (packages/scene-schema/visor-puente.md) sin WebGL ni 70 MB de descarga. Contesta
 // `listo`, `cargado` y `captura` (un PNG de un color por vista), guarda lo que recibe en
 // `window.__unityFalso.recibidos` y deja que la prueba mande mensajes con `__unityFalso.decir`.
+// También se queda con el teclado de la página, como el Unity real (`__unityFalso.teclas`).
 // La versión del puente la pone la prueba en `window.__unityFalsoVersion`.
 (function () {
   var decir = function (m) {
@@ -18,9 +19,19 @@
     g.fillRect(0, 0, c.width, c.height);
     return c.toDataURL("image/png").slice("data:image/png;base64,".length);
   };
-  window.__unityFalso = { recibidos: [], decir: decir };
+  window.__unityFalso = { recibidos: [], teclas: [], decir: decir };
   window.createUnityInstance = function (lienzo, config, progreso) {
     if (progreso) progreso(1);
+    // Como el Unity real: oye el teclado de toda la ventana y cancela cada tecla
+    // (`WebGLInput.captureAllKeyboardInput`, activo por defecto). Así lo registra su framework
+    // (`JSEvents.registerOrRemoveHandler`): una función `jsEventHandler` en `window`.
+    ["keydown", "keypress", "keyup"].forEach(function (tipo) {
+      var jsEventHandler = function jsEventHandler(event) {
+        window.__unityFalso.teclas.push(tipo + ":" + event.key);
+        event.preventDefault();
+      };
+      window.addEventListener(tipo, jsEventHandler, true);
+    });
     var instancia = {
       SendMessage: function (objeto, metodo, texto) {
         var datos = texto ? JSON.parse(texto) : {};

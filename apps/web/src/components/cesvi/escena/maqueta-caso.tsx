@@ -3,15 +3,23 @@
  * La maqueta de un caso reconstruido: la escena con las velocidades reconstruidas (la misma que el
  * 3D), calculada en el worker para no bloquear la página, y con las calles del mapa si ya llegaron.
  */
-import { formato as F, especReconstruida, type Reconstruccion } from "@croquis/cesvi";
+import {
+  formato as F,
+  especReconstruida,
+  posicionesEnTiempo,
+  type Reconstruccion,
+} from "@croquis/cesvi";
 import type { OverpassResponse } from "@croquis/croquis-2d";
 import type { EscenaSpec } from "@croquis/scene-schema";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { conCallesDelMapa } from "@/lib/calles-del-mapa";
+import type { Canal } from "@/lib/canal";
 import { METODO } from "@/lib/textos-caso";
 import { kmhAntesDe, kmhEn, tImpacto, type ResultadoMaqueta } from "@/lib/maqueta";
 import { reconstruirEnNavegador } from "@/lib/reconstruct-client";
-import { EscenaMaqueta } from "./maqueta";
+import { BarraReproduccion } from "@/components/visor-unity/barra-reproduccion";
+import type { Accion, Velocidad } from "@/lib/visor-unity/reproduccion";
+import { EscenaMaqueta, type PedidoVista } from "./maqueta";
 
 /**
  * W6: lo que tapan los paneles de la etapa (las pestañas y la nota de arriba, los botones de la
@@ -108,8 +116,10 @@ export function MaquetaCaso({
   return (
     <div className="relative h-full w-full">
       <ConLineaDeTiempo resultado={listo.res} tInicial={tInicial} onInstante={onInstante}>
-        {(t) => (
+        {(t, pedido) => (
           <EscenaMaqueta
+            pedidoVista={pedido}
+            conBarra
             spec={spec}
             resultado={listo.res}
             relieve={r.relieve ?? null}
@@ -165,8 +175,51 @@ export function MaquetaCaso({
 }
 
 /**
- * La línea de tiempo de la maqueta (Laboratorio §8): de la llegada al reposo final, con el impacto
- * marcado. Nada se mueve solo: corre al pulsar reproducir, a 1× o a ¼×.
+ * La barra de reproducción sobre el mapa real (el 2D con «Mapa» encendido; A6): el mismo reloj, y los
+ * vehículos se mueven en el mapa por un canal, sin volver a dibujar la página.
+ */
+export function RelojDelMapa({
+  r,
+  tInicial = null,
+  onInstante,
+  canal,
+}: {
+  r: Reconstruccion;
+  tInicial?: number | null;
+  onInstante?: (t: number) => void;
+  canal: Canal<ReturnType<typeof posicionesEnTiempo>>;
+}) {
+  // Al salir del mapa, sus vehículos en movimiento se quitan.
+  useEffect(() => () => canal.avisar([]), [canal]);
+  return (
+    <ConLineaDeTiempo
+      resultado={r.resultado as unknown as ResultadoMaqueta}
+      tInicial={tInicial}
+      onInstante={onInstante}
+    >
+      {(t) => <AvisaPosiciones r={r} t={t} canal={canal} />}
+    </ConLineaDeTiempo>
+  );
+}
+
+function AvisaPosiciones({
+  r,
+  t,
+  canal,
+}: {
+  r: Reconstruccion;
+  t: number;
+  canal: Canal<ReturnType<typeof posicionesEnTiempo>>;
+}) {
+  useEffect(() => {
+    canal.avisar(posicionesEnTiempo(r, r.resultado as never, t));
+  }, [r, t, canal]);
+  return null;
+}
+
+/**
+ * El reloj del 2D con la barra de reproducción compartida con el 3D (ronda 2, A6): de la llegada al
+ * reposo final, con el impacto marcado. Nada se mueve solo: corre al pulsar reproducir.
  */
 function ConLineaDeTiempo({
   resultado,
@@ -177,7 +230,8 @@ function ConLineaDeTiempo({
   resultado: ResultadoMaqueta;
   tInicial?: number | null;
   onInstante?: (t: number) => void;
-  children: (t: number) => ReactNode;
+  /** `pedido`: lo que pide la barra a la vista («Ver todo», «Ir al impacto»). */
+  children: (t: number, pedido: PedidoVista | null) => ReactNode;
 }) {
   const ti = tImpacto(resultado);
   const { t_inicio: ini, t_fin: fin } = resultado;
@@ -188,7 +242,8 @@ function ConLineaDeTiempo({
     onInstante?.(t);
   }, [onInstante, t]);
   const [corre, setCorre] = useState(false);
-  const [velocidad, setVelocidad] = useState<1 | 0.25>(1);
+  const [velocidad, setVelocidad] = useState<Velocidad>(1);
+  const [pedido, setPedido] = useState<PedidoVista | null>(null);
   const ultimo = useRef(0);
   const actual = useRef(ti);
   useEffect(() => {
@@ -210,73 +265,36 @@ function ConLineaDeTiempo({
     id = requestAnimationFrame(paso);
     return () => cancelAnimationFrame(id);
   }, [corre, velocidad, fin]);
-  const fraccion = (x: number) => (fin > ini ? ((x - ini) / (fin - ini)) * 100 : 0);
+  const pedir = (tipo: PedidoVista["tipo"]) => setPedido((x) => ({ tipo, n: (x?.n ?? 0) + 1 }));
+  // Las mismas acciones que el 3D; aquí el tiempo de la barra también va respecto al impacto.
+  const alControl = (a: Accion) => {
+    if (a.tipo === "alternar") {
+      if (!corre && t >= fin) setT(ini);
+      setCorre(!corre);
+    } else if (a.tipo === "ir") {
+      setCorre(false);
+      setT(Math.min(fin, Math.max(ini, a.t + ti)));
+    } else if (a.tipo === "velocidad") setVelocidad(a.x);
+    else if (a.tipo === "impacto") {
+      setCorre(false);
+      setT(ti);
+      pedir("impacto");
+    } else if (a.tipo === "todo") pedir("todo");
+    else if (a.tipo === "repetir") {
+      setT(ini);
+      setCorre(true);
+    }
+  };
   return (
     <>
-      {children(t)}
-      <div
-        className="escena-avance absolute right-4 bottom-4 left-4 z-10 flex items-center gap-4 p-3"
-        data-testid="linea-de-tiempo"
-      >
-        <button
-          type="button"
-          className="boton-principal grid h-11 w-11 shrink-0 place-items-center rounded-control p-0"
-          aria-label={corre ? "Pausar" : "Reproducir"}
-          onClick={() => {
-            if (!corre && t >= fin) setT(ini);
-            setCorre(!corre);
-          }}
-          data-testid="reproducir-maqueta"
-        >
-          {corre ? "❚❚" : "▶"}
-        </button>
-        <div className="relative min-w-0 flex-1">
-          <input
-            type="range"
-            className="w-full accent-[var(--texto)]"
-            min={ini}
-            max={fin}
-            step={0.01}
-            value={t}
-            aria-label="Instante de la reconstrucción"
-            aria-valuetext={`${F.numero(t, 2)} segundos`}
-            onChange={(e) => {
-              setCorre(false);
-              setT(Number(e.target.value));
-            }}
-            data-testid="tiempo-maqueta"
-          />
-          <span
-            className="pointer-events-none absolute top-0 h-3 w-0.5 bg-senal"
-            style={{ left: `${fraccion(ti)}%` }}
-            aria-hidden="true"
-          />
-          <div
-            className="h-1.5 bg-[repeating-linear-gradient(90deg,var(--linea)_0_1px,transparent_1px_5%)]"
-            aria-hidden="true"
-          />
-          <div className="relative mt-0.5 h-4 font-mono text-[0.6875rem] text-texto-3">
-            <span className="absolute left-0">Llegada</span>
-            <span className="absolute -translate-x-1/2" style={{ left: `${fraccion(ti)}%` }}>
-              Impacto · t {F.segundos(t - ti)}
-            </span>
-            <span className="absolute right-0">Reposo final</span>
-          </div>
-        </div>
-        <div className="segmentado shrink-0" role="group" aria-label="Velocidad de reproducción">
-          {([0.25, 1] as const).map((v) => (
-            <button
-              key={v}
-              type="button"
-              className="px-3"
-              aria-pressed={velocidad === v}
-              onClick={() => setVelocidad(v)}
-            >
-              {v === 1 ? "1×" : "¼×"}
-            </button>
-          ))}
-        </div>
-      </div>
+      {children(t, pedido)}
+      <BarraReproduccion
+        de="maqueta"
+        estado={{ t: t - ti, pausado: !corre, velocidad }}
+        intervalo={{ inicio: ini - ti, fin: fin - ti }}
+        corre={corre}
+        onAccion={alControl}
+      />
     </>
   );
 }

@@ -1,7 +1,7 @@
 {
  "name": "despliegue_peso",
  "descripcion": "Peso estimado de un despliegue de Croquis (MB): public/ por carpeta, estáticos de Next y archivos de las funciones, antes y después de servir las carpetas remotas desde Vercel Blob.",
- "generated_at": "2026-11-16T02:15:20.942Z",
+ "generated_at": "2026-11-17T15:30:21.919Z",
  "public_mb": {
   "modelos": 30,
   "hdri": 5.5,
@@ -10,10 +10,10 @@
   "decodificadores": 1.3,
   "pdfjs": 1.3,
   "texturas": 1.1,
+  "workers": 1,
   "maplibre": 0.5,
   "redes.png": 0.4,
   "iconos": 0.4,
-  "workers": 0.2,
   "historia": 0.2,
   "blender": 0.1,
   "fuente": 0,
@@ -28,11 +28,11 @@
   "modelos/vehiculos": 27.7,
   "hdri": 5.5
  },
- "next_static_mb": 23.3,
- "funciones_mb": 33.3,
+ "next_static_mb": 18.1,
+ "funciones_mb": 34.1,
  "funciones_por_origen_mb": {
-  ".next/server/chunks": 24.6,
-  ".next/server/app": 6.7,
+  ".next/server/chunks": 24.7,
+  ".next/server/app": 7.5,
   "node_modules": 1.9,
   "public/modelos/vehiculos": 0,
   "public/modelos/personas": 0,
@@ -40,7 +40,21 @@
   "public/arboles/arboles.json": 0,
   "package.json": 0
  },
- "despliegue_antes_mb": 103.9,
- "despliegue_despues_mb": 70.6,
- "ahorro_por_despliegue_pct": 32
+ "despliegue_antes_mb": 100.3,
+ "despliegue_despues_mb": 67,
+ "ahorro_por_despliegue_pct": 33.2,
+ "plan_b": {
+  "nota": "El build de Unity y los modelos dentro del despliegue, sin Blob (preparado, sin activar).",
+  "build_unity_mb": 76.3,
+  "carpetas_que_regresan_mb": 33.3,
+  "suma_al_despliegue_mb": 109.6,
+  "despliegue_con_plan_b_mb": 176.6
+ },
+ "merges_30_dias": {
+  "nota": "Merges a main (primer padre) de los últimos 30 días, comparando cada uno con el anterior con tools/vercel/construir.mjs.",
+  "total": 199,
+  "habrian_desplegado": 163,
+  "no_habrian_desplegado": 36,
+  "sin_poder_comparar": 0
+ }
 }

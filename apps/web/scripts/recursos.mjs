@@ -11,6 +11,12 @@
  *
  * Si algo no cuadra (huella distinta o almacén que no responde), `preparar` deja la carpeta en el
  * despliegue: el sitio nunca se queda sin modelos, solo pesa más. En local y en CI no quita nada.
+ *
+ * **Plan B (René, 2026-11-17; preparado, sin activar):** si el manifiesto del visor
+ * (`public/visor-unity/manifest.json`) tiene `"base": "/"`, el build de Unity y los modelos van
+ * dentro del despliegue y nada sale de Blob: `preparar` copia el build (del release de GitHub,
+ * `tools/unity/visor-local.mjs preparar`) a `public/visor-unity/local/` y deja los modelos y los HDRI
+ * en `public/`. Se activa y se desactiva con `node tools/unity/visor-local.mjs plan-b activar|desactivar`.
  */
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -109,6 +115,17 @@ async function estado() {
 async function preparar() {
   rmSync(MARCA, { force: true });
   const enVercel = process.env.VERCEL === "1";
+  const visor = JSON.parse(readFileSync(join(PUBLIC, "visor-unity", "manifest.json"), "utf-8"));
+  if (visor.base === "/") {
+    // Plan B: el build de Unity y los modelos, dentro del despliegue (sin Blob).
+    const { preparar: prepararVisor } = await import("../../../tools/unity/visor-local.mjs");
+    const r = await prepararVisor({ modelos: visor.modelos ?? "/modelos/vehiculos/" });
+    console.log(
+      `recursos: plan B activo, el visor ${r.huella} y los modelos van en el despliegue.`,
+    );
+    writeFileSync(MARCA, "{}\n");
+    return;
+  }
   if (!enVercel && process.env.CROQUIS_RECURSOS !== "remotos") return;
   const m = leerManifiesto();
   const remotas = {};

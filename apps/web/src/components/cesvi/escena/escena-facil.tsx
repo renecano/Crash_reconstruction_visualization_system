@@ -2369,23 +2369,20 @@ function IconoCoche({
  * La escena al presentar: lo marcado en palabras (el choque y, por vehículo, por dónde venía y dónde
  * quedó), con los supuestos y su explicación. Lo mismo que la tarjeta «¡La escena está lista!».
  */
-export function ResumenDeLaEscena({
-  estado,
-  impactos,
-  narracion,
-  calles,
-}: {
-  estado: EstadoEscena;
-  impactos: readonly ImpactoAColocar[];
-  narracion: string | null;
-  calles: OverpassResponse | null;
-}) {
+/**
+ * Lo que el perito marcó y lo que quedó como supuesto, en renglones: la tarjeta «¡La escena está
+ * lista!», el resumen del acto y el planteamiento de la reconstrucción (ronda 2, A6) dicen lo mismo.
+ */
+export function lineasDeLaEscena(
+  estado: EstadoEscena,
+  impactos: readonly ImpactoAColocar[],
+  calles: OverpassResponse | null,
+): LineaResumen[] {
   const e = estado.expediente;
   const callesMapa = callesDe(calles);
   const nombres = Object.fromEntries(
     e.vehiculos.map((v) => [v.id, nombreVehiculo(v, e.vehiculos)]),
   );
-  const colores = coloresVehiculos(e.vehiculos, narracion);
   const puntoDe = (orden: number): Punto | null => {
     if (estado.puntos[orden]) return estado.puntos[orden]!;
     const ps = (impactos.find((i) => i.orden === orden)?.vehiculos ?? []).flatMap(
@@ -2401,7 +2398,7 @@ export function ResumenDeLaEscena({
     const p = puntoDe(i.orden);
     return p ? [{ orden: i.orden, punto: p }] : [];
   });
-  const lineas = [
+  return [
     ...resumenEscena({
       e,
       impactos,
@@ -2416,6 +2413,22 @@ export function ResumenDeLaEscena({
     }),
     ...(estado.c1 ? resumenC1({ e, nombres, c1: estado.c1 }) : []),
   ];
+}
+
+export function ResumenDeLaEscena({
+  estado,
+  impactos,
+  narracion,
+  calles,
+}: {
+  estado: EstadoEscena;
+  impactos: readonly ImpactoAColocar[];
+  narracion: string | null;
+  calles: OverpassResponse | null;
+}) {
+  const e = estado.expediente;
+  const colores = coloresVehiculos(e.vehiculos, narracion);
+  const lineas = lineasDeLaEscena(estado, impactos, calles);
   const falta = pasoActual(pasosEscena(e, impactos, estado)) !== null;
   return (
     <section className="flex flex-col gap-4" data-testid="resumen-escena">

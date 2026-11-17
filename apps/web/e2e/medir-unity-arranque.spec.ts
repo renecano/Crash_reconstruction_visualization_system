@@ -1,7 +1,9 @@
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { chromium, expect, test, type Page } from "@playwright/test";
+import { chromium, type Page } from "@playwright/test";
+import { expect, test } from "./base";
+import { sinBlob } from "./sin-blob";
 import { colocarTodo, irAPaso } from "./ayuda-recorrido";
 
 /**
@@ -197,6 +199,7 @@ test("el arranque del 3D de Unity, por partes", async ({ baseURL }) => {
       viewport: { width: 1440, height: 900 },
       reducedMotion: "reduce",
     });
+    await sinBlob(ctx);
     await ctx.addInitScript(instrumentar);
     await ctx.route("**/api/osm?**", (r) => r.fulfill({ json: { elements: [] } }));
     await ctx.route("**/api/lugar?**", (r) => r.fulfill({ json: { resultados: [] } }));

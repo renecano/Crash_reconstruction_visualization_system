@@ -77,7 +77,42 @@
       "fecha": "2026-11-16T03:52:25.480Z",
       "que": "T6.6 (a): lecturas con «reporte» por lotes (msgbatch_01Q8H5JW2CTiA1CRE5MYrnmJ)",
       "usd": 0.3895
+    },
+    {
+      "fecha": "2026-11-17T01:22:04.513Z",
+      "que": "Ronda 2, C: lectura de la narración de ejemplo «alcance-deformacion»",
+      "usd": 0.028965
+    },
+    {
+      "fecha": "2026-11-17T01:22:17.984Z",
+      "que": "Ronda 2, C: lectura de la narración de ejemplo «carambola-lluvia»",
+      "usd": 0.0293252
+    },
+    {
+      "fecha": "2026-11-17T01:22:28.850Z",
+      "que": "Ronda 2, C: lectura de la narración de ejemplo «reversa-pendiente»",
+      "usd": 0.0218192
+    },
+    {
+      "fecha": "2026-11-17T01:22:38.900Z",
+      "que": "Ronda 2, C: lectura de la narración de ejemplo «poste-terraceria»",
+      "usd": 0.0212252
+    },
+    {
+      "fecha": "2026-11-17T01:36:34.696Z",
+      "que": "Ronda 2, C: lectura de la narración de ejemplo «carambola-lluvia»",
+      "usd": 0.038929
+    },
+    {
+      "fecha": "2026-11-17T01:36:46.388Z",
+      "que": "Ronda 2, C: lectura de la narración de ejemplo «poste-terraceria»",
+      "usd": 0.0270692
+    },
+    {
+      "fecha": "2026-11-17T02:13:52.831Z",
+      "que": "Ronda 2, C: lectura de la narración de ejemplo «alcance-deformacion»",
+      "usd": 0.031967
     }
   ],
-  "total_usd": 1.4066
+  "total_usd": 1.6059
 }

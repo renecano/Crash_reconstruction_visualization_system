@@ -1,0 +1,119 @@
+{
+  "descripcion": "Qué leyó Claude de cada narración de ejemplo (ronda 2, C), armado con las reglas de la app: cada dato con su cita revisada contra el texto.",
+  "script": "eval/ronda2_narraciones.mts",
+  "fecha": "2026-11-17T02:18:30.011Z",
+  "ejemplos": [
+    {
+      "clave": "crucero-noche",
+      "grabada": true,
+      "version_prompt": "escena-narracion-v1",
+      "modelo": "claude-sonnet-5-5",
+      "costo_usd": 0.0259064,
+      "filas": 36,
+      "vehiculos": 2,
+      "impactos": 0,
+      "danos": 5,
+      "danos_con_medidas": 0,
+      "posiciones_finales": 0,
+      "huellas": 0,
+      "maniobras": [],
+      "objetos_fijos": [],
+      "preguntas": 9,
+      "citas": 15,
+      "citas_fuera": 0,
+      "numeros_fuera": 0
+    },
+    {
+      "clave": "alcance-deformacion",
+      "grabada": true,
+      "version_prompt": "escena-narracion-v2",
+      "modelo": "claude-sonnet-5-5",
+      "costo_usd": 0.031967,
+      "filas": 27,
+      "vehiculos": 2,
+      "impactos": 1,
+      "danos": 2,
+      "danos_con_medidas": 2,
+      "posiciones_finales": 2,
+      "huellas": 0,
+      "maniobras": [],
+      "objetos_fijos": [],
+      "preguntas": 5,
+      "citas": 13,
+      "citas_fuera": 0,
+      "numeros_fuera": 0
+    },
+    {
+      "clave": "carambola-lluvia",
+      "grabada": true,
+      "version_prompt": "escena-narracion-v2",
+      "modelo": "claude-sonnet-5-5",
+      "costo_usd": 0.038929,
+      "filas": 43,
+      "vehiculos": 3,
+      "impactos": 2,
+      "danos": 4,
+      "danos_con_medidas": 0,
+      "posiciones_finales": 3,
+      "huellas": 0,
+      "maniobras": [
+        "circula",
+        "se_detiene",
+        "se_detiene"
+      ],
+      "objetos_fijos": [],
+      "preguntas": 8,
+      "citas": 18,
+      "citas_fuera": 0,
+      "numeros_fuera": 0
+    },
+    {
+      "clave": "reversa-pendiente",
+      "grabada": true,
+      "version_prompt": "escena-narracion-v2",
+      "modelo": "claude-sonnet-5-5",
+      "costo_usd": 0.0218192,
+      "filas": 30,
+      "vehiculos": 2,
+      "impactos": 1,
+      "danos": 2,
+      "danos_con_medidas": 0,
+      "posiciones_finales": 2,
+      "huellas": 0,
+      "maniobras": [
+        "reversa",
+        "circula"
+      ],
+      "objetos_fijos": [],
+      "preguntas": 6,
+      "citas": 11,
+      "citas_fuera": 0,
+      "numeros_fuera": 0
+    },
+    {
+      "clave": "poste-terraceria",
+      "grabada": true,
+      "version_prompt": "escena-narracion-v2",
+      "modelo": "claude-sonnet-5-5",
+      "costo_usd": 0.0270692,
+      "filas": 36,
+      "vehiculos": 2,
+      "impactos": 2,
+      "danos": 3,
+      "danos_con_medidas": 0,
+      "posiciones_finales": 2,
+      "huellas": 1,
+      "maniobras": [
+        "circula",
+        "circula"
+      ],
+      "objetos_fijos": [
+        "poste de concreto de la línea de distribución eléctrica"
+      ],
+      "preguntas": 7,
+      "citas": 16,
+      "citas_fuera": 0,
+      "numeros_fuera": 0
+    }
+  ]
+}

@@ -7,7 +7,7 @@
  *
  *   powershell tools/unity/build-web.ps1                      (si no hay build web)
  *   pnpm --filter @croquis/scene-schema exec tsx ../../tools/unity/paquetes-d1.ts
- *   node tools/trailer/tomas-3d.mjs [plan.json] [--salida D:\Croquis-trailer\tomas] [--nivel ultra]
+ *   node tools/trailer/tomas-3d.mjs [plan.json] [--salida trailer-salida/tomas] [--nivel ultra]
  *
  * El plan (por defecto `apps/trailer/tomas.json`) es una lista de tomas:
  *   { "escena": "lateral_interseccion-dia", "camara": "cinematica", "t": [0, 0.5, 1] }
@@ -33,7 +33,7 @@ const SALIDA = resolve(
     "salida",
     process.env.CROQUIS_TRAILER
       ? join(process.env.CROQUIS_TRAILER, "tomas")
-      : "D:\\Croquis-trailer\\tomas",
+      : join(RAIZ, "trailer-salida", "tomas"),
   ),
 );
 const NIVEL = arg("nivel", "ultra");

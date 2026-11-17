@@ -1,0 +1,125 @@
+{
+  "descripcion": "Cuánto se queda sin responder la página al pasar de un paso a otro: la tarea larga más larga del hilo principal (Long Tasks API) en los 3 s que siguen a cada clic en «Siguiente», y cuánto tardó en llegar el paso. AXA y un caso nuevo (narración de ejemplo grabada), con el visor Unity, en Chromium con ventana y GPU (ANGLE d3d11) a 1440×900 en la laptop de René. Meta: ninguna tarea de más de 100 ms.",
+  "script": "apps/web/e2e/medir-pasos.spec.ts",
+  "sitio": "http://localhost:3000",
+  "fecha": "2026-11-17T00:07:07.604Z",
+  "cambios": [
+    {
+      "caso": "axa",
+      "de": 1,
+      "a": 2,
+      "ms_hasta_el_paso": 348,
+      "tarea_mas_larga_ms": 169,
+      "tareas_de_mas_de_100_ms": 1,
+      "funciones": [
+        "241 ms (anónima) 28wzio_w-_z35.js:0",
+        "241 ms (anónima) 28wzio_w-_z35.js:816",
+        "238 ms _render 28wzio_w-_z35.js:816",
+        "223 ms render 28wzio_w-_z35.js:816",
+        "202 ms getProgram 28wzio_w-_z35.js:814",
+        "202 ms useProgram 28wzio_w-_z35.js:816",
+        "200 ms __ 28wzio_w-_z35.js:812",
+        "154 ms renderLayer 28wzio_w-_z35.js:816",
+        "90 ms I turbopack-3-ry682tkyiqk.js:0",
+        "90 ms B turbopack-3-ry682tkyiqk.js:0",
+        "90 ms w turbopack-3-ry682tkyiqk.js:0",
+        "90 ms (anónima) 2oubamk60a2dx.js:0",
+        "66 ms _9 28wzio_w-_z35.js:814",
+        "66 ms _8 28wzio_w-_z35.js:814",
+        "66 ms fill 28wzio_w-_z35.js:814",
+        "62 ms _6 28wzio_w-_z35.js:814",
+        "62 ms line 28wzio_w-_z35.js:814",
+        "51 ms (anónima) 2q29lff3vw9bq.js:0",
+        "45 ms su 2q29lff3vw9bq.js:0",
+        "44 ms u.S turbopack-3-ry682tkyiqk.js:0",
+        "44 ms (anónima) 35c83-9amj9no.js:0",
+        "43 ms sZ 2q29lff3vw9bq.js:0",
+        "43 ms sK 2q29lff3vw9bq.js:0",
+        "43 ms sX 2q29lff3vw9bq.js:0",
+        "41 ms (anónima) 0pyxhz8ka255a.js:5"
+      ]
+    },
+    {
+      "caso": "axa",
+      "de": 2,
+      "a": 3,
+      "ms_hasta_el_paso": 115,
+      "tarea_mas_larga_ms": 55,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "axa",
+      "de": 4,
+      "a": 5,
+      "ms_hasta_el_paso": 60,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "axa",
+      "de": 5,
+      "a": 6,
+      "ms_hasta_el_paso": 82,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "axa",
+      "de": 6,
+      "a": 7,
+      "ms_hasta_el_paso": 87,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "axa",
+      "de": 7,
+      "a": 8,
+      "ms_hasta_el_paso": 83,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "nuevo",
+      "de": 1,
+      "a": 2,
+      "ms_hasta_el_paso": 70,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "nuevo",
+      "de": 2,
+      "a": 3,
+      "ms_hasta_el_paso": 81,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "nuevo",
+      "de": 4,
+      "a": 5,
+      "ms_hasta_el_paso": 65,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "nuevo",
+      "de": 5,
+      "a": 6,
+      "ms_hasta_el_paso": 55,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    },
+    {
+      "caso": "nuevo",
+      "de": 6,
+      "a": 8,
+      "ms_hasta_el_paso": 77,
+      "tarea_mas_larga_ms": 0,
+      "tareas_de_mas_de_100_ms": 0
+    }
+  ],
+  "tarea_mas_larga_de_los_cambios_ms": 169,
+  "tarea_mas_larga_de_la_visita_ms": 218
+}

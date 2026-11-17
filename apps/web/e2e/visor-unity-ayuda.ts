@@ -12,6 +12,38 @@ const GRABACION = JSON.parse(
   ),
 ) as { salida: unknown };
 
+const FALSO = readFileSync(join(__dirname, "unity-falso.js"), "utf8");
+
+/**
+ * Pone el Unity de mentira (`unity-falso.js`) en lugar del build de Blob: habla el puente con la
+ * versión que se le diga y, como el real, se queda con el teclado de la página.
+ */
+export async function conUnityFalso(page: Page, version: string) {
+  await page.addInitScript(
+    ([v]) => {
+      (window as unknown as Record<string, unknown>).__croquisVisorUnity = true;
+      (window as unknown as Record<string, unknown>).__unityFalsoVersion = v;
+    },
+    [version],
+  );
+  await page.route("**/visor-unity/manifest.json", (r) =>
+    r.fulfill({
+      json: {
+        huella: "e2e",
+        base: "http://localhost:3000/",
+        prefijo: "unity-falso/",
+        loader: "cargador.js",
+        data: "x.data",
+        framework: "x.framework.js",
+        code: "x.wasm",
+      },
+    }),
+  );
+  await page.route("**/unity-falso/Build/cargador.js", (r) =>
+    r.fulfill({ contentType: "text/javascript", body: FALSO }),
+  );
+}
+
 export interface MensajeEnviado {
   metodo: string;
   datos: Record<string, unknown>;

@@ -1,4 +1,5 @@
-import { expect, test, type Page } from "@playwright/test";
+import { type Page } from "@playwright/test";
+import { expect, test } from "./base";
 import historia from "../src/data/historia.json";
 import recorrido from "../src/data/recorrido.json";
 

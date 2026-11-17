@@ -68,7 +68,7 @@ import type { ResultadoMaqueta } from "@/lib/maqueta";
 import { MODALIDAD } from "@/lib/nombres-cesvi";
 import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
 import { leerTransiciones, useTema, useTransiciones, type Modo } from "@/lib/preferencias-cesvi";
-import ejemplo from "../../../../../../data/cesvi/grabaciones/escenas/cesvi-e814f085db.json";
+import { lecturaGuardada } from "@/lib/ejemplos-narracion";
 import { Calculos, type DistanciaRestos } from "../calculos";
 import { Expediente as ExpedienteCesvi } from "../expediente";
 import { ComparacionDeclaracion } from "../comparacion-declaracion";
@@ -79,8 +79,8 @@ import { leerReporte } from "@/lib/lectura-reporte";
 import { actoDePaso, actosDelCaso, continuarA, rutaDeActo, type ClaveActo } from "@/lib/actos";
 import { BarraRecorrido, PASOS } from "../recorrido/barra";
 import { TransicionActo } from "../recorrido/transicion-acto";
-import { MaquetaCaso } from "../escena/maqueta-caso";
-import { EscenaFacil, ResumenDeLaEscena } from "../escena/escena-facil";
+import { MaquetaCaso, RelojDelMapa } from "../escena/maqueta-caso";
+import { EscenaFacil, ResumenDeLaEscena, lineasDeLaEscena } from "../escena/escena-facil";
 import { PresentarCaso } from "./presentar-caso";
 import { ActoDanos } from "./analisis-laboratorio";
 import { ActoContraste, filaDeRestos } from "./contraste-laboratorio";
@@ -90,8 +90,9 @@ import { TerrenoReconstruccion } from "./terreno-reconstruccion";
 import { VisorCasoUnity } from "@/components/visor-unity/visor-caso-unity";
 import type { ApiVisorUnity } from "@/components/visor-unity/visor-unity";
 import { CanalTiempo } from "@/lib/visor-unity/canal";
+import { Canal } from "@/lib/canal";
 import { precargarModelos, precargarVisorUnity } from "@/lib/visor-unity/precarga";
-import { protagonista, tipImpacto, tipVehiculo } from "@/lib/reconstruccion-lab";
+import { tipImpacto, tipVehiculo } from "@/lib/reconstruccion-lab";
 import { tomarArchivo } from "@/lib/archivo-pendiente";
 import {
   cifraContraste,
@@ -100,8 +101,16 @@ import {
   lecturaFisica,
 } from "@/lib/contraste-lab";
 import { textoDano, tituloDelHecho } from "@/lib/hecho-laboratorio";
-import { nombreVehiculo, pasoActual, pasosEscena, type RespuestasC1 } from "@/lib/escena-facil";
+import {
+  callesDe,
+  nombreVehiculo,
+  pasoActual,
+  pasosEscena,
+  type RespuestasC1,
+} from "@/lib/escena-facil";
 import { PasoCaso, PasoHecho, PasoNumeros, claveItem, type ItemLugar } from "./pasos";
+import { CroquisPlanteamiento, PanelIncognita } from "./planteamiento";
+import { TrazoInicio } from "./trazo-inicio";
 import { MapaEscena, type HerramientaMapa, type HuellaMapa } from "./piezas";
 import {
   DanoContraReconstruccion,
@@ -179,6 +188,8 @@ export function RecorridoCaso({
   const [estado, setEstado] = useState<string | null>(null);
   // El hecho (Laboratorio §8): leído, se ve el relato marcado; «Editar el relato» abre el editor.
   const [editandoRelato, setEditandoRelato] = useState(false);
+  // La lectura que se ve salió de un ejemplo guardado, no de una llamada a Claude ahora (se dice).
+  const [lecturaGuardadaUsada, setLecturaGuardadaUsada] = useState(false);
   const [noSe, setNoSe] = useState<Set<string>>(new Set());
   const [alMapa, setAlMapa] = useState<Set<string>>(new Set());
   // El paso del lugar (V2): la herramienta del mapa, el elemento elegido de la lista guiada, el
@@ -212,7 +223,7 @@ export function RecorridoCaso({
   const [moviles, setMoviles] = useState<PosicionMovil[]>([]);
   // La vista del escenario: la que se eligió o, al reconstruir, la maqueta (Laboratorio §8).
   const [vistaElegida, setVista] = useState<"mapa" | "3d" | "maqueta" | null>(null);
-  const [camaraPedida, setCamaraPedida] = useState<{ camara: string; n: number } | null>(null);
+  const [camaraPedida] = useState<{ camara: string; n: number } | null>(null);
   const [declarada, setDeclarada] = useState<Hipotesis | null>(null);
   const [comparacionDeclarada, setComparacionDeclarada] =
     useState<DatosDictamenCaso["declarada"]>(null);
@@ -221,6 +232,8 @@ export function RecorridoCaso({
   const [unityApi, setUnityApi] = useState<ApiVisorUnity | null>(null);
   // Presentar le avisa a Unity el instante de cada capítulo sin pasar por el estado de la página.
   const [canalPresentar] = useState(() => new CanalTiempo());
+  // Las posiciones de los vehículos sobre el mapa, en cada instante de la barra (A6).
+  const [canalMoviles] = useState(() => new Canal<PosicionMovil[]>());
   // El instante que comparten la maqueta (2D) y el 3D: al cambiar de pestaña se conserva (A6).
   const instante = useRef<number | null>(null);
   const [instanteMaqueta, setInstanteMaqueta] = useState<number | null>(null);
@@ -345,6 +358,8 @@ export function RecorridoCaso({
     () => (expediente ? verificacionCesvi(expediente) : []),
     [expediente],
   );
+  // Las calles del mapa como líneas, para el croquis del planteamiento (A6).
+  const callesDelCroquis = useMemo(() => callesDe(calles), [calles]);
   // Lo que el caso no trae, como supuesto declarado con su justificación (ADR 0091).
   const supuestos = useMemo(
     () =>
@@ -431,7 +446,15 @@ export function RecorridoCaso({
     const redactada = textoParaClaude(texto);
     let motivo: string | null = null;
     let insuficiente: string | null = null;
+    let deEjemplo = false;
     const leerConClaude: ContextoPizarra["leer"] = async (t, rechazadas) => {
+      // Una narración de ejemplo sin cambios: su lectura guardada (la hizo Claude con este mismo
+      // prompt), sin volver a llamarlo. Con un solo cambio en el texto, se lee de nuevo.
+      const guardada = rechazadas?.length ? null : lecturaGuardada(t);
+      if (guardada) {
+        deEjemplo = true;
+        return guardada;
+      }
       const res = await fetch("/api/cesvi/escena", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -465,6 +488,7 @@ export function RecorridoCaso({
       }
       if (redactada !== texto) setTexto(redactada);
       abrirEscena({ ...p.escena, preguntas: p.preguntas });
+      setLecturaGuardadaUsada(deEjemplo);
       setEstado(null);
     } catch {
       setEstado("No se pudo leer la narración.");
@@ -750,6 +774,7 @@ export function RecorridoCaso({
             ...medidasDe(v),
             clase: v.clase ?? "sedan_mediano",
             color: colorDeVehiculo(p.vehiculo),
+            fuente: p.fuente,
           },
         ];
       })
@@ -993,7 +1018,43 @@ export function RecorridoCaso({
     String.fromCharCode(65 + Math.max(0, expediente?.vehiculos.findIndex((v) => v.id === id) ?? 0));
   const nombreLab = (id: string) => `${letraDe(id)} · ${nombresPantalla[id] ?? id}`;
 
+  // A1 (ronda 2): un caso nuevo sin leer abre con «El trazo», no con la ficha del caso.
+  const enTrazo = actual === 0 && inicial.origen === "nuevo" && !leida;
   const cuerpo = (() => {
+    if (enTrazo)
+      return (
+        <>
+          <TrazoInicio
+            animar={transicionesActivas}
+            // El trazo espera a que suba la cortina del acto (la completa, al entrar al caso).
+            retrasoMs={transicionesActivas ? 1100 : 0}
+            onEscribir={() => irA(1)}
+            // Los cinco ejemplos están en la narración, cada uno con lo que muestra.
+            onEjemplo={() => irA(1)}
+            abrir={
+              <label className="tz-abrir cursor-pointer">
+                Abrir un caso guardado (.croquis)
+                <input
+                  type="file"
+                  accept={ACEPTA_CASO}
+                  className="sr-only"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) void abrirArchivo(f);
+                    e.target.value = "";
+                  }}
+                  data-testid="abrir-caso"
+                />
+              </label>
+            }
+          />
+          {avisoGuardado ? (
+            <p role="status" className="t-nota" data-testid="caso-abierto">
+              {avisoGuardado}
+            </p>
+          ) : null}
+        </>
+      );
     if (actual === 0)
       return (
         <PasoCaso
@@ -1020,17 +1081,25 @@ export function RecorridoCaso({
       );
     if (actual === 1 && leida && !editandoRelato && (!editable || texto.trim()))
       return (
-        <HechoLaboratorio
-          escena={leida}
-          narracion={texto}
-          editable={editable}
-          preguntas={preguntas}
-          onExpediente={cambiarExpediente}
-          onNoSe={cerrarPregunta}
-          onAlMapa={anotarAlMapa}
-          alMapa={preguntasAlMapa}
-          onEditar={() => setEditandoRelato(true)}
-        />
+        <>
+          {lecturaGuardadaUsada ? (
+            <p className="t-nota" role="note" data-testid="lectura-guardada">
+              Es una narración de ejemplo: se muestra su lectura guardada, hecha con Claude. No se
+              volvió a llamar a la IA.
+            </p>
+          ) : null}
+          <HechoLaboratorio
+            escena={leida}
+            narracion={texto}
+            editable={editable}
+            preguntas={preguntas}
+            onExpediente={cambiarExpediente}
+            onNoSe={cerrarPregunta}
+            onAlMapa={anotarAlMapa}
+            alMapa={preguntasAlMapa}
+            onEditar={() => setEditandoRelato(true)}
+          />
+        </>
       );
     if (actual === 1)
       return (
@@ -1039,7 +1108,7 @@ export function RecorridoCaso({
           editable={editable}
           onNarracion={setTexto}
           onLeer={() => void leer()}
-          onEjemplo={() => setTexto(ejemplo.narracion)}
+          onEjemplo={setTexto}
           onCargarReporte={
             inicial.origen === "nuevo"
               ? () =>
@@ -1136,8 +1205,27 @@ export function RecorridoCaso({
               )}
             />
           ) : null}
-          {/* Sin reconstruir, o si el caso cambió después, el panel va a la vista con su aviso. */}
-          {!r || rec.vieja ? <PanelReconstruccion rec={rec} /> : null}
+          {/* Sin reconstruir: «La incógnita», el planteamiento (ronda 2, A6). */}
+          {!r && expediente ? (
+            <PanelIncognita
+              nombres={expediente.vehiculos.map((v) => nombreLab(v.id))}
+              lineas={lineasDeLaEscena(
+                {
+                  expediente,
+                  desconocidos,
+                  direccionesNoSe,
+                  juntoAlChoque,
+                  puntos: puntosImpacto,
+                  c1: c1 ?? {},
+                },
+                impactos,
+                calles,
+              )}
+              rec={rec}
+            />
+          ) : null}
+          {/* Si el caso cambió después de reconstruir, el panel va a la vista con su aviso. */}
+          {r && rec.vieja ? <PanelReconstruccion rec={rec} /> : null}
           <DetalleReconstruccion plegado={r !== null}>
             {r && !rec.vieja ? <PanelReconstruccion rec={rec} /> : null}
             {r ? (
@@ -1240,7 +1328,10 @@ export function RecorridoCaso({
     );
   })();
 
-  const verMapa = vista === "mapa" || !r;
+  // «La incógnita» (A6): en la reconstrucción, antes de reconstruir, va el croquis del planteamiento
+  // en lugar del mapa lejano.
+  const planteando = actual === 3 && !r && expediente !== null && !expandido;
+  const verMapa = (vista === "mapa" || !r) && !planteando;
   // Presentar a pantalla completa necesita la reconstrucción; sin ella, se consulta el recorrido.
   const presentando = modo === "presentar" && r !== null && !rec.vieja;
   // El 3D (o Presentar, que lo usa) pedido por primera vez: ahora sí arranca Unity (se ajusta al
@@ -1253,9 +1344,6 @@ export function RecorridoCaso({
   // El 3D solo dibuja cuando se ve: oculto seguía a todo ritmo y ahogaba la página (la foto del
   // dictamen lo despierta si le hace falta).
   const visorAlaVista = vista === "3d" && !presentando && !hojaAncha && actual !== 1;
-  const vPico = r ? protagonista(r) : null;
-  const idPico =
-    r && vPico ? Object.entries(r.ids).find(([, id]) => id === vPico.vehiculo)?.[0] : null;
   // Lo obligatorio de cada paso (V2): «Siguiente» dice qué falta y los pasos futuros esperan.
   const claves = pasos.map((n) => CLAVES_PASOS[PASOS.indexOf(n)]!);
   const estadoPasos = {
@@ -1278,6 +1366,11 @@ export function RecorridoCaso({
   const siguienteNombre = pasos[paso + 1];
   // El mapa es el contenido en el lugar y la reconstrucción; en los demás pasos, una tarjeta.
   const grande = actual === 2 || actual === 3;
+  // En el primer paso, sin nada colocado, el mapa no dice nada: no se muestra (A1).
+  const sinMapaAlInicio = actual === 0 && !posiciones.length && !expandido;
+  // Un solo mapa por caso (`mapa-compartido`): este se monta cuando ya hay algo que ver en él y no
+  // lo tiene la escena fácil. Antes de colocar nada (el trazo, la narración) no existe.
+  const montarMapa = !escenaFacil && (expandido || actual >= 2 || posiciones.length > 0);
   const lugar = expediente?.caso.lugar;
   const lugarTexto = [lugar?.descripcion?.valor, lugar?.municipio?.valor, lugar?.estado?.valor]
     .filter(Boolean)
@@ -1453,14 +1546,16 @@ export function RecorridoCaso({
           data-paso={actual + 1}
         >
           <p className={pico || hojaAncha ? "sr-only" : "t-rotulo"} data-testid="rotulo-acto">
+            {enTrazo ? "Caso nuevo · " : ""}
             Acto {actoIdx + 1} de {actos.length} · {actos[actoIdx]?.nombre}
-            {(actos[actoIdx]?.pasos.length ?? 0) > 1
+            {(actos[actoIdx]?.pasos.length ?? 0) > 1 && !enTrazo
               ? ` · ${(actos[actoIdx]?.pasos.indexOf(paso) ?? 0) + 1} de ${actos[actoIdx]?.pasos.length}: ${pasos[paso]}`
               : ""}
           </p>
           {cuerpo}
           <div
-            className={`mt-auto flex flex-col gap-2 ${pico ? "pt-3" : "pt-4"} ${pico ? "sticky -bottom-5 z-10 -mx-5 -mb-5 bg-superficie px-5 pb-5 lg:-bottom-7 lg:-mx-7 lg:-mb-7 lg:px-7 lg:pb-7" : ""}`}
+            // En «El trazo» no va: su botón es lo único que hay que tocar (A1).
+            className={`mt-auto flex flex-col gap-2 ${pico ? "pt-3" : "pt-4"} ${pico ? "sticky -bottom-5 z-10 -mx-5 -mb-5 bg-superficie px-5 pb-5 lg:-bottom-7 lg:-mx-7 lg:-mb-7 lg:px-7 lg:pb-7" : ""} ${enTrazo ? "hidden" : ""}`}
           >
             {(actual === 2 || actual === 3) && modo === "trabajar"
               ? encimadas.map((enc) => (
@@ -1512,7 +1607,7 @@ export function RecorridoCaso({
               >
                 {pico ? "←" : "← Anterior"}
               </button>
-              {siguienteNombre ? (
+              {siguienteNombre && !enTrazo ? (
                 <button
                   type="button"
                   className={`boton-principal boton-continuar ${pico ? "flex-1" : ""}`}
@@ -1536,8 +1631,8 @@ export function RecorridoCaso({
               : // En el hecho no hay mapa (A5): se queda montado pero oculto, para no volver a
                 // cargarlo al llegar al lugar (MapLibre se ajusta solo al reaparecer).
                 pico
-                ? "relative order-first min-h-[60vh] overflow-hidden lg:absolute lg:inset-0 lg:min-h-0"
-                : `relative min-h-[50vh] overflow-hidden rounded-panel border border-linea-suave ${grande ? "lg:flex-1" : "lg:h-[460px] lg:w-[420px] lg:shrink-0 lg:self-start"} ${actual === 7 ? "pointer-events-none invisible absolute! h-[460px] w-[640px]" : actual === 1 || hojaAncha ? "hidden" : ""}`
+                ? `relative order-first ${planteando ? "min-h-[40vh]" : "min-h-[60vh]"} overflow-hidden lg:absolute lg:inset-0 lg:min-h-0`
+                : `relative min-h-[50vh] overflow-hidden rounded-panel border border-linea-suave ${grande ? "lg:flex-1" : "lg:h-[460px] lg:w-[420px] lg:shrink-0 lg:self-start"} ${actual === 7 ? "pointer-events-none invisible absolute! h-[460px] w-[640px]" : actual === 1 || hojaAncha || sinMapaAlInicio ? "hidden" : ""}`
           }
           aria-label="Mapa"
           data-testid="escenario"
@@ -1548,26 +1643,55 @@ export function RecorridoCaso({
           <div
             className={`absolute inset-0 ${pico ? "lg:right-[488px]" : ""} ${verMapa ? "" : "invisible"}`}
           >
-            <MapaEscena
-              tema={tema}
-              onMapa={setMapa}
-              posiciones={posiciones}
-              moviles={moviles}
-              impactos={rec.impactos}
-              onClic={colocar}
-              inicio={lugar?.coordenadas ?? null}
-              lugarTexto={lugarTexto}
-              lugarZona={{ municipio: lugar?.municipio?.valor, estado: lugar?.estado?.valor }}
-              herramienta={actual === 2 && modo === "trabajar" ? herramientaMapa : "mover"}
-              pedirLugar={actual === 2 || expandido}
-              huellas={huellas}
-              flecha={colocacion ? null : flecha}
-              colocacion={colocacion}
-              onFlecha={girar}
-              onMedida={setMedida}
-              onDeshacer={actual === 2 && modo === "trabajar" ? deshacer : undefined}
-            />
+            {montarMapa ? (
+              <MapaEscena
+                tema={tema}
+                onMapa={setMapa}
+                posiciones={posiciones}
+                // Con la reconstrucción, los vehículos en movimiento llegan por el canal de la barra.
+                moviles={r ? [] : moviles}
+                canalMoviles={canalMoviles}
+                impactos={rec.impactos}
+                onClic={colocar}
+                inicio={lugar?.coordenadas ?? null}
+                lugarTexto={lugarTexto}
+                lugarZona={{ municipio: lugar?.municipio?.valor, estado: lugar?.estado?.valor }}
+                herramienta={actual === 2 && modo === "trabajar" ? herramientaMapa : "mover"}
+                pedirLugar={actual === 2 || expandido}
+                huellas={huellas}
+                flecha={colocacion ? null : flecha}
+                colocacion={colocacion}
+                onFlecha={girar}
+                onMedida={setMedida}
+                onDeshacer={actual === 2 && modo === "trabajar" ? deshacer : undefined}
+              />
+            ) : null}
           </div>
+          {planteando ? (
+            <div className={`absolute inset-0 bg-fondo ${pico ? "lg:right-[488px]" : ""}`}>
+              <CroquisPlanteamiento
+                huellas={huellas}
+                impactos={impactos.flatMap((i) => {
+                  const punto = puntoDe(i.orden);
+                  const pose = posiciones.find(
+                    (p) => p.fase === "impacto" && i.vehiculos.includes(p.vehiculo),
+                  );
+                  return punto
+                    ? [
+                        {
+                          orden: i.orden,
+                          punto,
+                          fuente: puntosImpacto[i.orden] ? "perito" : pose?.fuente,
+                        },
+                      ]
+                    : [];
+                })}
+                calles={callesDelCroquis}
+                letraDe={letraDe}
+                nombreDe={nombreLab}
+              />
+            </div>
+          ) : null}
           {r && pidioUnity ? (
             <div
               className={`absolute inset-0 bg-fondo ${pico ? "lg:right-[488px]" : ""} ${vista === "3d" ? "" : "pointer-events-none invisible"}`}
@@ -1601,6 +1725,21 @@ export function RecorridoCaso({
                 objetos={objetos}
                 expandido={expandido}
                 supuestos={supuestos}
+              />
+            </div>
+          ) : null}
+          {/* El 2D sobre el mapa real: la misma barra mueve los vehículos en el mapa (A6). */}
+          {r && vista === "mapa" && !expandido ? (
+            // Solo sobre el mapa: la barra no tapa la hoja de la derecha ni deja de pasar los clics
+            // al mapa.
+            <div
+              className={`pointer-events-none absolute inset-0 [&>*]:pointer-events-auto ${pico ? "lg:right-[488px]" : ""}`}
+            >
+              <RelojDelMapa
+                r={r}
+                tInicial={instanteMaqueta}
+                onInstante={alInstante}
+                canal={canalMoviles}
               />
             </div>
           ) : null}
@@ -1663,12 +1802,6 @@ export function RecorridoCaso({
               />
             </div>
           ) : null}
-          {!posiciones.length && !grande && !expandido ? (
-            <div className="vidrio pointer-events-none absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 rounded-panel px-5 py-4 text-center">
-              <span className="t-interfaz font-semibold">El lugar aún no está marcado</span>
-              <span className="t-nota">Lo marcas en el paso 3.</span>
-            </div>
-          ) : null}
           {actual === 2 && modo === "trabajar" && verMapa ? (
             <div
               className={`pointer-events-none absolute z-10 flex flex-col gap-2 ${expandido ? "top-5 left-1/2 -translate-x-1/2 items-center" : "top-3 left-3 items-start"}`}
@@ -1712,60 +1845,60 @@ export function RecorridoCaso({
           ) : null}
           <div className={`absolute z-10 flex gap-2 ${pico ? "top-4 left-4" : "top-3 right-3"}`}>
             {r ? (
-              <div
-                className={`segmentado ${pico ? "segmentado-tinta" : ""}`}
-                role="tablist"
-                aria-label="Vista"
-              >
-                {(
-                  [
-                    ["maqueta", "maqueta", pico ? "Cenital" : "Maqueta", null],
-                    ...(pico && idPico && vPico
-                      ? ([
-                          [
-                            "detras",
-                            "3d",
-                            `Detrás de ${letraDe(vPico.vehiculo)}`,
-                            `detras-${idPico}`,
-                          ],
-                          [
-                            "conductor",
-                            "3d",
-                            `Conductor ${letraDe(vPico.vehiculo)}`,
-                            `conductor-${idPico}`,
-                          ],
-                        ] as const)
-                      : []),
-                    ["3d", "3d", pico ? "Órbita 3D" : "3D", pico ? "libre" : null],
-                    ["mapa", "mapa", "Mapa", null],
-                  ] as const
-                ).map(([id, v, nombre, camara]) => (
+              <>
+                {/* A6: dos pestañas, «3D» y «2D». El mapa real es un fondo del 2D, no otra pestaña. */}
+                <div
+                  className={`segmentado ${pico ? "segmentado-tinta" : ""}`}
+                  role="tablist"
+                  aria-label="Vista"
+                >
                   <button
-                    key={id}
                     type="button"
                     role="tab"
-                    aria-selected={
-                      camara
-                        ? vista === "3d" && camaraPedida?.camara === camara
-                        : vista === v && (v !== "3d" || !pico)
-                    }
-                    className="px-3"
+                    aria-selected={vista === "3d"}
+                    className="px-5"
                     onClick={() => {
-                      if (v === "mapa") setMoviles([]);
-                      // Del 2D al 3D, el 3D va al instante en que se quedó la maqueta.
-                      if (v === "3d" && vista !== "3d" && instante.current !== null)
+                      // Del 2D al 3D, el 3D va al instante en que se quedó el 2D.
+                      if (vista !== "3d" && instante.current !== null)
                         unityApi?.ir?.(instante.current);
-                      // Del 3D al 2D, la maqueta empieza donde se quedó el 3D.
-                      if (v === "maqueta") setInstanteMaqueta(instante.current);
-                      setVista(v);
-                      if (camara) setCamaraPedida((c) => ({ camara, n: (c?.n ?? 0) + 1 }));
+                      setVista("3d");
                     }}
-                    data-testid={`vista-${id}`}
+                    data-testid="vista-3d"
                   >
-                    {nombre}
+                    3D
                   </button>
-                ))}
-              </div>
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={vista !== "3d"}
+                    className="px-5"
+                    onClick={() => {
+                      if (vista !== "3d") return;
+                      // Del 3D al 2D, el 2D empieza donde se quedó el 3D.
+                      setInstanteMaqueta(instante.current);
+                      setVista("maqueta");
+                    }}
+                    data-testid="vista-maqueta"
+                  >
+                    2D
+                  </button>
+                </div>
+                {vista !== "3d" ? (
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={vista === "mapa"}
+                    className={`interruptor ${pico ? "" : "vidrio px-3"}`}
+                    onClick={() => {
+                      setInstanteMaqueta(instante.current);
+                      setVista(vista === "mapa" ? "maqueta" : "mapa");
+                    }}
+                    data-testid="vista-mapa"
+                  >
+                    Mapa
+                  </button>
+                ) : null}
+              </>
             ) : null}
             {pico ? null : (
               <button
@@ -1820,10 +1953,10 @@ export function RecorridoCaso({
                 </div>
               ) : null}
             </>
-          ) : verMapa ? (
+          ) : verMapa || planteando ? (
             // En el 3D la leyenda de CESVI va en la banda del visor (y no tapa sus controles).
             <p
-              className={`vidrio pointer-events-none absolute bottom-3 z-10 px-2 py-1 text-[0.6875rem] text-texto-2 ${pico ? "right-3 lg:right-[500px]" : "right-3"}`}
+              className={`vidrio pointer-events-none absolute z-10 px-2 py-1 text-[0.6875rem] text-texto-2 ${r && vista === "mapa" ? "bottom-[5.75rem]" : "bottom-3"} ${pico ? "right-3 lg:right-[500px]" : "right-3"}`}
             >
               {LEGEND_TEXT_CESVI}
             </p>

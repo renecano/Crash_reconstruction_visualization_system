@@ -2,7 +2,7 @@
 
 Las pruebas y mediciones pesadas de Croquis no corren en la laptop de René. Esta computadora las corre con un doble clic y sube los resultados a GitHub.
 
-**Es una sola corrida.** Primero comprueba que todo sirve (unos 2 minutos) y, si pasa, sigue sola con lo pesado. La Tanda 4 tarda **cerca de 2 h 45 min en total** (estimado: 151 minutos de pasos, más la comprobación y la descarga de dos paquetes de 60 MB). La ventana dice el tiempo estimado al empezar y, cada 30 segundos, cuánto lleva el paso y la última línea que escribió.
+**Es una sola corrida.** Primero comprueba que todo sirve (unos 2 minutos) y, si pasa, sigue sola con lo pesado. La Tanda 4 tarda **cerca de 3 horas en total** (estimado: 177 minutos de pasos, más la comprobación y tres descargas de GitHub: dos paquetes de 60 MB y el visor web, de 36 MB). Nada se baja de Vercel: el 3D sale de copias en esta computadora. La ventana dice el tiempo estimado al empezar y, cada 30 segundos, cuánto lleva el paso y la última línea que escribió.
 
 ## Los 3 pasos
 
@@ -31,8 +31,8 @@ Las pruebas y mediciones pesadas de Croquis no corren en la laptop de René. Est
 
 **Lo de la Tanda 4 que te toca a ti:**
 
-- **No uses la computadora mientras mide** (unos 100 minutos: el arranque del 3D y los fps en el navegador y en el visor de escritorio): abre ventanas a pantalla completa y cualquier otra cosa cambia los números. Déjala conectada a la corriente.
-- **Al final, manda a René el archivo `croquis-fotos-promo-t4.zip`** que queda en tu Escritorio (por Drive o WeTransfer). Son las fotos del modo foto en 4K: no van a GitHub.
+- **No uses la computadora mientras mide y toma las fotos** (unos 145 minutos, los últimos pasos: el arranque del 3D, los fps en el navegador y en el visor de escritorio, las fotos, las tomas del tráiler y la prueba de la demo local): abre ventanas a pantalla completa y cualquier otra cosa cambia los números. Déjala conectada a la corriente.
+- **Al final, manda a René los dos archivos que quedan en tu Escritorio** (por Drive o WeTransfer): `croquis-fotos-promo-t4.zip` (las fotos del modo foto en 4K) y `croquis-tomas-trailer.zip` (las tomas del 3D para el tráiler, cerca de 1 GB). No van a GitHub.
 
 **Lo que no puede hacer sola:**
 

@@ -1,6 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { expect, test, type CDPSession, type Page } from "@playwright/test";
+import { type CDPSession, type Page } from "@playwright/test";
+import { expect, test } from "./base";
 import { colocarTodo, sinRed } from "./ayuda-recorrido";
 
 /**

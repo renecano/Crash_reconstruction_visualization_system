@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 import { contestarC1, irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
 
 // La transición entre actos (ADR 0108) es decorativa: estos flujos prueban la función, y en CI (render
@@ -62,9 +62,13 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await irAPaso(page, 2);
 
   // 1. La narración: la de ejemplo, leída a escena.
+  // Cinco ejemplos, cada uno con lo que muestra (ronda 2, C). Uno sin cambios usa su lectura
+  // guardada y lo dice.
+  await expect(page.getByTestId("ejemplos-narracion").getByRole("button")).toHaveCount(5);
   await page.getByTestId("ejemplo-narracion").click();
   await expect(page.getByTestId("narracion")).toHaveValue(/vehículo A, marca VW, tipo Jetta/);
   await page.getByTestId("leer-narracion").click();
+  await expect(page.getByTestId("lectura-guardada")).toContainText("lectura guardada");
   const escena = page.getByTestId("escena");
   await expect(escena).toContainText("2 vehículos · 1 impacto");
   await expect(page.getByTestId("vehiculos")).toContainText("VW Jetta · 2002");
@@ -152,6 +156,8 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await expect(visor.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
   // El croquis 2D sigue al reloj del 3D: al volver al mapa (el mapa se desmonta mientras el 3D
   // está a la vista, ADR 0104), los vehículos de la reconstrucción están donde quedó el reloj.
+  // A6: el mapa real es un fondo del 2D (interruptor «Mapa»), no otra pestaña.
+  await page.getByTestId("vista-maqueta").click();
   await page.getByTestId("vista-mapa").click();
   await expect(mapa.locator('[data-movil="V1"]')).toHaveCount(1, { timeout: 30_000 });
   await expect(mapa.locator('[data-movil="V2"]')).toHaveCount(1);
@@ -330,7 +336,9 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await expect(guardado).toContainText("validado");
   await guardado.click();
   await expect(page.getByTestId("recorrido-caso")).toHaveAttribute("data-origen", "guardado");
-  await irAPaso(page, 3);
+  // Las posiciones regresan: se cuentan en el mapa del caso, que desde «un solo mapa por caso» (A1)
+  // se monta a partir de la reconstrucción (en «La escena» el mapa lo tiene la escena fácil).
+  await irAPaso(page, 4);
   await expect(page.getByTestId("mapa-escena").locator("[data-posicion]")).toHaveCount(4);
 
   // El archivo del caso, abierto en otra visita: regresan la narración, las posiciones y la
@@ -343,7 +351,9 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await irAPaso(page, 2);
   // El hecho, ya leído: el relato marcado (Laboratorio §8).
   await expect(page.getByTestId("relato")).toContainText("Jetta");
-  await irAPaso(page, 3);
+  // Las posiciones regresan: se cuentan en el mapa del caso, que desde «un solo mapa por caso» (A1)
+  // se monta a partir de la reconstrucción (en «La escena» el mapa lo tiene la escena fácil).
+  await irAPaso(page, 4);
   await expect(page.getByTestId("mapa-escena").locator("[data-posicion]")).toHaveCount(4);
   expect(errores).toEqual([]);
 });
@@ -436,6 +446,8 @@ test("@flujo /cesvi: una carambola, con sus impactos en orden hasta el 3D", asyn
   await page.getByTestId("vista-3d").click();
   const visor = page.getByTestId("visor-caso");
   await expect(visor.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
+  // A6: el mapa real es un fondo del 2D (interruptor «Mapa»), no otra pestaña.
+  await page.getByTestId("vista-maqueta").click();
   await page.getByTestId("vista-mapa").click();
   await expect(mapa.locator('[data-movil="V3"]')).toHaveCount(1, { timeout: 30_000 });
 

@@ -324,7 +324,10 @@ export function DictamenCaso({
     );
     requestAnimationFrame(() => {
       c?.focus();
-      c?.setSelectionRange(nueva.desde, nueva.hasta);
+      // Una cita nueva deja el cursor al final, para seguir escribiendo sin borrarla; si ya estaba,
+      // queda resaltada para que se vea dónde.
+      if (nueva.accion === "ya_estaba") c?.setSelectionRange(nueva.desde, nueva.hasta);
+      else c?.setSelectionRange(nueva.hasta, nueva.hasta);
     });
   };
   const pistaExportar = pedidoExportar
@@ -334,6 +337,15 @@ export function DictamenCaso({
   const idPico = vPico ? String(vPico.vehiculo) : null;
   const citaDeVelocidad = idPico ? citaVelocidad(reconstruccion, idPico, letraDe(idPico)) : null;
   const citaDeSupuestos = citaSupuestos(supuestos ?? []);
+  // Qué falta para firmar, dicho junto al botón (René, 2026-11-16).
+  const faltaParaFirmar =
+    !conclusion.trim() && !perito.trim()
+      ? "Escribe tu conclusión y tu nombre para firmar."
+      : !conclusion.trim()
+        ? "Escribe tu conclusión para firmar."
+        : !perito.trim()
+          ? "Escribe tu nombre para firmar."
+          : null;
 
   return (
     <section
@@ -449,7 +461,7 @@ export function DictamenCaso({
           <div className="flex flex-wrap gap-2">
             <input
               id="nombre-perito"
-              className="campo min-w-0 flex-1 basis-40"
+              className="campo min-w-0 flex-1 basis-56"
               placeholder="Como aparecerá en la firma"
               value={perito}
               onChange={(e) => {
@@ -461,7 +473,8 @@ export function DictamenCaso({
             <button
               type="button"
               className="boton-secundario"
-              disabled={!perito.trim() || !conclusion.trim()}
+              disabled={faltaParaFirmar !== null}
+              aria-describedby={faltaParaFirmar ? "falta-para-firmar" : undefined}
               onClick={() =>
                 onValidacion({
                   perito: perito.trim(),
@@ -475,6 +488,11 @@ export function DictamenCaso({
               Validar y firmar
             </button>
           </div>
+          {faltaParaFirmar ? (
+            <p id="falta-para-firmar" className="t-nota" data-testid="falta-para-firmar">
+              {faltaParaFirmar}
+            </p>
+          ) : null}
         </div>
         <p role="status" className="t-nota" data-testid="estado-validacion">
           {validacion
@@ -484,7 +502,7 @@ export function DictamenCaso({
               )
             : guardada
               ? `La validación de ${guardada.perito} era de otras entradas: cambiaron la narración o lo que marcaste. Vuelve a validar.`
-              : "Sin validar: el dictamen sale como borrador. Para firmar, escribe tu conclusión y tu nombre."}
+              : "Sin validar: el dictamen sale como borrador."}
         </p>
         {/* El estado va arriba de los botones: abajo quedaba fuera de la pantalla (O2, plan v4). */}
         {(estado ?? pistaExportar) ? (
@@ -504,10 +522,10 @@ export function DictamenCaso({
           {armando === "pdf" ? "Armando el PDF…" : "Descargar el PDF"}
           <kbd className="font-mono text-[0.6875rem] opacity-70">Ctrl P</kbd>
         </button>
-        <div className="grid grid-cols-3 gap-2" ref={descargas}>
+        <div className="flex flex-wrap gap-2" ref={descargas} data-testid="acciones-dictamen">
           <button
             type="button"
-            className="boton-secundario boton-compacto"
+            className="boton-secundario boton-compacto flex-auto"
             onClick={() => void exportar("docx")}
             aria-busy={armando === "docx"}
             aria-disabled={armando !== null}
@@ -517,19 +535,19 @@ export function DictamenCaso({
           </button>
           <button
             type="button"
-            className="boton-secundario boton-compacto"
+            className="boton-secundario boton-compacto flex-auto"
             onClick={acciones.guardarArchivo}
             data-testid="guardar-caso"
-            title="Descarga el caso completo para abrirlo después en Croquis"
+            data-tip="Descarga el caso completo para abrirlo después en Croquis"
           >
             Descargar el caso
           </button>
           <button
             type="button"
-            className="boton-secundario boton-compacto"
+            className="boton-secundario boton-compacto flex-auto"
             onClick={acciones.guardarAqui}
             data-testid="guardar-en-equipo"
-            title="Lo guarda en este navegador, en la lista de casos"
+            data-tip="Lo guarda en este navegador, en la lista de casos"
           >
             Guardar en este navegador
           </button>

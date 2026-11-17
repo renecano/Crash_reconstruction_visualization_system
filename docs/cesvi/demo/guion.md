@@ -2,7 +2,7 @@
 
 Para la demo en vivo con los peritos de CESVI. El video grabado tiene su propio guion (`docs/cesvi/video/guion.md`, del 23 de octubre, sin el 3D).
 
-- **Ensayado** el 2026-11-15 en producción con `apps/web/e2e/ensayo-demo.spec.ts`: los 10 tramos salieron, sin errores de página. Tiempos de máquina y capturas en `eval/results/ensayo_demo.json` y `docs/cesvi/demo/ensayo/`.
+- **Ensayado** el 2026-11-15 en producción con `apps/web/e2e/ensayo-demo.spec.ts` (`eval/results/ensayo_demo.json`, `docs/cesvi/demo/ensayo/`). Eso fue antes de la ronda 2: con las pantallas nuevas (la primera del caso nuevo, la de antes de reconstruir, las pestañas «3D» y «2D») falta repetir el ensayo. Los cinco ejemplos sí se recorrieron de punta a punta en producción el 2026-11-16, sin el 3D de Unity (`eval/results/ronda2_ejemplos.json`).
 - **Cifras:** solo las que muestra la pantalla. Las de abajo son las del 2026-11-15; si la pantalla dice otra cosa, manda la pantalla.
 - **Nada juzga al conductor:** el perito concluye. Croquis es una reconstrucción de apoyo.
 - **Antes de empezar:** Chrome con caché (no incógnito), la laptop conectada a la corriente, y el 3D de AXA abierto una vez antes (así el build ya está en caché: la primera carga tarda unos 10 s; las siguientes, 3 a 4 s).
@@ -15,15 +15,17 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 
 ## 1 · AXA A2010930: un caso que CESVI ya analizó (5 min)
 
-> Lista de casos → AXA. Pasos 1 a 3 de corrido; paso 4, «Reconstruir» (unos 9 s).
+> Lista de casos → AXA. Pasos 1 a 3 de corrido; en «Reconstrucción», la pantalla plantea la pregunta («¿A qué velocidad venían?») con lo que se colocó y de dónde salió cada cosa; «Reconstruir» (unos 9 s).
 
-- **La cifra:** V2 a 57 km/h, con su rango de 55 a 78. Es el mejor ajuste de la física, no un promedio.
+- **La cifra:** V2 a 57 km/h, con su rango de 55 a 78. Es el mejor ajuste de la física, no un promedio. Debajo, cada punto de la gráfica es una simulación; el corchete marca el rango.
 - **Dos hipótesis:** el reposo que el reporte no da (supuesto) y la deformación medida no caben juntos. Se ve «La más cercana al daño medido»; la otra, «Cuadra con el reposo supuesto» (34 km/h), va marcada como supuesto. El perito elige.
 - **Lo que explica el daño:** queda en el borde bajo de la energía que da la deformación medida. Croquis lo dice; no lo esconde.
 
-> «Ver en 3D» → Unity → «Ir al impacto» (unos 14 s con la carga).
+> Pestaña «3D» → Unity → «Ir al impacto» (unos 14 s con la carga). La pestaña «2D» es el croquis desde arriba; su interruptor «Mapa» pone el mapa real.
 
-- **El 3D reproduce el resultado:** no calcula nada. Después del impacto, la carrocería se deforma con el perfil de daño del solver. Pausar, ¼×, «Ir al impacto», «Ver todo».
+- **El 3D reproduce el resultado:** no calcula nada. Después del impacto, la carrocería se deforma con el perfil de daño del solver.
+- **Una sola barra de reproducción** para 3D y 2D: pausar, ¼× ½× 1×, «Ir al impacto», «Ver todo», «Repetir». Al cambiar de pestaña se conserva el instante.
+- **Cámara:** las generales a un clic («Alrededor», «Desde arriba», «Cinematográfica», «Desde la acera»); cada vehículo abre las suyas («Detrás, siguiéndolo», «Lo que veía su conductor», «Su daño, en el impacto»).
 - **Leyenda:** reconstrucción ilustrativa; el entorno es procedural, no el lugar real.
 - **La nota bajo el 3D** dice de qué vehículo y qué velocidad es, con el nombre del panel: «B · Tacoma (V2) antes del impacto: Croquis 57 km/h (55–78) · CESVI 63.15 km/h de barrera equivalente por la deformación (EBS)» y «A · Silverado 2500 (V1) al salir del impacto: Croquis 31 km/h · CESVI 60.27 km/h por los restos». Presentar y el dictamen lo nombran igual.
 
@@ -36,14 +38,26 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 
 ## 2 · Un caso nuevo, en vivo (4 min)
 
-> Lista → «Narrar un hecho nuevo» → paso 2 → «Usar una narración de ejemplo» (o una narración que dicte un perito) → «Leer» (Claude, unos 13 s).
+> Lista → «Narrar un hecho nuevo». La primera pantalla dice en una línea lo que va a pasar (narras, colocas, se reconstruye, comparas, firmas) → «Escribir la narración del hecho» → un ejemplo de la lista (o una narración que dicte un perito) → «Leer la narración».
+
+- **Un ejemplo sin cambios usa su lectura guardada** (hecha con Claude) y la pantalla lo dice: no espera ni gasta. Una narración dictada, o un ejemplo con un cambio, sí se lee con Claude (unos 13 s).
 
 - **Cada dato con su cita:** lo que la narración no dice queda como supuesto, a la vista. Los datos personales se quitan antes de enviar el texto. «Lo que Croquis leyó» enseña los vehículos y los impactos en orden, con la letra de cada vehículo y su «supuesto».
 - **Las preguntas no sacan del cuestionario:** «Lo coloco en el mapa» se anota y la colocación se hace en «La escena».
 - **Colocar:** una pregunta a la vez en el mapa (dónde fue, por dónde venía cada vehículo, dónde quedó). Si conviene, «Más herramientas» → «Medir una distancia»: la línea sigue al puntero con los metros en vivo; Esc termina.
-- **Reconstruir y ver en 3D** (unos 5 s; el 3D ya está en caché). La reconstrucción ya no enseña la bitácora de los agentes: es un registro interno.
+- **Reconstruir y ver en 3D** (unos 5 s; el 3D ya está en caché).
 
-**Ejemplos para elegir (pendiente):** cuando Fable los pruebe en producción, «Usar una narración de ejemplo» ofrecerá cinco, cada uno con una línea de lo que muestra (`docs/cesvi/ronda-2/narraciones.md`). Para la demo: el 2 (alcance con la deformación medida: el método de CESVI y dos hipótesis) o el 3 (carambola de noche con lluvia). Hasta entonces, la del Jetta y el Camaro.
+**Los cinco ejemplos** (`docs/cesvi/ronda-2/narraciones.md`; cifras del 2026-11-16 en producción, con la escena colocada como dice cada narración):
+
+| Ejemplo                                         | Qué muestra                                                                 | Lo que da                    |
+| ----------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------- |
+| Crucero de noche en Iztapalapa                  | Lectura con citas y preguntas; de noche                                     | A · Jetta a 16 km/h (7–24)   |
+| Alcance en carretera con la deformación medida  | Las medidas C1–C6 de los dos vehículos, su energía y su cambio de velocidad | A · NP300 a 62 km/h (53–62)  |
+| Carambola de noche con lluvia                   | Tres vehículos, dos impactos en orden, pavimento mojado                     | A · Ranger a 34 km/h (30–41) |
+| Reversa en una calle con tope                   | La reversa como supuesto con su fuente; un tope con las medidas de la norma | B · Versa a 21 km/h (20–26)  |
+| Choque en un entronque y salida contra un poste | Punto de paso, terracería y un objeto fijo                                  | B · Sentra a 36 km/h (31–38) |
+
+Para la demo: la carambola (los dos impactos en orden, de noche con lluvia en el 3D) o el alcance (la deformación medida). **Dos hipótesis** solo se ven en AXA: ninguno de los ejemplos las da. En el del poste, la app dice que el golpe contra el poste no lo calcula (sí el choque entre los dos vehículos).
 
 **Plan B:** si Claude no responde, la pantalla lo dice y conserva la narración; se sigue con el caso de AXA o se llena la escena a mano.
 
@@ -72,4 +86,4 @@ Croquis lee el reporte completo de CESVI y arma el expediente con la cita de cad
 
 - **Tope de Claude:** 10 USD diarios (`/api/version`). La secuencia de arriba cuesta unos 0.20 USD; con el ensayo del mismo día, sobra.
 - **Sin red:** el caso de AXA y la reproducción funcionan sin llamar a Claude; el 3D necesita haberse abierto una vez antes.
-- **Detalle que se nota en pantalla:** la barra de reproducción tapa una esquina del minimapa. La leyenda ilustrativa del 3D ya lleva su recuadro y se lee sobre cualquier fondo (WCAG AA).
+- **Detalle que se nota en pantalla:** en el 3D, la barra de reproducción tapa una esquina del minimapa. La leyenda ilustrativa del 3D ya lleva su recuadro y se lee sobre cualquier fondo (WCAG AA).

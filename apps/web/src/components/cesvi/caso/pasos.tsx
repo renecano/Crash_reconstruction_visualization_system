@@ -4,6 +4,7 @@
  * reproducción o guardado. Son los mismos pasos del recorrido de AXA, llenos con lo que hacía
  * «Caso nuevo» (N vehículos, carambolas, 3D, declaración y dictamen).
  */
+import { EJEMPLOS, ejemploDe } from "@/lib/ejemplos-narracion";
 import {
   formato as F,
   conMasa,
@@ -340,7 +341,8 @@ export function PasoHecho({
   editable: boolean;
   onNarracion: (t: string) => void;
   onLeer: () => void;
-  onEjemplo: () => void;
+  /** Pone una narración de ejemplo en el campo. */
+  onEjemplo: (texto: string) => void;
   estado: string | null;
   escena: EscenaNarrada | null;
   preguntas: PreguntaEscena[];
@@ -399,20 +401,36 @@ export function PasoHecho({
             >
               Leer la narración
             </button>
-            <button
-              type="button"
-              className="boton-secundario"
-              onClick={onEjemplo}
-              data-testid="ejemplo-narracion"
-            >
-              Usar una narración de ejemplo
-            </button>
             {estado ? (
               <span role="status" className="t-nota">
                 {estado}
               </span>
             ) : null}
           </div>
+          {/* Cinco ejemplos, cada uno con lo que muestra (ronda 2, C). A la vista mientras no haya
+              una narración propia: con el campo vacío o con un ejemplo sin cambios. */}
+          {!narracion.trim() || ejemploDe(narracion) ? (
+            <div className="flex flex-col gap-1.5" data-testid="ejemplos-narracion">
+              <span className="t-rotulo">O usa una narración de ejemplo</span>
+              <ul className="lista-ejemplos">
+                {EJEMPLOS.map((e, k) => (
+                  <li key={e.clave}>
+                    <button
+                      type="button"
+                      aria-pressed={ejemploDe(narracion)?.clave === e.clave}
+                      onClick={() => onEjemplo(e.narracion)}
+                      // El primero conserva el nombre de antes (lo usan las pruebas).
+                      data-testid={k === 0 ? "ejemplo-narracion" : `ejemplo-${e.clave}`}
+                      data-ejemplo={e.clave}
+                    >
+                      <b>{e.titulo}</b>
+                      <span>{e.linea}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
       ) : null}
       {narracion.trim() ? (
