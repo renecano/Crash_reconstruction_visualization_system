@@ -1,15 +1,10 @@
-# Croquis, tanda t4 (René, 2026-11-16): los fps del visor Unity en el navegador, en el sitio
-# publicado (con el build que trae el daño y la cámara de personas), en los cuatro niveles. Corre
-# tools\unity\medir-web.ps1 desde una carpeta de trabajo fuera del repo (su perfil de Chrome y sus
-# mediciones no ensucian git) y deja el resultado en eval\results\rtx-t4\fps_web.json.
+﻿# Croquis, tanda t4 (René, 2026-11-16; sin Vercel Blob desde el 2026-11-17): los fps del visor Unity en
+# el navegador, en los cuatro niveles. Desde el 2026-11-17 no mide el sitio publicado: compila el sitio
+# en modo local (tools/demo-local/demo-local.ps1, el visor y los modelos servidos desde esta máquina),
+# mide ahí con tools/unity/medir-web.ps1 y lo apaga. Es el mismo build de Unity que sirve producción;
+# los fps dependen de la tarjeta de video, no de dónde se bajó. Deja eval/results/rtx-t4/fps_web.json.
 $ErrorActionPreference = "Stop"
 $repo = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
-$trabajo = Join-Path $env:LOCALAPPDATA "croquis-rtx-t4\web"
-New-Item -ItemType Directory -Force $trabajo | Out-Null
-Copy-Item (Join-Path $repo "tools\unity\medir-web.ps1") $trabajo -Force
-& powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $trabajo "medir-web.ps1") -Niveles "baja,media,alta,ultra"
-if ($LASTEXITCODE) { throw "medir-web terminó con el código $LASTEXITCODE" }
-$destino = Join-Path $repo "eval\results\rtx-t4"
-New-Item -ItemType Directory -Force $destino | Out-Null
-Copy-Item (Join-Path $trabajo "e6_unity_web_demo.json") (Join-Path $destino "fps_web.json") -Force
+& powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $repo "tools\demo-local\demo-local.ps1") -Despues fps-web -Salida (Join-Path $repo "eval\results\rtx-t4\fps_web.json")
+if ($LASTEXITCODE) { throw "La medición de fps en el navegador terminó con el código $LASTEXITCODE" }
 Write-Host "Listo: eval\results\rtx-t4\fps_web.json"

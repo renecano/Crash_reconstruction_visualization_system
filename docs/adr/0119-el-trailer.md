@@ -18,12 +18,16 @@
 - **La hoja se dibuja en un lienzo con una cámara propia** (`camara.ts`, `hoja.ts`): la misma cámara va de la vista de plano al vuelo a ras de la hoja, y la onda del impacto dobla la cuadrícula. Sin imágenes.
 - **El mismo componente sirve para los tres formatos.** En vertical, la calle corre de abajo hacia arriba y los rótulos salen a los lados.
 - **La música se compone en código** (`tools/trailer/musica.mjs`): senos, ruido con semilla y filtros sencillos, sobre la misma rejilla. No usa grabaciones, muestras ni melodías de terceros, así que no hay licencia que revisar.
-  - La pista que René había elegido era el audio del video de referencia y no tenía licencia: no se usa (`D:\Croquis-trailer\LICENCIA-MUSICA.txt`).
+  - La pista que René había elegido era el audio del video de referencia y no tenía licencia: no se usa (`trailer-salida/LICENCIA-MUSICA.txt`).
 - **Las tipografías son las de la app** (Instrument Serif, Instrument Sans y Geist Mono, SIL OFL 1.1), de sus paquetes `@fontsource`. El logotipo final es el de `assets/brand` (símbolo de `marca.json` y la palabra del SVG maestro, letra por letra).
 - **Las tomas del 3D se graban en la computadora con tarjeta de video**, con el visor de escritorio del release `rtx-t4` y su modo foto: no hace falta un build nuevo de Unity.
   - `tools/trailer/tomas-rtx.mjs` genera el plan: seis huecos, cada uno una secuencia de cuadros a 3840×2160 en ultra.
   - Las corre `tools/colaborador/desde-release.ps1 -Paso trailer` (un paso más de la tanda 4) y las deja en un zip en el Escritorio. No van a git.
 - **Un hueco sin toma no se rellena.** La escena de papel sigue, y el archivo sale con «-sin-3d» en el nombre. Con `--previo` se aceptan las fotos de prueba a 720p para revisar el ritmo; ese archivo sale con «-previo».
+
+- **Nada de video ni audio en git** (René, 2026-11-17). Lo que produce el tráiler, sus tomas, su música y la referencia viven en `trailer-salida/`, que git ignora con una sola línea.
+  - `tools/git/sin-medios.mjs` falla si hay un .mp4, .mov, .wav, .mp3 o .m4a fuera de `apps/web/public/portada/`. Lo corren el CI (todo lo rastreado) y el gancho de pre-commit (lo que va en el commit).
+  - El gancho está en `.githooks/` y lo activa `pnpm install` (`tools/git/instalar-ganchos.mjs`).
 
 ## Consecuencias
 

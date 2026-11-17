@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 import { irAPaso, sinIdentificadoresDeFuente } from "./ayuda-recorrido";
 import * as F from "../../../packages/cesvi/src/formato";
 

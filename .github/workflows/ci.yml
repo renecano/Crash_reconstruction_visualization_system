@@ -30,6 +30,10 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # Ningún video ni audio en el repositorio fuera de la portada (René, 2026-11-17).
+      - run: node tools/git/sin-medios.mjs
+      # Las pruebas de tools/: el candado y qué cambios despliegan el sitio (tools/vercel).
+      - run: pnpm --filter @croquis/web exec vitest run --root ../.. --dir ../../tools --environment node
       - run: pnpm format:check
       - run: pnpm lint
       - run: pnpm typecheck

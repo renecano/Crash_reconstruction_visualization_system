@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 
 /**
  * `/medicion?auto=1` (botón de la computadora de la demo): empieza sola y descarga el JSON de E6 al

@@ -110,8 +110,8 @@
       ]
     },
     "t4": {
-      "titulo": "Tanda 4 · Referencias completas, arranque del 3D, fps con el daño y la cámara de personas (web y escritorio, baja a ultra), las fotos promo y las tomas del tráiler",
-      "nota": "Una sola corrida, unas 2 h 45 min. Las referencias son las de la Tanda 3 que quedaron pendientes. El arranque del 3D y los fps miden el sitio publicado; los fps de escritorio, el visor del release rtx-t4. Las fotos y las tomas del tráiler quedan en dos zip en el Escritorio para mandárselos a René: no van a git.",
+      "titulo": "Tanda 4 · Referencias completas, arranque del 3D, fps con el daño y la cámara de personas (web y escritorio, baja a ultra), las fotos promo, las tomas del tráiler y la demo local",
+      "nota": "Una sola corrida, unas 3 h 10 min. Las referencias son las de la Tanda 3 que quedaron pendientes. Nada baja de Vercel Blob (René, 2026-11-17): el visor de Unity sale de una copia local (del release de GitHub), los fps web se miden contra el sitio compilado en modo local, el arranque del 3D sirve el build desde esa copia y el visor de escritorio pide los modelos a esta máquina. Los fps de escritorio, las fotos y las tomas usan el visor del release rtx-t4. Las fotos y las tomas del tráiler quedan en dos zip en el Escritorio para mandárselos a René: no van a git.",
       "pasos": [
         {
           "nombre": "referencias-de-prueba",
@@ -192,6 +192,12 @@
           "salidas": []
         },
         {
+          "nombre": "visor-local",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 2,
+          "salidas": []
+        },
+        {
           "nombre": "arranque-3d",
           "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/arranque-3d.ps1",
           "minutos": 6,
@@ -200,7 +206,7 @@
         {
           "nombre": "fps-web",
           "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/fps-web.ps1",
-          "minutos": 50,
+          "minutos": 55,
           "salidas": ["eval/results/rtx-t4/fps_web.json"]
         },
         {
@@ -220,6 +226,12 @@
           "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/desde-release.ps1 -Paso trailer",
           "minutos": 15,
           "salidas": ["eval/results/rtx-t4/tomas_trailer.json"]
+        },
+        {
+          "nombre": "demo-local",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues comprobar -Salida eval/results/rtx-t4/demo_local.json",
+          "minutos": 4,
+          "salidas": ["eval/results/rtx-t4/demo_local.json"]
         }
       ]
     }

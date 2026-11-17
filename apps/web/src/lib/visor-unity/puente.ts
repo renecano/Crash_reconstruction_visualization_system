@@ -4,6 +4,7 @@
  * manda los de la web. El componente `<VisorUnity>` lo usa; las fotos del dictamen también.
  */
 import { archivosPrecargados } from "./precarga";
+import { redirigirModelosA } from "./modelos-locales";
 import { protegerTecladoDeLaPagina } from "./teclado";
 import {
   FUNCION_PUENTE_WEB,
@@ -23,6 +24,11 @@ export interface ManifiestoVisorUnity {
   data: string;
   framework: string;
   code: string;
+  /**
+   * Si está, los modelos de los vehículos salen de aquí (por ejemplo, `/modelos/vehiculos/`) y no de
+   * Vercel Blob: la demo local y el plan B (`tools/unity/visor-local.mjs`, René 2026-11-17).
+   */
+  modelos?: string;
 }
 
 /** Lo que `createUnityInstance` devuelve y usamos. */
@@ -187,6 +193,8 @@ export class PuenteUnity {
     try {
       // Antes de que Unity registre sus oyentes: lo que se escribe en la página no es suyo.
       protegerTecladoDeLaPagina();
+      // La demo local y el plan B: los modelos, del sitio y no de Blob.
+      if (m.modelos) redirigirModelosA(m.modelos);
       marcar("cargador");
       const crear = await Promise.race([cargarScript(urls.loader), plazo]);
       marcar("cargador_listo");

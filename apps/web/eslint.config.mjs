@@ -19,6 +19,8 @@ const eslintConfig = defineConfig([
     // Decodificadores de three (Draco y Basis) y el script de Blender, copiados en cada build (R10, R11).
     "public/decodificadores/**",
     "public/blender/**",
+    // La copia del build de Unity servida desde el sitio (demo local, plan B; tools/unity/visor-local.mjs).
+    "public/visor-unity/local/**",
   ]),
 ]);
 

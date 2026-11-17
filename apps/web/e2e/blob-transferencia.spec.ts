@@ -1,7 +1,9 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { chromium, expect, test, type Page } from "@playwright/test";
+import { chromium, type Page } from "@playwright/test";
+import { expect, test } from "./base";
+import { sinBlob } from "./sin-blob";
 import { irAPaso } from "./ayuda-recorrido";
 
 /**
@@ -83,6 +85,11 @@ const resumen = (c: Record<string, Cuenta>) =>
   );
 
 test("lo que baja una visita al 3D, primera y segunda vez, por servidor", async ({ baseURL }) => {
+  // Mide la transferencia real de Blob: nada la corre sin permiso explícito (René, 2026-11-17).
+  test.skip(
+    process.env.CROQUIS_PERMITIR_BLOB !== "1",
+    "Gasta transferencia real de Vercel Blob: solo con CROQUIS_PERMITIR_BLOB=1 y el visto bueno de René.",
+  );
   test.setTimeout(600_000);
   const perfil = mkdtempSync(join(tmpdir(), "croquis-perfil-"));
   const ctx = await chromium.launchPersistentContext(perfil, {
@@ -94,6 +101,7 @@ test("lo que baja una visita al 3D, primera y segunda vez, por servidor", async 
     reducedMotion: "reduce",
     viewport: { width: 1600, height: 900 },
   });
+  await sinBlob(ctx);
   try {
     await ctx.addInitScript(() => {
       (window as unknown as Record<string, unknown>).__croquisVisorUnity = true;

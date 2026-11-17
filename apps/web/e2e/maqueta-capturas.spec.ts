@@ -1,7 +1,7 @@
 import { mkdirSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join, resolve } from "node:path";
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./base";
 import { colocarTodo, irAPaso } from "./ayuda-recorrido";
 
 /**

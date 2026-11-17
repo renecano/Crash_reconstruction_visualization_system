@@ -5,7 +5,7 @@
  * rejilla de pulsos que la imagen (`apps/trailer/src/ritmo.json`): latido, impacto, casi silencio,
  * subida, tres golpes con percusión, corte a silencio y golpe final.
  *
- *   node tools/trailer/musica.mjs [--salida D:\Croquis-trailer\musica\croquis-trailer.wav]
+ *   node tools/trailer/musica.mjs [--salida trailer-salida/musica/croquis-trailer.wav]
  *
  * Escribe un WAV estéreo de 48 kHz y 16 bits. Con la misma semilla sale idéntico, bit a bit.
  */
@@ -438,7 +438,11 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const salida = resolve(
     i > 0
       ? process.argv[i + 1]
-      : join(process.env.CROQUIS_TRAILER ?? "D:\\Croquis-trailer", "musica", "croquis-trailer.wav"),
+      : join(
+          process.env.CROQUIS_TRAILER ?? resolve(AQUI, "../../trailer-salida"),
+          "musica",
+          "croquis-trailer.wav",
+        ),
   );
   const p = componer();
   const wav = aWav(p);
