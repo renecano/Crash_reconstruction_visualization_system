@@ -333,7 +333,7 @@ export function MapaEscena({
               [Math.min(...lons), Math.min(...lats)],
               [Math.max(...lons), Math.max(...lats)],
             ],
-            { padding: 80, maxZoom: 19, animate: false },
+            { padding: 80, maxZoom: 20.5, animate: false },
           );
         } else if (i0) instancia.jumpTo({ center: [i0.lon, i0.lat], zoom: 17 });
         else setBuscar(true);
@@ -482,7 +482,7 @@ export function MapaEscena({
           [Math.min(...lons), Math.min(...lats)],
           [Math.max(...lons), Math.max(...lats)],
         ],
-        { padding: 80, maxZoom: 19, animate: false },
+        { padding: 80, maxZoom: 20.5, animate: false },
       );
       encuadrado.current = true;
     };

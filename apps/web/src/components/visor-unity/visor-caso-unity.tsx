@@ -191,7 +191,7 @@ export function VisorCasoUnity({
           onPuntoMarcado={alPunto}
         />
         {api && !presentar ? (
-          <div className="absolute top-3 right-3 z-10 flex flex-wrap items-center justify-end gap-2">
+          <div className="absolute top-[4.25rem] right-3 z-10 flex flex-wrap items-center justify-end gap-2">
             {editable ? (
               <>
                 <button

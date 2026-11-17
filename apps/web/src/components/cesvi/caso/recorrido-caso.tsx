@@ -1614,7 +1614,7 @@ export function RecorridoCaso({
               : // En el hecho no hay mapa (A5): se queda montado pero oculto, para no volver a
                 // cargarlo al llegar al lugar (MapLibre se ajusta solo al reaparecer).
                 pico
-                ? "relative order-first min-h-[60vh] overflow-hidden lg:absolute lg:inset-0 lg:min-h-0"
+                ? `relative order-first ${planteando ? "min-h-[40vh]" : "min-h-[60vh]"} overflow-hidden lg:absolute lg:inset-0 lg:min-h-0`
                 : `relative min-h-[50vh] overflow-hidden rounded-panel border border-linea-suave ${grande ? "lg:flex-1" : "lg:h-[460px] lg:w-[420px] lg:shrink-0 lg:self-start"} ${actual === 7 ? "pointer-events-none invisible absolute! h-[460px] w-[640px]" : actual === 1 || hojaAncha || sinMapaAlInicio ? "hidden" : ""}`
           }
           aria-label="Mapa"
@@ -1939,7 +1939,7 @@ export function RecorridoCaso({
           ) : verMapa || planteando ? (
             // En el 3D la leyenda de CESVI va en la banda del visor (y no tapa sus controles).
             <p
-              className={`vidrio pointer-events-none absolute bottom-3 z-10 px-2 py-1 text-[0.6875rem] text-texto-2 ${pico ? "right-3 lg:right-[500px]" : "right-3"}`}
+              className={`vidrio pointer-events-none absolute z-10 px-2 py-1 text-[0.6875rem] text-texto-2 ${r && vista === "mapa" ? "bottom-[5.75rem]" : "bottom-3"} ${pico ? "right-3 lg:right-[500px]" : "right-3"}`}
             >
               {LEGEND_TEXT_CESVI}
             </p>

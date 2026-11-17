@@ -39,3 +39,43 @@ Ningún número cambia en ninguno de los bloques: cambia cómo se llega a ellos 
 **Evidencia:** `evidencia/a1/` (antes y después en claro y ventana chica; después también en oscuro y teléfono).
 
 **Pruebas:** `trazo-inicio.test.tsx` (qué dice, quién actúa, un solo botón principal, sin cifras, con y sin animación), `mapa-compartido.test.ts` (se presta el mismo mapa, uno propio si está ocupado) y las e2e del flujo de caso nuevo y de la carambola en Chromium.
+
+## A6 · «La incógnita» y el visor (rama `feat/ronda2-a6-incognita`)
+
+**Qué decidí sobre la pantalla antes de «Reconstruir», y por qué**
+
+Se queda, convertida en el planteamiento del problema («La incógnita», la propuesta que eligió René). La razón: es el único momento en que el perito puede ver junto lo que va a entrar al cálculo antes de confiar en un número. Quitarla (la propuesta «Sin antesala») ahorraba un clic, pero el resultado llegaba sin que se viera de qué evidencia salió.
+
+**Qué cambió en la pantalla antes de reconstruir**
+
+- **A la izquierda**, en lugar del mapa lejano con los marcadores encimados: el croquis de lo que el perito colocó, encuadrado a esa evidencia. Cada vehículo donde quedó y cada choque llevan una etiqueta con su origen («lo marcaste», «narración» o «supuesto»). Por dónde llegó cada vehículo va punteado, con su «A · ? km/h»: lo que se va a calcular. Lleva escala, norte y, si ya llegaron, las calles del mapa en tenue.
+- **A la derecha:** la pregunta («¿A qué velocidad venían?») con un signo del tamaño que tendrá la respuesta, el botón «Reconstruir» y, debajo, lo que el perito marcó y lo que quedó como supuesto (los mismos renglones de «¡La escena está lista!»). Ningún número aparece antes de calcular.
+- Al reconstruir, el signo late mientras se calcula y la cifra aparece en ese mismo lugar.
+- No calcula nada nuevo: dibuja lo que ya está en el expediente.
+
+**La gráfica de puntos de las simulaciones** (la que René pidió de «Sin antesala»)
+
+- Va a la vista bajo la cifra, en lugar del histograma de barras que estaba plegado. Cada punto es una simulación real del caso, en su km/h; el corchete bajo el eje es el rango (donde cae el 80 %) y el punto naranja, el mejor ajuste.
+- Si una columna no cabe, cada punto vale varias simulaciones y la leyenda lo dice. Una columna con simulaciones nunca se queda sin punto.
+- Los percentiles y la mediana siguen plegados («Los percentiles de las simulaciones»).
+- Son los mismos datos de antes (`valores` del resultado): ninguna cifra cambia.
+
+**El visor**
+
+- **Dos pestañas: «3D» y «2D».** Antes eran cinco en una fila (Cenital, Detrás de A, Conductor A, Órbita 3D, Mapa).
+- **2D:** el croquis cenital con etiquetas, trayectorias, siluetas, escala y norte. El interruptor «Mapa» pone el mapa real; no es otra pestaña.
+- **Una sola barra de reproducción** (`BarraReproduccion`) para el 3D, el 2D y el 2D sobre el mapa: reproducir, línea de tiempo con el impacto marcado, ¼× ½× 1×, «Ir al impacto», «Ver todo» y «Repetir». El instante se conserva al cambiar de pestaña. Sobre el mapa, los vehículos se mueven por un canal sin volver a dibujar la página (`apps/web/src/lib/canal.ts`).
+- En el 2D, «Ver todo» e «Ir al impacto» ya no se repiten arriba: arriba quedan acercar y alejar.
+- **El selector «Cámara» del 3D** (`selector-camaras.tsx`): las cuatro generales a un clic («Alrededor», «Desde arriba», «Cinematográfica», «Desde la acera»); un botón por vehículo («B · Tacoma») que abre sus tres vistas («Detrás, siguiéndolo», «Lo que veía su conductor», «Su daño, en el impacto»): dos clics; las personas que van a pie, en bici o en moto, a un clic. Con teclado: Esc cierra el menú y regresa el foco.
+- **«Detrás de C»:** la distancia y la altura de la cámara siguen al largo del vehículo. Un sedán de 4.5 m conserva 8 m atrás y 2.6 m arriba; detrás de una camioneta de 5.3 m queda a 9.42 m y 3.3 m. No pide build de Unity: son los parámetros que la web le manda a la cámara «cerca».
+- El mapa del caso se acerca más a lo colocado (zoom máximo 20.5 en lugar de 19).
+
+**Lo que no pude ver en pantalla**
+
+- El 3D real de Unity: René pidió no cargar Unity en su laptop (se quedó sin memoria). El selector se probó con el Unity falso de las e2e y con pruebas unitarias; «Detrás de C» con la camioneta queda por verse en el ensayo en producción.
+
+**Evidencia:** `evidencia/a6/` (antes y después de la pantalla antes de reconstruir, en claro, oscuro, ventana chica y AXA; el visor 2D, el 2D sobre el mapa y el selector del 3D).
+
+**Pruebas:** `planteamiento.test.tsx`, `selector-camaras.test.tsx`, `camaras.test.ts`, `reconstruccion-lab.test.ts` (la nube) y las e2e de los flujos principales en Chromium, ajustadas a las pestañas nuevas.
+
+**Pendiente (anotado en «Endurecimiento pendiente»):** las e2e manuales `promo-recorrido.spec.ts` y `auditoria-recorrido.spec.ts` todavía buscan las pestañas viejas (`vista-detras`, `vista-conductor`): hay que pasarlas al selector de cámaras antes de volver a correrlas.

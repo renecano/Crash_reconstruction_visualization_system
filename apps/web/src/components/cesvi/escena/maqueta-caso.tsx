@@ -119,6 +119,7 @@ export function MaquetaCaso({
         {(t, pedido) => (
           <EscenaMaqueta
             pedidoVista={pedido}
+            conBarra
             spec={spec}
             resultado={listo.res}
             relieve={r.relieve ?? null}

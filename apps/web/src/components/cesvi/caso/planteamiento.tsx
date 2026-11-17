@@ -216,9 +216,11 @@ export function CroquisPlanteamiento({
                 .join(" ")}
             />
           ))}
-          {g.llegadas.map((l) => {
+          {g.llegadas.map((l, k) => {
             const ang = (Math.atan2(l.b.y - l.a.y, l.b.x - l.a.x) * 180) / Math.PI;
-            const medio = { x: (l.a.x + l.b.x) / 2, y: (l.a.y + l.b.y) / 2 };
+            // Cada «? km/h» a distinta altura de su línea: si dos llegan por el mismo carril, no se enciman.
+            const f = (k + 1) / (g.llegadas.length + 1);
+            const medio = { x: l.a.x + (l.b.x - l.a.x) * f, y: l.a.y + (l.b.y - l.a.y) * f };
             // El «? km/h» va a un lado de la línea, del lado que queda dentro del dibujo.
             const lado =
               Math.abs(Math.cos((ang * Math.PI) / 180)) > 0.5 ? { x: 0, y: -14 } : { x: 16, y: 0 };
@@ -236,7 +238,7 @@ export function CroquisPlanteamiento({
                   y={medio.y + lado.y}
                   textAnchor={lado.x ? "start" : "middle"}
                 >
-                  ? km/h
+                  {letraDe(l.vehiculo)} · ? km/h
                 </text>
               </g>
             );

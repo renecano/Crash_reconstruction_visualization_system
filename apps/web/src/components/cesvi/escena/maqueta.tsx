@@ -103,6 +103,7 @@ export function EscenaMaqueta({
   relieve = null,
   navegable = false,
   pedidoVista = null,
+  conBarra = false,
   margenes = SIN_MARGENES,
   declarada = null,
 }: {
@@ -120,6 +121,8 @@ export function EscenaMaqueta({
    * dictamen), el encuadre fijo alrededor del impacto.
    */
   navegable?: boolean;
+  /** La barra de reproducción ya trae «Ver todo» e «Ir al impacto»: arriba solo queda el zoom. */
+  conBarra?: boolean;
   /** Lo que pide la barra de reproducción a la vista; `n` cambia con cada pedido. */
   pedidoVista?: PedidoVista | null;
   /** Lo que dice cada vehículo al pasar el puntero o con el foco (§9). */
@@ -633,6 +636,7 @@ export function EscenaMaqueta({
         vista={vista}
         anchoPx={anchoPx}
         onVerTodo={alVerTodo}
+        soloZoom={conBarra}
         onIrAlImpacto={alIrAlImpacto}
         onAcercar={alAcercar}
       />
@@ -768,12 +772,14 @@ function ControlesVista({
   onVerTodo,
   onIrAlImpacto,
   onAcercar,
+  soloZoom = false,
 }: {
   vista: Caja;
   anchoPx: number;
   onVerTodo: () => void;
   onIrAlImpacto: () => void;
   onAcercar: (factor: number) => void;
+  soloZoom?: boolean;
 }) {
   const ancho = vista[2] - vista[0];
   const escala = escalaGrafica(ancho);
@@ -792,24 +798,28 @@ function ControlesVista({
         role="group"
         aria-label="Encuadre de la maqueta"
       >
-        <button
-          type="button"
-          className="boton-secundario boton-compacto"
-          onClick={onVerTodo}
-          aria-label="Ver todo"
-          data-testid="maqueta-ver-todo"
-        >
-          {angosta ? "Todo" : "Ver todo"}
-        </button>
-        <button
-          type="button"
-          className="boton-secundario boton-compacto"
-          onClick={onIrAlImpacto}
-          aria-label="Ir al impacto"
-          data-testid="maqueta-ir-impacto"
-        >
-          {angosta ? "Impacto" : "Ir al impacto"}
-        </button>
+        {soloZoom ? null : (
+          <>
+            <button
+              type="button"
+              className="boton-secundario boton-compacto"
+              onClick={onVerTodo}
+              aria-label="Ver todo"
+              data-testid="maqueta-ver-todo"
+            >
+              {angosta ? "Todo" : "Ver todo"}
+            </button>
+            <button
+              type="button"
+              className="boton-secundario boton-compacto"
+              onClick={onIrAlImpacto}
+              aria-label="Ir al impacto"
+              data-testid="maqueta-ir-impacto"
+            >
+              {angosta ? "Impacto" : "Ir al impacto"}
+            </button>
+          </>
+        )}
         <button
           type="button"
           className={`boton-secundario boton-compacto ${angosta ? "" : "w-9"}`}

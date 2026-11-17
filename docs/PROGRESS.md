@@ -2460,7 +2460,9 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 
 ### Endurecimiento pendiente
 
-- **MapLibre compila sus programas de WebGL en el hilo principal la primera vez que dibuja un mapa** (2026-11-16, `eval/results/pasos_hilo_despues.json`): unos 230–280 ms al aparecer el mapa del paso 1 y el de «La escena». No se puede llevar a un worker. Para bajarlo: un solo mapa para todo el caso (el del paso 1 no sirve: A1, Fable) en lugar de uno nuevo por paso. El congelamiento de más de 15 s al pasar de «Daños» a «Los números» era Unity dibujando y arrancando en segundo plano; quedó resuelto (#250).
+- **MapLibre compila sus programas de WebGL en el hilo principal la primera vez que dibuja un mapa.** Desde la ronda 2 (A1, #256) hay un solo mapa por caso (`apps/web/src/lib/mapa-compartido.ts`) y esa compilación ocurre una vez: en la laptop de René, 169 ms al cambiar de paso (antes 214) y 55 ms al llegar a «La escena» (antes 96), en `eval/results/pasos_hilo_ronda2_a1.json`. Sigue por arriba de la meta de 100 ms; no se puede llevar a un worker.
+- **E2E manuales con las pestañas viejas del visor** (ronda 2, A6): `promo-recorrido.spec.ts` y `auditoria-recorrido.spec.ts` buscan `vista-detras` y `vista-conductor`, que ya no existen. Hay que pasarlas al selector de cámaras (`camaras-de-<vehículo>` y `camara-<modo>`) antes de volver a correrlas. No corren en CI.
+- **«Detrás de C» sin ver en el 3D real** (ronda 2, A6): la cámara ahora se aleja y sube con el largo del vehículo (`camaraDetras`), probado con pruebas unitarias. Falta verla en Unity con la carambola, en el ensayo en producción o en la RTX.
 - **Tanda 4 (2026-11-15), lo que queda del tope de gasto y los encabezados:**
   - La política de contenido (`Content-Security-Policy`) está en modo de solo reporte. Falta recorrer un caso completo (mapa, 3D de Unity, PDF) con la consola abierta y, sin avisos, volverla obligatoria.
   - `/api/cesvi/hecho` y `/api/cesvi/consideraciones` no las llama ninguna pantalla. Quedan protegidas como las demás; falta decidir si se retiran.
