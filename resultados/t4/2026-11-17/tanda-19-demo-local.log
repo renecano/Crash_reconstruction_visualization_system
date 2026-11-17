@@ -1,0 +1,30 @@
+# Paso: demo-local
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues comprobar -Salida eval/results/rtx-t4/demo_local.json
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v4\Croquis
+# Inicio: 2026-11-17 13:48:53
+
+
+== 1. Herramientas
+Node v26.13.1 y pnpm 12.11.2.
+Hay internet.
+
+== 2. Dependencias
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 2h ago)
+Lockfile is up to date, resolution step is skipped
+Done in 77ms using pnpm v12.11.2
+
+== 3. El visor de Unity, desde esta computadora
+Visor 64b29e877ba9c856 servido desde el sitio: C:\Users\MrKan\Documents\reto cesvi v4\Croquis\apps\web\public\visor-unity\local
+
+== 4. La app en modo local
+Test-Path : Caracteres no válidos en la ruta de acceso.
+En C:\Users\MrKan\Documents\reto cesvi v4\Croquis\tools\demo-local\demo-local.ps1: 92 Carácter: 15
++ $modoLocal = (Test-Path $rutas) -and ((Get-Content $rutas -Raw) -matc ...
++               ~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (C:\Users\MrKan\...s-manifest.json:String) [Test-Path], ArgumentExcepti 
+   on
+    + FullyQualifiedErrorId : ItemExistsArgumentError,Microsoft.PowerShell.Commands.TestPathCommand
+ 
+
+# Fin: 2026-11-17 13:48:54 · falló (código 1) · 0 min
