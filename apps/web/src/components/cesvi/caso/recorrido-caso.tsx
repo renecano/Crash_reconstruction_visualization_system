@@ -68,7 +68,7 @@ import type { ResultadoMaqueta } from "@/lib/maqueta";
 import { MODALIDAD } from "@/lib/nombres-cesvi";
 import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
 import { leerTransiciones, useTema, useTransiciones, type Modo } from "@/lib/preferencias-cesvi";
-import ejemplo from "../../../../../../data/cesvi/grabaciones/escenas/cesvi-e814f085db.json";
+import { lecturaGuardada } from "@/lib/ejemplos-narracion";
 import { Calculos, type DistanciaRestos } from "../calculos";
 import { Expediente as ExpedienteCesvi } from "../expediente";
 import { ComparacionDeclaracion } from "../comparacion-declaracion";
@@ -188,6 +188,8 @@ export function RecorridoCaso({
   const [estado, setEstado] = useState<string | null>(null);
   // El hecho (Laboratorio §8): leído, se ve el relato marcado; «Editar el relato» abre el editor.
   const [editandoRelato, setEditandoRelato] = useState(false);
+  // La lectura que se ve salió de un ejemplo guardado, no de una llamada a Claude ahora (se dice).
+  const [lecturaGuardadaUsada, setLecturaGuardadaUsada] = useState(false);
   const [noSe, setNoSe] = useState<Set<string>>(new Set());
   const [alMapa, setAlMapa] = useState<Set<string>>(new Set());
   // El paso del lugar (V2): la herramienta del mapa, el elemento elegido de la lista guiada, el
@@ -444,7 +446,15 @@ export function RecorridoCaso({
     const redactada = textoParaClaude(texto);
     let motivo: string | null = null;
     let insuficiente: string | null = null;
+    let deEjemplo = false;
     const leerConClaude: ContextoPizarra["leer"] = async (t, rechazadas) => {
+      // Una narración de ejemplo sin cambios: su lectura guardada (la hizo Claude con este mismo
+      // prompt), sin volver a llamarlo. Con un solo cambio en el texto, se lee de nuevo.
+      const guardada = rechazadas?.length ? null : lecturaGuardada(t);
+      if (guardada) {
+        deEjemplo = true;
+        return guardada;
+      }
       const res = await fetch("/api/cesvi/escena", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -478,6 +488,7 @@ export function RecorridoCaso({
       }
       if (redactada !== texto) setTexto(redactada);
       abrirEscena({ ...p.escena, preguntas: p.preguntas });
+      setLecturaGuardadaUsada(deEjemplo);
       setEstado(null);
     } catch {
       setEstado("No se pudo leer la narración.");
@@ -1018,10 +1029,8 @@ export function RecorridoCaso({
             // El trazo espera a que suba la cortina del acto (la completa, al entrar al caso).
             retrasoMs={transicionesActivas ? 1100 : 0}
             onEscribir={() => irA(1)}
-            onEjemplo={() => {
-              setTexto(ejemplo.narracion);
-              irA(1);
-            }}
+            // Los cinco ejemplos están en la narración, cada uno con lo que muestra.
+            onEjemplo={() => irA(1)}
             abrir={
               <label className="tz-abrir cursor-pointer">
                 Abrir un caso guardado (.croquis)
@@ -1072,17 +1081,25 @@ export function RecorridoCaso({
       );
     if (actual === 1 && leida && !editandoRelato && (!editable || texto.trim()))
       return (
-        <HechoLaboratorio
-          escena={leida}
-          narracion={texto}
-          editable={editable}
-          preguntas={preguntas}
-          onExpediente={cambiarExpediente}
-          onNoSe={cerrarPregunta}
-          onAlMapa={anotarAlMapa}
-          alMapa={preguntasAlMapa}
-          onEditar={() => setEditandoRelato(true)}
-        />
+        <>
+          {lecturaGuardadaUsada ? (
+            <p className="t-nota" role="note" data-testid="lectura-guardada">
+              Es una narración de ejemplo: se muestra su lectura guardada, hecha con Claude. No se
+              volvió a llamar a la IA.
+            </p>
+          ) : null}
+          <HechoLaboratorio
+            escena={leida}
+            narracion={texto}
+            editable={editable}
+            preguntas={preguntas}
+            onExpediente={cambiarExpediente}
+            onNoSe={cerrarPregunta}
+            onAlMapa={anotarAlMapa}
+            alMapa={preguntasAlMapa}
+            onEditar={() => setEditandoRelato(true)}
+          />
+        </>
       );
     if (actual === 1)
       return (
@@ -1091,7 +1108,7 @@ export function RecorridoCaso({
           editable={editable}
           onNarracion={setTexto}
           onLeer={() => void leer()}
-          onEjemplo={() => setTexto(ejemplo.narracion)}
+          onEjemplo={setTexto}
           onCargarReporte={
             inicial.origen === "nuevo"
               ? () =>

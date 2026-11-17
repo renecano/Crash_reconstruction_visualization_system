@@ -1,0 +1,209 @@
+{
+  "id": "ejemplo-poste-terraceria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 568,
+    "output_tokens": 1932,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0212252,
+  "narracion": "El hecho se ubica en la carretera estatal 15, tramo San Martín–Atlixco, a la altura del km 23+600, municipio de Tianguismanalco, Puebla, aproximadamente a las 06:40 horas. La carretera consta de un arroyo de dos carriles de concreto asfáltico, uno por sentido, en curva hacia la izquierda en el sentido de Norte a Sur, con acotamiento de terracería de 2.00 metros de ancho y pendiente descendente en el mismo sentido. La superficie se encontraba seca.\n\nSe examina el vehículo A, marca Mazda, tipo 3, modelo 2014, color gris, de servicio particular. Sobre la carpeta se localiza una huella de derrape de 18.40 metros que inicia en el carril con sentido al Sur, cruza el borde derecho de la carpeta y continúa 9.60 metros sobre el acotamiento de terracería, hasta un poste de concreto de la línea de distribución eléctrica situado a 1.50 metros del borde. El vehículo A presenta en su parte frontal derecha un hundimiento de adelante hacia atrás y de derecha a izquierda, de forma semicircular coincidente con el poste, que afecta defensa, fascia, salpicadera derecha y cofre; deformación medida C1 = 0.05 m, C2 = 0.12 m, C3 = 0.20 m, C4 = 0.31 m, C5 = 0.42 m y C6 = 0.51 m, con L = 0.95 m.\n\nEl vehículo A quedó en contacto con el poste, orientado hacia el Suroeste.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "objeto_fijo",
+        "cita": "hasta un poste de concreto de la línea de distribución eléctrica situado a 1.50 metros del borde"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 06:40 horas",
+        "cita": "municipio de Tianguismanalco, Puebla, aproximadamente a las 06:40 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "carretera estatal 15, tramo San Martín–Atlixco, km 23+600",
+        "cita": "El hecho se ubica en la carretera estatal 15, tramo San Martín–Atlixco, a la altura del km 23+600"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Tianguismanalco",
+        "cita": "municipio de Tianguismanalco, Puebla, aproximadamente a las 06:40 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Puebla",
+        "cita": "municipio de Tianguismanalco, Puebla, aproximadamente a las 06:40 horas"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Mazda",
+        "cita": "Se examina el vehículo A, marca Mazda, tipo 3, modelo 2014, color gris"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "3",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2014",
+        "cita": ""
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "derrape",
+        "cita": "huella de derrape de 18.40 metros que inicia en el carril con sentido al Sur"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "18.40 metros",
+        "cita": ""
+      },
+      {
+        "seccion": "huella",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "derrape",
+        "cita": "continúa 9.60 metros sobre el acotamiento de terracería"
+      },
+      {
+        "seccion": "huella",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "9.60 metros",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta en su parte frontal derecha un hundimiento de adelante hacia atrás y de derecha a izquierda"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_derecha_a_izquierda",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "medidas",
+        "valor": "C1 0.05 m, C2 0.12 m, C3 0.20 m, C4 0.31 m, C5 0.42 m, C6 0.51 m, L 0.95 m",
+        "cita": "deformación medida C1 = 0.05 m, C2 = 0.12 m, C3 = 0.20 m, C4 = 0.31 m, C5 = 0.42 m y C6 = 0.51 m, con L = 0.95 m"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "El vehículo A quedó en contacto con el poste, orientado hacia el Suroeste."
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "objeto_fijo",
+        "valor": "poste de concreto de la línea de distribución eléctrica",
+        "cita": "hasta un poste de concreto de la línea de distribución eléctrica situado a 1.50 metros del borde"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": "El vehículo A presenta en su parte frontal derecha un hundimiento de adelante hacia atrás y de derecha a izquierda"
+      },
+      {
+        "seccion": "objeto_fijo",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "descripcion",
+        "valor": "poste de concreto de la línea de distribución eléctrica situado a 1.50 metros del borde",
+        "cita": "hasta un poste de concreto de la línea de distribución eléctrica situado a 1.50 metros del borde"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A quedó en contacto con el poste, orientado hacia el Suroeste."
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "en contacto con el poste, orientado hacia el Suroeste",
+        "cita": ""
+      }
+    ]
+  }
+}
