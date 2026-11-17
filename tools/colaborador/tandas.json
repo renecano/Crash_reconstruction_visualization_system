@@ -110,8 +110,8 @@
       ]
     },
     "t4": {
-      "titulo": "Tanda 4 · Referencias completas, arranque del 3D, fps con el daño y la cámara de personas (web y escritorio, baja a ultra) y las fotos promo",
-      "nota": "Una sola corrida, unas 2 h 45 min. Las referencias son las de la Tanda 3 que quedaron pendientes. El arranque del 3D y los fps miden el sitio publicado; los fps de escritorio, el visor del release rtx-t4. Las fotos quedan en un zip en el Escritorio para mandárselo a René: no van a git.",
+      "titulo": "Tanda 4 · Referencias completas, arranque del 3D, fps con el daño y la cámara de personas (web y escritorio, baja a ultra), las fotos promo y las tomas del tráiler",
+      "nota": "Una sola corrida, unas 2 h 45 min. Las referencias son las de la Tanda 3 que quedaron pendientes. El arranque del 3D y los fps miden el sitio publicado; los fps de escritorio, el visor del release rtx-t4. Las fotos y las tomas del tráiler quedan en dos zip en el Escritorio para mandárselos a René: no van a git.",
       "pasos": [
         {
           "nombre": "referencias-de-prueba",
@@ -214,6 +214,12 @@
           "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/desde-release.ps1 -Paso fotos",
           "minutos": 20,
           "salidas": ["eval/results/rtx-t4/fotos.json"]
+        },
+        {
+          "nombre": "tomas-del-trailer",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/desde-release.ps1 -Paso trailer",
+          "minutos": 15,
+          "salidas": ["eval/results/rtx-t4/tomas_trailer.json"]
         }
       ]
     }
