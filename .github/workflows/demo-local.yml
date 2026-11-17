@@ -1,5 +1,5 @@
 # La demo local (CORRER-DEMO-LOCAL.bat y .command; LEEME-DEMO-LOCAL.md) en una Mac de verdad con
-# Apple Silicon (el runner macos-14 de GitHub) y en Linux. Revisa los scripts con shellcheck, prepara
+# Apple Silicon (el runner macos-15 de GitHub) y en Linux. Revisa los scripts con shellcheck, prepara
 # la demo como lo haría el doble clic (dependencias, el visor de Unity del release de GitHub y la
 # compilación en modo local) y comprueba con curl que el sitio sirve el visor y los modelos desde la
 # máquina. Lo que no puede probar: el doble clic en Finder, el aviso de macOS la primera vez y abrir
@@ -34,7 +34,7 @@ jobs:
   mac:
     name: Demo local en una Mac con Apple Silicon (preparar y humo)
     needs: shellcheck
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
