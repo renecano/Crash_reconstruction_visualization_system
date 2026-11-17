@@ -66,6 +66,13 @@
                       "estado":  "ok",
                       "minutos":  0.3,
                       "codigo":  0
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "er4-titulo-desarrollo",
+                      "estado":  "omitido: falta data/raw/cesvi (no va en git; se corre en la laptop de René)",
+                      "minutos":  0,
+                      "codigo":  null
                   }
               ]
 }

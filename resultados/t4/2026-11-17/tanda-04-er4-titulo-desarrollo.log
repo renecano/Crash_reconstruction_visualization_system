@@ -1,0 +1,8 @@
+# Paso: er4-titulo-desarrollo
+# Comando: pnpm --filter @croquis/cesvi exec tsx ../../eval/cesvi_r4c_titulo.mts medir desarrollo
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v4\Croquis
+# Inicio: 2026-11-17 11:24:27
+
+# omitido: falta data/raw/cesvi (no va en git; se corre en la laptop de René)
+
+# Fin: 2026-11-17 11:24:27 · omitido: falta data/raw/cesvi (no va en git; se corre en la laptop de René) · 0 min
