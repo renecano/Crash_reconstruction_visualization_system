@@ -2462,6 +2462,12 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 
 - **MapLibre compila sus programas de WebGL en el hilo principal la primera vez que dibuja un mapa.** Desde la ronda 2 (A1, #256) hay un solo mapa por caso (`apps/web/src/lib/mapa-compartido.ts`) y esa compilación ocurre una vez: en la laptop de René, 169 ms al cambiar de paso (antes 214) y 55 ms al llegar a «La escena» (antes 96), en `eval/results/pasos_hilo_ronda2_a1.json`. Sigue por arriba de la meta de 100 ms; no se puede llevar a un worker.
 - **E2E manuales con las pestañas viejas del visor** (ronda 2, A6): `promo-recorrido.spec.ts` y `auditoria-recorrido.spec.ts` buscan `vista-detras` y `vista-conductor`, que ya no existen. Hay que pasarlas al selector de cámaras (`camaras-de-<vehículo>` y `camara-<modo>`) antes de volver a correrlas. No corren en CI.
+- **Límites que dejaron ver las narraciones de ejemplo** (ronda 2, C; `docs/cesvi/ronda-2/narraciones.md`):
+  - un solo vehículo contra un objeto fijo no se reconstruye (el impacto contra el objeto «no lo calcula»);
+  - sin posiciones finales, la deformación medida sola no fija la velocidad;
+  - una pendiente narrada no se puede declarar a mano (solo topes, zonas y el relieve real);
+  - en un caso narrado no salen dos hipótesis: piden una posición final supuesta, que hoy solo trae AXA.
+- **Los ejemplos y el visor nuevo, sin ver en el 3D real de Unity** (ronda 2): `ejemplos-ronda2.spec.ts` con `CROQUIS_UNITY=1` y el ensayo de la demo quedan por correr en producción; no se hizo en la laptop de René por memoria.
 - **«Detrás de C» sin ver en el 3D real** (ronda 2, A6): la cámara ahora se aleja y sube con el largo del vehículo (`camaraDetras`), probado con pruebas unitarias. Falta verla en Unity con la carambola, en el ensayo en producción o en la RTX.
 - **Tanda 4 (2026-11-15), lo que queda del tope de gasto y los encabezados:**
   - La política de contenido (`Content-Security-Policy`) está en modo de solo reporte. Falta recorrer un caso completo (mapa, 3D de Unity, PDF) con la consola abierta y, sin avisos, volverla obligatoria.

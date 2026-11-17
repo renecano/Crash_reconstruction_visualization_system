@@ -1,7 +1,7 @@
 {
   "descripcion": "Qué leyó Claude de cada narración de ejemplo (ronda 2, C), armado con las reglas de la app: cada dato con su cita revisada contra el texto.",
   "script": "eval/ronda2_narraciones.mts",
-  "fecha": "2026-11-17T01:29:08.532Z",
+  "fecha": "2026-11-17T02:18:30.011Z",
   "ejemplos": [
     {
       "clave": "crucero-noche",
@@ -9,122 +9,63 @@
       "version_prompt": "escena-narracion-v1",
       "modelo": "claude-sonnet-5-5",
       "costo_usd": 0.0259064,
-      "vehiculos": [
-        {
-          "id": "V1",
-          "clase": null,
-          "marca": "VW",
-          "tipo": null
-        },
-        {
-          "id": "V2",
-          "clase": null,
-          "marca": "GM",
-          "tipo": null
-        }
-      ],
-      "danos": 4,
+      "filas": 36,
+      "vehiculos": 2,
+      "impactos": 0,
+      "danos": 5,
       "danos_con_medidas": 0,
-      "impactos": null,
-      "posiciones": 0,
+      "posiciones_finales": 0,
+      "huellas": 0,
+      "maniobras": [],
+      "objetos_fijos": [],
       "preguntas": 9,
-      "conteos": {
-        "filas": 36,
-        "valores_invalidos": 0,
-        "citas": 15,
-        "citas_fuera": 0,
-        "numeros": 4,
-        "numeros_fuera": 0
-      },
-      "numeros_fuera": 0,
-      "lugar": "crucero de la calle Azucena esquina con Av. Reforma, colonia Lomas San Lorenzo",
-      "hora": null,
-      "superficie": null,
-      "estado_superficie": null
+      "citas": 15,
+      "citas_fuera": 0,
+      "numeros_fuera": 0
     },
     {
       "clave": "alcance-deformacion",
       "grabada": true,
       "version_prompt": "escena-narracion-v2",
       "modelo": "claude-sonnet-5-5",
-      "costo_usd": 0.028965,
-      "vehiculos": [
-        {
-          "id": "V1",
-          "clase": null,
-          "marca": "Nissan",
-          "tipo": null
-        },
-        {
-          "id": "V2",
-          "clase": null,
-          "marca": "Volkswagen",
-          "tipo": null
-        }
-      ],
+      "costo_usd": 0.031967,
+      "filas": 27,
+      "vehiculos": 2,
+      "impactos": 1,
       "danos": 2,
-      "danos_con_medidas": 0,
-      "impactos": null,
-      "posiciones": 0,
-      "preguntas": 7,
-      "conteos": {
-        "filas": 23,
-        "valores_invalidos": 0,
-        "citas": 10,
-        "citas_fuera": 0,
-        "numeros": 17,
-        "numeros_fuera": 0
-      },
-      "numeros_fuera": 0,
-      "lugar": "carretera federal 57, tramo Querétaro–San Luis Potosí, km 112+300",
-      "hora": null,
-      "superficie": null,
-      "estado_superficie": null
+      "danos_con_medidas": 2,
+      "posiciones_finales": 2,
+      "huellas": 0,
+      "maniobras": [],
+      "objetos_fijos": [],
+      "preguntas": 5,
+      "citas": 13,
+      "citas_fuera": 0,
+      "numeros_fuera": 0
     },
     {
       "clave": "carambola-lluvia",
       "grabada": true,
       "version_prompt": "escena-narracion-v2",
       "modelo": "claude-sonnet-5-5",
-      "costo_usd": 0.0293252,
-      "vehiculos": [
-        {
-          "id": "V1",
-          "clase": null,
-          "marca": "Chevrolet",
-          "tipo": null
-        },
-        {
-          "id": "V2",
-          "clase": null,
-          "marca": "Toyota",
-          "tipo": null
-        },
-        {
-          "id": "V3",
-          "clase": null,
-          "marca": "Ford",
-          "tipo": null
-        }
-      ],
+      "costo_usd": 0.038929,
+      "filas": 43,
+      "vehiculos": 3,
+      "impactos": 2,
       "danos": 4,
       "danos_con_medidas": 0,
-      "impactos": null,
-      "posiciones": 3,
-      "preguntas": 9,
-      "conteos": {
-        "filas": 42,
-        "valores_invalidos": 0,
-        "citas": 17,
-        "citas_fuera": 0,
-        "numeros": 3,
-        "numeros_fuera": 0
-      },
-      "numeros_fuera": 0,
-      "lugar": "Boulevard de los Pinos, entre las calles Encino y Nogal, colonia Valle Alto",
-      "hora": null,
-      "superficie": null,
-      "estado_superficie": null
+      "posiciones_finales": 3,
+      "huellas": 0,
+      "maniobras": [
+        "circula",
+        "se_detiene",
+        "se_detiene"
+      ],
+      "objetos_fijos": [],
+      "preguntas": 8,
+      "citas": 18,
+      "citas_fuera": 0,
+      "numeros_fuera": 0
     },
     {
       "clave": "reversa-pendiente",
@@ -132,71 +73,47 @@
       "version_prompt": "escena-narracion-v2",
       "modelo": "claude-sonnet-5-5",
       "costo_usd": 0.0218192,
-      "vehiculos": [
-        {
-          "id": "V1",
-          "clase": null,
-          "marca": "Honda",
-          "tipo": null
-        },
-        {
-          "id": "V2",
-          "clase": null,
-          "marca": "Nissan",
-          "tipo": null
-        }
-      ],
+      "filas": 30,
+      "vehiculos": 2,
+      "impactos": 1,
       "danos": 2,
       "danos_con_medidas": 0,
-      "impactos": null,
-      "posiciones": 2,
+      "posiciones_finales": 2,
+      "huellas": 0,
+      "maniobras": [
+        "reversa",
+        "circula"
+      ],
+      "objetos_fijos": [],
       "preguntas": 6,
-      "conteos": {
-        "filas": 30,
-        "valores_invalidos": 0,
-        "citas": 11,
-        "citas_fuera": 0,
-        "numeros": 2,
-        "numeros_fuera": 0
-      },
-      "numeros_fuera": 0,
-      "lugar": "calle Cerro del Fortín, frente al acceso vehicular de una casa habitación, colonia Lomas del Valle",
-      "hora": null,
-      "superficie": null,
-      "estado_superficie": null
+      "citas": 11,
+      "citas_fuera": 0,
+      "numeros_fuera": 0
     },
     {
       "clave": "poste-terraceria",
       "grabada": true,
       "version_prompt": "escena-narracion-v2",
       "modelo": "claude-sonnet-5-5",
-      "costo_usd": 0.0212252,
-      "vehiculos": [
-        {
-          "id": "V1",
-          "clase": null,
-          "marca": "Mazda",
-          "tipo": null
-        }
-      ],
-      "danos": 1,
+      "costo_usd": 0.0270692,
+      "filas": 36,
+      "vehiculos": 2,
+      "impactos": 2,
+      "danos": 3,
       "danos_con_medidas": 0,
-      "impactos": null,
-      "posiciones": 1,
-      "preguntas": 4,
-      "conteos": {
-        "filas": 24,
-        "valores_invalidos": 0,
-        "citas": 13,
-        "citas_fuera": 0,
-        "numeros": 10,
-        "numeros_fuera": 0
-      },
-      "numeros_fuera": 0,
-      "lugar": "carretera estatal 15, tramo San Martín–Atlixco, km 23+600",
-      "hora": null,
-      "superficie": null,
-      "estado_superficie": null
+      "posiciones_finales": 2,
+      "huellas": 1,
+      "maniobras": [
+        "circula",
+        "circula"
+      ],
+      "objetos_fijos": [
+        "poste de concreto de la línea de distribución eléctrica"
+      ],
+      "preguntas": 7,
+      "citas": 16,
+      "citas_fuera": 0,
+      "numeros_fuera": 0
     }
   ]
 }

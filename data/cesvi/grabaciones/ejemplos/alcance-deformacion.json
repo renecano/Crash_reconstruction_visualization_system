@@ -3,13 +3,13 @@
   "version_prompt": "escena-narracion-v2",
   "modelo": "claude-sonnet-5-5",
   "uso": {
-    "input_tokens": 750,
-    "output_tokens": 1785,
+    "input_tokens": 761,
+    "output_tokens": 2083,
     "cache_creation_input_tokens": 3846,
     "cache_read_input_tokens": 0
   },
-  "costo_usd": 0.028965,
-  "narracion": "El hecho se ubica en la carretera federal 57, tramo Querétaro–San Luis Potosí, a la altura del km 112+300, municipio de San Luis de la Paz, Guanajuato, aproximadamente a las 16:10 horas. La carretera consta de dos cuerpos separados por un camellón central con vegetación; el cuerpo con sentido de Sur a Norte tiene dos carriles de concreto asfáltico de 3.50 metros cada uno, con acotamiento de 2.50 metros. La superficie se encontraba seca.\n\nSe examinan el vehículo A, marca Nissan, tipo NP300, modelo 2018, color blanco, de servicio particular, y el vehículo B, marca Volkswagen, tipo Vento, modelo 2016, color gris, de servicio particular. El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás que afecta defensa, fascia, cofre, parrilla y radiador; se midió la deformación a lo ancho del frente con seis medidas a separación uniforme: C1 = 0.18 m, C2 = 0.24 m, C3 = 0.29 m, C4 = 0.31 m, C5 = 0.27 m y C6 = 0.20 m, con un ancho de daño L = 1.52 m. El vehículo B presenta en su parte posterior un hundimiento de atrás hacia adelante que afecta defensa trasera, cajuela, calaveras y panel trasero, con medidas C1 = 0.22 m, C2 = 0.30 m, C3 = 0.36 m, C4 = 0.38 m, C5 = 0.33 m y C6 = 0.25 m, y L = 1.45 m. Las zonas de contacto corresponden entre sí: la parte frontal del vehículo A con la parte posterior del vehículo B.\n\nSe localizan restos de plástico y vidrio en el carril de baja velocidad, en una franja de 6.80 metros de largo que inicia 3.20 metros antes del acotamiento. Los vehículos fueron retirados del lugar antes de la inspección, por lo que no se cuenta con sus posiciones finales.",
+  "costo_usd": 0.031967,
+  "narracion": "El hecho se ubica en la carretera federal 57, tramo Querétaro–San Luis Potosí, a la altura del km 112+300, municipio de San Luis de la Paz, Guanajuato, aproximadamente a las 16:10 horas. La carretera consta de dos cuerpos separados por un camellón central con vegetación; el cuerpo con sentido de Sur a Norte tiene dos carriles de concreto asfáltico de 3.50 metros cada uno, con acotamiento de 2.50 metros. La superficie se encontraba seca.\n\nSe examinan el vehículo A, marca Nissan, tipo NP300, modelo 2018, color blanco, de servicio particular, y el vehículo B, marca Volkswagen, tipo Vento, modelo 2016, color gris, de servicio particular. El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás que afecta defensa, fascia, cofre, parrilla y radiador; se midió la deformación a lo ancho del frente con seis medidas a separación uniforme: C1 = 0.18 m, C2 = 0.24 m, C3 = 0.29 m, C4 = 0.31 m, C5 = 0.27 m y C6 = 0.20 m, con un ancho de daño L = 1.52 m. El vehículo B presenta en su parte posterior un hundimiento de atrás hacia adelante que afecta defensa trasera, cajuela, calaveras y panel trasero, con medidas C1 = 0.22 m, C2 = 0.30 m, C3 = 0.36 m, C4 = 0.38 m, C5 = 0.33 m y C6 = 0.25 m, y L = 1.45 m. Las zonas de contacto corresponden entre sí: la parte frontal del vehículo A con la parte posterior del vehículo B.\n\nSe localizan restos de plástico y vidrio en el carril de baja velocidad, en una franja de 6.80 metros de largo. El vehículo A quedó en el carril de baja velocidad, 9 metros adelante del inicio de los restos; el vehículo B quedó sobre el acotamiento, 21 metros adelante del inicio de los restos.",
   "salida": {
     "datos": [
       {
@@ -26,7 +26,7 @@
         "vehiculo": "ninguno",
         "campo": "municipio",
         "valor": "San Luis de la Paz",
-        "cita": "municipio de San Luis de la Paz, Guanajuato, aproximadamente a las 16:10 horas"
+        "cita": "municipio de San Luis de la Paz, Guanajuato"
       },
       {
         "seccion": "caso",
@@ -42,7 +42,7 @@
         "vehiculo": "ninguno",
         "campo": "fecha_hora",
         "valor": "16:10 horas",
-        "cita": ""
+        "cita": "aproximadamente a las 16:10 horas"
       },
       {
         "seccion": "vehiculo",
@@ -50,7 +50,7 @@
         "vehiculo": "V1",
         "campo": "marca",
         "valor": "Nissan",
-        "cita": "el vehículo A, marca Nissan, tipo NP300, modelo 2018, color blanco"
+        "cita": "el vehículo A, marca Nissan, tipo NP300, modelo 2018"
       },
       {
         "seccion": "vehiculo",
@@ -74,7 +74,7 @@
         "vehiculo": "V2",
         "campo": "marca",
         "valor": "Volkswagen",
-        "cita": "el vehículo B, marca Volkswagen, tipo Vento, modelo 2016, color gris"
+        "cita": "el vehículo B, marca Volkswagen, tipo Vento, modelo 2016"
       },
       {
         "seccion": "vehiculo",
@@ -154,7 +154,7 @@
         "vehiculo": "V2",
         "campo": "medidas",
         "valor": "C1 0.22 m, C2 0.30 m, C3 0.36 m, C4 0.38 m, C5 0.33 m, C6 0.25 m, L 1.45 m",
-        "cita": "con medidas C1 = 0.22 m, C2 = 0.30 m, C3 = 0.36 m, C4 = 0.38 m, C5 = 0.33 m y C6 = 0.25 m, y L = 1.45 m"
+        "cita": "C1 = 0.22 m, C2 = 0.30 m, C3 = 0.36 m, C4 = 0.38 m, C5 = 0.33 m y C6 = 0.25 m, y L = 1.45 m"
       },
       {
         "seccion": "impacto",
@@ -194,7 +194,39 @@
         "vehiculo": "ninguno",
         "campo": "longitud",
         "valor": "6.80 metros",
-        "cita": "restos de plástico y vidrio en el carril de baja velocidad, en una franja de 6.80 metros de largo"
+        "cita": "Se localizan restos de plástico y vidrio en el carril de baja velocidad, en una franja de 6.80 metros de largo"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A quedó en el carril de baja velocidad, 9 metros adelante del inicio de los restos"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "en el carril de baja velocidad, 9 metros adelante del inicio de los restos",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo B quedó sobre el acotamiento, 21 metros adelante del inicio de los restos"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "sobre el acotamiento, 21 metros adelante del inicio de los restos",
+        "cita": ""
       }
     ]
   }

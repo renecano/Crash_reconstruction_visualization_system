@@ -131,7 +131,11 @@ function medir() {
     if (!existsSync(ruta)) return [{ clave: e.clave, grabada: false }];
     const g = JSON.parse(readFileSync(ruta, "utf8")) as Grabacion;
     const escena = escenaDeNarracion(g.salida, g.narracion);
-    const x = escena.expediente;
+    const filas = g.salida.datos;
+    const cuantos = (seccion: string) =>
+      new Set(filas.filter((d) => d.seccion === seccion).map((d) => d.n)).size;
+    const valores = (campo: string) =>
+      filas.filter((d) => d.campo === campo).map((d) => String(d.valor));
     return [
       {
         clave: e.clave,
@@ -139,23 +143,19 @@ function medir() {
         version_prompt: g.version_prompt,
         modelo: g.modelo,
         costo_usd: g.costo_usd,
-        vehiculos: x.vehiculos.map((v) => ({
-          id: v.id,
-          clase: v.clase ?? null,
-          marca: v.marca?.valor ?? null,
-          tipo: v.tipo?.valor ?? null,
-        })),
-        danos: x.danos.length,
-        danos_con_medidas: x.danos.filter((d) => (d.deformacion?.medidas?.length ?? 0) > 0).length,
-        impactos: escena.impactos?.length ?? null,
-        posiciones: escena.posiciones.length,
+        filas: filas.length,
+        vehiculos: cuantos("vehiculo"),
+        impactos: cuantos("impacto"),
+        danos: cuantos("dano"),
+        danos_con_medidas: valores("medidas").length,
+        posiciones_finales: valores("fase").filter((v) => v === "final").length,
+        huellas: cuantos("huella"),
+        maniobras: valores("maniobra"),
+        objetos_fijos: valores("objeto_fijo"),
         preguntas: escena.preguntas.length,
-        conteos: escena.conteos,
+        citas: escena.conteos.citas,
+        citas_fuera: escena.conteos.citas_fuera,
         numeros_fuera: escena.numerosFuera?.length ?? 0,
-        lugar: x.caso.lugar?.descripcion?.valor ?? null,
-        hora: x.caso.hora?.valor ?? null,
-        superficie: x.caso.via?.superficie?.valor ?? null,
-        estado_superficie: x.caso.via?.estado_superficie?.valor ?? null,
       },
     ];
   });
