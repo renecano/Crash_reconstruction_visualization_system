@@ -79,3 +79,41 @@ Se queda, convertida en el planteamiento del problema («La incógnita», la pro
 **Pruebas:** `planteamiento.test.tsx`, `selector-camaras.test.tsx`, `camaras.test.ts`, `reconstruccion-lab.test.ts` (la nube) y las e2e de los flujos principales en Chromium, ajustadas a las pestañas nuevas.
 
 **Pendiente (anotado en «Endurecimiento pendiente»):** las e2e manuales `promo-recorrido.spec.ts` y `auditoria-recorrido.spec.ts` todavía buscan las pestañas viejas (`vista-detras`, `vista-conductor`): hay que pasarlas al selector de cámaras antes de volver a correrlas.
+
+## C · Las cinco narraciones de ejemplo (rama `feat/ronda2-c-narraciones`)
+
+El detalle, los textos y los límites están en [`narraciones.md`](narraciones.md).
+
+**Qué cambió en la pantalla**
+
+- En la narración del caso nuevo, en lugar del botón «Usar una narración de ejemplo» hay una lista de cinco, cada una con una línea de lo que muestra. Está a la vista con el campo vacío o con un ejemplo sin cambios.
+- En «El trazo», «Usar un ejemplo» lleva a esa lista.
+- Un ejemplo leído sin cambios usa su lectura guardada (hecha con Claude con el prompt de la app) y la pantalla lo dice. Con un cambio en el texto, se lee con Claude.
+
+**Las cinco, con lo que muestra cada una** (build local, la escena colocada como dice cada narración; `eval/results/ronda2_ejemplos.json`):
+
+| Ejemplo                                         | Qué muestra                                                                 | Lo que da                    |
+| ----------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------- |
+| Crucero de noche en Iztapalapa                  | Lectura con citas y preguntas; de noche                                     | A · Jetta a 16 km/h (7–24)   |
+| Alcance en carretera con la deformación medida  | Las medidas C1–C6 de los dos vehículos, su energía y su cambio de velocidad | A · NP300 a 62 km/h (53–62)  |
+| Carambola de noche con lluvia                   | Tres vehículos, dos impactos en orden, pavimento mojado                     | A · Ranger a 34 km/h (30–41) |
+| Reversa en una calle con tope                   | La reversa como supuesto con su fuente; un tope con las medidas de la norma | B · Versa a 21 km/h (20–26)  |
+| Choque en un entronque y salida contra un poste | Punto de paso, terracería y un objeto fijo                                  | B · Sentra a 36 km/h (31–38) |
+
+**Lo que cambié porque dejaba ver un límite** (los límites quedan escritos en `narraciones.md`, no escondidos):
+
+- **El alcance** decía que los vehículos fueron retirados: sin posiciones finales, la deformación sola no fija la velocidad. Ahora la narración dice dónde quedó cada uno.
+- **La carambola** se reescribió con la geometría que sí se reconstruye completa (A alcanza a B y B a C, detenidos en un semáforo).
+- **El poste** era un solo vehículo contra un objeto fijo, que la reconstrucción no calcula. Ahora es un choque entre dos vehículos en el que uno sale a la terracería y pega contra el poste; la app sigue diciendo que ese golpe no lo calcula.
+- **Dos hipótesis:** ningún ejemplo las da; solo AXA. La línea del alcance ya no las promete.
+
+**Gasto de API:** siete lecturas, 0.1993 USD. W9 quedó en 1.6059 de 20 USD.
+
+**Pruebas:** `ejemplos-narracion.test.ts` (son cinco, sin datos personales, ninguna cita fuera de su texto, cada una trae lo que promete), la e2e del flujo de caso nuevo (la lista y la lectura guardada) y `ejemplos-ronda2.spec.ts` (manual: recorre las cinco de punta a punta y anota lo que dice la pantalla).
+
+**Evidencia:** `evidencia/c/`.
+
+## Lo que falta de la parte 1
+
+- **Ver los ejemplos y el visor nuevo en el 3D real de Unity,** y el ensayo completo de la demo en producción con Unity. No se hizo en la laptop de René porque se quedó sin memoria con Unity; queda a su decisión correrlo ahí (con Edge cerrado) o en la RTX del colaborador.
+- **La rama `perf/unity-armado-por-partes` (Opus)** toca `visor-unity.tsx`, igual que A6 (ahí se cambió el selector de cámaras y su import). Al retomarla hay que traerle `main` y resolver ese archivo.

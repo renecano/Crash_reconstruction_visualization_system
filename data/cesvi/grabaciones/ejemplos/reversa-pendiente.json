@@ -1,0 +1,257 @@
+{
+  "id": "ejemplo-reversa-pendiente",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 575,
+    "output_tokens": 1990,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0218192,
+  "narracion": "El hecho se ubica en la calle Cerro del Fortín, frente al acceso vehicular de una casa habitación, colonia Lomas del Valle, municipio de Puebla, Puebla, aproximadamente a las 08:20 horas. La calle consta de un arroyo de dos carriles de concreto asfáltico, uno por sentido, con pendiente descendente hacia el Norte; 12 metros al Sur de ese acceso se encuentra un reductor de velocidad tipo tope de 0.10 metros de alto y 1.80 metros de ancho. La superficie se encontraba seca.\n\nSe examinan el vehículo A, marca Honda, tipo CR-V, modelo 2017, color plata, de servicio particular, que salía en reversa de ese acceso vehicular hacia la calle, y el vehículo B, marca Nissan, tipo Versa, modelo 2020, color azul, de servicio particular, que circulaba de Sur a Norte. El vehículo A presenta en su parte posterior derecha un hundimiento de atrás hacia adelante y de derecha a izquierda sobre defensa y calavera. El vehículo B presenta en su costado izquierdo, a la altura de la puerta delantera, un hundimiento de izquierda a derecha con desprendimiento de pintura. Las zonas de contacto corresponden: la parte posterior del vehículo A con el costado izquierdo del vehículo B.\n\nEl vehículo A quedó con su parte posterior sobre el carril con sentido al Norte, a 2.40 metros del acceso; el vehículo B quedó 7 metros al Norte del área de contacto, junto a la guarnición.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "calle Cerro del Fortín, frente al acceso vehicular de una casa habitación, colonia Lomas del Valle",
+        "cita": "El hecho se ubica en la calle Cerro del Fortín, frente al acceso vehicular de una casa habitación, colonia Lomas del Valle"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Puebla",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Puebla",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 08:20 horas",
+        "cita": "municipio de Puebla, Puebla, aproximadamente a las 08:20 horas"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Honda",
+        "cita": "el vehículo A, marca Honda, tipo CR-V, modelo 2017, color plata"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "CR-V",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2017",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Nissan",
+        "cita": "el vehículo B, marca Nissan, tipo Versa, modelo 2020, color azul"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Versa",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2020",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "reversa",
+        "cita": "que salía en reversa de ese acceso vehicular hacia la calle"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "que circulaba de Sur a Norte"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "El vehículo A presenta en su parte posterior derecha un hundimiento de atrás hacia adelante y de derecha a izquierda sobre defensa y calavera"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "vertice",
+        "valor": "posterior_derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_atras_hacia_adelante",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_derecha_a_izquierda",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "El vehículo B presenta en su costado izquierdo, a la altura de la puerta delantera, un hundimiento de izquierda a derecha con desprendimiento de pintura"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "tercio",
+        "valor": "delantero",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "desprendimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_izquierda_a_derecha",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "la parte posterior del vehículo A con el costado izquierdo del vehículo B"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 posterior",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 lateral_izquierdo",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A quedó con su parte posterior sobre el carril con sentido al Norte, a 2.40 metros del acceso"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "con su parte posterior sobre el carril con sentido al Norte, a 2.40 metros del acceso",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo B quedó 7 metros al Norte del área de contacto, junto a la guarnición"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "7 metros al Norte del área de contacto, junto a la guarnición",
+        "cita": ""
+      }
+    ]
+  }
+}

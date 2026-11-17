@@ -62,9 +62,13 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await irAPaso(page, 2);
 
   // 1. La narración: la de ejemplo, leída a escena.
+  // Cinco ejemplos, cada uno con lo que muestra (ronda 2, C). Uno sin cambios usa su lectura
+  // guardada y lo dice.
+  await expect(page.getByTestId("ejemplos-narracion").getByRole("button")).toHaveCount(5);
   await page.getByTestId("ejemplo-narracion").click();
   await expect(page.getByTestId("narracion")).toHaveValue(/vehículo A, marca VW, tipo Jetta/);
   await page.getByTestId("leer-narracion").click();
+  await expect(page.getByTestId("lectura-guardada")).toContainText("lectura guardada");
   const escena = page.getByTestId("escena");
   await expect(escena).toContainText("2 vehículos · 1 impacto");
   await expect(page.getByTestId("vehiculos")).toContainText("VW Jetta · 2002");
