@@ -12,7 +12,7 @@
  *
  * No calcula nada: solo dibuja lo que ya está en el expediente.
  */
-import { enMetros, type LonLat } from "@croquis/cesvi";
+import { formato as F, enMetros, type LonLat } from "@croquis/cesvi";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { contornoVehiculo } from "@/lib/colocar";
 import { enLista } from "@/lib/pasos-caso";
@@ -212,7 +212,7 @@ export function CroquisPlanteamiento({
               strokeWidth={Math.max(6, c.ancho * g.escala)}
               points={c.puntos
                 .map((p) => g.px(g.m(p)))
-                .map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`)
+                .map((p) => `${F.fijo(p.x, 1)},${F.fijo(p.y, 1)}`)
                 .join(" ")}
             />
           ))}
@@ -273,7 +273,7 @@ export function CroquisPlanteamiento({
             <g key={c.vehiculo}>
               <polygon
                 className="pl-vehiculo"
-                points={c.pts.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ")}
+                points={c.pts.map((p) => `${F.fijo(p.x, 1)},${F.fijo(p.y, 1)}`).join(" ")}
               />
               <text className="pl-letra" x={c.c.x} y={c.c.y + 4} textAnchor="middle">
                 {letraDe(c.vehiculo)}
