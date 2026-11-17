@@ -5,7 +5,7 @@
     "commit":  "25876f4470247b0ed15299406444de5f0a6c50e2",
     "rama_del_repositorio":  "main",
     "archivos_con_cambios":  8,
-    "duracion_min":  17.4,
+    "duracion_min":  20.1,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "NVIDIA GeForce RTX 4070 Laptop GPU",
@@ -128,6 +128,13 @@
                       "paso":  "cifras-verificar",
                       "estado":  "ok",
                       "minutos":  0.1,
+                      "codigo":  0
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "visor-local",
+                      "estado":  "ok",
+                      "minutos":  2.6,
                       "codigo":  0
                   }
               ]
