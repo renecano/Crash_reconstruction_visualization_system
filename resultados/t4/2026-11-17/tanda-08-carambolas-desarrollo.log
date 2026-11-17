@@ -1,0 +1,8 @@
+# Paso: carambolas-desarrollo
+# Comando: pnpm --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir desarrollo
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v4\Croquis
+# Inicio: 2026-11-17 11:24:40
+
+68/68 reconstruidas (68 válidas, 68 en 3D); impactos posteriores: 40 de 55 ocurren; mediana 145 ms
+
+# Fin: 2026-11-17 11:25:02 · ok · 0.4 min
