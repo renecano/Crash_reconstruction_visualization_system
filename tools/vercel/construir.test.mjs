@@ -59,6 +59,7 @@ describe("qué cambios despliegan el sitio", () => {
       "tools/unity/publicar-web.mjs",
       "tools/colaborador/tandas.json",
       "tools/trailer/musica.mjs",
+      "tools/vercel/peso-salida.mjs",
       "solver/croquis_solver/reconstruct.py",
       "extraction/croquis_extraction/cliente.py",
       ".github/workflows/ci.yml",
@@ -67,6 +68,7 @@ describe("qué cambios despliegan el sitio", () => {
       "uv.lock",
       ".gitignore",
       "CORRER-TANDA-EN-RTX.bat",
+      "CORRER-DEMO-LOCAL.command",
     ])
       expect(vaAlSitio(r), r).toBe(false);
   });

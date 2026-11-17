@@ -1,0 +1,93 @@
+{
+  "descripcion": "El peso de un despliegue de Croquis medido sobre la salida de vercel build en Linux (CI, tools/vercel/peso-salida.mjs): main antes del arreglo y la rama fix/peso-despliegue después. Los reportes de CESVI ya no se prerenderizan al construir.",
+  "script": "tools/vercel/peso-salida.mjs (.github/workflows/peso-despliegue.yml)",
+  "fecha": "2026-11-17T16:33:08.380Z",
+  "antes": {
+    "commit": "25876f44",
+    "corrida": "44125723180",
+    "total_mb": 303.4,
+    "salida_mb": 268.6,
+    "archivos_de_las_funciones_mb": 34.8,
+    "paginas_prerenderizadas_mb": 233.8,
+    "estaticos_next_mb": 18.1,
+    "entradas_de_funciones": 1546,
+    "funciones_con_paquete_propio": 7,
+    "funcion_mas_grande": {
+      "funcion": "cesvi/casos/a2010930/[[...acto]].func",
+      "mb": 26.8,
+      "enlazada_a": null,
+      "archivos": 550,
+      "lo_que_mas_pesa": [
+        {
+          "ruta": "apps/web/.next/server",
+          "mb": 24.4
+        },
+        {
+          "ruta": "node_modules/.pnpm",
+          "mb": 1.9
+        },
+        {
+          "ruta": "apps/web/.next",
+          "mb": 0.3
+        },
+        {
+          "ruta": "",
+          "mb": 0.1
+        },
+        {
+          "ruta": "apps/web",
+          "mb": 0
+        },
+        {
+          "ruta": "apps/web/node_modules/next",
+          "mb": 0
+        }
+      ]
+    }
+  },
+  "despues": {
+    "commit": "b8390b6e",
+    "corrida": "44125151410",
+    "total_mb": 103.7,
+    "salida_mb": 69.2,
+    "archivos_de_las_funciones_mb": 34.6,
+    "paginas_prerenderizadas_mb": 35.7,
+    "estaticos_next_mb": 18.1,
+    "entradas_de_funciones": 316,
+    "funciones_con_paquete_propio": 7,
+    "funcion_mas_grande": {
+      "funcion": "cesvi/casos/a2010930/[[...acto]].func",
+      "mb": 26.5,
+      "enlazada_a": null,
+      "archivos": 550,
+      "lo_que_mas_pesa": [
+        {
+          "ruta": "apps/web/.next/server",
+          "mb": 24.4
+        },
+        {
+          "ruta": "node_modules/.pnpm",
+          "mb": 1.9
+        },
+        {
+          "ruta": "",
+          "mb": 0.1
+        },
+        {
+          "ruta": "apps/web/.next",
+          "mb": 0.1
+        },
+        {
+          "ruta": "apps/web",
+          "mb": 0
+        },
+        {
+          "ruta": "apps/web/node_modules/next",
+          "mb": 0
+        }
+      ]
+    }
+  },
+  "vercel_reportaba_por_despliegue_gb": 2,
+  "nota": "Vercel mostraba unos 2 GB por despliegue (captura de René, 2026-11-17); la salida medida era de 303.4 MB. La diferencia es contabilidad de Vercel que no se ve desde vercel build: se confirma con la vista Resources del siguiente despliegue."
+}
