@@ -1,5 +1,5 @@
 {
- "fecha": "2026-11-16T00:35:23.044Z",
+ "fecha": "2026-11-17T17:24:03.803Z",
  "particion": "desarrollo",
  "descripcion": "E-R4: a Croquis se le da solo la narración sin conclusiones (R0); Claude la lee a escena como en «Caso nuevo» (R1) y Croquis la compara con lo que concluyó CESVI (R0). Líneas base: la modalidad más frecuente y la velocidad promedio por deformación, de desarrollo.",
  "version_prompt": "escena-narracion-v2",
@@ -230,7 +230,8 @@
    "costo_usd": 0.0245635,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -266,7 +267,8 @@
    "costo_usd": 0.0107778,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -302,7 +304,8 @@
    "costo_usd": 0.0091028,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -338,7 +341,8 @@
    "costo_usd": 0.0134898,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -374,7 +378,8 @@
    "costo_usd": 0.0182848,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -410,7 +415,8 @@
    "costo_usd": 0.0206648,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -446,7 +452,8 @@
    "costo_usd": 0.0119468,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -482,7 +489,8 @@
    "costo_usd": 0.0112288,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -518,7 +526,8 @@
    "costo_usd": 0.0135708,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -554,7 +563,8 @@
    "costo_usd": 0.0109428,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -590,7 +600,8 @@
    "costo_usd": 0.0157178,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -626,7 +637,8 @@
    "costo_usd": 0.0085918,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -662,7 +674,8 @@
    "costo_usd": 0.0502396,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -698,7 +711,8 @@
    "costo_usd": 0.0050608,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -734,7 +748,8 @@
    "costo_usd": 0.0054058,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -770,7 +785,8 @@
    "costo_usd": 0.0097738,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -806,7 +822,8 @@
    "costo_usd": 0.0097978,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -842,7 +859,8 @@
    "costo_usd": 0.0127788,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -878,7 +896,8 @@
    "costo_usd": 0.0239228,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -914,7 +933,8 @@
    "costo_usd": 0.0013958,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -950,7 +970,8 @@
    "costo_usd": 0.0185198,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -986,7 +1007,8 @@
    "costo_usd": 0.0148816,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1022,7 +1044,8 @@
    "costo_usd": 0.0244316,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1058,7 +1081,8 @@
    "costo_usd": 0.0121918,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1094,7 +1118,8 @@
    "costo_usd": 0.0052208,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1130,7 +1155,8 @@
    "costo_usd": 0.0129518,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1166,7 +1192,8 @@
    "costo_usd": 0.0194978,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1202,7 +1229,8 @@
    "costo_usd": 0.0102558,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1238,7 +1266,8 @@
    "costo_usd": 0.0091278,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1274,7 +1303,8 @@
    "costo_usd": 0.0111208,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1310,7 +1340,8 @@
    "costo_usd": 0.0161128,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1346,7 +1377,8 @@
    "costo_usd": 0.0204228,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1382,7 +1414,8 @@
    "costo_usd": 0.0267718,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1418,7 +1451,8 @@
    "costo_usd": 0.0034248,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1454,7 +1488,8 @@
    "costo_usd": 0.0162768,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1489,8 +1524,9 @@
    "reconstruccion": null,
    "costo_usd": 0.0162218,
    "bitacora": {
-    "mensajes": 8,
-    "relectura_pedida": true
+    "mensajes": 10,
+    "relectura_pedida": true,
+    "relectura_grabada": true
    }
   },
   {
@@ -1526,7 +1562,8 @@
    "costo_usd": 0.0038358,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1562,7 +1599,8 @@
    "costo_usd": 0.0073408,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1598,7 +1636,8 @@
    "costo_usd": 0.0030758,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1634,7 +1673,8 @@
    "costo_usd": 0.0127368,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1670,7 +1710,8 @@
    "costo_usd": 0.0086538,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1706,7 +1747,8 @@
    "costo_usd": 0.0104368,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1742,7 +1784,8 @@
    "costo_usd": 0.0151578,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1778,7 +1821,8 @@
    "costo_usd": 0.0107958,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1814,7 +1858,8 @@
    "costo_usd": 0.0113348,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1850,7 +1895,8 @@
    "costo_usd": 0.0131128,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1886,7 +1932,8 @@
    "costo_usd": 0.0049758,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1922,7 +1969,8 @@
    "costo_usd": 0.0076048,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1958,7 +2006,8 @@
    "costo_usd": 0.0193018,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -1994,7 +2043,8 @@
    "costo_usd": 0.0166838,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2030,7 +2080,8 @@
    "costo_usd": 0.0146718,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2066,7 +2117,8 @@
    "costo_usd": 0.0156588,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2102,7 +2154,8 @@
    "costo_usd": 0.0185518,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2138,7 +2191,8 @@
    "costo_usd": 0.0096928,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2174,7 +2228,8 @@
    "costo_usd": 0.0032728,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2210,7 +2265,8 @@
    "costo_usd": 0.0175438,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2246,7 +2302,8 @@
    "costo_usd": 0.0084768,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2282,7 +2339,8 @@
    "costo_usd": 0.0108888,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2318,7 +2376,8 @@
    "costo_usd": 0.0131938,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2354,7 +2413,8 @@
    "costo_usd": 0.0176938,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2390,7 +2450,8 @@
    "costo_usd": 0.0170428,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2426,7 +2487,8 @@
    "costo_usd": 0.0130278,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2462,7 +2524,8 @@
    "costo_usd": 0.0085628,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2498,7 +2561,8 @@
    "costo_usd": 0.0123008,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2534,7 +2598,8 @@
    "costo_usd": 0.0164018,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2570,7 +2635,8 @@
    "costo_usd": 0.0057178,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2606,7 +2672,8 @@
    "costo_usd": 0.0022998,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2642,7 +2709,8 @@
    "costo_usd": 0.0113208,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2678,7 +2746,8 @@
    "costo_usd": 0.0293308,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2714,7 +2783,8 @@
    "costo_usd": 0.0148278,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2750,7 +2820,8 @@
    "costo_usd": 0.0055938,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2786,7 +2857,8 @@
    "costo_usd": 0.0046908,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2822,7 +2894,8 @@
    "costo_usd": 0.0120428,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2858,7 +2931,8 @@
    "costo_usd": 0.0120648,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2894,7 +2968,8 @@
    "costo_usd": 0.0133198,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2930,7 +3005,8 @@
    "costo_usd": 0.0087988,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -2966,7 +3042,8 @@
    "costo_usd": 0.0154058,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3002,7 +3079,8 @@
    "costo_usd": 0.0030538,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3038,7 +3116,8 @@
    "costo_usd": 0.0128088,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3074,7 +3153,8 @@
    "costo_usd": 0.0141768,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3110,7 +3190,8 @@
    "costo_usd": 0.0117118,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3146,7 +3227,8 @@
    "costo_usd": 0.0134418,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3182,7 +3264,8 @@
    "costo_usd": 0.0184808,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3218,7 +3301,8 @@
    "costo_usd": 0.0221498,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3254,7 +3338,8 @@
    "costo_usd": 0.0130578,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3290,7 +3375,8 @@
    "costo_usd": 0.0028018,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3326,7 +3412,8 @@
    "costo_usd": 0.0119028,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3362,7 +3449,8 @@
    "costo_usd": 0.0153598,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3398,7 +3486,8 @@
    "costo_usd": 0.0150298,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3434,7 +3523,8 @@
    "costo_usd": 0.0124238,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3470,7 +3560,8 @@
    "costo_usd": 0.0120208,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3506,7 +3597,8 @@
    "costo_usd": 0.0159728,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3542,7 +3634,8 @@
    "costo_usd": 0.0105198,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3578,7 +3671,8 @@
    "costo_usd": 0.0128598,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3614,7 +3708,8 @@
    "costo_usd": 0.0151868,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3650,7 +3745,8 @@
    "costo_usd": 0.0137348,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3695,7 +3791,8 @@
    "costo_usd": 0.0125176,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3731,7 +3828,8 @@
    "costo_usd": 0.0157418,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3776,7 +3874,8 @@
    "costo_usd": 0.0323436,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3812,7 +3911,8 @@
    "costo_usd": 0.0041638,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3848,7 +3948,8 @@
    "costo_usd": 0.0124458,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3884,7 +3985,8 @@
    "costo_usd": 0.0220698,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3920,7 +4022,8 @@
    "costo_usd": 0.0069678,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3956,7 +4059,8 @@
    "costo_usd": 0.0092198,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -3992,7 +4096,8 @@
    "costo_usd": 0.0168448,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4037,7 +4142,8 @@
    "costo_usd": 0.0256716,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4073,7 +4179,8 @@
    "costo_usd": 0.0193288,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4109,7 +4216,8 @@
    "costo_usd": 0.0071888,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4145,7 +4253,8 @@
    "costo_usd": 0.0066818,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4181,7 +4290,8 @@
    "costo_usd": 0.0121968,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4217,7 +4327,8 @@
    "costo_usd": 0.0084508,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4252,8 +4363,9 @@
    "reconstruccion": null,
    "costo_usd": 0.0183508,
    "bitacora": {
-    "mensajes": 8,
-    "relectura_pedida": true
+    "mensajes": 10,
+    "relectura_pedida": true,
+    "relectura_grabada": true
    }
   },
   {
@@ -4289,7 +4401,8 @@
    "costo_usd": 0.0171398,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4325,7 +4438,8 @@
    "costo_usd": 0.0212578,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4361,7 +4475,8 @@
    "costo_usd": 0.0176848,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4397,7 +4512,8 @@
    "costo_usd": 0.0153308,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4433,7 +4549,8 @@
    "costo_usd": 0.0084258,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4469,7 +4586,8 @@
    "costo_usd": 0.0125688,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4504,8 +4622,9 @@
    "reconstruccion": null,
    "costo_usd": 0.0027068,
    "bitacora": {
-    "mensajes": 8,
-    "relectura_pedida": true
+    "mensajes": 10,
+    "relectura_pedida": true,
+    "relectura_grabada": true
    }
   },
   {
@@ -4541,7 +4660,8 @@
    "costo_usd": 0.0108868,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4577,7 +4697,8 @@
    "costo_usd": 0.0092218,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4613,7 +4734,8 @@
    "costo_usd": 0.0256728,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4649,7 +4771,8 @@
    "costo_usd": 0.0137748,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4685,7 +4808,8 @@
    "costo_usd": 0.0140848,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4721,7 +4845,8 @@
    "costo_usd": 0.0146178,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4757,7 +4882,8 @@
    "costo_usd": 0.0213688,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4793,7 +4919,8 @@
    "costo_usd": 0.0090648,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4829,7 +4956,8 @@
    "costo_usd": 0.0174188,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4865,7 +4993,8 @@
    "costo_usd": 0.0148448,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4901,7 +5030,8 @@
    "costo_usd": 0.0123638,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4937,7 +5067,8 @@
    "costo_usd": 0.0096778,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -4973,7 +5104,8 @@
    "costo_usd": 0.0071078,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5009,7 +5141,8 @@
    "costo_usd": 0.0124648,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5045,7 +5178,8 @@
    "costo_usd": 0.0142568,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5081,7 +5215,8 @@
    "costo_usd": 0.044387,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5117,7 +5252,8 @@
    "costo_usd": 0.0149378,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5153,7 +5289,8 @@
    "costo_usd": 0.0107568,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5189,7 +5326,8 @@
    "costo_usd": 0.0079738,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5225,7 +5363,8 @@
    "costo_usd": 0.0139878,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5261,7 +5400,8 @@
    "costo_usd": 0.0099708,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5297,7 +5437,8 @@
    "costo_usd": 0.0120908,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5333,7 +5474,8 @@
    "costo_usd": 0.0019748,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5369,7 +5511,8 @@
    "costo_usd": 0.0097878,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5405,7 +5548,8 @@
    "costo_usd": 0.0103258,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5441,7 +5585,8 @@
    "costo_usd": 0.0219858,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5477,7 +5622,8 @@
    "costo_usd": 0.0025888,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5513,7 +5659,8 @@
    "costo_usd": 0.0044438,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5549,7 +5696,8 @@
    "costo_usd": 0.0102818,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5585,7 +5733,8 @@
    "costo_usd": 0.0071678,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5621,7 +5770,8 @@
    "costo_usd": 0.0110688,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5657,7 +5807,8 @@
    "costo_usd": 0.0111428,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5693,7 +5844,8 @@
    "costo_usd": 0.0078468,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5729,7 +5881,8 @@
    "costo_usd": 0.0114418,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5765,7 +5918,8 @@
    "costo_usd": 0.0119468,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5801,7 +5955,8 @@
    "costo_usd": 0.0154728,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5837,7 +5992,8 @@
    "costo_usd": 0.0127718,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5873,7 +6029,8 @@
    "costo_usd": 0.0163168,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5909,7 +6066,8 @@
    "costo_usd": 0.0140698,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5945,7 +6103,8 @@
    "costo_usd": 0.0132038,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -5981,7 +6140,8 @@
    "costo_usd": 0.0353348,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6017,7 +6177,8 @@
    "costo_usd": 0.0092028,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6053,7 +6214,8 @@
    "costo_usd": 0.0040298,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6089,7 +6251,8 @@
    "costo_usd": 0.0074218,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6125,7 +6288,8 @@
    "costo_usd": 0.0123188,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6161,7 +6325,8 @@
    "costo_usd": 0.0098248,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6197,7 +6362,8 @@
    "costo_usd": 0.0141998,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6233,7 +6399,8 @@
    "costo_usd": 0.0148878,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6269,7 +6436,8 @@
    "costo_usd": 0.0080078,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6305,7 +6473,8 @@
    "costo_usd": 0.0121228,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6341,7 +6510,8 @@
    "costo_usd": 0.0074688,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6377,7 +6547,8 @@
    "costo_usd": 0.0049248,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6413,7 +6584,8 @@
    "costo_usd": 0.0194556,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6458,7 +6630,8 @@
    "costo_usd": 0.0213356,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6494,7 +6667,8 @@
    "costo_usd": 0.0126828,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6530,7 +6704,8 @@
    "costo_usd": 0.0158838,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6565,8 +6740,9 @@
    "reconstruccion": null,
    "costo_usd": 0.0098258,
    "bitacora": {
-    "mensajes": 8,
-    "relectura_pedida": true
+    "mensajes": 10,
+    "relectura_pedida": true,
+    "relectura_grabada": true
    }
   },
   {
@@ -6602,7 +6778,8 @@
    "costo_usd": 0.0207648,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6638,7 +6815,8 @@
    "costo_usd": 0.0089898,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6674,7 +6852,8 @@
    "costo_usd": 0.0130108,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6719,7 +6898,8 @@
    "costo_usd": 0.0131198,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6755,7 +6935,8 @@
    "costo_usd": 0.0070308,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6791,7 +6972,8 @@
    "costo_usd": 0.0125968,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6827,7 +7009,8 @@
    "costo_usd": 0.0107698,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6863,7 +7046,8 @@
    "costo_usd": 0.0123088,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6899,7 +7083,8 @@
    "costo_usd": 0.0147738,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6935,7 +7120,8 @@
    "costo_usd": 0.0134318,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -6971,7 +7157,8 @@
    "costo_usd": 0.0105508,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7007,7 +7194,8 @@
    "costo_usd": 0.0118818,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7043,7 +7231,8 @@
    "costo_usd": 0.0113338,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7079,7 +7268,8 @@
    "costo_usd": 0.0124328,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7115,7 +7305,8 @@
    "costo_usd": 0.0089778,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7151,7 +7342,8 @@
    "costo_usd": 0.0118108,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7187,7 +7379,8 @@
    "costo_usd": 0.0079858,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7223,7 +7416,8 @@
    "costo_usd": 0.0195928,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7259,7 +7453,8 @@
    "costo_usd": 0.0162268,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7295,7 +7490,8 @@
    "costo_usd": 0.0216448,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7331,7 +7527,8 @@
    "costo_usd": 0.0140248,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7367,7 +7564,8 @@
    "costo_usd": 0.0117918,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7403,7 +7601,8 @@
    "costo_usd": 0.0186678,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7439,7 +7638,8 @@
    "costo_usd": 0.0080768,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7475,7 +7675,8 @@
    "costo_usd": 0.0139928,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7511,7 +7712,8 @@
    "costo_usd": 0.0117088,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7547,7 +7749,8 @@
    "costo_usd": 0.0099488,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7583,7 +7786,8 @@
    "costo_usd": 0.0109178,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7619,7 +7823,8 @@
    "costo_usd": 0.0108358,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7655,7 +7860,8 @@
    "costo_usd": 0.0118398,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7691,7 +7897,8 @@
    "costo_usd": 0.0201418,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7727,7 +7934,8 @@
    "costo_usd": 0.0145768,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7763,7 +7971,8 @@
    "costo_usd": 0.0140088,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7799,7 +8008,8 @@
    "costo_usd": 0.0150848,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7835,7 +8045,8 @@
    "costo_usd": 0.0128998,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7871,7 +8082,8 @@
    "costo_usd": 0.0046438,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7907,7 +8119,8 @@
    "costo_usd": 0.0103428,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7943,7 +8156,8 @@
    "costo_usd": 0.0036688,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -7979,7 +8193,8 @@
    "costo_usd": 0.0115388,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8015,7 +8230,8 @@
    "costo_usd": 0.0128098,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8051,7 +8267,8 @@
    "costo_usd": 0.0160538,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8087,7 +8304,8 @@
    "costo_usd": 0.0133728,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8123,7 +8341,8 @@
    "costo_usd": 0.0074828,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8159,7 +8378,8 @@
    "costo_usd": 0.0151828,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8195,7 +8415,8 @@
    "costo_usd": 0.0134098,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8231,7 +8452,8 @@
    "costo_usd": 0.0085248,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8267,7 +8489,8 @@
    "costo_usd": 0.0104288,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8303,7 +8526,8 @@
    "costo_usd": 0.0112338,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8339,7 +8563,8 @@
    "costo_usd": 0.0171028,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8384,7 +8609,8 @@
    "costo_usd": 0.0110238,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8420,7 +8646,8 @@
    "costo_usd": 0.0140098,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8456,7 +8683,8 @@
    "costo_usd": 0.0203508,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8492,7 +8720,8 @@
    "costo_usd": 0.0163948,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8528,7 +8757,8 @@
    "costo_usd": 0.0119928,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8564,7 +8794,8 @@
    "costo_usd": 0.0152098,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8599,8 +8830,9 @@
    "reconstruccion": null,
    "costo_usd": 0.0197238,
    "bitacora": {
-    "mensajes": 8,
-    "relectura_pedida": true
+    "mensajes": 10,
+    "relectura_pedida": true,
+    "relectura_grabada": true
    }
   },
   {
@@ -8636,7 +8868,8 @@
    "costo_usd": 0.0202378,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8672,7 +8905,8 @@
    "costo_usd": 0.0193788,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8708,7 +8942,8 @@
    "costo_usd": 0.0125078,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8744,7 +8979,8 @@
    "costo_usd": 0.0153588,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8780,7 +9016,8 @@
    "costo_usd": 0.0136258,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8816,7 +9053,8 @@
    "costo_usd": 0.0105988,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8852,7 +9090,8 @@
    "costo_usd": 0.0128998,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8888,7 +9127,8 @@
    "costo_usd": 0.0118778,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8924,7 +9164,8 @@
    "costo_usd": 0.0112798,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8960,7 +9201,8 @@
    "costo_usd": 0.0140548,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -8996,7 +9238,8 @@
    "costo_usd": 0.0101048,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9040,8 +9283,9 @@
    "reconstruccion": null,
    "costo_usd": 0.0124748,
    "bitacora": {
-    "mensajes": 8,
-    "relectura_pedida": true
+    "mensajes": 10,
+    "relectura_pedida": true,
+    "relectura_grabada": true
    }
   },
   {
@@ -9077,7 +9321,8 @@
    "costo_usd": 0.0086918,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9113,7 +9358,8 @@
    "costo_usd": 0.0143848,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9149,7 +9395,8 @@
    "costo_usd": 0.0032218,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9185,7 +9432,8 @@
    "costo_usd": 0.0074878,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9221,7 +9469,8 @@
    "costo_usd": 0.0150158,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9257,7 +9506,8 @@
    "costo_usd": 0.0182408,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9293,7 +9543,8 @@
    "costo_usd": 0.0148058,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9329,7 +9580,8 @@
    "costo_usd": 0.0127358,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9365,7 +9617,8 @@
    "costo_usd": 0.0188628,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9401,7 +9654,8 @@
    "costo_usd": 0.0116828,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9437,7 +9691,8 @@
    "costo_usd": 0.0106278,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9473,7 +9728,8 @@
    "costo_usd": 0.0133648,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9509,7 +9765,8 @@
    "costo_usd": 0.0156348,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9545,7 +9802,8 @@
    "costo_usd": 0.0112478,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9581,7 +9839,8 @@
    "costo_usd": 0.0060598,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9617,7 +9876,8 @@
    "costo_usd": 0.0132668,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9653,7 +9913,8 @@
    "costo_usd": 0.0134188,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9689,7 +9950,8 @@
    "costo_usd": 0.0091528,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9725,7 +9987,8 @@
    "costo_usd": 0.0058888,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9761,7 +10024,8 @@
    "costo_usd": 0.0109548,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9797,7 +10061,8 @@
    "costo_usd": 0.0077928,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9833,7 +10098,8 @@
    "costo_usd": 0.0112268,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9878,7 +10144,8 @@
    "costo_usd": 0.0057818,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9914,7 +10181,8 @@
    "costo_usd": 0.0167438,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9950,7 +10218,8 @@
    "costo_usd": 0.0103248,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -9986,7 +10255,8 @@
    "costo_usd": 0.0090018,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10030,8 +10300,9 @@
    "reconstruccion": null,
    "costo_usd": 0.0103368,
    "bitacora": {
-    "mensajes": 8,
-    "relectura_pedida": true
+    "mensajes": 10,
+    "relectura_pedida": true,
+    "relectura_grabada": true
    }
   },
   {
@@ -10067,7 +10338,8 @@
    "costo_usd": 0.0101608,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10103,7 +10375,8 @@
    "costo_usd": 0.0132298,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10139,7 +10412,8 @@
    "costo_usd": 0.0054348,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10175,7 +10449,8 @@
    "costo_usd": 0.0134948,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10211,7 +10486,8 @@
    "costo_usd": 0.0126958,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10247,7 +10523,8 @@
    "costo_usd": 0.0267088,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10283,7 +10560,8 @@
    "costo_usd": 0.0139858,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10319,7 +10597,8 @@
    "costo_usd": 0.0089488,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10355,7 +10634,8 @@
    "costo_usd": 0.0154388,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10391,7 +10671,8 @@
    "costo_usd": 0.0216818,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10427,7 +10708,8 @@
    "costo_usd": 0.0127008,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10463,7 +10745,8 @@
    "costo_usd": 0.0123748,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10499,7 +10782,8 @@
    "costo_usd": 0.0139908,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10535,7 +10819,8 @@
    "costo_usd": 0.0127488,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10571,7 +10856,8 @@
    "costo_usd": 0.0173358,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10607,7 +10893,8 @@
    "costo_usd": 0.0123318,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10643,7 +10930,8 @@
    "costo_usd": 0.0139958,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10679,7 +10967,8 @@
    "costo_usd": 0.0116858,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10715,7 +11004,8 @@
    "costo_usd": 0.0169348,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10751,7 +11041,8 @@
    "costo_usd": 0.0129838,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10820,7 +11111,8 @@
    "costo_usd": 0.0180218,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10856,7 +11148,8 @@
    "costo_usd": 0.0132698,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10892,7 +11185,8 @@
    "costo_usd": 0.0102958,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10928,7 +11222,8 @@
    "costo_usd": 0.0142228,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -10964,7 +11259,8 @@
    "costo_usd": 0.0133818,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11000,7 +11296,8 @@
    "costo_usd": 0.0140508,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11036,7 +11333,8 @@
    "costo_usd": 0.0140708,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11072,7 +11370,8 @@
    "costo_usd": 0.0162468,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11108,7 +11407,8 @@
    "costo_usd": 0.0133518,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11144,7 +11444,8 @@
    "costo_usd": 0.0115968,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11180,7 +11481,8 @@
    "costo_usd": 0.0135628,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11216,7 +11518,8 @@
    "costo_usd": 0.0115438,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11252,7 +11555,8 @@
    "costo_usd": 0.0074718,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11288,7 +11592,8 @@
    "costo_usd": 0.0055508,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11324,7 +11629,8 @@
    "costo_usd": 0.0064458,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11360,7 +11666,8 @@
    "costo_usd": 0.0086718,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11396,7 +11703,8 @@
    "costo_usd": 0.0182808,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11432,7 +11740,8 @@
    "costo_usd": 0.0122608,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11468,7 +11777,8 @@
    "costo_usd": 0.0168698,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11504,7 +11814,8 @@
    "costo_usd": 0.0117898,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11540,7 +11851,8 @@
    "costo_usd": 0.0191598,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11576,7 +11888,8 @@
    "costo_usd": 0.0010078,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11612,7 +11925,8 @@
    "costo_usd": 0.0115718,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11648,7 +11962,8 @@
    "costo_usd": 0.0171918,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11684,7 +11999,8 @@
    "costo_usd": 0.0113938,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11720,7 +12036,8 @@
    "costo_usd": 0.0037298,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11756,7 +12073,8 @@
    "costo_usd": 0.0073038,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11792,7 +12110,8 @@
    "costo_usd": 0.0083158,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11837,7 +12156,8 @@
    "costo_usd": 0.0110918,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11873,7 +12193,8 @@
    "costo_usd": 0.0134488,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11909,7 +12230,8 @@
    "costo_usd": 0.0061348,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11945,7 +12267,8 @@
    "costo_usd": 0.0066528,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -11981,7 +12304,8 @@
    "costo_usd": 0.0145108,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12017,7 +12341,8 @@
    "costo_usd": 0.0141608,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12053,7 +12378,8 @@
    "costo_usd": 0.0086078,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12089,7 +12415,8 @@
    "costo_usd": 0.0106418,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12125,7 +12452,8 @@
    "costo_usd": 0.0134178,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12161,7 +12489,8 @@
    "costo_usd": 0.0169268,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12197,7 +12526,8 @@
    "costo_usd": 0.0150858,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12233,7 +12563,8 @@
    "costo_usd": 0.0149958,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12269,7 +12600,8 @@
    "costo_usd": 0.0166998,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12305,7 +12637,8 @@
    "costo_usd": 0.0146998,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12341,7 +12674,8 @@
    "costo_usd": 0.0156928,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12377,7 +12711,8 @@
    "costo_usd": 0.0193168,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12413,7 +12748,8 @@
    "costo_usd": 0.0095208,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12449,7 +12785,8 @@
    "costo_usd": 0.0141418,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12485,7 +12822,8 @@
    "costo_usd": 0.0095608,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12521,7 +12859,8 @@
    "costo_usd": 0.0145408,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12557,7 +12896,8 @@
    "costo_usd": 0.0172668,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12593,7 +12933,8 @@
    "costo_usd": 0.0184398,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12629,7 +12970,8 @@
    "costo_usd": 0.0099848,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12665,7 +13007,8 @@
    "costo_usd": 0.0111838,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12701,7 +13044,8 @@
    "costo_usd": 0.0127948,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12737,7 +13081,8 @@
    "costo_usd": 0.0123128,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12773,7 +13118,8 @@
    "costo_usd": 0.0110328,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12809,7 +13155,8 @@
    "costo_usd": 0.0123328,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12845,7 +13192,8 @@
    "costo_usd": 0.0294938,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12881,7 +13229,8 @@
    "costo_usd": 0.0024838,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12917,7 +13266,8 @@
    "costo_usd": 0.0104718,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12953,7 +13303,8 @@
    "costo_usd": 0.0174748,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -12989,7 +13340,8 @@
    "costo_usd": 0.0119878,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13025,7 +13377,8 @@
    "costo_usd": 0.0273018,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13061,7 +13414,8 @@
    "costo_usd": 0.0137438,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13097,7 +13451,8 @@
    "costo_usd": 0.0093448,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13133,7 +13488,8 @@
    "costo_usd": 0.0205978,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13169,7 +13525,8 @@
    "costo_usd": 0.0096488,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13205,7 +13562,8 @@
    "costo_usd": 0.0107168,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13241,7 +13599,8 @@
    "costo_usd": 0.0112898,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13277,7 +13636,8 @@
    "costo_usd": 0.0079548,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13313,7 +13673,8 @@
    "costo_usd": 0.0140718,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13348,8 +13709,9 @@
    "reconstruccion": null,
    "costo_usd": 0.0135688,
    "bitacora": {
-    "mensajes": 8,
-    "relectura_pedida": true
+    "mensajes": 10,
+    "relectura_pedida": true,
+    "relectura_grabada": true
    }
   },
   {
@@ -13385,7 +13747,8 @@
    "costo_usd": 0.0164028,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13421,7 +13784,8 @@
    "costo_usd": 0.0062458,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13457,7 +13821,8 @@
    "costo_usd": 0.0190508,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13493,7 +13858,8 @@
    "costo_usd": 0.0110578,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13529,7 +13895,8 @@
    "costo_usd": 0.0110488,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13565,7 +13932,8 @@
    "costo_usd": 0.0124298,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13601,7 +13969,8 @@
    "costo_usd": 0.0134858,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13637,7 +14006,8 @@
    "costo_usd": 0.0100768,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13673,7 +14043,8 @@
    "costo_usd": 0.0118898,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13709,7 +14080,8 @@
    "costo_usd": 0.0187368,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13745,7 +14117,8 @@
    "costo_usd": 0.0111038,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13781,7 +14154,8 @@
    "costo_usd": 0.0096018,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13817,7 +14191,8 @@
    "costo_usd": 0.0118078,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13853,7 +14228,8 @@
    "costo_usd": 0.0205408,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13889,7 +14265,8 @@
    "costo_usd": 0.0089508,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13925,7 +14302,8 @@
    "costo_usd": 0.0101248,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13961,7 +14339,8 @@
    "costo_usd": 0.0102458,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -13997,7 +14376,8 @@
    "costo_usd": 0.0185428,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14033,7 +14413,8 @@
    "costo_usd": 0.0114558,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14069,7 +14450,8 @@
    "costo_usd": 0.0138728,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14105,7 +14487,8 @@
    "costo_usd": 0.0062608,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14141,7 +14524,8 @@
    "costo_usd": 0.0108168,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14177,7 +14561,8 @@
    "costo_usd": 0.0093808,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14213,7 +14598,8 @@
    "costo_usd": 0.0121028,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14249,7 +14635,8 @@
    "costo_usd": 0.0075888,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14285,7 +14672,8 @@
    "costo_usd": 0.0033808,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14321,7 +14709,8 @@
    "costo_usd": 0.0162868,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14357,7 +14746,8 @@
    "costo_usd": 0.0095628,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14393,7 +14783,8 @@
    "costo_usd": 0.0086508,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14429,7 +14820,8 @@
    "costo_usd": 0.0118028,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14465,7 +14857,8 @@
    "costo_usd": 0.0200008,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14501,7 +14894,8 @@
    "costo_usd": 0.0115258,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14537,7 +14931,8 @@
    "costo_usd": 0.0149978,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14573,7 +14968,8 @@
    "costo_usd": 0.0115688,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14609,7 +15005,8 @@
    "costo_usd": 0.0156908,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14645,7 +15042,8 @@
    "costo_usd": 0.0110738,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14681,7 +15079,8 @@
    "costo_usd": 0.0136758,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14717,7 +15116,8 @@
    "costo_usd": 0.0196808,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14753,7 +15153,8 @@
    "costo_usd": 0.0150388,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14789,7 +15190,8 @@
    "costo_usd": 0.0094768,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14825,7 +15227,8 @@
    "costo_usd": 0.0134688,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14861,7 +15264,8 @@
    "costo_usd": 0.0179528,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14897,7 +15301,8 @@
    "costo_usd": 0.0103168,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14933,7 +15338,8 @@
    "costo_usd": 0.0184098,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -14969,7 +15375,8 @@
    "costo_usd": 0.0138858,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15004,8 +15411,9 @@
    "reconstruccion": null,
    "costo_usd": 0.0101588,
    "bitacora": {
-    "mensajes": 8,
-    "relectura_pedida": true
+    "mensajes": 10,
+    "relectura_pedida": true,
+    "relectura_grabada": true
    }
   },
   {
@@ -15041,7 +15449,8 @@
    "costo_usd": 0.0143488,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15077,7 +15486,8 @@
    "costo_usd": 0.0090095,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15113,7 +15523,8 @@
    "costo_usd": 0.0149508,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15149,7 +15560,8 @@
    "costo_usd": 0.0170548,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15185,7 +15597,8 @@
    "costo_usd": 0.0061938,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15221,7 +15634,8 @@
    "costo_usd": 0.0162318,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15257,7 +15671,8 @@
    "costo_usd": 0.0117768,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15293,7 +15708,8 @@
    "costo_usd": 0.0039088,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15329,7 +15745,8 @@
    "costo_usd": 0.0069888,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15365,7 +15782,8 @@
    "costo_usd": 0.0070018,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15401,7 +15819,8 @@
    "costo_usd": 0.0135548,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15437,7 +15856,8 @@
    "costo_usd": 0.0174538,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15473,7 +15893,8 @@
    "costo_usd": 0.0118168,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15509,7 +15930,8 @@
    "costo_usd": 0.0069128,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15545,7 +15967,8 @@
    "costo_usd": 0.0098458,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15581,7 +16004,8 @@
    "costo_usd": 0.0161928,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15617,7 +16041,8 @@
    "costo_usd": 0.0155358,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15662,7 +16087,8 @@
    "costo_usd": 0.0123308,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15698,7 +16124,8 @@
    "costo_usd": 0.0080838,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15734,7 +16161,8 @@
    "costo_usd": 0.0132128,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15770,7 +16198,8 @@
    "costo_usd": 0.0080838,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15806,7 +16235,8 @@
    "costo_usd": 0.0133038,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15841,8 +16271,9 @@
    "reconstruccion": null,
    "costo_usd": 0.0102498,
    "bitacora": {
-    "mensajes": 8,
-    "relectura_pedida": true
+    "mensajes": 10,
+    "relectura_pedida": true,
+    "relectura_grabada": true
    }
   },
   {
@@ -15878,7 +16309,8 @@
    "costo_usd": 0.0156388,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15914,7 +16346,8 @@
    "costo_usd": 0.0183098,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15950,7 +16383,8 @@
    "costo_usd": 0.0066458,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -15986,7 +16420,8 @@
    "costo_usd": 0.0162258,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16022,7 +16457,8 @@
    "costo_usd": 0.0132308,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16058,7 +16494,8 @@
    "costo_usd": 0.0135568,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16094,7 +16531,8 @@
    "costo_usd": 0.0121858,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16130,7 +16568,8 @@
    "costo_usd": 0.0153608,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16166,7 +16605,8 @@
    "costo_usd": 0.0091528,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16202,7 +16642,8 @@
    "costo_usd": 0.0140138,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16238,7 +16679,8 @@
    "costo_usd": 0.0149618,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16274,7 +16716,8 @@
    "costo_usd": 0.0161138,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16310,7 +16753,8 @@
    "costo_usd": 0.0091328,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16346,7 +16790,8 @@
    "costo_usd": 0.0178928,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16382,7 +16827,8 @@
    "costo_usd": 0.0152218,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16418,7 +16864,8 @@
    "costo_usd": 0.0185738,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16454,7 +16901,8 @@
    "costo_usd": 0.0103078,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16499,7 +16947,8 @@
    "costo_usd": 0.0155508,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16535,7 +16984,8 @@
    "costo_usd": 0.0137248,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16571,7 +17021,8 @@
    "costo_usd": 0.0197618,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16607,7 +17058,8 @@
    "costo_usd": 0.0133668,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16643,7 +17095,8 @@
    "costo_usd": 0.0134358,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16679,7 +17132,8 @@
    "costo_usd": 0.0066738,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16715,7 +17169,8 @@
    "costo_usd": 0.0126898,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16751,7 +17206,8 @@
    "costo_usd": 0.0184608,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16787,7 +17243,8 @@
    "costo_usd": 0.0116678,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16823,7 +17280,8 @@
    "costo_usd": 0.0074318,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   },
   {
@@ -16859,7 +17317,8 @@
    "costo_usd": 0.0210788,
    "bitacora": {
     "mensajes": 6,
-    "relectura_pedida": false
+    "relectura_pedida": false,
+    "relectura_grabada": false
    }
   }
  ]

@@ -1,0 +1,195 @@
+# Paso: er4-desarrollo
+# Comando: pnpm --filter @croquis/cesvi exec tsx ../../eval/cesvi_r4_reproduccion.mts medir desarrollo
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v4\Croquis
+# Inicio: 2026-11-17 11:23:58
+
+{
+ "particion": "desarrollo",
+ "leidos": 459,
+ "resumen": {
+  "dictamenes": 459,
+  "modalidad": {
+   "croquis": {
+    "k": 202,
+    "n": 420,
+    "pct": 48.1
+   },
+   "sin_inferir": 22,
+   "otra_predicha": {
+    "k": 14,
+    "n": 19,
+    "pct": 73.7
+   },
+   "fisicas": {
+    "croquis": {
+     "k": 188,
+     "n": 289,
+     "pct": 65.1
+    },
+    "linea_base": {
+     "modalidad": "alcance",
+     "k": 112,
+     "n": 289,
+     "pct": 38.8
+    }
+   },
+   "linea_base": {
+    "modalidad": "otra",
+    "k": 131,
+    "n": 420,
+    "pct": 31.2
+   },
+   "por_modalidad": {
+    "alcance": {
+     "k": 86,
+     "n": 112,
+     "pct": 76.8
+    },
+    "atropellamiento": {
+     "k": 0,
+     "n": 1,
+     "pct": 0
+    },
+    "crucero": {
+     "k": 0,
+     "n": 1,
+     "pct": 0
+    },
+    "frontal": {
+     "k": 6,
+     "n": 15,
+     "pct": 40
+    },
+    "lateral": {
+     "k": 45,
+     "n": 63,
+     "pct": 71.4
+    },
+    "objeto_fijo": {
+     "k": 29,
+     "n": 42,
+     "pct": 69
+    },
+    "otra": {
+     "k": 14,
+     "n": 131,
+     "pct": 10.7
+    },
+    "reversa": {
+     "k": 0,
+     "n": 16,
+     "pct": 0
+    },
+    "salida_de_camino": {
+     "k": 3,
+     "n": 16,
+     "pct": 18.8
+    },
+    "volcadura": {
+     "k": 19,
+     "n": 23,
+     "pct": 82.6
+    }
+   },
+   "precision_por_modalidad": {
+    "alcance": {
+     "k": 86,
+     "n": 140,
+     "pct": 61.4
+    },
+    "frontal": {
+     "k": 6,
+     "n": 17,
+     "pct": 35.3
+    },
+    "lateral": {
+     "k": 45,
+     "n": 110,
+     "pct": 40.9
+    },
+    "objeto_fijo": {
+     "k": 29,
+     "n": 70,
+     "pct": 41.4
+    },
+    "otra": {
+     "k": 14,
+     "n": 19,
+     "pct": 73.7
+    },
+    "salida_de_camino": {
+     "k": 3,
+     "n": 8,
+     "pct": 37.5
+    },
+    "volcadura": {
+     "k": 19,
+     "n": 34,
+     "pct": 55.9
+    }
+   }
+  },
+  "zonas": {
+   "dictamenes_con_zonas": 328,
+   "exhaustividad": {
+    "k": 473,
+    "n": 626,
+    "pct": 75.6
+   },
+   "precision": {
+    "k": 473,
+    "n": 766,
+    "pct": 61.7
+   },
+   "tercio": {
+    "k": 8,
+    "n": 9,
+    "pct": 88.9
+   }
+  },
+  "secuencia": {
+   "dictamenes_con_secuencia": 289,
+   "primer_impacto": {
+    "k": 193,
+    "n": 289,
+    "pct": 66.8
+   },
+   "completa": {
+    "k": 158,
+    "n": 289,
+    "pct": 54.7
+   },
+   "mismo_numero": {
+    "k": 169,
+    "n": 289,
+    "pct": 58.5
+   }
+  },
+  "velocidades": {
+   "del_dictamen_por_deformacion": 16,
+   "croquis_calcula": 0,
+   "error_abs_mediana_kmh": null,
+   "error_pct_abs_mediana": null,
+   "dentro_de_5_pct": {
+    "k": 0,
+    "n": 0,
+    "pct": null
+   },
+   "linea_base": {
+    "velocidad_kmh": 61.62,
+    "error_abs_mediana_kmh": 18.999999999999996,
+    "error_pct_abs_mediana": 36.81739382288937
+   }
+  },
+  "posiciones_finales": {
+   "dictamenes_con_posiciones": 109,
+   "croquis_las_tiene": {
+    "k": 86,
+    "n": 138,
+    "pct": 62.3
+   }
+  }
+ }
+}
+
+# Fin: 2026-11-17 11:24:03 · ok · 0.1 min
