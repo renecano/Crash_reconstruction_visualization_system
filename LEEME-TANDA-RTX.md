@@ -2,7 +2,7 @@
 
 Las pruebas y mediciones pesadas de Croquis no corren en la laptop de René. Esta computadora las corre con un doble clic y sube los resultados a GitHub.
 
-**Es una sola corrida.** Primero comprueba que todo sirve (unos 2 minutos) y, si pasa, sigue sola con lo pesado. La Tanda 4 tarda **cerca de 3 horas en total** (estimado: 177 minutos de pasos, más la comprobación y tres descargas de GitHub: dos paquetes de 60 MB y el visor web, de 36 MB). Nada se baja de Vercel: el 3D sale de copias en esta computadora. La ventana dice el tiempo estimado al empezar y, cada 30 segundos, cuánto lleva el paso y la última línea que escribió.
+**Es una sola corrida.** Primero comprueba que todo sirve (unos 2 minutos) y, si pasa, sigue sola con lo pesado. La Tanda 4b tarda **cerca de 2 h 45 min en total** (estimado: 163 minutos de pasos, más la comprobación y dos descargas de GitHub: el paquete de fotos de 60 MB y el visor web, de 36 MB). Nada se baja de Vercel: el 3D sale de copias en esta computadora. Usa la carpeta **«reto cesvi v5»**. La ventana dice el tiempo estimado al empezar y, cada 30 segundos, cuánto lleva el paso y la última línea que escribió.
 
 ## Los 3 pasos
 
@@ -29,10 +29,12 @@ Las pruebas y mediciones pesadas de Croquis no corren en la laptop de René. Est
 | Se cambia a la rama de la tanda si todavía no está en `main`, y al terminar vuelve a la que estaba                | No tener cambios sin guardar en la carpeta. Si los hay, lo dice y se detiene                                                                        |
 | Sube los resultados con el inicio de sesión normal de GitHub                                                      | Si Git abre el navegador, **inicia sesión en GitHub** con tu cuenta (la que René invitó al repositorio). Nunca pide ni guarda tokens ni contraseñas |
 
-**Lo de la Tanda 4 que te toca a ti:**
+**Lo de la Tanda 4b que te toca a ti:**
 
-- **No uses la computadora mientras mide y toma las fotos** (unos 145 minutos, los últimos pasos: el arranque del 3D, los fps en el navegador y en el visor de escritorio, las fotos, las tomas del tráiler y la prueba de la demo local): abre ventanas a pantalla completa y cualquier otra cosa cambia los números. Déjala conectada a la corriente.
-- **Al final, manda a René los dos archivos que quedan en tu Escritorio** (por Drive o WeTransfer): `croquis-fotos-promo-t4.zip` (las fotos del modo foto en 4K) y `croquis-tomas-trailer.zip` (las tomas del 3D para el tráiler, cerca de 1 GB). No van a GitHub.
+- **No uses la computadora en toda la corrida:** el arranque del 3D, la demo local, las fotos, las tomas del tráiler, el video de Unity y los fps en el navegador abren ventanas a pantalla completa, y cualquier otra cosa cambia los números. Déjala conectada a la corriente.
+- **Si se corta** (se apagó, se cerró la ventana), vuelve a hacer doble clic: las tomas del tráiler y los cuadros del video siguen desde el último terminado.
+- **El video necesita espacio:** unos 15 GB libres en el disco mientras dibuja; los cuadros se borran solos al terminar.
+- **Al final, manda a René los tres archivos que quedan en tu Escritorio** (por Drive o WeTransfer): `croquis-fotos-promo-t4b.zip` (las seis fotos rehechas, en 4K), `croquis-tomas-trailer.zip` (las tomas del 3D para el tráiler, cerca de 1 GB) y `croquis-video-unity.zip` (los videos de Unity). No van a GitHub.
 
 **Lo que no puede hacer sola:**
 

@@ -10,7 +10,28 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 - **Unity y Blender corren en segundo plano** desde el 2026-11-10: René reabrió la sesión con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`. Sigue la regla de un solo proceso pesado a la vez.
 - **Cómo se itera:** capturas del Editor en modo batch (`Capturas.Tomar`, unos 3 min). En esta sesión no hubo herramientas del MCP de Unity. Un build WebGL solo al cerrar cada punto.
 
-## U2 · Escenario
+## Tanda t4b de la RTX, fotos promo rehechas y el video de Unity (René, 2026-11-17)
+
+**La corrida corta de la RTX (t4b, `tools/colaborador/tandas.json`):** visor local, arranque del 3D, demo local, seis fotos rehechas, tomas del tráiler, video de Unity y fps web. Estimado: 163 minutos de pasos, más la comprobación.
+
+- **Arranque del 3D** (en la t4 se quedó «arrancando» 5 min): el hilo de la página estuvo bloqueado (Playwright la consultó 4 veces en 5 min y el plazo de 90 s del visor no corrió). Aquí, con la misma copia del build, pasó en 2.8 min. `arranque-3d.ps1` fija la GPU de alto rendimiento para el Chromium de Playwright, como `medir-web.ps1` con Chrome, y la deja como estaba. La prueba trae la ventana al frente y, si falla, escribe en el registro la tarjeta de WebGL, la fase y lo que dijo la página.
+- **Tomas del tráiler** (en la t4 se detuvieron en el tope de 60 min sin ninguna terminada): en la laptop, la escena de noche con lluvia a 4K bajó de 6.2 a 0.2 fps hacia la octava toma en la misma instancia del visor. No es la textura de la foto: con el lienzo fijo pasó lo mismo, y se deshizo. Van de 6 en 6, una instancia por grupo, con retoma y tope de 10 min por grupo. Probado a 1080p: 115 tomas en 13.1 min, y la segunda corrida no tuvo nada por hacer.
+- **Fotos promo** (`paquetes-promo.mts`):
+  - 02, más cerca;
+  - 11, las etiquetas con placa oscura: el rojo del aplastamiento pasa de 4.0:1 a 6.5:1;
+  - 15, el relieve ya no tapa la carretera curva (#271);
+  - 16, la cámara en la calle a 2.4 m;
+  - 18, A, B y el punto de choque en el cuadro;
+  - 19, a t = −0.3, cuando la casa de la esquina ya no tapa a B.
+- **El video de Unity** (`tools/unity/video-unity.mjs`, `video-unity-montar.mjs`, `video-unity-tarjetas.mjs`; paso `desde-release.ps1 -Paso video`):
+  - **Casos:** AXA solo en la versión para CESVI; la pública usa el alcance inventado; el lateral en intersección va en las dos.
+  - **Tomas por caso:** llegada, detrás de A (cámara lenta al final), el daño en cámara lenta y cenital hasta el reposo. Cuadro por cuadro a 60 fps en ultra, JPG.
+  - **Montaje:** el ffmpeg de Remotion, H.264 sin música, con la tarjeta del logo al abrir y al cerrar; el logo de la esquina y la leyenda salen en cada cuadro.
+  - **Salida:** 4K y 1080p de cada caso y de los dos juntos, en `croquis-video-unity.zip` en el Escritorio.
+  - **Probado en la laptop a 1080p con tomas de 1 s:** 720 cuadros y los cinco videos en 12.4 min. La primera prueba dejó ver una cámara del daño tapada por un poste y una llegada tapada por una casa; las dos cámaras van ahora sobre la calle de A.
+- **Visor de escritorio** (`Fotos.cs`): la textura de la foto se reusa, sale en JPG si el plan lo pide, con menos cuadros de asiento y con el logo del plan. El paquete nuevo es `fotos-promo-t4b.zip` en el release `rtx-t4`.
+
+**Pendiente:** la causa de que la lluvia de noche a 4K frene el visor con cada toma; la RTX dirá con los fps por grupo si también le pasa.
 
 La meta está en `docs/cesvi/PLAN-CESVI.md` §3.3. Decisiones: ADR 0112 (el escenario se calcula en TS) y ADR 0113 (recursos y materiales).
 

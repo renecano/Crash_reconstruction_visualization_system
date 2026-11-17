@@ -154,6 +154,18 @@ namespace Croquis.Visor
             var sombra = t.gameObject.AddComponent<Outline>();
             sombra.effectColor = new Color(0f, 0f, 0f, 0.75f);
             sombra.effectDistance = new Vector2(3f, -3f);
+
+            // Una placa oscura detrás del texto: se lee sobre cualquier fondo, también el rojo del
+            // aplastamiento sobre el asfalto (René, 2026-11-17, foto 11).
+            var placa = new GameObject("placa").AddComponent<Image>();
+            placa.transform.SetParent(go.transform, false);
+            placa.transform.SetAsFirstSibling();
+            placa.color = new Color(0.02f, 0.03f, 0.05f, 0.78f);
+            placa.raycastTarget = false;
+            var prt = placa.rectTransform;
+            prt.anchorMin = new Vector2(0.5f, 0.5f);
+            prt.anchorMax = new Vector2(0.5f, 0.5f);
+            prt.sizeDelta = new Vector2(t.preferredWidth + 56f, 112f);
             if (camara != null)
             {
                 go.transform.rotation = Quaternion.LookRotation(go.transform.position - camara.transform.position, camara.transform.up);
@@ -382,7 +394,7 @@ namespace Croquis.Visor
                     }
 
                     var etiqueta = Letrero(raiz, vista.transform.position + Vector3.up * (float)(d.AltoM + 0.45),
-                        "aplastamiento máx. " + F(maximo * 100.0, "0") + " cm (C1–C6 de Croquis)", 0.1f, Calor(1f), camara);
+                        "aplastamiento máx. " + F(maximo * 100.0, "0") + " cm (C1–C6 de Croquis)", 0.1f, new Color(1f, 0.47f, 0.4f), camara);
                     etiqueta.transform.SetParent(raiz, true);
                 }
             }

@@ -2464,6 +2464,8 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 
 ### Endurecimiento pendiente
 
+- **La lluvia de noche a 4K frena el visor de escritorio con cada toma** (2026-11-17, laptop con GPU integrada: de 6.2 a 0.2 fps hacia la octava toma). Se esquiva con una instancia por grupo de tomas; falta la causa. Los fps por grupo de la t4b dirán si a la RTX también le pasa.
+- **Luminarias y acotamientos en curvas:** `night-lights.ts` y `road-decor.ts` solo recorren los tramos rectos del trazado, como `corridorsOf` antes de #271. En una carretera con curva faltan luminarias y acotamiento.
 - **Confirmar el peso en Vercel** (2026-11-17): la salida medida de antes era de 303.4 MB y Vercel reportaba unos 2 GB. Al fusionar `fix/peso-despliegue`, revisar la vista Resources de ese despliegue y el gráfico de Usage. Si sigue sumando mucho más que 103.7 MB, lo siguiente es la función compartida de las páginas (26.5 MB, casi todo `.next/server`) y sus 316 entradas.
 - **`mapa.spec.ts` abre `/croquis`**, que desde el 2026-11-15 redirige a la portada (páginas del producto anterior): sus dos pruebas fallan. No están en el CI (no llevan `@flujo`). Hay que pasarlas al mapa de `/cesvi` o quitarlas.
 - **Librerías del navegador dentro de las funciones** (2026-11-17, `eval/results/despliegue_peso.json`): Rapier (4.4 MB), MapLibre, pdfmake, docx, three y mediabunny quedan en el código del servidor porque las páginas las importan arriba. Cargarlas solo en el navegador bajaría las funciones (34.1 MB de 67.0 por despliegue), pero exige tocar cómo se importan y probar cada paso.

@@ -1,6 +1,6 @@
 {
   "nota": "Lo pesado de cada tanda de la auditoría del 2026-11-15, para la computadora del colaborador (tools/colaborador/tanda.ps1). «vigente» es la que corre CORRER-TANDA-EN-RTX.bat con doble clic. Toda corrida empieza por «comprobacion»; si falla, lo pesado no corre. Cada paso: un comando que corre en la raíz del repositorio, sin preguntas y sin llaves; «minutos» es lo estimado (el tope es 4 veces eso, y al menos 10 min); «salidas» son las rutas que se suben además de los registros. «rama»: la rama donde vive la tanda mientras no esté en main. Un comando por paso (sin &&): cada uno deja su registro. Un paso con `requiere` se omite si falta esa carpeta (datos que no van en git).",
-  "vigente": "t4",
+  "vigente": "t4b",
   "comprobacion": {
     "pasos": [
       {
@@ -232,6 +232,54 @@
           "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues comprobar -Salida eval/results/rtx-t4/demo_local.json",
           "minutos": 4,
           "salidas": ["eval/results/rtx-t4/demo_local.json"]
+        }
+      ]
+    },
+    "t4b": {
+      "titulo": "Tanda 4b · Lo que faltó de la t4 (arranque del 3D corregido, fps web, demo local), las fotos promo rehechas, las tomas del tráiler retomables y el video de Unity",
+      "nota": "René, 2026-11-17. Una sola corrida. Retoma: si se corta, las tomas del tráiler y los cuadros del video siguen desde el último terminado. Nada baja de Vercel Blob. Al final quedan tres zip en el Escritorio para mandarle a René: croquis-fotos-promo-t4b.zip, croquis-tomas-trailer.zip y croquis-video-unity.zip.",
+      "pasos": [
+        {
+          "nombre": "visor-local",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 2,
+          "salidas": []
+        },
+        {
+          "nombre": "arranque-3d",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/arranque-3d.ps1",
+          "minutos": 8,
+          "salidas": ["eval/results/rtx-t4/unity_arranque.json"]
+        },
+        {
+          "nombre": "demo-local",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues comprobar -Salida eval/results/rtx-t4/demo_local.json",
+          "minutos": 4,
+          "salidas": ["eval/results/rtx-t4/demo_local.json"]
+        },
+        {
+          "nombre": "fotos-promo",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/desde-release.ps1 -Paso fotos -Solo 02-lateral-hora-dorada,11-rayos-x,15-terreno-relieve-real,16-ficha-lateral,18-conductor-visibilidad,19-conductor-vista",
+          "minutos": 4,
+          "salidas": ["eval/results/rtx-t4/fotos.json"]
+        },
+        {
+          "nombre": "tomas-del-trailer",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/desde-release.ps1 -Paso trailer",
+          "minutos": 20,
+          "salidas": ["eval/results/rtx-t4/tomas_trailer.json"]
+        },
+        {
+          "nombre": "video-unity",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/desde-release.ps1 -Paso video",
+          "minutos": 70,
+          "salidas": ["eval/results/rtx-t4/video_unity.json"]
+        },
+        {
+          "nombre": "fps-web",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/fps-web.ps1",
+          "minutos": 55,
+          "salidas": ["eval/results/rtx-t4/fps_web.json"]
         }
       ]
     }

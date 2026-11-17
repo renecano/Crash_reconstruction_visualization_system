@@ -126,6 +126,14 @@ nube("carambola", carambola.escena, carambola.resultado);
 // un caso: el de la carretera federal 95 cerca de Tres Marías, Morelos).
 const alcance = fixture("alcance");
 paquete("alcance-noche", alcance.escena, alcance.resultado, "noche");
+// El video de Unity (René, 2026-11-17): AXA solo en la versión para CESVI; la pública lleva en su
+// lugar el alcance sintético, el mismo tipo de choque (alcance en recta), de día. Ninguno sale en las
+// fotos promocionales: solo los usa el plan de `tools/unity/video-unity.mjs`.
+{
+  const axa = leer<EscenaSpec>("demo/escenas-r11/axa.json");
+  paquete("axa-dia", axa, fullResult(axa, PRODUCTION_SAMPLES) as unknown as Resultado, "dia");
+  paquete("alcance-dia", alcance.escena, alcance.resultado, "dia");
+}
 const curva = fixture("frontal_curva");
 const RELIEVE = { lat: 19.0418, lon: -99.2391 };
 {
@@ -147,6 +155,9 @@ const RELIEVE = { lat: 19.0418, lon: -99.2391 };
   );
 }
 
+/** El instante de la vista del conductor: el primero en que B y el punto de choque se ven desde A. */
+const T19 = Number(process.env.CROQUIS_T19 ?? -0.3);
+
 // Las tomas. Cámaras: `objetivo` (vehículo, «impacto» o [x, y]), `azimut` desde el norte (o desde
 // el frente del vehículo con `relativo`), `distancia`, `altura`, `mira`, `fov`; `modo` usa una
 // cámara del visor. Las de ingeniería llevan `capa` y salen también «limpias».
@@ -162,7 +173,8 @@ const tomas = [
     id: "02-lateral-hora-dorada",
     caso: "casos/lateral_interseccion-dorada.json",
     t: 0.6,
-    camara: { objetivo: "impacto", azimut: 265, distancia: 26, altura: 4.5, mira: 1, fov: 30 },
+    // Más cerca: los dos autos llenan el cuadro (René, 2026-11-17).
+    camara: { objetivo: "impacto", azimut: 265, distancia: 13, altura: 2.4, mira: 0.8, fov: 30 },
   },
   {
     id: "03-alcance-noche-faros",
@@ -246,7 +258,8 @@ const tomas = [
     capa: "alambre",
     lado: 80,
     malla: 2,
-    camara: { objetivo: "impacto", azimut: 230, distancia: 34, altura: 18, mira: 0, fov: 40 },
+    // Más cerca: los vehículos y la vía se reconocen (René, 2026-11-17).
+    camara: { objetivo: "impacto", azimut: 230, distancia: 20, altura: 10, mira: 0, fov: 40 },
   },
   {
     id: "16-ficha-lateral",
@@ -258,7 +271,9 @@ const tomas = [
       objetivo: "veh-a",
       relativo: true,
       azimut: 90,
-      distancia: 12,
+      // En la calle, entre el auto y las fachadas de enfrente (a 12 m quedaba dentro de una casa y
+      // su pared tapaba el auto; René, 2026-11-17).
+      distancia: 2.4,
       altura: 0.7,
       mira: 0.7,
       orto: 2.1,
@@ -286,12 +301,15 @@ const tomas = [
     t: -1,
     capa: "cono",
     vehiculo: "veh-a",
-    camara: { objetivo: [-8, -7], azimut: 245, distancia: 12, altura: 16, mira: 0, fov: 42 },
+    // A, B y el punto de choque en el cuadro (René, 2026-11-17).
+    camara: { objetivo: [-7, -6], azimut: 235, distancia: 14, altura: 24, mira: 0, fov: 46 },
   },
   {
     id: "19-conductor-vista",
     caso: "casos/lateral_interseccion-dia.json",
-    t: -1,
+    // A t = -1 la casa de la esquina tapa a B (René pidió verlo, 2026-11-17): T19 sale de una prueba
+    // de varios instantes en el mismo visor.
+    t: T19,
     capa: "cono",
     vehiculo: "veh-a",
     camara: { modo: "conductor:veh-a" },
