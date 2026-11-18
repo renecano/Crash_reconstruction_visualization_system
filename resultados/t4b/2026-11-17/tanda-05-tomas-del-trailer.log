@@ -1,0 +1,22 @@
+# Paso: tomas-del-trailer
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/desde-release.ps1 -Paso trailer
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-17 23:17:01
+
+Modelos del visor de escritorio, desde la máquina: ya estaba.
+115 tomas en C:\Users\MrKan\AppData\Local\croquis-rtx-t4\fotos-t4b\tomas-trailer.json
+Tomando tomas del tráiler: 115 de 115 por hacer, de 6 en 6 (no uses la computadora mientras tanto)...
+  El visor se trabó en heroe_0001… (120 s sin un cuadro nuevo; intento 1 de 2).
+  El visor se trabó en heroe_0001… (120 s sin un cuadro nuevo; intento 2 de 2).
+  Se trabó dos veces en el mismo grupo: salto lo que falta de tomas del tráiler y sigo.
+  0 de 115 listas (241 s este grupo; fps del visor al final: 586.3, 594.1, 588.3, 591.2)
+Faltan 115 tomas (heroe_0001…). Vuelve a correr la tanda: sigue desde la última terminada.
+En C:\Users\MrKan\Documents\reto cesvi v5\Croquis\tools\colaborador\desde-release.ps1: 171 Carácter: 27
++ ... es.Count) { throw "Faltan $($faltantes.Count) tomas ($($faltantes[0]) ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (Faltan 115 toma...tima terminada.:String) [], RuntimeException
+    + FullyQualifiedErrorId : Faltan 115 tomas (heroe_0001…). Vuelve a correr la tanda: sigue desde la última terminad 
+   a.
+ 
+
+# Fin: 2026-11-17 23:21:05 · falló (código 1) · 4.1 min
