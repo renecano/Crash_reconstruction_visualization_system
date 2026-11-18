@@ -25,6 +25,24 @@ async function fotos(page: Page, caso: string) {
   const foto = (n: string) =>
     page.screenshot({ path: join(DIR, `${PREFIJO}-${caso}-${n}.jpg`), type: "jpeg", quality: 82 });
   await page.getByTestId("vista-maqueta").click();
+  if (PREFIJO === "despues") {
+    // El croquis pericial (ronda 4, propuesta 2): sin fondo, con el mapa tenue y con la foto.
+    await expect(page.getByTestId("croquis-pericial")).toBeVisible({ timeout: 60_000 });
+    await page.waitForTimeout(2000);
+    await foto("1-croquis");
+    await page.getByTestId("croquis-fondo-mapa").click();
+    await page.waitForTimeout(12_000);
+    await foto("2-croquis-con-mapa");
+    await page.getByTestId("croquis-fondo-foto").click();
+    await page.waitForTimeout(15_000);
+    await foto("3-croquis-con-foto");
+    await page.getByTestId("croquis-fondo-ninguno").click();
+    await page.getByTestId("croquis-color").click();
+    await page.getByTestId("croquis-referencias").locator("summary").click();
+    await page.waitForTimeout(1500);
+    await foto("4-croquis-color-y-referencias");
+    return;
+  }
   // Al reposo: ahí se ven las posiciones finales.
   await page
     .getByRole("button", { name: "Ver todo", exact: true })
@@ -44,6 +62,11 @@ async function fotos(page: Page, caso: string) {
   await page.waitForTimeout(6000);
   await foto("2-2d-con-mapa");
 }
+
+test.beforeEach(async ({ page }) => {
+  if (PREFIJO === "despues")
+    await page.addInitScript(() => localStorage.setItem("croquis.2d", "pericial"));
+});
 
 test("2D de AXA", async ({ page }) => {
   test.setTimeout(240_000);

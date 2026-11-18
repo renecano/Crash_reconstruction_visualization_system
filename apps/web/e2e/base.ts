@@ -8,6 +8,18 @@ import { pedidasABlob, sinBlob } from "./sin-blob";
 export const test = base.extend({
   context: async ({ context }, usar) => {
     await sinBlob(context);
+    // Ronda 4: las e2e de siempre recorren La escena de una pregunta a la vez (`?escena=anterior`);
+    // la del flujo nuevo (la escena ya armada, con su lista) pone «nueva» en su página.
+    await context.addInitScript(() => {
+      try {
+        if (!localStorage.getItem("croquis.escena"))
+          localStorage.setItem("croquis.escena", "anterior");
+        // Y el 2D de Reconstrucción como maqueta (el croquis pericial tiene su propia e2e).
+        if (!localStorage.getItem("croquis.2d")) localStorage.setItem("croquis.2d", "maqueta");
+      } catch {
+        // Sin almacenamiento: el flujo nuevo.
+      }
+    });
     await usar(context);
     const pedidas = pedidasABlob(context);
     if (pedidas.length)

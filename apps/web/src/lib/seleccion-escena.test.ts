@@ -38,6 +38,8 @@ import {
   PASO_FLECHA_GRANDE_M,
   PASO_FLECHA_M,
   accionDeTecla,
+  alinearConLaCalle,
+  voltear,
   capacidadesDe,
   deClave,
   desplazar,
@@ -211,6 +213,23 @@ describe("girar lo seleccionado", () => {
     // El terreno no tiene rumbo absoluto; el mismo rumbo no es un cambio.
     expect(fijarRumbo(e, `terreno:${idZona(e)}`, 90)).toBeNull();
     expect(fijarRumbo(x, o, 345)).toBeNull();
+  });
+  it("ronda 4: «Alinear con la calle» (A) y «Voltear 180°» (F)", () => {
+    const e = conTodo();
+    // La calle va a 30°: queda en el sentido que más se parece al que ya tenía.
+    const calle = (_p: unknown, preferido: number) => (Math.abs(preferido - 210) < 90 ? 210 : 30);
+    const x = alinearConLaCalle(e, "coche:V1", calle)!;
+    expect([30, 210]).toContain(Math.round(poseDe(x, "V1", "final")!.rumbo));
+    expect(alinearConLaCalle(e, "coche:V1", () => null)).toBeNull();
+    expect(alinearConLaCalle(e, "marca:golpe", calle)).toBeNull();
+    const antes = poseDe(e, "V2", "final")!.rumbo;
+    expect(poseDe(voltear(e, "coche:V2")!, "V2", "final")!.rumbo).toBeCloseTo(
+      (antes + 180) % 360,
+      6,
+    );
+    expect(accionDeTecla({ key: "a" }, true)).toEqual({ tipo: "alinear" });
+    expect(accionDeTecla({ key: "F" }, true)).toEqual({ tipo: "voltear" });
+    expect(accionDeTecla({ key: "a" }, false)).toBeNull();
   });
 });
 
