@@ -1807,6 +1807,39 @@
         },
         "distancia_minima_m": {
           "type": "number"
+        },
+        "trayectorias": {
+          "type": "array",
+          "maxItems": 64,
+          "description": "Por dónde va cada vehículo con esas decisiones, del inicio hasta el primer contacto (o hasta el fin del horizonte si no hay), cada 0.1 s y en el instante final, con su velocidad (m/s). Sirve para dibujar el «¿y si…?»; no cambia ninguna cifra.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["vehiculo", "t", "x", "y", "rumbo", "vx", "vy"],
+            "properties": {
+              "vehiculo": {
+                "$ref": "#/$defs/Id"
+              },
+              "t": {
+                "$ref": "#/$defs/Numeros"
+              },
+              "x": {
+                "$ref": "#/$defs/Numeros"
+              },
+              "y": {
+                "$ref": "#/$defs/Numeros"
+              },
+              "rumbo": {
+                "$ref": "#/$defs/Numeros"
+              },
+              "vx": {
+                "$ref": "#/$defs/Numeros"
+              },
+              "vy": {
+                "$ref": "#/$defs/Numeros"
+              }
+            }
+          }
         }
       }
     },

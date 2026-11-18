@@ -31,6 +31,9 @@ export type ConductorAgente = z.infer<typeof ConductorAgente>;
 export const Percentiles = z.strictObject({ p10: z.number(), p50: z.number(), p90: z.number() });
 export type Percentiles = z.infer<typeof Percentiles>;
 
+export const Numeros = z.array(z.number()).max(20000);
+export type Numeros = z.infer<typeof Numeros>;
+
 /** Lo que pasa con esas decisiones: el primer contacto entre vehículos o, si no hay, la distancia mínima a la que quedaron. */
 export const SimulacionAgentes = z.strictObject({
   contacto: z.boolean(),
@@ -42,6 +45,20 @@ export const SimulacionAgentes = z.strictObject({
     .optional(),
   velocidad_relativa_kmh: z.number().optional(),
   distancia_minima_m: z.number().optional(),
+  trayectorias: z
+    .array(
+      z.strictObject({
+        vehiculo: Id,
+        t: Numeros,
+        x: Numeros,
+        y: Numeros,
+        rumbo: Numeros,
+        vx: Numeros,
+        vy: Numeros,
+      }),
+    )
+    .max(64)
+    .optional(),
 });
 export type SimulacionAgentes = z.infer<typeof SimulacionAgentes>;
 
@@ -356,9 +373,6 @@ export const Inversion = z.strictObject({
   alternativas: z.array(InversionAlternativa).max(8).optional(),
 });
 export type Inversion = z.infer<typeof Inversion>;
-
-export const Numeros = z.array(z.number()).max(20000);
-export type Numeros = z.infer<typeof Numeros>;
 
 /** Desplazamiento del ocupante respecto al habitáculo (marco del vehículo: x adelante, y izquierda) desde el impacto, con y sin cinturón. */
 export const MovimientoOcupante = z.strictObject({
