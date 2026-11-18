@@ -18,11 +18,13 @@
     -Despues comprobar     sirve, corre la prueba sin internet (e2e/demo-local.spec.ts) y apaga
     -Despues fps-web       sirve, mide los fps del visor en el navegador (tools/unity/medir-web.ps1)
                            contra el sitio local y apaga
+    -Despues arranque-3d   sirve, mide el arranque del 3D de Unity en el Chrome instalado
+                           (e2e/medir-unity-arranque.spec.ts) contra el sitio local y apaga
     -Salida RUTA           a dónde escribe su resultado la comprobación o la medición
 #>
 param(
   [switch]$SoloPreparar,
-  [ValidateSet("", "comprobar", "fps-web")][string]$Despues = "",
+  [ValidateSet("", "comprobar", "fps-web", "arranque-3d")][string]$Despues = "",
   [string]$Salida = ""
 )
 
@@ -155,11 +157,37 @@ try {
     Start-Sleep -Seconds 2
   }
   if (-not $listo) { Fallar "El servidor local no respondió en 2 minutos (registro: $registro)." }
+  # t4c (René, 2026-11-18): las pruebas, en el Chrome instalado (el navegador de la demo y el de
+  # fps-web); en la RTX, el Chromium de Playwright no compiló el WebAssembly de Unity.
+  $chrome = @(
+    "$env:ProgramFiles\Google\Chrome\Application\chrome.exe",
+    "${env:ProgramFiles(x86)}\Google\Chrome\Application\chrome.exe",
+    "$env:LOCALAPPDATA\Google\Chrome\Application\chrome.exe"
+  ) | Where-Object { Test-Path $_ } | Select-Object -First 1
   if ($Despues -eq "comprobar") {
     & pnpm --filter "@croquis/web" exec playwright install chromium
     if ($Salida) { $env:CROQUIS_SALIDA = $Salida }
+    if ($chrome) { $env:CROQUIS_CANAL = "chrome"; Escribir "La comprobación, en Chrome ($chrome)." }
+    else { Escribir "No encontré Google Chrome: la comprobación va en el Chromium de Playwright." "Yellow" }
     & pnpm --filter "@croquis/web" exec playwright test e2e/demo-local.spec.ts --project=chromium --headed
     $codigo = $LASTEXITCODE
+  } elseif ($Despues -eq "arranque-3d") {
+    if (-not $chrome) { Fallar "No encontré Google Chrome: la medición del arranque se hace en Chrome, como fps-web." }
+    # Chrome con la tarjeta de alto rendimiento mientras mide (como fps-web); al final, como estaba.
+    $llaveGpu = "HKCU:\Software\Microsoft\DirectX\UserGpuPreferences"
+    if (-not (Test-Path $llaveGpu)) { New-Item -Path $llaveGpu -Force | Out-Null }
+    $gpuAntes = (Get-ItemProperty -Path $llaveGpu -Name $chrome -ErrorAction SilentlyContinue).$chrome
+    Set-ItemProperty -Path $llaveGpu -Name $chrome -Value "GpuPreference=2;"
+    try {
+      $env:CROQUIS_URL = $Url
+      $env:CROQUIS_CHROME = $chrome
+      if ($Salida) { $env:CROQUIS_ARRANQUE_SALIDA = $Salida }
+      & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/medir-unity-arranque.spec.ts
+      $codigo = $LASTEXITCODE
+    } finally {
+      if ($null -eq $gpuAntes) { Remove-ItemProperty -Path $llaveGpu -Name $chrome -ErrorAction SilentlyContinue }
+      else { Set-ItemProperty -Path $llaveGpu -Name $chrome -Value $gpuAntes }
+    }
   } else {
     $trabajo = Join-Path $env:LOCALAPPDATA "croquis-demo-local\fps-web"
     New-Item -ItemType Directory -Force $trabajo | Out-Null
