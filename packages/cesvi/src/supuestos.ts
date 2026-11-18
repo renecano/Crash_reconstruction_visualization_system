@@ -51,6 +51,41 @@ export function justificacionReposo(e: Expediente): string {
 /** La incertidumbre de un reposo supuesto: `PRIORIDAD` veces la de una posición medida. */
 export const SIGMA_REPOSO_SUPUESTO_M = PRIORIDAD * SIGMA_POSITION_M;
 
+const NOMBRE_SUPERFICIE: Record<string, string> = {
+  asfalto: "asfalto",
+  concreto: "concreto",
+  adoquin: "adoquín",
+  empedrado: "empedrado",
+  terraceria: "terracería",
+};
+const NOMBRE_ESTADO: Record<string, string> = {
+  seco: "seco",
+  mojado: "mojado",
+  encharcado: "encharcado",
+  grava_suelta: "con grava suelta",
+  lodo: "con lodo",
+  aceite: "con aceite",
+};
+
+/**
+ * La superficie del caso y de dónde sale (René, 2026-11-18): «concreto mojado, como lo narra el
+ * perito», «asfalto mojado: se supone porque llovía» o «asfalto seco: la narración no lo dice».
+ */
+export function superficieDelCaso(spec: { lugar?: unknown } | null | undefined): string {
+  type C = { valor?: string; fuente?: string };
+  const l = (spec?.lugar ?? {}) as { superficie?: C; estado_superficie?: C };
+  const sup = String(l.superficie?.valor ?? "asfalto");
+  const est = String(l.estado_superficie?.valor ?? "seco");
+  const texto = `${NOMBRE_SUPERFICIE[sup] ?? sup} ${NOMBRE_ESTADO[est] ?? est}`;
+  const dichos = [l.superficie, l.estado_superficie].filter((c) => c?.fuente === "usuario").length;
+  if (l.estado_superficie?.fuente === "supuesto" && est === "mojado")
+    return `${texto} (se supone mojado porque llovía)`;
+  if (dichos === 2) return `${texto}, como lo narra el perito`;
+  if (dichos === 1)
+    return `${texto} (${l.superficie?.fuente === "usuario" ? "la superficie" : "su estado"} lo narra el perito; lo otro se supone)`;
+  return `${texto} (la narración no dice la superficie: se supone)`;
+}
+
 export function supuestosDeclarados(
   e: Expediente,
   r: Reconstruccion | null = null,
@@ -139,7 +174,7 @@ export function supuestosDeclarados(
             },
           }
         : {}),
-      justificacion: `Valor de la literatura para la superficie del caso (${mu.fuente ?? "tabla de fricción de Croquis"}).`,
+      justificacion: `Valor de la literatura para ${superficieDelCaso(r.spec)} (${mu.fuente ?? "tabla de fricción de Croquis"}).`,
       incertidumbre: mu.rango
         ? `En el rango de las velocidades, μ de ${mu.rango[0]} a ${mu.rango[1]}.`
         : "Sin rango.",

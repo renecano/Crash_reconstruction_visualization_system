@@ -297,10 +297,30 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
     facts.escalares.set("evento.objeto", fact(objeto, null, "supuesto"));
     facts.escalares.set("evento.tipo", fact("impacto_vehiculo_objeto", null, "supuesto"));
   }
-  // La luz del lugar, de la hora del relato (René, 2026-11-18): supuesto; nunca «sin alumbrado»,
-  // así que ningún número cambia por esto (`iluminacion.ts`).
+  // Las condiciones del lugar (René, 2026-11-18). Lo que narró el perito entra como dicho
+  // («usuario»): la superficie y su estado fijan la fricción; el clima, la vista del 3D.
+  const cond = e.caso?.condiciones;
+  if (cond?.superficie)
+    facts.escalares.set("lugar.superficie", fact(cond.superficie.valor, null, "usuario"));
+  if (cond?.estado_superficie)
+    facts.escalares.set(
+      "lugar.estado_superficie",
+      fact(cond.estado_superficie.valor, null, "usuario"),
+    );
+  else if (cond?.clima && /^lluvia|granizo/.test(cond.clima.valor)) {
+    // Si llovía y no dice cómo estaba la carpeta, se supone mojada.
+    facts.escalares.set("lugar.estado_superficie", fact("mojado", null, "supuesto"));
+    limites.push(
+      "La narración dice que llovía y no dice el estado de la carpeta: se supone mojada (fricción de pavimento mojado).",
+    );
+  }
+  if (cond?.clima) facts.escalares.set("entorno.clima", fact(cond.clima.valor, null, "usuario"));
+  // La luz, de la hora del relato (`iluminacion.ts`): supuesto. «Noche sin alumbrado» solo si la
+  // narración lo dice y la hora es de noche.
   const luz = iluminacionDeHora(e.caso?.fecha_hora?.valor);
-  if (luz) facts.escalares.set("entorno.iluminacion", fact(luz, null, "supuesto"));
+  if (luz === "noche_con_alumbrado" && cond?.iluminacion?.valor === "noche_sin_alumbrado")
+    facts.escalares.set("entorno.iluminacion", fact("noche_sin_alumbrado", null, "usuario"));
+  else if (luz) facts.escalares.set("entorno.iluminacion", fact(luz, null, "supuesto"));
   const spec = buildSpec(facts, "", { specId, origen: "escrito", sintetico: false }) as Json & {
     vehiculos: Json[];
     eventos: Json[];

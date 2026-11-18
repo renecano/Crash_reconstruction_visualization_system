@@ -26,6 +26,7 @@ import {
   expedienteErrors,
   type EscenaSpec,
 } from "@croquis/scene-schema";
+import { condicionesParaExpediente } from "./condiciones";
 import { GLOSARIO, glosarioParaPrompt, ubicarCita } from "./hecho-lectura";
 
 export const VERSION_PROMPT_CORPUS = "corpus-cesvi-v4";
@@ -608,6 +609,9 @@ export function expedienteDeSalida(
     aseguradora: caso0 && dato(caso0, "aseguradora"),
     fecha_hora: caso0 && dato(caso0, "fecha_hora"),
     lugar,
+    // Superficie, su estado, clima y luz, del texto con el vocabulario de los dictámenes (René,
+    // 2026-11-18): la lectura no los pide; aquí salen sin IA y con su frase literal.
+    condiciones: condicionesParaExpediente(textoDictamen, F),
     modalidades: (caso0 ? varios(caso0, "modalidad") : []).slice(
       0,
       6,
