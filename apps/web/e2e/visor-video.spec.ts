@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { VISOR_PUENTE_VERSION } from "@croquis/scene-schema";
 import { ALL_FORMATS, BufferSource, Input } from "mediabunny";
 import { expect, test } from "./base";
@@ -30,6 +31,10 @@ test("/cesvi: descargar el video del 3D en MP4 1080p", async ({ page }) => {
   await boton.click();
   await expect(page.getByTestId("grabando-video")).toBeVisible();
   await expect(page.getByTestId("falta-video")).toContainText("1920×1080, MP4");
+  await page.screenshot({
+    path: resolve(__dirname, "../../../docs/cesvi/ronda-4/evidencia/b/despues-b7-grabando.jpg"),
+    quality: 82,
+  });
   await page.keyboard.press("Escape");
   await expect(page.getByTestId("aviso-video")).toContainText("Se canceló");
   await expect(page.getByTestId("grabando-video")).toHaveCount(0);
