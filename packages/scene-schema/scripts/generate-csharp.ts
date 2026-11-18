@@ -53,14 +53,23 @@ export function esquemaUnido(): Json {
   for (const [n, d] of Object.entries((resultado.$defs ?? {}) as Json)) {
     defs[deResultado(n)] = conRefs(d, local(deResultado));
   }
-  for (const [n, d] of Object.entries((caso.$defs ?? {}) as Json)) defs[n] = d;
+  // Las definiciones del paquete pueden apuntar al esquema de la escena o del resultado (el fantasma).
+  const aLocal = (r: string) =>
+    r.includes("/escena")
+      ? "#/$defs/EscenaSpec"
+      : r.includes("/resultado/")
+        ? "#/$defs/Resultado"
+        : r;
+  for (const [n, d] of Object.entries((caso.$defs ?? {}) as Json)) defs[n] = conRefs(d, aLocal);
   const raiz = (s: Json, cambio: (r: string) => string) => {
     const resto = { ...s };
     for (const k of ["$defs", "$schema", "$id"]) delete resto[k];
     return conRefs(resto, cambio);
   };
   defs.EscenaSpec = raiz(escena, local(deEscena));
-  defs.Resultado = raiz(resultado, local(deResultado));
+  // Con el título, quicktype lo llama siempre `Caso3DResultado`, aunque el fantasma también lo use
+  // (sin él, el nombre sale de la primera propiedad que lo encuentra y cambia el código de Unity).
+  defs.Resultado = { ...(raiz(resultado, local(deResultado)) as Json), title: "Caso3DResultado" };
   const resto = { ...caso };
   for (const k of ["$defs", "$id"]) delete resto[k];
   return {

@@ -118,7 +118,22 @@ export function EscenaMaqueta({
   conBarra = false,
   margenes = SIN_MARGENES,
   declarada = null,
+  fondo = null,
+  papel = false,
 }: {
+  /**
+   * PROTOTIPO (ronda 4, el 2D como croquis de perito): una imagen del lugar debajo del croquis (el
+   * mapa o la foto satelital), tenue, en coordenadas de la escena.
+   */
+  fondo?: {
+    imagen: string;
+    centroX: number;
+    centroY: number;
+    ladoM: number;
+    opacidad: number;
+  } | null;
+  /** PROTOTIPO (ronda 4): papel blanco, como el croquis impreso de un perito. */
+  papel?: boolean;
   /**
    * T6.2: la versión declarada de un conductor ya simulada (R7), para dibujarla sobre la
    * reconstrucción: el camino y la silueta de cada vehículo que en esa versión va por otro lado, en
@@ -255,7 +270,7 @@ export function EscenaMaqueta({
       viewBox={vista ? `${px(vista[0])} ${py(vista[3])} ${vw} ${vh}` : `0 0 ${W} ${H}`}
       preserveAspectRatio="xMidYMid meet"
       overflow="visible"
-      className="h-full w-full"
+      className={`h-full w-full ${papel ? "grayscale contrast-125" : ""}`}
       style={vista ? { touchAction: "none", cursor: arrastrando ? "grabbing" : "grab" } : undefined}
       {...(vista ? manejadores : {})}
       data-vista={vista ? vista.map((x) => F.fijo(x, 1)).join(" ") : undefined}
@@ -293,6 +308,19 @@ export function EscenaMaqueta({
       ) : (
         <rect x={-W * 3} y={-H * 3} width={W * 7} height={H * 7} fill="url(#mq-luz)" />
       )}
+      {papel ? <rect x={-W * 50} y={-H * 50} width={W * 101} height={H * 101} fill="#fff" /> : null}
+      {fondo ? (
+        <image
+          href={fondo.imagen}
+          x={px(fondo.centroX - fondo.ladoM / 2)}
+          y={py(fondo.centroY + fondo.ladoM / 2)}
+          width={fondo.ladoM}
+          height={fondo.ladoM}
+          opacity={fondo.opacidad}
+          preserveAspectRatio="none"
+          data-testid="maqueta-fondo"
+        />
+      ) : null}
 
       {/* La vía: calles del mapa a su ancho; si no hay mapa, la plantilla de la escena. */}
       <g filter="url(#mq-losa)">
@@ -793,6 +821,39 @@ export function EscenaMaqueta({
           )}
         </g>
       ) : null}
+      {/* PROTOTIPO (ronda 4, croquis de perito): la letra de cada vehículo con el número de su
+          posición (1 antes, 2 impacto, 3 reposo), en un círculo, como en un croquis impreso. */}
+      {papel && !sinEtiquetas
+        ? resultado.vehiculos.flatMap((v) => {
+            const tr = v.trayectoria;
+            if (!tr.t.length) return [];
+            const letra = (nombres[v.id] ?? v.id).trim().charAt(0).toUpperCase();
+            const r = Math.max(1.3, fuente * 0.75);
+            const marcas: [number, { x: number; y: number }][] = [
+              [1, poseEn(tr, Math.max(tr.t[0]!, ti - 1.5))],
+              [2, poseEn(tr, ti)],
+              [3, poseEn(tr, tr.t[tr.t.length - 1]!)],
+            ];
+            return marcas.map(([k, q], i) => (
+              <g
+                key={`${v.id}-${k}`}
+                transform={`translate(${px(q.x) + (i === 1 ? r * 1.9 : r * 1.6)} ${py(q.y) - r * 1.6})`}
+                data-testid={`marca-papel-${v.id}-${k}`}
+              >
+                <circle r={r} fill="#fff" stroke="#000" strokeWidth={0.25} />
+                <text
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  fontSize={r * 1.05}
+                  fontWeight={700}
+                  fill="#000"
+                >
+                  {`${letra}${k}`}
+                </text>
+              </g>
+            ));
+          })
+        : null}
     </svg>
   );
   if (!vista) return svg;

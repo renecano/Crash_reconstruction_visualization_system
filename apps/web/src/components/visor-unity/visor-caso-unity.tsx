@@ -23,6 +23,9 @@ import type { CanalTiempo } from "@/lib/visor-unity/canal";
 import { aplicarObjetoEditado, aplicarPuntoMarcado } from "@/lib/visor-unity/edicion";
 import { nombreDelPaquete } from "@/lib/visor-unity/paquete";
 import { EnRanura, useMarco } from "./marco-vista";
+import { conPisoYFantasma } from "@croquis/scene-schema";
+import { ATRIBUCION_MAPA } from "@/lib/visor-unity/piso";
+import { MAPA_REAL_APAGADO, PanelMapaReal, usePisoMapaReal } from "./mapa-real";
 import { VisorUnity, type ApiVisorUnity, type VersionUnity } from "./visor-unity";
 
 const HERRAMIENTAS: { id: HerramientaEdicion; texto: string; conVehiculo: boolean }[] = [
@@ -109,6 +112,13 @@ export function VisorCasoUnity({
   const [vehiculo, setVehiculo] = useState<string | null>(vehiculos[0]?.id ?? null);
   const [aviso, setAviso] = useState<string | null>(null);
   const [api, setApi] = useState<ApiVisorUnity | null>(null);
+  // Ronda 4, punto 9: el modo «mapa real» (solo con un build que lo entiende, puente 1.3.0).
+  const [mapaReal, setMapaReal] = useState(MAPA_REAL_APAGADO);
+  const conMapaReal = conPisoYFantasma(api?.puente) && r.origen !== null && !presentar;
+  const pisoReal = usePisoMapaReal(r.resultado, r.origen, {
+    ...mapaReal,
+    activo: mapaReal.activo && conMapaReal,
+  });
   // En el marco del caso (René, 2026-11-17) los botones van en su barra y las notas en el
   // desplegable de abajo: nada encima del 3D.
   const { enMarco } = useMarco();
@@ -184,6 +194,7 @@ export function VisorCasoUnity({
         <VisorUnity
           escena={escena}
           version={presentar ? null : version}
+          piso={pisoReal.piso}
           relieve={r.relieve ?? null}
           camaras={camaras}
           onTiempo={onInstante}
@@ -200,6 +211,23 @@ export function VisorCasoUnity({
           onObjetoEditado={alObjeto}
           onPuntoMarcado={alPunto}
         />
+        {conMapaReal && mapaReal.activo && props.activo !== false ? (
+          <div className="pointer-events-none absolute bottom-3 left-3 z-10">
+            <PanelMapaReal
+              e={mapaReal}
+              onCambio={setMapaReal}
+              aviso={pisoReal.aviso}
+              cargando={pisoReal.cargando}
+              atribucion={
+                pisoReal.piso
+                  ? mapaReal.conFoto && !pisoReal.aviso
+                    ? pisoReal.piso.atribucionVivo
+                    : pisoReal.piso.atribucionMapa
+                  : ATRIBUCION_MAPA
+              }
+            />
+          </div>
+        ) : null}
         {api && !presentar ? (
           enMarco ? (
             props.activo === false ? null : (
@@ -253,6 +281,17 @@ export function VisorCasoUnity({
                         </div>
                       ) : null}
                     </>
+                  ) : null}
+                  {conMapaReal ? (
+                    <button
+                      type="button"
+                      className="vidrio rounded-full px-3 py-1.5 text-[0.8125rem] font-medium"
+                      aria-pressed={mapaReal.activo}
+                      onClick={() => setMapaReal((m) => ({ ...m, activo: !m.activo }))}
+                      data-testid="mapa-real"
+                    >
+                      {mapaReal.activo ? "Entorno procedural" : "Mapa real"}
+                    </button>
                   ) : null}
                   <button
                     type="button"

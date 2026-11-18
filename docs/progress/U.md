@@ -10,6 +10,34 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 - **Unity y Blender corren en segundo plano** desde el 2026-11-10: René reabrió la sesión con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`. Sigue la regla de un solo proceso pesado a la vez.
 - **Cómo se itera:** capturas del Editor en modo batch (`Capturas.Tomar`, unos 3 min). En esta sesión no hubo herramientas del MCP de Unity. Un build WebGL solo al cerrar cada punto.
 
+## Ronda 4, punto 9: el modo «mapa real» (René, 2026-11-18; ADR 0124)
+
+- **Prueba visual con la foto de Esri** en el cruce de Guadalajara: `eval/ronda4_mapa_real_esri.mjs` (20 teselas, ninguna fallida). En AXA, con el Unity falso: `docs/cesvi/ronda-4/evidencia/mapa-real/axa-*.jpg`.
+- **Web lista:** `lib/visor-unity/piso.ts`, `components/visor-unity/mapa-real.tsx` y el piso y el fantasma en `visor-unity.tsx`.
+  - Pruebas: `piso.test.ts`, `dictamen-caso.test.ts` (el crédito del piso) y la e2e `visor-mapa-real.spec.ts` (@flujo).
+- **Unity escrito, sin compilar en Unity:** `PisoMapa`, `Fantasmas`, `PisoMapaVista`, `VisorCaso` y el puente 1.3.0.
+  - `dotnet test` de Croquis.Core: 107 de 107.
+  - `Visor/` se comprobó contra los ensamblados del Editor 6000.3, sin abrir Unity.
+- **Build 1.3.0 (René, 2026-11-18: en su laptop, publicar solo si no empeora la carga):** huella `3087c2915b272e66`.
+  - **Compilación:** web en 8.3 min y Windows en 1.6 min, sin errores. Pesa casi lo mismo: wasm +58 KB y data +16 KB.
+  - **Arranque del 3D** (`medir-unity-arranque`, 3 corridas por build en la demo local, sin Blob; `eval/results/ronda4_unity_arranque_{antes,despues}_*.json`). Medianas, hasta «listo», primera y segunda visita:
+
+    | Caso       | Antes (64b29e87) | Después (1.3.0) |
+    | ---------- | ---------------- | --------------- |
+    | AXA        | 13.7 s / 8.8 s   | 13.5 s / 7.5 s  |
+    | Caso nuevo | 14.1 s / 6.7 s   | 12.0 s / 6.2 s  |
+
+    No empeora.
+
+  - **Con el Unity real** (`e2e/unity-130-real.spec.ts`, capturas en `docs/cesvi/ronda-4/evidencia/unity-130/`):
+    - el mapa real con la foto de Esri, su ajuste y el modo solo con el mapa;
+    - el fantasma translúcido de una hipótesis en «Versiones».
+  - **Tareas largas al encender el piso:** de 50 a 197 ms. Quedan en «Endurecimiento pendiente».
+  - **Publicado:**
+    - en Blob, con `publicar-web.mjs`, sin podar;
+    - en el release `visor-web-3087c2915b272e66` (para la demo local y la RTX);
+    - en el visor de escritorio `visor-escritorio-r4`, probado: arranca con el puente 1.3.0, sin excepciones.
+
 ## Ronda 4, punto 8: las versiones en el 3D (René, 2026-11-18; ADR 0123)
 
 - **Ahora (sin build nuevo):** en «Versiones», «La reconstrucción» / «Esta versión» alterna lo que carga Unity.

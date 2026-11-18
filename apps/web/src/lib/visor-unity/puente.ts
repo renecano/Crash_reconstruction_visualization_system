@@ -9,7 +9,7 @@ import { protegerTecladoDeLaPagina } from "./teclado";
 import {
   FUNCION_PUENTE_WEB,
   OBJETO_PUENTE_UNITY,
-  VISOR_PUENTE_VERSION,
+  VERSIONES_PUENTE_COMPATIBLES,
   type MensajeDeUnity,
   type MensajesAUnity,
   type VistaCaptura,
@@ -133,6 +133,9 @@ type Oyente = (m: MensajeDeUnity) => void;
 export class PuenteUnity {
   private oyentes = new Set<Oyente>();
   private capturando: Promise<unknown> = Promise.resolve();
+  /** La versión del puente que anunció el build (1.2.0 o 1.3.0): la 1.3.0 entiende el piso y el fantasma. */
+  version = "";
+
   private constructor(private readonly instancia: InstanciaUnity) {}
 
   /**
@@ -226,10 +229,11 @@ export class PuenteUnity {
     puente = new PuenteUnity(instancia);
     if (typeof navigator !== "undefined" && navigator.webdriver) puente.paraPruebas();
     for (const x of antes) puente.repartir(x);
-    if (v !== VISOR_PUENTE_VERSION) {
+    if (!VERSIONES_PUENTE_COMPATIBLES.includes(String(v))) {
       await puente.cerrar();
       throw motivo("version_puente");
     }
+    puente.version = String(v);
     return puente;
   }
 

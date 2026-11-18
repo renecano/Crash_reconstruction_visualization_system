@@ -9,6 +9,19 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 - **Fase actual:** ninguna en curso. W9 necesita la autorización de René para gastar API.
 - **Siguiente paso:** W8 cerrada el 2026-11-15: T3.2 (#215), T3.3 (contrato #219 y #220, ADR 0136) y T3.5 (E-R4 v4, igual a la v3 más el eje de la reversa). Nada de eso movió AXA ni un caso que ya vio CESVI después de T3.2. Queda una decisión de René sobre la versión declarada (sección T3.3, «Para decidir»). W9 (T6.5 y T6.6) espera su autorización de gasto de API.
 
+## Ronda 4, La escena y el 2D (René, 2026-11-18, tarde): en curso
+
+- **Las flechas por las calles reales (caso cesvi-cf708e9fed):** hecho.
+  - Causa: antes del arreglo del User-Agent, Overpass contestaba 406; ahora tarda unos 35 s, y la pregunta llega antes.
+  - Arreglo: las calles salen de las teselas del mapa (`overpassDeTeselas`). Pruebas: `calles-teselas.test.ts`, con las teselas grabadas del lugar.
+  - El recorrido (maqueta y 3D) también las usa.
+- **La escena ya armada:** hecho (`proponerEscena`, con pruebas sobre el expediente real del caso).
+- **Tres propuestas de la primera experiencia:** `docs/cesvi/ronda-4/propuestas-escena.md`, con capturas. Esperan la elección de René (anotado en «Bloqueado»).
+- **El 2D de Reconstrucción como croquis de perito:** tres propuestas con capturas en `docs/cesvi/ronda-4/propuestas-2d.md` (prototipo `?croquis=1|2|3`). Esperan la elección de René.
+- **Pendiente de René:**
+  - rotar al colocar (anillo, teclado, «Alinear con la calle», «Voltear 180°», alinear solo); se construye con la propuesta de La escena que elija;
+  - la medición con una persona nueva.
+
 ## Ronda 4, punto 8: el acto «Versiones» (René, 2026-11-18; ADR 0143)
 
 - **Decisión de René:** la propuesta 1 con la entrada de la 2 (`docs/cesvi/ronda-4/propuestas-hipotesis.md`).

@@ -330,6 +330,10 @@ export const Escenario = z.strictObject({
 });
 export type Escenario = z.infer<typeof Escenario>;
 
+/** Ronda 4, punto 8 (ADR 0123): una versión del caso (lo que declaró un conductor o una hipótesis del perito) que Unity dibuja translúcida sobre la reconstrucción, con el mismo reloj. Unity solo la reproduce. */
+export const Fantasma = z.strictObject({ etiqueta: z.string(), resultado: ResultadoSchema });
+export type Fantasma = z.infer<typeof Fantasma>;
+
 /** Dónde está la esquina suroeste de la malla: en el mundo y en la escena. */
 export const OrigenRelieve = z.strictObject({
   lat: z.number().min(-90).max(90),
@@ -338,6 +342,16 @@ export const OrigenRelieve = z.strictObject({
   y: z.number(),
 });
 export type OrigenRelieve = z.infer<typeof OrigenRelieve>;
+
+/** Ronda 4, punto 9 (ADR 0124): el modo «mapa real». Una imagen del lugar, norte arriba, que Unity pone como piso en vez del entorno procedural. En el paquete va solo el mapa de OpenStreetMap; la foto satelital de Esri se manda en vivo con el mensaje `piso` del puente y nunca se guarda. */
+export const PisoMapa = z.strictObject({
+  imagen: z.string().regex(new RegExp("^data:image/(jpeg|png);base64,")),
+  centro_x: z.number(),
+  centro_y: z.number(),
+  lado_m: z.number().max(2000).gt(0),
+  atribucion: z.string(),
+});
+export type PisoMapa = z.infer<typeof PisoMapa>;
 
 /** Malla regular de alturas. Las filas van de sur a norte y, en cada fila, de oeste a este: alturas_m[fila * ancho + columna]. */
 export const Relieve = z.strictObject({
@@ -361,5 +375,7 @@ export const Caso3DSchema = z.strictObject({
   relieve: Relieve.optional(),
   escenario: Escenario.optional(),
   convenciones: Convenciones,
+  piso: PisoMapa.optional(),
+  fantasma: Fantasma.optional(),
 });
 export type Caso3D = z.infer<typeof Caso3DSchema>;

@@ -9,6 +9,8 @@
  * pierde el dispositivo), muestra `respaldo`: el visor three.js de siempre.
  */
 import type { CamaraDelCaso } from "@/lib/visor-unity/camaras";
+import type { PisoUnity } from "@/lib/visor-unity/piso";
+import { conPisoYFantasma } from "@croquis/scene-schema";
 import type {
   Resultado,
   CamaraVisor,
@@ -50,6 +52,10 @@ export interface ApiVisorUnity {
   readonly paquete: Caso3D;
   /** Lleva el 3D a un instante (al volver del 2D se conserva el instante; A6). */
   ir?(t: number): void;
+  /** La versión del puente del build (1.3.0 entiende el piso de mapa y el fantasma). */
+  readonly puente?: string;
+  /** El crédito de lo que se ve en el piso del modo «mapa real» ahora mismo (null sin él). */
+  atribucionPiso?(): string | null;
 }
 
 export interface EdicionUnity {
@@ -82,6 +88,8 @@ const CLAVE_MINIMAPA = "croquis.minimapa";
  */
 export interface VersionUnity {
   clave: string;
+  /** Cómo se llama en pantalla (el fantasma de un build 1.3.0 la lleva). */
+  etiqueta?: string;
   escena: EscenaSpec | null;
   resultado: Resultado;
 }
@@ -89,6 +97,7 @@ export interface VersionUnity {
 export function VisorUnity({
   escena,
   version = null,
+  piso = null,
   relieve = null,
   activo = true,
   dormir = false,
@@ -110,6 +119,11 @@ export function VisorUnity({
    * reconstrucción.
    */
   version?: VersionUnity | null;
+  /**
+   * Ronda 4, punto 9: el piso del modo «mapa real» (solo con un build 1.3.0). El paquete lleva el
+   * mapa solo; lo que se ve en vivo (con la foto satelital) va por el mensaje `piso`.
+   */
+  piso?: PisoUnity | null;
   relieve?: RelieveCaso;
   /** El 3D está a la vista: si no, la reproducción se pausa. */
   activo?: boolean;
@@ -142,10 +156,30 @@ export function VisorUnity({
   const vEscena = version?.escena ?? null;
   const vResultado = version?.resultado ?? null;
   const vClave = version?.clave ?? null;
+  // Con un build 1.3.0 (ronda 4), la versión va como fantasma sobre la reconstrucción; con el
+  // publicado antes (1.2.0), se alterna: Unity carga la versión en lugar de la reconstrucción.
+  const superpone = conPisoYFantasma(puente?.version);
+  const vEtiqueta = version?.etiqueta ?? "";
   const objetivo = useMemo(
-    () => ({ escena: vEscena ?? escena, fijo: vResultado, clave: vClave }),
-    [escena, vEscena, vResultado, vClave],
+    () =>
+      superpone
+        ? {
+            escena,
+            fijo: null,
+            clave: vClave,
+            fantasma: vResultado ? { etiqueta: vEtiqueta, resultado: vResultado } : null,
+          }
+        : { escena: vEscena ?? escena, fijo: vResultado, clave: vClave, fantasma: null },
+    [superpone, escena, vEscena, vResultado, vClave, vEtiqueta],
   );
+  // El piso que hay que mandar en el próximo paquete (el mapa solo) y el último que se mandó en vivo.
+  const pisoActual = useRef<PisoUnity | null>(null);
+  useEffect(() => {
+    pisoActual.current = superpone ? piso : null;
+  }, [superpone, piso]);
+  const pisoEnviado = useRef<string | null>(null);
+  // Mientras se graba el video, el piso lo maneja la grabación (el mapa solo).
+  const grabando = useRef(false);
   // Lo que Unity ya tiene cargado: si es lo de ahora, el visor está listo.
   const [cargada, setCargada] = useState<typeof objetivo | null>(null);
   // El paquete de la reconstrucción: el que se descarga aunque se vea una versión.
@@ -245,8 +279,25 @@ export function VisorUnity({
       marcar("solver_listo");
       if (mio !== turno.current) return;
       const paquete = paqueteDelCaso(aCargar, resultado, relieve);
+      const p = pisoActual.current;
+      const conExtras = {
+        ...paquete,
+        ...(p
+          ? {
+              piso: {
+                imagen: p.imagenMapa,
+                centro_x: p.centro_x,
+                centro_y: p.centro_y,
+                lado_m: p.lado_m,
+                atribucion: p.atribucionMapa,
+              },
+            }
+          : {}),
+        ...(objetivo.fantasma ? { fantasma: objetivo.fantasma } : {}),
+      } as Caso3D;
       marcar("cargar_caso");
-      await puente.cargar(paquete);
+      await puente.cargar(conExtras);
+      pisoEnviado.current = p ? p.imagenMapa : null;
       marcar("caso_cargado");
       if (mio !== turno.current) return;
       setCargada(objetivo);
@@ -266,6 +317,13 @@ export function VisorUnity({
         paquete: paqueteBase.current ?? paquete,
         // Unity avisa el tiempo nuevo y la barra lo sigue (el aviso «tiempo»).
         ir: (t: number) => puente.enviar("fijarTiempo", { t }),
+        puente: puente.version,
+        atribucionPiso: () =>
+          pisoEnviado.current && pisoActual.current
+            ? pisoEnviado.current === pisoActual.current.imagenVivo
+              ? pisoActual.current.atribucionVivo
+              : pisoActual.current.atribucionMapa
+            : null,
       };
       cb.current.onApi?.(api);
       const final = completo ? await completo.catch(() => null) : null;
@@ -292,6 +350,32 @@ export function VisorUnity({
     // `vClave` sale de `objetivo`.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [puente, objetivo, relieve, dormir]);
+
+  /** Manda el piso a Unity: lo que se ve en vivo, o el mapa solo (para el video). */
+  const enviarPiso = (p: PisoUnity | null, vivo: boolean) => {
+    if (!puente || !conPisoYFantasma(puente.version)) return;
+    const imagen = p ? (vivo ? p.imagenVivo : p.imagenMapa) : null;
+    if (pisoEnviado.current === imagen) return;
+    pisoEnviado.current = imagen;
+    puente.enviar(
+      "piso",
+      p && imagen
+        ? {
+            imagen,
+            centro_x: p.centro_x,
+            centro_y: p.centro_y,
+            lado_m: p.lado_m,
+            atribucion: vivo ? p.atribucionVivo : p.atribucionMapa,
+          }
+        : { imagen: null },
+    );
+  };
+  // El piso en vivo: al activarlo, al mover la foto y después de cada carga (que trae el mapa solo).
+  useEffect(() => {
+    if (!puente || cargada !== objetivo || grabando.current) return;
+    enviarPiso(superpone ? piso : null, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `enviarPiso` lee referencias
+  }, [puente, cargada, objetivo, piso, superpone]);
 
   // Sin nadie mirando y sin una carga en curso, Unity no dibuja: el hilo principal queda libre.
   useEffect(() => {
@@ -386,7 +470,16 @@ export function VisorUnity({
       const logo = new Image();
       logo.src = "/marca/logotipo-blanco.svg";
       await logo.decode().catch(() => undefined);
+      // El video lleva el mapa sin la foto satelital (la licencia de Esri no menciona video) y el
+      // crédito del mapa en cada cuadro (ronda 4).
+      const pv = pisoActual.current;
+      grabando.current = true;
+      if (pv && pisoEnviado.current !== pv.imagenMapa) {
+        enviarPiso(pv, false);
+        for (let i = 0; i < 10; i++) await new Promise((ok) => requestAnimationFrame(ok));
+      }
       const video = await grabarVideoUnity({
+        credito: pv ? pv.atribucionMapa : null,
         lienzo: c,
         fijar: (t) => puente.enviar("fijarTiempo", { t }),
         inicio: intervalo.inicio,
@@ -420,6 +513,8 @@ export function VisorUnity({
       c.style.width = antes.ancho;
       c.style.height = antes.alto;
       puente.minimapa(minimapa);
+      grabando.current = false;
+      if (pisoActual.current) enviarPiso(pisoActual.current, true);
       puente.enviar("fijarTiempo", { t: antes.t });
       cancelarVideo.current = null;
       setGrabacion(null);

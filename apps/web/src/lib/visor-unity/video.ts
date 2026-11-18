@@ -74,6 +74,11 @@ export interface OpcionesGrabacion {
   logo: HTMLImageElement | null;
   /** Lo que dice la leyenda: va en los metadatos del archivo. */
   leyenda: string;
+  /**
+   * El crédito de lo que se ve en el piso (ronda 4: el mapa de OpenStreetMap en el modo «mapa
+   * real»), abajo a la derecha de cada cuadro. Sin él, nada.
+   */
+  credito?: string | null;
   alProgreso?: (hechos: number, total: number, ms: number) => void;
   signal?: AbortSignal;
 }
@@ -151,7 +156,7 @@ export async function grabarVideoUnity(o: OpcionesGrabacion): Promise<Blob> {
       await esperarCuadros(i === 0 ? 4 : 2);
       const cuadro = ultimo as VideoFrame | null;
       if (!cuadro) throw new VideoNoDisponible("El 3D no dibujó ningún cuadro.");
-      dibujar(ctx, cuadro, o.logo);
+      dibujar(ctx, cuadro, o.logo, o.credito ?? null);
       await source.add(i / FPS_VIDEO, 1 / FPS_VIDEO);
       o.alProgreso?.(i + 1, instantes.length, performance.now() - empezo);
     }
@@ -172,7 +177,12 @@ export async function grabarVideoUnity(o: OpcionesGrabacion): Promise<Blob> {
 }
 
 /** El cuadro llenando 1920×1080 (sin deformar) y el logo arriba a la derecha, con su sombra. */
-function dibujar(ctx: CanvasRenderingContext2D, cuadro: VideoFrame, logo: HTMLImageElement | null) {
+function dibujar(
+  ctx: CanvasRenderingContext2D,
+  cuadro: VideoFrame,
+  logo: HTMLImageElement | null,
+  credito: string | null = null,
+) {
   const w = cuadro.displayWidth;
   const h = cuadro.displayHeight;
   const k = Math.max(ANCHO_VIDEO / w, ALTO_VIDEO / h);
@@ -188,6 +198,17 @@ function dibujar(ctx: CanvasRenderingContext2D, cuadro: VideoFrame, logo: HTMLIm
     ctx.shadowColor = "rgba(0,0,0,0.55)";
     ctx.shadowBlur = 12;
     ctx.drawImage(logo, ANCHO_VIDEO - ancho - 48, 40, ancho, alto);
+    ctx.restore();
+  }
+  if (credito) {
+    ctx.save();
+    ctx.font = "500 20px system-ui, sans-serif";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "bottom";
+    ctx.shadowColor = "rgba(0,0,0,0.7)";
+    ctx.shadowBlur = 6;
+    ctx.fillStyle = "#fff";
+    ctx.fillText(credito, ANCHO_VIDEO - 48, ALTO_VIDEO - 28);
     ctx.restore();
   }
 }

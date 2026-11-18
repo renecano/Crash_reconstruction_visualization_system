@@ -1023,9 +1023,27 @@ namespace Croquis.Visor
             texto.alignment = TextAnchor.MiddleLeft;
             texto.horizontalOverflow = HorizontalWrapMode.Overflow;
             texto.raycastTarget = false;
-            texto.text = entornoProcedural
-                ? "Reconstrucción ilustrativa · entorno procedural: no es el lugar real"
-                : "Reconstrucción ilustrativa";
+            texto.text = Croquis.Core.Leyenda3d.Mensaje(entornoProcedural);
+        }
+
+        /// <summary>
+        /// El texto de la leyenda ya armada bajo la raíz del caso (con escenario o sin él), para
+        /// cambiarlo cuando se pone o se quita el piso del mapa o hay versión superpuesta. Null si no hay.
+        /// </summary>
+        public static Text TextoDeLeyenda(Transform raiz)
+        {
+            if (raiz == null)
+            {
+                return null;
+            }
+
+            var leyenda = raiz.Find("escenario/leyenda");
+            if (leyenda == null)
+            {
+                leyenda = raiz.Find("leyenda");
+            }
+
+            return leyenda != null ? leyenda.GetComponentInChildren<Text>(true) : null;
         }
     }
 
