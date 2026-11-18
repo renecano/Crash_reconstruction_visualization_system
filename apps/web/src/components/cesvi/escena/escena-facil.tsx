@@ -26,12 +26,10 @@ import {
   girarTerreno,
   medidasDe,
   moverObjeto,
-  moverTerreno,
   nombreSuperficie,
   objetosDe,
   piezasTerreno,
   posicionesEncimadas,
-  quitarObjeto,
   quitarTerreno,
   TIPOS_OBJETO,
   usarRelieve,
@@ -85,19 +83,31 @@ import {
   choquesIntermedios,
   articuloObjeto,
   marcarPrimerGolpe,
-  moverChoqueIntermedio,
-  moverPuntoDePaso,
   OBJETOS_C1,
   primerGolpe,
   puntosDePaso,
   quitarChoqueIntermedio,
-  quitarPrimerGolpe,
-  quitarPuntoDePaso,
   quitarUltimoPuntoDePaso,
   resumenC1,
   type RespuestasC1,
 } from "@/lib/escena-facil";
 import { BarraSeleccion, PanelCorregir, type AccionSeleccion } from "./correccion";
+import { AvisoEscenaCambio } from "./aviso-escena-cambio";
+import {
+  accionDeTecla,
+  capacidadesDe,
+  deClave,
+  desplazar,
+  enCampoDeTexto,
+  existe,
+  fijarRumbo,
+  girarSeleccion,
+  moverA,
+  posicionDe,
+  quitarSeleccion,
+  seleccionables,
+  type EstadoFrenteAEscena,
+} from "@/lib/seleccion-escena";
 import {
   MapaFacil,
   trayectoDeLlegada,
@@ -111,6 +121,8 @@ import { medidasDePieza, PreguntaTerreno, type PoniendoTerreno } from "./terreno
 /** Más lejos que esto del choque, un punto de C1 se confirma con una alerta (m). */
 const GOLPE_LEJOS_M = 30;
 const C1_LEJOS_M = 150;
+/** Cuántos cambios guarda «Deshacer». */
+const MAX_DESHACER = 200;
 
 /** Lo que la escena cambia: el expediente y lo que la persona no sabía. */
 export interface EstadoEscena {
@@ -152,6 +164,8 @@ export function EscenaFacil({
   onVerReconstruccion,
   onNota,
   recalculo = null,
+  onReconstruir,
+  errorReconstruccion = null,
 }: {
   tema: "claro" | "oscuro";
   estado: EstadoEscena;
@@ -172,8 +186,15 @@ export function EscenaFacil({
   onVerReconstruccion: () => void;
   /** Lo que decide la persona y conviene anotar en la bitácora («No sé dónde quedó…»). */
   onNota: (texto: string) => void;
-  /** W4: si ya hay una reconstrucción, se recalcula sola al corregir; aquí se ve cómo va. */
-  recalculo?: "calculando" | "al_dia" | null;
+  /**
+   * Cómo está la reconstrucción frente a esta escena: al día, recalculándose o vieja (la escena
+   * cambió después de reconstruir; René, 2026-11-17: se dice y se ofrece reconstruir de nuevo).
+   */
+  recalculo?: EstadoFrenteAEscena;
+  /** «Reconstruir de nuevo»: con la escena como está, sin borrar nada más. */
+  onReconstruir?: () => void;
+  /** Si la última reconstrucción falló, por qué. */
+  errorReconstruccion?: string | null;
 }) {
   const e = estado.expediente;
   const callesMapa = useMemo(() => callesDe(calles), [calles]);
@@ -264,22 +285,28 @@ export function EscenaFacil({
   /** W4: con la escena lista y la tarjeta cerrada, lo colocado se toca para corregirlo. */
   const corrigiendo = todoListo && listaVista;
 
-  /** Un cambio con su «Deshacer». */
+  /**
+   * Un cambio con su «Deshacer». La pila guarda los últimos `MAX_DESHACER` estados: corregir «las
+   * veces que sea» (René, 2026-11-17), también moviendo con las flechas paso a paso.
+   */
   const cambiar = (siguiente: EstadoEscena, m?: Mensaje | null) => {
-    setPila((x) => [...x.slice(-30), estado]);
+    setPila((x) => [...x.slice(-MAX_DESHACER), estado]);
     setFuturo([]);
     onEstado(siguiente);
     if (m !== undefined) setMensaje(m);
   };
+  /** Lo seleccionado sigue seleccionado al deshacer o rehacer, si sigue en la escena. */
+  const conservarSeleccion = (x: EstadoEscena) =>
+    setSeleccion((s) => (s && existe(x.expediente, s) ? s : null));
   const deshacer = () => {
     const previo = pila.at(-1);
     if (!previo) return;
     setPila((x) => x.slice(0, -1));
-    setFuturo((x) => [...x.slice(-30), estado]);
+    setFuturo((x) => [...x.slice(-MAX_DESHACER), estado]);
     onEstado(previo);
     setColocando(null);
     setEditando(null);
-    setSeleccion(null);
+    conservarSeleccion(previo);
     if (!corrigiendo) setListaVista(false);
     setMensaje(null);
   };
@@ -287,9 +314,9 @@ export function EscenaFacil({
     const siguiente = futuro.at(-1);
     if (!siguiente) return;
     setFuturo((x) => x.slice(0, -1));
-    setPila((x) => [...x.slice(-30), estado]);
+    setPila((x) => [...x.slice(-MAX_DESHACER), estado]);
     onEstado(siguiente);
-    setSeleccion(null);
+    conservarSeleccion(siguiente);
     setMensaje(null);
   };
   const exito = (texto: string): Mensaje => ({ tipo: "exito", texto, deshacer: true });
@@ -867,10 +894,6 @@ export function EscenaFacil({
   };
 
   // --- W4: corregir después ----------------------------------------------------------------------
-  const deClave = (clave: string) => {
-    const i = clave.indexOf(":");
-    return { tipo: clave.slice(0, i), id: clave.slice(i + 1) };
-  };
   const paso = (id: string) => /^paso-(.+)-(\d+)$/.exec(id);
   const nombreDeSeleccion = (clave: string): string => {
     const { tipo, id } = deClave(clave);
@@ -887,24 +910,40 @@ export function EscenaFacil({
     const c = choquesIntermedios(e).find((x) => x.orden === orden);
     return c ? (OBJETOS_C1.find((o) => o.id === c.objeto)?.texto ?? c.objeto) : "Marca";
   };
-  /** Al soltar lo seleccionado en otro lugar: se guarda y se dice. */
+  /** Al soltar lo seleccionado en otro lugar (o moverlo con las flechas): se guarda y se dice. */
   const moverSeleccion = (clave: string, p: Punto) => {
-    const { tipo, id } = deClave(clave);
+    const x = moverA(e, impactos, clave, p);
+    if (!x) return;
     const nombre = nombreDeSeleccion(clave);
-    let x: Expediente = e;
-    if (tipo === "coche") {
-      const fin = poseDe(e, id, "final");
-      if (!fin) return;
-      x = marcarFinal(e, id, p, fin.rumbo);
-    } else if (tipo === "objeto") x = moverObjeto(e, id, p);
-    else if (tipo === "terreno") x = moverTerreno(e, id, p);
-    else if (id === "golpe") x = marcarPrimerGolpe(e, impactos, p);
-    else if (paso(id)) x = moverPuntoDePaso(e, paso(id)![1]!, Number(paso(id)![2]), p);
-    else x = moverChoqueIntermedio(e, Number(id.replace("objeto-", "")), p);
     cambiar(
       { ...estado, expediente: x },
       exito(`¡Listo! Moviste: ${nombre.split(" · ")[0]!.toLowerCase()}.`),
     );
+  };
+  /** El anillo o Q/E: con su rumbo (un coche, un objeto) o lo girado (el terreno). */
+  const girarLoSeleccionado = (clave: string, giro: { rumbo?: number; delta: number }) => {
+    const x =
+      giro.rumbo !== undefined && capacidadesDe(e, clave).girar === "absoluto"
+        ? fijarRumbo(e, clave, giro.rumbo)
+        : girarSeleccion(e, clave, giro.delta);
+    if (x) cambiar({ ...estado, expediente: x }, exito("¡Listo! Lo giraste."));
+  };
+  /** «Quitar» o Supr. Un coche no sale del caso: se quita dónde quedó y se vuelve a preguntar. */
+  const quitarLoSeleccionado = (clave: string) => {
+    const x = quitarSeleccion(e, clave);
+    if (!x) return;
+    const { tipo, id } = deClave(clave);
+    cambiar(
+      { ...estado, expediente: x },
+      exito(
+        tipo === "coche"
+          ? `Quitaste dónde quedó el ${nombres[id] ?? id}. Márcalo otra vez o elige «No sé».`
+          : id === "golpe"
+            ? "Lo quitaste: Croquis usa el lugar del choque."
+            : "Lo quitaste.",
+      ),
+    );
+    setSeleccion(null);
   };
   const accionesDe = (clave: string): AccionSeleccion[] => {
     const { tipo, id } = deClave(clave);
@@ -916,6 +955,14 @@ export function EscenaFacil({
       setSeleccion(null);
       f();
     };
+    const nombre = nombreDeSeleccion(clave);
+    const quitarlo: AccionSeleccion = {
+      id: "quitar",
+      texto: "Quitar",
+      etiqueta: `Quitar: ${nombre}`,
+      peligro: true,
+      hacer: () => quitarLoSeleccionado(clave),
+    };
     if (tipo === "coche") {
       const fin = poseDe(e, id, "final");
       return [
@@ -924,11 +971,13 @@ export function EscenaFacil({
               {
                 id: "girar-izq",
                 texto: "Girar −15°",
+                etiqueta: `Girar ${nombre} 15° a la izquierda`,
                 hacer: () => hecho(girar(e, id, "final", -15), "¡Listo! Lo giraste."),
               },
               {
                 id: "girar-der",
                 texto: "Girar +15°",
+                etiqueta: `Girar ${nombre} 15° a la derecha`,
                 hacer: () => hecho(girar(e, id, "final", 15), "¡Listo! Lo giraste."),
               },
             ]
@@ -943,6 +992,7 @@ export function EscenaFacil({
           texto: "Cambiar dónde quedó",
           hacer: reabrir(() => setEditando({ tipo: "final", id })),
         },
+        ...(fin ? [quitarlo] : []),
       ];
     }
     if (tipo === "objeto") {
@@ -950,11 +1000,13 @@ export function EscenaFacil({
         {
           id: "girar-izq",
           texto: "Girar −15°",
+          etiqueta: `Girar ${nombre} 15° a la izquierda`,
           hacer: () => hecho(girarObjeto(e, id, -15), "¡Listo! Lo giraste."),
         },
         {
           id: "girar-der",
           texto: "Girar +15°",
+          etiqueta: `Girar ${nombre} 15° a la derecha`,
           hacer: () => hecho(girarObjeto(e, id, 15), "¡Listo! Lo giraste."),
         },
         {
@@ -967,12 +1019,7 @@ export function EscenaFacil({
           texto: "Más chico",
           hacer: () => hecho(cambiarTamano(e, id, 0.8), "¡Listo! Ahora es más chico."),
         },
-        {
-          id: "quitar",
-          texto: "Quitar",
-          peligro: true,
-          hacer: () => hecho(quitarObjeto(e, id), "Lo quitaste.", true),
-        },
+        quitarlo,
       ];
     }
     if (tipo === "terreno") {
@@ -982,11 +1029,13 @@ export function EscenaFacil({
         {
           id: "girar-izq",
           texto: "Girar −15°",
+          etiqueta: `Girar ${nombre} 15° a la izquierda`,
           hacer: () => hecho(girarTerreno(e, id, -15), "¡Listo! Lo giraste."),
         },
         {
           id: "girar-der",
           texto: "Girar +15°",
+          etiqueta: `Girar ${nombre} 15° a la derecha`,
           hacer: () => hecho(girarTerreno(e, id, 15), "¡Listo! Lo giraste."),
         },
         {
@@ -1000,12 +1049,7 @@ export function EscenaFacil({
           hacer: () => hecho(escalarTerreno(e, id, 0.8), "¡Listo! Ahora es más chico."),
         },
       ];
-      const quitar: AccionSeleccion = {
-        id: "quitar",
-        texto: "Quitar",
-        peligro: true,
-        hacer: () => hecho(quitarTerreno(e, id), "Lo quitaste.", true),
-      };
+      const quitar = quitarlo;
       const medida = (x: Expediente) => hecho(x, "¡Listo! Cambiaste su medida.");
       if (t.clase === "zona") {
         // Sin fijar, se parte del valor de la tabla (el lugar, en seco).
@@ -1089,36 +1133,70 @@ export function EscenaFacil({
     if (id === "golpe")
       return [
         { id: "cambiar", texto: "Cambiar", hacer: reabrir(() => setEditandoC1("golpe")) },
-        {
-          id: "quitar",
-          texto: "Quitar",
-          peligro: true,
-          hacer: () =>
-            hecho(quitarPrimerGolpe(e), "Lo quitaste: Croquis usa el lugar del choque.", true),
-        },
+        quitarlo,
       ];
     const q = paso(id);
     if (q)
       return [
         { id: "cambiar", texto: "Cambiar", hacer: reabrir(() => setEditandoC1("paso")) },
-        {
-          id: "quitar",
-          texto: "Quitar",
-          peligro: true,
-          hacer: () => hecho(quitarPuntoDePaso(e, q[1]!, Number(q[2])), "Lo quitaste.", true),
-        },
+        quitarlo,
       ];
-    const orden = Number(id.replace("objeto-", ""));
     return [
       { id: "cambiar", texto: "Cambiar", hacer: reabrir(() => setEditandoC1("otros")) },
-      {
-        id: "quitar",
-        texto: "Quitar",
-        peligro: true,
-        hacer: () => hecho(quitarChoqueIntermedio(e, orden), "Lo quitaste.", true),
-      },
+      quitarlo,
     ];
   };
+  /**
+   * Con la escena lista, todo lo colocado se toca para seleccionarlo (René, 2026-11-17: también
+   * desde la tarjeta «¡La escena está lista!», sin pasar antes por «Cambiar algo»). Mientras se
+   * pone un objeto, se mide o se marca el terreno, el toque es para eso.
+   */
+  const puedeSeleccionar =
+    todoListo && !poniendo && herramienta !== "medir" && poniendoTerreno === null;
+  const seleccionar = (clave: string) => {
+    setListaVista(true);
+    setSeleccion(clave);
+  };
+
+  // El teclado (René, 2026-11-17): Ctrl+Z deshace y Ctrl+Shift+Z (o Ctrl+Y) rehace siempre; con
+  // algo seleccionado, las flechas lo mueven (Shift: más), Q y E lo giran, Supr lo quita y Esc lo
+  // suelta. Se oye en la captura para que el mapa no se desplace con las mismas flechas.
+  const alTeclado = useRef<(ev: KeyboardEvent) => void>(() => undefined);
+  useEffect(() => {
+    alTeclado.current = (ev) => {
+      if (ev.defaultPrevented || enCampoDeTexto(ev.target)) return;
+      const sel = corrigiendo ? seleccion : null;
+      const accion = accionDeTecla(ev, sel !== null);
+      if (!accion) return;
+      if (accion.tipo === "deshacer") {
+        if (!pila.length) return;
+        deshacer();
+      } else if (accion.tipo === "rehacer") {
+        if (!futuro.length) return;
+        rehacer();
+      } else if (!sel) return;
+      else if (accion.tipo === "soltar") setSeleccion(null);
+      else if (accion.tipo === "quitar") {
+        if (!capacidadesDe(e, sel).quitar) return;
+        quitarLoSeleccionado(sel);
+      } else if (accion.tipo === "girar") {
+        if (!capacidadesDe(e, sel).girar) return;
+        girarLoSeleccionado(sel, { delta: accion.grados });
+      } else {
+        const pos = posicionDe(e, sel);
+        if (!pos || !capacidadesDe(e, sel).mover) return;
+        moverSeleccion(sel, desplazar(pos.punto, accion.rumbo, accion.metros));
+      }
+      ev.preventDefault();
+      ev.stopPropagation();
+    };
+  });
+  useEffect(() => {
+    const escuchar = (ev: KeyboardEvent) => alTeclado.current(ev);
+    window.addEventListener("keydown", escuchar, true);
+    return () => window.removeEventListener("keydown", escuchar, true);
+  }, []);
+
   /** «Cambiar» en una línea del resumen: regresa solo a esa pregunta. */
   const cambiarLinea = (l: LineaResumen) => {
     setListaVista(true);
@@ -1888,8 +1966,10 @@ export function EscenaFacil({
         objetos={objetosMapa}
         terreno={terrenoMapa}
         seleccion={corrigiendo ? seleccion : null}
-        onSeleccionar={corrigiendo && !poniendo ? (k) => setSeleccion(k) : undefined}
+        onSeleccionar={puedeSeleccionar ? seleccionar : undefined}
         onMover={moverSeleccion}
+        onGirarSeleccion={girarLoSeleccionado}
+        nombreDe={nombreDeSeleccion}
       />
 
       {/* «Deshacer» y «Rehacer», siempre a la vista (W4), y cómo va el recálculo. */}
@@ -1918,7 +1998,7 @@ export function EscenaFacil({
             Rehacer ↷
           </button>
         </div>
-        {recalculo ? (
+        {recalculo === "calculando" || recalculo === "al_dia" ? (
           <span
             className="escena-mensaje px-3 py-1 text-[0.85rem]"
             data-tipo={recalculo === "al_dia" ? "exito" : "alerta"}
@@ -1937,6 +2017,11 @@ export function EscenaFacil({
           <PanelCorregir
             poniendo={poniendo}
             onElegir={setPoniendo}
+            enLaEscena={seleccionables(e).map((clave) => ({
+              clave,
+              nombre: nombreDeSeleccion(clave),
+            }))}
+            onSeleccionar={seleccionar}
             onTerreno={() => {
               setPoniendo(null);
               setEditandoC1("terreno");
@@ -1953,6 +2038,7 @@ export function EscenaFacil({
           <BarraSeleccion
             nombre={nombreDeSeleccion(seleccion)}
             acciones={accionesDe(seleccion)}
+            capacidades={capacidadesDe(e, seleccion)}
             onListo={() => setSeleccion(null)}
           />
         </div>
@@ -2004,55 +2090,66 @@ export function EscenaFacil({
         </div>
       ) : null}
 
-      {/* El mensaje del momento: éxito, alerta o error. */}
-      {visible && herramienta !== "medir" ? (
+      {/* El mensaje del momento: éxito, alerta o error; debajo, si la escena cambió después de
+          reconstruir, el aviso con «Reconstruir de nuevo» (René, 2026-11-17). */}
+      {(visible || recalculo === "vieja") && herramienta !== "medir" ? (
         <div className="pointer-events-none absolute top-4 left-1/2 z-20 flex w-[min(640px,calc(100%-2rem))] -translate-x-1/2 md:top-[72px] flex-col items-center gap-2 md:left-[calc(50%+210px)] md:w-[min(560px,calc(100%-480px))]">
-          <div
-            className="escena-mensaje pointer-events-auto w-full flex-wrap"
-            data-tipo={visible.tipo}
-            role={visible.tipo === "exito" ? "status" : "alert"}
-            data-testid={`mensaje-${visible.tipo}`}
-          >
-            <span className="escena-icono-mensaje" aria-hidden="true">
-              {visible.tipo === "exito" ? "✓" : "!"}
-            </span>
-            <span className="min-w-0 flex-1 text-[0.95rem]">{visible.texto}</span>
-            {visible.deshacer && pila.length ? (
-              <button
-                type="button"
-                className="min-h-11 px-2 font-semibold text-[var(--exito)] underline"
-                onClick={deshacer}
-                data-testid="deshacer"
-              >
-                Deshacer
-              </button>
-            ) : null}
-            {visible.acciones?.length ? (
-              <span className="flex w-full flex-wrap justify-end gap-2">
-                {visible.acciones.map((a) => (
-                  <button
-                    key={a.id}
-                    type="button"
-                    className={`${a.principal ? "boton-principal" : "boton-secundario"} escena-boton`}
-                    onClick={a.hacer}
-                    data-testid={a.id}
-                  >
-                    {a.texto}
-                  </button>
-                ))}
+          {visible ? (
+            <div
+              className="escena-mensaje pointer-events-auto w-full flex-wrap"
+              data-tipo={visible.tipo}
+              role={visible.tipo === "exito" ? "status" : "alert"}
+              data-testid={`mensaje-${visible.tipo}`}
+            >
+              <span className="escena-icono-mensaje" aria-hidden="true">
+                {visible.tipo === "exito" ? "✓" : "!"}
               </span>
-            ) : null}
-            {visible.tipo !== "alerta" ? (
-              <button
-                type="button"
-                className="grid h-11 w-11 place-items-center rounded-full text-texto-3"
-                aria-label="Cerrar el mensaje"
-                onClick={() => (visible.clave ? descartar(visible.clave) : setMensaje(null))}
-              >
-                ×
-              </button>
-            ) : null}
-          </div>
+              <span className="min-w-0 flex-1 text-[0.95rem]">{visible.texto}</span>
+              {visible.deshacer && pila.length ? (
+                <button
+                  type="button"
+                  className="min-h-11 px-2 font-semibold text-[var(--exito)] underline"
+                  onClick={deshacer}
+                  data-testid="deshacer"
+                >
+                  Deshacer
+                </button>
+              ) : null}
+              {visible.acciones?.length ? (
+                <span className="flex w-full flex-wrap justify-end gap-2">
+                  {visible.acciones.map((a) => (
+                    <button
+                      key={a.id}
+                      type="button"
+                      className={`${a.principal ? "boton-principal" : "boton-secundario"} escena-boton`}
+                      onClick={a.hacer}
+                      data-testid={a.id}
+                    >
+                      {a.texto}
+                    </button>
+                  ))}
+                </span>
+              ) : null}
+              {visible.tipo !== "alerta" ? (
+                <button
+                  type="button"
+                  className="grid h-11 w-11 place-items-center rounded-full text-texto-3"
+                  aria-label="Cerrar el mensaje"
+                  onClick={() => (visible.clave ? descartar(visible.clave) : setMensaje(null))}
+                >
+                  ×
+                </button>
+              ) : null}
+            </div>
+          ) : null}
+          {recalculo === "vieja" && onReconstruir ? (
+            <AvisoEscenaCambio
+              estado="vieja"
+              onReconstruir={onReconstruir}
+              error={errorReconstruccion}
+              className="pointer-events-auto w-full"
+            />
+          ) : null}
         </div>
       ) : null}
 
@@ -2185,9 +2282,11 @@ export function EscenaFacil({
       {/* La tarjeta final. */}
       {todoListo && !listaVista ? (
         // Arriba de la barra de avance de abajo: sus botones no quedan tapados (ronda 2, B).
-        <div className="absolute inset-0 z-20 grid place-items-center bg-[color-mix(in_srgb,var(--fondo)_45%,transparent)] p-4 pb-[104px]">
+        // El fondo deja pasar el toque: lo colocado se toca en el mapa para corregirlo (René,
+        // 2026-11-17).
+        <div className="pointer-events-none absolute inset-0 z-20 grid place-items-center bg-[color-mix(in_srgb,var(--fondo)_45%,transparent)] p-4 pb-[104px]">
           <section
-            className="escena-hoja flex max-h-full w-[min(560px,100%)] flex-col gap-4 overflow-y-auto p-7"
+            className="escena-hoja pointer-events-auto flex max-h-full w-[min(560px,100%)] flex-col gap-4 overflow-y-auto p-7"
             role="dialog"
             aria-modal="false"
             aria-labelledby="escena-lista-titulo"
@@ -2203,7 +2302,8 @@ export function EscenaFacil({
               ¡La escena está lista!
             </h2>
             <p className="t-cuerpo text-center text-texto-2">
-              Esto es lo que marcaste. Con esto Croquis ya puede reconstruir el choque.
+              Esto es lo que marcaste. Con esto Croquis ya puede reconstruir el choque. Para
+              corregir algo, tócalo en el mapa o usa «Cambiar».
             </p>
             <ul
               className="flex flex-col divide-y divide-[var(--linea-suave)]"

@@ -120,6 +120,8 @@ import {
   type PosicionMovil,
 } from "./reconstruccion";
 import { textoParaClaude } from "@/lib/redaccion";
+import { estadoFrenteAEscena } from "@/lib/seleccion-escena";
+import { AvisoEscenaCambio } from "../escena/aviso-escena-cambio";
 
 /** De dónde viene la escena de un caso, para la bitácora de la pizarra (R12b). */
 const ORIGEN_ESCENA: Record<CasoExpediente["origen"], string> = {
@@ -256,7 +258,18 @@ export function RecorridoCaso({
     valor: String(inicial.ejemplo?.calculos.desplazamiento.D_m.valor ?? ""),
     fuente: "dictamen",
   });
-  const rec = useReconstruccion(expediente, { alCambiar: true });
+  // Si la escena cambia después de reconstruir (René, 2026-11-17), no se recalcula sola: se dice y se
+  // ofrece «Reconstruir de nuevo», en «La escena» y en «La reconstrucción», sin borrar nada más. Los
+  // demás cambios del caso (lo editado en el 3D, una respuesta) se siguen recalculando solos (W4).
+  const [escenaCambio, setEscenaCambio] = useState(false);
+  const rec = useReconstruccion(expediente, { alCambiar: !escenaCambio });
+  // Ya reconstruida con la escena que se ve (o deshecho el cambio), el aviso se va solo.
+  if (escenaCambio && !rec.vieja) setEscenaCambio(false);
+  const frenteAEscena = estadoFrenteAEscena({
+    hayResultado: rec.r !== null,
+    vieja: rec.vieja,
+    recalculando: rec.recalculando,
+  });
   // U6: el visor Unity y los modelos del caso se bajan de fondo mientras el perito trabaja, para que
   // el 3D abra sin esperar la descarga. Sin clase declarada, el sedán (la de omisión de la escena).
   useEffect(() => {
@@ -1162,6 +1175,13 @@ export function RecorridoCaso({
       return (
         <div className={`flex flex-col ${r ? "gap-3" : "gap-5"}`}>
           {r ? (
+            <AvisoEscenaCambio
+              estado={frenteAEscena}
+              onReconstruir={() => void rec.reconstruirDeNuevo()}
+              error={rec.estado}
+            />
+          ) : null}
+          {r ? (
             <CifraReconstruccion
               r={r}
               nombres={Object.fromEntries(
@@ -1224,10 +1244,9 @@ export function RecorridoCaso({
               rec={rec}
             />
           ) : null}
-          {/* Si el caso cambió después de reconstruir, el panel va a la vista con su aviso. */}
-          {r && rec.vieja ? <PanelReconstruccion rec={rec} /> : null}
+          {/* Si el caso cambió después de reconstruir, lo dice el aviso de arriba. */}
           <DetalleReconstruccion plegado={r !== null}>
-            {r && !rec.vieja ? <PanelReconstruccion rec={rec} /> : null}
+            {r ? <PanelReconstruccion rec={rec} /> : null}
             {r ? (
               <ComparacionDeclaracion
                 expediente={expediente}
@@ -1505,6 +1524,7 @@ export function RecorridoCaso({
             }}
             onEstado={(x) => {
               setC1(x.c1 ?? {});
+              if (rec.r && x.expediente !== expediente) setEscenaCambio(true);
               cambiarExpediente(x.expediente);
               setDesconocidos(x.desconocidos);
               setDireccionesNoSe(x.direccionesNoSe);
@@ -1525,13 +1545,9 @@ export function RecorridoCaso({
             onBuscarCalles={setCentroBuscado}
             onVerReconstruccion={() => irA(paso + 1)}
             onNota={(t) => setPizarra((x) => delPerito(x, t))}
-            recalculo={
-              rec.r === null && !rec.recalculando
-                ? null
-                : rec.recalculando || rec.vieja
-                  ? "calculando"
-                  : "al_dia"
-            }
+            recalculo={frenteAEscena}
+            onReconstruir={() => void rec.reconstruirDeNuevo()}
+            errorReconstruccion={rec.estado}
           />
         </div>
       ) : null}

@@ -9,7 +9,7 @@ import { formato as F, avanzar, type LonLat } from "@croquis/cesvi";
 import type { GeoJSONSource, Map as MapaMl, Marker } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
-import { metrosPorPixel, siluetaClase } from "@/lib/colocar";
+import { metrosPorPixel, normalizar, rumboDesdePuntero, siluetaClase } from "@/lib/colocar";
 import type { Punto } from "@/lib/escena-facil";
 import { tomarMapa, type MapaPrestado } from "@/lib/mapa-compartido";
 import { COLOR_MEDIDA, dibujoMedicion } from "@/lib/medir";
@@ -108,6 +108,13 @@ export interface MapaFacilProps {
   onSeleccionar?: (clave: string) => void;
   seleccion?: string | null;
   onMover?: (clave: string, p: Punto) => void;
+  /**
+   * El anillo de giro de lo seleccionado (René, 2026-11-17): al soltarlo, el rumbo que marca (con
+   * imán de 15°; Shift lo suelta) y lo que giró desde donde se tomó.
+   */
+  onGirarSeleccion?: (clave: string, giro: { rumbo: number; delta: number }) => void;
+  /** El nombre de cada cosa seleccionable, para leerla con el lector de pantalla. */
+  nombreDe?: (clave: string) => string;
 }
 
 const tamano = (m: MapaMl, lat: number, metros: number) =>
@@ -301,11 +308,19 @@ export function MapaFacil(p: MapaFacilProps) {
     Boolean(p.onSeleccionar),
     Boolean(p.onMoverCoche),
     Boolean(p.onGirar),
+    Boolean(p.onGirarSeleccion),
   ]);
   useEffect(() => {
     const m = mapa.current;
     const M = MarkerCls.current;
     if (!m || !M || !listo) return;
+    // Los marcadores se rehacen: si el foco del teclado estaba en uno, vuelve al nuevo (al
+    // seleccionarlo con Enter o moverlo con las flechas no se pierde).
+    const foco = document.activeElement;
+    const enfocada =
+      foco instanceof HTMLElement && raiz.current?.contains(foco)
+        ? (foco.closest("[data-clave]")?.getAttribute("data-clave") ?? null)
+        : null;
     for (const x of marcas.current) x.remove();
     marcas.current = [];
     const escalar: (() => void)[] = [];
@@ -324,8 +339,23 @@ export function MapaFacil(p: MapaFacilProps) {
       if (sel) el.classList.add("escena-seleccionado");
       el.setAttribute("data-clave", clave);
       el.setAttribute("data-seleccionado", sel ? "si" : "no");
+      // Con el teclado (René, 2026-11-17): Tab llega a cada cosa colocada y Enter o Espacio la
+      // selecciona; las flechas, Q/E, Supr y Esc los atiende la escena.
+      el.tabIndex = 0;
+      el.setAttribute("role", "button");
+      el.setAttribute(
+        "aria-label",
+        ultimo.current.nombreDe?.(clave) ?? el.getAttribute("aria-label") ?? clave,
+      );
+      el.setAttribute("aria-pressed", sel ? "true" : "false");
       el.style.pointerEvents = "auto";
       el.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        ultimo.current.onSeleccionar?.(clave);
+      });
+      el.addEventListener("keydown", (ev) => {
+        if (ev.key !== "Enter" && ev.key !== " ") return;
+        ev.preventDefault();
         ev.stopPropagation();
         ultimo.current.onSeleccionar?.(clave);
       });
@@ -346,9 +376,130 @@ export function MapaFacil(p: MapaFacilProps) {
       };
       mk.on("dragstart", () => {
         arrastrando = true;
+        // El anillo se queda donde estaba: mientras se arrastra no se ve.
+        raiz.current
+          ?.querySelectorAll<HTMLElement>(".escena-anillo")
+          .forEach((x) => (x.style.visibility = "hidden"));
         window.addEventListener("pointerup", soltar);
       });
       mk.on("dragend", soltar);
+    };
+    /**
+     * El anillo de giro de lo seleccionado (como el de «Colocar», ADR del punto 3 de René): se toma
+     * de su banda y el ángulo del puntero respecto del centro es el rumbo, con imán de 15° (Shift lo
+     * suelta). Con `rumbo` (un vehículo, un objeto) la silueta gira en vivo; sin él (el terreno, que
+     * no guarda un rumbo), se cuenta lo girado desde donde se tomó. Al soltar se avisa una vez.
+     */
+    const anillo = (
+      clave: string,
+      centro: Punto,
+      radio: () => number,
+      rumbo: number | null,
+      cuerpo: HTMLElement | null,
+    ) => {
+      if (!ultimo.current.onGirarSeleccion) return;
+      const ns = "http://www.w3.org/2000/svg";
+      const el = document.createElement("div");
+      el.className = "escena-anillo";
+      el.setAttribute("data-testid", "anillo-seleccion");
+      el.setAttribute("aria-hidden", "true");
+      const svg = document.createElementNS(ns, "svg");
+      svg.setAttribute("class", "escena-anillo-svg");
+      const circulo = document.createElementNS(ns, "circle");
+      circulo.setAttribute("class", "escena-anillo-circulo");
+      const banda = document.createElementNS(ns, "circle");
+      banda.setAttribute("class", "escena-anillo-banda");
+      banda.setAttribute("data-testid", "banda-giro");
+      const asa = document.createElementNS(ns, "circle");
+      asa.setAttribute("class", "escena-anillo-asa");
+      asa.setAttribute("r", "8");
+      svg.append(circulo, banda, asa);
+      const rotulo = document.createElement("span");
+      rotulo.className = "escena-anillo-rotulo";
+      rotulo.setAttribute("data-testid", "rotulo-giro");
+      el.append(svg, rotulo);
+      let angulo = rumbo ?? 0;
+      const dibujar = () => {
+        const r = radio();
+        const lado = r + 16;
+        svg.setAttribute("width", String(lado * 2));
+        svg.setAttribute("height", String(lado * 2));
+        svg.setAttribute("viewBox", `${-lado} ${-lado} ${lado * 2} ${lado * 2}`);
+        svg.style.left = `${-lado}px`;
+        svg.style.top = `${-lado}px`;
+        for (const c of [circulo, banda]) c.setAttribute("r", String(r));
+        const a = (angulo * Math.PI) / 180;
+        asa.setAttribute("cx", String(r * Math.sin(a)));
+        asa.setAttribute("cy", String(-r * Math.cos(a)));
+        rotulo.style.transform = `translate(-50%, ${r + 20}px)`;
+      };
+      dibujar();
+      escalar.push(dibujar);
+      const delPuntero = (ev: PointerEvent) => {
+        const caja = m.getContainer().getBoundingClientRect();
+        const c = m.project([centro.lon, centro.lat]);
+        return rumboDesdePuntero(
+          ev.clientX - (caja.left + c.x),
+          ev.clientY - (caja.top + c.y),
+          m.getBearing(),
+          ev.shiftKey,
+        );
+      };
+      // Lo girado de `a0` a `a`, por el lado corto (−180°, 180°].
+      const giro = (a: number, a0: number) => {
+        const d = normalizar(a - a0);
+        return d > 180 ? d - 360 : d;
+      };
+      let inicio: number | null = null;
+      let ultimoAngulo = 0;
+      const mover = (ev: PointerEvent) => {
+        if (inicio === null) return;
+        ultimoAngulo = delPuntero(ev);
+        if (rumbo !== null) {
+          angulo = ultimoAngulo;
+          if (cuerpo) cuerpo.style.transform = `translate(-50%, -50%) rotate(${angulo}deg)`;
+          rotulo.textContent = `${angulo}°`;
+        } else {
+          const d = giro(ultimoAngulo, inicio);
+          angulo = d;
+          rotulo.textContent = `${d > 0 ? "+" : ""}${d}°`;
+        }
+        dibujar();
+      };
+      const terminar = (ev: PointerEvent, cancelado: boolean) => {
+        if (inicio === null) return;
+        if (banda.hasPointerCapture?.(ev.pointerId)) banda.releasePointerCapture(ev.pointerId);
+        const a0 = inicio;
+        inicio = null;
+        rotulo.textContent = "";
+        const delta = giro(ultimoAngulo, a0);
+        const cambio =
+          !cancelado &&
+          (rumbo !== null ? normalizar(ultimoAngulo) !== normalizar(rumbo) : delta !== 0);
+        if (cambio) {
+          ultimo.current.onGirarSeleccion?.(clave, { rumbo: ultimoAngulo, delta });
+          return;
+        }
+        // Sin cambio (o cancelado), todo vuelve a como estaba.
+        angulo = rumbo ?? 0;
+        if (cuerpo && rumbo !== null)
+          cuerpo.style.transform = `translate(-50%, -50%) rotate(${rumbo}deg)`;
+        dibujar();
+      };
+      banda.addEventListener("pointerdown", (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        banda.setPointerCapture?.(ev.pointerId);
+        inicio = delPuntero(ev);
+        ultimoAngulo = inicio;
+      });
+      banda.addEventListener("pointermove", mover);
+      banda.addEventListener("pointerup", (ev) => terminar(ev, false));
+      banda.addEventListener("pointercancel", (ev) => terminar(ev, true));
+      // Que el mapa no se mueva ni tome el toque como un toque en el vacío.
+      for (const tipo of ["mousedown", "touchstart", "click", "dblclick"])
+        banda.addEventListener(tipo, (ev) => ev.stopPropagation());
+      agregar(el, centro);
     };
 
     for (const c of p.choques) {
@@ -380,6 +531,14 @@ export function MapaFacil(p: MapaFacilProps) {
           : `${figura}<span class="escena-etiqueta">${escaparHtml(mk.texto)}</span>`;
       el.firstElementChild?.classList.add("escena-marca-figura");
       const sel = seleccionable(el, clave);
+      if (sel && mk.tipo === "paso") {
+        // El punto de paso solo lleva su número: seleccionado, también su nombre.
+        const nombre = document.createElement("span");
+        nombre.className = "escena-etiqueta";
+        nombre.textContent = ultimo.current.nombreDe?.(clave) ?? mk.texto;
+        nombre.style.transform = "translate(18px, -14px)";
+        el.append(nombre);
+      }
       const marcador = agregar(el, mk.punto);
       if (sel) arrastrable(marcador, clave);
     }
@@ -416,6 +575,14 @@ export function MapaFacil(p: MapaFacilProps) {
       };
       ajustar();
       escalar.push(ajustar);
+      if (sel)
+        anillo(
+          clave,
+          o.punto,
+          () => Math.max(tamano(m, o.punto.lat, o.largo) * 0.6, 22) + 16,
+          o.rumbo,
+          cuerpo,
+        );
     }
 
     // W5: cada pieza del terreno lleva su etiqueta en el centro; de ahí se toca y se arrastra.
@@ -433,6 +600,8 @@ export function MapaFacil(p: MapaFacilProps) {
       const sel = seleccionable(el, clave);
       const marcador = agregar(el, t.centro);
       if (sel) arrastrable(marcador, clave);
+      // El terreno no guarda un rumbo: el anillo cuenta lo girado desde donde se tomó.
+      if (sel) anillo(clave, t.centro, () => 64, null, null);
     }
 
     if (p.propuesta) {
@@ -500,6 +669,14 @@ export function MapaFacil(p: MapaFacilProps) {
       };
       ajustar();
       escalar.push(ajustar);
+      if (sel && c.id.endsWith("-final"))
+        anillo(
+          clave,
+          c.punto,
+          () => Math.max(tamano(m, c.punto.lat, c.largo) * 0.6, 34) + 14,
+          c.rumbo,
+          cuerpo,
+        );
       if (c.activo && ultimo.current.onGirar) {
         // Dos botones redondos grandes para girarlo 15°, a sus lados.
         const giro = document.createElement("div");
@@ -533,6 +710,10 @@ export function MapaFacil(p: MapaFacilProps) {
         agregar(giro, c.punto);
       }
     }
+    if (enfocada)
+      Array.from(raiz.current?.querySelectorAll<HTMLElement>("[data-clave]") ?? [])
+        .find((x) => x.getAttribute("data-clave") === enfocada)
+        ?.focus({ preventScroll: true });
     const alZoom = () => escalar.forEach((f) => f());
     m.on("zoom", alZoom);
     return () => {
