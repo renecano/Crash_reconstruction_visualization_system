@@ -81,6 +81,23 @@ Desde el #250, Unity arranca cuando el perito abre el 3D, no en segundo plano: n
   - Safari no aísla iframes en otro proceso: ahí seguiría igual que hoy.
   - La caché del build queda partida por sitio anfitrión, igual en cada visita, así que la segunda visita sigue sin bajar nada.
 
+### Armado por partes: en pausa hasta después de la demo (René, 2026-11-18)
+
+La rama `perf/unity-armado-por-partes-v2` arma la escena de Unity por partes, para que ninguna tarea trabe la página. Se midió en la laptop (i5-10210U con Intel UHD, mediana de 3 corridas) y no cumple la regla de 100 ms, así que no se publicó. Los datos están en `eval/results/unity_carga_perfil_antes_2026-11-17.json` y `..._despues_2026-11-17.json`, en esa rama.
+
+| Carga                  | Hasta que se ve | Tarea más larga del hilo principal |
+| ---------------------- | --------------- | ---------------------------------- |
+| AXA en frío            | 17.4 → 18.4 s   | 10.0 → 4.5 s                       |
+| Segundo caso (lateral) | 5.0 → 5.3 s     | 926 → 429 ms                       |
+| AXA en caliente        | 1.10 → 1.47 s   | 549 → 156 ms                       |
+
+**Qué atacar cuando se retome:**
+
+1. **Los edificios** (`ent_edificios`): unos 8.4 s en frío, de 6.6 a 15.1 s del arranque. Es la parte más pesada.
+   - **Opciones:** instanciar por lotes repartidos en varios cuadros; combinar mallas por manzana antes de construir el build; o bajar el detalle de lo que queda lejos de la cámara.
+2. **Leer el paquete** (`leer_paquete`): sube de 0.7 a 1.6–1.8 s con el armado por partes. Hay que revisar si se lee dos veces.
+3. **Medir la página completa** (el solver en paralelo con Unity) con `medir-pasos`, y repetir en la RTX antes de publicar.
+
 ## Gasto en Vercel Pro (desde el 2026-11-17)
 
 René paga Pro: 20 USD al mes, con 20 USD de crédito de uso. Meta: no pasar de ese crédito. Precios de la documentación oficial de Vercel, consultada el 2026-11-17 ([precios](https://vercel.com/docs/pricing), [Deployment Storage](https://vercel.com/docs/deployment-storage), [Flat Rate CDN](https://vercel.com/docs/pricing/flat-rate-cdn), [Blob](https://vercel.com/docs/vercel-blob/usage-and-pricing)). El uso es el de los últimos 30 días de las capturas de René; las cifras del despliegue nuevo hay que leerlas en el panel.
