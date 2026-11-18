@@ -160,3 +160,123 @@ export function proponerEscena(o: {
   }
   return { expediente: e, puntos, propuestos, faltan };
 }
+
+/** Una fila de la lista de La escena (ronda 4, propuesta 1): qué es, en qué estado y qué hace. */
+export interface ItemEscena {
+  clave: string;
+  texto: string;
+  porque: string | null;
+  estado: "propuesto" | "confirmado" | "falta";
+  /** Las preguntas de C1 (primer golpe, otros choques, por dónde pasó, terreno) son opcionales. */
+  opcional: boolean;
+  /** Qué abre «Corregir» o «Marcar»: la pregunta de ese elemento. */
+  abre:
+    | { tipo: "choque"; orden: number }
+    | { tipo: "direccion" | "final"; vehiculo: string }
+    | { tipo: "c1"; pregunta: "golpe" | "otros" | "paso" | "terreno" };
+}
+
+const TEXTO_C1: Record<"golpe" | "otros" | "paso" | "terreno", string> = {
+  golpe: "Dónde fue el primer golpe",
+  otros: "Si chocó contra algo más",
+  paso: "Por dónde pasó cada vehículo",
+  terreno: "El terreno (pendientes, topes, otra superficie)",
+};
+
+/**
+ * La lista de La escena: cada choque, por dónde venía y dónde quedó cada vehículo, y las preguntas de
+ * C1, con su estado. Lo que armó Croquis es «propuesto» (con su porqué) hasta que el perito lo
+ * confirma o lo corrige; lo que no se pudo proponer «falta».
+ */
+export function listaDeLaEscena(o: {
+  expediente: Expediente;
+  impactos: readonly ImpactoAColocar[];
+  /** Los pasos de `pasosEscena` (para las preguntas de C1). */
+  pasos: readonly { tipo: string; hecho: boolean }[];
+  propuesta: EscenaPropuesta | null;
+  /** Si ya se sabe el lugar (buscado o del caso): sin él, lo primero es buscarlo. */
+  conLugar?: boolean;
+  /** Los choques que el perito ya confirmó en la lista. */
+  confirmados: ReadonlySet<string>;
+  direccionesNoSe: readonly string[];
+  juntoAlChoque: readonly string[];
+  desconocidos: readonly string[];
+  nombreDe: (id: string) => string;
+}): ItemEscena[] {
+  const { expediente: e, propuesta } = o;
+  const de = (clave: string) => propuesta?.propuestos.find((p) => p.clave === clave) ?? null;
+  const out: ItemEscena[] = [];
+  const varios = o.impactos.length > 1;
+  for (const i of o.impactos) {
+    const clave = `choque-${i.orden}`;
+    const colocado = i.vehiculos.some((v) => poseDe(e, v, "impacto"));
+    const p = de(clave);
+    out.push({
+      clave,
+      texto: colocado
+        ? (p?.texto ??
+          (varios ? `El choque ${i.orden}, donde lo marcaste` : "El choque, donde lo marcaste"))
+        : o.conLugar === false && i.orden === 1
+          ? "Dónde fue el hecho: busca el lugar y marca el choque"
+          : varios
+            ? `Dónde fue el choque ${i.orden}`
+            : "Dónde fue el choque",
+      porque: colocado ? (p?.porque ?? null) : null,
+      estado: !colocado ? "falta" : p && !o.confirmados.has(clave) ? "propuesto" : "confirmado",
+      opcional: false,
+      abre: { tipo: "choque", orden: i.orden },
+    });
+  }
+  const vistos = new Set<string>();
+  for (const i of o.impactos) {
+    for (const v of i.vehiculos) {
+      if (vistos.has(v)) continue;
+      vistos.add(v);
+      const pose = poseDe(e, v, "impacto");
+      const claveD = `direccion-${v}`;
+      const p = de(claveD);
+      const confirmada = pose?.fuente === "perito" || o.direccionesNoSe.includes(v);
+      out.push({
+        clave: claveD,
+        texto: pose
+          ? confirmada
+            ? `${o.nombreDe(v)}: venía de ${cardinal(pose.rumbo + 180)} a ${cardinal(pose.rumbo)}`
+            : (p?.texto ?? `${o.nombreDe(v)}: por dónde venía`)
+          : `Por dónde venía ${o.nombreDe(v)}`,
+        porque: pose && !confirmada ? (p?.porque ?? "lo propone Croquis por los daños") : null,
+        estado: !pose ? "falta" : confirmada ? "confirmado" : "propuesto",
+        opcional: false,
+        abre: { tipo: "direccion", vehiculo: v },
+      });
+      const final = poseDe(e, v, "final");
+      const resuelto = Boolean(final) || o.juntoAlChoque.includes(v) || o.desconocidos.includes(v);
+      out.push({
+        clave: `final-${v}`,
+        texto: final
+          ? `${o.nombreDe(v)}: dónde quedó, marcado`
+          : o.juntoAlChoque.includes(v)
+            ? `${o.nombreDe(v)}: quedó junto al choque`
+            : o.desconocidos.includes(v)
+              ? `${o.nombreDe(v)}: no se sabe dónde quedó`
+              : `Dónde quedó ${o.nombreDe(v)}`,
+        porque: resuelto ? null : "la narración no lo ubica en el mapa",
+        estado: resuelto ? "confirmado" : "falta",
+        opcional: false,
+        abre: { tipo: "final", vehiculo: v },
+      });
+    }
+  }
+  for (const pregunta of ["golpe", "otros", "paso", "terreno"] as const) {
+    const paso = o.pasos.find((p) => p.tipo === pregunta);
+    if (!paso) continue;
+    out.push({
+      clave: `c1-${pregunta}`,
+      texto: TEXTO_C1[pregunta],
+      porque: null,
+      estado: paso.hecho ? "confirmado" : "falta",
+      opcional: true,
+      abre: { tipo: "c1", pregunta },
+    });
+  }
+  return out;
+}
