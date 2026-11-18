@@ -19,7 +19,13 @@ import { irAPaso } from "./ayuda-recorrido";
  * - ninguna petición sale a Vercel Blob ni a Vercel: lo único que se intenta afuera es lo que necesita
  *   internet (los mosaicos del mapa, la lectura con Claude), y la página lo aguanta.
  */
-test.use({ reducedMotion: "reduce", viewport: { width: 1600, height: 900 } });
+test.use({
+  reducedMotion: "reduce",
+  viewport: { width: 1600, height: 900 },
+  // t4c (René, 2026-11-18): con CROQUIS_CANAL («chrome», «msedge») corre en el navegador instalado,
+  // el que abre la demo de verdad, y no en el Chromium de Playwright.
+  ...(process.env.CROQUIS_CANAL ? { channel: process.env.CROQUIS_CANAL } : {}),
+});
 
 const SALIDA =
   process.env.CROQUIS_SALIDA ?? resolve(__dirname, "../../../eval/results/demo_local.json");
@@ -44,6 +50,10 @@ test("la demo local funciona sin internet: AXA con su 3D y su dictamen, y un cas
   test.setTimeout(600_000);
   const errores: string[] = [];
   page.on("pageerror", (e) => errores.push(e.message));
+  const consola: string[] = [];
+  page.on("console", (m) => {
+    if (m.type() === "error" && consola.length < 60) consola.push(m.text().slice(0, 300));
+  });
   const afuera = await sinInternet(page);
   // El visor real de Unity, no el ligero (el navegador automatizado abre el ligero por omisión).
   await page.addInitScript(() => {
@@ -94,9 +104,30 @@ test("la demo local funciona sin internet: AXA con su 3D y su dictamen, y un cas
   await page.getByTestId("leer-narracion").click();
   await expect(page.getByTestId("lectura-guardada")).toBeVisible({ timeout: 30_000 });
   await irAPaso(page, 3);
-  await expect(page.getByTestId("mapa-facil")).toHaveAttribute("data-listo", "si", {
-    timeout: 30_000,
-  });
+  try {
+    await expect(page.getByTestId("mapa-facil")).toHaveAttribute("data-listo", "si", {
+      timeout: 60_000,
+    });
+  } catch (e) {
+    // t4c: si el mapa no queda listo, por qué (WebGL, lo que dijo la página), al registro y al JSON.
+    const diagnostico = await page
+      .evaluate(() => {
+        const c = document.createElement("canvas");
+        const gl = c.getContext("webgl2") ?? c.getContext("webgl");
+        const info = gl?.getExtension("WEBGL_debug_renderer_info");
+        return {
+          webgl: gl ? (gl instanceof WebGL2RenderingContext ? "webgl2" : "webgl") : "ninguno",
+          gpu: gl && info ? String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL)) : null,
+          navegador: navigator.userAgent,
+        };
+      })
+      .catch((x: unknown) => ({ error: String(x) }));
+    const salida = { ejemplo: { mapa_listo: false }, diagnostico, consola, errores };
+    process.stdout.write(`\n[diagnóstico del mapa] ${JSON.stringify(salida)}\n`);
+    mkdirSync(join(SALIDA, ".."), { recursive: true });
+    writeFileSync(SALIDA, `${JSON.stringify(salida, null, 2)}\n`);
+    throw e;
+  }
 
   // Nada fue a Vercel ni a Blob; lo de afuera es solo lo que necesita internet.
   const hosts = [...afuera].sort();

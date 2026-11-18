@@ -154,6 +154,22 @@ async function maquina(page: Page) {
   });
 }
 
+/** La huella SHA-256 del WebAssembly de Unity que sirve el sitio: descarta un build dañado. */
+async function huellaWasm(pagina: import("@playwright/test").Page): Promise<string | null> {
+  return pagina
+    .evaluate(async () => {
+      const m = (await (await fetch("/visor-unity/manifest.json")).json()) as {
+        base: string;
+        prefijo: string;
+        code: string;
+      };
+      const r = await fetch(`${m.base}${m.prefijo}Build/${m.code}`);
+      const h = await crypto.subtle.digest("SHA-256", await r.arrayBuffer());
+      return [...new Uint8Array(h)].map((b) => b.toString(16).padStart(2, "0")).join("");
+    })
+    .catch(() => null);
+}
+
 test("el arranque del 3D de Unity, por partes", async ({ baseURL }) => {
   test.setTimeout(1_800_000);
   const resultado: Record<string, unknown> = {};
@@ -161,7 +177,15 @@ test("el arranque del 3D de Unity, por partes", async ({ baseURL }) => {
   // Cada caso con su perfil: la primera visita sin caché y la segunda con ella.
   for (const caso of ["axa", "nuevo"] as const) {
     const perfil = mkdtempSync(join(tmpdir(), "croquis-unity-arranque-"));
+    // t4c (René, 2026-11-18): en la RTX el Chromium de Playwright no compiló el WebAssembly de
+    // Unity («Compiling function #10005 failed»); su Chrome instalado sí (fps-web). Con
+    // CROQUIS_CHROME (la ruta) o CROQUIS_CANAL («chrome», «msedge») se mide en ese navegador.
     const ctx = await chromium.launchPersistentContext(perfil, {
+      ...(process.env.CROQUIS_CHROME
+        ? { executablePath: process.env.CROQUIS_CHROME }
+        : process.env.CROQUIS_CANAL
+          ? { channel: process.env.CROQUIS_CANAL }
+          : {}),
       headless: false,
       args: ["--use-angle=d3d11", "--ignore-gpu-blocklist"],
       baseURL,
@@ -191,7 +215,11 @@ test("el arranque del 3D de Unity, por partes", async ({ baseURL }) => {
     );
     try {
       const primera = await abrir3d(ctx.pages()[0] ?? (await ctx.newPage()), caso);
-      equipo ??= await maquina(ctx.pages()[0]!);
+      equipo ??= {
+        ...((await maquina(ctx.pages()[0]!)) as object),
+        navegador: await ctx.pages()[0]!.evaluate(() => navigator.userAgent),
+        wasm: await huellaWasm(ctx.pages()[0]!),
+      };
       for (const p of ctx.pages()) await p.close();
       const segunda = await abrir3d(await ctx.newPage(), caso);
       resultado[caso] = { primera_visita: primera, segunda_visita: segunda };
