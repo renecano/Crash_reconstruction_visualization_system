@@ -181,5 +181,5 @@ export function condicionesParaExpediente(
     const c = leidas[k]!;
     out[k] = { valor: c.valor, fuente, cita: { texto: c.cita } };
   }
-  return out as Condiciones;
+  return out;
 }

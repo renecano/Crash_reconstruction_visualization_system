@@ -18,7 +18,7 @@ describe("las condiciones del lugar que narra el perito (René, 2026-11-18)", ()
     expect(c.iluminacion?.valor).toBe("noche_con_alumbrado");
     // Cada una con la frase literal de la narración.
     const texto = narracion("data/cesvi/grabaciones/ejemplos/carambola-lluvia.json");
-    for (const v of Object.values(c)) expect(texto).toContain(v!.cita);
+    for (const v of Object.values(c)) expect(texto).toContain(v.cita);
   });
 
   it("el acotamiento y el poste no son la superficie de la vía", () => {
