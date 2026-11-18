@@ -32,6 +32,12 @@ async function fotos(page: Page, caso: string) {
     .click({ timeout: 3000 })
     .catch(() => undefined);
   await page.waitForTimeout(3000);
+  // Con fondo (variantes 1 y 3), a que el mapa o la foto ya estén dibujados.
+  if (/croquis=[13]/.test(VARIANTE))
+    await page
+      .getByTestId("maqueta-fondo")
+      .waitFor({ timeout: 40_000 })
+      .catch(() => undefined);
   await foto("1-2d");
   const mapa = page.getByTestId("vista-mapa");
   if ((await mapa.getAttribute("aria-checked")) !== "true") await mapa.click();

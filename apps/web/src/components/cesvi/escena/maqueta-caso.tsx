@@ -74,6 +74,14 @@ function CuadroCroquis({
           <span className="h-3 w-5 rounded-sm border border-dashed border-current" />,
           "Posición final",
         )}
+        {variante === 2
+          ? fila(
+              <span className="rounded-full border border-current px-1 font-mono font-bold">
+                A2
+              </span>,
+              "Vehículo A en su posición: 1 antes del impacto, 2 en el impacto, 3 en reposo",
+            )
+          : null}
         {fila(<span className="font-mono font-bold">A</span>, nombres.join(" · ") || "Vehículos")}
       </ul>
       {atribucion ? <span className="text-[0.625rem] opacity-80">{atribucion}</span> : null}

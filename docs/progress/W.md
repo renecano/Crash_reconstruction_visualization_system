@@ -17,15 +17,7 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
   - El recorrido (maqueta y 3D) también las usa.
 - **La escena ya armada:** hecho (`proponerEscena`, con pruebas sobre el expediente real del caso).
 - **Tres propuestas de la primera experiencia:** `docs/cesvi/ronda-4/propuestas-escena.md`, con capturas. Esperan la elección de René (anotado en «Bloqueado»).
-- **El 2D de Reconstrucción como croquis de perito: a medias.**
-  - Antes: `docs/cesvi/ronda-4/evidencia/2d/antes-*.jpg`.
-  - Prototipo `?croquis=1|2|3`: el fondo tenue (mapa o foto) y una leyenda. Todavía no sirve para elegir:
-    - la 2 no se distingue de la 1;
-    - en AXA no aparecen las calles ni la foto, porque al entrar directo a Reconstrucción no se monta el mapa de La escena.
-  - **Siguiente paso:**
-    1. Leer las teselas también desde el mapa del recorrido.
-    2. Hacer la 2 de verdad: papel blanco, contornos negros, la letra en círculo en cada posición (inicio, impacto, reposo), bordes y carriles marcados, y el cuadro de referencias con escala y norte.
-    3. Sacar las capturas de AXA y cf708 y escribir `docs/cesvi/ronda-4/propuestas-2d.md`.
+- **El 2D de Reconstrucción como croquis de perito:** tres propuestas con capturas en `docs/cesvi/ronda-4/propuestas-2d.md` (prototipo `?croquis=1|2|3`). Esperan la elección de René.
 - **Pendiente de René:**
   - rotar al colocar (anillo, teclado, «Alinear con la calle», «Voltear 180°», alinear solo); se construye con la propuesta de La escena que elija;
   - la medición con una persona nueva.

@@ -38,7 +38,7 @@ import {
   type Pizarra,
   type SalidaCorpus,
 } from "@croquis/cesvi";
-import type { OverpassResponse } from "@croquis/croquis-2d";
+import { overpassDeTeselas, type OverpassResponse } from "@croquis/croquis-2d";
 import { preloadRenderer, type ViewerExportApi } from "@croquis/viewer";
 import type { Map as MapaMl } from "maplibre-gl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -59,7 +59,7 @@ import {
   versionesParaPresentar,
   type VersionCaso,
 } from "@/lib/versiones-caso";
-import { callesCerca, objetosCerca } from "@/lib/calles-del-mapa";
+import { callesCerca, objetosCerca, RADIO_CALLES_M } from "@/lib/calles-del-mapa";
 import { downloadBytes } from "@/lib/download";
 import {
   CLAVES_PASOS,
@@ -705,6 +705,34 @@ export function RecorridoCaso({
       vivo = false;
     };
   }, [claveCalles]);
+  // Ronda 4: mientras Overpass no llega, las calles de las teselas del mapa del caso (también al
+  // entrar directo a Reconstrucción, sin pasar por La escena).
+  useEffect(() => {
+    if (callesOverpass || callesTeselas || !mapa || !claveCalles) return undefined;
+    const [lon, lat] = claveCalles.split(",").map(Number) as [number, number];
+    const leer = () => {
+      try {
+        const capa = (sourceLayer: string) =>
+          mapa.querySourceFeatures("openmaptiles", { sourceLayer }) as unknown as Parameters<
+            typeof overpassDeTeselas
+          >[0];
+        const r = overpassDeTeselas(
+          capa("transportation"),
+          capa("transportation_name"),
+          [lon, lat],
+          RADIO_CALLES_M,
+        );
+        if (r.elements.some((x) => x.type === "way")) setCallesTeselas(r);
+      } catch {
+        // Sin las teselas todavía: se espera a Overpass.
+      }
+    };
+    mapa.once("idle", leer);
+    mapa.triggerRepaint();
+    return () => {
+      mapa.off("idle", leer);
+    };
+  }, [callesOverpass, callesTeselas, mapa, claveCalles]);
   const rumboDeItem = (i: ItemLugar): number | null => {
     if (i.tipo === "impacto") {
       const primero = vehiculosDe(i.orden)[0];
