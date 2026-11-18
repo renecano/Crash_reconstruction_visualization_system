@@ -44,7 +44,8 @@ import {
   type RolPersona,
   type TipoObjeto,
 } from "@croquis/cesvi";
-import type { OverpassResponse } from "@croquis/croquis-2d";
+import { overpassDeTeselas, type OverpassResponse } from "@croquis/croquis-2d";
+import { RADIO_CALLES_M } from "@/lib/calles-del-mapa";
 import type { Map as MapaMl } from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
@@ -174,8 +175,8 @@ export function EscenaFacil({
   impactos,
   narracion,
   posicionesNarradas,
-  calles,
-  callesFallaron,
+  calles: callesOverpass,
+  callesFallaron: overpassFallo,
   lugar,
   descripcionLugar = null,
   zona,
@@ -216,6 +217,47 @@ export function EscenaFacil({
   errorReconstruccion?: string | null;
 }) {
   const e = estado.expediente;
+  // Ronda 4 (René, 2026-11-18): las calles de las teselas del mapa, mientras Overpass no llega (tarda
+  // unos 35 s o no responde). Las flechas y el cruce salen de ahí en cuanto el mapa dibujó el lugar.
+  const [mapaListo, setMapaListo] = useState<MapaMl | null>(null);
+  const [callesTeselas, setCallesTeselas] = useState<{
+    de: string;
+    r: OverpassResponse;
+  } | null>(null);
+  const centroTeselas = estado.puntos[1] ?? lugar;
+  const claveTeselas = centroTeselas
+    ? `${centroTeselas.lon.toFixed(4)},${centroTeselas.lat.toFixed(4)}`
+    : null;
+  useEffect(() => {
+    if (callesOverpass || !mapaListo || !claveTeselas) return undefined;
+    const [lon, lat] = claveTeselas.split(",").map(Number) as [number, number];
+    const leer = () => {
+      try {
+        const capa = (sourceLayer: string) =>
+          mapaListo.querySourceFeatures("openmaptiles", { sourceLayer }) as unknown as Parameters<
+            typeof overpassDeTeselas
+          >[0];
+        const r = overpassDeTeselas(
+          capa("transportation"),
+          capa("transportation_name"),
+          [lon, lat],
+          RADIO_CALLES_M,
+        );
+        if (r.elements.some((x) => x.type === "way")) setCallesTeselas({ de: claveTeselas, r });
+      } catch {
+        // Sin las teselas (el estilo aún no carga): se espera a Overpass, como antes.
+      }
+    };
+    // Al terminar de dibujar el lugar (las teselas ya están); si ya terminó, en el siguiente cuadro.
+    mapaListo.once("idle", leer);
+    mapaListo.triggerRepaint();
+    return () => {
+      mapaListo.off("idle", leer);
+    };
+  }, [callesOverpass, mapaListo, claveTeselas]);
+  const deTeselas = callesTeselas?.de === claveTeselas ? callesTeselas.r : null;
+  const calles = callesOverpass ?? deTeselas;
+  const callesFallaron = overpassFallo && !deTeselas;
   const callesMapa = useMemo(() => callesDe(calles), [calles]);
   const vehiculos = e.vehiculos;
   const nombres = useMemo(
@@ -2157,6 +2199,7 @@ export function EscenaFacil({
         }}
         onMapa={(m) => {
           mapa.current = m;
+          setMapaListo(m);
         }}
         objetos={objetosMapa}
         terreno={terrenoMapa}

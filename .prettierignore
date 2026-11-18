@@ -87,3 +87,4 @@ apps/web/src/styles/tokens.css
 
 # Datos generados del tráiler (tools/trailer/datos-caso.mts): una sola línea, no se formatean.
 apps/trailer/src/datos/
+packages/croquis-2d/fixtures/
