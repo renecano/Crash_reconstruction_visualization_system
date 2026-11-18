@@ -1218,41 +1218,93 @@ class Lugar1(BaseModel):
     estado: DatoExpediente | None = None
 
 
-class CasoExpediente(BaseModel):
+class Superficie(BaseModel):
     """
-    Los datos del caso: aseguradora, siniestro, fecha, lugar y modalidades. Sin nombres de personas.
+    Material de la superficie de rodamiento.
     """
 
     model_config = ConfigDict(
         extra="forbid",
     )
-    aseguradora: DatoExpediente | None = None
-    siniestro: DatoExpediente | None = None
-    fecha_hora: DatoExpediente | None = None
-    lugar: Lugar1 | None = None
+    valor: Literal["asfalto", "concreto", "adoquin", "empedrado", "terraceria"]
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
     """
-    Dónde fue.
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
     """
-    modalidades: Annotated[
-        list[
-            Literal[
-                "alcance",
-                "lateral",
-                "frontal",
-                "crucero",
-                "reversa",
-                "volcadura",
-                "salida_de_camino",
-                "objeto_fijo",
-                "atropellamiento",
-                "carambola",
-                "otra",
-            ]
-        ],
-        Field(max_length=6),
-    ]
+    cita: Cita | None = None
+
+
+class EstadoSuperficie(BaseModel):
     """
-    Modalidad o modalidades del hecho.
+    Estado de la superficie: seca, mojada, encharcada…
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    valor: Literal["seco", "mojado", "encharcado", "grava_suelta", "aceite", "lodo"]
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+    cita: Cita | None = None
+
+
+class Clima(BaseModel):
+    """
+    Clima al momento del hecho.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    valor: Literal["despejado", "nublado", "lluvia_ligera", "lluvia_fuerte", "niebla", "granizo"]
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+    cita: Cita | None = None
+
+
+class Iluminacion(BaseModel):
+    """
+    Luz al momento del hecho. «Noche sin alumbrado» solo si la narración lo dice.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    valor: Literal["dia", "amanecer", "atardecer", "noche_con_alumbrado", "noche_sin_alumbrado"]
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+    cita: Cita | None = None
+
+
+class CondicionesExpediente(BaseModel):
+    """
+    Las condiciones del lugar al momento del hecho, como las narra el perito (opcional; agregado en 2.3.0 sin cambiar la versión, ADR 0142). El estado de la superficie fija la fricción del cálculo; el clima y la iluminación, la vista del 3D y lo que alcanza a ver un conductor.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    superficie: Superficie | None = None
+    """
+    Material de la superficie de rodamiento.
+    """
+    estado_superficie: EstadoSuperficie | None = None
+    """
+    Estado de la superficie: seca, mojada, encharcada…
+    """
+    clima: Clima | None = None
+    """
+    Clima al momento del hecho.
+    """
+    iluminacion: Iluminacion | None = None
+    """
+    Luz al momento del hecho. «Noche sin alumbrado» solo si la narración lo dice.
     """
 
 
@@ -2066,6 +2118,45 @@ class Evento(BaseModel):
     punto_impacto: Punto2D | None = None
     descripcion: Annotated[str | None, Field(max_length=400)] = None
     procedencia: Procedencia
+
+
+class CasoExpediente(BaseModel):
+    """
+    Los datos del caso: aseguradora, siniestro, fecha, lugar y modalidades. Sin nombres de personas.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    aseguradora: DatoExpediente | None = None
+    siniestro: DatoExpediente | None = None
+    fecha_hora: DatoExpediente | None = None
+    lugar: Lugar1 | None = None
+    """
+    Dónde fue.
+    """
+    condiciones: CondicionesExpediente | None = None
+    modalidades: Annotated[
+        list[
+            Literal[
+                "alcance",
+                "lateral",
+                "frontal",
+                "crucero",
+                "reversa",
+                "volcadura",
+                "salida_de_camino",
+                "objeto_fijo",
+                "atropellamiento",
+                "carambola",
+                "otra",
+            ]
+        ],
+        Field(max_length=6),
+    ]
+    """
+    Modalidad o modalidades del hecho.
+    """
 
 
 class TerrenoExpediente(BaseModel):

@@ -1403,6 +1403,7 @@
           "required": [],
           "additionalProperties": false
         },
+        "condiciones": { "$ref": "#/$defs/CondicionesExpediente" },
         "modalidades": {
           "type": "array",
           "description": "Modalidad o modalidades del hecho.",
@@ -1411,6 +1412,77 @@
         }
       },
       "required": ["modalidades"],
+      "additionalProperties": false
+    },
+    "CondicionesExpediente": {
+      "type": "object",
+      "description": "Las condiciones del lugar al momento del hecho, como las narra el perito (opcional; agregado en 2.3.0 sin cambiar la versión, ADR 0142). El estado de la superficie fija la fricción del cálculo; el clima y la iluminación, la vista del 3D y lo que alcanza a ver un conductor.",
+      "properties": {
+        "superficie": {
+          "type": "object",
+          "description": "Material de la superficie de rodamiento.",
+          "properties": {
+            "valor": {
+              "type": "string",
+              "enum": ["asfalto", "concreto", "adoquin", "empedrado", "terraceria"]
+            },
+            "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+            "cita": { "$ref": "#/$defs/Cita" }
+          },
+          "required": ["valor", "fuente"],
+          "additionalProperties": false
+        },
+        "estado_superficie": {
+          "type": "object",
+          "description": "Estado de la superficie: seca, mojada, encharcada…",
+          "properties": {
+            "valor": {
+              "type": "string",
+              "enum": ["seco", "mojado", "encharcado", "grava_suelta", "aceite", "lodo"]
+            },
+            "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+            "cita": { "$ref": "#/$defs/Cita" }
+          },
+          "required": ["valor", "fuente"],
+          "additionalProperties": false
+        },
+        "clima": {
+          "type": "object",
+          "description": "Clima al momento del hecho.",
+          "properties": {
+            "valor": {
+              "type": "string",
+              "enum": [
+                "despejado",
+                "nublado",
+                "lluvia_ligera",
+                "lluvia_fuerte",
+                "niebla",
+                "granizo"
+              ]
+            },
+            "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+            "cita": { "$ref": "#/$defs/Cita" }
+          },
+          "required": ["valor", "fuente"],
+          "additionalProperties": false
+        },
+        "iluminacion": {
+          "type": "object",
+          "description": "Luz al momento del hecho. «Noche sin alumbrado» solo si la narración lo dice.",
+          "properties": {
+            "valor": {
+              "type": "string",
+              "enum": ["dia", "amanecer", "atardecer", "noche_con_alumbrado", "noche_sin_alumbrado"]
+            },
+            "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+            "cita": { "$ref": "#/$defs/Cita" }
+          },
+          "required": ["valor", "fuente"],
+          "additionalProperties": false
+        }
+      },
+      "required": [],
       "additionalProperties": false
     },
     "Rigidez": {
