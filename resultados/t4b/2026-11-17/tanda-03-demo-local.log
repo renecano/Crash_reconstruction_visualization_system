@@ -1,0 +1,162 @@
+# Paso: demo-local
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues comprobar -Salida eval/results/rtx-t4/demo_local.json
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-17 23:15:10
+
+
+== 1. Herramientas
+Node v26.13.1 y pnpm 12.11.2.
+Hay internet.
+
+== 2. Dependencias
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 3h ago)
+Lockfile is up to date, resolution step is skipped
+Done in 74ms using pnpm v12.11.2
+
+== 3. El visor de Unity, desde esta computadora
+Visor 64b29e877ba9c856 servido desde el sitio: C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\public\visor-unity\local
+
+== 4. La app en modo local
+Compilando (unos minutos)...
+$ node scripts/build-worker.mjs && node scripts/maplibre-worker.mjs && node scripts/pdfjs-worker.mjs && node scripts/blender-script.mjs && node scripts/decodificadores.mjs && node scripts/recursos.mjs preparar && next build && node scripts/podar-estaticos.mjs && node scripts/css-check.mjs
+worker del solver → C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\public\workers\reconstruct.js
+Worker de MapLibre 6.15.0 en public/maplibre/.
+Worker de pdf.js 6.4.299 en public/pdfjs/.
+Script de Blender en public/blender/.
+Decodificadores de three 0.186.1 en public/decodificadores/r186/.
+▲ Next.js 16.4.6 (Turbopack)
+✓ Running next.config.ts took 965ms
+- Experiments (use with caution):
+  ✓ inlineCss
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 6.5s
+  Running TypeScript ...
+  Finished TypeScript in 12.1s ...
+  Collecting page data using 31 workers ...
+✓ Running next.config.ts took 354ms
+  Generating static pages using 31 workers (0/60) ...
+  Generating static pages using 31 workers (15/60) 
+  Generating static pages using 31 workers (30/60) 
+  Generating static pages using 31 workers (45/60) 
+✓ Running next.config.ts took 386ms
+○ (serwist) Using esbuild to bundle the service worker.
+✓ (serwist) 246 precache entries (25644.40 KiB)
+✓ Generating static pages using 31 workers (60/60) in 4.7s
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/cesvi/consideraciones
+├ ƒ /api/cesvi/declaracion
+├ ƒ /api/cesvi/escena
+├ ƒ /api/cesvi/hecho
+├ ƒ /api/cesvi/importar
+├ ƒ /api/lugar
+├ ƒ /api/osm
+├ ƒ /api/relato/extraer
+├ ƒ /api/relato/responder
+├ ƒ /api/relieve
+├ ○ /api/version
+├ ○ /cesvi
+├   /cesvi/casos/a2010930/[[...acto]]
+│ ├ ● /cesvi/casos/a2010930
+│ ├ ● /cesvi/casos/a2010930/hecho
+│ ├ ● /cesvi/casos/a2010930/escena
+│ └ ● [+4 more paths]
+├ ƒ /cesvi/casos/guardado/[id]/[[...acto]]
+├   /cesvi/casos/importar/[[...acto]]
+│ ├ ● /cesvi/casos/importar
+│ ├ ● /cesvi/casos/importar/hecho
+│ ├ ● /cesvi/casos/importar/escena
+│ └ ● [+4 more paths]
+├   /cesvi/casos/nuevo/[[...acto]]
+│ ├ ● /cesvi/casos/nuevo
+│ ├ ● /cesvi/casos/nuevo/hecho
+│ ├ ● /cesvi/casos/nuevo/escena
+│ └ ● [+4 more paths]
+├ ● /cesvi/casos/reporte/[id]/[[...acto]]
+├ ○ /cesvi/reproduccion
+├ ○ /croquis
+├ ○ /cuenta
+├ ○ /demo
+├ ○ /e9
+├ ○ /en
+├ ○ /en/croquis
+├ ○ /en/cuenta
+├ ○ /en/demo
+├ ○ /en/e9
+├ ○ /en/historia
+├ ○ /en/medicion
+├ ○ /en/publico
+├ ○ /en/recorrido
+├ ○ /en/relato
+├ ○ /en/visor
+├ ○ /historia
+├ ○ /medicion
+├ ○ /publico
+├ ○ /recorrido
+├ ○ /relato
+├   /serwist/[path]
+│ ├ ● /serwist/sw.js.map
+│ └ ● /serwist/sw.js
+└ ○ /visor
+
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+
+podar-estaticos: quité 6 archivos, 5.3 MB (maplibre-gl-dev.2iv-rrah6q3mv.mjs, maplibre-gl-shared-dev.2igpas129bw9s.mjs, maplibre-gl-shared.2igpas129bw9s.mjs, maplibre-gl-worker-dev.15915fg_tzqwt.mjs, maplibre-gl-worker.34up6k_3aq797.mjs, maplibre-gl.2f0qrvie8zuf-.mjs).
+CSS del sistema de diseño presente (275 KB).
+
+== 5. La lectura con IA
+No hay llave de Claude en .env.local: la lectura con IA no estará. Todo lo demás funciona (AXA, los casos de ejemplo con su lectura guardada, la reconstrucción, el 3D y el dictamen).
+
+== 6. Croquis en http://localhost:3000
+Necesitan internet: la lectura con IA de una narración nueva, los mosaicos del mapa (sin red, el mapa sale en blanco pero se puede colocar la escena) y buscar un lugar por nombre.
+Sin internet funcionan completos: el caso de AXA y los cinco casos de ejemplo, la reconstrucción, el 3D de Unity y el dictamen.
+
+Running 1 test using 1 worker
+
+  x  1 [chromium] › e2e\demo-local.spec.ts:39:5 › la demo local funciona sin internet: AXA con su 3D y su dictamen, y un caso de ejemplo (48.0s)
+
+
+  1) [chromium] › e2e\demo-local.spec.ts:39:5 › la demo local funciona sin internet: AXA con su 3D y su dictamen, y un caso de ejemplo 
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  getByTestId('mapa-facil')
+    Expected: "si"
+    Received: "no"
+    Timeout:  30000ms
+
+    Call log:
+      - Expect "toHaveAttribute" getByTestId('mapa-facil') with timeout 30000ms
+      - waiting for getByTestId('mapa-facil')
+        63 × locator resolved to <div data-listo="no" class="absolute inset-0" data-testid="mapa-facil">…</div>
+           - unexpected value "no"
+
+
+       95 |   await expect(page.getByTestId("lectura-guardada")).toBeVisible({ timeout: 30_000 });
+       96 |   await irAPaso(page, 3);
+    >  97 |   await expect(page.getByTestId("mapa-facil")).toHaveAttribute("data-listo", "si", {
+          |                                                ^
+       98 |     timeout: 30_000,
+       99 |   });
+      100 |
+        at C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\demo-local.spec.ts:97:48
+
+    Error Context: test-results\demo-local-la-demo-local-f-d0e91-ctamen-y-un-caso-de-ejemplo-chromium\error-context.md
+
+  1 failed
+    [chromium] › e2e\demo-local.spec.ts:39:5 › la demo local funciona sin internet: AXA con su 3D y su dictamen, y un caso de ejemplo 
+Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
+
+  × "pnpm recursive exec" failed in C:\Users\MrKan\Documents\reto cesvi
+  │ v5\Croquis\apps\web
+
+
+# Fin: 2026-11-17 23:16:35 · falló (código 1) · 1.4 min
