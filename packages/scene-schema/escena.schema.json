@@ -1871,6 +1871,36 @@
       "required": ["id", "tipo", "punto", "fuente"],
       "additionalProperties": false
     },
+    "PersonaExpediente": {
+      "type": "object",
+      "description": "Un peatón o un ciclista que el perito coloca en la escena (ronda 4, A3): dónde estaba cuando lo golpearon, hacia dónde iba y, si se sabe, dónde quedó. De lo golpeado a donde quedó es la distancia de proyección.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_-]{1,40}$",
+          "description": "Identificador estable dentro del expediente."
+        },
+        "rol": { "type": "string", "enum": ["peaton", "ciclista"] },
+        "punto": {
+          "$ref": "#/$defs/Coordenadas",
+          "description": "Dónde estaba al ser golpeado (o donde la colocó el perito)."
+        },
+        "rumbo_deg": {
+          "type": "number",
+          "minimum": 0,
+          "exclusiveMaximum": 360,
+          "description": "Hacia dónde iba, desde el norte hacia el este."
+        },
+        "final": {
+          "$ref": "#/$defs/Coordenadas",
+          "description": "Dónde quedó después del impacto, si el perito lo marcó."
+        },
+        "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+        "cita": { "$ref": "#/$defs/Cita" }
+      },
+      "required": ["id", "rol", "punto", "fuente"],
+      "additionalProperties": false
+    },
     "ImpactoExpediente": {
       "type": "object",
       "description": "Un impacto, en orden: qué vehículos u objeto fijo, sus zonas de contacto, dónde y cuándo. Una carambola tiene más de uno.",
@@ -1892,6 +1922,11 @@
           "minLength": 1,
           "maxLength": 120,
           "description": "Objeto fijo, si lo hay (poste, muro, árbol…)."
+        },
+        "persona": {
+          "type": "string",
+          "pattern": "^[a-z0-9_-]{1,40}$",
+          "description": "La persona a pie o en bicicleta del impacto (un atropello), por su `id` en `personas` (ronda 4, A3)."
         },
         "zonas": {
           "type": "array",
@@ -2208,6 +2243,12 @@
           "description": "Objetos del lugar que colocó el perito (C2).",
           "items": { "$ref": "#/$defs/ObjetoExpediente" },
           "maxItems": 60
+        },
+        "personas": {
+          "type": "array",
+          "description": "Peatones y ciclistas que colocó el perito (ronda 4, A3; agregado en 2.3.0 sin cambiar la versión, ADR 0142). En la escena van a `personas`.",
+          "items": { "$ref": "#/$defs/PersonaExpediente" },
+          "maxItems": 12
         },
         "terreno": { "$ref": "#/$defs/TerrenoExpediente" },
         "versiones": {

@@ -1709,6 +1709,38 @@ class ObjetoExpediente(BaseModel):
     cita: Cita | None = None
 
 
+class PersonaExpediente(BaseModel):
+    """
+    Un peatón o un ciclista que el perito coloca en la escena (ronda 4, A3): dónde estaba cuando lo golpearon, hacia dónde iba y, si se sabe, dónde quedó. De lo golpeado a donde quedó es la distancia de proyección.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    id: Annotated[str, Field(pattern="^[a-z0-9_-]{1,40}$")]
+    """
+    Identificador estable dentro del expediente.
+    """
+    rol: Literal["peaton", "ciclista"]
+    punto: Coordenadas
+    """
+    Dónde estaba al ser golpeado (o donde la colocó el perito).
+    """
+    rumbo_deg: Annotated[float | None, Field(ge=0.0, lt=360.0)] = None
+    """
+    Hacia dónde iba, desde el norte hacia el este.
+    """
+    final: Coordenadas | None = None
+    """
+    Dónde quedó después del impacto, si el perito lo marcó.
+    """
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+    cita: Cita | None = None
+
+
 class Zona(BaseModel):
     """
     Zona de contacto de un vehículo.
@@ -1743,6 +1775,10 @@ class ImpactoExpediente(BaseModel):
     objeto_fijo: Annotated[str | None, Field(max_length=120, min_length=1)] = None
     """
     Objeto fijo, si lo hay (poste, muro, árbol…).
+    """
+    persona: Annotated[str | None, Field(pattern="^[a-z0-9_-]{1,40}$")] = None
+    """
+    La persona a pie o en bicicleta del impacto (un atropello), por su `id` en `personas` (ronda 4, A3).
     """
     zonas: Annotated[list[Zona] | None, Field(max_length=6)] = None
     """
@@ -2237,6 +2273,10 @@ class Expediente(BaseModel):
     objetos: Annotated[list[ObjetoExpediente] | None, Field(max_length=60)] = None
     """
     Objetos del lugar que colocó el perito (C2).
+    """
+    personas: Annotated[list[PersonaExpediente] | None, Field(max_length=12)] = None
+    """
+    Peatones y ciclistas que colocó el perito (ronda 4, A3; agregado en 2.3.0 sin cambiar la versión, ADR 0142). En la escena van a `personas`.
     """
     terreno: TerrenoExpediente | None = None
     versiones: Annotated[list[VersionExpediente] | None, Field(max_length=20)] = None

@@ -692,6 +692,13 @@ namespace Croquis.Generated
         [JsonProperty("objetos", NullValueHandling = NullValueHandling.Ignore)]
         public ExpedienteObjeto[] Objetos { get; set; }
 
+        /// <summary>
+        /// Peatones y ciclistas que colocó el perito (ronda 4, A3; agregado en 2.3.0 sin cambiar la
+        /// versión, ADR 0142). En la escena van a `personas`.
+        /// </summary>
+        [JsonProperty("personas", NullValueHandling = NullValueHandling.Ignore)]
+        public ExpedientePersona[] Personas { get; set; }
+
         [JsonProperty("resultado", NullValueHandling = NullValueHandling.Ignore)]
         public Resultado Resultado { get; set; }
 
@@ -968,6 +975,10 @@ namespace Croquis.Generated
     /// <summary>
     /// Un punto en el mapa (WGS84).
     ///
+    /// Dónde quedó después del impacto, si el perito lo marcó.
+    ///
+    /// Dónde estaba al ser golpeado (o donde la colocó el perito).
+    ///
     /// Vértices del polígono en el mapa, sin repetir el primero al final.
     /// </summary>
     public partial class Coordenadas
@@ -1242,6 +1253,13 @@ namespace Croquis.Generated
         [JsonProperty("orden")]
         public long Orden { get; set; }
 
+        /// <summary>
+        /// La persona a pie o en bicicleta del impacto (un atropello), por su `id` en `personas`
+        /// (ronda 4, A3).
+        /// </summary>
+        [JsonProperty("persona", NullValueHandling = NullValueHandling.Ignore)]
+        public string Persona { get; set; }
+
         [JsonProperty("punto", NullValueHandling = NullValueHandling.Ignore)]
         public Coordenadas Punto { get; set; }
 
@@ -1309,6 +1327,48 @@ namespace Croquis.Generated
 
         [JsonProperty("tipo")]
         public TentacledTipo Tipo { get; set; }
+    }
+
+    /// <summary>
+    /// Un peatón o un ciclista que el perito coloca en la escena (ronda 4, A3): dónde estaba
+    /// cuando lo golpearon, hacia dónde iba y, si se sabe, dónde quedó. De lo golpeado a donde
+    /// quedó es la distancia de proyección.
+    /// </summary>
+    public partial class ExpedientePersona
+    {
+        [JsonProperty("cita", NullValueHandling = NullValueHandling.Ignore)]
+        public Cita Cita { get; set; }
+
+        /// <summary>
+        /// Dónde quedó después del impacto, si el perito lo marcó.
+        /// </summary>
+        [JsonProperty("final", NullValueHandling = NullValueHandling.Ignore)]
+        public Coordenadas Final { get; set; }
+
+        [JsonProperty("fuente")]
+        public ResultadoFuente Fuente { get; set; }
+
+        /// <summary>
+        /// Identificador estable dentro del expediente.
+        /// </summary>
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Dónde estaba al ser golpeado (o donde la colocó el perito).
+        /// </summary>
+        [JsonProperty("punto")]
+        public Coordenadas Punto { get; set; }
+
+        [JsonProperty("rol")]
+        public PersonaRolEnum Rol { get; set; }
+
+        /// <summary>
+        /// Hacia dónde iba, desde el norte hacia el este.
+        /// </summary>
+        [JsonProperty("rumbo_deg", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(FluffyMinMaxValueCheckConverter))]
+        public double? RumboDeg { get; set; }
     }
 
     /// <summary>
@@ -2287,7 +2347,7 @@ namespace Croquis.Generated
         public Postura Postura { get; set; }
 
         [JsonProperty("rol")]
-        public Rol Rol { get; set; }
+        public RolClass Rol { get; set; }
 
         [JsonProperty("sistema_retencion_infantil", NullValueHandling = NullValueHandling.Ignore)]
         public BolsasAire SistemaRetencionInfantil { get; set; }
@@ -2411,7 +2471,7 @@ namespace Croquis.Generated
         public PosturaValor Valor { get; set; }
     }
 
-    public partial class Rol
+    public partial class RolClass
     {
         [JsonProperty("confianza")]
         [JsonConverter(typeof(PurpleMinMaxValueCheckConverter))]
@@ -5144,6 +5204,8 @@ namespace Croquis.Generated
 
     public enum TentacledTipo { Arbol, Barrera, Guarnicion, Muro, Poste, Senal, VehiculoEstacionado };
 
+    public enum PersonaRolEnum { Ciclista, Peaton };
+
     public enum Veredicto { NoSeSostiene, Parcial, SeSostiene, SinJuicio };
 
     public enum DecisionEnum { Aceptada, Editada, Rechazada };
@@ -5336,6 +5398,7 @@ namespace Croquis.Generated
                 VerticeConverter.Singleton,
                 HuellaTipoConverter.Singleton,
                 TentacledTipoConverter.Singleton,
+                PersonaRolEnumConverter.Singleton,
                 VeredictoConverter.Singleton,
                 DecisionEnumConverter.Singleton,
                 PurpleFuenteConverter.Singleton,
@@ -8532,6 +8595,47 @@ namespace Croquis.Generated
         }
 
         public static readonly TentacledTipoConverter Singleton = new TentacledTipoConverter();
+    }
+
+    internal class PersonaRolEnumConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(PersonaRolEnum) || t == typeof(PersonaRolEnum?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "ciclista":
+                    return PersonaRolEnum.Ciclista;
+                case "peaton":
+                    return PersonaRolEnum.Peaton;
+            }
+            throw new Exception("Cannot unmarshal type PersonaRolEnum");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (PersonaRolEnum)untypedValue;
+            switch (value)
+            {
+                case PersonaRolEnum.Ciclista:
+                    serializer.Serialize(writer, "ciclista");
+                    return;
+                case PersonaRolEnum.Peaton:
+                    serializer.Serialize(writer, "peaton");
+                    return;
+            }
+            throw new Exception("Cannot marshal type PersonaRolEnum");
+        }
+
+        public static readonly PersonaRolEnumConverter Singleton = new PersonaRolEnumConverter();
     }
 
     internal class VeredictoConverter : JsonConverter
