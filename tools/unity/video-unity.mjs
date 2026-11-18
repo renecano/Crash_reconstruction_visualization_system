@@ -104,10 +104,11 @@ export function tomasDe(caso, { fps = 60, corto = false } = {}) {
       tramos: aDuracion([{ desde: inicio, hasta: -0.1, velocidad: 1 }], seg(DURACION.llegada)),
       camara: (u) => ({
         objetivo: "impacto",
-        // Sobre la calle de A, adelante del punto de choque, viendo cómo llegan: sobre la vía no hay
-        // casas ni postes entre la cámara y el choque (de lado, caía dentro de una cuadra).
-        azimut: azimutDe(rumboA) + 25 - 30 * u,
-        distancia: 17 - 3 * u,
+        // Sobre la calle de A, adelante del punto de choque, viendo cómo llegan. Casi sobre su eje: a
+        // 25° de lado, a 17 m, la cámara quedaba ~7 m fuera de la vía, dentro de una casa (la pared de
+        // ladrillo del lateral y la rosa del alcance en la RTX, René 2026-11-17); a ±6°, menos de 2 m.
+        azimut: azimutDe(rumboA) + 6 - 12 * u,
+        distancia: 16 - 2 * u,
         altura: 3.4 - 1.0 * u,
         mira: 0.8,
         fov: 35,
@@ -140,8 +141,9 @@ export function tomasDe(caso, { fps = 60, corto = false } = {}) {
       ),
       camara: (u) => ({
         objetivo: "impacto",
-        // A tres cuartos, desde adelante de A y sobre su calle (de lado a la vía la tapaba un poste).
-        azimut: azimutDe(rumboA) + 40 - 10 * u,
+        // A tres cuartos, desde adelante de A y sobre su calle (de lado a la vía la tapaba un poste); a
+        // 30°, a 6.5 m, queda ~3 m de lado: dentro de la vía.
+        azimut: azimutDe(rumboA) + 30 - 8 * u,
         distancia: 6.5,
         altura: 1.4,
         mira: 0.6,
