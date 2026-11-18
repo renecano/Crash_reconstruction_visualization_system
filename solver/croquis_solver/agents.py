@@ -52,6 +52,7 @@ DT = 0.02  # s, el paso de la reconstrucción
 HORIZON_AFTER_S = 3.0  # s después del impacto reconstruido
 BISECTION_STEPS = 30
 SENSITIVITY_SAMPLES = 64
+TRAJECTORY_DT = 0.1  # s, el paso de las trayectorias que se dibujan (no el de la simulación)
 DECISIONES = ("frenar", "volantear_izquierda", "volantear_derecha", "seguir")
 _TIME = {"s": 1.0, "ms": 0.001, "min": 60.0}
 
@@ -148,6 +149,12 @@ class Simulacion:
     decisiones: dict[str, Decision | None]
     contacto: Contacto | None
     distancia_minima_m: float
+    # Los agentes y hasta dónde llegó la simulación: con ellos se muestrean las trayectorias para
+    # dibujar el «¿y si…?». La posición de cada agente es cerrada en t, así que muestrearla después
+    # da lo mismo que durante la simulación; no cambia ninguna cifra.
+    agentes: list[Agent] = field(default_factory=lambda: list[Agent]())
+    t_inicio: float = 0.0
+    t_final: float = 0.0
 
 
 @dataclass
@@ -201,9 +208,41 @@ def _conductor_doc(
     return out
 
 
+def _trajectory_times(t0: float, t1: float) -> list[float]:
+    """De t0 a t1 cada `TRAJECTORY_DT`, y t1 al final si no cae en la rejilla."""
+    n = math.floor((t1 - t0) / TRAJECTORY_DT + 1e-9)
+    times = [t0 + k * TRAJECTORY_DT for k in range(n + 1)]
+    if t1 - times[-1] > 1e-9:
+        times.append(t1)
+    return times
+
+
+def _trajectories_doc(sim: Simulacion) -> list[JsonObj]:
+    if not sim.agentes:
+        return []
+    times = _trajectory_times(sim.t_inicio, sim.t_final)
+    out: list[JsonObj] = []
+    for a in sorted(sim.agentes, key=lambda q: q.id):
+        states = [a.state(t) for t in times]
+        out.append(
+            {
+                "vehiculo": a.id,
+                "t": [_r(t) for t in times],
+                "x": [_r(s[0]) for s in states],
+                "y": [_r(s[1]) for s in states],
+                "rumbo": [_r(s[2]) for s in states],
+                "vx": [_r(s[3]) for s in states],
+                "vy": [_r(s[4]) for s in states],
+            }
+        )
+    return out
+
+
 def _sim_doc(sim: Simulacion) -> JsonObj:
+    tray = _trajectories_doc(sim)
+    extra: JsonObj = {"trayectorias": tray} if tray else {}
     if sim.contacto is None:
-        return {"contacto": False, "distancia_minima_m": _r(sim.distancia_minima_m)}
+        return {"contacto": False, "distancia_minima_m": _r(sim.distancia_minima_m), **extra}
     c = sim.contacto
     return {
         "contacto": True,
@@ -213,6 +252,7 @@ def _sim_doc(sim: Simulacion) -> JsonObj:
             {"vehiculo": k, "valor": _r(v)} for k, v in sorted(c.velocidades_kmh.items())
         ],
         "velocidad_relativa_kmh": _r(c.velocidad_relativa_kmh),
+        **extra,
     }
 
 
@@ -382,7 +422,12 @@ def _simulate(
             }
             rel = 3.6 * dmath.hypot(sa[3] - sb[3], sa[4] - sb[4])
             return Simulacion(
-                {a.id: a.decision for a in agents}, Contacto(hi, pair, speeds, rel), 0.0
+                {a.id: a.decision for a in agents},
+                Contacto(hi, pair, speeds, rel),
+                0.0,
+                agents,
+                t0,
+                hi,
             )
         rs = rects(t)
         ids = sorted(rs)
@@ -391,7 +436,7 @@ def _simulate(
                 if (a, b) not in later and (by_id[a].v0 > 0 or by_id[b].v0 > 0):
                     min_gap = min(min_gap, _distance(rs[a], rs[b]))
         prev_t = t
-    return Simulacion({a.id: a.decision for a in agents}, None, min_gap)
+    return Simulacion({a.id: a.decision for a in agents}, None, min_gap, agents, t0, t0 + n * DT)
 
 
 def _make_agents(spec: JsonObj, rec: Reconstruction, *, with_drivers: bool) -> list[Agent]:

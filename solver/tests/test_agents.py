@@ -114,3 +114,36 @@ def test_un_par_que_el_hecho_no_narra_si_se_busca() -> None:
 def test_el_mismo_caso_da_lo_mismo() -> None:
     spec = agent_fixtures.carambola_cadena()
     assert _agentes(spec) == _agentes(copy.deepcopy(spec))
+
+
+def test_las_trayectorias_llegan_hasta_el_primer_contacto() -> None:
+    # Para dibujar el «¿y si…?» (ronda 4, punto 8): cada vehículo, del inicio al contacto.
+    d = _agentes(agent_fixtures.alcance_frena_antes())
+    for sim in (d["resultado"], d["linea_base"]):
+        tray = sim["trayectorias"]
+        assert [t["vehiculo"] for t in tray] == ["veh-a", "veh-b"]
+        for t in tray:
+            n = len(t["t"])
+            assert all(len(t[k]) == n for k in ("x", "y", "rumbo", "vx", "vy"))
+            assert t["t"][0] == pytest.approx(d["t_inicio"])
+            assert t["t"][-1] == pytest.approx(sim["t"])
+            pasos = [b - a for a, b in zip(t["t"], t["t"][1:], strict=False)]
+            assert all(0 < p <= 0.1 + 1e-9 for p in pasos)
+
+    # Con la hipótesis A frena antes: al contacto va más lento que sin ella.
+    def rapidez(sim: dict[str, Any]) -> float:
+        a = next(t for t in sim["trayectorias"] if t["vehiculo"] == "veh-a")
+        return float((a["vx"][-1] ** 2 + a["vy"][-1] ** 2) ** 0.5)
+
+    assert rapidez(d["resultado"]) < rapidez(d["linea_base"])
+
+
+def test_sin_contacto_las_trayectorias_cubren_todo_el_horizonte() -> None:
+    spec = copy.deepcopy(agent_fixtures.alcance_frena_antes())
+    a = next(v for v in spec["vehiculos"] if v["id"] == "veh-a")
+    a["conductor"]["instante_decision"]["valor"] = -3.0
+    d = _agentes(spec)
+    if d["resultado"]["contacto"]:
+        pytest.skip("con 3 s de frenado aún hay contacto en esta escena")
+    tray = d["resultado"]["trayectorias"][0]
+    assert tray["t"][-1] == pytest.approx(d["t_fin"], abs=0.021)
