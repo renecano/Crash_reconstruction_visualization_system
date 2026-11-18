@@ -64,17 +64,17 @@ test("@capturas W4: corregir después, para el resumen de René", async ({ page 
   await sinRed(page);
   await irAPaso(page, 3);
 
-  // La escena: el choque, los dos vehículos y, después, el Camaro contra un poste.
+  // La escena: el choque, los dos vehículos y, después, el GM Camaro contra un poste.
   const pregunta = page.getByTestId("escena-pregunta");
   const mapa = await mapaFacil(page);
   const caja = (await mapa.boundingBox())!;
   await mapa.click({ position: { x: caja.width * 0.6, y: caja.height * 0.45 } });
-  await expect(pregunta).toHaveText("¿Por dónde venía el Jetta?");
+  await expect(pregunta).toHaveText("¿Por dónde venía el VW Jetta?");
   await page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]').click();
   await expect(pregunta).toHaveText("¿Dónde quedó después del choque?");
   await tocarEnMetros(page, "choque-1", 6, 8);
   await page.getByTestId("listo-final").click();
-  await expect(pregunta).toHaveText("¿Por dónde venía el Camaro?");
+  await expect(pregunta).toHaveText("¿Por dónde venía el GM Camaro?");
   await page.getByTestId("no-se-direccion").click();
   await page.getByTestId("final-junto").click();
   await page.getByTestId("listo-final").click();
@@ -126,14 +126,14 @@ test("@capturas W4: corregir después, para el resumen de René", async ({ page 
   const conPosteMovido = await cifra.innerText();
   expect(conPosteMovido).not.toEqual(antes);
 
-  // 2. Corregir la dirección del Jetta, ya colocado: se toca y «Cambiar por dónde venía».
+  // 2. Corregir la dirección del VW Jetta, ya colocado: se toca y «Cambiar por dónde venía».
   await irAPaso(page, 3);
   await page.getByTestId("cambiar-algo").click();
   // El marcador del coche no tiene tamaño: se toca su cuerpo, como lo toca el perito.
   await page.locator('[data-testid="coche-V1-final"] .escena-coche-cuerpo').click();
   await foto(page, "6-jetta-seleccionado");
   await page.getByTestId("sel-cambiar-direccion").click();
-  await expect(pregunta).toHaveText("¿Por dónde venía el Jetta?");
+  await expect(pregunta).toHaveText("¿Por dónde venía el VW Jetta?");
   await page.locator('[data-testid^="opcion-flecha-"][data-propuesta="no"]').first().click();
   await reconstruirSiCambio(page);
   // «Deshacer» y «Rehacer» siguen a la vista.

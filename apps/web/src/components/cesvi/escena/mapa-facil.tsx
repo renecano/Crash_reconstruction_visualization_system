@@ -669,6 +669,8 @@ export function MapaFacil(p: MapaFacilProps) {
         const caja = document.createElement("div");
         caja.className = "escena-persona-proyeccion";
         caja.style.pointerEvents = "none";
+        // Encima de los vehículos: la distancia se lee aunque la línea pase bajo un coche.
+        caja.style.zIndex = "4";
         const etiqueta = document.createElement("span");
         etiqueta.className = "escena-etiqueta escena-etiqueta-proyeccion";
         etiqueta.setAttribute("data-testid", "proyeccion-persona");

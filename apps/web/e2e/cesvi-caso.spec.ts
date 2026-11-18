@@ -108,9 +108,9 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await mapaEscena.click({ position: { x: caja.width * 0.7, y: caja.height * 0.45 } });
   await expect(page.getByTestId("mensaje-exito")).toContainText("¡Listo! El choque quedó marcado.");
   await expect(page.getByTestId("choque-1")).toHaveCount(1);
-  // Por dónde venía el Jetta (nunca «V1»): sin calles, cuatro flechas por puntos cardinales, con la
+  // Por dónde venía el VW Jetta (nunca «V1»): sin calles, cuatro flechas por puntos cardinales, con la
   // de Croquis resaltada.
-  await expect(pregunta).toHaveText("¿Por dónde venía el Jetta?");
+  await expect(pregunta).toHaveText("¿Por dónde venía el VW Jetta?");
   await expect(page.locator('[data-testid^="opcion-flecha-"]')).toHaveCount(4);
   await expect(page.locator('[data-testid^="flecha-"]')).toHaveCount(4);
   await page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]').click();
@@ -121,10 +121,10 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await expect(page.getByTestId("coche-V1-final")).toHaveCount(1);
   await page.getByTestId("girar-derecha").click();
   await page.getByTestId("listo-final").click();
-  await expect(page.getByTestId("mensaje-exito")).toContainText("dónde quedó el Jetta");
-  // El Camaro: «No sé por dónde venía» (Croquis usa la de los daños, como supuesto) y «Quedó junto
+  await expect(page.getByTestId("mensaje-exito")).toContainText("dónde quedó el VW Jetta");
+  // El GM Camaro: «No sé por dónde venía» (Croquis usa la de los daños, como supuesto) y «Quedó junto
   // al choque».
-  await expect(pregunta).toHaveText("¿Por dónde venía el Camaro?");
+  await expect(pregunta).toHaveText("¿Por dónde venía el GM Camaro?");
   await page.getByTestId("no-se-direccion").click();
   await page.getByTestId("final-junto").click();
   await page.getByTestId("listo-final").click();
@@ -132,7 +132,7 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await contestarC1(page);
   await expect(page.getByTestId("escena-lista")).toBeVisible();
   const resumen = page.getByTestId("escena-resumen");
-  await expect(resumen).toContainText("El Jetta venía del");
+  await expect(resumen).toContainText("El VW Jetta venía del");
   await expect(resumen).toContainText("donde lo pusiste");
   await expect(resumen).toContainText("Quedó junto al choque.");
   await expect(resumen).toContainText("Supuesto");
@@ -320,7 +320,7 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   expect(fuenteDe("V2", "impacto")).toBe("supuesto");
   expect(fuenteDe("V1", "final")).toBe("perito");
   expect(fuenteDe("V2", "final")).toBe("perito");
-  // El Jetta quedó con su rumbo de llegada girado 15° (el botón); el Camaro, junto al choque, con el
+  // El VW Jetta quedó con su rumbo de llegada girado 15° (el botón); el GM Camaro, junto al choque, con el
   // suyo.
   const rumboDe = (v: string, fase: string) =>
     posiciones.find((p) => p.vehiculo === v && p.fase === fase)!.rumbo;
