@@ -347,7 +347,7 @@ test("pasada de la ronda 2", async ({ page, context }) => {
     await anota("escena-lista");
   });
   await tramo("nuevo-pasos", async () => {
-    await pasos("nuevo", 4, 7);
+    await pasos("nuevo", 4, 8);
     await page
       .getByTestId("exportar")
       .click()
@@ -382,7 +382,7 @@ test("pasada de la ronda 2", async ({ page, context }) => {
     await page.goto("/cesvi");
     await page.getByTestId("ir-axa").click();
     await expect(page.getByTestId("recorrido-caso")).toBeVisible();
-    await pasos("axa", 1, 8);
+    await pasos("axa", 1, 9);
     if (VARIANTE === "claro") {
       await irAPaso(page, 4);
       await page.getByTestId("vista-3d").click();

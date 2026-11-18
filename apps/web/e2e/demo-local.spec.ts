@@ -91,7 +91,7 @@ test("la demo local funciona sin internet: AXA con su 3D y su dictamen, y un cas
   expect(modelos.some((n) => n.endsWith(".glb"))).toBe(true);
   expect(modelos.every((n) => n.startsWith("http://localhost"))).toBe(true);
   await page.screenshot({ path: resolve(__dirname, "../test-results/demo-local-axa-3d.png") });
-  await irAPaso(page, 8);
+  await irAPaso(page, 9);
   const descarga = page.waitForEvent("download");
   await page.getByTestId("descargar-dictamen-pdf").click();
   const pdf = await descarga;

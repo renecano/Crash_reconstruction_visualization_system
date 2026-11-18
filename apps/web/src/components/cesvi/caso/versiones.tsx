@@ -290,6 +290,17 @@ export function ActoVersiones({
             />
           ) : (
             <div className="flex flex-col gap-3">
+              {v.prueba.lineaBaseDistinta ? (
+                <p
+                  className="t-nota border-l-2 border-senal pl-3 text-senal-texto"
+                  data-testid="aviso-linea-base"
+                >
+                  Sin la hipótesis, los conductores dan {v.prueba.lineaBaseDistinta.sinHipotesis};
+                  la reconstrucción tiene {v.prueba.lineaBaseDistinta.reconstruccion}. La simulación
+                  de los conductores no impone el impacto de la reconstrucción: compara con «Sin
+                  ella».
+                </p>
+              ) : null}
               <ul className="flex flex-col gap-2" data-testid="que-cambia">
                 {v.cambios.map((c) => (
                   <Tarjeta
@@ -368,7 +379,7 @@ export function ActoVersiones({
                     tipo: "hipotesis",
                     titulo,
                     resumen: resumenHipotesis(p),
-                    etiqueta: `¿y si el conductor de ${nombreDe(h.vehiculo)}…?`,
+                    etiqueta: "la hipótesis «¿y si…?» del perito",
                     resultado: resultado as unknown as Resultado,
                     h,
                     prueba: p,

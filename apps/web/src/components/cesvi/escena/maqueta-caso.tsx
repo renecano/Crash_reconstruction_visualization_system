@@ -164,8 +164,8 @@ export function MaquetaCaso({
           </span>
           {declarada ? (
             <span className="text-texto-3" data-testid="maqueta-leyenda-declarada">
-              En azul punteado, la {declarada.etiqueta}: por dónde va cada vehículo según esa
-              versión, simulada con el mismo método.
+              En azul punteado, {declarada.etiqueta}: por dónde va cada vehículo en esa versión,
+              simulada con la misma física.
             </span>
           ) : null}
         </div>

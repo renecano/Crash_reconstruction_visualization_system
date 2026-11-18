@@ -222,16 +222,16 @@ test("AXA como perito", async ({ page }) => {
     }
 
     for (const [n, nombre] of [
-      [5, "los-danos"],
-      [6, "los-numeros"],
-      [7, "contra-cesvi"],
+      [6, "los-danos"],
+      [7, "los-numeros"],
+      [8, "contra-cesvi"],
     ] as const) {
       await irAPaso(page, n);
       await quieta(page, 3500);
       await b.anota(nombre, panel, { controles: await controles(page) });
     }
 
-    await irAPaso(page, 8);
+    await irAPaso(page, 9);
     await expect
       .poll(
         async () =>
@@ -344,10 +344,10 @@ test("un caso nuevo como perito", async ({ page }) => {
         .catch(() => null),
     });
     for (const [n, nombre] of [
-      [5, "los-danos"],
-      [6, "los-numeros"],
-      [7, "contra-cesvi"],
-      [8, "dictamen"],
+      [6, "los-danos"],
+      [7, "los-numeros"],
+      [8, "contra-cesvi"],
+      [9, "dictamen"],
     ] as const) {
       await irAPaso(page, n).catch(() => undefined);
       await quieta(page, 5000);

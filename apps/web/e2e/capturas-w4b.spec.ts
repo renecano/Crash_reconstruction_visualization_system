@@ -54,11 +54,11 @@ for (const tema of ["claro", "oscuro"] as const) {
     if (await reconstruir.isVisible()) await reconstruir.click();
     await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 120_000 });
     await captura("3-reconstruccion");
-    await irAPaso(page, 5);
+    await irAPaso(page, 6);
     await captura("4-analisis");
-    await irAPaso(page, 7);
-    await captura("5-contraste");
     await irAPaso(page, 8);
+    await captura("5-contraste");
+    await irAPaso(page, 9);
     await captura("6-dictamen");
   });
 }
