@@ -165,6 +165,7 @@ export function ActoVersiones({
   onQuitar,
   nombreDe,
   en3d,
+  superpone3d = false,
   version3d,
   onVersion3d,
   textoInicial,
@@ -182,6 +183,8 @@ export function ActoVersiones({
   nombreDe: (id: string) => string;
   /** El escenario está en 3D: ahí se alterna entre la reconstrucción y la versión. */
   en3d: boolean;
+  /** Con un build 1.3.0, la versión va translúcida encima, no en lugar de la reconstrucción. */
+  superpone3d?: boolean;
   /** En el 3D se ve la versión elegida (si no, la reconstrucción). */
   version3d: boolean;
   onVersion3d: (x: boolean) => void;
@@ -264,7 +267,7 @@ export function ActoVersiones({
                 className="px-4"
                 data-testid="ver-3d-reconstruccion"
               >
-                La reconstrucción
+                {superpone3d ? "Solo la reconstrucción" : "La reconstrucción"}
               </button>
               <button
                 type="button"
@@ -273,14 +276,16 @@ export function ActoVersiones({
                 className="px-4"
                 data-testid="ver-3d-version"
               >
-                Esta versión
+                {superpone3d ? "Con la versión encima" : "Esta versión"}
               </button>
             </div>
           ) : null}
           <p className="t-nota">
-            {en3d
-              ? "En el 3D se alterna entre las dos con la misma cámara y el mismo instante."
-              : "En el 2D, la versión va punteada sobre la reconstrucción."}
+            {!en3d
+              ? "En el 2D, la versión va punteada sobre la reconstrucción."
+              : superpone3d
+                ? "En el 3D, la versión va translúcida sobre la reconstrucción, con el mismo reloj."
+                : "En el 3D se alterna entre las dos con la misma cámara y el mismo instante."}
           </p>
           {v.tipo === "declaracion" ? (
             <CambiosDeclaracion

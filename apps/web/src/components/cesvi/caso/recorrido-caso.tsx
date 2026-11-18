@@ -39,6 +39,7 @@ import {
   type SalidaCorpus,
 } from "@croquis/cesvi";
 import { overpassDeTeselas, type OverpassResponse } from "@croquis/croquis-2d";
+import { conPisoYFantasma } from "@croquis/scene-schema";
 import { preloadRenderer, type ViewerExportApi } from "@croquis/viewer";
 import type { Map as MapaMl } from "maplibre-gl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -1331,6 +1332,7 @@ export function RecorridoCaso({
           }}
           nombreDe={nombreLab}
           en3d={vista === "3d"}
+          superpone3d={conPisoYFantasma(unityApi?.puente)}
           version3d={version3d}
           onVersion3d={setVersion3d}
           textoInicial={inicial.ejemplo?.declaracion.texto}
