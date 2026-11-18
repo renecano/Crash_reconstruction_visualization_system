@@ -2,7 +2,9 @@
 
 Las pruebas y mediciones pesadas de Croquis no corren en la laptop de René. Esta computadora las corre con un doble clic y sube los resultados a GitHub.
 
-**Es una sola corrida.** Primero comprueba que todo sirve (unos 2 minutos) y, si pasa, sigue sola con lo pesado. La Tanda 4b tarda **cerca de 2 h 45 min en total** (estimado: 163 minutos de pasos, más la comprobación y dos descargas de GitHub: el paquete de fotos de 60 MB y el visor web, de 36 MB). Nada se baja de Vercel: el 3D sale de copias en esta computadora. Usa la carpeta **«reto cesvi v5»**. La ventana dice el tiempo estimado al empezar y, cada 30 segundos, cuánto lleva el paso y la última línea que escribió.
+**Es una sola corrida.** Primero comprueba que todo sirve (unos 2 minutos) y, si pasa, sigue sola con lo pesado. La **Tanda 4c** repite solo lo que falló en la 4b (las tomas del tráiler, la demo local y el arranque del 3D) y tarda **unos 40 minutos** (estimado: 38 minutos de pasos, más la comprobación). Nada se baja de Vercel: el 3D sale de copias en esta computadora. Usa la carpeta **«reto cesvi v5»**. La ventana dice el tiempo estimado al empezar y, cada 30 segundos, cuánto lleva el paso y la última línea que escribió.
+
+**Necesita Google Chrome instalado** (el mismo con el que corrió fps-web): la demo local y el arranque del 3D se prueban en él.
 
 ## Los 3 pasos
 
@@ -29,7 +31,12 @@ Las pruebas y mediciones pesadas de Croquis no corren en la laptop de René. Est
 | Se cambia a la rama de la tanda si todavía no está en `main`, y al terminar vuelve a la que estaba                | No tener cambios sin guardar en la carpeta. Si los hay, lo dice y se detiene                                                                        |
 | Sube los resultados con el inicio de sesión normal de GitHub                                                      | Si Git abre el navegador, **inicia sesión en GitHub** con tu cuenta (la que René invitó al repositorio). Nunca pide ni guarda tokens ni contraseñas |
 
-**Lo de la Tanda 4b que te toca a ti:**
+**Lo de la Tanda 4c que te toca a ti:**
+
+- **No uses la computadora en toda la corrida** (unos 40 min): las tomas del tráiler, la demo local y el arranque del 3D abren ventanas a pantalla completa.
+- **Al final, manda a René `croquis-tomas-trailer.zip`** de tu Escritorio (por Drive o WeTransfer). No va a GitHub.
+
+**Lo de la Tanda 4b (ya corrió; queda como referencia):**
 
 - **No uses la computadora en toda la corrida:** el arranque del 3D, la demo local, las fotos, las tomas del tráiler, el video de Unity y los fps en el navegador abren ventanas a pantalla completa, y cualquier otra cosa cambia los números. Déjala conectada a la corriente.
 - **Si se corta** (se apagó, se cerró la ventana), vuelve a hacer doble clic: las tomas del tráiler y los cuadros del video siguen desde el último terminado.

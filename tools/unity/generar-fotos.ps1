@@ -23,6 +23,10 @@ $exe = Join-Path $aqui "VisorCroquis.exe"
 if (-not (Test-Path $exe)) { throw "No encuentro VisorCroquis.exe junto a este script." }
 $salida = Join-Path $aqui "fotos"
 New-Item -ItemType Directory -Force $salida | Out-Null
+# Start-Process une los argumentos con espacios y no los cita: una ruta con espacios («reto cesvi
+# v5») le llega partida al programa (t4b, René 2026-11-18: las tomas del tráiler se escribían en otra
+# carpeta y el vigilante no veía ninguna). Cada argumento con espacios va entre comillas.
+function Citar([string] $a) { if ($a -match '\s' -and $a -notmatch '^".*"$') { '"' + $a + '"' } else { $a } }
 $argumentos = @(
     "-screen-width", "1920", "-screen-height", "1080", "-screen-fullscreen", "0",
     "-fotos", (Join-Path $aqui "tomas.json"), "-salida", $salida,
@@ -32,7 +36,7 @@ $argumentos = @(
 if ($Solo) { $argumentos += @("-solo", $Solo) }
 $reloj = [Diagnostics.Stopwatch]::StartNew()
 Write-Host "Generando las fotos en $salida (no uses la computadora mientras tanto)..."
-$p = Start-Process -FilePath $exe -ArgumentList $argumentos -PassThru -Wait
+$p = Start-Process -FilePath $exe -ArgumentList @($argumentos | ForEach-Object { Citar $_ }) -PassThru -Wait
 $informe = Join-Path $salida "fotos.json"
 if (-not (Test-Path $informe)) { throw "El visor no escribió fotos.json (código $($p.ExitCode)). Revisa fotos.log." }
 $r = Get-Content -Raw $informe | ConvertFrom-Json
