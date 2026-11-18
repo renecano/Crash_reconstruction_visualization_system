@@ -109,6 +109,9 @@ export function MarcoVista({
         document.fullscreenElement !== null && document.fullscreenElement === marco.current;
       setRanuras((r) => (r.completa === si ? r : { ...r, completa: si }));
       setVisibles(true);
+      // El foco pasa al marco: así Espacio reproduce o pausa en lugar de volver a «presionar» el botón
+      // de pantalla completa. Con Tab se llega a cada control, como siempre.
+      if (si) marco.current?.focus({ preventScroll: true });
     };
     document.addEventListener("fullscreenchange", alCambiar);
     return () => document.removeEventListener("fullscreenchange", alCambiar);
@@ -175,7 +178,7 @@ export function MarcoVista({
   return (
     <div
       ref={marco}
-      className={`flex flex-col bg-fondo ${completa ? "cursor-default" : ""} ${ocultas ? "cursor-none" : ""} ${className}`}
+      className={`flex flex-col bg-fondo outline-none ${completa ? "cursor-default" : ""} ${ocultas ? "cursor-none" : ""} ${className}`}
       data-testid="marco-vista"
       data-completa={completa ? "si" : "no"}
       data-controles={ocultas ? "ocultos" : "visibles"}
@@ -183,6 +186,7 @@ export function MarcoVista({
       onPointerDown={completa ? mostrar : undefined}
       role="region"
       aria-label={etiqueta}
+      tabIndex={-1}
     >
       <Contexto.Provider value={conBarras ? ranuras : null}>
         {conBarras ? (

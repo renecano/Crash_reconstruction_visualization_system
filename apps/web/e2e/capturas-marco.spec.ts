@@ -36,6 +36,12 @@ test("capturas del visor de la reconstrucción", async ({ page }) => {
   await expect(page.getByTestId("visor-unity")).toHaveAttribute("data-fase", "listo", {
     timeout: 240_000,
   });
+  // Cuando llegan las calles del mapa, la escena 3D cambia y Unity la vuelve a cargar: se espera a
+  // que se asiente antes de fotografiar.
+  await page.waitForTimeout(6000);
+  await expect(page.getByTestId("visor-unity")).toHaveAttribute("data-fase", "listo", {
+    timeout: 240_000,
+  });
   await page.getByTestId("reproducir-unity").click();
   await page.waitForTimeout(3500);
   await foto("3d");
