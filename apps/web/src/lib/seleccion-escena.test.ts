@@ -30,6 +30,7 @@ import {
   primerGolpe,
   puntosDePaso,
   quedoJuntoAlChoque,
+  resumenPersonas,
 } from "./escena-facil";
 import { impactosAColocar } from "./pasos-caso";
 import {
@@ -269,7 +270,11 @@ describe("peatones y ciclistas (A3)", () => {
     expect(posicionDe(e, clave)).toEqual({ punto: m(6, 2), rumbo: 90 });
     // Sin «dónde quedó», su clave no existe.
     expect(existe(e, `${clave}:final`)).toBe(false);
-    expect(capacidadesDe(e, `${clave}:final`)).toEqual({ mover: false, girar: null, quitar: false });
+    expect(capacidadesDe(e, `${clave}:final`)).toEqual({
+      mover: false,
+      girar: null,
+      quitar: false,
+    });
     const conFinal = marcarFinalPersona(e, id, m(20, 2));
     const claves = seleccionables(conFinal);
     // Después de los vehículos y antes de los objetos, cada persona seguida de dónde quedó.
@@ -323,6 +328,24 @@ describe("peatones y ciclistas (A3)", () => {
     expect(posicionDe(girarSeleccion(e, clave, 5)!, clave)!.rumbo).toBe(95);
     expect(accionDeTecla({ key: "Delete" }, true)).toEqual({ tipo: "quitar" });
     expect(existe(quitarSeleccion(e, clave)!, clave)).toBe(false);
+  });
+
+  it("el resumen dice dónde la golpearon y, si se marcó, la distancia de proyección", () => {
+    const { e, id } = conPeaton();
+    expect(resumenPersonas(e)).toEqual([
+      {
+        tipo: "persona",
+        persona: id,
+        texto: "Peatón, donde lo golpearon",
+        detalle: "Falta marcar dónde quedó: con eso Croquis mide la distancia de proyección.",
+        supuesto: null,
+      },
+    ]);
+    const conFinal = marcarFinalPersona(e, id, m(20, 2));
+    expect(resumenPersonas(conFinal)[0]!.detalle).toBe(
+      "Quedó a 14.0 m de ahí: es la distancia de proyección.",
+    );
+    expect(resumenPersonas(colocados())).toEqual([]);
   });
 
   it("si el impacto fue contra un peatón y no hay nadie, la escena lo pide", () => {
