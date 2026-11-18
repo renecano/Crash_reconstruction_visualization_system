@@ -1,7 +1,7 @@
 # ADR 0142 · Las condiciones del lugar y las personas en el expediente
 
 - **Fecha:** 2026-11-18
-- **Estado:** aceptada. Los cambios de cifras que provoca esperan el visto bueno de René (ronda 4, A1 y A3).
+- **Estado:** aceptada. René aprobó los cambios de cifras el 2026-11-18, después de comprobar que las que CESVI ya vio no cambian (`eval/results/ronda4_cifras_estables.json`).
 - **Pedido:** René, ronda 4:
   - **A1:** «Crucero de noche» y «Carambola de noche con lluvia» se veían de día y en seco. Lo correcto es que la lluvia use la fricción de mojado y que el 3D se vea de noche y mojado.
   - **A3:** colocar peatones y ciclistas en La escena, porque los atropellos son una modalidad clave.
@@ -37,5 +37,6 @@
 
 ## Consecuencias
 
-- **Las cifras cambian** en los casos con lluvia, con otra superficie o con atropello. Eso espera el visto bueno de René (`docs/PROGRESS.md`, «Bloqueado — necesita a René»).
+- **Las cifras cambian** en los casos con lluvia, con otra superficie o con atropello; René lo aprobó el 2026-11-18.
+- **Lo marcado contra lo reconstruido:** si el perito marcó dónde quedó la persona y la reconstrucción la proyecta fuera de ese punto (fuera de su rango), un límite lo dice con las dos cifras, y el 2D dibuja las dos.
 - **El 3D se ve de noche y mojado** sin un build nuevo: `caso-3d` ya lleva la noche y lo mojado desde la escena (`environmentFor`).
