@@ -3,7 +3,7 @@ import { Prueba } from "./Prueba";
 import { CUADROS, FPS } from "./ritmo";
 import { Trailer, type PropsDelTrailer } from "./Trailer";
 
-const SIN_NADA: PropsDelTrailer = { tomas: {}, musica: null };
+const SIN_NADA: PropsDelTrailer = { tomas: {}, musica: null, modelos: null };
 
 /** Los tres formatos que pidió René, con la misma composición. */
 export const FORMATOS = [

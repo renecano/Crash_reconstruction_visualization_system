@@ -950,6 +950,13 @@ René aprobó el storyboard versión 2 (28 s, «más épico», sin la mancha neg
 - La música: el silencio antes del golpe final es real y el golpe empieza en el segundo que marca `ritmo.json` (comprobado en el audio del archivo renderizado).
 - Los renders de previo y lo que tardó cada uno: `eval/results/trailer_render_trailer.json`, `trailer_render_trailervertical.json` y `trailer_render_trailer4k.json`.
 
+### Correcciones tras el primer previo (René, 2026-11-17)
+
+- El lápiz, modelado en 3D con su sombra y un trazo de grafito; los vehículos, con los modelos 3D de la app dibujados en tinta; el título de la evidencia, sobre una zona limpia; la música, sin silencio al final; y el logo, que se escribe con una cosa por letra. El detalle está en el ADR 0119.
+- Hay un previo nuevo, solo a 1920×1080: `trailer-salida/croquis-trailer-previo-1920x1080.mp4` (`eval/results/trailer_render_trailer.json`). Los de 4K y vertical que hay en la carpeta son del previo anterior.
+- Las tomas del 3D que pide el tráiler no cambiaron: las mismas seis secuencias de `tools/trailer/tomas-rtx.mjs`.
+- Para volver a renderizar hacen falta, una vez: `node tools/trailer/modelos-tinta.mjs` (la geometría de los vehículos) y `node tools/trailer/musica.mjs`.
+
 ### Lo que falta
 
 - **Las tomas reales del 3D.** Los archivos que hay en `trailer-salida/` son previos (`-previo` en el nombre): en los huecos del 3D llevan las fotos de prueba a 720p que se tomaron en la laptop el 2026-11-14, de otras escenas inventadas. Sirven para revisar el ritmo, no para entregar.

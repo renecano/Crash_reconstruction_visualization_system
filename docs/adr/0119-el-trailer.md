@@ -9,7 +9,7 @@
 
 - **Una sola rejilla de pulsos para la imagen y la música** (`apps/trailer/src/ritmo.json`): 120 pulsos por minuto y 30 cuadros por segundo.
   - Todo corte cae en un múltiplo de medio segundo.
-  - Los cortes más rápidos van en sextos de pulso, que son 5 cuadros exactos. Un cuarto de pulso serían 3.75 cuadros: no se usa para cortar.
+  - Los cortes más rápidos van cada sexto de segundo (un tercio de pulso), que son 5 cuadros exactos. Un cuarto de pulso serían 3.75 cuadros: no se usa para cortar.
 - **Todo lo que se ve sobre la hoja sale de una escena inventada de referencia y de su Resultado**, los dos versionados (`packages/scene-schema/fixtures/nocturno_lluvia.json` y `fixtures/resultados/`): un alcance de noche con lluvia.
   - `tools/trailer/datos-caso.mts` escribe `apps/trailer/src/datos/caso.json`: la calle, las trayectorias, el impacto, los restos, las posiciones finales y las citas del relato.
   - Las simulaciones son el Monte Carlo del solver (`monteCarlo`, con `alMuestra`), con la semilla del Resultado. El número que aparece en pantalla es el de las simulaciones que resultaron válidas.
@@ -28,6 +28,21 @@
 - **Nada de video ni audio en git** (René, 2026-11-17). Lo que produce el tráiler, sus tomas, su música y la referencia viven en `trailer-salida/`, que git ignora con una sola línea.
   - `tools/git/sin-medios.mjs` falla si hay un .mp4, .mov, .wav, .mp3 o .m4a fuera de `apps/web/public/portada/`. Lo corren el CI (todo lo rastreado) y el gancho de pre-commit (lo que va en el commit).
   - El gancho está en `.githooks/` y lo activa `pnpm install` (`tools/git/instalar-ganchos.mjs`).
+
+### Correcciones tras el primer previo (René, 2026-11-17)
+
+- **El lápiz se modela en código** (`lapiz3d.ts`, three.js): cuerpo hexagonal pintado, punta afilada con la madera y el grafito, casquillo de metal y goma, con su sombra suave.
+  - La frontera en ondas entre la pintura y la madera sale de cortar el prisma hexagonal con el cono del sacapuntas.
+  - Lleva un vaivén de mano, y el trazo es de grafito: cambia de grueso y de tono con la presión (`trazoDeGrafito`).
+- **Los vehículos son los modelos 3D de la app, dibujados en tinta** (`tinta3d.ts`): contorno de pluma, las aristas del modelo y sombreado a líneas.
+  - Son el sedán «Kiri '10» y la combi «Shvan 92 Traveller», de Daniel Zhabotinsky (CC-BY 4.0).
+  - `tools/trailer/modelos-tinta.mjs` saca su geometría (sin texturas) a `trailer-salida/modelos/`.
+  - El crédito va en pantalla, con el lema, y en `trailer-salida/DESCRIPCION.txt` para la descripción del video.
+  - El render usa Chrome con ANGLE (`chromiumOptions.gl`), como recomienda Remotion para three.js.
+- **«Cada choque deja evidencia» se lee sin competencia:** las rayas de la calle bajan a la mitad y el texto va sobre una zona limpia de la hoja, en un blanco más claro que las rayas.
+- **Sin silencio al final.** El medio segundo antes del golpe es una toma de aire: la música sube y los anillos del impacto se cierran sobre el punto donde va la mira del logo. Después, la música sigue mientras el logo se escribe: una nota por letra y un acorde final (re mayor) que se apaga solo.
+- **El logo se escribe letra por letra, y cada letra es antes una cosa** del oficio: una huella de frenado en curva (C), una señal en su poste (R), una llanta (O), una lupa (Q), una flecha de retorno (U), un lápiz (I) y una curva de carretera (S). Lo que queda es el logotipo exacto.
+- **De paso:** la hoja firmada lleva el símbolo, un croquis con las trayectorias del Resultado, la firma y el sello; las citas del relato se marcan como con marcador.
 
 ## Consecuencias
 
