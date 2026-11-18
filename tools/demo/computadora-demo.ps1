@@ -480,7 +480,8 @@ if (-not $SoloRender) {
       "--start-fullscreen", "--disable-gpu-vsync", "--disable-frame-rate-limit", $url
     )
     Escribir "   Chrome abre la medición a pantalla completa. No uses el equipo mientras mide."
-    $p = Start-Process -FilePath $Chrome -ArgumentList $argsChrome -PassThru
+    # Una ruta del perfil con espacios llegaría partida a Chrome: cada argumento con espacios, citado.
+    $p = Start-Process -FilePath $Chrome -ArgumentList @($argsChrome | ForEach-Object { if ("$_" -match '\s') { '"' + $_ + '"' } else { $_ } }) -PassThru
     $limite = (Get-Date).AddMinutes(150)
     $t0 = Get-Date
     $archivo = $null

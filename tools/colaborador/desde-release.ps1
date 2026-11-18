@@ -58,6 +58,11 @@ New-Item -ItemType Directory -Force $destino | Out-Null
 # Toma un plan del modo foto por grupos, una instancia del visor por grupo, y retoma: lo que ya tiene
 # su archivo no se vuelve a tomar. Devuelve las tomas que faltan (vacío si están todas) y deja el
 # informe en -Informe.
+# Start-Process une los argumentos con espacios y no los cita: una ruta con espacios («reto cesvi
+# v5») le llega partida al programa (t4b, René 2026-11-18: las tomas del tráiler se escribían en otra
+# carpeta y el vigilante no veía ninguna). Cada argumento con espacios va entre comillas.
+function Citar([string] $a) { if ($a -match '\s' -and $a -notmatch '^".*"$') { '"' + $a + '"' } else { $a } }
+
 function Tomar {
   param([string] $Plan, [string] $Salida, [string] $Extension, [int] $Grupo, [int] $TopeGrupoMin, [string] $Que, [string] $Informe)
   New-Item -ItemType Directory -Force $Salida | Out-Null
@@ -83,7 +88,7 @@ function Tomar {
         "-ancho", "$Ancho", "-alto", "$Alto", "-calidad", "ultra",
         "-logFile", (Join-Path $trabajo "tomas.log")
       )
-      $p = Start-Process -FilePath (Join-Path $trabajo "VisorCroquis.exe") -ArgumentList $argumentos -PassThru
+      $p = Start-Process -FilePath (Join-Path $trabajo "VisorCroquis.exe") -ArgumentList @($argumentos | ForEach-Object { Citar $_ }) -PassThru
       # El vigilante: cada 5 s cuenta los archivos del grupo; 2 min sin uno nuevo es un visor trabado.
       $ultimoAvance = $reloj.Elapsed.TotalSeconds
       $vistas = 0
