@@ -1,0 +1,1192 @@
+# Paso: arranque-3d
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/arranque-3d.ps1
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-17 23:09:51
+
+Instalando Chromium para Playwright (si falta)...
+Chromium de la medición con la tarjeta de alto rendimiento: C:\Users\MrKan\AppData\Local\ms-playwright\chromium-1248\chrome-win64\chrome.exe
+
+Running 1 test using 1 worker
+
+[1/1] [chromium] › e2e\medir-unity-arranque.spec.ts:157:5 › el arranque del 3D de Unity, por partes
+[chromium] › e2e\medir-unity-arranque.spec.ts:157:5 › el arranque del 3D de Unity, por partes
+
+[diagnóstico axa] fase del visor: null; equipo: {"nucleos":32,"memoria_gb":32,"gpu":"ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)"}
+  05:09:55 [consola warning] Service Worker registration blocked by Playwright
+  05:09:56 [consola warning] layers[highway-shield-non-us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+  05:09:56 [consola warning] layers[highway-shield-us-interstate].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+  05:09:57 [falló] https://tiles.openfreemap.org/planet/20261115_080022_pt/14/3228/6955.pbf net::ERR_ABORTED
+  05:09:57 [falló] https://tiles.openfreemap.org/planet/20261115_080022_pt/14/3228/6955.pbf net::ERR_ABORTED
+  05:09:57 [falló] https://tiles.openfreemap.org/planet net::ERR_ABORTED
+  05:10:02 [consola error] wasm streaming compile failed: CompileError: WebAssembly.instantiateStreaming(): Compiling function #10005 failed: not enough arguments on the stack for select (need 3, got 1) @+3077947
+  05:10:02 [consola warning] WebAssembly streaming compilation failed! This can happen for example if "Content-Encoding" HTTP header is incorrectly enabled on the server for file blob:https://croquis-sage.vercel.app/2a9aa271-3104-41d5-bcf1-1c5e471ffea1, but the file is not pre-compressed on disk (or vice versa
+  05:10:02 [consola error] falling back to ArrayBuffer instantiation
+  05:10:02 [consola error] failed to asynchronously prepare wasm: CompileError: WebAssembly.instantiate(): Compiling function #10005 failed: not enough arguments on the stack for select (need 3, got 1) @+3077947
+  05:10:02 [consola error] CompileError: WebAssembly.instantiate(): Compiling function #10005 failed: not enough arguments on the stack for select (need 3, got 1) @+3077947
+  05:10:02 [consola warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  05:10:04 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:04 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:04 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshBasicMaterial_121): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While 
+  05:10:04 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:04 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_223): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:04 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_98): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - 
+  05:10:04 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:04 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:04 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:04 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:04 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:04 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:04 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:05 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_101): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:05 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_BOTTOM_91): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validati
+  05:10:05 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_Transperent_89): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer out
+  05:10:06 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_87): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whil
+  05:10:06 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_187): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:06 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_213): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:06 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Interiors_1_95): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While val
+  05:10:08 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_187): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:08 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_187): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:08 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_Transperent_89): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer out
+  05:10:08 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_199): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:08 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_RB1c_Tire_1k_97): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While valida
+  05:10:08 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:08 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Interiors_1_95): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While val
+  05:10:08 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_197): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:08 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_198): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:08 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_98): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - 
+  05:10:08 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:08 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:08 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:09 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:09 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_101): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:09 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_110): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:09 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_110): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:10 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_110): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:10 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_107): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:10 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_116): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:10 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_215): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:10 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_126): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:10 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_127): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:10 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_127): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:10 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshBasicMaterial_122): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While 
+  05:10:11 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_LineBasicMaterial_204): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While 
+  05:10:11 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalMaterial_220): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:11 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_221): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:11 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_118): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:12 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_214): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:12 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_106): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:12 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshBasicMaterial_202): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While 
+  05:10:12 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_216): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:12 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_217): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:12 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_120): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:12 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_114): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:13 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_117): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:13 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_125): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:13 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_113): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_LineBasicMaterial_200): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While 
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_128): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_129): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_110): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_117): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_110): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_117): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_113): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_218): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_219): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_209): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_headlight_l_207): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While valida
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_headlight_r_208): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While valida
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_210): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_164): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_211): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Interiors_1_95): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While val
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Interiors_1_95): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While val
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_152): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_Transperent_89): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer out
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_87): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whil
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_BOTTOM_91): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validati
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_Transperent_89): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer out
+  05:10:14 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_212): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:15 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:15 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:15 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:17 [consola error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_Background.material_71): [Invalid ShaderModule "fragment_Background.material"] is invalid due to a previous error.
+ - While validating fragment stage ([Invalid ShaderModule "fragment_Background.material"], entryPoi
+  05:10:17 [consola error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_MeshStandardMaterial_224): [Invalid ShaderModule "fragment"] is invalid due to a previous error.
+ - While validating fragment stage ([Invalid ShaderModule "fragment"], entryPoint: "main").
+ - While validating fragm
+  05:10:17 [consola error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_Background.material_71): [Invalid ShaderModule "fragment_Background.material"] is invalid due to a previous error.
+ - While validating fragment stage ([Invalid ShaderModule "fragment_Background.material"], entryPoi
+  05:10:17 [consola error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_MeshStandardMaterial_224): [Invalid ShaderModule "fragment"] is invalid due to a previous error.
+ - While validating fragment stage ([Invalid ShaderModule "fragment"], entryPoint: "main").
+ - While validating fragm
+  05:10:17 [consola error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_MeshStandardMaterial_224): [Invalid ShaderModule "fragment"] is invalid due to a previous error.
+ - While validating fragment stage ([Invalid ShaderModule "fragment"], entryPoint: "main").
+ - While validating fragm
+  05:10:17 [consola warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment_Background.material""]).
+
+  05:10:17 [consola warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment""]).
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment_Background.material""]).
+
+  05:10:17 [consola warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment""]).
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment""]).
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:17 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:17 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:18 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:18 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:18 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:18 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:18 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:18 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:18 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:18 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:18 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:18 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:18 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:18 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:19 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:19 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:19 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:19 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:19 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:19 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:19 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:19 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:19 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:19 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:19 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:19 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:19 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:19 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:19 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:19 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:20 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:20 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:20 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:20 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:20 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:20 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:20 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:20 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:20 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:20 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:20 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_21
+  05:10:20 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+  05:10:20 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_71"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_71"]).
+ - While finishing [CommandEncoder "renderContext_26
+  05:10:20 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+  05:10:25 [consola warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+  05:10:26 [consola error] THREE.WebGPURenderer [renderPipeline_Background.material_71 / fragment error] at line 9:8: structures must have at least one member
+  struct OutputType {
+         ^
+  05:10:26 [consola error] THREE.WebGPURenderer [renderPipeline_MeshStandardMaterial_224 / fragment error] at line 9:8: structures must have at least one member
+  struct OutputType {
+         ^
+  05:10:26 [consola error] THREE.WebGPURenderer [renderPipeline_Background.material_71 / fragment error] at line 9:8: structures must have at least one member
+  struct OutputType {
+         ^
+  05:10:26 [consola error] THREE.WebGPURenderer [renderPipeline_MeshStandardMaterial_224 / fragment error] at line 9:8: structures must have at least one member
+  struct OutputType {
+         ^
+  05:10:26 [consola error] THREE.WebGPURenderer [renderPipeline_MeshStandardMaterial_224 / fragment error] at line 9:8: structures must have at least one member
+  struct OutputType {
+         ^
+  05:10:27 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:27 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:27 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshBasicMaterial_522): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While 
+  05:10:27 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:27 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_624): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:27 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_499): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:27 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:27 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:27 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:27 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:27 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:27 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:27 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:27 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_502): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:27 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_BOTTOM_492): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validat
+  05:10:27 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_BOTTOM_492): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validat
+  05:10:28 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_Transperent_494): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer ou
+  05:10:28 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_488): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:28 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_Transperent_494): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer ou
+  05:10:28 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_488): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:29 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_588): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:29 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_611): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:29 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_614): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:29 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_553): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:30 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Interiors_1_496): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While va
+  05:10:30 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Interiors_1_496): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While va
+  05:10:30 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_588): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:30 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_610): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:30 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_588): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:30 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_612): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:30 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_Transperent_494): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer ou
+  05:10:30 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_Transperent_494): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer ou
+  05:10:31 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_600): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:31 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_RB1c_Tire_1k_498): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While valid
+  05:10:31 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Interiors_1_496): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While va
+  05:10:31 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Interiors_1_496): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While va
+  05:10:31 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_headlight_l_608): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While valida
+  05:10:31 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_598): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:31 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_headlight_r_609): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While valida
+  05:10:31 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:31 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_599): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:31 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_613): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:31 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_499): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:31 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_502): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:32 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:32 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:32 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:32 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:32 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_511): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:32 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_511): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:32 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_508): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:33 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_517): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:33 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_618): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:33 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_527): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:33 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_528): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:34 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_528): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:34 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshBasicMaterial_523): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While 
+  05:10:34 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_LineBasicMaterial_605): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While 
+  05:10:34 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalMaterial_615): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:34 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_616): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:34 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_519): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:34 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_617): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:34 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_507): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:35 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshBasicMaterial_603): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While 
+  05:10:35 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_619): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:35 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_620): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:35 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_521): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:35 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_515): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:35 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_526): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:36 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_LineBasicMaterial_601): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While 
+  05:10:36 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_529): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:36 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_530): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:36 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_511): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:36 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_518): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:36 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_511): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:36 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_518): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:36 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_514): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:36 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_511): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:36 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_518): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:36 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_514): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:36 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_621): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:36 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_622): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ -
+  05:10:36 [consola error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_565): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - Whi
+  05:10:37 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:37 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:37 [consola warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+  05:10:39 [consola error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_Background.material_473): [Invalid ShaderModule "fragment_Background.material"] is invalid due to a previous error.
+ - While validating fragment stage ([Invalid ShaderModule "fragment_Background.material"], entryPo
+  05:10:39 [consola error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_MeshStandardMaterial_625): [Invalid ShaderModule "fragment"] is invalid due to a previous error.
+ - While validating fragment stage ([Invalid ShaderModule "fragment"], entryPoint: "main").
+ - While validating fragm
+  05:10:39 [consola error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_Background.material_473): [Invalid ShaderModule "fragment_Background.material"] is invalid due to a previous error.
+ - While validating fragment stage ([Invalid ShaderModule "fragment_Background.material"], entryPo
+  05:10:39 [consola error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_MeshStandardMaterial_625): [Invalid ShaderModule "fragment"] is invalid due to a previous error.
+ - While validating fragment stage ([Invalid ShaderModule "fragment"], entryPoint: "main").
+ - While validating fragm
+  05:10:39 [consola error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_MeshStandardMaterial_625): [Invalid ShaderModule "fragment"] is invalid due to a previous error.
+ - While validating fragment stage ([Invalid ShaderModule "fragment"], entryPoint: "main").
+ - While validating fragm
+  05:10:39 [consola warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment_Background.material""]).
+
+  05:10:39 [consola warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment""]).
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+  05:10:39 [consola warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment_Background.material""]).
+
+  05:10:39 [consola warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment""]).
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+  05:10:39 [consola warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment""]).
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+  05:10:39 [consola warning] [Invalid RenderPipeline "renderPipeline_Background.material_473"] is invalid due to a previous error.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_473"]).
+ - While finishing [CommandEncoder "renderContext_
+  05:10:39 [consola warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid due to a previous error.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+
+  1) [chromium] › e2e\medir-unity-arranque.spec.ts:157:5 › el arranque del 3D de Unity, por partes ─
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator: getByTestId('visor-unity')
+    Expected: "listo"
+    Timeout: 300000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveAttribute" getByTestId('visor-unity') with timeout 300000ms
+      - waiting for getByTestId('visor-unity')
+        4 × locator resolved to <div data-fase="arrancando" data-testid="visor-unity" class="relative h-full w-full">…</div>
+          - unexpected value "arrancando"
+
+
+      88 |   const reloj = Date.now();
+      89 |   await page.getByTestId("vista-3d").click();
+    > 90 |   await expect(page.getByTestId("visor-unity")).toHaveAttribute("data-fase", "listo", {
+         |                                                 ^
+      91 |     timeout: 300_000,
+      92 |   });
+      93 |   // El primer cuadro con el caso: el siguiente cuadro después de «caso cargado».
+        at abrir3d (C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\medir-unity-arranque.spec.ts:90:49)
+        at C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\medir-unity-arranque.spec.ts:193:23
+
+    Error Context: test-results\medir-unity-arranque-el-arranque-del-3D-de-Unity-por-partes-chromium\error-context.md
+
+
+  Slow test file: [chromium] › e2e\medir-unity-arranque.spec.ts (5.2m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 failed
+    [chromium] › e2e\medir-unity-arranque.spec.ts:157:5 › el arranque del 3D de Unity, por partes ──
+Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
+
+  × "pnpm recursive exec" failed in C:\Users\MrKan\Documents\reto cesvi
+  │ v5\Croquis\apps\web
+
+la medición del arranque terminó con el código 1
+En C:\Users\MrKan\Documents\reto cesvi v5\Croquis\tools\colaborador\arranque-3d.ps1: 45 Carácter: 24
++ ... EXITCODE) { throw "la medición del arranque terminó con el código $LA ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (la medición del...con el código 1:String) [], RuntimeException
+    + FullyQualifiedErrorId : la medición del arranque terminó con el código 1
+ 
+
+# Fin: 2026-11-17 23:15:07 · falló (código 1) · 5.3 min
