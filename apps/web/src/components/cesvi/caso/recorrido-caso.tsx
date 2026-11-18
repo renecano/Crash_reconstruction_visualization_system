@@ -1804,6 +1804,7 @@ export function RecorridoCaso({
                     versionVista && version3d
                       ? {
                           clave: versionVista.clave,
+                          etiqueta: versionVista.etiqueta,
                           escena: versionVista.tipo === "declaracion" ? versionVista.escena : null,
                           resultado: versionVista.resultado,
                         }

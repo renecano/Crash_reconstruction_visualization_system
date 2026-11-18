@@ -12,6 +12,21 @@ const remotos: Record<string, string> = existsSync(".recursos-remotos.json")
   : {};
 
 /**
+ * La llave de la foto satelital de Esri (ronda 4, punto 9; ADR 0124). En Vercel viene del entorno;
+ * en local, del `.env.local` de la raíz del repositorio (Next solo lee el de `apps/web`). Se lee solo
+ * esta variable y nunca se imprime. Es pública a propósito: Esri la limita a los referrers del sitio.
+ */
+function llaveEsri(): string {
+  if (process.env.NEXT_PUBLIC_ESRI_API_KEY) return process.env.NEXT_PUBLIC_ESRI_API_KEY;
+  const raiz = "../../.env.local";
+  if (!existsSync(raiz)) return "";
+  const m = /^\s*NEXT_PUBLIC_ESRI_API_KEY\s*=\s*"?([^"\s]+)"?\s*$/m.exec(
+    readFileSync(raiz, "utf-8"),
+  );
+  return m?.[1] ?? "";
+}
+
+/**
  * Lo que la app carga hoy: lo propio; el visor de Unity y los modelos, de Vercel Blob (con WebAssembly
  * y workers desde blob:); los mosaicos y las consultas del mapa, por https; y las imágenes y fuentes
  * que arma en memoria (data: y blob:).
@@ -35,6 +50,7 @@ const nextConfig: NextConfig = {
   env: {
     CROQUIS_RECURSOS_VEHICULOS: remotos["modelos/vehiculos"] ?? "",
     CROQUIS_RECURSOS_HDRI: remotos.hdri ?? "",
+    NEXT_PUBLIC_ESRI_API_KEY: llaveEsri(),
   },
   // Las reglas para agentes viven en CLAUDE.md; no generar AGENTS.md.
   agentRules: false,

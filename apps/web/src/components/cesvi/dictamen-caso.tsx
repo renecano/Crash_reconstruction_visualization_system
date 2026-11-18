@@ -237,6 +237,7 @@ export function DictamenCaso({
       croquisSobreMapa: c.sobreMapa,
       cuadros3d: await fotos(),
       logo: await logoDictamen(),
+      creditoPiso: unity?.atribucionPiso?.() ?? null,
       modelos3d: unity
         ? await creditosDelVisorUnity(unity.paquete.escena).catch(() => [])
         : exportApi

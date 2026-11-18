@@ -243,6 +243,20 @@ describe("el dictamen de una reconstrucción (R8)", () => {
     expect(texto(datos())).not.toContain("Vehículos 3D");
   });
 
+  it("con el modo «mapa real» (ronda 4), el crédito del piso va con los cuadros del 3D", () => {
+    const credito =
+      "© OpenStreetMap · OpenFreeMap · OpenMapTiles · Powered by Esri · Source: Esri, Maxar";
+    const t = texto(
+      datos({
+        cuadros3d: [{ etiqueta: "Instante del impacto", imagen: "data:image/png;base64,AAAA" }],
+        creditoPiso: credito,
+      }),
+    );
+    expect(t).toContain(`El piso de los cuadros es el lugar real, ilustrativo`);
+    expect(t).toContain(credito);
+    expect(texto(datos({ creditoPiso: credito }))).not.toContain("El piso de los cuadros");
+  });
+
   it("validado: la conclusión y el nombre del perito, sin borrador", () => {
     const t = texto(
       datos({

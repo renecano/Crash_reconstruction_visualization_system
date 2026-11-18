@@ -40,7 +40,6 @@ import { ANCHO_LOGO, PROPORCION_LOGO } from "./marca-dictamen";
 import { pdfBytes } from "./pdf";
 import type { VersionesDictamen } from "./versiones-caso";
 
-
 export interface DatosDictamenCaso {
   expediente: Expediente;
   /** La narración técnica del perito, tal como la escribió (null en un reporte importado). */
@@ -57,6 +56,11 @@ export interface DatosDictamenCaso {
   logo?: string | null;
   /** La atribución de los vehículos de Sketchfab que se ven en esos cuadros (R10, CC-BY). */
   modelos3d?: { modelo: string; autor: string; licencia: string; url: string }[];
+  /**
+   * Ronda 4, punto 9: el crédito del piso del modo «mapa real» que se ve en los cuadros del 3D (el
+   * mapa de OpenStreetMap y, si estaba encendida, la foto satelital de Esri). Null sin ese modo.
+   */
+  creditoPiso?: string | null;
   /**
    * Las versiones del caso (ronda 4, punto 8): lo que declaró cada conductor (R7) y las hipótesis
    * «¿y si…?» que probó el perito, marcadas como tales. Vacías si no usó el acto «Versiones».
@@ -349,6 +353,13 @@ function secciones(d: DatosDictamenCaso) {
             { image: c.imagen, width: 420, margin: [0, 2, 0, 2] },
             nota(`${c.etiqueta}. ${LEYENDA_3D}`),
           ]),
+          ...(d.creditoPiso
+            ? [
+                nota(
+                  `El piso de los cuadros es el lugar real, ilustrativo (la foto satelital puede estar corrida unos metros): ${d.creditoPiso}.`,
+                ),
+              ]
+            : []),
           ...(d.modelos3d?.length
             ? [
                 nota(
