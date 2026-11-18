@@ -138,7 +138,12 @@ test("@flujo /cesvi: un atropello — el peatón en La escena, su proyección y 
       ["impacto", "0.15"],
       ["reposo", "99"],
     ] as const) {
-      await tiempo.fill(t);
+      // Un control de rango no se llena con `fill`: se pone su valor y se avisa, como al arrastrarlo.
+      await tiempo.evaluate((el, v) => {
+        const poner = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!;
+        poner.call(el, v);
+        el.dispatchEvent(new Event("input", { bubbles: true }));
+      }, t);
       await page.waitForTimeout(2500);
       await page.screenshot({
         path: join(CAPTURAS, `atropello-3-unity-${nombre}.jpg`),
