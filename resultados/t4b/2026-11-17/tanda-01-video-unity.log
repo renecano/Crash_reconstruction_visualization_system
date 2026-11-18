@@ -1,0 +1,58 @@
+# Paso: video-unity
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/desde-release.ps1 -Paso video
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-17 19:28:08
+
+Bajando fotos-promo-t4b.zip del release rtx-t4...
+Descomprimiendo fotos-promo-t4b.zip...
+Modelos del visor de escritorio, desde la máquina: cambiada.
+axa: 1860 cuadros (31.0 s de video)
+alcance-inventado: 1860 cuadros (31.0 s de video)
+lateral-interseccion: 1860 cuadros (31.0 s de video)
+Tomando el video de axa: 1860 de 1860 por hacer, de 50 en 50 (no uses la computadora mientras tanto)...
+  50 de 1860 listas (16 s este grupo; fps del visor al final: 178.5)
+  100 de 1860 listas (10 s este grupo; fps del visor al final: 169.1)
+  150 de 1860 listas (10 s este grupo; fps del visor al final: 168.8)
+  200 de 1860 listas (10 s este grupo; fps del visor al final: 170.8)
+  250 de 1860 listas (10 s este grupo; fps del visor al final: 154.4)
+  300 de 1860 listas (10 s este grupo; fps del visor al final: 165.2)
+  350 de 1860 listas (10 s este grupo; fps del visor al final: 166.6)
+  400 de 1860 listas (10 s este grupo; fps del visor al final: 169.8)
+  450 de 1860 listas (10 s este grupo; fps del visor al final: 177.3)
+  500 de 1860 listas (10 s este grupo; fps del visor al final: 168.8)
+  550 de 1860 listas (10 s este grupo; fps del visor al final: 165.9)
+  600 de 1860 listas (10 s este grupo; fps del visor al final: 160.0)
+  650 de 1860 listas (10 s este grupo; fps del visor al final: 169.1)
+  700 de 1860 listas (10 s este grupo; fps del visor al final: 159.6)
+  750 de 1860 listas (10 s este grupo; fps del visor al final: 165.7)
+  800 de 1860 listas (10 s este grupo; fps del visor al final: 163.8)
+  850 de 1860 listas (10 s este grupo; fps del visor al final: 176.5)
+  900 de 1860 listas (10 s este grupo; fps del visor al final: 171.9)
+  950 de 1860 listas (10 s este grupo; fps del visor al final: 180.8)
+  1000 de 1860 listas (10 s este grupo; fps del visor al final: 161.8)
+  1050 de 1860 listas (10 s este grupo; fps del visor al final: 163.7)
+  1100 de 1860 listas (10 s este grupo; fps del visor al final: 166.3)
+  1150 de 1860 listas (10 s este grupo; fps del visor al final: 161.9)
+  1200 de 1860 listas (10 s este grupo; fps del visor al final: 161.3)
+  1250 de 1860 listas (10 s este grupo; fps del visor al final: 152.5)
+  1300 de 1860 listas (10 s este grupo; fps del visor al final: 167.7)
+  1350 de 1860 listas (10 s este grupo; fps del visor al final: 168.6)
+  1400 de 1860 listas (10 s este grupo; fps del visor al final: 172.5)
+  1450 de 1860 listas (10 s este grupo; fps del visor al final: 163.2)
+  1500 de 1860 listas (10 s este grupo; fps del visor al final: 167.5)
+  1550 de 1860 listas (10 s este grupo; fps del visor al final: 158.9)
+  1600 de 1860 listas (11 s este grupo; fps del visor al final: 158.8)
+  1650 de 1860 listas (10 s este grupo; fps del visor al final: 171.9)
+  1700 de 1860 listas (10 s este grupo; fps del visor al final: 158.1)
+  1750 de 1860 listas (10 s este grupo; fps del visor al final: 175.4)
+  1800 de 1860 listas (10 s este grupo; fps del visor al final: 168.8)
+  1850 de 1860 listas (11 s este grupo; fps del visor al final: 175.8)
+  1860 de 1860 listas (5 s este grupo; fps del visor al final: )
+Tomando el video de alcance-inventado: 1860 de 1860 por hacer, de 50 en 50 (no uses la computadora mientras tanto)...
+  50 de 1860 listas (11 s este grupo; fps del visor al final: 219.7)
+  100 de 1860 listas (12 s este grupo; fps del visor al final: 225.0, 10.0)
+  150 de 1860 listas (12 s este grupo; fps del visor al final: 223.2)
+  200 de 1860 listas (12 s este grupo; fps del visor al final: 227.0, 53.6)
+  250 de 1860 listas (13 s este grupo; fps del visor al final: 228.3, 9.7)
+  300 de 1860 listas (12 s este grupo; fps del visor al final: 222.6)
+  350 de 1860 listas (11 s este grupo; fps del visor al final: 219.8)

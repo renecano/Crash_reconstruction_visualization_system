@@ -5,7 +5,7 @@
     "commit":  "e1424175e4d1949885cf8ee6795dfecfcec3ed3a",
     "rama_del_repositorio":  "main",
     "archivos_con_cambios":  0,
-    "duracion_min":  0.4,
+    "duracion_min":  0.1,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "NVIDIA GeForce RTX 4070 Laptop GPU",
@@ -14,7 +14,7 @@
                    "memoria_gb":  31.7,
                    "procesador":  "Intel(R) Core(TM) i9-14900HX",
                    "nucleos_logicos":  32,
-                   "disco_libre_gb":  270.3,
+                   "disco_libre_gb":  265,
                    "windows":  "Microsoft Windows 11 Home",
                    "git":  "git version 2.55.0.windows.5",
                    "node":  "v26.13.1",
@@ -36,7 +36,7 @@
                       "grupo":  "comprobacion",
                       "paso":  "dependencias",
                       "estado":  "ok",
-                      "minutos":  0.3,
+                      "minutos":  0,
                       "codigo":  0
                   },
                   {
