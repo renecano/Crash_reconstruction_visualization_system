@@ -152,7 +152,8 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   // El 3D de la reconstrucción (R3): el visor dibuja la escena con las velocidades estimadas.
   await page.getByTestId("vista-3d").click();
   const visor = page.getByTestId("visor-caso");
-  await expect(visor).toContainText("supuesto, con su rango");
+  // Las notas, en «Supuestos y notas del cálculo» debajo del marco (René, 2026-11-17).
+  await expect(page.getByTestId("supuestos-y-notas")).toContainText("supuesto, con su rango");
   await expect(visor.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
   // El croquis 2D sigue al reloj del 3D: al volver al mapa (el mapa se desmonta mientras el 3D
   // está a la vista, ADR 0104), los vehículos de la reconstrucción están donde quedó el reloj.

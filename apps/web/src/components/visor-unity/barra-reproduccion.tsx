@@ -16,6 +16,7 @@ import {
   type EstadoReproduccion,
   type Intervalo,
 } from "@/lib/visor-unity/reproduccion";
+import { EnRanura, useMarco } from "./marco-vista";
 
 export function BarraReproduccion({
   estado,
@@ -34,9 +35,15 @@ export function BarraReproduccion({
 }) {
   const { inicio, fin } = intervalo;
   const fraccion = (x: number) => (fin > inicio ? ((x - inicio) / (fin - inicio)) * 100 : 0);
-  return (
+  // Con el marco del caso (René, 2026-11-17) va abajo, fuera de la escena; sin él, encima.
+  const { enMarco } = useMarco();
+  const barra = (
     <div
-      className={`escena-avance absolute right-4 left-4 z-10 flex flex-wrap items-center gap-3 p-3 ${de === "unity" ? "bottom-14" : "bottom-4"}`}
+      className={
+        enMarco
+          ? "flex flex-wrap items-center gap-3"
+          : `escena-avance absolute right-4 left-4 z-10 flex flex-wrap items-center gap-3 p-3 ${de === "unity" ? "bottom-14" : "bottom-4"}`
+      }
       data-testid={de === "unity" ? "controles-unity" : "linea-de-tiempo"}
       data-t={F.fijo(estado.t, 2)}
       data-pausado={estado.pausado ? "si" : "no"}
@@ -47,6 +54,8 @@ export function BarraReproduccion({
         aria-label={corre ? "Pausar" : "Reproducir"}
         onClick={() => onAccion({ tipo: "alternar" })}
         data-testid={`reproducir-${de}`}
+        // Espacio, a pantalla completa, toca este botón (el marco lo busca por aquí).
+        data-reproducir
       >
         {corre ? "❚❚" : "▶"}
       </button>
@@ -118,4 +127,5 @@ export function BarraReproduccion({
       </div>
     </div>
   );
+  return enMarco ? <EnRanura ranura="abajo">{barra}</EnRanura> : barra;
 }

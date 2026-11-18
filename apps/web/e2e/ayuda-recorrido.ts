@@ -164,3 +164,17 @@ export async function sinIdentificadoresDeFuente(page: Page) {
   const texto = await page.locator("body").innerText();
   for (const f of IDS_FUENTE.filter((f) => f.includes("_"))) expect(texto).not.toContain(f);
 }
+
+/**
+ * Después de cambiar la escena con una reconstrucción hecha, la escena ya no se recalcula sola
+ * (René, 2026-11-17): avisa que cambió y ofrece «Reconstruir de nuevo». Si el aviso aparece, se toca;
+ * luego se espera a que la reconstrucción esté al día. Las respuestas a una pregunta sí recalculan
+ * solas: ahí no hay aviso.
+ */
+export async function reconstruirSiCambio(page: Page) {
+  const boton = page.getByTestId("reconstruir-de-nuevo");
+  if (await boton.isVisible().catch(() => false)) await boton.click();
+  await expect(page.getByTestId("recalculo")).toHaveAttribute("data-estado", "al_dia", {
+    timeout: 90_000,
+  });
+}

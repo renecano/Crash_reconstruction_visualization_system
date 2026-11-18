@@ -3,6 +3,7 @@
  * La maqueta de un caso reconstruido: la escena con las velocidades reconstruidas (la misma que el
  * 3D), calculada en el worker para no bloquear la página, y con las calles del mapa si ya llegaron.
  */
+import { EnRanura, useMarco } from "@/components/visor-unity/marco-vista";
 import {
   formato as F,
   especReconstruida,
@@ -74,6 +75,7 @@ export function MaquetaCaso({
     return s as unknown as EscenaSpec;
   }, [r, calles]);
   const [listo, setListo] = useState<{ spec: EscenaSpec; res: ResultadoMaqueta } | null>(null);
+  const { enMarco } = useMarco();
   useEffect(() => {
     let vivo = true;
     // Con el relieve con que se reconstruyó (W5): la maqueta va sobre el mismo terreno.
@@ -135,32 +137,39 @@ export function MaquetaCaso({
           />
         )}
       </ConLineaDeTiempo>
-      {/* Cada cifra con su método (prompt §0): la de la maqueta no es el p50 de la tabla. */}
-      <div
-        className="vidrio absolute bottom-[6.25rem] left-4 flex max-w-[27rem] flex-col gap-0.5 rounded-control px-3 py-2 text-[0.75rem] leading-snug text-texto-2"
-        data-testid="maqueta-leyenda"
-      >
-        {veloz ? (
-          <span className="font-mono text-texto" data-testid="maqueta-velocidad">
-            velocidad de {nombres[veloz.id] ?? veloz.rol} ·{" "}
-            {F.kmh(kmhEn(veloz.trayectoria, 0), "reconstruccion")} →{" "}
-            {F.kmhConUnidad(kmhAntesDe(veloz.trayectoria, ti), "reconstruccion")}
+      {/* Cada cifra con su método (prompt §0): la de la maqueta no es el p50 de la tabla. En el marco
+          del caso va abajo, fuera del dibujo (René, 2026-11-17). */}
+      <LeyendaEnMarco>
+        <div
+          className={
+            enMarco
+              ? "flex flex-col gap-0.5 text-[0.75rem] leading-snug text-texto-2"
+              : "vidrio absolute bottom-[6.25rem] left-4 flex max-w-[27rem] flex-col gap-0.5 rounded-control px-3 py-2 text-[0.75rem] leading-snug text-texto-2"
+          }
+          data-testid="maqueta-leyenda"
+        >
+          {veloz ? (
+            <span className="font-mono text-texto" data-testid="maqueta-velocidad">
+              velocidad de {nombres[veloz.id] ?? veloz.rol} ·{" "}
+              {F.kmh(kmhEn(veloz.trayectoria, 0), "reconstruccion")} →{" "}
+              {F.kmhConUnidad(kmhAntesDe(veloz.trayectoria, ti), "reconstruccion")}
+            </span>
+          ) : null}
+          <span>
+            {METODO.reconstruccion}: la simulación con las velocidades ajustadas; puede diferir de
+            la mediana de las simulaciones con incertidumbre.
           </span>
-        ) : null}
-        <span>
-          {METODO.reconstruccion}: la simulación con las velocidades ajustadas; puede diferir de la
-          mediana de las simulaciones con incertidumbre.
-        </span>
-        <span className="text-texto-3">
-          Más naranja, más rápido · siluetas cada 0.4 s · reposo punteado.
-        </span>
-        {declarada ? (
-          <span className="text-texto-3" data-testid="maqueta-leyenda-declarada">
-            En azul punteado, la {declarada.etiqueta}: por dónde va cada vehículo según esa versión,
-            simulada con el mismo método.
+          <span className="text-texto-3">
+            Más naranja, más rápido · siluetas cada 0.4 s · reposo punteado.
           </span>
-        ) : null}
-      </div>
+          {declarada ? (
+            <span className="text-texto-3" data-testid="maqueta-leyenda-declarada">
+              En azul punteado, la {declarada.etiqueta}: por dónde va cada vehículo según esa
+              versión, simulada con el mismo método.
+            </span>
+          ) : null}
+        </div>
+      </LeyendaEnMarco>
       {conCalles ? null : (
         // Sin las calles del mapa no se dibuja una vía inventada: solo lo que calculó el solver.
         <p
@@ -297,4 +306,10 @@ function ConLineaDeTiempo({
       />
     </>
   );
+}
+
+/** La nota de la maqueta: debajo de la barra de reproducción si hay marco; si no, sobre el dibujo. */
+function LeyendaEnMarco({ children }: { children: React.ReactNode }) {
+  const { enMarco } = useMarco();
+  return enMarco ? <EnRanura ranura="pie">{children}</EnRanura> : <>{children}</>;
 }

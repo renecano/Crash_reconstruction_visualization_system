@@ -238,6 +238,20 @@ export class PuenteUnity {
     this.instancia.SendMessage(OBJETO_PUENTE_UNITY, mensaje, JSON.stringify(datos));
   }
 
+  /**
+   * Muestra u oculta el minimapa de Unity (René, 2026-11-17). Unity lo apaga con `depurar`
+   * (`minimapa`, `VisorPuente.cs`), que no es parte del contrato pero ya viene en el build publicado:
+   * así no hace falta un build nuevo para esto.
+   */
+  minimapa(visible: boolean): void {
+    this.registro?.enviados.push({ metodo: "depurar", datos: { minimapa: visible } });
+    this.instancia.SendMessage(
+      OBJETO_PUENTE_UNITY,
+      "depurar",
+      JSON.stringify({ minimapa: visible }),
+    );
+  }
+
   private registro: {
     enviados: { metodo: string; datos: unknown }[];
     recibidos: MensajeDeUnity[];

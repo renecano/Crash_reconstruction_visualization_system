@@ -10,7 +10,16 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 - **Unity y Blender corren en segundo plano** desde el 2026-11-10: René reabrió la sesión con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`. Sigue la regla de un solo proceso pesado a la vez.
 - **Cómo se itera:** capturas del Editor en modo batch (`Capturas.Tomar`, unos 3 min). En esta sesión no hubo herramientas del MCP de Unity. Un build WebGL solo al cerrar cada punto.
 
-## Tanda t4b de la RTX, fotos promo rehechas y el video de Unity (René, 2026-11-17)
+## El marco del 3D y el 2D, y los cinco ejemplos con el Unity real (René, 2026-11-17; ADR 0121)
+
+- **El marco:** en Reconstrucción, las cámaras, «Editar en 3D», «Descargar paquete 3D», el minimapa y la pantalla completa van en una barra arriba, y la reproducción abajo, fuera de la escena. Las notas van en «Supuestos y notas del cálculo», cerrado.
+  - **Pantalla completa** (botón o F; Esc sale): los controles se esconden a los 3 s sin mover el mouse, y Espacio reproduce o pausa.
+  - **El 2D** igual: la reproducción y la nota de la velocidad abajo; acercar y alejar, arriba.
+  - **Capturas antes y después** con el Unity real: `docs/cesvi/ronda-3/evidencia/marco/` (`e2e/capturas-marco.spec.ts`).
+  - **Pruebas:** `marco-vista.test.tsx` (5) y la e2e `visor-marco.spec.ts` (@flujo, con el Unity de prueba): barras fuera del lienzo, notas cerradas, `depurar` con `minimapa: false`, pantalla completa, Espacio, autoocultado, F, Esc y el 2D.
+- **Los cinco ejemplos con el Unity real**, en la demo local: los cinco abren el 3D, con las mismas cifras del 16 de noviembre (16, 62, 34, 21 y 36 km/h), sin llamadas a Claude ni errores de página (`eval/results/ronda2_ejemplos_unity_demo_local.json`, capturas en `docs/cesvi/ronda-3/evidencia/ejemplos-unity/`).
+  - «Crucero de noche» y «Carambola de noche con lluvia» salen de día y en seco en el 3D: la escena se arma con el clima y la luz por omisión, y la hora de la lectura («21:45 horas», «22:30 horas») no llega a la luz.
+  - En «poste-terraceria» el vehículo A se llama «A · 3»: solo el modelo, sin la marca.
 
 **La corrida corta de la RTX (t4b, `tools/colaborador/tandas.json`):** visor local, arranque del 3D, demo local, seis fotos rehechas, tomas del tráiler, video de Unity y fps web. Estimado: 163 minutos de pasos, más la comprobación.
 

@@ -9,7 +9,19 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 - **Fase actual:** ninguna en curso. W9 necesita la autorización de René para gastar API.
 - **Siguiente paso:** W8 cerrada el 2026-11-15: T3.2 (#215), T3.3 (contrato #219 y #220, ADR 0136) y T3.5 (E-R4 v4, igual a la v3 más el eje de la reversa). Nada de eso movió AXA ni un caso que ya vio CESVI después de T3.2. Queda una decisión de René sobre la versión declarada (sección T3.3, «Para decidir»). W9 (T6.5 y T6.6) espera su autorización de gasto de API.
 
-## Fases tomadas
+## Corregir la escena después (René, 2026-11-17; ADR 0121)
+
+- **Qué se puede hacer:** en el mapa de La escena se toca un coche, un objeto, una zona del terreno o una marca, y queda seleccionado, resaltado y con su nombre. Después se puede:
+  - moverlo (arrastre o flechas);
+  - girarlo con su anillo (o Q y E);
+  - quitarlo (un coche vuelve a preguntar dónde quedó);
+  - deshacer y rehacer, las veces que sea.
+
+  Tocar en vacío o Esc quita la selección. «En la escena» los lista para elegirlos con el teclado.
+
+- **Si la escena cambia después de reconstruir:** ya no se recalcula sola. Avisa y ofrece «Reconstruir de nuevo»; lo demás se queda.
+- **Pruebas:** `seleccion-escena.test.ts`, `seleccion.test.tsx`, y las e2e `escena-corregir`, `escena-terreno` y `capturas-w4` al día.
+- **Capturas antes y después:** `docs/cesvi/ronda-3/evidencia/escena/`.
 
 | Fase                                                         | Quién               | Rama                                     | Estado                 |
 | ------------------------------------------------------------ | ------------------- | ---------------------------------------- | ---------------------- |

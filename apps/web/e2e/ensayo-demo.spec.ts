@@ -118,6 +118,8 @@ test("ensayo de la demo con CESVI, en producción", async ({ baseURL }) => {
       await page.getByTestId("ir-al-impacto-unity").click();
       await page.waitForTimeout(3000);
       await expect(page.getByTestId("visor-caso")).toContainText(LEYENDA);
+      // Las notas van en el desplegable de abajo, cerrado al abrir (René, 2026-11-17).
+      await page.getByTestId("supuestos-y-notas").locator("summary").click();
       const notas = (await page.getByTestId("contra-cesvi-3d").allInnerTexts()).map(
         (x) => x.split(". ")[0],
       );

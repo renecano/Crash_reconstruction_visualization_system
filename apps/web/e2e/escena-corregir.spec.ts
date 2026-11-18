@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { type Page } from "@playwright/test";
 import { expect, test } from "./base";
-import { irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
+import { reconstruirSiCambio, irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
 
 // La transición entre actos (ADR 0108) es decorativa; con movimiento reducido no se monta.
 test.use({ reducedMotion: "reduce" });
@@ -105,6 +105,9 @@ test("@flujo /cesvi: corregir después — mover el poste y la dirección de un 
   await expect(page.getByTestId("seleccion-nombre")).toHaveText(/poste/i);
   await arrastrarEnMetros(page, "marca-objeto-2", 10, 0);
   await expect(page.getByTestId("mensaje-exito")).toContainText("Moviste");
+  // Mover algo de la escena con la reconstrucción hecha: avisa y ofrece reconstruir de nuevo.
+  await expect(page.getByTestId("aviso-escena-cambio")).toBeVisible();
+  await page.getByTestId("reconstruir-de-nuevo").click();
   await expect(page.getByTestId("recalculo")).toHaveAttribute("data-estado", "al_dia", {
     timeout: 90_000,
   });
@@ -122,9 +125,7 @@ test("@flujo /cesvi: corregir después — mover el poste y la dirección de un 
   await page.getByTestId("sel-cambiar-direccion").click();
   await expect(pregunta).toHaveText("¿Por dónde venía el Jetta?");
   await page.locator('[data-testid^="opcion-flecha-"][data-propuesta="no"]').first().click();
-  await expect(page.getByTestId("recalculo")).toHaveAttribute("data-estado", "al_dia", {
-    timeout: 90_000,
-  });
+  await reconstruirSiCambio(page);
   // «Deshacer» y «Rehacer» siguen a la vista.
   await expect(page.getByTestId("deshacer-barra")).toBeEnabled();
   await irAPaso(page, 4);

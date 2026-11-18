@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { mkdirSync } from "node:fs";
 import { type Page } from "@playwright/test";
 import { expect, test } from "./base";
-import { irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
+import { reconstruirSiCambio, irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
 
 // La transición entre actos (ADR 0108) es decorativa; con movimiento reducido no se monta.
 test.use({ reducedMotion: "reduce" });
@@ -112,9 +112,7 @@ test("@capturas W4: corregir después, para el resumen de René", async ({ page 
   await foto(page, "3-poste-seleccionado");
   await arrastrarEnMetros(page, "marca-objeto-2", 10, 0);
   await expect(page.getByTestId("mensaje-exito")).toContainText("Moviste");
-  await expect(page.getByTestId("recalculo")).toHaveAttribute("data-estado", "al_dia", {
-    timeout: 90_000,
-  });
+  await reconstruirSiCambio(page);
   await foto(page, "4-poste-movido-recalculado");
   await page.getByTestId("sel-listo").click();
   // Un objeto del lugar desde la paleta: una barrera.
@@ -137,9 +135,7 @@ test("@capturas W4: corregir después, para el resumen de René", async ({ page 
   await page.getByTestId("sel-cambiar-direccion").click();
   await expect(pregunta).toHaveText("¿Por dónde venía el Jetta?");
   await page.locator('[data-testid^="opcion-flecha-"][data-propuesta="no"]').first().click();
-  await expect(page.getByTestId("recalculo")).toHaveAttribute("data-estado", "al_dia", {
-    timeout: 90_000,
-  });
+  await reconstruirSiCambio(page);
   // «Deshacer» y «Rehacer» siguen a la vista.
   await expect(page.getByTestId("deshacer-barra")).toBeEnabled();
   await irAPaso(page, 4);

@@ -2465,6 +2465,10 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 
 ### Endurecimiento pendiente
 
+- **La luz y el clima de la escena no salen del expediente** (2026-11-17, los ejemplos con el Unity real): «Crucero de noche» y «Carambola de noche con lluvia» se ven de día y en seco. Antes de tocarlo hay que ver si el clima cambia la fricción del cálculo (números) o solo el dibujo.
+- **«A · 3»:** el nombre del vehículo usa solo el modelo cuando es un número (Mazda 3).
+- **Personas en La escena:** el modo guiado no coloca peatones, así que no hay personas que seleccionar ni corregir.
+- **El 2D de Reconstrucción no se edita:** reproduce el resultado. La lógica de `seleccion-escena.ts` se podría reusar ahí.
 - **La lluvia de noche a 4K frena el visor de escritorio con cada toma** (2026-11-17, laptop con GPU integrada: de 6.2 a 0.2 fps hacia la octava toma). Se esquiva con una instancia por grupo de tomas; falta la causa. Los fps por grupo de la t4b dirán si a la RTX también le pasa.
 - **Luminarias y acotamientos en curvas:** `night-lights.ts` y `road-decor.ts` solo recorren los tramos rectos del trazado, como `corridorsOf` antes de #271. En una carretera con curva faltan luminarias y acotamiento.
 - **Confirmar el peso en Vercel** (2026-11-17): la salida medida de antes era de 303.4 MB y Vercel reportaba unos 2 GB. Al fusionar `fix/peso-despliegue`, revisar la vista Resources de ese despliegue y el gráfico de Usage. Si sigue sumando mucho más que 103.7 MB, lo siguiente es la función compartida de las páginas (26.5 MB, casi todo `.next/server`) y sus 316 entradas.

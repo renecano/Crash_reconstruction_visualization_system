@@ -7,6 +7,7 @@
  */
 import { useEffect, useRef, useState } from "react";
 import type { CamaraDelCaso } from "@/lib/visor-unity/camaras";
+import { EnRanura, useMarco } from "./marco-vista";
 
 /** El nombre corto de una general: «Alrededor de la escena (se puede girar)» → «Alrededor». */
 export function nombreCorto(c: CamaraDelCaso): string {
@@ -62,10 +63,15 @@ export function SelectorCamaras({
     nombre: c.grupoNombre,
     vistas: camaras.filter((x) => x.grupo === "vehiculo" && x.vehiculo === c.vehiculo),
   }));
-  return (
+  const { enMarco } = useMarco();
+  const selector = (
     <div
       ref={caja}
-      className="selector-camaras vidrio absolute top-3 left-3 z-20 flex max-w-[calc(100%-1.5rem)] flex-wrap items-center gap-1 rounded-control px-2 py-1.5"
+      className={
+        enMarco
+          ? "selector-camaras flex flex-wrap items-center gap-1"
+          : "selector-camaras vidrio absolute top-3 left-3 z-20 flex max-w-[calc(100%-1.5rem)] flex-wrap items-center gap-1 rounded-control px-2 py-1.5"
+      }
       role="group"
       aria-label="Cámara"
       data-testid="selector-camara"
@@ -142,4 +148,5 @@ export function SelectorCamaras({
       ))}
     </div>
   );
+  return enMarco ? <EnRanura ranura="izquierda">{selector}</EnRanura> : selector;
 }

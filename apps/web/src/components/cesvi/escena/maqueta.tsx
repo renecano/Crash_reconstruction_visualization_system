@@ -14,6 +14,7 @@
  *
  * Coordenadas: las del solver en metros. El SVG usa metros como unidad, con Y hacia abajo.
  */
+import { EnRanura, useMarco } from "@/components/visor-unity/marco-vista";
 import { formato as F, curvasDeNivel, intervaloDeCurvas, type MallaRelieve } from "@croquis/cesvi";
 import type { EscenaSpec } from "@croquis/scene-schema";
 import { sceneLayout } from "@croquis/croquis-2d";
@@ -788,57 +789,106 @@ function ControlesVista({
   // En una maqueta angosta (el lado a lado de Contra CESVI), los botones van en columna y con
   // nombres cortos: en fila no caben.
   const angosta = anchoPx > 0 && anchoPx < 420;
+  // En el marco del caso (René, 2026-11-17) los botones van en su barra, fuera del dibujo.
+  const { enMarco } = useMarco();
   return (
     <div
       className={`pointer-events-none absolute z-10 flex flex-col items-end gap-2 ${angosta ? "top-2 right-2" : "top-3 right-3"}`}
       data-angosta={angosta ? "si" : "no"}
     >
-      <div
-        className={`pointer-events-auto flex gap-1 ${angosta ? "flex-col items-stretch" : ""}`}
-        role="group"
-        aria-label="Encuadre de la maqueta"
-      >
-        {soloZoom ? null : (
-          <>
+      {enMarco ? (
+        <EnRanura ranura="derecha">
+          <div className="flex gap-1" role="group" aria-label="Encuadre de la maqueta">
+            {soloZoom ? null : (
+              <>
+                <button
+                  type="button"
+                  className="boton-secundario boton-compacto"
+                  onClick={onVerTodo}
+                  aria-label="Ver todo"
+                  data-testid="maqueta-ver-todo"
+                >
+                  {angosta ? "Todo" : "Ver todo"}
+                </button>
+                <button
+                  type="button"
+                  className="boton-secundario boton-compacto"
+                  onClick={onIrAlImpacto}
+                  aria-label="Ir al impacto"
+                  data-testid="maqueta-ir-impacto"
+                >
+                  {angosta ? "Impacto" : "Ir al impacto"}
+                </button>
+              </>
+            )}
             <button
               type="button"
-              className="boton-secundario boton-compacto"
-              onClick={onVerTodo}
-              aria-label="Ver todo"
-              data-testid="maqueta-ver-todo"
+              className={`boton-secundario boton-compacto ${angosta ? "" : "w-9"}`}
+              aria-label="Acercar"
+              onClick={() => onAcercar(1.5)}
+              data-testid="maqueta-acercar"
             >
-              {angosta ? "Todo" : "Ver todo"}
+              +
             </button>
             <button
               type="button"
-              className="boton-secundario boton-compacto"
-              onClick={onIrAlImpacto}
-              aria-label="Ir al impacto"
-              data-testid="maqueta-ir-impacto"
+              className={`boton-secundario boton-compacto ${angosta ? "" : "w-9"}`}
+              aria-label="Alejar"
+              onClick={() => onAcercar(1 / 1.5)}
+              data-testid="maqueta-alejar"
             >
-              {angosta ? "Impacto" : "Ir al impacto"}
+              −
             </button>
-          </>
-        )}
-        <button
-          type="button"
-          className={`boton-secundario boton-compacto ${angosta ? "" : "w-9"}`}
-          aria-label="Acercar"
-          onClick={() => onAcercar(1.5)}
-          data-testid="maqueta-acercar"
+          </div>
+        </EnRanura>
+      ) : (
+        <div
+          className={`pointer-events-auto flex gap-1 ${angosta ? "flex-col items-stretch" : ""}`}
+          role="group"
+          aria-label="Encuadre de la maqueta"
         >
-          +
-        </button>
-        <button
-          type="button"
-          className={`boton-secundario boton-compacto ${angosta ? "" : "w-9"}`}
-          aria-label="Alejar"
-          onClick={() => onAcercar(1 / 1.5)}
-          data-testid="maqueta-alejar"
-        >
-          −
-        </button>
-      </div>
+          {soloZoom ? null : (
+            <>
+              <button
+                type="button"
+                className="boton-secundario boton-compacto"
+                onClick={onVerTodo}
+                aria-label="Ver todo"
+                data-testid="maqueta-ver-todo"
+              >
+                {angosta ? "Todo" : "Ver todo"}
+              </button>
+              <button
+                type="button"
+                className="boton-secundario boton-compacto"
+                onClick={onIrAlImpacto}
+                aria-label="Ir al impacto"
+                data-testid="maqueta-ir-impacto"
+              >
+                {angosta ? "Impacto" : "Ir al impacto"}
+              </button>
+            </>
+          )}
+          <button
+            type="button"
+            className={`boton-secundario boton-compacto ${angosta ? "" : "w-9"}`}
+            aria-label="Acercar"
+            onClick={() => onAcercar(1.5)}
+            data-testid="maqueta-acercar"
+          >
+            +
+          </button>
+          <button
+            type="button"
+            className={`boton-secundario boton-compacto ${angosta ? "" : "w-9"}`}
+            aria-label="Alejar"
+            onClick={() => onAcercar(1 / 1.5)}
+            data-testid="maqueta-alejar"
+          >
+            −
+          </button>
+        </div>
+      )}
       <div
         className={`vidrio flex items-end rounded-control ${angosta ? "gap-2 px-2 py-1.5" : "gap-3 px-3 py-2"}`}
         data-testid="maqueta-escala"
