@@ -451,7 +451,8 @@ export function EscenaMaqueta({
                   textAnchor="middle"
                   fill="var(--texto-2)"
                 >
-                  {declarada!.etiqueta}
+                  {/* Cada silueta con su nombre: dos con la misma leyenda se encimaban (ronda 4). */}
+                  {nombres[d.id] ? `${nombres[d.id]}, según lo declarado` : declarada!.etiqueta}
                 </text>
               )}
             </g>
