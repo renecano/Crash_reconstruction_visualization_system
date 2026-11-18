@@ -1,0 +1,50 @@
+{
+    "tanda":  "t4b",
+    "titulo":  "Tanda 4b · Lo que faltó de la t4 (arranque del 3D corregido, fps web, demo local), las fotos promo rehechas, las tomas del tráiler retomables y el video de Unity",
+    "fecha":  "2026-11-17",
+    "commit":  "e1424175e4d1949885cf8ee6795dfecfcec3ed3a",
+    "rama_del_repositorio":  "main",
+    "archivos_con_cambios":  0,
+    "duracion_min":  0.4,
+    "equipo":  {
+                   "tarjetas_de_video":  [
+                                             "NVIDIA GeForce RTX 4070 Laptop GPU",
+                                             "Intel(R) UHD Graphics"
+                                         ],
+                   "memoria_gb":  31.7,
+                   "procesador":  "Intel(R) Core(TM) i9-14900HX",
+                   "nucleos_logicos":  32,
+                   "disco_libre_gb":  270.3,
+                   "windows":  "Microsoft Windows 11 Home",
+                   "git":  "git version 2.55.0.windows.5",
+                   "node":  "v26.13.1",
+                   "pnpm":  "12.11.2",
+                   "uv":  null,
+                   "python":  "Python 3.13.15",
+                   "dotnet":  "11.0.100",
+                   "unity_instalados":  [
+                                            "6000.6.8f1"
+                                        ],
+                   "unity_del_proyecto":  "6000.3.28f1",
+                   "unity_coincide":  false,
+                   "instalado_en_esta_corrida":  [
+
+                                                 ]
+               },
+    "pasos":  [
+                  {
+                      "grupo":  "comprobacion",
+                      "paso":  "dependencias",
+                      "estado":  "ok",
+                      "minutos":  0.3,
+                      "codigo":  0
+                  },
+                  {
+                      "grupo":  "comprobacion",
+                      "paso":  "solver-en-reversa",
+                      "estado":  "ok",
+                      "minutos":  0,
+                      "codigo":  0
+                  }
+              ]
+}

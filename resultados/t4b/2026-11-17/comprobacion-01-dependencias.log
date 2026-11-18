@@ -1,0 +1,31 @@
+# Paso: dependencias
+# Comando: pnpm install --frozen-lockfile
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-17 19:27:46
+
+Scope: all 10 workspace projects
+? Verifying lockfile against supply-chain policies (1189 entries)...
+Downloading next@16.4.6: 0.00 B/43.66 MB
+Downloading @next/swc-win32-x64-msvc@16.4.6: 0.00 B/36.16 MB
+Downloading @next/swc-win32-x64-msvc@16.4.6: 1.17 MB/36.16 MB
+Downloading @next/swc-win32-x64-msvc@16.4.6: 3.12 MB/36.16 MB
+Downloading @next/swc-win32-x64-msvc@16.4.6: 5.14 MB/36.16 MB
+Downloading @next/swc-win32-x64-msvc@16.4.6: 7.73 MB/36.16 MB
+Downloading @next/swc-win32-x64-msvc@16.4.6: 11.25 MB/36.16 MB
+Downloading @next/swc-win32-x64-msvc@16.4.6: 16.15 MB/36.16 MB
+✓ Lockfile passes supply-chain policies (1189 entries in 7.2s)
+Lockfile is up to date, resolution step is skipped
+Downloading next@16.4.6: 17.96 MB/43.66 MB
+Downloading next@16.4.6: 24.93 MB/43.66 MB
+Downloading @next/swc-win32-x64-msvc@16.4.6: 36.16 MB/36.16 MB, done
+Downloading next@16.4.6: 37.25 MB/43.66 MB
+Downloading next@16.4.6: 42.85 MB/43.66 MB
+Downloading next@16.4.6: 43.66 MB/43.66 MB, done
+Packages: +10 -14
+++++++++++--------------
+Progress: resolved 10, reused 5, downloaded 5, added 10, done
+. prepare$ node tools/git/instalar-ganchos.mjs
+. prepare: Done
+Done in 16s using pnpm v12.11.2
+
+# Fin: 2026-11-17 19:28:02 · ok · 0.3 min
