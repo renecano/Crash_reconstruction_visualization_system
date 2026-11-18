@@ -77,6 +77,7 @@ import {
 } from "@/lib/escena-facil";
 import { siluetaClase } from "@/lib/colocar";
 import { interpretarLugar } from "@/lib/lugar-texto";
+import { etiquetaOpcion, type OpcionLugar, zonaDeOpcion } from "@/lib/lugar-opcion";
 import {
   agregarChoqueIntermedio,
   agregarPuntoDePaso,
@@ -250,7 +251,7 @@ export function EscenaFacil({
     return () => window.removeEventListener("keydown", tecla);
   }, [herramienta]);
   const [busqueda, setBusqueda] = useState(descripcionLugar ?? "");
-  const [resultados, setResultados] = useState<{ nombre: string; lat: number; lon: number }[]>([]);
+  const [resultados, setResultados] = useState<OpcionLugar[]>([]);
   const [estadoBusqueda, setEstadoBusqueda] = useState<string | null>(null);
   const mapa = useRef<MapaMl | null>(null);
   const [pila, setPila] = useState<readonly EstadoEscena[]>([]);
@@ -354,8 +355,19 @@ export function EscenaFacil({
         try {
           const r = await fetch(`/api/lugar?${params.toString()}`);
           const d = (await r.json().catch(() => null)) as {
-            resultados?: { lat: number; lon: number }[];
+            resultados?: OpcionLugar[];
           } | null;
+          // B5: sin el municipio ni el estado del caso, la primera opción puede ser de otro estado
+          // (San Luis Potosí caía en la CDMX): se muestran las opciones para elegir.
+          if (r.ok && d?.resultados?.length && !zona.municipio && !zona.estado) {
+            if (montada.current) {
+              setResultados(d.resultados);
+              setEstadoBusqueda(
+                "La narración no dice el municipio ni el estado: elige el lugar del caso.",
+              );
+            }
+            break;
+          }
           const p = r.ok ? d?.resultados?.[0] : undefined;
           if (p && montada.current) {
             setLugarNarrado({ lat: p.lat, lon: p.lon });
@@ -876,18 +888,22 @@ export function EscenaFacil({
     try {
       const r = await fetch(`/api/lugar?${params.toString()}`);
       const d = (await r.json().catch(() => null)) as {
-        resultados?: { nombre: string; lat: number; lon: number }[];
+        resultados?: OpcionLugar[];
+        aviso?: string | null;
         error?: string;
       } | null;
       if (!r.ok || !d?.resultados) {
         setEstadoBusqueda(d?.error ?? "No se pudo buscar. Mueve el mapa hasta el lugar.");
         return;
       }
-      if (d.resultados.length === 1) ir(d.resultados[0]!);
-      else {
-        setResultados(d.resultados);
-        setEstadoBusqueda(d.resultados.length ? null : "No se encontró. Prueba con otra calle.");
-      }
+      // B5: siempre las opciones con su municipio y estado; el perito elige (nunca salta a la primera).
+      setResultados(d.resultados);
+      setEstadoBusqueda(
+        d.aviso ??
+          (d.resultados.length
+            ? "Elige el lugar del caso."
+            : "No se encontró. Prueba con otra calle."),
+      );
     } catch {
       setEstadoBusqueda("Sin conexión: no se puede buscar. Mueve el mapa hasta el lugar.");
     }
@@ -1432,14 +1448,20 @@ export function EscenaFacil({
                   <li key={`${r.lat},${r.lon}`}>
                     <button
                       type="button"
-                      className="t-nota min-h-11 w-full rounded-control px-2 text-left hover:bg-superficie-alta"
+                      className="t-nota min-h-11 w-full rounded-control px-2 py-1 text-left hover:bg-superficie-alta"
+                      aria-label={etiquetaOpcion(r)}
+                      data-testid="opcion-lugar"
                       onClick={() => {
                         mapa.current?.easeTo({ center: [r.lon, r.lat], zoom: 18.5 });
                         onBuscarCalles({ lat: r.lat, lon: r.lon });
                         setResultados([]);
+                        setEstadoBusqueda(null);
                       }}
                     >
-                      {r.nombre}
+                      <span className="block">{r.nombre}</span>
+                      {zonaDeOpcion(r) ? (
+                        <span className="block text-texto-3">{zonaDeOpcion(r)}</span>
+                      ) : null}
                     </button>
                   </li>
                 ))}

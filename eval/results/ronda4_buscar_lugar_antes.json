@@ -1,0 +1,1549 @@
+{
+  "descripcion": "«Buscar el lugar» con 30 lugares de reportes de CESVI de varios estados (partición de desarrollo de R4): cuántos caen en el municipio y el estado que dice el reporte. Se busca como la app (texto del lugar, municipio y estado del caso) y cada resultado se ubica con la búsqueda inversa de Nominatim.",
+  "script": "eval/ronda4_buscar_lugar.mts",
+  "modo": "antes",
+  "fecha": "2026-11-18T14:47:05.050Z",
+  "lugares": 30,
+  "estados": 19,
+  "consultas_a_nominatim": 176,
+  "respuestas_por_codigo": {
+    "200": 176
+  },
+  "con_el_caso": {
+    "lugares": 30,
+    "primero_en_el_estado_correcto": 29,
+    "primero_en_el_municipio_correcto": 27,
+    "sin_resultado": 1
+  },
+  "escrito": {
+    "lugares": 30,
+    "primero_en_el_estado_correcto": 9,
+    "primero_en_el_municipio_correcto": 6,
+    "sin_resultado": 9
+  },
+  "casos": [
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-0638235be0",
+      "lugar": "entrada del poblado La Llave, justo antes del cruce con la carretera estatal 124",
+      "municipio": "San Juan del Río",
+      "estado": "Querétaro",
+      "aviso": "No se encontró la calle: el mapa queda en San Juan del Río, Querétaro. Muévelo hasta el lugar.",
+      "resultados": 1,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "San Juan del Río, Querétaro, México",
+          "lat": 20.3870462,
+          "lon": -100.0119627,
+          "cae_en": {
+            "estado": "Querétaro",
+            "municipio": [
+              "san juan del rio",
+              "san juan del rio"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-01797b62f0",
+      "lugar": "avenida Venustiano Carranza, esquina con Valentina, colonia Manantiales",
+      "municipio": "Papantla",
+      "estado": "Veracruz",
+      "aviso": "No se encontró la calle: el mapa queda en Papantla, Veracruz. Muévelo hasta el lugar.",
+      "resultados": 1,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Papantla, Veracruz, México",
+          "lat": 20.4173494,
+          "lon": -97.321741,
+          "cae_en": {
+            "estado": "Veracruz",
+            "municipio": [
+              "papantla",
+              "terrenos del lote 15 \"chote y mesillas\""
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-d8adc42ca4",
+      "lugar": "inmediaciones del KM 68 de la Autopista Cuernavaca-México",
+      "municipio": "Huitzilac",
+      "estado": "Morelos",
+      "aviso": "No se encontró la calle: el mapa queda en Huitzilac, Morelos. Muévelo hasta el lugar.",
+      "resultados": 1,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Huitzilac, Morelos, México",
+          "lat": 19.0586232,
+          "lon": -99.2321207,
+          "cae_en": {
+            "estado": "Morelos",
+            "municipio": [
+              "huitzilac"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-8b9eea1404",
+      "lugar": "Boulevard Las Vigas, colonia Las Vigas",
+      "municipio": "San Marcos",
+      "estado": "Guerrero",
+      "aviso": "No se encontró la calle: el mapa queda en San Marcos, Guerrero. Muévelo hasta el lugar.",
+      "resultados": 1,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "San Marcos, Guerrero, México",
+          "lat": 16.8573437,
+          "lon": -99.3903419,
+          "cae_en": {
+            "estado": "Guerrero",
+            "municipio": [
+              "san marcos"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-768cfcd48c",
+      "lugar": "autopista México-Puebla, aproximadamente a la altura del metro Santa Martha",
+      "municipio": "Chalco",
+      "estado": "Estado de México",
+      "aviso": "No se encontró el lugar completo; se buscó «autopista México-Puebla» en Chalco, Estado de México.",
+      "resultados": 5,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Autopista México - Puebla, La Chimenea, San Marcos Huixtoco, Chalco, Estado de México, 56643, México",
+          "lat": 19.294472,
+          "lon": -98.8777622,
+          "cae_en": {
+            "estado": "Estado de México",
+            "municipio": [
+              "chalco",
+              "chalco de diaz covarrubias"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-42a4be566c",
+      "lugar": "calle Cuauhtémoc",
+      "municipio": "Tlajomulco de Zúñiga",
+      "estado": "Jalisco",
+      "aviso": null,
+      "resultados": 3,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Calle Cuauhtémoc, Jardines de San Sebastián, San Sebastián El Grande, Tlajomulco de Zúñiga, Región Centro, Jalisco, 45845, México",
+          "lat": 20.5344419,
+          "lon": -103.4238126,
+          "cae_en": {
+            "estado": "Jalisco",
+            "municipio": [
+              "tlajomulco de zuniga"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-bbfe5ddb79",
+      "lugar": "Calle 48 esquina con Calle 39, Colonia 8 Calles",
+      "municipio": "Tizimín",
+      "estado": "Yucatán",
+      "aviso": "No se encontró el lugar completo; se buscó «Calle 48» en Tizimín, Yucatán.",
+      "resultados": 5,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Calle 48, Centro, Privada Casa Real, Tizimin, Tizimín, Yucatán, 97775, México",
+          "lat": 21.1410297,
+          "lon": -88.1515847,
+          "cae_en": {
+            "estado": "Yucatán",
+            "municipio": [
+              "tizimin",
+              "tizimin"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-0ad7f5461c",
+      "lugar": "Avenida la Turba esquina con Calle Medusa, Colonia del Mar",
+      "municipio": "Tlahuac",
+      "estado": "México DF",
+      "aviso": "No se encontró. Prueba con la calle y el municipio, o pega las coordenadas o un link de Google Maps.",
+      "resultados": 0,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": []
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-7ecd026b54",
+      "lugar": "Avenida Heroico Colegio Militar, sentido Sur, en su intersección con la calle Almendros, Colonia Reforma",
+      "municipio": "Oaxaca",
+      "estado": "Oaxaca",
+      "aviso": "No se encontró el lugar completo; se buscó «Avenida Heroico Colegio Militar» en Oaxaca, Oaxaca.",
+      "resultados": 3,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Avenida Heróico Colegio Militar, Colonia América Norte, Barrio Mágico de Jalatlaco, Oaxaca de Juárez, Oaxaca, 68050, México",
+          "lat": 17.0759903,
+          "lon": -96.7128591,
+          "cae_en": {
+            "estado": "Oaxaca",
+            "municipio": [
+              "oaxaca de juarez",
+              "oaxaca de juarez"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-4830f22dda",
+      "lugar": "kilómetro 155+00 de la carretera Villahermosa - Cárdenas",
+      "municipio": "Villahermosa",
+      "estado": "Tabasco",
+      "aviso": "No se encontró la calle: el mapa queda en Villahermosa, Tabasco. Muévelo hasta el lugar.",
+      "resultados": 1,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Villahermosa, Centro, Tabasco, México",
+          "lat": 17.9884657,
+          "lon": -92.9366326,
+          "cae_en": {
+            "estado": "Tabasco",
+            "municipio": [
+              "centro",
+              "villahermosa"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-2a3764fb29",
+      "lugar": "avenida Carlos Canseco «La Marina» esquina Cerro de la Cierpe",
+      "municipio": "Mazatlán",
+      "estado": "Sinaloa",
+      "aviso": "No se encontró la calle: el mapa queda en Mazatlán, Sinaloa. Muévelo hasta el lugar.",
+      "resultados": 1,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Mazatlán, Sinaloa, 82000, México",
+          "lat": 23.2035785,
+          "lon": -106.4208391,
+          "cae_en": {
+            "estado": "Sinaloa",
+            "municipio": [
+              "mazatlan",
+              "mazatlan"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-85fcf34be6",
+      "lugar": "circuito tipo trompeta para incorporarse a la 5ª Avenida Norte Poniente, proveniente del Libramiento Norte-Poniente, colonia Pimienta",
+      "municipio": "Tuxtla Gutiérrez",
+      "estado": "Chiapas",
+      "aviso": "No se encontró la calle: el mapa queda en Tuxtla Gutiérrez, Chiapas. Muévelo hasta el lugar.",
+      "resultados": 1,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Tuxtla Gutiérrez, Chiapas, 29019, México",
+          "lat": 16.753801,
+          "lon": -93.115959,
+          "cae_en": {
+            "estado": "Chiapas",
+            "municipio": [
+              "tuxtla gutierrez",
+              "tuxtla gutierrez"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-846d81c77e",
+      "lugar": "avenida Universidad",
+      "municipio": "Chihuahua",
+      "estado": "Chihuahua",
+      "aviso": null,
+      "resultados": 5,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": [
+        {
+          "nombre": "Avenida Universidad, Ciudad Juárez, Juárez, Chihuahua, 32317, México",
+          "lat": 31.7582659,
+          "lon": -106.4466773,
+          "cae_en": {
+            "estado": "Chihuahua",
+            "municipio": [
+              "juarez",
+              "ciudad juarez"
+            ]
+          },
+          "estado": true,
+          "municipio": false
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-b5ce0418c0",
+      "lugar": "Blvd. Venustiano Carranza, sobre el paso elevado que cruza la calle de Luis Donaldo Colosio",
+      "municipio": "Saltillo",
+      "estado": "Coahuila",
+      "aviso": "No se encontró el lugar completo; se buscó «Blvd. Venustiano Carranza» en Saltillo, Coahuila.",
+      "resultados": 5,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Boulevard Venustiano Carranza, Saltillo, Coahuila, 25265, México",
+          "lat": 25.4360817,
+          "lon": -100.9947469,
+          "cae_en": {
+            "estado": "Coahuila",
+            "municipio": [
+              "saltillo",
+              "saltillo"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-b18c6bacb8",
+      "lugar": "Blvd. Carlos de la Madrid",
+      "municipio": "Colima",
+      "estado": "Colima",
+      "aviso": null,
+      "resultados": 5,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Club Ternium Colima, Lateral Boulevard Licenciado Carlos de la Madrid Bejar, Barrio La Garita, Colima, Municipio de Colima, Colima, 28000, México",
+          "lat": 19.228347,
+          "lon": -103.7218822,
+          "cae_en": {
+            "estado": "Colima",
+            "municipio": [
+              "colima",
+              "colima"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-0ddf4bf046",
+      "lugar": "Paseo de los Leones, entre Puerta de Hierro y Monte Everest, Residencial Puerta de Hierro",
+      "municipio": "Monterrey",
+      "estado": "Nuevo León",
+      "aviso": "No se encontró el lugar completo; se buscó «Paseo de los Leones» en Monterrey, Nuevo León.",
+      "resultados": 1,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Paseo de los Leones, Cumbres, Monterrey, Nuevo León, 64610, México",
+          "lat": 25.7173296,
+          "lon": -100.3841499,
+          "cae_en": {
+            "estado": "Nuevo León",
+            "municipio": [
+              "monterrey",
+              "monterrey"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-599947f4ac",
+      "lugar": "kilómetro 165+100 de la carretera San Luis Río Colorado-Sonoyta (carretera federal 2)",
+      "municipio": "San Luis Río Colorado",
+      "estado": "Sonora",
+      "aviso": "La MEX 2 dentro de San Luis Río Colorado, Sonora. OpenStreetMap no tiene el kilómetro: mueve el mapa por la carretera hasta el punto.",
+      "resultados": 5,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Avenida Álvaro Obregón, Parque Industrial, San Luis Río Colorado, Sonora, 83400, México",
+          "lat": 32.4650522,
+          "lon": -114.7196791,
+          "cae_en": {
+            "estado": "Sonora",
+            "municipio": [
+              "san luis rio colorado",
+              "san luis rio colorado"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-ba0da5ab04",
+      "lugar": "Avenida Tecnológico, frente a un hotel",
+      "municipio": "Tepic",
+      "estado": "Nayarit",
+      "aviso": "No se encontró el lugar completo; se buscó «Avenida Tecnológico» en Tepic, Nayarit.",
+      "resultados": 5,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Avenida Tecnológico, Las Islas, Tepic, Nayarit, 63195, México",
+          "lat": 21.4765087,
+          "lon": -104.8654825,
+          "cae_en": {
+            "estado": "Nayarit",
+            "municipio": [
+              "tepic",
+              "tepic"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-0b13144563",
+      "lugar": "carretera Morelia-Cointzio, en la desviación hacia la papelera de Cointzio",
+      "municipio": "Morelia",
+      "estado": "Michoacán",
+      "aviso": "No se encontró el lugar completo; se buscó «carretera Morelia-Cointzio» en Morelia, Michoacán.",
+      "resultados": 4,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Avenida Cointzio, Tenencia Morelos, Morelia, Michoacán, 58341, México",
+          "lat": 19.6428601,
+          "lon": -101.2546013,
+          "cae_en": {
+            "estado": "Michoacán",
+            "municipio": [
+              "morelia",
+              "morelia"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-1f9706bd8e",
+      "lugar": "estacionamiento frente a un establecimiento denominado «Seven Eleven», colonia Jardines de Santa Mónica",
+      "municipio": "Tlalnepantla",
+      "estado": "Estado de México",
+      "aviso": "No se encontró el lugar completo; se buscó «estacionamiento» en Tlalnepantla, Estado de México.",
+      "resultados": 5,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Estacionamiento Parque Mini Mundos, Calle Zanja Regadora, Tlalnepantla, Tlalnepantla de Baz, Estado de México, 54015, México",
+          "lat": 19.5635953,
+          "lon": -99.2047613,
+          "cae_en": {
+            "estado": "Estado de México",
+            "municipio": [
+              "tlalnepantla de baz",
+              "tlalnepantla"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-3f00bd569d",
+      "lugar": "kilómetro 4 del Macro-libramiento Zapotlanejo, entre carretera Chapala y El Verde, colonia El Castillo",
+      "municipio": "El Salto",
+      "estado": "Jalisco",
+      "aviso": "No se encontró la calle: el mapa queda en El Salto, Jalisco. Muévelo hasta el lugar.",
+      "resultados": 1,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "El Salto, Región Centro, Jalisco, México",
+          "lat": 20.5196964,
+          "lon": -103.1813141,
+          "cae_en": {
+            "estado": "Jalisco",
+            "municipio": [
+              "el salto"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-4ebcf5844f",
+      "lugar": "Avenida Camino vía Lago, al inicio del puente vehicular San Felipe",
+      "municipio": "Texcoco",
+      "estado": "Estado de México",
+      "aviso": "No se encontró la calle: el mapa queda en Texcoco, Estado de México. Muévelo hasta el lugar.",
+      "resultados": 1,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Texcoco, Estado de México, México",
+          "lat": 19.4755907,
+          "lon": -98.8553964,
+          "cae_en": {
+            "estado": "Estado de México",
+            "municipio": [
+              "texcoco",
+              "texcoco de mora"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-8bc045f603",
+      "lugar": "Boulevard Francisco Fernández Arteaga, esquina con la calle Nicolás Bravo, colonia Lázaro Cárdenas",
+      "municipio": "Tuxtepec",
+      "estado": "Oaxaca",
+      "aviso": "No se encontró la calle: el mapa queda en Tuxtepec, Oaxaca. Muévelo hasta el lugar.",
+      "resultados": 1,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Tuxtepec, San Juan Bautista Tuxtepec, Oaxaca, 68300, México",
+          "lat": 18.0816805,
+          "lon": -96.1182813,
+          "cae_en": {
+            "estado": "Oaxaca",
+            "municipio": [
+              "san juan bautista tuxtepec",
+              "tuxtepec"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-09d688be8b",
+      "lugar": "calle Basilio Rojas, esquina con Eduardo Vasconcelos, colonia del Maestro",
+      "municipio": "Oaxaca",
+      "estado": "Oaxaca",
+      "aviso": "No se encontró el lugar completo; se buscó «calle Basilio Rojas» en Oaxaca, Oaxaca.",
+      "resultados": 2,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Calle Basilio Rojas, Colonia Buena Vista, Oaxaca de Juárez, Oaxaca, 68016, México",
+          "lat": 17.1026755,
+          "lon": -96.7450603,
+          "cae_en": {
+            "estado": "Oaxaca",
+            "municipio": [
+              "oaxaca de juarez",
+              "oaxaca de juarez"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-b6c70ec640",
+      "lugar": "lateral de Paseo Tollocan, entre las calles de Libertad y José María Pino Suarez, colonia Santa Anna Tlalpaltitlan",
+      "municipio": "Toluca",
+      "estado": "Estado de México",
+      "aviso": "No se encontró la calle: el mapa queda en Toluca, Estado de México. Muévelo hasta el lugar.",
+      "resultados": 1,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Toluca, Estado de México, 50000, México",
+          "lat": 19.292545,
+          "lon": -99.6569007,
+          "cae_en": {
+            "estado": "Estado de México",
+            "municipio": [
+              "toluca",
+              "toluca"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-231384d434",
+      "lugar": "avenida Adolfo López Mateos, colonia Villa de Guadalupe Xaloxtoc",
+      "municipio": "Ecatepec",
+      "estado": "Estado de México",
+      "aviso": "No se encontró el lugar completo; se buscó «avenida Adolfo López Mateos» en Ecatepec, Estado de México.",
+      "resultados": 5,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Avenida Adolfo López Mateos, Colonia Francisco I. Madero, Santa María Tulpetlac, Ecatepec de Morelos, Atenco, Estado de México, 55107, México",
+          "lat": 19.5539245,
+          "lon": -99.0281183,
+          "cae_en": {
+            "estado": "Estado de México",
+            "municipio": [
+              "ecatepec de morelos",
+              "atenco"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-15b3060743",
+      "lugar": "calles Niños Héroes y Agustín Yáñez, Colonia La Moderna",
+      "municipio": "Guadalajara",
+      "estado": "Jalisco",
+      "aviso": "No se encontró la calle: el mapa queda en Guadalajara, Jalisco. Muévelo hasta el lugar.",
+      "resultados": 1,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Guadalajara, Región Centro, Jalisco, México",
+          "lat": 20.6784455,
+          "lon": -103.3356942,
+          "cae_en": {
+            "estado": "Jalisco",
+            "municipio": [
+              "guadalajara",
+              "guadalajara"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-a9fe568ff5",
+      "lugar": "calle Playa de Caleta, a la altura del [NUMERO], colonia Reforma Iztaccihuatl",
+      "municipio": "Iztacalco",
+      "estado": "México, D.F.",
+      "aviso": "No se encontró la calle: el mapa queda en Iztacalco, México, D.F.. Muévelo hasta el lugar.",
+      "resultados": 1,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": [
+        {
+          "nombre": "Iztacalco, Francisco del Paso y Troncoso, Colonia Amado Nervo, Ciudad de México, Iztacalco, Ciudad de México, 08650, México",
+          "lat": 19.3880913,
+          "lon": -99.1120396,
+          "cae_en": {
+            "estado": "Ciudad de México",
+            "municipio": [
+              "ciudad de mexico",
+              "cuauhtemoc"
+            ]
+          },
+          "estado": true,
+          "municipio": false
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-4db33829a7",
+      "lugar": "Avenida Cafetales, a la altura del predio marcado con el [NUMERO] de la colonia Cafetales",
+      "municipio": "Chihuahua",
+      "estado": "Chihuahua",
+      "aviso": "No se encontró la calle: el mapa queda en Chihuahua, Chihuahua. Muévelo hasta el lugar.",
+      "resultados": 1,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Chihuahua, Municipio de Chihuahua, Chihuahua, 31000, México",
+          "lat": 28.6368669,
+          "lon": -106.076745,
+          "cae_en": {
+            "estado": "Chihuahua",
+            "municipio": [
+              "chihuahua",
+              "chihuahua"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "con_el_caso",
+      "id": "cesvi-4e859603f4",
+      "lugar": "calle San Isidro, colonia Crespa, a una distancia aproximada de 30 metros de la intersección con la Avenida Paseo Vicente Lombardo Toledo",
+      "municipio": "Toluca",
+      "estado": "Estado de México",
+      "aviso": "No se encontró la calle: el mapa queda en Toluca, Estado de México. Muévelo hasta el lugar.",
+      "resultados": 1,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Toluca, Estado de México, 50000, México",
+          "lat": 19.292545,
+          "lon": -99.6569007,
+          "cae_en": {
+            "estado": "Estado de México",
+            "municipio": [
+              "toluca",
+              "toluca"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-0638235be0",
+      "lugar": "entrada del poblado La Llave, justo antes del cruce con la carretera estatal 124",
+      "municipio": "San Juan del Río",
+      "estado": "Querétaro",
+      "aviso": "No se encontró. Prueba con la calle y el municipio, o pega las coordenadas o un link de Google Maps.",
+      "resultados": 0,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": []
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-01797b62f0",
+      "lugar": "avenida Venustiano Carranza, esquina con Valentina, colonia Manantiales",
+      "municipio": "Papantla",
+      "estado": "Veracruz",
+      "aviso": "No se encontró el lugar completo; se buscó «avenida Venustiano Carranza».",
+      "resultados": 5,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": [
+        {
+          "nombre": "Avenida Venustiano Carranza, Colonia Progresista, Ciudad de México, Iztapalapa, Ciudad de México, 09240, México",
+          "lat": 19.3573377,
+          "lon": -99.0669888,
+          "cae_en": {
+            "estado": "Ciudad de México",
+            "municipio": [
+              "ciudad de mexico",
+              "cuauhtemoc"
+            ]
+          },
+          "estado": false,
+          "municipio": false
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-d8adc42ca4",
+      "lugar": "inmediaciones del KM 68 de la Autopista Cuernavaca-México",
+      "municipio": "Huitzilac",
+      "estado": "Morelos",
+      "aviso": "No se encontró. Prueba con la calle y el municipio, o pega las coordenadas o un link de Google Maps.",
+      "resultados": 0,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": []
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-8b9eea1404",
+      "lugar": "Boulevard Las Vigas, colonia Las Vigas",
+      "municipio": "San Marcos",
+      "estado": "Guerrero",
+      "aviso": "No se encontró el lugar completo; se buscó «Boulevard Las Vigas».",
+      "resultados": 2,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": [
+        {
+          "nombre": "Carretera San Juan de Los Llanos - Ometepec, Las Vigas, Ometepec, Guerrero, México",
+          "lat": 16.6818551,
+          "lon": -98.4507558,
+          "cae_en": {
+            "estado": "Guerrero",
+            "municipio": [
+              "ometepec"
+            ]
+          },
+          "estado": true,
+          "municipio": false
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-768cfcd48c",
+      "lugar": "autopista México-Puebla, aproximadamente a la altura del metro Santa Martha",
+      "municipio": "Chalco",
+      "estado": "Estado de México",
+      "aviso": "No se encontró el lugar completo; se buscó «autopista México-Puebla».",
+      "resultados": 5,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": [
+        {
+          "nombre": "Autopista México - Puebla, Ciudad de México, Iztapalapa, Pueblo Santiago Acahualtepec, Ciudad de México, 09600, México",
+          "lat": 19.356215,
+          "lon": -98.9924538,
+          "cae_en": {
+            "estado": "Ciudad de México",
+            "municipio": [
+              "ciudad de mexico",
+              "cuauhtemoc"
+            ]
+          },
+          "estado": false,
+          "municipio": false
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-42a4be566c",
+      "lugar": "calle Cuauhtémoc",
+      "municipio": "Tlajomulco de Zúñiga",
+      "estado": "Jalisco",
+      "aviso": null,
+      "resultados": 3,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Calle Cuauhtémoc, Jardines de San Sebastián, San Sebastián El Grande, Tlajomulco de Zúñiga, Región Centro, Jalisco, 45845, México",
+          "lat": 20.5344419,
+          "lon": -103.4238126,
+          "cae_en": {
+            "estado": "Jalisco",
+            "municipio": [
+              "tlajomulco de zuniga"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-bbfe5ddb79",
+      "lugar": "Calle 48 esquina con Calle 39, Colonia 8 Calles",
+      "municipio": "Tizimín",
+      "estado": "Yucatán",
+      "aviso": "No se encontró el lugar completo; se buscó «Calle 48».",
+      "resultados": 5,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": [
+        {
+          "nombre": "Calle 48, Cancún, Benito Juárez, Distrito 5, Quintana Roo, 77534, México",
+          "lat": 21.1354136,
+          "lon": -86.8576221,
+          "cae_en": {
+            "estado": "Quintana Roo",
+            "municipio": [
+              "cancun",
+              "benito juarez"
+            ]
+          },
+          "estado": false,
+          "municipio": false
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-0ad7f5461c",
+      "lugar": "Avenida la Turba esquina con Calle Medusa, Colonia del Mar",
+      "municipio": "Tlahuac",
+      "estado": "México DF",
+      "aviso": "No se encontró el lugar completo; se buscó «Avenida la Turba».",
+      "resultados": 5,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": [
+        {
+          "nombre": "Avenida La Turba, Colonia Ampliación Miguel Hidalgo, Ciudad de México, Tláhuac, Ciudad de México, 13270, México",
+          "lat": 19.289932,
+          "lon": -99.0560225,
+          "cae_en": {
+            "estado": "Ciudad de México",
+            "municipio": [
+              "ciudad de mexico",
+              "cuauhtemoc"
+            ]
+          },
+          "estado": true,
+          "municipio": false
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-7ecd026b54",
+      "lugar": "Avenida Heroico Colegio Militar, sentido Sur, en su intersección con la calle Almendros, Colonia Reforma",
+      "municipio": "Oaxaca",
+      "estado": "Oaxaca",
+      "aviso": "No se encontró el lugar completo; se buscó «Avenida Heroico Colegio Militar».",
+      "resultados": 4,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": [
+        {
+          "nombre": "Avenida Heroico Colegio Militar, Ciudad Juárez, Juárez, Chihuahua, 32300, México",
+          "lat": 31.7490163,
+          "lon": -106.4725334,
+          "cae_en": {
+            "estado": "Chihuahua",
+            "municipio": [
+              "juarez",
+              "ciudad juarez"
+            ]
+          },
+          "estado": false,
+          "municipio": false
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-4830f22dda",
+      "lugar": "kilómetro 155+00 de la carretera Villahermosa - Cárdenas",
+      "municipio": "Villahermosa",
+      "estado": "Tabasco",
+      "aviso": "No se encontró. Prueba con la calle y el municipio, o pega las coordenadas o un link de Google Maps.",
+      "resultados": 0,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": []
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-2a3764fb29",
+      "lugar": "avenida Carlos Canseco «La Marina» esquina Cerro de la Cierpe",
+      "municipio": "Mazatlán",
+      "estado": "Sinaloa",
+      "aviso": "No se encontró. Prueba con la calle y el municipio, o pega las coordenadas o un link de Google Maps.",
+      "resultados": 0,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": []
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-85fcf34be6",
+      "lugar": "circuito tipo trompeta para incorporarse a la 5ª Avenida Norte Poniente, proveniente del Libramiento Norte-Poniente, colonia Pimienta",
+      "municipio": "Tuxtla Gutiérrez",
+      "estado": "Chiapas",
+      "aviso": "No se encontró. Prueba con la calle y el municipio, o pega las coordenadas o un link de Google Maps.",
+      "resultados": 0,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": []
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-846d81c77e",
+      "lugar": "avenida Universidad",
+      "municipio": "Chihuahua",
+      "estado": "Chihuahua",
+      "aviso": null,
+      "resultados": 5,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": [
+        {
+          "nombre": "Avenida Universidad, Ciudad Juárez, Juárez, Chihuahua, 32317, México",
+          "lat": 31.7582659,
+          "lon": -106.4466773,
+          "cae_en": {
+            "estado": "Chihuahua",
+            "municipio": [
+              "juarez",
+              "ciudad juarez"
+            ]
+          },
+          "estado": true,
+          "municipio": false
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-b5ce0418c0",
+      "lugar": "Blvd. Venustiano Carranza, sobre el paso elevado que cruza la calle de Luis Donaldo Colosio",
+      "municipio": "Saltillo",
+      "estado": "Coahuila",
+      "aviso": "No se encontró el lugar completo; se buscó «Blvd. Venustiano Carranza».",
+      "resultados": 1,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": [
+        {
+          "nombre": "Avenida Venustiano Carranza, Mexicali, Municipio de Mexicali, Baja California, 21000, México",
+          "lat": 32.5836624,
+          "lon": -115.4079005,
+          "cae_en": {
+            "estado": "Baja California",
+            "municipio": [
+              "mexicali",
+              "mexicali"
+            ]
+          },
+          "estado": false,
+          "municipio": false
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-b18c6bacb8",
+      "lugar": "Blvd. Carlos de la Madrid",
+      "municipio": "Colima",
+      "estado": "Colima",
+      "aviso": null,
+      "resultados": 5,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Club Ternium Colima, Lateral Boulevard Licenciado Carlos de la Madrid Bejar, Barrio La Garita, Colima, Municipio de Colima, Colima, 28000, México",
+          "lat": 19.228347,
+          "lon": -103.7218822,
+          "cae_en": {
+            "estado": "Colima",
+            "municipio": [
+              "colima",
+              "colima"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-0ddf4bf046",
+      "lugar": "Paseo de los Leones, entre Puerta de Hierro y Monte Everest, Residencial Puerta de Hierro",
+      "municipio": "Monterrey",
+      "estado": "Nuevo León",
+      "aviso": "No se encontró el lugar completo; se buscó «Paseo de los Leones».",
+      "resultados": 5,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Paseo de los Leones, Cumbres, Monterrey, Nuevo León, 64610, México",
+          "lat": 25.7173296,
+          "lon": -100.3841499,
+          "cae_en": {
+            "estado": "Nuevo León",
+            "municipio": [
+              "monterrey",
+              "monterrey"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-599947f4ac",
+      "lugar": "kilómetro 165+100 de la carretera San Luis Río Colorado-Sonoyta (carretera federal 2)",
+      "municipio": "San Luis Río Colorado",
+      "estado": "Sonora",
+      "aviso": "La MEX 2; el caso no dice el municipio y OpenStreetMap no tiene el kilómetro.",
+      "resultados": 1,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": [
+        {
+          "nombre": "Carril Listo, Federal, Zona Río, Del. Centro, Tijuana, Municipio de Tijuana, Baja California, 22000, México",
+          "lat": 32.542142,
+          "lon": -117.0287972,
+          "cae_en": {
+            "estado": "Baja California",
+            "municipio": [
+              "tijuana",
+              "tijuana"
+            ]
+          },
+          "estado": false,
+          "municipio": false
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-ba0da5ab04",
+      "lugar": "Avenida Tecnológico, frente a un hotel",
+      "municipio": "Tepic",
+      "estado": "Nayarit",
+      "aviso": "No se encontró el lugar completo; se buscó «Avenida Tecnológico».",
+      "resultados": 5,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": [
+        {
+          "nombre": "Avenida Tecnológico, Zona Escolar - Arbolillo - Jorge Negrete, Ciudad de México, Gustavo A. Madero, Ciudad de México, 07230, México",
+          "lat": 19.5400106,
+          "lon": -99.1487666,
+          "cae_en": {
+            "estado": "Ciudad de México",
+            "municipio": [
+              "ciudad de mexico",
+              "cuauhtemoc"
+            ]
+          },
+          "estado": false,
+          "municipio": false
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-0b13144563",
+      "lugar": "carretera Morelia-Cointzio, en la desviación hacia la papelera de Cointzio",
+      "municipio": "Morelia",
+      "estado": "Michoacán",
+      "aviso": "No se encontró el lugar completo; se buscó «carretera Morelia-Cointzio».",
+      "resultados": 5,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Servicios Ecoturisticos de Cointzio S.C. de C.V. de R.L., Avenida Cointzio, San Javier, Morelia, Michoacán, 58343, México",
+          "lat": 19.6396676,
+          "lon": -101.2742958,
+          "cae_en": {
+            "estado": "Michoacán",
+            "municipio": [
+              "morelia",
+              "morelia"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-1f9706bd8e",
+      "lugar": "estacionamiento frente a un establecimiento denominado «Seven Eleven», colonia Jardines de Santa Mónica",
+      "municipio": "Tlalnepantla",
+      "estado": "Estado de México",
+      "aviso": "No se encontró el lugar completo; se buscó «estacionamiento».",
+      "resultados": 5,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": [
+        {
+          "nombre": "Estacionamiento, San Nicolás de los Garza, Nuevo León, México",
+          "lat": 25.7317154,
+          "lon": -100.3044161,
+          "cae_en": {
+            "estado": "Nuevo León",
+            "municipio": [
+              "san nicolas de los garza",
+              "san nicolas de los garza"
+            ]
+          },
+          "estado": false,
+          "municipio": false
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-3f00bd569d",
+      "lugar": "kilómetro 4 del Macro-libramiento Zapotlanejo, entre carretera Chapala y El Verde, colonia El Castillo",
+      "municipio": "El Salto",
+      "estado": "Jalisco",
+      "aviso": "No se encontró. Prueba con la calle y el municipio, o pega las coordenadas o un link de Google Maps.",
+      "resultados": 0,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": []
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-4ebcf5844f",
+      "lugar": "Avenida Camino vía Lago, al inicio del puente vehicular San Felipe",
+      "municipio": "Texcoco",
+      "estado": "Estado de México",
+      "aviso": "No se encontró. Prueba con la calle y el municipio, o pega las coordenadas o un link de Google Maps.",
+      "resultados": 0,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": []
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-8bc045f603",
+      "lugar": "Boulevard Francisco Fernández Arteaga, esquina con la calle Nicolás Bravo, colonia Lázaro Cárdenas",
+      "municipio": "Tuxtepec",
+      "estado": "Oaxaca",
+      "aviso": "No se encontró el lugar completo; se buscó «Boulevard Francisco Fernández Arteaga».",
+      "resultados": 2,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Boulevard Ingeniero Francisco Fernández Arteaga, Centro, El Desengaño, Tuxtepec, San Juan Bautista Tuxtepec, Oaxaca, 68314, México",
+          "lat": 18.0839406,
+          "lon": -96.1093865,
+          "cae_en": {
+            "estado": "Oaxaca",
+            "municipio": [
+              "san juan bautista tuxtepec",
+              "tuxtepec"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-09d688be8b",
+      "lugar": "calle Basilio Rojas, esquina con Eduardo Vasconcelos, colonia del Maestro",
+      "municipio": "Oaxaca",
+      "estado": "Oaxaca",
+      "aviso": "No se encontró el lugar completo; se buscó «calle Basilio Rojas».",
+      "resultados": 3,
+      "primero_estado_correcto": true,
+      "primero_municipio_correcto": true,
+      "alguna_opcion_municipio_correcto": true,
+      "opciones": [
+        {
+          "nombre": "Calle Basilio Rojas, Colonia Buena Vista, Oaxaca de Juárez, Oaxaca, 68016, México",
+          "lat": 17.1026755,
+          "lon": -96.7450603,
+          "cae_en": {
+            "estado": "Oaxaca",
+            "municipio": [
+              "oaxaca de juarez",
+              "oaxaca de juarez"
+            ]
+          },
+          "estado": true,
+          "municipio": true
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-b6c70ec640",
+      "lugar": "lateral de Paseo Tollocan, entre las calles de Libertad y José María Pino Suarez, colonia Santa Anna Tlalpaltitlan",
+      "municipio": "Toluca",
+      "estado": "Estado de México",
+      "aviso": "No se encontró. Prueba con la calle y el municipio, o pega las coordenadas o un link de Google Maps.",
+      "resultados": 0,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": []
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-231384d434",
+      "lugar": "avenida Adolfo López Mateos, colonia Villa de Guadalupe Xaloxtoc",
+      "municipio": "Ecatepec",
+      "estado": "Estado de México",
+      "aviso": "No se encontró el lugar completo; se buscó «avenida Adolfo López Mateos».",
+      "resultados": 5,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": [
+        {
+          "nombre": "Avenida Adolfo López Mateos, Zona Escolar - Arbolillo - Jorge Negrete, Ciudad de México, Gustavo A. Madero, Ciudad de México, 07230, México",
+          "lat": 19.5412764,
+          "lon": -99.146745,
+          "cae_en": {
+            "estado": "Ciudad de México",
+            "municipio": [
+              "ciudad de mexico",
+              "cuauhtemoc"
+            ]
+          },
+          "estado": false,
+          "municipio": false
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-15b3060743",
+      "lugar": "calles Niños Héroes y Agustín Yáñez, Colonia La Moderna",
+      "municipio": "Guadalajara",
+      "estado": "Jalisco",
+      "aviso": "No se encontró. Prueba con la calle y el municipio, o pega las coordenadas o un link de Google Maps.",
+      "resultados": 0,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": []
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-a9fe568ff5",
+      "lugar": "calle Playa de Caleta, a la altura del [NUMERO], colonia Reforma Iztaccihuatl",
+      "municipio": "Iztacalco",
+      "estado": "México, D.F.",
+      "aviso": "No se encontró el lugar completo; se buscó «calle Playa de Caleta».",
+      "resultados": 1,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": [
+        {
+          "nombre": "Carretera Playa Azul - Manzanillo, Caleta de Campos, Lázaro Cárdenas, Michoacán, México",
+          "lat": 18.0797881,
+          "lon": -102.7522729,
+          "cae_en": {
+            "estado": "Michoacán",
+            "municipio": [
+              "lazaro cardenas"
+            ]
+          },
+          "estado": false,
+          "municipio": false
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-4db33829a7",
+      "lugar": "Avenida Cafetales, a la altura del predio marcado con el [NUMERO] de la colonia Cafetales",
+      "municipio": "Chihuahua",
+      "estado": "Chihuahua",
+      "aviso": "No se encontró el lugar completo; se buscó «Avenida Cafetales».",
+      "resultados": 3,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": [
+        {
+          "nombre": "Avenida Cafetales, Colonia Hacienda del Coyoacán, Coapa, Ciudad de México, Coyoacán, Ciudad de México, 04970, México",
+          "lat": 19.3032514,
+          "lon": -99.1127245,
+          "cae_en": {
+            "estado": "Ciudad de México",
+            "municipio": [
+              "ciudad de mexico",
+              "cuauhtemoc"
+            ]
+          },
+          "estado": false,
+          "municipio": false
+        }
+      ]
+    },
+    {
+      "escenario": "escrito",
+      "id": "cesvi-4e859603f4",
+      "lugar": "calle San Isidro, colonia Crespa, a una distancia aproximada de 30 metros de la intersección con la Avenida Paseo Vicente Lombardo Toledo",
+      "municipio": "Toluca",
+      "estado": "Estado de México",
+      "aviso": "No se encontró el lugar completo; se buscó «calle San Isidro».",
+      "resultados": 5,
+      "primero_estado_correcto": false,
+      "primero_municipio_correcto": false,
+      "alguna_opcion_municipio_correcto": false,
+      "opciones": [
+        {
+          "nombre": "Calle San Isidro, Colonia Lomas de San Lorenzo, San Lorenzo Tezonco, Ciudad de México, Iztapalapa, Ciudad de México, 09780, México",
+          "lat": 19.3166014,
+          "lon": -99.0610378,
+          "cae_en": {
+            "estado": "Ciudad de México",
+            "municipio": [
+              "ciudad de mexico",
+              "cuauhtemoc"
+            ]
+          },
+          "estado": false,
+          "municipio": false
+        }
+      ]
+    }
+  ]
+}
