@@ -229,7 +229,11 @@ export function RecorridoCaso({
   const [centroBuscado, setCentroBuscado] = useState<{ lat: number; lon: number } | null>(null);
   const [rumbosImpacto, setRumbosImpacto] = useState<Record<number, number>>({});
   const [historial, setHistorial] = useState<Expediente[]>([]);
-  const [calles, setCalles] = useState<OverpassResponse | null>(null);
+  const [callesOverpass, setCalles] = useState<OverpassResponse | null>(null);
+  // Ronda 4: las calles de las teselas del mapa de La escena, mientras Overpass no llega (la
+  // maqueta y el 3D las usan igual). Overpass, si llega, manda.
+  const [callesTeselas, setCallesTeselas] = useState<OverpassResponse | null>(null);
+  const calles = callesOverpass ?? callesTeselas;
   const [objetos, setObjetos] = useState<OverpassResponse | null>(null);
   const [, setMedida] = useState<number | null>(null);
   const [mapa, setMapa] = useState<MapaMl | null>(null);
@@ -1562,6 +1566,7 @@ export function RecorridoCaso({
         <div className="relative min-h-0 flex-1" data-testid="escena-fondo">
           <EscenaFacil
             tema={tema}
+            onCallesDelMapa={setCallesTeselas}
             estado={{
               expediente,
               desconocidos,

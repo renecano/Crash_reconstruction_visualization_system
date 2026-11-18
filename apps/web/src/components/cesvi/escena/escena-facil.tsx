@@ -180,6 +180,7 @@ export function EscenaFacil({
   posicionesNarradas,
   calles: callesOverpass,
   callesFallaron: overpassFallo,
+  onCallesDelMapa,
   lugar,
   descripcionLugar = null,
   zona,
@@ -198,6 +199,8 @@ export function EscenaFacil({
   /** Lo que la narración dice de cada posición (para citarlo junto a la pregunta). */
   posicionesNarradas: readonly PosicionDescrita[];
   calles: OverpassResponse | null;
+  /** Las calles leídas de las teselas del mapa (ronda 4), para que el recorrido las use también. */
+  onCallesDelMapa?: (r: OverpassResponse) => void;
   /** No llegaron las calles del mapa (sin red o el servicio no respondió). */
   callesFallaron: boolean;
   lugar: Punto | null;
@@ -261,7 +264,10 @@ export function EscenaFacil({
           [lon, lat],
           RADIO_CALLES_M,
         );
-        if (r.elements.some((x) => x.type === "way")) setCallesTeselas({ de: claveTeselas, r });
+        if (r.elements.some((x) => x.type === "way")) {
+          setCallesTeselas({ de: claveTeselas, r });
+          onCallesDelMapa?.(r);
+        }
       } catch {
         // Sin las teselas (el estilo aún no carga): se espera a Overpass, como antes.
       }
@@ -272,7 +278,7 @@ export function EscenaFacil({
     return () => {
       mapaListo.off("idle", leer);
     };
-  }, [callesOverpass, mapaListo, claveTeselas]);
+  }, [callesOverpass, mapaListo, claveTeselas, onCallesDelMapa]);
   const deTeselas = callesTeselas?.de === claveTeselas ? callesTeselas.r : null;
   const calles = callesOverpass ?? deTeselas;
   const callesFallaron = overpassFallo && !deTeselas;
