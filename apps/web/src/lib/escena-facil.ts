@@ -580,12 +580,22 @@ export function rumboAlineado(calles: readonly Calle[], p: Punto, preferido: num
 
 type Vehiculo = Expediente["vehiculos"][number];
 
-/** Cómo se llama un vehículo en pantalla: su modelo o su marca («Jetta»); nunca «V1». */
+/**
+ * Marca y modelo, como los escribe el perito: «Mazda 3», «Volkswagen Jetta». Si el modelo ya trae la
+ * marca, va una vez; con uno solo, ese. Nunca el modelo solo cuando hay marca (René, 2026-11-18: «A · 3»).
+ */
+export function marcaYModelo(marca: string | null | undefined, modelo: string | null | undefined): string {
+  const ma = marca?.trim() ?? "";
+  const mo = modelo?.trim() ?? "";
+  if (ma && mo) return mo.toLowerCase().startsWith(ma.toLowerCase()) ? mo : `${ma} ${mo}`;
+  return mo || ma;
+}
+
+/** Cómo se llama un vehículo en pantalla: marca y modelo («Mazda 3»); nunca «V1». */
 export function nombreVehiculo(v: Vehiculo, todos: readonly Vehiculo[] = [v]): string {
-  const base = v.modelo?.valor?.trim() || v.marca?.valor?.trim() || `Vehículo ${letra(v, todos)}`;
-  const repetido = todos.filter(
-    (x) => (x.modelo?.valor?.trim() || x.marca?.valor?.trim() || "") === base,
-  ).length;
+  const de = (x: Vehiculo) => marcaYModelo(x.marca?.valor, x.modelo?.valor);
+  const base = de(v) || `Vehículo ${letra(v, todos)}`;
+  const repetido = todos.filter((x) => de(x) === base).length;
   return repetido > 1 ? `${base} ${letra(v, todos)}` : base;
 }
 

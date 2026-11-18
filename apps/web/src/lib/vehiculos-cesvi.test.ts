@@ -23,8 +23,11 @@ function contraste(a: string, b: string): number {
 }
 
 describe("vehículos del recorrido", () => {
-  it("se nombran con su letra y su tipo", () => {
-    expect(nombresVehiculos(caso("A2010930"))).toEqual({ A: "A · Silverado", B: "B · Tacoma" });
+  it("se nombran con su letra, su marca y su modelo (René, 2026-11-18)", () => {
+    expect(nombresVehiculos(caso("A2010930"))).toEqual({
+      A: "A · Chevrolet Silverado",
+      B: "B · Toyota Tacoma",
+    });
   });
 
   it("el PDF (papel blanco) usa los colores del tema claro de la marca", () => {
