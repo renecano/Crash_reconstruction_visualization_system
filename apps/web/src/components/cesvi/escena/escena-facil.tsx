@@ -120,7 +120,9 @@ import {
   desplazar,
   enCampoDeTexto,
   existe,
+  alinearConLaCalle,
   fijarRumbo,
+  voltear,
   girarSeleccion,
   moverA,
   personaFaltante,
@@ -1131,6 +1133,22 @@ export function EscenaFacil({
         : girarSeleccion(e, clave, giro.delta);
     if (x) cambiar({ ...estado, expediente: x }, exito("¡Listo! Lo giraste."));
   };
+  /** A o «Alinear con la calle» (ronda 4): al eje de la calle más cercana. */
+  const alinearLoSeleccionado = (clave: string): boolean => {
+    if (!callesMapa.length) {
+      setMensaje({ tipo: "alerta", texto: "No hay calles del mapa cerca para alinearlo." });
+      return false;
+    }
+    const x = alinearConLaCalle(e, clave, (p, r) => rumboAlineado(callesMapa, p, r));
+    if (x) cambiar({ ...estado, expediente: x }, exito("¡Listo! Quedó alineado con la calle."));
+    return Boolean(x);
+  };
+  /** F o «Voltear 180°» (ronda 4). */
+  const voltearLoSeleccionado = (clave: string): boolean => {
+    const x = voltear(e, clave);
+    if (x) cambiar({ ...estado, expediente: x }, exito("¡Listo! Lo volteaste."));
+    return Boolean(x);
+  };
   /** «Quitar» o Supr. Un coche no sale del caso: se quita dónde quedó y se vuelve a preguntar. */
   const quitarLoSeleccionado = (clave: string) => {
     const x = quitarSeleccion(e, clave);
@@ -1459,6 +1477,10 @@ export function EscenaFacil({
       } else if (accion.tipo === "girar") {
         if (!capacidadesDe(e, sel).girar) return;
         girarLoSeleccionado(sel, { delta: accion.grados });
+      } else if (accion.tipo === "alinear") {
+        if (!alinearLoSeleccionado(sel)) return;
+      } else if (accion.tipo === "voltear") {
+        if (!voltearLoSeleccionado(sel)) return;
       } else {
         const pos = posicionDe(e, sel);
         if (!pos || !capacidadesDe(e, sel).mover) return;
