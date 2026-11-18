@@ -5,16 +5,21 @@
  * (`claro-vehiculo-a` y `claro-vehiculo-b`). Una prueba revisa que coincidan.
  */
 import type { CasoCesvi } from "@croquis/cesvi";
+import { marcaYModelo } from "./escena-facil";
 
 export type Letra = "A" | "B";
 
 /** Los del tema claro: el PDF es papel blanco (ADR 0057). */
 export const COLOR_VEHICULO: Readonly<Record<Letra, string>> = { A: "#2257C9", B: "#A35A00" };
 
-/** «A · Silverado», «B · Tacoma»: la letra del dictamen y la primera palabra del tipo. */
+/**
+ * «A · Chevrolet Silverado»: la letra del dictamen, la marca y la primera palabra del tipo (el
+ * modelo; en estos reportes `modelo` es el año). René, 2026-11-18: siempre marca y modelo.
+ */
 export function nombreVehiculo(caso: CasoCesvi, letra: Letra): string {
-  const tipo = caso.vehiculos[letra].tipo.trim().split(/\s+/)[0] ?? "";
-  return tipo ? `${letra} · ${tipo}` : letra;
+  const v = caso.vehiculos[letra];
+  const nombre = marcaYModelo(v.marca, v.tipo.trim().split(/\s+/)[0] ?? "");
+  return nombre ? `${letra} · ${nombre}` : letra;
 }
 
 export const nombresVehiculos = (caso: CasoCesvi): Record<Letra, string> => ({

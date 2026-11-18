@@ -18,13 +18,15 @@ import { irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
  * Con `CROQUIS_UNITY=1` abre además el 3D de Unity de cada una (pesado: no en una laptop de 8 GB).
  */
 const RAIZ = resolve(__dirname, "../../..");
+// `CROQUIS_SALIDA` y `CROQUIS_CAPTURAS` (relativas a la raíz) para medir un después sin pisar el antes.
 const SALIDA = join(
   RAIZ,
-  process.env.CROQUIS_EJEMPLO
-    ? `eval/results/ronda2_ejemplo_${process.env.CROQUIS_EJEMPLO}.json`
-    : "eval/results/ronda2_ejemplos.json",
+  process.env.CROQUIS_SALIDA ??
+    (process.env.CROQUIS_EJEMPLO
+      ? `eval/results/ronda2_ejemplo_${process.env.CROQUIS_EJEMPLO}.json`
+      : "eval/results/ronda2_ejemplos.json"),
 );
-const CAPTURAS = join(RAIZ, "docs/cesvi/ronda-2/ejemplos");
+const CAPTURAS = join(RAIZ, process.env.CROQUIS_CAPTURAS ?? "docs/cesvi/ronda-2/ejemplos");
 const CON_UNITY = process.env.CROQUIS_UNITY === "1";
 
 interface Receta {

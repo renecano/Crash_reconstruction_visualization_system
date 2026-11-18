@@ -33,6 +33,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState, type ComponentProps } from "react";
 import { contornoVehiculo } from "@/lib/colocar";
 import { interpretarLugar } from "@/lib/lugar-texto";
+import { etiquetaOpcion, type OpcionLugar, zonaDeOpcion } from "@/lib/lugar-opcion";
 import type { Canal } from "@/lib/canal";
 import { tomarMapa, type MapaPrestado } from "@/lib/mapa-compartido";
 import { ESTILO_MAPA, ESTILO_MAPA_CLARO, marcador } from "../mapa-comun";
@@ -646,7 +647,7 @@ function BuscarLugar({
 }) {
   const [q, setQ] = useState(inicial);
   const [estado, setEstado] = useState<string | null>(null);
-  const [resultados, setResultados] = useState<{ nombre: string; lat: number; lon: number }[]>([]);
+  const [resultados, setResultados] = useState<OpcionLugar[]>([]);
   const buscarYa = async () => {
     const texto = q.trim();
     if (texto.length < 2) {
@@ -666,7 +667,7 @@ function BuscarLugar({
     try {
       const r = await fetch(`/api/lugar?${params.toString()}`);
       const d = (await r.json().catch(() => null)) as {
-        resultados?: { nombre: string; lat: number; lon: number }[];
+        resultados?: OpcionLugar[];
         aviso?: string | null;
         error?: string;
       } | null;
@@ -675,7 +676,7 @@ function BuscarLugar({
         return;
       }
       setResultados(d.resultados);
-      setEstado(d.aviso ?? (d.resultados.length ? null : "No se encontró."));
+      setEstado(d.aviso ?? (d.resultados.length ? "Elige el lugar del caso." : "No se encontró."));
     } catch {
       setEstado("Sin conexión: no se puede buscar. Pega las coordenadas o mueve el mapa a mano.");
     }
@@ -721,10 +722,15 @@ function BuscarLugar({
             <li key={`${r.lat},${r.lon}`}>
               <button
                 type="button"
-                className="t-nota w-full rounded-control px-2 py-1.5 text-left hover:bg-superficie-alta"
+                className="t-nota min-h-11 w-full rounded-control px-2 py-1.5 text-left hover:bg-superficie-alta"
+                aria-label={etiquetaOpcion(r)}
+                data-testid="opcion-lugar"
                 onClick={() => onLugar(r)}
               >
-                {r.nombre}
+                <span className="block">{r.nombre}</span>
+                {zonaDeOpcion(r) ? (
+                  <span className="block text-texto-3">{zonaDeOpcion(r)}</span>
+                ) : null}
               </button>
             </li>
           ))}

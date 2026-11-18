@@ -346,3 +346,32 @@ describe("la masa en kg (R4b)", () => {
     ]);
   });
 });
+
+describe("los nombres de lugares no se redactan (ronda 4, B5)", () => {
+  it("el lugar, el municipio y el estado conservan los nombres; las placas no", () => {
+    const fila = (campo: string, valor: string) => ({
+      seccion: "caso",
+      n: 1,
+      vehiculo: "ninguno",
+      campo,
+      valor,
+      cita: "",
+    });
+    const { expediente: e } = expedienteDeSalida(
+      {
+        datos: [
+          fila("lugar", "Avenida Venustiano Carranza esquina con Benito Juárez, placas ABC-123-D"),
+          fila("municipio", "León"),
+          fila("entidad", "Nuevo León"),
+        ],
+      } as never,
+      "",
+      "perito",
+    );
+    expect(e.caso.lugar?.descripcion?.valor).toBe(
+      "Avenida Venustiano Carranza esquina con Benito Juárez, placas [PLACA]",
+    );
+    expect(e.caso.lugar?.municipio?.valor).toBe("León");
+    expect(e.caso.lugar?.estado?.valor).toBe("Nuevo León");
+  });
+});

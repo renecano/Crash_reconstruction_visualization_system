@@ -37,6 +37,39 @@ export const COLORES_MAPA = {
 const CALLES_GRANDES = ["motorway", "trunk", "primary", "secondary", "tertiary"];
 
 /**
+ * Los nombres de las calles al alejar (René, 2026-11-18, B6): cada tipo de vía desde su zoom, para
+ * que al alejar se sigan leyendo las grandes y las demás aparezcan al acercar. Van de las menores a
+ * las grandes: la capa de encima gana el lugar cuando dos nombres chocan (MapLibre nunca los
+ * encima). Las locales, desde 14: antes las teselas de OpenMapTiles no traen sus nombres.
+ */
+export const NOMBRES_POR_VIA: readonly {
+  id: string;
+  clases: readonly string[];
+  desde: number;
+  /** Tamaño de la letra (px) en `desde`, a 16 y a 19. */
+  tamano: readonly [number, number, number];
+}[] = [
+  {
+    id: "nombres-calles-locales",
+    clases: ["minor", "service", "street", "residential", "living_street"],
+    desde: 14,
+    tamano: [9, 11, 14],
+  },
+  {
+    id: "nombres-calles-medias",
+    clases: ["secondary", "tertiary"],
+    desde: 12.5,
+    tamano: [9.5, 12, 14],
+  },
+  {
+    id: "nombres-calles-grandes",
+    clases: ["motorway", "trunk", "primary"],
+    desde: 11,
+    tamano: [10, 13, 15],
+  },
+];
+
+/**
  * El ancho de una calle en pixeles a cada zoom para un ancho real en metros (a la latitud de la
  * Ciudad de México: 0.0704 m por pixel a zoom 20 con mosaicos de 512 px; se duplica por nivel). Una
  * sola interpolación por zoom (MapLibre no admite dos), con el ancho de las grandes y el de las demás
@@ -143,25 +176,41 @@ export function estiloMapaEscena(tema: "claro" | "oscuro"): StyleSpecification {
           "line-width": ancho(esGrande, 14, 9),
         },
       },
-      {
-        id: "nombres-calles",
-        type: "symbol",
-        source: "openmaptiles",
-        "source-layer": "transportation_name",
-        minzoom: 15,
-        layout: {
-          "symbol-placement": "line",
-          "text-field": [
-            "upcase",
-            ["coalesce", ["get", "name:es"], ["get", "name"]],
-          ] as unknown as string,
-          "text-font": ["Noto Sans Bold"],
-          "text-size": ["interpolate", ["linear"], ["zoom"], 15, 10, 19, 14] as unknown as number,
-          "text-letter-spacing": 0.08,
-          "symbol-spacing": 320,
-        },
-        paint: { "text-color": c.nombre, "text-halo-color": c.halo, "text-halo-width": 1.6 },
-      },
+      ...NOMBRES_POR_VIA.map(
+        (n) =>
+          ({
+            id: n.id,
+            type: "symbol",
+            source: "openmaptiles",
+            "source-layer": "transportation_name",
+            minzoom: n.desde,
+            filter: ["match", ["get", "class"], [...n.clases], true, false],
+            layout: {
+              "symbol-placement": "line",
+              "text-field": [
+                "upcase",
+                ["coalesce", ["get", "name:es"], ["get", "name"]],
+              ] as unknown as string,
+              "text-font": ["Noto Sans Bold"],
+              "text-size": [
+                "interpolate",
+                ["linear"],
+                ["zoom"],
+                n.desde,
+                n.tamano[0],
+                16,
+                n.tamano[1],
+                19,
+                n.tamano[2],
+              ] as unknown as number,
+              "text-letter-spacing": 0.08,
+              "text-padding": 6,
+              "text-max-angle": 35,
+              "symbol-spacing": 320,
+            },
+            paint: { "text-color": c.nombre, "text-halo-color": c.halo, "text-halo-width": 1.6 },
+          }) as StyleSpecification["layers"][number],
+      ),
       {
         id: "nombres-parques",
         type: "symbol",

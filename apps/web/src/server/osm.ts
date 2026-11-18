@@ -44,8 +44,13 @@ export const OVERPASS_URLS = OVERPASS_INSTANCES.map((i) => i.url);
 export const ROUNDS = 2;
 /** Tiempo total para Overpass (s): deja margen dentro del límite de 60 s de la función. */
 export const BUDGET_S = 50;
+/**
+ * Cómo se identifica Croquis ante Overpass: el proyecto y dónde verlo, como pide su política de uso.
+ * Sin «vercel.app»: overpass-api.de contesta 406 a todo User-Agent que lo trae (medido el
+ * 2026-11-18); con la URL del repositorio, acepta.
+ */
 export const USER_AGENT =
-  "Croquis/0.1 (reconstruccion ilustrativa de percances; proyecto academico)";
+  "Croquis/0.1 (reconstruccion ilustrativa de percances; +https://github.com/renecano/Crash_reconstruction_visualization_system)";
 /** Días que se guarda la respuesta de un punto: las calles cambian poco. */
 export const CACHE_DAYS = 30;
 const MEMORY_ENTRIES = 200;

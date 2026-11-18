@@ -65,7 +65,7 @@ async function hastaEl3d(page: Page) {
     .click();
   await sinRed(page);
   await irAPaso(page, 3);
-  // La escena fácil: el choque, el Jetta con su flecha y donde quedó (8 m al noreste), el Camaro
+  // La escena fácil: el choque, el VW Jetta con su flecha y donde quedó (8 m al noreste), el GM Camaro
   // con la suya y donde quedó (al oriente).
   const mapa = await mapaFacil(page);
   const caja = (await mapa.boundingBox())!;

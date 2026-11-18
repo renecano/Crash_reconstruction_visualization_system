@@ -20,11 +20,13 @@
                            contra el sitio local y apaga
     -Despues arranque-3d   sirve, mide el arranque del 3D de Unity en el Chrome instalado
                            (e2e/medir-unity-arranque.spec.ts) contra el sitio local y apaga
+    -Despues video-3d      sirve, graba «Descargar video» del 3D de AXA con el Unity real en Chrome y
+                           en Edge (e2e/video-3d-real.spec.ts; los MP4 al Escritorio) y apaga
     -Salida RUTA           a dónde escribe su resultado la comprobación o la medición
 #>
 param(
   [switch]$SoloPreparar,
-  [ValidateSet("", "comprobar", "fps-web", "arranque-3d")][string]$Despues = "",
+  [ValidateSet("", "comprobar", "fps-web", "arranque-3d", "video-3d")][string]$Despues = "",
   [string]$Salida = ""
 )
 
@@ -187,6 +189,16 @@ try {
     } finally {
       if ($null -eq $gpuAntes) { Remove-ItemProperty -Path $llaveGpu -Name $chrome -ErrorAction SilentlyContinue }
       else { Set-ItemProperty -Path $llaveGpu -Name $chrome -Value $gpuAntes }
+    }
+  } elseif ($Despues -eq "video-3d") {
+    # B7 (René, 2026-11-18): el video del 3D con el Unity real, en los navegadores instalados.
+    if ($Salida) { $env:CROQUIS_SALIDA = $Salida }
+    $codigo = 0
+    foreach ($canal in @("chrome", "msedge")) {
+      Escribir "Video del 3D en $canal..."
+      $env:CROQUIS_CANAL = $canal
+      & pnpm --filter "@croquis/web" exec playwright test e2e/video-3d-real.spec.ts --project=chromium --headed
+      if ($LASTEXITCODE) { $codigo = $LASTEXITCODE; Escribir "El video en $canal falló (código $LASTEXITCODE)." "Yellow" }
     }
   } else {
     $trabajo = Join-Path $env:LOCALAPPDATA "croquis-demo-local\fps-web"

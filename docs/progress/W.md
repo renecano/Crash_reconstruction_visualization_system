@@ -9,7 +9,39 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 - **Fase actual:** ninguna en curso. W9 necesita la autorización de René para gastar API.
 - **Siguiente paso:** W8 cerrada el 2026-11-15: T3.2 (#215), T3.3 (contrato #219 y #220, ADR 0136) y T3.5 (E-R4 v4, igual a la v3 más el eje de la reversa). Nada de eso movió AXA ni un caso que ya vio CESVI después de T3.2. Queda una decisión de René sobre la versión declarada (sección T3.3, «Para decidir»). W9 (T6.5 y T6.6) espera su autorización de gasto de API.
 
-## Corregir la escena después (René, 2026-11-17; ADR 0121)
+## Ronda 4, bloque B: buscar el lugar y los nombres de las calles (René, 2026-11-18)
+
+- **B5, «Buscar el lugar»:** siempre en México y primero dentro de lo que sabe el caso.
+  - **La zona:** el municipio y el estado del caso o, si el perito escribe otro estado, los del texto; lo que escribe gana.
+  - **Dónde se busca:** se ubica el área y la calle se busca dentro de su caja, con la zona escrita. El orden de las variantes: el texto, calle y colonia, la calle, la segunda calle y la colonia.
+  - **Varias opciones**, cada una con municipio y estado, y primero las del municipio del caso. Nunca salta a la primera; sin la zona del caso, La escena tampoco salta al abrir.
+  - **Medido** con 30 lugares de reportes de CESVI de 19 estados (`eval/ronda4_buscar_lugar.mts`, `eval/results/ronda4_buscar_lugar_{antes,despues}.json`):
+    - con el municipio y el estado del caso, el primer resultado cae en el municipio correcto en 28 de 30 (antes, 27);
+    - si el perito escribe «lugar, municipio, estado» sin la zona del caso, en 28 de 30 (antes, 6), y en el estado correcto en 30 de 30 (antes, 9).
+  - **Lo que falla:** dos alcaldías de la Ciudad de México (Tláhuac e Iztacalco). Con eso, Nominatim alcanza y no hace falta cambiar de proveedor.
+- **B6, los nombres de las calles al alejar:**
+  - **En La escena**, los nombres van en tres capas por tipo de vía: las grandes desde el zoom 11, las medias desde el 12.5 y las locales desde el 14 (antes, todas desde el 15). Las grandes van encima, y MapLibre nunca encima dos nombres.
+  - **En el mapa de positron**, las locales aparecen desde el 14 y las grandes desde el 11.
+- **Capturas antes y después:** `docs/cesvi/ronda-4/evidencia/b/`.
+
+## Ronda 4, bloque A: noche y lluvia, marca y modelo, peatones y ciclistas (René, 2026-11-18; ADR 0142)
+
+- **A1, las condiciones del lugar:** la superficie, su estado, el clima y la luz salen de la narración (`condiciones.ts`, sin IA, con su frase literal) y van al expediente (`caso.condiciones`). La luz, de la hora del relato (`iluminacion.ts`).
+  - **Cifras, con el visto bueno de René (2026-11-18):** «Carambola de noche con lluvia» pasa de 34 a 30 km/h (concreto mojado, μ 0.55); los otros cuatro ejemplos no cambian (`eval/results/ronda4_condiciones.json`).
+  - **Las cifras que CESVI ya vio no cambian** (`eval/results/ronda4_cifras_estables.json`): AXA 57 km/h (55–78) en las 20 semillas, la modalidad contra el título (91 de 156) y las carambolas (20 de 31). La cobertura (70.9 %) no usa nada de lo que cambió.
+- **A2, los nombres:** siempre marca y modelo («A · Mazda 3», «A · VW Jetta», «A · Chevrolet Silverado»).
+- **A3, peatones y ciclistas:**
+  - **En La escena** se colocan, mueven, giran, quitan y deshacen como un vehículo (`personas.ts`, `seleccion-escena.ts`). «Marcar dónde quedó» da la distancia de proyección.
+  - **En el cálculo:** la persona del atropello entra como `impacto_vehiculo_persona` con su distancia de proyección. «Peatón» ya no se calcula como objeto fijo: si falta, La escena pide colocarlo.
+  - **En el 2D de Reconstrucción:** la figura en cada instante, su recorrido punteado, el reposo reconstruido (círculo) y dónde quedó según lo marcó el perito (cruz).
+  - **Si lo marcado no cabe en el rango reconstruido,** un límite lo dice con las dos cifras (`avisoDeProyeccion`).
+  - **En el 3D de Unity** el peatón se ve de pie antes del impacto y tendido en su reposo, con su cámara «Peatón»; no hizo falta un build nuevo.
+- **La barra de reproducción:** «Llegada», «Impacto» y «Reposo final» ya no se enciman en ventanas angostas (dos renglones cuando la línea es corta).
+- **Pruebas:**
+  - **Unitarias:** `condiciones`, `iluminacion`, `personas`, `personas-reconstruccion`, `seleccion-escena`, `maqueta` (personas) y `vehiculos-cesvi`.
+  - **E2e:** `atropello.spec.ts` (nueva, de la narración a la reconstrucción), `escena-personas.spec.ts`, y `visor-marco.spec.ts` comprueba que las etiquetas no se enciman a 1280 px.
+- **Capturas:** `docs/cesvi/ronda-4/evidencia/personas/` (La escena, el 2D y el 3D de Unity real) y `docs/cesvi/ronda-4/condiciones/`.
+- **Pendiente:** el próximo build de Unity debe aceptar un rango de versiones de la escena (hoy solo «2.3.0»), para poder subir la versión del contrato.
 
 - **Qué se puede hacer:** en el mapa de La escena se toca un coche, un objeto, una zona del terreno o una marca, y queda seleccionado, resaltado y con su nombre. Después se puede:
   - moverlo (arrastre o flechas);

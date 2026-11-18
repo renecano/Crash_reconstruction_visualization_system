@@ -100,6 +100,7 @@ export async function tomarMapa(
   if (creando || compartido?.enUso) {
     const mapa = new Map({ container: anfitrion, ...opcionesDeMapa });
     conGiro(mapa, o.girar);
+    conNombresAlAlejar(mapa);
     const prestado = prestar(mapa, () => mapa.remove());
     mapa.once("load", () => alListo(prestado));
     return;
@@ -111,6 +112,7 @@ export async function tomarMapa(
     anfitrion.appendChild(nodo);
     const mapa = new Map({ container: nodo, ...opcionesDeMapa });
     conGiro(mapa, o.girar);
+    conNombresAlAlejar(mapa);
     compartido = { mapa, nodo, enUso: true };
     creando = false;
     const c = compartido;
@@ -130,6 +132,26 @@ export async function tomarMapa(
   const prestado = prestar(c.mapa, () => guardar(c));
   c.mapa.once("style.load", () => alListo(prestado));
   c.mapa.setStyle(o.style as string, { diff: false });
+}
+
+/**
+ * Los nombres de las calles al alejar en los estilos de OpenFreeMap (René, 2026-11-18, B6): positron
+ * los muestra desde 12.2 (las grandes) y 15 (las locales); aquí, desde 11 y 14, como La escena. El
+ * estilo dark ya los muestra a todo zoom. MapLibre nunca los encima.
+ */
+export const ZOOM_NOMBRES_OPENFREEMAP: Readonly<Record<string, number>> = {
+  "highway-name-major": 11,
+  "highway-name-minor": 14,
+  "highway-name-path": 15,
+};
+const conNombres = new WeakSet<object>();
+function conNombresAlAlejar(mapa: MapaMl) {
+  if (conNombres.has(mapa)) return;
+  conNombres.add(mapa);
+  mapa.on("style.load", () => {
+    for (const [id, z] of Object.entries(ZOOM_NOMBRES_OPENFREEMAP))
+      if (mapa.getLayer(id)) mapa.setLayerZoomRange(id, z, 24);
+  });
 }
 
 /** Guarda el mapa fuera de la vista hasta que alguien lo pida. */

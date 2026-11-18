@@ -10,7 +10,15 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 - **Unity y Blender corren en segundo plano** desde el 2026-11-10: René reabrió la sesión con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`. Sigue la regla de un solo proceso pesado a la vez.
 - **Cómo se itera:** capturas del Editor en modo batch (`Capturas.Tomar`, unos 3 min). En esta sesión no hubo herramientas del MCP de Unity. Un build WebGL solo al cerrar cada punto.
 
-## El marco del 3D y el 2D, y los cinco ejemplos con el Unity real (René, 2026-11-17; ADR 0121)
+## Ronda 4, B7: «Descargar video» del 3D (René, 2026-11-18; ADR 0122)
+
+- **Qué hace:** el botón «Descargar video», junto al del minimapa, graba la reproducción completa con la cámara elegida. Sale un MP4 H.264 de 1920×1080 a 30 fps, con la leyenda ilustrativa (la dibuja Unity) y el logo; el minimapa no aparece.
+- **Cómo:** cuadro por cuadro, con `fijarTiempo` y el lienzo, así que sale fluido aunque la máquina no llegue a 30 fps.
+- **Mientras graba:** un panel con el porcentaje, cuánto falta y «Cancelar» (también Esc).
+- **Pruebas:**
+  - `video.test.ts`: los instantes, cuánto falta y el nombre del archivo.
+  - `e2e/visor-video.spec.ts`, con el Unity de mentira: el MP4 es H.264 de 1920×1080 a 30 fps, con todos los instantes; la cancelación con Esc, en el panel.
+- **Con el Unity real, en Chrome y en Edge:** la tanda «r4» del colaborador (`demo-local.ps1 -Despues video-3d`).
 
 - **El marco:** en Reconstrucción, las cámaras, «Editar en 3D», «Descargar paquete 3D», el minimapa y la pantalla completa van en una barra arriba, y la reproducción abajo, fuera de la escena. Las notas van en «Supuestos y notas del cálculo», cerrado.
   - **Pantalla completa** (botón o F; Esc sale): los controles se esconden a los 3 s sin mover el mouse, y Espacio reproduce o pausa.

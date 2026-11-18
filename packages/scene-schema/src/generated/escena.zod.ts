@@ -399,6 +399,46 @@ export const CampoVelocidad = z.strictObject({
 });
 export type CampoVelocidad = z.infer<typeof CampoVelocidad>;
 
+/** Las condiciones del lugar al momento del hecho, como las narra el perito (opcional; agregado en 2.3.0 sin cambiar la versión, ADR 0142). El estado de la superficie fija la fricción del cálculo; el clima y la iluminación, la vista del 3D y lo que alcanza a ver un conductor. */
+export const CondicionesExpediente = z.strictObject({
+  superficie: z
+    .strictObject({
+      valor: z.enum(["asfalto", "concreto", "adoquin", "empedrado", "terraceria"]),
+      fuente: FuenteExpediente,
+      cita: Cita.optional(),
+    })
+    .optional(),
+  estado_superficie: z
+    .strictObject({
+      valor: z.enum(["seco", "mojado", "encharcado", "grava_suelta", "aceite", "lodo"]),
+      fuente: FuenteExpediente,
+      cita: Cita.optional(),
+    })
+    .optional(),
+  clima: z
+    .strictObject({
+      valor: z.enum([
+        "despejado",
+        "nublado",
+        "lluvia_ligera",
+        "lluvia_fuerte",
+        "niebla",
+        "granizo",
+      ]),
+      fuente: FuenteExpediente,
+      cita: Cita.optional(),
+    })
+    .optional(),
+  iluminacion: z
+    .strictObject({
+      valor: z.enum(["dia", "amanecer", "atardecer", "noche_con_alumbrado", "noche_sin_alumbrado"]),
+      fuente: FuenteExpediente,
+      cita: Cita.optional(),
+    })
+    .optional(),
+});
+export type CondicionesExpediente = z.infer<typeof CondicionesExpediente>;
+
 /** Un punto en el mapa (WGS84). */
 export const Coordenadas = z.strictObject({
   lat: z.number().min(-90).max(90),
@@ -445,6 +485,7 @@ export const CasoExpediente = z.strictObject({
       estado: DatoExpediente.optional(),
     })
     .optional(),
+  condiciones: CondicionesExpediente.optional(),
   modalidades: z.array(Modalidad).max(6),
 });
 export type CasoExpediente = z.infer<typeof CasoExpediente>;
@@ -777,6 +818,7 @@ export const ImpactoExpediente = z.strictObject({
   orden: z.int().min(1).max(50),
   vehiculos: z.array(IdVehiculoExpediente).max(6).optional(),
   objeto_fijo: z.string().min(1).max(120).optional(),
+  persona: z.string().regex(new RegExp("^[a-z0-9_-]{1,40}$")).optional(),
   zonas: z
     .array(z.strictObject({ vehiculo: IdVehiculoExpediente, zona: ZonaDiagrama }))
     .max(6)
@@ -807,6 +849,18 @@ export const ObjetoExpediente = z.strictObject({
   cita: Cita.optional(),
 });
 export type ObjetoExpediente = z.infer<typeof ObjetoExpediente>;
+
+/** Un peatón o un ciclista que el perito coloca en la escena (ronda 4, A3): dónde estaba cuando lo golpearon, hacia dónde iba y, si se sabe, dónde quedó. De lo golpeado a donde quedó es la distancia de proyección. */
+export const PersonaExpediente = z.strictObject({
+  id: z.string().regex(new RegExp("^[a-z0-9_-]{1,40}$")),
+  rol: z.enum(["peaton", "ciclista"]),
+  punto: Coordenadas,
+  rumbo_deg: z.number().min(0).lt(360).optional(),
+  final: Coordenadas.optional(),
+  fuente: FuenteExpediente,
+  cita: Cita.optional(),
+});
+export type PersonaExpediente = z.infer<typeof PersonaExpediente>;
 
 /** El resultado: conclusión, sugerencia, decisión del perito, quién validó y la huella de las entradas. */
 export const ResultadoExpediente = z.strictObject({
@@ -995,6 +1049,7 @@ export const Expediente = z.strictObject({
   danos: z.array(DanoExpediente).max(200).optional(),
   impactos: z.array(ImpactoExpediente).max(50).optional(),
   objetos: z.array(ObjetoExpediente).max(60).optional(),
+  personas: z.array(PersonaExpediente).max(12).optional(),
   terreno: TerrenoExpediente.optional(),
   versiones: z.array(VersionExpediente).max(20).optional(),
   evidencias: EvidenciasLugar.optional(),

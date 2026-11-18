@@ -1,0 +1,225 @@
+{
+  "descripcion": "Ronda 4, A1: la superficie, su estado, el clima y la luz leídos de la narración. Antes y después de los cinco ejemplos, la fricción de la tabla del solver y cuántas narraciones del corpus de CESVI cambian lo que entra a la fricción.",
+  "script": "eval/ronda4_condiciones.mts",
+  "fecha": "2026-11-18T14:24:18.309Z",
+  "antes": {
+    "archivo": "eval/results/ronda2_ejemplos.json",
+    "sitio": "https://croquis-sage.vercel.app",
+    "fecha": "2026-11-17T02:43:08.174Z"
+  },
+  "despues": {
+    "archivo": "eval/results/ronda4_ejemplos_condiciones_despues.json",
+    "sitio": "http://localhost:3000",
+    "fecha": "2026-11-18T14:22:44.198Z"
+  },
+  "supuesto_anterior": {
+    "superficie": "asfalto",
+    "estado": "seco",
+    "rango": [
+      0.55,
+      0.8
+    ],
+    "nominal": 0.7,
+    "fuente": "fricke; toolbox",
+    "tipo": "secundaria"
+  },
+  "ejemplos": [
+    {
+      "clave": "crucero-noche",
+      "condiciones": {
+        "superficie": {
+          "valor": "asfalto",
+          "cita": "La calle Azucena consta de un arroyo de circulación con dos carriles asfaltados, con sentido de circulación de Sureste a Noroeste y viceversa"
+        }
+      },
+      "friccion": {
+        "superficie": "asfalto",
+        "estado": "seco",
+        "rango": [
+          0.55,
+          0.8
+        ],
+        "nominal": 0.7,
+        "fuente": "fricke; toolbox",
+        "tipo": "secundaria"
+      },
+      "antes": {
+        "cifra_kmh": 16,
+        "de": "A · Jetta",
+        "rango": "rango 7–24"
+      },
+      "despues": {
+        "cifra_kmh": 16,
+        "de": "A · Jetta",
+        "rango": "rango 7–24"
+      },
+      "diferencia_kmh": 0,
+      "diferencia_pct": 0
+    },
+    {
+      "clave": "alcance-deformacion",
+      "condiciones": {
+        "superficie": {
+          "valor": "asfalto",
+          "cita": "el cuerpo con sentido de Sur a Norte tiene dos carriles de concreto asfáltico de 3.50 metros cada uno, con acotamiento de 2.50 metros"
+        },
+        "estado_superficie": {
+          "valor": "seco",
+          "cita": "La superficie se encontraba seca"
+        }
+      },
+      "friccion": {
+        "superficie": "asfalto",
+        "estado": "seco",
+        "rango": [
+          0.55,
+          0.8
+        ],
+        "nominal": 0.7,
+        "fuente": "fricke; toolbox",
+        "tipo": "secundaria"
+      },
+      "antes": {
+        "cifra_kmh": 62,
+        "de": "A · NP300",
+        "rango": "rango 53–62"
+      },
+      "despues": {
+        "cifra_kmh": 62,
+        "de": "A · NP300",
+        "rango": "rango 53–62"
+      },
+      "diferencia_kmh": 0,
+      "diferencia_pct": 0
+    },
+    {
+      "clave": "carambola-lluvia",
+      "condiciones": {
+        "superficie": {
+          "valor": "concreto",
+          "cita": "El boulevard consta de un arroyo de tres carriles con sentido de Poniente a Oriente, de concreto hidráulico, con iluminación artificial funcionando y semáforo en el cruce con la calle Nogal"
+        },
+        "estado_superficie": {
+          "valor": "mojado",
+          "cita": "Al momento del hecho se registraba lluvia ligera y la carpeta se encontraba mojada"
+        },
+        "clima": {
+          "valor": "lluvia_ligera",
+          "cita": "Al momento del hecho se registraba lluvia ligera y la carpeta se encontraba mojada"
+        },
+        "iluminacion": {
+          "valor": "noche_con_alumbrado",
+          "cita": "El boulevard consta de un arroyo de tres carriles con sentido de Poniente a Oriente, de concreto hidráulico, con iluminación artificial funcionando y semáforo en el cruce con la calle Nogal"
+        }
+      },
+      "friccion": {
+        "superficie": "concreto",
+        "estado": "mojado",
+        "rango": [
+          0.45,
+          0.7
+        ],
+        "nominal": 0.55,
+        "fuente": "fricke; mumford",
+        "tipo": "secundaria"
+      },
+      "antes": {
+        "cifra_kmh": 34,
+        "de": "A · Ranger",
+        "rango": "rango 30–41"
+      },
+      "despues": {
+        "cifra_kmh": 30,
+        "de": "A · Ranger",
+        "rango": "rango 27–38"
+      },
+      "diferencia_kmh": -4,
+      "diferencia_pct": -11.8
+    },
+    {
+      "clave": "reversa-pendiente",
+      "condiciones": {
+        "superficie": {
+          "valor": "asfalto",
+          "cita": "La calle consta de un arroyo de dos carriles de concreto asfáltico, uno por sentido, con pendiente descendente hacia el Norte"
+        },
+        "estado_superficie": {
+          "valor": "seco",
+          "cita": "La superficie se encontraba seca"
+        }
+      },
+      "friccion": {
+        "superficie": "asfalto",
+        "estado": "seco",
+        "rango": [
+          0.55,
+          0.8
+        ],
+        "nominal": 0.7,
+        "fuente": "fricke; toolbox",
+        "tipo": "secundaria"
+      },
+      "antes": {
+        "cifra_kmh": 21,
+        "de": "B · Versa",
+        "rango": "rango 20–26"
+      },
+      "despues": {
+        "cifra_kmh": 21,
+        "de": "B · Versa",
+        "rango": "rango 20–26"
+      },
+      "diferencia_kmh": 0,
+      "diferencia_pct": 0
+    },
+    {
+      "clave": "poste-terraceria",
+      "condiciones": {
+        "superficie": {
+          "valor": "asfalto",
+          "cita": "La carretera estatal consta de un arroyo de dos carriles de concreto asfáltico, uno por sentido, con circulación de Poniente a Oriente y viceversa, y acotamiento"
+        },
+        "estado_superficie": {
+          "valor": "seco",
+          "cita": "La superficie se encontraba seca"
+        }
+      },
+      "friccion": {
+        "superficie": "asfalto",
+        "estado": "seco",
+        "rango": [
+          0.55,
+          0.8
+        ],
+        "nominal": 0.7,
+        "fuente": "fricke; toolbox",
+        "tipo": "secundaria"
+      },
+      "antes": {
+        "cifra_kmh": 36,
+        "de": "B · Sentra",
+        "rango": "rango 31–38"
+      },
+      "despues": {
+        "cifra_kmh": 36,
+        "de": "B · Sentra",
+        "rango": "rango 31–38"
+      },
+      "diferencia_kmh": 0,
+      "diferencia_pct": 0
+    }
+  ],
+  "corpus": {
+    "narraciones": 671,
+    "cambian_la_friccion": 80,
+    "por_superficie_y_estado": {
+      "asfalto mojado": 4,
+      "concreto seco": 52,
+      "terraceria seco": 16,
+      "asfalto lodo": 1,
+      "adoquin seco": 2,
+      "asfalto grava_suelta": 2,
+      "empedrado seco": 3
+    }
+  }
+}

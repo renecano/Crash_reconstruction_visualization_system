@@ -1,0 +1,48 @@
+{
+  "descripcion": "Ronda 4, bloque A: las cifras que CESVI ya vio, repetidas en la rama y comparadas con lo publicado (sin contar tiempos de cómputo ni sellos de fecha).",
+  "script": "eval/ronda4_cifras_estables.mjs",
+  "fecha": "2026-11-18T18:03:05.200Z",
+  "base": "origin/main",
+  "rama": "36366da3",
+  "axa": {
+    "cifra": "57 km/h (55–78)",
+    "antes": {
+      "mejor": 56.87,
+      "p10": 55.11,
+      "p90": 78.06
+    },
+    "despues": {
+      "mejor": 56.87,
+      "p10": 55.11,
+      "p90": 78.06
+    },
+    "semillas": 20,
+    "igual_en_todas_las_semillas": true
+  },
+  "modalidad_contra_el_titulo": {
+    "cifra": "91 de 156 (58.3 %)",
+    "reportes": 205,
+    "reportes_con_algo_distinto": 0,
+    "resumen_igual": true
+  },
+  "carambolas": {
+    "cifra": "20 de 31",
+    "antes": [
+      20,
+      31
+    ],
+    "despues": [
+      20,
+      31
+    ],
+    "expedientes": 33,
+    "expedientes_con_algo_distinto": 0
+  },
+  "cobertura": {
+    "cifra": "410 de 578 (70.9 %)",
+    "repetida": false,
+    "por_que": "t3_cobertura solo usa packages/solver-ts y las escenas de packages/scene-schema/fixtures; la rama no toca ninguno.",
+    "archivos_del_solver_o_de_sus_escenas_tocados": []
+  },
+  "ninguna_cambia": true
+}

@@ -6,8 +6,12 @@ import {
   LugarError,
   MemoryLugarCache,
   PHOTON_URL,
+  coloniaDe,
+  estadoDe,
   primeraCalle,
+  segundaCalle,
   USER_AGENT,
+  zonaDelTexto,
 } from "./lugar";
 
 type Respuesta = { status: number; body: unknown } | "sin-red";
@@ -43,6 +47,36 @@ const AHOME = {
   boundingbox: ["25.4", "26.4", "-109.5", "-108.6"],
 };
 const TRAMO = { display_name: "MEX 15D, Ahome, Sinaloa", lat: "25.81", lon: "-108.95" };
+const IZTAPALAPA = {
+  display_name: "Iztapalapa, Ciudad de México, México",
+  lat: "19.35",
+  lon: "-99.05",
+  boundingbox: ["19.28", "19.40", "-99.13", "-98.95"],
+  address: { borough: "Iztapalapa", state: "Ciudad de México" },
+};
+const SLP = {
+  display_name: "San Luis Potosí, San Luis Potosí, México",
+  lat: "22.15",
+  lon: "-100.98",
+  boundingbox: ["21.1", "24.5", "-102.3", "-98.3"],
+  address: { city: "San Luis Potosí", state: "San Luis Potosí" },
+};
+const SOLEDAD = {
+  display_name: "Soledad de Graciano Sánchez, San Luis Potosí, México",
+  lat: "22.18",
+  lon: "-100.94",
+  boundingbox: ["22.10", "22.30", "-100.99", "-100.80"],
+  address: { city: "Soledad de Graciano Sánchez", state: "San Luis Potosí" },
+};
+const carranza = (lat: string, lon: string, city: string, state: string) => ({
+  display_name: `Avenida Venustiano Carranza, ${city}, ${state}`,
+  lat,
+  lon,
+  address: { road: "Avenida Venustiano Carranza", city, state },
+});
+const CARRANZA_SLP = carranza("22.152", "-100.99", "San Luis Potosí", "San Luis Potosí");
+const CARRANZA_SLP_2 = carranza("22.110", "-100.88", "Villa de Pozos", "San Luis Potosí");
+const CARRANZA_CDMX = carranza("19.43", "-99.13", "Cuauhtémoc", "Ciudad de México");
 
 describe("buscar el lugar del hecho (A1)", () => {
   it("una carretera con km se busca dentro del municipio y lo dice", async () => {
@@ -66,12 +100,29 @@ describe("buscar el lugar del hecho (A1)", () => {
     expect(pedidos.every((p) => p.ua === USER_AGENT)).toBe(true);
   });
 
-  it("si la descripción completa no aparece, busca la primera calle y luego el municipio", async () => {
-    const { deps, pedidos } = falso((u) =>
-      u.searchParams.get("q") === "Calle Azucena, Iztapalapa, Ciudad de México"
-        ? { status: 200, body: [{ display_name: "Calle Azucena", lat: "19.35", lon: "-99.07" }] }
-        : { status: 200, body: [] },
-    );
+  it("si la descripción completa no aparece, busca la calle dentro del municipio (B5)", async () => {
+    const { deps, pedidos } = falso((u) => {
+      const q = u.searchParams.get("q");
+      if (q === "Iztapalapa, Ciudad de México") return { status: 200, body: [IZTAPALAPA] };
+      if (q === "Calle Azucena, Iztapalapa, Ciudad de México")
+        return {
+          status: 200,
+          body: [
+            {
+              display_name: "Calle Azucena, Lomas San Lorenzo, Iztapalapa, Ciudad de México",
+              lat: "19.35",
+              lon: "-99.07",
+              address: {
+                road: "Calle Azucena",
+                suburb: "Lomas San Lorenzo",
+                borough: "Iztapalapa",
+                state: "Ciudad de México",
+              },
+            },
+          ],
+        };
+      return { status: 200, body: [] };
+    });
     const r = await buscarLugar(
       {
         q: "Calle Azucena esquina con Av. Reforma, colonia Lomas San Lorenzo",
@@ -81,9 +132,78 @@ describe("buscar el lugar del hecho (A1)", () => {
       "c2",
       deps,
     );
-    expect(r.resultados).toHaveLength(1);
+    expect(r.resultados).toEqual([
+      {
+        nombre: "Calle Azucena, Lomas San Lorenzo",
+        lat: 19.35,
+        lon: -99.07,
+        municipio: "Iztapalapa",
+        estado: "Ciudad de México",
+      },
+    ]);
     expect(r.aviso).toContain("«Calle Azucena»");
-    expect(pedidos).toHaveLength(2);
+    // Cada búsqueda de la calle, dentro de la caja de Iztapalapa: nunca en todo México.
+    const deCalle = pedidos.filter(
+      (p) => p.url.searchParams.get("q") !== "Iztapalapa, Ciudad de México",
+    );
+    expect(deCalle.length).toBeGreaterThan(0);
+    for (const p of deCalle) {
+      expect(p.url.searchParams.get("bounded")).toBe("1");
+      expect(p.url.searchParams.get("viewbox")).toBe("-99.13,19.40,-98.95,19.28");
+    }
+  });
+
+  it("sin la zona del caso, toma el municipio y el estado del texto (San Luis Potosí, no la CDMX)", async () => {
+    const { deps, pedidos } = falso((u) => {
+      const q = u.searchParams.get("q");
+      if (q === "San Luis Potosí, San Luis Potosí") return { status: 200, body: [SLP] };
+      if (
+        q === "Av. Venustiano Carranza 500, San Luis Potosí, San Luis Potosí" &&
+        u.searchParams.get("bounded") === "1"
+      )
+        return { status: 200, body: [CARRANZA_SLP] };
+      // Sin acotar, la misma calle de la CDMX: no debe pedirse.
+      if (q?.startsWith("Av. Venustiano Carranza")) return { status: 200, body: [CARRANZA_CDMX] };
+      return { status: 200, body: [] };
+    });
+    const r = await buscarLugar(
+      { q: "Av. Venustiano Carranza 500, San Luis Potosí, San Luis Potosí" },
+      "c6",
+      deps,
+    );
+    expect(r.resultados[0]).toMatchObject({
+      estado: "San Luis Potosí",
+      municipio: "San Luis Potosí",
+    });
+    expect(r.resultados.some((x) => x.estado === "Ciudad de México")).toBe(false);
+    expect(
+      pedidos
+        .filter((p) => p.url.searchParams.get("q")?.startsWith("Av. Venustiano"))
+        .every((p) => p.url.searchParams.get("bounded") === "1"),
+    ).toBe(true);
+  });
+
+  it("si en el municipio no aparece, da opciones del estado y lo dice", async () => {
+    const { deps } = falso((u) => {
+      const q = u.searchParams.get("q");
+      if (q === "Soledad, San Luis Potosí") return { status: 200, body: [SOLEDAD] };
+      if (u.searchParams.get("state") === "San Luis Potosí") return { status: 200, body: [SLP] };
+      // La calle aparece solo en la caja del estado.
+      if (
+        q?.startsWith("Av. Venustiano Carranza 500") &&
+        u.searchParams.get("viewbox")?.startsWith("-102.3")
+      )
+        return { status: 200, body: [CARRANZA_SLP, CARRANZA_SLP_2] };
+      return { status: 200, body: [] };
+    });
+    const r = await buscarLugar(
+      { q: "Av. Venustiano Carranza 500", municipio: "Soledad", estado: "San Luis Potosí" },
+      "c7",
+      deps,
+    );
+    expect(r.resultados).toHaveLength(2);
+    expect(r.resultados.every((x) => x.estado === "San Luis Potosí")).toBe(true);
+    expect(r.aviso).toContain("No apareció en Soledad");
   });
 
   it("si Nominatim no responde, usa Photon", async () => {
@@ -104,7 +224,12 @@ describe("buscar el lugar del hecho (A1)", () => {
     );
     const r = await buscarLugar({ q: "Paseo Tollocan, Toluca" }, "c3", deps);
     expect(r.fuente).toBe("photon");
-    expect(r.resultados[0]).toEqual({ nombre: "Paseo Tollocan, Toluca", lat: 19.28, lon: -99.66 });
+    expect(r.resultados[0]).toEqual({
+      nombre: "Paseo Tollocan",
+      lat: 19.28,
+      lon: -99.66,
+      municipio: "Toluca",
+    });
   });
 
   it("sin ningún buscador, el error dice qué hacer; lo encontrado sale de la caché", async () => {
@@ -124,5 +249,78 @@ describe("buscar el lugar del hecho (A1)", () => {
   it("la primera calle de una descripción", () => {
     expect(primeraCalle("Calle Azucena esquina con Av. Reforma, col. Lomas")).toBe("Calle Azucena");
     expect(primeraCalle("En el crucero de Paseo Tollocan y Av. Las Torres")).toBe("Paseo Tollocan");
+  });
+
+  it("lo que el texto dice de la zona, las calles y la colonia (B5)", () => {
+    expect(zonaDelTexto("Av. Carranza 500, San Luis Potosí, San Luis Potosí")).toEqual({
+      municipio: "San Luis Potosí",
+      estado: "San Luis Potosí",
+      resto: "Av. Carranza 500",
+    });
+    expect(zonaDelTexto("Avenida la Turba esquina con Calle Medusa, Tlahuac, México DF")).toEqual({
+      municipio: "Tlahuac",
+      estado: "Ciudad de México",
+      resto: "Avenida la Turba esquina con Calle Medusa",
+    });
+    // Sin estado en el texto, no hay zona.
+    expect(zonaDelTexto("Paseo Tollocan, Toluca")).toEqual({ resto: "Paseo Tollocan, Toluca" });
+    // Lo de antes del estado no es municipio si es una colonia.
+    expect(zonaDelTexto("Calle Uno, colonia Centro, Sinaloa")).toEqual({
+      estado: "Sinaloa",
+      resto: "Calle Uno, colonia Centro",
+    });
+    expect(estadoDe("D.F.")).toBe("Ciudad de México");
+    expect(estadoDe("Estado de México")).toBe("Estado de México");
+    expect(estadoDe("Baja California Norte")).toBe("Baja California");
+    expect(estadoDe("Michoacán de Ocampo")).toBe("Michoacán");
+    expect(estadoDe("Toluca")).toBeNull();
+    expect(segundaCalle("Calle Azucena esquina con Av. Reforma, col. Lomas")).toBe("Av. Reforma");
+    expect(segundaCalle("calles Niños Héroes y Agustín Yáñez, Colonia La Moderna")).toBe(
+      "Agustín Yáñez",
+    );
+    expect(coloniaDe("calles Niños Héroes y Agustín Yáñez, Colonia La Moderna")).toBe(
+      "Colonia La Moderna",
+    );
+    expect(coloniaDe("Paseo de los Leones, Residencial Puerta de Hierro")).toBe(
+      "Residencial Puerta de Hierro",
+    );
+  });
+});
+
+describe("lo que escribe el perito gana (B5)", () => {
+  it("si escribe otro estado, se busca ahí y no en la zona que leyó Croquis", async () => {
+    const { deps, pedidos } = falso((u) =>
+      u.searchParams.get("q") === "San Luis Potosí, San Luis Potosí"
+        ? { status: 200, body: [SLP] }
+        : { status: 200, body: [] },
+    );
+    await buscarLugar(
+      {
+        q: "Av. Venustiano Carranza 500, San Luis Potosí, San Luis Potosí",
+        municipio: "Monterrey",
+        estado: "Nuevo León",
+      },
+      "c8",
+      deps,
+    );
+    expect(pedidos[0]!.url.searchParams.get("q")).toBe("San Luis Potosí, San Luis Potosí");
+    expect(pedidos.some((p) => p.url.searchParams.get("q")?.includes("Monterrey"))).toBe(false);
+  });
+});
+
+describe("lo que dejó la redacción no estorba (B5)", () => {
+  it("«Nuevo [NOMBRE]» no se usa como estado: se busca en el municipio", async () => {
+    const { deps, pedidos } = falso(() => ({ status: 200, body: [] }));
+    await buscarLugar(
+      {
+        q: "Boulevard de los Pinos, colonia Valle Alto",
+        municipio: "Monterrey",
+        estado: "Nuevo [NOMBRE]",
+      },
+      "c9",
+      deps,
+    );
+    expect(pedidos[0]!.url.searchParams.get("q")).toBe("Monterrey");
+    expect(pedidos.every((p) => !String(p.url).includes("NOMBRE"))).toBe(true);
   });
 });

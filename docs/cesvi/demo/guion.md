@@ -31,6 +31,7 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 - **Una sola barra de reproducción** para 3D y 2D: pausar, ¼× ½× 1×, «Ir al impacto», «Ver todo», «Repetir». Al cambiar de pestaña se conserva el instante.
 - **Cámara** (el selector arriba a la izquierda del 3D): las cuatro generales a un clic («Alrededor», «Desde arriba», «Cinematográfica», «Desde la acera»); un botón por vehículo («B · Tacoma») abre sus tres vistas («Detrás, siguiéndolo», «Lo que veía su conductor», «Su daño, en el impacto»), a dos clics; las personas a pie, en bici o en moto, a un clic. «Detrás, siguiéndolo» se aleja más en las camionetas grandes. Esc cierra el menú.
 - **Leyenda:** reconstrucción ilustrativa; el entorno es procedural, no el lugar real.
+- **«Descargar video»** (arriba a la derecha, junto a «Ocultar minimapa»): graba la reproducción completa con la cámara elegida, en MP4 de 1920×1080, con la leyenda y el logo, y dice cuánto falta. Mientras graba, la escena se tapa con un panel; «Cancelar» o Esc lo paran. En la demo conviene hacerlo con una cámara ya elegida y no esperar a que termine: con unos segundos basta para mostrarlo. Funciona en Chrome y Edge.
 - **La nota bajo el 3D** dice de qué vehículo y qué velocidad es, con el nombre del panel: «B · Tacoma (V2) antes del impacto: Croquis 57 km/h (55–78) · CESVI 63.15 km/h de barrera equivalente por la deformación (EBS)» y «A · Silverado 2500 (V1) al salir del impacto: Croquis 31 km/h · CESVI 60.27 km/h por los restos». Presentar y el dictamen lo nombran igual.
 
 > Acto «Contra CESVI».
@@ -99,4 +100,6 @@ Croquis lee el reporte completo de CESVI y arma el expediente con la cita de cad
   - Sin internet funcionan completos AXA, los cinco ejemplos (con su lectura guardada), la reconstrucción, el 3D de Unity y el dictamen.
   - Necesitan internet: la lectura con IA de una narración nueva o de un reporte importado, los mosaicos del mapa (sin red sale en blanco, pero se coloca la escena) y buscar un lugar por nombre.
   - Probada en la laptop de René con la red cortada en el navegador; en Mac, solo en una Mac de CI.
+- **«Buscar el lugar»** (ronda 4): busca dentro del municipio y el estado del caso, o en los que se escriban, y da varias opciones con su municipio y estado para elegir. Ya no salta a la primera.
+- **Peatones y ciclistas** (ronda 4): en La escena, «Cambiar algo» → «Peatón» o «Ciclista», y se toca el mapa donde lo golpearon. Se mueve, se gira (anillo o Q/E), se quita y se deshace como un vehículo. «Marcar dónde quedó» dibuja la distancia de proyección en metros, que entra al cálculo del atropello. Si la lectura dice que el impacto fue contra un peatón, La escena pide colocarlo.
 - **Detalle que se nota en pantalla:** en el 3D, la barra de reproducción tapa una esquina del minimapa. La leyenda ilustrativa del 3D ya lleva su recuadro y se lee sobre cualquier fondo (WCAG AA).

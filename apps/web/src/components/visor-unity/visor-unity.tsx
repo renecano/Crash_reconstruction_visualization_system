@@ -33,6 +33,15 @@ import {
 } from "@/lib/visor-unity/reproduccion";
 import { BarraReproduccion } from "./barra-reproduccion";
 import { EnRanura, useMarco } from "./marco-vista";
+import {
+  ALTO_VIDEO,
+  ANCHO_VIDEO,
+  grabarVideoUnity,
+  nombreDelVideo,
+  puedeGrabarVideo,
+  textoFalta,
+} from "@/lib/visor-unity/video";
+import { LEYENDA_3D } from "@/lib/dictamen-caso";
 import { SelectorCamaras } from "./selector-camaras";
 
 /** Lo que el visor Unity le ofrece al caso: las fotos del dictamen y el paquete que tiene cargado. */
@@ -295,6 +304,89 @@ export function VisorUnity({
     if (!puente || !listo) return;
     puente.minimapa(minimapa);
   }, [puente, listo, minimapa]);
+  // «Descargar video» (René, 2026-11-18, B7): la reproducción completa con la cámara elegida, a
+  // 1920×1080, cuadro por cuadro (`lib/visor-unity/video.ts`).
+  const [grabacion, setGrabacion] = useState<{ hechos: number; total: number; ms: number } | null>(
+    null,
+  );
+  const [avisoVideo, setAvisoVideo] = useState<string | null>(null);
+  const cancelarVideo = useRef<AbortController | null>(null);
+  const caja = useRef<HTMLDivElement>(null);
+  const descargarVideo = async () => {
+    const c = lienzo.current;
+    if (!puente || !intervalo || !c || grabacion) return;
+    setAvisoVideo(null);
+    if (!puedeGrabarVideo()) {
+      setAvisoVideo("Este navegador no puede grabar el video: usa Chrome o Edge.");
+      return;
+    }
+    const antes = { ancho: c.style.width, alto: c.style.height, t: repActual.current.t };
+    const corte = new AbortController();
+    cancelarVideo.current = corte;
+    setGrabacion({ hechos: 0, total: 1, ms: 0 });
+    // Pausado y sin minimapa; el lienzo, a 1920×1080 pixeles reales (la caja lo recorta).
+    repActual.current = { ...repActual.current, pausado: true };
+    setRep(repActual.current);
+    puente.enviar("pausar", {});
+    puente.minimapa(false);
+    const dpr = window.devicePixelRatio || 1;
+    c.style.width = `${ANCHO_VIDEO / dpr}px`;
+    c.style.height = `${ALTO_VIDEO / dpr}px`;
+    try {
+      // Unity toma el tamaño nuevo en su siguiente cuadro.
+      for (let i = 0; i < 6; i++) await new Promise((ok) => requestAnimationFrame(ok));
+      const logo = new Image();
+      logo.src = "/marca/logotipo-blanco.svg";
+      await logo.decode().catch(() => undefined);
+      const video = await grabarVideoUnity({
+        lienzo: c,
+        fijar: (t) => puente.enviar("fijarTiempo", { t }),
+        inicio: intervalo.inicio,
+        fin: intervalo.fin,
+        logo,
+        leyenda: LEYENDA_3D,
+        signal: corte.signal,
+        alProgreso: (hechos, total, ms) => setGrabacion({ hechos, total, ms }),
+      });
+      const url = URL.createObjectURL(video);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = nombreDelVideo(
+        escena.meta?.titulo ?? escena.meta?.id ?? "caso",
+        camaras.find((x) => x.modo === elegida?.modo)?.nombre ?? null,
+      );
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      setAvisoVideo("Listo: el video se descargó.");
+    } catch (e) {
+      setAvisoVideo(
+        e instanceof DOMException && e.name === "AbortError"
+          ? "Se canceló el video."
+          : e instanceof Error
+            ? `No se pudo hacer el video: ${e.message}`
+            : "No se pudo hacer el video.",
+      );
+    } finally {
+      c.style.width = antes.ancho;
+      c.style.height = antes.alto;
+      puente.minimapa(minimapa);
+      puente.enviar("fijarTiempo", { t: antes.t });
+      cancelarVideo.current = null;
+      setGrabacion(null);
+    }
+  };
+  // Esc cancela el video mientras se graba.
+  useEffect(() => {
+    if (!grabacion) return;
+    const tecla = (e: KeyboardEvent) => {
+      if (e.key === "Escape") cancelarVideo.current?.abort();
+    };
+    window.addEventListener("keydown", tecla);
+    return () => window.removeEventListener("keydown", tecla);
+  }, [grabacion]);
+
   const alternarMinimapa = () => {
     const si = !minimapa;
     setMinimapa(si);
@@ -331,7 +423,12 @@ export function VisorUnity({
   }
 
   return (
-    <div className="relative h-full w-full" data-testid="visor-unity" data-fase={estado.fase}>
+    <div
+      ref={caja}
+      className="relative h-full w-full overflow-hidden"
+      data-testid="visor-unity"
+      data-fase={estado.fase}
+    >
       <canvas
         ref={lienzo}
         id="visor-unity-lienzo"
@@ -353,7 +450,67 @@ export function VisorUnity({
           >
             {minimapa ? "Ocultar minimapa" : "Mostrar minimapa"}
           </button>
+          {intervalo ? (
+            <button
+              type="button"
+              className="boton-secundario boton-compacto"
+              onClick={() => void descargarVideo()}
+              disabled={grabacion !== null}
+              data-testid="descargar-video"
+            >
+              Descargar video
+            </button>
+          ) : null}
         </EnRanura>
+      ) : null}
+      {avisoVideo && !grabacion ? (
+        <p
+          className="t-nota vidrio absolute top-3 left-1/2 z-10 -translate-x-1/2 rounded-control px-3 py-1.5"
+          role="status"
+          data-testid="aviso-video"
+        >
+          {avisoVideo}
+        </p>
+      ) : null}
+      {grabacion ? (
+        <div
+          className="absolute inset-0 z-20 flex items-center justify-center bg-fondo/90"
+          data-testid="grabando-video"
+        >
+          <div
+            className="vidrio flex w-[min(360px,90%)] flex-col gap-3 rounded-panel p-5"
+            role="status"
+            aria-live="polite"
+          >
+            <span className="t-interfaz font-semibold">
+              Grabando el video · {Math.floor((grabacion.hechos / grabacion.total) * 100)} %
+            </span>
+            <div
+              className="h-2 overflow-hidden rounded-full bg-superficie-alta"
+              role="progressbar"
+              aria-label="Avance del video"
+              aria-valuemin={0}
+              aria-valuemax={grabacion.total}
+              aria-valuenow={grabacion.hechos}
+            >
+              <div
+                className="h-full bg-accion"
+                style={{ width: `${(grabacion.hechos / grabacion.total) * 100}%` }}
+              />
+            </div>
+            <span className="t-nota" data-testid="falta-video">
+              {textoFalta(grabacion.hechos, grabacion.total, grabacion.ms)} · 1920×1080, MP4
+            </span>
+            <button
+              type="button"
+              className="boton-secundario boton-compacto self-end"
+              onClick={() => cancelarVideo.current?.abort()}
+              autoFocus
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
       ) : null}
       {listo && camaras.length && !tiempo && !edicion?.on && (activo || !enMarco) ? (
         <SelectorCamaras

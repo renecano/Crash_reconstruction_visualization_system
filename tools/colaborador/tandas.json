@@ -312,6 +312,24 @@
           "salidas": ["eval/results/rtx-t4/unity_arranque.json"]
         }
       ]
+    },
+    "r4": {
+      "titulo": "Ronda 4 · «Descargar video» del 3D con el Unity real, en Chrome y en Edge",
+      "nota": "René, 2026-11-18 (B7). En la laptop de René solo se probó con un Unity de mentira. Aquí: la demo local con el build de Unity de la máquina (nada baja de Vercel Blob), AXA reconstruido y «Descargar video» en Chrome y en Edge. Los dos MP4 quedan en el Escritorio, carpeta croquis-video-3d: mándaselos a René.",
+      "pasos": [
+        {
+          "nombre": "visor-local",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 2,
+          "salidas": []
+        },
+        {
+          "nombre": "video-3d",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues video-3d -Salida eval/results/rtx-r4/video_3d.jsonl",
+          "minutos": 15,
+          "salidas": ["eval/results/rtx-r4/video_3d.jsonl"]
+        }
+      ]
     }
   }
 }

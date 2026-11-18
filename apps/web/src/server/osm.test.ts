@@ -136,3 +136,10 @@ describe("calles de OSM en producción (ADR 0040)", () => {
     );
   });
 });
+
+describe("el User-Agent ante Overpass (ronda 4)", () => {
+  it("identifica al proyecto con su repositorio y no lleva «vercel.app» (overpass-api.de contesta 406)", () => {
+    expect(USER_AGENT).toMatch(/^Croquis\/\d+\.\d+ \(.+\+https:\/\/github\.com\//);
+    expect(USER_AGENT).not.toContain("vercel.app");
+  });
+});

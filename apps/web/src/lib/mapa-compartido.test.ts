@@ -38,6 +38,9 @@ class MapaFalso {
   resize = vi.fn();
   setMaxZoom = vi.fn();
   jumpTo = vi.fn();
+  /** Como positron: trae los nombres de las calles locales. */
+  getLayer = vi.fn((id: string) => (id === "highway-name-minor" ? { id } : undefined));
+  setLayerZoomRange = vi.fn();
   remove() {
     this.quitado = true;
   }
@@ -126,5 +129,21 @@ describe("un solo mapa por caso", () => {
       () => false,
     );
     expect(creados).toHaveLength(0);
+  });
+});
+
+describe("los nombres de las calles al alejar (B6)", () => {
+  it("en cada estilo que carga, las calles locales de positron se nombran desde el zoom 14", async () => {
+    await tomarMapa(
+      document.createElement("div"),
+      OPC,
+      () => undefined,
+      () => true,
+    );
+    const mapa = creados[0]!;
+    mapa.emitir("style.load");
+    expect(mapa.setLayerZoomRange).toHaveBeenCalledWith("highway-name-minor", 14, 24);
+    // Las capas que el estilo no trae no se tocan.
+    expect(mapa.setLayerZoomRange).toHaveBeenCalledTimes(1);
   });
 });
