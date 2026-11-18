@@ -24,9 +24,61 @@
     },
     "convenciones": {
       "$ref": "#/$defs/Convenciones"
+    },
+    "piso": {
+      "$ref": "#/$defs/PisoMapa"
+    },
+    "fantasma": {
+      "$ref": "#/$defs/Fantasma"
     }
   },
   "$defs": {
+    "PisoMapa": {
+      "type": "object",
+      "description": "Ronda 4, punto 9 (ADR 0124): el modo «mapa real». Una imagen del lugar, norte arriba, que Unity pone como piso en vez del entorno procedural. En el paquete va solo el mapa de OpenStreetMap; la foto satelital de Esri se manda en vivo con el mensaje `piso` del puente y nunca se guarda.",
+      "additionalProperties": false,
+      "required": ["imagen", "centro_x", "centro_y", "lado_m", "atribucion"],
+      "properties": {
+        "imagen": {
+          "type": "string",
+          "description": "La imagen como data URL (image/jpeg o image/png), cuadrada.",
+          "pattern": "^data:image/(jpeg|png);base64,"
+        },
+        "centro_x": {
+          "type": "number",
+          "description": "Metros hacia el este desde el origen de la escena."
+        },
+        "centro_y": {
+          "type": "number",
+          "description": "Metros hacia el norte desde el origen de la escena."
+        },
+        "lado_m": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 2000,
+          "description": "Cuántos metros cubre cada lado de la imagen."
+        },
+        "atribucion": {
+          "type": "string",
+          "description": "El crédito que pide la licencia de lo que se ve en la imagen."
+        }
+      }
+    },
+    "Fantasma": {
+      "type": "object",
+      "description": "Ronda 4, punto 8 (ADR 0123): una versión del caso (lo que declaró un conductor o una hipótesis del perito) que Unity dibuja translúcida sobre la reconstrucción, con el mismo reloj. Unity solo la reproduce.",
+      "additionalProperties": false,
+      "required": ["etiqueta", "resultado"],
+      "properties": {
+        "etiqueta": {
+          "type": "string",
+          "description": "Cómo se llama la versión en pantalla: «lo que declaró el conductor de B · GM Camaro»."
+        },
+        "resultado": {
+          "$ref": "https://croquis.local/schema/resultado/1.9.0"
+        }
+      }
+    },
     "OrigenRelieve": {
       "type": "object",
       "description": "Dónde está la esquina suroeste de la malla: en el mundo y en la escena.",

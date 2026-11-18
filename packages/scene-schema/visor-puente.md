@@ -1,28 +1,29 @@
 # Puente web ↔ visor Unity
 
-**Versión 1.2.0.** Los tipos están en `src/visor-puente.ts` (`VISOR_PUENTE_VERSION`), y una prueba revisa que este documento y los tipos nombren los mismos mensajes. Este contrato solo cambia con un PR `contract:`.
+**Versión 1.3.0.** Los tipos están en `src/visor-puente.ts` (`VISOR_PUENTE_VERSION`), y una prueba revisa que este documento y los tipos nombren los mismos mensajes. Este contrato solo cambia con un PR `contract:`.
 
 ## Cómo viajan los mensajes
 
 - **De la web a Unity:** `unityInstance.SendMessage("VisorPuente", "<mensaje>", "<JSON>")`, con los campos de la tabla como objeto JSON. Sin campos, `"{}"`.
 - **De Unity a la web:** Unity llama a `window.croquisVisorMensaje("<JSON>")`, con el nombre en `tipo` y los campos al mismo nivel: `{"tipo":"tiempo","t":0.4}`.
-- **Al arrancar:** Unity manda `listo` con su versión. Si no coincide con la de la web, la web no carga el caso y abre el visor ligero.
+- **Al arrancar:** Unity manda `listo` con su versión. Si no es una de las que acepta la web (`VERSIONES_PUENTE_COMPATIBLES`), la web no carga el caso y abre el visor ligero.
 
 ## De la web a Unity
 
-| Mensaje       | Campos                                            | Qué hace                                                                               |
-| ------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `cargarCaso`  | `json`: el paquete caso-3d, como texto            | Carga el caso. Contesta `cargado` o `error`.                                           |
-| `fijarTiempo` | `t`: segundos, 0 es el impacto principal          | Lleva la reproducción a ese instante.                                                  |
-| `reproducir`  |                                                   | Reproduce.                                                                             |
-| `pausar`      |                                                   | Pausa.                                                                                 |
-| `velocidad`   | `x`: 0.25, 0.5 o 1                                | Cambia la velocidad.                                                                   |
-| `camara`      | `modo`                                            | Cambia de cámara.                                                                      |
-| `calidad`     | `nivel`: `baja`, `media`, `alta`, `ultra`, `auto` | Fija el nivel, o lo deja automático.                                                   |
-| `encuadrar`   | `zona`: `todo` o `impacto`                        | «Ver todo» o «Ir al impacto».                                                          |
-| `capturar`    | `vista`, `ancho`, `alto`                          | Toma una foto cuando la escena está lista. Contesta `captura`.                         |
-| `modoEdicion` | `on`: sí o no; `herramienta`, `vehiculo_id`       | Permite arrastrar objetos o marcar un punto, según la herramienta.                     |
-| `marcadores`  | `visibles`: sí o no                               | Muestra u oculta los puntos de C1: primer golpe, choques intermedios y puntos de paso. |
+| Mensaje       | Campos                                                   | Qué hace                                                                                                   |
+| ------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `cargarCaso`  | `json`: el paquete caso-3d, como texto                   | Carga el caso. Contesta `cargado` o `error`.                                                               |
+| `fijarTiempo` | `t`: segundos, 0 es el impacto principal                 | Lleva la reproducción a ese instante.                                                                      |
+| `reproducir`  |                                                          | Reproduce.                                                                                                 |
+| `pausar`      |                                                          | Pausa.                                                                                                     |
+| `velocidad`   | `x`: 0.25, 0.5 o 1                                       | Cambia la velocidad.                                                                                       |
+| `camara`      | `modo`                                                   | Cambia de cámara.                                                                                          |
+| `calidad`     | `nivel`: `baja`, `media`, `alta`, `ultra`, `auto`        | Fija el nivel, o lo deja automático.                                                                       |
+| `encuadrar`   | `zona`: `todo` o `impacto`                               | «Ver todo» o «Ir al impacto».                                                                              |
+| `capturar`    | `vista`, `ancho`, `alto`                                 | Toma una foto cuando la escena está lista. Contesta `captura`.                                             |
+| `modoEdicion` | `on`: sí o no; `herramienta`, `vehiculo_id`              | Permite arrastrar objetos o marcar un punto, según la herramienta.                                         |
+| `marcadores`  | `visibles`: sí o no                                      | Muestra u oculta los puntos de C1: primer golpe, choques intermedios y puntos de paso.                     |
+| `piso`        | `imagen`, `centro_x`, `centro_y`, `lado_m`, `atribucion` | Cambia el piso del modo «mapa real» sin recargar el caso. Con `imagen` nula, vuelve al entorno procedural. |
 
 **`modo`:** `cenital`, `cinematica`, `orbita`, `acera`, `libre`, `conductor:<id del vehículo>`, `cerca:<id del vehículo>:<azimut°>:<distancia m>:<altura m>` o `persona:<id de la persona>`. `acera` es de pie junto al árbol más cercano a la acción. `cerca` sigue al vehículo desde un azimut contado desde su frente hacia su derecha (la web la usa para «Detrás de A» y para el daño). `persona` sigue a quien va a pie, en bici o en moto, desde su costado.
 
@@ -31,6 +32,14 @@
 **Cambios de la 1.1.0:** la cámara `acera` y el mensaje `marcadores`.
 
 **Cambios de la 1.2.0:** la vista `antes` de `capturar` (un segundo antes del impacto: el dictamen lleva tres fotos), la `herramienta` de `modoEdicion`, y el campo `tipo` de `puntoMarcado` se llama `punto` (chocaba con el `tipo` del mensaje, y se perdía).
+
+**Cambios de la 1.3.0** (ronda 4; ADR 0123 y 0124):
+
+- **El mensaje `piso`.** `imagen` es una data URL (JPEG o PNG), cuadrada y con el norte arriba; cubre `lado_m` metros con su centro en (`centro_x`, `centro_y`) de la escena. Mientras hay piso, Unity apaga el entorno procedural (calles, edificios, árboles y cerros) y dibuja la imagen como piso, sin sombras de nubes ni charcos encima.
+- **Dos campos opcionales en `caso-3d`.**
+  - `piso`: lo mismo, dentro del paquete. Lleva solo el mapa de OpenStreetMap: la foto satelital va por el mensaje y nunca se guarda.
+  - `fantasma`: una versión del caso (`etiqueta` y `resultado`). Unity dibuja sus vehículos translúcidos, sin daño, con el mismo reloj que la reconstrucción.
+- **La web sigue aceptando la 1.2.0** (`VERSIONES_PUENTE_COMPATIBLES`). Con ella no manda el piso ni el fantasma.
 
 **`vista`:** `antes` (t = −1 s), `impacto` (t = 0) y `reposo` (al final) salen con la cámara cinematográfica; `conductor:<id del vehículo>`, con la de ese conductor en el impacto. La foto se toma a la escala de dibujo completa, sin minimapa ni panel; la leyenda ilustrativa la pone la web al pie.
 

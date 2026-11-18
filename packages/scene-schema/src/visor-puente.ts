@@ -3,8 +3,18 @@
  * revisa que los dos nombren los mismos mensajes.
  */
 
-/** Sube cuando cambia un mensaje. Unity la anuncia en `listo`; la web no carga un caso si no coincide. */
-export const VISOR_PUENTE_VERSION = "1.2.0" as const;
+/** Sube cuando cambia un mensaje. Unity la anuncia en `listo`. */
+export const VISOR_PUENTE_VERSION = "1.3.0" as const;
+
+/**
+ * Las versiones con las que la web todavía trabaja: la 1.2.0 es la del build publicado antes de la
+ * ronda 4 (sin piso de mapa ni fantasma). Con otra, la web no carga el caso y abre el visor ligero.
+ */
+export const VERSIONES_PUENTE_COMPATIBLES: readonly string[] = ["1.2.0", VISOR_PUENTE_VERSION];
+
+/** Si el build anunciado entiende el piso de mapa y el fantasma (puente 1.3.0, ronda 4). */
+export const conPisoYFantasma = (version: string | null | undefined): boolean =>
+  version === "1.3.0";
 
 export const CALIDADES_VISOR = ["baja", "media", "alta", "ultra", "auto"] as const;
 export type CalidadVisor = (typeof CALIDADES_VISOR)[number];
@@ -59,6 +69,17 @@ export interface MensajesAUnity {
   modoEdicion: { on: boolean; herramienta?: HerramientaEdicion; vehiculo_id?: string };
   /** Muestra u oculta los puntos de C1 (primer golpe, choques intermedios, puntos de paso). */
   marcadores: { visibles: boolean };
+  /**
+   * 1.3.0 (ronda 4, punto 9): cambia la imagen del piso del modo «mapa real» sin volver a cargar el
+   * caso (la foto satelital y su ajuste). Con `imagen: null`, vuelve al entorno procedural.
+   */
+  piso: {
+    imagen: string | null;
+    centro_x?: number;
+    centro_y?: number;
+    lado_m?: number;
+    atribucion?: string;
+  };
 }
 
 export const CODIGOS_ERROR_VISOR = [
@@ -124,6 +145,7 @@ export const NOMBRES_A_UNITY = [
   "capturar",
   "modoEdicion",
   "marcadores",
+  "piso",
 ] as const satisfies readonly (keyof MensajesAUnity)[];
 
 export const NOMBRES_DE_UNITY = [

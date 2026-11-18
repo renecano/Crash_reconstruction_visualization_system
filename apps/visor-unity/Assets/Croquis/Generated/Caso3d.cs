@@ -33,6 +33,12 @@ namespace Croquis.Generated
         [JsonProperty("escenario", NullValueHandling = NullValueHandling.Ignore)]
         public Escenario Escenario { get; set; }
 
+        [JsonProperty("fantasma", NullValueHandling = NullValueHandling.Ignore)]
+        public Fantasma Fantasma { get; set; }
+
+        [JsonProperty("piso", NullValueHandling = NullValueHandling.Ignore)]
+        public Piso Piso { get; set; }
+
         [JsonProperty("relieve", NullValueHandling = NullValueHandling.Ignore)]
         public Caso3DRelieve Relieve { get; set; }
 
@@ -3516,91 +3522,20 @@ namespace Croquis.Generated
     }
 
     /// <summary>
-    /// Malla regular de alturas. Las filas van de sur a norte y, en cada fila, de oeste a este:
-    /// alturas_m[fila * ancho + columna].
+    /// Ronda 4, punto 8 (ADR 0123): una versión del caso (lo que declaró un conductor o una
+    /// hipótesis del perito) que Unity dibuja translúcida sobre la reconstrucción, con el mismo
+    /// reloj. Unity solo la reproduce.
     /// </summary>
-    public partial class Caso3DRelieve
+    public partial class Fantasma
     {
         /// <summary>
-        /// Nodos de sur a norte.
+        /// Cómo se llama la versión en pantalla: «lo que declaró el conductor de B · GM Camaro».
         /// </summary>
-        [JsonProperty("alto")]
-        public long Alto { get; set; }
+        [JsonProperty("etiqueta")]
+        public string Etiqueta { get; set; }
 
-        /// <summary>
-        /// Alturas en metros, relativas al punto de impacto (allí vale 0).
-        /// </summary>
-        [JsonProperty("alturas_m")]
-        public double[] AlturasM { get; set; }
-
-        /// <summary>
-        /// Nodos de oeste a este.
-        /// </summary>
-        [JsonProperty("ancho")]
-        public long Ancho { get; set; }
-
-        /// <summary>
-        /// De dónde salieron las alturas (p. ej. el modelo de elevación).
-        /// </summary>
-        [JsonProperty("fuente")]
-        [JsonConverter(typeof(MischievousMinMaxLengthCheckConverter))]
-        public string Fuente { get; set; }
-
-        /// <summary>
-        /// Lo cita `lugar.terreno.relieve.malla_id`.
-        /// </summary>
-        [JsonProperty("id")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter1))]
-        public string Id { get; set; }
-
-        /// <summary>
-        /// El aviso de la licencia de la fuente, tal como pide mostrarlo (el de Copernicus GLO-30
-        /// pasa de 120 caracteres).
-        /// </summary>
-        [JsonProperty("licencia")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter7))]
-        public string Licencia { get; set; }
-
-        [JsonProperty("origen")]
-        public OrigenClass Origen { get; set; }
-
-        /// <summary>
-        /// Metros entre nodos de la malla.
-        /// </summary>
-        [JsonProperty("resolucion_m")]
-        public double ResolucionM { get; set; }
-
-        /// <summary>
-        /// La resolución real de la fuente: lo que sea más chico que esto no se ve en la malla.
-        /// </summary>
-        [JsonProperty("resolucion_nativa_m")]
-        public double ResolucionNativaM { get; set; }
-    }
-
-    /// <summary>
-    /// Dónde está la esquina suroeste de la malla: en el mundo y en la escena.
-    /// </summary>
-    public partial class OrigenClass
-    {
-        [JsonProperty("lat")]
-        [JsonConverter(typeof(StickyMinMaxValueCheckConverter))]
-        public double Lat { get; set; }
-
-        [JsonProperty("lon")]
-        [JsonConverter(typeof(IndigoMinMaxValueCheckConverter))]
-        public double Lon { get; set; }
-
-        /// <summary>
-        /// Metros hacia el este desde el origen de la escena.
-        /// </summary>
-        [JsonProperty("x")]
-        public double X { get; set; }
-
-        /// <summary>
-        /// Metros hacia el norte desde el origen de la escena.
-        /// </summary>
-        [JsonProperty("y")]
-        public double Y { get; set; }
+        [JsonProperty("resultado")]
+        public Caso3DResultado Resultado { get; set; }
     }
 
     /// <summary>
@@ -5115,6 +5050,134 @@ namespace Croquis.Generated
 
         [JsonProperty("visible_toda_la_aproximacion", NullValueHandling = NullValueHandling.Ignore)]
         public bool? VisibleTodaLaAproximacion { get; set; }
+    }
+
+    /// <summary>
+    /// Ronda 4, punto 9 (ADR 0124): el modo «mapa real». Una imagen del lugar, norte arriba, que
+    /// Unity pone como piso en vez del entorno procedural. En el paquete va solo el mapa de
+    /// OpenStreetMap; la foto satelital de Esri se manda en vivo con el mensaje `piso` del
+    /// puente y nunca se guarda.
+    /// </summary>
+    public partial class Piso
+    {
+        /// <summary>
+        /// El crédito que pide la licencia de lo que se ve en la imagen.
+        /// </summary>
+        [JsonProperty("atribucion")]
+        public string Atribucion { get; set; }
+
+        /// <summary>
+        /// Metros hacia el este desde el origen de la escena.
+        /// </summary>
+        [JsonProperty("centro_x")]
+        public double CentroX { get; set; }
+
+        /// <summary>
+        /// Metros hacia el norte desde el origen de la escena.
+        /// </summary>
+        [JsonProperty("centro_y")]
+        public double CentroY { get; set; }
+
+        /// <summary>
+        /// La imagen como data URL (image/jpeg o image/png), cuadrada.
+        /// </summary>
+        [JsonProperty("imagen")]
+        public string Imagen { get; set; }
+
+        /// <summary>
+        /// Cuántos metros cubre cada lado de la imagen.
+        /// </summary>
+        [JsonProperty("lado_m")]
+        [JsonConverter(typeof(MinMaxValueCheckConverter14))]
+        public double LadoM { get; set; }
+    }
+
+    /// <summary>
+    /// Malla regular de alturas. Las filas van de sur a norte y, en cada fila, de oeste a este:
+    /// alturas_m[fila * ancho + columna].
+    /// </summary>
+    public partial class Caso3DRelieve
+    {
+        /// <summary>
+        /// Nodos de sur a norte.
+        /// </summary>
+        [JsonProperty("alto")]
+        public long Alto { get; set; }
+
+        /// <summary>
+        /// Alturas en metros, relativas al punto de impacto (allí vale 0).
+        /// </summary>
+        [JsonProperty("alturas_m")]
+        public double[] AlturasM { get; set; }
+
+        /// <summary>
+        /// Nodos de oeste a este.
+        /// </summary>
+        [JsonProperty("ancho")]
+        public long Ancho { get; set; }
+
+        /// <summary>
+        /// De dónde salieron las alturas (p. ej. el modelo de elevación).
+        /// </summary>
+        [JsonProperty("fuente")]
+        [JsonConverter(typeof(MischievousMinMaxLengthCheckConverter))]
+        public string Fuente { get; set; }
+
+        /// <summary>
+        /// Lo cita `lugar.terreno.relieve.malla_id`.
+        /// </summary>
+        [JsonProperty("id")]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter1))]
+        public string Id { get; set; }
+
+        /// <summary>
+        /// El aviso de la licencia de la fuente, tal como pide mostrarlo (el de Copernicus GLO-30
+        /// pasa de 120 caracteres).
+        /// </summary>
+        [JsonProperty("licencia")]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter7))]
+        public string Licencia { get; set; }
+
+        [JsonProperty("origen")]
+        public OrigenClass Origen { get; set; }
+
+        /// <summary>
+        /// Metros entre nodos de la malla.
+        /// </summary>
+        [JsonProperty("resolucion_m")]
+        public double ResolucionM { get; set; }
+
+        /// <summary>
+        /// La resolución real de la fuente: lo que sea más chico que esto no se ve en la malla.
+        /// </summary>
+        [JsonProperty("resolucion_nativa_m")]
+        public double ResolucionNativaM { get; set; }
+    }
+
+    /// <summary>
+    /// Dónde está la esquina suroeste de la malla: en el mundo y en la escena.
+    /// </summary>
+    public partial class OrigenClass
+    {
+        [JsonProperty("lat")]
+        [JsonConverter(typeof(StickyMinMaxValueCheckConverter))]
+        public double Lat { get; set; }
+
+        [JsonProperty("lon")]
+        [JsonConverter(typeof(IndigoMinMaxValueCheckConverter))]
+        public double Lon { get; set; }
+
+        /// <summary>
+        /// Metros hacia el este desde el origen de la escena.
+        /// </summary>
+        [JsonProperty("x")]
+        public double X { get; set; }
+
+        /// <summary>
+        /// Metros hacia el norte desde el origen de la escena.
+        /// </summary>
+        [JsonProperty("y")]
+        public double Y { get; set; }
     }
 
     public enum AngulosEscena { GradosAntihorarioDesdeX };
@@ -11424,34 +11487,6 @@ namespace Croquis.Generated
         public static readonly NombreCapaConverter Singleton = new NombreCapaConverter();
     }
 
-    internal class MinMaxLengthCheckConverter7 : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(string);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            var value = serializer.Deserialize<string>(reader);
-            if (value.Length >= 1 && value.Length <= 400)
-            {
-                return value;
-            }
-            throw new Exception("Cannot unmarshal type string");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            var value = (string)untypedValue;
-            if (value.Length >= 1 && value.Length <= 400)
-            {
-                serializer.Serialize(writer, value);
-                return;
-            }
-            throw new Exception("Cannot marshal type string");
-        }
-
-        public static readonly MinMaxLengthCheckConverter7 Singleton = new MinMaxLengthCheckConverter7();
-    }
-
     internal class OrigenEnumConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(OrigenEnum) || t == typeof(OrigenEnum?);
@@ -11564,6 +11599,34 @@ namespace Croquis.Generated
         }
 
         public static readonly IndecentDecodeArrayConverter Singleton = new IndecentDecodeArrayConverter();
+    }
+
+    internal class MinMaxLengthCheckConverter7 : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(string);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            var value = serializer.Deserialize<string>(reader);
+            if (value.Length >= 1 && value.Length <= 400)
+            {
+                return value;
+            }
+            throw new Exception("Cannot unmarshal type string");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            var value = (string)untypedValue;
+            if (value.Length >= 1 && value.Length <= 400)
+            {
+                serializer.Serialize(writer, value);
+                return;
+            }
+            throw new Exception("Cannot marshal type string");
+        }
+
+        public static readonly MinMaxLengthCheckConverter7 Singleton = new MinMaxLengthCheckConverter7();
     }
 
     internal class CodigoConverter : JsonConverter
@@ -12713,5 +12776,39 @@ namespace Croquis.Generated
         }
 
         public static readonly TipoObjetivoConverter Singleton = new TipoObjetivoConverter();
+    }
+
+    internal class MinMaxValueCheckConverter14 : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<double>(reader);
+            if (value <= 2000)
+            {
+                return value;
+            }
+            throw new Exception("Cannot unmarshal type double");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (double)untypedValue;
+            if (value <= 2000)
+            {
+                serializer.Serialize(writer, value);
+                return;
+            }
+            throw new Exception("Cannot marshal type double");
+        }
+
+        public static readonly MinMaxValueCheckConverter14 Singleton = new MinMaxValueCheckConverter14();
     }
 }
