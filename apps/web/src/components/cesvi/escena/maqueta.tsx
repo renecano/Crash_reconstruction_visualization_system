@@ -118,7 +118,22 @@ export function EscenaMaqueta({
   conBarra = false,
   margenes = SIN_MARGENES,
   declarada = null,
+  fondo = null,
+  papel = false,
 }: {
+  /**
+   * PROTOTIPO (ronda 4, el 2D como croquis de perito): una imagen del lugar debajo del croquis (el
+   * mapa o la foto satelital), tenue, en coordenadas de la escena.
+   */
+  fondo?: {
+    imagen: string;
+    centroX: number;
+    centroY: number;
+    ladoM: number;
+    opacidad: number;
+  } | null;
+  /** PROTOTIPO (ronda 4): papel blanco, como el croquis impreso de un perito. */
+  papel?: boolean;
   /**
    * T6.2: la versión declarada de un conductor ya simulada (R7), para dibujarla sobre la
    * reconstrucción: el camino y la silueta de cada vehículo que en esa versión va por otro lado, en
@@ -293,6 +308,19 @@ export function EscenaMaqueta({
       ) : (
         <rect x={-W * 3} y={-H * 3} width={W * 7} height={H * 7} fill="url(#mq-luz)" />
       )}
+      {papel ? <rect x={-W * 50} y={-H * 50} width={W * 101} height={H * 101} fill="#fff" /> : null}
+      {fondo ? (
+        <image
+          href={fondo.imagen}
+          x={px(fondo.centroX - fondo.ladoM / 2)}
+          y={py(fondo.centroY + fondo.ladoM / 2)}
+          width={fondo.ladoM}
+          height={fondo.ladoM}
+          opacity={fondo.opacidad}
+          preserveAspectRatio="none"
+          data-testid="maqueta-fondo"
+        />
+      ) : null}
 
       {/* La vía: calles del mapa a su ancho; si no hay mapa, la plantilla de la escena. */}
       <g filter="url(#mq-losa)">

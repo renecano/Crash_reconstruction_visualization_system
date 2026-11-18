@@ -14,6 +14,9 @@ import type { OverpassResponse } from "@croquis/croquis-2d";
 import type { EscenaSpec } from "@croquis/scene-schema";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { conCallesDelMapa } from "@/lib/calles-del-mapa";
+import { useSearchParams } from "next/navigation";
+import { usePisoMapaReal } from "@/components/visor-unity/mapa-real";
+import { SIN_AJUSTE } from "@/lib/visor-unity/piso";
 import type { Canal } from "@/lib/canal";
 import { METODO } from "@/lib/textos-caso";
 import { kmhAntesDe, kmhEn, tImpacto, type ResultadoMaqueta } from "@/lib/maqueta";
@@ -32,6 +35,51 @@ const MARGENES_ETAPA = { arriba: 150, abajo: 190, izq: 24, der: 24 };
  * es tan angosto que no deja la mitad libre, `encajar` ignora el margen.
  */
 const MARGENES_COMPACTA = { arriba: 16, abajo: 16, izq: 16, der: 92 };
+
+/**
+ * PROTOTIPO (ronda 4; René, 2026-11-18: «el 2D de Reconstrucción no se entiende»): la leyenda corta
+ * del croquis, con `?croquis=1|2|3`. 1: el croquis con el mapa tenue; 2: papel blanco con su cuadro
+ * de referencia; 3: sobre la foto satelital.
+ */
+function CuadroCroquis({
+  variante,
+  nombres,
+  atribucion,
+}: {
+  variante: 1 | 2 | 3;
+  nombres: string[];
+  atribucion: string | null;
+}) {
+  const fila = (simbolo: ReactNode, texto: string) => (
+    <li className="flex items-center gap-2">
+      <span className="inline-flex w-7 justify-center" aria-hidden="true">
+        {simbolo}
+      </span>
+      {texto}
+    </li>
+  );
+  return (
+    <aside
+      className={`pointer-events-auto absolute right-4 bottom-36 z-10 flex w-[17rem] flex-col gap-2 rounded-panel p-3 text-[0.75rem] ${variante === 2 ? "border-2 border-black bg-white text-black" : "vidrio"}`}
+      data-testid="cuadro-croquis"
+    >
+      <span className="font-mono text-[0.6875rem] tracking-[0.08em] uppercase">
+        {variante === 2 ? "Croquis ilustrativo · referencias" : "Leyenda"}
+      </span>
+      <ul className="flex flex-col gap-1">
+        {fila(<span className="font-bold text-[#FF5B2E]">✕</span>, "Punto de impacto")}
+        {fila(<span className="h-0.5 w-6 bg-[#FF5B2E]" />, "Trayectoria (más naranja, más rápido)")}
+        {fila(<span className="h-3 w-5 rounded-sm border border-current" />, "Posición cada 0.4 s")}
+        {fila(
+          <span className="h-3 w-5 rounded-sm border border-dashed border-current" />,
+          "Posición final",
+        )}
+        {fila(<span className="font-mono font-bold">A</span>, nombres.join(" · ") || "Vehículos")}
+      </ul>
+      {atribucion ? <span className="text-[0.625rem] opacity-80">{atribucion}</span> : null}
+    </aside>
+  );
+}
 
 export function MaquetaCaso({
   r,
@@ -76,6 +124,15 @@ export function MaquetaCaso({
   }, [r, calles]);
   const [listo, setListo] = useState<{ spec: EscenaSpec; res: ResultadoMaqueta } | null>(null);
   const { enMarco } = useMarco();
+  const sp = useSearchParams();
+  const variante2d = (
+    ["1", "2", "3"].includes(sp.get("croquis") ?? "") ? Number(sp.get("croquis")) : null
+  ) as 1 | 2 | 3 | null;
+  const piso2d = usePisoMapaReal(r.resultado, r.origen, {
+    activo: variante2d === 1 || variante2d === 3,
+    conFoto: variante2d === 3,
+    ajuste: SIN_AJUSTE,
+  });
   useEffect(() => {
     let vivo = true;
     // Con el relieve con que se reconstruyó (W5): la maqueta va sobre el mismo terreno.
@@ -134,9 +191,34 @@ export function MaquetaCaso({
             tips={tips}
             tipDelImpacto={tipDelImpacto}
             declarada={declarada}
+            fondo={
+              variante2d && piso2d.piso
+                ? {
+                    imagen: variante2d === 3 ? piso2d.piso.imagenVivo : piso2d.piso.imagenMapa,
+                    centroX: piso2d.piso.centro_x,
+                    centroY: piso2d.piso.centro_y,
+                    ladoM: piso2d.piso.lado_m,
+                    opacidad: variante2d === 3 ? 0.55 : 0.32,
+                  }
+                : null
+            }
+            papel={variante2d === 2}
           />
         )}
       </ConLineaDeTiempo>
+      {variante2d ? (
+        <CuadroCroquis
+          variante={variante2d}
+          nombres={Object.values(nombres ?? {})}
+          atribucion={
+            variante2d === 2 || !piso2d.piso
+              ? null
+              : variante2d === 3
+                ? piso2d.piso.atribucionVivo
+                : piso2d.piso.atribucionMapa
+          }
+        />
+      ) : null}
       {/* Cada cifra con su método (prompt §0): la de la maqueta no es el p50 de la tabla. En el marco
           del caso va abajo, fuera del dibujo (René, 2026-11-17). */}
       <LeyendaEnMarco>
