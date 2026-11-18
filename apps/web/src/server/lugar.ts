@@ -228,7 +228,8 @@ export function segundaCalle(texto: string): string | null {
     /\s(?:esquina\s+con|esq\.?|y\s+(?:la\s+)?(?:calle|av\.?|avenida)|entre(?:\s+las\s+calles)?)\s+([^,;]+?)(?:\s+y\s+|,|;|$)/i.exec(
       texto,
     ) ?? /^(?:las\s+)?calles\s+[^,;]+?\s+y\s+([^,;]+)/i.exec(texto);
-  const c = m?.[1]?.trim();
+  // «entre las calles de Libertad y…» → «Libertad».
+  const c = m?.[1]?.trim().replace(/^(?:de|la|el|los|las)\s+/i, "");
   return c && c.length >= 3 ? c : null;
 }
 
@@ -428,8 +429,28 @@ async function conNominatim(
   let cajaMunicipio: Nominatim | null = null;
   if (municipio) {
     const r = await nom({ q: donde, limit: "3" });
-    cajaMunicipio = r.find((x) => x.boundingbox && enEstado(x)) ?? null;
+    // El área que se llama como el municipio (no la ciudad entera ni una calle con su nombre).
+    const seLlama = (x: Nominatim) => {
+      const n = sinAcentos(x.name ?? x.display_name.split(",")[0] ?? "");
+      const m = sinAcentos(municipio);
+      return n.includes(m) || m.includes(n);
+    };
+    cajaMunicipio =
+      r.find((x) => x.boundingbox && enEstado(x) && seLlama(x)) ??
+      r.find((x) => x.boundingbox && enEstado(x)) ??
+      null;
   }
+  // Una opción cae en el municipio del caso si su municipio se llama igual (sin acentos).
+  const delMunicipio = (x: ResultadoLugar) => {
+    if (!municipio || !x.municipio) return false;
+    const a = sinAcentos(x.municipio);
+    const b = sinAcentos(municipio);
+    return a.includes(b) || b.includes(a);
+  };
+  const primeroDelMunicipio = (rs: ResultadoLugar[]) => [
+    ...rs.filter(delMunicipio),
+    ...rs.filter((x) => !delMunicipio(x)),
+  ];
   let cajaEstado: Nominatim | null = null;
   const estadoCaja = async () => {
     if (!estado || cajaEstado) return cajaEstado;
@@ -496,21 +517,32 @@ async function conNominatim(
       ].filter((s): s is string => Boolean(s && s.trim().length >= 3)),
     ),
   ];
-  const buscarEn = async (caja: Nominatim, cuantas: number) => {
+  // Dentro de la caja y con la zona escrita: la caja es un rectángulo que toca a los municipios
+  // vecinos; el nombre del municipio en el texto hace que Nominatim prefiera los del caso.
+  const buscarEn = async (caja: Nominatim, cuantas: number, zonaEscrita: string) => {
+    let otro: { v: string; r: ResultadoLugar[] } | null = null;
     for (const v of variantes.slice(0, cuantas)) {
-      const r = await nom({ q: v, viewbox: viewbox(caja.boundingbox!), bounded: "1" });
-      if (r.length) return { v, r };
+      const r = (
+        await nom({
+          q: zonaEscrita ? `${v}, ${zonaEscrita}` : v,
+          viewbox: viewbox(caja.boundingbox!),
+          bounded: "1",
+        })
+      ).map(aResultado);
+      if (r.some(delMunicipio) || (r.length && !municipio)) return { v, r, delCaso: true };
+      if (r.length && !otro) otro = { v, r };
     }
-    return null;
+    return otro ? { ...otro, delCaso: false } : null;
   };
 
   if (cajaMunicipio) {
-    const h = await buscarEn(cajaMunicipio, variantes.length);
+    const h = await buscarEn(cajaMunicipio, variantes.length, donde);
     if (h)
       return {
-        resultados: sinRepetir(h.r.map(aResultado)),
-        aviso:
-          h.v === variantes[0]
+        resultados: sinRepetir(primeroDelMunicipio(h.r)),
+        aviso: !h.delCaso
+          ? `No apareció en ${municipio}; estas opciones son de municipios vecinos. Revisa cuál es.`
+          : h.v === variantes[0]
             ? null
             : `No se encontró el lugar completo; se buscó «${h.v}» en ${donde}.`,
         fuente: "nominatim",
@@ -518,10 +550,10 @@ async function conNominatim(
   }
   const caja = await estadoCaja();
   if (caja) {
-    const h = await buscarEn(caja, 2);
+    const h = await buscarEn(caja, 2, estado ?? "");
     if (h)
       return {
-        resultados: sinRepetir(h.r.map(aResultado)),
+        resultados: sinRepetir(primeroDelMunicipio(h.r)),
         aviso: municipio
           ? `No apareció en ${municipio}; estas opciones son de otros municipios de ${estado}. Revisa cuál es.`
           : `Opciones en ${estado}: el caso no dice el municipio.`,

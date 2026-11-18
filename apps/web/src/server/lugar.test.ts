@@ -104,7 +104,7 @@ describe("buscar el lugar del hecho (A1)", () => {
     const { deps, pedidos } = falso((u) => {
       const q = u.searchParams.get("q");
       if (q === "Iztapalapa, Ciudad de México") return { status: 200, body: [IZTAPALAPA] };
-      if (q === "Calle Azucena")
+      if (q === "Calle Azucena, Iztapalapa, Ciudad de México")
         return {
           status: 200,
           body: [
@@ -157,7 +157,10 @@ describe("buscar el lugar del hecho (A1)", () => {
     const { deps, pedidos } = falso((u) => {
       const q = u.searchParams.get("q");
       if (q === "San Luis Potosí, San Luis Potosí") return { status: 200, body: [SLP] };
-      if (q === "Av. Venustiano Carranza 500" && u.searchParams.get("bounded") === "1")
+      if (
+        q === "Av. Venustiano Carranza 500, San Luis Potosí, San Luis Potosí" &&
+        u.searchParams.get("bounded") === "1"
+      )
         return { status: 200, body: [CARRANZA_SLP] };
       // Sin acotar, la misma calle de la CDMX: no debe pedirse.
       if (q?.startsWith("Av. Venustiano Carranza")) return { status: 200, body: [CARRANZA_CDMX] };
@@ -187,7 +190,7 @@ describe("buscar el lugar del hecho (A1)", () => {
       if (u.searchParams.get("state") === "San Luis Potosí") return { status: 200, body: [SLP] };
       // La calle aparece solo en la caja del estado.
       if (
-        q === "Av. Venustiano Carranza 500" &&
+        q?.startsWith("Av. Venustiano Carranza 500") &&
         u.searchParams.get("viewbox")?.startsWith("-102.3")
       )
         return { status: 200, body: [CARRANZA_SLP, CARRANZA_SLP_2] };
