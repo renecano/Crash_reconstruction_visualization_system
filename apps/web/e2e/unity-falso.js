@@ -32,10 +32,31 @@
       };
       window.addEventListener(tipo, jsEventHandler, true);
     });
+    // Como el real, dibuja un cuadro en cada vuelta del navegador (B7: el video sale de estos
+    // cuadros): un color que cambia con el instante fijado y el instante escrito.
+    var tFijado = 0;
+    var g2 = lienzo.getContext("2d");
+    var dibujar = function () {
+      if (g2) {
+        lienzo.width = Math.max(1, Math.round(lienzo.clientWidth * (window.devicePixelRatio || 1)));
+        lienzo.height = Math.max(
+          1,
+          Math.round(lienzo.clientHeight * (window.devicePixelRatio || 1)),
+        );
+        g2.fillStyle = "hsl(" + Math.round(((tFijado + 10) * 36) % 360) + ", 60%, 45%)";
+        g2.fillRect(0, 0, lienzo.width, lienzo.height);
+        g2.fillStyle = "#fff";
+        g2.font = Math.round(lienzo.height / 12) + "px sans-serif";
+        g2.fillText("t = " + tFijado.toFixed(2), lienzo.width * 0.05, lienzo.height * 0.2);
+      }
+      requestAnimationFrame(dibujar);
+    };
+    requestAnimationFrame(dibujar);
     var instancia = {
       SendMessage: function (objeto, metodo, texto) {
         var datos = texto ? JSON.parse(texto) : {};
         window.__unityFalso.recibidos.push({ objeto: objeto, metodo: metodo, datos: datos });
+        if (metodo === "fijarTiempo") tFijado = Number(datos.t) || 0;
         if (metodo === "cargarCaso") {
           var caso = JSON.parse(datos.json);
           setTimeout(function () {
