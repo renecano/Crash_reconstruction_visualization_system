@@ -1,0 +1,12 @@
+{
+  "descripcion": "Ronda 4, punto 9: la prueba visual de la foto satelital de Esri (World Imagery) en Av. Niños Héroes, Guadalajara. Teselas pedidas para las dos vistas (la cuota gratis es de 2 millones al mes).",
+  "script": "eval/ronda4_mapa_real_esri.mjs",
+  "fecha": "2026-11-18T19:50:31.045Z",
+  "servicio": "https://ibasemaps-api.arcgis.com/arcgis/rest/services/World_Imagery/MapServer",
+  "creditos": "Source: Esri, Vantor, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community",
+  "teselas": 20,
+  "fallidas": 0,
+  "estados": {
+    "200": 20
+  }
+}

@@ -57,7 +57,11 @@ Los plazos son estimaciones gruesas: nadie abrió todavía el código del entorn
   - **Trae los coches de ese día** pintados en el piso, bajo los vehículos 3D.
   - **El video:** la licencia de Esri nombra PDF, GIF, JPEG y HTML; del video no dice nada. Habría que preguntarles o dejar el video sin la foto.
   - **Google y Mapbox quedan descartados para esto:** no permiten la imagen en el dictamen.
-- **Prueba visual:** falta. Necesita una cuenta de Esri (gratis) que solo René puede crear.
+- **Prueba visual** (2026-11-18, con la llave de ArcGIS Location Platform de René; `eval/ronda4_mapa_real_esri.mjs`, 20 teselas, ninguna fallida, `eval/results/ronda4_mapa_real_esri.json`): el mismo cruce y la misma cámara que A1. Las dos cajas, colocadas con las coordenadas de OpenStreetMap, caen sobre el camellón de la foto: es el corrimiento que el perito tiene que poder ajustar.
+
+![A2: la foto satelital como piso](evidencia/mapa-real/prueba-a2-foto-satelital.jpg)
+
+![A2: la misma, desde arriba](evidencia/mapa-real/prueba-a2-foto-satelital-arriba.jpg)
 
 ### B1 · Google Photorealistic 3D Tiles
 
