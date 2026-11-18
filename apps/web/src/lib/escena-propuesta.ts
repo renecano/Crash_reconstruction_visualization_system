@@ -17,6 +17,7 @@
  */
 import type { Expediente } from "@croquis/cesvi";
 import {
+  ajustarACalle,
   elegirDireccion,
   flechaPropuesta,
   flechasDeLlegada,
@@ -71,7 +72,9 @@ export function proponerEscena(o: {
   const { impactos, calles, narracion } = o;
   const vs = o.expediente.vehiculos;
   const cruce = proponerChoque(calles, narracion, o.lugar);
-  const choque = cruce?.punto ?? o.lugar;
+  // Sin cruce cerca, sobre la calle más cercana al lugar (no en medio de una manzana).
+  const sobre = !cruce && o.lugar ? ajustarACalle(calles, o.lugar, 150) : null;
+  const choque = cruce?.punto ?? sobre?.punto ?? o.lugar;
   if (!choque || !impactos.length) return null;
   const propuestos: ElementoPropuesto[] = [];
   const faltan: ElementoPropuesto[] = [];
@@ -80,10 +83,14 @@ export function proponerEscena(o: {
     clave: "choque-1",
     texto: cruce?.calles.length
       ? `El choque, en ${cruce.calles.length > 1 ? `el cruce de ${cruce.calles.join(" y ")}` : cruce.calles[0]}`
-      : "El choque, en el lugar del caso",
+      : sobre
+        ? `El choque, sobre ${sobre.calle.nombre ?? "la calle más cercana"}`
+        : "El choque, en el lugar del caso",
     porque: cruce
       ? (POR_QUE_CHOQUE[cruce.segun] ?? "es el cruce más cercano")
-      : "no hay un cruce cerca: va en el lugar buscado",
+      : sobre
+        ? "no hay un cruce cerca: va sobre la calle más cercana al lugar buscado"
+        : "no hay calles cerca: va en el lugar buscado",
   });
   const sentido = (v: string) =>
     narracion

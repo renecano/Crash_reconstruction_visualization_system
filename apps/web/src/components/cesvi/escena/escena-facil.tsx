@@ -46,6 +46,9 @@ import {
 } from "@croquis/cesvi";
 import { overpassDeTeselas, type OverpassResponse } from "@croquis/croquis-2d";
 import { RADIO_CALLES_M } from "@/lib/calles-del-mapa";
+import { useSearchParams } from "next/navigation";
+import { PropuestaEscena } from "@/components/cesvi/propuestas/escena";
+import { proponerEscena, type EscenaPropuesta } from "@/lib/escena-propuesta";
 import type { Map as MapaMl } from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
@@ -224,7 +227,22 @@ export function EscenaFacil({
     de: string;
     r: OverpassResponse;
   } | null>(null);
-  const centroTeselas = estado.puntos[1] ?? lugar;
+  // Sin choque ni lugar, el centro del mapa (ya está en el lugar buscado).
+  const [centroMapa, setCentroMapa] = useState<Punto | null>(null);
+  useEffect(() => {
+    if (!mapaListo) return undefined;
+    const alMover = () => {
+      const c = mapaListo.getCenter();
+      setCentroMapa({ lat: Number(c.lat.toFixed(4)), lon: Number(c.lng.toFixed(4)) });
+    };
+    mapaListo.on("moveend", alMover);
+    mapaListo.once("idle", alMover);
+    mapaListo.triggerRepaint();
+    return () => {
+      mapaListo.off("moveend", alMover);
+    };
+  }, [mapaListo]);
+  const centroTeselas = estado.puntos[1] ?? lugar ?? centroMapa;
   const claveTeselas = centroTeselas
     ? `${centroTeselas.lon.toFixed(4)},${centroTeselas.lat.toFixed(4)}`
     : null;
@@ -463,6 +481,49 @@ export function EscenaFacil({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- una vez, al abrir la escena
   }, []);
   const lugarBase = lugar ?? lugarNarrado;
+  // PROTOTIPO (ronda 4): con `?propuesta=1|2|3`, Croquis arma la escena al entrar y se ve la
+  // propuesta de diseño encima. Sin el parámetro, nada cambia.
+  const sp = useSearchParams();
+  const variante = (
+    ["1", "2", "3"].includes(sp.get("propuesta") ?? "") ? Number(sp.get("propuesta")) : null
+  ) as 1 | 2 | 3 | null;
+  const [escenaPropuesta, setEscenaPropuesta] = useState<EscenaPropuesta | null>(null);
+  useEffect(() => {
+    if (
+      !variante ||
+      escenaPropuesta ||
+      (estado.puntos[1] && sp.get("desde") !== "cero") ||
+      (!lugarBase && !centroMapa)
+    )
+      return undefined;
+    // Con las calles (de las teselas o de Overpass) en cuanto lleguen; sin ellas, a los 10 s.
+    const t = setTimeout(
+      () => {
+        // «desde=cero»: sin las posiciones que ya traía el caso (AXA trae las de su reporte).
+        const deCero = sp.get("desde") === "cero";
+        const p = proponerEscena({
+          expediente: deCero
+            ? { ...e, versiones: (e.versiones ?? []).map((v) => ({ ...v, posiciones: [] })) }
+            : e,
+          impactos,
+          calles: callesMapa,
+          narracion,
+          lugar: lugarBase ?? centroMapa,
+          nombreDe: (id) => nombres[id] ?? id,
+        });
+        if (!p) return;
+        setEscenaPropuesta(p);
+        onEstado({
+          ...estado,
+          expediente: p.expediente,
+          puntos: deCero ? p.puntos : { ...estado.puntos, ...p.puntos },
+        });
+      },
+      callesMapa.length ? 0 : 10_000,
+    );
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- se arma una vez, al tener calles
+  }, [variante, escenaPropuesta, callesMapa, lugarBase, centroMapa]);
 
   // Lo que Croquis propone para el primer choque.
   const propuesta = useMemo(
@@ -2176,6 +2237,9 @@ export function EscenaFacil({
       data-testid="escena-facil"
       data-listo={todoListo ? "si" : "no"}
     >
+      {variante && escenaPropuesta ? (
+        <PropuestaEscena variante={variante} propuesta={escenaPropuesta} mapa={mapaListo} />
+      ) : null}
       <MapaFacil
         tema={tema}
         encuadre={encuadre}
@@ -2211,8 +2275,11 @@ export function EscenaFacil({
         nombreDe={nombreDeSeleccion}
       />
 
-      {/* «Deshacer» y «Rehacer», siempre a la vista (W4), y cómo va el recálculo. */}
-      <div className="pointer-events-none absolute top-4 right-20 z-10 flex flex-col items-end gap-2">
+      {/* «Deshacer» y «Rehacer», siempre a la vista (W4), y cómo va el recálculo. En el prototipo
+          de la ronda 4 van en su barra de herramientas. */}
+      <div
+        className={`pointer-events-none absolute top-4 right-20 z-10 flex flex-col items-end gap-2 ${variante ? "hidden" : ""}`}
+      >
         <div className="flex gap-2">
           <button
             type="button"
@@ -2432,6 +2499,7 @@ export function EscenaFacil({
           className="escena-hoja absolute right-0 bottom-[84px] left-0 z-10 flex max-h-[46vh] flex-col gap-4 overflow-y-auto rounded-b-none p-5 md:top-6 md:right-auto md:bottom-auto md:left-6 md:max-h-[calc(100%-140px)] md:w-[420px] md:rounded-[22px] md:p-7"
           aria-label="La pregunta"
           data-testid="escena-hoja"
+          hidden={variante === 3}
         >
           {hoja}
           <details
