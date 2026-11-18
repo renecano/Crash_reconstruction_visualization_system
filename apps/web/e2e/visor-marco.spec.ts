@@ -50,6 +50,8 @@ test("@flujo /cesvi: el 3D y el 2D en su marco — controles fuera de la escena,
   await irAPaso(page, 4);
   await page.getByTestId("reconstruir").click();
   await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 120_000 });
+  // La cifra aparece contando: se lee cuando ya no cambia.
+  await page.waitForTimeout(2500);
   const cifra = await page.getByTestId("cifra-reconstruccion").innerText();
 
   // El 3D: las cámaras arriba y la reproducción abajo, fuera del lienzo de Unity.
