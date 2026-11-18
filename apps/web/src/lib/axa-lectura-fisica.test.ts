@@ -96,7 +96,6 @@ describe("la lectura física de AXA", () => {
           verificacion: verificacionCesvi(e),
           croquis: null,
           cuadros3d: [],
-          declarada: null,
           validacion: null,
           estructuraCesvi: false,
           trazabilidad: { metodo: "prueba", huella: "abc" },

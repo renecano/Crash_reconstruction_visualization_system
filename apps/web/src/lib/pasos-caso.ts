@@ -6,13 +6,24 @@
 import type { Expediente } from "@croquis/cesvi";
 
 export type ClavePaso =
-  "caso" | "hecho" | "lugar" | "reconstruccion" | "danos" | "numeros" | "reporte" | "dictamen";
+  | "caso"
+  | "hecho"
+  | "lugar"
+  | "reconstruccion"
+  | "versiones"
+  | "danos"
+  | "numeros"
+  | "reporte"
+  | "dictamen";
 
 export const CLAVES_PASOS: readonly ClavePaso[] = [
   "caso",
   "hecho",
   "lugar",
   "reconstruccion",
+  // Ronda 4, punto 8 (René, 2026-11-18): la declaración y las hipótesis, entre la reconstrucción y
+  // el análisis. Opcional: nunca bloquea.
+  "versiones",
   "danos",
   "numeros",
   "reporte",

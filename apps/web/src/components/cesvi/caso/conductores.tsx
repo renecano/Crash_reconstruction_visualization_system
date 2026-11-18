@@ -134,13 +134,23 @@ export function ResultadoConductores({ p }: { p: PruebaConductores }) {
   );
 }
 
-/** El formulario del paso 6: conductor, decisión, instante y, si se quiere, tiempo de reacción. */
+/**
+ * El formulario de la hipótesis «¿y si…?»: conductor, decisión, instante y, si se quiere, tiempo de
+ * reacción. En el acto «Versiones» (ronda 4) la prueba va a la lista de versiones (`onProbada`); sin
+ * ella, el resultado se muestra aquí mismo.
+ */
 export function ProbarConductores({
   r,
   probar = probarConductoresEnNavegador,
+  onProbada,
+  nombreDe = (id) => id,
 }: {
   r: Reconstruccion;
   probar?: (spec: Json) => Promise<Json | null>;
+  /** La hipótesis probada, con la lectura y el bloque `agentes` del solver. */
+  onProbada?: (x: { h: HipotesisConductor; p: PruebaConductores; agentes: Json }) => void;
+  /** «A · Nissan Versa», por id del expediente. */
+  nombreDe?: (id: string) => string;
 }) {
   const ids = Object.values(r.ids) as Id[];
   const [vehiculo, setVehiculo] = useState<Id>(ids[0]!);
@@ -166,7 +176,9 @@ export function ProbarConductores({
     try {
       const agentes = await probar(especConConductor(r, h));
       if (!agentes) throw new Error("la simulación no devolvió a los conductores");
-      setPrueba({ h, p: leerPruebaConductores(r, agentes) });
+      const p = leerPruebaConductores(r, agentes);
+      if (onProbada) onProbada({ h, p, agentes });
+      else setPrueba({ h, p });
       setEstado(null);
     } catch (e) {
       setEstado(`No se pudo simular: ${(e as Error).message}`);
@@ -175,7 +187,7 @@ export function ProbarConductores({
 
   return (
     <section className="flex flex-col gap-3" data-testid="probar-conductores">
-      <h3 className="t-subtitulo">Probar una hipótesis sobre un conductor</h3>
+      {onProbada ? null : <h3 className="t-subtitulo">Probar una hipótesis sobre un conductor</h3>}
       <p className="t-nota">
         Elige un conductor, qué hace y cuándo; Croquis simula a todos los conductores con esa
         decisión y compara el contacto con el que dan los mismos conductores sin ella.
@@ -191,7 +203,7 @@ export function ProbarConductores({
           >
             {ids.map((id) => (
               <option key={id} value={id}>
-                {id}
+                {nombreDe(id)}
               </option>
             ))}
           </select>

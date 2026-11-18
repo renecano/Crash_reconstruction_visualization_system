@@ -1,77 +1,54 @@
 "use client";
 /**
- * R7 (ADR 0070): comparar la declaración de un conductor con la reconstrucción, como complemento
- * opcional. El perito pega la declaración y elige qué vehículo conducía el declarante; Croquis la
- * lee, simula esa versión con la misma física y muestra «Qué cambia entre versiones». La versión
- * declarada entra al 3D como hipótesis (fantasmas o lado a lado). La sugerencia sale solo si el
- * perito la pide, y él la confirma o la descarta. Sin culpas.
+ * R7 (ADR 0070), en el acto «Versiones» desde la ronda 4 (René, 2026-11-18): el perito pega lo que
+ * declaró un conductor y elige qué vehículo conducía; Croquis la lee, simula esa versión con la
+ * misma física y la agrega a la lista de versiones, con lo que cambia contra la evidencia. Es lo que
+ * dice el conductor, no evidencia; Croquis no dice quién tiene razón.
  */
 import {
   compararDeclarada,
   descripcionVehiculo,
   especDeclarada,
   especDeExpediente,
-  REGLA_SUGERENCIA_DECLARADA,
-  sugerirDeclarada,
   versionDeclarada,
   type Expediente,
-  type FilaDeclarada,
   type Reconstruccion,
   type SalidaCorpus,
-  type VersionDeclarada,
 } from "@croquis/cesvi";
 import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
-import { useEffect, useState } from "react";
-import type { Hipotesis } from "@/components/visor/hypothesis-panel";
-import type { DatosDictamenCaso } from "@/lib/dictamen-caso";
+import { useState } from "react";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
 import { textoParaClaude } from "@/lib/redaccion";
+import { resumenDeDeclaracion, type VersionDeclaracion } from "@/lib/versiones-caso";
 
 type Id = Expediente["vehiculos"][number]["id"];
 
-const ESTADO: Record<FilaDeclarada["estado"], string> = {
-  coincide: "Coincide",
-  no_coincide: "No coincide",
-  sin_dato: "Sin dato",
-};
-
-const descripcion = descripcionVehiculo;
-
-export function ComparacionDeclaracion({
+/** Agregar la declaración de un conductor: el texto, quién la dio y «Leer y comparar». */
+export function FormDeclaracion({
   expediente,
   reconstruccion,
-  onHipotesis,
-  onComparacion,
+  onVersion,
+  nombreDe = (id) => id,
   textoInicial = "",
   declaranteInicial,
 }: {
   expediente: Expediente;
+  reconstruccion: Reconstruccion;
+  /** La versión declarada ya leída y simulada, lista para la lista de versiones. */
+  onVersion: (v: VersionDeclaracion) => void;
+  /** «B · GM Camaro», por id del expediente. */
+  nombreDe?: (id: string) => string;
   /** La declaración que trae el caso (AXA), ya escrita; el perito la lee o la cambia. */
   textoInicial?: string;
   declaranteInicial?: Id;
-  reconstruccion: Reconstruccion;
-  /** La versión declarada ya simulada, para el 3D (null al quitarla). */
-  onHipotesis: (h: Hipotesis | null) => void;
-  /** La comparación que hizo el perito, para el dictamen (R8); null si no la usó. */
-  onComparacion?: (c: DatosDictamenCaso["declarada"]) => void;
 }) {
   const ids = expediente.vehiculos.map((v) => v.id);
-  const [abierta, setAbierta] = useState(false);
   const [texto, setTexto] = useState(textoInicial);
   const [declarante, setDeclarante] = useState<Id>(declaranteInicial ?? ids[0]!);
   const [estado, setEstado] = useState<string | null>(null);
-  const [version, setVersion] = useState<VersionDeclarada | null>(null);
-  const [filas, setFilas] = useState<FilaDeclarada[] | null>(null);
-  const [sugerencia, setSugerencia] = useState(false);
-  const [decision, setDecision] = useState<"confirmada" | "descartada" | null>(null);
 
   const comparar = async () => {
     setEstado("Leyendo la declaración…");
-    setVersion(null);
-    setFilas(null);
-    setSugerencia(false);
-    setDecision(null);
-    onHipotesis(null);
     try {
       const res = await fetch("/api/cesvi/declaracion", {
         method: "POST",
@@ -79,7 +56,10 @@ export function ComparacionDeclaracion({
         body: JSON.stringify({
           texto,
           declarante,
-          vehiculos: expediente.vehiculos.map((v) => ({ id: v.id, descripcion: descripcion(v) })),
+          vehiculos: expediente.vehiculos.map((v) => ({
+            id: v.id,
+            descripcion: descripcionVehiculo(v),
+          })),
         }),
       });
       const d = (await res.json()) as {
@@ -94,7 +74,6 @@ export function ComparacionDeclaracion({
       }
       // Las citas salen del texto que vio Claude: la declaración sin datos personales (PLAN §10).
       const v = versionDeclarada(d.salida, textoParaClaude(texto), declarante, ids);
-      setVersion(v);
       setEstado("Simulando la versión declarada…");
       const reconstruidas = new Map(
         reconstruccion.velocidades.flatMap((x) =>
@@ -103,17 +82,25 @@ export function ComparacionDeclaracion({
       );
       const decl = especDeclarada(especDeExpediente(expediente), v, reconstruidas);
       const resultado = await reconstruirCompletoEnNavegador(decl.spec as unknown as EscenaSpec);
-      setFilas(
-        compararDeclarada({
-          expediente,
-          reconstruccion,
-          declarada: v,
-          resultadoDeclarado: resultado as unknown as Record<string, unknown>,
-        }),
-      );
-      onHipotesis({
-        etiqueta: `versión declarada (${declarante})`,
+      const filas = compararDeclarada({
+        expediente,
+        reconstruccion,
+        declarada: v,
+        resultadoDeclarado: resultado as unknown as Record<string, unknown>,
+      });
+      const quien = nombreDe(declarante);
+      onVersion({
+        clave: `declaracion-${declarante}`,
+        tipo: "declaracion",
+        titulo: `Lo que declaró el conductor de ${quien}`,
+        resumen: resumenDeDeclaracion(filas),
+        etiqueta: `lo que declaró el conductor de ${quien}`,
         resultado: resultado as Resultado,
+        escena: decl.spec as unknown as EscenaSpec,
+        declarante,
+        version: v,
+        filas,
+        sugerencia: { pedida: false, decision: null },
       });
       setEstado(null);
     } catch (e) {
@@ -121,177 +108,53 @@ export function ComparacionDeclaracion({
     }
   };
 
-  const s = filas ? sugerirDeclarada(filas) : null;
-  useEffect(() => {
-    onComparacion?.(
-      version && filas
-        ? {
-            declarante: version.declarante,
-            filas,
-            sugerencia: sugerencia && s ? { texto: s.texto, decision } : null,
-          }
-        : null,
-    );
-    // `s` se deriva de `filas`.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [version, filas, sugerencia, decision, onComparacion]);
-
+  const ocupado =
+    estado === "Leyendo la declaración…" || estado === "Simulando la versión declarada…";
   return (
-    <section className="hundido flex flex-col gap-4 p-4" data-testid="comparacion-declaracion">
+    <div className="flex flex-col gap-3" data-testid="comparacion-declaracion">
+      <p className="t-nota">
+        Pega lo que declaró un conductor. Croquis arma esa versión con la misma física y la dibuja
+        sobre la reconstrucción. Es lo que dice el conductor, no evidencia; Croquis no dice quién
+        tiene razón.
+      </p>
+      <label className="solo-trabajar flex flex-col gap-1.5">
+        <span className="t-nota">Declaración</span>
+        <textarea
+          className="campo min-h-[120px]"
+          value={texto}
+          onChange={(e) => setTexto(e.target.value)}
+          data-testid="texto-declaracion"
+        />
+      </label>
+      <label className="solo-trabajar flex flex-wrap items-center gap-2">
+        <span className="t-nota">La declaró el conductor de</span>
+        <select
+          className="campo"
+          value={declarante}
+          onChange={(e) => setDeclarante(e.target.value as Id)}
+          data-testid="declarante"
+        >
+          {expediente.vehiculos.map((v) => (
+            <option key={v.id} value={v.id}>
+              {nombreDe(v.id)}
+            </option>
+          ))}
+        </select>
+      </label>
       <button
         type="button"
-        className="t-subtitulo self-start text-left"
-        aria-expanded={abierta}
-        onClick={() => setAbierta((x) => !x)}
-        data-testid="abrir-declaracion"
+        className="boton-principal solo-trabajar self-start"
+        disabled={texto.trim().length < 20 || ocupado}
+        onClick={() => void comparar()}
+        data-testid="leer-declaracion"
       >
-        {abierta ? "▾" : "▸"} Comparar con la declaración del conductor · opcional
+        Leer y comparar
       </button>
-      {abierta ? (
-        <>
-          <p className="t-nota">
-            Pega lo que declaró un conductor. Croquis arma esa versión con la misma física y la
-            muestra al lado de la reconstrucción. Es lo que dice el conductor, no evidencia; Croquis
-            no dice quién tiene razón.
-          </p>
-          <label className="solo-trabajar flex flex-col gap-1.5">
-            <span className="t-nota">Declaración</span>
-            <textarea
-              className="campo min-h-[120px]"
-              value={texto}
-              onChange={(e) => setTexto(e.target.value)}
-              data-testid="texto-declaracion"
-            />
-          </label>
-          <label className="solo-trabajar flex flex-wrap items-center gap-2">
-            <span className="t-nota">El declarante conducía</span>
-            <select
-              className="campo"
-              value={declarante}
-              onChange={(e) => setDeclarante(e.target.value as Id)}
-              data-testid="declarante"
-            >
-              {expediente.vehiculos.map((v) => (
-                <option key={v.id} value={v.id}>
-                  {v.id} · {descripcion(v)}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button
-            type="button"
-            className="boton-principal solo-trabajar self-start"
-            disabled={texto.trim().length < 20}
-            onClick={() => void comparar()}
-            data-testid="leer-declaracion"
-          >
-            Leer y comparar
-          </button>
-          {estado ? (
-            <p role="status" className="t-interfaz">
-              {estado}
-            </p>
-          ) : null}
-          {version ? (
-            <ul className="t-nota flex flex-col gap-1" data-testid="lo-que-declara">
-              {version.maniobras.map((m) => (
-                <li key={`m-${m.vehiculo}`}>
-                  {m.vehiculo}: {m.tipo.replaceAll("_", " ")} — «{m.cita}»
-                </li>
-              ))}
-              {version.velocidades.map((x) => (
-                <li key={`v-${x.vehiculo}`}>
-                  {x.vehiculo}: <span className="cifras">{x.kmh} km/h</span> — «{x.cita}»
-                </li>
-              ))}
-              {version.contactos.map((c) => (
-                <li key={`c-${c.impacto}-${c.vehiculo}`}>
-                  {c.vehiculo}: contacto {c.cara.replaceAll("_", " ")} — «{c.cita}»
-                </li>
-              ))}
-            </ul>
-          ) : null}
-          {filas ? (
-            <>
-              <table className="w-full border-collapse text-sm" data-testid="que-cambia">
-                <caption className="t-interfaz mb-2 text-left font-semibold">
-                  Qué cambia entre versiones
-                </caption>
-                <thead>
-                  <tr className="text-left text-xs text-texto-3">
-                    <th className="py-2 font-medium">Vehículo</th>
-                    <th className="py-2 font-medium">Concepto</th>
-                    <th className="py-2 font-medium">Versión declarada</th>
-                    <th className="py-2 font-medium">Evidencia y reconstrucción</th>
-                    <th className="py-2 text-right font-medium">Estado</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filas.map((f) => (
-                    <tr
-                      key={`${f.clave}-${f.vehiculo}`}
-                      className="border-t border-linea-suave"
-                      data-fila={`${f.clave}-${f.vehiculo}`}
-                      title={f.fuente}
-                    >
-                      <td className="py-2.5 font-medium">{f.vehiculo}</td>
-                      <td className="py-2.5">{f.concepto}</td>
-                      <td className="cifras py-2.5">{f.declarada}</td>
-                      <td className="cifras py-2.5">{f.evidencia}</td>
-                      <td className="py-2.5 text-right">{ESTADO[f.estado]}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <p className="t-nota">
-                En el 3D, la versión declarada se ve como fantasma sobre la reconstrucción;
-                «Comparar lado a lado» las separa.
-              </p>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={sugerencia}
-                  onChange={(e) => {
-                    setSugerencia(e.target.checked);
-                    setDecision(null);
-                  }}
-                  data-testid="pedir-sugerencia"
-                />
-                <span className="t-interfaz">Mostrar la sugerencia de Croquis</span>
-              </label>
-              {sugerencia && s ? (
-                <div className="hundido flex flex-col gap-2 p-4" data-testid="sugerencia-declarada">
-                  <p className="t-interfaz">{s.texto}</p>
-                  <p className="t-nota">{REGLA_SUGERENCIA_DECLARADA}</p>
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      className="boton-secundario"
-                      aria-pressed={decision === "confirmada"}
-                      onClick={() => setDecision("confirmada")}
-                    >
-                      Confirmar
-                    </button>
-                    <button
-                      type="button"
-                      className="boton-secundario"
-                      aria-pressed={decision === "descartada"}
-                      onClick={() => setDecision("descartada")}
-                    >
-                      Descartar
-                    </button>
-                  </div>
-                  {decision ? (
-                    <p role="status" className="t-nota" data-testid="decision-sugerencia">
-                      El perito {decision === "confirmada" ? "confirmó" : "descartó"} la sugerencia.
-                    </p>
-                  ) : null}
-                </div>
-              ) : null}
-            </>
-          ) : null}
-        </>
+      {estado ? (
+        <p role="status" className="t-interfaz">
+          {estado}
+        </p>
       ) : null}
-    </section>
+    </div>
   );
 }

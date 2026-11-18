@@ -30,6 +30,7 @@ import {
   revisarRelato,
   supuestosDeClase,
   supuestosDeclarados,
+  sugerirDeclarada,
   verificacionCesvi,
   type ContextoPizarra,
   type EscenaNarrada,
@@ -41,7 +42,6 @@ import type { OverpassResponse } from "@croquis/croquis-2d";
 import { preloadRenderer, type ViewerExportApi } from "@croquis/viewer";
 import type { Map as MapaMl } from "maplibre-gl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { Hipotesis } from "@/components/visor/hypothesis-panel";
 import {
   ACEPTA_CASO,
   casoParaGuardar,
@@ -53,7 +53,12 @@ import {
 } from "@/lib/caso-guardado";
 import { guardarCaso, idNuevo, type CasoExpediente } from "@/lib/casos";
 import { avisarCambio } from "@/lib/casos-navegador";
-import type { DatosDictamenCaso } from "@/lib/dictamen-caso";
+import {
+  conVersion,
+  versionesParaDictamen,
+  versionesParaPresentar,
+  type VersionCaso,
+} from "@/lib/versiones-caso";
 import { callesCerca, objetosCerca } from "@/lib/calles-del-mapa";
 import { downloadBytes } from "@/lib/download";
 import {
@@ -63,6 +68,7 @@ import {
   faltaEnPaso,
   impactosAColocar,
   pasoAbierto,
+  type ClavePaso,
 } from "@/lib/pasos-caso";
 import type { ResultadoMaqueta } from "@/lib/maqueta";
 import { MODALIDAD } from "@/lib/nombres-cesvi";
@@ -71,7 +77,6 @@ import { leerTransiciones, useTema, useTransiciones, type Modo } from "@/lib/pre
 import { lecturaGuardada } from "@/lib/ejemplos-narracion";
 import { Calculos, type DistanciaRestos } from "../calculos";
 import { Expediente as ExpedienteCesvi } from "../expediente";
-import { ComparacionDeclaracion } from "../comparacion-declaracion";
 import { DictamenCaso } from "../dictamen-caso";
 import { CargaReporte } from "../importar-dictamen";
 import { subpasoLugar } from "@/lib/colocar";
@@ -86,6 +91,7 @@ import { ActoDanos } from "./analisis-laboratorio";
 import { ActoContraste, filaDeRestos } from "./contraste-laboratorio";
 import { HechoLaboratorio } from "./hecho-laboratorio";
 import { CifraReconstruccion, DetalleReconstruccion } from "./hoja-reconstruccion";
+import { ActoVersiones } from "./versiones";
 import { TerrenoReconstruccion } from "./terreno-reconstruccion";
 import { EnRanura, MarcoVista } from "@/components/visor-unity/marco-vista";
 import { VisorCasoUnity } from "@/components/visor-unity/visor-caso-unity";
@@ -156,6 +162,9 @@ const IGNORAR_POSICIONES = (): undefined => undefined;
  * Las clases que se supusieron por el vocabulario del relato, mientras el perito no las cambie: si
  * ya eligió otra clase en su pregunta, deja de ser un supuesto.
  */
+/** El índice de cada paso en `PASOS` por su clave: un paso nuevo no recorre números a mano. */
+const P = Object.fromEntries(CLAVES_PASOS.map((c, i) => [c, i])) as Record<ClavePaso, number>;
+
 function supuestosDeClaseVigentes(leida: EscenaNarrada | null, e: Expediente) {
   return supuestosDeClase(
     (leida?.menciones ?? []).filter(
@@ -228,9 +237,10 @@ export function RecorridoCaso({
   // La vista del escenario: la que se eligió o, al reconstruir, la maqueta (Laboratorio §8).
   const [vistaElegida, setVista] = useState<"mapa" | "3d" | "maqueta" | null>(null);
   const [camaraPedida] = useState<{ camara: string; n: number } | null>(null);
-  const [declarada, setDeclarada] = useState<Hipotesis | null>(null);
-  const [comparacionDeclarada, setComparacionDeclarada] =
-    useState<DatosDictamenCaso["declarada"]>(null);
+  // Ronda 4, punto 8: las versiones del caso (declaraciones e hipótesis) y la que se dibuja.
+  const [versiones, setVersiones] = useState<VersionCaso[]>([]);
+  const [elegida, setElegida] = useState<string | null>(null);
+  const [version3d, setVersion3d] = useState(false);
   const [exportApi, setExportApi] = useState<ViewerExportApi | null>(null);
   // U6: el visor Unity (si cargó). Las fotos del dictamen salen de él.
   const [unityApi, setUnityApi] = useState<ApiVisorUnity | null>(null);
@@ -320,10 +330,18 @@ export function RecorridoCaso({
   // Un caso con reporte se lee del reporte: su narración no se edita ni va al dictamen.
   const editable = reporte === null;
   const narracion = editable ? texto.trim() || null : null;
-  const pasos = PASOS.filter((_, i) => i !== 6 || reporte !== null);
+  const pasos = PASOS.filter((_, i) => i !== P.reporte || reporte !== null);
   const clave = (i: number) => PASOS.indexOf(pasos[i]!);
   const actual = clave(paso);
-  const vista = vistaElegida ?? (actual === 3 && r ? "maqueta" : "mapa");
+  // El escenario grande de la reconstrucción, también en «Versiones» (con el fantasma encima).
+  const enEscenario = actual === P.reconstruccion || actual === P.versiones;
+  const vista = vistaElegida ?? (enEscenario && r ? "maqueta" : "mapa");
+  // La versión elegida se dibuja solo en su acto: la reconstrucción se ve limpia en los demás.
+  const versionVista =
+    actual === P.versiones ? (versiones.find((v) => v.clave === elegida) ?? null) : null;
+  const declarada = versionVista
+    ? { etiqueta: versionVista.etiqueta, resultado: versionVista.resultado }
+    : null;
   // Los actos del Laboratorio (prompt §4) y la transición al entrar a uno (§5): completa al entrar
   // al caso y al presentar, corta entre actos al trabajar; nada con «Transiciones» apagado o con
   // `prefers-reduced-motion`.
@@ -765,7 +783,7 @@ export function RecorridoCaso({
     }
   };
   const flecha =
-    actual === 2 && modo === "trabajar" && activo && colocado(activo)
+    actual === P.lugar && modo === "trabajar" && activo && colocado(activo)
       ? (() => {
           const punto =
             activo.tipo === "impacto"
@@ -811,7 +829,7 @@ export function RecorridoCaso({
   // La colocación en tres pasos (B): impacto, por dónde venía cada uno y dónde quedó.
   const ordenVehiculos = impactos.flatMap((i) => i.vehiculos);
   const subpaso =
-    actual === 2 && expediente
+    actual === P.lugar && expediente
       ? subpasoLugar({
           impactoColocado: requeridos.some((i) => i.tipo === "impacto" && colocado(i)),
           sinConfirmar: [...new Set(ordenVehiculos)].filter(
@@ -852,7 +870,7 @@ export function RecorridoCaso({
     );
   };
   const colocacion =
-    actual === 2 && modo === "trabajar" && expediente
+    actual === P.lugar && modo === "trabajar" && expediente
       ? {
           bandeja: requeridos
             .filter((i) => !colocado(i))
@@ -1034,7 +1052,7 @@ export function RecorridoCaso({
   const nombreLab = (id: string) => `${letraDe(id)} · ${nombresPantalla[id] ?? id}`;
 
   // A1 (ronda 2): un caso nuevo sin leer abre con «El trazo», no con la ficha del caso.
-  const enTrazo = actual === 0 && inicial.origen === "nuevo" && !leida;
+  const enTrazo = actual === P.caso && inicial.origen === "nuevo" && !leida;
   const cuerpo = (() => {
     if (enTrazo)
       return (
@@ -1070,7 +1088,7 @@ export function RecorridoCaso({
           ) : null}
         </>
       );
-    if (actual === 0)
+    if (actual === P.caso)
       return (
         <PasoCaso
           titulo={titulo}
@@ -1094,7 +1112,7 @@ export function RecorridoCaso({
           }
         />
       );
-    if (actual === 1 && leida && !editandoRelato && (!editable || texto.trim()))
+    if (actual === P.hecho && leida && !editandoRelato && (!editable || texto.trim()))
       return (
         <>
           {lecturaGuardadaUsada ? (
@@ -1116,7 +1134,7 @@ export function RecorridoCaso({
           />
         </>
       );
-    if (actual === 1)
+    if (actual === P.hecho)
       return (
         <PasoHecho
           narracion={texto}
@@ -1157,7 +1175,7 @@ export function RecorridoCaso({
         />
       );
     if (!expediente || !leida) return sinEscena;
-    if (actual === 2)
+    if (actual === P.lugar)
       return (
         <ResumenDeLaEscena
           estado={{
@@ -1173,7 +1191,7 @@ export function RecorridoCaso({
           calles={calles}
         />
       );
-    if (actual === 3)
+    if (actual === P.reconstruccion)
       return (
         <div className={`flex flex-col ${r ? "gap-3" : "gap-5"}`}>
           {r ? (
@@ -1195,6 +1213,20 @@ export function RecorridoCaso({
               ]}
               onRepetir={() => void rec.reconstruir()}
             />
+          ) : null}
+          {/* Ronda 4, punto 8 (la entrada de la propuesta 2): a la vista, lleva al acto «Versiones». */}
+          {r ? (
+            <button
+              type="button"
+              className="boton-secundario self-start"
+              onClick={() => irA(pasos.indexOf(PASOS[P.versiones]!))}
+              data-testid="comparar-version"
+            >
+              Comparar con una versión
+              {versiones.length ? (
+                <span className="cifras ml-2 text-texto-3">· {versiones.length}</span>
+              ) : null}
+            </button>
           ) : null}
           {r && !r.hipotesis ? (
             <DanoContraReconstruccion
@@ -1249,26 +1281,37 @@ export function RecorridoCaso({
           {/* Si el caso cambió después de reconstruir, lo dice el aviso de arriba. */}
           <DetalleReconstruccion plegado={r !== null}>
             {r ? <PanelReconstruccion rec={rec} /> : null}
-            {r ? (
-              <ComparacionDeclaracion
-                expediente={expediente}
-                reconstruccion={r}
-                textoInicial={inicial.ejemplo?.declaracion.texto}
-                declaranteInicial={
-                  inicial.ejemplo
-                    ? inicial.ejemplo.declaracion.conductor === "B"
-                      ? "V2"
-                      : "V1"
-                    : undefined
-                }
-                onHipotesis={setDeclarada}
-                onComparacion={setComparacionDeclarada}
-              />
-            ) : null}
           </DetalleReconstruccion>
         </div>
       );
-    if (actual === 4)
+    if (actual === P.versiones)
+      return (
+        <ActoVersiones
+          expediente={expediente}
+          r={r}
+          versiones={versiones}
+          elegida={elegida}
+          onElegir={setElegida}
+          onVersion={(v) => setVersiones((vs) => conVersion(vs, v))}
+          onQuitar={(clave) => {
+            setVersiones((vs) => vs.filter((v) => v.clave !== clave));
+            if (elegida === clave) setElegida(null);
+          }}
+          nombreDe={nombreLab}
+          en3d={vista === "3d"}
+          version3d={version3d}
+          onVersion3d={setVersion3d}
+          textoInicial={inicial.ejemplo?.declaracion.texto}
+          declaranteInicial={
+            inicial.ejemplo
+              ? inicial.ejemplo.declaracion.conductor === "B"
+                ? "V2"
+                : "V1"
+              : undefined
+          }
+        />
+      );
+    if (actual === P.danos)
       return (
         <ActoDanos
           expediente={expediente}
@@ -1282,7 +1325,7 @@ export function RecorridoCaso({
           nombreDe={nombreLab}
         />
       );
-    if (actual === 5)
+    if (actual === P.numeros)
       return (
         <div className="flex flex-col gap-8">
           <PasoNumeros r={r} verificacion={verificacion} contraCesvi={contraCesvi} />
@@ -1291,7 +1334,7 @@ export function RecorridoCaso({
           ) : null}
         </div>
       );
-    if (actual === 6 && reporte && comparacionReporte)
+    if (actual === P.reporte && reporte && comparacionReporte)
       return (
         <ActoContraste
           reporte={reporte}
@@ -1310,7 +1353,7 @@ export function RecorridoCaso({
         narracion={narracion}
         reconstruccion={r}
         verificacion={verificacion}
-        declarada={comparacionDeclarada}
+        versiones={versionesParaDictamen(versiones, nombreLab, sugerirDeclarada)}
         exportApi={vista === "3d" ? exportApi : null}
         unity={vista === "3d" ? unityApi : null}
         pedidoExportar={pedidoExportar}
@@ -1351,7 +1394,7 @@ export function RecorridoCaso({
 
   // «La incógnita» (A6): en la reconstrucción, antes de reconstruir, va el croquis del planteamiento
   // en lugar del mapa lejano.
-  const planteando = actual === 3 && !r && expediente !== null && !expandido;
+  const planteando = actual === P.reconstruccion && !r && expediente !== null && !expandido;
   const verMapa = (vista === "mapa" || !r) && !planteando;
   // Presentar a pantalla completa necesita la reconstrucción; sin ella, se consulta el recorrido.
   const presentando = modo === "presentar" && r !== null && !rec.vieja;
@@ -1359,10 +1402,10 @@ export function RecorridoCaso({
   // dibujar, sin un efecto que vuelva a dibujar todo).
   if (!pidioUnity && (vista === "3d" || presentando)) setPidioUnity(true);
   // La reconstrucción (el pico, Laboratorio §8): la escena a sangre y la hoja encima.
-  const pico = actual === 3 && !expandido;
+  const pico = enEscenario && !expandido;
   // Los daños y Contra CESVI ocupan todo el ancho, sin mapa (Laboratorio §8).
-  const hojaAncha = actual === 4 || actual === 6 || actual === 7;
-  const conBarras = r !== null && actual === 3 && !presentando && !expandido;
+  const hojaAncha = actual === P.danos || actual === P.reporte || actual === P.dictamen;
+  const conBarras = r !== null && enEscenario && !presentando && !expandido;
   // El 3D solo dibuja cuando se ve: oculto seguía a todo ritmo y ahogaba la página (la foto del
   // dictamen lo despierta si le hace falta).
   const visorAlaVista = vista === "3d" && !presentando && !hojaAncha && actual !== 1;
@@ -1377,7 +1420,8 @@ export function RecorridoCaso({
   };
   // La escena fácil ocupa todo en «La escena» al trabajar; el mapa de antes queda montado debajo
   // (el dictamen toma de él la imagen del croquis).
-  const escenaFacil = actual === 2 && modo === "trabajar" && expediente !== null && leida !== null;
+  const escenaFacil =
+    actual === P.lugar && modo === "trabajar" && expediente !== null && leida !== null;
   const falta = faltaEnPaso(claves[paso]!, estadoPasos);
   // Posiciones finales encimadas: se avisan con la propuesta para separarlas (comentario de René).
   const encimadas = useMemo(
@@ -1387,12 +1431,12 @@ export function RecorridoCaso({
   const abierto = (i: number) => pasoAbierto(claves, i, estadoPasos);
   const siguienteNombre = pasos[paso + 1];
   // El mapa es el contenido en el lugar y la reconstrucción; en los demás pasos, una tarjeta.
-  const grande = actual === 2 || actual === 3;
+  const grande = actual === P.lugar || enEscenario;
   // En el primer paso, sin nada colocado, el mapa no dice nada: no se muestra (A1).
-  const sinMapaAlInicio = actual === 0 && !posiciones.length && !expandido;
+  const sinMapaAlInicio = actual === P.caso && !posiciones.length && !expandido;
   // Un solo mapa por caso (`mapa-compartido`): este se monta cuando ya hay algo que ver en él y no
   // lo tiene la escena fácil. Antes de colocar nada (el trazo, la narración) no existe.
-  const montarMapa = !escenaFacil && (expandido || actual >= 2 || posiciones.length > 0);
+  const montarMapa = !escenaFacil && (expandido || actual >= P.lugar || posiciones.length > 0);
   const lugar = expediente?.caso.lugar;
   const lugarTexto = [lugar?.descripcion?.valor, lugar?.municipio?.valor, lugar?.estado?.valor]
     .filter(Boolean)
@@ -1483,6 +1527,7 @@ export function RecorridoCaso({
             comparacionReporte ? conteoCriterios(criteriosContraste(comparacionReporte)) : null
           }
           nombreDe={nombreLab}
+          versiones={versionesParaPresentar(versiones)}
           onSalir={() => setModo("trabajar")}
           con3d={unityApi ? canalPresentar : null}
         />
@@ -1576,7 +1621,7 @@ export function RecorridoCaso({
             // En «El trazo» no va: su botón es lo único que hay que tocar (A1).
             className={`mt-auto flex flex-col gap-2 ${pico ? "pt-3" : "pt-4"} ${pico ? "sticky -bottom-5 z-10 -mx-5 -mb-5 bg-superficie px-5 pb-5 lg:-bottom-7 lg:-mx-7 lg:-mb-7 lg:px-7 lg:pb-7" : ""} ${enTrazo ? "hidden" : ""}`}
           >
-            {(actual === 2 || actual === 3) && modo === "trabajar"
+            {(actual === P.lugar || actual === P.reconstruccion) && modo === "trabajar"
               ? encimadas.map((enc) => (
                   <div
                     key={enc.vehiculos.join("-")}
@@ -1651,7 +1696,7 @@ export function RecorridoCaso({
                 // cargarlo al llegar al lugar (MapLibre se ajusta solo al reaparecer).
                 pico
                 ? `relative order-first ${planteando ? "min-h-[40vh]" : "min-h-[60vh]"} overflow-hidden lg:absolute lg:inset-0 lg:min-h-0`
-                : `relative min-h-[50vh] overflow-hidden rounded-panel border border-linea-suave ${grande ? "lg:flex-1" : "lg:h-[460px] lg:w-[420px] lg:shrink-0 lg:self-start"} ${actual === 7 ? "pointer-events-none invisible absolute! h-[460px] w-[640px]" : actual === 1 || hojaAncha || sinMapaAlInicio ? "hidden" : ""}`
+                : `relative min-h-[50vh] overflow-hidden rounded-panel border border-linea-suave ${grande ? "lg:flex-1" : "lg:h-[460px] lg:w-[420px] lg:shrink-0 lg:self-start"} ${actual === P.dictamen ? "pointer-events-none invisible absolute! h-[460px] w-[640px]" : actual === P.hecho || hojaAncha || sinMapaAlInicio ? "hidden" : ""}`
           }
           aria-label="Mapa"
           data-testid="escenario"
@@ -1692,14 +1737,16 @@ export function RecorridoCaso({
                   inicio={lugar?.coordenadas ?? null}
                   lugarTexto={lugarTexto}
                   lugarZona={{ municipio: lugar?.municipio?.valor, estado: lugar?.estado?.valor }}
-                  herramienta={actual === 2 && modo === "trabajar" ? herramientaMapa : "mover"}
-                  pedirLugar={actual === 2 || expandido}
+                  herramienta={
+                    actual === P.lugar && modo === "trabajar" ? herramientaMapa : "mover"
+                  }
+                  pedirLugar={actual === P.lugar || expandido}
                   huellas={huellas}
                   flecha={colocacion ? null : flecha}
                   colocacion={colocacion}
                   onFlecha={girar}
                   onMedida={setMedida}
-                  onDeshacer={actual === 2 && modo === "trabajar" ? deshacer : undefined}
+                  onDeshacer={actual === P.lugar && modo === "trabajar" ? deshacer : undefined}
                 />
               ) : null}
             </div>
@@ -1736,7 +1783,7 @@ export function RecorridoCaso({
                   expediente={expediente}
                   onExpediente={(e) => cambiarExpediente(e)}
                   // En la reconstrucción, con el perito trabajando: mover objetos y marcar puntos en 3D.
-                  editable={actual === 3 && modo === "trabajar"}
+                  editable={actual === P.reconstruccion && modo === "trabajar"}
                   vehiculos={Object.entries(r.ids).map(([resId, id]) => ({
                     id: String(id),
                     resId,
@@ -1751,6 +1798,17 @@ export function RecorridoCaso({
                   aSangre={pico}
                   contraCesvi={contraCesvi}
                   declarada={declarada}
+                  // Ronda 4: en «Versiones», el 3D alterna entre la reconstrucción y la versión
+                  // elegida, con la misma cámara y el mismo instante.
+                  version={
+                    versionVista && version3d
+                      ? {
+                          clave: versionVista.clave,
+                          escena: versionVista.tipo === "declaracion" ? versionVista.escena : null,
+                          resultado: versionVista.resultado,
+                        }
+                      : null
+                  }
                   onExportApi={setExportApi}
                   // Con el 3D a la vista el mapa está desmontado: no hace falta mover sus
                   // marcadores (cada aviso del reloj volvía a dibujar toda la página, ~200 ms en
@@ -1836,7 +1894,7 @@ export function RecorridoCaso({
                 />
               </div>
             ) : null}
-            {actual === 2 && modo === "trabajar" && verMapa ? (
+            {actual === P.lugar && modo === "trabajar" && verMapa ? (
               <div
                 className={`pointer-events-none absolute z-10 flex flex-col gap-2 ${expandido ? "top-5 left-1/2 -translate-x-1/2 items-center" : "top-3 left-3 items-start"}`}
               >

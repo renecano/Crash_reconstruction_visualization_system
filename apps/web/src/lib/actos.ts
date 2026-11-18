@@ -1,18 +1,20 @@
 /**
- * Los seis actos del rediseño «Laboratorio» (prompt §4): agrupan los ocho pasos del recorrido sin
- * cambiar su lógica. El hecho junta el caso y la narración; Análisis, los daños y los números;
+ * Los actos del rediseño «Laboratorio» (prompt §4), más «Versiones» (ronda 4): agrupan los pasos del
+ * recorrido sin cambiar su lógica. El hecho junta el caso y la narración; Análisis, los daños y los números;
  * Contra CESVI solo existe si el caso trae reporte. La tabla «paso viejo → acto nuevo» está en
  * `docs/DISENO.md`.
  */
 import type { ClavePaso } from "./pasos-caso";
 
 export type ClaveActo =
-  "hecho" | "escena" | "reconstruccion" | "analisis" | "contraste" | "dictamen";
+  "hecho" | "escena" | "reconstruccion" | "versiones" | "analisis" | "contraste" | "dictamen";
 
 export const ACTOS: readonly { clave: ClaveActo; nombre: string; pasos: readonly ClavePaso[] }[] = [
   { clave: "hecho", nombre: "El hecho", pasos: ["caso", "hecho"] },
   { clave: "escena", nombre: "La escena", pasos: ["lugar"] },
   { clave: "reconstruccion", nombre: "Reconstrucción", pasos: ["reconstruccion"] },
+  // Ronda 4, punto 8 (René, 2026-11-18): lo que declara cada conductor y lo que el perito prueba.
+  { clave: "versiones", nombre: "Versiones", pasos: ["versiones"] },
   { clave: "analisis", nombre: "Análisis", pasos: ["danos", "numeros"] },
   { clave: "contraste", nombre: "Contra CESVI", pasos: ["reporte"] },
   { clave: "dictamen", nombre: "Dictamen", pasos: ["dictamen"] },
@@ -44,7 +46,11 @@ export function actoDePaso(actos: readonly ActoDelCaso[], i: number): number {
  * «El hecho» → «Continuar al hecho»; «La escena» → «Continuar a la escena».
  */
 export function continuarA(nombre: string): string {
-  const conArticulo = { Análisis: "al análisis", Dictamen: "al dictamen" }[nombre];
+  const conArticulo = {
+    Análisis: "al análisis",
+    Dictamen: "al dictamen",
+    Versiones: "a las versiones",
+  }[nombre];
   if (conArticulo) return `Continuar ${conArticulo}`;
   const m = nombre.match(/^(El|La|Los|Las)\s+(.*)$/);
   if (!m) return `Continuar a ${nombre}`;

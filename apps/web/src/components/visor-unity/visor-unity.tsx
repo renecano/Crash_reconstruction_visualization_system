@@ -19,7 +19,7 @@ import type {
   MensajesDeUnity,
   VistaCaptura,
 } from "@croquis/scene-schema";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
 import { marcar, motivoDe, PuenteUnity, type MotivoRespaldo } from "@/lib/visor-unity/puente";
 import { paqueteDelCaso, type RelieveCaso } from "@/lib/visor-unity/paquete";
@@ -76,8 +76,19 @@ const TEXTO_RESPALDO: Record<MotivoRespaldo, string> = {
 /** Si el perito ocultó el minimapa (se recuerda en este navegador). */
 const CLAVE_MINIMAPA = "croquis.minimapa";
 
+/**
+ * Una versión del caso para el 3D (ronda 4, punto 8): la escena de la declaración (o null para la
+ * reconstruida, en un «¿y si…?») y su resultado ya calculado. Unity solo la reproduce.
+ */
+export interface VersionUnity {
+  clave: string;
+  escena: EscenaSpec | null;
+  resultado: Resultado;
+}
+
 export function VisorUnity({
   escena,
+  version = null,
   relieve = null,
   activo = true,
   dormir = false,
@@ -93,6 +104,12 @@ export function VisorUnity({
 }: {
   /** La escena que dibuja el 3D (la reconstruida, con calles y objetos del mapa). */
   escena: EscenaSpec;
+  /**
+   * Ronda 4: en vez de la reconstrucción, una versión del caso. Al alternar se conservan el instante
+   * y la cámara (su modo); el paquete que se descarga y las fotos siguen siendo los de la
+   * reconstrucción.
+   */
+  version?: VersionUnity | null;
   relieve?: RelieveCaso;
   /** El 3D está a la vista: si no, la reproducción se pausa. */
   activo?: boolean;
@@ -121,8 +138,18 @@ export function VisorUnity({
   const [respaldoPor, setRespaldoPor] = useState<{ motivo: MotivoRespaldo; aviso?: string } | null>(
     null,
   );
-  // La escena que Unity ya tiene cargada: si es la de ahora, el visor está listo.
-  const [cargada, setCargada] = useState<EscenaSpec | null>(null);
+  // Lo que Unity tiene que dibujar: la reconstrucción o una versión (con su resultado ya calculado).
+  const vEscena = version?.escena ?? null;
+  const vResultado = version?.resultado ?? null;
+  const vClave = version?.clave ?? null;
+  const objetivo = useMemo(
+    () => ({ escena: vEscena ?? escena, fijo: vResultado, clave: vClave }),
+    [escena, vEscena, vResultado, vClave],
+  );
+  // Lo que Unity ya tiene cargado: si es lo de ahora, el visor está listo.
+  const [cargada, setCargada] = useState<typeof objetivo | null>(null);
+  // El paquete de la reconstrucción: el que se descarga aunque se vea una versión.
+  const paqueteBase = useRef<Caso3D | null>(null);
   // La reproducción que maneja el perito con la barra (I3): pausa, instante y velocidad.
   const [rep, setRep] = useState<EstadoReproduccion>(ESTADO_INICIAL);
   const repActual = useRef(rep);
@@ -136,7 +163,7 @@ export function VisorUnity({
     ? { fase: "respaldo", motivo: respaldoPor.motivo }
     : !puente
       ? { fase: "arrancando", progreso }
-      : cargada === escena
+      : cargada === objetivo
         ? { fase: "listo" }
         : { fase: "calculando" };
 
@@ -184,13 +211,15 @@ export function VisorUnity({
   // Cada escena nueva: el Resultado completo, el paquete y a Unity. El último pedido gana. Con el 3D
   // dormido se espera; al despertar, solo se carga si la escena o el relieve cambiaron.
   const turno = useRef(0);
-  const pedida = useRef<{ escena: EscenaSpec; relieve: RelieveCaso } | null>(null);
+  const pedida = useRef<{ objetivo: typeof objetivo; relieve: RelieveCaso } | null>(null);
   const cargando = useRef(false);
   const [vueltas, setVueltas] = useState(0);
   useEffect(() => {
     if (!puente || dormir) return;
-    if (pedida.current?.escena === escena && pedida.current.relieve === relieve) return;
-    pedida.current = { escena, relieve };
+    if (pedida.current?.objetivo === objetivo && pedida.current.relieve === relieve) return;
+    // Al alternar entre la reconstrucción y una versión (ronda 4) se queda el mismo instante.
+    const mantener = pedida.current !== null && pedida.current.objetivo.clave !== objetivo.clave;
+    pedida.current = { objetivo, relieve };
     const mio = ++turno.current;
     cargando.current = true;
     puente.despertar();
@@ -199,34 +228,51 @@ export function VisorUnity({
       // milisegundos. El resultado completo (Monte Carlo, inversión, consistencia) llega después y
       // solo cambia el paquete que se descarga, sin volver a cargar la escena (U6: antes se esperaba
       // a Monte Carlo y el 3D tardaba unos 11 s más).
+      const tAntes = repActual.current.t;
+      const { escena: aCargar, fijo } = objetivo;
       marcar("solver");
-      let alParcial!: (r: Resultado) => void;
-      const parcial = new Promise<Resultado>((ok) => (alParcial = ok));
-      const completo = reconstruirCompletoEnNavegador(escena, (r) => alParcial(r), relieve);
-      const resultado = await Promise.race([parcial, completo]);
+      let completo: Promise<Resultado> | null = null;
+      let resultado: Resultado;
+      if (fijo) {
+        // Una versión ya trae su resultado: no se vuelve a calcular nada.
+        resultado = fijo;
+      } else {
+        let alParcial!: (r: Resultado) => void;
+        const parcial = new Promise<Resultado>((ok) => (alParcial = ok));
+        completo = reconstruirCompletoEnNavegador(aCargar, (r) => alParcial(r), relieve);
+        resultado = await Promise.race([parcial, completo]);
+      }
       marcar("solver_listo");
       if (mio !== turno.current) return;
-      const paquete = paqueteDelCaso(escena, resultado, relieve);
+      const paquete = paqueteDelCaso(aCargar, resultado, relieve);
       marcar("cargar_caso");
       await puente.cargar(paquete);
       marcar("caso_cargado");
       if (mio !== turno.current) return;
-      setCargada(escena);
-      // Un caso recién cargado empieza a reproducirse desde su inicio, a velocidad normal.
-      repActual.current = { ...ESTADO_INICIAL, t: resultado.t_inicio };
+      setCargada(objetivo);
+      // Un caso recién cargado empieza desde su inicio, a velocidad normal; al alternar con una
+      // versión, en el mismo instante (dentro de lo que dura la otra) y con la misma velocidad.
+      const t0 = mantener
+        ? Math.min(resultado.t_fin, Math.max(resultado.t_inicio, tAntes))
+        : resultado.t_inicio;
+      repActual.current = { ...(mantener ? repActual.current : ESTADO_INICIAL), t: t0 };
       setRep(repActual.current);
       setIntervalo({ inicio: resultado.t_inicio, fin: resultado.t_fin });
+      if (mantener) puente.enviar("fijarTiempo", { t: t0 });
+      if (!fijo && !vClave) paqueteBase.current = paquete;
       const api = {
         capturar: (vista: VistaCaptura, ancho: number, alto: number) =>
           puente.capturar(vista, ancho, alto),
-        paquete,
+        paquete: paqueteBase.current ?? paquete,
         // Unity avisa el tiempo nuevo y la barra lo sigue (el aviso «tiempo»).
         ir: (t: number) => puente.enviar("fijarTiempo", { t }),
       };
       cb.current.onApi?.(api);
-      const final = await completo.catch(() => null);
+      const final = completo ? await completo.catch(() => null) : null;
       if (final && mio === turno.current && final !== resultado) {
-        cb.current.onApi?.({ ...api, paquete: paqueteDelCaso(escena, final, relieve) });
+        const conFinal = paqueteDelCaso(aCargar, final, relieve);
+        if (!vClave) paqueteBase.current = conFinal;
+        cb.current.onApi?.({ ...api, paquete: paqueteBase.current ?? conFinal });
       }
     })()
       .finally(() => {
@@ -243,7 +289,9 @@ export function VisorUnity({
         void puente.cerrar();
         setPuente(null);
       });
-  }, [puente, escena, relieve, dormir]);
+    // `vClave` sale de `objetivo`.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [puente, objetivo, relieve, dormir]);
 
   // Sin nadie mirando y sin una carga en curso, Unity no dibuja: el hilo principal queda libre.
   useEffect(() => {
@@ -450,7 +498,8 @@ export function VisorUnity({
           >
             {minimapa ? "Ocultar minimapa" : "Mostrar minimapa"}
           </button>
-          {intervalo ? (
+          {/* El video es de la reconstrucción: con una versión a la vista no se ofrece. */}
+          {intervalo && !vClave ? (
             <button
               type="button"
               className="boton-secundario boton-compacto"

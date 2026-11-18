@@ -38,8 +38,8 @@ import { nombreVehiculo } from "./escena-facil";
 import { dictamenDocx } from "./exportar-cesvi";
 import { ANCHO_LOGO, PROPORCION_LOGO } from "./marca-dictamen";
 import { pdfBytes } from "./pdf";
+import type { VersionesDictamen } from "./versiones-caso";
 
-type Id = Expediente["vehiculos"][number]["id"];
 
 export interface DatosDictamenCaso {
   expediente: Expediente;
@@ -57,13 +57,11 @@ export interface DatosDictamenCaso {
   logo?: string | null;
   /** La atribución de los vehículos de Sketchfab que se ven en esos cuadros (R10, CC-BY). */
   modelos3d?: { modelo: string; autor: string; licencia: string; url: string }[];
-  /** La comparación con la declaración del conductor (R7), si la usó. */
-  declarada: {
-    declarante: Id;
-    filas: FilaDeclarada[];
-    /** La sugerencia, solo si el perito la pidió, con lo que decidió. */
-    sugerencia: { texto: string; decision: "confirmada" | "descartada" | null } | null;
-  } | null;
+  /**
+   * Las versiones del caso (ronda 4, punto 8): lo que declaró cada conductor (R7) y las hipótesis
+   * «¿y si…?» que probó el perito, marcadas como tales. Vacías si no usó el acto «Versiones».
+   */
+  versiones?: VersionesDictamen;
   validacion: { perito: string; conclusion: string; fecha: string } | null;
   /**
    * La velocidad por deformación contra la del reporte (Contra CESVI): con las mismas medidas y el
@@ -381,35 +379,56 @@ function secciones(d: DatosDictamenCaso) {
         ]
       : []),
   ]);
-  const declarada: Content[] = d.declarada
-    ? [
-        parrafo(
-          `Versión que declara el conductor de ${d.declarada.declarante}, simulada con la misma física. Es lo que dice el conductor, no evidencia.`,
-        ),
-        tabla(
-          ["Vehículo", "Concepto", "Versión declarada", "Evidencia y reconstrucción", "Estado"],
-          d.declarada.filas.map((f) => [
-            f.vehiculo,
-            f.concepto,
-            f.declarada,
-            f.evidencia,
-            ESTADO[f.estado],
-          ]),
-        ),
-        ...(d.declarada.sugerencia
-          ? [
-              parrafo(
-                `Sugerencia de Croquis, pedida por el perito: ${d.declarada.sugerencia.texto}`,
-              ),
-              parrafo(
-                d.declarada.sugerencia.decision
-                  ? `El perito ${d.declarada.sugerencia.decision === "confirmada" ? "confirmó" : "descartó"} la sugerencia.`
-                  : "El perito no ha confirmado ni descartado la sugerencia.",
-              ),
-            ]
-          : []),
-      ]
-    : [];
+  // Las versiones (ronda 4): cada declaración y cada hipótesis, marcada como tal. Lo que dice un
+  // conductor no es evidencia; una hipótesis es una prueba ilustrativa del perito.
+  const vs = d.versiones ?? { declaradas: [], hipotesis: [] };
+  const nombre = (id: string) =>
+    vs.declaradas.find((x) => x.declarante === id)?.nombre ?? nombreDelVehiculo(d, id);
+  const declarada: Content[] = [
+    ...(vs.declaradas.length || vs.hipotesis.length
+      ? [
+          parrafo(
+            "Lo que declaró cada conductor y las hipótesis que probó el perito, simuladas con la misma física que la reconstrucción. Croquis no dice quién tiene razón ni juzga a ningún conductor.",
+          ),
+        ]
+      : []),
+    ...vs.declaradas.flatMap((x) => [
+      subtitulo(`Declaración del conductor de ${x.nombre}`),
+      parrafo(
+        `Versión que declara el conductor de ${x.nombre}, simulada con la misma física. Es lo que dice el conductor, no evidencia.`,
+      ),
+      tabla(
+        ["Vehículo", "Concepto", "Versión declarada", "Evidencia y reconstrucción", "Estado"],
+        x.filas.map((f) => [
+          nombre(f.vehiculo),
+          f.concepto,
+          f.declarada,
+          f.evidencia,
+          ESTADO[f.estado],
+        ]),
+      ),
+      ...(x.sugerencia
+        ? [
+            parrafo(`Sugerencia de Croquis, pedida por el perito: ${x.sugerencia.texto}`),
+            parrafo(
+              x.sugerencia.decision
+                ? `El perito ${x.sugerencia.decision === "confirmada" ? "confirmó" : "descartó"} la sugerencia.`
+                : "El perito no ha confirmado ni descartado la sugerencia.",
+            ),
+          ]
+        : []),
+    ]),
+    ...vs.hipotesis.flatMap((h) => [
+      subtitulo(`Hipótesis del perito: ${h.titulo}`),
+      parrafo(
+        `${h.resumen}. Es una prueba ilustrativa del perito con los conductores como agentes, comparada con los mismos conductores sin la hipótesis; llega hasta el primer contacto y no calcula el choque ni el daño. No es evidencia ni un juicio sobre ningún conductor.`,
+      ),
+      tabla(
+        ["Concepto", "Con la hipótesis", "Sin ella"],
+        h.cambios.map((c) => [c.concepto, c.version, c.reconstruccion]),
+      ),
+    ]),
+  ];
   const conclusion: Content[] = d.validacion
     ? [parrafo(d.validacion.conclusion)]
     : [parrafo("[el perito debe concluir]")];
@@ -511,7 +530,7 @@ function cuerpoDelDictamen(d: DatosDictamenCaso): Content[] {
       ...s.reconstruccion,
       subtitulo("Verificación con el método de CESVI"),
       ...s.verificacion,
-      ...conDeclarada("Comparación con la declaración del conductor"),
+      ...conDeclarada("Versiones del caso"),
       titulo("Conclusiones"),
       ...s.conclusion,
       titulo("Validación del perito"),
@@ -538,7 +557,7 @@ function cuerpoDelDictamen(d: DatosDictamenCaso): Content[] {
     ...s.lugar,
     titulo("Verificación con el método de CESVI"),
     ...s.verificacion,
-    ...conDeclarada("Comparación con la declaración del conductor"),
+    ...conDeclarada("Versiones del caso"),
     titulo("Conclusión del perito"),
     ...s.conclusion,
     titulo("Validación"),

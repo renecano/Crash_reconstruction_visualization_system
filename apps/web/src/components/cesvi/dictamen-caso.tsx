@@ -114,7 +114,7 @@ export function DictamenCaso({
   narracion,
   reconstruccion,
   verificacion,
-  declarada,
+  versiones,
   exportApi,
   unity = null,
   mapa = null,
@@ -150,7 +150,8 @@ export function DictamenCaso({
   narracion: string | null;
   reconstruccion: Reconstruccion;
   verificacion: VerificacionVehiculo[];
-  declarada: DatosDictamenCaso["declarada"];
+  /** Las versiones del caso (ronda 4): declaraciones e hipótesis, para su sección. */
+  versiones?: DatosDictamenCaso["versiones"];
   /** El visor 3D abierto, para los cuadros (null si el perito no lo abrió). */
   exportApi: ViewerExportApi | null;
   /** El visor Unity, si es el que está abierto (U6): las fotos salen de él. */
@@ -241,7 +242,7 @@ export function DictamenCaso({
         : exportApi
           ? [...exportApi.vehicleCredits]
           : [],
-      declarada,
+      versiones,
       validacion,
       estructuraCesvi,
       contraDeformacion: contra,
