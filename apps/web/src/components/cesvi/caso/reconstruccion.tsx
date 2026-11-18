@@ -1,4 +1,5 @@
 "use client";
+import { useMarco } from "@/components/visor-unity/marco-vista";
 import { useSearchParams } from "next/navigation";
 import {
   modelVariantFor,
@@ -649,12 +650,19 @@ export function Visor3dCaso({
     ).catch(() => undefined);
   }, [spec3d]);
   const externas = useMemo(() => (declarada ? [declarada] : undefined), [declarada]);
+  const { enMarco } = useMarco();
   return (
     <div
-      className={`flex h-full flex-col gap-2 overflow-y-auto p-3 ${expandido ? "pt-40 pb-28" : "pt-16"} ${aSangre ? "[&>p]:order-last" : ""}`}
+      className={
+        enMarco
+          ? "flex h-full flex-col"
+          : `flex h-full flex-col gap-2 overflow-y-auto p-3 ${expandido ? "pt-40 pb-28" : "pt-16"} ${aSangre ? "[&>p]:order-last" : ""}`
+      }
       data-testid="visor-caso"
     >
-      <NotasDel3d supuestos={supuestos} contraCesvi={contraCesvi} expediente={expediente} />
+      {enMarco ? null : (
+        <NotasDel3d supuestos={supuestos} contraCesvi={contraCesvi} expediente={expediente} />
+      )}
       <VisorEscena
         spec={spec3d}
         escena="propia"

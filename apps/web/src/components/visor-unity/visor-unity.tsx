@@ -32,6 +32,7 @@ import {
   type Intervalo,
 } from "@/lib/visor-unity/reproduccion";
 import { BarraReproduccion } from "./barra-reproduccion";
+import { EnRanura, useMarco } from "./marco-vista";
 import { SelectorCamaras } from "./selector-camaras";
 
 /** Lo que el visor Unity le ofrece al caso: las fotos del dictamen y el paquete que tiene cargado. */
@@ -62,6 +63,9 @@ const TEXTO_RESPALDO: Record<MotivoRespaldo, string> = {
   version_puente: "El visor publicado es de otra versión",
   dispositivo_perdido: "La tarjeta de video se reinició",
 };
+
+/** Si el perito ocultó el minimapa (se recuerda en este navegador). */
+const CLAVE_MINIMAPA = "croquis.minimapa";
 
 export function VisorUnity({
   escena,
@@ -279,6 +283,28 @@ export function VisorUnity({
     if (c.alImpacto) alControl({ tipo: "impacto" });
   };
 
+  const { enMarco } = useMarco();
+  const [minimapa, setMinimapa] = useState(() => {
+    try {
+      return window.localStorage.getItem(CLAVE_MINIMAPA) !== "no";
+    } catch {
+      return true;
+    }
+  });
+  useEffect(() => {
+    if (!puente || !listo) return;
+    puente.minimapa(minimapa);
+  }, [puente, listo, minimapa]);
+  const alternarMinimapa = () => {
+    const si = !minimapa;
+    setMinimapa(si);
+    try {
+      window.localStorage.setItem(CLAVE_MINIMAPA, si ? "si" : "no");
+    } catch {
+      /* sin almacenamiento: vale solo esta vez */
+    }
+  };
+
   useEffect(() => {
     if (!puente || !listo) return;
     puente.enviar("modoEdicion", {
@@ -314,15 +340,29 @@ export function VisorUnity({
         // Unity lee el tamaño del lienzo; sin esto toma 300×150.
         style={{ width: "100%", height: "100%" }}
       />
-      {/* Sin la barra al presentar (el instante lo pone el capítulo) y al editar en 3D. */}
-      {listo && camaras.length && !tiempo && !edicion?.on ? (
+      {/* Sin la barra al presentar (el instante lo pone el capítulo) y al editar en 3D. En el marco
+          del caso, solo con el 3D a la vista: el 2D pone los suyos. */}
+      {listo && !tiempo && enMarco && activo ? (
+        <EnRanura ranura="derecha">
+          <button
+            type="button"
+            className="boton-secundario boton-compacto"
+            aria-pressed={minimapa}
+            onClick={alternarMinimapa}
+            data-testid="minimapa"
+          >
+            {minimapa ? "Ocultar minimapa" : "Mostrar minimapa"}
+          </button>
+        </EnRanura>
+      ) : null}
+      {listo && camaras.length && !tiempo && !edicion?.on && (activo || !enMarco) ? (
         <SelectorCamaras
           camaras={camaras}
           elegida={elegida?.modo ?? null}
           onElegir={elegirCamara}
         />
       ) : null}
-      {listo && intervalo && !tiempo && !edicion?.on ? (
+      {listo && intervalo && !tiempo && !edicion?.on && (activo || !enMarco) ? (
         <BarraReproduccion
           estado={rep}
           intervalo={intervalo}

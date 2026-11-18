@@ -22,6 +22,7 @@ import { camarasDelCaso, camaraUnity } from "@/lib/visor-unity/camaras";
 import type { CanalTiempo } from "@/lib/visor-unity/canal";
 import { aplicarObjetoEditado, aplicarPuntoMarcado } from "@/lib/visor-unity/edicion";
 import { nombreDelPaquete } from "@/lib/visor-unity/paquete";
+import { EnRanura, useMarco } from "./marco-vista";
 import { VisorUnity, type ApiVisorUnity } from "./visor-unity";
 
 const HERRAMIENTAS: { id: HerramientaEdicion; texto: string; conVehiculo: boolean }[] = [
@@ -105,6 +106,9 @@ export function VisorCasoUnity({
   const [vehiculo, setVehiculo] = useState<string | null>(vehiculos[0]?.id ?? null);
   const [aviso, setAviso] = useState<string | null>(null);
   const [api, setApi] = useState<ApiVisorUnity | null>(null);
+  // En el marco del caso (René, 2026-11-17) los botones van en su barra y las notas en el
+  // desplegable de abajo: nada encima del 3D.
+  const { enMarco } = useMarco();
   const exp = useRef(expediente);
   useEffect(() => {
     exp.current = expediente;
@@ -156,12 +160,14 @@ export function VisorCasoUnity({
           ? // Detrás del diálogo de Presentar (z-50), donde iba la maqueta, sobre la franja de los capítulos
             // (el minimapa de Unity la tapaba): el velo de la izquierda lo cubre.
             "visible pointer-events-none fixed top-0 right-0 bottom-28 left-[30%] z-[49]"
-          : `flex h-full flex-col gap-2 p-3 ${props.expandido ? "pt-40 pb-28" : "pt-16"} ${props.aSangre ? "[&>p]:order-last" : ""}`
+          : enMarco
+            ? "flex h-full flex-col"
+            : `flex h-full flex-col gap-2 p-3 ${props.expandido ? "pt-40 pb-28" : "pt-16"} ${props.aSangre ? "[&>p]:order-last" : ""}`
       }
       data-testid="visor-caso"
       data-presentar={presentar ? "si" : undefined}
     >
-      {presentar ? null : (
+      {presentar || enMarco ? null : (
         <NotasDel3d
           supuestos={props.supuestos}
           contraCesvi={props.contraCesvi}
@@ -191,86 +197,170 @@ export function VisorCasoUnity({
           onPuntoMarcado={alPunto}
         />
         {api && !presentar ? (
-          <div className="absolute top-[4.25rem] right-3 z-10 flex flex-wrap items-center justify-end gap-2">
-            {editable ? (
-              <>
-                <button
-                  type="button"
-                  className="vidrio rounded-full px-3 py-1.5 text-[0.8125rem] font-medium"
-                  aria-pressed={editando}
-                  onClick={() => {
-                    setEditando(!editando);
-                    setAviso(null);
-                  }}
-                  data-testid="editar-3d"
-                >
-                  {editando ? "Terminar de editar" : "Editar en 3D"}
-                </button>
-                {editando ? (
-                  <div className="segmentado" role="tablist" aria-label="Qué editar">
-                    {HERRAMIENTAS.map((h) => (
+          enMarco ? (
+            props.activo === false ? null : (
+              <EnRanura ranura="derecha">
+                <>
+                  {editable ? (
+                    <>
                       <button
-                        key={h.id}
                         type="button"
-                        role="tab"
-                        aria-selected={herramienta === h.id}
-                        className="px-3"
-                        onClick={() => setHerramienta(h.id)}
-                        data-testid={`herramienta-3d-${h.id}`}
+                        className="vidrio rounded-full px-3 py-1.5 text-[0.8125rem] font-medium"
+                        aria-pressed={editando}
+                        onClick={() => {
+                          setEditando(!editando);
+                          setAviso(null);
+                        }}
+                        data-testid="editar-3d"
                       >
-                        {h.texto}
+                        {editando ? "Terminar de editar" : "Editar en 3D"}
                       </button>
-                    ))}
-                  </div>
-                ) : null}
-                {editando && conVehiculo ? (
-                  <div className="segmentado" role="tablist" aria-label="De qué vehículo">
-                    {vehiculos.map((v) => (
-                      <button
-                        key={v.id}
-                        type="button"
-                        role="tab"
-                        aria-selected={vehiculo === v.id}
-                        className="px-3"
-                        onClick={() => setVehiculo(v.id)}
-                      >
-                        {v.letra}
-                      </button>
-                    ))}
-                  </div>
-                ) : null}
-              </>
-            ) : null}
-            <button
-              type="button"
-              className="vidrio rounded-full px-3 py-1.5 text-[0.8125rem] font-medium"
-              onClick={() =>
-                downloadBytes(
-                  new TextEncoder().encode(JSON.stringify(api.paquete)),
-                  nombreDelPaquete(escena),
-                  "application/json",
-                )
-              }
-              data-testid="descargar-paquete-3d"
-            >
-              Descargar paquete 3D
-            </button>
-          </div>
+                      {editando ? (
+                        <div className="segmentado" role="tablist" aria-label="Qué editar">
+                          {HERRAMIENTAS.map((h) => (
+                            <button
+                              key={h.id}
+                              type="button"
+                              role="tab"
+                              aria-selected={herramienta === h.id}
+                              className="px-3"
+                              onClick={() => setHerramienta(h.id)}
+                              data-testid={`herramienta-3d-${h.id}`}
+                            >
+                              {h.texto}
+                            </button>
+                          ))}
+                        </div>
+                      ) : null}
+                      {editando && conVehiculo ? (
+                        <div className="segmentado" role="tablist" aria-label="De qué vehículo">
+                          {vehiculos.map((v) => (
+                            <button
+                              key={v.id}
+                              type="button"
+                              role="tab"
+                              aria-selected={vehiculo === v.id}
+                              className="px-3"
+                              onClick={() => setVehiculo(v.id)}
+                            >
+                              {v.letra}
+                            </button>
+                          ))}
+                        </div>
+                      ) : null}
+                    </>
+                  ) : null}
+                  <button
+                    type="button"
+                    className="vidrio rounded-full px-3 py-1.5 text-[0.8125rem] font-medium"
+                    onClick={() =>
+                      downloadBytes(
+                        new TextEncoder().encode(JSON.stringify(api.paquete)),
+                        nombreDelPaquete(escena),
+                        "application/json",
+                      )
+                    }
+                    data-testid="descargar-paquete-3d"
+                  >
+                    Descargar paquete 3D
+                  </button>
+                </>
+              </EnRanura>
+            )
+          ) : (
+            <div className="absolute top-[4.25rem] right-3 z-10 flex flex-wrap items-center justify-end gap-2">
+              {editable ? (
+                <>
+                  <button
+                    type="button"
+                    className="vidrio rounded-full px-3 py-1.5 text-[0.8125rem] font-medium"
+                    aria-pressed={editando}
+                    onClick={() => {
+                      setEditando(!editando);
+                      setAviso(null);
+                    }}
+                    data-testid="editar-3d"
+                  >
+                    {editando ? "Terminar de editar" : "Editar en 3D"}
+                  </button>
+                  {editando ? (
+                    <div className="segmentado" role="tablist" aria-label="Qué editar">
+                      {HERRAMIENTAS.map((h) => (
+                        <button
+                          key={h.id}
+                          type="button"
+                          role="tab"
+                          aria-selected={herramienta === h.id}
+                          className="px-3"
+                          onClick={() => setHerramienta(h.id)}
+                          data-testid={`herramienta-3d-${h.id}`}
+                        >
+                          {h.texto}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                  {editando && conVehiculo ? (
+                    <div className="segmentado" role="tablist" aria-label="De qué vehículo">
+                      {vehiculos.map((v) => (
+                        <button
+                          key={v.id}
+                          type="button"
+                          role="tab"
+                          aria-selected={vehiculo === v.id}
+                          className="px-3"
+                          onClick={() => setVehiculo(v.id)}
+                        >
+                          {v.letra}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                </>
+              ) : null}
+              <button
+                type="button"
+                className="vidrio rounded-full px-3 py-1.5 text-[0.8125rem] font-medium"
+                onClick={() =>
+                  downloadBytes(
+                    new TextEncoder().encode(JSON.stringify(api.paquete)),
+                    nombreDelPaquete(escena),
+                    "application/json",
+                  )
+                }
+                data-testid="descargar-paquete-3d"
+              >
+                Descargar paquete 3D
+              </button>
+            </div>
+          )
         ) : null}
         {editando && editable && !presentar ? (
-          <p
-            className="t-nota vidrio absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-control px-3 py-1.5"
-            data-testid="aviso-edicion-3d"
-          >
-            {aviso ??
-              (herramienta === "mover"
-                ? "Arrastra un objeto para moverlo; la rueda lo gira y, con Mayús, cambia su largo. Esc cancela."
-                : herramienta === "choque_intermedio"
-                  ? "Toca el objeto contra el que chocó, donde lo tocó."
-                  : "Toca el piso donde va el punto.")}
-          </p>
+          <AvisoEnMarco enMarco={enMarco}>
+            <p
+              className={
+                enMarco
+                  ? "t-nota"
+                  : "t-nota vidrio absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-control px-3 py-1.5"
+              }
+              data-testid="aviso-edicion-3d"
+              aria-live="polite"
+            >
+              {aviso ??
+                (herramienta === "mover"
+                  ? "Arrastra un objeto para moverlo; la rueda lo gira y, con Mayús, cambia su largo. Esc cancela."
+                  : herramienta === "choque_intermedio"
+                    ? "Toca el objeto contra el que chocó, donde lo tocó."
+                    : "Toca el piso donde va el punto.")}
+            </p>
+          </AvisoEnMarco>
         ) : null}
       </div>
     </div>
   );
+}
+
+/** El aviso del modo edición: en la barra de abajo del marco, o sobre el 3D sin marco. */
+function AvisoEnMarco({ enMarco, children }: { enMarco: boolean; children: React.ReactNode }) {
+  return enMarco ? <EnRanura ranura="abajo">{children}</EnRanura> : <>{children}</>;
 }

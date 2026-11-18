@@ -87,6 +87,7 @@ import { ActoContraste, filaDeRestos } from "./contraste-laboratorio";
 import { HechoLaboratorio } from "./hecho-laboratorio";
 import { CifraReconstruccion, DetalleReconstruccion } from "./hoja-reconstruccion";
 import { TerrenoReconstruccion } from "./terreno-reconstruccion";
+import { EnRanura, MarcoVista } from "@/components/visor-unity/marco-vista";
 import { VisorCasoUnity } from "@/components/visor-unity/visor-caso-unity";
 import type { ApiVisorUnity } from "@/components/visor-unity/visor-unity";
 import { CanalTiempo } from "@/lib/visor-unity/canal";
@@ -115,6 +116,7 @@ import { MapaEscena, type HerramientaMapa, type HuellaMapa } from "./piezas";
 import {
   DanoContraReconstruccion,
   ElegirHipotesis,
+  NotasDel3d,
   PanelReconstruccion,
   useReconstruccion,
   type PosicionMovil,
@@ -1341,6 +1343,7 @@ export function RecorridoCaso({
   const pico = actual === 3 && !expandido;
   // Los daños y Contra CESVI ocupan todo el ancho, sin mapa (Laboratorio §8).
   const hojaAncha = actual === 4 || actual === 6 || actual === 7;
+  const conBarras = r !== null && actual === 3 && !presentando && !expandido;
   // El 3D solo dibuja cuando se ve: oculto seguía a todo ritmo y ahogaba la página (la foto del
   // dictamen lo despierta si le hace falta).
   const visorAlaVista = vista === "3d" && !presentando && !hojaAncha && actual !== 1;
@@ -1638,329 +1641,403 @@ export function RecorridoCaso({
           data-testid="escenario"
           data-expandido={expandido ? "si" : "no"}
         >
-          {/* Bajo el 3D el mapa queda montado pero quieto: no recibe posiciones ni se vuelve a
-              dibujar (ADR 0104); el dictamen toma de aquí la imagen del croquis. */}
-          <div
-            className={`absolute inset-0 ${pico ? "lg:right-[488px]" : ""} ${verMapa ? "" : "invisible"}`}
+          {/* René, 2026-11-17: en la reconstrucción, las vistas 3D y 2D van en un marco con sus
+              barras arriba y abajo, fuera de la escena, y las notas en un desplegable. */}
+          <MarcoVista
+            conBarras={conBarras}
+            className={`absolute inset-0 ${pico ? "lg:right-[488px]" : ""}`}
+            etiqueta={vista === "3d" ? "Vista 3D del caso" : "Vista 2D del caso"}
+            notas={
+              r ? (
+                <NotasDel3d
+                  supuestos={supuestos}
+                  contraCesvi={contraCesvi}
+                  expediente={expediente}
+                  conOcupantes={((r.resultado?.personas ?? []) as { ocupante?: unknown }[]).some(
+                    (p) => p.ocupante,
+                  )}
+                />
+              ) : null
+            }
           >
-            {montarMapa ? (
-              <MapaEscena
-                tema={tema}
-                onMapa={setMapa}
-                posiciones={posiciones}
-                // Con la reconstrucción, los vehículos en movimiento llegan por el canal de la barra.
-                moviles={r ? [] : moviles}
-                canalMoviles={canalMoviles}
-                impactos={rec.impactos}
-                onClic={colocar}
-                inicio={lugar?.coordenadas ?? null}
-                lugarTexto={lugarTexto}
-                lugarZona={{ municipio: lugar?.municipio?.valor, estado: lugar?.estado?.valor }}
-                herramienta={actual === 2 && modo === "trabajar" ? herramientaMapa : "mover"}
-                pedirLugar={actual === 2 || expandido}
-                huellas={huellas}
-                flecha={colocacion ? null : flecha}
-                colocacion={colocacion}
-                onFlecha={girar}
-                onMedida={setMedida}
-                onDeshacer={actual === 2 && modo === "trabajar" ? deshacer : undefined}
-              />
-            ) : null}
-          </div>
-          {planteando ? (
-            <div className={`absolute inset-0 bg-fondo ${pico ? "lg:right-[488px]" : ""}`}>
-              <CroquisPlanteamiento
-                huellas={huellas}
-                impactos={impactos.flatMap((i) => {
-                  const punto = puntoDe(i.orden);
-                  const pose = posiciones.find(
-                    (p) => p.fase === "impacto" && i.vehiculos.includes(p.vehiculo),
-                  );
-                  return punto
-                    ? [
-                        {
-                          orden: i.orden,
-                          punto,
-                          fuente: puntosImpacto[i.orden] ? "perito" : pose?.fuente,
-                        },
-                      ]
-                    : [];
-                })}
-                calles={callesDelCroquis}
-                letraDe={letraDe}
-                nombreDe={nombreLab}
-              />
-            </div>
-          ) : null}
-          {r && pidioUnity ? (
-            <div
-              className={`absolute inset-0 bg-fondo ${pico ? "lg:right-[488px]" : ""} ${vista === "3d" ? "" : "pointer-events-none invisible"}`}
-            >
-              <VisorCasoUnity
-                expediente={expediente}
-                onExpediente={(e) => cambiarExpediente(e)}
-                // En la reconstrucción, con el perito trabajando: mover objetos y marcar puntos en 3D.
-                editable={actual === 3 && modo === "trabajar"}
-                vehiculos={Object.entries(r.ids).map(([resId, id]) => ({
-                  id: String(id),
-                  resId,
-                  letra: letraDe(String(id)),
-                }))}
-                onApiUnity={setUnityApi}
-                onInstante={alInstante}
-                presentar={presentando && unityApi ? canalPresentar : null}
-                r={r}
-                activo={visorAlaVista}
-                camaraPedida={camaraPedida}
-                aSangre={pico}
-                contraCesvi={contraCesvi}
-                declarada={declarada}
-                onExportApi={setExportApi}
-                // Con el 3D a la vista el mapa está desmontado: no hace falta mover sus
-                // marcadores (cada aviso del reloj volvía a dibujar toda la página, ~200 ms en
-                // una laptop; René, 2026-11-04). Al volver al mapa, el reloj se pausa y avisa una
-                // vez con el instante en que quedó.
-                onPosiciones={verMapa ? setMoviles : IGNORAR_POSICIONES}
-                calles={calles}
-                objetos={objetos}
-                expandido={expandido}
-                supuestos={supuestos}
-              />
-            </div>
-          ) : null}
-          {/* El 2D sobre el mapa real: la misma barra mueve los vehículos en el mapa (A6). */}
-          {r && vista === "mapa" && !expandido ? (
-            // Solo sobre el mapa: la barra no tapa la hoja de la derecha ni deja de pasar los clics
-            // al mapa.
-            <div
-              className={`pointer-events-none absolute inset-0 [&>*]:pointer-events-auto ${pico ? "lg:right-[488px]" : ""}`}
-            >
-              <RelojDelMapa
-                r={r}
-                tInicial={instanteMaqueta}
-                onInstante={alInstante}
-                canal={canalMoviles}
-              />
-            </div>
-          ) : null}
-          {/* La maqueta del caso (Laboratorio §7): la escena desde arriba, generada del resultado. */}
-          {r && vista === "maqueta" ? (
-            <div
-              className={`absolute inset-0 ${pico ? "lg:right-[488px]" : "bg-fondo p-3 pt-16"}`}
-              data-testid="panel-maqueta"
-            >
-              <MaquetaCaso
-                r={r}
-                tInicial={instanteMaqueta}
-                onInstante={alInstante}
-                calles={calles}
-                nombres={Object.fromEntries(
-                  Object.entries(r.ids).map(([resId, id]) => [resId, nombreLab(String(id))]),
-                )}
-                tips={Object.fromEntries(
-                  Object.entries(r.ids).map(([resId, id]) => {
-                    const v = expediente?.vehiculos.find((x) => x.id === id);
-                    return [
-                      resId,
-                      tipVehiculo({
-                        nombre: nombreLab(String(id)),
-                        masaKg: v?.masa?.valor ?? null,
-                        masaDe: v?.masa?.fuente ?? null,
-                        kmh: r.velocidades.find((x) => x.vehiculo === id)?.previa?.mejor ?? null,
-                        dano: expediente ? textoDano(expediente, String(id)) : null,
-                      }),
-                    ];
-                  }),
-                )}
-                tipDelImpacto={tipImpacto(
-                  Object.values(r.ids)
-                    .map((id) => letraDe(String(id)))
-                    .sort()
-                    .join(" y "),
-                  posiciones.find((p) => p.fase === "impacto")?.fuente ?? null,
-                )}
-                anchoVia={
-                  inicial.ejemplo
-                    ? { m: inicial.ejemplo.lugar.ancho_arroyo_m.valor, de: "del reporte" }
-                    : null
-                }
-                detalles={Object.fromEntries(
-                  Object.entries(r.ids).flatMap(([resId, id]) => {
-                    const d = expediente ? textoDano(expediente, String(id)) : null;
-                    return d ? [[resId, d.charAt(0).toLowerCase() + d.slice(1)]] : [];
-                  }),
-                )}
-                // T6.2: la versión declarada (R7), también en el croquis 2D y no solo en el 3D.
-                declarada={
-                  declarada
-                    ? {
-                        etiqueta: declarada.etiqueta,
-                        resultado: declarada.resultado as unknown as ResultadoMaqueta,
-                      }
-                    : null
-                }
-              />
-            </div>
-          ) : null}
-          {actual === 2 && modo === "trabajar" && verMapa ? (
-            <div
-              className={`pointer-events-none absolute z-10 flex flex-col gap-2 ${expandido ? "top-5 left-1/2 -translate-x-1/2 items-center" : "top-3 left-3 items-start"}`}
-            >
-              {/* El contenedor deja pasar el puntero (no tapa lo que se arrastra en el mapa); los botones no. */}
-              <div
-                className="segmentado pointer-events-auto"
-                role="tablist"
-                aria-label="Herramienta del mapa"
-              >
-                {(
-                  [
-                    ["colocar", "Colocar"],
-                    ["mover", "Mover mapa"],
-                    ["medir", "Medir"],
-                  ] as const
-                ).map(([h, nombre]) => (
-                  <button
-                    key={h}
-                    type="button"
-                    role="tab"
-                    aria-selected={herramientaMapa === h}
-                    className="px-3"
-                    onClick={() => setHerramientaMapa(h)}
-                    data-testid={`herramienta-${h}`}
-                  >
-                    {nombre}
-                  </button>
-                ))}
-              </div>
-              {herramientaMapa === "colocar" ? (
-                <p className="vidrio t-nota pointer-events-none rounded-control px-3 py-1.5">
-                  En «Colocar» el mapa no se mueve. Mantén Espacio para moverlo.
-                </p>
-              ) : herramientaMapa === "medir" ? (
-                <p className="vidrio t-nota pointer-events-none rounded-control px-3 py-1.5">
-                  Toca los dos extremos de lo que mides.
-                </p>
+            {/* Bajo el 3D el mapa queda montado pero quieto: no recibe posiciones ni se vuelve a
+              dibujar (ADR 0104); el dictamen toma de aquí la imagen del croquis. */}
+            <div className={`absolute inset-0 ${verMapa ? "" : "invisible"}`}>
+              {montarMapa ? (
+                <MapaEscena
+                  tema={tema}
+                  onMapa={setMapa}
+                  posiciones={posiciones}
+                  // Con la reconstrucción, los vehículos en movimiento llegan por el canal de la barra.
+                  moviles={r ? [] : moviles}
+                  canalMoviles={canalMoviles}
+                  impactos={rec.impactos}
+                  onClic={colocar}
+                  inicio={lugar?.coordenadas ?? null}
+                  lugarTexto={lugarTexto}
+                  lugarZona={{ municipio: lugar?.municipio?.valor, estado: lugar?.estado?.valor }}
+                  herramienta={actual === 2 && modo === "trabajar" ? herramientaMapa : "mover"}
+                  pedirLugar={actual === 2 || expandido}
+                  huellas={huellas}
+                  flecha={colocacion ? null : flecha}
+                  colocacion={colocacion}
+                  onFlecha={girar}
+                  onMedida={setMedida}
+                  onDeshacer={actual === 2 && modo === "trabajar" ? deshacer : undefined}
+                />
               ) : null}
             </div>
-          ) : null}
-          <div className={`absolute z-10 flex gap-2 ${pico ? "top-4 left-4" : "top-3 right-3"}`}>
-            {r ? (
-              <>
-                {/* A6: dos pestañas, «3D» y «2D». El mapa real es un fondo del 2D, no otra pestaña. */}
+            {planteando ? (
+              <div className="absolute inset-0 bg-fondo">
+                <CroquisPlanteamiento
+                  huellas={huellas}
+                  impactos={impactos.flatMap((i) => {
+                    const punto = puntoDe(i.orden);
+                    const pose = posiciones.find(
+                      (p) => p.fase === "impacto" && i.vehiculos.includes(p.vehiculo),
+                    );
+                    return punto
+                      ? [
+                          {
+                            orden: i.orden,
+                            punto,
+                            fuente: puntosImpacto[i.orden] ? "perito" : pose?.fuente,
+                          },
+                        ]
+                      : [];
+                  })}
+                  calles={callesDelCroquis}
+                  letraDe={letraDe}
+                  nombreDe={nombreLab}
+                />
+              </div>
+            ) : null}
+            {r && pidioUnity ? (
+              <div
+                className={`absolute inset-0 bg-fondo ${vista === "3d" ? "" : "pointer-events-none invisible"}`}
+              >
+                <VisorCasoUnity
+                  expediente={expediente}
+                  onExpediente={(e) => cambiarExpediente(e)}
+                  // En la reconstrucción, con el perito trabajando: mover objetos y marcar puntos en 3D.
+                  editable={actual === 3 && modo === "trabajar"}
+                  vehiculos={Object.entries(r.ids).map(([resId, id]) => ({
+                    id: String(id),
+                    resId,
+                    letra: letraDe(String(id)),
+                  }))}
+                  onApiUnity={setUnityApi}
+                  onInstante={alInstante}
+                  presentar={presentando && unityApi ? canalPresentar : null}
+                  r={r}
+                  activo={visorAlaVista}
+                  camaraPedida={camaraPedida}
+                  aSangre={pico}
+                  contraCesvi={contraCesvi}
+                  declarada={declarada}
+                  onExportApi={setExportApi}
+                  // Con el 3D a la vista el mapa está desmontado: no hace falta mover sus
+                  // marcadores (cada aviso del reloj volvía a dibujar toda la página, ~200 ms en
+                  // una laptop; René, 2026-11-04). Al volver al mapa, el reloj se pausa y avisa una
+                  // vez con el instante en que quedó.
+                  onPosiciones={verMapa ? setMoviles : IGNORAR_POSICIONES}
+                  calles={calles}
+                  objetos={objetos}
+                  expandido={expandido}
+                  supuestos={supuestos}
+                />
+              </div>
+            ) : null}
+            {/* El 2D sobre el mapa real: la misma barra mueve los vehículos en el mapa (A6). */}
+            {r && vista === "mapa" && !expandido ? (
+              // Solo sobre el mapa: la barra no tapa la hoja de la derecha ni deja de pasar los clics
+              // al mapa.
+              <div className="pointer-events-none absolute inset-0 [&>*]:pointer-events-auto">
+                <RelojDelMapa
+                  r={r}
+                  tInicial={instanteMaqueta}
+                  onInstante={alInstante}
+                  canal={canalMoviles}
+                />
+              </div>
+            ) : null}
+            {/* La maqueta del caso (Laboratorio §7): la escena desde arriba, generada del resultado. */}
+            {r && vista === "maqueta" ? (
+              <div
+                className={`absolute inset-0 ${pico ? "" : "bg-fondo"} ${conBarras || pico ? "" : "p-3 pt-16"}`}
+                data-testid="panel-maqueta"
+              >
+                <MaquetaCaso
+                  r={r}
+                  tInicial={instanteMaqueta}
+                  onInstante={alInstante}
+                  calles={calles}
+                  nombres={Object.fromEntries(
+                    Object.entries(r.ids).map(([resId, id]) => [resId, nombreLab(String(id))]),
+                  )}
+                  tips={Object.fromEntries(
+                    Object.entries(r.ids).map(([resId, id]) => {
+                      const v = expediente?.vehiculos.find((x) => x.id === id);
+                      return [
+                        resId,
+                        tipVehiculo({
+                          nombre: nombreLab(String(id)),
+                          masaKg: v?.masa?.valor ?? null,
+                          masaDe: v?.masa?.fuente ?? null,
+                          kmh: r.velocidades.find((x) => x.vehiculo === id)?.previa?.mejor ?? null,
+                          dano: expediente ? textoDano(expediente, String(id)) : null,
+                        }),
+                      ];
+                    }),
+                  )}
+                  tipDelImpacto={tipImpacto(
+                    Object.values(r.ids)
+                      .map((id) => letraDe(String(id)))
+                      .sort()
+                      .join(" y "),
+                    posiciones.find((p) => p.fase === "impacto")?.fuente ?? null,
+                  )}
+                  anchoVia={
+                    inicial.ejemplo
+                      ? { m: inicial.ejemplo.lugar.ancho_arroyo_m.valor, de: "del reporte" }
+                      : null
+                  }
+                  detalles={Object.fromEntries(
+                    Object.entries(r.ids).flatMap(([resId, id]) => {
+                      const d = expediente ? textoDano(expediente, String(id)) : null;
+                      return d ? [[resId, d.charAt(0).toLowerCase() + d.slice(1)]] : [];
+                    }),
+                  )}
+                  // T6.2: la versión declarada (R7), también en el croquis 2D y no solo en el 3D.
+                  declarada={
+                    declarada
+                      ? {
+                          etiqueta: declarada.etiqueta,
+                          resultado: declarada.resultado as unknown as ResultadoMaqueta,
+                        }
+                      : null
+                  }
+                />
+              </div>
+            ) : null}
+            {actual === 2 && modo === "trabajar" && verMapa ? (
+              <div
+                className={`pointer-events-none absolute z-10 flex flex-col gap-2 ${expandido ? "top-5 left-1/2 -translate-x-1/2 items-center" : "top-3 left-3 items-start"}`}
+              >
+                {/* El contenedor deja pasar el puntero (no tapa lo que se arrastra en el mapa); los botones no. */}
                 <div
-                  className={`segmentado ${pico ? "segmentado-tinta" : ""}`}
+                  className="segmentado pointer-events-auto"
                   role="tablist"
-                  aria-label="Vista"
+                  aria-label="Herramienta del mapa"
                 >
-                  <button
-                    type="button"
-                    role="tab"
-                    aria-selected={vista === "3d"}
-                    className="px-5"
-                    onClick={() => {
-                      // Del 2D al 3D, el 3D va al instante en que se quedó el 2D.
-                      if (vista !== "3d" && instante.current !== null)
-                        unityApi?.ir?.(instante.current);
-                      setVista("3d");
-                    }}
-                    data-testid="vista-3d"
-                  >
-                    3D
-                  </button>
-                  <button
-                    type="button"
-                    role="tab"
-                    aria-selected={vista !== "3d"}
-                    className="px-5"
-                    onClick={() => {
-                      if (vista !== "3d") return;
-                      // Del 3D al 2D, el 2D empieza donde se quedó el 3D.
-                      setInstanteMaqueta(instante.current);
-                      setVista("maqueta");
-                    }}
-                    data-testid="vista-maqueta"
-                  >
-                    2D
-                  </button>
+                  {(
+                    [
+                      ["colocar", "Colocar"],
+                      ["mover", "Mover mapa"],
+                      ["medir", "Medir"],
+                    ] as const
+                  ).map(([h, nombre]) => (
+                    <button
+                      key={h}
+                      type="button"
+                      role="tab"
+                      aria-selected={herramientaMapa === h}
+                      className="px-3"
+                      onClick={() => setHerramientaMapa(h)}
+                      data-testid={`herramienta-${h}`}
+                    >
+                      {nombre}
+                    </button>
+                  ))}
                 </div>
-                {vista !== "3d" ? (
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={vista === "mapa"}
-                    className={`interruptor ${pico ? "" : "vidrio px-3"}`}
-                    onClick={() => {
-                      setInstanteMaqueta(instante.current);
-                      setVista(vista === "mapa" ? "maqueta" : "mapa");
-                    }}
-                    data-testid="vista-mapa"
+                {herramientaMapa === "colocar" ? (
+                  <p className="vidrio t-nota pointer-events-none rounded-control px-3 py-1.5">
+                    En «Colocar» el mapa no se mueve. Mantén Espacio para moverlo.
+                  </p>
+                ) : herramientaMapa === "medir" ? (
+                  <p className="vidrio t-nota pointer-events-none rounded-control px-3 py-1.5">
+                    Toca los dos extremos de lo que mides.
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+            {conBarras ? (
+              <EnRanura ranura="vista">
+                <>
+                  {/* A6: dos pestañas, «3D» y «2D». El mapa real es un fondo del 2D, no otra pestaña. */}
+                  <div
+                    className={`segmentado ${pico ? "segmentado-tinta" : ""}`}
+                    role="tablist"
+                    aria-label="Vista"
                   >
-                    Mapa
-                  </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={vista === "3d"}
+                      className="px-5"
+                      onClick={() => {
+                        // Del 2D al 3D, el 3D va al instante en que se quedó el 2D.
+                        if (vista !== "3d" && instante.current !== null)
+                          unityApi?.ir?.(instante.current);
+                        setVista("3d");
+                      }}
+                      data-testid="vista-3d"
+                    >
+                      3D
+                    </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={vista !== "3d"}
+                      className="px-5"
+                      onClick={() => {
+                        if (vista !== "3d") return;
+                        // Del 3D al 2D, el 2D empieza donde se quedó el 3D.
+                        setInstanteMaqueta(instante.current);
+                        setVista("maqueta");
+                      }}
+                      data-testid="vista-maqueta"
+                    >
+                      2D
+                    </button>
+                  </div>
+                  {vista !== "3d" ? (
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={vista === "mapa"}
+                      className={`interruptor ${pico ? "" : "vidrio px-3"}`}
+                      onClick={() => {
+                        setInstanteMaqueta(instante.current);
+                        setVista(vista === "mapa" ? "maqueta" : "mapa");
+                      }}
+                      data-testid="vista-mapa"
+                    >
+                      Mapa
+                    </button>
+                  ) : null}
+                </>
+              </EnRanura>
+            ) : null}
+            <div className={`absolute z-10 flex gap-2 ${pico ? "top-4 left-4" : "top-3 right-3"}`}>
+              {r && !conBarras ? (
+                <>
+                  {/* A6: dos pestañas, «3D» y «2D». El mapa real es un fondo del 2D, no otra pestaña. */}
+                  <div
+                    className={`segmentado ${pico ? "segmentado-tinta" : ""}`}
+                    role="tablist"
+                    aria-label="Vista"
+                  >
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={vista === "3d"}
+                      className="px-5"
+                      onClick={() => {
+                        // Del 2D al 3D, el 3D va al instante en que se quedó el 2D.
+                        if (vista !== "3d" && instante.current !== null)
+                          unityApi?.ir?.(instante.current);
+                        setVista("3d");
+                      }}
+                      data-testid="vista-3d"
+                    >
+                      3D
+                    </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={vista !== "3d"}
+                      className="px-5"
+                      onClick={() => {
+                        if (vista !== "3d") return;
+                        // Del 3D al 2D, el 2D empieza donde se quedó el 3D.
+                        setInstanteMaqueta(instante.current);
+                        setVista("maqueta");
+                      }}
+                      data-testid="vista-maqueta"
+                    >
+                      2D
+                    </button>
+                  </div>
+                  {vista !== "3d" ? (
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={vista === "mapa"}
+                      className={`interruptor ${pico ? "" : "vidrio px-3"}`}
+                      onClick={() => {
+                        setInstanteMaqueta(instante.current);
+                        setVista(vista === "mapa" ? "maqueta" : "mapa");
+                      }}
+                      data-testid="vista-mapa"
+                    >
+                      Mapa
+                    </button>
+                  ) : null}
+                </>
+              ) : null}
+              {pico ? null : (
+                <button
+                  type="button"
+                  className="vidrio rounded-full px-4 py-2 text-[0.8125rem] font-medium"
+                  onClick={() => setExpandido(!expandido)}
+                  data-testid={expandido ? "contraer-mapa" : "expandir-mapa"}
+                >
+                  {expandido ? "⤡ Contraer · Esc" : "⤢ Expandir"}
+                </button>
+              )}
+            </div>
+            {expandido ? (
+              <>
+                <aside
+                  className="vidrio absolute top-5 left-5 z-10 flex w-[300px] flex-col gap-2 rounded-panel p-4"
+                  aria-label="Lo que falta"
+                  data-testid="panel-expandido"
+                >
+                  <span className="t-rotulo">
+                    Paso {paso + 1} · {pasos[paso]}
+                  </span>
+                  <span className="t-nota">
+                    {falta.length ? (
+                      <>
+                        Falta: <b className="text-texto">{enLista(falta)}</b>
+                      </>
+                    ) : (
+                      "Listo: puedes seguir."
+                    )}
+                  </span>
+                </aside>
+                {siguienteNombre ? (
+                  <div className="vidrio absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-4 rounded-full py-2 pr-2 pl-5">
+                    <span className="t-nota">
+                      {falta.length ? `Falta: ${enLista(falta)}` : "Todo listo en este paso."}
+                    </span>
+                    <button
+                      type="button"
+                      className="boton-principal boton-compacto"
+                      disabled={falta.length > 0}
+                      onClick={() => {
+                        setExpandido(false);
+                        irA(paso + 1);
+                      }}
+                    >
+                      {textoSiguiente}
+                      <span className="flecha-continuar" aria-hidden="true">
+                        →
+                      </span>
+                    </button>
+                  </div>
                 ) : null}
               </>
+            ) : verMapa || planteando ? (
+              // En el 3D la leyenda de CESVI va en la banda del visor (y no tapa sus controles).
+              <p
+                className={`vidrio pointer-events-none absolute right-3 z-10 px-2 py-1 text-[0.6875rem] text-texto-2 ${r && vista === "mapa" && !conBarras ? "bottom-[5.75rem]" : "bottom-3"}`}
+              >
+                {LEGEND_TEXT_CESVI}
+              </p>
             ) : null}
-            {pico ? null : (
-              <button
-                type="button"
-                className="vidrio rounded-full px-4 py-2 text-[0.8125rem] font-medium"
-                onClick={() => setExpandido(!expandido)}
-                data-testid={expandido ? "contraer-mapa" : "expandir-mapa"}
-              >
-                {expandido ? "⤡ Contraer · Esc" : "⤢ Expandir"}
-              </button>
-            )}
-          </div>
-          {expandido ? (
-            <>
-              <aside
-                className="vidrio absolute top-5 left-5 z-10 flex w-[300px] flex-col gap-2 rounded-panel p-4"
-                aria-label="Lo que falta"
-                data-testid="panel-expandido"
-              >
-                <span className="t-rotulo">
-                  Paso {paso + 1} · {pasos[paso]}
-                </span>
-                <span className="t-nota">
-                  {falta.length ? (
-                    <>
-                      Falta: <b className="text-texto">{enLista(falta)}</b>
-                    </>
-                  ) : (
-                    "Listo: puedes seguir."
-                  )}
-                </span>
-              </aside>
-              {siguienteNombre ? (
-                <div className="vidrio absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-4 rounded-full py-2 pr-2 pl-5">
-                  <span className="t-nota">
-                    {falta.length ? `Falta: ${enLista(falta)}` : "Todo listo en este paso."}
-                  </span>
-                  <button
-                    type="button"
-                    className="boton-principal boton-compacto"
-                    disabled={falta.length > 0}
-                    onClick={() => {
-                      setExpandido(false);
-                      irA(paso + 1);
-                    }}
-                  >
-                    {textoSiguiente}
-                    <span className="flecha-continuar" aria-hidden="true">
-                      →
-                    </span>
-                  </button>
-                </div>
-              ) : null}
-            </>
-          ) : verMapa || planteando ? (
-            // En el 3D la leyenda de CESVI va en la banda del visor (y no tapa sus controles).
-            <p
-              className={`vidrio pointer-events-none absolute z-10 px-2 py-1 text-[0.6875rem] text-texto-2 ${r && vista === "mapa" ? "bottom-[5.75rem]" : "bottom-3"} ${pico ? "right-3 lg:right-[500px]" : "right-3"}`}
-            >
-              {LEGEND_TEXT_CESVI}
-            </p>
-          ) : null}
+          </MarcoVista>
         </section>
       </div>
     </div>
