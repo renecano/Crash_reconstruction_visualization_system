@@ -48,10 +48,23 @@ function metros(a: [number, number], b: [number, number]): number {
   return Math.hypot((b[0] - a[0]) * k, b[1] - a[1]) * 111_320;
 }
 
+/** Metros de `p` al segmento `a`–`b` (plano local, equirectangular). */
+function aSegmento(p: [number, number], a: [number, number], b: [number, number]): number {
+  const k = Math.cos((p[1] * Math.PI) / 180) * 111_320;
+  const ax = (a[0] - p[0]) * k;
+  const ay = (a[1] - p[1]) * 111_320;
+  const bx = (b[0] - p[0]) * k;
+  const by = (b[1] - p[1]) * 111_320;
+  const dx = bx - ax;
+  const dy = by - ay;
+  const t = dx || dy ? Math.max(0, Math.min(1, -(ax * dx + ay * dy) / (dx * dx + dy * dy))) : 0;
+  return Math.hypot(ax + t * dx, ay + t * dy);
+}
+
 /**
  * Las calles a `radioM` de `centro` ([lon, lat]) como una respuesta de Overpass: un nodo por vértice
  * (compartido entre líneas que se tocan) y una vía por tramo, con su `highway`, su sentido y su nombre
- * (de `transportation_name`, que comparte los vértices de la calle). Los tramos repetidos (una calle
+ * (de `transportation_name`, la línea con nombre más cercana a su punto medio). Los tramos repetidos (una calle
  * en dos teselas vecinas) salen una vez.
  */
 export function overpassDeTeselas(
@@ -70,13 +83,24 @@ export function overpassDeTeselas(
     }
     return n.id;
   };
-  // El nombre de cada vértice que tiene uno (la capa de nombres repite la geometría de la calle).
-  const nombreDe = new Map<string, string>();
+  // Las líneas con nombre (la capa de nombres repite la geometría de las calles, a veces partida
+  // distinto): el nombre de un tramo es el de la línea que pasa a menos de 3 m de su punto medio.
+  const conNombre: { nombre: string; l: [number, number][] }[] = [];
   for (const f of nombres) {
     const nombre = (texto(f.properties["name:es"]) || texto(f.properties.name)).trim();
     if (!nombre) continue;
-    for (const l of lineas(f.geometry)) for (const p of l) nombreDe.set(claveDe(p), nombre);
+    for (const l of lineas(f.geometry)) if (l.length >= 2) conNombre.push({ nombre, l });
   }
+  const nombreCerca = (p: [number, number]): string | null => {
+    let mejor: { nombre: string; d: number } | null = null;
+    for (const { nombre, l } of conNombre) {
+      for (let i = 0; i + 1 < l.length; i++) {
+        const d = aSegmento(p, l[i]!, l[i + 1]!);
+        if (d <= 3 && (!mejor || d < mejor.d)) mejor = { nombre, d };
+      }
+    }
+    return mejor?.nombre ?? null;
+  };
   const vistas = new Set<string>();
   const vias: OsmWay[] = [];
   for (const f of calles) {
@@ -94,15 +118,14 @@ export function overpassDeTeselas(
       if (vistas.has(firma) || vistas.has(reves)) continue;
       vistas.add(firma);
       const tags: Record<string, string> = { highway: tipo };
-      const conNombre = l.map((p) => nombreDe.get(claveDe(p))).filter(Boolean) as string[];
-      if (conNombre.length) {
-        // El nombre que más vértices comparte con el tramo, con dos o más: un solo vértice en común
-        // es el cruce con otra calle, no la misma calle.
-        const cuenta = new Map<string, number>();
-        for (const n of conNombre) cuenta.set(n, (cuenta.get(n) ?? 0) + 1);
-        const [nombre, veces] = [...cuenta].sort((a, b) => b[1] - a[1])[0]!;
-        if (veces >= 2) tags.name = nombre;
-      }
+      // El punto medio del tramo (a la mitad de su arista central).
+      const k = Math.floor((l.length - 1) / 2);
+      const medio: [number, number] = [
+        (l[k]![0] + l[k + 1]![0]) / 2,
+        (l[k]![1] + l[k + 1]![1]) / 2,
+      ];
+      const nombre = nombreCerca(medio);
+      if (nombre) tags.name = nombre;
       if (f.properties.oneway === 1) tags.oneway = "yes";
       else if (f.properties.oneway === -1) tags.oneway = "-1";
       vias.push({ type: "way", id: -(vias.length + 1), nodes: l.map(nodo), tags });

@@ -18,6 +18,7 @@
 import type { Expediente } from "@croquis/cesvi";
 import {
   ajustarACalle,
+  cardinal,
   elegirDireccion,
   flechaPropuesta,
   flechasDeLlegada,
@@ -118,15 +119,27 @@ export function proponerEscena(o: {
     const i = flechaPropuesta(flechas, s, poseDe(e, v, "impacto")?.rumbo ?? null);
     const f = i >= 0 ? flechas[i]! : null;
     if (f) e = elegirDireccion(e, impactos, v, f.rumbo, (k) => puntos[k] ?? null, true);
+    // René (2026-11-18): concreto, por qué calle y en qué sentido, y en qué se basa.
+    const caraDe = (id: string) =>
+      (o.expediente.danos ?? [])
+        .find((d) => d.vehiculo === id && !d.dano_previo)
+        ?.zona.cara.replaceAll("_", " ") ?? null;
+    const otro = impactos[0]!.vehiculos.find((x) => x !== v) ?? null;
+    const daños = [
+      caraDe(v) ? `el daño ${caraDe(v)} de ${o.nombreDe(v)}` : null,
+      otro && caraDe(otro) ? `el ${caraDe(otro)} de ${o.nombreDe(otro)}` : null,
+    ].filter(Boolean);
     propuestos.push({
       clave: `direccion-${v}`,
       texto: f
-        ? `${o.nombreDe(v)}: ${textoFlecha(f).replace(/^Del /, "venía del ")}`
+        ? `${o.nombreDe(v)}: venía por ${f.calle ?? "la calle sin nombre del mapa"}, de ${f.desde} a ${cardinal(f.rumbo)}`
         : `${o.nombreDe(v)}: en el choque, alineado con la calle`,
       porque: s
         ? `la narración dice «${s.cita}»`
         : f
-          ? "por las zonas de daño de los vehículos"
+          ? daños.length
+            ? `${daños.join(" y ")} cuadran con que llegara así (${textoFlecha(f).toLowerCase()})`
+            : "por las zonas de contacto de los vehículos"
           : "no hay calles del mapa para proponer por dónde llegaba",
     });
   }

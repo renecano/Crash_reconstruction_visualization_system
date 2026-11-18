@@ -69,6 +69,12 @@ describe("la escena ya armada (cesvi-cf708e9fed)", () => {
     expect(Math.min(dif, 180 - dif)).toBeLessThan(15);
   });
 
+  it("cada «Por qué» es concreto: la calle, el sentido y los daños en que se basa (René)", () => {
+    const d = p.propuestos.find((x) => x.clave.startsWith("direccion-"))!;
+    expect(d.texto).toMatch(/venía por .+, de \S+ a \S+$/);
+    expect(d.porque).toMatch(/daño|narración/);
+  });
+
   it("lo que no puede proponer va a la lista de lo que falta, con su porqué", () => {
     expect(p.faltan.some((f) => f.clave.startsWith("final-"))).toBe(true);
     expect(p.faltan.every((f) => f.porque.length > 0)).toBe(true);
