@@ -6,7 +6,16 @@
  * Todo lo que se mueve sale de `datos/caso.json` (una escena inventada y su Resultado): la calle, las
  * trayectorias, el punto de impacto, los restos, las posiciones finales y las 256 simulaciones.
  */
-import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
+import { useEffect, useRef, useState } from "react";
+import {
+  AbsoluteFill,
+  cancelRender,
+  continueRender,
+  delayRender,
+  staticFile,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
 import { mezclaCamaras, proyector, type Camara, type Proyector } from "../camara";
 import { CASO, caminoEntre, largoDeLaCalle, poseEn, rayasDeLaCalle } from "../datos";
 import { MONO, SERIF } from "../fuentes";
@@ -16,12 +25,15 @@ import {
   rectanguloEnPantalla,
   SENAL,
   trazarPolilinea,
+  trazoDeGrafito,
   type Onda,
   type Paleta,
 } from "../hoja";
 import { Lienzo, type Marco } from "../Lienzo";
 import { entre, FPS, mezcla, MOMENTOS, sale, suave } from "../ritmo";
 import { azar } from "../texturas/azar";
+import { Lapiz } from "../lapiz3d";
+import { Dibujante, type AutoEnEscena, type ModeloAuto } from "../tinta3d";
 
 const A = CASO.vehiculos[0]!;
 const B = CASO.vehiculos[1]!;
@@ -62,7 +74,7 @@ export function camaraEn(s: number, vertical: boolean): Camara {
     if (s < 6) return cen(b.x + 2, b.y, 15);
     if (s < 6.5) return { x: a.x + 9, y: a.y - 1, dist: 15, inclinacion: 0.36, giro: 0, focal: 1 };
     if (s < 7) return cen((a.x + b.x) / 2, (a.y + b.y) / 2, 24);
-    // Los tres últimos, de un sexto de pulso cada uno.
+    // Los tres últimos, de un sexto de segundo (5 cuadros) cada uno.
     if (s < 7 + 1 / 6) return cen(a.x + 1.5, a.y, 10.5);
     if (s < 7 + 2 / 6) return cen(b.x - 1, b.y, 10.5);
     return cen((a.x + b.x) / 2 + 1, (a.y + b.y) / 2, 9);
@@ -202,7 +214,15 @@ function frenteDelTrazo(s: number): number {
   return mezcla(-37, X1, suave(entre(s, 1.2, 4.7)));
 }
 
-function calle(m: Marco, p: Proyector, pal: Paleta, s: number, onda: Onda | null) {
+function calle(
+  m: Marco,
+  p: Proyector,
+  pal: Paleta,
+  s: number,
+  onda: Onda | null,
+  /** Cuánto se ven las rayas (1 normal): bajan donde va el título, para que no compitan con él. */
+  fuerza = 1,
+) {
   const { ctx, u } = m;
   ctx.save();
   ctx.strokeStyle = pal.tinta;
@@ -217,27 +237,26 @@ function calle(m: Marco, p: Proyector, pal: Paleta, s: number, onda: Onda | null
       : X0 + (X1 - X0) * (s >= 5 ? 1 : suave(entre(s, desde, desde + 2.6)));
     const avance = (hasta - X0) / (X1 - X0);
     if (avance <= 0) return;
-    ctx.globalAlpha = raya.tipo === "carril" ? 0.78 : 0.95;
-    ctx.lineWidth = (raya.tipo === "orilla" ? 3.6 : primera ? 3.4 : 2.8) * u;
+    const opacidad = (raya.tipo === "carril" ? 0.8 : 0.96) * fuerza;
+    const grueso = (raya.tipo === "orilla" ? 3.8 : primera ? 3.8 : 3) * u;
     if (raya.tipo === "carril" && !(primera && s < 5)) {
       // Raya discontinua: 3 m de raya, 4.5 m de hueco. (La del trazo inicial va corrida mientras se
       // dibuja; al cortar a la siguiente escena ya es una raya de carril.)
       for (let x = X0; x < hasta; x += 7.5)
-        trazarPolilinea(
+        trazoDeGrafito(
           ctx,
           p,
           [
             [x, raya.y],
             [Math.min(x + 3, hasta), raya.y],
           ],
-          1,
-          onda,
+          { grueso, opacidad, semilla: k * 17 + Math.round(x), onda },
         );
     } else {
       const pts: [number, number][] = [];
       for (let x = X0; x < hasta; x += 4) pts.push([x, raya.y]);
       pts.push([hasta, raya.y]);
-      trazarPolilinea(ctx, p, pts, 1, onda);
+      trazoDeGrafito(ctx, p, pts, { grueso, opacidad, semilla: k * 17, onda });
     }
     if (primera && avance < 1) frente = { x: hasta, y: raya.y };
   });
@@ -335,7 +354,14 @@ function circuloDelMundo(m: Marco, p: Proyector, x: number, y: number, radio: nu
   ctx.stroke();
 }
 
-function dibuja(m: Marco, vertical: boolean) {
+/** Qué modelo de la app lleva cada clase de vehículo de la escena. */
+const MODELO_DE: Record<string, string> = {
+  sedan_compacto: "sedan",
+  sedan_mediano: "sedan",
+  microbus_combi: "combi",
+};
+
+function dibuja(m: Marco, vertical: boolean, tinta: Dibujante | null, lapiz3d: Lapiz | null) {
   const { ctx, ancho, alto, u, cuadro } = m;
   const s = cuadro / FPS;
   const cam = camaraEn(s, vertical);
@@ -387,7 +413,26 @@ function dibuja(m: Marco, vertical: boolean) {
   }
 
   // La calle, a lápiz.
-  const frente = calle(m, p, pal, s, onda);
+  // Donde va «Cada choque deja evidencia», las rayas bajan y una zona limpia de la hoja deja el texto
+  // sin nada que compita con él (René, 2026-11-17: el texto se confundía con los carriles).
+  const titulo = sale(entre(s, 9.05, 9.5)) * (1 - entre(s, 12.6, 13));
+  const frente = calle(m, p, pal, s, onda, 1 - 0.5 * titulo);
+  if (titulo > 0) {
+    const cx = vertical ? ancho / 2 : 104 * u + 430 * u;
+    const cy = vertical ? 150 * u + 125 * u : 250 * u + 135 * u;
+    const radio = (vertical ? 660 : 820) * u;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(vertical ? 1.15 : 1.3, vertical ? 0.62 : 0.78);
+    const zona = ctx.createRadialGradient(0, 0, 0, 0, 0, radio);
+    const fondo = pal.fondo.replace("rgb(", "rgba(");
+    zona.addColorStop(0, fondo.replace(")", `,${0.97 * titulo})`));
+    zona.addColorStop(0.62, fondo.replace(")", `,${0.9 * titulo})`));
+    zona.addColorStop(1, fondo.replace(")", ",0)"));
+    ctx.fillStyle = zona;
+    ctx.fillRect(-radio, -radio, radio * 2, radio * 2);
+    ctx.restore();
+  }
 
   // 4 · Las simulaciones del solver: cada línea, una simulación; aparecen del reposo hacia atrás.
   if (s >= 13) {
@@ -499,6 +544,7 @@ function dibuja(m: Marco, vertical: boolean) {
   if (s >= 5 && s < 16.6) {
     const tsim = Math.min(0, s - CONTACTO);
     const tenue = s < 9 ? 1 : mezcla(1, 0.3, entre(s, 9, 9.6)) * (1 - entre(s, 15, 15.6));
+    const autos: AutoEnEscena[] = [];
     if (tenue > 0)
       for (const v of [B, A]) {
         const pose = poseEn(v, tsim);
@@ -528,8 +574,46 @@ function dibuja(m: Marco, vertical: boolean) {
           }
           ctx.restore();
         }
-        vehiculo(m, p, v, pose, pal.vehiculo, pal.fondo, tenue, onda);
+        if (tinta && MODELO_DE[v.clase]) {
+          // La sombra sobre el papel: suave y un poco corrida hacia donde no da la luz.
+          const sombra = rectanguloEnPantalla(
+            p,
+            pose.x + 0.45,
+            pose.y - 0.5,
+            pose.rumbo,
+            v.largo,
+            v.ancho,
+          );
+          if (sombra) {
+            ctx.save();
+            ctx.filter = `blur(${9 * u}px)`;
+            ctx.globalAlpha = mezcla(0.2, 0.42, noche) * tenue;
+            ctx.fillStyle = "#000";
+            ctx.beginPath();
+            sombra.forEach((c, i) => (i ? ctx.lineTo(c.x, c.y) : ctx.moveTo(c.x, c.y)));
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+          }
+          autos.push({
+            id: v.id,
+            clave: MODELO_DE[v.clase]!,
+            x: pose.x,
+            y: pose.y,
+            rumbo: pose.rumbo,
+            largo: v.largo,
+            ancho: v.ancho,
+            opacidad: tenue,
+          });
+        } else vehiculo(m, p, v, pose, pal.vehiculo, pal.fondo, tenue, onda);
       }
+    // Los modelos 3D de la app, dibujados en tinta con la misma cámara de la hoja.
+    if (tinta && autos.length)
+      tinta.dibujar(ctx, cam, { ancho, alto }, autos, {
+        tinta: pal.tinta,
+        papel: pal.fondo,
+        pluma: 2.6,
+      });
   }
 
   // El golpe: anillos, destello y fragmentos.
@@ -605,7 +689,26 @@ function dibuja(m: Marco, vertical: boolean) {
   }
 
   // El lápiz, mientras traza.
-  if (frente && s < 5) lapiz(m, p, frente, 1 - entre(s, 4.3, 4.9));
+  if (frente && s < 5) {
+    const opacidad = 1 - entre(s, 4.3, 4.9);
+    if (lapiz3d)
+      // El vaivén de la mano: el lápiz nunca está del todo quieto.
+      lapiz3d.dibujar(
+        ctx,
+        cam,
+        { ancho, alto },
+        {
+          x: frente.x,
+          y: frente.y + 0.012 * cam.dist * (Math.sin(s * 9.1) * 0.5 + Math.sin(s * 23.7) * 0.2),
+          tamano: mezcla(0.66, 0.42, suave(entre(s, 1.3, 4.4))),
+          elevacion: 0.86 + 0.035 * Math.sin(s * 5.3) + 0.02 * Math.sin(s * 13.1 + 1),
+          azimut: 0.68 + 0.06 * Math.sin(s * 4.1 + 2) + 0.025 * Math.sin(s * 11.3),
+          giro: 0.5 + 0.3 * Math.sin(s * 2.2),
+          opacidad,
+        },
+      );
+    else lapiz(m, p, frente, opacidad);
+  }
 
   // Abre desde negro, y el contacto es un destello de tres cuadros.
   const negro = 1 - sale(entre(s, 0, 0.5));
@@ -622,7 +725,31 @@ function dibuja(m: Marco, vertical: boolean) {
 
 // --- La escena -----------------------------------------------------------------------------------
 
-export function Papel() {
+export function Papel({ modelos }: { modelos: Record<string, ModeloAuto> | null }) {
+  // Los modelos de los vehículos: el render espera a que estén cargados.
+  const [tinta, setTinta] = useState<Dibujante | null>(null);
+  const espera = useRef<number | null>(null);
+  useEffect(() => {
+    if (!modelos) return;
+    espera.current = delayRender("Cargando los modelos de los vehículos");
+    const d = new Dibujante();
+    d.cargar(
+      Object.fromEntries(
+        Object.entries(modelos).map(([k, mo]) => [k, { url: staticFile(mo.archivo), modelo: mo }]),
+      ),
+    )
+      .then(() => setTinta(d))
+      .catch((e: unknown) => cancelRender(e));
+  }, [modelos]);
+  // Ya con el dibujante puesto (y la hoja vuelta a dibujar con él), el render sigue.
+  useEffect(() => {
+    if (tinta && espera.current !== null) {
+      continueRender(espera.current);
+      espera.current = null;
+    }
+  }, [tinta]);
+  // El lápiz se modela en código: no hay nada que cargar.
+  const [lapiz3d] = useState(() => (typeof document === "undefined" ? null : new Lapiz()));
   const cuadro = useCurrentFrame();
   const { width: ancho, height: alto } = useVideoConfig();
   const vertical = alto > ancho;
@@ -638,7 +765,7 @@ export function Papel() {
 
   return (
     <AbsoluteFill>
-      <Lienzo dibuja={(m) => dibuja(m, vertical)} />
+      <Lienzo dibuja={(m) => dibuja(m, vertical, tinta, lapiz3d)} />
       {/* Los rótulos de la evidencia, donde cae cada pieza. */}
       {s >= 9 && s < 13.2
         ? PIEZAS.map((pieza, k) => {
@@ -708,12 +835,14 @@ export function Papel() {
             fontSize: (vertical ? 122 : 136) * u,
             lineHeight: 0.98,
             letterSpacing: "-0.02em",
-            color: pal.tinta,
+            // Un blanco cálido, más claro que las rayas de la calle, sobre su zona limpia.
+            color: "#FFF8EE",
+            textShadow: `0 0 ${28 * u}px ${pal.fondo}`,
           }}
         >
           Cada choque
           <br />
-          deja evidencia.
+          deja evidencia<span style={{ color: SENAL }}>.</span>
         </div>
       ) : null}
     </AbsoluteFill>

@@ -50,6 +50,24 @@ namespace Croquis.Visor
         private VisorCaso visor;
         private Camera camara;
 
+        // La textura y la lectura se reusan entre tomas del mismo tamaño (René, 2026-11-17): crear una
+        // de 3840x2160 por toma hacía crecer la memoria del visor hasta trabarse a la décima toma.
+        private RenderTexture lienzo;
+        private Texture2D lectura;
+
+        // El formato de salida («png» o «jpg», del plan) y los cuadros que se espera a que se asiente
+        // cada toma. Para el video (miles de cuadros) va en JPG y con menos espera.
+        private bool enJpg;
+        private int calidadJpg = 95;
+        private int cuadrosDeAsiento = CuadrosDeAsiento;
+
+        // El logo en la esquina superior derecha (el video de Unity, René 2026-11-17): un PNG del plan
+        // (`marca`), con su alto como fracción del cuadro (`marca_alto`). Se dibuja en la misma capa que
+        // la leyenda ilustrativa, así que sale en cada cuadro sin montaje.
+        private Texture2D marca;
+        private float marcaAlto = 0.05f;
+        private RawImage marcaVista;
+
         private async void Start()
         {
             if (!Pedidas)
@@ -67,6 +85,17 @@ namespace Croquis.Visor
             var alto = int.Parse(Arg("alto") ?? (string)plan["alto"] ?? "2160", Inv);
             var nivelTexto = Arg("calidad") ?? (string)plan["calidad"] ?? "ultra";
             var solo = Arg("solo");
+            enJpg = string.Equals((string)plan["formato"], "jpg", StringComparison.OrdinalIgnoreCase);
+            calidadJpg = (int?)plan["calidad_jpg"] ?? 95;
+            cuadrosDeAsiento = (int?)plan["asiento"] ?? CuadrosDeAsiento;
+            var extension = enJpg ? ".jpg" : ".png";
+            var marcaArchivo = (string)plan["marca"];
+            if (!string.IsNullOrEmpty(marcaArchivo))
+            {
+                marca = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                marca.LoadImage(File.ReadAllBytes(Path.GetFullPath(Path.Combine(carpeta, marcaArchivo))));
+                marcaAlto = (float?)plan["marca_alto"] ?? 0.05f;
+            }
             var informe = new JObject
             {
                 { "gpu", SystemInfo.graphicsDeviceName },
@@ -133,12 +162,12 @@ namespace Croquis.Visor
                         }
 
                         await Asentar();
-                        Guardar(Path.Combine(salida, id + ".png"), ancho, alto);
+                        Guardar(Path.Combine(salida, id + extension), ancho, alto);
                         if (capa != null)
                         {
                             capa.Quitar();
                             await Asentar();
-                            Guardar(Path.Combine(salida, id + "-limpia.png"), ancho, alto);
+                            Guardar(Path.Combine(salida, id + "-limpia" + extension), ancho, alto);
                         }
 
                         if (conductor)
@@ -163,13 +192,24 @@ namespace Croquis.Visor
             }
 
             informe["segundos"] = Math.Round(reloj.Elapsed.TotalSeconds, 1);
+            if (lienzo != null)
+            {
+                lienzo.Release();
+                Destroy(lienzo);
+            }
+
+            if (lectura != null)
+            {
+                Destroy(lectura);
+            }
+
             File.WriteAllText(Path.Combine(salida, "fotos.json"), informe.ToString());
             Application.Quit(errores == 0 ? 0 : 1);
         }
 
         private async Awaitable Asentar()
         {
-            for (var i = 0; i < CuadrosDeAsiento; i++)
+            for (var i = 0; i < cuadrosDeAsiento; i++)
             {
                 await Awaitable.NextFrameAsync();
             }
@@ -306,11 +346,28 @@ namespace Croquis.Visor
             var modo = leyenda != null ? leyenda.renderMode : RenderMode.ScreenSpaceOverlay;
             Text texto = leyenda != null ? leyenda.GetComponentInChildren<Text>() : null;
             var tamano = texto != null ? texto.fontSize : 0;
-            RenderTexture rt = null;
-            Texture2D lectura = null;
             var aspecto = camara.aspect;
             try
             {
+                if (leyenda != null && marca != null && marcaVista == null)
+                {
+                    // Anclado en fracciones del cuadro: el mismo tamaño a 1080p y a 4K.
+                    marcaVista = new GameObject("marca").AddComponent<RawImage>();
+                    marcaVista.transform.SetParent(leyenda.transform, false);
+                    marcaVista.texture = marca;
+                    marcaVista.raycastTarget = false;
+                    marcaVista.color = new Color(1f, 1f, 1f, 0.9f);
+                    var alto0 = marcaAlto;
+                    var ancho0 = alto0 * marca.width / marca.height * alto / ancho;
+                    var my = 0.035f;
+                    var mx = my * alto / ancho;
+                    var mrt = marcaVista.rectTransform;
+                    mrt.anchorMin = new Vector2(1f - mx - ancho0, 1f - my - alto0);
+                    mrt.anchorMax = new Vector2(1f - mx, 1f - my);
+                    mrt.offsetMin = Vector2.zero;
+                    mrt.offsetMax = Vector2.zero;
+                }
+
                 if (leyenda != null)
                 {
                     leyenda.renderMode = RenderMode.ScreenSpaceCamera;
@@ -323,12 +380,33 @@ namespace Croquis.Visor
                     }
                 }
 
-                rt = new RenderTexture(ancho, alto, 24, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB)
+                if (lienzo == null || lienzo.width != ancho || lienzo.height != alto)
                 {
-                    name = "foto",
-                    antiAliasing = 1,
-                };
-                rt.Create();
+                    if (lienzo != null)
+                    {
+                        lienzo.Release();
+                        Destroy(lienzo);
+                    }
+
+                    lienzo = new RenderTexture(ancho, alto, 24, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB)
+                    {
+                        name = "foto",
+                        antiAliasing = 1,
+                    };
+                    lienzo.Create();
+                }
+
+                if (lectura == null || lectura.width != ancho || lectura.height != alto)
+                {
+                    if (lectura != null)
+                    {
+                        Destroy(lectura);
+                    }
+
+                    lectura = new Texture2D(ancho, alto, TextureFormat.RGB24, false);
+                }
+
+                var rt = lienzo;
                 var pedido = new UniversalRenderPipeline.SingleCameraRequest { destination = rt };
                 if (!RenderPipeline.SupportsRenderRequest(camara, pedido))
                 {
@@ -339,11 +417,10 @@ namespace Croquis.Visor
                 RenderPipeline.SubmitRenderRequest(camara, pedido);
                 var antes = RenderTexture.active;
                 RenderTexture.active = rt;
-                lectura = new Texture2D(ancho, alto, TextureFormat.RGB24, false);
                 lectura.ReadPixels(new Rect(0, 0, ancho, alto), 0, 0);
                 lectura.Apply(false);
                 RenderTexture.active = antes;
-                File.WriteAllBytes(ruta, lectura.EncodeToPNG());
+                File.WriteAllBytes(ruta, enJpg ? lectura.EncodeToJPG(calidadJpg) : lectura.EncodeToPNG());
             }
             finally
             {
@@ -356,17 +433,6 @@ namespace Croquis.Visor
                     {
                         texto.fontSize = tamano;
                     }
-                }
-
-                if (rt != null)
-                {
-                    rt.Release();
-                    Destroy(rt);
-                }
-
-                if (lectura != null)
-                {
-                    Destroy(lectura);
                 }
             }
         }

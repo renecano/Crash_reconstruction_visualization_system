@@ -1,0 +1,65 @@
+# El peso de un despliegue (René, 2026-11-17): Vercel guardaba ~2 GB por despliegue y Deployment
+# Storage del plan Hobby pasó de 10 GB. Este trabajo hace el mismo build que Vercel (`vercel build`,
+# solo local: no sube nada ni necesita llaves) y mide `.vercel/output` con tools/vercel/peso-salida.mjs.
+# Falla si el despliegue pasa de 200 MB o si una función pasa de 50 MB. El detalle queda como artefacto.
+name: Peso del despliegue
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: peso-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  peso:
+    name: Peso del despliegue (vercel build, ≤ 200 MB y ≤ 50 MB por función)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # La configuración del proyecto que lee `vercel build` (la misma del panel: Next.js con la raíz
+      # en apps/web). Sin identificadores reales ni variables de entorno: el build no las necesita.
+      - name: Configuración local de Vercel
+        run: |
+          mkdir -p .vercel
+          cat > .vercel/project.json <<'EOF'
+          {
+            "projectId": "prj_peso_en_ci",
+            "orgId": "team_peso_en_ci",
+            "settings": {
+              "framework": "nextjs",
+              "rootDirectory": "apps/web",
+              "installCommand": null,
+              "buildCommand": null,
+              "devCommand": null,
+              "outputDirectory": null,
+              "nodeVersion": "24.x"
+            }
+          }
+          EOF
+          : > .vercel/.env.production.local
+      - name: vercel build (como en Vercel)
+        run: npx --yes vercel@62.7.0 build --prod
+        env:
+          VERCEL_TELEMETRY_DISABLED: "1"
+      - name: Medir .vercel/output
+        run: node tools/vercel/peso-salida.mjs .vercel/output --salida peso-despliegue.json --limite-total 200 --limite-funcion 50
+      - if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: peso-despliegue
+          path: peso-despliegue.json
+          if-no-files-found: ignore

@@ -52,6 +52,19 @@
 - `CROQUIS_VISOR=local` agrega una reescritura `beforeFiles` del manifiesto al de `public/visor-unity/local/`.
 - `e2e/demo-local.spec.ts` lo comprueba con la red de afuera cortada en el navegador. El paquete de la RTX corre la misma comprobación.
 
+### 6. El peso real de un despliegue (René, 2026-11-17, tarde)
+
+- René vio en Vercel 5 despliegues de producción que ocupaban 10.82 GB: unos 2 GB cada uno, no los 67 MB que daba `despliegue_peso.mjs`. Ese script medía el `next build` local, sin contar las páginas prerenderizadas ni la forma en que Vercel arma las funciones.
+- **La medición nueva** es la salida de `vercel build` en Linux (`tools/vercel/peso-salida.mjs`, `.github/workflows/peso-despliegue.yml`). Cuenta lo estático, las páginas prerenderizadas y los archivos que cada función nombra en `filePathMap`. El trabajo de CI falla si el despliegue pasa de 200 MB o una función de 50 MB.
+- **Lo que pesaba:** las 205 páginas de los reportes de CESVI se prerenderizaban al construir, cada una con sus datos (~1 MB). Eran 233.8 MB de páginas y 1,546 entradas de funciones, casi todas enlaces a la misma función de 26.8 MB.
+- **El arreglo:** cada reporte se genera la primera vez que alguien lo abre y desde ahí queda en la caché. `generateStaticParams` devuelve una lista vacía, como indica la documentación de Next. Lo que ve el perito no cambia: la primera visita a un reporte tarda 0.6 s y las siguientes 0.01 s, medido en local.
+- **Resultado** (`eval/results/peso_despliegue.json`):
+  - el despliegue medido baja de 303.4 a 103.7 MB;
+  - las páginas prerenderizadas, de 233.8 a 35.7 MB;
+  - las entradas de funciones, de 1,546 a 316.
+- **Lo que no se puede ver desde aquí:** la salida de antes medía 303.4 MB y Vercel reportaba unos 2 GB. Vercel contabiliza algo que `vercel build` no muestra. La vista Resources del siguiente despliegue, o el gráfico de Usage, dirán cuánto suma de verdad.
+- **Con el plan B,** el despliegue sumaría los 109.6 MB del build de Unity y de los modelos: unos 213 MB, más que el límite de 200 MB del CI. Para usarlo habría que servir el build comprimido o dejar en el despliegue solo la versión «alta» de los modelos.
+
 ## Consecuencias
 
 - Las mediciones de arranque del 3D ya no incluyen la descarga desde Blob: miden la máquina.

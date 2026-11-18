@@ -1,5 +1,5 @@
 {
-  "descripcion": "El pulso del tráiler: una sola rejilla para la imagen y la música (storyboard versión 2, aprobado por René el 2026-11-16). 120 pulsos por minuto: un pulso dura medio segundo, así que todo corte cae en un múltiplo de 0.5 s; los más rápidos, en un sexto de pulso (5 cuadros exactos a 30 por segundo). Los tiempos van en segundos.",
+  "descripcion": "El pulso del tráiler: una sola rejilla para la imagen y la música (storyboard versión 2, aprobado por René el 2026-11-16). 120 pulsos por minuto: un pulso dura medio segundo, así que todo corte cae en un múltiplo de 0.5 s; los más rápidos, en un sexto de segundo (un tercio de pulso: 5 cuadros exactos a 30 por segundo). Los tiempos van en segundos.",
   "pulsos_por_minuto": 120,
   "cuadros_por_segundo": 30,
   "duracion": 28,
@@ -19,7 +19,12 @@
       "hasta": 23.5,
       "nota": "La IA lee. La física decide. El perito firma."
     },
-    { "clave": "logo", "desde": 23.5, "hasta": 28, "nota": "Un golpe, silencio, y CROQUIS" }
+    {
+      "clave": "logo",
+      "desde": 23.5,
+      "hasta": 28,
+      "nota": "Un golpe y CROQUIS se escribe: cada letra es antes una cosa"
+    }
   ],
   "momentos": {
     "latidos": [1, 2, 3, 4, 5, 5.5, 6, 6.5, 7, 7.166666666666667, 7.333333333333333],
@@ -28,7 +33,11 @@
     "la_que_cabe": 15.5,
     "del_papel_al_3d": 16,
     "frases": [18, 19.5, 21],
-    "corte_a_silencio": 23,
-    "golpe_final": 23.5
+    "toma_de_aire": 23,
+    "golpe_final": 23.5,
+    "letras": [
+      24, 24.333333333333332, 24.666666666666668, 25, 25.333333333333332, 25.666666666666668, 26
+    ],
+    "acorde_final": 26.5
   }
 }

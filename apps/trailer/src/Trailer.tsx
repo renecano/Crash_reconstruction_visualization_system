@@ -11,6 +11,7 @@ import { Papel } from "./escenas/Papel";
 import { cargarFuentes } from "./fuentes";
 import { cuadroDe, entre, FPS, MOMENTOS, sale, tramo } from "./ritmo";
 import { GranoDePelicula } from "./texturas";
+import type { ModeloAuto } from "./tinta3d";
 import { hay, Toma, type TomasDisponibles } from "./tomas";
 
 export type PropsDelTrailer = {
@@ -18,6 +19,11 @@ export type PropsDelTrailer = {
   tomas: TomasDisponibles;
   /** El archivo de la música en la carpeta pública del render, o `null` para un render mudo. */
   musica: string | null;
+  /**
+   * Los modelos 3D de los vehículos, ya sin texturas (`tools/trailer/modelos-tinta.mjs`), por clave
+   * («sedan», «combi»). Con `null`, los vehículos salen como siluetas planas.
+   */
+  modelos: Record<string, ModeloAuto> | null;
 };
 
 /** La toma del 3D que sale del papel: entra cuando la hoja ya se inclinó. */
@@ -36,7 +42,7 @@ function DelPapelAl3d({ tomas }: { tomas: TomasDisponibles }) {
   );
 }
 
-export function Trailer({ tomas, musica }: PropsDelTrailer) {
+export function Trailer({ tomas, musica, modelos }: PropsDelTrailer) {
   useEffect(() => {
     void cargarFuentes();
   }, []);
@@ -45,7 +51,7 @@ export function Trailer({ tomas, musica }: PropsDelTrailer) {
   return (
     <AbsoluteFill style={{ backgroundColor: "#000" }}>
       <Sequence durationInFrames={frases.desde}>
-        <Papel />
+        <Papel modelos={modelos} />
       </Sequence>
       {hay(tomas, "heroe") ? (
         <Sequence
@@ -59,7 +65,7 @@ export function Trailer({ tomas, musica }: PropsDelTrailer) {
         <Frases tomas={tomas} />
       </Sequence>
       <Sequence from={logo.desde} durationInFrames={logo.cuadros}>
-        <Logo />
+        <Logo modelos={modelos} />
       </Sequence>
       <GranoDePelicula intensidad={0.07} />
       {musica ? <Audio src={staticFile(musica)} /> : null}

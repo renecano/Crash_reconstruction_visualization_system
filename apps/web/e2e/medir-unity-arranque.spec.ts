@@ -88,6 +88,8 @@ async function abrir3d(page: Page, caso: "axa" | "nuevo") {
   await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 180_000 });
   await page.waitForTimeout(2000);
   const t0 = await page.evaluate(() => performance.now());
+  // La ventana al frente: Unity dibuja con requestAnimationFrame, que no corre en una ventana tapada.
+  await page.bringToFront();
   const reloj = Date.now();
   await page.getByTestId("vista-3d").click();
   await expect(page.getByTestId("visor-unity")).toHaveAttribute("data-fase", "listo", {
@@ -201,6 +203,18 @@ test("el arranque del 3D de Unity, por partes", async ({ baseURL }) => {
     });
     await sinBlob(ctx);
     await ctx.addInitScript(instrumentar);
+    // Lo que diga la página, para el registro si el 3D no arranca (t4b, René 2026-11-17).
+    const avisos: string[] = [];
+    const anotar = (x: string) => {
+      if (avisos.length < 400)
+        avisos.push(`${new Date().toISOString().slice(11, 19)} ${x.slice(0, 300)}`);
+    };
+    ctx.on("console", (m) => {
+      if (m.type() === "error" || m.type() === "warning" || /unity|webgl|puente/i.test(m.text()))
+        anotar(`[consola ${m.type()}] ${m.text()}`);
+    });
+    ctx.on("weberror", (e) => anotar(`[error de página] ${String(e.error())}`));
+    ctx.on("requestfailed", (r) => anotar(`[falló] ${r.url()} ${r.failure()?.errorText ?? ""}`));
     await ctx.route("**/api/osm?**", (r) => r.fulfill({ json: { elements: [] } }));
     await ctx.route("**/api/lugar?**", (r) => r.fulfill({ json: { resultados: [] } }));
     await ctx.route("**/api/cesvi/escena", (r) =>
@@ -212,6 +226,22 @@ test("el arranque del 3D de Unity, por partes", async ({ baseURL }) => {
       for (const p of ctx.pages()) await p.close();
       const segunda = await abrir3d(await ctx.newPage(), caso);
       resultado[caso] = { primera_visita: primera, segunda_visita: segunda };
+    } catch (e) {
+      // Al registro de la tanda: la tarjeta que usó WebGL, la fase del visor y lo que dijo la página.
+      const pagina = ctx.pages()[0];
+      const gpu = pagina ? await maquina(pagina).catch(() => null) : null;
+      const fase = pagina
+        ? await pagina
+            .getByTestId("visor-unity")
+            .getAttribute("data-fase", { timeout: 5_000 })
+            .catch(() => null)
+        : null;
+      const lineas = [
+        `[diagnóstico ${caso}] fase del visor: ${fase}; equipo: ${JSON.stringify(gpu)}`,
+      ];
+      for (const a of avisos) lineas.push(`  ${a}`);
+      process.stdout.write(`\n${lineas.join("\n")}\n`);
+      throw e;
     } finally {
       await ctx.close();
       rmSync(perfil, { recursive: true, force: true });

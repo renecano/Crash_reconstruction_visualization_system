@@ -8,14 +8,18 @@
  * - «El perito firma»: la hoja con su firma y su sello.
  *
  * Donde hay toma del 3D, entra entre frase y frase; donde no, la tarjeta sigue.
+ *
+ * El último medio segundo es la toma de aire antes del golpe: de noche, los anillos del impacto se
+ * cierran sobre el punto donde va a quedar la mira del logo. La música sube; no hay silencio.
  */
 import type { ReactNode } from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
-import { CASO, nubeDeVelocidades } from "../datos";
+import { CASO, MARCA, nubeDeVelocidades } from "../datos";
 import { MONO, SANS, SERIF } from "../fuentes";
 import { SENAL } from "../hoja";
 import { entre, FPS, sale } from "../ritmo";
 import { hay, Toma, type Hueco, type TomasDisponibles } from "../tomas";
+import { geometriaDelLogo } from "./Logo";
 
 const PAPEL = "#EFEBE1";
 const TINTA = "#15181B";
@@ -120,10 +124,12 @@ function Relato({ x, u, vertical }: { x: number; u: number; vertical: boolean })
       <span
         key={k}
         style={{
-          backgroundImage: `linear-gradient(${SENAL}, ${SENAL})`,
+          // Marcado como con un marcador: una pasada ancha y translúcida y otra fina encima, que no
+          // empiezan ni acaban parejo.
+          backgroundImage: `linear-gradient(rgba(255,91,46,0.3), rgba(255,91,46,0.3)), linear-gradient(${SENAL}, ${SENAL})`,
           backgroundRepeat: "no-repeat",
-          backgroundPosition: "0 92%",
-          backgroundSize: `${marcada * 100}% ${0.34}em`,
+          backgroundPosition: `0 ${78 + (k % 3) * 3}%, ${(k % 2) * 0.12}em 96%`,
+          backgroundSize: `${marcada * 100}% 0.62em, ${marcada * (97 - (k % 4))}% 0.09em`,
           boxDecorationBreak: "clone",
           WebkitBoxDecorationBreak: "clone",
         }}
@@ -223,66 +229,197 @@ function Nube({ x, u, vertical }: { x: number; u: number; vertical: boolean }) {
   );
 }
 
-/** La hoja firmada: la firma se traza y cae el sello. */
+/**
+ * La hoja firmada: el dictamen con el símbolo de la marca, un croquis de la escena (las trayectorias
+ * del Resultado), la firma que se traza con el pulso de una mano y el sello que cae.
+ */
 function Firma({ x, u, vertical }: { x: number; u: number; vertical: boolean }) {
   const { width: ancho, height: alto } = useVideoConfig();
-  const w = (vertical ? 760 : 700) * u;
+  const w = (vertical ? 800 : 700) * u;
   const h = w * 1.18;
   const traza = entre(x, 0.02, 0.3);
   const sello = sale(entre(x, 0.28, 0.4));
+  // El croquis: las dos trayectorias de la escena, llevadas a un recuadro de la hoja.
+  const caminos = CASO.vehiculos.map((v) => v.trayectoria.filter((_p, i) => i % 6 === 0));
+  const xs = caminos.flat().map((q) => q[1]!);
+  const ys = caminos.flat().map((q) => q[2]!);
+  const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+  const medio = (y0 + y1) / 2;
+  const escala = 420 / (x1 - x0);
+  const aHoja = (q: number[]) => `${100 + (q[1]! - x0) * escala} ${300 - (q[2]! - medio) * escala}`;
+  const sim = MARCA.simbolo;
   return (
     <Hoja u={u}>
       <svg
         width={w}
         height={h}
         viewBox="0 0 620 730"
-        style={{ position: "absolute", left: (ancho - w) / 2, top: alto * (vertical ? 0.2 : 0.08) }}
+        style={{
+          position: "absolute",
+          left: (ancho - w) / 2,
+          top: alto * (vertical ? 0.2 : 0.07),
+          filter: `drop-shadow(0 ${10 * u}px ${22 * u}px rgba(21,24,27,0.22))`,
+        }}
       >
         <rect
           x="4"
           y="4"
           width="612"
           height="722"
-          rx="6"
+          rx="5"
           fill="#FBFAF6"
           stroke={TINTA}
-          strokeWidth="4"
+          strokeWidth="2.5"
         />
-        <g stroke="#C6BFAE" strokeWidth="12" strokeLinecap="round">
-          <path d="M70 110H550M70 170H550M70 230H430M70 330H550M70 390H500" />
+        {/* El encabezado: el símbolo de la marca y el título del documento. */}
+        <g transform="translate(58 44) scale(0.92)">
+          <path d={sim.arco} fill="none" stroke={TINTA} strokeWidth={sim.arco_grosor} />
+          <circle
+            cx="52"
+            cy="32"
+            r={sim.mira.radio}
+            fill="none"
+            stroke={SENAL}
+            strokeWidth={sim.mira.grosor}
+          />
+          <circle cx="52" cy="32" r={sim.mira.punto} fill={SENAL} />
         </g>
-        <path d="M70 610H420" stroke={TINTA} strokeWidth="3" />
-        <path
-          d="M84 574c40 -100 70 34 104 -34s36 80 78 10s62 20 132 -26"
-          fill="none"
-          stroke={TINTA}
-          strokeWidth="7"
-          strokeLinecap="round"
-          pathLength={1}
-          strokeDasharray="1"
-          strokeDashoffset={1 - traza}
-        />
+        <text x="132" y="72" fontFamily={SERIF} fontSize="34" fill={TINTA}>
+          Dictamen
+        </text>
+        <text x="132" y="96" fontFamily={MONO} fontSize="11" fill="#5B5546" letterSpacing="1.2">
+          RECONSTRUCCIÓN DE HECHOS DE TRÁNSITO
+        </text>
+        <path d="M58 122H562" stroke={TINTA} strokeWidth="1.4" />
+        <g stroke="#C6BFAE" strokeWidth="8" strokeLinecap="round">
+          <path d="M58 156H562M58 186H500" />
+        </g>
+        {/* El croquis del caso: la cuadrícula y las trayectorias. */}
+        <g>
+          <rect
+            x="58"
+            y="220"
+            width="504"
+            height="160"
+            fill="#EFEBE1"
+            stroke="#C6BFAE"
+            strokeWidth="1.2"
+          />
+          {Array.from({ length: 12 }, (_q, i) => (
+            <path key={`v${i}`} d={`M${58 + i * 42} 220V380`} stroke="#D8D2C4" strokeWidth="1" />
+          ))}
+          {Array.from({ length: 3 }, (_q, i) => (
+            <path key={`h${i}`} d={`M58 ${260 + i * 40}H562`} stroke="#D8D2C4" strokeWidth="1" />
+          ))}
+          {caminos.map((c, i) => (
+            <path
+              key={i}
+              d={`M${c.map(aHoja).join("L")}`}
+              fill="none"
+              stroke={i === 0 ? SENAL : TINTA}
+              strokeWidth={i === 0 ? 3 : 2.2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          ))}
+          <circle
+            cx={100 + (CASO.impacto.x - x0) * escala}
+            cy={300 - (CASO.impacto.y - medio) * escala}
+            r="7"
+            fill="none"
+            stroke={SENAL}
+            strokeWidth="2.4"
+          />
+        </g>
+        <g stroke="#C6BFAE" strokeWidth="8" strokeLinecap="round">
+          <path d="M58 420H562M58 450H562M58 480H430" />
+        </g>
+        <path d="M58 640H360" stroke={TINTA} strokeWidth="1.6" />
+        <text x="58" y="664" fontFamily={MONO} fontSize="11" fill="#5B5546" letterSpacing="1.2">
+          FIRMA DEL PERITO
+        </text>
+        {/* La firma: dos pasadas, como tinta que carga más donde la mano frena. */}
+        {[
+          [5.5, 1],
+          [2.2, 0.55],
+        ].map(([grueso, op], i) => (
+          <path
+            key={i}
+            d="M70 612c22 -74 44 -86 52 -40c6 34 -30 44 -22 8c10 -44 60 -52 74 -12c8 22 22 -30 40 -30c22 0 6 46 34 30c20 -12 30 -34 50 -30c18 4 8 30 40 22"
+            fill="none"
+            stroke={TINTA}
+            strokeWidth={grueso}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity={op}
+            pathLength={1}
+            strokeDasharray="1"
+            strokeDashoffset={1 - Math.min(1, traza * (i === 0 ? 1 : 1.08))}
+            transform={i === 1 ? "translate(1.4 1.2)" : undefined}
+          />
+        ))}
+        {/* El sello: cae, con su anillo de marcas, y queda un poco girado. */}
         <g
-          transform={`translate(490 560) scale(${2 - sello})`}
+          transform={`translate(478 600) rotate(-9) scale(${2.1 - 1.1 * sello})`}
           opacity={sello}
           fill="none"
           stroke={SENAL}
-          strokeWidth="9"
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <circle r="72" fill="#FBFAF6" />
-          <path d="M-32 2l22 24l44 -52" />
+          <circle r="64" strokeWidth="5" />
+          <circle r="52" strokeWidth="1.6" />
+          {Array.from({ length: 36 }, (_q, i) => (
+            <path key={i} d="M0 -55V-61" strokeWidth="1.6" transform={`rotate(${i * 10})`} />
+          ))}
+          <path d="M-26 2l18 20l36 -44" strokeWidth="8" />
         </g>
       </svg>
     </Hoja>
   );
 }
 
+/** La toma de aire: los anillos del impacto se cierran sobre el punto donde irá la mira del logo. */
+function Aire({ x }: { x: number }) {
+  const { width: ancho, height: alto } = useVideoConfig();
+  const u = Math.min(ancho, alto) / 1080;
+  const g = geometriaDelLogo(ancho, alto);
+  const cierra = x ** 1.6;
+  const mm = 40 * u;
+  return (
+    <AbsoluteFill
+      style={{
+        backgroundColor: "#0A1120",
+        backgroundImage: [
+          `linear-gradient(to right, rgba(143,161,191,0.16) ${u}px, transparent ${u}px)`,
+          `linear-gradient(to bottom, rgba(143,161,191,0.16) ${u}px, transparent ${u}px)`,
+        ].join(","),
+        backgroundSize: `${mm}px ${mm}px`,
+      }}
+    >
+      <svg width={ancho} height={alto} style={{ position: "absolute", inset: 0 }}>
+        {[1, 0.62, 1.5, 2.1].map((f, i) => (
+          <circle
+            key={i}
+            cx={g.miraX}
+            cy={g.miraY}
+            r={Math.max(2 * u, Math.max(ancho, alto) * 0.72 * f * (1 - cierra))}
+            fill="none"
+            stroke={SENAL}
+            strokeWidth={(i === 0 ? 6 : 2.4) * u}
+            opacity={(i === 0 ? 1 : 0.5) * Math.min(1, x * 4)}
+          />
+        ))}
+        <circle cx={g.miraX} cy={g.miraY} r={(3 + 9 * cierra) * u} fill={SENAL} opacity={cierra} />
+      </svg>
+    </AbsoluteFill>
+  );
+}
+
 interface Corte {
   desde: number;
   hasta: number;
-  que: "frase" | "relato" | "nube" | "firma" | "toma" | "negro";
+  que: "frase" | "relato" | "nube" | "firma" | "toma" | "aire";
   frase?: string;
   hueco?: Hueco;
 }
@@ -302,11 +439,11 @@ export const CORTES: Corte[] = [
   { desde: 3, hasta: 3.5, que: "frase", frase: F3 },
   { desde: 3.5, hasta: 4, que: "firma", frase: F3 },
   { desde: 4, hasta: 4.5, que: "toma", hueco: "aerea", frase: F3 },
-  // Los tres últimos, de un sexto de pulso (5 cuadros) cada uno.
+  // Los tres últimos, de un sexto de segundo (5 cuadros) cada uno.
   { desde: 4.5, hasta: 4.5 + 1 / 6, que: "toma", hueco: "detalle-1" },
   { desde: 4.5 + 1 / 6, hasta: 4.5 + 2 / 6, que: "nube" },
   { desde: 4.5 + 2 / 6, hasta: 5, que: "toma", hueco: "detalle-2" },
-  { desde: 5, hasta: 5.5, que: "negro" },
+  { desde: 5, hasta: 5.5, que: "aire" },
 ];
 
 export function Frases({ tomas }: { tomas: TomasDisponibles }) {
@@ -326,7 +463,7 @@ export function Frases({ tomas }: { tomas: TomasDisponibles }) {
   }
   const local = x - desde;
   const dura = corte.hasta - corte.desde;
-  if (corte.que === "negro") return <AbsoluteFill style={{ backgroundColor: "#000" }} />;
+  if (corte.que === "aire") return <Aire x={local / dura} />;
   const sobreToma = corte.que === "toma";
   return (
     <AbsoluteFill>

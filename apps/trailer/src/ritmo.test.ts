@@ -31,9 +31,19 @@ describe("el pulso del tráiler", () => {
     }
   });
 
-  it("el silencio antes del golpe final dura medio segundo", () => {
-    expect(MOMENTOS.golpe_final - MOMENTOS.corte_a_silencio).toBe(0.5);
+  it("la toma de aire antes del golpe dura medio segundo, y el logo empieza con el golpe", () => {
+    expect(MOMENTOS.golpe_final - MOMENTOS.toma_de_aire).toBe(0.5);
     expect(tramo("logo").desde).toBe(cuadroDe(MOMENTOS.golpe_final));
+  });
+
+  it("el logo se escribe letra por letra, cada tercio de segundo, y cierra con su acorde", () => {
+    expect(MOMENTOS.letras.length).toBe("CROQUIS".length);
+    for (let i = 1; i < MOMENTOS.letras.length; i++)
+      expect(cuadroDe(MOMENTOS.letras[i]!) - cuadroDe(MOMENTOS.letras[i - 1]!)).toBe(10);
+    expect(MOMENTOS.letras[0]!).toBeGreaterThan(MOMENTOS.golpe_final);
+    expect(MOMENTOS.acorde_final).toBeGreaterThan(MOMENTOS.letras[MOMENTOS.letras.length - 1]!);
+    // La música no termina en silencio: el acorde final deja más de un segundo para su cola.
+    expect(RITMO.duracion - MOMENTOS.acorde_final).toBeGreaterThanOrEqual(1.2);
   });
 
   it("entre() va de 0 a 1 sin salirse", () => {

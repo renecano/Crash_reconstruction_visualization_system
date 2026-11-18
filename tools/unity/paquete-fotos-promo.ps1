@@ -20,6 +20,9 @@ Get-ChildItem $destino -Directory -Filter "*DoNotShip*" | Remove-Item -Recurse -
 Copy-Item -Recurse (Join-Path $promo "casos") (Join-Path $destino "casos")
 Copy-Item (Join-Path $promo "tomas.json") $destino
 Copy-Item (Join-Path $PSScriptRoot "generar-fotos.ps1") $destino
+# El video de Unity (René, 2026-11-17): el logo de la esquina y la tarjeta, del logo de assets/brand.
+& node (Join-Path $PSScriptRoot "video-unity-tarjetas.mjs") $destino
+if ($LASTEXITCODE) { throw "video-unity-tarjetas.mjs terminó con el código $LASTEXITCODE" }
 @"
 Fotos del material promocional de Croquis (visor de escritorio)
 

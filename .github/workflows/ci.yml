@@ -32,6 +32,9 @@ jobs:
       - run: pnpm install --frozen-lockfile
       # Ningún video ni audio en el repositorio fuera de la portada (René, 2026-11-17).
       - run: node tools/git/sin-medios.mjs
+      # Ningún carácter de control (un CR real en lugar de «\r») dentro de una línea de un script
+      # (René, 2026-11-17: la demo local falló en la computadora del colaborador).
+      - run: node tools/git/sin-control.mjs
       # Las pruebas de tools/: el candado y qué cambios despliegan el sitio (tools/vercel).
       - run: pnpm --filter @croquis/web exec vitest run --root ../.. --dir ../../tools --environment node
       - run: pnpm format:check
