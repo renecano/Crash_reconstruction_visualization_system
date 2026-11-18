@@ -1,0 +1,21 @@
+# Paso: video-unity
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/desde-release.ps1 -Paso video
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-17 23:21:07
+
+Modelos del visor de escritorio, desde la máquina: ya estaba.
+axa: 1860 cuadros (31.0 s de video)
+alcance-inventado: 1860 cuadros (31.0 s de video)
+lateral-interseccion: 1860 cuadros (31.0 s de video)
+El video de axa ya estaba montado: lo reuso.
+El video de alcance-inventado ya estaba montado: lo reuso.
+El video de lateral-interseccion ya estaba montado: lo reuso.
+Montando los videos de dos casos...
+  croquis-unity-dos-casos-SOLO-CESVI-4k.mp4 (625.6 MB)
+  croquis-unity-dos-casos-SOLO-CESVI-1080p.mp4 (86.5 MB)
+  croquis-unity-dos-casos-publico-4k.mp4 (433.1 MB)
+  croquis-unity-dos-casos-publico-1080p.mp4 (62.9 MB)
+
+Los videos quedaron en C:\Users\MrKan\OneDrive\Desktop\croquis-video-unity.zip. Mándale ese archivo a René (por Drive o WeTransfer): no va a git.
+
+# Fin: 2026-11-17 23:26:34 · ok · 5.5 min

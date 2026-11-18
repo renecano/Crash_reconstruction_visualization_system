@@ -4,44 +4,44 @@
   "alto": 2160,
   "videos": [
     {
-      "archivo": "croquis-unity-axa-SOLO-CESVI-4k.mp4",
-      "mb": 413
-    },
-    {
-      "archivo": "croquis-unity-axa-SOLO-CESVI-1080p.mp4",
-      "mb": 52.3
+      "archivo": "croquis-unity-alcance-inventado-1080p.mp4",
+      "mb": 26.8
     },
     {
       "archivo": "croquis-unity-alcance-inventado-4k.mp4",
       "mb": 208
     },
     {
-      "archivo": "croquis-unity-alcance-inventado-1080p.mp4",
-      "mb": 26.8
+      "archivo": "croquis-unity-axa-SOLO-CESVI-1080p.mp4",
+      "mb": 52.3
     },
     {
-      "archivo": "croquis-unity-lateral-interseccion-4k.mp4",
-      "mb": 274.5
+      "archivo": "croquis-unity-axa-SOLO-CESVI-4k.mp4",
+      "mb": 413
+    },
+    {
+      "archivo": "croquis-unity-dos-casos-SOLO-CESVI-1080p.mp4",
+      "mb": 86.5
+    },
+    {
+      "archivo": "croquis-unity-dos-casos-SOLO-CESVI-4k.mp4",
+      "mb": 625.6
+    },
+    {
+      "archivo": "croquis-unity-dos-casos-publico-1080p.mp4",
+      "mb": 62.9
+    },
+    {
+      "archivo": "croquis-unity-dos-casos-publico-4k.mp4",
+      "mb": 433.1
     },
     {
       "archivo": "croquis-unity-lateral-interseccion-1080p.mp4",
       "mb": 41.2
     },
     {
-      "archivo": "croquis-unity-dos-casos-SOLO-CESVI-4k.mp4",
-      "mb": 687.3
-    },
-    {
-      "archivo": "croquis-unity-dos-casos-SOLO-CESVI-1080p.mp4",
-      "mb": 93.5
-    },
-    {
-      "archivo": "croquis-unity-dos-casos-publico-4k.mp4",
-      "mb": 482.3
-    },
-    {
-      "archivo": "croquis-unity-dos-casos-publico-1080p.mp4",
-      "mb": 68
+      "archivo": "croquis-unity-lateral-interseccion-4k.mp4",
+      "mb": 274.5
     }
   ]
 }
