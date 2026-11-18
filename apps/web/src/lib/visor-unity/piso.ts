@@ -12,7 +12,7 @@
  * La llave es `NEXT_PUBLIC_ESRI_API_KEY` (René: ArcGIS Location Platform, solo Basemaps, con los
  * referrers del sitio y de localhost:3000). Nunca se imprime ni se guarda en el paquete.
  */
-import { desdeMetros, type LonLat } from "@croquis/cesvi";
+import { desdeMetros, formato, type LonLat } from "@croquis/cesvi";
 import type { StyleSpecification } from "maplibre-gl";
 
 /** Lado de la imagen que recibe Unity (px): 2 048 para unos 600 m da unos 0.3 m por pixel. */
@@ -98,7 +98,7 @@ export function desplazamientoPx(
 export function ajusteEnPalabras(a: AjusteFoto): string {
   if (!a.esteM && !a.norteM) return "Sin ajuste";
   const parte = (m: number, pos: string, neg: string) =>
-    m ? `${Math.abs(m).toFixed(1)} m al ${m > 0 ? pos : neg}` : null;
+    m ? `${formato.fijo(Math.abs(m), 1)} m al ${m > 0 ? pos : neg}` : null;
   return [parte(a.esteM, "este", "oeste"), parte(a.norteM, "norte", "sur")]
     .filter(Boolean)
     .join(" y ");

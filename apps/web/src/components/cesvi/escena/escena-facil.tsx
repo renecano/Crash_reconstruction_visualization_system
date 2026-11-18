@@ -236,7 +236,9 @@ export function EscenaFacil({
     if (!mapaListo) return undefined;
     const alMover = () => {
       const c = mapaListo.getCenter();
-      setCentroMapa({ lat: Number(c.lat.toFixed(4)), lon: Number(c.lng.toFixed(4)) });
+      // Redondeado a ~10 m: una clave, no una cifra que se escriba.
+      const r4 = (x: number) => Math.round(x * 1e4) / 1e4;
+      setCentroMapa({ lat: r4(c.lat), lon: r4(c.lng) });
     };
     mapaListo.on("moveend", alMover);
     mapaListo.once("idle", alMover);
@@ -247,11 +249,11 @@ export function EscenaFacil({
   }, [mapaListo]);
   const centroTeselas = estado.puntos[1] ?? lugar ?? centroMapa;
   const claveTeselas = centroTeselas
-    ? `${centroTeselas.lon.toFixed(4)},${centroTeselas.lat.toFixed(4)}`
+    ? `${Math.round(centroTeselas.lon * 1e4)},${Math.round(centroTeselas.lat * 1e4)}`
     : null;
   useEffect(() => {
     if (callesOverpass || !mapaListo || !claveTeselas) return undefined;
-    const [lon, lat] = claveTeselas.split(",").map(Number) as [number, number];
+    const [lon, lat] = claveTeselas.split(",").map((x) => Number(x) / 1e4) as [number, number];
     const leer = () => {
       try {
         const capa = (sourceLayer: string) =>
