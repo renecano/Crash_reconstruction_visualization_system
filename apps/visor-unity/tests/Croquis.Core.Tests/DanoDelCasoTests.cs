@@ -166,10 +166,16 @@ namespace Croquis.Core.Tests
         public void LaLeyendaVaConEscenarioYSinEl()
         {
             var visor = Path.Combine(Raiz(), "apps", "visor-unity", "Assets", "Croquis", "Visor");
-            Assert.Contains("EscenarioVista.Leyenda(raiz, false)", File.ReadAllText(Path.Combine(visor, "VisorCaso.cs")));
+            var caso = File.ReadAllText(Path.Combine(visor, "VisorCaso.cs"));
+            Assert.Contains("EscenarioVista.Leyenda(raiz, false)", caso);
             var escenario = File.ReadAllText(Path.Combine(visor, "EscenarioVista.cs"));
             Assert.Contains("Leyenda(escenario);", escenario);
-            Assert.Contains("Reconstrucción ilustrativa", escenario);
+            // El texto sale del núcleo (ronda 4): con el piso del mapa o la versión superpuesta, el visor
+            // lo cambia con el mismo `Leyenda3d.Mensaje`, y siempre empieza igual.
+            Assert.Contains("Croquis.Core.Leyenda3d.Mensaje(entornoProcedural)", escenario);
+            Assert.Contains("Leyenda3d.Mensaje(conEscenario", caso);
+            Assert.StartsWith("Reconstrucción ilustrativa", Leyenda3d.Mensaje(true));
+            Assert.StartsWith("Reconstrucción ilustrativa", Leyenda3d.Mensaje(false, "© OpenStreetMap", "una versión"));
         }
 
         /// <summary>

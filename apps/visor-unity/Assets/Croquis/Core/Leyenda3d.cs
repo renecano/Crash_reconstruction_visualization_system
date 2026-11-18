@@ -21,6 +21,33 @@ namespace Croquis.Core
         public const int MargenX = 8;
         public const int MargenY = 4;
 
+        /// <summary>
+        /// Lo que dice la leyenda (IA responsable, §10). Con entorno dibujado, que es procedural; con el
+        /// piso del mapa real (ADR 0124), que el piso es una imagen del lugar, con el crédito que pide su
+        /// licencia; con una versión superpuesta (ADR 0123), en otro renglón, cuál es la translúcida.
+        /// </summary>
+        public static string Mensaje(bool entornoProcedural, string atribucionPiso = null, string etiquetaFantasma = null)
+        {
+            var texto = "Reconstrucción ilustrativa";
+            if (atribucionPiso != null)
+            {
+                texto += string.IsNullOrWhiteSpace(atribucionPiso)
+                    ? " · piso: imagen del lugar"
+                    : " · piso: imagen del lugar (" + atribucionPiso.Trim() + ")";
+            }
+            else if (entornoProcedural)
+            {
+                texto += " · entorno procedural: no es el lugar real";
+            }
+
+            if (!string.IsNullOrWhiteSpace(etiquetaFantasma))
+            {
+                texto += "\nTranslúcido: " + etiquetaFantasma.Trim();
+            }
+
+            return texto;
+        }
+
         /// <summary>Contraste mínimo de WCAG AA para texto normal.</summary>
         public const double MinimoAa = 4.5;
 

@@ -14,7 +14,7 @@ namespace Croquis.Visor
     public sealed class VisorPuente : MonoBehaviour
     {
         /// <summary>La versión del contrato: debe coincidir con VISOR_PUENTE_VERSION.</summary>
-        public const string Version = "1.2.0";
+        public const string Version = "1.3.0";
 
         private const float SegundosPorReporteFps = 5f;
         private const float SegundosPorReporteTiempo = 0.1f;
@@ -167,6 +167,34 @@ namespace Croquis.Visor
         public void marcadores(string texto)
         {
             Campos(texto, j => visor.Marcadores((bool)j["visibles"]));
+        }
+
+        /// <summary>
+        /// El piso del modo «mapa real» (1.3.0, ADR 0124): `imagen` es una data URL de JPEG o PNG,
+        /// cuadrada y con el norte arriba, que cubre `lado_m` metros alrededor de (`centro_x`,
+        /// `centro_y`); nula, vuelve al entorno procedural. Si la imagen no sirve, contesta `error`
+        /// (`interno`) y el piso queda como estaba.
+        /// </summary>
+        public void piso(string texto)
+        {
+            Campos(texto, j =>
+            {
+                var imagen = j["imagen"];
+                if (imagen == null || imagen.Type == JTokenType.Null)
+                {
+                    visor.CambiarPiso(null);
+                    return;
+                }
+
+                visor.CambiarPiso(new Croquis.Generated.Piso
+                {
+                    Imagen = (string)imagen,
+                    CentroX = (double)j["centro_x"],
+                    CentroY = (double)j["centro_y"],
+                    LadoM = (double)j["lado_m"],
+                    Atribucion = (string)j["atribucion"] ?? string.Empty,
+                });
+            });
         }
 
         /// <summary>

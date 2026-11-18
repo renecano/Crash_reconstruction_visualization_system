@@ -25,6 +25,40 @@ namespace Croquis.Visor
         private double inicio;
         private double fin;
 
+        /// <summary>Los vehículos de la versión superpuesta (ADR 0123): translúcidos, sin daño, con el mismo reloj.</summary>
+        private readonly List<VehiculoVista> fantasmas = new List<VehiculoVista>();
+
+        /// <summary>El azul claro del fantasma, translúcido.</summary>
+        private static readonly Color ColorFantasma = new Color(0.55f, 0.78f, 1f, 0.35f);
+
+        /// <summary>Lo que se suma al instante de la reconstrucción para tener el de la versión (s).</summary>
+        private double desfaseFantasma;
+        private string etiquetaFantasma;
+
+        /// <summary>El piso del modo «mapa real» (ADR 0124).</summary>
+        private readonly PisoMapaVista pisoMapa = new PisoMapaVista();
+
+        /// <summary>Lo del escenario que apagó el mapa, para prenderlo igual al quitarlo.</summary>
+        private readonly List<GameObject> apagadosPorElMapa = new List<GameObject>();
+
+        /// <summary>
+        /// Lo del escenario que se queda con el mapa: la leyenda, la sonda de reflejos (se vuelve a
+        /// tomar), la lluvia y la luz de las luminarias (de noche el piso se ve con la luz del caso).
+        /// Calles, suelo, edificios, árboles, cerros, postes y charcos se apagan.
+        /// </summary>
+        private static readonly HashSet<string> SeQuedanConElMapa = new HashSet<string>
+        {
+            "leyenda", "sonda_reflejos", "lluvia", "lluvia_particulas", "salpicaduras", "luz_luminaria",
+        };
+
+        private bool conEscenario;
+        private Terreno terrenoDelCaso = new Terreno();
+
+        /// <summary>Mientras se arma un caso, el mensaje `piso` espera a que termine (gana sobre el del paquete).</summary>
+        private bool cargando;
+        private bool hayPisoPendiente;
+        private Piso pisoPendiente;
+
         public double Tiempo { get; private set; }
 
         /// <summary>El final del Resultado (s): el instante de la foto «en reposo».</summary>
@@ -79,6 +113,13 @@ namespace Croquis.Visor
             reloj = System.Diagnostics.Stopwatch.StartNew();
             Reproduciendo = false;
             Cargado = false;
+            // Un caso nuevo empieza sin el piso ni el fantasma del anterior: los trae el paquete o el
+            // mensaje `piso` que llegue mientras se arma.
+            cargando = true;
+            hayPisoPendiente = false;
+            pisoPendiente = null;
+            pisoMapa.Quitar();
+            apagadosPorElMapa.Clear();
             if (raiz != null)
             {
                 Destroy(raiz.gameObject);
@@ -86,6 +127,9 @@ namespace Croquis.Visor
 
             vehiculos.Clear();
             personas.Clear();
+            fantasmas.Clear();
+            desfaseFantasma = 0.0;
+            etiquetaFantasma = null;
             dinamica = null;
             raiz = new GameObject("Caso").transform;
             var r = caso.Resultado;
@@ -155,6 +199,8 @@ namespace Croquis.Visor
             {
                 v.Terreno = terreno;
             }
+
+            await ArmarFantasmasAsync(caso, terreno);
 
             // Los vehículos estacionados, con el modelo de su clase y quietos (antes salían como una caja
             // de tabique). Sus medidas son las del objeto; sin clase, un sedán.
@@ -313,6 +359,32 @@ namespace Croquis.Visor
                 Camara.HornearMinimapa();
             }
 
+            // El piso del mapa real, después de unir las sombras (la unión del escenario se apaga con él)
+            // y antes de que se hornee el minimapa, unos cuadros después (lo lleva de fondo). El del
+            // mensaje gana al del paquete.
+            conEscenario = e != null;
+            terrenoDelCaso = terreno;
+            var pedido = hayPisoPendiente ? pisoPendiente : caso.Piso;
+            hayPisoPendiente = false;
+            pisoPendiente = null;
+            cargando = false;
+            if (pedido != null && pedido.Imagen != null)
+            {
+                try
+                {
+                    PonerPiso(pedido);
+                }
+                catch (FormatException ex)
+                {
+                    // Un piso que no sirve no detiene la reconstrucción: queda el entorno procedural. No se
+                    // avisa con `error`: la web lo tomaría como falla de la carga.
+                    Debug.LogWarning("[piso] " + ex.Message);
+                }
+            }
+
+            ActualizarLeyenda();
+            Paso("piso");
+
             Calidad.Aplicar();
             Cargado = true;
             Calidad.Reiniciar();
@@ -376,6 +448,185 @@ namespace Croquis.Visor
             }
         }
 
+        /// <summary>
+        /// Los vehículos de la versión superpuesta (ADR 0123): el mismo modelo que en la reconstrucción,
+        /// con un material translúcido y sin daño, sombras, luces ni minimapa propio. Van en la capa de
+        /// los vehículos: fuera de la sonda de reflejos y del fondo horneado del minimapa. Las cámaras no
+        /// los conocen. Solo los que en la versión van por otro lado (`Fantasmas.VehiculosADibujar`).
+        /// </summary>
+        private async Awaitable ArmarFantasmasAsync(Caso3D caso, Terreno terreno)
+        {
+            var version = caso.Fantasma?.Resultado;
+            if (version?.Vehiculos == null)
+            {
+                return;
+            }
+
+            desfaseFantasma = Fantasmas.Desfase(caso.Resultado, version);
+            var dibujar = Fantasmas.VehiculosADibujar(caso.Resultado, version);
+            var material = Materiales.Calca(ColorFantasma, 0.4f);
+            foreach (var v in version.Vehiculos)
+            {
+                if (Array.IndexOf(dibujar, v.Id) < 0)
+                {
+                    continue;
+                }
+
+                var go = new GameObject("fantasma_version_" + v.Id);
+                go.transform.SetParent(raiz, false);
+                try
+                {
+                    await modelos.ArmarAsync(go.transform, v, (Color?)null);
+                }
+                catch (ModeloNoCargo ex)
+                {
+                    // Sin su modelo, la versión no tapa la reconstrucción: se queda sin ese fantasma.
+                    Debug.LogWarning("[fantasma] " + ex.Message);
+                    Destroy(go);
+                    continue;
+                }
+
+                foreach (var r in go.GetComponentsInChildren<Renderer>(true))
+                {
+                    var ms = r.sharedMaterials;
+                    for (var i = 0; i < ms.Length; i++)
+                    {
+                        ms[i] = material;
+                    }
+
+                    r.sharedMaterials = ms;
+                    r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                    r.receiveShadows = false;
+                }
+
+                foreach (var t in go.GetComponentsInChildren<Transform>(true))
+                {
+                    t.gameObject.layer = EscenarioVista.CapaVehiculos;
+                }
+
+                var vista = go.AddComponent<VehiculoVista>();
+                vista.Trayectoria = v.Trayectoria;
+                vista.Datos = v;
+                vista.Terreno = terreno;
+                fantasmas.Add(vista);
+            }
+
+            if (fantasmas.Count > 0)
+            {
+                etiquetaFantasma = string.IsNullOrWhiteSpace(caso.Fantasma.Etiqueta) ? "otra versión del caso" : caso.Fantasma.Etiqueta;
+            }
+        }
+
+        /// <summary>
+        /// El mensaje `piso` (puente 1.3.0): pone la imagen del mapa real, o con `Imagen` nula vuelve al
+        /// entorno procedural, sin recargar el caso. Mientras se arma un caso, espera a que termine.
+        /// </summary>
+        /// <exception cref="FormatException">La imagen o sus medidas no sirven; el piso queda como estaba.</exception>
+        public void CambiarPiso(Piso p)
+        {
+            if (cargando)
+            {
+                pisoPendiente = p;
+                hayPisoPendiente = true;
+                return;
+            }
+
+            if (raiz == null)
+            {
+                return;
+            }
+
+            if (p == null || p.Imagen == null)
+            {
+                if (!pisoMapa.Puesto)
+                {
+                    return;
+                }
+
+                pisoMapa.Quitar();
+                Entorno(true);
+            }
+            else
+            {
+                PonerPiso(p);
+            }
+
+            // El fondo del minimapa cambia con el piso; y es otra carga de dibujo.
+            if (Calidad.Perfil.MinimapaHorneado)
+            {
+                Camara.HornearMinimapa();
+            }
+
+            Calidad.Reiniciar();
+        }
+
+        /// <summary>Abre la imagen (si no sirve, nada cambia), la pone y apaga el entorno procedural.</summary>
+        private void PonerPiso(Piso p)
+        {
+            PisoMapa.Revisar(p.CentroX, p.CentroY, p.LadoM);
+            var tex = PisoMapaVista.Abrir(p.Imagen);
+            pisoMapa.Poner(raiz, tex, p.CentroX, p.CentroY, p.LadoM, p.Atribucion, terrenoDelCaso);
+            Entorno(false);
+        }
+
+        /// <summary>
+        /// Prende o apaga lo procedural del escenario (calles, suelo, edificios, árboles, cerros, postes,
+        /// charcos y la unión de sus sombras), toma de nuevo la sonda de reflejos y cambia la leyenda.
+        /// Lo del caso (vehículos, personas, daño, evidencias, marcadores, objetos y terreno declarados),
+        /// el cielo y la luz no se tocan.
+        /// </summary>
+        private void Entorno(bool procedural)
+        {
+            var escenario = raiz != null ? raiz.Find("escenario") : null;
+            if (procedural)
+            {
+                foreach (var go in apagadosPorElMapa)
+                {
+                    if (go != null)
+                    {
+                        go.SetActive(true);
+                    }
+                }
+
+                apagadosPorElMapa.Clear();
+            }
+            else if (escenario != null)
+            {
+                foreach (Transform hijo in escenario)
+                {
+                    if (!SeQuedanConElMapa.Contains(hijo.name) && hijo.gameObject.activeSelf)
+                    {
+                        hijo.gameObject.SetActive(false);
+                        apagadosPorElMapa.Add(hijo.gameObject);
+                    }
+                }
+            }
+
+            if (piso != null)
+            {
+                // El piso liso de U1 solo va en un caso sin escenario y sin mapa.
+                piso.SetActive(procedural && !conEscenario);
+            }
+
+            var sonda = escenario != null ? escenario.Find("sonda_reflejos") : null;
+            var reflejos = sonda != null ? sonda.GetComponent<ReflectionProbe>() : null;
+            if (reflejos != null)
+            {
+                reflejos.RenderProbe();
+            }
+
+            ActualizarLeyenda();
+        }
+
+        private void ActualizarLeyenda()
+        {
+            var texto = EscenarioVista.TextoDeLeyenda(raiz);
+            if (texto != null)
+            {
+                texto.text = Leyenda3d.Mensaje(conEscenario, pisoMapa.Puesto ? pisoMapa.Atribucion : null, etiquetaFantasma);
+            }
+        }
+
         public void Fijar(double t)
         {
             Tiempo = Math.Max(inicio, Math.Min(fin, t));
@@ -387,6 +638,12 @@ namespace Croquis.Visor
             foreach (var p in personas)
             {
                 p.Colocar(Tiempo);
+            }
+
+            // La versión, alineada por su impacto; pasado su final se queda en su última pose.
+            foreach (var g in fantasmas)
+            {
+                g.Colocar(Tiempo + desfaseFantasma);
             }
 
             if (dinamica != null)
