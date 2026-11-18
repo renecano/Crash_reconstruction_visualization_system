@@ -375,8 +375,13 @@ export async function buscarLugar(
   };
   // La zona: la del caso; si el caso no la trae, la del texto.
   const delTexto = zonaDelTexto(c.q);
-  const estado = estadoDe(c.estado) ?? c.estado ?? delTexto.estado;
-  const municipio = c.municipio ?? delTexto.municipio;
+  // Lo que escribió el perito gana: si el texto trae un estado, ese; el municipio del caso solo si
+  // es del mismo estado.
+  const delCaso = estadoDe(c.estado) ?? c.estado;
+  const estado = delTexto.estado ?? delCaso;
+  const municipio = delTexto.estado
+    ? (delTexto.municipio ?? (delCaso === delTexto.estado ? c.municipio : undefined))
+    : c.municipio;
   const texto = delTexto.estado ? delTexto.resto || c.q : c.q;
   const zona = { municipio, estado, texto };
   const interpretado = interpretarLugar(texto);

@@ -286,3 +286,24 @@ describe("buscar el lugar del hecho (A1)", () => {
     );
   });
 });
+
+describe("lo que escribe el perito gana (B5)", () => {
+  it("si escribe otro estado, se busca ahí y no en la zona que leyó Croquis", async () => {
+    const { deps, pedidos } = falso((u) =>
+      u.searchParams.get("q") === "San Luis Potosí, San Luis Potosí"
+        ? { status: 200, body: [SLP] }
+        : { status: 200, body: [] },
+    );
+    await buscarLugar(
+      {
+        q: "Av. Venustiano Carranza 500, San Luis Potosí, San Luis Potosí",
+        municipio: "Monterrey",
+        estado: "Nuevo León",
+      },
+      "c8",
+      deps,
+    );
+    expect(pedidos[0]!.url.searchParams.get("q")).toBe("San Luis Potosí, San Luis Potosí");
+    expect(pedidos.some((p) => p.url.searchParams.get("q")?.includes("Monterrey"))).toBe(false);
+  });
+});
