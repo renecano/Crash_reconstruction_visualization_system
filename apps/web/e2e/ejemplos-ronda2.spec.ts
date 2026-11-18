@@ -261,7 +261,7 @@ test("las cinco narraciones de ejemplo, de punta a punta", async ({ page, baseUR
       await foto("4b-3d");
       await page.getByTestId("vista-maqueta").click();
     }
-    for (const n of [5, 6]) {
+    for (const n of [6, 7]) {
       await irAPaso(page, n);
       await page.waitForTimeout(1200);
       fila.analisis.push(

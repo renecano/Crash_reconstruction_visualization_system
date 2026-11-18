@@ -96,9 +96,9 @@ test("@flujo /cesvi: el 3D en Unity — mover el poste recalcula y las fotos del
 
   // El dictamen toma sus tres fotos de Unity: antes, en el impacto y en reposo.
   // Sin reporte de CESVI, después de los números (paso 6) viene el dictamen (paso 8).
-  await irAPaso(page, 6);
+  await irAPaso(page, 7);
   await page.getByTestId("siguiente").click();
-  await expect(page.getByTestId("panel-paso")).toHaveAttribute("data-paso", "8");
+  await expect(page.getByTestId("panel-paso")).toHaveAttribute("data-paso", "9");
   await expect(page.getByTestId("dictamen-caso")).toBeVisible();
   await expect
     .poll(

@@ -203,7 +203,7 @@ test.describe("con movimiento reducido", () => {
     await irAPaso(page, 4);
     await page.getByTestId("reconstruir").click();
     await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 120_000 });
-    await irAPaso(page, 7);
+    await irAPaso(page, 8);
     // De inmediato, sin esperar a que cuente: `textContent` en el primer vistazo.
     const croquis = page.getByTestId("cifra-contra-croquis");
     await croquis.waitFor();

@@ -13,7 +13,12 @@ import { conCallesDelMapa } from "@/lib/calles-del-mapa";
 import type { CifraContraste, conteoCriterios, LecturaFisica } from "@/lib/contraste-lab";
 import type { ResultadoMaqueta } from "@/lib/maqueta";
 import { guardarTema, type Tema } from "@/lib/preferencias-cesvi";
-import { capitulos, DURACION_CAPITULO_S, tDelCapitulo } from "@/lib/presentar-lab";
+import {
+  capitulos,
+  DURACION_CAPITULO_S,
+  tDelCapitulo,
+  type VersionPresentar,
+} from "@/lib/presentar-lab";
 import { reconstruirEnNavegador } from "@/lib/reconstruct-client";
 import type { CanalTiempo } from "@/lib/visor-unity/canal";
 import { EscenaMaqueta } from "../escena/maqueta";
@@ -31,6 +36,7 @@ export function PresentarCaso({
   letraDe,
   conteo,
   nombreDe,
+  versiones = [],
   onSalir,
   con3d = null,
 }: {
@@ -51,6 +57,8 @@ export function PresentarCaso({
   contra: CifraContraste | null;
   conteo: ReturnType<typeof conteoCriterios> | null;
   nombreDe: (id: string) => string;
+  /** Las versiones del caso (ronda 4): su capítulo, marcadas como declaración o como hipótesis. */
+  versiones?: VersionPresentar[];
   onSalir: () => void;
 }) {
   const spec = useMemo(() => {
@@ -73,10 +81,23 @@ export function PresentarCaso({
 
   const caps = useMemo(
     () =>
-      res ? capitulos({ r, res, nombreDe, lugar, modalidad, contra, fisica, letraDe, conteo }) : [],
+      res
+        ? capitulos({
+            r,
+            res,
+            nombreDe,
+            lugar,
+            modalidad,
+            contra,
+            fisica,
+            letraDe,
+            conteo,
+            versiones,
+          })
+        : [],
     // `nombreDe` cambia en cada render del recorrido, pero depende de lo mismo que `r`.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [r, res, lugar, modalidad, contra, fisica, conteo],
+    [r, res, lugar, modalidad, contra, fisica, conteo, versiones],
   );
   const [k, setK] = useState(0);
   const [fraccion, setFraccion] = useState(0);

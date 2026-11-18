@@ -49,6 +49,35 @@ describe("Presentar (Laboratorio §8)", () => {
     expect(capitulos({ ...base, contra: null, conteo: null })).toHaveLength(3);
   });
 
+  it("las versiones del caso (ronda 4) van en su capítulo, antes de Contra CESVI, marcadas", () => {
+    const caps = capitulos({
+      ...base,
+      contra,
+      conteo: null,
+      versiones: [
+        { tipo: "declaracion", titulo: "Lo que declaró el conductor de B", resumen: "2 de 5 no" },
+        { tipo: "hipotesis", titulo: "¿Y si…?", resumen: "No hay contacto" },
+      ],
+    });
+    expect(caps.map((c) => c.clave)).toEqual([
+      "escena",
+      "impacto",
+      "finales",
+      "versiones",
+      "contra",
+    ]);
+    const v = caps[3]!;
+    expect(v.filas.map((f) => f.etiqueta)).toEqual([
+      "Declaración · Lo que declaró el conductor de B",
+      "Hipótesis del perito · ¿Y si…?",
+    ]);
+    expect(v.nota).toContain("no es evidencia");
+    // Sin versiones no hay capítulo.
+    expect(capitulos({ ...base, contra: null, conteo: null }).map((c) => c.clave)).not.toContain(
+      "versiones",
+    );
+  });
+
   it("el impacto: el mejor ajuste del más rápido, en grande, con su rango; no la mediana", () => {
     const c = capitulos({ ...base, contra: null, conteo: null })[1]!;
     expect(c.filas[0]).toEqual({

@@ -23,7 +23,7 @@ import type { CanalTiempo } from "@/lib/visor-unity/canal";
 import { aplicarObjetoEditado, aplicarPuntoMarcado } from "@/lib/visor-unity/edicion";
 import { nombreDelPaquete } from "@/lib/visor-unity/paquete";
 import { EnRanura, useMarco } from "./marco-vista";
-import { VisorUnity, type ApiVisorUnity } from "./visor-unity";
+import { VisorUnity, type ApiVisorUnity, type VersionUnity } from "./visor-unity";
 
 const HERRAMIENTAS: { id: HerramientaEdicion; texto: string; conVehiculo: boolean }[] = [
   { id: "mover", texto: "Mover objetos", conVehiculo: false },
@@ -40,8 +40,11 @@ export function VisorCasoUnity({
   onApiUnity,
   presentar = null,
   onInstante,
+  version = null,
   ...props
 }: ComponentProps<typeof Visor3dCaso> & {
+  /** Ronda 4: la versión del caso que se ve en el 3D en vez de la reconstrucción (alternar). */
+  version?: VersionUnity | null;
   /** Por dónde va el 3D, para el instante que comparten el 2D y el 3D (A6). */
   onInstante?: (t: number) => void;
   /**
@@ -180,6 +183,7 @@ export function VisorCasoUnity({
       <div className={presentar ? "relative h-full w-full" : "relative min-h-0 flex-1"}>
         <VisorUnity
           escena={escena}
+          version={presentar ? null : version}
           relieve={r.relieve ?? null}
           camaras={camaras}
           onTiempo={onInstante}

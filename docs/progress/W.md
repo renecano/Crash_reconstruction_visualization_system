@@ -9,6 +9,28 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 - **Fase actual:** ninguna en curso. W9 necesita la autorización de René para gastar API.
 - **Siguiente paso:** W8 cerrada el 2026-11-15: T3.2 (#215), T3.3 (contrato #219 y #220, ADR 0136) y T3.5 (E-R4 v4, igual a la v3 más el eje de la reversa). Nada de eso movió AXA ni un caso que ya vio CESVI después de T3.2. Queda una decisión de René sobre la versión declarada (sección T3.3, «Para decidir»). W9 (T6.5 y T6.6) espera su autorización de gasto de API.
 
+## Ronda 4, punto 8: el acto «Versiones» (René, 2026-11-18; ADR 0143)
+
+- **Decisión de René:** la propuesta 1 con la entrada de la 2 (`docs/cesvi/ronda-4/propuestas-hipotesis.md`).
+- **Qué quedó:**
+  - **El acto «Versiones»,** entre Reconstrucción y Análisis. A la izquierda, el escenario grande con la versión elegida punteada. A la derecha, la lista de declaraciones e hipótesis y «Qué cambia» en el lenguaje del perito. Abajo, los dos formularios.
+  - **«Comparar con una versión»** bajo la cifra de Reconstrucción.
+  - **La declaración y «Probar una hipótesis» se movieron:** ya no están en «Ver el detalle» ni en «Los números».
+  - **El solver entrega las trayectorias del «¿y si…?»,** en Python y en TS, con paridad. Ninguna cifra cambia: en los cinco resultados de referencia de los agentes solo aparece el campo nuevo, y el índice de cifras pasa.
+  - **Presentar** tiene su capítulo y **el dictamen** su sección «Versiones del caso», marcadas como declaración o como hipótesis.
+  - **El 3D alterna** entre la reconstrucción y la versión (frente U, ADR 0123).
+- **Pruebas:**
+  - **Unitarias:**
+    - `versiones-caso.test.ts` de `packages/cesvi`: el resultado dibujable, válido contra el contrato; lo que cambia, con el alcance de referencia; títulos y resúmenes.
+    - `versiones-caso.test.ts` de la web: una declaración por conductor y el tope de hipótesis.
+    - `dictamen-caso`, `presentar-lab` y `actos`.
+    - Python: `test_agents.py` (las trayectorias llegan al contacto; sin contacto, cubren el horizonte).
+  - **E2e:** `cesvi-caso.spec.ts` recorre el acto con la declaración (crucero) y con una hipótesis (carambola), y comprueba que Análisis ya no la lleva. En `cesvi.spec.ts` (AXA), la declaración ya escrita está en «Versiones».
+- **Capturas:**
+  - Antes: `docs/cesvi/ronda-4/evidencia/hipotesis/hoy-*.jpg`.
+  - Después: `docs/cesvi/ronda-4/evidencia/versiones/despues-*.jpg` (`e2e/capturas-ronda4-versiones.spec.ts`, a mano).
+- **Límite a la vista:** en algunos casos colocados a mano, los conductores sin la hipótesis no dan el impacto de la reconstrucción. En el crucero de ejemplo no se tocan. Un aviso lo dice junto a las tarjetas: la hipótesis se compara con «Sin ella».
+
 ## Ronda 4, bloque B: buscar el lugar y los nombres de las calles (René, 2026-11-18)
 
 - **B5, «Buscar el lugar»:** siempre en México y primero dentro de lo que sabe el caso.

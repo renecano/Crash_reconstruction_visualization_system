@@ -80,7 +80,7 @@ test("@capturas W6: el encuadre de la maqueta en el caso de AXA", async ({ page 
   expect(await vista(page)).toEqual(todo);
 
   // En Análisis, la vista cenital también se navega; en Contra CESVI, el lado a lado.
-  await irAPaso(page, 7);
+  await irAPaso(page, 8);
   await expect(page.getByTestId("maqueta-navegable").first()).toBeVisible({ timeout: 60_000 });
   await captura("5-contra-cesvi");
 });

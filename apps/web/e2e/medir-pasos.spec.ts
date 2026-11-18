@@ -147,7 +147,7 @@ test("cuánto se queda sin responder la página entre pasos", async ({ page, con
   await page.goto("/cesvi");
   await page.getByTestId("ir-axa").click();
   await expect(page.getByTestId("recorrido-caso")).toBeVisible();
-  while ((await paso()) < 8) {
+  while ((await paso()) < 9) {
     if ((await paso()) === 3 && (await page.getByTestId("escena-facil").isVisible())) {
       await page.getByTestId("avance-ver-reconstruccion").click();
       await expect.poll(paso).toBe(4);
@@ -175,7 +175,7 @@ test("cuánto se queda sin responder la página entre pasos", async ({ page, con
   await page.getByTestId("reconstruir").click();
   await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 180_000 });
   await page.waitForTimeout(3000);
-  while ((await paso()) < 7) await avanzar("nuevo");
+  while ((await paso()) < 8) await avanzar("nuevo");
 
   const todas = await page.evaluate(
     () => (window as unknown as { __largas: { t: number; d: number }[] }).__largas,

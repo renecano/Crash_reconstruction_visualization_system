@@ -129,12 +129,12 @@ test("ensayo de la demo con CESVI, en producción", async ({ baseURL }) => {
       };
     });
     await tramo("1c-axa-contra-cesvi", async () => {
-      await irAPaso(page, 7);
+      await irAPaso(page, 8);
       const t = (await page.getByTestId("panel-paso").innerText()).replace(/\s+/g, " ");
       return { nota: t.slice(0, 220), captura: await captura(page, "1c-axa-contra-cesvi") };
     });
     await tramo("1d-axa-dictamen", async () => {
-      await irAPaso(page, 8);
+      await irAPaso(page, 9);
       await expect(page.getByTestId("panel-paso")).toContainText(/Dictamen|dictamen/);
       // Las filas contra CESVI de la vista previa del dictamen, tal como se leen.
       const t = (await page.getByTestId("panel-paso").innerText()).split(/\r?\n/);

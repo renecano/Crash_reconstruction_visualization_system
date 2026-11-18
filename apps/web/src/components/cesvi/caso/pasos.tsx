@@ -20,7 +20,6 @@ import { useState, type ReactNode } from "react";
 import type { ReporteCesvi } from "@/lib/caso-guardado";
 import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
 import { Fuente, Pregunta } from "./piezas";
-import { ProbarConductores } from "./conductores";
 import { PanelVerificacion, TablaContraCesvi, TablaVelocidades } from "./reconstruccion";
 import { ConclusionesCesvi } from "../importar-dictamen";
 import {
@@ -500,7 +499,6 @@ export function PasoNumeros({
         <p className="t-nota">Reconstruye para ver las velocidades con su rango.</p>
       )}
       {contraCesvi?.filas.length ? <TablaContraCesvi contra={contraCesvi} /> : null}
-      {r ? <ProbarConductores r={r} /> : null}
       <PanelVerificacion verificacion={verificacion} />
     </div>
   );

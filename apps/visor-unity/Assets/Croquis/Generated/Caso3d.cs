@@ -3777,6 +3777,14 @@ namespace Croquis.Generated
         [JsonProperty("t", NullValueHandling = NullValueHandling.Ignore)]
         public double? T { get; set; }
 
+        /// <summary>
+        /// Por dónde va cada vehículo con esas decisiones, del inicio hasta el primer contacto (o
+        /// hasta el fin del horizonte si no hay), cada 0.1 s y en el instante final, con su
+        /// velocidad (m/s). Sirve para dibujar el «¿y si…?»; no cambia ninguna cifra.
+        /// </summary>
+        [JsonProperty("trayectorias", NullValueHandling = NullValueHandling.Ignore)]
+        public TrayectoriaElement[] Trayectorias { get; set; }
+
         [JsonProperty("vehiculos", NullValueHandling = NullValueHandling.Ignore)]
         public string[] Vehiculos { get; set; }
 
@@ -3785,6 +3793,30 @@ namespace Croquis.Generated
 
         [JsonProperty("velocidades_kmh", NullValueHandling = NullValueHandling.Ignore)]
         public VelocidadesKmh[] VelocidadesKmh { get; set; }
+    }
+
+    public partial class TrayectoriaElement
+    {
+        [JsonProperty("rumbo")]
+        public double[] Rumbo { get; set; }
+
+        [JsonProperty("t")]
+        public double[] T { get; set; }
+
+        [JsonProperty("vehiculo")]
+        public string Vehiculo { get; set; }
+
+        [JsonProperty("vx")]
+        public double[] Vx { get; set; }
+
+        [JsonProperty("vy")]
+        public double[] Vy { get; set; }
+
+        [JsonProperty("x")]
+        public double[] X { get; set; }
+
+        [JsonProperty("y")]
+        public double[] Y { get; set; }
     }
 
     public partial class VelocidadesKmh

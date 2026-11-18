@@ -24,6 +24,7 @@ import {
   type DatosDictamenCaso,
 } from "./dictamen-caso";
 import { terminosProhibidos } from "./terminologia";
+import type { VersionesDictamen } from "./versiones-caso";
 
 /** Todo el texto de un contenido de pdfmake, en orden. */
 function textOf(node: unknown): string {
@@ -74,7 +75,6 @@ const datos = (extra: Partial<DatosDictamenCaso> = {}): DatosDictamenCaso => ({
   verificacion: verificacionCesvi(e),
   croquis: null,
   cuadros3d: [],
-  declarada: null,
   validacion: null,
   estructuraCesvi: false,
   trazabilidad: { metodo: "solver de Croquis 1.9.0", huella: "abc123def456" },
@@ -277,23 +277,48 @@ describe("el dictamen de una reconstrucción (R8)", () => {
     expect(texto(datos())).not.toContain("Huella del documento:");
   });
 
-  it("lleva la comparación con la declaración si se usó, y la sugerencia solo si se pidió", () => {
-    const sin = texto(datos({ declarada: { declarante: "V2", filas, sugerencia: null } }));
-    expect(sin).toContain("Comparación con la declaración del conductor");
+  it("lleva las versiones del caso (ronda 4), cada una marcada como declaración o como hipótesis", () => {
+    const declarada = (sugerencia: VersionesDictamen["declaradas"][number]["sugerencia"]) => ({
+      declarante: "V2" as const,
+      nombre: "B · GM Camaro",
+      filas,
+      sugerencia,
+    });
+    const sin = texto(datos({ versiones: { declaradas: [declarada(null)], hipotesis: [] } }));
+    expect(sin).toContain("Versiones del caso");
+    expect(sin).toContain("Declaración del conductor de B · GM Camaro");
     expect(sin).toContain("Es lo que dice el conductor, no evidencia.");
     expect(sin).not.toContain("Sugerencia de Croquis");
     const con = texto(
       datos({
-        declarada: {
-          declarante: "V2",
-          filas,
-          sugerencia: { texto: "Texto de la sugerencia.", decision: "descartada" },
+        versiones: {
+          declaradas: [declarada({ texto: "Texto de la sugerencia.", decision: "descartada" })],
+          hipotesis: [
+            {
+              titulo: "¿Y si el conductor de A · VW Jetta frena 1.50 s antes del impacto?",
+              resumen: "No hay contacto: quedan a 7.40 m como mínimo",
+              cambios: [
+                {
+                  clave: "contacto",
+                  concepto: "¿Se tocan?",
+                  version: "No: quedan a 7.40 m como mínimo",
+                  reconstruccion: "Sí, en 0.00 s a 55 km/h de velocidad relativa",
+                  cambia: true,
+                },
+              ],
+            },
+          ],
         },
       }),
     );
     expect(con).toContain("Sugerencia de Croquis, pedida por el perito: Texto de la sugerencia.");
     expect(con).toContain("El perito descartó la sugerencia.");
-    expect(texto(datos())).not.toContain("Comparación con la declaración del conductor");
+    expect(con).toContain(
+      "Hipótesis del perito: ¿Y si el conductor de A · VW Jetta frena 1.50 s antes del impacto?",
+    );
+    expect(con).toContain("No es evidencia ni un juicio sobre ningún conductor.");
+    expect(con).toContain("No: quedan a 7.40 m como mínimo");
+    expect(texto(datos())).not.toContain("Versiones del caso");
   });
 
   it("no llama dictamen al reporte de CESVI y el Word sale con el mismo contenido", async () => {

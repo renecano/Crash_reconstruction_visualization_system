@@ -165,15 +165,27 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await page.getByTestId("vista-3d").click();
   await expect(visor.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
 
-  // R7: la declaración del conductor de V2, leída y simulada, contra la reconstrucción y en el 3D.
+  // Ronda 4, punto 8: «Comparar con una versión» lleva al acto «Versiones», entre Reconstrucción y
+  // Análisis. La declaración ya no está en «Ver el detalle».
   await page.getByTestId("ver-detalle-reconstruccion").click();
-  await page.getByTestId("abrir-declaracion").click();
+  await expect(page.getByTestId("texto-declaracion")).toHaveCount(0);
+  await page.getByTestId("comparar-version").click();
+  await expect(page.getByTestId("panel-paso")).toHaveAttribute("data-paso", "5");
+  await expect(page.getByTestId("versiones-vacio")).toBeVisible();
+  // R7: la declaración del conductor del GM Camaro (V2), leída y simulada, contra la reconstrucción.
   await page.getByTestId("texto-declaracion").fill(DECLARACION.declaracion);
   await page.getByTestId("declarante").selectOption("V2");
   await page.getByTestId("leer-declaracion").click();
-  await expect(page.getByTestId("lo-que-declara")).toContainText("40 km/h");
   const queCambia = page.getByTestId("que-cambia");
   await expect(queCambia).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByTestId("version-declaracion-V2")).toContainText(
+    "Lo que declaró el conductor de B · GM Camaro",
+  );
+  await expect(page.getByTestId("version-declaracion-V2")).toHaveAttribute("aria-pressed", "true");
+  await page.getByText("Lo que dice la declaración, con sus citas").click();
+  await expect(page.getByTestId("lo-que-declara")).toContainText("40 km/h");
+  // En el 3D se alterna entre la reconstrucción y la versión (con el visor ligero, el fantasma).
+  await expect(page.getByTestId("ver-3d-version")).toBeVisible();
   await expect(queCambia.locator('[data-fila="velocidad-V2"]')).toContainText("40 km/h");
   await expect(queCambia.locator('[data-fila="posicion_final-V2"]')).toContainText(
     "m de la reconstruida",
@@ -200,26 +212,26 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await page.getByTestId("vista-maqueta").click();
   await expect(page.getByTestId("maqueta-declarada")).toHaveCount(1, { timeout: 30_000 });
   await expect(page.getByTestId("maqueta-leyenda-declarada")).toContainText(
-    "versión declarada (V2)",
+    "lo que declaró el conductor de B · GM Camaro",
   );
   // De vuelta al 3D: el dictamen toma de ahí sus tres cuadros.
   await page.getByTestId("vista-3d").click();
   await expect(visor.locator("canvas").first()).toBeVisible({ timeout: 60_000 });
 
   // Los daños que calcula la reconstrucción y, en los números, la verificación CESVI dice qué falta.
-  await irAPaso(page, 5);
+  await irAPaso(page, 6);
   // Con las velocidades reconstruidas (§0 del rediseño): energía, Δv y el perfil estimado, sin ceros.
   const danoV1 = page.getByTestId("dano-calculado-V1");
   await expect(danoV1).toContainText("perfil estimado", { timeout: 60_000 });
   await expect(danoV1).toContainText("kJ");
   await expect(danoV1).not.toContainText(" 0.0 kJ");
-  await irAPaso(page, 6);
+  await irAPaso(page, 7);
   await expect(page.getByTestId("verificacion-cesvi")).toContainText("Falta:");
 
   // R8: el dictamen de la reconstrucción, validado por el perito, en PDF y en Word. Sin reporte de
   // CESVI no hay paso «Croquis contra el reporte»: de los números se pasa al dictamen.
   await page.getByTestId("siguiente").click();
-  await expect(page.getByTestId("panel-paso")).toHaveAttribute("data-paso", "8");
+  await expect(page.getByTestId("panel-paso")).toHaveAttribute("data-paso", "9");
   const dictamen = page.getByTestId("dictamen-caso");
   await expect(page.getByTestId("estado-validacion")).toContainText(
     "Sin validar: el dictamen sale como borrador.",
@@ -452,13 +464,27 @@ test("@flujo /cesvi: una carambola, con sus impactos en orden hasta el 3D", asyn
   await page.getByTestId("vista-mapa").click();
   await expect(mapa.locator('[data-movil="V3"]')).toHaveCount(1, { timeout: 30_000 });
 
-  // 5. Paso 6 (R12a): una hipótesis sobre un conductor. V3 frena 2.5 s antes del impacto; el Web
-  // Worker simula a los tres conductores y el resultado se compara con la reconstrucción.
-  await irAPaso(page, 6);
+  // 5. En «Versiones» (ronda 4; R12a): una hipótesis sobre un conductor. V3 frena 2.5 s antes del
+  // impacto; el Web Worker simula a los tres conductores y se dibuja sobre la reconstrucción.
+  await irAPaso(page, 5);
   await page.getByTestId("conductor-vehiculo").selectOption("V3");
   await page.getByTestId("conductor-instante").fill("2.5");
   await page.getByTestId("conductor-probar").click();
-  await expect(page.getByTestId("resultado-conductores")).toBeVisible({ timeout: 60_000 });
+  const hipotesis = page.getByTestId("version-hipotesis-1");
+  await expect(hipotesis).toContainText("¿Y si el conductor de C", { timeout: 60_000 });
+  await expect(hipotesis).toHaveAttribute("data-tipo", "hipotesis");
+  // Lo que cambia, en el lenguaje del perito, contra los mismos conductores sin la hipótesis.
+  const cambios = page.getByTestId("que-cambia");
+  await expect(cambios.locator('[data-fila="contacto"]')).toContainText("¿Se tocan?");
+  await expect(cambios.locator('[data-fila="trayectoria"]')).toContainText("Se separa hasta");
+  // El «¿y si…?» dibujado en el 2D, punteado sobre la reconstrucción (sin el mapa de fondo, que
+  // quedó encendido desde la reconstrucción).
+  await page.getByTestId("vista-mapa").click();
+  await expect(page.getByTestId("vista-mapa")).toHaveAttribute("aria-checked", "false");
+  await expect(page.getByTestId("maqueta-declarada")).toHaveCount(1, { timeout: 30_000 });
+  // El detalle de la simulación, plegado.
+  await page.getByText("Ver el detalle de la simulación").click();
+  await expect(page.getByTestId("resultado-conductores")).toBeVisible();
   await expect(page.getByTestId("decisiones")).toContainText(
     "V3 frena en −2.50 s (la hipótesis del perito)",
   );
@@ -467,5 +493,8 @@ test("@flujo /cesvi: una carambola, con sus impactos en orden hasta el 3D", asyn
   // el mismo primer contacto que la reconstrucción: no hay aviso de línea base distinta. Ese aviso
   // (ADR 0088) lo cubre `conductores.test.ts`.
   await expect(page.getByTestId("linea-base-distinta")).toHaveCount(0);
+  // Análisis ya no lleva la hipótesis: vive en «Versiones» (no se duplica).
+  await irAPaso(page, 7);
+  await expect(page.getByTestId("probar-conductores")).toHaveCount(0);
   expect(errores).toEqual([]);
 });

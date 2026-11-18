@@ -144,6 +144,44 @@ interface Simulacion {
   decisiones: Map<string, Decision | null>;
   contacto: Contacto | null;
   distanciaMinimaM: number;
+  /**
+   * Los agentes y hasta dónde llegó la simulación: con ellos se muestrean las trayectorias para
+   * dibujar el «¿y si…?» (la posición es cerrada en t: no cambia ninguna cifra).
+   */
+  agentes: Agent[];
+  tInicio: number;
+  tFinal: number;
+}
+
+/** El paso de las trayectorias que se dibujan (s), no el de la simulación. */
+const TRAJECTORY_DT = 0.1;
+
+/** De t0 a t1 cada `TRAJECTORY_DT`, y t1 al final si no cae en la rejilla (como Python). */
+function trajectoryTimes(t0: number, t1: number): number[] {
+  const n = Math.floor((t1 - t0) / TRAJECTORY_DT + 1e-9);
+  const times: number[] = [];
+  for (let k = 0; k <= n; k++) times.push(t0 + k * TRAJECTORY_DT);
+  if (t1 - times[times.length - 1]! > 1e-9) times.push(t1);
+  return times;
+}
+
+function trajectoriesDoc(sim: Simulacion): Json[] {
+  if (!sim.agentes.length) return [];
+  const times = trajectoryTimes(sim.tInicio, sim.tFinal);
+  return [...sim.agentes]
+    .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
+    .map((a) => {
+      const states = times.map((t) => a.state(t));
+      return {
+        vehiculo: a.id,
+        t: times.map((t) => r6(t)),
+        x: states.map((s) => r6(s[0])),
+        y: states.map((s) => r6(s[1])),
+        rumbo: states.map((s) => r6(s[2])),
+        vx: states.map((s) => r6(s[3])),
+        vy: states.map((s) => r6(s[4])),
+      };
+    });
 }
 
 type Reaccion = [number, [number, number], string];
@@ -198,8 +236,10 @@ function conductorDoc(vid: string, reaccion: Reaccion, d: Decision | null): Json
 }
 
 function simDoc(sim: Simulacion): Json {
+  const tray = trajectoriesDoc(sim);
+  const extra: Json = tray.length ? { trayectorias: tray } : {};
   if (sim.contacto === null)
-    return { contacto: false, distancia_minima_m: r6(sim.distanciaMinimaM) };
+    return { contacto: false, distancia_minima_m: r6(sim.distanciaMinimaM), ...extra };
   const c = sim.contacto;
   return {
     contacto: true,
@@ -209,6 +249,7 @@ function simDoc(sim: Simulacion): Json {
       .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
       .map(([k, v]) => ({ vehiculo: k, valor: r6(v) })),
     velocidad_relativa_kmh: r6(c.velocidadRelativaKmh),
+    ...extra,
   };
 }
 
@@ -408,6 +449,9 @@ function simulate(
         decisiones: decisiones(),
         contacto: { t: hi, vehiculos: pair, velocidadesKmh: speeds, velocidadRelativaKmh: rel },
         distanciaMinimaM: 0.0,
+        agentes: agents,
+        tInicio: t0,
+        tFinal: hi,
       };
     }
     const rs = rects(t);
@@ -421,7 +465,14 @@ function simulate(
     }
     prevT = t;
   }
-  return { decisiones: decisiones(), contacto: null, distanciaMinimaM: minGap };
+  return {
+    decisiones: decisiones(),
+    contacto: null,
+    distanciaMinimaM: minGap,
+    agentes: agents,
+    tInicio: t0,
+    tFinal: t0 + n * DT,
+  };
 }
 
 function makeAgents(spec: Json, rec: Reconstruction, withDrivers: boolean): Agent[] {

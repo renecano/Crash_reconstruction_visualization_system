@@ -204,6 +204,26 @@ export function EscenaMaqueta({
     () => (declarada ? versionDeclaradaEnMaqueta(resultado, declarada.resultado, ahora) : []),
     [declarada, resultado, ahora],
   );
+  // Las etiquetas del fantasma, una por vehículo y sin encimarse: en el impacto los vehículos de la
+  // versión están juntos y cada etiqueta sube hasta que ya no toca a las anteriores (ronda 4).
+  const etiquetasDeclaradas: { x: number; y: number; texto: string }[] = [];
+  for (const d of declarados) {
+    const texto = `${nombres[d.id] ?? d.rol} · versión`;
+    const x = px(d.pose.x);
+    let y =
+      py(d.pose.y) - Math.max(d.dimensiones.largo_m, d.dimensiones.ancho_m) / 2 - fuente * 0.4;
+    const ancho = texto.length * fuente * 0.8 * 0.55;
+    for (
+      let k = 0;
+      k < 8 &&
+      etiquetasDeclaradas.some(
+        (o) => Math.abs(o.x - x) < ancho && Math.abs(o.y - y) < fuente * 0.9,
+      );
+      k++
+    )
+      y -= fuente * 0.95;
+    etiquetasDeclaradas.push({ x, y, texto });
+  }
   const personas = useMemo(() => personasEnMaqueta(resultado, ahora), [resultado, ahora]);
   // Donde quedó cada persona según lo marcó el perito (la escena lo trae como posición final).
   const marcados = useMemo(() => {
@@ -549,7 +569,7 @@ export function EscenaMaqueta({
 
       {declarados.length ? (
         <g data-testid="maqueta-declarada" aria-label={declarada!.etiqueta}>
-          {declarados.map((d) => (
+          {declarados.map((d, k) => (
             <g key={d.id} data-testid={`maqueta-declarada-${d.rol}`}>
               {d.camino.length > 1 ? (
                 <polyline
@@ -587,17 +607,17 @@ export function EscenaMaqueta({
               />
               {sinEtiquetas ? null : (
                 <text
-                  x={px(d.pose.x)}
-                  y={
-                    py(d.pose.y) -
-                    Math.max(d.dimensiones.largo_m, d.dimensiones.ancho_m) / 2 -
-                    fuente * 0.4
-                  }
+                  x={etiquetasDeclaradas[k]!.x}
+                  y={etiquetasDeclaradas[k]!.y}
                   fontSize={fuente * 0.8}
                   textAnchor="middle"
                   fill="var(--texto-2)"
+                  paintOrder="stroke"
+                  stroke="var(--fondo)"
+                  strokeWidth={fuente * 0.18}
                 >
-                  {declarada!.etiqueta}
+                  {/* Cada silueta con su vehículo (ronda 4): el nombre de la versión va en la leyenda. */}
+                  {etiquetasDeclaradas[k]!.texto}
                 </text>
               )}
             </g>

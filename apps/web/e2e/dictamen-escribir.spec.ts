@@ -101,7 +101,7 @@ test("@flujo /cesvi: el dictamen se escribe con el 3D de Unity abierto y sale co
   await page.locator("body").press("ArrowUp");
   expect(await teclasDeUnity()).toContain("keydown:ArrowUp");
 
-  await irAPaso(page, 8);
+  await irAPaso(page, 9);
   const campo = page.getByTestId("conclusion-perito");
   const validar = page.getByTestId("validar-dictamen");
   // «Validar y firmar» dice junto al botón qué falta.

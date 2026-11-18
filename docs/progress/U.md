@@ -10,6 +10,14 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 - **Unity y Blender corren en segundo plano** desde el 2026-11-10: René reabrió la sesión con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`. Sigue la regla de un solo proceso pesado a la vez.
 - **Cómo se itera:** capturas del Editor en modo batch (`Capturas.Tomar`, unos 3 min). En esta sesión no hubo herramientas del MCP de Unity. Un build WebGL solo al cerrar cada punto.
 
+## Ronda 4, punto 8: las versiones en el 3D (René, 2026-11-18; ADR 0123)
+
+- **Ahora (sin build nuevo):** en «Versiones», «La reconstrucción» / «Esta versión» alterna lo que carga Unity.
+  - Se conservan el instante y el modo de cámara.
+  - El paquete 3D, las fotos y el video siguen siendo los de la reconstrucción.
+  - **Límite:** un giro a mano en la órbita vuelve a su ángulo, porque la escena se recarga.
+- **Siguiente:** el fantasma superpuesto (`caso-3d` con la versión, vehículos translúcidos en Unity), compilado con el paquete del colaborador. Se cambia antes de la demo si la medición cumple.
+
 ## Ronda 4, B7: «Descargar video» del 3D (René, 2026-11-18; ADR 0122)
 
 - **Qué hace:** el botón «Descargar video», junto al del minimapa, graba la reproducción completa con la cámara elegida. Sale un MP4 H.264 de 1920×1080 a 30 fps, con la leyenda ilustrativa (la dibuja Unity) y el logo; el minimapa no aparece.

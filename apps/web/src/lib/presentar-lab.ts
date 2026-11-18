@@ -24,8 +24,15 @@ export interface FilaCapitulo {
   grande?: boolean;
 }
 
+/** Una versión del caso para su capítulo (ronda 4): una declaración o una hipótesis del perito. */
+export interface VersionPresentar {
+  tipo: "declaracion" | "hipotesis";
+  titulo: string;
+  resumen: string;
+}
+
 export interface Capitulo {
-  clave: "escena" | "impacto" | "finales" | "contra";
+  clave: "escena" | "impacto" | "finales" | "versiones" | "contra";
   titulo: string;
   filas: FilaCapitulo[];
   /** Una línea debajo de sus datos (por qué difieren las dos lecturas). */
@@ -60,7 +67,10 @@ export function capitulos({
   fisica = null,
   letraDe = (id) => id,
   conteo,
+  versiones = [],
 }: {
+  /** Las versiones que probó el perito (ronda 4): van en su capítulo, después de las finales. */
+  versiones?: readonly VersionPresentar[];
   /** La lectura de la reconstrucción física contra el reporte. */
   fisica?: LecturaFisica | null;
   letraDe?: (id: string) => string;
@@ -145,6 +155,18 @@ export function capitulos({
   };
 
   const salida = [escena, impacto, finales];
+  if (versiones.length)
+    salida.push({
+      clave: "versiones",
+      titulo: "Versiones",
+      t0: res.t_fin,
+      t1: res.t_fin,
+      filas: versiones.map((v) => ({
+        etiqueta: `${v.tipo === "declaracion" ? "Declaración" : "Hipótesis del perito"} · ${v.titulo}`,
+        valor: v.resumen,
+      })),
+      nota: "Lo que dice un conductor no es evidencia y una hipótesis es una prueba del perito: las dos, simuladas con la misma física. Croquis no dice quién tiene razón.",
+    });
   if (contra || fisica) {
     const filas: FilaCapitulo[] = [];
     if (contra) {

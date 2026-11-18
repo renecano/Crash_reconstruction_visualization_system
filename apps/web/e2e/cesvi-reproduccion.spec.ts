@@ -43,7 +43,7 @@ test("@flujo /cesvi/reproduccion: la evidencia, y cada reporte abre su caso en e
   await expect(page.getByTestId("visor-caso").locator("canvas").first()).toBeVisible({
     timeout: 60_000,
   });
-  await irAPaso(page, 7);
+  await irAPaso(page, 8);
   await expect(page.getByTestId("eje-modalidad")).toContainText("CESVI");
   await page.getByTestId("ver-detalle-contra").click();
   await expect(page.getByTestId("conclusiones-cesvi")).toBeVisible();

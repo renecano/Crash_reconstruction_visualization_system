@@ -641,7 +641,7 @@ async function medir(page: Page, cpu: number) {
     /* sin espacio: la traza no hace falta para el resultado */
   }
   // El paso «Los daños» abre el 3D con el mismo visor: nunca dos lienzos (WebGPU/WebGL) a la vez.
-  if (ESCENARIO === "caso") await irAPaso(page, 5);
+  if (ESCENARIO === "caso") await irAPaso(page, 6);
   await page.waitForTimeout(500);
   const lienzosEnDanos = await page.locator("canvas").count();
   const ordenRevelado = await page.evaluate(() => window.__croquisOrdenRevelado ?? []);

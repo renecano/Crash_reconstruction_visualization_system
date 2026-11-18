@@ -98,17 +98,17 @@ for (const [luz, tema] of [
     await masCerca(page);
     await foto("05-reconstruccion-unity-detras");
 
-    await irAPaso(page, 5);
-    await quieta(page);
-    await foto("06-los-danos");
     await irAPaso(page, 6);
     await quieta(page);
-    await foto("07-los-numeros");
+    await foto("06-los-danos");
     await irAPaso(page, 7);
+    await quieta(page);
+    await foto("07-los-numeros");
+    await irAPaso(page, 8);
     await quieta(page);
     await foto("08-contra-cesvi");
 
-    await irAPaso(page, 8);
+    await irAPaso(page, 9);
     await expect
       .poll(
         async () =>

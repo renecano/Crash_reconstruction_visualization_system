@@ -7,7 +7,8 @@ Para la demo en vivo con los peritos de CESVI. El video grabado tiene su propio 
 - **Cifras:** solo las que muestra la pantalla. Las de abajo son las del 2026-11-15; si la pantalla dice otra cosa, manda la pantalla.
 - **Nada juzga al conductor:** el perito concluye. Croquis es una reconstrucción de apoyo.
 - **Antes de empezar:** Chrome con caché (no incógnito), la laptop conectada a la corriente, y el 3D de AXA abierto una vez antes (así el build ya está en caché: la primera carga tarda unos 10 s; las siguientes, 3 a 4 s).
-- **Los actos** (la barra de arriba): «El hecho», «La escena», «Reconstrucción», «Análisis», «Contra CESVI» y «Dictamen». En ventanas de menos de 1280 px de ancho, la barra muestra el nombre del acto actual y los demás con su número.
+- **Actualizado** el 2026-11-18 con el acto «Versiones» (ronda 4, punto 8).
+- **Los actos** (la barra de arriba): «El hecho», «La escena», «Reconstrucción», «Versiones», «Análisis», «Contra CESVI» y «Dictamen». En ventanas de menos de 1280 px de ancho, la barra muestra el nombre del acto actual y los demás con su número.
 
 ## 0 · Apertura (1 min)
 
@@ -33,6 +34,16 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 - **Leyenda:** reconstrucción ilustrativa; el entorno es procedural, no el lugar real.
 - **«Descargar video»** (arriba a la derecha, junto a «Ocultar minimapa»): graba la reproducción completa con la cámara elegida, en MP4 de 1920×1080, con la leyenda y el logo, y dice cuánto falta. Mientras graba, la escena se tapa con un panel; «Cancelar» o Esc lo paran. En la demo conviene hacerlo con una cámara ya elegida y no esperar a que termine: con unos segundos basta para mostrarlo. Funciona en Chrome y Edge.
 - **La nota bajo el 3D** dice de qué vehículo y qué velocidad es, con el nombre del panel: «B · Tacoma (V2) antes del impacto: Croquis 57 km/h (55–78) · CESVI 63.15 km/h de barrera equivalente por la deformación (EBS)» y «A · Silverado 2500 (V1) al salir del impacto: Croquis 31 km/h · CESVI 60.27 km/h por los restos». Presentar y el dictamen lo nombran igual.
+
+> «Comparar con una versión» (bajo la cifra, en Reconstrucción) → acto «Versiones».
+
+- **Qué es:** lo que declaró cada conductor y las hipótesis «¿y si…?» del perito, simuladas con la misma física y dibujadas sobre la reconstrucción. Croquis no dice quién tiene razón ni juzga a ningún conductor.
+- **La declaración de AXA ya viene escrita:** «Agregar lo que declaró un conductor» → «Leer y comparar». La lectura usa Claude (dentro del tope diario); en la demo local sin la llave, la pantalla lo dice y lo demás sigue.
+- **La lista de versiones:** cada una con su tipo («Declaración del conductor» o «Hipótesis del perito»), su título y una línea de resumen («4 de 7 puntos comparables no coinciden con la evidencia»). La elegida va punteada sobre la reconstrucción en el 2D, con el nombre de cada vehículo.
+- **Qué cambia:** tarjetas en el lenguaje del perito, primero lo que no coincide: «Declaró» contra «La evidencia» (velocidad, zona de contacto, dónde quedó). En una hipótesis: si se tocan, la velocidad de cada vehículo al contacto, dónde está al contacto y cuánto se separa su trayectoria, contra los mismos conductores sin ella.
+- **«Probar una hipótesis «¿y si…?»»:** conductor, qué hace (frenar, volantear, seguir) y cuántos segundos antes del impacto. La simulación llega hasta el primer contacto y no calcula el choque ni el daño; lo dice.
+- **En el 3D:** «La reconstrucción» / «Esta versión» alterna entre las dos con el mismo instante y la misma cámara. Un giro hecho a mano en la órbita vuelve a su ángulo al alternar (el build publicado recarga la escena); el fantasma superpuesto en Unity es el build siguiente.
+- **Llegan a Presentar** (su capítulo, antes de «Contra CESVI») **y al dictamen** («Versiones del caso»), cada una marcada como declaración o como hipótesis.
 
 > Acto «Contra CESVI».
 

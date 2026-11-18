@@ -104,7 +104,7 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   await expect(page.getByTestId("siguiente")).toBeEnabled();
   await sinIdentificadoresDeFuente(page);
 
-  // 4. La reconstrucción, y la declaración del conductor ya escrita para compararla.
+  // 4. La reconstrucción, y en «Versiones» la declaración del conductor ya escrita para compararla.
   await irAPaso(page, 4);
   await page.getByTestId("reconstruir").click();
   await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 60_000 });
@@ -122,9 +122,12 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
     "data-tip",
     `Mejor ajuste: ${V2.texto} km/h`,
   );
-  await page.getByTestId("ver-detalle-reconstruccion").click();
-  await page.getByTestId("abrir-declaracion").click();
+  // La declaración del conductor, ya escrita, está en el acto «Versiones» (ronda 4, punto 8).
+  await page.getByTestId("comparar-version").click();
+  await expect(page.getByTestId("panel-paso")).toHaveAttribute("data-paso", "5");
   await expect(page.getByTestId("texto-declaracion")).toHaveValue(/revers/);
+  await irAPaso(page, 4);
+  await page.getByTestId("ver-detalle-reconstruccion").click();
 
   // Los tooltips también salen con el foco de teclado (§9).
   const impacto = page.getByTestId("maqueta-impacto");
@@ -161,7 +164,7 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   await expect(recorrido).toHaveAttribute("data-modo", "trabajar");
 
   // 5. Los daños, con la correspondencia del método de CESVI.
-  await irAPaso(page, 5);
+  await irAPaso(page, 6);
   await expect(page.getByTestId("criterios-axa")).toBeVisible();
   // §0.1: el perfil medido de V2 del reporte; V1 sin medida dice «sin dato»; la energía y el Δv de
   // la reconstrucción ya no salen en 0.
@@ -185,13 +188,13 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   await expect(page.getByTestId("dano-V1").getByTestId("perfil-deformacion")).toHaveCount(0);
 
   // 6. Los números: la verificación con las medidas del reporte reproduce la EBS de la Tacoma.
-  await irAPaso(page, 6);
+  await irAPaso(page, 7);
   await expect(page.getByTestId("verificacion-cesvi")).toContainText("63.90 km/h");
   await expect(page.getByTestId("metodo-verificacion")).toContainText("Método de CESVI");
 
   // 7. Contra el reporte de CESVI: la misma modalidad y cada número del reporte con el de Croquis,
   // su diferencia y su porcentaje.
-  await irAPaso(page, 7);
+  await irAPaso(page, 8);
   await expect(page.getByTestId("eje-modalidad")).toHaveAttribute("data-estado", "coincide");
   await expect(page.getByTestId("cifra-contra-croquis")).toHaveText("63.90");
   await expect(page.getByTestId("cifra-contra-cesvi")).toHaveText("63.15");
@@ -222,7 +225,7 @@ test("@flujo /cesvi: el caso de AXA desde la lista, del caso al dictamen en PDF"
   await expect(tabla.locator('[data-fila="energia"]')).toContainText("2.39");
 
   // 8. El dictamen, en PDF.
-  await irAPaso(page, 8);
+  await irAPaso(page, 9);
   // §0.5: un solo título en el paso del dictamen.
   await expect(
     page.getByTestId("panel-paso").getByRole("heading", { name: /dictamen/i }),

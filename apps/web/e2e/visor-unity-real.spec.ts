@@ -264,9 +264,9 @@ test("/cesvi con el Unity real: mover el poste en 3D, fotos del dictamen y Prese
   await page.screenshot({ path: join(CAPTURAS, "3-poste-movido.png") });
 
   // Las fotos del dictamen salen de Unity: tres PNG distintos.
-  await irAPaso(page, 6);
+  await irAPaso(page, 7);
   await page.getByTestId("siguiente").click();
-  await expect(page.getByTestId("panel-paso")).toHaveAttribute("data-paso", "8");
+  await expect(page.getByTestId("panel-paso")).toHaveAttribute("data-paso", "9");
   await expect
     .poll(
       async () =>
