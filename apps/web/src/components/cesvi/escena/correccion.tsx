@@ -5,9 +5,58 @@
  * con la paleta y la barra de controles grandes de lo seleccionado; la lógica vive en
  * `@croquis/cesvi` (objetos) y en `@/lib/escena-facil` (lo demás).
  */
-import { TIPOS_OBJETO, type TipoObjeto } from "@croquis/cesvi";
+import { ROLES_PERSONA, TIPOS_OBJETO, type RolPersona, type TipoObjeto } from "@croquis/cesvi";
 import { useEffect, useRef } from "react";
 import type { Capacidades } from "@/lib/seleccion-escena";
+import { IconoPersona } from "./figura-persona";
+
+/** Con artículo y en minúsculas: «el peatón», «el ciclista». */
+export const articuloPersona = (r: RolPersona) => (r === "ciclista" ? "el ciclista" : "el peatón");
+/** Tras «a»: «al peatón», «al ciclista». */
+export const alPersona = (r: RolPersona) => `al ${articuloPersona(r).slice(3)}`;
+
+/**
+ * A3: la lectura del caso dice que un impacto fue contra un peatón o un ciclista y en la escena no
+ * hay nadie. Sin la persona no hay atropello: se pide colocarla donde la golpearon.
+ */
+export function AvisoFaltaPersona({
+  rol,
+  onColocar,
+  activo = false,
+}: {
+  rol: RolPersona;
+  onColocar: () => void;
+  /** Ya se está colocando: el botón queda presionado y la pista dice qué tocar. */
+  activo?: boolean;
+}) {
+  return (
+    <div
+      className="escena-mensaje flex-wrap"
+      data-tipo="alerta"
+      role="status"
+      data-testid="falta-persona"
+      data-rol={rol}
+    >
+      <span className="escena-icono-mensaje" aria-hidden="true">
+        !
+      </span>
+      <span className="min-w-0 flex-1 text-[0.95rem]">
+        El impacto fue contra {rol === "ciclista" ? "un ciclista" : "un peatón"}: colócalo donde lo
+        golpearon.
+      </span>
+      <button
+        type="button"
+        className="boton-principal escena-boton flex items-center gap-2"
+        aria-pressed={activo}
+        onClick={onColocar}
+        data-testid="colocar-persona-faltante"
+      >
+        <IconoPersona rol={rol} tamano={22} />
+        Colocar {alPersona(rol)}
+      </button>
+    </div>
+  );
+}
 
 /** La silueta de cada objeto de la paleta, vista desde arriba (24 × 24). */
 function Silueta({ tipo }: { tipo: TipoObjeto }) {
@@ -72,6 +121,10 @@ function Silueta({ tipo }: { tipo: TipoObjeto }) {
 export function PanelCorregir({
   poniendo,
   onElegir,
+  poniendoPersona = null,
+  onElegirPersona,
+  faltaPersona = null,
+  onCentro,
   enLaEscena = [],
   onSeleccionar,
   onTerreno,
@@ -79,6 +132,13 @@ export function PanelCorregir({
 }: {
   poniendo: TipoObjeto | null;
   onElegir: (t: TipoObjeto | null) => void;
+  /** A3: el peatón o el ciclista que se va a poner con el siguiente toque. */
+  poniendoPersona?: RolPersona | null;
+  onElegirPersona?: (r: RolPersona | null) => void;
+  /** A3: el impacto fue contra una persona y no hay ninguna en la escena. */
+  faltaPersona?: RolPersona | null;
+  /** Ponerlo en el centro del mapa, sin tocarlo (con el teclado). */
+  onCentro?: () => void;
   /**
    * Lo que ya está en la escena, para elegirlo sin tocar el mapa (con el teclado o el lector de
    * pantalla; René, 2026-11-17).
@@ -99,9 +159,16 @@ export function PanelCorregir({
         Corregir la escena
       </h2>
       <p className="t-cuerpo text-texto-2">
-        Toca un coche, una marca, un objeto o una zona del terreno para moverlo, girarlo o quitarlo.
-        O agrega algo que está en el lugar.
+        Toca un coche, una persona, una marca, un objeto o una zona del terreno para moverlo,
+        girarlo o quitarlo. O agrega algo que está en el lugar.
       </p>
+      {faltaPersona && onElegirPersona ? (
+        <AvisoFaltaPersona
+          rol={faltaPersona}
+          activo={poniendoPersona === faltaPersona}
+          onColocar={() => onElegirPersona(poniendoPersona === faltaPersona ? null : faltaPersona)}
+        />
+      ) : null}
       {enLaEscena.length && onSeleccionar ? (
         <div className="flex flex-col gap-2">
           <h3 id="en-la-escena-titulo" className="text-[0.95rem] font-semibold">
@@ -142,11 +209,45 @@ export function PanelCorregir({
           </button>
         ))}
       </div>
-      {poniendo ? (
-        <p className="t-nota" role="status" data-testid="paleta-pista">
-          Toca el mapa donde está{" "}
-          {TIPOS_OBJETO.find((t) => t.tipo === poniendo)!.nombre.toLowerCase()}.
-        </p>
+      {onElegirPersona ? (
+        <div
+          className="grid grid-cols-2 gap-2"
+          role="group"
+          aria-label="Agregar un peatón o un ciclista"
+        >
+          {ROLES_PERSONA.map((r) => (
+            <button
+              key={r.rol}
+              type="button"
+              className="escena-opcion flex min-h-12 items-center gap-2 rounded-xl px-3 text-left text-[0.95rem]"
+              aria-pressed={poniendoPersona === r.rol}
+              onClick={() => onElegirPersona(poniendoPersona === r.rol ? null : r.rol)}
+              data-testid={`agregar-${r.rol}`}
+            >
+              <IconoPersona rol={r.rol} />
+              <span className="font-semibold">{r.nombre}</span>
+            </button>
+          ))}
+        </div>
+      ) : null}
+      {poniendo || poniendoPersona ? (
+        <div className="flex flex-wrap items-center gap-2" role="status" data-testid="paleta-pista">
+          <p className="t-nota min-w-0 flex-1">
+            {poniendoPersona
+              ? `Toca el mapa donde golpearon ${alPersona(poniendoPersona)}.`
+              : `Toca el mapa donde está ${TIPOS_OBJETO.find((t) => t.tipo === poniendo)!.nombre.toLowerCase()}.`}
+          </p>
+          {onCentro ? (
+            <button
+              type="button"
+              className="boton-secundario boton-compacto"
+              onClick={onCentro}
+              data-testid="poner-al-centro"
+            >
+              En el centro del mapa
+            </button>
+          ) : null}
+        </div>
       ) : null}
       {onTerreno ? (
         <button
@@ -177,6 +278,10 @@ export interface AccionSeleccion {
   etiqueta?: string;
   hacer: () => void;
   peligro?: boolean;
+  /** El `data-testid`, si no es el de omisión (`sel-<id>`). */
+  testId?: string;
+  /** Un botón que se queda presionado mientras espera el toque («Marcar dónde quedó»). */
+  presionado?: boolean;
 }
 
 /** Los atajos que sí aplican a lo seleccionado, en palabras. */
@@ -238,7 +343,8 @@ export function BarraSeleccion({
           className={`${a.peligro ? "boton-secundario text-[var(--error)]" : "boton-secundario"} escena-boton`}
           onClick={a.hacer}
           aria-label={a.etiqueta}
-          data-testid={`sel-${a.id}`}
+          aria-pressed={a.presionado}
+          data-testid={a.testId ?? `sel-${a.id}`}
         >
           {a.texto}
         </button>

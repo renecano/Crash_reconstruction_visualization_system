@@ -10,6 +10,7 @@
 import {
   formato as F,
   agregarObjeto,
+  agregarPersona,
   agregarOndulacion,
   agregarTope,
   agregarZona,
@@ -19,13 +20,17 @@ import {
   conPosicion,
   conRestos,
   distanciaM,
+  distanciaProyeccion,
   empalmesDeObjetos,
   escalarTerreno,
   friccionDeTabla,
   girarObjeto,
+  girarPersona,
   girarTerreno,
+  marcarFinalPersona,
   medidasDe,
   moverObjeto,
+  nombrePersona,
   nombreSuperficie,
   objetosDe,
   piezasTerreno,
@@ -36,6 +41,7 @@ import {
   usaRelieve,
   type Expediente,
   type PosicionDescrita,
+  type RolPersona,
   type TipoObjeto,
 } from "@croquis/cesvi";
 import type { OverpassResponse } from "@croquis/croquis-2d";
@@ -89,10 +95,19 @@ import {
   quitarChoqueIntermedio,
   quitarUltimoPuntoDePaso,
   resumenC1,
+  resumenPersonas,
   type RespuestasC1,
 } from "@/lib/escena-facil";
-import { BarraSeleccion, PanelCorregir, type AccionSeleccion } from "./correccion";
+import {
+  AvisoFaltaPersona,
+  BarraSeleccion,
+  PanelCorregir,
+  alPersona,
+  articuloPersona,
+  type AccionSeleccion,
+} from "./correccion";
 import { AvisoEscenaCambio } from "./aviso-escena-cambio";
+import { IconoPersona } from "./figura-persona";
 import {
   accionDeTecla,
   capacidadesDe,
@@ -103,16 +118,19 @@ import {
   fijarRumbo,
   girarSeleccion,
   moverA,
+  personaFaltante,
   posicionDe,
   quitarSeleccion,
   seleccionables,
   type EstadoFrenteAEscena,
 } from "@/lib/seleccion-escena";
 import {
+  COLOR_PERSONA,
   MapaFacil,
   trayectoDeLlegada,
   type CocheMapa,
   type FlechaMapa,
+  type PersonaMapa,
   type TerrenoMapa,
 } from "./mapa-facil";
 import { textoMedicion } from "@/lib/medir";
@@ -257,7 +275,21 @@ export function EscenaFacil({
   // W4: «Rehacer», lo seleccionado para corregir y el objeto que se va a poner con el siguiente toque.
   const [futuro, setFuturo] = useState<readonly EstadoEscena[]>([]);
   const [seleccion, setSeleccion] = useState<string | null>(null);
-  const [poniendo, setPoniendo] = useState<TipoObjeto | null>(null);
+  const [poniendoObjeto, setPoniendoObjeto] = useState<TipoObjeto | null>(null);
+  // A3: el peatón o el ciclista que se va a poner con el siguiente toque, y la persona a la que se le
+  // marca dónde quedó (el siguiente toque fija su `final`).
+  const [poniendoPersona, setPoniendoPersona] = useState<RolPersona | null>(null);
+  const [marcandoFinal, setMarcandoFinal] = useState<string | null>(null);
+  // Se pone una cosa a la vez: un objeto o una persona (`setPoniendo(null)` suelta las dos).
+  const poniendo = poniendoObjeto;
+  const setPoniendo = (t: TipoObjeto | null) => {
+    setPoniendoObjeto(t);
+    setPoniendoPersona(null);
+  };
+  const elegirPersona = (r: RolPersona | null) => {
+    setPoniendoPersona(r);
+    setPoniendoObjeto(null);
+  };
   const objetosColocados = useMemo(() => objetosDe(e), [e]);
   // C3 (W5): lo que se va a poner en el terreno con el siguiente toque, y lo ya marcado.
   const [poniendoTerreno, setPoniendoTerreno] = useState<PoniendoTerreno | null>(null);
@@ -284,6 +316,11 @@ export function EscenaFacil({
     pasoActual(pasos) === null && colocando === null && editando === null && editandoC1 === null;
   /** W4: con la escena lista y la tarjeta cerrada, lo colocado se toca para corregirlo. */
   const corrigiendo = todoListo && listaVista;
+  /** A3: a quién se le marca dónde quedó; se suelta solo si la persona deja de estar seleccionada. */
+  const marcando =
+    corrigiendo && marcandoFinal && seleccion === `persona:${marcandoFinal}` ? marcandoFinal : null;
+  const personasColocadas = useMemo(() => e.personas ?? [], [e]);
+  const faltaPersona = useMemo(() => personaFaltante(e), [e]);
 
   /**
    * Un cambio con su «Deshacer». La pila guarda los últimos `MAX_DESHACER` estados: corregir «las
@@ -792,6 +829,34 @@ export function EscenaFacil({
       setSeleccion(`objeto:${id}`);
       return;
     }
+    if (poniendoPersona) {
+      // A3: la persona va donde la golpearon; se gira después hacia donde iba.
+      const rol = poniendoPersona;
+      const { expediente, id } = agregarPersona(e, rol, p, 0);
+      cambiar(
+        { ...estado, expediente },
+        exito(`¡Listo! Colocaste ${alPersona(rol)}. Gíralo hacia donde iba y marca dónde quedó.`),
+      );
+      setPoniendoPersona(null);
+      setListaVista(true);
+      setSeleccion(`persona:${id}`);
+      return;
+    }
+    if (marcando) {
+      const x = marcarFinalPersona(e, marcando, p);
+      const per = x.personas?.find((q) => q.id === marcando);
+      const d = per ? distanciaProyeccion(per) : null;
+      cambiar(
+        { ...estado, expediente: x },
+        exito(
+          d !== null
+            ? `¡Listo! Quedó a ${F.metros(d, 1)} de donde lo golpearon.`
+            : "¡Listo! Marcaste dónde quedó.",
+        ),
+      );
+      setMarcandoFinal(null);
+      return;
+    }
     if (corrigiendo) {
       // Tocar el mapa vacío suelta lo seleccionado.
       setSeleccion(null);
@@ -899,6 +964,17 @@ export function EscenaFacil({
     const { tipo, id } = deClave(clave);
     if (tipo === "coche") return `El ${nombres[id] ?? id}`;
     if (tipo === "objeto") return objetosColocados.find((o) => o.id === id)?.nombre ?? "Objeto";
+    if (tipo === "persona") {
+      // «Peatón · Proyección 14.0 m»; su punto final, «Dónde quedó: Peatón».
+      const final = id.endsWith(":final");
+      const pid = final ? id.slice(0, -":final".length) : id;
+      const per = personasColocadas.find((x) => x.id === pid);
+      if (!per) return "Persona";
+      const nombre = nombrePersona(e, pid);
+      if (final) return `Dónde quedó: ${nombre}`;
+      const d = distanciaProyeccion(per);
+      return d !== null ? `${nombre} · Proyección ${F.metros(d, 1)}` : nombre;
+    }
     if (tipo === "terreno") {
       const t = terrenoMarcado.find((x) => x.id === id);
       return t ? `${t.nombre} · ${medidasDePieza(t)}` : "Terreno";
@@ -940,10 +1016,17 @@ export function EscenaFacil({
           ? `Quitaste dónde quedó el ${nombres[id] ?? id}. Márcalo otra vez o elige «No sé».`
           : id === "golpe"
             ? "Lo quitaste: Croquis usa el lugar del choque."
-            : "Lo quitaste.",
+            : tipo === "persona" && id.endsWith(":final")
+              ? "Borraste dónde quedó: sin eso no hay distancia de proyección."
+              : "Lo quitaste.",
       ),
     );
-    setSeleccion(null);
+    // Sin su punto final, la persona sigue seleccionada (para marcarlo otra vez).
+    setSeleccion(
+      tipo === "persona" && id.endsWith(":final")
+        ? `persona:${id.slice(0, -":final".length)}`
+        : null,
+    );
   };
   const accionesDe = (clave: string): AccionSeleccion[] => {
     const { tipo, id } = deClave(clave);
@@ -993,6 +1076,60 @@ export function EscenaFacil({
           hacer: reabrir(() => setEditando({ tipo: "final", id })),
         },
         ...(fin ? [quitarlo] : []),
+      ];
+    }
+    if (tipo === "persona" && id.endsWith(":final")) {
+      const pid = id.slice(0, -":final".length);
+      return [
+        {
+          id: "ver-persona",
+          texto: nombrePersona(e, pid),
+          etiqueta: `Seleccionar: ${nombrePersona(e, pid)}`,
+          hacer: () => setSeleccion(`persona:${pid}`),
+        },
+        { ...quitarlo, texto: "Borrar", etiqueta: `Borrar: ${nombre}` },
+      ];
+    }
+    if (tipo === "persona") {
+      const per = personasColocadas.find((x) => x.id === id);
+      const nombreCorto = nombrePersona(e, id);
+      const esperando = marcando === id;
+      return [
+        {
+          id: "girar-izq",
+          texto: "Girar −15°",
+          etiqueta: `Girar ${nombreCorto} 15° a la izquierda`,
+          hacer: () => hecho(girarPersona(e, id, -15), "¡Listo! Lo giraste."),
+        },
+        {
+          id: "girar-der",
+          texto: "Girar +15°",
+          etiqueta: `Girar ${nombreCorto} 15° a la derecha`,
+          hacer: () => hecho(girarPersona(e, id, 15), "¡Listo! Lo giraste."),
+        },
+        {
+          id: "marcar-final",
+          testId: "marcar-final-persona",
+          texto: esperando
+            ? "Toca el mapa…"
+            : per?.final
+              ? "Marcar otra vez dónde quedó"
+              : "Marcar dónde quedó",
+          etiqueta: `Marcar dónde quedó: ${nombreCorto}`,
+          presionado: esperando,
+          hacer: () => setMarcandoFinal(esperando ? null : id),
+        },
+        ...(per?.final
+          ? [
+              {
+                id: "borrar-final",
+                texto: "Borrar dónde quedó",
+                etiqueta: `Borrar dónde quedó: ${nombreCorto}`,
+                hacer: () => quitarLoSeleccionado(`persona:${id}:final`),
+              },
+            ]
+          : []),
+        { ...quitarlo, etiqueta: `Quitar: ${nombreCorto}` },
       ];
     }
     if (tipo === "objeto") {
@@ -1152,7 +1289,12 @@ export function EscenaFacil({
    * pone un objeto, se mide o se marca el terreno, el toque es para eso.
    */
   const puedeSeleccionar =
-    todoListo && !poniendo && herramienta !== "medir" && poniendoTerreno === null;
+    todoListo &&
+    !poniendo &&
+    !poniendoPersona &&
+    !marcando &&
+    herramienta !== "medir" &&
+    poniendoTerreno === null;
   const seleccionar = (clave: string) => {
     setListaVista(true);
     setSeleccion(clave);
@@ -1165,6 +1307,14 @@ export function EscenaFacil({
   useEffect(() => {
     alTeclado.current = (ev) => {
       if (ev.defaultPrevented || enCampoDeTexto(ev.target)) return;
+      // Esc primero cancela lo que espera un toque (poner a una persona, marcar dónde quedó).
+      if (ev.key === "Escape" && (marcando || poniendoPersona)) {
+        setMarcandoFinal(null);
+        setPoniendoPersona(null);
+        ev.preventDefault();
+        ev.stopPropagation();
+        return;
+      }
       const sel = corrigiendo ? seleccion : null;
       const accion = accionDeTecla(ev, sel !== null);
       if (!accion) return;
@@ -1207,6 +1357,7 @@ export function EscenaFacil({
     else if (l.tipo === "objeto") setEditandoC1("otros");
     else if (l.tipo === "paso") setEditandoC1("paso");
     else if (l.tipo === "lugar" && l.objeto) setSeleccion(`objeto:${l.objeto}`);
+    else if (l.tipo === "persona" && l.persona) setSeleccion(`persona:${l.persona}`);
     else if (l.tipo === "terreno") {
       if (l.terreno) setSeleccion(`terreno:${l.terreno}`);
       else setEditandoC1("terreno");
@@ -1230,6 +1381,25 @@ export function EscenaFacil({
     largo: o.largo,
     ancho: o.ancho,
   }));
+
+  // A3: los peatones y los ciclistas, con su distancia de proyección si se marcó dónde quedaron.
+  const personasMapa: PersonaMapa[] = personasColocadas.map((per) => {
+    const d = distanciaProyeccion(per);
+    return {
+      id: per.id,
+      rol: per.rol,
+      nombre: nombrePersona(e, per.id),
+      punto: per.punto,
+      rumbo: per.rumbo_deg ?? 0,
+      final: per.final ?? null,
+      proyeccion: d !== null ? `Proyección ${F.metros(d, 1)}` : null,
+    };
+  });
+  /** «En el centro del mapa»: lo que espera un toque, sin tocar (con el teclado). */
+  const ponerAlCentro = () => {
+    const c = mapa.current?.getCenter();
+    if (c) tocar({ lat: c.lat, lon: c.lng });
+  };
 
   // --- Lo que se dibuja en el mapa ---------------------------------------------------------------
   const coches: CocheMapa[] = vehiculos.flatMap((v) => {
@@ -1280,6 +1450,9 @@ export function EscenaFacil({
       ...(fin ? [{ puntos: [c, fin.punto], color: colores[v.id]!.css }] : []),
     ];
   });
+  // A3: de donde golpearon a la persona a donde quedó (la proyección), discontinua como las demás.
+  for (const per of personasColocadas)
+    if (per.final) lineas.push({ puntos: [per.punto, per.final], color: COLOR_PERSONA[tema] });
   const choques = impactos.flatMap((i) => {
     const p = puntoChoque(i.orden);
     return p ? [{ orden: i.orden, punto: p }] : [];
@@ -1907,7 +2080,7 @@ export function EscenaFacil({
     direccionesNoSe: estado.direccionesNoSe,
     juntoAlChoque: estado.juntoAlChoque,
   });
-  const resumenCompleto = [...resumen, ...resumenC1({ e, nombres, c1 })];
+  const resumenCompleto = [...resumen, ...resumenPersonas(e), ...resumenC1({ e, nombres, c1 })];
   const golpeMarcado = primerGolpe(e);
   const marcasC1 = [
     ...(golpeMarcado
@@ -1965,6 +2138,7 @@ export function EscenaFacil({
         }}
         objetos={objetosMapa}
         terreno={terrenoMapa}
+        personas={personasMapa}
         seleccion={corrigiendo ? seleccion : null}
         onSeleccionar={puedeSeleccionar ? seleccionar : undefined}
         onMover={moverSeleccion}
@@ -2017,6 +2191,10 @@ export function EscenaFacil({
           <PanelCorregir
             poniendo={poniendo}
             onElegir={setPoniendo}
+            poniendoPersona={poniendoPersona}
+            onElegirPersona={elegirPersona}
+            faltaPersona={faltaPersona}
+            onCentro={ponerAlCentro}
             enLaEscena={seleccionables(e).map((clave) => ({
               clave,
               nombre: nombreDeSeleccion(clave),
@@ -2034,7 +2212,37 @@ export function EscenaFacil({
         </div>
       ) : null}
       {corrigiendo && seleccion ? (
-        <div className="pointer-events-none absolute right-3 bottom-[84px] left-3 z-20 flex justify-center">
+        <div className="pointer-events-none absolute right-3 bottom-[84px] left-3 z-20 flex flex-col items-center gap-2">
+          {marcando ? (
+            <div
+              className="escena-mensaje pointer-events-auto flex-wrap"
+              data-tipo="alerta"
+              role="status"
+              data-testid="pista-final-persona"
+            >
+              <span className="min-w-0 flex-1 text-[0.95rem]">
+                Toca el mapa donde quedó{" "}
+                {articuloPersona(personasColocadas.find((x) => x.id === marcando)?.rol ?? "peaton")}
+                .
+              </span>
+              <button
+                type="button"
+                className="boton-secundario boton-compacto"
+                onClick={ponerAlCentro}
+                data-testid="final-al-centro"
+              >
+                En el centro del mapa
+              </button>
+              <button
+                type="button"
+                className="boton-secundario boton-compacto"
+                onClick={() => setMarcandoFinal(null)}
+                data-testid="cancelar-final-persona"
+              >
+                Cancelar <kbd className="escena-tecla">Esc</kbd>
+              </button>
+            </div>
+          ) : null}
           <BarraSeleccion
             nombre={nombreDeSeleccion(seleccion)}
             acciones={accionesDe(seleccion)}
@@ -2305,13 +2513,28 @@ export function EscenaFacil({
               Esto es lo que marcaste. Con esto Croquis ya puede reconstruir el choque. Para
               corregir algo, tócalo en el mapa o usa «Cambiar».
             </p>
+            {faltaPersona ? (
+              <AvisoFaltaPersona
+                rol={faltaPersona}
+                onColocar={() => {
+                  setListaVista(true);
+                  setSeleccion(null);
+                  elegirPersona(faltaPersona);
+                }}
+              />
+            ) : null}
             <ul
               className="flex flex-col divide-y divide-[var(--linea-suave)]"
               data-testid="escena-resumen"
             >
               {resumenCompleto.map((l, k) => (
                 <li key={k} className="flex gap-3 py-3">
-                  {!l.vehiculo ? (
+                  {l.persona ? (
+                    <IconoPersona
+                      rol={personasColocadas.find((x) => x.id === l.persona)?.rol ?? "peaton"}
+                      tamano={22}
+                    />
+                  ) : !l.vehiculo ? (
                     <svg viewBox="-12 -12 24 24" width="22" height="22" aria-hidden="true">
                       <path
                         d="M0 -11 L3 -4 L10 -6 L5 0 L10 6 L3 4 L0 11 L-3 4 L-10 6 L-5 0 L-10 -6 L-3 -4 Z"
@@ -2511,6 +2734,7 @@ export function lineasDeLaEscena(
       direccionesNoSe: estado.direccionesNoSe,
       juntoAlChoque: estado.juntoAlChoque,
     }),
+    ...resumenPersonas(e),
     ...(estado.c1 ? resumenC1({ e, nombres, c1: estado.c1 }) : []),
   ];
 }
@@ -2541,7 +2765,12 @@ export function ResumenDeLaEscena({
       <ul className="flex flex-col divide-y divide-[var(--linea-suave)]">
         {lineas.map((l, k) => (
           <li key={k} className="flex gap-3 py-3">
-            {!l.vehiculo ? (
+            {l.persona ? (
+              <IconoPersona
+                rol={(e.personas ?? []).find((x) => x.id === l.persona)?.rol ?? "peaton"}
+                tamano={22}
+              />
+            ) : !l.vehiculo ? (
               <svg viewBox="-12 -12 24 24" width="22" height="22" aria-hidden="true">
                 <path
                   d="M0 -11 L3 -4 L10 -6 L5 0 L10 6 L3 4 L0 11 L-3 4 L-10 6 L-5 0 L-10 -6 L-3 -4 Z"

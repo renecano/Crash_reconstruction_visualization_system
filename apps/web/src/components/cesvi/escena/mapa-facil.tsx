@@ -5,7 +5,7 @@
  * las flechas de llegada (botones grandes), los coches como coches (silueta vista desde arriba, a
  * escala, de su color, con su nombre y una flecha en el frente) y los botones redondos para girar.
  */
-import { formato as F, avanzar, type LonLat } from "@croquis/cesvi";
+import { formato as F, avanzar, type LonLat, type RolPersona } from "@croquis/cesvi";
 import type { GeoJSONSource, Map as MapaMl, Marker } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
@@ -15,6 +15,7 @@ import { tomarMapa, type MapaPrestado } from "@/lib/mapa-compartido";
 import { COLOR_MEDIDA, dibujoMedicion } from "@/lib/medir";
 import { COLOR_ONDULACION, COLOR_SUPERFICIE, COLOR_TOPE } from "@/lib/terreno-colores";
 import { estiloMapaEscena } from "./estilo-mapa-escena";
+import { svgPersona } from "./figura-persona";
 
 export interface CocheMapa {
   id: string;
@@ -50,6 +51,27 @@ export interface ObjetoMapa {
   largo: number;
   ancho: number;
 }
+
+/**
+ * Un peatón o un ciclista (A3, René, 2026-11-18): donde lo golpearon, con una flecha corta hacia
+ * donde iba y, si el perito lo marcó, dónde quedó con la distancia de proyección.
+ */
+export interface PersonaMapa {
+  id: string;
+  rol: RolPersona;
+  nombre: string;
+  punto: Punto;
+  rumbo: number;
+  final?: Punto | null;
+  /** «Proyección 14.0 m», ya formateada. */
+  proyeccion?: string | null;
+}
+
+/**
+ * El color de la línea de proyección y de su etiqueta, por tema: contraste de al menos 3:1 con la
+ * calle y el fondo del mapa en claro (#FFFFFF, #F4F2EC) y en oscuro (#1C2944, #0A1120).
+ */
+export const COLOR_PERSONA = { claro: "#6D28D9", oscuro: "#A78BFA" } as const;
 
 export interface LineaMapa {
   puntos: Punto[];
@@ -100,10 +122,12 @@ export interface MapaFacilProps {
   objetos?: ObjetoMapa[];
   /** W5: las zonas de otra superficie, las zonas onduladas y los topes. */
   terreno?: TerrenoMapa[];
+  /** A3: los peatones y los ciclistas que colocó el perito. */
+  personas?: PersonaMapa[];
   /**
    * W4, corregir después: lo ya colocado se toca para seleccionarlo («coche:V1», «objeto:obj-1»,
-   * «marca:golpe», «marca:objeto-2», «marca:paso-V1-1», «terreno:zona-1») y lo seleccionado se
-   * arrastra.
+   * «marca:golpe», «marca:objeto-2», «marca:paso-V1-1», «terreno:zona-1», «persona:per-1» y
+   * «persona:per-1:final») y lo seleccionado se arrastra.
    */
   onSeleccionar?: (clave: string) => void;
   seleccion?: string | null;
@@ -304,6 +328,8 @@ export function MapaFacil(p: MapaFacilProps) {
     p.coches,
     p.objetos,
     p.terreno,
+    p.personas,
+    p.tema,
     p.seleccion,
     Boolean(p.onSeleccionar),
     Boolean(p.onMoverCoche),
@@ -583,6 +609,75 @@ export function MapaFacil(p: MapaFacilProps) {
           o.rumbo,
           cuerpo,
         );
+    }
+
+    // A3: cada persona es una insignia con su figura y una flecha corta hacia donde iba; dónde quedó,
+    // un punto aparte con la distancia de proyección a la mitad de la línea.
+    const colorPersona = COLOR_PERSONA[p.tema];
+    for (const per of p.personas ?? []) {
+      const clave = `persona:${per.id}`;
+      const el = document.createElement("div");
+      el.className = "escena-persona";
+      el.setAttribute("data-testid", `persona-${per.id}`);
+      el.setAttribute("data-rol", per.rol);
+      el.setAttribute("data-rumbo", String(per.rumbo));
+      el.setAttribute("aria-label", per.nombre);
+      el.setAttribute("role", "img");
+      el.style.pointerEvents = "none";
+      const rumbo = document.createElement("div");
+      rumbo.className = "escena-persona-rumbo";
+      rumbo.innerHTML = `<svg viewBox="-30 -30 60 60" width="60" height="60" aria-hidden="true"><path d="M0 -29 L7.5 -19 L2.8 -19 L2.8 -15.5 L-2.8 -15.5 L-2.8 -19 L-7.5 -19 Z"/></svg>`;
+      rumbo.style.transform = `translate(-50%, -50%) rotate(${per.rumbo}deg)`;
+      const figura = document.createElement("span");
+      figura.className = "escena-persona-figura";
+      figura.innerHTML = svgPersona(per.rol, "#FFFFFF");
+      el.append(rumbo, figura);
+      const sel = seleccionable(el, clave);
+      if (sel) {
+        const nombre = document.createElement("span");
+        nombre.className = "escena-etiqueta";
+        nombre.textContent = ultimo.current.nombreDe?.(clave) ?? per.nombre;
+        nombre.style.transform = "translate(22px, -40px)";
+        el.append(nombre);
+      }
+      const marcador = agregar(el, per.punto);
+      if (sel) {
+        arrastrable(marcador, clave);
+        anillo(clave, per.punto, () => 40, per.rumbo, rumbo);
+      }
+      if (!per.final) continue;
+      const claveFinal = `${clave}:final`;
+      const fin = document.createElement("div");
+      fin.className = "escena-persona-final";
+      fin.setAttribute("data-testid", `persona-final-${per.id}`);
+      fin.setAttribute("aria-label", `Dónde quedó: ${per.nombre}`);
+      fin.setAttribute("role", "img");
+      fin.style.pointerEvents = "none";
+      fin.style.setProperty("--color-persona", colorPersona);
+      const punto = document.createElement("span");
+      punto.className = "escena-persona-final-punto";
+      fin.append(punto);
+      const selFinal = seleccionable(fin, claveFinal);
+      const mkFinal = agregar(fin, per.final);
+      // Con la persona seleccionada, dónde quedó también se arrastra directo.
+      if (selFinal || sel) arrastrable(mkFinal, claveFinal);
+      if (per.proyeccion) {
+        const medio = {
+          lat: (per.punto.lat + per.final.lat) / 2,
+          lon: (per.punto.lon + per.final.lon) / 2,
+        };
+        const caja = document.createElement("div");
+        caja.className = "escena-persona-proyeccion";
+        caja.style.pointerEvents = "none";
+        const etiqueta = document.createElement("span");
+        etiqueta.className = "escena-etiqueta escena-etiqueta-proyeccion";
+        etiqueta.setAttribute("data-testid", "proyeccion-persona");
+        etiqueta.setAttribute("data-persona", per.id);
+        etiqueta.style.setProperty("--color-persona", colorPersona);
+        etiqueta.textContent = per.proyeccion;
+        caja.append(etiqueta);
+        agregar(caja, medio);
+      }
     }
 
     // W5: cada pieza del terreno lleva su etiqueta en el centro; de ahí se toca y se arrastra.

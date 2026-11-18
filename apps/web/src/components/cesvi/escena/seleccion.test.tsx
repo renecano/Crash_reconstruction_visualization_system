@@ -3,11 +3,20 @@
  * sus botones con nombre accesible y los atajos que aplican; la lista para elegir sin tocar el mapa;
  * y el aviso de que la escena cambió después de reconstruir, con «Reconstruir de nuevo».
  */
+import { agregarPersona, nombrePersona, type Expediente, type RolPersona } from "@croquis/cesvi";
 import { fireEvent, render, screen } from "@testing-library/react";
+import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
-import { AVISO_ESCENA_CAMBIO } from "@/lib/seleccion-escena";
+import {
+  AVISO_ESCENA_CAMBIO,
+  capacidadesDe,
+  deClave,
+  personaFaltante,
+  quitarSeleccion,
+  seleccionables,
+} from "@/lib/seleccion-escena";
 import { AvisoEscenaCambio } from "./aviso-escena-cambio";
-import { BarraSeleccion, PanelCorregir, atajosDe } from "./correccion";
+import { AvisoFaltaPersona, BarraSeleccion, PanelCorregir, atajosDe } from "./correccion";
 
 describe("el aviso de que la escena cambió", () => {
   it("lo dice y ofrece reconstruir de nuevo", () => {
@@ -96,6 +105,102 @@ describe("la barra de lo seleccionado", () => {
       "Esc: soltar",
     ]);
     expect(atajosDe(undefined)).toEqual([]);
+  });
+});
+
+describe("peatones y ciclistas en la corrección (A3)", () => {
+  const C = { lat: 19.3576, lon: -99.0625 };
+  const base = {
+    vehiculos: [],
+    impactos: [{ orden: 1, vehiculos: ["V1"], objeto_fijo: "peatón" }],
+  } as unknown as Expediente;
+
+  /** El panel y la barra con un expediente vivo: colocar, elegir de la lista y quitar. */
+  function Arnes() {
+    const [e, setE] = useState(base);
+    const [poniendo, setPoniendo] = useState<RolPersona | null>(null);
+    const [sel, setSel] = useState<string | null>(null);
+    if (sel)
+      return (
+        <BarraSeleccion
+          nombre={nombrePersona(e, deClave(sel).id)}
+          capacidades={capacidadesDe(e, sel)}
+          acciones={[
+            {
+              id: "marcar-final",
+              testId: "marcar-final-persona",
+              texto: "Marcar dónde quedó",
+              presionado: false,
+              hacer: () => {},
+            },
+            {
+              id: "quitar",
+              texto: "Quitar",
+              peligro: true,
+              hacer: () => {
+                setE(quitarSeleccion(e, sel)!);
+                setSel(null);
+              },
+            },
+          ]}
+          onListo={() => setSel(null)}
+        />
+      );
+    return (
+      <>
+        <PanelCorregir
+          poniendo={null}
+          onElegir={() => {}}
+          poniendoPersona={poniendo}
+          onElegirPersona={setPoniendo}
+          faltaPersona={personaFaltante(e)}
+          onCentro={() => {
+            // Lo mismo que un toque en el centro del mapa.
+            setE(agregarPersona(e, poniendo!, C).expediente);
+            setPoniendo(null);
+          }}
+          enLaEscena={seleccionables(e).map((clave) => ({ clave, nombre: clave }))}
+          onSeleccionar={setSel}
+          onListo={() => {}}
+        />
+        <output data-testid="personas">{(e.personas ?? []).length}</output>
+      </>
+    );
+  }
+
+  it("se coloca desde la paleta, se elige de la lista y se quita", () => {
+    render(<Arnes />);
+    // El impacto fue contra un peatón y no hay nadie: la escena lo pide.
+    expect(screen.getByTestId("falta-persona").textContent).toContain(
+      "El impacto fue contra un peatón: colócalo donde lo golpearon",
+    );
+    const peaton = screen.getByTestId("agregar-peaton");
+    expect(screen.getByTestId("agregar-ciclista").getAttribute("aria-pressed")).toBe("false");
+    fireEvent.click(peaton);
+    expect(peaton.getAttribute("aria-pressed")).toBe("true");
+    expect(screen.getByTestId("paleta-pista").textContent).toContain(
+      "Toca el mapa donde golpearon al peatón.",
+    );
+    fireEvent.click(screen.getByTestId("poner-al-centro"));
+    expect(screen.getByTestId("personas").textContent).toBe("1");
+    expect(screen.queryByTestId("falta-persona")).toBeNull();
+    fireEvent.click(screen.getByTestId("elegir-persona-per-1"));
+    expect(screen.getByTestId("seleccion-nombre").textContent).toBe("Peatón");
+    expect(screen.getByTestId("marcar-final-persona")).toBeTruthy();
+    expect(screen.getByTestId("seleccion-atajos").textContent).toContain("Q / E: girar");
+    fireEvent.click(screen.getByTestId("sel-quitar"));
+    expect(screen.getByTestId("personas").textContent).toBe("0");
+    expect(screen.getByTestId("falta-persona")).toBeTruthy();
+  });
+
+  it("el aviso de la persona que falta dice si es un ciclista y la pone con un botón", () => {
+    const colocar = vi.fn();
+    render(<AvisoFaltaPersona rol="ciclista" onColocar={colocar} />);
+    expect(screen.getByTestId("falta-persona").textContent).toContain(
+      "El impacto fue contra un ciclista",
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Colocar al ciclista/ }));
+    expect(colocar).toHaveBeenCalledTimes(1);
   });
 });
 
