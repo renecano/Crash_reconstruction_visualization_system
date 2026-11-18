@@ -1,0 +1,227 @@
+{
+  "descripcion": "Ronda 4, punto 9: lo que hay del «mapa real» en México en puntos concretos. Los metadatos de la foto satelital de Esri World Imagery (consulta pública identify: fuente, fecha, resolución y exactitud declarada; no se bajan imágenes) y los edificios de OpenStreetMap a 300 m de cada punto (capa building de las teselas de OpenFreeMap, zoom 14), contados como figuras (las teselas juntan edificios vecinos) con algún vértice dentro del círculo, y cuántas traen una altura que no es la de omisión de OpenMapTiles (5 m). Pocos puntos: muestran el patrón, no son una muestra del país.",
+  "script": "eval/ronda4_mapa_real_datos.mjs",
+  "fecha": "2026-11-18T17:42:59.810Z",
+  "resumen": {
+    "puntos": 12,
+    "foto_esri": {
+      "puntos_con_dato": 12,
+      "resolucion_m_min": 0.31,
+      "resolucion_m_max": 0.5,
+      "exactitud_m_min": 5,
+      "exactitud_m_max": 8.47,
+      "fecha_mas_antigua": "2025-01-30",
+      "fecha_mas_reciente": "2026-05-15"
+    },
+    "edificios_osm": {
+      "puntos_con_dato": 9,
+      "puntos_sin_respuesta": 0,
+      "altura_por_omision_m": 5,
+      "figuras_de_edificios": 92,
+      "con_altura_propia": 78
+    }
+  },
+  "puntos": [
+    {
+      "lugar": "Cruce de un reporte de CESVI: Av. Niños Héroes, Guadalajara",
+      "tipo": "ciudad",
+      "lat": 20.6667966,
+      "lon": -103.3766224,
+      "foto_esri": {
+        "fuente": "Vantor",
+        "producto": "Vivid Mosaic Metro",
+        "fecha": "2026-03-03",
+        "resolucion_m": 0.31,
+        "exactitud_m": 8.47
+      },
+      "edificios_osm_300m": {
+        "figuras_de_edificios": 1,
+        "con_altura_propia": 0,
+        "teselas": 1
+      }
+    },
+    {
+      "lugar": "CDMX, Zócalo",
+      "tipo": "ciudad",
+      "lat": 19.4326,
+      "lon": -99.1332,
+      "foto_esri": {
+        "fuente": "Vantor",
+        "producto": "Vivid Advanced",
+        "fecha": "2025-02-24",
+        "resolucion_m": 0.5,
+        "exactitud_m": 8.47
+      },
+      "edificios_osm_300m": {
+        "figuras_de_edificios": 41,
+        "con_altura_propia": 39,
+        "teselas": 1
+      }
+    },
+    {
+      "lugar": "CDMX, Roma Norte",
+      "tipo": "ciudad",
+      "lat": 19.4195,
+      "lon": -99.162,
+      "foto_esri": {
+        "fuente": "Vantor",
+        "producto": "Vivid Advanced",
+        "fecha": "2025-01-30",
+        "resolucion_m": 0.5,
+        "exactitud_m": 8.47
+      },
+      "edificios_osm_300m": {
+        "figuras_de_edificios": 12,
+        "con_altura_propia": 10,
+        "teselas": 2
+      }
+    },
+    {
+      "lugar": "Ecatepec (periferia)",
+      "tipo": "ciudad",
+      "lat": 19.601,
+      "lon": -99.05,
+      "foto_esri": {
+        "fuente": "Vantor",
+        "producto": "Vivid Advanced",
+        "fecha": "2025-02-26",
+        "resolucion_m": 0.34,
+        "exactitud_m": 8.47
+      },
+      "edificios_osm_300m": {
+        "figuras_de_edificios": 2,
+        "con_altura_propia": 0,
+        "teselas": 2
+      }
+    },
+    {
+      "lugar": "Toluca, centro",
+      "tipo": "ciudad",
+      "lat": 19.2926,
+      "lon": -99.6569,
+      "foto_esri": {
+        "fuente": "Vantor",
+        "producto": "Vivid Advanced",
+        "fecha": "2026-01-28",
+        "resolucion_m": 0.34,
+        "exactitud_m": 8.47
+      },
+      "edificios_osm_300m": {
+        "figuras_de_edificios": 5,
+        "con_altura_propia": 3,
+        "teselas": 2
+      }
+    },
+    {
+      "lugar": "Metepec, residencial",
+      "tipo": "ciudad",
+      "lat": 19.254,
+      "lon": -99.604,
+      "foto_esri": {
+        "fuente": "Vantor",
+        "producto": "Vivid Advanced",
+        "fecha": "2026-01-28",
+        "resolucion_m": 0.34,
+        "exactitud_m": 8.47
+      },
+      "edificios_osm_300m": {
+        "figuras_de_edificios": 1,
+        "con_altura_propia": 0,
+        "teselas": 2
+      }
+    },
+    {
+      "lugar": "Guadalajara, centro",
+      "tipo": "ciudad",
+      "lat": 20.6767,
+      "lon": -103.3475,
+      "foto_esri": {
+        "fuente": "Vantor",
+        "producto": "Vivid Mosaic Metro",
+        "fecha": "2025-11-16",
+        "resolucion_m": 0.31,
+        "exactitud_m": 8.47
+      },
+      "edificios_osm_300m": {
+        "figuras_de_edificios": 12,
+        "con_altura_propia": 11,
+        "teselas": 1
+      }
+    },
+    {
+      "lugar": "Monterrey, centro",
+      "tipo": "ciudad",
+      "lat": 25.6694,
+      "lon": -100.3097,
+      "foto_esri": {
+        "fuente": "Vantor",
+        "producto": "Vivid Advanced",
+        "fecha": "2026-01-18",
+        "resolucion_m": 0.31,
+        "exactitud_m": 8.47
+      },
+      "edificios_osm_300m": {
+        "figuras_de_edificios": 13,
+        "con_altura_propia": 12,
+        "teselas": 1
+      }
+    },
+    {
+      "lugar": "Atlacomulco (ciudad chica)",
+      "tipo": "ciudad",
+      "lat": 19.798,
+      "lon": -99.876,
+      "foto_esri": {
+        "fuente": "Vantor",
+        "producto": "Vivid",
+        "fecha": "2025-03-01",
+        "resolucion_m": 0.34,
+        "exactitud_m": 5
+      },
+      "edificios_osm_300m": {
+        "figuras_de_edificios": 5,
+        "con_altura_propia": 3,
+        "teselas": 1
+      }
+    },
+    {
+      "lugar": "Autopista México–Querétaro (rural)",
+      "tipo": "rural",
+      "lat": 19.956,
+      "lon": -99.533,
+      "foto_esri": {
+        "fuente": "Vantor",
+        "producto": "Vivid",
+        "fecha": "2026-05-15",
+        "resolucion_m": 0.31,
+        "exactitud_m": 5
+      }
+    },
+    {
+      "lugar": "Carretera 15, Sonora (rural)",
+      "tipo": "rural",
+      "lat": 29.5,
+      "lon": -110.95,
+      "foto_esri": {
+        "fuente": "Vantor",
+        "producto": "Vivid",
+        "fecha": "2025-02-03",
+        "resolucion_m": 0.34,
+        "exactitud_m": 5
+      }
+    },
+    {
+      "lugar": "Carretera Oaxaca–Istmo (rural)",
+      "tipo": "rural",
+      "lat": 16.72,
+      "lon": -96.05,
+      "foto_esri": {
+        "fuente": "Vantor",
+        "producto": "Vivid",
+        "fecha": "2026-01-10",
+        "resolucion_m": 0.34,
+        "exactitud_m": 5
+      }
+    }
+  ]
+}
