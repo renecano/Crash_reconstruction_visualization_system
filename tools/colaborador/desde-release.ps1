@@ -16,9 +16,16 @@
 # trabarse. En la laptop de René (GPU integrada), la escena de noche con lluvia bajó de 6.2 a 0.2 fps
 # hacia la octava toma; con una instancia nueva por grupo no llega a eso. Cada grupo anota en el
 # registro sus fps. Si se corta, la siguiente corrida sigue desde la última toma terminada.
+#
+# Vigilante (René, 2026-11-17): en la RTX el video se trabó en un grupo, 9 min sin un cuadro nuevo.
+# Si un grupo pasa 2 min sin escribir ningún archivo, se mata el visor y se reintenta ese grupo una
+# vez; si se vuelve a trabar, se salta el resto de ese caso con un aviso y se sigue con el siguiente.
+# `-SoloCesvi` hace solo AXA y el lateral (la versión para CESVI), reusando los cuadros ya hechos.
 param(
   [Parameter(Mandatory = $true)][ValidateSet("escritorio", "fotos", "trailer", "video")][string] $Paso,
   [switch] $Corto,
+  # Solo la versión para CESVI (AXA y el lateral en intersección), sin el alcance inventado.
+  [switch] $SoloCesvi,
   [int] $Ancho = 3840,
   [int] $Alto = 2160,
   [string] $Solo = ""
@@ -60,24 +67,46 @@ function Tomar {
   Write-Host "Tomando $($Que): $($faltan.Count) de $($todas.Count) por hacer, de $Grupo en $Grupo (no uses la computadora mientras tanto)..."
   $hechas = New-Object System.Collections.ArrayList
   $reloj = [Diagnostics.Stopwatch]::StartNew()
-  for ($i = 0; $i -lt $faltan.Count; $i += $Grupo) {
-    $ids = @($faltan[$i..([math]::Min($i + $Grupo, $faltan.Count) - 1)])
-    $informeGrupo = Join-Path $Salida "fotos.json"
-    if (Test-Path $informeGrupo) { Remove-Item $informeGrupo -Force }
-    $argumentos = @(
-      "-screen-width", "1920", "-screen-height", "1080", "-screen-fullscreen", "0",
-      "-fotos", $Plan, "-salida", $Salida, "-solo", ($ids -join ","),
-      "-ancho", "$Ancho", "-alto", "$Alto", "-calidad", "ultra",
-      "-logFile", (Join-Path $trabajo "tomas.log")
-    )
+  $atorado = $false
+  for ($i = 0; $i -lt $faltan.Count -and -not $atorado; $i += $Grupo) {
+    $grupoIds = @($faltan[$i..([math]::Min($i + $Grupo, $faltan.Count) - 1)])
     $inicioGrupo = $reloj.Elapsed.TotalSeconds
-    $p = Start-Process -FilePath (Join-Path $trabajo "VisorCroquis.exe") -ArgumentList $argumentos -PassThru
-    if (-not $p.WaitForExit($TopeGrupoMin * 60 * 1000)) {
-      try { $p.Kill() } catch { }
-      Write-Host "  El grupo $($ids[0])…$($ids[-1]) pasó de $TopeGrupoMin min: lo detengo y sigo con el siguiente." -ForegroundColor Yellow
-    }
-    if (Test-Path $informeGrupo) {
-      foreach ($t in (Get-Content $informeGrupo -Raw -Encoding UTF8 | ConvertFrom-Json).tomas) { [void]$hechas.Add($t) }
+    # Hasta dos intentos por grupo: el segundo, solo con lo que falte del grupo.
+    for ($intento = 1; $intento -le 2; $intento++) {
+      $ids = @($grupoIds | Where-Object { -not (& $hecha $_) })
+      if (-not $ids.Count) { break }
+      $informeGrupo = Join-Path $Salida "fotos.json"
+      if (Test-Path $informeGrupo) { Remove-Item $informeGrupo -Force }
+      $argumentos = @(
+        "-screen-width", "1920", "-screen-height", "1080", "-screen-fullscreen", "0",
+        "-fotos", $Plan, "-salida", $Salida, "-solo", ($ids -join ","),
+        "-ancho", "$Ancho", "-alto", "$Alto", "-calidad", "ultra",
+        "-logFile", (Join-Path $trabajo "tomas.log")
+      )
+      $p = Start-Process -FilePath (Join-Path $trabajo "VisorCroquis.exe") -ArgumentList $argumentos -PassThru
+      # El vigilante: cada 5 s cuenta los archivos del grupo; 2 min sin uno nuevo es un visor trabado.
+      $ultimoAvance = $reloj.Elapsed.TotalSeconds
+      $vistas = 0
+      $trabado = $false
+      while (-not $p.WaitForExit(5000)) {
+        $ahora = @($ids | Where-Object { & $hecha $_ }).Count
+        if ($ahora -gt $vistas) { $vistas = $ahora; $ultimoAvance = $reloj.Elapsed.TotalSeconds }
+        if ($reloj.Elapsed.TotalSeconds - $ultimoAvance -gt $SinAvanceSeg) { $trabado = $true; break }
+        if ($reloj.Elapsed.TotalSeconds - $inicioGrupo -gt $TopeGrupoMin * 60) { $trabado = $true; break }
+      }
+      if ($trabado) {
+        try { $p.Kill() } catch { }
+        try { [void]$p.WaitForExit(10000) } catch { }
+        Write-Host ("  El visor se trabó en {0}… ({1} s sin un cuadro nuevo; intento {2} de 2)." -f $ids[0], [int]($reloj.Elapsed.TotalSeconds - $ultimoAvance), $intento) -ForegroundColor Yellow
+      }
+      if (Test-Path $informeGrupo) {
+        foreach ($t in (Get-Content $informeGrupo -Raw -Encoding UTF8 | ConvertFrom-Json).tomas) { [void]$hechas.Add($t) }
+      }
+      if (-not $trabado) { break }
+      if ($intento -eq 2) {
+        $atorado = $true
+        Write-Host "  Se trabó dos veces en el mismo grupo: salto lo que falta de $Que y sigo." -ForegroundColor Yellow
+      }
     }
     $listas = @($todas | Where-Object { & $hecha $_ }).Count
     # Los fps del visor en este grupo (el visor los escribe cada segundo): si se traba, se ve aquí.
@@ -93,12 +122,23 @@ function Tomar {
     tomas = $todas.Count
     hechas_en_esta_corrida = $hechas.Count
     faltan = $faltantes
+    atorado = $atorado
     grupo = $Grupo
     resolucion = "$($Ancho)x$($Alto)"
     segundos = [math]::Round($reloj.Elapsed.TotalSeconds, 1)
     por_toma = $hechas
   } | ConvertTo-Json -Depth 5 | Set-Content -Path $Informe -Encoding UTF8
   return ,$faltantes
+}
+
+# Segundos sin un archivo nuevo para dar por trabado al visor.
+# (CROQUIS_SIN_AVANCE_SEG lo baja para probar el vigilante sin esperar un visor trabado de verdad.)
+$SinAvanceSeg = if ($env:CROQUIS_SIN_AVANCE_SEG) { [int]$env:CROQUIS_SIN_AVANCE_SEG } else { 120 }
+
+# Los GB libres en el disco de una carpeta.
+function GbLibres([string] $Carpeta) {
+  $letra = (Split-Path -Qualifier (Resolve-Path $Carpeta).Path).TrimEnd(":")
+  return [math]::Round((Get-PSDrive -Name $letra).Free / 1GB, 1)
 }
 
 # Sin Vercel Blob (René, 2026-11-17): el visor pide los modelos de los vehículos a esta máquina. Se
@@ -142,29 +182,52 @@ if ($Paso -eq "escritorio") {
   # videos, en un zip en el Escritorio. Retoma: si se corta, sigue desde el último cuadro hecho.
   $planes = @("tools\unity\video-unity.mjs", $trabajo, "--ancho", "$Ancho", "--alto", "$Alto")
   if ($Corto) { $planes += "--corto" }
+  if ($SoloCesvi) { $planes += @("--casos", "axa-dia,lateral_interseccion-dia") }
   & node (Join-Path $repo $planes[0]) $planes[1..($planes.Count - 1)]
   if ($LASTEXITCODE) { throw "video-unity.mjs terminó con el código $LASTEXITCODE" }
   $montaje = Get-Content (Join-Path $trabajo "video-montaje.json") -Raw -Encoding UTF8 | ConvertFrom-Json
   $cuadros = Join-Path $raiz "video-cuadros-$($Ancho)x$($Alto)"
-  $faltan = 0
-  foreach ($c in $montaje.casos) {
-    $f = Tomar -Plan (Join-Path $trabajo $c.plan) -Salida $cuadros -Extension "jpg" -Grupo 50 -TopeGrupoMin 15 -Que "el video de $($c.nombre)" -Informe (Join-Path $trabajo "video-$($c.nombre)-informe.json")
-    $faltan += $f.Count
-  }
-  if ($faltan) { throw "Faltan $faltan cuadros del video. Vuelve a correr la tanda: sigue desde el último terminado." }
+  New-Item -ItemType Directory -Force $cuadros | Out-Null
   $videos = Join-Path $raiz "video-salida"
-  if (Test-Path $videos) { Remove-Item -Recurse -Force $videos }
-  Write-Host "Montando los videos (H.264, sin música)..."
-  & node (Join-Path $repo "tools\unity\video-unity-montar.mjs") --paquete $trabajo --cuadros $cuadros --salida $videos
-  if ($LASTEXITCODE) { throw "video-unity-montar.mjs terminó con el código $LASTEXITCODE" }
+  New-Item -ItemType Directory -Force $videos | Out-Null
+  # Por caso: unos 6 GB de cuadros a 4K mientras se dibuja, más los videos.
+  $gbPorCaso = if ($Alto -ge 2160) { 8 } else { 3 }
+  $montar = Join-Path $repo "tools\unity\video-unity-montar.mjs"
+  $saltados = @()
+  foreach ($c in $montaje.casos) {
+    $listo = @(Get-ChildItem $videos -Filter "croquis-unity-$($c.nombre)*.mp4" -ErrorAction SilentlyContinue).Count -gt 0
+    if ($listo) { Write-Host "El video de $($c.nombre) ya estaba montado: lo reuso."; continue }
+    $libres = GbLibres $cuadros
+    if ($libres -lt $gbPorCaso) {
+      throw "Quedan $libres GB libres y el video de $($c.nombre) necesita unos $gbPorCaso GB. Libera espacio y vuelve a correr la tanda: sigue donde se quedó."
+    }
+    $f = Tomar -Plan (Join-Path $trabajo $c.plan) -Salida $cuadros -Extension "jpg" -Grupo 50 -TopeGrupoMin 15 -Que "el video de $($c.nombre)" -Informe (Join-Path $trabajo "video-$($c.nombre)-informe.json")
+    if ($f.Count) {
+      $saltados += $c.nombre
+      Write-Host "AVISO: el video de $($c.nombre) quedó sin terminar ($($f.Count) cuadros sin dibujar): no se monta. Sigo con lo demás." -ForegroundColor Yellow
+      continue
+    }
+    Write-Host "Montando el video de $($c.nombre) (H.264, sin música)..."
+    & node $montar --paquete $trabajo --cuadros $cuadros --salida $videos --caso $c.nombre
+    if ($LASTEXITCODE) { throw "video-unity-montar.mjs terminó con el código $LASTEXITCODE con $($c.nombre)" }
+    # Ya montado: sus cuadros se borran (pesan varios GB).
+    Get-ChildItem $cuadros -Filter "$($c.nombre)_*.jpg" | Remove-Item -Force
+  }
+  Write-Host "Montando los videos de dos casos..."
+  & node $montar --paquete $trabajo --cuadros $cuadros --salida $videos --combinar
+  if ($LASTEXITCODE) { throw "video-unity-montar.mjs terminó con el código $LASTEXITCODE al juntar los casos" }
+  if (-not @(Get-ChildItem $videos -Filter "*.mp4").Count) {
+    throw "No quedó ningún video: todos los casos se trabaron. Avísale a René; el registro de la tanda dice en qué cuadro."
+  }
   Copy-Item (Join-Path $videos "video_unity.json") (Join-Path $destino "video_unity.json") -Force
   $escritorio = [Environment]::GetFolderPath("Desktop")
   $entrega = Join-Path $escritorio "croquis-video-unity.zip"
   if (Test-Path $entrega) { Remove-Item $entrega -Force }
   Compress-Archive -Path (Join-Path $videos "*.mp4"), (Join-Path $videos "LEEME.txt") -DestinationPath $entrega
-  # Los cuadros pesan varios GB: se borran cuando los videos ya están en el zip.
-  Remove-Item -Recurse -Force $cuadros
   Write-Host ""
+  if ($saltados.Count) {
+    Write-Host "AVISO: quedaron sin video: $($saltados -join ', '). Los demás sí están en el zip." -ForegroundColor Yellow
+  }
   Write-Host "Los videos quedaron en $entrega. Mándale ese archivo a René (por Drive o WeTransfer): no va a git."
 } else {
   if ($Solo) {
