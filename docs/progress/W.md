@@ -9,7 +9,20 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 - **Fase actual:** ninguna en curso. W9 necesita la autorización de René para gastar API.
 - **Siguiente paso:** W8 cerrada el 2026-11-15: T3.2 (#215), T3.3 (contrato #219 y #220, ADR 0136) y T3.5 (E-R4 v4, igual a la v3 más el eje de la reversa). Nada de eso movió AXA ni un caso que ya vio CESVI después de T3.2. Queda una decisión de René sobre la versión declarada (sección T3.3, «Para decidir»). W9 (T6.5 y T6.6) espera su autorización de gasto de API.
 
-## Corregir la escena después (René, 2026-11-17; ADR 0121)
+## Ronda 4, bloque B: buscar el lugar y los nombres de las calles (René, 2026-11-18)
+
+- **B5, «Buscar el lugar»:** siempre en México y primero dentro de lo que sabe el caso.
+  - **La zona:** el municipio y el estado del caso o, si el perito escribe otro estado, los del texto; lo que escribe gana.
+  - **Dónde se busca:** se ubica el área y la calle se busca dentro de su caja, con la zona escrita. El orden de las variantes: el texto, calle y colonia, la calle, la segunda calle y la colonia.
+  - **Varias opciones**, cada una con municipio y estado, y primero las del municipio del caso. Nunca salta a la primera; sin la zona del caso, La escena tampoco salta al abrir.
+  - **Medido** con 30 lugares de reportes de CESVI de 19 estados (`eval/ronda4_buscar_lugar.mts`, `eval/results/ronda4_buscar_lugar_{antes,despues}.json`):
+    - con el municipio y el estado del caso, el primer resultado cae en el municipio correcto en 28 de 30 (antes, 27);
+    - si el perito escribe «lugar, municipio, estado» sin la zona del caso, en 28 de 30 (antes, 6), y en el estado correcto en 30 de 30 (antes, 9).
+  - **Lo que falla:** dos alcaldías de la Ciudad de México (Tláhuac e Iztacalco). Con eso, Nominatim alcanza y no hace falta cambiar de proveedor.
+- **B6, los nombres de las calles al alejar:**
+  - **En La escena**, los nombres van en tres capas por tipo de vía: las grandes desde el zoom 11, las medias desde el 12.5 y las locales desde el 14 (antes, todas desde el 15). Las grandes van encima, y MapLibre nunca encima dos nombres.
+  - **En el mapa de positron**, las locales aparecen desde el 14 y las grandes desde el 11.
+- **Capturas antes y después:** `docs/cesvi/ronda-4/evidencia/b/`.
 
 - **Qué se puede hacer:** en el mapa de La escena se toca un coche, un objeto, una zona del terreno o una marca, y queda seleccionado, resaltado y con su nombre. Después se puede:
   - moverlo (arrastre o flechas);
