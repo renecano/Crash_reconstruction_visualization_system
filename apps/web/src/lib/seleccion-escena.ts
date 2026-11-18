@@ -9,19 +9,27 @@
  *
  * Las claves son las del mapa de la escena: «coche:V1», «objeto:obj-1», «terreno:zona-1»,
  * «marca:golpe», «marca:objeto-2» (un choque intermedio) y «marca:paso-V1-1» (un punto de paso).
+ * Un peatón o un ciclista (A3, René, 2026-11-18): «persona:per-1» y dónde quedó, «persona:per-1:final».
  */
 import {
   avanzar,
   girarObjeto,
+  girarPersona,
   girarTerreno,
+  marcarFinalPersona,
   moverObjeto,
+  moverPersona,
   moverTerreno,
   objetosDe,
+  OBJETO_PERSONA,
   piezasTerreno,
   quitarObjeto,
+  quitarPersona,
   quitarTerreno,
   type Expediente,
   type LonLat,
+  type PersonaExpediente,
+  type RolPersona,
 } from "@croquis/cesvi";
 import { PASO_BOTON_GRADOS, PASO_TECLA_GRADOS, normalizar } from "./colocar";
 import {
@@ -46,7 +54,7 @@ import {
 export const PASO_FLECHA_M = 0.5;
 export const PASO_FLECHA_GRANDE_M = 2;
 
-export type TipoSeleccion = "coche" | "objeto" | "terreno" | "marca";
+export type TipoSeleccion = "coche" | "objeto" | "terreno" | "marca" | "persona";
 
 /** «coche:V1» → { tipo: "coche", id: "V1" } (el id puede llevar dos puntos o guiones). */
 export function deClave(clave: string): { tipo: string; id: string } {
@@ -56,6 +64,20 @@ export function deClave(clave: string): { tipo: string; id: string } {
 
 const PASO = /^paso-(.+)-(\d+)$/;
 const INTERMEDIO = /^objeto-(\d+)$/;
+/** Dónde quedó una persona (A3): «persona:per-1:final». */
+const FINAL_PERSONA = /^(.+):final$/;
+
+/** La persona de una clave «persona:…» y si la clave es su punto final. */
+function personaDe(
+  e: Expediente,
+  id: string,
+): { persona: PersonaExpediente; final: boolean } | null {
+  const f = FINAL_PERSONA.exec(id);
+  const pid = f ? f[1]! : id;
+  const persona = (e.personas ?? []).find((p) => p.id === pid);
+  if (!persona || (f && !persona.final)) return null;
+  return { persona, final: Boolean(f) };
+}
 
 /**
  * Cómo se gira lo seleccionado: con su rumbo (un vehículo en reposo, un objeto), desde donde está (el
@@ -89,6 +111,12 @@ export function capacidadesDe(e: Expediente, clave: string): Capacidades {
       : NADA;
   if (tipo === "marca")
     return posicionDe(e, clave) ? { mover: true, girar: null, quitar: true } : NADA;
+  if (tipo === "persona") {
+    // La persona se gira (hacia dónde iba); dónde quedó es un punto: se mueve o se borra.
+    const x = personaDe(e, id);
+    if (!x) return NADA;
+    return { mover: true, girar: x.final ? null : "absoluto", quitar: true };
+  }
   return NADA;
 }
 
@@ -109,6 +137,13 @@ export function posicionDe(
   if (tipo === "terreno") {
     const t = piezasTerreno(e).find((x) => x.id === id);
     return t ? { punto: t.centro, rumbo: null } : null;
+  }
+  if (tipo === "persona") {
+    const x = personaDe(e, id);
+    if (!x) return null;
+    return x.final
+      ? { punto: x.persona.final!, rumbo: null }
+      : { punto: x.persona.punto, rumbo: x.persona.rumbo_deg ?? 0 };
   }
   if (tipo !== "marca") return null;
   if (id === "golpe") {
@@ -132,14 +167,18 @@ export function posicionDe(
 export const existe = (e: Expediente, clave: string) => posicionDe(e, clave) !== null;
 
 /**
- * Todo lo que se puede seleccionar, en el orden de la lista accesible: los vehículos, los objetos
- * del lugar, el terreno y las marcas (primer golpe, choques intermedios y puntos de paso).
+ * Todo lo que se puede seleccionar, en el orden de la lista accesible: los vehículos, las personas
+ * (y dónde quedó cada una), los objetos del lugar, el terreno y las marcas (primer golpe, choques
+ * intermedios y puntos de paso).
  */
 export function seleccionables(e: Expediente): string[] {
   return [
     ...e.vehiculos
       .filter((v) => poseDe(e, v.id, "final") || poseDe(e, v.id, "impacto"))
       .map((v) => `coche:${v.id}`),
+    ...(e.personas ?? []).flatMap((p) =>
+      p.final ? [`persona:${p.id}`, `persona:${p.id}:final`] : [`persona:${p.id}`],
+    ),
     ...objetosDe(e).map((o) => `objeto:${o.id}`),
     ...piezasTerreno(e).map((t) => `terreno:${t.id}`),
     ...(primerGolpe(e) ? ["marca:golpe"] : []),
@@ -163,6 +202,10 @@ export function moverA(
   if (tipo === "coche") return marcarFinal(e, id, p, poseDe(e, id, "final")!.rumbo);
   if (tipo === "objeto") return moverObjeto(e, id, p);
   if (tipo === "terreno") return moverTerreno(e, id, p);
+  if (tipo === "persona") {
+    const x = personaDe(e, id)!;
+    return x.final ? marcarFinalPersona(e, x.persona.id, p) : moverPersona(e, id, p);
+  }
   if (id === "golpe") return marcarPrimerGolpe(e, impactos, p);
   const q = PASO.exec(id);
   if (q) return moverPuntoDePaso(e, q[1]!, Number(q[2]), p);
@@ -182,6 +225,7 @@ export function girarSeleccion(e: Expediente, clave: string, grados: number): Ex
   const { tipo, id } = deClave(clave);
   if (tipo === "coche") return girar(e, id, "final", grados);
   if (tipo === "objeto") return girarObjeto(e, id, grados);
+  if (tipo === "persona") return girarPersona(e, id, grados);
   return girarTerreno(e, id, grados);
 }
 
@@ -197,7 +241,8 @@ export function fijarRumbo(e: Expediente, clave: string, rumbo: number): Expedie
 
 /**
  * Lo quita de la escena. Un vehículo no se borra del caso (viene de la narración): se quita su
- * posición de reposo y la escena vuelve a preguntar dónde quedó.
+ * posición de reposo y la escena vuelve a preguntar dónde quedó. De una persona se puede quitar solo
+ * dónde quedó («persona:per-1:final»): sigue en la escena, sin distancia de proyección.
  */
 export function quitarSeleccion(e: Expediente, clave: string): Expediente | null {
   if (!capacidadesDe(e, clave).quitar) return null;
@@ -205,6 +250,10 @@ export function quitarSeleccion(e: Expediente, clave: string): Expediente | null
   if (tipo === "coche") return sinFinal(e, id);
   if (tipo === "objeto") return quitarObjeto(e, id);
   if (tipo === "terreno") return quitarTerreno(e, id);
+  if (tipo === "persona") {
+    const x = personaDe(e, id)!;
+    return x.final ? marcarFinalPersona(e, x.persona.id, null) : quitarPersona(e, id);
+  }
   if (id === "golpe") return quitarPrimerGolpe(e);
   const q = PASO.exec(id);
   if (q) return quitarPuntoDePaso(e, q[1]!, Number(q[2]));
@@ -259,6 +308,19 @@ export function accionDeTecla(
   if (k === "Delete" || k === "Backspace") return { tipo: "quitar" };
   if (k === "Escape") return { tipo: "soltar" };
   return null;
+}
+
+/**
+ * Si la lectura del caso dice que un impacto fue contra una persona y en la escena no hay ninguna
+ * (A3), quién falta: un ciclista si lo dice así, si no, un peatón. Sin ella no hay atropello.
+ */
+export function personaFaltante(e: Expediente): RolPersona | null {
+  if (e.personas?.length) return null;
+  const contra = (e.impactos ?? []).find(
+    (i) => i.objeto_fijo && OBJETO_PERSONA.test(i.objeto_fijo),
+  );
+  if (!contra) return null;
+  return /ciclista|bicicleta/i.test(contra.objeto_fijo!) ? "ciclista" : "peaton";
 }
 
 /** Si la tecla se escribe en un campo de texto (ahí no es un atajo de la escena). */
