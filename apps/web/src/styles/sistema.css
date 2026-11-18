@@ -1760,6 +1760,70 @@
     outline-offset: 3px;
     cursor: grab;
   }
+  /* Con el teclado (René, 2026-11-17): el foco es un doble anillo y no pisa el contorno de lo
+     seleccionado. El marcador del coche no tiene tamaño: el foco se ve en su cuerpo. */
+  .escena-seleccionable:focus {
+    outline: none;
+  }
+  .escena-seleccionable:focus-visible .escena-coche-cuerpo,
+  .escena-seleccionable:focus-visible .escena-objeto-cuerpo,
+  .escena-seleccionable:focus-visible .escena-marca-figura,
+  .escena-seleccionable:focus-visible .escena-etiqueta-terreno {
+    box-shadow:
+      0 0 0 8px var(--superficie),
+      0 0 0 11px var(--eleccion);
+    border-radius: 8px;
+  }
+  /* El anillo de giro de lo seleccionado: se toma de su banda (ancha e invisible). */
+  .escena-anillo {
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+  .escena-anillo-svg {
+    position: absolute;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .escena-anillo-circulo {
+    fill: none;
+    stroke: var(--eleccion);
+    stroke-width: 2;
+    stroke-dasharray: 4 4;
+  }
+  .escena-anillo-banda {
+    fill: none;
+    stroke: transparent;
+    stroke-width: 24;
+    pointer-events: stroke;
+    cursor: grab;
+    touch-action: none;
+  }
+  .escena-anillo-banda:active {
+    cursor: grabbing;
+  }
+  .escena-anillo-asa {
+    fill: var(--eleccion);
+    stroke: var(--superficie);
+    stroke-width: 2;
+    pointer-events: none;
+  }
+  .escena-anillo-rotulo {
+    position: absolute;
+    left: 0;
+    top: 0;
+    white-space: nowrap;
+    border-radius: 999px;
+    background: var(--superficie);
+    color: var(--texto);
+    padding: 2px 8px;
+    font: 600 0.75rem/1.3 var(--fuente);
+    font-variant-numeric: tabular-nums;
+    pointer-events: none;
+  }
+  .escena-anillo-rotulo:empty {
+    display: none;
+  }
   .escena-objeto {
     position: relative;
     width: 0;

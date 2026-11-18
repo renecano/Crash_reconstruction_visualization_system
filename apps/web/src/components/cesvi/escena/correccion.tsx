@@ -6,6 +6,8 @@
  * `@croquis/cesvi` (objetos) y en `@/lib/escena-facil` (lo demás).
  */
 import { TIPOS_OBJETO, type TipoObjeto } from "@croquis/cesvi";
+import { useEffect, useRef } from "react";
+import type { Capacidades } from "@/lib/seleccion-escena";
 
 /** La silueta de cada objeto de la paleta, vista desde arriba (24 × 24). */
 function Silueta({ tipo }: { tipo: TipoObjeto }) {
@@ -70,11 +72,19 @@ function Silueta({ tipo }: { tipo: TipoObjeto }) {
 export function PanelCorregir({
   poniendo,
   onElegir,
+  enLaEscena = [],
+  onSeleccionar,
   onTerreno,
   onListo,
 }: {
   poniendo: TipoObjeto | null;
   onElegir: (t: TipoObjeto | null) => void;
+  /**
+   * Lo que ya está en la escena, para elegirlo sin tocar el mapa (con el teclado o el lector de
+   * pantalla; René, 2026-11-17).
+   */
+  enLaEscena?: readonly { clave: string; nombre: string }[];
+  onSeleccionar?: (clave: string) => void;
   /** C3 (W5): volver a «¿Cómo es el terreno?» para marcar una zona, un tope o el relieve. */
   onTerreno?: () => void;
   onListo: () => void;
@@ -92,6 +102,31 @@ export function PanelCorregir({
         Toca un coche, una marca, un objeto o una zona del terreno para moverlo, girarlo o quitarlo.
         O agrega algo que está en el lugar.
       </p>
+      {enLaEscena.length && onSeleccionar ? (
+        <div className="flex flex-col gap-2">
+          <h3 id="en-la-escena-titulo" className="text-[0.95rem] font-semibold">
+            En la escena
+          </h3>
+          <ul
+            className="flex flex-wrap gap-2"
+            aria-labelledby="en-la-escena-titulo"
+            data-testid="en-la-escena"
+          >
+            {enLaEscena.map((x) => (
+              <li key={x.clave}>
+                <button
+                  type="button"
+                  className="escena-opcion min-h-11 rounded-xl px-3 text-left text-[0.95rem]"
+                  onClick={() => onSeleccionar(x.clave)}
+                  data-testid={`elegir-${x.clave.replace(":", "-")}`}
+                >
+                  {x.nombre}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
       <div className="grid grid-cols-2 gap-2" role="group" aria-label="Agregar un objeto del lugar">
         {TIPOS_OBJETO.map((t) => (
           <button
@@ -138,25 +173,59 @@ export function PanelCorregir({
 export interface AccionSeleccion {
   id: string;
   texto: string;
+  /** El nombre accesible, si el texto del botón no basta («Girar el Jetta 15° a la izquierda»). */
+  etiqueta?: string;
   hacer: () => void;
   peligro?: boolean;
+}
+
+/** Los atajos que sí aplican a lo seleccionado, en palabras. */
+export function atajosDe(c: Capacidades | undefined): string[] {
+  if (!c) return [];
+  return [
+    ...(c.mover ? ["Flechas: mover (Shift, más)"] : []),
+    ...(c.girar ? ["Q / E: girar"] : []),
+    ...(c.quitar ? ["Supr: quitar"] : []),
+    "Ctrl+Z: deshacer",
+    "Esc: soltar",
+  ];
 }
 
 /** La barra de controles grandes de lo seleccionado: su nombre y lo que se le puede hacer. */
 export function BarraSeleccion({
   nombre,
   acciones,
+  capacidades,
   onListo,
 }: {
   nombre: string;
   acciones: readonly AccionSeleccion[];
+  /** Lo que admite (para decir qué teclas sirven y si se arrastra o se gira con el anillo). */
+  capacidades?: Capacidades;
   onListo: () => void;
 }) {
+  const barra = useRef<HTMLDivElement>(null);
+  // Si el foco se quedó sin lugar (se eligió de la lista y la lista se cerró), pasa a la barra: el
+  // teclado sigue en la corrección.
+  useEffect(() => {
+    const f = document.activeElement;
+    if (!f || f === document.body) barra.current?.focus({ preventScroll: true });
+  }, [nombre]);
+  const atajos = atajosDe(capacidades);
+  const gesto = capacidades
+    ? [
+        capacidades.mover ? "Arrástralo para moverlo" : null,
+        capacidades.girar ? "gíralo con su anillo" : null,
+      ].filter(Boolean)
+    : [];
   return (
     <div
+      ref={barra}
+      tabIndex={-1}
       className="escena-barra-seleccion pointer-events-auto"
       role="toolbar"
       aria-label={`Corregir: ${nombre}`}
+      aria-describedby={atajos.length ? "seleccion-atajos" : undefined}
       data-testid="seleccion"
     >
       <span className="mr-1 font-semibold" data-testid="seleccion-nombre">
@@ -166,8 +235,9 @@ export function BarraSeleccion({
         <button
           key={a.id}
           type="button"
-          className={`${a.peligro ? "boton-secundario text-[var(--peligro,#B91C1C)]" : "boton-secundario"} escena-boton`}
+          className={`${a.peligro ? "boton-secundario text-[var(--error)]" : "boton-secundario"} escena-boton`}
           onClick={a.hacer}
+          aria-label={a.etiqueta}
           data-testid={`sel-${a.id}`}
         >
           {a.texto}
@@ -181,6 +251,12 @@ export function BarraSeleccion({
       >
         Listo
       </button>
+      {atajos.length ? (
+        <p id="seleccion-atajos" className="t-nota w-full" data-testid="seleccion-atajos">
+          {gesto.length ? `${gesto.join(" o ")}. ` : ""}
+          {atajos.join(" · ")}.
+        </p>
+      ) : null}
     </div>
   );
 }

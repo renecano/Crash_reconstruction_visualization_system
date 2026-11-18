@@ -99,6 +99,7 @@ describe("«La incógnita»: el planteamiento antes de reconstruir (A6)", () => 
           estado: null,
           impactos: [],
           reconstruir,
+          reconstruirDeNuevo: () => Promise.resolve(),
           recalculando: false,
         }}
       />,
