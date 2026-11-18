@@ -45,3 +45,4 @@ export * from "./encimadas";
 export * from "./objetos";
 export * from "./terreno";
 export * from "./relieve";
+export * from "./iluminacion";

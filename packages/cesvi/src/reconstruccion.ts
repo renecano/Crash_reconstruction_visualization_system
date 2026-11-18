@@ -63,6 +63,7 @@ import { objetosDe, TIPOS_OBJETO } from "./objetos";
 import type { MallaRelieve } from "./relieve";
 import { terrenoDeEscena, terrenoReconstruido, type TerrenoReconstruido } from "./terreno";
 import { limiteDeCobertura } from "./cobertura";
+import { iluminacionDeHora } from "./iluminacion";
 import { grados, kmhConUnidad, metros, rangoKmh } from "./formato";
 
 type Json = Record<string, unknown>;
@@ -296,6 +297,10 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
     facts.escalares.set("evento.objeto", fact(objeto, null, "supuesto"));
     facts.escalares.set("evento.tipo", fact("impacto_vehiculo_objeto", null, "supuesto"));
   }
+  // La luz del lugar, de la hora del relato (René, 2026-11-18): supuesto; nunca «sin alumbrado»,
+  // así que ningún número cambia por esto (`iluminacion.ts`).
+  const luz = iluminacionDeHora(e.caso?.fecha_hora?.valor);
+  if (luz) facts.escalares.set("entorno.iluminacion", fact(luz, null, "supuesto"));
   const spec = buildSpec(facts, "", { specId, origen: "escrito", sintetico: false }) as Json & {
     vehiculos: Json[];
     eventos: Json[];
