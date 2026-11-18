@@ -3,7 +3,7 @@ import { createRequire } from "node:module";
 import { join } from "node:path";
 import { type Page } from "@playwright/test";
 import { expect, test } from "./base";
-import { irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
+import { reconstruirSiCambio, irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
 
 // La transición entre actos (ADR 0108) es decorativa; con movimiento reducido no se monta.
 test.use({ reducedMotion: "reduce" });
@@ -196,8 +196,6 @@ test("@flujo /cesvi: ¿cómo es el terreno? — un tope, una zona ondulada y el 
     "0.09 m de alto × 1.40 m de largo",
   );
   await expect(page.getByTestId("seleccion-nombre")).not.toContainText("(norma)");
-  await expect(page.getByTestId("recalculo")).toHaveAttribute("data-estado", "al_dia", {
-    timeout: 90_000,
-  });
+  await reconstruirSiCambio(page);
   expect(errores).toEqual([]);
 });
