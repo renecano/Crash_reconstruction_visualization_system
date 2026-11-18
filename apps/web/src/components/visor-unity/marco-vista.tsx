@@ -148,7 +148,8 @@ export function MarcoVista({
     const alTecla = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey || e.altKey || esCampo(e)) return;
       const el = marco.current;
-      if (!el || el.offsetParent === null) return;
+      // A la vista: con tamaño en pantalla (a pantalla completa `offsetParent` es null).
+      if (!el || el.getClientRects().length === 0) return;
       const enCompleta = document.fullscreenElement === el;
       if (e.key === "f" || e.key === "F") {
         e.preventDefault();

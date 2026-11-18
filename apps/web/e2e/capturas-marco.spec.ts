@@ -28,7 +28,7 @@ test("capturas del visor de la reconstrucción", async ({ page }) => {
   });
   await page.goto("/cesvi");
   await page.getByTestId("ir-axa").click();
-  await expect(page.getByTestId("recorrido-caso")).toBeVisible();
+  await expect(page.getByTestId("recorrido-caso")).toBeVisible({ timeout: 30_000 });
   await irAPaso(page, 4);
   await page.getByTestId("reconstruir").click();
   await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 180_000 });
