@@ -63,6 +63,11 @@ export interface EstadoReconstruccion {
   estado: string | null;
   impactos: MarcaImpacto[];
   reconstruir: () => Promise<void>;
+  /**
+   * «Reconstruir de nuevo» después de cambiar la escena (René, 2026-11-17): la reconstrucción
+   * anterior se sigue viendo, con su aviso, hasta que llega la nueva.
+   */
+  reconstruirDeNuevo: () => Promise<void>;
   /** W4: se está recalculando solo, después de una corrección. */
   recalculando: boolean;
 }
@@ -119,6 +124,9 @@ export function useReconstruccion(
   const reconstruir = useCallback(async () => {
     if (expediente) await calcular(expediente, true);
   }, [expediente, calcular]);
+  const reconstruirDeNuevo = useCallback(async () => {
+    if (expediente) await calcular(expediente, false);
+  }, [expediente, calcular]);
   const alCambiar = opciones.alCambiar ?? false;
   useEffect(() => {
     if (!alCambiar || !expediente || de === null || de === expediente) return;
@@ -131,6 +139,7 @@ export function useReconstruccion(
     estado,
     impactos,
     reconstruir,
+    reconstruirDeNuevo,
     recalculando,
   };
 }
@@ -158,11 +167,6 @@ export function PanelReconstruccion({ rec }: { rec: EstadoReconstruccion }) {
       {rec.estado ? (
         <p role="status" className="t-interfaz">
           {rec.estado}
-        </p>
-      ) : null}
-      {rec.vieja ? (
-        <p role="status" className="t-nota text-senal-texto" data-testid="reconstruccion-vieja">
-          Cambiaste el caso después de reconstruir: vuelve a reconstruir.
         </p>
       ) : null}
       {r ? (
