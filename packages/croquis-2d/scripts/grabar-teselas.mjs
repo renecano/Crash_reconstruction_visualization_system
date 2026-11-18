@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* global process, URL, window */
 /**
  * Graba las calles de las teselas de OpenFreeMap (esquema OpenMapTiles; datos © OpenStreetMap, ODbL)
  * alrededor de un punto, como las ve MapLibre en La escena, para las pruebas de `teselas.ts` sin red.
