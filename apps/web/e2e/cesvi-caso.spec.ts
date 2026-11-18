@@ -463,9 +463,9 @@ test("@flujo /cesvi: una carambola, con sus impactos en orden hasta el 3D", asyn
     "V3 frena en −2.50 s (la hipótesis del perito)",
   );
   await expect(page.getByTestId("contacto-sin")).not.toBeEmpty();
-  // Si sin la hipótesis el primer contacto no es el primer impacto reconstruido, se avisa (ADR 0088).
-  await expect(page.getByTestId("linea-base-distinta")).toContainText(
-    "la reconstrucción tiene primero V1 con V2",
-  );
+  // Con la carpeta mojada que narra el caso (ronda 4, ADR 0142), los conductores sin la hipótesis dan
+  // el mismo primer contacto que la reconstrucción: no hay aviso de línea base distinta. Ese aviso
+  // (ADR 0088) lo cubre `conductores.test.ts`.
+  await expect(page.getByTestId("linea-base-distinta")).toHaveCount(0);
   expect(errores).toEqual([]);
 });

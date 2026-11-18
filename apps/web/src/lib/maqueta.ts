@@ -24,12 +24,58 @@ export interface VehiculoResultado {
   dano?: { ancho_m: number; centro_m: number; cdc?: { lado?: string } } | null;
 }
 
+/** Una persona a pie o en bicicleta del resultado (A3): su trayectoria y, si la golpearon, su proyección. */
+export interface PersonaResultado {
+  id: string;
+  rol: string;
+  /** Si va a bordo de un vehículo, no se dibuja aparte. */
+  vehiculo_id?: string | null;
+  trayectoria?: Pick<TrayectoriaResultado, "t" | "x" | "y" | "rumbo">;
+  proyeccion?: { distancia_m?: number } | null;
+}
+
 export interface ResultadoMaqueta {
   t_inicio: number;
   t_fin: number;
   punto_impacto?: { x: number; y: number } | null;
   vehiculos: VehiculoResultado[];
+  personas?: PersonaResultado[];
   eventos?: { tipo: string; t: number }[];
+}
+
+/** Una persona en el croquis 2D: dónde está en `t`, por dónde fue y dónde quedó. */
+export interface PersonaEnMaqueta {
+  id: string;
+  rol: "peaton" | "ciclista";
+  pose: Pose;
+  /** Su recorrido completo, si se movió más de medio metro (la proyección de un atropello). */
+  camino: { x: number; y: number }[];
+  reposo: { x: number; y: number } | null;
+  proyeccionM: number | null;
+}
+
+/**
+ * Los peatones y ciclistas del resultado, para el croquis 2D (ronda 4, A3): solo los que van por su
+ * cuenta (los ocupantes van en su vehículo) y traen trayectoria.
+ */
+export function personasEnMaqueta(r: ResultadoMaqueta, t: number): PersonaEnMaqueta[] {
+  return (r.personas ?? []).flatMap((p) => {
+    const tr = p.trayectoria;
+    if (!tr?.t?.length || p.vehiculo_id) return [];
+    if (p.rol !== "peaton" && p.rol !== "ciclista") return [];
+    const n = tr.t.length;
+    const seMovio = Math.hypot(tr.x[n - 1]! - tr.x[0]!, tr.y[n - 1]! - tr.y[0]!) > 0.5;
+    return [
+      {
+        id: p.id,
+        rol: p.rol,
+        pose: poseEn(tr as TrayectoriaResultado, t),
+        camino: seMovio ? tr.x.map((x, i) => ({ x, y: tr.y[i]! })) : [],
+        reposo: seMovio ? { x: tr.x[n - 1]!, y: tr.y[n - 1]! } : null,
+        proyeccionM: p.proyeccion?.distancia_m ?? null,
+      },
+    ];
+  });
 }
 
 export interface Pose {
@@ -202,8 +248,12 @@ export function cajaDe(r: ResultadoMaqueta, margen = 6): [number, number, number
   let b = Infinity;
   let c = -Infinity;
   let d = -Infinity;
-  for (const v of r.vehiculos) {
-    const tr = v.trayectoria;
+  // Los vehículos y las personas que van por su cuenta (A3): «Ver todo» los incluye.
+  const trayectorias = [
+    ...r.vehiculos.map((v) => v.trayectoria),
+    ...(r.personas ?? []).flatMap((p) => (p.trayectoria && !p.vehiculo_id ? [p.trayectoria] : [])),
+  ];
+  for (const tr of trayectorias) {
     for (let i = 0; i < tr.x.length; i++) {
       a = Math.min(a, tr.x[i]!);
       b = Math.min(b, tr.y[i]!);

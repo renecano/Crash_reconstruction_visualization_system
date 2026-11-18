@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 import type { Expediente, SalidaCorpus } from "./corpus";
 import { conPosicion, escenaDeNarracion } from "./escena-narracion";
 import { agregarPersona, marcarFinalPersona } from "./personas";
-import { especDeExpediente, reconstruirExpediente } from "./reconstruccion";
+import { avisoDeProyeccion, especDeExpediente, reconstruirExpediente } from "./reconstruccion";
 
 type Json = Record<string, unknown>;
 
@@ -83,4 +83,29 @@ describe("un atropello en La escena (René, 2026-11-18, A3)", () => {
       expect(v1.previa!.p10!).toBeLessThanOrEqual(v1.previa!.p90!);
     },
   );
+});
+
+describe("lo marcado contra lo reconstruido en un atropello", () => {
+  const spec = { evidencias: [{ tipo: "distancia_proyeccion", longitud: { valor: 12 } }] };
+  const con = (d: number, rango: [number, number]) => ({
+    eventos: [
+      {
+        tipo: "impacto_vehiculo_persona",
+        detalle: { distancia_proyeccion_m: d, rango_m: rango },
+      },
+    ],
+  });
+
+  it("si lo marcado queda fuera del rango reconstruido, lo dice con las dos cifras", () => {
+    const aviso = avisoDeProyeccion(spec, con(4.71, [3.9, 5.6]));
+    expect(aviso).toContain("12.00 m");
+    expect(aviso).toContain("4.71 m (de 3.90 m a 5.60 m)");
+    expect(aviso).toContain("no cuadran juntas");
+  });
+
+  it("dentro del rango, o sin lo marcado, no avisa", () => {
+    expect(avisoDeProyeccion(spec, con(11.4, [9.8, 13.1]))).toBeNull();
+    expect(avisoDeProyeccion({ evidencias: [] }, con(4.71, [3.9, 5.6]))).toBeNull();
+    expect(avisoDeProyeccion(spec, { eventos: [] })).toBeNull();
+  });
 });

@@ -1178,6 +1178,24 @@ export function alternativaSupuesta(
  * Lee el resultado completo del solver (`fullResult`, en el servidor de pruebas o en el Web Worker
  * del navegador) en términos del expediente: velocidades por vehículo y lo que no fija la evidencia.
  */
+/**
+ * Lo marcado contra lo reconstruido en un atropello: la distancia de proyección que marcó el perito
+ * (de donde golpearon a la persona a donde quedó) y la que da la reconstrucción, con su rango. Null si
+ * no hay atropello, si el perito no marcó dónde quedó o si lo marcado cae dentro del rango.
+ */
+export function avisoDeProyeccion(spec: Json, resultado: Json): string | null {
+  const marcada = ((spec.evidencias ?? []) as Json[]).find((e) => e.tipo === "distancia_proyeccion")
+    ?.longitud as { valor?: number } | undefined;
+  const d = (((resultado.eventos ?? []) as { tipo: string; detalle?: Json | null }[]).find(
+    (ev) => ev.tipo === "impacto_vehiculo_persona",
+  )?.detalle ?? null) as { distancia_proyeccion_m?: number; rango_m?: [number, number] } | null;
+  const m = Number(marcada?.valor);
+  if (!Number.isFinite(m) || !d?.rango_m || d.distancia_proyeccion_m === undefined) return null;
+  const [a, b] = d.rango_m;
+  if (m >= a && m <= b) return null;
+  return `La persona quedó a ${metros(m)} de donde la golpearon, según lo marcado; con la velocidad reconstruida, la proyección es de ${metros(d.distancia_proyeccion_m)} (de ${metros(a)} a ${metros(b)}). La posición final del vehículo y la de la persona no cuadran juntas: revisa cuál está mejor medida.`;
+}
+
 export function interpretarResultado(base: EscenaSolver, resultado: Json): Reconstruccion {
   const inv = resultado.inversion as Inversion;
   const limites = [...base.limites];
@@ -1192,6 +1210,10 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
     t: number;
     actores: string[];
   }[];
+  // Un atropello (A3): si el perito marcó dónde quedó la persona y la reconstrucción la proyecta a
+  // otra distancia (fuera de su rango), se dice con las dos cifras. No se esconde ninguna.
+  const aviso = avisoDeProyeccion(base.spec, resultado);
+  if (aviso) limites.push(aviso);
   const impactos = eventos
     .filter((ev) => ev.tipo.startsWith("impacto_"))
     .sort((a, b) => a.t - b.t)
