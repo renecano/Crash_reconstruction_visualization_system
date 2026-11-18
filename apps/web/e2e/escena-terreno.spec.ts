@@ -107,12 +107,12 @@ test("@flujo /cesvi: ¿cómo es el terreno? — un tope, una zona ondulada y el 
   const mapa = await mapaFacil(page);
   const caja = (await mapa.boundingBox())!;
   await mapa.click({ position: { x: caja.width * 0.6, y: caja.height * 0.45 } });
-  await expect(pregunta).toHaveText("¿Por dónde venía el Jetta?");
+  await expect(pregunta).toHaveText("¿Por dónde venía el VW Jetta?");
   await page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]').click();
   await expect(pregunta).toHaveText("¿Dónde quedó después del choque?");
   await tocarEnMetros(page, "choque-1", 6, 8);
   await page.getByTestId("listo-final").click();
-  await expect(pregunta).toHaveText("¿Por dónde venía el Camaro?");
+  await expect(pregunta).toHaveText("¿Por dónde venía el GM Camaro?");
   await page.getByTestId("no-se-direccion").click();
   await page.getByTestId("final-junto").click();
   await page.getByTestId("listo-final").click();
@@ -125,7 +125,7 @@ test("@flujo /cesvi: ¿cómo es el terreno? — un tope, una zona ondulada y el 
   await expect(page.getByTestId("terreno-liso")).toBeVisible();
   await foto(page, "1-como-es-el-terreno");
 
-  // Un tope, en el camino del Jetta hacia donde quedó: con las medidas de la norma.
+  // Un tope, en el camino del VW Jetta hacia donde quedó: con las medidas de la norma.
   await page.getByTestId("terreno-tope-circular").click();
   await expect(page.getByTestId("terreno-pista")).toContainText("NOM-034");
   await foto(page, "2-tope-elegido");

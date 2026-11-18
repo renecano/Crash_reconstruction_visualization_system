@@ -18,7 +18,9 @@ import {
   avanzar,
   conPosicion,
   distanciaM,
+  distanciaProyeccion,
   enMetros,
+  nombrePersona,
   posesDeImpacto,
   objetosDe,
   piezasTerreno,
@@ -580,12 +582,25 @@ export function rumboAlineado(calles: readonly Calle[], p: Punto, preferido: num
 
 type Vehiculo = Expediente["vehiculos"][number];
 
-/** Cómo se llama un vehículo en pantalla: su modelo o su marca («Jetta»); nunca «V1». */
+/**
+ * Marca y modelo, como los escribe el perito: «Mazda 3», «Volkswagen Jetta». Si el modelo ya trae la
+ * marca, va una vez; con uno solo, ese. Nunca el modelo solo cuando hay marca (René, 2026-11-18: «A · 3»).
+ */
+export function marcaYModelo(
+  marca: string | null | undefined,
+  modelo: string | null | undefined,
+): string {
+  const ma = marca?.trim() ?? "";
+  const mo = modelo?.trim() ?? "";
+  if (ma && mo) return mo.toLowerCase().startsWith(ma.toLowerCase()) ? mo : `${ma} ${mo}`;
+  return mo || ma;
+}
+
+/** Cómo se llama un vehículo en pantalla: marca y modelo («Mazda 3»); nunca «V1». */
 export function nombreVehiculo(v: Vehiculo, todos: readonly Vehiculo[] = [v]): string {
-  const base = v.modelo?.valor?.trim() || v.marca?.valor?.trim() || `Vehículo ${letra(v, todos)}`;
-  const repetido = todos.filter(
-    (x) => (x.modelo?.valor?.trim() || x.marca?.valor?.trim() || "") === base,
-  ).length;
+  const de = (x: Vehiculo) => marcaYModelo(x.marca?.valor, x.modelo?.valor);
+  const base = de(v) || `Vehículo ${letra(v, todos)}`;
+  const repetido = todos.filter((x) => de(x) === base).length;
   return repetido > 1 ? `${base} ${letra(v, todos)}` : base;
 }
 
@@ -977,6 +992,26 @@ export function resumenC1(s: {
   return out;
 }
 
+/**
+ * A3: cada peatón o ciclista que colocó el perito, donde lo golpearon y, si marcó dónde quedó, la
+ * distancia de proyección (la mide Croquis entre los dos puntos que marcó el perito).
+ */
+export function resumenPersonas(e: Expediente): LineaResumen[] {
+  return (e.personas ?? []).map((p) => {
+    const d = distanciaProyeccion(p);
+    return {
+      tipo: "persona",
+      persona: p.id,
+      texto: `${nombrePersona(e, p.id)}, donde lo golpearon`,
+      detalle:
+        d !== null
+          ? `Quedó a ${F.metros(d, 1)} de ahí: es la distancia de proyección.`
+          : "Falta marcar dónde quedó: con eso Croquis mide la distancia de proyección.",
+      supuesto: null,
+    };
+  });
+}
+
 /** C3 (W5): las líneas del terreno para el resumen, con lo que es supuesto dicho como supuesto. */
 export function resumenTerreno(e: Expediente, c1: RespuestasC1): LineaResumen[] {
   const out: LineaResumen[] = [];
@@ -1187,8 +1222,10 @@ export function ponerEnLaCalle(
 // --- El resumen final ----------------------------------------------------------------------------
 
 export interface LineaResumen {
-  tipo: "choque" | "vehiculo" | "golpe" | "objeto" | "paso" | "lugar" | "terreno";
+  tipo: "choque" | "vehiculo" | "golpe" | "objeto" | "paso" | "lugar" | "terreno" | "persona";
   vehiculo?: string;
+  /** El peatón o el ciclista de una línea «persona» (A3): para «Cambiar». */
+  persona?: string;
   /** La pieza del terreno de una línea «terreno» (zona, ondulación o tope): para «Cambiar». */
   terreno?: string;
   /** El choque (su orden) de una línea «choque» u «objeto»: para «Cambiar». */

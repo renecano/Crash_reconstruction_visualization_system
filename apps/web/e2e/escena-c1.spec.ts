@@ -52,15 +52,15 @@ test("@flujo /cesvi: el primer golpe, un choque contra algo más y un punto de p
   const caja = (await mapa.boundingBox())!;
   await mapa.click({ position: { x: caja.width * 0.6, y: caja.height * 0.45 } });
   await expect(page.getByTestId("choque-1")).toHaveCount(1);
-  await expect(pregunta).toHaveText("¿Por dónde venía el Jetta?");
+  await expect(pregunta).toHaveText("¿Por dónde venía el VW Jetta?");
   await page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]').click();
-  // El Jetta queda aparte del choque: dos coches «junto al choque» quedan encimados, y esa alerta
+  // El VW Jetta queda aparte del choque: dos coches «junto al choque» quedan encimados, y esa alerta
   // se queda a la vista en lugar de los mensajes de éxito de después.
   await expect(pregunta).toHaveText("¿Dónde quedó después del choque?");
   await tocarEnMetros(page, "choque-1", 6, 8);
   await expect(page.getByTestId("coche-V1-final")).toHaveCount(1);
   await page.getByTestId("listo-final").click();
-  await expect(pregunta).toHaveText("¿Por dónde venía el Camaro?");
+  await expect(pregunta).toHaveText("¿Por dónde venía el GM Camaro?");
   await page.getByTestId("no-se-direccion").click();
   await page.getByTestId("final-junto").click();
   await page.getByTestId("listo-final").click();
@@ -74,27 +74,27 @@ test("@flujo /cesvi: el primer golpe, un choque contra algo más y un punto de p
   );
   await expect(page.getByTestId("marca-golpe")).toHaveCount(1);
 
-  // 2. ¿Chocó contra algo más? Sí: el Camaro, contra un poste, y se toca dónde fue.
+  // 2. ¿Chocó contra algo más? Sí: el GM Camaro, contra un poste, y se toca dónde fue.
   await expect(pregunta).toHaveText("¿Chocó contra algo más?");
   await page.getByTestId("otros-si").click();
   await expect(page.getByTestId("otros-toca")).toContainText("Elige y después toca el mapa");
   await page.getByTestId("otros-vehiculo-V2").click();
   await page.getByTestId("otros-objeto-0").click();
-  await expect(page.getByTestId("otros-toca")).toContainText("el Camaro chocó contra un poste");
+  await expect(page.getByTestId("otros-toca")).toContainText("el GM Camaro chocó contra un poste");
   await tocarEnMetros(page, "choque-1", 18, 3);
   await expect(page.getByTestId("mensaje-exito")).toContainText("chocó contra un poste ahí");
   await expect(page.getByTestId("marca-objeto-2")).toHaveCount(1);
-  await expect(page.getByTestId("otros-marcados")).toContainText("El Camaro contra un poste");
+  await expect(page.getByTestId("otros-marcados")).toContainText("El GM Camaro contra un poste");
   // La pregunta sigue abierta hasta decir que es todo.
   await expect(pregunta).toHaveText("¿Chocó contra algo más?");
   await page.getByTestId("otros-no").click();
 
-  // 3. ¿Sabes por dónde pasó? Opcional: un punto del Camaro, y «Listo».
+  // 3. ¿Sabes por dónde pasó? Opcional: un punto del GM Camaro, y «Listo».
   await expect(pregunta).toHaveText("¿Sabes por dónde pasó?");
   await page.getByTestId("paso-vehiculo-V2").click();
   await tocarEnMetros(page, "choque-1", 9, 1.5);
   await expect(page.getByTestId("marca-paso-V2-1")).toHaveCount(1);
-  await expect(page.getByTestId("paso-cuenta")).toContainText("Un punto del Camaro");
+  await expect(page.getByTestId("paso-cuenta")).toContainText("Un punto del GM Camaro");
   await page.getByTestId("paso-listo").click();
 
   // La del terreno (C3, W5): aquí, pavimento liso.
@@ -105,8 +105,8 @@ test("@flujo /cesvi: el primer golpe, un choque contra algo más y un punto de p
   await expect(page.getByTestId("escena-lista")).toBeVisible();
   const resumen = page.getByTestId("escena-resumen");
   await expect(resumen).toContainText("El primer golpe, donde lo marcaste");
-  await expect(resumen).toContainText("el Camaro chocó contra un poste");
-  await expect(resumen).toContainText("El Camaro pasó por el punto que marcaste");
+  await expect(resumen).toContainText("el GM Camaro chocó contra un poste");
+  await expect(resumen).toContainText("El GM Camaro pasó por el punto que marcaste");
 
   // La reconstrucción usa lo marcado como evidencia.
   await irAPaso(page, 4);

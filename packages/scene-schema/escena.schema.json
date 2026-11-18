@@ -1403,6 +1403,7 @@
           "required": [],
           "additionalProperties": false
         },
+        "condiciones": { "$ref": "#/$defs/CondicionesExpediente" },
         "modalidades": {
           "type": "array",
           "description": "Modalidad o modalidades del hecho.",
@@ -1411,6 +1412,77 @@
         }
       },
       "required": ["modalidades"],
+      "additionalProperties": false
+    },
+    "CondicionesExpediente": {
+      "type": "object",
+      "description": "Las condiciones del lugar al momento del hecho, como las narra el perito (opcional; agregado en 2.3.0 sin cambiar la versión, ADR 0142). El estado de la superficie fija la fricción del cálculo; el clima y la iluminación, la vista del 3D y lo que alcanza a ver un conductor.",
+      "properties": {
+        "superficie": {
+          "type": "object",
+          "description": "Material de la superficie de rodamiento.",
+          "properties": {
+            "valor": {
+              "type": "string",
+              "enum": ["asfalto", "concreto", "adoquin", "empedrado", "terraceria"]
+            },
+            "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+            "cita": { "$ref": "#/$defs/Cita" }
+          },
+          "required": ["valor", "fuente"],
+          "additionalProperties": false
+        },
+        "estado_superficie": {
+          "type": "object",
+          "description": "Estado de la superficie: seca, mojada, encharcada…",
+          "properties": {
+            "valor": {
+              "type": "string",
+              "enum": ["seco", "mojado", "encharcado", "grava_suelta", "aceite", "lodo"]
+            },
+            "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+            "cita": { "$ref": "#/$defs/Cita" }
+          },
+          "required": ["valor", "fuente"],
+          "additionalProperties": false
+        },
+        "clima": {
+          "type": "object",
+          "description": "Clima al momento del hecho.",
+          "properties": {
+            "valor": {
+              "type": "string",
+              "enum": [
+                "despejado",
+                "nublado",
+                "lluvia_ligera",
+                "lluvia_fuerte",
+                "niebla",
+                "granizo"
+              ]
+            },
+            "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+            "cita": { "$ref": "#/$defs/Cita" }
+          },
+          "required": ["valor", "fuente"],
+          "additionalProperties": false
+        },
+        "iluminacion": {
+          "type": "object",
+          "description": "Luz al momento del hecho. «Noche sin alumbrado» solo si la narración lo dice.",
+          "properties": {
+            "valor": {
+              "type": "string",
+              "enum": ["dia", "amanecer", "atardecer", "noche_con_alumbrado", "noche_sin_alumbrado"]
+            },
+            "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+            "cita": { "$ref": "#/$defs/Cita" }
+          },
+          "required": ["valor", "fuente"],
+          "additionalProperties": false
+        }
+      },
+      "required": [],
       "additionalProperties": false
     },
     "Rigidez": {
@@ -1799,6 +1871,36 @@
       "required": ["id", "tipo", "punto", "fuente"],
       "additionalProperties": false
     },
+    "PersonaExpediente": {
+      "type": "object",
+      "description": "Un peatón o un ciclista que el perito coloca en la escena (ronda 4, A3): dónde estaba cuando lo golpearon, hacia dónde iba y, si se sabe, dónde quedó. De lo golpeado a donde quedó es la distancia de proyección.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_-]{1,40}$",
+          "description": "Identificador estable dentro del expediente."
+        },
+        "rol": { "type": "string", "enum": ["peaton", "ciclista"] },
+        "punto": {
+          "$ref": "#/$defs/Coordenadas",
+          "description": "Dónde estaba al ser golpeado (o donde la colocó el perito)."
+        },
+        "rumbo_deg": {
+          "type": "number",
+          "minimum": 0,
+          "exclusiveMaximum": 360,
+          "description": "Hacia dónde iba, desde el norte hacia el este."
+        },
+        "final": {
+          "$ref": "#/$defs/Coordenadas",
+          "description": "Dónde quedó después del impacto, si el perito lo marcó."
+        },
+        "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+        "cita": { "$ref": "#/$defs/Cita" }
+      },
+      "required": ["id", "rol", "punto", "fuente"],
+      "additionalProperties": false
+    },
     "ImpactoExpediente": {
       "type": "object",
       "description": "Un impacto, en orden: qué vehículos u objeto fijo, sus zonas de contacto, dónde y cuándo. Una carambola tiene más de uno.",
@@ -1820,6 +1922,11 @@
           "minLength": 1,
           "maxLength": 120,
           "description": "Objeto fijo, si lo hay (poste, muro, árbol…)."
+        },
+        "persona": {
+          "type": "string",
+          "pattern": "^[a-z0-9_-]{1,40}$",
+          "description": "La persona a pie o en bicicleta del impacto (un atropello), por su `id` en `personas` (ronda 4, A3)."
         },
         "zonas": {
           "type": "array",
@@ -2136,6 +2243,12 @@
           "description": "Objetos del lugar que colocó el perito (C2).",
           "items": { "$ref": "#/$defs/ObjetoExpediente" },
           "maxItems": 60
+        },
+        "personas": {
+          "type": "array",
+          "description": "Peatones y ciclistas que colocó el perito (ronda 4, A3; agregado en 2.3.0 sin cambiar la versión, ADR 0142). En la escena van a `personas`.",
+          "items": { "$ref": "#/$defs/PersonaExpediente" },
+          "maxItems": 12
         },
         "terreno": { "$ref": "#/$defs/TerrenoExpediente" },
         "versiones": {

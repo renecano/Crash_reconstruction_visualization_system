@@ -15,7 +15,14 @@
  * Coordenadas: las del solver en metros. El SVG usa metros como unidad, con Y hacia abajo.
  */
 import { EnRanura, useMarco } from "@/components/visor-unity/marco-vista";
-import { formato as F, curvasDeNivel, intervaloDeCurvas, type MallaRelieve } from "@croquis/cesvi";
+import {
+  formato as F,
+  curvasDeNivel,
+  intervaloDeCurvas,
+  nombreRol,
+  type MallaRelieve,
+} from "@croquis/cesvi";
+import { FIGURA_PERSONA } from "./figura-persona";
 import type { EscenaSpec } from "@croquis/scene-schema";
 import { sceneLayout } from "@croquis/croquis-2d";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -45,6 +52,7 @@ import {
   type ResultadoMaqueta,
   tImpacto,
   tramosPorVelocidad,
+  personasEnMaqueta,
   versionDeclaradaEnMaqueta,
   type VehiculoResultado,
 } from "@/lib/maqueta";
@@ -90,6 +98,9 @@ export interface PedidoVista {
   tipo: "todo" | "impacto";
   n: number;
 }
+
+/** El violeta de las personas en La escena (`sistema.css`): 10.9:1 con la figura blanca. */
+const COLOR_PERSONA = "#4C1D95";
 
 export function EscenaMaqueta({
   spec,
@@ -193,6 +204,16 @@ export function EscenaMaqueta({
     () => (declarada ? versionDeclaradaEnMaqueta(resultado, declarada.resultado, ahora) : []),
     [declarada, resultado, ahora],
   );
+  const personas = useMemo(() => personasEnMaqueta(resultado, ahora), [resultado, ahora]);
+  // Donde quedó cada persona según lo marcó el perito (la escena lo trae como posición final).
+  const marcados = useMemo(() => {
+    type P = { id: string; posicion_final?: { x: number; y: number } };
+    return Object.fromEntries(
+      (((spec as { personas?: P[] }).personas ?? []) as P[]).flatMap((p) =>
+        p.posicion_final ? [[p.id, { x: p.posicion_final.x, y: p.posicion_final.y }]] : [],
+      ),
+    ) as Record<string, { x: number; y: number }>;
+  }, [spec]);
   const cota =
     layout.mapa && impacto ? cotaDeVia(layout.mapa.vias, impacto, 14, anchoVia?.m) : null;
   // Las etiquetas van en columna a un lado del impacto: los vehículos arriba y abajo, en el orden en
@@ -398,6 +419,131 @@ export function EscenaMaqueta({
             </title>
             {F.metros(cota.ancho)}
           </text>
+        </g>
+      ) : null}
+
+      {/* A3 (ronda 4): los peatones y ciclistas, con la figura y el color de La escena. El que fue
+          golpeado lleva su recorrido punteado y dónde quedó. */}
+      {personas.length ? (
+        <g data-testid="maqueta-personas">
+          {personas.map((p) => {
+            const nombre = nombres[p.id] ?? nombreRol(p.rol);
+            // La figura, de 1.6 m de alto en la escena (una persona), nunca menos de lo que se lee.
+            const lado = Math.max(1.6, fuente * 1.5);
+            const f = FIGURA_PERSONA[p.rol];
+            return (
+              <g key={p.id} data-testid={`maqueta-persona-${p.id}`} data-rol={p.rol}>
+                {p.camino.length > 1 ? (
+                  <polyline
+                    points={p.camino.map((q) => `${px(q.x)},${py(q.y)}`).join(" ")}
+                    fill="none"
+                    stroke={COLOR_PERSONA}
+                    strokeWidth={1.6}
+                    strokeDasharray="5 4"
+                    vectorEffect="non-scaling-stroke"
+                  />
+                ) : null}
+                {/* Donde quedó según lo marcó el perito (la evidencia), con una cruz: puede no coincidir
+                    con el reposo reconstruido (el círculo). */}
+                {marcados[p.id] ? (
+                  <g
+                    transform={`translate(${px(marcados[p.id]!.x)} ${py(marcados[p.id]!.y)})`}
+                    data-testid={`maqueta-persona-marcado-${p.id}`}
+                    data-tip={`${nombre}: donde quedó, según lo marcó el perito`}
+                  >
+                    <path
+                      d={`M${-lado * 0.3} ${-lado * 0.3} L${lado * 0.3} ${lado * 0.3} M${-lado * 0.3} ${lado * 0.3} L${lado * 0.3} ${-lado * 0.3}`}
+                      fill="none"
+                      stroke={COLOR_PERSONA}
+                      strokeWidth={2.4}
+                      strokeLinecap="round"
+                      vectorEffect="non-scaling-stroke"
+                    />
+                    {sinEtiquetas ? null : (
+                      <text
+                        y={lado * 0.95}
+                        fontSize={fuente * 0.7}
+                        textAnchor="middle"
+                        fill="var(--texto-2)"
+                        paintOrder="stroke"
+                        stroke="var(--fondo)"
+                        strokeWidth={fuente * 0.18}
+                      >
+                        quedó aquí (marcado)
+                      </text>
+                    )}
+                  </g>
+                ) : null}
+                {p.reposo ? (
+                  <circle
+                    cx={px(p.reposo.x)}
+                    cy={py(p.reposo.y)}
+                    r={lado * 0.28}
+                    fill="var(--superficie)"
+                    stroke={COLOR_PERSONA}
+                    strokeWidth={2}
+                    vectorEffect="non-scaling-stroke"
+                    data-testid={`maqueta-persona-reposo-${p.id}`}
+                  />
+                ) : null}
+                <g
+                  transform={`translate(${px(p.pose.x)} ${py(p.pose.y)}) scale(${lado / 24}) translate(-12 -12)`}
+                  data-tip={
+                    p.proyeccionM !== null
+                      ? `${nombre} · proyección reconstruida de ${F.metros(p.proyeccionM)}`
+                      : nombre
+                  }
+                >
+                  <circle
+                    cx={12}
+                    cy={12}
+                    r={13}
+                    fill={COLOR_PERSONA}
+                    stroke="#fff"
+                    strokeWidth={1.2}
+                  />
+                  {f.circulos.map(([cx, cy, r, relleno], k) => (
+                    <circle
+                      key={k}
+                      cx={cx}
+                      cy={cy}
+                      r={r}
+                      fill={relleno ? "#fff" : "none"}
+                      stroke="#fff"
+                      strokeWidth={relleno ? 0 : 1.8}
+                    />
+                  ))}
+                  {f.trazos.map((d, k) => (
+                    <path
+                      key={`t${k}`}
+                      d={d}
+                      fill="none"
+                      stroke="#fff"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  ))}
+                </g>
+                {sinEtiquetas ? null : (
+                  <text
+                    x={px(p.pose.x)}
+                    y={py(p.pose.y) - lado * 0.7}
+                    fontSize={fuente * 0.8}
+                    textAnchor="middle"
+                    fill="var(--texto-2)"
+                    paintOrder="stroke"
+                    stroke="var(--fondo)"
+                    strokeWidth={fuente * 0.18}
+                  >
+                    {p.proyeccionM !== null && p.reposo
+                      ? `${nombre} · proyección reconstruida ${F.metros(p.proyeccionM)}`
+                      : nombre}
+                  </text>
+                )}
+              </g>
+            );
+          })}
         </g>
       ) : null}
 

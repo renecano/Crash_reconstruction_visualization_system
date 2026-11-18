@@ -59,7 +59,9 @@ export function BarraReproduccion({
       >
         {corre ? "❚❚" : "▶"}
       </button>
-      <div className="relative min-w-40 flex-1">
+      {/* Un contenedor con nombre: las etiquetas se acomodan según el ancho de la línea, no de la
+          ventana (a 1280 px «Llegada» e «Impacto» se encimaban; René, 2026-11-18). */}
+      <div className="@container relative min-w-40 flex-1">
         <input
           type="range"
           className="w-full accent-[var(--texto)]"
@@ -77,12 +79,27 @@ export function BarraReproduccion({
           style={{ left: `${fraccion(0)}%` }}
           aria-hidden="true"
         />
-        <div className="relative mt-0.5 h-4 font-mono text-[0.6875rem] text-texto-3">
-          <span className="absolute left-0">Llegada</span>
-          <span className="absolute -translate-x-1/2" style={{ left: `${fraccion(0)}%` }}>
+        {/* Angosta: «Llegada» y «Reposo final» arriba y el impacto en su propio renglón. Ancha: un
+            renglón, y el impacto nunca se acerca a las de los extremos más de lo que miden. */}
+        <div
+          className="relative mt-0.5 h-8 font-mono text-[0.6875rem] leading-4 whitespace-nowrap text-texto-3 [--der:4.75rem] [--izq:4.75rem] @md:h-4 @md:[--der:10rem] @md:[--izq:8rem]"
+          data-testid="etiquetas-tiempo"
+        >
+          <span className="absolute top-0 left-0" data-etiqueta="llegada">
+            Llegada
+          </span>
+          <span
+            className="absolute top-4 -translate-x-1/2 @md:top-0"
+            style={{
+              left: `clamp(var(--izq), ${fraccion(0)}%, calc(100% - var(--der)))`,
+            }}
+            data-etiqueta="impacto"
+          >
             Impacto · t {F.instante(estado.t)}
           </span>
-          <span className="absolute right-0">Reposo final</span>
+          <span className="absolute top-0 right-0" data-etiqueta="reposo">
+            Reposo final
+          </span>
         </div>
       </div>
       <div className="segmentado shrink-0" role="group" aria-label="Velocidad de reproducción">

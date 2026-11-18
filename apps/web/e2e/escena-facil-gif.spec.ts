@@ -116,7 +116,7 @@ for (const [nombre, tema, ancho, alto] of [
     await expect(page.getByTestId("mensaje-exito")).toBeVisible();
     await cuadro(1600, "2-choque-listo");
 
-    // 2. ¿Por dónde venía el Jetta? La flecha propuesta ya viene resaltada.
+    // 2. ¿Por dónde venía el VW Jetta? La flecha propuesta ya viene resaltada.
     await expect(page.getByTestId("escena-pregunta")).toContainText("Jetta");
     await cuadro(1600, "3-jetta-direccion");
     await page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]').first().click();
@@ -138,7 +138,7 @@ for (const [nombre, tema, ancho, alto] of [
     await cuadro(1600, "4-jetta-quedo");
     await page.getByTestId("listo-final").click();
 
-    // 3. El Camaro: su flecha y «Quedó junto al choque».
+    // 3. El GM Camaro: su flecha y «Quedó junto al choque».
     await expect(page.getByTestId("escena-pregunta")).toContainText("Camaro");
     await cuadro(1400, "5-camaro-direccion");
     await page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]').first().click();

@@ -57,7 +57,7 @@ export const recibidosDelPuente = (page: Page) =>
         ?.enviados ?? [],
   );
 
-/** La escena de «Corregir después» (W4): dos vehículos y el Camaro contra un poste. */
+/** La escena de «Corregir después» (W4): dos vehículos y el GM Camaro contra un poste. */
 export async function casoConPoste(page: Page) {
   await page.route("https://tiles.openfreemap.org/**", (r) =>
     r.fulfill({
@@ -87,7 +87,7 @@ export async function casoConPoste(page: Page) {
   const mapa = await mapaFacil(page);
   const caja = (await mapa.boundingBox())!;
   await mapa.click({ position: { x: caja.width * 0.6, y: caja.height * 0.45 } });
-  await expect(pregunta).toHaveText("¿Por dónde venía el Jetta?");
+  await expect(pregunta).toHaveText("¿Por dónde venía el VW Jetta?");
   await page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]').click();
   await tocarEnMetros(page, "choque-1", 6, 8);
   await page.getByTestId("listo-final").click();

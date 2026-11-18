@@ -68,6 +68,16 @@ test("@flujo /cesvi: el 3D y el 2D en su marco — controles fuera de la escena,
   await expect(abajo.getByTestId("controles-unity")).toBeVisible();
   await noSeEnciman(arriba, lienzo);
   await noSeEnciman(abajo, lienzo);
+  // Las etiquetas de la línea de tiempo no se enciman (esta prueba corre a 1280 px; René, 2026-11-18).
+  const etiquetas = page.getByTestId("etiquetas-tiempo");
+  await noSeEnciman(
+    etiquetas.locator('[data-etiqueta="llegada"]'),
+    etiquetas.locator('[data-etiqueta="impacto"]'),
+  );
+  await noSeEnciman(
+    etiquetas.locator('[data-etiqueta="impacto"]'),
+    etiquetas.locator('[data-etiqueta="reposo"]'),
+  );
 
   // Las notas, en su desplegable, cerrado.
   const notas = page.getByTestId("supuestos-y-notas");

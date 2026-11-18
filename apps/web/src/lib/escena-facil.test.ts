@@ -23,6 +23,7 @@ import {
   marcarChoque,
   marcarFinal,
   nombreComparable,
+  marcaYModelo,
   nombreVehiculo,
   PALETA_VEHICULOS,
   pasoActual,
@@ -137,11 +138,22 @@ describe("lo que Croquis lee de la narración (escena fácil)", () => {
     expect(PALETA_VEHICULOS.map((c) => c.toLowerCase())).not.toContain("#ff5a1f");
   });
 
-  it("cada vehículo se llama por su modelo, nunca «V1»", () => {
-    expect(nombreVehiculo(e0.vehiculos[0]!, e0.vehiculos)).toBe("Jetta");
-    expect(nombreVehiculo(e0.vehiculos[1]!, e0.vehiculos)).toBe("Camaro");
-    const dos = [e0.vehiculos[0]!, { ...e0.vehiculos[1]!, modelo: e0.vehiculos[0]!.modelo }];
-    expect(nombreVehiculo(dos[1]!, dos)).toBe("Jetta B");
+  it("cada vehículo se llama por su marca y su modelo, nunca «V1» ni «3» (René, 2026-11-18)", () => {
+    const v1 = e0.vehiculos[0]!;
+    const v2 = e0.vehiculos[1]!;
+    const marca1 = v1.marca?.valor?.trim();
+    expect(nombreVehiculo(v1, e0.vehiculos)).toBe(marca1 ? `${marca1} Jetta` : "Jetta");
+    expect(nombreVehiculo(v2, e0.vehiculos)).toContain("Camaro");
+    const dos = [v1, { ...v2, marca: v1.marca, modelo: v1.modelo }];
+    expect(nombreVehiculo(dos[1]!, dos)).toBe(`${nombreVehiculo(v1, [v1])} B`);
+  });
+
+  it("marca y modelo: «Mazda 3», sin repetir la marca", () => {
+    expect(marcaYModelo("Mazda", "3")).toBe("Mazda 3");
+    expect(marcaYModelo("Nissan", "Nissan Tsuru")).toBe("Nissan Tsuru");
+    expect(marcaYModelo("", "Jetta")).toBe("Jetta");
+    expect(marcaYModelo("Ford", undefined)).toBe("Ford");
+    expect(marcaYModelo(null, null)).toBe("");
   });
 });
 

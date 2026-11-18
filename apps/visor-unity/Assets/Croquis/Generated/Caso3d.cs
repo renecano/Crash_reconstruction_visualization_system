@@ -335,13 +335,13 @@ namespace Croquis.Generated
         public BolsasAire AlumbradoPublico { get; set; }
 
         [JsonProperty("clima")]
-        public Clima Clima { get; set; }
+        public EntornoClima Clima { get; set; }
 
         [JsonProperty("fecha_hora", NullValueHandling = NullValueHandling.Ignore)]
         public FechaHora FechaHora { get; set; }
 
         [JsonProperty("iluminacion")]
-        public Iluminacion Iluminacion { get; set; }
+        public EntornoIluminacion Iluminacion { get; set; }
 
         [JsonProperty("objetos", NullValueHandling = NullValueHandling.Ignore)]
         public EntornoObjeto[] Objetos { get; set; }
@@ -353,7 +353,7 @@ namespace Croquis.Generated
         public AnchoDanado Visibilidad { get; set; }
     }
 
-    public partial class Clima
+    public partial class EntornoClima
     {
         [JsonProperty("confianza")]
         [JsonConverter(typeof(PurpleMinMaxValueCheckConverter))]
@@ -394,7 +394,7 @@ namespace Croquis.Generated
         public string Valor { get; set; }
     }
 
-    public partial class Iluminacion
+    public partial class EntornoIluminacion
     {
         [JsonProperty("confianza")]
         [JsonConverter(typeof(PurpleMinMaxValueCheckConverter))]
@@ -692,6 +692,13 @@ namespace Croquis.Generated
         [JsonProperty("objetos", NullValueHandling = NullValueHandling.Ignore)]
         public ExpedienteObjeto[] Objetos { get; set; }
 
+        /// <summary>
+        /// Peatones y ciclistas que colocó el perito (ronda 4, A3; agregado en 2.3.0 sin cambiar la
+        /// versión, ADR 0142). En la escena van a `personas`.
+        /// </summary>
+        [JsonProperty("personas", NullValueHandling = NullValueHandling.Ignore)]
+        public ExpedientePersona[] Personas { get; set; }
+
         [JsonProperty("resultado", NullValueHandling = NullValueHandling.Ignore)]
         public Resultado Resultado { get; set; }
 
@@ -804,6 +811,9 @@ namespace Croquis.Generated
         [JsonProperty("aseguradora", NullValueHandling = NullValueHandling.Ignore)]
         public Aseguradora Aseguradora { get; set; }
 
+        [JsonProperty("condiciones", NullValueHandling = NullValueHandling.Ignore)]
+        public Condiciones Condiciones { get; set; }
+
         [JsonProperty("fecha_hora", NullValueHandling = NullValueHandling.Ignore)]
         public Aseguradora FechaHora { get; set; }
 
@@ -843,6 +853,99 @@ namespace Croquis.Generated
     }
 
     /// <summary>
+    /// Las condiciones del lugar al momento del hecho, como las narra el perito (opcional;
+    /// agregado en 2.3.0 sin cambiar la versión, ADR 0142). El estado de la superficie fija la
+    /// fricción del cálculo; el clima y la iluminación, la vista del 3D y lo que alcanza a ver
+    /// un conductor.
+    /// </summary>
+    public partial class Condiciones
+    {
+        /// <summary>
+        /// Clima al momento del hecho.
+        /// </summary>
+        [JsonProperty("clima", NullValueHandling = NullValueHandling.Ignore)]
+        public CondicionesClima Clima { get; set; }
+
+        /// <summary>
+        /// Estado de la superficie: seca, mojada, encharcada…
+        /// </summary>
+        [JsonProperty("estado_superficie", NullValueHandling = NullValueHandling.Ignore)]
+        public CondicionesEstadoSuperficie EstadoSuperficie { get; set; }
+
+        /// <summary>
+        /// Luz al momento del hecho. «Noche sin alumbrado» solo si la narración lo dice.
+        /// </summary>
+        [JsonProperty("iluminacion", NullValueHandling = NullValueHandling.Ignore)]
+        public CondicionesIluminacion Iluminacion { get; set; }
+
+        /// <summary>
+        /// Material de la superficie de rodamiento.
+        /// </summary>
+        [JsonProperty("superficie", NullValueHandling = NullValueHandling.Ignore)]
+        public CondicionesSuperficie Superficie { get; set; }
+    }
+
+    /// <summary>
+    /// Clima al momento del hecho.
+    /// </summary>
+    public partial class CondicionesClima
+    {
+        [JsonProperty("cita", NullValueHandling = NullValueHandling.Ignore)]
+        public Cita Cita { get; set; }
+
+        [JsonProperty("fuente")]
+        public ResultadoFuente Fuente { get; set; }
+
+        [JsonProperty("valor")]
+        public ClimaValor Valor { get; set; }
+    }
+
+    /// <summary>
+    /// Estado de la superficie: seca, mojada, encharcada…
+    /// </summary>
+    public partial class CondicionesEstadoSuperficie
+    {
+        [JsonProperty("cita", NullValueHandling = NullValueHandling.Ignore)]
+        public Cita Cita { get; set; }
+
+        [JsonProperty("fuente")]
+        public ResultadoFuente Fuente { get; set; }
+
+        [JsonProperty("valor")]
+        public EstadoSuperficieValor Valor { get; set; }
+    }
+
+    /// <summary>
+    /// Luz al momento del hecho. «Noche sin alumbrado» solo si la narración lo dice.
+    /// </summary>
+    public partial class CondicionesIluminacion
+    {
+        [JsonProperty("cita", NullValueHandling = NullValueHandling.Ignore)]
+        public Cita Cita { get; set; }
+
+        [JsonProperty("fuente")]
+        public ResultadoFuente Fuente { get; set; }
+
+        [JsonProperty("valor")]
+        public IluminacionValor Valor { get; set; }
+    }
+
+    /// <summary>
+    /// Material de la superficie de rodamiento.
+    /// </summary>
+    public partial class CondicionesSuperficie
+    {
+        [JsonProperty("cita", NullValueHandling = NullValueHandling.Ignore)]
+        public Cita Cita { get; set; }
+
+        [JsonProperty("fuente")]
+        public ResultadoFuente Fuente { get; set; }
+
+        [JsonProperty("valor")]
+        public SuperficieValor Valor { get; set; }
+    }
+
+    /// <summary>
     /// Dónde fue.
     /// </summary>
     public partial class CasoLugar
@@ -871,6 +974,10 @@ namespace Croquis.Generated
 
     /// <summary>
     /// Un punto en el mapa (WGS84).
+    ///
+    /// Dónde quedó después del impacto, si el perito lo marcó.
+    ///
+    /// Dónde estaba al ser golpeado (o donde la colocó el perito).
     ///
     /// Vértices del polígono en el mapa, sin repetir el primero al final.
     /// </summary>
@@ -1146,6 +1253,13 @@ namespace Croquis.Generated
         [JsonProperty("orden")]
         public long Orden { get; set; }
 
+        /// <summary>
+        /// La persona a pie o en bicicleta del impacto (un atropello), por su `id` en `personas`
+        /// (ronda 4, A3).
+        /// </summary>
+        [JsonProperty("persona", NullValueHandling = NullValueHandling.Ignore)]
+        public string Persona { get; set; }
+
         [JsonProperty("punto", NullValueHandling = NullValueHandling.Ignore)]
         public Coordenadas Punto { get; set; }
 
@@ -1213,6 +1327,48 @@ namespace Croquis.Generated
 
         [JsonProperty("tipo")]
         public TentacledTipo Tipo { get; set; }
+    }
+
+    /// <summary>
+    /// Un peatón o un ciclista que el perito coloca en la escena (ronda 4, A3): dónde estaba
+    /// cuando lo golpearon, hacia dónde iba y, si se sabe, dónde quedó. De lo golpeado a donde
+    /// quedó es la distancia de proyección.
+    /// </summary>
+    public partial class ExpedientePersona
+    {
+        [JsonProperty("cita", NullValueHandling = NullValueHandling.Ignore)]
+        public Cita Cita { get; set; }
+
+        /// <summary>
+        /// Dónde quedó después del impacto, si el perito lo marcó.
+        /// </summary>
+        [JsonProperty("final", NullValueHandling = NullValueHandling.Ignore)]
+        public Coordenadas Final { get; set; }
+
+        [JsonProperty("fuente")]
+        public ResultadoFuente Fuente { get; set; }
+
+        /// <summary>
+        /// Identificador estable dentro del expediente.
+        /// </summary>
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Dónde estaba al ser golpeado (o donde la colocó el perito).
+        /// </summary>
+        [JsonProperty("punto")]
+        public Coordenadas Punto { get; set; }
+
+        [JsonProperty("rol")]
+        public PersonaRolEnum Rol { get; set; }
+
+        /// <summary>
+        /// Hacia dónde iba, desde el norte hacia el este.
+        /// </summary>
+        [JsonProperty("rumbo_deg", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(FluffyMinMaxValueCheckConverter))]
+        public double? RumboDeg { get; set; }
     }
 
     /// <summary>
@@ -1648,7 +1804,7 @@ namespace Croquis.Generated
         public DispositivoElement[] Dispositivos { get; set; }
 
         [JsonProperty("estado_superficie")]
-        public EstadoSuperficie EstadoSuperficie { get; set; }
+        public LugarEstadoSuperficie EstadoSuperficie { get; set; }
 
         [JsonProperty("friccion", NullValueHandling = NullValueHandling.Ignore)]
         public TemperaturaC Friccion { get; set; }
@@ -1678,7 +1834,7 @@ namespace Croquis.Generated
         public Sentidos Sentidos { get; set; }
 
         [JsonProperty("superficie")]
-        public Superficie Superficie { get; set; }
+        public LugarSuperficie Superficie { get; set; }
 
         [JsonProperty("terreno", NullValueHandling = NullValueHandling.Ignore)]
         public LugarTerreno Terreno { get; set; }
@@ -1792,7 +1948,7 @@ namespace Croquis.Generated
         public double Valor { get; set; }
     }
 
-    public partial class EstadoSuperficie
+    public partial class LugarEstadoSuperficie
     {
         [JsonProperty("confianza")]
         [JsonConverter(typeof(PurpleMinMaxValueCheckConverter))]
@@ -1923,7 +2079,7 @@ namespace Croquis.Generated
         public SentidosValor Valor { get; set; }
     }
 
-    public partial class Superficie
+    public partial class LugarSuperficie
     {
         [JsonProperty("confianza")]
         [JsonConverter(typeof(PurpleMinMaxValueCheckConverter))]
@@ -2191,7 +2347,7 @@ namespace Croquis.Generated
         public Postura Postura { get; set; }
 
         [JsonProperty("rol")]
-        public Rol Rol { get; set; }
+        public RolClass Rol { get; set; }
 
         [JsonProperty("sistema_retencion_infantil", NullValueHandling = NullValueHandling.Ignore)]
         public BolsasAire SistemaRetencionInfantil { get; set; }
@@ -2315,7 +2471,7 @@ namespace Croquis.Generated
         public PosturaValor Valor { get; set; }
     }
 
-    public partial class Rol
+    public partial class RolClass
     {
         [JsonProperty("confianza")]
         [JsonConverter(typeof(PurpleMinMaxValueCheckConverter))]
@@ -5012,6 +5168,10 @@ namespace Croquis.Generated
 
     public enum Metodo { BolsasAire, CantidadMovimiento, Desplazamiento, Ebs, FrenadoHuellas, Mchenry, Otro, PruebaChoque };
 
+    public enum EstadoSuperficieValor { Aceite, Encharcado, GravaSuelta, Lodo, Mojado, Seco };
+
+    public enum SuperficieValor { Adoquin, Asfalto, Concreto, Empedrado, Terraceria };
+
     /// <summary>
     /// Modalidad del hecho de tránsito según los dictámenes de CESVI.
     /// </summary>
@@ -5043,6 +5203,8 @@ namespace Croquis.Generated
     public enum HuellaTipo { Arrastre, Derrape, Frenado };
 
     public enum TentacledTipo { Arbol, Barrera, Guarnicion, Muro, Poste, Senal, VehiculoEstacionado };
+
+    public enum PersonaRolEnum { Ciclista, Peaton };
 
     public enum Veredicto { NoSeSostiene, Parcial, SeSostiene, SinJuicio };
 
@@ -5078,8 +5240,6 @@ namespace Croquis.Generated
 
     public enum DispositivoTipo { Alto, CedaElPaso, LimiteVelocidad, LineaContinua, LineaDiscontinua, NoVuelta, Otro, PasoPeatonal, Semaforo, SemaforoPeatonal, Tope, UnSentido };
 
-    public enum EstadoSuperficieValor { Aceite, Encharcado, GravaSuelta, Lodo, Mojado, Seco };
-
     public enum PendienteUnidad { Empty };
 
     public enum FuenteDatos { OpenStreetMap };
@@ -5087,8 +5247,6 @@ namespace Croquis.Generated
     public enum Licencia { ODbL10 };
 
     public enum SentidosValor { DobleSentido, UnSentido };
-
-    public enum SuperficieValor { Adoquin, Asfalto, Concreto, Empedrado, Terraceria };
 
     public enum TentacledFuente { Declarado, Dem, Plano };
 
@@ -5227,6 +5385,8 @@ namespace Croquis.Generated
                 EvidenciaTipoConverter.Singleton,
                 ResultadoFuenteConverter.Singleton,
                 MetodoConverter.Singleton,
+                EstadoSuperficieValorConverter.Singleton,
+                SuperficieValorConverter.Singleton,
                 ModalidadeElementConverter.Singleton,
                 CriterioConverter.Singleton,
                 EstadoConverter.Singleton,
@@ -5238,6 +5398,7 @@ namespace Croquis.Generated
                 VerticeConverter.Singleton,
                 HuellaTipoConverter.Singleton,
                 TentacledTipoConverter.Singleton,
+                PersonaRolEnumConverter.Singleton,
                 VeredictoConverter.Singleton,
                 DecisionEnumConverter.Singleton,
                 PurpleFuenteConverter.Singleton,
@@ -5250,12 +5411,10 @@ namespace Croquis.Generated
                 ColorEnumConverter.Singleton,
                 VelocidadUnidadConverter.Singleton,
                 DispositivoTipoConverter.Singleton,
-                EstadoSuperficieValorConverter.Singleton,
                 PendienteUnidadConverter.Singleton,
                 FuenteDatosConverter.Singleton,
                 LicenciaConverter.Singleton,
                 SentidosValorConverter.Singleton,
-                SuperficieValorConverter.Singleton,
                 TentacledFuenteConverter.Singleton,
                 TipoViaValorConverter.Singleton,
                 IdiomaConverter.Singleton,
@@ -7213,6 +7372,123 @@ namespace Croquis.Generated
         public static readonly AmbitiousMinMaxLengthCheckConverter Singleton = new AmbitiousMinMaxLengthCheckConverter();
     }
 
+    internal class EstadoSuperficieValorConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(EstadoSuperficieValor) || t == typeof(EstadoSuperficieValor?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "aceite":
+                    return EstadoSuperficieValor.Aceite;
+                case "encharcado":
+                    return EstadoSuperficieValor.Encharcado;
+                case "grava_suelta":
+                    return EstadoSuperficieValor.GravaSuelta;
+                case "lodo":
+                    return EstadoSuperficieValor.Lodo;
+                case "mojado":
+                    return EstadoSuperficieValor.Mojado;
+                case "seco":
+                    return EstadoSuperficieValor.Seco;
+            }
+            throw new Exception("Cannot unmarshal type EstadoSuperficieValor");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (EstadoSuperficieValor)untypedValue;
+            switch (value)
+            {
+                case EstadoSuperficieValor.Aceite:
+                    serializer.Serialize(writer, "aceite");
+                    return;
+                case EstadoSuperficieValor.Encharcado:
+                    serializer.Serialize(writer, "encharcado");
+                    return;
+                case EstadoSuperficieValor.GravaSuelta:
+                    serializer.Serialize(writer, "grava_suelta");
+                    return;
+                case EstadoSuperficieValor.Lodo:
+                    serializer.Serialize(writer, "lodo");
+                    return;
+                case EstadoSuperficieValor.Mojado:
+                    serializer.Serialize(writer, "mojado");
+                    return;
+                case EstadoSuperficieValor.Seco:
+                    serializer.Serialize(writer, "seco");
+                    return;
+            }
+            throw new Exception("Cannot marshal type EstadoSuperficieValor");
+        }
+
+        public static readonly EstadoSuperficieValorConverter Singleton = new EstadoSuperficieValorConverter();
+    }
+
+    internal class SuperficieValorConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(SuperficieValor) || t == typeof(SuperficieValor?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "adoquin":
+                    return SuperficieValor.Adoquin;
+                case "asfalto":
+                    return SuperficieValor.Asfalto;
+                case "concreto":
+                    return SuperficieValor.Concreto;
+                case "empedrado":
+                    return SuperficieValor.Empedrado;
+                case "terraceria":
+                    return SuperficieValor.Terraceria;
+            }
+            throw new Exception("Cannot unmarshal type SuperficieValor");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (SuperficieValor)untypedValue;
+            switch (value)
+            {
+                case SuperficieValor.Adoquin:
+                    serializer.Serialize(writer, "adoquin");
+                    return;
+                case SuperficieValor.Asfalto:
+                    serializer.Serialize(writer, "asfalto");
+                    return;
+                case SuperficieValor.Concreto:
+                    serializer.Serialize(writer, "concreto");
+                    return;
+                case SuperficieValor.Empedrado:
+                    serializer.Serialize(writer, "empedrado");
+                    return;
+                case SuperficieValor.Terraceria:
+                    serializer.Serialize(writer, "terraceria");
+                    return;
+            }
+            throw new Exception("Cannot marshal type SuperficieValor");
+        }
+
+        public static readonly SuperficieValorConverter Singleton = new SuperficieValorConverter();
+    }
+
     internal class StickyMinMaxValueCheckConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
@@ -8321,6 +8597,47 @@ namespace Croquis.Generated
         public static readonly TentacledTipoConverter Singleton = new TentacledTipoConverter();
     }
 
+    internal class PersonaRolEnumConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(PersonaRolEnum) || t == typeof(PersonaRolEnum?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "ciclista":
+                    return PersonaRolEnum.Ciclista;
+                case "peaton":
+                    return PersonaRolEnum.Peaton;
+            }
+            throw new Exception("Cannot unmarshal type PersonaRolEnum");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (PersonaRolEnum)untypedValue;
+            switch (value)
+            {
+                case PersonaRolEnum.Ciclista:
+                    serializer.Serialize(writer, "ciclista");
+                    return;
+                case PersonaRolEnum.Peaton:
+                    serializer.Serialize(writer, "peaton");
+                    return;
+            }
+            throw new Exception("Cannot marshal type PersonaRolEnum");
+        }
+
+        public static readonly PersonaRolEnumConverter Singleton = new PersonaRolEnumConverter();
+    }
+
     internal class VeredictoConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(Veredicto) || t == typeof(Veredicto?);
@@ -9300,67 +9617,6 @@ namespace Croquis.Generated
         public static readonly DispositivoTipoConverter Singleton = new DispositivoTipoConverter();
     }
 
-    internal class EstadoSuperficieValorConverter : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(EstadoSuperficieValor) || t == typeof(EstadoSuperficieValor?);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            if (reader.TokenType == JsonToken.Null) return null;
-            var value = serializer.Deserialize<string>(reader);
-            switch (value)
-            {
-                case "aceite":
-                    return EstadoSuperficieValor.Aceite;
-                case "encharcado":
-                    return EstadoSuperficieValor.Encharcado;
-                case "grava_suelta":
-                    return EstadoSuperficieValor.GravaSuelta;
-                case "lodo":
-                    return EstadoSuperficieValor.Lodo;
-                case "mojado":
-                    return EstadoSuperficieValor.Mojado;
-                case "seco":
-                    return EstadoSuperficieValor.Seco;
-            }
-            throw new Exception("Cannot unmarshal type EstadoSuperficieValor");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            if (untypedValue == null)
-            {
-                serializer.Serialize(writer, null);
-                return;
-            }
-            var value = (EstadoSuperficieValor)untypedValue;
-            switch (value)
-            {
-                case EstadoSuperficieValor.Aceite:
-                    serializer.Serialize(writer, "aceite");
-                    return;
-                case EstadoSuperficieValor.Encharcado:
-                    serializer.Serialize(writer, "encharcado");
-                    return;
-                case EstadoSuperficieValor.GravaSuelta:
-                    serializer.Serialize(writer, "grava_suelta");
-                    return;
-                case EstadoSuperficieValor.Lodo:
-                    serializer.Serialize(writer, "lodo");
-                    return;
-                case EstadoSuperficieValor.Mojado:
-                    serializer.Serialize(writer, "mojado");
-                    return;
-                case EstadoSuperficieValor.Seco:
-                    serializer.Serialize(writer, "seco");
-                    return;
-            }
-            throw new Exception("Cannot marshal type EstadoSuperficieValor");
-        }
-
-        public static readonly EstadoSuperficieValorConverter Singleton = new EstadoSuperficieValorConverter();
-    }
-
     internal class PendienteUnidadConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(PendienteUnidad) || t == typeof(PendienteUnidad?);
@@ -9626,62 +9882,6 @@ namespace Croquis.Generated
         }
 
         public static readonly SentidosValorConverter Singleton = new SentidosValorConverter();
-    }
-
-    internal class SuperficieValorConverter : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(SuperficieValor) || t == typeof(SuperficieValor?);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            if (reader.TokenType == JsonToken.Null) return null;
-            var value = serializer.Deserialize<string>(reader);
-            switch (value)
-            {
-                case "adoquin":
-                    return SuperficieValor.Adoquin;
-                case "asfalto":
-                    return SuperficieValor.Asfalto;
-                case "concreto":
-                    return SuperficieValor.Concreto;
-                case "empedrado":
-                    return SuperficieValor.Empedrado;
-                case "terraceria":
-                    return SuperficieValor.Terraceria;
-            }
-            throw new Exception("Cannot unmarshal type SuperficieValor");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            if (untypedValue == null)
-            {
-                serializer.Serialize(writer, null);
-                return;
-            }
-            var value = (SuperficieValor)untypedValue;
-            switch (value)
-            {
-                case SuperficieValor.Adoquin:
-                    serializer.Serialize(writer, "adoquin");
-                    return;
-                case SuperficieValor.Asfalto:
-                    serializer.Serialize(writer, "asfalto");
-                    return;
-                case SuperficieValor.Concreto:
-                    serializer.Serialize(writer, "concreto");
-                    return;
-                case SuperficieValor.Empedrado:
-                    serializer.Serialize(writer, "empedrado");
-                    return;
-                case SuperficieValor.Terraceria:
-                    serializer.Serialize(writer, "terraceria");
-                    return;
-            }
-            throw new Exception("Cannot marshal type SuperficieValor");
-        }
-
-        public static readonly SuperficieValorConverter Singleton = new SuperficieValorConverter();
     }
 
     internal class TentacledFuenteConverter : JsonConverter

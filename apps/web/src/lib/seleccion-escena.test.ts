@@ -9,8 +9,11 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   agregarObjeto,
+  agregarPersona,
   agregarZona,
+  distanciaProyeccion,
   escenaDeNarracion,
+  marcarFinalPersona,
   especDeExpediente,
   objetosDe,
   piezasTerreno,
@@ -27,6 +30,7 @@ import {
   primerGolpe,
   puntosDePaso,
   quedoJuntoAlChoque,
+  resumenPersonas,
 } from "./escena-facil";
 import { impactosAColocar } from "./pasos-caso";
 import {
@@ -43,6 +47,7 @@ import {
   fijarRumbo,
   girarSeleccion,
   moverA,
+  personaFaltante,
   posicionDe,
   quitarSeleccion,
   seleccionables,
@@ -248,6 +253,115 @@ describe("las veces que sea", () => {
     expect(poseDe(x, "V2", "final")).toEqual(poseDe(e, "V2", "final"));
     // Deshacer es volver al estado anterior: el primero de la historia es la escena de antes, tal cual.
     expect(especDeExpediente(historia[0]!)).toEqual(especDeExpediente(e));
+  });
+});
+
+describe("peatones y ciclistas (A3)", () => {
+  function conPeaton() {
+    const { expediente, id } = agregarPersona(colocados(), "peaton", m(6, 2), 90);
+    return { e: expediente, id, clave: `persona:${id}` };
+  }
+
+  it("una persona se selecciona; dónde quedó también, en cuanto se marca", () => {
+    const { e, id, clave } = conPeaton();
+    expect(seleccionables(e)).toContain(clave);
+    expect(seleccionables(e)).not.toContain(`${clave}:final`);
+    expect(capacidadesDe(e, clave)).toEqual({ mover: true, girar: "absoluto", quitar: true });
+    expect(posicionDe(e, clave)).toEqual({ punto: m(6, 2), rumbo: 90 });
+    // Sin «dónde quedó», su clave no existe.
+    expect(existe(e, `${clave}:final`)).toBe(false);
+    expect(capacidadesDe(e, `${clave}:final`)).toEqual({
+      mover: false,
+      girar: null,
+      quitar: false,
+    });
+    const conFinal = marcarFinalPersona(e, id, m(20, 2));
+    const claves = seleccionables(conFinal);
+    // Después de los vehículos y antes de los objetos, cada persona seguida de dónde quedó.
+    expect(claves.slice(2, 4)).toEqual([clave, `${clave}:final`]);
+    expect(capacidadesDe(conFinal, `${clave}:final`)).toEqual({
+      mover: true,
+      girar: null,
+      quitar: true,
+    });
+    expect(posicionDe(conFinal, `${clave}:final`)).toEqual({ punto: m(20, 2), rumbo: null });
+    expect(deClave(`${clave}:final`)).toEqual({ tipo: "persona", id: `${id}:final` });
+  });
+
+  it("se mueve, se gira y se quita como lo demás; dónde quedó se mueve y se borra aparte", () => {
+    const { e, id, clave } = conPeaton();
+    const movida = moverA(e, impactos, clave, m(7, 3))!;
+    expect(posicionDe(movida, clave)!.punto).toEqual(m(7, 3));
+    const flecha = moverA(e, impactos, clave, desplazar(m(6, 2), 0, PASO_FLECHA_M))!;
+    expect(metros(posicionDe(flecha, clave)!.punto, m(6, 2))).toBeCloseTo(PASO_FLECHA_M, 2);
+    // Q/E desde donde está; el anillo, al rumbo que marca, por el lado corto.
+    expect(posicionDe(girarSeleccion(e, clave, -15)!, clave)!.rumbo).toBe(75);
+    expect(posicionDe(fijarRumbo(e, clave, 300)!, clave)!.rumbo).toBe(300);
+    expect(fijarRumbo(e, clave, 90)).toBeNull();
+    // Dónde quedó: se mueve, la proyección cambia; no se gira; se borra sin quitar a la persona.
+    const conFinal = marcarFinalPersona(e, id, m(20, 2));
+    expect(distanciaProyeccion(conFinal.personas![0]!)).toBeCloseTo(14, 1);
+    const lejos = moverA(conFinal, impactos, `${clave}:final`, m(26, 2))!;
+    expect(distanciaProyeccion(lejos.personas![0]!)).toBeCloseTo(20, 1);
+    expect(lejos.personas![0]!.punto).toEqual(m(6, 2));
+    expect(girarSeleccion(conFinal, `${clave}:final`, 15)).toBeNull();
+    const sinFinal = quitarSeleccion(conFinal, `${clave}:final`)!;
+    expect(sinFinal.personas![0]!.final).toBeUndefined();
+    expect(existe(sinFinal, clave)).toBe(true);
+    // Quitar a la persona la saca de la escena (y de la lista).
+    const sinNadie = quitarSeleccion(conFinal, clave)!;
+    expect(sinNadie.personas).toBeUndefined();
+    expect(seleccionables(sinNadie).some((k) => k.startsWith("persona:"))).toBe(false);
+    expect(moverA(sinNadie, impactos, clave, m(1, 1))).toBeNull();
+    // Nada de esto toca los vehículos.
+    expect(poseDe(sinNadie, "V1", "final")).toEqual(poseDe(e, "V1", "final"));
+  });
+
+  it("las teclas de lo seleccionado sirven igual con una persona", () => {
+    const { e, clave } = conPeaton();
+    const accion = accionDeTecla({ key: "ArrowRight", shiftKey: true }, true)!;
+    expect(accion).toEqual({ tipo: "mover", rumbo: 90, metros: PASO_FLECHA_GRANDE_M });
+    const x = moverA(e, impactos, clave, desplazar(posicionDe(e, clave)!.punto, 90, 2))!;
+    expect(metros(posicionDe(x, clave)!.punto, m(6, 4))).toBeLessThan(0.01);
+    const q = accionDeTecla({ key: "e" }, true)!;
+    expect(q).toEqual({ tipo: "girar", grados: 5 });
+    expect(posicionDe(girarSeleccion(e, clave, 5)!, clave)!.rumbo).toBe(95);
+    expect(accionDeTecla({ key: "Delete" }, true)).toEqual({ tipo: "quitar" });
+    expect(existe(quitarSeleccion(e, clave)!, clave)).toBe(false);
+  });
+
+  it("el resumen dice dónde la golpearon y, si se marcó, la distancia de proyección", () => {
+    const { e, id } = conPeaton();
+    expect(resumenPersonas(e)).toEqual([
+      {
+        tipo: "persona",
+        persona: id,
+        texto: "Peatón, donde lo golpearon",
+        detalle: "Falta marcar dónde quedó: con eso Croquis mide la distancia de proyección.",
+        supuesto: null,
+      },
+    ]);
+    const conFinal = marcarFinalPersona(e, id, m(20, 2));
+    expect(resumenPersonas(conFinal)[0]!.detalle).toBe(
+      "Quedó a 14.0 m de ahí: es la distancia de proyección.",
+    );
+    expect(resumenPersonas(colocados())).toEqual([]);
+  });
+
+  it("si el impacto fue contra un peatón y no hay nadie, la escena lo pide", () => {
+    const base = colocados();
+    expect(personaFaltante(base)).toBeNull();
+    const contra = (objeto: string) => ({
+      ...base,
+      impactos: (base.impactos ?? []).map((i, k) => (k === 0 ? { ...i, objeto_fijo: objeto } : i)),
+    });
+    expect(base.impactos?.length).toBeGreaterThan(0);
+    expect(personaFaltante(contra("peatón"))).toBe("peaton");
+    expect(personaFaltante(contra("ciclista"))).toBe("ciclista");
+    // Colocado, ya no falta (y queda ligado a ese impacto).
+    const { expediente, id } = agregarPersona(contra("peatón"), "peaton", m(3, 0));
+    expect(personaFaltante(expediente)).toBeNull();
+    expect(expediente.impactos![0]!.persona).toBe(id);
   });
 });
 

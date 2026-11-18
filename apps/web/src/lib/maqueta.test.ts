@@ -11,6 +11,7 @@ import {
   type ResultadoMaqueta,
   tImpacto,
   tramosPorVelocidad,
+  personasEnMaqueta,
   versionDeclaradaEnMaqueta,
 } from "./maqueta";
 
@@ -179,5 +180,42 @@ describe("la versión declarada en el croquis 2D (T6.2)", () => {
     const d = corrida("veh-a", 2);
     d.vehiculos = d.vehiculos.filter((v) => v.id !== "veh-a");
     expect(versionDeclaradaEnMaqueta(r, d, ti)).toEqual([]);
+  });
+});
+
+describe("las personas en el croquis 2D (ronda 4, A3)", () => {
+  const veh = { id: "veh-a", trayectoria: { t: [0, 1], x: [0, 5], y: [0, 0], rumbo: [0, 0] } };
+  const r = {
+    t_inicio: -1,
+    t_fin: 3,
+    vehiculos: [veh],
+    personas: [
+      // El atropellado: sale lanzado 10 m.
+      {
+        id: "per-1",
+        rol: "peaton",
+        trayectoria: { t: [-1, 0, 2], x: [2, 2, 12], y: [0, 0, 0], rumbo: [0, 0, 0] },
+        proyeccion: { distancia_m: 10 },
+      },
+      // Uno que solo está ahí, y un conductor (va en su vehículo: no se dibuja aparte).
+      { id: "per-2", rol: "ciclista", trayectoria: { t: [-1], x: [-6], y: [7], rumbo: [0] } },
+      { id: "per-3", rol: "conductor", vehiculo_id: "veh-a" },
+    ],
+  } as never;
+
+  it("da dónde está cada una en el instante, su recorrido y dónde quedó", () => {
+    const ps = personasEnMaqueta(r, 1);
+    expect(ps.map((p) => p.id)).toEqual(["per-1", "per-2"]);
+    expect(ps[0]!.pose.x).toBeCloseTo(7);
+    expect(ps[0]!.reposo).toEqual({ x: 12, y: 0 });
+    expect(ps[0]!.camino).toHaveLength(3);
+    expect(ps[0]!.proyeccionM).toBe(10);
+    // El que no se movió no lleva recorrido ni reposo aparte.
+    expect(ps[1]).toMatchObject({ rol: "ciclista", camino: [], reposo: null, proyeccionM: null });
+  });
+
+  it("«Ver todo» las incluye", () => {
+    const [x0, y0, x1, y1] = cajaDe(r, 0);
+    expect([x0, y0, x1, y1]).toEqual([-6, 0, 12, 7]);
   });
 });

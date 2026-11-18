@@ -101,4 +101,5 @@ Croquis lee el reporte completo de CESVI y arma el expediente con la cita de cad
   - Necesitan internet: la lectura con IA de una narración nueva o de un reporte importado, los mosaicos del mapa (sin red sale en blanco, pero se coloca la escena) y buscar un lugar por nombre.
   - Probada en la laptop de René con la red cortada en el navegador; en Mac, solo en una Mac de CI.
 - **«Buscar el lugar»** (ronda 4): busca dentro del municipio y el estado del caso, o en los que se escriban, y da varias opciones con su municipio y estado para elegir. Ya no salta a la primera.
+- **Peatones y ciclistas** (ronda 4): en La escena, «Cambiar algo» → «Peatón» o «Ciclista», y se toca el mapa donde lo golpearon. Se mueve, se gira (anillo o Q/E), se quita y se deshace como un vehículo. «Marcar dónde quedó» dibuja la distancia de proyección en metros, que entra al cálculo del atropello. Si la lectura dice que el impacto fue contra un peatón, La escena pide colocarlo.
 - **Detalle que se nota en pantalla:** en el 3D, la barra de reproducción tapa una esquina del minimapa. La leyenda ilustrativa del 3D ya lleva su recuadro y se lee sobre cualquier fondo (WCAG AA).
