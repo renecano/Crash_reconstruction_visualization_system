@@ -64,6 +64,7 @@ import type { MallaRelieve } from "./relieve";
 import { terrenoDeEscena, terrenoReconstruido, type TerrenoReconstruido } from "./terreno";
 import { limiteDeCobertura } from "./cobertura";
 import { iluminacionDeHora } from "./iluminacion";
+import { distanciaProyeccion, OBJETO_PERSONA, personaDelAtropello } from "./personas";
 import { grados, kmhConUnidad, metros, rangoKmh } from "./formato";
 
 type Json = Record<string, unknown>;
@@ -290,9 +291,26 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   }
   if (supuestas.length)
     limites.push(`La narración no da las caras de contacto: ${supuestas.join("; ")}.`);
-  const objeto = primero?.objeto_fijo
-    ? (OBJETO.find(([rx]) => rx.test(primero.objeto_fijo!))?.[1] ?? "otro")
-    : null;
+  // Un atropello (A3, René, 2026-11-18): la persona que colocó el perito para el impacto contra un
+  // peatón o un ciclista. Entra como hecho para que la escena lleve el evento
+  // `impacto_vehiculo_persona`; si el perito marcó dónde quedó, también la distancia de proyección.
+  // Solo ella: otra persona a pie convertiría un choque entre vehículos en atropello.
+  const atropello = personaDelAtropello(e);
+  const contraPersona = Boolean(primero?.objeto_fijo && OBJETO_PERSONA.test(primero.objeto_fijo));
+  if (atropello) {
+    facts.personas.push(new Map([["rol", fact(atropello.rol, null, "usuario")]]));
+    const d = distanciaProyeccion(atropello);
+    if (d !== null)
+      facts.escalares.set("evidencias.distancia_proyeccion_m", fact(d, null, "usuario"));
+  } else if (contraPersona) {
+    limites.push(
+      "El impacto fue contra una persona y no está en la escena: coloca al peatón o al ciclista donde lo golpearon.",
+    );
+  }
+  const objeto =
+    primero?.objeto_fijo && !contraPersona
+      ? (OBJETO.find(([rx]) => rx.test(primero.objeto_fijo!))?.[1] ?? "otro")
+      : null;
   if (objeto) {
     facts.escalares.set("evento.objeto", fact(objeto, null, "supuesto"));
     facts.escalares.set("evento.tipo", fact("impacto_vehiculo_objeto", null, "supuesto"));
@@ -482,6 +500,39 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   }
   const evento = spec.eventos[0]!;
   if (origen) evento.punto_impacto = { x: 0, y: 0 };
+  // El atropello: la persona con su id del expediente, donde la golpearon (ahí fue el impacto, si el
+  // perito no marcó otro punto) y donde quedó.
+  if (atropello && evento.tipo === "impacto_vehiculo_persona") {
+    const personas = (spec.personas ?? []) as Json[];
+    const sp = personas.find((x) => !x.vehiculo_id);
+    if (sp) {
+      const antes = String(sp.id);
+      sp.id = atropello.id;
+      evento.actores = (evento.actores as string[]).map((a) => (a === antes ? atropello.id : a));
+      for (const ev of spec.evidencias) if (ev.persona_id === antes) ev.persona_id = atropello.id;
+      if (origen) {
+        const r = rumboEscena(atropello.rumbo_deg ?? 0);
+        sp.posicion_inicial = {
+          ...local(atropello.punto),
+          rumbo_deg: r > 180 ? r - 360 : r,
+          procedencia: { ...DEL_PERITO, nota: "El perito la colocó donde la golpearon." },
+        };
+        if (atropello.final)
+          sp.posicion_final = {
+            ...local(atropello.final),
+            rumbo_deg: r > 180 ? r - 360 : r,
+            procedencia: { ...DEL_PERITO, nota: "El perito marcó dónde quedó." },
+          };
+        if (!primero?.punto) {
+          evento.punto_impacto = local(atropello.punto);
+          evento.procedencia = {
+            ...DEL_PERITO,
+            nota: "El perito colocó a la persona donde la golpearon.",
+          };
+        }
+      }
+    }
+  }
   if (origen && primero?.punto) {
     // El perito marcó dónde fue el primer golpe (C1): entra a la inversión como evidencia medida.
     evento.punto_impacto = local(primero.punto);
@@ -638,6 +689,34 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
             ? "El perito lo colocó en el mapa y le dio sus medidas."
             : "El perito lo colocó en el mapa; sus medidas son las típicas (supuesto).",
         },
+      });
+    }
+  }
+
+  // Las demás personas a pie o en bicicleta que colocó el perito (A3): están en la escena (el 3D las
+  // dibuja) aunque nadie las golpee; no cambian el cálculo.
+  if (origen) {
+    const personas = ((spec as Json).personas ??= []) as Json[];
+    for (const p of e.personas ?? []) {
+      if (p.id === atropello?.id && evento.tipo === "impacto_vehiculo_persona") continue;
+      const r = rumboEscena(p.rumbo_deg ?? 0);
+      personas.push({
+        id: p.id,
+        rol: { valor: p.rol, fuente: "usuario", confianza: 0.9 },
+        posicion_inicial: {
+          ...local(p.punto),
+          rumbo_deg: r > 180 ? r - 360 : r,
+          procedencia: { ...DEL_PERITO, nota: "El perito la colocó en el mapa." },
+        },
+        ...(p.final
+          ? {
+              posicion_final: {
+                ...local(p.final),
+                rumbo_deg: r > 180 ? r - 360 : r,
+                procedencia: { ...DEL_PERITO, nota: "El perito marcó dónde quedó." },
+              },
+            }
+          : {}),
       });
     }
   }
