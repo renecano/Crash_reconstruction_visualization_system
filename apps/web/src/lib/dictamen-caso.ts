@@ -40,7 +40,6 @@ import { ANCHO_LOGO, PROPORCION_LOGO } from "./marca-dictamen";
 import { pdfBytes } from "./pdf";
 import type { VersionesDictamen } from "./versiones-caso";
 
-
 export interface DatosDictamenCaso {
   expediente: Expediente;
   /** La narración técnica del perito, tal como la escribió (null en un reporte importado). */
