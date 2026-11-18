@@ -1,0 +1,13 @@
+# Paso: fotos-promo
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/desde-release.ps1 -Paso fotos -Solo 02-lateral-hora-dorada,11-rayos-x,15-terreno-relieve-real,16-ficha-lateral,18-conductor-visibilidad,19-conductor-vista
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-17 23:16:37
+
+Modelos del visor de escritorio, desde la máquina: ya estaba.
+Generando las fotos en C:\Users\MrKan\AppData\Local\croquis-rtx-t4\fotos-t4b\fotos (no uses la computadora mientras tanto)...
+Listo en 0.3 min: 11 PNG en C:\Users\MrKan\AppData\Local\croquis-rtx-t4\fotos-t4b\fotos.
+Tarjeta: NVIDIA GeForce RTX 4070 Laptop GPU · calidad ultra · 3840x2160
+
+Las fotos quedaron en C:\Users\MrKan\OneDrive\Desktop\croquis-fotos-promo-t4b.zip. Mándale ese archivo a René (por Drive o WeTransfer): no va a git.
+
+# Fin: 2026-11-17 23:16:58 · ok · 0.4 min
