@@ -1,0 +1,849 @@
+{
+  "descripcion": "El armado de un caso en Unity, por partes: el build web local en Chromium con ventana y GPU (ANGLE d3d11), 1440×900. Por corrida, una instancia nueva que carga los casos en orden (el primero en frío). `unity_acumulado_ms` es lo que escribe Unity en su renglón «[carga]»: ms acumulados desde que empieza a armar el caso. Mediana de las corridas.",
+  "script": "tools/unity/perfil-carga.mjs",
+  "fecha": "2026-11-18T02:49:24.971Z",
+  "maquina": {
+    "cpu": "Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz",
+    "nucleos": 8,
+    "ram_gb": 8
+  },
+  "corridas": 3,
+  "resumen": [
+    {
+      "carga": 1,
+      "caso": "axa-dia",
+      "hasta_visible_ms": 18386,
+      "hasta_cargado_ms": 18724,
+      "tarea_mas_larga_ms": 4531,
+      "tareas_de_mas_de_200_ms": 5,
+      "unity_acumulado_ms": {
+        "leer_sobre": 13.7,
+        "leer_paquete": 1769.9,
+        "caracteres_paquete": 391141,
+        "modelo_veh-a": 5015.1,
+        "modelo_veh-b": 5304.5,
+        "vehiculos": 5428.5,
+        "cielo": 5428.6,
+        "esc_ambiente": 5490,
+        "esc_via": 5618.6,
+        "esc_carretera": 5926.5,
+        "esc_suelo": 6143.1,
+        "escenario_base": 6176.3,
+        "caso_y_terreno": 6183.7,
+        "personas": 6258,
+        "camara": 6267.3,
+        "ent_arboles": 6642.3,
+        "ent_edificios": 15089,
+        "ent_postes_cercas_senales": 15181.3,
+        "ent_horizonte": 15260.6,
+        "esc_luminarias": 15270.9,
+        "escenario": 15274.1,
+        "estacionados": 15274.3,
+        "antes_de_unir_sombras": 15990.1,
+        "sombras_unidas": 15997.8,
+        "minimapa_horneado": 15997.9,
+        "calidad": 15998.5,
+        "total": 15998.7,
+        "primer_cuadro": 16027.5
+      }
+    },
+    {
+      "carga": 2,
+      "caso": "lateral_interseccion-dia",
+      "hasta_visible_ms": 5266,
+      "hasta_cargado_ms": 6370,
+      "tarea_mas_larga_ms": 429,
+      "tareas_de_mas_de_200_ms": 1,
+      "unity_acumulado_ms": {
+        "leer_sobre": 3.3,
+        "leer_paquete": 1618.4,
+        "caracteres_paquete": 310575,
+        "modelo_veh-a": 2162.6,
+        "modelo_veh-b": 2325.8,
+        "vehiculos": 2540,
+        "cielo": 2540.3,
+        "esc_ambiente": 2659.6,
+        "esc_via": 2682.7,
+        "esc_carretera": 2682.8,
+        "esc_suelo": 2887,
+        "escenario_base": 2889.2,
+        "caso_y_terreno": 2971.4,
+        "personas": 3288.5,
+        "camara": 3290.3,
+        "ent_arboles": 3297.1,
+        "ent_edificios": 3578.8,
+        "ent_postes_cercas_senales": 3658.6,
+        "ent_horizonte": 3679.3,
+        "esc_luminarias": 3686.5,
+        "escenario": 3766.1,
+        "estacionados": 3766.5,
+        "antes_de_unir_sombras": 4161.4,
+        "sombras_unidas": 4168.9,
+        "minimapa_horneado": 4168.9,
+        "calidad": 4169.2,
+        "total": 4169.2,
+        "primer_cuadro": 4210.8
+      }
+    },
+    {
+      "carga": 3,
+      "caso": "axa-dia",
+      "hasta_visible_ms": 1472,
+      "hasta_cargado_ms": 1646,
+      "tarea_mas_larga_ms": 156,
+      "tareas_de_mas_de_200_ms": 0,
+      "unity_acumulado_ms": {
+        "leer_sobre": 5,
+        "leer_paquete": 605.6,
+        "caracteres_paquete": 391141,
+        "modelo_veh-a": 17.7,
+        "modelo_veh-b": 167.5,
+        "vehiculos": 248.8,
+        "cielo": 248.9,
+        "esc_ambiente": 266.6,
+        "esc_via": 290.2,
+        "esc_carretera": 417.1,
+        "esc_suelo": 572.5,
+        "escenario_base": 573.3,
+        "caso_y_terreno": 574.4,
+        "personas": 574.5,
+        "camara": 574.7,
+        "ent_arboles": 580,
+        "ent_edificios": 580.7,
+        "ent_postes_cercas_senales": 609.1,
+        "ent_horizonte": 644.7,
+        "esc_luminarias": 649.6,
+        "escenario": 649.8,
+        "estacionados": 650,
+        "antes_de_unir_sombras": 887.4,
+        "sombras_unidas": 891.5,
+        "minimapa_horneado": 891.5,
+        "calidad": 891.9,
+        "total": 891.9,
+        "primer_cuadro": 907.6
+      }
+    }
+  ],
+  "detalle": [
+    {
+      "arranque_ms": 7472,
+      "cargas": [
+        {
+          "caso": "axa-dia",
+          "hasta_visible_ms": 19072,
+          "hasta_cargado_ms": 20360,
+          "tarea_mas_larga_ms": 10712,
+          "tareas_de_mas_de_200_ms": 6,
+          "tiempo_bloqueado_ms": 14223,
+          "tareas_largas": [
+            {
+              "desde_ms": 489,
+              "ms": 102
+            },
+            {
+              "desde_ms": 5307,
+              "ms": 847
+            },
+            {
+              "desde_ms": 6826,
+              "ms": 128
+            },
+            {
+              "desde_ms": 6955,
+              "ms": 228
+            },
+            {
+              "desde_ms": 7202,
+              "ms": 152
+            },
+            {
+              "desde_ms": 7433,
+              "ms": 127
+            },
+            {
+              "desde_ms": 7562,
+              "ms": 310
+            },
+            {
+              "desde_ms": 7873,
+              "ms": 170
+            },
+            {
+              "desde_ms": 8044,
+              "ms": 143
+            },
+            {
+              "desde_ms": 8188,
+              "ms": 10712
+            },
+            {
+              "desde_ms": 19072,
+              "ms": 747
+            },
+            {
+              "desde_ms": 19940,
+              "ms": 408
+            }
+          ],
+          "unity": {
+            "leer_sobre": 20.6,
+            "leer_paquete": 1769.9,
+            "caracteres_paquete": 391141,
+            "modelo_veh-a": 5015.1,
+            "modelo_veh-b": 5304.5,
+            "vehiculos": 5428.5,
+            "cielo": 5428.6,
+            "esc_ambiente": 5490,
+            "esc_via": 5618.6,
+            "esc_carretera": 5926.5,
+            "esc_suelo": 6143.1,
+            "escenario_base": 6176.3,
+            "caso_y_terreno": 6183.7,
+            "personas": 6258,
+            "camara": 6267.3,
+            "ent_arboles": 6642.3,
+            "ent_edificios": 17048,
+            "ent_postes_cercas_senales": 17101,
+            "ent_horizonte": 17119.8,
+            "esc_luminarias": 17145.5,
+            "escenario": 17148.3,
+            "estacionados": 17148.5,
+            "antes_de_unir_sombras": 17974.7,
+            "sombras_unidas": 17982,
+            "minimapa_horneado": 17982.1,
+            "calidad": 17982.4,
+            "total": 17982.6,
+            "primer_cuadro": 17994.4
+          },
+          "renglon": "[carga] leer_sobre 20,6 ms, leer_paquete 1769,9 ms, caracteres_paquete 391141 ms, modelo_veh-a 5015,1 ms, modelo_veh-b 5304,5 ms, vehiculos 5428,5 ms, cielo 5428,6 ms, esc_ambiente 5490 ms, esc_via 5618,6 ms, esc_carretera 5926,5 ms, esc_suelo 6143,1 ms, escenario_base 6176,3 ms, caso_y_terreno 6183,7 ms, personas 6258 ms, camara 6267,3 ms, ent_arboles 6642,3 ms, ent_edificios 17048 ms, ent_postes_cercas_senales 17101 ms, ent_horizonte 17119,8 ms, esc_luminarias 17145,5 ms, escenario 17148,3 ms, estacionados 17148,5 ms, antes_de_unir_sombras 17974,7 ms, sombras_unidas 17982 ms, minimapa_horneado 17982,1 ms, calidad 17982,4 ms, total 17982,6 ms, primer_cuadro 17994,4 ms, segundo_cuadro 18006,1 ms\n"
+        },
+        {
+          "caso": "lateral_interseccion-dia",
+          "hasta_visible_ms": 4164,
+          "hasta_cargado_ms": 5528,
+          "tarea_mas_larga_ms": 1000,
+          "tareas_de_mas_de_200_ms": 1,
+          "tiempo_bloqueado_ms": 1520,
+          "tareas_largas": [
+            {
+              "desde_ms": 779,
+              "ms": 142
+            },
+            {
+              "desde_ms": 3467,
+              "ms": 107
+            },
+            {
+              "desde_ms": 4029,
+              "ms": 134
+            },
+            {
+              "desde_ms": 4165,
+              "ms": 134
+            },
+            {
+              "desde_ms": 4300,
+              "ms": 113
+            },
+            {
+              "desde_ms": 4477,
+              "ms": 1000
+            }
+          ],
+          "unity": {
+            "leer_sobre": 2.7,
+            "leer_paquete": 1618.4,
+            "caracteres_paquete": 310575,
+            "modelo_veh-a": 1709.7,
+            "modelo_veh-b": 1814.2,
+            "vehiculos": 1900.6,
+            "cielo": 1900.7,
+            "esc_ambiente": 1919.2,
+            "esc_via": 1925.1,
+            "esc_carretera": 1925.2,
+            "esc_suelo": 2008.7,
+            "escenario_base": 2009.4,
+            "caso_y_terreno": 2053.3,
+            "personas": 2276.1,
+            "camara": 2278.8,
+            "ent_arboles": 2284.2,
+            "ent_edificios": 2455.6,
+            "ent_postes_cercas_senales": 2497.4,
+            "ent_horizonte": 2512,
+            "esc_luminarias": 2514,
+            "escenario": 2514.7,
+            "estacionados": 2514.8,
+            "antes_de_unir_sombras": 2738.6,
+            "sombras_unidas": 2745.8,
+            "minimapa_horneado": 2745.8,
+            "calidad": 2746,
+            "total": 2746,
+            "primer_cuadro": 2771.3
+          },
+          "renglon": "[carga] leer_sobre 2,7 ms, leer_paquete 1618,4 ms, caracteres_paquete 310575 ms, modelo_veh-a 1709,7 ms, modelo_veh-b 1814,2 ms, vehiculos 1900,6 ms, cielo 1900,7 ms, esc_ambiente 1919,2 ms, esc_via 1925,1 ms, esc_carretera 1925,2 ms, esc_suelo 2008,7 ms, escenario_base 2009,4 ms, caso_y_terreno 2053,3 ms, personas 2276,1 ms, camara 2278,8 ms, ent_arboles 2284,2 ms, ent_edificios 2455,6 ms, ent_postes_cercas_senales 2497,4 ms, ent_horizonte 2512 ms, esc_luminarias 2514 ms, escenario 2514,7 ms, estacionados 2514,8 ms, antes_de_unir_sombras 2738,6 ms, sombras_unidas 2745,8 ms, minimapa_horneado 2745,8 ms, calidad 2746 ms, total 2746 ms, primer_cuadro 2771,3 ms, segundo_cuadro 2802,2 ms\n"
+        },
+        {
+          "caso": "axa-dia",
+          "hasta_visible_ms": 1472,
+          "hasta_cargado_ms": 1646,
+          "tarea_mas_larga_ms": 156,
+          "tareas_de_mas_de_200_ms": 0,
+          "tiempo_bloqueado_ms": 626,
+          "tareas_largas": [
+            {
+              "desde_ms": 669,
+              "ms": 150
+            },
+            {
+              "desde_ms": 820,
+              "ms": 105
+            },
+            {
+              "desde_ms": 989,
+              "ms": 128
+            },
+            {
+              "desde_ms": 1118,
+              "ms": 104
+            },
+            {
+              "desde_ms": 1315,
+              "ms": 156
+            }
+          ],
+          "unity": {
+            "leer_sobre": 3.6,
+            "leer_paquete": 605.6,
+            "caracteres_paquete": 391141,
+            "modelo_veh-a": 16.7,
+            "modelo_veh-b": 167.5,
+            "vehiculos": 248.8,
+            "cielo": 248.9,
+            "esc_ambiente": 266.6,
+            "esc_via": 290.2,
+            "esc_carretera": 417.7,
+            "esc_suelo": 573.9,
+            "escenario_base": 574.5,
+            "caso_y_terreno": 575.3,
+            "personas": 575.3,
+            "camara": 575.5,
+            "ent_arboles": 580,
+            "ent_edificios": 580.7,
+            "ent_postes_cercas_senales": 609.1,
+            "ent_horizonte": 644.7,
+            "esc_luminarias": 649.6,
+            "escenario": 649.8,
+            "estacionados": 650,
+            "antes_de_unir_sombras": 887.4,
+            "sombras_unidas": 891.5,
+            "minimapa_horneado": 891.5,
+            "calidad": 891.9,
+            "total": 891.9,
+            "primer_cuadro": 907.6
+          },
+          "renglon": "[carga] leer_sobre 3,6 ms, leer_paquete 605,6 ms, caracteres_paquete 391141 ms, modelo_veh-a 16,7 ms, modelo_veh-b 167,5 ms, vehiculos 248,8 ms, cielo 248,9 ms, esc_ambiente 266,6 ms, esc_via 290,2 ms, esc_carretera 417,7 ms, esc_suelo 573,9 ms, escenario_base 574,5 ms, caso_y_terreno 575,3 ms, personas 575,3 ms, camara 575,5 ms, ent_arboles 580 ms, ent_edificios 580,7 ms, ent_postes_cercas_senales 609,1 ms, ent_horizonte 644,7 ms, esc_luminarias 649,6 ms, escenario 649,8 ms, estacionados 650 ms, antes_de_unir_sombras 887,4 ms, sombras_unidas 891,5 ms, minimapa_horneado 891,5 ms, calidad 891,9 ms, total 891,9 ms, primer_cuadro 907,6 ms, segundo_cuadro 921,4 ms\n"
+        }
+      ]
+    },
+    {
+      "arranque_ms": 2475,
+      "cargas": [
+        {
+          "caso": "axa-dia",
+          "hasta_visible_ms": 8011,
+          "hasta_cargado_ms": 8589,
+          "tarea_mas_larga_ms": 2305,
+          "tareas_de_mas_de_200_ms": 4,
+          "tiempo_bloqueado_ms": 3703,
+          "tareas_largas": [
+            {
+              "desde_ms": 286,
+              "ms": 106
+            },
+            {
+              "desde_ms": 4074,
+              "ms": 315
+            },
+            {
+              "desde_ms": 4773,
+              "ms": 140
+            },
+            {
+              "desde_ms": 4914,
+              "ms": 105
+            },
+            {
+              "desde_ms": 5020,
+              "ms": 140
+            },
+            {
+              "desde_ms": 5161,
+              "ms": 202
+            },
+            {
+              "desde_ms": 5363,
+              "ms": 134
+            },
+            {
+              "desde_ms": 5499,
+              "ms": 106
+            },
+            {
+              "desde_ms": 5606,
+              "ms": 2305
+            },
+            {
+              "desde_ms": 8093,
+              "ms": 284
+            }
+          ],
+          "unity": {
+            "leer_sobre": 7.4,
+            "leer_paquete": 916.9,
+            "caracteres_paquete": 391141,
+            "modelo_veh-a": 3757.7,
+            "modelo_veh-b": 3930,
+            "vehiculos": 4010.2,
+            "cielo": 4010.3,
+            "esc_ambiente": 4043.7,
+            "esc_via": 4138.3,
+            "esc_carretera": 4343,
+            "esc_suelo": 4518.1,
+            "escenario_base": 4544.2,
+            "caso_y_terreno": 4551.2,
+            "personas": 4597.7,
+            "camara": 4602.6,
+            "ent_arboles": 4862.4,
+            "ent_edificios": 6981,
+            "ent_postes_cercas_senales": 7039.3,
+            "ent_horizonte": 7059.3,
+            "esc_luminarias": 7091.3,
+            "escenario": 7093.2,
+            "estacionados": 7093.4,
+            "antes_de_unir_sombras": 7469.3,
+            "sombras_unidas": 7473.6,
+            "minimapa_horneado": 7473.7,
+            "calidad": 7474,
+            "total": 7474.2,
+            "primer_cuadro": 7487.6
+          },
+          "renglon": "[carga] leer_sobre 7,4 ms, leer_paquete 916,9 ms, caracteres_paquete 391141 ms, modelo_veh-a 3757,7 ms, modelo_veh-b 3930 ms, vehiculos 4010,2 ms, cielo 4010,3 ms, esc_ambiente 4043,7 ms, esc_via 4138,3 ms, esc_carretera 4343 ms, esc_suelo 4518,1 ms, escenario_base 4544,2 ms, caso_y_terreno 4551,2 ms, personas 4597,7 ms, camara 4602,6 ms, ent_arboles 4862,4 ms, ent_edificios 6981 ms, ent_postes_cercas_senales 7039,3 ms, ent_horizonte 7059,3 ms, esc_luminarias 7091,3 ms, escenario 7093,2 ms, estacionados 7093,4 ms, antes_de_unir_sombras 7469,3 ms, sombras_unidas 7473,6 ms, minimapa_horneado 7473,7 ms, calidad 7474 ms, total 7474,2 ms, primer_cuadro 7487,6 ms, segundo_cuadro 7502,5 ms\n"
+        },
+        {
+          "caso": "lateral_interseccion-dia",
+          "hasta_visible_ms": 5266,
+          "hasta_cargado_ms": 6370,
+          "tarea_mas_larga_ms": 429,
+          "tareas_de_mas_de_200_ms": 4,
+          "tiempo_bloqueado_ms": 1841,
+          "tareas_largas": [
+            {
+              "desde_ms": 746,
+              "ms": 116
+            },
+            {
+              "desde_ms": 3103,
+              "ms": 172
+            },
+            {
+              "desde_ms": 3802,
+              "ms": 110
+            },
+            {
+              "desde_ms": 3914,
+              "ms": 246
+            },
+            {
+              "desde_ms": 4162,
+              "ms": 131
+            },
+            {
+              "desde_ms": 4294,
+              "ms": 125
+            },
+            {
+              "desde_ms": 4697,
+              "ms": 111
+            },
+            {
+              "desde_ms": 4906,
+              "ms": 131
+            },
+            {
+              "desde_ms": 5039,
+              "ms": 226
+            },
+            {
+              "desde_ms": 5368,
+              "ms": 229
+            },
+            {
+              "desde_ms": 5598,
+              "ms": 183
+            },
+            {
+              "desde_ms": 5906,
+              "ms": 429
+            }
+          ],
+          "unity": {
+            "leer_sobre": 3.3,
+            "leer_paquete": 1552.5,
+            "caracteres_paquete": 310575,
+            "modelo_veh-a": 2162.6,
+            "modelo_veh-b": 2325.8,
+            "vehiculos": 2540,
+            "cielo": 2540.3,
+            "esc_ambiente": 2659.6,
+            "esc_via": 2682.7,
+            "esc_carretera": 2682.8,
+            "esc_suelo": 2887,
+            "escenario_base": 2889.2,
+            "caso_y_terreno": 2971.4,
+            "personas": 3288.5,
+            "camara": 3290.3,
+            "ent_arboles": 3297.1,
+            "ent_edificios": 3578.8,
+            "ent_postes_cercas_senales": 3658.6,
+            "ent_horizonte": 3679.3,
+            "esc_luminarias": 3686.5,
+            "escenario": 3766.1,
+            "estacionados": 3766.5,
+            "antes_de_unir_sombras": 4161.4,
+            "sombras_unidas": 4168.9,
+            "minimapa_horneado": 4168.9,
+            "calidad": 4169.2,
+            "total": 4169.2,
+            "primer_cuadro": 4210.8
+          },
+          "renglon": "[carga] leer_sobre 3,3 ms, leer_paquete 1552,5 ms, caracteres_paquete 310575 ms, modelo_veh-a 2162,6 ms, modelo_veh-b 2325,8 ms, vehiculos 2540 ms, cielo 2540,3 ms, esc_ambiente 2659,6 ms, esc_via 2682,7 ms, esc_carretera 2682,8 ms, esc_suelo 2887 ms, escenario_base 2889,2 ms, caso_y_terreno 2971,4 ms, personas 3288,5 ms, camara 3290,3 ms, ent_arboles 3297,1 ms, ent_edificios 3578,8 ms, ent_postes_cercas_senales 3658,6 ms, ent_horizonte 3679,3 ms, esc_luminarias 3686,5 ms, escenario 3766,1 ms, estacionados 3766,5 ms, antes_de_unir_sombras 4161,4 ms, sombras_unidas 4168,9 ms, minimapa_horneado 4168,9 ms, calidad 4169,2 ms, total 4169,2 ms, primer_cuadro 4210,8 ms, segundo_cuadro 4283 ms\n"
+        },
+        {
+          "caso": "axa-dia",
+          "hasta_visible_ms": 1613,
+          "hasta_cargado_ms": 1795,
+          "tarea_mas_larga_ms": 176,
+          "tareas_de_mas_de_200_ms": 0,
+          "tiempo_bloqueado_ms": 695,
+          "tareas_largas": [
+            {
+              "desde_ms": 778,
+              "ms": 127
+            },
+            {
+              "desde_ms": 906,
+              "ms": 106
+            },
+            {
+              "desde_ms": 1077,
+              "ms": 124
+            },
+            {
+              "desde_ms": 1202,
+              "ms": 125
+            },
+            {
+              "desde_ms": 1329,
+              "ms": 106
+            },
+            {
+              "desde_ms": 1436,
+              "ms": 176
+            }
+          ],
+          "unity": {
+            "leer_sobre": 5.5,
+            "leer_paquete": 693.6,
+            "caracteres_paquete": 391141,
+            "modelo_veh-a": 17.7,
+            "modelo_veh-b": 142.6,
+            "vehiculos": 227,
+            "cielo": 227.1,
+            "esc_ambiente": 244.6,
+            "esc_via": 268.8,
+            "esc_carretera": 393.6,
+            "esc_suelo": 572.5,
+            "escenario_base": 573.3,
+            "caso_y_terreno": 574.4,
+            "personas": 574.5,
+            "camara": 574.7,
+            "ent_arboles": 580.3,
+            "ent_edificios": 580.8,
+            "ent_postes_cercas_senales": 611.7,
+            "ent_horizonte": 663,
+            "esc_luminarias": 668.3,
+            "escenario": 668.5,
+            "estacionados": 668.7,
+            "antes_de_unir_sombras": 928.7,
+            "sombras_unidas": 933.2,
+            "minimapa_horneado": 933.2,
+            "calidad": 933.4,
+            "total": 933.4,
+            "primer_cuadro": 951.8
+          },
+          "renglon": "[carga] leer_sobre 5,5 ms, leer_paquete 693,6 ms, caracteres_paquete 391141 ms, modelo_veh-a 17,7 ms, modelo_veh-b 142,6 ms, vehiculos 227 ms, cielo 227,1 ms, esc_ambiente 244,6 ms, esc_via 268,8 ms, esc_carretera 393,6 ms, esc_suelo 572,5 ms, escenario_base 573,3 ms, caso_y_terreno 574,4 ms, personas 574,5 ms, camara 574,7 ms, ent_arboles 580,3 ms, ent_edificios 580,8 ms, ent_postes_cercas_senales 611,7 ms, ent_horizonte 663 ms, esc_luminarias 668,3 ms, escenario 668,5 ms, estacionados 668,7 ms, antes_de_unir_sombras 928,7 ms, sombras_unidas 933,2 ms, minimapa_horneado 933,2 ms, calidad 933,4 ms, total 933,4 ms, primer_cuadro 951,8 ms, segundo_cuadro 965,1 ms\n"
+        }
+      ]
+    },
+    {
+      "arranque_ms": 2703,
+      "cargas": [
+        {
+          "caso": "axa-dia",
+          "hasta_visible_ms": 18386,
+          "hasta_cargado_ms": 18724,
+          "tarea_mas_larga_ms": 4531,
+          "tareas_de_mas_de_200_ms": 5,
+          "tiempo_bloqueado_ms": 8215,
+          "tareas_largas": [
+            {
+              "desde_ms": 280,
+              "ms": 101
+            },
+            {
+              "desde_ms": 582,
+              "ms": 106
+            },
+            {
+              "desde_ms": 690,
+              "ms": 131
+            },
+            {
+              "desde_ms": 1010,
+              "ms": 126
+            },
+            {
+              "desde_ms": 1137,
+              "ms": 141
+            },
+            {
+              "desde_ms": 1280,
+              "ms": 143
+            },
+            {
+              "desde_ms": 1619,
+              "ms": 103
+            },
+            {
+              "desde_ms": 1731,
+              "ms": 102
+            },
+            {
+              "desde_ms": 2029,
+              "ms": 115
+            },
+            {
+              "desde_ms": 10210,
+              "ms": 795
+            },
+            {
+              "desde_ms": 11638,
+              "ms": 197
+            },
+            {
+              "desde_ms": 11836,
+              "ms": 141
+            },
+            {
+              "desde_ms": 11979,
+              "ms": 109
+            },
+            {
+              "desde_ms": 12090,
+              "ms": 170
+            },
+            {
+              "desde_ms": 12261,
+              "ms": 301
+            },
+            {
+              "desde_ms": 12566,
+              "ms": 221
+            },
+            {
+              "desde_ms": 12802,
+              "ms": 152
+            },
+            {
+              "desde_ms": 12955,
+              "ms": 4531
+            },
+            {
+              "desde_ms": 17487,
+              "ms": 187
+            },
+            {
+              "desde_ms": 17674,
+              "ms": 103
+            },
+            {
+              "desde_ms": 17781,
+              "ms": 604
+            },
+            {
+              "desde_ms": 18387,
+              "ms": 149
+            },
+            {
+              "desde_ms": 18597,
+              "ms": 107
+            }
+          ],
+          "unity": {
+            "leer_sobre": 13.7,
+            "leer_paquete": 2397.2,
+            "caracteres_paquete": 391141,
+            "modelo_veh-a": 9083.6,
+            "modelo_veh-b": 9323.6,
+            "vehiculos": 9431.4,
+            "cielo": 9431.5,
+            "esc_ambiente": 9530.1,
+            "esc_via": 9701.7,
+            "esc_carretera": 10002.6,
+            "esc_suelo": 10287.4,
+            "escenario_base": 10329.6,
+            "caso_y_terreno": 10339.3,
+            "personas": 10410.6,
+            "camara": 10419.7,
+            "ent_arboles": 10865.3,
+            "ent_edificios": 15089,
+            "ent_postes_cercas_senales": 15181.3,
+            "ent_horizonte": 15260.6,
+            "esc_luminarias": 15270.9,
+            "escenario": 15274.1,
+            "estacionados": 15274.3,
+            "antes_de_unir_sombras": 15990.1,
+            "sombras_unidas": 15997.8,
+            "minimapa_horneado": 15997.9,
+            "calidad": 15998.5,
+            "total": 15998.7,
+            "primer_cuadro": 16027.5
+          },
+          "renglon": "[carga] leer_sobre 13,7 ms, leer_paquete 2397,2 ms, caracteres_paquete 391141 ms, modelo_veh-a 9083,6 ms, modelo_veh-b 9323,6 ms, vehiculos 9431,4 ms, cielo 9431,5 ms, esc_ambiente 9530,1 ms, esc_via 9701,7 ms, esc_carretera 10002,6 ms, esc_suelo 10287,4 ms, escenario_base 10329,6 ms, caso_y_terreno 10339,3 ms, personas 10410,6 ms, camara 10419,7 ms, ent_arboles 10865,3 ms, ent_edificios 15089 ms, ent_postes_cercas_senales 15181,3 ms, ent_horizonte 15260,6 ms, esc_luminarias 15270,9 ms, escenario 15274,1 ms, estacionados 15274,3 ms, antes_de_unir_sombras 15990,1 ms, sombras_unidas 15997,8 ms, minimapa_horneado 15997,9 ms, calidad 15998,5 ms, total 15998,7 ms, primer_cuadro 16027,5 ms, segundo_cuadro 16049 ms\n"
+        },
+        {
+          "caso": "lateral_interseccion-dia",
+          "hasta_visible_ms": 7519,
+          "hasta_cargado_ms": 8328,
+          "tarea_mas_larga_ms": 359,
+          "tareas_de_mas_de_200_ms": 1,
+          "tiempo_bloqueado_ms": 1135,
+          "tareas_largas": [
+            {
+              "desde_ms": 691,
+              "ms": 166
+            },
+            {
+              "desde_ms": 6272,
+              "ms": 108
+            },
+            {
+              "desde_ms": 6788,
+              "ms": 106
+            },
+            {
+              "desde_ms": 7366,
+              "ms": 152
+            },
+            {
+              "desde_ms": 7519,
+              "ms": 157
+            },
+            {
+              "desde_ms": 7677,
+              "ms": 146
+            },
+            {
+              "desde_ms": 7933,
+              "ms": 359
+            }
+          ],
+          "unity": {
+            "leer_sobre": 6.2,
+            "leer_paquete": 1981.6,
+            "caracteres_paquete": 310575,
+            "modelo_veh-a": 4641.4,
+            "modelo_veh-b": 4740.5,
+            "vehiculos": 4830.3,
+            "cielo": 4830.3,
+            "esc_ambiente": 4849.4,
+            "esc_via": 4856.4,
+            "esc_carretera": 4856.4,
+            "esc_suelo": 4952.6,
+            "escenario_base": 4953.5,
+            "caso_y_terreno": 5006.2,
+            "personas": 5220.9,
+            "camara": 5223.1,
+            "ent_arboles": 5229.2,
+            "ent_edificios": 5419.3,
+            "ent_postes_cercas_senales": 5462.4,
+            "ent_horizonte": 5476.8,
+            "esc_luminarias": 5479.8,
+            "escenario": 5481.3,
+            "estacionados": 5481.6,
+            "antes_de_unir_sombras": 5760,
+            "sombras_unidas": 5767.4,
+            "minimapa_horneado": 5767.4,
+            "calidad": 5767.8,
+            "total": 5767.8,
+            "primer_cuadro": 5809.7
+          },
+          "renglon": "[carga] leer_sobre 6,2 ms, leer_paquete 1981,6 ms, caracteres_paquete 310575 ms, modelo_veh-a 4641,4 ms, modelo_veh-b 4740,5 ms, vehiculos 4830,3 ms, cielo 4830,3 ms, esc_ambiente 4849,4 ms, esc_via 4856,4 ms, esc_carretera 4856,4 ms, esc_suelo 4952,6 ms, escenario_base 4953,5 ms, caso_y_terreno 5006,2 ms, personas 5220,9 ms, camara 5223,1 ms, ent_arboles 5229,2 ms, ent_edificios 5419,3 ms, ent_postes_cercas_senales 5462,4 ms, ent_horizonte 5476,8 ms, esc_luminarias 5479,8 ms, escenario 5481,3 ms, estacionados 5481,6 ms, antes_de_unir_sombras 5760 ms, sombras_unidas 5767,4 ms, minimapa_horneado 5767,4 ms, calidad 5767,8 ms, total 5767,8 ms, primer_cuadro 5809,7 ms, segundo_cuadro 5868,6 ms\n"
+        },
+        {
+          "caso": "axa-dia",
+          "hasta_visible_ms": 1390,
+          "hasta_cargado_ms": 1542,
+          "tarea_mas_larga_ms": 130,
+          "tareas_de_mas_de_200_ms": 0,
+          "tiempo_bloqueado_ms": 470,
+          "tareas_largas": [
+            {
+              "desde_ms": 956,
+              "ms": 118
+            },
+            {
+              "desde_ms": 1075,
+              "ms": 103
+            },
+            {
+              "desde_ms": 1259,
+              "ms": 130
+            }
+          ],
+          "unity": {
+            "leer_sobre": 5,
+            "leer_paquete": 548,
+            "caracteres_paquete": 391141,
+            "modelo_veh-a": 44.4,
+            "modelo_veh-b": 177.5,
+            "vehiculos": 257.5,
+            "cielo": 257.5,
+            "esc_ambiente": 274.7,
+            "esc_via": 299.1,
+            "esc_carretera": 417.1,
+            "esc_suelo": 568.8,
+            "escenario_base": 569.6,
+            "caso_y_terreno": 570.6,
+            "personas": 570.7,
+            "camara": 570.9,
+            "ent_arboles": 575.1,
+            "ent_edificios": 575.7,
+            "ent_postes_cercas_senales": 599.7,
+            "ent_horizonte": 631.5,
+            "esc_luminarias": 636,
+            "escenario": 636.3,
+            "estacionados": 636.5,
+            "antes_de_unir_sombras": 828.8,
+            "sombras_unidas": 833.1,
+            "minimapa_horneado": 833.1,
+            "calidad": 833.3,
+            "total": 833.3,
+            "primer_cuadro": 848.9
+          },
+          "renglon": "[carga] leer_sobre 5 ms, leer_paquete 548 ms, caracteres_paquete 391141 ms, modelo_veh-a 44,4 ms, modelo_veh-b 177,5 ms, vehiculos 257,5 ms, cielo 257,5 ms, esc_ambiente 274,7 ms, esc_via 299,1 ms, esc_carretera 417,1 ms, esc_suelo 568,8 ms, escenario_base 569,6 ms, caso_y_terreno 570,6 ms, personas 570,7 ms, camara 570,9 ms, ent_arboles 575,1 ms, ent_edificios 575,7 ms, ent_postes_cercas_senales 599,7 ms, ent_horizonte 631,5 ms, esc_luminarias 636 ms, escenario 636,3 ms, estacionados 636,5 ms, antes_de_unir_sombras 828,8 ms, sombras_unidas 833,1 ms, minimapa_horneado 833,1 ms, calidad 833,3 ms, total 833,3 ms, primer_cuadro 848,9 ms, segundo_cuadro 861,3 ms\n"
+        }
+      ]
+    }
+  ]
+}

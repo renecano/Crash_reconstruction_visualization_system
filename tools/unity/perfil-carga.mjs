@@ -10,7 +10,7 @@
  *   powershell tools/unity/build-web.ps1
  *   pnpm --filter @croquis/scene-schema exec tsx ../../tools/unity/paquetes-d1.ts
  *   node tools/unity/perfil-carga.mjs [--corridas 3] [--casos axa-dia,lateral_interseccion-dia,axa-dia]
- *     [--salida eval/results/unity_carga_perfil.json]
+ *     [--salida eval/results/unity_carga_perfil.json] [--build web|antes]
  */
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
@@ -29,7 +29,8 @@ const arg = (n, d) => {
 const CORRIDAS = Number(arg("corridas", 3));
 const CASOS = arg("casos", "axa-dia,lateral_interseccion-dia,axa-dia").split(",");
 const SALIDA = resolve(RAIZ, arg("salida", "eval/results/unity_carga_perfil.json"));
-const WEB = join(BUILD, "web");
+// Qué build se mide: `web` (el que acaba de compilar build-web.ps1) o `antes` (el publicado, para comparar).
+const WEB = join(BUILD, arg("build", "web"));
 const PUBLICO = join(RAIZ, "apps/web/public");
 const TIPOS = {
   ".html": "text/html; charset=utf-8",
