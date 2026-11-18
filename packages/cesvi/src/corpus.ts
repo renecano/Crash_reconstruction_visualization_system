@@ -428,14 +428,14 @@ const modeloONorma = (antes: string) => /(?:\b(?:tipo|modelo)\s+|\bNOM-?)$/i.tes
  * (p. ej. «Mercedes Benz»), no una persona: se conserva. Lo que parece placa después de «tipo» o
  * «modelo» es el modelo («tipo FLD-120»), y «NOM-012» es una norma: también se conservan.
  */
-export function redactar(t: string): string {
+export function redactar(t: string, opciones: { conservarNombres?: boolean } = {}): string {
   const r = redact(t, { conservarCifras: true });
   let out = "";
   let pos = 0;
   for (const sp of r.spans) {
     const antes = t.slice(0, sp.start);
     const conserva =
-      (sp.kind === "NOMBRE" && /\bmarca\s+$/i.test(antes)) ||
+      (sp.kind === "NOMBRE" && (opciones.conservarNombres || /\bmarca\s+$/i.test(antes))) ||
       (sp.kind === "PLACA" && modeloONorma(antes));
     out += antes.slice(pos) + (conserva ? sp.original : `[${sp.kind}]`);
     pos = sp.end;
@@ -587,8 +587,16 @@ export function expedienteDeSalida(
   const dato = (g: Grupo, campo: string) => {
     // La marca y el modelo de un vehículo nunca son datos personales: no se redactan.
     const t = uno(g, campo).trim();
+    // El lugar, el municipio y el estado son nombres de lugares, aunque se llamen como una persona
+    // («Avenida Venustiano Carranza», «Nuevo León»): se quitan placas y teléfonos, no esos nombres
+    // (ronda 4, B5: «León» salía como «[NOMBRE]» y la búsqueda del lugar no encontraba el estado).
+    const lugar = campo === "lugar" || campo === "municipio" || campo === "entidad";
     const v =
-      campo === "marca" || campo === "modelo" ? t.slice(0, 600) || undefined : libre(t, 600);
+      campo === "marca" || campo === "modelo"
+        ? t.slice(0, 600) || undefined
+        : lugar
+          ? redactar(t, { conservarNombres: true }).trim().slice(0, 600) || undefined
+          : libre(t, 600);
     return v ? { valor: v, fuente: F } : undefined;
   };
   const de = (seccion: Seccion) => grupos.filter((g) => g.seccion === seccion);

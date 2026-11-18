@@ -374,10 +374,24 @@ export async function buscarLugar(
     return nominatim(params, deps);
   };
   // La zona: la del caso; si el caso no la trae, la del texto.
+  // Lo que la redacción dejó como «[NOMBRE]» o «[PLACA]» no se busca (casos guardados antes de B5).
+  const sinMarcas = (s: string | undefined) =>
+    s
+      ?.replace(/\[[A-Z_]+\]/g, "")
+      .replace(/\s{2,}/g, " ")
+      .replace(/\s+,/g, ",")
+      .trim() || undefined;
+  c = {
+    ...c,
+    q: sinMarcas(c.q) ?? c.q,
+    municipio: sinMarcas(c.municipio),
+    estado: sinMarcas(c.estado),
+  };
   const delTexto = zonaDelTexto(c.q);
   // Lo que escribió el perito gana: si el texto trae un estado, ese; el municipio del caso solo si
   // es del mismo estado.
-  const delCaso = estadoDe(c.estado) ?? c.estado;
+  // Un estado que no se reconoce (mal escrito o a medias) no se usa para filtrar.
+  const delCaso = estadoDe(c.estado) ?? undefined;
   const estado = delTexto.estado ?? delCaso;
   const municipio = delTexto.estado
     ? (delTexto.municipio ?? (delCaso === delTexto.estado ? c.municipio : undefined))

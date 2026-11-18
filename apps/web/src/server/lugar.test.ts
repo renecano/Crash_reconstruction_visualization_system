@@ -307,3 +307,20 @@ describe("lo que escribe el perito gana (B5)", () => {
     expect(pedidos.some((p) => p.url.searchParams.get("q")?.includes("Monterrey"))).toBe(false);
   });
 });
+
+describe("lo que dejó la redacción no estorba (B5)", () => {
+  it("«Nuevo [NOMBRE]» no se usa como estado: se busca en el municipio", async () => {
+    const { deps, pedidos } = falso(() => ({ status: 200, body: [] }));
+    await buscarLugar(
+      {
+        q: "Boulevard de los Pinos, colonia Valle Alto",
+        municipio: "Monterrey",
+        estado: "Nuevo [NOMBRE]",
+      },
+      "c9",
+      deps,
+    );
+    expect(pedidos[0]!.url.searchParams.get("q")).toBe("Monterrey");
+    expect(pedidos.every((p) => !String(p.url).includes("NOMBRE"))).toBe(true);
+  });
+});
