@@ -124,8 +124,9 @@ export function MarcoVista({
   const armarReloj = useCallback(() => {
     if (reloj.current !== null) window.clearTimeout(reloj.current);
     reloj.current = window.setTimeout(() => {
-      // Con el foco en un control, se quedan: quien usa el teclado los está usando.
-      const dentro = marco.current?.querySelector("[data-barra]:focus-within");
+      // Con el foco de teclado en un control, se quedan: quien usa el teclado los está usando. Un clic
+      // con el mouse no cuenta (deja el foco, pero no `:focus-visible`).
+      const dentro = marco.current?.querySelector("[data-barra] :focus-visible");
       if (!dentro) setVisibles(false);
     }, OCULTAR_TRAS_MS);
   }, []);
