@@ -1,6 +1,6 @@
 {
   "nota": "Lo pesado de cada tanda de la auditoría del 2026-11-15, para la computadora del colaborador (tools/colaborador/tanda.ps1). «vigente» es la que corre CORRER-TANDA-EN-RTX.bat con doble clic. Toda corrida empieza por «comprobacion»; si falla, lo pesado no corre. Cada paso: un comando que corre en la raíz del repositorio, sin preguntas y sin llaves; «minutos» es lo estimado (el tope es 4 veces eso, y al menos 10 min); «salidas» son las rutas que se suben además de los registros. «rama»: la rama donde vive la tanda mientras no esté en main. Un comando por paso (sin &&): cada uno deja su registro. Un paso con `requiere` se omite si falta esa carpeta (datos que no van en git).",
-  "vigente": "t4b",
+  "vigente": "r4",
   "comprobacion": {
     "pasos": [
       {
@@ -280,6 +280,24 @@
           "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/fps-web.ps1",
           "minutos": 55,
           "salidas": ["eval/results/rtx-t4/fps_web.json"]
+        }
+      ]
+    },
+    "r4": {
+      "titulo": "Ronda 4 · «Descargar video» del 3D con el Unity real, en Chrome y en Edge",
+      "nota": "René, 2026-11-18 (B7). En la laptop de René solo se probó con un Unity de mentira. Aquí: la demo local con el build de Unity de la máquina (nada baja de Vercel Blob), AXA reconstruido y «Descargar video» en Chrome y en Edge. Los dos MP4 quedan en el Escritorio, carpeta croquis-video-3d: mándaselos a René.",
+      "pasos": [
+        {
+          "nombre": "visor-local",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 2,
+          "salidas": []
+        },
+        {
+          "nombre": "video-3d",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues video-3d -Salida eval/results/rtx-r4/video_3d.jsonl",
+          "minutos": 15,
+          "salidas": ["eval/results/rtx-r4/video_3d.jsonl"]
         }
       ]
     }

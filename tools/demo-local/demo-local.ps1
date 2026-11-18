@@ -18,11 +18,13 @@
     -Despues comprobar     sirve, corre la prueba sin internet (e2e/demo-local.spec.ts) y apaga
     -Despues fps-web       sirve, mide los fps del visor en el navegador (tools/unity/medir-web.ps1)
                            contra el sitio local y apaga
+    -Despues video-3d      sirve, graba «Descargar video» del 3D de AXA con el Unity real en Chrome y
+                           en Edge (e2e/video-3d-real.spec.ts; los MP4 al Escritorio) y apaga
     -Salida RUTA           a dónde escribe su resultado la comprobación o la medición
 #>
 param(
   [switch]$SoloPreparar,
-  [ValidateSet("", "comprobar", "fps-web")][string]$Despues = "",
+  [ValidateSet("", "comprobar", "fps-web", "video-3d")][string]$Despues = "",
   [string]$Salida = ""
 )
 
@@ -160,6 +162,16 @@ try {
     if ($Salida) { $env:CROQUIS_SALIDA = $Salida }
     & pnpm --filter "@croquis/web" exec playwright test e2e/demo-local.spec.ts --project=chromium --headed
     $codigo = $LASTEXITCODE
+  } elseif ($Despues -eq "video-3d") {
+    # B7 (René, 2026-11-18): el video del 3D con el Unity real, en los navegadores instalados.
+    if ($Salida) { $env:CROQUIS_SALIDA = $Salida }
+    $codigo = 0
+    foreach ($canal in @("chrome", "msedge")) {
+      Escribir "Video del 3D en $canal..."
+      $env:CROQUIS_CANAL = $canal
+      & pnpm --filter "@croquis/web" exec playwright test e2e/video-3d-real.spec.ts --project=chromium --headed
+      if ($LASTEXITCODE) { $codigo = $LASTEXITCODE; Escribir "El video en $canal falló (código $LASTEXITCODE)." "Yellow" }
+    }
   } else {
     $trabajo = Join-Path $env:LOCALAPPDATA "croquis-demo-local\fps-web"
     New-Item -ItemType Directory -Force $trabajo | Out-Null
