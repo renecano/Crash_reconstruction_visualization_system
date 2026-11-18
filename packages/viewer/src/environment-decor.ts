@@ -203,8 +203,60 @@ export interface Corridor {
   half: number;
 }
 
+/** El arco de una vía curva (grados) y el anillo de una glorieta, como los da el trazado. */
+export interface ArcoDeVia {
+  center: Vec2;
+  radius: number;
+  width: number;
+  from: number;
+  to: number;
+}
+export interface AnilloDeVia {
+  center: Vec2;
+  innerRadius: number;
+  outerRadius: number;
+}
+
+/** Cuerda máxima de un arco al partirlo en corredores rectos (m). */
+export const CUERDA_DE_ARCO_M = 4;
+
+/**
+ * Un arco en corredores rectos. Cada cuerda se separa del arco a lo más su flecha (r·(1 − cos(Δ/2))):
+ * el medio ancho la suma, para que el corredor cubra toda la calzada curva y no solo las cuerdas.
+ */
+function corredoresDeArco(
+  center: Vec2,
+  radius: number,
+  half: number,
+  fromDeg: number,
+  toDeg: number,
+): Corridor[] {
+  const barrido = ((toDeg - fromDeg) * Math.PI) / 180;
+  if (radius <= 0 || barrido === 0) return [];
+  const tramos = Math.max(1, Math.ceil((Math.abs(barrido) * radius) / CUERDA_DE_ARCO_M));
+  const paso = barrido / tramos;
+  const flecha = radius * (1 - Math.cos(paso / 2));
+  const punto = (k: number) => {
+    const a = (fromDeg * Math.PI) / 180 + paso * k;
+    return { x: center.x + radius * Math.cos(a), y: center.y + radius * Math.sin(a) };
+  };
+  const out: Corridor[] = [];
+  for (let k = 0; k < tramos; k++) out.push({ a: punto(k), b: punto(k + 1), half: half + flecha });
+  return out;
+}
+
+/**
+ * Los corredores de las vías del trazado: los tramos rectos y también las curvas (`arcs`) y las
+ * glorietas (`rings`), partidas en cuerdas. Sin las curvas, el relieve procedural, los árboles y las
+ * casas no las respetaban: en una carretera con curva el pasto subía encima de la calzada y tapaba la
+ * vía y los vehículos (René, 2026-11-17, foto promo 15).
+ */
 export function corridorsOf(
-  layout: { strips: readonly Strip[] },
+  layout: {
+    strips: readonly Strip[];
+    arcs?: readonly ArcoDeVia[];
+    rings?: readonly AnilloDeVia[];
+  },
   mapVias?: readonly Via[],
 ): Corridor[] {
   const out: Corridor[] = [];
@@ -225,6 +277,12 @@ export function corridorsOf(
       b: { x: s.center.x + (dx * s.length) / 2, y: s.center.y + (dy * s.length) / 2 },
       half: s.width / 2,
     });
+  }
+  for (const a of layout.arcs ?? [])
+    out.push(...corredoresDeArco(a.center, a.radius, a.width / 2, a.from, a.to));
+  for (const r of layout.rings ?? []) {
+    const medio = (r.innerRadius + r.outerRadius) / 2;
+    out.push(...corredoresDeArco(r.center, medio, (r.outerRadius - r.innerRadius) / 2, 0, 360));
   }
   return out;
 }
@@ -327,7 +385,7 @@ function alongCorridors(
 
 export function planEnvironment(
   lugar: EscenaSpec["lugar"],
-  layout: { strips: readonly Strip[] },
+  layout: Parameters<typeof corridorsOf>[0],
   mapVias: readonly Via[] | undefined,
   opts: PlanOptions,
 ): EnvironmentPlan {
