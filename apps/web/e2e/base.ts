@@ -14,6 +14,8 @@ export const test = base.extend({
       try {
         if (!localStorage.getItem("croquis.escena"))
           localStorage.setItem("croquis.escena", "anterior");
+        // Y el 2D de Reconstrucción como maqueta (el croquis pericial tiene su propia e2e).
+        if (!localStorage.getItem("croquis.2d")) localStorage.setItem("croquis.2d", "maqueta");
       } catch {
         // Sin almacenamiento: el flujo nuevo.
       }

@@ -292,8 +292,8 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
     diferencia,
     "fracción de píxeles distintos entre «en el impacto» y «en reposo»",
   ).toBeGreaterThan(0.02);
-  // El croquis del dictamen va sobre las calles del mapa donde el perito colocó a los vehículos.
-  await expect(dictamen).toHaveAttribute("data-croquis", "mapa");
+  // El croquis del dictamen es el mismo del 2D de Reconstrucción: el croquis pericial (ronda 4).
+  await expect(dictamen).toHaveAttribute("data-croquis", "pericial");
   const word = page.waitForEvent("download");
   await dictamen.getByTestId("descargar-dictamen-word").click();
   const archivoWord = await word;

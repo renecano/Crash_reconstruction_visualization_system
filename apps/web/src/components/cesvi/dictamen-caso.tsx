@@ -7,6 +7,7 @@
  * el orden de los reportes de CESVI.
  */
 import {
+  especReconstruida,
   formato as F,
   impactosEnMapa,
   trayectoriasEnMapa,
@@ -20,7 +21,11 @@ import type { OverpassResponse } from "@croquis/croquis-2d";
 import type { Map as MapaMl } from "maplibre-gl";
 import { useEffect, useRef, useState } from "react";
 import { huellaDelCaso, validacionVigente, type ValidacionPerito } from "@/lib/caso-guardado";
+import { conCallesDelMapa } from "@/lib/calles-del-mapa";
 import { croquisDeReconstruccion } from "@/lib/croquis-caso";
+import { croquisPericial, svgAPng, viasDeEscena } from "@/lib/croquis-pericial";
+import type { ResultadoMaqueta } from "@/lib/maqueta";
+import type { EscenaSpec } from "@croquis/scene-schema";
 import { croquisSobreMapa } from "@/lib/croquis-mapa";
 import type { CifraContraste } from "@/lib/contraste-lab";
 import { dictamenCasoPdf, dictamenCasoWord, type DatosDictamenCaso } from "@/lib/dictamen-caso";
@@ -183,10 +188,28 @@ export function DictamenCaso({
   const descargas = useRef<HTMLDivElement>(null);
   const botonPdf = useRef<HTMLButtonElement>(null);
   // Qué croquis llevó el último dictamen descargado: sobre el mapa o a escala sin mapa.
-  const [croquisUsado, setCroquisUsado] = useState<"mapa" | "escala" | null>(null);
+  const [croquisUsado, setCroquisUsado] = useState<"pericial" | "mapa" | "escala" | null>(null);
+  const tipoCroquis = useRef<"pericial" | "mapa" | "escala">("escala");
 
-  /** El croquis sobre las calles del mapa si el caso está en el mapa; si no, el dibujo a escala. */
+  /**
+   * El croquis del dictamen es el mismo del 2D de Reconstrucción (ronda 4, René): el croquis pericial,
+   * con las calles del mapa. Si no se puede dibujar, el de antes (sobre el mapa o a escala).
+   */
   const croquis = async () => {
+    let spec = especReconstruida(reconstruccion);
+    if (reconstruccion.origen && calles)
+      spec = conCallesDelMapa(spec, reconstruccion.origen, calles);
+    const letras = Object.fromEntries(
+      Object.entries(reconstruccion.ids).map(([resId, id]) => [resId, letraDe(String(id))]),
+    );
+    const { svg } = croquisPericial(
+      reconstruccion.resultado as unknown as ResultadoMaqueta,
+      viasDeEscena(spec as unknown as EscenaSpec),
+      letras,
+      { proporcion: 1.6 },
+    );
+    const pericial = await svgAPng(svg, 1600, 1000);
+    if (pericial) return { imagen: pericial, sobreMapa: false, tipo: "pericial" as const };
     const trs = trayectoriasEnMapa(reconstruccion, reconstruccion.resultado);
     if (mapa && trs.length) {
       const imagen = await croquisSobreMapa(
@@ -198,11 +221,12 @@ export function DictamenCaso({
           actual: tema === "claro" ? ESTILO_MAPA_CLARO : ESTILO_MAPA,
         },
       );
-      if (imagen) return { imagen, sobreMapa: true };
+      if (imagen) return { imagen, sobreMapa: true, tipo: "mapa" as const };
     }
     return {
       imagen: croquisDeReconstruccion(reconstruccion.resultado, reconstruccion.ids),
       sobreMapa: false,
+      tipo: "escala" as const,
     };
   };
   // Las fotos del 3D se toman al abrir el dictamen, no al pedir el archivo (O2, plan v4): con el
@@ -228,6 +252,7 @@ export function DictamenCaso({
 
   const datos = async (): Promise<DatosDictamenCaso> => {
     const c = await croquis();
+    tipoCroquis.current = c.tipo;
     return {
       expediente,
       narracion,
@@ -268,7 +293,7 @@ export function DictamenCaso({
     );
     try {
       const d = await datos();
-      setCroquisUsado(d.croquisSobreMapa ? "mapa" : "escala");
+      setCroquisUsado(tipoCroquis.current);
       if (formato === "pdf") descargar(await dictamenCasoPdf(d), nombre("pdf"), "application/pdf");
       else
         descargar(
