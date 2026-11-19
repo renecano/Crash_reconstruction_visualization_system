@@ -1352,3 +1352,27 @@ export function limiteEnElChoque(
   const l = limiteDeLaVia(mejor.c.tipo, mejor.c.maxspeed);
   return l && mejor.c.nombre ? { ...l, fuente: `${l.fuente}; ${mejor.c.nombre}` } : l;
 }
+
+/**
+ * Si se avisa que no hay calles (ronda 4; René, 2026-11-18: «el aviso rojo sale cada vez que se regresa
+ * a La escena, aunque el mapa dibuja las calles»). Solo si Overpass no respondió, no hay calles de
+ * ninguna otra fuente (las teselas de este mapa, las del recorrido o las guardadas con el caso), las
+ * teselas de este lugar ya se leyeron y el aviso no se ha mostrado en la sesión.
+ */
+export function avisarSinCalles(o: {
+  overpassFallo: boolean;
+  hayCalles: boolean;
+  teselasLeidasDe: string | null;
+  lugar: string | null;
+  yaVisto: boolean;
+  descartado: boolean;
+}): boolean {
+  return (
+    o.overpassFallo &&
+    !o.hayCalles &&
+    o.lugar !== null &&
+    o.teselasLeidasDe === o.lugar &&
+    !o.yaVisto &&
+    !o.descartado
+  );
+}

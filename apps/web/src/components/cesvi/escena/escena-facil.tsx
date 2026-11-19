@@ -61,6 +61,7 @@ import type { Map as MapaMl } from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   ajustarACalle,
+  avisarSinCalles,
   callesDe,
   cruceNarrado,
   callesEn,
@@ -314,7 +315,7 @@ export function EscenaFacil({
   const calles = callesOverpass ?? deTeselas;
   // Ronda 4 (René): el aviso solo si de verdad no hay calles de ninguna fuente (Overpass, las teselas
   // de este mapa o las que ya leyó el recorrido), y una sola vez por lugar en la sesión.
-  const callesFallaron = overpassFallo && !calles && teselasLeidas === claveTeselas;
+  // La regla del aviso de calles, probada en `avisarSinCalles` (escena-facil.test.ts).
   const claveAvisoCalles = `croquis.aviso-calles:${claveTeselas ?? "sin-lugar"}`;
   const [avisoCallesVisto] = useState(() => {
     try {
@@ -912,7 +913,16 @@ export function EscenaFacil({
           { texto: "Así está bien", id: "fuera-asi", hacer: () => descartar(`fuera:${v}`) },
         ],
       };
-    if (callesFallaron && !avisoCallesVisto && !descartadas.includes("sin-calles")) {
+    if (
+      avisarSinCalles({
+        overpassFallo,
+        hayCalles: Boolean(calles),
+        teselasLeidasDe: teselasLeidas,
+        lugar: claveTeselas,
+        yaVisto: avisoCallesVisto,
+        descartado: descartadas.includes("sin-calles"),
+      })
+    ) {
       try {
         sessionStorage.setItem(claveAvisoCalles, "1");
       } catch {

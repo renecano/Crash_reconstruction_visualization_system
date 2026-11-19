@@ -37,6 +37,7 @@ import {
   sinFinal,
   textoChoqueListo,
   textoFlecha,
+  avisarSinCalles,
 } from "./escena-facil";
 import { impactosAColocar } from "./pasos-caso";
 
@@ -367,5 +368,30 @@ describe("cada respuesta se guarda en el expediente de siempre", () => {
     expect(lineas[2]!.supuesto).toBe(
       "No sabías dónde quedó: Croquis lo calcula y el dictamen lo dice.",
     );
+  });
+});
+
+describe("el aviso de calles (ronda 4, René)", () => {
+  const base = {
+    overpassFallo: true,
+    hayCalles: false,
+    teselasLeidasDe: "lugar-1",
+    lugar: "lugar-1",
+    yaVisto: false,
+    descartado: false,
+  };
+  it("sale solo si de verdad no hay calles de ninguna fuente, ya leídas las teselas del lugar", () => {
+    expect(avisarSinCalles(base)).toBe(true);
+    // Al regresar a La escena con las calles del recorrido (o guardadas con el caso): no sale.
+    expect(avisarSinCalles({ ...base, hayCalles: true })).toBe(false);
+    // Todavía sin leer las teselas de este lugar (recién montada): no sale.
+    expect(avisarSinCalles({ ...base, teselasLeidasDe: null })).toBe(false);
+    expect(avisarSinCalles({ ...base, teselasLeidasDe: "otro" })).toBe(false);
+    // Overpass respondió: no sale.
+    expect(avisarSinCalles({ ...base, overpassFallo: false })).toBe(false);
+  });
+  it("una sola vez por lugar en la sesión, y no si el perito lo cerró", () => {
+    expect(avisarSinCalles({ ...base, yaVisto: true })).toBe(false);
+    expect(avisarSinCalles({ ...base, descartado: true })).toBe(false);
   });
 });
