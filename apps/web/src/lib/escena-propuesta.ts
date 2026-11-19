@@ -113,7 +113,8 @@ export function proponerEscena(o: {
     sentido(primero)?.rumbo ?? rumboAlineado(calles, choque, 0),
   );
   // Por dónde llegaba cada uno (solo los del primer choque: los demás impactos los marca el perito).
-  const flechas = flechasDeLlegada(calles, choque);
+  // Sin calles del mapa no hay flechas: las cardinales serían una dirección inventada (René).
+  const flechas = calles.length ? flechasDeLlegada(calles, choque) : [];
   for (const v of impactos[0]!.vehiculos) {
     const s = sentido(v);
     const i = flechaPropuesta(flechas, s, poseDe(e, v, "impacto")?.rumbo ?? null);

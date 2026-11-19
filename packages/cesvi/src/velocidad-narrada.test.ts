@@ -16,7 +16,7 @@ describe("la velocidad que dice la narración (ronda 4)", () => {
       "El vehículo A circulaba por Paseo Tollocan a 80 km/h cuando perdió el control.",
       ids,
     );
-    expect(m.get("V1")).toMatchObject({ kmh: 80, rango_kmh: [72, 88], origen: "narracion" });
+    expect(m.get("V1")).toMatchObject({ kmh: 80, rango_kmh: [72, 88], origen: "narración" });
     expect(m.get("V1")!.cita).toContain("a 80 km/h");
     const a = velocidadesNarradas("El vehículo B venía como a 60 kilómetros por hora.", ids);
     expect(a.get("V2")).toMatchObject({ kmh: 60, rango_kmh: [51, 69] });

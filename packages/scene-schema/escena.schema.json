@@ -1665,8 +1665,8 @@
         },
         "origen": {
           "type": "string",
-          "description": "narracion: la cifra o la descripción de la narración; perito: la contestó el perito; via: el rango típico de la vía (su límite de OpenStreetMap o su tipo).",
-          "enum": ["narracion", "perito", "via"]
+          "description": "narración: la cifra o la descripción de la narración; perito: la contestó el perito; via: el rango típico de la vía (su límite de OpenStreetMap o su tipo).",
+          "enum": ["narración", "perito", "via"]
         },
         "descripcion": {
           "type": "string",

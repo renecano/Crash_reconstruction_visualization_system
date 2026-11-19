@@ -1454,9 +1454,9 @@ class VelocidadNarrada(BaseModel):
     """
     El rango [mínimo, máximo] en km/h.
     """
-    origen: Literal["narracion", "perito", "via"]
+    origen: Literal["narración", "perito", "via"]
     """
-    narracion: la cifra o la descripción de la narración; perito: la contestó el perito; via: el rango típico de la vía (su límite de OpenStreetMap o su tipo).
+    narración: la cifra o la descripción de la narración; perito: la contestó el perito; via: el rango típico de la vía (su límite de OpenStreetMap o su tipo).
     """
     descripcion: Annotated[str, Field(max_length=200)]
     """

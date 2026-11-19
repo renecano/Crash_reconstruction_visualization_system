@@ -1839,7 +1839,7 @@ namespace Croquis.Generated
         public double? LimiteKmh { get; set; }
 
         /// <summary>
-        /// narracion: la cifra o la descripción de la narración; perito: la contestó el perito; via:
+        /// narración: la cifra o la descripción de la narración; perito: la contestó el perito; via:
         /// el rango típico de la vía (su límite de OpenStreetMap o su tipo).
         /// </summary>
         [JsonProperty("origen")]
@@ -5542,10 +5542,10 @@ namespace Croquis.Generated
     public enum FluffyFuente { Dictamen, NhtsaE2, Perito, TablaCesvi };
 
     /// <summary>
-    /// narracion: la cifra o la descripción de la narración; perito: la contestó el perito; via:
+    /// narración: la cifra o la descripción de la narración; perito: la contestó el perito; via:
     /// el rango típico de la vía (su límite de OpenStreetMap o su tipo).
     /// </summary>
-    public enum VelocidadNarradaOrigen { Narracion, Perito, Via };
+    public enum VelocidadNarradaOrigen { Narración, Perito, Via };
 
     /// <summary>
     /// Si la velocidad es relativa al límite de la vía («a exceso de velocidad»: arriba;
@@ -9796,8 +9796,8 @@ namespace Croquis.Generated
             var value = serializer.Deserialize<string>(reader);
             switch (value)
             {
-                case "narracion":
-                    return VelocidadNarradaOrigen.Narracion;
+                case "narración":
+                    return VelocidadNarradaOrigen.Narración;
                 case "perito":
                     return VelocidadNarradaOrigen.Perito;
                 case "via":
@@ -9816,8 +9816,8 @@ namespace Croquis.Generated
             var value = (VelocidadNarradaOrigen)untypedValue;
             switch (value)
             {
-                case VelocidadNarradaOrigen.Narracion:
-                    serializer.Serialize(writer, "narracion");
+                case VelocidadNarradaOrigen.Narración:
+                    serializer.Serialize(writer, "narración");
                     return;
                 case VelocidadNarradaOrigen.Perito:
                     serializer.Serialize(writer, "perito");

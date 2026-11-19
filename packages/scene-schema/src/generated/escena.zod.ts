@@ -1004,7 +1004,7 @@ export type Rigidez = z.infer<typeof Rigidez>;
 export const VelocidadNarrada = z.strictObject({
   kmh: z.number().min(0).max(300),
   rango_kmh: z.tuple([z.number().min(0).max(300), z.number().min(0).max(300)]),
-  origen: z.enum(["narracion", "perito", "via"]),
+  origen: z.enum(["narración", "perito", "via"]),
   descripcion: z.string().max(200),
   cita: z.string().max(400).optional(),
   respecto_al_limite: z.enum(["arriba", "abajo", "alrededor"]).optional(),

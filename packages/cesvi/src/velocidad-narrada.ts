@@ -215,7 +215,7 @@ export function velocidadesNarradas(
     poner(i, {
       kmh: r1(kmh),
       rango_kmh: [r1(rango[0]), r1(rango[1])],
-      origen: "narracion",
+      origen: "narración",
       descripcion: m[0].trim(),
       cita: cita(narracion, i, m[0].length),
     });
@@ -231,13 +231,13 @@ export function velocidadesNarradas(
         ? {
             kmh: d.fijo[0],
             rango_kmh: [d.fijo[1], d.fijo[2]],
-            origen: "narracion",
+            origen: "narración",
             descripcion: d.texto,
             cita: cita(narracion, i, m[0].length),
           }
         : {
             ...respectoAlLimite(d.r, LIMITE_SIN_VIA.kmh),
-            origen: "narracion",
+            origen: "narración",
             descripcion: d.texto,
             cita: cita(narracion, i, m[0].length),
             respecto_al_limite: d.r,
@@ -332,7 +332,7 @@ export function velocidadPreviaDeclarada(v: VelocidadNarrada): Record<string, un
     valor: v.kmh,
     unidad: "km/h",
     rango: v.rango_kmh,
-    fuente: v.origen === "narracion" ? "relato" : v.origen === "perito" ? "usuario" : "supuesto",
+    fuente: v.origen === "narración" ? "relato" : v.origen === "perito" ? "usuario" : "supuesto",
     confianza: v.origen === "via" ? 0.3 : 0.6,
     nota: `${deDonde}. Supuesto declarado con su rango: solo pesa si la evidencia no fija la velocidad.`.slice(
       0,

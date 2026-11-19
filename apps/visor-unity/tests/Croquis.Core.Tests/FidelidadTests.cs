@@ -41,7 +41,8 @@ namespace Croquis.Core.Tests
         [Fact]
         public void HayPaquetesDeTodosLosCasos()
         {
-            Assert.Equal(23, Paquetes().Length);
+            // 24 desde la ronda 4: el árbol con la velocidad declarada (`fixtures/inversion`).
+            Assert.Equal(24, Paquetes().Length);
         }
 
         [Fact]

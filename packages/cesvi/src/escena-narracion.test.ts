@@ -119,6 +119,9 @@ describe("de la narración del perito a la escena (R1)", () => {
     expect(e.preguntas.map((p) => p.clave)).toEqual([
       "impacto-propuesto",
       "impactos",
+      // Ronda 4: la narración no dice a qué velocidad venían.
+      "velocidad-V1",
+      "velocidad-V2",
       "clase-V1",
       "masa-V1",
       "clase-V2",
