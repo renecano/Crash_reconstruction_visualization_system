@@ -863,6 +863,35 @@ class Estructura(BaseModel):
     nota: Annotated[str | None, Field(max_length=300)] = None
 
 
+class Punto(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    x: float
+    y: float
+
+
+class EjeVia(BaseModel):
+    """
+    El eje real de la vía del choque (ronda 4; René, 2026-11-19): la polilínea de la calle guardada con el caso, en metros de la escena. Si viene, la trayectoria sigue su carril en vez del arco de plantilla de `tipo_via` y `radio_curva`.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    puntos: Annotated[list[Punto], Field(max_length=400, min_length=2)]
+    nombre: Annotated[str | None, Field(max_length=200)] = None
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
+    """
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
+    """
+    confianza: Annotated[float, Field(ge=0.0, le=1.0)]
+    """
+    Confianza en el valor, de 0 (adivinado) a 1 (seguro).
+    """
+    nota: Annotated[str | None, Field(max_length=300)] = None
+
+
 class ObjetoEntorno(BaseModel):
     """
     Objeto fijo o estacionado que puede ser golpeado o tapar la vista.
@@ -1224,7 +1253,7 @@ class Coordenadas(BaseModel):
     """
 
 
-class Punto(RootModel[list[float]]):
+class Punto1(RootModel[list[float]]):
     root: Annotated[list[float], Field(max_length=2, min_length=2)]
 
 
@@ -1242,7 +1271,7 @@ class Via(BaseModel):
     carriles: Annotated[str | None, Field(max_length=10)] = None
     sentido_unico: Annotated[str | None, Field(max_length=10)] = None
     ancho: Annotated[str | None, Field(max_length=10)] = None
-    puntos: Annotated[list[Punto], Field(max_length=2000, min_length=2)]
+    puntos: Annotated[list[Punto1], Field(max_length=2000, min_length=2)]
     """
     [lon, lat] de cada punto, en orden.
     """
@@ -2204,6 +2233,10 @@ class Lugar(BaseModel):
     estructura: Estructura | None = None
     """
     Si el hecho fue sobre un puente o un paso a desnivel (ronda 4). La física va sobre la losa, a nivel; el 3D dibuja la estructura.
+    """
+    eje_via: EjeVia | None = None
+    """
+    El eje real de la vía del choque (ronda 4; René, 2026-11-19): la polilínea de la calle guardada con el caso, en metros de la escena. Si viene, la trayectoria sigue su carril en vez del arco de plantilla de `tipo_via` y `radio_curva`.
     """
     radio_curva: CampoLongitud | None = None
     superficie: CampoSuperficie

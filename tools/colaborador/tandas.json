@@ -443,6 +443,60 @@
           "tope_min": 15
         }
       ]
+    },
+    "t6-curvas": {
+      "titulo": "Tanda 6 · Las curvas por el eje real de la calle (antes y después de las cifras, y el 3D)",
+      "nota": "René, 2026-11-19. En la rama feat/w-curvas (apilada sobre el #284). Las cifras del índice se vuelven a medir y se comparan con las guardadas (el antes): carambolas 20 de 31 y 40 de 55, y 91 de 156. Si alguna cambia, no se publica: va a René con el antes y el después. Después, las narraciones en la demo local (la sexta es la de la curva) para ver la curva en el 3D. Tope de 15 min por paso, sin reintentar.",
+      "rama": "feat/w-curvas",
+      "pasos": [
+        {
+          "nombre": "carambolas-prueba",
+          "comando": "pnpm --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir prueba",
+          "minutos": 5,
+          "tope_min": 15,
+          "salidas": ["eval/results"]
+        },
+        {
+          "nombre": "carambolas-desarrollo",
+          "comando": "pnpm --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir desarrollo",
+          "minutos": 6,
+          "tope_min": 15,
+          "salidas": ["eval/results"]
+        },
+        {
+          "nombre": "titulo-prueba",
+          "comando": "pnpm --filter @croquis/cesvi exec tsx ../../eval/cesvi_r4c_titulo.mts medir prueba",
+          "minutos": 4,
+          "tope_min": 15,
+          "salidas": ["eval/results"]
+        },
+        {
+          "nombre": "verificar-cifras",
+          "comando": "node eval/verificar_cifras.mjs",
+          "minutos": 1,
+          "tope_min": 15,
+          "salidas": ["eval/results"]
+        },
+        {
+          "nombre": "visor",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 2,
+          "tope_min": 15
+        },
+        {
+          "nombre": "preparar",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar",
+          "minutos": 8,
+          "tope_min": 15
+        },
+        {
+          "nombre": "narraciones-curva",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues narraciones -Salida eval/results/t6/narraciones_fisica.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t6", "docs/cesvi/ronda-4/evidencia/fisica"]
+        }
+      ]
     }
   }
 }
