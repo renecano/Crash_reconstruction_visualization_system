@@ -72,10 +72,7 @@
     "radio_curva": {
       "valor": 90,
       "unidad": "m",
-      "rango": [
-        60,
-        150
-      ],
+      "rango": [60, 150],
       "fuente": "supuesto",
       "confianza": 0.4
     },
@@ -98,10 +95,7 @@
     },
     "friccion": {
       "valor": 0.45,
-      "rango": [
-        0.35,
-        0.6
-      ],
+      "rango": [0.35, 0.6],
       "fuente": "default",
       "confianza": 0.5,
       "nota": "Asfalto con grava suelta; se refina en F2 con tabla de fricción referenciada."
@@ -130,20 +124,14 @@
         "alto": {
           "valor": 10,
           "unidad": "m",
-          "rango": [
-            7,
-            14
-          ],
+          "rango": [7, 14],
           "fuente": "supuesto",
           "confianza": 0.4
         },
         "diametro_tronco": {
           "valor": 0.5,
           "unidad": "m",
-          "rango": [
-            0.35,
-            0.7
-          ],
+          "rango": [0.35, 0.7],
           "fuente": "relato",
           "confianza": 0.6,
           "evidencia": [
@@ -227,10 +215,7 @@
       "masa": {
         "valor": 1900,
         "unidad": "kg",
-        "rango": [
-          1700,
-          2150
-        ],
+        "rango": [1700, 2150],
         "fuente": "default",
         "confianza": 0.6
       },
@@ -273,10 +258,7 @@
       "velocidad_previa": {
         "valor": 80,
         "unidad": "km/h",
-        "rango": [
-          70,
-          95
-        ],
+        "rango": [70, 95],
         "fuente": "relato",
         "confianza": 0.7,
         "evidencia": [
@@ -305,10 +287,7 @@
         "distancia_antes_impacto": {
           "valor": 20,
           "unidad": "m",
-          "rango": [
-            15,
-            25
-          ],
+          "rango": [15, 25],
           "fuente": "relato",
           "confianza": 0.6,
           "evidencia": [
@@ -363,10 +342,7 @@
           ]
         }
       },
-      "ocupantes": [
-        "per-a1",
-        "per-a2"
-      ]
+      "ocupantes": ["per-a1", "per-a2"]
     }
   ],
   "personas": [
@@ -442,16 +418,11 @@
       "id": "ev-derrape",
       "orden": 0,
       "tipo": "derrape",
-      "actores": [
-        "veh-a"
-      ],
+      "actores": ["veh-a"],
       "t": {
         "valor": -1.6,
         "unidad": "s",
-        "rango": [
-          -2.2,
-          -1.1
-        ],
+        "rango": [-2.2, -1.1],
         "fuente": "supuesto",
         "confianza": 0.4
       },
@@ -471,16 +442,11 @@
       "id": "ev-frenado",
       "orden": 1,
       "tipo": "inicio_frenado",
-      "actores": [
-        "veh-a"
-      ],
+      "actores": ["veh-a"],
       "t": {
         "valor": -1.4,
         "unidad": "s",
-        "rango": [
-          -2,
-          -1
-        ],
+        "rango": [-2, -1],
         "fuente": "supuesto",
         "confianza": 0.4
       },
@@ -500,10 +466,7 @@
       "id": "ev-impacto",
       "orden": 2,
       "tipo": "impacto_vehiculo_objeto",
-      "actores": [
-        "veh-a",
-        "arbol-impacto"
-      ],
+      "actores": ["veh-a", "arbol-impacto"],
       "t": {
         "valor": 0,
         "unidad": "s",
@@ -547,9 +510,7 @@
       "id": "ev-reposo",
       "orden": 3,
       "tipo": "reposo",
-      "actores": [
-        "veh-a"
-      ],
+      "actores": ["veh-a"],
       "t": {
         "valor": 0.2,
         "unidad": "s",
@@ -576,20 +537,14 @@
       "profundidad_aplastamiento": {
         "valor": 0.6,
         "unidad": "m",
-        "rango": [
-          0.4,
-          0.8
-        ],
+        "rango": [0.4, 0.8],
         "fuente": "supuesto",
         "confianza": 0.4
       },
       "ancho_danado": {
         "valor": 0.8,
         "unidad": "m",
-        "rango": [
-          0.6,
-          1.0
-        ],
+        "rango": [0.6, 1.0],
         "fuente": "supuesto",
         "confianza": 0.4
       },
@@ -606,13 +561,8 @@
           }
         ]
       },
-      "piezas_desprendidas": [
-        "defensa",
-        "faro"
-      ],
-      "fugas": [
-        "anticongelante"
-      ],
+      "piezas_desprendidas": ["defensa", "faro"],
+      "fugas": ["anticongelante"],
       "procedencia": {
         "fuente": "relato",
         "confianza": 0.8,
@@ -635,10 +585,7 @@
       "longitud": {
         "valor": 20,
         "unidad": "m",
-        "rango": [
-          15,
-          25
-        ],
+        "rango": [15, 25],
         "fuente": "relato",
         "confianza": 0.6,
         "evidencia": [

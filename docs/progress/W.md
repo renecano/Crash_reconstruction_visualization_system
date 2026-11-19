@@ -14,6 +14,7 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 René probó Croquis en producción y en local: lo que dice la narración no llega a la física ni al 3D. Esto va antes de todo lo demás. Rama `feat/w-narracion-a-la-fisica`.
 
 **Diagnóstico del punto 1 (velocidades bajas), medido con el solver TS:**
+
 - **La lectura nunca extrae velocidades.** `SISTEMA_ESCENA` (`packages/cesvi/src/escena-narracion.ts`) no tiene campo de velocidad, así que «a exceso de velocidad», «rápido» o «a 80 km/h» se pierden.
 - **El solver no tiene prior de velocidad.** `velocidad_previa` solo es el arranque del ajuste (40 km/h si nadie la dice; `inversion.py`, `parameters`).
 - **Un auto contra un árbol, sin reposo:** sale 40 km/h, el arranque fijo, y «la evidencia no la fija».
@@ -30,9 +31,9 @@ René probó Croquis en producción y en local: lo que dice la narración no lle
    - Donde la evidencia no fija nada, la típica de la vía en vez del arranque de 40 km/h (`expedienteConTipicas`).
    - Medido (`eval/ronda4_narracion_fisica.mts`):
 
-     | Caso | Antes | Después |
-     | --- | --- | --- |
-     | AXA | 57 (55–78) | 57 (55–78), igual |
+     | Caso                             | Antes                           | Después                             |
+     | -------------------------------- | ------------------------------- | ----------------------------------- |
+     | AXA                              | 57 (55–78)                      | 57 (55–78), igual                   |
      | Tollocan (el `.croquis` de René) | 40 km/h, el arranque, sin rango | 45 (31–59), fijada por lo declarado |
 
    - Las 14 escenas canónicas, sin cambios (`reconstruct --all --check`).
@@ -44,10 +45,10 @@ René probó Croquis en producción y en local: lo que dice la narración no lle
    - «Rumbo a …» es el sentido de llegada: cardinal, o el rumbo hacia el destino, que se busca aparte.
    - Medido con 20 frases al estilo de CESVI (`eval/results/ronda4_lugar_sentido.json`):
 
-     | | Antes | Después |
-     | --- | --- | --- |
-     | Vía correcta | 2/20 | 17/20 |
-     | Sentido correcto | 10/20 | 19/20 |
+     |                  | Antes | Después |
+     | ---------------- | ----- | ------- |
+     | Vía correcta     | 2/20  | 17/20   |
+     | Sentido correcto | 10/20 | 19/20   |
 
    - Los 3 fallos de vía son del buscador: Eje 6 Sur, Gonzalitos y Periférico Sur.
 4. **Objeto del primer impacto.** Va frente a la cara de contacto. Antes quedaba en la plantilla (6, −6) y el solver desviaba al auto hacia él.
@@ -69,6 +70,7 @@ René probó Croquis en producción y en local: lo que dice la narración no lle
    - Pruebas en Croquis.Core: 115/115.
 
 **Para retomar (2026-11-18, 20:30):**
+
 - **El build nuevo de Unity** (huella `3cce5c1caca88f96`) compiló y pasa sus 7 pruebas EditMode.
   - Ya está copiado en `.cache/visor-unity/3cce5c1caca88f96`.
   - El `apps/web/public/visor-unity/manifest.json` local apunta a él. Ese cambio no se sube: `git restore` lo regresa al publicado.
@@ -76,6 +78,7 @@ René probó Croquis en producción y en local: lo que dice la narración no lle
 - **Para medir:** con todo lo demás cerrado, `tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/ronda4b_unity_arranque_<n>.json`, 3 corridas. Se compara contra `ronda4_unity_arranque_despues_*` (el 1.3.0 publicado).
 
 **Siguiente:**
+
 1. Medir el build de Unity antes de publicar.
 2. Las seis narraciones (`docs/cesvi/ronda-4/narraciones-fisica.md`) y el caso encimado en la demo local, con capturas del 3D y la tabla.
 3. El antes y después de los cinco ejemplos en el navegador.
