@@ -66,3 +66,23 @@ describe("el objeto del primer impacto, donde fue el choque (René, 2026-11-18)"
     );
   }
 });
+
+describe("subida, bajada, puente y curva narrados (René, 2026-11-18)", () => {
+  const leer = (extra: string) => escenaDeNarracion(g.salida, `${g.narracion} ${extra}`).expediente;
+  it("una subida o una bajada enciende el relieve real del lugar, con su cita", () => {
+    const e = leer("El vehículo A circulaba en subida.");
+    expect(e.caso.condiciones?.pendiente).toMatchObject({ valor: "subida" });
+    expect(e.terreno?.relieve?.fuente).toBe("dem");
+    expect(leer("Bajaba cuesta abajo.").caso.condiciones?.pendiente?.valor).toBe("bajada");
+  });
+  it("sobre un puente no (el relieve sería el del suelo de abajo), y el puente llega a la escena", () => {
+    const e = leer("Circulaba en bajada sobre el puente vehicular.");
+    expect(e.caso.condiciones?.estructura?.valor).toBe("puente");
+    expect(e.terreno?.relieve).toBeUndefined();
+    const spec = especDeExpediente(e).spec as Json & { lugar: Json };
+    expect(spec.lugar.estructura).toMatchObject({ valor: "puente" });
+  });
+  it("la curva queda como condición con su cita", () => {
+    expect(leer("Perdió el control en la curva.").caso.condiciones?.trazo?.valor).toBe("curva");
+  });
+});
