@@ -522,7 +522,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       guardadas.vias.map((v) => ({
         tipo: v.tipo,
         ...(v.nombre ? { nombre: v.nombre } : {}),
-        puntos: (v.puntos as [number, number][]).map(([lon, lat]) => local({ lat, lon })),
+        puntos: (v.puntos).map(([lon, lat]) => local({ lat, lon })),
       })),
       choque,
     );
