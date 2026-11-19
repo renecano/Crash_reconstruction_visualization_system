@@ -20,13 +20,16 @@
                            contra el sitio local y apaga
     -Despues arranque-3d   sirve, mide el arranque del 3D de Unity en el Chrome instalado
                            (e2e/medir-unity-arranque.spec.ts) contra el sitio local y apaga
+    -Despues narraciones   sirve, corre las seis narraciones y el caso encimado (t5) en Chrome y apaga
+    -Despues tollocan      sirve, corre el caso de Tollocan de René de punta a punta (t5) en Chrome y apaga
+    -Despues ejemplos      sirve, corre los cinco ejemplos con el 3D (t5) en Chrome y apaga
     -Despues video-3d      sirve, graba «Descargar video» del 3D de AXA con el Unity real en Chrome y
                            en Edge (e2e/video-3d-real.spec.ts; los MP4 al Escritorio) y apaga
     -Salida RUTA           a dónde escribe su resultado la comprobación o la medición
 #>
 param(
   [switch]$SoloPreparar,
-  [ValidateSet("", "comprobar", "fps-web", "arranque-3d", "video-3d")][string]$Despues = "",
+  [ValidateSet("", "comprobar", "fps-web", "arranque-3d", "video-3d", "narraciones", "tollocan", "ejemplos")][string]$Despues = "",
   [string]$Salida = ""
 )
 
@@ -190,6 +193,24 @@ try {
       if ($null -eq $gpuAntes) { Remove-ItemProperty -Path $llaveGpu -Name $chrome -ErrorAction SilentlyContinue }
       else { Set-ItemProperty -Path $llaveGpu -Name $chrome -Value $gpuAntes }
     }
+  } elseif ($Despues -in @("narraciones", "tollocan", "ejemplos")) {
+    # t5-verificacion (René, 2026-11-19), en el Chrome instalado contra la demo local:
+    #   narraciones  las seis narraciones nuevas y el caso encimado, con capturas del 3D;
+    #   tollocan     el caso de René de punta a punta;
+    #   ejemplos     los cinco ejemplos (el «después»; el «antes» es el de producción).
+    if (-not $chrome) { Fallar "No encontré Google Chrome: la tanda t5 corre en Chrome." }
+    $env:CROQUIS_URL = $Url
+    $env:CROQUIS_CANAL = "chrome"
+    if ($Salida) { $env:CROQUIS_SALIDA = $Salida }
+    if ($Despues -eq "ejemplos") {
+      $env:CROQUIS_UNITY = "1"
+      $env:CROQUIS_CAPTURAS = "docs/cesvi/ronda-4/evidencia/t5-ejemplos"
+      & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/ejemplos-ronda2.spec.ts
+    } else {
+      $filtro = if ($Despues -eq "tollocan") { "Tollocan" } else { "narración|encimado" }
+      & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/narraciones-fisica.spec.ts -g $filtro
+    }
+    $codigo = $LASTEXITCODE
   } elseif ($Despues -eq "video-3d") {
     # B7 (René, 2026-11-18): el video del 3D con el Unity real, en los navegadores instalados.
     if ($Salida) { $env:CROQUIS_SALIDA = $Salida }

@@ -86,7 +86,13 @@ const RECETAS: Receta[] = [
 ];
 
 // Una acción que no encuentra su control falla pronto, con el nombre de lo que faltó.
-test.use({ actionTimeout: 20_000, viewport: { width: 1440, height: 900 }, locale: "es-MX" });
+test.use({
+  actionTimeout: 20_000,
+  viewport: { width: 1440, height: 900 },
+  locale: "es-MX",
+  // t5 (René, 2026-11-19): con CROQUIS_CANAL, en el navegador instalado («chrome»).
+  ...(process.env.CROQUIS_CANAL ? { channel: process.env.CROQUIS_CANAL } : {}),
+});
 
 const de = <T>(mapa: Record<string, T>, texto: string): T | undefined =>
   Object.entries(mapa).find(([nombre]) => texto.includes(nombre))?.[1];

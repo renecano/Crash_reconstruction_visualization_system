@@ -18,7 +18,10 @@ import { casoParaGuardar } from "../src/lib/caso-guardado";
  */
 const RAIZ = resolve(__dirname, "../../..");
 const CAPTURAS = join(RAIZ, "docs/cesvi/ronda-4/evidencia/fisica");
-const SALIDA = join(RAIZ, "eval/results/ronda4_narraciones_fisica.json");
+const SALIDA = join(
+  RAIZ,
+  process.env.CROQUIS_SALIDA ?? "eval/results/ronda4_narraciones_fisica.json",
+);
 
 /** Las seis narraciones de `docs/cesvi/ronda-4/narraciones-fisica.md` (sus bloques citados). */
 function narraciones(): { clave: string; texto: string }[] {
@@ -28,7 +31,11 @@ function narraciones(): { clave: string; texto: string }[] {
   return bloques.slice(0, 6).map((texto, k) => ({ clave: claves[k]!, texto }));
 }
 
-test.use({ viewport: { width: 1600, height: 900 } });
+test.use({
+  viewport: { width: 1600, height: 900 },
+  // t5 (René, 2026-11-19): en el Chrome instalado, no en el Chromium de Playwright.
+  ...(process.env.CROQUIS_CANAL ? { channel: process.env.CROQUIS_CANAL } : {}),
+});
 
 /** Contesta lo que pregunte la lectura: el típico si lo ofrece; si no, «No sé». */
 async function contestarPreguntas(page: Page) {
@@ -223,6 +230,56 @@ test("caso encimado a propósito: antes y después en el 3D", async ({ page }) =
     clave: "encimado",
     aviso_sin_transferencia_antes: avisoAntes,
     aviso_en_la_escena: avisoEscena,
+  });
+  writeFileSync(SALIDA, JSON.stringify({ fecha: new Date().toISOString(), filas }, null, 2) + "\n");
+});
+
+/**
+ * El caso de Tollocan de René (2026-11-18), de punta a punta: «iba por tollocan rumbo a la ciudad de
+ * mexico, y me sali de la carretera imapctando de frente contra un arbol, iba en un sedan». Antes daba
+ * 20 km/h en producción; aquí se ve qué velocidad da, qué dice de ella, dónde queda el árbol y su 3D.
+ */
+test("Tollocan de René, de punta a punta", async ({ page }) => {
+  test.setTimeout(900_000);
+  mkdirSync(CAPTURAS, { recursive: true });
+  await page.goto("/cesvi");
+  await page
+    .getByTestId("abrir-caso-casos")
+    .setInputFiles(join(RAIZ, "data/cesvi/casos/tollocan-rene.croquis"));
+  await expect(page.getByTestId("recorrido-caso")).toBeVisible({ timeout: 60_000 });
+  await irAPaso(page, 2);
+  await page.waitForTimeout(2000);
+  await page.screenshot({
+    path: join(CAPTURAS, "tollocan-1-el-hecho.jpg"),
+    quality: 85,
+    type: "jpeg",
+  });
+  await irAPaso(page, 3);
+  await page.waitForTimeout(12_000);
+  await page.screenshot({
+    path: join(CAPTURAS, "tollocan-2-la-escena.jpg"),
+    quality: 85,
+    type: "jpeg",
+  });
+  await irAPaso(page, 4);
+  const rec = page.getByTestId("reconstruir");
+  if (await rec.isVisible().catch(() => false)) await rec.click();
+  await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 240_000 });
+  await page.waitForTimeout(3000);
+  const texto = (await page.locator("body").innerText()).replace(/\s+/g, " ");
+  await page.screenshot({
+    path: join(CAPTURAS, "tollocan-3-reconstruccion.jpg"),
+    quality: 85,
+    type: "jpeg",
+  });
+  await capturar3d(page, "tollocan");
+  filas.push({
+    clave: "tollocan",
+    cifra: (await page.getByTestId("cifra-reconstruccion").innerText()).replace(/\s+/g, " "),
+    dice_supuesto_de_velocidad: /típica de la vía|supuesto de \d+ a \d+ km\/h|declarad/i.test(
+      texto,
+    ),
+    menciona_arbol: /árbol/i.test(texto),
   });
   writeFileSync(SALIDA, JSON.stringify({ fecha: new Date().toISOString(), filas }, null, 2) + "\n");
 });
