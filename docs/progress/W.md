@@ -9,6 +9,33 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 - **Fase actual:** ninguna en curso. W9 necesita la autorización de René para gastar API.
 - **Siguiente paso:** W8 cerrada el 2026-11-15: T3.2 (#215), T3.3 (contrato #219 y #220, ADR 0136) y T3.5 (E-R4 v4, igual a la v3 más el eje de la reversa). Nada de eso movió AXA ni un caso que ya vio CESVI después de T3.2. Queda una decisión de René sobre la versión declarada (sección T3.3, «Para decidir»). W9 (T6.5 y T6.6) espera su autorización de gasto de API.
 
+## Ronda 4, de la narración a la física y al 3D (René, 2026-11-18, noche): en curso
+
+René probó Croquis en producción y en local: lo que dice la narración no llega a la física ni al 3D. Esto va antes de todo lo demás. Rama `feat/w-narracion-a-la-fisica`.
+
+**Diagnóstico del punto 1 (velocidades bajas), medido con el solver TS:**
+- **La lectura nunca extrae velocidades.** `SISTEMA_ESCENA` (`packages/cesvi/src/escena-narracion.ts`) no tiene campo de velocidad, así que «a exceso de velocidad», «rápido» o «a 80 km/h» se pierden.
+- **El solver no tiene prior de velocidad.** `velocidad_previa` solo es el arranque del ajuste (40 km/h si nadie la dice; `inversion.py`, `parameters`).
+- **Un auto contra un árbol, sin reposo:** sale 40 km/h, el arranque fijo, y «la evidencia no la fija».
+- **El mismo choque con el reposo junto al árbol:** el ajuste se va al tope (200 km/h, σ local 62), y la pantalla lo esconde como no fijada.
+- **Los cinco ejemplos y AXA** no narran velocidades. «Carril de baja velocidad» es nombre de carril y se excluye.
+- **Pendiente:** reproducir los 20 km/h de René con una narración de Tollocan contra un árbol (punto 2, demo local).
+
+**Plan:**
+1. **Velocidad narrada:** un detector determinista con su cita: cifras («a 80 km/h») y descripciones («exceso de velocidad», «rápido», «despacio»). Excluye límites y nombres de carril.
+   - Va como `velocidad_previa` con su rango y la marca `a_priori`.
+   - El solver (Python, y el port TS con paridad) le suma un residuo débil que solo pesa si la evidencia no la fija. En el muestreo se sortea dentro de su rango.
+   - Si no la dice, va una pregunta en «lo que más cambia la reconstrucción», con «No sé» y el rango típico de la vía (límite de OSM o el tipo de vía, con su fuente en `data/SOURCES.md`).
+   - Si nada la fija, se dice así y nunca queda el tope ni un arranque fijo.
+   - Antes y después en los cinco ejemplos y AXA (debe quedar 57, 55–78).
+2. **Inventario «narración → escena → solver → Unity»** y cierre de huecos: objetos fijos, puentes, pendientes y curvas. Seis narraciones nuevas de punta a punta en demo local, con captura del 3D y tabla.
+3. **Trayectorias sobre vías reales:**
+   - El arranque va sobre la calle por la que llegaba, en su sentido.
+   - Las calles se guardan con el caso para que funcione sin red.
+   - Sin datos se dice y no se inventa la dirección.
+4. **El aviso de calles:** solo si de verdad no hay calles de ninguna fuente, una vez por lugar, en tono informativo. Hecho.
+5. **El choque en Unity:** cámara lenta, deformación del solver, restos, la marca del contacto y la cámara cinematográfica en el impacto. Build medido antes de publicar.
+
 ## Ronda 4, La escena y el 2D (René, 2026-11-18): hecho (ADR 0144)
 
 René eligió la propuesta 1 de La escena, con cambios, y la propuesta 2 del 2D, con la 1 como fondo opcional. Rama `feat/w-ronda4-escena`.

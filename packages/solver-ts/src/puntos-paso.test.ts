@@ -111,3 +111,36 @@ describe("paridad con Python: lateral_puntos_paso", () => {
     for (const r of dePaso) expect(Math.abs(r.sigma)).toBeLessThan(1.0);
   }, 900_000);
 });
+
+/**
+ * Ronda 4 (René): la velocidad que dice la narración entra como supuesto con su rango y, si la
+ * evidencia no la fija, la fija ella, dicho así (`fijada_por: "declarada"`). El árbol del relato
+ * «como a 80» (rango 70–95) con `a_priori`; la referencia la escribe `croquis-solver`.
+ */
+describe("paridad con Python: arbol_velocidad_declarada", () => {
+  const spec = leer("inversion/arbol_velocidad_declarada.json");
+  const golden = leer("inversion/resultados/arbol_velocidad_declarada.json");
+
+  it("la velocidad declarada es evidencia, y la inversión coincide con la referencia", () => {
+    const ev = evidenceFromSpec(spec);
+    expect(ev.labels()).toEqual(golden.evidencia);
+    expect(ev.labels()).toContain("velocidad_declarada:veh-a");
+    const inv = invert(spec).toDict() as { parametros: Json[] };
+    expect(differences(golden.inversion as Json, JSON.parse(JSON.stringify(inv)))).toEqual([]);
+    const v = inv.parametros.find((p) => p.parametro === "velocidad_previa")!;
+    expect(v.fijada_por).toBe("declarada");
+    const est = v.estimacion as { mejor: number; p10: number; p90: number };
+    expect(est.mejor).toBeGreaterThan(70);
+    expect(est.p10).toBeGreaterThan(60);
+    expect(est.p90).toBeLessThan(100);
+  });
+
+  it("sin `a_priori`, la misma escena no fija la velocidad (como antes)", () => {
+    const sin = structuredClone(spec) as { vehiculos: Json[] };
+    delete (sin.vehiculos[0]!.velocidad_previa as Json).a_priori;
+    const inv = invert(sin).toDict() as { parametros: Json[] };
+    const v = inv.parametros.find((p) => p.parametro === "velocidad_previa")!;
+    expect(v.identificable).toBe(false);
+    expect(v.fijada_por).toBeUndefined();
+  });
+});

@@ -270,6 +270,8 @@ export function EscenaFacil({
       mapaListo.off("moveend", alMover);
     };
   }, [mapaListo]);
+  // Las teselas de qué lugar ya se leyeron (con o sin calles): antes de eso no se avisa nada.
+  const [teselasLeidas, setTeselasLeidas] = useState<string | null>(null);
   const centroTeselas = estado.puntos[1] ?? lugar ?? centroMapa;
   const claveTeselas = centroTeselas
     ? `${Math.round(centroTeselas.lon * 1e4)},${Math.round(centroTeselas.lat * 1e4)}`
@@ -293,6 +295,7 @@ export function EscenaFacil({
           setCallesTeselas({ de: claveTeselas, r });
           onCallesDelMapa?.(r);
         }
+        setTeselasLeidas(claveTeselas);
       } catch {
         // Sin las teselas (el estilo aún no carga): se espera a Overpass, como antes.
       }
@@ -306,7 +309,17 @@ export function EscenaFacil({
   }, [callesOverpass, mapaListo, claveTeselas, onCallesDelMapa]);
   const deTeselas = callesTeselas?.de === claveTeselas ? callesTeselas.r : null;
   const calles = callesOverpass ?? deTeselas;
-  const callesFallaron = overpassFallo && !deTeselas;
+  // Ronda 4 (René): el aviso solo si de verdad no hay calles de ninguna fuente (Overpass, las teselas
+  // de este mapa o las que ya leyó el recorrido), y una sola vez por lugar en la sesión.
+  const callesFallaron = overpassFallo && !calles && teselasLeidas === claveTeselas;
+  const claveAvisoCalles = `croquis.aviso-calles:${claveTeselas ?? "sin-lugar"}`;
+  const [avisoCallesVisto] = useState(() => {
+    try {
+      return sessionStorage.getItem(claveAvisoCalles) === "1";
+    } catch {
+      return false;
+    }
+  });
   const callesMapa = useMemo(() => callesDe(calles), [calles]);
   const vehiculos = e.vehiculos;
   const nombres = useMemo(
@@ -829,13 +842,19 @@ export function EscenaFacil({
           { texto: "Así está bien", id: "fuera-asi", hacer: () => descartar(`fuera:${v}`) },
         ],
       };
-    if (callesFallaron && !descartadas.includes("sin-calles"))
+    if (callesFallaron && !avisoCallesVisto && !descartadas.includes("sin-calles")) {
+      try {
+        sessionStorage.setItem(claveAvisoCalles, "1");
+      } catch {
+        // Sin almacenamiento, el aviso puede repetirse; no pasa nada más.
+      }
       return {
-        tipo: "error",
+        tipo: "alerta",
         clave: "sin-calles",
         texto:
-          "No llegaron las calles del mapa. Revisa tu conexión; mientras, marca el choque tocando el mapa y elige la dirección por los puntos cardinales.",
+          "Este lugar no tiene calles en los datos del mapa. Marca el choque tocando el mapa; la dirección de cada vehículo la eliges tú y Croquis no la supone.",
       };
+    }
     return null;
   })();
 

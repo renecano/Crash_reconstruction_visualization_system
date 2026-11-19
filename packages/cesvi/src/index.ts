@@ -48,3 +48,4 @@ export * from "./terreno";
 export * from "./relieve";
 export * from "./iluminacion";
 export * from "./personas";
+export * from "./velocidad-narrada";

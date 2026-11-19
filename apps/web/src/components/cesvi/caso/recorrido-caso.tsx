@@ -28,6 +28,7 @@ import {
   reconstruccionContraCesvi,
   supuestoAlNoSaber,
   revisarRelato,
+  conLimiteDeLaVia,
   supuestosDeClase,
   supuestosDeclarados,
   sugerirDeclarada,
@@ -111,6 +112,7 @@ import {
 import { textoDano, tituloDelHecho } from "@/lib/hecho-laboratorio";
 import {
   callesDe,
+  limiteEnElChoque,
   nombreVehiculo,
   pasoActual,
   pasosEscena,
@@ -706,6 +708,18 @@ export function RecorridoCaso({
       vivo = false;
     };
   }, [claveCalles]);
+  // Ronda 4 (René): con la vía del choque ya conocida, lo que la narración describe respecto al
+  // límite («a exceso de velocidad») o la típica de la vía se recalcula con el límite de esa vía.
+  const puntoChoque = puntoDe(1);
+  const limiteChoque = useMemo(
+    () => (calles && puntoChoque ? limiteEnElChoque(callesDe(calles), puntoChoque) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- el punto se compara por sus coordenadas
+    [calles, puntoChoque?.lat, puntoChoque?.lon],
+  );
+  if (expediente && limiteChoque) {
+    const nuevo = conLimiteDeLaVia(expediente, limiteChoque);
+    if (nuevo !== expediente) setExpediente(nuevo);
+  }
   // Ronda 4: mientras Overpass no llega, las calles de las teselas del mapa del caso (también al
   // entrar directo a Reconstrucción, sin pasar por La escena).
   useEffect(() => {

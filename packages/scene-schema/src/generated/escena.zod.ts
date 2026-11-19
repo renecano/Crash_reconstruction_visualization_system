@@ -396,6 +396,7 @@ export const CampoVelocidad = z.strictObject({
   confianza: Confianza,
   evidencia: ListaEvidencia.optional(),
   nota: z.string().max(300).optional(),
+  a_priori: z.boolean().optional(),
 });
 export type CampoVelocidad = z.infer<typeof CampoVelocidad>;
 
@@ -954,6 +955,19 @@ export const Rigidez = z.strictObject({
 });
 export type Rigidez = z.infer<typeof Rigidez>;
 
+/** La velocidad antes del impacto que dice o describe la narración, que contesta el perito o que se supone por la vía (ronda 4). Entra a la reconstrucción como supuesto declarado con su rango: solo pesa si la evidencia no fija la velocidad. */
+export const VelocidadNarrada = z.strictObject({
+  kmh: z.number().min(0).max(300),
+  rango_kmh: z.tuple([z.number().min(0).max(300), z.number().min(0).max(300)]),
+  origen: z.enum(["narracion", "perito", "via"]),
+  descripcion: z.string().max(200),
+  cita: z.string().max(400).optional(),
+  respecto_al_limite: z.enum(["arriba", "abajo", "alrededor"]).optional(),
+  limite_kmh: z.number().min(5).max(200).optional(),
+  limite_fuente: z.string().max(200).optional(),
+});
+export type VelocidadNarrada = z.infer<typeof VelocidadNarrada>;
+
 /** Un vehículo del expediente. Sin placas, VIN ni nombres. */
 export const VehiculoExpediente = z.strictObject({
   id: IdVehiculoExpediente,
@@ -986,6 +1000,7 @@ export const VehiculoExpediente = z.strictObject({
       trasera: z.number().min(0).max(300).optional(),
     })
     .optional(),
+  velocidad_narrada: VelocidadNarrada.optional(),
 });
 export type VehiculoExpediente = z.infer<typeof VehiculoExpediente>;
 

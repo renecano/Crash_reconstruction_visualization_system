@@ -90,6 +90,10 @@ class CampoVelocidad(BaseModel):
     """
     evidencia: Annotated[list[EvidenciaTexto] | None, Field(max_length=8)] = None
     nota: Annotated[str | None, Field(max_length=300)] = None
+    a_priori: bool | None = None
+    """
+    Solo en `velocidad_previa`: la velocidad declarada (narración, perito o vía) entra a la inversión como supuesto con su `rango` (p10–p90). Pesa solo donde la evidencia no fija la velocidad, y en las simulaciones se sortea dentro de su rango (ronda 4).
+    """
 
 
 class CampoMasa(BaseModel):
@@ -1349,51 +1353,49 @@ class AlturaDefensaCm(BaseModel):
     """
 
 
-class VehiculoExpediente(BaseModel):
+class RangoKmhItem(RootModel[float]):
+    root: Annotated[float, Field(ge=0.0, le=300.0)]
+
+
+class VelocidadNarrada(BaseModel):
     """
-    Un vehículo del expediente. Sin placas, VIN ni nombres.
+    La velocidad antes del impacto que dice o describe la narración, que contesta el perito o que se supone por la vía (ronda 4). Entra a la reconstrucción como supuesto declarado con su rango: solo pesa si la evidencia no fija la velocidad.
     """
 
     model_config = ConfigDict(
         extra="forbid",
     )
-    id: Annotated[str, Field(pattern="^[A-Z][A-Z0-9]{0,3}$")]
+    kmh: Annotated[float, Field(ge=0.0, le=300.0)]
     """
-    Identificador del vehículo en el expediente: A, B, C… (o V1, V2… en un dictamen importado).
+    El valor central (km/h).
     """
-    marca: DatoExpediente | None = None
-    modelo: DatoExpediente | None = None
-    anio: Annotated[int | None, Field(ge=1900, le=2100)] = None
+    rango_kmh: Annotated[list[RangoKmhItem], Field(max_length=2, min_length=2)]
     """
-    Año modelo.
+    El rango [mínimo, máximo] en km/h.
     """
-    clase: (
-        Literal[
-            "sedan_compacto",
-            "sedan_mediano",
-            "hatchback",
-            "suv_compacta",
-            "suv_grande",
-            "pickup",
-            "van",
-            "microbus_combi",
-            "autobus",
-            "camion_unitario",
-            "tractocamion",
-            "motocicleta",
-            "bicicleta",
-            "scooter",
-        ]
-        | None
-    ) = None
+    origen: Literal["narracion", "perito", "via"]
     """
-    Clase del vehículo (las mismas del contrato: sedan_compacto, pickup…).
+    narracion: la cifra o la descripción de la narración; perito: la contestó el perito; via: el rango típico de la vía (su límite de OpenStreetMap o su tipo).
     """
-    masa: MedidaExpediente | None = None
-    rigidez: Rigidez | None = None
-    altura_defensa_cm: AlturaDefensaCm | None = None
+    descripcion: Annotated[str, Field(max_length=200)]
     """
-    Altura de las defensas medida (cm desde el piso).
+    Cómo lo dice («a exceso de velocidad», «a 80 km/h», «límite de 60 km/h de la vía»).
+    """
+    cita: Annotated[str | None, Field(max_length=400)] = None
+    """
+    El fragmento literal de la narración, si sale de ella.
+    """
+    respecto_al_limite: Literal["arriba", "abajo", "alrededor"] | None = None
+    """
+    Si la velocidad es relativa al límite de la vía («a exceso de velocidad»: arriba; «despacio»: abajo; la típica de la vía: alrededor). Al conocerse la vía del choque, el valor y el rango se recalculan con su límite.
+    """
+    limite_kmh: Annotated[float | None, Field(ge=5.0, le=200.0)] = None
+    """
+    El límite de la vía con que se calculó (km/h).
+    """
+    limite_fuente: Annotated[str | None, Field(max_length=200)] = None
+    """
+    De dónde sale el límite: el `maxspeed` de OpenStreetMap o el tipo de vía según la LGMSV, art. 49 fr. III.
     """
 
 
@@ -2193,6 +2195,55 @@ class CasoExpediente(BaseModel):
     """
     Modalidad o modalidades del hecho.
     """
+
+
+class VehiculoExpediente(BaseModel):
+    """
+    Un vehículo del expediente. Sin placas, VIN ni nombres.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    id: Annotated[str, Field(pattern="^[A-Z][A-Z0-9]{0,3}$")]
+    """
+    Identificador del vehículo en el expediente: A, B, C… (o V1, V2… en un dictamen importado).
+    """
+    marca: DatoExpediente | None = None
+    modelo: DatoExpediente | None = None
+    anio: Annotated[int | None, Field(ge=1900, le=2100)] = None
+    """
+    Año modelo.
+    """
+    clase: (
+        Literal[
+            "sedan_compacto",
+            "sedan_mediano",
+            "hatchback",
+            "suv_compacta",
+            "suv_grande",
+            "pickup",
+            "van",
+            "microbus_combi",
+            "autobus",
+            "camion_unitario",
+            "tractocamion",
+            "motocicleta",
+            "bicicleta",
+            "scooter",
+        ]
+        | None
+    ) = None
+    """
+    Clase del vehículo (las mismas del contrato: sedan_compacto, pickup…).
+    """
+    masa: MedidaExpediente | None = None
+    rigidez: Rigidez | None = None
+    altura_defensa_cm: AlturaDefensaCm | None = None
+    """
+    Altura de las defensas medida (cm desde el piso).
+    """
+    velocidad_narrada: VelocidadNarrada | None = None
 
 
 class TerrenoExpediente(BaseModel):

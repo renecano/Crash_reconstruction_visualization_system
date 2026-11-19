@@ -60,6 +60,7 @@ import type { Expediente } from "./corpus";
 import { rigidezEnKilo } from "./verificacion";
 import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from "./geo";
 import { objetosDe, TIPOS_OBJETO } from "./objetos";
+import { velocidadPreviaDeclarada, type VelocidadNarrada } from "./velocidad-narrada";
 import type { MallaRelieve } from "./relieve";
 import { terrenoDeEscena, terrenoReconstruido, type TerrenoReconstruido } from "./terreno";
 import { limiteDeCobertura } from "./cobertura";
@@ -161,6 +162,17 @@ const MANIOBRA_ESCENA: Record<string, string> = {
  * La zona horizontal CDC (SAE J224) de una zona del diagrama del perito: en el frente y la parte
  * posterior, L, C o R por el tercio o el vértice; en los costados, F, P o B. null si no la dice.
  */
+/** Lo que se supone de la velocidad de un vehículo, dicho en los límites del cálculo (ronda 4). */
+function limiteDeVelocidadNarrada(id: Id, v: VelocidadNarrada): string {
+  const [lo, hi] = v.rango_kmh;
+  const rango = `${Math.round(lo)} a ${Math.round(hi)} km/h`;
+  if (v.origen === "perito")
+    return `${id}: su velocidad previa es la que dio el perito (${rango}); solo pesa si la evidencia no la fija.`;
+  if (v.origen === "via")
+    return `${id}: el perito no sabe su velocidad; se supone la típica de la vía (${rango}, alrededor del límite de ${v.limite_kmh} km/h: ${v.limite_fuente}). Solo pesa si la evidencia no la fija.`;
+  return `${id}: la narración dice «${v.descripcion}»; entra como supuesto de ${rango}${v.respecto_al_limite ? ` (respecto al límite de ${v.limite_kmh} km/h: ${v.limite_fuente})` : ""}. Solo pesa si la evidencia no la fija.`;
+}
+
 export function zonaHorizontal(z: {
   cara: string;
   tercio?: string;
@@ -385,6 +397,12 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
         unidad: "kg",
         ...(v.masa.fuente === "supuesto" ? { fuente: "supuesto", confianza: 0.5 } : DEL_PERITO),
       };
+    }
+    // La velocidad que dice o describe la narración, la que dio el perito o la típica de la vía
+    // (ronda 4): un supuesto declarado con su rango, que solo pesa si la evidencia no la fija.
+    if (v.velocidad_narrada && maniobraNarrada.get(v.id) !== "detenido") {
+      sv.velocidad_previa = velocidadPreviaDeclarada(v.velocidad_narrada);
+      limites.push(limiteDeVelocidadNarrada(v.id, v.velocidad_narrada));
     }
     if (maniobraNarrada.has(v.id) && sv.maniobra) {
       sv.maniobra = {

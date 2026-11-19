@@ -130,7 +130,11 @@
         "fuente": { "$ref": "#/$defs/Fuente" },
         "confianza": { "$ref": "#/$defs/Confianza" },
         "evidencia": { "$ref": "#/$defs/ListaEvidencia" },
-        "nota": { "type": "string", "maxLength": 300 }
+        "nota": { "type": "string", "maxLength": 300 },
+        "a_priori": {
+          "type": "boolean",
+          "description": "Solo en `velocidad_previa`: la velocidad declarada (narración, perito o vía) entra a la inversión como supuesto con su `rango` (p10–p90). Pesa solo donde la evidencia no fija la velocidad, y en las simulaciones se sortea dentro de su rango (ronda 4)."
+        }
       }
     },
     "CampoMasa": {
@@ -1555,9 +1559,62 @@
           },
           "required": [],
           "additionalProperties": false
-        }
+        },
+        "velocidad_narrada": { "$ref": "#/$defs/VelocidadNarrada" }
       },
       "required": ["id"],
+      "additionalProperties": false
+    },
+    "VelocidadNarrada": {
+      "type": "object",
+      "description": "La velocidad antes del impacto que dice o describe la narración, que contesta el perito o que se supone por la vía (ronda 4). Entra a la reconstrucción como supuesto declarado con su rango: solo pesa si la evidencia no fija la velocidad.",
+      "properties": {
+        "kmh": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 300,
+          "description": "El valor central (km/h)."
+        },
+        "rango_kmh": {
+          "type": "array",
+          "description": "El rango [mínimo, máximo] en km/h.",
+          "items": { "type": "number", "minimum": 0, "maximum": 300 },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "origen": {
+          "type": "string",
+          "description": "narracion: la cifra o la descripción de la narración; perito: la contestó el perito; via: el rango típico de la vía (su límite de OpenStreetMap o su tipo).",
+          "enum": ["narracion", "perito", "via"]
+        },
+        "descripcion": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Cómo lo dice («a exceso de velocidad», «a 80 km/h», «límite de 60 km/h de la vía»)."
+        },
+        "cita": {
+          "type": "string",
+          "maxLength": 400,
+          "description": "El fragmento literal de la narración, si sale de ella."
+        },
+        "respecto_al_limite": {
+          "type": "string",
+          "enum": ["arriba", "abajo", "alrededor"],
+          "description": "Si la velocidad es relativa al límite de la vía («a exceso de velocidad»: arriba; «despacio»: abajo; la típica de la vía: alrededor). Al conocerse la vía del choque, el valor y el rango se recalculan con su límite."
+        },
+        "limite_kmh": {
+          "type": "number",
+          "minimum": 5,
+          "maximum": 200,
+          "description": "El límite de la vía con que se calculó (km/h)."
+        },
+        "limite_fuente": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "De dónde sale el límite: el `maxspeed` de OpenStreetMap o el tipo de vía según la LGMSV, art. 49 fr. III."
+        }
+      },
+      "required": ["kmh", "rango_kmh", "origen", "descripcion"],
       "additionalProperties": false
     },
     "ZonaDiagrama": {

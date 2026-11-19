@@ -1606,6 +1606,9 @@ namespace Croquis.Generated
 
         [JsonProperty("rigidez", NullValueHandling = NullValueHandling.Ignore)]
         public VehiculoRigidez Rigidez { get; set; }
+
+        [JsonProperty("velocidad_narrada", NullValueHandling = NullValueHandling.Ignore)]
+        public VelocidadNarrada VelocidadNarrada { get; set; }
     }
 
     /// <summary>
@@ -1658,6 +1661,72 @@ namespace Croquis.Generated
     }
 
     /// <summary>
+    /// La velocidad antes del impacto que dice o describe la narración, que contesta el perito o
+    /// que se supone por la vía (ronda 4). Entra a la reconstrucción como supuesto declarado con
+    /// su rango: solo pesa si la evidencia no fija la velocidad.
+    /// </summary>
+    public partial class VelocidadNarrada
+    {
+        /// <summary>
+        /// El fragmento literal de la narración, si sale de ella.
+        /// </summary>
+        [JsonProperty("cita", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(TentacledMinMaxLengthCheckConverter))]
+        public string Cita { get; set; }
+
+        /// <summary>
+        /// Cómo lo dice («a exceso de velocidad», «a 80 km/h», «límite de 60 km/h de la vía»).
+        /// </summary>
+        [JsonProperty("descripcion")]
+        [JsonConverter(typeof(StickyMinMaxLengthCheckConverter))]
+        public string Descripcion { get; set; }
+
+        /// <summary>
+        /// El valor central (km/h).
+        /// </summary>
+        [JsonProperty("kmh")]
+        [JsonConverter(typeof(MinMaxValueCheckConverter2))]
+        public double Kmh { get; set; }
+
+        /// <summary>
+        /// De dónde sale el límite: el `maxspeed` de OpenStreetMap o el tipo de vía según la LGMSV,
+        /// art. 49 fr. III.
+        /// </summary>
+        [JsonProperty("limite_fuente", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(StickyMinMaxLengthCheckConverter))]
+        public string LimiteFuente { get; set; }
+
+        /// <summary>
+        /// El límite de la vía con que se calculó (km/h).
+        /// </summary>
+        [JsonProperty("limite_kmh", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(MinMaxValueCheckConverter3))]
+        public double? LimiteKmh { get; set; }
+
+        /// <summary>
+        /// narracion: la cifra o la descripción de la narración; perito: la contestó el perito; via:
+        /// el rango típico de la vía (su límite de OpenStreetMap o su tipo).
+        /// </summary>
+        [JsonProperty("origen")]
+        public VelocidadNarradaOrigen Origen { get; set; }
+
+        /// <summary>
+        /// El rango [mínimo, máximo] en km/h.
+        /// </summary>
+        [JsonProperty("rango_kmh")]
+        [JsonConverter(typeof(IndigoDecodeArrayConverter))]
+        public double[] RangoKmh { get; set; }
+
+        /// <summary>
+        /// Si la velocidad es relativa al límite de la vía («a exceso de velocidad»: arriba;
+        /// «despacio»: abajo; la típica de la vía: alrededor). Al conocerse la vía del choque, el
+        /// valor y el rango se recalculan con su límite.
+        /// </summary>
+        [JsonProperty("respecto_al_limite", NullValueHandling = NullValueHandling.Ignore)]
+        public RespectoAlLimite? RespectoAlLimite { get; set; }
+    }
+
+    /// <summary>
     /// Una versión del hecho: la de la evidencia (la arma el perito) o la de un conductor (cita
     /// literal y maniobras).
     /// </summary>
@@ -1703,7 +1772,7 @@ namespace Croquis.Generated
         /// Metros, si se dicen.
         /// </summary>
         [JsonProperty("metros", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxValueCheckConverter3))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter4))]
         public double? Metros { get; set; }
 
         /// <summary>
@@ -1738,7 +1807,7 @@ namespace Croquis.Generated
         /// Rumbo del frente, grados desde el norte.
         /// </summary>
         [JsonProperty("rumbo")]
-        [JsonConverter(typeof(MinMaxValueCheckConverter4))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter5))]
         public double Rumbo { get; set; }
 
         [JsonProperty("vehiculo")]
@@ -1929,6 +1998,14 @@ namespace Croquis.Generated
 
     public partial class LimiteVelocidad
     {
+        /// <summary>
+        /// Solo en `velocidad_previa`: la velocidad declarada (narración, perito o vía) entra a la
+        /// inversión como supuesto con su `rango` (p10–p90). Pesa solo donde la evidencia no fija la
+        /// velocidad, y en las simulaciones se sortea dentro de su rango (ronda 4).
+        /// </summary>
+        [JsonProperty("a_priori", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? APriori { get; set; }
+
         [JsonProperty("confianza")]
         [JsonConverter(typeof(PurpleMinMaxValueCheckConverter))]
         public double Confianza { get; set; }
@@ -1997,7 +2074,7 @@ namespace Croquis.Generated
         public PendienteUnidad Unidad { get; set; }
 
         [JsonProperty("valor")]
-        [JsonConverter(typeof(MinMaxValueCheckConverter5))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter6))]
         public double Valor { get; set; }
     }
 
@@ -2041,7 +2118,7 @@ namespace Croquis.Generated
     public partial class ViaElement
     {
         [JsonProperty("ancho_m", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxValueCheckConverter6))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter7))]
         public double? AnchoM { get; set; }
 
         [JsonProperty("carriles", NullValueHandling = NullValueHandling.Ignore)]
@@ -2252,7 +2329,7 @@ namespace Croquis.Generated
         public Procedencia Procedencia { get; set; }
 
         [JsonProperty("radio_m", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxValueCheckConverter7))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter8))]
         public double? RadioM { get; set; }
 
         /// <summary>
@@ -3555,7 +3632,7 @@ namespace Croquis.Generated
         /// Avisos en lenguaje llano sobre supuestos fuertes o inconsistencias. Nunca asignan culpa.
         /// </summary>
         [JsonProperty("banderas")]
-        [JsonConverter(typeof(IndecentDecodeArrayConverter))]
+        [JsonConverter(typeof(HilariousDecodeArrayConverter))]
         public string[] Banderas { get; set; }
 
         /// <summary>
@@ -3566,7 +3643,7 @@ namespace Croquis.Generated
         public ConsistenciaElement[] Consistencia { get; set; }
 
         [JsonProperty("dt")]
-        [JsonConverter(typeof(MinMaxValueCheckConverter8))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter9))]
         public double Dt { get; set; }
 
         [JsonProperty("escena_id")]
@@ -3609,7 +3686,7 @@ namespace Croquis.Generated
         public double TFin { get; set; }
 
         [JsonProperty("t_inicio")]
-        [JsonConverter(typeof(MinMaxValueCheckConverter12))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter13))]
         public double TInicio { get; set; }
 
         [JsonProperty("vehiculos")]
@@ -3644,7 +3721,7 @@ namespace Croquis.Generated
         public Sensibilidad Sensibilidad { get; set; }
 
         [JsonProperty("supuestos", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(IndigoDecodeArrayConverter))]
+        [JsonConverter(typeof(IndecentDecodeArrayConverter))]
         public string[] Supuestos { get; set; }
 
         [JsonProperty("t_fin")]
@@ -3672,7 +3749,7 @@ namespace Croquis.Generated
         public string Ante { get; set; }
 
         [JsonProperty("origen")]
-        public OrigenEnum Origen { get; set; }
+        public DecisionOrigen Origen { get; set; }
 
         [JsonProperty("percibio_t", NullValueHandling = NullValueHandling.Ignore)]
         public double? PercibioT { get; set; }
@@ -3833,7 +3910,7 @@ namespace Croquis.Generated
         public double? DistanciaMinimaM { get; set; }
 
         [JsonProperty("evidencia", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(HilariousDecodeArrayConverter))]
+        [JsonConverter(typeof(AmbitiousDecodeArrayConverter))]
         public string[] Evidencia { get; set; }
 
         [JsonProperty("evidencia_kmh", NullValueHandling = NullValueHandling.Ignore)]
@@ -3918,7 +3995,7 @@ namespace Croquis.Generated
         public double[] PuntoM { get; set; }
 
         [JsonProperty("rango_m", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(AmbitiousDecodeArrayConverter))]
+        [JsonConverter(typeof(CunningDecodeArrayConverter))]
         public double[] RangoM { get; set; }
 
         [JsonProperty("rigido", NullValueHandling = NullValueHandling.Ignore)]
@@ -4184,6 +4261,13 @@ namespace Croquis.Generated
 
         [JsonProperty("estimacion", NullValueHandling = NullValueHandling.Ignore)]
         public Estimacion Estimacion { get; set; }
+
+        /// <summary>
+        /// La evidencia no fija esta velocidad: la fija la velocidad declarada (narración, perito o
+        /// vía) con su rango (ronda 4). Falta si la fija la evidencia.
+        /// </summary>
+        [JsonProperty("fijada_por", NullValueHandling = NullValueHandling.Ignore)]
+        public FijadaPor? FijadaPor { get; set; }
 
         [JsonProperty("identificable")]
         public bool Identificable { get; set; }
@@ -4469,7 +4553,7 @@ namespace Croquis.Generated
     public partial class ResultadoPersona
     {
         [JsonProperty("estatura_m")]
-        [JsonConverter(typeof(MinMaxValueCheckConverter9))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter10))]
         public double EstaturaM { get; set; }
 
         [JsonProperty("fases")]
@@ -4602,15 +4686,15 @@ namespace Croquis.Generated
     public partial class Proyeccion
     {
         [JsonProperty("altura_cg_m")]
-        [JsonConverter(typeof(MinMaxValueCheckConverter10))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter11))]
         public double AlturaCgM { get; set; }
 
         [JsonProperty("angulo_lanzamiento_deg")]
-        [JsonConverter(typeof(MinMaxValueCheckConverter11))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter12))]
         public double AnguloLanzamientoDeg { get; set; }
 
         [JsonProperty("banda_searle_m")]
-        [JsonConverter(typeof(AmbitiousDecodeArrayConverter))]
+        [JsonConverter(typeof(CunningDecodeArrayConverter))]
         public double[] BandaSearleM { get; set; }
 
         [JsonProperty("contacto")]
@@ -4627,7 +4711,7 @@ namespace Croquis.Generated
         public PosicionReposo PosicionReposo { get; set; }
 
         [JsonProperty("rango_m")]
-        [JsonConverter(typeof(AmbitiousDecodeArrayConverter))]
+        [JsonConverter(typeof(CunningDecodeArrayConverter))]
         public double[] RangoM { get; set; }
 
         [JsonProperty("rumbo_deg")]
@@ -4660,7 +4744,7 @@ namespace Croquis.Generated
     public partial class FriccionCuerpo
     {
         [JsonProperty("rango")]
-        [JsonConverter(typeof(AmbitiousDecodeArrayConverter))]
+        [JsonConverter(typeof(CunningDecodeArrayConverter))]
         public double[] Rango { get; set; }
 
         [JsonProperty("valor")]
@@ -4734,7 +4818,7 @@ namespace Croquis.Generated
         public bool Involucrado { get; set; }
 
         [JsonProperty("pdof_horas", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxValueCheckConverter13))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter14))]
         public double? PdofHoras { get; set; }
 
         [JsonProperty("pose_final")]
@@ -4793,7 +4877,7 @@ namespace Croquis.Generated
         /// frente y en la parte trasera, de adelante hacia atrás en los costados (convención CRASH3).
         /// </summary>
         [JsonProperty("perfil_m")]
-        [JsonConverter(typeof(CunningDecodeArrayConverter))]
+        [JsonConverter(typeof(MagentaDecodeArrayConverter))]
         public double[] PerfilM { get; set; }
     }
 
@@ -4855,7 +4939,7 @@ namespace Croquis.Generated
         /// frente y en la parte trasera, de adelante hacia atrás en los costados (convención CRASH3).
         /// </summary>
         [JsonProperty("perfil_m")]
-        [JsonConverter(typeof(CunningDecodeArrayConverter))]
+        [JsonConverter(typeof(MagentaDecodeArrayConverter))]
         public double[] PerfilM { get; set; }
 
         /// <summary>
@@ -4992,14 +5076,14 @@ namespace Croquis.Generated
         /// vacío si se veía.
         /// </summary>
         [JsonProperty("causa")]
-        [JsonConverter(typeof(MagentaDecodeArrayConverter))]
+        [JsonConverter(typeof(FriskyDecodeArrayConverter))]
         public string[] Causa { get; set; }
 
         [JsonProperty("distancia_m")]
         public double[] DistanciaM { get; set; }
 
         [JsonProperty("fraccion")]
-        [JsonConverter(typeof(FriskyDecodeArrayConverter))]
+        [JsonConverter(typeof(MischievousDecodeArrayConverter))]
         public double[] Fraccion { get; set; }
 
         [JsonProperty("objetivo")]
@@ -5028,7 +5112,7 @@ namespace Croquis.Generated
         public double? DistanciaAlVerseM { get; set; }
 
         [JsonProperty("limitado_por")]
-        [JsonConverter(typeof(MischievousDecodeArrayConverter))]
+        [JsonConverter(typeof(BraggadociousDecodeArrayConverter))]
         public string[] LimitadoPor { get; set; }
 
         /// <summary>
@@ -5088,7 +5172,7 @@ namespace Croquis.Generated
         /// Cuántos metros cubre cada lado de la imagen.
         /// </summary>
         [JsonProperty("lado_m")]
-        [JsonConverter(typeof(MinMaxValueCheckConverter14))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter15))]
         public double LadoM { get; set; }
     }
 
@@ -5315,6 +5399,19 @@ namespace Croquis.Generated
     public enum FluffyFuente { Dictamen, NhtsaE2, Perito, TablaCesvi };
 
     /// <summary>
+    /// narracion: la cifra o la descripción de la narración; perito: la contestó el perito; via:
+    /// el rango típico de la vía (su límite de OpenStreetMap o su tipo).
+    /// </summary>
+    public enum VelocidadNarradaOrigen { Narracion, Perito, Via };
+
+    /// <summary>
+    /// Si la velocidad es relativa al límite de la vía («a exceso de velocidad»: arriba;
+    /// «despacio»: abajo; la típica de la vía: alrededor). Al conocerse la vía del choque, el
+    /// valor y el rango se recalculan con su límite.
+    /// </summary>
+    public enum RespectoAlLimite { Abajo, Alrededor, Arriba };
+
+    /// <summary>
     /// El sentido de marcha en esta maniobra, si se dice: una vuelta o un cambio de carril
     /// hechos en reversa. Con `tipo: "reversa"` no hace falta.
     ///
@@ -5400,7 +5497,7 @@ namespace Croquis.Generated
 
     public enum NombreCapa { Acotamiento, Banqueta, Calzada, Camellon, PasoPeatonal, RayasAmarillas, RayasBlancas };
 
-    public enum OrigenEnum { Perito, Reaccion, Reconstruccion };
+    public enum DecisionOrigen { Perito, Reaccion, Reconstruccion };
 
     public enum Codigo { DanoNoAlcanzado, DanoVsVelocidad, DetenidoConVelocidad, FueraDeLaViaDelMapa, MarcasVsVelocidad, ProyeccionVsVelocidad, ReposoInalcanzable, ReposoSupuestoVsDano, VelocidadVsEvidencia };
 
@@ -5414,6 +5511,12 @@ namespace Croquis.Generated
     /// campo, el p10–p90 es el de las muestras.
     /// </summary>
     public enum RangoPor { Laplace };
+
+    /// <summary>
+    /// La evidencia no fija esta velocidad: la fija la velocidad declarada (narración, perito o
+    /// vía) con su rango (ronda 4). Falta si la fija la evidencia.
+    /// </summary>
+    public enum FijadaPor { Declarada };
 
     public enum Parametro { RumboInicial, VelocidadPrevia };
 
@@ -5499,6 +5602,8 @@ namespace Croquis.Generated
                 PurpleFuenteConverter.Singleton,
                 TipoSuperficieConverter.Singleton,
                 FluffyFuenteConverter.Singleton,
+                VelocidadNarradaOrigenConverter.Singleton,
+                RespectoAlLimiteConverter.Singleton,
                 SentidoMarchaEnumConverter.Singleton,
                 ManiobraTipoConverter.Singleton,
                 PosicioneFaseConverter.Singleton,
@@ -5537,11 +5642,12 @@ namespace Croquis.Generated
                 TipoMarcadorConverter.Singleton,
                 VersionConverter.Singleton,
                 NombreCapaConverter.Singleton,
-                OrigenEnumConverter.Singleton,
+                DecisionOrigenConverter.Singleton,
                 CodigoConverter.Singleton,
                 StickyTipoConverter.Singleton,
                 DistribucionConverter.Singleton,
                 RangoPorConverter.Singleton,
+                FijadaPorConverter.Singleton,
                 ParametroConverter.Singleton,
                 ParametroUnidadConverter.Singleton,
                 FormaConverter.Singleton,
@@ -9232,6 +9338,166 @@ namespace Croquis.Generated
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<double>(reader);
+            if (value >= 5 && value <= 200)
+            {
+                return value;
+            }
+            throw new Exception("Cannot unmarshal type double");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (double)untypedValue;
+            if (value >= 5 && value <= 200)
+            {
+                serializer.Serialize(writer, value);
+                return;
+            }
+            throw new Exception("Cannot marshal type double");
+        }
+
+        public static readonly MinMaxValueCheckConverter3 Singleton = new MinMaxValueCheckConverter3();
+    }
+
+    internal class VelocidadNarradaOrigenConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(VelocidadNarradaOrigen) || t == typeof(VelocidadNarradaOrigen?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "narracion":
+                    return VelocidadNarradaOrigen.Narracion;
+                case "perito":
+                    return VelocidadNarradaOrigen.Perito;
+                case "via":
+                    return VelocidadNarradaOrigen.Via;
+            }
+            throw new Exception("Cannot unmarshal type VelocidadNarradaOrigen");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (VelocidadNarradaOrigen)untypedValue;
+            switch (value)
+            {
+                case VelocidadNarradaOrigen.Narracion:
+                    serializer.Serialize(writer, "narracion");
+                    return;
+                case VelocidadNarradaOrigen.Perito:
+                    serializer.Serialize(writer, "perito");
+                    return;
+                case VelocidadNarradaOrigen.Via:
+                    serializer.Serialize(writer, "via");
+                    return;
+            }
+            throw new Exception("Cannot marshal type VelocidadNarradaOrigen");
+        }
+
+        public static readonly VelocidadNarradaOrigenConverter Singleton = new VelocidadNarradaOrigenConverter();
+    }
+
+    internal class IndigoDecodeArrayConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(double[]);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            reader.Read();
+            var value = new List<double>();
+            while (reader.TokenType != JsonToken.EndArray)
+            {
+                var converter = MinMaxValueCheckConverter2.Singleton;
+                var arrayItem = (double)converter.ReadJson(reader, typeof(double), null, serializer);
+                value.Add(arrayItem);
+                reader.Read();
+            }
+            return value.ToArray();
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            var value = (double[])untypedValue;
+            writer.WriteStartArray();
+            foreach (var arrayItem in value)
+            {
+                var converter = MinMaxValueCheckConverter2.Singleton;
+                converter.WriteJson(writer, arrayItem, serializer);
+            }
+            writer.WriteEndArray();
+            return;
+        }
+
+        public static readonly IndigoDecodeArrayConverter Singleton = new IndigoDecodeArrayConverter();
+    }
+
+    internal class RespectoAlLimiteConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(RespectoAlLimite) || t == typeof(RespectoAlLimite?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "abajo":
+                    return RespectoAlLimite.Abajo;
+                case "alrededor":
+                    return RespectoAlLimite.Alrededor;
+                case "arriba":
+                    return RespectoAlLimite.Arriba;
+            }
+            throw new Exception("Cannot unmarshal type RespectoAlLimite");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (RespectoAlLimite)untypedValue;
+            switch (value)
+            {
+                case RespectoAlLimite.Abajo:
+                    serializer.Serialize(writer, "abajo");
+                    return;
+                case RespectoAlLimite.Alrededor:
+                    serializer.Serialize(writer, "alrededor");
+                    return;
+                case RespectoAlLimite.Arriba:
+                    serializer.Serialize(writer, "arriba");
+                    return;
+            }
+            throw new Exception("Cannot marshal type RespectoAlLimite");
+        }
+
+        public static readonly RespectoAlLimiteConverter Singleton = new RespectoAlLimiteConverter();
+    }
+
+    internal class MinMaxValueCheckConverter4 : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<double>(reader);
             if (value >= 0 && value <= 10000)
             {
                 return value;
@@ -9255,7 +9521,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter3 Singleton = new MinMaxValueCheckConverter3();
+        public static readonly MinMaxValueCheckConverter4 Singleton = new MinMaxValueCheckConverter4();
     }
 
     internal class SentidoMarchaEnumConverter : JsonConverter
@@ -9421,7 +9687,7 @@ namespace Croquis.Generated
         public static readonly PosicioneFaseConverter Singleton = new PosicioneFaseConverter();
     }
 
-    internal class MinMaxValueCheckConverter4 : JsonConverter
+    internal class MinMaxValueCheckConverter5 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -9452,7 +9718,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter4 Singleton = new MinMaxValueCheckConverter4();
+        public static readonly MinMaxValueCheckConverter5 Singleton = new MinMaxValueCheckConverter5();
     }
 
     internal class VersioneTipoConverter : JsonConverter
@@ -9746,7 +10012,7 @@ namespace Croquis.Generated
         public static readonly PendienteUnidadConverter Singleton = new PendienteUnidadConverter();
     }
 
-    internal class MinMaxValueCheckConverter5 : JsonConverter
+    internal class MinMaxValueCheckConverter6 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -9777,7 +10043,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter5 Singleton = new MinMaxValueCheckConverter5();
+        public static readonly MinMaxValueCheckConverter6 Singleton = new MinMaxValueCheckConverter6();
     }
 
     internal class MinMaxLengthCheckConverter3 : JsonConverter
@@ -9876,7 +10142,7 @@ namespace Croquis.Generated
         public static readonly LicenciaConverter Singleton = new LicenciaConverter();
     }
 
-    internal class MinMaxValueCheckConverter6 : JsonConverter
+    internal class MinMaxValueCheckConverter7 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -9907,7 +10173,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter6 Singleton = new MinMaxValueCheckConverter6();
+        public static readonly MinMaxValueCheckConverter7 Singleton = new MinMaxValueCheckConverter7();
     }
 
     internal class MinMaxLengthCheckConverter4 : JsonConverter
@@ -10106,7 +10372,7 @@ namespace Croquis.Generated
         public static readonly TipoViaValorConverter Singleton = new TipoViaValorConverter();
     }
 
-    internal class MinMaxValueCheckConverter7 : JsonConverter
+    internal class MinMaxValueCheckConverter8 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -10137,7 +10403,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter7 Singleton = new MinMaxValueCheckConverter7();
+        public static readonly MinMaxValueCheckConverter8 Singleton = new MinMaxValueCheckConverter8();
     }
 
     internal class MinMaxLengthCheckConverter5 : JsonConverter
@@ -11487,9 +11753,9 @@ namespace Croquis.Generated
         public static readonly NombreCapaConverter Singleton = new NombreCapaConverter();
     }
 
-    internal class OrigenEnumConverter : JsonConverter
+    internal class DecisionOrigenConverter : JsonConverter
     {
-        public override bool CanConvert(Type t) => t == typeof(OrigenEnum) || t == typeof(OrigenEnum?);
+        public override bool CanConvert(Type t) => t == typeof(DecisionOrigen) || t == typeof(DecisionOrigen?);
 
         public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
         {
@@ -11498,13 +11764,13 @@ namespace Croquis.Generated
             switch (value)
             {
                 case "perito":
-                    return OrigenEnum.Perito;
+                    return DecisionOrigen.Perito;
                 case "reaccion":
-                    return OrigenEnum.Reaccion;
+                    return DecisionOrigen.Reaccion;
                 case "reconstruccion":
-                    return OrigenEnum.Reconstruccion;
+                    return DecisionOrigen.Reconstruccion;
             }
-            throw new Exception("Cannot unmarshal type OrigenEnum");
+            throw new Exception("Cannot unmarshal type DecisionOrigen");
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -11514,57 +11780,23 @@ namespace Croquis.Generated
                 serializer.Serialize(writer, null);
                 return;
             }
-            var value = (OrigenEnum)untypedValue;
+            var value = (DecisionOrigen)untypedValue;
             switch (value)
             {
-                case OrigenEnum.Perito:
+                case DecisionOrigen.Perito:
                     serializer.Serialize(writer, "perito");
                     return;
-                case OrigenEnum.Reaccion:
+                case DecisionOrigen.Reaccion:
                     serializer.Serialize(writer, "reaccion");
                     return;
-                case OrigenEnum.Reconstruccion:
+                case DecisionOrigen.Reconstruccion:
                     serializer.Serialize(writer, "reconstruccion");
                     return;
             }
-            throw new Exception("Cannot marshal type OrigenEnum");
+            throw new Exception("Cannot marshal type DecisionOrigen");
         }
 
-        public static readonly OrigenEnumConverter Singleton = new OrigenEnumConverter();
-    }
-
-    internal class IndigoDecodeArrayConverter : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(string[]);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            reader.Read();
-            var value = new List<string>();
-            while (reader.TokenType != JsonToken.EndArray)
-            {
-                var converter = FluffyMinMaxLengthCheckConverter.Singleton;
-                var arrayItem = (string)converter.ReadJson(reader, typeof(string), null, serializer);
-                value.Add(arrayItem);
-                reader.Read();
-            }
-            return value.ToArray();
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            var value = (string[])untypedValue;
-            writer.WriteStartArray();
-            foreach (var arrayItem in value)
-            {
-                var converter = FluffyMinMaxLengthCheckConverter.Singleton;
-                converter.WriteJson(writer, arrayItem, serializer);
-            }
-            writer.WriteEndArray();
-            return;
-        }
-
-        public static readonly IndigoDecodeArrayConverter Singleton = new IndigoDecodeArrayConverter();
+        public static readonly DecisionOrigenConverter Singleton = new DecisionOrigenConverter();
     }
 
     internal class IndecentDecodeArrayConverter : JsonConverter
@@ -11577,6 +11809,40 @@ namespace Croquis.Generated
             var value = new List<string>();
             while (reader.TokenType != JsonToken.EndArray)
             {
+                var converter = FluffyMinMaxLengthCheckConverter.Singleton;
+                var arrayItem = (string)converter.ReadJson(reader, typeof(string), null, serializer);
+                value.Add(arrayItem);
+                reader.Read();
+            }
+            return value.ToArray();
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            var value = (string[])untypedValue;
+            writer.WriteStartArray();
+            foreach (var arrayItem in value)
+            {
+                var converter = FluffyMinMaxLengthCheckConverter.Singleton;
+                converter.WriteJson(writer, arrayItem, serializer);
+            }
+            writer.WriteEndArray();
+            return;
+        }
+
+        public static readonly IndecentDecodeArrayConverter Singleton = new IndecentDecodeArrayConverter();
+    }
+
+    internal class HilariousDecodeArrayConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(string[]);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            reader.Read();
+            var value = new List<string>();
+            while (reader.TokenType != JsonToken.EndArray)
+            {
                 var converter = MinMaxLengthCheckConverter7.Singleton;
                 var arrayItem = (string)converter.ReadJson(reader, typeof(string), null, serializer);
                 value.Add(arrayItem);
@@ -11598,7 +11864,7 @@ namespace Croquis.Generated
             return;
         }
 
-        public static readonly IndecentDecodeArrayConverter Singleton = new IndecentDecodeArrayConverter();
+        public static readonly HilariousDecodeArrayConverter Singleton = new HilariousDecodeArrayConverter();
     }
 
     internal class MinMaxLengthCheckConverter7 : JsonConverter
@@ -11705,7 +11971,7 @@ namespace Croquis.Generated
         public static readonly CodigoConverter Singleton = new CodigoConverter();
     }
 
-    internal class HilariousDecodeArrayConverter : JsonConverter
+    internal class AmbitiousDecodeArrayConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(string[]);
 
@@ -11736,10 +12002,10 @@ namespace Croquis.Generated
             return;
         }
 
-        public static readonly HilariousDecodeArrayConverter Singleton = new HilariousDecodeArrayConverter();
+        public static readonly AmbitiousDecodeArrayConverter Singleton = new AmbitiousDecodeArrayConverter();
     }
 
-    internal class MinMaxValueCheckConverter8 : JsonConverter
+    internal class MinMaxValueCheckConverter9 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -11770,10 +12036,10 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter8 Singleton = new MinMaxValueCheckConverter8();
+        public static readonly MinMaxValueCheckConverter9 Singleton = new MinMaxValueCheckConverter9();
     }
 
-    internal class AmbitiousDecodeArrayConverter : JsonConverter
+    internal class CunningDecodeArrayConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double[]);
 
@@ -11804,7 +12070,7 @@ namespace Croquis.Generated
             return;
         }
 
-        public static readonly AmbitiousDecodeArrayConverter Singleton = new AmbitiousDecodeArrayConverter();
+        public static readonly CunningDecodeArrayConverter Singleton = new CunningDecodeArrayConverter();
     }
 
     internal class StickyTipoConverter : JsonConverter
@@ -11944,6 +12210,40 @@ namespace Croquis.Generated
         }
 
         public static readonly RangoPorConverter Singleton = new RangoPorConverter();
+    }
+
+    internal class FijadaPorConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(FijadaPor) || t == typeof(FijadaPor?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            if (value == "declarada")
+            {
+                return FijadaPor.Declarada;
+            }
+            throw new Exception("Cannot unmarshal type FijadaPor");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (FijadaPor)untypedValue;
+            if (value == FijadaPor.Declarada)
+            {
+                serializer.Serialize(writer, "declarada");
+                return;
+            }
+            throw new Exception("Cannot marshal type FijadaPor");
+        }
+
+        public static readonly FijadaPorConverter Singleton = new FijadaPorConverter();
     }
 
     internal class ParametroConverter : JsonConverter
@@ -12216,7 +12516,7 @@ namespace Croquis.Generated
         public static readonly AlcanceDeteccionNocturnaTipoConverter Singleton = new AlcanceDeteccionNocturnaTipoConverter();
     }
 
-    internal class MinMaxValueCheckConverter9 : JsonConverter
+    internal class MinMaxValueCheckConverter10 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -12247,7 +12547,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter9 Singleton = new MinMaxValueCheckConverter9();
+        public static readonly MinMaxValueCheckConverter10 Singleton = new MinMaxValueCheckConverter10();
     }
 
     internal class FaseFaseConverter : JsonConverter
@@ -12311,40 +12611,6 @@ namespace Croquis.Generated
         public static readonly FaseFaseConverter Singleton = new FaseFaseConverter();
     }
 
-    internal class MinMaxValueCheckConverter10 : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            if (reader.TokenType == JsonToken.Null) return null;
-            var value = serializer.Deserialize<double>(reader);
-            if (value <= 3)
-            {
-                return value;
-            }
-            throw new Exception("Cannot unmarshal type double");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            if (untypedValue == null)
-            {
-                serializer.Serialize(writer, null);
-                return;
-            }
-            var value = (double)untypedValue;
-            if (value <= 3)
-            {
-                serializer.Serialize(writer, value);
-                return;
-            }
-            throw new Exception("Cannot marshal type double");
-        }
-
-        public static readonly MinMaxValueCheckConverter10 Singleton = new MinMaxValueCheckConverter10();
-    }
-
     internal class MinMaxValueCheckConverter11 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
@@ -12353,7 +12619,7 @@ namespace Croquis.Generated
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<double>(reader);
-            if (value >= 0 && value <= 90)
+            if (value <= 3)
             {
                 return value;
             }
@@ -12368,7 +12634,7 @@ namespace Croquis.Generated
                 return;
             }
             var value = (double)untypedValue;
-            if (value >= 0 && value <= 90)
+            if (value <= 3)
             {
                 serializer.Serialize(writer, value);
                 return;
@@ -12387,6 +12653,40 @@ namespace Croquis.Generated
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<double>(reader);
+            if (value >= 0 && value <= 90)
+            {
+                return value;
+            }
+            throw new Exception("Cannot unmarshal type double");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (double)untypedValue;
+            if (value >= 0 && value <= 90)
+            {
+                serializer.Serialize(writer, value);
+                return;
+            }
+            throw new Exception("Cannot marshal type double");
+        }
+
+        public static readonly MinMaxValueCheckConverter12 Singleton = new MinMaxValueCheckConverter12();
+    }
+
+    internal class MinMaxValueCheckConverter13 : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<double>(reader);
             if (value <= 0)
             {
                 return value;
@@ -12410,7 +12710,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter12 Singleton = new MinMaxValueCheckConverter12();
+        public static readonly MinMaxValueCheckConverter13 Singleton = new MinMaxValueCheckConverter13();
     }
 
     internal class OrigenRigidezConverter : JsonConverter
@@ -12459,7 +12759,7 @@ namespace Croquis.Generated
         public static readonly OrigenRigidezConverter Singleton = new OrigenRigidezConverter();
     }
 
-    internal class CunningDecodeArrayConverter : JsonConverter
+    internal class MagentaDecodeArrayConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double[]);
 
@@ -12490,10 +12790,10 @@ namespace Croquis.Generated
             return;
         }
 
-        public static readonly CunningDecodeArrayConverter Singleton = new CunningDecodeArrayConverter();
+        public static readonly MagentaDecodeArrayConverter Singleton = new MagentaDecodeArrayConverter();
     }
 
-    internal class MinMaxValueCheckConverter13 : JsonConverter
+    internal class MinMaxValueCheckConverter14 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -12524,7 +12824,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter13 Singleton = new MinMaxValueCheckConverter13();
+        public static readonly MinMaxValueCheckConverter14 Singleton = new MinMaxValueCheckConverter14();
     }
 
     internal class LadoTropiezoConverter : JsonConverter
@@ -12602,7 +12902,7 @@ namespace Croquis.Generated
         public static readonly VersionResultadoConverter Singleton = new VersionResultadoConverter();
     }
 
-    internal class MagentaDecodeArrayConverter : JsonConverter
+    internal class FriskyDecodeArrayConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(string[]);
 
@@ -12633,7 +12933,7 @@ namespace Croquis.Generated
             return;
         }
 
-        public static readonly MagentaDecodeArrayConverter Singleton = new MagentaDecodeArrayConverter();
+        public static readonly FriskyDecodeArrayConverter Singleton = new FriskyDecodeArrayConverter();
     }
 
     internal class MinMaxLengthCheckConverter8 : JsonConverter
@@ -12664,7 +12964,7 @@ namespace Croquis.Generated
         public static readonly MinMaxLengthCheckConverter8 Singleton = new MinMaxLengthCheckConverter8();
     }
 
-    internal class FriskyDecodeArrayConverter : JsonConverter
+    internal class MischievousDecodeArrayConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double[]);
 
@@ -12695,10 +12995,10 @@ namespace Croquis.Generated
             return;
         }
 
-        public static readonly FriskyDecodeArrayConverter Singleton = new FriskyDecodeArrayConverter();
+        public static readonly MischievousDecodeArrayConverter Singleton = new MischievousDecodeArrayConverter();
     }
 
-    internal class MischievousDecodeArrayConverter : JsonConverter
+    internal class BraggadociousDecodeArrayConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(string[]);
 
@@ -12729,7 +13029,7 @@ namespace Croquis.Generated
             return;
         }
 
-        public static readonly MischievousDecodeArrayConverter Singleton = new MischievousDecodeArrayConverter();
+        public static readonly BraggadociousDecodeArrayConverter Singleton = new BraggadociousDecodeArrayConverter();
     }
 
     internal class TipoObjetivoConverter : JsonConverter
@@ -12778,7 +13078,7 @@ namespace Croquis.Generated
         public static readonly TipoObjetivoConverter Singleton = new TipoObjetivoConverter();
     }
 
-    internal class MinMaxValueCheckConverter14 : JsonConverter
+    internal class MinMaxValueCheckConverter15 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -12809,6 +13109,6 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter14 Singleton = new MinMaxValueCheckConverter14();
+        public static readonly MinMaxValueCheckConverter15 Singleton = new MinMaxValueCheckConverter15();
     }
 }
