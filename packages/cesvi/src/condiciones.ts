@@ -91,10 +91,15 @@ const PENDIENTE: Regla<"subida" | "bajada">[] = [
   },
 ];
 const ESTRUCTURA: Regla<"puente" | "paso_a_desnivel">[] = [
-  { valor: "paso_a_desnivel", re: /paso\s+(?:a\s+desnivel|elevado|superior|inferior)|distribuidor vial/i },
+  {
+    valor: "paso_a_desnivel",
+    re: /paso\s+(?:a\s+desnivel|elevado|superior|inferior)|distribuidor vial/i,
+  },
   { valor: "puente", re: /(?<!\p{L})puente(?:\s+vehicular)?(?!\s+peatonal)(?!\p{L})/iu },
 ];
-const TRAZO: Regla<"curva">[] = [{ valor: "curva", re: /(?<!\p{L})(?:la|una|en)\s+curva(?!\p{L})/iu }];
+const TRAZO: Regla<"curva">[] = [
+  { valor: "curva", re: /(?<!\p{L})(?:la|una|en)\s+curva(?!\p{L})/iu },
+];
 
 const SIN_ALUMBRADO =
   /sin (?:alumbrado|iluminaci[oó]n)(?: (?:p[uú]blico|artificial))?|carec[ií]a de (?:alumbrado|iluminaci[oó]n)|no (?:hab[ií]a|contaba con|exist[ií]a) (?:alumbrado|iluminaci[oó]n)|alumbrado (?:p[uú]blico )?(?:apagado|sin funcionar|no funcionaba)/i;

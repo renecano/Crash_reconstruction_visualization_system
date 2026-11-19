@@ -20,32 +20,32 @@ Es determinista y deja su cita; no llama al modelo, así que no gasta API ni cam
 
 **Una cifra:**
 
-| Cómo lo dice la narración | Rango |
-| --- | --- |
-| «a 80 km/h» | ±10 % |
-| «como a 60», «aproximadamente», «unos» | ±15 % |
-| «entre 60 y 70» | 60–70 |
-| «a más de 90» | 90–117 (+30 %) |
-| «a menos de 40» | 24–40 (−40 %) |
+| Cómo lo dice la narración              | Rango          |
+| -------------------------------------- | -------------- |
+| «a 80 km/h»                            | ±10 %          |
+| «como a 60», «aproximadamente», «unos» | ±15 %          |
+| «entre 60 y 70»                        | 60–70          |
+| «a más de 90»                          | 90–117 (+30 %) |
+| «a menos de 40»                        | 24–40 (−40 %)  |
 
 **Una descripción, relativa al límite de la vía** (L = límite):
 
-| Descripción | Valor | Rango |
-| --- | --- | --- |
-| «a exceso de velocidad», «a alta velocidad», «rápido» | 1.3 L | L a 1.6 L |
-| «despacio» | 0.4 L | 5 a 0.7 L |
-| «a vuelta de rueda» | 8 km/h | 3–15 km/h (el valor que ya usaba la ruta del relato) |
-| la típica de la vía | 0.9 L | 0.6 L a 1.2 L |
+| Descripción                                           | Valor  | Rango                                                |
+| ----------------------------------------------------- | ------ | ---------------------------------------------------- |
+| «a exceso de velocidad», «a alta velocidad», «rápido» | 1.3 L  | L a 1.6 L                                            |
+| «despacio»                                            | 0.4 L  | 5 a 0.7 L                                            |
+| «a vuelta de rueda»                                   | 8 km/h | 3–15 km/h (el valor que ya usaba la ruta del relato) |
+| la típica de la vía                                   | 0.9 L  | 0.6 L a 1.2 L                                        |
 
 Estos rangos son **supuestos de Croquis**, dichos en la nota del cálculo: un límite es un máximo legal, no una medición.
 
 **El límite de la vía** es su `maxspeed` de OpenStreetMap o, si no lo tiene, el de su tipo según la **LGMSV, art. 49 fr. III** (DOF 17-05-2022, última reforma DOF 29-12-2023):
 
-| Tipo de vía en OSM | Límite |
-| --- | --- |
-| motorway | 80 km/h (inciso e, acceso controlado) |
-| trunk, primary | 50 km/h (inciso d) |
-| secondary, tertiary, residential, unclassified, living_street, service | 30 km/h (inciso c) |
+| Tipo de vía en OSM                                                     | Límite                                |
+| ---------------------------------------------------------------------- | ------------------------------------- |
+| motorway                                                               | 80 km/h (inciso e, acceso controlado) |
+| trunk, primary                                                         | 50 km/h (inciso d)                    |
+| secondary, tertiary, residential, unclassified, living_street, service | 30 km/h (inciso c)                    |
 
 Mientras no se conoce la vía, se usa la avenida primaria (50 km/h). Al marcar el choque sobre una calle, se recalcula (`conLimiteDeLaVia`).
 

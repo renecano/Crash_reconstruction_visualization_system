@@ -1435,7 +1435,11 @@
             "type": "object",
             "properties": {
               "id": { "type": "integer" },
-              "tipo": { "type": "string", "maxLength": 40, "description": "El `highway` de OpenStreetMap." },
+              "tipo": {
+                "type": "string",
+                "maxLength": 40,
+                "description": "El `highway` de OpenStreetMap."
+              },
               "nombre": { "type": "string", "maxLength": 200 },
               "maxspeed": { "type": "string", "maxLength": 20 },
               "carriles": { "type": "string", "maxLength": 10 },

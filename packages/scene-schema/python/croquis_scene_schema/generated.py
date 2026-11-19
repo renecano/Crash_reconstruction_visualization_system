@@ -1203,23 +1203,92 @@ class Coordenadas(BaseModel):
     """
 
 
-class Lugar1(BaseModel):
+class Punto(RootModel[list[float]]):
+    root: Annotated[list[float], Field(max_length=2, min_length=2)]
+
+
+class Via(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    id: int
+    tipo: Annotated[str, Field(max_length=40)]
     """
-    Dónde fue.
+    El `highway` de OpenStreetMap.
+    """
+    nombre: Annotated[str | None, Field(max_length=200)] = None
+    maxspeed: Annotated[str | None, Field(max_length=20)] = None
+    carriles: Annotated[str | None, Field(max_length=10)] = None
+    sentido_unico: Annotated[str | None, Field(max_length=10)] = None
+    ancho: Annotated[str | None, Field(max_length=10)] = None
+    puntos: Annotated[list[Punto], Field(max_length=2000, min_length=2)]
+    """
+    [lon, lat] de cada punto, en orden.
+    """
+
+
+class CallesGuardadas(BaseModel):
+    """
+    Las calles del lugar del caso, guardadas con él para que La escena, la reconstrucción y el 3D las tengan sin red (ronda 4). De OpenStreetMap (Overpass) o de las teselas del mapa (OpenMapTiles, también datos de OpenStreetMap).
     """
 
     model_config = ConfigDict(
         extra="forbid",
     )
-    descripcion: DatoExpediente | None = None
-    coordenadas: Coordenadas | None = None
-    via: DatoExpediente | None = None
-    carriles: Annotated[int | None, Field(ge=1, le=12)] = None
+    fuente: Literal["overpass", "teselas"]
+    atribucion: Annotated[str | None, Field(max_length=200)] = None
+    consultado: AwareDatetime
+    centro: Coordenadas
+    radio_m: Annotated[float, Field(ge=10.0, le=2000.0)]
+    vias: Annotated[list[Via], Field(max_length=600)]
+
+
+class Pendiente(BaseModel):
     """
-    Carriles por sentido.
+    Si la vía va en subida o en bajada donde fue el hecho (ronda 4). Con ella, la reconstrucción usa el relieve real del lugar.
     """
-    municipio: DatoExpediente | None = None
-    estado: DatoExpediente | None = None
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    valor: Literal["subida", "bajada"]
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+    cita: Cita | None = None
+
+
+class Estructura(BaseModel):
+    """
+    Si el hecho fue sobre un puente o un paso a desnivel (ronda 4).
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    valor: Literal["puente", "paso_a_desnivel"]
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+    cita: Cita | None = None
+
+
+class Trazo(BaseModel):
+    """
+    Si el hecho fue en una curva (ronda 4).
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    valor: Literal["curva"]
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+    cita: Cita | None = None
 
 
 class Superficie(BaseModel):
@@ -1294,6 +1363,18 @@ class CondicionesExpediente(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
+    pendiente: Pendiente | None = None
+    """
+    Si la vía va en subida o en bajada donde fue el hecho (ronda 4). Con ella, la reconstrucción usa el relieve real del lugar.
+    """
+    estructura: Estructura | None = None
+    """
+    Si el hecho fue sobre un puente o un paso a desnivel (ronda 4).
+    """
+    trazo: Trazo | None = None
+    """
+    Si el hecho fue en una curva (ronda 4).
+    """
     superficie: Superficie | None = None
     """
     Material de la superficie de rodamiento.
@@ -2156,6 +2237,26 @@ class Evento(BaseModel):
     punto_impacto: Punto2D | None = None
     descripcion: Annotated[str | None, Field(max_length=400)] = None
     procedencia: Procedencia
+
+
+class Lugar1(BaseModel):
+    """
+    Dónde fue.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    descripcion: DatoExpediente | None = None
+    coordenadas: Coordenadas | None = None
+    via: DatoExpediente | None = None
+    carriles: Annotated[int | None, Field(ge=1, le=12)] = None
+    """
+    Carriles por sentido.
+    """
+    municipio: DatoExpediente | None = None
+    estado: DatoExpediente | None = None
+    calles_del_mapa: CallesGuardadas | None = None
 
 
 class CasoExpediente(BaseModel):

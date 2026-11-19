@@ -879,16 +879,35 @@ namespace Croquis.Generated
         public CondicionesEstadoSuperficie EstadoSuperficie { get; set; }
 
         /// <summary>
+        /// Si el hecho fue sobre un puente o un paso a desnivel (ronda 4).
+        /// </summary>
+        [JsonProperty("estructura", NullValueHandling = NullValueHandling.Ignore)]
+        public Estructura Estructura { get; set; }
+
+        /// <summary>
         /// Luz al momento del hecho. «Noche sin alumbrado» solo si la narración lo dice.
         /// </summary>
         [JsonProperty("iluminacion", NullValueHandling = NullValueHandling.Ignore)]
         public CondicionesIluminacion Iluminacion { get; set; }
 
         /// <summary>
+        /// Si la vía va en subida o en bajada donde fue el hecho (ronda 4). Con ella, la
+        /// reconstrucción usa el relieve real del lugar.
+        /// </summary>
+        [JsonProperty("pendiente", NullValueHandling = NullValueHandling.Ignore)]
+        public CondicionesPendiente Pendiente { get; set; }
+
+        /// <summary>
         /// Material de la superficie de rodamiento.
         /// </summary>
         [JsonProperty("superficie", NullValueHandling = NullValueHandling.Ignore)]
         public CondicionesSuperficie Superficie { get; set; }
+
+        /// <summary>
+        /// Si el hecho fue en una curva (ronda 4).
+        /// </summary>
+        [JsonProperty("trazo", NullValueHandling = NullValueHandling.Ignore)]
+        public Trazo Trazo { get; set; }
     }
 
     /// <summary>
@@ -922,6 +941,21 @@ namespace Croquis.Generated
     }
 
     /// <summary>
+    /// Si el hecho fue sobre un puente o un paso a desnivel (ronda 4).
+    /// </summary>
+    public partial class Estructura
+    {
+        [JsonProperty("cita", NullValueHandling = NullValueHandling.Ignore)]
+        public Cita Cita { get; set; }
+
+        [JsonProperty("fuente")]
+        public ResultadoFuente Fuente { get; set; }
+
+        [JsonProperty("valor")]
+        public EstructuraValor Valor { get; set; }
+    }
+
+    /// <summary>
     /// Luz al momento del hecho. «Noche sin alumbrado» solo si la narración lo dice.
     /// </summary>
     public partial class CondicionesIluminacion
@@ -934,6 +968,22 @@ namespace Croquis.Generated
 
         [JsonProperty("valor")]
         public IluminacionValor Valor { get; set; }
+    }
+
+    /// <summary>
+    /// Si la vía va en subida o en bajada donde fue el hecho (ronda 4). Con ella, la
+    /// reconstrucción usa el relieve real del lugar.
+    /// </summary>
+    public partial class CondicionesPendiente
+    {
+        [JsonProperty("cita", NullValueHandling = NullValueHandling.Ignore)]
+        public Cita Cita { get; set; }
+
+        [JsonProperty("fuente")]
+        public ResultadoFuente Fuente { get; set; }
+
+        [JsonProperty("valor")]
+        public PendienteValor Valor { get; set; }
     }
 
     /// <summary>
@@ -952,10 +1002,28 @@ namespace Croquis.Generated
     }
 
     /// <summary>
+    /// Si el hecho fue en una curva (ronda 4).
+    /// </summary>
+    public partial class Trazo
+    {
+        [JsonProperty("cita", NullValueHandling = NullValueHandling.Ignore)]
+        public Cita Cita { get; set; }
+
+        [JsonProperty("fuente")]
+        public ResultadoFuente Fuente { get; set; }
+
+        [JsonProperty("valor")]
+        public TrazoValor Valor { get; set; }
+    }
+
+    /// <summary>
     /// Dónde fue.
     /// </summary>
     public partial class CasoLugar
     {
+        [JsonProperty("calles_del_mapa", NullValueHandling = NullValueHandling.Ignore)]
+        public CallesDelMapa CallesDelMapa { get; set; }
+
         /// <summary>
         /// Carriles por sentido.
         /// </summary>
@@ -963,7 +1031,7 @@ namespace Croquis.Generated
         public long? Carriles { get; set; }
 
         [JsonProperty("coordenadas", NullValueHandling = NullValueHandling.Ignore)]
-        public Coordenadas Coordenadas { get; set; }
+        public Centro Coordenadas { get; set; }
 
         [JsonProperty("descripcion", NullValueHandling = NullValueHandling.Ignore)]
         public Aseguradora Descripcion { get; set; }
@@ -979,6 +1047,34 @@ namespace Croquis.Generated
     }
 
     /// <summary>
+    /// Las calles del lugar del caso, guardadas con él para que La escena, la reconstrucción y
+    /// el 3D las tengan sin red (ronda 4). De OpenStreetMap (Overpass) o de las teselas del mapa
+    /// (OpenMapTiles, también datos de OpenStreetMap).
+    /// </summary>
+    public partial class CallesDelMapa
+    {
+        [JsonProperty("atribucion", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(StickyMinMaxLengthCheckConverter))]
+        public string Atribucion { get; set; }
+
+        [JsonProperty("centro")]
+        public Centro Centro { get; set; }
+
+        [JsonProperty("consultado")]
+        public DateTimeOffset Consultado { get; set; }
+
+        [JsonProperty("fuente")]
+        public CallesDelMapaFuente Fuente { get; set; }
+
+        [JsonProperty("radio_m")]
+        [JsonConverter(typeof(IndecentMinMaxValueCheckConverter))]
+        public double RadioM { get; set; }
+
+        [JsonProperty("vias")]
+        public Via[] Vias { get; set; }
+    }
+
+    /// <summary>
     /// Un punto en el mapa (WGS84).
     ///
     /// Dónde quedó después del impacto, si el perito lo marcó.
@@ -987,7 +1083,7 @@ namespace Croquis.Generated
     ///
     /// Vértices del polígono en el mapa, sin repetir el primero al final.
     /// </summary>
-    public partial class Coordenadas
+    public partial class Centro
     {
         /// <summary>
         /// Latitud.
@@ -1002,6 +1098,45 @@ namespace Croquis.Generated
         [JsonProperty("lon")]
         [JsonConverter(typeof(IndigoMinMaxValueCheckConverter))]
         public double Lon { get; set; }
+    }
+
+    public partial class Via
+    {
+        [JsonProperty("ancho", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(CunningMinMaxLengthCheckConverter))]
+        public string Ancho { get; set; }
+
+        [JsonProperty("carriles", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(CunningMinMaxLengthCheckConverter))]
+        public string Carriles { get; set; }
+
+        [JsonProperty("id")]
+        public long Id { get; set; }
+
+        [JsonProperty("maxspeed", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(MagentaMinMaxLengthCheckConverter))]
+        public string Maxspeed { get; set; }
+
+        [JsonProperty("nombre", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(StickyMinMaxLengthCheckConverter))]
+        public string Nombre { get; set; }
+
+        /// <summary>
+        /// [lon, lat] de cada punto, en orden.
+        /// </summary>
+        [JsonProperty("puntos")]
+        public double[][] Puntos { get; set; }
+
+        [JsonProperty("sentido_unico", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(CunningMinMaxLengthCheckConverter))]
+        public string SentidoUnico { get; set; }
+
+        /// <summary>
+        /// El `highway` de OpenStreetMap.
+        /// </summary>
+        [JsonProperty("tipo")]
+        [JsonConverter(typeof(FriskyMinMaxLengthCheckConverter))]
+        public string Tipo { get; set; }
     }
 
     /// <summary>
@@ -1100,14 +1235,14 @@ namespace Croquis.Generated
         /// Máxima (cm).
         /// </summary>
         [JsonProperty("max", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(IndecentMinMaxValueCheckConverter))]
+        [JsonConverter(typeof(HilariousMinMaxValueCheckConverter))]
         public double? Max { get; set; }
 
         /// <summary>
         /// Mínima (cm).
         /// </summary>
         [JsonProperty("min", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(IndecentMinMaxValueCheckConverter))]
+        [JsonConverter(typeof(HilariousMinMaxValueCheckConverter))]
         public double? Min { get; set; }
     }
 
@@ -1120,14 +1255,14 @@ namespace Croquis.Generated
         /// Color transferido.
         /// </summary>
         [JsonProperty("color", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MagentaMinMaxLengthCheckConverter))]
+        [JsonConverter(typeof(BraggadociousMinMaxLengthCheckConverter))]
         public string Color { get; set; }
 
         /// <summary>
         /// Sobre qué zona o pieza.
         /// </summary>
         [JsonProperty("sobre", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(FriskyMinMaxLengthCheckConverter))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter1))]
         public string Sobre { get; set; }
     }
 
@@ -1150,7 +1285,7 @@ namespace Croquis.Generated
         /// Ancho del daño L (m).
         /// </summary>
         [JsonProperty("l_m", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(AmbitiousMinMaxValueCheckConverter))]
+        [JsonConverter(typeof(CunningMinMaxValueCheckConverter))]
         public double? LM { get; set; }
     }
 
@@ -1225,10 +1360,10 @@ namespace Croquis.Generated
         public Cita Cita { get; set; }
 
         [JsonProperty("fin", NullValueHandling = NullValueHandling.Ignore)]
-        public Coordenadas Fin { get; set; }
+        public Centro Fin { get; set; }
 
         [JsonProperty("inicio", NullValueHandling = NullValueHandling.Ignore)]
-        public Coordenadas Inicio { get; set; }
+        public Centro Inicio { get; set; }
 
         [JsonProperty("longitud", NullValueHandling = NullValueHandling.Ignore)]
         public ResultadoClass Longitud { get; set; }
@@ -1250,7 +1385,7 @@ namespace Croquis.Generated
         /// Objeto fijo, si lo hay (poste, muro, árbol…).
         /// </summary>
         [JsonProperty("objeto_fijo", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MischievousMinMaxLengthCheckConverter))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter2))]
         public string ObjetoFijo { get; set; }
 
         /// <summary>
@@ -1267,7 +1402,7 @@ namespace Croquis.Generated
         public string Persona { get; set; }
 
         [JsonProperty("punto", NullValueHandling = NullValueHandling.Ignore)]
-        public Coordenadas Punto { get; set; }
+        public Centro Punto { get; set; }
 
         /// <summary>
         /// Vehículos que participan.
@@ -1302,7 +1437,7 @@ namespace Croquis.Generated
     public partial class ExpedienteObjeto
     {
         [JsonProperty("ancho_m", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(CunningMinMaxValueCheckConverter))]
+        [JsonConverter(typeof(MagentaMinMaxValueCheckConverter))]
         public double? AnchoM { get; set; }
 
         [JsonProperty("cita", NullValueHandling = NullValueHandling.Ignore)]
@@ -1318,11 +1453,11 @@ namespace Croquis.Generated
         public string Id { get; set; }
 
         [JsonProperty("largo_m", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MagentaMinMaxValueCheckConverter))]
+        [JsonConverter(typeof(FriskyMinMaxValueCheckConverter))]
         public double? LargoM { get; set; }
 
         [JsonProperty("punto")]
-        public Coordenadas Punto { get; set; }
+        public Centro Punto { get; set; }
 
         /// <summary>
         /// Hacia dónde apunta su largo, desde el norte hacia el este.
@@ -1349,7 +1484,7 @@ namespace Croquis.Generated
         /// Dónde quedó después del impacto, si el perito lo marcó.
         /// </summary>
         [JsonProperty("final", NullValueHandling = NullValueHandling.Ignore)]
-        public Coordenadas Final { get; set; }
+        public Centro Final { get; set; }
 
         [JsonProperty("fuente")]
         public ResultadoFuente Fuente { get; set; }
@@ -1364,7 +1499,7 @@ namespace Croquis.Generated
         /// Dónde estaba al ser golpeado (o donde la colocó el perito).
         /// </summary>
         [JsonProperty("punto")]
-        public Coordenadas Punto { get; set; }
+        public Centro Punto { get; set; }
 
         [JsonProperty("rol")]
         public PersonaRolEnum Rol { get; set; }
@@ -1408,14 +1543,14 @@ namespace Croquis.Generated
         /// La sugerencia de Croquis.
         /// </summary>
         [JsonProperty("sugerencia", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(BraggadociousMinMaxLengthCheckConverter))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter3))]
         public string Sugerencia { get; set; }
 
         /// <summary>
         /// Quién validó (cargo o «perito»; sin nombres en el repositorio).
         /// </summary>
         [JsonProperty("validado_por", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MischievousMinMaxLengthCheckConverter))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter2))]
         public string ValidadoPor { get; set; }
     }
 
@@ -1473,7 +1608,7 @@ namespace Croquis.Generated
     public partial class PurpleCaso3DSchema
     {
         [JsonProperty("amplitud_m")]
-        [JsonConverter(typeof(FriskyMinMaxValueCheckConverter))]
+        [JsonConverter(typeof(MischievousMinMaxValueCheckConverter))]
         public double AmplitudM { get; set; }
 
         [JsonProperty("cita", NullValueHandling = NullValueHandling.Ignore)]
@@ -1486,11 +1621,11 @@ namespace Croquis.Generated
         public string Id { get; set; }
 
         [JsonProperty("longitud_onda_m")]
-        [JsonConverter(typeof(MischievousMinMaxValueCheckConverter))]
+        [JsonConverter(typeof(BraggadociousMinMaxValueCheckConverter))]
         public double LongitudOndaM { get; set; }
 
         [JsonProperty("poligono")]
-        public Coordenadas[] Poligono { get; set; }
+        public Centro[] Poligono { get; set; }
 
         /// <summary>
         /// Hacia dónde avanzan las ondas, desde el norte hacia el este.
@@ -1510,7 +1645,7 @@ namespace Croquis.Generated
         public PurpleFuente Fuente { get; set; }
 
         [JsonProperty("malla_id", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter1))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter4))]
         public string MallaId { get; set; }
     }
 
@@ -1527,7 +1662,7 @@ namespace Croquis.Generated
         /// Coeficiente de fricción que fijó el perito.
         /// </summary>
         [JsonProperty("friccion", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(BraggadociousMinMaxValueCheckConverter))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter1))]
         public double? Friccion { get; set; }
 
         [JsonProperty("fuente")]
@@ -1537,7 +1672,7 @@ namespace Croquis.Generated
         public string Id { get; set; }
 
         [JsonProperty("poligono")]
-        public Coordenadas[] Poligono { get; set; }
+        public Centro[] Poligono { get; set; }
 
         [JsonProperty("tipo")]
         public TipoSuperficie Tipo { get; set; }
@@ -1549,7 +1684,7 @@ namespace Croquis.Generated
     public partial class TentacledCaso3DSchema
     {
         [JsonProperty("alto_m")]
-        [JsonConverter(typeof(MinMaxValueCheckConverter1))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter2))]
         public double AltoM { get; set; }
 
         [JsonProperty("cita", NullValueHandling = NullValueHandling.Ignore)]
@@ -1562,11 +1697,11 @@ namespace Croquis.Generated
         public string Id { get; set; }
 
         [JsonProperty("largo_m")]
-        [JsonConverter(typeof(CunningMinMaxValueCheckConverter))]
+        [JsonConverter(typeof(MagentaMinMaxValueCheckConverter))]
         public double LargoM { get; set; }
 
         [JsonProperty("linea")]
-        public Coordenadas[] Linea { get; set; }
+        public Centro[] Linea { get; set; }
     }
 
     /// <summary>
@@ -1620,14 +1755,14 @@ namespace Croquis.Generated
         /// Delantera (cm).
         /// </summary>
         [JsonProperty("delantera", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxValueCheckConverter2))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter3))]
         public double? Delantera { get; set; }
 
         /// <summary>
         /// Trasera (cm).
         /// </summary>
         [JsonProperty("trasera", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxValueCheckConverter2))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter3))]
         public double? Trasera { get; set; }
     }
 
@@ -1685,7 +1820,7 @@ namespace Croquis.Generated
         /// El valor central (km/h).
         /// </summary>
         [JsonProperty("kmh")]
-        [JsonConverter(typeof(MinMaxValueCheckConverter2))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter3))]
         public double Kmh { get; set; }
 
         /// <summary>
@@ -1700,7 +1835,7 @@ namespace Croquis.Generated
         /// El límite de la vía con que se calculó (km/h).
         /// </summary>
         [JsonProperty("limite_kmh", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxValueCheckConverter3))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter4))]
         public double? LimiteKmh { get; set; }
 
         /// <summary>
@@ -1772,7 +1907,7 @@ namespace Croquis.Generated
         /// Metros, si se dicen.
         /// </summary>
         [JsonProperty("metros", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxValueCheckConverter4))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter5))]
         public double? Metros { get; set; }
 
         /// <summary>
@@ -1801,13 +1936,13 @@ namespace Croquis.Generated
         public ResultadoFuente Fuente { get; set; }
 
         [JsonProperty("punto")]
-        public Coordenadas Punto { get; set; }
+        public Centro Punto { get; set; }
 
         /// <summary>
         /// Rumbo del frente, grados desde el norte.
         /// </summary>
         [JsonProperty("rumbo")]
-        [JsonConverter(typeof(MinMaxValueCheckConverter5))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter6))]
         public double Rumbo { get; set; }
 
         [JsonProperty("vehiculo")]
@@ -1837,7 +1972,7 @@ namespace Croquis.Generated
         public double? PrecisionM { get; set; }
 
         [JsonProperty("punto")]
-        public Coordenadas Punto { get; set; }
+        public Centro Punto { get; set; }
 
         /// <summary>
         /// Segundos respecto al impacto principal (t = 0), si se sabe.
@@ -1894,10 +2029,10 @@ namespace Croquis.Generated
         public FechaHora NombreViaSecundaria { get; set; }
 
         [JsonProperty("pendiente", NullValueHandling = NullValueHandling.Ignore)]
-        public Pendiente Pendiente { get; set; }
+        public PeralteClass Pendiente { get; set; }
 
         [JsonProperty("peralte", NullValueHandling = NullValueHandling.Ignore)]
-        public Pendiente Peralte { get; set; }
+        public PeralteClass Peralte { get; set; }
 
         [JsonProperty("radio_curva", NullValueHandling = NullValueHandling.Ignore)]
         public AnchoDanado RadioCurva { get; set; }
@@ -1989,7 +2124,7 @@ namespace Croquis.Generated
         /// A qué flujo aplica: id de vehículo, o descripción como 'norte-sur'.
         /// </summary>
         [JsonProperty("movimiento")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter2))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter5))]
         public string Movimiento { get; set; }
 
         [JsonProperty("tiempo_en_fase", NullValueHandling = NullValueHandling.Ignore)]
@@ -2027,7 +2162,7 @@ namespace Croquis.Generated
         public VelocidadUnidad Unidad { get; set; }
 
         [JsonProperty("valor")]
-        [JsonConverter(typeof(IndecentMinMaxValueCheckConverter))]
+        [JsonConverter(typeof(HilariousMinMaxValueCheckConverter))]
         public double Valor { get; set; }
     }
 
@@ -2051,7 +2186,7 @@ namespace Croquis.Generated
         public EstadoSuperficieValor Valor { get; set; }
     }
 
-    public partial class Pendiente
+    public partial class PeralteClass
     {
         [JsonProperty("confianza")]
         [JsonConverter(typeof(PurpleMinMaxValueCheckConverter))]
@@ -2074,7 +2209,7 @@ namespace Croquis.Generated
         public PendienteUnidad Unidad { get; set; }
 
         [JsonProperty("valor")]
-        [JsonConverter(typeof(MinMaxValueCheckConverter6))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter7))]
         public double Valor { get; set; }
     }
 
@@ -2086,14 +2221,14 @@ namespace Croquis.Generated
     public partial class RedVial
     {
         [JsonProperty("atribucion")]
-        [JsonConverter(typeof(FriskyMinMaxLengthCheckConverter))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter1))]
         public string Atribucion { get; set; }
 
         /// <summary>
         /// Fecha de los datos de OSM (`timestamp_osm_base` de Overpass), ISO 8601.
         /// </summary>
         [JsonProperty("consultado")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter3))]
+        [JsonConverter(typeof(FriskyMinMaxLengthCheckConverter))]
         public string Consultado { get; set; }
 
         [JsonProperty("fuente_datos")]
@@ -2118,7 +2253,7 @@ namespace Croquis.Generated
     public partial class ViaElement
     {
         [JsonProperty("ancho_m", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxValueCheckConverter7))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter8))]
         public double? AnchoM { get; set; }
 
         [JsonProperty("carriles", NullValueHandling = NullValueHandling.Ignore)]
@@ -2128,7 +2263,7 @@ namespace Croquis.Generated
         public long IdOsm { get; set; }
 
         [JsonProperty("nombre", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter4))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter6))]
         public string Nombre { get; set; }
 
         [JsonProperty("puntos")]
@@ -2239,7 +2374,7 @@ namespace Croquis.Generated
         /// El `id` de la malla en el paquete caso-3d.
         /// </summary>
         [JsonProperty("malla_id", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter1))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter4))]
         public string MallaId { get; set; }
 
         [JsonProperty("procedencia")]
@@ -2329,7 +2464,7 @@ namespace Croquis.Generated
         public Procedencia Procedencia { get; set; }
 
         [JsonProperty("radio_m", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxValueCheckConverter8))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter9))]
         public double? RadioM { get; set; }
 
         /// <summary>
@@ -2353,7 +2488,7 @@ namespace Croquis.Generated
         public string HashRelato { get; set; }
 
         [JsonProperty("id")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter5))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter7))]
         public string Id { get; set; }
 
         [JsonProperty("idioma")]
@@ -2367,7 +2502,7 @@ namespace Croquis.Generated
         /// consentimiento.
         /// </summary>
         [JsonProperty("relato", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter6))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter8))]
         public string Relato { get; set; }
 
         /// <summary>
@@ -2384,7 +2519,7 @@ namespace Croquis.Generated
         public bool? Sintetico { get; set; }
 
         [JsonProperty("titulo", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter4))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter6))]
         public string Titulo { get; set; }
 
         [JsonProperty("version_esquema")]
@@ -2980,7 +3115,7 @@ namespace Croquis.Generated
         public bool Noche { get; set; }
 
         [JsonProperty("precipitacion")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter1))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter4))]
         public string Precipitacion { get; set; }
 
         /// <summary>
@@ -2996,7 +3131,7 @@ namespace Croquis.Generated
         public double SolElevacionDeg { get; set; }
 
         [JsonProperty("superficie")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter1))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter4))]
         public string Superficie { get; set; }
 
         /// <summary>
@@ -3024,7 +3159,7 @@ namespace Croquis.Generated
     public partial class DispositivoEscenario
     {
         [JsonProperty("id")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter1))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter4))]
         public string Id { get; set; }
 
         [JsonProperty("intermitente")]
@@ -3302,7 +3437,7 @@ namespace Croquis.Generated
     public partial class EvidenciaEscenario
     {
         [JsonProperty("id")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter1))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter4))]
         public string Id { get; set; }
 
         [JsonProperty("puntos")]
@@ -3387,7 +3522,7 @@ namespace Croquis.Generated
         public TipoMarcador Tipo { get; set; }
 
         [JsonProperty("vehiculo_id", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter1))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter4))]
         public string VehiculoId { get; set; }
 
         [JsonProperty("x")]
@@ -3527,7 +3662,7 @@ namespace Croquis.Generated
         public TramoFreno[] Frenado { get; set; }
 
         [JsonProperty("id")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter1))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter4))]
         public string Id { get; set; }
     }
 
@@ -3643,7 +3778,7 @@ namespace Croquis.Generated
         public ConsistenciaElement[] Consistencia { get; set; }
 
         [JsonProperty("dt")]
-        [JsonConverter(typeof(MinMaxValueCheckConverter9))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter10))]
         public double Dt { get; set; }
 
         [JsonProperty("escena_id")]
@@ -3686,7 +3821,7 @@ namespace Croquis.Generated
         public double TFin { get; set; }
 
         [JsonProperty("t_inicio")]
-        [JsonConverter(typeof(MinMaxValueCheckConverter13))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter14))]
         public double TInicio { get; set; }
 
         [JsonProperty("vehiculos")]
@@ -3985,7 +4120,7 @@ namespace Croquis.Generated
         public double[] ImpulsoNs { get; set; }
 
         [JsonProperty("objeto", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter3))]
+        [JsonConverter(typeof(FriskyMinMaxLengthCheckConverter))]
         public string Objeto { get; set; }
 
         /// <summary>
@@ -4058,7 +4193,7 @@ namespace Croquis.Generated
         /// parámetro del solver que no está en la escena, parametros.&lt;nombre&gt; (desde 1.6.0).
         /// </summary>
         [JsonProperty("ruta")]
-        [JsonConverter(typeof(MischievousMinMaxLengthCheckConverter))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter2))]
         public string Ruta { get; set; }
     }
 
@@ -4166,7 +4301,7 @@ namespace Croquis.Generated
     public partial class ResiduoElement
     {
         [JsonProperty("nombre")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter1))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter4))]
         public string Nombre { get; set; }
 
         [JsonProperty("sigma")]
@@ -4176,7 +4311,7 @@ namespace Croquis.Generated
     public partial class PurpleValore
     {
         [JsonProperty("nombre")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter1))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter4))]
         public string Nombre { get; set; }
 
         [JsonProperty("valor")]
@@ -4239,7 +4374,7 @@ namespace Croquis.Generated
     public partial class FluffyValore
     {
         [JsonProperty("nombre")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter1))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter4))]
         public string Nombre { get; set; }
 
         [JsonProperty("valor")]
@@ -4405,7 +4540,7 @@ namespace Croquis.Generated
     public partial class ModoValore
     {
         [JsonProperty("nombre")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter1))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter4))]
         public string Nombre { get; set; }
 
         [JsonProperty("valor")]
@@ -4425,7 +4560,7 @@ namespace Croquis.Generated
         public double AnchoM { get; set; }
 
         [JsonProperty("clase_vehiculo", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter3))]
+        [JsonConverter(typeof(FriskyMinMaxLengthCheckConverter))]
         public string ClaseVehiculo { get; set; }
 
         [JsonProperty("copa", NullValueHandling = NullValueHandling.Ignore)]
@@ -4553,7 +4688,7 @@ namespace Croquis.Generated
     public partial class ResultadoPersona
     {
         [JsonProperty("estatura_m")]
-        [JsonConverter(typeof(MinMaxValueCheckConverter10))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter11))]
         public double EstaturaM { get; set; }
 
         [JsonProperty("fases")]
@@ -4673,7 +4808,7 @@ namespace Croquis.Generated
         public double VelocidadRelativaKmh { get; set; }
 
         [JsonProperty("zona")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter2))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter5))]
         public string Zona { get; set; }
     }
 
@@ -4686,11 +4821,11 @@ namespace Croquis.Generated
     public partial class Proyeccion
     {
         [JsonProperty("altura_cg_m")]
-        [JsonConverter(typeof(MinMaxValueCheckConverter11))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter12))]
         public double AlturaCgM { get; set; }
 
         [JsonProperty("angulo_lanzamiento_deg")]
-        [JsonConverter(typeof(MinMaxValueCheckConverter12))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter13))]
         public double AnguloLanzamientoDeg { get; set; }
 
         [JsonProperty("banda_searle_m")]
@@ -4729,15 +4864,15 @@ namespace Croquis.Generated
     public partial class ProyeccionContacto
     {
         [JsonProperty("borde_cofre")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter3))]
+        [JsonConverter(typeof(FriskyMinMaxLengthCheckConverter))]
         public string BordeCofre { get; set; }
 
         [JsonProperty("cabeza")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter3))]
+        [JsonConverter(typeof(FriskyMinMaxLengthCheckConverter))]
         public string Cabeza { get; set; }
 
         [JsonProperty("defensa")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter3))]
+        [JsonConverter(typeof(FriskyMinMaxLengthCheckConverter))]
         public string Defensa { get; set; }
     }
 
@@ -4818,7 +4953,7 @@ namespace Croquis.Generated
         public bool Involucrado { get; set; }
 
         [JsonProperty("pdof_horas", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxValueCheckConverter14))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter15))]
         public double? PdofHoras { get; set; }
 
         [JsonProperty("pose_final")]
@@ -5119,7 +5254,7 @@ namespace Croquis.Generated
         /// Lo que más tiempo tapó la vista antes de verse (si algo la tapó).
         /// </summary>
         [JsonProperty("oclusor_principal", NullValueHandling = NullValueHandling.Ignore)]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter8))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter10))]
         public string OclusorPrincipal { get; set; }
 
         [JsonProperty("tiempo_disponible_s", NullValueHandling = NullValueHandling.Ignore)]
@@ -5172,7 +5307,7 @@ namespace Croquis.Generated
         /// Cuántos metros cubre cada lado de la imagen.
         /// </summary>
         [JsonProperty("lado_m")]
-        [JsonConverter(typeof(MinMaxValueCheckConverter15))]
+        [JsonConverter(typeof(MinMaxValueCheckConverter16))]
         public double LadoM { get; set; }
     }
 
@@ -5204,14 +5339,14 @@ namespace Croquis.Generated
         /// De dónde salieron las alturas (p. ej. el modelo de elevación).
         /// </summary>
         [JsonProperty("fuente")]
-        [JsonConverter(typeof(MischievousMinMaxLengthCheckConverter))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter2))]
         public string Fuente { get; set; }
 
         /// <summary>
         /// Lo cita `lugar.terreno.relieve.malla_id`.
         /// </summary>
         [JsonProperty("id")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter1))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter4))]
         public string Id { get; set; }
 
         /// <summary>
@@ -5219,7 +5354,7 @@ namespace Croquis.Generated
         /// pasa de 120 caracteres).
         /// </summary>
         [JsonProperty("licencia")]
-        [JsonConverter(typeof(MinMaxLengthCheckConverter7))]
+        [JsonConverter(typeof(MinMaxLengthCheckConverter9))]
         public string Licencia { get; set; }
 
         [JsonProperty("origen")]
@@ -5349,7 +5484,15 @@ namespace Croquis.Generated
 
     public enum EstadoSuperficieValor { Aceite, Encharcado, GravaSuelta, Lodo, Mojado, Seco };
 
+    public enum EstructuraValor { PasoADesnivel, Puente };
+
+    public enum PendienteValor { Bajada, Subida };
+
     public enum SuperficieValor { Adoquin, Asfalto, Concreto, Empedrado, Terraceria };
+
+    public enum TrazoValor { Curva };
+
+    public enum CallesDelMapaFuente { Overpass, Teselas };
 
     /// <summary>
     /// Modalidad del hecho de tránsito según los dictámenes de CESVI.
@@ -5584,7 +5727,11 @@ namespace Croquis.Generated
                 ResultadoFuenteConverter.Singleton,
                 MetodoConverter.Singleton,
                 EstadoSuperficieValorConverter.Singleton,
+                EstructuraValorConverter.Singleton,
+                PendienteValorConverter.Singleton,
                 SuperficieValorConverter.Singleton,
+                TrazoValorConverter.Singleton,
+                CallesDelMapaFuenteConverter.Singleton,
                 ModalidadeElementConverter.Singleton,
                 CriterioConverter.Singleton,
                 EstadoConverter.Singleton,
@@ -7634,6 +7781,88 @@ namespace Croquis.Generated
         public static readonly EstadoSuperficieValorConverter Singleton = new EstadoSuperficieValorConverter();
     }
 
+    internal class EstructuraValorConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(EstructuraValor) || t == typeof(EstructuraValor?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "paso_a_desnivel":
+                    return EstructuraValor.PasoADesnivel;
+                case "puente":
+                    return EstructuraValor.Puente;
+            }
+            throw new Exception("Cannot unmarshal type EstructuraValor");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (EstructuraValor)untypedValue;
+            switch (value)
+            {
+                case EstructuraValor.PasoADesnivel:
+                    serializer.Serialize(writer, "paso_a_desnivel");
+                    return;
+                case EstructuraValor.Puente:
+                    serializer.Serialize(writer, "puente");
+                    return;
+            }
+            throw new Exception("Cannot marshal type EstructuraValor");
+        }
+
+        public static readonly EstructuraValorConverter Singleton = new EstructuraValorConverter();
+    }
+
+    internal class PendienteValorConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(PendienteValor) || t == typeof(PendienteValor?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "bajada":
+                    return PendienteValor.Bajada;
+                case "subida":
+                    return PendienteValor.Subida;
+            }
+            throw new Exception("Cannot unmarshal type PendienteValor");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (PendienteValor)untypedValue;
+            switch (value)
+            {
+                case PendienteValor.Bajada:
+                    serializer.Serialize(writer, "bajada");
+                    return;
+                case PendienteValor.Subida:
+                    serializer.Serialize(writer, "subida");
+                    return;
+            }
+            throw new Exception("Cannot marshal type PendienteValor");
+        }
+
+        public static readonly PendienteValorConverter Singleton = new PendienteValorConverter();
+    }
+
     internal class SuperficieValorConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(SuperficieValor) || t == typeof(SuperficieValor?);
@@ -7688,6 +7917,40 @@ namespace Croquis.Generated
         }
 
         public static readonly SuperficieValorConverter Singleton = new SuperficieValorConverter();
+    }
+
+    internal class TrazoValorConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(TrazoValor) || t == typeof(TrazoValor?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            if (value == "curva")
+            {
+                return TrazoValor.Curva;
+            }
+            throw new Exception("Cannot unmarshal type TrazoValor");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (TrazoValor)untypedValue;
+            if (value == TrazoValor.Curva)
+            {
+                serializer.Serialize(writer, "curva");
+                return;
+            }
+            throw new Exception("Cannot marshal type TrazoValor");
+        }
+
+        public static readonly TrazoValorConverter Singleton = new TrazoValorConverter();
     }
 
     internal class StickyMinMaxValueCheckConverter : JsonConverter
@@ -7756,6 +8019,165 @@ namespace Croquis.Generated
         }
 
         public static readonly IndigoMinMaxValueCheckConverter Singleton = new IndigoMinMaxValueCheckConverter();
+    }
+
+    internal class CallesDelMapaFuenteConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(CallesDelMapaFuente) || t == typeof(CallesDelMapaFuente?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "overpass":
+                    return CallesDelMapaFuente.Overpass;
+                case "teselas":
+                    return CallesDelMapaFuente.Teselas;
+            }
+            throw new Exception("Cannot unmarshal type CallesDelMapaFuente");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (CallesDelMapaFuente)untypedValue;
+            switch (value)
+            {
+                case CallesDelMapaFuente.Overpass:
+                    serializer.Serialize(writer, "overpass");
+                    return;
+                case CallesDelMapaFuente.Teselas:
+                    serializer.Serialize(writer, "teselas");
+                    return;
+            }
+            throw new Exception("Cannot marshal type CallesDelMapaFuente");
+        }
+
+        public static readonly CallesDelMapaFuenteConverter Singleton = new CallesDelMapaFuenteConverter();
+    }
+
+    internal class IndecentMinMaxValueCheckConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<double>(reader);
+            if (value >= 10 && value <= 2000)
+            {
+                return value;
+            }
+            throw new Exception("Cannot unmarshal type double");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (double)untypedValue;
+            if (value >= 10 && value <= 2000)
+            {
+                serializer.Serialize(writer, value);
+                return;
+            }
+            throw new Exception("Cannot marshal type double");
+        }
+
+        public static readonly IndecentMinMaxValueCheckConverter Singleton = new IndecentMinMaxValueCheckConverter();
+    }
+
+    internal class CunningMinMaxLengthCheckConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(string);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            var value = serializer.Deserialize<string>(reader);
+            if (value.Length <= 10)
+            {
+                return value;
+            }
+            throw new Exception("Cannot unmarshal type string");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            var value = (string)untypedValue;
+            if (value.Length <= 10)
+            {
+                serializer.Serialize(writer, value);
+                return;
+            }
+            throw new Exception("Cannot marshal type string");
+        }
+
+        public static readonly CunningMinMaxLengthCheckConverter Singleton = new CunningMinMaxLengthCheckConverter();
+    }
+
+    internal class MagentaMinMaxLengthCheckConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(string);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            var value = serializer.Deserialize<string>(reader);
+            if (value.Length <= 20)
+            {
+                return value;
+            }
+            throw new Exception("Cannot unmarshal type string");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            var value = (string)untypedValue;
+            if (value.Length <= 20)
+            {
+                serializer.Serialize(writer, value);
+                return;
+            }
+            throw new Exception("Cannot marshal type string");
+        }
+
+        public static readonly MagentaMinMaxLengthCheckConverter Singleton = new MagentaMinMaxLengthCheckConverter();
+    }
+
+    internal class FriskyMinMaxLengthCheckConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(string);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            var value = serializer.Deserialize<string>(reader);
+            if (value.Length <= 40)
+            {
+                return value;
+            }
+            throw new Exception("Cannot unmarshal type string");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            var value = (string)untypedValue;
+            if (value.Length <= 40)
+            {
+                serializer.Serialize(writer, value);
+                return;
+            }
+            throw new Exception("Cannot marshal type string");
+        }
+
+        public static readonly FriskyMinMaxLengthCheckConverter Singleton = new FriskyMinMaxLengthCheckConverter();
     }
 
     internal class ModalidadeElementConverter : JsonConverter
@@ -7956,7 +8378,7 @@ namespace Croquis.Generated
         public static readonly EstadoConverter Singleton = new EstadoConverter();
     }
 
-    internal class IndecentMinMaxValueCheckConverter : JsonConverter
+    internal class HilariousMinMaxValueCheckConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -7987,7 +8409,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly IndecentMinMaxValueCheckConverter Singleton = new IndecentMinMaxValueCheckConverter();
+        public static readonly HilariousMinMaxValueCheckConverter Singleton = new HilariousMinMaxValueCheckConverter();
     }
 
     internal class DireccioneElementConverter : JsonConverter
@@ -8061,7 +8483,7 @@ namespace Croquis.Generated
             var value = new List<string>();
             while (reader.TokenType != JsonToken.EndArray)
             {
-                var converter = CunningMinMaxLengthCheckConverter.Singleton;
+                var converter = MischievousMinMaxLengthCheckConverter.Singleton;
                 var arrayItem = (string)converter.ReadJson(reader, typeof(string), null, serializer);
                 value.Add(arrayItem);
                 reader.Read();
@@ -8075,7 +8497,7 @@ namespace Croquis.Generated
             writer.WriteStartArray();
             foreach (var arrayItem in value)
             {
-                var converter = CunningMinMaxLengthCheckConverter.Singleton;
+                var converter = MischievousMinMaxLengthCheckConverter.Singleton;
                 converter.WriteJson(writer, arrayItem, serializer);
             }
             writer.WriteEndArray();
@@ -8085,7 +8507,7 @@ namespace Croquis.Generated
         public static readonly FluffyDecodeArrayConverter Singleton = new FluffyDecodeArrayConverter();
     }
 
-    internal class CunningMinMaxLengthCheckConverter : JsonConverter
+    internal class MischievousMinMaxLengthCheckConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(string);
 
@@ -8110,10 +8532,10 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type string");
         }
 
-        public static readonly CunningMinMaxLengthCheckConverter Singleton = new CunningMinMaxLengthCheckConverter();
+        public static readonly MischievousMinMaxLengthCheckConverter Singleton = new MischievousMinMaxLengthCheckConverter();
     }
 
-    internal class MagentaMinMaxLengthCheckConverter : JsonConverter
+    internal class BraggadociousMinMaxLengthCheckConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(string);
 
@@ -8138,10 +8560,10 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type string");
         }
 
-        public static readonly MagentaMinMaxLengthCheckConverter Singleton = new MagentaMinMaxLengthCheckConverter();
+        public static readonly BraggadociousMinMaxLengthCheckConverter Singleton = new BraggadociousMinMaxLengthCheckConverter();
     }
 
-    internal class FriskyMinMaxLengthCheckConverter : JsonConverter
+    internal class MinMaxLengthCheckConverter1 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(string);
 
@@ -8166,7 +8588,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type string");
         }
 
-        public static readonly FriskyMinMaxLengthCheckConverter Singleton = new FriskyMinMaxLengthCheckConverter();
+        public static readonly MinMaxLengthCheckConverter1 Singleton = new MinMaxLengthCheckConverter1();
     }
 
     internal class TentacledDecodeArrayConverter : JsonConverter
@@ -8179,7 +8601,7 @@ namespace Croquis.Generated
             var value = new List<double>();
             while (reader.TokenType != JsonToken.EndArray)
             {
-                var converter = HilariousMinMaxValueCheckConverter.Singleton;
+                var converter = AmbitiousMinMaxValueCheckConverter.Singleton;
                 var arrayItem = (double)converter.ReadJson(reader, typeof(double), null, serializer);
                 value.Add(arrayItem);
                 reader.Read();
@@ -8193,7 +8615,7 @@ namespace Croquis.Generated
             writer.WriteStartArray();
             foreach (var arrayItem in value)
             {
-                var converter = HilariousMinMaxValueCheckConverter.Singleton;
+                var converter = AmbitiousMinMaxValueCheckConverter.Singleton;
                 converter.WriteJson(writer, arrayItem, serializer);
             }
             writer.WriteEndArray();
@@ -8203,7 +8625,7 @@ namespace Croquis.Generated
         public static readonly TentacledDecodeArrayConverter Singleton = new TentacledDecodeArrayConverter();
     }
 
-    internal class HilariousMinMaxValueCheckConverter : JsonConverter
+    internal class AmbitiousMinMaxValueCheckConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -8234,7 +8656,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly HilariousMinMaxValueCheckConverter Singleton = new HilariousMinMaxValueCheckConverter();
+        public static readonly AmbitiousMinMaxValueCheckConverter Singleton = new AmbitiousMinMaxValueCheckConverter();
     }
 
     internal class CualitativaConverter : JsonConverter
@@ -8283,7 +8705,7 @@ namespace Croquis.Generated
         public static readonly CualitativaConverter Singleton = new CualitativaConverter();
     }
 
-    internal class AmbitiousMinMaxValueCheckConverter : JsonConverter
+    internal class CunningMinMaxValueCheckConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -8314,7 +8736,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly AmbitiousMinMaxValueCheckConverter Singleton = new AmbitiousMinMaxValueCheckConverter();
+        public static readonly CunningMinMaxValueCheckConverter Singleton = new CunningMinMaxValueCheckConverter();
     }
 
     internal class TipoElementConverter : JsonConverter
@@ -8612,7 +9034,7 @@ namespace Croquis.Generated
             var value = new List<string>();
             while (reader.TokenType != JsonToken.EndArray)
             {
-                var converter = FriskyMinMaxLengthCheckConverter.Singleton;
+                var converter = MinMaxLengthCheckConverter1.Singleton;
                 var arrayItem = (string)converter.ReadJson(reader, typeof(string), null, serializer);
                 value.Add(arrayItem);
                 reader.Read();
@@ -8626,7 +9048,7 @@ namespace Croquis.Generated
             writer.WriteStartArray();
             foreach (var arrayItem in value)
             {
-                var converter = FriskyMinMaxLengthCheckConverter.Singleton;
+                var converter = MinMaxLengthCheckConverter1.Singleton;
                 converter.WriteJson(writer, arrayItem, serializer);
             }
             writer.WriteEndArray();
@@ -8636,7 +9058,7 @@ namespace Croquis.Generated
         public static readonly StickyDecodeArrayConverter Singleton = new StickyDecodeArrayConverter();
     }
 
-    internal class MischievousMinMaxLengthCheckConverter : JsonConverter
+    internal class MinMaxLengthCheckConverter2 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(string);
 
@@ -8661,41 +9083,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type string");
         }
 
-        public static readonly MischievousMinMaxLengthCheckConverter Singleton = new MischievousMinMaxLengthCheckConverter();
-    }
-
-    internal class CunningMinMaxValueCheckConverter : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            if (reader.TokenType == JsonToken.Null) return null;
-            var value = serializer.Deserialize<double>(reader);
-            if (value <= 20)
-            {
-                return value;
-            }
-            throw new Exception("Cannot unmarshal type double");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            if (untypedValue == null)
-            {
-                serializer.Serialize(writer, null);
-                return;
-            }
-            var value = (double)untypedValue;
-            if (value <= 20)
-            {
-                serializer.Serialize(writer, value);
-                return;
-            }
-            throw new Exception("Cannot marshal type double");
-        }
-
-        public static readonly CunningMinMaxValueCheckConverter Singleton = new CunningMinMaxValueCheckConverter();
+        public static readonly MinMaxLengthCheckConverter2 Singleton = new MinMaxLengthCheckConverter2();
     }
 
     internal class MagentaMinMaxValueCheckConverter : JsonConverter
@@ -8706,6 +9094,40 @@ namespace Croquis.Generated
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<double>(reader);
+            if (value <= 20)
+            {
+                return value;
+            }
+            throw new Exception("Cannot unmarshal type double");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (double)untypedValue;
+            if (value <= 20)
+            {
+                serializer.Serialize(writer, value);
+                return;
+            }
+            throw new Exception("Cannot marshal type double");
+        }
+
+        public static readonly MagentaMinMaxValueCheckConverter Singleton = new MagentaMinMaxValueCheckConverter();
+    }
+
+    internal class FriskyMinMaxValueCheckConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<double>(reader);
             if (value <= 60)
             {
                 return value;
@@ -8729,7 +9151,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MagentaMinMaxValueCheckConverter Singleton = new MagentaMinMaxValueCheckConverter();
+        public static readonly FriskyMinMaxValueCheckConverter Singleton = new FriskyMinMaxValueCheckConverter();
     }
 
     internal class TentacledTipoConverter : JsonConverter
@@ -8936,7 +9358,7 @@ namespace Croquis.Generated
         public static readonly DecisionEnumConverter Singleton = new DecisionEnumConverter();
     }
 
-    internal class BraggadociousMinMaxLengthCheckConverter : JsonConverter
+    internal class MinMaxLengthCheckConverter3 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(string);
 
@@ -8961,41 +9383,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type string");
         }
 
-        public static readonly BraggadociousMinMaxLengthCheckConverter Singleton = new BraggadociousMinMaxLengthCheckConverter();
-    }
-
-    internal class FriskyMinMaxValueCheckConverter : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            if (reader.TokenType == JsonToken.Null) return null;
-            var value = serializer.Deserialize<double>(reader);
-            if (value <= 2)
-            {
-                return value;
-            }
-            throw new Exception("Cannot unmarshal type double");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            if (untypedValue == null)
-            {
-                serializer.Serialize(writer, null);
-                return;
-            }
-            var value = (double)untypedValue;
-            if (value <= 2)
-            {
-                serializer.Serialize(writer, value);
-                return;
-            }
-            throw new Exception("Cannot marshal type double");
-        }
-
-        public static readonly FriskyMinMaxValueCheckConverter Singleton = new FriskyMinMaxValueCheckConverter();
+        public static readonly MinMaxLengthCheckConverter3 Singleton = new MinMaxLengthCheckConverter3();
     }
 
     internal class MischievousMinMaxValueCheckConverter : JsonConverter
@@ -9006,6 +9394,40 @@ namespace Croquis.Generated
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<double>(reader);
+            if (value <= 2)
+            {
+                return value;
+            }
+            throw new Exception("Cannot unmarshal type double");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (double)untypedValue;
+            if (value <= 2)
+            {
+                serializer.Serialize(writer, value);
+                return;
+            }
+            throw new Exception("Cannot marshal type double");
+        }
+
+        public static readonly MischievousMinMaxValueCheckConverter Singleton = new MischievousMinMaxValueCheckConverter();
+    }
+
+    internal class BraggadociousMinMaxValueCheckConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<double>(reader);
             if (value <= 200)
             {
                 return value;
@@ -9029,7 +9451,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MischievousMinMaxValueCheckConverter Singleton = new MischievousMinMaxValueCheckConverter();
+        public static readonly BraggadociousMinMaxValueCheckConverter Singleton = new BraggadociousMinMaxValueCheckConverter();
     }
 
     internal class PurpleFuenteConverter : JsonConverter
@@ -9073,7 +9495,7 @@ namespace Croquis.Generated
         public static readonly PurpleFuenteConverter Singleton = new PurpleFuenteConverter();
     }
 
-    internal class MinMaxLengthCheckConverter1 : JsonConverter
+    internal class MinMaxLengthCheckConverter4 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(string);
 
@@ -9098,10 +9520,10 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type string");
         }
 
-        public static readonly MinMaxLengthCheckConverter1 Singleton = new MinMaxLengthCheckConverter1();
+        public static readonly MinMaxLengthCheckConverter4 Singleton = new MinMaxLengthCheckConverter4();
     }
 
-    internal class BraggadociousMinMaxValueCheckConverter : JsonConverter
+    internal class MinMaxValueCheckConverter1 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -9132,7 +9554,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly BraggadociousMinMaxValueCheckConverter Singleton = new BraggadociousMinMaxValueCheckConverter();
+        public static readonly MinMaxValueCheckConverter1 Singleton = new MinMaxValueCheckConverter1();
     }
 
     internal class TipoSuperficieConverter : JsonConverter
@@ -9211,40 +9633,6 @@ namespace Croquis.Generated
         public static readonly TipoSuperficieConverter Singleton = new TipoSuperficieConverter();
     }
 
-    internal class MinMaxValueCheckConverter1 : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            if (reader.TokenType == JsonToken.Null) return null;
-            var value = serializer.Deserialize<double>(reader);
-            if (value <= 0.5)
-            {
-                return value;
-            }
-            throw new Exception("Cannot unmarshal type double");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            if (untypedValue == null)
-            {
-                serializer.Serialize(writer, null);
-                return;
-            }
-            var value = (double)untypedValue;
-            if (value <= 0.5)
-            {
-                serializer.Serialize(writer, value);
-                return;
-            }
-            throw new Exception("Cannot marshal type double");
-        }
-
-        public static readonly MinMaxValueCheckConverter1 Singleton = new MinMaxValueCheckConverter1();
-    }
-
     internal class MinMaxValueCheckConverter2 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
@@ -9253,6 +9641,40 @@ namespace Croquis.Generated
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<double>(reader);
+            if (value <= 0.5)
+            {
+                return value;
+            }
+            throw new Exception("Cannot unmarshal type double");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (double)untypedValue;
+            if (value <= 0.5)
+            {
+                serializer.Serialize(writer, value);
+                return;
+            }
+            throw new Exception("Cannot marshal type double");
+        }
+
+        public static readonly MinMaxValueCheckConverter2 Singleton = new MinMaxValueCheckConverter2();
+    }
+
+    internal class MinMaxValueCheckConverter3 : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<double>(reader);
             if (value >= 0 && value <= 300)
             {
                 return value;
@@ -9276,7 +9698,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter2 Singleton = new MinMaxValueCheckConverter2();
+        public static readonly MinMaxValueCheckConverter3 Singleton = new MinMaxValueCheckConverter3();
     }
 
     internal class FluffyFuenteConverter : JsonConverter
@@ -9330,7 +9752,7 @@ namespace Croquis.Generated
         public static readonly FluffyFuenteConverter Singleton = new FluffyFuenteConverter();
     }
 
-    internal class MinMaxValueCheckConverter3 : JsonConverter
+    internal class MinMaxValueCheckConverter4 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -9361,7 +9783,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter3 Singleton = new MinMaxValueCheckConverter3();
+        public static readonly MinMaxValueCheckConverter4 Singleton = new MinMaxValueCheckConverter4();
     }
 
     internal class VelocidadNarradaOrigenConverter : JsonConverter
@@ -9420,7 +9842,7 @@ namespace Croquis.Generated
             var value = new List<double>();
             while (reader.TokenType != JsonToken.EndArray)
             {
-                var converter = MinMaxValueCheckConverter2.Singleton;
+                var converter = MinMaxValueCheckConverter3.Singleton;
                 var arrayItem = (double)converter.ReadJson(reader, typeof(double), null, serializer);
                 value.Add(arrayItem);
                 reader.Read();
@@ -9434,7 +9856,7 @@ namespace Croquis.Generated
             writer.WriteStartArray();
             foreach (var arrayItem in value)
             {
-                var converter = MinMaxValueCheckConverter2.Singleton;
+                var converter = MinMaxValueCheckConverter3.Singleton;
                 converter.WriteJson(writer, arrayItem, serializer);
             }
             writer.WriteEndArray();
@@ -9490,7 +9912,7 @@ namespace Croquis.Generated
         public static readonly RespectoAlLimiteConverter Singleton = new RespectoAlLimiteConverter();
     }
 
-    internal class MinMaxValueCheckConverter4 : JsonConverter
+    internal class MinMaxValueCheckConverter5 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -9521,7 +9943,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter4 Singleton = new MinMaxValueCheckConverter4();
+        public static readonly MinMaxValueCheckConverter5 Singleton = new MinMaxValueCheckConverter5();
     }
 
     internal class SentidoMarchaEnumConverter : JsonConverter
@@ -9687,7 +10109,7 @@ namespace Croquis.Generated
         public static readonly PosicioneFaseConverter Singleton = new PosicioneFaseConverter();
     }
 
-    internal class MinMaxValueCheckConverter5 : JsonConverter
+    internal class MinMaxValueCheckConverter6 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -9718,7 +10140,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter5 Singleton = new MinMaxValueCheckConverter5();
+        public static readonly MinMaxValueCheckConverter6 Singleton = new MinMaxValueCheckConverter6();
     }
 
     internal class VersioneTipoConverter : JsonConverter
@@ -9818,7 +10240,7 @@ namespace Croquis.Generated
         public static readonly ColorEnumConverter Singleton = new ColorEnumConverter();
     }
 
-    internal class MinMaxLengthCheckConverter2 : JsonConverter
+    internal class MinMaxLengthCheckConverter5 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(string);
 
@@ -9843,7 +10265,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type string");
         }
 
-        public static readonly MinMaxLengthCheckConverter2 Singleton = new MinMaxLengthCheckConverter2();
+        public static readonly MinMaxLengthCheckConverter5 Singleton = new MinMaxLengthCheckConverter5();
     }
 
     internal class VelocidadUnidadConverter : JsonConverter
@@ -10012,7 +10434,7 @@ namespace Croquis.Generated
         public static readonly PendienteUnidadConverter Singleton = new PendienteUnidadConverter();
     }
 
-    internal class MinMaxValueCheckConverter6 : JsonConverter
+    internal class MinMaxValueCheckConverter7 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -10043,35 +10465,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter6 Singleton = new MinMaxValueCheckConverter6();
-    }
-
-    internal class MinMaxLengthCheckConverter3 : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(string);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            var value = serializer.Deserialize<string>(reader);
-            if (value.Length <= 40)
-            {
-                return value;
-            }
-            throw new Exception("Cannot unmarshal type string");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            var value = (string)untypedValue;
-            if (value.Length <= 40)
-            {
-                serializer.Serialize(writer, value);
-                return;
-            }
-            throw new Exception("Cannot marshal type string");
-        }
-
-        public static readonly MinMaxLengthCheckConverter3 Singleton = new MinMaxLengthCheckConverter3();
+        public static readonly MinMaxValueCheckConverter7 Singleton = new MinMaxValueCheckConverter7();
     }
 
     internal class FuenteDatosConverter : JsonConverter
@@ -10142,7 +10536,7 @@ namespace Croquis.Generated
         public static readonly LicenciaConverter Singleton = new LicenciaConverter();
     }
 
-    internal class MinMaxValueCheckConverter7 : JsonConverter
+    internal class MinMaxValueCheckConverter8 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -10173,10 +10567,10 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter7 Singleton = new MinMaxValueCheckConverter7();
+        public static readonly MinMaxValueCheckConverter8 Singleton = new MinMaxValueCheckConverter8();
     }
 
-    internal class MinMaxLengthCheckConverter4 : JsonConverter
+    internal class MinMaxLengthCheckConverter6 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(string);
 
@@ -10201,7 +10595,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type string");
         }
 
-        public static readonly MinMaxLengthCheckConverter4 Singleton = new MinMaxLengthCheckConverter4();
+        public static readonly MinMaxLengthCheckConverter6 Singleton = new MinMaxLengthCheckConverter6();
     }
 
     internal class SentidosValorConverter : JsonConverter
@@ -10372,7 +10766,7 @@ namespace Croquis.Generated
         public static readonly TipoViaValorConverter Singleton = new TipoViaValorConverter();
     }
 
-    internal class MinMaxValueCheckConverter8 : JsonConverter
+    internal class MinMaxValueCheckConverter9 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -10403,10 +10797,10 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter8 Singleton = new MinMaxValueCheckConverter8();
+        public static readonly MinMaxValueCheckConverter9 Singleton = new MinMaxValueCheckConverter9();
     }
 
-    internal class MinMaxLengthCheckConverter5 : JsonConverter
+    internal class MinMaxLengthCheckConverter7 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(string);
 
@@ -10431,7 +10825,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type string");
         }
 
-        public static readonly MinMaxLengthCheckConverter5 Singleton = new MinMaxLengthCheckConverter5();
+        public static readonly MinMaxLengthCheckConverter7 Singleton = new MinMaxLengthCheckConverter7();
     }
 
     internal class IdiomaConverter : JsonConverter
@@ -10526,7 +10920,7 @@ namespace Croquis.Generated
         public static readonly OrigenRelatoConverter Singleton = new OrigenRelatoConverter();
     }
 
-    internal class MinMaxLengthCheckConverter6 : JsonConverter
+    internal class MinMaxLengthCheckConverter8 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(string);
 
@@ -10551,7 +10945,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type string");
         }
 
-        public static readonly MinMaxLengthCheckConverter6 Singleton = new MinMaxLengthCheckConverter6();
+        public static readonly MinMaxLengthCheckConverter8 Singleton = new MinMaxLengthCheckConverter8();
     }
 
     internal class VersionEsquemaConverter : JsonConverter
@@ -11843,7 +12237,7 @@ namespace Croquis.Generated
             var value = new List<string>();
             while (reader.TokenType != JsonToken.EndArray)
             {
-                var converter = MinMaxLengthCheckConverter7.Singleton;
+                var converter = MinMaxLengthCheckConverter9.Singleton;
                 var arrayItem = (string)converter.ReadJson(reader, typeof(string), null, serializer);
                 value.Add(arrayItem);
                 reader.Read();
@@ -11857,7 +12251,7 @@ namespace Croquis.Generated
             writer.WriteStartArray();
             foreach (var arrayItem in value)
             {
-                var converter = MinMaxLengthCheckConverter7.Singleton;
+                var converter = MinMaxLengthCheckConverter9.Singleton;
                 converter.WriteJson(writer, arrayItem, serializer);
             }
             writer.WriteEndArray();
@@ -11867,7 +12261,7 @@ namespace Croquis.Generated
         public static readonly HilariousDecodeArrayConverter Singleton = new HilariousDecodeArrayConverter();
     }
 
-    internal class MinMaxLengthCheckConverter7 : JsonConverter
+    internal class MinMaxLengthCheckConverter9 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(string);
 
@@ -11892,7 +12286,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type string");
         }
 
-        public static readonly MinMaxLengthCheckConverter7 Singleton = new MinMaxLengthCheckConverter7();
+        public static readonly MinMaxLengthCheckConverter9 Singleton = new MinMaxLengthCheckConverter9();
     }
 
     internal class CodigoConverter : JsonConverter
@@ -11981,7 +12375,7 @@ namespace Croquis.Generated
             var value = new List<string>();
             while (reader.TokenType != JsonToken.EndArray)
             {
-                var converter = MinMaxLengthCheckConverter1.Singleton;
+                var converter = MinMaxLengthCheckConverter4.Singleton;
                 var arrayItem = (string)converter.ReadJson(reader, typeof(string), null, serializer);
                 value.Add(arrayItem);
                 reader.Read();
@@ -11995,7 +12389,7 @@ namespace Croquis.Generated
             writer.WriteStartArray();
             foreach (var arrayItem in value)
             {
-                var converter = MinMaxLengthCheckConverter1.Singleton;
+                var converter = MinMaxLengthCheckConverter4.Singleton;
                 converter.WriteJson(writer, arrayItem, serializer);
             }
             writer.WriteEndArray();
@@ -12005,7 +12399,7 @@ namespace Croquis.Generated
         public static readonly AmbitiousDecodeArrayConverter Singleton = new AmbitiousDecodeArrayConverter();
     }
 
-    internal class MinMaxValueCheckConverter9 : JsonConverter
+    internal class MinMaxValueCheckConverter10 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -12036,7 +12430,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter9 Singleton = new MinMaxValueCheckConverter9();
+        public static readonly MinMaxValueCheckConverter10 Singleton = new MinMaxValueCheckConverter10();
     }
 
     internal class CunningDecodeArrayConverter : JsonConverter
@@ -12516,7 +12910,7 @@ namespace Croquis.Generated
         public static readonly AlcanceDeteccionNocturnaTipoConverter Singleton = new AlcanceDeteccionNocturnaTipoConverter();
     }
 
-    internal class MinMaxValueCheckConverter10 : JsonConverter
+    internal class MinMaxValueCheckConverter11 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -12547,7 +12941,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter10 Singleton = new MinMaxValueCheckConverter10();
+        public static readonly MinMaxValueCheckConverter11 Singleton = new MinMaxValueCheckConverter11();
     }
 
     internal class FaseFaseConverter : JsonConverter
@@ -12611,40 +13005,6 @@ namespace Croquis.Generated
         public static readonly FaseFaseConverter Singleton = new FaseFaseConverter();
     }
 
-    internal class MinMaxValueCheckConverter11 : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            if (reader.TokenType == JsonToken.Null) return null;
-            var value = serializer.Deserialize<double>(reader);
-            if (value <= 3)
-            {
-                return value;
-            }
-            throw new Exception("Cannot unmarshal type double");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            if (untypedValue == null)
-            {
-                serializer.Serialize(writer, null);
-                return;
-            }
-            var value = (double)untypedValue;
-            if (value <= 3)
-            {
-                serializer.Serialize(writer, value);
-                return;
-            }
-            throw new Exception("Cannot marshal type double");
-        }
-
-        public static readonly MinMaxValueCheckConverter11 Singleton = new MinMaxValueCheckConverter11();
-    }
-
     internal class MinMaxValueCheckConverter12 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
@@ -12653,7 +13013,7 @@ namespace Croquis.Generated
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<double>(reader);
-            if (value >= 0 && value <= 90)
+            if (value <= 3)
             {
                 return value;
             }
@@ -12668,7 +13028,7 @@ namespace Croquis.Generated
                 return;
             }
             var value = (double)untypedValue;
-            if (value >= 0 && value <= 90)
+            if (value <= 3)
             {
                 serializer.Serialize(writer, value);
                 return;
@@ -12687,6 +13047,40 @@ namespace Croquis.Generated
         {
             if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<double>(reader);
+            if (value >= 0 && value <= 90)
+            {
+                return value;
+            }
+            throw new Exception("Cannot unmarshal type double");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (double)untypedValue;
+            if (value >= 0 && value <= 90)
+            {
+                serializer.Serialize(writer, value);
+                return;
+            }
+            throw new Exception("Cannot marshal type double");
+        }
+
+        public static readonly MinMaxValueCheckConverter13 Singleton = new MinMaxValueCheckConverter13();
+    }
+
+    internal class MinMaxValueCheckConverter14 : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<double>(reader);
             if (value <= 0)
             {
                 return value;
@@ -12710,7 +13104,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter13 Singleton = new MinMaxValueCheckConverter13();
+        public static readonly MinMaxValueCheckConverter14 Singleton = new MinMaxValueCheckConverter14();
     }
 
     internal class OrigenRigidezConverter : JsonConverter
@@ -12793,7 +13187,7 @@ namespace Croquis.Generated
         public static readonly MagentaDecodeArrayConverter Singleton = new MagentaDecodeArrayConverter();
     }
 
-    internal class MinMaxValueCheckConverter14 : JsonConverter
+    internal class MinMaxValueCheckConverter15 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -12824,7 +13218,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter14 Singleton = new MinMaxValueCheckConverter14();
+        public static readonly MinMaxValueCheckConverter15 Singleton = new MinMaxValueCheckConverter15();
     }
 
     internal class LadoTropiezoConverter : JsonConverter
@@ -12912,7 +13306,7 @@ namespace Croquis.Generated
             var value = new List<string>();
             while (reader.TokenType != JsonToken.EndArray)
             {
-                var converter = MinMaxLengthCheckConverter8.Singleton;
+                var converter = MinMaxLengthCheckConverter10.Singleton;
                 var arrayItem = (string)converter.ReadJson(reader, typeof(string), null, serializer);
                 value.Add(arrayItem);
                 reader.Read();
@@ -12926,7 +13320,7 @@ namespace Croquis.Generated
             writer.WriteStartArray();
             foreach (var arrayItem in value)
             {
-                var converter = MinMaxLengthCheckConverter8.Singleton;
+                var converter = MinMaxLengthCheckConverter10.Singleton;
                 converter.WriteJson(writer, arrayItem, serializer);
             }
             writer.WriteEndArray();
@@ -12936,7 +13330,7 @@ namespace Croquis.Generated
         public static readonly FriskyDecodeArrayConverter Singleton = new FriskyDecodeArrayConverter();
     }
 
-    internal class MinMaxLengthCheckConverter8 : JsonConverter
+    internal class MinMaxLengthCheckConverter10 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(string);
 
@@ -12961,7 +13355,7 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type string");
         }
 
-        public static readonly MinMaxLengthCheckConverter8 Singleton = new MinMaxLengthCheckConverter8();
+        public static readonly MinMaxLengthCheckConverter10 Singleton = new MinMaxLengthCheckConverter10();
     }
 
     internal class MischievousDecodeArrayConverter : JsonConverter
@@ -13008,7 +13402,7 @@ namespace Croquis.Generated
             var value = new List<string>();
             while (reader.TokenType != JsonToken.EndArray)
             {
-                var converter = MinMaxLengthCheckConverter8.Singleton;
+                var converter = MinMaxLengthCheckConverter10.Singleton;
                 var arrayItem = (string)converter.ReadJson(reader, typeof(string), null, serializer);
                 value.Add(arrayItem);
                 reader.Read();
@@ -13022,7 +13416,7 @@ namespace Croquis.Generated
             writer.WriteStartArray();
             foreach (var arrayItem in value)
             {
-                var converter = MinMaxLengthCheckConverter8.Singleton;
+                var converter = MinMaxLengthCheckConverter10.Singleton;
                 converter.WriteJson(writer, arrayItem, serializer);
             }
             writer.WriteEndArray();
@@ -13078,7 +13472,7 @@ namespace Croquis.Generated
         public static readonly TipoObjetivoConverter Singleton = new TipoObjetivoConverter();
     }
 
-    internal class MinMaxValueCheckConverter15 : JsonConverter
+    internal class MinMaxValueCheckConverter16 : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double) || t == typeof(double?);
 
@@ -13109,6 +13503,6 @@ namespace Croquis.Generated
             throw new Exception("Cannot marshal type double");
         }
 
-        public static readonly MinMaxValueCheckConverter15 Singleton = new MinMaxValueCheckConverter15();
+        public static readonly MinMaxValueCheckConverter16 Singleton = new MinMaxValueCheckConverter16();
     }
 }

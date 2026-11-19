@@ -1,3 +1,4 @@
+using Croquis.Core;
 using System.Collections.Generic;
 using Croquis.Generated;
 using UnityEngine;
@@ -12,17 +13,26 @@ namespace Croquis.Visor
     /// </summary>
     public static class TerrenoVista
     {
-        /// <summary>La función de altura del piso; plana si la escena no declara terreno.</summary>
-        public static Terreno De(TerrenoEscenario t)
+        /// <summary>
+        /// La función de altura del piso: el relieve real del lugar si el caso lo trae (ronda 4), más las
+        /// zonas onduladas y los topes que dibujó el perito; plana si no hay nada de eso.
+        /// </summary>
+        public static Terreno De(TerrenoEscenario t, RelieveMalla relieve = null)
         {
-            if (t == null || (t.Ondulaciones.Length == 0 && t.Topes.Length == 0))
+            var sinPiezas = t == null || (t.Ondulaciones.Length == 0 && t.Topes.Length == 0);
+            if (sinPiezas && relieve == null)
             {
                 return new Terreno();
             }
 
+            if (sinPiezas)
+            {
+                return new Terreno((x, y) => (float)relieve.Altura(x, y));
+            }
+
             return new Terreno((x, y) =>
             {
-                var z = 0f;
+                var z = relieve != null ? (float)relieve.Altura(x, y) : 0f;
                 foreach (var o in t.Ondulaciones)
                 {
                     var borde = DistanciaAlBorde(o.Poligono, x, y);

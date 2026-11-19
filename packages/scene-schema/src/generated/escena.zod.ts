@@ -58,6 +58,40 @@ export const CalculoExpediente = z.strictObject({
 });
 export type CalculoExpediente = z.infer<typeof CalculoExpediente>;
 
+/** Un punto en el mapa (WGS84). */
+export const Coordenadas = z.strictObject({
+  lat: z.number().min(-90).max(90),
+  lon: z.number().min(-180).max(180),
+});
+export type Coordenadas = z.infer<typeof Coordenadas>;
+
+/** Las calles del lugar del caso, guardadas con él para que La escena, la reconstrucción y el 3D las tengan sin red (ronda 4). De OpenStreetMap (Overpass) o de las teselas del mapa (OpenMapTiles, también datos de OpenStreetMap). */
+export const CallesGuardadas = z.strictObject({
+  fuente: z.enum(["overpass", "teselas"]),
+  atribucion: z.string().max(200).optional(),
+  consultado: z.iso.datetime({ offset: true }),
+  centro: Coordenadas,
+  radio_m: z.number().min(10).max(2000),
+  vias: z
+    .array(
+      z.strictObject({
+        id: z.int(),
+        tipo: z.string().max(40),
+        nombre: z.string().max(200).optional(),
+        maxspeed: z.string().max(20).optional(),
+        carriles: z.string().max(10).optional(),
+        sentido_unico: z.string().max(10).optional(),
+        ancho: z.string().max(10).optional(),
+        puntos: z
+          .array(z.tuple([z.number(), z.number()]))
+          .min(2)
+          .max(2000),
+      }),
+    )
+    .max(600),
+});
+export type CallesGuardadas = z.infer<typeof CallesGuardadas>;
+
 /** Confianza en el valor, de 0 (adivinado) a 1 (seguro). */
 export const Confianza = z.number().min(0).max(1);
 export type Confianza = z.infer<typeof Confianza>;
@@ -402,6 +436,23 @@ export type CampoVelocidad = z.infer<typeof CampoVelocidad>;
 
 /** Las condiciones del lugar al momento del hecho, como las narra el perito (opcional; agregado en 2.3.0 sin cambiar la versión, ADR 0142). El estado de la superficie fija la fricción del cálculo; el clima y la iluminación, la vista del 3D y lo que alcanza a ver un conductor. */
 export const CondicionesExpediente = z.strictObject({
+  pendiente: z
+    .strictObject({
+      valor: z.enum(["subida", "bajada"]),
+      fuente: FuenteExpediente,
+      cita: Cita.optional(),
+    })
+    .optional(),
+  estructura: z
+    .strictObject({
+      valor: z.enum(["puente", "paso_a_desnivel"]),
+      fuente: FuenteExpediente,
+      cita: Cita.optional(),
+    })
+    .optional(),
+  trazo: z
+    .strictObject({ valor: z.enum(["curva"]), fuente: FuenteExpediente, cita: Cita.optional() })
+    .optional(),
   superficie: z
     .strictObject({
       valor: z.enum(["asfalto", "concreto", "adoquin", "empedrado", "terraceria"]),
@@ -440,13 +491,6 @@ export const CondicionesExpediente = z.strictObject({
 });
 export type CondicionesExpediente = z.infer<typeof CondicionesExpediente>;
 
-/** Un punto en el mapa (WGS84). */
-export const Coordenadas = z.strictObject({
-  lat: z.number().min(-90).max(90),
-  lon: z.number().min(-180).max(180),
-});
-export type Coordenadas = z.infer<typeof Coordenadas>;
-
 /** Un dato de texto con su fuente y su cita. */
 export const DatoExpediente = z.strictObject({
   valor: z.string().min(1).max(600),
@@ -484,6 +528,7 @@ export const CasoExpediente = z.strictObject({
       carriles: z.int().min(1).max(12).optional(),
       municipio: DatoExpediente.optional(),
       estado: DatoExpediente.optional(),
+      calles_del_mapa: CallesGuardadas.optional(),
     })
     .optional(),
   condiciones: CondicionesExpediente.optional(),

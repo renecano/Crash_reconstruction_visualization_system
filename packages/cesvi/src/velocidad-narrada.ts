@@ -137,7 +137,7 @@ function menciones(texto: string, ids: readonly Id[]): { i: number; id: Id }[] {
   );
   for (const m of texto.matchAll(rx)) {
     const id = m[1] ? `V${m[1].toUpperCase().charCodeAt(0) - 64}` : `V${m[2]}`;
-    if (ids.includes(id)) out.push({ i: m.index!, id });
+    if (ids.includes(id)) out.push({ i: m.index, id });
   }
   return out;
 }
@@ -195,7 +195,7 @@ export function velocidadesNarradas(
   );
   const usados: [number, number][] = [];
   for (const m of narracion.matchAll(rxCifra)) {
-    const i = m.index!;
+    const i = m.index;
     const antes = narracion.slice(Math.max(0, i - 60), i);
     if (LIMITE.test(antes)) continue;
     const n = (x: string) => Number(x.replace(",", "."));
@@ -223,7 +223,7 @@ export function velocidadesNarradas(
   // 2) Las descripciones, relativas al límite de la vía.
   for (const d of DESCRIPCIONES)
     for (const m of narracion.matchAll(d.rx)) {
-      const i = m.index!;
+      const i = m.index;
       if (usados.some(([a, b]) => i >= a && i < b)) continue;
       // «El carril de baja velocidad» es el nombre de un carril, no cómo venía.
       if (/carril\s+(?:de\s+)?$/iu.test(narracion.slice(Math.max(0, i - 20), i))) continue;

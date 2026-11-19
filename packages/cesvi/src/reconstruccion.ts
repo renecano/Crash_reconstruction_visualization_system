@@ -507,7 +507,13 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
     const r = rumboEscena(poseGolpe.rumbo);
     const cara = zonasPrimero.find((z) => z.vehiculo === golpea)?.zona.cara ?? "frontal";
     const giro =
-      cara === "posterior" ? 180 : cara === "lateral_izquierdo" ? 90 : cara === "lateral_derecho" ? -90 : 0;
+      cara === "posterior"
+        ? 180
+        : cara === "lateral_izquierdo"
+          ? 90
+          : cara === "lateral_derecho"
+            ? -90
+            : 0;
     const m = medidasDe(vehiculos.find((v) => v.id === golpea)!);
     const lateral = giro === 90 || giro === -90;
     const angosto = !TIPOS_PLANOS.has(String(objetoPrimero.tipo));

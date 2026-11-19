@@ -32,17 +32,17 @@ Las seis son casos inventados por Croquis para la prueba. No hay personas, placa
 
 Se llena al correrlas de punta a punta en la demo local, con la captura del 3D de cada una en `docs/cesvi/ronda-4/evidencia/fisica/`.
 
-| # | Dicho en la narración | ¿Llega a la física? | ¿Se ve en el 3D? |
-| --- | --- | --- | --- |
-| 1 | «a exceso de velocidad» | por medir | por medir |
-| 1 | el árbol, frente al vehículo | por medir | por medir |
-| 2 | «a 60 km/h» | por medir | por medir |
-| 2 | el poste, en el costado derecho | por medir | por medir |
-| 3 | el puente (paso a desnivel) | por medir | por medir |
-| 3 | «como a 70 km/h» | por medir | por medir |
-| 4 | la subida | por medir | por medir |
-| 4 | «despacio» | por medir | por medir |
-| 5 | la bajada pronunciada | por medir | por medir |
-| 5 | «a más de 90 km/h» y la barrera | por medir | por medir |
-| 6 | la curva y los carriles | por medir | por medir |
-| 6 | «a alta velocidad» | por medir | por medir |
+| #   | Dicho en la narración           | ¿Llega a la física? | ¿Se ve en el 3D? |
+| --- | ------------------------------- | ------------------- | ---------------- |
+| 1   | «a exceso de velocidad»         | por medir           | por medir        |
+| 1   | el árbol, frente al vehículo    | por medir           | por medir        |
+| 2   | «a 60 km/h»                     | por medir           | por medir        |
+| 2   | el poste, en el costado derecho | por medir           | por medir        |
+| 3   | el puente (paso a desnivel)     | por medir           | por medir        |
+| 3   | «como a 70 km/h»                | por medir           | por medir        |
+| 4   | la subida                       | por medir           | por medir        |
+| 4   | «despacio»                      | por medir           | por medir        |
+| 5   | la bajada pronunciada           | por medir           | por medir        |
+| 5   | «a más de 90 km/h» y la barrera | por medir           | por medir        |
+| 6   | la curva y los carriles         | por medir           | por medir        |
+| 6   | «a alta velocidad»              | por medir           | por medir        |

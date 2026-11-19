@@ -25,7 +25,12 @@ const t = JSON.parse(
   ),
 ) as { transportation: LineaTesela[]; transportation_name: LineaTesela[] };
 const centro = { lat: 19.4085338, lon: -99.1944592 };
-const resp = overpassDeTeselas(t.transportation, t.transportation_name, [centro.lon, centro.lat], 500);
+const resp = overpassDeTeselas(
+  t.transportation,
+  t.transportation_name,
+  [centro.lon, centro.lat],
+  500,
+);
 const base = { caso: { lugar: {}, modalidades: [] }, vehiculos: [] } as unknown as Expediente;
 
 describe("las calles guardadas con el caso", () => {

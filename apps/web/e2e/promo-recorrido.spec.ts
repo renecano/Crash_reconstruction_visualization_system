@@ -240,6 +240,14 @@ for (const [luz, tema] of [
     await irAPaso(page, 4);
     await page.getByTestId("reconstruir").click();
     await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 180_000 });
+    // La receta deja a los dos «junto al choque»: la app avisa que quedaron encimados y ofrece
+    // separarlos. Para el set promo se usa esa misma acción, y se espera el nuevo cálculo.
+    const separar = page.getByRole("button", { name: "Separarlos" });
+    if (await separar.isVisible().catch(() => false)) {
+      await separar.click();
+      await expect(separar).toBeHidden({ timeout: 180_000 });
+      await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 180_000 });
+    }
     await quieta(page, 5000);
     await foto("08-resultado");
     await unityListo(page);

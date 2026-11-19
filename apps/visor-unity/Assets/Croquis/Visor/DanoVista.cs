@@ -18,7 +18,7 @@ namespace Croquis.Visor
     public sealed class DanoVista
     {
         private readonly List<Pieza> piezas = new List<Pieza>();
-        private bool deformado;
+        private double avance = -1.0;
 
         private DanoVista(double desde)
         {
@@ -78,21 +78,38 @@ namespace Croquis.Visor
             return dano.piezas.Count > 0 ? dano : null;
         }
 
-        /// <summary>Pone la malla que toca en el instante `t`: la original antes del impacto, la deformada después.</summary>
+        /// <summary>
+        /// Pone la malla que toca en el instante `t`: la original antes del impacto, la deformada después
+        /// y, en los `EnfasisImpacto.DuracionDanoS` del golpe, la que va de una a otra (ronda 4, punto 5:
+        /// que el choque se vea). Termina exactamente en la deformación del solver.
+        /// </summary>
         public void Mostrar(double t)
         {
-            var si = t >= Desde - 1e-9;
-            if (si == deformado)
+            var f = EnfasisImpacto.AvanceDano(t, Desde);
+            if (System.Math.Abs(f - avance) < 1e-4)
             {
                 return;
             }
 
-            deformado = si;
+            avance = f;
             foreach (var p in piezas)
             {
-                if (p.Filtro != null)
+                if (p.Filtro == null)
                 {
-                    p.Filtro.sharedMesh = si ? p.Despues : p.Antes;
+                    continue;
+                }
+
+                if (f <= 0.0)
+                {
+                    p.Filtro.sharedMesh = p.Antes;
+                }
+                else if (f >= 1.0)
+                {
+                    p.Filtro.sharedMesh = p.Despues;
+                }
+                else
+                {
+                    p.Filtro.sharedMesh = p.Transicion(f);
                 }
             }
         }
@@ -162,6 +179,33 @@ namespace Croquis.Visor
             public MeshFilter Filtro;
             public Mesh Antes;
             public Mesh Despues;
+            private Mesh enMedio;
+            private Vector3[] va;
+            private Vector3[] vd;
+            private Vector3[] vm;
+
+            /// <summary>La malla a una fracción `f` del camino entre la original y la deformada.</summary>
+            public Mesh Transicion(double f)
+            {
+                if (enMedio == null)
+                {
+                    enMedio = Object.Instantiate(Despues);
+                    enMedio.name = Antes.name + "_golpe";
+                    enMedio.MarkDynamic();
+                    va = Antes.vertices;
+                    vd = Despues.vertices;
+                    vm = new Vector3[va.Length];
+                }
+
+                var k = (float)f;
+                for (var i = 0; i < va.Length; i++)
+                {
+                    vm[i] = Vector3.LerpUnclamped(va[i], vd[i], k);
+                }
+
+                enMedio.vertices = vm;
+                return enMedio;
+            }
         }
     }
 }

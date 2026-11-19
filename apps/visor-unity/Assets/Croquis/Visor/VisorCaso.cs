@@ -28,6 +28,16 @@ namespace Croquis.Visor
         /// <summary>Los vehículos de la versión superpuesta (ADR 0123): translúcidos, sin daño, con el mismo reloj.</summary>
         private readonly List<VehiculoVista> fantasmas = new List<VehiculoVista>();
 
+        // El énfasis del impacto (ronda 4, punto 5): su instante, la marca y los restos.
+        private double tImpacto = double.NaN;
+        private ImpactoVista impacto;
+
+        /// <summary>La cámara lenta automática en el impacto (encendida por omisión).</summary>
+        public bool EnfasisActivo { get; set; } = true;
+
+        /// <summary>El instante del primer impacto del caso (NaN si no hay).</summary>
+        public double TImpacto => tImpacto;
+
         /// <summary>El azul claro del fantasma, translúcido.</summary>
         private static readonly Color ColorFantasma = new Color(0.55f, 0.78f, 1f, 0.35f);
 
@@ -131,6 +141,8 @@ namespace Croquis.Visor
             desfaseFantasma = 0.0;
             etiquetaFantasma = null;
             dinamica = null;
+            impacto = null;
+            tImpacto = double.NaN;
             raiz = new GameObject("Caso").transform;
             var r = caso.Resultado;
             var e = caso.Escenario;
@@ -173,7 +185,8 @@ namespace Croquis.Visor
 
             // Con escenario (ADR 0112) se dibuja lo que calculó TS y se esconde el piso liso de U1.
             // El piso es plano salvo que la escena declare terreno (C3): entonces todo se arma sobre él.
-            var terreno = TerrenoVista.De(e?.Terreno);
+            // El relieve real del lugar, si el caso lo trae (ronda 4): el piso sube y baja como el del solver.
+            var terreno = TerrenoVista.De(e?.Terreno, RelieveMalla.De(caso.Relieve));
             var zona = Encuadre.ZonaDeInteres(r);
             EscenarioVista.CentroDelHecho = new Vector2((float)zona.CentroX, (float)zona.CentroY);
             EscenarioVista.ClaroDelHecho = (float)zona.Lado * 0.6f + 4f;
@@ -193,6 +206,8 @@ namespace Croquis.Visor
 
             TerrenoVista.Dibujar(raiz, e?.Terreno, terreno, e != null && e.Ambiente.Mojado);
             dinamica = CasoVista.Construir(raiz, caso, terreno, noche);
+            tImpacto = r.PuntoImpacto != null ? Fantasmas.TImpacto(r) : double.NaN;
+            impacto = ImpactoVista.Construir(raiz, r, tImpacto, terreno, noche);
             Paso("caso_y_terreno");
             Editor.Preparar(r.Objetos, terreno);
             foreach (var v in vehiculos)
@@ -650,6 +665,8 @@ namespace Croquis.Visor
             {
                 dinamica.Actualizar(Tiempo);
             }
+
+            impacto?.Colocar(Tiempo);
         }
 
         private void Update()
@@ -659,7 +676,9 @@ namespace Croquis.Visor
                 return;
             }
 
-            Fijar(Tiempo + Time.unscaledDeltaTime * Velocidad);
+            // Cámara lenta automática en el impacto: el ritmo cambia, las poses no (ronda 4, punto 5).
+            var factor = EnfasisActivo ? EnfasisImpacto.FactorCamaraLenta(Tiempo, tImpacto) : 1.0;
+            Fijar(Tiempo + Time.unscaledDeltaTime * Velocidad * factor);
             if (Tiempo >= fin)
             {
                 if (Bucle)
