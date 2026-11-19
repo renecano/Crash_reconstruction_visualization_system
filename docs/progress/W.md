@@ -68,8 +68,15 @@ René probó Croquis en producción y en local: lo que dice la narración no lle
    - La cinematográfica encuadra el impacto.
    - Pruebas en Croquis.Core: 115/115.
 
+**Para retomar (2026-11-18, 20:30):**
+- **El build nuevo de Unity** (huella `3cce5c1caca88f96`) compiló y pasa sus 7 pruebas EditMode.
+  - Ya está copiado en `.cache/visor-unity/3cce5c1caca88f96`.
+  - El `apps/web/public/visor-unity/manifest.json` local apunta a él. Ese cambio no se sube: `git restore` lo regresa al publicado.
+- **La medición del arranque quedó sin hacer.** Claude Code detuvo las tareas por falta de memoria (8 GB). La primera corrida ya había fallado al compilar la app en modo local.
+- **Para medir:** con todo lo demás cerrado, `tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/ronda4b_unity_arranque_<n>.json`, 3 corridas. Se compara contra `ronda4_unity_arranque_despues_*` (el 1.3.0 publicado).
+
 **Siguiente:**
-1. Build de Unity, medido antes de publicar.
+1. Medir el build de Unity antes de publicar.
 2. Las seis narraciones (`docs/cesvi/ronda-4/narraciones-fisica.md`) y el caso encimado en la demo local, con capturas del 3D y la tabla.
 3. El antes y después de los cinco ejemplos en el navegador.
 4. El tráiler, cuando llegue `croquis-tomas-trailer.zip`.
