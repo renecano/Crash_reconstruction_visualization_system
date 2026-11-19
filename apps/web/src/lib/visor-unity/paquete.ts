@@ -11,7 +11,7 @@ import {
   type EscenaSpec,
   type Resultado,
 } from "@croquis/scene-schema";
-import { escenarioDe } from "@/components/visor-unity/escenario";
+import { escenarioDe, type RelieveEscenario } from "@/components/visor-unity/escenario";
 
 /** La malla de relieve tal como la guarda `Reconstruccion.relieve` (la misma forma que `caso3d.relieve`). */
 export type RelieveCaso = Parameters<typeof armarCaso3d>[2];
@@ -25,7 +25,12 @@ export function paqueteDelCaso(
   resultado: Resultado,
   relieve: RelieveCaso = null,
 ): Caso3D {
-  const paquete = armarCaso3d(escena, resultado, relieve ?? null, escenarioDe(escena, resultado));
+  const paquete = armarCaso3d(
+    escena,
+    resultado,
+    relieve ?? null,
+    escenarioDe(escena, resultado, (relieve ?? null) as RelieveEscenario | null),
+  );
   const errores = caso3dErrors(paquete);
   if (errores.length) {
     throw new Error(`Paquete caso-3d inválido: ${errores.slice(0, 3).join("; ")}`);

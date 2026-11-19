@@ -17,22 +17,26 @@ namespace Croquis.Visor
         /// La función de altura del piso: el relieve real del lugar si el caso lo trae (ronda 4), más las
         /// zonas onduladas y los topes que dibujó el perito; plana si no hay nada de eso.
         /// </summary>
-        public static Terreno De(TerrenoEscenario t, RelieveMalla relieve = null)
+        public static Terreno De(TerrenoEscenario t, RelieveMalla relieve = null, EscenarioEstructura estructura = null)
         {
             var sinPiezas = t == null || (t.Ondulaciones.Length == 0 && t.Topes.Length == 0);
-            if (sinPiezas && relieve == null)
+            if (sinPiezas && relieve == null && estructura == null)
             {
                 return new Terreno();
             }
 
+            // La base: el relieve real y el piso bajo un puente narrado (ronda 4), como el suelo de la web.
+            float Base(float x, float y) =>
+                (relieve != null ? (float)relieve.Altura(x, y) : 0f) - (float)EstructuraVia.Hundimiento(estructura, x, y);
+
             if (sinPiezas)
             {
-                return new Terreno((x, y) => (float)relieve.Altura(x, y));
+                return new Terreno(Base);
             }
 
             return new Terreno((x, y) =>
             {
-                var z = relieve != null ? (float)relieve.Altura(x, y) : 0f;
+                var z = Base(x, y);
                 foreach (var o in t.Ondulaciones)
                 {
                     var borde = DistanciaAlBorde(o.Poligono, x, y);

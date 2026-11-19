@@ -497,6 +497,16 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
         procedencia: { ...DEL_PERITO },
       };
   }
+  // Un puente o un paso a desnivel narrado (ronda 4): la física va sobre la losa, a nivel; el 3D
+  // dibuja la estructura.
+  const estructura = e.caso.condiciones?.estructura;
+  if (estructura)
+    (spec.lugar as Json).estructura = {
+      valor: estructura.valor,
+      fuente: "usuario",
+      confianza: 0.8,
+      nota: "Lo dice la narración del perito.",
+    };
   // El objeto del primer impacto (árbol, poste, muro…) frente a la cara de contacto del vehículo,
   // donde el perito lo colocó en el choque (ronda 4; René, 2026-11-18). Antes iba en la posición
   // genérica de la plantilla (6, −6) y el solver, que toma el objeto como punto de contacto,

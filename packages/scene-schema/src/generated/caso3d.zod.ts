@@ -301,6 +301,16 @@ export const Escenario = z.strictObject({
   procedural: z.literal(true),
   centro: PuntoPlano,
   ambiente: AmbienteEscenario,
+  estructura: z
+    .strictObject({
+      tipo: z.enum(["puente", "paso_a_desnivel"]),
+      centro: PuntoPlano,
+      rumbo_deg: z.number(),
+      largo_m: z.number().min(10).max(400),
+      ancho_m: z.number().min(4).max(60),
+      altura_m: z.number().min(2).max(30),
+    })
+    .optional(),
   via: z.strictObject({
     capas: z.array(CapaEscenario),
     guarniciones: z.array(SegmentoPlano),

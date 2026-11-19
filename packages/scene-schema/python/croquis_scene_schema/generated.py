@@ -842,6 +842,27 @@ class Terreno(BaseModel):
     topes: Annotated[list[TopeVia] | None, Field(max_length=32)] = None
 
 
+class Estructura(BaseModel):
+    """
+    Si el hecho fue sobre un puente o un paso a desnivel (ronda 4). La física va sobre la losa, a nivel; el 3D dibuja la estructura.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    valor: Literal["puente", "paso_a_desnivel"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
+    """
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
+    """
+    confianza: Annotated[float, Field(ge=0.0, le=1.0)]
+    """
+    Confianza en el valor, de 0 (adivinado) a 1 (seguro).
+    """
+    evidencia: Annotated[list[EvidenciaTexto] | None, Field(max_length=8)] = None
+    nota: Annotated[str | None, Field(max_length=300)] = None
+
+
 class ObjetoEntorno(BaseModel):
     """
     Objeto fijo o estacionado que puede ser golpeado o tapar la vista.
@@ -1259,7 +1280,7 @@ class Pendiente(BaseModel):
     cita: Cita | None = None
 
 
-class Estructura(BaseModel):
+class Estructura1(BaseModel):
     """
     Si el hecho fue sobre un puente o un paso a desnivel (ronda 4).
     """
@@ -1367,7 +1388,7 @@ class CondicionesExpediente(BaseModel):
     """
     Si la vía va en subida o en bajada donde fue el hecho (ronda 4). Con ella, la reconstrucción usa el relieve real del lugar.
     """
-    estructura: Estructura | None = None
+    estructura: Estructura1 | None = None
     """
     Si el hecho fue sobre un puente o un paso a desnivel (ronda 4).
     """
@@ -2180,6 +2201,10 @@ class Lugar(BaseModel):
     ancho_acotamiento: CampoLongitud | None = None
     pendiente: CampoPorcentaje | None = None
     peralte: CampoPorcentaje | None = None
+    estructura: Estructura | None = None
+    """
+    Si el hecho fue sobre un puente o un paso a desnivel (ronda 4). La física va sobre la losa, a nivel; el 3D dibuja la estructura.
+    """
     radio_curva: CampoLongitud | None = None
     superficie: CampoSuperficie
     estado_superficie: CampoEstadoSuperficie

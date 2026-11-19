@@ -1239,6 +1239,15 @@ export const Lugar = z.strictObject({
   ancho_acotamiento: CampoLongitud.optional(),
   pendiente: CampoPorcentaje.optional(),
   peralte: CampoPorcentaje.optional(),
+  estructura: z
+    .strictObject({
+      valor: z.enum(["puente", "paso_a_desnivel"]),
+      fuente: Fuente,
+      confianza: Confianza,
+      evidencia: ListaEvidencia.optional(),
+      nota: z.string().max(300).optional(),
+    })
+    .optional(),
   radio_curva: CampoLongitud.optional(),
   superficie: CampoSuperficie,
   estado_superficie: CampoEstadoSuperficie,
