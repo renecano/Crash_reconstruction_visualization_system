@@ -1729,6 +1729,23 @@ export function RecorridoCaso({
                   </div>
                 ))
               : null}
+            {actual === P.reconstruccion && rec.r?.impactos[0]?.sinTransferencia ? (
+              // Ronda 4 (René): un choque que no transfiere energía no deja daño; se dice a la vista.
+              <div
+                role="status"
+                className="border-l-2 border-senal pl-3"
+                data-testid="aviso-sin-transferencia"
+              >
+                <p className="t-nota">
+                  <b className="text-texto">
+                    El choque entre {rec.r.impactos[0].vehiculos.map(nombreLab).join(" y ")} casi no
+                    transfiere energía
+                  </b>{" "}
+                  con estas velocidades: los dos llegan casi igual de rápido en el mismo sentido y
+                  no queda daño. Di a qué velocidad venía cada uno o revisa por dónde venían.
+                </p>
+              </div>
+            ) : null}
             {falta.length ? (
               <p className="t-nota" role="status" data-testid="falta-para-seguir">
                 Para seguir falta: <b className="text-texto">{enLista(falta)}</b>.

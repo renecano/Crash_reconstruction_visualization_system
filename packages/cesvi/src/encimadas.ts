@@ -11,6 +11,7 @@
 import type { Expediente } from "./corpus";
 import { desdeMetros, enMetros, type LonLat } from "./geo";
 import { medidasDe } from "./poses-impacto";
+import { objetosDe } from "./objetos";
 
 type Id = Expediente["vehiculos"][number]["id"];
 export type Vec = [number, number];
@@ -114,6 +115,90 @@ export function posicionesEncimadas(e: Expediente): Encimadas[] {
         traslape_m: Math.round(t.prof * 100) / 100,
         propuesta: [mover(a, -1), mover(b, 1)],
       });
+    }
+  }
+  return out;
+}
+
+// --- En el choque (ronda 4; René, 2026-11-18) ------------------------------------------------------
+
+/**
+ * m: en el choque los contornos se tocan; un traslape mayor a esto ya no es contacto, es que
+ * quedaron encimados (el perito los soltó uno sobre otro).
+ */
+export const PROFUNDO_EN_CHOQUE_M = 0.3;
+
+export interface EncimadosEnChoque {
+  /** El impacto (su orden) y quiénes: dos vehículos, o un vehículo y un objeto del lugar. */
+  orden: number;
+  vehiculos: Id[];
+  objeto: string | null;
+  traslape_m: number;
+  /**
+   * «Separarlos»: las poses de impacto que los dejan tocándose (sin traslape) por la cara de
+   * contacto, cada vehículo movido la mitad (contra un objeto, se mueve solo el vehículo).
+   */
+  propuesta: PoseFinal[];
+}
+
+/** Los choques en que lo colocado quedó encimado (más que un contacto), con su propuesta. */
+export function impactosEncimados(e: Expediente): EncimadosEnChoque[] {
+  const enImpacto =
+    (e.versiones ?? [])
+      .find((v) => v.tipo === "evidencia")
+      ?.posiciones?.filter((p) => p.fase === "impacto") ?? [];
+  if (!enImpacto.length) return [];
+  const origen: LonLat = [enImpacto[0]!.punto.lon, enImpacto[0]!.punto.lat];
+  const caja = (p: (typeof enImpacto)[number]) => {
+    const v = e.vehiculos.find((x) => x.id === p.vehiculo);
+    const { largo, ancho } = v ? medidasDe(v) : { largo: 4.5, ancho: 1.8 };
+    const m = enMetros([p.punto.lon, p.punto.lat], origen);
+    const c: Vec = [m.este, m.norte];
+    return { p, c, contorno: esquinas(c, p.rumbo, largo, ancho) };
+  };
+  const poseMovida = (x: ReturnType<typeof caja>, d: Vec): PoseFinal => {
+    const [lon, lat] = desdeMetros(x.c[0] + d[0], x.c[1] + d[1], origen);
+    return { vehiculo: x.p.vehiculo, punto: { lat, lon }, rumbo: x.p.rumbo };
+  };
+  const out: EncimadosEnChoque[] = [];
+  for (const imp of e.impactos ?? []) {
+    const cajas = (imp.vehiculos ?? []).flatMap((v) => {
+      const p = enImpacto.find((x) => x.vehiculo === v);
+      return p ? [caja(p)] : [];
+    });
+    for (let i = 0; i < cajas.length; i++)
+      for (let k = i + 1; k < cajas.length; k++) {
+        const a = cajas[i]!;
+        const b = cajas[k]!;
+        const t = traslape(a.contorno, b.contorno);
+        if (!t || t.prof <= PROFUNDO_EN_CHOQUE_M) continue;
+        const mitad = t.prof / 2;
+        out.push({
+          orden: imp.orden,
+          vehiculos: [a.p.vehiculo, b.p.vehiculo],
+          objeto: null,
+          traslape_m: Math.round(t.prof * 100) / 100,
+          propuesta: [
+            poseMovida(a, [-mitad * t.n[0], -mitad * t.n[1]]),
+            poseMovida(b, [mitad * t.n[0], mitad * t.n[1]]),
+          ],
+        });
+      }
+    // Un vehículo encima del objeto del lugar con el que chocó (colocado por el perito).
+    for (const o of objetosDe(e)) {
+      const m = enMetros([o.punto.lon, o.punto.lat], origen);
+      const contorno = esquinas([m.este, m.norte], o.rumbo, o.largo, o.ancho);
+      for (const a of cajas) {
+        const t = traslape(a.contorno, contorno);
+        if (!t || t.prof <= PROFUNDO_EN_CHOQUE_M) continue;
+        out.push({
+          orden: imp.orden,
+          vehiculos: [a.p.vehiculo],
+          objeto: o.id,
+          traslape_m: Math.round(t.prof * 100) / 100,
+          propuesta: [poseMovida(a, [-t.prof * t.n[0], -t.prof * t.n[1]])],
+        });
+      }
     }
   }
   return out;

@@ -35,6 +35,7 @@ import {
   objetosDe,
   piezasTerreno,
   posicionesEncimadas,
+  impactosEncimados,
   quitarTerreno,
   TIPOS_OBJETO,
   usarRelieve,
@@ -793,6 +794,8 @@ export function EscenaFacil({
   // Las alertas que se calculan solas (coches encimados, un coche fuera de la calle) y el error sin
   // calles: salen del estado, sin efectos; «Así está bien» las descarta.
   const encimadas = useMemo(() => posicionesEncimadas(e), [e]);
+  // Ronda 4 (René): encimados en el choque (más que un contacto), dicho en el momento.
+  const encimadosChoque = useMemo(() => impactosEncimados(e), [e]);
   const descartar = (clave: string) => {
     setDescartadas((d) => [...d, clave]);
     setMensaje(null);
@@ -818,6 +821,44 @@ export function EscenaFacil({
             },
           },
           { texto: "Así está bien", id: "encimadas-asi", hacer: () => descartar(clave) },
+        ],
+      };
+    }
+    const ench = encimadosChoque.find(
+      (x) =>
+        !descartadas.includes(
+          `choque-encimado:${x.orden}:${x.vehiculos.join("-")}:${x.objeto ?? ""}`,
+        ),
+    );
+    if (ench) {
+      const clave = `choque-encimado:${ench.orden}:${ench.vehiculos.join("-")}:${ench.objeto ?? ""}`;
+      const [a, b] = ench.vehiculos.map((v) => nombres[v] ?? v);
+      const con = ench.objeto
+        ? (objetosColocados.find((o) => o.id === ench.objeto)?.nombre ?? "el objeto").toLowerCase()
+        : `el ${b}`;
+      return {
+        tipo: "alerta",
+        clave,
+        texto: `Ojo: en el choque, el ${a} quedó encima de ${con} (${F.metros(ench.traslape_m)}). En un choque se tocan; encimados, la reconstrucción no sabe por qué cara fue el contacto.`,
+        acciones: [
+          {
+            texto: "Separarlos",
+            id: "separar-choque-encimado",
+            principal: true,
+            hacer: () => {
+              let x = e;
+              for (const pose of ench.propuesta) x = conPosicion(x, { ...pose, fase: "impacto" });
+              cambiar(
+                { ...estado, expediente: x },
+                exito("¡Listo! Quedaron tocándose por la cara de contacto."),
+              );
+            },
+          },
+          {
+            texto: "Así fue el contacto",
+            id: "choque-encimado-asi",
+            hacer: () => descartar(clave),
+          },
         ],
       };
     }

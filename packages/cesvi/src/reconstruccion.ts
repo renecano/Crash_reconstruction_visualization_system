@@ -987,7 +987,15 @@ export interface ImpactoReconstruido {
   numero: number;
   t: number;
   vehiculos: Id[];
+  /**
+   * Ronda 4 (René): el choque ocurre pero no transfiere energía (ningún vehículo cambia su velocidad
+   * más de `DV_SIN_TRANSFERENCIA_KMH`): sin daño. Se dice; nunca se ve como un empujón mudo.
+   */
+  sinTransferencia?: boolean;
 }
+
+/** km/h: un cambio de velocidad menor en todos los del choque es un choque que no transfiere nada. */
+export const DV_SIN_TRANSFERENCIA_KMH = 2;
 
 /**
  * De qué inversión sale una hipótesis (ADR 0091): si un reposo supuesto no cabe con la deformación
@@ -1283,11 +1291,28 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
   const impactos = eventos
     .filter((ev) => ev.tipo.startsWith("impacto_"))
     .sort((a, b) => a.t - b.t)
-    .map((ev, k) => ({
-      numero: k + 1,
-      t: ev.t,
-      vehiculos: ev.actores.flatMap((a) => (base.ids[a] ? [base.ids[a]] : [])),
-    }));
+    .map((ev, k) => {
+      const actores = ev.actores.filter((a) => base.ids[a]);
+      // Solo el primero: los posteriores llevan su ΔV en `danos_posteriores`.
+      const dv = (a: string) =>
+        Number(((resultado.vehiculos ?? []) as Json[]).find((v) => v.id === a)?.delta_v_kmh ?? NaN);
+      const sinTransferencia =
+        k === 0 &&
+        ev.tipo === "impacto_vehiculo_vehiculo" &&
+        actores.length >= 2 &&
+        actores.every((a) => Number.isFinite(dv(a)) && dv(a) < DV_SIN_TRANSFERENCIA_KMH);
+      return {
+        numero: k + 1,
+        t: ev.t,
+        vehiculos: actores.map((a) => base.ids[a]!),
+        ...(sinTransferencia ? { sinTransferencia: true } : {}),
+      };
+    });
+  const fantasma = impactos.find((i) => i.sinTransferencia);
+  if (fantasma)
+    limites.push(
+      `El choque entre ${fantasma.vehiculos.join(" y ")} casi no transfiere energía con estas velocidades (ninguno cambia su velocidad más de ${DV_SIN_TRANSFERENCIA_KMH} km/h), así que no deja daño: los dos llegan casi igual de rápido en el mismo sentido. Dile a Croquis a qué velocidad venía cada uno o revisa por dónde venían.`,
+    );
   // Un impacto posterior que el solver no alcanzó a resolver se le dice al perito (R6).
   const primerPar = new Set(impactos[0]?.vehiculos ?? []);
   for (const ev of (base.spec.eventos ?? []) as { id: string; tipo: string; actores: string[] }[]) {
