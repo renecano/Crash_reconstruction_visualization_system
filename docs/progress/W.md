@@ -21,20 +21,58 @@ René probó Croquis en producción y en local: lo que dice la narración no lle
 - **Los cinco ejemplos y AXA** no narran velocidades. «Carril de baja velocidad» es nombre de carril y se excluye.
 - **Pendiente:** reproducir los 20 km/h de René con una narración de Tollocan contra un árbol (punto 2, demo local).
 
-**Plan:**
-1. **Velocidad narrada:** un detector determinista con su cita: cifras («a 80 km/h») y descripciones («exceso de velocidad», «rápido», «despacio»). Excluye límites y nombres de carril.
-   - Va como `velocidad_previa` con su rango y la marca `a_priori`.
-   - El solver (Python, y el port TS con paridad) le suma un residuo débil que solo pesa si la evidencia no la fija. En el muestreo se sortea dentro de su rango.
-   - Si no la dice, va una pregunta en «lo que más cambia la reconstrucción», con «No sé» y el rango típico de la vía (límite de OSM o el tipo de vía, con su fuente en `data/SOURCES.md`).
-   - Si nada la fija, se dice así y nunca queda el tope ni un arranque fijo.
-   - Antes y después en los cinco ejemplos y AXA (debe quedar 57, 55–78).
-2. **Inventario «narración → escena → solver → Unity»** y cierre de huecos: objetos fijos, puentes, pendientes y curvas. Seis narraciones nuevas de punta a punta en demo local, con captura del 3D y tabla.
-3. **Trayectorias sobre vías reales:**
-   - El arranque va sobre la calle por la que llegaba, en su sentido.
-   - Las calles se guardan con el caso para que funcione sin red.
-   - Sin datos se dice y no se inventa la dirección.
-4. **El aviso de calles:** solo si de verdad no hay calles de ninguna fuente, una vez por lugar, en tono informativo. Hecho.
-5. **El choque en Unity:** cámara lenta, deformación del solver, restos, la marca del contacto y la cámara cinematográfica en el impacto. Build medido antes de publicar.
+**Hecho (rama `feat/w-narracion-a-la-fisica`, con commits y push):**
+
+1. **Velocidad (ADR 0145).**
+   - Detector con cita: cifras y descripciones respecto al límite de la vía (LGMSV, art. 49 fr. III, o el `maxspeed` de OSM).
+   - Prior en el solver, Python y TS, con paridad (`arbol_velocidad_declarada`) y `fijada_por: "declarada"`.
+   - Pregunta «¿A qué velocidad venía?» con «No sé».
+   - Donde la evidencia no fija nada, la típica de la vía en vez del arranque de 40 km/h (`expedienteConTipicas`).
+   - Medido (`eval/ronda4_narracion_fisica.mts`):
+
+     | Caso | Antes | Después |
+     | --- | --- | --- |
+     | AXA | 57 (55–78) | 57 (55–78), igual |
+     | Tollocan (el `.croquis` de René) | 40 km/h, el arranque, sin rango | 45 (31–59), fijada por lo declarado |
+
+   - Las 14 escenas canónicas, sin cambios (`reconstruct --all --check`).
+2. **Clase del vehículo.**
+   - «Un sedán», «una camioneta», «un tracto», «un Tsuru», «una CR-V»: clase más cercana, como supuesto con cita.
+   - Solo se pregunta si de verdad no la dice (prueba con varias formas en `relato.test.ts`).
+3. **Lugar y sentido separados** (`lugar-narrado.ts`).
+   - Solo el lugar va al buscador.
+   - «Rumbo a …» es el sentido de llegada: cardinal, o el rumbo hacia el destino, que se busca aparte.
+   - Medido con 20 frases al estilo de CESVI (`eval/results/ronda4_lugar_sentido.json`):
+
+     | | Antes | Después |
+     | --- | --- | --- |
+     | Vía correcta | 2/20 | 17/20 |
+     | Sentido correcto | 10/20 | 19/20 |
+
+   - Los 3 fallos de vía son del buscador: Eje 6 Sur, Gonzalitos y Periférico Sur.
+4. **Objeto del primer impacto.** Va frente a la cara de contacto. Antes quedaba en la plantilla (6, −6) y el solver desviaba al auto hacia él.
+5. **Calles guardadas con el caso** (`caso.lugar.calles_del_mapa`). Sin calles, la dirección queda como «falta», sin flechas cardinales.
+6. **Aviso de calles:** solo sin calles de ninguna fuente, una vez por lugar, informativo.
+7. **Encimados.**
+   - En el choque se dice en el momento, con «Separarlos» (tocándose por la cara de contacto) o «Así fue el contacto».
+   - Un choque que no transfiere energía (ΔV < 2 km/h en los dos) se dice en el resultado y en pantalla.
+   - Causa medida: uno detrás de otro con la misma velocidad supuesta da ΔV 0. Encimados en ángulo o de frente, el impacto sale completo.
+8. **Pendiente, puente y curva** narrados, como condiciones con cita.
+   - Una subida o bajada enciende el relieve real.
+   - El puente se dibuja en el 3D: losa a nivel, parapetos y muros hasta el piso de abajo.
+   - El suelo de la web y las vías de Unity llevan el mismo relieve y el mismo hundimiento.
+9. **Unity (punto 5).**
+   - Cámara lenta automática en el impacto.
+   - La deformación crece en 0.12 s hasta la del solver.
+   - Restos y vidrios; la marca del contacto se queda.
+   - La cinematográfica encuadra el impacto.
+   - Pruebas en Croquis.Core: 115/115.
+
+**Siguiente:**
+1. Build de Unity, medido antes de publicar.
+2. Las seis narraciones (`docs/cesvi/ronda-4/narraciones-fisica.md`) y el caso encimado en la demo local, con capturas del 3D y la tabla.
+3. El antes y después de los cinco ejemplos en el navegador.
+4. El tráiler, cuando llegue `croquis-tomas-trailer.zip`.
 
 ## Ronda 4, La escena y el 2D (René, 2026-11-18): hecho (ADR 0144)
 
