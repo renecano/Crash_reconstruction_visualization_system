@@ -19,8 +19,7 @@ import * as rec from "../packages/cesvi/src/reconstruccion.ts";
 const { especDeExpediente, interpretarResultado } = rec;
 // En la rama, la típica de la vía donde la evidencia no fija nada (no existe en main: el antes).
 const conTipicas = (rec as Record<string, unknown>).expedienteConTipicas as
-  | ((e: Expediente, r: ReturnType<typeof interpretarResultado>) => Expediente | null)
-  | undefined;
+  ((e: Expediente, r: ReturnType<typeof interpretarResultado>) => Expediente | null) | undefined;
 import type { Expediente } from "../packages/cesvi/src/corpus.ts";
 
 type Json = Record<string, unknown>;
@@ -44,18 +43,30 @@ function medir(nombre: string, e: Expediente) {
     segundos: r2((performance.now() - t0) / 1000),
     velocidades: r.velocidades.map((v) => {
       const p = inv.parametros?.find(
-        (x) => x.parametro === "velocidad_previa" && x.vehiculo === Object.entries(r.ids).find(([, id]) => id === v.vehiculo)?.[0],
+        (x) =>
+          x.parametro === "velocidad_previa" &&
+          x.vehiculo === Object.entries(r.ids).find(([, id]) => id === v.vehiculo)?.[0],
       );
       return {
         vehiculo: v.vehiculo,
-        previa: v.previa ? { mejor: r2(v.previa.mejor), p10: v.previa.p10 == null ? null : r2(v.previa.p10), p90: v.previa.p90 == null ? null : r2(v.previa.p90) } : null,
-        impacto_kmh: v.impacto ? r2(v.impacto.mejor ?? (v.impacto as unknown as { p50: number }).p50) : null,
+        previa: v.previa
+          ? {
+              mejor: r2(v.previa.mejor),
+              p10: v.previa.p10 == null ? null : r2(v.previa.p10),
+              p90: v.previa.p90 == null ? null : r2(v.previa.p90),
+            }
+          : null,
+        impacto_kmh: v.impacto
+          ? r2(v.impacto.mejor ?? (v.impacto as unknown as { p50: number }).p50)
+          : null,
         identificable: p?.identificable ?? null,
         fijada_por: p?.fijada_por ?? (p?.identificable ? "evidencia" : null),
         en_limite: p?.en_limite ?? false,
       };
     }),
-    resultado_v_impacto_kmh: ((r.resultado as Json).vehiculos as Json[]).map((v) => r2(Number(v.v_impacto_kmh))),
+    resultado_v_impacto_kmh: ((r.resultado as Json).vehiculos as Json[]).map((v) =>
+      r2(Number(v.v_impacto_kmh)),
+    ),
     objeto_primer_impacto: objeto ? { tipo: objeto.tipo, posicion: objeto.posicion } : null,
     limites: r.limites,
   };
@@ -68,7 +79,13 @@ for (const ruta of casos) {
 }
 writeFileSync(
   salida ?? join(RAIZ, "eval/results/ronda4_narracion_fisica.json"),
-  JSON.stringify({ etiqueta: etiqueta ?? "", fecha: new Date().toISOString(), filas }, null, 2) + "\n",
+  JSON.stringify({ etiqueta: etiqueta ?? "", fecha: new Date().toISOString(), filas }, null, 2) +
+    "\n",
 );
 for (const f of filas)
-  console.log(f.caso, JSON.stringify(f.velocidades), f.resultado_v_impacto_kmh, JSON.stringify(f.objeto_primer_impacto));
+  console.log(
+    f.caso,
+    JSON.stringify(f.velocidades),
+    f.resultado_v_impacto_kmh,
+    JSON.stringify(f.objeto_primer_impacto),
+  );

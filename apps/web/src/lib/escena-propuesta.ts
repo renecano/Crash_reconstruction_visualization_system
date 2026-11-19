@@ -15,7 +15,7 @@
  * Todo queda como supuesto (fuente «supuesto»): se ve distinto y cambia de estado cuando el perito lo
  * confirma o lo corrige. Ningún número de la reconstrucción cambia por proponer: solo se coloca.
  */
-import type { Expediente } from "@croquis/cesvi";
+import { rumboHacia, type Expediente, type SentidoNarradoLugar } from "@croquis/cesvi";
 import {
   ajustarACalle,
   cardinal,
@@ -69,6 +69,11 @@ export function proponerEscena(o: {
   narracion: string | null;
   lugar: Punto | null;
   nombreDe: (id: string) => string;
+  /**
+   * El sentido narrado junto al lugar (ronda 4): «rumbo a Ciudad de México» ya convertido en rumbo,
+   * o un sentido cardinal. Vale para el vehículo que no tiene otro sentido narrado.
+   */
+  rumboNarrado?: { rumbo: number; cita: string } | null;
 }): EscenaPropuesta | null {
   const { impactos, calles, narracion } = o;
   const vs = o.expediente.vehiculos;
@@ -94,7 +99,7 @@ export function proponerEscena(o: {
         : "no hay calles cerca: va en el lugar buscado",
   });
   const sentido = (v: string) =>
-    narracion
+    (narracion
       ? sentidoNarrado(
           narracion,
           nombresDe(
@@ -102,7 +107,15 @@ export function proponerEscena(o: {
             vs,
           ),
         )
-      : null;
+      : null) ??
+    // El del lugar, para el que va primero en el choque (o el único).
+    (o.rumboNarrado && v === impactos[0]?.vehiculos[0]
+      ? {
+          rumbo: o.rumboNarrado.rumbo,
+          desde: cardinal(o.rumboNarrado.rumbo + 180),
+          cita: o.rumboNarrado.cita,
+        }
+      : null);
   // El primero del choque fija el giro de todo el choque: el de la narración o el de la calle.
   const primero = impactos[0]!.vehiculos[0]!;
   let e = marcarChoque(
@@ -302,4 +315,17 @@ export function listaDeLaEscena(o: {
     });
   }
   return out;
+}
+
+/** El rumbo de llegada de un sentido narrado: el cardinal, o el del lugar hacia el destino. */
+export function rumboDelSentido(
+  s: SentidoNarradoLugar | null,
+  destino: Punto | null,
+  desde: Punto | null,
+): { rumbo: number; cita: string } | null {
+  if (!s) return null;
+  if (s.tipo === "cardinal" && s.rumbo !== undefined) return { rumbo: s.rumbo, cita: s.cita };
+  if (s.tipo === "destino" && destino && desde)
+    return { rumbo: rumboHacia(desde, destino), cita: s.cita };
+  return null;
 }

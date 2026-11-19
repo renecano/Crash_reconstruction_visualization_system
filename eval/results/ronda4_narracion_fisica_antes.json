@@ -31,10 +31,7 @@
           "en_limite": false
         }
       ],
-      "resultado_v_impacto_kmh": [
-        40,
-        40
-      ],
+      "resultado_v_impacto_kmh": [40, 40],
       "objeto_primer_impacto": null,
       "limites": [
         "El reporte no da las zonas del impacto de V2 y V1: se toma la cara de su primer daño.",
@@ -55,9 +52,7 @@
           "en_limite": false
         }
       ],
-      "resultado_v_impacto_kmh": [
-        40
-      ],
+      "resultado_v_impacto_kmh": [40],
       "objeto_primer_impacto": {
         "tipo": "arbol",
         "posicion": {

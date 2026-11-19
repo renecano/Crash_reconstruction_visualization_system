@@ -43,6 +43,7 @@ import {
   type PosicionDescrita,
   type RolPersona,
   type TipoObjeto,
+  separarLugarYSentido,
 } from "@croquis/cesvi";
 import { overpassDeTeselas, type OverpassResponse } from "@croquis/croquis-2d";
 import { RADIO_CALLES_M } from "@/lib/calles-del-mapa";
@@ -51,6 +52,7 @@ import { HerramientasEscena, ListaEscena } from "./lista-escena";
 import {
   listaDeLaEscena,
   proponerEscena,
+  rumboDelSentido,
   type EscenaPropuesta,
   type ItemEscena,
 } from "@/lib/escena-propuesta";
@@ -372,7 +374,9 @@ export function EscenaFacil({
     window.addEventListener("keydown", tecla);
     return () => window.removeEventListener("keydown", tecla);
   }, [herramienta]);
-  const [busqueda, setBusqueda] = useState(descripcionLugar ?? "");
+  const [busqueda, setBusqueda] = useState(
+    separarLugarYSentido(descripcionLugar).lugar ?? descripcionLugar ?? "",
+  );
   const [resultados, setResultados] = useState<OpcionLugar[]>([]);
   const [estadoBusqueda, setEstadoBusqueda] = useState<string | null>(null);
   const mapa = useRef<MapaMl | null>(null);
@@ -482,8 +486,9 @@ export function EscenaFacil({
   useEffect(() => {
     if (lugar || yaBuscado.current || estado.puntos[1]) return;
     const cruce = narracion ? cruceNarrado(narracion) : null;
+    // Ronda 4 (René): solo el lugar va al buscador, nunca la frase completa con su «rumbo a…».
     const consultas = [
-      descripcionLugar,
+      separarLugarYSentido(descripcionLugar).lugar,
       cruce ? `${cruce.calles[0]} y ${cruce.calles[1]}` : null,
       cruce?.calles[0] ?? null,
     ].filter((x): x is string => Boolean(x?.trim()));
@@ -527,6 +532,29 @@ export function EscenaFacil({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- una vez, al abrir la escena
   }, []);
   const lugarBase = lugar ?? lugarNarrado;
+  // Ronda 4 (René): «rumbo a Ciudad de México» es el sentido de llegada, no parte del lugar. El
+  // destino se busca aparte; su rumbo desde el lugar del choque dice en qué sentido de la vía venía.
+  const sentidoDelLugar = useMemo(() => {
+    const deDescripcion = separarLugarYSentido(descripcionLugar).sentido;
+    if (deDescripcion) return deDescripcion;
+    return narracion ? separarLugarYSentido(narracion).sentido : null;
+  }, [descripcionLugar, narracion]);
+  const [destinoNarrado, setDestinoNarrado] = useState<Punto | null>(null);
+  useEffect(() => {
+    if (sentidoDelLugar?.tipo !== "destino" || !sentidoDelLugar.destino) return undefined;
+    let vivo = true;
+    const params = new URLSearchParams({ q: sentidoDelLugar.destino });
+    void fetch(`/api/lugar?${params.toString()}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { resultados?: OpcionLugar[] } | null) => {
+        const p = d?.resultados?.[0];
+        if (vivo && p) setDestinoNarrado({ lat: p.lat, lon: p.lon });
+      })
+      .catch(() => undefined);
+    return () => {
+      vivo = false;
+    };
+  }, [sentidoDelLugar]);
   // La escena ya armada: al entrar, si nadie ha marcado el choque, Croquis la propone con lo que leyó
   // (con `?desde=cero`, también en un caso que ya trae posiciones, como AXA).
   const [escenaPropuesta, setEscenaPropuesta] = useState<EscenaPropuesta | null>(null);
@@ -553,6 +581,7 @@ export function EscenaFacil({
           narracion,
           lugar: lugarBase ?? centroMapa,
           nombreDe: (id) => nombres[id] ?? id,
+          rumboNarrado: rumboDelSentido(sentidoDelLugar, destinoNarrado, lugarBase ?? centroMapa),
         });
         if (!p) return;
         setEscenaPropuesta(p);
