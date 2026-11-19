@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Croquis.Core;
 using Croquis.Generated;
 using UnityEngine;
 using Material = UnityEngine.Material;
