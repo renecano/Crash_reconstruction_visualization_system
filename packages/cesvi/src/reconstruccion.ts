@@ -1530,7 +1530,7 @@ export function expedienteConTipicas(e: Expediente, r: Reconstruccion): Expedien
       return veh && !veh.velocidad_narrada && !detenidos.has(id);
     });
   // Solo los que el solver estima (los que se mueven): un detenido supuesto no tiene velocidad previa.
-  const inv = ((r.resultado as Json).inversion ?? {}) as { parametros?: Json[] };
+  const inv = ((r.resultado).inversion ?? {}) as { parametros?: Json[] };
   const estimados = new Set(
     (inv.parametros ?? [])
       .filter((p) => p.parametro === "velocidad_previa")

@@ -105,6 +105,8 @@ export interface Pizarra {
   conversion: Conversion | null;
   /** La lectura de donde salió `conversion` (sus citas van a `escena.lectura`). */
   salidaElegida?: SalidaCorpus | null;
+  /** La misma lectura elegida, tal como la dio el modelo (sin el vocabulario): de ella salen las menciones. */
+  lecturaCruda?: SalidaCorpus | null;
   escena: EscenaNarrada | null;
   expediente: Expediente | null;
   preguntas: PreguntaEscena[];
@@ -287,6 +289,7 @@ const verificadorCitas: Agente = {
       verificadas: p.verificadas + 1,
       conversion,
       salidaElegida: conversion === p.conversion ? p.salidaElegida : s,
+      lecturaCruda: conversion === p.conversion ? p.lecturaCruda : p.lecturas.at(-1)!,
       escena: conversion === p.conversion ? p.escena : null,
     };
     const fuera = rechazosParaReleer(s, p.narracion!, conv);
@@ -316,8 +319,9 @@ const validador: Agente = {
       ? {
           ...convertida,
           lectura: lecturaDeNarracion(p.salidaElegida, p.narracion!),
-          // La elegida ya pasó por el vocabulario: aquí solo se leen sus menciones.
-          menciones: conVocabulario(p.salidaElegida, p.narracion!).menciones,
+          // Las menciones, de la lectura tal como llegó: el vocabulario se aplica una sola vez, como en
+          // `escenaDeNarracion` (si no, la clase que puso el vocabulario perdía su «supuesto»).
+          menciones: conVocabulario(p.lecturaCruda ?? p.salidaElegida, p.narracion!).menciones,
         }
       : convertida;
     const n = escena.expediente.vehiculos.length;

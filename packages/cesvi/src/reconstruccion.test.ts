@@ -282,10 +282,15 @@ describe("del expediente a la escena del solver (R2)", () => {
     "sin evidencia no inventa velocidades; con las posiciones del perito las fija con rangos",
     { timeout: 60_000 },
     () => {
+      // Sin evidencia (ronda 4, René): no hay estimación de la evidencia; cada velocidad es la típica
+      // de la vía, dicha como supuesto con su rango (nunca el arranque del ajuste).
       const sin = reconstruirExpediente(base);
-      expect(sin.evidencia).toEqual([]);
-      expect(sin.velocidades.every((v) => v.previa === null)).toBe(true);
-      expect(sin.limites.at(-1)).toMatch(/todavía no fija ninguna velocidad/);
+      expect(sin.evidencia.every((x) => x.startsWith("velocidad_declarada:"))).toBe(true);
+      expect(sin.limites.join(" ")).toMatch(/se supone la típica de la vía/);
+      const inv = (sin.resultado as { inversion: { parametros: Record<string, unknown>[] } })
+        .inversion;
+      for (const p of inv.parametros.filter((x) => x.parametro === "velocidad_previa"))
+        expect(p.fijada_por).toBe("declarada");
 
       const con = reconstruirExpediente(colocado());
       expect(con.evidencia).toEqual([
