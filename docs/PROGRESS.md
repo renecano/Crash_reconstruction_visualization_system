@@ -2465,6 +2465,11 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 
 ### Endurecimiento pendiente
 
+- **Ronda 4, la curva en la física** (René, 2026-11-19).
+  - La curva narrada queda como condición con su cita, y el 3D dibuja la curva real cuando hay calles.
+  - La física, en cambio, no la sigue: el solver solo sabe seguir la curva de su plantilla (un arco fijo con centro en (0, −r), `roadAxis`), no la de la calle real. La aproximación sigue siendo recta, de 12 m.
+  - Para seguir la curva real hace falta llevar su eje (centro y radio, girado como la calle de OSM en el impacto) al contrato y al solver, Python y TS con paridad. Ninguna cifra de AXA ni de los cinco ejemplos depende de esto.
+- **Ronda 4, el puente en el 3D** es un paso elevado sobre terraplén: el piso de abajo no pasa por debajo de la losa, porque el terreno es una sola altura por punto. Es ilustrativo, y lo dice la leyenda.
 - **Ronda 4, el piso del modo «mapa real» (build 1.3.0, `eval/results/ronda4_unity_130.json`):** al encenderlo con la foto, el hilo principal tiene tareas largas de 50 a 197 ms (cuatro pasan de 100 ms). La regla de René (2026-11-16) es nunca más de 100 ms. Falta repartir el trabajo: el dibujo del mapa y la foto fuera de pantalla (MapLibre), la composición y la decodificación de la imagen en Unity (`LoadImage`, en el hilo principal en WebGL). Primero medir cuánto toca a cada parte. Solo pasa al encender el modo; abrir el 3D no empeoró (`eval/results/ronda4_unity_arranque_*`). De cerca la foto se ve borrosa (unos 0.3 m por pixel): subirla a 4 096 px cuesta más tiempo de decodificación, y va después de lo anterior.
 
 - **La luz y el clima de la escena no salen del expediente** (2026-11-17, los ejemplos con el Unity real): «Crucero de noche» y «Carambola de noche con lluvia» se ven de día y en seco. Antes de tocarlo hay que ver si el clima cambia la fricción del cálculo (números) o solo el dibujo.
