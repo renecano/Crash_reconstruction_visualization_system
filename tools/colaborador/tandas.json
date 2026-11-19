@@ -1,6 +1,6 @@
 {
   "nota": "Lo pesado de cada tanda de la auditoría del 2026-11-15, para la computadora del colaborador (tools/colaborador/tanda.ps1). «vigente» es la que corre CORRER-TANDA-EN-RTX.bat con doble clic. Toda corrida empieza por «comprobacion»; si falla, lo pesado no corre. Cada paso: un comando que corre en la raíz del repositorio, sin preguntas y sin llaves; «minutos» es lo estimado (el tope es 4 veces eso, y al menos 10 min); «salidas» son las rutas que se suben además de los registros. «rama»: la rama donde vive la tanda mientras no esté en main. Un comando por paso (sin &&): cada uno deja su registro. Un paso con `requiere` se omite si falta esa carpeta (datos que no van en git).",
-  "vigente": "t4c",
+  "vigente": "t5-verificacion",
   "comprobacion": {
     "pasos": [
       {
@@ -330,6 +330,120 @@
           "salidas": ["eval/results/rtx-r4/video_3d.jsonl"]
         }
       ]
+    },
+    "t5-verificacion": {
+      "titulo": "Tanda 5 · Verificación de la ronda 4 (lo narrado llega a la física y al 3D)",
+      "nota": "René, 2026-11-19. En la rama del #284, en modo demo local y en el Chrome instalado (no en el Chromium de Playwright). Nada baja de Vercel Blob: el visor sale del release de GitHub. Cada paso tiene un tope de 15 min: si lo pasa, se detiene, queda anotado y la tanda sigue sin reintentar. Unas 2 h. Primero lo que más importa (las seis narraciones, el caso encimado, Tollocan y los cinco ejemplos); al final el arranque, 3 corridas con el build nuevo (3cce5c1caca88f96) y 3 con el 1.3.0 de producción (3087c2915b272e66). Fijada al commit d96d7439 del #284: lo que se prueba no cambia si la rama avanza.",
+      "rama": "feat/w-narracion-a-la-fisica",
+      "pasos": [
+        {
+          "nombre": "visor-nuevo",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 2,
+          "tope_min": 15
+        },
+        {
+          "nombre": "preparar-nuevo",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar",
+          "minutos": 8,
+          "tope_min": 15
+        },
+        {
+          "nombre": "narraciones",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues narraciones -Salida eval/results/t5/narraciones_fisica.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5", "docs/cesvi/ronda-4/evidencia/fisica"]
+        },
+        {
+          "nombre": "tollocan",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tollocan -Salida eval/results/t5/tollocan.json",
+          "minutos": 6,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5", "docs/cesvi/ronda-4/evidencia/fisica"]
+        },
+        {
+          "nombre": "ejemplos-despues",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t5/ejemplos_despues.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5", "docs/cesvi/ronda-4/evidencia/t5-ejemplos"]
+        },
+        {
+          "nombre": "ejemplos-antes",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/ejemplos-produccion.ps1",
+          "minutos": 10,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5", "docs/cesvi/ronda-4/evidencia/t5-ejemplos-antes"]
+        },
+        {
+          "nombre": "arranque-nuevo-1",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t5/arranque_3cce5c1caca88f96_1.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5"]
+        },
+        {
+          "nombre": "arranque-nuevo-2",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t5/arranque_3cce5c1caca88f96_2.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5"]
+        },
+        {
+          "nombre": "arranque-nuevo-3",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t5/arranque_3cce5c1caca88f96_3.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5"]
+        },
+        {
+          "nombre": "usar-130",
+          "comando": "git checkout origin/main -- apps/web/public/visor-unity/manifest.json",
+          "minutos": 1,
+          "tope_min": 15
+        },
+        {
+          "nombre": "visor-130",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 2,
+          "tope_min": 15
+        },
+        {
+          "nombre": "preparar-130",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar",
+          "minutos": 8,
+          "tope_min": 15
+        },
+        {
+          "nombre": "arranque-130-1",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t5/arranque_3087c2915b272e66_1.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5"]
+        },
+        {
+          "nombre": "arranque-130-2",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t5/arranque_3087c2915b272e66_2.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5"]
+        },
+        {
+          "nombre": "arranque-130-3",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t5/arranque_3087c2915b272e66_3.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5"]
+        },
+        {
+          "nombre": "volver-al-nuevo",
+          "comando": "git checkout HEAD -- apps/web/public/visor-unity/manifest.json",
+          "minutos": 1,
+          "tope_min": 15
+        }
+      ],
+      "commit": "d96d7439bbf908e6d221de116ac762419de22e3c"
     }
   }
 }

@@ -260,7 +260,21 @@ if ($ramaDeLaTanda -and -not $EnSuRama -and $ramaActual -ne $ramaDeLaTanda) {
     Escribir "No se pudo traer la rama $ramaDeLaTanda de GitHub (¿hay internet?)." "Red"
     exit 1
   }
-  if ((Nativo "git" @("-C", $Repo, "checkout", "-B", $ramaDeLaTanda, "FETCH_HEAD")) -ne 0) {
+  # Fijada a un commit (René, 2026-11-19): se prueba ese SHA exacto, aunque la rama avance mientras corre.
+  $destino = "FETCH_HEAD"
+  $commitDeLaTanda = [string]$Definicion.commit
+  if ($commitDeLaTanda) {
+    if ((Nativo "git" @("-C", $Repo, "cat-file", "-e", "$commitDeLaTanda^{commit}")) -ne 0) {
+      [void](Nativo "git" @("-C", $Repo, "fetch", "origin", $commitDeLaTanda))
+    }
+    if ((Nativo "git" @("-C", $Repo, "cat-file", "-e", "$commitDeLaTanda^{commit}")) -ne 0) {
+      Escribir "No encontré el commit $commitDeLaTanda de la tanda en GitHub." "Red"
+      exit 1
+    }
+    $destino = $commitDeLaTanda
+    Escribir "La tanda está fijada al commit $commitDeLaTanda."
+  }
+  if ((Nativo "git" @("-C", $Repo, "checkout", "-B", $ramaDeLaTanda, $destino)) -ne 0) {
     Escribir "No se pudo cambiar a la rama $ramaDeLaTanda." "Red"
     exit 1
   }
@@ -491,7 +505,9 @@ function CorrerPaso([string]$grupo, [int]$numero, [int]$total, $paso) {
   $comando = [string]$paso.comando
   $registro = Join-Path $Salida ("{0}-{1:D2}-{2}.log" -f $grupo, $numero, $nombre)
   $estimado = [double]$paso.minutos
-  $tope = [math]::Max(10, 4 * $estimado)
+  # El tope: el del paso si lo trae (`tope_min`, René 2026-11-19: 15 min y se salta, sin reintentar);
+  # si no, 4 veces lo estimado y al menos 10 min.
+  $tope = if ($paso.tope_min) { [double]$paso.tope_min } else { [math]::Max(10, 4 * $estimado) }
   Escribir ""
   Escribir "[$grupo $numero/$total] $nombre (unos $estimado min; tope $tope min)" "White"
   [IO.File]::WriteAllText($registro, (@(
