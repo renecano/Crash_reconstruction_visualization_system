@@ -35,7 +35,7 @@ function contra(objeto: string): Expediente {
     danos: [],
     impactos: [{ orden: 1, vehiculos: ["V1"], objeto_fijo: objeto, fuente: "perito" }],
     versiones: [],
-  } as Expediente;
+  };
   // Hacia el oriente (rumbo 90 desde el norte).
   return conPosicion(e, { vehiculo: "V1", fase: "impacto", punto: m(0, 0), rumbo: 90 });
 }
@@ -55,7 +55,7 @@ describe("el objeto del primer impacto, donde fue el choque (René, 2026-11-18)"
         expect(pos.x).toBeLessThan(3.5);
         expect(Math.abs(pos.y)).toBeLessThan(0.3);
         const r = reconstruirExpediente(e, "objeto", { samples: 8, mcSamples: 8 });
-        const res = r.resultado as Json;
+        const res = r.resultado;
         const pi = res.punto_impacto as { x: number; y: number };
         expect(Math.hypot(pi.x - pos.x, pi.y - pos.y)).toBeLessThan(1.0);
         const v = (res.vehiculos as Json[])[0]!;
