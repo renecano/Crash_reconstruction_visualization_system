@@ -91,9 +91,27 @@ describe("vocabulario mexicano de vehículos (O5)", () => {
     });
   });
 
-  it("los nombres comerciales no son clases: «lobo» no se reconoce", () => {
-    const m = vehiculosMencionados("una combi colisiona con un pickup lobo");
-    expect(m.map((x) => x.texto)).toEqual(["combi", "pickup"]);
+  it("ronda 4: la clase sale de cómo lo dice el perito o de su modelo, con su cita", () => {
+    const clase = (texto: string) => vehiculosMencionados(texto).map((x) => [x.texto, x.clase]);
+    expect(clase("iba en un sedán")).toEqual([["sedán", "sedan_mediano"]]);
+    expect(clase("una camioneta lo golpeó")).toEqual([["camioneta", "pickup"]]);
+    expect(clase("venía en su Tsuru")).toEqual([["Tsuru", "sedan_compacto"]]);
+    expect(clase("un Nissan March blanco")).toEqual([["March", "hatchback"]]);
+    expect(clase("la CR-V invadió el carril")).toEqual([["CR-V", "suv_compacta"]]);
+    expect(clase("un tracto con caja seca")).toEqual([["tracto", "tractocamion"]]);
+    expect(clase("el autobús de pasajeros")).toEqual([["autobús", "autobus"]]);
+    expect(clase("una moto Italika")).toEqual([
+      ["moto", "motocicleta"],
+      ["Italika", "motocicleta"],
+    ]);
+    expect(clase("un pick-up Lobo")).toEqual([
+      ["pick-up", "pickup"],
+      ["Lobo", "pickup"],
+    ]);
+    // Lo genérico o el modelo es la clase más cercana: queda como supuesto declarado.
+    expect(vehiculosMencionados("iba en un sedán")[0]!.exacta).toBe(false);
+    // Un auto, a secas, no dice su clase: se pregunta.
+    expect(clase("un auto se impactó")).toEqual([["auto", undefined]]);
   });
 
   it("no ve vehículos dentro de otras palabras", () => {
