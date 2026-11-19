@@ -19,6 +19,7 @@ import {
   lecturasDeDano,
   formato as F,
   especDeExpediente,
+  expedienteConTipicas,
   especReconstruida,
   evidenciaEnPalabras,
   impactosEnMapa,
@@ -100,18 +101,35 @@ export function useReconstruccion(
     }
     setRecalculando(true);
     try {
-      const base = especDeExpediente(exp);
+      let base = especDeExpediente(exp);
       // W5: el relieve real, si el perito lo pidió. Sin malla (sin red), el solver va en plano y
       // lo avisa.
       const malla = usaRelieve(exp) && base.origen ? await relieveDelLugar(base.origen) : null;
-      const resultado = await reconstruirCompletoEnNavegador(
+      let resultado = await reconstruirCompletoEnNavegador(
         base.spec as unknown as EscenaSpec,
         undefined,
         malla,
       );
       if (mio !== turno.current) return;
+      let interpretada = interpretarResultado(
+        base,
+        resultado as unknown as Record<string, unknown>,
+      );
+      // Ronda 4: lo que la evidencia no fija va con la velocidad típica de la vía (supuesto con su
+      // rango), nunca con el arranque del ajuste. Si todo quedó fijado, no se recalcula.
+      const conTipicas = expedienteConTipicas(exp, interpretada);
+      if (conTipicas) {
+        base = especDeExpediente(conTipicas);
+        resultado = await reconstruirCompletoEnNavegador(
+          base.spec as unknown as EscenaSpec,
+          undefined,
+          malla,
+        );
+        if (mio !== turno.current) return;
+        interpretada = interpretarResultado(base, resultado as unknown as Record<string, unknown>);
+      }
       const json = resultado as unknown as Record<string, unknown>;
-      setR({ ...interpretarResultado(base, json), relieve: malla });
+      setR({ ...interpretada, relieve: malla });
       setDe(exp);
       setImpactos(impactosEnMapa(base, json));
       setEstado(null);

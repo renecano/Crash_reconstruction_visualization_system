@@ -61,7 +61,11 @@ import { rigidezEnKilo } from "./verificacion";
 import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from "./geo";
 import { objetosDe, TIPOS_OBJETO } from "./objetos";
 import { medidasDe } from "./poses-impacto";
-import { velocidadPreviaDeclarada, type VelocidadNarrada } from "./velocidad-narrada";
+import {
+  conVelocidadDelPerito,
+  velocidadPreviaDeclarada,
+  type VelocidadNarrada,
+} from "./velocidad-narrada";
 import type { MallaRelieve } from "./relieve";
 import { terrenoDeEscena, terrenoReconstruido, type TerrenoReconstruido } from "./terreno";
 import { limiteDeCobertura } from "./cobertura";
@@ -1401,7 +1405,45 @@ export function reconstruirExpediente(
   muestras: { samples?: number; mcSamples?: number } = {},
 ): Reconstruccion {
   const base = especDeExpediente(e, specId);
-  return interpretarResultado(base, fullResult(base.spec, muestras));
+  const r = interpretarResultado(base, fullResult(base.spec, muestras));
+  // Ronda 4: lo que la evidencia no fija va con la velocidad típica de la vía, nunca con el arranque.
+  const conTipicas = expedienteConTipicas(e, r);
+  if (!conTipicas) return r;
+  const base2 = especDeExpediente(conTipicas, specId);
+  return interpretarResultado(base2, fullResult(base2.spec, muestras));
+}
+
+/**
+ * Ronda 4 (René, 2026-11-18): «si la evidencia no fija la velocidad, dilo y usa la declarada o la
+ * típica, nunca una mínima arbitraria». El expediente con la velocidad típica de la vía (supuesto
+ * con su rango, `conVelocidadDelPerito(…, null)`) para cada vehículo en movimiento que la evidencia
+ * no fijó y del que nadie dijo la velocidad; null si no hay ninguno (entonces nada cambia: AXA, con
+ * todo fijado por la evidencia, queda igual).
+ */
+export function expedienteConTipicas(e: Expediente, r: Reconstruccion): Expediente | null {
+  const detenidos = new Set(
+    (e.versiones ?? [])
+      .find((x) => x.tipo === "evidencia")
+      ?.maniobras?.filter((m) => m.tipo === "se_detiene")
+      .map((m) => m.vehiculo) ?? [],
+  );
+  const sinFijar = r.velocidades
+    .filter((v) => !v.previa)
+    .map((v) => String(v.vehiculo))
+    .filter((id) => {
+      const veh = e.vehiculos.find((x) => x.id === id);
+      return veh && !veh.velocidad_narrada && !detenidos.has(id);
+    });
+  // Solo los que el solver estima (los que se mueven): un detenido supuesto no tiene velocidad previa.
+  const inv = ((r.resultado as Json).inversion ?? {}) as { parametros?: Json[] };
+  const estimados = new Set(
+    (inv.parametros ?? [])
+      .filter((p) => p.parametro === "velocidad_previa")
+      .map((p) => String(r.ids[String(p.vehiculo)] ?? "")),
+  );
+  const ids = sinFijar.filter((id) => estimados.has(id));
+  if (!ids.length) return null;
+  return ids.reduce((x, id) => conVelocidadDelPerito(x, id, null), e);
 }
 
 /** Las simulaciones con las que se calculó un rango, y cuál de los dos juegos son. */
