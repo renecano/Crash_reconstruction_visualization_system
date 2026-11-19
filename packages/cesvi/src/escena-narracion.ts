@@ -27,6 +27,7 @@ import {
   type SalidaCorpus,
 } from "./corpus";
 import { conVelocidadesNarradas } from "./velocidad-narrada";
+import { usaRelieve, usarRelieve } from "./terreno";
 import { GLOSARIO, glosarioParaPrompt } from "./hecho-lectura";
 
 import { conVocabulario, type MencionLeida } from "./relato";
@@ -358,9 +359,13 @@ export function lecturaDeHecho(
  */
 export function escenaDeConversion(c: Conversion, narracion?: string): EscenaNarrada {
   // La velocidad que dice o describe la narración (ronda 4), leída sin el modelo y con su cita.
-  const leido = conZonas(
-    narracion ? conVelocidadesNarradas(c.expediente, narracion) : c.expediente,
-  );
+  let narrado = narracion ? conVelocidadesNarradas(c.expediente, narracion) : c.expediente;
+  // Una subida o una bajada narradas (ronda 4): la reconstrucción usa el relieve real del lugar, no
+  // una pendiente supuesta. Sobre un puente no: el relieve es el del suelo de abajo.
+  const cond = narrado.caso.condiciones;
+  if (cond?.pendiente && !cond.estructura && !usaRelieve(narrado))
+    narrado = usarRelieve(narrado, true);
+  const leido = conZonas(narrado);
   const preguntas: PreguntaEscena[] = [];
   const propuesto = leido.expediente.impactos?.length ? null : impactoPropuesto(leido.expediente);
   const expediente = propuesto ? { ...leido.expediente, impactos: [propuesto] } : leido.expediente;

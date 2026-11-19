@@ -94,6 +94,35 @@ describe("la escena ya armada (cesvi-cf708e9fed)", () => {
   });
 });
 
+describe("sin calles en el lugar (René, 2026-11-18: no inventar la dirección)", () => {
+  it("el choque va en el lugar y por dónde venía cada uno falta, sin un rumbo supuesto", () => {
+    const impactos = impactosAColocar(expediente);
+    const p = proponerEscena({
+      expediente,
+      impactos,
+      calles: [],
+      narracion: null,
+      lugar,
+      nombreDe,
+    })!;
+    expect(p.propuestos.some((x) => x.clave.startsWith("direccion-"))).toBe(false);
+    const faltan = p.faltan.filter((x) => x.clave.startsWith("direccion-"));
+    expect(faltan.length).toBe(impactos[0]!.vehiculos.length);
+    const l = listaDeLaEscena({
+      expediente: p.expediente,
+      impactos,
+      pasos: [],
+      propuesta: p,
+      confirmados: new Set<string>(),
+      direccionesNoSe: [],
+      juntoAlChoque: [],
+      desconocidos: [],
+      nombreDe,
+    });
+    for (const f of faltan) expect(l.find((x) => x.clave === f.clave)!.estado).toBe("falta");
+  });
+});
+
 describe("la lista de La escena (ronda 4, propuesta 1)", () => {
   const impactos = impactosAColocar(expediente);
   const p = proponerEscena({ expediente, impactos, calles, narracion: null, lugar, nombreDe })!;

@@ -60,6 +60,7 @@ import type { Expediente } from "./corpus";
 import { rigidezEnKilo } from "./verificacion";
 import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from "./geo";
 import { objetosDe, TIPOS_OBJETO } from "./objetos";
+import { medidasDe } from "./poses-impacto";
 import { velocidadPreviaDeclarada, type VelocidadNarrada } from "./velocidad-narrada";
 import type { MallaRelieve } from "./relieve";
 import { terrenoDeEscena, terrenoReconstruido, type TerrenoReconstruido } from "./terreno";
@@ -162,6 +163,9 @@ const MANIOBRA_ESCENA: Record<string, string> = {
  * La zona horizontal CDC (SAE J224) de una zona del diagrama del perito: en el frente y la parte
  * posterior, L, C o R por el tercio o el vértice; en los costados, F, P o B. null si no la dice.
  */
+/** Los objetos planos (el solver los trata como superficie): los demás son angostos (tronco, poste). */
+const TIPOS_PLANOS = new Set(["muro", "barda", "vehiculo_estacionado", "contenedor", "puesto"]);
+
 /** Lo que se supone de la velocidad de un vehículo, dicho en los límites del cálculo (ronda 4). */
 function limiteDeVelocidadNarrada(id: Id, v: VelocidadNarrada): string {
   const [lo, hi] = v.rango_kmh;
@@ -488,6 +492,40 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
         rumbo_deg: rumboEscena(fin.rumbo),
         procedencia: { ...DEL_PERITO },
       };
+  }
+  // El objeto del primer impacto (árbol, poste, muro…) frente a la cara de contacto del vehículo,
+  // donde el perito lo colocó en el choque (ronda 4; René, 2026-11-18). Antes iba en la posición
+  // genérica de la plantilla (6, −6) y el solver, que toma el objeto como punto de contacto,
+  // desviaba al vehículo hacia ella, fuera de donde lo colocó el perito.
+  const objetoPrimero = ((spec.entorno as Json | undefined)?.objetos as Json[] | undefined)?.find(
+    (o) => o.id === "obj-1",
+  );
+  const golpea = enImpacto[0];
+  const poseGolpe = golpea ? deImpacto.find((p) => p.vehiculo === golpea) : undefined;
+  if (objetoPrimero && origen && poseGolpe && objeto) {
+    const { x, y } = local(poseGolpe.punto);
+    const r = rumboEscena(poseGolpe.rumbo);
+    const cara = zonasPrimero.find((z) => z.vehiculo === golpea)?.zona.cara ?? "frontal";
+    const giro =
+      cara === "posterior" ? 180 : cara === "lateral_izquierdo" ? 90 : cara === "lateral_derecho" ? -90 : 0;
+    const m = medidasDe(vehiculos.find((v) => v.id === golpea)!);
+    const lateral = giro === 90 || giro === -90;
+    const angosto = !TIPOS_PLANOS.has(String(objetoPrimero.tipo));
+    // Del centro del vehículo a su cara, más medio objeto (un tronco típico de 0.3 m; un muro, 0.1 m).
+    const d = (lateral ? m.ancho : m.largo) / 2 + (angosto ? 0.15 : 0.1);
+    const rad = ((r + giro) * Math.PI) / 180;
+    objetoPrimero.posicion = {
+      x: Math.round((x + d * Math.cos(rad)) * 1000) / 1000,
+      y: Math.round((y + d * Math.sin(rad)) * 1000) / 1000,
+    };
+    objetoPrimero.procedencia = {
+      fuente: "supuesto",
+      confianza: 0.5,
+      nota: `Frente a la cara ${cara.replace("_", " ")} del vehículo, donde el perito lo colocó en el choque.`,
+    };
+    limites.push(
+      `El ${String(objetoPrimero.tipo).replace("_", " ")} del primer impacto va frente a la cara ${cara.replace("_", " ")} de ${golpea}, donde lo colocaste en el choque; sus medidas son las típicas (supuesto).`,
+    );
   }
   // Sin posiciones del perito, la disposición genérica supone que todos avanzan. Quien retrocede
   // y con eso se alejaría del otro se voltea (T3.3): mismo lugar y mismo recorrido, con la parte

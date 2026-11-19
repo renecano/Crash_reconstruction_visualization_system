@@ -129,6 +129,16 @@ export function proponerEscena(o: {
       caraDe(v) ? `el daño ${caraDe(v)} de ${o.nombreDe(v)}` : null,
       otro && caraDe(otro) ? `el ${caraDe(otro)} de ${o.nombreDe(otro)}` : null,
     ].filter(Boolean);
+    // Sin calles del mapa ni sentido narrado no hay de dónde sacar por dónde venía: no se inventa
+    // (René, 2026-11-18); falta, y lo elige el perito.
+    if (!f && !s) {
+      faltan.push({
+        clave: `direccion-${v}`,
+        texto: `Por dónde venía ${o.nombreDe(v)}`,
+        porque: "no hay calles del mapa en este lugar y la narración no lo dice: elígelo tú",
+      });
+      continue;
+    }
     propuestos.push({
       clave: `direccion-${v}`,
       texto: f
@@ -236,18 +246,30 @@ export function listaDeLaEscena(o: {
       const claveD = `direccion-${v}`;
       const p = de(claveD);
       const confirmada = pose?.fuente === "perito" || o.direccionesNoSe.includes(v);
-      out.push({
-        clave: claveD,
-        texto: pose
-          ? confirmada
-            ? `${o.nombreDe(v)}: venía de ${cardinal(pose.rumbo + 180)} a ${cardinal(pose.rumbo)}`
-            : (p?.texto ?? `${o.nombreDe(v)}: por dónde venía`)
-          : `Por dónde venía ${o.nombreDe(v)}`,
-        porque: pose && !confirmada ? (p?.porque ?? "lo propone Croquis por los daños") : null,
-        estado: !pose ? "falta" : confirmada ? "confirmado" : "propuesto",
-        opcional: false,
-        abre: { tipo: "direccion", vehiculo: v },
-      });
+      // Sin calles ni sentido narrado, Croquis no la propone: falta, aunque el choque ya tenga pose.
+      const sinPropuesta = propuesta?.faltan.find((f) => f.clave === claveD) ?? null;
+      if (sinPropuesta && !confirmada) {
+        out.push({
+          clave: claveD,
+          texto: sinPropuesta.texto,
+          porque: sinPropuesta.porque,
+          estado: "falta",
+          opcional: false,
+          abre: { tipo: "direccion", vehiculo: v },
+        });
+      } else
+        out.push({
+          clave: claveD,
+          texto: pose
+            ? confirmada
+              ? `${o.nombreDe(v)}: venía de ${cardinal(pose.rumbo + 180)} a ${cardinal(pose.rumbo)}`
+              : (p?.texto ?? `${o.nombreDe(v)}: por dónde venía`)
+            : `Por dónde venía ${o.nombreDe(v)}`,
+          porque: pose && !confirmada ? (p?.porque ?? "lo propone Croquis por los daños") : null,
+          estado: !pose ? "falta" : confirmada ? "confirmado" : "propuesto",
+          opcional: false,
+          abre: { tipo: "direccion", vehiculo: v },
+        });
       const final = poseDe(e, v, "final");
       const resuelto = Boolean(final) || o.juntoAlChoque.includes(v) || o.desconocidos.includes(v);
       out.push({
