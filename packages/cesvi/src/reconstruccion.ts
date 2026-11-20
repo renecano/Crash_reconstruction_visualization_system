@@ -60,6 +60,12 @@ import type { Expediente } from "./corpus";
 import { rigidezEnKilo } from "./verificacion";
 import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from "./geo";
 import { objetosDe, TIPOS_OBJETO } from "./objetos";
+import { medidasDe } from "./poses-impacto";
+import {
+  conVelocidadDelPerito,
+  velocidadPreviaDeclarada,
+  type VelocidadNarrada,
+} from "./velocidad-narrada";
 import type { MallaRelieve } from "./relieve";
 import { terrenoDeEscena, terrenoReconstruido, type TerrenoReconstruido } from "./terreno";
 import { limiteDeCobertura } from "./cobertura";
@@ -161,6 +167,20 @@ const MANIOBRA_ESCENA: Record<string, string> = {
  * La zona horizontal CDC (SAE J224) de una zona del diagrama del perito: en el frente y la parte
  * posterior, L, C o R por el tercio o el vértice; en los costados, F, P o B. null si no la dice.
  */
+/** Los objetos planos (el solver los trata como superficie): los demás son angostos (tronco, poste). */
+const TIPOS_PLANOS = new Set(["muro", "barda", "vehiculo_estacionado", "contenedor", "puesto"]);
+
+/** Lo que se supone de la velocidad de un vehículo, dicho en los límites del cálculo (ronda 4). */
+function limiteDeVelocidadNarrada(id: Id, v: VelocidadNarrada): string {
+  const [lo, hi] = v.rango_kmh;
+  const rango = `${Math.round(lo)} a ${Math.round(hi)} km/h`;
+  if (v.origen === "perito")
+    return `${id}: su velocidad previa es la que dio el perito (${rango}); solo pesa si la evidencia no la fija.`;
+  if (v.origen === "via")
+    return `${id}: el perito no sabe su velocidad; se supone la típica de la vía (${rango}, alrededor del límite de ${v.limite_kmh} km/h: ${v.limite_fuente}). Solo pesa si la evidencia no la fija.`;
+  return `${id}: la narración dice «${v.descripcion}»; entra como supuesto de ${rango}${v.respecto_al_limite ? ` (respecto al límite de ${v.limite_kmh} km/h: ${v.limite_fuente})` : ""}. Solo pesa si la evidencia no la fija.`;
+}
+
 export function zonaHorizontal(z: {
   cara: string;
   tercio?: string;
@@ -386,6 +406,12 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
         ...(v.masa.fuente === "supuesto" ? { fuente: "supuesto", confianza: 0.5 } : DEL_PERITO),
       };
     }
+    // La velocidad que dice o describe la narración, la que dio el perito o la típica de la vía
+    // (ronda 4): un supuesto declarado con su rango, que solo pesa si la evidencia no la fija.
+    if (v.velocidad_narrada && maniobraNarrada.get(v.id) !== "detenido") {
+      sv.velocidad_previa = velocidadPreviaDeclarada(v.velocidad_narrada);
+      limites.push(limiteDeVelocidadNarrada(v.id, v.velocidad_narrada));
+    }
     if (maniobraNarrada.has(v.id) && sv.maniobra) {
       sv.maniobra = {
         ...(sv.maniobra as Json),
@@ -470,6 +496,56 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
         rumbo_deg: rumboEscena(fin.rumbo),
         procedencia: { ...DEL_PERITO },
       };
+  }
+  // Un puente o un paso a desnivel narrado (ronda 4): la física va sobre la losa, a nivel; el 3D
+  // dibuja la estructura.
+  const estructura = e.caso.condiciones?.estructura;
+  if (estructura)
+    (spec.lugar as Json).estructura = {
+      valor: estructura.valor,
+      fuente: "usuario",
+      confianza: 0.8,
+      nota: "Lo dice la narración del perito.",
+    };
+  // El objeto del primer impacto (árbol, poste, muro…) frente a la cara de contacto del vehículo,
+  // donde el perito lo colocó en el choque (ronda 4; René, 2026-11-18). Antes iba en la posición
+  // genérica de la plantilla (6, −6) y el solver, que toma el objeto como punto de contacto,
+  // desviaba al vehículo hacia ella, fuera de donde lo colocó el perito.
+  const objetoPrimero = ((spec.entorno as Json | undefined)?.objetos as Json[] | undefined)?.find(
+    (o) => o.id === "obj-1",
+  );
+  const golpea = enImpacto[0];
+  const poseGolpe = golpea ? deImpacto.find((p) => p.vehiculo === golpea) : undefined;
+  if (objetoPrimero && origen && poseGolpe && objeto) {
+    const { x, y } = local(poseGolpe.punto);
+    const r = rumboEscena(poseGolpe.rumbo);
+    const cara = zonasPrimero.find((z) => z.vehiculo === golpea)?.zona.cara ?? "frontal";
+    const giro =
+      cara === "posterior"
+        ? 180
+        : cara === "lateral_izquierdo"
+          ? 90
+          : cara === "lateral_derecho"
+            ? -90
+            : 0;
+    const m = medidasDe(vehiculos.find((v) => v.id === golpea)!);
+    const lateral = giro === 90 || giro === -90;
+    const angosto = !TIPOS_PLANOS.has(String(objetoPrimero.tipo));
+    // Del centro del vehículo a su cara, más medio objeto (un tronco típico de 0.3 m; un muro, 0.1 m).
+    const d = (lateral ? m.ancho : m.largo) / 2 + (angosto ? 0.15 : 0.1);
+    const rad = ((r + giro) * Math.PI) / 180;
+    objetoPrimero.posicion = {
+      x: Math.round((x + d * Math.cos(rad)) * 1000) / 1000,
+      y: Math.round((y + d * Math.sin(rad)) * 1000) / 1000,
+    };
+    objetoPrimero.procedencia = {
+      fuente: "supuesto",
+      confianza: 0.5,
+      nota: `Frente a la cara ${cara.replace("_", " ")} del vehículo, donde el perito lo colocó en el choque.`,
+    };
+    limites.push(
+      `El ${String(objetoPrimero.tipo).replace("_", " ")} del primer impacto va frente a la cara ${cara.replace("_", " ")} de ${golpea}, donde lo colocaste en el choque; sus medidas son las típicas (supuesto).`,
+    );
   }
   // Sin posiciones del perito, la disposición genérica supone que todos avanzan. Quien retrocede
   // y con eso se alejaría del otro se voltea (T3.3): mismo lugar y mismo recorrido, con la parte
@@ -921,7 +997,15 @@ export interface ImpactoReconstruido {
   numero: number;
   t: number;
   vehiculos: Id[];
+  /**
+   * Ronda 4 (René): el choque ocurre pero no transfiere energía (ningún vehículo cambia su velocidad
+   * más de `DV_SIN_TRANSFERENCIA_KMH`): sin daño. Se dice; nunca se ve como un empujón mudo.
+   */
+  sinTransferencia?: boolean;
 }
+
+/** km/h: un cambio de velocidad menor en todos los del choque es un choque que no transfiere nada. */
+export const DV_SIN_TRANSFERENCIA_KMH = 2;
 
 /**
  * De qué inversión sale una hipótesis (ADR 0091): si un reposo supuesto no cabe con la deformación
@@ -1217,11 +1301,28 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
   const impactos = eventos
     .filter((ev) => ev.tipo.startsWith("impacto_"))
     .sort((a, b) => a.t - b.t)
-    .map((ev, k) => ({
-      numero: k + 1,
-      t: ev.t,
-      vehiculos: ev.actores.flatMap((a) => (base.ids[a] ? [base.ids[a]] : [])),
-    }));
+    .map((ev, k) => {
+      const actores = ev.actores.filter((a) => base.ids[a]);
+      // Solo el primero: los posteriores llevan su ΔV en `danos_posteriores`.
+      const dv = (a: string) =>
+        Number(((resultado.vehiculos ?? []) as Json[]).find((v) => v.id === a)?.delta_v_kmh ?? NaN);
+      const sinTransferencia =
+        k === 0 &&
+        ev.tipo === "impacto_vehiculo_vehiculo" &&
+        actores.length >= 2 &&
+        actores.every((a) => Number.isFinite(dv(a)) && dv(a) < DV_SIN_TRANSFERENCIA_KMH);
+      return {
+        numero: k + 1,
+        t: ev.t,
+        vehiculos: actores.map((a) => base.ids[a]!),
+        ...(sinTransferencia ? { sinTransferencia: true } : {}),
+      };
+    });
+  const fantasma = impactos.find((i) => i.sinTransferencia);
+  if (fantasma)
+    limites.push(
+      `El choque entre ${fantasma.vehiculos.join(" y ")} casi no transfiere energía con estas velocidades (ninguno cambia su velocidad más de ${DV_SIN_TRANSFERENCIA_KMH} km/h), así que no deja daño: los dos llegan casi igual de rápido en el mismo sentido. Dile a Croquis a qué velocidad venía cada uno o revisa por dónde venían.`,
+    );
   // Un impacto posterior que el solver no alcanzó a resolver se le dice al perito (R6).
   const primerPar = new Set(impactos[0]?.vehiculos ?? []);
   for (const ev of (base.spec.eventos ?? []) as { id: string; tipo: string; actores: string[] }[]) {
@@ -1339,7 +1440,45 @@ export function reconstruirExpediente(
   muestras: { samples?: number; mcSamples?: number } = {},
 ): Reconstruccion {
   const base = especDeExpediente(e, specId);
-  return interpretarResultado(base, fullResult(base.spec, muestras));
+  const r = interpretarResultado(base, fullResult(base.spec, muestras));
+  // Ronda 4: lo que la evidencia no fija va con la velocidad típica de la vía, nunca con el arranque.
+  const conTipicas = expedienteConTipicas(e, r);
+  if (!conTipicas) return r;
+  const base2 = especDeExpediente(conTipicas, specId);
+  return interpretarResultado(base2, fullResult(base2.spec, muestras));
+}
+
+/**
+ * Ronda 4 (René, 2026-11-18): «si la evidencia no fija la velocidad, dilo y usa la declarada o la
+ * típica, nunca una mínima arbitraria». El expediente con la velocidad típica de la vía (supuesto
+ * con su rango, `conVelocidadDelPerito(…, null)`) para cada vehículo en movimiento que la evidencia
+ * no fijó y del que nadie dijo la velocidad; null si no hay ninguno (entonces nada cambia: AXA, con
+ * todo fijado por la evidencia, queda igual).
+ */
+export function expedienteConTipicas(e: Expediente, r: Reconstruccion): Expediente | null {
+  const detenidos = new Set(
+    (e.versiones ?? [])
+      .find((x) => x.tipo === "evidencia")
+      ?.maniobras?.filter((m) => m.tipo === "se_detiene")
+      .map((m) => m.vehiculo) ?? [],
+  );
+  const sinFijar = r.velocidades
+    .filter((v) => !v.previa)
+    .map((v) => String(v.vehiculo))
+    .filter((id) => {
+      const veh = e.vehiculos.find((x) => x.id === id);
+      return veh && !veh.velocidad_narrada && !detenidos.has(id);
+    });
+  // Solo los que el solver estima (los que se mueven): un detenido supuesto no tiene velocidad previa.
+  const inv = (r.resultado.inversion ?? {}) as { parametros?: Json[] };
+  const estimados = new Set(
+    (inv.parametros ?? [])
+      .filter((p) => p.parametro === "velocidad_previa")
+      .map((p) => String(r.ids[String(p.vehiculo)] ?? "")),
+  );
+  const ids = sinFijar.filter((id) => estimados.has(id));
+  if (!ids.length) return null;
+  return ids.reduce((x, id) => conVelocidadDelPerito(x, id, null), e);
 }
 
 /** Las simulaciones con las que se calculó un rango, y cuál de los dos juegos son. */

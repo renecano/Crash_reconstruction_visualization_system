@@ -177,15 +177,579 @@ export const VOCABULARIO_VEHICULOS: readonly EntradaVocabulario[] = [
   { patron: "motos?", clase: "motocicleta", exacta: true },
   { patron: "bicicletas?", clase: "bicicleta", exacta: true },
   { patron: "vans?", clase: "van", exacta: true },
+  { patron: "tractos?", clase: "tractocamion", exacta: true },
+  // Los modelos más comunes en México (ronda 4; René: «un Tsuru»): la carrocería con que se venden,
+  // como supuesto declarado (un modelo puede tener otras versiones).
+  {
+    patron: "tsurus?",
+    clase: "sedan_compacto",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "sentras?",
+    clase: "sedan_compacto",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "versas?",
+    clase: "sedan_compacto",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "aveos?",
+    clase: "sedan_compacto",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "spark",
+    clase: "sedan_compacto",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "vento",
+    clase: "sedan_compacto",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "jetta",
+    clase: "sedan_compacto",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "virtus",
+    clase: "sedan_compacto",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "city",
+    clase: "sedan_compacto",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "yaris sedan",
+    clase: "sedan_compacto",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "rio",
+    clase: "sedan_compacto",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "attitude",
+    clase: "sedan_compacto",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "dart",
+    clase: "sedan_compacto",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "nuevo tsuru",
+    clase: "sedan_compacto",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "corollas?",
+    clase: "sedan_mediano",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "civic",
+    clase: "sedan_mediano",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "mazda ?3",
+    clase: "sedan_mediano",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "mazda ?6",
+    clase: "sedan_mediano",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "camry",
+    clase: "sedan_mediano",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "altima",
+    clase: "sedan_mediano",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "passat",
+    clase: "sedan_mediano",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "cruze",
+    clase: "sedan_mediano",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "camaro",
+    clase: "sedan_mediano",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "mustang",
+    clase: "sedan_mediano",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "accord",
+    clase: "sedan_mediano",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "optima",
+    clase: "sedan_mediano",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "elantra",
+    clase: "sedan_mediano",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "march",
+    clase: "hatchback",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "micra",
+    clase: "hatchback",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "beat",
+    clase: "hatchback",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "polo",
+    clase: "hatchback",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "golf",
+    clase: "hatchback",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "swift",
+    clase: "hatchback",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "fiesta",
+    clase: "hatchback",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "gol",
+    clase: "hatchback",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "chevy",
+    clase: "hatchback",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "i10",
+    clase: "hatchback",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "kwid",
+    clase: "hatchback",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "cr-?v",
+    clase: "suv_compacta",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "rav ?4",
+    clase: "suv_compacta",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "tiguan",
+    clase: "suv_compacta",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "x-?trail",
+    clase: "suv_compacta",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "kicks",
+    clase: "suv_compacta",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "tracker",
+    clase: "suv_compacta",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "hr-?v",
+    clase: "suv_compacta",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "cx-?5",
+    clase: "suv_compacta",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "tucson",
+    clase: "suv_compacta",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "sportage",
+    clase: "suv_compacta",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "ecosport",
+    clase: "suv_compacta",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "creta",
+    clase: "suv_compacta",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "seltos",
+    clase: "suv_compacta",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "t-?cross",
+    clase: "suv_compacta",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "taos",
+    clase: "suv_compacta",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "suburban",
+    clase: "suv_grande",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "tahoe",
+    clase: "suv_grande",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "expedition",
+    clase: "suv_grande",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "explorer",
+    clase: "suv_grande",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "highlander",
+    clase: "suv_grande",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "pathfinder",
+    clase: "suv_grande",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "traverse",
+    clase: "suv_grande",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "pilot",
+    clase: "suv_grande",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "sequoia",
+    clase: "suv_grande",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "hilux",
+    clase: "pickup",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "np ?300",
+    clase: "pickup",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "ranger",
+    clase: "pickup",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "tacoma",
+    clase: "pickup",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "silverado",
+    clase: "pickup",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "lobos?",
+    clase: "pickup",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "f-?150",
+    clase: "pickup",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "f-?250",
+    clase: "pickup",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "ram ?(?:1500|2500|700)?",
+    clase: "pickup",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "frontier",
+    clase: "pickup",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "tundra",
+    clase: "pickup",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "cheyenne",
+    clase: "pickup",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "s-?10",
+    clase: "pickup",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "l200",
+    clase: "pickup",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "saveiro",
+    clase: "pickup",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "tornado",
+    clase: "pickup",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "amarok",
+    clase: "pickup",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "hiace",
+    clase: "van",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "sprinter",
+    clase: "van",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "transit",
+    clase: "van",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "odyssey",
+    clase: "van",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "sienna",
+    clase: "van",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "promaster",
+    clase: "van",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "express van",
+    clase: "van",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "italika",
+    clase: "motocicleta",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "pulsar",
+    clase: "motocicleta",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "dt ?125",
+    clase: "motocicleta",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  {
+    patron: "ft ?150",
+    clase: "motocicleta",
+    exacta: false,
+    nota: "por el modelo: se vende con esa carrocería",
+  },
+  // Palabras genéricas (ronda 4): la clase más cercana, como supuesto declarado y con su cita.
+  {
+    patron: "sedan(?:es)?",
+    clase: "sedan_mediano",
+    exacta: false,
+    nota: "un sedán sin más se toma como sedán mediano",
+  },
+  {
+    patron: "camionetas?",
+    clase: "pickup",
+    exacta: false,
+    nota: "una camioneta sin más se toma como pick-up; si es SUV o van, cámbiala",
+  },
+  {
+    patron: "camion(?:es)?",
+    clase: "camion_unitario",
+    exacta: false,
+    nota: "un camión sin más se toma como camión unitario",
+  },
+  {
+    patron: "suvs?",
+    clase: "suv_compacta",
+    exacta: false,
+    nota: "una SUV sin más se toma como compacta",
+  },
   // Palabras que nombran a un vehículo sin decir su clase: solo marcan la mención.
-  { patron: "sedan(?:es)?" },
-  { patron: "camionetas?" },
-  { patron: "camion(?:es)?" },
   { patron: "automovil(?:es)?" },
   { patron: "autos?" },
   { patron: "coches?" },
   { patron: "carros?" },
-  { patron: "suvs?" },
 ];
 
 export interface MencionVehiculo {
@@ -335,6 +899,37 @@ export function conVocabulario(
       if (!m.exacta) claseSupuesta = m.clase;
     }
     menciones.push({ ...m, vehiculo: v, ...(claseSupuesta ? { claseSupuesta } : {}) });
+  }
+  // La marca y el modelo que leyó la lectura («marca Mazda, tipo 3» → «Mazda 3»): si ninguna mención
+  // del texto dio la clase, se busca en ellos (ronda 4; René, 2026-11-20: solo preguntar si de verdad
+  // no lo dice).
+  for (const v of orden) {
+    if (datos.some((d) => d.seccion === "vehiculo" && d.vehiculo === v && d.campo === "clase"))
+      continue;
+    const de = (campo: string) =>
+      datos.find((d) => d.seccion === "vehiculo" && d.vehiculo === v && d.campo === campo)?.valor ??
+      "";
+    const nombre = `${de("marca")} ${de("modelo")}`.trim();
+    const m = nombre ? vehiculosMencionados(nombre).find((x) => x.clase) : undefined;
+    if (!m?.clase) continue;
+    datos.push({
+      seccion: "vehiculo",
+      n: Number(v.slice(1)),
+      vehiculo: v as FilaCorpus["vehiculo"],
+      campo: "clase",
+      valor: m.clase,
+      cita: "",
+    });
+    // Sin lugar en el texto (salió de los campos de la lectura): la mención queda sin posición.
+    menciones.push({
+      ...m,
+      ini: -1,
+      fin: -1,
+      texto: nombre,
+      vehiculo: v,
+      claseSupuesta: m.clase,
+      nota: m.nota ?? "por el modelo: se vende con esa carrocería",
+    });
   }
   return { salida: { datos }, menciones };
 }

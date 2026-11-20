@@ -1036,6 +1036,19 @@ namespace Croquis.Visor
                     var az = (azBase + Mathf.Clamp(2.2f * t, -giroMax, giroMax)) * Mathf.Deg2Rad;
                     dist *= distK;
                     alto += altoExtra;
+                    // En el golpe, la cinematográfica se acerca al punto de impacto (ronda 4, punto 5):
+                    // lo encuadra y vuelve sola al encuadre de los vehículos.
+                    if (resultado?.PuntoImpacto != null && Caso != null)
+                    {
+                        var peso = (float)EnfasisImpacto.PesoCamara(Caso.Tiempo, Caso.TImpacto);
+                        if (peso > 0f)
+                        {
+                            var pi = new Vector3((float)resultado.PuntoImpacto.X, 0f, (float)resultado.PuntoImpacto.Y);
+                            objetivo = Vector3.Lerp(objetivo, pi, peso);
+                            dist = Mathf.Lerp(dist, Mathf.Max(7f, dist * 0.7f), peso);
+                            alto = Mathf.Lerp(alto, Mathf.Max(1.6f, alto * 0.8f), peso);
+                        }
+                    }
                     // La distancia cambia con el instante y el rumbo se revisó con la del principio: si
                     // ahora algo tapa la vista (una fachada), primero se busca otro rumbo a la misma
                     // distancia, que es la que encuadra a los vehículos; después, más cerca; al final, más

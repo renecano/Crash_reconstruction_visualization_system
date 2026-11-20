@@ -90,6 +90,10 @@ class CampoVelocidad(BaseModel):
     """
     evidencia: Annotated[list[EvidenciaTexto] | None, Field(max_length=8)] = None
     nota: Annotated[str | None, Field(max_length=300)] = None
+    a_priori: bool | None = None
+    """
+    Solo en `velocidad_previa`: la velocidad declarada (narración, perito o vía) entra a la inversión como supuesto con su `rango` (p10–p90). Pesa solo donde la evidencia no fija la velocidad, y en las simulaciones se sortea dentro de su rango (ronda 4).
+    """
 
 
 class CampoMasa(BaseModel):
@@ -838,6 +842,27 @@ class Terreno(BaseModel):
     topes: Annotated[list[TopeVia] | None, Field(max_length=32)] = None
 
 
+class Estructura(BaseModel):
+    """
+    Si el hecho fue sobre un puente o un paso a desnivel (ronda 4). La física va sobre la losa, a nivel; el 3D dibuja la estructura.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    valor: Literal["puente", "paso_a_desnivel"]
+    fuente: Literal["relato", "usuario", "supuesto", "default", "mapa"]
+    """
+    De dónde salió el dato: del relato (con evidencia textual), lo escribió o corrigió la persona, lo supuso el sistema, es el valor por defecto de la clase, o salió del mapa de OpenStreetMap en `ubicacion_real` (desde 1.2.0).
+    """
+    confianza: Annotated[float, Field(ge=0.0, le=1.0)]
+    """
+    Confianza en el valor, de 0 (adivinado) a 1 (seguro).
+    """
+    evidencia: Annotated[list[EvidenciaTexto] | None, Field(max_length=8)] = None
+    nota: Annotated[str | None, Field(max_length=300)] = None
+
+
 class ObjetoEntorno(BaseModel):
     """
     Objeto fijo o estacionado que puede ser golpeado o tapar la vista.
@@ -1199,23 +1224,92 @@ class Coordenadas(BaseModel):
     """
 
 
-class Lugar1(BaseModel):
+class Punto(RootModel[list[float]]):
+    root: Annotated[list[float], Field(max_length=2, min_length=2)]
+
+
+class Via(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    id: int
+    tipo: Annotated[str, Field(max_length=40)]
     """
-    Dónde fue.
+    El `highway` de OpenStreetMap.
+    """
+    nombre: Annotated[str | None, Field(max_length=200)] = None
+    maxspeed: Annotated[str | None, Field(max_length=20)] = None
+    carriles: Annotated[str | None, Field(max_length=10)] = None
+    sentido_unico: Annotated[str | None, Field(max_length=10)] = None
+    ancho: Annotated[str | None, Field(max_length=10)] = None
+    puntos: Annotated[list[Punto], Field(max_length=2000, min_length=2)]
+    """
+    [lon, lat] de cada punto, en orden.
+    """
+
+
+class CallesGuardadas(BaseModel):
+    """
+    Las calles del lugar del caso, guardadas con él para que La escena, la reconstrucción y el 3D las tengan sin red (ronda 4). De OpenStreetMap (Overpass) o de las teselas del mapa (OpenMapTiles, también datos de OpenStreetMap).
     """
 
     model_config = ConfigDict(
         extra="forbid",
     )
-    descripcion: DatoExpediente | None = None
-    coordenadas: Coordenadas | None = None
-    via: DatoExpediente | None = None
-    carriles: Annotated[int | None, Field(ge=1, le=12)] = None
+    fuente: Literal["overpass", "teselas"]
+    atribucion: Annotated[str | None, Field(max_length=200)] = None
+    consultado: AwareDatetime
+    centro: Coordenadas
+    radio_m: Annotated[float, Field(ge=10.0, le=2000.0)]
+    vias: Annotated[list[Via], Field(max_length=600)]
+
+
+class Pendiente(BaseModel):
     """
-    Carriles por sentido.
+    Si la vía va en subida o en bajada donde fue el hecho (ronda 4). Con ella, la reconstrucción usa el relieve real del lugar.
     """
-    municipio: DatoExpediente | None = None
-    estado: DatoExpediente | None = None
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    valor: Literal["subida", "bajada"]
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+    cita: Cita | None = None
+
+
+class Estructura1(BaseModel):
+    """
+    Si el hecho fue sobre un puente o un paso a desnivel (ronda 4).
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    valor: Literal["puente", "paso_a_desnivel"]
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+    cita: Cita | None = None
+
+
+class Trazo(BaseModel):
+    """
+    Si el hecho fue en una curva (ronda 4).
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    valor: Literal["curva"]
+    fuente: Literal["perito", "conductor", "expediente", "dictamen_importado", "supuesto", "mapa"]
+    """
+    De dónde sale un dato del expediente de CESVI (v2): lo escribió el perito, lo dijo un conductor, viene del expediente del caso, de un dictamen importado, lo supuso el sistema o salió del mapa.
+    """
+    cita: Cita | None = None
 
 
 class Superficie(BaseModel):
@@ -1290,6 +1384,18 @@ class CondicionesExpediente(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
+    pendiente: Pendiente | None = None
+    """
+    Si la vía va en subida o en bajada donde fue el hecho (ronda 4). Con ella, la reconstrucción usa el relieve real del lugar.
+    """
+    estructura: Estructura1 | None = None
+    """
+    Si el hecho fue sobre un puente o un paso a desnivel (ronda 4).
+    """
+    trazo: Trazo | None = None
+    """
+    Si el hecho fue en una curva (ronda 4).
+    """
     superficie: Superficie | None = None
     """
     Material de la superficie de rodamiento.
@@ -1349,51 +1455,49 @@ class AlturaDefensaCm(BaseModel):
     """
 
 
-class VehiculoExpediente(BaseModel):
+class RangoKmhItem(RootModel[float]):
+    root: Annotated[float, Field(ge=0.0, le=300.0)]
+
+
+class VelocidadNarrada(BaseModel):
     """
-    Un vehículo del expediente. Sin placas, VIN ni nombres.
+    La velocidad antes del impacto que dice o describe la narración, que contesta el perito o que se supone por la vía (ronda 4). Entra a la reconstrucción como supuesto declarado con su rango: solo pesa si la evidencia no fija la velocidad.
     """
 
     model_config = ConfigDict(
         extra="forbid",
     )
-    id: Annotated[str, Field(pattern="^[A-Z][A-Z0-9]{0,3}$")]
+    kmh: Annotated[float, Field(ge=0.0, le=300.0)]
     """
-    Identificador del vehículo en el expediente: A, B, C… (o V1, V2… en un dictamen importado).
+    El valor central (km/h).
     """
-    marca: DatoExpediente | None = None
-    modelo: DatoExpediente | None = None
-    anio: Annotated[int | None, Field(ge=1900, le=2100)] = None
+    rango_kmh: Annotated[list[RangoKmhItem], Field(max_length=2, min_length=2)]
     """
-    Año modelo.
+    El rango [mínimo, máximo] en km/h.
     """
-    clase: (
-        Literal[
-            "sedan_compacto",
-            "sedan_mediano",
-            "hatchback",
-            "suv_compacta",
-            "suv_grande",
-            "pickup",
-            "van",
-            "microbus_combi",
-            "autobus",
-            "camion_unitario",
-            "tractocamion",
-            "motocicleta",
-            "bicicleta",
-            "scooter",
-        ]
-        | None
-    ) = None
+    origen: Literal["narración", "perito", "via"]
     """
-    Clase del vehículo (las mismas del contrato: sedan_compacto, pickup…).
+    narración: la cifra o la descripción de la narración; perito: la contestó el perito; via: el rango típico de la vía (su límite de OpenStreetMap o su tipo).
     """
-    masa: MedidaExpediente | None = None
-    rigidez: Rigidez | None = None
-    altura_defensa_cm: AlturaDefensaCm | None = None
+    descripcion: Annotated[str, Field(max_length=200)]
     """
-    Altura de las defensas medida (cm desde el piso).
+    Cómo lo dice («a exceso de velocidad», «a 80 km/h», «límite de 60 km/h de la vía»).
+    """
+    cita: Annotated[str | None, Field(max_length=400)] = None
+    """
+    El fragmento literal de la narración, si sale de ella.
+    """
+    respecto_al_limite: Literal["arriba", "abajo", "alrededor"] | None = None
+    """
+    Si la velocidad es relativa al límite de la vía («a exceso de velocidad»: arriba; «despacio»: abajo; la típica de la vía: alrededor). Al conocerse la vía del choque, el valor y el rango se recalculan con su límite.
+    """
+    limite_kmh: Annotated[float | None, Field(ge=5.0, le=200.0)] = None
+    """
+    El límite de la vía con que se calculó (km/h).
+    """
+    limite_fuente: Annotated[str | None, Field(max_length=200)] = None
+    """
+    De dónde sale el límite: el `maxspeed` de OpenStreetMap o el tipo de vía según la LGMSV, art. 49 fr. III.
     """
 
 
@@ -2097,6 +2201,10 @@ class Lugar(BaseModel):
     ancho_acotamiento: CampoLongitud | None = None
     pendiente: CampoPorcentaje | None = None
     peralte: CampoPorcentaje | None = None
+    estructura: Estructura | None = None
+    """
+    Si el hecho fue sobre un puente o un paso a desnivel (ronda 4). La física va sobre la losa, a nivel; el 3D dibuja la estructura.
+    """
     radio_curva: CampoLongitud | None = None
     superficie: CampoSuperficie
     estado_superficie: CampoEstadoSuperficie
@@ -2156,6 +2264,26 @@ class Evento(BaseModel):
     procedencia: Procedencia
 
 
+class Lugar1(BaseModel):
+    """
+    Dónde fue.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    descripcion: DatoExpediente | None = None
+    coordenadas: Coordenadas | None = None
+    via: DatoExpediente | None = None
+    carriles: Annotated[int | None, Field(ge=1, le=12)] = None
+    """
+    Carriles por sentido.
+    """
+    municipio: DatoExpediente | None = None
+    estado: DatoExpediente | None = None
+    calles_del_mapa: CallesGuardadas | None = None
+
+
 class CasoExpediente(BaseModel):
     """
     Los datos del caso: aseguradora, siniestro, fecha, lugar y modalidades. Sin nombres de personas.
@@ -2193,6 +2321,55 @@ class CasoExpediente(BaseModel):
     """
     Modalidad o modalidades del hecho.
     """
+
+
+class VehiculoExpediente(BaseModel):
+    """
+    Un vehículo del expediente. Sin placas, VIN ni nombres.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    id: Annotated[str, Field(pattern="^[A-Z][A-Z0-9]{0,3}$")]
+    """
+    Identificador del vehículo en el expediente: A, B, C… (o V1, V2… en un dictamen importado).
+    """
+    marca: DatoExpediente | None = None
+    modelo: DatoExpediente | None = None
+    anio: Annotated[int | None, Field(ge=1900, le=2100)] = None
+    """
+    Año modelo.
+    """
+    clase: (
+        Literal[
+            "sedan_compacto",
+            "sedan_mediano",
+            "hatchback",
+            "suv_compacta",
+            "suv_grande",
+            "pickup",
+            "van",
+            "microbus_combi",
+            "autobus",
+            "camion_unitario",
+            "tractocamion",
+            "motocicleta",
+            "bicicleta",
+            "scooter",
+        ]
+        | None
+    ) = None
+    """
+    Clase del vehículo (las mismas del contrato: sedan_compacto, pickup…).
+    """
+    masa: MedidaExpediente | None = None
+    rigidez: Rigidez | None = None
+    altura_defensa_cm: AlturaDefensaCm | None = None
+    """
+    Altura de las defensas medida (cm desde el piso).
+    """
+    velocidad_narrada: VelocidadNarrada | None = None
 
 
 class TerrenoExpediente(BaseModel):

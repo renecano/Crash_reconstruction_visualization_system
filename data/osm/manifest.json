@@ -11,5 +11,16 @@
     "descargado": "2026-10-16",
     "sha256": "e9b314dc498cd9a9e3aece4b20a5344eac030be25f0c5e504f51ddb747342087",
     "elementos": 80
+  },
+  "tollocan_rene": {
+    "descripcion": "Alrededor del impacto del caso de Tollocan de René (data/cesvi/casos/tollocan-rene.croquis), Toluca, Estado de México: todo lo de la caja (calles, edificios y demás), para reproducir sin red el 3D que se trababa (2026-11-20)",
+    "lat": 19.2989,
+    "lon": -99.58887,
+    "bbox": [-99.5905, 19.2975, -99.5873, 19.3003],
+    "url": "https://api.openstreetmap.org/api/0.6/map?bbox=-99.5905,19.2975,-99.5873,19.3003",
+    "nota": "API principal de OpenStreetMap (Overpass rechazó la consulta automática ese día); el XML se pasó al formato de Overpass (elements con node y way).",
+    "descargado": "2026-11-20",
+    "sha256": "5d61df667d0e4b356c76d34fe235f4a63669d8e48c1d7cd4643eba860bb595e9",
+    "elementos": 236
   }
 }

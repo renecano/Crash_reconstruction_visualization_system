@@ -15,9 +15,22 @@ export async function irAPaso(page: Page, n: number) {
     if (actual === n) return;
     if (actual === 3 && (await page.getByTestId("escena-facil").isVisible())) {
       if (n > 3) {
-        const ver = page.getByTestId("avance-ver-reconstruccion");
-        await expect(ver).toBeEnabled();
-        await ver.click();
+        // Ronda 4 (René, 2026-11-20): La escena nueva (la lista de la propuesta 1) no tiene la barra
+        // de pasos; «Ver la reconstrucción» va dentro del panel. La guía («Entendido») se cierra.
+        const lista = page.getByTestId("lista-escena");
+        if (await lista.isVisible().catch(() => false)) {
+          const guia = page.getByTestId("cerrar-guia");
+          if (await guia.isVisible().catch(() => false)) await guia.click();
+          const ver = page.getByTestId("lista-ver-reconstruccion");
+          await expect(ver, `La escena no deja seguir: ${await lista.innerText()}`).toBeEnabled({
+            timeout: 30_000,
+          });
+          await ver.click();
+        } else {
+          const ver = page.getByTestId("avance-ver-reconstruccion");
+          await expect(ver).toBeEnabled({ timeout: 30_000 });
+          await ver.click();
+        }
       } else await page.getByTestId("paso-1").click();
       await expect(panel).not.toHaveAttribute("data-paso", "3");
       continue;

@@ -26,6 +26,8 @@ import {
   type PosicionDescrita,
   type SalidaCorpus,
 } from "./corpus";
+import { conVelocidadesNarradas } from "./velocidad-narrada";
+import { usaRelieve, usarRelieve } from "./terreno";
 import { GLOSARIO, glosarioParaPrompt } from "./hecho-lectura";
 
 import { conVocabulario, type MencionLeida } from "./relato";
@@ -96,7 +98,7 @@ export type ControlPregunta =
   | { tipo: "opciones"; opciones: { valor: string; etiqueta: string }[] }
   | {
       tipo: "numero";
-      unidad: "kg" | "m";
+      unidad: "kg" | "m" | "km/h";
       /** El valor típico de su clase, con su fuente; al usarlo queda como supuesto. */
       tipico?: { valor: number; fuente: string };
     }
@@ -356,7 +358,14 @@ export function lecturaDeHecho(
  * el texto no lo dice (T6.3).
  */
 export function escenaDeConversion(c: Conversion, narracion?: string): EscenaNarrada {
-  const leido = conZonas(c.expediente);
+  // La velocidad que dice o describe la narración (ronda 4), leída sin el modelo y con su cita.
+  let narrado = narracion ? conVelocidadesNarradas(c.expediente, narracion) : c.expediente;
+  // Una subida o una bajada narradas (ronda 4): la reconstrucción usa el relieve real del lugar, no
+  // una pendiente supuesta. Sobre un puente no: el relieve es el del suelo de abajo.
+  const cond = narrado.caso.condiciones;
+  if (cond?.pendiente && !cond.estructura && !usaRelieve(narrado))
+    narrado = usarRelieve(narrado, true);
+  const leido = conZonas(narrado);
   const preguntas: PreguntaEscena[] = [];
   const propuesto = leido.expediente.impactos?.length ? null : impactoPropuesto(leido.expediente);
   const expediente = propuesto ? { ...leido.expediente, impactos: [propuesto] } : leido.expediente;
@@ -429,6 +438,25 @@ export function escenaDeConversion(c: Conversion, narracion?: string): EscenaNar
       control: { tipo: "opciones", opciones: CARAS_PREGUNTA },
       vehiculo: v,
       impacto: orden,
+    });
+  }
+  // La velocidad que la narración no dice (ronda 4): es lo que más cambia la reconstrucción cuando
+  // la evidencia no la fija. «No sé» deja la típica de la vía como supuesto, con su rango.
+  const detenidos = new Set(
+    (expediente.versiones ?? [])
+      .find((x) => x.tipo === "evidencia")
+      ?.maniobras?.filter((m) => m.tipo === "se_detiene")
+      .map((m) => m.vehiculo) ?? [],
+  );
+  for (const v of expediente.vehiculos) {
+    if (v.velocidad_narrada || detenidos.has(v.id)) continue;
+    preguntas.push({
+      clave: `velocidad-${v.id}`,
+      texto: `¿A qué velocidad venía ${v.id} antes del impacto?`,
+      porQue:
+        "Si la evidencia no fija la velocidad, la reconstrucción usa la que des, como supuesto con su rango. Con «No sé», la típica de la vía.",
+      control: { tipo: "numero", unidad: "km/h" },
+      vehiculo: v.id,
     });
   }
   for (const v of expediente.vehiculos) {
@@ -628,6 +656,7 @@ export function preguntaPendiente(
       ?.zonas?.some((z) => z.vehiculo === p.vehiculo);
   if (p.clave.startsWith("clase-")) return !vehiculo?.clase;
   if (p.clave.startsWith("masa-")) return !vehiculo?.masa;
+  if (p.clave.startsWith("velocidad-")) return !vehiculo?.velocidad_narrada;
   if (p.clave === "restos") return !e.evidencias?.restos?.longitud;
   if (p.clave.startsWith("final-")) return !finales.some((x) => x.vehiculo === p.vehiculo);
   // La que agrega el Preguntador cuando la física no cuadra (R12b): hasta que haya huellas de frenado.

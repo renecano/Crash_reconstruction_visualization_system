@@ -156,6 +156,39 @@ namespace Croquis.Tests
         }
 
         [Test]
+        public void EnElGolpeLaDeformacionCreceHastaLaDelSolver()
+        {
+            // Ronda 4, punto 5: el choque se ve; a la mitad del golpe va a medio camino, y al final es
+            // exactamente la del solver.
+            var v = Vehiculo(new[] { 0.45, 0.45, 0.45, 0.45, 0.45, 0.45 });
+            var vista = Armar(out var pieza, out _);
+            vista.Trayectoria = v.Trayectoria;
+            var original = pieza.sharedMesh;
+            vista.Dano = DanoVista.Preparar(vista.transform, v, Resultado(0.0));
+            float Hundido()
+            {
+                var a = original.vertices;
+                var b = pieza.sharedMesh.vertices;
+                var h = 0f;
+                for (var i = 0; i < a.Length; i++)
+                {
+                    h = Mathf.Max(h, a[i].z - b[i].z);
+                }
+
+                return h;
+            }
+
+            vista.Colocar(1.0);
+            var final = Hundido();
+            vista.Colocar(EnfasisImpacto.DuracionDanoS / 2);
+            var medio = Hundido();
+            Assert.That(medio, Is.GreaterThan(0.2f * final).And.LessThan(0.8f * final));
+            vista.Colocar(1.0);
+            Assert.AreEqual(final, Hundido(), 1e-6f);
+            Object.DestroyImmediate(vista.gameObject);
+        }
+
+        [Test]
         public void EnUnaCarambolaElDanoEsperaAlImpactoDeEseVehiculo()
         {
             var v = Vehiculo(new[] { 0.1, 0.2, 0.3, 0.3, 0.2, 0.1 });

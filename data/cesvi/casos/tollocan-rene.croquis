@@ -1,0 +1,300 @@
+{
+  "formato": "croquis-caso",
+  "version": 1,
+  "guardado": "2026-11-19T01:00:37.537Z",
+  "narracion": "iba por tollocan rumbo a la ciudad de mexico, y me sali de la carretera imapctando de frente contra un arbol, iba en un sedan",
+  "escena": {
+    "posiciones": [],
+    "conteos": {
+      "filas": 7,
+      "valores_invalidos": 0,
+      "citas": 5,
+      "citas_fuera": 0,
+      "numeros": 0,
+      "numeros_fuera": 0
+    },
+    "problemas": [],
+    "preguntas": [
+      {
+        "clave": "impactos",
+        "texto": "¿Contra qué chocó V1?",
+        "porQue": "Sin los impactos no hay reconstrucción.",
+        "control": {
+          "tipo": "opciones",
+          "opciones": [
+            {
+              "valor": "V1|objeto:poste",
+              "etiqueta": "Un poste"
+            },
+            {
+              "valor": "V1|objeto:arbol",
+              "etiqueta": "Un árbol"
+            },
+            {
+              "valor": "V1|objeto:muro",
+              "etiqueta": "Un muro o una barda"
+            },
+            {
+              "valor": "V1|objeto:otro",
+              "etiqueta": "Otro objeto fijo"
+            }
+          ]
+        }
+      },
+      {
+        "clave": "masa-V1",
+        "texto": "¿Cuál es la masa de V1?",
+        "porQue": "La masa reparte la cantidad de movimiento y cambia las velocidades.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "kg",
+          "tipico": {
+            "valor": 1769.5,
+            "fuente": "masa media de 386 pruebas de NHTSA contra barrera (E2, eval/results/e2_barrier.json)"
+          }
+        },
+        "vehiculo": "V1"
+      },
+      {
+        "clave": "restos",
+        "texto": "¿Qué longitud tiene la zona de restos?",
+        "porQue": "Los restos fijan el desplazamiento después del impacto.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "m"
+        }
+      },
+      {
+        "clave": "final-V1",
+        "texto": "¿Dónde quedó V1 al final?",
+        "porQue": "La posición final es evidencia para la inversión de velocidades.",
+        "control": {
+          "tipo": "mapa"
+        },
+        "vehiculo": "V1"
+      }
+    ]
+  },
+  "expediente": {
+    "caso": {
+      "lugar": {
+        "descripcion": {
+          "valor": "Tollocan rumbo a la ciudad de México",
+          "fuente": "perito"
+        }
+      },
+      "modalidades": []
+    },
+    "vehiculos": [
+      {
+        "id": "V1",
+        "clase": "sedan_mediano",
+        "masa": {
+          "valor": 1769.5,
+          "unidad": "kg",
+          "fuente": "supuesto"
+        }
+      }
+    ],
+    "impactos": [
+      {
+        "orden": 1,
+        "vehiculos": [
+          "V1"
+        ],
+        "objeto_fijo": "árbol",
+        "zonas": [
+          {
+            "vehiculo": "V1",
+            "zona": {
+              "cara": "frontal"
+            }
+          }
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "imapctando de frente contra un arbol"
+        }
+      }
+    ],
+    "versiones": [
+      {
+        "tipo": "evidencia",
+        "maniobras": [
+          {
+            "vehiculo": "V1",
+            "tipo": "circula",
+            "cita": {
+              "texto": "iba por tollocan rumbo a la ciudad de mexico"
+            }
+          }
+        ],
+        "posiciones": [
+          {
+            "vehiculo": "V1",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.298904302569596,
+              "lon": -99.58887106452113
+            },
+            "rumbo": 83.72405419993981,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V1",
+            "fase": "final",
+            "punto": {
+              "lat": 19.29890577723482,
+              "lon": -99.58885685721356
+            },
+            "rumbo": 83.72405419993981,
+            "fuente": "perito"
+          }
+        ],
+        "puntos_paso": [
+          {
+            "vehiculo": "V1",
+            "orden": 1,
+            "punto": {
+              "lat": 19.29888309219369,
+              "lon": -99.58898296829949
+            },
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V1",
+            "orden": 2,
+            "punto": {
+              "lat": 19.298886431034973,
+              "lon": -99.58893695875103
+            },
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V1",
+            "orden": 3,
+            "punto": {
+              "lat": 19.298901873174245,
+              "lon": -99.5888993547935
+            },
+            "fuente": "perito"
+          }
+        ]
+      }
+    ],
+    "evidencias": {
+      "objetos_fijos_danados": [
+        "árbol"
+      ],
+      "restos": {
+        "longitud": {
+          "valor": 10,
+          "unidad": "m",
+          "fuente": "perito"
+        }
+      }
+    }
+  },
+  "conclusion_perito": null,
+  "titulo": "Caso nuevo",
+  "bitacora": [
+    {
+      "n": 1,
+      "de": "lector",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Lectura: 7 filas con su cita."
+    },
+    {
+      "n": 2,
+      "de": "verificador_citas",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Citas encontradas en la narración: 5 de 5; números con su cita: 0 de 0. Lo que no está en el texto se descarta."
+    },
+    {
+      "n": 3,
+      "de": "validador",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Escena válida: 1 vehículo, 1 impacto."
+    },
+    {
+      "n": 4,
+      "de": "preguntador",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "4 preguntas para el perito, de lo que más cambia la reconstrucción: impactos, masa-V1, restos, final-V1."
+    },
+    {
+      "n": 5,
+      "de": "verificador_cesvi",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Sin medidas de deformación completas: no hay EBS con el método de CESVI."
+    },
+    {
+      "n": 6,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "No sé dónde fue el primer golpe: se usa el lugar del choque (supuesto)."
+    },
+    {
+      "n": 7,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Pide reconstruir."
+    },
+    {
+      "n": 8,
+      "de": "fisico",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Reconstrucción hecha; la evidencia todavía no fija ninguna velocidad."
+    },
+    {
+      "n": 9,
+      "de": "fisico",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Con los supuestos declarados: Masa de V1: 1,769.5 kg; Posición inicial de V1: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Fricción llanta–pavimento: μ = 0.7; Después del impacto: las llantas ruedan, con un arrastre de 0.35 de la fricción; Restitución del choque: e = 0.1; Fricción entre los vehículos durante el choque: razón de impulso de 0.4."
+    },
+    {
+      "n": 10,
+      "de": "fisico",
+      "para": "preguntador",
+      "tipo": "pide",
+      "texto": "La física no cuadra o no alcanza (la evidencia todavía no fija ninguna velocidad): pide evidencia al perito."
+    },
+    {
+      "n": 11,
+      "de": "preguntador",
+      "para": "fisico",
+      "tipo": "escribe",
+      "texto": "Lo que pide el Físico ya está entre las preguntas al perito."
+    },
+    {
+      "n": 12,
+      "de": "verificador_cesvi",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Sin medidas de deformación completas: no hay EBS con el método de CESVI."
+    },
+    {
+      "n": 13,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Abre el dictamen."
+    },
+    {
+      "n": 14,
+      "de": "redactor",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Dictamen redactado con la reconstrucción, la verificación con el método de CESVI, esta bitácora."
+    }
+  ]
+}

@@ -23,7 +23,14 @@ import type {
 } from "@croquis/scene-schema";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
-import { marcar, motivoDe, PuenteUnity, type MotivoRespaldo } from "@/lib/visor-unity/puente";
+import {
+  conTope,
+  ESPERA_CALCULO_3D_MS,
+  marcar,
+  motivoDe,
+  PuenteUnity,
+  type MotivoRespaldo,
+} from "@/lib/visor-unity/puente";
 import { paqueteDelCaso, type RelieveCaso } from "@/lib/visor-unity/paquete";
 import type { CanalTiempo } from "@/lib/visor-unity/canal";
 import {
@@ -274,7 +281,11 @@ export function VisorUnity({
         let alParcial!: (r: Resultado) => void;
         const parcial = new Promise<Resultado>((ok) => (alParcial = ok));
         completo = reconstruirCompletoEnNavegador(aCargar, (r) => alParcial(r), relieve);
-        resultado = await Promise.race([parcial, completo]);
+        resultado = await conTope(
+          Promise.race([parcial, completo]),
+          ESPERA_CALCULO_3D_MS,
+          `El cálculo de la escena del 3D no terminó en ${ESPERA_CALCULO_3D_MS / 1000} s`,
+        );
       }
       marcar("solver_listo");
       if (mio !== turno.current) return;
@@ -296,6 +307,9 @@ export function VisorUnity({
         ...(objetivo.fantasma ? { fantasma: objetivo.fantasma } : {}),
       } as Caso3D;
       marcar("cargar_caso");
+      // El humo de las tandas: el paquete exacto que recibe Unity, para reproducir un caso que se traba.
+      if ((window as unknown as { __croquisDiagnostico?: boolean }).__croquisDiagnostico)
+        console.debug(`[croquis] paquete-3d ${JSON.stringify(conExtras)}`);
       await puente.cargar(conExtras);
       pisoEnviado.current = p ? p.imagenMapa : null;
       marcar("caso_cargado");
@@ -341,8 +355,13 @@ export function VisorUnity({
       })
       .catch((e: unknown) => {
         if (mio !== turno.current) return;
-        // Un caso que Unity no pudo cargar: el respaldo sí lo dibuja. Unity se cierra.
-        setRespaldoPor({ motivo: "no_cargo", aviso: e instanceof Error ? e.message : String(e) });
+        // Un caso que Unity no pudo cargar (o que no terminó a tiempo): el respaldo sí lo dibuja y
+        // dice por qué. Unity se cierra.
+        const aviso = e instanceof Error ? e.message : String(e);
+        setRespaldoPor({
+          motivo: /no contestó|no terminó/.test(aviso) ? "tardo_demasiado" : "no_cargo",
+          aviso,
+        });
         cb.current.onApi?.(null);
         void puente.cerrar();
         setPuente(null);
@@ -558,7 +577,9 @@ export function VisorUnity({
       >
         <p className="t-nota vidrio absolute top-3 left-1/2 z-10 -translate-x-1/2 rounded-control px-3 py-1.5">
           {TEXTO_RESPALDO[estado.motivo]}: se muestra el visor ligero.
-          {respaldoPor?.aviso ? <span className="sr-only"> {respaldoPor.aviso}</span> : null}
+          {respaldoPor?.aviso ? (
+            <span data-testid="visor-unity-aviso"> ({respaldoPor.aviso}).</span>
+          ) : null}
         </p>
         {respaldo}
       </div>

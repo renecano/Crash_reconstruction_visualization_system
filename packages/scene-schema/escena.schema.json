@@ -130,7 +130,11 @@
         "fuente": { "$ref": "#/$defs/Fuente" },
         "confianza": { "$ref": "#/$defs/Confianza" },
         "evidencia": { "$ref": "#/$defs/ListaEvidencia" },
-        "nota": { "type": "string", "maxLength": 300 }
+        "nota": { "type": "string", "maxLength": 300 },
+        "a_priori": {
+          "type": "boolean",
+          "description": "Solo en `velocidad_previa`: la velocidad declarada (narración, perito o vía) entra a la inversión como supuesto con su `rango` (p10–p90). Pesa solo donde la evidencia no fija la velocidad, y en las simulaciones se sortea dentro de su rango (ronda 4)."
+        }
       }
     },
     "CampoMasa": {
@@ -908,6 +912,19 @@
         "ancho_acotamiento": { "$ref": "#/$defs/CampoLongitud" },
         "pendiente": { "$ref": "#/$defs/CampoPorcentaje" },
         "peralte": { "$ref": "#/$defs/CampoPorcentaje" },
+        "estructura": {
+          "type": "object",
+          "description": "Si el hecho fue sobre un puente o un paso a desnivel (ronda 4). La física va sobre la losa, a nivel; el 3D dibuja la estructura.",
+          "additionalProperties": false,
+          "required": ["valor", "fuente", "confianza"],
+          "properties": {
+            "valor": { "type": "string", "enum": ["puente", "paso_a_desnivel"] },
+            "fuente": { "$ref": "#/$defs/Fuente" },
+            "confianza": { "$ref": "#/$defs/Confianza" },
+            "evidencia": { "$ref": "#/$defs/ListaEvidencia" },
+            "nota": { "type": "string", "maxLength": 300 }
+          }
+        },
         "radio_curva": { "$ref": "#/$defs/CampoLongitud" },
         "superficie": { "$ref": "#/$defs/CampoSuperficie" },
         "estado_superficie": { "$ref": "#/$defs/CampoEstadoSuperficie" },
@@ -1398,7 +1415,8 @@
               "description": "Carriles por sentido."
             },
             "municipio": { "$ref": "#/$defs/DatoExpediente" },
-            "estado": { "$ref": "#/$defs/DatoExpediente" }
+            "estado": { "$ref": "#/$defs/DatoExpediente" },
+            "calles_del_mapa": { "$ref": "#/$defs/CallesGuardadas" }
           },
           "required": [],
           "additionalProperties": false
@@ -1414,10 +1432,90 @@
       "required": ["modalidades"],
       "additionalProperties": false
     },
+    "CallesGuardadas": {
+      "type": "object",
+      "description": "Las calles del lugar del caso, guardadas con él para que La escena, la reconstrucción y el 3D las tengan sin red (ronda 4). De OpenStreetMap (Overpass) o de las teselas del mapa (OpenMapTiles, también datos de OpenStreetMap).",
+      "properties": {
+        "fuente": { "type": "string", "enum": ["overpass", "teselas"] },
+        "atribucion": { "type": "string", "maxLength": 200 },
+        "consultado": { "type": "string", "format": "date-time" },
+        "centro": { "$ref": "#/$defs/Coordenadas" },
+        "radio_m": { "type": "number", "minimum": 10, "maximum": 2000 },
+        "vias": {
+          "type": "array",
+          "maxItems": 600,
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer" },
+              "tipo": {
+                "type": "string",
+                "maxLength": 40,
+                "description": "El `highway` de OpenStreetMap."
+              },
+              "nombre": { "type": "string", "maxLength": 200 },
+              "maxspeed": { "type": "string", "maxLength": 20 },
+              "carriles": { "type": "string", "maxLength": 10 },
+              "sentido_unico": { "type": "string", "maxLength": 10 },
+              "ancho": { "type": "string", "maxLength": 10 },
+              "puntos": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2000,
+                "description": "[lon, lat] de cada punto, en orden.",
+                "items": {
+                  "type": "array",
+                  "items": { "type": "number" },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              }
+            },
+            "required": ["id", "tipo", "puntos"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["fuente", "consultado", "centro", "radio_m", "vias"],
+      "additionalProperties": false
+    },
     "CondicionesExpediente": {
       "type": "object",
       "description": "Las condiciones del lugar al momento del hecho, como las narra el perito (opcional; agregado en 2.3.0 sin cambiar la versión, ADR 0142). El estado de la superficie fija la fricción del cálculo; el clima y la iluminación, la vista del 3D y lo que alcanza a ver un conductor.",
       "properties": {
+        "pendiente": {
+          "type": "object",
+          "description": "Si la vía va en subida o en bajada donde fue el hecho (ronda 4). Con ella, la reconstrucción usa el relieve real del lugar.",
+          "properties": {
+            "valor": { "type": "string", "enum": ["subida", "bajada"] },
+            "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+            "cita": { "$ref": "#/$defs/Cita" }
+          },
+          "required": ["valor", "fuente"],
+          "additionalProperties": false
+        },
+        "estructura": {
+          "type": "object",
+          "description": "Si el hecho fue sobre un puente o un paso a desnivel (ronda 4).",
+          "properties": {
+            "valor": { "type": "string", "enum": ["puente", "paso_a_desnivel"] },
+            "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+            "cita": { "$ref": "#/$defs/Cita" }
+          },
+          "required": ["valor", "fuente"],
+          "additionalProperties": false
+        },
+        "trazo": {
+          "type": "object",
+          "description": "Si el hecho fue en una curva (ronda 4).",
+          "properties": {
+            "valor": { "type": "string", "enum": ["curva"] },
+            "fuente": { "$ref": "#/$defs/FuenteExpediente" },
+            "cita": { "$ref": "#/$defs/Cita" }
+          },
+          "required": ["valor", "fuente"],
+          "additionalProperties": false
+        },
         "superficie": {
           "type": "object",
           "description": "Material de la superficie de rodamiento.",
@@ -1555,9 +1653,62 @@
           },
           "required": [],
           "additionalProperties": false
-        }
+        },
+        "velocidad_narrada": { "$ref": "#/$defs/VelocidadNarrada" }
       },
       "required": ["id"],
+      "additionalProperties": false
+    },
+    "VelocidadNarrada": {
+      "type": "object",
+      "description": "La velocidad antes del impacto que dice o describe la narración, que contesta el perito o que se supone por la vía (ronda 4). Entra a la reconstrucción como supuesto declarado con su rango: solo pesa si la evidencia no fija la velocidad.",
+      "properties": {
+        "kmh": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 300,
+          "description": "El valor central (km/h)."
+        },
+        "rango_kmh": {
+          "type": "array",
+          "description": "El rango [mínimo, máximo] en km/h.",
+          "items": { "type": "number", "minimum": 0, "maximum": 300 },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "origen": {
+          "type": "string",
+          "description": "narración: la cifra o la descripción de la narración; perito: la contestó el perito; via: el rango típico de la vía (su límite de OpenStreetMap o su tipo).",
+          "enum": ["narración", "perito", "via"]
+        },
+        "descripcion": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Cómo lo dice («a exceso de velocidad», «a 80 km/h», «límite de 60 km/h de la vía»)."
+        },
+        "cita": {
+          "type": "string",
+          "maxLength": 400,
+          "description": "El fragmento literal de la narración, si sale de ella."
+        },
+        "respecto_al_limite": {
+          "type": "string",
+          "enum": ["arriba", "abajo", "alrededor"],
+          "description": "Si la velocidad es relativa al límite de la vía («a exceso de velocidad»: arriba; «despacio»: abajo; la típica de la vía: alrededor). Al conocerse la vía del choque, el valor y el rango se recalculan con su límite."
+        },
+        "limite_kmh": {
+          "type": "number",
+          "minimum": 5,
+          "maximum": 200,
+          "description": "El límite de la vía con que se calculó (km/h)."
+        },
+        "limite_fuente": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "De dónde sale el límite: el `maxspeed` de OpenStreetMap o el tipo de vía según la LGMSV, art. 49 fr. III."
+        }
+      },
+      "required": ["kmh", "rango_kmh", "origen", "descripcion"],
       "additionalProperties": false
     },
     "ZonaDiagrama": {

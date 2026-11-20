@@ -1,0 +1,146 @@
+{
+  "id": "ronda4-arbol",
+  "modalidad_c0": "ronda4",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 248,
+    "output_tokens": 1045,
+    "cache_creation_input_tokens": 3846,
+    "cache_read_input_tokens": 0
+  },
+  "costo_usd": 0.020561,
+  "narracion": "El hecho se ubica sobre Paseo Tollocan, a la altura de la calle Isidro Fabela, en Toluca, Estado de México, aproximadamente a las 23:10 horas. El vehículo A, marca Nissan, tipo Versa, modelo 2019, circulaba a exceso de velocidad por los carriles centrales con dirección de oriente a poniente. El conductor perdió el control, el vehículo salió hacia el camellón y se impactó con su parte frontal contra un árbol. El vehículo A presenta hundimiento en la parte frontal, acentuado hacia el lado derecho. El vehículo A quedó detenido junto al árbol, sobre el camellón.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Paseo Tollocan, a la altura de la calle Isidro Fabela",
+        "cita": "El hecho se ubica sobre Paseo Tollocan, a la altura de la calle Isidro Fabela, en Toluca, Estado de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Toluca",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "23:10 horas",
+        "cita": "aproximadamente a las 23:10 horas"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Nissan",
+        "cita": "El vehículo A, marca Nissan, tipo Versa, modelo 2019"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Versa",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2019",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba a exceso de velocidad por los carriles centrales con dirección de oriente a poniente"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "el vehículo salió hacia el camellón y se impactó con su parte frontal contra un árbol"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "objeto_fijo",
+        "valor": "árbol",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta hundimiento en la parte frontal, acentuado hacia el lado derecho"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A quedó detenido junto al árbol, sobre el camellón"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "junto al árbol, sobre el camellón",
+        "cita": ""
+      }
+    ]
+  }
+}

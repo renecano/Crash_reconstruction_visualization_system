@@ -9,18 +9,109 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.4. Reglas: `CLAUDE.md`. ADR del bloque 0130
 - **Fase actual:** ninguna en curso. W9 necesita la autorización de René para gastar API.
 - **Siguiente paso:** W8 cerrada el 2026-11-15: T3.2 (#215), T3.3 (contrato #219 y #220, ADR 0136) y T3.5 (E-R4 v4, igual a la v3 más el eje de la reversa). Nada de eso movió AXA ni un caso que ya vio CESVI después de T3.2. Queda una decisión de René sobre la versión declarada (sección T3.3, «Para decidir»). W9 (T6.5 y T6.6) espera su autorización de gasto de API.
 
-## Ronda 4, La escena y el 2D (René, 2026-11-18, tarde): en curso
+## Ronda 4, de la narración a la física y al 3D (René, 2026-11-18, noche): en curso
 
-- **Las flechas por las calles reales (caso cesvi-cf708e9fed):** hecho.
+René probó Croquis en producción y en local: lo que dice la narración no llega a la física ni al 3D. Esto va antes de todo lo demás. Rama `feat/w-narracion-a-la-fisica`.
+
+**Diagnóstico del punto 1 (velocidades bajas), medido con el solver TS:**
+
+- **La lectura nunca extrae velocidades.** `SISTEMA_ESCENA` (`packages/cesvi/src/escena-narracion.ts`) no tiene campo de velocidad, así que «a exceso de velocidad», «rápido» o «a 80 km/h» se pierden.
+- **El solver no tiene prior de velocidad.** `velocidad_previa` solo es el arranque del ajuste (40 km/h si nadie la dice; `inversion.py`, `parameters`).
+- **Un auto contra un árbol, sin reposo:** sale 40 km/h, el arranque fijo, y «la evidencia no la fija».
+- **El mismo choque con el reposo junto al árbol:** el ajuste se va al tope (200 km/h, σ local 62), y la pantalla lo esconde como no fijada.
+- **Los cinco ejemplos y AXA** no narran velocidades. «Carril de baja velocidad» es nombre de carril y se excluye.
+- **Pendiente:** reproducir los 20 km/h de René con una narración de Tollocan contra un árbol (punto 2, demo local).
+
+**Hecho (rama `feat/w-narracion-a-la-fisica`, con commits y push):**
+
+1. **Velocidad (ADR 0145).**
+   - Detector con cita: cifras y descripciones respecto al límite de la vía (LGMSV, art. 49 fr. III, o el `maxspeed` de OSM).
+   - Prior en el solver, Python y TS, con paridad (`arbol_velocidad_declarada`) y `fijada_por: "declarada"`.
+   - Pregunta «¿A qué velocidad venía?» con «No sé».
+   - Donde la evidencia no fija nada, la típica de la vía en vez del arranque de 40 km/h (`expedienteConTipicas`).
+   - Medido (`eval/ronda4_narracion_fisica.mts`):
+
+     | Caso                             | Antes                           | Después                             |
+     | -------------------------------- | ------------------------------- | ----------------------------------- |
+     | AXA                              | 57 (55–78)                      | 57 (55–78), igual                   |
+     | Tollocan (el `.croquis` de René) | 40 km/h, el arranque, sin rango | 45 (31–59), fijada por lo declarado |
+
+   - Las 14 escenas canónicas, sin cambios (`reconstruct --all --check`).
+2. **Clase del vehículo.**
+   - «Un sedán», «una camioneta», «un tracto», «un Tsuru», «una CR-V»: clase más cercana, como supuesto con cita.
+   - Solo se pregunta si de verdad no la dice (prueba con varias formas en `relato.test.ts`).
+3. **Lugar y sentido separados** (`lugar-narrado.ts`).
+   - Solo el lugar va al buscador.
+   - «Rumbo a …» es el sentido de llegada: cardinal, o el rumbo hacia el destino, que se busca aparte.
+   - Medido con 20 frases al estilo de CESVI (`eval/results/ronda4_lugar_sentido.json`):
+
+     |                  | Antes | Después |
+     | ---------------- | ----- | ------- |
+     | Vía correcta     | 2/20  | 17/20   |
+     | Sentido correcto | 10/20 | 19/20   |
+
+   - Los 3 fallos de vía son del buscador: Eje 6 Sur, Gonzalitos y Periférico Sur.
+4. **Objeto del primer impacto.** Va frente a la cara de contacto. Antes quedaba en la plantilla (6, −6) y el solver desviaba al auto hacia él.
+5. **Calles guardadas con el caso** (`caso.lugar.calles_del_mapa`). Sin calles, la dirección queda como «falta», sin flechas cardinales.
+6. **Aviso de calles:** solo sin calles de ninguna fuente, una vez por lugar, informativo.
+7. **Encimados.**
+   - En el choque se dice en el momento, con «Separarlos» (tocándose por la cara de contacto) o «Así fue el contacto».
+   - Un choque que no transfiere energía (ΔV < 2 km/h en los dos) se dice en el resultado y en pantalla.
+   - Causa medida: uno detrás de otro con la misma velocidad supuesta da ΔV 0. Encimados en ángulo o de frente, el impacto sale completo.
+8. **Pendiente, puente y curva** narrados, como condiciones con cita.
+   - Una subida o bajada enciende el relieve real.
+   - El puente se dibuja en el 3D: losa a nivel, parapetos y muros hasta el piso de abajo.
+   - El suelo de la web y las vías de Unity llevan el mismo relieve y el mismo hundimiento.
+9. **Unity (punto 5).**
+   - Cámara lenta automática en el impacto.
+   - La deformación crece en 0.12 s hasta la del solver.
+   - Restos y vidrios; la marca del contacto se queda.
+   - La cinematográfica encuadra el impacto.
+   - Pruebas en Croquis.Core: 115/115.
+
+**Para retomar (2026-11-18, 20:30):**
+
+- **El build nuevo de Unity** (huella `3cce5c1caca88f96`) compiló y pasa sus 7 pruebas EditMode.
+  - Ya está copiado en `.cache/visor-unity/3cce5c1caca88f96`.
+  - El `apps/web/public/visor-unity/manifest.json` local apunta a él. Ese cambio no se sube: `git restore` lo regresa al publicado.
+- **La medición del arranque quedó sin hacer.** Claude Code detuvo las tareas por falta de memoria (8 GB). La primera corrida ya había fallado al compilar la app en modo local.
+- **Para medir:** con todo lo demás cerrado, `tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/ronda4b_unity_arranque_<n>.json`, 3 corridas. Se compara contra `ronda4_unity_arranque_despues_*` (el 1.3.0 publicado).
+
+**Siguiente:**
+
+1. Medir el build de Unity antes de publicar.
+2. Las seis narraciones (`docs/cesvi/ronda-4/narraciones-fisica.md`) y el caso encimado en la demo local, con capturas del 3D y la tabla.
+3. El antes y después de los cinco ejemplos en el navegador.
+4. El tráiler, cuando llegue `croquis-tomas-trailer.zip`.
+
+## Ronda 4, La escena y el 2D (René, 2026-11-18): hecho (ADR 0144)
+
+René eligió la propuesta 1 de La escena, con cambios, y la propuesta 2 del 2D, con la 1 como fondo opcional. Rama `feat/w-ronda4-escena`.
+
+- **Las flechas por las calles reales (caso cesvi-cf708e9fed):**
   - Causa: antes del arreglo del User-Agent, Overpass contestaba 406; ahora tarda unos 35 s, y la pregunta llega antes.
-  - Arreglo: las calles salen de las teselas del mapa (`overpassDeTeselas`). Pruebas: `calles-teselas.test.ts`, con las teselas grabadas del lugar.
+  - Arreglo: las calles salen de las teselas del mapa (`overpassDeTeselas`). Cada tramo toma el nombre de la línea con nombre más cercana. Pruebas en `calles-teselas.test.ts`, con las teselas grabadas del lugar.
   - El recorrido (maqueta y 3D) también las usa.
-- **La escena ya armada:** hecho (`proponerEscena`, con pruebas sobre el expediente real del caso).
-- **Tres propuestas de la primera experiencia:** `docs/cesvi/ronda-4/propuestas-escena.md`, con capturas. Esperan la elección de René (anotado en «Bloqueado»).
-- **El 2D de Reconstrucción como croquis de perito:** tres propuestas con capturas en `docs/cesvi/ronda-4/propuestas-2d.md` (prototipo `?croquis=1|2|3`). Esperan la elección de René.
-- **Pendiente de René:**
-  - rotar al colocar (anillo, teclado, «Alinear con la calle», «Voltear 180°», alinear solo); se construye con la propuesta de La escena que elija;
-  - la medición con una persona nueva.
+- **La escena ya armada y revisada en una lista** (`proponerEscena`, `listaDeLaEscena`, `ListaEscena`):
+  - Cada elemento lleva su estado (propuesto, listo o falta) y un «Por qué» concreto: la calle, el sentido y el daño en que se apoya.
+  - Sin la barra de 6 pasos; «Ver la reconstrucción» va dentro del panel.
+  - Las herramientas, arriba, con su tecla. Alinear (A) y voltear (F) sirven para lo que esté seleccionado.
+  - El flujo de una pregunta a la vez sigue con `?escena=anterior`.
+  - Capturas en `docs/cesvi/ronda-4/evidencia/escena/despues-*`.
+- **El 2D de Reconstrucción como croquis de perito** (`croquisPericial`, `CroquisPericialVista`):
+  - Girado con la vía del choque horizontal, y el norte girando con él. Encuadra el choque; «Ver todo» muestra lo demás.
+  - La vía en negro sobre papel. A1/A2/A3 (y P1–P3) con líneas guía, sin encimarse.
+  - Las referencias, plegables bajo el dibujo.
+  - Interruptor «Color por velocidad».
+  - Fondos: «Mapa» tenue y «Foto» con su ajuste.
+  - El dictamen usa el mismo SVG.
+  - Capturas en `docs/cesvi/ronda-4/evidencia/2d/despues-{axa,cf708}-{1..4}-*.jpg`, contra `antes-*`.
+- **Ninguna cifra cambió:** el croquis solo dibuja el `Resultado`.
+- **Pruebas:**
+  - `croquis-pericial.test.ts` (6), `escena-propuesta.test.ts` y `seleccion-escena.test.ts`.
+  - Las e2e `croquis-pericial.spec.ts`, `escena-lista.spec.ts` y `cesvi-caso.spec.ts` (4 en verde, en local).
+- **Pendiente:** la medición con una persona la hace René en la segunda ronda, con la guía de 5 minutos (`docs/cesvi/ronda-4/guia-medicion-escena.md`).
+- **Siguiente paso:** el PR, el CI y la verificación en producción.
 
 ## Ronda 4, punto 8: el acto «Versiones» (René, 2026-11-18; ADR 0143)
 
@@ -1188,6 +1279,25 @@ Con la regla nueva ninguna de las 12 relecturas se usa: todas traían menos dato
 
 - **Por reporte**, con la regla de T6.5 (mejor si rechaza menos y no trae menos números verificados): 6 mejores, 6 iguales y 6 peores.
 - **Por qué no mejora:** rechaza menos porque trae menos números (160 contra 187), y trae 9 números verificados menos. La narración queda igual o un poco peor. Con una lectura por lado, el reparto 6 / 6 / 6 no se distingue del ruido del modelo.
+
+## Ronda 4 · el humo de la t5b: Tollocan se queda en «calculando» (2026-11-20)
+
+**Lo que mostró la t5b** (`resultados/t5b-repeticion-2026-11-20`, `tanda-03-humo.log`): AXA llega de La escena nueva al 3D de Unity; Tollocan (`data/cesvi/casos/tollocan-rene.croquis`) pasa de «arrancando» a «calculando» y, en 90 s, Playwright solo pudo leer la página 6 veces (todas en los primeros ~3 s). Al final ya no estaba `visor-unity`: a los 90 s sin «cargado», la web abrió el visor ligero.
+
+**Lo que se sabe (sin Unity en la laptop):**
+
+- Lo que Tollocan trae y AXA no es el escenario del mapa en vivo. AXA trae sus calles guardadas; los ejemplos corren con `sinRed`; Tollocan toma las calles y objetos de OpenStreetMap o de las teselas.
+- Con lo de OpenStreetMap alrededor del impacto (`data/osm/tollocan_rene.overpass.json`, ODbL; Overpass rechazó la consulta automática y se usó la API principal), el paquete caso-3d de Tollocan tiene 38 vías, 620 lotes, 265 árboles y una calzada de 10 952 vértices. Pesa 622 KB y se arma en 1.3 s en node (`paquete-tollocan.test.ts`). El de AXA, en la misma prueba sin calles, 108 lotes en 28 ms. Ningún valor raro (NaN, lotes enormes, pisos absurdos).
+- En WebGL, Unity corre en el hilo de la página: armar ese escenario es lo que más probablemente la trabó. **No está probado**: el humo nuevo lo confirma o lo descarta.
+
+**Lo que se hizo** (commit `fd5b20ff`):
+
+- Ninguna espera del 3D sin tope: el cálculo de la escena, 60 s; la confirmación de Unity, 45 s (antes 90); el relieve, 20 s. Pasado el tope, el visor ligero dice por qué, visible.
+- Modo diagnóstico (`__croquisDiagnostico`): cada paso del visor y el paquete exacto que recibe Unity, en la consola.
+- El humo (`e2e/humo-3d.spec.ts`): AXA, Tollocan y el ejemplo «Crucero de noche». Cada uno deja en `eval/results/humo/` su consola (con el log de Unity), el paquete 3D, una captura y su fila en `resumen.jsonl`; la traza, en `apps/web/test-results/`. Si Tollocan no llega, se repite sin el mapa en vivo.
+- La t5b sube esas dos carpetas en el paso del humo; su tope pasa de 3 a 6 min (tres casos y la repetición).
+
+**Siguiente paso:** con el resultado del humo, si Tollocan sin el mapa en vivo sí llega, el arreglo es armar en Unity el escenario por partes, unos cuadros a la vez, o ponerle un presupuesto. El presupuesto toca alta y ultra: se le pregunta a René antes.
 
 ## Lo que U deja dicho para W
 

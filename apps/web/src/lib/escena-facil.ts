@@ -26,6 +26,7 @@ import {
   piezasTerreno,
   rumboDeg,
   usaRelieve,
+  limiteDeLaVia,
   type Expediente,
   type LonLat,
   type TipoObjeto,
@@ -275,6 +276,9 @@ export interface Calle {
   ancho: number;
   /** Ids de sus nodos, en orden (para los cruces). */
   nodos: number[];
+  /** Su tipo de OpenStreetMap (`highway`) y su límite (`maxspeed`), si lo trae (ronda 4). */
+  tipo?: string;
+  maxspeed?: string;
 }
 
 /** Las calles de una respuesta de Overpass: las que se dibujan (sin andadores ni ciclovías). */
@@ -304,6 +308,8 @@ export function callesDe(resp: OverpassResponse | null): Calle[] {
           ? ancho
           : (Number.isFinite(carriles) && carriles > 0 ? carriles : 2) * 3.3,
       nodos: w.nodes.filter((id) => nodos.has(id)),
+      tipo,
+      ...(w.tags?.maxspeed ? { maxspeed: w.tags.maxspeed } : {}),
     });
   }
   return out;
@@ -1327,4 +1333,46 @@ export function callesEn(calles: readonly Calle[], p: Punto): string[] {
   if (cruce && cruce.c.calles.length) return cruce.c.calles.slice(0, 2);
   const a = ajustarACalle(calles, p);
   return a?.calle.nombre ? [a.calle.nombre] : [];
+}
+
+/**
+ * El límite de la vía del choque (ronda 4): la calle más cercana al punto, a menos de 25 m, con su
+ * `maxspeed` o el de su tipo (LGMSV, art. 49 fr. III). null si no hay calle cerca.
+ */
+export function limiteEnElChoque(
+  calles: readonly Calle[],
+  p: Punto,
+): { kmh: number; fuente: string } | null {
+  let mejor: { c: Calle; d: number } | null = null;
+  for (const c of calles) {
+    const d = sobreCalle(c, p).distancia;
+    if (d <= 25 && (!mejor || d < mejor.d)) mejor = { c, d };
+  }
+  if (!mejor) return null;
+  const l = limiteDeLaVia(mejor.c.tipo, mejor.c.maxspeed);
+  return l && mejor.c.nombre ? { ...l, fuente: `${l.fuente}; ${mejor.c.nombre}` } : l;
+}
+
+/**
+ * Si se avisa que no hay calles (ronda 4; René, 2026-11-18: «el aviso rojo sale cada vez que se regresa
+ * a La escena, aunque el mapa dibuja las calles»). Solo si Overpass no respondió, no hay calles de
+ * ninguna otra fuente (las teselas de este mapa, las del recorrido o las guardadas con el caso), las
+ * teselas de este lugar ya se leyeron y el aviso no se ha mostrado en la sesión.
+ */
+export function avisarSinCalles(o: {
+  overpassFallo: boolean;
+  hayCalles: boolean;
+  teselasLeidasDe: string | null;
+  lugar: string | null;
+  yaVisto: boolean;
+  descartado: boolean;
+}): boolean {
+  return (
+    o.overpassFallo &&
+    !o.hayCalles &&
+    o.lugar !== null &&
+    o.teselasLeidasDe === o.lugar &&
+    !o.yaVisto &&
+    !o.descartado
+  );
 }

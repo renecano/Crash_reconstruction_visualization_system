@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Croquis.Core;
 using Croquis.Generated;
 using UnityEngine;
 using Material = UnityEngine.Material;
@@ -51,6 +52,10 @@ namespace Croquis.Visor
             }
 
             EntornoVista.Construir(escenario, e.Entorno, e.Ambiente, e.Semilla);
+            if (e.Estructura != null)
+            {
+                Puente(escenario, e.Estructura, terreno);
+            }
             Luminarias(escenario, e.Luminarias, e.Ambiente, new Vector2((float)e.Centro.X, (float)e.Centro.Y));
             var p = e.Ambiente.Precipitacion;
             LluviaDeParticulas = null;
@@ -541,6 +546,37 @@ namespace Croquis.Visor
         }
 
         // ---- Suelo ------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// El puente o paso a desnivel narrado (ronda 4), ilustrativo: la losa a nivel con su canto y sus
+        /// parapetos, y los muros de concreto que bajan hasta el piso de abajo (`EstructuraVia`). Sus
+        /// medidas son supuestos del 3D; la física va sobre la losa.
+        /// </summary>
+        private static void Puente(Transform padre, EscenarioEstructura e, Terreno terreno)
+        {
+            var r = (float)e.RumboDeg * Mathf.Deg2Rad;
+            var eje = new Vector3(Mathf.Cos(r), 0f, Mathf.Sin(r));
+            var lado = new Vector3(-Mathf.Sin(r), 0f, Mathf.Cos(r));
+            var centro = new Vector3((float)e.Centro.X, 0f, (float)e.Centro.Y);
+            var largo = (float)e.LargoM - 2f * (float)EstructuraVia.RampaExtremoM * 0.5f;
+            var mitadAncho = (float)e.AnchoM / 2f;
+            var concreto = new Malla();
+            var parapeto = new Malla();
+            foreach (var s in new[] { -1f, 1f })
+            {
+                // El muro: de la orilla de la losa hasta el piso de abajo, a todo lo largo de la parte alta.
+                var orilla = centro + lado * s * (mitadAncho + 0.25f);
+                var abajo = (float)e.AlturaM + 0.3f;
+                concreto.Caja(orilla - Vector3.up * abajo, eje, lado, largo, abajo - 0.02f, 0.5f, 0.5f);
+                // El canto de la losa, un poco más ancho, que marca la línea del puente.
+                concreto.Caja(orilla + lado * s * 0.15f - Vector3.up * 0.9f, eje, lado, largo, 0.88f, 0.3f, 0.5f);
+                // El parapeto, sobre la orilla.
+                parapeto.Caja(orilla, eje, lado, largo, 0.95f, 0.3f, 0.5f);
+            }
+
+            concreto.Poner(padre, "puente_estructura", Materiales.Liso(new Color(0.62f, 0.61f, 0.58f), 0.15f));
+            parapeto.Poner(padre, "puente_parapetos", Materiales.Liso(new Color(0.72f, 0.71f, 0.68f), 0.2f));
+        }
 
         private static void Suelo(Transform padre, SueloEscenario s, AmbienteEscenario a, bool urbana, long semilla)
         {

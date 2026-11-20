@@ -72,9 +72,29 @@ export const RUTA_MANIFIESTO = "/visor-unity/manifest.json";
 export function marcar(paso: string): void {
   try {
     performance.mark(`unity:${paso}`);
+    // El humo de las tandas (René, 2026-11-20): en qué paso se quedó, en la consola que sube.
+    if ((window as unknown as { __croquisDiagnostico?: boolean }).__croquisDiagnostico)
+      console.info(`[croquis] unity:${paso} ${Math.round(performance.now())} ms`);
   } catch {
     /* sin performance (pruebas unitarias) */
   }
+}
+
+/**
+ * Lo que se espera a que Unity confirme que cargó un caso (René, 2026-11-20: ninguna fase espera sin
+ * fin). Pasado el tope, la web abre el visor ligero y dice por qué.
+ */
+export const ESPERA_CARGA_MS = 45_000;
+/** Lo que se espera el cálculo de la escena que dibuja el 3D, antes de mandarla a Unity. */
+export const ESPERA_CALCULO_3D_MS = 60_000;
+
+/** La promesa, o un error con `mensaje` si no termina en `ms`. */
+export function conTope<T>(p: Promise<T>, ms: number, mensaje: string): Promise<T> {
+  let reloj: ReturnType<typeof setTimeout> | undefined;
+  const tope = new Promise<never>((_, falla) => {
+    reloj = setTimeout(() => falla(new Error(mensaje)), ms);
+  });
+  return Promise.race([p, tope]).finally(() => clearTimeout(reloj));
 }
 
 export function urlsDelBuild(m: ManifiestoVisorUnity) {
@@ -320,7 +340,7 @@ export class PuenteUnity {
     this.instancia.Module?.resumeMainLoop?.();
   }
 
-  async cargar(paquete: unknown, ms = ESPERA_ARRANQUE_MS): Promise<void> {
+  async cargar(paquete: unknown, ms = ESPERA_CARGA_MS): Promise<void> {
     const llega = this.esperar(
       (m): m is Extract<MensajeDeUnity, { tipo: "cargado" }> => m.tipo === "cargado",
       ms,
