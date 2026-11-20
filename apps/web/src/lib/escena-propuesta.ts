@@ -329,3 +329,13 @@ export function rumboDelSentido(
     return { rumbo: rumboHacia(desde, destino), cita: s.cita };
   return null;
 }
+
+/**
+ * Si se puede ver la reconstrucción desde la lista (ronda 4; René, 2026-11-20: la medición y una
+ * persona se quedaban en La escena): cuando no falta ningún elemento obligatorio (cada choque, por
+ * dónde venía y dónde quedó cada vehículo). Las preguntas opcionales (primer golpe, otros choques,
+ * por dónde pasó, terreno) no bloquean; lo propuesto por Croquis cuenta como listo.
+ */
+export function listaLista(items: readonly ItemEscena[]): boolean {
+  return items.length > 0 && items.every((i) => i.opcional || i.estado !== "falta");
+}

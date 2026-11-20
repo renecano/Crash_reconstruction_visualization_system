@@ -10,7 +10,7 @@ import { overpassDeTeselas, type LineaTesela } from "@croquis/croquis-2d";
 import { describe, expect, it } from "vitest";
 import { RADIO_CALLES_M } from "./calles-del-mapa";
 import { callesDe, nombreVehiculo, poseDe, rumboAlineado } from "./escena-facil";
-import { listaDeLaEscena, proponerEscena } from "./escena-propuesta";
+import { listaDeLaEscena, listaLista, proponerEscena } from "./escena-propuesta";
 import { impactosAColocar } from "./pasos-caso";
 
 const aqui = dirname(fileURLToPath(import.meta.url));
@@ -91,6 +91,23 @@ describe("la escena ya armada (cesvi-cf708e9fed)", () => {
         nombreDe,
       }),
     ).toBeNull();
+  });
+});
+
+describe("ver la reconstrucción desde la lista (René, 2026-11-20)", () => {
+  const item = (estado: "propuesto" | "confirmado" | "falta", opcional = false) =>
+    ({
+      clave: "x",
+      texto: "",
+      porque: null,
+      estado,
+      opcional,
+      abre: { tipo: "choque", orden: 1 },
+    }) as const;
+  it("las opcionales sin contestar no bloquean; lo propuesto cuenta como listo", () => {
+    expect(listaLista([item("confirmado"), item("propuesto"), item("falta", true)])).toBe(true);
+    expect(listaLista([item("confirmado"), item("falta")])).toBe(false);
+    expect(listaLista([])).toBe(false);
   });
 });
 
