@@ -2,10 +2,10 @@
     "tanda":  "t5b-repeticion",
     "titulo":  "Tanda 5b · La t5 completa con la tarjeta de alto rendimiento y la e2e corregida",
     "fecha":  "2026-11-20",
-    "commit":  "1084a84526b7ca425503d0146ac55f47c605fb01",
+    "commit":  "6257a45ef87c38e355b240caa547768430ec03ec",
     "rama_del_repositorio":  "feat/w-narracion-a-la-fisica",
     "archivos_con_cambios":  0,
-    "duracion_min":  2.6,
+    "duracion_min":  0.1,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "NVIDIA GeForce RTX 4070 Laptop GPU",
@@ -14,7 +14,7 @@
                    "memoria_gb":  31.7,
                    "procesador":  "Intel(R) Core(TM) i9-14900HX",
                    "nucleos_logicos":  32,
-                   "disco_libre_gb":  292.9,
+                   "disco_libre_gb":  289.7,
                    "windows":  "Microsoft Windows 11 Home",
                    "git":  "git version 2.55.0.windows.5",
                    "node":  "v26.13.1",
@@ -45,27 +45,6 @@
                       "estado":  "ok",
                       "minutos":  0,
                       "codigo":  0
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "visor-nuevo",
-                      "estado":  "ok",
-                      "minutos":  0,
-                      "codigo":  0
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "preparar-nuevo",
-                      "estado":  "ok",
-                      "minutos":  0.5,
-                      "codigo":  0
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "humo",
-                      "estado":  "falló (código 1)",
-                      "minutos":  1.8,
-                      "codigo":  1
                   }
               ]
 }
