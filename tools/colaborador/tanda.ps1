@@ -349,6 +349,56 @@ function AsegurarHerramientas {
 
 $Instaladas = @(AsegurarHerramientas)
 
+# Mientras corre la tanda en su rama o commit: Ctrl+C detiene el paso (el proceso hijo), no a este, y
+# al cerrar la ventana se regresa a la rama de antes en los segundos que da Windows.
+function GuardiaDeLaTanda([string]$repo, [string]$rama) {
+  if (-not ("Croquis.Guardia" -as [type])) {
+    Add-Type -TypeDefinition @"
+using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+namespace Croquis {
+  public static class Guardia {
+    private delegate bool Manejador(int evento);
+    [DllImport("kernel32.dll")] private static extern bool SetConsoleCtrlHandler(Manejador m, bool agregar);
+    private static Manejador manejador;
+    private static string repo;
+    private static string rama;
+    public static void Poner(string r, string b) {
+      repo = r; rama = b;
+      if (manejador == null) { manejador = Atender; SetConsoleCtrlHandler(manejador, true); }
+    }
+    public static void Quitar() {
+      if (manejador != null) { SetConsoleCtrlHandler(manejador, false); manejador = null; }
+    }
+    // 0 Ctrl+C, 1 Ctrl+Break: los atiende el paso; este proceso sigue para regresar a la rama.
+    // 2 la ventana se cierra: se regresa ya (Windows da unos 5 s).
+    private static bool Atender(int evento) {
+      if (evento == 2) Volver(1);
+      return true;
+    }
+    public static bool Volver(int intentos) {
+      for (int i = 0; i < intentos; i++) {
+        try {
+          var psi = new ProcessStartInfo("git", "-C \"" + repo + "\" checkout -q " + rama);
+          psi.UseShellExecute = false; psi.CreateNoWindow = true;
+          psi.RedirectStandardOutput = true; psi.RedirectStandardError = true;
+          using (var p = Process.Start(psi)) {
+            p.WaitForExit(4000);
+            if (p.HasExited && p.ExitCode == 0) return true;
+          }
+        } catch { }
+        System.Threading.Thread.Sleep(2000);
+      }
+      return false;
+    }
+  }
+}
+"@
+  }
+  [Croquis.Guardia]::Poner($repo, $rama)
+}
+
 # --- La rama de la tanda ------------------------------------------------------------------------------
 # Una tanda que todavía no está en main vive en su rama: se cambia a ella y esta misma corrida sigue
 # desde ahí (con el guion y los pasos de esa rama). Al terminar vuelve a la rama en la que estaba.
@@ -369,9 +419,14 @@ if ($ramaDeLaTanda -and -not $EnSuRama -and $ramaActual -ne $ramaDeLaTanda) {
     exit 1
   }
   Escribir "La tanda «$Tanda» está en la rama $ramaDeLaTanda. Cambio a ella; al terminar vuelvo a $ramaActual."
-  # Pase lo que pase (un error, Ctrl+C), al salir se regresa a la rama de antes (René, 2026-11-20). Si se
-  # cierra la ventana y no alcanza, la siguiente corrida lo nota al arrancar y regresa a main.
+  # Pase lo que pase (un error, Ctrl+C, la ventana cerrada), se regresa a la rama de antes (René,
+  # 2026-11-20). Con Ctrl+C, PowerShell deja de correr comandos en el `finally` (la prueba lo mostró:
+  # la copia se quedaba en el commit de la tanda), así que mientras corre la tanda este proceso atiende
+  # él mismo Ctrl+C y el cierre de la ventana (`GuardiaDeLaTanda`): el paso que corre se detiene como
+  # siempre, y aquí se regresa a la rama con git directo (.NET, no la tubería de PowerShell). Si aun
+  # así no alcanza, el .bat y la siguiente corrida lo notan al arrancar y regresan a main.
   $codigo = 1
+  GuardiaDeLaTanda $Repo $ramaActual
   try {
   if ((Nativo "git" @("-C", $Repo, "fetch", "origin", $ramaDeLaTanda)) -ne 0) {
     Escribir "No se pudo traer la rama $ramaDeLaTanda de GitHub (¿hay internet?)." "Red"
@@ -401,13 +456,13 @@ if ($ramaDeLaTanda -and -not $EnSuRama -and $ramaActual -ne $ramaDeLaTanda) {
   & powershell.exe @argumentos
   $codigo = $LASTEXITCODE
   } finally {
-    $volvio = $false
     # Los procesos del paso cortado pueden tardar unos segundos en soltar los archivos.
-    for ($i = 0; $i -lt 5 -and -not $volvio; $i++) {
-      if ((Nativo "git" @("-C", $Repo, "checkout", $ramaActual)) -eq 0) { $volvio = $true } else { Start-Sleep -Seconds 2 }
-    }
-    if ($volvio) { Escribir "De vuelta en $ramaActual." }
-    else { Escribir "No se pudo volver a la rama $($ramaActual): la carpeta quedó en $ramaDeLaTanda. La siguiente corrida regresa sola." "Yellow" }
+    $volvio = [Croquis.Guardia]::Volver(5)
+    [Croquis.Guardia]::Quitar()
+    try {
+      if ($volvio) { Escribir "De vuelta en $ramaActual." }
+      else { Escribir "No se pudo volver a la rama $($ramaActual): la carpeta quedó en $ramaDeLaTanda. La siguiente corrida regresa sola." "Yellow" }
+    } catch { }
   }
   exit $codigo
 }
