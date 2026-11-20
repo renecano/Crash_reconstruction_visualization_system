@@ -1,7 +1,7 @@
 # Paso: narraciones
 # Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues narraciones -Salida eval/results/t5/narraciones_fisica.json
 # Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
-# Inicio: 2026-11-20 11:09:22
+# Inicio: 2026-11-20 11:21:19
 
 
 == 1. Herramientas
@@ -12,7 +12,7 @@ Hay internet.
 Scope: all 10 workspace projects
 ✓ Lockfile passes supply-chain policies (verified 2d ago)
 Lockfile is up to date, resolution step is skipped
-Done in 71ms using pnpm v12.11.2
+Done in 65ms using pnpm v12.11.2
 
 == 3. El visor de Unity, desde esta computadora
 Visor 3cce5c1caca88f96 servido desde el sitio: C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\public\visor-unity\local
@@ -113,18 +113,16 @@ Running 7 tests using 1 worker
 [4/7] [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración subida: de lo dicho a la física y al 3D
   4) [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración subida: de lo dicho a la física y al 3D 
 
-    Test was interrupted.
-
     Error: expect(locator).toContainText(expected) failed
 
     Locator: getByTestId('escena')
     Expected substring: "vehículo"
+    Timeout: 180000ms
     Error: element(s) not found
 
     Call log:
       - Expect "toContainText" getByTestId('escena') with timeout 180000ms
       - waiting for getByTestId('escena')
-      - Test ended.
 
 
       133 |     await page.getByTestId("narracion").fill(n.texto);
@@ -139,15 +137,8 @@ Running 7 tests using 1 worker
     Error Context: test-results\narraciones-fisica-narraci-7e027-o-dicho-a-la-física-y-al-3D-chromium\error-context.md
 
 
-  3 failed
-    [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración arbol: de lo dicho a la física y al 3D 
-    [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración poste: de lo dicho a la física y al 3D 
-    [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración puente: de lo dicho a la física y al 3D 
-  1 interrupted
-    [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración subida: de lo dicho a la física y al 3D 
-  3 did not run
-¿Desea terminar el trabajo por lotes (S/N)? Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
+[5/7] [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración bajada: de lo dicho a la física y al 3D
 
-  × "pnpm recursive exec" failed in C:\Users\MrKan\Documents\reto cesvi
-  │ v5\Croquis\apps\web
+# no arrancó: Excepción al llamar a "AppendAllText" con los argumentos "3": "El proceso no puede obtener acceso al archivo 'C:\Users\MrKan\Documents\reto cesvi v5\Croquis\resultados\t5-verificacion\2026-11-20\tanda-03-narraciones.log' porque está siendo utilizado en otro proceso."
 
+# Fin: 2026-11-20 11:36:20 · no arrancó: Excepción al llamar a "AppendAllText" con los argumentos "3": "El proceso no puede obtener acceso al archivo 'C:\Users\MrKan\Documents\reto cesvi v5\Croquis\resultados\t5-verificacion\2026-11-20\tanda-03-narraciones.log' porque está siendo utilizado en otro proceso." · 15 min
