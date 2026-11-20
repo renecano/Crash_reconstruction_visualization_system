@@ -79,10 +79,9 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   // 2. Lo que más cambia la reconstrucción: el impacto supuesto se confirma; una masa con «No sé».
   await page.getByTestId("confirmar-impacto").click();
   await expect(page.getByTestId("impactos")).not.toContainText("supuesto");
-  // Una pregunta = un dato, con su control además de «No sé»: primero el tipo de vehículo (opciones)
-  // y luego la masa, que ya ofrece el valor típico de su clase (E2).
-  await expect(page.getByTestId("usar-tipico-masa-V1")).toHaveCount(0);
-  await page.getByTestId("opcion-clase-V1-sedan_compacto").click();
+  // Una pregunta = un dato, con su control además de «No sé». La clase sale del modelo leído («marca
+  // VW, tipo Jetta»: supuesta por el modelo, ronda 4), así que ya no se pregunta; la masa ofrece el
+  // valor típico de esa clase (E2).
   await expect(page.getByTestId("pregunta-clase-V1")).toHaveCount(0);
   await expect(page.getByTestId("usar-tipico-masa-V1")).toBeVisible();
   await page.getByTestId("no-se-masa-V1").click();

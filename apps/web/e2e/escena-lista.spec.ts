@@ -43,7 +43,9 @@ test("@flujo /cesvi: la escena ya armada se revisa en su lista y llega a la reco
   await page.getByTestId("leer-narracion").click();
   await expect(page.getByTestId("escena")).toContainText("2 vehículos · 1 impacto");
   await page.getByTestId("confirmar-impacto").click();
-  await page.getByTestId("opcion-clase-V1-sedan_compacto").click();
+  // La clase ya sale del modelo leído («tipo Jetta», ronda 4); se contesta solo si se pregunta.
+  const clase = page.getByTestId("opcion-clase-V1-sedan_compacto");
+  if (await clase.isVisible().catch(() => false)) await clase.click();
   await page.getByTestId("no-se-masa-V1").click();
   await page.getByTestId("valor-masa-V2").fill("1450");
   await page
