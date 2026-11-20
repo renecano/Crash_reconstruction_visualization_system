@@ -1,5 +1,5 @@
 import { mkdirSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { type Page } from "@playwright/test";
 import { expect, test } from "./base";
 import { irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
@@ -19,14 +19,20 @@ import { irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
  */
 const RAIZ = resolve(__dirname, "../../..");
 // `CROQUIS_SALIDA` y `CROQUIS_CAPTURAS` (relativas a la raíz) para medir un después sin pisar el antes.
-const SALIDA = join(
+// `resolve`: la ruta puede llegar absoluta (la tanda); `join` la pegaba detrás de la raíz (t5).
+const SALIDA = resolve(
   RAIZ,
   process.env.CROQUIS_SALIDA ??
     (process.env.CROQUIS_EJEMPLO
       ? `eval/results/ronda2_ejemplo_${process.env.CROQUIS_EJEMPLO}.json`
       : "eval/results/ronda2_ejemplos.json"),
 );
-const CAPTURAS = join(RAIZ, process.env.CROQUIS_CAPTURAS ?? "docs/cesvi/ronda-2/ejemplos");
+const CAPTURAS = resolve(RAIZ, process.env.CROQUIS_CAPTURAS ?? "docs/cesvi/ronda-2/ejemplos");
+/** Escribe el resultado, creando su carpeta si falta («antes»: eval/results/t5 no existía). */
+function escribirSalida(texto: string): void {
+  mkdirSync(dirname(SALIDA), { recursive: true });
+  writeFileSync(SALIDA, texto);
+}
 const CON_UNITY = process.env.CROQUIS_UNITY === "1";
 
 interface Receta {
@@ -298,8 +304,7 @@ test("las cinco narraciones de ejemplo, de punta a punta", async ({ page, baseUR
     await foto("6-dictamen");
     resultados.push(fila);
   }
-  writeFileSync(
-    SALIDA,
+  escribirSalida(
     `${JSON.stringify(
       {
         descripcion:

@@ -118,6 +118,8 @@ export function separarLugarYSentido(texto: string | null | undefined): LugarYSe
       "",
     )
     .replace(/^\s*(?:por|sobre|en)\s+/i, "")
+    // «…, en la subida», «…, en la curva»: describen el lugar, no son parte del nombre que se busca.
+    .replace(/,?\s+en\s+(?:la|una)\s+(?:subida|bajada|curva|pendiente)\b.*$/i, "")
     .replace(
       /\s*,?\s*(?:y\s+)?(?:me|se|nos)\s+(?:sal[ií]|sali[oó]|impact|estrell|choc|volc|perd).*$/i,
       "",

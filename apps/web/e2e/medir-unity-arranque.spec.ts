@@ -2,7 +2,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { chromium, type Page } from "@playwright/test";
-import { expect, test } from "./base";
+import { expect, flujoDeSiempre, test } from "./base";
 import { sinBlob } from "./sin-blob";
 import { colocarTodo, irAPaso } from "./ayuda-recorrido";
 
@@ -195,6 +195,9 @@ test("el arranque del 3D de Unity, por partes", async ({ baseURL }) => {
       reducedMotion: "reduce",
     });
     await sinBlob(ctx);
+    // El mismo flujo de La escena que las mediciones anteriores (comparables con el 1.3.0); antes se
+    // quedaba en La escena nueva sin poder seguir (t5, René 2026-11-20).
+    await flujoDeSiempre(ctx);
     await ctx.addInitScript(instrumentar);
     // Lo que diga la página, para el registro si el 3D no arranca (t4b, René 2026-11-17).
     const avisos: string[] = [];

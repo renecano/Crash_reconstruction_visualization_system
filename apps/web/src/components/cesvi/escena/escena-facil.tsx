@@ -52,6 +52,7 @@ import { useSearchParams } from "next/navigation";
 import { HerramientasEscena, ListaEscena } from "./lista-escena";
 import {
   listaDeLaEscena,
+  listaLista,
   proponerEscena,
   rumboDelSentido,
   type EscenaPropuesta,
@@ -2707,7 +2708,7 @@ export function EscenaFacil({
       {nuevo && enLista ? (
         <ListaEscena
           items={itemsLista}
-          listo={todoListo}
+          listo={listaLista(itemsLista)}
           onConfirmar={confirmarItem}
           onAbrir={abrirItem}
           onVer={() => onVerReconstruccion?.()}

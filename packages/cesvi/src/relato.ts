@@ -900,6 +900,37 @@ export function conVocabulario(
     }
     menciones.push({ ...m, vehiculo: v, ...(claseSupuesta ? { claseSupuesta } : {}) });
   }
+  // La marca y el modelo que leyó la lectura («marca Mazda, tipo 3» → «Mazda 3»): si ninguna mención
+  // del texto dio la clase, se busca en ellos (ronda 4; René, 2026-11-20: solo preguntar si de verdad
+  // no lo dice).
+  for (const v of orden) {
+    if (datos.some((d) => d.seccion === "vehiculo" && d.vehiculo === v && d.campo === "clase"))
+      continue;
+    const de = (campo: string) =>
+      datos.find((d) => d.seccion === "vehiculo" && d.vehiculo === v && d.campo === campo)?.valor ??
+      "";
+    const nombre = `${de("marca")} ${de("modelo")}`.trim();
+    const m = nombre ? vehiculosMencionados(nombre).find((x) => x.clase) : undefined;
+    if (!m?.clase) continue;
+    datos.push({
+      seccion: "vehiculo",
+      n: Number(v.slice(1)),
+      vehiculo: v as FilaCorpus["vehiculo"],
+      campo: "clase",
+      valor: m.clase,
+      cita: "",
+    });
+    // Sin lugar en el texto (salió de los campos de la lectura): la mención queda sin posición.
+    menciones.push({
+      ...m,
+      ini: -1,
+      fin: -1,
+      texto: nombre,
+      vehiculo: v,
+      claseSupuesta: m.clase,
+      nota: m.nota ?? "por el modelo: se vende con esa carrocería",
+    });
+  }
   return { salida: { datos }, menciones };
 }
 

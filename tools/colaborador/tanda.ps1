@@ -463,7 +463,19 @@ $Utf8SinBom = New-Object Text.UTF8Encoding $false
 $CarpetaCmd = Join-Path ([IO.Path]::GetTempPath()) "croquis-tanda"
 
 function AgregarAlRegistro([string]$registro, [string[]]$lineas) {
-  [IO.File]::AppendAllText($registro, (($lineas -join "`r`n") + "`r`n"), $Utf8SinBom)
+  # Un proceso del paso que todavía no termina de cerrarse (node, Chrome) puede tener el registro
+  # abierto («está siendo utilizado en otro proceso», t5 2026-11-20): se reintenta unos segundos y,
+  # si sigue ocupado, la nota va a un archivo aparte, sin tirar la tanda.
+  $texto = ($lineas -join "`r`n") + "`r`n"
+  for ($i = 0; $i -lt 10; $i++) {
+    try {
+      [IO.File]::AppendAllText($registro, $texto, $Utf8SinBom)
+      return
+    } catch {
+      Start-Sleep -Milliseconds 1000
+    }
+  }
+  try { [IO.File]::AppendAllText("$registro.nota.txt", $texto, $Utf8SinBom) } catch { }
 }
 
 # La última línea con texto de un registro que otro proceso sigue escribiendo.
@@ -550,6 +562,8 @@ function CorrerPaso([string]$grupo, [int]$numero, [int]$total, $paso) {
         $lleva = (Get-Date) - $t0
         if ($lleva.TotalMinutes -gt $tope) {
           & taskkill.exe /PID $proceso.Id /T /F 2>$null | Out-Null
+          # Primero que se cierre todo el árbol del paso; después se escribe la nota.
+          try { [void]$proceso.WaitForExit(15000) } catch { }
           $estado = "detenido por pasar de $tope min"
           AgregarAlRegistro $registro @("", "# $estado")
           break
@@ -647,8 +661,14 @@ if ($Pesados.Count -eq 0) {
   $n = 0
   foreach ($p in $Pesados) {
     $n++
-    [void](CorrerPaso "tanda" $n $Pesados.Count $p)
+    $resultado = [string](@(CorrerPaso "tanda" $n $Pesados.Count $p)[-1])
     [void](Subir ([string]$p.nombre) @($p.salidas))
+    # Un paso de humo (`detiene_si_falla`, René 2026-11-20): si no sale, no se gastan las 2 horas.
+    if ($p.detiene_si_falla -and $resultado -ne "ok") {
+      Escribir ""
+      Escribir "El paso «$($p.nombre)» no salió ($resultado): la tanda se detiene aquí y ya subió lo que tenía." "Red"
+      break
+    }
   }
   [void](Subir "resumen" @())
 }

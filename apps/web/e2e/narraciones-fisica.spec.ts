@@ -1,5 +1,5 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { type Page } from "@playwright/test";
 import { expect, test } from "./base";
 import { irAPaso, mapaFacil } from "./ayuda-recorrido";
@@ -18,7 +18,13 @@ import { casoParaGuardar } from "../src/lib/caso-guardado";
  */
 const RAIZ = resolve(__dirname, "../../..");
 const CAPTURAS = join(RAIZ, "docs/cesvi/ronda-4/evidencia/fisica");
-const SALIDA = join(
+/** Escribe el resultado, creando su carpeta si falta («antes»: eval/results/t5 no existía). */
+function escribirSalida(texto: string): void {
+  mkdirSync(dirname(SALIDA), { recursive: true });
+  writeFileSync(SALIDA, texto);
+}
+// `resolve`: la ruta puede llegar absoluta (la tanda); `join` la pegaba detrás de la raíz (t5).
+const SALIDA = resolve(
   RAIZ,
   process.env.CROQUIS_SALIDA ?? "eval/results/ronda4_narraciones_fisica.json",
 );
@@ -264,7 +270,7 @@ test("caso encimado a propósito: antes y después en el 3D", async ({ page }) =
     aviso_sin_transferencia_antes: avisoAntes,
     aviso_en_la_escena: avisoEscena,
   });
-  writeFileSync(SALIDA, JSON.stringify({ fecha: new Date().toISOString(), filas }, null, 2) + "\n");
+  escribirSalida(JSON.stringify({ fecha: new Date().toISOString(), filas }, null, 2) + "\n");
 });
 
 /**
@@ -315,5 +321,5 @@ test("Tollocan de René, de punta a punta", async ({ page }) => {
     ),
     menciona_arbol: /árbol/i.test(texto),
   });
-  writeFileSync(SALIDA, JSON.stringify({ fecha: new Date().toISOString(), filas }, null, 2) + "\n");
+  escribirSalida(JSON.stringify({ fecha: new Date().toISOString(), filas }, null, 2) + "\n");
 });
