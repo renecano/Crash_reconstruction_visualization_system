@@ -447,7 +447,7 @@
     },
     "t5b-repeticion": {
       "titulo": "Tanda 5b · La t5 completa con la tarjeta de alto rendimiento y la e2e corregida",
-      "nota": "René, 2026-11-20: la tanda completa, no solo la repetición. La t5 corrió en la gráfica integrada (Chrome en ahorro de energía), las narraciones no se leyeron (sin llave de Claude en esa computadora) y Tollocan abrió el visor de respaldo. Aquí: las narraciones usan su lectura grabada, se pide el Unity real, cada fila dice con qué tarjeta corrió (renderer de WebGL) y la demo local pone a Chrome en alto rendimiento. Fijada al commit 1598a64e del #284 (e451c995 más el renderer en las filas de los ejemplos y alto rendimiento en el «antes» de producción). Para repetir solo el arranque: tanda.ps1 -Tanda t5b-repeticion -Solo visor-nuevo,preparar-nuevo,arranque-nuevo-1,arranque-nuevo-2,arranque-nuevo-3,usar-130,visor-130,preparar-130,arranque-130-1,arranque-130-2,arranque-130-3,volver-al-nuevo",
+      "nota": "René, 2026-11-20: la tanda completa, no solo la repetición. La t5 corrió en la gráfica integrada (Chrome en ahorro de energía), las narraciones no se leyeron (sin llave de Claude en esa computadora) y Tollocan abrió el visor de respaldo. Aquí: las narraciones usan su lectura grabada, se pide el Unity real, cada fila dice con qué tarjeta corrió (renderer de WebGL) y la demo local pone a Chrome en alto rendimiento. Fijada al commit 1084a845 del #284 (e451c995 más el renderer en las filas de los ejemplos y alto rendimiento en el «antes» de producción). Para repetir solo el arranque: tanda.ps1 -Tanda t5b-repeticion -Solo visor-nuevo,preparar-nuevo,arranque-nuevo-1,arranque-nuevo-2,arranque-nuevo-3,usar-130,visor-130,preparar-130,arranque-130-1,arranque-130-2,arranque-130-3,volver-al-nuevo Primero el humo (3 min): AXA y Tollocan de La escena nueva al 3D de Unity; si falla, la tanda se detiene y sube lo que tenga.",
       "rama": "feat/w-narracion-a-la-fisica",
       "pasos": [
         {
@@ -461,6 +461,13 @@
           "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar",
           "minutos": 8,
           "tope_min": 15
+        },
+        {
+          "nombre": "humo",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues humo",
+          "minutos": 2,
+          "tope_min": 3,
+          "detiene_si_falla": true
         },
         {
           "nombre": "narraciones",
@@ -557,7 +564,7 @@
           "tope_min": 15
         }
       ],
-      "commit": "1598a64e88fd8e31463a5cd1f74579f97b71681a"
+      "commit": "1084a84526b7ca425503d0146ac55f47c605fb01"
     }
   }
 }
