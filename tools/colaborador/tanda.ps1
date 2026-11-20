@@ -260,7 +260,21 @@ if ($ramaDeLaTanda -and -not $EnSuRama -and $ramaActual -ne $ramaDeLaTanda) {
     Escribir "No se pudo traer la rama $ramaDeLaTanda de GitHub (¿hay internet?)." "Red"
     exit 1
   }
-  if ((Nativo "git" @("-C", $Repo, "checkout", "-B", $ramaDeLaTanda, "FETCH_HEAD")) -ne 0) {
+  # Fijada a un commit (René, 2026-11-19): se prueba ese SHA exacto, aunque la rama avance mientras corre.
+  $destino = "FETCH_HEAD"
+  $commitDeLaTanda = [string]$Definicion.commit
+  if ($commitDeLaTanda) {
+    if ((Nativo "git" @("-C", $Repo, "cat-file", "-e", "$commitDeLaTanda^{commit}")) -ne 0) {
+      [void](Nativo "git" @("-C", $Repo, "fetch", "origin", $commitDeLaTanda))
+    }
+    if ((Nativo "git" @("-C", $Repo, "cat-file", "-e", "$commitDeLaTanda^{commit}")) -ne 0) {
+      Escribir "No encontré el commit $commitDeLaTanda de la tanda en GitHub." "Red"
+      exit 1
+    }
+    $destino = $commitDeLaTanda
+    Escribir "La tanda está fijada al commit $commitDeLaTanda."
+  }
+  if ((Nativo "git" @("-C", $Repo, "checkout", "-B", $ramaDeLaTanda, $destino)) -ne 0) {
     Escribir "No se pudo cambiar a la rama $ramaDeLaTanda." "Red"
     exit 1
   }
