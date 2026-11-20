@@ -1,7 +1,7 @@
 # Paso: narraciones
 # Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues narraciones -Salida eval/results/t5/narraciones_fisica.json
 # Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
-# Inicio: 2026-11-20 11:38:06
+# Inicio: 2026-11-20 14:20:01
 
 
 == 1. Herramientas
@@ -12,7 +12,7 @@ Hay internet.
 Scope: all 10 workspace projects
 ✓ Lockfile passes supply-chain policies (verified 2d ago)
 Lockfile is up to date, resolution step is skipped
-Done in 65ms using pnpm v12.11.2
+Done in 60ms using pnpm v12.11.2
 
 == 3. El visor de Unity, desde esta computadora
 Visor 3cce5c1caca88f96 servido desde el sitio: C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\public\visor-unity\local
@@ -139,6 +139,6 @@ Running 7 tests using 1 worker
 
 [5/7] [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración bajada: de lo dicho a la física y al 3D
 
-# no arrancó: Excepción al llamar a "AppendAllText" con los argumentos "3": "El proceso no puede obtener acceso al archivo 'C:\Users\MrKan\Documents\reto cesvi v5\Croquis\resultados\t5-verificacion\2026-11-20\tanda-03-narraciones.log' porque está siendo utilizado en otro proceso."
+# detenido por pasar de 15 min
 
-# Fin: 2026-11-20 11:53:06 · no arrancó: Excepción al llamar a "AppendAllText" con los argumentos "3": "El proceso no puede obtener acceso al archivo 'C:\Users\MrKan\Documents\reto cesvi v5\Croquis\resultados\t5-verificacion\2026-11-20\tanda-03-narraciones.log' porque está siendo utilizado en otro proceso." · 15 min
+# Fin: 2026-11-20 14:35:02 · detenido por pasar de 15 min · 15 min
