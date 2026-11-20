@@ -1,7 +1,7 @@
 # Paso: tollocan
 # Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tollocan -Salida eval/results/t5/tollocan.json
 # Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
-# Inicio: 2026-11-20 11:53:09
+# Inicio: 2026-11-20 14:35:06
 
 
 == 1. Herramientas
@@ -12,7 +12,7 @@ Hay internet.
 Scope: all 10 workspace projects
 ✓ Lockfile passes supply-chain policies (verified 2d ago)
 Lockfile is up to date, resolution step is skipped
-Done in 71ms using pnpm v12.11.2
+Done in 123ms using pnpm v12.11.2
 
 == 3. El visor de Unity, desde esta computadora
 Visor 3cce5c1caca88f96 servido desde el sitio: C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\public\visor-unity\local
@@ -67,4 +67,4 @@ Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
   │ v5\Croquis\apps\web
 
 
-# Fin: 2026-11-20 11:58:33 · falló (código 1) · 5.4 min
+# Fin: 2026-11-20 14:40:31 · falló (código 1) · 5.4 min
