@@ -21,7 +21,7 @@ import { clienteCorpus, leerConPedido, pedidoLectura } from "../packages/cesvi/s
 
 const RAIZ = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const GRABACIONES = join(RAIZ, "data/cesvi/grabaciones/ronda4");
-const CLAVES = ["arbol", "poste", "puente", "subida", "bajada", "curva"];
+const CLAVES = ["arbol", "poste", "puente", "subida", "bajada", "curva", "tollocan"];
 
 // La llave, del .env.local, solo en memoria.
 if (!process.env.ANTHROPIC_API_KEY) {
@@ -37,6 +37,14 @@ if (!process.env.ANTHROPIC_API_KEY) throw new Error("No hay ANTHROPIC_API_KEY en
 
 const md = readFileSync(join(RAIZ, "docs/cesvi/ronda-4/narraciones-fisica.md"), "utf8");
 const textos = [...md.matchAll(/^> (.+)$/gm)].map((m) => m[1]!.trim()).slice(0, 6);
+// La séptima: la de Tollocan de René (su caso guardado trae la narración, no la lectura cruda).
+textos.push(
+  (
+    JSON.parse(readFileSync(join(RAIZ, "data/cesvi/casos/tollocan-rene.croquis"), "utf8")) as {
+      narracion: string;
+    }
+  ).narracion,
+);
 mkdirSync(GRABACIONES, { recursive: true });
 const c = clienteCorpus();
 let costo = 0;
