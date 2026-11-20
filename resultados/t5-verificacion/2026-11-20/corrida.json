@@ -5,7 +5,7 @@
     "commit":  "d96d7439bbf908e6d221de116ac762419de22e3c",
     "rama_del_repositorio":  "feat/w-narracion-a-la-fisica",
     "archivos_con_cambios":  0,
-    "duracion_min":  20.7,
+    "duracion_min":  22.5,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "NVIDIA GeForce RTX 4070 Laptop GPU",
@@ -72,6 +72,13 @@
                       "paso":  "tollocan",
                       "estado":  "falló (código 1)",
                       "minutos":  5.4,
+                      "codigo":  1
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "ejemplos-despues",
+                      "estado":  "falló (código 1)",
+                      "minutos":  1.8,
                       "codigo":  1
                   }
               ]

@@ -1,0 +1,57 @@
+# Paso: ejemplos-despues
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t5/ejemplos_despues.json
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-20 11:58:36
+
+
+== 1. Herramientas
+Node v26.13.1 y pnpm 12.11.2.
+Hay internet.
+
+== 2. Dependencias
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 2d ago)
+Lockfile is up to date, resolution step is skipped
+Done in 73ms using pnpm v12.11.2
+
+== 3. El visor de Unity, desde esta computadora
+Visor 3cce5c1caca88f96 servido desde el sitio: C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\public\visor-unity\local
+
+== 4. La app en modo local
+Ya está compilada para esta versión (d96d7439).
+
+== 5. La lectura con IA
+No hay llave de Claude en .env.local: la lectura con IA no estará. Todo lo demás funciona (AXA, los casos de ejemplo con su lectura guardada, la reconstrucción, el 3D y el dictamen).
+
+== 6. Croquis en http://localhost:3000
+Necesitan internet: la lectura con IA de una narración nueva, los mosaicos del mapa (sin red, el mapa sale en blanco pero se puede colocar la escena) y buscar un lugar por nombre.
+Sin internet funcionan completos: el caso de AXA y los cinco casos de ejemplo, la reconstrucción, el 3D de Unity y el dictamen.
+
+Running 1 test using 1 worker
+
+[1/1] [chromium] › e2e\ejemplos-ronda2.spec.ts:181:5 › las cinco narraciones de ejemplo, de punta a punta
+  1) [chromium] › e2e\ejemplos-ronda2.spec.ts:181:5 › las cinco narraciones de ejemplo, de punta a punta 
+
+    Error: ENOENT: no such file or directory, open 'C:\Users\MrKan\Documents\reto cesvi v5\Croquis\C:\Users\MrKan\Documents\reto cesvi v5\Croquis\eval\results\t5\ejemplos_despues.json'
+
+      290 |     resultados.push(fila);
+      291 |   }
+    > 292 |   writeFileSync(
+          |                ^
+      293 |     SALIDA,
+      294 |     `${JSON.stringify(
+      295 |       {
+        at C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\ejemplos-ronda2.spec.ts:292:16
+
+    Error Context: test-results\ejemplos-ronda2-las-cinco--e288d-de-ejemplo-de-punta-a-punta-chromium\error-context.md
+
+
+  1 failed
+    [chromium] › e2e\ejemplos-ronda2.spec.ts:181:5 › las cinco narraciones de ejemplo, de punta a punta 
+Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
+
+  × "pnpm recursive exec" failed in C:\Users\MrKan\Documents\reto cesvi
+  │ v5\Croquis\apps\web
+
+
+# Fin: 2026-11-20 12:00:22 · falló (código 1) · 1.8 min
