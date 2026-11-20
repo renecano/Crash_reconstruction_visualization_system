@@ -1,7 +1,7 @@
 # Paso: arranque-nuevo-1
 # Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t5/arranque_3cce5c1caca88f96_1.json
 # Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
-# Inicio: 2026-11-20 12:01:51
+# Inicio: 2026-11-20 14:43:42
 
 
 == 1. Herramientas
@@ -30,61 +30,7 @@ Sin internet funcionan completos: el caso de AXA y los cinco casos de ejemplo, l
 Running 1 test using 1 worker
 
 [1/1] [chromium] › e2e\medir-unity-arranque.spec.ts:173:5 › el arranque del 3D de Unity, por partes
-[chromium] › e2e\medir-unity-arranque.spec.ts:173:5 › el arranque del 3D de Unity, por partes
 
-[diagnóstico axa] fase del visor: null; equipo: null
-  18:01:56 [consola warning] Service Worker registration blocked by Playwright
-  18:01:56 [consola warning] layers[highway-shield-non-us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
-  18:01:56 [consola warning] layers[highway-shield-us-interstate].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+# no arrancó: Excepción al llamar a "AppendAllText" con los argumentos "3": "El proceso no puede obtener acceso al archivo 'C:\Users\MrKan\Documents\reto cesvi v5\Croquis\resultados\t5-verificacion\2026-11-20\tanda-07-arranque-nuevo-1.log' porque está siendo utilizado en otro proceso."
 
-  1) [chromium] › e2e\medir-unity-arranque.spec.ts:173:5 › el arranque del 3D de Unity, por partes ─
-
-    Error: locator.click: Target page, context or browser has been closed
-    Browser logs:
-
-    <launching> C:\Program Files\Google\Chrome\Application\chrome.exe --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --use-angle=d3d11 --ignore-gpu-blocklist --user-data-dir=C:\Users\MrKan\AppData\Local\Temp\croquis-unity-arranque-ACvZ3M --remote-debugging-pipe about:blank
-    <launched> pid=24716
-    [pid=24716][err] [24716:16604:1120/120200.371:ERROR:google_apis\gcm\engine\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT
-    [pid=24716][err] [24716:16604:1120/120200.479:ERROR:google_apis\gcm\engine\mcs_client.cc:700]   Error code: 401  Error message: Authentication Failed: wrong_secret
-    [pid=24716][err] [24716:16604:1120/120200.479:ERROR:google_apis\gcm\engine\mcs_client.cc:702] Failed to log in to GCM, resetting connection.
-    [pid=24716][err] [24716:16604:1120/120230.354:ERROR:google_apis\gcm\engine\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT
-    [pid=24716][err] [24716:16604:1120/120311.119:ERROR:google_apis\gcm\engine\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT
-    [pid=24716][err] [24716:16604:1120/120432.277:ERROR:google_apis\gcm\engine\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT
-    [pid=24716][err] [24716:16604:1120/120756.811:ERROR:google_apis\gcm\engine\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT
-    [pid=24716] <gracefully close start>
-    Call log:
-      - waiting for getByTestId('avance-ver-reconstruccion')
-        - locator resolved to <button type="button" data-testid="avance-ver-reconstruccion" class="boton-principal escena-boton whitespace-nowrap">Ver la reconstrucción →</button>
-      - attempting click action
-        2 × waiting for element to be visible, enabled and stable
-          - element is not visible
-        - retrying click action
-        - waiting 20ms
-        2 × waiting for element to be visible, enabled and stable
-          - element is not visible
-        - retrying click action
-          - waiting 100ms
-        1087 × waiting for element to be visible, enabled and stable
-             - element is not visible
-           - retrying click action
-             - waiting 500ms
-        - waiting for element to be visible, enabled and stable
-
-
-       at ayuda-recorrido.ts:20
-
-      18 |         const ver = page.getByTestId("avance-ver-reconstruccion");
-      19 |         await expect(ver).toBeEnabled();
-    > 20 |         await ver.click();
-         |                   ^
-      21 |       } else await page.getByTestId("paso-1").click();
-      22 |       await expect(panel).not.toHaveAttribute("data-paso", "3");
-      23 |       continue;
-        at irAPaso (C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\ayuda-recorrido.ts:20:19)
-        at abrir3d (C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\medir-unity-arranque.spec.ts:68:5)
-        at C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\medir-unity-arranque.spec.ts:217:23
-
-    Error Context: test-results\medir-unity-arranque-el-arranque-del-3D-de-Unity-por-partes-chromium\error-context.md
-
-
-^C^C
+# Fin: 2026-11-20 14:58:42 · no arrancó: Excepción al llamar a "AppendAllText" con los argumentos "3": "El proceso no puede obtener acceso al archivo 'C:\Users\MrKan\Documents\reto cesvi v5\Croquis\resultados\t5-verificacion\2026-11-20\tanda-07-arranque-nuevo-1.log' porque está siendo utilizado en otro proceso." · 15 min
