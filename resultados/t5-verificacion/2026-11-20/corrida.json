@@ -45,6 +45,13 @@
                       "estado":  "ok",
                       "minutos":  0,
                       "codigo":  0
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "visor-nuevo",
+                      "estado":  "ok",
+                      "minutos":  0,
+                      "codigo":  0
                   }
               ]
 }
