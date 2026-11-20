@@ -122,12 +122,43 @@ async function capturar3d(page: Page, clave: string) {
 
 const filas: Record<string, unknown>[] = [];
 
+// t5 (René, 2026-11-20): el Unity real (la app usa el visor de respaldo en un navegador automatizado
+// si no se pide), y con qué tarjeta corre cada prueba (el renderer de WebGL).
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    (window as unknown as { __croquisVisorUnity?: boolean }).__croquisVisorUnity = true;
+  });
+});
+
+/** El renderer de WebGL del navegador (UNMASKED_RENDERER_WEBGL): con qué tarjeta se corrió. */
+async function rendererWebgl(page: Page): Promise<string | null> {
+  return page
+    .evaluate(() => {
+      const gl = document.createElement("canvas").getContext("webgl2");
+      const ext = gl?.getExtension("WEBGL_debug_renderer_info");
+      return ext && gl ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : null;
+    })
+    .catch(() => null);
+}
+
+/** La lectura grabada de cada narración (eval/ronda4_grabar_narraciones.mts): sin llave ni gasto. */
+const grabada = (clave: string) =>
+  (
+    JSON.parse(
+      readFileSync(join(RAIZ, `data/cesvi/grabaciones/ronda4/ronda4-${clave}.json`), "utf8"),
+    ) as { salida: unknown }
+  ).salida;
+
 for (const n of narraciones()) {
   test(`narración ${n.clave}: de lo dicho a la física y al 3D`, async ({ page }) => {
     test.setTimeout(900_000);
     mkdirSync(CAPTURAS, { recursive: true });
     await page.addInitScript(() => localStorage.setItem("croquis.escena", "nueva"));
+    await page.route("**/api/cesvi/escena", (r) =>
+      r.fulfill({ json: { metodo: "claude", salida: grabada(n.clave) } }),
+    );
     await page.goto("/cesvi");
+    const gpu = await rendererWebgl(page);
     await page.getByTestId("ir-caso-nuevo").click();
     await irAPaso(page, 2);
     await page.getByTestId("narracion").fill(n.texto);
@@ -147,6 +178,7 @@ for (const n of narraciones()) {
     await capturar3d(page, n.clave);
     filas.push({
       clave: n.clave,
+      gpu,
       cifra: (await page.getByTestId("cifra-reconstruccion").innerText()).replace(/\s+/g, " "),
       panel: panel.replace(/\s+/g, " "),
       dice_supuesto_de_velocidad:
@@ -228,6 +260,7 @@ test("caso encimado a propósito: antes y después en el 3D", async ({ page }) =
   await capturar3d(page, "encimado-despues");
   filas.push({
     clave: "encimado",
+    gpu: await rendererWebgl(page),
     aviso_sin_transferencia_antes: avisoAntes,
     aviso_en_la_escena: avisoEscena,
   });
@@ -275,6 +308,7 @@ test("Tollocan de René, de punta a punta", async ({ page }) => {
   await capturar3d(page, "tollocan");
   filas.push({
     clave: "tollocan",
+    gpu: await rendererWebgl(page),
     cifra: (await page.getByTestId("cifra-reconstruccion").innerText()).replace(/\s+/g, " "),
     dice_supuesto_de_velocidad: /típica de la vía|supuesto de \d+ a \d+ km\/h|declarad/i.test(
       texto,
