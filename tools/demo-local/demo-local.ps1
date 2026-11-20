@@ -199,18 +199,29 @@ try {
     #   tollocan     el caso de René de punta a punta;
     #   ejemplos     los cinco ejemplos (el «después»; el «antes» es el de producción).
     if (-not $chrome) { Fallar "No encontré Google Chrome: la tanda t5 corre en Chrome." }
-    $env:CROQUIS_URL = $Url
-    $env:CROQUIS_CANAL = "chrome"
-    if ($Salida) { $env:CROQUIS_SALIDA = $Salida }
-    if ($Despues -eq "ejemplos") {
-      $env:CROQUIS_UNITY = "1"
-      $env:CROQUIS_CAPTURAS = "docs/cesvi/ronda-4/evidencia/t5-ejemplos"
-      & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/ejemplos-ronda2.spec.ts
-    } else {
-      $filtro = if ($Despues -eq "tollocan") { "Tollocan" } else { "narración|encimado" }
-      & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/narraciones-fisica.spec.ts -g $filtro
+    # Chrome con la tarjeta de alto rendimiento (René, 2026-11-20: la t5 corrió en la integrada),
+    # como en arranque-3d; al final, como estaba.
+    $llaveGpu = "HKCU:\Software\Microsoft\DirectX\UserGpuPreferences"
+    if (-not (Test-Path $llaveGpu)) { New-Item -Path $llaveGpu -Force | Out-Null }
+    $gpuAntes = (Get-ItemProperty -Path $llaveGpu -Name $chrome -ErrorAction SilentlyContinue).$chrome
+    Set-ItemProperty -Path $llaveGpu -Name $chrome -Value "GpuPreference=2;"
+    try {
+      $env:CROQUIS_URL = $Url
+      $env:CROQUIS_CANAL = "chrome"
+      if ($Salida) { $env:CROQUIS_SALIDA = $Salida }
+      if ($Despues -eq "ejemplos") {
+        $env:CROQUIS_UNITY = "1"
+        $env:CROQUIS_CAPTURAS = "docs/cesvi/ronda-4/evidencia/t5-ejemplos"
+        & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/ejemplos-ronda2.spec.ts
+      } else {
+        $filtro = if ($Despues -eq "tollocan") { "Tollocan" } else { "narración|encimado" }
+        & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/narraciones-fisica.spec.ts -g $filtro
+      }
+      $codigo = $LASTEXITCODE
+    } finally {
+      if ($null -eq $gpuAntes) { Remove-ItemProperty -Path $llaveGpu -Name $chrome -ErrorAction SilentlyContinue }
+      else { Set-ItemProperty -Path $llaveGpu -Name $chrome -Value $gpuAntes }
     }
-    $codigo = $LASTEXITCODE
   } elseif ($Despues -eq "video-3d") {
     # B7 (René, 2026-11-18): el video del 3D con el Unity real, en los navegadores instalados.
     if ($Salida) { $env:CROQUIS_SALIDA = $Salida }

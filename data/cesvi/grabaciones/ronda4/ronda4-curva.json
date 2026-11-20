@@ -1,0 +1,186 @@
+{
+  "id": "ronda4-curva",
+  "modalidad_c0": "ronda4",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 287,
+    "output_tokens": 1380,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0151432,
+  "narracion": "El hecho ocurrió en la curva del Circuito Exterior Mexiquense a la altura de Ecatepec, Estado de México, aproximadamente a las 21:15 horas. El vehículo A, marca Kia, tipo Rio, modelo 2022, circulaba por el carril derecho de la curva con dirección de oriente a poniente. El vehículo B, marca Honda, tipo CR-V, modelo 2019, circulaba por el carril izquierdo a alta velocidad, se abrió en la curva e invadió el carril derecho. El vehículo B impactó con su lateral derecho el lateral izquierdo del vehículo A. El vehículo A quedó sobre el acotamiento derecho y el vehículo B, sobre el carril derecho, 15 metros adelante del punto de contacto.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "curva del Circuito Exterior Mexiquense a la altura de Ecatepec",
+        "cita": "El hecho ocurrió en la curva del Circuito Exterior Mexiquense a la altura de Ecatepec, Estado de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Ecatepec",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 21:15 horas",
+        "cita": "aproximadamente a las 21:15 horas"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Kia",
+        "cita": "El vehículo A, marca Kia, tipo Rio, modelo 2022"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Rio",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2022",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Honda",
+        "cita": "El vehículo B, marca Honda, tipo CR-V, modelo 2019"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "CR-V",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2019",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba por el carril derecho de la curva con dirección de oriente a poniente"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba por el carril izquierdo a alta velocidad"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "cambia_carril",
+        "cita": "se abrió en la curva e invadió el carril derecho"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "El vehículo B impactó con su lateral derecho el lateral izquierdo del vehículo A"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 lateral_derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 lateral_izquierdo",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A quedó sobre el acotamiento derecho"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "sobre el acotamiento derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo B, sobre el carril derecho, 15 metros adelante del punto de contacto"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "sobre el carril derecho, 15 metros adelante del punto de contacto",
+        "cita": ""
+      }
+    ]
+  }
+}
