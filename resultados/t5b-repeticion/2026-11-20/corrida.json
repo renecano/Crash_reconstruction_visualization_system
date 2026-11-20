@@ -14,7 +14,7 @@
                    "memoria_gb":  31.7,
                    "procesador":  "Intel(R) Core(TM) i9-14900HX",
                    "nucleos_logicos":  32,
-                   "disco_libre_gb":  289.7,
+                   "disco_libre_gb":  294.6,
                    "windows":  "Microsoft Windows 11 Home",
                    "git":  "git version 2.55.0.windows.5",
                    "node":  "v26.13.1",
@@ -42,13 +42,6 @@
                   {
                       "grupo":  "comprobacion",
                       "paso":  "solver-en-reversa",
-                      "estado":  "ok",
-                      "minutos":  0,
-                      "codigo":  0
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "visor-nuevo",
                       "estado":  "ok",
                       "minutos":  0,
                       "codigo":  0
