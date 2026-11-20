@@ -47,35 +47,7 @@ $ProgressPreference = "SilentlyContinue"
 try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch { }
 
 $Repo = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
-$Config = Get-Content (Join-Path $PSScriptRoot "tandas.json") -Raw -Encoding UTF8 | ConvertFrom-Json
-if (-not $Tanda) { $Tanda = $Config.vigente }
-
 function Escribir([string]$texto, [string]$color = "Gray") { Write-Host $texto -ForegroundColor $color }
-
-if ($Lista) {
-  Escribir "Tanda vigente: $($Config.vigente)" "White"
-  Escribir ""
-  Escribir "Comprobación del mecanismo (siempre va primero):" "White"
-  foreach ($p in @($Config.comprobacion.pasos)) { Escribir "  - $($p.nombre) (~$($p.minutos) min): $($p.comando)" }
-  foreach ($t in $Config.tandas.PSObject.Properties) {
-    Escribir ""
-    Escribir "$($t.Name): $($t.Value.titulo)" "White"
-    if ($t.Value.rama) { Escribir "  (en la rama $($t.Value.rama))" }
-    if (@($t.Value.pasos).Count -eq 0) { Escribir "  (sin pasos pesados)" }
-    foreach ($p in @($t.Value.pasos)) { Escribir "  - $($p.nombre) (~$($p.minutos) min): $($p.comando)" }
-  }
-  exit 0
-}
-
-$Definicion = $Config.tandas.$Tanda
-if (-not $Definicion) {
-  Escribir "No existe la tanda «$Tanda». Las que hay: $(($Config.tandas.PSObject.Properties.Name) -join ', ')." "Red"
-  exit 2
-}
-if ($Tanda -notmatch '^[a-z0-9-]+$') {
-  Escribir "El nombre de la tanda solo lleva minúsculas, números y guiones." "Red"
-  exit 2
-}
 
 # --- Utilidades --------------------------------------------------------------------------------------
 function EscribirJson([string]$ruta, $objeto) {
@@ -119,6 +91,147 @@ function AlaVista([string]$programa, [string[]]$argumentos) {
 }
 
 function Minutos([TimeSpan]$t) { return [math]::Round($t.TotalMinutes, 1) }
+
+# --- Primero: en main y al día (René, 2026-11-20) ----------------------------------------------------
+# Antes de leer tandas.json. Una tanda cortada (Ctrl+C, la ventana cerrada) pudo dejar la copia en la
+# rama o el commit de esa tanda, y leer su tandas.json vuelve a correr la tanda vieja. Así que: si la
+# copia no está en main, lo dice y regresa; después trae lo último de main (pull --ff-only). Los
+# resultados que dejó una corrida anterior (ya subidos) se guardan en un stash, no se borran
+# (`git stash list` los muestra). Si cambió la versión del script, se vuelve a lanzar con la nueva.
+$Avisos = New-Object System.Collections.ArrayList
+$ConfigLocal = $null
+try { $ConfigLocal = Get-Content (Join-Path $PSScriptRoot "tandas.json") -Raw -Encoding UTF8 | ConvertFrom-Json } catch { }
+
+function EsResultado([string]$ruta) {
+  $ruta = $ruta.Trim('"').Replace("\", "/")
+  if ($ruta.StartsWith("eval/results/") -or $ruta.StartsWith("resultados/")) { return $true }
+  foreach ($t in $ConfigLocal.tandas.PSObject.Properties) {
+    foreach ($p in @($t.Value.pasos)) {
+      foreach ($s in @($p.salidas)) {
+        if ($s -and ($ruta -eq [string]$s -or $ruta.StartsWith(([string]$s).TrimEnd("/") + "/"))) { return $true }
+      }
+    }
+  }
+  return $false
+}
+
+function ResultadosEnStash([string]$porQue) {
+  $estado = SalidaDe "git" @("-C", $Repo, "status", "--porcelain", "--untracked-files=all")
+  $cambios = @()
+  if ($estado) { $cambios = @($estado -split "`r?`n" | Where-Object { $_.Trim() } | ForEach-Object { $_ -replace '^\s*\S{1,2}\s+', '' }) }
+  if ($cambios.Count -eq 0) { return $true }
+  $ajenos = @($cambios | Where-Object { -not (EsResultado $_) })
+  if ($ajenos.Count -gt 0) {
+    [void]$Avisos.Add("Hay cambios en la carpeta que no son resultados de una tanda ($($ajenos[0])...): no la muevo ($porQue).")
+    return $false
+  }
+  $mensaje = "Croquis: resultados de una corrida anterior, ya subidos ($(Get-Date -Format 'yyyy-MM-dd HH:mm'))"
+  if ((Nativo "git" @("-C", $Repo, "stash", "push", "--include-untracked", "-m", $mensaje)) -ne 0) {
+    [void]$Avisos.Add("No pude guardar los resultados de la corrida anterior: no muevo la carpeta ($porQue).")
+    return $false
+  }
+  [void]$Avisos.Add("Guardé en un stash los $($cambios.Count) archivos de resultados que dejó una corrida anterior (ya están en GitHub).")
+  return $true
+}
+
+if (-not $EnSuRama -and -not $YaAlDia -and (Get-Command git -ErrorAction SilentlyContinue)) {
+  $antes = SalidaDe "git" @("-C", $Repo, "rev-parse", "HEAD")
+  $ramaAlArrancar = SalidaDe "git" @("-C", $Repo, "rev-parse", "--abbrev-ref", "HEAD")
+  if ($ramaAlArrancar -and $ramaAlArrancar -ne "main") {
+    Escribir "La copia no está en main sino en «$ramaAlArrancar» (una tanda anterior se cortó a la mitad): regreso a main." "Yellow"
+    if (-not (ResultadosEnStash "para regresar a main")) {
+      foreach ($a in $Avisos) { Escribir $a "Yellow" }
+      Escribir "No puedo regresar a main solo. Escribe en esta carpeta: git checkout main" "Red"
+      exit 1
+    }
+    if ((Nativo "git" @("-C", $Repo, "checkout", "main")) -ne 0) {
+      foreach ($a in $Avisos) { Escribir $a "Yellow" }
+      Escribir "No pude regresar a main. Escribe en esta carpeta: git checkout main" "Red"
+      exit 1
+    }
+    [void]$Avisos.Add("La copia estaba en «$ramaAlArrancar»: regresé a main.")
+  }
+  if (ResultadosEnStash "para traer lo último de main") {
+    if ((Nativo "git" @("-C", $Repo, "pull", "--ff-only", "origin", "main")) -eq 0) {
+      [void]$Avisos.Add("Repositorio al día con main.")
+    } else {
+      [void]$Avisos.Add("No pude traer lo último de main (¿hay internet?): sigo con la versión que hay.")
+    }
+  }
+  $despues = SalidaDe "git" @("-C", $Repo, "rev-parse", "HEAD")
+  if ($despues -ne $antes) {
+    # Llegó otra versión: se corre esa, no la que ya estaba cargada en memoria.
+    $env:CROQUIS_TANDA_AVISOS = ($Avisos -join "`n")
+    $argumentos = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $PSCommandPath, "-YaAlDia")
+    if ($Tanda) { $argumentos += @("-Tanda", $Tanda) }
+    if ($Prueba) { $argumentos += "-Prueba" }
+    if ($SinSubir) { $argumentos += "-SinSubir" }
+    if ($Lista) { $argumentos += "-Lista" }
+    if ($Solo) { $argumentos += @("-Solo", $Solo) }
+    if ($SimularFalta) { $argumentos += @("-SimularFalta", $SimularFalta) }
+    & powershell.exe @argumentos
+    exit $LASTEXITCODE
+  }
+}
+if ($env:CROQUIS_TANDA_AVISOS) {
+  foreach ($a in ($env:CROQUIS_TANDA_AVISOS -split "`n")) { if ($a) { [void]$Avisos.Add($a) } }
+  Remove-Item Env:\CROQUIS_TANDA_AVISOS -ErrorAction SilentlyContinue
+}
+
+$Config = Get-Content (Join-Path $PSScriptRoot "tandas.json") -Raw -Encoding UTF8 | ConvertFrom-Json
+if (-not $Tanda) { $Tanda = $Config.vigente }
+
+
+if ($Lista) {
+  Escribir "Tanda vigente: $($Config.vigente)" "White"
+  Escribir ""
+  Escribir "Comprobación del mecanismo (siempre va primero):" "White"
+  foreach ($p in @($Config.comprobacion.pasos)) { Escribir "  - $($p.nombre) (~$($p.minutos) min): $($p.comando)" }
+  foreach ($t in $Config.tandas.PSObject.Properties) {
+    Escribir ""
+    Escribir "$($t.Name): $($t.Value.titulo)" "White"
+    if ($t.Value.rama) { Escribir "  (en la rama $($t.Value.rama))" }
+    if (@($t.Value.pasos).Count -eq 0) { Escribir "  (sin pasos pesados)" }
+    foreach ($p in @($t.Value.pasos)) { Escribir "  - $($p.nombre) (~$($p.minutos) min): $($p.comando)" }
+  }
+  exit 0
+}
+
+$Definicion = $Config.tandas.$Tanda
+if (-not $Definicion) {
+  Escribir "No existe la tanda «$Tanda». Las que hay: $(($Config.tandas.PSObject.Properties.Name) -join ', ')." "Red"
+  exit 2
+}
+if ($Tanda -notmatch '^[a-z0-9-]+$') {
+  Escribir "El nombre de la tanda solo lleva minúsculas, números y guiones." "Red"
+  exit 2
+}
+
+
+# --- El letrero: qué tanda y qué commit corren (René, 2026-11-20) -------------------------------------
+if (-not $EnSuRama) {
+  $commitLetrero = [string]$Definicion.commit
+  $deDonde = "fijada"
+  if (-not $commitLetrero -and $Definicion.rama) { $commitLetrero = "la punta de $($Definicion.rama)"; $deDonde = "" }
+  if (-not $commitLetrero) {
+    $commitLetrero = [string](SalidaDe "git" @("-C", $Repo, "rev-parse", "HEAD"))
+    $deDonde = "main"
+  }
+  if ($commitLetrero -match '^[0-9a-f]{40}$') { $commitLetrero = $commitLetrero.Substring(0, 8) }
+  $lineasLetrero = @(
+    "  TANDA   $Tanda",
+    "  COMMIT  $commitLetrero$(if ($deDonde) { "  ($deDonde)" })"
+  )
+  if ($Prueba) { $lineasLetrero += "  (solo la comprobación del mecanismo)" }
+  $ancho = [math]::Max(64, (($lineasLetrero | ForEach-Object { $_.Length }) | Measure-Object -Maximum).Maximum + 4)
+  try { Clear-Host } catch { }
+  Write-Host (" " * $ancho) -BackgroundColor DarkBlue
+  foreach ($l in $lineasLetrero) { Write-Host ($l.PadRight($ancho)) -ForegroundColor White -BackgroundColor DarkBlue }
+  Write-Host (" " * $ancho) -BackgroundColor DarkBlue
+  try { $Host.UI.RawUI.WindowTitle = "Croquis · tanda $Tanda · $commitLetrero" } catch { }
+  foreach ($a in $Avisos) { Escribir $a }
+}
+
 
 # --- Herramientas: lo que falte se instala solo -------------------------------------------------------
 $Simuladas = New-Object System.Collections.Generic.HashSet[string]
@@ -256,6 +369,10 @@ if ($ramaDeLaTanda -and -not $EnSuRama -and $ramaActual -ne $ramaDeLaTanda) {
     exit 1
   }
   Escribir "La tanda «$Tanda» está en la rama $ramaDeLaTanda. Cambio a ella; al terminar vuelvo a $ramaActual."
+  # Pase lo que pase (un error, Ctrl+C), al salir se regresa a la rama de antes (René, 2026-11-20). Si se
+  # cierra la ventana y no alcanza, la siguiente corrida lo nota al arrancar y regresa a main.
+  $codigo = 1
+  try {
   if ((Nativo "git" @("-C", $Repo, "fetch", "origin", $ramaDeLaTanda)) -ne 0) {
     Escribir "No se pudo traer la rama $ramaDeLaTanda de GitHub (¿hay internet?)." "Red"
     exit 1
@@ -283,67 +400,17 @@ if ($ramaDeLaTanda -and -not $EnSuRama -and $ramaActual -ne $ramaDeLaTanda) {
   if ($SinSubir) { $argumentos += "-SinSubir" }
   & powershell.exe @argumentos
   $codigo = $LASTEXITCODE
-  if ((Nativo "git" @("-C", $Repo, "checkout", $ramaActual)) -ne 0) {
-    Escribir "No se pudo volver a la rama $($ramaActual): la carpeta quedó en $ramaDeLaTanda." "Yellow"
+  } finally {
+    $volvio = $false
+    # Los procesos del paso cortado pueden tardar unos segundos en soltar los archivos.
+    for ($i = 0; $i -lt 5 -and -not $volvio; $i++) {
+      if ((Nativo "git" @("-C", $Repo, "checkout", $ramaActual)) -eq 0) { $volvio = $true } else { Start-Sleep -Seconds 2 }
+    }
+    if ($volvio) { Escribir "De vuelta en $ramaActual." }
+    else { Escribir "No se pudo volver a la rama $($ramaActual): la carpeta quedó en $ramaDeLaTanda. La siguiente corrida regresa sola." "Yellow" }
   }
   exit $codigo
 }
-# --- Al día con main ------------------------------------------------------------------------------
-# Una corrida anterior deja en la copia los resultados que ya subió (archivos cambiados y nuevos), y con
-# ellos `git pull` se niega. Si lo único que estorba son resultados de las tandas, se guardan en un
-# stash (no se borran: `git stash list` los muestra) y se trae lo último de main. Si llegó una versión
-# nueva, el script se vuelve a lanzar con ella. Si hay otros cambios, no toca nada y sigue como está.
-function EsResultado([string]$ruta) {
-  $ruta = $ruta.Trim('"').Replace("\", "/")
-  if ($ruta.StartsWith("eval/results/") -or $ruta.StartsWith("resultados/")) { return $true }
-  foreach ($t in $Config.tandas.PSObject.Properties) {
-    foreach ($p in @($t.Value.pasos)) {
-      foreach ($s in @($p.salidas)) {
-        if ($s -and ($ruta -eq [string]$s -or $ruta.StartsWith(([string]$s).TrimEnd("/") + "/"))) { return $true }
-      }
-    }
-  }
-  return $false
-}
-if (-not $EnSuRama -and -not $YaAlDia -and $ramaActual -eq "main") {
-  $antes = SalidaDe "git" @("-C", $Repo, "rev-parse", "HEAD")
-  $estado = SalidaDe "git" @("-C", $Repo, "status", "--porcelain", "--untracked-files=all")
-  $cambios = @()
-  if ($estado) { $cambios = @($estado -split "`r?`n" | Where-Object { $_.Trim() } | ForEach-Object { $_ -replace '^\s*\S{1,2}\s+', '' }) }
-  $ajenos = @($cambios | Where-Object { -not (EsResultado $_) })
-  $alDia = $false
-  if ($ajenos.Count -gt 0) {
-    Escribir "Hay cambios en la carpeta que no son resultados de una tanda ($($ajenos[0])...): no la actualizo." "Yellow"
-  } else {
-    if ($cambios.Count -gt 0) {
-      $mensaje = "Croquis: resultados de una corrida anterior, ya subidos ($(Get-Date -Format 'yyyy-MM-dd HH:mm'))"
-      if ((Nativo "git" @("-C", $Repo, "stash", "push", "--include-untracked", "-m", $mensaje)) -eq 0) {
-        Escribir "Guardé en un stash los $($cambios.Count) archivos de resultados que dejó una corrida anterior (ya están en GitHub)."
-      } else {
-        Escribir "No pude guardar los resultados de la corrida anterior: no actualizo la carpeta." "Yellow"
-        $cambios = $null
-      }
-    }
-    if ($null -ne $cambios -and (Nativo "git" @("-C", $Repo, "pull", "--ff-only", "origin", "main")) -eq 0) {
-      $alDia = $true
-      Escribir "Repositorio al día con main."
-    } elseif ($null -ne $cambios) {
-      Escribir "No pude traer lo último de main (¿hay internet?): sigo con la versión que hay." "Yellow"
-    }
-  }
-  $despues = SalidaDe "git" @("-C", $Repo, "rev-parse", "HEAD")
-  if ($alDia -and $despues -ne $antes) {
-    # Llegó una versión nueva: se corre esa, no la que ya estaba cargada en memoria.
-    $argumentos = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $PSCommandPath, "-YaAlDia")
-    if ($Tanda -ne $Config.vigente) { $argumentos += @("-Tanda", $Tanda) }
-    if ($Prueba) { $argumentos += "-Prueba" }
-    if ($SinSubir) { $argumentos += "-SinSubir" }
-    if ($Solo) { $argumentos += @("-Solo", $Solo) }
-    & powershell.exe @argumentos
-    exit $LASTEXITCODE
-  }
-}
-
 $Fecha = Get-Date -Format "yyyy-MM-dd"
 $Etiqueta = $Tanda
 if ($Prueba) { $Etiqueta = "prueba" }
