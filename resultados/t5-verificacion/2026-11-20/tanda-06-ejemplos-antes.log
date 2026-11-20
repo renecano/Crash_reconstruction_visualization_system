@@ -1,0 +1,34 @@
+# Paso: ejemplos-antes
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/ejemplos-produccion.ps1
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-20 12:00:28
+
+
+Running 1 test using 1 worker
+
+[1/1] [chromium] › e2e\ejemplos-ronda2.spec.ts:181:5 › las cinco narraciones de ejemplo, de punta a punta
+  1) [chromium] › e2e\ejemplos-ronda2.spec.ts:181:5 › las cinco narraciones de ejemplo, de punta a punta 
+
+    Error: ENOENT: no such file or directory, open 'C:\Users\MrKan\Documents\reto cesvi v5\Croquis\eval\results\t5\ejemplos_antes.json'
+
+      290 |     resultados.push(fila);
+      291 |   }
+    > 292 |   writeFileSync(
+          |                ^
+      293 |     SALIDA,
+      294 |     `${JSON.stringify(
+      295 |       {
+        at C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\ejemplos-ronda2.spec.ts:292:16
+
+    Error Context: test-results\ejemplos-ronda2-las-cinco--e288d-de-ejemplo-de-punta-a-punta-chromium\error-context.md
+
+
+  1 failed
+    [chromium] › e2e\ejemplos-ronda2.spec.ts:181:5 › las cinco narraciones de ejemplo, de punta a punta 
+Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
+
+  × "pnpm recursive exec" failed in C:\Users\MrKan\Documents\reto cesvi
+  │ v5\Croquis\apps\web
+
+
+# Fin: 2026-11-20 12:01:46 · falló (código 1) · 1.3 min
