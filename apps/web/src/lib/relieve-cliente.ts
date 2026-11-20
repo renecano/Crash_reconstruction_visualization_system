@@ -7,6 +7,9 @@ import { puntoDeRelieve, relieveEnEscena, type LonLat, type MallaRelieve } from 
 
 const pedidas = new Map<string, Promise<MallaRelieve | null>>();
 
+/** Lo que se espera la malla de relieve (ms). */
+export const ESPERA_RELIEVE_MS = 20_000;
+
 /**
  * La malla de relieve de la escena cuyo origen es `origen` (lon, lat), en metros de la escena y con
  * altura 0 en el punto de impacto. null si no se pudo obtener (sin red, o un lugar sin modelo de
@@ -22,7 +25,11 @@ export async function relieveDelLugar(
   if (!promesa) {
     promesa = (async () => {
       try {
-        const r = await pedir(`/api/relieve?lat=${p.lat}&lon=${p.lon}`);
+        // Con tope (René, 2026-11-20): si el servicio de elevación no responde, se reconstruye en
+        // plano y se dice («No se pudo obtener el relieve real del lugar»).
+        const r = await pedir(`/api/relieve?lat=${p.lat}&lon=${p.lon}`, {
+          signal: AbortSignal.timeout(ESPERA_RELIEVE_MS),
+        });
         return r.ok ? ((await r.json()) as MallaRelieve) : null;
       } catch {
         return null;

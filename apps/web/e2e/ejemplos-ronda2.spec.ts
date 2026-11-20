@@ -2,7 +2,8 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { type Page } from "@playwright/test";
 import { expect, test } from "./base";
-import { irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
+import { irAPaso } from "./ayuda-recorrido";
+import { colocar, RECETAS } from "./recetas-ejemplos";
 
 /**
  * Ronda 2, C: las cinco narraciones de ejemplo, de punta a punta, como las usaría un perito: elegir
@@ -35,62 +36,6 @@ function escribirSalida(texto: string): void {
 }
 const CON_UNITY = process.env.CROQUIS_UNITY === "1";
 
-interface Receta {
-  clave: string;
-  /** Dónde va cada choque después del primero, en metros (este, norte) desde el primero. */
-  choques?: [number, number][];
-  /** Por dónde venía cada vehículo (por una parte de su nombre): el texto de la flecha. */
-  venia: Record<string, string>;
-  /** Dónde quedó cada uno: metros (este, norte) desde el primer choque, «junto» o «nose». */
-  quedo: Record<string, [number, number] | "junto" | "nose">;
-  /** Un punto por donde pasó un vehículo (su id en la escena), si la narración lo da. */
-  pasos?: { vehiculo: string; en: [number, number] }[];
-  /** Lo que la narración dice del terreno: un tope o una zona, donde va. */
-  terreno?: { tipo: "tope-circular" | "terraceria" | "ondulado"; en: [number, number] }[];
-}
-
-const RECETAS: Receta[] = [
-  {
-    // La narración no dice a cuántos metros quedó cada uno: «junto al choque», como en la demo.
-    clave: "crucero-noche",
-    venia: { Jetta: "Del sur", Camaro: "Del oeste" },
-    quedo: { Jetta: "junto", Camaro: "junto" },
-  },
-  {
-    // Alcance de Sur a Norte: A quedó en su carril, 9 m adelante del inicio de los restos; B, sobre
-    // el acotamiento (a la derecha), 21 m adelante.
-    clave: "alcance-deformacion",
-    venia: { NP300: "Del sur", Vento: "Del sur" },
-    quedo: { NP300: [0, 9], Vento: [2.6, 21] },
-  },
-  {
-    // De Poniente a Oriente: A alcanza a B y, por el empuje, B a C (detenidos en el semáforo). A
-    // quedó en el área del primer contacto; B, 5 m adelante; C, 10 m adelante.
-    clave: "carambola-lluvia",
-    choques: [[5.6, 0]],
-    venia: { Ranger: "Del oeste" },
-    quedo: { Ranger: [-0.5, 0], Corolla: [5.4, 0], Aveo: [9.8, 0] },
-  },
-  {
-    // A sale en reversa de una cochera hacia la calle; B circula de Sur a Norte y quedó 7 m al
-    // Norte. El tope está 12 m al Sur del acceso, en el camino de B.
-    clave: "reversa-pendiente",
-    venia: { "CR-V": "Del oeste", Versa: "Del sur" },
-    quedo: { "CR-V": [-1.8, 0.4], Versa: [0.6, 7] },
-    terreno: [{ tipo: "tope-circular", en: [0.6, -12] }],
-  },
-  {
-    // A llega del Sur y B del Poniente; después del contacto, B derrapa, cruza a la terracería y
-    // pega contra un poste (el segundo choque), donde queda. A quedó 8 m al Norte.
-    clave: "poste-terraceria",
-    choques: [[18, 3]],
-    venia: { "el 3": "Del sur", Sentra: "Del oeste" },
-    quedo: { "el 3": [0.8, 8], Sentra: [16.4, 2.7] },
-    pasos: [{ vehiculo: "V2", en: [9, 1.5] }],
-    terreno: [{ tipo: "terraceria", en: [15, 4] }],
-  },
-];
-
 // Una acción que no encuentra su control falla pronto, con el nombre de lo que faltó.
 test.use({
   actionTimeout: 20_000,
@@ -99,83 +44,6 @@ test.use({
   // t5 (René, 2026-11-19): con CROQUIS_CANAL, en el navegador instalado («chrome»).
   ...(process.env.CROQUIS_CANAL ? { channel: process.env.CROQUIS_CANAL } : {}),
 });
-
-const de = <T>(mapa: Record<string, T>, texto: string): T | undefined =>
-  Object.entries(mapa).find(([nombre]) => texto.includes(nombre))?.[1];
-
-/** Contesta «La escena» con la receta; lo que la receta no cubre, con lo que no agrega evidencia. */
-async function colocar(page: Page, r: Receta, notas: string[]) {
-  await sinRed(page);
-  const mapa = await mapaFacil(page);
-  const lista = page.getByTestId("escena-lista");
-  const pregunta = page.getByTestId("escena-pregunta");
-  let choques = 0;
-  // «¿Dónde quedó después del choque?» no nombra al vehículo: es el de la pregunta anterior.
-  let vehiculo = "";
-  for (let k = 0; k < 30; k++) {
-    if (await lista.isVisible()) break;
-    const texto = (await pregunta.textContent()) ?? "";
-    // «¿Dónde fue el primer golpe?» no es un choque: la narración no lo da, así que «No sé».
-    if (/primer golpe/.test(texto)) await page.getByTestId("golpe-nose").click();
-    else if (/^¿Dónde fue/.test(texto)) {
-      if (choques === 0) {
-        const caja = (await mapa.boundingBox())!;
-        await mapa.click({ position: { x: caja.width * 0.62, y: caja.height * 0.5 } });
-      } else {
-        const [e, n] = r.choques?.[choques - 1] ?? [5 * choques, 0];
-        await tocarEnMetros(page, "choque-1", e, n);
-      }
-      choques++;
-    } else if (texto.startsWith("¿Por dónde")) {
-      vehiculo = texto;
-      const flecha = de(r.venia, texto);
-      const opcion = flecha
-        ? page.locator('[data-testid^="opcion-flecha-"]', { hasText: flecha })
-        : page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]');
-      if (await opcion.count()) await opcion.first().click();
-      else {
-        notas.push(
-          `«${texto}»: no había la flecha «${flecha ?? "propuesta"}»; se tomó la primera.`,
-        );
-        await page.getByTestId("opcion-flecha-0").click();
-      }
-    } else if (/quedó/i.test(texto)) {
-      const q = de(r.quedo, vehiculo);
-      if (q === undefined) {
-        notas.push(`Sin receta para dónde quedó («${vehiculo}»): junto al choque.`);
-      }
-      if (q === undefined || q === "junto" || q === "nose")
-        await page.getByTestId(`final-${q ?? "junto"}`).click();
-      else await tocarEnMetros(page, "choque-1", q[0], q[1]);
-      await page.getByTestId("listo-final").click();
-    } else if (/algo más/.test(texto)) await page.getByTestId("otros-no").click();
-    else if (/por dónde pasó/.test(texto)) {
-      for (const p of r.pasos ?? []) {
-        await page.getByTestId(`paso-vehiculo-${p.vehiculo}`).click();
-        await tocarEnMetros(page, "choque-1", p.en[0], p.en[1]);
-      }
-      await page.getByTestId("paso-listo").click();
-    } else if (/Cómo es el terreno/.test(texto)) {
-      if (!r.terreno?.length) await page.getByTestId("terreno-liso").click();
-      else {
-        for (const t of r.terreno) {
-          await page.getByTestId(`terreno-${t.tipo}`).click();
-          await tocarEnMetros(page, "choque-1", t.en[0], t.en[1]);
-        }
-        await page.getByTestId("terreno-listo").click();
-      }
-    } else {
-      notas.push(`Pregunta sin receta: «${texto}».`);
-      break;
-    }
-    await expect
-      .poll(async () => (await lista.isVisible()) || (await pregunta.textContent()) !== texto, {
-        timeout: 15_000,
-      })
-      .toBe(true);
-  }
-  return lista.isVisible();
-}
 
 const textoDe = async (page: Page, testid: string) => {
   const l = page.getByTestId(testid);
