@@ -10,7 +10,7 @@
 import { ANGLE_BOUND_DEG, MASS_SPREAD, PRIORIDAD, SIGMA_POSITION_M } from "@croquis/solver-ts";
 import type { Expediente } from "./corpus";
 import { masaTipica } from "./escena-narracion";
-import { fichaDe } from "./fichas";
+import { fichaDe, masaDeModelo } from "./fichas";
 import type { Reconstruccion } from "./reconstruccion";
 import { grados, numero } from "./formato";
 
@@ -94,6 +94,7 @@ export function supuestosDeclarados(
   for (const v of e.vehiculos) {
     if (v.masa?.fuente !== "supuesto") continue;
     const f = fichaDe(v);
+    const deModelo = f ? null : masaDeModelo(v);
     const tipica = masaTipica(v.clase);
     out.push({
       clave: `masa-${v.id}`,
@@ -107,9 +108,11 @@ export function supuestosDeclarados(
       })(),
       justificacion: f
         ? `Ficha técnica de ${titulo(`${f.marca} ${f.modelo}`)} ${f.anio}: ${f.regla} (data/SOURCES.md).`
-        : tipica && tipica.valor === v.masa.valor
-          ? `Valor típico de su clase (${tipica.fuente}).`
-          : "Supuesta: el caso no la da.",
+        : deModelo && deModelo.masa_kg === v.masa.valor
+          ? `Del modelo leído: ficha de ${deModelo.version}, ${deModelo.fuente}. La versión y el año de este vehículo pueden ser otros (data/SOURCES.md).`
+          : tipica && tipica.valor === v.masa.valor
+            ? `${v.modelo?.valor ? `El modelo leído («${v.modelo.valor}») no tiene ficha con su masa: ` : ""}valor típico de su clase (${tipica.fuente}).`
+            : "Supuesta: el caso no la da.",
       incertidumbre: f
         ? `La ficha va de ${kg(f.peso_vacio_kg[0]!)} a ${kg(f.peso_vacio_kg[1]!)}; en el rango de las velocidades, ${pct(MASS_SPREAD)}.`
         : `En el rango de las velocidades, ${pct(MASS_SPREAD)}.`,

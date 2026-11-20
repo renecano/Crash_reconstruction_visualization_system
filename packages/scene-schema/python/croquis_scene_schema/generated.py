@@ -90,6 +90,10 @@ class CampoVelocidad(BaseModel):
     """
     evidencia: Annotated[list[EvidenciaTexto] | None, Field(max_length=8)] = None
     nota: Annotated[str | None, Field(max_length=300)] = None
+    cota: Literal["minimo", "maximo"] | None = None
+    """
+    Solo con `a_priori`: la velocidad declarada es una cota («a más de 90 km/h»: al menos `valor`), no un valor con su rango; el solver la hace cumplir sin empujar hacia ella.
+    """
     a_priori: bool | None = None
     """
     Solo en `velocidad_previa`: la velocidad declarada (narración, perito o vía) entra a la inversión como supuesto con su `rango` (p10–p90). Pesa solo donde la evidencia no fija la velocidad, y en las simulaciones se sortea dentro de su rango (ronda 4).
@@ -1486,6 +1490,10 @@ class VelocidadNarrada(BaseModel):
     cita: Annotated[str | None, Field(max_length=400)] = None
     """
     El fragmento literal de la narración, si sale de ella.
+    """
+    cota: Literal["minimo", "maximo"] | None = None
+    """
+    «a más de X»: X es el mínimo; «a menos de X»: el máximo (ronda 4). Es una cota, no un valor: `kmh` es X y el solver solo la hace cumplir.
     """
     respecto_al_limite: Literal["arriba", "abajo", "alrededor"] | None = None
     """

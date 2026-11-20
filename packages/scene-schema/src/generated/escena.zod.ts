@@ -430,6 +430,7 @@ export const CampoVelocidad = z.strictObject({
   confianza: Confianza,
   evidencia: ListaEvidencia.optional(),
   nota: z.string().max(300).optional(),
+  cota: z.enum(["minimo", "maximo"]).optional(),
   a_priori: z.boolean().optional(),
 });
 export type CampoVelocidad = z.infer<typeof CampoVelocidad>;
@@ -1007,6 +1008,7 @@ export const VelocidadNarrada = z.strictObject({
   origen: z.enum(["narración", "perito", "via"]),
   descripcion: z.string().max(200),
   cita: z.string().max(400).optional(),
+  cota: z.enum(["minimo", "maximo"]).optional(),
   respecto_al_limite: z.enum(["arriba", "abajo", "alrededor"]).optional(),
   limite_kmh: z.number().min(5).max(200).optional(),
   limite_fuente: z.string().max(200).optional(),

@@ -123,8 +123,8 @@ describe("de la narración del perito a la escena (R1)", () => {
       "velocidad-V1",
       "velocidad-V2",
       // Ronda 4: la narración nombra los dos vehículos; la clase ya no se pregunta.
-      "masa-V1",
-      "masa-V2",
+      // René, 2026-11-20: con el modelo leído, la masa es la de su ficha o la típica de su clase,
+      // como supuesto declarado; ya no se pregunta.
       "final-V1",
     ]);
   });

@@ -370,7 +370,8 @@ describe("verificación CESVI al lado de la reconstrucción", () => {
     expect(["nhtsa_e2", "supuesto"]).toContain(v1!.rigidez!.fuente);
     expect(v1!.pasos).toHaveLength(2);
     expect(v2!.pasos).toEqual([]);
-    expect(v2!.falta).toEqual(["las medidas C (2, 4 o 6) y L de la deformación", "la masa"]);
+    // La masa de V2 ya sale de su modelo (supuesto declarado, René 2026-11-20): solo faltan sus medidas.
+    expect(v2!.falta).toEqual(["las medidas C (2, 4 o 6) y L de la deformación"]);
   });
 });
 

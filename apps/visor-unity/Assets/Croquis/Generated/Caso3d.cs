@@ -1810,6 +1810,13 @@ namespace Croquis.Generated
         public string Cita { get; set; }
 
         /// <summary>
+        /// «a más de X»: X es el mínimo; «a menos de X»: el máximo (ronda 4). Es una cota, no un
+        /// valor: `kmh` es X y el solver solo la hace cumplir.
+        /// </summary>
+        [JsonProperty("cota", NullValueHandling = NullValueHandling.Ignore)]
+        public Cota? Cota { get; set; }
+
+        /// <summary>
         /// Cómo lo dice («a exceso de velocidad», «a 80 km/h», «límite de 60 km/h de la vía»).
         /// </summary>
         [JsonProperty("descripcion")]
@@ -2151,6 +2158,13 @@ namespace Croquis.Generated
         [JsonProperty("confianza")]
         [JsonConverter(typeof(PurpleMinMaxValueCheckConverter))]
         public double Confianza { get; set; }
+
+        /// <summary>
+        /// Solo con `a_priori`: la velocidad declarada es una cota («a más de 90 km/h»: al menos
+        /// `valor`), no un valor con su rango; el solver la hace cumplir sin empujar hacia ella.
+        /// </summary>
+        [JsonProperty("cota", NullValueHandling = NullValueHandling.Ignore)]
+        public Cota? Cota { get; set; }
 
         [JsonProperty("evidencia", NullValueHandling = NullValueHandling.Ignore)]
         public VisibilidadEvidencia[] Evidencia { get; set; }
@@ -5613,6 +5627,15 @@ namespace Croquis.Generated
     public enum FluffyFuente { Dictamen, NhtsaE2, Perito, TablaCesvi };
 
     /// <summary>
+    /// «a más de X»: X es el mínimo; «a menos de X»: el máximo (ronda 4). Es una cota, no un
+    /// valor: `kmh` es X y el solver solo la hace cumplir.
+    ///
+    /// Solo con `a_priori`: la velocidad declarada es una cota («a más de 90 km/h»: al menos
+    /// `valor`), no un valor con su rango; el solver la hace cumplir sin empujar hacia ella.
+    /// </summary>
+    public enum Cota { Maximo, Minimo };
+
+    /// <summary>
     /// narración: la cifra o la descripción de la narración; perito: la contestó el perito; via:
     /// el rango típico de la vía (su límite de OpenStreetMap o su tipo).
     /// </summary>
@@ -5820,6 +5843,7 @@ namespace Croquis.Generated
                 PurpleFuenteConverter.Singleton,
                 TipoSuperficieConverter.Singleton,
                 FluffyFuenteConverter.Singleton,
+                CotaConverter.Singleton,
                 VelocidadNarradaOrigenConverter.Singleton,
                 RespectoAlLimiteConverter.Singleton,
                 SentidoMarchaEnumConverter.Singleton,
@@ -9821,6 +9845,47 @@ namespace Croquis.Generated
         }
 
         public static readonly FluffyFuenteConverter Singleton = new FluffyFuenteConverter();
+    }
+
+    internal class CotaConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(Cota) || t == typeof(Cota?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "maximo":
+                    return Cota.Maximo;
+                case "minimo":
+                    return Cota.Minimo;
+            }
+            throw new Exception("Cannot unmarshal type Cota");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (Cota)untypedValue;
+            switch (value)
+            {
+                case Cota.Maximo:
+                    serializer.Serialize(writer, "maximo");
+                    return;
+                case Cota.Minimo:
+                    serializer.Serialize(writer, "minimo");
+                    return;
+            }
+            throw new Exception("Cannot marshal type Cota");
+        }
+
+        public static readonly CotaConverter Singleton = new CotaConverter();
     }
 
     internal class MinMaxValueCheckConverter4 : JsonConverter

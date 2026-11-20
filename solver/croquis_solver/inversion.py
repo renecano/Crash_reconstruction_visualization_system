@@ -347,6 +347,9 @@ class Evidence:
     declared_speed: dict[str, tuple[float, float]] = field(
         default_factory=lambda: dict[str, tuple[float, float]]()
     )
+    # vehículo → «minimo» o «maximo» si su velocidad declarada es una cota («a más de 90 km/h»): el
+    # residuo solo cuenta del lado que la viola, y no se sortea.
+    declared_bound: dict[str, str] = field(default_factory=lambda: dict[str, str]())
 
     def empty(self) -> bool:
         return not (
@@ -577,7 +580,20 @@ def evidence_from_spec(
         waypoints=waypoints_from_spec(spec),
         impact_point=impact_point_from_spec(spec),
         declared_speed=declared_speeds(spec),
+        declared_bound=declared_bounds(spec),
     )
+
+
+def declared_bounds(spec: JsonObj) -> dict[str, str]:
+    """Las velocidades declaradas que son una cota (`velocidad_previa.cota`): «minimo» o «maximo»."""
+    by_id = {v["id"]: v for v in spec["vehiculos"]}
+    out: dict[str, str] = {}
+    for vid in declared_speeds(spec):
+        vp: JsonObj = by_id[vid].get("velocidad_previa") or {}
+        cota = vp.get("cota")
+        if cota in ("minimo", "maximo"):
+            out[vid] = str(cota)
+    return out
 
 
 def declared_speeds(spec: JsonObj) -> dict[str, tuple[float, float]]:
@@ -896,7 +912,14 @@ def _residuals(
         for vid, (kmh, sigma) in sorted(ev.declared_speed.items()):
             vp: JsonObj = by_s[vid].get("velocidad_previa") or {}
             val = float(vp.get("valor", kmh)) * (3.6 if vp.get("unidad") == "m/s" else 1.0)
-            out[f"velocidad_declarada:{vid}"] = (val - kmh) / sigma
+            r = (val - kmh) / sigma
+            cota = ev.declared_bound.get(vid)
+            # Una cota solo empuja si se viola: «al menos 90» no lleva la velocidad hacia 90.
+            if cota == "minimo":
+                r = min(0.0, r)
+            elif cota == "maximo":
+                r = max(0.0, r)
+            out[f"velocidad_declarada:{vid}"] = r
     return out
 
 
@@ -1264,7 +1287,7 @@ def perturbed(spec: JsonObj, ev: Evidence, rng: Draws) -> Perturbed:
         e = replace(
             e,
             declared_speed={
-                k: (max(0.0, kmh + rng.gauss(0, sigma)), sigma)
+                k: (kmh if k in ev.declared_bound else max(0.0, kmh + rng.gauss(0, sigma)), sigma)
                 for k, (kmh, sigma) in sorted(ev.declared_speed.items())
             },
         )

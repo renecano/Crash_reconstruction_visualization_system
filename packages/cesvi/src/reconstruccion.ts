@@ -63,6 +63,7 @@ import { objetosDe, TIPOS_OBJETO } from "./objetos";
 import { medidasDe } from "./poses-impacto";
 import {
   conVelocidadDelPerito,
+  enCota,
   velocidadPreviaDeclarada,
   type VelocidadNarrada,
 } from "./velocidad-narrada";
@@ -178,6 +179,8 @@ function limiteDeVelocidadNarrada(id: Id, v: VelocidadNarrada): string {
     return `${id}: su velocidad previa es la que dio el perito (${rango}); solo pesa si la evidencia no la fija.`;
   if (v.origen === "via")
     return `${id}: el perito no sabe su velocidad; se supone la típica de la vía (${rango}, alrededor del límite de ${v.limite_kmh} km/h: ${v.limite_fuente}). Solo pesa si la evidencia no la fija.`;
+  if (v.cota)
+    return `${id}: la narración dice «${v.descripcion}»; entra como cota: ${enCota(v)} (no un valor). Solo pesa si la reconstrucción quedara del otro lado.`;
   return `${id}: la narración dice «${v.descripcion}»; entra como supuesto de ${rango}${v.respecto_al_limite ? ` (respecto al límite de ${v.limite_kmh} km/h: ${v.limite_fuente})` : ""}. Solo pesa si la evidencia no la fija.`;
 }
 
@@ -1470,7 +1473,7 @@ export function expedienteConTipicas(e: Expediente, r: Reconstruccion): Expedien
       return veh && !veh.velocidad_narrada && !detenidos.has(id);
     });
   // Solo los que el solver estima (los que se mueven): un detenido supuesto no tiene velocidad previa.
-  const inv = ((r.resultado).inversion ?? {}) as { parametros?: Json[] };
+  const inv = (r.resultado.inversion ?? {}) as { parametros?: Json[] };
   const estimados = new Set(
     (inv.parametros ?? [])
       .filter((p) => p.parametro === "velocidad_previa")

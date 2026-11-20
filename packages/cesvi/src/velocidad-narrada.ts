@@ -2,11 +2,15 @@
  * La velocidad que dice o describe la narración del perito (ronda 4; René, 2026-11-18: «lo que dice
  * la narración no llega a la física»). Determinista y con su cita: no llama al modelo ni gasta API.
  *
- * - **Una cifra** («a 80 km/h», «como a 60 kilómetros por hora», «entre 60 y 70 km/h», «a más de
- *   90 km/h») va con su rango, de un ±10 % en la cifra dicha a un ±15 % en la aproximada.
- * - **Una descripción** («a exceso de velocidad», «rápido», «despacio», «a vuelta de rueda») va
- *   relativa al límite de la vía. Mientras no se conoce la vía del choque se usa el de una avenida
- *   primaria; al conocerla, `conLimiteDeLaVia` lo recalcula.
+ * - **Una cifra** («a 80 km/h», «como a 60 kilómetros por hora», «entre 60 y 70 km/h») va con su
+ *   rango, de un ±10 % en la cifra dicha a un ±15 % en la aproximada.
+ * - **Una cota** («a más de 90 km/h», «a menos de 40 km/h»): la cifra es el mínimo o el máximo, no un
+ *   valor (René, 2026-11-20). El perito ve «al menos 90 km/h» y el solver solo la hace cumplir.
+ * - **Una descripción** («a exceso de velocidad», «a alta velocidad», «muy rápido», «despacio», «a
+ *   vuelta de rueda») va relativa al límite de la vía: el de su `maxspeed` o su tipo en el mapa
+ *   (`conLimiteDeLaVia`) y, mientras no se ubica, el que da el texto del lugar («autopista»,
+ *   «carretera», «avenida», «calle»; `limiteDelLugarNarrado`). Sin nada de eso, el de una avenida
+ *   primaria. «Exceso» nunca queda por debajo del límite: su rango empieza en él.
  * - **Un límite del lugar** («velocidad máxima de 50 km/h», «restrictivo de 40 km/h») no es la
  *   velocidad del hecho, y tampoco lo es «el carril de baja velocidad».
  *
@@ -14,7 +18,8 @@
  * no fija la velocidad, y el resultado lo dice (`fijada_por: "declarada"`).
  *
  * Los límites por tipo de vía salen de la Ley General de Movilidad y Seguridad Vial, art. 49
- * fr. III (DOF 17-05-2022, última reforma DOF 29-12-2023; `data/SOURCES.md`). El rango alrededor de
+ * fr. III (DOF 17-05-2022, última reforma DOF 29-12-2023; texto verificado el 2026-11-20 en
+ * diputados.gob.mx; `data/SOURCES.md`). El rango alrededor de
  * un límite es un supuesto de Croquis, dicho en su descripción: un límite es un máximo legal, no
  * una medición.
  */
@@ -50,6 +55,67 @@ export const LIMITES_LGMSV: readonly { tipos: readonly string[]; kmh: number; in
     inciso: "c) calles secundarias y terciarias",
   },
 ];
+
+/**
+ * El límite por lo que dice el texto del lugar (LGMSV, art. 49 fr. III), mientras la vía no se ubica
+ * en el mapa. El orden importa: «carretera federal» antes que «carretera», «autopista» antes que
+ * «avenida». null si el texto no nombra un tipo de vía.
+ */
+const LUGAR_LGMSV: readonly { rx: RegExp; kmh: number; inciso: string }[] = [
+  {
+    rx: /\b(?:carretera|autopista)s?\s+federal/iu,
+    kmh: 110,
+    inciso: "g) carreteras y autopistas de jurisdicción federal (automóviles)",
+  },
+  {
+    rx: /\b(?:autopista|circuito\s+exterior|perif[eé]rico|viaducto|libramiento|v[ií]a\s+r[aá]pida|acceso\s+controlado)/iu,
+    kmh: 80,
+    inciso: "e) carriles centrales de avenidas de acceso controlado",
+  },
+  {
+    rx: /\bcarretera/iu,
+    kmh: 80,
+    inciso: "f) carreteras estatales fuera de zonas urbanas",
+  },
+  {
+    rx: /\b(?:avenida|av\.|calzada|paseo|boulevard|bulevar|blvd\.?|eje\s+vial|circuito|prolongaci[oó]n)/iu,
+    kmh: 50,
+    inciso: "d) avenidas primarias sin acceso controlado",
+  },
+  {
+    rx: /\b(?:calle|privada|cerrada|andador|callej[oó]n)/iu,
+    kmh: 30,
+    inciso: "c) calles secundarias y calles terciarias",
+  },
+];
+
+/** El límite que da el texto del lugar («la autopista…», «la carretera…»), o null. */
+export function limiteDelLugarNarrado(
+  texto: string | null | undefined,
+): { kmh: number; fuente: string } | null {
+  if (!texto) return null;
+  for (const f of LUGAR_LGMSV) {
+    const m = texto.match(f.rx);
+    if (m)
+      return {
+        kmh: f.kmh,
+        fuente: `LGMSV, art. 49 fr. III ${f.inciso}; por «${m[0].trim()}» en el lugar narrado, mientras la vía no se ubica en el mapa`,
+      };
+  }
+  return null;
+}
+
+/** El límite para las descripciones de un expediente: el del texto de su lugar o el de omisión. */
+export function limiteDelExpediente(
+  e: Expediente,
+  narracion?: string,
+): { kmh: number; fuente: string } {
+  return (
+    limiteDelLugarNarrado(e.caso?.lugar?.descripcion?.valor) ??
+    limiteDelLugarNarrado(narracion) ??
+    LIMITE_SIN_VIA
+  );
+}
 
 /** El límite de una avenida primaria (LGMSV, art. 49 fr. III d): mientras no se conoce la vía. */
 export const LIMITE_SIN_VIA = {
@@ -182,6 +248,7 @@ const cita = (texto: string, i: number, largo: number) => {
 export function velocidadesNarradas(
   narracion: string,
   ids: readonly Id[],
+  limite: { kmh: number; fuente: string } = LIMITE_SIN_VIA,
 ): Map<Id, VelocidadNarrada> {
   const out = new Map<Id, VelocidadNarrada>();
   const ms = menciones(narracion, ids);
@@ -203,13 +270,14 @@ export function velocidadesNarradas(
     if (!(x >= 3 && x <= 250)) continue;
     let rango: [number, number];
     let kmh = x;
+    // «Más de X» y «menos de X» son cotas: X es el mínimo o el máximo, no un valor con su rango.
+    const cota = m[2] ? (/^m[aá]s/i.test(m[2]) ? ("minimo" as const) : ("maximo" as const)) : null;
     if (m[1]) {
       rango = [n(m[1]), x];
       kmh = (rango[0] + rango[1]) / 2;
-    } else if (m[2]) rango = /^m/i.test(m[2]) ? [x, x * 1.3] : [x * 0.6, x];
+    } else if (cota) rango = [x, x];
     else if (APROX.test(antes)) rango = [x * 0.85, x * 1.15];
     else rango = [x * 0.9, x * 1.1];
-    if (m[2]) kmh = (rango[0] + rango[1]) / 2;
     const r1 = (v: number) => Math.round(v * 10) / 10;
     usados.push([i, i + m[0].length]);
     poner(i, {
@@ -218,6 +286,7 @@ export function velocidadesNarradas(
       origen: "narración",
       descripcion: m[0].trim(),
       cita: cita(narracion, i, m[0].length),
+      ...(cota ? { cota } : {}),
     });
   }
   // 2) Las descripciones, relativas al límite de la vía.
@@ -236,13 +305,13 @@ export function velocidadesNarradas(
             cita: cita(narracion, i, m[0].length),
           }
         : {
-            ...respectoAlLimite(d.r, LIMITE_SIN_VIA.kmh),
+            ...respectoAlLimite(d.r, limite.kmh),
             origen: "narración",
             descripcion: d.texto,
             cita: cita(narracion, i, m[0].length),
             respecto_al_limite: d.r,
-            limite_kmh: LIMITE_SIN_VIA.kmh,
-            limite_fuente: LIMITE_SIN_VIA.fuente,
+            limite_kmh: limite.kmh,
+            limite_fuente: limite.fuente,
           };
       poner(i, v);
     }
@@ -254,6 +323,7 @@ export function conVelocidadesNarradas(e: Expediente, narracion: string): Expedi
   const vs = velocidadesNarradas(
     narracion,
     e.vehiculos.map((v) => v.id),
+    limiteDelExpediente(e, narracion),
   );
   if (!vs.size) return e;
   return {
@@ -266,6 +336,7 @@ export function conVelocidadesNarradas(e: Expediente, narracion: string): Expedi
 
 /** La velocidad que contestó el perito (km/h), o la típica de la vía si dijo «No sé». */
 export function conVelocidadDelPerito(e: Expediente, vehiculo: Id, kmh: number | null): Expediente {
+  const limite = limiteDelExpediente(e);
   const v: VelocidadNarrada =
     kmh !== null
       ? {
@@ -275,12 +346,12 @@ export function conVelocidadDelPerito(e: Expediente, vehiculo: Id, kmh: number |
           descripcion: `${kmh} km/h, la que dio el perito`,
         }
       : {
-          ...respectoAlLimite("alrededor", LIMITE_SIN_VIA.kmh),
+          ...respectoAlLimite("alrededor", limite.kmh),
           origen: "via",
           descripcion: "la típica de la vía (el perito no la sabe)",
           respecto_al_limite: "alrededor",
-          limite_kmh: LIMITE_SIN_VIA.kmh,
-          limite_fuente: LIMITE_SIN_VIA.fuente,
+          limite_kmh: limite.kmh,
+          limite_fuente: limite.fuente,
         };
   return {
     ...e,
@@ -327,7 +398,9 @@ export function velocidadPreviaDeclarada(v: VelocidadNarrada): Record<string, un
         ? `La típica de la vía (límite de ${v.limite_kmh} km/h: ${v.limite_fuente}); el perito no la sabe`
         : v.respecto_al_limite
           ? `La narración dice «${v.descripcion}»; respecto al límite de ${v.limite_kmh} km/h (${v.limite_fuente})`
-          : `La narración dice «${v.descripcion}»`;
+          : v.cota
+            ? `La narración dice «${v.descripcion}»: ${enCota(v)}, una cota y no un valor`
+            : `La narración dice «${v.descripcion}»`;
   return {
     valor: v.kmh,
     unidad: "km/h",
@@ -339,5 +412,11 @@ export function velocidadPreviaDeclarada(v: VelocidadNarrada): Record<string, un
       300,
     ),
     a_priori: true,
+    ...(v.cota ? { cota: v.cota } : {}),
   };
+}
+
+/** «al menos 90 km/h» o «a lo más 40 km/h»: lo que ve el perito de una cota. */
+export function enCota(v: Pick<VelocidadNarrada, "cota" | "kmh">): string {
+  return `${v.cota === "maximo" ? "a lo más" : "al menos"} ${Math.round(v.kmh)} km/h`;
 }
