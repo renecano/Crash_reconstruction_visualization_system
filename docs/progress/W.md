@@ -1287,7 +1287,7 @@ Con la regla nueva ninguna de las 12 relecturas se usa: todas traían menos dato
 **Lo que se sabe (sin Unity en la laptop):**
 
 - Lo que Tollocan trae y AXA no es el escenario del mapa en vivo. AXA trae sus calles guardadas; los ejemplos corren con `sinRed`; Tollocan toma las calles y objetos de OpenStreetMap o de las teselas.
-- Con lo de OpenStreetMap alrededor del impacto (`data/osm/tollocan_rene.osm-api.json`, ODbL; Overpass rechazó la consulta automática y se usó la API principal), el paquete caso-3d de Tollocan tiene 38 vías, 620 lotes, 265 árboles y una calzada de 10 952 vértices. Pesa 622 KB y se arma en 1.3 s en node (`paquete-tollocan.test.ts`). El de AXA, en la misma prueba sin calles, 108 lotes en 28 ms. Ningún valor raro (NaN, lotes enormes, pisos absurdos).
+- Con lo de OpenStreetMap alrededor del impacto (`data/osm/tollocan_rene.overpass.json`, ODbL; Overpass rechazó la consulta automática y se usó la API principal), el paquete caso-3d de Tollocan tiene 38 vías, 620 lotes, 265 árboles y una calzada de 10 952 vértices. Pesa 622 KB y se arma en 1.3 s en node (`paquete-tollocan.test.ts`). El de AXA, en la misma prueba sin calles, 108 lotes en 28 ms. Ningún valor raro (NaN, lotes enormes, pisos absurdos).
 - En WebGL, Unity corre en el hilo de la página: armar ese escenario es lo que más probablemente la trabó. **No está probado**: el humo nuevo lo confirma o lo descarta.
 
 **Lo que se hizo** (commit `fd5b20ff`):

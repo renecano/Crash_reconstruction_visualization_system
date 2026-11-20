@@ -17,7 +17,7 @@ describe("el paquete de Unity del caso de Tollocan (René, 2026-11-20: se congel
     ) as { expediente: Expediente };
     // Lo de OpenStreetMap alrededor del impacto (data/osm/manifest.json, «tollocan_rene»).
     const osm = JSON.parse(
-      readFileSync(resolve(RAIZ, "data/osm/tollocan_rene.osm-api.json"), "utf8"),
+      readFileSync(resolve(RAIZ, "data/osm/tollocan_rene.overpass.json"), "utf8"),
     ) as OverpassResponse;
     const t0 = performance.now();
     const r = reconstruirExpediente(d.expediente, undefined, { samples: 8, mcSamples: 8 });

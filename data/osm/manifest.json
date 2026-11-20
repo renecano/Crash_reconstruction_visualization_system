@@ -20,7 +20,7 @@
     "url": "https://api.openstreetmap.org/api/0.6/map?bbox=-99.5905,19.2975,-99.5873,19.3003",
     "nota": "API principal de OpenStreetMap (Overpass rechazó la consulta automática ese día); el XML se pasó al formato de Overpass (elements con node y way).",
     "descargado": "2026-11-20",
-    "sha256": "2e409bd9aa1298810a0a52ad057ead013241279e1d6f1c77b7cd4024ec4a3f69",
+    "sha256": "5d61df667d0e4b356c76d34fe235f4a63669d8e48c1d7cd4643eba860bb595e9",
     "elementos": 236
   }
 }
