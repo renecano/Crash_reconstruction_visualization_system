@@ -1,0 +1,74 @@
+# Paso: humo
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues humo
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-20 15:12:33
+
+
+== 1. Herramientas
+Node v26.13.1 y pnpm 12.11.2.
+Hay internet.
+
+== 2. Dependencias
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 2d ago)
+Lockfile is up to date, resolution step is skipped
+Done in 71ms using pnpm v12.11.2
+
+== 3. El visor de Unity, desde esta computadora
+Visor 3cce5c1caca88f96 servido desde el sitio: C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\public\visor-unity\local
+
+== 4. La app en modo local
+Ya está compilada para esta versión (1084a845).
+
+== 5. La lectura con IA
+No hay llave de Claude en .env.local: la lectura con IA no estará. Todo lo demás funciona (AXA, los casos de ejemplo con su lectura guardada, la reconstrucción, el 3D y el dictamen).
+
+== 6. Croquis en http://localhost:3000
+Necesitan internet: la lectura con IA de una narración nueva, los mosaicos del mapa (sin red, el mapa sale en blanco pero se puede colocar la escena) y buscar un lugar por nombre.
+Sin internet funcionan completos: el caso de AXA y los cinco casos de ejemplo, la reconstrucción, el 3D de Unity y el dictamen.
+
+Running 2 tests using 1 worker
+
+[1/2] [chromium] › e2e\humo-3d.spec.ts:46:5 › humo: AXA de La escena nueva al 3D de Unity
+[2/2] [chromium] › e2e\humo-3d.spec.ts:54:5 › humo: Tollocan de La escena nueva al 3D de Unity
+  1) [chromium] › e2e\humo-3d.spec.ts:54:5 › humo: Tollocan de La escena nueva al 3D de Unity ──────
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator: getByTestId('visor-unity')
+    Expected: "listo"
+    Timeout: 90000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveAttribute" getByTestId('visor-unity') with timeout 90000ms
+      - waiting for getByTestId('visor-unity')
+        4 × locator resolved to <div data-fase="arrancando" data-testid="visor-unity" class="relative h-full w-full overflow-hidden">…</div>
+          - unexpected value "arrancando"
+        2 × locator resolved to <div data-fase="calculando" data-testid="visor-unity" class="relative h-full w-full overflow-hidden">…</div>
+          - unexpected value "calculando"
+
+
+      39 |   await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 60_000 });
+      40 |   await page.getByTestId("vista-3d").click();
+    > 41 |   await expect(page.getByTestId("visor-unity")).toHaveAttribute("data-fase", "listo", {
+         |                                                 ^
+      42 |     timeout: 90_000,
+      43 |   });
+      44 | }
+        at hastaEl3d (C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\humo-3d.spec.ts:41:49)
+        at C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\humo-3d.spec.ts:61:3
+
+    Error Context: test-results\humo-3d-humo-Tollocan-de-La-escena-nueva-al-3D-de-Unity-chromium\error-context.md
+
+
+  1 failed
+    [chromium] › e2e\humo-3d.spec.ts:54:5 › humo: Tollocan de La escena nueva al 3D de Unity ───────
+  1 passed (1.8m)
+Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
+
+  × "pnpm recursive exec" failed in C:\Users\MrKan\Documents\reto cesvi
+  │ v5\Croquis\apps\web
+
+
+# Fin: 2026-11-20 15:14:22 · falló (código 1) · 1.8 min
