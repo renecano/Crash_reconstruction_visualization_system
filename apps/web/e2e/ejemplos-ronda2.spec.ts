@@ -199,6 +199,14 @@ test("las cinco narraciones de ejemplo, de punta a punta", async ({ page, baseUR
     const foto = (n: string) =>
       page.screenshot({ path: join(CAPTURAS, `${r.clave}-${n}.jpg`), type: "jpeg", quality: 80 });
     await page.goto("/cesvi");
+    // t5b (René, 2026-11-20): con qué tarjeta se corrió (el renderer de WebGL), en cada fila.
+    const gpu = await page
+      .evaluate(() => {
+        const gl = document.createElement("canvas").getContext("webgl2");
+        const ext = gl?.getExtension("WEBGL_debug_renderer_info");
+        return ext && gl ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : null;
+      })
+      .catch(() => null);
     await page.getByTestId("ir-caso-nuevo").click();
     await expect(page.getByTestId("recorrido-caso")).toBeVisible();
     await irAPaso(page, 2);
@@ -214,7 +222,7 @@ test("las cinco narraciones de ejemplo, de punta a punta", async ({ page, baseUR
     const lista = await colocar(page, r, notas);
     await foto("2-escena");
     if (!lista) {
-      resultados.push({ clave: r.clave, leido, guardada, colocada: false, notas });
+      resultados.push({ clave: r.clave, gpu, leido, guardada, colocada: false, notas });
       continue;
     }
     await page.getByTestId("avance-ver-reconstruccion").click();
@@ -231,6 +239,7 @@ test("las cinco narraciones de ejemplo, de punta a punta", async ({ page, baseUR
     await page.getByTestId("ver-detalle-reconstruccion").click();
     const fila = {
       clave: r.clave,
+      gpu,
       leido,
       lectura_guardada: guardada,
       colocada: true,
