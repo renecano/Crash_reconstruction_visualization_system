@@ -335,3 +335,138 @@ class CurvedLanePath(Path):
         dh = dmath.atan2(dmath.sin(h1 - h0), dmath.cos(h1 - h0))
         x, y = self._point(u)
         return Pose(x, y, heading, dh / (dist / 2) if dist > 0 else 0.0)
+
+
+class PolylineLanePath(Path):
+    """Sigue el eje real de la calle (ronda 4; René, 2026-11-19: «la trayectoria sigue la geometría
+    real de la calle, no el arco de plantilla»): una polilínea en metros de la escena, desde la
+    proyección de la pose sobre ella, en el sentido de su rumbo, con la misma separación lateral que
+    tenía al arrancar y, si se pide, un cambio de carril con el perfil coseno de `LaneChangePath`.
+    Más allá de los extremos del eje sigue recta, en su última tangente.
+    """
+
+    # m: la tangente se toma con este medio tramo, para que las esquinas del eje no la quiebren.
+    TANGENT_HALF_M = 2.0
+
+    def __init__(
+        self,
+        puntos: tuple[tuple[float, float], ...],
+        pose: tuple[float, float, float],
+        length: float,
+        lateral: float = 0.0,
+        change_length: float = 40.0,
+        samples: int = 4000,
+    ) -> None:
+        self.length = length
+        self.lateral = lateral
+        self.change_length = change_length
+        self.samples = samples
+        x, y, yaw = pose
+        # La longitud acumulada del eje.
+        self.pts = puntos
+        acc = [0.0]
+        for i in range(1, len(puntos)):
+            a, b = puntos[i - 1], puntos[i]
+            acc.append(acc[-1] + dmath.hypot(b[0] - a[0], b[1] - a[1]))
+        self.acc = acc
+        # La proyección de la pose sobre el eje: su abscisa y su separación a la izquierda.
+        best = (math.inf, 0.0)
+        for i in range(1, len(puntos)):
+            a, b = puntos[i - 1], puntos[i]
+            dx, dy = b[0] - a[0], b[1] - a[1]
+            seg2 = dx * dx + dy * dy
+            t = (
+                0.0
+                if seg2 == 0.0
+                else max(0.0, min(1.0, ((x - a[0]) * dx + (y - a[1]) * dy) / seg2))
+            )
+            px, py = a[0] + t * dx, a[1] + t * dy
+            d = dmath.hypot(x - px, y - py)
+            if d < best[0]:
+                best = (d, acc[i - 1] + t * (acc[i] - acc[i - 1]))
+        s0 = best[1]
+        tx, ty = self._tangent(s0)
+        # Hacia dónde va: el sentido del eje que coincide con su rumbo.
+        self.sign = 1.0 if dmath.cos(yaw) * tx + dmath.sin(yaw) * ty >= 0.0 else -1.0
+        ax, ay = self._axis(s0)
+        nx, ny = -ty * self.sign, tx * self.sign
+        self.s0 = s0
+        self.d0 = (x - ax) * nx + (y - ay) * ny
+        self._table: tuple[list[float], list[float]] | None = None
+
+    def _axis(self, s: float) -> tuple[float, float]:
+        pts, acc = self.pts, self.acc
+        if s <= 0.0:
+            (ax, ay), (bx, by) = pts[0], pts[1]
+            seg = acc[1]
+            return (ax + (bx - ax) * s / seg, ay + (by - ay) * s / seg) if seg > 0 else (ax, ay)
+        if s >= acc[-1]:
+            (ax, ay), (bx, by) = pts[-2], pts[-1]
+            seg = acc[-1] - acc[-2]
+            e = s - acc[-1]
+            return (bx + (bx - ax) * e / seg, by + (by - ay) * e / seg) if seg > 0 else (bx, by)
+        i = bisect.bisect_right(acc, s)
+        a, b = pts[i - 1], pts[i]
+        seg = acc[i] - acc[i - 1]
+        f = (s - acc[i - 1]) / seg if seg > 0 else 0.0
+        return (a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f)
+
+    def _tangent(self, s: float) -> tuple[float, float]:
+        h = self.TANGENT_HALF_M
+        p0 = self._axis(s - h)
+        p1 = self._axis(s + h)
+        dx, dy = p1[0] - p0[0], p1[1] - p0[1]
+        n = dmath.hypot(dx, dy)
+        return (dx / n, dy / n) if n > 0 else (1.0, 0.0)
+
+    def _point(self, u: float) -> tuple[float, float]:
+        s = self.s0 + self.sign * u
+        ax, ay = self._axis(s)
+        tx, ty = self._tangent(s)
+        nx, ny = -ty * self.sign, tx * self.sign
+        k = min(max(u, 0.0), self.change_length) if self.change_length > 0 else 0.0
+        lat = (
+            0.5 * self.lateral * (1.0 - dmath.cos(math.pi * k / self.change_length))
+            if self.change_length > 0
+            else 0.0
+        )
+        d = self.d0 + lat
+        return (ax + nx * d, ay + ny * d)
+
+    def _get_table(self) -> tuple[list[float], list[float]]:
+        if self._table is None:
+            u_max = 1.2 * self.length + abs(self.lateral)
+            us = [u_max * i / self.samples for i in range(self.samples + 1)]
+            ss = [0.0]
+            prev = self._point(0.0)
+            for u in us[1:]:
+                p = self._point(u)
+                ss.append(ss[-1] + dmath.hypot(p[0] - prev[0], p[1] - prev[1]))
+                prev = p
+            self._table = (us, ss)
+        return self._table
+
+    def _u_at(self, s_in: float) -> float:
+        us, ss = self._get_table()
+        s = min(max(s_in, 0.0), ss[-1])
+        i = bisect.bisect_left(ss, s)
+        if i <= 0:
+            return 0.0
+        f = (s - ss[i - 1]) / (ss[i] - ss[i - 1]) if ss[i] > ss[i - 1] else 0.0
+        return us[i - 1] + f * (us[i] - us[i - 1])
+
+    def pose(self, s: float) -> Pose:
+        s = min(max(s, 0.0), self.length)
+        u = self._u_at(s)
+        h = 1e-3
+        p0 = self._point(u - h)
+        p1 = self._point(u + h)
+        heading = dmath.atan2(p1[1] - p0[1], p1[0] - p0[0])
+        q0 = self._point(u - 2 * h)
+        q1 = self._point(u + 2 * h)
+        pu = self._point(u)
+        h0 = dmath.atan2(pu[1] - q0[1], pu[0] - q0[0])
+        h1 = dmath.atan2(q1[1] - pu[1], q1[0] - pu[0])
+        dist = dmath.hypot(q1[0] - q0[0], q1[1] - q0[1])
+        dh = dmath.atan2(dmath.sin(h1 - h0), dmath.cos(h1 - h0))
+        return Pose(pu[0], pu[1], heading, dh / (dist / 2) if dist > 0 else 0.0)

@@ -332,3 +332,165 @@ export class CurvedLanePath implements Path {
     return { x: pu[0], y: pu[1], heading, curvature: dist > 0 ? dh / (dist / 2) : 0.0 };
   }
 }
+
+/** El índice donde `x` entraría por la derecha en `a` ordenado (`bisect.bisect_right` de Python). */
+function bisectRightNum(a: readonly number[], x: number): number {
+  let lo = 0;
+  let hi = a.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (x < a[mid]!) hi = mid;
+    else lo = mid + 1;
+  }
+  return lo;
+}
+
+/**
+ * Sigue el eje real de la calle (ronda 4; René, 2026-11-19), port de `PolylineLanePath` de
+ * `croquis_solver.preimpact`: desde la proyección de la pose sobre la polilínea, en el sentido de su
+ * rumbo, con la misma separación lateral que tenía al arrancar y, si se pide, un cambio de carril con
+ * el perfil coseno. Más allá de los extremos del eje sigue recta, en su última tangente.
+ */
+export class PolylineLanePath implements Path {
+  /** m: la tangente se toma con este medio tramo, para que las esquinas del eje no la quiebren. */
+  static readonly TANGENT_HALF_M = 2.0;
+  private readonly acc: number[];
+  private readonly sign: number;
+  private readonly s0: number;
+  private readonly d0: number;
+  private table: [number[], number[]] | null = null;
+
+  constructor(
+    readonly pts: readonly (readonly [number, number])[],
+    pose: readonly [number, number, number],
+    readonly length: number,
+    readonly lateral = 0.0,
+    readonly changeLength = 40.0,
+    readonly samples = 4000,
+  ) {
+    const [x, y, yaw] = pose;
+    const acc = [0.0];
+    for (let i = 1; i < pts.length; i++) {
+      const a = pts[i - 1]!;
+      const b = pts[i]!;
+      acc.push(acc[acc.length - 1]! + dmath.hypot(b[0] - a[0], b[1] - a[1]));
+    }
+    this.acc = acc;
+    let best: [number, number] = [Infinity, 0.0];
+    for (let i = 1; i < pts.length; i++) {
+      const a = pts[i - 1]!;
+      const b = pts[i]!;
+      const dx = b[0] - a[0];
+      const dy = b[1] - a[1];
+      const seg2 = dx * dx + dy * dy;
+      const t =
+        seg2 === 0.0
+          ? 0.0
+          : Math.max(0.0, Math.min(1.0, ((x - a[0]) * dx + (y - a[1]) * dy) / seg2));
+      const px = a[0] + t * dx;
+      const py = a[1] + t * dy;
+      const d = dmath.hypot(x - px, y - py);
+      if (d < best[0]) best = [d, acc[i - 1]! + t * (acc[i]! - acc[i - 1]!)];
+    }
+    const s0 = best[1];
+    const [tx, ty] = this.tangent(s0);
+    this.sign = dmath.cos(yaw) * tx + dmath.sin(yaw) * ty >= 0.0 ? 1.0 : -1.0;
+    const [ax, ay] = this.axis(s0);
+    const nx = -ty * this.sign;
+    const ny = tx * this.sign;
+    this.s0 = s0;
+    this.d0 = (x - ax) * nx + (y - ay) * ny;
+  }
+
+  private axis(s: number): [number, number] {
+    const pts = this.pts;
+    const acc = this.acc;
+    if (s <= 0.0) {
+      const [ax, ay] = pts[0]!;
+      const [bx, by] = pts[1]!;
+      const seg = acc[1]!;
+      return seg > 0 ? [ax + ((bx - ax) * s) / seg, ay + ((by - ay) * s) / seg] : [ax, ay];
+    }
+    if (s >= acc[acc.length - 1]!) {
+      const [ax, ay] = pts[pts.length - 2]!;
+      const [bx, by] = pts[pts.length - 1]!;
+      const seg = acc[acc.length - 1]! - acc[acc.length - 2]!;
+      const e = s - acc[acc.length - 1]!;
+      return seg > 0 ? [bx + ((bx - ax) * e) / seg, by + ((by - ay) * e) / seg] : [bx, by];
+    }
+    const i = bisectRightNum(acc, s);
+    const a = pts[i - 1]!;
+    const b = pts[i]!;
+    const seg = acc[i]! - acc[i - 1]!;
+    const f = seg > 0 ? (s - acc[i - 1]!) / seg : 0.0;
+    return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
+  }
+
+  private tangent(s: number): [number, number] {
+    const h = PolylineLanePath.TANGENT_HALF_M;
+    const p0 = this.axis(s - h);
+    const p1 = this.axis(s + h);
+    const dx = p1[0] - p0[0];
+    const dy = p1[1] - p0[1];
+    const n = dmath.hypot(dx, dy);
+    return n > 0 ? [dx / n, dy / n] : [1.0, 0.0];
+  }
+
+  private point(u: number): [number, number] {
+    const s = this.s0 + this.sign * u;
+    const [ax, ay] = this.axis(s);
+    const [tx, ty] = this.tangent(s);
+    const nx = -ty * this.sign;
+    const ny = tx * this.sign;
+    let lat = 0.0;
+    if (this.changeLength > 0) {
+      const k = Math.min(Math.max(u, 0.0), this.changeLength);
+      lat = 0.5 * this.lateral * (1.0 - dmath.cos((Math.PI * k) / this.changeLength));
+    }
+    const d = this.d0 + lat;
+    return [ax + nx * d, ay + ny * d];
+  }
+
+  private getTable(): [number[], number[]] {
+    if (this.table === null) {
+      const uMax = 1.2 * this.length + Math.abs(this.lateral);
+      const us: number[] = [];
+      for (let i = 0; i <= this.samples; i++) us.push((uMax * i) / this.samples);
+      const ss = [0.0];
+      let prev = this.point(0.0);
+      for (const u of us.slice(1)) {
+        const p = this.point(u);
+        ss.push(ss[ss.length - 1]! + dmath.hypot(p[0] - prev[0], p[1] - prev[1]));
+        prev = p;
+      }
+      this.table = [us, ss];
+    }
+    return this.table;
+  }
+
+  private uAt(sIn: number): number {
+    const [us, ss] = this.getTable();
+    const s = Math.min(Math.max(sIn, 0.0), ss[ss.length - 1]!);
+    const i = bisectLeft(ss, s);
+    if (i <= 0) return 0.0;
+    const f = ss[i]! > ss[i - 1]! ? (s - ss[i - 1]!) / (ss[i]! - ss[i - 1]!) : 0.0;
+    return us[i - 1]! + f * (us[i]! - us[i - 1]!);
+  }
+
+  pose(sIn: number): Pose {
+    const s = Math.min(Math.max(sIn, 0.0), this.length);
+    const u = this.uAt(s);
+    const h = 1e-3;
+    const p0 = this.point(u - h);
+    const p1 = this.point(u + h);
+    const heading = dmath.atan2(p1[1] - p0[1], p1[0] - p0[0]);
+    const q0 = this.point(u - 2 * h);
+    const q1 = this.point(u + 2 * h);
+    const pu = this.point(u);
+    const h0 = dmath.atan2(pu[1] - q0[1], pu[0] - q0[0]);
+    const h1 = dmath.atan2(q1[1] - pu[1], q1[0] - pu[0]);
+    const dist = dmath.hypot(q1[0] - q0[0], q1[1] - q0[1]);
+    const dh = dmath.atan2(dmath.sin(h1 - h0), dmath.cos(h1 - h0));
+    return { x: pu[0], y: pu[1], heading, curvature: dist > 0 ? dh / (dist / 2) : 0.0 };
+  }
+}

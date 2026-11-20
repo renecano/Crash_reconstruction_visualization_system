@@ -925,6 +925,29 @@
             "nota": { "type": "string", "maxLength": 300 }
           }
         },
+        "eje_via": {
+          "type": "object",
+          "description": "El eje real de la vía del choque (ronda 4; René, 2026-11-19): la polilínea de la calle guardada con el caso, en metros de la escena. Si viene, la trayectoria sigue su carril en vez del arco de plantilla de `tipo_via` y `radio_curva`.",
+          "additionalProperties": false,
+          "required": ["puntos", "fuente", "confianza"],
+          "properties": {
+            "puntos": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 400,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["x", "y"],
+                "properties": { "x": { "type": "number" }, "y": { "type": "number" } }
+              }
+            },
+            "nombre": { "type": "string", "maxLength": 200 },
+            "fuente": { "$ref": "#/$defs/Fuente" },
+            "confianza": { "$ref": "#/$defs/Confianza" },
+            "nota": { "type": "string", "maxLength": 300 }
+          }
+        },
         "radio_curva": { "$ref": "#/$defs/CampoLongitud" },
         "superficie": { "$ref": "#/$defs/CampoSuperficie" },
         "estado_superficie": { "$ref": "#/$defs/CampoEstadoSuperficie" },

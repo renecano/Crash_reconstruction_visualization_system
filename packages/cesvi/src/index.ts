@@ -50,3 +50,4 @@ export * from "./iluminacion";
 export * from "./personas";
 export * from "./velocidad-narrada";
 export * from "./lugar-narrado";
+export * from "./eje-calle";
