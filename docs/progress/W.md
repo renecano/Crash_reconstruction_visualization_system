@@ -1280,6 +1280,25 @@ Con la regla nueva ninguna de las 12 relecturas se usa: todas traían menos dato
 - **Por reporte**, con la regla de T6.5 (mejor si rechaza menos y no trae menos números verificados): 6 mejores, 6 iguales y 6 peores.
 - **Por qué no mejora:** rechaza menos porque trae menos números (160 contra 187), y trae 9 números verificados menos. La narración queda igual o un poco peor. Con una lectura por lado, el reparto 6 / 6 / 6 no se distingue del ruido del modelo.
 
+## Ronda 4 · el humo de la t5b: Tollocan se queda en «calculando» (2026-11-20)
+
+**Lo que mostró la t5b** (`resultados/t5b-repeticion-2026-11-20`, `tanda-03-humo.log`): AXA llega de La escena nueva al 3D de Unity; Tollocan (`data/cesvi/casos/tollocan-rene.croquis`) pasa de «arrancando» a «calculando» y, en 90 s, Playwright solo pudo leer la página 6 veces (todas en los primeros ~3 s). Al final ya no estaba `visor-unity`: a los 90 s sin «cargado», la web abrió el visor ligero.
+
+**Lo que se sabe (sin Unity en la laptop):**
+
+- Lo que Tollocan trae y AXA no es el escenario del mapa en vivo. AXA trae sus calles guardadas; los ejemplos corren con `sinRed`; Tollocan toma las calles y objetos de OpenStreetMap o de las teselas.
+- Con lo de OpenStreetMap alrededor del impacto (`data/osm/tollocan_rene.osm-api.json`, ODbL; Overpass rechazó la consulta automática y se usó la API principal), el paquete caso-3d de Tollocan tiene 38 vías, 620 lotes, 265 árboles y una calzada de 10 952 vértices. Pesa 622 KB y se arma en 1.3 s en node (`paquete-tollocan.test.ts`). El de AXA, en la misma prueba sin calles, 108 lotes en 28 ms. Ningún valor raro (NaN, lotes enormes, pisos absurdos).
+- En WebGL, Unity corre en el hilo de la página: armar ese escenario es lo que más probablemente la trabó. **No está probado**: el humo nuevo lo confirma o lo descarta.
+
+**Lo que se hizo** (commit `fd5b20ff`):
+
+- Ninguna espera del 3D sin tope: el cálculo de la escena, 60 s; la confirmación de Unity, 45 s (antes 90); el relieve, 20 s. Pasado el tope, el visor ligero dice por qué, visible.
+- Modo diagnóstico (`__croquisDiagnostico`): cada paso del visor y el paquete exacto que recibe Unity, en la consola.
+- El humo (`e2e/humo-3d.spec.ts`): AXA, Tollocan y el ejemplo «Crucero de noche». Cada uno deja en `eval/results/humo/` su consola (con el log de Unity), el paquete 3D, una captura y su fila en `resumen.jsonl`; la traza, en `apps/web/test-results/`. Si Tollocan no llega, se repite sin el mapa en vivo.
+- La t5b sube esas dos carpetas en el paso del humo; su tope pasa de 3 a 6 min (tres casos y la repetición).
+
+**Siguiente paso:** con el resultado del humo, si Tollocan sin el mapa en vivo sí llega, el arreglo es armar en Unity el escenario por partes, unos cuadros a la vez, o ponerle un presupuesto. El presupuesto toca alta y ultra: se le pregunta a René antes.
+
 ## Lo que U deja dicho para W
 
 Viene de U0 (ADR 0111). Vale cuando el PR de contrato 2.3.0 esté en `main`:
