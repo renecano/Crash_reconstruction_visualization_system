@@ -1,0 +1,153 @@
+# Paso: narraciones
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues narraciones -Salida eval/results/t5/narraciones_fisica.json
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-20 11:09:22
+
+
+== 1. Herramientas
+Node v26.13.1 y pnpm 12.11.2.
+Hay internet.
+
+== 2. Dependencias
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 2d ago)
+Lockfile is up to date, resolution step is skipped
+Done in 71ms using pnpm v12.11.2
+
+== 3. El visor de Unity, desde esta computadora
+Visor 3cce5c1caca88f96 servido desde el sitio: C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\public\visor-unity\local
+
+== 4. La app en modo local
+Ya está compilada para esta versión (d96d7439).
+
+== 5. La lectura con IA
+No hay llave de Claude en .env.local: la lectura con IA no estará. Todo lo demás funciona (AXA, los casos de ejemplo con su lectura guardada, la reconstrucción, el 3D y el dictamen).
+
+== 6. Croquis en http://localhost:3000
+Necesitan internet: la lectura con IA de una narración nueva, los mosaicos del mapa (sin red, el mapa sale en blanco pero se puede colocar la escena) y buscar un lugar por nombre.
+Sin internet funcionan completos: el caso de AXA y los cinco casos de ejemplo, la reconstrucción, el 3D de Unity y el dictamen.
+
+Running 7 tests using 1 worker
+
+[1/7] [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración arbol: de lo dicho a la física y al 3D
+  1) [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración arbol: de lo dicho a la física y al 3D 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByTestId('escena')
+    Expected substring: "vehículo"
+    Timeout: 180000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" getByTestId('escena') with timeout 180000ms
+      - waiting for getByTestId('escena')
+
+
+      133 |     await page.getByTestId("narracion").fill(n.texto);
+      134 |     await page.getByTestId("leer-narracion").click();
+    > 135 |     await expect(page.getByTestId("escena")).toContainText("vehículo", { timeout: 180_000 });
+          |                                              ^
+      136 |     await contestarPreguntas(page);
+      137 |     await irAPaso(page, 3);
+      138 |     await cerrarLaEscena(page);
+        at C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\narraciones-fisica.spec.ts:135:46
+
+    Error Context: test-results\narraciones-fisica-narraci-c1340-o-dicho-a-la-física-y-al-3D-chromium\error-context.md
+
+
+[2/7] [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración poste: de lo dicho a la física y al 3D
+  2) [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración poste: de lo dicho a la física y al 3D 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByTestId('escena')
+    Expected substring: "vehículo"
+    Timeout: 180000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" getByTestId('escena') with timeout 180000ms
+      - waiting for getByTestId('escena')
+
+
+      133 |     await page.getByTestId("narracion").fill(n.texto);
+      134 |     await page.getByTestId("leer-narracion").click();
+    > 135 |     await expect(page.getByTestId("escena")).toContainText("vehículo", { timeout: 180_000 });
+          |                                              ^
+      136 |     await contestarPreguntas(page);
+      137 |     await irAPaso(page, 3);
+      138 |     await cerrarLaEscena(page);
+        at C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\narraciones-fisica.spec.ts:135:46
+
+    Error Context: test-results\narraciones-fisica-narraci-ab1b2-o-dicho-a-la-física-y-al-3D-chromium\error-context.md
+
+
+[3/7] [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración puente: de lo dicho a la física y al 3D
+  3) [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración puente: de lo dicho a la física y al 3D 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByTestId('escena')
+    Expected substring: "vehículo"
+    Timeout: 180000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" getByTestId('escena') with timeout 180000ms
+      - waiting for getByTestId('escena')
+
+
+      133 |     await page.getByTestId("narracion").fill(n.texto);
+      134 |     await page.getByTestId("leer-narracion").click();
+    > 135 |     await expect(page.getByTestId("escena")).toContainText("vehículo", { timeout: 180_000 });
+          |                                              ^
+      136 |     await contestarPreguntas(page);
+      137 |     await irAPaso(page, 3);
+      138 |     await cerrarLaEscena(page);
+        at C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\narraciones-fisica.spec.ts:135:46
+
+    Error Context: test-results\narraciones-fisica-narraci-8cc33-o-dicho-a-la-física-y-al-3D-chromium\error-context.md
+
+
+[4/7] [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración subida: de lo dicho a la física y al 3D
+  4) [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración subida: de lo dicho a la física y al 3D 
+
+    Test was interrupted.
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByTestId('escena')
+    Expected substring: "vehículo"
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" getByTestId('escena') with timeout 180000ms
+      - waiting for getByTestId('escena')
+      - Test ended.
+
+
+      133 |     await page.getByTestId("narracion").fill(n.texto);
+      134 |     await page.getByTestId("leer-narracion").click();
+    > 135 |     await expect(page.getByTestId("escena")).toContainText("vehículo", { timeout: 180_000 });
+          |                                              ^
+      136 |     await contestarPreguntas(page);
+      137 |     await irAPaso(page, 3);
+      138 |     await cerrarLaEscena(page);
+        at C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\narraciones-fisica.spec.ts:135:46
+
+    Error Context: test-results\narraciones-fisica-narraci-7e027-o-dicho-a-la-física-y-al-3D-chromium\error-context.md
+
+
+  3 failed
+    [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración arbol: de lo dicho a la física y al 3D 
+    [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración poste: de lo dicho a la física y al 3D 
+    [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración puente: de lo dicho a la física y al 3D 
+  1 interrupted
+    [chromium] › e2e\narraciones-fisica.spec.ts:126:7 › narración subida: de lo dicho a la física y al 3D 
+  3 did not run
+¿Desea terminar el trabajo por lotes (S/N)? Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
+
+  × "pnpm recursive exec" failed in C:\Users\MrKan\Documents\reto cesvi
+  │ v5\Croquis\apps\web
+
