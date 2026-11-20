@@ -1,7 +1,7 @@
 # Paso: ejemplos-antes
 # Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/ejemplos-produccion.ps1
 # Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
-# Inicio: 2026-11-20 12:00:28
+# Inicio: 2026-11-20 14:42:24
 
 
 Running 1 test using 1 worker
@@ -31,4 +31,4 @@ Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
   │ v5\Croquis\apps\web
 
 
-# Fin: 2026-11-20 12:01:46 · falló (código 1) · 1.3 min
+# Fin: 2026-11-20 14:43:38 · falló (código 1) · 1.2 min
