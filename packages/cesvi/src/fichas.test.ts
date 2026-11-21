@@ -56,6 +56,11 @@ describe("la masa del modelo leído (René, 2026-11-20)", () => {
     expect(masaDeModelo(veh("V1", "Honda", "CR-V", "suv_compacta"))!.masa_kg).toBe(1590);
     expect(masaDeModelo(veh("V1", "Mazda", "3", "sedan_mediano"))!.masa_kg).toBe(1405);
     expect(masaDeModelo(veh("V1", "Ford", "Ranger", "pickup"))!.masa_kg).toBe(1923);
+    // De otro mercado: el supuesto lo dice, con la URL de la ficha.
+    expect(masaDeModelo(veh("V1", "Ford", "Ranger", "pickup"))!.fuente).toMatch(
+      /mercado de EE\. UU\.\), consultada el 2026-11-21: https:\/\/www\.fromtheroad\.ford\.com\//,
+    );
+    expect(masaDeModelo(veh("V1", "Mazda", "3", "sedan_mediano"))!.fuente).not.toMatch(/mercado/);
     expect(masaDeModelo(veh("V1", "Toyota", "Hilux", "pickup"))!.fuente).toMatch(
       /^masa en vacío .*https:\/\//,
     );
