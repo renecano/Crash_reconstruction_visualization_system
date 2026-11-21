@@ -95,7 +95,12 @@ export type CodigoErrorVisor = (typeof CODIGOS_ERROR_VISOR)[number];
 /** Lo que Unity le manda a la web. */
 export interface MensajesDeUnity {
   listo: { version: string };
-  cargado: { escena_id: string };
+  /**
+   * `omitidos` (desde el build de la batería de ciudad, 2026-11-20): lo que el 3D no pudo dibujar y
+   * omitió para no caer al visor de respaldo, una línea por elemento y causa. Los builds anteriores no
+   * lo mandan.
+   */
+  cargado: { escena_id: string; omitidos?: string[] };
   tiempo: { t: number };
   camara: { modo: CamaraVisor };
   /** `png` es la imagen en base64, sin el prefijo `data:`. */

@@ -254,10 +254,19 @@ export function VisorUnity({
   const turno = useRef(0);
   const pedida = useRef<{ objetivo: typeof objetivo; relieve: RelieveCaso } | null>(null);
   const cargando = useRef(false);
+  /**
+   * Una carga en Unity a la vez (René, 2026-11-20): una escena nueva mientras Unity carga la anterior
+   * (las calles del mapa llegan después) espera a que termine y entonces va, solo la última. Unity no
+   * dice de qué carga es cada respuesta; antes, el «error» de la vieja tumbaba la nueva.
+   */
+  const enUnity = useRef(false);
   const [vueltas, setVueltas] = useState(0);
+  /** Lo que el 3D omitió de este caso (un elemento con un dato faltante): se le dice al perito. */
+  const [omitidos, setOmitidos] = useState<string[]>([]);
   useEffect(() => {
     if (!puente || dormir) return;
     if (pedida.current?.objetivo === objetivo && pedida.current.relieve === relieve) return;
+    if (enUnity.current) return;
     // Al alternar entre la reconstrucción y una versión (ronda 4) se queda el mismo instante.
     const mantener = pedida.current !== null && pedida.current.objetivo.clave !== objetivo.clave;
     pedida.current = { objetivo, relieve };
@@ -307,13 +316,22 @@ export function VisorUnity({
         ...(objetivo.fantasma ? { fantasma: objetivo.fantasma } : {}),
       } as Caso3D;
       marcar("cargar_caso");
+      enUnity.current = true;
       // El humo de las tandas: el paquete exacto que recibe Unity, para reproducir un caso que se traba.
       if ((window as unknown as { __croquisDiagnostico?: boolean }).__croquisDiagnostico)
         console.debug(`[croquis] paquete-3d ${JSON.stringify(conExtras)}`);
-      await puente.cargar(conExtras);
+      let omitidosDelCaso: string[];
+      try {
+        omitidosDelCaso = await puente.cargar(conExtras);
+      } finally {
+        enUnity.current = false;
+        // Si llegó otra escena mientras Unity cargaba, ahora va.
+        setVueltas((v) => v + 1);
+      }
       pisoEnviado.current = p ? p.imagenMapa : null;
       marcar("caso_cargado");
       if (mio !== turno.current) return;
+      setOmitidos(omitidosDelCaso);
       setCargada(objetivo);
       // Un caso recién cargado empieza desde su inicio, a velocidad normal; al alternar con una
       // versión, en el mismo instante (dentro de lo que dura la otra) y con la misma velocidad.
@@ -366,9 +384,9 @@ export function VisorUnity({
         void puente.cerrar();
         setPuente(null);
       });
-    // `vClave` sale de `objetivo`.
+    // `vClave` sale de `objetivo`; `vueltas`, para la escena que esperó a que Unity terminara.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [puente, objetivo, relieve, dormir]);
+  }, [puente, objetivo, relieve, dormir, vueltas]);
 
   /** Manda el piso a Unity: lo que se ve en vivo, o el mapa solo (para el video). */
   const enviarPiso = (p: PisoUnity | null, vivo: boolean) => {
@@ -601,6 +619,16 @@ export function VisorUnity({
         // Unity lee el tamaño del lienzo; sin esto toma 300×150.
         style={{ width: "100%", height: "100%" }}
       />
+      {/* Lo que el 3D no pudo dibujar y omitió (René, 2026-11-20): el caso abre igual y el perito lo sabe. */}
+      {listo && omitidos.length ? (
+        <p
+          className="t-nota vidrio absolute bottom-3 left-3 z-10 max-w-[60%] rounded-control px-3 py-1.5"
+          data-testid="visor-unity-omitidos"
+        >
+          En el 3D se omitió, por un dato que no se pudo leer: {omitidos.join("; ")}. La
+          reconstrucción no cambia.
+        </p>
+      ) : null}
       {/* Sin la barra al presentar (el instante lo pone el capítulo) y al editar en 3D. En el marco
           del caso, solo con el 3D a la vista: el 2D pone los suyos. */}
       {listo && !tiempo && enMarco && activo ? (

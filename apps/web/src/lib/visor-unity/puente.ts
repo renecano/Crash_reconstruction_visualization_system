@@ -340,7 +340,12 @@ export class PuenteUnity {
     this.instancia.Module?.resumeMainLoop?.();
   }
 
-  async cargar(paquete: unknown, ms = ESPERA_CARGA_MS): Promise<void> {
+  /**
+   * Carga un paquete caso-3d y espera `cargado`; devuelve lo que el 3D omitió. Una a la vez: Unity no
+   * distingue de qué carga es cada respuesta, así que quien llama no manda otra mientras esta sigue
+   * (René, 2026-11-20: Tollocan abría el visor de respaldo por eso).
+   */
+  async cargar(paquete: unknown, ms = ESPERA_CARGA_MS): Promise<string[]> {
     const llega = this.esperar(
       (m): m is Extract<MensajeDeUnity, { tipo: "cargado" }> => m.tipo === "cargado",
       ms,
@@ -348,7 +353,7 @@ export class PuenteUnity {
     this.enviar("cargarCaso", {
       json: typeof paquete === "string" ? paquete : JSON.stringify(paquete),
     });
-    await llega;
+    return (await llega).omitidos ?? [];
   }
 
   /**
