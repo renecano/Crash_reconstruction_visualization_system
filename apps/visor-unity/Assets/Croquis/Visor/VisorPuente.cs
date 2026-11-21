@@ -95,6 +95,13 @@ namespace Croquis.Visor
                 // Cuánto pasó desde que llegó el mensaje hasta avisar «cargado» (incluye el regreso del
                 // await, que en Unity es en el cuadro siguiente: ahí se compilan los shaders de la escena).
                 visor.PasosDeCarga["hasta_cargado"] = Math.Round(reloj.Elapsed.TotalMilliseconds, 1);
+                if (encuadrePendiente != null)
+                {
+                    var zona = encuadrePendiente;
+                    encuadrePendiente = null;
+                    encuadrar(new JObject { { "zona", zona } }.ToString());
+                }
+
                 // Lo que el 3D omitió (un elemento con un dato faltante): la web se lo dice al perito.
                 Enviar("cargado", new JObject
                 {
@@ -159,10 +166,22 @@ namespace Croquis.Visor
             });
         }
 
+        /// <summary>
+        /// Un encuadre pedido a media carga (René, 2026-11-21: la batería de carreras): los límites del caso
+        /// salen al final de la carga, y antes la órbita quedaba en NaN. Se aplica al terminar.
+        /// </summary>
+        private string encuadrePendiente;
+
         public void encuadrar(string texto)
         {
             Campos(texto, j =>
             {
+                if (!visor.Cargado)
+                {
+                    encuadrePendiente = (string)j["zona"];
+                    return;
+                }
+
                 var antes = visor.Camara.Modo;
                 var ahora = visor.Camara.Encuadrar((string)j["zona"]);
                 if (ahora != antes)
@@ -365,6 +384,14 @@ namespace Croquis.Visor
             try
             {
                 var j = JObject.Parse(texto);
+                // Una foto pedida a media carga espera a que el caso esté (con tope): antes fallaba con
+                // «No hay un caso cargado» (René, 2026-11-21).
+                var espera = System.Diagnostics.Stopwatch.StartNew();
+                while (!visor.Cargado && espera.Elapsed.TotalSeconds < 60)
+                {
+                    await Awaitable.NextFrameAsync();
+                }
+
                 var foto = await Captura.TomarAsync(visor, (string)j["vista"], (int?)j["ancho"] ?? 1600, (int?)j["alto"] ?? 900);
                 Enviar("captura", foto);
             }

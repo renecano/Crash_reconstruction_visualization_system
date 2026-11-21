@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="24" result="Passed" total="24" passed="24" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-21 16:16:53Z" end-time="2026-11-21 16:17:17Z" duration="23.3531248">
+  <test-suite type="TestSuite" id="1074" name="Visor de Croquis" fullname="Visor de Croquis" runstate="Runnable" testcasecount="61" result="Passed" start-time="2026-11-21 16:16:53Z" end-time="2026-11-21 16:17:17Z" duration="23.353125" total="24" passed="24" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1069" name="Croquis.TestsCiudad.dll" fullname="D:/Documentos/proyectos/croquis/apps/visor-unity/Library/ScriptAssemblies/Croquis.TestsCiudad.dll" runstate="Runnable" testcasecount="61" result="Passed" start-time="2026-11-21 16:16:53Z" end-time="2026-11-21 16:17:17Z" duration="23.340967" total="24" passed="24" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15832" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1070" name="Croquis" fullname="Croquis" runstate="Runnable" testcasecount="61" result="Passed" start-time="2026-11-21 16:16:53Z" end-time="2026-11-21 16:17:17Z" duration="23.339525" total="24" passed="24" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1071" name="TestsCiudad" fullname="Croquis.TestsCiudad" runstate="Runnable" testcasecount="61" result="Passed" start-time="2026-11-21 16:16:53Z" end-time="2026-11-21 16:17:17Z" duration="23.338394" total="24" passed="24" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1037" name="CiudadEnUnityTests" fullname="Croquis.TestsCiudad.CiudadEnUnityTests" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" testcasecount="29" result="Passed" start-time="2026-11-21 16:16:53Z" end-time="2026-11-21 16:17:17Z" duration="23.336569" total="24" passed="24" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1062" name="LlegaACargado" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" testcasecount="24" result="Passed" start-time="2026-11-21 16:16:53Z" end-time="2026-11-21 16:17:17Z" duration="23.332498" total="24" passed="24" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="240000" />
+              </properties>
+              <test-case id="1038" name="LlegaACargado(&quot;repo-alcance&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-alcance&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="555724837" result="Passed" start-time="2026-11-21 16:16:53Z" end-time="2026-11-21 16:16:57Z" duration="3.516807" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 2.4 ms, leer_paquete 376.1 ms, caracteres_paquete 304056 ms, vehiculos 394.7 ms, cielo 394.9 ms, escenario 755.6 ms, caso_y_terreno 778.9 ms, estacionados_y_personas 2723 ms, antes_de_unir_sombras 2749.1 ms, sombras_unidas 2751.4 ms, piso 2752.2 ms, total 2753.1 ms, primer_cuadro 2760.2 ms, segundo_cuadro 2761 ms
+[puente] {"escena_id":"fx-alcance-tollocan","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1039" name="LlegaACargado(&quot;repo-alcance_frena_antes&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-alcance_frena_antes&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1708434517" result="Passed" start-time="2026-11-21 16:16:57Z" end-time="2026-11-21 16:16:58Z" duration="0.746953" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 58.1 ms, caracteres_paquete 308711 ms, vehiculos 108.9 ms, cielo 108.9 ms, escenario 155.7 ms, caso_y_terreno 159 ms, estacionados_y_personas 435.6 ms, antes_de_unir_sombras 442.5 ms, sombras_unidas 443.8 ms, piso 443.8 ms, total 444 ms, primer_cuadro 446.9 ms, segundo_cuadro 447.5 ms
+[puente] {"escena_id":"fx-alcance-tollocan-frena-antes","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1040" name="LlegaACargado(&quot;repo-alcance_un_dano&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-alcance_un_dano&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1668027701" result="Passed" start-time="2026-11-21 16:16:58Z" end-time="2026-11-21 16:16:58Z" duration="0.700088" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.5 ms, leer_paquete 46.5 ms, caracteres_paquete 304938 ms, vehiculos 96.3 ms, cielo 96.3 ms, escenario 148.2 ms, caso_y_terreno 151.2 ms, estacionados_y_personas 394.8 ms, antes_de_unir_sombras 401.7 ms, sombras_unidas 402.8 ms, piso 402.8 ms, total 402.9 ms, primer_cuadro 405.6 ms, segundo_cuadro 407.4 ms
+[puente] {"escena_id":"fx-alcance-tollocan-un-dano","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1041" name="LlegaACargado(&quot;repo-alcance_volantea&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-alcance_volantea&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="9714695" result="Passed" start-time="2026-11-21 16:16:58Z" end-time="2026-11-21 16:16:59Z" duration="0.664871" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 38.1 ms, caracteres_paquete 308650 ms, vehiculos 96.6 ms, cielo 96.6 ms, escenario 145.4 ms, caso_y_terreno 148.5 ms, estacionados_y_personas 369.7 ms, antes_de_unir_sombras 376.5 ms, sombras_unidas 377.5 ms, piso 377.6 ms, total 377.7 ms, primer_cuadro 380.3 ms, segundo_cuadro 380.9 ms
+[puente] {"escena_id":"fx-alcance-tollocan-volantea","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1042" name="LlegaACargado(&quot;repo-arbol_velocidad_declarada&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-arbol_velocidad_declarada&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="400799157" result="Passed" start-time="2026-11-21 16:16:59Z" end-time="2026-11-21 16:17:00Z" duration="0.622991" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.2 ms, leer_paquete 48.8 ms, caracteres_paquete 268881 ms, vehiculos 76.9 ms, cielo 76.9 ms, escenario 122 ms, caso_y_terreno 128.9 ms, estacionados_y_personas 328.7 ms, antes_de_unir_sombras 335 ms, sombras_unidas 335.1 ms, piso 335.1 ms, total 335.2 ms, primer_cuadro 336.1 ms, segundo_cuadro 336.5 ms
+[puente] {"escena_id":"fx-objeto-fijo-arbol","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1043" name="LlegaACargado(&quot;repo-axa_agentes&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-axa_agentes&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="700695761" result="Passed" start-time="2026-11-21 16:17:00Z" end-time="2026-11-21 16:17:00Z" duration="0.820179" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.3 ms, leer_paquete 51.5 ms, caracteres_paquete 398923 ms, vehiculos 90.5 ms, cielo 90.5 ms, escenario 320.5 ms, caso_y_terreno 322.6 ms, estacionados_y_personas 322.6 ms, antes_de_unir_sombras 333.8 ms, sombras_unidas 335.3 ms, piso 335.4 ms, total 335.5 ms, primer_cuadro 524.8 ms, segundo_cuadro 526.3 ms
+[puente] {"escena_id":"caso-nuevo-agentes","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1044" name="LlegaACargado(&quot;repo-axa_alcance&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-axa_alcance&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="939695293" result="Passed" start-time="2026-11-21 16:17:00Z" end-time="2026-11-21 16:17:01Z" duration="0.501416" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.1 ms, leer_paquete 27 ms, caracteres_paquete 264561 ms, vehiculos 64.1 ms, cielo 64.2 ms, escenario 108.7 ms, caso_y_terreno 110.7 ms, estacionados_y_personas 110.8 ms, antes_de_unir_sombras 122.9 ms, sombras_unidas 124 ms, piso 124 ms, total 124.1 ms, primer_cuadro 227.5 ms, segundo_cuadro 228.6 ms
+[puente] {"escena_id":"axa-alcance","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1045" name="LlegaACargado(&quot;repo-axa_reposo_lejano&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-axa_reposo_lejano&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="870891093" result="Passed" start-time="2026-11-21 16:17:01Z" end-time="2026-11-21 16:17:01Z" duration="0.501962" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.1 ms, leer_paquete 26.6 ms, caracteres_paquete 264505 ms, vehiculos 63.5 ms, cielo 63.5 ms, escenario 104.7 ms, caso_y_terreno 106.7 ms, estacionados_y_personas 106.7 ms, antes_de_unir_sombras 117.9 ms, sombras_unidas 119 ms, piso 119 ms, total 119.1 ms, primer_cuadro 223.1 ms, segundo_cuadro 224.2 ms
+[puente] {"escena_id":"axa-reposo-lejano","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1046" name="LlegaACargado(&quot;repo-carambola&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-carambola&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1728776062" result="Passed" start-time="2026-11-21 16:17:01Z" end-time="2026-11-21 16:17:02Z" duration="0.741989" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.5 ms, leer_paquete 48.2 ms, caracteres_paquete 321332 ms, vehiculos 110.7 ms, cielo 110.7 ms, escenario 154.7 ms, caso_y_terreno 158.6 ms, estacionados_y_personas 435.5 ms, antes_de_unir_sombras 446.4 ms, sombras_unidas 447.8 ms, piso 447.9 ms, total 448 ms, primer_cuadro 451.7 ms, segundo_cuadro 452.4 ms
+[puente] {"escena_id":"fx-carambola-tollocan","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1047" name="LlegaACargado(&quot;repo-carambola_cadena&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-carambola_cadena&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="188358094" result="Passed" start-time="2026-11-21 16:17:02Z" end-time="2026-11-21 16:17:03Z" duration="0.638887" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.5 ms, leer_paquete 40.3 ms, caracteres_paquete 342075 ms, vehiculos 88.3 ms, cielo 88.3 ms, escenario 132.5 ms, caso_y_terreno 135 ms, estacionados_y_personas 341.4 ms, antes_de_unir_sombras 351.1 ms, sombras_unidas 352.3 ms, piso 352.3 ms, total 352.4 ms, primer_cuadro 356 ms, segundo_cuadro 356.6 ms
+[puente] {"escena_id":"fx-carambola-tollocan-cadena","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1048" name="LlegaACargado(&quot;repo-carambola_orden&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-carambola_orden&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1164759071" result="Passed" start-time="2026-11-21 16:17:03Z" end-time="2026-11-21 16:17:04Z" duration="0.711790" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.6 ms, leer_paquete 37.8 ms, caracteres_paquete 320391 ms, vehiculos 108.6 ms, cielo 108.6 ms, escenario 152.2 ms, caso_y_terreno 155.4 ms, estacionados_y_personas 414.4 ms, antes_de_unir_sombras 424.3 ms, sombras_unidas 425.8 ms, piso 425.8 ms, total 425.9 ms, primer_cuadro 429.1 ms, segundo_cuadro 429.8 ms
+[puente] {"escena_id":"fx-carambola-tollocan-orden","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1049" name="LlegaACargado(&quot;repo-frontal_curva&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-frontal_curva&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1144930096" result="Passed" start-time="2026-11-21 16:17:04Z" end-time="2026-11-21 16:17:04Z" duration="0.704810" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.6 ms, leer_paquete 50.4 ms, caracteres_paquete 420327 ms, vehiculos 112.1 ms, cielo 112.2 ms, escenario 164.7 ms, caso_y_terreno 168.7 ms, estacionados_y_personas 408.8 ms, antes_de_unir_sombras 417.2 ms, sombras_unidas 417.2 ms, piso 417.2 ms, total 417.3 ms, primer_cuadro 418.6 ms, segundo_cuadro 419 ms
+[puente] {"escena_id":"fx-frontal-curva","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1050" name="LlegaACargado(&quot;repo-glorieta&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-glorieta&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1733991898" result="Passed" start-time="2026-11-21 16:17:04Z" end-time="2026-11-21 16:17:06Z" duration="1.363376" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.9 ms, leer_paquete 48.9 ms, caracteres_paquete 372362 ms, vehiculos 102.5 ms, cielo 102.5 ms, escenario 163.7 ms, caso_y_terreno 166.7 ms, estacionados_y_personas 861.6 ms, antes_de_unir_sombras 868.8 ms, sombras_unidas 871.9 ms, piso 872 ms, total 872.1 ms, primer_cuadro 881.2 ms, segundo_cuadro 887.5 ms
+[puente] {"escena_id":"fx-glorieta-incorporacion","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1051" name="LlegaACargado(&quot;repo-interseccion_toluca&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-interseccion_toluca&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1170858798" result="Passed" start-time="2026-11-21 16:17:06Z" end-time="2026-11-21 16:17:07Z" duration="1.517454" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 8.9 ms, leer_paquete 146.4 ms, caracteres_paquete 1321698 ms, vehiculos 61.7 ms, cielo 61.7 ms, escenario 193.6 ms, caso_y_terreno 197.1 ms, estacionados_y_personas 408.9 ms, antes_de_unir_sombras 415.9 ms, sombras_unidas 426.5 ms, piso 426.5 ms, total 426.7 ms, primer_cuadro 452.6 ms, segundo_cuadro 472.9 ms
+[puente] {"escena_id":"fx-interseccion-toluca","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1052" name="LlegaACargado(&quot;repo-lateral_interseccion&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-lateral_interseccion&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="2116007678" result="Passed" start-time="2026-11-21 16:17:07Z" end-time="2026-11-21 16:17:08Z" duration="0.881987" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.6 ms, leer_paquete 41.3 ms, caracteres_paquete 310576 ms, vehiculos 123.9 ms, cielo 123.9 ms, escenario 180.2 ms, caso_y_terreno 184.3 ms, estacionados_y_personas 424.2 ms, antes_de_unir_sombras 434.5 ms, sombras_unidas 436.9 ms, piso 436.9 ms, total 437 ms, primer_cuadro 442.4 ms, segundo_cuadro 445.6 ms
+[puente] {"escena_id":"fx-lateral-interseccion","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1053" name="LlegaACargado(&quot;repo-lateral_puntos_paso&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-lateral_puntos_paso&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="589194976" result="Passed" start-time="2026-11-21 16:17:08Z" end-time="2026-11-21 16:17:09Z" duration="0.772728" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.6 ms, leer_paquete 43.3 ms, caracteres_paquete 311005 ms, vehiculos 110.3 ms, cielo 110.3 ms, escenario 168.1 ms, caso_y_terreno 173.5 ms, estacionados_y_personas 376.9 ms, antes_de_unir_sombras 386.4 ms, sombras_unidas 388.2 ms, piso 388.2 ms, total 388.3 ms, primer_cuadro 393.5 ms, segundo_cuadro 396.5 ms
+[puente] {"escena_id":"fx-lateral-puntos-paso","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1054" name="LlegaACargado(&quot;repo-motociclista&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-motociclista&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="94716990" result="Passed" start-time="2026-11-21 16:17:09Z" end-time="2026-11-21 16:17:09Z" duration="0.682463" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.5 ms, leer_paquete 53.1 ms, caracteres_paquete 311758 ms, vehiculos 84.6 ms, cielo 84.6 ms, escenario 131.5 ms, caso_y_terreno 133.9 ms, estacionados_y_personas 348.5 ms, antes_de_unir_sombras 366.9 ms, sombras_unidas 368.4 ms, piso 368.4 ms, total 368.5 ms, primer_cuadro 372.5 ms, segundo_cuadro 373.1 ms
+[puente] {"escena_id":"fx-motociclista-vuelta","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1055" name="LlegaACargado(&quot;repo-nocturno_lluvia&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-nocturno_lluvia&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="2093913148" result="Passed" start-time="2026-11-21 16:17:09Z" end-time="2026-11-21 16:17:10Z" duration="0.697571" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 2 ms, leer_paquete 55.9 ms, caracteres_paquete 400512 ms, vehiculos 124.8 ms, cielo 124.8 ms, escenario 171.1 ms, caso_y_terreno 176.5 ms, estacionados_y_personas 382.4 ms, antes_de_unir_sombras 392.1 ms, sombras_unidas 393.7 ms, piso 393.7 ms, total 393.8 ms, primer_cuadro 396.5 ms, segundo_cuadro 397.1 ms
+[puente] {"escena_id":"fx-nocturno-lluvia-combi","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1056" name="LlegaACargado(&quot;repo-objeto_fijo_arbol&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-objeto_fijo_arbol&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="870757022" result="Passed" start-time="2026-11-21 16:17:10Z" end-time="2026-11-21 16:17:11Z" duration="0.561650" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1 ms, leer_paquete 26 ms, caracteres_paquete 268482 ms, vehiculos 70 ms, cielo 70 ms, escenario 102.6 ms, caso_y_terreno 106.4 ms, estacionados_y_personas 298.5 ms, antes_de_unir_sombras 304.6 ms, sombras_unidas 304.7 ms, piso 304.7 ms, total 304.8 ms, primer_cuadro 305.7 ms, segundo_cuadro 306.1 ms
+[puente] {"escena_id":"fx-objeto-fijo-arbol","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1057" name="LlegaACargado(&quot;repo-peaton_cruce&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-peaton_cruce&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="462365725" result="Passed" start-time="2026-11-21 16:17:11Z" end-time="2026-11-21 16:17:14Z" duration="3.119695" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 42.1 ms, caracteres_paquete 285634 ms, vehiculos 42.4 ms, cielo 42.4 ms, escenario 94.1 ms, caso_y_terreno 97.1 ms, estacionados_y_personas 439.9 ms, antes_de_unir_sombras 443.9 ms, sombras_unidas 445.6 ms, piso 445.6 ms, total 445.7 ms, primer_cuadro 458.2 ms, segundo_cuadro 459 ms
+[puente] {"escena_id":"fx-peaton-cruce","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1058" name="LlegaACargado(&quot;repo-poste&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-poste&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1345132212" result="Passed" start-time="2026-11-21 16:17:14Z" end-time="2026-11-21 16:17:15Z" duration="0.805329" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.3 ms, leer_paquete 31.2 ms, caracteres_paquete 266665 ms, vehiculos 53.5 ms, cielo 53.5 ms, escenario 89.3 ms, caso_y_terreno 92 ms, estacionados_y_personas 519.3 ms, antes_de_unir_sombras 523.5 ms, sombras_unidas 524.7 ms, piso 524.7 ms, total 524.9 ms, primer_cuadro 527 ms, segundo_cuadro 527.5 ms
+[puente] {"escena_id":"fx-poste-noche","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1059" name="LlegaACargado(&quot;repo-reversa&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-reversa&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1951813922" result="Passed" start-time="2026-11-21 16:17:15Z" end-time="2026-11-21 16:17:15Z" duration="0.642908" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.1 ms, leer_paquete 26.9 ms, caracteres_paquete 216828 ms, vehiculos 99.9 ms, cielo 99.9 ms, escenario 142.2 ms, caso_y_terreno 144.2 ms, estacionados_y_personas 358.4 ms, antes_de_unir_sombras 367.4 ms, sombras_unidas 368.5 ms, piso 368.5 ms, total 368.6 ms, primer_cuadro 373.5 ms, segundo_cuadro 374 ms
+[puente] {"escena_id":"fx-reversa-hidalgo","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1060" name="LlegaACargado(&quot;repo-terraceria_topes&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-terraceria_topes&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="537352312" result="Passed" start-time="2026-11-21 16:17:15Z" end-time="2026-11-21 16:17:16Z" duration="0.717243" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.5 ms, leer_paquete 60.1 ms, caracteres_paquete 323657 ms, vehiculos 97 ms, cielo 97 ms, escenario 157.7 ms, caso_y_terreno 167.1 ms, estacionados_y_personas 396.3 ms, antes_de_unir_sombras 403.2 ms, sombras_unidas 404.3 ms, piso 404.4 ms, total 404.5 ms, primer_cuadro 407.2 ms, segundo_cuadro 407.8 ms
+[puente] {"escena_id":"fx-terraceria-topes","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1061" name="LlegaACargado(&quot;repo-volcadura&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;repo-volcadura&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1580505812" result="Passed" start-time="2026-11-21 16:17:16Z" end-time="2026-11-21 16:17:17Z" duration="0.682073" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.1 ms, leer_paquete 35.3 ms, caracteres_paquete 276718 ms, vehiculos 86.6 ms, cielo 86.6 ms, escenario 140.7 ms, caso_y_terreno 143.3 ms, estacionados_y_personas 388 ms, antes_de_unir_sombras 394.8 ms, sombras_unidas 395.2 ms, piso 395.2 ms, total 395.3 ms, primer_cuadro 396.8 ms, segundo_cuadro 397.3 ms
+[puente] {"escena_id":"fx-volcadura-autopista","omitidos":[],"tipo":"cargado"}
+<b><color=#2EA3FF>MCP-FOR-UNITY</color></b>: [TestRunnerNoThrottle] Restored Interaction Mode after test run.
+Saving results to: C:/Users/René/AppData/LocalLow/Croquis/Visor de Croquis\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

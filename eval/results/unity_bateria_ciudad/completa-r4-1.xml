@@ -1,0 +1,865 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="69" result="Passed" total="69" passed="69" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-21 16:12:47Z" end-time="2026-11-21 16:13:23Z" duration="35.3233239">
+  <test-suite type="TestSuite" id="1119" name="Visor de Croquis" fullname="Visor de Croquis" runstate="Runnable" testcasecount="106" result="Passed" start-time="2026-11-21 16:12:47Z" end-time="2026-11-21 16:13:23Z" duration="35.323324" total="69" passed="69" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1114" name="Croquis.TestsCiudad.dll" fullname="D:/Documentos/proyectos/croquis/apps/visor-unity/Library/ScriptAssemblies/Croquis.TestsCiudad.dll" runstate="Runnable" testcasecount="106" result="Passed" start-time="2026-11-21 16:12:47Z" end-time="2026-11-21 16:13:23Z" duration="35.313058" total="69" passed="69" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="4724" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1115" name="Croquis" fullname="Croquis" runstate="Runnable" testcasecount="106" result="Passed" start-time="2026-11-21 16:12:47Z" end-time="2026-11-21 16:13:23Z" duration="35.311679" total="69" passed="69" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1116" name="TestsCiudad" fullname="Croquis.TestsCiudad" runstate="Runnable" testcasecount="106" result="Passed" start-time="2026-11-21 16:12:47Z" end-time="2026-11-21 16:13:23Z" duration="35.310589" total="69" passed="69" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1037" name="CiudadEnUnityTests" fullname="Croquis.TestsCiudad.CiudadEnUnityTests" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" testcasecount="74" result="Passed" start-time="2026-11-21 16:12:47Z" end-time="2026-11-21 16:13:23Z" duration="35.308954" total="69" passed="69" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1107" name="LlegaACargado" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" testcasecount="69" result="Passed" start-time="2026-11-21 16:12:47Z" end-time="2026-11-21 16:13:23Z" duration="35.304412" total="69" passed="69" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="240000" />
+              </properties>
+              <test-case id="1038" name="LlegaACargado(&quot;r4-cesvi-0221ee4ec4&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-0221ee4ec4&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="679212822" result="Passed" start-time="2026-11-21 16:12:48Z" end-time="2026-11-21 16:12:50Z" duration="2.420241" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+[puente] {"version":"1.3.0","tipo":"listo"}
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+[carga] leer_sobre 2.1 ms, leer_paquete 261.6 ms, caracteres_paquete 241590 ms, vehiculos 327.2 ms, cielo 327.4 ms, escenario 627.1 ms, caso_y_terreno 645.7 ms, estacionados_y_personas 649.3 ms, antes_de_unir_sombras 671.7 ms, sombras_unidas 672.8 ms, piso 673.5 ms, total 674.5 ms, primer_cuadro 1756.1 ms, segundo_cuadro 1757.4 ms
+[puente] {"escena_id":"bateria-cesvi-0221ee4ec4","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1039" name="LlegaACargado(&quot;r4-cesvi-037dde2760&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-037dde2760&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1055228545" result="Passed" start-time="2026-11-21 16:12:50Z" end-time="2026-11-21 16:12:51Z" duration="0.648547" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 37.6 ms, caracteres_paquete 276775 ms, vehiculos 76.6 ms, cielo 76.6 ms, escenario 129.4 ms, caso_y_terreno 134.5 ms, estacionados_y_personas 134.6 ms, antes_de_unir_sombras 141.9 ms, sombras_unidas 143 ms, piso 143.1 ms, total 143.3 ms, primer_cuadro 302.8 ms, segundo_cuadro 306.7 ms
+[puente] {"escena_id":"bateria-cesvi-037dde2760","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1040" name="LlegaACargado(&quot;r4-cesvi-059b27d89d&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-059b27d89d&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1124873415" result="Passed" start-time="2026-11-21 16:12:51Z" end-time="2026-11-21 16:12:51Z" duration="0.470479" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 33.4 ms, caracteres_paquete 278416 ms, vehiculos 46.8 ms, cielo 46.8 ms, escenario 81.9 ms, caso_y_terreno 84.8 ms, estacionados_y_personas 84.9 ms, antes_de_unir_sombras 91 ms, sombras_unidas 91.9 ms, piso 91.9 ms, total 92 ms, primer_cuadro 193.7 ms, segundo_cuadro 195.3 ms
+[puente] {"escena_id":"bateria-cesvi-059b27d89d","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1041" name="LlegaACargado(&quot;r4-cesvi-05a7c05640&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-05a7c05640&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="873217799" result="Passed" start-time="2026-11-21 16:12:51Z" end-time="2026-11-21 16:12:52Z" duration="0.493867" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 33.1 ms, caracteres_paquete 277367 ms, vehiculos 52.5 ms, cielo 52.5 ms, escenario 99.6 ms, caso_y_terreno 102.5 ms, estacionados_y_personas 102.5 ms, antes_de_unir_sombras 108.7 ms, sombras_unidas 109.7 ms, piso 109.7 ms, total 109.9 ms, primer_cuadro 221.5 ms, segundo_cuadro 222.9 ms
+[puente] {"escena_id":"bateria-cesvi-05a7c05640","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1042" name="LlegaACargado(&quot;r4-cesvi-12f0cdba9c&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-12f0cdba9c&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="54978618" result="Passed" start-time="2026-11-21 16:12:52Z" end-time="2026-11-21 16:12:52Z" duration="0.496930" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 33.2 ms, caracteres_paquete 278306 ms, vehiculos 54.2 ms, cielo 54.2 ms, escenario 99.6 ms, caso_y_terreno 102.5 ms, estacionados_y_personas 102.5 ms, antes_de_unir_sombras 108.8 ms, sombras_unidas 109.9 ms, piso 109.9 ms, total 110.4 ms, primer_cuadro 216.7 ms, segundo_cuadro 218.3 ms
+[puente] {"escena_id":"bateria-cesvi-12f0cdba9c","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1043" name="LlegaACargado(&quot;r4-cesvi-147df2914c&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-147df2914c&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1118033559" result="Passed" start-time="2026-11-21 16:12:52Z" end-time="2026-11-21 16:12:53Z" duration="0.484511" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 33.2 ms, caracteres_paquete 277278 ms, vehiculos 55.1 ms, cielo 55.1 ms, escenario 106 ms, caso_y_terreno 108.9 ms, estacionados_y_personas 108.9 ms, antes_de_unir_sombras 115.2 ms, sombras_unidas 116.4 ms, piso 116.4 ms, total 116.5 ms, primer_cuadro 222 ms, segundo_cuadro 223.4 ms
+[puente] {"escena_id":"bateria-cesvi-147df2914c","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1044" name="LlegaACargado(&quot;r4-cesvi-16eb0fba1f&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-16eb0fba1f&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="392891215" result="Passed" start-time="2026-11-21 16:12:53Z" end-time="2026-11-21 16:12:53Z" duration="0.465604" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.2 ms, leer_paquete 29 ms, caracteres_paquete 247651 ms, vehiculos 34.4 ms, cielo 34.4 ms, escenario 81.1 ms, caso_y_terreno 92.8 ms, estacionados_y_personas 92.9 ms, antes_de_unir_sombras 99.3 ms, sombras_unidas 100.4 ms, piso 100.4 ms, total 100.5 ms, primer_cuadro 200 ms, segundo_cuadro 201.4 ms
+[puente] {"escena_id":"bateria-cesvi-16eb0fba1f","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1045" name="LlegaACargado(&quot;r4-cesvi-1bc2829bb6&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-1bc2829bb6&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="613257557" result="Passed" start-time="2026-11-21 16:12:53Z" end-time="2026-11-21 16:12:53Z" duration="0.483271" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1 ms, leer_paquete 32.8 ms, caracteres_paquete 221029 ms, vehiculos 54.3 ms, cielo 54.3 ms, escenario 98.3 ms, caso_y_terreno 102.8 ms, estacionados_y_personas 103.1 ms, antes_de_unir_sombras 106.5 ms, sombras_unidas 107.6 ms, piso 107.6 ms, total 107.7 ms, primer_cuadro 216.1 ms, segundo_cuadro 217.9 ms
+[puente] {"escena_id":"bateria-cesvi-1bc2829bb6","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1046" name="LlegaACargado(&quot;r4-cesvi-2276b03fc0&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-2276b03fc0&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="2068491126" result="Passed" start-time="2026-11-21 16:12:53Z" end-time="2026-11-21 16:12:54Z" duration="0.485918" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.7 ms, leer_paquete 33.3 ms, caracteres_paquete 277960 ms, vehiculos 50.9 ms, cielo 50.9 ms, escenario 94.5 ms, caso_y_terreno 97.6 ms, estacionados_y_personas 97.7 ms, antes_de_unir_sombras 104.1 ms, sombras_unidas 105.4 ms, piso 105.4 ms, total 105.5 ms, primer_cuadro 208.4 ms, segundo_cuadro 209.7 ms
+[puente] {"escena_id":"bateria-cesvi-2276b03fc0","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1047" name="LlegaACargado(&quot;r4-cesvi-240b770de0&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-240b770de0&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1439873938" result="Passed" start-time="2026-11-21 16:12:54Z" end-time="2026-11-21 16:12:54Z" duration="0.468673" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 33.1 ms, caracteres_paquete 278700 ms, vehiculos 52.9 ms, cielo 52.9 ms, escenario 89.3 ms, caso_y_terreno 92.1 ms, estacionados_y_personas 92.2 ms, antes_de_unir_sombras 98.3 ms, sombras_unidas 99.4 ms, piso 99.4 ms, total 99.5 ms, primer_cuadro 202.7 ms, segundo_cuadro 204 ms
+[puente] {"escena_id":"bateria-cesvi-240b770de0","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1048" name="LlegaACargado(&quot;r4-cesvi-285a38dbd1&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-285a38dbd1&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="2030708115" result="Passed" start-time="2026-11-21 16:12:54Z" end-time="2026-11-21 16:12:55Z" duration="0.458388" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1 ms, leer_paquete 22.9 ms, caracteres_paquete 212936 ms, vehiculos 47.5 ms, cielo 47.6 ms, escenario 90.8 ms, caso_y_terreno 90.9 ms, estacionados_y_personas 91 ms, antes_de_unir_sombras 94.4 ms, sombras_unidas 95.5 ms, piso 95.5 ms, total 95.6 ms, primer_cuadro 204 ms, segundo_cuadro 205.7 ms
+[puente] {"escena_id":"bateria-cesvi-285a38dbd1","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1049" name="LlegaACargado(&quot;r4-cesvi-352e083b8a&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-352e083b8a&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="289791049" result="Passed" start-time="2026-11-21 16:12:55Z" end-time="2026-11-21 16:12:55Z" duration="0.482871" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 34 ms, caracteres_paquete 279178 ms, vehiculos 52.4 ms, cielo 52.4 ms, escenario 94.3 ms, caso_y_terreno 97.3 ms, estacionados_y_personas 97.3 ms, antes_de_unir_sombras 103.4 ms, sombras_unidas 104.5 ms, piso 104.5 ms, total 104.7 ms, primer_cuadro 214.9 ms, segundo_cuadro 216.5 ms
+[puente] {"escena_id":"bateria-cesvi-352e083b8a","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1050" name="LlegaACargado(&quot;r4-cesvi-3eab5db876&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-3eab5db876&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="816557775" result="Passed" start-time="2026-11-21 16:12:55Z" end-time="2026-11-21 16:12:56Z" duration="0.490526" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 34.6 ms, caracteres_paquete 278561 ms, vehiculos 50.8 ms, cielo 50.8 ms, escenario 95 ms, caso_y_terreno 97.8 ms, estacionados_y_personas 97.9 ms, antes_de_unir_sombras 104.1 ms, sombras_unidas 105.1 ms, piso 105.2 ms, total 105.3 ms, primer_cuadro 208.1 ms, segundo_cuadro 209.5 ms
+[puente] {"escena_id":"bateria-cesvi-3eab5db876","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1051" name="LlegaACargado(&quot;r4-cesvi-3fa0cd2ba1&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-3fa0cd2ba1&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1066677577" result="Passed" start-time="2026-11-21 16:12:56Z" end-time="2026-11-21 16:12:56Z" duration="0.516051" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.5 ms, leer_paquete 33.2 ms, caracteres_paquete 277759 ms, vehiculos 102.1 ms, cielo 102.1 ms, escenario 136.5 ms, caso_y_terreno 139.5 ms, estacionados_y_personas 139.6 ms, antes_de_unir_sombras 149.5 ms, sombras_unidas 150.7 ms, piso 150.7 ms, total 150.8 ms, primer_cuadro 255 ms, segundo_cuadro 256.7 ms
+[puente] {"escena_id":"bateria-cesvi-3fa0cd2ba1","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1052" name="LlegaACargado(&quot;r4-cesvi-460d7f3120&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-460d7f3120&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1610293214" result="Passed" start-time="2026-11-21 16:12:56Z" end-time="2026-11-21 16:12:57Z" duration="0.469954" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.1 ms, leer_paquete 24.2 ms, caracteres_paquete 213426 ms, vehiculos 54.6 ms, cielo 54.6 ms, escenario 88.8 ms, caso_y_terreno 88.9 ms, estacionados_y_personas 89 ms, antes_de_unir_sombras 94.8 ms, sombras_unidas 95.8 ms, piso 95.8 ms, total 95.9 ms, primer_cuadro 197.7 ms, segundo_cuadro 199.3 ms
+[puente] {"escena_id":"bateria-cesvi-460d7f3120","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1053" name="LlegaACargado(&quot;r4-cesvi-476cf1439b&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-476cf1439b&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="804140106" result="Passed" start-time="2026-11-21 16:12:57Z" end-time="2026-11-21 16:12:57Z" duration="0.448983" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1 ms, leer_paquete 22.4 ms, caracteres_paquete 213400 ms, vehiculos 51.4 ms, cielo 51.4 ms, escenario 85.2 ms, caso_y_terreno 85.4 ms, estacionados_y_personas 85.4 ms, antes_de_unir_sombras 88.6 ms, sombras_unidas 89.6 ms, piso 89.6 ms, total 89.7 ms, primer_cuadro 186 ms, segundo_cuadro 187.3 ms
+[puente] {"escena_id":"bateria-cesvi-476cf1439b","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1054" name="LlegaACargado(&quot;r4-cesvi-4e4d78194f&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-4e4d78194f&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1287395399" result="Passed" start-time="2026-11-21 16:12:57Z" end-time="2026-11-21 16:12:58Z" duration="0.472715" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.2 ms, leer_paquete 29 ms, caracteres_paquete 232701 ms, vehiculos 46.4 ms, cielo 46.4 ms, escenario 89.8 ms, caso_y_terreno 92 ms, estacionados_y_personas 92.1 ms, antes_de_unir_sombras 95.4 ms, sombras_unidas 97.1 ms, piso 97.1 ms, total 97.2 ms, primer_cuadro 207.5 ms, segundo_cuadro 209.1 ms
+[puente] {"escena_id":"bateria-cesvi-4e4d78194f","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1055" name="LlegaACargado(&quot;r4-cesvi-4e9cbd1711&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-4e9cbd1711&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1179017119" result="Passed" start-time="2026-11-21 16:12:58Z" end-time="2026-11-21 16:12:58Z" duration="0.473789" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.5 ms, leer_paquete 32.8 ms, caracteres_paquete 277895 ms, vehiculos 51.8 ms, cielo 51.8 ms, escenario 87 ms, caso_y_terreno 89.9 ms, estacionados_y_personas 90 ms, antes_de_unir_sombras 96.3 ms, sombras_unidas 97.3 ms, piso 97.3 ms, total 97.4 ms, primer_cuadro 200.4 ms, segundo_cuadro 201.7 ms
+[puente] {"escena_id":"bateria-cesvi-4e9cbd1711","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1056" name="LlegaACargado(&quot;r4-cesvi-52de2b4555&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-52de2b4555&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1787522080" result="Passed" start-time="2026-11-21 16:12:58Z" end-time="2026-11-21 16:12:59Z" duration="0.444747" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 0.9 ms, leer_paquete 22.6 ms, caracteres_paquete 212756 ms, vehiculos 42.4 ms, cielo 42.4 ms, escenario 76.8 ms, caso_y_terreno 77 ms, estacionados_y_personas 77 ms, antes_de_unir_sombras 80.5 ms, sombras_unidas 81.6 ms, piso 81.6 ms, total 81.7 ms, primer_cuadro 179.7 ms, segundo_cuadro 181.3 ms
+[puente] {"escena_id":"bateria-cesvi-52de2b4555","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1057" name="LlegaACargado(&quot;r4-cesvi-52fb9f9c5d&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-52fb9f9c5d&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1208102421" result="Passed" start-time="2026-11-21 16:12:59Z" end-time="2026-11-21 16:12:59Z" duration="0.444992" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1 ms, leer_paquete 22.7 ms, caracteres_paquete 212575 ms, vehiculos 48.6 ms, cielo 48.6 ms, escenario 85.1 ms, caso_y_terreno 85.3 ms, estacionados_y_personas 85.3 ms, antes_de_unir_sombras 88.6 ms, sombras_unidas 89.7 ms, piso 89.7 ms, total 89.8 ms, primer_cuadro 187.7 ms, segundo_cuadro 188.9 ms
+[puente] {"escena_id":"bateria-cesvi-52fb9f9c5d","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1058" name="LlegaACargado(&quot;r4-cesvi-581f3c5f7e&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-581f3c5f7e&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="337607422" result="Passed" start-time="2026-11-21 16:12:59Z" end-time="2026-11-21 16:13:00Z" duration="0.465967" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 33 ms, caracteres_paquete 278204 ms, vehiculos 52.1 ms, cielo 52.1 ms, escenario 88.1 ms, caso_y_terreno 91.3 ms, estacionados_y_personas 91.4 ms, antes_de_unir_sombras 97.5 ms, sombras_unidas 98.5 ms, piso 98.5 ms, total 98.7 ms, primer_cuadro 204.2 ms, segundo_cuadro 205.4 ms
+[puente] {"escena_id":"bateria-cesvi-581f3c5f7e","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1059" name="LlegaACargado(&quot;r4-cesvi-5863ef5531&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-5863ef5531&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1502145414" result="Passed" start-time="2026-11-21 16:13:00Z" end-time="2026-11-21 16:13:00Z" duration="0.484827" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 32.9 ms, caracteres_paquete 278430 ms, vehiculos 51.5 ms, cielo 51.5 ms, escenario 92 ms, caso_y_terreno 95.1 ms, estacionados_y_personas 95.1 ms, antes_de_unir_sombras 101.2 ms, sombras_unidas 102.2 ms, piso 102.2 ms, total 102.4 ms, primer_cuadro 205 ms, segundo_cuadro 206.2 ms
+[puente] {"escena_id":"bateria-cesvi-5863ef5531","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1060" name="LlegaACargado(&quot;r4-cesvi-5dd2c6df58&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-5dd2c6df58&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1596093763" result="Passed" start-time="2026-11-21 16:13:00Z" end-time="2026-11-21 16:13:01Z" duration="0.450886" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1 ms, leer_paquete 22.9 ms, caracteres_paquete 211764 ms, vehiculos 52.3 ms, cielo 52.3 ms, escenario 89.4 ms, caso_y_terreno 89.5 ms, estacionados_y_personas 89.6 ms, antes_de_unir_sombras 95.4 ms, sombras_unidas 96.5 ms, piso 96.5 ms, total 96.7 ms, primer_cuadro 193.3 ms, segundo_cuadro 194.7 ms
+[puente] {"escena_id":"bateria-cesvi-5dd2c6df58","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1061" name="LlegaACargado(&quot;r4-cesvi-5dfc9ba3c0&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-5dfc9ba3c0&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1100739232" result="Passed" start-time="2026-11-21 16:13:01Z" end-time="2026-11-21 16:13:01Z" duration="0.528579" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.7 ms, leer_paquete 31.9 ms, caracteres_paquete 283076 ms, vehiculos 96.2 ms, cielo 96.3 ms, escenario 130.5 ms, caso_y_terreno 133.9 ms, estacionados_y_personas 133.9 ms, antes_de_unir_sombras 151.4 ms, sombras_unidas 152.3 ms, piso 152.3 ms, total 152.4 ms, primer_cuadro 253.4 ms, segundo_cuadro 254.7 ms
+[puente] {"escena_id":"bateria-cesvi-5dfc9ba3c0","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1062" name="LlegaACargado(&quot;r4-cesvi-6256dba174&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-6256dba174&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1801797494" result="Passed" start-time="2026-11-21 16:13:01Z" end-time="2026-11-21 16:13:02Z" duration="0.467469" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1 ms, leer_paquete 22.7 ms, caracteres_paquete 211763 ms, vehiculos 52.2 ms, cielo 52.2 ms, escenario 94.5 ms, caso_y_terreno 94.7 ms, estacionados_y_personas 94.7 ms, antes_de_unir_sombras 98 ms, sombras_unidas 99.1 ms, piso 99.1 ms, total 99.2 ms, primer_cuadro 207 ms, segundo_cuadro 208.6 ms
+[puente] {"escena_id":"bateria-cesvi-6256dba174","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1063" name="LlegaACargado(&quot;r4-cesvi-639ce6d42f&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-639ce6d42f&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1568021268" result="Passed" start-time="2026-11-21 16:13:02Z" end-time="2026-11-21 16:13:02Z" duration="0.478782" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.1 ms, leer_paquete 24.5 ms, caracteres_paquete 221219 ms, vehiculos 49.6 ms, cielo 49.6 ms, escenario 95 ms, caso_y_terreno 97.5 ms, estacionados_y_personas 97.6 ms, antes_de_unir_sombras 101 ms, sombras_unidas 102.1 ms, piso 102.2 ms, total 102.3 ms, primer_cuadro 211.8 ms, segundo_cuadro 213.4 ms
+[puente] {"escena_id":"bateria-cesvi-639ce6d42f","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1064" name="LlegaACargado(&quot;r4-cesvi-644837b23b&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-644837b23b&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1169339231" result="Passed" start-time="2026-11-21 16:13:02Z" end-time="2026-11-21 16:13:02Z" duration="0.466554" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.8 ms, leer_paquete 33 ms, caracteres_paquete 276730 ms, vehiculos 51.8 ms, cielo 51.8 ms, escenario 86.4 ms, caso_y_terreno 89.3 ms, estacionados_y_personas 89.3 ms, antes_de_unir_sombras 95.6 ms, sombras_unidas 96.5 ms, piso 96.5 ms, total 96.6 ms, primer_cuadro 193 ms, segundo_cuadro 195 ms
+[puente] {"escena_id":"bateria-cesvi-644837b23b","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1065" name="LlegaACargado(&quot;r4-cesvi-662e6d9423&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-662e6d9423&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="886831236" result="Passed" start-time="2026-11-21 16:13:02Z" end-time="2026-11-21 16:13:03Z" duration="0.573429" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.5 ms, leer_paquete 41.7 ms, caracteres_paquete 278743 ms, vehiculos 123 ms, cielo 123 ms, escenario 166.4 ms, caso_y_terreno 169.7 ms, estacionados_y_personas 169.7 ms, antes_de_unir_sombras 186.8 ms, sombras_unidas 187.7 ms, piso 187.7 ms, total 187.9 ms, primer_cuadro 293.1 ms, segundo_cuadro 294.5 ms
+[puente] {"escena_id":"bateria-cesvi-662e6d9423","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1066" name="LlegaACargado(&quot;r4-cesvi-6c34c6ac79&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-6c34c6ac79&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="284640556" result="Passed" start-time="2026-11-21 16:13:03Z" end-time="2026-11-21 16:13:04Z" duration="0.478290" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.3 ms, leer_paquete 32.2 ms, caracteres_paquete 269399 ms, vehiculos 53.8 ms, cielo 53.8 ms, escenario 89.7 ms, caso_y_terreno 92.5 ms, estacionados_y_personas 92.6 ms, antes_de_unir_sombras 98.7 ms, sombras_unidas 99.8 ms, piso 99.8 ms, total 100 ms, primer_cuadro 202.4 ms, segundo_cuadro 204 ms
+[puente] {"escena_id":"bateria-cesvi-6c34c6ac79","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1067" name="LlegaACargado(&quot;r4-cesvi-71660b61b8&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-71660b61b8&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1374004133" result="Passed" start-time="2026-11-21 16:13:04Z" end-time="2026-11-21 16:13:04Z" duration="0.441703" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 0.9 ms, leer_paquete 23.9 ms, caracteres_paquete 212688 ms, vehiculos 23.5 ms, cielo 23.5 ms, escenario 64.5 ms, caso_y_terreno 64.6 ms, estacionados_y_personas 64.6 ms, antes_de_unir_sombras 68.1 ms, sombras_unidas 69.1 ms, piso 69.1 ms, total 69.2 ms, primer_cuadro 173.2 ms, segundo_cuadro 174.5 ms
+[puente] {"escena_id":"bateria-cesvi-71660b61b8","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1068" name="LlegaACargado(&quot;r4-cesvi-73ea769d2f&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-73ea769d2f&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="65130217" result="Passed" start-time="2026-11-21 16:13:04Z" end-time="2026-11-21 16:13:04Z" duration="0.463024" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 32.8 ms, caracteres_paquete 278388 ms, vehiculos 51.6 ms, cielo 51.6 ms, escenario 85.7 ms, caso_y_terreno 88.6 ms, estacionados_y_personas 88.6 ms, antes_de_unir_sombras 94.8 ms, sombras_unidas 95.7 ms, piso 95.7 ms, total 95.9 ms, primer_cuadro 193.7 ms, segundo_cuadro 195.4 ms
+[puente] {"escena_id":"bateria-cesvi-73ea769d2f","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1069" name="LlegaACargado(&quot;r4-cesvi-7968cc5df9&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-7968cc5df9&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1646925553" result="Passed" start-time="2026-11-21 16:13:04Z" end-time="2026-11-21 16:13:05Z" duration="0.485883" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 31.3 ms, caracteres_paquete 268899 ms, vehiculos 50.5 ms, cielo 50.5 ms, escenario 85 ms, caso_y_terreno 87.8 ms, estacionados_y_personas 87.8 ms, antes_de_unir_sombras 94 ms, sombras_unidas 95.1 ms, piso 95.1 ms, total 95.2 ms, primer_cuadro 195.5 ms, segundo_cuadro 196.8 ms
+[puente] {"escena_id":"bateria-cesvi-7968cc5df9","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1070" name="LlegaACargado(&quot;r4-cesvi-7b8ab3e55e&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-7b8ab3e55e&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1440539880" result="Passed" start-time="2026-11-21 16:13:05Z" end-time="2026-11-21 16:13:05Z" duration="0.488367" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.3 ms, leer_paquete 30.6 ms, caracteres_paquete 261693 ms, vehiculos 100.7 ms, cielo 100.7 ms, escenario 135 ms, caso_y_terreno 137.9 ms, estacionados_y_personas 137.9 ms, antes_de_unir_sombras 157.6 ms, sombras_unidas 158.6 ms, piso 158.6 ms, total 158.7 ms, primer_cuadro 220 ms, segundo_cuadro 221.5 ms
+[puente] {"escena_id":"bateria-cesvi-7b8ab3e55e","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1071" name="LlegaACargado(&quot;r4-cesvi-7d5dbd5fdb&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-7d5dbd5fdb&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1720905959" result="Passed" start-time="2026-11-21 16:13:05Z" end-time="2026-11-21 16:13:06Z" duration="0.523721" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 33.5 ms, caracteres_paquete 277718 ms, vehiculos 89 ms, cielo 89 ms, escenario 132.7 ms, caso_y_terreno 135.7 ms, estacionados_y_personas 135.7 ms, antes_de_unir_sombras 144.3 ms, sombras_unidas 145.6 ms, piso 145.6 ms, total 145.7 ms, primer_cuadro 256.1 ms, segundo_cuadro 257.6 ms
+[puente] {"escena_id":"bateria-cesvi-7d5dbd5fdb","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1072" name="LlegaACargado(&quot;r4-cesvi-84cfa78565&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-84cfa78565&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="333589227" result="Passed" start-time="2026-11-21 16:13:06Z" end-time="2026-11-21 16:13:06Z" duration="0.499053" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 33.4 ms, caracteres_paquete 279485 ms, vehiculos 53.2 ms, cielo 53.2 ms, escenario 103.1 ms, caso_y_terreno 106.1 ms, estacionados_y_personas 106.1 ms, antes_de_unir_sombras 112.2 ms, sombras_unidas 113.2 ms, piso 113.2 ms, total 113.4 ms, primer_cuadro 221.1 ms, segundo_cuadro 222.3 ms
+[puente] {"escena_id":"bateria-cesvi-84cfa78565","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1073" name="LlegaACargado(&quot;r4-cesvi-85b5b83442&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-85b5b83442&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="375448716" result="Passed" start-time="2026-11-21 16:13:06Z" end-time="2026-11-21 16:13:07Z" duration="0.487567" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.5 ms, leer_paquete 33.2 ms, caracteres_paquete 278133 ms, vehiculos 47 ms, cielo 47 ms, escenario 89.9 ms, caso_y_terreno 92.9 ms, estacionados_y_personas 92.9 ms, antes_de_unir_sombras 99.2 ms, sombras_unidas 100.2 ms, piso 100.2 ms, total 100.3 ms, primer_cuadro 201.5 ms, segundo_cuadro 202.6 ms
+[puente] {"escena_id":"bateria-cesvi-85b5b83442","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1074" name="LlegaACargado(&quot;r4-cesvi-8e3a7ac59f&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-8e3a7ac59f&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="911950612" result="Passed" start-time="2026-11-21 16:13:07Z" end-time="2026-11-21 16:13:07Z" duration="0.507738" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.3 ms, leer_paquete 32.3 ms, caracteres_paquete 275242 ms, vehiculos 84.8 ms, cielo 84.8 ms, escenario 122.2 ms, caso_y_terreno 125 ms, estacionados_y_personas 125.1 ms, antes_de_unir_sombras 141.3 ms, sombras_unidas 142.5 ms, piso 142.5 ms, total 142.6 ms, primer_cuadro 243.8 ms, segundo_cuadro 245.4 ms
+[puente] {"escena_id":"bateria-cesvi-8e3a7ac59f","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1075" name="LlegaACargado(&quot;r4-cesvi-9200983dab&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-9200983dab&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="2003865462" result="Passed" start-time="2026-11-21 16:13:07Z" end-time="2026-11-21 16:13:08Z" duration="0.462198" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1 ms, leer_paquete 23 ms, caracteres_paquete 213007 ms, vehiculos 46.1 ms, cielo 46.1 ms, escenario 86.4 ms, caso_y_terreno 86.5 ms, estacionados_y_personas 86.6 ms, antes_de_unir_sombras 89.8 ms, sombras_unidas 90.7 ms, piso 90.7 ms, total 90.8 ms, primer_cuadro 189.7 ms, segundo_cuadro 190.8 ms
+[puente] {"escena_id":"bateria-cesvi-9200983dab","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1076" name="LlegaACargado(&quot;r4-cesvi-9f15522337&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-9f15522337&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1962416109" result="Passed" start-time="2026-11-21 16:13:08Z" end-time="2026-11-21 16:13:08Z" duration="0.571449" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.3 ms, leer_paquete 30.7 ms, caracteres_paquete 264532 ms, vehiculos 64.2 ms, cielo 64.2 ms, escenario 108 ms, caso_y_terreno 111.5 ms, estacionados_y_personas 111.6 ms, antes_de_unir_sombras 117.9 ms, sombras_unidas 118.8 ms, piso 118.9 ms, total 119 ms, primer_cuadro 228.8 ms, segundo_cuadro 233.1 ms
+[puente] {"escena_id":"bateria-cesvi-9f15522337","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1077" name="LlegaACargado(&quot;r4-cesvi-a8b1cf4c43&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-a8b1cf4c43&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1310696556" result="Passed" start-time="2026-11-21 16:13:08Z" end-time="2026-11-21 16:13:09Z" duration="0.524716" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.5 ms, leer_paquete 36.5 ms, caracteres_paquete 314866 ms, vehiculos 64.5 ms, cielo 64.5 ms, escenario 107.4 ms, caso_y_terreno 110.7 ms, estacionados_y_personas 110.7 ms, antes_de_unir_sombras 122.6 ms, sombras_unidas 123.5 ms, piso 123.5 ms, total 123.7 ms, primer_cuadro 231.6 ms, segundo_cuadro 233.2 ms
+[puente] {"escena_id":"bateria-cesvi-a8b1cf4c43","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1078" name="LlegaACargado(&quot;r4-cesvi-a8e0a03cfd&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-a8e0a03cfd&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="949190280" result="Passed" start-time="2026-11-21 16:13:09Z" end-time="2026-11-21 16:13:09Z" duration="0.438259" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1 ms, leer_paquete 23.1 ms, caracteres_paquete 213068 ms, vehiculos 44.7 ms, cielo 44.7 ms, escenario 80.1 ms, caso_y_terreno 80.2 ms, estacionados_y_personas 80.2 ms, antes_de_unir_sombras 83.6 ms, sombras_unidas 84.6 ms, piso 84.6 ms, total 84.7 ms, primer_cuadro 184.6 ms, segundo_cuadro 186.1 ms
+[puente] {"escena_id":"bateria-cesvi-a8e0a03cfd","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1079" name="LlegaACargado(&quot;r4-cesvi-ab666b294f&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-ab666b294f&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1405462988" result="Passed" start-time="2026-11-21 16:13:09Z" end-time="2026-11-21 16:13:10Z" duration="0.484694" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 33.1 ms, caracteres_paquete 277432 ms, vehiculos 51.2 ms, cielo 51.2 ms, escenario 98.2 ms, caso_y_terreno 101.1 ms, estacionados_y_personas 101.1 ms, antes_de_unir_sombras 107.2 ms, sombras_unidas 108.2 ms, piso 108.2 ms, total 108.3 ms, primer_cuadro 213.9 ms, segundo_cuadro 215.4 ms
+[puente] {"escena_id":"bateria-cesvi-ab666b294f","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1080" name="LlegaACargado(&quot;r4-cesvi-aee9753bf1&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-aee9753bf1&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1551441595" result="Passed" start-time="2026-11-21 16:13:10Z" end-time="2026-11-21 16:13:10Z" duration="0.463045" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 32.9 ms, caracteres_paquete 277582 ms, vehiculos 51.4 ms, cielo 51.4 ms, escenario 84.9 ms, caso_y_terreno 87.8 ms, estacionados_y_personas 87.8 ms, antes_de_unir_sombras 94 ms, sombras_unidas 94.8 ms, piso 94.8 ms, total 95 ms, primer_cuadro 198.4 ms, segundo_cuadro 199.8 ms
+[puente] {"escena_id":"bateria-cesvi-aee9753bf1","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1081" name="LlegaACargado(&quot;r4-cesvi-af71476614&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-af71476614&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1814739763" result="Passed" start-time="2026-11-21 16:13:10Z" end-time="2026-11-21 16:13:11Z" duration="0.472425" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.5 ms, leer_paquete 34.4 ms, caracteres_paquete 277895 ms, vehiculos 45.1 ms, cielo 45.1 ms, escenario 79.6 ms, caso_y_terreno 82.6 ms, estacionados_y_personas 82.6 ms, antes_de_unir_sombras 89 ms, sombras_unidas 90.2 ms, piso 90.2 ms, total 90.4 ms, primer_cuadro 189 ms, segundo_cuadro 194.6 ms
+[puente] {"escena_id":"bateria-cesvi-af71476614","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1082" name="LlegaACargado(&quot;r4-cesvi-b641fb6657&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-b641fb6657&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1377898280" result="Passed" start-time="2026-11-21 16:13:11Z" end-time="2026-11-21 16:13:11Z" duration="0.482422" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1 ms, leer_paquete 22.8 ms, caracteres_paquete 211215 ms, vehiculos 48.3 ms, cielo 48.3 ms, escenario 95.1 ms, caso_y_terreno 95.2 ms, estacionados_y_personas 95.2 ms, antes_de_unir_sombras 98.6 ms, sombras_unidas 99.8 ms, piso 99.8 ms, total 99.9 ms, primer_cuadro 206.3 ms, segundo_cuadro 208 ms
+[puente] {"escena_id":"bateria-cesvi-b641fb6657","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1083" name="LlegaACargado(&quot;r4-cesvi-b7834ff8b0&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-b7834ff8b0&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="350493950" result="Passed" start-time="2026-11-21 16:13:11Z" end-time="2026-11-21 16:13:12Z" duration="0.505118" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.5 ms, leer_paquete 32 ms, caracteres_paquete 278023 ms, vehiculos 66 ms, cielo 66 ms, escenario 109.2 ms, caso_y_terreno 112.5 ms, estacionados_y_personas 112.6 ms, antes_de_unir_sombras 119 ms, sombras_unidas 120 ms, piso 120.1 ms, total 120.2 ms, primer_cuadro 231.3 ms, segundo_cuadro 232.8 ms
+[puente] {"escena_id":"bateria-cesvi-b7834ff8b0","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1084" name="LlegaACargado(&quot;r4-cesvi-b7ca573795&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-b7ca573795&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1766324473" result="Passed" start-time="2026-11-21 16:13:12Z" end-time="2026-11-21 16:13:12Z" duration="0.464327" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.5 ms, leer_paquete 33.4 ms, caracteres_paquete 280203 ms, vehiculos 48.8 ms, cielo 48.8 ms, escenario 83.3 ms, caso_y_terreno 86.3 ms, estacionados_y_personas 86.3 ms, antes_de_unir_sombras 92.5 ms, sombras_unidas 93.5 ms, piso 93.5 ms, total 93.6 ms, primer_cuadro 190.8 ms, segundo_cuadro 192.3 ms
+[puente] {"escena_id":"bateria-cesvi-b7ca573795","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1085" name="LlegaACargado(&quot;r4-cesvi-bb774b3897&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-bb774b3897&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1841144662" result="Passed" start-time="2026-11-21 16:13:12Z" end-time="2026-11-21 16:13:13Z" duration="0.413956" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 32.9 ms, caracteres_paquete 274962 ms, vehiculos 34.8 ms, cielo 34.8 ms, escenario 70.6 ms, caso_y_terreno 73.6 ms, estacionados_y_personas 73.6 ms, antes_de_unir_sombras 86.4 ms, sombras_unidas 87.4 ms, piso 87.4 ms, total 87.5 ms, primer_cuadro 143.7 ms, segundo_cuadro 145.1 ms
+[puente] {"escena_id":"bateria-cesvi-bb774b3897","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1086" name="LlegaACargado(&quot;r4-cesvi-bf10fcba2f&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-bf10fcba2f&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="226030424" result="Passed" start-time="2026-11-21 16:13:13Z" end-time="2026-11-21 16:13:13Z" duration="0.485870" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.1 ms, leer_paquete 26 ms, caracteres_paquete 232994 ms, vehiculos 57.3 ms, cielo 57.3 ms, escenario 100.7 ms, caso_y_terreno 102.9 ms, estacionados_y_personas 102.9 ms, antes_de_unir_sombras 108.9 ms, sombras_unidas 110 ms, piso 110 ms, total 110.2 ms, primer_cuadro 218.9 ms, segundo_cuadro 220.6 ms
+[puente] {"escena_id":"bateria-cesvi-bf10fcba2f","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1087" name="LlegaACargado(&quot;r4-cesvi-c6269d800e&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-c6269d800e&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1176327568" result="Passed" start-time="2026-11-21 16:13:13Z" end-time="2026-11-21 16:13:14Z" duration="0.470451" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.5 ms, leer_paquete 33.3 ms, caracteres_paquete 278690 ms, vehiculos 47.2 ms, cielo 47.2 ms, escenario 89.6 ms, caso_y_terreno 92.4 ms, estacionados_y_personas 92.5 ms, antes_de_unir_sombras 98.6 ms, sombras_unidas 99.5 ms, piso 99.6 ms, total 99.7 ms, primer_cuadro 206.6 ms, segundo_cuadro 208.5 ms
+[puente] {"escena_id":"bateria-cesvi-c6269d800e","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1088" name="LlegaACargado(&quot;r4-cesvi-c9ea862641&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-c9ea862641&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="307339229" result="Passed" start-time="2026-11-21 16:13:14Z" end-time="2026-11-21 16:13:14Z" duration="0.453532" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1 ms, leer_paquete 23.3 ms, caracteres_paquete 211682 ms, vehiculos 47 ms, cielo 47 ms, escenario 88.2 ms, caso_y_terreno 88.3 ms, estacionados_y_personas 88.3 ms, antes_de_unir_sombras 91.7 ms, sombras_unidas 92.7 ms, piso 92.7 ms, total 92.8 ms, primer_cuadro 199.7 ms, segundo_cuadro 201.2 ms
+[puente] {"escena_id":"bateria-cesvi-c9ea862641","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1089" name="LlegaACargado(&quot;r4-cesvi-cade1c89cb&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-cade1c89cb&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1603238498" result="Passed" start-time="2026-11-21 16:13:14Z" end-time="2026-11-21 16:13:15Z" duration="0.480241" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.5 ms, leer_paquete 37.9 ms, caracteres_paquete 312705 ms, vehiculos 59.5 ms, cielo 59.5 ms, escenario 93.7 ms, caso_y_terreno 96.9 ms, estacionados_y_personas 97 ms, antes_de_unir_sombras 108.7 ms, sombras_unidas 109.5 ms, piso 109.5 ms, total 109.7 ms, primer_cuadro 210.7 ms, segundo_cuadro 212.3 ms
+[puente] {"escena_id":"bateria-cesvi-cade1c89cb","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1090" name="LlegaACargado(&quot;r4-cesvi-cb04fdb41b&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-cb04fdb41b&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="553184169" result="Passed" start-time="2026-11-21 16:13:15Z" end-time="2026-11-21 16:13:15Z" duration="0.455936" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1 ms, leer_paquete 22.9 ms, caracteres_paquete 212285 ms, vehiculos 51.8 ms, cielo 51.8 ms, escenario 88.3 ms, caso_y_terreno 88.5 ms, estacionados_y_personas 88.5 ms, antes_de_unir_sombras 92.2 ms, sombras_unidas 93.2 ms, piso 93.3 ms, total 93.4 ms, primer_cuadro 193.8 ms, segundo_cuadro 195.3 ms
+[puente] {"escena_id":"bateria-cesvi-cb04fdb41b","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1091" name="LlegaACargado(&quot;r4-cesvi-cd894debf8&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-cd894debf8&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1840095209" result="Passed" start-time="2026-11-21 16:13:15Z" end-time="2026-11-21 16:13:16Z" duration="0.544760" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 33.1 ms, caracteres_paquete 275975 ms, vehiculos 65.7 ms, cielo 65.7 ms, escenario 109 ms, caso_y_terreno 112.1 ms, estacionados_y_personas 112.1 ms, antes_de_unir_sombras 118.7 ms, sombras_unidas 119.7 ms, piso 119.7 ms, total 119.8 ms, primer_cuadro 226.4 ms, segundo_cuadro 230 ms
+[puente] {"escena_id":"bateria-cesvi-cd894debf8","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1092" name="LlegaACargado(&quot;r4-cesvi-ce2e6cce75&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-ce2e6cce75&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="104206825" result="Passed" start-time="2026-11-21 16:13:16Z" end-time="2026-11-21 16:13:16Z" duration="0.473804" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1 ms, leer_paquete 22.7 ms, caracteres_paquete 211297 ms, vehiculos 44 ms, cielo 44 ms, escenario 88.9 ms, caso_y_terreno 89 ms, estacionados_y_personas 89 ms, antes_de_unir_sombras 92.4 ms, sombras_unidas 93.5 ms, piso 93.5 ms, total 93.6 ms, primer_cuadro 202.6 ms, segundo_cuadro 204.2 ms
+[puente] {"escena_id":"bateria-cesvi-ce2e6cce75","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1093" name="LlegaACargado(&quot;r4-cesvi-cf708e9fed&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-cf708e9fed&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1324551055" result="Passed" start-time="2026-11-21 16:13:16Z" end-time="2026-11-21 16:13:17Z" duration="0.444372" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1 ms, leer_paquete 23 ms, caracteres_paquete 213369 ms, vehiculos 42.5 ms, cielo 42.5 ms, escenario 78.6 ms, caso_y_terreno 78.8 ms, estacionados_y_personas 78.8 ms, antes_de_unir_sombras 82.4 ms, sombras_unidas 83.4 ms, piso 83.4 ms, total 83.5 ms, primer_cuadro 179.1 ms, segundo_cuadro 180.8 ms
+[puente] {"escena_id":"bateria-cesvi-cf708e9fed","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1094" name="LlegaACargado(&quot;r4-cesvi-d2c5cede7c&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-d2c5cede7c&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1606618429" result="Passed" start-time="2026-11-21 16:13:17Z" end-time="2026-11-21 16:13:17Z" duration="0.535795" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.5 ms, leer_paquete 33.3 ms, caracteres_paquete 277763 ms, vehiculos 93.8 ms, cielo 93.8 ms, escenario 136.9 ms, caso_y_terreno 140.1 ms, estacionados_y_personas 140.1 ms, antes_de_unir_sombras 148.9 ms, sombras_unidas 149.8 ms, piso 149.8 ms, total 149.9 ms, primer_cuadro 254.7 ms, segundo_cuadro 256 ms
+[puente] {"escena_id":"bateria-cesvi-d2c5cede7c","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1095" name="LlegaACargado(&quot;r4-cesvi-d4b38174d1&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-d4b38174d1&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="24134183" result="Passed" start-time="2026-11-21 16:13:17Z" end-time="2026-11-21 16:13:18Z" duration="0.499556" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.5 ms, leer_paquete 33.4 ms, caracteres_paquete 278793 ms, vehiculos 54.5 ms, cielo 54.5 ms, escenario 99.2 ms, caso_y_terreno 102.2 ms, estacionados_y_personas 102.3 ms, antes_de_unir_sombras 108.4 ms, sombras_unidas 109.4 ms, piso 109.4 ms, total 109.6 ms, primer_cuadro 212.7 ms, segundo_cuadro 214.1 ms
+[puente] {"escena_id":"bateria-cesvi-d4b38174d1","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1096" name="LlegaACargado(&quot;r4-cesvi-d55ce7a8fe&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-d55ce7a8fe&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1218903952" result="Passed" start-time="2026-11-21 16:13:18Z" end-time="2026-11-21 16:13:18Z" duration="0.444494" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1 ms, leer_paquete 24.1 ms, caracteres_paquete 212666 ms, vehiculos 45.4 ms, cielo 45.4 ms, escenario 79.8 ms, caso_y_terreno 80 ms, estacionados_y_personas 80 ms, antes_de_unir_sombras 83.4 ms, sombras_unidas 84.3 ms, piso 84.3 ms, total 84.5 ms, primer_cuadro 185.2 ms, segundo_cuadro 186.8 ms
+[puente] {"escena_id":"bateria-cesvi-d55ce7a8fe","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1097" name="LlegaACargado(&quot;r4-cesvi-d8a73cd0be&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-d8a73cd0be&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="634440997" result="Passed" start-time="2026-11-21 16:13:18Z" end-time="2026-11-21 16:13:18Z" duration="0.489912" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 33.6 ms, caracteres_paquete 278101 ms, vehiculos 50.2 ms, cielo 50.2 ms, escenario 92.8 ms, caso_y_terreno 96 ms, estacionados_y_personas 96.1 ms, antes_de_unir_sombras 103.3 ms, sombras_unidas 104.2 ms, piso 104.2 ms, total 104.3 ms, primer_cuadro 208.7 ms, segundo_cuadro 210.3 ms
+[puente] {"escena_id":"bateria-cesvi-d8a73cd0be","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1098" name="LlegaACargado(&quot;r4-cesvi-d950dda14b&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-d950dda14b&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="2096177975" result="Passed" start-time="2026-11-21 16:13:18Z" end-time="2026-11-21 16:13:19Z" duration="0.461638" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.2 ms, leer_paquete 25.2 ms, caracteres_paquete 234470 ms, vehiculos 50.2 ms, cielo 50.2 ms, escenario 85.4 ms, caso_y_terreno 87.6 ms, estacionados_y_personas 87.6 ms, antes_de_unir_sombras 91 ms, sombras_unidas 92.1 ms, piso 92.1 ms, total 92.2 ms, primer_cuadro 191.4 ms, segundo_cuadro 194 ms
+[puente] {"escena_id":"bateria-cesvi-d950dda14b","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1099" name="LlegaACargado(&quot;r4-cesvi-df6a4b2324&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-df6a4b2324&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1653543626" result="Passed" start-time="2026-11-21 16:13:19Z" end-time="2026-11-21 16:13:20Z" duration="0.591893" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.2 ms, leer_paquete 29.8 ms, caracteres_paquete 260236 ms, vehiculos 92.4 ms, cielo 92.4 ms, escenario 133 ms, caso_y_terreno 135.5 ms, estacionados_y_personas 135.6 ms, antes_de_unir_sombras 144.7 ms, sombras_unidas 145.6 ms, piso 145.6 ms, total 145.7 ms, primer_cuadro 250.7 ms, segundo_cuadro 254.5 ms
+[puente] {"escena_id":"bateria-cesvi-df6a4b2324","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1100" name="LlegaACargado(&quot;r4-cesvi-e9c4e081fe&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-e9c4e081fe&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="328617001" result="Passed" start-time="2026-11-21 16:13:20Z" end-time="2026-11-21 16:13:20Z" duration="0.488095" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.2 ms, leer_paquete 25.9 ms, caracteres_paquete 242684 ms, vehiculos 47.4 ms, cielo 47.4 ms, escenario 91.3 ms, caso_y_terreno 93.2 ms, estacionados_y_personas 93.3 ms, antes_de_unir_sombras 99.7 ms, sombras_unidas 100.8 ms, piso 100.8 ms, total 100.9 ms, primer_cuadro 201.8 ms, segundo_cuadro 203 ms
+[puente] {"escena_id":"bateria-cesvi-e9c4e081fe","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1101" name="LlegaACargado(&quot;r4-cesvi-ec1c390b10&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-ec1c390b10&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="694486993" result="Passed" start-time="2026-11-21 16:13:20Z" end-time="2026-11-21 16:13:20Z" duration="0.468516" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.2 ms, leer_paquete 25.4 ms, caracteres_paquete 240591 ms, vehiculos 46.9 ms, cielo 46.9 ms, escenario 89.8 ms, caso_y_terreno 91.8 ms, estacionados_y_personas 91.9 ms, antes_de_unir_sombras 98.7 ms, sombras_unidas 99.8 ms, piso 99.8 ms, total 100 ms, primer_cuadro 199.6 ms, segundo_cuadro 200.9 ms
+[puente] {"escena_id":"bateria-cesvi-ec1c390b10","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1102" name="LlegaACargado(&quot;r4-cesvi-eed00406c6&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-eed00406c6&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1374743721" result="Passed" start-time="2026-11-21 16:13:20Z" end-time="2026-11-21 16:13:21Z" duration="0.457984" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 36.8 ms, caracteres_paquete 315118 ms, vehiculos 70.1 ms, cielo 70.1 ms, escenario 105.4 ms, caso_y_terreno 108.7 ms, estacionados_y_personas 108.8 ms, antes_de_unir_sombras 120.6 ms, sombras_unidas 121.7 ms, piso 121.7 ms, total 121.9 ms, primer_cuadro 179.7 ms, segundo_cuadro 181.2 ms
+[puente] {"escena_id":"bateria-cesvi-eed00406c6","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1103" name="LlegaACargado(&quot;r4-cesvi-f112d84f11&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-f112d84f11&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="383782562" result="Passed" start-time="2026-11-21 16:13:21Z" end-time="2026-11-21 16:13:21Z" duration="0.449640" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1 ms, leer_paquete 22.9 ms, caracteres_paquete 211494 ms, vehiculos 46 ms, cielo 46 ms, escenario 82.3 ms, caso_y_terreno 82.4 ms, estacionados_y_personas 82.5 ms, antes_de_unir_sombras 85.9 ms, sombras_unidas 87 ms, piso 87 ms, total 87.1 ms, primer_cuadro 183.1 ms, segundo_cuadro 184.4 ms
+[puente] {"escena_id":"bateria-cesvi-f112d84f11","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1104" name="LlegaACargado(&quot;r4-cesvi-f344a46f3f&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-f344a46f3f&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="996734816" result="Passed" start-time="2026-11-21 16:13:21Z" end-time="2026-11-21 16:13:22Z" duration="0.450704" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.2 ms, leer_paquete 24 ms, caracteres_paquete 221083 ms, vehiculos 24.5 ms, cielo 24.5 ms, escenario 68.2 ms, caso_y_terreno 70.9 ms, estacionados_y_personas 71 ms, antes_de_unir_sombras 74.6 ms, sombras_unidas 75.6 ms, piso 75.6 ms, total 75.8 ms, primer_cuadro 182.8 ms, segundo_cuadro 184.5 ms
+[puente] {"escena_id":"bateria-cesvi-f344a46f3f","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1105" name="LlegaACargado(&quot;r4-cesvi-faa8a2bde0&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-faa8a2bde0&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1243135463" result="Passed" start-time="2026-11-21 16:13:22Z" end-time="2026-11-21 16:13:22Z" duration="0.452073" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1 ms, leer_paquete 22.8 ms, caracteres_paquete 213274 ms, vehiculos 44.1 ms, cielo 44.1 ms, escenario 89.9 ms, caso_y_terreno 90 ms, estacionados_y_personas 90 ms, antes_de_unir_sombras 93.3 ms, sombras_unidas 94.5 ms, piso 94.5 ms, total 94.6 ms, primer_cuadro 197.4 ms, segundo_cuadro 199 ms
+[puente] {"escena_id":"bateria-cesvi-faa8a2bde0","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1106" name="LlegaACargado(&quot;r4-cesvi-feef78b49a&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;r4-cesvi-feef78b49a&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="733088350" result="Passed" start-time="2026-11-21 16:13:22Z" end-time="2026-11-21 16:13:23Z" duration="0.486616" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.5 ms, leer_paquete 33.2 ms, caracteres_paquete 278912 ms, vehiculos 51.4 ms, cielo 51.4 ms, escenario 94.8 ms, caso_y_terreno 97.7 ms, estacionados_y_personas 97.8 ms, antes_de_unir_sombras 104 ms, sombras_unidas 104.9 ms, piso 104.9 ms, total 105.1 ms, primer_cuadro 207.4 ms, segundo_cuadro 208.9 ms
+[puente] {"escena_id":"bateria-cesvi-feef78b49a","omitidos":[],"tipo":"cargado"}
+<b><color=#2EA3FF>MCP-FOR-UNITY</color></b>: [TestRunnerNoThrottle] Restored Interaction Mode after test run.
+Saving results to: C:/Users/René/AppData/LocalLow/Croquis/Visor de Croquis\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

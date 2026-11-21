@@ -1,0 +1,6 @@
+{"caso":"axa","respuesta":{"escena_id":"bateria-axa","omitidos":[],"tipo":"cargado"},"ms":4025.0,"errores":[],"avisos":[]}
+{"caso":"ejemplo-alcance-deformacion","respuesta":{"escena_id":"bateria-alcance-deformacion","omitidos":[],"tipo":"cargado"},"ms":272.0,"errores":[],"avisos":[]}
+{"caso":"ejemplo-carambola-lluvia","respuesta":{"escena_id":"bateria-carambola-lluvia","omitidos":[],"tipo":"cargado"},"ms":5317.0,"errores":[],"avisos":[]}
+{"caso":"ejemplo-crucero-noche","respuesta":{"escena_id":"bateria-crucero-noche","omitidos":[],"tipo":"cargado"},"ms":184.0,"errores":[],"avisos":[]}
+{"caso":"ejemplo-poste-terraceria","respuesta":{"escena_id":"bateria-poste-terraceria","omitidos":[],"tipo":"cargado"},"ms":196.0,"errores":[],"avisos":[]}
+{"caso":"ejemplo-reversa-pendiente","respuesta":{"escena_id":"bateria-reversa-pendiente","omitidos":[],"tipo":"cargado"},"ms":207.0,"errores":[],"avisos":[]}

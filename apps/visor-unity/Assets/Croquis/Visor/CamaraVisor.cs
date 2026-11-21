@@ -843,6 +843,12 @@ namespace Croquis.Visor
                         yaw = yawAntes;
                     }
 
+                    // Sin límites del caso todavía (a media carga), la órbita no se mueve a un NaN.
+                    if (float.IsNaN(ojo.x) || float.IsNaN(ojo.y) || float.IsNaN(ojo.z) || float.IsNaN(mira.x) || float.IsNaN(mira.z))
+                    {
+                        return;
+                    }
+
                     camara.transform.position = ojo;
                     camara.transform.LookAt(mira);
                     return;

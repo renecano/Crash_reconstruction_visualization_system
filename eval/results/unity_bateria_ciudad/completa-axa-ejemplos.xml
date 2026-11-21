@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-21 16:11:29Z" end-time="2026-11-21 16:11:41Z" duration="12.4926603">
+  <test-suite type="TestSuite" id="1056" name="Visor de Croquis" fullname="Visor de Croquis" runstate="Runnable" testcasecount="43" result="Passed" start-time="2026-11-21 16:11:29Z" end-time="2026-11-21 16:11:41Z" duration="12.492660" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1051" name="Croquis.TestsCiudad.dll" fullname="D:/Documentos/proyectos/croquis/apps/visor-unity/Library/ScriptAssemblies/Croquis.TestsCiudad.dll" runstate="Runnable" testcasecount="43" result="Passed" start-time="2026-11-21 16:11:29Z" end-time="2026-11-21 16:11:41Z" duration="12.482410" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15880" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1052" name="Croquis" fullname="Croquis" runstate="Runnable" testcasecount="43" result="Passed" start-time="2026-11-21 16:11:29Z" end-time="2026-11-21 16:11:41Z" duration="12.481054" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1053" name="TestsCiudad" fullname="Croquis.TestsCiudad" runstate="Runnable" testcasecount="43" result="Passed" start-time="2026-11-21 16:11:29Z" end-time="2026-11-21 16:11:41Z" duration="12.480065" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1037" name="CiudadEnUnityTests" fullname="Croquis.TestsCiudad.CiudadEnUnityTests" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" testcasecount="11" result="Passed" start-time="2026-11-21 16:11:29Z" end-time="2026-11-21 16:11:41Z" duration="12.478393" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1044" name="LlegaACargado" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-11-21 16:11:29Z" end-time="2026-11-21 16:11:41Z" duration="12.474393" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="240000" />
+              </properties>
+              <test-case id="1038" name="LlegaACargado(&quot;axa&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;axa&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1187215203" result="Passed" start-time="2026-11-21 16:11:29Z" end-time="2026-11-21 16:11:33Z" duration="4.416380" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+[puente] {"version":"1.3.0","tipo":"listo"}
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+[carga] leer_sobre 2.5 ms, leer_paquete 272.5 ms, caracteres_paquete 252033 ms, vehiculos 480.9 ms, cielo 481.2 ms, escenario 1070.3 ms, caso_y_terreno 1089.3 ms, estacionados_y_personas 1093.1 ms, antes_de_unir_sombras 1130 ms, sombras_unidas 1131.2 ms, piso 1131.9 ms, total 1132.9 ms, primer_cuadro 3726 ms, segundo_cuadro 3727.8 ms
+[puente] {"escena_id":"bateria-axa","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1039" name="LlegaACargado(&quot;ejemplo-alcance-deformacion&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;ejemplo-alcance-deformacion&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="810184436" result="Passed" start-time="2026-11-21 16:11:33Z" end-time="2026-11-21 16:11:34Z" duration="0.529311" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 0.9 ms, leer_paquete 39.5 ms, caracteres_paquete 239616 ms, vehiculos 145.2 ms, cielo 145.2 ms, escenario 187.9 ms, caso_y_terreno 189.9 ms, estacionados_y_personas 190 ms, antes_de_unir_sombras 199.7 ms, sombras_unidas 200.8 ms, piso 200.8 ms, total 201 ms, primer_cuadro 229 ms, segundo_cuadro 230.1 ms
+[puente] {"escena_id":"bateria-alcance-deformacion","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1040" name="LlegaACargado(&quot;ejemplo-carambola-lluvia&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;ejemplo-carambola-lluvia&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="136142020" result="Passed" start-time="2026-11-21 16:11:34Z" end-time="2026-11-21 16:11:40Z" duration="6.055528" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[puente] {"p50":2642.0,"tipo":"fps"}
+[carga] leer_sobre 1 ms, leer_paquete 32.4 ms, caracteres_paquete 248233 ms, vehiculos 129.7 ms, cielo 129.7 ms, escenario 219.3 ms, caso_y_terreno 222.1 ms, estacionados_y_personas 222.1 ms, antes_de_unir_sombras 235.4 ms, sombras_unidas 236.7 ms, piso 236.7 ms, total 236.8 ms, primer_cuadro 5280.3 ms, segundo_cuadro 5282.2 ms
+[puente] {"escena_id":"bateria-carambola-lluvia","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1041" name="LlegaACargado(&quot;ejemplo-crucero-noche&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;ejemplo-crucero-noche&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="682434940" result="Passed" start-time="2026-11-21 16:11:40Z" end-time="2026-11-21 16:11:40Z" duration="0.490871" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.2 ms, leer_paquete 34.9 ms, caracteres_paquete 278611 ms, vehiculos 67.4 ms, cielo 67.4 ms, escenario 100.2 ms, caso_y_terreno 105.3 ms, estacionados_y_personas 105.4 ms, antes_de_unir_sombras 112.1 ms, sombras_unidas 113.2 ms, piso 113.2 ms, total 113.3 ms, primer_cuadro 141.5 ms, segundo_cuadro 145.5 ms
+[puente] {"escena_id":"bateria-crucero-noche","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1042" name="LlegaACargado(&quot;ejemplo-poste-terraceria&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;ejemplo-poste-terraceria&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1903782360" result="Passed" start-time="2026-11-21 16:11:40Z" end-time="2026-11-21 16:11:41Z" duration="0.509940" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.2 ms, leer_paquete 35 ms, caracteres_paquete 278978 ms, vehiculos 58.7 ms, cielo 58.7 ms, escenario 118.3 ms, caso_y_terreno 121.2 ms, estacionados_y_personas 121.3 ms, antes_de_unir_sombras 127.3 ms, sombras_unidas 128.3 ms, piso 128.3 ms, total 128.4 ms, primer_cuadro 154.7 ms, segundo_cuadro 158.2 ms
+[puente] {"escena_id":"bateria-poste-terraceria","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1043" name="LlegaACargado(&quot;ejemplo-reversa-pendiente&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;ejemplo-reversa-pendiente&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1581983094" result="Passed" start-time="2026-11-21 16:11:41Z" end-time="2026-11-21 16:11:41Z" duration="0.460505" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 0.9 ms, leer_paquete 30.1 ms, caracteres_paquete 264981 ms, vehiculos 97.3 ms, cielo 97.3 ms, escenario 140.7 ms, caso_y_terreno 142.8 ms, estacionados_y_personas 142.9 ms, antes_de_unir_sombras 149.5 ms, sombras_unidas 150.6 ms, piso 150.6 ms, total 150.7 ms, primer_cuadro 172.6 ms, segundo_cuadro 174.2 ms
+[puente] {"escena_id":"bateria-reversa-pendiente","omitidos":[],"tipo":"cargado"}
+<b><color=#2EA3FF>MCP-FOR-UNITY</color></b>: [TestRunnerNoThrottle] Restored Interaction Mode after test run.
+Saving results to: C:/Users/René/AppData/LocalLow/Croquis/Visor de Croquis\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

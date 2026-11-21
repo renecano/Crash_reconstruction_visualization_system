@@ -12,7 +12,9 @@
 param(
   [string]$Etiqueta = "rama",
   [string]$Paquetes = "",
-  [string]$Filtro = "Croquis.TestsCiudad"
+  [string]$Filtro = "Croquis.TestsCiudad",
+  # Solo esas pruebas (p. ej. «Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado»), con -testFilter.
+  [string]$Pruebas = ""
 )
 . (Join-Path $PSScriptRoot "comun.ps1")
 
@@ -30,7 +32,7 @@ $log = Join-Path $salidaDir "$Etiqueta.unity.log"
 $xml = Join-Path $salidaDir "$Etiqueta.xml"
 $editor = Get-EditorUnity
 $inicio = Get-Date
-$p = Start-Process -FilePath $editor -Wait -PassThru -NoNewWindow -ArgumentList @(
+$argumentos = @(
   "-batchmode",
   "-projectPath", "`"$script:Proyecto`"",
   "-runTests", "-testPlatform", "PlayMode",
@@ -38,6 +40,8 @@ $p = Start-Process -FilePath $editor -Wait -PassThru -NoNewWindow -ArgumentList 
   "-testResults", "`"$xml`"",
   "-logFile", "`"$log`""
 )
+if ($Pruebas) { $argumentos += @("-testFilter", $Pruebas) }
+$p = Start-Process -FilePath $editor -Wait -PassThru -NoNewWindow -ArgumentList $argumentos
 $min = [math]::Round(((Get-Date) - $inicio).TotalMinutes, 1)
 $vivos = @(Get-Process -Name "Unity" -ErrorAction SilentlyContinue)
 Write-Output "Unity terminó con código $($p.ExitCode) en $min min (2 = alguna prueba falló). Unity vivo después: $($vivos.Count)."
