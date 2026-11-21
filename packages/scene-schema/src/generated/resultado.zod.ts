@@ -405,6 +405,8 @@ export const ObjetoEscena = z.strictObject({
     "contenedor",
     "senal",
     "parada_autobus",
+    "barrera",
+    "guarnicion",
     "otro",
   ]),
   forma: z.enum(["arbol", "cilindro", "caja", "senal"]),

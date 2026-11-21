@@ -272,7 +272,7 @@ namespace Croquis.Visor
             // de tabique). Sus medidas son las del objeto; sin clase, un sedán.
             foreach (var o in r.Objetos ?? new ResultadoObjeto[0])
             {
-                if (o.Tipo != IndigoTipo.VehiculoEstacionado)
+                if (o.Tipo != PurpleTipo.VehiculoEstacionado)
                 {
                     continue;
                 }

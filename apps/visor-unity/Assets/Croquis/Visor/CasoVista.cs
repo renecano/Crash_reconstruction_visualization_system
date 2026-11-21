@@ -110,7 +110,7 @@ namespace Croquis.Visor
                         default:
                         {
                             // Un vehículo estacionado no es una caja: lo arma `VisorCaso` con el modelo de su clase.
-                            if (o.Tipo == IndigoTipo.VehiculoEstacionado)
+                            if (o.Tipo == PurpleTipo.VehiculoEstacionado)
                             {
                                 break;
                             }

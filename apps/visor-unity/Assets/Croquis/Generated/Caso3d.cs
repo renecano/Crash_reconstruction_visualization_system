@@ -4710,7 +4710,7 @@ namespace Croquis.Generated
         public double RumboDeg { get; set; }
 
         [JsonProperty("tipo")]
-        public IndigoTipo Tipo { get; set; }
+        public PurpleTipo Tipo { get; set; }
 
         [JsonProperty("x")]
         public double X { get; set; }
@@ -5804,8 +5804,6 @@ namespace Croquis.Generated
 
     public enum Forma { Arbol, Caja, Cilindro, Senal };
 
-    public enum IndigoTipo { Arbol, Barda, Contenedor, Muro, Otro, ParadaAutobus, Poste, Puesto, Senal, VehiculoEstacionado };
-
     public enum AlcanceDeteccionNocturnaTipo { Medido, Primaria, Relato, Secundaria, Supuesto };
 
     public enum FaseFase { Caminando, DePie, Deslizamiento, Montado, Reposo, Vuelo };
@@ -5936,7 +5934,6 @@ namespace Croquis.Generated
                 ParametroConverter.Singleton,
                 ParametroUnidadConverter.Singleton,
                 FormaConverter.Singleton,
-                IndigoTipoConverter.Singleton,
                 AlcanceDeteccionNocturnaTipoConverter.Singleton,
                 FaseFaseConverter.Singleton,
                 OrigenRigidezConverter.Singleton,
@@ -13052,87 +13049,6 @@ namespace Croquis.Generated
         }
 
         public static readonly FormaConverter Singleton = new FormaConverter();
-    }
-
-    internal class IndigoTipoConverter : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(IndigoTipo) || t == typeof(IndigoTipo?);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            if (reader.TokenType == JsonToken.Null) return null;
-            var value = serializer.Deserialize<string>(reader);
-            switch (value)
-            {
-                case "arbol":
-                    return IndigoTipo.Arbol;
-                case "barda":
-                    return IndigoTipo.Barda;
-                case "contenedor":
-                    return IndigoTipo.Contenedor;
-                case "muro":
-                    return IndigoTipo.Muro;
-                case "otro":
-                    return IndigoTipo.Otro;
-                case "parada_autobus":
-                    return IndigoTipo.ParadaAutobus;
-                case "poste":
-                    return IndigoTipo.Poste;
-                case "puesto":
-                    return IndigoTipo.Puesto;
-                case "senal":
-                    return IndigoTipo.Senal;
-                case "vehiculo_estacionado":
-                    return IndigoTipo.VehiculoEstacionado;
-            }
-            throw new Exception("Cannot unmarshal type IndigoTipo");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            if (untypedValue == null)
-            {
-                serializer.Serialize(writer, null);
-                return;
-            }
-            var value = (IndigoTipo)untypedValue;
-            switch (value)
-            {
-                case IndigoTipo.Arbol:
-                    serializer.Serialize(writer, "arbol");
-                    return;
-                case IndigoTipo.Barda:
-                    serializer.Serialize(writer, "barda");
-                    return;
-                case IndigoTipo.Contenedor:
-                    serializer.Serialize(writer, "contenedor");
-                    return;
-                case IndigoTipo.Muro:
-                    serializer.Serialize(writer, "muro");
-                    return;
-                case IndigoTipo.Otro:
-                    serializer.Serialize(writer, "otro");
-                    return;
-                case IndigoTipo.ParadaAutobus:
-                    serializer.Serialize(writer, "parada_autobus");
-                    return;
-                case IndigoTipo.Poste:
-                    serializer.Serialize(writer, "poste");
-                    return;
-                case IndigoTipo.Puesto:
-                    serializer.Serialize(writer, "puesto");
-                    return;
-                case IndigoTipo.Senal:
-                    serializer.Serialize(writer, "senal");
-                    return;
-                case IndigoTipo.VehiculoEstacionado:
-                    serializer.Serialize(writer, "vehiculo_estacionado");
-                    return;
-            }
-            throw new Exception("Cannot marshal type IndigoTipo");
-        }
-
-        public static readonly IndigoTipoConverter Singleton = new IndigoTipoConverter();
     }
 
     internal class AlcanceDeteccionNocturnaTipoConverter : JsonConverter
