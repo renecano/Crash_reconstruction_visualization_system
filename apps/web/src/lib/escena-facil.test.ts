@@ -28,6 +28,7 @@ import {
   PALETA_VEHICULOS,
   pasoActual,
   pasosEscena,
+  terrenoMarcado,
   poseDe,
   ponerEnLaCalle,
   proponerChoque,
@@ -253,6 +254,24 @@ describe("lo que sale de las calles del mapa", () => {
       "oeste",
       "norte",
     ]);
+  });
+});
+
+describe("el terreno que narra la pendiente (René, 2026-11-21)", () => {
+  it("el relieve real de la narración no da por contestado el terreno: el tope todavía se marca", () => {
+    const conRelieve = { ...e0, terreno: { relieve: { fuente: "dem" } } } as typeof e0;
+    expect(terrenoMarcado(conRelieve)).toBe(false);
+    const conTope = {
+      ...e0,
+      terreno: { relieve: { fuente: "dem" }, topes: [{ id: "t1" }] },
+    } as unknown as typeof e0;
+    expect(terrenoMarcado(conTope)).toBe(true);
+    const paso = (e: typeof e0) =>
+      pasosEscena(e, impactos, { desconocidos: [], direccionesNoSe: [], c1: {} }).find(
+        (p) => p.tipo === "terreno",
+      );
+    expect(paso(conRelieve)).toMatchObject({ hecho: false });
+    expect(paso(conTope)).toMatchObject({ hecho: true });
   });
 });
 

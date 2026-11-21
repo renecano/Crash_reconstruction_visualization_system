@@ -695,6 +695,12 @@ export const poseDe = (e: Expediente, v: string, fase: "impacto" | "final" | "in
  * Los pasos de la escena, en orden: cada choque (uno en dos vehículos; en una carambola, uno por
  * impacto) y, por cada vehículo en el orden de los impactos, por dónde venía y dónde quedó.
  */
+/** Si el expediente ya trae algo del terreno marcado (no solo el relieve real que pidió la narración). */
+export function terrenoMarcado(e: Expediente): boolean {
+  const t = e.terreno;
+  return Boolean(t?.superficies?.length || t?.ondulaciones?.length || t?.topes?.length);
+}
+
 export function pasosEscena(
   e: Expediente,
   impactos: readonly ImpactoAColocar[],
@@ -733,7 +739,13 @@ export function pasosEscena(
       tipo: "paso",
       hecho: omitidas || s.c1.pasosListos === true || puntosDePaso(e).length > 0,
     },
-    { tipo: "terreno", hecho: omitidas || s.c1.terrenoListo === true || Boolean(e.terreno) },
+    {
+      tipo: "terreno",
+      // Lo marcado (zonas, ondulaciones, topes) cuenta como contestado; el relieve real que pide la
+      // narración («con pendiente») no: el perito todavía tiene que poder marcar el tope que narró
+      // (René, 2026-11-21: la reversa perdía su tope en la t5c).
+      hecho: omitidas || s.c1.terrenoListo === true || terrenoMarcado(e),
+    },
   ];
   return [...choques, ...vehiculos, ...c1];
 }
