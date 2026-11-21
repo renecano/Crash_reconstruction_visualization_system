@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { expect, test } from "./base";
-import { irAPaso, mapaFacil, sinRed } from "./ayuda-recorrido";
+import { contestarMasas, irAPaso, mapaFacil, sinRed } from "./ayuda-recorrido";
 
 /**
  * La escena, propuesta 1 elegida por René (2026-11-18): Croquis la arma con lo que leyó y el perito la
@@ -46,12 +46,8 @@ test("@flujo /cesvi: la escena ya armada se revisa en su lista y llega a la reco
   // La clase ya sale del modelo leído («tipo Jetta», ronda 4); se contesta solo si se pregunta.
   const clase = page.getByTestId("opcion-clase-V1-sedan_compacto");
   if (await clase.isVisible().catch(() => false)) await clase.click();
-  await page.getByTestId("no-se-masa-V1").click();
-  await page.getByTestId("valor-masa-V2").fill("1450");
-  await page
-    .getByTestId("pregunta-masa-V2")
-    .getByRole("button", { name: "Usar", exact: true })
-    .click();
+  // La masa también sale del modelo leído (ficha del fabricante, René 2026-11-21): solo si se pregunta.
+  await contestarMasas(page);
   await sinRed(page);
   await irAPaso(page, 3);
 

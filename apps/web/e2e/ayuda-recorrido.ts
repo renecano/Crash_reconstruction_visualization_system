@@ -256,3 +256,17 @@ export async function cerrarLaEscena(page: Page) {
     await expect(lista).toBeVisible({ timeout: 30_000 });
   }
 }
+
+/**
+ * Las masas del crucero de ejemplo, si se preguntan: la de V1 con «No sé» y la de V2 con 1450 kg.
+ * Con la ficha del fabricante del modelo leído (René, 2026-11-21) ya no se preguntan.
+ */
+export async function contestarMasas(page: Page) {
+  const nose = page.getByTestId("no-se-masa-V1");
+  if (await nose.isVisible().catch(() => false)) await nose.click();
+  const v2 = page.getByTestId("pregunta-masa-V2");
+  if (await v2.isVisible().catch(() => false)) {
+    await page.getByTestId("valor-masa-V2").fill("1450");
+    await v2.getByRole("button", { name: "Usar", exact: true }).click();
+  }
+}
