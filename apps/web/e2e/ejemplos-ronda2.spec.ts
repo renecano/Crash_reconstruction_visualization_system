@@ -35,6 +35,8 @@ function escribirSalida(texto: string): void {
   writeFileSync(SALIDA, texto);
 }
 const CON_UNITY = process.env.CROQUIS_UNITY === "1";
+/** Dónde guardar el .croquis de cada ejemplo (t6), relativa a la raíz; sin ella, no se guarda. */
+const CASOS = process.env.CROQUIS_CASOS ? resolve(RAIZ, process.env.CROQUIS_CASOS) : null;
 
 // Una acción que no encuentra su control falla pronto, con el nombre de lo que faltó.
 test.use({
@@ -170,6 +172,17 @@ test("las cinco narraciones de ejemplo, de punta a punta", async ({ page, baseUR
       .catch(() => false);
     await page.waitForTimeout(1500);
     await foto("6-dictamen");
+    // t6 (René, 2026-11-21): el caso tal como lo armó el navegador, para reproducir su cifra sin
+    // navegador (en la t5c el alcance dio 66 aquí y 50 en la tabla con el mismo código).
+    if (CASOS) {
+      mkdirSync(CASOS, { recursive: true });
+      const [descarga] = await Promise.all([
+        page.waitForEvent("download", { timeout: 60_000 }),
+        page.getByTestId("guardar-caso").click(),
+      ]).catch(() => [null] as const);
+      if (descarga) await descarga.saveAs(join(CASOS, `${r.clave}.croquis`));
+      else fila.notas.push("No se pudo descargar el caso (.croquis).");
+    }
     resultados.push(fila);
   }
   escribirSalida(

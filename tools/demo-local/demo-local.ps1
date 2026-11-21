@@ -23,15 +23,22 @@
     -Despues narraciones   sirve, corre las seis narraciones y el caso encimado (t5) en Chrome y apaga
     -Despues tollocan      sirve, corre el caso de Tollocan de René de punta a punta (t5) en Chrome y apaga
     -Despues humo          sirve, lleva AXA y Tollocan de La escena nueva al 3D de Unity (humo de la tanda) y apaga
-    -Despues ejemplos      sirve, corre los cinco ejemplos con el 3D (t5) en Chrome y apaga
+    -Despues ejemplos      sirve, corre los cinco ejemplos con el 3D (t5) en Chrome y apaga; con -Casos,
+                           guarda ahí el .croquis de cada uno (t6)
+    -Despues recorrido     sirve, toma las fotos del recorrido de la app (t6: juegos «publico» y
+                           «solo-cesvi», 2560×1440, Unity en calidad alta) en -Salida y apaga
     -Despues video-3d      sirve, graba «Descargar video» del 3D de AXA con el Unity real en Chrome y
                            en Edge (e2e/video-3d-real.spec.ts; los MP4 al Escritorio) y apaga
     -Salida RUTA           a dónde escribe su resultado la comprobación o la medición
+    -Capturas RUTA         dónde van las capturas de los ejemplos (por omisión, las de la t5)
+    -Casos RUTA            dónde van los .croquis de los ejemplos
 #>
 param(
   [switch]$SoloPreparar,
-  [ValidateSet("", "comprobar", "fps-web", "arranque-3d", "video-3d", "narraciones", "tollocan", "ejemplos", "humo")][string]$Despues = "",
-  [string]$Salida = ""
+  [ValidateSet("", "comprobar", "fps-web", "arranque-3d", "video-3d", "narraciones", "tollocan", "ejemplos", "humo", "recorrido")][string]$Despues = "",
+  [string]$Salida = "",
+  [string]$Capturas = "",
+  [string]$Casos = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -194,7 +201,7 @@ try {
       if ($null -eq $gpuAntes) { Remove-ItemProperty -Path $llaveGpu -Name $chrome -ErrorAction SilentlyContinue }
       else { Set-ItemProperty -Path $llaveGpu -Name $chrome -Value $gpuAntes }
     }
-  } elseif ($Despues -in @("narraciones", "tollocan", "ejemplos", "humo")) {
+  } elseif ($Despues -in @("narraciones", "tollocan", "ejemplos", "humo", "recorrido")) {
     # t5-verificacion (René, 2026-11-19), en el Chrome instalado contra la demo local:
     #   narraciones  las seis narraciones nuevas y el caso encimado, con capturas del 3D;
     #   tollocan     el caso de René de punta a punta;
@@ -212,9 +219,14 @@ try {
       if ($Salida) { $env:CROQUIS_SALIDA = $Salida }
       if ($Despues -eq "humo") {
         & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/humo-3d.spec.ts
+      } elseif ($Despues -eq "recorrido") {
+        # t6 (René, 2026-11-21): las fotos del recorrido, 2560×1440 con deviceScaleFactor 2.
+        if ($Salida) { $env:CROQUIS_RECORRIDO = $Salida }
+        & pnpm --filter "@croquis/web" exec playwright test -c playwright.recorrido.config.ts
       } elseif ($Despues -eq "ejemplos") {
         $env:CROQUIS_UNITY = "1"
-        $env:CROQUIS_CAPTURAS = "docs/cesvi/ronda-4/evidencia/t5-ejemplos"
+        $env:CROQUIS_CAPTURAS = if ($Capturas) { $Capturas } else { "docs/cesvi/ronda-4/evidencia/t5-ejemplos" }
+        if ($Casos) { $env:CROQUIS_CASOS = $Casos }
         & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/ejemplos-ronda2.spec.ts
       } else {
         $filtro = if ($Despues -eq "tollocan") { "Tollocan" } else { "narración|encimado" }

@@ -3,7 +3,7 @@ import { dirname, join, resolve } from "node:path";
 import { type Page } from "@playwright/test";
 import { expect, test } from "./base";
 import { colocar, RECETAS } from "./recetas-ejemplos";
-import { irAPaso, mapaFacil } from "./ayuda-recorrido";
+import { cerrarLaEscena, contestarPreguntas, irAPaso } from "./ayuda-recorrido";
 import { conPosicion, escenaDeNarracion, type SalidaCorpus } from "@croquis/cesvi";
 import { casoParaGuardar } from "../src/lib/caso-guardado";
 
@@ -43,67 +43,6 @@ test.use({
   // t5 (René, 2026-11-19): en el Chrome instalado, no en el Chromium de Playwright.
   ...(process.env.CROQUIS_CANAL ? { channel: process.env.CROQUIS_CANAL } : {}),
 });
-
-/** Contesta lo que pregunte la lectura: el típico si lo ofrece; si no, «No sé». */
-async function contestarPreguntas(page: Page) {
-  for (let k = 0; k < 20; k++) {
-    const pregunta = page.locator('[data-testid^="pregunta-"]').first();
-    if (!(await pregunta.isVisible().catch(() => false))) return;
-    const tipico = pregunta.locator('[data-testid^="usar-tipico-"]');
-    const nose = pregunta.locator('[data-testid^="no-se-"]');
-    const opcion = pregunta.locator('[data-testid^="opcion-"]').first();
-    if (await tipico.count()) await tipico.click();
-    else if (await nose.count()) await nose.click();
-    else if (await opcion.count()) await opcion.click();
-    else return;
-    await page.waitForTimeout(400);
-  }
-}
-
-/** La escena ya armada (flujo de la lista): confirma lo propuesto y contesta lo que falta. */
-async function cerrarLaEscena(page: Page) {
-  const lista = page.getByTestId("lista-escena");
-  await expect(lista).toBeVisible({ timeout: 90_000 });
-  const cerrarGuia = page.getByTestId("cerrar-guia");
-  if (await cerrarGuia.isVisible().catch(() => false)) await cerrarGuia.click();
-  // Que llegue la propuesta (con las calles) antes de seguir.
-  await page.waitForTimeout(12_000);
-  for (let k = 0; k < 30; k++) {
-    const ver = page.getByTestId("lista-ver-reconstruccion");
-    if (await ver.isEnabled().catch(() => false)) return;
-    const confirmar = page.locator('[data-testid^="confirmar-"]').first();
-    if (await confirmar.isVisible().catch(() => false)) {
-      await confirmar.click();
-      continue;
-    }
-    const marcar = page.locator('[data-testid^="marcar-"]').first();
-    if (!(await marcar.isVisible().catch(() => false))) break;
-    const id = (await marcar.getAttribute("data-testid")) ?? "";
-    await marcar.click();
-    if (id.startsWith("marcar-choque")) {
-      const mapa = await mapaFacil(page);
-      const caja = (await mapa.boundingBox())!;
-      await mapa.click({ position: { x: caja.width * 0.5, y: caja.height * 0.5 } });
-    } else if (id.startsWith("marcar-direccion")) {
-      const propuesta = page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]');
-      await (
-        (await propuesta.count()) ? propuesta.first() : page.getByTestId("opcion-flecha-0")
-      ).click();
-    } else if (id.startsWith("marcar-final")) {
-      await page.getByTestId("final-junto").click();
-      await page.getByTestId("listo-final").click();
-    } else {
-      for (const b of ["golpe-nose", "otros-no", "paso-listo", "terreno-liso"]) {
-        const x = page.getByTestId(b);
-        if (await x.isVisible().catch(() => false)) {
-          await x.click();
-          break;
-        }
-      }
-    }
-    await expect(lista).toBeVisible({ timeout: 30_000 });
-  }
-}
 
 /** El 3D de Unity, en el impacto y después, con sus capturas. */
 async function capturar3d(page: Page, clave: string) {
