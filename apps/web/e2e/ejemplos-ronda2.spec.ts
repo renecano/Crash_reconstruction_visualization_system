@@ -78,8 +78,8 @@ const RECETAS: Receta[] = [
     // pega contra un poste (el segundo choque), donde queda. A quedó 8 m al Norte.
     clave: "poste-terraceria",
     choques: [[18, 3]],
-    venia: { "el 3": "Del sur", Sentra: "Del oeste" },
-    quedo: { "el 3": [0.8, 8], Sentra: [16.4, 2.7] },
+    venia: { "Mazda 3": "Del sur", Sentra: "Del oeste" },
+    quedo: { "Mazda 3": [0.8, 8], Sentra: [16.4, 2.7] },
     pasos: [{ vehiculo: "V2", en: [9, 1.5] }],
     terreno: [{ tipo: "terraceria", en: [15, 4] }],
   },

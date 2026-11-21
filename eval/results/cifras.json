@@ -40,6 +40,10 @@
     {
       "texto": "43 de 55",
       "que": "Carambolas de desarrollo medidas el 2026-10-23, antes del #119"
+    },
+    {
+      "texto": "27 km/h (23–35)",
+      "que": "Ejemplo «poste y terracería» medido en la t5 y la t5c: la receta de la e2e buscaba «el 3» y la pantalla dice «Mazda 3», así que dejaba el Mazda junto al choque y no 8 m al norte como dice la narración (René, 2026-11-21)"
     }
   ],
   "cifras": {
@@ -174,6 +178,19 @@
       "texto": "40 de 55",
       "fuente": "eval/results/cesvi_r4b_carambolas_desarrollo.json",
       "campo": "impactos_posteriores_ocurridos / impactos_posteriores_en_escena"
+    },
+    "ejemplos.poste": {
+      "que": "Ejemplo «poste y terracería»: velocidad del Sentra (B) antes del impacto, con la escena colocada como dice la narración (el Mazda 3 quedó 8 m al norte)",
+      "mejor": 36,
+      "p10": 29,
+      "p90": 38,
+      "unidad": "km/h",
+      "muestras": 32,
+      "juego_de_muestras": "producción",
+      "texto": "36 km/h (29–38)",
+      "fuente": "eval/results/ronda4_cifras/antes.json",
+      "campo": "filas.5.velocidades.1",
+      "codigo": "3257fa9f"
     },
     "reversa.velocidad": {
       "que": "Velocidad supuesta de un vehículo en reversa: mediana y p10–p90 de la velocidad máxima de maniobras reales",
