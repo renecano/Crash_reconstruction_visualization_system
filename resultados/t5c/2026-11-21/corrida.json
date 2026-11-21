@@ -129,6 +129,13 @@
                       "estado":  "ok",
                       "minutos":  0.1,
                       "codigo":  0
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "preparar-130",
+                      "estado":  "ok",
+                      "minutos":  0,
+                      "codigo":  0
                   }
               ]
 }

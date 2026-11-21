@@ -1,0 +1,25 @@
+# Paso: preparar-130
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-21 10:16:09
+
+
+== 1. Herramientas
+Node v26.13.1 y pnpm 12.11.2.
+Hay internet.
+
+== 2. Dependencias
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 3d ago)
+Lockfile is up to date, resolution step is skipped
+Done in 71ms using pnpm v12.11.2
+
+== 3. El visor de Unity, desde esta computadora
+Visor 3087c2915b272e66 servido desde el sitio: C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\public\visor-unity\local
+
+== 4. La app en modo local
+Ya está compilada para esta versión (c051746c).
+
+Listo: la demo local está preparada.
+
+# Fin: 2026-11-21 10:16:10 · ok · 0 min
