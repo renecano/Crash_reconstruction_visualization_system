@@ -1,6 +1,6 @@
 {
   "nota": "Lo pesado de cada tanda de la auditoría del 2026-11-15, para la computadora del colaborador (tools/colaborador/tanda.ps1). «vigente» es la que corre CORRER-TANDA-EN-RTX.bat con doble clic. Toda corrida empieza por «comprobacion»; si falla, lo pesado no corre. Cada paso: un comando que corre en la raíz del repositorio, sin preguntas y sin llaves; «minutos» es lo estimado (el tope es 4 veces eso, y al menos 10 min); «salidas» son las rutas que se suben además de los registros. «rama»: la rama donde vive la tanda mientras no esté en main. Un comando por paso (sin &&): cada uno deja su registro. Un paso con `requiere` se omite si falta esa carpeta (datos que no van en git).",
-  "vigente": "t5b-repeticion",
+  "vigente": "t5c",
   "comprobacion": {
     "pasos": [
       {
@@ -565,6 +565,127 @@
         }
       ],
       "commit": "af9d3036d9b14f006412b9563aff8868bc487049"
+    },
+    "t5c": {
+      "titulo": "Tanda 5c · El 3D de ciudad corregido (build 59d874d0d8ffd774) y la t5 completa",
+      "nota": "René, 2026-11-20: la única corrida que se le pide al colaborador. El build 59d874d0d8ffd774 (release de GitHub, sin Blob) corrige lo que tumbaba a Tollocan: con las calles del mapa llegando después, la web mandaba una segunda carga y la primera contestaba «error» (reproducido en Unity con la batería de ciudad). Primero el humo (tope de 8 min): AXA, Tollocan, Reforma y el centro de Guadalajara por La escena nueva y «Crucero de noche» por la de siempre, hasta el 3D en «listo»; si falla, la tanda se detiene y sube la consola, el log de Unity, el paquete 3D, las capturas y la traza. Después, todo lo de la t5: narraciones, Tollocan de punta a punta, los cinco ejemplos antes y después, y el arranque del 3D con el build nuevo contra el 1.3.0.",
+      "rama": "feat/w-narracion-a-la-fisica",
+      "pasos": [
+        {
+          "nombre": "visor-nuevo",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 2,
+          "tope_min": 15
+        },
+        {
+          "nombre": "preparar-nuevo",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar",
+          "minutos": 8,
+          "tope_min": 15
+        },
+        {
+          "nombre": "humo",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues humo",
+          "minutos": 6,
+          "tope_min": 8,
+          "detiene_si_falla": true,
+          "salidas": ["eval/results/humo/", "apps/web/test-results/"]
+        },
+        {
+          "nombre": "narraciones",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues narraciones -Salida eval/results/t5c/narraciones_fisica.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5c", "docs/cesvi/ronda-4/evidencia/fisica"]
+        },
+        {
+          "nombre": "tollocan",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tollocan -Salida eval/results/t5c/tollocan.json",
+          "minutos": 6,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5c", "docs/cesvi/ronda-4/evidencia/fisica"]
+        },
+        {
+          "nombre": "ejemplos-despues",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t5c/ejemplos_despues.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5c", "docs/cesvi/ronda-4/evidencia/t5-ejemplos"]
+        },
+        {
+          "nombre": "ejemplos-antes",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/ejemplos-produccion.ps1 -Salida eval/results/t5c/ejemplos_antes.json",
+          "minutos": 10,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5c", "docs/cesvi/ronda-4/evidencia/t5-ejemplos-antes"]
+        },
+        {
+          "nombre": "arranque-nuevo-1",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t5c/arranque_59d874d0d8ffd774_1.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5c"]
+        },
+        {
+          "nombre": "arranque-nuevo-2",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t5c/arranque_59d874d0d8ffd774_2.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5c"]
+        },
+        {
+          "nombre": "arranque-nuevo-3",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t5c/arranque_59d874d0d8ffd774_3.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5c"]
+        },
+        {
+          "nombre": "usar-130",
+          "comando": "git checkout origin/main -- apps/web/public/visor-unity/manifest.json",
+          "minutos": 1,
+          "tope_min": 15
+        },
+        {
+          "nombre": "visor-130",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 2,
+          "tope_min": 15
+        },
+        {
+          "nombre": "preparar-130",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar",
+          "minutos": 8,
+          "tope_min": 15
+        },
+        {
+          "nombre": "arranque-130-1",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t5c/arranque_3087c2915b272e66_1.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5c"]
+        },
+        {
+          "nombre": "arranque-130-2",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t5c/arranque_3087c2915b272e66_2.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5c"]
+        },
+        {
+          "nombre": "arranque-130-3",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t5c/arranque_3087c2915b272e66_3.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t5c"]
+        },
+        {
+          "nombre": "volver-al-nuevo",
+          "comando": "git checkout HEAD -- apps/web/public/visor-unity/manifest.json",
+          "minutos": 1,
+          "tope_min": 15
+        }
+      ]
     }
   }
 }
