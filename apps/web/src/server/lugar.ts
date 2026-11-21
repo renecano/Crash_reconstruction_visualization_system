@@ -211,6 +211,126 @@ export function zonaDelTexto(q: string): { municipio?: string; estado?: string; 
   return { resto: q };
 }
 
+/**
+ * Lo que va antes del nombre de la vía y no es parte de él: «paso a desnivel de …», «puente de …»,
+ * «curva del …», «bajada de …» (ronda 4: «curva del Circuito Exterior Mexiquense» no aparecía).
+ */
+const PREFIJO_DE_LUGAR =
+  /^(?:en\s+)?(?:el\s+|la\s+)?(?:paso\s+a\s+desnivel|puente(?:\s+vehicular)?|distribuidor\s+vial|curva|bajada|subida|pendiente)\s+(?:de\s+(?:la\s+|el\s+)?|del\s+|en\s+(?:la\s+|el\s+)?|sobre\s+(?:la\s+|el\s+)?)?/i;
+
+/**
+ * Las dos vías de un cruce narrado (ronda 4, René: «paso a desnivel de Solidaridad Las Torres sobre
+ * Paseo Tollocan» caía en el centro de Toluca): «X sobre Y» en un puente o paso a desnivel, «X a la
+ * altura de (la calle) Y», «X esquina con Y», «cruce de X con Y», «X y la avenida Y». null si no hay
+ * dos; «a la altura de» un municipio no es un cruce.
+ */
+export function viasDelCruce(texto: string, municipio?: string): [string, string] | null {
+  const limpio = texto.replace(/[–—]/g, "-").trim();
+  const puente =
+    /^(?:en\s+)?(?:el\s+)?(?:paso\s+a\s+desnivel|puente(?:\s+vehicular)?|distribuidor\s+vial)\s+(?:de\s+(?:la\s+|el\s+)?|del\s+)?(.+?)\s+sobre\s+(?:la\s+|el\s+)?([^,;]+)/i.exec(
+      limpio,
+    );
+  const altura =
+    /^(.+?)\s+a\s+la\s+altura\s+de(?:l)?\s+(?:la\s+|el\s+)?(?:calle\s+)?([^,;]+)/i.exec(limpio);
+  const cruce =
+    /^(?:en\s+)?(?:el\s+)?(?:crucero|cruce|intersecci[oó]n)\s+(?:de\s+)?(?:la\s+)?(.+?)\s+(?:con|y)\s+(?:la\s+|el\s+)?([^,;]+)/i.exec(
+      limpio,
+    );
+  const m = puente ?? cruce ?? altura;
+  let par: [string, string] | null = m ? [m[1]!.trim(), m[2]!.trim()] : null;
+  if (!par) {
+    const otra = segundaCalle(limpio);
+    if (otra) par = [primeraCalle(limpio), otra];
+  }
+  if (!par) return null;
+  const [a, b] = par.map((x) =>
+    x.replace(PREFIJO_DE_LUGAR, "").replace(/[,;.\s]+$/, "").trim(),
+  ) as [string, string];
+  if (a.length < 3 || b.length < 3 || sinAcentos(a) === sinAcentos(b)) return null;
+  // «a la altura de Amanalco»: el municipio, no una calle.
+  if (
+    municipio &&
+    (sinAcentos(b).includes(sinAcentos(municipio)) || sinAcentos(municipio).includes(sinAcentos(b)))
+  )
+    return null;
+  return [a, b];
+}
+
+/** Metros por grado, en un plano local alrededor de `lat`. */
+const plano = (lat: number) => ({ x: 111320 * Math.cos((lat * Math.PI) / 180), y: 110574 });
+
+type Tramo = [[number, number], [number, number]];
+
+/** Los tramos (lon, lat) de la geometría de una vía de Nominatim. */
+function tramosDe(g: Nominatim["geojson"]): Tramo[] {
+  if (!g) return [];
+  const lineas: [number, number][][] =
+    g.type === "LineString"
+      ? [g.coordinates as [number, number][]]
+      : g.type === "MultiLineString" || g.type === "Polygon"
+        ? (g.coordinates as [number, number][][])
+        : g.type === "MultiPolygon"
+          ? (g.coordinates as [number, number][][][]).flat()
+          : [];
+  return lineas.flatMap((l) => l.slice(1).map((q, i) => [l[i]!, q] as Tramo));
+}
+
+/**
+ * Dónde se cruzan (o pasan más cerca) dos tramos, en metros: el punto medio de lo más cercano y la
+ * distancia. Plano local; para tramos de calle (cientos de metros) el error es de centímetros.
+ */
+function cercania(a: Tramo, b: Tramo): { lat: number; lon: number; m: number } {
+  const k = plano(a[0][1]);
+  const P = (p: [number, number]) => ({ x: p[0] * k.x, y: p[1] * k.y });
+  const [p1, p2, p3, p4] = [P(a[0]), P(a[1]), P(b[0]), P(b[1])];
+  const d1 = { x: p2.x - p1.x, y: p2.y - p1.y };
+  const d2 = { x: p4.x - p3.x, y: p4.y - p3.y };
+  const den = d1.x * d2.y - d1.y * d2.x;
+  if (Math.abs(den) > 1e-9) {
+    const t = ((p3.x - p1.x) * d2.y - (p3.y - p1.y) * d2.x) / den;
+    const u = ((p3.x - p1.x) * d1.y - (p3.y - p1.y) * d1.x) / den;
+    if (t >= 0 && t <= 1 && u >= 0 && u <= 1)
+      return { lon: (p1.x + t * d1.x) / k.x, lat: (p1.y + t * d1.y) / k.y, m: 0 };
+  }
+  // Sin cruzarse: lo más cercano está en un extremo de alguno.
+  const alTramo = (
+    p: { x: number; y: number },
+    q: { x: number; y: number },
+    d: { x: number; y: number },
+  ) => {
+    const l2 = d.x * d.x + d.y * d.y;
+    const t = l2 ? Math.max(0, Math.min(1, ((p.x - q.x) * d.x + (p.y - q.y) * d.y) / l2)) : 0;
+    const c = { x: q.x + t * d.x, y: q.y + t * d.y };
+    return { m: Math.hypot(p.x - c.x, p.y - c.y), x: (p.x + c.x) / 2, y: (p.y + c.y) / 2 };
+  };
+  const mejor = [
+    alTramo(p1, p3, d2),
+    alTramo(p2, p3, d2),
+    alTramo(p3, p1, d1),
+    alTramo(p4, p1, d1),
+  ].sort((x, y) => x.m - y.m)[0]!;
+  return { lon: mejor.x / k.x, lat: mejor.y / k.y, m: mejor.m };
+}
+
+/** Metros: dos vías que pasan a menos de esto se cruzan (un paso a desnivel incluido). */
+export const CRUCE_M = 40;
+
+/** El punto donde se cruzan dos vías (la más cercana de sus partes), o null si no se tocan. */
+export function cruceDeVias(
+  a: readonly Nominatim[],
+  b: readonly Nominatim[],
+): { lat: number; lon: number; m: number; de: Nominatim } | null {
+  let mejor: { lat: number; lon: number; m: number; de: Nominatim } | null = null;
+  for (const x of a)
+    for (const ta of tramosDe(x.geojson))
+      for (const y of b)
+        for (const tb of tramosDe(y.geojson)) {
+          const c = cercania(ta, tb);
+          if (!mejor || c.m < mejor.m) mejor = { ...c, de: x };
+        }
+  return mejor && mejor.m <= CRUCE_M ? mejor : null;
+}
+
 /** La primera calle de una descripción: «Calle Azucena esquina con Av. Reforma, col. …» → «Calle Azucena». */
 export function primeraCalle(texto: string): string {
   const corte = texto.split(
@@ -218,6 +338,7 @@ export function primeraCalle(texto: string): string {
   )[0];
   return (corte ?? texto)
     .replace(/^(?:en\s+)?(?:el\s+)?(?:crucero|cruce|intersecci[oó]n)\s+(?:de\s+)?(?:la\s+)?/i, "")
+    .replace(PREFIJO_DE_LUGAR, "")
     .replace(/^(?:las\s+)?calles\s+/i, "")
     .trim();
 }
@@ -253,6 +374,8 @@ interface Nominatim {
   name?: string;
   boundingbox?: [string, string, string, string];
   address?: Record<string, string | undefined>;
+  /** Con `polygon_geojson=1`: la geometría de la vía (para el cruce de dos). */
+  geojson?: { type: string; coordinates: unknown };
 }
 
 class SinServicio extends Error {}
@@ -495,8 +618,8 @@ async function conNominatim(
           fuente: "nominatim",
         };
       return {
-        resultados: [aResultado(caja)],
-        aviso: `No se encontró la ${interpretado.ref} dentro de ${zonaTexto}: el mapa queda ahí.`,
+        resultados: [],
+        aviso: `No se encontró la ${interpretado.ref} dentro de ${zonaTexto}. ¿Dónde fue? Pega las coordenadas o un link de Google Maps, o toca el lugar en el mapa.`,
         fuente: "nominatim",
       };
     }
@@ -523,7 +646,7 @@ async function conNominatim(
           "",
         )
       : s;
-  const calle = primeraCalle(texto);
+  const calle = primeraCalle(texto).replace(/\s*[–—]\s*/g, " - ");
   const colonia = coloniaDe(texto);
   const variantes = [
     ...new Set(
@@ -554,6 +677,32 @@ async function conNominatim(
     return otro ? { ...otro, delCaso: false } : null;
   };
 
+  // El cruce de dos vías narradas: las dos con su geometría dentro de la zona y el punto donde se
+  // tocan. Antes que la primera calle sola, que cae en cualquier punto de ella.
+  const vias = viasDelCruce(texto, municipio);
+  const cajaCruce = cajaMunicipio ?? (await estadoCaja());
+  if (vias && cajaCruce?.boundingbox) {
+    const geometria = (v: string) =>
+      nom({
+        q: donde ? `${v}, ${donde}` : v,
+        viewbox: viewbox(cajaCruce.boundingbox!),
+        bounded: "1",
+        polygon_geojson: "1",
+        limit: "10",
+      });
+    const a = await geometria(vias[0]);
+    const b = a.length ? await geometria(vias[1]) : [];
+    const c = cruceDeVias(a, b);
+    if (c) {
+      const base = aResultado(c.de);
+      return {
+        resultados: [{ ...base, nombre: `${vias[0]} y ${vias[1]}`, lat: c.lat, lon: c.lon }],
+        aviso: `El cruce de ${vias[0]} y ${vias[1]}${donde ? ` en ${donde}` : ""}.`,
+        fuente: "nominatim",
+      };
+    }
+  }
+
   if (cajaMunicipio) {
     const h = await buscarEn(cajaMunicipio, variantes.length, donde);
     if (h)
@@ -579,10 +728,11 @@ async function conNominatim(
         fuente: "nominatim",
       };
   }
+  // Ronda 4 (René): si nada cuadra se pregunta; el centro del municipio no es el lugar del choque.
   if (cajaMunicipio)
     return {
-      resultados: [aResultado(cajaMunicipio)],
-      aviso: `No se encontró la calle: el mapa queda en ${donde}. Muévelo hasta el lugar.`,
+      resultados: [],
+      aviso: `No se encontró «${vias ? `${vias[0]} y ${vias[1]}` : calle || texto}» en ${donde}. ¿Dónde fue? Escribe las calles del cruce, pega las coordenadas o un link de Google Maps, o toca el lugar en el mapa.`,
       fuente: "nominatim",
     };
   if (!municipio && !estado) {

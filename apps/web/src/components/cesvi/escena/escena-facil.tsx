@@ -496,6 +496,8 @@ export function EscenaFacil({
   // lugar, el cruce o la primera calle, con el municipio) y propone con las calles de ahí.
   const [lugarNarrado, setLugarNarrado] = useState<Punto | null>(null);
   const [buscandoNarrado, setBuscandoNarrado] = useState(false);
+  // Ronda 4 (René): si el lugar narrado no aparece, se pregunta (nunca el centro del municipio).
+  const [narradoSinLugar, setNarradoSinLugar] = useState<string | null>(null);
   const yaBuscado = useRef(false);
   // Vivo mientras la escena está montada (en desarrollo React monta los efectos dos veces: la búsqueda
   // de la primera vuelta debe poder terminar).
@@ -519,6 +521,8 @@ export function EscenaFacil({
     yaBuscado.current = true;
     const buscarEn = async () => {
       setBuscandoNarrado(true);
+      let hallado = false;
+      let aviso: string | null = null;
       for (const q of consultas) {
         const params = new URLSearchParams({ q });
         if (zona.municipio) params.set("municipio", zona.municipio);
@@ -527,7 +531,9 @@ export function EscenaFacil({
           const r = await fetch(`/api/lugar?${params.toString()}`);
           const d = (await r.json().catch(() => null)) as {
             resultados?: OpcionLugar[];
+            aviso?: string | null;
           } | null;
+          aviso ??= d?.aviso ?? null;
           // B5: sin el municipio ni el estado del caso, la primera opción puede ser de otro estado
           // (San Luis Potosí caía en la CDMX): se muestran las opciones para elegir.
           if (r.ok && d?.resultados?.length && !zona.municipio && !zona.estado) {
@@ -537,19 +543,28 @@ export function EscenaFacil({
                 "La narración no dice el municipio ni el estado: elige el lugar del caso.",
               );
             }
+            hallado = true;
             break;
           }
           const p = r.ok ? d?.resultados?.[0] : undefined;
           if (p && montada.current) {
             setLugarNarrado({ lat: p.lat, lon: p.lon });
             onBuscarCalles({ lat: p.lat, lon: p.lon });
+            hallado = true;
             break;
           }
         } catch {
           break;
         }
       }
-      if (montada.current) setBuscandoNarrado(false);
+      if (montada.current) {
+        setBuscandoNarrado(false);
+        if (!hallado)
+          setNarradoSinLugar(
+            aviso ??
+              `No se encontró «${consultas[0]}». ¿Dónde fue? Escribe las calles del cruce, pega las coordenadas o un link de Google Maps, o toca el lugar en el mapa.`,
+          );
+      }
     };
     void buscarEn();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- una vez, al abrir la escena
@@ -1814,6 +1829,11 @@ export function EscenaFacil({
         {buscandoNarrado && !conPropuesta ? (
           <p className="t-nota" role="status" data-testid="buscando-narrado">
             Buscando en el mapa el lugar que dice la narración…
+          </p>
+        ) : null}
+        {narradoSinLugar && !buscandoNarrado && !conPropuesta && !estado.puntos[1] ? (
+          <p className="t-nota text-texto" role="status" data-testid="narrado-sin-lugar">
+            {narradoSinLugar}
           </p>
         ) : null}
         {conPropuesta ? (

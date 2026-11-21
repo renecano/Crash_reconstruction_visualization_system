@@ -11,6 +11,7 @@ import {
   primeraCalle,
   segundaCalle,
   USER_AGENT,
+  viasDelCruce,
   zonaDelTexto,
 } from "./lugar";
 
@@ -322,5 +323,139 @@ describe("lo que dejó la redacción no estorba (B5)", () => {
     );
     expect(pedidos[0]!.url.searchParams.get("q")).toBe("Monterrey");
     expect(pedidos.every((p) => !String(p.url).includes("NOMBRE"))).toBe(true);
+  });
+});
+
+describe("el cruce de dos vías y, si nada cuadra, la pregunta (ronda 4, René)", () => {
+  const TOLUCA = {
+    display_name: "Toluca, Estado de México, México",
+    lat: "19.29",
+    lon: "-99.66",
+    name: "Toluca",
+    boundingbox: ["19.20", "19.40", "-99.75", "-99.50"],
+    address: { city: "Toluca", state: "Estado de México" },
+  };
+  const via = (nombre: string, coords: [number, number][]) => ({
+    display_name: `${nombre}, Toluca, Estado de México`,
+    lat: String(coords[0]![1]),
+    lon: String(coords[0]![0]),
+    address: { road: nombre, city: "Toluca", state: "Estado de México" },
+    geojson: { type: "LineString", coordinates: coords },
+  });
+
+  it("lee las dos vías de la frase", () => {
+    expect(viasDelCruce("paso a desnivel de Solidaridad Las Torres sobre Paseo Tollocan")).toEqual([
+      "Solidaridad Las Torres",
+      "Paseo Tollocan",
+    ]);
+    expect(viasDelCruce("Paseo Tollocan, a la altura de la calle Isidro Fabela")).toEqual([
+      "Paseo Tollocan",
+      "Isidro Fabela",
+    ]);
+    expect(viasDelCruce("cruce de Av. Juárez con Hidalgo")).toEqual(["Av. Juárez", "Hidalgo"]);
+    // «a la altura de» el municipio no es un cruce.
+    expect(
+      viasDelCruce("carretera Toluca–Valle de Bravo, a la altura de Amanalco", "Amanalco"),
+    ).toBeNull();
+    expect(
+      viasDelCruce(
+        "curva del Circuito Exterior Mexiquense a la altura de Ecatepec",
+        "Ecatepec de Morelos",
+      ),
+    ).toBeNull();
+    expect(viasDelCruce("Av. Las Torres")).toBeNull();
+    // Lo que va antes del nombre no es parte de la vía.
+    expect(primeraCalle("curva del Circuito Exterior Mexiquense a la altura de Ecatepec")).toBe(
+      "Circuito Exterior Mexiquense",
+    );
+  });
+
+  it("da el punto donde se cruzan, con las geometrías de OpenStreetMap", async () => {
+    const { deps, pedidos } = falso((u) => {
+      const q = u.searchParams.get("q");
+      if (q === "Toluca, Estado de México") return { status: 200, body: [TOLUCA] };
+      if (u.searchParams.get("polygon_geojson") !== "1") return { status: 200, body: [] };
+      // Las Torres va de oeste a este; Tollocan, de sur a norte: se cruzan en (-99.60, 19.28).
+      if (q === "Solidaridad Las Torres, Toluca, Estado de México")
+        return {
+          status: 200,
+          body: [
+            via("Avenida Solidaridad Las Torres", [
+              [-99.61, 19.28],
+              [-99.59, 19.28],
+            ]),
+          ],
+        };
+      if (q === "Paseo Tollocan, Toluca, Estado de México")
+        return {
+          status: 200,
+          body: [
+            via("Paseo Tollocan", [
+              [-99.6, 19.27],
+              [-99.6, 19.29],
+            ]),
+          ],
+        };
+      return { status: 200, body: [] };
+    });
+    const r = await buscarLugar(
+      {
+        q: "paso a desnivel de Solidaridad Las Torres sobre Paseo Tollocan",
+        municipio: "Toluca",
+        estado: "Estado de México",
+      },
+      "cruce",
+      deps,
+    );
+    expect(r.resultados).toHaveLength(1);
+    expect(r.resultados[0]!.nombre).toBe("Solidaridad Las Torres y Paseo Tollocan");
+    expect(r.resultados[0]!.lat).toBeCloseTo(19.28, 5);
+    expect(r.resultados[0]!.lon).toBeCloseTo(-99.6, 5);
+    expect(r.aviso).toContain("El cruce de Solidaridad Las Torres y Paseo Tollocan");
+    // Dentro de la caja del municipio.
+    const g = pedidos.find((p) => p.url.searchParams.get("polygon_geojson") === "1")!;
+    expect(g.url.searchParams.get("bounded")).toBe("1");
+  });
+
+  it("si las vías no se tocan ni aparece nada, pregunta; nunca el centro del municipio", async () => {
+    const { deps } = falso((u) => {
+      const q = u.searchParams.get("q");
+      if (q === "Toluca, Estado de México") return { status: 200, body: [TOLUCA] };
+      if (u.searchParams.get("polygon_geojson") !== "1") return { status: 200, body: [] };
+      // Paralelas, a 1 km: no hay cruce.
+      if (q === "Solidaridad Las Torres, Toluca, Estado de México")
+        return {
+          status: 200,
+          body: [
+            via("Avenida Solidaridad Las Torres", [
+              [-99.61, 19.28],
+              [-99.59, 19.28],
+            ]),
+          ],
+        };
+      if (q === "Paseo Tollocan, Toluca, Estado de México")
+        return {
+          status: 200,
+          body: [
+            via("Paseo Tollocan", [
+              [-99.61, 19.29],
+              [-99.59, 19.29],
+            ]),
+          ],
+        };
+      return { status: 200, body: [] };
+    });
+    const r = await buscarLugar(
+      {
+        q: "paso a desnivel de Solidaridad Las Torres sobre Paseo Tollocan",
+        municipio: "Toluca",
+        estado: "Estado de México",
+      },
+      "sin-cruce",
+      deps,
+    );
+    expect(r.resultados).toEqual([]);
+    expect(r.aviso).toContain("No se encontró «Solidaridad Las Torres y Paseo Tollocan» en Toluca");
+    expect(r.aviso).toContain("¿Dónde fue?");
   });
 });

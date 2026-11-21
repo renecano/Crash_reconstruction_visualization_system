@@ -1,7 +1,14 @@
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { distanciaM, escenaDeNarracion, type SalidaCorpus } from "@croquis/cesvi";
+import {
+  agregarTope,
+  distanciaM,
+  escenaDeNarracion,
+  especDeExpediente,
+  type SalidaCorpus,
+  usaRelieve,
+} from "@croquis/cesvi";
 import type { OverpassResponse } from "@croquis/croquis-2d";
 import { describe, expect, it } from "vitest";
 import {
@@ -272,6 +279,33 @@ describe("el terreno que narra la pendiente (René, 2026-11-21)", () => {
       );
     expect(paso(conRelieve)).toMatchObject({ hecho: false });
     expect(paso(conTope)).toMatchObject({ hecho: true });
+  });
+
+  it("la reversa de ejemplo: con el relieve encendido pregunta el terreno y el tope llega a la física", () => {
+    const g = JSON.parse(
+      readFileSync(
+        resolve(aqui, "../../../../data/cesvi/grabaciones/ejemplos/reversa-pendiente.json"),
+        "utf8",
+      ),
+    ) as { narracion: string; salida: SalidaCorpus };
+    const leida = escenaDeNarracion(g.salida, g.narracion).expediente;
+    // La narración dice «pendiente»: el relieve real va encendido.
+    expect(usaRelieve(leida)).toBe(true);
+    const imp = impactosAColocar(leida);
+    let e = marcarChoque(leida, imp, 1, C, 0);
+    const paso = (x: typeof e) =>
+      pasosEscena(x, imp, { desconocidos: [], direccionesNoSe: [], c1: {} }).find(
+        (p) => p.tipo === "terreno",
+      );
+    // Antes del arreglo el relieve lo daba por contestado y el tope nunca se preguntaba.
+    expect(paso(e)).toMatchObject({ hecho: false });
+    e = agregarTope(e, { lat: C.lat - 12 / 111320, lon: C.lon }, 0).expediente;
+    expect(paso(e)).toMatchObject({ hecho: true });
+    // Y la física lo recibe: el tope va en el terreno del lugar de la escena.
+    const lugar = especDeExpediente(e, "reversa").spec.lugar as {
+      terreno?: { topes?: unknown[] };
+    };
+    expect(lugar.terreno?.topes).toHaveLength(1);
   });
 });
 
