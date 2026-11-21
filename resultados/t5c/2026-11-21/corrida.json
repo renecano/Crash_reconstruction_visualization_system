@@ -5,7 +5,7 @@
     "commit":  "c051746cf9755bd50d30f46a0d0c733f224eab8a",
     "rama_del_repositorio":  "feat/w-narracion-a-la-fisica",
     "archivos_con_cambios":  1,
-    "duracion_min":  11.2,
+    "duracion_min":  12.1,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "NVIDIA GeForce RTX 4070 Laptop GPU",
@@ -135,6 +135,13 @@
                       "paso":  "preparar-130",
                       "estado":  "ok",
                       "minutos":  0,
+                      "codigo":  0
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "arranque-130-1",
+                      "estado":  "ok",
+                      "minutos":  0.8,
                       "codigo":  0
                   }
               ]
