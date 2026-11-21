@@ -267,6 +267,11 @@ export class Evidence {
      * con su rango que solo pesa donde la evidencia no fija la velocidad.
      */
     readonly declaredSpeed: Map<string, [number, number]> = new Map(),
+    /**
+     * Vehículo → «minimo» o «maximo» si su velocidad declarada es una cota («a más de 90 km/h»): el
+     * residuo solo cuenta del lado que la viola, y no se sortea.
+     */
+    readonly declaredBound: Map<string, string> = new Map(),
   ) {}
 
   /** La misma evidencia con otra velocidad declarada (el sorteo de las simulaciones). */
@@ -286,6 +291,7 @@ export class Evidence {
       this.waypoints,
       this.impactPoint,
       m,
+      this.declaredBound,
     );
   }
 
@@ -326,6 +332,7 @@ export class Evidence {
       this.waypoints,
       this.impactPoint,
       this.declaredSpeed,
+      this.declaredBound,
     );
   }
 
@@ -545,7 +552,19 @@ export function evidenceFromSpec(spec: Json, seed = EVIDENCE_SEED, nDamage = N_D
     waypointsFromSpec(spec),
     impactPointFromSpec(spec),
     declaredSpeeds(spec),
+    declaredBounds(spec),
   );
+}
+
+/** Las velocidades declaradas que son una cota (`velocidad_previa.cota`): «minimo» o «maximo». */
+export function declaredBounds(spec: Json): Map<string, string> {
+  const byId = new Map((spec.vehiculos as Json[]).map((v) => [String(v.id), v]));
+  const out = new Map<string, string>();
+  for (const vid of declaredSpeeds(spec).keys()) {
+    const cota = ((byId.get(vid)!.velocidad_previa ?? {}) as Json).cota;
+    if (cota === "minimo" || cota === "maximo") out.set(vid, cota);
+  }
+  return out;
 }
 
 /**
@@ -882,7 +901,7 @@ export function positionAt(ts: number[], xs: number[], ys: number[], t: number):
   return [xs[xs.length - 1]!, ys[ys.length - 1]!];
 }
 
-function residuals(
+export function residuals(
   spec: Json,
   ev: Evidence,
   dt: number,
@@ -979,7 +998,12 @@ function residuals(
       const [kmh, sigma] = ev.declaredSpeed.get(vid)!;
       const vp = (byS.get(vid)!.velocidad_previa ?? {}) as Json;
       const val = Number(vp.valor ?? kmh) * (vp.unidad === "m/s" ? 3.6 : 1.0);
-      out.set(`velocidad_declarada:${vid}`, (val - kmh) / sigma);
+      let r = (val - kmh) / sigma;
+      const cota = ev.declaredBound.get(vid);
+      // Una cota solo empuja si se viola: «al menos 90» no lleva la velocidad hacia 90.
+      if (cota === "minimo") r = Math.min(0, r);
+      else if (cota === "maximo") r = Math.max(0, r);
+      out.set(`velocidad_declarada:${vid}`, r);
     }
   }
   return out;
@@ -1337,6 +1361,8 @@ export function perturbed(spec: Json, ev: Evidence, rng: Draws): Perturbed {
     ev.rearEnd,
     waypoints,
     impactPoint,
+    new Map(),
+    ev.declaredBound,
   );
   let downedMu: number | null = null;
   if (
@@ -1355,7 +1381,7 @@ export function perturbed(spec: Json, ev: Evidence, rng: Draws): Perturbed {
     const m = new Map<string, [number, number]>();
     for (const k of [...ev.declaredSpeed.keys()].sort()) {
       const [kmh, sigma] = ev.declaredSpeed.get(k)!;
-      m.set(k, [Math.max(0, kmh + rng.gauss(0, sigma)), sigma]);
+      m.set(k, [ev.declaredBound.has(k) ? kmh : Math.max(0, kmh + rng.gauss(0, sigma)), sigma]);
     }
     return { spec: s, evidence: e.withDeclaredSpeed(m), downedMu };
   }

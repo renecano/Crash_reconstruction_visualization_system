@@ -1,0 +1,253 @@
+{
+  "_generado_por": "node data/cesvi/scripts/masas-modelo.mjs",
+  "modelos": [
+    {
+      "marca": "nissan",
+      "familia": "versa",
+      "version": "Nissan Versa Sense TM 2026",
+      "clase": "sedan_compacto",
+      "masa_kg": 1110,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.nissan.com.mx/content/dam/Nissan/mexico/assets/versa/my26/vlp/catalogos/nissan-2026-versa-catalogo.pdf"
+    },
+    {
+      "marca": "volkswagen",
+      "familia": "virtus",
+      "version": "Volkswagen Virtus Trendline 2026",
+      "clase": "sedan_compacto",
+      "masa_kg": 1256,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.vw.com.mx/idhub/content/dam/onehub_pkw/importers/mx/fichas-tecnicas/producto/2026/volkswagen-virtus-2026-ficha-tecnica.pdf"
+    },
+    {
+      "marca": "nissan",
+      "familia": "sentra",
+      "version": "Nissan Sentra Sense 2026",
+      "clase": "sedan_mediano",
+      "masa_kg": 1405,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.nissan.com.mx/content/dam/Nissan/mexico/assets/sentra/my26/vlp/catalogos/nissan-2026-sentra-catalogo.pdf"
+    },
+    {
+      "marca": "volkswagen",
+      "familia": "jetta",
+      "version": "Volkswagen Jetta (Trendline/Comfortline/Sportline) 2027",
+      "clase": "sedan_mediano",
+      "masa_kg": 1418,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.vw.com.mx/idhub/content/dam/onehub_pkw/importers/mx/fichas-tecnicas/producto/2027/volkswagen-jetta-MY27-ficha-tecnica.pdf"
+    },
+    {
+      "marca": "honda",
+      "familia": "civic",
+      "version": "Honda Civic Sedán i-Style 2026",
+      "clase": "sedan_mediano",
+      "masa_kg": 1278,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.honda.mx/web/pdf/brochure/honda/Brochure_CIVIC_2026.pdf"
+    },
+    {
+      "marca": "nissan",
+      "familia": "march",
+      "version": "Nissan March Sense TM 2026",
+      "clase": "hatchback",
+      "masa_kg": 981,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.nissan.com.mx/content/dam/Nissan/mexico/assets/march/my26/vlp/catalogos/nissan-2026-march-catalogo.pdf"
+    },
+    {
+      "marca": "volkswagen",
+      "familia": "polo",
+      "version": "Volkswagen Polo Track 2026",
+      "clase": "hatchback",
+      "masa_kg": 1080,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.vw.com.mx/idhub/content/dam/onehub_pkw/importers/mx/fichas-tecnicas/producto/2026/vw_ficha_tecnica_polo_track_26.pdf"
+    },
+    {
+      "marca": "nissan",
+      "familia": "kicks",
+      "version": "Nissan Kicks 2026",
+      "clase": "suv_compacta",
+      "masa_kg": 1379,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.nissan.com.mx/content/dam/Nissan/mexico/assets/kicks/my26/vlp/catalogos/nissan-2026-kicks-catalogo.pdf"
+    },
+    {
+      "marca": "hyundai",
+      "familia": "creta",
+      "version": "Hyundai Creta GL TM 2027",
+      "clase": "suv_compacta",
+      "masa_kg": 1180,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.hyundai.com.mx/modelos/creta-2027/especificaciones"
+    },
+    {
+      "marca": "toyota",
+      "familia": "corolla cross",
+      "version": "Toyota Corolla Cross LE 2026",
+      "clase": "suv_compacta",
+      "masa_kg": 1400,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.toyota.mx/content/dam/tmex/corolla-cross/ficha/Ficha_tecnica_COROLLA_CROSS_26_web.pdf.coredownload.pdf"
+    },
+    {
+      "marca": "toyota",
+      "familia": "sequoia",
+      "version": "Toyota Sequoia HEV Limited 2WD 2025",
+      "clase": "suv_grande",
+      "masa_kg": 2655,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.toyota.mx/content/dam/tmex/sequoia-hev/ficha/Ficha_Tecnica_SEQUOIA_25_web.pdf.coredownload.pdf"
+    },
+    {
+      "marca": "nissan",
+      "familia": "pathfinder",
+      "version": "Nissan Pathfinder 2026",
+      "clase": "suv_grande",
+      "masa_kg": 2102,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.nissan.com.mx/content/dam/Nissan/mexico/assets/pathfinder/my26/vlp/catalogos/nissan-2026-pathfinder-catalogo.pdf"
+    },
+    {
+      "marca": "nissan",
+      "familia": "np300",
+      "version": "Nissan NP300 Pick-Up (gasolina) 2026",
+      "clase": "pickup",
+      "masa_kg": 1653,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.nissan.com.mx/content/dam/Nissan/mexico/assets/np300/my26/vlp/catalogos/nissan-2026-np300-catalogo.pdf"
+    },
+    {
+      "marca": "toyota",
+      "familia": "hilux",
+      "version": "Toyota Hilux Doble Cabina SR 2.7 gasolina 2025",
+      "clase": "pickup",
+      "masa_kg": 1890,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.toyota.mx/content/dam/tmex/hilux/ficha/Ficha_HILUX%20DIESEL%20y%20GASOLINA%202025.pdf.coredownload.pdf"
+    },
+    {
+      "marca": "chevrolet",
+      "familia": "silverado",
+      "version": "Chevrolet Silverado Cabina Regular V8 4x2 2026",
+      "clase": "pickup",
+      "masa_kg": 2298,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.chevrolet.com.mx/content/dam/chevrolet/na/mx/es/index/pickups-and-trucks/2026-silverado/mov/02-pdf/Ficha-Tecnica-Silverado-2026.pdf"
+    },
+    {
+      "marca": "toyota",
+      "familia": "hiace",
+      "version": "Toyota Hiace Panel 2.8 diésel 2024",
+      "clase": "van",
+      "masa_kg": 2375,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.toyota.mx/content/dam/tmex/hiace/ficha-tecnica/Ficha_Tecnica_HIACE_24_web.pdf.coredownload.pdf"
+    },
+    {
+      "marca": "mercedes-benz",
+      "familia": "sprinter",
+      "version": "Mercedes-Benz Sprinter Furgón 314 CDI 3665 techo normal 2026",
+      "clase": "van",
+      "masa_kg": 2255,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://nd-mediagallery2-public-production.s3.amazonaws.com/2df0454a861a57a704932c1b664b1776/ft_sprinter_furgon_2026.pdf"
+    },
+    {
+      "marca": "nissan",
+      "familia": "urvan",
+      "version": "Nissan Urvan Panel Cargo 2.5 2023",
+      "clase": "van",
+      "masa_kg": 1849,
+      "fuente": "masa en vacío de la ficha del fabricante (copia secundaria), consultada el 2026-10-10: https://www.autocom.mx/static/agency-go-virtual/Nissan/NV350/2023/Ficha-Tecnica/nissan-2023-urvan_panel-manteleta.pdf"
+    },
+    {
+      "marca": "isuzu",
+      "familia": "elf",
+      "version": "Isuzu ELF 300 chasis cabina E (DEE corta) 2026",
+      "clase": "camion_unitario",
+      "masa_kg": 2175,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.isuzumex.com.mx/assets/Fichas_tecnicas/ELF/ficha-tecnica-ELF-200-300%202026.pdf"
+    },
+    {
+      "marca": "freightliner",
+      "familia": "m2",
+      "version": "Freightliner M2 Plus cabina de día (PBV 25K) 2025",
+      "clase": "camion_unitario",
+      "masa_kg": 4443,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://admin.freightliner.com.mx/files/WO102-Ficha-t--cnica-M2-compressed--1--YbjxFtVTLZGE.pdf"
+    },
+    {
+      "marca": "hino",
+      "familia": "500",
+      "version": "Hino 500 Serie 1628 versión J (chasis cabina) 2027",
+      "clase": "camion_unitario",
+      "masa_kg": 5600,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.hino.com.mx/pdf/FICHA_TECNICA_1628.pdf"
+    },
+    {
+      "marca": "honda",
+      "familia": "gl150",
+      "version": "Honda GL150 Cargo 2026",
+      "clase": "motocicleta",
+      "masa_kg": 128,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.honda.mx/motos/gl-150-cargo"
+    },
+    {
+      "marca": "honda",
+      "familia": "xr150l",
+      "version": "Honda XR150L 2026",
+      "clase": "motocicleta",
+      "masa_kg": 129,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.honda.mx/motos/xr-150l"
+    },
+    {
+      "marca": "italika",
+      "familia": "ft150",
+      "version": "Italika FT150 2025",
+      "clase": "motocicleta",
+      "masa_kg": 99,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.italika.mx/motos/trabajo/ft-150"
+    },
+    {
+      "marca": "italika",
+      "familia": "dm150",
+      "version": "Italika DM150 2026",
+      "clase": "motocicleta",
+      "masa_kg": 114,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.italika.mx/motos/doble-proposito/dm-150"
+    },
+    {
+      "marca": "italika",
+      "familia": "250z",
+      "version": "Italika 250Z 2026",
+      "clase": "motocicleta",
+      "masa_kg": 130,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.italika.mx/motos/linea-z/250z"
+    },
+    {
+      "marca": "trek",
+      "familia": "marlin",
+      "version": "Trek Marlin 5 Gen 3 (MTB 29\") 2026",
+      "clase": "bicicleta",
+      "masa_kg": 15,
+      "fuente": "masa en vacío de la ficha del fabricante (copia secundaria), consultada el 2026-10-10: https://www.bike-magazin.de/en/brands/trek/model/marlin-5-gen-3-69c281a414a2690c039b8057/"
+    },
+    {
+      "marca": "specialized",
+      "familia": "rockhopper",
+      "version": "Specialized Rockhopper Sport 29 (MTB) 2024",
+      "clase": "bicicleta",
+      "masa_kg": 14.15,
+      "fuente": "masa en vacío de la ficha del fabricante (copia secundaria), consultada el 2026-10-10: https://www.bike-magazin.de/en/brands/specialized/model/rockhopper-sport-29-662f89612a726a7a0f0303c7/"
+    },
+    {
+      "marca": "xiaomi",
+      "familia": "electric",
+      "version": "Xiaomi Electric Scooter 4 2024",
+      "clase": "scooter",
+      "masa_kg": 17.2,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.mi.com/mx/product/xiaomi-electric-scooter-4/specs/"
+    },
+    {
+      "marca": "segway-ninebot",
+      "familia": "kickscooter",
+      "version": "Segway-Ninebot KickScooter MAX G2 2024",
+      "clase": "scooter",
+      "masa_kg": 24.25,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.segway.com/ekickscooter/products/max-g2.html"
+    },
+    {
+      "marca": "italika",
+      "familia": "ds150",
+      "version": "Italika DS150 (motoneta 150 cc) 2024",
+      "clase": "scooter",
+      "masa_kg": 110,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.italika.mx/motos/motoneta/ds-150"
+    }
+  ]
+}

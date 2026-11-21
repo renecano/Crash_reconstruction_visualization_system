@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   conLimiteDeLaVia,
   conVelocidadDelPerito,
+  enCota,
   limiteDeLaVia,
+  limiteDelLugarNarrado,
   velocidadPreviaDeclarada,
   velocidadesNarradas,
 } from "./velocidad-narrada";
@@ -22,8 +24,56 @@ describe("la velocidad que dice la narración (ronda 4)", () => {
     expect(a.get("V2")).toMatchObject({ kmh: 60, rango_kmh: [51, 69] });
     const e = velocidadesNarradas("El vehículo A circulaba entre 60 y 70 km/h.", ids);
     expect(e.get("V1")).toMatchObject({ kmh: 65, rango_kmh: [60, 70] });
+    // René, 2026-11-20: «más de X» y «menos de X» son cotas, no un valor inventado.
     const mas = velocidadesNarradas("El vehículo A iba a más de 90 km/h.", ids);
-    expect(mas.get("V1")!.rango_kmh).toEqual([90, 117]);
+    expect(mas.get("V1")).toMatchObject({ kmh: 90, rango_kmh: [90, 90], cota: "minimo" });
+    expect(enCota(mas.get("V1")!)).toBe("al menos 90 km/h");
+    const menos = velocidadesNarradas("El vehículo B iba a menos de 40 km/h.", ids);
+    expect(menos.get("V2")).toMatchObject({ kmh: 40, cota: "maximo" });
+    expect(enCota(menos.get("V2")!)).toBe("a lo más 40 km/h");
+    const vp = velocidadPreviaDeclarada(mas.get("V1")!);
+    expect(vp).toMatchObject({ valor: 90, cota: "minimo", a_priori: true });
+    expect(String(vp.nota)).toContain("al menos 90 km/h");
+  });
+
+  it("el límite sale del texto del lugar mientras la vía no se ubica (LGMSV, art. 49 fr. III)", () => {
+    const casos: [string, number, string][] = [
+      ["curva del Circuito Exterior Mexiquense a la altura de Ecatepec", 80, "e)"],
+      ["la autopista México–Querétaro", 80, "e)"],
+      ["carretera federal 57", 110, "g)"],
+      ["carretera Toluca–Valle de Bravo, a la altura de Amanalco", 80, "f)"],
+      ["avenida Las Torres", 50, "d)"],
+      ["Paseo Tollocan", 50, "d)"],
+      ["calle Hidalgo", 30, "c)"],
+    ];
+    for (const [texto, kmh, inciso] of casos) {
+      const l = limiteDelLugarNarrado(texto)!;
+      expect(l.kmh, texto).toBe(kmh);
+      expect(l.fuente, texto).toContain(`fr. III ${inciso}`);
+    }
+    expect(limiteDelLugarNarrado("frente a la gasolinera")).toBeNull();
+    // «Alta velocidad» en el Circuito Exterior: respecto a 80, no a 50 (no puede dar 65).
+    const alta = velocidadesNarradas(
+      "El vehículo B venía a alta velocidad.",
+      ids,
+      limiteDelLugarNarrado("Circuito Exterior Mexiquense")!,
+    ).get("V2")!;
+    expect(alta).toMatchObject({ kmh: 104, rango_kmh: [80, 128], limite_kmh: 80 });
+    // «Exceso» nunca queda por debajo del límite: su rango empieza en él.
+    for (const l of [30, 50, 80, 110]) {
+      const v = velocidadesNarradas("El vehículo A a exceso de velocidad.", ids, {
+        kmh: l,
+        fuente: "prueba",
+      }).get("V1")!;
+      expect(v.rango_kmh[0]).toBe(l);
+      expect(v.kmh).toBeGreaterThan(l);
+    }
+    // «Despacio», también relativo a la vía.
+    const lento = velocidadesNarradas("El vehículo A venía despacio.", ids, {
+      kmh: 80,
+      fuente: "prueba",
+    }).get("V1")!;
+    expect(lento).toMatchObject({ kmh: 32, rango_kmh: [5, 56] });
   });
 
   it("una descripción va respecto al límite de la vía", () => {

@@ -1,0 +1,346 @@
+{
+  "descripcion": "Ronda 4: velocidad y masa que la lectura le pasa a la física, por vehículo (lecturas grabadas; sin API).",
+  "etiqueta": "antes",
+  "fecha": "2026-11-21T16:22:25.930Z",
+  "filas": [
+    {
+      "grupo": "narraciones ronda 4",
+      "clave": "arbol",
+      "lugar": "Paseo Tollocan, a la altura de la calle Isidro Fabela",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "marca_modelo": "Nissan Versa",
+          "clase": "sedan_compacto",
+          "velocidad": {
+            "kmh": 65,
+            "rango_kmh": [
+              50,
+              80
+            ],
+            "cota": null,
+            "descripcion": "a exceso de velocidad",
+            "limite_kmh": 50,
+            "limite_fuente": "LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)",
+            "cita": "El vehículo A, marca Nissan, tipo Versa, modelo 2019, circulaba a exceso de velocidad por los carriles centrales con dirección de oriente a ponie"
+          },
+          "se_pregunta_velocidad": false,
+          "masa": null,
+          "se_pregunta_masa": true
+        }
+      ]
+    },
+    {
+      "grupo": "narraciones ronda 4",
+      "clave": "poste",
+      "lugar": "avenida Las Torres",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "marca_modelo": "Chevrolet Aveo",
+          "clase": "sedan_compacto",
+          "velocidad": {
+            "kmh": 60,
+            "rango_kmh": [
+              54,
+              66
+            ],
+            "cota": null,
+            "descripcion": "60 km/h",
+            "limite_kmh": null,
+            "limite_fuente": null,
+            "cita": "El vehículo A, marca Chevrolet, tipo Aveo, modelo 2016, circulaba a 60 km/h con dirección de poniente a oriente"
+          },
+          "se_pregunta_velocidad": false,
+          "masa": null,
+          "se_pregunta_masa": true
+        }
+      ]
+    },
+    {
+      "grupo": "narraciones ronda 4",
+      "clave": "puente",
+      "lugar": "paso a desnivel de Solidaridad Las Torres sobre Paseo Tollocan",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "marca_modelo": "Volkswagen Jetta",
+          "clase": "sedan_compacto",
+          "velocidad": {
+            "kmh": 70,
+            "rango_kmh": [
+              59.5,
+              80.5
+            ],
+            "cota": null,
+            "descripcion": "70 km/h",
+            "limite_kmh": null,
+            "limite_fuente": null,
+            "cita": "ta, modelo 2018, circulaba sobre el puente con dirección de sur a norte, como a 70 km/h"
+          },
+          "se_pregunta_velocidad": false,
+          "masa": null,
+          "se_pregunta_masa": true
+        },
+        {
+          "id": "V2",
+          "marca_modelo": "Toyota Hilux",
+          "clase": "pickup",
+          "velocidad": null,
+          "se_pregunta_velocidad": true,
+          "masa": null,
+          "se_pregunta_masa": true
+        }
+      ]
+    },
+    {
+      "grupo": "narraciones ronda 4",
+      "clave": "subida",
+      "lugar": "Calzada al Pacífico, en la subida hacia San Buenaventura",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "marca_modelo": "Ford Ranger",
+          "clase": "pickup",
+          "velocidad": {
+            "kmh": 20,
+            "rango_kmh": [
+              5,
+              35
+            ],
+            "cota": null,
+            "descripcion": "despacio",
+            "limite_kmh": 50,
+            "limite_fuente": "LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)",
+            "cita": "rd, tipo Ranger, modelo 2015, circulaba en subida con dirección de norte a sur, despacio, cargado de material"
+          },
+          "se_pregunta_velocidad": false,
+          "masa": null,
+          "se_pregunta_masa": true
+        },
+        {
+          "id": "V2",
+          "marca_modelo": "Nissan Tsuru",
+          "clase": "sedan_compacto",
+          "velocidad": null,
+          "se_pregunta_velocidad": true,
+          "masa": null,
+          "se_pregunta_masa": true
+        }
+      ]
+    },
+    {
+      "grupo": "narraciones ronda 4",
+      "clave": "bajada",
+      "lugar": "carretera Toluca–Valle de Bravo, a la altura de Amanalco",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "marca_modelo": "Mazda 3",
+          "clase": "sedan_mediano",
+          "velocidad": {
+            "kmh": 103.5,
+            "rango_kmh": [
+              90,
+              117
+            ],
+            "cota": null,
+            "descripcion": "más de 90 km/h",
+            "limite_kmh": null,
+            "limite_fuente": null,
+            "cita": "lo 2021, circulaba en bajada pronunciada con dirección de oriente a poniente, a más de 90 km/h"
+          },
+          "se_pregunta_velocidad": false,
+          "masa": null,
+          "se_pregunta_masa": true
+        }
+      ]
+    },
+    {
+      "grupo": "narraciones ronda 4",
+      "clave": "curva",
+      "lugar": "curva del Circuito Exterior Mexiquense a la altura de Ecatepec",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "marca_modelo": "Kia Rio",
+          "clase": "sedan_compacto",
+          "velocidad": null,
+          "se_pregunta_velocidad": true,
+          "masa": null,
+          "se_pregunta_masa": true
+        },
+        {
+          "id": "V2",
+          "marca_modelo": "Honda CR-V",
+          "clase": "suv_compacta",
+          "velocidad": {
+            "kmh": 65,
+            "rango_kmh": [
+              50,
+              80
+            ],
+            "cota": null,
+            "descripcion": "a alta velocidad",
+            "limite_kmh": 50,
+            "limite_fuente": "LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)",
+            "cita": "ículo B, marca Honda, tipo CR-V, modelo 2019, circulaba por el carril izquierdo a alta velocidad, se abrió en la curva e invadió el carril derecho"
+          },
+          "se_pregunta_velocidad": false,
+          "masa": null,
+          "se_pregunta_masa": true
+        }
+      ]
+    },
+    {
+      "grupo": "narraciones ronda 4",
+      "clave": "tollocan",
+      "lugar": "Tollocan rumbo a la ciudad de México",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "marca_modelo": null,
+          "clase": "sedan_mediano",
+          "velocidad": null,
+          "se_pregunta_velocidad": true,
+          "masa": null,
+          "se_pregunta_masa": true
+        }
+      ]
+    },
+    {
+      "grupo": "ejemplos",
+      "clave": "crucero-noche",
+      "lugar": "crucero de la calle Azucena esquina con Av. Reforma, colonia Lomas San Lorenzo",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "marca_modelo": "VW Jetta",
+          "clase": "sedan_compacto",
+          "velocidad": null,
+          "se_pregunta_velocidad": true,
+          "masa": null,
+          "se_pregunta_masa": true
+        },
+        {
+          "id": "V2",
+          "marca_modelo": "GM Camaro",
+          "clase": "sedan_mediano",
+          "velocidad": null,
+          "se_pregunta_velocidad": true,
+          "masa": null,
+          "se_pregunta_masa": true
+        }
+      ]
+    },
+    {
+      "grupo": "ejemplos",
+      "clave": "alcance-deformacion",
+      "lugar": "carretera federal 57, tramo Querétaro–San Luis Potosí, km 112+300",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "marca_modelo": "Nissan NP300",
+          "clase": "pickup",
+          "velocidad": null,
+          "se_pregunta_velocidad": true,
+          "masa": null,
+          "se_pregunta_masa": true
+        },
+        {
+          "id": "V2",
+          "marca_modelo": "Volkswagen Vento",
+          "clase": "sedan_compacto",
+          "velocidad": null,
+          "se_pregunta_velocidad": true,
+          "masa": null,
+          "se_pregunta_masa": true
+        }
+      ]
+    },
+    {
+      "grupo": "ejemplos",
+      "clave": "carambola-lluvia",
+      "lugar": "Boulevard de los Pinos, entre las calles Encino y Nogal, colonia Valle Alto",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "marca_modelo": "Ford Ranger",
+          "clase": "pickup",
+          "velocidad": null,
+          "se_pregunta_velocidad": true,
+          "masa": null,
+          "se_pregunta_masa": true
+        },
+        {
+          "id": "V2",
+          "marca_modelo": "Toyota Corolla",
+          "clase": "sedan_mediano",
+          "velocidad": null,
+          "se_pregunta_velocidad": false,
+          "masa": null,
+          "se_pregunta_masa": true
+        },
+        {
+          "id": "V3",
+          "marca_modelo": "Chevrolet Aveo",
+          "clase": "sedan_compacto",
+          "velocidad": null,
+          "se_pregunta_velocidad": false,
+          "masa": null,
+          "se_pregunta_masa": true
+        }
+      ]
+    },
+    {
+      "grupo": "ejemplos",
+      "clave": "reversa-pendiente",
+      "lugar": "calle Cerro del Fortín, frente al acceso vehicular de una casa habitación, colonia Lomas del Valle",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "marca_modelo": "Honda CR-V",
+          "clase": "suv_compacta",
+          "velocidad": null,
+          "se_pregunta_velocidad": true,
+          "masa": null,
+          "se_pregunta_masa": true
+        },
+        {
+          "id": "V2",
+          "marca_modelo": "Nissan Versa",
+          "clase": "sedan_compacto",
+          "velocidad": null,
+          "se_pregunta_velocidad": true,
+          "masa": null,
+          "se_pregunta_masa": true
+        }
+      ]
+    },
+    {
+      "grupo": "ejemplos",
+      "clave": "poste-terraceria",
+      "lugar": "entronque de la carretera estatal 15, tramo San Martín–Atlixco, con el camino a San Lucas, km 23+600",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "marca_modelo": "Mazda 3",
+          "clase": "sedan_mediano",
+          "velocidad": null,
+          "se_pregunta_velocidad": true,
+          "masa": null,
+          "se_pregunta_masa": true
+        },
+        {
+          "id": "V2",
+          "marca_modelo": "Nissan Sentra",
+          "clase": "sedan_compacto",
+          "velocidad": null,
+          "se_pregunta_velocidad": true,
+          "masa": null,
+          "se_pregunta_masa": true
+        }
+      ]
+    }
+  ]
+}

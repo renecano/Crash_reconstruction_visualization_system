@@ -65,6 +65,15 @@ Cada dato externo que usa Croquis se registra aquí (CLAUDE.md, regla 4). Format
 
 Se genera con `node data/cesvi/scripts/masas-tipicas.mjs` (`--check` comprueba que esté al día), y una prueba de `packages/cesvi` la compara con E2. Al usarla, la masa queda como supuesto.
 
+`packages/cesvi/src/data/masas-modelo.json`: la masa del modelo que lee la narración («Versa», «Hilux»), cuando la narración no da la masa (René, 2026-11-20). Es la masa en vacío de la ficha del fabricante de `data/vehicles/models_raw.json` (fuente ya registrada arriba, con la URL de cada ficha), por la familia del modelo: la versión y el año del vehículo del caso pueden ser otros, y así lo dice el supuesto que ve el perito. Las fichas que no publican la masa (Aveo, Ranger, Corolla, Tahoe, Expedition y otras) quedan fuera: para esos modelos se usa la típica de su clase, dicho así. Se genera con `node data/cesvi/scripts/masas-modelo.mjs` (`--check` comprueba que esté al día).
+
+`packages/cesvi/src/velocidad-narrada.ts`: los límites de velocidad contra los que se miden las descripciones de la narración («a exceso de velocidad», «a alta velocidad», «despacio»).
+
+- **Origen:** Ley General de Movilidad y Seguridad Vial, art. 49, fr. III, incisos c) a g) (DOF 17-05-2022; última reforma DOF 29-12-2023; incisos recorridos DOF 08-05-2023): 30 km/h en calles secundarias y terciarias; 50 km/h en avenidas primarias sin acceso controlado; 80 km/h en carriles centrales de avenidas de acceso controlado; 80 km/h en carreteras estatales fuera de zonas urbanas; 110 km/h para automóviles en carreteras y autopistas federales.
+- **URL:** <https://www.diputados.gob.mx/LeyesBiblio/pdf/LGMSV.pdf> (texto vigente de la Cámara de Diputados).
+- **Consultado:** 2026-11-20. Es una ley publicada (dominio público); no se guarda copia.
+- **Uso:** con la vía del choque en el mapa, su `maxspeed` de OpenStreetMap o el inciso de su tipo; mientras no se ubica, el inciso que nombra el texto del lugar («autopista», «carretera», «avenida», «calle»; `limiteDelLugarNarrado`). El rango alrededor del límite es un supuesto de Croquis, dicho en cada velocidad.
+
 `packages/cesvi/src/data/reversa-nhtsa.json`: la velocidad máxima de una maniobra de reversa en uso real, para el supuesto de T3.3 (W8, ADR 0136).
 
 - **Origen:** Mazzae, E. N., Barickman, F., Baldwin, G. H. S. y Ranney, T. (2008). _On-Road Study of Drivers' Use of Rearview Video Systems (ORSDURVS)_. NHTSA, DOT HS 811 024.

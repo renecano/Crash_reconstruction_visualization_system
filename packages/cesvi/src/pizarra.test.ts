@@ -192,12 +192,15 @@ describe("la pizarra y el coordinador (R12b)", () => {
     expect(nuevos.map((m) => [m.de, m.para, m.tipo])).toEqual([
       ["perito", "pizarra", "escribe"],
       ["fisico", "pizarra", "escribe"],
+      // Las masas del modelo leído, como supuestos declarados (René, 2026-11-20).
+      ["fisico", "pizarra", "escribe"],
       ["fisico", "preguntador", "pide"],
       ["preguntador", "fisico", "escribe"],
     ]);
     expect(nuevos[1]!.texto).toBe("Reconstrucción: V1 a 52 km/h (48–58).");
     // El pedido va en palabras: la bitácora entra al dictamen y no lleva identificadores internos.
-    expect(nuevos[2]!.texto).toBe(
+    expect(nuevos[2]!.texto).toMatch(/^Con los supuestos declarados: Masa de V1/);
+    expect(nuevos[3]!.texto).toBe(
       "La física no cuadra o no alcanza (la velocidad declarada no cuadra con la evidencia física): pide evidencia al perito.",
     );
     for (const m of p.bitacora) expect(m.texto, m.texto).not.toMatch(/[a-z]_[a-z]/);
@@ -243,6 +246,7 @@ describe("la pizarra y el coordinador (R12b)", () => {
     expect(p.bitacora.map((m) => [m.de, m.tipo])).toEqual([
       ["perito", "escribe"],
       ["perito", "escribe"],
+      ["fisico", "escribe"],
       ["fisico", "escribe"],
       ["fisico", "pide"],
       ["preguntador", "escribe"],

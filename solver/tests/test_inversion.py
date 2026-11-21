@@ -416,3 +416,36 @@ def test_el_que_golpea_mas_lento_cuesta_y_mas_rapido_no() -> None:
     assert rapido["orden_alcance:veh-a"] == 0
     # No es evidencia: no aparece entre las etiquetas.
     assert not any(e.startswith("orden") for e in ev.labels())
+
+
+def _con_cota(cota: str, valor: float) -> dict[str, Any]:
+    spec = copy.deepcopy(_fixture_inversion("arbol_velocidad_declarada"))
+    vp = spec["vehiculos"][0]["velocidad_previa"]
+    vp.update({"valor": valor, "rango": [valor, valor], "cota": cota})
+    return spec
+
+
+@pytest.mark.parametrize(
+    ("cota", "probada", "esperado"),
+    [("minimo", 70.0, -5.0), ("minimo", 95.0, 0.0), ("maximo", 95.0, 7.5), ("maximo", 70.0, 0.0)],
+)
+def test_velocidad_declarada_como_cota(cota: str, probada: float, esperado: float) -> None:
+    """René, 2026-11-20: «a más de 80» solo empuja si la velocidad queda por debajo de 80 (σ mínima)."""
+    spec = _con_cota(cota, 80.0)
+    ev = inv.evidence_from_spec(spec)
+    assert ev.declared_bound == {"veh-a": cota}
+    prueba = copy.deepcopy(spec)
+    prueba["vehiculos"][0]["velocidad_previa"]["valor"] = probada
+    r = inv._residuals(prueba, ev, 0.02)
+    assert r is not None
+    assert r["velocidad_declarada:veh-a"] == pytest.approx(esperado)
+
+
+def test_una_cota_sola_no_inventa_la_velocidad() -> None:
+    """Sin otra evidencia, «a más de 80» no fija un número: la velocidad no es identificable."""
+    v = next(
+        p for p in inv.invert(_con_cota("minimo", 80.0)).to_dict()["parametros"]
+        if p["parametro"] == "velocidad_previa"
+    )
+    assert v["identificable"] is False
+    assert v.get("estimacion") is None
