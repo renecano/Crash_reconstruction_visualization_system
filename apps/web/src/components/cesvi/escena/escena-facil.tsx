@@ -428,6 +428,26 @@ export function EscenaFacil({
   }, [enLista, editando, editandoC1, colocando, pasos]);
   const todoListo =
     pasoActual(pasos) === null && colocando === null && editando === null && editandoC1 === null;
+  /** El nombre de un paso de la escena, como en la barra de avance. */
+  const nombreDelPaso = (p: (typeof pasos)[number], detalle = false) =>
+    p.tipo === "choque"
+      ? impactos.length > 1
+        ? `Choque ${p.orden}`
+        : "El choque"
+      : p.tipo === "vehiculo"
+        ? !detalle
+          ? nombres[p.vehiculo]!
+          : p.direccion
+            ? `dónde quedó ${nombres[p.vehiculo]!}`
+            : `por dónde venía ${nombres[p.vehiculo]!}`
+        : p.tipo === "golpe"
+          ? "Primer golpe"
+          : p.tipo === "otros"
+            ? "Otros choques"
+            : p.tipo === "paso"
+              ? "Por dónde pasó"
+              : "Terreno";
+  const pendientes = pasos.filter((p) => !p.hecho).map((p) => nombreDelPaso(p, true));
   /** W4: con la escena lista y la tarjeta cerrada, lo colocado se toca para corregirlo. */
   const corrigiendo = (todoListo && listaVista) || enLista;
   /** A3: a quién se le marca dónde quedó; se suelta solo si la persona deja de estar seleccionada. */
@@ -2957,20 +2977,7 @@ export function EscenaFacil({
       >
         {pasos.map((p, k) => {
           const esActual = k === indice && !todoListo;
-          const nombre =
-            p.tipo === "choque"
-              ? impactos.length > 1
-                ? `Choque ${p.orden}`
-                : "El choque"
-              : p.tipo === "vehiculo"
-                ? nombres[p.vehiculo]!
-                : p.tipo === "golpe"
-                  ? "Primer golpe"
-                  : p.tipo === "otros"
-                    ? "Otros choques"
-                    : p.tipo === "paso"
-                      ? "Por dónde pasó"
-                      : "Terreno";
+          const nombre = nombreDelPaso(p);
           return (
             <button
               key={k}
@@ -3006,6 +3013,14 @@ export function EscenaFacil({
         >
           Ver la reconstrucción →
         </button>
+        {/* Con el botón apagado, qué falta (René, 2026-11-21: un botón apagado sin decir por qué). */}
+        {!todoListo ? (
+          <span className="t-nota whitespace-nowrap px-1" data-testid="avance-falta">
+            {pendientes.length
+              ? `Para seguir falta: ${pendientes.join(", ").toLowerCase()}.`
+              : "Termina lo que estás colocando."}
+          </span>
+        ) : null}
       </nav>
     </div>
   );

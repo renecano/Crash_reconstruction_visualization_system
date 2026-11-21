@@ -28,7 +28,11 @@ export async function irAPaso(page: Page, n: number) {
           await ver.click();
         } else {
           const ver = page.getByTestId("avance-ver-reconstruccion");
-          await expect(ver).toBeEnabled({ timeout: 30_000 });
+          const falta = page.getByTestId("avance-falta");
+          await expect(
+            ver,
+            `La escena no deja seguir: ${(await falta.isVisible().catch(() => false)) ? await falta.textContent() : "sin aviso"}`,
+          ).toBeEnabled({ timeout: 30_000 });
           await ver.click();
         }
       } else await page.getByTestId("paso-1").click();

@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { type Page } from "@playwright/test";
 import { expect, test } from "./base";
+import { colocar, RECETAS } from "./recetas-ejemplos";
 import { irAPaso, mapaFacil } from "./ayuda-recorrido";
 import { conPosicion, escenaDeNarracion, type SalidaCorpus } from "@croquis/cesvi";
 import { casoParaGuardar } from "../src/lib/caso-guardado";
@@ -117,7 +118,8 @@ async function capturar3d(page: Page, clave: string) {
     quality: 85,
     type: "jpeg",
   });
-  await page.getByRole("button", { name: "Repetir" }).click();
+  // Hay dos «Repetir» (la barra y el marco): el de la barra del 3D, por su testid (t5c, 2026-11-21).
+  await page.getByTestId("repetir-unity").click();
   await page.waitForTimeout(9000);
   await page.screenshot({
     path: join(CAPTURAS, `${clave}-2-despues.jpg`),
@@ -240,6 +242,15 @@ test("caso encimado a propósito: antes y después en el 3D", async ({ page }) =
   await page.goto("/cesvi");
   await page.getByTestId("abrir-caso-casos").setInputFiles(ruta);
   await expect(page.getByTestId("recorrido-caso")).toBeVisible({ timeout: 60_000 });
+  // El caso trae dónde chocaron A y B, no dónde quedaron: La escena lo pide («Para seguir falta: dónde
+  // quedó…», t5c 2026-11-21) y se contesta como en el crucero, «junto al choque».
+  await irAPaso(page, 3);
+  const notasEscena: string[] = [];
+  await colocar(
+    page,
+    RECETAS.find((x) => x.clave === "crucero-noche")!,
+    notasEscena,
+  );
   // Antes de separarlos: la reconstrucción con lo encimado, y su 3D.
   await irAPaso(page, 4);
   await page.getByTestId("reconstruir").click();
