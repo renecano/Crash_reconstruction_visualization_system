@@ -247,10 +247,18 @@ export function VisorUnity({
   const turno = useRef(0);
   const pedida = useRef<{ objetivo: typeof objetivo; relieve: RelieveCaso } | null>(null);
   const cargando = useRef(false);
+  /**
+   * Una carga en Unity a la vez (René, 2026-11-20): una escena nueva mientras Unity carga la anterior
+   * (en un caso de ciudad, las calles del mapa llegan después) espera a que termine y entonces va, solo
+   * la última. Unity no dice de qué carga es cada respuesta: el «error» de la vieja (que tocaba lo que
+   * la nueva ya había destruido) tumbaba la nueva y abría el visor de respaldo.
+   */
+  const enUnity = useRef(false);
   const [vueltas, setVueltas] = useState(0);
   useEffect(() => {
     if (!puente || dormir) return;
     if (pedida.current?.objetivo === objetivo && pedida.current.relieve === relieve) return;
+    if (enUnity.current) return;
     // Al alternar entre la reconstrucción y una versión (ronda 4) se queda el mismo instante.
     const mantener = pedida.current !== null && pedida.current.objetivo.clave !== objetivo.clave;
     pedida.current = { objetivo, relieve };
@@ -296,7 +304,14 @@ export function VisorUnity({
         ...(objetivo.fantasma ? { fantasma: objetivo.fantasma } : {}),
       } as Caso3D;
       marcar("cargar_caso");
-      await puente.cargar(conExtras);
+      enUnity.current = true;
+      try {
+        await puente.cargar(conExtras);
+      } finally {
+        enUnity.current = false;
+        // Si llegó otra escena mientras Unity cargaba, ahora va.
+        setVueltas((v) => v + 1);
+      }
       pisoEnviado.current = p ? p.imagenMapa : null;
       marcar("caso_cargado");
       if (mio !== turno.current) return;
@@ -348,8 +363,9 @@ export function VisorUnity({
         setPuente(null);
       });
     // `vClave` sale de `objetivo`.
+    // `vueltas`: la escena que esperó a que Unity terminara.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [puente, objetivo, relieve, dormir]);
+  }, [puente, objetivo, relieve, dormir, vueltas]);
 
   /** Manda el piso a Unity: lo que se ve en vivo, o el mapa solo (para el video). */
   const enviarPiso = (p: PisoUnity | null, vivo: boolean) => {
