@@ -2020,6 +2020,14 @@ namespace Croquis.Generated
         [JsonProperty("dispositivos", NullValueHandling = NullValueHandling.Ignore)]
         public DispositivoElement[] Dispositivos { get; set; }
 
+        /// <summary>
+        /// El eje real de la vía del choque (ronda 4; René, 2026-11-19): la polilínea de la calle
+        /// guardada con el caso, en metros de la escena. Si viene, la trayectoria sigue su carril en
+        /// vez del arco de plantilla de `tipo_via` y `radio_curva`.
+        /// </summary>
+        [JsonProperty("eje_via", NullValueHandling = NullValueHandling.Ignore)]
+        public EjeVia EjeVia { get; set; }
+
         [JsonProperty("estado_superficie")]
         public LugarEstadoSuperficie EstadoSuperficie { get; set; }
 
@@ -2185,6 +2193,41 @@ namespace Croquis.Generated
         [JsonProperty("valor")]
         [JsonConverter(typeof(HilariousMinMaxValueCheckConverter))]
         public double Valor { get; set; }
+    }
+
+    /// <summary>
+    /// El eje real de la vía del choque (ronda 4; René, 2026-11-19): la polilínea de la calle
+    /// guardada con el caso, en metros de la escena. Si viene, la trayectoria sigue su carril en
+    /// vez del arco de plantilla de `tipo_via` y `radio_curva`.
+    /// </summary>
+    public partial class EjeVia
+    {
+        [JsonProperty("confianza")]
+        [JsonConverter(typeof(PurpleMinMaxValueCheckConverter))]
+        public double Confianza { get; set; }
+
+        [JsonProperty("fuente")]
+        public VisibilidadFuente Fuente { get; set; }
+
+        [JsonProperty("nombre", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(StickyMinMaxLengthCheckConverter))]
+        public string Nombre { get; set; }
+
+        [JsonProperty("nota", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(FluffyMinMaxLengthCheckConverter))]
+        public string Nota { get; set; }
+
+        [JsonProperty("puntos")]
+        public Punto[] Puntos { get; set; }
+    }
+
+    public partial class Punto
+    {
+        [JsonProperty("x")]
+        public double X { get; set; }
+
+        [JsonProperty("y")]
+        public double Y { get; set; }
     }
 
     public partial class LugarEstadoSuperficie

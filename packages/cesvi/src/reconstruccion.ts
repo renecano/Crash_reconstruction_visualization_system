@@ -61,6 +61,7 @@ import { rigidezEnKilo } from "./verificacion";
 import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from "./geo";
 import { objetosDe, TIPOS_OBJETO } from "./objetos";
 import { medidasDe } from "./poses-impacto";
+import { arranqueSobreElEje, ejeDeLaCalle, type EjeCalle } from "./eje-calle";
 import {
   conVelocidadDelPerito,
   enCota,
@@ -510,6 +511,65 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       confianza: 0.8,
       nota: "Lo dice la narración del perito.",
     };
+  // La curva de la calle real (ronda 4; René, 2026-11-19): con las calles guardadas con el caso, si
+  // la vía del choque curva cerca de él, el solver sigue su eje (`lugar.eje_via`) y cada vehículo
+  // arranca sobre la curva, en su carril, no en línea recta. Sin calles, se reconstruye en recta,
+  // como siempre, y si la narración dice «curva» se dice que es un supuesto.
+  const trazo = e.caso.condiciones?.trazo;
+  const guardadas = e.caso.lugar?.calles_del_mapa;
+  const primeraPose = deImpacto[0];
+  let ejeReal: EjeCalle | null = null;
+  if (origen && guardadas && primeraPose) {
+    const choque = local(primeraPose.punto);
+    ejeReal = ejeDeLaCalle(
+      guardadas.vias.map((v) => ({
+        tipo: v.tipo,
+        ...(v.nombre ? { nombre: v.nombre } : {}),
+        puntos: (v.puntos).map(([lon, lat]) => local({ lat, lon })),
+      })),
+      choque,
+    );
+  }
+  if (ejeReal) {
+    (spec.lugar as Json).eje_via = {
+      puntos: ejeReal.puntos,
+      ...(ejeReal.nombre ? { nombre: ejeReal.nombre } : {}),
+      fuente: "mapa",
+      confianza: 0.8,
+      nota: `El trazo de ${ejeReal.nombre ?? "la calle"} en las calles guardadas con el caso (gira ${ejeReal.giro_deg}° cerca del choque).`,
+    };
+    for (const v of vehiculos) {
+      const sv = spec.vehiculos[orden.indexOf(v.id)]!;
+      const imp = deImpacto.find((p) => p.vehiculo === v.id);
+      const ini = sv.posicion_inicial as Json | undefined;
+      if (!imp || !ini || maniobraNarrada.get(v.id) === "detenido" || enReversa.has(v.id)) continue;
+      if ((ini.procedencia as Json | undefined)?.fuente !== "supuesto") continue;
+      const p = local(imp.punto);
+      const a = arranqueSobreElEje(
+        ejeReal.puntos,
+        p,
+        (rumboEscena(imp.rumbo) * Math.PI) / 180,
+        ANTES_DEL_IMPACTO_M,
+      );
+      sv.posicion_inicial = {
+        x: Math.round(a.x * 1000) / 1000,
+        y: Math.round(a.y * 1000) / 1000,
+        rumbo_deg: Math.round(((a.rumboRad * 180) / Math.PI) * 1000) / 1000,
+        procedencia: {
+          fuente: "supuesto",
+          confianza: 0.5,
+          nota: `${ANTES_DEL_IMPACTO_M} m antes de la posición de impacto que colocó el perito, sobre el trazo de la calle.`,
+        },
+      };
+    }
+    limites.push(
+      `La trayectoria sigue el trazo real de ${ejeReal.nombre ?? "la calle"}, de las calles guardadas con el caso: gira ${ejeReal.giro_deg}° cerca del choque${trazo ? ` (la narración dice «${trazo.cita?.texto ?? "curva"}»)` : ""}.`,
+    );
+  } else if (trazo) {
+    limites.push(
+      `La narración dice «${trazo.cita?.texto ?? "curva"}», pero sin las calles del mapa del lugar no se conoce el trazo de la curva: se reconstruye en recta (supuesto).`,
+    );
+  }
   // El objeto del primer impacto (árbol, poste, muro…) frente a la cara de contacto del vehículo,
   // donde el perito lo colocó en el choque (ronda 4; René, 2026-11-18). Antes iba en la posición
   // genérica de la plantilla (6, −6) y el solver, que toma el objeto como punto de contacto,

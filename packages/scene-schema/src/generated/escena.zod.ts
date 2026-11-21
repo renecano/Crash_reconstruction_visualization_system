@@ -1250,6 +1250,18 @@ export const Lugar = z.strictObject({
       nota: z.string().max(300).optional(),
     })
     .optional(),
+  eje_via: z
+    .strictObject({
+      puntos: z
+        .array(z.strictObject({ x: z.number(), y: z.number() }))
+        .min(2)
+        .max(400),
+      nombre: z.string().max(200).optional(),
+      fuente: Fuente,
+      confianza: Confianza,
+      nota: z.string().max(300).optional(),
+    })
+    .optional(),
   radio_curva: CampoLongitud.optional(),
   superficie: CampoSuperficie,
   estado_superficie: CampoEstadoSuperficie,
