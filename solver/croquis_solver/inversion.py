@@ -585,7 +585,7 @@ def evidence_from_spec(
 
 
 def declared_bounds(spec: JsonObj) -> dict[str, str]:
-    """Las velocidades declaradas que son una cota (`velocidad_previa.cota`): «minimo» o «maximo»."""
+    """Las velocidades declaradas que son cota (`velocidad_previa.cota`): «minimo» o «maximo»."""
     by_id = {v["id"]: v for v in spec["vehiculos"]}
     out: dict[str, str] = {}
     for vid in declared_speeds(spec):

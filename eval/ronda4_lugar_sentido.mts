@@ -315,7 +315,8 @@ for (const f of FRASES) {
       al_centro_del_municipio: alCentro(despues),
       pregunta,
       via_correcta:
-        Boolean(despues && plano(despues.nombre).includes(f.via)) || (Boolean(f.oPregunta) && pregunta),
+        Boolean(despues && plano(despues.nombre).includes(f.via)) ||
+        (Boolean(f.oPregunta) && pregunta),
       rumbo: rDespues,
       sentido_correcto: rDespues !== null && difAng(rDespues, f.rumbo) <= 45,
     },

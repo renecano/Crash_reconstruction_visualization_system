@@ -16,7 +16,8 @@ import { escenaDeNarracion, preguntaPendiente } from "../packages/cesvi/src/esce
 
 const RAIZ = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const [salida, etiqueta] = process.argv.slice(2);
-if (!salida || !etiqueta) throw new Error("uso: ronda4_velocidad_masa.mts <salida.json> <etiqueta>");
+if (!salida || !etiqueta)
+  throw new Error("uso: ronda4_velocidad_masa.mts <salida.json> <etiqueta>");
 
 const EJEMPLOS = JSON.parse(
   readFileSync(join(RAIZ, "data/cesvi/ejemplos/narraciones.json"), "utf8"),
@@ -58,8 +59,7 @@ const filas = fuentes.map(({ grupo, clave, ruta }) => {
     lugar: x.caso.lugar?.descripcion?.valor ?? null,
     vehiculos: x.vehiculos.map((v) => {
       const vn = v.velocidad_narrada as
-        | (NonNullable<typeof v.velocidad_narrada> & { cota?: string })
-        | undefined;
+        (NonNullable<typeof v.velocidad_narrada> & { cota?: string }) | undefined;
       return {
         id: v.id,
         marca_modelo: [v.marca?.valor, v.modelo?.valor].filter(Boolean).join(" ") || null,

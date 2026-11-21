@@ -97,11 +97,10 @@ describe("la curva de la calle real (René, 2026-11-19)", () => {
     const r = reconstruirExpediente(caso(curva), "curva", { samples: 8, mcSamples: 8 });
     const lugar = especDeExpediente(caso(curva)).spec.lugar as Json;
     const eje = (lugar.eje_via as { puntos: { x: number; y: number }[] }).puntos;
-    const v = ((r.resultado).vehiculos as Json[])[0]!;
+    const v = (r.resultado.vehiculos as Json[])[0]!;
     const tr = v.trayectoria as { t: number[]; x: number[]; y: number[] };
     const ti = Number(
-      ((r.resultado).eventos as Json[]).find((x) => String(x.tipo).startsWith("impacto"))
-        ?.t ?? 0,
+      (r.resultado.eventos as Json[]).find((x) => String(x.tipo).startsWith("impacto"))?.t ?? 0,
     );
     // Del choque hacia atrás, a lo largo de lo recorrido (antes del arranque el solver solo prolonga
     // la trayectoria para tener tiempo previo; eso no es la vía).

@@ -244,7 +244,10 @@ export function viasDelCruce(texto: string, municipio?: string): [string, string
   }
   if (!par) return null;
   const [a, b] = par.map((x) =>
-    x.replace(PREFIJO_DE_LUGAR, "").replace(/[,;.\s]+$/, "").trim(),
+    x
+      .replace(PREFIJO_DE_LUGAR, "")
+      .replace(/[,;.\s]+$/, "")
+      .trim(),
   ) as [string, string];
   if (a.length < 3 || b.length < 3 || sinAcentos(a) === sinAcentos(b)) return null;
   // «a la altura de Amanalco»: el municipio, no una calle.
