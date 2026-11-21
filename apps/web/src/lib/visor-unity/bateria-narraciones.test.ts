@@ -115,6 +115,7 @@ describe("las narraciones como paquete 3D, por el camino del navegador", () => {
     async () => {
       mkdirSync(DIR, { recursive: true });
       const indice: Json[] = [];
+      const colocaciones: Record<string, unknown> = {};
       const deps = defaultLugarDeps({} as NodeJS.ProcessEnv);
       for (const clave of ["arbol", "poste", "puente", "subida", "bajada", "curva"]) {
         const g = JSON.parse(
@@ -155,6 +156,8 @@ describe("las narraciones como paquete 3D, por el camino del navegador", () => {
           `narracion-${clave}`,
         );
         expect(caso3dErrors(paquete as never), clave).toEqual([]);
+        // La colocación que propuso La escena, para medir las cifras con la misma en otro árbol.
+        colocaciones[clave] = { versiones: (p?.expediente ?? leida).versiones ?? [] };
         writeFileSync(resolve(DIR, `${clave}.json`), JSON.stringify(paquete) + "\n");
         indice.push({
           clave,
@@ -180,6 +183,10 @@ describe("las narraciones como paquete 3D, por el camino del navegador", () => {
         con_relieve: Boolean(paquete.relieve),
         ...resumenDelPaquete(paquete),
       });
+      writeFileSync(
+        resolve(DIR, "colocaciones.json"),
+        JSON.stringify(colocaciones, null, 2) + "\n",
+      );
       writeFileSync(
         resolve(DIR, "indice.json"),
         JSON.stringify(
