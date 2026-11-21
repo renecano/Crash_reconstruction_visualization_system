@@ -97,8 +97,11 @@ namespace Croquis.TestsCiudad
                 var res = (JObject)paquete["resultado"];
                 var impacto = res["punto_impacto"];
                 var tImpacto = visor.TImpacto;
-                // El énfasis del impacto: su marca en el piso.
-                fila["enfasis"] = GameObject.Find("impacto_marca") != null;
+                // El énfasis del impacto: su marca en el piso, que aparece desde el instante del choque (antes
+                // está inactiva, y GameObject.Find no ve lo inactivo).
+                visor.Fijar(double.IsNaN(tImpacto) ? (double)res["t_fin"] : tImpacto + 0.3);
+                yield return null;
+                fila["enfasis"] = Resources.FindObjectsOfTypeAll<GameObject>().Any(g => g.name == "impacto_marca" && g.scene.IsValid());
                 if (!(bool)fila["enfasis"])
                 {
                     faltan.Add("el énfasis del impacto");
@@ -212,26 +215,29 @@ namespace Croquis.TestsCiudad
                     }
                 }
 
-                // La captura renderizada del impacto.
+                // La captura renderizada del impacto: la cámara del visor, en el instante del choque, a una
+                // textura (en modo batch el Editor no corre el fin de cuadro que espera `Captura`).
                 Directory.CreateDirectory(Salida);
-                JObject foto = null;
-                // Con tope (30 s): sin él, una captura que no termina dejaba la prueba esperando sin fin.
-                var tarea = Captura.TomarAsync(visor, "impacto", 960, 540);
-                var espera = Stopwatch.StartNew();
-                while (!tarea.GetAwaiter().IsCompleted && espera.Elapsed.TotalSeconds < 30)
-                {
-                    yield return null;
-                }
-
-                if (!tarea.GetAwaiter().IsCompleted)
-                {
-                    fila["captura"] = "no terminó en 30 s";
-                }
-                else
+                visor.Fijar(double.IsNaN(tImpacto) ? (double)res["t_fin"] : tImpacto + 0.3);
+                yield return null;
+                yield return null;
                 try
                 {
-                    foto = tarea.GetAwaiter().GetResult();
-                    File.WriteAllBytes(Path.Combine(Salida, clave + ".png"), Convert.FromBase64String((string)foto["png"]));
+                    var cam = Camera.main;
+                    var rt = new RenderTexture(960, 540, 24);
+                    var antes = cam.targetTexture;
+                    cam.targetTexture = rt;
+                    cam.Render();
+                    var previo = RenderTexture.active;
+                    RenderTexture.active = rt;
+                    var tex = new Texture2D(960, 540, TextureFormat.RGB24, false);
+                    tex.ReadPixels(new Rect(0, 0, 960, 540), 0, 0);
+                    tex.Apply();
+                    cam.targetTexture = antes;
+                    RenderTexture.active = previo;
+                    File.WriteAllBytes(Path.Combine(Salida, clave + ".png"), tex.EncodeToPNG());
+                    UnityEngine.Object.Destroy(tex);
+                    rt.Release();
                     fila["captura"] = "eval/results/unity_narraciones/" + clave + ".png";
                 }
                 catch (Exception ex)
