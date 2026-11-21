@@ -4,7 +4,7 @@
     "fecha":  "2026-11-21",
     "commit":  "c051746cf9755bd50d30f46a0d0c733f224eab8a",
     "rama_del_repositorio":  "feat/w-narracion-a-la-fisica",
-    "archivos_con_cambios":  1,
+    "archivos_con_cambios":  0,
     "duracion_min":  13.8,
     "equipo":  {
                    "tarjetas_de_video":  [
@@ -156,6 +156,13 @@
                       "paso":  "arranque-130-3",
                       "estado":  "ok",
                       "minutos":  0.8,
+                      "codigo":  0
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "volver-al-nuevo",
+                      "estado":  "ok",
+                      "minutos":  0,
                       "codigo":  0
                   }
               ]
