@@ -28,7 +28,9 @@ const ESPERA_3D_MS = 75_000;
 
 test.use({
   viewport: { width: 1440, height: 900 },
-  trace: "retain-on-failure",
+  // Sin las instantáneas del DOM: guardan también lo que baja la página (el build de Unity, decenas de
+  // MB) y la traza pasaba de lo que acepta GitHub. Quedan las capturas y la consola.
+  trace: { mode: "retain-on-failure", snapshots: false, screenshots: true, sources: false },
   ...(process.env.CROQUIS_CANAL ? { channel: process.env.CROQUIS_CANAL } : {}),
 });
 

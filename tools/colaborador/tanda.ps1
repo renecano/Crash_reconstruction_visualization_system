@@ -562,8 +562,27 @@ function Subir([string]$motivo, [string[]]$salidas) {
     try {
       if ((Nativo "git" @("-C", $Repo, "read-tree", $padre)) -ne 0) { throw "No se pudo leer el commit $padre." }
       $rutas = @($Relativa) + @($salidas | Where-Object { $_ -and (Test-Path (Join-Path $Repo $_)) })
+      # GitHub rechaza el push entero si un archivo pasa de 100 MB (René, 2026-11-20: el humo de la
+      # t5b no subió nada, ni su consola). Los de más de 90 MB se quedan aquí, en la lista
+      # no-subidos.txt, y todo lo demás sube.
+      $grandes = @()
+      foreach ($r in $rutas) {
+        $ruta = Join-Path $Repo $r
+        if (Test-Path $ruta -PathType Container) {
+          $grandes += @(Get-ChildItem -LiteralPath $ruta -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.Length -gt 90MB })
+        } elseif ((Get-Item -LiteralPath $ruta).Length -gt 90MB) {
+          $grandes += @(Get-Item -LiteralPath $ruta)
+        }
+      }
+      if ($grandes.Count -gt 0) {
+        $lista = @($grandes | ForEach-Object { "{0} ({1} MB): no se sube, GitHub no acepta archivos de más de 100 MB" -f $_.FullName.Substring($Repo.Length + 1), [math]::Round($_.Length / 1MB) })
+        AgregarAlRegistro (Join-Path $Salida "no-subidos.txt") $lista
+      }
       foreach ($r in $rutas) {
         if ((Nativo "git" @("-C", $Repo, "add", "-f", "--", $r)) -ne 0) { throw "No se pudo agregar $r." }
+      }
+      foreach ($g in $grandes) {
+        [void](Nativo "git" @("-C", $Repo, "rm", "--cached", "-q", "--", $g.FullName.Substring($Repo.Length + 1)))
       }
       $arbol = SalidaDe "git" @("-C", $Repo, "write-tree")
       $arbolPadre = SalidaDe "git" @("-C", $Repo, "rev-parse", "$padre^{tree}")
@@ -583,6 +602,8 @@ function Subir([string]$motivo, [string[]]$salidas) {
     return $true
   } catch {
     Escribir "   No se subió ($motivo): $($_.Exception.Message) Queda en $Salida." "Yellow"
+    # Por qué no subió, en un archivo que sí viaja con el resumen.
+    try { AgregarAlRegistro (Join-Path $Salida "subida.log") @("$(Get-Date -Format 'HH:mm:ss') · $motivo · $($_.Exception.Message)") } catch { }
     return $false
   }
 }

@@ -22,5 +22,82 @@
     "descargado": "2026-11-20",
     "sha256": "5d61df667d0e4b356c76d34fe235f4a63669d8e48c1d7cd4643eba860bb595e9",
     "elementos": 236
+  },
+  "centro_toluca": {
+    "descripcion": "Centro de Toluca (Av. Independencia y Benito Juárez), Estado de México — batería de ciudad del visor 3D (2026-11-20)",
+    "lat": 19.2925,
+    "lon": -99.6557,
+    "bbox": [-99.6573, 19.2911, -99.6541, 19.2939],
+    "url": "https://api.openstreetmap.org/api/0.6/map?bbox=-99.65730,19.29110,-99.65410,19.29390",
+    "nota": "API principal de OpenStreetMap (Overpass rechazó la consulta automática); el XML se pasó al formato de Overpass.",
+    "descargado": "2026-11-20",
+    "sha256": "ad62214293e785224d76868c9ff5183dcbe18a218586190e03e004682428dcb0",
+    "elementos": 1007
+  },
+  "tollocan_metepec": {
+    "descripcion": "Paseo Tollocan en Metepec, Estado de México — batería de ciudad del visor 3D (2026-11-20)",
+    "lat": 19.28706,
+    "lon": -99.60228,
+    "bbox": [-99.60388, 19.28566, -99.60068, 19.28846],
+    "url": "https://api.openstreetmap.org/api/0.6/map?bbox=-99.60388,19.28566,-99.60068,19.28846",
+    "nota": "API principal de OpenStreetMap (Overpass rechazó la consulta automática); el XML se pasó al formato de Overpass.",
+    "descargado": "2026-11-20",
+    "sha256": "126bdd232536a34ca5b841c7f08aba7a80fc6daedce9ab58730773549a2b48ba",
+    "elementos": 410
+  },
+  "reforma_cdmx": {
+    "descripcion": "Paseo de la Reforma en El Ángel, Ciudad de México — batería de ciudad del visor 3D (2026-11-20)",
+    "lat": 19.427,
+    "lon": -99.1677,
+    "bbox": [-99.1693, 19.4256, -99.1661, 19.4284],
+    "url": "https://api.openstreetmap.org/api/0.6/map?bbox=-99.16930,19.42560,-99.16610,19.42840",
+    "nota": "API principal de OpenStreetMap (Overpass rechazó la consulta automática); el XML se pasó al formato de Overpass.",
+    "descargado": "2026-11-20",
+    "sha256": "122da58cf6af429941c9cc78cf43e029bead4be87775bfa6c5d6aae0326ab1c0",
+    "elementos": 2186
+  },
+  "insurgentes_cdmx": {
+    "descripcion": "Avenida Insurgentes en la Glorieta de Insurgentes, Ciudad de México — batería de ciudad del visor 3D (2026-11-20)",
+    "lat": 19.4235,
+    "lon": -99.1631,
+    "bbox": [-99.1647, 19.4221, -99.1615, 19.4249],
+    "url": "https://api.openstreetmap.org/api/0.6/map?bbox=-99.16470,19.42210,-99.16150,19.42490",
+    "nota": "API principal de OpenStreetMap (Overpass rechazó la consulta automática); el XML se pasó al formato de Overpass.",
+    "descargado": "2026-11-20",
+    "sha256": "d12e5a1d8f28f1e2ffb10c8a25b507e299150c56810d2754c989ef54aa341050",
+    "elementos": 2379
+  },
+  "centro_guadalajara": {
+    "descripcion": "Centro de Guadalajara (Av. Hidalgo y Morelos), Jalisco — batería de ciudad del visor 3D (2026-11-20)",
+    "lat": 20.6767,
+    "lon": -103.3469,
+    "bbox": [-103.3485, 20.6753, -103.3453, 20.6781],
+    "url": "https://api.openstreetmap.org/api/0.6/map?bbox=-103.34850,20.67530,-103.34530,20.67810",
+    "nota": "API principal de OpenStreetMap (Overpass rechazó la consulta automática); el XML se pasó al formato de Overpass.",
+    "descargado": "2026-11-20",
+    "sha256": "61a73d37092d0e533330804b088a103d6ac6ceb0ad8a58f48393d94e81689fa3",
+    "elementos": 1335
+  },
+  "centro_monterrey": {
+    "descripcion": "Centro de Monterrey (Macroplaza), Nuevo León — batería de ciudad del visor 3D (2026-11-20)",
+    "lat": 25.6694,
+    "lon": -100.3097,
+    "bbox": [-100.3113, 25.668, -100.3081, 25.6708],
+    "url": "https://api.openstreetmap.org/api/0.6/map?bbox=-100.31130,25.66800,-100.30810,25.67080",
+    "nota": "API principal de OpenStreetMap (Overpass rechazó la consulta automática); el XML se pasó al formato de Overpass.",
+    "descargado": "2026-11-20",
+    "sha256": "c407dd3652f787a147e45485d70e9167f9e0eb95e4d3537de0ee7e5a3b6cce22",
+    "elementos": 1280
+  },
+  "axa_mex15d": {
+    "descripcion": "El punto ilustrativo de AXA A2010930 en la carretera MEX 15D (Sinaloa) — batería de ciudad del visor 3D (2026-11-20)",
+    "lat": 26.20915,
+    "lon": -109.0597,
+    "bbox": [-109.0613, 26.20775, -109.0581, 26.21055],
+    "url": "https://api.openstreetmap.org/api/0.6/map?bbox=-109.06130,26.20775,-109.05810,26.21055",
+    "nota": "API principal de OpenStreetMap (Overpass rechazó la consulta automática); el XML se pasó al formato de Overpass.",
+    "descargado": "2026-11-20",
+    "sha256": "61d3e62c5a4ed8db1f6e7701b4112b25cd9246710d35c09841c44314040ff7a6",
+    "elementos": 316
   }
 }
