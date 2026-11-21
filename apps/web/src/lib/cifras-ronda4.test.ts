@@ -35,7 +35,7 @@ const RUMBO: Record<string, number> = {
 };
 
 /** Las recetas de los ejemplos, como en e2e/recetas-ejemplos.ts. */
-const RECETAS: {
+export const RECETAS: {
   clave: string;
   choques?: [number, number][];
   venia: Record<string, string>;
@@ -73,8 +73,8 @@ const RECETAS: {
   {
     clave: "poste-terraceria",
     choques: [[18, 3]],
-    venia: { "el 3": "Del sur", Sentra: "Del oeste" },
-    quedo: { "el 3": [0.8, 8], Sentra: [16.4, 2.7] },
+    venia: { "Mazda 3": "Del sur", Sentra: "Del oeste" },
+    quedo: { "Mazda 3": [0.8, 8], Sentra: [16.4, 2.7] },
     pasos: [{ vehiculo: "V2", en: [9, 1.5] }],
     terreno: [{ tipo: "terraceria", en: [15, 4] }],
     cifra: "V2",
@@ -84,7 +84,7 @@ const RECETAS: {
 const de = <T>(mapa: Record<string, T>, texto: string) =>
   Object.entries(mapa).find(([k]) => texto.includes(k))?.[1];
 
-function lectura(ruta: string): { e: Expediente; narracion: string } {
+export function lectura(ruta: string): { e: Expediente; narracion: string } {
   const g = JSON.parse(readFileSync(resolve(RAIZ, ruta), "utf8")) as {
     narracion: string;
     salida: SalidaCorpus;
@@ -92,7 +92,7 @@ function lectura(ruta: string): { e: Expediente; narracion: string } {
   return { e: cesvi.escenaDeNarracion(g.salida, g.narracion).expediente, narracion: g.narracion };
 }
 
-function colocarReceta(e0: Expediente, r: (typeof RECETAS)[number]): Expediente {
+export function colocarReceta(e0: Expediente, r: (typeof RECETAS)[number]): Expediente {
   const impactos = impactosAColocar(e0);
   const nombres = Object.fromEntries(
     e0.vehiculos.map((v) => [v.id, facil.nombreVehiculo(v, e0.vehiculos)]),
@@ -125,7 +125,7 @@ function colocarReceta(e0: Expediente, r: (typeof RECETAS)[number]): Expediente 
 }
 
 /** Como la web: el relieve real si se pide y la velocidad típica donde exista (en el #284). */
-async function reconstruir(e0: Expediente, id: string) {
+export async function reconstruir(e0: Expediente, id: string) {
   let e = e0;
   let base = cesvi.especDeExpediente(e, id);
   const usa = (cesvi as Json).usaRelieve as ((x: Expediente) => boolean) | undefined;
