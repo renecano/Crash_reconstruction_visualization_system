@@ -1,0 +1,2041 @@
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[warning] Service Worker registration blocked by Playwright
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[info] [Report Only] Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+
+[warning] layers[highway-shield-non-us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[warning] layers[highway-shield-us-interstate].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[warning] layers[highway-shield-non-us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[warning] layers[highway-shield-us-interstate].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[warning] layers[road_shield_us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshBasicMaterial_124): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_188): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_101): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_104): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_101): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_104): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_110): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_109): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_113): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_132): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_110): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_119): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_182): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_129): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_130): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_130): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshBasicMaterial_125): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_LineBasicMaterial_172): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_121): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_181): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_109): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshBasicMaterial_170): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_131): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_183): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_184): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_123): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_128): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_167): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_LineBasicMaterial_168): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_113): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_120): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_113): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_120): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_116): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_113): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_120): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_116): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_113): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_117): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_185): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_186): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_177): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_154): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_headlight_l_175): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_headlight_r_176): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_154): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_166): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_178): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Interiors_2_96): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Interiors_2_96): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_154): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_179): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_RB1c_Tire_1k_100): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_98): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_BOTTOM_LT_92): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_Transperent_94): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment_Background.material""]).
+
+[error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_Background.material_72): [Invalid ShaderModule "fragment_Background.material"] is invalid.
+ - While validating fragment stage ([Invalid ShaderModule "fragment_Background.material"], entryPoint: "main").
+ - While validating fragment state.
+ - While calling [Device].CreateRenderPipeline([RenderPipelineDescriptor ""renderPipeline_Background.material_72""]).
+
+[warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment""]).
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_MeshStandardMaterial_189): [Invalid ShaderModule "fragment"] is invalid.
+ - While validating fragment stage ([Invalid ShaderModule "fragment"], entryPoint: "main").
+ - While validating fragment state.
+ - While calling [Device].CreateRenderPipeline([RenderPipelineDescriptor ""renderPipeline_MeshStandardMaterial_189""]).
+
+[warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment_Background.material""]).
+
+[error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_Background.material_72): [Invalid ShaderModule "fragment_Background.material"] is invalid.
+ - While validating fragment stage ([Invalid ShaderModule "fragment_Background.material"], entryPoint: "main").
+ - While validating fragment state.
+ - While calling [Device].CreateRenderPipeline([RenderPipelineDescriptor ""renderPipeline_Background.material_72""]).
+
+[warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment""]).
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_MeshStandardMaterial_189): [Invalid ShaderModule "fragment"] is invalid.
+ - While validating fragment stage ([Invalid ShaderModule "fragment"], entryPoint: "main").
+ - While validating fragment state.
+ - While calling [Device].CreateRenderPipeline([RenderPipelineDescriptor ""renderPipeline_MeshStandardMaterial_189""]).
+
+[warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment""]).
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_MeshStandardMaterial_189): [Invalid ShaderModule "fragment"] is invalid.
+ - While validating fragment stage ([Invalid ShaderModule "fragment"], entryPoint: "main").
+ - While validating fragment state.
+ - While calling [Device].CreateRenderPipeline([RenderPipelineDescriptor ""renderPipeline_MeshStandardMaterial_189""]).
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_21"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_21"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_21"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_72"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_72"]).
+ - While finishing [CommandEncoder "renderContext_26"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_26"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_26"]])
+
+[warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_177): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalMaterial_191): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_192): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer [renderPipeline_Background.material_72 / fragment error] at line 9:8: structures must have at least one member
+  struct OutputType {
+         ^
+[error] THREE.WebGPURenderer [renderPipeline_MeshStandardMaterial_189 / fragment error] at line 9:8: structures must have at least one member
+  struct OutputType {
+         ^
+[error] THREE.WebGPURenderer [renderPipeline_Background.material_72 / fragment error] at line 9:8: structures must have at least one member
+  struct OutputType {
+         ^
+[error] THREE.WebGPURenderer [renderPipeline_MeshStandardMaterial_189 / fragment error] at line 9:8: structures must have at least one member
+  struct OutputType {
+         ^
+[error] THREE.WebGPURenderer [renderPipeline_MeshStandardMaterial_189 / fragment error] at line 9:8: structures must have at least one member
+  struct OutputType {
+         ^
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshBasicMaterial_408): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_474): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_385): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_388): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_461): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_385): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_388): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_394): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_393): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_397): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_416): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_394): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_403): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_468): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_413): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_414): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_414): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshBasicMaterial_409): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_LineBasicMaterial_456): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalMaterial_465): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_466): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_405): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_467): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_393): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshBasicMaterial_454): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_415): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_469): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_470): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_407): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_412): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_451): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_461): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_LineBasicMaterial_452): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_397): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_404): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_397): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_404): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_400): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_397): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_404): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_400): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_397): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardMaterial_401): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_471): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshStandardNodeMaterial_472): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_438): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_headlight_l_459): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_headlight_r_460): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_438): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_450): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_462): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Interiors_2_382): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Interiors_2_382): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_438): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_MeshPhysicalNodeMaterial_463): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_RB1c_Tire_1k_384): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_374): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_BOTTOM_LT_378): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[error] THREE.WebGPURenderer: Async render pipeline creation failed (renderPipeline_UCB_Lights_and_Glass_Transperent_380): Color target has no corresponding fragment stage output but writeMask (ColorWriteMask::(Red|Green|Blue|Alpha)) is not zero.
+ - While validating targets[1] framebuffer output.
+ - While validating fragment state.
+
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment_Background.material""]).
+
+[error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_Background.material_359): [Invalid ShaderModule "fragment_Background.material"] is invalid.
+ - While validating fragment stage ([Invalid ShaderModule "fragment_Background.material"], entryPoint: "main").
+ - While validating fragment state.
+ - While calling [Device].CreateRenderPipeline([RenderPipelineDescriptor ""renderPipeline_Background.material_359""]).
+
+[warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment""]).
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_MeshStandardMaterial_475): [Invalid ShaderModule "fragment"] is invalid.
+ - While validating fragment stage ([Invalid ShaderModule "fragment"], entryPoint: "main").
+ - While validating fragment state.
+ - While calling [Device].CreateRenderPipeline([RenderPipelineDescriptor ""renderPipeline_MeshStandardMaterial_475""]).
+
+[warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment_Background.material""]).
+
+[error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_Background.material_359): [Invalid ShaderModule "fragment_Background.material"] is invalid.
+ - While validating fragment stage ([Invalid ShaderModule "fragment_Background.material"], entryPoint: "main").
+ - While validating fragment state.
+ - While calling [Device].CreateRenderPipeline([RenderPipelineDescriptor ""renderPipeline_Background.material_359""]).
+
+[warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment""]).
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_MeshStandardMaterial_475): [Invalid ShaderModule "fragment"] is invalid.
+ - While validating fragment stage ([Invalid ShaderModule "fragment"], entryPoint: "main").
+ - While validating fragment state.
+ - While calling [Device].CreateRenderPipeline([RenderPipelineDescriptor ""renderPipeline_MeshStandardMaterial_475""]).
+
+[warning] Error while parsing WGSL: :9:8 error: structures must have at least one member
+struct OutputType {
+       ^^^^^^^^^^
+
+
+ - While calling [Device].CreateShaderModule([ShaderModuleDescriptor ""fragment""]).
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[error] THREE.WebGPURenderer: Render pipeline creation failed (renderPipeline_MeshStandardMaterial_475): [Invalid ShaderModule "fragment"] is invalid.
+ - While validating fragment stage ([Invalid ShaderModule "fragment"], entryPoint: "main").
+ - While validating fragment state.
+ - While calling [Device].CreateRenderPipeline([RenderPipelineDescriptor ""renderPipeline_MeshStandardMaterial_475""]).
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_48"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_48"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_48"]])
+
+[warning] [Invalid RenderPipeline "renderPipeline_Background.material_359"] is invalid.
+ - While encoding [RenderPassEncoder (unlabeled)].SetPipeline([Invalid RenderPipeline "renderPipeline_Background.material_359"]).
+ - While finishing [CommandEncoder "renderContext_53"].
+
+[warning] [Invalid CommandBuffer from CommandEncoder "renderContext_53"] is invalid.
+ - While calling [Queue].Submit([[Invalid CommandBuffer from CommandEncoder "renderContext_53"]])
+
+[error] THREE.WebGPURenderer [renderPipeline_Background.material_359 / fragment error] at line 9:8: structures must have at least one member
+  struct OutputType {
+         ^
+[error] THREE.WebGPURenderer [renderPipeline_MeshStandardMaterial_475 / fragment error] at line 9:8: structures must have at least one member
+  struct OutputType {
+         ^
+[error] THREE.WebGPURenderer [renderPipeline_Background.material_359 / fragment error] at line 9:8: structures must have at least one member
+  struct OutputType {
+         ^
+[error] THREE.WebGPURenderer [renderPipeline_MeshStandardMaterial_475 / fragment error] at line 9:8: structures must have at least one member
+  struct OutputType {
+         ^
+[error] THREE.WebGPURenderer [renderPipeline_MeshStandardMaterial_475 / fragment error] at line 9:8: structures must have at least one member
+  struct OutputType {
+         ^
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.
+[warning] THREE.AttributeNode: Vertex attribute "uv" not found on geometry.

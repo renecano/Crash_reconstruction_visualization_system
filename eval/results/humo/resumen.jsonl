@@ -1,0 +1,9 @@
+{"fecha":"2026-11-20T22:59:14.867Z","caso":"AXA","estado":"listo","segundos":6.9,"fases":["arrancando @0.0 s","calculando @1.0 s","listo @6.9 s"]}
+{"fecha":"2026-11-20T22:59:18.804Z","caso":"Tollocan","estado":"respaldo","motivo":"no_cargo","aviso":" (interno: Object reference not set to an instance of an object.).","segundos":1.8,"fases":["arrancando @0.1 s","calculando @0.6 s","respaldo:no_cargo @1.8 s"]}
+{"fecha":"2026-11-20T23:00:36.085Z","caso":"Tollocan sin el mapa en vivo","estado":"sin respuesta","segundos":75.3,"fases":["sin visor @0.1 s"]}
+{"fecha":"2026-11-20T23:01:03.399Z","caso":"Ejemplo crucero de noche","estado":"listo","segundos":4.1,"fases":["arrancando @0.0 s","calculando @1.0 s","listo @4.1 s"],"notas":[]}
+{"fecha":"2026-11-21T16:05:58.222Z","caso":"AXA","estado":"listo","segundos":6.1,"fases":["arrancando @0.0 s","calculando @1.2 s","listo @6.1 s"]}
+{"fecha":"2026-11-21T16:06:02.194Z","caso":"Tollocan","estado":"listo","segundos":2.2,"fases":["arrancando @0.0 s","calculando @0.5 s","listo @2.2 s"]}
+{"fecha":"2026-11-21T16:06:06.222Z","caso":"Reforma, CDMX (batería de ciudad)","estado":"listo","segundos":2.2,"fases":["arrancando @0.0 s","calculando @1.0 s","listo @2.2 s"]}
+{"fecha":"2026-11-21T16:06:10.325Z","caso":"Centro de Guadalajara (batería de ciudad)","estado":"listo","segundos":2.4,"fases":["arrancando @0.0 s","calculando @0.5 s","listo @2.4 s"]}
+{"fecha":"2026-11-21T16:06:16.943Z","caso":"Ejemplo crucero de noche","estado":"listo","segundos":2.2,"fases":["arrancando @0.0 s","calculando @0.9 s","listo @2.2 s"],"notas":[]}
