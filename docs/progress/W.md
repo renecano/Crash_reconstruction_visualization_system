@@ -1314,3 +1314,12 @@ Viene de U0 (ADR 0111). Vale cuando el PR de contrato 2.3.0 esté en `main`:
 ## Necesito del otro frente
 
 - **De W5 para U6:** pasar `Reconstruccion.relieve` a `armarCaso3d` al integrar `<VisorUnity>`, y publicar un build con el tope como arco (`TerrenoVista.cs`). Está anotado en `docs/progress/U.md`.
+
+### 2026-11-21 — Tabla de cifras de la ronda 4 para el visto bueno de René (#284)
+
+- Medida sin navegador (`apps/web/src/lib/cifras-ronda4.test.ts`), producción 3257fa9f contra el #284: `eval/results/ronda4_cifras/{antes,despues}.json`. AXA sigue en 57 (55–78).
+- Integrado al #284: masa por ficha del modelo (feat/w-velocidades-via) y 10 fichas más con su URL (`data/vehicles/masas_extra.json`); «VW» y «GM» como marcas.
+- Bugs encontrados y corregidos: el aviso «casi no transfiere energía» leía la corrida de arranque (40 y 40 km/h) y salía en AXA y en el alcance; la receta del poste («el 3» no coincidía con «Mazda 3»), que movía la cifra publicada del poste.
+- Buscador: cruce de dos vías con su geometría; si nada cuadra, pregunta (nunca el centro del municipio). 23 frases: `eval/results/ronda4_lugar_sentido_local.json`.
+- Unity, lo narrado en el 3D: 5 de 7 (`eval/results/unity_narraciones/`); faltan la barrera de la bajada (sale «otro») y la curva (#286).
+- Pendiente: visto bueno de René; si el #284 se fusiona sin medir carambolas, «91 de 156» y cobertura (dependen de masa y velocidad); el 66 del alcance en el navegador de la t5c no se reproduce sin navegador: la t6 guarda el .croquis de cada ejemplo.
