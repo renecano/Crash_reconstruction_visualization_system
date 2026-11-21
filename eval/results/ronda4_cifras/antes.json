@@ -1,0 +1,519 @@
+{
+  "descripcion": "Tabla de cifras de la ronda 4 (René, 2026-11-21): AXA, los cinco ejemplos con la colocación de su receta y las siete narraciones con la colocación que propone La escena; solver TS con las muestras de producción, sin navegador (apps/web/src/lib/cifras-ronda4.test.ts).",
+  "codigo": "3257fa9f",
+  "arbol": "producción (main, el que sirve croquis-sage.vercel.app)",
+  "fecha": "2026-11-21T19:05:20.636Z",
+  "muestras": {
+    "samples": 32,
+    "mcSamples": 128
+  },
+  "filas": [
+    {
+      "grupo": "axa",
+      "clave": "axa",
+      "cifra_de": "V2",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "nombre": "Chevrolet Silverado 2500",
+          "clase": "pickup",
+          "masa_kg": 2562.1,
+          "masa_fuente": "supuesto",
+          "declarada": null
+        },
+        {
+          "id": "V2",
+          "nombre": "Toyota Tacoma",
+          "clase": "pickup",
+          "masa_kg": 1431.083,
+          "masa_fuente": "dictamen_importado",
+          "declarada": null
+        }
+      ],
+      "velocidades": [
+        {
+          "vehiculo": "V2",
+          "mejor": 57,
+          "p10": 55,
+          "p90": 78
+        },
+        {
+          "vehiculo": "V1",
+          "mejor": 15,
+          "p10": 1,
+          "p90": 21
+        }
+      ],
+      "relieve": false,
+      "topes": 0,
+      "limites": [
+        "El reporte no da las zonas del impacto de V2 y V1: se toma la cara de su primer daño.",
+        "V2: el reporte trae medidas de deformación en 2 daños; se usa la de la cara del impacto (frontal).",
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+      ]
+    },
+    {
+      "grupo": "ejemplo",
+      "clave": "crucero-noche",
+      "cifra_de": "V1",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "nombre": "VW Jetta",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        },
+        {
+          "id": "V2",
+          "nombre": "GM Camaro",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        }
+      ],
+      "velocidades": [
+        {
+          "vehiculo": "V1",
+          "mejor": 16,
+          "p10": 7,
+          "p90": 24
+        },
+        {
+          "vehiculo": "V2",
+          "mejor": 12,
+          "p10": 3,
+          "p90": 19
+        }
+      ],
+      "relieve": false,
+      "topes": 0,
+      "limites": [
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+      ]
+    },
+    {
+      "grupo": "ejemplo",
+      "clave": "alcance-deformacion",
+      "cifra_de": "V1",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "nombre": "Nissan NP300",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        },
+        {
+          "id": "V2",
+          "nombre": "Volkswagen Vento",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        }
+      ],
+      "velocidades": [
+        {
+          "vehiculo": "V1",
+          "mejor": 62,
+          "p10": 53,
+          "p90": 62
+        },
+        {
+          "vehiculo": "V2",
+          "mejor": 0,
+          "p10": 0,
+          "p90": 10
+        }
+      ],
+      "relieve": false,
+      "topes": 0,
+      "limites": [
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+      ]
+    },
+    {
+      "grupo": "ejemplo",
+      "clave": "carambola-lluvia",
+      "cifra_de": "V1",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "nombre": "Ford Ranger",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        },
+        {
+          "id": "V2",
+          "nombre": "Toyota Corolla",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        },
+        {
+          "id": "V3",
+          "nombre": "Chevrolet Aveo",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        }
+      ],
+      "velocidades": [
+        {
+          "vehiculo": "V1",
+          "mejor": 30,
+          "p10": 27,
+          "p90": 38
+        },
+        {
+          "vehiculo": "V2",
+          "mejor": null,
+          "p10": null,
+          "p90": null
+        },
+        {
+          "vehiculo": "V3",
+          "mejor": null,
+          "p10": null,
+          "p90": null
+        }
+      ],
+      "relieve": false,
+      "topes": 0,
+      "limites": [
+        "V3: solo está en un impacto posterior y empieza detenido en la posición de impacto que colocó el perito (supuesto).",
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+      ]
+    },
+    {
+      "grupo": "ejemplo",
+      "clave": "reversa-pendiente",
+      "cifra_de": "V2",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "nombre": "Honda CR-V",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        },
+        {
+          "id": "V2",
+          "nombre": "Nissan Versa",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        }
+      ],
+      "velocidades": [
+        {
+          "vehiculo": "V1",
+          "mejor": 0,
+          "p10": 0,
+          "p90": 1
+        },
+        {
+          "vehiculo": "V2",
+          "mejor": 21,
+          "p10": 20,
+          "p90": 26
+        }
+      ],
+      "relieve": false,
+      "topes": 1,
+      "limites": [
+        "V1 va en reversa y la narración no dice a qué velocidad: se suponen 5.68 km/h (de 3.06 a 9.07), lo que se mide en maniobras de reversa en uso real (NHTSA, DOT HS 811 024).",
+        "Los topes sin medir llevan las medidas de la NOM-034-SCT2/SEDATU-2022, tabla 38: si mediste el tope, corrígelas.",
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+      ]
+    },
+    {
+      "grupo": "ejemplo",
+      "clave": "poste-terraceria",
+      "cifra_de": "V2",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "nombre": "Mazda 3",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        },
+        {
+          "id": "V2",
+          "nombre": "Nissan Sentra",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        }
+      ],
+      "velocidades": [
+        {
+          "vehiculo": "V1",
+          "mejor": 30,
+          "p10": 25,
+          "p90": 31
+        },
+        {
+          "vehiculo": "V2",
+          "mejor": 36,
+          "p10": 29,
+          "p90": 38
+        }
+      ],
+      "relieve": false,
+      "topes": 0,
+      "limites": [
+        "El impacto 2 no es entre dos vehículos (poste de concreto de la línea de distribución eléctrica): la reconstrucción no lo calcula.",
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+      ]
+    },
+    {
+      "grupo": "narracion",
+      "clave": "arbol",
+      "cifra_de": null,
+      "vehiculos": [
+        {
+          "id": "V1",
+          "nombre": "Nissan Versa",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        }
+      ],
+      "velocidades": [
+        {
+          "vehiculo": "V1",
+          "mejor": null,
+          "p10": null,
+          "p90": null
+        }
+      ],
+      "relieve": false,
+      "topes": 0,
+      "limites": [
+        "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+      ]
+    },
+    {
+      "grupo": "narracion",
+      "clave": "poste",
+      "cifra_de": null,
+      "vehiculos": [
+        {
+          "id": "V1",
+          "nombre": "Chevrolet Aveo",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        }
+      ],
+      "velocidades": [
+        {
+          "vehiculo": "V1",
+          "mejor": null,
+          "p10": null,
+          "p90": null
+        }
+      ],
+      "relieve": false,
+      "topes": 0,
+      "limites": [
+        "La narración dice que llovía y no dice el estado de la carpeta: se supone mojada (fricción de pavimento mojado).",
+        "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+      ]
+    },
+    {
+      "grupo": "narracion",
+      "clave": "puente",
+      "cifra_de": null,
+      "vehiculos": [
+        {
+          "id": "V1",
+          "nombre": "Volkswagen Jetta",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        },
+        {
+          "id": "V2",
+          "nombre": "Toyota Hilux",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        }
+      ],
+      "velocidades": [
+        {
+          "vehiculo": "V1",
+          "mejor": null,
+          "p10": null,
+          "p90": null
+        },
+        {
+          "vehiculo": "V2",
+          "mejor": null,
+          "p10": null,
+          "p90": null
+        }
+      ],
+      "relieve": false,
+      "topes": 0,
+      "limites": [
+        "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+      ]
+    },
+    {
+      "grupo": "narracion",
+      "clave": "subida",
+      "cifra_de": null,
+      "vehiculos": [
+        {
+          "id": "V1",
+          "nombre": "Ford Ranger",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        },
+        {
+          "id": "V2",
+          "nombre": "Nissan Tsuru",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        }
+      ],
+      "velocidades": [
+        {
+          "vehiculo": "V1",
+          "mejor": null,
+          "p10": null,
+          "p90": null
+        },
+        {
+          "vehiculo": "V2",
+          "mejor": null,
+          "p10": null,
+          "p90": null
+        }
+      ],
+      "relieve": false,
+      "topes": 0,
+      "limites": [
+        "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+      ]
+    },
+    {
+      "grupo": "narracion",
+      "clave": "bajada",
+      "cifra_de": null,
+      "vehiculos": [
+        {
+          "id": "V1",
+          "nombre": "Mazda 3",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        }
+      ],
+      "velocidades": [
+        {
+          "vehiculo": "V1",
+          "mejor": null,
+          "p10": null,
+          "p90": null
+        }
+      ],
+      "relieve": false,
+      "topes": 0,
+      "limites": []
+    },
+    {
+      "grupo": "narracion",
+      "clave": "curva",
+      "cifra_de": null,
+      "vehiculos": [
+        {
+          "id": "V1",
+          "nombre": "Kia Rio",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        },
+        {
+          "id": "V2",
+          "nombre": "Honda CR-V",
+          "clase": null,
+          "masa_kg": null,
+          "masa_fuente": null,
+          "declarada": null
+        }
+      ],
+      "velocidades": [
+        {
+          "vehiculo": "V1",
+          "mejor": null,
+          "p10": null,
+          "p90": null
+        },
+        {
+          "vehiculo": "V2",
+          "mejor": null,
+          "p10": null,
+          "p90": null
+        }
+      ],
+      "relieve": false,
+      "topes": 0,
+      "limites": [
+        "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+      ]
+    },
+    {
+      "grupo": "narracion",
+      "clave": "tollocan",
+      "cifra_de": "V1",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "nombre": "Vehículo A",
+          "clase": "sedan_mediano",
+          "masa_kg": 1769.5,
+          "masa_fuente": "supuesto",
+          "declarada": null
+        }
+      ],
+      "velocidades": [
+        {
+          "vehiculo": "V1",
+          "mejor": null,
+          "p10": null,
+          "p90": null
+        }
+      ],
+      "relieve": false,
+      "topes": 0,
+      "limites": []
+    }
+  ]
+}

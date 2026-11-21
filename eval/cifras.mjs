@@ -228,6 +228,30 @@ function construir() {
     });
   }
 
+  // --- Los ejemplos de narración: el del poste, corregido (René, 2026-11-21) ---
+  {
+    const archivo = "eval/results/ronda4_cifras/antes.json";
+    const doc = leer(archivo);
+    const i = doc.filas.findIndex((f) => f.clave === "poste-terraceria");
+    if (i < 0) throw new Error(`${archivo}: no está el ejemplo poste-terraceria`);
+    const fila = doc.filas[i];
+    const j = fila.velocidades.findIndex((v) => v.vehiculo === fila.cifra_de);
+    const v = fila.velocidades[j];
+    pon("ejemplos.poste", {
+      que: "Ejemplo «poste y terracería»: velocidad del Sentra (B) antes del impacto, con la escena colocada como dice la narración (el Mazda 3 quedó 8 m al norte)",
+      mejor: v.mejor,
+      p10: v.p10,
+      p90: v.p90,
+      unidad: "km/h",
+      muestras: doc.muestras.samples,
+      juego_de_muestras: "producción",
+      texto: `${v.mejor} km/h (${v.p10}–${v.p90})`,
+      fuente: archivo,
+      campo: `filas.${i}.velocidades.${j}`,
+      codigo: doc.codigo,
+    });
+  }
+
   // --- La reversa (supuesto con fuente) ---
   {
     const archivo = "packages/cesvi/src/data/reversa-nhtsa.json";
@@ -267,6 +291,10 @@ function construir() {
         que: "Carambolas de prueba medidas el 2026-10-23, antes del #119 (2026-10-24)",
       },
       { texto: "43 de 55", que: "Carambolas de desarrollo medidas el 2026-10-23, antes del #119" },
+      {
+        texto: "27 km/h (23–35)",
+        que: "Ejemplo «poste y terracería» medido en la t5 y la t5c: la receta de la e2e buscaba «el 3» y la pantalla dice «Mazda 3», así que dejaba el Mazda junto al choque y no 8 m al norte como dice la narración (René, 2026-11-21)",
+      },
     ],
     cifras,
   };
