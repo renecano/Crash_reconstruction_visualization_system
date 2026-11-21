@@ -1,5 +1,5 @@
 {
-  "nota": "Lo pesado de cada tanda de la auditoría del 2026-11-15, para la computadora del colaborador (tools/colaborador/tanda.ps1). «vigente» es la que corre CORRER-TANDA-EN-RTX.bat con doble clic. Toda corrida empieza por «comprobacion»; si falla, lo pesado no corre. Cada paso: un comando que corre en la raíz del repositorio, sin preguntas y sin llaves; «minutos» es lo estimado (el tope es 4 veces eso, y al menos 10 min); «salidas» son las rutas que se suben además de los registros. «rama»: la rama donde vive la tanda mientras no esté en main. Un comando por paso (sin &&): cada uno deja su registro. Un paso con `requiere` se omite si falta esa carpeta (datos que no van en git).",
+  "nota": "Lo pesado de cada tanda de la auditoría del 2026-11-15, para la computadora del colaborador (tools/colaborador/tanda.ps1). «vigente» es la que corre CORRER-TANDA-EN-RTX.bat con doble clic. Toda corrida empieza por «comprobacion»; si falla, lo pesado no corre. Cada paso: un comando que corre en la raíz del repositorio, sin preguntas y sin llaves; «minutos» es lo estimado (el tope es 4 veces eso, y al menos 10 min); «salidas» son las rutas que se suben además de los registros. «rama»: la rama donde vive la tanda mientras no esté en main. Un comando por paso (sin &&): cada uno deja su registro. Un paso con `requiere` se omite si falta esa carpeta (datos que no van en git). «privadas»: carpetas de un paso que no se suben; se comprimen en un zip en la carpeta de resultados (René, 2026-11-21: el repositorio es público).",
   "vigente": "t6",
   "comprobacion": {
     "pasos": [
@@ -691,7 +691,7 @@
     },
     "t6": {
       "titulo": "Tanda 6 · Antes de publicar: fotos del recorrido, cifras en el navegador, narraciones, barrera y curvas",
-      "nota": "René, 2026-11-21: la única corrida pesada antes de publicar. Fijada al último commit del #284, con el #286 (curvas) integrado y el build de Unity nuevo (la barrera y la guarnición de concreto). Primero el humo (si falla, se detiene). Luego, las fotos del recorrido (2560×1440, Unity en calidad alta; juegos «publico» y «solo-cesvi», en recorrido/), que no dependen de lo demás. Después lo pesado: los cinco ejemplos en el navegador con su .croquis, las seis narraciones con sus capturas del 3D (la curva y la barrera) y el caso encimado, Tollocan, y carambolas y cobertura antes (producción, 3257fa9f) y después. Al final, eval/t6_comparar.mjs: si las cinco cifras del navegador no son las de la tabla aprobada, o AXA no da 57, o cambian carambolas o cobertura, no se publica. «91 de 156» se mide en la laptop de René (necesita los textos crudos).",
+      "nota": "René, 2026-11-21: la única corrida pesada antes de publicar. Fijada al último commit del #284, con el #286 (curvas) integrado y el build de Unity nuevo (la barrera y la guarnición de concreto). Primero el humo (si falla, se detiene). Luego, las fotos del recorrido (2560×1440, Unity en calidad alta; juegos «publico» y «solo-cesvi», en recorrido/), que no dependen de lo demás. Después lo pesado: los cinco ejemplos en el navegador con su .croquis, las seis narraciones con sus capturas del 3D (la curva y la barrera) y el caso encimado, Tollocan, y carambolas y cobertura antes (producción, 3257fa9f) y después. Al final, eval/t6_comparar.mjs: si las cinco cifras del navegador no son las de la tabla aprobada, o AXA no da 57, o cambian carambolas o cobertura, no se publica. «91 de 156» se mide en la laptop de René (necesita los textos crudos). Lo privado (René, 2026-11-21): las fotos de AXA (recorrido/solo-cesvi) no se suben; quedan en recorrido-solo-cesvi.zip en la carpeta de resultados, y al final la ventana dice dónde está para mandárselo a René por WhatsApp o Drive. Nada cuya ruta nombre a AXA se sube (el humo de AXA tampoco).",
       "rama": "feat/w-narracion-a-la-fisica",
       "pasos": [
         {
@@ -719,7 +719,8 @@
           "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues recorrido -Salida recorrido",
           "minutos": 50,
           "tope_min": 120,
-          "salidas": ["recorrido/"]
+          "salidas": ["recorrido/publico/"],
+          "privadas": ["recorrido/solo-cesvi"]
         },
         {
           "nombre": "ejemplos",
