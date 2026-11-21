@@ -39,7 +39,7 @@ function unityFalso(version: string, contestar: (metodo: string, datos: unknown)
     setTimeout(() => (n as HTMLScriptElement).onload?.(new Event("load")), 0);
     return n;
   });
-  return { enviados, instancia };
+  return { enviados, instancia, decir };
 }
 
 function conWebgl2() {
@@ -49,6 +49,93 @@ function conWebgl2() {
 afterEach(() => {
   vi.restoreAllMocks();
   delete (window as unknown as Record<string, unknown>).createUnityInstance;
+});
+
+/** Unas vueltas del ciclo de eventos (los `setTimeout(0)` del Unity de mentira). */
+const vueltas = async (n = 5) => {
+  for (let i = 0; i < n; i++) await new Promise((ok) => setTimeout(ok, 0));
+};
+
+/**
+ * Las carreras del puente (René, 2026-11-20, después de Tollocan): Unity no dice de qué mensaje es un
+ * «error», así que la web no puede tener dos esperas a la vez ni mandar, mientras carga, algo que
+ * pueda contestar «error».
+ */
+describe("una respuesta a la vez", () => {
+  it("una cámara que no existe, elegida mientras carga, no tumba la carga", async () => {
+    conWebgl2();
+    const { enviados, decir } = unityFalso(VISOR_PUENTE_VERSION, (metodo, datos) =>
+      metodo === "camara" && (datos as { modo: string }).modo === "conductor_V9"
+        ? { tipo: "error", codigo: "interno", mensaje: "No hay una cámara «conductor_V9»." }
+        : null,
+    );
+    const p = await PuenteUnity.arrancar(document.createElement("canvas"), () => {}, {
+      manifiesto: MANIFIESTO,
+    });
+    const carga = p.cargar({ version_caso3d: "1" });
+    let fallo: unknown = null;
+    carga.catch((e: unknown) => (fallo = e));
+    await vueltas();
+    p.enviar("camara", { modo: "conductor_V9" as never });
+    p.enviar("fijarTiempo", { t: 1 });
+    p.enviar("fijarTiempo", { t: 2 });
+    await vueltas();
+    expect(fallo).toBeNull();
+    // Mientras carga, esos mensajes esperan; de cada uno va el último, después de «cargado».
+    expect(enviados.map((x) => x.metodo)).toEqual(["cargarCaso"]);
+    decir({ tipo: "cargado", escena_id: "x" });
+    await carga;
+    await vueltas();
+    expect(enviados.map((x) => [x.metodo, x.datos])).toEqual([
+      ["cargarCaso", expect.anything()],
+      ["camara", { modo: "conductor_V9" }],
+      ["fijarTiempo", { t: 2 }],
+    ]);
+  });
+
+  it("una foto pedida mientras carga espera a la carga, y su «error» no tumba la carga", async () => {
+    conWebgl2();
+    const { enviados, decir } = unityFalso(VISOR_PUENTE_VERSION, (metodo) =>
+      metodo === "capturar"
+        ? { tipo: "error", codigo: "captura_fallo", mensaje: "sin cámara" }
+        : null,
+    );
+    const p = await PuenteUnity.arrancar(document.createElement("canvas"), () => {}, {
+      manifiesto: MANIFIESTO,
+    });
+    const carga = p.cargar({ version_caso3d: "1" });
+    let fallo: unknown = null;
+    carga.catch((e: unknown) => (fallo = e));
+    await vueltas();
+    const foto = p.capturar("impacto", 960, 540);
+    foto.catch(() => undefined);
+    await vueltas();
+    expect(fallo).toBeNull();
+    expect(enviados.map((x) => x.metodo)).toEqual(["cargarCaso"]);
+    decir({ tipo: "cargado", escena_id: "x" });
+    await carga;
+    await expect(foto).rejects.toThrow(/captura_fallo/);
+    expect(enviados.map((x) => x.metodo)).toEqual(["cargarCaso", "capturar"]);
+  });
+
+  it("una carga pedida mientras se toma una foto espera a la foto", async () => {
+    conWebgl2();
+    const { enviados, decir } = unityFalso(VISOR_PUENTE_VERSION, () => null);
+    const p = await PuenteUnity.arrancar(document.createElement("canvas"), () => {}, {
+      manifiesto: MANIFIESTO,
+    });
+    const foto = p.capturar("antes", 960, 540);
+    await vueltas();
+    const carga = p.cargar({ version_caso3d: "1" });
+    await vueltas();
+    expect(enviados.map((x) => x.metodo)).toEqual(["capturar"]);
+    decir({ tipo: "captura", vista: "antes", png: btoa("antes") });
+    await foto;
+    await vueltas();
+    expect(enviados.map((x) => x.metodo)).toEqual(["capturar", "cargarCaso"]);
+    decir({ tipo: "cargado", escena_id: "x" });
+    await carga;
+  });
 });
 
 describe("puente con Unity", () => {
