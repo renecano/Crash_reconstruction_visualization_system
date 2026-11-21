@@ -1,0 +1,201 @@
+{
+  "formato": "croquis-caso",
+  "version": 1,
+  "guardado": "2026-11-19T01:00:37.537Z",
+  "narracion": null,
+  "escena": {
+    "posiciones": [],
+    "conteos": {
+      "filas": 7,
+      "valores_invalidos": 0,
+      "citas": 5,
+      "citas_fuera": 0,
+      "numeros": 0,
+      "numeros_fuera": 0
+    },
+    "problemas": [],
+    "preguntas": [
+      {
+        "clave": "impactos",
+        "texto": "¿Contra qué chocó V1?",
+        "porQue": "Sin los impactos no hay reconstrucción.",
+        "control": {
+          "tipo": "opciones",
+          "opciones": [
+            {
+              "valor": "V1|objeto:poste",
+              "etiqueta": "Un poste"
+            },
+            {
+              "valor": "V1|objeto:arbol",
+              "etiqueta": "Un árbol"
+            },
+            {
+              "valor": "V1|objeto:muro",
+              "etiqueta": "Un muro o una barda"
+            },
+            {
+              "valor": "V1|objeto:otro",
+              "etiqueta": "Otro objeto fijo"
+            }
+          ]
+        }
+      },
+      {
+        "clave": "masa-V1",
+        "texto": "¿Cuál es la masa de V1?",
+        "porQue": "La masa reparte la cantidad de movimiento y cambia las velocidades.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "kg",
+          "tipico": {
+            "valor": 1769.5,
+            "fuente": "masa media de 386 pruebas de NHTSA contra barrera (E2, eval/results/e2_barrier.json)"
+          }
+        },
+        "vehiculo": "V1"
+      },
+      {
+        "clave": "restos",
+        "texto": "¿Qué longitud tiene la zona de restos?",
+        "porQue": "Los restos fijan el desplazamiento después del impacto.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "m"
+        }
+      },
+      {
+        "clave": "final-V1",
+        "texto": "¿Dónde quedó V1 al final?",
+        "porQue": "La posición final es evidencia para la inversión de velocidades.",
+        "control": {
+          "tipo": "mapa"
+        },
+        "vehiculo": "V1"
+      }
+    ]
+  },
+  "expediente": {
+    "caso": {
+      "lugar": {
+        "descripcion": {
+          "valor": "Centro de Guadalajara",
+          "fuente": "perito"
+        }
+      },
+      "modalidades": []
+    },
+    "vehiculos": [
+      {
+        "id": "V1",
+        "clase": "sedan_mediano",
+        "masa": {
+          "valor": 1769.5,
+          "unidad": "kg",
+          "fuente": "supuesto"
+        }
+      }
+    ],
+    "impactos": [
+      {
+        "orden": 1,
+        "vehiculos": [
+          "V1"
+        ],
+        "objeto_fijo": "poste",
+        "zonas": [
+          {
+            "vehiculo": "V1",
+            "zona": {
+              "cara": "frontal"
+            }
+          }
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "imapctando de frente contra un arbol"
+        }
+      }
+    ],
+    "versiones": [
+      {
+        "tipo": "evidencia",
+        "maniobras": [
+          {
+            "vehiculo": "V1",
+            "tipo": "circula",
+            "cita": {
+              "texto": "iba por tollocan rumbo a la ciudad de mexico"
+            }
+          }
+        ],
+        "posiciones": [
+          {
+            "vehiculo": "V1",
+            "fase": "impacto",
+            "punto": {
+              "lat": 20.6767,
+              "lon": -103.3469
+            },
+            "rumbo": 83.72405419993981,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V1",
+            "fase": "final",
+            "punto": {
+              "lat": 20.676701474665222,
+              "lon": -103.34688579269243
+            },
+            "rumbo": 83.72405419993981,
+            "fuente": "perito"
+          }
+        ],
+        "puntos_paso": [
+          {
+            "vehiculo": "V1",
+            "orden": 1,
+            "punto": {
+              "lat": 20.676678789624095,
+              "lon": -103.34701190377837
+            },
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V1",
+            "orden": 2,
+            "punto": {
+              "lat": 20.676682128465377,
+              "lon": -103.34696589422991
+            },
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V1",
+            "orden": 3,
+            "punto": {
+              "lat": 20.67669757060465,
+              "lon": -103.34692829027237
+            },
+            "fuente": "perito"
+          }
+        ]
+      }
+    ],
+    "evidencias": {
+      "objetos_fijos_danados": [
+        "poste"
+      ],
+      "restos": {
+        "longitud": {
+          "valor": 10,
+          "unidad": "m",
+          "fuente": "perito"
+        }
+      }
+    }
+  },
+  "conclusion_perito": null,
+  "titulo": "Centro de Guadalajara, contra un poste",
+  "bitacora": []
+}

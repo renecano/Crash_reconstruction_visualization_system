@@ -1,8 +1,9 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { caso3dErrors } from "@croquis/scene-schema";
+import { leerCasoGuardado } from "@/lib/caso-guardado";
 import { describe, expect, it } from "vitest";
-import { CASOS_BATERIA, paqueteDeLaBateria, resumenDelPaquete } from "./bateria-ciudad";
+import { CASOS_BATERIA, CASOS_HUMO, paqueteDeLaBateria, resumenDelPaquete } from "./bateria-ciudad";
 
 const RAIZ = resolve(__dirname, "../../../../..");
 const DIR = resolve(RAIZ, "packages/scene-schema/fixtures/caso3d-ciudad");
@@ -48,6 +49,29 @@ describe("la batería de ciudad del visor 3D", () => {
         ) + "\n",
       );
       expect(indice).toHaveLength(CASOS_BATERIA.length);
+      // Dos lugares de la batería como casos que se abren en la app (el humo de las tandas).
+      if (!process.env.CROQUIS_BATERIA_DIR) {
+        const base = JSON.parse(
+          readFileSync(resolve(RAIZ, "data/cesvi/casos/tollocan-rene.croquis"), "utf8"),
+        ) as Record<string, unknown>;
+        for (const clave of CASOS_HUMO) {
+          const c = CASOS_BATERIA.find((x) => x.clave === clave)!;
+          const caso = {
+            ...base,
+            titulo: c.que,
+            narracion: null,
+            conclusion_perito: null,
+            bitacora: [],
+            expediente: c.expediente(RAIZ),
+          };
+          // Que la app lo abra igual que un caso guardado.
+          expect(leerCasoGuardado(caso), clave).not.toHaveProperty("error");
+          writeFileSync(
+            resolve(RAIZ, `data/cesvi/casos/bateria-${clave}.croquis`),
+            JSON.stringify(caso, null, 2) + "\n",
+          );
+        }
+      }
     },
     600_000,
   );

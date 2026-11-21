@@ -1,0 +1,681 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="19" result="Failed(Child)" total="19" passed="16" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-21 00:26:09Z" end-time="2026-11-21 00:26:33Z" duration="24.3905172">
+  <test-suite type="TestSuite" id="1028" name="Visor de Croquis" fullname="Visor de Croquis" runstate="Runnable" testcasecount="19" result="Failed" site="Child" start-time="2026-11-21 00:26:09Z" end-time="2026-11-21 00:26:33Z" duration="24.390517" total="19" passed="16" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1023" name="Croquis.TestsCiudad.dll" fullname="D:/Documentos/proyectos/croquis/apps/visor-unity/Library/ScriptAssemblies/Croquis.TestsCiudad.dll" runstate="Runnable" testcasecount="19" result="Failed" site="Child" start-time="2026-11-21 00:26:09Z" end-time="2026-11-21 00:26:33Z" duration="24.373620" total="19" passed="16" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17328" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1024" name="Croquis" fullname="Croquis" runstate="Runnable" testcasecount="19" result="Failed" site="Child" start-time="2026-11-21 00:26:09Z" end-time="2026-11-21 00:26:33Z" duration="24.372491" total="19" passed="16" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1025" name="TestsCiudad" fullname="Croquis.TestsCiudad" runstate="Runnable" testcasecount="19" result="Failed" site="Child" start-time="2026-11-21 00:26:09Z" end-time="2026-11-21 00:26:33Z" duration="24.371899" total="19" passed="16" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1001" name="CiudadEnUnityTests" fullname="Croquis.TestsCiudad.CiudadEnUnityTests" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" testcasecount="19" result="Failed" site="Child" start-time="2026-11-21 00:26:09Z" end-time="2026-11-21 00:26:33Z" duration="24.370362" total="19" passed="16" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1022" name="DosCargasEncimadas" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.DosCargasEncimadas" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-11-21 00:26:09Z" end-time="2026-11-21 00:26:24Z" duration="14.843512" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="240000" />
+              </properties>
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1017" name="DosCargasEncimadas(0)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.DosCargasEncimadas(0)" methodname="DosCargasEncimadas" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="942577544" result="Failed" start-time="2026-11-21 00:26:09Z" end-time="2026-11-21 00:26:20Z" duration="11.369349" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Con errores:
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+UnityEngine.Rendering.Universal.CameraExtensions:SetVolumeFrameworkUpdateMode (UnityEngine.Camera,UnityEngine.Rendering.Universal.VolumeFrameworkUpdateMode)
+Croquis.Visor.Calidad:RefrescarPosproceso () (at Assets/Croquis/Visor/Calidad.cs:186)
+Croquis.Visor.Calidad:Aplicar () (at Assets/Croquis/Visor/Calidad.cs:229)
+Croquis.Visor.VisorPuente:Awake () (at Assets/Croquis/Visor/VisorPuente.cs:41)
+
+---
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+UnityEngine.Rendering.Universal.CameraExtensions:UpdateVolumeStack (UnityEngine.Camera,UnityEngine.Rendering.Universal.UniversalAdditionalCameraData)
+Croquis.Visor.Calidad:RefrescarPosproceso () (at Assets/Croquis/Visor/Calidad.cs:187)
+Croquis.Visor.Calidad:Aplicar () (at Assets/Croquis/Visor/Calidad.cs:229)
+Croquis.Visor.VisorPuente:Awake () (at Assets/Croquis/Visor/VisorPuente.cs:41)
+
+---
+MissingReferenceException: The object of type 'UnityEngine.GameObject' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.
+UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) (at <de88af24691e4d5d8139304fcf46f698>:0)
+UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) (at <de88af24691e4d5d8139304fcf46f698>:0)
+UnityEngine.GameObject.get_transform () (at <de88af24691e4d5d8139304fcf46f698>:0)
+Croquis.Visor.VisorCaso.CargarAsync (Croquis.Generated.Caso3D caso) (at Assets/Croquis/Visor/VisorCaso.cs:166)
+UnityEngine.Awaitable.PropagateExceptionAndRelease () (at <de88af24691e4d5d8139304fcf46f698>:0)
+Croquis.Visor.VisorPuente.CargarAsync (System.String texto) (at Assets/Croquis/Visor/VisorPuente.cs:93)
+UnityEngine.Debug:LogException(Exception)
+Croquis.Visor.<CargarAsync>d__12:MoveNext() (at Assets/Croquis/Visor/VisorPuente.cs:109)
+UnityEngine.Awaitable:RaiseManagedCompletion(Exception)
+Croquis.Visor.<CargarAsync>d__71:MoveNext() (at Assets/Croquis/Visor/VisorCaso.cs:412)
+UnityEngine.AwaitableAsyncMethodBuilder`1:SetResult(PartesVehiculo)
+Croquis.Visor.<ArmarAsync>d__11:MoveNext() (at Assets/Croquis/Visor/CargadorModelos.cs:122)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<InstantiateMainSceneAsync>d__73:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:718)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<InstantiateMainSceneAsync>d__74:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:745)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<InstantiateSceneAsync>d__76:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:798)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<InstantiateSceneInternal>d__164:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:3199)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<<InstantiateSceneInternal>g__IterateNodes|1>d:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:3021)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<BreakPoint>d__11:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/TimeBudgetPerFrameDeferAgent.cs:85)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks()
+
+---
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+UnityEngine.Rendering.Universal.CameraExtensions:SetVolumeFrameworkUpdateMode (UnityEngine.Camera,UnityEngine.Rendering.Universal.VolumeFrameworkUpdateMode)
+Croquis.Visor.CamaraVisor:Minimapa () (at Assets/Croquis/Visor/CamaraVisor.cs:541)
+Croquis.Visor.CamaraVisor:Abrir (Croquis.Generated.Caso3D) (at Assets/Croquis/Visor/CamaraVisor.cs:431)
+Croquis.Visor.VisorCaso/<CargarAsync>d__71:MoveNext () (at Assets/Croquis/Visor/VisorCaso.cs:289)
+UnityEngine.Awaitable/AwaitableAsyncMethodBuilder`1<Croquis.Visor.PartesVehiculo>:SetResult (Croquis.Visor.PartesVehiculo)
+Croquis.Visor.CargadorModelos/<ArmarAsync>d__11:MoveNext () (at Assets/Croquis/Visor/CargadorModelos.cs:122)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:SetResult (bool)
+GLTFast.GltfImportBase/<Load>d__63:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:438)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:SetResult (bool)
+GLTFast.GltfImportBase/<Load>d__64:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:467)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:SetResult (bool)
+GLTFast.GltfImportBase/<LoadGltfBinaryInternal>d__126:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:1416)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:SetResult (bool)
+GLTFast.GltfImportBase/<Prepare>d__148:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2458)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult ()
+GLTFast.GltfImportBase/<GenerateMaterials>d__154:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2733)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult ()
+GLTFast.TimeBudgetPerFrameDeferAgent/<BreakPoint>d__12:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/TimeBudgetPerFrameDeferAgent.cs:94)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
+
+---
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+UnityEngine.Rendering.Universal.CameraExtensions:UpdateVolumeStack (UnityEngine.Camera,UnityEngine.Rendering.Universal.UniversalAdditionalCameraData)
+Croquis.Visor.Calidad:RefrescarPosproceso () (at Assets/Croquis/Visor/Calidad.cs:187)
+Croquis.Visor.Calidad:Aplicar () (at Assets/Croquis/Visor/Calidad.cs:229)
+Croquis.Visor.VisorCaso/<CargarAsync>d__71:MoveNext () (at Assets/Croquis/Visor/VisorCaso.cs:403)
+UnityEngine.Awaitable/AwaitableAsyncMethodBuilder`1<Croquis.Visor.PartesVehiculo>:SetResult (Croquis.Visor.PartesVehiculo)
+Croquis.Visor.CargadorModelos/<ArmarAsync>d__11:MoveNext () (at Assets/Croquis/Visor/CargadorModelos.cs:122)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:SetResult (bool)
+GLTFast.GltfImportBase/<Load>d__63:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:438)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:SetResult (bool)
+GLTFast.GltfImportBase/<Load>d__64:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:467)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:SetResult (bool)
+GLTFast.GltfImportBase/<LoadGltfBinaryInternal>d__126:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:1416)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:SetResult (bool)
+GLTFast.GltfImportBase/<Prepare>d__148:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2458)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult ()
+GLTFast.GltfImportBase/<GenerateMaterials>d__154:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2733)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult ()
+GLTFast.TimeBudgetPerFrameDeferAgent/<BreakPoint>d__12:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/TimeBudgetPerFrameDeferAgent.cs:94)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
+
+  Expected: <empty>
+  But was:  < "UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+UnityEngine.Rendering.Universal.CameraExtensions:SetVolumeFrameworkUpdateMode (UnityEngine.Camera,UnityEngine.Rendering.Universal.VolumeFrameworkUpdateMode)
+Croquis.Visor.Calidad:RefrescarPosproceso () (at Assets/Croquis/Visor/Calidad.cs:186)
+Croquis.Visor.Calidad:Aplicar () (at Assets/Croquis/Visor/Calidad.cs:229)
+Croquis.Visor.VisorPuente:Awake () (at Assets/Croquis/Visor/VisorPuente.cs:41)
+", "UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+UnityEngine.Rendering.Universal.CameraExtensions:UpdateVolumeStack (UnityEngine.Camera,UnityEngine.Rendering.Universal.UniversalAdditionalCameraData)
+Croquis.Visor.Calidad:RefrescarPosproceso () (at Assets/Croquis/Visor/Calidad.cs:187)
+Croquis.Visor.Calidad:Aplicar () (at Assets/Croquis/Visor/Calidad.cs:229)
+Croquis.Visor.VisorPuente:Awake () (at Assets/Croquis/Visor/VisorPuente.cs:41)
+", "MissingReferenceException: The object of type 'UnityEngine.GameObject' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.
+UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) (at <de88af24691e4d5d8139304fcf46f698>:0)
+UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) (at <de88af24691e4d5d8139304fcf46f698>:0)
+UnityEngine.GameObject.get_transform () (at <de88af24691e4d5d8139304fcf46f698>:0)
+Croquis.Visor.VisorCaso.CargarAsync (Croquis.Generated.Caso3D caso) (at Assets/Croquis/Visor/VisorCaso.cs:166)
+UnityEngine.Awaitable.PropagateExceptionAndRelease () (at <de88af24691e4d5d8139304fcf46f698>:0)
+Croquis.Visor.VisorPuente.CargarAsync (System.String texto) (at Assets/Croquis/Visor/VisorPuente.cs:93)
+UnityEngine.Debug:LogException(Exception)
+Croquis.Visor.<CargarAsync>d__12:MoveNext() (at Assets/Croquis/Visor/VisorPuente.cs:109)
+UnityEngine.Awaitable:RaiseManagedCompletion(Exception)
+Croquis.Visor.<CargarAsync>d__71:MoveNext() (at Assets/Croquis/Visor/VisorCaso.cs:412)
+UnityEngine.AwaitableAsyncMethodBuilder`1:SetResult(PartesVehiculo)
+Croquis.Visor.<ArmarAsync>d__11:MoveNext() (at Assets/Croquis/Visor/CargadorModelos.cs:122)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<InstantiateMainSceneAsync>d__73:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:718)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<InstantiateMainSceneAsync>d__74:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:745)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<InstantiateSceneAsync>d__76:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:798)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<InstantiateSceneInternal>d__164:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:3199)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<<InstantiateSceneInternal>g__IterateNodes|1>d:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:3021)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<BreakPoint>d__11:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/TimeBudgetPerFrameDeferAgent.cs:85)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks()
+", "UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+UnityEngine.Rendering.Universal.CameraExtensions:SetVolumeFrameworkUpdateMode (UnityEngine.Camera,UnityEngine.Rendering.Universal.VolumeFrameworkUpdateMode)
+Croquis.Visor.CamaraVisor:Minimapa () (at Assets/Croquis/Visor/CamaraVisor.cs:541)
+Croquis.Visor.CamaraVisor:Abrir (Croquis.Generated.Caso3D) (at Assets/Croquis/Visor/CamaraVisor.cs:431)
+Croquis.Visor.VisorCaso/<CargarAsync>d__71:MoveNext () (at Assets/Croquis/Visor/VisorCaso.cs:289)
+UnityEngine.Awaitable/AwaitableAsyncMethodBuilder`1<Croquis.Visor.PartesVehiculo>:SetResult (Croquis.Visor.PartesVehiculo)
+Croquis.Visor.CargadorModelos/<ArmarAsync>d__11:MoveNext () (at Assets/Croquis/Visor/CargadorModelos.cs:122)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:SetResult (bool)
+GLTFast.GltfImportBase/<Load>d__63:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:438)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:SetResult (bool)
+GLTFast.GltfImportBase/<Load>d__64:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:467)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:SetResult (bool)
+GLTFast.GltfImportBase/<LoadGltfBinaryInternal>d__126:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:1416)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:SetResult (bool)
+GLTFast.GltfImportBase/<Prepare>d__148:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2458)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult ()
+GLTFast.GltfImportBase/<GenerateMaterials>d__154:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2733)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult ()
+GLTFast.TimeBudgetPerFrameDeferAgent/<BreakPoint>d__12:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/TimeBudgetPerFrameDeferAgent.cs:94)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
+", "UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+UnityEngine.Rendering.Universal.CameraExtensions:UpdateVolumeStack (UnityEngine.Camera,UnityEngine.Rendering.Universal.UniversalAdditionalCameraData)
+Croquis.Visor.Calidad:RefrescarPosproceso () (at Assets/Croquis/Visor/Calidad.cs:187)
+Croquis.Visor.Calidad:Aplicar () (at Assets/Croquis/Visor/Calidad.cs:229)
+Croquis.Visor.VisorCaso/<CargarAsync>d__71:MoveNext () (at Assets/Croquis/Visor/VisorCaso.cs:403)
+UnityEngine.Awaitable/AwaitableAsyncMethodBuilder`1<Croquis.Visor.PartesVehiculo>:SetResult (Croquis.Visor.PartesVehiculo)
+Croquis.Visor.CargadorModelos/<ArmarAsync>d__11:MoveNext () (at Assets/Croquis/Visor/CargadorModelos.cs:122)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:SetResult (bool)
+GLTFast.GltfImportBase/<Load>d__63:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:438)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:SetResult (bool)
+GLTFast.GltfImportBase/<Load>d__64:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:467)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:SetResult (bool)
+GLTFast.GltfImportBase/<LoadGltfBinaryInternal>d__126:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:1416)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:SetResult (bool)
+GLTFast.GltfImportBase/<Prepare>d__148:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2458)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult ()
+GLTFast.GltfImportBase/<GenerateMaterials>d__154:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2733)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult ()
+GLTFast.TimeBudgetPerFrameDeferAgent/<BreakPoint>d__12:MoveNext () (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/TimeBudgetPerFrameDeferAgent.cs:94)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks ()
+" >
+]]></message>
+                  <stack-trace><![CDATA[at Croquis.TestsCiudad.CiudadEnUnityTests+<DosCargasEncimadas>d__7.MoveNext () [0x0031c] in D:\Documentos\proyectos\croquis\apps\visor-unity\Assets\Croquis\TestsCiudad\CiudadEnUnityTests.cs:202
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@bd7f943e9647\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+[puente] {"version":"1.3.0","tipo":"listo"}
+MissingReferenceException: The object of type 'UnityEngine.GameObject' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.
+UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) (at <de88af24691e4d5d8139304fcf46f698>:0)
+UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) (at <de88af24691e4d5d8139304fcf46f698>:0)
+UnityEngine.GameObject.get_transform () (at <de88af24691e4d5d8139304fcf46f698>:0)
+Croquis.Visor.VisorCaso.CargarAsync (Croquis.Generated.Caso3D caso) (at Assets/Croquis/Visor/VisorCaso.cs:166)
+UnityEngine.Awaitable.PropagateExceptionAndRelease () (at <de88af24691e4d5d8139304fcf46f698>:0)
+Croquis.Visor.VisorPuente.CargarAsync (System.String texto) (at Assets/Croquis/Visor/VisorPuente.cs:93)
+UnityEngine.Debug:LogException(Exception)
+Croquis.Visor.<CargarAsync>d__12:MoveNext() (at Assets/Croquis/Visor/VisorPuente.cs:109)
+UnityEngine.Awaitable:RaiseManagedCompletion(Exception)
+Croquis.Visor.<CargarAsync>d__71:MoveNext() (at Assets/Croquis/Visor/VisorCaso.cs:412)
+UnityEngine.AwaitableAsyncMethodBuilder`1:SetResult(PartesVehiculo)
+Croquis.Visor.<ArmarAsync>d__11:MoveNext() (at Assets/Croquis/Visor/CargadorModelos.cs:122)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<InstantiateMainSceneAsync>d__73:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:718)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<InstantiateMainSceneAsync>d__74:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:745)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<InstantiateSceneAsync>d__76:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:798)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<InstantiateSceneInternal>d__164:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:3199)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<<InstantiateSceneInternal>g__IterateNodes|1>d:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:3021)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<BreakPoint>d__11:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/TimeBudgetPerFrameDeferAgent.cs:85)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks()
+
+[puente] {"codigo":"interno","mensaje":"The object of type 'UnityEngine.GameObject' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object.","tipo":"error"}
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+[puente] {"p50":1895.4,"tipo":"fps"}
+[carga] leer_sobre 5.6 ms, leer_paquete 127.3 ms, caracteres_paquete 622606 ms, vehiculos 1676.2 ms, cielo 1676.5 ms, escenario 2305.3 ms, caso_y_terreno 2337.2 ms, estacionados_y_personas 2342.8 ms, antes_de_unir_sombras 2372.4 ms, sombras_unidas 2373.6 ms, piso 2374.6 ms, total 2376.1 ms, primer_cuadro 7990.1 ms, segundo_cuadro 7992.1 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1018" name="DosCargasEncimadas(1)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.DosCargasEncimadas(1)" methodname="DosCargasEncimadas" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="207773647" result="Failed" start-time="2026-11-21 00:26:20Z" end-time="2026-11-21 00:26:21Z" duration="0.784008" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Con errores:
+MissingReferenceException: The object of type 'UnityEngine.GameObject' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.
+UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) (at <de88af24691e4d5d8139304fcf46f698>:0)
+UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) (at <de88af24691e4d5d8139304fcf46f698>:0)
+UnityEngine.GameObject.get_transform () (at <de88af24691e4d5d8139304fcf46f698>:0)
+Croquis.Visor.VisorCaso.CargarAsync (Croquis.Generated.Caso3D caso) (at Assets/Croquis/Visor/VisorCaso.cs:166)
+UnityEngine.Awaitable.PropagateExceptionAndRelease () (at <de88af24691e4d5d8139304fcf46f698>:0)
+Croquis.Visor.VisorPuente.CargarAsync (System.String texto) (at Assets/Croquis/Visor/VisorPuente.cs:93)
+UnityEngine.Debug:LogException(Exception)
+Croquis.Visor.<CargarAsync>d__12:MoveNext() (at Assets/Croquis/Visor/VisorPuente.cs:109)
+UnityEngine.Awaitable:RaiseManagedCompletion(Exception)
+Croquis.Visor.<CargarAsync>d__71:MoveNext() (at Assets/Croquis/Visor/VisorCaso.cs:412)
+UnityEngine.AwaitableAsyncMethodBuilder`1:SetResult(PartesVehiculo)
+Croquis.Visor.<ArmarAsync>d__11:MoveNext() (at Assets/Croquis/Visor/CargadorModelos.cs:122)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<Load>d__63:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:438)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<Load>d__64:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:467)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<LoadGltfBinaryInternal>d__126:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:1416)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<Prepare>d__148:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2458)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<GenerateMaterials>d__154:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2733)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<BreakPoint>d__12:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/TimeBudgetPerFrameDeferAgent.cs:94)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks()
+
+  Expected: <empty>
+  But was:  < "MissingReferenceException: The object of type 'UnityEngine.GameObject' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.
+UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) (at <de88af24691e4d5d8139304fcf46f698>:0)
+UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) (at <de88af24691e4d5d8139304fcf46f698>:0)
+UnityEngine.GameObject.get_transform () (at <de88af24691e4d5d8139304fcf46f698>:0)
+Croquis.Visor.VisorCaso.CargarAsync (Croquis.Generated.Caso3D caso) (at Assets/Croquis/Visor/VisorCaso.cs:166)
+UnityEngine.Awaitable.PropagateExceptionAndRelease () (at <de88af24691e4d5d8139304fcf46f698>:0)
+Croquis.Visor.VisorPuente.CargarAsync (System.String texto) (at Assets/Croquis/Visor/VisorPuente.cs:93)
+UnityEngine.Debug:LogException(Exception)
+Croquis.Visor.<CargarAsync>d__12:MoveNext() (at Assets/Croquis/Visor/VisorPuente.cs:109)
+UnityEngine.Awaitable:RaiseManagedCompletion(Exception)
+Croquis.Visor.<CargarAsync>d__71:MoveNext() (at Assets/Croquis/Visor/VisorCaso.cs:412)
+UnityEngine.AwaitableAsyncMethodBuilder`1:SetResult(PartesVehiculo)
+Croquis.Visor.<ArmarAsync>d__11:MoveNext() (at Assets/Croquis/Visor/CargadorModelos.cs:122)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<Load>d__63:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:438)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<Load>d__64:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:467)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<LoadGltfBinaryInternal>d__126:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:1416)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<Prepare>d__148:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2458)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<GenerateMaterials>d__154:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2733)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<BreakPoint>d__12:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/TimeBudgetPerFrameDeferAgent.cs:94)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks()
+" >
+]]></message>
+                  <stack-trace><![CDATA[at Croquis.TestsCiudad.CiudadEnUnityTests+<DosCargasEncimadas>d__7.MoveNext () [0x0031c] in D:\Documentos\proyectos\croquis\apps\visor-unity\Assets\Croquis\TestsCiudad\CiudadEnUnityTests.cs:202
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@bd7f943e9647\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+MissingReferenceException: The object of type 'UnityEngine.GameObject' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.
+UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) (at <de88af24691e4d5d8139304fcf46f698>:0)
+UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) (at <de88af24691e4d5d8139304fcf46f698>:0)
+UnityEngine.GameObject.get_transform () (at <de88af24691e4d5d8139304fcf46f698>:0)
+Croquis.Visor.VisorCaso.CargarAsync (Croquis.Generated.Caso3D caso) (at Assets/Croquis/Visor/VisorCaso.cs:166)
+UnityEngine.Awaitable.PropagateExceptionAndRelease () (at <de88af24691e4d5d8139304fcf46f698>:0)
+Croquis.Visor.VisorPuente.CargarAsync (System.String texto) (at Assets/Croquis/Visor/VisorPuente.cs:93)
+UnityEngine.Debug:LogException(Exception)
+Croquis.Visor.<CargarAsync>d__12:MoveNext() (at Assets/Croquis/Visor/VisorPuente.cs:109)
+UnityEngine.Awaitable:RaiseManagedCompletion(Exception)
+Croquis.Visor.<CargarAsync>d__71:MoveNext() (at Assets/Croquis/Visor/VisorCaso.cs:412)
+UnityEngine.AwaitableAsyncMethodBuilder`1:SetResult(PartesVehiculo)
+Croquis.Visor.<ArmarAsync>d__11:MoveNext() (at Assets/Croquis/Visor/CargadorModelos.cs:122)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<Load>d__63:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:438)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<Load>d__64:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:467)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<LoadGltfBinaryInternal>d__126:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:1416)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<Prepare>d__148:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2458)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<GenerateMaterials>d__154:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2733)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<BreakPoint>d__12:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/TimeBudgetPerFrameDeferAgent.cs:94)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks()
+
+[puente] {"codigo":"interno","mensaje":"The object of type 'UnityEngine.GameObject' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object.","tipo":"error"}
+[carga] leer_sobre 4.9 ms, leer_paquete 93.6 ms, caracteres_paquete 622606 ms, vehiculos 101.6 ms, cielo 101.6 ms, escenario 231.1 ms, caso_y_terreno 235.2 ms, estacionados_y_personas 235.3 ms, antes_de_unir_sombras 240.4 ms, sombras_unidas 249.8 ms, piso 249.9 ms, total 250.1 ms, primer_cuadro 325.7 ms, segundo_cuadro 327.9 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1019" name="DosCargasEncimadas(5)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.DosCargasEncimadas(5)" methodname="DosCargasEncimadas" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1586595671" result="Failed" start-time="2026-11-21 00:26:21Z" end-time="2026-11-21 00:26:22Z" duration="0.776967" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Con errores:
+MissingReferenceException: The object of type 'UnityEngine.GameObject' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.
+UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) (at <de88af24691e4d5d8139304fcf46f698>:0)
+UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) (at <de88af24691e4d5d8139304fcf46f698>:0)
+UnityEngine.GameObject.get_transform () (at <de88af24691e4d5d8139304fcf46f698>:0)
+Croquis.Visor.VisorCaso.CargarAsync (Croquis.Generated.Caso3D caso) (at Assets/Croquis/Visor/VisorCaso.cs:166)
+UnityEngine.Awaitable.PropagateExceptionAndRelease () (at <de88af24691e4d5d8139304fcf46f698>:0)
+Croquis.Visor.VisorPuente.CargarAsync (System.String texto) (at Assets/Croquis/Visor/VisorPuente.cs:93)
+UnityEngine.Debug:LogException(Exception)
+Croquis.Visor.<CargarAsync>d__12:MoveNext() (at Assets/Croquis/Visor/VisorPuente.cs:109)
+UnityEngine.Awaitable:RaiseManagedCompletion(Exception)
+Croquis.Visor.<CargarAsync>d__71:MoveNext() (at Assets/Croquis/Visor/VisorCaso.cs:412)
+UnityEngine.AwaitableAsyncMethodBuilder`1:SetResult(PartesVehiculo)
+Croquis.Visor.<ArmarAsync>d__11:MoveNext() (at Assets/Croquis/Visor/CargadorModelos.cs:122)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<Load>d__63:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:438)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<Load>d__64:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:467)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<LoadGltfBinaryInternal>d__126:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:1416)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<Prepare>d__148:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2458)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<GenerateMaterials>d__154:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2733)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<BreakPoint>d__12:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/TimeBudgetPerFrameDeferAgent.cs:94)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks()
+
+  Expected: <empty>
+  But was:  < "MissingReferenceException: The object of type 'UnityEngine.GameObject' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.
+UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) (at <de88af24691e4d5d8139304fcf46f698>:0)
+UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) (at <de88af24691e4d5d8139304fcf46f698>:0)
+UnityEngine.GameObject.get_transform () (at <de88af24691e4d5d8139304fcf46f698>:0)
+Croquis.Visor.VisorCaso.CargarAsync (Croquis.Generated.Caso3D caso) (at Assets/Croquis/Visor/VisorCaso.cs:166)
+UnityEngine.Awaitable.PropagateExceptionAndRelease () (at <de88af24691e4d5d8139304fcf46f698>:0)
+Croquis.Visor.VisorPuente.CargarAsync (System.String texto) (at Assets/Croquis/Visor/VisorPuente.cs:93)
+UnityEngine.Debug:LogException(Exception)
+Croquis.Visor.<CargarAsync>d__12:MoveNext() (at Assets/Croquis/Visor/VisorPuente.cs:109)
+UnityEngine.Awaitable:RaiseManagedCompletion(Exception)
+Croquis.Visor.<CargarAsync>d__71:MoveNext() (at Assets/Croquis/Visor/VisorCaso.cs:412)
+UnityEngine.AwaitableAsyncMethodBuilder`1:SetResult(PartesVehiculo)
+Croquis.Visor.<ArmarAsync>d__11:MoveNext() (at Assets/Croquis/Visor/CargadorModelos.cs:122)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<Load>d__63:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:438)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<Load>d__64:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:467)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<LoadGltfBinaryInternal>d__126:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:1416)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<Prepare>d__148:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2458)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<GenerateMaterials>d__154:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2733)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<BreakPoint>d__12:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/TimeBudgetPerFrameDeferAgent.cs:94)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks()
+" >
+]]></message>
+                  <stack-trace><![CDATA[at Croquis.TestsCiudad.CiudadEnUnityTests+<DosCargasEncimadas>d__7.MoveNext () [0x0031c] in D:\Documentos\proyectos\croquis\apps\visor-unity\Assets\Croquis\TestsCiudad\CiudadEnUnityTests.cs:202
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@bd7f943e9647\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+MissingReferenceException: The object of type 'UnityEngine.GameObject' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.
+UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) (at <de88af24691e4d5d8139304fcf46f698>:0)
+UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) (at <de88af24691e4d5d8139304fcf46f698>:0)
+UnityEngine.GameObject.get_transform () (at <de88af24691e4d5d8139304fcf46f698>:0)
+Croquis.Visor.VisorCaso.CargarAsync (Croquis.Generated.Caso3D caso) (at Assets/Croquis/Visor/VisorCaso.cs:166)
+UnityEngine.Awaitable.PropagateExceptionAndRelease () (at <de88af24691e4d5d8139304fcf46f698>:0)
+Croquis.Visor.VisorPuente.CargarAsync (System.String texto) (at Assets/Croquis/Visor/VisorPuente.cs:93)
+UnityEngine.Debug:LogException(Exception)
+Croquis.Visor.<CargarAsync>d__12:MoveNext() (at Assets/Croquis/Visor/VisorPuente.cs:109)
+UnityEngine.Awaitable:RaiseManagedCompletion(Exception)
+Croquis.Visor.<CargarAsync>d__71:MoveNext() (at Assets/Croquis/Visor/VisorCaso.cs:412)
+UnityEngine.AwaitableAsyncMethodBuilder`1:SetResult(PartesVehiculo)
+Croquis.Visor.<ArmarAsync>d__11:MoveNext() (at Assets/Croquis/Visor/CargadorModelos.cs:122)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<Load>d__63:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:438)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<Load>d__64:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:467)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<LoadGltfBinaryInternal>d__126:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:1416)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1:SetResult(Boolean)
+GLTFast.<Prepare>d__148:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2458)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<GenerateMaterials>d__154:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/GltfImport.cs:2733)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:SetResult()
+GLTFast.<BreakPoint>d__12:MoveNext() (at ./Library/PackageCache/com.unity.cloud.gltfast@11ddc2436f97/Runtime/Scripts/TimeBudgetPerFrameDeferAgent.cs:94)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks()
+
+[puente] {"codigo":"interno","mensaje":"The object of type 'UnityEngine.GameObject' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object.","tipo":"error"}
+[carga] leer_sobre 4.9 ms, leer_paquete 98.9 ms, caracteres_paquete 622606 ms, vehiculos 65.3 ms, cielo 65.3 ms, escenario 193 ms, caso_y_terreno 197 ms, estacionados_y_personas 197 ms, antes_de_unir_sombras 201.3 ms, sombras_unidas 211 ms, piso 211 ms, total 211.1 ms, primer_cuadro 285.7 ms, segundo_cuadro 287.9 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1020" name="DosCargasEncimadas(20)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.DosCargasEncimadas(20)" methodname="DosCargasEncimadas" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1979336820" result="Passed" start-time="2026-11-21 00:26:22Z" end-time="2026-11-21 00:26:23Z" duration="0.970652" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 31.5 ms, caracteres_paquete 222288 ms, vehiculos 74.8 ms, cielo 74.9 ms, escenario 132.5 ms, caso_y_terreno 137 ms, estacionados_y_personas 137.1 ms, antes_de_unir_sombras 141.8 ms, sombras_unidas 143.4 ms, piso 143.4 ms, total 143.5 ms, primer_cuadro 173.3 ms, segundo_cuadro 174.9 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+[carga] leer_sobre 5.9 ms, leer_paquete 116.1 ms, caracteres_paquete 622606 ms, vehiculos 19.2 ms, cielo 19.2 ms, escenario 191.2 ms, caso_y_terreno 195.1 ms, estacionados_y_personas 195.1 ms, antes_de_unir_sombras 199.3 ms, sombras_unidas 208.3 ms, piso 208.3 ms, total 208.5 ms, primer_cuadro 288.5 ms, segundo_cuadro 290.3 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1021" name="DosCargasEncimadas(60)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.DosCargasEncimadas(60)" methodname="DosCargasEncimadas" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="97729673" result="Passed" start-time="2026-11-21 00:26:23Z" end-time="2026-11-21 00:26:24Z" duration="0.928105" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.3 ms, leer_paquete 30.7 ms, caracteres_paquete 222288 ms, vehiculos 63.7 ms, cielo 63.7 ms, escenario 116.9 ms, caso_y_terreno 121.1 ms, estacionados_y_personas 121.2 ms, antes_de_unir_sombras 125.5 ms, sombras_unidas 127.2 ms, piso 127.2 ms, total 127.3 ms, primer_cuadro 153.4 ms, segundo_cuadro 154.9 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+[carga] leer_sobre 5 ms, leer_paquete 102.3 ms, caracteres_paquete 622606 ms, vehiculos 15.6 ms, cielo 15.6 ms, escenario 153.1 ms, caso_y_terreno 156.4 ms, estacionados_y_personas 156.4 ms, antes_de_unir_sombras 159.8 ms, sombras_unidas 170 ms, piso 170.1 ms, total 170.2 ms, primer_cuadro 240 ms, segundo_cuadro 242.1 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1016" name="LlegaACargado" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-11-21 00:26:24Z" end-time="2026-11-21 00:26:33Z" duration="9.521386" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="240000" />
+              </properties>
+              <test-case id="1002" name="LlegaACargado(&quot;axa&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;axa&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1577100868" result="Passed" start-time="2026-11-21 00:26:24Z" end-time="2026-11-21 00:26:24Z" duration="0.758101" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.4 ms, leer_paquete 48.6 ms, caracteres_paquete 341725 ms, vehiculos 109.9 ms, cielo 109.9 ms, escenario 319.6 ms, caso_y_terreno 322.2 ms, estacionados_y_personas 322.2 ms, antes_de_unir_sombras 336.4 ms, sombras_unidas 337.5 ms, piso 337.5 ms, total 337.6 ms, primer_cuadro 435.7 ms, segundo_cuadro 437.1 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1003" name="LlegaACargado(&quot;axa-sin-modelo&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;axa-sin-modelo&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="499345172" result="Passed" start-time="2026-11-21 00:26:24Z" end-time="2026-11-21 00:26:25Z" duration="0.570711" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.5 ms, leer_paquete 35.2 ms, caracteres_paquete 341725 ms, vehiculos 106.5 ms, cielo 106.5 ms, escenario 202.3 ms, caso_y_terreno 204.8 ms, estacionados_y_personas 204.8 ms, antes_de_unir_sombras 219.1 ms, sombras_unidas 220.2 ms, piso 220.2 ms, total 220.4 ms, primer_cuadro 243.9 ms, segundo_cuadro 245.1 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1004" name="LlegaACargado(&quot;guadalajara-poste&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;guadalajara-poste&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1502278203" result="Passed" start-time="2026-11-21 00:26:25Z" end-time="2026-11-21 00:26:26Z" duration="0.597485" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 4.2 ms, leer_paquete 82.4 ms, caracteres_paquete 540827 ms, vehiculos 60.3 ms, cielo 60.3 ms, escenario 147.1 ms, caso_y_terreno 152.1 ms, estacionados_y_personas 152.2 ms, antes_de_unir_sombras 156.3 ms, sombras_unidas 160.3 ms, piso 160.3 ms, total 160.4 ms, primer_cuadro 192.8 ms, segundo_cuadro 194.8 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1005" name="LlegaACargado(&quot;insurgentes-arbol&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;insurgentes-arbol&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1316292812" result="Passed" start-time="2026-11-21 00:26:26Z" end-time="2026-11-21 00:26:26Z" duration="0.759878" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 7.4 ms, leer_paquete 149.3 ms, caracteres_paquete 1255920 ms, vehiculos 62.9 ms, cielo 62.9 ms, escenario 190.2 ms, caso_y_terreno 195.6 ms, estacionados_y_personas 195.7 ms, antes_de_unir_sombras 200.1 ms, sombras_unidas 207.3 ms, piso 207.4 ms, total 207.5 ms, primer_cuadro 279.1 ms, segundo_cuadro 281.2 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1006" name="LlegaACargado(&quot;metepec-arbol&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;metepec-arbol&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="31711148" result="Passed" start-time="2026-11-21 00:26:26Z" end-time="2026-11-21 00:26:27Z" duration="0.679191" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 5.4 ms, leer_paquete 108.2 ms, caracteres_paquete 886701 ms, vehiculos 54.7 ms, cielo 54.7 ms, escenario 174.9 ms, caso_y_terreno 178.9 ms, estacionados_y_personas 179 ms, antes_de_unir_sombras 183.3 ms, sombras_unidas 190.5 ms, piso 190.5 ms, total 190.7 ms, primer_cuadro 249.8 ms, segundo_cuadro 251.9 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1007" name="LlegaACargado(&quot;monterrey-pared&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;monterrey-pared&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="589638469" result="Passed" start-time="2026-11-21 00:26:27Z" end-time="2026-11-21 00:26:28Z" duration="0.700957" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 5.6 ms, leer_paquete 114.2 ms, caracteres_paquete 849763 ms, vehiculos 53.3 ms, cielo 53.3 ms, escenario 159.4 ms, caso_y_terreno 162.8 ms, estacionados_y_personas 162.8 ms, antes_de_unir_sombras 167.7 ms, sombras_unidas 174 ms, piso 174 ms, total 174.2 ms, primer_cuadro 266.6 ms, segundo_cuadro 268.7 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1008" name="LlegaACargado(&quot;reforma-poste&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;reforma-poste&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1788119524" result="Passed" start-time="2026-11-21 00:26:28Z" end-time="2026-11-21 00:26:28Z" duration="0.708902" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 6.4 ms, leer_paquete 132.3 ms, caracteres_paquete 1138420 ms, vehiculos 60.9 ms, cielo 60.9 ms, escenario 182.4 ms, caso_y_terreno 187.2 ms, estacionados_y_personas 187.3 ms, antes_de_unir_sombras 192 ms, sombras_unidas 199.3 ms, piso 199.3 ms, total 199.5 ms, primer_cuadro 264.1 ms, segundo_cuadro 266.5 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1009" name="LlegaACargado(&quot;tollocan&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;tollocan&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1622358944" result="Passed" start-time="2026-11-21 00:26:28Z" end-time="2026-11-21 00:26:29Z" duration="0.713641" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 5.1 ms, leer_paquete 101.4 ms, caracteres_paquete 622606 ms, vehiculos 63.3 ms, cielo 63.3 ms, escenario 191.6 ms, caso_y_terreno 195.5 ms, estacionados_y_personas 195.6 ms, antes_de_unir_sombras 199.9 ms, sombras_unidas 208 ms, piso 208 ms, total 208.1 ms, primer_cuadro 278.3 ms, segundo_cuadro 280.5 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1010" name="LlegaACargado(&quot;tollocan-sin-arbol&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;tollocan-sin-arbol&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1611504525" result="Passed" start-time="2026-11-21 00:26:29Z" end-time="2026-11-21 00:26:30Z" duration="0.668223" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 4.6 ms, leer_paquete 93.1 ms, caracteres_paquete 632274 ms, vehiculos 47 ms, cielo 47 ms, escenario 167.4 ms, caso_y_terreno 170.2 ms, estacionados_y_personas 170.3 ms, antes_de_unir_sombras 174.7 ms, sombras_unidas 182.3 ms, piso 182.3 ms, total 182.5 ms, primer_cuadro 245.4 ms, segundo_cuadro 247.5 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1011" name="LlegaACargado(&quot;tollocan-sin-mapa&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;tollocan-sin-mapa&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1759734841" result="Passed" start-time="2026-11-21 00:26:30Z" end-time="2026-11-21 00:26:30Z" duration="0.456698" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 1.2 ms, leer_paquete 28.2 ms, caracteres_paquete 222288 ms, vehiculos 60.2 ms, cielo 60.2 ms, escenario 109.8 ms, caso_y_terreno 113.8 ms, estacionados_y_personas 113.9 ms, antes_de_unir_sombras 118.4 ms, sombras_unidas 119.8 ms, piso 119.8 ms, total 119.9 ms, primer_cuadro 147.2 ms, segundo_cuadro 148.7 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1012" name="LlegaACargado(&quot;tollocan-teselas&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;tollocan-teselas&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="749802568" result="Passed" start-time="2026-11-21 00:26:30Z" end-time="2026-11-21 00:26:31Z" duration="0.761025" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 4.5 ms, leer_paquete 90.9 ms, caracteres_paquete 426204 ms, vehiculos 76.2 ms, cielo 76.2 ms, escenario 226.9 ms, caso_y_terreno 231.5 ms, estacionados_y_personas 231.6 ms, antes_de_unir_sombras 236.5 ms, sombras_unidas 245.2 ms, piso 245.2 ms, total 245.4 ms, primer_cuadro 322.3 ms, segundo_cuadro 324.6 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1013" name="LlegaACargado(&quot;toluca-arbol&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;toluca-arbol&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1994120890" result="Passed" start-time="2026-11-21 00:26:31Z" end-time="2026-11-21 00:26:32Z" duration="0.719697" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 4.8 ms, leer_paquete 92 ms, caracteres_paquete 643967 ms, vehiculos 57.3 ms, cielo 57.3 ms, escenario 155.8 ms, caso_y_terreno 159.8 ms, estacionados_y_personas 159.9 ms, antes_de_unir_sombras 164.1 ms, sombras_unidas 169.8 ms, piso 169.8 ms, total 169.9 ms, primer_cuadro 228.1 ms, segundo_cuadro 233.3 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1014" name="LlegaACargado(&quot;toluca-pared&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;toluca-pared&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="1805920289" result="Passed" start-time="2026-11-21 00:26:32Z" end-time="2026-11-21 00:26:32Z" duration="0.728631" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 4.5 ms, leer_paquete 87 ms, caracteres_paquete 652569 ms, vehiculos 45.9 ms, cielo 45.9 ms, escenario 138.1 ms, caso_y_terreno 141.1 ms, estacionados_y_personas 141.1 ms, antes_de_unir_sombras 145.3 ms, sombras_unidas 150.7 ms, piso 150.7 ms, total 150.8 ms, primer_cuadro 321.2 ms, segundo_cuadro 322.8 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1015" name="LlegaACargado(&quot;toluca-poste&quot;)" fullname="Croquis.TestsCiudad.CiudadEnUnityTests.LlegaACargado(&quot;toluca-poste&quot;)" methodname="LlegaACargado" classname="Croquis.TestsCiudad.CiudadEnUnityTests" runstate="Runnable" seed="307021582" result="Passed" start-time="2026-11-21 00:26:32Z" end-time="2026-11-21 00:26:33Z" duration="0.694008" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 4.3 ms, leer_paquete 86.9 ms, caracteres_paquete 642012 ms, vehiculos 60.3 ms, cielo 60.3 ms, escenario 152.6 ms, caso_y_terreno 156.4 ms, estacionados_y_personas 156.4 ms, antes_de_unir_sombras 160.5 ms, sombras_unidas 165.9 ms, piso 165.9 ms, total 166.1 ms, primer_cuadro 221.4 ms, segundo_cuadro 226.5 ms
+[puente] {"escena_id":"caso-nuevo","tipo":"cargado"}
+<b><color=#2EA3FF>MCP-FOR-UNITY</color></b>: [TestRunnerNoThrottle] Restored Interaction Mode after test run.
+Saving results to: C:/Users/René/AppData/LocalLow/Croquis/Visor de Croquis\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

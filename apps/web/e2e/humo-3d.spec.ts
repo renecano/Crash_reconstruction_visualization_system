@@ -6,10 +6,11 @@ import { irAPaso, sinRed } from "./ayuda-recorrido";
 import { colocar, RECETAS } from "./recetas-ejemplos";
 
 /**
- * El humo de las tandas (René, 2026-11-20): antes de gastar 2 horas, tres casos llegan al 3D de Unity
- * («listo») como los abriría una persona: AXA y el caso de Tollocan por La escena nueva (la guía, la
- * lista y «Ver la reconstrucción» dentro del panel) y un ejemplo («Crucero de noche») por La escena de
- * siempre, con su lectura guardada. Si uno no llega, la tanda se detiene (`detiene_si_falla`).
+ * El humo de las tandas (René, 2026-11-20): antes de gastar 2 horas, cinco casos llegan al 3D de Unity
+ * («listo») como los abriría una persona: AXA, el caso de Tollocan y dos lugares de la batería de ciudad
+ * (Reforma y el centro de Guadalajara) por La escena nueva (la guía, la lista y «Ver la reconstrucción»
+ * dentro del panel), y un ejemplo («Crucero de noche») por La escena de siempre, con su lectura
+ * guardada. Si uno no llega, la tanda se detiene (`detiene_si_falla`).
  *
  * Para no adivinar la próxima vez, cada caso deja en `eval/results/humo/` (o `CROQUIS_HUMO_SALIDA`):
  * su consola completa (con el log de Unity y cada paso del visor, `[croquis] unity:…`), el paquete
@@ -146,13 +147,13 @@ async function porLaEscenaNueva(page: Page) {
   return esperar3d(page);
 }
 
-async function abrirTollocan(page: Page) {
+async function abrirCaso(page: Page, archivo: string) {
   await page.goto("/cesvi");
-  await page
-    .getByTestId("abrir-caso-casos")
-    .setInputFiles(join(RAIZ, "data/cesvi/casos/tollocan-rene.croquis"));
+  await page.getByTestId("abrir-caso-casos").setInputFiles(join(RAIZ, "data/cesvi/casos", archivo));
   await expect(page.getByTestId("recorrido-caso")).toBeVisible({ timeout: 30_000 });
 }
+
+const abrirTollocan = (page: Page) => abrirCaso(page, "tollocan-rene.croquis");
 
 function revisar(nombre: string, r: Awaited<ReturnType<typeof esperar3d>>, info: TestInfo) {
   info.annotations.push({ type: "humo", description: `${nombre}: ${JSON.stringify(r)}` });
@@ -198,6 +199,21 @@ test("humo: Tollocan de La escena nueva al 3D de Unity", async ({ page, context 
   }
   revisar("Tollocan", r, info);
 });
+
+// Dos lugares de la batería de ciudad (René, 2026-11-20): el mapa en vivo de otra ciudad, con sus
+// calles y objetos llegando después de que el 3D empezó (lo que tumbaba a Tollocan).
+for (const [nombre, archivo] of [
+  ["Reforma, CDMX (batería de ciudad)", "bateria-reforma-poste.croquis"],
+  ["Centro de Guadalajara (batería de ciudad)", "bateria-guadalajara-poste.croquis"],
+] as const) {
+  test(`humo: ${nombre} de La escena nueva al 3D de Unity`, async ({ page }, info) => {
+    test.setTimeout(180_000);
+    await abrirCaso(page, archivo);
+    const r = await porLaEscenaNueva(page);
+    await guardar(page, nombre, r);
+    revisar(nombre, r, info);
+  });
+}
 
 test("humo: un ejemplo («Crucero de noche») de La escena al 3D de Unity", async ({
   page,

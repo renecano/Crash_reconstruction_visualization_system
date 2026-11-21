@@ -198,6 +198,9 @@ export const CASOS_BATERIA: readonly CasoBateria[] = [
   },
 ];
 
+/** Los lugares de la batería que el humo de las tandas abre en la app (`data/cesvi/casos/bateria-*.croquis`). */
+export const CASOS_HUMO = ["reforma-poste", "guadalajara-poste"] as const;
+
 /** Lo que trae un paquete, para la tabla de la batería. */
 export function resumenDelPaquete(p: Json) {
   const esc = p.escenario as

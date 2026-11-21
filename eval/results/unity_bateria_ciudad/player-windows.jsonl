@@ -1,0 +1,14 @@
+{"caso":"axa-sin-modelo","estado":"cargado","ms":5898.0,"excepcion":null,"errores":[],"nivel":"Media","gpu":"Intel(R) UHD Graphics"}
+{"caso":"axa","estado":"cargado","ms":777.0,"excepcion":null,"errores":[],"nivel":"Media","gpu":"Intel(R) UHD Graphics"}
+{"caso":"guadalajara-poste","estado":"cargado","ms":1033.0,"excepcion":null,"errores":[],"nivel":"Media","gpu":"Intel(R) UHD Graphics"}
+{"caso":"insurgentes-arbol","estado":"cargado","ms":926.0,"excepcion":null,"errores":[],"nivel":"Media","gpu":"Intel(R) UHD Graphics"}
+{"caso":"metepec-arbol","estado":"cargado","ms":793.0,"excepcion":null,"errores":[],"nivel":"Media","gpu":"Intel(R) UHD Graphics"}
+{"caso":"monterrey-pared","estado":"cargado","ms":767.0,"excepcion":null,"errores":[],"nivel":"Media","gpu":"Intel(R) UHD Graphics"}
+{"caso":"reforma-poste","estado":"cargado","ms":795.0,"excepcion":null,"errores":[],"nivel":"Media","gpu":"Intel(R) UHD Graphics"}
+{"caso":"tollocan-sin-arbol","estado":"cargado","ms":810.0,"excepcion":null,"errores":[],"nivel":"Media","gpu":"Intel(R) UHD Graphics"}
+{"caso":"tollocan-sin-mapa","estado":"cargado","ms":503.0,"excepcion":null,"errores":[],"nivel":"Media","gpu":"Intel(R) UHD Graphics"}
+{"caso":"tollocan-teselas","estado":"cargado","ms":833.0,"excepcion":null,"errores":[],"nivel":"Media","gpu":"Intel(R) UHD Graphics"}
+{"caso":"tollocan","estado":"cargado","ms":882.0,"excepcion":null,"errores":[],"nivel":"Media","gpu":"Intel(R) UHD Graphics"}
+{"caso":"toluca-arbol","estado":"cargado","ms":724.0,"excepcion":null,"errores":[],"nivel":"Media","gpu":"Intel(R) UHD Graphics"}
+{"caso":"toluca-pared","estado":"cargado","ms":786.0,"excepcion":null,"errores":[],"nivel":"Media","gpu":"Intel(R) UHD Graphics"}
+{"caso":"toluca-poste","estado":"cargado","ms":716.0,"excepcion":null,"errores":[],"nivel":"Media","gpu":"Intel(R) UHD Graphics"}
