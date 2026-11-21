@@ -333,7 +333,7 @@
     },
     "t5-verificacion": {
       "titulo": "Tanda 5 · Verificación de la ronda 4 (lo narrado llega a la física y al 3D)",
-      "nota": "René, 2026-11-19. En la rama del #284, en modo demo local y en el Chrome instalado (no en el Chromium de Playwright). Nada baja de Vercel Blob: el visor sale del release de GitHub. Cada paso tiene un tope de 15 min: si lo pasa, se detiene, queda anotado y la tanda sigue sin reintentar. Unas 2 h. Primero lo que más importa (las seis narraciones, el caso encimado, Tollocan y los cinco ejemplos); al final el arranque, 3 corridas con el build nuevo (3cce5c1caca88f96) y 3 con el 1.3.0 de producción (3087c2915b272e66).",
+      "nota": "René, 2026-11-19. En la rama del #284, en modo demo local y en el Chrome instalado (no en el Chromium de Playwright). Nada baja de Vercel Blob: el visor sale del release de GitHub. Cada paso tiene un tope de 15 min: si lo pasa, se detiene, queda anotado y la tanda sigue sin reintentar. Unas 2 h. Primero lo que más importa (las seis narraciones, el caso encimado, Tollocan y los cinco ejemplos); al final el arranque, 3 corridas con el build nuevo (3cce5c1caca88f96) y 3 con el 1.3.0 de producción (3087c2915b272e66). Fijada al commit d96d7439 del #284: lo que se prueba no cambia si la rama avanza.",
       "rama": "feat/w-narracion-a-la-fisica",
       "pasos": [
         {
@@ -442,11 +442,12 @@
           "minutos": 1,
           "tope_min": 15
         }
-      ]
+      ],
+      "commit": "d96d7439bbf908e6d221de116ac762419de22e3c"
     },
     "t5b-repeticion": {
       "titulo": "Tanda 5b · La t5 completa con la tarjeta de alto rendimiento y la e2e corregida",
-      "nota": "René, 2026-11-20: la tanda completa, no solo la repetición. La t5 corrió en la gráfica integrada (Chrome en ahorro de energía), las narraciones no se leyeron (sin llave de Claude en esa computadora) y Tollocan abrió el visor de respaldo. Aquí: las narraciones usan su lectura grabada, se pide el Unity real, cada fila dice con qué tarjeta corrió (renderer de WebGL) y la demo local pone a Chrome en alto rendimiento. Fijada al commit af9d3036 del #284 (e451c995 más el renderer en las filas de los ejemplos y alto rendimiento en el «antes» de producción). Para repetir solo el arranque: tanda.ps1 -Tanda t5b-repeticion -Solo visor-nuevo,preparar-nuevo,arranque-nuevo-1,arranque-nuevo-2,arranque-nuevo-3,usar-130,visor-130,preparar-130,arranque-130-1,arranque-130-2,arranque-130-3,volver-al-nuevo Primero el humo (tope de 6 min): AXA y Tollocan por La escena nueva y el ejemplo «Crucero de noche» por La escena de siempre, hasta el 3D de Unity en «listo»; si Tollocan no llega, se repite sin el mapa en vivo. Si falla, la tanda se detiene y sube la consola, el log de Unity, el paquete 3D, las capturas y la traza.",
+      "nota": "René, 2026-11-20: la tanda completa, no solo la repetición. La t5 corrió en la gráfica integrada (Chrome en ahorro de energía), las narraciones no se leyeron (sin llave de Claude en esa computadora) y Tollocan abrió el visor de respaldo. Aquí: las narraciones usan su lectura grabada, se pide el Unity real, cada fila dice con qué tarjeta corrió (renderer de WebGL) y la demo local pone a Chrome en alto rendimiento. Fijada al commit 6257a45e del #284 (e451c995 más el renderer en las filas de los ejemplos y alto rendimiento en el «antes» de producción). Para repetir solo el arranque: tanda.ps1 -Tanda t5b-repeticion -Solo visor-nuevo,preparar-nuevo,arranque-nuevo-1,arranque-nuevo-2,arranque-nuevo-3,usar-130,visor-130,preparar-130,arranque-130-1,arranque-130-2,arranque-130-3,volver-al-nuevo Primero el humo (tope de 6 min): AXA y Tollocan por La escena nueva y el ejemplo «Crucero de noche» por La escena de siempre, hasta el 3D de Unity en «listo»; si Tollocan no llega, se repite sin el mapa en vivo. Si falla, la tanda se detiene y sube la consola, el log de Unity, el paquete 3D, las capturas y la traza.",
       "rama": "feat/w-narracion-a-la-fisica",
       "pasos": [
         {
@@ -564,11 +565,11 @@
           "tope_min": 15
         }
       ],
-      "commit": "af9d3036d9b14f006412b9563aff8868bc487049"
+      "commit": "6257a45ef87c38e355b240caa547768430ec03ec"
     },
     "t5c": {
       "titulo": "Tanda 5c · El 3D de ciudad corregido (build 59d874d0d8ffd774) y la t5 completa",
-      "nota": "René, 2026-11-20: la única corrida que se le pide al colaborador. El build 59d874d0d8ffd774 (release de GitHub, sin Blob) corrige lo que tumbaba a Tollocan: con las calles del mapa llegando después, la web mandaba una segunda carga y la primera contestaba «error» (reproducido en Unity con la batería de ciudad). Primero el humo (tope de 8 min): AXA, Tollocan, Reforma y el centro de Guadalajara por La escena nueva y «Crucero de noche» por la de siempre, hasta el 3D en «listo»; si falla, la tanda se detiene y sube la consola, el log de Unity, el paquete 3D, las capturas y la traza. Después, todo lo de la t5: narraciones, Tollocan de punta a punta, los cinco ejemplos antes y después, y el arranque del 3D con el build nuevo contra el 1.3.0.",
+      "nota": "René, 2026-11-20: la única corrida que se le pide al colaborador. El build 59d874d0d8ffd774 (release de GitHub, sin Blob) corrige lo que tumbaba a Tollocan: con las calles del mapa llegando después, la web mandaba una segunda carga y la primera contestaba «error» (reproducido en Unity con la batería de ciudad). Primero el humo (tope de 8 min): AXA, Tollocan, Reforma y el centro de Guadalajara por La escena nueva y «Crucero de noche» por la de siempre, hasta el 3D en «listo»; si falla, la tanda se detiene y sube la consola, el log de Unity, el paquete 3D, las capturas y la traza. Después, todo lo de la t5: narraciones, Tollocan de punta a punta, los cinco ejemplos antes y después, y el arranque del 3D con el build nuevo contra el 1.3.0. Fijada al commit c051746c del #284.",
       "rama": "feat/w-narracion-a-la-fisica",
       "pasos": [
         {
@@ -685,7 +686,8 @@
           "minutos": 1,
           "tope_min": 15
         }
-      ]
+      ],
+      "commit": "c051746cf9755bd50d30f46a0d0c733f224eab8a"
     }
   }
 }

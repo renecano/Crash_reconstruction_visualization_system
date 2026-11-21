@@ -150,9 +150,35 @@ type Oyente = (m: MensajeDeUnity) => void;
  * El puente con una instancia de Unity. Solo hay una función global para los mensajes
  * (`croquisVisorMensaje`), así que solo puede haber un visor Unity vivo por página.
  */
+/**
+ * Lo que puede contestar «error» o mover lo que la carga está armando: mientras Unity carga, espera
+ * (René, 2026-11-20). `piso` no: Unity lo guarda si llega a media carga.
+ */
+const DIFERIBLES_EN_CARGA: ReadonlySet<string> = new Set([
+  "camara",
+  "encuadrar",
+  "fijarTiempo",
+  "reproducir",
+  "pausar",
+  "velocidad",
+  "marcadores",
+  "calidad",
+  "modoEdicion",
+  "depurar",
+]);
+
 export class PuenteUnity {
   private oyentes = new Set<Oyente>();
-  private capturando: Promise<unknown> = Promise.resolve();
+  /**
+   * Una espera a la vez (René, 2026-11-20): Unity no dice de qué mensaje es un «error», así que una
+   * carga y una foto no pueden esperar al mismo tiempo (el error de una tumbaba la otra). Las cargas y
+   * las fotos van en esta cola, una tras otra.
+   */
+  private ocupado: Promise<unknown> = Promise.resolve();
+  /** Si hay una carga en curso: los mensajes que pueden contestar «error» esperan a que termine. */
+  private enCarga = false;
+  /** Lo que llegó mientras cargaba, para después: el último de cada mensaje, en orden. */
+  private diferidos = new Map<string, unknown>();
   /** La versión del puente que anunció el build (1.2.0 o 1.3.0): la 1.3.0 entiende el piso y el fantasma. */
   version = "";
 
@@ -258,8 +284,25 @@ export class PuenteUnity {
   }
 
   enviar<K extends keyof MensajesAUnity>(mensaje: K, datos: MensajesAUnity[K]): void {
+    // Mientras carga, lo que puede contestar «error» espera (una cámara de un vehículo que todavía
+    // no existe tumbaba la carga en curso): va después de «cargado», el último de cada uno.
+    if (this.enCarga && DIFERIBLES_EN_CARGA.has(mensaje)) {
+      this.diferidos.delete(mensaje);
+      this.diferidos.set(mensaje, datos);
+      return;
+    }
+    this.mandar(mensaje, datos);
+  }
+
+  private mandar(mensaje: string, datos: unknown): void {
     this.registro?.enviados.push({ metodo: mensaje, datos });
     this.instancia.SendMessage(OBJETO_PUENTE_UNITY, mensaje, JSON.stringify(datos));
+  }
+
+  private soltarDiferidos(): void {
+    const pendientes = [...this.diferidos];
+    this.diferidos.clear();
+    for (const [mensaje, datos] of pendientes) this.mandar(mensaje, datos);
   }
 
   /**
@@ -268,12 +311,12 @@ export class PuenteUnity {
    * así no hace falta un build nuevo para esto.
    */
   minimapa(visible: boolean): void {
-    this.registro?.enviados.push({ metodo: "depurar", datos: { minimapa: visible } });
-    this.instancia.SendMessage(
-      OBJETO_PUENTE_UNITY,
-      "depurar",
-      JSON.stringify({ minimapa: visible }),
-    );
+    if (this.enCarga) {
+      this.diferidos.delete("depurar");
+      this.diferidos.set("depurar", { minimapa: visible });
+      return;
+    }
+    this.mandar("depurar", { minimapa: visible });
   }
 
   private registro: {
@@ -341,19 +384,29 @@ export class PuenteUnity {
   }
 
   /**
-   * Carga un paquete caso-3d y espera `cargado`; devuelve lo que el 3D omitió. Una a la vez: Unity no
-   * distingue de qué carga es cada respuesta, así que quien llama no manda otra mientras esta sigue
-   * (René, 2026-11-20: Tollocan abría el visor de respaldo por eso).
+   * Carga un paquete caso-3d y espera `cargado`; devuelve lo que el 3D omitió. Una a la vez, en la
+   * misma fila que las capturas (René, 2026-11-20: Tollocan abría el visor de respaldo porque Unity no
+   * distingue de qué carga es cada respuesta).
    */
-  async cargar(paquete: unknown, ms = ESPERA_CARGA_MS): Promise<string[]> {
-    const llega = this.esperar(
-      (m): m is Extract<MensajeDeUnity, { tipo: "cargado" }> => m.tipo === "cargado",
-      ms,
-    );
-    this.enviar("cargarCaso", {
-      json: typeof paquete === "string" ? paquete : JSON.stringify(paquete),
+  cargar(paquete: unknown, ms = ESPERA_CARGA_MS): Promise<string[]> {
+    const op = this.ocupado.then(async () => {
+      this.enCarga = true;
+      try {
+        const llega = this.esperar(
+          (m): m is Extract<MensajeDeUnity, { tipo: "cargado" }> => m.tipo === "cargado",
+          ms,
+        );
+        this.enviar("cargarCaso", {
+          json: typeof paquete === "string" ? paquete : JSON.stringify(paquete),
+        });
+        return (await llega).omitidos ?? [];
+      } finally {
+        this.enCarga = false;
+        this.soltarDiferidos();
+      }
     });
-    return (await llega).omitidos ?? [];
+    this.ocupado = op.catch(() => undefined);
+    return op;
   }
 
   /**
@@ -361,7 +414,7 @@ export class PuenteUnity {
    * la cámara para cada una.
    */
   capturar(vista: VistaCaptura, ancho: number, alto: number): Promise<string> {
-    const foto = this.capturando.then(async () => {
+    const foto = this.ocupado.then(async () => {
       const llega = this.esperar(
         (m): m is Extract<MensajeDeUnity, { tipo: "captura" }> =>
           m.tipo === "captura" && m.vista === vista,
@@ -371,7 +424,7 @@ export class PuenteUnity {
       const m = await llega;
       return `data:image/png;base64,${m.png}`;
     });
-    this.capturando = foto.catch(() => undefined);
+    this.ocupado = foto.catch(() => undefined);
     return foto;
   }
 

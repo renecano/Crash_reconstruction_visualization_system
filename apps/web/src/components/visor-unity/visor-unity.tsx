@@ -256,8 +256,9 @@ export function VisorUnity({
   const cargando = useRef(false);
   /**
    * Una carga en Unity a la vez (René, 2026-11-20): una escena nueva mientras Unity carga la anterior
-   * (las calles del mapa llegan después) espera a que termine y entonces va, solo la última. Unity no
-   * dice de qué carga es cada respuesta; antes, el «error» de la vieja tumbaba la nueva.
+   * (en un caso de ciudad, las calles del mapa llegan después) espera a que termine y entonces va, solo
+   * la última. Unity no dice de qué carga es cada respuesta: el «error» de la vieja (que tocaba lo que
+   * la nueva ya había destruido) tumbaba la nueva y abría el visor de respaldo.
    */
   const enUnity = useRef(false);
   const [vueltas, setVueltas] = useState(0);
@@ -267,6 +268,8 @@ export function VisorUnity({
     if (!puente || dormir) return;
     if (pedida.current?.objetivo === objetivo && pedida.current.relieve === relieve) return;
     if (enUnity.current) return;
+    // Mientras se graba el video, la escena no cambia: la nueva va al terminar (René, 2026-11-20).
+    if (grabando.current) return;
     // Al alternar entre la reconstrucción y una versión (ronda 4) se queda el mismo instante.
     const mantener = pedida.current !== null && pedida.current.objetivo.clave !== objetivo.clave;
     pedida.current = { objetivo, relieve };
@@ -551,6 +554,8 @@ export function VisorUnity({
       c.style.height = antes.alto;
       puente.minimapa(minimapa);
       grabando.current = false;
+      // Si cambió la escena mientras se grababa, ahora va.
+      setVueltas((v) => v + 1);
       if (pisoActual.current) enviarPiso(pisoActual.current, true);
       puente.enviar("fijarTiempo", { t: antes.t });
       cancelarVideo.current = null;
