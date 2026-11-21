@@ -182,11 +182,32 @@ namespace Croquis.TestsCiudad
                     }
                     else if (e == "curva")
                     {
-                        var forma = (string)paquete.SelectToken("escena.lugar.geometria.valor");
-                        fila["geometria_via"] = forma;
-                        if (forma != "curva")
+                        // La curva: el vehículo gira siguiendo la calle antes del impacto (no basta que la calle
+                        // del mapa sea curva si el vehículo llega recto).
+                        var inicio = (double)res["t_inicio"];
+                        var hasta = double.IsNaN(tImpacto) ? (double)res["t_fin"] : tImpacto;
+                        var rumbos = new List<float>();
+                        for (var i = 0; i <= 10; i++)
                         {
-                            faltan.Add($"la curva (la vía del paquete es «{forma}»)");
+                            visor.Fijar(inicio + (hasta - inicio) * i / 10.0);
+                            yield return null;
+                            var v = UnityEngine.Object.FindObjectsByType<VehiculoVista>(FindObjectsSortMode.None).FirstOrDefault();
+                            if (v != null)
+                            {
+                                rumbos.Add(v.transform.eulerAngles.y);
+                            }
+                        }
+
+                        var giro = 0f;
+                        for (var i = 1; i < rumbos.Count; i++)
+                        {
+                            giro += Mathf.Abs(Mathf.DeltaAngle(rumbos[i - 1], rumbos[i]));
+                        }
+
+                        fila["giro_antes_del_impacto_deg"] = Math.Round(giro, 1);
+                        if (!(giro > 10f))
+                        {
+                            faltan.Add($"la curva (el vehículo gira {giro:0} ° antes del impacto: llega recto)");
                         }
                     }
                 }
