@@ -1010,6 +1010,42 @@ export interface ImpactoReconstruido {
 /** km/h: un cambio de velocidad menor en todos los del choque es un choque que no transfiere nada. */
 export const DV_SIN_TRANSFERENCIA_KMH = 2;
 
+interface ParametroAjustado {
+  parametro: string;
+  vehiculo: string;
+  inicial?: number;
+  estimacion?: { mejor: number };
+}
+
+/** El parámetro que ajustó la inversión para un vehículo, si lo ajustó. */
+function ajustadoDe(resultado: Json, vehiculo: string, parametro: string) {
+  const ps = ((resultado.inversion as Json | undefined)?.parametros ?? []) as ParametroAjustado[];
+  return ps.find((p) => p.parametro === parametro && p.vehiculo === vehiculo) ?? null;
+}
+
+/**
+ * km/h: la velocidad de cierre del primer choque con las velocidades y los rumbos del mejor ajuste
+ * (lo no ajustado, como viene en la escena). Infinito si falta algún dato: nunca da un aviso falso.
+ */
+function cierreDelAjuste(spec: Json, resultado: Json, actores: readonly string[]): number {
+  const vs = (spec.vehiculos ?? []) as Json[];
+  const vector = (a: string): [number, number] | null => {
+    const v = vs.find((x) => x.id === a);
+    const pv = ajustadoDe(resultado, a, "velocidad_previa");
+    const pr = ajustadoDe(resultado, a, "rumbo_inicial");
+    const kmh =
+      pv?.estimacion?.mejor ?? pv?.inicial ?? (v?.velocidad_previa as Json | undefined)?.valor;
+    const rumbo =
+      pr?.estimacion?.mejor ?? pr?.inicial ?? (v?.posicion_inicial as Json | undefined)?.rumbo_deg;
+    if (typeof kmh !== "number" || typeof rumbo !== "number") return null;
+    const r = (rumbo * Math.PI) / 180;
+    return [kmh * Math.sin(r), kmh * Math.cos(r)];
+  };
+  const [a, b] = actores.map(vector);
+  if (!a || !b) return Infinity;
+  return Math.hypot(a[0] - b[0], a[1] - b[1]);
+}
+
 /**
  * De qué inversión sale una hipótesis (ADR 0091): si un reposo supuesto no cabe con la deformación
  * medida, «la más cercana al daño medido» (la deformación como restricción, el reposo supuesto blando)
@@ -1309,11 +1345,18 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
       // Solo el primero: los posteriores llevan su ΔV en `danos_posteriores`.
       const dv = (a: string) =>
         Number(((resultado.vehiculos ?? []) as Json[]).find((v) => v.id === a)?.delta_v_kmh ?? NaN);
+      // Si la inversión ajustó la velocidad de alguno, la corrida de `resultado` va con su arranque
+      // (40 km/h para todos), no con el mejor ajuste: su ΔV no dice nada del choque reconstruido
+      // (AXA salía «sin transferencia» con 57 contra 15 km/h). Entonces se mide la velocidad de cierre
+      // con las del mejor ajuste: si es menor que el umbral, ningún ΔV puede pasarlo.
+      const ajustado = actores.some((a) => ajustadoDe(resultado, a, "velocidad_previa"));
       const sinTransferencia =
         k === 0 &&
         ev.tipo === "impacto_vehiculo_vehiculo" &&
         actores.length >= 2 &&
-        actores.every((a) => Number.isFinite(dv(a)) && dv(a) < DV_SIN_TRANSFERENCIA_KMH);
+        (ajustado
+          ? cierreDelAjuste(base.spec, resultado, actores) < DV_SIN_TRANSFERENCIA_KMH
+          : actores.every((a) => Number.isFinite(dv(a)) && dv(a) < DV_SIN_TRANSFERENCIA_KMH));
       return {
         numero: k + 1,
         t: ev.t,
