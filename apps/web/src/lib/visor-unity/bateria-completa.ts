@@ -44,7 +44,7 @@ function paqueteDe(
   ajustar?: (escena: Json) => void,
   relieve?: MallaRelieve | null,
 ): Json {
-  const r = reconstruirExpediente(e, id, MUESTRAS);
+  const r = reconstruirExpediente(e, `bateria-${id}`, MUESTRAS);
   const escena = especDel3d(r, null, null) as unknown as Json;
   ajustar?.(escena);
   const resultado = reconstructionToDict(reconstruct(escena as never));
