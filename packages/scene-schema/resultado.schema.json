@@ -915,6 +915,8 @@
             "contenedor",
             "senal",
             "parada_autobus",
+            "barrera",
+            "guarnicion",
             "otro"
           ]
         },
