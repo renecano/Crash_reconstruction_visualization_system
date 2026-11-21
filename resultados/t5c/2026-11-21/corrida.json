@@ -5,7 +5,7 @@
     "commit":  "c051746cf9755bd50d30f46a0d0c733f224eab8a",
     "rama_del_repositorio":  "feat/w-narracion-a-la-fisica",
     "archivos_con_cambios":  0,
-    "duracion_min":  1.4,
+    "duracion_min":  4.8,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "NVIDIA GeForce RTX 4070 Laptop GPU",
@@ -66,6 +66,13 @@
                       "estado":  "ok",
                       "minutos":  0.6,
                       "codigo":  0
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "narraciones",
+                      "estado":  "falló (código 1)",
+                      "minutos":  3.4,
+                      "codigo":  1
                   }
               ]
 }

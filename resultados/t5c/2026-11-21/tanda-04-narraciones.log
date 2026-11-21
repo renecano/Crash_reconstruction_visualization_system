@@ -1,0 +1,222 @@
+# Paso: narraciones
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues narraciones -Salida eval/results/t5c/narraciones_fisica.json
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-21 10:06:22
+
+
+== 1. Herramientas
+Node v26.13.1 y pnpm 12.11.2.
+Hay internet.
+
+== 2. Dependencias
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 3d ago)
+Lockfile is up to date, resolution step is skipped
+Done in 70ms using pnpm v12.11.2
+
+== 3. El visor de Unity, desde esta computadora
+Visor 59d874d0d8ffd774 servido desde el sitio: C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\public\visor-unity\local
+
+== 4. La app en modo local
+Ya está compilada para esta versión (c051746c).
+
+== 5. La lectura con IA
+No hay llave de Claude en .env.local: la lectura con IA no estará. Todo lo demás funciona (AXA, los casos de ejemplo con su lectura guardada, la reconstrucción, el 3D y el dictamen).
+
+== 6. Croquis en http://localhost:3000
+Necesitan internet: la lectura con IA de una narración nueva, los mosaicos del mapa (sin red, el mapa sale en blanco pero se puede colocar la escena) y buscar un lugar por nombre.
+Sin internet funcionan completos: el caso de AXA y los cinco casos de ejemplo, la reconstrucción, el 3D de Unity y el dictamen.
+
+Running 7 tests using 1 worker
+
+[1/7] [chromium] › e2e\narraciones-fisica.spec.ts:159:7 › narración arbol: de lo dicho a la física y al 3D
+  1) [chromium] › e2e\narraciones-fisica.spec.ts:159:7 › narración arbol: de lo dicho a la física y al 3D 
+
+    Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'Repetir' }) resolved to 2 elements:
+        1) <button type="button" data-testid="repetir-reconstruccion" class="boton-secundario boton-compacto min-h-8!">Repetir</button> aka getByTestId('repetir-reconstruccion')
+        2) <button type="button" data-testid="repetir-unity" class="boton-secundario boton-compacto">Repetir</button> aka getByTestId('repetir-unity')
+
+    Call log:
+      - waiting for getByRole('button', { name: 'Repetir' })
+
+
+      118 |     type: "jpeg",
+      119 |   });
+    > 120 |   await page.getByRole("button", { name: "Repetir" }).click();
+          |                                                       ^
+      121 |   await page.waitForTimeout(9000);
+      122 |   await page.screenshot({
+      123 |     path: join(CAPTURAS, `${clave}-2-despues.jpg`),
+        at capturar3d (C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\narraciones-fisica.spec.ts:120:55)
+        at C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\narraciones-fisica.spec.ts:184:5
+
+    Error Context: test-results\narraciones-fisica-narraci-c1340-o-dicho-a-la-física-y-al-3D-chromium\error-context.md
+
+
+[2/7] [chromium] › e2e\narraciones-fisica.spec.ts:159:7 › narración poste: de lo dicho a la física y al 3D
+  2) [chromium] › e2e\narraciones-fisica.spec.ts:159:7 › narración poste: de lo dicho a la física y al 3D 
+
+    Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'Repetir' }) resolved to 2 elements:
+        1) <button type="button" data-testid="repetir-reconstruccion" class="boton-secundario boton-compacto min-h-8!">Repetir</button> aka getByTestId('repetir-reconstruccion')
+        2) <button type="button" data-testid="repetir-unity" class="boton-secundario boton-compacto">Repetir</button> aka getByTestId('repetir-unity')
+
+    Call log:
+      - waiting for getByRole('button', { name: 'Repetir' })
+
+
+      118 |     type: "jpeg",
+      119 |   });
+    > 120 |   await page.getByRole("button", { name: "Repetir" }).click();
+          |                                                       ^
+      121 |   await page.waitForTimeout(9000);
+      122 |   await page.screenshot({
+      123 |     path: join(CAPTURAS, `${clave}-2-despues.jpg`),
+        at capturar3d (C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\narraciones-fisica.spec.ts:120:55)
+        at C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\narraciones-fisica.spec.ts:184:5
+
+    Error Context: test-results\narraciones-fisica-narraci-ab1b2-o-dicho-a-la-física-y-al-3D-chromium\error-context.md
+
+
+[3/7] [chromium] › e2e\narraciones-fisica.spec.ts:159:7 › narración puente: de lo dicho a la física y al 3D
+  3) [chromium] › e2e\narraciones-fisica.spec.ts:159:7 › narración puente: de lo dicho a la física y al 3D 
+
+    Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'Repetir' }) resolved to 2 elements:
+        1) <button type="button" data-testid="repetir-reconstruccion" class="boton-secundario boton-compacto min-h-8!">Repetir</button> aka getByTestId('repetir-reconstruccion')
+        2) <button type="button" data-testid="repetir-unity" class="boton-secundario boton-compacto">Repetir</button> aka getByTestId('repetir-unity')
+
+    Call log:
+      - waiting for getByRole('button', { name: 'Repetir' })
+
+
+      118 |     type: "jpeg",
+      119 |   });
+    > 120 |   await page.getByRole("button", { name: "Repetir" }).click();
+          |                                                       ^
+      121 |   await page.waitForTimeout(9000);
+      122 |   await page.screenshot({
+      123 |     path: join(CAPTURAS, `${clave}-2-despues.jpg`),
+        at capturar3d (C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\narraciones-fisica.spec.ts:120:55)
+        at C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\narraciones-fisica.spec.ts:184:5
+
+    Error Context: test-results\narraciones-fisica-narraci-8cc33-o-dicho-a-la-física-y-al-3D-chromium\error-context.md
+
+
+[4/7] [chromium] › e2e\narraciones-fisica.spec.ts:159:7 › narración subida: de lo dicho a la física y al 3D
+  4) [chromium] › e2e\narraciones-fisica.spec.ts:159:7 › narración subida: de lo dicho a la física y al 3D 
+
+    Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'Repetir' }) resolved to 2 elements:
+        1) <button type="button" data-testid="repetir-reconstruccion" class="boton-secundario boton-compacto min-h-8!">Repetir</button> aka getByTestId('repetir-reconstruccion')
+        2) <button type="button" data-testid="repetir-unity" class="boton-secundario boton-compacto">Repetir</button> aka getByTestId('repetir-unity')
+
+    Call log:
+      - waiting for getByRole('button', { name: 'Repetir' })
+
+
+      118 |     type: "jpeg",
+      119 |   });
+    > 120 |   await page.getByRole("button", { name: "Repetir" }).click();
+          |                                                       ^
+      121 |   await page.waitForTimeout(9000);
+      122 |   await page.screenshot({
+      123 |     path: join(CAPTURAS, `${clave}-2-despues.jpg`),
+        at capturar3d (C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\narraciones-fisica.spec.ts:120:55)
+        at C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\narraciones-fisica.spec.ts:184:5
+
+    Error Context: test-results\narraciones-fisica-narraci-7e027-o-dicho-a-la-física-y-al-3D-chromium\error-context.md
+
+
+[5/7] [chromium] › e2e\narraciones-fisica.spec.ts:159:7 › narración bajada: de lo dicho a la física y al 3D
+  5) [chromium] › e2e\narraciones-fisica.spec.ts:159:7 › narración bajada: de lo dicho a la física y al 3D 
+
+    Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'Repetir' }) resolved to 2 elements:
+        1) <button type="button" data-testid="repetir-reconstruccion" class="boton-secundario boton-compacto min-h-8!">Repetir</button> aka getByTestId('repetir-reconstruccion')
+        2) <button type="button" data-testid="repetir-unity" class="boton-secundario boton-compacto">Repetir</button> aka getByTestId('repetir-unity')
+
+    Call log:
+      - waiting for getByRole('button', { name: 'Repetir' })
+
+
+      118 |     type: "jpeg",
+      119 |   });
+    > 120 |   await page.getByRole("button", { name: "Repetir" }).click();
+          |                                                       ^
+      121 |   await page.waitForTimeout(9000);
+      122 |   await page.screenshot({
+      123 |     path: join(CAPTURAS, `${clave}-2-despues.jpg`),
+        at capturar3d (C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\narraciones-fisica.spec.ts:120:55)
+        at C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\narraciones-fisica.spec.ts:184:5
+
+    Error Context: test-results\narraciones-fisica-narraci-2c0a9-o-dicho-a-la-física-y-al-3D-chromium\error-context.md
+
+
+[6/7] [chromium] › e2e\narraciones-fisica.spec.ts:159:7 › narración curva: de lo dicho a la física y al 3D
+  6) [chromium] › e2e\narraciones-fisica.spec.ts:159:7 › narración curva: de lo dicho a la física y al 3D 
+
+    Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'Repetir' }) resolved to 2 elements:
+        1) <button type="button" data-testid="repetir-reconstruccion" class="boton-secundario boton-compacto min-h-8!">Repetir</button> aka getByTestId('repetir-reconstruccion')
+        2) <button type="button" data-testid="repetir-unity" class="boton-secundario boton-compacto">Repetir</button> aka getByTestId('repetir-unity')
+
+    Call log:
+      - waiting for getByRole('button', { name: 'Repetir' })
+
+
+      118 |     type: "jpeg",
+      119 |   });
+    > 120 |   await page.getByRole("button", { name: "Repetir" }).click();
+          |                                                       ^
+      121 |   await page.waitForTimeout(9000);
+      122 |   await page.screenshot({
+      123 |     path: join(CAPTURAS, `${clave}-2-despues.jpg`),
+        at capturar3d (C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\narraciones-fisica.spec.ts:120:55)
+        at C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\narraciones-fisica.spec.ts:184:5
+
+    Error Context: test-results\narraciones-fisica-narraci-57f53-o-dicho-a-la-física-y-al-3D-chromium\error-context.md
+
+
+[7/7] [chromium] › e2e\narraciones-fisica.spec.ts:208:5 › caso encimado a propósito: antes y después en el 3D
+  7) [chromium] › e2e\narraciones-fisica.spec.ts:208:5 › caso encimado a propósito: antes y después en el 3D 
+
+    Error: expect(locator).toBeEnabled() failed
+
+    Locator:  getByTestId('avance-ver-reconstruccion')
+    Expected: enabled
+    Received: disabled
+    Timeout:  30000ms
+
+    Call log:
+      - Expect "toBeEnabled" getByTestId('avance-ver-reconstruccion') with timeout 30000ms
+      - waiting for getByTestId('avance-ver-reconstruccion')
+        63 × locator resolved to <button disabled type="button" data-testid="avance-ver-reconstruccion" class="boton-principal escena-boton whitespace-nowrap">Ver la reconstrucción →</button>
+           - unexpected value "disabled"
+
+
+       at ayuda-recorrido.ts:31
+
+      29 |         } else {
+      30 |           const ver = page.getByTestId("avance-ver-reconstruccion");
+    > 31 |           await expect(ver).toBeEnabled({ timeout: 30_000 });
+         |                             ^
+      32 |           await ver.click();
+      33 |         }
+      34 |       } else await page.getByTestId("paso-1").click();
+        at irAPaso (C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\ayuda-recorrido.ts:31:29)
+        at C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\narraciones-fisica.spec.ts:244:3
+
+    Error Context: test-results\narraciones-fisica-caso-en-db8c4-to-antes-y-después-en-el-3D-chromium\error-context.md
+
+
+  7 failed
+    [chromium] › e2e\narraciones-fisica.spec.ts:159:7 › narración arbol: de lo dicho a la física y al 3D 
+    [chromium] › e2e\narraciones-fisica.spec.ts:159:7 › narración poste: de lo dicho a la física y al 3D 
+    [chromium] › e2e\narraciones-fisica.spec.ts:159:7 › narración puente: de lo dicho a la física y al 3D 
+    [chromium] › e2e\narraciones-fisica.spec.ts:159:7 › narración subida: de lo dicho a la física y al 3D 
+    [chromium] › e2e\narraciones-fisica.spec.ts:159:7 › narración bajada: de lo dicho a la física y al 3D 
+    [chromium] › e2e\narraciones-fisica.spec.ts:159:7 › narración curva: de lo dicho a la física y al 3D 
+    [chromium] › e2e\narraciones-fisica.spec.ts:208:5 › caso encimado a propósito: antes y después en el 3D 
+Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
+
+  × "pnpm recursive exec" failed in C:\Users\MrKan\Documents\reto cesvi
+  │ v5\Croquis\apps\web
+
+
+# Fin: 2026-11-21 10:09:44 · falló (código 1) · 3.4 min
