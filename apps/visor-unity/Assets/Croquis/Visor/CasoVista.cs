@@ -53,6 +53,7 @@ namespace Croquis.Visor
             var madera = new Malla();
             var muro = new Malla();
             var metal = new Malla();
+            var barreras = new Malla();
             var troncos = new Malla();
             ArbolesVista impostores = null;
             var copasPlanta = new Malla();
@@ -115,7 +116,11 @@ namespace Croquis.Visor
                                 break;
                             }
 
-                            var m = tipo == "Contenedor" || tipo == "ParadaAutobus" ? metal : muro;
+                            // La barrera y la guarnición son de concreto (René, 2026-11-21: la «barrera de
+                            // concreto» de la bajada salía como un bloque de tabique).
+                            var m = o.Tipo == PurpleTipo.Barrera || o.Tipo == PurpleTipo.Guarnicion
+                                ? barreras
+                                : tipo == "Contenedor" || tipo == "ParadaAutobus" ? metal : muro;
                             m.Caja(pie, eje, lado, (float)o.LargoM, alto, (float)o.AnchoM, 0.5f);
                             break;
                         }
@@ -131,6 +136,7 @@ namespace Croquis.Visor
             madera.Poner(padre, "crucetas_colocadas", Materiales.Liso(new Color(0.3f, 0.25f, 0.2f), 0.1f));
             muro.Poner(padre, "muros_colocados", Materiales.Pbr("tabique", new Color(1.5f, 0.95f, 0.78f)));
             metal.Poner(padre, "metal_colocado", Materiales.Liso(new Color(0.42f, 0.45f, 0.48f), 0.5f, 0.7f));
+            barreras.Poner(padre, "barreras_colocadas", Materiales.Pbr("concreto", new Color(0.86f, 0.86f, 0.84f)));
             troncos.Poner(padre, "troncos_colocados", Materiales.Liso(new Color(0.3f, 0.24f, 0.18f), 0.08f));
             if (impostores != null)
             {

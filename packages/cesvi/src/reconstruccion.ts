@@ -104,6 +104,15 @@ const OBJETO_INTERMEDIO: [RegExp, string][] = [
   [/estacionad/i, "vehiculo_estacionado"],
   ...OBJETO,
 ];
+/**
+ * El objeto del primer choque (ronda 4, René: «barrera de concreto» quedaba como «otro»). La
+ * barrera antes que el muro; «defensa» sola no (casi siempre es la del vehículo) ni «muro de
+ * contención» (es un muro).
+ */
+const OBJETO_PRIMERO: [RegExp, string][] = [
+  [/barrera|defensa\s+met[aá]lica/i, "barrera"],
+  ...OBJETO,
+];
 const SUPUESTA = { unidad: "m", fuente: "default", confianza: 0.5 } as const;
 /**
  * Las medidas de un objeto que el perito marca sin medirlo: valores típicos, declarados como
@@ -333,7 +342,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   }
   const objeto =
     primero?.objeto_fijo && !contraPersona
-      ? (OBJETO.find(([rx]) => rx.test(primero.objeto_fijo!))?.[1] ?? "otro")
+      ? (OBJETO_PRIMERO.find(([rx]) => rx.test(primero.objeto_fijo!))?.[1] ?? "otro")
       : null;
   if (objeto) {
     facts.escalares.set("evento.objeto", fact(objeto, null, "supuesto"));
@@ -525,7 +534,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       guardadas.vias.map((v) => ({
         tipo: v.tipo,
         ...(v.nombre ? { nombre: v.nombre } : {}),
-        puntos: (v.puntos).map(([lon, lat]) => local({ lat, lon })),
+        puntos: v.puntos.map(([lon, lat]) => local({ lat, lon })),
       })),
       choque,
     );
@@ -593,7 +602,9 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
             : 0;
     const m = medidasDe(vehiculos.find((v) => v.id === golpea)!);
     const lateral = giro === 90 || giro === -90;
-    const angosto = !TIPOS_PLANOS.has(String(objetoPrimero.tipo));
+    // La barrera del primer choque (ronda 4) es plana: va pegada a la cara, como el muro.
+    const angosto =
+      !TIPOS_PLANOS.has(String(objetoPrimero.tipo)) && objetoPrimero.tipo !== "barrera";
     // Del centro del vehículo a su cara, más medio objeto (un tronco típico de 0.3 m; un muro, 0.1 m).
     const d = (lateral ? m.ancho : m.largo) / 2 + (angosto ? 0.15 : 0.1);
     const rad = ((r + giro) * Math.PI) / 180;
@@ -601,6 +612,14 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       x: Math.round((x + d * Math.cos(rad)) * 1000) / 1000,
       y: Math.round((y + d * Math.sin(rad)) * 1000) / 1000,
     };
+    // La barrera (René, 2026-11-21): sus medidas típicas (6 × 0.4 × 0.8 m, como en La escena) y
+    // atravesada frente a la cara del golpe; sin esto, el solver la hacía una caja de 2 × 1.5 × 2 m.
+    if (objetoPrimero.tipo === "barrera") {
+      Object.assign(objetoPrimero, MEDIDAS_OBJETO.barrera);
+      const atravesada = (((r + giro + 90) % 360) + 360) % 360;
+      objetoPrimero.rumbo_deg =
+        Math.round((atravesada > 180 ? atravesada - 360 : atravesada) * 10) / 10;
+    }
     objetoPrimero.procedencia = {
       fuente: "supuesto",
       confianza: 0.5,

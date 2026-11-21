@@ -112,7 +112,7 @@ namespace Croquis.TestsCiudad
                     if (e.StartsWith("objeto:", StringComparison.Ordinal))
                     {
                         var tipo = e.Substring(7);
-                        var malla = tipo == "arbol" ? "troncos_colocados" : tipo == "poste" ? "postes_colocados" : "muros_colocados";
+                        var malla = tipo == "arbol" ? "troncos_colocados" : tipo == "poste" ? "postes_colocados" : tipo == "barrera" ? "barreras_colocadas" : "muros_colocados";
                         var obj = ((JArray)res["objetos"] ?? new JArray()).FirstOrDefault(o => (string)o["tipo"] == tipo);
                         fila["objeto_" + tipo] = obj != null;
                         if (obj == null)

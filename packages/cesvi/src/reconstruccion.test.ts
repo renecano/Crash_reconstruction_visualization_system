@@ -761,3 +761,38 @@ describe("lo medido pesa más que lo supuesto: el reposo supuesto y las dos hip�
     expect(uno.hipotesis).toBeNull();
   });
 });
+
+describe("el objeto del primer choque (ronda 4, René, 2026-11-21)", () => {
+  const leer = (clave: string) => {
+    const g = JSON.parse(
+      readFileSync(
+        resolve(
+          dirname(fileURLToPath(import.meta.url)),
+          `../../../data/cesvi/grabaciones/ronda4/ronda4-${clave}.json`,
+        ),
+        "utf8",
+      ),
+    ) as { narracion: string; salida: SalidaCorpus };
+    const e = escenaDeNarracion(g.salida, g.narracion).expediente;
+    return conPosicion(e, { vehiculo: "V1", fase: "impacto", punto: m(0, 0), rumbo: 270 });
+  };
+  const objetoDe = (e: Expediente) =>
+    (especDeExpediente(e, "objeto").spec.entorno as { objetos?: { tipo: string }[] }).objetos?.[0]
+      ?.tipo;
+
+  it("la «barrera de concreto» de la bajada es una barrera, no «otro», con sus medidas típicas", () => {
+    const e = leer("bajada");
+    expect(objetoDe(e)).toBe("barrera");
+    const o = (especDeExpediente(e, "objeto").spec.entorno as { objetos: Json[] }).objetos[0]!;
+    // 6 × 0.4 × 0.8 m, atravesada frente a la cara del golpe (el vehículo va al poniente: rumbo 270).
+    expect([o.largo, o.ancho, o.alto].map((m) => (m as { valor: number }).valor)).toEqual([
+      6, 0.4, 0.8,
+    ]);
+    expect(Math.abs(Math.abs(Number(o.rumbo_deg)) % 180)).toBeCloseTo(90, 0);
+  });
+
+  it("el árbol y el poste no cambian", () => {
+    expect(objetoDe(leer("arbol"))).toBe("arbol");
+    expect(objetoDe(leer("poste"))).toBe("poste");
+  });
+});

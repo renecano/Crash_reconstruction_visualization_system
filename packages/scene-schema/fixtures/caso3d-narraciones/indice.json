@@ -32,27 +32,29 @@
       "clave": "poste",
       "lugar_buscado": "avenida Las Torres",
       "punto": {
-        "nombre": "Avenida Solidaridad Las Torres, San Salvador Tizatlalli",
-        "lat": 19.2788169,
-        "lon": -99.5658889,
+        "nombre": "Avenida Solidaridad Las Torres",
+        "lat": 19.2764248,
+        "lon": -99.605349,
         "municipio": "Metepec",
         "estado": "Estado de México"
       },
       "propuesta": true,
       "con_relieve": false,
       "zona": "urbana",
-      "edificios": 433,
-      "arboles": 72,
-      "postes": 8,
-      "senales": 10,
-      "rodadas": 68,
-      "vertices_via": 3005,
+      "edificios": 580,
+      "arboles": 271,
+      "postes": 33,
+      "senales": 34,
+      "rodadas": 534,
+      "vertices_via": 15291,
       "objetos_del_choque": [
+        "poste",
+        "poste",
         "poste",
         "poste"
       ],
       "vehiculos": 1,
-      "bytes": 390562
+      "bytes": 877759
     },
     {
       "clave": "puente",
@@ -76,23 +78,23 @@
       "lugar_buscado": "Calzada al Pacífico",
       "punto": {
         "nombre": "Calzada al Pacífico",
-        "lat": 19.2563877,
-        "lon": -99.6675104,
+        "lat": 19.2566448,
+        "lon": -99.669446,
         "municipio": "Toluca",
         "estado": "Estado de México"
       },
       "propuesta": true,
       "con_relieve": true,
       "zona": "urbana",
-      "edificios": 595,
-      "arboles": 271,
-      "postes": 37,
-      "senales": 44,
-      "rodadas": 284,
-      "vertices_via": 9475,
+      "edificios": 586,
+      "arboles": 238,
+      "postes": 26,
+      "senales": 34,
+      "rodadas": 412,
+      "vertices_via": 11008,
       "objetos_del_choque": [],
       "vehiculos": 2,
-      "bytes": 749170
+      "bytes": 845694
     },
     {
       "clave": "bajada",
@@ -114,10 +116,10 @@
       "rodadas": 124,
       "vertices_via": 5373,
       "objetos_del_choque": [
-        "otro"
+        "barrera"
       ],
       "vehiculos": 1,
-      "bytes": 504127
+      "bytes": 504359
     },
     {
       "clave": "curva",
