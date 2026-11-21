@@ -1,0 +1,199 @@
+{
+  "arbol": {
+    "versiones": [
+      {
+        "tipo": "evidencia",
+        "maniobras": [
+          {
+            "vehiculo": "V1",
+            "tipo": "circula",
+            "cita": {
+              "texto": "circulaba a exceso de velocidad por los carriles centrales con dirección de oriente a poniente"
+            }
+          }
+        ],
+        "posiciones": [
+          {
+            "vehiculo": "V1",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.28693314455735,
+              "lon": -99.59772797336831
+            },
+            "rumbo": 271.8562495483636,
+            "fuente": "supuesto"
+          }
+        ]
+      }
+    ]
+  },
+  "poste": {
+    "versiones": [
+      {
+        "tipo": "evidencia",
+        "maniobras": [
+          {
+            "vehiculo": "V1",
+            "tipo": "circula",
+            "cita": {
+              "texto": "circulaba a 60 km/h con dirección de poniente a oriente"
+            }
+          }
+        ],
+        "posiciones": [
+          {
+            "vehiculo": "V1",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.278760512750885,
+              "lon": -99.56717664603907
+            },
+            "rumbo": 86.91533185850261,
+            "fuente": "supuesto"
+          }
+        ]
+      }
+    ]
+  },
+  "puente": {
+    "versiones": [
+      {
+        "tipo": "evidencia",
+        "maniobras": [
+          {
+            "vehiculo": "V1",
+            "tipo": "circula",
+            "cita": {
+              "texto": "circulaba sobre el puente con dirección de sur a norte, como a 70 km/h"
+            }
+          },
+          {
+            "vehiculo": "V2",
+            "tipo": "frena",
+            "cita": {
+              "texto": "circulaba en el mismo sentido delante del vehículo A y frenó al final del puente"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "subida": {
+    "versiones": [
+      {
+        "tipo": "evidencia",
+        "maniobras": [
+          {
+            "vehiculo": "V1",
+            "tipo": "circula",
+            "cita": {
+              "texto": "circulaba en subida con dirección de norte a sur, despacio, cargado de material"
+            }
+          },
+          {
+            "vehiculo": "V2",
+            "tipo": "circula",
+            "cita": {
+              "texto": "bajaba en sentido contrario e invadió el carril del vehículo A"
+            }
+          }
+        ],
+        "posiciones": [
+          {
+            "vehiculo": "V1",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.256388655862867,
+              "lon": -99.66764993343375
+            },
+            "rumbo": 90.61053761805147,
+            "fuente": "supuesto"
+          },
+          {
+            "vehiculo": "V2",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.256388184385223,
+              "lon": -99.66760306733111
+            },
+            "rumbo": 270.38424623697847,
+            "fuente": "supuesto"
+          }
+        ]
+      }
+    ]
+  },
+  "bajada": {
+    "versiones": [
+      {
+        "tipo": "evidencia",
+        "maniobras": [
+          {
+            "vehiculo": "V1",
+            "tipo": "circula",
+            "cita": {
+              "texto": "circulaba en bajada pronunciada con dirección de oriente a poniente, a más de 90 km/h"
+            }
+          }
+        ],
+        "posiciones": [
+          {
+            "vehiculo": "V1",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.166230155169135,
+              "lon": -100.10996841924617
+            },
+            "rumbo": 282.7790298921774,
+            "fuente": "supuesto"
+          }
+        ]
+      }
+    ]
+  },
+  "curva": {
+    "versiones": [
+      {
+        "tipo": "evidencia",
+        "maniobras": [
+          {
+            "vehiculo": "V1",
+            "tipo": "circula",
+            "cita": {
+              "texto": "circulaba por el carril derecho de la curva con dirección de oriente a poniente"
+            }
+          },
+          {
+            "vehiculo": "V2",
+            "tipo": "circula",
+            "cita": {
+              "texto": "circulaba por el carril izquierdo a alta velocidad"
+            }
+          }
+        ],
+        "posiciones": [
+          {
+            "vehiculo": "V1",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.525508745917566,
+              "lon": -99.01471555332583
+            },
+            "rumbo": 221.12484678996725,
+            "fuente": "supuesto"
+          },
+          {
+            "vehiculo": "V2",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.525498276637002,
+              "lon": -99.01470283104226
+            },
+            "rumbo": 221.12484678996725,
+            "fuente": "supuesto"
+          }
+        ]
+      }
+    ]
+  }
+}
