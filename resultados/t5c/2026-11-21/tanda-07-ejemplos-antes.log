@@ -1,0 +1,12 @@
+# Paso: ejemplos-antes
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/ejemplos-produccion.ps1 -Salida eval/results/t5c/ejemplos_antes.json
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-21 10:12:09
+
+
+Running 1 test using 1 worker
+
+[1/1] [chromium] › e2e\ejemplos-ronda2.spec.ts:55:5 › las cinco narraciones de ejemplo, de punta a punta
+  1 passed (1.2m)
+
+# Fin: 2026-11-21 10:13:22 · ok · 1.2 min
