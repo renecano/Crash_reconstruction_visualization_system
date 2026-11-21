@@ -99,5 +99,16 @@
     "descargado": "2026-11-20",
     "sha256": "61d3e62c5a4ed8db1f6e7701b4112b25cd9246710d35c09841c44314040ff7a6",
     "elementos": 316
+  },
+  "tollocan_rene_teselas": {
+    "descripcion": "Las calles alrededor del impacto de Tollocan sacadas de las teselas vectoriales del mapa (OpenFreeMap, esquema OpenMapTiles, zoom 14), como las arma la web cuando Overpass no responde (overpassDeTeselas) — batería de ciudad (2026-11-20)",
+    "lat": 19.298904302569596,
+    "lon": -99.58887106452113,
+    "radio_m": 150,
+    "url": "https://tiles.openfreemap.org/planet/20261115_080022_pt/14/{x}/{y}.pbf (x 3658–3660, y 7295–7297)",
+    "nota": "Teselas decodificadas con @mapbox/vector-tile como las da MapLibre y pasadas por overpassDeTeselas.",
+    "descargado": "2026-11-20",
+    "sha256": "1f6995cef6c9a3c59079c0aeb9a304e33d3456dceb01dc5394a58c943874167a",
+    "elementos": 114
   }
 }

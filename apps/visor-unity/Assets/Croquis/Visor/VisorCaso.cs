@@ -114,8 +114,27 @@ namespace Croquis.Visor
             PasosDeCarga[nombre] = Math.Round(reloj.Elapsed.TotalMilliseconds, 1);
         }
 
+        /// <summary>
+        /// El turno de la carga más nueva (René, 2026-11-20: Tollocan tronaba). La web manda otro
+        /// `cargarCaso` cuando cambia la escena (las calles del mapa llegan después); la carga nueva destruye
+        /// la anterior, y la anterior, al volver de un `await`, tocaba lo destruido. Ahora se detiene ahí
+        /// (`CargaReemplazada`), sin tocar nada ni avisar «error».
+        /// </summary>
+        private int turnoDeCarga;
+
+        /// <summary>Si la carga `mio` ya no es la más nueva, se detiene.</summary>
+        private void Vigente(int mio)
+        {
+            if (mio != turnoDeCarga)
+            {
+                throw new CargaReemplazada();
+            }
+        }
+
         public async Awaitable CargarAsync(Caso3D caso)
         {
+            var mio = ++turnoDeCarga;
+            Omisiones.Limpiar();
             PasosDeCarga.Clear();
             PasosDeCarga["leer_sobre"] = Math.Round(LecturaDelPaquete.Sobre, 1);
             PasosDeCarga["leer_paquete"] = Math.Round(LecturaDelPaquete.Paquete, 1);
@@ -161,11 +180,26 @@ namespace Croquis.Visor
                 vista.CaidaLado = Caida.SeArrastraCaido(r, v) ? Caida.Lado(v.Trayectoria) : 0;
                 var extra = e?.Vehiculos != null ? Array.Find(e.Vehiculos, x => x.Id == v.Id) : null;
                 var color = extra?.Color != null ? Materiales.Hex(extra.Color, Color.gray) : (Color?)null;
-                vista.Partes = await modelos.ArmarAsync(go.transform, v, color);
+                try
+                {
+                    vista.Partes = await modelos.ArmarAsync(go.transform, v, color);
+                }
+                catch (Exception ex) when (!(ex is CargaReemplazada))
+                {
+                    // Sin su modelo (o con un dato que no se pudo leer), el vehículo va como una caja con sus
+                    // medidas y el perito lo sabe: no se abre el visor de respaldo por eso.
+                    Vigente(mio);
+                    Omisiones.Anotar("el modelo de " + v.Id + " (va como una caja con sus medidas)", ex);
+                    var d = v.Dimensiones;
+                    Omisiones.Intentar("la caja de " + v.Id, () => ArmadorVehiculo.Procedural(
+                        go.transform, new MedidasVehiculo(d.LargoM, d.AnchoM, d.AltoM, d.DistanciaEntreEjesM)));
+                }
+
+                Vigente(mio);
                 // El daño del solver sobre la carrocería: se prepara aquí y se ve desde su impacto.
-                vista.Dano = DanoVista.Preparar(go.transform, v, r);
+                Omisiones.Intentar("el daño de " + v.Id, () => vista.Dano = DanoVista.Preparar(go.transform, v, r));
                 vista.Frenado = extra?.Frenado;
-                vista.Luces(noche, extra == null || extra.Faros, (float)v.Dimensiones.LargoM);
+                Omisiones.Intentar("las luces de " + v.Id, () => vista.Luces(noche, extra == null || extra.Faros, (float)v.Dimensiones.LargoM));
                 foreach (var tr in go.GetComponentsInChildren<Transform>(true))
                 {
                     tr.gameObject.layer = EscenarioVista.CapaVehiculos;
@@ -173,12 +207,12 @@ namespace Croquis.Visor
 
                 if (Calidad.Perfil.SombrasUnidas)
                 {
-                    SombrasUnidas.Unir(go.transform, "sombra_vehiculo");
+                    Omisiones.Intentar("la sombra de " + v.Id, () => SombrasUnidas.Unir(go.transform, "sombra_vehiculo"));
                 }
 
                 if (e != null)
                 {
-                    SombraDeContacto(go.transform, (float)v.Dimensiones.LargoM, (float)v.Dimensiones.AnchoM, noche);
+                    Omisiones.Intentar("la sombra de contacto de " + v.Id, () => SombraDeContacto(go.transform, (float)v.Dimensiones.LargoM, (float)v.Dimensiones.AnchoM, noche));
                 }
                 vehiculos.Add(vista);
             }
@@ -186,7 +220,11 @@ namespace Croquis.Visor
             // Con escenario (ADR 0112) se dibuja lo que calculó TS y se esconde el piso liso de U1.
             // El piso es plano salvo que la escena declare terreno (C3): entonces todo se arma sobre él.
             // El relieve real del lugar, si el caso lo trae (ronda 4): el piso sube y baja como el del solver.
-            var terreno = TerrenoVista.De(e?.Terreno, RelieveMalla.De(caso.Relieve), e?.Estructura);
+            Terreno terreno = null;
+            if (!Omisiones.Intentar("el relieve real (el piso va plano)", () => terreno = TerrenoVista.De(e?.Terreno, RelieveMalla.De(caso.Relieve), e?.Estructura)))
+            {
+                terreno = TerrenoVista.De(e?.Terreno, null, e?.Estructura);
+            }
             var zona = Encuadre.ZonaDeInteres(r);
             EscenarioVista.CentroDelHecho = new Vector2((float)zona.CentroX, (float)zona.CentroY);
             EscenarioVista.ClaroDelHecho = (float)zona.Lado * 0.6f + 4f;
@@ -194,8 +232,9 @@ namespace Croquis.Visor
             {
                 Paso("vehiculos");
                 await cielo;
+                Vigente(mio);
                 Paso("cielo");
-            EscenarioVista.Construir(raiz, e, sol, Camera.main, terreno);
+            Omisiones.Intentar("el escenario", () => EscenarioVista.Construir(raiz, e, sol, Camera.main, terreno));
             Paso("escenario");
             }
             else
@@ -204,18 +243,30 @@ namespace Croquis.Visor
                 EscenarioVista.Leyenda(raiz, false);
             }
 
-            TerrenoVista.Dibujar(raiz, e?.Terreno, terreno, e != null && e.Ambiente.Mojado);
-            dinamica = CasoVista.Construir(raiz, caso, terreno, noche);
-            tImpacto = r.PuntoImpacto != null ? Fantasmas.TImpacto(r) : double.NaN;
-            impacto = ImpactoVista.Construir(raiz, r, tImpacto, terreno, noche);
+            Omisiones.Intentar("el terreno", () => TerrenoVista.Dibujar(raiz, e?.Terreno, terreno, e != null && e.Ambiente.Mojado));
+            Omisiones.Intentar("los objetos y las marcas del caso", () => dinamica = CasoVista.Construir(raiz, caso, terreno, noche));
+            Omisiones.Intentar("el énfasis del impacto", () =>
+            {
+                tImpacto = r.PuntoImpacto != null ? Fantasmas.TImpacto(r) : double.NaN;
+                impacto = ImpactoVista.Construir(raiz, r, tImpacto, terreno, noche);
+            });
             Paso("caso_y_terreno");
-            Editor.Preparar(r.Objetos, terreno);
+            Omisiones.Intentar("la edición en 3D", () => Editor.Preparar(r.Objetos, terreno));
             foreach (var v in vehiculos)
             {
                 v.Terreno = terreno;
             }
 
-            await ArmarFantasmasAsync(caso, terreno);
+            try
+            {
+                await ArmarFantasmasAsync(caso, terreno, mio);
+            }
+            catch (Exception ex) when (!(ex is CargaReemplazada))
+            {
+                Omisiones.Anotar("la versión superpuesta", ex);
+            }
+
+            Vigente(mio);
 
             // Los vehículos estacionados, con el modelo de su clase y quietos (antes salían como una caja
             // de tabique). Sus medidas son las del objeto; sin clase, un sedán.
@@ -249,6 +300,8 @@ namespace Croquis.Visor
                     Debug.LogWarning("[estacionado] " + ex.Message);
                 }
 
+                Vigente(mio);
+
                 var pie = terreno.P(o.X, o.Y);
                 go.transform.SetPositionAndRotation(pie, Quaternion.Euler(0f, 90f - (float)o.RumboDeg, 0f));
                 if (e != null)
@@ -262,7 +315,9 @@ namespace Croquis.Visor
             {
                 if (Personas.TieneTrayectoria(p))
                 {
-                    personas.Add(await PersonaVista.ConTrayectoriaAsync(raiz, p, terreno, cuerpos));
+                    var persona = await PersonaVista.ConTrayectoriaAsync(raiz, p, terreno, cuerpos);
+                    Vigente(mio);
+                    personas.Add(persona);
                     continue;
                 }
 
@@ -276,7 +331,9 @@ namespace Croquis.Visor
                 for (var i = 0; i < variantes.Length; i++)
                 {
                     // Sin cinturón declarado van las dos variantes; la segunda, de otro color.
-                    personas.Add(await PersonaVista.OcupanteAsync(vehiculos[k].transform, p, r.Vehiculos[k], variantes[i], i > 0, cuerpos));
+                    var persona = await PersonaVista.OcupanteAsync(vehiculos[k].transform, p, r.Vehiculos[k], variantes[i], i > 0, cuerpos);
+                    Vigente(mio);
+                    personas.Add(persona);
                 }
             }
 
@@ -406,8 +463,10 @@ namespace Croquis.Visor
             Paso("total");
             // El primer cuadro con la escena completa: ahí se compilan sus shaders y se suben sus texturas.
             await Awaitable.NextFrameAsync();
+            Vigente(mio);
             Paso("primer_cuadro");
             await Awaitable.NextFrameAsync();
+            Vigente(mio);
             Paso("segundo_cuadro");
             Debug.Log("[carga] " + string.Join(", ", PasosDeCarga.Select(kv => kv.Key + " " + kv.Value + " ms")));
         }
@@ -469,7 +528,7 @@ namespace Croquis.Visor
         /// los vehículos: fuera de la sonda de reflejos y del fondo horneado del minimapa. Las cámaras no
         /// los conocen. Solo los que en la versión van por otro lado (`Fantasmas.VehiculosADibujar`).
         /// </summary>
-        private async Awaitable ArmarFantasmasAsync(Caso3D caso, Terreno terreno)
+        private async Awaitable ArmarFantasmasAsync(Caso3D caso, Terreno terreno, int mio)
         {
             var version = caso.Fantasma?.Resultado;
             if (version?.Vehiculos == null)
@@ -492,6 +551,7 @@ namespace Croquis.Visor
                 try
                 {
                     await modelos.ArmarAsync(go.transform, v, (Color?)null);
+                    Vigente(mio);
                 }
                 catch (ModeloNoCargo ex)
                 {
@@ -1018,6 +1078,15 @@ namespace Croquis.Visor
             RectTransformUtility.ScreenPointToLocalPointInRectangle(lienzo, p, null, out var local);
             texto.rectTransform.anchoredPosition = local;
             texto.enabled = true;
+        }
+    }
+
+    /// <summary>Una carga que reemplazó otra más nueva: se detiene en silencio (`VisorCaso.Vigente`).</summary>
+    public sealed class CargaReemplazada : System.Exception
+    {
+        public CargaReemplazada()
+            : base("La reemplazó una carga más nueva.")
+        {
         }
     }
 }

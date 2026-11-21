@@ -76,7 +76,7 @@ namespace Croquis.TestsCiudad
                     return;
                 }
 
-                if (tipo == LogType.Exception || tipo == LogType.Error || tipo == LogType.Assert)
+                if ((tipo == LogType.Exception || tipo == LogType.Error || tipo == LogType.Assert) && !SoloDelEditor(mensaje))
                 {
                     errores.Add(mensaje + "\n" + pila);
                 }
@@ -120,7 +120,101 @@ namespace Croquis.TestsCiudad
             Assert.IsNotNull(respuesta, $"{caso}: Unity no contestó en {TopeSegundos} s.");
             Assert.That(respuesta, Does.Contain("\"cargado\""), caso + ": " + respuesta + "\n" + string.Join("\n---\n", errores));
             Assert.IsEmpty(errores, caso + ": cargó, pero con errores:\n" + string.Join("\n---\n", errores));
+            // Lo que el 3D omitió para no caer al respaldo: la batería quiere que no haga falta.
+            var omitidos = (JArray)JObject.Parse(respuesta)["omitidos"] ?? new JArray();
+            Assert.IsEmpty(omitidos, caso + ": cargó omitiendo: " + omitidos.ToString(Formatting.None));
         }
+
+        /// <summary>
+        /// Lo que pasa en el navegador con un caso de ciudad (René, 2026-11-20): el 3D arranca con la escena
+        /// sin calles y, cuando llegan las del mapa, la web manda otro `cargarCaso` aunque el primero no
+        /// haya terminado. Gana el último: tiene que llegar a «cargado» sin errores.
+        /// </summary>
+        [UnityTest]
+        [Timeout(240000)]
+        public IEnumerator DosCargasEncimadas([Values(0, 1, 5, 20, 60)] int cuadrosEntreUnaYOtra)
+        {
+            LogAssert.ignoreFailingMessages = true;
+            var errores = new List<string>();
+            var respuestas = new List<string>();
+
+            void Oir(string mensaje, string pila, LogType tipo)
+            {
+                if (mensaje.StartsWith("[puente] ", StringComparison.Ordinal))
+                {
+                    try
+                    {
+                        var t = (string)JObject.Parse(mensaje.Substring(9))["tipo"];
+                        if (t == "cargado" || t == "error")
+                        {
+                            respuestas.Add(mensaje.Substring(9));
+                        }
+                    }
+                    catch (JsonException)
+                    {
+                    }
+
+                    return;
+                }
+
+                if ((tipo == LogType.Exception || tipo == LogType.Error || tipo == LogType.Assert) && !SoloDelEditor(mensaje))
+                {
+                    errores.Add(mensaje + "\n" + pila);
+                }
+            }
+
+            Application.logMessageReceived += Oir;
+            var reloj = Stopwatch.StartNew();
+            try
+            {
+                yield return SceneManager.LoadSceneAsync("Visor", LoadSceneMode.Single);
+                yield return null;
+                CargadorModelos.BaseLocal = new Uri(
+                    Path.Combine(Raiz, "apps", "web", "public", "modelos", "vehiculos") + Path.DirectorySeparatorChar).AbsoluteUri;
+                var puente = UnityEngine.Object.FindFirstObjectByType<VisorPuente>();
+                var sinMapa = File.ReadAllText(Path.Combine(Carpeta, "tollocan-sin-mapa.json"));
+                var conMapa = File.ReadAllText(Path.Combine(Carpeta, "tollocan.json"));
+                puente.cargarCaso(new JObject { { "json", sinMapa } }.ToString(Formatting.None));
+                for (var i = 0; i < cuadrosEntreUnaYOtra; i++)
+                {
+                    yield return null;
+                }
+
+                var antes = respuestas.Count;
+                puente.cargarCaso(new JObject { { "json", conMapa } }.ToString(Formatting.None));
+                // La primera, si la reemplazó la segunda, ya no contesta: se espera la de la segunda.
+                while (respuestas.Count <= antes && reloj.Elapsed.TotalSeconds < TopeSegundos)
+                {
+                    yield return null;
+                }
+
+                for (var i = 0; i < 30; i++)
+                {
+                    yield return null;
+                }
+            }
+            finally
+            {
+                Application.logMessageReceived -= Oir;
+                var todas = respuestas.Count > 0
+                    ? new JObject { { "tipo", "varias" }, { "respuestas", new JArray(respuestas.Cast<object>().ToArray()) } }.ToString(Formatting.None)
+                    : null;
+                Anotar($"encimadas-{cuadrosEntreUnaYOtra}", todas, reloj.Elapsed.TotalMilliseconds, errores, new List<string>());
+            }
+
+            Assert.IsNotEmpty(respuestas, "Unity no contestó.");
+            Assert.IsFalse(respuestas.Any(x => x.Contains("\"error\"")), "Una carga contestó «error»: " + string.Join(" | ", respuestas));
+            Assert.That(respuestas.Last(), Does.Contain("\"cargado\""), string.Join("\n", respuestas) + "\n" + string.Join("\n---\n", errores));
+            Assert.IsEmpty(errores, "Con errores:\n" + string.Join("\n---\n", errores));
+        }
+
+        /// <summary>
+        /// El aviso de URP al abrir la escena en el Editor en modo batch («UpdateVolumeStack must not be
+        /// called before VolumeManager.instance.Initialize»): no sale en el player (la batería en el build de
+        /// escritorio da 0 errores) y no es del caso.
+        /// </summary>
+        private static bool SoloDelEditor(string mensaje) =>
+            mensaje.StartsWith("UpdateVolumeStack must not be called before VolumeManager", StringComparison.Ordinal);
 
         private static void Anotar(string caso, string respuesta, double ms, List<string> errores, List<string> avisos)
         {

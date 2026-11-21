@@ -19,7 +19,7 @@ namespace Croquis.Visor
             var padre = new GameObject("caso").transform;
             padre.SetParent(raiz, false);
             var dinamica = padre.gameObject.AddComponent<EscenaDinamica>();
-            Objetos(padre, caso.Resultado.Objetos, terreno);
+            Omisiones.Intentar("los objetos del choque", () => Objetos(padre, caso.Resultado.Objetos, terreno));
             var e = caso.Escenario;
             if (e == null)
             {
@@ -59,64 +59,71 @@ namespace Croquis.Visor
             var placas = new Malla();
             foreach (var o in objetos)
             {
-                var pie = terreno.P(o.X, o.Y);
-                var eje = Dir(o.RumboDeg);
-                var lado = Vector3.Cross(Vector3.up, eje);
-                var tipo = o.Tipo.ToString();
-                var alto = (float)o.AltoM;
-                switch (o.Forma)
+                try
                 {
-                    case Forma.Cilindro:
+                    var pie = terreno.P(o.X, o.Y);
+                    var eje = Dir(o.RumboDeg);
+                    var lado = Vector3.Cross(Vector3.up, eje);
+                    var tipo = o.Tipo.ToString();
+                    var alto = (float)o.AltoM;
+                    switch (o.Forma)
                     {
-                        var r = (float)(o.RadioM ?? Math.Max(o.LargoM, o.AnchoM) / 2.0);
-                        // Un poste de concreto es más ancho abajo; con brazo corto si es de luz.
-                        concreto.Prisma(pie, r * 1.15f, alto, 12, r * 0.75f);
-                        if (tipo == "Poste" && alto > 5f)
+                        case Forma.Cilindro:
                         {
-                            madera.Caja(pie + Vector3.up * (alto - 0.7f), eje, lado, 1.6f, 0.1f, 0.1f);
-                        }
+                            var r = (float)(o.RadioM ?? Math.Max(o.LargoM, o.AnchoM) / 2.0);
+                            // Un poste de concreto es más ancho abajo; con brazo corto si es de luz.
+                            concreto.Prisma(pie, r * 1.15f, alto, 12, r * 0.75f);
+                            if (tipo == "Poste" && alto > 5f)
+                            {
+                                madera.Caja(pie + Vector3.up * (alto - 0.7f), eje, lado, 1.6f, 0.1f, 0.1f);
+                            }
 
-                        break;
-                    }
-
-                    case Forma.Arbol:
-                    {
-                        var copa = o.Copa;
-                        var tronco = copa != null ? (float)copa.TroncoAltoM : alto * 0.4f;
-                        var radio = (float)(o.RadioM ?? 0.2);
-                        troncos.Prisma(pie, radio * 1.2f, tronco + 0.6f, 10, radio * 0.8f);
-                        var medidas = Materiales.MedidasArbol("fresno");
-                        var ancho = medidas.x * (alto / medidas.y);
-                        if (impostores == null)
-                        {
-                            impostores = padre.gameObject.AddComponent<ArbolesVista>();
-                        }
-
-                        impostores.Agregar("fresno", pie, alto, (float)(o.RumboDeg * System.Math.PI / 180.0));
-
-                        var h = pie + Vector3.up * (alto * 0.62f);
-                        var rr = ancho * 0.5f;
-                        copasPlanta.Tarjeta(
-                            h + new Vector3(-rr, 0, -rr), h + new Vector3(rr, 0, -rr), h + new Vector3(rr, 0, rr), h + new Vector3(-rr, 0, rr));
-                        break;
-                    }
-
-                    case Forma.Senal:
-                        metal.Prisma(pie, 0.035f, alto, 8);
-                        placas.Caja(pie + Vector3.up * (alto - 0.75f) + eje * 0.04f, lado, eje, 0.7f, 0.7f, 0.03f);
-                        break;
-                    default:
-                    {
-                        // Un vehículo estacionado no es una caja: lo arma `VisorCaso` con el modelo de su clase.
-                        if (o.Tipo == IndigoTipo.VehiculoEstacionado)
-                        {
                             break;
                         }
 
-                        var m = tipo == "Contenedor" || tipo == "ParadaAutobus" ? metal : muro;
-                        m.Caja(pie, eje, lado, (float)o.LargoM, alto, (float)o.AnchoM, 0.5f);
-                        break;
+                        case Forma.Arbol:
+                        {
+                            var copa = o.Copa;
+                            var tronco = copa != null ? (float)copa.TroncoAltoM : alto * 0.4f;
+                            var radio = (float)(o.RadioM ?? 0.2);
+                            troncos.Prisma(pie, radio * 1.2f, tronco + 0.6f, 10, radio * 0.8f);
+                            var medidas = Materiales.MedidasArbol("fresno");
+                            var ancho = medidas.x * (alto / medidas.y);
+                            if (impostores == null)
+                            {
+                                impostores = padre.gameObject.AddComponent<ArbolesVista>();
+                            }
+
+                            impostores.Agregar("fresno", pie, alto, (float)(o.RumboDeg * System.Math.PI / 180.0));
+
+                            var h = pie + Vector3.up * (alto * 0.62f);
+                            var rr = ancho * 0.5f;
+                            copasPlanta.Tarjeta(
+                                h + new Vector3(-rr, 0, -rr), h + new Vector3(rr, 0, -rr), h + new Vector3(rr, 0, rr), h + new Vector3(-rr, 0, rr));
+                            break;
+                        }
+
+                        case Forma.Senal:
+                            metal.Prisma(pie, 0.035f, alto, 8);
+                            placas.Caja(pie + Vector3.up * (alto - 0.75f) + eje * 0.04f, lado, eje, 0.7f, 0.7f, 0.03f);
+                            break;
+                        default:
+                        {
+                            // Un vehículo estacionado no es una caja: lo arma `VisorCaso` con el modelo de su clase.
+                            if (o.Tipo == IndigoTipo.VehiculoEstacionado)
+                            {
+                                break;
+                            }
+
+                            var m = tipo == "Contenedor" || tipo == "ParadaAutobus" ? metal : muro;
+                            m.Caja(pie, eje, lado, (float)o.LargoM, alto, (float)o.AnchoM, 0.5f);
+                            break;
+                        }
                     }
+                }
+                catch (System.Exception ex) when (!(ex is CargaReemplazada))
+                {
+                    Omisiones.Anotar("un objeto del choque («" + o.Tipo + "»)", ex);
                 }
             }
 
@@ -294,23 +301,30 @@ namespace Croquis.Visor
 
             foreach (var mancha in manchas)
             {
-                var m = new Malla();
-                var c = m.Vertice(Vector3.zero, Vector2.zero);
-                const int Lados = 20;
-                for (var k = 0; k <= Lados; k++)
+                try
                 {
-                    var ang = 2f * Mathf.PI * k / Lados;
-                    var r = 1f + 0.14f * Mathf.Sin(3f * ang) + 0.08f * Mathf.Sin(7f * ang + 1f);
-                    m.Vertice(new Vector3(Mathf.Cos(ang) * r, 0f, Mathf.Sin(ang) * r), Vector2.zero);
-                    if (k > 0)
+                    var m = new Malla();
+                    var c = m.Vertice(Vector3.zero, Vector2.zero);
+                    const int Lados = 20;
+                    for (var k = 0; k <= Lados; k++)
                     {
-                        m.Triangulo(c, c + k + 1, c + k);
+                        var ang = 2f * Mathf.PI * k / Lados;
+                        var r = 1f + 0.14f * Mathf.Sin(3f * ang) + 0.08f * Mathf.Sin(7f * ang + 1f);
+                        m.Vertice(new Vector3(Mathf.Cos(ang) * r, 0f, Mathf.Sin(ang) * r), Vector2.zero);
+                        if (k > 0)
+                        {
+                            m.Triangulo(c, c + k + 1, c + k);
+                        }
                     }
-                }
 
-                var go = m.Poner(padre, "mancha", Materiales.Charco, false);
-                go.transform.position = terreno.P(mancha.X, mancha.Y, 0.028f);
-                dinamica.Manchas.Add(new EscenaDinamica.Mancha { Objeto = go.transform, T0 = mancha.T0, Radio = (float)mancha.RadioM });
+                    var go = m.Poner(padre, "mancha", Materiales.Charco, false);
+                    go.transform.position = terreno.P(mancha.X, mancha.Y, 0.028f);
+                    dinamica.Manchas.Add(new EscenaDinamica.Mancha { Objeto = go.transform, T0 = mancha.T0, Radio = (float)mancha.RadioM });
+                }
+                catch (System.Exception ex) when (!(ex is CargaReemplazada))
+                {
+                    Omisiones.Anotar("una mancha", ex);
+                }
             }
         }
 
@@ -329,48 +343,55 @@ namespace Croquis.Visor
             var azar = new Azar(semilla + 211);
             foreach (var ev in evidencias)
             {
-                var p = ev.Puntos;
-                if (ev.Tipo == TipoEvidencia.Vidrios || ev.Tipo == TipoEvidencia.Restos)
+                try
                 {
-                    // Regados alrededor de los puntos declarados y entre ellos.
-                    var malla = ev.Tipo == TipoEvidencia.Vidrios ? vidrios : restos;
-                    var cuantos = ev.Tipo == TipoEvidencia.Vidrios ? 90 : 26;
-                    for (var k = 0; k < cuantos * p.Length; k++)
+                    var p = ev.Puntos;
+                    if (ev.Tipo == TipoEvidencia.Vidrios || ev.Tipo == TipoEvidencia.Restos)
                     {
-                        var a = p[k % p.Length];
-                        var b = p[(k + 1) % p.Length];
-                        var u = azar.Siguiente();
-                        var x = (float)(a.X + (b.X - a.X) * u) + azar.Entre(-0.9f, 0.9f);
-                        var y = (float)(a.Y + (b.Y - a.Y) * u) + azar.Entre(-0.9f, 0.9f);
-                        var tam = ev.Tipo == TipoEvidencia.Vidrios ? azar.Entre(0.012f, 0.04f) : azar.Entre(0.04f, 0.16f);
-                        var giro = Dir(azar.Entre(0f, 360f));
-                        var c = terreno.P(x, y, 0.024f);
-                        if (ev.Tipo == TipoEvidencia.Vidrios)
+                        // Regados alrededor de los puntos declarados y entre ellos.
+                        var malla = ev.Tipo == TipoEvidencia.Vidrios ? vidrios : restos;
+                        var cuantos = ev.Tipo == TipoEvidencia.Vidrios ? 90 : 26;
+                        for (var k = 0; k < cuantos * p.Length; k++)
                         {
-                            var ld = Vector3.Cross(Vector3.up, giro);
-                            malla.Cuadro(c - giro * tam - ld * tam * 0.6f, c + giro * tam - ld * tam * 0.4f, c + giro * tam * 0.7f + ld * tam, c - giro * tam * 0.8f + ld * tam * 0.7f + Vector3.up * 0.006f, 1f, true);
+                            var a = p[k % p.Length];
+                            var b = p[(k + 1) % p.Length];
+                            var u = azar.Siguiente();
+                            var x = (float)(a.X + (b.X - a.X) * u) + azar.Entre(-0.9f, 0.9f);
+                            var y = (float)(a.Y + (b.Y - a.Y) * u) + azar.Entre(-0.9f, 0.9f);
+                            var tam = ev.Tipo == TipoEvidencia.Vidrios ? azar.Entre(0.012f, 0.04f) : azar.Entre(0.04f, 0.16f);
+                            var giro = Dir(azar.Entre(0f, 360f));
+                            var c = terreno.P(x, y, 0.024f);
+                            if (ev.Tipo == TipoEvidencia.Vidrios)
+                            {
+                                var ld = Vector3.Cross(Vector3.up, giro);
+                                malla.Cuadro(c - giro * tam - ld * tam * 0.6f, c + giro * tam - ld * tam * 0.4f, c + giro * tam * 0.7f + ld * tam, c - giro * tam * 0.8f + ld * tam * 0.7f + Vector3.up * 0.006f, 1f, true);
+                            }
+                            else
+                            {
+                                malla.Caja(c, giro, Vector3.Cross(Vector3.up, giro), tam, tam * azar.Entre(0.15f, 0.5f), tam * azar.Entre(0.4f, 1f));
+                            }
                         }
-                        else
-                        {
-                            malla.Caja(c, giro, Vector3.Cross(Vector3.up, giro), tam, tam * azar.Entre(0.15f, 0.5f), tam * azar.Entre(0.4f, 1f));
-                        }
-                    }
 
-                    continue;
-                }
-
-                for (var k = 0; k + 1 < p.Length; k++)
-                {
-                    var a = terreno.P(p[k].X, p[k].Y, 0.025f);
-                    var b = terreno.P(p[k + 1].X, p[k + 1].Y, 0.025f);
-                    var d = b - a;
-                    if (d.sqrMagnitude < 0.0025f)
-                    {
                         continue;
                     }
 
-                    var ld = Vector3.Cross(Vector3.up, d.normalized) * 0.11f;
-                    trazos.Cuadro(a - ld, b - ld, b + ld, a + ld, 1f, true);
+                    for (var k = 0; k + 1 < p.Length; k++)
+                    {
+                        var a = terreno.P(p[k].X, p[k].Y, 0.025f);
+                        var b = terreno.P(p[k + 1].X, p[k + 1].Y, 0.025f);
+                        var d = b - a;
+                        if (d.sqrMagnitude < 0.0025f)
+                        {
+                            continue;
+                        }
+
+                        var ld = Vector3.Cross(Vector3.up, d.normalized) * 0.11f;
+                        trazos.Cuadro(a - ld, b - ld, b + ld, a + ld, 1f, true);
+                    }
+                }
+                catch (System.Exception ex) when (!(ex is CargaReemplazada))
+                {
+                    Omisiones.Anotar("una evidencia", ex);
                 }
             }
 
@@ -393,27 +414,34 @@ namespace Croquis.Visor
             var mallas = new Dictionary<TipoMarcador, Malla>();
             foreach (var mk in marcadores)
             {
-                if (!mallas.TryGetValue(mk.Tipo, out var m))
+                try
                 {
-                    mallas[mk.Tipo] = m = new Malla();
-                }
+                    if (!mallas.TryGetValue(mk.Tipo, out var m))
+                    {
+                        mallas[mk.Tipo] = m = new Malla();
+                    }
 
-                var c = terreno.P(mk.X, mk.Y, 0.03f);
-                // Un anillo en el piso y un alfiler con su rombo: se ve desde arriba y desde la calle.
-                var radio = mk.Tipo == TipoMarcador.PrimerGolpe ? 0.55f : 0.4f;
-                const int Lados = 28;
-                for (var k = 0; k < Lados; k++)
+                    var c = terreno.P(mk.X, mk.Y, 0.03f);
+                    // Un anillo en el piso y un alfiler con su rombo: se ve desde arriba y desde la calle.
+                    var radio = mk.Tipo == TipoMarcador.PrimerGolpe ? 0.55f : 0.4f;
+                    const int Lados = 28;
+                    for (var k = 0; k < Lados; k++)
+                    {
+                        var a0 = 2f * Mathf.PI * k / Lados;
+                        var a1 = 2f * Mathf.PI * (k + 1) / Lados;
+                        Vector3 R(float a, float r) => c + new Vector3(Mathf.Cos(a) * r, 0f, Mathf.Sin(a) * r);
+                        m.Cuadro(R(a0, radio * 0.78f), R(a0, radio), R(a1, radio), R(a1, radio * 0.78f), 1f, true);
+                    }
+
+                    m.Prisma(c, 0.015f, 1.9f, 6);
+                    var punta = c + Vector3.up * 2.1f;
+                    m.Prisma(punta - Vector3.up * 0.2f, 0.001f, 0.2f, 4, 0.16f);
+                    m.Prisma(punta, 0.16f, 0.2f, 4, 0.001f);
+                }
+                catch (System.Exception ex) when (!(ex is CargaReemplazada))
                 {
-                    var a0 = 2f * Mathf.PI * k / Lados;
-                    var a1 = 2f * Mathf.PI * (k + 1) / Lados;
-                    Vector3 R(float a, float r) => c + new Vector3(Mathf.Cos(a) * r, 0f, Mathf.Sin(a) * r);
-                    m.Cuadro(R(a0, radio * 0.78f), R(a0, radio), R(a1, radio), R(a1, radio * 0.78f), 1f, true);
+                    Omisiones.Anotar("un marcador", ex);
                 }
-
-                m.Prisma(c, 0.015f, 1.9f, 6);
-                var punta = c + Vector3.up * 2.1f;
-                m.Prisma(punta - Vector3.up * 0.2f, 0.001f, 0.2f, 4, 0.16f);
-                m.Prisma(punta, 0.16f, 0.2f, 4, 0.001f);
             }
 
             foreach (var par in mallas)

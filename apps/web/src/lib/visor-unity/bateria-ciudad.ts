@@ -44,6 +44,11 @@ export interface CasoBateria {
   sinMapa?: boolean;
   /** Sin el árbol colocado como objeto del choque (en el paquete). */
   sinArbolColocado?: boolean;
+  /**
+   * Otras calles, de `data/osm/<callesDe>.overpass.json` y sin objetos: las de las teselas del mapa,
+   * como cuando Overpass no responde.
+   */
+  callesDe?: string;
 }
 
 const tollocan = (raiz: string): Expediente =>
@@ -111,6 +116,13 @@ export const CASOS_BATERIA: readonly CasoBateria[] = [
     lugar: "tollocan_rene",
     expediente: tollocan,
     sinMapa: true,
+  },
+  {
+    clave: "tollocan-teselas",
+    que: "Tollocan con las calles de las teselas del mapa (sin Overpass)",
+    lugar: "tollocan_rene",
+    expediente: tollocan,
+    callesDe: "tollocan_rene_teselas",
   },
   {
     clave: "toluca-poste",
@@ -214,15 +226,27 @@ export function resumenDelPaquete(p: Json) {
 }
 
 /** El paquete caso-3d de un caso de la batería, como lo arma el navegador. */
-export function paqueteDeLaBateria(c: CasoBateria, raiz: string): Json {
+export function paqueteDeLaBateria(
+  c: CasoBateria,
+  raiz: string,
+  /** Otras calles (las de las teselas del mapa, cuando Overpass no responde); sin objetos. */
+  calles?: OverpassResponse,
+): Json {
   const e = c.expediente(raiz);
-  const osm = c.sinMapa
+  calles ??= c.callesDe
+    ? (JSON.parse(
+        readFileSync(resolve(raiz, `data/osm/${c.callesDe}.overpass.json`), "utf8"),
+      ) as OverpassResponse)
+    : undefined;
+  const osm = calles
     ? null
-    : (JSON.parse(
-        readFileSync(resolve(raiz, `data/osm/${c.lugar}.overpass.json`), "utf8"),
-      ) as OverpassResponse);
+    : c.sinMapa
+      ? null
+      : (JSON.parse(
+          readFileSync(resolve(raiz, `data/osm/${c.lugar}.overpass.json`), "utf8"),
+        ) as OverpassResponse);
   const r = reconstruirExpediente(e, undefined, { samples: 8, mcSamples: 8 });
-  const escena = especDel3d(r, osm, osm) as unknown as Json;
+  const escena = especDel3d(r, calles ?? osm, osm) as unknown as Json;
   if (c.sinArbolColocado) {
     const entorno = (escena.entorno ?? {}) as Json;
     entorno.objetos = ((entorno.objetos ?? []) as Json[]).filter((o) => o.tipo !== "arbol");

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Croquis.Core;
@@ -94,7 +95,16 @@ namespace Croquis.Visor
                 // Cuánto pasó desde que llegó el mensaje hasta avisar «cargado» (incluye el regreso del
                 // await, que en Unity es en el cuadro siguiente: ahí se compilan los shaders de la escena).
                 visor.PasosDeCarga["hasta_cargado"] = Math.Round(reloj.Elapsed.TotalMilliseconds, 1);
-                Enviar("cargado", new JObject { { "escena_id", caso.Resultado.EscenaId } });
+                // Lo que el 3D omitió (un elemento con un dato faltante): la web se lo dice al perito.
+                Enviar("cargado", new JObject
+                {
+                    { "escena_id", caso.Resultado.EscenaId },
+                    { "omitidos", new JArray(Omisiones.Lista.Cast<object>().ToArray()) },
+                });
+            }
+            catch (CargaReemplazada)
+            {
+                // La reemplazó otra más nueva: esa es la que contesta («cargado» o «error»).
             }
             catch (FormatException e)
             {

@@ -208,16 +208,23 @@ namespace Croquis.Visor
             var mosaico = Materiales.Mosaico("grava");
             foreach (var o in orillas)
             {
-                var pasos = Mathf.Max(1, Mathf.CeilToInt(o.Largo / 6f));
-                for (var k = 0; k < pasos; k++)
+                try
                 {
-                    var p0 = Vector2.Lerp(o.A, o.B, k / (float)pasos);
-                    var p1 = Vector2.Lerp(o.A, o.B, (k + 1) / (float)pasos);
-                    var s0 = o.Largo * k / pasos;
-                    var s1 = o.Largo * (k + 1) / pasos;
-                    // El parche fino del suelo va 3 cm abajo de la vía: la grava, 1 cm abajo.
-                    Franja(grava, terreno, p0, p1, o.Afuera, 0.02f, 0.95f, -0.01f, s0 / mosaico, s1 / mosaico, 0.93f / mosaico);
-                    Franja(tierra, terreno, p0, p1, o.Afuera, 0.85f, 2.4f, -0.014f, s0 / 6f, s1 / 6f, 1f);
+                    var pasos = Mathf.Max(1, Mathf.CeilToInt(o.Largo / 6f));
+                    for (var k = 0; k < pasos; k++)
+                    {
+                        var p0 = Vector2.Lerp(o.A, o.B, k / (float)pasos);
+                        var p1 = Vector2.Lerp(o.A, o.B, (k + 1) / (float)pasos);
+                        var s0 = o.Largo * k / pasos;
+                        var s1 = o.Largo * (k + 1) / pasos;
+                        // El parche fino del suelo va 3 cm abajo de la vía: la grava, 1 cm abajo.
+                        Franja(grava, terreno, p0, p1, o.Afuera, 0.02f, 0.95f, -0.01f, s0 / mosaico, s1 / mosaico, 0.93f / mosaico);
+                        Franja(tierra, terreno, p0, p1, o.Afuera, 0.85f, 2.4f, -0.014f, s0 / 6f, s1 / 6f, 1f);
+                    }
+                }
+                catch (System.Exception ex) when (!(ex is CargaReemplazada))
+                {
+                    Omisiones.Anotar("una orilla de la carretera", ex);
                 }
             }
 
@@ -533,38 +540,45 @@ namespace Croquis.Visor
             var ojos = new Malla();
             foreach (var o in orillas)
             {
-                if (o.Mediana)
+                try
                 {
-                    continue;
-                }
-
-                for (var s = 10f; s < o.Largo; s += 20f)
-                {
-                    var q = o.A + o.Dir * s + o.Afuera * 0.7f;
-                    var conDefensa = false;
-                    foreach (var (a, b) in defensas)
-                    {
-                        if (Distancia(q, a, b) < 3f)
-                        {
-                            conDefensa = true;
-                            break;
-                        }
-                    }
-
-                    if (conDefensa)
+                    if (o.Mediana)
                     {
                         continue;
                     }
 
-                    var t = new Vector3(o.Transito.x, 0f, o.Transito.y);
-                    var lado = new Vector3(o.Afuera.x, 0f, o.Afuera.y);
-                    var pie = terreno.P(q.x, q.y);
-                    blancos.Caja(pie, lado, t, 0.1f, 0.88f, 0.1f);
-                    bandas.Caja(pie + Vector3.up * 0.88f, lado, t, 0.1f, 0.16f, 0.1f);
-                    var c = pie + Vector3.up * 0.96f - t * 0.052f;
-                    var x = lado * 0.035f;
-                    var y = Vector3.up * 0.05f;
-                    ojos.Cuadro(c + x - y, c - x - y, c - x + y, c + x + y, 1f, true);
+                    for (var s = 10f; s < o.Largo; s += 20f)
+                    {
+                        var q = o.A + o.Dir * s + o.Afuera * 0.7f;
+                        var conDefensa = false;
+                        foreach (var (a, b) in defensas)
+                        {
+                            if (Distancia(q, a, b) < 3f)
+                            {
+                                conDefensa = true;
+                                break;
+                            }
+                        }
+
+                        if (conDefensa)
+                        {
+                            continue;
+                        }
+
+                        var t = new Vector3(o.Transito.x, 0f, o.Transito.y);
+                        var lado = new Vector3(o.Afuera.x, 0f, o.Afuera.y);
+                        var pie = terreno.P(q.x, q.y);
+                        blancos.Caja(pie, lado, t, 0.1f, 0.88f, 0.1f);
+                        bandas.Caja(pie + Vector3.up * 0.88f, lado, t, 0.1f, 0.16f, 0.1f);
+                        var c = pie + Vector3.up * 0.96f - t * 0.052f;
+                        var x = lado * 0.035f;
+                        var y = Vector3.up * 0.05f;
+                        ojos.Cuadro(c + x - y, c - x - y, c - x + y, c + x + y, 1f, true);
+                    }
+                }
+                catch (System.Exception ex) when (!(ex is CargaReemplazada))
+                {
+                    Omisiones.Anotar("una orilla de la carretera", ex);
                 }
             }
 
@@ -721,9 +735,16 @@ namespace Croquis.Visor
             var total = 0f;
             foreach (var o in orillas)
             {
-                if (!o.Mediana)
+                try
                 {
-                    total += o.Largo;
+                    if (!o.Mediana)
+                    {
+                        total += o.Largo;
+                    }
+                }
+                catch (System.Exception ex) when (!(ex is CargaReemplazada))
+                {
+                    Omisiones.Anotar("una orilla de la carretera", ex);
                 }
             }
 

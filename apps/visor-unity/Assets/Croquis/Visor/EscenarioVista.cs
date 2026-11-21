@@ -38,33 +38,33 @@ namespace Croquis.Visor
         {
             var escenario = new GameObject("escenario").transform;
             escenario.SetParent(raiz, false);
-            Ambiente(e.Ambiente, sol, camara);
-            var urbana = e.Entorno.Zona == ZonaEntorno.Urbana;
+            Omisiones.Intentar("la luz y el cielo", () => Ambiente(e.Ambiente, sol, camara));
+            var urbana = e.Entorno != null && e.Entorno.Zona == ZonaEntorno.Urbana;
             var centro = new Vector2((float)e.Centro.X, (float)e.Centro.Y);
-            Via(escenario, e.Via, e.Ambiente, terreno, e.Semilla, urbana, centro);
+            Omisiones.Intentar("la vía", () => Via(escenario, e.Via, e.Ambiente, terreno, e.Semilla, urbana, centro));
             if (!urbana)
             {
-                CarreteraVista.Construir(escenario, e.Via, e.Ambiente, terreno, e.Semilla);
+                Omisiones.Intentar("la carretera", () => CarreteraVista.Construir(escenario, e.Via, e.Ambiente, terreno, e.Semilla));
             }
-            foreach (var s in e.Suelo)
+            foreach (var s in e.Suelo ?? new SueloEscenario[0])
             {
-                Suelo(escenario, s, e.Ambiente, urbana, e.Semilla);
+                Omisiones.Intentar("un tramo de suelo", () => Suelo(escenario, s, e.Ambiente, urbana, e.Semilla));
             }
 
-            EntornoVista.Construir(escenario, e.Entorno, e.Ambiente, e.Semilla);
+            Omisiones.Intentar("el entorno", () => EntornoVista.Construir(escenario, e.Entorno, e.Ambiente, e.Semilla));
             if (e.Estructura != null)
             {
-                Puente(escenario, e.Estructura, terreno);
+                Omisiones.Intentar("el puente", () => Puente(escenario, e.Estructura, terreno));
             }
-            Luminarias(escenario, e.Luminarias, e.Ambiente, new Vector2((float)e.Centro.X, (float)e.Centro.Y));
+            Omisiones.Intentar("las luminarias", () => Luminarias(escenario, e.Luminarias, e.Ambiente, new Vector2((float)e.Centro.X, (float)e.Centro.Y)));
             var p = e.Ambiente.Precipitacion;
             LluviaDeParticulas = null;
             if (p.StartsWith("lluvia", StringComparison.Ordinal) || p == "granizo")
             {
-                Lluvia(escenario, e.Centro, p == "lluvia_ligera" ? 2500 : 6000, camara);
+                Omisiones.Intentar("la lluvia", () => Lluvia(escenario, e.Centro, p == "lluvia_ligera" ? 2500 : 6000, camara));
             }
 
-            Sonda(escenario, e);
+            Omisiones.Intentar("los reflejos", () => Sonda(escenario, e));
 
             Leyenda(escenario);
         }
@@ -443,40 +443,47 @@ namespace Croquis.Visor
             var postes = new Malla();
             foreach (var b in barreras)
             {
-                var recorrido = 0f;
-                var siguiente = 0f;
-                for (var i = 0; i + 1 < b.Length; i++)
+                try
                 {
-                    var p0 = terreno.P(b[i].X, b[i].Y);
-                    var p1 = terreno.P(b[i + 1].X, b[i + 1].Y);
-                    var largo = (p1 - p0).magnitude;
-                    if (largo < 1e-3f)
+                    var recorrido = 0f;
+                    var siguiente = 0f;
+                    for (var i = 0; i + 1 < b.Length; i++)
                     {
-                        continue;
-                    }
+                        var p0 = terreno.P(b[i].X, b[i].Y);
+                        var p1 = terreno.P(b[i + 1].X, b[i + 1].Y);
+                        var largo = (p1 - p0).magnitude;
+                        if (largo < 1e-3f)
+                        {
+                            continue;
+                        }
 
-                    var dir = (p1 - p0) / largo;
-                    var lado = Vector3.Cross(Vector3.up, dir);
-                    // El perfil de dos ondas: tres franjas en zigzag hacia la vía.
-                    var alturas = new[] { 0.42f, 0.5f, 0.58f, 0.66f, 0.73f };
-                    var salientes = new[] { 0f, 0.06f, 0f, 0.06f, 0f };
-                    for (var k = 0; k + 1 < alturas.Length; k++)
-                    {
-                        var a0 = p0 + Vector3.up * alturas[k] + lado * salientes[k];
-                        var a1 = p1 + Vector3.up * alturas[k] + lado * salientes[k];
-                        var b0 = p0 + Vector3.up * alturas[k + 1] + lado * salientes[k + 1];
-                        var b1 = p1 + Vector3.up * alturas[k + 1] + lado * salientes[k + 1];
-                        viga.Cuadro(a0, a1, b1, b0, 1f, true);
-                    }
+                        var dir = (p1 - p0) / largo;
+                        var lado = Vector3.Cross(Vector3.up, dir);
+                        // El perfil de dos ondas: tres franjas en zigzag hacia la vía.
+                        var alturas = new[] { 0.42f, 0.5f, 0.58f, 0.66f, 0.73f };
+                        var salientes = new[] { 0f, 0.06f, 0f, 0.06f, 0f };
+                        for (var k = 0; k + 1 < alturas.Length; k++)
+                        {
+                            var a0 = p0 + Vector3.up * alturas[k] + lado * salientes[k];
+                            var a1 = p1 + Vector3.up * alturas[k] + lado * salientes[k];
+                            var b0 = p0 + Vector3.up * alturas[k + 1] + lado * salientes[k + 1];
+                            var b1 = p1 + Vector3.up * alturas[k + 1] + lado * salientes[k + 1];
+                            viga.Cuadro(a0, a1, b1, b0, 1f, true);
+                        }
 
-                    while (siguiente <= recorrido + largo)
-                    {
-                        var p = p0 + dir * (siguiente - recorrido) - lado * 0.06f;
-                        postes.Caja(p, dir, lado, 0.1f, 0.74f, 0.12f);
-                        siguiente += 4f;
-                    }
+                        while (siguiente <= recorrido + largo)
+                        {
+                            var p = p0 + dir * (siguiente - recorrido) - lado * 0.06f;
+                            postes.Caja(p, dir, lado, 0.1f, 0.74f, 0.12f);
+                            siguiente += 4f;
+                        }
 
-                    recorrido += largo;
+                        recorrido += largo;
+                    }
+                }
+                catch (System.Exception ex) when (!(ex is CargaReemplazada))
+                {
+                    Omisiones.Anotar("una barrera", ex);
                 }
             }
 
@@ -825,54 +832,61 @@ namespace Croquis.Visor
             var luces = 0;
             foreach (var l in lista)
             {
-                var p = new Vector3((float)l.X, (float)l.Z, (float)l.Y);
-                var alto = (float)l.AlturaM;
-                var ang = (float)l.RumboDeg * Mathf.Deg2Rad;
-                var dir = new Vector3(Mathf.Cos(ang), 0f, Mathf.Sin(ang));
-                var lado = Vector3.Cross(Vector3.up, dir);
-                // Poste cónico con base, brazo curvo en tres tramos y cabeza tipo cobra.
-                postes.Prisma(p, 0.16f, 0.5f, 10);
-                postes.Prisma(p + Vector3.up * 0.5f, 0.1f, alto - 0.5f, 10, 0.06f);
-                var codo = p + Vector3.up * alto;
-                var tramos = new[] { 0f, 0.5f, 1.15f, 1.9f };
-                var subidas = new[] { 0f, 0.28f, 0.42f, 0.42f };
-                for (var k = 0; k + 1 < tramos.Length; k++)
+                try
                 {
-                    var q0 = codo + dir * tramos[k] + Vector3.up * subidas[k];
-                    var q1 = codo + dir * tramos[k + 1] + Vector3.up * subidas[k + 1];
-                    var eje = (q1 - q0).normalized;
-                    postes.Caja(q0 - Vector3.up * 0.03f + eje * ((q1 - q0).magnitude / 2f), lado, eje, 0.06f, 0.06f, (q1 - q0).magnitude);
-                }
+                    var p = new Vector3((float)l.X, (float)l.Z, (float)l.Y);
+                    var alto = (float)l.AlturaM;
+                    var ang = (float)l.RumboDeg * Mathf.Deg2Rad;
+                    var dir = new Vector3(Mathf.Cos(ang), 0f, Mathf.Sin(ang));
+                    var lado = Vector3.Cross(Vector3.up, dir);
+                    // Poste cónico con base, brazo curvo en tres tramos y cabeza tipo cobra.
+                    postes.Prisma(p, 0.16f, 0.5f, 10);
+                    postes.Prisma(p + Vector3.up * 0.5f, 0.1f, alto - 0.5f, 10, 0.06f);
+                    var codo = p + Vector3.up * alto;
+                    var tramos = new[] { 0f, 0.5f, 1.15f, 1.9f };
+                    var subidas = new[] { 0f, 0.28f, 0.42f, 0.42f };
+                    for (var k = 0; k + 1 < tramos.Length; k++)
+                    {
+                        var q0 = codo + dir * tramos[k] + Vector3.up * subidas[k];
+                        var q1 = codo + dir * tramos[k + 1] + Vector3.up * subidas[k + 1];
+                        var eje = (q1 - q0).normalized;
+                        postes.Caja(q0 - Vector3.up * 0.03f + eje * ((q1 - q0).magnitude / 2f), lado, eje, 0.06f, 0.06f, (q1 - q0).magnitude);
+                    }
 
-                var cabeza = codo + dir * 2.2f + Vector3.up * 0.38f;
-                postes.Caja(cabeza, lado, dir, 0.3f, 0.1f, 0.7f);
-                focos.Caja(cabeza - Vector3.up * 0.025f, lado, dir, 0.22f, 0.03f, 0.5f);
-                if (encendidas)
-                {
-                    // El charco de luz en el piso, bajo la cabeza. En las que llevan luz real es tenue:
-                    // solo alarga su caída más allá del alcance del foco.
-                    var c0 = new Vector3(cabeza.x, (float)l.Z + 0.045f, cabeza.z);
-                    var radio = alto * (reales.Contains(l) ? 2.6f : 1.9f);
-                    halos.Tarjeta(
-                        c0 + new Vector3(-radio, 0f, -radio), c0 + new Vector3(radio, 0f, -radio),
-                        c0 + new Vector3(radio, 0f, radio), c0 + new Vector3(-radio, 0f, radio));
-                }
+                    var cabeza = codo + dir * 2.2f + Vector3.up * 0.38f;
+                    postes.Caja(cabeza, lado, dir, 0.3f, 0.1f, 0.7f);
+                    focos.Caja(cabeza - Vector3.up * 0.025f, lado, dir, 0.22f, 0.03f, 0.5f);
+                    if (encendidas)
+                    {
+                        // El charco de luz en el piso, bajo la cabeza. En las que llevan luz real es tenue:
+                        // solo alarga su caída más allá del alcance del foco.
+                        var c0 = new Vector3(cabeza.x, (float)l.Z + 0.045f, cabeza.z);
+                        var radio = alto * (reales.Contains(l) ? 2.6f : 1.9f);
+                        halos.Tarjeta(
+                            c0 + new Vector3(-radio, 0f, -radio), c0 + new Vector3(radio, 0f, -radio),
+                            c0 + new Vector3(radio, 0f, radio), c0 + new Vector3(-radio, 0f, radio));
+                    }
 
-                if (encendidas && reales.Contains(l))
+                    if (encendidas && reales.Contains(l))
+                    {
+                        var luz = new GameObject("luz_luminaria").AddComponent<Light>();
+                        luz.transform.SetParent(padre, false);
+                        luz.type = LightType.Spot;
+                        luz.transform.SetPositionAndRotation(cabeza - Vector3.up * 0.1f, Quaternion.LookRotation(Vector3.down + dir * 0.15f));
+                        // Cono muy abierto y sin núcleo: la luz cae suave desde el pie del poste, sin el
+                        // círculo quemado de un cono con borde.
+                        luz.spotAngle = 160f;
+                        luz.innerSpotAngle = 8f;
+                        luz.range = alto * 4.5f;
+                        luz.intensity = 190f;
+                        luz.color = new Color(1f, 0.82f, 0.56f);
+                        luz.shadows = luces < 2 && Calidad.Perfil.SombrasDeFocos ? LightShadows.Soft : LightShadows.None;
+                        luces++;
+                    }
+                }
+                catch (System.Exception ex) when (!(ex is CargaReemplazada))
                 {
-                    var luz = new GameObject("luz_luminaria").AddComponent<Light>();
-                    luz.transform.SetParent(padre, false);
-                    luz.type = LightType.Spot;
-                    luz.transform.SetPositionAndRotation(cabeza - Vector3.up * 0.1f, Quaternion.LookRotation(Vector3.down + dir * 0.15f));
-                    // Cono muy abierto y sin núcleo: la luz cae suave desde el pie del poste, sin el
-                    // círculo quemado de un cono con borde.
-                    luz.spotAngle = 160f;
-                    luz.innerSpotAngle = 8f;
-                    luz.range = alto * 4.5f;
-                    luz.intensity = 190f;
-                    luz.color = new Color(1f, 0.82f, 0.56f);
-                    luz.shadows = luces < 2 && Calidad.Perfil.SombrasDeFocos ? LightShadows.Soft : LightShadows.None;
-                    luces++;
+                    Omisiones.Anotar("una luminaria", ex);
                 }
             }
 
