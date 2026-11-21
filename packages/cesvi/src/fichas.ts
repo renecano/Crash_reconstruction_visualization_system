@@ -62,10 +62,15 @@ interface MasaDeModelo {
  * `data/vehicles/models_raw.json`): por la familia del modelo («Versa», «Hilux»), sin importar el año
  * ni la versión, que pueden variar respecto al del caso. null si el modelo no tiene ficha con masa.
  */
+/** Las marcas que se escriben abreviadas. */
+const ALIAS_MARCA: Readonly<Record<string, string>> = { vw: "volkswagen" };
+
 export function masaDeModelo(v: Expediente["vehiculos"][number]): MasaDeModelo | null {
   const modelo = normal(v.modelo?.valor ?? "");
   if (!modelo) return null;
-  const marca = normal(v.marca?.valor ?? "");
+  // «VW» es Volkswagen (el crucero de ejemplo dice «marca VW, tipo Jetta»).
+  const leida = normal(v.marca?.valor ?? "");
+  const marca = ALIAS_MARCA[leida] ?? leida;
   const candidatos = (MASAS_MODELO.modelos as MasaDeModelo[]).filter(
     (m) =>
       (!marca || marca === m.marca) &&

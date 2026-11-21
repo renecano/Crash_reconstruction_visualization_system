@@ -50,6 +50,7 @@ describe("la masa del modelo leído (René, 2026-11-20)", () => {
       version: "Nissan Versa Sense TM 2026",
     });
     expect(masaDeModelo(veh("V1", null, "Hilux", "pickup"))!.masa_kg).toBe(1890);
+    expect(masaDeModelo(veh("V1", "VW", "Jetta", "sedan_mediano"))!.masa_kg).toBe(1418);
     expect(masaDeModelo(veh("V1", "Toyota", "Hilux", "pickup"))!.fuente).toMatch(
       /^masa en vacío .*https:\/\//,
     );
