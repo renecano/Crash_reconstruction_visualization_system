@@ -62,19 +62,23 @@ interface MasaDeModelo {
  * `data/vehicles/models_raw.json`): por la familia del modelo («Versa», «Hilux»), sin importar el año
  * ni la versión, que pueden variar respecto al del caso. null si el modelo no tiene ficha con masa.
  */
-/** Las marcas que se escriben abreviadas. */
-const ALIAS_MARCA: Readonly<Record<string, string>> = { vw: "volkswagen" };
+/** Las marcas que se escriben abreviadas («GM» puede ser cualquiera de sus marcas). */
+const ALIAS_MARCA: Readonly<Record<string, readonly string[]>> = {
+  vw: ["volkswagen"],
+  gm: ["chevrolet", "gmc", "buick", "cadillac"],
+};
 
 export function masaDeModelo(v: Expediente["vehiculos"][number]): MasaDeModelo | null {
   const modelo = normal(v.modelo?.valor ?? "");
   if (!modelo) return null;
-  // «VW» es Volkswagen (el crucero de ejemplo dice «marca VW, tipo Jetta»).
+  // «VW» es Volkswagen y «GM», Chevrolet o sus otras marcas (el crucero de ejemplo dice «marca VW,
+  // tipo Jetta» y «marca GM, tipo Camaro»).
   const leida = normal(v.marca?.valor ?? "");
-  const marca = ALIAS_MARCA[leida] ?? leida;
+  const marcas = ALIAS_MARCA[leida] ?? (leida ? [leida] : []);
+  const marca = marcas[0] ?? "";
+  const plano = (t: string) => ` ${t.replace(/[^a-z0-9]+/g, " ").trim()} `;
   const candidatos = (MASAS_MODELO.modelos as MasaDeModelo[]).filter(
-    (m) =>
-      (!marca || marca === m.marca) &&
-      ` ${modelo.replace(/[^a-z0-9]+/g, " ")} `.includes(` ${m.familia} `),
+    (m) => (!marcas.length || marcas.includes(m.marca)) && plano(modelo).includes(plano(m.familia)),
   );
   // Sin marca, solo si no hay dos marcas con la misma familia.
   return candidatos.length === 1 || (marca && candidatos.length) ? candidatos[0]! : null;

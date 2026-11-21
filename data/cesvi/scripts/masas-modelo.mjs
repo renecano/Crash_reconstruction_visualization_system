@@ -11,33 +11,43 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), "../../..");
-const filas = JSON.parse(readFileSync(join(raiz, "data/vehicles/models_raw.json"), "utf8"));
+// Las fichas de `models_raw.json` y, para los modelos que esa no trae con masa, las de
+// `masas_extra.json` (ronda 4, 2026-11-21), que no entran a las clases de vehículo.
+const filas = [
+  ...JSON.parse(readFileSync(join(raiz, "data/vehicles/models_raw.json"), "utf8")),
+  ...JSON.parse(readFileSync(join(raiz, "data/vehicles/masas_extra.json"), "utf8")).filas,
+];
 const normal = (t) =>
   t
     .normalize("NFD")
     .replace(/\p{Diacritic}/gu, "")
     .toLowerCase()
     .trim();
-/** La familia del modelo («Versa Sense TM» → «versa»; «Corolla Cross LE» → «corolla cross»). */
-const familia = (modelo) => {
+/**
+ * La familia del modelo («Versa Sense TM» → «versa»; «Corolla Cross LE» → «corolla cross»; «Mazda3
+ * Sedán» → «3», como la narración dice «marca Mazda, tipo 3»).
+ */
+const familia = (modelo, marca) => {
   const p = normal(modelo).split(/[\s(]+/);
-  return p[1] === "cross" ? `${p[0]} cross` : p[0];
+  const f = p[1] === "cross" ? `${p[0]} cross` : p[0];
+  const m = normal(marca);
+  return f.startsWith(m) && f.length > m.length ? f.slice(m.length) : f;
 };
 const vistos = new Set();
 const modelos = [];
 for (const f of filas) {
   if (f.masa_vacio_kg == null) continue;
-  const clave = `${normal(f.marca)}|${familia(f.modelo)}`;
+  const clave = `${normal(f.marca)}|${familia(f.modelo, f.marca)}`;
   // Un solo valor por familia: el primero registrado (Hiace aparece como van y como combi).
   if (vistos.has(clave)) continue;
   vistos.add(clave);
   modelos.push({
     marca: normal(f.marca),
-    familia: familia(f.modelo),
+    familia: familia(f.modelo, f.marca),
     version: `${f.marca} ${f.modelo} ${f.anio}`,
     clase: f.clase,
     masa_kg: f.masa_vacio_kg,
-    fuente: `masa en vacío de la ficha del fabricante (${f.fuente_tipo === "oficial" ? "oficial" : "copia secundaria"}), consultada el ${f.fecha_consulta}: ${f.fuente_url}`,
+    fuente: `masa en vacío de la ficha del fabricante (${f.fuente_tipo === "oficial" ? "oficial" : "copia secundaria"}${f.mercado && f.mercado !== "México" ? `, mercado de ${f.mercado}` : ""}), consultada el ${f.fecha_consulta}: ${f.fuente_url}`,
   });
 }
 const salida = join(raiz, "packages/cesvi/src/data/masas-modelo.json");

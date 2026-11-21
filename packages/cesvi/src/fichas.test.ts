@@ -51,11 +51,18 @@ describe("la masa del modelo leído (René, 2026-11-20)", () => {
     });
     expect(masaDeModelo(veh("V1", null, "Hilux", "pickup"))!.masa_kg).toBe(1890);
     expect(masaDeModelo(veh("V1", "VW", "Jetta", "sedan_mediano"))!.masa_kg).toBe(1418);
+    // Ronda 4: «GM Camaro», «Honda CR-V», «Mazda 3» (la ficha dice «Mazda3»).
+    expect(masaDeModelo(veh("V1", "GM", "Camaro", "sedan_mediano"))!.masa_kg).toBe(1700);
+    expect(masaDeModelo(veh("V1", "Honda", "CR-V", "suv_compacta"))!.masa_kg).toBe(1590);
+    expect(masaDeModelo(veh("V1", "Mazda", "3", "sedan_mediano"))!.masa_kg).toBe(1405);
+    expect(masaDeModelo(veh("V1", "Ford", "Ranger", "pickup"))!.masa_kg).toBe(1923);
     expect(masaDeModelo(veh("V1", "Toyota", "Hilux", "pickup"))!.fuente).toMatch(
       /^masa en vacío .*https:\/\//,
     );
-    // La ficha del Aveo no publica la masa: no hay masa de modelo.
-    expect(masaDeModelo(veh("V1", "Chevrolet", "Aveo", "sedan_compacto"))).toBeNull();
+    // El Aveo: la de su manual del propietario (data/vehicles/masas_extra.json).
+    expect(masaDeModelo(veh("V1", "Chevrolet", "Aveo", "sedan_compacto"))!.masa_kg).toBe(1140);
+    // Un modelo sin ficha con masa: no hay masa de modelo.
+    expect(masaDeModelo(veh("V1", "Chevrolet", "Tahoe", "suv_grande"))).toBeNull();
     // Otra marca con la misma familia no cuenta.
     expect(masaDeModelo(veh("V1", "Ford", "Versa", "sedan_compacto"))).toBeNull();
   });
@@ -64,7 +71,7 @@ describe("la masa del modelo leído (René, 2026-11-20)", () => {
     const e = {
       vehiculos: [
         veh("V1", "Nissan", "Versa", "sedan_compacto"),
-        veh("V2", "Chevrolet", "Aveo", "sedan_compacto"),
+        veh("V2", "Chevrolet", "Modelo sin ficha", "sedan_compacto"),
         veh("V3", null, null, "pickup"),
       ],
     } as unknown as Expediente;

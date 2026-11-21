@@ -248,6 +248,86 @@
       "clase": "scooter",
       "masa_kg": 110,
       "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-10-10: https://www.italika.mx/motos/motoneta/ds-150"
+    },
+    {
+      "marca": "chevrolet",
+      "familia": "camaro",
+      "version": "Chevrolet Camaro 1SS Coupe automático (6.2L V8) 2020",
+      "clase": "sedan_mediano",
+      "masa_kg": 1700,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial, mercado de EE. UU.), consultada el 2026-11-21: https://web.archive.org/web/20230228050135id_/https://media.chevrolet.com/media/us/en/chevrolet/vehicles/camaro-ss/2020.tab1.html"
+    },
+    {
+      "marca": "volkswagen",
+      "familia": "vento",
+      "version": "Volkswagen Vento Startline Manual 5 vel. 2022",
+      "clase": "sedan_compacto",
+      "masa_kg": 1191,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-11-21: https://web.archive.org/web/20220204032156id_/https://www.vw.com.mx/idhub/content/dam/onehub_pkw/importers/mx/fichas-tecnicas/producto/2022/vento/ficha-tecnica-vento-2022-startline.pdf"
+    },
+    {
+      "marca": "honda",
+      "familia": "cr-v",
+      "version": "Honda CR-V Turbo Plus (1.5L turbo, CVT) 2027",
+      "clase": "suv_compacta",
+      "masa_kg": 1590,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-11-21: https://www.honda.mx/web/pdf/brochure/honda/Brochure_CRV_2027.pdf"
+    },
+    {
+      "marca": "mazda",
+      "familia": "3",
+      "version": "Mazda Mazda3 Sedán i TM 2026",
+      "clase": "sedan_mediano",
+      "masa_kg": 1405,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-11-21: https://www.mazda.mx/siteassets/descargables-2026/mazda3-sedan/ficha-tecnica/ficha-tecnica-mazda3-sedan-2026-v04.pdf"
+    },
+    {
+      "marca": "ford",
+      "familia": "ranger",
+      "version": "Ford Ranger 2.3L EcoBoost 4x2 SuperCrew 2026",
+      "clase": "pickup",
+      "masa_kg": 1923,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial, mercado de EE. UU.), consultada el 2026-11-21: https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2026/specs/2026_Ford_Ranger%20Technical_Specs.pdf"
+    },
+    {
+      "marca": "toyota",
+      "familia": "corolla",
+      "version": "Toyota Corolla L CVT (2.0L) 2026",
+      "clase": "sedan_mediano",
+      "masa_kg": 1335,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial, mercado de Canadá), consultada el 2026-11-21: https://www.toyota.ca/content/toyota/en/vehicles/corolla/models-specifications.generate.summaries.series-COR.year-2026.province-ON.powertrain-gas-hybrid.pdf"
+    },
+    {
+      "marca": "chevrolet",
+      "familia": "aveo",
+      "version": "Chevrolet Aveo Sedán TM (LZW7157EBYB) 2026",
+      "clase": "sedan_compacto",
+      "masa_kg": 1140,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-11-21: https://www.chevrolet.com.mx/content/dam/chevrolet/na/mx/es/index/cars/2026-aveo-sedan/mov/02-pdf/2026-aveo-nb-manual-de-propietario.pdf"
+    },
+    {
+      "marca": "kia",
+      "familia": "rio",
+      "version": "Kia Rio LX sedán 1.6L IVT 2023",
+      "clase": "sedan_compacto",
+      "masa_kg": 1255,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial, mercado de EE. UU.), consultada el 2026-11-21: https://www.kiamedia.com/us/en/models/rio/2023/specifications"
+    },
+    {
+      "marca": "nissan",
+      "familia": "tsuru",
+      "version": "Nissan Tsuru GSI (T/M) 2015",
+      "clase": "sedan_compacto",
+      "masa_kg": 946,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-11-21: https://web.archive.org/web/20150412092520id_/http://www.nissan.com.mx:80/tsuru/specs/ft_tsuru.pdf"
+    },
+    {
+      "marca": "toyota",
+      "familia": "tacoma",
+      "version": "Toyota Tacoma SR 4x2 (2.4L turbo, automática 8 vel.) 2026",
+      "clase": "pickup",
+      "masa_kg": 1940,
+      "fuente": "masa en vacío de la ficha del fabricante (oficial), consultada el 2026-11-21: https://www.toyota.mx/content/dam/tmex/tacoma/ficha-t%C3%A9cnica/01Ficha_Tecnica_Tacoma_26_web%20(1).pdf.coredownload.pdf"
     }
   ]
 }
