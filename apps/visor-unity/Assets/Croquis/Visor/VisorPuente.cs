@@ -108,16 +108,16 @@ namespace Croquis.Visor
             }
             catch (FormatException e)
             {
-                Error("caso_invalido", e.Message);
+                Error("caso_invalido", e.Message, "cargarCaso");
             }
             catch (ModeloNoCargo e)
             {
-                Error("modelo_no_cargo", e.Message);
+                Error("modelo_no_cargo", e.Message, "cargarCaso");
             }
             catch (Exception e)
             {
                 Debug.LogException(e);
-                Error("interno", e.Message);
+                Error("interno", e.Message, "cargarCaso");
             }
         }
 
@@ -154,7 +154,7 @@ namespace Croquis.Visor
                 }
                 else
                 {
-                    Error("interno", "No hay una cámara «" + modo + "».");
+                    Error("interno", "No hay una cámara «" + modo + "».", "camara");
                 }
             });
         }
@@ -349,7 +349,7 @@ namespace Croquis.Visor
                 }
                 else
                 {
-                    Error("interno", "No hay un nivel de calidad «" + nivel + "».");
+                    Error("interno", "No hay un nivel de calidad «" + nivel + "».", "calidad");
                 }
             });
         }
@@ -371,7 +371,7 @@ namespace Croquis.Visor
             catch (Exception e)
             {
                 Debug.LogException(e);
-                Error("captura_fallo", e.Message);
+                Error("captura_fallo", e.Message, "capturar");
             }
         }
 
@@ -383,7 +383,7 @@ namespace Croquis.Visor
                 var herramienta = (string)j["herramienta"] ?? "mover";
                 if (herramienta != "mover" && herramienta != "punto_inicial" && herramienta != "choque_intermedio" && herramienta != "punto_paso")
                 {
-                    Error("interno", "No hay una herramienta «" + herramienta + "».");
+                    Error("interno", "No hay una herramienta «" + herramienta + "».", "modoEdicion");
                     return;
                 }
 
@@ -397,7 +397,7 @@ namespace Croquis.Visor
             Enviar(tipo, campos);
         }
 
-        private void Campos(string texto, Action<JObject> hacer)
+        private void Campos(string texto, Action<JObject> hacer, [System.Runtime.CompilerServices.CallerMemberName] string de = "")
         {
             try
             {
@@ -406,13 +406,17 @@ namespace Croquis.Visor
             catch (Exception e)
             {
                 Debug.LogException(e);
-                Error("interno", e.Message);
+                Error("interno", e.Message, de);
             }
         }
 
-        private void Error(string codigo, string mensaje)
+        /// <summary>
+        /// Un «error», con el mensaje que lo causó (`de`, René 2026-11-20): la web solo lo toma como
+        /// respuesta de ese mensaje (antes, el de una cámara tumbaba la carga en curso).
+        /// </summary>
+        private void Error(string codigo, string mensaje, string de)
         {
-            Enviar("error", new JObject { { "codigo", codigo }, { "mensaje", mensaje } });
+            Enviar("error", new JObject { { "codigo", codigo }, { "mensaje", mensaje }, { "de", de } });
         }
 
         private static void Enviar(string tipo, JObject campos)

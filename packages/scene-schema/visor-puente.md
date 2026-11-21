@@ -45,17 +45,17 @@
 
 ## De Unity a la web
 
-| Mensaje         | Campos                                                    | Cuándo                                     |
-| --------------- | --------------------------------------------------------- | ------------------------------------------ |
-| `listo`         | `version`                                                 | Al terminar de arrancar.                   |
-| `cargado`       | `escena_id`; `omitidos` (opcional): lo que el 3D omitió   | El caso ya se puede ver.                   |
-| `tiempo`        | `t`                                                       | Mientras avanza la reproducción.           |
-| `camara`        | `modo`                                                    | Cambió la cámara.                          |
-| `captura`       | `vista`, `png`: base64 sin el prefijo `data:`             | Respuesta a `capturar`.                    |
-| `fps`           | `p50`                                                     | Cada 5 s, para la calidad automática.      |
-| `error`         | `codigo`, `mensaje`                                       | Ver abajo.                                 |
-| `objetoEditado` | `id`, `x`, `y`, `rumbo_deg`, `largo`, `ancho`             | El perito soltó un objeto en modo edición. |
-| `puntoMarcado`  | `punto`, `vehiculo_id` y `objeto_id` opcionales, `x`, `y` | El perito marcó un punto en modo edición.  |
+| Mensaje         | Campos                                                        | Cuándo                                                 |
+| --------------- | ------------------------------------------------------------- | ------------------------------------------------------ |
+| `listo`         | `version`                                                     | Al terminar de arrancar.                               |
+| `cargado`       | `escena_id`; `omitidos` (opcional): lo que el 3D omitió       | El caso ya se puede ver.                               |
+| `tiempo`        | `t`                                                           | Mientras avanza la reproducción.                       |
+| `camara`        | `modo`                                                        | Cambió la cámara.                                      |
+| `captura`       | `vista`, `png`: base64 sin el prefijo `data:`                 | Respuesta a `capturar`.                                |
+| `fps`           | `p50`                                                         | Cada 5 s, para la calidad automática.                  |
+| `error`         | `codigo`, `mensaje`; `de` (opcional): el mensaje que lo causó | Ver abajo. La web lo toma solo como respuesta de `de`. |
+| `objetoEditado` | `id`, `x`, `y`, `rumbo_deg`, `largo`, `ancho`                 | El perito soltó un objeto en modo edición.             |
+| `puntoMarcado`  | `punto`, `vehiculo_id` y `objeto_id` opcionales, `x`, `y`     | El perito marcó un punto en modo edición.              |
 
 **`punto` de `puntoMarcado`:** `punto_inicial`, `choque_intermedio` o `punto_paso`. Un choque intermedio lleva el `objeto_id` del objeto tocado.
 

@@ -106,7 +106,12 @@ export interface MensajesDeUnity {
   /** `png` es la imagen en base64, sin el prefijo `data:`. */
   captura: { vista: VistaCaptura; png: string };
   fps: { p50: number };
-  error: { codigo: CodigoErrorVisor; mensaje: string };
+  /**
+   * `de` (desde el build de la batería de ciudad, 2026-11-20): el mensaje que lo causó («cargarCaso»,
+   * «capturar», «camara»…). La web toma un error solo como respuesta de ese mensaje; sin `de` (builds
+   * anteriores), de cualquiera.
+   */
+  error: { codigo: CodigoErrorVisor; mensaje: string; de?: string };
   /** Unity nunca recalcula: manda la edición, la web actualiza la escena y vuelve a cargar el caso. */
   objetoEditado: {
     id: string;

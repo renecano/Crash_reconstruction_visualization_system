@@ -267,6 +267,8 @@ export function VisorUnity({
     if (!puente || dormir) return;
     if (pedida.current?.objetivo === objetivo && pedida.current.relieve === relieve) return;
     if (enUnity.current) return;
+    // Mientras se graba el video, la escena no cambia: la nueva va al terminar (René, 2026-11-20).
+    if (grabando.current) return;
     // Al alternar entre la reconstrucción y una versión (ronda 4) se queda el mismo instante.
     const mantener = pedida.current !== null && pedida.current.objetivo.clave !== objetivo.clave;
     pedida.current = { objetivo, relieve };
@@ -551,6 +553,8 @@ export function VisorUnity({
       c.style.height = antes.alto;
       puente.minimapa(minimapa);
       grabando.current = false;
+      // Si cambió la escena mientras se grababa, ahora va.
+      setVueltas((v) => v + 1);
       if (pisoActual.current) enviarPiso(pisoActual.current, true);
       puente.enviar("fijarTiempo", { t: antes.t });
       cancelarVideo.current = null;
