@@ -129,6 +129,13 @@
                       "estado":  "ok",
                       "minutos":  12.9,
                       "codigo":  0
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "antes-guardar",
+                      "estado":  "ok",
+                      "minutos":  0,
+                      "codigo":  0
                   }
               ]
 }
