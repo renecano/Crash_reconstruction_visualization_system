@@ -1,0 +1,20 @@
+# Paso: solver-en-reversa
+# Comando: pnpm --filter @croquis/cesvi exec vitest run src/reversa.test.ts
+# Carpeta: D:\dev-cache\prueba-t6
+# Inicio: 2026-11-22 11:53:52
+
+
+ RUN  v5.0.3 D:/dev-cache/prueba-t6/packages/cesvi
+
+
+ Test Files  1 passed (1)
+      Tests  19 passed (19)
+   Start at  11:53:56
+   Duration  8.04s (import 62%, transform 33%, tests 4%, worker 1%)
+
+  Transform  transforming modules took 2.47s · 33% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+
+
+# Fin: 2026-11-22 11:54:04 · ok · 0.2 min

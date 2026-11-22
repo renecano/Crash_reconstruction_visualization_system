@@ -1,0 +1,51 @@
+{
+    "tanda":  "prueba",
+    "titulo":  "Tanda 6 · Antes de publicar: fotos del recorrido, cifras en el navegador, narraciones, barrera y curvas",
+    "fecha":  "2026-11-22",
+    "commit":  "30da33b8947f20e07e5e2b7316e70a37dedaf1a1",
+    "rama_del_repositorio":  "feat/w-narracion-a-la-fisica",
+    "archivos_con_cambios":  0,
+    "duracion_min":  0.7,
+    "equipo":  {
+                   "tarjetas_de_video":  [
+                                             "Virtual Display Device",
+                                             "Intel(R) UHD Graphics"
+                                         ],
+                   "memoria_gb":  7.8,
+                   "procesador":  "Intel(R) Core(TM) i5-10210U CPU @ 1.60GHz",
+                   "nucleos_logicos":  8,
+                   "disco_libre_gb":  163,
+                   "windows":  "Microsoft Windows 11 Home Single Language",
+                   "git":  "git version 2.47.1.windows.1",
+                   "node":  "v24.12.0",
+                   "pnpm":  "12.11.2",
+                   "uv":  "uv 0.13.0 (4ecd0eff2 2026-10-09 x86_64-pc-windows-msvc)",
+                   "python":  "Python 3.14.0",
+                   "dotnet":  null,
+                   "unity_instalados":  [
+                                            "6000.3.28f1",
+                                            "6000.4.2f1"
+                                        ],
+                   "unity_del_proyecto":  "6000.3.28f1",
+                   "unity_coincide":  true,
+                   "instalado_en_esta_corrida":  [
+
+                                                 ]
+               },
+    "pasos":  [
+                  {
+                      "grupo":  "comprobacion",
+                      "paso":  "dependencias",
+                      "estado":  "ok",
+                      "minutos":  0.5,
+                      "codigo":  0
+                  },
+                  {
+                      "grupo":  "comprobacion",
+                      "paso":  "solver-en-reversa",
+                      "estado":  "ok",
+                      "minutos":  0.2,
+                      "codigo":  0
+                  }
+              ]
+}

@@ -1,0 +1,56 @@
+# Paso: dependencias
+# Comando: pnpm install --frozen-lockfile
+# Carpeta: D:\dev-cache\prueba-t6
+# Inicio: 2026-11-22 11:53:24
+
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 4d ago)
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages are hard linked from the content-addressable store to the virtual store.
+  Content-addressable store is at: D:\dev-cache\pnpm-store\v11
+  Virtual store is at:             node_modules/.pnpm
+Progress: resolved 117, reused 117, downloaded 0, added 110
+Progress: resolved 195, reused 195, downloaded 0, added 188
+Progress: resolved 272, reused 272, downloaded 0, added 265
+Progress: resolved 304, reused 304, downloaded 0, added 297
+Progress: resolved 344, reused 344, downloaded 0, added 336
+Progress: resolved 415, reused 415, downloaded 0, added 407
+Progress: resolved 495, reused 495, downloaded 0, added 487
+Progress: resolved 578, reused 578, downloaded 0, added 570
+Progress: resolved 656, reused 656, downloaded 0, added 648
+Progress: resolved 708, reused 708, downloaded 0, added 700
+Progress: resolved 770, reused 770, downloaded 0, added 762
+Progress: resolved 814, reused 814, downloaded 0, added 806
+Progress: resolved 838, reused 838, downloaded 0, added 830
+Progress: resolved 900, reused 900, downloaded 0, added 892
+Progress: resolved 963, reused 963, downloaded 0, added 955
+Progress: resolved 996, reused 996, downloaded 0, added 988
+Progress: resolved 999, reused 999, downloaded 0, added 996
+Progress: resolved 999, reused 999, downloaded 0, added 998
+Packages: +1001
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 1001, reused 1001, downloaded 0, added 1001, done
+.../esbuild@0.28.1/node_modules/esbuild postinstall$ node install.js
+.../esbuild@0.28.2/node_modules/esbuild postinstall$ node install.js
+.../esbuild@0.28.1/node_modules/esbuild postinstall: Done
+.../esbuild@0.28.2/node_modules/esbuild postinstall: Done
+. prepare$ node tools/git/instalar-ganchos.mjs
+. prepare: Done
+
+devDependencies:
++ @eslint/js 10.0.1
++ @fontsource-variable/anybody 5.3.0
++ @gltf-transform/cli 4.5.1
++ @gltf-transform/core 4.5.1
++ @gltf-transform/extensions 4.5.1
++ @gltf-transform/functions 4.5.1
++ esbuild 0.28.2
++ eslint 10.12.0
++ prettier 3.9.10
++ typescript 6.0.3
++ typescript-eslint 8.71.1
+
+Done in 28.6s using pnpm v12.11.2
+
+# Fin: 2026-11-22 11:53:52 · ok · 0.5 min
