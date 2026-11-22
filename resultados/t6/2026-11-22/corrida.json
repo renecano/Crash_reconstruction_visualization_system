@@ -4,8 +4,8 @@
     "fecha":  "2026-11-22",
     "commit":  "30da33b8947f20e07e5e2b7316e70a37dedaf1a1",
     "rama_del_repositorio":  "feat/w-narracion-a-la-fisica",
-    "archivos_con_cambios":  0,
-    "duracion_min":  52.2,
+    "archivos_con_cambios":  1,
+    "duracion_min":  53.9,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "NVIDIA GeForce RTX 4070 Laptop GPU",
@@ -135,6 +135,13 @@
                       "paso":  "antes-guardar",
                       "estado":  "ok",
                       "minutos":  0,
+                      "codigo":  0
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "carambolas-prueba",
+                      "estado":  "ok",
+                      "minutos":  1.6,
                       "codigo":  0
                   }
               ]
