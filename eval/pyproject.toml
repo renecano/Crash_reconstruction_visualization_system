@@ -7,7 +7,7 @@ dependencies = [
   "croquis-solver",
   "croquis-data",
   "croquis-extraction",
-  "numpy>=2.5,<3",
+  "numpy>=2.5.5,<3",
   "polars>=2.0,<3",
   "scipy>=1.18,<2",
 ]

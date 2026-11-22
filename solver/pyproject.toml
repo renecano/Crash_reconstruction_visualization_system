@@ -5,7 +5,7 @@ description = "Solver de referencia de reconstrucción de percances viales (Pyth
 requires-python = ">=3.14"
 dependencies = [
   "croquis-scene-schema",
-  "numpy>=2.5,<3",
+  "numpy>=2.5.5,<3",
 ]
 
 [project.scripts]
