@@ -1,0 +1,8 @@
+# Paso: limpiar
+# Comando: git worktree remove --force ../croquis-t6-antes
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-22 13:12:12
+
+error: failed to delete 'C:/Users/MrKan/Documents/reto cesvi v5/croquis-t6-antes': Filename too long
+
+# Fin: 2026-11-22 13:12:22 · falló (código 255) · 0.2 min
