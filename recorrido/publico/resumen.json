@@ -1,0 +1,29 @@
+{
+  "juego": "publico",
+  "fotos": [
+    {
+      "archivo": "01-casos.png",
+      "ok": true,
+      "bytes": 365864,
+      "nota": "sin la tarjeta del caso de AXA (oculta para el juego público)"
+    },
+    {
+      "archivo": "02-el-hecho-narracion.png",
+      "ok": true,
+      "bytes": 214559
+    },
+    {
+      "archivo": "03-el-hecho-lectura.png",
+      "ok": true,
+      "bytes": 389401
+    },
+    {
+      "archivo": "04-la-escena-lista.png",
+      "ok": true,
+      "bytes": 492318
+    }
+  ],
+  "cifras": {},
+  "bien": 4,
+  "mal": 0
+}
