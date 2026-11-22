@@ -1,0 +1,77 @@
+{
+  "fecha": "2026-11-22T19:12:09.549Z",
+  "ejemplos": [
+    {
+      "clave": "crucero-noche",
+      "vehiculo": "V1",
+      "tabla": "20 (10–28)",
+      "navegador": "20 (10–28)",
+      "de_quien_navegador": "A · VW Jetta",
+      "coincide": true
+    },
+    {
+      "clave": "alcance-deformacion",
+      "vehiculo": "V1",
+      "tabla": "53 (49–56)",
+      "navegador": "54 (49–56)",
+      "de_quien_navegador": "A · Nissan NP300",
+      "coincide": false
+    },
+    {
+      "clave": "carambola-lluvia",
+      "vehiculo": "V1",
+      "tabla": "24 (22–32)",
+      "navegador": "24 (22–32)",
+      "de_quien_navegador": "A · Ford Ranger",
+      "coincide": true
+    },
+    {
+      "clave": "reversa-pendiente",
+      "vehiculo": "V2",
+      "tabla": "21 (20–28)",
+      "navegador": "21 (20–27)",
+      "de_quien_navegador": "B · Nissan Versa",
+      "coincide": false
+    },
+    {
+      "clave": "poste-terraceria",
+      "vehiculo": "V2",
+      "tabla": "36 (31–38)",
+      "navegador": "36 (31–39)",
+      "de_quien_navegador": "B · Nissan Sentra",
+      "coincide": false
+    }
+  ],
+  "axa": {
+    "esperado": "57 km/h (55–78)",
+    "navegador": null,
+    "coincide": false
+  },
+  "otras": [
+    {
+      "cifra": "carambolas.prueba",
+      "publicada": "20 de 31",
+      "antes": "20 de 31",
+      "despues": "21 de 31",
+      "cambia": true
+    },
+    {
+      "cifra": "carambolas.desarrollo",
+      "publicada": "40 de 55",
+      "antes": "40 de 55",
+      "despues": "44 de 55",
+      "cambia": true
+    },
+    {
+      "cifra": "cobertura.rango",
+      "publicada": "410 de 578",
+      "antes": "410 de 578",
+      "despues": "410 de 578",
+      "cambia": false
+    }
+  ],
+  "pendientes": [
+    "«91 de 156» (er4.modalidad_titulo) necesita data/raw/cesvi: se mide en la laptop de René."
+  ],
+  "publicar": false
+}
