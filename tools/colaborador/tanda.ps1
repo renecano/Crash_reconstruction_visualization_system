@@ -51,7 +51,9 @@ $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch { }
 
-$Repo = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
+# La copia de main que se relanza al cambiar al commit de la tanda (abajo) corre desde una carpeta
+# temporal: el repositorio se lo dice quien la lanza.
+$Repo = if ($env:CROQUIS_TANDA_REPO) { $env:CROQUIS_TANDA_REPO } else { (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path }
 function Escribir([string]$texto, [string]$color = "Gray") { Write-Host $texto -ForegroundColor $color }
 
 # --- Utilidades --------------------------------------------------------------------------------------
@@ -455,15 +457,23 @@ if ($ramaDeLaTanda -and -not $EnSuRama -and $ramaActual -ne $ramaDeLaTanda) {
     $destino = $commitDeLaTanda
     Escribir "La tanda está fijada al commit $commitDeLaTanda."
   }
+  # La definición de la tanda y este script se toman de main, antes de cambiar de commit (René,
+  # 2026-11-22: el commit fijado no trae la t6 en su tandas.json, ni el filtro de lo privado).
+  $deMain = Join-Path ([IO.Path]::GetTempPath()) "croquis-tanda-main"
+  New-Item -ItemType Directory -Force $deMain | Out-Null
+  Copy-Item -Force $PSCommandPath (Join-Path $deMain "tanda.ps1")
+  Copy-Item -Force (Join-Path $PSScriptRoot "tandas.json") (Join-Path $deMain "tandas.json")
   if ((Nativo "git" @("-C", $Repo, "checkout", "-B", $ramaDeLaTanda, $destino)) -ne 0) {
     Escribir "No se pudo cambiar a la rama $ramaDeLaTanda." "Red"
     exit 1
   }
-  $argumentos = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $PSCommandPath, "-Tanda", $Tanda, "-EnSuRama")
+  $env:CROQUIS_TANDA_REPO = $Repo
+  $argumentos = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", (Join-Path $deMain "tanda.ps1"), "-Tanda", $Tanda, "-EnSuRama")
   if ($Prueba) { $argumentos += "-Prueba" }
   if ($SinSubir) { $argumentos += "-SinSubir" }
   & powershell.exe @argumentos
   $codigo = $LASTEXITCODE
+  Remove-Item Env:\CROQUIS_TANDA_REPO -ErrorAction SilentlyContinue
   } finally {
     # Los procesos del paso cortado pueden tardar unos segundos en soltar los archivos.
     $volvio = [Croquis.Guardia]::Volver(5)
