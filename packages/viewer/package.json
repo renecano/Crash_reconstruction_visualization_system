@@ -21,7 +21,7 @@
     "@croquis/solver-ts": "workspace:*",
     "@dimforge/rapier3d-deterministic-compat": "catalog:",
     "@react-three/fiber": "catalog:",
-    "mediabunny": "1.61.6",
+    "mediabunny": "1.66.1",
     "three": "catalog:"
   },
   "peerDependencies": {
