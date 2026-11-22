@@ -1,0 +1,505 @@
+{
+  "formato": "croquis-caso",
+  "version": 1,
+  "guardado": "2026-11-22T18:35:39.381Z",
+  "narracion": "El hecho se ubica en el Boulevard de los Pinos, entre las calles Encino y Nogal, colonia Valle Alto, municipio de Monterrey, Nuevo León, aproximadamente a las 21:45 horas. El boulevard consta de un arroyo de tres carriles con sentido de Poniente a Oriente, de concreto hidráulico, con iluminación artificial funcionando y semáforo en el cruce con la calle Nogal. Al momento del hecho se registraba lluvia ligera y la carpeta se encontraba mojada.\n\nSe examinan tres vehículos de servicio particular que se encontraban en el carril central: el vehículo A, marca Ford, tipo Ranger, modelo 2012, color negro; el vehículo B, marca Toyota, tipo Corolla, modelo 2019, color blanco; y el vehículo C, marca Chevrolet, tipo Aveo, modelo 2015, color rojo. El vehículo B y el vehículo C se encontraban detenidos por el semáforo en rojo, el vehículo C delante del vehículo B; el vehículo A circulaba detrás de ellos. El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás sobre defensa, parrilla y cofre. El vehículo B presenta en su parte posterior un hundimiento de atrás hacia adelante sobre defensa, cajuela y calaveras, y en su parte frontal un hundimiento de adelante hacia atrás sobre defensa y fascia. El vehículo C presenta en su parte posterior un hundimiento de atrás hacia adelante sobre defensa y cajuela.\n\nPrimer impacto: la parte frontal del vehículo A contra la parte posterior del vehículo B. Segundo impacto: por el empuje, la parte frontal del vehículo B contra la parte posterior del vehículo C.\n\nSe localizan restos de plástico y vidrio sobre el carril central, en el área del primer contacto. El vehículo A quedó sobre el área de restos; el vehículo B, en el mismo carril, 5 metros adelante del área de restos; y el vehículo C, 10 metros adelante del área de restos.",
+  "escena": {
+    "posiciones": [
+      {
+        "vehiculo": "V1",
+        "fase": "final",
+        "descripcion": "sobre el área de restos",
+        "cita": {
+          "texto": "El vehículo A quedó sobre el área de restos"
+        }
+      },
+      {
+        "vehiculo": "V2",
+        "fase": "final",
+        "descripcion": "en el mismo carril, 5 metros adelante del área de restos",
+        "cita": {
+          "texto": "el vehículo B, en el mismo carril, 5 metros adelante del área de restos"
+        }
+      },
+      {
+        "vehiculo": "V3",
+        "fase": "final",
+        "descripcion": "10 metros adelante del área de restos",
+        "cita": {
+          "texto": "el vehículo C, 10 metros adelante del área de restos"
+        }
+      }
+    ],
+    "conteos": {
+      "filas": 46,
+      "valores_invalidos": 0,
+      "citas": 18,
+      "citas_fuera": 0,
+      "numeros": 3,
+      "numeros_fuera": 0
+    },
+    "problemas": [],
+    "preguntas": [
+      {
+        "clave": "impactos",
+        "texto": "¿Qué vehículos chocaron primero?",
+        "porQue": "Sin los impactos no hay reconstrucción.",
+        "control": {
+          "tipo": "opciones",
+          "opciones": [
+            {
+              "valor": "V1|V2",
+              "etiqueta": "V1 y V2"
+            },
+            {
+              "valor": "V1|V3",
+              "etiqueta": "V1 y V3"
+            },
+            {
+              "valor": "V2|V3",
+              "etiqueta": "V2 y V3"
+            },
+            {
+              "valor": "V1|objeto:otro",
+              "etiqueta": "V1 contra un objeto fijo"
+            },
+            {
+              "valor": "V2|objeto:otro",
+              "etiqueta": "V2 contra un objeto fijo"
+            },
+            {
+              "valor": "V3|objeto:otro",
+              "etiqueta": "V3 contra un objeto fijo"
+            }
+          ]
+        }
+      },
+      {
+        "clave": "velocidad-V1",
+        "texto": "¿A qué velocidad venía V1 antes del impacto?",
+        "porQue": "Si la evidencia no fija la velocidad, la reconstrucción usa la que des, como supuesto con su rango. Con «No sé», la típica de la vía.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "km/h"
+        },
+        "vehiculo": "V1"
+      },
+      {
+        "clave": "restos",
+        "texto": "¿Qué longitud tiene la zona de restos?",
+        "porQue": "Los restos fijan el desplazamiento después del impacto.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "m"
+        }
+      }
+    ]
+  },
+  "expediente": {
+    "caso": {
+      "fecha_hora": {
+        "valor": "21:45 horas",
+        "fuente": "perito"
+      },
+      "lugar": {
+        "descripcion": {
+          "valor": "Boulevard de los Pinos, entre las calles Encino y Nogal, colonia Valle Alto",
+          "fuente": "perito"
+        },
+        "municipio": {
+          "valor": "Monterrey",
+          "fuente": "perito"
+        },
+        "estado": {
+          "valor": "Nuevo León",
+          "fuente": "perito"
+        }
+      },
+      "condiciones": {
+        "superficie": {
+          "valor": "concreto",
+          "fuente": "perito",
+          "cita": {
+            "texto": "El boulevard consta de un arroyo de tres carriles con sentido de Poniente a Oriente, de concreto hidráulico, con iluminación artificial funcionando y semáforo en el cruce con la calle Nogal"
+          }
+        },
+        "estado_superficie": {
+          "valor": "mojado",
+          "fuente": "perito",
+          "cita": {
+            "texto": "Al momento del hecho se registraba lluvia ligera y la carpeta se encontraba mojada"
+          }
+        },
+        "clima": {
+          "valor": "lluvia_ligera",
+          "fuente": "perito",
+          "cita": {
+            "texto": "Al momento del hecho se registraba lluvia ligera y la carpeta se encontraba mojada"
+          }
+        },
+        "iluminacion": {
+          "valor": "noche_con_alumbrado",
+          "fuente": "perito",
+          "cita": {
+            "texto": "El boulevard consta de un arroyo de tres carriles con sentido de Poniente a Oriente, de concreto hidráulico, con iluminación artificial funcionando y semáforo en el cruce con la calle Nogal"
+          }
+        }
+      },
+      "modalidades": [
+        "alcance"
+      ]
+    },
+    "vehiculos": [
+      {
+        "id": "V1",
+        "marca": {
+          "valor": "Ford",
+          "fuente": "perito"
+        },
+        "modelo": {
+          "valor": "Ranger",
+          "fuente": "perito"
+        },
+        "anio": 2012,
+        "clase": "pickup",
+        "masa": {
+          "valor": 1923,
+          "unidad": "kg",
+          "fuente": "supuesto"
+        }
+      },
+      {
+        "id": "V2",
+        "marca": {
+          "valor": "Toyota",
+          "fuente": "perito"
+        },
+        "modelo": {
+          "valor": "Corolla",
+          "fuente": "perito"
+        },
+        "anio": 2019,
+        "clase": "sedan_mediano",
+        "masa": {
+          "valor": 1335,
+          "unidad": "kg",
+          "fuente": "supuesto"
+        }
+      },
+      {
+        "id": "V3",
+        "marca": {
+          "valor": "Chevrolet",
+          "fuente": "perito"
+        },
+        "modelo": {
+          "valor": "Aveo",
+          "fuente": "perito"
+        },
+        "anio": 2015,
+        "clase": "sedan_compacto",
+        "masa": {
+          "valor": 1140,
+          "unidad": "kg",
+          "fuente": "supuesto"
+        }
+      }
+    ],
+    "danos": [
+      {
+        "vehiculo": "V1",
+        "zona": {
+          "cara": "frontal"
+        },
+        "direcciones": [
+          "de_adelante_hacia_atras"
+        ],
+        "tipos": [
+          "hundimiento"
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás sobre defensa, parrilla y cofre."
+        }
+      },
+      {
+        "vehiculo": "V2",
+        "zona": {
+          "cara": "posterior"
+        },
+        "direcciones": [
+          "de_atras_hacia_adelante"
+        ],
+        "tipos": [
+          "hundimiento"
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "El vehículo B presenta en su parte posterior un hundimiento de atrás hacia adelante sobre defensa, cajuela y calaveras"
+        }
+      },
+      {
+        "vehiculo": "V2",
+        "zona": {
+          "cara": "frontal"
+        },
+        "direcciones": [
+          "de_adelante_hacia_atras"
+        ],
+        "tipos": [
+          "hundimiento"
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "en su parte frontal un hundimiento de adelante hacia atrás sobre defensa y fascia"
+        }
+      },
+      {
+        "vehiculo": "V3",
+        "zona": {
+          "cara": "posterior"
+        },
+        "direcciones": [
+          "de_atras_hacia_adelante"
+        ],
+        "tipos": [
+          "hundimiento"
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "El vehículo C presenta en su parte posterior un hundimiento de atrás hacia adelante sobre defensa y cajuela."
+        }
+      }
+    ],
+    "impactos": [
+      {
+        "orden": 1,
+        "vehiculos": [
+          "V1",
+          "V2"
+        ],
+        "zonas": [
+          {
+            "vehiculo": "V1",
+            "zona": {
+              "cara": "frontal"
+            }
+          },
+          {
+            "vehiculo": "V2",
+            "zona": {
+              "cara": "posterior"
+            }
+          }
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "Primer impacto: la parte frontal del vehículo A contra la parte posterior del vehículo B."
+        }
+      },
+      {
+        "orden": 2,
+        "vehiculos": [
+          "V2",
+          "V3"
+        ],
+        "zonas": [
+          {
+            "vehiculo": "V2",
+            "zona": {
+              "cara": "frontal"
+            }
+          },
+          {
+            "vehiculo": "V3",
+            "zona": {
+              "cara": "posterior"
+            }
+          }
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "Segundo impacto: por el empuje, la parte frontal del vehículo B contra la parte posterior del vehículo C."
+        }
+      }
+    ],
+    "versiones": [
+      {
+        "tipo": "evidencia",
+        "maniobras": [
+          {
+            "vehiculo": "V1",
+            "tipo": "circula",
+            "cita": {
+              "texto": "el vehículo A circulaba detrás de ellos"
+            }
+          },
+          {
+            "vehiculo": "V2",
+            "tipo": "se_detiene",
+            "cita": {
+              "texto": "El vehículo B y el vehículo C se encontraban detenidos por el semáforo en rojo"
+            }
+          },
+          {
+            "vehiculo": "V3",
+            "tipo": "se_detiene",
+            "cita": {
+              "texto": "El vehículo B y el vehículo C se encontraban detenidos por el semáforo en rojo"
+            }
+          }
+        ],
+        "posiciones": [
+          {
+            "vehiculo": "V1",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.429999999999723,
+              "lon": -99.07097394827537
+            },
+            "rumbo": 90,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V1",
+            "fase": "final",
+            "punto": {
+              "lat": 19.43000000000015,
+              "lon": -99.07095335272342
+            },
+            "rumbo": 90,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V2",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.429999999999723,
+              "lon": -99.07092621904512
+            },
+            "rumbo": 90,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V2",
+            "fase": "final",
+            "punto": {
+              "lat": 19.42999999999988,
+              "lon": -99.0708969467865
+            },
+            "rumbo": 90,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V3",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.42999999999786,
+              "lon": -99.07087394169197
+            },
+            "rumbo": 90,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V3",
+            "fase": "final",
+            "punto": {
+              "lat": 19.42999999999988,
+              "lon": -99.07085491883369
+            },
+            "rumbo": 90,
+            "fuente": "perito"
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion_perito": null,
+  "titulo": "Caso nuevo",
+  "bitacora": [
+    {
+      "n": 1,
+      "de": "lector",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Lectura: 43 filas con su cita."
+    },
+    {
+      "n": 2,
+      "de": "verificador_citas",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Citas encontradas en la narración: 18 de 18; números con su cita: 3 de 3. Lo que no está en el texto se descarta."
+    },
+    {
+      "n": 3,
+      "de": "validador",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Escena válida: 3 vehículos, 2 impactos."
+    },
+    {
+      "n": 4,
+      "de": "preguntador",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "3 preguntas para el perito, de lo que más cambia la reconstrucción: impactos, velocidad-V1, restos."
+    },
+    {
+      "n": 5,
+      "de": "verificador_cesvi",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Sin medidas de deformación completas: no hay EBS con el método de CESVI."
+    },
+    {
+      "n": 6,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "No sé dónde fue el primer golpe: se usa el lugar del choque (supuesto)."
+    },
+    {
+      "n": 7,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Pide reconstruir."
+    },
+    {
+      "n": 8,
+      "de": "fisico",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Reconstrucción: V1 a 24 km/h (22–32)."
+    },
+    {
+      "n": 9,
+      "de": "fisico",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Con los supuestos declarados: Masa de V1: 1,923 kg; Masa de V2: 1,335 kg; Masa de V3: 1,140 kg; Posición inicial de V1: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Posición inicial de V2: Detenido en la posición de impacto que colocó el perito; Posición inicial de V3: Detenido en la posición de impacto que colocó el perito (impacto posterior); Fricción llanta–pavimento: μ = 0.55; Después del impacto: las llantas ruedan, con un arrastre de 0.35 de la fricción; Restitución del choque: e = 0.1; Fricción entre los vehículos durante el choque: razón de impulso de 0.4."
+    },
+    {
+      "n": 10,
+      "de": "verificador_cesvi",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Sin medidas de deformación completas: no hay EBS con el método de CESVI."
+    },
+    {
+      "n": 11,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Abre el dictamen."
+    },
+    {
+      "n": 12,
+      "de": "redactor",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Dictamen redactado con la reconstrucción, la verificación con el método de CESVI, esta bitácora."
+    }
+  ]
+}

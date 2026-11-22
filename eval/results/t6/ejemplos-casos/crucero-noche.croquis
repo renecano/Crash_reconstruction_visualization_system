@@ -1,0 +1,405 @@
+{
+  "formato": "croquis-caso",
+  "version": 1,
+  "guardado": "2026-11-22T18:35:00.713Z",
+  "narracion": "El hecho se ubica en el crucero de la calle Azucena esquina con Av. Reforma, colonia Lomas San Lorenzo, delegación Iztapalapa, aproximadamente a las 22:30 horas. La calle Azucena consta de un arroyo de circulación con dos carriles asfaltados, con sentido de circulación de Sureste a Noroeste y viceversa; los carriles adyacentes se ocupan de estacionamiento. La Av. Reforma consta de un arroyo de circulación de cuatro carriles asfaltados, divididos por líneas longitudinales de color blanco, con sentido de circulación de Sur a Norte.\n\nSe observan dos vehículos: el vehículo A, marca VW, tipo Jetta, modelo 2002, color azul, de servicio particular, y el vehículo B, marca GM, tipo Camaro, modelo 1995, color rojo, de servicio particular.\n\nEl vehículo A presenta en la parte frontal un daño con características de hundimiento en dirección de adelante hacia atrás, acentuado sobre su costado delantero derecho y en el vértice delantero izquierdo, a una altura de 0.80 metros con respecto del piso. Presenta también un daño tipo tallón en dirección de adelante hacia atrás, con desprendimiento de pintura, sobre el vértice delantero inferior de la fascia. El conjunto de luces de ambos lados, la fascia y la parrilla se observan desacoplados de su posición original. En el vértice delantero izquierdo se describe además un hundimiento con desprendimiento de pintura a una altura de 0.73 metros, y en otra fotografía una altura de 0.72 metros. En el costado derecho no se aprecian daños por impacto contra cuerpo duro y se observa la ausencia del cuarto delantero derecho. En el habitáculo, las bolsas de aire del conductor y del copiloto se encuentran activadas. En el daño del vehículo A solo se observa desprendimiento de material, sin restos de pintura color rojo.\n\nEl vehículo B no presenta daños por impacto contra cuerpo duro en los costados delantero y medio derechos. En la parte posterior derecha se observa un ligero daño tipo hundimiento sobre la salpicadera posterior, en dirección de derecha a izquierda, con un daño tipo tallón en dirección de adelante hacia atrás con desprendimiento de pintura. Se observa también desprendimiento de pintura sobre la parte media de la puerta y la parte media de la salpicadera trasera, este último a una altura de 0.73 metros. En otra medición se registra el daño a una altura de 0.67 metros con respecto del piso. No se describen restos de pintura color azul sobre el vehículo B. No se describen huellas de frenado, restos ni posiciones finales.",
+  "escena": {
+    "posiciones": [],
+    "conteos": {
+      "filas": 38,
+      "valores_invalidos": 0,
+      "citas": 15,
+      "citas_fuera": 0,
+      "numeros": 4,
+      "numeros_fuera": 0
+    },
+    "problemas": [],
+    "preguntas": [
+      {
+        "clave": "impacto-propuesto",
+        "texto": "La narración no dice qué entró en contacto. Por los daños, Croquis supone un impacto entre V1 en su frontal y V2 en su lateral derecho. ¿Es correcto?",
+        "porQue": "Sin los impactos no hay reconstrucción; este es un supuesto hasta que el perito lo confirme.",
+        "control": {
+          "tipo": "sino"
+        },
+        "impacto": 1
+      },
+      {
+        "clave": "impactos",
+        "texto": "¿Qué vehículos chocaron primero?",
+        "porQue": "Sin los impactos no hay reconstrucción.",
+        "control": {
+          "tipo": "opciones",
+          "opciones": [
+            {
+              "valor": "V1|V2",
+              "etiqueta": "V1 y V2"
+            },
+            {
+              "valor": "V1|objeto:otro",
+              "etiqueta": "V1 contra un objeto fijo"
+            },
+            {
+              "valor": "V2|objeto:otro",
+              "etiqueta": "V2 contra un objeto fijo"
+            }
+          ]
+        }
+      },
+      {
+        "clave": "velocidad-V1",
+        "texto": "¿A qué velocidad venía V1 antes del impacto?",
+        "porQue": "Si la evidencia no fija la velocidad, la reconstrucción usa la que des, como supuesto con su rango. Con «No sé», la típica de la vía.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "km/h"
+        },
+        "vehiculo": "V1"
+      },
+      {
+        "clave": "velocidad-V2",
+        "texto": "¿A qué velocidad venía V2 antes del impacto?",
+        "porQue": "Si la evidencia no fija la velocidad, la reconstrucción usa la que des, como supuesto con su rango. Con «No sé», la típica de la vía.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "km/h"
+        },
+        "vehiculo": "V2"
+      },
+      {
+        "clave": "restos",
+        "texto": "¿Qué longitud tiene la zona de restos?",
+        "porQue": "Los restos fijan el desplazamiento después del impacto.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "m"
+        }
+      },
+      {
+        "clave": "final-V1",
+        "texto": "¿Dónde quedó V1 al final?",
+        "porQue": "La posición final es evidencia para la inversión de velocidades.",
+        "control": {
+          "tipo": "mapa"
+        },
+        "vehiculo": "V1"
+      },
+      {
+        "clave": "final-V2",
+        "texto": "¿Dónde quedó V2 al final?",
+        "porQue": "La posición final es evidencia para la inversión de velocidades.",
+        "control": {
+          "tipo": "mapa"
+        },
+        "vehiculo": "V2"
+      }
+    ]
+  },
+  "expediente": {
+    "caso": {
+      "fecha_hora": {
+        "valor": "aproximadamente a las 22:30 horas",
+        "fuente": "perito"
+      },
+      "lugar": {
+        "descripcion": {
+          "valor": "crucero de la calle Azucena esquina con Av. Reforma, colonia Lomas San Lorenzo",
+          "fuente": "perito"
+        },
+        "municipio": {
+          "valor": "Iztapalapa",
+          "fuente": "perito"
+        }
+      },
+      "condiciones": {
+        "superficie": {
+          "valor": "asfalto",
+          "fuente": "perito",
+          "cita": {
+            "texto": "La calle Azucena consta de un arroyo de circulación con dos carriles asfaltados, con sentido de circulación de Sureste a Noroeste y viceversa"
+          }
+        }
+      },
+      "modalidades": [
+        "crucero"
+      ]
+    },
+    "vehiculos": [
+      {
+        "id": "V1",
+        "marca": {
+          "valor": "VW",
+          "fuente": "perito"
+        },
+        "modelo": {
+          "valor": "Jetta",
+          "fuente": "perito"
+        },
+        "anio": 2002,
+        "clase": "sedan_compacto",
+        "masa": {
+          "valor": 1418,
+          "unidad": "kg",
+          "fuente": "supuesto"
+        }
+      },
+      {
+        "id": "V2",
+        "marca": {
+          "valor": "GM",
+          "fuente": "perito"
+        },
+        "modelo": {
+          "valor": "Camaro",
+          "fuente": "perito"
+        },
+        "anio": 1995,
+        "clase": "sedan_mediano",
+        "masa": {
+          "valor": 1700,
+          "unidad": "kg",
+          "fuente": "supuesto"
+        }
+      }
+    ],
+    "danos": [
+      {
+        "vehiculo": "V1",
+        "zona": {
+          "cara": "frontal"
+        },
+        "altura_cm": {
+          "min": 80,
+          "max": 80
+        },
+        "direcciones": [
+          "de_adelante_hacia_atras"
+        ],
+        "tipos": [
+          "hundimiento"
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "El vehículo A presenta en la parte frontal un daño con características de hundimiento en dirección de adelante hacia atrás"
+        }
+      },
+      {
+        "vehiculo": "V1",
+        "zona": {
+          "cara": "frontal"
+        },
+        "direcciones": [
+          "de_adelante_hacia_atras"
+        ],
+        "tipos": [
+          "tallon",
+          "desprendimiento"
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "Presenta también un daño tipo tallón en dirección de adelante hacia atrás, con desprendimiento de pintura, sobre el vértice delantero inferior de la fascia"
+        }
+      },
+      {
+        "vehiculo": "V2",
+        "zona": {
+          "cara": "lateral_derecho",
+          "tercio": "trasero"
+        },
+        "direcciones": [
+          "de_derecha_a_izquierda",
+          "de_adelante_hacia_atras"
+        ],
+        "tipos": [
+          "hundimiento",
+          "tallon",
+          "desprendimiento"
+        ],
+        "magnitud": {
+          "cualitativa": "leve"
+        },
+        "fuente": "perito",
+        "cita": {
+          "texto": "En la parte posterior derecha se observa un ligero daño tipo hundimiento sobre la salpicadera posterior, en dirección de derecha a izquierda"
+        }
+      },
+      {
+        "vehiculo": "V2",
+        "zona": {
+          "cara": "lateral_derecho",
+          "tercio": "medio"
+        },
+        "altura_cm": {
+          "min": 73,
+          "max": 73
+        },
+        "tipos": [
+          "desprendimiento"
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "desprendimiento de pintura sobre la parte media de la puerta y la parte media de la salpicadera trasera, este último a una altura de 0.73 metros"
+        }
+      }
+    ],
+    "impactos": [
+      {
+        "orden": 1,
+        "vehiculos": [
+          "V1",
+          "V2"
+        ],
+        "zonas": [
+          {
+            "vehiculo": "V1",
+            "zona": {
+              "cara": "frontal"
+            }
+          },
+          {
+            "vehiculo": "V2",
+            "zona": {
+              "cara": "lateral_derecho"
+            }
+          }
+        ],
+        "fuente": "supuesto"
+      }
+    ],
+    "versiones": [
+      {
+        "tipo": "evidencia",
+        "posiciones": [
+          {
+            "vehiculo": "V1",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.429979765291538,
+              "lon": -99.07094848632836
+            },
+            "rumbo": 0,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V1",
+            "fase": "final",
+            "punto": {
+              "lat": 19.429993255096996,
+              "lon": -99.07094848632836
+            },
+            "rumbo": 0,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V2",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.430008093882996,
+              "lon": -99.07094848632836
+            },
+            "rumbo": 90,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V2",
+            "fase": "final",
+            "punto": {
+              "lat": 19.430008093882996,
+              "lon": -99.07093418186304
+            },
+            "rumbo": 90,
+            "fuente": "perito"
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion_perito": null,
+  "titulo": "Caso nuevo",
+  "bitacora": [
+    {
+      "n": 1,
+      "de": "lector",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Lectura: 36 filas con su cita."
+    },
+    {
+      "n": 2,
+      "de": "verificador_citas",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Citas encontradas en la narración: 15 de 15; números con su cita: 4 de 4. Lo que no está en el texto se descarta."
+    },
+    {
+      "n": 3,
+      "de": "validador",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Escena válida: 2 vehículos, 1 impacto."
+    },
+    {
+      "n": 4,
+      "de": "preguntador",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "7 preguntas para el perito, de lo que más cambia la reconstrucción: impacto-propuesto, impactos, velocidad-V1, velocidad-V2, restos, final-V1, final-V2."
+    },
+    {
+      "n": 5,
+      "de": "verificador_cesvi",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Sin medidas de deformación completas: no hay EBS con el método de CESVI."
+    },
+    {
+      "n": 6,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "No sé dónde fue el primer golpe: se usa el lugar del choque (supuesto)."
+    },
+    {
+      "n": 7,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Pide reconstruir."
+    },
+    {
+      "n": 8,
+      "de": "fisico",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Reconstrucción: V1 a 20 km/h (10–28), V2 a 12 km/h (3–19)."
+    },
+    {
+      "n": 9,
+      "de": "fisico",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Con los supuestos declarados: Masa de V1: 1,418 kg; Masa de V2: 1,700 kg; Posición inicial de V1: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Posición inicial de V2: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Fricción llanta–pavimento: μ = 0.7; Después del impacto: las llantas ruedan, con un arrastre de 0.35 de la fricción; Restitución del choque: e = 0.1; Fricción entre los vehículos durante el choque: razón de impulso de 0.4."
+    },
+    {
+      "n": 10,
+      "de": "verificador_cesvi",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Sin medidas de deformación completas: no hay EBS con el método de CESVI."
+    },
+    {
+      "n": 11,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Abre el dictamen."
+    },
+    {
+      "n": 12,
+      "de": "redactor",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Dictamen redactado con la reconstrucción, la verificación con el método de CESVI, esta bitácora."
+    }
+  ]
+}
