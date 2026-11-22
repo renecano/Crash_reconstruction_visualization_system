@@ -1,0 +1,78 @@
+# Paso: antes-cobertura
+# Comando: pnpm -C ../croquis-t6-antes --filter @croquis/cesvi exec tsx ../../eval/t3_cobertura.mts --casos 200
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-22 12:42:13
+
+alcance: 10 de 200 casos (12 s)
+alcance: 20 de 200 casos (22 s)
+alcance: 30 de 200 casos (32 s)
+alcance: 40 de 200 casos (43 s)
+alcance: 50 de 200 casos (53 s)
+alcance: 60 de 200 casos (65 s)
+alcance: 70 de 200 casos (75 s)
+alcance: 80 de 200 casos (85 s)
+alcance: 90 de 200 casos (94 s)
+alcance: 100 de 200 casos (105 s)
+alcance: 110 de 200 casos (115 s)
+alcance: 120 de 200 casos (125 s)
+alcance: 130 de 200 casos (136 s)
+alcance: 140 de 200 casos (146 s)
+alcance: 150 de 200 casos (156 s)
+alcance: 160 de 200 casos (166 s)
+alcance: 170 de 200 casos (176 s)
+alcance: 180 de 200 casos (186 s)
+alcance: 190 de 200 casos (197 s)
+alcance: 200 de 200 casos (209 s)
+lateral_interseccion: 10 de 200 casos (237 s)
+lateral_interseccion: 20 de 200 casos (265 s)
+lateral_interseccion: 30 de 200 casos (293 s)
+lateral_interseccion: 40 de 200 casos (324 s)
+lateral_interseccion: 50 de 200 casos (352 s)
+lateral_interseccion: 60 de 200 casos (381 s)
+lateral_interseccion: 70 de 200 casos (410 s)
+lateral_interseccion: 80 de 200 casos (438 s)
+lateral_interseccion: 90 de 200 casos (465 s)
+lateral_interseccion: 100 de 200 casos (494 s)
+lateral_interseccion: 110 de 200 casos (524 s)
+lateral_interseccion: 120 de 200 casos (552 s)
+lateral_interseccion: 130 de 200 casos (581 s)
+lateral_interseccion: 140 de 200 casos (608 s)
+lateral_interseccion: 150 de 200 casos (636 s)
+lateral_interseccion: 160 de 200 casos (663 s)
+lateral_interseccion: 170 de 200 casos (691 s)
+lateral_interseccion: 180 de 200 casos (718 s)
+lateral_interseccion: 190 de 200 casos (746 s)
+lateral_interseccion: 200 de 200 casos (774 s)
+{
+ "total": {
+  "supuestos_fijos": {
+   "velocidades": 578,
+   "dentro": 345,
+   "cobertura_pct": 59.69,
+   "ic95_pct": [
+    55.64,
+    63.61
+   ],
+   "ancho_mediano_kmh": 11.27,
+   "error_absoluto_mediano_kmh": 4.78,
+   "verdad_abajo_del_rango": 105,
+   "verdad_arriba_del_rango": 125
+  },
+  "supuestos_sorteados": {
+   "velocidades": 578,
+   "dentro": 410,
+   "cobertura_pct": 70.93,
+   "ic95_pct": [
+    67.1,
+    74.49
+   ],
+   "ancho_mediano_kmh": 13.09,
+   "error_absoluto_mediano_kmh": 4.78,
+   "verdad_abajo_del_rango": 79,
+   "verdad_arriba_del_rango": 88
+  }
+ },
+ "segundos": 774
+}
+
+# Fin: 2026-11-22 12:55:08 · ok · 12.9 min
