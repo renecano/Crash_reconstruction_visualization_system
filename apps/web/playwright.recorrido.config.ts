@@ -28,7 +28,12 @@ export default defineConfig({
     // Un clic que nunca llega (otro elemento encima) falla en 1 min, no al tope de la prueba.
     actionTimeout: 60_000,
     launchOptions: {
-      args: ["--use-angle=d3d11", "--ignore-gpu-blocklist", "--disable-infobars"],
+      // La GPU de verdad: Direct3D 11 en Windows, Metal en una Mac.
+      args: [
+        `--use-angle=${process.platform === "darwin" ? "metal" : "d3d11"}`,
+        "--ignore-gpu-blocklist",
+        "--disable-infobars",
+      ],
       ignoreDefaultArgs: ["--enable-automation"],
     },
   },

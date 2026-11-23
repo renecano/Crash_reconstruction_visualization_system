@@ -286,25 +286,31 @@ test("publico · el recorrido completo con la narración del árbol", async ({ p
   await cerrarLaEscena(page);
   await quieta(page, 3000);
   await f.foto("04-la-escena-lista");
-  // Rotar al colocar: el vehículo seleccionado y su giro. Se elige en el mapa: en la escena nueva la
-  // lista tapa el panel «Corregir la escena», y el clic a su botón esperaba sin fin (la t6).
+  // Rotar al colocar: en la escena nueva el coche ya colocado no se elige en el mapa (el clic lo toma
+  // el mapa, y la lista tapa el panel «Corregir la escena»: la t6 esperó ahí 30 min). Se rota como lo
+  // hace el perito: «Cambiar» en dónde quedó, y sus botones de 15°.
   try {
-    await page.locator('[data-testid^="coche-"]').first().click({ timeout: 15_000 });
-    const girar = page.getByTestId("sel-girar-der");
-    if (await girar.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await girar.click({ timeout: 15_000 });
-      await page.waitForTimeout(1200);
-      await f.foto("05-la-escena-rotar");
-      await page.getByTestId("sel-girar-izq").click({ timeout: 15_000 });
-    } else f.omitir("05-la-escena-rotar", "el vehículo seleccionado no ofrece girar");
+    await page.locator('[data-testid^="cambiar-final-"]').first().click({ timeout: 15_000 });
+    // Un toque sobre el coche lo toma (queda en su lugar) y aparecen sus botones de 15°.
+    const caja = await page
+      .locator('[data-testid^="coche-"][data-testid$="-final"] .escena-coche-cuerpo')
+      .first()
+      .boundingBox();
+    if (!caja) throw new Error("no se ve el coche en el mapa");
+    await page.mouse.click(caja.x + caja.width / 2, caja.y + caja.height / 2);
+    await page.getByTestId("girar-derecha").click({ timeout: 15_000 });
+    await page.waitForTimeout(1200);
+    await f.foto("05-la-escena-rotar");
+    await page.getByTestId("girar-izquierda").click({ timeout: 15_000 });
+    await page.getByTestId("listo-final").click({ timeout: 15_000 });
   } catch (e) {
     f.omitir(
       "05-la-escena-rotar",
-      `no se pudo elegir el vehículo: ${(e as Error).message.split("\n")[0]}`,
+      `no se pudo girar el vehículo: ${(e as Error).message.split("\n")[0]}`,
     );
+    const listo = page.getByTestId("listo-final");
+    if (await listo.isEnabled().catch(() => false)) await listo.click();
   }
-  const listo = page.getByTestId("sel-listo");
-  if (await listo.isVisible().catch(() => false)) await listo.click({ timeout: 15_000 });
   // Girar y regresar pudo dejar algo por confirmar: la lista se cierra otra vez.
   await cerrarLaEscena(page);
 
@@ -370,7 +376,7 @@ test("publico · los cinco ejemplos", async ({ page }) => {
   // Los ejemplos se colocan con su receta en la escena de siempre (la de las e2e de los ejemplos).
   await page.addInitScript(() => {
     try {
-      localStorage.removeItem("croquis.escena");
+      localStorage.setItem("croquis.escena", "anterior");
     } catch {
       // nada
     }
