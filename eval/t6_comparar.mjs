@@ -2,8 +2,8 @@
  * La t6 (René, 2026-11-21): ¿lo que calcula el navegador es lo que aprobó René?
  *
  * - Los cinco ejemplos en el navegador (`eval/results/t6/ejemplos_despues.json`, la e2e de la demo
- *   local) contra la tabla aprobada (`eval/results/ronda4_cifras/despues.json`): la cifra y su rango,
- *   exactos. Si alguno no coincide, no se publica: va a René.
+ *   local) contra la tabla aprobada (`eval/results/ronda4_cifras/despues.json`): la cifra exacta y las
+ *   orillas del rango con ±1 km/h de redondeo (René, 2026-11-22); cada diferencia, con su porcentaje. Si alguno no coincide, no se publica: va a René.
  * - AXA en el navegador (las fotos del recorrido «solo-cesvi» anotan su cifra): 57 (55–78).
  * - Carambolas (prueba y desarrollo) y cobertura: el antes (producción, en `eval/results/t6/antes/`)
  *   y el después (este commit, en `eval/results/`). Si cambian, van a René con las dos cifras.
@@ -43,7 +43,24 @@ if (!tabla || !nav) {
     const deQuien = letra ? `V${letra.charCodeAt(0) - 64}` : null;
     const rango = /(\d+)\s*–\s*(\d+)/.exec(e?.rango ?? "");
     const navegador = e?.cifra && rango ? `${e.cifra} (${rango[1]}–${rango[2]})` : null;
-    const coincide = navegador === esperado && deQuien === fila.cifra_de;
+    // René (2026-11-22): la cifra, exacta; las orillas del rango, con ±1 km/h de redondeo (el p10 y
+    // el p90 caen a veces en el medio kilómetro). Toda diferencia va con su valor y su porcentaje.
+    const orillas = rango ? [Number(rango[1]) - v.p10, Number(rango[2]) - v.p90] : null;
+    const pct = (d, base) => (base ? `${d > 0 ? "+" : ""}${((100 * d) / base).toFixed(1)} %` : "—");
+    const diferencias = orillas
+      ? [
+          ["cifra", Number(e.cifra) - v.mejor, v.mejor],
+          ["p10", orillas[0], v.p10],
+          ["p90", orillas[1], v.p90],
+        ]
+          .filter(([, d]) => d !== 0)
+          .map(([que, d, base]) => ({ que, km_h: d, porcentaje: pct(d, base) }))
+      : [];
+    const coincide =
+      deQuien === fila.cifra_de &&
+      Number(e?.cifra) === v.mejor &&
+      Boolean(orillas) &&
+      orillas.every((d) => Math.abs(d) <= 1);
     if (!coincide) todoCoincide = false;
     salida.ejemplos.push({
       clave: fila.clave,
@@ -51,14 +68,16 @@ if (!tabla || !nav) {
       tabla: esperado,
       navegador: navegador ?? e?.sin_cifra ?? "sin cifra",
       de_quien_navegador: e?.de_quien ?? null,
+      diferencias,
       coincide,
     });
   }
 }
 
 // --- AXA en el navegador ---
+// De la prueba de los ejemplos en el navegador (René, 2026-11-22); si no, de las fotos «solo-cesvi».
 const fotos = leer("recorrido/solo-cesvi/resumen.json");
-const axa = fotos?.cifras?.axa ?? null;
+const axa = nav?.axa ?? fotos?.cifras?.axa ?? null;
 const cifras = leer("eval/results/cifras.json");
 const axaEsperada = cifras?.cifras?.["axa.v2"];
 const axaOk = Boolean(

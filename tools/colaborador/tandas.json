@@ -1,6 +1,6 @@
 {
-  "nota": "Lo pesado de cada tanda de la auditoría del 2026-11-15, para la computadora del colaborador (tools/colaborador/tanda.ps1). «vigente» es la que corre CORRER-TANDA-EN-RTX.bat con doble clic. Toda corrida empieza por «comprobacion»; si falla, lo pesado no corre. Cada paso: un comando que corre en la raíz del repositorio, sin preguntas y sin llaves; «minutos» es lo estimado (el tope es 4 veces eso, y al menos 10 min); «salidas» son las rutas que se suben además de los registros. «rama»: la rama donde vive la tanda mientras no esté en main. Un comando por paso (sin &&): cada uno deja su registro. Un paso con `requiere` se omite si falta esa carpeta (datos que no van en git).",
-  "vigente": "t5c",
+  "nota": "Lo pesado de cada tanda de la auditoría del 2026-11-15, para la computadora del colaborador (tools/colaborador/tanda.ps1). «vigente» es la que corre CORRER-TANDA-EN-RTX.bat con doble clic. Toda corrida empieza por «comprobacion»; si falla, lo pesado no corre. Cada paso: un comando que corre en la raíz del repositorio, sin preguntas y sin llaves; «minutos» es lo estimado (el tope es 4 veces eso, y al menos 10 min); «salidas» son las rutas que se suben además de los registros. «rama»: la rama donde vive la tanda mientras no esté en main. Un comando por paso (sin &&): cada uno deja su registro. Un paso con `requiere` se omite si falta esa carpeta (datos que no van en git). «privadas»: carpetas de un paso que no se suben; se comprimen en un zip en la carpeta de resultados (René, 2026-11-21: el repositorio es público).",
+  "vigente": "t6",
   "comprobacion": {
     "pasos": [
       {
@@ -688,6 +688,134 @@
         }
       ],
       "commit": "c051746cf9755bd50d30f46a0d0c733f224eab8a"
+    },
+    "t6": {
+      "titulo": "Tanda 6 · Antes de publicar: fotos del recorrido, cifras en el navegador, narraciones, barrera y curvas",
+      "nota": "René, 2026-11-21: la única corrida pesada antes de publicar. Fijada al último commit del #284, con el #286 (curvas) integrado y el build de Unity nuevo (la barrera y la guarnición de concreto). Primero el humo (si falla, se detiene). Luego, las fotos del recorrido (2560×1440, Unity en calidad alta; juegos «publico» y «solo-cesvi», en recorrido/), que no dependen de lo demás. Después lo pesado: los cinco ejemplos en el navegador con su .croquis, las seis narraciones con sus capturas del 3D (la curva y la barrera) y el caso encimado, Tollocan, y carambolas y cobertura antes (producción, 3257fa9f) y después. Al final, eval/t6_comparar.mjs: si las cinco cifras del navegador no son las de la tabla aprobada, o AXA no da 57, o cambian carambolas o cobertura, no se publica. «91 de 156» se mide en la laptop de René (necesita los textos crudos). Lo privado (René, 2026-11-21): las fotos de AXA (recorrido/solo-cesvi) no se suben; quedan en recorrido-solo-cesvi.zip en la carpeta de resultados, y al final la ventana dice dónde está para mandárselo a René por WhatsApp o Drive. Nada cuya ruta nombre a AXA se sube (el humo de AXA tampoco).",
+      "rama": "feat/w-narracion-a-la-fisica",
+      "pasos": [
+        {
+          "nombre": "visor",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 2,
+          "tope_min": 15
+        },
+        {
+          "nombre": "preparar",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar",
+          "minutos": 8,
+          "tope_min": 15
+        },
+        {
+          "nombre": "humo",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues humo",
+          "minutos": 6,
+          "tope_min": 8,
+          "detiene_si_falla": true,
+          "salidas": ["eval/results/humo/", "apps/web/test-results/"]
+        },
+        {
+          "nombre": "fotos-recorrido",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues recorrido -Salida recorrido",
+          "minutos": 50,
+          "tope_min": 120,
+          "salidas": ["recorrido/publico/"],
+          "privadas": ["recorrido/solo-cesvi"]
+        },
+        {
+          "nombre": "ejemplos",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t6/ejemplos_despues.json -Capturas docs/cesvi/ronda-4/evidencia/t6-ejemplos -Casos eval/results/t6/ejemplos-casos",
+          "minutos": 12,
+          "tope_min": 30,
+          "salidas": ["eval/results/t6", "docs/cesvi/ronda-4/evidencia/t6-ejemplos"]
+        },
+        {
+          "nombre": "narraciones",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues narraciones -Salida eval/results/t6/narraciones_fisica.json",
+          "minutos": 12,
+          "tope_min": 30,
+          "salidas": ["eval/results/t6", "docs/cesvi/ronda-4/evidencia/fisica"]
+        },
+        {
+          "nombre": "tollocan",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tollocan -Salida eval/results/t6/tollocan.json",
+          "minutos": 6,
+          "tope_min": 15,
+          "salidas": ["eval/results/t6", "docs/cesvi/ronda-4/evidencia/fisica"]
+        },
+        {
+          "nombre": "antes-copia",
+          "comando": "powershell -NoProfile -Command \"if (Test-Path ../croquis-t6-antes) { git worktree remove --force ../croquis-t6-antes }; git worktree add --detach ../croquis-t6-antes 3257fa9f\"",
+          "minutos": 1,
+          "tope_min": 10
+        },
+        {
+          "nombre": "antes-dependencias",
+          "comando": "pnpm -C ../croquis-t6-antes install --frozen-lockfile",
+          "minutos": 3,
+          "tope_min": 15
+        },
+        {
+          "nombre": "antes-carambolas-prueba",
+          "comando": "pnpm -C ../croquis-t6-antes --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir prueba",
+          "minutos": 5,
+          "tope_min": 20
+        },
+        {
+          "nombre": "antes-carambolas-desarrollo",
+          "comando": "pnpm -C ../croquis-t6-antes --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir desarrollo",
+          "minutos": 6,
+          "tope_min": 25
+        },
+        {
+          "nombre": "antes-cobertura",
+          "comando": "pnpm -C ../croquis-t6-antes --filter @croquis/cesvi exec tsx ../../eval/t3_cobertura.mts --casos 200",
+          "minutos": 15,
+          "tope_min": 60
+        },
+        {
+          "nombre": "antes-guardar",
+          "comando": "powershell -NoProfile -Command \"New-Item -ItemType Directory -Force eval/results/t6/antes | Out-Null; Copy-Item ../croquis-t6-antes/eval/results/cesvi_r4b_carambolas_prueba.json, ../croquis-t6-antes/eval/results/cesvi_r4b_carambolas_desarrollo.json, ../croquis-t6-antes/eval/results/t3_cobertura.json eval/results/t6/antes/\"",
+          "minutos": 1,
+          "tope_min": 10,
+          "salidas": ["eval/results/t6"]
+        },
+        {
+          "nombre": "carambolas-prueba",
+          "comando": "pnpm --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir prueba",
+          "minutos": 5,
+          "tope_min": 20,
+          "salidas": ["eval/results/cesvi_r4b_carambolas_prueba.json"]
+        },
+        {
+          "nombre": "carambolas-desarrollo",
+          "comando": "pnpm --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir desarrollo",
+          "minutos": 6,
+          "tope_min": 25,
+          "salidas": ["eval/results/cesvi_r4b_carambolas_desarrollo.json"]
+        },
+        {
+          "nombre": "cobertura",
+          "comando": "pnpm --filter @croquis/cesvi exec tsx ../../eval/t3_cobertura.mts --casos 200",
+          "minutos": 15,
+          "tope_min": 60,
+          "salidas": ["eval/results/t3_cobertura.json"]
+        },
+        {
+          "nombre": "comparar",
+          "comando": "node eval/t6_comparar.mjs",
+          "minutos": 1,
+          "tope_min": 10,
+          "salidas": ["eval/results/t6"]
+        },
+        {
+          "nombre": "limpiar",
+          "comando": "git worktree remove --force ../croquis-t6-antes",
+          "minutos": 1,
+          "tope_min": 10
+        }
+      ],
+      "commit": "30da33b8947f20e07e5e2b7316e70a37dedaf1a1"
     }
   }
 }

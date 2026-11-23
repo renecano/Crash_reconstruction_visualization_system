@@ -46,3 +46,26 @@ describe("la cifra de la reconstrucción y su rango", () => {
     expect(screen.queryByTestId("mejor-fuera-del-rango")).toBeNull();
   });
 });
+
+describe("las posiciones contra lo narrado (René, 2026-11-22)", () => {
+  it("se dice junto a la cifra, con el nombre del vehículo, aunque no sea el que encabeza", () => {
+    const r = reconstruccion(36, 31, 38);
+    r.limites = [
+      "V3: la narración dice más de 80 km/h («a alta velocidad»); las posiciones dan 10 km/h (7–14). No se fuerza ninguna de las dos: revisa las posiciones marcadas y lo que dice la narración.",
+      "V2: la narración dice «60 km/h»; entra como supuesto de 54 a 66 km/h. Solo pesa si la evidencia no la fija.",
+    ];
+    render(
+      <CifraReconstruccion
+        r={r}
+        nombres={{ V2: "B · Camaro", V3: "C · CR-V" }}
+        decisiones={[]}
+        onRepetir={() => undefined}
+      />,
+    );
+    const notas = screen.getAllByTestId("contra-narracion");
+    expect(notas).toHaveLength(1);
+    expect(notas[0]!.textContent).toBe(
+      "C · CR-V: la narración dice más de 80 km/h («a alta velocidad»); las posiciones dan 10 km/h (7–14). No se fuerza ninguna de las dos: revisa las posiciones marcadas y lo que dice la narración.",
+    );
+  });
+});

@@ -25,6 +25,7 @@ import {
   SIGMA_POSITION_M,
 } from "@croquis/solver-ts";
 import { limiteMejorFuera } from "./mejor-fuera";
+import { limiteContraNarracion } from "./contra-narracion";
 import { avisoReversaRapida, limiteVelocidadSupuesta, velocidadSupuestaEnReversa } from "./reversa";
 
 /**
@@ -230,6 +231,8 @@ export interface EscenaSolver {
   limites: string[];
   /** El punto de impacto en el mapa (lon, lat): el origen de la escena. null sin posiciones de impacto. */
   origen: LonLat | null;
+  /** La velocidad narrada de cada vehículo del expediente, para decir si las posiciones la contradicen. */
+  narradas?: Record<string, VelocidadNarrada>;
 }
 
 /** La escena del solver a partir del expediente (sin correr el solver). */
@@ -969,7 +972,10 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       `${nombres}: sin sus posiciones en el mapa, Croquis ${colocados.length === 1 ? "lo coloca detenido" : "los coloca detenidos"} en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.`,
     );
   }
-  return { spec, ids, limites, origen };
+  const velocidadesNarradas = Object.fromEntries(
+    e.vehiculos.flatMap((v) => (v.velocidad_narrada ? [[v.id, v.velocidad_narrada]] : [])),
+  );
+  return { spec, ids, limites, origen, narradas: velocidadesNarradas };
 }
 
 const CARA_POR_OMISION = "B";
@@ -1492,6 +1498,9 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
   for (const v of velocidades) {
     const fuera = limiteMejorFuera(v.vehiculo, v.previa);
     if (fuera) limites.push(fuera);
+    // Las posiciones contra lo narrado (René, 2026-11-22): las dos cifras, sin forzar ninguna.
+    const contra = limiteContraNarracion(v.vehiculo, base.narradas?.[v.vehiculo], v.previa);
+    if (contra) limites.push(contra);
   }
   // Una reversa más rápida que cualquiera de las medidas en uso real se le dice al perito (T3.3).
   for (const sv of (base.spec.vehiculos ?? []) as Json[]) {
