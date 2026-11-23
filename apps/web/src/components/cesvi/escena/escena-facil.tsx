@@ -71,6 +71,7 @@ import {
   contraNarracion,
   elegirDireccion,
   flechaPropuesta,
+  flechaDelToque,
   flechasDeLlegada,
   fueraDeLaCalle,
   girar,
@@ -91,6 +92,7 @@ import {
   textoChoqueListo,
   textoFlecha,
   textoSentido,
+  type Flecha,
   type ImpactoAColocar,
   type LineaResumen,
   type Punto,
@@ -734,9 +736,9 @@ export function EscenaFacil({
       );
     setEditando(null);
   };
-  const elegirFlecha = (i: number) => {
+  const elegirFlecha = (i: number) => elegirLlegada(flechas[i]);
+  const elegirLlegada = (f: Flecha | undefined) => {
     const v = vehiculoActual;
-    const f = flechas[i];
     if (!v || !f) return;
     const texto = `El ${nombres[v]} venía del ${f.desde}${f.calle ? `, por ${f.calle}` : ""}.`;
     const sentido = sentidos[v] ?? null;
@@ -1188,6 +1190,12 @@ export function EscenaFacil({
       const a = ajustarACalle(callesMapa, p);
       const punto = a?.punto ?? p;
       ponerChoque(actual.orden, punto, callesEn(callesMapa, punto));
+      return;
+    }
+    if (actual?.tipo === "vehiculo" && !actual.direccion) {
+      // Por dónde venía: además de las flechas, de donde tocó hacia el choque.
+      const c = choqueDe(actual.vehiculo);
+      if (c) elegirLlegada(flechaDelToque(callesMapa, c, p));
       return;
     }
     if (actual?.tipo === "vehiculo" && actual.direccion && !actual.final) {
@@ -2206,7 +2214,7 @@ export function EscenaFacil({
           </h2>
         </div>
         <p className="t-cuerpo text-texto-2">
-          Toca la flecha de la calle por donde llegaba al choque.
+          Toca la flecha de la calle por donde llegaba al choque, o el mapa donde venía.
         </p>
         <div
           className="flex flex-col gap-2"

@@ -24,6 +24,11 @@
     -Tanda NOMBRE        corre esa tanda en vez de la vigente
     -Prueba              solo la comprobación del mecanismo
     -SinSubir            no hace commit ni push (los resultados quedan en la carpeta)
+
+  Lo privado (René, 2026-11-21: el repositorio es público): nada cuya ruta nombre a AXA o al juego
+  «solo-cesvi» se sube, aunque esté en las salidas de un paso. Las carpetas `privadas` de un paso se
+  comprimen en un zip en la carpeta de resultados y se quedan en esta computadora; al final, la
+  ventana dice dónde está para mandárselo a René por WhatsApp o Drive.
     -Lista               solo dice qué tandas hay y qué pasos tienen
     -Solo LISTA          de lo pesado, solo esos pasos (nombres con comas), para probar
     -SimularFalta LISTA  hace como si faltaran esas herramientas (git, node, pnpm; con comas), para
@@ -46,7 +51,9 @@ $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch { }
 
-$Repo = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
+# La copia de main que se relanza al cambiar al commit de la tanda (abajo) corre desde una carpeta
+# temporal: el repositorio se lo dice quien la lanza.
+$Repo = if ($env:CROQUIS_TANDA_REPO) { $env:CROQUIS_TANDA_REPO } else { (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path }
 function Escribir([string]$texto, [string]$color = "Gray") { Write-Host $texto -ForegroundColor $color }
 
 # --- Utilidades --------------------------------------------------------------------------------------
@@ -102,12 +109,16 @@ $Avisos = New-Object System.Collections.ArrayList
 $ConfigLocal = $null
 try { $ConfigLocal = Get-Content (Join-Path $PSScriptRoot "tandas.json") -Raw -Encoding UTF8 | ConvertFrom-Json } catch { }
 
+# Lo que no sale de esta computadora (René, 2026-11-21: el repositorio es público).
+$PatronPrivado = '(?i)(axa|a2010930|solo-cesvi)'
+$ZipsPrivados = New-Object System.Collections.ArrayList
+
 function EsResultado([string]$ruta) {
   $ruta = $ruta.Trim('"').Replace("\", "/")
   if ($ruta.StartsWith("eval/results/") -or $ruta.StartsWith("resultados/")) { return $true }
   foreach ($t in $ConfigLocal.tandas.PSObject.Properties) {
     foreach ($p in @($t.Value.pasos)) {
-      foreach ($s in @($p.salidas)) {
+      foreach ($s in (@($p.salidas) + @($p.privadas))) {
         if ($s -and ($ruta -eq [string]$s -or $ruta.StartsWith(([string]$s).TrimEnd("/") + "/"))) { return $true }
       }
     }
@@ -446,15 +457,23 @@ if ($ramaDeLaTanda -and -not $EnSuRama -and $ramaActual -ne $ramaDeLaTanda) {
     $destino = $commitDeLaTanda
     Escribir "La tanda está fijada al commit $commitDeLaTanda."
   }
+  # La definición de la tanda y este script se toman de main, antes de cambiar de commit (René,
+  # 2026-11-22: el commit fijado no trae la t6 en su tandas.json, ni el filtro de lo privado).
+  $deMain = Join-Path ([IO.Path]::GetTempPath()) "croquis-tanda-main"
+  New-Item -ItemType Directory -Force $deMain | Out-Null
+  Copy-Item -Force $PSCommandPath (Join-Path $deMain "tanda.ps1")
+  Copy-Item -Force (Join-Path $PSScriptRoot "tandas.json") (Join-Path $deMain "tandas.json")
   if ((Nativo "git" @("-C", $Repo, "checkout", "-B", $ramaDeLaTanda, $destino)) -ne 0) {
     Escribir "No se pudo cambiar a la rama $ramaDeLaTanda." "Red"
     exit 1
   }
-  $argumentos = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $PSCommandPath, "-Tanda", $Tanda, "-EnSuRama")
+  $env:CROQUIS_TANDA_REPO = $Repo
+  $argumentos = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", (Join-Path $deMain "tanda.ps1"), "-Tanda", $Tanda, "-EnSuRama")
   if ($Prueba) { $argumentos += "-Prueba" }
   if ($SinSubir) { $argumentos += "-SinSubir" }
   & powershell.exe @argumentos
   $codigo = $LASTEXITCODE
+  Remove-Item Env:\CROQUIS_TANDA_REPO -ErrorAction SilentlyContinue
   } finally {
     # Los procesos del paso cortado pueden tardar unos segundos en soltar los archivos.
     $volvio = [Croquis.Guardia]::Volver(5)
@@ -583,6 +602,23 @@ function Subir([string]$motivo, [string[]]$salidas) {
       }
       foreach ($g in $grandes) {
         [void](Nativo "git" @("-C", $Repo, "rm", "--cached", "-q", "--", $g.FullName.Substring($Repo.Length + 1)))
+      }
+      # Lo privado (AXA, «solo-cesvi» y sus zips) se saca del commit: se queda en esta computadora.
+      $privados = @()
+      foreach ($r in $rutas) {
+        $ruta = Join-Path $Repo $r
+        $archivos = @()
+        if (Test-Path $ruta -PathType Container) { $archivos = @(Get-ChildItem -LiteralPath $ruta -Recurse -File -ErrorAction SilentlyContinue) }
+        elseif (Test-Path $ruta) { $archivos = @(Get-Item -LiteralPath $ruta) }
+        $privados += @($archivos | Where-Object {
+            $_.FullName.Substring($Repo.Length + 1).Replace("\", "/") -match $PatronPrivado -or $ZipsPrivados.Contains($_.FullName)
+          })
+      }
+      foreach ($x in $privados) {
+        [void](Nativo "git" @("-C", $Repo, "rm", "--cached", "-q", "--ignore-unmatch", "--", $x.FullName.Substring($Repo.Length + 1)))
+      }
+      if ($privados.Count -gt 0) {
+        AgregarAlRegistro (Join-Path $Salida "subida.log") @("$(Get-Date -Format 'HH:mm:ss') · $motivo · $($privados.Count) archivo(s) privado(s) (AXA o solo-cesvi): se quedaron en esta computadora, sin subir")
       }
       $arbol = SalidaDe "git" @("-C", $Repo, "write-tree")
       $arbolPadre = SalidaDe "git" @("-C", $Repo, "rev-parse", "$padre^{tree}")
@@ -760,6 +796,23 @@ function CorrerPaso([string]$grupo, [int]$numero, [int]$total, $paso) {
   return $estado
 }
 
+# Una carpeta privada de un paso (`privadas`, René 2026-11-21): se comprime en un zip dentro de la
+# carpeta de resultados. El zip no se sube (Subir lo saca del commit) y al final se dice dónde quedó.
+function GuardarPrivado([string]$ruta) {
+  $origen = Join-Path $Repo $ruta
+  if (-not (Test-Path $origen)) { return }
+  if (-not (Test-Path $Salida)) { New-Item -ItemType Directory -Force $Salida | Out-Null }
+  $zip = Join-Path $Salida ((($ruta.Trim("/", "\")) -replace '[\\/]+', '-') + ".zip")
+  try {
+    Compress-Archive -Path (Join-Path $origen "*") -DestinationPath $zip -Force -ErrorAction Stop
+    if (-not $ZipsPrivados.Contains($zip)) { [void]$ZipsPrivados.Add($zip) }
+    Escribir "   Lo privado de $ruta quedó en $zip (no se sube)." "Cyan"
+  } catch {
+    Escribir "   No se pudo comprimir ${ruta}: $($_.Exception.Message). Quedó en $origen (no se sube)." "Yellow"
+    if (-not $ZipsPrivados.Contains($origen)) { [void]$ZipsPrivados.Add($origen) }
+  }
+}
+
 # --- La corrida --------------------------------------------------------------------------------------
 $Comprobacion = @($Config.comprobacion.pasos)
 $Pesados = @($Definicion.pasos)
@@ -819,6 +872,7 @@ if ($Pesados.Count -eq 0) {
   foreach ($p in $Pesados) {
     $n++
     $resultado = [string](@(CorrerPaso "tanda" $n $Pesados.Count $p)[-1])
+    foreach ($priv in @($p.privadas)) { if ($priv) { GuardarPrivado ([string]$priv) } }
     [void](Subir ([string]$p.nombre) @($p.salidas))
     # Un paso de humo (`detiene_si_falla`, René 2026-11-20): si no sale, no se gastan las 2 horas.
     if ($p.detiene_si_falla -and $resultado -ne "ok") {
@@ -843,6 +897,12 @@ $omitidos = @($Pasos | Where-Object { ([string]$_.estado).StartsWith("omitido") 
 if ($omitidos -gt 0) { Escribir "$omitidos paso(s) se omitieron porque necesitan datos que no van en git: no es una falla." "Cyan" }
 if ($SinSubir) { Escribir "No se subió nada (-SinSubir): los resultados están en $Salida." }
 else { Escribir "Los resultados están en la rama $Rama. Avísale a René que ya terminó." "White" }
+if ($ZipsPrivados.Count -gt 0) {
+  Escribir ""
+  Escribir "IMPORTANTE: esto lleva datos de CESVI y NO se subió a GitHub (el repositorio es público):" "Yellow"
+  foreach ($z in $ZipsPrivados) { Escribir "  $z" "Yellow" }
+  Escribir "Mándaselo a René por WhatsApp o Drive. No lo subas a ningún sitio público." "Yellow"
+}
 if ($fallas -gt 0) {
   Escribir "$fallas paso(s) no terminaron bien: su salida está en la misma rama." "Yellow"
   exit 1
