@@ -1228,3 +1228,18 @@ Viene de U0 (ADR 0111). Vale cuando el PR de contrato 2.3.0 esté en `main`:
 1. Iniciar sesión de `gh` y abrir los PR: `fix/w-marcar-de-donde-venia` y `feat/w-ir-al-impacto-mapa` (a `main`), `feat/w-velocidad-contra-narracion` (al #284) y `chore/colaboradores-en-paralelo`. Después, la t7-fotos vigente.
 2. Las cifras de la t6 (punto 2) van a René antes de publicar el #284.
 3. La curva: la narración sí pone a los dos de oriente a poniente. Falta que la CR-V «se abrió e invadió el carril derecho» entre como ángulo, y no hay una fuente que dé el número: decisión de René.
+
+## Fotos del recorrido tomadas en la Mac con el Unity real (2026-11-23)
+
+- **Ambiente:** `tools/demo-local/demo-local.sh --solo-preparar` en el commit e37ef9a8 (#305 sobre el #284). El build 945617e0 sale del release de GitHub y se sirve desde la máquina, sin Blob. Chrome instalado con ANGLE sobre Metal, 2560×1440 con DPR 2.
+- **Resultado:** el juego público tiene 52 de 53 fotos; la que falta, «contra CESVI», no aplica a un caso nuevo. SOLO-CESVI tiene 16 de 16, y AXA da 57 km/h (55–78) en el navegador. Las fotos están fuera del repositorio, en `croquis-fotos-2026-11-23/` (`recorrido-publico.zip` y `recorrido-solo-cesvi.zip`). Nada de AXA se sube.
+- **Arreglos de la prueba:** en la escena nueva, el coche ya colocado no se elige en el mapa. La foto de rotar ahora sigue el flujo del perito: «Cambiar», tocar el coche y usar sus botones de 15°. Los ejemplos fijan la escena de una pregunta a la vez, porque la lista ya es la que sale por omisión.
+- **Cifras que salen en estas fotos y no coinciden con la tabla aprobada:**
+  - **Crucero de noche:** 14 km/h (4–26), contra 20 (10–28) en la tabla.
+  - **Reversa:** 20 (19–26), contra 21 (20–28).
+  - **Poste:** 36 (28–38), contra 36 (31–38).
+  - **Alcance:** 54 (49–56), contra 53 (49–56).
+
+  Son la misma receta colocada con toques en otro tamaño de pantalla, así que los coches quedan en posiciones algo distintas. Antes de usar esas cifras en una pieza, conviene revisarlas.
+
+- **Árbol y curva:** el límite de la vía depende de la calle del mapa donde queda el choque. En la Mac, el árbol cayó junto a una calle secundaria (30 km/h): 39 (30–47) no contradice «exceso de velocidad», y el aviso no sale. En la curva, el Circuito Exterior (80 km/h) sí lo dispara: «la narración dice más de 80 km/h («a alta velocidad»); las posiciones dan 10 km/h (7–14)». Ese aviso solo salía junto a la cifra del vehículo que la encabeza (el Rio); desde 26e78eca sale para cada vehículo que contradiga lo narrado (la CR-V), con su nombre.
