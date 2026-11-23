@@ -71,12 +71,16 @@ export async function colocar(page: Page, r: Receta, notas: string[]) {
   const mapa = await mapaFacil(page);
   const lista = page.getByTestId("escena-lista");
   const pregunta = page.getByTestId("escena-pregunta");
+  // La tarjeta entera: «¿Dónde quedó después del choque?» se repite igual para cada vehículo (el caso
+  // encimado trae los rumbos, así que van seguidas), y solo cambia el nombre de arriba (t6).
+  const tarjeta = page.getByRole("region", { name: "La pregunta" });
   let choques = 0;
   // «¿Dónde quedó después del choque?» no nombra al vehículo: es el de la pregunta anterior.
   let vehiculo = "";
   for (let k = 0; k < 30; k++) {
     if (await lista.isVisible()) break;
     const texto = (await pregunta.textContent()) ?? "";
+    const antes = (await tarjeta.textContent().catch(() => null)) ?? texto;
     // «¿Dónde fue el primer golpe?» no es un choque: la narración no lo da, así que «No sé».
     if (/primer golpe/.test(texto)) await page.getByTestId("golpe-nose").click();
     else if (/^¿Dónde fue/.test(texto)) {
@@ -131,9 +135,14 @@ export async function colocar(page: Page, r: Receta, notas: string[]) {
       break;
     }
     await expect
-      .poll(async () => (await lista.isVisible()) || (await pregunta.textContent()) !== texto, {
-        timeout: 15_000,
-      })
+      .poll(
+        async () =>
+          (await lista.isVisible()) ||
+          ((await tarjeta.textContent().catch(() => null)) ?? "") !== antes,
+        {
+          timeout: 15_000,
+        },
+      )
       .toBe(true);
   }
   return lista.isVisible();

@@ -185,6 +185,22 @@ test("las cinco narraciones de ejemplo, de punta a punta", async ({ page, baseUR
     }
     resultados.push(fila);
   }
+  // AXA en el navegador (René, 2026-11-22): la comparación de la tanda ya no depende de las fotos.
+  // Solo la cifra, que ya es pública (eval/results/cifras.json); nada de sus capturas.
+  let axa: string | null = null;
+  if (!solo) {
+    try {
+      await page.goto("/cesvi");
+      await page.getByTestId("ir-axa").click();
+      await irAPaso(page, 4);
+      const rec = page.getByTestId("reconstruir");
+      if (await rec.isVisible().catch(() => false)) await rec.click();
+      await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 240_000 });
+      axa = await textoDe(page, "cifra-reconstruccion");
+    } catch (e) {
+      axa = `sin cifra: ${(e as Error).message.split("\n")[0]}`;
+    }
+  }
   escribirSalida(
     `${JSON.stringify(
       {
@@ -197,6 +213,7 @@ test("las cinco narraciones de ejemplo, de punta a punta", async ({ page, baseUR
         llamadas_a_claude: llamadasAClaude,
         errores_de_pagina: errores,
         ejemplos: resultados,
+        axa,
       },
       null,
       2,
