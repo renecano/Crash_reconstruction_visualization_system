@@ -1204,3 +1204,27 @@ Viene de U0 (ADR 0111). Vale cuando el PR de contrato 2.3.0 esté en `main`:
 ## Necesito del otro frente
 
 - **De W5 para U6:** pasar `Reconstruccion.relieve` a `armarCaso3d` al integrar `<VisorUnity>`, y publicar un build con el tope como arco (`TerrenoVista.cs`). Está anotado en `docs/progress/U.md`.
+
+## Tras la t6: arreglos, colaboradores en paralelo y t7-fotos (2026-11-22/23)
+
+**Estado:** código listo en ramas; los PR y las fusiones esperan a que esta máquina tenga sesión de `gh` (no la tenía). Nada se publicó.
+
+- **«Márcalo tú» por dónde venía** (`fix/w-marcar-de-donde-venia`, sobre `main`): sin calles del mapa, la escena pedía «Marcar en el mapa» y el toque no hacía nada (solo contaban las flechas). Ahora el toque fija el rumbo del punto tocado hacia el choque (`flechaDelToque`). Prueba de componente `marcar-en-el-mapa.test.tsx` (choque, por dónde venía, dónde quedó, por dónde pasó): 3 de 4 fallan sin el arreglo, 4 de 4 pasan con él; en la línea del #284, 5 de 5 con la lista.
+- **«Ir al impacto» en el mapa de La escena** (`feat/w-ir-al-impacto-mapa`, sobre `main`): solo con choque marcado, tecla I, al primer choque con el zoom de trabajo (19.6). `ir-al-impacto.test.tsx`.
+- **Fotos del recorrido** (`fix/fotos-recorrido`, sobre el #284): se atoraban en La escena porque la lista tapa el panel «Corregir la escena» y el clic a `elegir-coche-*` esperaba sin tope; el modo serial dejaba sin correr las otras tres. Ahora el coche se elige en el mapa, cada prueba tiene su tope (25/45/45/25 min), sin modo serial, `actionTimeout` de 1 min y `-Filtro` en `demo-local.ps1`.
+- **Velocidad contra la narración** (`feat/w-velocidad-contra-narracion`, sobre el anterior): `contra-narracion.ts`. Si todo el p10–p90 queda del otro lado de lo narrado, va un límite y una nota junto a la cifra con las dos cifras; ninguna se fuerza.
+- **Caso encimado:** era la prueba. La receta esperaba que cambiara el texto de la pregunta, y «¿Dónde quedó después del choque?» se repite igual para los dos vehículos. Ahora espera a que cambie la tarjeta entera. En esta Mac pasa la colocación y la reconstrucción; el 3D necesita el build local de la tanda.
+- **Comparación de la tanda:** la cifra central, exacta; el p10 y el p90, con ±1 km/h; cada diferencia, con su valor y su porcentaje. AXA se mide con los ejemplos en el navegador (`ejemplos-ronda2.spec.ts`), ya no depende de las fotos. Con los datos de la t6: siguen sin coincidir el alcance (cifra 54 contra 53, +1.9 %) y AXA (sin dato en la t6).
+- **Varios colaboradores** (`chore/colaboradores-en-paralelo`): rama y carpeta por equipo (`resultados/<tanda>-<fecha>-<equipo>`), `corrida.json` con `equipo_nombre`, `gpu` y `parte`, push reintentado hasta 4 veces sobre lo último de la rama, `partes` en `tandas.json` con la pregunta al inicio, `.rar`/`.zip` sueltos movidos a `Croquis-archivos-sueltos`, `core.longpaths` y «limpiar» con robocopy. `tools/colaborador/revisar.mjs` junta las ramas de todos los equipos. Probado con pwsh 7.5.4 en esta Mac: un remoto local y dos copias limpias subiendo a la vez dejan dos ramas completas y separadas; con el mismo equipo, 3 rechazos reintentados y las 11 subidas en la rama.
+- **Instalado en esta Mac:** `gh` 2.83.0 y PowerShell 7.5.4 en `~/.local` (para PRs y para probar `tanda.ps1`).
+
+### Las cifras de la t6, explicadas
+
+- **El ±1 km/h de los ejemplos no es redondeo ni semilla.** El solver en Node, con el `.croquis` que guardó el navegador, da la cifra del navegador en 4 de 5 (alcance 53.52 → 54; carambola 24.46; poste 35.94, p90 38.60). La tabla los colocó con la receta en coordenadas exactas; el navegador, con toques en el mapa que dejan los finales de 3 a 5 cm distintos. En el alcance eso cruza el medio kilómetro (53.46 contra 53.52). La reversa además depende del relieve real del lugar, y la tabla la puso en otro punto.
+- **Las carambolas no cambian por las masas de ficha.** Búsqueda binaria en la partición de prueba (determinista: 50ebd981 dio 20 dos veces): el primer commit con 21 es el merge de `feat/w-velocidades-via` (45f58f9a). En ese commit siguen saliendo 21 si se apaga la masa de ficha, si se apagan las velocidades narradas o si se apagan las dos. La causa todavía no está identificada.
+
+### Siguiente paso
+
+1. Iniciar sesión de `gh` y abrir los PR: `fix/w-marcar-de-donde-venia` y `feat/w-ir-al-impacto-mapa` (a `main`), `feat/w-velocidad-contra-narracion` (al #284) y `chore/colaboradores-en-paralelo`. Después, la t7-fotos vigente.
+2. Las cifras de la t6 (punto 2) van a René antes de publicar el #284.
+3. La curva: la narración sí pone a los dos de oriente a poniente. Falta que la CR-V «se abrió e invadió el carril derecho» entre como ángulo, y no hay una fuente que dé el número: decisión de René.
