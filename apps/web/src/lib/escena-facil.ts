@@ -27,6 +27,7 @@ import {
   rumboDeg,
   usaRelieve,
   limiteDeLaVia,
+  limiteDelLugarNarrado,
   type Expediente,
   type LonLat,
   type TipoObjeto,
@@ -1363,20 +1364,49 @@ export function callesEn(calles: readonly Calle[], p: Punto): string[] {
 }
 
 /**
- * El límite de la vía del choque (ronda 4): la calle más cercana al punto, a menos de 25 m, con su
- * `maxspeed` o el de su tipo (LGMSV, art. 49 fr. III). null si no hay calle cerca.
+ * El límite de la vía por donde circulaba el vehículo (ronda 4; René, 2026-11-23: el árbol de
+ * «Paseo Tollocan» tomó una calle secundaria de 30 km/h que pasaba más cerca del choque). Entre las
+ * calles a menos de 40 m del punto: la que nombra el lugar narrado y va en el rumbo del vehículo en el
+ * impacto; si no, la que nombra el lugar (la que se nombra primero); si no, la que va en su rumbo (a
+ * menos de 25 m); si no, la más cercana a menos de 25 m. Con su `maxspeed` o el de su tipo (LGMSV,
+ * art. 49 fr. III). null si no hay calle cerca.
  */
 export function limiteEnElChoque(
   calles: readonly Calle[],
   p: Punto,
+  o: { rumbo?: number | null; lugar?: string | null } = {},
 ): { kmh: number; fuente: string } | null {
-  let mejor: { c: Calle; d: number } | null = null;
-  for (const c of calles) {
-    const d = sobreCalle(c, p).distancia;
-    if (d <= 25 && (!mejor || d < mejor.d)) mejor = { c, d };
-  }
+  const lugar = sinAcentos(o.lugar ?? "");
+  const cerca = calles
+    .map((c) => {
+      const s = sobreCalle(c, p);
+      const nucleo = c.nombre ? nombreComparable(c.nombre) : "";
+      const en = nucleo.length >= 4 ? lugar.indexOf(nucleo) : -1;
+      // Una vía no tiene sentido: 0° y 180° son la misma dirección.
+      const giro =
+        o.rumbo == null ? null : Math.abs(((((s.rumbo - o.rumbo) % 180) + 270) % 180) - 90);
+      return { c, d: s.distancia, en, alineada: giro !== null && giro <= 35 };
+    })
+    .filter((x) => x.d <= 40);
+  const porCercania = (xs: typeof cerca) => [...xs].sort((a, b) => a.d - b.d)[0];
+  const nombradas = cerca.filter((x) => x.en >= 0).sort((a, b) => a.en - b.en || a.d - b.d);
+  const mejor =
+    nombradas.find((x) => x.alineada) ??
+    nombradas[0] ??
+    porCercania(cerca.filter((x) => x.alineada && x.d <= 25)) ??
+    porCercania(cerca.filter((x) => x.d <= 25));
   if (!mejor) return null;
   const l = limiteDeLaVia(mejor.c.tipo, mejor.c.maxspeed);
+  // La vía que nombra la narración, sin límite publicado en el mapa: su clase la da el texto del lugar
+  // («Paseo Tollocan» es una avenida). El tipo de OpenStreetMap («secondary») no es la clase de la
+  // LGMSV: Tollocan salía como «calle secundaria» de 30 km/h (René, 2026-11-23).
+  const narrada =
+    mejor.en >= 0 && l?.fuente.startsWith("LGMSV") ? limiteDelLugarNarrado(o.lugar) : null;
+  if (narrada)
+    return {
+      kmh: narrada.kmh,
+      fuente: `${narrada.fuente.replace(/, mientras la vía no se ubica en el mapa$/, "")}; ${mejor.c.nombre}, sin límite publicado en el mapa`,
+    };
   return l && mejor.c.nombre ? { ...l, fuente: `${l.fuente}; ${mejor.c.nombre}` } : l;
 }
 

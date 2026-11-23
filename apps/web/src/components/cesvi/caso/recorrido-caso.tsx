@@ -736,10 +736,23 @@ export function RecorridoCaso({
     if (nuevo !== expediente) setExpediente(nuevo);
   }
   const puntoChoque = puntoDe(1);
+  // La vía por donde circulaba: la del lugar narrado y en el rumbo del primero del choque (René,
+  // 2026-11-23), no la calle más cercana al punto.
+  const primeroDelChoque = vehiculosDe(1)[0];
+  const rumboChoque = primeroDelChoque
+    ? (poseDe(primeroDelChoque, "impacto")?.rumbo ?? null)
+    : null;
+  const lugarNarrado = expediente?.caso?.lugar?.descripcion?.valor ?? null;
   const limiteChoque = useMemo(
-    () => (calles && puntoChoque ? limiteEnElChoque(callesDe(calles), puntoChoque) : null),
+    () =>
+      calles && puntoChoque
+        ? limiteEnElChoque(callesDe(calles), puntoChoque, {
+            rumbo: rumboChoque,
+            lugar: lugarNarrado,
+          })
+        : null,
     // eslint-disable-next-line react-hooks/exhaustive-deps -- el punto se compara por sus coordenadas
-    [calles, puntoChoque?.lat, puntoChoque?.lon],
+    [calles, puntoChoque?.lat, puntoChoque?.lon, rumboChoque, lugarNarrado],
   );
   if (expediente && limiteChoque) {
     const nuevo = conLimiteDeLaVia(expediente, limiteChoque);

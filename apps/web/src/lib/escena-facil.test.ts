@@ -14,6 +14,8 @@ import { describe, expect, it } from "vitest";
 import {
   ajustarACalle,
   callesDe,
+  limiteEnElChoque,
+  type Calle,
   callesEn,
   callesNarradas,
   cardinal,
@@ -446,5 +448,60 @@ describe("el aviso de calles (ronda 4, René)", () => {
   it("una sola vez por lugar en la sesión, y no si el perito lo cerró", () => {
     expect(avisarSinCalles({ ...base, yaVisto: true })).toBe(false);
     expect(avisarSinCalles({ ...base, descartado: true })).toBe(false);
+  });
+});
+
+describe("el límite de la vía por donde circulaba (René, 2026-11-23)", () => {
+  // Paseo Tollocan (oriente–poniente) pasa a 20 m del choque; una calle secundaria (norte–sur), a 6 m.
+  const ll = (este: number, norte: number): [number, number] => [
+    C.lon + este / (111320 * Math.cos((C.lat * Math.PI) / 180)),
+    C.lat + norte / 111320,
+  ];
+  const calles: Calle[] = [
+    {
+      id: 1,
+      nombre: "Paseo Tollocan",
+      puntos: [ll(-200, 20), ll(200, 20)],
+      ancho: 14,
+      nodos: [1, 2],
+      tipo: "primary",
+      maxspeed: "70",
+    },
+    {
+      id: 2,
+      nombre: "Calle Isidro Fabela",
+      puntos: [ll(6, -200), ll(6, 200)],
+      ancho: 7,
+      nodos: [3, 4],
+      tipo: "residential",
+    },
+  ];
+  const lugar = "Paseo Tollocan, a la altura de la calle Isidro Fabela";
+
+  it("la vía del lugar narrado y en el rumbo del vehículo, no la calle más cercana", () => {
+    expect(limiteEnElChoque(calles, C, { rumbo: 270, lugar })).toMatchObject({
+      kmh: 70,
+      fuente: expect.stringContaining("Paseo Tollocan"),
+    });
+  });
+
+  it("sin lugar narrado, la que va en su rumbo; sin nada, la más cercana (como antes)", () => {
+    expect(limiteEnElChoque(calles, C, { rumbo: 90 })!.fuente).toContain("Paseo Tollocan");
+    expect(limiteEnElChoque(calles, C)!.fuente).toContain("Isidro Fabela");
+  });
+
+  it("la vía narrada sin límite en el mapa toma la clase del lugar narrado, no la del tipo de OpenStreetMap", () => {
+    // Así está Tollocan en OpenStreetMap junto al árbol: «secondary» y sin maxspeed.
+    const sinLimite = calles.map((c) =>
+      c.id === 1 ? { ...c, tipo: "secondary", maxspeed: undefined } : c,
+    );
+    expect(limiteEnElChoque(sinLimite, C, { rumbo: 270, lugar })).toMatchObject({
+      kmh: 50,
+      fuente: expect.stringContaining("avenidas primarias"),
+    });
+  });
+
+  it("si el vehículo iba por la otra calle nombrada, esa", () => {
+    expect(limiteEnElChoque(calles, C, { rumbo: 0, lugar })!.fuente).toContain("Isidro Fabela");
   });
 });
