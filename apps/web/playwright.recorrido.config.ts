@@ -25,6 +25,8 @@ export default defineConfig({
     viewport: { width: 2560, height: 1440 },
     deviceScaleFactor: 2,
     reducedMotion: "reduce",
+    // Un clic que nunca llega (otro elemento encima) falla en 1 min, no al tope de la prueba.
+    actionTimeout: 60_000,
     launchOptions: {
       args: ["--use-angle=d3d11", "--ignore-gpu-blocklist", "--disable-infobars"],
       ignoreDefaultArgs: ["--enable-automation"],

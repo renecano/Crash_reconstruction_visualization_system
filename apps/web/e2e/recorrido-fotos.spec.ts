@@ -257,9 +257,12 @@ async function tomas3d(page: Page, f: ReturnType<typeof fotografo>, prefijo: str
   }
 }
 
-test.describe.configure({ mode: "serial" });
+// Cada prueba con su tope (René, 2026-11-22: la t6 se atoró 30 min en La escena y, en modo serial,
+// las otras tres no corrieron). Una que se atora ya no impide las demás.
+const TOPE_MIN = { arbol: 25, narraciones: 45, ejemplos: 45, axa: 25 } as const;
 
 test("publico · el recorrido completo con la narración del árbol", async ({ page }) => {
+  test.setTimeout(TOPE_MIN.arbol * 60_000);
   await preparar(page);
   const f = fotografo(page, "publico");
   // «Casos» trae la tarjeta del caso de AXA (real): en este juego se oculta, y así se anota.
@@ -283,19 +286,27 @@ test("publico · el recorrido completo con la narración del árbol", async ({ p
   await cerrarLaEscena(page);
   await quieta(page, 3000);
   await f.foto("04-la-escena-lista");
-  // Rotar al colocar: el vehículo seleccionado y su giro.
-  const elegir = page.locator('[data-testid^="elegir-coche-"]').first();
-  if (await elegir.isVisible().catch(() => false)) {
-    await elegir.click();
+  // Rotar al colocar: el vehículo seleccionado y su giro. Se elige en el mapa: en la escena nueva la
+  // lista tapa el panel «Corregir la escena», y el clic a su botón esperaba sin fin (la t6).
+  try {
+    await page.locator('[data-testid^="coche-"]').first().click({ timeout: 15_000 });
     const girar = page.getByTestId("sel-girar-der");
     if (await girar.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await girar.click();
+      await girar.click({ timeout: 15_000 });
       await page.waitForTimeout(1200);
       await f.foto("05-la-escena-rotar");
-      await page.getByTestId("sel-girar-izq").click();
+      await page.getByTestId("sel-girar-izq").click({ timeout: 15_000 });
     } else f.omitir("05-la-escena-rotar", "el vehículo seleccionado no ofrece girar");
-    await page.keyboard.press("Escape");
-  } else f.omitir("05-la-escena-rotar", "no apareció la selección del vehículo");
+  } catch (e) {
+    f.omitir(
+      "05-la-escena-rotar",
+      `no se pudo elegir el vehículo: ${(e as Error).message.split("\n")[0]}`,
+    );
+  }
+  const listo = page.getByTestId("sel-listo");
+  if (await listo.isVisible().catch(() => false)) await listo.click({ timeout: 15_000 });
+  // Girar y regresar pudo dejar algo por confirmar: la lista se cierra otra vez.
+  await cerrarLaEscena(page);
 
   await page.getByTestId("lista-ver-reconstruccion").click();
   await page.getByTestId("reconstruir").click();
@@ -328,7 +339,7 @@ test("publico · el recorrido completo con la narración del árbol", async ({ p
 });
 
 test("publico · el puente y las otras narraciones en el 3D", async ({ page }) => {
-  test.setTimeout(3_600_000);
+  test.setTimeout(TOPE_MIN.narraciones * 60_000);
   await preparar(page);
   const f = fotografo(page, "publico");
   for (const clave of ["puente", "poste", "subida", "bajada", "curva"]) {
@@ -354,7 +365,7 @@ test("publico · el puente y las otras narraciones en el 3D", async ({ page }) =
 });
 
 test("publico · los cinco ejemplos", async ({ page }) => {
-  test.setTimeout(3_600_000);
+  test.setTimeout(TOPE_MIN.ejemplos * 60_000);
   await preparar(page);
   // Los ejemplos se colocan con su receta en la escena de siempre (la de las e2e de los ejemplos).
   await page.addInitScript(() => {
@@ -392,6 +403,7 @@ test("publico · los cinco ejemplos", async ({ page }) => {
 });
 
 test("SOLO-CESVI · el recorrido con AXA", async ({ page }) => {
+  test.setTimeout(TOPE_MIN.axa * 60_000);
   await preparar(page);
   const f = fotografo(page, "solo-cesvi");
   await page.goto("/cesvi?calidad=alta");

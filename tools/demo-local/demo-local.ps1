@@ -38,7 +38,9 @@ param(
   [ValidateSet("", "comprobar", "fps-web", "arranque-3d", "video-3d", "narraciones", "tollocan", "ejemplos", "humo", "recorrido")][string]$Despues = "",
   [string]$Salida = "",
   [string]$Capturas = "",
-  [string]$Casos = ""
+  [string]$Casos = "",
+  # Con -Despues recorrido: solo las pruebas cuyo nombre lo lleva («publico», «SOLO-CESVI»).
+  [string]$Filtro = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -222,7 +224,8 @@ try {
       } elseif ($Despues -eq "recorrido") {
         # t6 (René, 2026-11-21): las fotos del recorrido, 2560×1440 con deviceScaleFactor 2.
         if ($Salida) { $env:CROQUIS_RECORRIDO = $Salida }
-        & pnpm --filter "@croquis/web" exec playwright test -c playwright.recorrido.config.ts
+        $grep = if ($Filtro) { @("--grep", $Filtro) } else { @() }
+        & pnpm --filter "@croquis/web" exec playwright test -c playwright.recorrido.config.ts @grep
       } elseif ($Despues -eq "ejemplos") {
         $env:CROQUIS_UNITY = "1"
         $env:CROQUIS_CAPTURAS = if ($Capturas) { $Capturas } else { "docs/cesvi/ronda-4/evidencia/t5-ejemplos" }
