@@ -17,8 +17,8 @@ Las pruebas y mediciones pesadas de Croquis no corren en la laptop de René. Est
 
    El primer comando guarda aparte los resultados que dejó la corrida anterior (ya están en GitHub; no se borran) para que `git pull` no se niegue. Desde esta versión, el doble clic hace eso solo cuando lo único que estorba son resultados, y se vuelve a lanzar con lo último.
 
-2. **Doble clic en `CORRER-TANDA-EN-RTX.bat`.** Se abre una ventana negra que dice qué paso va y cuánto lleva. No pregunta nada. No la cierres.
-3. **Cuando diga «Avísale a René que ya terminó», avísale.** Los resultados ya están en GitHub, en una rama `resultados/<tanda>-<fecha>` (nunca en `main`). Presiona una tecla para cerrar la ventana.
+2. **Doble clic en `CORRER-TANDA-EN-RTX.bat`.** Se abre una ventana negra que dice qué paso va y cuánto lleva. Si la tanda está repartida entre varios colaboradores, al inicio pregunta qué parte corres («1, 2 o todo», con lo que lleva cada una y cuánto tarda): escribe la que te dijo René. Después no pregunta nada más. No la cierres.
+3. **Cuando diga «Avísale a René que ya terminó», avísale.** Los resultados ya están en GitHub, en una rama `resultados/<tanda>-<fecha>-<equipo>` (nunca en `main`): cada computadora sube a la suya, con el nombre de la computadora, así que dos colaboradores pueden correr la misma tanda el mismo día sin pisarse. Presiona una tecla para cerrar la ventana.
 
 ## Qué hace sola y qué te toca a ti
 
@@ -52,7 +52,7 @@ Las pruebas y mediciones pesadas de Croquis no corren en la laptop de René. Est
 ## Si algo falla
 
 - **Si la comprobación falla,** se detiene ahí y lo dice en rojo, con el paso que falló: lo pesado no corre. Tómale una foto a la ventana y mándasela a René.
-- **Si falla un paso pesado,** lo dice, muestra sus últimas líneas en la ventana y sigue con el siguiente. Cada paso deja su registro en `resultados/<tanda>/<fecha>/` aunque falle al arrancar (con el comando, la carpeta y la hora), y queda en la misma rama para que René lo vea.
+- **Si falla un paso pesado,** lo dice, muestra sus últimas líneas en la ventana y sigue con el siguiente. Cada paso deja su registro en `resultados/<tanda>/<fecha>-<equipo>/` aunque falle al arrancar (con el comando, la carpeta y la hora), y queda en la misma rama para que René lo vea.
 - **Un paso «omitido» no es una falla:** necesita datos que no van en git (por ejemplo, los reportes crudos de CESVI) y se corre en la laptop de René.
 - **Si se cerró a la mitad,** vuelve a hacer doble clic: lo que ya terminó ya está en GitHub.
 - **Mientras corre,** no uses la computadora para otra cosa pesada.
@@ -64,3 +64,5 @@ Las pruebas y mediciones pesadas de Croquis no corren en la laptop de René. Est
 - **Un comando por paso** (sin `&&`): así cada uno deja su registro completo. Un paso con `requiere` en `tandas.json` se omite si falta esa carpeta.
 - **Probado en una ruta con espacios** (2026-11-15, `D:\croquis-wt\prueba con espacios\Croquis`, Windows PowerShell 5.1): un paso que falla a propósito deja su registro y sus últimas líneas en la ventana; el del título se omite por falta de `data/raw/cesvi`; `w8_comparar.mjs` escribe sus cuatro archivos dentro de esa ruta. En la corrida del 15 de noviembre, en la ruta `reto cesvi v4`, ese script partía las rutas en los espacios y solo llegó uno de los cuatro archivos.
 - Probado en la laptop (2026-11-15) simulando que falta pnpm: lo instaló con corepack en una carpeta aparte, pasó la comprobación y no tocó el pnpm que ya estaba. La instalación de Git y de Node con winget no se probó de verdad (aquí ya están): la simulación solo muestra lo que haría. El Node LTS que instala winget hoy es el 26, que ya no trae corepack: en una computadora sin Node, pnpm se instala con npm.
+- **Un .rar o .zip suelto en la carpeta** no estorba: al arrancar se mueve a la carpeta `Croquis-archivos-sueltos`, junto a la del repositorio, y la ventana dice a dónde.
+- **Si GitHub rechaza una subida,** se vuelve a intentar sobre lo último de la rama (hasta 4 veces) antes de dejarla anotada en `subida.log`.

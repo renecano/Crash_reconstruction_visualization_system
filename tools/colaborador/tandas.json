@@ -745,7 +745,7 @@
         },
         {
           "nombre": "antes-copia",
-          "comando": "powershell -NoProfile -Command \"if (Test-Path ../croquis-t6-antes) { git worktree remove --force ../croquis-t6-antes }; git worktree add --detach ../croquis-t6-antes 3257fa9f\"",
+          "comando": "powershell -NoProfile -Command \"if (Test-Path ../croquis-t6-antes) { git -c core.longpaths=true worktree remove --force ../croquis-t6-antes }; git worktree add --detach ../croquis-t6-antes 3257fa9f\"",
           "minutos": 1,
           "tope_min": 10
         },
@@ -810,12 +810,66 @@
         },
         {
           "nombre": "limpiar",
-          "comando": "git worktree remove --force ../croquis-t6-antes",
+          "comando": "powershell -NoProfile -Command \"git -c core.longpaths=true worktree remove --force ../croquis-t6-antes; if (Test-Path ../croquis-t6-antes) { $v = Join-Path $env:TEMP 'croquis-vacia'; New-Item -ItemType Directory -Force $v | Out-Null; robocopy $v ../croquis-t6-antes /MIR /NFL /NDL /NJH /NJS /NP | Out-Null; Remove-Item -Recurse -Force ../croquis-t6-antes }; git worktree prune; if (Test-Path ../croquis-t6-antes) { exit 1 }\"",
           "minutos": 1,
           "tope_min": 10
         }
       ],
       "commit": "30da33b8947f20e07e5e2b7316e70a37dedaf1a1"
+    },
+    "t7-fotos": {
+      "titulo": "Tanda 7 · Solo las fotos del recorrido (públicas y SOLO-CESVI)",
+      "rama": "feat/w-velocidad-contra-narracion",
+      "commit": "8f01f7debdf6dadee073dea44b96d4bc7c106b72",
+      "nota": "René, 2026-11-22: las fotos para el material promocional, sin nada más. Fijada al commit 8f01f7de: el #284 con las fotos que ya no se atoran en La escena (cada prueba con su tope; una atorada no impide las demás), «márcalo tú» por dónde venía, «Ir al impacto» y el aviso de velocidad contra la narración. Es el commit que se publica cuando René apruebe el #284; al publicarlo, esta tanda se fija al de producción. Repartida en dos partes: 1, las públicas (el árbol de punta a punta, el puente y las otras narraciones, los cinco ejemplos); 2, SOLO-CESVI (AXA), que no se sube: queda en recorrido-solo-cesvi.zip para mandárselo a René. Las dos corren primero el humo.",
+      "partes": [
+        {
+          "id": "1",
+          "titulo": "Fotos públicas: el árbol, las narraciones y los cinco ejemplos"
+        },
+        {
+          "id": "2",
+          "titulo": "Fotos SOLO-CESVI: el recorrido con AXA (zip local, no se sube)"
+        }
+      ],
+      "pasos": [
+        {
+          "nombre": "visor",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 2,
+          "tope_min": 15
+        },
+        {
+          "nombre": "preparar",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar",
+          "minutos": 8,
+          "tope_min": 15
+        },
+        {
+          "nombre": "humo",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues humo",
+          "minutos": 6,
+          "tope_min": 8,
+          "detiene_si_falla": true,
+          "salidas": ["eval/results/humo/", "apps/web/test-results/"]
+        },
+        {
+          "nombre": "fotos-publico",
+          "parte": "1",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues recorrido -Salida recorrido -Filtro publico",
+          "minutos": 90,
+          "tope_min": 130,
+          "salidas": ["recorrido/publico/"]
+        },
+        {
+          "nombre": "fotos-solo-cesvi",
+          "parte": "2",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues recorrido -Salida recorrido -Filtro SOLO-CESVI",
+          "minutos": 20,
+          "tope_min": 35,
+          "privadas": ["recorrido/solo-cesvi"]
+        }
+      ]
     }
   }
 }
