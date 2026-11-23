@@ -1,0 +1,38 @@
+{
+  "tanda": "prueba",
+  "titulo": "Tanda 7 · Solo las fotos del recorrido (públicas y SOLO-CESVI)",
+  "equipo_nombre": "beto-pro",
+  "gpu": "(sin dato fuera de Windows)",
+  "parte": "todo",
+  "fecha": "2026-11-23",
+  "commit": "26e78eca5ffa4bc46336c8495bbc278725fffaf6",
+  "rama_del_repositorio": "HEAD",
+  "archivos_con_cambios": 0,
+  "duracion_min": 0.1,
+  "equipo": {
+    "tarjetas_de_video": [
+      "(sin dato fuera de Windows)"
+    ],
+    "sistema": "Darwin 27.2.0 Darwin Kernel Version 27.2.0: Wed Oct 14 23:46:57 PDT 2026; root:xnu-13432.41.4~25/RELEASE_ARM64_T8103",
+    "git": "git version 2.54.0 (Apple Git-157)",
+    "node": "v24.21.0",
+    "pnpm": "12.11.2",
+    "instalado_en_esta_corrida": []
+  },
+  "pasos": [
+    {
+      "grupo": "comprobacion",
+      "paso": "dependencias",
+      "estado": "ok",
+      "minutos": 0.0,
+      "codigo": 0
+    },
+    {
+      "grupo": "comprobacion",
+      "paso": "solver-en-reversa",
+      "estado": "ok",
+      "minutos": 0.0,
+      "codigo": 0
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+# Paso: solver-en-reversa
+# Comando: pnpm --filter @croquis/cesvi exec vitest run src/reversa.test.ts
+# Carpeta: /private/tmp/claude-501/-Users-tungas-Desktop-Escuela-croquis/e98115fb-c030-48e1-8a82-cff0dd5e436c/scratchpad/final2/colaborador
+# Inicio: 2026-11-23 11:43:14
+
+
+ RUN  v5.0.3 /private/tmp/claude-501/-Users-tungas-Desktop-Escuela-croquis/e98115fb-c030-48e1-8a82-cff0dd5e436c/scratchpad/final2/colaborador/packages/cesvi
+
+
+ Test Files  1 passed (1)
+      Tests  19 passed (19)
+   Start at  11:43:15
+   Duration  1.02s (transform 60%, import 23%, tests 17%)
+
+
+# Fin: 2026-11-23 11:43:16 · ok · 0 min
