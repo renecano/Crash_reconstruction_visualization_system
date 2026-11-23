@@ -24,6 +24,14 @@
     -Tanda NOMBRE        corre esa tanda en vez de la vigente
     -Prueba              solo la comprobación del mecanismo
     -SinSubir            no hace commit ni push (los resultados quedan en la carpeta)
+    -Parte N             de una tanda repartida («partes» en tandas.json), solo esa parte (o «todo»);
+                         sin la opción, la ventana pregunta
+
+  Varios colaboradores a la vez (René, 2026-11-22): cada computadora sube a su propia rama y carpeta,
+  resultados/<tanda>-<fecha>-<equipo> y resultados/<tanda>/<fecha>-<equipo>, con un nombre corto y
+  estable del equipo (el nombre de la computadora; CROQUIS_EQUIPO lo cambia, para probar). Si GitHub
+  rechaza un push, se reintenta sobre lo último de la rama. `node tools/colaborador/revisar.mjs`
+  junta las ramas de todos los equipos de una tanda.
 
   Lo privado (René, 2026-11-21: el repositorio es público): nada cuya ruta nombre a AXA o al juego
   «solo-cesvi» se sube, aunque esté en las salidas de un paso. Las carpetas `privadas` de un paso se
@@ -43,6 +51,7 @@ param(
   [string]$SimularFalta = "",
   [string]$Solo = "",
   [switch]$EnSuRama,
+  [string]$Parte = "",
   # Lo pone el propio script al volver a lanzarse después de traer lo último de main.
   [switch]$YaAlDia
 )
@@ -99,6 +108,16 @@ function AlaVista([string]$programa, [string[]]$argumentos) {
 
 function Minutos([TimeSpan]$t) { return [math]::Round($t.TotalMinutes, 1) }
 
+# PowerShell 5.1 (el de Windows) no trae $IsWindows; con pwsh en otra máquina se puede probar.
+$EnWindows = ($PSVersionTable.PSEdition -eq "Desktop") -or $IsWindows
+# Para volver a lanzarse: el mismo PowerShell que corre esto (powershell.exe o pwsh).
+$EstePowerShell = (Get-Process -Id $PID).Path
+# El equipo, en minúsculas y sin espacios: la rama y la carpeta de resultados lo llevan.
+$NombreEquipo = if ($env:CROQUIS_EQUIPO) { $env:CROQUIS_EQUIPO } elseif ($env:COMPUTERNAME) { $env:COMPUTERNAME } else { [Environment]::MachineName }
+$NombreEquipo = (($NombreEquipo.ToLower() -replace '[^a-z0-9]+', '-').Trim('-'))
+if ($NombreEquipo.Length -gt 24) { $NombreEquipo = $NombreEquipo.Substring(0, 24).Trim('-') }
+if (-not $NombreEquipo) { $NombreEquipo = "equipo" }
+
 # --- Primero: en main y al día (René, 2026-11-20) ----------------------------------------------------
 # Antes de leer tandas.json. Una tanda cortada (Ctrl+C, la ventana cerrada) pudo dejar la copia en la
 # rama o el commit de esa tanda, y leer su tandas.json vuelve a correr la tanda vieja. Así que: si la
@@ -145,7 +164,33 @@ function ResultadosEnStash([string]$porQue) {
   return $true
 }
 
+# Un .rar o .zip que el colaborador dejó en la carpeta (René, 2026-11-22) no es de la tanda y no debe
+# frenar la actualización: se mueve junto al repositorio, a «Croquis-archivos-sueltos», y se avisa.
+function ApartarArchivosSueltos {
+  $estado = SalidaDe "git" @("-C", $Repo, "status", "--porcelain", "--untracked-files=all")
+  if (-not $estado) { return }
+  $sueltos = @($estado -split "`r?`n" | Where-Object { $_ -match '^\?\? ' } | ForEach-Object { $_.Substring(3).Trim('"') } |
+      Where-Object { $_ -match '(?i)\.(rar|zip|7z)$' -and -not (EsResultado $_) })
+  if ($sueltos.Count -eq 0) { return }
+  $destino = Join-Path (Split-Path $Repo -Parent) "Croquis-archivos-sueltos"
+  New-Item -ItemType Directory -Force $destino | Out-Null
+  foreach ($s in $sueltos) {
+    $origen = Join-Path $Repo $s
+    $final = Join-Path $destino (Split-Path $s -Leaf)
+    if (Test-Path -LiteralPath $final) { $final = Join-Path $destino ("{0}-{1}" -f (Get-Date -Format "yyyyMMdd-HHmmss"), (Split-Path $s -Leaf)) }
+    try {
+      Move-Item -LiteralPath $origen -Destination $final -ErrorAction Stop
+      [void]$Avisos.Add("Moví «$s» fuera del repositorio, a $final (no es de la tanda; ahí sigue).")
+    } catch {
+      [void]$Avisos.Add("No pude mover «$s» fuera del repositorio: $($_.Exception.Message)")
+    }
+  }
+}
+
 if (-not $EnSuRama -and -not $YaAlDia -and (Get-Command git -ErrorAction SilentlyContinue)) {
+  # Rutas de más de 260 caracteres en Windows (René, 2026-11-22: «limpiar» de la t6 no pudo borrar).
+  if ($EnWindows) { [void](Nativo "git" @("-C", $Repo, "config", "core.longpaths", "true")) }
+  ApartarArchivosSueltos
   $antes = SalidaDe "git" @("-C", $Repo, "rev-parse", "HEAD")
   $ramaAlArrancar = SalidaDe "git" @("-C", $Repo, "rev-parse", "--abbrev-ref", "HEAD")
   if ($ramaAlArrancar -and $ramaAlArrancar -ne "main") {
@@ -180,7 +225,8 @@ if (-not $EnSuRama -and -not $YaAlDia -and (Get-Command git -ErrorAction Silentl
     if ($Lista) { $argumentos += "-Lista" }
     if ($Solo) { $argumentos += @("-Solo", $Solo) }
     if ($SimularFalta) { $argumentos += @("-SimularFalta", $SimularFalta) }
-    & powershell.exe @argumentos
+    if ($Parte) { $argumentos += @("-Parte", $Parte) }
+    & $EstePowerShell @argumentos
     exit $LASTEXITCODE
   }
 }
@@ -203,7 +249,7 @@ if ($Lista) {
     Escribir "$($t.Name): $($t.Value.titulo)" "White"
     if ($t.Value.rama) { Escribir "  (en la rama $($t.Value.rama))" }
     if (@($t.Value.pasos).Count -eq 0) { Escribir "  (sin pasos pesados)" }
-    foreach ($p in @($t.Value.pasos)) { Escribir "  - $($p.nombre) (~$($p.minutos) min): $($p.comando)" }
+    foreach ($p in @($t.Value.pasos)) { Escribir "  - $($p.nombre) (~$($p.minutos) min)$(if ($p.parte) { " [parte $($p.parte)]" }): $($p.comando)" }
   }
   exit 0
 }
@@ -216,6 +262,35 @@ if (-not $Definicion) {
 if ($Tanda -notmatch '^[a-z0-9-]+$') {
   Escribir "El nombre de la tanda solo lleva minúsculas, números y guiones." "Red"
   exit 2
+}
+
+# --- Una tanda repartida entre varios colaboradores (René, 2026-11-22) -------------------------------
+# `partes` en tandas.json: cada paso con `parte` va solo en esa parte; los que no la llevan (el visor,
+# preparar, el humo) van en todas. Sin -Parte, la ventana pregunta cuál correr.
+$Partes = @($Definicion.partes | Where-Object { $_ })
+function PasosDeLaParte([string]$id) {
+  return @(@($Definicion.pasos) | Where-Object { -not $_.parte -or [string]$_.parte -eq $id -or $id -eq "todo" })
+}
+if ($Partes.Count -gt 0 -and -not $Prueba) {
+  $ids = @($Partes | ForEach-Object { [string]$_.id })
+  if (-not $Parte) {
+    Escribir ""
+    Escribir "Esta tanda está repartida. ¿Qué parte corres en esta computadora?" "White"
+    foreach ($x in $Partes) {
+      $min = (PasosDeLaParte ([string]$x.id) | Measure-Object -Property minutos -Sum).Sum
+      Escribir ("  {0}  {1} (unos {2} min)" -f $x.id, $x.titulo, $min) "White"
+    }
+    $min = (PasosDeLaParte "todo" | Measure-Object -Property minutos -Sum).Sum
+    Escribir ("  todo  todas las partes (unos {0} min)" -f $min) "White"
+    for ($k = 0; $k -lt 5 -and -not $Parte; $k++) {
+      $r = ([string](Read-Host "Escribe $($ids -join ', ') o todo")).Trim().ToLower()
+      if ($ids -contains $r -or $r -eq "todo") { $Parte = $r } else { Escribir "No entendí «$r»." "Yellow" }
+    }
+    if (-not $Parte) { Escribir "Sin parte elegida, no corro nada." "Red"; exit 2 }
+  } elseif (-not ($ids -contains $Parte) -and $Parte -ne "todo") {
+    Escribir "La tanda «$Tanda» no tiene la parte «$Parte». Las que tiene: $($ids -join ', ') o todo." "Red"
+    exit 2
+  }
 }
 
 
@@ -421,7 +496,10 @@ if (-not $ramaActual) {
   exit 1
 }
 $ramaDeLaTanda = [string]$Definicion.rama
-if ($ramaDeLaTanda -and -not $EnSuRama -and $ramaActual -ne $ramaDeLaTanda) {
+$commitFijado = [string]$Definicion.commit
+$enElCommit = $commitFijado -and ((SalidaDe "git" @("-C", $Repo, "rev-parse", "HEAD")) -eq $commitFijado)
+if (-not $EnSuRama -and (($ramaDeLaTanda -and $ramaActual -ne $ramaDeLaTanda) -or ($commitFijado -and -not $enElCommit))) {
+  if (-not $ramaDeLaTanda) { $ramaDeLaTanda = "main" }
   $sucio = SalidaDe "git" @("-C", $Repo, "status", "--porcelain", "--untracked-files=no")
   if ($sucio) {
     Escribir ""
@@ -463,15 +541,18 @@ if ($ramaDeLaTanda -and -not $EnSuRama -and $ramaActual -ne $ramaDeLaTanda) {
   New-Item -ItemType Directory -Force $deMain | Out-Null
   Copy-Item -Force $PSCommandPath (Join-Path $deMain "tanda.ps1")
   Copy-Item -Force (Join-Path $PSScriptRoot "tandas.json") (Join-Path $deMain "tandas.json")
-  if ((Nativo "git" @("-C", $Repo, "checkout", "-B", $ramaDeLaTanda, $destino)) -ne 0) {
-    Escribir "No se pudo cambiar a la rama $ramaDeLaTanda." "Red"
+  # Fijada a un commit, se trabaja con él suelto: una rama como main nunca se mueve a ese commit.
+  $cambio = if ($commitDeLaTanda) { @("-C", $Repo, "checkout", "-q", "--detach", $destino) } else { @("-C", $Repo, "checkout", "-B", $ramaDeLaTanda, $destino) }
+  if ((Nativo "git" $cambio) -ne 0) {
+    Escribir "No se pudo cambiar a $(if ($commitDeLaTanda) { "el commit $commitDeLaTanda" } else { "la rama $ramaDeLaTanda" })." "Red"
     exit 1
   }
   $env:CROQUIS_TANDA_REPO = $Repo
   $argumentos = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", (Join-Path $deMain "tanda.ps1"), "-Tanda", $Tanda, "-EnSuRama")
   if ($Prueba) { $argumentos += "-Prueba" }
   if ($SinSubir) { $argumentos += "-SinSubir" }
-  & powershell.exe @argumentos
+  if ($Parte) { $argumentos += @("-Parte", $Parte) }
+  & $EstePowerShell @argumentos
   $codigo = $LASTEXITCODE
   Remove-Item Env:\CROQUIS_TANDA_REPO -ErrorAction SilentlyContinue
   } finally {
@@ -488,8 +569,8 @@ if ($ramaDeLaTanda -and -not $EnSuRama -and $ramaActual -ne $ramaDeLaTanda) {
 $Fecha = Get-Date -Format "yyyy-MM-dd"
 $Etiqueta = $Tanda
 if ($Prueba) { $Etiqueta = "prueba" }
-$Rama = "resultados/$Etiqueta-$Fecha"
-$Relativa = "resultados/$Etiqueta/$Fecha"
+$Rama = "resultados/$Etiqueta-$Fecha-$NombreEquipo"
+$Relativa = "resultados/$Etiqueta/$Fecha-$NombreEquipo"
 $Salida = Join-Path $Repo $Relativa
 New-Item -ItemType Directory -Force $Salida | Out-Null
 $Inicio = Get-Date
@@ -497,6 +578,17 @@ $Pasos = New-Object System.Collections.ArrayList
 
 # --- El equipo ---------------------------------------------------------------------------------------
 function DatosDelEquipo {
+  if (-not $EnWindows) {
+    # Fuera de Windows (solo para probar el mecanismo): lo que se sabe sin CIM.
+    return [ordered]@{
+      tarjetas_de_video = @("(sin dato fuera de Windows)")
+      sistema           = [Runtime.InteropServices.RuntimeInformation]::OSDescription
+      git               = SalidaDe "git" @("--version")
+      node              = SalidaDe "node" @("--version")
+      pnpm              = SalidaDe "pnpm" @("--version")
+      instalado_en_esta_corrida = $Instaladas
+    }
+  }
   $so = Get-CimInstance Win32_OperatingSystem
   $cpu = Get-CimInstance Win32_Processor | Select-Object -First 1
   $unidad = (Get-Item $Repo).PSDrive.Name
@@ -544,6 +636,9 @@ function DatosDeLaCorrida {
   return [ordered]@{
     tanda                    = $Etiqueta
     titulo                   = $Definicion.titulo
+    equipo_nombre            = $NombreEquipo
+    gpu                      = (@($Equipo.tarjetas_de_video) -join " + ")
+    parte                    = $(if ($Parte) { $Parte } else { "todo" })
     fecha                    = $Fecha
     commit                   = SalidaDe "git" @("-C", $Repo, "rev-parse", "HEAD")
     rama_del_repositorio     = SalidaDe "git" @("-C", $Repo, "rev-parse", "--abbrev-ref", "HEAD")
@@ -563,76 +658,89 @@ function Subir([string]$motivo, [string[]]$salidas) {
   if ($SinSubir) { return $true }
   if ($Rama -eq "main" -or $Rama -notmatch '^resultados/') { throw "La rama de resultados no puede ser main." }
   try {
-    $remota = SalidaDe "git" @("-C", $Repo, "ls-remote", "origin", "refs/heads/$Rama")
-    $padre = $null
-    if ($remota) {
-      $padre = ($remota -split "\s+")[0]
-      if ((Nativo "git" @("-C", $Repo, "cat-file", "-e", "$padre^{commit}")) -ne 0) {
-        if ((Nativo "git" @("-C", $Repo, "fetch", "origin", "refs/heads/$Rama")) -ne 0) { throw "No se pudo traer la rama $Rama." }
+    $Intentos = 4
+    $subido = $false
+    for ($intento = 1; $intento -le $Intentos -and -not $subido; $intento++) {
+      if ($intento -gt 1) {
+        Start-Sleep -Seconds (2 * $intento)
+        [void](Nativo "git" @("-C", $Repo, "fetch", "-q", "origin", "refs/heads/$Rama"))
       }
-    } else {
-      $padre = SalidaDe "git" @("-C", $Repo, "rev-parse", "HEAD")
-    }
-    $quien = @()
-    if (-not (SalidaDe "git" @("-C", $Repo, "config", "user.name"))) { $quien += @("-c", "user.name=Computadora del colaborador") }
-    if (-not (SalidaDe "git" @("-C", $Repo, "config", "user.email"))) { $quien += @("-c", "user.email=colaborador@croquis.invalid") }
-    $indice = Join-Path $env:TEMP "croquis-indice-$Etiqueta-$Fecha"
-    $env:GIT_INDEX_FILE = $indice
-    try {
-      if ((Nativo "git" @("-C", $Repo, "read-tree", $padre)) -ne 0) { throw "No se pudo leer el commit $padre." }
-      $rutas = @($Relativa) + @($salidas | Where-Object { $_ -and (Test-Path (Join-Path $Repo $_)) })
-      # GitHub rechaza el push entero si un archivo pasa de 100 MB (René, 2026-11-20: el humo de la
-      # t5b no subió nada, ni su consola). Los de más de 90 MB se quedan aquí, en la lista
-      # no-subidos.txt, y todo lo demás sube.
-      $grandes = @()
-      foreach ($r in $rutas) {
-        $ruta = Join-Path $Repo $r
-        if (Test-Path $ruta -PathType Container) {
-          $grandes += @(Get-ChildItem -LiteralPath $ruta -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.Length -gt 90MB })
-        } elseif ((Get-Item -LiteralPath $ruta).Length -gt 90MB) {
-          $grandes += @(Get-Item -LiteralPath $ruta)
+      $remota = SalidaDe "git" @("-C", $Repo, "ls-remote", "origin", "refs/heads/$Rama")
+      $padre = $null
+      if ($remota) {
+        $padre = ($remota -split "\s+")[0]
+        if ((Nativo "git" @("-C", $Repo, "cat-file", "-e", "$padre^{commit}")) -ne 0) {
+          if ((Nativo "git" @("-C", $Repo, "fetch", "origin", "refs/heads/$Rama")) -ne 0) { throw "No se pudo traer la rama $Rama." }
         }
+      } else {
+        $padre = SalidaDe "git" @("-C", $Repo, "rev-parse", "HEAD")
       }
-      if ($grandes.Count -gt 0) {
-        $lista = @($grandes | ForEach-Object { "{0} ({1} MB): no se sube, GitHub no acepta archivos de más de 100 MB" -f $_.FullName.Substring($Repo.Length + 1), [math]::Round($_.Length / 1MB) })
-        AgregarAlRegistro (Join-Path $Salida "no-subidos.txt") $lista
+      $quien = @()
+      if (-not (SalidaDe "git" @("-C", $Repo, "config", "user.name"))) { $quien += @("-c", "user.name=Computadora del colaborador") }
+      if (-not (SalidaDe "git" @("-C", $Repo, "config", "user.email"))) { $quien += @("-c", "user.email=colaborador@croquis.invalid") }
+      $indice = Join-Path ([IO.Path]::GetTempPath()) "croquis-indice-$Etiqueta-$Fecha-$NombreEquipo-$PID"
+      $env:GIT_INDEX_FILE = $indice
+      try {
+        if ((Nativo "git" @("-C", $Repo, "read-tree", $padre)) -ne 0) { throw "No se pudo leer el commit $padre." }
+        $rutas = @($Relativa) + @($salidas | Where-Object { $_ -and (Test-Path (Join-Path $Repo $_)) })
+        # GitHub rechaza el push entero si un archivo pasa de 100 MB (René, 2026-11-20: el humo de la
+        # t5b no subió nada, ni su consola). Los de más de 90 MB se quedan aquí, en la lista
+        # no-subidos.txt, y todo lo demás sube.
+        $grandes = @()
+        foreach ($r in $rutas) {
+          $ruta = Join-Path $Repo $r
+          if (Test-Path $ruta -PathType Container) {
+            $grandes += @(Get-ChildItem -LiteralPath $ruta -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.Length -gt 90MB })
+          } elseif ((Get-Item -LiteralPath $ruta).Length -gt 90MB) {
+            $grandes += @(Get-Item -LiteralPath $ruta)
+          }
+        }
+        if ($grandes.Count -gt 0) {
+          $lista = @($grandes | ForEach-Object { "{0} ({1} MB): no se sube, GitHub no acepta archivos de más de 100 MB" -f $_.FullName.Substring($Repo.Length + 1), [math]::Round($_.Length / 1MB) })
+          AgregarAlRegistro (Join-Path $Salida "no-subidos.txt") $lista
+        }
+        foreach ($r in $rutas) {
+          if ((Nativo "git" @("-C", $Repo, "add", "-f", "--", $r)) -ne 0) { throw "No se pudo agregar $r." }
+        }
+        foreach ($g in $grandes) {
+          [void](Nativo "git" @("-C", $Repo, "rm", "--cached", "-q", "--", $g.FullName.Substring($Repo.Length + 1)))
+        }
+        # Lo privado (AXA, «solo-cesvi» y sus zips) se saca del commit: se queda en esta computadora.
+        $privados = @()
+        foreach ($r in $rutas) {
+          $ruta = Join-Path $Repo $r
+          $archivos = @()
+          if (Test-Path $ruta -PathType Container) { $archivos = @(Get-ChildItem -LiteralPath $ruta -Recurse -File -ErrorAction SilentlyContinue) }
+          elseif (Test-Path $ruta) { $archivos = @(Get-Item -LiteralPath $ruta) }
+          $privados += @($archivos | Where-Object {
+              $_.FullName.Substring($Repo.Length + 1).Replace("\", "/") -match $PatronPrivado -or $ZipsPrivados.Contains($_.FullName)
+            })
+        }
+        foreach ($x in $privados) {
+          [void](Nativo "git" @("-C", $Repo, "rm", "--cached", "-q", "--ignore-unmatch", "--", $x.FullName.Substring($Repo.Length + 1)))
+        }
+        if ($privados.Count -gt 0) {
+          AgregarAlRegistro (Join-Path $Salida "subida.log") @("$(Get-Date -Format 'HH:mm:ss') · $motivo · $($privados.Count) archivo(s) privado(s) (AXA o solo-cesvi): se quedaron en esta computadora, sin subir")
+        }
+        $arbol = SalidaDe "git" @("-C", $Repo, "write-tree")
+        $arbolPadre = SalidaDe "git" @("-C", $Repo, "rev-parse", "$padre^{tree}")
+        if ($arbol -eq $arbolPadre) { Escribir "   Nada nuevo que subir ($motivo)."; return $true }
+        $commit = SalidaDe "git" (@("-C", $Repo) + $quien + @("commit-tree", $arbol, "-p", $padre, "-m", "results: $Etiqueta $Fecha $NombreEquipo ($motivo)"))
+        if (-not $commit) { throw "No se pudo hacer el commit." }
+        # Aquí Git puede abrir el navegador para iniciar sesión en GitHub (Git Credential Manager).
+        $previo = $ErrorActionPreference
+        $ErrorActionPreference = "Continue"
+        try { & git -C $Repo push origin "$($commit):refs/heads/$Rama" 2>&1 | Out-Null; $codigo = $LASTEXITCODE } finally { $ErrorActionPreference = $previo }
+        if ($codigo -eq 0) { $subido = $true }
+        elseif ($intento -lt $Intentos) {
+          # Rechazado (otra corrida subió a la misma rama, o la red): se rearma sobre lo último.
+          AgregarAlRegistro (Join-Path $Salida "subida.log") @("$(Get-Date -Format 'HH:mm:ss') · $motivo · GitHub rechazó el push (intento $intento de $Intentos): reintento sobre lo último de la rama")
+        }
+        else { throw "No se pudo subir a GitHub (¿iniciaste sesión cuando se abrió el navegador? ¿tienes permiso de escritura en el repositorio?)." }
+      } finally {
+        Remove-Item Env:\GIT_INDEX_FILE -ErrorAction SilentlyContinue
+        Remove-Item -Force $indice -ErrorAction SilentlyContinue
       }
-      foreach ($r in $rutas) {
-        if ((Nativo "git" @("-C", $Repo, "add", "-f", "--", $r)) -ne 0) { throw "No se pudo agregar $r." }
-      }
-      foreach ($g in $grandes) {
-        [void](Nativo "git" @("-C", $Repo, "rm", "--cached", "-q", "--", $g.FullName.Substring($Repo.Length + 1)))
-      }
-      # Lo privado (AXA, «solo-cesvi» y sus zips) se saca del commit: se queda en esta computadora.
-      $privados = @()
-      foreach ($r in $rutas) {
-        $ruta = Join-Path $Repo $r
-        $archivos = @()
-        if (Test-Path $ruta -PathType Container) { $archivos = @(Get-ChildItem -LiteralPath $ruta -Recurse -File -ErrorAction SilentlyContinue) }
-        elseif (Test-Path $ruta) { $archivos = @(Get-Item -LiteralPath $ruta) }
-        $privados += @($archivos | Where-Object {
-            $_.FullName.Substring($Repo.Length + 1).Replace("\", "/") -match $PatronPrivado -or $ZipsPrivados.Contains($_.FullName)
-          })
-      }
-      foreach ($x in $privados) {
-        [void](Nativo "git" @("-C", $Repo, "rm", "--cached", "-q", "--ignore-unmatch", "--", $x.FullName.Substring($Repo.Length + 1)))
-      }
-      if ($privados.Count -gt 0) {
-        AgregarAlRegistro (Join-Path $Salida "subida.log") @("$(Get-Date -Format 'HH:mm:ss') · $motivo · $($privados.Count) archivo(s) privado(s) (AXA o solo-cesvi): se quedaron en esta computadora, sin subir")
-      }
-      $arbol = SalidaDe "git" @("-C", $Repo, "write-tree")
-      $arbolPadre = SalidaDe "git" @("-C", $Repo, "rev-parse", "$padre^{tree}")
-      if ($arbol -eq $arbolPadre) { Escribir "   Nada nuevo que subir ($motivo)."; return $true }
-      $commit = SalidaDe "git" (@("-C", $Repo) + $quien + @("commit-tree", $arbol, "-p", $padre, "-m", "results: $Etiqueta $Fecha ($motivo)"))
-      if (-not $commit) { throw "No se pudo hacer el commit." }
-      # Aquí Git puede abrir el navegador para iniciar sesión en GitHub (Git Credential Manager).
-      $previo = $ErrorActionPreference
-      $ErrorActionPreference = "Continue"
-      try { & git -C $Repo push origin "$($commit):refs/heads/$Rama" 2>&1 | Out-Null; $codigo = $LASTEXITCODE } finally { $ErrorActionPreference = $previo }
-      if ($codigo -ne 0) { throw "No se pudo subir a GitHub (¿iniciaste sesión cuando se abrió el navegador? ¿tienes permiso de escritura en el repositorio?)." }
-    } finally {
-      Remove-Item Env:\GIT_INDEX_FILE -ErrorAction SilentlyContinue
-      Remove-Item -Force $indice -ErrorAction SilentlyContinue
     }
     Escribir "   Subido a la rama $Rama ($motivo)." "Green"
     return $true
@@ -735,26 +843,34 @@ function CorrerPaso([string]$grupo, [int]$numero, [int]$total, $paso) {
   } else {
     try {
       New-Item -ItemType Directory -Force $CarpetaCmd | Out-Null
-      $archivoCmd = Join-Path $CarpetaCmd ("{0}-{1:D2}-{2}.cmd" -f $grupo, $numero, $nombre)
-      # chcp primero: el resto del .cmd (rutas con acentos) se lee como UTF-8.
-      [IO.File]::WriteAllText($archivoCmd, (@(
-            "@echo off",
-            "chcp 65001 >nul",
-            "cd /d `"$Repo`"",
-            "$comando >> `"$registro`" 2>&1",
-            "exit /b %ERRORLEVEL%"
-          ) -join "`r`n") + "`r`n", $Utf8SinBom)
       $psi = New-Object Diagnostics.ProcessStartInfo
-      $psi.FileName = $env:ComSpec
-      # /s con comillas dobles alrededor: cmd quita las de afuera y deja la ruta entre comillas.
-      $psi.Arguments = "/d /s /c `"`"$archivoCmd`"`""
+      if ($EnWindows) {
+        $archivoCmd = Join-Path $CarpetaCmd ("{0}-{1}-{2:D2}-{3}.cmd" -f $NombreEquipo, $grupo, $numero, $nombre)
+        # chcp primero: el resto del .cmd (rutas con acentos) se lee como UTF-8.
+        [IO.File]::WriteAllText($archivoCmd, (@(
+              "@echo off",
+              "chcp 65001 >nul",
+              "cd /d `"$Repo`"",
+              "$comando >> `"$registro`" 2>&1",
+              "exit /b %ERRORLEVEL%"
+            ) -join "`r`n") + "`r`n", $Utf8SinBom)
+        $psi.FileName = $env:ComSpec
+        # /s con comillas dobles alrededor: cmd quita las de afuera y deja la ruta entre comillas.
+        $psi.Arguments = "/d /s /c `"`"$archivoCmd`"`""
+      } else {
+        # Solo para probar el mecanismo fuera de Windows (pwsh): el mismo paso con sh.
+        $archivoCmd = Join-Path $CarpetaCmd ("{0}-{1}-{2:D2}-{3}.sh" -f $NombreEquipo, $grupo, $numero, $nombre)
+        [IO.File]::WriteAllText($archivoCmd, "cd `"$Repo`" && $comando >> `"$registro`" 2>&1`n", $Utf8SinBom)
+        $psi.FileName = "/bin/sh"
+        $psi.Arguments = "`"$archivoCmd`""
+      }
       $psi.WorkingDirectory = $Repo
       $psi.UseShellExecute = $false
       $proceso = [Diagnostics.Process]::Start($psi)
       while (-not $proceso.WaitForExit(30000)) {
         $lleva = (Get-Date) - $t0
         if ($lleva.TotalMinutes -gt $tope) {
-          & taskkill.exe /PID $proceso.Id /T /F 2>$null | Out-Null
+          if ($EnWindows) { & taskkill.exe /PID $proceso.Id /T /F 2>$null | Out-Null } else { $proceso.Kill($true) }
           # Primero que se cierre todo el árbol del paso; después se escribe la nota.
           try { [void]$proceso.WaitForExit(15000) } catch { }
           $estado = "detenido por pasar de $tope min"
@@ -816,6 +932,7 @@ function GuardarPrivado([string]$ruta) {
 # --- La corrida --------------------------------------------------------------------------------------
 $Comprobacion = @($Config.comprobacion.pasos)
 $Pesados = @($Definicion.pasos)
+if ($Parte -and $Parte -ne "todo") { $Pesados = @(PasosDeLaParte $Parte) }
 if ($Solo) {
   $pedidos = @($Solo -split "," | ForEach-Object { $_.Trim() } | Where-Object { $_ })
   $Pesados = @($Pesados | Where-Object { $pedidos -contains [string]$_.nombre })
@@ -826,6 +943,7 @@ foreach ($p in ($Comprobacion + $Pesados)) { $estimadoTotal += [double]$p.minuto
 
 Escribir ""
 Escribir "Croquis · $($Definicion.titulo) — $Fecha ($(Get-Date -Format 'HH:mm'))" "White"
+Escribir "Equipo «$NombreEquipo»$(if ($Parte) { ", parte $Parte" }): sube a la rama $Rama."
 Escribir "Una sola corrida: la comprobación del mecanismo y, si pasa, lo pesado. Unos $estimadoTotal minutos en total."
 Escribir "Resultados en: $Salida"
 Escribir "No cierres esta ventana. No pide llaves ni contraseñas; si Git abre el navegador, inicia sesión en GitHub."
