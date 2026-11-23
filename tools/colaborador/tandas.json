@@ -819,7 +819,7 @@
     },
     "t7-fotos": {
       "titulo": "Tanda 7 · Solo las fotos del recorrido (públicas y SOLO-CESVI)",
-      "rama": "feat/w-velocidad-contra-narracion",
+      "rama": "feat/w-narracion-a-la-fisica",
       "commit": "26e78eca5ffa4bc46336c8495bbc278725fffaf6",
       "nota": "René, 2026-11-22: las fotos para el material promocional, sin nada más. Fijada al commit 26e78eca: el #284 con las fotos que ya no se atoran en La escena y que ya se tomaron completas en una Mac con el Unity real (2026-11-23) (cada prueba con su tope; una atorada no impide las demás), «márcalo tú» por dónde venía, «Ir al impacto» y el aviso de velocidad contra la narración. Es el commit que se publica cuando René apruebe el #284; al publicarlo, esta tanda se fija al de producción. Repartida en dos partes: 1, las públicas (el árbol de punta a punta, el puente y las otras narraciones, los cinco ejemplos); 2, SOLO-CESVI (AXA), que no se sube: queda en recorrido-solo-cesvi.zip para mandárselo a René. Las dos corren primero el humo.",
       "partes": [
