@@ -438,6 +438,8 @@ $Instaladas = @(AsegurarHerramientas)
 # Mientras corre la tanda en su rama o commit: Ctrl+C detiene el paso (el proceso hijo), no a este, y
 # al cerrar la ventana se regresa a la rama de antes en los segundos que da Windows.
 function GuardiaDeLaTanda([string]$repo, [string]$rama) {
+  # La guardia usa kernel32: solo en Windows. Fuera (las pruebas con pwsh) se regresa con git directo.
+  if (-not $EnWindows) { return }
   if (-not ("Croquis.Guardia" -as [type])) {
     Add-Type -TypeDefinition @"
 using System;
@@ -557,8 +559,12 @@ if (-not $EnSuRama -and (($ramaDeLaTanda -and $ramaActual -ne $ramaDeLaTanda) -o
   Remove-Item Env:\CROQUIS_TANDA_REPO -ErrorAction SilentlyContinue
   } finally {
     # Los procesos del paso cortado pueden tardar unos segundos en soltar los archivos.
-    $volvio = [Croquis.Guardia]::Volver(5)
-    [Croquis.Guardia]::Quitar()
+    if ($EnWindows) {
+      $volvio = [Croquis.Guardia]::Volver(5)
+      [Croquis.Guardia]::Quitar()
+    } else {
+      $volvio = (Nativo "git" @("-C", $Repo, "checkout", "-q", $ramaActual)) -eq 0
+    }
     try {
       if ($volvio) { Escribir "De vuelta en $ramaActual." }
       else { Escribir "No se pudo volver a la rama $($ramaActual): la carpeta quedó en $ramaDeLaTanda. La siguiente corrida regresa sola." "Yellow" }
