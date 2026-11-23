@@ -491,6 +491,21 @@ export function flechasDeLlegada(calles: readonly Calle[], choque: Punto): Flech
   }));
 }
 
+/**
+ * «Por dónde venía» con un toque en el mapa (René, 2026-11-22): sin calles del mapa, la escena pide
+ * «Marcar en el mapa» y el toque no hacía nada. El vehículo venía del punto tocado hacia el choque;
+ * la calle, si el toque cae sobre una.
+ */
+export function flechaDelToque(calles: readonly Calle[], choque: Punto, p: Punto): Flecha {
+  const salida = rumboDeg(ll(choque), ll(p));
+  return {
+    rumbo: normalizar(salida + 180),
+    desde: cardinal(salida),
+    calle: ajustarACalle(calles, p)?.calle.nombre ?? null,
+    en: p,
+  };
+}
+
 /** El punto a `d` m del choque a lo largo de la calle, en un sentido; null si la calle no llega. */
 function puntoDelBrazo(
   c: Calle,
