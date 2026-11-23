@@ -150,6 +150,8 @@ const tamano = (m: MapaMl, lat: number, metros: number) =>
  * largo reales (sin conservar la proporción) y los trazos no se deforman.
  */
 export const CAJA_COCHE = { ancho: 1.2, largo: 1.9 } as const;
+/** El zoom de trabajo: al marcar el choque y con «Ir al impacto». */
+export const ZOOM_TRABAJO = 19.6;
 function htmlCoche(c: CocheMapa): string {
   const claro = /^#(f|e|d)/i.test(c.color);
   const borde = claro ? "#5B616C" : "rgba(11,13,18,0.6)";
@@ -239,6 +241,25 @@ export function MapaFacil(p: MapaFacilProps) {
       mapa.current = null;
     };
   }, []);
+
+  // «Ir al impacto» (René, 2026-11-22): de vuelta al primer choque con el zoom de trabajo; atajo I.
+  const hayChoque = p.choques.length > 0;
+  const irAlImpacto = () => {
+    const c = [...ultimo.current.choques].sort((a, b) => a.orden - b.orden)[0];
+    if (c) mapa.current?.easeTo({ center: [c.punto.lon, c.punto.lat], zoom: ZOOM_TRABAJO });
+  };
+  useEffect(() => {
+    if (!hayChoque) return undefined;
+    const tecla = (ev: KeyboardEvent) => {
+      if (ev.key.toLowerCase() !== "i" || ev.ctrlKey || ev.metaKey || ev.altKey) return;
+      const t = ev.target;
+      if (t instanceof Element && t.closest("input, textarea, select, [contenteditable='true']"))
+        return;
+      irAlImpacto();
+    };
+    window.addEventListener("keydown", tecla);
+    return () => window.removeEventListener("keydown", tecla);
+  }, [hayChoque]);
 
   // El tema.
   const tema = useRef(p.tema);
@@ -828,7 +849,7 @@ export function MapaFacil(p: MapaFacilProps) {
     >
       {/* En línea: la hoja de MapLibre (sin capa) le pone position: relative y le ganaría a la clase. */}
       <div ref={contenedor} style={{ position: "absolute", inset: 0 }} />
-      <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
+      <div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-2">
         <button
           type="button"
           className="escena-zoom"
@@ -847,6 +868,21 @@ export function MapaFacil(p: MapaFacilProps) {
         >
           −
         </button>
+        {hayChoque ? (
+          <button
+            type="button"
+            className="escena-zoom flex w-auto items-center gap-1.5 px-3 text-[0.8125rem]"
+            onClick={irAlImpacto}
+            aria-keyshortcuts="I"
+            title="Ir al impacto (I)"
+            data-testid="mapa-ir-impacto"
+          >
+            Ir al impacto
+            <kbd className="rounded border border-linea-suave px-1 font-mono text-[0.6875rem] text-texto-3">
+              I
+            </kbd>
+          </button>
+        ) : null}
       </div>
       <p className="pointer-events-none absolute right-4 bottom-3 z-10 text-[0.6875rem] text-texto-3">
         © OpenStreetMap · OpenFreeMap

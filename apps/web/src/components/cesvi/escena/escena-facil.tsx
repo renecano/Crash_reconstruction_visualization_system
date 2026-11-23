@@ -137,6 +137,7 @@ import {
   type FlechaMapa,
   type PersonaMapa,
   type TerrenoMapa,
+  ZOOM_TRABAJO,
 } from "./mapa-facil";
 import { textoMedicion } from "@/lib/medir";
 import { medidasDePieza, PreguntaTerreno, type PoniendoTerreno } from "./terreno";
@@ -586,7 +587,7 @@ export function EscenaFacil({
     setEditando(null);
     setMarcoYo(false);
     if (mapa.current && mapa.current.getZoom() < 19)
-      mapa.current.easeTo({ center: [p.lon, p.lat], zoom: 19.6 });
+      mapa.current.easeTo({ center: [p.lon, p.lat], zoom: ZOOM_TRABAJO });
   };
 
   // Las flechas del vehículo en curso: una por calle que llega a su choque.
