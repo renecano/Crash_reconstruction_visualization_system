@@ -46,12 +46,12 @@ export function CifraReconstruccion({
   const rango = v ? rangoDeVelocidad(v) : null;
   // Si el rango es el lineal, va centrado en el mejor ajuste y no lo deja fuera.
   const fuera = rango && !rango.lineal ? mejorFueraDelRango(v?.previa) : null;
-  // Las posiciones contradicen lo narrado (René, 2026-11-22): se dice junto a la cifra, sin el «V1:».
-  const contra = v
-    ? r.limites
-        .find((l) => l.startsWith(`${v.vehiculo}: la narración dice`))
-        ?.slice(`${v.vehiculo}: `.length)
-    : undefined;
+  // Las posiciones contradicen lo narrado (René, 2026-11-22): junto a la cifra, de cada vehículo que
+  // la contradiga (no solo del que encabeza: en la curva es la CR-V), con su nombre en vez de «V2».
+  const contras = r.limites.flatMap((l) => {
+    const m = /^(V\d+): (la narración dice .*las posiciones dan .*)$/.exec(l);
+    return m ? [`${nombres[m[1]!] ?? m[1]}: ${m[2]}`] : [];
+  });
   return (
     <section className="flex flex-col gap-3" data-testid="cifra-reconstruccion">
       <div className="flex items-center justify-end gap-3">
@@ -102,11 +102,16 @@ export function CifraReconstruccion({
               evidencia y de los supuestos. Revisa los límites antes de citar la cifra.
             </p>
           ) : null}
-          {contra ? (
-            <p className="t-nota text-senal-texto" role="note" data-testid="contra-narracion">
-              {contra.charAt(0).toUpperCase() + contra.slice(1)}
+          {contras.map((c) => (
+            <p
+              key={c}
+              className="t-nota text-senal-texto"
+              role="note"
+              data-testid="contra-narracion"
+            >
+              {c}
             </p>
-          ) : null}
+          ))}
           {quieta ? (
             <p className="t-nota" data-testid="sin-dispersion">
               Las {muestras} simulaciones dan la misma velocidad: el ajuste a la evidencia tiene un
