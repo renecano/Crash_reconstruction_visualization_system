@@ -1239,6 +1239,7 @@ Viene de U0 (ADR 0111). Vale cuando el PR de contrato 2.3.0 esté en `main`:
   - **Reversa:** 20 (19–26), contra 21 (20–28).
   - **Poste:** 36 (28–38), contra 36 (31–38).
   - **Alcance:** 54 (49–56), contra 53 (49–56).
-  
+
   Son la misma receta colocada con toques en otro tamaño de pantalla, así que los coches quedan en posiciones algo distintas. Antes de usar esas cifras en una pieza, conviene revisarlas.
+
 - **Árbol y curva:** el límite de la vía depende de la calle del mapa donde queda el choque. En la Mac, el árbol cayó junto a una calle secundaria (30 km/h): 39 (30–47) no contradice «exceso de velocidad», y el aviso no sale. En la curva, el Circuito Exterior (80 km/h) sí lo dispara: «la narración dice más de 80 km/h («a alta velocidad»); las posiciones dan 10 km/h (7–14)». Ese aviso solo salía junto a la cifra del vehículo que la encabeza (el Rio); desde 26e78eca sale para cada vehículo que contradiga lo narrado (la CR-V), con su nombre.
