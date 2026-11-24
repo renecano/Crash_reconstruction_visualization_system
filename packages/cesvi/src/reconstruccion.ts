@@ -23,6 +23,7 @@ import {
   PRODUCTION_SAMPLES,
   reconstruct,
   SIGMA_POSITION_M,
+  TURN_RADIUS_M,
 } from "@croquis/solver-ts";
 import { limiteMejorFuera } from "./mejor-fuera";
 import { candadoFisico, type NoCuadra } from "./candado";
@@ -175,6 +176,8 @@ const DEL_PERITO = { fuente: "usuario", confianza: 0.9 } as const;
 const PRECISION_CHOQUE_M = 2;
 /** Sin posición inicial del perito, el vehículo empieza 12 m antes del impacto en su rumbo. */
 const ANTES_DEL_IMPACTO_M = 12;
+/** m: lo que avanza derecho después de la vuelta, antes del choque. */
+const DESPUES_DE_LA_VUELTA_M = 2;
 /** La maniobra de la escena v1 para cada maniobra narrada que cambia la reconstrucción (R4b). */
 const MANIOBRA_ESCENA: Record<string, string> = {
   reversa: "reversa",
@@ -501,21 +504,51 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       // de antes del choque, empieza detrás de ellas (René, 2026-11-24: 18 m de derrape en 12 m).
       const antes = arranqueAntes(v.id);
       const d = man === "detenido" ? 0 : reversa ? -ANTES_DEL_IMPACTO_M : antes;
-      sv.posicion_inicial = {
-        x: Math.round((x - d * Math.cos(rad)) * 1000) / 1000,
-        y: Math.round((y - d * Math.sin(rad)) * 1000) / 1000,
-        rumbo_deg: r,
-        procedencia: {
-          fuente: "supuesto",
-          confianza: 0.5,
-          nota:
-            man === "detenido"
-              ? "Detenido en la posición de impacto que colocó el perito."
-              : reversa
-                ? `${ANTES_DEL_IMPACTO_M} m delante de la posición de impacto que colocó el perito: llega en reversa.`
-                : `${antes} m antes de la posición de impacto que colocó el perito, en su rumbo${antes > ANTES_DEL_IMPACTO_M ? ", detrás de sus huellas" : ""}.`,
-        },
-      };
+      // Quien da vuelta (René, 2026-11-24: el camión que daba vuelta a la derecha y atropellaba al
+      // peatón): el rumbo del choque es el de después de la vuelta; empieza en la calle de donde
+      // venía, al principio del cuarto de círculo que traza el solver, y el arco termina
+      // DESPUES_DE_LA_VUELTA_M antes del choque. Antes empezaba 12 m atrás en el rumbo del choque y
+      // la vuelta salía donde no había calle.
+      const giro = reversa
+        ? 0
+        : man === "vuelta_derecha"
+          ? -90
+          : man === "vuelta_izquierda"
+            ? 90
+            : 0;
+      if (giro !== 0) {
+        const llegada = ((r - giro) * Math.PI) / 180;
+        const tras = TURN_RADIUS_M + DESPUES_DE_LA_VUELTA_M;
+        sv.posicion_inicial = {
+          x:
+            Math.round((x - TURN_RADIUS_M * Math.cos(llegada) - tras * Math.cos(rad)) * 1000) /
+            1000,
+          y:
+            Math.round((y - TURN_RADIUS_M * Math.sin(llegada) - tras * Math.sin(rad)) * 1000) /
+            1000,
+          rumbo_deg: Math.round((r - giro) * 1000) / 1000,
+          procedencia: {
+            fuente: "supuesto",
+            confianza: 0.5,
+            nota: `En la calle de donde venía, al empezar la vuelta: el arco del solver (radio de ${TURN_RADIUS_M} m) termina ${DESPUES_DE_LA_VUELTA_M} m antes de la posición de impacto que colocó el perito.`,
+          },
+        };
+      } else
+        sv.posicion_inicial = {
+          x: Math.round((x - d * Math.cos(rad)) * 1000) / 1000,
+          y: Math.round((y - d * Math.sin(rad)) * 1000) / 1000,
+          rumbo_deg: r,
+          procedencia: {
+            fuente: "supuesto",
+            confianza: 0.5,
+            nota:
+              man === "detenido"
+                ? "Detenido en la posición de impacto que colocó el perito."
+                : reversa
+                  ? `${ANTES_DEL_IMPACTO_M} m delante de la posición de impacto que colocó el perito: llega en reversa.`
+                  : `${antes} m antes de la posición de impacto que colocó el perito, en su rumbo${antes > ANTES_DEL_IMPACTO_M ? ", detrás de sus huellas" : ""}.`,
+          },
+        };
     }
     const fin = posiciones.find((p) => p.vehiculo === v.id && p.fase === "final");
     if (fin?.fuente === "supuesto") {

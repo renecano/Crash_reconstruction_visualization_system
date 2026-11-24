@@ -16,7 +16,7 @@
  * confirma o lo corrige. Ningún número de la reconstrucción cambia por proponer: solo se coloca.
  */
 import {
-  rumboDeMarcha,
+  rumboDeLlegada,
   rumboHacia,
   type Expediente,
   type SentidoNarradoLugar,
@@ -136,7 +136,7 @@ export function proponerEscena(o: {
   for (const v of impactos[0]!.vehiculos) {
     const s = sentido(v);
     const r = poseDe(e, v, "impacto")?.rumbo;
-    const i = flechaPropuesta(flechas, s, r === undefined ? null : rumboDeMarcha(e, v, r));
+    const i = flechaPropuesta(flechas, s, r === undefined ? null : rumboDeLlegada(e, v, r));
     const f = i >= 0 ? flechas[i]! : null;
     if (f) e = elegirDireccion(e, impactos, v, f.rumbo, (k) => puntos[k] ?? null, true);
     // René (2026-11-18): concreto, por qué calle y en qué sentido, y en qué se basa.
@@ -282,7 +282,7 @@ export function listaDeLaEscena(o: {
           clave: claveD,
           texto: pose
             ? confirmada
-              ? `${o.nombreDe(v)}: venía de ${cardinal(rumboDeMarcha(o.expediente, v, pose.rumbo) + 180)} a ${cardinal(rumboDeMarcha(o.expediente, v, pose.rumbo))}`
+              ? `${o.nombreDe(v)}: venía de ${cardinal(rumboDeLlegada(o.expediente, v, pose.rumbo) + 180)} a ${cardinal(rumboDeLlegada(o.expediente, v, pose.rumbo))}`
               : (p?.texto ?? `${o.nombreDe(v)}: por dónde venía`)
             : `Por dónde venía ${o.nombreDe(v)}`,
           porque: pose && !confirmada ? (p?.porque ?? "lo propone Croquis por los daños") : null,

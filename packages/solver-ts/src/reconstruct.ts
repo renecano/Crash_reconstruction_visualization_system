@@ -125,7 +125,7 @@ const T_POST_MAX = 30.0;
 // Los nominales; el rango de cada uno lo sortea el muestreo (impact-assumptions.ts, ADR 0139).
 export const RESTITUTION_VV = RESTITUTION[0];
 export const IMPULSE_RATIO = IMPULSE_RATIO_RANGE[0];
-const TURN_RADIUS_M = 8.0;
+export const TURN_RADIUS_M = 8.0;
 const LANE_CHANGE_LENGTH_M = 40.0;
 const LANE_WIDTH_DEFAULT = 3.5;
 const DEFAULT_BRAKE_BEFORE_IMPACT_S = 0.6;

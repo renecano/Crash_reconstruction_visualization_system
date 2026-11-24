@@ -489,8 +489,8 @@ def evidence_from_spec(
             fase = e.get("fase") or ("antes_impacto" if e["tipo"] == "marcas_frenado" else None)
             if fase == "despues_impacto":
                 slide[str(e["vehiculo_id"])] = _len_m(e["longitud"])
-            # Un derrape antes del impacto (René, 2026-11-24: «derrape de 18 m antes de la salida del
-            # camino») también disipa con la fricción: va como el frenado.
+            # Un derrape antes del impacto (René, 2026-11-24: «derrape de 18 m antes de la
+            # salida del camino») también disipa con la fricción: va como el frenado.
             elif fase == "antes_impacto":
                 skid[str(e["vehiculo_id"])] = _len_m(e["longitud"])
     damage_dv: dict[str, Distribution] = {}

@@ -37,7 +37,7 @@ import {
   posicionesEncimadas,
   impactosEncimados,
   quitarTerreno,
-  rumboDeMarcha,
+  rumboDeLlegada,
   TIPOS_OBJETO,
   usarRelieve,
   usaRelieve,
@@ -86,6 +86,7 @@ import {
   ponerEnLaCalle,
   proponerChoque,
   quedoJuntoAlChoque,
+  finalDeLaNarracion,
   resumenEscena,
   rumboAlineado,
   sentidoNarrado,
@@ -186,6 +187,9 @@ type Mensaje = {
   acciones?: { texto: string; hacer: () => void; principal?: boolean; id: string }[];
   deshacer?: boolean;
 };
+
+/** Cómo contesta el perito «¿Dónde quedó después del choque?». */
+type OpcionFinal = "narracion" | "marcar" | "junto" | "nose";
 
 export function EscenaFacil({
   tema,
@@ -362,7 +366,19 @@ export function EscenaFacil({
     tipo: "choque" | "direccion" | "final";
     id: string;
   } | null>(null);
-  const [opcionFinal, setOpcionFinal] = useState<Record<string, "marcar" | "junto" | "nose">>({});
+  const [opcionFinal, setOpcionFinal] = useState<Record<string, OpcionFinal>>({});
+  /** Dónde quedó como lo dice la narración (René, 2026-11-24), o null si no da una distancia. */
+  const finalNarradoDe = (v: string) => {
+    const n = posicionesNarradas.find((p) => p.vehiculo === v && p.fase === "final");
+    return n
+      ? finalDeLaNarracion(
+          e,
+          v,
+          n.descripcion,
+          posicionesNarradas.filter((x) => x.fase === "final"),
+        )
+      : null;
+  };
   const [marcoYo, setMarcoYo] = useState(false);
   const [mensaje, setMensaje] = useState<Mensaje | null>(null);
   const [descartadas, setDescartadas] = useState<readonly string[]>([]);
@@ -665,7 +681,7 @@ export function EscenaFacil({
     const previa = primero ? poseDe(e, primero, "impacto") : null;
     const rumbo =
       sentido?.rumbo ??
-      (previa && primero ? rumboDeMarcha(e, primero, previa.rumbo) : null) ??
+      (previa && primero ? rumboDeLlegada(e, primero, previa.rumbo) : null) ??
       (callesMapa.length ? rumboAlineado(callesMapa, p, 0) : 0);
     const siguiente: EstadoEscena = {
       ...estado,
@@ -719,7 +735,7 @@ export function EscenaFacil({
     ? flechaPropuesta(
         flechas,
         sentidos[vehiculoActual] ?? null,
-        ((r) => (r === undefined ? null : rumboDeMarcha(e, vehiculoActual, r)))(
+        ((r) => (r === undefined ? null : rumboDeLlegada(e, vehiculoActual, r)))(
           poseDe(e, vehiculoActual, "impacto")?.rumbo,
         ),
       )
@@ -800,7 +816,21 @@ export function EscenaFacil({
     setColocando(v);
   };
   const terminarFinal = (v: string) => {
-    const op = opcionFinal[v] ?? "marcar";
+    const op = opcionFinal[v] ?? (finalNarradoDe(v) ? "narracion" : "marcar");
+    if (op === "narracion") {
+      const f = finalNarradoDe(v);
+      if (!f) return;
+      cambiar(
+        {
+          ...estado,
+          expediente: marcarFinal(e, v, f.punto, f.rumbo),
+          desconocidos: estado.desconocidos.filter((x) => x !== v),
+          juntoAlChoque: estado.juntoAlChoque.filter((x) => x !== v),
+        },
+        exito(`¡Listo! El ${nombres[v]} quedó ${f.texto}, como dice la narración.`),
+      );
+      return;
+    }
     if (op === "marcar") {
       if (!poseDe(e, v, "final")) return;
       setColocando(null);
@@ -2268,7 +2298,7 @@ export function EscenaFacil({
             if (!pose) return;
             aplicarDireccion(
               v,
-              rumboDeMarcha(e, v, pose.rumbo),
+              rumboDeLlegada(e, v, pose.rumbo),
               true,
               `Croquis usa la dirección que dan los daños para el ${nombres[v]}.`,
             );
@@ -2281,15 +2311,29 @@ export function EscenaFacil({
     );
   } else if (actual?.tipo === "vehiculo") {
     const v = actual.vehiculo;
-    const op = opcionFinal[v] ?? "marcar";
+    const op = opcionFinal[v] ?? (finalNarradoDe(v) ? "narracion" : "marcar");
     const imp = poseDe(e, v, "impacto");
     const narrada = posicionesNarradas.find((p) => p.vehiculo === v && p.fase === "final");
     const desde = imp
       ? flechasDeLlegada(callesMapa, choqueDe(v) ?? imp.punto).find(
-          (f) => Math.abs(((f.rumbo - imp.rumbo + 540) % 360) - 180) < 30,
+          (f) => Math.abs(((f.rumbo - rumboDeLlegada(e, v, imp.rumbo) + 540) % 360) - 180) < 30,
         )
       : null;
-    const opciones: { clave: "marcar" | "junto" | "nose"; titulo: string; detalle?: string }[] = [
+    const comoNarra = finalNarradoDe(v);
+    const opciones: {
+      clave: OpcionFinal;
+      titulo: string;
+      detalle?: string;
+    }[] = [
+      ...(comoNarra
+        ? [
+            {
+              clave: "narracion" as const,
+              titulo: "Como dice la narración",
+              detalle: `Croquis lo coloca ${comoNarra.texto}.`,
+            },
+          ]
+        : []),
       {
         clave: "marcar",
         titulo: "Lo marco en el mapa",
@@ -2467,7 +2511,13 @@ export function EscenaFacil({
       cambiar(
         {
           ...estado,
-          expediente: elegirDireccion(e, impactos, v, rumboDeMarcha(e, v, pose.rumbo), puntoChoque),
+          expediente: elegirDireccion(
+            e,
+            impactos,
+            v,
+            rumboDeLlegada(e, v, pose.rumbo),
+            puntoChoque,
+          ),
         },
         exito(`¡Listo! Confirmaste por dónde venía ${nombres[v] ?? v}.`),
       );

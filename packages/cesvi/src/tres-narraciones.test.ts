@@ -5,6 +5,8 @@ import { describe, expect, it } from "vitest";
 import type { Expediente } from "./corpus";
 import { candadoFisico } from "./candado";
 import { impactosEncimados } from "./encimadas";
+import { escenaDeConversion } from "./escena-narracion";
+import { rumboDeLlegada, rumboDelFrente } from "./reversa";
 import { enMetros } from "./geo";
 import { medidasDe } from "./poses-impacto";
 import { reconstruct, reconstructionToDict } from "@croquis/solver-ts";
@@ -148,4 +150,76 @@ describe("lo que no cuadra no se anima", () => {
       }
     },
   );
+});
+
+describe("el camión que da vuelta a la derecha", () => {
+  const guardado = caso("rene-peaton-vuelta");
+  // Como lo deja ahora La escena: venía del sur y en el choque ya dio la vuelta (mira al oriente).
+  const e: Expediente = {
+    ...guardado,
+    versiones: guardado.versiones!.map((v) => ({
+      ...v,
+      posiciones: (v.posiciones ?? []).map((p) =>
+        p.fase === "impacto" ? { ...p, rumbo: rumboDelFrente(guardado, "V1", 0) } : p,
+      ),
+    })),
+  };
+
+  it("en el choque mira al oriente: venía del sur con vuelta a la derecha", () => {
+    expect(rumboDelFrente(guardado, "V1", 0)).toBe(90);
+    expect(rumboDeLlegada(guardado, "V1", 90)).toBe(0);
+  });
+
+  it("empieza en la calle de donde venía y la vuelta termina en el choque", () => {
+    const { spec } = especDeExpediente(e, "vuelta");
+    const v = (
+      spec.vehiculos as {
+        posicion_inicial: { x: number; y: number; rumbo_deg: number };
+        maniobra: { valor: string };
+      }[]
+    )[0]!;
+    expect(v.maniobra.valor).toBe("vuelta_derecha");
+    // Al norte (90° en la escena del solver), al sur y al poniente del choque.
+    expect(v.posicion_inicial.rumbo_deg).toBeCloseTo(90, 0);
+    const imp = (spec.eventos as { punto_impacto: { x: number; y: number } }[])[0]!.punto_impacto;
+    expect(imp.y - v.posicion_inicial.y).toBeGreaterThan(5);
+    expect(imp.x - v.posicion_inicial.x).toBeGreaterThan(5);
+    // Y el solver lo lleva por el arco hasta el choque, mirando al oriente.
+    const d = reconstructionToDict(reconstruct(spec)) as {
+      vehiculos: { trayectoria: { t: number[]; rumbo: number[] } }[];
+    };
+    const tr = d.vehiculos[0]!.trayectoria;
+    const k = tr.t.findIndex((t) => t >= 0);
+    expect(Math.abs(tr.rumbo[k]!)).toBeLessThan(0.35);
+  });
+});
+
+describe("el de en medio de la carambola", () => {
+  const guardado = caso("rene-carambola-semaforo");
+  // Como lo lee la narración: el segundo choque no dice con qué parte golpeó B.
+  const leido: Expediente = {
+    ...guardado,
+    versiones: [],
+    impactos: guardado.impactos!.map((i) =>
+      i.orden === 2 ? { ...i, zonas: i.zonas!.filter((z) => z.vehiculo !== "V2") } : i,
+    ),
+  };
+
+  it("con daños atrás y adelante, y el primer choque atrás, el segundo es adelante: no se pregunta", () => {
+    const r = escenaDeConversion({
+      expediente: leido,
+      conteos: {
+        filas: 0,
+        valores_invalidos: 0,
+        citas: 0,
+        citas_fuera: 0,
+        numeros: 0,
+        numeros_fuera: 0,
+      },
+      posiciones: [],
+    });
+    const z = r.expediente.impactos!.find((i) => i.orden === 2)!.zonas!;
+    expect(z.find((x) => x.vehiculo === "V2")!.zona.cara).toBe("frontal");
+    expect(r.preguntas.some((p) => p.clave === "zona-2-V2")).toBe(false);
+  });
 });

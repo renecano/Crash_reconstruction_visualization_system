@@ -15,6 +15,7 @@
  */
 import { reconstruct, reconstructionToDict } from "@croquis/solver-ts";
 import type { Expediente } from "./corpus";
+import { metros, numero } from "./formato";
 import { traslape } from "./encimadas";
 
 type Id = Expediente["vehiculos"][number]["id"];
@@ -136,7 +137,7 @@ export function candadoFisico(o: {
     const a = (v0 * v0 - vi * vi) / (2 * largo);
     if (a > FRENADA_MAXIMA) {
       motivos.push(
-        `${nombre(v.vehiculo)}: con ${largo} m de huella, pasar de ${Math.round(v.previa!.mejor)} a ${Math.round(alImpacto)} km/h exige frenar a ${(a / 9.81).toFixed(1)} g; ningún vehículo frena más de 1 g en pavimento.`,
+        `${nombre(v.vehiculo)}: con ${largo} m de huella, pasar de ${Math.round(v.previa!.mejor)} a ${Math.round(alImpacto)} km/h exige frenar a ${numero(a / 9.81, 1)} g; ningún vehículo frena más de 1 g en pavimento.`,
       );
       revisar.add("las posiciones finales y el largo de las huellas");
     }
@@ -162,7 +163,7 @@ export function candadoFisico(o: {
     const prof = encimadoAlChocar(a, b, ev.t);
     if (prof <= ENCIMADO_MAXIMO_M) continue;
     motivos.push(
-      `${nombre(o.ids[a.id]!)} y ${nombre(o.ids[b.id]!)} quedan encimados ${prof.toFixed(1)} m al chocar en la simulación, y el solver los separa de golpe: la animación los mostraría saltando.`,
+      `${nombre(o.ids[a.id]!)} y ${nombre(o.ids[b.id]!)} quedan encimados ${metros(prof, 1)} al chocar en la simulación, y el solver los separa de golpe: la animación los mostraría saltando.`,
     );
     revisar.add(
       "las posiciones de impacto, para que los vehículos se toquen sin encimarse (en La escena, «Separarlos»)",

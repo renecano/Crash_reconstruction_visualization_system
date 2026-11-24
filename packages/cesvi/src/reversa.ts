@@ -73,3 +73,28 @@ export function vaEnReversa(e: Expediente, vehiculo: string): boolean {
 export function rumboDeMarcha(e: Expediente, vehiculo: string, rumbo: number): number {
   return vaEnReversa(e, vehiculo) ? (((rumbo + 180) % 360) + 360) % 360 : rumbo;
 }
+
+/** Cuánto gira el frente entre la llegada y el choque, por la maniobra narrada (0° = norte, horario). */
+function giroNarrado(e: Expediente, vehiculo: string): number {
+  if (vaEnReversa(e, vehiculo)) return 0;
+  const narradas = (e.versiones ?? []).find((v) => v.tipo === "evidencia")?.maniobras ?? [];
+  const m = narradas.find((x) => x.vehiculo === vehiculo && /^vira_/.test(x.tipo));
+  return m?.tipo === "vira_derecha" ? 90 : m?.tipo === "vira_izquierda" ? -90 : 0;
+}
+
+const norm360 = (r: number) => ((r % 360) + 360) % 360;
+
+/**
+ * «Por dónde venía» (hacia dónde avanzaba al llegar) → el rumbo del frente en el choque: en reversa,
+ * el contrario; quien da vuelta, ya con la vuelta dada (René, 2026-11-24: el camión que venía del sur
+ * y daba vuelta a la derecha quedaba mirando al norte en el choque, y el solver trazaba la vuelta
+ * desde el oriente, donde no había calle).
+ */
+export function rumboDelFrente(e: Expediente, vehiculo: string, llegada: number): number {
+  return norm360(rumboDeMarcha(e, vehiculo, llegada + giroNarrado(e, vehiculo)));
+}
+
+/** Lo contrario de `rumboDelFrente`: de la pose del choque, por dónde venía. */
+export function rumboDeLlegada(e: Expediente, vehiculo: string, frente: number): number {
+  return norm360(rumboDeMarcha(e, vehiculo, frente) - giroNarrado(e, vehiculo));
+}

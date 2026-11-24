@@ -20,15 +20,20 @@ import {
   distanciaM,
   distanciaProyeccion,
   enMetros,
+  agregarPersona,
+  moverPersona,
   nombrePersona,
+  OBJETO_PERSONA,
   posesDeImpacto,
   rumboDeMarcha,
+  rumboDelFrente,
   objetosDe,
   piezasTerreno,
   rumboDeg,
   usaRelieve,
   limiteDeLaVia,
   limiteDelLugarNarrado,
+  medidasDe,
   type Expediente,
   type LonLat,
   type TipoObjeto,
@@ -1113,7 +1118,7 @@ export const pasoActual = (pasos: readonly PasoEscena[]) => pasos.find((p) => !p
  * Croquis con las zonas de contacto (con fuente «supuesto» hasta que la persona dice por dónde venía
  * cada uno); en una carambola, solo las de quien entra en ese choque. `rumbo`: hacia dónde avanzaba
  * el primer vehículo (el de la narración, el de la calle o el que ya tenía); en reversa, su frente
- * queda al lado contrario (`rumboDeMarcha`).
+ * queda al lado contrario (`rumboDelFrente`; si da vuelta, con la vuelta dada).
  */
 export function marcarChoque(
   e: Expediente,
@@ -1125,7 +1130,7 @@ export function marcarChoque(
   const antes = new Set(impactos.filter((x) => x.orden < orden).flatMap((x) => x.vehiculos));
   let r = e;
   const primero = impactos.find((x) => x.orden === orden)?.vehiculos[0];
-  const frente = primero ? rumboDeMarcha(e, primero, rumbo) : rumbo;
+  const frente = primero ? rumboDelFrente(e, primero, rumbo) : rumbo;
   for (const pose of posesDeImpacto(e, p, frente, orden)) {
     if (antes.has(pose.vehiculo)) continue;
     r = conPosicion(r, {
@@ -1136,7 +1141,31 @@ export function marcarChoque(
       fuente: "supuesto",
     });
   }
-  return r;
+  return conPersonaDelChoque(r, orden, p, rumbo);
+}
+
+/**
+ * Un choque contra una persona («impactó a un peatón»): Croquis la coloca en el punto de contacto,
+ * cruzando delante del vehículo, como supuesto que el perito puede mover (René, 2026-11-24: el peatón
+ * del camión que daba vuelta nunca aparecía en el 3D, porque la lectura lo dejaba como «objeto
+ * peatón» y nadie lo colocaba). Si ya la colocó el perito, no se toca.
+ */
+function conPersonaDelChoque(e: Expediente, orden: number, p: Punto, rumbo: number): Expediente {
+  const imp = (e.impactos ?? []).find((i) => (i.orden ?? 1) === orden);
+  if (!imp?.objeto_fijo || !OBJETO_PERSONA.test(imp.objeto_fijo)) return e;
+  const actual = imp.persona ? (e.personas ?? []).find((x) => x.id === imp.persona) : undefined;
+  if (actual && actual.fuente !== "supuesto") return e;
+  if (actual) return moverPersona(e, actual.id, p);
+  const rol = /ciclista|bicicleta/i.test(imp.objeto_fijo) ? "ciclista" : "peaton";
+  const { expediente, id } = agregarPersona(e, rol, p, normalizar(rumbo + 90));
+  return {
+    ...expediente,
+    personas: (expediente.personas ?? []).map((x) =>
+      x.id === id
+        ? { ...x, fuente: "supuesto" as const, ...(imp.cita ? { cita: imp.cita } : {}) }
+        : x,
+    ),
+  };
 }
 
 /**
@@ -1186,8 +1215,8 @@ export function elegirDireccion(
     fase: "impacto",
     punto: nueva?.punto ?? pose.punto,
     rumbo: primero
-      ? (nueva?.rumbo ?? rumboDeMarcha(e, vehiculo, rumbo))
-      : rumboDeMarcha(e, vehiculo, rumbo),
+      ? (nueva?.rumbo ?? rumboDelFrente(e, vehiculo, rumbo))
+      : rumboDelFrente(e, vehiculo, rumbo),
     fuente: noSe ? "supuesto" : "perito",
   });
 }
@@ -1439,4 +1468,77 @@ export function avisarSinCalles(o: {
     !o.yaVisto &&
     !o.descartado
   );
+}
+
+/** Un número de la narración («6», «2.5», «2,5»). */
+const NUM = String.raw`(\d+(?:[.,]\d+)?)`;
+const metros = (x: string) => Number(x.replace(",", "."));
+/** El vehículo que nombra la narración («vehículo B») como id del expediente («V2»). */
+const idDeLetra = (l: string) => `V${l.toUpperCase().charCodeAt(0) - 64}`;
+
+export interface FinalNarrado {
+  punto: Punto;
+  rumbo: number;
+  /** Cómo lo colocó Croquis, para el perito: «6 m adelante del choque, hacia donde avanzaba». */
+  texto: string;
+}
+
+/**
+ * Dónde quedó, como lo dice la narración (René, 2026-11-24): las distancias que da contra el choque,
+ * contra otro vehículo o contra donde estaba detenido. Antes La escena solo ofrecía «junto al
+ * choque» o marcarlo a mano, y el camión que quedó «6 m después del paso peatonal» quedaba a 1.5 m
+ * (la reconstrucción daba 7 km/h contra los 15 narrados). Lo que no reconoce da null: el perito lo
+ * marca en el mapa.
+ */
+export function finalDeLaNarracion(
+  e: Expediente,
+  vehiculo: string,
+  descripcion: string,
+  /** Las descripciones de los demás, para «a 1 m detrás del vehículo B». */
+  otras: readonly { vehiculo: string; descripcion: string }[] = [],
+  vistos: ReadonlySet<string> = new Set(),
+): FinalNarrado | null {
+  const imp = poseDe(e, vehiculo, "impacto");
+  if (!imp) return null;
+  const d = descripcion.toLowerCase();
+  const marcha = rumboDeMarcha(e, vehiculo, imp.rumbo);
+  const adelante = (n: number, texto: string): FinalNarrado => ({
+    punto: punto(avanzar(ll(imp.punto), marcha, n)),
+    rumbo: imp.rumbo,
+    texto,
+  });
+  // «a 1 m detrás del vehículo B»: detrás de donde quedó B, en su rumbo, defensa con defensa más N.
+  const detras = new RegExp(
+    String.raw`a\s+${NUM}\s*m(?:etros?)?\s+detr[aá]s\s+del\s+veh[ií]culo\s+([a-z])\b`,
+  ).exec(d);
+  if (detras) {
+    const otro = idDeLetra(detras[2]!);
+    if (vistos.has(otro) || otro === vehiculo) return null;
+    const suyo = otras.find((o) => o.vehiculo === otro);
+    const finOtro =
+      poseDe(e, otro, "final") ??
+      (suyo
+        ? finalDeLaNarracion(e, otro, suyo.descripcion, otras, new Set([...vistos, vehiculo]))
+        : null);
+    const vo = e.vehiculos.find((x) => x.id === otro);
+    const vv = e.vehiculos.find((x) => x.id === vehiculo);
+    if (!finOtro || !vo || !vv) return null;
+    const n = metros(detras[1]!);
+    const atras = (medidasDe(vo).largo + medidasDe(vv).largo) / 2 + n;
+    return {
+      punto: punto(avanzar(ll(finOtro.punto), normalizar(finOtro.rumbo + 180), atras)),
+      rumbo: finOtro.rumbo,
+      texto: `${n} m detrás de donde quedó el vehículo ${detras[2]!.toUpperCase()}`,
+    };
+  }
+  // «6 m después del paso peatonal», «a 4 m adelante del punto de contacto», «a 2 m del punto del
+  // primer impacto», «a 3 m de donde estaba detenido»: desde su pose del choque, hacia donde avanzaba.
+  const desde = new RegExp(
+    String.raw`${NUM}\s*m(?:etros?)?\s+(?:despu[eé]s|adelante|m[aá]s\s+all[aá])\s+del?\s+(?:paso\s+peatonal|punto\s+de\s+(?:contacto|impacto)|impacto|choque|cruce|contacto)|a\s+${NUM}\s*m(?:etros?)?\s+del\s+punto\s+del?\s+(?:primer\s+)?(?:impacto|choque|contacto)|a\s+${NUM}\s*m(?:etros?)?\s+de\s+donde\s+(?:estaba|se\s+encontraba)\s+detenid[oa]`,
+  ).exec(d);
+  if (desde) {
+    const n = metros(desde[1] ?? desde[2] ?? desde[3]!);
+    return adelante(n, `${n} m adelante de su posición en el choque, hacia donde avanzaba`);
+  }
+  return null;
 }
