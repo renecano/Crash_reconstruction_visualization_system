@@ -196,7 +196,11 @@ test("las cinco narraciones de ejemplo, de punta a punta", async ({ page, baseUR
       const rec = page.getByTestId("reconstruir");
       if (await rec.isVisible().catch(() => false)) await rec.click();
       await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 240_000 });
-      axa = await textoDe(page, "cifra-reconstruccion");
+      // La cifra cuenta desde 0 (1.45 s): la t8 la leyó a la mitad («20»). Se espera a que termine y
+      // se guarda solo la cifra con su rango («57 (55–78)»).
+      await page.waitForTimeout(2500);
+      const rango = /(\d+)\s*–\s*(\d+)/.exec((await textoDe(page, "cifra-rango")) ?? "");
+      axa = `${((await textoDe(page, "cifra-reconstruida")) ?? "").trim()} (${rango ? `${rango[1]}–${rango[2]}` : "sin rango"})`;
     } catch (e) {
       axa = `sin cifra: ${(e as Error).message.split("\n")[0]}`;
     }
