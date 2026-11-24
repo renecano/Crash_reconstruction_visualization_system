@@ -1,0 +1,22 @@
+# Paso: crucero-en-la-app
+# Comando: powershell -NoProfile -Command "$env:CROQUIS_EJEMPLO_APP='../../eval/results/t8/crucero_en_la_app.json'; pnpm --filter @croquis/web exec vitest run src/lib/ejemplo-en-la-app.test.ts"
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-23 20:49:55
+
+[33m(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.[39m
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.3 [39m[90mC:/Users/MrKan/Documents/reto cesvi v5/Croquis/apps/web[39m
+
+ [32m✓[39m src/lib/ejemplo-en-la-app.test.ts [2m([22m[2m3 tests[22m[2m | [22m[33m2 skipped[39m[2m)[22m[33m 9329[2mms[22m[39m
+   [32m✓[39m un ejemplo como lo ve el perito en la app [2m(1)[22m
+     [33m[2m✓[22m[39m el crucero de noche[33m 9329[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[2m | [22m[33m2 skipped[39m[90m (3)[39m
+[2m   Start at [22m 20:49:56
+[2m   Duration [22m 14.66s[2m (tests 64%, environment 16%, transform 11%, import 6%, setup 3%)[22m
+
+
+# Fin: 2026-11-23 20:50:11 · ok · 0.3 min
