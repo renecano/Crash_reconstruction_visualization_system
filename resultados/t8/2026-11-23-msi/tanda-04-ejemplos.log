@@ -1,0 +1,57 @@
+# Paso: ejemplos
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t8/ejemplos.json -Capturas docs/cesvi/ronda-4/evidencia/t8-ejemplos -Casos eval/results/t8/ejemplos-casos
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-23 20:35:38
+
+
+== 1. Herramientas
+Node v26.13.1 y pnpm 12.11.2.
+Hay internet.
+
+== 2. Dependencias
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 6d ago)
+Lockfile is up to date, resolution step is skipped
+Done in 71ms using pnpm v12.11.2
+
+== 3. El visor de Unity, desde esta computadora
+Visor 945617e035988035 servido desde el sitio: C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\public\visor-unity\local
+
+== 4. La app en modo local
+Ya está compilada para esta versión (7128f27b).
+
+== 5. La lectura con IA
+No hay llave de Claude en .env.local: la lectura con IA no estará. Todo lo demás funciona (AXA, los casos de ejemplo con su lectura guardada, la reconstrucción, el 3D y el dictamen).
+
+== 6. Croquis en http://localhost:3000
+Necesitan internet: la lectura con IA de una narración nueva, los mosaicos del mapa (sin red, el mapa sale en blanco pero se puede colocar la escena) y buscar un lugar por nombre.
+Sin internet funcionan completos: el caso de AXA y los cinco casos de ejemplo, la reconstrucción, el 3D de Unity y el dictamen.
+
+Running 1 test using 1 worker
+
+[1/1] [chromium] › e2e\ejemplos-ronda2.spec.ts:57:5 › las cinco narraciones de ejemplo, de punta a punta
+  1) [chromium] › e2e\ejemplos-ronda2.spec.ts:57:5 › las cinco narraciones de ejemplo, de punta a punta 
+
+    Test was interrupted.
+
+    Error: page.waitForTimeout: Test ended.
+
+      111 |     await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 240_000 });
+      112 |     const segundos = Math.round((Date.now() - t0) / 100) / 10;
+    > 113 |     await page.waitForTimeout(2500);
+          |                ^
+      114 |     await foto("4-reconstruccion");
+      115 |     await page.getByTestId("ver-detalle-reconstruccion").click();
+      116 |     const fila = {
+        at C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\ejemplos-ronda2.spec.ts:113:16
+
+    Error Context: test-results\ejemplos-ronda2-las-cinco--e288d-de-ejemplo-de-punta-a-punta-chromium\error-context.md
+
+
+  1 interrupted
+    [chromium] › e2e\ejemplos-ronda2.spec.ts:57:5 › las cinco narraciones de ejemplo, de punta a punta 
+¿Desea terminar el trabajo por lotes (S/N)? Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
+
+  × "pnpm recursive exec" failed in C:\Users\MrKan\Documents\reto cesvi
+  │ v5\Croquis\apps\web
+

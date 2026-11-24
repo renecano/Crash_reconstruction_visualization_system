@@ -5,10 +5,10 @@
     "gpu":  "NVIDIA GeForce RTX 4070 Laptop GPU + Intel(R) UHD Graphics",
     "parte":  "todo",
     "fecha":  "2026-11-23",
-    "commit":  "7128f27bbbdc0d15f78c20b2006ab7ea2fe8e19e",
+    "commit":  "d028f1de794936c01bcd8be7b9eaf77f7f7c99d8",
     "rama_del_repositorio":  "main",
     "archivos_con_cambios":  0,
-    "duracion_min":  1.5,
+    "duracion_min":  0.1,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "NVIDIA GeForce RTX 4070 Laptop GPU",
@@ -17,7 +17,7 @@
                    "memoria_gb":  31.7,
                    "procesador":  "Intel(R) Core(TM) i9-14900HX",
                    "nucleos_logicos":  32,
-                   "disco_libre_gb":  381.4,
+                   "disco_libre_gb":  381.2,
                    "windows":  "Microsoft Windows 11 Home",
                    "git":  "git version 2.55.0.windows.5",
                    "node":  "v26.13.1",
@@ -41,41 +41,14 @@
                       "estado":  "ok",
                       "minutos":  0,
                       "codigo":  0,
-                      "disco_libre_gb_antes":  381.4,
-                      "disco_libre_gb_despues":  381.4
+                      "disco_libre_gb_antes":  381.2,
+                      "disco_libre_gb_despues":  381.2
                   },
                   {
                       "grupo":  "comprobacion",
                       "paso":  "solver-en-reversa",
                       "estado":  "ok",
                       "minutos":  0,
-                      "codigo":  0,
-                      "disco_libre_gb_antes":  381.4,
-                      "disco_libre_gb_despues":  381.4
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "visor",
-                      "estado":  "ok",
-                      "minutos":  0,
-                      "codigo":  0,
-                      "disco_libre_gb_antes":  381.4,
-                      "disco_libre_gb_despues":  381.4
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "preparar",
-                      "estado":  "ok",
-                      "minutos":  0.5,
-                      "codigo":  0,
-                      "disco_libre_gb_antes":  381.4,
-                      "disco_libre_gb_despues":  381.2
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "humo",
-                      "estado":  "ok",
-                      "minutos":  0.6,
                       "codigo":  0,
                       "disco_libre_gb_antes":  381.2,
                       "disco_libre_gb_despues":  381.2
