@@ -45,6 +45,7 @@ describe("un ejemplo como lo ve el perito en la app", () => {
         lugar: { lat: pt.lat, lon: pt.lon },
         nombreDe: (x) => x,
       });
+      if (!prop) throw new Error("La escena no propuso nada para el crucero.");
       const final = prop.expediente.vehiculos.reduce(
         (a: Expediente, v) => facil.quedoJuntoAlChoque(a, v.id),
         prop.expediente,
