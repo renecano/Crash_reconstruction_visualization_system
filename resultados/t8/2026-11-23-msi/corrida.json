@@ -7,7 +7,7 @@
     "fecha":  "2026-11-23",
     "commit":  "d028f1de794936c01bcd8be7b9eaf77f7f7c99d8",
     "rama_del_repositorio":  "main",
-    "archivos_con_cambios":  1,
+    "archivos_con_cambios":  0,
     "duracion_min":  28.9,
     "equipo":  {
                    "tarjetas_de_video":  [
@@ -193,6 +193,15 @@
                       "paso":  "arranque-anterior-3",
                       "estado":  "ok",
                       "minutos":  0.8,
+                      "codigo":  0,
+                      "disco_libre_gb_antes":  380.9,
+                      "disco_libre_gb_despues":  380.9
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "volver-al-publicado",
+                      "estado":  "ok",
+                      "minutos":  0,
                       "codigo":  0,
                       "disco_libre_gb_antes":  380.9,
                       "disco_libre_gb_despues":  380.9
