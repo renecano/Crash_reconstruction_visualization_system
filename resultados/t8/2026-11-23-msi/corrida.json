@@ -1,0 +1,57 @@
+{
+    "tanda":  "t8",
+    "titulo":  "Tanda 8 · Verificación en el navegador de lo publicado con el #284",
+    "equipo_nombre":  "msi",
+    "gpu":  "NVIDIA GeForce RTX 4070 Laptop GPU + Intel(R) UHD Graphics",
+    "parte":  "todo",
+    "fecha":  "2026-11-23",
+    "commit":  "7128f27bbbdc0d15f78c20b2006ab7ea2fe8e19e",
+    "rama_del_repositorio":  "main",
+    "archivos_con_cambios":  0,
+    "duracion_min":  0.2,
+    "equipo":  {
+                   "tarjetas_de_video":  [
+                                             "NVIDIA GeForce RTX 4070 Laptop GPU",
+                                             "Intel(R) UHD Graphics"
+                                         ],
+                   "memoria_gb":  31.7,
+                   "procesador":  "Intel(R) Core(TM) i9-14900HX",
+                   "nucleos_logicos":  32,
+                   "disco_libre_gb":  381.4,
+                   "windows":  "Microsoft Windows 11 Home",
+                   "git":  "git version 2.55.0.windows.5",
+                   "node":  "v26.13.1",
+                   "pnpm":  "12.11.2",
+                   "uv":  null,
+                   "python":  "Python 3.13.15",
+                   "dotnet":  "11.0.100",
+                   "unity_instalados":  [
+                                            "6000.6.8f1"
+                                        ],
+                   "unity_del_proyecto":  "6000.3.28f1",
+                   "unity_coincide":  false,
+                   "instalado_en_esta_corrida":  [
+
+                                                 ]
+               },
+    "pasos":  [
+                  {
+                      "grupo":  "comprobacion",
+                      "paso":  "dependencias",
+                      "estado":  "ok",
+                      "minutos":  0,
+                      "codigo":  0,
+                      "disco_libre_gb_antes":  381.4,
+                      "disco_libre_gb_despues":  381.4
+                  },
+                  {
+                      "grupo":  "comprobacion",
+                      "paso":  "solver-en-reversa",
+                      "estado":  "ok",
+                      "minutos":  0,
+                      "codigo":  0,
+                      "disco_libre_gb_antes":  381.4,
+                      "disco_libre_gb_despues":  381.4
+                  }
+              ]
+}
