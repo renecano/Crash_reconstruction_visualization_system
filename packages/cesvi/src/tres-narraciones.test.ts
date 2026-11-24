@@ -2,10 +2,11 @@ import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import type { Expediente } from "./corpus";
+import type { Expediente, SalidaCorpus } from "./corpus";
 import { candadoFisico } from "./candado";
 import { impactosEncimados } from "./encimadas";
-import { escenaDeConversion } from "./escena-narracion";
+import { escenaDeConversion, escenaDeNarracion } from "./escena-narracion";
+import { OBJETO_PERSONA } from "./personas";
 import { rumboDeLlegada, rumboDelFrente } from "./reversa";
 import { enMetros } from "./geo";
 import { medidasDe } from "./poses-impacto";
@@ -221,5 +222,47 @@ describe("el de en medio de la carambola", () => {
     const z = r.expediente.impactos!.find((i) => i.orden === 2)!.zonas!;
     expect(z.find((x) => x.vehiculo === "V2")!.zona.cara).toBe("frontal");
     expect(r.preguntas.some((p) => p.clave === "zona-2-V2")).toBe(false);
+  });
+});
+
+describe("las tres narraciones, con su lectura grabada (con la llave de René, 2026-11-24)", () => {
+  const leer = (n: string) => {
+    const g = JSON.parse(
+      readFileSync(
+        resolve(
+          dirname(fileURLToPath(import.meta.url)),
+          `../../../data/cesvi/grabaciones/tres-narraciones/${n}.json`,
+        ),
+        "utf8",
+      ),
+    ) as { narracion: string; salida: SalidaCorpus };
+    return escenaDeNarracion(g.salida, g.narracion);
+  };
+
+  it("el árbol: 80 km/h narrados y el derrape de 18 m antes de salir del camino", () => {
+    const { expediente: e } = leer("rene-arbol-curva");
+    expect(e.vehiculos[0]!.velocidad_narrada?.kmh).toBe(80);
+    const { spec } = especDeExpediente(e, "arbol-grabado");
+    const d = (
+      spec.evidencias as { tipo: string; fase?: string; longitud?: { valor: number } }[]
+    ).filter((x) => x.tipo === "marcas_derrape" || x.tipo === "marcas_frenado");
+    expect(d.some((x) => x.fase === "antes_impacto" && x.longitud?.valor === 18)).toBe(true);
+  });
+
+  it("el camión: da vuelta a la derecha y el impacto es contra un peatón", () => {
+    const { expediente: e } = leer("rene-peaton-vuelta");
+    const m = e.versiones?.find((v) => v.tipo === "evidencia")?.maniobras ?? [];
+    expect(m.some((x) => x.vehiculo === "V1" && x.tipo === "vira_derecha")).toBe(true);
+    expect(e.impactos?.some((i) => OBJETO_PERSONA.test(i.objeto_fijo ?? ""))).toBe(true);
+  });
+
+  it("la carambola: dos choques, el de en medio con su parte de cada uno, y C detenido", () => {
+    const { expediente: e, posiciones } = leer("rene-carambola-semaforo");
+    expect(e.impactos).toHaveLength(2);
+    for (const i of e.impactos!)
+      expect(i.zonas?.find((z) => z.vehiculo === "V2")?.zona.cara).toBe(
+        i.vehiculos!.includes("V1") ? "posterior" : "frontal",
+      );
+    expect(posiciones.filter((p) => p.fase === "final")).toHaveLength(3);
   });
 });

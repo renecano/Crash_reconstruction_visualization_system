@@ -1,0 +1,178 @@
+{
+  "id": "rene-peaton-vuelta",
+  "modalidad_c0": "tres-narraciones",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 415,
+    "output_tokens": 1445,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0160492,
+  "narracion": "El hecho se ubica en el cruce de Avenida Tecnológico y Avenida Estado de México, en Metepec, Estado de México, aproximadamente a las 13:15 horas. El vehículo A, camión de reparto marca Isuzu, tipo ELF 400, modelo 2018, circulaba de sur a norte sobre Avenida Tecnológico y dio vuelta a la derecha para incorporarse a Avenida Estado de México, a baja velocidad, unos 15 km/h según su conductor. Al dar la vuelta, impactó con su parte frontal derecha a un peatón, adulto, que cruzaba Avenida Estado de México sobre el paso peatonal, de oriente a poniente. El peatón quedó tendido sobre el arroyo vehicular, aproximadamente a 4 m del punto de contacto y a 1 m del paso peatonal. El vehículo A frenó y quedó detenido 6 m después del paso peatonal, sobre el carril derecho. No se observaron huellas de frenado. El camión presenta un golpe leve en la defensa delantera derecha. Día soleado, pavimento seco y semáforo en verde para el vehículo A.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "atropellamiento",
+        "cita": "impactó con su parte frontal derecha a un peatón, adulto, que cruzaba Avenida Estado de México sobre el paso peatonal"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "cruce de Avenida Tecnológico y Avenida Estado de México",
+        "cita": "El hecho se ubica en el cruce de Avenida Tecnológico y Avenida Estado de México, en Metepec, Estado de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Metepec",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 13:15 horas",
+        "cita": "aproximadamente a las 13:15 horas"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Isuzu",
+        "cita": "camión de reparto marca Isuzu, tipo ELF 400, modelo 2018"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "ELF 400",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2018",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "clase",
+        "valor": "camion_unitario",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "vira_derecha",
+        "cita": "circulaba de sur a norte sobre Avenida Tecnológico y dio vuelta a la derecha para incorporarse a Avenida Estado de México"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "impactó con su parte frontal derecha a un peatón, adulto, que cruzaba Avenida Estado de México sobre el paso peatonal"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "objeto_fijo",
+        "valor": "peatón",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El camión presenta un golpe leve en la defensa delantera derecha"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "magnitud",
+        "valor": "leve",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El peatón quedó tendido sobre el arroyo vehicular, aproximadamente a 4 m del punto de contacto y a 1 m del paso peatonal"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "descripcion",
+        "valor": "peatón tendido sobre el arroyo vehicular, a 4 m del punto de contacto y a 1 m del paso peatonal",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A frenó y quedó detenido 6 m después del paso peatonal, sobre el carril derecho"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "detenido 6 m después del paso peatonal, sobre el carril derecho",
+        "cita": ""
+      }
+    ]
+  }
+}
