@@ -1,6 +1,6 @@
 {
   "nota": "Lo pesado de cada tanda de la auditoría del 2026-11-15, para la computadora del colaborador (tools/colaborador/tanda.ps1). «vigente» es la que corre CORRER-TANDA-EN-RTX.bat con doble clic. Toda corrida empieza por «comprobacion»; si falla, lo pesado no corre. Cada paso: un comando que corre en la raíz del repositorio, sin preguntas y sin llaves; «minutos» es lo estimado (el tope es 4 veces eso, y al menos 10 min); «salidas» son las rutas que se suben además de los registros. «rama»: la rama donde vive la tanda mientras no esté en main. Un comando por paso (sin &&): cada uno deja su registro. Un paso con `requiere` se omite si falta esa carpeta (datos que no van en git). «privadas»: carpetas de un paso que no se suben; se comprimen en un zip en la carpeta de resultados (René, 2026-11-21: el repositorio es público). Un «antes» en otro commit va en un git worktree (sin copiar el repositorio) y sus dependencias se enlazan desde el almacén de pnpm (--prefer-offline --package-import-method=hardlink), sin copiar node_modules (René, 2026-11-23: el disco llegaba al 100 %); corrida.json guarda el disco libre antes y después de cada paso.",
-  "vigente": "t7-fotos",
+  "vigente": "t8",
   "comprobacion": {
     "pasos": [
       {
@@ -868,6 +868,133 @@
           "minutos": 20,
           "tope_min": 35,
           "privadas": ["recorrido/solo-cesvi"]
+        }
+      ]
+    },
+    "t8": {
+      "titulo": "Tanda 8 · Verificación en el navegador de lo publicado con el #284",
+      "nota": "René, 2026-11-23: lo que quedó en producción con el #284 (build de Unity 945617e035988035, del release de GitHub, sin Blob), en la demo local con main. Primero el humo (si falla, se detiene). Después: los cinco ejemplos en el navegador contra la tabla aprobada y AXA contra el índice de cifras; el crucero como lo ve el perito en la app contra el índice; las seis narraciones, Tollocan y el caso encimado con sus capturas del 3D; y el arranque del 3D del build nuevo contra el anterior (3087c2915b272e66), tres veces cada uno. Al final, eval/t8_comparar.mjs dice qué no coincide con lo publicado. Nada de AXA se sube (el humo de AXA queda fuera por su nombre).",
+      "pasos": [
+        {
+          "nombre": "visor",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 2,
+          "tope_min": 15
+        },
+        {
+          "nombre": "preparar",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar",
+          "minutos": 8,
+          "tope_min": 15
+        },
+        {
+          "nombre": "humo",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues humo",
+          "minutos": 6,
+          "tope_min": 8,
+          "salidas": ["eval/results/humo/", "apps/web/test-results/"],
+          "detiene_si_falla": true
+        },
+        {
+          "nombre": "ejemplos",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t8/ejemplos.json -Capturas docs/cesvi/ronda-4/evidencia/t8-ejemplos -Casos eval/results/t8/ejemplos-casos",
+          "minutos": 12,
+          "tope_min": 30,
+          "salidas": ["eval/results/t8", "docs/cesvi/ronda-4/evidencia/t8-ejemplos"]
+        },
+        {
+          "nombre": "crucero-en-la-app",
+          "comando": "powershell -NoProfile -Command \"$env:CROQUIS_EJEMPLO_APP='../../eval/results/t8/crucero_en_la_app.json'; pnpm --filter @croquis/web exec vitest run src/lib/ejemplo-en-la-app.test.ts\"",
+          "minutos": 2,
+          "tope_min": 10,
+          "salidas": ["eval/results/t8"]
+        },
+        {
+          "nombre": "narraciones",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues narraciones -Salida eval/results/t8/narraciones_fisica.json",
+          "minutos": 12,
+          "tope_min": 30,
+          "salidas": ["eval/results/t8", "docs/cesvi/ronda-4/evidencia/fisica"]
+        },
+        {
+          "nombre": "tollocan",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tollocan -Salida eval/results/t8/tollocan.json",
+          "minutos": 6,
+          "tope_min": 15,
+          "salidas": ["eval/results/t8", "docs/cesvi/ronda-4/evidencia/fisica"]
+        },
+        {
+          "nombre": "arranque-nuevo-1",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t8/arranque_945617e035988035_1.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t8"]
+        },
+        {
+          "nombre": "arranque-nuevo-2",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t8/arranque_945617e035988035_2.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t8"]
+        },
+        {
+          "nombre": "arranque-nuevo-3",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t8/arranque_945617e035988035_3.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t8"]
+        },
+        {
+          "nombre": "usar-anterior",
+          "comando": "git checkout 3257fa9f -- apps/web/public/visor-unity/manifest.json",
+          "minutos": 1,
+          "tope_min": 10
+        },
+        {
+          "nombre": "visor-anterior",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 2,
+          "tope_min": 15
+        },
+        {
+          "nombre": "preparar-anterior",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar",
+          "minutos": 8,
+          "tope_min": 15
+        },
+        {
+          "nombre": "arranque-anterior-1",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t8/arranque_3087c2915b272e66_1.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t8"]
+        },
+        {
+          "nombre": "arranque-anterior-2",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t8/arranque_3087c2915b272e66_2.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t8"]
+        },
+        {
+          "nombre": "arranque-anterior-3",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t8/arranque_3087c2915b272e66_3.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t8"]
+        },
+        {
+          "nombre": "volver-al-publicado",
+          "comando": "git checkout HEAD -- apps/web/public/visor-unity/manifest.json",
+          "minutos": 1,
+          "tope_min": 10
+        },
+        {
+          "nombre": "comparar",
+          "comando": "node eval/t8_comparar.mjs",
+          "minutos": 1,
+          "tope_min": 10,
+          "salidas": ["eval/results/t8"]
         }
       ]
     }
