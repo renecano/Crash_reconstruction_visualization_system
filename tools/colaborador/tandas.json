@@ -873,7 +873,7 @@
     },
     "t8": {
       "titulo": "Tanda 8 · Verificación en el navegador de lo publicado con el #284",
-      "nota": "René, 2026-11-23: lo que quedó en producción con el #284 (build de Unity 945617e035988035, del release de GitHub, sin Blob), en la demo local con main. Primero el humo (si falla, se detiene). Después: los cinco ejemplos en el navegador contra la tabla aprobada y AXA contra el índice de cifras; el crucero como lo ve el perito en la app contra el índice; las seis narraciones, Tollocan y el caso encimado con sus capturas del 3D; y el arranque del 3D del build nuevo contra el anterior (3087c2915b272e66), tres veces cada uno. Al final, eval/t8_comparar.mjs dice qué no coincide con lo publicado. Nada de AXA se sube (el humo de AXA queda fuera por su nombre).",
+      "nota": "René, 2026-11-23: lo que quedó en producción con el #284 (build de Unity 945617e035988035, del release de GitHub, sin Blob), en la demo local con main. Primero el humo (si falla, se detiene). Después: los cinco ejemplos en el navegador contra la tabla aprobada y AXA contra el índice de cifras; el crucero como lo ve el perito en la app contra el índice; las seis narraciones, Tollocan y el caso encimado con sus capturas del 3D; y el arranque del 3D del build nuevo contra el anterior (3087c2915b272e66), tres veces cada uno. Al final, eval/t8_comparar.mjs dice qué no coincide con lo publicado. Nada de AXA se sube (el humo de AXA queda fuera por su nombre). Al final, las tomas del tráiler (heroe, faros, impacto, aerea, detalle-1 y detalle-2) a 3840×2160 con el visor de escritorio compilado con el mismo código del build publicado (release visor-fotos-945617e035988035, sin AXA): suben a la rama de resultados en zips de menos de 90 MB (eval/results/t8/tomas-trailer), solo PNG y su informe, sin video ni audio.",
       "pasos": [
         {
           "nombre": "visor",
@@ -995,6 +995,13 @@
           "minutos": 1,
           "tope_min": 10,
           "salidas": ["eval/results/t8"]
+        },
+        {
+          "nombre": "tomas-del-trailer",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/desde-release.ps1 -Paso trailer -Release visor-fotos-945617e035988035 -Archivo fotos-promo-945617e0.zip -Zips eval/results/t8/tomas-trailer",
+          "minutos": 20,
+          "tope_min": 60,
+          "salidas": ["eval/results/t8/tomas-trailer", "eval/results/rtx-t4/tomas_trailer.json"]
         }
       ]
     }
