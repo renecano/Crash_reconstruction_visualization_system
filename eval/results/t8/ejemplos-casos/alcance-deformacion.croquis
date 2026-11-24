@@ -1,0 +1,386 @@
+{
+  "formato": "croquis-caso",
+  "version": 1,
+  "guardado": "2026-11-24T15:14:48.546Z",
+  "narracion": "El hecho se ubica en la carretera federal 57, tramo Querétaro–San Luis Potosí, a la altura del km 112+300, municipio de San Luis de la Paz, Guanajuato, aproximadamente a las 16:10 horas. La carretera consta de dos cuerpos separados por un camellón central con vegetación; el cuerpo con sentido de Sur a Norte tiene dos carriles de concreto asfáltico de 3.50 metros cada uno, con acotamiento de 2.50 metros. La superficie se encontraba seca.\n\nSe examinan el vehículo A, marca Nissan, tipo NP300, modelo 2018, color blanco, de servicio particular, y el vehículo B, marca Volkswagen, tipo Vento, modelo 2016, color gris, de servicio particular. El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás que afecta defensa, fascia, cofre, parrilla y radiador; se midió la deformación a lo ancho del frente con seis medidas a separación uniforme: C1 = 0.18 m, C2 = 0.24 m, C3 = 0.29 m, C4 = 0.31 m, C5 = 0.27 m y C6 = 0.20 m, con un ancho de daño L = 1.52 m. El vehículo B presenta en su parte posterior un hundimiento de atrás hacia adelante que afecta defensa trasera, cajuela, calaveras y panel trasero, con medidas C1 = 0.22 m, C2 = 0.30 m, C3 = 0.36 m, C4 = 0.38 m, C5 = 0.33 m y C6 = 0.25 m, y L = 1.45 m. Las zonas de contacto corresponden entre sí: la parte frontal del vehículo A con la parte posterior del vehículo B.\n\nSe localizan restos de plástico y vidrio en el carril de baja velocidad, en una franja de 6.80 metros de largo. El vehículo A quedó en el carril de baja velocidad, 9 metros adelante del inicio de los restos; el vehículo B quedó sobre el acotamiento, 21 metros adelante del inicio de los restos.",
+  "escena": {
+    "posiciones": [
+      {
+        "vehiculo": "V1",
+        "fase": "final",
+        "descripcion": "en el carril de baja velocidad, 9 metros adelante del inicio de los restos",
+        "cita": {
+          "texto": "El vehículo A quedó en el carril de baja velocidad, 9 metros adelante del inicio de los restos"
+        }
+      },
+      {
+        "vehiculo": "V2",
+        "fase": "final",
+        "descripcion": "sobre el acotamiento, 21 metros adelante del inicio de los restos",
+        "cita": {
+          "texto": "el vehículo B quedó sobre el acotamiento, 21 metros adelante del inicio de los restos"
+        }
+      }
+    ],
+    "conteos": {
+      "filas": 29,
+      "valores_invalidos": 0,
+      "citas": 13,
+      "citas_fuera": 0,
+      "numeros": 17,
+      "numeros_fuera": 0
+    },
+    "problemas": [],
+    "preguntas": [
+      {
+        "clave": "impactos",
+        "texto": "¿Qué vehículos chocaron primero?",
+        "porQue": "Sin los impactos no hay reconstrucción.",
+        "control": {
+          "tipo": "opciones",
+          "opciones": [
+            {
+              "valor": "V1|V2",
+              "etiqueta": "V1 y V2"
+            },
+            {
+              "valor": "V1|objeto:otro",
+              "etiqueta": "V1 contra un objeto fijo"
+            },
+            {
+              "valor": "V2|objeto:otro",
+              "etiqueta": "V2 contra un objeto fijo"
+            }
+          ]
+        }
+      },
+      {
+        "clave": "velocidad-V1",
+        "texto": "¿A qué velocidad venía V1 antes del impacto?",
+        "porQue": "Si la evidencia no fija la velocidad, la reconstrucción usa la que des, como supuesto con su rango. Con «No sé», la típica de la vía.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "km/h"
+        },
+        "vehiculo": "V1"
+      },
+      {
+        "clave": "velocidad-V2",
+        "texto": "¿A qué velocidad venía V2 antes del impacto?",
+        "porQue": "Si la evidencia no fija la velocidad, la reconstrucción usa la que des, como supuesto con su rango. Con «No sé», la típica de la vía.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "km/h"
+        },
+        "vehiculo": "V2"
+      }
+    ]
+  },
+  "expediente": {
+    "caso": {
+      "fecha_hora": {
+        "valor": "16:10 horas",
+        "fuente": "perito"
+      },
+      "lugar": {
+        "descripcion": {
+          "valor": "carretera federal 57, tramo Querétaro–San Luis Potosí, km 112+300",
+          "fuente": "perito"
+        },
+        "municipio": {
+          "valor": "San Luis de la Paz",
+          "fuente": "perito"
+        },
+        "estado": {
+          "valor": "Guanajuato",
+          "fuente": "perito"
+        }
+      },
+      "condiciones": {
+        "superficie": {
+          "valor": "asfalto",
+          "fuente": "perito",
+          "cita": {
+            "texto": "el cuerpo con sentido de Sur a Norte tiene dos carriles de concreto asfáltico de 3.50 metros cada uno, con acotamiento de 2.50 metros"
+          }
+        },
+        "estado_superficie": {
+          "valor": "seco",
+          "fuente": "perito",
+          "cita": {
+            "texto": "La superficie se encontraba seca"
+          }
+        }
+      },
+      "modalidades": []
+    },
+    "vehiculos": [
+      {
+        "id": "V1",
+        "marca": {
+          "valor": "Nissan",
+          "fuente": "perito"
+        },
+        "modelo": {
+          "valor": "NP300",
+          "fuente": "perito"
+        },
+        "anio": 2018,
+        "clase": "pickup",
+        "masa": {
+          "valor": 1653,
+          "unidad": "kg",
+          "fuente": "supuesto"
+        }
+      },
+      {
+        "id": "V2",
+        "marca": {
+          "valor": "Volkswagen",
+          "fuente": "perito"
+        },
+        "modelo": {
+          "valor": "Vento",
+          "fuente": "perito"
+        },
+        "anio": 2016,
+        "clase": "sedan_compacto",
+        "masa": {
+          "valor": 1191,
+          "unidad": "kg",
+          "fuente": "supuesto"
+        }
+      }
+    ],
+    "danos": [
+      {
+        "vehiculo": "V1",
+        "zona": {
+          "cara": "frontal"
+        },
+        "direcciones": [
+          "de_adelante_hacia_atras"
+        ],
+        "tipos": [
+          "hundimiento"
+        ],
+        "magnitud": {
+          "c_m": [
+            0.18,
+            0.24,
+            0.29,
+            0.31,
+            0.27,
+            0.2
+          ],
+          "l_m": 1.52
+        },
+        "fuente": "perito",
+        "cita": {
+          "texto": "El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás que afecta defensa, fascia, cofre, parrilla y radiador"
+        }
+      },
+      {
+        "vehiculo": "V2",
+        "zona": {
+          "cara": "posterior"
+        },
+        "direcciones": [
+          "de_atras_hacia_adelante"
+        ],
+        "tipos": [
+          "hundimiento"
+        ],
+        "magnitud": {
+          "c_m": [
+            0.22,
+            0.3,
+            0.36,
+            0.38,
+            0.33,
+            0.25
+          ],
+          "l_m": 1.45
+        },
+        "fuente": "perito",
+        "cita": {
+          "texto": "El vehículo B presenta en su parte posterior un hundimiento de atrás hacia adelante que afecta defensa trasera, cajuela, calaveras y panel trasero"
+        }
+      }
+    ],
+    "impactos": [
+      {
+        "orden": 1,
+        "vehiculos": [
+          "V1",
+          "V2"
+        ],
+        "zonas": [
+          {
+            "vehiculo": "V1",
+            "zona": {
+              "cara": "frontal"
+            }
+          },
+          {
+            "vehiculo": "V2",
+            "zona": {
+              "cara": "posterior"
+            }
+          }
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "la parte frontal del vehículo A con la parte posterior del vehículo B"
+        }
+      }
+    ],
+    "evidencias": {
+      "restos": {
+        "longitud": {
+          "valor": 6.8,
+          "unidad": "metros",
+          "fuente": "perito"
+        },
+        "cita": {
+          "texto": "Se localizan restos de plástico y vidrio en el carril de baja velocidad, en una franja de 6.80 metros de largo"
+        }
+      }
+    },
+    "versiones": [
+      {
+        "tipo": "evidencia",
+        "posiciones": [
+          {
+            "vehiculo": "V1",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.429975988146012,
+              "lon": -99.07094848632836
+            },
+            "rumbo": 0,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V1",
+            "fase": "final",
+            "punto": {
+              "lat": 19.430081154886864,
+              "lon": -99.07094848632731
+            },
+            "rumbo": 0,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V2",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.430020234707907,
+              "lon": -99.07094848632836
+            },
+            "rumbo": 0,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V2",
+            "fase": "final",
+            "punto": {
+              "lat": 19.430189102051713,
+              "lon": -99.07092415435585
+            },
+            "rumbo": 0,
+            "fuente": "perito"
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion_perito": null,
+  "titulo": "Caso nuevo",
+  "bitacora": [
+    {
+      "n": 1,
+      "de": "lector",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Lectura: 27 filas con su cita."
+    },
+    {
+      "n": 2,
+      "de": "verificador_citas",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Citas encontradas en la narración: 13 de 13; números con su cita: 17 de 17. Lo que no está en el texto se descarta."
+    },
+    {
+      "n": 3,
+      "de": "validador",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Escena válida: 2 vehículos, 1 impacto."
+    },
+    {
+      "n": 4,
+      "de": "preguntador",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "3 preguntas para el perito, de lo que más cambia la reconstrucción: impactos, velocidad-V1, velocidad-V2."
+    },
+    {
+      "n": 5,
+      "de": "verificador_cesvi",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Método de CESVI (EBS por deformación): V1 a 39.93 km/h, V2 a 33.65 km/h."
+    },
+    {
+      "n": 6,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "No sé dónde fue el primer golpe: se usa el lugar del choque (supuesto)."
+    },
+    {
+      "n": 7,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Pide reconstruir."
+    },
+    {
+      "n": 8,
+      "de": "fisico",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Reconstrucción: V1 a 54 km/h (49–56), V2 a 0 km/h (0–9)."
+    },
+    {
+      "n": 9,
+      "de": "fisico",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Con los supuestos declarados: Masa de V1: 1,653 kg; Masa de V2: 1,191 kg; Posición inicial de V1: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Posición inicial de V2: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Fricción llanta–pavimento: μ = 0.7; Después del impacto: las llantas ruedan, con un arrastre de 0.35 de la fricción; Restitución del choque: e = 0.1; Fricción entre los vehículos durante el choque: razón de impulso de 0.4."
+    },
+    {
+      "n": 10,
+      "de": "verificador_cesvi",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Método de CESVI (EBS por deformación): V1 a 39.93 km/h, V2 a 33.65 km/h."
+    },
+    {
+      "n": 11,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Abre el dictamen."
+    },
+    {
+      "n": 12,
+      "de": "redactor",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Dictamen redactado con la reconstrucción, la verificación con el método de CESVI, esta bitácora."
+    }
+  ]
+}

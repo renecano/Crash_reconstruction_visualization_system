@@ -1,0 +1,434 @@
+{
+  "formato": "croquis-caso",
+  "version": 1,
+  "guardado": "2026-11-24T15:15:33.976Z",
+  "narracion": "El hecho se ubica en la calle Cerro del Fortín, frente al acceso vehicular de una casa habitación, colonia Lomas del Valle, municipio de Puebla, Puebla, aproximadamente a las 08:20 horas. La calle consta de un arroyo de dos carriles de concreto asfáltico, uno por sentido, con pendiente descendente hacia el Norte; 12 metros al Sur de ese acceso se encuentra un reductor de velocidad tipo tope de 0.10 metros de alto y 1.80 metros de ancho. La superficie se encontraba seca.\n\nSe examinan el vehículo A, marca Honda, tipo CR-V, modelo 2017, color plata, de servicio particular, que salía en reversa de ese acceso vehicular hacia la calle, y el vehículo B, marca Nissan, tipo Versa, modelo 2020, color azul, de servicio particular, que circulaba de Sur a Norte. El vehículo A presenta en su parte posterior derecha un hundimiento de atrás hacia adelante y de derecha a izquierda sobre defensa y calavera. El vehículo B presenta en su costado izquierdo, a la altura de la puerta delantera, un hundimiento de izquierda a derecha con desprendimiento de pintura. Las zonas de contacto corresponden: la parte posterior del vehículo A con el costado izquierdo del vehículo B.\n\nEl vehículo A quedó con su parte posterior sobre el carril con sentido al Norte, a 2.40 metros del acceso; el vehículo B quedó 7 metros al Norte del área de contacto, junto a la guarnición.",
+  "escena": {
+    "posiciones": [
+      {
+        "vehiculo": "V1",
+        "fase": "final",
+        "descripcion": "con su parte posterior sobre el carril con sentido al Norte, a 2.40 metros del acceso",
+        "cita": {
+          "texto": "El vehículo A quedó con su parte posterior sobre el carril con sentido al Norte, a 2.40 metros del acceso"
+        }
+      },
+      {
+        "vehiculo": "V2",
+        "fase": "final",
+        "descripcion": "7 metros al Norte del área de contacto, junto a la guarnición",
+        "cita": {
+          "texto": "el vehículo B quedó 7 metros al Norte del área de contacto, junto a la guarnición"
+        }
+      }
+    ],
+    "conteos": {
+      "filas": 32,
+      "valores_invalidos": 0,
+      "citas": 11,
+      "citas_fuera": 0,
+      "numeros": 2,
+      "numeros_fuera": 0
+    },
+    "problemas": [],
+    "preguntas": [
+      {
+        "clave": "impactos",
+        "texto": "¿Qué vehículos chocaron primero?",
+        "porQue": "Sin los impactos no hay reconstrucción.",
+        "control": {
+          "tipo": "opciones",
+          "opciones": [
+            {
+              "valor": "V1|V2",
+              "etiqueta": "V1 y V2"
+            },
+            {
+              "valor": "V1|objeto:otro",
+              "etiqueta": "V1 contra un objeto fijo"
+            },
+            {
+              "valor": "V2|objeto:otro",
+              "etiqueta": "V2 contra un objeto fijo"
+            }
+          ]
+        }
+      },
+      {
+        "clave": "velocidad-V1",
+        "texto": "¿A qué velocidad venía V1 antes del impacto?",
+        "porQue": "Si la evidencia no fija la velocidad, la reconstrucción usa la que des, como supuesto con su rango. Con «No sé», la típica de la vía.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "km/h"
+        },
+        "vehiculo": "V1"
+      },
+      {
+        "clave": "velocidad-V2",
+        "texto": "¿A qué velocidad venía V2 antes del impacto?",
+        "porQue": "Si la evidencia no fija la velocidad, la reconstrucción usa la que des, como supuesto con su rango. Con «No sé», la típica de la vía.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "km/h"
+        },
+        "vehiculo": "V2"
+      },
+      {
+        "clave": "restos",
+        "texto": "¿Qué longitud tiene la zona de restos?",
+        "porQue": "Los restos fijan el desplazamiento después del impacto.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "m"
+        }
+      },
+      {
+        "clave": "final-V2",
+        "texto": "¿Dónde quedó V2 al final? Una posición medida en el lugar fija mejor su velocidad.",
+        "porQue": "Con la posición final que hay, la física no cuadra. Si se midió en el lugar, colócala; si no, queda el supuesto.",
+        "control": {
+          "tipo": "mapa"
+        },
+        "vehiculo": "V2"
+      }
+    ]
+  },
+  "expediente": {
+    "caso": {
+      "fecha_hora": {
+        "valor": "aproximadamente a las 08:20 horas",
+        "fuente": "perito"
+      },
+      "lugar": {
+        "descripcion": {
+          "valor": "calle Cerro del Fortín, frente al acceso vehicular de una casa habitación, colonia Lomas del Valle",
+          "fuente": "perito"
+        },
+        "municipio": {
+          "valor": "Puebla",
+          "fuente": "perito"
+        },
+        "estado": {
+          "valor": "Puebla",
+          "fuente": "perito"
+        }
+      },
+      "condiciones": {
+        "superficie": {
+          "valor": "asfalto",
+          "fuente": "perito",
+          "cita": {
+            "texto": "La calle consta de un arroyo de dos carriles de concreto asfáltico, uno por sentido, con pendiente descendente hacia el Norte"
+          }
+        },
+        "estado_superficie": {
+          "valor": "seco",
+          "fuente": "perito",
+          "cita": {
+            "texto": "La superficie se encontraba seca"
+          }
+        },
+        "pendiente": {
+          "valor": "bajada",
+          "fuente": "perito",
+          "cita": {
+            "texto": "La calle consta de un arroyo de dos carriles de concreto asfáltico, uno por sentido, con pendiente descendente hacia el Norte"
+          }
+        }
+      },
+      "modalidades": []
+    },
+    "vehiculos": [
+      {
+        "id": "V1",
+        "marca": {
+          "valor": "Honda",
+          "fuente": "perito"
+        },
+        "modelo": {
+          "valor": "CR-V",
+          "fuente": "perito"
+        },
+        "anio": 2017,
+        "clase": "suv_compacta",
+        "masa": {
+          "valor": 1590,
+          "unidad": "kg",
+          "fuente": "supuesto"
+        }
+      },
+      {
+        "id": "V2",
+        "marca": {
+          "valor": "Nissan",
+          "fuente": "perito"
+        },
+        "modelo": {
+          "valor": "Versa",
+          "fuente": "perito"
+        },
+        "anio": 2020,
+        "clase": "sedan_compacto",
+        "masa": {
+          "valor": 1110,
+          "unidad": "kg",
+          "fuente": "supuesto"
+        }
+      }
+    ],
+    "danos": [
+      {
+        "vehiculo": "V1",
+        "zona": {
+          "cara": "posterior",
+          "vertice": "posterior_derecho"
+        },
+        "direcciones": [
+          "de_atras_hacia_adelante",
+          "de_derecha_a_izquierda"
+        ],
+        "tipos": [
+          "hundimiento"
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "El vehículo A presenta en su parte posterior derecha un hundimiento de atrás hacia adelante y de derecha a izquierda sobre defensa y calavera"
+        }
+      },
+      {
+        "vehiculo": "V2",
+        "zona": {
+          "cara": "lateral_izquierdo",
+          "tercio": "delantero"
+        },
+        "direcciones": [
+          "de_izquierda_a_derecha"
+        ],
+        "tipos": [
+          "hundimiento",
+          "desprendimiento"
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "El vehículo B presenta en su costado izquierdo, a la altura de la puerta delantera, un hundimiento de izquierda a derecha con desprendimiento de pintura"
+        }
+      }
+    ],
+    "impactos": [
+      {
+        "orden": 1,
+        "vehiculos": [
+          "V1",
+          "V2"
+        ],
+        "zonas": [
+          {
+            "vehiculo": "V1",
+            "zona": {
+              "cara": "posterior"
+            }
+          },
+          {
+            "vehiculo": "V2",
+            "zona": {
+              "cara": "lateral_izquierdo"
+            }
+          }
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "la parte posterior del vehículo A con el costado izquierdo del vehículo B"
+        }
+      }
+    ],
+    "versiones": [
+      {
+        "tipo": "evidencia",
+        "maniobras": [
+          {
+            "vehiculo": "V1",
+            "tipo": "reversa",
+            "cita": {
+              "texto": "que salía en reversa de ese acceso vehicular hacia la calle"
+            }
+          },
+          {
+            "vehiculo": "V2",
+            "tipo": "circula",
+            "cita": {
+              "texto": "que circulaba de Sur a Norte"
+            }
+          }
+        ],
+        "posiciones": [
+          {
+            "vehiculo": "V1",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.429999999999723,
+              "lon": -99.07092769717313
+            },
+            "rumbo": 90,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V1",
+            "fase": "final",
+            "punto": {
+              "lat": 19.430003595469415,
+              "lon": -99.07096591537311
+            },
+            "rumbo": 90,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V2",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.429999999999723,
+              "lon": -99.07095678291783
+            },
+            "rumbo": 0,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V2",
+            "fase": "final",
+            "punto": {
+              "lat": 19.430063126744557,
+              "lon": -99.07094304406657
+            },
+            "rumbo": 0,
+            "fuente": "perito"
+          }
+        ]
+      }
+    ],
+    "terreno": {
+      "topes": [
+        {
+          "id": "tope-1",
+          "linea": [
+            {
+              "lat": 19.4298922,
+              "lon": -99.0709811
+            },
+            {
+              "lat": 19.4298922,
+              "lon": -99.0709048
+            }
+          ],
+          "alto_m": 0.1,
+          "largo_m": 1.4,
+          "fuente": "supuesto"
+        }
+      ],
+      "relieve": {
+        "fuente": "dem"
+      }
+    }
+  },
+  "conclusion_perito": null,
+  "titulo": "Caso nuevo",
+  "bitacora": [
+    {
+      "n": 1,
+      "de": "lector",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Lectura: 30 filas con su cita."
+    },
+    {
+      "n": 2,
+      "de": "verificador_citas",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Citas encontradas en la narración: 11 de 11; números con su cita: 2 de 2. Lo que no está en el texto se descarta."
+    },
+    {
+      "n": 3,
+      "de": "validador",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Escena válida: 2 vehículos, 1 impacto."
+    },
+    {
+      "n": 4,
+      "de": "preguntador",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "4 preguntas para el perito, de lo que más cambia la reconstrucción: impactos, velocidad-V1, velocidad-V2, restos."
+    },
+    {
+      "n": 5,
+      "de": "verificador_cesvi",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Sin medidas de deformación completas: no hay EBS con el método de CESVI."
+    },
+    {
+      "n": 6,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "No sé dónde fue el primer golpe: se usa el lugar del choque (supuesto)."
+    },
+    {
+      "n": 7,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Pide reconstruir."
+    },
+    {
+      "n": 8,
+      "de": "fisico",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Reconstrucción: V1 a 0 km/h (0–1), V2 a 20 km/h (19–26)."
+    },
+    {
+      "n": 9,
+      "de": "fisico",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Con los supuestos declarados: Masa de V1: 1,590 kg; Masa de V2: 1,110 kg; Posición inicial de V1: 12 m delante de la posición de impacto que colocó el perito: llega en reversa; Posición inicial de V2: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Fricción llanta–pavimento: μ = 0.7; Después del impacto: las llantas ruedan, con un arrastre de 0.35 de la fricción; Restitución del choque: e = 0.1; Fricción entre los vehículos durante el choque: razón de impulso de 0.4."
+    },
+    {
+      "n": 10,
+      "de": "fisico",
+      "para": "preguntador",
+      "tipo": "pide",
+      "texto": "La física no cuadra o no alcanza (ninguna velocidad lleva al vehículo a la posición final dada): pide evidencia al perito."
+    },
+    {
+      "n": 11,
+      "de": "preguntador",
+      "para": "fisico",
+      "tipo": "escribe",
+      "texto": "Pregunta al perito: ¿Dónde quedó V2 al final? Una posición medida en el lugar fija mejor su velocidad."
+    },
+    {
+      "n": 12,
+      "de": "verificador_cesvi",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Sin medidas de deformación completas: no hay EBS con el método de CESVI."
+    },
+    {
+      "n": 13,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Abre el dictamen."
+    },
+    {
+      "n": 14,
+      "de": "redactor",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Dictamen redactado con la reconstrucción, la verificación con el método de CESVI, esta bitácora."
+    }
+  ]
+}

@@ -1,0 +1,514 @@
+{
+  "formato": "croquis-caso",
+  "version": 1,
+  "guardado": "2026-11-24T15:15:53.835Z",
+  "narracion": "El hecho se ubica en el entronque de la carretera estatal 15, tramo San Martín–Atlixco, con el camino a San Lucas, a la altura del km 23+600, municipio de Tianguismanalco, Puebla, aproximadamente a las 06:40 horas. La carretera estatal consta de un arroyo de dos carriles de concreto asfáltico, uno por sentido, con circulación de Poniente a Oriente y viceversa, y acotamiento de terracería de 2.00 metros de ancho en ambos lados; el camino a San Lucas llega del Sur, es de un carril por sentido y de concreto asfáltico. La superficie se encontraba seca.\n\nSe examinan el vehículo A, marca Mazda, tipo 3, modelo 2014, color gris, de servicio particular, que circulaba por el camino a San Lucas de Sur a Norte, y el vehículo B, marca Nissan, tipo Sentra, modelo 2018, color blanco, de servicio particular, que circulaba por la carretera estatal de Poniente a Oriente. El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás sobre defensa, fascia y cofre. El vehículo B presenta en su costado derecho, a la altura de la puerta delantera, un hundimiento de derecha a izquierda, y en su parte frontal izquierda un hundimiento de adelante hacia atrás, de forma semicircular coincidente con un poste. Las zonas de contacto corresponden: la parte frontal del vehículo A con el costado derecho del vehículo B.\n\nDespués del contacto, el vehículo B dejó una huella de derrape de 18.40 metros que inicia en el área de contacto, cruza el borde de la carpeta y continúa sobre el acotamiento de terracería, hasta un poste de concreto de la línea de distribución eléctrica situado a 1.50 metros del borde de la carpeta, contra el cual se impactó. El vehículo B quedó en contacto con el poste, orientado hacia el Oriente; el vehículo A quedó sobre el entronque, 8 metros al Norte del área de contacto.",
+  "escena": {
+    "posiciones": [
+      {
+        "vehiculo": "V2",
+        "fase": "final",
+        "descripcion": "en contacto con el poste, orientado hacia el Oriente",
+        "cita": {
+          "texto": "El vehículo B quedó en contacto con el poste, orientado hacia el Oriente"
+        }
+      },
+      {
+        "vehiculo": "V1",
+        "fase": "final",
+        "descripcion": "sobre el entronque, 8 metros al Norte del área de contacto",
+        "cita": {
+          "texto": "el vehículo A quedó sobre el entronque, 8 metros al Norte del área de contacto"
+        }
+      }
+    ],
+    "conteos": {
+      "filas": 38,
+      "valores_invalidos": 0,
+      "citas": 16,
+      "citas_fuera": 0,
+      "numeros": 3,
+      "numeros_fuera": 0
+    },
+    "problemas": [],
+    "preguntas": [
+      {
+        "clave": "impactos",
+        "texto": "¿Qué vehículos chocaron primero?",
+        "porQue": "Sin los impactos no hay reconstrucción.",
+        "control": {
+          "tipo": "opciones",
+          "opciones": [
+            {
+              "valor": "V1|V2",
+              "etiqueta": "V1 y V2"
+            },
+            {
+              "valor": "V1|objeto:otro",
+              "etiqueta": "V1 contra un objeto fijo"
+            },
+            {
+              "valor": "V2|objeto:otro",
+              "etiqueta": "V2 contra un objeto fijo"
+            }
+          ]
+        }
+      },
+      {
+        "clave": "zona-2-V2",
+        "texto": "¿Con qué zona entró en contacto V2 en el impacto 2?",
+        "porQue": "La zona de contacto fija la dirección de la fuerza en el impacto.",
+        "control": {
+          "tipo": "opciones",
+          "opciones": [
+            {
+              "valor": "frontal",
+              "etiqueta": "Frente"
+            },
+            {
+              "valor": "posterior",
+              "etiqueta": "Parte trasera"
+            },
+            {
+              "valor": "lateral_izquierdo",
+              "etiqueta": "Costado izquierdo"
+            },
+            {
+              "valor": "lateral_derecho",
+              "etiqueta": "Costado derecho"
+            }
+          ]
+        },
+        "vehiculo": "V2",
+        "impacto": 2
+      },
+      {
+        "clave": "velocidad-V1",
+        "texto": "¿A qué velocidad venía V1 antes del impacto?",
+        "porQue": "Si la evidencia no fija la velocidad, la reconstrucción usa la que des, como supuesto con su rango. Con «No sé», la típica de la vía.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "km/h"
+        },
+        "vehiculo": "V1"
+      },
+      {
+        "clave": "velocidad-V2",
+        "texto": "¿A qué velocidad venía V2 antes del impacto?",
+        "porQue": "Si la evidencia no fija la velocidad, la reconstrucción usa la que des, como supuesto con su rango. Con «No sé», la típica de la vía.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "km/h"
+        },
+        "vehiculo": "V2"
+      },
+      {
+        "clave": "restos",
+        "texto": "¿Qué longitud tiene la zona de restos?",
+        "porQue": "Los restos fijan el desplazamiento después del impacto.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "m"
+        }
+      },
+      {
+        "clave": "final-V1",
+        "texto": "¿Dónde quedó V1 al final? Una posición medida en el lugar fija mejor su velocidad.",
+        "porQue": "Con la posición final que hay, la física no cuadra. Si se midió en el lugar, colócala; si no, queda el supuesto.",
+        "control": {
+          "tipo": "mapa"
+        },
+        "vehiculo": "V1"
+      }
+    ]
+  },
+  "expediente": {
+    "caso": {
+      "fecha_hora": {
+        "valor": "06:40 horas",
+        "fuente": "perito"
+      },
+      "lugar": {
+        "descripcion": {
+          "valor": "entronque de la carretera estatal 15, tramo San Martín–Atlixco, con el camino a San Lucas, km 23+600",
+          "fuente": "perito"
+        },
+        "municipio": {
+          "valor": "Tianguismanalco",
+          "fuente": "perito"
+        },
+        "estado": {
+          "valor": "Puebla",
+          "fuente": "perito"
+        }
+      },
+      "condiciones": {
+        "superficie": {
+          "valor": "asfalto",
+          "fuente": "perito",
+          "cita": {
+            "texto": "La carretera estatal consta de un arroyo de dos carriles de concreto asfáltico, uno por sentido, con circulación de Poniente a Oriente y viceversa, y acotamiento"
+          }
+        },
+        "estado_superficie": {
+          "valor": "seco",
+          "fuente": "perito",
+          "cita": {
+            "texto": "La superficie se encontraba seca"
+          }
+        }
+      },
+      "modalidades": []
+    },
+    "vehiculos": [
+      {
+        "id": "V1",
+        "marca": {
+          "valor": "Mazda",
+          "fuente": "perito"
+        },
+        "modelo": {
+          "valor": "3",
+          "fuente": "perito"
+        },
+        "anio": 2014,
+        "clase": "sedan_mediano",
+        "masa": {
+          "valor": 1405,
+          "unidad": "kg",
+          "fuente": "supuesto"
+        }
+      },
+      {
+        "id": "V2",
+        "marca": {
+          "valor": "Nissan",
+          "fuente": "perito"
+        },
+        "modelo": {
+          "valor": "Sentra",
+          "fuente": "perito"
+        },
+        "anio": 2018,
+        "clase": "sedan_compacto",
+        "masa": {
+          "valor": 1405,
+          "unidad": "kg",
+          "fuente": "supuesto"
+        }
+      }
+    ],
+    "danos": [
+      {
+        "vehiculo": "V1",
+        "zona": {
+          "cara": "frontal"
+        },
+        "direcciones": [
+          "de_adelante_hacia_atras"
+        ],
+        "tipos": [
+          "hundimiento"
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás sobre defensa, fascia y cofre"
+        }
+      },
+      {
+        "vehiculo": "V2",
+        "zona": {
+          "cara": "lateral_derecho",
+          "tercio": "delantero"
+        },
+        "direcciones": [
+          "de_derecha_a_izquierda"
+        ],
+        "tipos": [
+          "hundimiento"
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "El vehículo B presenta en su costado derecho, a la altura de la puerta delantera, un hundimiento de derecha a izquierda"
+        }
+      },
+      {
+        "vehiculo": "V2",
+        "zona": {
+          "cara": "frontal",
+          "tercio": "izquierdo"
+        },
+        "direcciones": [
+          "de_adelante_hacia_atras"
+        ],
+        "tipos": [
+          "hundimiento"
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "en su parte frontal izquierda un hundimiento de adelante hacia atrás, de forma semicircular coincidente con un poste"
+        }
+      }
+    ],
+    "impactos": [
+      {
+        "orden": 1,
+        "vehiculos": [
+          "V1",
+          "V2"
+        ],
+        "zonas": [
+          {
+            "vehiculo": "V1",
+            "zona": {
+              "cara": "frontal"
+            }
+          },
+          {
+            "vehiculo": "V2",
+            "zona": {
+              "cara": "lateral_derecho"
+            }
+          }
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "Las zonas de contacto corresponden: la parte frontal del vehículo A con el costado derecho del vehículo B"
+        }
+      },
+      {
+        "orden": 2,
+        "vehiculos": [
+          "V2"
+        ],
+        "objeto_fijo": "poste de concreto de la línea de distribución eléctrica",
+        "fuente": "perito",
+        "cita": {
+          "texto": "un poste de concreto de la línea de distribución eléctrica situado a 1.50 metros del borde de la carpeta, contra el cual se impactó"
+        }
+      }
+    ],
+    "versiones": [
+      {
+        "tipo": "evidencia",
+        "maniobras": [
+          {
+            "vehiculo": "V1",
+            "tipo": "circula",
+            "cita": {
+              "texto": "que circulaba por el camino a San Lucas de Sur a Norte"
+            }
+          },
+          {
+            "vehiculo": "V2",
+            "tipo": "circula",
+            "cita": {
+              "texto": "que circulaba por la carretera estatal de Poniente a Oriente"
+            }
+          }
+        ],
+        "posiciones": [
+          {
+            "vehiculo": "V1",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.42997900086923,
+              "lon": -99.07094848632836
+            },
+            "rumbo": 0,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V1",
+            "fase": "final",
+            "punto": {
+              "lat": 19.43007190939514,
+              "lon": -99.07094140577789
+            },
+            "rumbo": 0,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V2",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.430007824086886,
+              "lon": -99.07094848632836
+            },
+            "rumbo": 90,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V2",
+            "fase": "final",
+            "punto": {
+              "lat": 19.4300246901892,
+              "lon": -99.07079231822449
+            },
+            "rumbo": 90,
+            "fuente": "perito"
+          }
+        ],
+        "puntos_paso": [
+          {
+            "vehiculo": "V2",
+            "orden": 1,
+            "punto": {
+              "lat": 19.430013863587817,
+              "lon": -99.07086311443145
+            },
+            "fuente": "perito"
+          }
+        ]
+      }
+    ],
+    "evidencias": {
+      "huellas": [
+        {
+          "tipo": "derrape",
+          "vehiculo": "V2",
+          "longitud": {
+            "valor": 18.4,
+            "unidad": "metros",
+            "fuente": "perito"
+          },
+          "cita": {
+            "texto": "el vehículo B dejó una huella de derrape de 18.40 metros que inicia en el área de contacto"
+          }
+        }
+      ],
+      "objetos_fijos_danados": [
+        "poste de concreto de la línea de distribución eléctrica situado a 1.50 metros del borde de la carpeta"
+      ]
+    },
+    "terreno": {
+      "superficies": [
+        {
+          "id": "zona-1",
+          "tipo": "terraceria",
+          "poligono": [
+            {
+              "lat": 19.4299015,
+              "lon": -99.0708631
+            },
+            {
+              "lat": 19.4301713,
+              "lon": -99.0708631
+            },
+            {
+              "lat": 19.4301713,
+              "lon": -99.0707486
+            },
+            {
+              "lat": 19.4299015,
+              "lon": -99.0707486
+            }
+          ],
+          "fuente": "perito"
+        }
+      ]
+    }
+  },
+  "conclusion_perito": null,
+  "titulo": "Caso nuevo",
+  "bitacora": [
+    {
+      "n": 1,
+      "de": "lector",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Lectura: 36 filas con su cita."
+    },
+    {
+      "n": 2,
+      "de": "verificador_citas",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Citas encontradas en la narración: 16 de 16; números con su cita: 3 de 3. Lo que no está en el texto se descarta."
+    },
+    {
+      "n": 3,
+      "de": "validador",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Escena válida: 2 vehículos, 2 impactos."
+    },
+    {
+      "n": 4,
+      "de": "preguntador",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "5 preguntas para el perito, de lo que más cambia la reconstrucción: impactos, zona-2-V2, velocidad-V1, velocidad-V2, restos."
+    },
+    {
+      "n": 5,
+      "de": "verificador_cesvi",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Sin medidas de deformación completas: no hay EBS con el método de CESVI."
+    },
+    {
+      "n": 6,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "No sé dónde fue el primer golpe: se usa el lugar del choque (supuesto)."
+    },
+    {
+      "n": 7,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Pide reconstruir."
+    },
+    {
+      "n": 8,
+      "de": "fisico",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Reconstrucción: V1 a 30 km/h (25–32), V2 a 36 km/h (31–39)."
+    },
+    {
+      "n": 9,
+      "de": "fisico",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Con los supuestos declarados: Masa de V1: 1,405 kg; Masa de V2: 1,405 kg; Posición inicial de V1: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Posición inicial de V2: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Fricción llanta–pavimento: μ = 0.7; Después del impacto: las llantas ruedan, con un arrastre de 0.35 de la fricción; Restitución del choque: e = 0.1; Fricción entre los vehículos durante el choque: razón de impulso de 0.4."
+    },
+    {
+      "n": 10,
+      "de": "fisico",
+      "para": "preguntador",
+      "tipo": "pide",
+      "texto": "La física no cuadra o no alcanza (ninguna velocidad lleva al vehículo a la posición final dada): pide evidencia al perito."
+    },
+    {
+      "n": 11,
+      "de": "preguntador",
+      "para": "fisico",
+      "tipo": "escribe",
+      "texto": "Pregunta al perito: ¿Dónde quedó V1 al final? Una posición medida en el lugar fija mejor su velocidad."
+    },
+    {
+      "n": 12,
+      "de": "verificador_cesvi",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Sin medidas de deformación completas: no hay EBS con el método de CESVI."
+    },
+    {
+      "n": 13,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Abre el dictamen."
+    },
+    {
+      "n": 14,
+      "de": "redactor",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Dictamen redactado con la reconstrucción, la verificación con el método de CESVI, esta bitácora."
+    }
+  ]
+}
