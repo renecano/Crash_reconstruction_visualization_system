@@ -1,0 +1,35 @@
+# Paso: arranque-anterior-1
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t8/arranque_3087c2915b272e66_1.json
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-23 21:12:58
+
+
+== 1. Herramientas
+Node v26.13.1 y pnpm 12.11.2.
+Hay internet.
+
+== 2. Dependencias
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 6d ago)
+Lockfile is up to date, resolution step is skipped
+Done in 69ms using pnpm v12.11.2
+
+== 3. El visor de Unity, desde esta computadora
+Visor 3087c2915b272e66 servido desde el sitio: C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\public\visor-unity\local
+
+== 4. La app en modo local
+Ya está compilada para esta versión (d028f1de).
+
+== 5. La lectura con IA
+No hay llave de Claude en .env.local: la lectura con IA no estará. Todo lo demás funciona (AXA, los casos de ejemplo con su lectura guardada, la reconstrucción, el 3D y el dictamen).
+
+== 6. Croquis en http://localhost:3000
+Necesitan internet: la lectura con IA de una narración nueva, los mosaicos del mapa (sin red, el mapa sale en blanco pero se puede colocar la escena) y buscar un lugar por nombre.
+Sin internet funcionan completos: el caso de AXA y los cinco casos de ejemplo, la reconstrucción, el 3D de Unity y el dictamen.
+
+Running 1 test using 1 worker
+
+[1/1] [chromium] › e2e\medir-unity-arranque.spec.ts:173:5 › el arranque del 3D de Unity, por partes
+  1 passed (47.5s)
+
+# Fin: 2026-11-23 21:13:50 · ok · 0.9 min
