@@ -1,0 +1,89 @@
+{
+  "descripcion": "El arranque del 3D de Unity al abrirlo (clic en «3D» con el caso reconstruido), por etapas, en ms desde el clic: descarga del build (precarga), compilación del WebAssembly, arranque del motor (instancia), solver del caso, carga del caso y primer cuadro. AXA y un caso nuevo (la narración de ejemplo grabada); primera visita con un perfil nuevo, segunda con otra pestaña del mismo perfil (caché). Tareas largas del hilo principal (Long Tasks API). Chromium con ventana y GPU (ANGLE d3d11), 1440×900.",
+  "script": "apps/web/e2e/medir-unity-arranque.spec.ts",
+  "sitio": "http://localhost:3000",
+  "fecha": "2026-11-24T03:15:34.601Z",
+  "maquina": {
+    "nucleos": 32,
+    "memoria_gb": 8,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "navegador": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+    "wasm": "ab5b6f3826f053a842718f897644180e0b8444d691cfd1e1a8341e96972fc8de"
+  },
+  "axa": {
+    "primera_visita": {
+      "ms_hasta_listo": 4035,
+      "etapas_ms_desde_el_clic": {
+        "precarga": 34,
+        "precarga_lista": 35,
+        "cargador_listo": 43,
+        "wasm_compila": 85,
+        "wasm_listo": 154,
+        "motor_listo": 617,
+        "solver_listo": 965,
+        "caso_cargado": 3593,
+        "primer_cuadro": 4039
+      },
+      "recursos": [],
+      "tarea_mas_larga_ms": 1697,
+      "tareas_de_mas_de_100_ms": 5,
+      "tiempo_bloqueado_ms": 2661
+    },
+    "segunda_visita": {
+      "ms_hasta_listo": 2172,
+      "etapas_ms_desde_el_clic": {
+        "precarga": 34,
+        "precarga_lista": 35,
+        "cargador_listo": 55,
+        "wasm_compila": 95,
+        "wasm_listo": 164,
+        "motor_listo": 372,
+        "solver_listo": 489,
+        "caso_cargado": 1674,
+        "primer_cuadro": 2173
+      },
+      "recursos": [],
+      "tarea_mas_larga_ms": 495,
+      "tareas_de_mas_de_100_ms": 4,
+      "tiempo_bloqueado_ms": 1036
+    }
+  },
+  "nuevo": {
+    "primera_visita": {
+      "ms_hasta_listo": 3973,
+      "etapas_ms_desde_el_clic": {
+        "precarga": 47,
+        "precarga_lista": 47,
+        "cargador_listo": 51,
+        "wasm_compila": 89,
+        "wasm_listo": 156,
+        "motor_listo": 649,
+        "solver_listo": 992,
+        "caso_cargado": 3470,
+        "primer_cuadro": 3977
+      },
+      "recursos": [],
+      "tarea_mas_larga_ms": 1563,
+      "tareas_de_mas_de_100_ms": 5,
+      "tiempo_bloqueado_ms": 2574
+    },
+    "segunda_visita": {
+      "ms_hasta_listo": 2078,
+      "etapas_ms_desde_el_clic": {
+        "precarga": 30,
+        "precarga_lista": 31,
+        "cargador_listo": 44,
+        "wasm_compila": 83,
+        "wasm_listo": 148,
+        "motor_listo": 353,
+        "solver_listo": 470,
+        "caso_cargado": 1569,
+        "primer_cuadro": 2079
+      },
+      "recursos": [],
+      "tarea_mas_larga_ms": 438,
+      "tareas_de_mas_de_100_ms": 4,
+      "tiempo_bloqueado_ms": 971
+    }
+  }
+}
