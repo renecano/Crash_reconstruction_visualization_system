@@ -1,0 +1,5 @@
+{"fecha":"2026-11-24T02:35:14.162Z","caso":"AXA","estado":"listo","segundos":7.3,"fases":["arrancando @0.0 s","calculando @1.1 s","listo @7.3 s"]}
+{"fecha":"2026-11-24T02:35:18.169Z","caso":"Tollocan","estado":"listo","segundos":2.2,"fases":["arrancando @0.0 s","calculando @0.9 s","listo @2.2 s"]}
+{"fecha":"2026-11-24T02:35:22.652Z","caso":"Reforma, CDMX (batería de ciudad)","estado":"listo","segundos":2.8,"fases":["arrancando @0.0 s","calculando @1.0 s","listo @2.8 s"]}
+{"fecha":"2026-11-24T02:35:26.795Z","caso":"Centro de Guadalajara (batería de ciudad)","estado":"listo","segundos":2.4,"fases":["arrancando @0.0 s","calculando @0.5 s","listo @2.4 s"]}
+{"fecha":"2026-11-24T02:35:34.002Z","caso":"Ejemplo crucero de noche","estado":"listo","segundos":2.3,"fases":["arrancando @0.0 s","calculando @0.9 s","listo @2.3 s"],"notas":[]}
