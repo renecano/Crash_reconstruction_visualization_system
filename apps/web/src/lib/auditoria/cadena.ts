@@ -18,6 +18,7 @@ import {
   especReconstruida,
   expedienteConTipicas,
   fichaDe,
+  formato as F,
   impactosEncimados,
   interpretarResultado,
   masaDeModelo,
@@ -326,7 +327,7 @@ export async function auditarCaso(o: {
       if (s && !s.sobre)
         falla(
           "vehiculo.fuera_de_calle",
-          `a ${s.m.toFixed(1)} m de ${s.calle.nombre ?? "la calle más cercana"}${s.alineada ? "" : ", cruzado a ella"}`,
+          `a ${F.metros(s.m, 1)} de ${s.calle.nombre ?? "la calle más cercana"}${s.alineada ? "" : ", cruzado a ella"}`,
           v.id,
         );
     }
@@ -347,7 +348,7 @@ export async function auditarCaso(o: {
   for (const enc of impactosEncimados(e))
     falla(
       "escena.encimados",
-      `choque ${enc.orden}: ${enc.vehiculos.join(" y ")} encimados ${enc.traslape_m.toFixed(2)} m`,
+      `choque ${enc.orden}: ${enc.vehiculos.join(" y ")} encimados ${F.metros(enc.traslape_m, 2)}`,
     );
 
   // --- La reconstrucción, como useReconstruccion ---
@@ -411,7 +412,7 @@ export async function auditarCaso(o: {
     if (s && !s.sobre)
       falla(
         "vuelta.fuera_de_calle",
-        `arranca a ${s.m.toFixed(1)} m de ${s.calle.nombre ?? "una calle"}`,
+        `arranca a ${F.metros(s.m, 1)} de ${s.calle.nombre ?? "una calle"}`,
         r.ids[String(sv.id)],
       );
   }
