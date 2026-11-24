@@ -1323,3 +1323,42 @@ Viene de U0 (ADR 0111). Vale cuando el PR de contrato 2.3.0 esté en `main`:
 - Buscador: cruce de dos vías con su geometría; si nada cuadra, pregunta (nunca el centro del municipio). 23 frases: `eval/results/ronda4_lugar_sentido_local.json`.
 - Unity, lo narrado en el 3D: 5 de 7 (`eval/results/unity_narraciones/`); faltan la barrera de la bajada (sale «otro») y la curva (#286).
 - Pendiente: visto bueno de René; si el #284 se fusiona sin medir carambolas, «91 de 156» y cobertura (dependen de masa y velocidad); el 66 del alcance en el navegador de la t5c no se reproduce sin navegador: la t6 guarda el .croquis de cada ejemplo.
+
+## Tras la t6: arreglos, colaboradores en paralelo y t7-fotos (2026-11-22/23)
+
+**Estado:** código listo en ramas; los PR y las fusiones esperan a que esta máquina tenga sesión de `gh` (no la tenía). Nada se publicó.
+
+- **«Márcalo tú» por dónde venía** (`fix/w-marcar-de-donde-venia`, sobre `main`): sin calles del mapa, la escena pedía «Marcar en el mapa» y el toque no hacía nada (solo contaban las flechas). Ahora el toque fija el rumbo del punto tocado hacia el choque (`flechaDelToque`). Prueba de componente `marcar-en-el-mapa.test.tsx` (choque, por dónde venía, dónde quedó, por dónde pasó): 3 de 4 fallan sin el arreglo, 4 de 4 pasan con él; en la línea del #284, 5 de 5 con la lista.
+- **«Ir al impacto» en el mapa de La escena** (`feat/w-ir-al-impacto-mapa`, sobre `main`): solo con choque marcado, tecla I, al primer choque con el zoom de trabajo (19.6). `ir-al-impacto.test.tsx`.
+- **Fotos del recorrido** (`fix/fotos-recorrido`, sobre el #284): se atoraban en La escena porque la lista tapa el panel «Corregir la escena» y el clic a `elegir-coche-*` esperaba sin tope; el modo serial dejaba sin correr las otras tres. Ahora el coche se elige en el mapa, cada prueba tiene su tope (25/45/45/25 min), sin modo serial, `actionTimeout` de 1 min y `-Filtro` en `demo-local.ps1`.
+- **Velocidad contra la narración** (`feat/w-velocidad-contra-narracion`, sobre el anterior): `contra-narracion.ts`. Si todo el p10–p90 queda del otro lado de lo narrado, va un límite y una nota junto a la cifra con las dos cifras; ninguna se fuerza.
+- **Caso encimado:** era la prueba. La receta esperaba que cambiara el texto de la pregunta, y «¿Dónde quedó después del choque?» se repite igual para los dos vehículos. Ahora espera a que cambie la tarjeta entera. En esta Mac pasa la colocación y la reconstrucción; el 3D necesita el build local de la tanda.
+- **Comparación de la tanda:** la cifra central, exacta; el p10 y el p90, con ±1 km/h; cada diferencia, con su valor y su porcentaje. AXA se mide con los ejemplos en el navegador (`ejemplos-ronda2.spec.ts`), ya no depende de las fotos. Con los datos de la t6: siguen sin coincidir el alcance (cifra 54 contra 53, +1.9 %) y AXA (sin dato en la t6).
+- **Varios colaboradores** (`chore/colaboradores-en-paralelo`): rama y carpeta por equipo (`resultados/<tanda>-<fecha>-<equipo>`), `corrida.json` con `equipo_nombre`, `gpu` y `parte`, push reintentado hasta 4 veces sobre lo último de la rama, `partes` en `tandas.json` con la pregunta al inicio, `.rar`/`.zip` sueltos movidos a `Croquis-archivos-sueltos`, `core.longpaths` y «limpiar» con robocopy. `tools/colaborador/revisar.mjs` junta las ramas de todos los equipos. Probado con pwsh 7.5.4 en esta Mac: un remoto local y dos copias limpias subiendo a la vez dejan dos ramas completas y separadas; con el mismo equipo, 3 rechazos reintentados y las 11 subidas en la rama.
+- **Instalado en esta Mac:** `gh` 2.83.0 y PowerShell 7.5.4 en `~/.local` (para PRs y para probar `tanda.ps1`).
+
+### Las cifras de la t6, explicadas
+
+- **El ±1 km/h de los ejemplos no es redondeo ni semilla.** El solver en Node, con el `.croquis` que guardó el navegador, da la cifra del navegador en 4 de 5 (alcance 53.52 → 54; carambola 24.46; poste 35.94, p90 38.60). La tabla los colocó con la receta en coordenadas exactas; el navegador, con toques en el mapa que dejan los finales de 3 a 5 cm distintos. En el alcance eso cruza el medio kilómetro (53.46 contra 53.52). La reversa además depende del relieve real del lugar, y la tabla la puso en otro punto.
+- **Las carambolas no cambian por las masas de ficha.** Búsqueda binaria en la partición de prueba (determinista: 50ebd981 dio 20 dos veces): el primer commit con 21 es el merge de `feat/w-velocidades-via` (45f58f9a). En ese commit siguen saliendo 21 si se apaga la masa de ficha, si se apagan las velocidades narradas o si se apagan las dos. La causa todavía no está identificada.
+
+### Siguiente paso
+
+1. Iniciar sesión de `gh` y abrir los PR: `fix/w-marcar-de-donde-venia` y `feat/w-ir-al-impacto-mapa` (a `main`), `feat/w-velocidad-contra-narracion` (al #284) y `chore/colaboradores-en-paralelo`. Después, la t7-fotos vigente.
+2. Las cifras de la t6 (punto 2) van a René antes de publicar el #284.
+3. La curva: la narración sí pone a los dos de oriente a poniente. Falta que la CR-V «se abrió e invadió el carril derecho» entre como ángulo, y no hay una fuente que dé el número: decisión de René.
+
+## Fotos del recorrido tomadas en la Mac con el Unity real (2026-11-23)
+
+- **Ambiente:** `tools/demo-local/demo-local.sh --solo-preparar` en el commit e37ef9a8 (#305 sobre el #284). El build 945617e0 sale del release de GitHub y se sirve desde la máquina, sin Blob. Chrome instalado con ANGLE sobre Metal, 2560×1440 con DPR 2.
+- **Resultado:** el juego público tiene 52 de 53 fotos; la que falta, «contra CESVI», no aplica a un caso nuevo. SOLO-CESVI tiene 16 de 16, y AXA da 57 km/h (55–78) en el navegador. Las fotos están fuera del repositorio, en `croquis-fotos-2026-11-23/` (`recorrido-publico.zip` y `recorrido-solo-cesvi.zip`). Nada de AXA se sube.
+- **Arreglos de la prueba:** en la escena nueva, el coche ya colocado no se elige en el mapa. La foto de rotar ahora sigue el flujo del perito: «Cambiar», tocar el coche y usar sus botones de 15°. Los ejemplos fijan la escena de una pregunta a la vez, porque la lista ya es la que sale por omisión.
+- **Cifras que salen en estas fotos y no coinciden con la tabla aprobada:**
+  - **Crucero de noche:** 14 km/h (4–26), contra 20 (10–28) en la tabla.
+  - **Reversa:** 20 (19–26), contra 21 (20–28).
+  - **Poste:** 36 (28–38), contra 36 (31–38).
+  - **Alcance:** 54 (49–56), contra 53 (49–56).
+
+  Son la misma receta colocada con toques en otro tamaño de pantalla, así que los coches quedan en posiciones algo distintas. Antes de usar esas cifras en una pieza, conviene revisarlas.
+
+- **Árbol y curva:** el límite de la vía depende de la calle del mapa donde queda el choque. En la Mac, el árbol cayó junto a una calle secundaria (30 km/h): 39 (30–47) no contradice «exceso de velocidad», y el aviso no sale. En la curva, el Circuito Exterior (80 km/h) sí lo dispara: «la narración dice más de 80 km/h («a alta velocidad»); las posiciones dan 10 km/h (7–14)». Ese aviso solo salía junto a la cifra del vehículo que la encabeza (el Rio); desde 26e78eca sale para cada vehículo que contradiga lo narrado (la CR-V), con su nombre.
