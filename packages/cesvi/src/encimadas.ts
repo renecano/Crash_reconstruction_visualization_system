@@ -172,6 +172,37 @@ export function impactosEncimados(e: Expediente): EncimadosEnChoque[] {
         const b = cajas[k]!;
         const t = traslape(a.contorno, b.contorno);
         if (!t || t.prof <= PROFUNDO_EN_CHOQUE_M) continue;
+        // Frente contra parte trasera (un alcance o una carambola, René 2026-11-24): uno detrás del otro,
+        // por su rumbo, defensa con defensa; por el eje de menor traslape los ponía en otro carril.
+        const cara = (v: string) => imp.zonas?.find((z) => z.vehiculo === v)?.zona.cara;
+        const ca = cara(a.p.vehiculo);
+        const cb = cara(b.p.vehiculo);
+        if ((ca === "frontal" && cb === "posterior") || (ca === "posterior" && cb === "frontal")) {
+          const delante = ca === "frontal" ? b : a;
+          const atras = ca === "frontal" ? a : b;
+          const r = (delante.p.rumbo * Math.PI) / 180;
+          const u: Vec = [Math.sin(r), Math.cos(r)];
+          const largo = (x: typeof a) => {
+            const v = e.vehiculos.find((y) => y.id === x.p.vehiculo);
+            return v ? medidasDe(v).largo : 4.5;
+          };
+          const ahora = (delante.c[0] - atras.c[0]) * u[0] + (delante.c[1] - atras.c[1]) * u[1];
+          const falta = (largo(delante) + largo(atras)) / 2 - ahora;
+          if (falta > PROFUNDO_EN_CHOQUE_M) {
+            const mitad = falta / 2;
+            out.push({
+              orden: imp.orden,
+              vehiculos: [a.p.vehiculo, b.p.vehiculo],
+              objeto: null,
+              traslape_m: Math.round(falta * 100) / 100,
+              propuesta: [
+                poseMovida(atras, [-mitad * u[0], -mitad * u[1]]),
+                poseMovida(delante, [mitad * u[0], mitad * u[1]]),
+              ],
+            });
+          }
+          continue;
+        }
         const mitad = t.prof / 2;
         out.push({
           orden: imp.orden,

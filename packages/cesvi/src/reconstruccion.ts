@@ -115,6 +115,13 @@ const OBJETO_PRIMERO: [RegExp, string][] = [
   ...OBJETO,
 ];
 const SUPUESTA = { unidad: "m", fuente: "default", confianza: 0.5 } as const;
+
+/** Si la cita de un derrape lo pone antes del choque o de la salida del camino. */
+export function derrapeAntes(cita: string | undefined): boolean {
+  return /\b(?:antes|previo|previas?)\b[^.]{0,40}\b(?:impacto|choque|colisi[oó]n|salida|salir|golpe|contacto)/i.test(
+    cita ?? "",
+  );
+}
 /**
  * Las medidas de un objeto que el perito marca sin medirlo: valores típicos, declarados como
  * supuesto. El muro, la barda, la barrera y la guarnición son un tramo de 6 m.
@@ -269,6 +276,20 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   // 1. Base válida con buildSpec, con la maniobra que dice la narración (R4b): quien retrocede va en
   // reversa (avanza con la parte posterior por delante) y quien estaba detenido empieza quieto.
   const maniobraNarrada = new Map<Id, string>();
+  // Lo que miden las huellas de antes del choque de cada vehículo (frenado, o derrape que la narración
+  // pone antes): el arranque va detrás de ellas, con 5 m de margen (René, 2026-11-24).
+  const arranqueAntes = (id: Id): number => {
+    const largos = (e.evidencias?.huellas ?? [])
+      .filter(
+        (h) =>
+          h.vehiculo === id &&
+          h.longitud &&
+          (h.tipo === "frenado" || (h.tipo === "derrape" && derrapeAntes(h.cita?.texto))),
+      )
+      .map((h) => (h.longitud!.unidad === "cm" ? h.longitud!.valor / 100 : h.longitud!.valor));
+    const l = largos.length ? Math.max(...largos) : 0;
+    return l + 5 > ANTES_DEL_IMPACTO_M ? Math.ceil(l + 5) : ANTES_DEL_IMPACTO_M;
+  };
   const narradas = (e.versiones ?? []).find((v) => v.tipo === "evidencia")?.maniobras ?? [];
   // El sentido de marcha va aparte de la forma de la maniobra (T3.3): quien retrocede dando vuelta
   // conserva las dos cosas.
@@ -475,8 +496,10 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       const rad = (r * Math.PI) / 180;
       const man = maniobraNarrada.get(v.id);
       const reversa = enReversa.has(v.id);
-      // En reversa llega de frente a su rumbo (avanza hacia atrás); detenido, ya está ahí.
-      const d = man === "detenido" ? 0 : reversa ? -ANTES_DEL_IMPACTO_M : ANTES_DEL_IMPACTO_M;
+      // En reversa llega de frente a su rumbo (avanza hacia atrás); detenido, ya está ahí. Con huellas
+      // de antes del choque, empieza detrás de ellas (René, 2026-11-24: 18 m de derrape en 12 m).
+      const antes = arranqueAntes(v.id);
+      const d = man === "detenido" ? 0 : reversa ? -ANTES_DEL_IMPACTO_M : antes;
       sv.posicion_inicial = {
         x: Math.round((x - d * Math.cos(rad)) * 1000) / 1000,
         y: Math.round((y - d * Math.sin(rad)) * 1000) / 1000,
@@ -489,7 +512,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
               ? "Detenido en la posición de impacto que colocó el perito."
               : reversa
                 ? `${ANTES_DEL_IMPACTO_M} m delante de la posición de impacto que colocó el perito: llega en reversa.`
-                : `${ANTES_DEL_IMPACTO_M} m antes de la posición de impacto que colocó el perito, en su rumbo.`,
+                : `${antes} m antes de la posición de impacto que colocó el perito, en su rumbo${antes > ANTES_DEL_IMPACTO_M ? ", detrás de sus huellas" : ""}.`,
         },
       };
     }
@@ -561,7 +584,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
         ejeReal.puntos,
         p,
         (rumboEscena(imp.rumbo) * Math.PI) / 180,
-        ANTES_DEL_IMPACTO_M,
+        arranqueAntes(v.id),
       );
       sv.posicion_inicial = {
         x: Math.round(a.x * 1000) / 1000,
@@ -570,7 +593,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
         procedencia: {
           fuente: "supuesto",
           confianza: 0.5,
-          nota: `${ANTES_DEL_IMPACTO_M} m antes de la posición de impacto que colocó el perito, sobre el trazo de la calle.`,
+          nota: `${arranqueAntes(v.id)} m antes de la posición de impacto que colocó el perito, sobre el trazo de la calle${arranqueAntes(v.id) > ANTES_DEL_IMPACTO_M ? ", detrás de sus huellas" : ""}.`,
         },
       };
     }
@@ -949,7 +972,9 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
     spec.evidencias.push({
       id: `evid-huella-${k + 1}`,
       tipo: h.tipo === "frenado" ? "marcas_frenado" : "marcas_derrape",
-      ...(h.tipo === "frenado" ? { fase: "antes_impacto" } : {}),
+      // Un derrape que la narración pone antes del choque («antes de la salida del camino», «previo
+      // al impacto») es de antes del impacto, como el frenado (René, 2026-11-24).
+      ...(h.tipo === "frenado" || derrapeAntes(h.cita?.texto) ? { fase: "antes_impacto" } : {}),
       vehiculo_id: idEscena(h.vehiculo),
       longitud: {
         valor: h.longitud.valor,
