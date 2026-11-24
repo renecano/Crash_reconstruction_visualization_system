@@ -176,8 +176,46 @@ const DEL_PERITO = { fuente: "usuario", confianza: 0.9 } as const;
 const PRECISION_CHOQUE_M = 2;
 /** Sin posición inicial del perito, el vehículo empieza 12 m antes del impacto en su rumbo. */
 const ANTES_DEL_IMPACTO_M = 12;
-/** m: lo que avanza derecho después de la vuelta, antes del choque. */
+/** m: lo que avanza derecho después de la vuelta, antes del choque, si no hay calles guardadas. */
 const DESPUES_DE_LA_VUELTA_M = 2;
+/** m: lo más que se alarga ese tramo para llegar al eje de la calle de llegada. */
+const RECTO_MAXIMO_M = 30;
+
+/**
+ * Los metros en recta entre el fin del arco de la vuelta y el choque para que el arranque quede sobre
+ * el eje de la calle de llegada: la distancia, medida hacia la salida, del choque al eje de la calle
+ * paralela a la llegada más cercana, menos el radio del arco. Sin una calle así, `DESPUES_DE_LA_VUELTA_M`.
+ */
+export function rectoTrasLaVuelta(
+  vias: readonly (readonly { x: number; y: number }[])[],
+  choque: { x: number; y: number },
+  llegada: number,
+  salida: number,
+): number {
+  const A = [Math.cos(llegada), Math.sin(llegada)];
+  const H = [Math.cos(salida), Math.sin(salida)];
+  let mejor: number | null = null;
+  for (const via of vias)
+    for (let i = 1; i < via.length; i++) {
+      const p = via[i - 1]!;
+      const q = via[i]!;
+      const ux = q.x - p.x;
+      const uy = q.y - p.y;
+      const l = Math.hypot(ux, uy);
+      if (l < 1) continue;
+      // Paralela a la llegada (±25°).
+      if (Math.abs((ux * A[0]! + uy * A[1]!) / l) < Math.cos((25 * Math.PI) / 180)) continue;
+      // Cerca del choque: a menos de 60 m del tramo.
+      const t = Math.max(0, Math.min(1, ((choque.x - p.x) * ux + (choque.y - p.y) * uy) / (l * l)));
+      const cx = p.x + t * ux;
+      const cy = p.y + t * uy;
+      if (Math.hypot(choque.x - cx, choque.y - cy) > 60) continue;
+      const dH = (choque.x - cx) * H[0]! + (choque.y - cy) * H[1]!;
+      if (dH > 0 && (mejor === null || dH < mejor)) mejor = dH;
+    }
+  if (mejor === null) return DESPUES_DE_LA_VUELTA_M;
+  return Math.min(RECTO_MAXIMO_M, Math.max(DESPUES_DE_LA_VUELTA_M, mejor - TURN_RADIUS_M));
+}
 /** La maniobra de la escena v1 para cada maniobra narrada que cambia la reconstrucción (R4b). */
 const MANIOBRA_ESCENA: Record<string, string> = {
   reversa: "reversa",
@@ -518,7 +556,18 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
             : 0;
       if (giro !== 0) {
         const llegada = ((r - giro) * Math.PI) / 180;
-        const tras = TURN_RADIUS_M + DESPUES_DE_LA_VUELTA_M;
+        // Con las calles guardadas del caso, el tramo recto después del arco es el que deja el
+        // arranque sobre el eje de la calle de llegada (revisión de la cadena, 2026-11-24: arrancaba
+        // a 10 m de ella en un cruce ancho). Sin calles, los 2 m de siempre.
+        const recto = rectoTrasLaVuelta(
+          e.caso.lugar?.calles_del_mapa?.vias.map((via) =>
+            via.puntos.map(([lon, lat]) => local({ lat, lon })),
+          ) ?? [],
+          { x, y },
+          llegada,
+          rad,
+        );
+        const tras = TURN_RADIUS_M + recto;
         sv.posicion_inicial = {
           x:
             Math.round((x - TURN_RADIUS_M * Math.cos(llegada) - tras * Math.cos(rad)) * 1000) /
@@ -530,7 +579,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
           procedencia: {
             fuente: "supuesto",
             confianza: 0.5,
-            nota: `En la calle de donde venía, al empezar la vuelta: el arco del solver (radio de ${TURN_RADIUS_M} m) termina ${DESPUES_DE_LA_VUELTA_M} m antes de la posición de impacto que colocó el perito.`,
+            nota: `En la calle de donde venía, al empezar la vuelta: el arco del solver (radio de ${TURN_RADIUS_M} m) termina ${Math.round(recto * 10) / 10} m antes de la posición de impacto que colocó el perito.`,
           },
         };
       } else

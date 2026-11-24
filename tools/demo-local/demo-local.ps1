@@ -23,6 +23,7 @@
     -Despues narraciones   sirve, corre las seis narraciones y el caso encimado (t5) en Chrome y apaga
     -Despues tollocan      sirve, corre el caso de Tollocan de René de punta a punta (t5) en Chrome y apaga
     -Despues tres          sirve, corre las tres narraciones de René (t9) con su 3D en Chrome y apaga
+    -Despues nuevas        sirve, corre la muestra de 10 narraciones de la revisión de la cadena (t9) y apaga
     -Despues humo          sirve, lleva AXA y Tollocan de La escena nueva al 3D de Unity (humo de la tanda) y apaga
     -Despues ejemplos      sirve, corre los cinco ejemplos con el 3D (t5) en Chrome y apaga; con -Casos,
                            guarda ahí el .croquis de cada uno (t6)
@@ -36,7 +37,7 @@
 #>
 param(
   [switch]$SoloPreparar,
-  [ValidateSet("", "comprobar", "fps-web", "arranque-3d", "video-3d", "narraciones", "tollocan", "tres", "ejemplos", "humo", "recorrido")][string]$Despues = "",
+  [ValidateSet("", "comprobar", "fps-web", "arranque-3d", "video-3d", "narraciones", "tollocan", "tres", "nuevas", "ejemplos", "humo", "recorrido")][string]$Despues = "",
   [string]$Salida = "",
   [string]$Capturas = "",
   [string]$Casos = "",
@@ -204,7 +205,7 @@ try {
       if ($null -eq $gpuAntes) { Remove-ItemProperty -Path $llaveGpu -Name $chrome -ErrorAction SilentlyContinue }
       else { Set-ItemProperty -Path $llaveGpu -Name $chrome -Value $gpuAntes }
     }
-  } elseif ($Despues -in @("narraciones", "tollocan", "tres", "ejemplos", "humo", "recorrido")) {
+  } elseif ($Despues -in @("narraciones", "tollocan", "tres", "nuevas", "ejemplos", "humo", "recorrido")) {
     # t5-verificacion (René, 2026-11-19), en el Chrome instalado contra la demo local:
     #   narraciones  las seis narraciones nuevas y el caso encimado, con capturas del 3D;
     #   tollocan     el caso de René de punta a punta;
@@ -234,7 +235,7 @@ try {
         if ($Casos) { $env:CROQUIS_CASOS = $Casos }
         & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/ejemplos-ronda2.spec.ts
       } else {
-        $filtro = if ($Despues -eq "tollocan") { "Tollocan" } elseif ($Despues -eq "tres") { "tres narraciones de René" } else { "narración|encimado" }
+        $filtro = if ($Despues -eq "tollocan") { "Tollocan" } elseif ($Despues -eq "tres") { "tres narraciones de René" } elseif ($Despues -eq "nuevas") { "narraciones nuevas" } else { "narración|encimado" }
         & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/narraciones-fisica.spec.ts -g $filtro
       }
       $codigo = $LASTEXITCODE

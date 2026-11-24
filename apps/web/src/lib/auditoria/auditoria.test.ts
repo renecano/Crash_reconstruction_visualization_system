@@ -48,9 +48,20 @@ const ENV = {
 } as unknown as NodeJS.ProcessEnv;
 const lugarDeps = defaultLugarDeps(ENV);
 const osmDeps = defaultOsmDeps(ENV);
+/** La huella del código de la búsqueda: si cambia, lo guardado de antes no vale. */
+const VERSION_LUGAR = createHash("sha256")
+  .update(readFileSync(join(RAIZ, "apps/web/src/server/lugar.ts"), "utf8"))
+  .digest("hex")
+  .slice(0, 12);
+let ultimaBusqueda = 0;
 const red: Red = {
   lugar: (q, municipio, estado) =>
-    enDisco("lugar", { q, municipio, estado }, async () => {
+    enDisco("lugar", { q, municipio, estado, version: VERSION_LUGAR }, async () => {
+      // Nominatim pide una consulta por segundo: con dos búsquedas seguidas, la segunda podía caer
+      // al «sin servicio» y perder el cruce. Se espacian.
+      const espera = ultimaBusqueda + 1500 - Date.now();
+      if (espera > 0) await new Promise((r) => setTimeout(r, espera));
+      ultimaBusqueda = Date.now();
       const r = await buscarLugar(
         LugarIn.parse({ q, ...(municipio ? { municipio } : {}), ...(estado ? { estado } : {}) }),
         "auditoria",

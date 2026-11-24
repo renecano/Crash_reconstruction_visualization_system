@@ -183,6 +183,60 @@ if (!tabla || !nav) {
   }
 }
 
+// --- La muestra de 10 narraciones nuevas de la revisión de la cadena: su cifra y su 3D ---
+{
+  const t = leer("eval/results/t9/narraciones_nuevas.json");
+  const filas = t?.filas ?? [];
+  const carpeta = join(RAIZ, "docs/cesvi/ronda-4/evidencia/fisica");
+  const hay = existsSync(carpeta) ? readdirSync(carpeta) : [];
+  salida.nuevas = filas.map((f) => ({
+    clave: f.clave,
+    cifra: f.no_cuadra ? "no cuadra" : (/(\d+)\s*km\/h/.exec(f.cifra ?? "")?.[1] ?? null),
+    capturas: hay.filter((x) => x.startsWith(`${f.clave}-`) && /\.jpe?g$/.test(x)).length,
+  }));
+  if (filas.length < 10) {
+    todoCoincide = false;
+    salida.pendientes.push(`De la muestra de narraciones nuevas llegaron ${filas.length} de 10.`);
+  }
+  for (const x of salida.nuevas)
+    if (!x.capturas) salida.pendientes.push(`Sin captura del 3D: ${x.clave}.`);
+}
+
+// --- Carambolas y cobertura: antes (main, en eval/results/t9/antes/) y después (este commit) ---
+// René (2026-11-24): «para ver si el candado les quita cifra a algunas». Si cambian, van a René.
+salida.otras = [];
+{
+  const tasa = (doc, k, n) => (doc ? `${doc[k]} de ${doc[n]}` : null);
+  for (const p of ["prueba", "desarrollo"]) {
+    const a = leer(`eval/results/t9/antes/cesvi_r4b_carambolas_${p}.json`);
+    const d = leer(`eval/results/cesvi_r4b_carambolas_${p}.json`);
+    const fila = {
+      cifra: `carambolas.${p}`,
+      publicada: cifras[`carambolas.${p}`]?.texto ?? null,
+      antes: tasa(a, "impactos_posteriores_ocurridos", "impactos_posteriores_en_escena"),
+      despues: tasa(d, "impactos_posteriores_ocurridos", "impactos_posteriores_en_escena"),
+    };
+    fila.cambia = fila.antes !== fila.despues;
+    salida.otras.push(fila);
+  }
+  const a = leer("eval/results/t9/antes/t3_cobertura.json")?.total?.supuestos_sorteados;
+  const d = leer("eval/results/t3_cobertura.json")?.total?.supuestos_sorteados;
+  const c = cifras["cobertura.rango"];
+  const fila = {
+    cifra: "cobertura.rango",
+    publicada: c ? `${c.k} de ${c.n}` : null,
+    antes: a ? `${a.dentro} de ${a.velocidades}` : null,
+    despues: d ? `${d.dentro} de ${d.velocidades}` : null,
+  };
+  fila.cambia = fila.antes !== fila.despues;
+  salida.otras.push(fila);
+  for (const x of salida.otras) {
+    if (!x.antes || !x.despues)
+      salida.pendientes.push(`Falta el antes o el después de ${x.cifra}.`);
+    if (x.cambia) todoCoincide = false;
+  }
+}
+
 // --- El arranque del 3D: los dos builds, para la revisión ---
 {
   const carpeta = join(RAIZ, "eval/results/t9");
@@ -212,6 +266,12 @@ for (const e of salida.ejemplos)
       `  ${e.clave} contra lo publicado ${e.publicada}: ${e.contra_publicada.map((d) => `${d.que} ${d.km_h > 0 ? "+" : ""}${d.km_h} km/h (${d.porcentaje})`).join(", ")}`,
     );
 for (const t of salida.tres ?? []) console.log(`  ${t.clave}: ${t.cifra}`);
+for (const x of salida.nuevas ?? [])
+  console.log(`  ${x.clave}: ${x.cifra} · ${x.capturas} capturas`);
+for (const x of salida.otras)
+  console.log(
+    `${x.cambia ? "✗" : "✓"} ${x.cifra}: antes ${x.antes} · después ${x.despues} (publicada ${x.publicada})`,
+  );
 for (const c of salida.capturas) console.log(`  capturas ${c.clave}: ${c.capturas}`);
 for (const p of salida.pendientes) console.log(`  pendiente: ${p}`);
 console.log(

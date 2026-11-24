@@ -141,6 +141,8 @@ export function proponerEscena(o: {
     const i = flechaPropuesta(flechas, s, r === undefined ? null : rumboDeLlegada(e, v, r));
     const f = i >= 0 ? flechas[i]! : null;
     if (f) e = elegirDireccion(e, impactos, v, f.rumbo, (k) => puntos[k] ?? null, true);
+    // Sin una calle en el sentido narrado: como lo dice la narración (revisión de la cadena).
+    else if (s) e = elegirDireccion(e, impactos, v, s.rumbo, (k) => puntos[k] ?? null, true);
     // René (2026-11-18): concreto, por qué calle y en qué sentido, y en qué se basa.
     const caraDe = (id: string) =>
       (o.expediente.danos ?? [])
@@ -165,7 +167,9 @@ export function proponerEscena(o: {
       clave: `direccion-${v}`,
       texto: f
         ? `${o.nombreDe(v)}: venía por ${f.calle ?? "la calle sin nombre del mapa"}, de ${f.desde} a ${cardinal(f.rumbo)}`
-        : `${o.nombreDe(v)}: en el choque, alineado con la calle`,
+        : s
+          ? `${o.nombreDe(v)}: venía de ${s.desde} a ${cardinal(s.rumbo)}, como dice la narración; en este lugar no hay una calle en ese sentido: revisa que el lugar sea el del caso`
+          : `${o.nombreDe(v)}: en el choque, alineado con la calle`,
       porque: s
         ? `la narración dice «${s.cita}»`
         : f
@@ -181,14 +185,14 @@ export function proponerEscena(o: {
   for (const k of impactos.slice(1)) {
     const primeroK = k.vehiculos[0]!;
     const pose = poseDe(e, primeroK, "impacto");
-    let zona = (o.expediente.impactos ?? [])
+    let zona = (e.impactos ?? [])
       .find((i) => i.orden === k.orden)
       ?.zonas?.find((z) => z.vehiculo === primeroK)?.zona.cara;
     // Sin zonas en este choque: si en uno anterior lo golpearon por detrás, salió empujado hacia
     // adelante: su frente contra la parte trasera del siguiente (supuesto de la carambola en cadena).
     let enCadena = false;
     if (!zona) {
-      const golpeadoAtras = (o.expediente.impactos ?? []).some(
+      const golpeadoAtras = (e.impactos ?? []).some(
         (i) =>
           i.orden < k.orden &&
           i.zonas?.some((z) => z.vehiculo === primeroK && z.zona.cara === "posterior"),

@@ -531,13 +531,25 @@ function aResultado(x: Nominatim): ResultadoLugar {
 /** m: a lo más esto entre dos vías para tomar su punto más cercano como el cruce aproximado. */
 const CERCA_DEL_CRUCE_M = 150;
 
-export function variantesDeVia(v: string): string[] {
+export function variantesDeVia(nombre: string): string[] {
+  // «paso a desnivel de Avenida Río Churubusco (Circuito Interior)»: la vía, y su otro nombre.
+  const entre = /\(([^)]+)\)/.exec(nombre)?.[1]?.trim();
+  const v = nombre
+    .replace(
+      /^(?:el\s+)?(?:paso\s+a\s+desnivel|puente(?:\s+vehicular)?|distribuidor\s+vial)\s+(?:de\s+(?:la\s+|el\s+)?|del\s+)?/i,
+      "",
+    )
+    .replace(/\s*\([^)]*\)\s*/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  const otras = entre && entre.length >= 3 ? [entre] : [];
   const sinArticulos = v.replace(/\s+de(?:\s+(?:los|las|la|el))?\s+/gi, " ").replace(/\s+/g, " ");
   const tipo =
     /^(?:avenida|av\.?|calle|calzada|calz\.?|boulevard|blvd\.?|paseo|eje|circuito|carretera|prolongaci[oó]n|prol\.?)\s+/i;
   return [
     ...new Set(
       [v, sinArticulos, sinArticulos.replace(tipo, ""), tipo.test(v) ? null : `Avenida ${v}`]
+        .concat(otras)
         .filter((x): x is string => Boolean(x))
         .map((x) => x.trim()),
     ),

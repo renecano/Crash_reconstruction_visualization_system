@@ -24,6 +24,8 @@ import { buscarLugar, defaultLugarDeps } from "@/server/lugar";
 import { armarRelieve, defaultRelieveDeps, RelieveIn } from "@/server/relieve";
 import { resumenDelPaquete } from "./bateria-ciudad";
 import { osmAlrededor } from "./osm-alrededor";
+import { callesParaGuardar, conCallesGuardadas } from "@/lib/calles-guardadas";
+import { RADIO_CALLES_M } from "@/lib/calles-del-mapa";
 import { rehacerLaEscena } from "@/lib/rehacer-escena";
 
 const RAIZ = resolve(__dirname, "../../../../..");
@@ -43,7 +45,11 @@ const MUESTRAS = { samples: 8, mcSamples: 8 };
 
 /** Reconstruye como `useReconstruccion` (con el relieve y la típica de la vía) y arma el paquete. */
 async function paqueteComoElNavegador(e0: Expediente, osm: OverpassResponse | null, id: string) {
-  let e = e0;
+  // Las calles del lugar se guardan con el caso, como en la app (recorrido-caso.tsx): con ellas la
+  // reconstrucción sigue la curva de la vía. Sin esto, la batería llegaba en recta a la curva.
+  const p0 = poseDe(e0, "V1", "impacto")?.punto;
+  let e =
+    osm && p0 ? conCallesGuardadas(e0, callesParaGuardar(osm, p0, RADIO_CALLES_M, "overpass")) : e0;
   let base = especDeExpediente(e, id);
   const malla =
     usaRelieve(e) && base.origen
@@ -81,7 +87,10 @@ describe("las narraciones como paquete 3D, por el camino del navegador", () => {
       const indice: Json[] = [];
       const colocaciones: Record<string, unknown> = {};
       const deps = defaultLugarDeps({} as NodeJS.ProcessEnv);
+      // `CROQUIS_NARRACIONES_SOLO=curva`: solo esos paquetes; las colocaciones y Tollocan no se tocan.
+      const solo = process.env.CROQUIS_NARRACIONES_SOLO?.split(",");
       for (const clave of ["arbol", "poste", "puente", "subida", "bajada", "curva"]) {
+        if (solo && !solo.includes(clave)) continue;
         const g = JSON.parse(
           readFileSync(resolve(RAIZ, `data/cesvi/grabaciones/ronda4/ronda4-${clave}.json`), "utf8"),
         ) as { narracion: string; salida: SalidaCorpus };
@@ -131,6 +140,14 @@ describe("las narraciones como paquete 3D, por el camino del navegador", () => {
           con_relieve: Boolean(paquete.relieve),
           ...resumenDelPaquete(paquete),
         });
+      }
+      if (solo) {
+        const ruta = resolve(DIR, "indice.json");
+        const previo = JSON.parse(readFileSync(ruta, "utf8")) as { casos: Json[] };
+        previo.casos = previo.casos.map((x) => indice.find((y) => y.clave === x.clave) ?? x);
+        writeFileSync(ruta, JSON.stringify(previo, null, 2) + "\n");
+        expect(indice).toHaveLength(solo.length);
+        return;
       }
       // Tollocan: el caso de René, con sus posiciones, y lo de OpenStreetMap de data/osm/.
       const t = JSON.parse(

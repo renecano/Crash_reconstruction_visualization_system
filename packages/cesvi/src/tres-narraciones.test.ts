@@ -12,7 +12,12 @@ import { rumboDeLlegada, rumboDelFrente } from "./reversa";
 import { enMetros } from "./geo";
 import { medidasDe } from "./poses-impacto";
 import { reconstruct, reconstructionToDict } from "@croquis/solver-ts";
-import { especDeExpediente, especReconstruida, reconstruirExpediente } from "./reconstruccion";
+import {
+  especDeExpediente,
+  especReconstruida,
+  reconstruirExpediente,
+  rectoTrasLaVuelta,
+} from "./reconstruccion";
 
 /**
  * Las tres narraciones que René probó en producción (2026-11-24): el árbol al salir de una curva, el
@@ -287,5 +292,22 @@ describe("la clase sale del modelo (revisión de la cadena, 2026-11-24)", () => 
 
   it("lo que no reconoce no lo inventa: se pregunta", () => {
     expect(claseDeModelo(v("Saab", "9-3"))).toBeNull();
+  });
+});
+
+describe("la vuelta arranca sobre la calle de llegada (revisión de la cadena, 2026-11-24)", () => {
+  // La calle de llegada va de sur a norte por x = 0; la vuelta es a la derecha (sale al este).
+  const llegada = [
+    [
+      { x: 0, y: -100 },
+      { x: 0, y: 100 },
+    ],
+  ];
+  it("el tramo recto tras el arco deja el arranque en el eje: 20 m al este del eje, 12 m de recta", () => {
+    expect(rectoTrasLaVuelta(llegada, { x: 20, y: 30 }, Math.PI / 2, 0)).toBeCloseTo(12, 6);
+  });
+  it("sin calle paralela cerca, los 2 m de siempre", () => {
+    expect(rectoTrasLaVuelta([], { x: 20, y: 30 }, Math.PI / 2, 0)).toBe(2);
+    expect(rectoTrasLaVuelta(llegada, { x: 200, y: 30 }, Math.PI / 2, 0)).toBe(2);
   });
 });

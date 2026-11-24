@@ -565,8 +565,15 @@ export function flechaPropuesta(
       mejor = i;
     }
   });
+  // Una flecha que contradice el sentido narrado no se propone (revisión de la cadena, René
+  // 2026-11-24: el March «de norte a sur» quedaba «de este a oeste» porque en el lugar no había otra
+  // calle): sin ella, el vehículo va como dice la narración y el perito revisa el lugar.
+  if (sentido && d > FLECHA_CONTRA_NARRADO_DEG) return -1;
   return mejor;
 }
+
+/** Grados: más que esto entre la flecha de una calle y el sentido narrado, la flecha no se propone. */
+export const FLECHA_CONTRA_NARRADO_DEG = 60;
 
 /** ¿La flecha elegida va en contra de lo que dice la narración (más de 100°)? */
 export const contraNarracion = (rumbo: number, sentido: SentidoNarrado | null) =>

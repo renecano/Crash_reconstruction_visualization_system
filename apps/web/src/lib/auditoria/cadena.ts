@@ -45,6 +45,8 @@ import {
   type Calle,
 } from "@/lib/escena-facil";
 import { proponerEscena, rumboDelSentido } from "@/lib/escena-propuesta";
+import { RADIO_CALLES_M } from "@/lib/calles-del-mapa";
+import { callesParaGuardar, conCallesGuardadas } from "@/lib/calles-guardadas";
 import { impactosAColocar } from "@/lib/pasos-caso";
 import { paqueteDelCaso } from "@/lib/visor-unity/paquete";
 
@@ -274,7 +276,10 @@ export async function auditarCaso(o: {
     falla("escena.sin_propuesta", "La escena no propuso nada");
     return { id: o.id, fuente: o.fuente, fallas, datos };
   }
-  let e = prop.expediente;
+  // Las calles del lugar se guardan con el caso, como en la app (recorrido-caso.tsx).
+  let e = osm
+    ? conCallesGuardadas(prop.expediente, callesParaGuardar(osm, lugar, RADIO_CALLES_M, "overpass"))
+    : prop.expediente;
   // «¿Dónde quedó?»: «Como dice la narración» si da la distancia (lo que La escena preselecciona).
   const finales = leida.posiciones.filter((p) => p.fase === "final");
   for (const n of finales) {
@@ -328,7 +333,10 @@ export async function auditarCaso(o: {
     const sn = sentidoEnElCaso(o.narracion, v, vs);
     const esperado = o.esperado?.vehiculos?.find((x) => `V${x.letra.charCodeAt(0) - 64}` === v.id);
     const narrado = sn?.rumbo ?? (esperado?.sentido ? CARDINAL[esperado.sentido] : undefined);
-    if (narrado !== undefined && difRumbo(llegada, narrado) > 45)
+    // En una curva el sentido narrado es el general de la vía; en el choque puede tener otro rumbo.
+    const tope =
+      e0.caso.condiciones?.trazo?.valor && /curva/.test(e0.caso.condiciones.trazo.valor) ? 100 : 45;
+    if (narrado !== undefined && difRumbo(llegada, narrado) > tope)
       falla(
         "vehiculo.sentido",
         `llega con rumbo ${Math.round(llegada)}°, la narración dice ${Math.round(narrado)}°`,
