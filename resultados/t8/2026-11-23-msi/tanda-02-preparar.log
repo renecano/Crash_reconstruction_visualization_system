@@ -1,7 +1,7 @@
 # Paso: preparar
 # Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar
 # Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
-# Inicio: 2026-11-23 20:34:24
+# Inicio: 2026-11-23 20:46:55
 
 
 == 1. Herramientas
@@ -12,7 +12,7 @@ Hay internet.
 Scope: all 10 workspace projects
 ✓ Lockfile passes supply-chain policies (verified 6d ago)
 Lockfile is up to date, resolution step is skipped
-Done in 73ms using pnpm v12.11.2
+Done in 76ms using pnpm v12.11.2
 
 == 3. El visor de Unity, desde esta computadora
 Visor 945617e035988035 servido desde el sitio: C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\public\visor-unity\local
@@ -26,21 +26,24 @@ Worker de pdf.js 6.4.299 en public/pdfjs/.
 Script de Blender en public/blender/.
 Decodificadores de three 0.186.1 en public/decodificadores/r186/.
 ▲ Next.js 16.4.6 (Turbopack)
-✓ Running next.config.ts took 1062ms
+✓ Running next.config.ts took 365ms
 - Experiments (use with caution):
   ✓ inlineCss
 
   Creating an optimized production build ...
-✓ Compiled successfully in 3.9s
+✓ Compiled successfully in 992ms
   Running TypeScript ...
-  Finished TypeScript in 12.3s ...
+  Finished TypeScript in 3.6s ...
   Collecting page data using 31 workers ...
-✓ Running next.config.ts took 373ms
+✓ Running next.config.ts took 386ms
   Generating static pages using 31 workers (0/63) ...
   Generating static pages using 31 workers (15/63) 
   Generating static pages using 31 workers (31/63) 
   Generating static pages using 31 workers (47/63) 
-✓ Generating static pages using 31 workers (63/63) in 5.4s
+✓ Running next.config.ts took 394ms
+○ (serwist) Using esbuild to bundle the service worker.
+✓ (serwist) 246 precache entries (25833.12 KiB)
+✓ Generating static pages using 31 workers (63/63) in 5.5s
   Finalizing page optimization ...
 
 Route (app)
@@ -111,4 +114,4 @@ CSS del sistema de diseño presente (281 KB).
 
 Listo: la demo local está preparada.
 
-# Fin: 2026-11-23 20:34:54 · ok · 0.5 min
+# Fin: 2026-11-23 20:47:11 · ok · 0.3 min
