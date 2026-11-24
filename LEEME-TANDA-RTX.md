@@ -17,7 +17,7 @@ Las pruebas y mediciones pesadas de Croquis no corren en la laptop de René. Est
 
    El primer comando guarda aparte los resultados que dejó la corrida anterior (ya están en GitHub; no se borran) para que `git pull` no se niegue. Desde esta versión, el doble clic hace eso solo cuando lo único que estorba son resultados, y se vuelve a lanzar con lo último.
 
-2. **Doble clic en `CORRER-TANDA-EN-RTX.bat`.** Se abre una ventana negra que dice qué paso va y cuánto lleva. Si la tanda está repartida entre varios colaboradores, al inicio pregunta qué parte corres («1, 2 o todo», con lo que lleva cada una y cuánto tarda): escribe la que te dijo René. Después no pregunta nada más. No la cierres.
+2. **Doble clic en `CORRER-TANDA-EN-RTX.bat`.** Se abre una ventana negra que dice qué paso va y cuánto lleva. Corre la tanda completa. Los dos colaboradores son respaldo: cualquiera la corre entera y, si uno no puede, la corre el otro. Si otro equipo ya subió una corrida completa de esa tanda, al inicio pregunta «Esta tanda ya la corrió <equipo> el <fecha>. ¿Correrla de nuevo? (s/n)»: contesta lo que te dijo René. Después no pregunta nada más. No la cierres.
 3. **Cuando diga «Avísale a René que ya terminó», avísale.** Los resultados ya están en GitHub, en una rama `resultados/<tanda>-<fecha>-<equipo>` (nunca en `main`): cada computadora sube a la suya, con el nombre de la computadora, así que dos colaboradores pueden correr la misma tanda el mismo día sin pisarse. Presiona una tecla para cerrar la ventana.
 
 ## Qué hace sola y qué te toca a ti

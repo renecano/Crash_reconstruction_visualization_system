@@ -24,8 +24,8 @@
     -Tanda NOMBRE        corre esa tanda en vez de la vigente
     -Prueba              solo la comprobación del mecanismo
     -SinSubir            no hace commit ni push (los resultados quedan en la carpeta)
-    -Parte N             de una tanda repartida («partes» en tandas.json), solo esa parte (o «todo»);
-                         sin la opción, la ventana pregunta
+    -Parte N             opción avanzada: solo esa parte («partes» en tandas.json). Sin ella corre todo;
+                         (la usa, por ejemplo, quien quiere repetir un solo bloque)
 
   Varios colaboradores a la vez (René, 2026-11-22): cada computadora sube a su propia rama y carpeta,
   resultados/<tanda>-<fecha>-<equipo> y resultados/<tanda>/<fecha>-<equipo>, con un nombre corto y
@@ -264,32 +264,54 @@ if ($Tanda -notmatch '^[a-z0-9-]+$') {
   exit 2
 }
 
-# --- Una tanda repartida entre varios colaboradores (René, 2026-11-22) -------------------------------
-# `partes` en tandas.json: cada paso con `parte` va solo en esa parte; los que no la llevan (el visor,
-# preparar, el humo) van en todas. Sin -Parte, la ventana pregunta cuál correr.
+# --- Partes: solo como opción avanzada (René, 2026-11-23) ---------------------------------------------
+# Los colaboradores no se reparten la tanda: son respaldo, y cualquiera la corre completa. Sin -Parte
+# corre «todo», sin preguntar; con -Parte N, solo los pasos de esa parte (y los que no llevan parte).
 $Partes = @($Definicion.partes | Where-Object { $_ })
+if (-not $Parte) { $Parte = "todo" }
 function PasosDeLaParte([string]$id) {
   return @(@($Definicion.pasos) | Where-Object { -not $_.parte -or [string]$_.parte -eq $id -or $id -eq "todo" })
 }
-if ($Partes.Count -gt 0 -and -not $Prueba) {
+if ($Parte -ne "todo") {
   $ids = @($Partes | ForEach-Object { [string]$_.id })
-  if (-not $Parte) {
-    Escribir ""
-    Escribir "Esta tanda está repartida. ¿Qué parte corres en esta computadora?" "White"
-    foreach ($x in $Partes) {
-      $min = (PasosDeLaParte ([string]$x.id) | Measure-Object -Property minutos -Sum).Sum
-      Escribir ("  {0}  {1} (unos {2} min)" -f $x.id, $x.titulo, $min) "White"
-    }
-    $min = (PasosDeLaParte "todo" | Measure-Object -Property minutos -Sum).Sum
-    Escribir ("  todo  todas las partes (unos {0} min)" -f $min) "White"
-    for ($k = 0; $k -lt 5 -and -not $Parte; $k++) {
-      $r = ([string](Read-Host "Escribe $($ids -join ', ') o todo")).Trim().ToLower()
-      if ($ids -contains $r -or $r -eq "todo") { $Parte = $r } else { Escribir "No entendí «$r»." "Yellow" }
-    }
-    if (-not $Parte) { Escribir "Sin parte elegida, no corro nada." "Red"; exit 2 }
-  } elseif (-not ($ids -contains $Parte) -and $Parte -ne "todo") {
+  if (-not ($ids -contains $Parte)) {
     Escribir "La tanda «$Tanda» no tiene la parte «$Parte». Las que tiene: $($ids -join ', ') o todo." "Red"
     exit 2
+  }
+}
+
+# --- ¿Ya la corrió otro equipo? (René, 2026-11-23) ------------------------------------------------------
+# Una corrida completa («todo», con todos sus pasos) de esta tanda en la rama de otro equipo: se avisa y
+# se pregunta antes de volver a correrla.
+function CorridaCompletaDeOtro {
+  $refs = SalidaDe "git" @("-C", $Repo, "ls-remote", "origin", "refs/heads/resultados/$Tanda-*")
+  if (-not $refs) { return $null }
+  $nombres = @(@($Definicion.pasos) | ForEach-Object { [string]$_.nombre })
+  $mejor = $null
+  foreach ($linea in ($refs -split "`r?`n")) {
+    $campos = $linea -split "\s+"
+    if ($campos.Count -lt 2) { continue }
+    $rama = $campos[1] -replace '^refs/heads/', ''
+    $m = [regex]::Match($rama, "^resultados/$([regex]::Escape($Tanda))-(\d{4}-\d{2}-\d{2})-(.+)$")
+    if (-not $m.Success -or $m.Groups[2].Value -eq $NombreEquipo) { continue }
+    $fecha = $m.Groups[1].Value; $equipo = $m.Groups[2].Value
+    if ((Nativo "git" @("-C", $Repo, "fetch", "-q", "origin", "refs/heads/$rama")) -ne 0) { continue }
+    $texto = SalidaDe "git" @("-C", $Repo, "show", "FETCH_HEAD:resultados/$Tanda/$fecha-$equipo/corrida.json")
+    if (-not $texto) { continue }
+    try { $c = $texto | ConvertFrom-Json } catch { continue }
+    if ($c.parte -and [string]$c.parte -ne "todo") { continue }
+    $corridos = @(@($c.pasos) | Where-Object { $_.grupo -eq "tanda" } | ForEach-Object { [string]$_.paso })
+    if (@($nombres | Where-Object { $corridos -notcontains $_ }).Count -gt 0) { continue }
+    if (-not $mejor -or $fecha -gt $mejor.fecha) { $mejor = @{ equipo = $equipo; fecha = $fecha } }
+  }
+  return $mejor
+}
+if (-not $EnSuRama -and -not $Prueba -and $Parte -eq "todo") {
+  $otra = CorridaCompletaDeOtro
+  if ($otra) {
+    Escribir ""
+    $r = ([string](Read-Host "Esta tanda ya la corrió $($otra.equipo) el $($otra.fecha). ¿Correrla de nuevo? (s/n)")).Trim().ToLower()
+    if ($r -ne "s" -and $r -ne "si" -and $r -ne "sí") { Escribir "No la corro. Los resultados de $($otra.equipo) ya están en GitHub." "White"; exit 0 }
   }
 }
 
@@ -554,6 +576,8 @@ if (-not $EnSuRama -and (($ramaDeLaTanda -and $ramaActual -ne $ramaDeLaTanda) -o
   if ($Prueba) { $argumentos += "-Prueba" }
   if ($SinSubir) { $argumentos += "-SinSubir" }
   if ($Parte) { $argumentos += @("-Parte", $Parte) }
+  # -Solo también (2026-11-23: una prueba con -Solo corría la tanda entera en el commit fijado).
+  if ($Solo) { $argumentos += @("-Solo", $Solo) }
   & $EstePowerShell @argumentos
   $codigo = $LASTEXITCODE
   Remove-Item Env:\CROQUIS_TANDA_REPO -ErrorAction SilentlyContinue
@@ -805,7 +829,15 @@ function UltimaLinea([string]$registro) {
   } catch { return "" }
 }
 
+function DiscoLibreGb {
+  try {
+    $letra = (Split-Path -Qualifier $Repo)
+    return [math]::Round((Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='$letra'").FreeSpace / 1GB, 1)
+  } catch { return $null }
+}
+
 function CorrerPaso([string]$grupo, [int]$numero, [int]$total, $paso) {
+  $discoAntes = DiscoLibreGb
   $nombre = [string]$paso.nombre
   $comando = [string]$paso.comando
   $registro = Join-Path $Salida ("{0}-{1:D2}-{2}.log" -f $grupo, $numero, $nombre)
@@ -914,7 +946,8 @@ function CorrerPaso([string]$grupo, [int]$numero, [int]$total, $paso) {
       foreach ($l in $cola) { Escribir "     | $l" "Yellow" }
     } catch { }
   }
-  [void]$Pasos.Add([ordered]@{ grupo = $grupo; paso = $nombre; estado = $estado; minutos = $duracion; codigo = $codigo })
+  # El disco libre antes y después de cada paso (René, 2026-11-23: el disco llegó al 100 %).
+  [void]$Pasos.Add([ordered]@{ grupo = $grupo; paso = $nombre; estado = $estado; minutos = $duracion; codigo = $codigo; disco_libre_gb_antes = $discoAntes; disco_libre_gb_despues = (DiscoLibreGb) })
   return $estado
 }
 
