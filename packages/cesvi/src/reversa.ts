@@ -5,6 +5,7 @@
  * vehículo que avanza.
  */
 import tabla from "./data/reversa-nhtsa.json";
+import type { Expediente } from "./corpus";
 import { kmhConUnidad } from "./formato";
 
 const MPH_A_KMH = 1.609344;
@@ -51,4 +52,24 @@ export function limiteVelocidadSupuesta(vehiculo: string): string {
 export function avisoReversaRapida(vehiculo: string, velocidadKmh: number): string | null {
   if (!(velocidadKmh > REVERSA_KMH.max)) return null;
   return `${vehiculo}: ${kmhConUnidad(velocidadKmh, "reconstruccion")} en reversa es más que la maniobra más rápida de ${REVERSA_MANIOBRAS} medidas en uso real (${REVERSA_KMH.max} km/h; ${REVERSA_FUENTE}). Conviene revisar el sentido de marcha y las posiciones finales.`;
+}
+
+/**
+ * ¿La narración dice que el vehículo iba en reversa? (Como la lectura de `especDeExpediente`: una
+ * maniobra de reversa o un sentido de marcha en reversa.)
+ */
+export function vaEnReversa(e: Expediente, vehiculo: string): boolean {
+  const narradas = (e.versiones ?? []).find((v) => v.tipo === "evidencia")?.maniobras ?? [];
+  return narradas.some(
+    (m) => m.vehiculo === vehiculo && (m.tipo === "reversa" || m.sentido_marcha === "reversa"),
+  );
+}
+
+/**
+ * La pose guarda hacia dónde mira el frente; «Por dónde venía», hacia dónde avanzaba. En reversa son
+ * contrarios (René, 2026-11-24: la reversa de ejemplo dejaba al CR-V mirando hacia donde retrocedía,
+ * del lado equivocado del Versa, y el 3D lo metía dentro de él). La conversión va y vuelve igual.
+ */
+export function rumboDeMarcha(e: Expediente, vehiculo: string, rumbo: number): number {
+  return vaEnReversa(e, vehiculo) ? (((rumbo + 180) % 360) + 360) % 360 : rumbo;
 }

@@ -37,6 +37,7 @@ import {
   posicionesEncimadas,
   impactosEncimados,
   quitarTerreno,
+  rumboDeMarcha,
   TIPOS_OBJETO,
   usarRelieve,
   usaRelieve,
@@ -663,7 +664,9 @@ export function EscenaFacil({
     const sentido = primero ? sentidos[primero] : null;
     const previa = primero ? poseDe(e, primero, "impacto") : null;
     const rumbo =
-      sentido?.rumbo ?? previa?.rumbo ?? (callesMapa.length ? rumboAlineado(callesMapa, p, 0) : 0);
+      sentido?.rumbo ??
+      (previa && primero ? rumboDeMarcha(e, primero, previa.rumbo) : null) ??
+      (callesMapa.length ? rumboAlineado(callesMapa, p, 0) : 0);
     const siguiente: EstadoEscena = {
       ...estado,
       expediente: marcarChoque(e, impactos, orden, p, rumbo),
@@ -716,7 +719,9 @@ export function EscenaFacil({
     ? flechaPropuesta(
         flechas,
         sentidos[vehiculoActual] ?? null,
-        poseDe(e, vehiculoActual, "impacto")?.rumbo ?? null,
+        ((r) => (r === undefined ? null : rumboDeMarcha(e, vehiculoActual, r)))(
+          poseDe(e, vehiculoActual, "impacto")?.rumbo,
+        ),
       )
     : -1;
 
@@ -2263,7 +2268,7 @@ export function EscenaFacil({
             if (!pose) return;
             aplicarDireccion(
               v,
-              pose.rumbo,
+              rumboDeMarcha(e, v, pose.rumbo),
               true,
               `Croquis usa la dirección que dan los daños para el ${nombres[v]}.`,
             );
@@ -2460,7 +2465,10 @@ export function EscenaFacil({
       const pose = poseDe(e, v, "impacto");
       if (!pose) return;
       cambiar(
-        { ...estado, expediente: elegirDireccion(e, impactos, v, pose.rumbo, puntoChoque) },
+        {
+          ...estado,
+          expediente: elegirDireccion(e, impactos, v, rumboDeMarcha(e, v, pose.rumbo), puntoChoque),
+        },
         exito(`¡Listo! Confirmaste por dónde venía ${nombres[v] ?? v}.`),
       );
     }

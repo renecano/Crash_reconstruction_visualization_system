@@ -22,6 +22,7 @@ import {
   enMetros,
   nombrePersona,
   posesDeImpacto,
+  rumboDeMarcha,
   objetosDe,
   piezasTerreno,
   rumboDeg,
@@ -1110,8 +1111,9 @@ export const pasoActual = (pasos: readonly PasoEscena[]) => pasos.find((p) => !p
 /**
  * «Sí, fue en ese cruce» o un toque en el mapa: el choque en `p`. Las poses de impacto las propone
  * Croquis con las zonas de contacto (con fuente «supuesto» hasta que la persona dice por dónde venía
- * cada uno); en una carambola, solo las de quien entra en ese choque. `rumbo`: el del primer
- * vehículo (el de la narración, el de la calle o el que ya tenía).
+ * cada uno); en una carambola, solo las de quien entra en ese choque. `rumbo`: hacia dónde avanzaba
+ * el primer vehículo (el de la narración, el de la calle o el que ya tenía); en reversa, su frente
+ * queda al lado contrario (`rumboDeMarcha`).
  */
 export function marcarChoque(
   e: Expediente,
@@ -1122,7 +1124,9 @@ export function marcarChoque(
 ): Expediente {
   const antes = new Set(impactos.filter((x) => x.orden < orden).flatMap((x) => x.vehiculos));
   let r = e;
-  for (const pose of posesDeImpacto(e, p, rumbo, orden)) {
+  const primero = impactos.find((x) => x.orden === orden)?.vehiculos[0];
+  const frente = primero ? rumboDeMarcha(e, primero, rumbo) : rumbo;
+  for (const pose of posesDeImpacto(e, p, frente, orden)) {
     if (antes.has(pose.vehiculo)) continue;
     r = conPosicion(r, {
       vehiculo: pose.vehiculo,
@@ -1136,7 +1140,8 @@ export function marcarChoque(
 }
 
 /**
- * «Por dónde venía»: el vehículo avanzaba con `rumbo` al llegar al choque. El primero de su choque
+ * «Por dónde venía»: el vehículo avanzaba con `rumbo` al llegar al choque (en reversa, su frente mira
+ * al lado contrario: la pose guarda el frente). El primero de su choque
  * gira todo el choque (los demás se recolocan por sus zonas de contacto); su pose queda como dato
  * de la persona. Con «No sé por dónde venía» (`noSe`), se queda la que propone Croquis, como
  * supuesto.
@@ -1180,7 +1185,9 @@ export function elegirDireccion(
     vehiculo: vehiculo as Id,
     fase: "impacto",
     punto: nueva?.punto ?? pose.punto,
-    rumbo: primero ? (nueva?.rumbo ?? rumbo) : rumbo,
+    rumbo: primero
+      ? (nueva?.rumbo ?? rumboDeMarcha(e, vehiculo, rumbo))
+      : rumboDeMarcha(e, vehiculo, rumbo),
     fuente: noSe ? "supuesto" : "perito",
   });
 }
@@ -1197,13 +1204,13 @@ export function marcarFinal(e: Expediente, vehiculo: string, p: Punto, rumbo: nu
 }
 
 /**
- * «Quedó junto al choque»: un poco adelante de su pose de impacto (1.5 m en su rumbo), con el mismo
- * rumbo. Sin pose de impacto, nada cambia.
+ * «Quedó junto al choque»: un poco adelante de su pose de impacto (1.5 m hacia donde avanzaba; en
+ * reversa, hacia atrás), con el mismo rumbo. Sin pose de impacto, nada cambia.
  */
 export function quedoJuntoAlChoque(e: Expediente, vehiculo: string): Expediente {
   const pose = poseDe(e, vehiculo, "impacto");
   if (!pose) return e;
-  const p = punto(avanzar(ll(pose.punto), pose.rumbo, 1.5));
+  const p = punto(avanzar(ll(pose.punto), rumboDeMarcha(e, vehiculo, pose.rumbo), 1.5));
   return marcarFinal(e, vehiculo, p, pose.rumbo);
 }
 

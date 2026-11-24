@@ -3,10 +3,12 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import type { Expediente } from "./corpus";
+import { candadoFisico } from "./candado";
 import { impactosEncimados } from "./encimadas";
 import { enMetros } from "./geo";
 import { medidasDe } from "./poses-impacto";
-import { especDeExpediente, reconstruirExpediente } from "./reconstruccion";
+import { reconstruct, reconstructionToDict } from "@croquis/solver-ts";
+import { especDeExpediente, especReconstruida, reconstruirExpediente } from "./reconstruccion";
 
 /**
  * Las tres narraciones que René probó en producción (2026-11-24): el árbol al salir de una curva, el
@@ -73,4 +75,77 @@ describe("la carambola en el semáforo: el Aveo y la Rio colocados encimados", (
     // Y no se mueven de lado (de carril): lo de lado es lo que ya tenían.
     expect(deLado).toBeLessThan(0.5);
   });
+});
+
+describe("el candado físico (René, 2026-11-24)", () => {
+  it(
+    "la carambola con el Aveo y la Rio encimados no presenta cifra: dice qué no cuadra y qué revisar",
+    { timeout: 240_000 },
+    () => {
+      const r = reconstruirExpediente(caso("rene-carambola-semaforo"), "carambola", {
+        samples: 8,
+        mcSamples: 8,
+      });
+      expect(r.noCuadra).toBeTruthy();
+      expect(r.noCuadra!.motivos.join(" ")).toMatch(/quedan encimados .* m al chocar/);
+      expect(r.noCuadra!.revisar.join(" ")).toMatch(/Separarlos/);
+      // Sin cifra presentada: ninguna velocidad, y la de referencia va aparte.
+      expect(r.velocidades.every((v) => v.previa === null && v.impacto === null)).toBe(true);
+      expect(r.noCuadra!.cifras.length).toBeGreaterThan(0);
+      expect(r.limites.some((l) => l.startsWith("Croquis no presenta una velocidad"))).toBe(true);
+    },
+  );
+
+  it("el árbol cuadra: la cifra se presenta", { timeout: 240_000 }, () => {
+    const r = reconstruirExpediente(caso("rene-arbol-curva"), "arbol", {
+      samples: 8,
+      mcSamples: 8,
+    });
+    expect(r.noCuadra).toBeUndefined();
+    expect(r.velocidades[0]!.previa).toBeTruthy();
+  });
+
+  it("frenar más de 1 g con las huellas de antes del choque no cuadra", () => {
+    const { noCuadra } = candadoFisico({
+      especAnimada: {
+        evidencias: [
+          {
+            tipo: "marcas_frenado",
+            vehiculo_id: "veh-a",
+            longitud: { valor: 9, unidad: "m" },
+          },
+        ],
+      },
+      ids: { "veh-a": "V1" },
+      // 163 km/h con 9 m de frenado y 60 al impacto: (45.3² − 16.7²) / 18 = 98 m/s², 10 g.
+      velocidades: [{ vehiculo: "V1", previa: { mejor: 163 }, impacto: { p50: 60 } }],
+    });
+    expect(noCuadra!.motivos[0]).toMatch(/exige frenar a 10\.0 g/);
+  });
+});
+
+describe("lo que no cuadra no se anima", () => {
+  it(
+    "el 3D de la carambola encimada deja a cada vehículo quieto donde quedó, sin choque",
+    { timeout: 240_000 },
+    () => {
+      const r = reconstruirExpediente(caso("rene-carambola-semaforo"), "carambola", {
+        samples: 8,
+        mcSamples: 8,
+      });
+      const s = especReconstruida(r) as {
+        eventos: unknown[];
+        vehiculos: { velocidad_previa: { valor: number } }[];
+      };
+      expect(s.eventos).toEqual([]);
+      expect(s.vehiculos.every((v) => v.velocidad_previa.valor === 0)).toBe(true);
+      const d = reconstructionToDict(reconstruct(s)) as {
+        vehiculos: { trayectoria: { x: number[]; y: number[] } }[];
+      };
+      for (const v of d.vehiculos) {
+        const { x, y } = v.trayectoria;
+        expect(Math.hypot(x.at(-1)! - x[0]!, y.at(-1)! - y[0]!)).toBeLessThan(0.05);
+      }
+    },
+  );
 });

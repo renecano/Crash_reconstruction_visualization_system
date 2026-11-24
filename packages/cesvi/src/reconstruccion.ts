@@ -25,6 +25,7 @@ import {
   SIGMA_POSITION_M,
 } from "@croquis/solver-ts";
 import { limiteMejorFuera } from "./mejor-fuera";
+import { candadoFisico, type NoCuadra } from "./candado";
 import { limiteContraNarracion } from "./contra-narracion";
 import { avisoReversaRapida, limiteVelocidadSupuesta, velocidadSupuestaEnReversa } from "./reversa";
 
@@ -1204,6 +1205,11 @@ export interface HipotesisReconstruccion {
 export interface Reconstruccion extends EscenaSolver {
   /** El resultado completo del solver (trayectorias, incertidumbre, inversión, consistencia). */
   resultado: Json;
+  /**
+   * El candado físico (René, 2026-11-24): presente si la cifra no cuadra con la física o con el 3D.
+   * Entonces ninguna velocidad trae cifra (`previa` y `impacto` van en null) y el 3D no anima.
+   */
+  noCuadra?: NoCuadra;
   velocidades: VelocidadReconstruida[];
   /** Los impactos que ocurrieron en la reconstrucción, en orden (más de uno en una carambola). */
   impactos: ImpactoReconstruido[];
@@ -1351,7 +1357,11 @@ export function conHipotesis(r: Reconstruccion, clave: string): Reconstruccion {
     h.familia === "reposo" ? r.resultado.inversion_reposo_supuesto : r.resultado.inversion
   ) as Inversion;
   const inv = h.modo === 1 ? familia : familia.alternativas![h.modo - 2]!;
-  const otra = interpretarResultado(r, { ...r.resultado, inversion: inv });
+  const otra = interpretarResultado(
+    r,
+    { ...r.resultado, inversion: inv },
+    { relieve: r.relieve ?? null },
+  );
   return { ...otra, limites: r.limites, hipotesis: r.hipotesis, elegida: clave };
 }
 
@@ -1429,7 +1439,12 @@ export function avisoDeProyeccion(spec: Json, resultado: Json): string | null {
   return `La persona quedó a ${metros(m)} de donde la golpearon, según lo marcado; con la velocidad reconstruida, la proyección es de ${metros(d.distancia_proyeccion_m)} (de ${metros(a)} a ${metros(b)}). La posición final del vehículo y la de la persona no cuadran juntas: revisa cuál está mejor medida.`;
 }
 
-export function interpretarResultado(base: EscenaSolver, resultado: Json): Reconstruccion {
+export function interpretarResultado(
+  base: EscenaSolver,
+  resultado: Json,
+  /** La malla de relieve con que se reconstruyó: el candado reproduce el 3D con ella. */
+  opciones: { relieve?: unknown } = {},
+): Reconstruccion {
   const inv = resultado.inversion as Inversion;
   const limites = [...base.limites];
   if (!inv.evidencia.length) {
@@ -1547,7 +1562,7 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
     ? [...hipotesisDe(base, inv, "dano"), ...hipotesisDe(base, alterna, "reposo")]
     : hipotesisDe(base, inv, "evidencia");
   const hipotesis = todas.length > 1 ? todas : null;
-  return {
+  const rec: Reconstruccion = {
     ...base,
     limites,
     resultado,
@@ -1557,6 +1572,25 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
     hipotesis,
     elegida: null,
     terreno,
+  };
+  // El candado físico (René, 2026-11-24): si la cifra no cuadra con la física o con lo que reproduce
+  // el 3D, no se presenta como resultado; se dice qué no cuadra y qué revisar.
+  const { noCuadra } = candadoFisico({
+    especAnimada: especReconstruida(rec),
+    relieve: opciones.relieve ?? null,
+    ids: base.ids,
+    velocidades,
+  });
+  if (!noCuadra) return rec;
+  return {
+    ...rec,
+    noCuadra,
+    velocidades: velocidades.map((v) => ({ ...v, previa: null, impacto: null })),
+    limites: [
+      ...limites,
+      ...noCuadra.motivos.map((m) => `No cuadra: ${m}`),
+      `Croquis no presenta una velocidad hasta que cuadre. Revisa ${noCuadra.revisar.join("; ")}.`,
+    ],
   };
 }
 
@@ -1615,6 +1649,9 @@ export function reconstruirExpediente(
  * todo fijado por la evidencia, queda igual).
  */
 export function expedienteConTipicas(e: Expediente, r: Reconstruccion): Expediente | null {
+  // Lo que no cuadra no trae cifras (el candado las quita): no es que la evidencia no las fije, así
+  // que no se le ponen las típicas de la vía (René, 2026-11-24).
+  if (r.noCuadra) return null;
   const detenidos = new Set(
     (e.versiones ?? [])
       .find((x) => x.tipo === "evidencia")
@@ -1717,6 +1754,39 @@ export function especReconstruida(r: Reconstruccion): Json {
       confianza: 0.7,
       nota: "Velocidad que reproduce la evidencia del perito (Croquis la ajusta a la evidencia; el rango es donde cae el 80 % de las simulaciones).",
     };
+  }
+  // Las huellas de antes del choque frenan en el recorrido como en el ajuste (`withMarks` del solver):
+  // sin esto, el 3D llegaba al choque a la velocidad previa, sin frenar (René, 2026-11-24).
+  for (const ev of (spec.evidencias ?? []) as Json[]) {
+    const antes = ev.fase === "antes_impacto" || (ev.tipo === "marcas_frenado" && !ev.fase);
+    if (!antes || (ev.tipo !== "marcas_frenado" && ev.tipo !== "marcas_derrape")) continue;
+    const sv = spec.vehiculos.find((v) => v.id === ev.vehiculo_id);
+    const largo = Number((ev.longitud as Json | undefined)?.valor);
+    if (!sv || !(largo > 0)) continue;
+    const fr = (sv.frenado ?? {}) as Json;
+    if (((fr.distancia_antes_impacto ?? {}) as Json).fuente === "usuario") continue;
+    fr.aplico = { valor: true, fuente: "relato", confianza: 0.8 };
+    fr.distancia_antes_impacto = { valor: largo, unidad: "m", fuente: "relato", confianza: 0.8 };
+    sv.frenado = fr;
+  }
+  // El candado físico (René, 2026-11-24): lo que no cuadra no se anima. El 3D muestra a cada vehículo
+  // quieto donde el perito dijo que quedó, sin choque: la animación nunca muestra una velocidad que
+  // Croquis no presenta.
+  if (r.noCuadra) {
+    for (const sv of spec.vehiculos) {
+      const fin = (sv.posicion_final ?? null) as Json | null;
+      if (fin) sv.posicion_inicial = { ...fin };
+      sv.velocidad_previa = {
+        valor: 0,
+        unidad: "km/h",
+        fuente: "supuesto",
+        confianza: 0.5,
+        nota: "La reconstrucción no cuadra: el 3D muestra dónde quedó, sin animar el choque.",
+      };
+      sv.maniobra = { valor: "detenido", fuente: "supuesto", confianza: 0.5 };
+      delete sv.frenado;
+    }
+    spec.eventos = [];
   }
   return spec;
 }

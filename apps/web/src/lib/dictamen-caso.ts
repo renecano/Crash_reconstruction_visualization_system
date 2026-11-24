@@ -31,6 +31,7 @@ import {
   danoEnTexto,
   lecturasDeDano,
   notaDeMuestras,
+  sinCifraEnTexto,
 } from "@croquis/cesvi";
 import type { Content, TableCell, TDocumentDefinitions } from "pdfmake/interfaces";
 import { conGlifosDeRoboto, LEYENDA_DICTAMEN } from "./dictamen-cesvi";
@@ -307,7 +308,7 @@ function secciones(d: DatosDictamenCaso) {
         v.vehiculo,
         v.previa
           ? `${kmh(v.previa.mejor)} (${kmh(v.previa.p10)}–${kmh(v.previa.p90)})`
-          : "la evidencia no la fija",
+          : sinCifraEnTexto(r, v.vehiculo),
         v.impacto ? `${kmh(v.impacto.p10)}–${kmh(v.impacto.p50)}–${kmh(v.impacto.p90)}` : "—",
       ]),
     ),

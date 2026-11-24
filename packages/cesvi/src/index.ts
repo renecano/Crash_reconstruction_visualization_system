@@ -50,5 +50,6 @@ export * from "./iluminacion";
 export * from "./personas";
 export * from "./velocidad-narrada";
 export * from "./contra-narracion";
+export * from "./candado";
 export * from "./lugar-narrado";
 export * from "./eje-calle";
