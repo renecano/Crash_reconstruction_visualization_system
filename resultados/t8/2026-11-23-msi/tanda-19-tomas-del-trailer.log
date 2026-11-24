@@ -1,0 +1,35 @@
+# Paso: tomas-del-trailer
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/desde-release.ps1 -Paso trailer -Release visor-fotos-945617e035988035 -Archivo fotos-promo-945617e0.zip -Zips eval/results/t8/tomas-trailer
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-23 21:15:43
+
+Bajando fotos-promo-945617e0.zip del release visor-fotos-945617e035988035...
+Descomprimiendo fotos-promo-945617e0.zip...
+Modelos del visor de escritorio, desde la máquina: cambiada.
+115 tomas en C:\Users\MrKan\AppData\Local\croquis-rtx-t4\fotos-promo-945617e0\tomas-trailer.json
+Tomando tomas del tráiler: 115 de 115 por hacer, de 6 en 6 (no uses la computadora mientras tanto)...
+  6 de 115 listas (16 s este grupo; fps del visor al final: 61.7)
+  12 de 115 listas (7 s este grupo; fps del visor al final: )
+  18 de 115 listas (7 s este grupo; fps del visor al final: )
+  24 de 115 listas (7 s este grupo; fps del visor al final: 62.8)
+  30 de 115 listas (7 s este grupo; fps del visor al final: 60.6)
+  36 de 115 listas (7 s este grupo; fps del visor al final: 62.7)
+  42 de 115 listas (7 s este grupo; fps del visor al final: 61.2)
+  48 de 115 listas (8 s este grupo; fps del visor al final: 59.9)
+  54 de 115 listas (8 s este grupo; fps del visor al final: 61.5)
+  60 de 115 listas (7 s este grupo; fps del visor al final: 62.6)
+  66 de 115 listas (7 s este grupo; fps del visor al final: 61.8)
+  72 de 115 listas (7 s este grupo; fps del visor al final: 63.0)
+  78 de 115 listas (7 s este grupo; fps del visor al final: 63.0)
+  84 de 115 listas (7 s este grupo; fps del visor al final: 59.4)
+  90 de 115 listas (7 s este grupo; fps del visor al final: 60.8)
+  96 de 115 listas (8 s este grupo; fps del visor al final: 60.1)
+  102 de 115 listas (8 s este grupo; fps del visor al final: 61.2)
+  108 de 115 listas (8 s este grupo; fps del visor al final: 62.2)
+  114 de 115 listas (7 s este grupo; fps del visor al final: )
+  115 de 115 listas (5 s este grupo; fps del visor al final: )
+Las tomas del tráiler van a la rama de resultados en 9 zips (eval/results/t8/tomas-trailer).
+
+Las tomas del tráiler quedaron también en C:\Users\MrKan\OneDrive\Desktop\croquis-tomas-trailer.zip (por si la subida falla, mándaselo a René por Drive).
+
+# Fin: 2026-11-23 21:20:49 · ok · 5.1 min

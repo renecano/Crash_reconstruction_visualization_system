@@ -8,7 +8,7 @@
     "commit":  "d028f1de794936c01bcd8be7b9eaf77f7f7c99d8",
     "rama_del_repositorio":  "main",
     "archivos_con_cambios":  0,
-    "duracion_min":  29,
+    "duracion_min":  34.1,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "NVIDIA GeForce RTX 4070 Laptop GPU",
@@ -214,6 +214,15 @@
                       "codigo":  1,
                       "disco_libre_gb_antes":  380.9,
                       "disco_libre_gb_despues":  380.9
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "tomas-del-trailer",
+                      "estado":  "ok",
+                      "minutos":  5.1,
+                      "codigo":  0,
+                      "disco_libre_gb_antes":  380.9,
+                      "disco_libre_gb_despues":  378.8
                   }
               ]
 }
