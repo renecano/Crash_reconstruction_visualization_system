@@ -1,0 +1,78 @@
+# Paso: narraciones
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues narraciones -Salida eval/results/t8/narraciones_fisica.json
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-24 09:16:24
+
+
+== 1. Herramientas
+Node v26.13.1 y pnpm 12.11.2.
+Hay internet.
+
+== 2. Dependencias
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 6d ago)
+Lockfile is up to date, resolution step is skipped
+Done in 74ms using pnpm v12.11.2
+
+== 3. El visor de Unity, desde esta computadora
+Visor 945617e035988035 servido desde el sitio: C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\public\visor-unity\local
+
+== 4. La app en modo local
+Ya está compilada para esta versión (ffc03c70).
+
+== 5. La lectura con IA
+No hay llave de Claude en .env.local: la lectura con IA no estará. Todo lo demás funciona (AXA, los casos de ejemplo con su lectura guardada, la reconstrucción, el 3D y el dictamen).
+
+== 6. Croquis en http://localhost:3000
+Necesitan internet: la lectura con IA de una narración nueva, los mosaicos del mapa (sin red, el mapa sale en blanco pero se puede colocar la escena) y buscar un lugar por nombre.
+Sin internet funcionan completos: el caso de AXA y los cinco casos de ejemplo, la reconstrucción, el 3D de Unity y el dictamen.
+
+Running 7 tests using 1 worker
+
+[1/7] [chromium] › e2e\narraciones-fisica.spec.ts:100:7 › narración arbol: de lo dicho a la física y al 3D
+[2/7] [chromium] › e2e\narraciones-fisica.spec.ts:100:7 › narración poste: de lo dicho a la física y al 3D
+[3/7] [chromium] › e2e\narraciones-fisica.spec.ts:100:7 › narración puente: de lo dicho a la física y al 3D
+[4/7] [chromium] › e2e\narraciones-fisica.spec.ts:100:7 › narración subida: de lo dicho a la física y al 3D
+[5/7] [chromium] › e2e\narraciones-fisica.spec.ts:100:7 › narración bajada: de lo dicho a la física y al 3D
+[6/7] [chromium] › e2e\narraciones-fisica.spec.ts:100:7 › narración curva: de lo dicho a la física y al 3D
+[7/7] [chromium] › e2e\narraciones-fisica.spec.ts:149:5 › caso encimado a propósito: antes y después en el 3D
+  1) [chromium] › e2e\narraciones-fisica.spec.ts:149:5 › caso encimado a propósito: antes y después en el 3D 
+
+    Test timeout of 900000ms exceeded.
+
+    Error: Sin el panel de pasos en la página (se pedía el paso 3)
+
+    expect(locator).toBeAttached() failed
+
+    Locator:  getByTestId('panel-paso')
+    Expected: attached
+    Received: undefined
+
+
+       at ayuda-recorrido.ts:15
+
+      13 |   for (let k = 0; k < 10; k++) {
+      14 |     // t8 (2026-11-24): sin el panel, la lectura esperaba hasta el tope de la prueba (15 min).
+    > 15 |     await expect(panel, `Sin el panel de pasos en la página (se pedía el paso ${n})`).toBeAttached({
+         |                                                                                       ^
+      16 |       timeout: 30_000,
+      17 |     });
+      18 |     const actual = Number(await panel.getAttribute("data-paso"));
+        at irAPaso (C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\ayuda-recorrido.ts:15:87)
+        at C:\Users\MrKan\Documents\reto cesvi v5\Croquis\apps\web\e2e\narraciones-fisica.spec.ts:208:16
+
+    Error Context: test-results\narraciones-fisica-caso-en-db8c4-to-antes-y-después-en-el-3D-chromium\error-context.md
+
+
+  Slow test file: [chromium] › e2e\narraciones-fisica.spec.ts (18.5m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  1 failed
+    [chromium] › e2e\narraciones-fisica.spec.ts:149:5 › caso encimado a propósito: antes y después en el 3D 
+  6 passed (18.5m)
+Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
+
+  × "pnpm recursive exec" failed in C:\Users\MrKan\Documents\reto cesvi
+  │ v5\Croquis\apps\web
+
+
+# Fin: 2026-11-24 09:34:56 · falló (código 1) · 18.5 min
