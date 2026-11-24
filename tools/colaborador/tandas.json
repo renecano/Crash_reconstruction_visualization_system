@@ -1017,7 +1017,7 @@
       "titulo": "Tanda 9 · Los tres casos de René y la verificación final en el navegador",
       "nota": "René, 2026-11-24: una sola tanda final, fijada al commit con todo (#311, rama fix/w-tres-narraciones). En la demo local con el build de Unity publicado (945617e035988035, del release de GitHub, sin Blob) y en Chrome con la tarjeta de alto rendimiento. Primero el humo (si falla, se detiene). Después: los cinco ejemplos y AXA en el navegador (la cifra ya asentada, sin la cuenta a medias); el crucero como lo ve el perito en la app; Tollocan; las seis narraciones y el caso encimado; los tres casos nuevos (árbol en curva, camión con peatón y carambola), cada uno con su captura del 3D; el arranque del 3D tres veces; y eval/t9_comparar.mjs contra el índice de cifras y la tabla aprobada (lo que difiera va a René con su antes y después). Nada de AXA se sube.",
       "rama": "fix/w-tres-narraciones",
-      "commit": "bee2fc5c21d156068785e91360c74ddf97e3c0e7",
+      "commit": "ff2fef2503e412d05bd6c4e575e9c4ae7a96f3d4",
       "pasos": [
         {
           "nombre": "visor",
