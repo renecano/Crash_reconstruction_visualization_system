@@ -28,23 +28,29 @@ param(
   [switch] $SoloCesvi,
   [int] $Ancho = 3840,
   [int] $Alto = 2160,
-  [string] $Solo = ""
+  [string] $Solo = "",
+  # t8 (René, 2026-11-23): el paquete de otro release (el visor de escritorio con el código del build
+  # publicado) y una carpeta del repositorio donde dejar las tomas en zips de menos de 90 MB, que la
+  # tanda sube a la rama de resultados.
+  [string] $Release = "rtx-t4",
+  [string] $Archivo = "",
+  [string] $Zips = ""
 )
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 $repo = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
-$base = "https://github.com/renecano/Crash_reconstruction_visualization_system/releases/download/rtx-t4"
-$archivo = if ($Paso -eq "escritorio") { "visor-escritorio-t4.zip" } else { "fotos-promo-t4b.zip" }
+$base = "https://github.com/renecano/Crash_reconstruction_visualization_system/releases/download/$Release"
+$archivo = if ($Archivo) { $Archivo } elseif ($Paso -eq "escritorio") { "visor-escritorio-t4.zip" } else { "fotos-promo-t4b.zip" }
 $raiz = Join-Path $env:LOCALAPPDATA "croquis-rtx-t4"
 # Las tomas del tráiler usan el mismo visor del paquete de fotos (el de t4b, en su propia carpeta).
-$carpeta = if ($Paso -eq "escritorio") { "escritorio" } else { "fotos-t4b" }
+$carpeta = if ($Archivo) { [IO.Path]::GetFileNameWithoutExtension($Archivo) } elseif ($Paso -eq "escritorio") { "escritorio" } else { "fotos-t4b" }
 # Para probar en otra máquina con un paquete ya descomprimido (la laptop de René): CROQUIS_PAQUETE_FOTOS.
 if ($Paso -ne "escritorio" -and $env:CROQUIS_PAQUETE_FOTOS) { $raiz = Split-Path $env:CROQUIS_PAQUETE_FOTOS; $carpeta = Split-Path $env:CROQUIS_PAQUETE_FOTOS -Leaf }
 $trabajo = Join-Path $raiz $carpeta
 New-Item -ItemType Directory -Force $trabajo | Out-Null
 $zip = Join-Path $raiz $archivo
 if (-not (Test-Path (Join-Path $trabajo "VisorCroquis.exe")) -and -not (Test-Path $zip)) {
-  Write-Host "Bajando $archivo del release rtx-t4..."
+  Write-Host "Bajando $archivo del release $Release..."
   Invoke-WebRequest "$base/$archivo" -OutFile "$zip.parcial" -UseBasicParsing
   Move-Item "$zip.parcial" $zip -Force
 }
@@ -178,8 +184,26 @@ if ($Paso -eq "escritorio") {
   $entrega = Join-Path $escritorio "croquis-tomas-trailer.zip"
   if (Test-Path $entrega) { Remove-Item $entrega -Force }
   Compress-Archive -Path (Join-Path $salida "*_*.png"), $informe -DestinationPath $entrega
+  if ($Zips) {
+    # Para la rama de resultados: zips de menos de 90 MB (GitHub no acepta archivos de más de 100 MB),
+    # solo con las tomas en PNG y su informe; ni video ni audio.
+    $carpetaZips = Join-Path $repo $Zips
+    if (Test-Path $carpetaZips) { Remove-Item -Recurse -Force $carpetaZips }
+    New-Item -ItemType Directory -Force $carpetaZips | Out-Null
+    $grupo = @(); $suma = 0; $n = 0
+    $archivos = @(Get-ChildItem -LiteralPath $salida -Filter "*_*.png" | Sort-Object Name) + @(Get-Item $informe)
+    foreach ($a in $archivos) {
+      if ($grupo.Count -and ($suma + $a.Length) -gt 85MB) {
+        $n++; Compress-Archive -Path ($grupo | ForEach-Object { $_.FullName }) -DestinationPath (Join-Path $carpetaZips ("tomas-trailer-{0:D2}.zip" -f $n))
+        $grupo = @(); $suma = 0
+      }
+      $grupo += $a; $suma += $a.Length
+    }
+    if ($grupo.Count) { $n++; Compress-Archive -Path ($grupo | ForEach-Object { $_.FullName }) -DestinationPath (Join-Path $carpetaZips ("tomas-trailer-{0:D2}.zip" -f $n)) }
+    Write-Host "Las tomas del tráiler van a la rama de resultados en $n zips ($Zips)."
+  }
   Write-Host ""
-  Write-Host "Las tomas del tráiler quedaron en $entrega. Mándale ese archivo a René (por Drive o WeTransfer): no va a git."
+  Write-Host "Las tomas del tráiler quedaron también en $entrega (por si la subida falla, mándaselo a René por Drive)."
 } elseif ($Paso -eq "video") {
   # El video de Unity (René, 2026-11-17): AXA, el lateral en intersección y, para la versión pública,
   # el alcance inventado; cada caso con cuatro cámaras, cuadro por cuadro a 60 fps en ultra, montado
