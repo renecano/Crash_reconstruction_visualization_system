@@ -2,10 +2,8 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import type { Expediente, SalidaCorpus } from "@croquis/cesvi";
 import {
-  conPosicion,
   escenaDeNarracion,
   especDeExpediente,
-  impactosEncimados,
   expedienteConTipicas,
   interpretarResultado,
   puntoDeRelieve,
@@ -18,19 +16,14 @@ import { caso3dErrors } from "@croquis/scene-schema";
 import { fullResult, reconstruct, reconstructionToDict, withRelief } from "@croquis/solver-ts";
 import { describe, expect, it } from "vitest";
 import { especDel3d } from "@/components/cesvi/caso/reconstruccion";
-import {
-  callesDe,
-  elegirDireccion,
-  finalDeLaNarracion,
-  marcarFinal,
-  poseDe,
-} from "@/lib/escena-facil";
+import { callesDe, poseDe } from "@/lib/escena-facil";
 import { proponerEscena } from "@/lib/escena-propuesta";
 import { impactosAColocar } from "@/lib/pasos-caso";
 import { paqueteDelCaso } from "@/lib/visor-unity/paquete";
 import { buscarLugar, defaultLugarDeps } from "@/server/lugar";
 import { armarRelieve, defaultRelieveDeps, RelieveIn } from "@/server/relieve";
 import { resumenDelPaquete } from "./bateria-ciudad";
+import { rehacerLaEscena } from "@/lib/rehacer-escena";
 
 const RAIZ = resolve(__dirname, "../../../../..");
 const DIR = resolve(RAIZ, "packages/scene-schema/fixtures/caso3d-narraciones");
@@ -214,53 +207,10 @@ describe("las narraciones como paquete 3D, por el camino del navegador", () => {
 });
 
 /**
- * Las tres narraciones que René probó en producción (2026-11-24), como paquete caso-3d para la
- * batería de Unity. Parten de su caso guardado (`data/cesvi/casos/rene-*.croquis`: sus choques donde
- * él los marcó) y rehacen La escena con las funciones corregidas, como la haría el perito hoy: «Por
- * dónde venía» con la vuelta dada (el camión) y el peatón en el punto de contacto, «Separarlos» si
- * quedaron encimados, y «Como dice la narración» para dónde quedó cada uno. Usa la red (OpenStreetMap):
- * solo a mano, `CROQUIS_TRES=1`. No toca los otros siete paquetes ni `colocaciones.json`.
+ * Las tres narraciones de René (2026-11-24) como paquete caso-3d para la batería de Unity, con La
+ * escena rehecha (`rehacerLaEscena`). Usa la red (OpenStreetMap): solo a mano, `CROQUIS_TRES=1`. No
+ * toca los otros siete paquetes ni `colocaciones.json`.
  */
-export function rehacerLaEscena(
-  guardado: Expediente,
-  narradas: readonly { vehiculo: string; fase: string; descripcion: string }[],
-): Expediente {
-  let e: Expediente = {
-    ...guardado,
-    versiones: (guardado.versiones ?? []).map((v) => ({
-      ...v,
-      posiciones: (v.posiciones ?? []).filter((p) => p.fase !== "final"),
-    })),
-  };
-  const impactos = impactosAColocar(e);
-  const punto = (orden: number) => {
-    const vs = impactos.find((i) => i.orden === orden)?.vehiculos ?? [];
-    const ps = vs.flatMap((v) => poseDe(guardado, v, "impacto") ?? []);
-    return ps.length
-      ? {
-          lat: ps.reduce((a, p) => a + p.punto.lat, 0) / ps.length,
-          lon: ps.reduce((a, p) => a + p.punto.lon, 0) / ps.length,
-        }
-      : null;
-  };
-  // Su dirección de llegada, como la marcó (antes la pose guardaba la llegada tal cual).
-  for (const i of impactos) {
-    const v = i.vehiculos[0]!;
-    const pose = poseDe(guardado, v, "impacto");
-    if (pose) e = elegirDireccion(e, impactos, v, pose.rumbo, punto);
-  }
-  for (const enc of impactosEncimados(e))
-    for (const pose of enc.propuesta) e = conPosicion(e, { ...pose, fase: "impacto" });
-  const finales = narradas.filter((p) => p.fase === "final");
-  for (const n of finales) {
-    const f = finalDeLaNarracion(e, n.vehiculo, n.descripcion, finales);
-    const suyo = poseDe(guardado, n.vehiculo, "final");
-    if (f) e = marcarFinal(e, n.vehiculo, f.punto, f.rumbo);
-    else if (suyo) e = marcarFinal(e, n.vehiculo, suyo.punto, suyo.rumbo);
-  }
-  return e;
-}
-
 describe("las tres narraciones de René como paquete 3D", () => {
   it.skipIf(!process.env.CROQUIS_TRES)(
     "arma los paquetes",
