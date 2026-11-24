@@ -151,6 +151,15 @@
                       "codigo":  0,
                       "disco_libre_gb_antes":  380.9,
                       "disco_libre_gb_despues":  380.9
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "visor-anterior",
+                      "estado":  "ok",
+                      "minutos":  0,
+                      "codigo":  0,
+                      "disco_libre_gb_antes":  380.9,
+                      "disco_libre_gb_despues":  380.9
                   }
               ]
 }
