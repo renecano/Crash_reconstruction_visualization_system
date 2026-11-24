@@ -1,0 +1,150 @@
+{
+  "fecha": "2026-11-24T03:15:40.899Z",
+  "ejemplos": [
+    {
+      "clave": "crucero-noche",
+      "vehiculo": "V1",
+      "tabla": "20 (10–28)",
+      "navegador": "20 (10–28)",
+      "diferencias": [],
+      "coincide": true
+    },
+    {
+      "clave": "alcance-deformacion",
+      "vehiculo": "V1",
+      "tabla": "53 (49–56)",
+      "navegador": "54 (49–56)",
+      "diferencias": [
+        {
+          "que": "cifra",
+          "km_h": 1,
+          "porcentaje": "+1.9 %"
+        }
+      ],
+      "coincide": false
+    },
+    {
+      "clave": "carambola-lluvia",
+      "vehiculo": "V1",
+      "tabla": "24 (22–32)",
+      "navegador": "24 (22–32)",
+      "diferencias": [],
+      "coincide": true
+    },
+    {
+      "clave": "reversa-pendiente",
+      "vehiculo": "V2",
+      "tabla": "21 (20–28)",
+      "navegador": "20 (19–26)",
+      "diferencias": [
+        {
+          "que": "cifra",
+          "km_h": -1,
+          "porcentaje": "-4.8 %"
+        },
+        {
+          "que": "p10",
+          "km_h": -1,
+          "porcentaje": "-5.0 %"
+        },
+        {
+          "que": "p90",
+          "km_h": -2,
+          "porcentaje": "-7.1 %"
+        }
+      ],
+      "coincide": false
+    },
+    {
+      "clave": "poste-terraceria",
+      "vehiculo": "V2",
+      "tabla": "36 (31–38)",
+      "navegador": "36 (31–39)",
+      "diferencias": [
+        {
+          "que": "p90",
+          "km_h": 1,
+          "porcentaje": "+2.6 %"
+        }
+      ],
+      "coincide": true
+    }
+  ],
+  "indice": [
+    {
+      "cifra": "ejemplos.crucero",
+      "indice": "20 km/h (4–27)",
+      "medida": "20 km/h (4–27)",
+      "diferencias": [],
+      "coincide": true
+    },
+    {
+      "cifra": "ejemplos.poste",
+      "indice": "36 km/h (31–38)",
+      "medida": "36 (31–39)",
+      "diferencias": [
+        {
+          "que": "p90",
+          "km_h": 1,
+          "porcentaje": "+2.6 %"
+        }
+      ],
+      "coincide": true
+    }
+  ],
+  "axa": {
+    "indice": "57 km/h (55–78)",
+    "navegador": "RepetirVelocidad antes del impacto20km/hB · Toyota Tacomarango 55–78Reconstrucción física de Croquis · mejor ajuste5560657075808590km/hCada punto es una de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste.Los percentiles de las simulacionesp10 · 55p50 · 64p90 · 78Pasa el puntero por un percentil para ver qué significa.Mediana de las simulaciones64 km/hA · Chevrolet Silverado 250015 km/hLo fijan5 evidencias",
+    "coincide": true
+  },
+  "capturas": [
+    {
+      "clave": "arbol",
+      "capturas": 2
+    },
+    {
+      "clave": "poste",
+      "capturas": 2
+    },
+    {
+      "clave": "puente",
+      "capturas": 2
+    },
+    {
+      "clave": "subida",
+      "capturas": 2
+    },
+    {
+      "clave": "bajada",
+      "capturas": 2
+    },
+    {
+      "clave": "curva",
+      "capturas": 2
+    },
+    {
+      "clave": "tollocan",
+      "capturas": 5
+    },
+    {
+      "clave": "encimado-antes",
+      "capturas": 2
+    },
+    {
+      "clave": "encimado-despues",
+      "capturas": 0
+    }
+  ],
+  "arranque": [
+    "arranque_3087c2915b272e66_1.json",
+    "arranque_3087c2915b272e66_2.json",
+    "arranque_3087c2915b272e66_3.json",
+    "arranque_945617e035988035_1.json",
+    "arranque_945617e035988035_2.json",
+    "arranque_945617e035988035_3.json"
+  ],
+  "pendientes": [
+    "Sin captura del 3D: encimado-despues."
+  ],
+  "coincide": false
+}
