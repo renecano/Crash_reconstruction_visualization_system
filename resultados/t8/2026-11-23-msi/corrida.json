@@ -8,7 +8,7 @@
     "commit":  "d028f1de794936c01bcd8be7b9eaf77f7f7c99d8",
     "rama_del_repositorio":  "main",
     "archivos_con_cambios":  1,
-    "duracion_min":  26.1,
+    "duracion_min":  26.2,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "NVIDIA GeForce RTX 4070 Laptop GPU",
@@ -155,6 +155,15 @@
                   {
                       "grupo":  "tanda",
                       "paso":  "visor-anterior",
+                      "estado":  "ok",
+                      "minutos":  0,
+                      "codigo":  0,
+                      "disco_libre_gb_antes":  380.9,
+                      "disco_libre_gb_despues":  380.9
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "preparar-anterior",
                       "estado":  "ok",
                       "minutos":  0,
                       "codigo":  0,
