@@ -1,6 +1,6 @@
 {
   "nota": "Lo pesado de cada tanda de la auditoría del 2026-11-15, para la computadora del colaborador (tools/colaborador/tanda.ps1). «vigente» es la que corre CORRER-TANDA-EN-RTX.bat con doble clic. Toda corrida empieza por «comprobacion»; si falla, lo pesado no corre. Cada paso: un comando que corre en la raíz del repositorio, sin preguntas y sin llaves; «minutos» es lo estimado (el tope es 4 veces eso, y al menos 10 min); «salidas» son las rutas que se suben además de los registros. «rama»: la rama donde vive la tanda mientras no esté en main. Un comando por paso (sin &&): cada uno deja su registro. Un paso con `requiere` se omite si falta esa carpeta (datos que no van en git). «privadas»: carpetas de un paso que no se suben; se comprimen en un zip en la carpeta de resultados (René, 2026-11-21: el repositorio es público). Un «antes» en otro commit va en un git worktree (sin copiar el repositorio) y sus dependencias se enlazan desde el almacén de pnpm (--prefer-offline --package-import-method=hardlink), sin copiar node_modules (René, 2026-11-23: el disco llegaba al 100 %); corrida.json guarda el disco libre antes y después de cada paso.",
-  "vigente": "t8",
+  "vigente": "t9",
   "comprobacion": {
     "pasos": [
       {
@@ -1010,6 +1010,108 @@
           "minutos": 20,
           "tope_min": 60,
           "salidas": ["eval/results/t8/tomas-trailer", "eval/results/rtx-t4/tomas_trailer.json"]
+        }
+      ]
+    },
+    "t9": {
+      "titulo": "Tanda 9 · Los tres casos de René y la verificación final en el navegador",
+      "nota": "René, 2026-11-24: una sola tanda final, fijada al commit con todo (#311, rama fix/w-tres-narraciones). En la demo local con el build de Unity publicado (945617e035988035, del release de GitHub, sin Blob) y en Chrome con la tarjeta de alto rendimiento. Primero el humo (si falla, se detiene). Después: los cinco ejemplos y AXA en el navegador (la cifra ya asentada, sin la cuenta a medias); el crucero como lo ve el perito en la app; Tollocan; las seis narraciones y el caso encimado; los tres casos nuevos (árbol en curva, camión con peatón y carambola), cada uno con su captura del 3D; el arranque del 3D tres veces; y eval/t9_comparar.mjs contra el índice de cifras y la tabla aprobada (lo que difiera va a René con su antes y después). Nada de AXA se sube.",
+      "rama": "fix/w-tres-narraciones",
+      "commit": "ff2fef2503e412d05bd6c4e575e9c4ae7a96f3d4",
+      "pasos": [
+        {
+          "nombre": "visor",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 2,
+          "tope_min": 15
+        },
+        {
+          "nombre": "preparar",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar",
+          "minutos": 8,
+          "tope_min": 15
+        },
+        {
+          "nombre": "humo",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues humo",
+          "minutos": 6,
+          "tope_min": 8,
+          "salidas": ["eval/results/humo/", "apps/web/test-results/"],
+          "detiene_si_falla": true
+        },
+        {
+          "nombre": "ejemplos",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t9/ejemplos.json -Capturas docs/cesvi/ronda-4/evidencia/t9-ejemplos -Casos eval/results/t9/ejemplos-casos",
+          "minutos": 12,
+          "tope_min": 30,
+          "salidas": ["eval/results/t9", "docs/cesvi/ronda-4/evidencia/t9-ejemplos"]
+        },
+        {
+          "nombre": "crucero-en-la-app",
+          "comando": "powershell -NoProfile -Command \"$env:CROQUIS_EJEMPLO_APP='../../eval/results/t9/crucero_en_la_app.json'; pnpm --filter @croquis/web exec vitest run src/lib/ejemplo-en-la-app.test.ts\"",
+          "minutos": 2,
+          "tope_min": 10,
+          "salidas": ["eval/results/t9"]
+        },
+        {
+          "nombre": "tollocan",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tollocan -Salida eval/results/t9/tollocan.json",
+          "minutos": 6,
+          "tope_min": 15,
+          "salidas": [
+            "eval/results/t9",
+            "docs/cesvi/ronda-4/evidencia/fisica",
+            "apps/web/test-results/"
+          ]
+        },
+        {
+          "nombre": "narraciones",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues narraciones -Salida eval/results/t9/narraciones_fisica.json",
+          "minutos": 12,
+          "tope_min": 30,
+          "salidas": [
+            "eval/results/t9",
+            "docs/cesvi/ronda-4/evidencia/fisica",
+            "apps/web/test-results/"
+          ]
+        },
+        {
+          "nombre": "tres-narraciones",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tres -Salida eval/results/t9/tres_narraciones.json",
+          "minutos": 8,
+          "tope_min": 25,
+          "salidas": [
+            "eval/results/t9",
+            "docs/cesvi/ronda-4/evidencia/fisica",
+            "apps/web/test-results/"
+          ]
+        },
+        {
+          "nombre": "arranque-1",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t9/arranque_945617e035988035_1.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t9"]
+        },
+        {
+          "nombre": "arranque-2",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t9/arranque_945617e035988035_2.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t9"]
+        },
+        {
+          "nombre": "arranque-3",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t9/arranque_945617e035988035_3.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t9"]
+        },
+        {
+          "nombre": "comparar",
+          "comando": "node eval/t9_comparar.mjs",
+          "minutos": 1,
+          "salidas": ["eval/results/t9"]
         }
       ]
     }
