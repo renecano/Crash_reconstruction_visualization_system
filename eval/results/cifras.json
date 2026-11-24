@@ -34,12 +34,20 @@
       "que": "Paridad antes de las 14 escenas"
     },
     {
-      "texto": "21 de 31",
-      "que": "Carambolas de prueba medidas el 2026-10-23, antes del #119 (2026-10-24)"
-    },
-    {
       "texto": "43 de 55",
       "que": "Carambolas de desarrollo medidas el 2026-10-23, antes del #119"
+    },
+    {
+      "texto": "20 de 31",
+      "que": "Carambolas de prueba antes de la ronda 4 (2026-11-23): la velocidad típica de la vía según su clase en el texto del lugar del reporte (LGMSV; carreteras 80–110, calles 30) donde la evidencia no fija la velocidad gana un impacto posterior en una carretera y en una calle y lo pierde en otra calle (#284, 4d7812cd). «21 de 31» también se midió el 2026-10-23, antes del #119, con otros casos"
+    },
+    {
+      "texto": "40 de 55",
+      "que": "Carambolas de desarrollo antes de la ronda 4 (2026-11-23): la velocidad típica de la vía en lugar de los 40 km/h del ajuste (c4d4beb3), su clase según el texto del lugar (4d7812cd) y la masa de la ficha del fabricante de diez modelos más (4f9c6b08)"
+    },
+    {
+      "texto": "36 km/h (29–38)",
+      "que": "Ejemplo «poste y terracería» con el código de producción anterior a la ronda 4 (3257fa9f); con la masa de la ficha de cada modelo da 36 km/h (31–38) (2026-11-23)"
     },
     {
       "texto": "27 km/h (23–35)",
@@ -163,34 +171,46 @@
     },
     "carambolas.prueba": {
       "que": "Carambolas (prueba): impactos posteriores entre vehículos que ocurren en la reconstrucción, de los que pasan a la escena",
-      "k": 20,
+      "k": 21,
       "n": 31,
-      "pct": 64.5,
-      "texto": "20 de 31",
+      "pct": 67.7,
+      "texto": "21 de 31",
       "fuente": "eval/results/cesvi_r4b_carambolas_prueba.json",
       "campo": "impactos_posteriores_ocurridos / impactos_posteriores_en_escena"
     },
     "carambolas.desarrollo": {
       "que": "Carambolas (desarrollo): impactos posteriores entre vehículos que ocurren en la reconstrucción, de los que pasan a la escena",
-      "k": 40,
+      "k": 44,
       "n": 55,
-      "pct": 72.7,
-      "texto": "40 de 55",
+      "pct": 80,
+      "texto": "44 de 55",
       "fuente": "eval/results/cesvi_r4b_carambolas_desarrollo.json",
       "campo": "impactos_posteriores_ocurridos / impactos_posteriores_en_escena"
     },
     "ejemplos.poste": {
       "que": "Ejemplo «poste y terracería»: velocidad del Sentra (B) antes del impacto, con la escena colocada como dice la narración (el Mazda 3 quedó 8 m al norte)",
       "mejor": 36,
-      "p10": 29,
+      "p10": 31,
       "p90": 38,
       "unidad": "km/h",
       "muestras": 32,
       "juego_de_muestras": "producción",
-      "texto": "36 km/h (29–38)",
-      "fuente": "eval/results/ronda4_cifras/antes.json",
+      "texto": "36 km/h (31–38)",
+      "fuente": "eval/results/ronda4_cifras/despues.json",
       "campo": "filas.5.velocidades.1",
-      "codigo": "3257fa9f"
+      "codigo": "4f9c6b08"
+    },
+    "ejemplos.crucero": {
+      "que": "Ejemplo «crucero de noche»: velocidad del Jetta (A) antes del impacto, como lo ve el perito en la app (la escena que propone La escena sobre las calles reales, aceptada, y los dos junto al choque)",
+      "mejor": 20,
+      "p10": 4,
+      "p90": 27,
+      "unidad": "km/h",
+      "muestras": 32,
+      "juego_de_muestras": "producción",
+      "texto": "20 km/h (4–27)",
+      "fuente": "eval/results/ronda4_cifras/crucero_en_la_app.json",
+      "campo": "velocidad"
     },
     "reversa.velocidad": {
       "que": "Velocidad supuesta de un vehículo en reversa: mediana y p10–p90 de la velocidad máxima de maniobras reales",

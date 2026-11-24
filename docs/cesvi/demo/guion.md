@@ -96,7 +96,7 @@ Croquis lee el reporte completo de CESVI y arma el expediente con la cita de cad
 > Lista → «Ver los 205 reportes de la reproducción…» → el reporte `257e13` → colocar → reconstruir → 3D (unos 17 s).
 
 - **Los impactos en orden,** en 3D.
-- **Sin las posiciones del perito,** la evidencia no fija ninguna velocidad, y la pantalla lo dice así. En la prueba con 33 carambolas, todas se reconstruyen y se ven en 3D; ocurren 20 de 31 impactos posteriores.
+- **Sin las posiciones del perito,** la evidencia no fija ninguna velocidad, y la pantalla lo dice así. En la prueba con 33 carambolas, todas se reconstruyen y se ven en 3D; ocurren <!--cifra:carambolas.prueba-->21 de 31<!--/cifra--> impactos posteriores.
 
 ## 5 · Cierre (1 min)
 

@@ -228,9 +228,10 @@ function construir() {
     });
   }
 
-  // --- Los ejemplos de narración: el del poste, corregido (René, 2026-11-21) ---
+  // --- Los ejemplos de narración (René, 2026-11-21 y 23) ---
+  // El poste, con la escena colocada como dice la narración, en la tabla aprobada de la ronda 4.
   {
-    const archivo = "eval/results/ronda4_cifras/antes.json";
+    const archivo = "eval/results/ronda4_cifras/despues.json";
     const doc = leer(archivo);
     const i = doc.filas.findIndex((f) => f.clave === "poste-terraceria");
     if (i < 0) throw new Error(`${archivo}: no está el ejemplo poste-terraceria`);
@@ -249,6 +250,25 @@ function construir() {
       fuente: archivo,
       campo: `filas.${i}.velocidades.${j}`,
       codigo: doc.codigo,
+    });
+  }
+  // El crucero de noche como lo ve el perito en la app: la escena que propone La escena sobre las
+  // calles reales, aceptada, con los dos junto al choque («la cifra publicada es esa», René 2026-11-23).
+  {
+    const archivo = "eval/results/ronda4_cifras/crucero_en_la_app.json";
+    const doc = leer(archivo);
+    const v = doc.velocidad;
+    pon("ejemplos.crucero", {
+      que: "Ejemplo «crucero de noche»: velocidad del Jetta (A) antes del impacto, como lo ve el perito en la app (la escena que propone La escena sobre las calles reales, aceptada, y los dos junto al choque)",
+      mejor: v.mejor,
+      p10: v.p10,
+      p90: v.p90,
+      unidad: "km/h",
+      muestras: muestrasDeProduccion().inversion,
+      juego_de_muestras: "producción",
+      texto: `${v.mejor} km/h (${v.p10}–${v.p90})`,
+      fuente: archivo,
+      campo: "velocidad",
     });
   }
 
@@ -286,11 +306,19 @@ function construir() {
       { texto: "68,557", que: "Paridad antes de las 14 escenas" },
       { texto: "68 557", que: "Paridad antes de las 14 escenas" },
       { texto: "68557", que: "Paridad antes de las 14 escenas" },
-      {
-        texto: "21 de 31",
-        que: "Carambolas de prueba medidas el 2026-10-23, antes del #119 (2026-10-24)",
-      },
       { texto: "43 de 55", que: "Carambolas de desarrollo medidas el 2026-10-23, antes del #119" },
+      {
+        texto: "20 de 31",
+        que: "Carambolas de prueba antes de la ronda 4 (2026-11-23): la velocidad típica de la vía según su clase en el texto del lugar del reporte (LGMSV; carreteras 80–110, calles 30) donde la evidencia no fija la velocidad gana un impacto posterior en una carretera y en una calle y lo pierde en otra calle (#284, 4d7812cd). «21 de 31» también se midió el 2026-10-23, antes del #119, con otros casos",
+      },
+      {
+        texto: "40 de 55",
+        que: "Carambolas de desarrollo antes de la ronda 4 (2026-11-23): la velocidad típica de la vía en lugar de los 40 km/h del ajuste (c4d4beb3), su clase según el texto del lugar (4d7812cd) y la masa de la ficha del fabricante de diez modelos más (4f9c6b08)",
+      },
+      {
+        texto: "36 km/h (29–38)",
+        que: "Ejemplo «poste y terracería» con el código de producción anterior a la ronda 4 (3257fa9f); con la masa de la ficha de cada modelo da 36 km/h (31–38) (2026-11-23)",
+      },
       {
         texto: "27 km/h (23–35)",
         que: "Ejemplo «poste y terracería» medido en la t5 y la t5c: la receta de la e2e buscaba «el 3» y la pantalla dice «Mazda 3», así que dejaba el Mazda junto al choque y no 8 m al norte como dice la narración (René, 2026-11-21)",

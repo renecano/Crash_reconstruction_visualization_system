@@ -38,7 +38,7 @@ const MUESTRAS = { samples: 8, mcSamples: 8 };
  * `packages/scene-schema/fixtures/caso3d-narraciones/` para la prueba de Unity
  * (`NarracionEnUnityTests`), que no la usa.
  */
-async function osmAlrededor(lat: number, lon: number): Promise<OverpassResponse> {
+export async function osmAlrededor(lat: number, lon: number): Promise<OverpassResponse> {
   const b = [lon - 0.0016, lat - 0.0014, lon + 0.0016, lat + 0.0014]
     .map((x) => x.toFixed(5))
     .join(",");

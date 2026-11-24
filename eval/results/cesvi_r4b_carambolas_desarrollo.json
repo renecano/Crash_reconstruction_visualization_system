@@ -1,5 +1,5 @@
 {
- "fecha": "2026-11-16T00:36:21.267Z",
+ "fecha": "2026-11-22T18:59:01.300Z",
  "descripcion": "E-R6 v2 (R4b): los expedientes de C0 con 3 o más vehículos de una partición, por «escenaDeConversion» como en «Caso nuevo»; los vehículos que solo están en impactos posteriores, colocados en la trayectoria del que los golpea (supuesto). Al lado, la v1 de la misma partición.",
  "expedientes": 68,
  "por_vehiculos": {
@@ -13,9 +13,9 @@
  "en_3d": 68,
  "con_impactos_posteriores": 43,
  "impactos_posteriores_en_escena": 55,
- "impactos_posteriores_ocurridos": 40,
- "ms_mediana": 145,
- "ms_maximo": 2815,
+ "impactos_posteriores_ocurridos": 44,
+ "ms_mediana": 987,
+ "ms_maximo": 18221,
  "detalle": [
   {
    "id": "cesvi-7659b99429",
@@ -28,13 +28,16 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1 y V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El choque entre V1 y V2 casi no transfiere energía con estas velocidades (ninguno cambia su velocidad más de 2 km/h), así que no deja daño: los dos llegan casi igual de rápido en el mismo sentido. Dile a Croquis a qué velocidad venía cada uno o revisa por dónde venían.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 242
+   "ms": 1093
   },
   {
    "id": "cesvi-3a735f207f",
@@ -47,12 +50,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
     "El reporte no da las zonas del impacto de V3: se toma la cara de su primer daño.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 131
+   "ms": 573
   },
   {
    "id": "cesvi-3a0125cb81",
@@ -65,12 +71,16 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «libramiento» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «libramiento» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «libramiento» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "El choque entre V1 y V2 casi no transfiere energía con estas velocidades (ninguno cambia su velocidad más de 2 km/h), así que no deja daño: los dos llegan casi igual de rápido en el mismo sentido. Dile a Croquis a qué velocidad venía cada uno o revisa por dónde venían.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 112
+   "ms": 998
   },
   {
    "id": "cesvi-7968a2fe85",
@@ -83,13 +93,16 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
     "El reporte no da las zonas del impacto de V3: se toma la cara de su primer daño.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «CARRETERA» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «CARRETERA» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «CARRETERA» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "El impacto 2 no es entre dos vehículos (árbol): la reconstrucción no lo calcula.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 101
+   "ms": 560
   },
   {
    "id": "cesvi-b62c02ae9d",
@@ -102,12 +115,16 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
     "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "El choque entre V1 y V2 casi no transfiere energía con estas velocidades (ninguno cambia su velocidad más de 2 km/h), así que no deja daño: los dos llegan casi igual de rápido en el mismo sentido. Dile a Croquis a qué velocidad venía cada uno o revisa por dónde venían.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 126
+   "ms": 1070
   },
   {
    "id": "cesvi-cacd4ad40a",
@@ -120,14 +137,16 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1 y V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3, V4: sin sus posiciones en el mapa, Croquis los coloca detenidos en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
-    "El impacto 2 (V1 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+    "El impacto 2 (V1 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 1116
+   "ms": 5780
   },
   {
    "id": "cesvi-a0b75448f9",
@@ -140,13 +159,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 147
+   "ms": 804
   },
   {
    "id": "cesvi-8adfda879d",
@@ -159,13 +180,17 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 4,
    "limites": [
     "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V5: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V6: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 219
+   "ms": 1590
   },
   {
    "id": "cesvi-1d13d79cc8",
@@ -178,13 +203,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (66 a 132 km/h, alrededor del límite de 110 km/h: LGMSV, art. 49 fr. III g) carreteras y autopistas de jurisdicción federal (automóviles); por «Carretera Federal» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (66 a 132 km/h, alrededor del límite de 110 km/h: LGMSV, art. 49 fr. III g) carreteras y autopistas de jurisdicción federal (automóviles); por «Carretera Federal» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 155
+   "ms": 1092
   },
   {
    "id": "cesvi-ba0da5ab04",
@@ -197,13 +224,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1 y V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3, V4: sin sus posiciones en el mapa, Croquis los coloca detenidos en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 249
+   "ms": 1268
   },
   {
    "id": "cesvi-1804eb79f8",
@@ -216,11 +245,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "El choque entre V2 y V3 casi no transfiere energía con estas velocidades (ninguno cambia su velocidad más de 2 km/h), así que no deja daño: los dos llegan casi igual de rápido en el mismo sentido. Dile a Croquis a qué velocidad venía cada uno o revisa por dónde venían.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 124
+   "ms": 1268
   },
   {
    "id": "cesvi-d6f456b23d",
@@ -233,13 +266,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1 y V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 142
+   "ms": 782
   },
   {
    "id": "cesvi-f046c2675a",
@@ -252,12 +287,16 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 4,
    "limites": [
     "El reporte no da las zonas del impacto de V4: se toma la cara de su primer daño.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V4: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 155
+   "ms": 1257
   },
   {
    "id": "cesvi-56d6a6fbae",
@@ -270,13 +309,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1 y V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (66 a 132 km/h, alrededor del límite de 110 km/h: LGMSV, art. 49 fr. III g) carreteras y autopistas de jurisdicción federal (automóviles); por «Carretera Federal» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (66 a 132 km/h, alrededor del límite de 110 km/h: LGMSV, art. 49 fr. III g) carreteras y autopistas de jurisdicción federal (automóviles); por «Carretera Federal» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 145
+   "ms": 1100
   },
   {
    "id": "cesvi-599947f4ac",
@@ -289,12 +330,16 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 4,
    "limites": [
     "El reporte no da las zonas del impacto de V1 y V3: se toma la cara de su primer daño.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V4: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 139
+   "ms": 1037
   },
   {
    "id": "cesvi-7f19126288",
@@ -307,13 +352,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 148
+   "ms": 925
   },
   {
    "id": "cesvi-61d0d1144e",
@@ -326,14 +373,19 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 4,
    "limites": [
     "El reporte no da las zonas del impacto de V5: se toma la cara de su primer daño.",
+    "V5: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V4: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
-    "El impacto 2 (V5 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+    "El choque entre V5 y V2 casi no transfiere energía con estas velocidades (ninguno cambia su velocidad más de 2 km/h), así que no deja daño: los dos llegan casi igual de rápido en el mismo sentido. Dile a Croquis a qué velocidad venía cada uno o revisa por dónde venían.",
+    "El impacto 2 (V5 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 1195
+   "ms": 10913
   },
   {
    "id": "cesvi-d9765c2a21",
@@ -346,14 +398,17 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Boulevard» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Boulevard» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V5: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Boulevard» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3, V4: sin sus posiciones en el mapa, Croquis los coloca detenidos en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
-    "El impacto 3 (V2 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+    "El impacto 3 (V2 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 331
+   "ms": 1726
   },
   {
    "id": "cesvi-051c73af54",
@@ -366,12 +421,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
     "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 85
+   "ms": 603
   },
   {
    "id": "cesvi-e3d81875a4",
@@ -384,13 +442,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1 y V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 143
+   "ms": 819
   },
   {
    "id": "cesvi-62d28f0343",
@@ -403,13 +463,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
+    "V4: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V2, V3: sin sus posiciones en el mapa, Croquis los coloca detenidos en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 252
+   "ms": 1334
   },
   {
    "id": "cesvi-f5a7c68983",
@@ -417,18 +479,21 @@
    "vehiculos": 3,
    "impactos_declarados": 2,
    "posteriores_en_escena": 1,
-   "posteriores_ocurridos": 1,
+   "posteriores_ocurridos": 0,
    "escena_valida": true,
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El impacto 2 (V2 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 196
+   "ms": 3548
   },
   {
    "id": "cesvi-3187c0665b",
@@ -441,13 +506,17 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 4,
    "limites": [
     "El reporte no da las zonas del impacto de V1 y V3: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
+    "V4: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
+    "V5: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
     "V2: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 227
+   "ms": 1309
   },
   {
    "id": "cesvi-93fc1de642",
@@ -460,13 +529,16 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El choque entre V1 y V2 casi no transfiere energía con estas velocidades (ninguno cambia su velocidad más de 2 km/h), así que no deja daño: los dos llegan casi igual de rápido en el mismo sentido. Dile a Croquis a qué velocidad venía cada uno o revisa por dónde venían.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 178
+   "ms": 987
   },
   {
    "id": "cesvi-3d7ee126c8",
@@ -479,12 +551,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
     "El reporte no da las zonas del impacto de V1 y V2: se toma la cara de su primer daño.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 99
+   "ms": 524
   },
   {
    "id": "cesvi-c804f62495",
@@ -497,12 +572,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 135
+   "ms": 792
   },
   {
    "id": "cesvi-a33ecd0a11",
@@ -515,12 +593,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
     "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 103
+   "ms": 569
   },
   {
    "id": "cesvi-e76954ac28",
@@ -533,12 +614,16 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
     "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
+    "El choque entre V1 y V2 casi no transfiere energía con estas velocidades (ninguno cambia su velocidad más de 2 km/h), así que no deja daño: los dos llegan casi igual de rápido en el mismo sentido. Dile a Croquis a qué velocidad venía cada uno o revisa por dónde venían.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 127
+   "ms": 1140
   },
   {
    "id": "cesvi-899e45b63e",
@@ -546,20 +631,25 @@
    "vehiculos": 7,
    "impactos_declarados": 3,
    "posteriores_en_escena": 2,
-   "posteriores_ocurridos": 0,
+   "posteriores_ocurridos": 1,
    "escena_valida": true,
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 6,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «Libramiento» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V5: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «Libramiento» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «Libramiento» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «Libramiento» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V4: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «Libramiento» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V6: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «Libramiento» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V7: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
     "El impacto 2 (V1 con V6) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.",
-    "El impacto 3 (V7 con V2) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 2332
+   "ms": 18221
   },
   {
    "id": "cesvi-9014f1cb9c",
@@ -572,12 +662,19 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 7,
    "limites": [
     "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Av.» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Av.» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Av.» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V4: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Av.» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V5: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Av.» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V6: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Av.» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V7: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Av.» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 520
+   "ms": 4019
   },
   {
    "id": "cesvi-f0d942b95d",
@@ -590,13 +687,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V2: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 141
+   "ms": 666
   },
   {
    "id": "cesvi-a6a54c8ba9",
@@ -609,14 +708,16 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (66 a 132 km/h, alrededor del límite de 110 km/h: LGMSV, art. 49 fr. III g) carreteras y autopistas de jurisdicción federal (automóviles); por «carretera Federal» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (66 a 132 km/h, alrededor del límite de 110 km/h: LGMSV, art. 49 fr. III g) carreteras y autopistas de jurisdicción federal (automóviles); por «carretera Federal» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "El impacto 3 no es entre dos vehículos (barandal de la escalera del puente peatonal): la reconstrucción no lo calcula.",
     "V2: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 139
+   "ms": 918
   },
   {
    "id": "cesvi-3093487f36",
@@ -629,13 +730,16 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1 y V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El choque entre V1 y V2 casi no transfiere energía con estas velocidades (ninguno cambia su velocidad más de 2 km/h), así que no deja daño: los dos llegan casi igual de rápido en el mismo sentido. Dile a Croquis a qué velocidad venía cada uno o revisa por dónde venían.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 171
+   "ms": 1659
   },
   {
    "id": "cesvi-44ed367f4d",
@@ -648,13 +752,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1 y V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 143
+   "ms": 853
   },
   {
    "id": "cesvi-0638235be0",
@@ -667,13 +773,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1 y V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 191
+   "ms": 1163
   },
   {
    "id": "cesvi-410d266d94",
@@ -686,14 +794,17 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V2 y V3: se toma la cara de su primer daño.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
     "V1: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
-    "El impacto 2 (V1 con V2) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+    "El choque entre V2 y V3 casi no transfiere energía con estas velocidades (ninguno cambia su velocidad más de 2 km/h), así que no deja daño: los dos llegan casi igual de rápido en el mismo sentido. Dile a Croquis a qué velocidad venía cada uno o revisa por dónde venían.",
+    "El impacto 2 (V1 con V2) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 941
+   "ms": 6354
   },
   {
    "id": "cesvi-7ab32bd17e",
@@ -706,14 +817,16 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
-    "El impacto 2 (V2 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+    "El impacto 2 (V2 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 759
+   "ms": 2817
   },
   {
    "id": "cesvi-a0f209a852",
@@ -726,13 +839,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1 y V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «AVENIDA» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «AVENIDA» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 144
+   "ms": 676
   },
   {
    "id": "cesvi-245a622191",
@@ -745,12 +860,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
     "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «autopista» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «autopista» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «autopista» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 99
+   "ms": 606
   },
   {
    "id": "cesvi-8c65d882e1",
@@ -763,13 +881,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Boulevard» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Boulevard» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 147
+   "ms": 709
   },
   {
    "id": "cesvi-644f4d909d",
@@ -777,21 +897,22 @@
    "vehiculos": 5,
    "impactos_declarados": 4,
    "posteriores_en_escena": 3,
-   "posteriores_ocurridos": 0,
+   "posteriores_ocurridos": 3,
    "escena_valida": true,
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
-    "V2: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
-    "El impacto 2 (V1 con V2) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.",
-    "El impacto 3 (V2 con V4) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.",
-    "El impacto 4 (V2 con V5) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «Periférico» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «Periférico» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V4: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «Periférico» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V5: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «Periférico» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2, V4, V5: sin sus posiciones en el mapa, Croquis los coloca detenidos en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 2815
+   "ms": 5170
   },
   {
    "id": "cesvi-3a460e69de",
@@ -804,11 +925,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "El choque entre V1 y V2 casi no transfiere energía con estas velocidades (ninguno cambia su velocidad más de 2 km/h), así que no deja daño: los dos llegan casi igual de rápido en el mismo sentido. Dile a Croquis a qué velocidad venía cada uno o revisa por dónde venían.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 125
+   "ms": 1515
   },
   {
    "id": "cesvi-380a1f4ce4",
@@ -821,11 +946,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "El choque entre V1 y V2 casi no transfiere energía con estas velocidades (ninguno cambia su velocidad más de 2 km/h), así que no deja daño: los dos llegan casi igual de rápido en el mismo sentido. Dile a Croquis a qué velocidad venía cada uno o revisa por dónde venían.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 121
+   "ms": 1033
   },
   {
    "id": "cesvi-e1338ab329",
@@ -838,13 +967,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 135
+   "ms": 662
   },
   {
    "id": "cesvi-6a09a017fd",
@@ -852,20 +983,21 @@
    "vehiculos": 4,
    "impactos_declarados": 4,
    "posteriores_en_escena": 3,
-   "posteriores_ocurridos": 1,
+   "posteriores_ocurridos": 2,
    "escena_valida": true,
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (66 a 132 km/h, alrededor del límite de 110 km/h: LGMSV, art. 49 fr. III g) carreteras y autopistas de jurisdicción federal (automóviles); por «Carretera Federal» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (66 a 132 km/h, alrededor del límite de 110 km/h: LGMSV, art. 49 fr. III g) carreteras y autopistas de jurisdicción federal (automóviles); por «Carretera Federal» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3, V4: sin sus posiciones en el mapa, Croquis los coloca detenidos en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
-    "El impacto 2 (V2 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.",
-    "El impacto 3 (V1 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+    "El impacto 3 (V1 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 330
+   "ms": 1598
   },
   {
    "id": "cesvi-03e36e3e67",
@@ -878,13 +1010,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «CALLE» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «CALLE» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 136
+   "ms": 601
   },
   {
    "id": "cesvi-0f0cc2d51b",
@@ -897,12 +1031,16 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «CALLE» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «CALLE» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «CALLE» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "El choque entre V1 y V2 casi no transfiere energía con estas velocidades (ninguno cambia su velocidad más de 2 km/h), así que no deja daño: los dos llegan casi igual de rápido en el mismo sentido. Dile a Croquis a qué velocidad venía cada uno o revisa por dónde venían.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 130
+   "ms": 888
   },
   {
    "id": "cesvi-73aef4cf09",
@@ -915,14 +1053,17 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1 y V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
-    "El impacto 2 (V2 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+    "El choque entre V1 y V2 casi no transfiere energía con estas velocidades (ninguno cambia su velocidad más de 2 km/h), así que no deja daño: los dos llegan casi igual de rápido en el mismo sentido. Dile a Croquis a qué velocidad venía cada uno o revisa por dónde venían.",
+    "El impacto 2 (V2 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 902
+   "ms": 6251
   },
   {
    "id": "cesvi-2aa502fe04",
@@ -935,11 +1076,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
+    "El choque entre V2 y V3 casi no transfiere energía con estas velocidades (ninguno cambia su velocidad más de 2 km/h), así que no deja daño: los dos llegan casi igual de rápido en el mismo sentido. Dile a Croquis a qué velocidad venía cada uno o revisa por dónde venían.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 129
+   "ms": 1176
   },
   {
    "id": "cesvi-ffeba2db53",
@@ -952,13 +1097,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 143
+   "ms": 679
   },
   {
    "id": "cesvi-4e859603f4",
@@ -966,18 +1113,22 @@
    "vehiculos": 4,
    "impactos_declarados": 3,
    "posteriores_en_escena": 2,
-   "posteriores_ocurridos": 2,
+   "posteriores_ocurridos": 1,
    "escena_valida": true,
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
-    "V3, V4: sin sus posiciones en el mapa, Croquis los coloca detenidos en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V4: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
+    "El impacto 3 (V3 con V4) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 318
+   "ms": 8926
   },
   {
    "id": "cesvi-d8beb00274",
@@ -990,12 +1141,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
     "El reporte no da las zonas del impacto de V1 y V2: se toma la cara de su primer daño.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «prolongación» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «prolongación» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «prolongación» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 95
+   "ms": 462
   },
   {
    "id": "cesvi-469e0a733d",
@@ -1008,16 +1162,18 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "El impacto 3 no es entre dos vehículos (zaguán): la reconstrucción no lo calcula.",
     "El impacto 4 no es entre dos vehículos (pared): la reconstrucción no lo calcula.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
-    "El impacto 2 (V1 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+    "El impacto 2 (V1 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 893
+   "ms": 886
   },
   {
    "id": "cesvi-c4360980c1",
@@ -1030,11 +1186,14 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 101
+   "ms": 539
   },
   {
    "id": "cesvi-74e69ea53a",
@@ -1042,19 +1201,20 @@
    "vehiculos": 3,
    "impactos_declarados": 2,
    "posteriores_en_escena": 1,
-   "posteriores_ocurridos": 0,
+   "posteriores_ocurridos": 1,
    "escena_valida": true,
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación.",
-    "El impacto 2 (V1 con V3) no ocurre en la reconstrucción: con estas posiciones, sus trayectorias no llegan a tocarse."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 805
+   "ms": 1861
   },
   {
    "id": "cesvi-fbcaec35d2",
@@ -1067,13 +1227,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 149
+   "ms": 644
   },
   {
    "id": "cesvi-8b8d558579",
@@ -1086,12 +1248,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «Periférico» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «Periférico» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «Periférico» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 124
+   "ms": 738
   },
   {
    "id": "cesvi-164d4f2952",
@@ -1104,13 +1269,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V4: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V2, V3: sin sus posiciones en el mapa, Croquis los coloca detenidos en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 259
+   "ms": 1087
   },
   {
    "id": "cesvi-0b8d91ec3f",
@@ -1123,13 +1290,16 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V4: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 178
+   "ms": 1064
   },
   {
    "id": "cesvi-0f51871925",
@@ -1142,13 +1312,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 155
+   "ms": 620
   },
   {
    "id": "cesvi-ab90ccd929",
@@ -1161,11 +1333,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
-    "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño."
+    "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 86
+   "ms": 431
   },
   {
    "id": "cesvi-1909b39da3",
@@ -1178,13 +1354,16 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «Periférico» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «Periférico» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «Periférico» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "El impacto 2 no es entre dos vehículos (muro de contención): la reconstrucción no lo calcula.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 105
+   "ms": 604
   },
   {
    "id": "cesvi-15cf5bae5a",
@@ -1197,13 +1376,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1 y V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «Calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «Calle» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 144
+   "ms": 593
   },
   {
    "id": "cesvi-dc12b71b44",
@@ -1216,13 +1397,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 157
+   "ms": 651
   },
   {
    "id": "cesvi-686c31bd14",
@@ -1235,13 +1418,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «CALLE» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (18 a 36 km/h, alrededor del límite de 30 km/h: LGMSV, art. 49 fr. III c) calles secundarias y calles terciarias; por «CALLE» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 143
+   "ms": 592
   },
   {
    "id": "cesvi-86b6d3cecf",
@@ -1254,12 +1439,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
     "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 121
+   "ms": 739
   },
   {
    "id": "cesvi-31aa158ae6",
@@ -1272,13 +1460,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 2,
    "limites": [
     "El reporte no da las zonas del impacto de V1 y V2: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Avenida» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
     "V3: sin sus posiciones en el mapa, Croquis lo coloca detenido en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.",
-    "La evidencia del perito todavía no fija ninguna velocidad: coloca las posiciones de impacto y finales, o captura las medidas C y L de la deformación."
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 153
+   "ms": 621
   },
   {
    "id": "cesvi-f489cf7716",
@@ -1291,11 +1481,15 @@
    "reconstruida": true,
    "resultado_valido": true,
    "escena_3d_valida": true,
-   "velocidades_fijadas": 0,
+   "velocidades_fijadas": 3,
    "limites": [
-    "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño."
+    "El reporte no da las zonas del impacto de V1: se toma la cara de su primer daño.",
+    "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V2: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "V3: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III f) carreteras estatales fuera de zonas urbanas; por «carretera» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+    "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
    ],
-   "ms": 84
+   "ms": 395
   }
  ],
  "particion": "desarrollo",
