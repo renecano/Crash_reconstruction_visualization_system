@@ -1,0 +1,28 @@
+# Paso: comparar
+# Comando: node eval/t8_comparar.mjs
+# Carpeta: C:\Users\MrKan\Documents\reto cesvi v5\Croquis
+# Inicio: 2026-11-24 09:35:02
+
+✓ crucero-noche: tabla 20 (10–28) · navegador 20 (10–28)
+✗ alcance-deformacion: tabla 53 (49–56) · navegador 54 (49–56)
+✓ carambola-lluvia: tabla 24 (22–32) · navegador 24 (22–32)
+✗ reversa-pendiente: tabla 21 (20–28) · navegador 20 (19–26)
+✓ poste-terraceria: tabla 36 (31–38) · navegador 36 (31–39)
+✓ ejemplos.crucero: índice 20 km/h (4–27) · medida 20 km/h (4–27)
+✓ ejemplos.poste: índice 36 km/h (31–38) · medida 36 (31–39)
+✓ AXA: índice 57 km/h (55–78) · navegador 57 (55–78)
+  capturas arbol: 2
+  capturas poste: 2
+  capturas puente: 2
+  capturas subida: 2
+  capturas bajada: 2
+  capturas curva: 2
+  capturas tollocan: 0
+  capturas encimado-antes: 2
+  capturas encimado-despues: 0
+  pendiente: Sin captura del 3D: tollocan.
+  pendiente: Sin captura del 3D: encimado-despues.
+  pendiente: Sin mediciones del arranque del 3D.
+Algo no coincide con lo publicado: va a René.
+
+# Fin: 2026-11-24 09:35:02 · falló (código 1) · 0 min
