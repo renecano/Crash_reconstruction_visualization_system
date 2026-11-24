@@ -3025,6 +3025,7 @@ export function EscenaFacil({
                     className="boton-secundario escena-boton self-start px-3"
                     onClick={() => cambiarLinea(l)}
                     data-testid={`cambiar-linea-${k}`}
+                    data-linea={l.tipo}
                   >
                     Cambiar
                   </button>

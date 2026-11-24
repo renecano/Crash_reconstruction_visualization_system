@@ -1047,7 +1047,10 @@ export function resumenPersonas(e: Expediente): LineaResumen[] {
         d !== null
           ? `Quedó a ${F.metros(d, 1)} de ahí: es la distancia de proyección.`
           : "Falta marcar dónde quedó: con eso Croquis mide la distancia de proyección.",
-      supuesto: null,
+      supuesto:
+        p.fuente === "supuesto"
+          ? "Croquis lo puso en el punto de contacto del choque. Si estaba en otro lugar, muévelo."
+          : null,
     };
   });
 }

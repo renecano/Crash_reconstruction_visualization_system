@@ -97,15 +97,14 @@ test("@flujo /cesvi: un atropello — el peatón en La escena, su proyección y 
   await contestarC1(page);
   await expect(page.getByTestId("escena-lista")).toBeVisible();
 
-  // La lectura dice «peatón» y no hay nadie: La escena pide colocarlo.
-  await expect(page.getByTestId("falta-persona")).toContainText("fue contra un peatón");
-  await page.getByTestId("colocar-persona-faltante").click();
-  await tocarEnMetros(page, "choque-1", 1.5, 0);
+  // La lectura dice «peatón»: al marcar el choque, Croquis lo pone en el punto de contacto, como
+  // supuesto (René, 2026-11-24: antes nadie lo colocaba y no llegaba al 3D). Se elige desde el resumen.
   await expect(page.getByTestId("persona-per-1")).toHaveCount(1);
   await expect(page.getByTestId("falta-persona")).toHaveCount(0);
-  // Dónde quedó: 12 m adelante.
+  await page.locator('[data-testid^="cambiar-linea-"][data-linea="persona"]').click();
+  // Dónde quedó: 12 m adelante del punto de contacto, donde Croquis lo puso.
   await page.getByTestId("marcar-final-persona").click();
-  await tocarEnMetros(page, "choque-1", 13.5, 0);
+  await tocarEnMetros(page, "choque-1", 12, 0);
   await expect(page.getByTestId("proyeccion-persona")).toContainText(/Proyección 1[12]\.\d m/);
   mkdirSync(CAPTURAS, { recursive: true });
   await page.screenshot({ path: join(CAPTURAS, "atropello-1-la-escena.jpg"), quality: 82 });
