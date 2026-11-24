@@ -15,74 +15,64 @@ function errores(page: Page): string[] {
   return out;
 }
 
-/** La intro se retira cuando la primera toma está lista (o a los 6 s). */
-const sinIntro = (page: Page) => expect(page.locator("#intro")).toBeHidden({ timeout: 15_000 });
+/** La cortina con el logo se retira sola. */
+const sinCortina = (page: Page) =>
+  expect(page.locator("[data-cortina]")).toBeHidden({ timeout: 15_000 });
 
 /**
- * La portada v3 (`docs/cesvi/rediseno/Portada-v3.html`): carga sin errores de consola, con las
- * cifras de `eval/results` (aquí se leen de los mismos archivos, no se escriben), y cada «Entrar a
- * Croquis» (barra, encabezado y cierre) lleva a /cesvi. «Cómo funciona» baja a su sección, las
- * páginas del producto anterior (/publico…) llevan a la portada y, con movimiento reducido, el
- * fondo es solo el póster.
+ * La portada: carga sin errores de consola, con las cifras del índice único (aquí se leen de él, no se
+ * escriben), cada botón lleva a /cesvi, la barra lleva a su sección, sigue el tema del sistema, y las
+ * páginas del producto anterior (/publico…) llevan a ella. Con movimiento reducido no hay cortina.
  */
-test("@flujo la portada v3 carga sin errores y lleva a /cesvi", async ({ page }) => {
-  // Varias cargas de la portada (con su intro) y de /cesvi.
-  test.setTimeout(180_000);
+test("@flujo la portada carga sin errores y lleva a /cesvi", async ({ page }) => {
+  test.setTimeout(120_000);
   const errs = errores(page);
   await page.goto("/");
   await expect(page.locator("html")).toHaveAttribute("lang", "es-MX");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Reconstruye el hecho.");
-  await sinIntro(page);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("El perito narra el hecho.");
+  await sinCortina(page);
+  await expect(page.locator('[data-testid^="paso-portada-"]')).toHaveCount(6);
 
-  const corpus = leer<{ dictamenes: number }>("eval/results/cesvi_corpus_extraccion.json");
-  await page.getByTestId("cifra-0").scrollIntoViewIfNeeded();
-  await expect(page.getByTestId("cifra-0")).toHaveText(String(corpus.dictamenes), {
-    timeout: 10_000,
-  });
-  const tabla = page.getByTestId("tabla-axa");
-  await expect(tabla).toContainText("Alcance");
-  await expect(tabla).toContainText("60.27");
+  // «Resultados», desde la barra: la cortina, la sección y las cifras del índice.
+  await page.getByRole("link", { name: "Resultados" }).click();
+  await expect(page.locator("#resultados")).toBeFocused();
+  await sinCortina(page);
+  const { cifras } = leer<{ cifras: Record<string, { k: number; n: number }> }>(
+    "eval/results/cifras.json",
+  );
+  for (const [testid, clave] of [
+    ["cifra-cobertura", "cobertura.rango"],
+    ["cifra-modalidad", "er4.modalidad_titulo"],
+    ["cifra-carambolas", "carambolas.prueba"],
+  ] as const) {
+    const c = cifras[clave]!;
+    await page.getByTestId(testid).scrollIntoViewIfNeeded();
+    await expect(page.getByTestId(testid).locator("[data-cuenta]")).toHaveText(String(c.k));
+    await expect(page.getByTestId(testid)).toContainText(`${c.k} de ${c.n}`);
+  }
 
-  // «Cómo funciona» baja a su sección.
-  await page.evaluate(() => window.scrollTo(0, 0));
-  await page.locator("#hecho").getByRole("link", { name: "Cómo funciona" }).click();
-  await expect
-    .poll(() => page.locator("#metodo").evaluate((el) => el.getBoundingClientRect().top), {
-      timeout: 10_000,
-    })
-    .toBeLessThan(200);
-
-  const entrar = page.getByTestId("entrar");
-  await expect(entrar).toHaveCount(3);
-  for (const k of [0, 1, 2]) {
+  for (const boton of ["entrar-barra", "entrar", "entrar-cierre"]) {
     await page.goto("/");
-    await sinIntro(page);
-    await expect(entrar.nth(k)).toContainText("Entrar a Croquis");
-    await entrar.nth(k).click();
+    await sinCortina(page);
+    await page.getByTestId(boton).click();
     await expect(page).toHaveURL(/\/cesvi$/);
     await expect(page.getByTestId("lista-casos")).toBeVisible();
   }
-  expect(errs).toEqual([]);
 
-  // En inglés.
+  // En inglés y de noche.
+  await page.emulateMedia({ colorScheme: "dark" });
   await page.goto("/en");
-  await sinIntro(page);
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Reconstruct the crash.");
-  await page.getByTestId("entrar").nth(1).click();
-  await expect(page).toHaveURL(/\/cesvi$/);
+  await expect(page.getByTestId("portada-v3")).toHaveAttribute("data-tema", "oscuro");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("The expert tells what");
 
-  // Las páginas del producto anterior llevan a la portada, y la portada ya no las enlaza (auditoría
-  // del 2026-11-15, I7).
+  // Las páginas del producto anterior llevan a la portada (auditoría del 2026-11-15, I7).
   await page.goto("/publico");
   await expect(page).toHaveURL(/localhost:\d+\/$/);
-  await sinIntro(page);
-  await expect(page.getByRole("link", { name: "Portada anterior" })).toHaveCount(0);
 
-  // Movimiento reducido: sin video, solo el póster de la primera toma.
+  // Movimiento reducido: sin cortina y todo a la vista.
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await sinIntro(page);
-  const video = page.locator("#vA");
-  await expect(video).toHaveAttribute("poster", "/portada/toma-1.jpg");
-  expect(await video.evaluate((v: HTMLVideoElement) => v.currentSrc)).toBe("");
+  await expect(page.getByTestId("portada-v3")).not.toHaveAttribute("data-movimiento", "si");
+  await expect(page.locator("[data-cortina]")).toBeHidden();
+  expect(errs).toEqual([]);
 });

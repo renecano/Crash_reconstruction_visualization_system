@@ -1040,6 +1040,14 @@ René aprobó el storyboard versión 2 (28 s, «más épico», sin la mancha neg
 - **Cómo probarlo:** abre `trailer-salida/croquis-trailer-previo-1920x1080.mp4`. Para volver a renderizar: `cd apps/trailer` y `node render.mjs Trailer --previo`.
 - **Qué necesito de ti:** que oigas la música y me digas qué cambiar, y las tomas de la RTX (la tanda 4).
 
+## Portada con el estilo de la app (2026-11-24, rama `feat/portada-estilo-app`, ADR 0125)
+
+- **Plan:** rehacer `/` y `/en` con el sistema «Laboratorio», sin tocar /cesvi, el solver ni `tools/colaborador/`.
+- **Qué se hizo:** página nueva en `components/portada-v3/`, cifras del índice único, capturas reales de día y de noche, logo en vez del nombre escrito. Se quitaron las tomas de video y los datos de AXA.
+- **Evidencia:** `e2e/home.spec.ts` (@flujo), `textos.test.ts` y `portada-cesvi.test.ts`. Lighthouse y peso de antes y después, en el PR.
+- **Pendiente:** el visto bueno de René a las capturas. Si hay un video real de autos de noche, va en Blob con póster y solo en escritorio.
+- **Siguiente paso:** fusionar con el visto bueno.
+
 ## Necesito del otro frente
 
 Nada por ahora.
