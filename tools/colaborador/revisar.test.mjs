@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { equipoDeRama, juntar } from "./revisar.mjs";
+import { compararCifras, completa, deRama, equipoDeRama, juntar } from "./revisar.mjs";
 
 describe("la revisión de una tanda con varios equipos", () => {
   it("el equipo sale del nombre de la rama; la de antes no tiene", () => {
@@ -44,5 +44,27 @@ describe("la revisión de una tanda con varios equipos", () => {
       ["laptop", "Intel UHD"],
     ]);
     expect(r.aviso_arranque).toMatch(/tarjetas distintas, sus cifras no se juntan/);
+  });
+
+  it("respaldo (René, 2026-11-23): la corrida completa es la de «todo» con cada paso; las cifras se comparan sin juntarse", () => {
+    expect(deRama("refs/remotes/origin/resultados/t6-2026-11-22-rtx-rene", "t6")).toEqual({
+      fecha: "2026-11-22",
+      equipo: "rtx-rene",
+    });
+    expect(deRama("resultados/t6b-2026-11-22-x", "t6")).toBeNull();
+    const pasos = ["humo", "fotos"];
+    const corrida = (parte, hechos) => ({
+      parte,
+      pasos: hechos.map((paso) => ({ grupo: "tanda", paso, estado: "ok" })),
+    });
+    expect(completa(corrida("todo", ["humo", "fotos"]), pasos)).toBe(true);
+    expect(completa(corrida("todo", ["humo"]), pasos)).toBe(false);
+    expect(completa(corrida("1", ["humo", "fotos"]), pasos)).toBe(false);
+    expect(
+      compararCifras(
+        { equipo: "rtx", datos: { k: 21, n: 31, fecha: "a" } },
+        { equipo: "laptop", datos: { k: 20, n: 31, fecha: "b" } },
+      ),
+    ).toEqual([{ campo: "k", rtx: 21, laptop: 20 }]);
   });
 });
