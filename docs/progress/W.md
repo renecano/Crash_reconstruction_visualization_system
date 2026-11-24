@@ -1369,16 +1369,16 @@ René probó tres narraciones en producción y la reconstrucción no tenía sent
 
 ### Causas y arreglos
 
-| Síntoma | Causa | Arreglo | Prueba |
-| --- | --- | --- | --- |
-| Árbol: el derrape no frenaba | El derrape de antes del choque no entraba a la inversión, y el auto arrancaba 12 m antes del árbol | El derrape de antes del choque frena como una huella de frenado (Python y TS); arranca detrás de sus huellas | `tres-narraciones.test.ts` (árbol), paridad |
-| Posiciones finales «junto al choque» | La escena no leía las distancias de la narración | «Como dice la narración» en «¿Dónde quedó?» (`finalDeLaNarracion`) | `escena-final-narrado.test.ts` |
-| El peatón no aparece | La lectura lo deja como «objeto peatón» y nadie lo colocaba | Al marcar el choque, el peatón queda en el punto de contacto (supuesto) | `escena-peaton.test.ts` |
-| La vuelta donde no hay calle | «Por dónde venía» guardaba la llegada como rumbo del choque; el solver trazaba la vuelta al revés | El choque lleva la vuelta dada y el arranque va en la calle de llegada, al inicio del arco | `tres-narraciones.test.ts` (camión) |
-| 163 km/h y el 3D distinto | Aveo y Rio colocados encimados: el solver los separa de golpe; «Separarlos» los mandaba de carril | «Separarlos» defensa con defensa por su rumbo; el candado físico | `tres-narraciones.test.ts` (carambola, candado) |
-| Aveo «la evidencia no la fija» | La hoja no distinguía al detenido | «0 km/h (detenido, lo dice la narración)» | revisado en la hoja |
-| El de en medio, una sola cara | La pregunta era por choque pero se leía como «dónde quedaron los daños» | Croquis deduce la cara del segundo choque; la pregunta dice de qué choque es | `tres-narraciones.test.ts` (en medio) |
-| «restos 10 m (perito)» | No es un valor por omisión: es la respuesta guardada a «¿Qué longitud tiene la zona de restos?» (10, 6 y 10 m) | Sin cambio | — |
+| Síntoma                              | Causa                                                                                                          | Arreglo                                                                                                      | Prueba                                          |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- |
+| Árbol: el derrape no frenaba         | El derrape de antes del choque no entraba a la inversión, y el auto arrancaba 12 m antes del árbol             | El derrape de antes del choque frena como una huella de frenado (Python y TS); arranca detrás de sus huellas | `tres-narraciones.test.ts` (árbol), paridad     |
+| Posiciones finales «junto al choque» | La escena no leía las distancias de la narración                                                               | «Como dice la narración» en «¿Dónde quedó?» (`finalDeLaNarracion`)                                           | `escena-final-narrado.test.ts`                  |
+| El peatón no aparece                 | La lectura lo deja como «objeto peatón» y nadie lo colocaba                                                    | Al marcar el choque, el peatón queda en el punto de contacto (supuesto)                                      | `escena-peaton.test.ts`                         |
+| La vuelta donde no hay calle         | «Por dónde venía» guardaba la llegada como rumbo del choque; el solver trazaba la vuelta al revés              | El choque lleva la vuelta dada y el arranque va en la calle de llegada, al inicio del arco                   | `tres-narraciones.test.ts` (camión)             |
+| 163 km/h y el 3D distinto            | Aveo y Rio colocados encimados: el solver los separa de golpe; «Separarlos» los mandaba de carril              | «Separarlos» defensa con defensa por su rumbo; el candado físico                                             | `tres-narraciones.test.ts` (carambola, candado) |
+| Aveo «la evidencia no la fija»       | La hoja no distinguía al detenido                                                                              | «0 km/h (detenido, lo dice la narración)»                                                                    | revisado en la hoja                             |
+| El de en medio, una sola cara        | La pregunta era por choque pero se leía como «dónde quedaron los daños»                                        | Croquis deduce la cara del segundo choque; la pregunta dice de qué choque es                                 | `tres-narraciones.test.ts` (en medio)           |
+| «restos 10 m (perito)»               | No es un valor por omisión: es la respuesta guardada a «¿Qué longitud tiene la zona de restos?» (10, 6 y 10 m) | Sin cambio                                                                                                   | —                                               |
 
 **Candado físico** (`packages/cesvi/src/candado.ts`): no se presenta la cifra si exige frenar más de 1 g, si el recorrido del 3D llega al choque a otra velocidad que la del rango, o si los vehículos quedan encimados más de 0.5 m al chocar. La hoja dice qué no cuadra y qué revisar; el 3D deja a cada vehículo quieto donde quedó.
 
