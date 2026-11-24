@@ -62,6 +62,14 @@ export const RECETAS: Receta[] = [
   },
 ];
 
+/** Hacia dónde avanza quien llega de cada lado (grados desde el norte). */
+const RUMBO_DE: Record<string, number> = {
+  "Del sur": 0,
+  "Del oeste": 90,
+  "Del norte": 180,
+  "Del este": 270,
+};
+
 const de = <T>(mapa: Record<string, T>, texto: string): T | undefined =>
   Object.entries(mapa).find(([nombre]) => texto.includes(nombre))?.[1];
 
@@ -95,14 +103,30 @@ export async function colocar(page: Page, r: Receta, notas: string[]) {
     } else if (texto.startsWith("¿Por dónde")) {
       vehiculo = texto;
       const flecha = de(r.venia, texto);
-      const opcion = flecha
-        ? page.locator('[data-testid^="opcion-flecha-"]', { hasText: flecha })
-        : page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]');
-      if (await opcion.count()) await opcion.first().click();
+      // La flecha cuyo rumbo es el más cercano al que dice la receta (René, 2026-11-23): con las calles
+      // del mapa las flechas van por las calles («Del sureste, por Calle Azucena»), así que el texto
+      // «Del sur» no siempre existe y como subcadena también coincidía con «Del sureste».
+      const objetivo = flecha ? RUMBO_DE[flecha] : undefined;
+      const opciones = page.locator('[data-testid^="opcion-flecha-"]');
+      let elegida = page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]');
+      if (objetivo !== undefined) {
+        let mejor = { i: -1, giro: Infinity };
+        for (let i = 0; i < (await opciones.count()); i++) {
+          const rumbo = Number(await opciones.nth(i).getAttribute("data-rumbo"));
+          const giro = Math.abs(((rumbo - objetivo + 540) % 360) - 180);
+          if (giro < mejor.giro) mejor = { i, giro };
+        }
+        if (mejor.i >= 0) {
+          elegida = opciones.nth(mejor.i);
+          if (mejor.giro > 30)
+            notas.push(
+              `«${texto}»: la flecha más cercana a «${flecha}» se aparta ${Math.round(mejor.giro)}°.`,
+            );
+        }
+      }
+      if (await elegida.count()) await elegida.first().click();
       else {
-        notas.push(
-          `«${texto}»: no había la flecha «${flecha ?? "propuesta"}»; se tomó la primera.`,
-        );
+        notas.push(`«${texto}»: no había flechas; se tomó la primera opción.`);
         await page.getByTestId("opcion-flecha-0").click();
       }
     } else if (/quedó/i.test(texto)) {

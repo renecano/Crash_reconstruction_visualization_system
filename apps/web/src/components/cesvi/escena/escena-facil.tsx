@@ -2232,6 +2232,7 @@ export function EscenaFacil({
               onClick={() => elegirFlecha(i)}
               data-testid={`opcion-flecha-${i}`}
               data-propuesta={i === propuestaFlecha ? "si" : "no"}
+              data-rumbo={Math.round(f.rumbo)}
             >
               <span className="escena-radio" aria-hidden="true">
                 {i === propuestaFlecha ? "✓" : ""}
