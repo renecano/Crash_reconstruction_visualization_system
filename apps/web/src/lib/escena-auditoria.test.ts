@@ -2,13 +2,20 @@ import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  enMetros,
   escenaDeNarracion,
   impactosEncimados,
   type Expediente,
   type SalidaCorpus,
 } from "@croquis/cesvi";
 import { describe, expect, it } from "vitest";
-import { poseDe, sentidoEnElCaso } from "./escena-facil";
+import {
+  mismaCalleNarrada,
+  nombreComparable,
+  poseDe,
+  proponerChoque,
+  sentidoEnElCaso,
+} from "./escena-facil";
 import { proponerEscena } from "./escena-propuesta";
 import { impactosAColocar } from "./pasos-caso";
 
@@ -69,5 +76,67 @@ describe("el segundo choque de una carambola, propuesto por las zonas", () => {
     const cc = poseDe(p.expediente, "V3", "impacto")!;
     const dif = Math.abs(((b.rumbo - cc.rumbo + 540) % 360) - 180);
     expect(dif).toBeLessThan(1);
+  });
+});
+
+describe("el choque en un paso a desnivel y los nombres largos de las calles", () => {
+  const P0 = { lat: 19.4, lon: -99.17 };
+  const m = (este: number, norte: number): [number, number] => [
+    P0.lon + este / (111320 * Math.cos((P0.lat * Math.PI) / 180)),
+    P0.lat + norte / 111320,
+  ];
+  // El Viaducto va de este a oeste por y = 0; Insurgentes, de sur a norte por x = 0, sin nodo común.
+  const calles = [
+    {
+      id: 1,
+      nombre: "Viaducto Presidente Miguel Alemán Valdés",
+      puntos: [m(-200, 0), m(-5, 0), m(5, 0), m(200, 0)],
+      ancho: 20,
+      nodos: [1, 2, 3, 4],
+    },
+    {
+      id: 2,
+      nombre: "Avenida Insurgentes Sur",
+      puntos: [m(0, -200), m(0, -8), m(0, 8), m(0, 200)],
+      ancho: 20,
+      nodos: [5, 6, 7, 8],
+    },
+    {
+      id: 3,
+      nombre: "Calle Nuevo León",
+      puntos: [m(150, -100), m(150, 100)],
+      ancho: 10,
+      nodos: [9, 10],
+    },
+    {
+      id: 4,
+      nombre: "Avenida Insurgentes Sur",
+      puntos: [m(0, 200), m(150, 100)],
+      ancho: 10,
+      nodos: [8, 10],
+    },
+  ];
+
+  it("«Viaducto Miguel Alemán» es «Viaducto Presidente Miguel Alemán Valdés»", () => {
+    expect(
+      mismaCalleNarrada(
+        "Viaducto Presidente Miguel Alemán Valdés",
+        nombreComparable("Viaducto Miguel Alemán"),
+      ),
+    ).toBe(true);
+    expect(mismaCalleNarrada("Calle Nuevo León", nombreComparable("Viaducto Miguel Alemán"))).toBe(
+      false,
+    );
+  });
+
+  it("sin cruce a nivel, el choque va sobre el Viaducto, a la altura de Insurgentes", () => {
+    const p = proponerChoque(
+      calles,
+      "El hecho se ubica sobre el Viaducto Miguel Alemán, a la altura de la Avenida de los Insurgentes Sur.",
+      { lat: P0.lat, lon: P0.lon },
+    )!;
+    expect(p.segun).toBe("a_la_altura");
+    const d = enMetros([p.punto.lon, p.punto.lat], [P0.lon, P0.lat]);
+    expect(Math.hypot(d.este, d.norte)).toBeLessThan(10);
   });
 });

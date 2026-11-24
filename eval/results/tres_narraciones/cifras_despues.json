@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-11-24T15:39:58.339Z",
+  "fecha": "2026-11-24T22:29:39.542Z",
   "muestras": {
     "samples": 32,
     "mcSamples": 128
@@ -454,30 +454,40 @@
           "clase": "sedan_compacto",
           "masa_kg": 946,
           "masa_fuente": "supuesto",
-          "declarada": null
+          "declarada": {
+            "kmh": 45,
+            "rango_kmh": [
+              30,
+              60
+            ],
+            "origen": "via",
+            "descripcion": "la típica de la vía (el perito no la sabe)",
+            "respecto_al_limite": "alrededor",
+            "limite_kmh": 50,
+            "limite_fuente": "LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Calzada» en el lugar narrado, mientras la vía no se ubica en el mapa"
+          }
         }
       ],
       "velocidades": [
         {
           "vehiculo": "V1",
-          "mejor": null,
-          "p10": null,
-          "p90": null
+          "mejor": 20,
+          "p10": 5,
+          "p90": 34
         },
         {
           "vehiculo": "V2",
-          "mejor": null,
-          "p10": null,
-          "p90": null
+          "mejor": 45,
+          "p10": 31,
+          "p90": 59
         }
       ],
       "relieve": true,
       "topes": 0,
       "limites": [
         "V1: la narración dice «despacio»; entra como supuesto de 5 a 35 km/h (respecto al límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Calzada» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
-        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre.",
-        "No cuadra: V1 y V2 quedan encimados 0.9 m al chocar en la simulación, y el solver los separa de golpe: la animación los mostraría saltando.",
-        "Croquis no presenta una velocidad hasta que cuadre. Revisa las posiciones de impacto, para que los vehículos se toquen sin encimarse (en La escena, «Separarlos»)."
+        "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Calzada» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
       ]
     },
     {

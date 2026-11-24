@@ -387,6 +387,20 @@ export function escenaDeConversion(c: Conversion, narracion?: string): EscenaNar
   // La masa del modelo leído (René, 2026-11-20): la de su ficha o la típica de su clase, como supuesto
   // declarado. Solo se pregunta la de un vehículo sin modelo.
   // La clase que la lectura no dio, por su modelo (René, 2026-11-24), antes de su masa típica.
+  // Un ciclista que la lectura dejó como vehículo sin marca, modelo ni clase (revisión de la cadena,
+  // 2026-11-24: en el 3D salía como un auto pegado a la camioneta): es una bicicleta.
+  if (narracion && /\b(?:ciclista|bicicleta)\b/i.test(narracion)) {
+    const sinNada = narrado.vehiculos.filter(
+      (v) => !v.clase && !v.modelo?.valor && !v.marca?.valor,
+    );
+    if (sinNada.length === 1)
+      narrado = {
+        ...narrado,
+        vehiculos: narrado.vehiculos.map((v) =>
+          v === sinNada[0] ? { ...v, clase: "bicicleta" as NonNullable<typeof v.clase> } : v,
+        ),
+      };
+  }
   narrado = conMasasDelModelo(conClasesDelModelo(narrado), masaTipica);
   // Una subida o una bajada narradas (ronda 4): la reconstrucción usa el relieve real del lugar, no
   // una pendiente supuesta. Sobre un puente no: el relieve es el del suelo de abajo.

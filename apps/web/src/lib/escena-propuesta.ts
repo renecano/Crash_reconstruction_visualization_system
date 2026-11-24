@@ -65,6 +65,8 @@ const POR_QUE_CHOQUE: Record<string, string> = {
   narracion: "la narración nombra las dos calles del cruce",
   una_calle: "la narración nombra una de las calles; es su cruce más cercano al lugar",
   cercania: "es el cruce más cercano al lugar del caso",
+  a_la_altura:
+    "la narración nombra las dos calles y no se cruzan a nivel (un paso a desnivel): va sobre la primera, a la altura de la segunda",
 };
 
 /**

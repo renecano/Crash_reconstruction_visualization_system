@@ -49,10 +49,14 @@ const ENV = {
 const lugarDeps = defaultLugarDeps(ENV);
 const osmDeps = defaultOsmDeps(ENV);
 /** La huella del código de la búsqueda: si cambia, lo guardado de antes no vale. */
-const VERSION_LUGAR = createHash("sha256")
-  .update(readFileSync(join(RAIZ, "apps/web/src/server/lugar.ts"), "utf8"))
-  .digest("hex")
-  .slice(0, 12);
+// `CROQUIS_VERSION_LUGAR`: la de una corrida anterior, para reusar sus búsquedas sin salir a la red
+// (Nominatim bloqueó esta computadora por la carga de la revisión; 2026-11-24).
+const VERSION_LUGAR =
+  process.env.CROQUIS_VERSION_LUGAR ??
+  createHash("sha256")
+    .update(readFileSync(join(RAIZ, "apps/web/src/server/lugar.ts"), "utf8"))
+    .digest("hex")
+    .slice(0, 12);
 let ultimaBusqueda = 0;
 const red: Red = {
   lugar: (q, municipio, estado) =>

@@ -416,16 +416,23 @@ async function nominatim(params: Record<string, string>, deps: LugarDeps): Promi
     ...params,
   }))
     url.searchParams.set(k, v);
-  let r: Response;
-  try {
-    r = await deps.fetcher(url, {
-      headers: { "User-Agent": USER_AGENT, Accept: "application/json" },
-      signal: AbortSignal.timeout(ESPERA_MS),
-    });
-  } catch {
-    throw new SinServicio();
+  let r: Response | null = null;
+  // Si Nominatim pide calma (429, o 629 cuando se pasa del ancho de banda), una espera y un reintento
+  // (revisión de la cadena, René 2026-11-24: el cruce se perdía y caía a una sola calle).
+  for (let intento = 0; intento < 2; intento++) {
+    try {
+      r = await deps.fetcher(url, {
+        headers: { "User-Agent": USER_AGENT, Accept: "application/json" },
+        signal: AbortSignal.timeout(ESPERA_MS),
+      });
+    } catch {
+      throw new SinServicio();
+    }
+    if (r.status !== 429 && r.status !== 629) break;
+    if (intento === 0)
+      await (deps.pausa ?? ((ms: number) => new Promise((x) => setTimeout(x, ms))))(2000);
   }
-  if (!r.ok) throw new SinServicio();
+  if (!r?.ok) throw new SinServicio();
   const d = (await r.json().catch(() => null)) as Nominatim[] | null;
   if (!Array.isArray(d)) throw new SinServicio();
   return d;
@@ -798,9 +805,7 @@ async function conNominatim(
           polygon_geojson: "1",
           // Solo vías y lugares: «Paseo de la Reforma» y «Prado Norte» daban paradas de autobús.
           layer: "address",
-          // Una avenida larga tiene decenas de tramos en OpenStreetMap: con 10, el del cruce podía no
-          // venir (Tecnológico y Solidaridad Las Torres, revisión de la cadena 2026-11-24).
-          limit: "40",
+          limit: "10",
         });
         if (r.length) return r;
       }

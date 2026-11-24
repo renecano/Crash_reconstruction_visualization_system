@@ -82,14 +82,16 @@ export function citaCorta(oracion: string, foco: string, max = 90): string {
   return `${ini > 0 ? "… " : ""}${oracion.slice(ini, fin).trim()}${fin < oracion.length ? " …" : ""}`;
 }
 
-// El tipo de vía en mayúscula o minúscula; el nombre, con mayúscula (la expresión no lleva «i»: con
+// El tipo de vía en mayúscula o minúscula (con «Viaducto», «Anillo», «Autopista», «Libramiento» y
+// «Glorieta», revisión de la cadena 2026-11-24); el nombre, con mayúscula (la expresión no lleva «i»: con
 // ella, «calle Azucena esquina con Av» se tragaba las palabras en minúscula).
 const TIPO_VIA =
-  "(?:[Cc]alle|[Aa]venida|[Aa]v\\.?|[Bb]oulevard|[Bb]lvd\\.?|[Bb]ulevar|[Cc]alzada|[Cc]arretera|[Pp]rivada|[Pp]rolongaci[oó]n|[Pp]erif[eé]rico|[Cc]ircuito|[Cc]amino|[Pp]aseo|[Ee]je)";
+  "(?:[Cc]alle|[Aa]venida|[Aa]v\\.?|[Bb]oulevard|[Bb]lvd\\.?|[Bb]ulevar|[Cc]alzada|[Cc]arretera|[Pp]rivada|[Pp]rolongaci[oó]n|[Pp]erif[eé]rico|[Cc]ircuito|[Cc]amino|[Pp]aseo|[Ee]je|[Vv]iaducto|[Aa]nillo|[Aa]utopista|[Ll]ibramiento|[Gg]lorieta)";
 const PALABRA_NOMBRE = "[A-ZÁÉÍÓÚÑ0-9][\\wÁÉÍÓÚÑáéíóúñ.'-]*";
 const UNION = "(?:\\s+(?:de|del|la|las|los|el)\\s+|\\s+)";
 const RE_CALLE = new RegExp(
-  `\\b(${TIPO_VIA})\\s+(${PALABRA_NOMBRE}(?:${UNION}${PALABRA_NOMBRE}){0,3})`,
+  // «Avenida de los Insurgentes Sur», «Calzada de Tlalpan»: los artículos pueden ir antes del nombre.
+  `\\b(${TIPO_VIA})\\s+((?:(?:de|del)\\s+(?:la\\s+|las\\s+|los\\s+|el\\s+)?)?${PALABRA_NOMBRE}(?:${UNION}${PALABRA_NOMBRE}){0,3})`,
   "g",
 );
 
@@ -380,6 +382,23 @@ export interface Cruce {
   calles: string[];
 }
 
+/**
+ * ¿El nombre del mapa es la calle narrada? Por sus palabras que la distinguen («Viaducto Miguel
+ * Alemán» es «Viaducto Presidente Miguel Alemán Valdés»): todas las de la más corta están en la otra,
+ * o por inclusión del nombre completo.
+ */
+export function mismaCalleNarrada(delMapa: string, narradaComparable: string): boolean {
+  const x = nombreComparable(delMapa);
+  const b = narradaComparable;
+  if (x === b || x.includes(b) || b.includes(x)) return true;
+  const palabras = (s: string) =>
+    s.split(/\s+/).filter((w) => w.length > 2 && !/^(?:de|del|la|las|los|el|y)$/.test(w));
+  const pa = palabras(x);
+  const pb = palabras(b);
+  const [corta, larga] = pa.length <= pb.length ? [pa, new Set(pb)] : [pb, new Set(pa)];
+  return corta.length >= 2 && corta.every((w) => larga.has(w));
+}
+
 /** Los cruces: nodos que comparten dos o más calles distintas. */
 export function crucesDe(calles: readonly Calle[]): Cruce[] {
   const porNodo = new Map<number, { punto: LonLat; calles: Set<Calle> }>();
@@ -410,7 +429,7 @@ export interface PropuestaChoque {
    * «narracion»: el cruce de las dos calles que nombra; «una_calle»: solo una de ellas está en el
    * mapa y se propone su cruce más cercano; «cercania»: el cruce más cercano al lugar.
    */
-  segun: "narracion" | "una_calle" | "cercania";
+  segun: "narracion" | "una_calle" | "cercania" | "a_la_altura";
   cita: string | null;
   /** La calle de la narración que sí está (en «una_calle») y la que no se encontró. */
   encontrada?: string;
@@ -434,14 +453,31 @@ export function proponerChoque(
   const porCercania = [...cruces].sort((a, b) => cerca(a) - cerca(b));
   if (narrado) {
     const buscadas = narrado.calles.map(nombreComparable);
-    const tiene = (c: Cruce, b: string) =>
-      c.calles.some((n) => {
-        const x = nombreComparable(n);
-        return x === b || x.includes(b) || b.includes(x);
-      });
+    const tiene = (c: Cruce, b: string) => c.calles.some((n) => mismaCalleNarrada(n, b));
     const ambas = porCercania.find((c) => buscadas.every((b) => tiene(c, b)));
     if (ambas)
       return { punto: ambas.punto, calles: ambas.calles, segun: "narracion", cita: narrado.cita };
+    // Un paso a desnivel (el Viaducto bajo Insurgentes) no comparte nodo: el choque va sobre la
+    // primera calle narrada («sobre X, a la altura de Y»), en su punto más cercano a la segunda, si
+    // pasan a menos de 60 m (revisión de la cadena, René 2026-11-24).
+    const sobre = calles.filter((c) => c.nombre && mismaCalleNarrada(c.nombre, buscadas[0]!));
+    const otra = calles.filter((c) => c.nombre && mismaCalleNarrada(c.nombre, buscadas[1]!));
+    let alto: { m: number; punto: LonLat; a: string; b: string } | null = null;
+    for (const a of sobre)
+      for (const p of a.puntos)
+        for (const b of otra)
+          for (const q of b.puntos) {
+            const d = enMetros(p, q);
+            const m = Math.hypot(d.este, d.norte);
+            if (!alto || m < alto.m) alto = { m, punto: p, a: a.nombre!, b: b.nombre! };
+          }
+    if (alto && alto.m <= 60)
+      return {
+        punto: punto(alto.punto),
+        calles: [alto.a, alto.b],
+        segun: "a_la_altura",
+        cita: narrado.cita,
+      };
     const una = porCercania.find((c) => buscadas.some((b) => tiene(c, b)));
     if (una) {
       const k = buscadas.findIndex((b) => tiene(una, b));
