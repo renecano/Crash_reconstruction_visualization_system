@@ -112,12 +112,19 @@ if (!tabla || !nav) {
 {
   const axa = nav?.axa ?? null;
   const c = cifras["axa.v2"];
-  const ok = Boolean(
-    axa &&
-    c &&
-    axa.includes(String(Math.round(c.mejor))) &&
-    axa.includes(`${Math.round(c.p10)}–${Math.round(c.p90)}`),
-  );
+  // «57 (55–78)»: la cifra y su rango, no el texto entero (en la t8, el «57» salía de las marcas del
+  // eje de la gráfica y la cifra, leída a media cuenta, decía 20).
+  const m = /^(\d+)\s*\((\d+)–(\d+)\)/.exec(axa ?? "");
+  const r =
+    m && c
+      ? comparar(
+          { mejor: Math.round(c.mejor), p10: Math.round(c.p10), p90: Math.round(c.p90) },
+          Number(m[1]),
+          Number(m[2]),
+          Number(m[3]),
+        )
+      : null;
+  const ok = Boolean(r?.coincide);
   if (!ok) todoCoincide = false;
   salida.axa = { indice: c?.texto ?? null, navegador: axa, coincide: ok };
 }

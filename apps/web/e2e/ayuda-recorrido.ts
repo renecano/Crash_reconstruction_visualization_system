@@ -11,6 +11,10 @@ import { FUENTE, palabra } from "../src/i18n/vocabulario";
 export async function irAPaso(page: Page, n: number) {
   const panel = page.getByTestId("panel-paso");
   for (let k = 0; k < 10; k++) {
+    // t8 (2026-11-24): sin el panel, la lectura esperaba hasta el tope de la prueba (15 min).
+    await expect(panel, `Sin el panel de pasos en la página (se pedía el paso ${n})`).toBeAttached({
+      timeout: 30_000,
+    });
     const actual = Number(await panel.getAttribute("data-paso"));
     if (actual === n) return;
     if (actual === 3 && (await page.getByTestId("escena-facil").isVisible())) {

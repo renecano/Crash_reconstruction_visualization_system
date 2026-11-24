@@ -914,14 +914,22 @@
           "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues narraciones -Salida eval/results/t8/narraciones_fisica.json",
           "minutos": 12,
           "tope_min": 30,
-          "salidas": ["eval/results/t8", "docs/cesvi/ronda-4/evidencia/fisica"]
+          "salidas": [
+            "eval/results/t8",
+            "docs/cesvi/ronda-4/evidencia/fisica",
+            "apps/web/test-results/"
+          ]
         },
         {
           "nombre": "tollocan",
           "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tollocan -Salida eval/results/t8/tollocan.json",
           "minutos": 6,
           "tope_min": 15,
-          "salidas": ["eval/results/t8", "docs/cesvi/ronda-4/evidencia/fisica"]
+          "salidas": [
+            "eval/results/t8",
+            "docs/cesvi/ronda-4/evidencia/fisica",
+            "apps/web/test-results/"
+          ]
         },
         {
           "nombre": "arranque-nuevo-1",
