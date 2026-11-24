@@ -397,7 +397,7 @@ export function escenaDeConversion(c: Conversion, narracion?: string): EscenaNar
       narrado = {
         ...narrado,
         vehiculos: narrado.vehiculos.map((v) =>
-          v === sinNada[0] ? { ...v, clase: "bicicleta" as NonNullable<typeof v.clase> } : v,
+          v === sinNada[0] ? { ...v, clase: "bicicleta" } : v,
         ),
       };
   }
