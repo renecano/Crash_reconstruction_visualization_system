@@ -576,6 +576,8 @@ if (-not $EnSuRama -and (($ramaDeLaTanda -and $ramaActual -ne $ramaDeLaTanda) -o
   if ($Prueba) { $argumentos += "-Prueba" }
   if ($SinSubir) { $argumentos += "-SinSubir" }
   if ($Parte) { $argumentos += @("-Parte", $Parte) }
+  # -Solo también (2026-11-23: una prueba con -Solo corría la tanda entera en el commit fijado).
+  if ($Solo) { $argumentos += @("-Solo", $Solo) }
   & $EstePowerShell @argumentos
   $codigo = $LASTEXITCODE
   Remove-Item Env:\CROQUIS_TANDA_REPO -ErrorAction SilentlyContinue
