@@ -1045,8 +1045,10 @@ René aprobó el storyboard versión 2 (28 s, «más épico», sin la mancha neg
 - **Plan:** rehacer `/` y `/en` con el sistema «Laboratorio», sin tocar /cesvi, el solver ni `tools/colaborador/`.
 - **Qué se hizo:** página nueva en `components/portada-v3/`, cifras del índice único, capturas reales de día y de noche, logo en vez del nombre escrito. Se quitaron las tomas de video y los datos de AXA.
 - **Evidencia:** `e2e/home.spec.ts` (@flujo), `textos.test.ts` y `portada-cesvi.test.ts`. Lighthouse y peso de antes y después, en el PR.
-- **Pendiente:** el visto bueno de René a las capturas. Si hay un video real de autos de noche, va en Blob con póster y solo en escritorio.
-- **Siguiente paso:** fusionar con el visto bueno.
+- **Segunda vuelta (René, 2026-11-24):** capturas de producción sin cifras de la reconstrucción, respaldo WebP, precarga y tamaños de la foto del inicio, y el lugar del video con su botón de pausa. Probada en Chromium 156, WebKit 27.2 y Firefox 157 (de Playwright); WebKit cortaba los descendentes del titular y se corrigió.
+- **Bloqueado, necesita a René:** `trailer-salida/croquis-trailer-1920x1080.mp4` y `RECURSOS_READ_WRITE_TOKEN` no están en esta máquina. Con los dos: `node apps/web/scripts/portada-video.mjs <tráiler> <inicio_s> <duración_s>`.
+- **Pendiente:** el visto bueno de René a las capturas.
+- **Siguiente paso:** activar el video y fusionar con el visto bueno.
 
 ## Necesito del otro frente
 

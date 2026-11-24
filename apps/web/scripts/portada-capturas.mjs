@@ -79,8 +79,8 @@ const foto = sharp(
     .png()
     .toBuffer(),
 );
-// 720: lo que pide un celular de 412 px con densidad 1.75.
-const anchos = [480, 720, 1800];
+// 760: lo que pide un celular de 412 px con densidad 1.75 (721); 1100, uno con densidad 2.6.
+const anchos = [480, 760, 1100, 1800];
 await guardar("inicio", foto, anchos, 46);
 medidas.inicio = { w: 1800, h: Math.round((1800 * 2540) / 3420), anchos };
 writeFileSync(

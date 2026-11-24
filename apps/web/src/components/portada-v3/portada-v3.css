@@ -201,7 +201,8 @@ html:has(.pv[data-tema="oscuro"]) body {
 .pv-inicio-foto::after {
   content: "";
   position: absolute;
-  inset: 0;
+  /* Un píxel de más: con medidas fraccionarias quedaba una raya en el borde. */
+  inset: -1px;
   background: linear-gradient(
     90deg,
     var(--fondo) 0%,

@@ -63,7 +63,7 @@ const meta = await sharp(png).metadata();
 medidas.inicio = {
   w: 1800,
   h: Math.round((1800 * meta.height) / meta.width),
-  anchos: [480, 720, 1800],
+  anchos: [480, 760, 1100, 1800],
 };
 for (const ancho of medidas.inicio.anchos) {
   const ruta = join(WEB, `public/portada/app/inicio-${ancho}`);
