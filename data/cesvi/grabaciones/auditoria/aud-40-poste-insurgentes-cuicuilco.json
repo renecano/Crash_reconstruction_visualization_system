@@ -1,0 +1,186 @@
+{
+  "id": "aud-40-poste-insurgentes-cuicuilco",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 396,
+    "output_tokens": 1444,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0160012,
+  "narracion": "El hecho se ubica sobre Avenida de los Insurgentes Sur, a la altura de la colonia Insurgentes Cuicuilco, alcaldía Coyoacán, Ciudad de México, aproximadamente a las 3:15 horas. Las luminarias de ese tramo estaban apagadas. El vehículo A, marca Nissan, tipo Sentra, modelo 2017, circulaba de sur a norte por el carril central. Al cambiarse al carril derecho, el conductor perdió el control; el vehículo giró en sentido contrario a las manecillas del reloj, subió la guarnición y se impactó con su costado derecho contra un poste metálico de alumbrado público ubicado en la banqueta. En el pavimento se observaron huellas de derrape de 9 m antes del impacto. El vehículo A quedó detenido a 2 m adelante del poste, sobre la banqueta, con el frente hacia el poniente. Presenta hundimiento en el costado derecho, en las puertas delantera y trasera, y los cristales laterales derechos rotos. El poste quedó doblado. Pavimento seco.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Avenida de los Insurgentes Sur, a la altura de la colonia Insurgentes Cuicuilco",
+        "cita": "El hecho se ubica sobre Avenida de los Insurgentes Sur, a la altura de la colonia Insurgentes Cuicuilco"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Coyoacán",
+        "cita": "alcaldía Coyoacán, Ciudad de México, aproximadamente a las 3:15 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Ciudad de México",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 3:15 horas",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Nissan",
+        "cita": "El vehículo A, marca Nissan, tipo Sentra, modelo 2017"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Sentra",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2017",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "cambia_carril",
+        "cita": "Al cambiarse al carril derecho, el conductor perdió el control"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "se impactó con su costado derecho contra un poste metálico de alumbrado público ubicado en la banqueta"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "objeto_fijo",
+        "valor": "poste metálico de alumbrado público",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 lateral_derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "derrape",
+        "cita": "En el pavimento se observaron huellas de derrape de 9 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "9 m",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A quedó detenido a 2 m adelante del poste, sobre la banqueta, con el frente hacia el poniente"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "sobre la banqueta, a 2 m adelante del poste, con el frente hacia el poniente",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "Presenta hundimiento en el costado derecho, en las puertas delantera y trasera"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "delantero",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "trasero",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "ruptura",
+        "cita": "los cristales laterales derechos rotos"
+      },
+      {
+        "seccion": "objeto_fijo",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "descripcion",
+        "valor": "poste metálico de alumbrado público doblado",
+        "cita": "El poste quedó doblado"
+      }
+    ]
+  }
+}

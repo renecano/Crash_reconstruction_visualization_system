@@ -27,7 +27,7 @@ import {
   type SalidaCorpus,
 } from "./corpus";
 import { conVelocidadesNarradas } from "./velocidad-narrada";
-import { conMasasDelModelo } from "./fichas";
+import { conClasesDelModelo, conMasasDelModelo } from "./fichas";
 import { usaRelieve, usarRelieve } from "./terreno";
 import { GLOSARIO, glosarioParaPrompt } from "./hecho-lectura";
 
@@ -386,7 +386,8 @@ export function escenaDeConversion(c: Conversion, narracion?: string): EscenaNar
   let narrado = narracion ? conVelocidadesNarradas(c.expediente, narracion) : c.expediente;
   // La masa del modelo leído (René, 2026-11-20): la de su ficha o la típica de su clase, como supuesto
   // declarado. Solo se pregunta la de un vehículo sin modelo.
-  narrado = conMasasDelModelo(narrado, masaTipica);
+  // La clase que la lectura no dio, por su modelo (René, 2026-11-24), antes de su masa típica.
+  narrado = conMasasDelModelo(conClasesDelModelo(narrado), masaTipica);
   // Una subida o una bajada narradas (ronda 4): la reconstrucción usa el relieve real del lugar, no
   // una pendiente supuesta. Sobre un puente no: el relieve es el del suelo de abajo.
   const cond = narrado.caso.condiciones;

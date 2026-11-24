@@ -1,0 +1,258 @@
+{
+  "id": "aud-18-frontal-matlatzincas-pendiente",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 492,
+    "output_tokens": 2013,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0218832,
+  "narracion": "El hecho se ubica sobre Paseo de los Matlatzincas, a la altura de la colonia Ciprés, en Toluca, Estado de México, aproximadamente a las 22:00 horas. En ese tramo la vía tiene un carril por sentido, sin camellón, y no cuenta con alumbrado público. El vehículo A, marca Kia, tipo Rio, modelo 2020, circulaba en subida de norte a sur, a unos 40 km/h según su conductor. El vehículo B, camioneta marca Toyota, tipo Hilux, modelo 2017, bajaba en sentido contrario, de sur a norte, a más de 60 km/h según los testigos. En una curva, el vehículo B se abrió e invadió el carril del vehículo A. El conductor del vehículo B frenó, dejando huellas de frenado de 9 m antes del impacto. Ambos se impactaron con sus partes frontales, acentuadas hacia el lado izquierdo. El vehículo A fue empujado hacia atrás y quedó a 2 m del punto de contacto, cuesta abajo; el vehículo B quedó a 1 m del punto de contacto, atravesado sobre el carril del vehículo A. El vehículo A presenta hundimiento frontal severo del lado izquierdo; el vehículo B, daños en la defensa, el faro y la salpicadera izquierda. Pavimento seco.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "frontal",
+        "cita": "Ambos se impactaron con sus partes frontales, acentuadas hacia el lado izquierdo."
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 22:00 horas",
+        "cita": "aproximadamente a las 22:00 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Paseo de los Matlatzincas, a la altura de la colonia Ciprés",
+        "cita": "El hecho se ubica sobre Paseo de los Matlatzincas, a la altura de la colonia Ciprés, en Toluca"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Toluca",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": "en Toluca, Estado de México"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Kia",
+        "cita": "El vehículo A, marca Kia, tipo Rio, modelo 2020"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Rio",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2020",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Toyota",
+        "cita": "camioneta marca Toyota, tipo Hilux, modelo 2017"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Hilux",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2017",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba en subida de norte a sur, a unos 40 km/h según su conductor"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "bajaba en sentido contrario, de sur a norte, a más de 60 km/h según los testigos"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "frena",
+        "cita": "El conductor del vehículo B frenó, dejando huellas de frenado de 9 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "tipo_huella",
+        "valor": "frenado",
+        "cita": "El conductor del vehículo B frenó, dejando huellas de frenado de 9 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "longitud",
+        "valor": "9 m",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "Ambos se impactaron con sus partes frontales, acentuadas hacia el lado izquierdo."
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A fue empujado hacia atrás y quedó a 2 m del punto de contacto, cuesta abajo"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "a 2 m del punto de contacto, cuesta abajo",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo B quedó a 1 m del punto de contacto, atravesado sobre el carril del vehículo A"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "a 1 m del punto de contacto, atravesado sobre el carril del vehículo A",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta hundimiento frontal severo del lado izquierdo"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "izquierdo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "magnitud",
+        "valor": "severa",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "el vehículo B, daños en la defensa, el faro y la salpicadera izquierda"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "la salpicadera izquierda"
+      }
+    ]
+  }
+}

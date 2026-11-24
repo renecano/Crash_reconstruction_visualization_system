@@ -65,9 +65,24 @@ describe("las posiciones finales de la carambola", () => {
     expect(a.rumbo).toBeCloseTo(b.rumbo, 5);
   });
 
-  it("lo que no da una distancia no se inventa", () => {
+  it("«junto al árbol, con el frente al suroeste»: en el objeto del choque, con su rumbo", () => {
+    const f = finalDeLaNarracion(
+      e,
+      "V1",
+      "detenido junto al árbol, con el frente hacia el suroeste",
+    )!;
+    expect(f.punto).toEqual(poseDe(e, "V1", "impacto")!.punto);
+    expect(f.rumbo).toBe(225);
+  });
+
+  it("«a 1 m del vehículo B», sin decir de qué lado: del lado donde estaba en el choque", () => {
+    const f = finalDeLaNarracion(e, "V1", "detenido a 1 m del vehículo B", finales)!;
+    expect(f.texto).toMatch(/^1 m de donde quedó el vehículo B/);
+  });
+
+  it("lo que se mide desde la orilla del camino no se inventa: lo marca el perito", () => {
     expect(
-      finalDeLaNarracion(e, "V1", "detenido junto al árbol, con el frente al suroeste"),
+      finalDeLaNarracion(e, "V1", "a 3 m de la orilla del camino, sobre el terreno"),
     ).toBeNull();
   });
 });

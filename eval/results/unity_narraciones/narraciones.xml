@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Failed(Child)" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-24 19:53:44Z" end-time="2026-11-24 19:54:07Z" duration="23.148355">
+  <test-suite type="TestSuite" id="1040" name="Visor de Croquis" fullname="Visor de Croquis" runstate="Runnable" testcasecount="29" result="Failed" site="Child" start-time="2026-11-24 19:53:44Z" end-time="2026-11-24 19:54:07Z" duration="23.148355" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1035" name="Croquis.TestsCiudad.dll" fullname="D:/Documentos/proyectos/croquis/apps/visor-unity/Library/ScriptAssemblies/Croquis.TestsCiudad.dll" runstate="Runnable" testcasecount="29" result="Failed" site="Child" start-time="2026-11-24 19:53:44Z" end-time="2026-11-24 19:54:07Z" duration="23.137313" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="1096" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1036" name="Croquis" fullname="Croquis" runstate="Runnable" testcasecount="29" result="Failed" site="Child" start-time="2026-11-24 19:53:44Z" end-time="2026-11-24 19:54:07Z" duration="23.136091" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1037" name="TestsCiudad" fullname="Croquis.TestsCiudad" runstate="Runnable" testcasecount="29" result="Failed" site="Child" start-time="2026-11-24 19:53:44Z" end-time="2026-11-24 19:54:07Z" duration="23.135146" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1023" name="NarracionEnUnityTests" fullname="Croquis.TestsCiudad.NarracionEnUnityTests" classname="Croquis.TestsCiudad.NarracionEnUnityTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-11-24 19:53:44Z" end-time="2026-11-24 19:54:07Z" duration="23.133030" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1034" name="LoNarradoSeVe" fullname="Croquis.TestsCiudad.NarracionEnUnityTests.LoNarradoSeVe" classname="Croquis.TestsCiudad.NarracionEnUnityTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-11-24 19:53:44Z" end-time="2026-11-24 19:54:07Z" duration="23.127775" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="240000" />
+              </properties>
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1024" name="LoNarradoSeVe(&quot;arbol&quot;)" fullname="Croquis.TestsCiudad.NarracionEnUnityTests.LoNarradoSeVe(&quot;arbol&quot;)" methodname="LoNarradoSeVe" classname="Croquis.TestsCiudad.NarracionEnUnityTests" runstate="Runnable" seed="1059240970" result="Passed" start-time="2026-11-24 19:53:44Z" end-time="2026-11-24 19:53:55Z" duration="10.937731" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+[puente] {"version":"1.3.0","tipo":"listo"}
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+[puente] {"p50":1820.8,"tipo":"fps"}
+[carga] leer_sobre 8.9 ms, leer_paquete 520.4 ms, caracteres_paquete 696969 ms, vehiculos 719.3 ms, cielo 719.5 ms, escenario 1330 ms, caso_y_terreno 1357.1 ms, estacionados_y_personas 1360.6 ms, antes_de_unir_sombras 1390.3 ms, sombras_unidas 1391.2 ms, piso 1391.9 ms, total 1393.1 ms, primer_cuadro 6013.2 ms, segundo_cuadro 6015.5 ms
+[puente] {"escena_id":"narracion-arbol","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1025" name="LoNarradoSeVe(&quot;poste&quot;)" fullname="Croquis.TestsCiudad.NarracionEnUnityTests.LoNarradoSeVe(&quot;poste&quot;)" methodname="LoNarradoSeVe" classname="Croquis.TestsCiudad.NarracionEnUnityTests" runstate="Runnable" seed="150533253" result="Passed" start-time="2026-11-24 19:53:55Z" end-time="2026-11-24 19:53:58Z" duration="2.726099" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 4.8 ms, leer_paquete 160.8 ms, caracteres_paquete 877760 ms, vehiculos 160.1 ms, cielo 160.1 ms, escenario 850.9 ms, caso_y_terreno 865.3 ms, estacionados_y_personas 865.5 ms, antes_de_unir_sombras 876.2 ms, sombras_unidas 922.7 ms, piso 922.7 ms, total 923.2 ms, primer_cuadro 1289.1 ms, segundo_cuadro 1295.7 ms
+[puente] {"escena_id":"narracion-poste","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1026" name="LoNarradoSeVe(&quot;puente&quot;)" fullname="Croquis.TestsCiudad.NarracionEnUnityTests.LoNarradoSeVe(&quot;puente&quot;)" methodname="LoNarradoSeVe" classname="Croquis.TestsCiudad.NarracionEnUnityTests" runstate="Runnable" seed="390512600" result="Passed" start-time="2026-11-24 19:53:58Z" end-time="2026-11-24 19:53:59Z" duration="1.410417" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 4.3 ms, leer_paquete 89.1 ms, caracteres_paquete 250536 ms, vehiculos 236.7 ms, cielo 236.7 ms, escenario 362.1 ms, caso_y_terreno 364.3 ms, estacionados_y_personas 364.4 ms, antes_de_unir_sombras 374.5 ms, sombras_unidas 375.5 ms, piso 375.6 ms, total 375.7 ms, primer_cuadro 414.3 ms, segundo_cuadro 425.7 ms
+[puente] {"escena_id":"narracion-puente","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1027" name="LoNarradoSeVe(&quot;subida&quot;)" fullname="Croquis.TestsCiudad.NarracionEnUnityTests.LoNarradoSeVe(&quot;subida&quot;)" methodname="LoNarradoSeVe" classname="Croquis.TestsCiudad.NarracionEnUnityTests" runstate="Runnable" seed="1038377965" result="Passed" start-time="2026-11-24 19:53:59Z" end-time="2026-11-24 19:54:01Z" duration="1.674464" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 3.9 ms, leer_paquete 154.3 ms, caracteres_paquete 845695 ms, vehiculos 305.5 ms, cielo 305.5 ms, escenario 719.3 ms, caso_y_terreno 723.1 ms, estacionados_y_personas 723.2 ms, antes_de_unir_sombras 770.2 ms, sombras_unidas 782.5 ms, piso 782.6 ms, total 782.8 ms, primer_cuadro 864.3 ms, segundo_cuadro 866.7 ms
+[puente] {"escena_id":"narracion-subida","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1028" name="LoNarradoSeVe(&quot;bajada&quot;)" fullname="Croquis.TestsCiudad.NarracionEnUnityTests.LoNarradoSeVe(&quot;bajada&quot;)" methodname="LoNarradoSeVe" classname="Croquis.TestsCiudad.NarracionEnUnityTests" runstate="Runnable" seed="1282461154" result="Passed" start-time="2026-11-24 19:54:01Z" end-time="2026-11-24 19:54:02Z" duration="0.874572" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 2.7 ms, leer_paquete 71.4 ms, caracteres_paquete 504360 ms, vehiculos 115 ms, cielo 115 ms, escenario 227.1 ms, caso_y_terreno 230.4 ms, estacionados_y_personas 230.5 ms, antes_de_unir_sombras 234 ms, sombras_unidas 237.8 ms, piso 237.9 ms, total 238 ms, primer_cuadro 271.2 ms, segundo_cuadro 273.9 ms
+[puente] {"escena_id":"narracion-bajada","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1029" name="LoNarradoSeVe(&quot;curva&quot;)" fullname="Croquis.TestsCiudad.NarracionEnUnityTests.LoNarradoSeVe(&quot;curva&quot;)" methodname="LoNarradoSeVe" classname="Croquis.TestsCiudad.NarracionEnUnityTests" runstate="Runnable" seed="350643689" result="Failed" start-time="2026-11-24 19:54:02Z" end-time="2026-11-24 19:54:03Z" duration="0.944126" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  curva: no se ve la curva (el vehículo gira 0 ° antes del impacto: llega recto)
+  Expected: <empty>
+  But was:  < "la curva (el vehículo gira 0 ° antes del impacto: llega recto)" >
+]]></message>
+                  <stack-trace><![CDATA[at Croquis.TestsCiudad.NarracionEnUnityTests+<LoNarradoSeVe>d__8.MoveNext () [0x00eb2] in D:\Documentos\proyectos\croquis\apps\visor-unity\Assets\Croquis\TestsCiudad\NarracionEnUnityTests.cs:281
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@bd7f943e9647\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 4.1 ms, leer_paquete 95 ms, caracteres_paquete 815164 ms, vehiculos 186.6 ms, cielo 186.6 ms, escenario 281.9 ms, caso_y_terreno 284.5 ms, estacionados_y_personas 284.5 ms, antes_de_unir_sombras 291.2 ms, sombras_unidas 298.6 ms, piso 298.6 ms, total 298.7 ms, primer_cuadro 329.1 ms, segundo_cuadro 332 ms
+[puente] {"escena_id":"narracion-curva","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1030" name="LoNarradoSeVe(&quot;tollocan&quot;)" fullname="Croquis.TestsCiudad.NarracionEnUnityTests.LoNarradoSeVe(&quot;tollocan&quot;)" methodname="LoNarradoSeVe" classname="Croquis.TestsCiudad.NarracionEnUnityTests" runstate="Runnable" seed="215180839" result="Passed" start-time="2026-11-24 19:54:03Z" end-time="2026-11-24 19:54:03Z" duration="0.808259" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 3.6 ms, leer_paquete 90.9 ms, caracteres_paquete 621079 ms, vehiculos 73.6 ms, cielo 73.6 ms, escenario 179.9 ms, caso_y_terreno 183.4 ms, estacionados_y_personas 183.5 ms, antes_de_unir_sombras 187.1 ms, sombras_unidas 194.7 ms, piso 194.7 ms, total 194.9 ms, primer_cuadro 274.2 ms, segundo_cuadro 277.2 ms
+[puente] {"escena_id":"narracion-tollocan","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1031" name="LoNarradoSeVe(&quot;rene-arbol-curva&quot;)" fullname="Croquis.TestsCiudad.NarracionEnUnityTests.LoNarradoSeVe(&quot;rene-arbol-curva&quot;)" methodname="LoNarradoSeVe" classname="Croquis.TestsCiudad.NarracionEnUnityTests" runstate="Runnable" seed="851335380" result="Passed" start-time="2026-11-24 19:54:03Z" end-time="2026-11-24 19:54:04Z" duration="0.976375" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 5.1 ms, leer_paquete 138.7 ms, caracteres_paquete 1269662 ms, vehiculos 97.4 ms, cielo 97.4 ms, escenario 197.8 ms, caso_y_terreno 202.1 ms, estacionados_y_personas 202.2 ms, antes_de_unir_sombras 205.7 ms, sombras_unidas 213.5 ms, piso 213.5 ms, total 213.6 ms, primer_cuadro 240.2 ms, segundo_cuadro 244 ms
+[puente] {"escena_id":"narracion-rene-arbol-curva","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1032" name="LoNarradoSeVe(&quot;rene-peaton-vuelta&quot;)" fullname="Croquis.TestsCiudad.NarracionEnUnityTests.LoNarradoSeVe(&quot;rene-peaton-vuelta&quot;)" methodname="LoNarradoSeVe" classname="Croquis.TestsCiudad.NarracionEnUnityTests" runstate="Runnable" seed="1029273380" result="Passed" start-time="2026-11-24 19:54:04Z" end-time="2026-11-24 19:54:06Z" duration="1.763544" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 3 ms, leer_paquete 92.8 ms, caracteres_paquete 569663 ms, vehiculos 90.3 ms, cielo 90.3 ms, escenario 160.8 ms, caso_y_terreno 163.2 ms, estacionados_y_personas 1190.9 ms, antes_de_unir_sombras 1198.3 ms, sombras_unidas 1202.4 ms, piso 1202.4 ms, total 1202.5 ms, primer_cuadro 1209.2 ms, segundo_cuadro 1210.1 ms
+[puente] {"escena_id":"narracion-rene-peaton-vuelta","omitidos":[],"tipo":"cargado"}
+]]></output>
+              </test-case>
+              <test-case id="1033" name="LoNarradoSeVe(&quot;rene-carambola-semaforo&quot;)" fullname="Croquis.TestsCiudad.NarracionEnUnityTests.LoNarradoSeVe(&quot;rene-carambola-semaforo&quot;)" methodname="LoNarradoSeVe" classname="Croquis.TestsCiudad.NarracionEnUnityTests" runstate="Runnable" seed="930940196" result="Passed" start-time="2026-11-24 19:54:06Z" end-time="2026-11-24 19:54:07Z" duration="0.991211" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[
+IgnoreFailingMessages:true
+[puente] {"version":"1.3.0","tipo":"listo"}
+[carga] leer_sobre 5 ms, leer_paquete 114.4 ms, caracteres_paquete 812514 ms, vehiculos 180.8 ms, cielo 180.8 ms, escenario 295.1 ms, caso_y_terreno 298.9 ms, estacionados_y_personas 299 ms, antes_de_unir_sombras 311.6 ms, sombras_unidas 318 ms, piso 318 ms, total 318.2 ms, primer_cuadro 376 ms, segundo_cuadro 380 ms
+[puente] {"escena_id":"narracion-rene-carambola-semaforo","omitidos":[],"tipo":"cargado"}
+<b><color=#2EA3FF>MCP-FOR-UNITY</color></b>: [TestRunnerNoThrottle] Restored Interaction Mode after test run.
+Saving results to: C:/Users/René/AppData/LocalLow/Croquis/Visor de Croquis\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

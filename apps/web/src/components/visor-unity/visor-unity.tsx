@@ -31,6 +31,7 @@ import {
   PuenteUnity,
   type MotivoRespaldo,
 } from "@/lib/visor-unity/puente";
+import { deformacionesMedidas } from "@/lib/visor-unity/deformacion-medida";
 import { paqueteDelCaso, type RelieveCaso } from "@/lib/visor-unity/paquete";
 import type { CanalTiempo } from "@/lib/visor-unity/canal";
 import {
@@ -624,6 +625,20 @@ export function VisorUnity({
         // Unity lee el tamaño del lienzo; sin esto toma 300×150.
         style={{ width: "100%", height: "100%" }}
       />
+      {/* La deformación que dibuja el 3D es la medida por CESVI donde el reporte la midió (René,
+          2026-11-24): se dice cuál, con sus medidas. */}
+      {listo && escena && deformacionesMedidas(escena).length ? (
+        <p
+          className="t-nota vidrio absolute top-3 left-3 z-10 max-w-[60%] rounded-control px-3 py-1.5"
+          data-testid="visor-unity-deformacion-medida"
+        >
+          Deformación medida por CESVI:{" "}
+          {deformacionesMedidas(escena)
+            .map((d) => `${d.perfil_m.map((c) => Math.round(c * 100)).join(", ")} cm`)
+            .join("; ")}
+          .
+        </p>
+      ) : null}
       {/* Lo que el 3D no pudo dibujar y omitió (René, 2026-11-20): el caso abre igual y el perito lo sabe. */}
       {listo && omitidos.length ? (
         <p

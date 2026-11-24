@@ -1,0 +1,210 @@
+{
+  "id": "aud-19-glorieta-insurgentes",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 452,
+    "output_tokens": 1712,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0187932,
+  "narracion": "El hecho se ubica en la Glorieta de Insurgentes, en el punto donde se incorpora la Avenida Chapultepec, colonia Roma Norte, alcaldía Cuauhtémoc, Ciudad de México, aproximadamente a las 10:30 horas. El vehículo B, marca Volkswagen, tipo Vento, modelo 2019, circulaba dentro de la glorieta por el carril exterior, por su costado oriente, de sur a norte. El vehículo A, marca Chevrolet, tipo Aveo, modelo 2018, circulaba sobre Avenida Chapultepec de oriente a poniente e ingresó a la glorieta. Al incorporarse, el vehículo A impactó con su parte frontal el costado derecho del vehículo B, a la altura de la puerta trasera. El vehículo B fue desplazado hacia el carril interior y quedó a 4 m del punto de contacto. El vehículo A quedó detenido a 1 m del punto de contacto, en la entrada de la glorieta. No se observaron huellas de frenado. El vehículo A presenta daños en la defensa delantera y el cofre; el vehículo B, hundimiento en la puerta trasera derecha y la salpicadera trasera. Pavimento seco, día nublado.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Glorieta de Insurgentes, en el punto donde se incorpora la Avenida Chapultepec, colonia Roma Norte",
+        "cita": "El hecho se ubica en la Glorieta de Insurgentes, en el punto donde se incorpora la Avenida Chapultepec, colonia Roma Norte"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "alcaldía Cuauhtémoc",
+        "cita": "alcaldía Cuauhtémoc, Ciudad de México, aproximadamente a las 10:30 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Ciudad de México",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 10:30 horas",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Chevrolet",
+        "cita": "El vehículo A, marca Chevrolet, tipo Aveo, modelo 2018, circulaba sobre Avenida Chapultepec"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Aveo",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2018",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Volkswagen",
+        "cita": "El vehículo B, marca Volkswagen, tipo Vento, modelo 2019, circulaba dentro de la glorieta"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Vento",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2019",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "el vehículo A impactó con su parte frontal el costado derecho del vehículo B, a la altura de la puerta trasera"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 lateral_derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba sobre Avenida Chapultepec de oriente a poniente e ingresó a la glorieta"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba dentro de la glorieta por el carril exterior, por su costado oriente, de sur a norte"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo B fue desplazado hacia el carril interior y quedó a 4 m del punto de contacto"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "en el carril interior, a 4 m del punto de contacto",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A quedó detenido a 1 m del punto de contacto, en la entrada de la glorieta"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "en la entrada de la glorieta, a 1 m del punto de contacto",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta daños en la defensa delantera y el cofre"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "el vehículo B, hundimiento en la puerta trasera derecha y la salpicadera trasera"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "tercio",
+        "valor": "trasero",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      }
+    ]
+  }
+}

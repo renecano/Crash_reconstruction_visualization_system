@@ -13,6 +13,7 @@ import {
   USER_AGENT,
   viasDelCruce,
   zonaDelTexto,
+  variantesDeVia,
 } from "./lugar";
 
 type Respuesta = { status: number; body: unknown } | "sin-red";
@@ -457,5 +458,25 @@ describe("el cruce de dos vías y, si nada cuadra, la pregunta (ronda 4, René)"
     expect(r.resultados).toEqual([]);
     expect(r.aviso).toContain("No se encontró «Solidaridad Las Torres y Paseo Tollocan» en Toluca");
     expect(r.aviso).toContain("¿Dónde fue?");
+  });
+});
+
+describe("variantes de una vía y precisión (revisión de la cadena, 2026-11-24)", () => {
+  it("prueba la vía sin artículos y sin su tipo", () => {
+    expect(variantesDeVia("Avenida de los Insurgentes Sur")).toEqual([
+      "Avenida de los Insurgentes Sur",
+      "Avenida Insurgentes Sur",
+      "Insurgentes Sur",
+    ]);
+  });
+});
+
+describe("los cruces que dice la revisión de la cadena (2026-11-24)", () => {
+  it("«X, unos 15 m al norte de su cruce con Y» es el cruce de X y Y", () => {
+    expect(
+      viasDelCruce(
+        "Avenida de los Insurgentes Sur, unos 15 m al norte de su cruce con Avenida Miguel Ángel de Quevedo, colonia Chimalistac",
+      ),
+    ).toEqual(["Avenida de los Insurgentes Sur", "Avenida Miguel Ángel de Quevedo"]);
   });
 });

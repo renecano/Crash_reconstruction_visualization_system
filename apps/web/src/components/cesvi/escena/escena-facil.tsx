@@ -78,7 +78,6 @@ import {
   girar,
   marcarChoque,
   marcarFinal,
-  nombresDe,
   nombreVehiculo,
   pasoActual,
   pasosEscena,
@@ -89,7 +88,7 @@ import {
   finalDeLaNarracion,
   resumenEscena,
   rumboAlineado,
-  sentidoNarrado,
+  sentidoEnElCaso,
   sinFinal,
   textoChoqueListo,
   textoFlecha,
@@ -343,10 +342,7 @@ export function EscenaFacil({
   const sentidos = useMemo(
     () =>
       Object.fromEntries(
-        vehiculos.map((v) => [
-          v.id,
-          narracion ? sentidoNarrado(narracion, nombresDe(v, vehiculos)) : null,
-        ]),
+        vehiculos.map((v) => [v.id, narracion ? sentidoEnElCaso(narracion, v, vehiculos) : null]),
       ),
     [vehiculos, narracion],
   );
@@ -567,6 +563,12 @@ export function EscenaFacil({
             break;
           }
           const p = r.ok ? d?.resultados?.[0] : undefined;
+          // Solo una zona (la colonia, el municipio) no es el lugar del choque (revisión de la cadena,
+          // René 2026-11-24): se prueba la consulta siguiente y, si nada es preciso, se pregunta.
+          if (p?.precision === "zona") {
+            aviso ??= `Solo se encontró la zona («${p.nombre}»), no el lugar del choque. Escribe las calles del cruce, pega las coordenadas o un link de Google Maps, o toca el lugar en el mapa.`;
+            continue;
+          }
           if (p && montada.current) {
             setLugarNarrado({ lat: p.lat, lon: p.lon });
             onBuscarCalles({ lat: p.lat, lon: p.lon });

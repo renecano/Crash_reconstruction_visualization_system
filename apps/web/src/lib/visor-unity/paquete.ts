@@ -12,6 +12,7 @@ import {
   type Resultado,
 } from "@croquis/scene-schema";
 import { escenarioDe, type RelieveEscenario } from "@/components/visor-unity/escenario";
+import { conDeformacionMedida } from "./deformacion-medida";
 
 /** La malla de relieve tal como la guarda `Reconstruccion.relieve` (la misma forma que `caso3d.relieve`). */
 export type RelieveCaso = Parameters<typeof armarCaso3d>[2];
@@ -25,9 +26,10 @@ export function paqueteDelCaso(
   resultado: Resultado,
   relieve: RelieveCaso = null,
 ): Caso3D {
+  // Donde el reporte midió la deformación, el 3D dibuja esa y no la calculada (René, 2026-11-24).
   const paquete = armarCaso3d(
     escena,
-    resultado,
+    conDeformacionMedida(escena, resultado),
     relieve ?? null,
     escenarioDe(escena, resultado, (relieve ?? null) as RelieveEscenario | null),
   );

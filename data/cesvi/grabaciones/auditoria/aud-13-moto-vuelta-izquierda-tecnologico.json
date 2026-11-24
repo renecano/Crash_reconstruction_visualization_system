@@ -1,0 +1,250 @@
+{
+  "id": "aud-13-moto-vuelta-izquierda-tecnologico",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 486,
+    "output_tokens": 1939,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0211312,
+  "narracion": "El hecho se ubica en el cruce de Avenida Tecnológico y Avenida Estado de México, colonia San Salvador Tizatlalli, en Metepec, Estado de México, aproximadamente a las 17:00 horas. El vehículo A, motocicleta marca Honda, tipo CB190R, modelo 2022, circulaba sobre Avenida Tecnológico de norte a sur, por el carril izquierdo, a más de 70 km/h según los testigos. El vehículo B, marca Nissan, tipo Versa, modelo 2019, circulaba sobre la misma avenida de sur a norte y dio vuelta a la izquierda para incorporarse a Avenida Estado de México con dirección al poniente, cruzando la trayectoria de la motocicleta. El conductor de la motocicleta frenó, dejando huellas de frenado de 14 m antes del impacto, y se impactó con su parte frontal contra el costado derecho del vehículo B, a la altura de la puerta delantera. La motocicleta quedó caída a 8 m del punto de contacto, hacia el suroeste del cruce. El vehículo B fue desplazado y quedó a 2 m del punto de contacto. El vehículo B presenta hundimiento en las puertas del costado derecho; la motocicleta, la horquilla delantera doblada y el faro destruido. Pavimento seco, día nublado.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "cruce de Avenida Tecnológico y Avenida Estado de México, colonia San Salvador Tizatlalli",
+        "cita": "El hecho se ubica en el cruce de Avenida Tecnológico y Avenida Estado de México, colonia San Salvador Tizatlalli, en Metepec"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Metepec",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": "en Metepec, Estado de México, aproximadamente a las 17:00 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 17:00 horas",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Honda",
+        "cita": "El vehículo A, motocicleta marca Honda, tipo CB190R, modelo 2022"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "CB190R",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2022",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "clase",
+        "valor": "motocicleta",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Nissan",
+        "cita": "El vehículo B, marca Nissan, tipo Versa, modelo 2019"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Versa",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2019",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba sobre Avenida Tecnológico de norte a sur, por el carril izquierdo"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "vira_izquierda",
+        "cita": "circulaba sobre la misma avenida de sur a norte y dio vuelta a la izquierda para incorporarse a Avenida Estado de México"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "frena",
+        "cita": "El conductor de la motocicleta frenó, dejando huellas de frenado de 14 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "frenado",
+        "cita": "dejando huellas de frenado de 14 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "14 m",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "se impactó con su parte frontal contra el costado derecho del vehículo B, a la altura de la puerta delantera"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 lateral_derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "La motocicleta quedó caída a 8 m del punto de contacto, hacia el suroeste del cruce"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "caída a 8 m del punto de contacto, hacia el suroeste del cruce",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo B fue desplazado y quedó a 2 m del punto de contacto"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "a 2 m del punto de contacto",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "El vehículo B presenta hundimiento en las puertas del costado derecho"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "tercio",
+        "valor": "medio",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "deformacion",
+        "cita": "la motocicleta, la horquilla delantera doblada y el faro destruido"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": ""
+      }
+    ]
+  }
+}

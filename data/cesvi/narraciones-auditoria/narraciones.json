@@ -1,0 +1,1153 @@
+{
+  "descripcion": "Narraciones nuevas para la revisión sistemática de la cadena (René, 2026-11-24). Escritas como reportes de CESVI; lugares reales.",
+  "narraciones": [
+    {
+      "id": "aud-01-alcance-tollocan",
+      "cubre": ["alcance", "a_unos_x", "huellas_frenado", "final_relativo"],
+      "texto": "El hecho se ubica sobre Paseo Tollocan, a la altura de la Avenida Isidro Fabela, colonia Científicos, en Toluca, Estado de México, aproximadamente a las 7:45 horas. El vehículo B, marca Nissan, tipo Versa, modelo 2022, circulaba por el carril central de Paseo Tollocan con dirección a la Ciudad de México y se encontraba detenido por el alto del semáforo. El vehículo A, marca Volkswagen, tipo Jetta, modelo 2017, circulaba detrás de él, por el mismo carril y en el mismo sentido, a unos 60 km/h según la declaración de su conductor. Al percatarse de que el vehículo B estaba detenido, el conductor del vehículo A frenó, dejando huellas de frenado de 12 m antes del impacto, y se impactó con su parte frontal contra la parte posterior del vehículo B. Posiciones finales: el vehículo B quedó a 3 m de donde estaba detenido, sobre el mismo carril; el vehículo A quedó a 1 m detrás del vehículo B. El vehículo A presenta hundimiento en la parte frontal, acentuado hacia el lado derecho; el vehículo B, deformación en la defensa trasera y en la tapa de la cajuela. Pavimento seco, día despejado.",
+      "esperado": {
+        "ciudad": "Toluca",
+        "calles": ["Paseo Tollocan", "Avenida Isidro Fabela"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "sedan", "marca": "Volkswagen", "modelo": "Jetta",
+            "sentido": "con dirección a la Ciudad de México", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 60, "tipo": "aprox" },
+            "final": { "descripcion": "1 m detrás del vehículo B", "metros": 1 },
+            "huella": { "tipo": "frenado", "metros": 12, "antes_del_impacto": true }
+          },
+          {
+            "letra": "B", "clase": "sedan", "marca": "Nissan", "modelo": "Versa",
+            "sentido": "con dirección a la Ciudad de México", "maniobra": "detenido",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "3 m de donde estaba detenido", "metros": 3 },
+            "huella": null
+          }
+        ],
+        "personas": [],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-02-lateral-tecnologico-lastorres",
+      "cubre": ["lateral_cruce", "sin_velocidad", "noche", "final_relativo"],
+      "texto": "El hecho se ubica en el cruce de Avenida Tecnológico y Avenida Solidaridad Las Torres, fraccionamiento Casa Blanca, en Metepec, Estado de México, aproximadamente a las 21:30 horas. El vehículo A, marca Nissan, tipo Sentra, modelo 2020, circulaba sobre Avenida Tecnológico de sur a norte, por el carril izquierdo. El vehículo B, camioneta marca Toyota, tipo Hilux, modelo 2018, circulaba sobre Avenida Solidaridad Las Torres de oriente a poniente y entró al cruce. Dentro del cruce, el vehículo A impactó con su parte frontal el costado izquierdo del vehículo B, a la altura de la puerta del conductor. El vehículo B fue desplazado hacia el noroeste del cruce y quedó detenido a 7 m del punto de contacto, con el frente hacia el noroeste. El vehículo A quedó a 3 m del punto de contacto, sobre su mismo carril. No se observaron huellas de frenado ni de derrape. El vehículo A presenta hundimiento frontal, acentuado hacia el lado izquierdo; el vehículo B, deformación en el costado izquierdo, en la zona de las puertas. El pavimento estaba seco y el cruce cuenta con alumbrado público y semáforos.",
+      "esperado": {
+        "ciudad": "Metepec",
+        "calles": ["Avenida Tecnológico", "Avenida Solidaridad Las Torres"],
+        "cruce": true,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "sedan", "marca": "Nissan", "modelo": "Sentra",
+            "sentido": "sur_a_norte", "maniobra": "recto",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "3 m del punto de contacto", "metros": 3 },
+            "huella": null
+          },
+          {
+            "letra": "B", "clase": "pickup", "marca": "Toyota", "modelo": "Hilux",
+            "sentido": "oriente_a_poniente", "maniobra": "recto",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "7 m del punto de contacto, hacia el noroeste del cruce", "metros": 7 },
+            "huella": null
+          }
+        ],
+        "personas": [],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": true, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-03-atropello-pinosuarez-lastorres",
+      "cubre": ["atropello_auto", "vuelta_izquierda", "a_unos_x", "lluvia", "final_relativo"],
+      "texto": "El hecho se ubica en el cruce de Avenida Pino Suárez y Avenida Solidaridad Las Torres, colonia La Providencia, en Metepec, Estado de México, aproximadamente a las 16:20 horas, con lluvia moderada. El vehículo A, marca Nissan, tipo March, modelo 2021, circulaba sobre Avenida Pino Suárez de norte a sur y, al llegar al cruce, dio vuelta a la izquierda para incorporarse a Avenida Solidaridad Las Torres con dirección al oriente, a unos 20 km/h según su conductor. Al completar la vuelta, impactó con su parte frontal izquierda a un peatón, adulto, que cruzaba Avenida Solidaridad Las Torres de sur a norte sobre el paso peatonal. El peatón quedó tendido sobre el arroyo vehicular, aproximadamente a 3 m del punto de contacto. El vehículo A frenó y quedó detenido 5 m después del paso peatonal, sobre el carril izquierdo. Por el pavimento mojado no se apreciaron huellas de frenado. El vehículo A presenta un abollamiento en el cofre, del lado izquierdo, y el parabrisas estrellado en su esquina inferior izquierda. Pavimento mojado; el cruce cuenta con semáforo.",
+      "esperado": {
+        "ciudad": "Metepec",
+        "calles": ["Avenida Pino Suárez", "Avenida Solidaridad Las Torres"],
+        "cruce": true,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "hatchback", "marca": "Nissan", "modelo": "March",
+            "sentido": "norte_a_sur", "maniobra": "vira_izquierda",
+            "velocidad_narrada": { "kmh": 20, "tipo": "aprox" },
+            "final": { "descripcion": "5 m después del paso peatonal", "metros": 5 },
+            "huella": null
+          }
+        ],
+        "personas": [ { "rol": "peaton" } ],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": true, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-04-arbol-matlatzincas",
+      "cubre": ["arbol", "salida_curva", "mas_de_x", "huellas_derrape", "lluvia", "noche", "final_relativo"],
+      "texto": "El hecho se ubica sobre Paseo de los Matlatzincas, a la altura de la colonia Seminario, en Toluca, Estado de México, aproximadamente a las 23:50 horas. Llovía y el alumbrado público de ese tramo estaba apagado. El vehículo A, marca Chevrolet, tipo Aveo, modelo 2015, circulaba de sur a norte a más de 70 km/h, según los testigos. Al entrar a una curva hacia la izquierda, el conductor perdió el control: el vehículo se abrió hacia el lado derecho, salió del arroyo vehicular por el costado exterior de la curva y se impactó con su parte frontal derecha contra un árbol de aproximadamente 50 cm de diámetro. En el pavimento se observaron huellas de derrape de 20 m antes de salir del camino. El vehículo A quedó detenido junto al árbol, a 2 m de la orilla del camino, con el frente hacia el oriente. Presenta hundimiento en la parte frontal derecha, con el faro derecho desprendido y la salpicadera derecha deformada hacia el interior. Pavimento mojado.",
+      "esperado": {
+        "ciudad": "Toluca",
+        "calles": ["Paseo de los Matlatzincas"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "sedan", "marca": "Chevrolet", "modelo": "Aveo",
+            "sentido": "sur_a_norte", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 70, "tipo": "mas_de" },
+            "final": { "descripcion": "junto al árbol, a 2 m de la orilla del camino", "metros": 2 },
+            "huella": { "tipo": "derrape", "metros": 20, "antes_del_impacto": true }
+          }
+        ],
+        "personas": [],
+        "objetos": [ { "tipo": "arbol" } ],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": true, "lluvia": true, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-05-poste-lastorres",
+      "cubre": ["poste", "sin_velocidad"],
+      "texto": "El hecho ocurrió sobre Avenida Solidaridad Las Torres, a la altura de la colonia Santa Ana Tlapaltitlán, en Toluca, Estado de México, aproximadamente a las 12:10 horas. El vehículo A, camioneta marca Nissan, tipo NP300, modelo 2016, con caja de redilas y sin carga, circulaba de oriente a poniente por el carril central. Según su conductor, un vehículo que no fue identificado se cerró desde el carril izquierdo; el conductor del vehículo A giró hacia la derecha para evitarlo, atravesó el carril derecho, subió la guarnición y se impactó con su parte frontal derecha contra un poste de concreto del alumbrado público ubicado en la banqueta. El vehículo A quedó detenido junto al poste, con el frente hacia el noroeste. No se observaron huellas de frenado. Presenta hundimiento en la parte frontal derecha, defensa desprendida y el radiador dañado. El poste quedó inclinado, sin caer. Pavimento seco, día soleado.",
+      "esperado": {
+        "ciudad": "Toluca",
+        "calles": ["Avenida Solidaridad Las Torres"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "pickup", "marca": "Nissan", "modelo": "NP300",
+            "sentido": "oriente_a_poniente", "maniobra": "recto",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "junto al poste", "metros": null },
+            "huella": null
+          }
+        ],
+        "personas": [],
+        "objetos": [ { "tipo": "poste" } ],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-06-carambola3-tecnologico",
+      "cubre": ["carambola_3", "alcance", "mas_de_x", "huellas_frenado", "final_relativo"],
+      "texto": "El hecho se ubica sobre Avenida Tecnológico, a la altura de Avenida Estado de México, colonia San Salvador Tizatlalli, en Metepec, Estado de México, aproximadamente a las 18:05 horas. El vehículo C, camioneta marca Honda, tipo CR-V, modelo 2019, y detrás de él el vehículo B, marca Chevrolet, tipo Beat, modelo 2020, circulaban de norte a sur por el carril derecho y se encontraban detenidos por el semáforo, antes del paso peatonal. El vehículo A, camión de reparto marca Isuzu, tipo ELF 300, modelo 2017, con carga, circulaba detrás en el mismo carril a más de 50 km/h, según los testigos. Al ver a los vehículos detenidos frenó, dejando huellas de frenado de 10 m antes del impacto, y se impactó con su parte frontal contra la parte posterior del vehículo B, que fue proyectado contra la parte posterior del vehículo C. Posiciones finales: el vehículo C quedó a 2 m de donde estaba detenido, sobre el paso peatonal; el vehículo B, a 3 m de donde estaba detenido, pegado al vehículo C; el vehículo A, a 1 m detrás del vehículo B. El vehículo B presenta daños severos en la parte posterior y daños en la frontal; el vehículo C, en la parte posterior; el camión, en la defensa y la parrilla. Pavimento seco, atardecer con luz natural.",
+      "esperado": {
+        "ciudad": "Metepec",
+        "calles": ["Avenida Tecnológico", "Avenida Estado de México"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "camion", "marca": "Isuzu", "modelo": "ELF 300",
+            "sentido": "norte_a_sur", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 50, "tipo": "mas_de" },
+            "final": { "descripcion": "1 m detrás del vehículo B", "metros": 1 },
+            "huella": { "tipo": "frenado", "metros": 10, "antes_del_impacto": true }
+          },
+          {
+            "letra": "B", "clase": "hatchback", "marca": "Chevrolet", "modelo": "Beat",
+            "sentido": "norte_a_sur", "maniobra": "detenido",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "3 m de donde estaba detenido, pegado al vehículo C", "metros": 3 },
+            "huella": null
+          },
+          {
+            "letra": "C", "clase": "suv", "marca": "Honda", "modelo": "CR-V",
+            "sentido": "norte_a_sur", "maniobra": "detenido",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "2 m de donde estaba detenido", "metros": 2 },
+            "huella": null
+          }
+        ],
+        "personas": [],
+        "objetos": [],
+        "impactos": 2,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-07-volcadura-calzada-pacifico",
+      "cubre": ["volcadura", "salida_curva", "pendiente", "a_unos_x", "huellas_derrape", "final_relativo"],
+      "texto": "El hecho ocurrió en la Calzada al Pacífico, en la bajada de San Buenaventura, en Toluca, Estado de México, aproximadamente a las 15:30 horas. El vehículo A, camioneta marca Nissan, tipo NP300, modelo 2017, sin carga, circulaba en bajada de sur a norte, a unos 80 km/h según su conductor. Al entrar a una curva hacia la derecha, el vehículo se abrió hacia el lado izquierdo, invadió el carril contrario, que en ese momento estaba libre, y salió del camino por el costado exterior de la curva. Al salir, las llantas del lado derecho golpearon la guarnición y la camioneta volcó: dio una vuelta y media sobre su eje longitudinal y quedó sobre su toldo, a 9 m de la orilla del camino, sobre el terreno. En el pavimento se observaron huellas de derrape de 25 m antes de salir del camino. El vehículo A presenta hundimiento del toldo, parabrisas estallado, daños en ambos costados y en los rines del lado derecho. Pavimento seco, día nublado.",
+      "esperado": {
+        "ciudad": "Toluca",
+        "calles": ["Calzada al Pacífico"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "pickup", "marca": "Nissan", "modelo": "NP300",
+            "sentido": "sur_a_norte", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 80, "tipo": "aprox" },
+            "final": { "descripcion": "sobre su toldo, a 9 m de la orilla del camino", "metros": 9 },
+            "huella": { "tipo": "derrape", "metros": 25, "antes_del_impacto": true }
+          }
+        ],
+        "personas": [],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": true, "puente": false, "noche": false, "lluvia": false, "volcadura": true
+      }
+    },
+    {
+      "id": "aud-08-atropello-tollocan-carranza",
+      "cubre": ["atropello_auto", "mas_de_x", "huellas_frenado", "noche", "final_relativo"],
+      "texto": "El hecho se ubica sobre Paseo Tollocan, a la altura de la calle Jesús Carranza, colonia Moderna de la Cruz, en Toluca, Estado de México, aproximadamente a las 23:30 horas. El vehículo A, marca Toyota, tipo Corolla, modelo 2021, circulaba por los carriles centrales de Paseo Tollocan con dirección a Toluca, a más de 80 km/h según las cámaras de la zona. Un peatón, adulto, cruzaba los carriles centrales de norte a sur, por debajo del puente peatonal y fuera de él. Al percatarse de su presencia, el conductor del vehículo A frenó, dejando huellas de frenado de 25 m antes del impacto, y alcanzó al peatón con su parte frontal derecha. El peatón quedó tendido sobre el carril izquierdo, a 15 m del punto de contacto. El vehículo A quedó detenido 11 m después del punto de contacto, sobre el carril central. Presenta hundimiento en el cofre del lado derecho y el parabrisas estrellado en la misma zona. Pavimento seco; la vía cuenta con alumbrado público, que funcionaba.",
+      "esperado": {
+        "ciudad": "Toluca",
+        "calles": ["Paseo Tollocan", "calle Jesús Carranza"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "sedan", "marca": "Toyota", "modelo": "Corolla",
+            "sentido": "con dirección a Toluca", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 80, "tipo": "mas_de" },
+            "final": { "descripcion": "11 m después del punto de contacto", "metros": 11 },
+            "huella": { "tipo": "frenado", "metros": 25, "antes_del_impacto": true }
+          }
+        ],
+        "personas": [ { "rol": "peaton" } ],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": true, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-09-ciclista-tecnologico",
+      "cubre": ["ciclista", "vuelta_derecha", "sin_velocidad", "final_relativo"],
+      "texto": "El hecho se ubica en el cruce de Avenida Tecnológico y Avenida Estado de México, colonia San Salvador Tizatlalli, en Metepec, Estado de México, aproximadamente a las 11:00 horas. El vehículo A, marca Volkswagen, tipo Gol, modelo 2019, circulaba sobre Avenida Tecnológico de norte a sur, por el carril derecho, y dio vuelta a la derecha para incorporarse a Avenida Estado de México con dirección al poniente. Un ciclista, adulto, circulaba en el mismo sentido por la orilla derecha de Avenida Tecnológico y continuaba de frente. Al dar la vuelta, el vehículo A impactó con su costado delantero derecho la bicicleta. El ciclista quedó tendido a 4 m del punto de contacto, sobre Avenida Estado de México, y la bicicleta a 1 m de él. El vehículo A quedó detenido 6 m después del paso peatonal de Avenida Estado de México. No se observaron huellas de frenado. El vehículo A presenta un rayón y un abollamiento leve en la salpicadera delantera derecha; la bicicleta, la rueda delantera doblada. Pavimento seco, día soleado.",
+      "esperado": {
+        "ciudad": "Metepec",
+        "calles": ["Avenida Tecnológico", "Avenida Estado de México"],
+        "cruce": true,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "hatchback", "marca": "Volkswagen", "modelo": "Gol",
+            "sentido": "norte_a_sur", "maniobra": "vira_derecha",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "6 m después del paso peatonal", "metros": 6 },
+            "huella": null
+          }
+        ],
+        "personas": [ { "rol": "ciclista" } ],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-10-reversa-estacionado-metepec",
+      "cubre": ["reversa", "estacionado", "sin_velocidad", "final_relativo"],
+      "texto": "El hecho se ubica sobre Avenida Benito Juárez, en el Barrio de Santiaguito, en Metepec, Estado de México, aproximadamente a las 13:40 horas. El vehículo B, marca Chevrolet, tipo Spark, modelo 2018, se encontraba estacionado en cordón junto a la guarnición, con el frente hacia el centro de Metepec, sin ocupantes. El vehículo A, camioneta marca Honda, tipo CR-V, modelo 2021, estaba estacionado en batería del lado contrario de la avenida y salió en reversa hacia el arroyo vehicular, en dirección perpendicular a la avenida. Al retroceder, el conductor no se detuvo a tiempo y el vehículo A impactó con su parte posterior el costado izquierdo del vehículo B, a la altura de la puerta trasera. El vehículo B fue desplazado y quedó a 1 m de donde estaba estacionado, con la llanta derecha sobre la guarnición. El vehículo A quedó detenido a 1 m del vehículo B. El vehículo A presenta daños en la defensa trasera y en la puerta de la cajuela; el vehículo B, hundimiento en las puertas del costado izquierdo. Pavimento seco, día soleado.",
+      "esperado": {
+        "ciudad": "Metepec",
+        "calles": ["Avenida Benito Juárez"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "suv", "marca": "Honda", "modelo": "CR-V",
+            "sentido": "en reversa, perpendicular a la avenida", "maniobra": "reversa",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "1 m del vehículo B", "metros": 1 },
+            "huella": null
+          },
+          {
+            "letra": "B", "clase": "hatchback", "marca": "Chevrolet", "modelo": "Spark",
+            "sentido": "con el frente hacia el centro de Metepec", "maniobra": "estacionado",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "1 m de donde estaba estacionado", "metros": 1 },
+            "huella": null
+          }
+        ],
+        "personas": [],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-11-barrera-puente-tollocan-tecnologico",
+      "cubre": ["puente", "barrera", "pendiente", "mas_de_x", "huellas_derrape", "noche", "final_relativo"],
+      "texto": "El hecho se ubica en el paso a desnivel de Paseo Tollocan en su cruce con Avenida Tecnológico, colonia San Jerónimo Chicahualco, en Metepec, Estado de México, aproximadamente a las 2:10 horas. El vehículo A, marca Volkswagen, tipo Jetta, modelo 2016, circulaba sobre el puente con dirección a Toluca, por el carril izquierdo, a más de 100 km/h, según las cámaras de la vialidad. En la bajada del puente el conductor perdió el control: el vehículo giró en sentido contrario a las manecillas del reloj, derrapó y se impactó con su costado izquierdo contra la barrera metálica de contención del lado izquierdo. En el pavimento se observaron huellas de derrape de 30 m antes del impacto. Después del impacto el vehículo siguió deslizándose junto a la barrera y quedó detenido a 15 m del punto de impacto, sobre el carril izquierdo, con el frente hacia el sur. Presenta deformación severa en el costado izquierdo, en las puertas y el poste central, y daños en la salpicadera trasera izquierda. La barrera quedó deformada en un tramo de unos 8 m. Pavimento seco; la vía cuenta con alumbrado público.",
+      "esperado": {
+        "ciudad": "Metepec",
+        "calles": ["Paseo Tollocan", "Avenida Tecnológico"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "sedan", "marca": "Volkswagen", "modelo": "Jetta",
+            "sentido": "con dirección a Toluca", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 100, "tipo": "mas_de" },
+            "final": { "descripcion": "15 m del punto de impacto", "metros": 15 },
+            "huella": { "tipo": "derrape", "metros": 30, "antes_del_impacto": true }
+          }
+        ],
+        "personas": [],
+        "objetos": [ { "tipo": "barrera" } ],
+        "impactos": 1,
+        "pendiente": true, "puente": true, "noche": true, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-12-atropello-autobus-tollocan",
+      "cubre": ["atropello_autobus", "a_unos_x", "huellas_frenado", "final_relativo"],
+      "texto": "El hecho se ubica sobre Paseo Tollocan, a la altura de la colonia Universidad, en Toluca, Estado de México, aproximadamente a las 9:20 horas. El vehículo A, autobús de pasajeros marca Volvo, modelo 2015, de servicio urbano, circulaba por los carriles laterales de Paseo Tollocan de poniente a oriente, por el carril derecho, a unos 40 km/h según su conductor. Un peatón, adulto, cruzaba los carriles laterales de sur a norte, a unos 20 m del paso peatonal más cercano. El conductor del autobús frenó, dejando huellas de frenado de 6 m antes del impacto, y alcanzó al peatón con la esquina frontal derecha. El peatón quedó tendido sobre el carril derecho, a 5 m del punto de contacto. El autobús quedó detenido 2 m después del punto de contacto. Presenta el parabrisas estrellado en su parte inferior derecha y un abollamiento en la defensa del mismo lado. Pavimento seco, día despejado.",
+      "esperado": {
+        "ciudad": "Toluca",
+        "calles": ["Paseo Tollocan"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "autobus", "marca": "Volvo", "modelo": "autobús de pasajeros",
+            "sentido": "poniente_a_oriente", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 40, "tipo": "aprox" },
+            "final": { "descripcion": "2 m después del punto de contacto", "metros": 2 },
+            "huella": { "tipo": "frenado", "metros": 6, "antes_del_impacto": true }
+          }
+        ],
+        "personas": [ { "rol": "peaton" } ],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-13-moto-vuelta-izquierda-tecnologico",
+      "cubre": ["motocicleta", "lateral_cruce", "vuelta_izquierda", "mas_de_x", "huellas_frenado", "final_relativo"],
+      "texto": "El hecho se ubica en el cruce de Avenida Tecnológico y Avenida Estado de México, colonia San Salvador Tizatlalli, en Metepec, Estado de México, aproximadamente a las 17:00 horas. El vehículo A, motocicleta marca Honda, tipo CB190R, modelo 2022, circulaba sobre Avenida Tecnológico de norte a sur, por el carril izquierdo, a más de 70 km/h según los testigos. El vehículo B, marca Nissan, tipo Versa, modelo 2019, circulaba sobre la misma avenida de sur a norte y dio vuelta a la izquierda para incorporarse a Avenida Estado de México con dirección al poniente, cruzando la trayectoria de la motocicleta. El conductor de la motocicleta frenó, dejando huellas de frenado de 14 m antes del impacto, y se impactó con su parte frontal contra el costado derecho del vehículo B, a la altura de la puerta delantera. La motocicleta quedó caída a 8 m del punto de contacto, hacia el suroeste del cruce. El vehículo B fue desplazado y quedó a 2 m del punto de contacto. El vehículo B presenta hundimiento en las puertas del costado derecho; la motocicleta, la horquilla delantera doblada y el faro destruido. Pavimento seco, día nublado.",
+      "esperado": {
+        "ciudad": "Metepec",
+        "calles": ["Avenida Tecnológico", "Avenida Estado de México"],
+        "cruce": true,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "motocicleta", "marca": "Honda", "modelo": "CB190R",
+            "sentido": "norte_a_sur", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 70, "tipo": "mas_de" },
+            "final": { "descripcion": "8 m del punto de contacto", "metros": 8 },
+            "huella": { "tipo": "frenado", "metros": 14, "antes_del_impacto": true }
+          },
+          {
+            "letra": "B", "clase": "sedan", "marca": "Nissan", "modelo": "Versa",
+            "sentido": "sur_a_norte", "maniobra": "vira_izquierda",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "2 m del punto de contacto", "metros": 2 },
+            "huella": null
+          }
+        ],
+        "personas": [],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-14-barda-morelos",
+      "cubre": ["barda", "a_unos_x", "huellas_frenado", "noche", "final_relativo"],
+      "texto": "El hecho se ubica sobre Avenida Morelos, en la colonia Centro, en Toluca, Estado de México, aproximadamente a las 0:40 horas. El alumbrado público de ese tramo no funcionaba. El vehículo A, marca Volkswagen, tipo Vento, modelo 2018, circulaba de poniente a oriente por el carril derecho, a unos 50 km/h según su conductor. De acuerdo con su declaración, un vehículo salió de una cochera del lado derecho; el conductor del vehículo A frenó, dejando huellas de frenado de 7 m antes del impacto, giró hacia la derecha, subió la banqueta y se impactó con su parte frontal contra la barda perimetral de un predio, de block y concreto. El vehículo A quedó detenido contra la barda, con el frente hacia el sureste y la parte posterior a 1 m de la guarnición. El vehículo que salía de la cochera no tuvo contacto y no fue identificado. El vehículo A presenta hundimiento frontal, acentuado hacia el lado derecho, con la defensa desprendida. La barda presenta fractura en un tramo de unos 2 m. Pavimento seco.",
+      "esperado": {
+        "ciudad": "Toluca",
+        "calles": ["Avenida Morelos"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "sedan", "marca": "Volkswagen", "modelo": "Vento",
+            "sentido": "poniente_a_oriente", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 50, "tipo": "aprox" },
+            "final": { "descripcion": "contra la barda, con la parte posterior a 1 m de la guarnición", "metros": 1 },
+            "huella": { "tipo": "frenado", "metros": 7, "antes_del_impacto": true }
+          }
+        ],
+        "personas": [],
+        "objetos": [ { "tipo": "barda" } ],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": true, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-15-carambola4-tollocan-lluvia",
+      "cubre": ["carambola_4", "alcance", "a_unos_x", "huellas_frenado", "lluvia", "noche", "final_relativo"],
+      "texto": "El hecho se ubica sobre Paseo Tollocan, a la altura de Avenida Pino Suárez, colonia Vértice, en Toluca, Estado de México, aproximadamente a las 19:30 horas, ya de noche y con lluvia intensa. Por el carril central, con dirección a la Ciudad de México, se encontraban detenidos por el semáforo, en este orden, el vehículo D, marca Kia, tipo Rio, modelo 2022; el vehículo C, marca Nissan, tipo March, modelo 2018; y el vehículo B, marca Volkswagen, tipo Vento, modelo 2020. El vehículo A, camioneta marca Ford, tipo Ranger, modelo 2019, circulaba por el mismo carril a unos 60 km/h, según su conductor. Al ver a los vehículos detenidos frenó, dejando huellas de frenado de 15 m antes del impacto, y se impactó con su parte frontal contra la parte posterior del vehículo B; este fue proyectado contra el vehículo C, y el vehículo C contra el vehículo D. Posiciones finales: el vehículo D quedó a 2 m de donde estaba detenido; el vehículo C, pegado a la parte posterior del vehículo D; el vehículo B, a 1 m detrás del vehículo C; y el vehículo A, a 2 m detrás del vehículo B. El vehículo A presenta hundimiento frontal; los vehículos B y C, daños en la parte frontal y en la posterior; el vehículo D, en la parte posterior. Pavimento mojado; la vía cuenta con alumbrado público.",
+      "esperado": {
+        "ciudad": "Toluca",
+        "calles": ["Paseo Tollocan", "Avenida Pino Suárez"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "pickup", "marca": "Ford", "modelo": "Ranger",
+            "sentido": "con dirección a la Ciudad de México", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 60, "tipo": "aprox" },
+            "final": { "descripcion": "2 m detrás del vehículo B", "metros": 2 },
+            "huella": { "tipo": "frenado", "metros": 15, "antes_del_impacto": true }
+          },
+          {
+            "letra": "B", "clase": "sedan", "marca": "Volkswagen", "modelo": "Vento",
+            "sentido": "con dirección a la Ciudad de México", "maniobra": "detenido",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "1 m detrás del vehículo C", "metros": 1 },
+            "huella": null
+          },
+          {
+            "letra": "C", "clase": "hatchback", "marca": "Nissan", "modelo": "March",
+            "sentido": "con dirección a la Ciudad de México", "maniobra": "detenido",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "pegado a la parte posterior del vehículo D", "metros": 0 },
+            "huella": null
+          },
+          {
+            "letra": "D", "clase": "sedan", "marca": "Kia", "modelo": "Rio",
+            "sentido": "con dirección a la Ciudad de México", "maniobra": "detenido",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "2 m de donde estaba detenido", "metros": 2 },
+            "huella": null
+          }
+        ],
+        "personas": [],
+        "objetos": [],
+        "impactos": 3,
+        "pendiente": false, "puente": false, "noche": true, "lluvia": true, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-16-atropello-camion-pinosuarez",
+      "cubre": ["atropello_camion", "vuelta_derecha", "sin_velocidad", "noche", "final_relativo"],
+      "texto": "El hecho se ubica en el cruce de Paseo Tollocan y Avenida Pino Suárez, colonia Vértice, en Toluca, Estado de México, aproximadamente a las 20:15 horas. El vehículo A, camión de carga marca Isuzu, tipo ELF 400, modelo 2020, con caja seca, circulaba por los carriles laterales de Paseo Tollocan de oriente a poniente y dio vuelta a la derecha para incorporarse a Avenida Pino Suárez con dirección al norte. Un peatón, adulto, cruzaba Avenida Pino Suárez de poniente a oriente sobre el paso peatonal. Al dar la vuelta, el camión impactó al peatón con su parte frontal derecha. El peatón quedó tendido sobre el arroyo vehicular, a 2 m del paso peatonal. El camión quedó detenido 8 m después del paso peatonal, sobre el carril derecho de Avenida Pino Suárez. No se observaron huellas de frenado. El camión presenta un abollamiento en la defensa delantera derecha y el espejo derecho desprendido. Pavimento seco; el cruce cuenta con alumbrado público y semáforos.",
+      "esperado": {
+        "ciudad": "Toluca",
+        "calles": ["Paseo Tollocan", "Avenida Pino Suárez"],
+        "cruce": true,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "camion", "marca": "Isuzu", "modelo": "ELF 400",
+            "sentido": "oriente_a_poniente", "maniobra": "vira_derecha",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "8 m después del paso peatonal", "metros": 8 },
+            "huella": null
+          }
+        ],
+        "personas": [ { "rol": "peaton" } ],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": true, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-17-moto-estacionado-estado-de-mexico",
+      "cubre": ["motocicleta", "estacionado", "alcance", "mas_de_x", "huellas_frenado", "final_relativo"],
+      "texto": "El hecho se ubica sobre Avenida Estado de México, colonia San Salvador Tizatlalli, en Metepec, Estado de México, aproximadamente a las 14:00 horas. El vehículo B, marca Nissan, tipo March, modelo 2017, se encontraba estacionado junto a la guarnición del lado derecho, con el frente hacia el poniente, sin ocupantes. El vehículo A, motocicleta marca Italika, tipo FT150, modelo 2023, circulaba de oriente a poniente por el carril derecho, a más de 60 km/h según los testigos. Al aproximarse al vehículo B, el motociclista frenó, dejando huellas de frenado de 4 m antes del impacto, y se impactó con su parte frontal contra la parte posterior del vehículo B. El vehículo B quedó a 1 m de donde estaba estacionado. La motocicleta quedó caída a 2 m a la izquierda del vehículo B, sobre el carril. El vehículo B presenta hundimiento en la tapa de la cajuela y la defensa trasera; la motocicleta, daños en la horquilla, el faro y el tanque. Pavimento seco, día soleado.",
+      "esperado": {
+        "ciudad": "Metepec",
+        "calles": ["Avenida Estado de México"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "motocicleta", "marca": "Italika", "modelo": "FT150",
+            "sentido": "oriente_a_poniente", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 60, "tipo": "mas_de" },
+            "final": { "descripcion": "2 m a la izquierda del vehículo B", "metros": 2 },
+            "huella": { "tipo": "frenado", "metros": 4, "antes_del_impacto": true }
+          },
+          {
+            "letra": "B", "clase": "hatchback", "marca": "Nissan", "modelo": "March",
+            "sentido": "oriente_a_poniente", "maniobra": "estacionado",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "1 m de donde estaba estacionado", "metros": 1 },
+            "huella": null
+          }
+        ],
+        "personas": [],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-18-frontal-matlatzincas-pendiente",
+      "cubre": ["frontal", "pendiente", "a_unos_x", "mas_de_x", "huellas_frenado", "noche", "final_relativo"],
+      "texto": "El hecho se ubica sobre Paseo de los Matlatzincas, a la altura de la colonia Ciprés, en Toluca, Estado de México, aproximadamente a las 22:00 horas. En ese tramo la vía tiene un carril por sentido, sin camellón, y no cuenta con alumbrado público. El vehículo A, marca Kia, tipo Rio, modelo 2020, circulaba en subida de norte a sur, a unos 40 km/h según su conductor. El vehículo B, camioneta marca Toyota, tipo Hilux, modelo 2017, bajaba en sentido contrario, de sur a norte, a más de 60 km/h según los testigos. En una curva, el vehículo B se abrió e invadió el carril del vehículo A. El conductor del vehículo B frenó, dejando huellas de frenado de 9 m antes del impacto. Ambos se impactaron con sus partes frontales, acentuadas hacia el lado izquierdo. El vehículo A fue empujado hacia atrás y quedó a 2 m del punto de contacto, cuesta abajo; el vehículo B quedó a 1 m del punto de contacto, atravesado sobre el carril del vehículo A. El vehículo A presenta hundimiento frontal severo del lado izquierdo; el vehículo B, daños en la defensa, el faro y la salpicadera izquierda. Pavimento seco.",
+      "esperado": {
+        "ciudad": "Toluca",
+        "calles": ["Paseo de los Matlatzincas"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "sedan", "marca": "Kia", "modelo": "Rio",
+            "sentido": "norte_a_sur", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 40, "tipo": "aprox" },
+            "final": { "descripcion": "2 m del punto de contacto, cuesta abajo", "metros": 2 },
+            "huella": null
+          },
+          {
+            "letra": "B", "clase": "pickup", "marca": "Toyota", "modelo": "Hilux",
+            "sentido": "sur_a_norte", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 60, "tipo": "mas_de" },
+            "final": { "descripcion": "1 m del punto de contacto", "metros": 1 },
+            "huella": { "tipo": "frenado", "metros": 9, "antes_del_impacto": true }
+          }
+        ],
+        "personas": [],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": true, "puente": false, "noche": true, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-19-glorieta-insurgentes",
+      "cubre": ["glorieta", "sin_velocidad", "final_relativo"],
+      "texto": "El hecho se ubica en la Glorieta de Insurgentes, en el punto donde se incorpora la Avenida Chapultepec, colonia Roma Norte, alcaldía Cuauhtémoc, Ciudad de México, aproximadamente a las 10:30 horas. El vehículo B, marca Volkswagen, tipo Vento, modelo 2019, circulaba dentro de la glorieta por el carril exterior, por su costado oriente, de sur a norte. El vehículo A, marca Chevrolet, tipo Aveo, modelo 2018, circulaba sobre Avenida Chapultepec de oriente a poniente e ingresó a la glorieta. Al incorporarse, el vehículo A impactó con su parte frontal el costado derecho del vehículo B, a la altura de la puerta trasera. El vehículo B fue desplazado hacia el carril interior y quedó a 4 m del punto de contacto. El vehículo A quedó detenido a 1 m del punto de contacto, en la entrada de la glorieta. No se observaron huellas de frenado. El vehículo A presenta daños en la defensa delantera y el cofre; el vehículo B, hundimiento en la puerta trasera derecha y la salpicadera trasera. Pavimento seco, día nublado.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Glorieta de Insurgentes", "Avenida Chapultepec"],
+        "cruce": true,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "sedan", "marca": "Chevrolet", "modelo": "Aveo",
+            "sentido": "oriente_a_poniente", "maniobra": "glorieta",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "1 m del punto de contacto", "metros": 1 },
+            "huella": null
+          },
+          {
+            "letra": "B", "clase": "sedan", "marca": "Volkswagen", "modelo": "Vento",
+            "sentido": "sur_a_norte", "maniobra": "glorieta",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "4 m del punto de contacto", "metros": 4 },
+            "huella": null
+          }
+        ],
+        "personas": [],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-20-glorieta-cibeles-moto",
+      "cubre": ["glorieta", "motocicleta", "a_unos_x", "noche", "final_relativo"],
+      "texto": "El hecho se ubica en la Glorieta de las Cibeles, en la incorporación de la calle Durango, colonia Roma Norte, alcaldía Cuauhtémoc, Ciudad de México, aproximadamente a las 22:50 horas. El vehículo B, motocicleta marca Italika, tipo FT150, modelo 2021, circulaba dentro de la glorieta por su costado poniente, de norte a sur. El vehículo A, marca Volkswagen, tipo Jetta, modelo 2020, circulaba sobre la calle Durango de poniente a oriente, a unos 30 km/h según su conductor, e ingresó a la glorieta sin detenerse. El vehículo A impactó con su parte frontal el costado derecho de la motocicleta. La motocicleta quedó caída a 5 m del punto de contacto, junto a la guarnición de la fuente. El vehículo A quedó detenido 2 m después del punto de contacto. No se observaron huellas de frenado. El vehículo A presenta un abollamiento en la defensa delantera y el cofre; la motocicleta, daños en el costado derecho, el escape y el manubrio. Pavimento seco; la glorieta cuenta con alumbrado público.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Glorieta de las Cibeles", "calle Durango"],
+        "cruce": true,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "sedan", "marca": "Volkswagen", "modelo": "Jetta",
+            "sentido": "poniente_a_oriente", "maniobra": "glorieta",
+            "velocidad_narrada": { "kmh": 30, "tipo": "aprox" },
+            "final": { "descripcion": "2 m después del punto de contacto", "metros": 2 },
+            "huella": null
+          },
+          {
+            "letra": "B", "clase": "motocicleta", "marca": "Italika", "modelo": "FT150",
+            "sentido": "norte_a_sur", "maniobra": "glorieta",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "5 m del punto de contacto", "metros": 5 },
+            "huella": null
+          }
+        ],
+        "personas": [],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": true, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-21-glorieta-angel-ciclista",
+      "cubre": ["glorieta", "ciclista", "vuelta_derecha", "a_unos_x", "lluvia", "final_relativo"],
+      "texto": "El hecho se ubica en la glorieta del Ángel de la Independencia, sobre Paseo de la Reforma, en la salida hacia la calle Florencia, colonia Juárez, alcaldía Cuauhtémoc, Ciudad de México, aproximadamente a las 8:15 horas, con lluvia ligera. El vehículo A, camioneta marca Mercedes-Benz, tipo Sprinter, modelo 2019, circulaba sobre Paseo de la Reforma con dirección al Centro Histórico, ingresó a la glorieta y dio vuelta a la derecha para salir hacia la calle Florencia, a unos 20 km/h según su conductor. Un ciclista, adulto, circulaba en el mismo sentido por la orilla derecha de la glorieta y seguía de frente sobre Paseo de la Reforma. Al dar la vuelta, la camioneta impactó la bicicleta con su costado delantero derecho. El ciclista quedó tendido a 3 m del punto de contacto. La camioneta quedó detenida 4 m después del punto de contacto, ya sobre la calle Florencia. Por el pavimento mojado no se apreciaron huellas. La camioneta presenta rayones en la salpicadera delantera derecha; la bicicleta, el cuadro doblado. Pavimento mojado, día nublado.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Paseo de la Reforma", "calle Florencia"],
+        "cruce": true,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "van", "marca": "Mercedes-Benz", "modelo": "Sprinter",
+            "sentido": "con dirección al Centro Histórico", "maniobra": "vira_derecha",
+            "velocidad_narrada": { "kmh": 20, "tipo": "aprox" },
+            "final": { "descripcion": "4 m después del punto de contacto", "metros": 4 },
+            "huella": null
+          }
+        ],
+        "personas": [ { "rol": "ciclista" } ],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": true, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-22-lateral-insurgentes-mixcoac",
+      "cubre": ["lateral_cruce", "mas_de_x", "huellas_frenado", "final_relativo"],
+      "texto": "El hecho se ubica en el cruce de Avenida de los Insurgentes Sur y Avenida Río Mixcoac, colonia Insurgentes Mixcoac, alcaldía Benito Juárez, Ciudad de México, aproximadamente a las 13:00 horas. El vehículo B, marca Chevrolet, tipo Spark, modelo 2017, circulaba sobre Avenida de los Insurgentes Sur de sur a norte, por el carril central. El vehículo A, marca Kia, tipo Rio, modelo 2021, circulaba sobre Avenida Río Mixcoac de poniente a oriente, a más de 50 km/h según los testigos, y entró al cruce. Al ver al vehículo B, el conductor del vehículo A frenó, dejando huellas de frenado de 11 m antes del impacto, y se impactó con su parte frontal contra el costado izquierdo del vehículo B, a la altura del poste central. El vehículo B fue desplazado hacia el noreste y quedó a 4 m del punto de contacto. El vehículo A quedó a 1 m del punto de contacto. El vehículo A presenta hundimiento frontal; el vehículo B, deformación en ambas puertas del costado izquierdo. Pavimento seco; el cruce cuenta con semáforos.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Avenida de los Insurgentes Sur", "Avenida Río Mixcoac"],
+        "cruce": true,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "sedan", "marca": "Kia", "modelo": "Rio",
+            "sentido": "poniente_a_oriente", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 50, "tipo": "mas_de" },
+            "final": { "descripcion": "1 m del punto de contacto", "metros": 1 },
+            "huella": { "tipo": "frenado", "metros": 11, "antes_del_impacto": true }
+          },
+          {
+            "letra": "B", "clase": "hatchback", "marca": "Chevrolet", "modelo": "Spark",
+            "sentido": "sur_a_norte", "maniobra": "recto",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "4 m del punto de contacto, hacia el noreste", "metros": 4 },
+            "huella": null
+          }
+        ],
+        "personas": [],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-23-atropello-autobus-insurgentes-quevedo",
+      "cubre": ["atropello_autobus", "sin_velocidad", "lluvia", "final_relativo"],
+      "texto": "El hecho se ubica sobre Avenida de los Insurgentes Sur, unos 15 m al norte de su cruce con Avenida Miguel Ángel de Quevedo, colonia Chimalistac, alcaldía Álvaro Obregón, Ciudad de México, aproximadamente a las 13:30 horas, con lluvia. El vehículo A, autobús de pasajeros marca Volvo, modelo 2018, circulaba sobre Avenida de los Insurgentes Sur de norte a sur, por el carril derecho. Un peatón, adulto, cruzaba la avenida de oriente a poniente, fuera del paso peatonal. El autobús impactó al peatón con su esquina frontal izquierda. El peatón quedó tendido sobre el carril, a 4 m del punto de contacto. El autobús quedó detenido 7 m después del punto de contacto, antes del paso peatonal del cruce. Por el pavimento mojado no se apreciaron huellas de frenado. El autobús presenta el parabrisas estrellado en su parte inferior izquierda. Pavimento mojado, día nublado.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Avenida de los Insurgentes Sur", "Avenida Miguel Ángel de Quevedo"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "autobus", "marca": "Volvo", "modelo": "autobús de pasajeros",
+            "sentido": "norte_a_sur", "maniobra": "recto",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "7 m después del punto de contacto", "metros": 7 },
+            "huella": null
+          }
+        ],
+        "personas": [ { "rol": "peaton" } ],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": true, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-24-barrera-periferico-sur",
+      "cubre": ["barrera", "a_unos_x", "huellas_derrape", "lluvia", "final_relativo"],
+      "texto": "El hecho se ubica sobre el Anillo Periférico Sur, a la altura de la colonia Jardines del Pedregal, alcaldía Álvaro Obregón, Ciudad de México, aproximadamente a las 17:30 horas, con lluvia. El vehículo A, camioneta marca Honda, tipo CR-V, modelo 2020, circulaba por el carril izquierdo de los carriles centrales con dirección a Xochimilco, a unos 80 km/h según su conductor. Al frenar por la reducción del tránsito, el vehículo perdió adherencia sobre el pavimento mojado, derrapó hacia la izquierda y se impactó con su parte frontal izquierda contra la barrera metálica de contención del camellón central. En el pavimento se observaron huellas de derrape de 20 m antes del impacto. Después del impacto, el vehículo rebotó y quedó detenido a 6 m del punto de impacto, atravesado sobre el carril izquierdo, con el frente hacia el norte. Presenta hundimiento en la parte frontal izquierda, con el faro y la salpicadera izquierda destruidos. La barrera quedó deformada en un tramo de unos 4 m. Pavimento mojado, día nublado.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Anillo Periférico Sur"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "suv", "marca": "Honda", "modelo": "CR-V",
+            "sentido": "con dirección a Xochimilco", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 80, "tipo": "aprox" },
+            "final": { "descripcion": "6 m del punto de impacto", "metros": 6 },
+            "huella": { "tipo": "derrape", "metros": 20, "antes_del_impacto": true }
+          }
+        ],
+        "personas": [],
+        "objetos": [ { "tipo": "barrera" } ],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": true, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-25-moto-muro-viaducto",
+      "cubre": ["motocicleta", "mas_de_x", "huellas_derrape", "noche", "lluvia", "final_relativo"],
+      "texto": "El hecho se ubica sobre el Viaducto Miguel Alemán, a la altura de la colonia Piedad Narvarte, alcaldía Benito Juárez, Ciudad de México, aproximadamente a la 1:30 horas, con llovizna. El vehículo A, motocicleta marca Honda, tipo CB190R, modelo 2021, circulaba de poniente a oriente por el carril izquierdo, a más de 80 km/h según las cámaras de la vialidad. El motociclista perdió el control sobre el pavimento mojado; la motocicleta se inclinó hacia la izquierda, derrapó sobre su costado izquierdo y se impactó contra el muro de concreto del camellón central. En el pavimento se observaron huellas de derrape de 16 m antes del impacto, con marcas de arrastre metálico. La motocicleta rebotó y quedó a 10 m del punto de impacto, sobre el carril central. Presenta daños en el costado izquierdo, el manubrio, el escape y el carenado. Pavimento mojado; la vía cuenta con alumbrado público.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Viaducto Miguel Alemán"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "motocicleta", "marca": "Honda", "modelo": "CB190R",
+            "sentido": "poniente_a_oriente", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 80, "tipo": "mas_de" },
+            "final": { "descripcion": "10 m del punto de impacto", "metros": 10 },
+            "huella": { "tipo": "derrape", "metros": 16, "antes_del_impacto": true }
+          }
+        ],
+        "personas": [],
+        "objetos": [ { "tipo": "muro" } ],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": true, "lluvia": true, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-26-carambola4-tlalpan",
+      "cubre": ["carambola_4", "alcance", "sin_velocidad", "huellas_frenado", "final_relativo"],
+      "texto": "El hecho se ubica sobre la Calzada de Tlalpan, a la altura de la colonia Portales Sur, alcaldía Benito Juárez, Ciudad de México, aproximadamente a las 17:40 horas. Por el carril derecho, con dirección al Centro, se encontraban detenidos por el semáforo, en este orden, el vehículo D, marca Toyota, tipo Corolla, modelo 2018; el vehículo C, marca Volkswagen, tipo Gol, modelo 2016; y el vehículo B, marca Nissan, tipo Tsuru, modelo 2012. El vehículo A, camioneta marca Nissan, tipo NP300, modelo 2020, circulaba por el mismo carril y en el mismo sentido. Su conductor declaró que se distrajo y no vio el alto. Frenó, dejando huellas de frenado de 6 m antes del impacto, y se impactó con su parte frontal contra la parte posterior del vehículo B, que fue proyectado contra el vehículo C, y este contra el vehículo D. Posiciones finales: el vehículo D quedó a 1 m de donde estaba detenido; el vehículo C, pegado al vehículo D; el vehículo B, a 1 m detrás del vehículo C; y el vehículo A, pegado al vehículo B. El vehículo A presenta daños en la defensa y la parrilla; los vehículos B y C, en las partes frontal y posterior; el vehículo D, en la defensa trasera. Pavimento seco, día nublado.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Calzada de Tlalpan"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "pickup", "marca": "Nissan", "modelo": "NP300",
+            "sentido": "con dirección al Centro", "maniobra": "recto",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "pegado al vehículo B", "metros": 0 },
+            "huella": { "tipo": "frenado", "metros": 6, "antes_del_impacto": true }
+          },
+          {
+            "letra": "B", "clase": "sedan", "marca": "Nissan", "modelo": "Tsuru",
+            "sentido": "con dirección al Centro", "maniobra": "detenido",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "1 m detrás del vehículo C", "metros": 1 },
+            "huella": null
+          },
+          {
+            "letra": "C", "clase": "hatchback", "marca": "Volkswagen", "modelo": "Gol",
+            "sentido": "con dirección al Centro", "maniobra": "detenido",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "pegado al vehículo D", "metros": 0 },
+            "huella": null
+          },
+          {
+            "letra": "D", "clase": "sedan", "marca": "Toyota", "modelo": "Corolla",
+            "sentido": "con dirección al Centro", "maniobra": "detenido",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "1 m de donde estaba detenido", "metros": 1 },
+            "huella": null
+          }
+        ],
+        "personas": [],
+        "objetos": [],
+        "impactos": 3,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-27-frontal-quevedo",
+      "cubre": ["frontal", "a_unos_x", "huellas_frenado", "final_relativo"],
+      "texto": "El hecho se ubica sobre Avenida Miguel Ángel de Quevedo, a la altura de la colonia Romero de Terreros, alcaldía Coyoacán, Ciudad de México, aproximadamente a las 15:20 horas. En ese tramo la avenida tiene dos carriles por sentido, separados solo por la línea central. El vehículo A, marca Volkswagen, tipo Vento, modelo 2019, circulaba de poniente a oriente por el carril izquierdo, a unos 40 km/h según su conductor. El vehículo B, marca Nissan, tipo Tsuru, modelo 2014, circulaba de oriente a poniente a unos 50 km/h, según su conductor; para rebasar a un vehículo de transporte público detenido en una parada, ajeno al hecho, invadió el carril izquierdo del sentido contrario. El conductor del vehículo B frenó, dejando huellas de frenado de 8 m antes del impacto. Ambos vehículos se impactaron con sus partes frontales, acentuadas hacia el lado izquierdo. El vehículo A quedó a 2 m del punto de contacto, desplazado hacia atrás; el vehículo B, a 3 m del punto de contacto, sobre el carril del vehículo A. El vehículo A presenta hundimiento frontal izquierdo; el vehículo B, hundimiento frontal izquierdo con la rueda delantera izquierda desalineada. Pavimento seco, día soleado.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Avenida Miguel Ángel de Quevedo"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "sedan", "marca": "Volkswagen", "modelo": "Vento",
+            "sentido": "poniente_a_oriente", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 40, "tipo": "aprox" },
+            "final": { "descripcion": "2 m del punto de contacto", "metros": 2 },
+            "huella": null
+          },
+          {
+            "letra": "B", "clase": "sedan", "marca": "Nissan", "modelo": "Tsuru",
+            "sentido": "oriente_a_poniente", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 50, "tipo": "aprox" },
+            "final": { "descripcion": "3 m del punto de contacto", "metros": 3 },
+            "huella": { "tipo": "frenado", "metros": 8, "antes_del_impacto": true }
+          }
+        ],
+        "personas": [],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-28-atropello-camion-eje-central",
+      "cubre": ["atropello_camion", "a_unos_x", "huellas_frenado", "final_relativo"],
+      "texto": "El hecho se ubica en el cruce del Eje Central Lázaro Cárdenas y la Avenida Juárez, colonia Centro, alcaldía Cuauhtémoc, Ciudad de México, aproximadamente a las 12:40 horas. El vehículo A, camión de reparto marca Isuzu, tipo ELF 300, modelo 2019, circulaba sobre el Eje Central Lázaro Cárdenas de sur a norte, por el carril derecho, a unos 30 km/h según su conductor. Un peatón, adulto, cruzaba el Eje Central de poniente a oriente sobre el paso peatonal del lado sur del cruce. El conductor del camión frenó, dejando huellas de frenado de 3 m antes del impacto, y alcanzó al peatón con su parte frontal derecha. El peatón quedó tendido a 3 m del punto de contacto. El camión quedó detenido 2 m después del paso peatonal, dentro del cruce. El camión presenta un abollamiento leve en la defensa delantera derecha. Pavimento seco, día soleado; el cruce cuenta con semáforos.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Eje Central Lázaro Cárdenas", "Avenida Juárez"],
+        "cruce": true,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "camion", "marca": "Isuzu", "modelo": "ELF 300",
+            "sentido": "sur_a_norte", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 30, "tipo": "aprox" },
+            "final": { "descripcion": "2 m después del paso peatonal", "metros": 2 },
+            "huella": { "tipo": "frenado", "metros": 3, "antes_del_impacto": true }
+          }
+        ],
+        "personas": [ { "rol": "peaton" } ],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-29-vuelta-izquierda-universidad-quevedo",
+      "cubre": ["lateral_cruce", "vuelta_izquierda", "a_unos_x", "lluvia", "noche", "final_relativo"],
+      "texto": "El hecho se ubica en el cruce de Avenida Universidad y Avenida Miguel Ángel de Quevedo, colonia Oxtopulco Universidad, alcaldía Coyoacán, Ciudad de México, aproximadamente a las 20:00 horas, de noche y con lluvia. El vehículo A, marca Chevrolet, tipo Spark, modelo 2019, circulaba sobre Avenida Universidad de norte a sur y dio vuelta a la izquierda para incorporarse a Avenida Miguel Ángel de Quevedo con dirección al oriente. El vehículo B, marca Toyota, tipo Corolla, modelo 2022, circulaba sobre Avenida Universidad de sur a norte, por el carril izquierdo, a unos 50 km/h según su conductor, y siguió de frente. Dentro del cruce, el vehículo B impactó con su parte frontal el costado derecho del vehículo A. El vehículo A fue desplazado hacia el noreste y quedó a 5 m del punto de contacto. El vehículo B quedó a 2 m del punto de contacto. Por el pavimento mojado no se apreciaron huellas de frenado. El vehículo A presenta hundimiento en las puertas del costado derecho; el vehículo B, en la parte frontal. Pavimento mojado; el cruce cuenta con alumbrado público y semáforos.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Avenida Universidad", "Avenida Miguel Ángel de Quevedo"],
+        "cruce": true,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "hatchback", "marca": "Chevrolet", "modelo": "Spark",
+            "sentido": "norte_a_sur", "maniobra": "vira_izquierda",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "5 m del punto de contacto, hacia el noreste", "metros": 5 },
+            "huella": null
+          },
+          {
+            "letra": "B", "clase": "sedan", "marca": "Toyota", "modelo": "Corolla",
+            "sentido": "sur_a_norte", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 50, "tipo": "aprox" },
+            "final": { "descripcion": "2 m del punto de contacto", "metros": 2 },
+            "huella": null
+          }
+        ],
+        "personas": [],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": true, "lluvia": true, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-30-ciclista-alcance-universidad",
+      "cubre": ["ciclista", "alcance", "mas_de_x", "huellas_frenado", "noche", "final_relativo"],
+      "texto": "El hecho se ubica sobre Avenida Universidad, a la altura de la colonia Santa Cruz Atoyac, alcaldía Benito Juárez, Ciudad de México, aproximadamente a las 23:00 horas. El alumbrado público de ese tramo era insuficiente. Un ciclista, adulto, circulaba de sur a norte por la orilla del carril derecho, sin luces en la bicicleta. El vehículo A, marca Chevrolet, tipo Beat, modelo 2021, circulaba detrás de él, por el mismo carril y en el mismo sentido, a más de 60 km/h según los testigos. Al percatarse de la bicicleta, el conductor del vehículo A frenó, dejando huellas de frenado de 10 m antes del impacto, y la alcanzó con su parte frontal derecha. El ciclista quedó tendido a 12 m del punto de contacto, junto a la guarnición, y la bicicleta a 2 m detrás de él. El vehículo A quedó detenido 10 m después del punto de contacto. Presenta el cofre abollado y el parabrisas estrellado del lado derecho; la bicicleta, la rueda trasera destruida. Pavimento seco.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Avenida Universidad"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "hatchback", "marca": "Chevrolet", "modelo": "Beat",
+            "sentido": "sur_a_norte", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 60, "tipo": "mas_de" },
+            "final": { "descripcion": "10 m después del punto de contacto", "metros": 10 },
+            "huella": { "tipo": "frenado", "metros": 10, "antes_del_impacto": true }
+          }
+        ],
+        "personas": [ { "rol": "ciclista" } ],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": true, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-31-alcance-puente-churubusco",
+      "cubre": ["puente", "pendiente", "alcance", "a_unos_x", "huellas_frenado", "final_relativo"],
+      "texto": "El hecho se ubica en el paso a desnivel de Avenida Río Churubusco (Circuito Interior) en su cruce con la Calzada de Tlalpan, colonia Country Club, alcaldía Coyoacán, Ciudad de México, aproximadamente a las 8:30 horas. El vehículo B, marca Volkswagen, tipo Gol, modelo 2020, circulaba de oriente a poniente por el carril central y se encontraba detenido por el tránsito al final de la bajada del puente. El vehículo A, camioneta marca Ford, tipo Ranger, modelo 2018, circulaba detrás, en bajada, por el mismo carril, a unos 70 km/h según su conductor. Al ver al vehículo B detenido frenó, dejando huellas de frenado de 18 m antes del impacto, y se impactó con su parte frontal contra la parte posterior del vehículo B. El vehículo B fue proyectado y quedó a 5 m de donde estaba detenido; el vehículo A quedó a 2 m detrás del vehículo B. El vehículo A presenta daños en la defensa y la parrilla; el vehículo B, hundimiento severo en la parte posterior. Pavimento seco, día despejado.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Avenida Río Churubusco", "Circuito Interior", "Calzada de Tlalpan"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "pickup", "marca": "Ford", "modelo": "Ranger",
+            "sentido": "oriente_a_poniente", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 70, "tipo": "aprox" },
+            "final": { "descripcion": "2 m detrás del vehículo B", "metros": 2 },
+            "huella": { "tipo": "frenado", "metros": 18, "antes_del_impacto": true }
+          },
+          {
+            "letra": "B", "clase": "hatchback", "marca": "Volkswagen", "modelo": "Gol",
+            "sentido": "oriente_a_poniente", "maniobra": "detenido",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "5 m de donde estaba detenido", "metros": 5 },
+            "huella": null
+          }
+        ],
+        "personas": [],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": true, "puente": true, "noche": false, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-32-volcadura-viaducto",
+      "cubre": ["volcadura", "mas_de_x", "huellas_derrape", "final_relativo"],
+      "texto": "El hecho se ubica sobre el Viaducto Miguel Alemán, a la altura de la Avenida de los Insurgentes Sur, colonia Roma Sur, alcaldía Cuauhtémoc, Ciudad de México, aproximadamente a las 16:00 horas. El vehículo A, camioneta marca Toyota, tipo Hilux, modelo 2019, circulaba de oriente a poniente por el carril izquierdo, a más de 90 km/h según las cámaras de la vialidad. El vehículo B, marca Nissan, tipo Versa, modelo 2020, circulaba en el mismo sentido por el carril central y se cambió al carril izquierdo, delante del vehículo A. El vehículo A impactó con su parte frontal derecha la parte posterior izquierda del vehículo B. Después del impacto, el vehículo A derrapó hacia la izquierda, dejando huellas de derrape de 22 m después del impacto, golpeó la guarnición del camellón central y volcó; quedó sobre su costado izquierdo, a 30 m del punto de contacto. El vehículo B giró y quedó a 12 m del punto de contacto, sobre el carril central. El vehículo A presenta daños en la parte frontal derecha, el toldo y el costado izquierdo; el vehículo B, en la parte posterior izquierda. Pavimento seco, día soleado.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Viaducto Miguel Alemán", "Avenida de los Insurgentes Sur"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "pickup", "marca": "Toyota", "modelo": "Hilux",
+            "sentido": "oriente_a_poniente", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 90, "tipo": "mas_de" },
+            "final": { "descripcion": "sobre su costado izquierdo, a 30 m del punto de contacto", "metros": 30 },
+            "huella": { "tipo": "derrape", "metros": 22, "antes_del_impacto": false }
+          },
+          {
+            "letra": "B", "clase": "sedan", "marca": "Nissan", "modelo": "Versa",
+            "sentido": "oriente_a_poniente", "maniobra": "recto",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "12 m del punto de contacto", "metros": 12 },
+            "huella": null
+          }
+        ],
+        "personas": [],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": false, "volcadura": true
+      }
+    },
+    {
+      "id": "aud-33-alcance-bajada-reforma-lomas",
+      "cubre": ["pendiente", "alcance", "a_unos_x", "huellas_frenado", "final_relativo"],
+      "texto": "El hecho se ubica sobre Paseo de la Reforma, en la bajada hacia el cruce con la Avenida Prado Norte, colonia Lomas de Chapultepec, alcaldía Miguel Hidalgo, Ciudad de México, aproximadamente a las 7:10 horas. El vehículo B, marca Chevrolet, tipo Aveo, modelo 2019, circulaba de poniente a oriente por el carril derecho y se encontraba detenido por el semáforo de Avenida Prado Norte. El vehículo A, camioneta marca Mercedes-Benz, tipo Sprinter, modelo 2017, con pasajeros, bajaba detrás de él por el mismo carril, a unos 60 km/h según su conductor. Al ver al vehículo B detenido frenó, dejando huellas de frenado de 14 m antes del impacto, y se impactó con su parte frontal contra la parte posterior del vehículo B. El vehículo B quedó a 4 m de donde estaba detenido, antes del paso peatonal; el vehículo A quedó a 1 m detrás del vehículo B. El vehículo A presenta hundimiento en la parte frontal; el vehículo B, hundimiento severo en la parte posterior, con la tapa de la cajuela deformada. Pavimento seco, día nublado.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Paseo de la Reforma", "Avenida Prado Norte"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "van", "marca": "Mercedes-Benz", "modelo": "Sprinter",
+            "sentido": "poniente_a_oriente", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 60, "tipo": "aprox" },
+            "final": { "descripcion": "1 m detrás del vehículo B", "metros": 1 },
+            "huella": { "tipo": "frenado", "metros": 14, "antes_del_impacto": true }
+          },
+          {
+            "letra": "B", "clase": "sedan", "marca": "Chevrolet", "modelo": "Aveo",
+            "sentido": "poniente_a_oriente", "maniobra": "detenido",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "4 m de donde estaba detenido", "metros": 4 },
+            "huella": null
+          }
+        ],
+        "personas": [],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": true, "puente": false, "noche": false, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-34-barda-curva-vasco-de-quiroga",
+      "cubre": ["barda", "salida_curva", "pendiente", "mas_de_x", "huellas_derrape", "noche", "final_relativo"],
+      "texto": "El hecho se ubica sobre Avenida Vasco de Quiroga, en la colonia Santa Fe, alcaldía Álvaro Obregón, Ciudad de México, aproximadamente a las 0:20 horas. En ese tramo la vía no cuenta con alumbrado público. El vehículo A, marca Nissan, tipo Versa, modelo 2018, circulaba en bajada de poniente a oriente, a más de 60 km/h según los testigos. Al entrar a una curva hacia la izquierda, el conductor perdió el control: el vehículo se abrió hacia el lado derecho, salió del camino por el costado exterior de la curva, subió la banqueta y se impactó con su parte frontal derecha contra la barda de block de un predio. En el pavimento se observaron huellas de derrape de 14 m antes de salir del camino. El vehículo A quedó detenido junto a la barda, a 3 m de la orilla del camino, con el frente hacia el sureste. Presenta hundimiento en la parte frontal derecha, con la defensa y el faro derecho desprendidos. La barda presenta fractura en un tramo de 1.5 m. Pavimento seco.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Avenida Vasco de Quiroga"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "sedan", "marca": "Nissan", "modelo": "Versa",
+            "sentido": "poniente_a_oriente", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 60, "tipo": "mas_de" },
+            "final": { "descripcion": "junto a la barda, a 3 m de la orilla del camino", "metros": 3 },
+            "huella": { "tipo": "derrape", "metros": 14, "antes_del_impacto": true }
+          }
+        ],
+        "personas": [],
+        "objetos": [ { "tipo": "barda" } ],
+        "impactos": 1,
+        "pendiente": true, "puente": false, "noche": true, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-35-arbol-constituyentes-lluvia",
+      "cubre": ["arbol", "salida_curva", "pendiente", "mas_de_x", "huellas_derrape", "lluvia"],
+      "texto": "El hecho se ubica sobre Avenida Constituyentes, a la altura de la Segunda Sección del Bosque de Chapultepec, alcaldía Miguel Hidalgo, Ciudad de México, aproximadamente a las 15:40 horas, con lluvia fuerte. El vehículo A, marca Volkswagen, tipo Jetta, modelo 2015, circulaba en subida de oriente a poniente por el carril izquierdo, a más de 70 km/h según los testigos. En una curva hacia la derecha, el vehículo perdió adherencia sobre el pavimento mojado, giró en sentido de las manecillas del reloj, salió del arroyo vehicular hacia el camellón y se impactó con su costado derecho contra un árbol de aproximadamente 60 cm de diámetro. En el pavimento se observaron huellas de derrape de 18 m antes del impacto. El vehículo A quedó detenido junto al árbol, sobre el camellón, con el frente hacia el sur. Presenta hundimiento severo en el costado derecho, en la zona de las puertas, con el poste central deformado hacia el interior. Pavimento mojado.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Avenida Constituyentes"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "sedan", "marca": "Volkswagen", "modelo": "Jetta",
+            "sentido": "oriente_a_poniente", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 70, "tipo": "mas_de" },
+            "final": { "descripcion": "junto al árbol, sobre el camellón", "metros": null },
+            "huella": { "tipo": "derrape", "metros": 18, "antes_del_impacto": true }
+          }
+        ],
+        "personas": [],
+        "objetos": [ { "tipo": "arbol" } ],
+        "impactos": 1,
+        "pendiente": true, "puente": false, "noche": false, "lluvia": true, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-36-reversa-atropello-camion-cuauhtemoc",
+      "cubre": ["reversa", "atropello_camion", "sin_velocidad", "final_relativo"],
+      "texto": "El hecho se ubica sobre Avenida Cuauhtémoc, a la altura de la colonia Narvarte Poniente, alcaldía Benito Juárez, Ciudad de México, aproximadamente a las 11:15 horas. El vehículo A, camión de reparto marca Isuzu, tipo ELF 400, modelo 2016, circulaba de norte a sur por el carril derecho y se detuvo para estacionarse frente a un comercio; para alinearse con la guarnición avanzó en reversa unos metros, con el frente hacia el sur. Un peatón, adulto, cruzaba la avenida de oriente a poniente por detrás del camión. Al retroceder, el camión impactó al peatón con su parte posterior derecha. El peatón quedó tendido a 1 m detrás del camión. El camión quedó detenido a 3 m de donde inició la reversa. No se observaron huellas de frenado. El camión presenta un rayón en la defensa trasera. Pavimento seco, día soleado.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Avenida Cuauhtémoc"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "camion", "marca": "Isuzu", "modelo": "ELF 400",
+            "sentido": "norte_a_sur", "maniobra": "reversa",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "3 m de donde inició la reversa", "metros": 3 },
+            "huella": null
+          }
+        ],
+        "personas": [ { "rol": "peaton" } ],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-37-estacionados-rio-mixcoac",
+      "cubre": ["estacionado", "carambola_3", "alcance", "a_unos_x", "huellas_derrape", "lluvia", "noche", "final_relativo"],
+      "texto": "El hecho se ubica sobre Avenida Río Mixcoac, a la altura de la colonia Acacias, alcaldía Benito Juárez, Ciudad de México, aproximadamente a las 22:30 horas, con lluvia. El vehículo C, marca Chevrolet, tipo Aveo, modelo 2017, y detrás de él el vehículo B, marca Nissan, tipo Tsuru, modelo 2013, se encontraban estacionados junto a la guarnición del lado derecho, con el frente hacia el poniente, sin ocupantes. El vehículo A, marca Kia, tipo Rio, modelo 2023, circulaba de oriente a poniente por el carril derecho, a unos 50 km/h según su conductor. Al frenar sobre el pavimento mojado, el vehículo derrapó hacia la derecha, dejando huellas de derrape de 12 m antes del impacto, y se impactó con su parte frontal derecha contra la parte posterior del vehículo B, que fue proyectado contra la parte posterior del vehículo C. Posiciones finales: el vehículo C quedó a 1 m de donde estaba estacionado; el vehículo B, a 2 m de donde estaba estacionado, pegado al vehículo C; el vehículo A, a 1 m detrás del vehículo B. El vehículo A presenta hundimiento frontal derecho; el vehículo B, daños en la parte posterior y en la frontal; el vehículo C, en la defensa trasera. Pavimento mojado; la vía cuenta con alumbrado público.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Avenida Río Mixcoac"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "sedan", "marca": "Kia", "modelo": "Rio",
+            "sentido": "oriente_a_poniente", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 50, "tipo": "aprox" },
+            "final": { "descripcion": "1 m detrás del vehículo B", "metros": 1 },
+            "huella": { "tipo": "derrape", "metros": 12, "antes_del_impacto": true }
+          },
+          {
+            "letra": "B", "clase": "sedan", "marca": "Nissan", "modelo": "Tsuru",
+            "sentido": "oriente_a_poniente", "maniobra": "estacionado",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "2 m de donde estaba estacionado, pegado al vehículo C", "metros": 2 },
+            "huella": null
+          },
+          {
+            "letra": "C", "clase": "sedan", "marca": "Chevrolet", "modelo": "Aveo",
+            "sentido": "oriente_a_poniente", "maniobra": "estacionado",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "1 m de donde estaba estacionado", "metros": 1 },
+            "huella": null
+          }
+        ],
+        "personas": [],
+        "objetos": [],
+        "impactos": 2,
+        "pendiente": false, "puente": false, "noche": true, "lluvia": true, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-38-alcance-barrera-circuito-reforma",
+      "cubre": ["puente", "alcance", "barrera", "mas_de_x", "huellas_frenado", "final_relativo"],
+      "texto": "El hecho se ubica en el paso a desnivel de Circuito Interior (Avenida Melchor Ocampo) en su cruce con Paseo de la Reforma, colonia Cuauhtémoc, alcaldía Cuauhtémoc, Ciudad de México, aproximadamente a las 9:00 horas. El vehículo B, marca Volkswagen, tipo Jetta, modelo 2021, circulaba de norte a sur por el carril derecho del paso a desnivel y frenó por el tránsito a la salida. El vehículo A, camioneta marca Honda, tipo CR-V, modelo 2018, circulaba detrás de él por el mismo carril, a más de 80 km/h según las cámaras de la vialidad. El conductor del vehículo A frenó, dejando huellas de frenado de 20 m antes del impacto, y se impactó con su parte frontal contra la parte posterior del vehículo B. Por el impacto, el vehículo B se desvió hacia la derecha y se impactó con su parte frontal derecha contra la barrera metálica de contención del lado derecho. El vehículo B quedó junto a la barrera, a 6 m del punto de contacto; el vehículo A, a 3 m del punto de contacto, sobre el carril derecho. El vehículo A presenta hundimiento frontal; el vehículo B, daños en la parte posterior y en la frontal derecha. Pavimento seco, día nublado.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Circuito Interior", "Avenida Melchor Ocampo", "Paseo de la Reforma"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "suv", "marca": "Honda", "modelo": "CR-V",
+            "sentido": "norte_a_sur", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 80, "tipo": "mas_de" },
+            "final": { "descripcion": "3 m del punto de contacto", "metros": 3 },
+            "huella": { "tipo": "frenado", "metros": 20, "antes_del_impacto": true }
+          },
+          {
+            "letra": "B", "clase": "sedan", "marca": "Volkswagen", "modelo": "Jetta",
+            "sentido": "norte_a_sur", "maniobra": "recto",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "junto a la barrera, a 6 m del punto de contacto", "metros": 6 },
+            "huella": null
+          }
+        ],
+        "personas": [],
+        "objetos": [ { "tipo": "barrera" } ],
+        "impactos": 2,
+        "pendiente": false, "puente": true, "noche": false, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-39-atropello-autobus-tlalpan-ermita",
+      "cubre": ["atropello_autobus", "vuelta_derecha", "a_unos_x", "final_relativo"],
+      "texto": "El hecho se ubica en el cruce de la Calzada de Tlalpan y la Calzada Ermita Iztapalapa, colonia Ermita, alcaldía Benito Juárez, Ciudad de México, aproximadamente a las 7:00 horas. El vehículo A, autobús de pasajeros marca Volvo, modelo 2016, circulaba por los carriles laterales de la Calzada de Tlalpan de sur a norte y dio vuelta a la derecha para incorporarse a la Calzada Ermita Iztapalapa con dirección al oriente, a unos 15 km/h según su conductor. Un peatón, adulto, cruzaba la Calzada Ermita Iztapalapa de norte a sur sobre el paso peatonal. Al dar la vuelta, el autobús impactó al peatón con su esquina frontal derecha. El peatón quedó tendido a 2 m del punto de contacto, sobre el paso peatonal. El autobús quedó detenido 5 m después del paso peatonal. No se observaron huellas de frenado. El autobús no presenta daños visibles. Pavimento seco, amanecer con luz natural; el cruce cuenta con semáforos.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Calzada de Tlalpan", "Calzada Ermita Iztapalapa"],
+        "cruce": true,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "autobus", "marca": "Volvo", "modelo": "autobús de pasajeros",
+            "sentido": "sur_a_norte", "maniobra": "vira_derecha",
+            "velocidad_narrada": { "kmh": 15, "tipo": "aprox" },
+            "final": { "descripcion": "5 m después del paso peatonal", "metros": 5 },
+            "huella": null
+          }
+        ],
+        "personas": [ { "rol": "peaton" } ],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-40-poste-insurgentes-cuicuilco",
+      "cubre": ["poste", "sin_velocidad", "noche", "huellas_derrape", "final_relativo"],
+      "texto": "El hecho se ubica sobre Avenida de los Insurgentes Sur, a la altura de la colonia Insurgentes Cuicuilco, alcaldía Coyoacán, Ciudad de México, aproximadamente a las 3:15 horas. Las luminarias de ese tramo estaban apagadas. El vehículo A, marca Nissan, tipo Sentra, modelo 2017, circulaba de sur a norte por el carril central. Al cambiarse al carril derecho, el conductor perdió el control; el vehículo giró en sentido contrario a las manecillas del reloj, subió la guarnición y se impactó con su costado derecho contra un poste metálico de alumbrado público ubicado en la banqueta. En el pavimento se observaron huellas de derrape de 9 m antes del impacto. El vehículo A quedó detenido a 2 m adelante del poste, sobre la banqueta, con el frente hacia el poniente. Presenta hundimiento en el costado derecho, en las puertas delantera y trasera, y los cristales laterales derechos rotos. El poste quedó doblado. Pavimento seco.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Avenida de los Insurgentes Sur"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "sedan", "marca": "Nissan", "modelo": "Sentra",
+            "sentido": "sur_a_norte", "maniobra": "recto",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "2 m adelante del poste", "metros": 2 },
+            "huella": { "tipo": "derrape", "metros": 9, "antes_del_impacto": true }
+          }
+        ],
+        "personas": [],
+        "objetos": [ { "tipo": "poste" } ],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": true, "lluvia": false, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-41-atropello-vuelta-derecha-insurgentes-mixcoac",
+      "cubre": ["atropello_auto", "vuelta_derecha", "sin_velocidad", "lluvia", "final_relativo"],
+      "texto": "El hecho se ubica en el cruce de Avenida de los Insurgentes Sur y Avenida Río Mixcoac, colonia Actipan, alcaldía Benito Juárez, Ciudad de México, aproximadamente a las 17:10 horas, con lluvia ligera. El vehículo A, marca Chevrolet, tipo Aveo, modelo 2020, circulaba sobre Avenida de los Insurgentes Sur de sur a norte, por el carril derecho, y dio vuelta a la derecha para incorporarse a Avenida Río Mixcoac con dirección al oriente. Un peatón, adulto, cruzaba Avenida Río Mixcoac de sur a norte sobre el paso peatonal. Al dar la vuelta, el vehículo A impactó al peatón con su parte frontal izquierda. El peatón quedó tendido a 2 m del punto de contacto. El vehículo A frenó y quedó detenido 4 m después del paso peatonal, sobre el carril derecho de Avenida Río Mixcoac. Por el pavimento mojado no se apreciaron huellas de frenado. El vehículo A presenta un abollamiento en el cofre, del lado izquierdo. Pavimento mojado, día nublado; el cruce cuenta con semáforos.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Avenida de los Insurgentes Sur", "Avenida Río Mixcoac"],
+        "cruce": true,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "sedan", "marca": "Chevrolet", "modelo": "Aveo",
+            "sentido": "sur_a_norte", "maniobra": "vira_derecha",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "4 m después del paso peatonal", "metros": 4 },
+            "huella": null
+          }
+        ],
+        "personas": [ { "rol": "peaton" } ],
+        "objetos": [],
+        "impactos": 1,
+        "pendiente": false, "puente": false, "noche": false, "lluvia": true, "volcadura": false
+      }
+    },
+    {
+      "id": "aud-42-lateral-barrera-churubusco",
+      "cubre": ["barrera", "a_unos_x", "huellas_derrape", "noche", "final_relativo"],
+      "texto": "El hecho se ubica sobre Avenida Río Churubusco (Circuito Interior), a la altura de la colonia Campestre Churubusco, alcaldía Coyoacán, Ciudad de México, aproximadamente a las 21:45 horas. El vehículo A, camioneta marca Nissan, tipo NP300, modelo 2021, circulaba de poniente a oriente por el carril central, a unos 70 km/h según su conductor. El vehículo B, marca Chevrolet, tipo Aveo, modelo 2016, circulaba en el mismo sentido por el carril derecho. El vehículo A se cambió al carril derecho e impactó con su costado derecho el costado izquierdo del vehículo B. Después del primer impacto, el vehículo B se desvió hacia la derecha, derrapó y se impactó con su parte frontal derecha contra la barrera metálica de contención del lado derecho; en el pavimento se observaron huellas de derrape del vehículo B de 10 m antes del impacto contra la barrera. El vehículo B quedó junto a la barrera, a 12 m del punto de contacto. El vehículo A quedó detenido 20 m adelante del punto de contacto, sobre el carril derecho. El vehículo A presenta rayones y abollamientos en el costado derecho; el vehículo B, en el costado izquierdo y hundimiento en la parte frontal derecha. Pavimento seco; la vía cuenta con alumbrado público.",
+      "esperado": {
+        "ciudad": "Ciudad de México",
+        "calles": ["Avenida Río Churubusco", "Circuito Interior"],
+        "cruce": false,
+        "vehiculos": [
+          {
+            "letra": "A", "clase": "pickup", "marca": "Nissan", "modelo": "NP300",
+            "sentido": "poniente_a_oriente", "maniobra": "recto",
+            "velocidad_narrada": { "kmh": 70, "tipo": "aprox" },
+            "final": { "descripcion": "20 m adelante del punto de contacto", "metros": 20 },
+            "huella": null
+          },
+          {
+            "letra": "B", "clase": "sedan", "marca": "Chevrolet", "modelo": "Aveo",
+            "sentido": "poniente_a_oriente", "maniobra": "recto",
+            "velocidad_narrada": null,
+            "final": { "descripcion": "junto a la barrera, a 12 m del punto de contacto", "metros": 12 },
+            "huella": { "tipo": "derrape", "metros": 10, "antes_del_impacto": true }
+          }
+        ],
+        "personas": [],
+        "objetos": [ { "tipo": "barrera" } ],
+        "impactos": 2,
+        "pendiente": false, "puente": false, "noche": true, "lluvia": false, "volcadura": false
+      }
+    }
+  ]
+}

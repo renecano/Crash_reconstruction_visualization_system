@@ -1505,17 +1505,24 @@ export function finalDeLaNarracion(
   if (!imp) return null;
   const d = descripcion.toLowerCase();
   const marcha = rumboDeMarcha(e, vehiculo, imp.rumbo);
+  // «con el frente hacia el suroeste»: el rumbo con que quedó.
+  const f = new RegExp(
+    String.raw`con\s+el\s+frente\s+(?:hacia|al|viendo\s+al)\s+(?:el\s+)?${PUNTO}\b`,
+  ).exec(sinAcentos(d));
+  const frente = f ? RUMBO_DE[f[1]!] : undefined;
   const adelante = (n: number, texto: string): FinalNarrado => ({
     punto: punto(avanzar(ll(imp.punto), marcha, n)),
-    rumbo: imp.rumbo,
+    rumbo: frente ?? imp.rumbo,
     texto,
   });
-  // «a 1 m detrás del vehículo B»: detrás de donde quedó B, en su rumbo, defensa con defensa más N.
-  const detras = new RegExp(
-    String.raw`a\s+${NUM}\s*m(?:etros?)?\s+detr[aá]s\s+del\s+veh[ií]culo\s+([a-z])\b`,
+  // «a 1 m detrás del vehículo B», «a 2 m delante del vehículo C», «a 1 m del vehículo B»: desde donde
+  // quedó el otro, defensa con defensa más N; sin «detrás» ni «delante», del lado donde estaba este en
+  // el choque.
+  const rel = new RegExp(
+    String.raw`a\s+${NUM}\s*m(?:etros?)?\s+(?:(detr[aá]s|delante|adelante|enfrente)\s+)?del\s+veh[ií]culo\s+([a-z])\b`,
   ).exec(d);
-  if (detras) {
-    const otro = idDeLetra(detras[2]!);
+  if (rel) {
+    const otro = idDeLetra(rel[3]!);
     if (vistos.has(otro) || otro === vehiculo) return null;
     const suyo = otras.find((o) => o.vehiculo === otro);
     const finOtro =
@@ -1526,22 +1533,81 @@ export function finalDeLaNarracion(
     const vo = e.vehiculos.find((x) => x.id === otro);
     const vv = e.vehiculos.find((x) => x.id === vehiculo);
     if (!finOtro || !vo || !vv) return null;
-    const n = metros(detras[1]!);
-    const atras = (medidasDe(vo).largo + medidasDe(vv).largo) / 2 + n;
+    const n = metros(rel[1]!);
+    const separacion = (medidasDe(vo).largo + medidasDe(vv).largo) / 2 + n;
+    const lado = rel[2] ? (/detr/.test(rel[2]) ? "detrás" : "delante") : null;
+    const haciaEste = enMetros(ll(imp.punto), ll(finOtro.punto));
+    const rumboSep =
+      lado === "detrás"
+        ? normalizar(finOtro.rumbo + 180)
+        : lado === "delante"
+          ? finOtro.rumbo
+          : normalizar((Math.atan2(haciaEste.este, haciaEste.norte) * 180) / Math.PI);
     return {
-      punto: punto(avanzar(ll(finOtro.punto), normalizar(finOtro.rumbo + 180), atras)),
-      rumbo: finOtro.rumbo,
-      texto: `${n} m detrás de donde quedó el vehículo ${detras[2]!.toUpperCase()}`,
+      punto: punto(avanzar(ll(finOtro.punto), rumboSep, separacion)),
+      rumbo: frente ?? (lado ? finOtro.rumbo : imp.rumbo),
+      texto: `${n} m ${lado ? `${lado} de` : "de"} donde quedó el vehículo ${rel[3]!.toUpperCase()}`,
     };
   }
   // «6 m después del paso peatonal», «a 4 m adelante del punto de contacto», «a 2 m del punto del
-  // primer impacto», «a 3 m de donde estaba detenido»: desde su pose del choque, hacia donde avanzaba.
+  // primer impacto», «a 3 m de donde estaba detenido» (o estacionado): desde su pose del choque, hacia
+  // donde avanzaba.
   const desde = new RegExp(
-    String.raw`${NUM}\s*m(?:etros?)?\s+(?:despu[eé]s|adelante|m[aá]s\s+all[aá])\s+del?\s+(?:paso\s+peatonal|punto\s+de\s+(?:contacto|impacto)|impacto|choque|cruce|contacto)|a\s+${NUM}\s*m(?:etros?)?\s+del\s+punto\s+del?\s+(?:primer\s+)?(?:impacto|choque|contacto)|a\s+${NUM}\s*m(?:etros?)?\s+de\s+donde\s+(?:estaba|se\s+encontraba)\s+detenid[oa]`,
+    String.raw`${NUM}\s*m(?:etros?)?\s+(?:despu[eé]s|adelante|m[aá]s\s+all[aá])\s+del?\s+(?:paso\s+peatonal|punto\s+de\s+(?:contacto|impacto)|impacto|choque|cruce|contacto)|a\s+${NUM}\s*m(?:etros?)?\s+del\s+punto\s+del?\s+(?:primer\s+)?(?:impacto|choque|contacto)|a\s+${NUM}\s*m(?:etros?)?\s+de\s+donde\s+(?:estaba|se\s+encontraba)\s+(?:detenid|estacionad)[oa]`,
   ).exec(d);
   if (desde) {
     const n = metros(desde[1] ?? desde[2] ?? desde[3]!);
     return adelante(n, `${n} m adelante de su posición en el choque, hacia donde avanzaba`);
+  }
+  // «junto al árbol», «contra la barda», «a 2 m adelante del poste»: en el objeto del choque (su pose
+  // del choque), más los metros que diga hacia donde avanzaba.
+  const objeto = new RegExp(
+    String.raw`(?:a\s+${NUM}\s*m(?:etros?)?\s+(?:adelante|delante|despu[eé]s|m[aá]s\s+all[aá])\s+del?\s+(?:la\s+)?|junto\s+(?:al?|a\s+la)\s+|contra\s+(?:el|la)\s+)(?:arbol|árbol|poste|barda|muro|barrera|pared)`,
+  ).exec(d);
+  if (objeto) {
+    const n = objeto[1] ? metros(objeto[1]) : 0;
+    return adelante(
+      n,
+      n ? `${n} m adelante del objeto contra el que chocó` : "en el objeto contra el que chocó",
+    );
+  }
+  return null;
+}
+
+/**
+ * El sentido de un vehículo en su caso: el que dice la narración, o el relativo a otro (René,
+ * 2026-11-24: «el vehículo B … bajaba en sentido contrario» quedaba cruzado, porque solo se entendían
+ * los puntos cardinales). «En sentido contrario» u «opuesto» es el contrario del otro vehículo que
+ * nombra la oración (o del único otro con sentido); «en el mismo sentido», «por el mismo carril» o
+ * «detrás de él», el mismo.
+ */
+export function sentidoEnElCaso(
+  narracion: string,
+  v: Vehiculo,
+  todos: readonly Vehiculo[],
+): SentidoNarrado | null {
+  const propio = sentidoNarrado(narracion, nombresDe(v, todos));
+  if (propio) return propio;
+  const nombra = (o: string, w: Vehiculo) =>
+    nombresDe(w, todos).some(
+      (n) => n.trim() && new RegExp(`\\b${escapar(sinAcentos(n))}\\b`).test(sinAcentos(o)),
+    );
+  const otros = todos
+    .filter((w) => w.id !== v.id)
+    .map((w) => ({ w, s: sentidoNarrado(narracion, nombresDe(w, todos)) }))
+    .filter((x): x is { w: Vehiculo; s: SentidoNarrado } => x.s !== null);
+  for (const o of narracion.split(/(?<=[.;])\s+/).filter((x) => nombra(x, v))) {
+    const t = sinAcentos(o);
+    const m =
+      /\b(?:en|con|por el|circulaba en)\s+(?:el\s+)?(sentido|direccion)\s+(contrari[oa]|opuest[oa]|invers[oa])\b|\ben\s+el\s+mismo\s+sentido\b|\bpor\s+el\s+mismo\s+carril\b|\bdetras\s+de\s+(?:el|ella|este|este\s+ultimo)\b/.exec(
+        t,
+      );
+    if (!m) continue;
+    const ref = otros.find((x) => nombra(o, x.w)) ?? (otros.length === 1 ? otros[0] : undefined);
+    if (!ref) continue;
+    const mismo = !m[2];
+    const rumbo = normalizar(ref.s.rumbo + (mismo ? 0 : 180));
+    return { rumbo, desde: cardinal(rumbo + 180), cita: citaDe(o, m[0]) };
   }
   return null;
 }

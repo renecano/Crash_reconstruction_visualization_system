@@ -1,0 +1,186 @@
+{
+  "id": "aud-05-poste-lastorres",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 387,
+    "output_tokens": 1479,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0163332,
+  "narracion": "El hecho ocurrió sobre Avenida Solidaridad Las Torres, a la altura de la colonia Santa Ana Tlapaltitlán, en Toluca, Estado de México, aproximadamente a las 12:10 horas. El vehículo A, camioneta marca Nissan, tipo NP300, modelo 2016, con caja de redilas y sin carga, circulaba de oriente a poniente por el carril central. Según su conductor, un vehículo que no fue identificado se cerró desde el carril izquierdo; el conductor del vehículo A giró hacia la derecha para evitarlo, atravesó el carril derecho, subió la guarnición y se impactó con su parte frontal derecha contra un poste de concreto del alumbrado público ubicado en la banqueta. El vehículo A quedó detenido junto al poste, con el frente hacia el noroeste. No se observaron huellas de frenado. Presenta hundimiento en la parte frontal derecha, defensa desprendida y el radiador dañado. El poste quedó inclinado, sin caer. Pavimento seco, día soleado.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "objeto_fijo",
+        "cita": "se impactó con su parte frontal derecha contra un poste de concreto del alumbrado público ubicado en la banqueta"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 12:10 horas",
+        "cita": "aproximadamente a las 12:10 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Avenida Solidaridad Las Torres, a la altura de la colonia Santa Ana Tlapaltitlán",
+        "cita": "Avenida Solidaridad Las Torres, a la altura de la colonia Santa Ana Tlapaltitlán"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Toluca",
+        "cita": "en Toluca, Estado de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Nissan",
+        "cita": "camioneta marca Nissan, tipo NP300, modelo 2016"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "NP300",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2016",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "clase",
+        "valor": "pickup",
+        "cita": "camioneta marca Nissan, tipo NP300, modelo 2016, con caja de redilas y sin carga"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba de oriente a poniente por el carril central"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "evasiva",
+        "cita": "el conductor del vehículo A giró hacia la derecha para evitarlo"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "se impactó con su parte frontal derecha contra un poste de concreto del alumbrado público ubicado en la banqueta"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "objeto_fijo",
+        "valor": "poste de concreto del alumbrado público",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "Presenta hundimiento en la parte frontal derecha, defensa desprendida y el radiador dañado"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "desprendimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "objeto_fijo",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "descripcion",
+        "valor": "poste de concreto del alumbrado público, quedó inclinado, sin caer",
+        "cita": "El poste quedó inclinado, sin caer"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A quedó detenido junto al poste, con el frente hacia el noroeste"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "detenido junto al poste, con el frente hacia el noroeste",
+        "cita": ""
+      }
+    ]
+  }
+}

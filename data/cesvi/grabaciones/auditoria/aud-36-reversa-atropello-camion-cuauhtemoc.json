@@ -1,0 +1,154 @@
+{
+  "id": "aud-36-reversa-atropello-camion-cuauhtemoc",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 358,
+    "output_tokens": 1159,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0130752,
+  "narracion": "El hecho se ubica sobre Avenida Cuauhtémoc, a la altura de la colonia Narvarte Poniente, alcaldía Benito Juárez, Ciudad de México, aproximadamente a las 11:15 horas. El vehículo A, camión de reparto marca Isuzu, tipo ELF 400, modelo 2016, circulaba de norte a sur por el carril derecho y se detuvo para estacionarse frente a un comercio; para alinearse con la guarnición avanzó en reversa unos metros, con el frente hacia el sur. Un peatón, adulto, cruzaba la avenida de oriente a poniente por detrás del camión. Al retroceder, el camión impactó al peatón con su parte posterior derecha. El peatón quedó tendido a 1 m detrás del camión. El camión quedó detenido a 3 m de donde inició la reversa. No se observaron huellas de frenado. El camión presenta un rayón en la defensa trasera. Pavimento seco, día soleado.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "atropellamiento",
+        "cita": "Al retroceder, el camión impactó al peatón con su parte posterior derecha."
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 11:15 horas",
+        "cita": "aproximadamente a las 11:15 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Avenida Cuauhtémoc, a la altura de la colonia Narvarte Poniente",
+        "cita": "El hecho se ubica sobre Avenida Cuauhtémoc, a la altura de la colonia Narvarte Poniente"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Benito Juárez",
+        "cita": "alcaldía Benito Juárez, Ciudad de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Ciudad de México",
+        "cita": "alcaldía Benito Juárez, Ciudad de México"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Isuzu",
+        "cita": "camión de reparto marca Isuzu, tipo ELF 400, modelo 2016"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "ELF 400",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2016",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "clase",
+        "valor": "camion_unitario",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "El camión presenta un rayón en la defensa trasera."
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "Al retroceder, el camión impactó al peatón con su parte posterior derecha."
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "objeto_fijo",
+        "valor": "peatón",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 posterior",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "reversa",
+        "cita": "para alinearse con la guarnición avanzó en reversa unos metros"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El camión quedó detenido a 3 m de donde inició la reversa."
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "detenido a 3 m de donde inició la reversa",
+        "cita": ""
+      }
+    ]
+  }
+}

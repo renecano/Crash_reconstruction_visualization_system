@@ -55,6 +55,12 @@ export interface ResultadoLugar {
   /** El municipio (o la alcaldía) y el estado donde cae, para que el perito elija bien. */
   municipio?: string;
   estado?: string;
+  /**
+   * Qué tan preciso es (revisión de la cadena, René 2026-11-24): el cruce de dos vías, una calle, o
+   * solo una zona (colonia, pueblo, municipio). Sobre una zona La escena no arma la escena sola: el
+   * centro de una colonia no es el lugar del choque.
+   */
+  precision?: "cruce" | "calle" | "zona";
 }
 
 export interface LugarOut {
@@ -130,8 +136,9 @@ const sinAcentos = (s: string) =>
     .trim();
 
 export function cacheKey(c: LugarConsulta): string {
-  // v2: desde B5 los resultados traen municipio y estado; los guardados antes no.
-  return `croquis:lugar:v2:${normalizar(c.q)}|${normalizar(c.municipio)}|${normalizar(c.estado)}`;
+  // v2: desde B5 los resultados traen municipio y estado; los guardados antes no. v3: su precisión
+  // (cruce, calle o zona) y la alcaldía en la Ciudad de México (revisión de la cadena, 2026-11-24).
+  return `croquis:lugar:v3:${normalizar(c.q)}|${normalizar(c.municipio)}|${normalizar(c.estado)}`;
 }
 
 // --- Lo que dice el texto --------------------------------------------------------------------------
@@ -236,7 +243,17 @@ export function viasDelCruce(texto: string, municipio?: string): [string, string
     /^(?:en\s+)?(?:el\s+)?(?:crucero|cruce|intersecci[oó]n)\s+(?:de\s+)?(?:la\s+)?(.+?)\s+(?:con|y)\s+(?:la\s+|el\s+)?([^,;]+)/i.exec(
       limpio,
     );
-  const m = puente ?? cruce ?? altura;
+  // «Avenida X, unos 15 m al norte de su cruce con Avenida Y» (revisión de la cadena, 2026-11-24).
+  const suCruce =
+    /^(.+?),?\s+(?:a\s+)?(?:unos\s+|aproximadamente\s+)?(?:\d+(?:[.,]\d+)?\s*m(?:etros)?\s+(?:al\s+\w+\s+|antes\s+|despu[eé]s\s+)?)?(?:de|en)\s+su\s+(?:cruce|intersecci[oó]n|esquina)\s+con\s+(?:la\s+|el\s+)?([^,;]+)/i.exec(
+      limpio,
+    );
+  // «Paseo de la Reforma, en la bajada hacia el cruce con la Avenida Prado Norte».
+  const elCruce =
+    /^(.+?),\s+[^,;]{0,70}?\b(?:el|su)\s+(?:cruce|intersecci[oó]n|esquina)\s+con\s+(?:la\s+|el\s+)?([^,;]+)/i.exec(
+      limpio,
+    );
+  const m = puente ?? cruce ?? suCruce ?? elCruce ?? altura;
   let par: [string, string] | null = m ? [m[1]!.trim(), m[2]!.trim()] : null;
   if (!par) {
     const otra = segundaCalle(limpio);
@@ -322,6 +339,7 @@ export const CRUCE_M = 40;
 export function cruceDeVias(
   a: readonly Nominatim[],
   b: readonly Nominatim[],
+  tope = CRUCE_M,
 ): { lat: number; lon: number; m: number; de: Nominatim } | null {
   let mejor: { lat: number; lon: number; m: number; de: Nominatim } | null = null;
   for (const x of a)
@@ -331,7 +349,7 @@ export function cruceDeVias(
           const c = cercania(ta, tb);
           if (!mejor || c.m < mejor.m) mejor = { ...c, de: x };
         }
-  return mejor && mejor.m <= CRUCE_M ? mejor : null;
+  return mejor && mejor.m <= tope ? mejor : null;
 }
 
 /** La primera calle de una descripción: «Calle Azucena esquina con Av. Reforma, col. …» → «Calle Azucena». */
@@ -379,6 +397,10 @@ interface Nominatim {
   address?: Record<string, string | undefined>;
   /** Con `polygon_geojson=1`: la geometría de la vía (para el cruce de dos). */
   geojson?: { type: string; coordinates: unknown };
+  /** El tipo del resultado en jsonv2 («road», «suburb», «city»…) y su clase («highway», «place»…). */
+  addresstype?: string;
+  category?: string;
+  type?: string;
 }
 
 class SinServicio extends Error {}
@@ -445,10 +467,49 @@ async function photon(q: string, deps: LugarDeps): Promise<ResultadoLugar[]> {
 }
 
 /** Un resultado con su calle y colonia, y aparte su municipio y estado. */
+/** Lo que para Nominatim es una zona (colonia, pueblo, municipio); lo demás es un punto preciso. */
+const TIPOS_DE_ZONA = new Set([
+  "suburb",
+  "neighbourhood",
+  "quarter",
+  "city",
+  "town",
+  "village",
+  "hamlet",
+  "municipality",
+  "county",
+  "state",
+  "region",
+  "country",
+  "city_district",
+  "borough",
+  "postcode",
+  "residential",
+  "allotments",
+]);
+
 function aResultado(x: Nominatim): ResultadoLugar {
   const a = x.address ?? {};
+  // En la Ciudad de México, Nominatim da la ciudad como municipio: el del caso es la alcaldía.
+  const cdmx = /ciudad de m[eé]xico/i.test(a.city ?? a.state ?? "");
   const municipio =
-    a.city ?? a.town ?? a.municipality ?? a.county ?? a.city_district ?? a.borough ?? a.village;
+    (cdmx ? (a.borough ?? a.city_district) : undefined) ??
+    a.city ??
+    a.town ??
+    a.municipality ??
+    a.county ??
+    a.city_district ??
+    a.borough ??
+    a.village;
+  // Sin el tipo (una respuesta que no lo trae), no se sabe: no se trata como zona.
+  const precision: ResultadoLugar["precision"] =
+    !x.category && !x.addresstype
+      ? undefined
+      : x.category === "boundary" ||
+          x.category === "place" ||
+          TIPOS_DE_ZONA.has(x.addresstype ?? "")
+        ? "zona"
+        : "calle";
   const lugar = [
     a.road ?? x.name,
     a.neighbourhood ?? a.suburb ?? a.quarter ?? a.hamlet ?? a.village,
@@ -459,7 +520,28 @@ function aResultado(x: Nominatim): ResultadoLugar {
     lon: Number(x.lon),
     ...(municipio ? { municipio } : {}),
     ...(a.state ? { estado: a.state } : {}),
+    ...(precision ? { precision } : {}),
   };
+}
+
+/**
+ * Los nombres con que se busca una vía de un cruce: el narrado, sin los artículos de en medio («de
+ * los», «de la») y sin su tipo («Avenida»). OpenStreetMap la puede tener con cualquiera.
+ */
+/** m: a lo más esto entre dos vías para tomar su punto más cercano como el cruce aproximado. */
+const CERCA_DEL_CRUCE_M = 150;
+
+export function variantesDeVia(v: string): string[] {
+  const sinArticulos = v.replace(/\s+de(?:\s+(?:los|las|la|el))?\s+/gi, " ").replace(/\s+/g, " ");
+  const tipo =
+    /^(?:avenida|av\.?|calle|calzada|calz\.?|boulevard|blvd\.?|paseo|eje|circuito|carretera|prolongaci[oó]n|prol\.?)\s+/i;
+  return [
+    ...new Set(
+      [v, sinArticulos, sinArticulos.replace(tipo, ""), tipo.test(v) ? null : `Avenida ${v}`]
+        .filter((x): x is string => Boolean(x))
+        .map((x) => x.trim()),
+    ),
+  ].filter((x) => x.length >= 3);
 }
 
 /** Sin repetir el mismo punto (a ~10 m) ni el mismo nombre en el mismo municipio. */
@@ -510,7 +592,11 @@ export async function buscarLugar(
   c = {
     ...c,
     q: sinMarcas(c.q) ?? c.q,
-    municipio: sinMarcas(c.municipio),
+    // «alcaldía Benito Juárez», «municipio de Metepec» (revisión de la cadena, René 2026-11-24): la
+    // caja del municipio no aparecía y el cruce no se intentaba.
+    municipio: sinMarcas(c.municipio)
+      ?.replace(/^(?:la\s+)?(?:alcald[ií]a|municipio|delegaci[oó]n)\s+(?:de\s+)?/i, "")
+      .trim(),
     estado: sinMarcas(c.estado),
   };
   const delTexto = zonaDelTexto(c.q);
@@ -674,8 +760,12 @@ async function conNominatim(
           bounded: "1",
         })
       ).map(aResultado);
-      if (r.some(delMunicipio) || (r.length && !municipio)) return { v, r, delCaso: true };
-      if (r.length && !otro) otro = { v, r };
+      // Una zona (la colonia) se guarda por si nada más aparece; se sigue buscando algo preciso
+      // («Anillo Periférico Sur, a la altura de la colonia…» daba la colonia y paraba).
+      const preciso = r[0]?.precision !== "zona";
+      if (preciso && (r.some(delMunicipio) || (r.length && !municipio)))
+        return { v, r, delCaso: true };
+      if (r.length && (!otro || (preciso && otro.r[0]?.precision === "zona"))) otro = { v, r };
     }
     return otro ? { ...otro, delCaso: false } : null;
   };
@@ -685,21 +775,43 @@ async function conNominatim(
   const vias = viasDelCruce(texto, municipio);
   const cajaCruce = cajaMunicipio ?? (await estadoCaja());
   if (vias && cajaCruce?.boundingbox) {
-    const geometria = (v: string) =>
-      nom({
-        q: donde ? `${v}, ${donde}` : v,
-        viewbox: viewbox(cajaCruce.boundingbox!),
-        bounded: "1",
-        polygon_geojson: "1",
-        limit: "10",
-      });
+    // Con variantes del nombre (revisión de la cadena, René 2026-11-24): «Avenida de los Insurgentes
+    // Sur» es «Avenida Insurgentes Sur» en OpenStreetMap.
+    const geometria = async (v: string) => {
+      for (const n of variantesDeVia(v)) {
+        const r = await nom({
+          q: donde ? `${n}, ${donde}` : n,
+          viewbox: viewbox(cajaCruce.boundingbox!),
+          bounded: "1",
+          polygon_geojson: "1",
+          // Solo vías y lugares: «Paseo de la Reforma» y «Prado Norte» daban paradas de autobús.
+          layer: "address",
+          // Una avenida larga tiene decenas de tramos en OpenStreetMap: con 10, el del cruce podía no
+          // venir (Tecnológico y Solidaridad Las Torres, revisión de la cadena 2026-11-24).
+          limit: "40",
+        });
+        if (r.length) return r;
+      }
+      return [];
+    };
     const a = await geometria(vias[0]);
     const b = a.length ? await geometria(vias[1]) : [];
-    const c = cruceDeVias(a, b);
+    // Nominatim da a lo más 10 tramos por vía y el del cruce puede no venir: basta el punto donde se
+    // acercan más (a menos de 150 m); La escena encuentra el cruce exacto con las calles del mapa a
+    // 150 m de ahí (revisión de la cadena, 2026-11-24).
+    const c = cruceDeVias(a, b) ?? cruceDeVias(a, b, CERCA_DEL_CRUCE_M);
     if (c) {
       const base = aResultado(c.de);
       return {
-        resultados: [{ ...base, nombre: `${vias[0]} y ${vias[1]}`, lat: c.lat, lon: c.lon }],
+        resultados: [
+          {
+            ...base,
+            nombre: `${vias[0]} y ${vias[1]}`,
+            lat: c.lat,
+            lon: c.lon,
+            precision: "cruce" as const,
+          },
+        ],
         aviso: `El cruce de ${vias[0]} y ${vias[1]}${donde ? ` en ${donde}` : ""}.`,
         fuente: "nominatim",
       };

@@ -1,0 +1,234 @@
+{
+  "id": "aud-22-lateral-insurgentes-mixcoac",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 462,
+    "output_tokens": 1862,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0203132,
+  "narracion": "El hecho se ubica en el cruce de Avenida de los Insurgentes Sur y Avenida Río Mixcoac, colonia Insurgentes Mixcoac, alcaldía Benito Juárez, Ciudad de México, aproximadamente a las 13:00 horas. El vehículo B, marca Chevrolet, tipo Spark, modelo 2017, circulaba sobre Avenida de los Insurgentes Sur de sur a norte, por el carril central. El vehículo A, marca Kia, tipo Rio, modelo 2021, circulaba sobre Avenida Río Mixcoac de poniente a oriente, a más de 50 km/h según los testigos, y entró al cruce. Al ver al vehículo B, el conductor del vehículo A frenó, dejando huellas de frenado de 11 m antes del impacto, y se impactó con su parte frontal contra el costado izquierdo del vehículo B, a la altura del poste central. El vehículo B fue desplazado hacia el noreste y quedó a 4 m del punto de contacto. El vehículo A quedó a 1 m del punto de contacto. El vehículo A presenta hundimiento frontal; el vehículo B, deformación en ambas puertas del costado izquierdo. Pavimento seco; el cruce cuenta con semáforos.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "cruce de Avenida de los Insurgentes Sur y Avenida Río Mixcoac, colonia Insurgentes Mixcoac",
+        "cita": "El hecho se ubica en el cruce de Avenida de los Insurgentes Sur y Avenida Río Mixcoac, colonia Insurgentes Mixcoac"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "alcaldía Benito Juárez",
+        "cita": "alcaldía Benito Juárez, Ciudad de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Ciudad de México",
+        "cita": "alcaldía Benito Juárez, Ciudad de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 13:00 horas",
+        "cita": "Ciudad de México, aproximadamente a las 13:00 horas"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Kia",
+        "cita": "El vehículo A, marca Kia, tipo Rio, modelo 2021"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Rio",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2021",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Chevrolet",
+        "cita": "El vehículo B, marca Chevrolet, tipo Spark, modelo 2017"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Spark",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2017",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "se impactó con su parte frontal contra el costado izquierdo del vehículo B"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 lateral_izquierdo",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba sobre Avenida de los Insurgentes Sur de sur a norte, por el carril central"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba sobre Avenida Río Mixcoac de poniente a oriente, a más de 50 km/h según los testigos"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "frena",
+        "cita": "el conductor del vehículo A frenó, dejando huellas de frenado de 11 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "frenado",
+        "cita": "dejando huellas de frenado de 11 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "11 m",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo B fue desplazado hacia el noreste y quedó a 4 m del punto de contacto"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "desplazado hacia el noreste, a 4 m del punto de contacto",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A quedó a 1 m del punto de contacto"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "a 1 m del punto de contacto",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta hundimiento frontal"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "el vehículo B, deformación en ambas puertas del costado izquierdo"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "deformacion",
+        "cita": ""
+      }
+    ]
+  }
+}

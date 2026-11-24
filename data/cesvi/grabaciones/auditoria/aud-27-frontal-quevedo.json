@@ -1,0 +1,266 @@
+{
+  "id": "aud-27-frontal-quevedo",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 522,
+    "output_tokens": 2059,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0224032,
+  "narracion": "El hecho se ubica sobre Avenida Miguel Ángel de Quevedo, a la altura de la colonia Romero de Terreros, alcaldía Coyoacán, Ciudad de México, aproximadamente a las 15:20 horas. En ese tramo la avenida tiene dos carriles por sentido, separados solo por la línea central. El vehículo A, marca Volkswagen, tipo Vento, modelo 2019, circulaba de poniente a oriente por el carril izquierdo, a unos 40 km/h según su conductor. El vehículo B, marca Nissan, tipo Tsuru, modelo 2014, circulaba de oriente a poniente a unos 50 km/h, según su conductor; para rebasar a un vehículo de transporte público detenido en una parada, ajeno al hecho, invadió el carril izquierdo del sentido contrario. El conductor del vehículo B frenó, dejando huellas de frenado de 8 m antes del impacto. Ambos vehículos se impactaron con sus partes frontales, acentuadas hacia el lado izquierdo. El vehículo A quedó a 2 m del punto de contacto, desplazado hacia atrás; el vehículo B, a 3 m del punto de contacto, sobre el carril del vehículo A. El vehículo A presenta hundimiento frontal izquierdo; el vehículo B, hundimiento frontal izquierdo con la rueda delantera izquierda desalineada. Pavimento seco, día soleado.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "frontal",
+        "cita": "Ambos vehículos se impactaron con sus partes frontales, acentuadas hacia el lado izquierdo."
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 15:20 horas",
+        "cita": "aproximadamente a las 15:20 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Avenida Miguel Ángel de Quevedo, a la altura de la colonia Romero de Terreros",
+        "cita": "sobre Avenida Miguel Ángel de Quevedo, a la altura de la colonia Romero de Terreros"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Coyoacán",
+        "cita": "alcaldía Coyoacán, Ciudad de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Ciudad de México",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Volkswagen",
+        "cita": "El vehículo A, marca Volkswagen, tipo Vento, modelo 2019"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Vento",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2019",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Nissan",
+        "cita": "El vehículo B, marca Nissan, tipo Tsuru, modelo 2014"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Tsuru",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2014",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba de poniente a oriente por el carril izquierdo"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba de oriente a poniente a unos 50 km/h"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "otra",
+        "cita": "para rebasar a un vehículo de transporte público detenido en una parada"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "frena",
+        "cita": "El conductor del vehículo B frenó, dejando huellas de frenado de 8 m antes del impacto."
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "tipo_huella",
+        "valor": "frenado",
+        "cita": "dejando huellas de frenado de 8 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "longitud",
+        "valor": "8 m",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "Ambos vehículos se impactaron con sus partes frontales, acentuadas hacia el lado izquierdo."
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A quedó a 2 m del punto de contacto, desplazado hacia atrás"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "a 2 m del punto de contacto, desplazado hacia atrás",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo B, a 3 m del punto de contacto, sobre el carril del vehículo A"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "a 3 m del punto de contacto, sobre el carril del vehículo A",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta hundimiento frontal izquierdo"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "izquierdo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "el vehículo B, hundimiento frontal izquierdo con la rueda delantera izquierda desalineada"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "tercio",
+        "valor": "izquierdo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      }
+    ]
+  }
+}

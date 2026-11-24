@@ -1,0 +1,250 @@
+{
+  "id": "aud-31-alcance-puente-churubusco",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 435,
+    "output_tokens": 1885,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0204892,
+  "narracion": "El hecho se ubica en el paso a desnivel de Avenida Río Churubusco (Circuito Interior) en su cruce con la Calzada de Tlalpan, colonia Country Club, alcaldía Coyoacán, Ciudad de México, aproximadamente a las 8:30 horas. El vehículo B, marca Volkswagen, tipo Gol, modelo 2020, circulaba de oriente a poniente por el carril central y se encontraba detenido por el tránsito al final de la bajada del puente. El vehículo A, camioneta marca Ford, tipo Ranger, modelo 2018, circulaba detrás, en bajada, por el mismo carril, a unos 70 km/h según su conductor. Al ver al vehículo B detenido frenó, dejando huellas de frenado de 18 m antes del impacto, y se impactó con su parte frontal contra la parte posterior del vehículo B. El vehículo B fue proyectado y quedó a 5 m de donde estaba detenido; el vehículo A quedó a 2 m detrás del vehículo B. El vehículo A presenta daños en la defensa y la parrilla; el vehículo B, hundimiento severo en la parte posterior. Pavimento seco, día despejado.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "alcance",
+        "cita": "se impactó con su parte frontal contra la parte posterior del vehículo B"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "paso a desnivel de Avenida Río Churubusco (Circuito Interior) en su cruce con la Calzada de Tlalpan, colonia Country Club",
+        "cita": "El hecho se ubica en el paso a desnivel de Avenida Río Churubusco (Circuito Interior) en su cruce con la Calzada de Tlalpan, colonia Country Club"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Coyoacán",
+        "cita": "alcaldía Coyoacán, Ciudad de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Ciudad de México",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 8:30 horas",
+        "cita": "aproximadamente a las 8:30 horas"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Ford",
+        "cita": "camioneta marca Ford, tipo Ranger, modelo 2018"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Ranger",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2018",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "clase",
+        "valor": "pickup",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Volkswagen",
+        "cita": "marca Volkswagen, tipo Gol, modelo 2020"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Gol",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2020",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "se_detiene",
+        "cita": "circulaba de oriente a poniente por el carril central y se encontraba detenido por el tránsito"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "frena",
+        "cita": "Al ver al vehículo B detenido frenó"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "velocidad",
+        "valor": "70 km/h",
+        "cita": "a unos 70 km/h según su conductor"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "frenado",
+        "cita": "dejando huellas de frenado de 18 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "18 m",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "se impactó con su parte frontal contra la parte posterior del vehículo B"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 posterior",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo B fue proyectado y quedó a 5 m de donde estaba detenido"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "a 5 m de donde estaba detenido",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo A quedó a 2 m detrás del vehículo B"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "a 2 m detrás del vehículo B",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta daños en la defensa y la parrilla"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "el vehículo B, hundimiento severo en la parte posterior"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "magnitud",
+        "valor": "severa",
+        "cita": ""
+      }
+    ]
+  }
+}

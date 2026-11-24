@@ -6,6 +6,7 @@ import type { Expediente, SalidaCorpus } from "./corpus";
 import { candadoFisico } from "./candado";
 import { impactosEncimados } from "./encimadas";
 import { escenaDeConversion, escenaDeNarracion } from "./escena-narracion";
+import { claseDeModelo } from "./fichas";
 import { OBJETO_PERSONA } from "./personas";
 import { rumboDeLlegada, rumboDelFrente } from "./reversa";
 import { enMetros } from "./geo";
@@ -264,5 +265,27 @@ describe("las tres narraciones, con su lectura grabada (con la llave de René, 2
         i.vehiculos!.includes("V1") ? "posterior" : "frontal",
       );
     expect(posiciones.filter((p) => p.fase === "final")).toHaveLength(3);
+  });
+});
+
+describe("la clase sale del modelo (revisión de la cadena, 2026-11-24)", () => {
+  const v = (marca: string, modelo: string) =>
+    ({ id: "V1", marca: { valor: marca }, modelo: { valor: modelo } }) as never;
+
+  it("reconoce las familias por su carrocería, con su marca o sin ella", () => {
+    expect(claseDeModelo(v("Nissan", "Tsuru"))).toBe("sedan_compacto");
+    expect(claseDeModelo(v("Chevrolet", "Suburban"))).toBe("suv_grande");
+    expect(claseDeModelo(v("Dodge", "Ram 4000"))).toBe("pickup");
+    expect(claseDeModelo(v("Volkswagen", "Beetle"))).toBe("sedan_mediano");
+    expect(claseDeModelo(v("Italika", "250Z"))).toBe("motocicleta");
+  });
+
+  it("los tractocamiones y camiones, por su marca", () => {
+    expect(claseDeModelo(v("Kenworth", "KW 900"))).toBe("tractocamion");
+    expect(claseDeModelo(v("Isuzu", "ELF 400"))).toBe("camion_unitario");
+  });
+
+  it("lo que no reconoce no lo inventa: se pregunta", () => {
+    expect(claseDeModelo(v("Saab", "9-3"))).toBeNull();
   });
 });
