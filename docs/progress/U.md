@@ -10,6 +10,23 @@ Plan: `docs/cesvi/PLAN-CESVI.md` §3.3. Reglas: `CLAUDE.md`. ADR del bloque 0110
 - **Unity y Blender corren en segundo plano** desde el 2026-11-10: René reabrió la sesión con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`. Sigue la regla de un solo proceso pesado a la vez.
 - **Cómo se itera:** capturas del Editor en modo batch (`Capturas.Tomar`, unos 3 min). En esta sesión no hubo herramientas del MCP de Unity. Un build WebGL solo al cerrar cada punto.
 
+## La batería de ciudad: Tollocan tronaba en el 3D (René, 2026-11-20)
+
+- **Lo que se vio:** en el humo de la t5b, Tollocan pasaba a «calculando» y, 1.2 s después, Unity contestaba «Object reference not set to an instance of an object». Se abría el visor de respaldo.
+- **La causa, reproducida en Unity** (PlayMode en el Editor, en modo batch, sin navegador): en un caso de ciudad, las calles del mapa en vivo llegan después de que el 3D empezó, y la web mandaba otro `cargarCaso` mientras Unity seguía con el primero.
+  - La carga nueva destruía lo de la vieja; la vieja, al volver de `await modelos.ArmarAsync`, tocaba `go.transform` (`VisorCaso.cs`) y contestaba «error».
+  - La web tomaba ese «error» como respuesta de la nueva.
+  - Un solo caso cargado por separado no truena: 14 de 14 en el Editor y 14 de 14 en el player de Windows (build de desarrollo).
+- **Producción tiene el mismo bug:** con el código del 1.3.0 (`35a9cd92`) y paquetes de `main`, las cargas encimadas a 0 y 1 cuadros contestan «error». El arreglo solo de la web está en el #292, sin fusionar.
+- **El arreglo** (`dcf7c291`, `266a61dc`):
+  - Unity: cada carga lleva su turno, y una reemplazada se detiene sin tocar nada (`CargaReemplazada`).
+  - Web: una carga a la vez; la escena que llega mientras Unity carga va cuando termina.
+  - Cada elemento y cada sección de los constructores va protegido (`Omisiones`), y lo omitido viaja en `cargado` (`omitidos`) para que el perito lo vea.
+- **La batería:** `packages/scene-schema/fixtures/caso3d-ciudad/` (14 paquetes, datos de `data/osm/`), `Assets/Croquis/TestsCiudad/CiudadEnUnityTests.cs` y `tools/unity/bateria-ciudad.ps1`. Resultados en `eval/results/unity_bateria_ciudad/`. Con el arreglo: 19 de 19.
+- **El build:** `59d874d0d8ffd774` (7.1 min, 0 errores), en el release de GitHub `visor-web-59d874d0d8ffd774`; no va a Blob. El manifiesto de la rama apunta a él.
+- **La t5c:** definida y fijada a `c051746c`; el PR #293 la hace vigente, sin fusionar.
+- **Siguiente paso:** con el visto bueno de René, fusionar #293 (la t5c) y #292 (el arreglo de producción). Después, la tarea de 1.4 s en el hilo de la página (armar el paquete de un caso de ciudad) y las velocidades (`feat/w-velocidades-via`).
+
 ## Ronda 4, punto 9: el modo «mapa real» (René, 2026-11-18; ADR 0124)
 
 - **Prueba visual con la foto de Esri** en el cruce de Guadalajara: `eval/ronda4_mapa_real_esri.mjs` (20 teselas, ninguna fallida). En AXA, con el Unity falso: `docs/cesvi/ronda-4/evidencia/mapa-real/axa-*.jpg`.

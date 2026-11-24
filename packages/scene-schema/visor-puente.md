@@ -48,7 +48,7 @@
 | Mensaje         | Campos                                                    | Cuándo                                     |
 | --------------- | --------------------------------------------------------- | ------------------------------------------ |
 | `listo`         | `version`                                                 | Al terminar de arrancar.                   |
-| `cargado`       | `escena_id`                                               | El caso ya se puede ver.                   |
+| `cargado`       | `escena_id`; `omitidos` (opcional): lo que el 3D omitió   | El caso ya se puede ver.                   |
 | `tiempo`        | `t`                                                       | Mientras avanza la reproducción.           |
 | `camara`        | `modo`                                                    | Cambió la cámara.                          |
 | `captura`       | `vista`, `png`: base64 sin el prefijo `data:`             | Respuesta a `capturar`.                    |

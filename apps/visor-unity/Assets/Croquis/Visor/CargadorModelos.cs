@@ -33,6 +33,13 @@ namespace Croquis.Visor
         private JObject manifiesto;
         private string baseUrl;
 
+        /// <summary>
+        /// Para las pruebas de Unity (la batería de ciudad, René 2026-11-20): la carpeta local de los modelos
+        /// (`file://…/apps/web/public/modelos/vehiculos/`), sin Blob. En el build queda en null y la dirección
+        /// sale de `recursos_visor.json`.
+        /// </summary>
+        public static string BaseLocal { get; set; }
+
         /// <summary>El papel de cada pieza de un modelo (pintura, faro, calavera…), por su nombre.</summary>
         private readonly Dictionary<string, Dictionary<string, string>> papeles =
             new Dictionary<string, Dictionary<string, string>>();
@@ -127,7 +134,7 @@ namespace Croquis.Visor
                 throw new ModeloNoCargo("El build no trae recursos_visor.json.");
             }
 
-            baseUrl = (string)JObject.Parse(recursos.text)["vehiculos"];
+            baseUrl = BaseLocal ?? (string)JObject.Parse(recursos.text)["vehiculos"];
             using var pedido = UnityWebRequest.Get(baseUrl + "vehiculos.json");
             await pedido.SendWebRequest();
             if (pedido.result != UnityWebRequest.Result.Success)

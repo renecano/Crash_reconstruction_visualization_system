@@ -23,7 +23,14 @@ import type {
 } from "@croquis/scene-schema";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { reconstruirCompletoEnNavegador } from "@/lib/reconstruct-client";
-import { marcar, motivoDe, PuenteUnity, type MotivoRespaldo } from "@/lib/visor-unity/puente";
+import {
+  conTope,
+  ESPERA_CALCULO_3D_MS,
+  marcar,
+  motivoDe,
+  PuenteUnity,
+  type MotivoRespaldo,
+} from "@/lib/visor-unity/puente";
 import { paqueteDelCaso, type RelieveCaso } from "@/lib/visor-unity/paquete";
 import type { CanalTiempo } from "@/lib/visor-unity/canal";
 import {
@@ -255,6 +262,8 @@ export function VisorUnity({
    */
   const enUnity = useRef(false);
   const [vueltas, setVueltas] = useState(0);
+  /** Lo que el 3D omitió de este caso (un elemento con un dato faltante): se le dice al perito. */
+  const [omitidos, setOmitidos] = useState<string[]>([]);
   useEffect(() => {
     if (!puente || dormir) return;
     if (pedida.current?.objetivo === objetivo && pedida.current.relieve === relieve) return;
@@ -284,7 +293,11 @@ export function VisorUnity({
         let alParcial!: (r: Resultado) => void;
         const parcial = new Promise<Resultado>((ok) => (alParcial = ok));
         completo = reconstruirCompletoEnNavegador(aCargar, (r) => alParcial(r), relieve);
-        resultado = await Promise.race([parcial, completo]);
+        resultado = await conTope(
+          Promise.race([parcial, completo]),
+          ESPERA_CALCULO_3D_MS,
+          `El cálculo de la escena del 3D no terminó en ${ESPERA_CALCULO_3D_MS / 1000} s`,
+        );
       }
       marcar("solver_listo");
       if (mio !== turno.current) return;
@@ -307,8 +320,12 @@ export function VisorUnity({
       } as Caso3D;
       marcar("cargar_caso");
       enUnity.current = true;
+      // El humo de las tandas: el paquete exacto que recibe Unity, para reproducir un caso que se traba.
+      if ((window as unknown as { __croquisDiagnostico?: boolean }).__croquisDiagnostico)
+        console.debug(`[croquis] paquete-3d ${JSON.stringify(conExtras)}`);
+      let omitidosDelCaso: string[];
       try {
-        await puente.cargar(conExtras);
+        omitidosDelCaso = await puente.cargar(conExtras);
       } finally {
         enUnity.current = false;
         // Si llegó otra escena mientras Unity cargaba, ahora va.
@@ -317,6 +334,7 @@ export function VisorUnity({
       pisoEnviado.current = p ? p.imagenMapa : null;
       marcar("caso_cargado");
       if (mio !== turno.current) return;
+      setOmitidos(omitidosDelCaso);
       setCargada(objetivo);
       // Un caso recién cargado empieza desde su inicio, a velocidad normal; al alternar con una
       // versión, en el mismo instante (dentro de lo que dura la otra) y con la misma velocidad.
@@ -358,14 +376,18 @@ export function VisorUnity({
       })
       .catch((e: unknown) => {
         if (mio !== turno.current) return;
-        // Un caso que Unity no pudo cargar: el respaldo sí lo dibuja. Unity se cierra.
-        setRespaldoPor({ motivo: "no_cargo", aviso: e instanceof Error ? e.message : String(e) });
+        // Un caso que Unity no pudo cargar (o que no terminó a tiempo): el respaldo sí lo dibuja y
+        // dice por qué. Unity se cierra.
+        const aviso = e instanceof Error ? e.message : String(e);
+        setRespaldoPor({
+          motivo: /no contestó|no terminó/.test(aviso) ? "tardo_demasiado" : "no_cargo",
+          aviso,
+        });
         cb.current.onApi?.(null);
         void puente.cerrar();
         setPuente(null);
       });
-    // `vClave` sale de `objetivo`.
-    // `vueltas`: la escena que esperó a que Unity terminara.
+    // `vClave` sale de `objetivo`; `vueltas`, para la escena que esperó a que Unity terminara.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [puente, objetivo, relieve, dormir, vueltas]);
 
@@ -578,7 +600,9 @@ export function VisorUnity({
       >
         <p className="t-nota vidrio absolute top-3 left-1/2 z-10 -translate-x-1/2 rounded-control px-3 py-1.5">
           {TEXTO_RESPALDO[estado.motivo]}: se muestra el visor ligero.
-          {respaldoPor?.aviso ? <span className="sr-only"> {respaldoPor.aviso}</span> : null}
+          {respaldoPor?.aviso ? (
+            <span data-testid="visor-unity-aviso"> ({respaldoPor.aviso}).</span>
+          ) : null}
         </p>
         {respaldo}
       </div>
@@ -600,6 +624,16 @@ export function VisorUnity({
         // Unity lee el tamaño del lienzo; sin esto toma 300×150.
         style={{ width: "100%", height: "100%" }}
       />
+      {/* Lo que el 3D no pudo dibujar y omitió (René, 2026-11-20): el caso abre igual y el perito lo sabe. */}
+      {listo && omitidos.length ? (
+        <p
+          className="t-nota vidrio absolute bottom-3 left-3 z-10 max-w-[60%] rounded-control px-3 py-1.5"
+          data-testid="visor-unity-omitidos"
+        >
+          En el 3D se omitió, por un dato que no se pudo leer: {omitidos.join("; ")}. La
+          reconstrucción no cambia.
+        </p>
+      ) : null}
       {/* Sin la barra al presentar (el instante lo pone el capítulo) y al editar en 3D. En el marco
           del caso, solo con el 3D a la vista: el 2D pone los suyos. */}
       {listo && !tiempo && enMarco && activo ? (

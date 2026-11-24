@@ -1,0 +1,125 @@
+{
+  "_descripcion": "Masas en vacío de ficha de fabricante para los modelos que nombran los ejemplos y las narraciones de la ronda 4 y que data/vehicles/models_raw.json no trae con masa (René, 2026-11-21: «integra la masa por ficha del modelo»). Solo las lee data/cesvi/scripts/masas-modelo.mjs; no entran a las clases de vehículo (vehicle_classes.json). Una fila por modelo, con la URL consultada y la etiqueta y el valor como vienen impresos.",
+  "filas": [
+    {
+      "clase": "sedan_mediano",
+      "marca": "Chevrolet",
+      "modelo": "Camaro 1SS Coupe automático (6.2L V8)",
+      "anio": 2020,
+      "masa_vacio_kg": 1700,
+      "mercado": "EE. UU.",
+      "fuente_url": "https://web.archive.org/web/20230228050135id_/https://media.chevrolet.com/media/us/en/chevrolet/vehicles/camaro-ss/2020.tab1.html",
+      "fuente_tipo": "oficial",
+      "fecha_consulta": "2026-11-21",
+      "notas": "Sitio de prensa de GM (media.chevrolet.com), archivado. «Base Curb Weight (lb. / kg)», coupé: «3747 / 1700 – 1SS automatic»; coupés de 1,642 a 1,706 kg. El catálogo 2024 de Chevrolet México (SS Coupé 6.2L automático) no publica pesos."
+    },
+    {
+      "clase": "sedan_compacto",
+      "marca": "Volkswagen",
+      "modelo": "Vento Startline Manual 5 vel.",
+      "anio": 2022,
+      "masa_vacio_kg": 1191,
+      "mercado": "México",
+      "fuente_url": "https://web.archive.org/web/20220204032156id_/https://www.vw.com.mx/idhub/content/dam/onehub_pkw/importers/mx/fichas-tecnicas/producto/2022/vento/ficha-tecnica-vento-2022-startline.pdf",
+      "fuente_tipo": "oficial",
+      "fecha_consulta": "2026-11-21",
+      "notas": "Ficha técnica VW de México «VENTO 2022», archivada. «Peso vehicular (kg) 1191» (Startline manual); Tiptronic 1245."
+    },
+    {
+      "clase": "suv_compacta",
+      "marca": "Honda",
+      "modelo": "CR-V Turbo Plus (1.5L turbo, CVT)",
+      "anio": 2027,
+      "masa_vacio_kg": 1590,
+      "mercado": "México",
+      "fuente_url": "https://www.honda.mx/web/pdf/brochure/honda/Brochure_CRV_2027.pdf",
+      "fuente_tipo": "oficial",
+      "fecha_consulta": "2026-11-21",
+      "notas": "Folleto de Honda de México, p. 8, «Peso vehicular (kilogramos) 1,590 | 1,609» (Turbo Plus | Touring). El año sale del nombre del archivo."
+    },
+    {
+      "clase": "sedan_mediano",
+      "marca": "Mazda",
+      "modelo": "Mazda3 Sedán i TM",
+      "anio": 2026,
+      "masa_vacio_kg": 1405,
+      "mercado": "México",
+      "fuente_url": "https://www.mazda.mx/siteassets/descargables-2026/mazda3-sedan/ficha-tecnica/ficha-tecnica-mazda3-sedan-2026-v04.pdf",
+      "fuente_tipo": "oficial",
+      "fecha_consulta": "2026-11-21",
+      "notas": "Ficha técnica Mazda de México «MAZDA3 SEDÁN 2026», p. 5, «Peso en vacío 1,405 TM / 1,415 TA» (i e i Sport); hasta 1,537 (Signature)."
+    },
+    {
+      "clase": "pickup",
+      "marca": "Ford",
+      "modelo": "Ranger 2.3L EcoBoost 4x2 SuperCrew",
+      "anio": 2026,
+      "masa_vacio_kg": 1923,
+      "mercado": "EE. UU.",
+      "fuente_url": "https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2026/specs/2026_Ford_Ranger%20Technical_Specs.pdf",
+      "fuente_tipo": "oficial",
+      "fecha_consulta": "2026-11-21",
+      "notas": "Ficha técnica de Ford EE. UU. 2026, «Base Curb Weight 4,240» lb (2.3L 4x2) = 1,923 kg (0.45359237 kg/lb). El catálogo 2026 de Ford México imprime «Peso vehicular (kg) 3,100» junto a «Capacidad de carga 1,128»: por su magnitud es el peso bruto, así que no da la masa en vacío."
+    },
+    {
+      "clase": "sedan_mediano",
+      "marca": "Toyota",
+      "modelo": "Corolla L CVT (2.0L)",
+      "anio": 2026,
+      "masa_vacio_kg": 1335,
+      "mercado": "Canadá",
+      "fuente_url": "https://www.toyota.ca/content/toyota/en/vehicles/corolla/models-specifications.generate.summaries.series-COR.year-2026.province-ON.powertrain-gas-hybrid.pdf",
+      "fuente_tipo": "oficial",
+      "fecha_consulta": "2026-11-21",
+      "notas": "Toyota Canadá, «PRODUCT SUMMARY 2026 Corolla Gas», «Base Curb Weight kg 1335» (L CVT); hasta 1425 (XSE). La ficha 2027 de Toyota México (mismo 2.0L CVT) no publica el peso."
+    },
+    {
+      "clase": "sedan_compacto",
+      "marca": "Chevrolet",
+      "modelo": "Aveo Sedán TM (LZW7157EBYB)",
+      "anio": 2026,
+      "masa_vacio_kg": 1140,
+      "mercado": "México",
+      "fuente_url": "https://www.chevrolet.com.mx/content/dam/chevrolet/na/mx/es/index/cars/2026-aveo-sedan/mov/02-pdf/2026-aveo-nb-manual-de-propietario.pdf",
+      "fuente_tipo": "oficial",
+      "fecha_consulta": "2026-11-21",
+      "notas": "Manual del propietario Aveo 2026 de Chevrolet México, p. 159: «Peso útil 1140 kg», eje delantero 680 + trasero 460 = 1140, «Masa total 1550 kg»: aquí «peso útil» es la masa en vacío. Sedán automático 1190 kg."
+    },
+    {
+      "clase": "sedan_compacto",
+      "marca": "Kia",
+      "modelo": "Rio LX sedán 1.6L IVT",
+      "anio": 2023,
+      "masa_vacio_kg": 1255,
+      "mercado": "EE. UU.",
+      "fuente_url": "https://www.kiamedia.com/us/en/models/rio/2023/specifications",
+      "fuente_tipo": "oficial",
+      "fecha_consulta": "2026-11-21",
+      "notas": "Kia América, «2023 Kia Rio Specifications», «Curb Weights – Automatic transmission 2,767 lbs.» = 1,255 kg. El Rio de EE. UU. se fabricaba en México; kia.com/mx ya no tiene la ficha."
+    },
+    {
+      "clase": "sedan_compacto",
+      "marca": "Nissan",
+      "modelo": "Tsuru GSI (T/M)",
+      "anio": 2015,
+      "masa_vacio_kg": 946,
+      "mercado": "México",
+      "fuente_url": "https://web.archive.org/web/20150412092520id_/http://www.nissan.com.mx:80/tsuru/specs/ft_tsuru.pdf",
+      "fuente_tipo": "oficial",
+      "fecha_consulta": "2026-11-21",
+      "notas": "Ficha técnica Nissan Mexicana «2015 NISSAN TSURU», archivada: «Peso vehicular 946 | 957 | 987» (GSI | GSI 1.5 | GSII)."
+    },
+    {
+      "clase": "pickup",
+      "marca": "Toyota",
+      "modelo": "Tacoma SR 4x2 (2.4L turbo, automática 8 vel.)",
+      "anio": 2026,
+      "masa_vacio_kg": 1940,
+      "mercado": "México",
+      "fuente_url": "https://www.toyota.mx/content/dam/tmex/tacoma/ficha-t%C3%A9cnica/01Ficha_Tecnica_Tacoma_26_web%20(1).pdf.coredownload.pdf",
+      "fuente_tipo": "oficial",
+      "fecha_consulta": "2026-11-21",
+      "notas": "Ficha técnica Toyota México Tacoma 2026, p. 2, «Peso vehicular (kg) 1,940» (SR 4x2); hasta 2,045 (SR 4x4)."
+    }
+  ]
+}

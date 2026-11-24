@@ -15,9 +15,10 @@
  * Todo queda como supuesto (fuente «supuesto»): se ve distinto y cambia de estado cuando el perito lo
  * confirma o lo corrige. Ningún número de la reconstrucción cambia por proponer: solo se coloca.
  */
-import type { Expediente } from "@croquis/cesvi";
+import { rumboHacia, type Expediente, type SentidoNarradoLugar } from "@croquis/cesvi";
 import {
   ajustarACalle,
+  cardinal,
   elegirDireccion,
   flechaPropuesta,
   flechasDeLlegada,
@@ -68,6 +69,11 @@ export function proponerEscena(o: {
   narracion: string | null;
   lugar: Punto | null;
   nombreDe: (id: string) => string;
+  /**
+   * El sentido narrado junto al lugar (ronda 4): «rumbo a Ciudad de México» ya convertido en rumbo,
+   * o un sentido cardinal. Vale para el vehículo que no tiene otro sentido narrado.
+   */
+  rumboNarrado?: { rumbo: number; cita: string } | null;
 }): EscenaPropuesta | null {
   const { impactos, calles, narracion } = o;
   const vs = o.expediente.vehiculos;
@@ -93,7 +99,7 @@ export function proponerEscena(o: {
         : "no hay calles cerca: va en el lugar buscado",
   });
   const sentido = (v: string) =>
-    narracion
+    (narracion
       ? sentidoNarrado(
           narracion,
           nombresDe(
@@ -101,7 +107,15 @@ export function proponerEscena(o: {
             vs,
           ),
         )
-      : null;
+      : null) ??
+    // El del lugar, para el que va primero en el choque (o el único).
+    (o.rumboNarrado && v === impactos[0]?.vehiculos[0]
+      ? {
+          rumbo: o.rumboNarrado.rumbo,
+          desde: cardinal(o.rumboNarrado.rumbo + 180),
+          cita: o.rumboNarrado.cita,
+        }
+      : null);
   // El primero del choque fija el giro de todo el choque: el de la narración o el de la calle.
   const primero = impactos[0]!.vehiculos[0]!;
   let e = marcarChoque(
@@ -112,21 +126,44 @@ export function proponerEscena(o: {
     sentido(primero)?.rumbo ?? rumboAlineado(calles, choque, 0),
   );
   // Por dónde llegaba cada uno (solo los del primer choque: los demás impactos los marca el perito).
-  const flechas = flechasDeLlegada(calles, choque);
+  // Sin calles del mapa no hay flechas: las cardinales serían una dirección inventada (René).
+  const flechas = calles.length ? flechasDeLlegada(calles, choque) : [];
   for (const v of impactos[0]!.vehiculos) {
     const s = sentido(v);
     const i = flechaPropuesta(flechas, s, poseDe(e, v, "impacto")?.rumbo ?? null);
     const f = i >= 0 ? flechas[i]! : null;
     if (f) e = elegirDireccion(e, impactos, v, f.rumbo, (k) => puntos[k] ?? null, true);
+    // René (2026-11-18): concreto, por qué calle y en qué sentido, y en qué se basa.
+    const caraDe = (id: string) =>
+      (o.expediente.danos ?? [])
+        .find((d) => d.vehiculo === id && !d.dano_previo)
+        ?.zona.cara.replaceAll("_", " ") ?? null;
+    const otro = impactos[0]!.vehiculos.find((x) => x !== v) ?? null;
+    const daños = [
+      caraDe(v) ? `el daño ${caraDe(v)} de ${o.nombreDe(v)}` : null,
+      otro && caraDe(otro) ? `el ${caraDe(otro)} de ${o.nombreDe(otro)}` : null,
+    ].filter(Boolean);
+    // Sin calles del mapa ni sentido narrado no hay de dónde sacar por dónde venía: no se inventa
+    // (René, 2026-11-18); falta, y lo elige el perito.
+    if (!f && !s) {
+      faltan.push({
+        clave: `direccion-${v}`,
+        texto: `Por dónde venía ${o.nombreDe(v)}`,
+        porque: "no hay calles del mapa en este lugar y la narración no lo dice: elígelo tú",
+      });
+      continue;
+    }
     propuestos.push({
       clave: `direccion-${v}`,
       texto: f
-        ? `${o.nombreDe(v)}: ${textoFlecha(f).replace(/^Del /, "venía del ")}`
+        ? `${o.nombreDe(v)}: venía por ${f.calle ?? "la calle sin nombre del mapa"}, de ${f.desde} a ${cardinal(f.rumbo)}`
         : `${o.nombreDe(v)}: en el choque, alineado con la calle`,
       porque: s
         ? `la narración dice «${s.cita}»`
         : f
-          ? "por las zonas de daño de los vehículos"
+          ? daños.length
+            ? `${daños.join(" y ")} cuadran con que llegara así (${textoFlecha(f).toLowerCase()})`
+            : "por las zonas de contacto de los vehículos"
           : "no hay calles del mapa para proponer por dónde llegaba",
     });
   }
@@ -146,4 +183,159 @@ export function proponerEscena(o: {
       });
   }
   return { expediente: e, puntos, propuestos, faltan };
+}
+
+/** Una fila de la lista de La escena (ronda 4, propuesta 1): qué es, en qué estado y qué hace. */
+export interface ItemEscena {
+  clave: string;
+  texto: string;
+  porque: string | null;
+  estado: "propuesto" | "confirmado" | "falta";
+  /** Las preguntas de C1 (primer golpe, otros choques, por dónde pasó, terreno) son opcionales. */
+  opcional: boolean;
+  /** Qué abre «Corregir» o «Marcar»: la pregunta de ese elemento. */
+  abre:
+    | { tipo: "choque"; orden: number }
+    | { tipo: "direccion" | "final"; vehiculo: string }
+    | { tipo: "c1"; pregunta: "golpe" | "otros" | "paso" | "terreno" };
+}
+
+const TEXTO_C1: Record<"golpe" | "otros" | "paso" | "terreno", string> = {
+  golpe: "Dónde fue el primer golpe",
+  otros: "Si chocó contra algo más",
+  paso: "Por dónde pasó cada vehículo",
+  terreno: "El terreno (pendientes, topes, otra superficie)",
+};
+
+/**
+ * La lista de La escena: cada choque, por dónde venía y dónde quedó cada vehículo, y las preguntas de
+ * C1, con su estado. Lo que armó Croquis es «propuesto» (con su porqué) hasta que el perito lo
+ * confirma o lo corrige; lo que no se pudo proponer «falta».
+ */
+export function listaDeLaEscena(o: {
+  expediente: Expediente;
+  impactos: readonly ImpactoAColocar[];
+  /** Los pasos de `pasosEscena` (para las preguntas de C1). */
+  pasos: readonly { tipo: string; hecho: boolean }[];
+  propuesta: EscenaPropuesta | null;
+  /** Si ya se sabe el lugar (buscado o del caso): sin él, lo primero es buscarlo. */
+  conLugar?: boolean;
+  /** Los choques que el perito ya confirmó en la lista. */
+  confirmados: ReadonlySet<string>;
+  direccionesNoSe: readonly string[];
+  juntoAlChoque: readonly string[];
+  desconocidos: readonly string[];
+  nombreDe: (id: string) => string;
+}): ItemEscena[] {
+  const { expediente: e, propuesta } = o;
+  const de = (clave: string) => propuesta?.propuestos.find((p) => p.clave === clave) ?? null;
+  const out: ItemEscena[] = [];
+  const varios = o.impactos.length > 1;
+  for (const i of o.impactos) {
+    const clave = `choque-${i.orden}`;
+    const colocado = i.vehiculos.some((v) => poseDe(e, v, "impacto"));
+    const p = de(clave);
+    out.push({
+      clave,
+      texto: colocado
+        ? (p?.texto ??
+          (varios ? `El choque ${i.orden}, donde lo marcaste` : "El choque, donde lo marcaste"))
+        : o.conLugar === false && i.orden === 1
+          ? "Dónde fue el hecho: busca el lugar y marca el choque"
+          : varios
+            ? `Dónde fue el choque ${i.orden}`
+            : "Dónde fue el choque",
+      porque: colocado ? (p?.porque ?? null) : null,
+      estado: !colocado ? "falta" : p && !o.confirmados.has(clave) ? "propuesto" : "confirmado",
+      opcional: false,
+      abre: { tipo: "choque", orden: i.orden },
+    });
+  }
+  const vistos = new Set<string>();
+  for (const i of o.impactos) {
+    for (const v of i.vehiculos) {
+      if (vistos.has(v)) continue;
+      vistos.add(v);
+      const pose = poseDe(e, v, "impacto");
+      const claveD = `direccion-${v}`;
+      const p = de(claveD);
+      const confirmada = pose?.fuente === "perito" || o.direccionesNoSe.includes(v);
+      // Sin calles ni sentido narrado, Croquis no la propone: falta, aunque el choque ya tenga pose.
+      const sinPropuesta = propuesta?.faltan.find((f) => f.clave === claveD) ?? null;
+      if (sinPropuesta && !confirmada) {
+        out.push({
+          clave: claveD,
+          texto: sinPropuesta.texto,
+          porque: sinPropuesta.porque,
+          estado: "falta",
+          opcional: false,
+          abre: { tipo: "direccion", vehiculo: v },
+        });
+      } else
+        out.push({
+          clave: claveD,
+          texto: pose
+            ? confirmada
+              ? `${o.nombreDe(v)}: venía de ${cardinal(pose.rumbo + 180)} a ${cardinal(pose.rumbo)}`
+              : (p?.texto ?? `${o.nombreDe(v)}: por dónde venía`)
+            : `Por dónde venía ${o.nombreDe(v)}`,
+          porque: pose && !confirmada ? (p?.porque ?? "lo propone Croquis por los daños") : null,
+          estado: !pose ? "falta" : confirmada ? "confirmado" : "propuesto",
+          opcional: false,
+          abre: { tipo: "direccion", vehiculo: v },
+        });
+      const final = poseDe(e, v, "final");
+      const resuelto = Boolean(final) || o.juntoAlChoque.includes(v) || o.desconocidos.includes(v);
+      out.push({
+        clave: `final-${v}`,
+        texto: final
+          ? `${o.nombreDe(v)}: dónde quedó, marcado`
+          : o.juntoAlChoque.includes(v)
+            ? `${o.nombreDe(v)}: quedó junto al choque`
+            : o.desconocidos.includes(v)
+              ? `${o.nombreDe(v)}: no se sabe dónde quedó`
+              : `Dónde quedó ${o.nombreDe(v)}`,
+        porque: resuelto ? null : "la narración no lo ubica en el mapa",
+        estado: resuelto ? "confirmado" : "falta",
+        opcional: false,
+        abre: { tipo: "final", vehiculo: v },
+      });
+    }
+  }
+  for (const pregunta of ["golpe", "otros", "paso", "terreno"] as const) {
+    const paso = o.pasos.find((p) => p.tipo === pregunta);
+    if (!paso) continue;
+    out.push({
+      clave: `c1-${pregunta}`,
+      texto: TEXTO_C1[pregunta],
+      porque: null,
+      estado: paso.hecho ? "confirmado" : "falta",
+      opcional: true,
+      abre: { tipo: "c1", pregunta },
+    });
+  }
+  return out;
+}
+
+/** El rumbo de llegada de un sentido narrado: el cardinal, o el del lugar hacia el destino. */
+export function rumboDelSentido(
+  s: SentidoNarradoLugar | null,
+  destino: Punto | null,
+  desde: Punto | null,
+): { rumbo: number; cita: string } | null {
+  if (!s) return null;
+  if (s.tipo === "cardinal" && s.rumbo !== undefined) return { rumbo: s.rumbo, cita: s.cita };
+  if (s.tipo === "destino" && destino && desde)
+    return { rumbo: rumboHacia(desde, destino), cita: s.cita };
+  return null;
+}
+
+/**
+ * Si se puede ver la reconstrucción desde la lista (ronda 4; René, 2026-11-20: la medición y una
+ * persona se quedaban en La escena): cuando no falta ningún elemento obligatorio (cada choque, por
+ * dónde venía y dónde quedó cada vehículo). Las preguntas opcionales (primer golpe, otros choques,
+ * por dónde pasó, terreno) no bloquean; lo propuesto por Croquis cuenta como listo.
+ */
+export function listaLista(items: readonly ItemEscena[]): boolean {
+  return items.length > 0 && items.every((i) => i.opcional || i.estado !== "falta");
 }

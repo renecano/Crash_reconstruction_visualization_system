@@ -1,0 +1,21 @@
+{
+  "descripcion": "La demo local sin internet (CORRER-DEMO-LOCAL.bat): el sitio compilado con CROQUIS_VISOR=local, con la red de afuera cortada en el navegador.",
+  "script": "apps/web/e2e/demo-local.spec.ts",
+  "fecha": "2026-11-19T13:58:55.788Z",
+  "sitio": "http://localhost:3000",
+  "axa": {
+    "cifra": "57",
+    "segundos_hasta_unity_listo": 17.2,
+    "dictamen_pdf": true
+  },
+  "ejemplo": {
+    "lectura_guardada": true,
+    "mapa_listo": true
+  },
+  "modelos_desde": "el sitio local",
+  "hosts_de_afuera_que_se_intentaron": [
+    "tiles.openfreemap.org"
+  ],
+  "errores_de_pagina": 0,
+  "segundos_totales": 44.7
+}

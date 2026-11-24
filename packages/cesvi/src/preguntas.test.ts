@@ -73,7 +73,7 @@ describe("preguntas del hecho: un dato y su control", () => {
           c.opciones.every((o) => o.valor && o.etiqueta && !/no s[eé]/i.test(o.etiqueta)),
         ).toBe(true);
       }
-      if (c.tipo === "numero") expect(["kg", "m"]).toContain(c.unidad);
+      if (c.tipo === "numero") expect(["kg", "m", "km/h"]).toContain(c.unidad);
       // Un solo dato: una sola pregunta, sin «y cuál», «y qué», «y en qué»…
       expect(p.texto.split("?").length - 1).toBe(1);
       expect(p.texto).not.toMatch(/ y (cu[aá]l|qu[eé]|en qu[eé]|d[oó]nde|c[oó]mo)\b/i);

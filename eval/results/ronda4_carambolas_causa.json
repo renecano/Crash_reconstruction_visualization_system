@@ -1,0 +1,108 @@
+{
+  "descripcion": "Por qué cambian las carambolas con el #284 (René, 2026-11-23): los casos que cambian entre la t6 «antes» (producción, 3257fa9f) y «después» (30da33b8), medidos solo esos casos con eval/cesvi_r6_carambolas.mts (CROQUIS_CASOS), en la laptop de René.",
+  "dentro_del_merge_45f58f9a": {
+    "antes": "45f58f9a^1",
+    "completo": "45f58f9a (4d7812cd)",
+    "partes_apagadas": {
+      "sin-limite": "limiteDelExpediente da siempre 50 km/h (LIMITE_SIN_VIA)",
+      "sin-cota": "declaredBounds vacío en el solver",
+      "sin-masa": "sin conMasasDelModelo"
+    },
+    "casos": {
+      "cesvi-cade1c89cb": {
+        "particion": "prueba",
+        "antes": "0 de 2",
+        "completo": "1 de 2",
+        "sin-limite": "0 de 2",
+        "sin-cota": "1 de 2",
+        "sin-masa": "1 de 2"
+      },
+      "cesvi-b1ab1b00df": {
+        "particion": "prueba",
+        "antes": "1 de 1",
+        "completo": "0 de 1",
+        "sin-limite": "1 de 1",
+        "sin-cota": "0 de 1",
+        "sin-masa": "0 de 1"
+      },
+      "cesvi-17afa381e4": {
+        "particion": "prueba",
+        "antes": "0 de 1",
+        "completo": "1 de 1",
+        "sin-limite": "0 de 1",
+        "sin-cota": "1 de 1",
+        "sin-masa": "1 de 1"
+      },
+      "cesvi-f5a7c68983": {
+        "particion": "desarrollo",
+        "antes": "0 de 1",
+        "completo": "0 de 1",
+        "sin-limite": "0 de 1",
+        "sin-cota": "0 de 1",
+        "sin-masa": "0 de 1"
+      },
+      "cesvi-899e45b63e": {
+        "particion": "desarrollo",
+        "antes": "0 de 2",
+        "completo": "1 de 2",
+        "sin-limite": "0 de 2",
+        "sin-cota": "1 de 2",
+        "sin-masa": "1 de 2"
+      },
+      "cesvi-644f4d909d": {
+        "particion": "desarrollo",
+        "antes": "1 de 3",
+        "completo": "2 de 3",
+        "sin-limite": "0 de 3",
+        "sin-cota": "2 de 3",
+        "sin-masa": "2 de 3"
+      },
+      "cesvi-6a09a017fd": {
+        "particion": "desarrollo",
+        "antes": "1 de 3",
+        "completo": "2 de 3",
+        "sin-limite": "1 de 3",
+        "sin-cota": "2 de 3",
+        "sin-masa": "2 de 3"
+      },
+      "cesvi-4e859603f4": {
+        "particion": "desarrollo",
+        "antes": "2 de 2",
+        "completo": "1 de 2",
+        "sin-limite": "2 de 2",
+        "sin-cota": "1 de 2",
+        "sin-masa": "1 de 2"
+      },
+      "cesvi-74e69ea53a": {
+        "particion": "desarrollo",
+        "antes": "0 de 1",
+        "completo": "1 de 1",
+        "sin-limite": "0 de 1",
+        "sin-cota": "1 de 1",
+        "sin-masa": "1 de 1"
+      }
+    },
+    "conclusion": "Solo el límite de la vía según el texto del lugar los mueve; la cota y la masa por ficha no cambian ningún caso."
+  },
+  "fuera_del_merge": [
+    {
+      "caso": "cesvi-f5a7c68983",
+      "cambio": "1 de 1 → 0 de 1",
+      "commit": "c4d4beb3",
+      "que": "la velocidad típica de la vía, en lugar de los 40 km/h del ajuste, donde la evidencia no fija la velocidad"
+    },
+    {
+      "caso": "cesvi-644f4d909d",
+      "cambio": "0 de 3 → 1 de 3",
+      "commit": "c4d4beb3",
+      "que": "lo mismo"
+    },
+    {
+      "caso": "cesvi-644f4d909d",
+      "cambio": "2 de 3 → 3 de 3",
+      "commit": "4f9c6b08",
+      "que": "la masa de la ficha del fabricante de diez modelos más"
+    }
+  ],
+  "busqueda_binaria": "Commits de primer padre del #284 desde la bifurcación con main (3bfee653) hasta 45f58f9a^1 y de 45f58f9a a 30da33b8, cada uno en su worktree con su instalación."
+}

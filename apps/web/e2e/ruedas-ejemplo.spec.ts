@@ -3,7 +3,14 @@ import { createRequire } from "node:module";
 import { join, resolve } from "node:path";
 import { type Page } from "@playwright/test";
 import { expect, test } from "./base";
-import { contestarC1, irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
+import {
+  contestarC1,
+  contestarMasas,
+  irAPaso,
+  mapaFacil,
+  sinRed,
+  tocarEnMetros,
+} from "./ayuda-recorrido";
 
 /**
  * Las llantas del caso de ejemplo (VW Jetta 2002 contra GM Camaro 1995; René, 2026-11-05): el mismo
@@ -56,13 +63,11 @@ async function hastaEl3d(page: Page) {
   await page.getByTestId("leer-narracion").click();
   await expect(page.getByTestId("vehiculos")).toContainText("VW Jetta · 2002");
   await page.getByTestId("confirmar-impacto").click();
-  await page.getByTestId("opcion-clase-V1-sedan_compacto").click();
-  await page.getByTestId("no-se-masa-V1").click();
-  await page.getByTestId("valor-masa-V2").fill("1450");
-  await page
-    .getByTestId("pregunta-masa-V2")
-    .getByRole("button", { name: "Usar", exact: true })
-    .click();
+  // La clase ya sale del modelo leído («tipo Jetta», ronda 4); se contesta solo si se pregunta.
+  const clase = page.getByTestId("opcion-clase-V1-sedan_compacto");
+  if (await clase.isVisible().catch(() => false)) await clase.click();
+  // La masa también sale del modelo leído (ficha del fabricante, René 2026-11-21): solo si se pregunta.
+  await contestarMasas(page);
   await sinRed(page);
   await irAPaso(page, 3);
   // La escena fácil: el choque, el VW Jetta con su flecha y donde quedó (8 m al noreste), el GM Camaro

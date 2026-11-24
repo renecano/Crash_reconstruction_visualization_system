@@ -1,7 +1,14 @@
 import { mkdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { expect, test } from "./base";
-import { contestarC1, irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
+import {
+  contestarC1,
+  contestarMasas,
+  irAPaso,
+  mapaFacil,
+  sinRed,
+  tocarEnMetros,
+} from "./ayuda-recorrido";
 
 /**
  * Ronda 4, punto 8 (René, 2026-11-18): las capturas «después» del acto «Versiones», con el mismo caso
@@ -52,13 +59,11 @@ test("el acto «Versiones»: la declaración y una hipótesis sobre la reconstru
   await page.getByTestId("leer-narracion").click();
   await expect(page.getByTestId("escena")).toContainText("2 vehículos · 1 impacto");
   await page.getByTestId("confirmar-impacto").click();
-  await page.getByTestId("opcion-clase-V1-sedan_compacto").click();
-  await page.getByTestId("no-se-masa-V1").click();
-  await page.getByTestId("valor-masa-V2").fill("1450");
-  await page
-    .getByTestId("pregunta-masa-V2")
-    .getByRole("button", { name: "Usar", exact: true })
-    .click();
+  // La clase ya sale del modelo leído («tipo Jetta», ronda 4); se contesta solo si se pregunta.
+  const clase = page.getByTestId("opcion-clase-V1-sedan_compacto");
+  if (await clase.isVisible().catch(() => false)) await clase.click();
+  // La masa también sale del modelo leído (ficha del fabricante, René 2026-11-21): solo si se pregunta.
+  await contestarMasas(page);
   await sinRed(page);
   await irAPaso(page, 3);
   const mapaEscena = await mapaFacil(page);

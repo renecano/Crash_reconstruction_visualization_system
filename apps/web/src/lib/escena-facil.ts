@@ -26,6 +26,8 @@ import {
   piezasTerreno,
   rumboDeg,
   usaRelieve,
+  limiteDeLaVia,
+  limiteDelLugarNarrado,
   type Expediente,
   type LonLat,
   type TipoObjeto,
@@ -275,6 +277,9 @@ export interface Calle {
   ancho: number;
   /** Ids de sus nodos, en orden (para los cruces). */
   nodos: number[];
+  /** Su tipo de OpenStreetMap (`highway`) y su límite (`maxspeed`), si lo trae (ronda 4). */
+  tipo?: string;
+  maxspeed?: string;
 }
 
 /** Las calles de una respuesta de Overpass: las que se dibujan (sin andadores ni ciclovías). */
@@ -304,6 +309,8 @@ export function callesDe(resp: OverpassResponse | null): Calle[] {
           ? ancho
           : (Number.isFinite(carriles) && carriles > 0 ? carriles : 2) * 3.3,
       nodos: w.nodes.filter((id) => nodos.has(id)),
+      tipo,
+      ...(w.tags?.maxspeed ? { maxspeed: w.tags.maxspeed } : {}),
     });
   }
   return out;
@@ -704,6 +711,12 @@ export const poseDe = (e: Expediente, v: string, fase: "impacto" | "final" | "in
  * Los pasos de la escena, en orden: cada choque (uno en dos vehículos; en una carambola, uno por
  * impacto) y, por cada vehículo en el orden de los impactos, por dónde venía y dónde quedó.
  */
+/** Si el expediente ya trae algo del terreno marcado (no solo el relieve real que pidió la narración). */
+export function terrenoMarcado(e: Expediente): boolean {
+  const t = e.terreno;
+  return Boolean(t?.superficies?.length || t?.ondulaciones?.length || t?.topes?.length);
+}
+
 export function pasosEscena(
   e: Expediente,
   impactos: readonly ImpactoAColocar[],
@@ -742,7 +755,13 @@ export function pasosEscena(
       tipo: "paso",
       hecho: omitidas || s.c1.pasosListos === true || puntosDePaso(e).length > 0,
     },
-    { tipo: "terreno", hecho: omitidas || s.c1.terrenoListo === true || Boolean(e.terreno) },
+    {
+      tipo: "terreno",
+      // Lo marcado (zonas, ondulaciones, topes) cuenta como contestado; el relieve real que pide la
+      // narración («con pendiente») no: el perito todavía tiene que poder marcar el tope que narró
+      // (René, 2026-11-21: la reversa perdía su tope en la t5c).
+      hecho: omitidas || s.c1.terrenoListo === true || terrenoMarcado(e),
+    },
   ];
   return [...choques, ...vehiculos, ...c1];
 }
@@ -1342,4 +1361,75 @@ export function callesEn(calles: readonly Calle[], p: Punto): string[] {
   if (cruce && cruce.c.calles.length) return cruce.c.calles.slice(0, 2);
   const a = ajustarACalle(calles, p);
   return a?.calle.nombre ? [a.calle.nombre] : [];
+}
+
+/**
+ * El límite de la vía por donde circulaba el vehículo (ronda 4; René, 2026-11-23: el árbol de
+ * «Paseo Tollocan» tomó una calle secundaria de 30 km/h que pasaba más cerca del choque). Entre las
+ * calles a menos de 40 m del punto: la que nombra el lugar narrado y va en el rumbo del vehículo en el
+ * impacto; si no, la que nombra el lugar (la que se nombra primero); si no, la que va en su rumbo (a
+ * menos de 25 m); si no, la más cercana a menos de 25 m. Con su `maxspeed` o el de su tipo (LGMSV,
+ * art. 49 fr. III). null si no hay calle cerca.
+ */
+export function limiteEnElChoque(
+  calles: readonly Calle[],
+  p: Punto,
+  o: { rumbo?: number | null; lugar?: string | null } = {},
+): { kmh: number; fuente: string } | null {
+  const lugar = sinAcentos(o.lugar ?? "");
+  const cerca = calles
+    .map((c) => {
+      const s = sobreCalle(c, p);
+      const nucleo = c.nombre ? nombreComparable(c.nombre) : "";
+      const en = nucleo.length >= 4 ? lugar.indexOf(nucleo) : -1;
+      // Una vía no tiene sentido: 0° y 180° son la misma dirección.
+      const giro =
+        o.rumbo == null ? null : Math.abs(((((s.rumbo - o.rumbo) % 180) + 270) % 180) - 90);
+      return { c, d: s.distancia, en, alineada: giro !== null && giro <= 35 };
+    })
+    .filter((x) => x.d <= 40);
+  const porCercania = (xs: typeof cerca) => [...xs].sort((a, b) => a.d - b.d)[0];
+  const nombradas = cerca.filter((x) => x.en >= 0).sort((a, b) => a.en - b.en || a.d - b.d);
+  const mejor =
+    nombradas.find((x) => x.alineada) ??
+    nombradas[0] ??
+    porCercania(cerca.filter((x) => x.alineada && x.d <= 25)) ??
+    porCercania(cerca.filter((x) => x.d <= 25));
+  if (!mejor) return null;
+  const l = limiteDeLaVia(mejor.c.tipo, mejor.c.maxspeed);
+  // La vía que nombra la narración, sin límite publicado en el mapa: su clase la da el texto del lugar
+  // («Paseo Tollocan» es una avenida). El tipo de OpenStreetMap («secondary») no es la clase de la
+  // LGMSV: Tollocan salía como «calle secundaria» de 30 km/h (René, 2026-11-23).
+  const narrada =
+    mejor.en >= 0 && l?.fuente.startsWith("LGMSV") ? limiteDelLugarNarrado(o.lugar) : null;
+  if (narrada)
+    return {
+      kmh: narrada.kmh,
+      fuente: `${narrada.fuente.replace(/, mientras la vía no se ubica en el mapa$/, "")}; ${mejor.c.nombre}, sin límite publicado en el mapa`,
+    };
+  return l && mejor.c.nombre ? { ...l, fuente: `${l.fuente}; ${mejor.c.nombre}` } : l;
+}
+
+/**
+ * Si se avisa que no hay calles (ronda 4; René, 2026-11-18: «el aviso rojo sale cada vez que se regresa
+ * a La escena, aunque el mapa dibuja las calles»). Solo si Overpass no respondió, no hay calles de
+ * ninguna otra fuente (las teselas de este mapa, las del recorrido o las guardadas con el caso), las
+ * teselas de este lugar ya se leyeron y el aviso no se ha mostrado en la sesión.
+ */
+export function avisarSinCalles(o: {
+  overpassFallo: boolean;
+  hayCalles: boolean;
+  teselasLeidasDe: string | null;
+  lugar: string | null;
+  yaVisto: boolean;
+  descartado: boolean;
+}): boolean {
+  return (
+    o.overpassFallo &&
+    !o.hayCalles &&
+    o.lugar !== null &&
+    o.teselasLeidasDe === o.lugar &&
+    !o.yaVisto &&
+    !o.descartado
+  );
 }

@@ -13,7 +13,26 @@ import { contestarC1, irAPaso, mapaFacil } from "./ayuda-recorrido";
  *
  * No cambia nada del caso: no firma el dictamen ni guarda.
  */
-const SALIDA = process.env.CROQUIS_PROMO ?? "D:\\Croquis-promo\\recorrido";
+const SALIDA = process.env.CROQUIS_PROMO ?? join(__dirname, "../../../trailer-salida/recorrido");
+
+/**
+ * Sin avisos en pantalla (René, 2026-11-18): se cierra todo mensaje que tenga su «Cerrar» (como el
+ * de las calles que no llegaron) antes de cada captura.
+ */
+async function sinAvisos(page: Page) {
+  for (let k = 0; k < 4; k++) {
+    const cerrar = page.locator('button[aria-label="Cerrar el mensaje"]:visible');
+    if (!(await cerrar.count())) return;
+    await cerrar.first().click();
+    await page.waitForTimeout(400);
+  }
+}
+
+/** La pestaña 2D de Reconstrucción, asentada. */
+async function vista2d(page: Page) {
+  await page.getByTestId("vista-maqueta").first().click();
+  await quieta(page, 4000);
+}
 
 /** Que la página termine de entrar y de calcular antes de cada captura. */
 async function quieta(page: Page, extra = 2500) {
@@ -62,8 +81,10 @@ for (const [luz, tema] of [
   test(`AXA completo (${luz})`, async ({ page }) => {
     const dir = join(SALIDA, luz, "axa");
     mkdirSync(dir, { recursive: true });
-    const foto = async (nombre: string) =>
+    const foto = async (nombre: string) => {
+      await sinAvisos(page);
       writeFileSync(join(dir, `${nombre}.png`), await page.screenshot());
+    };
     const errores: string[] = [];
     page.on("pageerror", (e) => errores.push(e.message));
     await preparar(page, tema);
@@ -97,7 +118,12 @@ for (const [luz, tema] of [
     await foto("05-reconstruccion-unity");
     await masCerca(page);
     await foto("05-reconstruccion-unity-detras");
+    await vista2d(page);
+    await foto("05-reconstruccion-2d");
 
+    await irAPaso(page, 5);
+    await quieta(page);
+    await foto("05-versiones");
     await irAPaso(page, 6);
     await quieta(page);
     await foto("06-los-danos");
@@ -109,6 +135,7 @@ for (const [luz, tema] of [
     await foto("08-contra-cesvi");
 
     await irAPaso(page, 9);
+    // Las fotos del 3D del dictamen salen de Unity al abrirlo: se esperan, con tope.
     await expect
       .poll(
         async () =>
@@ -119,13 +146,14 @@ for (const [luz, tema] of [
           )) as number,
         { timeout: 240_000 },
       )
-      .toBe(3);
+      .toBeGreaterThanOrEqual(3)
+      .catch(() => undefined);
     await quieta(page, 5000);
     await foto("09-dictamen");
     const imagenes = await page.evaluate(
       () =>
-        (window as unknown as { __croquisCuadrosDictamen: { etiqueta: string; imagen: string }[] })
-          .__croquisCuadrosDictamen,
+        (window as unknown as { __croquisCuadrosDictamen?: { etiqueta: string; imagen: string }[] })
+          .__croquisCuadrosDictamen ?? [],
     );
     imagenes.forEach((i, k) =>
       writeFileSync(
@@ -149,8 +177,10 @@ for (const [luz, tema] of [
   test(`un caso nuevo desde cero (${luz})`, async ({ page }) => {
     const dir = join(SALIDA, luz, "caso-nuevo");
     mkdirSync(dir, { recursive: true });
-    const foto = async (nombre: string) =>
+    const foto = async (nombre: string) => {
+      await sinAvisos(page);
       writeFileSync(join(dir, `${nombre}.png`), await page.screenshot());
+    };
     const errores: string[] = [];
     page.on("pageerror", (e) => errores.push(e.message));
     await preparar(page, tema);
@@ -210,12 +240,35 @@ for (const [luz, tema] of [
     await irAPaso(page, 4);
     await page.getByTestId("reconstruir").click();
     await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 180_000 });
+    // La receta deja a los dos «junto al choque»: la app avisa que quedaron encimados y ofrece
+    // separarlos. Para el set promo se usa esa misma acción, y se espera el nuevo cálculo.
+    const separar = page.getByRole("button", { name: "Separarlos" });
+    if (await separar.isVisible().catch(() => false)) {
+      await separar.click();
+      await expect(separar).toBeHidden({ timeout: 180_000 });
+      await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 180_000 });
+    }
     await quieta(page, 5000);
     await foto("08-resultado");
     await unityListo(page);
     await foto("09-resultado-unity");
     await masCerca(page);
     await foto("09-resultado-unity-detras");
+    await vista2d(page);
+    await foto("09-resultado-2d");
+    await irAPaso(page, 5);
+    await quieta(page);
+    await foto("10-versiones");
+    await irAPaso(page, 6);
+    await quieta(page);
+    await foto("11-los-danos");
+    await irAPaso(page, 7);
+    await quieta(page);
+    await foto("12-los-numeros");
+    // Un caso nuevo no tiene reporte de CESVI: de los números pasa al dictamen.
+    await irAPaso(page, 9);
+    await quieta(page, 8000);
+    await foto("14-dictamen");
     expect(errores).toEqual([]);
   });
 }

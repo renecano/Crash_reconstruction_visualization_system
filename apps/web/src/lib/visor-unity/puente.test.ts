@@ -168,6 +168,24 @@ describe("puente con Unity", () => {
     expect(instancia.Quit).toHaveBeenCalled();
   });
 
+  it("al cargar, devuelve lo que el 3D omitió (y nada si el build no lo dice)", async () => {
+    conWebgl2();
+    let omitidos: string[] | undefined = ["un edificio: NullReferenceException (…) (3)"];
+    unityFalso(VISOR_PUENTE_VERSION, (metodo) =>
+      metodo === "cargarCaso"
+        ? { tipo: "cargado", escena_id: "x", ...(omitidos ? { omitidos } : {}) }
+        : null,
+    );
+    const p = await PuenteUnity.arrancar(document.createElement("canvas"), () => {}, {
+      manifiesto: MANIFIESTO,
+    });
+    expect(await p.cargar({ version_caso3d: "1" })).toEqual([
+      "un edificio: NullReferenceException (…) (3)",
+    ]);
+    omitidos = undefined;
+    expect(await p.cargar({ version_caso3d: "1" })).toEqual([]);
+  });
+
   it("carga un caso, toma las fotos una por una y devuelve PNG", async () => {
     conWebgl2();
     const { enviados } = unityFalso(VISOR_PUENTE_VERSION, (metodo, datos) => {

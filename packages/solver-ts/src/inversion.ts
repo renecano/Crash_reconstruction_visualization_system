@@ -46,6 +46,9 @@ export const SIGMA_POSITION_M = 1.0;
  * Global, no por caso.
  */
 export const PRIORIDAD = 10.0;
+/** La velocidad declarada (ronda 4): el prefijo de su residuo y la σ mínima (km/h) de su rango. */
+export const DECLARADA = "velocidad_declarada:";
+export const SIGMA_DECLARADA_MIN_KMH = 2.0;
 /** Un reposo supuesto a más de esto del de la reconstrucción con la deformación no cabe con ella. */
 export const ASSUMED_REST_MISS_M = 3.0 * SIGMA_POSITION_M;
 const SIGMA_THROW_M = 1.5;
@@ -259,7 +262,38 @@ export class Evidence {
     readonly waypoints: Waypoint[] = [],
     /** El punto inicial del choque que marcó el perito (C1): [evento, x, y]. */
     readonly impactPoint: [string, number, number] | null = null,
+    /**
+     * Vehículo → [km/h, σ] de la velocidad declarada (narración, perito o vía; ronda 4): un supuesto
+     * con su rango que solo pesa donde la evidencia no fija la velocidad.
+     */
+    readonly declaredSpeed: Map<string, [number, number]> = new Map(),
+    /**
+     * Vehículo → «minimo» o «maximo» si su velocidad declarada es una cota («a más de 90 km/h»): el
+     * residuo solo cuenta del lado que la viola, y no se sortea.
+     */
+    readonly declaredBound: Map<string, string> = new Map(),
   ) {}
+
+  /** La misma evidencia con otra velocidad declarada (el sorteo de las simulaciones). */
+  withDeclaredSpeed(m: Map<string, [number, number]>): Evidence {
+    return new Evidence(
+      this.rest,
+      this.throwM,
+      this.damageDv,
+      this.restHeading,
+      this.skid,
+      this.slide,
+      this.damageMin,
+      this.restAssumed,
+      this.headingAssumed,
+      this.assumedAsData,
+      this.rearEnd,
+      this.waypoints,
+      this.impactPoint,
+      m,
+      this.declaredBound,
+    );
+  }
 
   empty(): boolean {
     return !(
@@ -271,7 +305,8 @@ export class Evidence {
       this.slide.size ||
       this.restAssumed.size ||
       this.waypoints.length ||
-      this.impactPoint
+      this.impactPoint ||
+      this.declaredSpeed.size
     );
   }
 
@@ -296,6 +331,8 @@ export class Evidence {
       this.rearEnd,
       this.waypoints,
       this.impactPoint,
+      this.declaredSpeed,
+      this.declaredBound,
     );
   }
 
@@ -313,6 +350,7 @@ export class Evidence {
       ...sorted(this.headingAssumed).map((k) => `rumbo_final_supuesto:${k}`),
       ...this.waypoints.map((w) => `paso:${w.id}`),
       ...(this.impactPoint ? [`punto_inicial:${this.impactPoint[0]}`] : []),
+      ...sorted(this.declaredSpeed).map((k) => `velocidad_declarada:${k}`),
     ];
   }
 }
@@ -513,7 +551,39 @@ export function evidenceFromSpec(spec: Json, seed = EVIDENCE_SEED, nDamage = N_D
     rearEndPairs(spec),
     waypointsFromSpec(spec),
     impactPointFromSpec(spec),
+    declaredSpeeds(spec),
+    declaredBounds(spec),
   );
+}
+
+/** Las velocidades declaradas que son una cota (`velocidad_previa.cota`): «minimo» o «maximo». */
+export function declaredBounds(spec: Json): Map<string, string> {
+  const byId = new Map((spec.vehiculos as Json[]).map((v) => [String(v.id), v]));
+  const out = new Map<string, string>();
+  for (const vid of declaredSpeeds(spec).keys()) {
+    const cota = ((byId.get(vid)!.velocidad_previa ?? {}) as Json).cota;
+    if (cota === "minimo" || cota === "maximo") out.set(vid, cota);
+  }
+  return out;
+}
+
+/**
+ * La velocidad declarada de cada vehículo en movimiento (`velocidad_previa.a_priori` con su `rango`
+ * p10–p90): su valor y su σ, en km/h (ronda 4).
+ */
+export function declaredSpeeds(spec: Json): Map<string, [number, number]> {
+  const byId = new Map((spec.vehiculos as Json[]).map((v) => [String(v.id), v]));
+  const out = new Map<string, [number, number]>();
+  for (const vid of movingVehicles(spec)) {
+    const vp = (byId.get(vid)!.velocidad_previa ?? {}) as Json;
+    const rango = vp.rango as number[] | undefined;
+    if (!vp.a_priori || !rango) continue;
+    const f = vp.unidad === "m/s" ? 3.6 : 1.0;
+    const lo = Number(rango[0]) * f;
+    const hi = Number(rango[1]) * f;
+    out.set(vid, [Number(vp.valor) * f, Math.max(SIGMA_DECLARADA_MIN_KMH, (hi - lo) / 2.563)]);
+  }
+  return out;
 }
 
 /**
@@ -831,7 +901,7 @@ export function positionAt(ts: number[], xs: number[], ys: number[], t: number):
   return [xs[xs.length - 1]!, ys[ys.length - 1]!];
 }
 
-function residuals(
+export function residuals(
   spec: Json,
   ev: Evidence,
   dt: number,
@@ -920,6 +990,21 @@ function residuals(
     const [eid, x, y] = ev.impactPoint;
     out.set(`punto_inicial:${eid}:x`, (r.puntoImpacto[0] - x) / SIGMA_POSITION_M);
     out.set(`punto_inicial:${eid}:y`, (r.puntoImpacto[1] - y) / SIGMA_POSITION_M);
+  }
+  if (ev.declaredSpeed.size) {
+    // La velocidad declarada (ronda 4): un supuesto con la σ de su rango p10–p90.
+    const byS = new Map((spec.vehiculos as Json[]).map((v) => [String(v.id), v]));
+    for (const vid of [...ev.declaredSpeed.keys()].sort()) {
+      const [kmh, sigma] = ev.declaredSpeed.get(vid)!;
+      const vp = (byS.get(vid)!.velocidad_previa ?? {}) as Json;
+      const val = Number(vp.valor ?? kmh) * (vp.unidad === "m/s" ? 3.6 : 1.0);
+      let r = (val - kmh) / sigma;
+      const cota = ev.declaredBound.get(vid);
+      // Una cota solo empuja si se viola: «al menos 90» no lleva la velocidad hacia 90.
+      if (cota === "minimo") r = Math.min(0, r);
+      else if (cota === "maximo") r = Math.max(0, r);
+      out.set(`velocidad_declarada:${vid}`, r);
+    }
   }
   return out;
 }
@@ -1085,15 +1170,25 @@ export function fitEvidence(
   };
 }
 
-/** Desviación local de cada parámetro en el mejor ajuste (aproximación de Laplace). */
-export function localSigma(spec: Json, ev: Evidence, fit: Fit, dt = 0.1): Map<string, number> {
+/**
+ * Desviación local de cada parámetro en el mejor ajuste (aproximación de Laplace). Con
+ * `soloEvidencia`, sin la velocidad declarada: lo que fija la evidencia por sí sola.
+ */
+export function localSigma(
+  spec: Json,
+  ev: Evidence,
+  fit: Fit,
+  dt = 0.1,
+  soloEvidencia = false,
+): Map<string, number> {
   const base = withMarks(spec, ev);
   const params = parameters(base, ev);
   if (params.length === 0) return new Map();
   const prob = new Problem(base, ev, params, new Map(), dt);
   const x = params.map((p) => Math.min(Math.max(fit.values.get(p.name) ?? p.start, p.lo), p.hi));
   prob.activate(x);
-  const j = prob.jac(x);
+  let j = prob.jac(x);
+  if (soloEvidencia) j = j.filter((_, i) => !prob.names[i]!.startsWith(DECLARADA));
   if (j.length === 0 || prob.names.length === 0) {
     return new Map(params.map((p) => [p.name, Infinity]));
   }
@@ -1266,6 +1361,8 @@ export function perturbed(spec: Json, ev: Evidence, rng: Draws): Perturbed {
     ev.rearEnd,
     waypoints,
     impactPoint,
+    new Map(),
+    ev.declaredBound,
   );
   let downedMu: number | null = null;
   if (
@@ -1278,6 +1375,15 @@ export function perturbed(spec: Json, ev: Evidence, rng: Draws): Perturbed {
   for (const [k, lo, hi] of zoneRanges(lugar)) {
     const zonas = (lugar.terreno as Json).superficies as Json[];
     zonas[k]!.friccion = { valor: rng.uniform(lo, hi), fuente: "supuesto", confianza: 0.5 };
+  }
+  // La velocidad declarada (ronda 4), sorteada dentro de su rango; al final, por la misma razón.
+  if (ev.declaredSpeed.size) {
+    const m = new Map<string, [number, number]>();
+    for (const k of [...ev.declaredSpeed.keys()].sort()) {
+      const [kmh, sigma] = ev.declaredSpeed.get(k)!;
+      m.set(k, [ev.declaredBound.has(k) ? kmh : Math.max(0, kmh + rng.gauss(0, sigma)), sigma]);
+    }
+    return { spec: s, evidence: e.withDeclaredSpeed(m), downedMu };
   }
   return { spec: s, evidence: e, downedMu };
 }
@@ -1335,6 +1441,8 @@ export class Inversion {
     readonly full: Fit | null = null,
     /** La velocidad al impacto de cada reestimación: la distribución real, para su histograma. */
     readonly impactSamples: Map<string, number[]> = new Map(),
+    /** Las velocidades que fija solo lo declarado (narración, perito o vía), no la evidencia. */
+    readonly declaredOnly: Set<string> = new Set(),
   ) {}
 
   /** Los modos del multiarranque, del menor costo al mayor (ADR 0091). */
@@ -1358,7 +1466,12 @@ export class Inversion {
       semilla: this.seed,
       muestras: this.fits.length,
       evidencia: this.evidence,
-      parametros: this.estimates.map((e) => e.toDict()),
+      parametros: this.estimates.map((e) => ({
+        ...e.toDict(),
+        ...(e.identifiable && this.declaredOnly.has(e.param.name)
+          ? { fijada_por: "declarada" }
+          : {}),
+      })),
       velocidad_impacto: byKey(this.impactSpeeds).map(([k, d]) => ({
         vehiculo: k,
         ...d.toDict(2),
@@ -1614,6 +1727,8 @@ interface Prepared {
   free: Set<string>;
   full: Fit | null;
   best: Fit;
+  /** Lo que fija solo la velocidad declarada, no la evidencia (ronda 4). */
+  declaredOnly: Set<string>;
   estimates(params: Param[]): Estimate[];
 }
 
@@ -1643,12 +1758,21 @@ function prepare(spec: Json, ev: Evidence, params: Param[], bestFull: Fit, dt: n
     dt,
   );
   const fin = best;
+  const declaredOnly = new Set<string>();
+  if (ev.declaredSpeed.size && free.size) {
+    // Qué fijaría la evidencia por sí sola: lo demás lo fija la velocidad declarada.
+    const sEv = localSigma(spec, ev, best, dt, true);
+    for (const p of params)
+      if (free.has(p.name) && !((sEv.get(p.name) ?? Infinity) <= IDENT_MAX[p.kind]!))
+        declaredOnly.add(p.name);
+  }
   return {
     sigma,
     ident,
     free,
     full,
     best,
+    declaredOnly,
     estimates: (ps: Param[]) =>
       ps.map(
         (p) =>
@@ -1749,6 +1873,7 @@ function estimate(
     assumedAsData,
     full,
     impacts,
+    prep.declaredOnly,
   );
 }
 

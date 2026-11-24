@@ -48,3 +48,7 @@ export * from "./terreno";
 export * from "./relieve";
 export * from "./iluminacion";
 export * from "./personas";
+export * from "./velocidad-narrada";
+export * from "./contra-narracion";
+export * from "./lugar-narrado";
+export * from "./eje-calle";

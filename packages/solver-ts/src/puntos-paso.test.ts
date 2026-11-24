@@ -15,6 +15,7 @@ import {
   invert,
   parameters,
   positionAt,
+  residuals,
   waypointsFromSpec,
 } from "./inversion";
 import { differences } from "./parity-diff";
@@ -110,4 +111,70 @@ describe("paridad con Python: lateral_puntos_paso", () => {
     expect(dePaso.length).toBeGreaterThanOrEqual(8);
     for (const r of dePaso) expect(Math.abs(r.sigma)).toBeLessThan(1.0);
   }, 900_000);
+});
+
+/**
+ * Ronda 4 (René): la velocidad que dice la narración entra como supuesto con su rango y, si la
+ * evidencia no la fija, la fija ella, dicho así (`fijada_por: "declarada"`). El árbol del relato
+ * «como a 80» (rango 70–95) con `a_priori`; la referencia la escribe `croquis-solver`.
+ */
+describe("paridad con Python: arbol_velocidad_declarada", () => {
+  const spec = leer("inversion/arbol_velocidad_declarada.json");
+  const golden = leer("inversion/resultados/arbol_velocidad_declarada.json");
+
+  it("la velocidad declarada es evidencia, y la inversión coincide con la referencia", () => {
+    const ev = evidenceFromSpec(spec);
+    expect(ev.labels()).toEqual(golden.evidencia);
+    expect(ev.labels()).toContain("velocidad_declarada:veh-a");
+    const inv = invert(spec).toDict() as { parametros: Json[] };
+    expect(differences(golden.inversion as Json, JSON.parse(JSON.stringify(inv)))).toEqual([]);
+    const v = inv.parametros.find((p) => p.parametro === "velocidad_previa")!;
+    expect(v.fijada_por).toBe("declarada");
+    const est = v.estimacion as { mejor: number; p10: number; p90: number };
+    expect(est.mejor).toBeGreaterThan(70);
+    expect(est.p10).toBeGreaterThan(60);
+    expect(est.p90).toBeLessThan(100);
+  }, 30_000);
+
+  it("sin `a_priori`, la misma escena no fija la velocidad (como antes)", () => {
+    const sin = structuredClone(spec) as { vehiculos: Json[] };
+    delete (sin.vehiculos[0]!.velocidad_previa as Json).a_priori;
+    const inv = invert(sin).toDict() as { parametros: Json[] };
+    const v = inv.parametros.find((p) => p.parametro === "velocidad_previa")!;
+    expect(v.identificable).toBe(false);
+    expect(v.fijada_por).toBeUndefined();
+  });
+});
+
+/** René, 2026-11-20: «a más de X» es una cota, no un valor (paridad con `test_inversion.py`). */
+describe("la velocidad declarada como cota", () => {
+  const conCota = (cota: string, valor: number) => {
+    const s = structuredClone(leer("inversion/arbol_velocidad_declarada.json")) as {
+      vehiculos: Json[];
+    };
+    Object.assign(s.vehiculos[0]!.velocidad_previa as Json, { valor, rango: [valor, valor], cota });
+    return s as unknown as Json;
+  };
+
+  it.each([
+    ["minimo", 70, -5],
+    ["minimo", 95, 0],
+    ["maximo", 95, 7.5],
+    ["maximo", 70, 0],
+  ] as const)("%s 80 con %d km/h: residuo %d", (cota, probada, esperado) => {
+    const spec = conCota(cota, 80);
+    const ev = evidenceFromSpec(spec);
+    expect([...ev.declaredBound]).toEqual([["veh-a", cota]]);
+    const prueba = structuredClone(spec) as { vehiculos: Json[] };
+    (prueba.vehiculos[0]!.velocidad_previa as Json).valor = probada;
+    const r = residuals(prueba, ev, 0.02)!;
+    expect(r.get("velocidad_declarada:veh-a")).toBeCloseTo(esperado, 9);
+  });
+
+  it("una cota sola no inventa la velocidad", () => {
+    const inv = invert(conCota("minimo", 80)).toDict() as { parametros: Json[] };
+    const v = inv.parametros.find((p) => p.parametro === "velocidad_previa")!;
+    expect(v.identificable).toBe(false);
+    expect(v.estimacion ?? null).toBeNull();
+  }, 30_000);
 });

@@ -297,7 +297,11 @@ function vehiculosDe(spec: EscenaSpec, resultado: Resultado): Escenario["vehicul
   });
 }
 
-export function escenarioDe(spec: EscenaSpec, resultado: Resultado): Escenario {
+export function escenarioDe(
+  spec: EscenaSpec,
+  resultado: Resultado,
+  relieve: RelieveEscenario | null = null,
+): Escenario {
   const lugar = spec.lugar;
   const layout = roadLayout(lugar);
   const mapa = sceneLayout(spec).mapa;
@@ -392,7 +396,14 @@ export function escenarioDe(spec: EscenaSpec, resultado: Resultado): Escenario {
         herreria: false,
         zaguan: false,
       }));
-  const altura = terrainHeightAt(spec.meta.semilla, corredores, plan.zone);
+  // El piso: el ondulado decorativo, más el relieve real del lugar si el caso lo trae y el
+  // hundimiento bajo un puente narrado (ronda 4). Unity usa la misma altura para las vías
+  // (`RelieveMalla` y `EstructuraVia` en Croquis.Core), así que vías y suelo no se despegan.
+  const decorativa = terrainHeightAt(spec.meta.semilla, corredores, plan.zone);
+  const real = alturaDeRelieve(relieve);
+  const estructuraPiso = estructuraDe(spec, resultado, mainWidth);
+  const altura = (x: number, y: number) =>
+    decorativa(x, y) + real(x, y) - hundimientoBajoEstructura(estructuraPiso, x, y);
   const seco = (x: number, y: number) =>
     1 - Math.min(1, Math.max(0, (distanceToRoad({ x, y }, corredores) - 1.2) / 4));
   const tonoEn = (x: number, y: number): number => {
@@ -438,11 +449,13 @@ export function escenarioDe(spec: EscenaSpec, resultado: Resultado): Escenario {
   };
 
   const z = (x: number, y: number) => cm(altura(x, y));
+  const estructura = estructuraPiso;
   return {
     version: ESCENARIO_VERSION,
     semilla: spec.meta.semilla,
     procedural: true as const,
     centro,
+    ...(estructura ? { estructura } : {}),
     ambiente: {
       noche: env.night,
       mojado: env.wet,
@@ -587,4 +600,101 @@ export function escenarioDe(spec: EscenaSpec, resultado: Resultado): Escenario {
       rumbo_deg: cm(p.rumbo_deg),
     })),
   };
+}
+
+/**
+ * El puente o paso a desnivel que narra el perito (ronda 4), ilustrativo: centrado en el impacto y a
+ * lo largo del avance del primer vehículo en ese instante. El largo (60 m), la altura (6 m) y las pilas
+ * son supuestos del 3D; el ancho es el de la vía más los parapetos. La física no cambia: va sobre la
+ * losa, a nivel.
+ */
+export function estructuraDe(
+  spec: EscenaSpec,
+  resultado: Resultado,
+  anchoVia: number,
+): Escenario["estructura"] | null {
+  const e = (spec.lugar as { estructura?: { valor: "puente" | "paso_a_desnivel" } }).estructura;
+  if (!e) return null;
+  const p = resultado.punto_impacto ?? { x: 0, y: 0 };
+  const t0 = resultado.eventos.find((x) => x.tipo.startsWith("impacto"))?.t ?? 0;
+  const tr = resultado.vehiculos[0]?.trayectoria;
+  let rumbo = 0;
+  if (tr && tr.t.length > 1) {
+    let i = 0;
+    while (i + 1 < tr.t.length && tr.t[i + 1]! <= t0) i++;
+    const k = Math.max(0, i - 1);
+    rumbo = (Math.atan2(tr.vy[k] ?? 0, tr.vx[k] ?? 0) * 180) / Math.PI;
+    if (!Number.isFinite(rumbo) || (tr.vx[k] === 0 && tr.vy[k] === 0))
+      rumbo = ((tr.rumbo[k] ?? 0) * 180) / Math.PI;
+  }
+  return {
+    tipo: e.valor,
+    centro: { x: cm(p.x), y: cm(p.y) },
+    rumbo_deg: cm(rumbo),
+    largo_m: 60,
+    ancho_m: cm(Math.min(60, Math.max(4, anchoVia + 1.6))),
+    altura_m: 6,
+  };
+}
+
+/** La malla de relieve del caso (la misma de `caso3d.relieve`). */
+export interface RelieveEscenario {
+  origen: { x: number; y: number };
+  resolucion_m: number;
+  ancho: number;
+  alto: number;
+  alturas_m: number[];
+}
+
+/**
+ * La altura del relieve real en (x, y): la bilineal del solver (`ReliefMesh.height`). Cero sin
+ * relieve o con una malla plana.
+ */
+export function alturaDeRelieve(r: RelieveEscenario | null): (x: number, y: number) => number {
+  if (!r || r.ancho < 2 || r.alto < 2 || r.alturas_m.length < r.ancho * r.alto) return () => 0;
+  const h = r.alturas_m;
+  if (Math.max(...h) === Math.min(...h)) return () => 0;
+  const { ancho: nx, alto: ny, resolucion_m: paso } = r;
+  return (x, y) => {
+    const fx = Math.min(Math.max((x - r.origen.x) / paso, 0), nx - 1);
+    const fy = Math.min(Math.max((y - r.origen.y) / paso, 0), ny - 1);
+    const i = Math.min(Math.trunc(fx), nx - 2);
+    const j = Math.min(Math.trunc(fy), ny - 2);
+    const tx = fx - i;
+    const ty = fy - j;
+    const k = j * nx + i;
+    const bajo = h[k]! + (h[k + 1]! - h[k]!) * tx;
+    const alto = h[k + nx]! + (h[k + nx + 1]! - h[k + nx]!) * tx;
+    return bajo + (alto - bajo) * ty;
+  };
+}
+
+/** m: en cuánto sube el piso de abajo hasta la losa en cada extremo del puente (el terraplén). */
+export const RAMPA_EXTREMO_M = 15;
+/** m: en cuánto baja el piso desde la orilla de la losa (el muro del estribo). */
+export const RAMPA_LADO_M = 1;
+
+/**
+ * Cuánto baja el piso en (x, y) bajo un puente narrado: nada sobre la losa ni fuera del puente; su
+ * altura completa a los lados de la losa, con el terraplén en los extremos. La misma fórmula que
+ * `EstructuraVia.Hundimiento` en Croquis.Core.
+ */
+export function hundimientoBajoEstructura(
+  e: Escenario["estructura"] | null | undefined,
+  x: number,
+  y: number,
+): number {
+  if (!e) return 0;
+  const r = (e.rumbo_deg * Math.PI) / 180;
+  const dx = x - e.centro.x;
+  const dy = y - e.centro.y;
+  const largo = Math.abs(dx * Math.cos(r) + dy * Math.sin(r));
+  const lado = Math.abs(-dx * Math.sin(r) + dy * Math.cos(r));
+  const suave = (u: number) => {
+    const t = Math.min(1, Math.max(0, u));
+    return t * t * (3 - 2 * t);
+  };
+  const enLargo = suave((e.largo_m / 2 - largo) / RAMPA_EXTREMO_M);
+  const enLado = suave((lado - e.ancho_m / 2) / RAMPA_LADO_M);
+  return e.altura_m * enLargo * enLado;
 }

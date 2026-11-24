@@ -59,7 +59,9 @@ namespace Croquis.EditorTools
                 scenes = new[] { RutaEscena },
                 locationPathName = salida,
                 target = objetivo,
-                options = BuildOptions.None,
+                // CROQUIS_DESARROLLO=1: build de desarrollo, con la pila y la línea de cada excepción (la
+                // batería de ciudad en un player, René 2026-11-20). Los que se publican van sin eso.
+                options = System.Environment.GetEnvironmentVariable("CROQUIS_DESARROLLO") == "1" ? BuildOptions.Development : BuildOptions.None,
             });
             var s = reporte.summary;
             VariantesDeShaders.EscribirInforme(objetivo);

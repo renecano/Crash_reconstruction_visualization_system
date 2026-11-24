@@ -20,14 +20,27 @@
                            contra el sitio local y apaga
     -Despues arranque-3d   sirve, mide el arranque del 3D de Unity en el Chrome instalado
                            (e2e/medir-unity-arranque.spec.ts) contra el sitio local y apaga
+    -Despues narraciones   sirve, corre las seis narraciones y el caso encimado (t5) en Chrome y apaga
+    -Despues tollocan      sirve, corre el caso de Tollocan de René de punta a punta (t5) en Chrome y apaga
+    -Despues humo          sirve, lleva AXA y Tollocan de La escena nueva al 3D de Unity (humo de la tanda) y apaga
+    -Despues ejemplos      sirve, corre los cinco ejemplos con el 3D (t5) en Chrome y apaga; con -Casos,
+                           guarda ahí el .croquis de cada uno (t6)
+    -Despues recorrido     sirve, toma las fotos del recorrido de la app (t6: juegos «publico» y
+                           «solo-cesvi», 2560×1440, Unity en calidad alta) en -Salida y apaga
     -Despues video-3d      sirve, graba «Descargar video» del 3D de AXA con el Unity real en Chrome y
                            en Edge (e2e/video-3d-real.spec.ts; los MP4 al Escritorio) y apaga
     -Salida RUTA           a dónde escribe su resultado la comprobación o la medición
+    -Capturas RUTA         dónde van las capturas de los ejemplos (por omisión, las de la t5)
+    -Casos RUTA            dónde van los .croquis de los ejemplos
 #>
 param(
   [switch]$SoloPreparar,
-  [ValidateSet("", "comprobar", "fps-web", "arranque-3d", "video-3d")][string]$Despues = "",
-  [string]$Salida = ""
+  [ValidateSet("", "comprobar", "fps-web", "arranque-3d", "video-3d", "narraciones", "tollocan", "ejemplos", "humo", "recorrido")][string]$Despues = "",
+  [string]$Salida = "",
+  [string]$Capturas = "",
+  [string]$Casos = "",
+  # Con -Despues recorrido: solo las pruebas cuyo nombre lo lleva («publico», «SOLO-CESVI»).
+  [string]$Filtro = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -185,6 +198,43 @@ try {
       $env:CROQUIS_CHROME = $chrome
       if ($Salida) { $env:CROQUIS_ARRANQUE_SALIDA = $Salida }
       & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/medir-unity-arranque.spec.ts
+      $codigo = $LASTEXITCODE
+    } finally {
+      if ($null -eq $gpuAntes) { Remove-ItemProperty -Path $llaveGpu -Name $chrome -ErrorAction SilentlyContinue }
+      else { Set-ItemProperty -Path $llaveGpu -Name $chrome -Value $gpuAntes }
+    }
+  } elseif ($Despues -in @("narraciones", "tollocan", "ejemplos", "humo", "recorrido")) {
+    # t5-verificacion (René, 2026-11-19), en el Chrome instalado contra la demo local:
+    #   narraciones  las seis narraciones nuevas y el caso encimado, con capturas del 3D;
+    #   tollocan     el caso de René de punta a punta;
+    #   ejemplos     los cinco ejemplos (el «después»; el «antes» es el de producción).
+    if (-not $chrome) { Fallar "No encontré Google Chrome: la tanda t5 corre en Chrome." }
+    # Chrome con la tarjeta de alto rendimiento (René, 2026-11-20: la t5 corrió en la integrada),
+    # como en arranque-3d; al final, como estaba.
+    $llaveGpu = "HKCU:\Software\Microsoft\DirectX\UserGpuPreferences"
+    if (-not (Test-Path $llaveGpu)) { New-Item -Path $llaveGpu -Force | Out-Null }
+    $gpuAntes = (Get-ItemProperty -Path $llaveGpu -Name $chrome -ErrorAction SilentlyContinue).$chrome
+    Set-ItemProperty -Path $llaveGpu -Name $chrome -Value "GpuPreference=2;"
+    try {
+      $env:CROQUIS_URL = $Url
+      $env:CROQUIS_CANAL = "chrome"
+      if ($Salida) { $env:CROQUIS_SALIDA = $Salida }
+      if ($Despues -eq "humo") {
+        & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/humo-3d.spec.ts
+      } elseif ($Despues -eq "recorrido") {
+        # t6 (René, 2026-11-21): las fotos del recorrido, 2560×1440 con deviceScaleFactor 2.
+        if ($Salida) { $env:CROQUIS_RECORRIDO = $Salida }
+        $grep = if ($Filtro) { @("--grep", $Filtro) } else { @() }
+        & pnpm --filter "@croquis/web" exec playwright test -c playwright.recorrido.config.ts @grep
+      } elseif ($Despues -eq "ejemplos") {
+        $env:CROQUIS_UNITY = "1"
+        $env:CROQUIS_CAPTURAS = if ($Capturas) { $Capturas } else { "docs/cesvi/ronda-4/evidencia/t5-ejemplos" }
+        if ($Casos) { $env:CROQUIS_CASOS = $Casos }
+        & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/ejemplos-ronda2.spec.ts
+      } else {
+        $filtro = if ($Despues -eq "tollocan") { "Tollocan" } else { "narración|encimado" }
+        & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/narraciones-fisica.spec.ts -g $filtro
+      }
       $codigo = $LASTEXITCODE
     } finally {
       if ($null -eq $gpuAntes) { Remove-ItemProperty -Path $llaveGpu -Name $chrome -ErrorAction SilentlyContinue }

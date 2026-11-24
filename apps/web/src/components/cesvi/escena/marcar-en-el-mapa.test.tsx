@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 import { escenaDeNarracion, type SalidaCorpus } from "@croquis/cesvi";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { useState } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { marcarChoque, poseDe, puntosDePaso, type Punto } from "@/lib/escena-facil";
 import { impactosAColocar } from "@/lib/pasos-caso";
 import { EscenaFacil, type EstadoEscena } from "./escena-facil";
@@ -88,6 +88,8 @@ function tocar(norte: number, este: number) {
 }
 
 describe("márcalo tú: un toque en el mapa contesta la pregunta, sin calles del mapa", () => {
+  // La escena de una pregunta a la vez; la lista (la escena nueva) va en su propia prueba, abajo.
+  beforeEach(() => localStorage.setItem("croquis.escena", "anterior"));
   it("el choque", () => {
     let ultimo: EstadoEscena | null = null;
     render(<Escena inicial={vacio()} salida={(x) => (ultimo = x)} />);
@@ -145,5 +147,22 @@ describe("márcalo tú: un toque en el mapa contesta la pregunta, sin calles del
     fireEvent.click(screen.getByTestId(`paso-vehiculo-${impactos[0]!.vehiculos[0]}`));
     tocar(-15, 0);
     expect(puntosDePaso(ultimo!.expediente).length).toBe(1);
+  });
+});
+
+describe("márcalo tú en la escena nueva (la lista)", () => {
+  beforeEach(() => localStorage.setItem("croquis.escena", "nueva"));
+
+  it("«Corregir» por dónde venía: un toque en el mapa lo contesta y la lista vuelve", () => {
+    let ultimo: EstadoEscena | null = null;
+    const conChoque = marcarChoque(e0, impactos, 1, C, 0);
+    render(<Escena inicial={vacio(conChoque, { 1: C })} salida={(x) => (ultimo = x)} />);
+    const v = impactos[0]!.vehiculos[0]!;
+    fireEvent.click(screen.getByTestId(`corregir-direccion-${v}`));
+    expect(screen.getByTestId("escena-pregunta").textContent).toMatch(/Por dónde venía/);
+    tocar(-30, 0);
+    const rumbo = poseDe(ultimo!.expediente, v, "impacto")!.rumbo;
+    expect(Math.min(Math.abs(rumbo), Math.abs(rumbo - 360))).toBeLessThan(1);
+    expect(screen.getByTestId(`cambiar-direccion-${v}`)).toBeTruthy();
   });
 });

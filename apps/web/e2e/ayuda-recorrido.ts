@@ -15,9 +15,26 @@ export async function irAPaso(page: Page, n: number) {
     if (actual === n) return;
     if (actual === 3 && (await page.getByTestId("escena-facil").isVisible())) {
       if (n > 3) {
-        const ver = page.getByTestId("avance-ver-reconstruccion");
-        await expect(ver).toBeEnabled();
-        await ver.click();
+        // Ronda 4 (René, 2026-11-20): La escena nueva (la lista de la propuesta 1) no tiene la barra
+        // de pasos; «Ver la reconstrucción» va dentro del panel. La guía («Entendido») se cierra.
+        const lista = page.getByTestId("lista-escena");
+        if (await lista.isVisible().catch(() => false)) {
+          const guia = page.getByTestId("cerrar-guia");
+          if (await guia.isVisible().catch(() => false)) await guia.click();
+          const ver = page.getByTestId("lista-ver-reconstruccion");
+          await expect(ver, `La escena no deja seguir: ${await lista.innerText()}`).toBeEnabled({
+            timeout: 30_000,
+          });
+          await ver.click();
+        } else {
+          const ver = page.getByTestId("avance-ver-reconstruccion");
+          const falta = page.getByTestId("avance-falta");
+          await expect(
+            ver,
+            `La escena no deja seguir: ${(await falta.isVisible().catch(() => false)) ? await falta.textContent() : "sin aviso"}`,
+          ).toBeEnabled({ timeout: 30_000 });
+          await ver.click();
+        }
       } else await page.getByTestId("paso-1").click();
       await expect(panel).not.toHaveAttribute("data-paso", "3");
       continue;
@@ -177,4 +194,79 @@ export async function reconstruirSiCambio(page: Page) {
   await expect(page.getByTestId("recalculo")).toHaveAttribute("data-estado", "al_dia", {
     timeout: 90_000,
   });
+}
+
+/** Contesta lo que pregunte la lectura: el típico si lo ofrece; si no, «No sé». */
+export async function contestarPreguntas(page: Page) {
+  for (let k = 0; k < 20; k++) {
+    const pregunta = page.locator('[data-testid^="pregunta-"]').first();
+    if (!(await pregunta.isVisible().catch(() => false))) return;
+    const tipico = pregunta.locator('[data-testid^="usar-tipico-"]');
+    const nose = pregunta.locator('[data-testid^="no-se-"]');
+    const opcion = pregunta.locator('[data-testid^="opcion-"]').first();
+    if (await tipico.count()) await tipico.click();
+    else if (await nose.count()) await nose.click();
+    else if (await opcion.count()) await opcion.click();
+    else return;
+    await page.waitForTimeout(400);
+  }
+}
+
+/** La escena ya armada (flujo de la lista): confirma lo propuesto y contesta lo que falta. */
+export async function cerrarLaEscena(page: Page) {
+  const lista = page.getByTestId("lista-escena");
+  await expect(lista).toBeVisible({ timeout: 90_000 });
+  const cerrarGuia = page.getByTestId("cerrar-guia");
+  if (await cerrarGuia.isVisible().catch(() => false)) await cerrarGuia.click();
+  // Que llegue la propuesta (con las calles) antes de seguir.
+  await page.waitForTimeout(12_000);
+  for (let k = 0; k < 30; k++) {
+    const ver = page.getByTestId("lista-ver-reconstruccion");
+    if (await ver.isEnabled().catch(() => false)) return;
+    const confirmar = page.locator('[data-testid^="confirmar-"]').first();
+    if (await confirmar.isVisible().catch(() => false)) {
+      await confirmar.click();
+      continue;
+    }
+    const marcar = page.locator('[data-testid^="marcar-"]').first();
+    if (!(await marcar.isVisible().catch(() => false))) break;
+    const id = (await marcar.getAttribute("data-testid")) ?? "";
+    await marcar.click();
+    if (id.startsWith("marcar-choque")) {
+      const mapa = await mapaFacil(page);
+      const caja = (await mapa.boundingBox())!;
+      await mapa.click({ position: { x: caja.width * 0.5, y: caja.height * 0.5 } });
+    } else if (id.startsWith("marcar-direccion")) {
+      const propuesta = page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]');
+      await (
+        (await propuesta.count()) ? propuesta.first() : page.getByTestId("opcion-flecha-0")
+      ).click();
+    } else if (id.startsWith("marcar-final")) {
+      await page.getByTestId("final-junto").click();
+      await page.getByTestId("listo-final").click();
+    } else {
+      for (const b of ["golpe-nose", "otros-no", "paso-listo", "terreno-liso"]) {
+        const x = page.getByTestId(b);
+        if (await x.isVisible().catch(() => false)) {
+          await x.click();
+          break;
+        }
+      }
+    }
+    await expect(lista).toBeVisible({ timeout: 30_000 });
+  }
+}
+
+/**
+ * Las masas del crucero de ejemplo, si se preguntan: la de V1 con «No sé» y la de V2 con 1450 kg.
+ * Con la ficha del fabricante del modelo leído (René, 2026-11-21) ya no se preguntan.
+ */
+export async function contestarMasas(page: Page) {
+  const nose = page.getByTestId("no-se-masa-V1");
+  if (await nose.isVisible().catch(() => false)) await nose.click();
+  const v2 = page.getByTestId("pregunta-masa-V2");
+  if (await v2.isVisible().catch(() => false)) {
+    await page.getByTestId("valor-masa-V2").fill("1450");
+    await v2.getByRole("button", { name: "Usar", exact: true }).click();
+  }
 }

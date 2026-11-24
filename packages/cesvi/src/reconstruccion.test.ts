@@ -282,10 +282,15 @@ describe("del expediente a la escena del solver (R2)", () => {
     "sin evidencia no inventa velocidades; con las posiciones del perito las fija con rangos",
     { timeout: 60_000 },
     () => {
+      // Sin evidencia (ronda 4, René): no hay estimación de la evidencia; cada velocidad es la típica
+      // de la vía, dicha como supuesto con su rango (nunca el arranque del ajuste).
       const sin = reconstruirExpediente(base);
-      expect(sin.evidencia).toEqual([]);
-      expect(sin.velocidades.every((v) => v.previa === null)).toBe(true);
-      expect(sin.limites.at(-1)).toMatch(/todavía no fija ninguna velocidad/);
+      expect(sin.evidencia.every((x) => x.startsWith("velocidad_declarada:"))).toBe(true);
+      expect(sin.limites.join(" ")).toMatch(/se supone la típica de la vía/);
+      const inv = (sin.resultado as { inversion: { parametros: Record<string, unknown>[] } })
+        .inversion;
+      for (const p of inv.parametros.filter((x) => x.parametro === "velocidad_previa"))
+        expect(p.fijada_por).toBe("declarada");
 
       const con = reconstruirExpediente(colocado());
       expect(con.evidencia).toEqual([
@@ -365,7 +370,8 @@ describe("verificación CESVI al lado de la reconstrucción", () => {
     expect(["nhtsa_e2", "supuesto"]).toContain(v1!.rigidez!.fuente);
     expect(v1!.pasos).toHaveLength(2);
     expect(v2!.pasos).toEqual([]);
-    expect(v2!.falta).toEqual(["las medidas C (2, 4 o 6) y L de la deformación", "la masa"]);
+    // La masa de V2 ya sale de su modelo (supuesto declarado, René 2026-11-20): solo faltan sus medidas.
+    expect(v2!.falta).toEqual(["las medidas C (2, 4 o 6) y L de la deformación"]);
   });
 });
 
@@ -753,5 +759,40 @@ describe("lo medido pesa más que lo supuesto: el reposo supuesto y las dos hip�
       },
     });
     expect(uno.hipotesis).toBeNull();
+  });
+});
+
+describe("el objeto del primer choque (ronda 4, René, 2026-11-21)", () => {
+  const leer = (clave: string) => {
+    const g = JSON.parse(
+      readFileSync(
+        resolve(
+          dirname(fileURLToPath(import.meta.url)),
+          `../../../data/cesvi/grabaciones/ronda4/ronda4-${clave}.json`,
+        ),
+        "utf8",
+      ),
+    ) as { narracion: string; salida: SalidaCorpus };
+    const e = escenaDeNarracion(g.salida, g.narracion).expediente;
+    return conPosicion(e, { vehiculo: "V1", fase: "impacto", punto: m(0, 0), rumbo: 270 });
+  };
+  const objetoDe = (e: Expediente) =>
+    (especDeExpediente(e, "objeto").spec.entorno as { objetos?: { tipo: string }[] }).objetos?.[0]
+      ?.tipo;
+
+  it("la «barrera de concreto» de la bajada es una barrera, no «otro», con sus medidas típicas", () => {
+    const e = leer("bajada");
+    expect(objetoDe(e)).toBe("barrera");
+    const o = (especDeExpediente(e, "objeto").spec.entorno as { objetos: Json[] }).objetos[0]!;
+    // 6 × 0.4 × 0.8 m, atravesada frente a la cara del golpe (el vehículo va al poniente: rumbo 270).
+    expect([o.largo, o.ancho, o.alto].map((m) => (m as { valor: number }).valor)).toEqual([
+      6, 0.4, 0.8,
+    ]);
+    expect(Math.abs(Math.abs(Number(o.rumbo_deg)) % 180)).toBeCloseTo(90, 0);
+  });
+
+  it("el árbol y el poste no cambian", () => {
+    expect(objetoDe(leer("arbol"))).toBe("arbol");
+    expect(objetoDe(leer("poste"))).toBe("poste");
   });
 });

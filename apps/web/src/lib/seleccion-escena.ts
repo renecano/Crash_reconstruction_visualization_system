@@ -229,6 +229,26 @@ export function girarSeleccion(e: Expediente, clave: string, grados: number): Ex
   return girarTerreno(e, id, grados);
 }
 
+/**
+ * Ronda 4 (René): «Alinear con la calle». El rumbo del eje de la calle más cercana en el sentido que
+ * más se parece al que ya tiene (no lo voltea); `rumboDeCalle` es `rumboAlineado` de La escena.
+ * null si no gira o si no hay calle cerca.
+ */
+export function alinearConLaCalle(
+  e: Expediente,
+  clave: string,
+  rumboDeCalle: (p: Punto, preferido: number) => number | null,
+): Expediente | null {
+  const pos = posicionDe(e, clave);
+  if (!pos || !capacidadesDe(e, clave).girar) return null;
+  const r = rumboDeCalle(pos.punto, pos.rumbo ?? 0);
+  return r === null ? null : fijarRumbo(e, clave, r);
+}
+
+/** Ronda 4 (René): «Voltear 180°», para el que quedó al revés. */
+export const voltear = (e: Expediente, clave: string): Expediente | null =>
+  girarSeleccion(e, clave, 180);
+
 /** Lo deja con ese rumbo (el anillo de giro). En el terreno, sin rumbo propio, no aplica. */
 export function fijarRumbo(e: Expediente, clave: string, rumbo: number): Expediente | null {
   if (capacidadesDe(e, clave).girar !== "absoluto") return null;
@@ -263,6 +283,9 @@ export function quitarSeleccion(e: Expediente, clave: string): Expediente | null
 export type AccionTecla =
   | { tipo: "mover"; rumbo: number; metros: number }
   | { tipo: "girar"; grados: number }
+  /** Ronda 4: A lo alinea con la calle más cercana; F lo voltea 180°. */
+  | { tipo: "alinear" }
+  | { tipo: "voltear" }
   | { tipo: "quitar" }
   | { tipo: "soltar" }
   | { tipo: "deshacer" }
@@ -305,6 +328,8 @@ export function accionDeTecla(
     const paso = ev.shiftKey ? PASO_BOTON_GRADOS : PASO_TECLA_GRADOS;
     return { tipo: "girar", grados: q === "e" ? paso : -paso };
   }
+  if (q === "a") return { tipo: "alinear" };
+  if (q === "f") return { tipo: "voltear" };
   if (k === "Delete" || k === "Backspace") return { tipo: "quitar" };
   if (k === "Escape") return { tipo: "soltar" };
   return null;

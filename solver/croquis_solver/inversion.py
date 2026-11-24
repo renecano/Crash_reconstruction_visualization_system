@@ -78,6 +78,9 @@ SIGMA_POSITION_M = 1.0  # incertidumbre de una posición final declarada (supues
 # veces su σ fuera de su banda; un reposo supuesto tiene PRIORIDAD veces la σ de uno declarado
 # (±10 m en lugar de ±1 m). Global, no por caso.
 PRIORIDAD = 10.0
+# La velocidad declarada (ronda 4): el prefijo de su residuo y la σ mínima (km/h) de su rango.
+DECLARADA = "velocidad_declarada:"
+SIGMA_DECLARADA_MIN_KMH = 2.0
 # Un reposo supuesto a más de esto del de la reconstrucción con la deformación (el mismo umbral de
 # `reposo_inalcanzable`, 3 σ de una posición declarada) no cabe con ella: hay dos hipótesis.
 ASSUMED_REST_MISS_M = 3.0 * SIGMA_POSITION_M
@@ -339,6 +342,14 @@ class Evidence:
     waypoints: tuple[Waypoint, ...] = field(default_factory=_no_waypoints)
     # El punto inicial del choque que marcó el perito (C1): (evento, x, y).
     impact_point: tuple[str, float, float] | None = None
+    # vehículo → (km/h, σ) de la velocidad declarada (narración, perito o vía; ronda 4): un supuesto
+    # con su rango que solo pesa donde la evidencia no fija la velocidad.
+    declared_speed: dict[str, tuple[float, float]] = field(
+        default_factory=lambda: dict[str, tuple[float, float]]()
+    )
+    # vehículo → «minimo» o «maximo» si su velocidad declarada es una cota («a más de 90 km/h»): el
+    # residuo solo cuenta del lado que la viola, y no se sortea.
+    declared_bound: dict[str, str] = field(default_factory=lambda: dict[str, str]())
 
     def empty(self) -> bool:
         return not (
@@ -351,6 +362,7 @@ class Evidence:
             or self.rest_assumed
             or self.waypoints
             or self.impact_point
+            or self.declared_speed
         )
 
     def weight(self) -> float:
@@ -372,6 +384,7 @@ class Evidence:
             + [f"rumbo_final_supuesto:{k}" for k in sorted(self.heading_assumed)]
             + [f"paso:{w.id}" for w in self.waypoints]
             + ([f"punto_inicial:{self.impact_point[0]}"] if self.impact_point else [])
+            + [f"velocidad_declarada:{k}" for k in sorted(self.declared_speed)]
         )
 
 
@@ -566,7 +579,37 @@ def evidence_from_spec(
         rear_end=rear_end_pairs(spec),
         waypoints=waypoints_from_spec(spec),
         impact_point=impact_point_from_spec(spec),
+        declared_speed=declared_speeds(spec),
+        declared_bound=declared_bounds(spec),
     )
+
+
+def declared_bounds(spec: JsonObj) -> dict[str, str]:
+    """Las velocidades declaradas que son cota (`velocidad_previa.cota`): «minimo» o «maximo»."""
+    by_id = {v["id"]: v for v in spec["vehiculos"]}
+    out: dict[str, str] = {}
+    for vid in declared_speeds(spec):
+        vp: JsonObj = by_id[vid].get("velocidad_previa") or {}
+        cota = vp.get("cota")
+        if cota in ("minimo", "maximo"):
+            out[vid] = str(cota)
+    return out
+
+
+def declared_speeds(spec: JsonObj) -> dict[str, tuple[float, float]]:
+    """La velocidad declarada de cada vehículo en movimiento (`velocidad_previa.a_priori` con su
+    `rango` p10–p90): su valor y su σ, en km/h (ronda 4)."""
+    by_id = {v["id"]: v for v in spec["vehiculos"]}
+    out: dict[str, tuple[float, float]] = {}
+    for vid in moving_vehicles(spec):
+        vp: JsonObj = by_id[vid].get("velocidad_previa") or {}
+        rango = vp.get("rango")
+        if not vp.get("a_priori") or not rango:
+            continue
+        f = 3.6 if vp.get("unidad") == "m/s" else 1.0
+        lo, hi = float(rango[0]) * f, float(rango[1]) * f
+        out[vid] = (float(vp["valor"]) * f, max(SIGMA_DECLARADA_MIN_KMH, (hi - lo) / 2.563))
+    return out
 
 
 def rear_end_pairs(spec: JsonObj) -> tuple[tuple[str, str], ...]:
@@ -863,6 +906,20 @@ def _residuals(
         eid, x, y = ev.impact_point
         out[f"punto_inicial:{eid}:x"] = (r.punto_impacto[0] - x) / SIGMA_POSITION_M
         out[f"punto_inicial:{eid}:y"] = (r.punto_impacto[1] - y) / SIGMA_POSITION_M
+    if ev.declared_speed:
+        # La velocidad declarada (ronda 4): un supuesto con la σ de su rango p10–p90.
+        by_s = {v["id"]: v for v in spec["vehiculos"]}
+        for vid, (kmh, sigma) in sorted(ev.declared_speed.items()):
+            vp: JsonObj = by_s[vid].get("velocidad_previa") or {}
+            val = float(vp.get("valor", kmh)) * (3.6 if vp.get("unidad") == "m/s" else 1.0)
+            r = (val - kmh) / sigma
+            cota = ev.declared_bound.get(vid)
+            # Una cota solo empuja si se viola: «al menos 90» no lleva la velocidad hacia 90.
+            if cota == "minimo":
+                r = min(0.0, r)
+            elif cota == "maximo":
+                r = max(0.0, r)
+            out[f"velocidad_declarada:{vid}"] = r
     return out
 
 
@@ -1022,9 +1079,12 @@ def _robust_least_squares(
     return sol.x, sol.cost, sol.success
 
 
-def local_sigma(spec: JsonObj, ev: Evidence, fit: Fit, *, dt: float = 0.1) -> dict[str, float]:
+def local_sigma(
+    spec: JsonObj, ev: Evidence, fit: Fit, *, dt: float = 0.1, solo_evidencia: bool = False
+) -> dict[str, float]:
     """Desviación local de cada parámetro en el mejor ajuste: √diag((JᵀJ)⁺) con los residuos en
-    sigmas (aproximación de Laplace). Infinita si la evidencia no lo mueve."""
+    sigmas (aproximación de Laplace). Infinita si la evidencia no lo mueve. Con `solo_evidencia`,
+    sin la velocidad declarada: lo que fija la evidencia por sí sola."""
     base = with_marks(spec, ev)
     params = parameters(base, ev)
     if not params:
@@ -1033,6 +1093,8 @@ def local_sigma(spec: JsonObj, ev: Evidence, fit: Fit, *, dt: float = 0.1) -> di
     x = [min(max(fit.values.get(p.name, p.start), p.lo), p.hi) for p in params]
     prob.activate(x)
     j = prob.jac(x)
+    if solo_evidencia:
+        j = [row for row, n in zip(j, prob.names, strict=True) if not n.startswith(DECLARADA)]
     if not j or not prob.names:
         return {p.name: math.inf for p in params}
     return _laplace(j, params)
@@ -1220,6 +1282,15 @@ def perturbed(spec: JsonObj, ev: Evidence, rng: Draws) -> Perturbed:
             "fuente": "supuesto",
             "confianza": 0.5,
         }
+    # La velocidad declarada (ronda 4), sorteada dentro de su rango; al final, por la misma razón.
+    if ev.declared_speed:
+        e = replace(
+            e,
+            declared_speed={
+                k: (kmh if k in ev.declared_bound else max(0.0, kmh + rng.gauss(0, sigma)), sigma)
+                for k, (kmh, sigma) in sorted(ev.declared_speed.items())
+            },
+        )
     return Perturbed(s, e, downed_mu)
 
 
@@ -1279,6 +1350,8 @@ class Inversion:
     alternatives: list[Inversion] = field(default_factory=lambda: list[Inversion]())
     # La velocidad al impacto de cada reestimación: la distribución real, para su histograma.
     impact_samples: dict[str, list[float]] = field(default_factory=lambda: dict[str, list[float]]())
+    # Las velocidades que fija solo lo declarado (narración, perito o vía), no la evidencia.
+    declared_only: frozenset[str] = frozenset()
 
     @property
     def speeds(self) -> dict[str, Distribution]:
@@ -1294,7 +1367,15 @@ class Inversion:
             "semilla": self.seed,
             "muestras": len(self.fits),
             "evidencia": self.evidence,
-            "parametros": [e.to_dict() for e in self.estimates],
+            "parametros": [
+                e.to_dict()
+                | (
+                    {"fijada_por": "declarada"}
+                    if e.identifiable and e.param.name in self.declared_only
+                    else {}
+                )
+                for e in self.estimates
+            ],
             "velocidad_impacto": [
                 {
                     "vehiculo": k,
@@ -1651,6 +1732,8 @@ class _Prepared:
     free: set[str]
     full: Fit | None
     best: Fit
+    # Lo que fija solo la velocidad declarada, no la evidencia (ronda 4).
+    declared_only: frozenset[str] = frozenset()
 
     def estimates(self, params: list[Param]) -> list[Estimate]:
         return [
@@ -1682,7 +1765,16 @@ def _prepare(spec: JsonObj, ev: Evidence, params: list[Param], best: Fit, dt: fl
         start = {p.name: (best.values[p.name] if p.name in free else p.start) for p in params}
         best = fit_evidence(spec, ev, dt=dt, start=start, free=free)
     best = _polish(spec, ev, best, [p for p in params if p.name in free], dt)
-    return _Prepared(sigma, ident, free, full, best)
+    declared_only: frozenset[str] = frozenset()
+    if ev.declared_speed and free:
+        # Qué fijaría la evidencia por sí sola: lo demás lo fija la velocidad declarada.
+        s_ev = local_sigma(spec, ev, best, dt=dt, solo_evidencia=True)
+        declared_only = frozenset(
+            p.name
+            for p in params
+            if p.name in free and not s_ev.get(p.name, math.inf) <= IDENT_MAX[p.kind]
+        )
+    return _Prepared(sigma, ident, free, full, best, declared_only)
 
 
 def _estimate(
@@ -1769,6 +1861,7 @@ def _estimate(
         seed=seed,
         full=full,
         impact_samples={k: list(v) for k, v in impacts.items() if v},
+        declared_only=prep.declared_only,
     )
 
 

@@ -26,7 +26,7 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 - **Dos hipótesis:** el reposo que el reporte no da (supuesto) y la deformación medida no caben juntos. Se ve «La más cercana al daño medido»; la otra, «Cuadra con el reposo supuesto» (34 km/h), va marcada como supuesto. El perito elige.
 - **Lo que explica el daño:** queda en el borde bajo de la energía que da la deformación medida. Croquis lo dice; no lo esconde.
 
-> Pestaña «3D» → Unity → «Ir al impacto» (unos 14 s con la carga). La pestaña «2D» es el croquis desde arriba; su interruptor «Mapa» pone el mapa real.
+> Pestaña «3D» → Unity → «Ir al impacto» (unos 14 s con la carga). La pestaña «2D» es el croquis del perito (ronda 4): girado con la vía horizontal, cada vehículo en A1 (antes), A2 (impacto) y A3 (reposo), el punto de impacto, el norte y la escala. «Mapa» o «Foto» lo ponen sobre el lugar real; «Color por velocidad» colorea los recorridos. Es el mismo croquis del dictamen.
 
 - **El 3D reproduce el resultado:** no calcula nada. Después del impacto, la carrocería se deforma con el perfil de daño del solver.
 - **Una sola barra de reproducción** para 3D y 2D: pausar, ¼× ½× 1×, «Ir al impacto», «Ver todo», «Repetir». Al cambiar de pestaña se conserva el instante.
@@ -66,7 +66,7 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 
 - **Cada dato con su cita:** lo que la narración no dice queda como supuesto, a la vista. Los datos personales se quitan antes de enviar el texto. «Lo que Croquis leyó» enseña los vehículos y los impactos en orden, con la letra de cada vehículo y su «supuesto».
 - **Las preguntas no sacan del cuestionario:** «Lo coloco en el mapa» se anota y la colocación se hace en «La escena».
-- **Colocar:** una pregunta a la vez en el mapa (dónde fue, por dónde venía cada vehículo, dónde quedó). Si conviene, «Más herramientas» → «Medir una distancia»: la línea sigue al puntero con los metros en vivo; Esc termina.
+- **La escena llega armada** (ronda 4): Croquis la propone con lo que leyó. A la izquierda va la lista: cada cosa propuesta, lista o pendiente, con su «Por qué» (la calle y el sentido en que venía, y el daño en que se apoya). Lo propuesto se confirma o se corrige; lo que falta abre su pregunta en el mapa. Arriba están las herramientas con su tecla: girar (Q/E), «Alinear con la calle» (A), «Voltear 180°» (F), deshacer, acercar y medir (M). «Ver la reconstrucción» se activa en el panel al completar.
 - **Reconstruir y ver en 3D** (unos 5 s; el 3D ya está en caché). Antes de reconstruir sale la misma incógnita que en AXA, ahora con lo que colocó el perito.
 
 **Los cinco ejemplos** (`docs/cesvi/ronda-2/narraciones.md`; cifras del 2026-11-16 en producción, con la escena colocada como dice cada narración):
@@ -96,7 +96,7 @@ Croquis lee el reporte completo de CESVI y arma el expediente con la cita de cad
 > Lista → «Ver los 205 reportes de la reproducción…» → el reporte `257e13` → colocar → reconstruir → 3D (unos 17 s).
 
 - **Los impactos en orden,** en 3D.
-- **Sin las posiciones del perito,** la evidencia no fija ninguna velocidad, y la pantalla lo dice así. En la prueba con 33 carambolas, todas se reconstruyen y se ven en 3D; ocurren 20 de 31 impactos posteriores.
+- **Sin las posiciones del perito,** la evidencia no fija ninguna velocidad, y la pantalla lo dice así. En la prueba con 33 carambolas, todas se reconstruyen y se ven en 3D; ocurren <!--cifra:carambolas.prueba-->21 de 31<!--/cifra--> impactos posteriores.
 
 ## 5 · Cierre (1 min)
 

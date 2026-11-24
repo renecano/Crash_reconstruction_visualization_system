@@ -19,7 +19,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from croquis_solver import dmath
-from croquis_solver.preimpact import CurvedLanePath, Path, StraightPath
+from croquis_solver.preimpact import CurvedLanePath, Path, PolylineLanePath, StraightPath
 
 DEFAULT_CURVE_RADIUS_M = 25.0
 CURVED_ROAD_TYPES = {"carretera_dos_carriles", "autopista"}
@@ -29,10 +29,12 @@ _LEN = {"m": 1.0, "cm": 0.01, "mm": 0.001, "km": 1000.0}
 
 @dataclass(frozen=True)
 class RoadAxis:
-    kind: str  # "recta" | "arco" | "anillo"
+    kind: str  # "recta" | "arco" | "anillo" | "polilinea"
     center: tuple[float, float]
     radius: float  # radio del eje (m); 0 en recta
     width: float  # ancho de la calzada principal (m)
+    # El eje real de la calle (ronda 4), en metros de la escena; solo en «polilinea».
+    puntos: tuple[tuple[float, float], ...] = ()
 
 
 def _len(campo: dict[str, Any] | None, default: float) -> float:
@@ -65,6 +67,12 @@ def secondary_width(lugar: dict[str, Any]) -> float:
 def road_axis(lugar: dict[str, Any]) -> RoadAxis:
     tipo = str(lugar["tipo_via"]["valor"])
     width = main_width(lugar)
+    # El eje real de la calle (ronda 4; René, 2026-11-19), si la escena lo trae: manda sobre la
+    # plantilla.
+    eje: dict[str, Any] = lugar.get("eje_via") or {}
+    puntos = tuple((float(p["x"]), float(p["y"])) for p in eje.get("puntos", []))
+    if len(puntos) >= 2:
+        return RoadAxis("polilinea", (0.0, 0.0), 0.0, width, puntos)
     has_radius = lugar.get("radio_curva") is not None
     radius = _len(lugar.get("radio_curva"), DEFAULT_CURVE_RADIUS_M)
     if tipo == "glorieta":
@@ -86,6 +94,10 @@ def lane_following_path(
     """Trayectoria que sigue el carril desde `pose`; None si la vía es recta (no aplica)."""
     if axis.kind == "recta":
         return None
+    if axis.kind == "polilinea":
+        return PolylineLanePath(
+            axis.puntos, pose, length, lateral=lateral, change_length=change_length
+        )
     x, y, yaw = pose
     cx, cy = axis.center
     r0 = dmath.hypot(x - cx, y - cy)

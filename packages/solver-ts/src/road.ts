@@ -4,7 +4,7 @@
  * recorrida en sentido antihorario.
  */
 import { str } from "./pymath";
-import { CurvedLanePath, type Path, StraightPath } from "./preimpact";
+import { CurvedLanePath, type Path, PolylineLanePath, StraightPath } from "./preimpact";
 import * as dmath from "./dmath";
 
 type Json = Record<string, unknown>;
@@ -14,13 +14,15 @@ const CURVED_ROAD_TYPES = new Set(["carretera_dos_carriles", "autopista"]);
 const LEN: Readonly<Record<string, number>> = { m: 1.0, cm: 0.01, mm: 0.001, km: 1000.0 };
 
 export interface RoadAxis {
-  /** "recta" | "arco" | "anillo" */
+  /** "recta" | "arco" | "anillo" | "polilinea" */
   kind: string;
   center: readonly [number, number];
   /** Radio del eje (m); 0 en recta. */
   radius: number;
   /** Ancho de la calzada principal (m). */
   width: number;
+  /** El eje real de la calle (ronda 4), en metros de la escena; solo en «polilinea». */
+  puntos?: readonly (readonly [number, number])[];
 }
 
 function len(campo: unknown, dflt: number): number {
@@ -61,6 +63,12 @@ export function secondaryWidth(lugar: Json): number {
 export function roadAxis(lugar: Json): RoadAxis {
   const tipo = String(valor(lugar, "tipo_via"));
   const width = mainWidth(lugar);
+  // El eje real de la calle (ronda 4; René, 2026-11-19), si la escena lo trae: manda sobre la
+  // plantilla.
+  const eje = (lugar.eje_via ?? {}) as Json;
+  const puntos = ((eje.puntos ?? []) as Json[]).map((p) => [Number(p.x), Number(p.y)] as const);
+  if (puntos.length >= 2)
+    return { kind: "polilinea", center: [0.0, 0.0], radius: 0.0, width, puntos };
   const hasRadius = lugar.radio_curva !== undefined && lugar.radio_curva !== null;
   const radius = len(lugar.radio_curva, DEFAULT_CURVE_RADIUS_M);
   if (tipo === "glorieta")
@@ -80,6 +88,8 @@ export function laneFollowingPath(
 ): Path | null {
   const { length = 400.0, lateral = 0.0, changeLength = 40.0 } = opts;
   if (axis.kind === "recta") return null;
+  if (axis.kind === "polilinea")
+    return new PolylineLanePath(axis.puntos ?? [], pose, length, lateral, changeLength);
   const [x, y, yaw] = pose;
   const [cx, cy] = axis.center;
   const r0 = dmath.hypot(x - cx, y - cy);

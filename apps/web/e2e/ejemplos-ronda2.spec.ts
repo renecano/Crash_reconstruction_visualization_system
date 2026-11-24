@@ -1,8 +1,9 @@
 import { mkdirSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { type Page } from "@playwright/test";
 import { expect, test } from "./base";
-import { irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
+import { irAPaso } from "./ayuda-recorrido";
+import { colocar, RECETAS } from "./recetas-ejemplos";
 
 /**
  * Ronda 2, C: las cinco narraciones de ejemplo, de punta a punta, como las usaría un perito: elegir
@@ -19,151 +20,32 @@ import { irAPaso, mapaFacil, sinRed, tocarEnMetros } from "./ayuda-recorrido";
  */
 const RAIZ = resolve(__dirname, "../../..");
 // `CROQUIS_SALIDA` y `CROQUIS_CAPTURAS` (relativas a la raíz) para medir un después sin pisar el antes.
-const SALIDA = join(
+// `resolve`: la ruta puede llegar absoluta (la tanda); `join` la pegaba detrás de la raíz (t5).
+const SALIDA = resolve(
   RAIZ,
   process.env.CROQUIS_SALIDA ??
     (process.env.CROQUIS_EJEMPLO
       ? `eval/results/ronda2_ejemplo_${process.env.CROQUIS_EJEMPLO}.json`
       : "eval/results/ronda2_ejemplos.json"),
 );
-const CAPTURAS = join(RAIZ, process.env.CROQUIS_CAPTURAS ?? "docs/cesvi/ronda-2/ejemplos");
-const CON_UNITY = process.env.CROQUIS_UNITY === "1";
-
-interface Receta {
-  clave: string;
-  /** Dónde va cada choque después del primero, en metros (este, norte) desde el primero. */
-  choques?: [number, number][];
-  /** Por dónde venía cada vehículo (por una parte de su nombre): el texto de la flecha. */
-  venia: Record<string, string>;
-  /** Dónde quedó cada uno: metros (este, norte) desde el primer choque, «junto» o «nose». */
-  quedo: Record<string, [number, number] | "junto" | "nose">;
-  /** Un punto por donde pasó un vehículo (su id en la escena), si la narración lo da. */
-  pasos?: { vehiculo: string; en: [number, number] }[];
-  /** Lo que la narración dice del terreno: un tope o una zona, donde va. */
-  terreno?: { tipo: "tope-circular" | "terraceria" | "ondulado"; en: [number, number] }[];
+const CAPTURAS = resolve(RAIZ, process.env.CROQUIS_CAPTURAS ?? "docs/cesvi/ronda-2/ejemplos");
+/** Escribe el resultado, creando su carpeta si falta («antes»: eval/results/t5 no existía). */
+function escribirSalida(texto: string): void {
+  mkdirSync(dirname(SALIDA), { recursive: true });
+  writeFileSync(SALIDA, texto);
 }
-
-const RECETAS: Receta[] = [
-  {
-    // La narración no dice a cuántos metros quedó cada uno: «junto al choque», como en la demo.
-    clave: "crucero-noche",
-    venia: { Jetta: "Del sur", Camaro: "Del oeste" },
-    quedo: { Jetta: "junto", Camaro: "junto" },
-  },
-  {
-    // Alcance de Sur a Norte: A quedó en su carril, 9 m adelante del inicio de los restos; B, sobre
-    // el acotamiento (a la derecha), 21 m adelante.
-    clave: "alcance-deformacion",
-    venia: { NP300: "Del sur", Vento: "Del sur" },
-    quedo: { NP300: [0, 9], Vento: [2.6, 21] },
-  },
-  {
-    // De Poniente a Oriente: A alcanza a B y, por el empuje, B a C (detenidos en el semáforo). A
-    // quedó en el área del primer contacto; B, 5 m adelante; C, 10 m adelante.
-    clave: "carambola-lluvia",
-    choques: [[5.6, 0]],
-    venia: { Ranger: "Del oeste" },
-    quedo: { Ranger: [-0.5, 0], Corolla: [5.4, 0], Aveo: [9.8, 0] },
-  },
-  {
-    // A sale en reversa de una cochera hacia la calle; B circula de Sur a Norte y quedó 7 m al
-    // Norte. El tope está 12 m al Sur del acceso, en el camino de B.
-    clave: "reversa-pendiente",
-    venia: { "CR-V": "Del oeste", Versa: "Del sur" },
-    quedo: { "CR-V": [-1.8, 0.4], Versa: [0.6, 7] },
-    terreno: [{ tipo: "tope-circular", en: [0.6, -12] }],
-  },
-  {
-    // A llega del Sur y B del Poniente; después del contacto, B derrapa, cruza a la terracería y
-    // pega contra un poste (el segundo choque), donde queda. A quedó 8 m al Norte.
-    clave: "poste-terraceria",
-    choques: [[18, 3]],
-    venia: { "Mazda 3": "Del sur", Sentra: "Del oeste" },
-    quedo: { "Mazda 3": [0.8, 8], Sentra: [16.4, 2.7] },
-    pasos: [{ vehiculo: "V2", en: [9, 1.5] }],
-    terreno: [{ tipo: "terraceria", en: [15, 4] }],
-  },
-];
+const CON_UNITY = process.env.CROQUIS_UNITY === "1";
+/** Dónde guardar el .croquis de cada ejemplo (t6), relativa a la raíz; sin ella, no se guarda. */
+const CASOS = process.env.CROQUIS_CASOS ? resolve(RAIZ, process.env.CROQUIS_CASOS) : null;
 
 // Una acción que no encuentra su control falla pronto, con el nombre de lo que faltó.
-test.use({ actionTimeout: 20_000, viewport: { width: 1440, height: 900 }, locale: "es-MX" });
-
-const de = <T>(mapa: Record<string, T>, texto: string): T | undefined =>
-  Object.entries(mapa).find(([nombre]) => texto.includes(nombre))?.[1];
-
-/** Contesta «La escena» con la receta; lo que la receta no cubre, con lo que no agrega evidencia. */
-async function colocar(page: Page, r: Receta, notas: string[]) {
-  await sinRed(page);
-  const mapa = await mapaFacil(page);
-  const lista = page.getByTestId("escena-lista");
-  const pregunta = page.getByTestId("escena-pregunta");
-  let choques = 0;
-  // «¿Dónde quedó después del choque?» no nombra al vehículo: es el de la pregunta anterior.
-  let vehiculo = "";
-  for (let k = 0; k < 30; k++) {
-    if (await lista.isVisible()) break;
-    const texto = (await pregunta.textContent()) ?? "";
-    // «¿Dónde fue el primer golpe?» no es un choque: la narración no lo da, así que «No sé».
-    if (/primer golpe/.test(texto)) await page.getByTestId("golpe-nose").click();
-    else if (/^¿Dónde fue/.test(texto)) {
-      if (choques === 0) {
-        const caja = (await mapa.boundingBox())!;
-        await mapa.click({ position: { x: caja.width * 0.62, y: caja.height * 0.5 } });
-      } else {
-        const [e, n] = r.choques?.[choques - 1] ?? [5 * choques, 0];
-        await tocarEnMetros(page, "choque-1", e, n);
-      }
-      choques++;
-    } else if (texto.startsWith("¿Por dónde")) {
-      vehiculo = texto;
-      const flecha = de(r.venia, texto);
-      const opcion = flecha
-        ? page.locator('[data-testid^="opcion-flecha-"]', { hasText: flecha })
-        : page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]');
-      if (await opcion.count()) await opcion.first().click();
-      else {
-        notas.push(
-          `«${texto}»: no había la flecha «${flecha ?? "propuesta"}»; se tomó la primera.`,
-        );
-        await page.getByTestId("opcion-flecha-0").click();
-      }
-    } else if (/quedó/i.test(texto)) {
-      const q = de(r.quedo, vehiculo);
-      if (q === undefined) {
-        notas.push(`Sin receta para dónde quedó («${vehiculo}»): junto al choque.`);
-      }
-      if (q === undefined || q === "junto" || q === "nose")
-        await page.getByTestId(`final-${q ?? "junto"}`).click();
-      else await tocarEnMetros(page, "choque-1", q[0], q[1]);
-      await page.getByTestId("listo-final").click();
-    } else if (/algo más/.test(texto)) await page.getByTestId("otros-no").click();
-    else if (/por dónde pasó/.test(texto)) {
-      for (const p of r.pasos ?? []) {
-        await page.getByTestId(`paso-vehiculo-${p.vehiculo}`).click();
-        await tocarEnMetros(page, "choque-1", p.en[0], p.en[1]);
-      }
-      await page.getByTestId("paso-listo").click();
-    } else if (/Cómo es el terreno/.test(texto)) {
-      if (!r.terreno?.length) await page.getByTestId("terreno-liso").click();
-      else {
-        for (const t of r.terreno) {
-          await page.getByTestId(`terreno-${t.tipo}`).click();
-          await tocarEnMetros(page, "choque-1", t.en[0], t.en[1]);
-        }
-        await page.getByTestId("terreno-listo").click();
-      }
-    } else {
-      notas.push(`Pregunta sin receta: «${texto}».`);
-      break;
-    }
-    await expect
-      .poll(async () => (await lista.isVisible()) || (await pregunta.textContent()) !== texto, {
-        timeout: 15_000,
-      })
-      .toBe(true);
-  }
-  return lista.isVisible();
-}
+test.use({
+  actionTimeout: 20_000,
+  viewport: { width: 1440, height: 900 },
+  locale: "es-MX",
+  // t5 (René, 2026-11-19): con CROQUIS_CANAL, en el navegador instalado («chrome»).
+  ...(process.env.CROQUIS_CANAL ? { channel: process.env.CROQUIS_CANAL } : {}),
+});
 
 const textoDe = async (page: Page, testid: string) => {
   const l = page.getByTestId(testid);
@@ -193,6 +75,14 @@ test("las cinco narraciones de ejemplo, de punta a punta", async ({ page, baseUR
     const foto = (n: string) =>
       page.screenshot({ path: join(CAPTURAS, `${r.clave}-${n}.jpg`), type: "jpeg", quality: 80 });
     await page.goto("/cesvi");
+    // t5b (René, 2026-11-20): con qué tarjeta se corrió (el renderer de WebGL), en cada fila.
+    const gpu = await page
+      .evaluate(() => {
+        const gl = document.createElement("canvas").getContext("webgl2");
+        const ext = gl?.getExtension("WEBGL_debug_renderer_info");
+        return ext && gl ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : null;
+      })
+      .catch(() => null);
     await page.getByTestId("ir-caso-nuevo").click();
     await expect(page.getByTestId("recorrido-caso")).toBeVisible();
     await irAPaso(page, 2);
@@ -208,7 +98,7 @@ test("las cinco narraciones de ejemplo, de punta a punta", async ({ page, baseUR
     const lista = await colocar(page, r, notas);
     await foto("2-escena");
     if (!lista) {
-      resultados.push({ clave: r.clave, leido, guardada, colocada: false, notas });
+      resultados.push({ clave: r.clave, gpu, leido, guardada, colocada: false, notas });
       continue;
     }
     await page.getByTestId("avance-ver-reconstruccion").click();
@@ -225,6 +115,7 @@ test("las cinco narraciones de ejemplo, de punta a punta", async ({ page, baseUR
     await page.getByTestId("ver-detalle-reconstruccion").click();
     const fila = {
       clave: r.clave,
+      gpu,
       leido,
       lectura_guardada: guardada,
       colocada: true,
@@ -281,10 +172,36 @@ test("las cinco narraciones de ejemplo, de punta a punta", async ({ page, baseUR
       .catch(() => false);
     await page.waitForTimeout(1500);
     await foto("6-dictamen");
+    // t6 (René, 2026-11-21): el caso tal como lo armó el navegador, para reproducir su cifra sin
+    // navegador (en la t5c el alcance dio 66 aquí y 50 en la tabla con el mismo código).
+    if (CASOS) {
+      mkdirSync(CASOS, { recursive: true });
+      const [descarga] = await Promise.all([
+        page.waitForEvent("download", { timeout: 60_000 }),
+        page.getByTestId("guardar-caso").click(),
+      ]).catch(() => [null] as const);
+      if (descarga) await descarga.saveAs(join(CASOS, `${r.clave}.croquis`));
+      else fila.notas.push("No se pudo descargar el caso (.croquis).");
+    }
     resultados.push(fila);
   }
-  writeFileSync(
-    SALIDA,
+  // AXA en el navegador (René, 2026-11-22): la comparación de la tanda ya no depende de las fotos.
+  // Solo la cifra, que ya es pública (eval/results/cifras.json); nada de sus capturas.
+  let axa: string | null = null;
+  if (!solo) {
+    try {
+      await page.goto("/cesvi");
+      await page.getByTestId("ir-axa").click();
+      await irAPaso(page, 4);
+      const rec = page.getByTestId("reconstruir");
+      if (await rec.isVisible().catch(() => false)) await rec.click();
+      await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 240_000 });
+      axa = await textoDe(page, "cifra-reconstruccion");
+    } catch (e) {
+      axa = `sin cifra: ${(e as Error).message.split("\n")[0]}`;
+    }
+  }
+  escribirSalida(
     `${JSON.stringify(
       {
         descripcion:
@@ -296,6 +213,7 @@ test("las cinco narraciones de ejemplo, de punta a punta", async ({ page, baseUR
         llamadas_a_claude: llamadasAClaude,
         errores_de_pagina: errores,
         ejemplos: resultados,
+        axa,
       },
       null,
       2,

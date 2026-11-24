@@ -1,0 +1,74 @@
+{
+  "etiqueta": "despues",
+  "fecha": "2026-11-19T01:21:32.002Z",
+  "filas": [
+    {
+      "caso": "AXA A2010930",
+      "segundos": 19.93,
+      "velocidades": [
+        {
+          "vehiculo": "V2",
+          "previa": {
+            "mejor": 56.87,
+            "p10": 55.11,
+            "p90": 78.06
+          },
+          "impacto_kmh": 63.65,
+          "identificable": true,
+          "fijada_por": "evidencia",
+          "en_limite": false
+        },
+        {
+          "vehiculo": "V1",
+          "previa": {
+            "mejor": 14.98,
+            "p10": 1.04,
+            "p90": 21.38
+          },
+          "impacto_kmh": 13.64,
+          "identificable": true,
+          "fijada_por": "evidencia",
+          "en_limite": false
+        }
+      ],
+      "resultado_v_impacto_kmh": [40, 40],
+      "objeto_primer_impacto": null,
+      "limites": [
+        "El reporte no da las zonas del impacto de V2 y V1: se toma la cara de su primer daño.",
+        "V2: el reporte trae medidas de deformación en 2 daños; se usa la de la cara del impacto (frontal).",
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+      ]
+    },
+    {
+      "caso": "caso-nuevo.croquis",
+      "segundos": 1.6,
+      "velocidades": [
+        {
+          "vehiculo": "V1",
+          "previa": {
+            "mejor": 44.59,
+            "p10": 30.61,
+            "p90": 58.5
+          },
+          "impacto_kmh": 44.95,
+          "identificable": true,
+          "fijada_por": "declarada",
+          "en_limite": false
+        }
+      ],
+      "resultado_v_impacto_kmh": [45],
+      "objeto_primer_impacto": {
+        "tipo": "arbol",
+        "posicion": {
+          "x": 2.47,
+          "y": 0.272
+        }
+      },
+      "limites": [
+        "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
+        "El arbol del primer impacto va frente a la cara frontal de V1, donde lo colocaste en el choque; sus medidas son las típicas (supuesto).",
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+      ]
+    }
+  ]
+}

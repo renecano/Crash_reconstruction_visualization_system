@@ -76,23 +76,17 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   // Sin «Ver detalle» ni jerga interna (ronda 2, A2).
   await expect(page.getByText(/contra el contrato|Ver lo leído en detalle/)).toHaveCount(0);
 
-  // 2. Lo que más cambia la reconstrucción: el impacto supuesto se confirma; una masa con «No sé».
+  // 2. Lo que más cambia la reconstrucción: el impacto supuesto se confirma.
   await page.getByTestId("confirmar-impacto").click();
   await expect(page.getByTestId("impactos")).not.toContainText("supuesto");
-  // Una pregunta = un dato, con su control además de «No sé»: primero el tipo de vehículo (opciones)
-  // y luego la masa, que ya ofrece el valor típico de su clase (E2).
-  await expect(page.getByTestId("usar-tipico-masa-V1")).toHaveCount(0);
-  await page.getByTestId("opcion-clase-V1-sedan_compacto").click();
+  // La clase y la masa salen del modelo leído (ronda 4; René, 2026-11-20 y 21): «marca VW, tipo
+  // Jetta» y «marca GM, tipo Camaro» tienen ficha del fabricante con su masa (1,418 y 1,700 kg), así
+  // que no se preguntan: entran como supuesto declarado, con su fuente.
   await expect(page.getByTestId("pregunta-clase-V1")).toHaveCount(0);
-  await expect(page.getByTestId("usar-tipico-masa-V1")).toBeVisible();
-  await page.getByTestId("no-se-masa-V1").click();
   await expect(page.getByTestId("pregunta-masa-V1")).toHaveCount(0);
-  await page.getByTestId("valor-masa-V2").fill("1450");
-  await page
-    .getByTestId("pregunta-masa-V2")
-    .getByRole("button", { name: "Usar", exact: true })
-    .click();
-  await expect(page.getByTestId("vehiculos")).toContainText(/1,?450\s*kg/);
+  await expect(page.getByTestId("pregunta-masa-V2")).toHaveCount(0);
+  await expect(page.getByTestId("vehiculos")).toContainText(/1,?418\s*kg/);
+  await expect(page.getByTestId("vehiculos")).toContainText(/1,?700\s*kg/);
 
   await sinRed(page);
   await irAPaso(page, 3);
@@ -292,8 +286,8 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
     diferencia,
     "fracción de píxeles distintos entre «en el impacto» y «en reposo»",
   ).toBeGreaterThan(0.02);
-  // El croquis del dictamen va sobre las calles del mapa donde el perito colocó a los vehículos.
-  await expect(dictamen).toHaveAttribute("data-croquis", "mapa");
+  // El croquis del dictamen es el mismo del 2D de Reconstrucción: el croquis pericial (ronda 4).
+  await expect(dictamen).toHaveAttribute("data-croquis", "pericial");
   const word = page.waitForEvent("download");
   await dictamen.getByTestId("descargar-dictamen-word").click();
   const archivoWord = await word;

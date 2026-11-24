@@ -1,0 +1,172 @@
+{
+  "descripcion": "Las narraciones como paquete 3D, por el camino del navegador (bateria-narraciones.test.ts).",
+  "casos": [
+    {
+      "clave": "arbol",
+      "lugar_buscado": "Paseo Tollocan, a la altura de la calle Isidro Fabela",
+      "punto": {
+        "nombre": "Paseo Tollocan",
+        "lat": 19.2872109,
+        "lon": -99.5979386,
+        "municipio": "Toluca",
+        "estado": "Estado de México"
+      },
+      "propuesta": true,
+      "con_relieve": false,
+      "zona": "urbana",
+      "edificios": 594,
+      "arboles": 172,
+      "postes": 16,
+      "senales": 16,
+      "rodadas": 320,
+      "vertices_via": 10755,
+      "objetos_del_choque": [
+        "arbol",
+        "poste",
+        "poste"
+      ],
+      "vehiculos": 1,
+      "bytes": 696968
+    },
+    {
+      "clave": "poste",
+      "lugar_buscado": "avenida Las Torres",
+      "punto": {
+        "nombre": "Avenida Solidaridad Las Torres",
+        "lat": 19.2764248,
+        "lon": -99.605349,
+        "municipio": "Metepec",
+        "estado": "Estado de México"
+      },
+      "propuesta": true,
+      "con_relieve": false,
+      "zona": "urbana",
+      "edificios": 580,
+      "arboles": 271,
+      "postes": 33,
+      "senales": 34,
+      "rodadas": 534,
+      "vertices_via": 15291,
+      "objetos_del_choque": [
+        "poste",
+        "poste",
+        "poste",
+        "poste"
+      ],
+      "vehiculos": 1,
+      "bytes": 877759
+    },
+    {
+      "clave": "puente",
+      "lugar_buscado": "paso a desnivel de Solidaridad Las Torres sobre Paseo Tollocan",
+      "punto": null,
+      "propuesta": false,
+      "con_relieve": false,
+      "zona": "urbana",
+      "edificios": 113,
+      "arboles": 9,
+      "postes": 4,
+      "senales": 4,
+      "rodadas": 8,
+      "vertices_via": 1368,
+      "objetos_del_choque": [],
+      "vehiculos": 2,
+      "bytes": 250535
+    },
+    {
+      "clave": "subida",
+      "lugar_buscado": "Calzada al Pacífico",
+      "punto": {
+        "nombre": "Calzada al Pacífico",
+        "lat": 19.2566448,
+        "lon": -99.669446,
+        "municipio": "Toluca",
+        "estado": "Estado de México"
+      },
+      "propuesta": true,
+      "con_relieve": true,
+      "zona": "urbana",
+      "edificios": 586,
+      "arboles": 238,
+      "postes": 26,
+      "senales": 34,
+      "rodadas": 412,
+      "vertices_via": 11008,
+      "objetos_del_choque": [],
+      "vehiculos": 2,
+      "bytes": 845694
+    },
+    {
+      "clave": "bajada",
+      "lugar_buscado": "carretera Toluca–Valle de Bravo, a la altura de Amanalco",
+      "punto": {
+        "nombre": "Carretera (Toluca-Cd. Altamirano)-Valle de Bravo, Mesa de Jaimes",
+        "lat": 19.1665817,
+        "lon": -100.1103937,
+        "municipio": "Valle de Bravo",
+        "estado": "Estado de México"
+      },
+      "propuesta": true,
+      "con_relieve": true,
+      "zona": "urbana",
+      "edificios": 446,
+      "arboles": 61,
+      "postes": 7,
+      "senales": 6,
+      "rodadas": 124,
+      "vertices_via": 5373,
+      "objetos_del_choque": [
+        "barrera"
+      ],
+      "vehiculos": 1,
+      "bytes": 504359
+    },
+    {
+      "clave": "curva",
+      "lugar_buscado": "curva del Circuito Exterior Mexiquense a la altura de Ecatepec",
+      "punto": {
+        "nombre": "Circuito Exterior Mexiquense Bicentenario, Colonia Prizo I",
+        "lat": 19.5252618,
+        "lon": -99.0145377,
+        "municipio": "Ecatepec de Morelos",
+        "estado": "Estado de México"
+      },
+      "propuesta": true,
+      "con_relieve": false,
+      "zona": "urbana",
+      "edificios": 577,
+      "arboles": 227,
+      "postes": 39,
+      "senales": 47,
+      "rodadas": 148,
+      "vertices_via": 11787,
+      "objetos_del_choque": [
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol"
+      ],
+      "vehiculos": 2,
+      "bytes": 815163
+    },
+    {
+      "clave": "tollocan",
+      "propuesta": false,
+      "con_relieve": false,
+      "zona": "urbana",
+      "edificios": 614,
+      "arboles": 264,
+      "postes": 27,
+      "senales": 39,
+      "rodadas": 298,
+      "vertices_via": 7837,
+      "objetos_del_choque": [
+        "arbol"
+      ],
+      "vehiculos": 1,
+      "bytes": 621078
+    }
+  ]
+}

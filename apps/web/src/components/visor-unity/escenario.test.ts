@@ -11,8 +11,9 @@ const casos = readdirSync(DIR)
   .map((f) => [f, JSON.parse(readFileSync(join(DIR, f), "utf8")) as Caso3D] as const);
 
 describe("el escenario del visor Unity (ADR 0112)", () => {
-  it("cumple el esquema del paquete en los 23 casos versionados", () => {
-    expect(casos).toHaveLength(23);
+  it("cumple el esquema del paquete en los 25 casos versionados", () => {
+    // 25: la ronda 4 agregó el árbol con la velocidad declarada y la curva por el eje de la calle.
+    expect(casos).toHaveLength(25);
     for (const [f, c] of casos) {
       const p = armarCaso3d(c.escena, c.resultado, null, escenarioDe(c.escena, c.resultado));
       expect(caso3dErrors(p), f).toEqual([]);

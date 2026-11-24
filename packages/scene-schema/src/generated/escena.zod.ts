@@ -58,6 +58,40 @@ export const CalculoExpediente = z.strictObject({
 });
 export type CalculoExpediente = z.infer<typeof CalculoExpediente>;
 
+/** Un punto en el mapa (WGS84). */
+export const Coordenadas = z.strictObject({
+  lat: z.number().min(-90).max(90),
+  lon: z.number().min(-180).max(180),
+});
+export type Coordenadas = z.infer<typeof Coordenadas>;
+
+/** Las calles del lugar del caso, guardadas con él para que La escena, la reconstrucción y el 3D las tengan sin red (ronda 4). De OpenStreetMap (Overpass) o de las teselas del mapa (OpenMapTiles, también datos de OpenStreetMap). */
+export const CallesGuardadas = z.strictObject({
+  fuente: z.enum(["overpass", "teselas"]),
+  atribucion: z.string().max(200).optional(),
+  consultado: z.iso.datetime({ offset: true }),
+  centro: Coordenadas,
+  radio_m: z.number().min(10).max(2000),
+  vias: z
+    .array(
+      z.strictObject({
+        id: z.int(),
+        tipo: z.string().max(40),
+        nombre: z.string().max(200).optional(),
+        maxspeed: z.string().max(20).optional(),
+        carriles: z.string().max(10).optional(),
+        sentido_unico: z.string().max(10).optional(),
+        ancho: z.string().max(10).optional(),
+        puntos: z
+          .array(z.tuple([z.number(), z.number()]))
+          .min(2)
+          .max(2000),
+      }),
+    )
+    .max(600),
+});
+export type CallesGuardadas = z.infer<typeof CallesGuardadas>;
+
 /** Confianza en el valor, de 0 (adivinado) a 1 (seguro). */
 export const Confianza = z.number().min(0).max(1);
 export type Confianza = z.infer<typeof Confianza>;
@@ -396,11 +430,30 @@ export const CampoVelocidad = z.strictObject({
   confianza: Confianza,
   evidencia: ListaEvidencia.optional(),
   nota: z.string().max(300).optional(),
+  cota: z.enum(["minimo", "maximo"]).optional(),
+  a_priori: z.boolean().optional(),
 });
 export type CampoVelocidad = z.infer<typeof CampoVelocidad>;
 
 /** Las condiciones del lugar al momento del hecho, como las narra el perito (opcional; agregado en 2.3.0 sin cambiar la versión, ADR 0142). El estado de la superficie fija la fricción del cálculo; el clima y la iluminación, la vista del 3D y lo que alcanza a ver un conductor. */
 export const CondicionesExpediente = z.strictObject({
+  pendiente: z
+    .strictObject({
+      valor: z.enum(["subida", "bajada"]),
+      fuente: FuenteExpediente,
+      cita: Cita.optional(),
+    })
+    .optional(),
+  estructura: z
+    .strictObject({
+      valor: z.enum(["puente", "paso_a_desnivel"]),
+      fuente: FuenteExpediente,
+      cita: Cita.optional(),
+    })
+    .optional(),
+  trazo: z
+    .strictObject({ valor: z.enum(["curva"]), fuente: FuenteExpediente, cita: Cita.optional() })
+    .optional(),
   superficie: z
     .strictObject({
       valor: z.enum(["asfalto", "concreto", "adoquin", "empedrado", "terraceria"]),
@@ -439,13 +492,6 @@ export const CondicionesExpediente = z.strictObject({
 });
 export type CondicionesExpediente = z.infer<typeof CondicionesExpediente>;
 
-/** Un punto en el mapa (WGS84). */
-export const Coordenadas = z.strictObject({
-  lat: z.number().min(-90).max(90),
-  lon: z.number().min(-180).max(180),
-});
-export type Coordenadas = z.infer<typeof Coordenadas>;
-
 /** Un dato de texto con su fuente y su cita. */
 export const DatoExpediente = z.strictObject({
   valor: z.string().min(1).max(600),
@@ -483,6 +529,7 @@ export const CasoExpediente = z.strictObject({
       carriles: z.int().min(1).max(12).optional(),
       municipio: DatoExpediente.optional(),
       estado: DatoExpediente.optional(),
+      calles_del_mapa: CallesGuardadas.optional(),
     })
     .optional(),
   condiciones: CondicionesExpediente.optional(),
@@ -954,6 +1001,20 @@ export const Rigidez = z.strictObject({
 });
 export type Rigidez = z.infer<typeof Rigidez>;
 
+/** La velocidad antes del impacto que dice o describe la narración, que contesta el perito o que se supone por la vía (ronda 4). Entra a la reconstrucción como supuesto declarado con su rango: solo pesa si la evidencia no fija la velocidad. */
+export const VelocidadNarrada = z.strictObject({
+  kmh: z.number().min(0).max(300),
+  rango_kmh: z.tuple([z.number().min(0).max(300), z.number().min(0).max(300)]),
+  origen: z.enum(["narración", "perito", "via"]),
+  descripcion: z.string().max(200),
+  cita: z.string().max(400).optional(),
+  cota: z.enum(["minimo", "maximo"]).optional(),
+  respecto_al_limite: z.enum(["arriba", "abajo", "alrededor"]).optional(),
+  limite_kmh: z.number().min(5).max(200).optional(),
+  limite_fuente: z.string().max(200).optional(),
+});
+export type VelocidadNarrada = z.infer<typeof VelocidadNarrada>;
+
 /** Un vehículo del expediente. Sin placas, VIN ni nombres. */
 export const VehiculoExpediente = z.strictObject({
   id: IdVehiculoExpediente,
@@ -986,6 +1047,7 @@ export const VehiculoExpediente = z.strictObject({
       trasera: z.number().min(0).max(300).optional(),
     })
     .optional(),
+  velocidad_narrada: VelocidadNarrada.optional(),
 });
 export type VehiculoExpediente = z.infer<typeof VehiculoExpediente>;
 
@@ -1179,6 +1241,27 @@ export const Lugar = z.strictObject({
   ancho_acotamiento: CampoLongitud.optional(),
   pendiente: CampoPorcentaje.optional(),
   peralte: CampoPorcentaje.optional(),
+  estructura: z
+    .strictObject({
+      valor: z.enum(["puente", "paso_a_desnivel"]),
+      fuente: Fuente,
+      confianza: Confianza,
+      evidencia: ListaEvidencia.optional(),
+      nota: z.string().max(300).optional(),
+    })
+    .optional(),
+  eje_via: z
+    .strictObject({
+      puntos: z
+        .array(z.strictObject({ x: z.number(), y: z.number() }))
+        .min(2)
+        .max(400),
+      nombre: z.string().max(200).optional(),
+      fuente: Fuente,
+      confianza: Confianza,
+      nota: z.string().max(300).optional(),
+    })
+    .optional(),
   radio_curva: CampoLongitud.optional(),
   superficie: CampoSuperficie,
   estado_superficie: CampoEstadoSuperficie,

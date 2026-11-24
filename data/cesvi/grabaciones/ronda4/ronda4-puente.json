@@ -1,0 +1,194 @@
+{
+  "id": "ronda4-puente",
+  "modalidad_c0": "ronda4",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 256,
+    "output_tokens": 1471,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0159912,
+  "narracion": "El hecho se ubica en el paso a desnivel de Solidaridad Las Torres sobre Paseo Tollocan, en Toluca, Estado de México, aproximadamente a las 14:20 horas. El vehículo A, marca Volkswagen, tipo Jetta, modelo 2018, circulaba sobre el puente con dirección de sur a norte, como a 70 km/h. El vehículo B, marca Toyota, tipo Hilux, modelo 2020, circulaba en el mismo sentido delante del vehículo A y frenó al final del puente. El vehículo A impactó con su parte frontal la parte posterior del vehículo B. Ambos vehículos quedaron sobre la bajada del puente.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "alcance",
+        "cita": "El vehículo A impactó con su parte frontal la parte posterior del vehículo B."
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 14:20 horas",
+        "cita": "Toluca, Estado de México, aproximadamente a las 14:20 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "paso a desnivel de Solidaridad Las Torres sobre Paseo Tollocan",
+        "cita": "El hecho se ubica en el paso a desnivel de Solidaridad Las Torres sobre Paseo Tollocan"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Toluca",
+        "cita": "Paseo Tollocan, en Toluca, Estado de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": "Paseo Tollocan, en Toluca, Estado de México"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Volkswagen",
+        "cita": "El vehículo A, marca Volkswagen, tipo Jetta, modelo 2018"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Jetta",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2018",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Toyota",
+        "cita": "El vehículo B, marca Toyota, tipo Hilux, modelo 2020"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Hilux",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2020",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba sobre el puente con dirección de sur a norte, como a 70 km/h"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "velocidad",
+        "valor": "70 km/h",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "frena",
+        "cita": "circulaba en el mismo sentido delante del vehículo A y frenó al final del puente"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "El vehículo A impactó con su parte frontal la parte posterior del vehículo B."
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 posterior",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "Ambos vehículos quedaron sobre la bajada del puente."
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "sobre la bajada del puente",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "Ambos vehículos quedaron sobre la bajada del puente."
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "sobre la bajada del puente",
+        "cita": ""
+      }
+    ]
+  }
+}

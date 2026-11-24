@@ -1,0 +1,339 @@
+{
+  "descripcion": "Ronda 4: qué sacó la lectura de cada narración, con su cita (de las lecturas grabadas; sin API).",
+  "fecha": "2026-11-20T18:11:34.567Z",
+  "filas": [
+    {
+      "clave": "arbol",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "marca_modelo": "Nissan Versa",
+          "clase": "sedan_compacto",
+          "clase_supuesta": true,
+          "clase_cita": "Versa",
+          "clase_porque": "por el modelo: se vende con esa carrocería",
+          "velocidad": {
+            "kmh": 65,
+            "rango_kmh": [
+              50,
+              80
+            ],
+            "descripcion": "a exceso de velocidad",
+            "cita": "El vehículo A, marca Nissan, tipo Versa, modelo 2019, circulaba a exceso de velocidad por los carriles centrales con dirección de oriente a ponie"
+          }
+        }
+      ],
+      "lugar_narrado": "Paseo Tollocan, a la altura de la calle Isidro Fabela",
+      "lugar_para_buscar": "Paseo Tollocan, a la altura de la calle Isidro Fabela",
+      "sentido": {
+        "tipo": "cardinal",
+        "rumbo_deg": 270,
+        "cita": "de oriente a poniente"
+      },
+      "objetos": [
+        {
+          "objeto": "árbol",
+          "cita": "el vehículo salió hacia el camellón y se impactó con su parte frontal contra un árbol"
+        }
+      ],
+      "condiciones": {},
+      "relieve_real": false,
+      "preguntas_que_quedan": [
+        "masa-V1",
+        "restos"
+      ]
+    },
+    {
+      "clave": "poste",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "marca_modelo": "Chevrolet Aveo",
+          "clase": "sedan_compacto",
+          "clase_supuesta": true,
+          "clase_cita": "Aveo",
+          "clase_porque": "por el modelo: se vende con esa carrocería",
+          "velocidad": {
+            "kmh": 60,
+            "rango_kmh": [
+              54,
+              66
+            ],
+            "descripcion": "60 km/h",
+            "cita": "El vehículo A, marca Chevrolet, tipo Aveo, modelo 2016, circulaba a 60 km/h con dirección de poniente a oriente"
+          }
+        }
+      ],
+      "lugar_narrado": "avenida Las Torres",
+      "lugar_para_buscar": "avenida Las Torres",
+      "sentido": {
+        "tipo": "cardinal",
+        "rumbo_deg": 90,
+        "cita": "de poniente a oriente"
+      },
+      "objetos": [
+        {
+          "objeto": "poste de alumbrado de concreto",
+          "cita": "se impactó con su costado derecho contra un poste de alumbrado de concreto"
+        }
+      ],
+      "condiciones": {
+        "clima": {
+          "valor": "lluvia_ligera",
+          "cita": "El hecho ocurrió en la avenida Las Torres, en Metepec, Estado de México, aproximadamente a las 06:40 horas, con lluvia ligera"
+        }
+      },
+      "relieve_real": false,
+      "preguntas_que_quedan": [
+        "masa-V1",
+        "restos"
+      ]
+    },
+    {
+      "clave": "puente",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "marca_modelo": "Volkswagen Jetta",
+          "clase": "sedan_compacto",
+          "clase_supuesta": true,
+          "clase_cita": "Jetta",
+          "clase_porque": "por el modelo: se vende con esa carrocería",
+          "velocidad": {
+            "kmh": 70,
+            "rango_kmh": [
+              59.5,
+              80.5
+            ],
+            "descripcion": "70 km/h",
+            "cita": "ta, modelo 2018, circulaba sobre el puente con dirección de sur a norte, como a 70 km/h"
+          }
+        },
+        {
+          "id": "V2",
+          "marca_modelo": "Toyota Hilux",
+          "clase": "pickup",
+          "clase_supuesta": true,
+          "clase_cita": "Hilux",
+          "clase_porque": "por el modelo: se vende con esa carrocería",
+          "velocidad": null
+        }
+      ],
+      "lugar_narrado": "paso a desnivel de Solidaridad Las Torres sobre Paseo Tollocan",
+      "lugar_para_buscar": "paso a desnivel de Solidaridad Las Torres sobre Paseo Tollocan",
+      "sentido": {
+        "tipo": "cardinal",
+        "rumbo_deg": 0,
+        "cita": "de sur a norte"
+      },
+      "objetos": [],
+      "condiciones": {
+        "pendiente": {
+          "valor": "bajada",
+          "cita": "Ambos vehículos quedaron sobre la bajada del puente"
+        },
+        "estructura": {
+          "valor": "paso_a_desnivel",
+          "cita": "El hecho se ubica en el paso a desnivel de Solidaridad Las Torres sobre Paseo Tollocan, en Toluca, Estado de México, aproximadamente a las 14:20 horas"
+        }
+      },
+      "relieve_real": false,
+      "preguntas_que_quedan": [
+        "velocidad-V2",
+        "masa-V1",
+        "masa-V2",
+        "restos"
+      ]
+    },
+    {
+      "clave": "subida",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "marca_modelo": "Ford Ranger",
+          "clase": "pickup",
+          "clase_supuesta": true,
+          "clase_cita": "Ranger",
+          "clase_porque": "por el modelo: se vende con esa carrocería",
+          "velocidad": {
+            "kmh": 20,
+            "rango_kmh": [
+              5,
+              35
+            ],
+            "descripcion": "despacio",
+            "cita": "rd, tipo Ranger, modelo 2015, circulaba en subida con dirección de norte a sur, despacio, cargado de material"
+          }
+        },
+        {
+          "id": "V2",
+          "marca_modelo": "Nissan Tsuru",
+          "clase": "sedan_compacto",
+          "clase_supuesta": true,
+          "clase_cita": "Tsuru",
+          "clase_porque": "por el modelo: se vende con esa carrocería",
+          "velocidad": null
+        }
+      ],
+      "lugar_narrado": "Calzada al Pacífico, en la subida hacia San Buenaventura",
+      "lugar_para_buscar": "Calzada al Pacífico",
+      "sentido": {
+        "tipo": "destino",
+        "destino": "San Buenaventura",
+        "cita": "hacia San Buenaventura"
+      },
+      "objetos": [],
+      "condiciones": {
+        "pendiente": {
+          "valor": "subida",
+          "cita": "El hecho ocurrió en la Calzada al Pacífico, en la subida hacia San Buenaventura, en Toluca, Estado de México, aproximadamente a las 18:00 horas"
+        }
+      },
+      "relieve_real": true,
+      "preguntas_que_quedan": [
+        "velocidad-V2",
+        "masa-V1",
+        "masa-V2",
+        "restos",
+        "final-V1"
+      ]
+    },
+    {
+      "clave": "bajada",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "marca_modelo": "Mazda 3",
+          "clase": "sedan_mediano",
+          "clase_supuesta": true,
+          "clase_cita": "Mazda 3",
+          "clase_porque": "por el modelo: se vende con esa carrocería",
+          "velocidad": {
+            "kmh": 103.5,
+            "rango_kmh": [
+              90,
+              117
+            ],
+            "descripcion": "más de 90 km/h",
+            "cita": "lo 2021, circulaba en bajada pronunciada con dirección de oriente a poniente, a más de 90 km/h"
+          }
+        }
+      ],
+      "lugar_narrado": "carretera Toluca–Valle de Bravo, a la altura de Amanalco",
+      "lugar_para_buscar": "carretera Toluca–Valle de Bravo, a la altura de Amanalco",
+      "sentido": {
+        "tipo": "cardinal",
+        "rumbo_deg": 270,
+        "cita": "de oriente a poniente"
+      },
+      "objetos": [
+        {
+          "objeto": "barrera de concreto del lado derecho",
+          "cita": "se impactó con su parte frontal contra la barrera de concreto del lado derecho"
+        }
+      ],
+      "condiciones": {
+        "pendiente": {
+          "valor": "bajada",
+          "cita": "El vehículo A, marca Mazda, tipo 3, modelo 2021, circulaba en bajada pronunciada con dirección de oriente a poniente, a más de 90 km/h"
+        },
+        "trazo": {
+          "valor": "curva",
+          "cita": "En la curva no alcanzó a frenar, dejó huellas de frenado de 22 metros y se impactó con su parte frontal contra la barrera de concreto del lado derecho"
+        }
+      },
+      "relieve_real": true,
+      "preguntas_que_quedan": [
+        "masa-V1",
+        "restos"
+      ]
+    },
+    {
+      "clave": "curva",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "marca_modelo": "Kia Rio",
+          "clase": "sedan_compacto",
+          "clase_supuesta": true,
+          "clase_cita": "Rio",
+          "clase_porque": "por el modelo: se vende con esa carrocería",
+          "velocidad": null
+        },
+        {
+          "id": "V2",
+          "marca_modelo": "Honda CR-V",
+          "clase": "suv_compacta",
+          "clase_supuesta": true,
+          "clase_cita": "CR-V",
+          "clase_porque": "por el modelo: se vende con esa carrocería",
+          "velocidad": {
+            "kmh": 65,
+            "rango_kmh": [
+              50,
+              80
+            ],
+            "descripcion": "a alta velocidad",
+            "cita": "ículo B, marca Honda, tipo CR-V, modelo 2019, circulaba por el carril izquierdo a alta velocidad, se abrió en la curva e invadió el carril derecho"
+          }
+        }
+      ],
+      "lugar_narrado": "curva del Circuito Exterior Mexiquense a la altura de Ecatepec",
+      "lugar_para_buscar": "curva del Circuito Exterior Mexiquense a la altura de Ecatepec",
+      "sentido": {
+        "tipo": "cardinal",
+        "rumbo_deg": 270,
+        "cita": "de oriente a poniente"
+      },
+      "objetos": [],
+      "condiciones": {
+        "trazo": {
+          "valor": "curva",
+          "cita": "El hecho ocurrió en la curva del Circuito Exterior Mexiquense a la altura de Ecatepec, Estado de México, aproximadamente a las 21:15 horas"
+        }
+      },
+      "relieve_real": false,
+      "preguntas_que_quedan": [
+        "velocidad-V1",
+        "masa-V1",
+        "masa-V2",
+        "restos"
+      ]
+    },
+    {
+      "clave": "tollocan",
+      "vehiculos": [
+        {
+          "id": "V1",
+          "marca_modelo": null,
+          "clase": "sedan_mediano",
+          "clase_supuesta": false,
+          "clase_cita": "sedan",
+          "clase_porque": "un sedán sin más se toma como sedán mediano",
+          "velocidad": null
+        }
+      ],
+      "lugar_narrado": "Tollocan rumbo a la ciudad de México",
+      "lugar_para_buscar": "Tollocan",
+      "sentido": {
+        "tipo": "destino",
+        "destino": "ciudad de México",
+        "cita": "rumbo a la ciudad de México"
+      },
+      "objetos": [
+        {
+          "objeto": "árbol",
+          "cita": null
+        }
+      ],
+      "condiciones": {},
+      "relieve_real": false,
+      "preguntas_que_quedan": [
+        "velocidad-V1",
+        "masa-V1",
+        "restos",
+        "final-V1"
+      ]
+    }
+  ]
+}

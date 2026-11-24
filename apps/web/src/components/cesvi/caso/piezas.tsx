@@ -12,6 +12,7 @@ import {
   confirmarImpacto,
   conClase,
   conMasa,
+  conVelocidadDelPerito,
   conMasaTipica,
   conOrdenImpactos,
   conPrimerImpacto,
@@ -769,6 +770,8 @@ export function Pregunta({
     if (p.clave.startsWith("masa-") && p.vehiculo)
       onCambio(conMasa(expediente, p.vehiculo, numero));
     if (p.clave === "restos") onCambio(conRestos(expediente, numero));
+    if (p.clave.startsWith("velocidad-") && p.vehiculo)
+      onCambio(conVelocidadDelPerito(expediente, p.vehiculo, numero));
     if (p.clave.startsWith("huella-") && p.vehiculo)
       onCambio(conHuella(expediente, p.vehiculo, numero));
   };
@@ -844,7 +847,13 @@ export function Pregunta({
               inputMode="decimal"
               value={valor}
               onChange={(e) => setValor(e.target.value)}
-              aria-label={c.unidad === "m" ? "Longitud en metros" : "Masa en kilogramos"}
+              aria-label={
+                c.unidad === "m"
+                  ? "Longitud en metros"
+                  : c.unidad === "km/h"
+                    ? "Velocidad en kilómetros por hora"
+                    : "Masa en kilogramos"
+              }
               data-testid={`valor-${p.clave}`}
             />
             <span className="t-nota">{c.unidad}</span>
@@ -880,7 +889,12 @@ export function Pregunta({
         <button
           type="button"
           className="boton-secundario boton-compacto text-texto-2"
-          onClick={onNoSe}
+          onClick={() =>
+            // La velocidad que el perito no sabe: la típica de la vía, como supuesto (ronda 4).
+            p.clave.startsWith("velocidad-") && p.vehiculo
+              ? onCambio(conVelocidadDelPerito(expediente, p.vehiculo, null))
+              : onNoSe()
+          }
           data-testid={`no-se-${p.clave}`}
         >
           No sé

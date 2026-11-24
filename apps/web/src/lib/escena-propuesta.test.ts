@@ -10,7 +10,7 @@ import { overpassDeTeselas, type LineaTesela } from "@croquis/croquis-2d";
 import { describe, expect, it } from "vitest";
 import { RADIO_CALLES_M } from "./calles-del-mapa";
 import { callesDe, nombreVehiculo, poseDe, rumboAlineado } from "./escena-facil";
-import { proponerEscena } from "./escena-propuesta";
+import { listaDeLaEscena, listaLista, proponerEscena } from "./escena-propuesta";
 import { impactosAColocar } from "./pasos-caso";
 
 const aqui = dirname(fileURLToPath(import.meta.url));
@@ -69,6 +69,12 @@ describe("la escena ya armada (cesvi-cf708e9fed)", () => {
     expect(Math.min(dif, 180 - dif)).toBeLessThan(15);
   });
 
+  it("cada «Por qué» es concreto: la calle, el sentido y los daños en que se basa (René)", () => {
+    const d = p.propuestos.find((x) => x.clave.startsWith("direccion-"))!;
+    expect(d.texto).toMatch(/venía por .+, de \S+ a \S+$/);
+    expect(d.porque).toMatch(/daño|narración/);
+  });
+
   it("lo que no puede proponer va a la lista de lo que falta, con su porqué", () => {
     expect(p.faltan.some((f) => f.clave.startsWith("final-"))).toBe(true);
     expect(p.faltan.every((f) => f.porque.length > 0)).toBe(true);
@@ -85,5 +91,102 @@ describe("la escena ya armada (cesvi-cf708e9fed)", () => {
         nombreDe,
       }),
     ).toBeNull();
+  });
+});
+
+describe("ver la reconstrucción desde la lista (René, 2026-11-20)", () => {
+  const item = (estado: "propuesto" | "confirmado" | "falta", opcional = false) =>
+    ({
+      clave: "x",
+      texto: "",
+      porque: null,
+      estado,
+      opcional,
+      abre: { tipo: "choque", orden: 1 },
+    }) as const;
+  it("las opcionales sin contestar no bloquean; lo propuesto cuenta como listo", () => {
+    expect(listaLista([item("confirmado"), item("propuesto"), item("falta", true)])).toBe(true);
+    expect(listaLista([item("confirmado"), item("falta")])).toBe(false);
+    expect(listaLista([])).toBe(false);
+  });
+});
+
+describe("sin calles en el lugar (René, 2026-11-18: no inventar la dirección)", () => {
+  it("el choque va en el lugar y por dónde venía cada uno falta, sin un rumbo supuesto", () => {
+    const impactos = impactosAColocar(expediente);
+    const p = proponerEscena({
+      expediente,
+      impactos,
+      calles: [],
+      narracion: null,
+      lugar,
+      nombreDe,
+    })!;
+    expect(p.propuestos.some((x) => x.clave.startsWith("direccion-"))).toBe(false);
+    const faltan = p.faltan.filter((x) => x.clave.startsWith("direccion-"));
+    expect(faltan.length).toBe(impactos[0]!.vehiculos.length);
+    const l = listaDeLaEscena({
+      expediente: p.expediente,
+      impactos,
+      pasos: [],
+      propuesta: p,
+      confirmados: new Set<string>(),
+      direccionesNoSe: [],
+      juntoAlChoque: [],
+      desconocidos: [],
+      nombreDe,
+    });
+    for (const f of faltan) expect(l.find((x) => x.clave === f.clave)!.estado).toBe("falta");
+  });
+});
+
+describe("la lista de La escena (ronda 4, propuesta 1)", () => {
+  const impactos = impactosAColocar(expediente);
+  const p = proponerEscena({ expediente, impactos, calles, narracion: null, lugar, nombreDe })!;
+  const base = {
+    impactos,
+    pasos: [
+      { tipo: "golpe", hecho: false },
+      { tipo: "terreno", hecho: true },
+    ],
+    propuesta: p,
+    confirmados: new Set<string>(),
+    direccionesNoSe: [],
+    juntoAlChoque: [],
+    desconocidos: [],
+    nombreDe,
+  };
+
+  it("lo propuesto se ve propuesto, con su porqué, y lo que no se pudo proponer falta", () => {
+    const l = listaDeLaEscena({ ...base, expediente: p.expediente });
+    expect(l.find((x) => x.clave === "choque-1")!.estado).toBe("propuesto");
+    const d = l.find((x) => x.clave.startsWith("direccion-"))!;
+    expect(d.estado).toBe("propuesto");
+    expect(d.porque).toBeTruthy();
+    expect(l.find((x) => x.clave.startsWith("final-"))!.estado).toBe("falta");
+    // Las preguntas de C1 son opcionales.
+    expect(l.find((x) => x.clave === "c1-golpe")).toMatchObject({
+      opcional: true,
+      estado: "falta",
+    });
+    expect(l.find((x) => x.clave === "c1-terreno")!.estado).toBe("confirmado");
+  });
+
+  it("lo que el perito confirma cambia de estado", () => {
+    const v = impactos[0]!.vehiculos[0]!;
+    const conChoque = listaDeLaEscena({
+      ...base,
+      expediente: p.expediente,
+      confirmados: new Set(["choque-1"]),
+      juntoAlChoque: [v],
+    });
+    expect(conChoque.find((x) => x.clave === "choque-1")!.estado).toBe("confirmado");
+    expect(conChoque.find((x) => x.clave === `final-${v}`)).toMatchObject({
+      estado: "confirmado",
+      texto: `${nombreDe(v)}: quedó junto al choque`,
+    });
+    // «No sé por dónde venía» también cuenta como respondido.
+    const conNoSe = listaDeLaEscena({ ...base, expediente: p.expediente, direccionesNoSe: [v] });
+    expect(conNoSe.find((x) => x.clave === `direccion-${v}`)!.estado).toBe("confirmado");
   });
 });

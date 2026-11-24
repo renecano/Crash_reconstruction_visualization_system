@@ -714,6 +714,23 @@
         "ambiente": {
           "$ref": "#/$defs/AmbienteEscenario"
         },
+        "estructura": {
+          "type": "object",
+          "description": "Un puente o paso a desnivel bajo la vía del choque (ronda 4), ilustrativo: la losa con sus parapetos y pilas, y el piso más abajo. Su largo, su altura y sus pilas son supuestos del 3D; la física va sobre la losa, a nivel.",
+          "additionalProperties": false,
+          "required": ["tipo", "centro", "rumbo_deg", "largo_m", "ancho_m", "altura_m"],
+          "properties": {
+            "tipo": { "type": "string", "enum": ["puente", "paso_a_desnivel"] },
+            "centro": { "$ref": "#/$defs/PuntoPlano" },
+            "rumbo_deg": {
+              "type": "number",
+              "description": "El eje de la losa, en grados desde el eje x de la escena (antihorario)."
+            },
+            "largo_m": { "type": "number", "minimum": 10, "maximum": 400 },
+            "ancho_m": { "type": "number", "minimum": 4, "maximum": 60 },
+            "altura_m": { "type": "number", "minimum": 2, "maximum": 30 }
+          }
+        },
         "via": {
           "title": "ViaEscenario",
           "type": "object",

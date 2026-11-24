@@ -1,0 +1,458 @@
+{
+  "descripcion": "Ronda 4: 20 frases de lugar y sentido; la vía correcta en la primera opción del buscador del sitio y el sentido de llegada (±45°), antes (la frase completa) y después (lugar y sentido separados).",
+  "sitio": "https://croquis-sage.vercel.app",
+  "fecha": "2026-11-19T01:30:50.519Z",
+  "resumen": {
+    "frases": 20,
+    "antes": {
+      "via_correcta": 2,
+      "sentido_correcto": 10
+    },
+    "despues": {
+      "via_correcta": 17,
+      "sentido_correcto": 19
+    }
+  },
+  "filas": [
+    {
+      "frase": "iba sobre Tollocan rumbo a Ciudad de México",
+      "esperado": {
+        "via": "tollocan",
+        "rumbo": 90
+      },
+      "antes": {
+        "consulta": "iba sobre Tollocan rumbo a Ciudad de México",
+        "encontrado": "Toluca, Estado de México",
+        "via_correcta": false,
+        "rumbo": null,
+        "sentido_correcto": false
+      },
+      "despues": {
+        "consulta": "Tollocan",
+        "destino": "Ciudad de México",
+        "encontrado": "Prados de Tollocan",
+        "via_correcta": true,
+        "rumbo": 73,
+        "sentido_correcto": true
+      }
+    },
+    {
+      "frase": "Calzada Ignacio Zaragoza con dirección a Puebla",
+      "esperado": {
+        "via": "zaragoza",
+        "rumbo": 90
+      },
+      "antes": {
+        "consulta": "Calzada Ignacio Zaragoza con dirección a Puebla",
+        "encontrado": "Iztapalapa, Ciudad de México",
+        "via_correcta": false,
+        "rumbo": null,
+        "sentido_correcto": false
+      },
+      "despues": {
+        "consulta": "Calzada Ignacio Zaragoza",
+        "destino": "Puebla",
+        "encontrado": "Calzada General Ignacio Zaragoza, Colonia Guelatao Benito Juárez",
+        "via_correcta": true,
+        "rumbo": 113,
+        "sentido_correcto": true
+      }
+    },
+    {
+      "frase": "Av. Insurgentes Sur en dirección a Cuernavaca",
+      "esperado": {
+        "via": "insurgentes",
+        "rumbo": 180
+      },
+      "antes": {
+        "consulta": "Av. Insurgentes Sur en dirección a Cuernavaca",
+        "encontrado": "Tlalpan, Ciudad de México",
+        "via_correcta": false,
+        "rumbo": null,
+        "sentido_correcto": false
+      },
+      "despues": {
+        "consulta": "Av. Insurgentes Sur",
+        "destino": "Cuernavaca",
+        "encontrado": "Avenida Insurgentes Sur, Colonia Santa Úrsula Xitla",
+        "via_correcta": true,
+        "rumbo": 193,
+        "sentido_correcto": true
+      }
+    },
+    {
+      "frase": "Viaducto Miguel Alemán de poniente a oriente",
+      "esperado": {
+        "via": "viaducto",
+        "rumbo": 90
+      },
+      "antes": {
+        "consulta": "Viaducto Miguel Alemán de poniente a oriente",
+        "encontrado": "Benito Juárez, Ciudad de México",
+        "via_correcta": false,
+        "rumbo": 90,
+        "sentido_correcto": true
+      },
+      "despues": {
+        "consulta": "Viaducto Miguel Alemán",
+        "destino": null,
+        "encontrado": "Viaducto Miguel Alemán, La Piedad",
+        "via_correcta": true,
+        "rumbo": 90,
+        "sentido_correcto": true
+      }
+    },
+    {
+      "frase": "circulaba por la Calzada de Tlalpan con dirección al sur",
+      "esperado": {
+        "via": "tlalpan",
+        "rumbo": 180
+      },
+      "antes": {
+        "consulta": "circulaba por la Calzada de Tlalpan con dirección al sur",
+        "encontrado": "Coyoacán, Ciudad de México",
+        "via_correcta": false,
+        "rumbo": 180,
+        "sentido_correcto": true
+      },
+      "despues": {
+        "consulta": "la Calzada de Tlalpan",
+        "destino": null,
+        "encontrado": "Calzada de Tlalpan, Colonia San Diego Churubusco",
+        "via_correcta": true,
+        "rumbo": 180,
+        "sentido_correcto": true
+      }
+    },
+    {
+      "frase": "Av. Las Torres, de oriente a poniente",
+      "esperado": {
+        "via": "torres",
+        "rumbo": 270
+      },
+      "antes": {
+        "consulta": "Av. Las Torres, de oriente a poniente",
+        "encontrado": "Avenida Solidaridad Las Torres, San Salvador Tizatlalli",
+        "via_correcta": true,
+        "rumbo": 270,
+        "sentido_correcto": true
+      },
+      "despues": {
+        "consulta": "Av. Las Torres",
+        "destino": null,
+        "encontrado": "Avenida Solidaridad Las Torres, San Salvador Tizatlalli",
+        "via_correcta": true,
+        "rumbo": 270,
+        "sentido_correcto": true
+      }
+    },
+    {
+      "frase": "Boulevard Miguel Alemán rumbo a Toluca",
+      "esperado": {
+        "via": "miguel aleman",
+        "rumbo": 270
+      },
+      "antes": {
+        "consulta": "Boulevard Miguel Alemán rumbo a Toluca",
+        "encontrado": "Lerma, Estado de México",
+        "via_correcta": false,
+        "rumbo": null,
+        "sentido_correcto": false
+      },
+      "despues": {
+        "consulta": "Boulevard Miguel Alemán",
+        "destino": "Toluca",
+        "encontrado": "Boulevard Aeropuerto Miguel Alemán Valdez, COLONIA FRANCISCO I.MADERO",
+        "via_correcta": true,
+        "rumbo": 260,
+        "sentido_correcto": true
+      }
+    },
+    {
+      "frase": "Av. Constituyentes hacia el poniente",
+      "esperado": {
+        "via": "constituyentes",
+        "rumbo": 270
+      },
+      "antes": {
+        "consulta": "Av. Constituyentes hacia el poniente",
+        "encontrado": "Miguel Hidalgo, Ciudad de México",
+        "via_correcta": false,
+        "rumbo": 270,
+        "sentido_correcto": true
+      },
+      "despues": {
+        "consulta": "Av. Constituyentes",
+        "destino": null,
+        "encontrado": "Avenida Constituyentes, 16 de Septiembre",
+        "via_correcta": true,
+        "rumbo": 270,
+        "sentido_correcto": true
+      }
+    },
+    {
+      "frase": "Eje 6 Sur con dirección a Iztapalapa",
+      "esperado": {
+        "via": "eje 6",
+        "rumbo": 90
+      },
+      "antes": {
+        "consulta": "Eje 6 Sur con dirección a Iztapalapa",
+        "encontrado": "Benito Juárez, Ciudad de México",
+        "via_correcta": false,
+        "rumbo": null,
+        "sentido_correcto": false
+      },
+      "despues": {
+        "consulta": "Eje 6 Sur",
+        "destino": "Iztapalapa",
+        "encontrado": "Ángel Urraza, Colonia Vértiz Narvarte",
+        "via_correcta": false,
+        "rumbo": 110,
+        "sentido_correcto": true
+      }
+    },
+    {
+      "frase": "Av. Gustavo Baz, en sentido norte-sur",
+      "esperado": {
+        "via": "gustavo baz",
+        "rumbo": 180
+      },
+      "antes": {
+        "consulta": "Av. Gustavo Baz, en sentido norte-sur",
+        "encontrado": "Avenida Via Gustavo Baz",
+        "via_correcta": true,
+        "rumbo": 180,
+        "sentido_correcto": true
+      },
+      "despues": {
+        "consulta": "Av. Gustavo Baz",
+        "destino": null,
+        "encontrado": "Avenida Via Gustavo Baz",
+        "via_correcta": true,
+        "rumbo": 180,
+        "sentido_correcto": true
+      }
+    },
+    {
+      "frase": "Vía José López Portillo rumbo a Coacalco",
+      "esperado": {
+        "via": "lopez portillo",
+        "rumbo": 90
+      },
+      "antes": {
+        "consulta": "Vía José López Portillo rumbo a Coacalco",
+        "encontrado": "Tultitlán, Estado de México",
+        "via_correcta": false,
+        "rumbo": null,
+        "sentido_correcto": false
+      },
+      "despues": {
+        "consulta": "Vía José López Portillo",
+        "destino": "Coacalco",
+        "encontrado": "Carretera Vía José López Portillo",
+        "via_correcta": true,
+        "rumbo": 68,
+        "sentido_correcto": true
+      }
+    },
+    {
+      "frase": "Av. Solidaridad Las Torres con dirección a Lerma",
+      "esperado": {
+        "via": "solidaridad las torres",
+        "rumbo": 90
+      },
+      "antes": {
+        "consulta": "Av. Solidaridad Las Torres con dirección a Lerma",
+        "encontrado": "Toluca, Estado de México",
+        "via_correcta": false,
+        "rumbo": null,
+        "sentido_correcto": false
+      },
+      "despues": {
+        "consulta": "Av. Solidaridad Las Torres",
+        "destino": "Lerma",
+        "encontrado": "Avenida Solidaridad Las Torres",
+        "via_correcta": true,
+        "rumbo": 70,
+        "sentido_correcto": true
+      }
+    },
+    {
+      "frase": "Av. Universidad hacia el norte",
+      "esperado": {
+        "via": "universidad",
+        "rumbo": 0
+      },
+      "antes": {
+        "consulta": "Av. Universidad hacia el norte",
+        "encontrado": "Coyoacán, Ciudad de México",
+        "via_correcta": false,
+        "rumbo": 0,
+        "sentido_correcto": true
+      },
+      "despues": {
+        "consulta": "Av. Universidad",
+        "destino": null,
+        "encontrado": "Avenida Universidad, Colonia FOVISSSTE Oxtopulco",
+        "via_correcta": true,
+        "rumbo": 0,
+        "sentido_correcto": true
+      }
+    },
+    {
+      "frase": "Calzada Ermita Iztapalapa de oriente a poniente",
+      "esperado": {
+        "via": "ermita",
+        "rumbo": 270
+      },
+      "antes": {
+        "consulta": "Calzada Ermita Iztapalapa de oriente a poniente",
+        "encontrado": "Iztapalapa, Ciudad de México",
+        "via_correcta": false,
+        "rumbo": 270,
+        "sentido_correcto": true
+      },
+      "despues": {
+        "consulta": "Calzada Ermita Iztapalapa",
+        "destino": null,
+        "encontrado": "Calzada Ermita Iztapalapa, 2a. Ampliación Barrio San Miguel (San Felipe Terremotes)",
+        "via_correcta": true,
+        "rumbo": 270,
+        "sentido_correcto": true
+      }
+    },
+    {
+      "frase": "Av. Revolución con dirección al sur",
+      "esperado": {
+        "via": "revolucion",
+        "rumbo": 180
+      },
+      "antes": {
+        "consulta": "Av. Revolución con dirección al sur",
+        "encontrado": "Álvaro Obregón, Ciudad de México",
+        "via_correcta": false,
+        "rumbo": 180,
+        "sentido_correcto": true
+      },
+      "despues": {
+        "consulta": "Av. Revolución",
+        "destino": null,
+        "encontrado": "Avenida Revolución, Colonia Loreto y Campamento",
+        "via_correcta": true,
+        "rumbo": 180,
+        "sentido_correcto": true
+      }
+    },
+    {
+      "frase": "Paseo de la Reforma rumbo a Santa Fe",
+      "esperado": {
+        "via": "reforma",
+        "rumbo": 250
+      },
+      "antes": {
+        "consulta": "Paseo de la Reforma rumbo a Santa Fe",
+        "encontrado": "Miguel Hidalgo, Ciudad de México",
+        "via_correcta": false,
+        "rumbo": null,
+        "sentido_correcto": false
+      },
+      "despues": {
+        "consulta": "Paseo de la Reforma",
+        "destino": "Santa Fe",
+        "encontrado": "Avenida Paseo Bosque de la Reforma, Lomas de Reforma",
+        "via_correcta": true,
+        "rumbo": 214,
+        "sentido_correcto": true
+      }
+    },
+    {
+      "frase": "Av. López Mateos Sur con dirección a Guadalajara",
+      "esperado": {
+        "via": "lopez mateos",
+        "rumbo": 0
+      },
+      "antes": {
+        "consulta": "Av. López Mateos Sur con dirección a Guadalajara",
+        "encontrado": "Zapopan, Región Centro",
+        "via_correcta": false,
+        "rumbo": null,
+        "sentido_correcto": false
+      },
+      "despues": {
+        "consulta": "Av. López Mateos Sur",
+        "destino": "Guadalajara",
+        "encontrado": "Lateral de López Mateos Sur, Rinconada La Joya",
+        "via_correcta": true,
+        "rumbo": 59,
+        "sentido_correcto": false
+      }
+    },
+    {
+      "frase": "Av. Gonzalitos de sur a norte",
+      "esperado": {
+        "via": "gonzalitos",
+        "rumbo": 0
+      },
+      "antes": {
+        "consulta": "Av. Gonzalitos de sur a norte",
+        "encontrado": "Monterrey, Nuevo León",
+        "via_correcta": false,
+        "rumbo": 0,
+        "sentido_correcto": true
+      },
+      "despues": {
+        "consulta": "Av. Gonzalitos",
+        "destino": null,
+        "encontrado": "Avenida Doctor José Eleuterio González, San Jerónimo",
+        "via_correcta": false,
+        "rumbo": 0,
+        "sentido_correcto": true
+      }
+    },
+    {
+      "frase": "iba por Periférico Sur hacia Xochimilco",
+      "esperado": {
+        "via": "periferico",
+        "rumbo": 110
+      },
+      "antes": {
+        "consulta": "iba por Periférico Sur hacia Xochimilco",
+        "encontrado": "Tlalpan, Ciudad de México",
+        "via_correcta": false,
+        "rumbo": null,
+        "sentido_correcto": false
+      },
+      "despues": {
+        "consulta": "Periférico Sur",
+        "destino": "Xochimilco",
+        "encontrado": "Boulevard Adolfo Ruiz Cortines, Colonia Guadalupe Tlalpan",
+        "via_correcta": false,
+        "rumbo": 119,
+        "sentido_correcto": true
+      }
+    },
+    {
+      "frase": "Calzada Vallejo con dirección al norte",
+      "esperado": {
+        "via": "vallejo",
+        "rumbo": 0
+      },
+      "antes": {
+        "consulta": "Calzada Vallejo con dirección al norte",
+        "encontrado": "Azcapotzalco, Ciudad de México",
+        "via_correcta": false,
+        "rumbo": 0,
+        "sentido_correcto": true
+      },
+      "despues": {
+        "consulta": "Calzada Vallejo",
+        "destino": null,
+        "encontrado": "Calzada Vallejo, Unidad Coltongo",
+        "via_correcta": true,
+        "rumbo": 0,
+        "sentido_correcto": true
+      }
+    }
+  ]
+}

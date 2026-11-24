@@ -1,0 +1,66 @@
+{
+  "id": "ronda4-tollocan",
+  "modalidad_c0": "ronda4",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 66,
+    "output_tokens": 389,
+    "cache_creation_input_tokens": 3846,
+    "cache_read_input_tokens": 0
+  },
+  "costo_usd": 0.013637,
+  "narracion": "iba por tollocan rumbo a la ciudad de mexico, y me sali de la carretera imapctando de frente contra un arbol, iba en un sedan",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Tollocan rumbo a la ciudad de México",
+        "cita": "iba por tollocan rumbo a la ciudad de mexico"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "clase",
+        "valor": "sedan_mediano",
+        "cita": "iba en un sedan"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "iba por tollocan rumbo a la ciudad de mexico"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "impacto de frente contra un arbol"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "objeto_fijo",
+        "valor": "árbol",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      }
+    ]
+  }
+}

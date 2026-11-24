@@ -18,12 +18,12 @@ namespace Croquis.Visor
             var entorno = new GameObject("entorno_procedural").transform;
             entorno.SetParent(padre, false);
             var azar = new Azar(semilla + 13);
-            Arboles(entorno, en.Arboles);
-            Edificios(entorno, en.Edificios, a, azar, en.Zona == ZonaEntorno.Urbana);
-            Postes(entorno, en.Postes);
-            Cercas(entorno, en.Cercas);
-            Senales(entorno, en.Senales);
-            Horizonte(entorno, en, a, semilla);
+            Omisiones.Intentar("los árboles del entorno", () => Arboles(entorno, en.Arboles));
+            Omisiones.Intentar("los edificios", () => Edificios(entorno, en.Edificios, a, azar, en.Zona == ZonaEntorno.Urbana));
+            Omisiones.Intentar("los postes de luz", () => Postes(entorno, en.Postes));
+            Omisiones.Intentar("las cercas", () => Cercas(entorno, en.Cercas));
+            Omisiones.Intentar("las señales", () => Senales(entorno, en.Senales));
+            Omisiones.Intentar("el horizonte", () => Horizonte(entorno, en, a, semilla));
         }
 
         private static Vector3 U(double x, double y, double z)
@@ -50,32 +50,39 @@ namespace Croquis.Visor
             var troncos = new Malla();
             foreach (var t in arboles)
             {
-                var p = U(t.X, t.Y, t.Z);
-                if (t.Especie == EspecieArbol.Palmera)
+                try
                 {
-                    Palmera(palmas, troncos, p, t);
-                    continue;
-                }
+                    var p = U(t.X, t.Y, t.Z);
+                    if (t.Especie == EspecieArbol.Palmera)
+                    {
+                        Palmera(palmas, troncos, p, t);
+                        continue;
+                    }
 
-                var especie = t.Tipo == 2 ? "pirul" : (t.Especie ?? EspecieArbol.Fresno).ToString().ToLowerInvariant();
-                var medidas = Materiales.MedidasArbol(especie);
-                var alto = t.Tipo == 2
-                    ? (float)t.CopaM * 1.5f
-                    : t.AlturaM.HasValue ? (float)t.AlturaM.Value : (float)(t.TroncoM + 2.0 * t.CopaM);
-                var k = alto / medidas.y;
-                var ancho = medidas.x * k;
-                if (!plantas.ContainsKey(especie))
+                    var especie = t.Tipo == 2 ? "pirul" : (t.Especie ?? EspecieArbol.Fresno).ToString().ToLowerInvariant();
+                    var medidas = Materiales.MedidasArbol(especie);
+                    var alto = t.Tipo == 2
+                        ? (float)t.CopaM * 1.5f
+                        : t.AlturaM.HasValue ? (float)t.AlturaM.Value : (float)(t.TroncoM + 2.0 * t.CopaM);
+                    var k = alto / medidas.y;
+                    var ancho = medidas.x * k;
+                    if (!plantas.ContainsKey(especie))
+                    {
+                        plantas[especie] = new Malla();
+                    }
+
+                    impostores.Agregar(especie, p, alto, (float)t.RumboRad);
+
+                    // La planta, a media copa: lo que se ve desde arriba y lo que da sombra de copa.
+                    var h = p + Vector3.up * (alto * 0.62f);
+                    var r = ancho * 0.5f;
+                    plantas[especie].Tarjeta(
+                        h + new Vector3(-r, 0, -r), h + new Vector3(r, 0, -r), h + new Vector3(r, 0, r), h + new Vector3(-r, 0, r));
+                }
+                catch (System.Exception ex) when (!(ex is CargaReemplazada))
                 {
-                    plantas[especie] = new Malla();
+                    Omisiones.Anotar("un árbol del entorno", ex);
                 }
-
-                impostores.Agregar(especie, p, alto, (float)t.RumboRad);
-
-                // La planta, a media copa: lo que se ve desde arriba y lo que da sombra de copa.
-                var h = p + Vector3.up * (alto * 0.62f);
-                var r = ancho * 0.5f;
-                plantas[especie].Tarjeta(
-                    h + new Vector3(-r, 0, -r), h + new Vector3(r, 0, -r), h + new Vector3(r, 0, r), h + new Vector3(-r, 0, r));
             }
 
             impostores.Cerrar();
@@ -147,98 +154,105 @@ namespace Croquis.Visor
             var fierro = new Malla();
             foreach (var b in edificios)
             {
-                var llave = b.Material == MaterialFachada.Tabique ? "tabique" : "yeso|" + b.Color;
-                if (!muros.TryGetValue(llave, out var muro))
+                try
                 {
-                    muros[llave] = muro = new Malla();
-                    colores[llave] = b.Material == MaterialFachada.Tabique
-                        ? Materiales.Pbr("tabique", new Color(1.25f, 0.82f, 0.7f))
-                        // El aplanado se tiñe con el color de la fachada; su textura es clara.
-                        : Materiales.Pbr("yeso", Color.Lerp(Materiales.Hex(b.Color, Color.white), Color.white, 0.15f));
-                }
-
-                var centro = U(b.X, b.Y, b.Z - 0.3);
-                var largo = Dir(b.RumboRad);
-                var fondo = Vector3.Cross(Vector3.up, largo);
-                var frente = Dir(b.FrenteRad);
-                var alto = (float)b.AltoM + 0.3f;
-                var w = (float)b.LargoM;
-                var d = (float)b.FondoM;
-                if (cuadras)
-                {
-                    // En la cuadra los lotes van pegados: solo la cara de la calle lleva fachada.
-                    var n = Vector3.Dot(fondo, frente) > 0f ? fondo : -fondo;
-                    if (b.Tipo == TipoLote.Baldio)
+                    var llave = b.Material == MaterialFachada.Tabique ? "tabique" : "yeso|" + b.Color;
+                    if (!muros.TryGetValue(llave, out var muro))
                     {
-                        Barda(b, centro, largo, n, w, d, muro, lamina);
-                        continue;
+                        muros[llave] = muro = new Malla();
+                        colores[llave] = b.Material == MaterialFachada.Tabique
+                            ? Materiales.Pbr("tabique", new Color(1.25f, 0.82f, 0.7f))
+                            // El aplanado se tiñe con el color de la fachada; su textura es clara.
+                            : Materiales.Pbr("yeso", Color.Lerp(Materiales.Hex(b.Color, Color.white), Color.white, 0.15f));
                     }
 
-                    muro.Caja(centro, largo, fondo, w, alto, d, 0.5f);
-                    var calle = centro + n * (d / 2f);
-                    var niveles = Mathf.Max(1, (int)b.Pisos);
-                    if (b.Tipo == TipoLote.Fondo)
+                    var centro = U(b.X, b.Y, b.Z - 0.3);
+                    var largo = Dir(b.RumboRad);
+                    var fondo = Vector3.Cross(Vector3.up, largo);
+                    var frente = Dir(b.FrenteRad);
+                    var alto = (float)b.AltoM + 0.3f;
+                    var w = (float)b.LargoM;
+                    var d = (float)b.FondoM;
+                    if (cuadras)
                     {
-                        // Las cuadras de atrás: el volumen y sus ventanas como manchas, sin marcos.
-                        for (var piso = 0; piso < niveles; piso++)
+                        // En la cuadra los lotes van pegados: solo la cara de la calle lleva fachada.
+                        var n = Vector3.Dot(fondo, frente) > 0f ? fondo : -fondo;
+                        if (b.Tipo == TipoLote.Baldio)
                         {
-                            for (var k = 0; k < 2; k++)
+                            Barda(b, centro, largo, n, w, d, muro, lamina);
+                            continue;
+                        }
+
+                        muro.Caja(centro, largo, fondo, w, alto, d, 0.5f);
+                        var calle = centro + n * (d / 2f);
+                        var niveles = Mathf.Max(1, (int)b.Pisos);
+                        if (b.Tipo == TipoLote.Fondo)
+                        {
+                            // Las cuadras de atrás: el volumen y sus ventanas como manchas, sin marcos.
+                            for (var piso = 0; piso < niveles; piso++)
                             {
-                                var c = calle + largo * ((k - 0.5f) * w * 0.45f) + Vector3.up * (0.3f + piso * AltoPiso + 1.1f) + n * 0.02f;
-                                var m = a.Noche && azar.Siguiente() < 0.25f ? encendidas : oscuras;
-                                m.Cuadro(c - largo * 0.6f, c + largo * 0.6f, c + largo * 0.6f + Vector3.up * 1.2f, c - largo * 0.6f + Vector3.up * 1.2f, 1f, true);
+                                for (var k = 0; k < 2; k++)
+                                {
+                                    var c = calle + largo * ((k - 0.5f) * w * 0.45f) + Vector3.up * (0.3f + piso * AltoPiso + 1.1f) + n * 0.02f;
+                                    var m = a.Noche && azar.Siguiente() < 0.25f ? encendidas : oscuras;
+                                    m.Cuadro(c - largo * 0.6f, c + largo * 0.6f, c + largo * 0.6f + Vector3.up * 1.2f, c - largo * 0.6f + Vector3.up * 1.2f, 1f, true);
+                                }
                             }
+
+                            continue;
+                        }
+
+                        Fachada(b, calle, largo, n, w, niveles, a, azar, marcos, vidrios, encendidas, lamina, toldos, concreto, rejas, portones, ac);
+                        Azotea(b, centro, largo, fondo, w, d, alto, azar, concreto, negro, fierro);
+                        if (b.RemetimientoM > 0.2)
+                        {
+                            Reja(calle + n * (float)b.RemetimientoM, largo, n, w, muro, rejas);
                         }
 
                         continue;
                     }
 
-                    Fachada(b, calle, largo, n, w, niveles, a, azar, marcos, vidrios, encendidas, lamina, toldos, concreto, rejas, portones, ac);
+                    muro.Caja(centro, largo, fondo, w, alto, d, 0.5f);
+
+                    // Las cuatro caras: su normal hacia afuera, el eje a lo largo y su ancho. La que más mira
+                    // hacia la calle es la fachada; las demás llevan ventanas más chicas y espaciadas.
+                    var caras = new[]
+                    {
+                        (n: fondo, eje: largo, ancho: w, lejos: d / 2f),
+                        (n: -fondo, eje: largo, ancho: w, lejos: d / 2f),
+                        (n: largo, eje: fondo, ancho: d, lejos: w / 2f),
+                        (n: -largo, eje: fondo, ancho: d, lejos: w / 2f),
+                    };
+                    var principal = 0;
+                    for (var k = 1; k < caras.Length; k++)
+                    {
+                        if (Vector3.Dot(caras[k].n, frente) > Vector3.Dot(caras[principal].n, frente))
+                        {
+                            principal = k;
+                        }
+                    }
+
+                    var pisos = Mathf.Max(1, (int)b.Pisos);
+                    for (var k = 0; k < caras.Length; k++)
+                    {
+                        var c = caras[k];
+                        var cara = centro + c.n * c.lejos;
+                        if (k == principal)
+                        {
+                            Fachada(b, cara, c.eje, c.n, c.ancho, pisos, a, azar, marcos, vidrios, encendidas, lamina, toldos, concreto, null, null, null);
+                        }
+                        else
+                        {
+                            Ventanas(cara, c.eje, c.n, c.ancho, pisos, 0, 4.2f, 1.0f, 1.1f, a, azar, marcos, vidrios, encendidas);
+                        }
+                    }
+
                     Azotea(b, centro, largo, fondo, w, d, alto, azar, concreto, negro, fierro);
-                    if (b.RemetimientoM > 0.2)
-                    {
-                        Reja(calle + n * (float)b.RemetimientoM, largo, n, w, muro, rejas);
-                    }
-
-                    continue;
                 }
-
-                muro.Caja(centro, largo, fondo, w, alto, d, 0.5f);
-
-                // Las cuatro caras: su normal hacia afuera, el eje a lo largo y su ancho. La que más mira
-                // hacia la calle es la fachada; las demás llevan ventanas más chicas y espaciadas.
-                var caras = new[]
+                catch (System.Exception ex) when (!(ex is CargaReemplazada))
                 {
-                    (n: fondo, eje: largo, ancho: w, lejos: d / 2f),
-                    (n: -fondo, eje: largo, ancho: w, lejos: d / 2f),
-                    (n: largo, eje: fondo, ancho: d, lejos: w / 2f),
-                    (n: -largo, eje: fondo, ancho: d, lejos: w / 2f),
-                };
-                var principal = 0;
-                for (var k = 1; k < caras.Length; k++)
-                {
-                    if (Vector3.Dot(caras[k].n, frente) > Vector3.Dot(caras[principal].n, frente))
-                    {
-                        principal = k;
-                    }
+                    Omisiones.Anotar("un edificio", ex);
                 }
-
-                var pisos = Mathf.Max(1, (int)b.Pisos);
-                for (var k = 0; k < caras.Length; k++)
-                {
-                    var c = caras[k];
-                    var cara = centro + c.n * c.lejos;
-                    if (k == principal)
-                    {
-                        Fachada(b, cara, c.eje, c.n, c.ancho, pisos, a, azar, marcos, vidrios, encendidas, lamina, toldos, concreto, null, null, null);
-                    }
-                    else
-                    {
-                        Ventanas(cara, c.eje, c.n, c.ancho, pisos, 0, 4.2f, 1.0f, 1.1f, a, azar, marcos, vidrios, encendidas);
-                    }
-                }
-
-                Azotea(b, centro, largo, fondo, w, d, alto, azar, concreto, negro, fierro);
             }
 
             foreach (var par in muros)
@@ -569,23 +583,30 @@ namespace Croquis.Visor
             Vector3? previo = null;
             foreach (var p in postes)
             {
-                var pie = U(p.X, p.Y, p.Z);
-                var d = Dir(p.RumboRad);
-                var lado = Vector3.Cross(Vector3.up, d);
-                madera.Prisma(pie, 0.14f, 9f, 8, 0.1f);
-                madera.Caja(pie + Vector3.up * 8.3f, d, lado, 1.8f, 0.1f, 0.1f);
-                madera.Caja(pie + Vector3.up * 7.6f, d, lado, 1.2f, 0.08f, 0.08f);
-                var punta = pie + Vector3.up * 8.42f;
-                if (previo.HasValue && (previo.Value - punta).magnitude < 80f)
+                try
                 {
-                    // Dos cables con su catenaria entre postes vecinos.
-                    foreach (var desvio in new[] { -0.75f, 0.75f })
+                    var pie = U(p.X, p.Y, p.Z);
+                    var d = Dir(p.RumboRad);
+                    var lado = Vector3.Cross(Vector3.up, d);
+                    madera.Prisma(pie, 0.14f, 9f, 8, 0.1f);
+                    madera.Caja(pie + Vector3.up * 8.3f, d, lado, 1.8f, 0.1f, 0.1f);
+                    madera.Caja(pie + Vector3.up * 7.6f, d, lado, 1.2f, 0.08f, 0.08f);
+                    var punta = pie + Vector3.up * 8.42f;
+                    if (previo.HasValue && (previo.Value - punta).magnitude < 80f)
                     {
-                        Cable(cables, previo.Value + d * desvio, punta + d * desvio);
+                        // Dos cables con su catenaria entre postes vecinos.
+                        foreach (var desvio in new[] { -0.75f, 0.75f })
+                        {
+                            Cable(cables, previo.Value + d * desvio, punta + d * desvio);
+                        }
                     }
-                }
 
-                previo = punta;
+                    previo = punta;
+                }
+                catch (System.Exception ex) when (!(ex is CargaReemplazada))
+                {
+                    Omisiones.Anotar("un poste de luz", ex);
+                }
             }
 
             madera.Poner(padre, "postes", Materiales.Liso(new Color(0.3f, 0.25f, 0.2f), 0.1f));
@@ -617,26 +638,33 @@ namespace Croquis.Visor
             var alambre = new Malla();
             foreach (var c in cercas)
             {
-                var a = new Vector3((float)c.Ax, 0f, (float)c.Ay);
-                var b = new Vector3((float)c.Bx, 0f, (float)c.By);
-                var largo = (b - a).magnitude;
-                if (largo < 0.1f)
+                try
                 {
-                    continue;
-                }
+                    var a = new Vector3((float)c.Ax, 0f, (float)c.Ay);
+                    var b = new Vector3((float)c.Bx, 0f, (float)c.By);
+                    var largo = (b - a).magnitude;
+                    if (largo < 0.1f)
+                    {
+                        continue;
+                    }
 
-                var dir = (b - a) / largo;
-                var lado = Vector3.Cross(Vector3.up, dir);
-                for (var s = 0f; s <= largo; s += 2.5f)
-                {
-                    postes.Caja(a + dir * s, dir, lado, 0.09f, 1.25f, 0.09f);
-                }
+                    var dir = (b - a) / largo;
+                    var lado = Vector3.Cross(Vector3.up, dir);
+                    for (var s = 0f; s <= largo; s += 2.5f)
+                    {
+                        postes.Caja(a + dir * s, dir, lado, 0.09f, 1.25f, 0.09f);
+                    }
 
-                foreach (var h in new[] { 0.45f, 0.8f, 1.15f })
+                    foreach (var h in new[] { 0.45f, 0.8f, 1.15f })
+                    {
+                        alambre.Cuadro(
+                            a + Vector3.up * (h - 0.008f), b + Vector3.up * (h - 0.008f),
+                            b + Vector3.up * (h + 0.008f), a + Vector3.up * (h + 0.008f), 1f, true);
+                    }
+                }
+                catch (System.Exception ex) when (!(ex is CargaReemplazada))
                 {
-                    alambre.Cuadro(
-                        a + Vector3.up * (h - 0.008f), b + Vector3.up * (h - 0.008f),
-                        b + Vector3.up * (h + 0.008f), a + Vector3.up * (h + 0.008f), 1f, true);
+                    Omisiones.Anotar("una cerca", ex);
                 }
             }
 
@@ -656,31 +684,38 @@ namespace Croquis.Visor
             var reverso = new Malla();
             foreach (var s in senales)
             {
-                var pie = U(s.X, s.Y, s.Z);
-                var mira = Dir(s.RumboRad);
-                var lado = Vector3.Cross(Vector3.up, mira);
-                postes.Prisma(pie, 0.035f, 2.9f, 8);
-                if (!placas.TryGetValue(s.Tipo, out var placa))
+                try
                 {
-                    placas[s.Tipo] = placa = new Malla();
-                }
+                    var pie = U(s.X, s.Y, s.Z);
+                    var mira = Dir(s.RumboRad);
+                    var lado = Vector3.Cross(Vector3.up, mira);
+                    postes.Prisma(pie, 0.035f, 2.9f, 8);
+                    if (!placas.TryGetValue(s.Tipo, out var placa))
+                    {
+                        placas[s.Tipo] = placa = new Malla();
+                    }
 
-                var c = pie + Vector3.up * 2.45f + mira * 0.045f;
-                switch (s.Tipo)
+                    var c = pie + Vector3.up * 2.45f + mira * 0.045f;
+                    switch (s.Tipo)
+                    {
+                        case TipoSenal.Alto:
+                            Poligono(placa, reverso, c, lado, mira, 0.38f, 8, Mathf.PI / 8f);
+                            break;
+                        case TipoSenal.Ceda:
+                            Poligono(placa, reverso, c, lado, mira, 0.46f, 3, -Mathf.PI / 2f);
+                            break;
+                        case TipoSenal.Informativa:
+                            placa.Cuadro(c - lado * 0.75f - Vector3.up * 0.3f, c + lado * 0.75f - Vector3.up * 0.3f, c + lado * 0.75f + Vector3.up * 0.3f, c - lado * 0.75f + Vector3.up * 0.3f);
+                            reverso.Cuadro(c + lado * 0.75f - Vector3.up * 0.3f - mira * 0.01f, c - lado * 0.75f - Vector3.up * 0.3f - mira * 0.01f, c - lado * 0.75f + Vector3.up * 0.3f - mira * 0.01f, c + lado * 0.75f + Vector3.up * 0.3f - mira * 0.01f);
+                            break;
+                        default:
+                            Poligono(placa, reverso, c, lado, mira, 0.36f, 20, 0f);
+                            break;
+                    }
+                }
+                catch (System.Exception ex) when (!(ex is CargaReemplazada))
                 {
-                    case TipoSenal.Alto:
-                        Poligono(placa, reverso, c, lado, mira, 0.38f, 8, Mathf.PI / 8f);
-                        break;
-                    case TipoSenal.Ceda:
-                        Poligono(placa, reverso, c, lado, mira, 0.46f, 3, -Mathf.PI / 2f);
-                        break;
-                    case TipoSenal.Informativa:
-                        placa.Cuadro(c - lado * 0.75f - Vector3.up * 0.3f, c + lado * 0.75f - Vector3.up * 0.3f, c + lado * 0.75f + Vector3.up * 0.3f, c - lado * 0.75f + Vector3.up * 0.3f);
-                        reverso.Cuadro(c + lado * 0.75f - Vector3.up * 0.3f - mira * 0.01f, c - lado * 0.75f - Vector3.up * 0.3f - mira * 0.01f, c - lado * 0.75f + Vector3.up * 0.3f - mira * 0.01f, c + lado * 0.75f + Vector3.up * 0.3f - mira * 0.01f);
-                        break;
-                    default:
-                        Poligono(placa, reverso, c, lado, mira, 0.36f, 20, 0f);
-                        break;
+                    Omisiones.Anotar("una señal", ex);
                 }
             }
 

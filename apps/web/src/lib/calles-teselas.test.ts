@@ -68,5 +68,10 @@ describe("las flechas siguen las calles reales con las teselas del mapa (cesvi-c
     expect(flechas.some((f) => /Periférico|López Mateos/.test(f.calle ?? ""))).toBe(true);
     // Sin calles serían exactamente 0°, 90°, 180° y 270° sin nombre.
     expect(flechas.every((f) => f.calle === null && f.rumbo % 90 === 0)).toBe(false);
+    // René (2026-11-18): las flechas con su calle, no solo «Del norte»: los dos sentidos del
+    // Periférico traen su nombre.
+    expect(
+      flechas.filter((f) => /Periférico|López Mateos/.test(f.calle ?? "")).length,
+    ).toBeGreaterThanOrEqual(2);
   });
 });

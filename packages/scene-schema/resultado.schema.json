@@ -1271,6 +1271,11 @@
         "identificable": {
           "type": "boolean"
         },
+        "fijada_por": {
+          "type": "string",
+          "enum": ["declarada"],
+          "description": "La evidencia no fija esta velocidad: la fija la velocidad declarada (narración, perito o vía) con su rango (ronda 4). Falta si la fija la evidencia."
+        },
         "sigma_local": {
           "type": "number",
           "minimum": 0,
@@ -1360,7 +1365,7 @@
           "maxItems": 64,
           "items": {
             "type": "string",
-            "pattern": "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance|paso|punto_inicial):[A-Za-z0-9_-]+$"
+            "pattern": "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance|paso|punto_inicial|velocidad_declarada):[A-Za-z0-9_-]+$"
           }
         },
         "parametros": {
@@ -1525,7 +1530,7 @@
           "maxItems": 64,
           "items": {
             "type": "string",
-            "pattern": "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance|paso|punto_inicial):[A-Za-z0-9_-]+$"
+            "pattern": "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance|paso|punto_inicial|velocidad_declarada):[A-Za-z0-9_-]+$"
           }
         },
         "parametros": {

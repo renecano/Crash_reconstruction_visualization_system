@@ -119,10 +119,12 @@ describe("de la narración del perito a la escena (R1)", () => {
     expect(e.preguntas.map((p) => p.clave)).toEqual([
       "impacto-propuesto",
       "impactos",
-      "clase-V1",
-      "masa-V1",
-      "clase-V2",
-      "masa-V2",
+      // Ronda 4: la narración no dice a qué velocidad venían.
+      "velocidad-V1",
+      "velocidad-V2",
+      // Ronda 4: la narración nombra los dos vehículos; la clase ya no se pregunta.
+      // René, 2026-11-20: con el modelo leído, la masa es la de su ficha o la típica de su clase,
+      // como supuesto declarado; ya no se pregunta.
       "final-V1",
     ]);
   });

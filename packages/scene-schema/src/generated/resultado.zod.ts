@@ -279,6 +279,7 @@ export const ParametroInvertido = z.strictObject({
   inicial: z.number(),
   inicial_declarado: z.boolean(),
   identificable: z.boolean(),
+  fijada_por: z.enum(["declarada"]).optional(),
   sigma_local: z.number().min(0).optional(),
   estimacion: EstimacionParametro.optional(),
   en_limite: z.boolean().optional(),
@@ -308,7 +309,7 @@ export const InversionAlternativa = z.strictObject({
         .string()
         .regex(
           new RegExp(
-            "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance|paso|punto_inicial):[A-Za-z0-9_-]+$",
+            "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance|paso|punto_inicial|velocidad_declarada):[A-Za-z0-9_-]+$",
           ),
         ),
     )
@@ -350,7 +351,7 @@ export const Inversion = z.strictObject({
         .string()
         .regex(
           new RegExp(
-            "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance|paso|punto_inicial):[A-Za-z0-9_-]+$",
+            "^(reposo|rumbo_final|marcas_frenado|marcas_despues|proyeccion|dano|dano_minimo|reposo_supuesto|rumbo_final_supuesto|orden_alcance|paso|punto_inicial|velocidad_declarada):[A-Za-z0-9_-]+$",
           ),
         ),
     )

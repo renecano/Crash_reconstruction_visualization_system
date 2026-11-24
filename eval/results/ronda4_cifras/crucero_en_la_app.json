@@ -1,0 +1,26 @@
+{
+  "descripcion": "El crucero de noche como lo ve el perito en la app: la escena que propone La escena sobre las calles reales, aceptada, y los dos vehículos junto al choque (apps/web/src/lib/ejemplo-en-la-app.test.ts).",
+  "fecha": "2026-11-24T00:11:27.648Z",
+  "lugar": {
+    "buscado": "crucero de la calle Azucena esquina con Av. Reforma, colonia Lomas San Lorenzo",
+    "encontrado": "Calle Azucena, Colonia Lomas de San Lorenzo",
+    "lat": 19.317204,
+    "lon": -99.0593382
+  },
+  "rumbos_al_choque": [
+    {
+      "id": "V1",
+      "rumbo": 37
+    },
+    {
+      "id": "V2",
+      "rumbo": 127
+    }
+  ],
+  "cifra_de": "V1",
+  "velocidad": {
+    "mejor": 20,
+    "p10": 4,
+    "p90": 27
+  }
+}

@@ -28,6 +28,7 @@ import {
   reconstruccionContraCesvi,
   supuestoAlNoSaber,
   revisarRelato,
+  conLimiteDeLaVia,
   supuestosDeClase,
   supuestosDeclarados,
   sugerirDeclarada,
@@ -61,6 +62,11 @@ import {
   type VersionCaso,
 } from "@/lib/versiones-caso";
 import { callesCerca, objetosCerca, RADIO_CALLES_M } from "@/lib/calles-del-mapa";
+import {
+  callesParaGuardar,
+  conCallesGuardadas,
+  respuestaDeGuardadas,
+} from "@/lib/calles-guardadas";
 import { downloadBytes } from "@/lib/download";
 import {
   CLAVES_PASOS,
@@ -111,6 +117,7 @@ import {
 import { textoDano, tituloDelHecho } from "@/lib/hecho-laboratorio";
 import {
   callesDe,
+  limiteEnElChoque,
   nombreVehiculo,
   pasoActual,
   pasosEscena,
@@ -234,7 +241,13 @@ export function RecorridoCaso({
   // Ronda 4: las calles de las teselas del mapa de La escena, mientras Overpass no llega (la
   // maqueta y el 3D las usan igual). Overpass, si llega, manda.
   const [callesTeselas, setCallesTeselas] = useState<OverpassResponse | null>(null);
-  const calles = callesOverpass ?? callesTeselas;
+  // Ronda 4 (René): las guardadas con el caso, para tenerlas sin red (al abrirlo en local).
+  const guardadas = expediente?.caso.lugar?.calles_del_mapa ?? null;
+  const callesGuardadas = useMemo(
+    () => (guardadas ? respuestaDeGuardadas(guardadas) : null),
+    [guardadas],
+  );
+  const calles = callesOverpass ?? callesTeselas ?? callesGuardadas;
   const [objetos, setObjetos] = useState<OverpassResponse | null>(null);
   const [, setMedida] = useState<number | null>(null);
   const [mapa, setMapa] = useState<MapaMl | null>(null);
@@ -706,6 +719,45 @@ export function RecorridoCaso({
       vivo = false;
     };
   }, [claveCalles]);
+  // Ronda 4 (René): con la vía del choque ya conocida, lo que la narración describe respecto al
+  // límite («a exceso de velocidad») o la típica de la vía se recalcula con el límite de esa vía.
+  // Las calles que llegan (Overpass o teselas) se guardan con el caso, una vez por lugar.
+  const recienLlegadas = callesOverpass ?? callesTeselas;
+  if (expediente && recienLlegadas && origenCalles) {
+    const nuevo = conCallesGuardadas(
+      expediente,
+      callesParaGuardar(
+        recienLlegadas,
+        origenCalles,
+        RADIO_CALLES_M,
+        callesOverpass ? "overpass" : "teselas",
+      ),
+    );
+    if (nuevo !== expediente) setExpediente(nuevo);
+  }
+  const puntoChoque = puntoDe(1);
+  // La vía por donde circulaba: la del lugar narrado y en el rumbo del primero del choque (René,
+  // 2026-11-23), no la calle más cercana al punto.
+  const primeroDelChoque = vehiculosDe(1)[0];
+  const rumboChoque = primeroDelChoque
+    ? (poseDe(primeroDelChoque, "impacto")?.rumbo ?? null)
+    : null;
+  const lugarNarrado = expediente?.caso?.lugar?.descripcion?.valor ?? null;
+  const limiteChoque = useMemo(
+    () =>
+      calles && puntoChoque
+        ? limiteEnElChoque(callesDe(calles), puntoChoque, {
+            rumbo: rumboChoque,
+            lugar: lugarNarrado,
+          })
+        : null,
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- el punto se compara por sus coordenadas
+    [calles, puntoChoque?.lat, puntoChoque?.lon, rumboChoque, lugarNarrado],
+  );
+  if (expediente && limiteChoque) {
+    const nuevo = conLimiteDeLaVia(expediente, limiteChoque);
+    if (nuevo !== expediente) setExpediente(nuevo);
+  }
   // Ronda 4: mientras Overpass no llega, las calles de las teselas del mapa del caso (también al
   // entrar directo a Reconstrucción, sin pasar por La escena).
   useEffect(() => {
@@ -1690,6 +1742,23 @@ export function RecorridoCaso({
                   </div>
                 ))
               : null}
+            {actual === P.reconstruccion && rec.r?.impactos[0]?.sinTransferencia ? (
+              // Ronda 4 (René): un choque que no transfiere energía no deja daño; se dice a la vista.
+              <div
+                role="status"
+                className="border-l-2 border-senal pl-3"
+                data-testid="aviso-sin-transferencia"
+              >
+                <p className="t-nota">
+                  <b className="text-texto">
+                    El choque entre {rec.r.impactos[0].vehiculos.map(nombreLab).join(" y ")} casi no
+                    transfiere energía
+                  </b>{" "}
+                  con estas velocidades: los dos llegan casi igual de rápido en el mismo sentido y
+                  no queda daño. Di a qué velocidad venía cada uno o revisa por dónde venían.
+                </p>
+              </div>
+            ) : null}
             {falta.length ? (
               <p className="t-nota" role="status" data-testid="falta-para-seguir">
                 Para seguir falta: <b className="text-texto">{enLista(falta)}</b>.

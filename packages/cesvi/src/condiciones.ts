@@ -79,6 +79,28 @@ const CLIMA: Regla<
   { valor: "despejado", re: /despejad[oa]|cielo claro|buen tiempo/i },
 ];
 
+/** El relieve, la estructura y el trazo donde fue el hecho (ronda 4; René, 2026-11-18). */
+const PENDIENTE: Regla<"subida" | "bajada">[] = [
+  {
+    valor: "subida",
+    re: /(?:en|la|una|de)\s+subida|cuesta arriba|pendiente ascendente|(?:circulaba|iba|avanzaba)\s+subiendo/i,
+  },
+  {
+    valor: "bajada",
+    re: /(?:en|la|una|de)\s+bajada|cuesta abajo|pendiente (?:descendente|pronunciada)|(?:circulaba|iba|avanzaba)\s+bajando/i,
+  },
+];
+const ESTRUCTURA: Regla<"puente" | "paso_a_desnivel">[] = [
+  {
+    valor: "paso_a_desnivel",
+    re: /paso\s+(?:a\s+desnivel|elevado|superior|inferior)|distribuidor vial/i,
+  },
+  { valor: "puente", re: /(?<!\p{L})puente(?:\s+vehicular)?(?!\s+peatonal)(?!\p{L})/iu },
+];
+const TRAZO: Regla<"curva">[] = [
+  { valor: "curva", re: /(?<!\p{L})(?:la|una|en)\s+curva(?!\p{L})/iu },
+];
+
 const SIN_ALUMBRADO =
   /sin (?:alumbrado|iluminaci[oó]n)(?: (?:p[uú]blico|artificial))?|carec[ií]a de (?:alumbrado|iluminaci[oó]n)|no (?:hab[ií]a|contaba con|exist[ií]a) (?:alumbrado|iluminaci[oó]n)|alumbrado (?:p[uú]blico )?(?:apagado|sin funcionar|no funcionaba)/i;
 const CON_ALUMBRADO =
@@ -159,6 +181,13 @@ export function condicionesDeTexto(texto: string | null | undefined): Condicione
   const con = primera(texto, [{ valor: "noche_con_alumbrado" as const, re: CON_ALUMBRADO }]);
   if (sin) out.iluminacion = sin;
   else if (con) out.iluminacion = con;
+  // Ronda 4: la subida o la bajada, el puente y la curva (lo que antes se perdía).
+  const pendiente = primera(texto, PENDIENTE, (o, i) => !negado(o, i));
+  if (pendiente) out.pendiente = pendiente;
+  const estructura = primera(texto, ESTRUCTURA, (o, i) => !negado(o, i));
+  if (estructura) out.estructura = estructura;
+  const trazo = primera(texto, TRAZO, (o, i) => !negado(o, i));
+  if (trazo) out.trazo = trazo;
   return out;
 }
 

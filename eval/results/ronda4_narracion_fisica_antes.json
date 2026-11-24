@@ -1,0 +1,66 @@
+{
+  "etiqueta": "antes",
+  "fecha": "2026-11-19T01:14:51.865Z",
+  "filas": [
+    {
+      "caso": "AXA A2010930",
+      "segundos": 26,
+      "velocidades": [
+        {
+          "vehiculo": "V2",
+          "previa": {
+            "mejor": 56.87,
+            "p10": 55.11,
+            "p90": 78.06
+          },
+          "impacto_kmh": 63.65,
+          "identificable": true,
+          "fijada_por": "evidencia",
+          "en_limite": false
+        },
+        {
+          "vehiculo": "V1",
+          "previa": {
+            "mejor": 14.98,
+            "p10": 1.04,
+            "p90": 21.38
+          },
+          "impacto_kmh": 13.64,
+          "identificable": true,
+          "fijada_por": "evidencia",
+          "en_limite": false
+        }
+      ],
+      "resultado_v_impacto_kmh": [40, 40],
+      "objeto_primer_impacto": null,
+      "limites": [
+        "El reporte no da las zonas del impacto de V2 y V1: se toma la cara de su primer daño.",
+        "V2: el reporte trae medidas de deformación en 2 daños; se usa la de la cara del impacto (frontal).",
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+      ]
+    },
+    {
+      "caso": "caso-nuevo.croquis",
+      "segundos": 2.59,
+      "velocidades": [
+        {
+          "vehiculo": "V1",
+          "previa": null,
+          "impacto_kmh": 40,
+          "identificable": false,
+          "fijada_por": null,
+          "en_limite": false
+        }
+      ],
+      "resultado_v_impacto_kmh": [40],
+      "objeto_primer_impacto": {
+        "tipo": "arbol",
+        "posicion": {
+          "x": 6,
+          "y": -6
+        }
+      },
+      "limites": []
+    }
+  ]
+}

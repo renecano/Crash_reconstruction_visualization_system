@@ -1,12 +1,21 @@
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { distanciaM, escenaDeNarracion, type SalidaCorpus } from "@croquis/cesvi";
+import {
+  agregarTope,
+  distanciaM,
+  escenaDeNarracion,
+  especDeExpediente,
+  type SalidaCorpus,
+  usaRelieve,
+} from "@croquis/cesvi";
 import type { OverpassResponse } from "@croquis/croquis-2d";
 import { describe, expect, it } from "vitest";
 import {
   ajustarACalle,
   callesDe,
+  limiteEnElChoque,
+  type Calle,
   callesEn,
   callesNarradas,
   cardinal,
@@ -28,6 +37,7 @@ import {
   PALETA_VEHICULOS,
   pasoActual,
   pasosEscena,
+  terrenoMarcado,
   poseDe,
   ponerEnLaCalle,
   proponerChoque,
@@ -37,6 +47,7 @@ import {
   sinFinal,
   textoChoqueListo,
   textoFlecha,
+  avisarSinCalles,
 } from "./escena-facil";
 import { impactosAColocar } from "./pasos-caso";
 
@@ -255,6 +266,51 @@ describe("lo que sale de las calles del mapa", () => {
   });
 });
 
+describe("el terreno que narra la pendiente (René, 2026-11-21)", () => {
+  it("el relieve real de la narración no da por contestado el terreno: el tope todavía se marca", () => {
+    const conRelieve = { ...e0, terreno: { relieve: { fuente: "dem" } } } as typeof e0;
+    expect(terrenoMarcado(conRelieve)).toBe(false);
+    const conTope = {
+      ...e0,
+      terreno: { relieve: { fuente: "dem" }, topes: [{ id: "t1" }] },
+    } as unknown as typeof e0;
+    expect(terrenoMarcado(conTope)).toBe(true);
+    const paso = (e: typeof e0) =>
+      pasosEscena(e, impactos, { desconocidos: [], direccionesNoSe: [], c1: {} }).find(
+        (p) => p.tipo === "terreno",
+      );
+    expect(paso(conRelieve)).toMatchObject({ hecho: false });
+    expect(paso(conTope)).toMatchObject({ hecho: true });
+  });
+
+  it("la reversa de ejemplo: con el relieve encendido pregunta el terreno y el tope llega a la física", () => {
+    const g = JSON.parse(
+      readFileSync(
+        resolve(aqui, "../../../../data/cesvi/grabaciones/ejemplos/reversa-pendiente.json"),
+        "utf8",
+      ),
+    ) as { narracion: string; salida: SalidaCorpus };
+    const leida = escenaDeNarracion(g.salida, g.narracion).expediente;
+    // La narración dice «pendiente»: el relieve real va encendido.
+    expect(usaRelieve(leida)).toBe(true);
+    const imp = impactosAColocar(leida);
+    let e = marcarChoque(leida, imp, 1, C, 0);
+    const paso = (x: typeof e) =>
+      pasosEscena(x, imp, { desconocidos: [], direccionesNoSe: [], c1: {} }).find(
+        (p) => p.tipo === "terreno",
+      );
+    // Antes del arreglo el relieve lo daba por contestado y el tope nunca se preguntaba.
+    expect(paso(e)).toMatchObject({ hecho: false });
+    e = agregarTope(e, { lat: C.lat - 12 / 111320, lon: C.lon }, 0).expediente;
+    expect(paso(e)).toMatchObject({ hecho: true });
+    // Y la física lo recibe: el tope va en el terreno del lugar de la escena.
+    const lugar = especDeExpediente(e, "reversa").spec.lugar as {
+      terreno?: { topes?: unknown[] };
+    };
+    expect(lugar.terreno?.topes).toHaveLength(1);
+  });
+});
+
 describe("cada respuesta se guarda en el expediente de siempre", () => {
   const vacio = { desconocidos: [] as string[], direccionesNoSe: [] as string[] };
 
@@ -367,5 +423,85 @@ describe("cada respuesta se guarda en el expediente de siempre", () => {
     expect(lineas[2]!.supuesto).toBe(
       "No sabías dónde quedó: Croquis lo calcula y el dictamen lo dice.",
     );
+  });
+});
+
+describe("el aviso de calles (ronda 4, René)", () => {
+  const base = {
+    overpassFallo: true,
+    hayCalles: false,
+    teselasLeidasDe: "lugar-1",
+    lugar: "lugar-1",
+    yaVisto: false,
+    descartado: false,
+  };
+  it("sale solo si de verdad no hay calles de ninguna fuente, ya leídas las teselas del lugar", () => {
+    expect(avisarSinCalles(base)).toBe(true);
+    // Al regresar a La escena con las calles del recorrido (o guardadas con el caso): no sale.
+    expect(avisarSinCalles({ ...base, hayCalles: true })).toBe(false);
+    // Todavía sin leer las teselas de este lugar (recién montada): no sale.
+    expect(avisarSinCalles({ ...base, teselasLeidasDe: null })).toBe(false);
+    expect(avisarSinCalles({ ...base, teselasLeidasDe: "otro" })).toBe(false);
+    // Overpass respondió: no sale.
+    expect(avisarSinCalles({ ...base, overpassFallo: false })).toBe(false);
+  });
+  it("una sola vez por lugar en la sesión, y no si el perito lo cerró", () => {
+    expect(avisarSinCalles({ ...base, yaVisto: true })).toBe(false);
+    expect(avisarSinCalles({ ...base, descartado: true })).toBe(false);
+  });
+});
+
+describe("el límite de la vía por donde circulaba (René, 2026-11-23)", () => {
+  // Paseo Tollocan (oriente–poniente) pasa a 20 m del choque; una calle secundaria (norte–sur), a 6 m.
+  const ll = (este: number, norte: number): [number, number] => [
+    C.lon + este / (111320 * Math.cos((C.lat * Math.PI) / 180)),
+    C.lat + norte / 111320,
+  ];
+  const calles: Calle[] = [
+    {
+      id: 1,
+      nombre: "Paseo Tollocan",
+      puntos: [ll(-200, 20), ll(200, 20)],
+      ancho: 14,
+      nodos: [1, 2],
+      tipo: "primary",
+      maxspeed: "70",
+    },
+    {
+      id: 2,
+      nombre: "Calle Isidro Fabela",
+      puntos: [ll(6, -200), ll(6, 200)],
+      ancho: 7,
+      nodos: [3, 4],
+      tipo: "residential",
+    },
+  ];
+  const lugar = "Paseo Tollocan, a la altura de la calle Isidro Fabela";
+
+  it("la vía del lugar narrado y en el rumbo del vehículo, no la calle más cercana", () => {
+    expect(limiteEnElChoque(calles, C, { rumbo: 270, lugar })).toMatchObject({
+      kmh: 70,
+      fuente: expect.stringContaining("Paseo Tollocan"),
+    });
+  });
+
+  it("sin lugar narrado, la que va en su rumbo; sin nada, la más cercana (como antes)", () => {
+    expect(limiteEnElChoque(calles, C, { rumbo: 90 })!.fuente).toContain("Paseo Tollocan");
+    expect(limiteEnElChoque(calles, C)!.fuente).toContain("Isidro Fabela");
+  });
+
+  it("la vía narrada sin límite en el mapa toma la clase del lugar narrado, no la del tipo de OpenStreetMap", () => {
+    // Así está Tollocan en OpenStreetMap junto al árbol: «secondary» y sin maxspeed.
+    const sinLimite = calles.map((c) =>
+      c.id === 1 ? { ...c, tipo: "secondary", maxspeed: undefined } : c,
+    );
+    expect(limiteEnElChoque(sinLimite, C, { rumbo: 270, lugar })).toMatchObject({
+      kmh: 50,
+      fuente: expect.stringContaining("avenidas primarias"),
+    });
+  });
+
+  it("si el vehículo iba por la otra calle nombrada, esa", () => {
+    expect(limiteEnElChoque(calles, C, { rumbo: 0, lugar })!.fuente).toContain("Isidro Fabela");
   });
 });

@@ -58,6 +58,10 @@ describe("la lectura física de AXA", () => {
     expect(f.croquis).toBe(medida.V2.mejor);
     expect(f.rango).toEqual([medida.V2.p10, medida.V2.p90]);
     expect(r.hipotesis?.length ?? 1).toBe(medida.hipotesis);
+    // 57 contra 15 km/h sí transfiere energía: el aviso de «casi no transfiere» medía la corrida de
+    // arranque (40 y 40 km/h en el mismo rumbo), no el mejor ajuste.
+    expect(r.impactos[0]?.sinTransferencia).toBeUndefined();
+    expect(r.limites.join(" ")).not.toMatch(/casi no transfiere energía/);
     // Un número por cantidad: la cifra grande, la hoja del dictamen y las citas son el mismo.
     const v = protagonista(r)!;
     expect(v.vehiculo).toBe("V2");
