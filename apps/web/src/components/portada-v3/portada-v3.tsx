@@ -8,9 +8,12 @@
  */
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
+import { preload } from "react-dom";
 import { FUENTES_LABORATORIO } from "@/components/cesvi/fuentes-laboratorio";
 import { Logotipo } from "@/components/sitio/logo";
 import { MovimientoPortada } from "./movimiento-portada";
+import IMAGENES from "./imagenes.json";
+import VIDEO from "./video.json";
 import { DETALLES, LEMA, PASOS, SECCIONES, type TextosPortadaV3 } from "./textos";
 import MARCA from "../../../../../assets/brand/marca.json";
 import "./portada-v3.css";
@@ -108,37 +111,42 @@ function Palabras({ texto, desde = 0 }: { texto: string; desde?: number }) {
   );
 }
 
-/** Una captura de la app, la del tema del sistema. */
+/** Las rutas de una imagen en un formato, para `srcset`. */
+function juego(nombre: string, anchos: readonly number[], formato: "avif" | "webp") {
+  return anchos.map((a) => `/portada/app/${nombre}-${a}.${formato} ${a}w`).join(", ");
+}
+
+/** Una captura de la app, la del tema del sistema: AVIF y, si el navegador no lo lee, WebP. */
 function Captura({
   nombre,
   alt,
-  anchos,
   tamanos,
-  w,
-  h,
 }: {
-  nombre: string;
+  nombre: keyof typeof IMAGENES;
   alt: string;
-  anchos?: readonly number[];
-  tamanos?: string;
-  w: number;
-  h: number;
+  tamanos: string;
 }) {
-  const ruta = (tema: string, ancho?: number) =>
-    `/portada/app/${nombre}-${tema}${ancho ? `-${ancho}` : ""}.avif`;
-  const juego = (tema: string) =>
-    anchos ? anchos.map((a) => `${ruta(tema, a)} ${a}w`).join(", ") : ruta(tema);
+  const { w, h, anchos } = IMAGENES[nombre];
+  const noche = "(prefers-color-scheme: dark)";
   return (
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcSet={juego("oscuro")} sizes={tamanos} />
+      <source
+        media={noche}
+        type="image/avif"
+        srcSet={juego(`${nombre}-oscuro`, anchos, "avif")}
+        sizes={tamanos}
+      />
+      <source media={noche} srcSet={juego(`${nombre}-oscuro`, anchos, "webp")} sizes={tamanos} />
+      <source type="image/avif" srcSet={juego(`${nombre}-claro`, anchos, "avif")} sizes={tamanos} />
       <img
-        src={ruta("claro", anchos?.at(-1))}
-        srcSet={juego("claro")}
+        src={`/portada/app/${nombre}-claro-${w}.webp`}
+        srcSet={juego(`${nombre}-claro`, anchos, "webp")}
         sizes={tamanos}
         width={w}
         height={h}
         alt={alt}
         loading="lazy"
+        fetchPriority="low"
         decoding="async"
       />
     </picture>
@@ -187,7 +195,18 @@ function Abrir({
   );
 }
 
+/** Lo que ocupa la foto del inicio: en celular es baja y ancha, así que basta una chica. */
+const TAMANO_INICIO = "(min-width: 64rem) 64vw, 100vw";
+
 export function PortadaV3({ t }: { t: TextosPortadaV3 }) {
+  // La imagen más grande de la primera pantalla se pide antes que nada (LCP).
+  preload(`/portada/app/inicio-${IMAGENES.inicio.w}.avif`, {
+    as: "image",
+    type: "image/avif",
+    imageSrcSet: juego("inicio", IMAGENES.inicio.anchos, "avif"),
+    imageSizes: TAMANO_INICIO,
+    fetchPriority: "high",
+  });
   return (
     <div data-diseno="laboratorio" className={FUENTES_LABORATORIO}>
       <div
@@ -254,17 +273,32 @@ export function PortadaV3({ t }: { t: TextosPortadaV3 }) {
 
         <main>
           <section id="inicio" tabIndex={-1} className="pv-inicio" data-ve>
-            <div className="pv-inicio-foto">
-              {/* eslint-disable-next-line @next/next/no-img-element -- AVIF ya reducido */}
-              <img
-                src="/portada/app/inicio-1800.avif"
-                srcSet="/portada/app/inicio-900.avif 900w, /portada/app/inicio-1800.avif 1800w"
-                sizes="(min-width: 64rem) 64vw, 100vw"
-                width={1800}
-                height={1049}
-                alt={t.altInicio}
-                fetchPriority="high"
-              />
+            <div className="pv-inicio-foto" data-video={VIDEO.url ?? undefined}>
+              <picture>
+                <source
+                  type="image/avif"
+                  srcSet={juego("inicio", IMAGENES.inicio.anchos, "avif")}
+                  sizes={TAMANO_INICIO}
+                />
+                <img
+                  src={`/portada/app/inicio-${IMAGENES.inicio.w}.webp`}
+                  srcSet={juego("inicio", IMAGENES.inicio.anchos, "webp")}
+                  sizes={TAMANO_INICIO}
+                  width={IMAGENES.inicio.w}
+                  height={IMAGENES.inicio.h}
+                  alt={t.altInicio}
+                  fetchPriority="high"
+                />
+              </picture>
+              {VIDEO.url ? (
+                <button
+                  type="button"
+                  hidden
+                  className="pv-video-boton"
+                  data-pausar={t.pausar}
+                  data-reproducir={t.reproducir}
+                />
+              ) : null}
             </div>
             <div className="pv-inicio-texto">
               <p className="t-rotulo">{t.rotulo}</p>
@@ -338,14 +372,11 @@ export function PortadaV3({ t }: { t: TextosPortadaV3 }) {
                     </h3>
                     <p>{p.texto}</p>
                   </div>
-                  <figure className="pv-captura" data-ve>
+                  <figure className="pv-captura" data-ve data-captura={PASOS[k]}>
                     <Captura
                       nombre={PASOS[k]!}
                       alt={p.alt}
-                      anchos={[800, 1600]}
                       tamanos="(min-width: 64rem) 62vw, 92vw"
-                      w={1600}
-                      h={1000}
                     />
                   </figure>
                 </li>
@@ -360,7 +391,11 @@ export function PortadaV3({ t }: { t: TextosPortadaV3 }) {
               {t.distinto.map((x, k) => (
                 <li key={x.titulo}>
                   <figure className="pv-captura" data-ve>
-                    <Captura nombre={`detalle-${DETALLES[k]}`} alt={x.alt} w={912} h={636} />
+                    <Captura
+                      nombre={`detalle-${DETALLES[k]!}`}
+                      alt={x.alt}
+                      tamanos="(min-width: 64rem) 46vw, 92vw"
+                    />
                   </figure>
                   <h3>{x.titulo}</h3>
                   <p>{x.texto}</p>

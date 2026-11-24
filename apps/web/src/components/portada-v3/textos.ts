@@ -55,6 +55,9 @@ export interface TextosPortadaV3 {
   lede: string;
   altInicio: string;
   leyenda: string;
+  /** El botón del video del inicio. */
+  pausar: string;
+  reproducir: string;
   lemaTitulo: string;
   /** El sentido de cada palabra del lema, en inglés. */
   lemaGlosa: readonly string[] | null;
@@ -102,8 +105,10 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
       h1: ["The expert tells what happened. ", " reconstructs it with physics, in 3D."],
       lede: "From the narrative to the report, with the source of every number in sight.",
       altInicio:
-        "3D reconstruction of an invented example at night in the rain: two cars in line on an avenue and a ring marking the point of impact.",
+        "3D reconstruction of an invented example at night: two cars approach a crossing with their headlights on and a ring marks the point of impact.",
       leyenda: "Illustrative reconstruction · procedural surroundings: not the real place",
+      pausar: "Pause the video",
+      reproducir: "Play the video",
       lemaTitulo: "What the name means, in Spanish",
       lemaGlosa: [
         "Tell.",
@@ -135,39 +140,39 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
           titulo: "Physics does the rest.",
           texto:
             "It searches for the speeds that explain the final positions and the damage. The result is seen in 3D and on the 2D sketch, with its range.",
-          alt: "Reconstruction: the impact in 3D and the speed before impact with its simulations and its range.",
+          alt: "Reconstruction: the impact in 3D, full screen.",
         },
         {
           nombre: "Versions",
           titulo: "Test every version.",
           texto:
             "What each driver stated and the expert's own hypotheses are simulated with the same physics, and what changes is shown. It never says who is right.",
-          alt: "Versions: the 3D and, beside it, what changes with a hypothesis.",
+          alt: "Versions: the 3D and, beside it, the form for what a driver stated.",
         },
         {
           nombre: "Analysis",
           titulo: "Check it with numbers.",
           texto:
             "Damage, energy and a verification with CESVI's method, with every assumption and its range.",
-          alt: "Analysis: the measured crush profile and the list of assumptions, each with its range.",
+          alt: "Analysis: the crush profile measured in the report.",
         },
         {
           nombre: "Report",
           titulo: "Sign your report.",
           texto:
             "In PDF or Word, structured like CESVI's reports. The expert writes the conclusion and signs it.",
-          alt: "Report: the draft and, beside it, the empty conclusion for the expert to write.",
+          alt: "Report: its format, the expert's name and the downloads; without validation it is a draft.",
         },
       ],
       capturas:
-        "Unedited captures of the app, which is in Spanish, with invented example narratives.",
+        "Real captures of the app, which is in Spanish, with an invented example; some are cropped.",
       distintoTitulo: "Every number can be questioned. And answered.",
       distinto: [
         {
           titulo: "Physics with its uncertainty.",
           texto:
-            "A speed never comes alone: it carries the range of simulations that vary whatever is uncertain.",
-          alt: "A speed with its range and one dot per simulation.",
+            "Whatever is uncertain varies within its range in every simulation, so a speed never comes alone.",
+          alt: "Two assumptions of the physics with their value and their range.",
         },
         {
           titulo: "Every datum, with its quote.",
@@ -178,7 +183,7 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
           titulo: "Assumptions in plain sight.",
           texto:
             "What the narrative does not say goes in as a marked assumption, with its reason and, when it varies, its range.",
-          alt: "The list of assumptions with their values and ranges.",
+          alt: "The mass of each vehicle as an assumption, with its range.",
         },
         {
           titulo: "The report belongs to the expert.",
@@ -255,8 +260,10 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
     h1: ["El perito narra el hecho. ", " lo reconstruye con física y en 3D."],
     lede: "De la narración al dictamen, con la fuente de cada número a la vista.",
     altInicio:
-      "Reconstrucción en 3D de un ejemplo inventado, de noche y con lluvia: dos autos en fila sobre una avenida y un aro que marca el punto de impacto.",
+      "Reconstrucción en 3D de un ejemplo inventado, de noche: dos autos llegan a un cruce con los faros encendidos y un aro marca el punto de impacto.",
     leyenda: "Reconstrucción ilustrativa · entorno procedural: no es el lugar real",
+    pausar: "Pausar el video",
+    reproducir: "Reproducir el video",
     lemaTitulo: "Qué significa el nombre",
     lemaGlosa: null,
     comoTitulo: "Seis pasos, de la narración a la firma.",
@@ -280,38 +287,38 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
         titulo: "La física hace el resto.",
         texto:
           "Busca las velocidades que explican las posiciones finales y los daños. El resultado se ve en 3D y en el croquis 2D, con su rango.",
-        alt: "Reconstrucción: el impacto en 3D y la velocidad antes del impacto con sus simulaciones y su rango.",
+        alt: "Reconstrucción: el impacto en 3D, a pantalla completa.",
       },
       {
         nombre: "Versiones",
         titulo: "Prueba cada versión.",
         texto:
           "Lo que declaró cada conductor y las hipótesis del perito se simulan con la misma física, y se ve qué cambia. Nunca dice quién tiene razón.",
-        alt: "Versiones: el 3D y, al lado, qué cambia con una hipótesis.",
+        alt: "Versiones: el 3D y, al lado, el formulario de lo que declaró un conductor.",
       },
       {
         nombre: "Análisis",
         titulo: "Compruébalo con números.",
         texto:
           "Daños, energía y la verificación con el método de CESVI, con cada supuesto y su rango.",
-        alt: "Análisis: el perfil de la deformación medida y la lista de supuestos, cada uno con su rango.",
+        alt: "Análisis: el perfil de la deformación medida en el reporte.",
       },
       {
         nombre: "Dictamen",
         titulo: "Firma tu dictamen.",
         texto:
           "En PDF o Word, con la estructura de los reportes de CESVI. El perito escribe la conclusión y la firma.",
-        alt: "Dictamen: el borrador y, al lado, la conclusión vacía para que la escriba el perito.",
+        alt: "Dictamen: el formato, el nombre del perito y las descargas; sin validar es un borrador.",
       },
     ],
-    capturas: "Capturas de la app sin retoque, con narraciones de ejemplo inventadas.",
+    capturas: "Capturas reales de la app con un ejemplo inventado; algunas, recortadas.",
     distintoTitulo: "Cada número se puede cuestionar. Y responder.",
     distinto: [
       {
         titulo: "Física con su incertidumbre.",
         texto:
-          "Una velocidad nunca va sola: lleva el rango de las simulaciones que varían lo incierto.",
-        alt: "Una velocidad con su rango y un punto por cada simulación.",
+          "Lo incierto varía dentro de su rango en cada simulación: una velocidad nunca va sola.",
+        alt: "Dos supuestos de la física con su valor y su rango.",
       },
       {
         titulo: "Cada dato, con su cita.",
@@ -322,7 +329,7 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
         titulo: "Los supuestos, a la vista.",
         texto:
           "Lo que la narración no dice entra como supuesto marcado, con su porqué y, si varía, su rango.",
-        alt: "La lista de supuestos con sus valores y sus rangos.",
+        alt: "La masa de cada vehículo como supuesto, con su rango.",
       },
       {
         titulo: "El dictamen es del perito.",

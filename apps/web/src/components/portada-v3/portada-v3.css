@@ -196,7 +196,7 @@ html:has(.pv[data-tema="oscuro"]) body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 30% 60%;
+  object-position: 26% 60%;
 }
 .pv-inicio-foto::after {
   content: "";
@@ -209,6 +209,33 @@ html:has(.pv[data-tema="oscuro"]) body {
     color-mix(in srgb, var(--fondo) 34%, transparent) 26%,
     transparent 40%
   );
+}
+.pv-inicio-foto video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+.pv-inicio-foto video[data-listo] {
+  opacity: 1;
+}
+.pv-video-boton {
+  position: absolute;
+  z-index: 1;
+  top: 20px;
+  right: var(--pv-margen);
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.62);
+  color: #fff;
+  font-size: 0.75rem;
+}
+.pv-video-boton[hidden] {
+  display: none;
 }
 .pv-inicio-texto {
   position: relative;
@@ -278,7 +305,7 @@ html:has(.pv[data-tema="oscuro"]) body {
     margin-inline: calc(-1 * var(--pv-margen));
   }
   .pv-inicio-foto img {
-    object-position: 46% 100%;
+    object-position: 60% 60%;
   }
   .pv-inicio-foto::after {
     background: linear-gradient(180deg, var(--fondo) 0%, transparent 34%);
@@ -353,10 +380,11 @@ html:has(.pv[data-tema="oscuro"]) body {
 }
 .pv-captura {
   overflow: hidden;
-  border: 1px solid var(--linea-suave);
-  border-radius: 22px;
-  background: var(--fondo);
-  box-shadow: var(--sombra-hoja);
+  border-radius: 14px;
+}
+/* El recorte del dictamen es una columna de la app: no se estira a todo lo ancho. */
+.pv-captura[data-captura="dictamen"] {
+  width: min(100%, 36rem);
 }
 .pv-captura img {
   display: block;
@@ -546,11 +574,13 @@ html:has(.pv[data-tema="oscuro"]) body {
 }
 
 /* ---------- Movimiento ---------- */
+/* El relleno deja ver los descendentes y las colas de la itálica; el margen lo compensa. (No
+   `overflow-clip-margin`: WebKit no lo tiene y cortaba la «p».) */
 .pv-mascara {
   display: inline-block;
-  overflow: clip;
-  /* La máscara no corta los descendentes ni las colas de la itálica. */
-  overflow-clip-margin: 0.12em;
+  overflow: hidden;
+  padding: 0.14em 0.08em 0.24em;
+  margin: -0.14em -0.08em -0.24em;
   vertical-align: bottom;
 }
 .pv-palabra {
@@ -588,7 +618,7 @@ html:has(.pv[data-tema="oscuro"]) body {
   animation: ta-anillo 700ms ease-out 640ms both;
 }
 .pv[data-movimiento] .pv-captura[data-ve] {
-  clip-path: inset(10% 6% 10% 6% round 22px);
+  clip-path: inset(10% 6% 10% 6% round 14px);
   transition: clip-path 1100ms var(--pv-curva);
 }
 .pv[data-movimiento] .pv-captura[data-ve] img {
@@ -596,7 +626,7 @@ html:has(.pv[data-tema="oscuro"]) body {
   transition: transform 1400ms var(--pv-curva);
 }
 .pv[data-movimiento] .pv-captura[data-visto] {
-  clip-path: inset(-120px round 22px);
+  clip-path: inset(-120px round 14px);
 }
 .pv[data-movimiento] .pv-captura[data-visto] img {
   transform: none;

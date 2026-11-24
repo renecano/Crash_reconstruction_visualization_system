@@ -1,25 +1,24 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { type Page } from "@playwright/test";
 import { expect, test } from "./base";
-import { irAPaso } from "./ayuda-recorrido";
-import { colocar, RECETAS } from "./recetas-ejemplos";
+import { cerrarLaEscena, contestarPreguntas, irAPaso } from "./ayuda-recorrido";
 
 /**
- * Las capturas de la app que usa la portada (René, 2026-11-24): una narración de ejemplo de la app
- * (inventada, sin AXA ni reportes de CESVI; con su lectura guardada, no llama a Claude), de día y de
- * noche, en la demo local con el Unity real. No lleva @flujo y no corre en CI. Con `CROQUIS_CAPTURAS`,
- * `playwright.recorrido.config.ts` corre solo este archivo:
+ * Las capturas de la app que usa la portada (René, 2026-11-24), de la app en producción y con el flujo
+ * de hoy: un ejemplo de la app (inventado, sin AXA ni reportes de CESVI; con su lectura guardada, no
+ * llama a Claude), de día y de noche. Ninguna muestra una cifra de la reconstrucción: dependen de dónde
+ * se colocó cada vehículo y cambian con la física, así que esas zonas quedan fuera del recorte. El
+ * Unity sale de la copia local (`base.ts`), no de Blob. No lleva @flujo y no corre en CI:
  *
- *   bash tools/demo-local/demo-local.sh --solo-preparar && pnpm --filter @croquis/web exec next start
- *   CROQUIS_CAPTURAS=<carpeta> CROQUIS_EJEMPLO=<clave> pnpm --filter @croquis/web exec playwright test \
- *     --config playwright.recorrido.config.ts --headed
- *   node apps/web/scripts/portada-capturas.mjs …   (las reduce a AVIF; una carpeta por ejemplo)
+ *   CROQUIS_URL=https://croquis-sage.vercel.app CROQUIS_CAPTURAS=<carpeta> CROQUIS_EJEMPLO=<clave> \
+ *     pnpm --filter @croquis/web exec playwright test --config playwright.recorrido.config.ts --headed
+ *   node apps/web/scripts/portada-capturas.mjs …
  */
 const SALIDA = process.env.CROQUIS_CAPTURAS ?? "capturas-portada";
-const CLAVE = process.env.CROQUIS_EJEMPLO ?? "poste-terraceria";
+const CLAVE = process.env.CROQUIS_EJEMPLO ?? "alcance-deformacion";
 
-test.use({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 });
+test.use({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 3 });
 
 const quieta = async (page: Page, ms = 3000) => {
   await page.waitForTimeout(ms);
@@ -34,14 +33,14 @@ for (const tema of ["claro", "oscuro"] as const)
     const foto = async (nombre: string) => {
       for (const b of await page.locator('button[aria-label="Cerrar el mensaje"]:visible').all())
         await b.click();
-      writeFileSync(join(dir, `${nombre}.png`), await page.screenshot());
+      await page.screenshot({ path: join(dir, `${nombre}.png`) });
     };
     await page.emulateMedia({ colorScheme: tema === "claro" ? "light" : "dark" });
     await page.addInitScript((t) => {
       (window as unknown as Record<string, unknown>).__croquisVisorUnity = true;
       localStorage.setItem("croquis.cesvi.tema.trabajar", t);
-      localStorage.setItem("croquis.cesvi.tema.presentar", t);
-      localStorage.setItem("croquis.escena", "anterior");
+      localStorage.setItem("croquis.escena", "nueva");
+      localStorage.setItem("croquis.2d", "pericial");
     }, tema);
     await page.goto("/cesvi?calidad=alta");
     await page.getByTestId("ir-caso-nuevo").click();
@@ -50,6 +49,7 @@ for (const tema of ["claro", "oscuro"] as const)
     await page.locator(`[data-ejemplo="${CLAVE}"]`).click();
     await page.getByTestId("leer-narracion").click();
     await expect(page.getByTestId("escena")).toBeVisible({ timeout: 60_000 });
+    await contestarPreguntas(page);
     await quieta(page);
     await page.evaluate(() =>
       document.querySelectorAll("*").forEach((e) => {
@@ -59,17 +59,10 @@ for (const tema of ["claro", "oscuro"] as const)
     await page.waitForTimeout(800);
     await foto("1-hecho");
     await irAPaso(page, 3);
-    const receta = RECETAS.find((r) => r.clave === CLAVE)!;
-    expect(await colocar(page, receta, [])).toBe(true);
+    await cerrarLaEscena(page);
     await quieta(page);
-    // Sin la tarjeta «¡La escena está lista!», que tapa el mapa.
-    await page
-      .getByTestId("cambiar-algo")
-      .click({ timeout: 5000 })
-      .catch(() => undefined);
-    await page.waitForTimeout(1500);
     await foto("2-escena");
-    await page.getByTestId("avance-ver-reconstruccion").click();
+    await page.getByTestId("lista-ver-reconstruccion").click();
     await page.getByTestId("reconstruir").click();
     await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 240_000 });
     await quieta(page, 4000);
@@ -84,29 +77,39 @@ for (const tema of ["claro", "oscuro"] as const)
     await page.getByTestId("ir-al-impacto-unity").click();
     await page.waitForTimeout(3500);
     await foto("3-reconstruccion");
+    await page.getByTestId("pantalla-completa").first().click();
+    await page.waitForTimeout(3500);
+    await foto("3-reconstruccion-completa");
+    // Antes del impacto, sin barras (se esconden solas): la foto del inicio.
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(1500);
+    await page.getByTestId("tiempo-unity").fill("-0.95");
+    await page.getByTestId("pantalla-completa").first().click();
+    await page.mouse.move(720, 450);
+    await page.waitForTimeout(6000);
+    await foto("3-antes-del-impacto");
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(1500);
     await irAPaso(page, 5);
     await quieta(page);
     await foto("4-versiones");
-    const probar = page.getByTestId("acto-versiones").getByRole("button", { name: /^Probar$/ });
-    if (await probar.isEnabled().catch(() => false)) {
-      await probar.click();
-      await quieta(page, 15_000);
-      await foto("4-versiones-hipotesis");
-    }
     await irAPaso(page, 6);
     await quieta(page);
     await foto("5-analisis");
-    await irAPaso(page, 7);
-    await quieta(page);
-    await foto("5-analisis-numeros");
+    // Los últimos supuestos de la lista, con su rango.
+    const supuestos = page.getByTestId("supuestos").locator(".tarjeta-supuesto");
+    const recorte = async (nombre: string, desde: number, hasta: number) => {
+      await supuestos.nth(hasta).scrollIntoViewIfNeeded();
+      await page.waitForTimeout(800);
+      const a = (await supuestos.nth(desde).boundingBox())!;
+      const z = (await supuestos.nth(hasta).boundingBox())!;
+      await page.screenshot({
+        path: join(dir, `${nombre}.png`),
+        clip: { x: a.x - 8, y: a.y - 8, width: a.width + 16, height: z.y + z.height - a.y + 16 },
+      });
+    };
+    await recorte("5-supuestos", (await supuestos.count()) - 3, (await supuestos.count()) - 1);
     await irAPaso(page, 9);
     await quieta(page, 9000);
     await foto("6-dictamen");
-    await page.getByTestId("modo-presentar").click();
-    await expect(page.getByTestId("presentar-caso")).toBeVisible({ timeout: 60_000 });
-    await quieta(page, 7000);
-    await foto("7-presentar-1");
-    await page.keyboard.press("ArrowRight");
-    await quieta(page, 6000);
-    await foto("7-presentar-2");
   });

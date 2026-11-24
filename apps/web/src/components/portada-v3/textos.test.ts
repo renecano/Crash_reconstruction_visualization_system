@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { formato as F } from "@croquis/cesvi";
 import { datosPortadaCesvi } from "@/lib/portada-cesvi";
+import IMAGENES from "./imagenes.json";
 import { DETALLES, PASOS, textosPortadaV3 } from "./textos";
 
 const APP = join(dirname(fileURLToPath(import.meta.url)), "../../../public/portada/app");
@@ -33,12 +34,14 @@ describe.each(["es", "en"] as const)("portada (%s)", (lang) => {
   });
 });
 
-it("cada captura existe, de día y de noche", () => {
-  for (const tema of ["claro", "oscuro"]) {
-    for (const p of PASOS)
-      for (const w of [800, 1600])
-        expect(existsSync(join(APP, `${p}-${tema}-${w}.avif`)), `${p}-${tema}-${w}`).toBe(true);
-    for (const x of DETALLES)
-      expect(existsSync(join(APP, `detalle-${x}-${tema}.avif`)), `${x}-${tema}`).toBe(true);
-  }
+it("cada captura existe, de día y de noche, en AVIF y con su respaldo WebP", () => {
+  for (const [nombre, { anchos }] of Object.entries(IMAGENES))
+    for (const tema of nombre === "inicio" ? [""] : ["-claro", "-oscuro"])
+      for (const ancho of anchos)
+        for (const formato of ["avif", "webp"]) {
+          const f = `${nombre}${tema}-${ancho}.${formato}`;
+          expect(existsSync(join(APP, f)), f).toBe(true);
+        }
+  const usadas = ["inicio", ...PASOS, ...DETALLES.map((d) => `detalle-${d}`)];
+  expect(Object.keys(IMAGENES).sort()).toEqual(usadas.sort());
 });
