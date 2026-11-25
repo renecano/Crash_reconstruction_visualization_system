@@ -55,7 +55,7 @@ export interface TextosPortadaV3 {
   h1: [string, string];
   lede: string;
   altInicio: string;
-  /** La sección del tráiler, justo después del inicio (dura 28 s: «medio minuto», sin cifras escritas). */
+  /** La sección del tráiler, justo después del inicio (título de René, 2026-11-25). */
   trailer: { rotulo: string; titulo: string; ver: string };
   leyenda: string;
   lemaTitulo: string;
@@ -110,7 +110,7 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
       leyenda: "Illustrative reconstruction · procedural surroundings: not the real place",
       trailer: {
         rotulo: "Trailer",
-        titulo: "The app in half a minute.",
+        titulo: "See it in action.",
         ver: "Play the trailer (YouTube)",
       },
       lemaTitulo: "What the name means, in Spanish",
@@ -269,7 +269,7 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
     leyenda: "Reconstrucción ilustrativa · entorno procedural: no es el lugar real",
     trailer: {
       rotulo: "Tráiler",
-      titulo: "La app en medio minuto.",
+      titulo: "Míralo en acción.",
       ver: "Ver el tráiler (YouTube)",
     },
     lemaTitulo: "Qué significa el nombre",
