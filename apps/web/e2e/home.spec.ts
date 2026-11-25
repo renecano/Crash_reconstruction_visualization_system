@@ -33,6 +33,26 @@ test("@flujo la portada carga sin errores y lleva a /cesvi", async ({ page }) =>
   await sinCortina(page);
   await expect(page.locator('[data-testid^="paso-portada-"]')).toHaveCount(6);
 
+  // El tráiler, con fachada: nada de YouTube antes de tocarlo; al tocarlo, el reproductor sin cookies
+  // (aquí no sale a la red).
+  const deYoutube: string[] = [];
+  await page.route(/youtube/, (r) => {
+    deYoutube.push(r.request().url());
+    return r.abort();
+  });
+  const trailer = page.getByTestId("trailer");
+  await trailer.scrollIntoViewIfNeeded();
+  await expect(trailer).toHaveAttribute("href", /youtube\.com\/watch\?v=mUWk-sZgdjM/);
+  await expect(page.locator("iframe")).toHaveCount(0);
+  expect(deYoutube).toEqual([]);
+  await trailer.click();
+  await expect(page.locator(".pv-trailer-caja iframe")).toHaveAttribute(
+    "src",
+    /^https:\/\/www\.youtube-nocookie\.com\/embed\/mUWk-sZgdjM\?/,
+  );
+  await page.unroute(/youtube/);
+  await page.evaluate(() => window.scrollTo(0, 0));
+
   // El indicador de los pasos sigue al que se ve, al tocar una pestaña y en un salto de scroll.
   const pestanas = page.getByRole("navigation", { name: "Pasos" });
   const actual = pestanas.locator("[aria-current]");

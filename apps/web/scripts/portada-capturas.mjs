@@ -3,10 +3,13 @@
  * inventados) en AVIF con respaldo WebP, en dos anchos, y `imagenes.json` con lo que mide cada una. El
  * service worker no las precarga (`serwist/[path]/route.ts`): solo las baja quien llega a verlas.
  *
- *   node scripts/portada-capturas.mjs <capturas> <capturas-inicio>
+ *   node scripts/portada-capturas.mjs <capturas> <portada-4k> <cuadro-trailer>
  *
  * - `<capturas>`: `claro/` y `oscuro/` de «alcance-deformacion»;
- * - `<capturas-inicio>`: `oscuro/` de «crucero-noche» (el 3D de noche, antes del impacto).
+ * - `<portada-4k>`: `croquis-promo-v3/sin-logo/01-portada.jpg` (3840×2160, render del tráiler con el
+ *   3D de Croquis; René, 2026-11-25), la foto del inicio;
+ * - `<cuadro-trailer>`: el cuadro de 15.5 s de `croquis-trailer-3840x2160.mp4` (sin texto), el
+ *   póster del tráiler: `ffmpeg -ss 15.5 -i croquis-trailer-3840x2160.mp4 -frames:v 1 cuadro.png`.
  *
  * Los recortes dejan fuera toda cifra de la reconstrucción (velocidades, rangos, energía y Δv).
  */
@@ -21,7 +24,7 @@ const desdeNext = createRequire(
 );
 const sharp = desdeNext("sharp");
 const OUT = join(WEB, "public/portada/app");
-const [base, inicio] = process.argv.slice(2);
+const [base, portada4k, cuadroTrailer] = process.argv.slice(2);
 /** Píxeles de la captura por píxel de CSS. */
 const DPR = 3;
 
@@ -45,16 +48,16 @@ mkdirSync(OUT, { recursive: true });
 const medidas = {};
 
 /** Cada imagen en dos anchos y dos formatos. */
-async function guardar(nombre, img, anchos, calidad) {
+async function guardar(nombre, img, anchos, calidad, avif = { effort: 6 }, webp = calidad + 18) {
   for (const ancho of anchos) {
     const x = img.clone().resize(ancho);
     await x
       .clone()
-      .avif({ quality: calidad, effort: 6 })
+      .avif({ quality: calidad, ...avif })
       .toFile(join(OUT, `${nombre}-${ancho}.avif`));
     await x
       .clone()
-      .webp({ quality: calidad + 18, effort: 6 })
+      .webp({ quality: webp, effort: 6 })
       .toFile(join(OUT, `${nombre}-${ancho}.webp`));
   }
 }
@@ -95,17 +98,30 @@ for (const [tema, fondo] of [
   await guardar(`dictamen-${tema}`, img, [800, 1600], 56);
   medidas.dictamen = { ...hoja, anchos: [800, 1600] };
 }
-// Sin la leyenda de la esquina: la portada la escribe como texto.
+// La foto 4K sin la leyenda de abajo (los últimos 120 px): la portada la escribe como texto. Una foto
+// con mucho detalle fino: con calidad 24, esfuerzo 9 y color 4:2:0 el AVIF de 2560 pesa 52 KB y no se
+// distingue de calidad 46 (133 KB) en el frente del choque.
+const ALTO_SIN_LEYENDA = 2040;
 const foto = sharp(
-  await sharp(join(inicio, "oscuro/3-antes-del-impacto.png"))
-    .extract({ left: 408, top: 0, width: 3163, height: 2256 })
-    .png()
+  await sharp(portada4k)
+    .extract({ left: 0, top: 0, width: 3840, height: ALTO_SIN_LEYENDA })
     .toBuffer(),
 );
-// 760: lo que pide un celular de 412 px con densidad 1.75 (721); 1100, uno con densidad 2.6.
-const anchos = [480, 760, 1100, 1800];
-await guardar("inicio", foto, anchos, 46);
-medidas.inicio = { w: 1800, h: Math.round((1800 * 2256) / 3163), anchos };
+const anchos = [640, 960, 1280, 1600, 2048, 2560];
+await guardar("inicio", foto, anchos, 24, { effort: 9, chromaSubsampling: "4:2:0" }, 62);
+medidas.inicio = { w: 2560, h: Math.round((2560 * ALTO_SIN_LEYENDA) / 3840), anchos };
+// El póster del tráiler: se pide solo al acercarse (loading="lazy").
+await guardar(
+  "trailer-poster",
+  sharp(cuadroTrailer),
+  [960, 1280, 1920],
+  26,
+  {
+    effort: 9,
+    chromaSubsampling: "4:2:0",
+  },
+  66,
+);
 writeFileSync(
   join(WEB, "src/components/portada-v3/imagenes.json"),
   `${JSON.stringify(medidas, null, 2).replace(/\[\s+([\d,\s]+?)\s+\]/g, (_, n) => `[${n.replace(/\s+/g, " ")}]`)}\n`,

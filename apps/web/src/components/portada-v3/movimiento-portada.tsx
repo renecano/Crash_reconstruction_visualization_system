@@ -14,61 +14,27 @@ const CORTINA_SUBE_MS = 700;
 const CUENTA_MS = 1450;
 
 /**
- * El video del inicio, solo en pantallas anchas, con movimiento y sin ahorro de datos. Se pide al
- * terminar de cargar la página, entra cuando ya corre y se detiene fuera de la pantalla; si falla,
- * queda la foto. Con su botón de pausa (WCAG 2.2.2).
+ * La fachada del tráiler: el enlace a YouTube se cambia por el reproductor de youtube-nocookie solo
+ * cuando la persona lo toca (no se carga nada antes ni suena solo). Con Ctrl, Cmd o Mayús abre YouTube.
  */
-function ponerVideo(raiz: HTMLElement, limpiar: (() => void)[]) {
-  const foto = raiz.querySelector<HTMLElement>("[data-video]");
-  const url = foto?.dataset.video;
-  const boton = foto?.querySelector<HTMLButtonElement>("button");
-  const ahorro = (navigator as { connection?: { saveData?: boolean } }).connection?.saveData;
-  if (!foto || !url || !boton || ahorro || !window.matchMedia("(min-width: 64rem)").matches) return;
-  const video = document.createElement("video");
-  Object.assign(video, { muted: true, loop: true, playsInline: true, preload: "auto" });
-  video.setAttribute("aria-hidden", "true");
-  let pausado = false;
-  const correr = () => void video.play().catch(() => undefined);
-  const rotular = () => {
-    boton.textContent = pausado ? "▶" : "❚❚";
-    boton.setAttribute(
-      "aria-label",
-      (pausado ? boton.dataset.reproducir : boton.dataset.pausar) ?? "",
-    );
-  };
-  const aLaVista = new IntersectionObserver(([e]) =>
-    e?.isIntersecting && !pausado ? correr() : video.pause(),
+function ponerTrailer(raiz: HTMLElement, signal: AbortSignal) {
+  raiz.querySelector<HTMLAnchorElement>("[data-youtube]")?.addEventListener(
+    "click",
+    (ev) => {
+      const a = ev.currentTarget as HTMLAnchorElement;
+      if (ev.metaKey || ev.ctrlKey || ev.shiftKey) return;
+      ev.preventDefault();
+      const marco = document.createElement("iframe");
+      marco.src = `https://www.youtube-nocookie.com/embed/${a.dataset.youtube}?autoplay=1&rel=0&playsinline=1`;
+      marco.title = a.dataset.titulo ?? "";
+      marco.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+      marco.allowFullscreen = true;
+      marco.referrerPolicy = "strict-origin-when-cross-origin";
+      a.replaceWith(marco);
+      marco.focus();
+    },
+    { signal, once: true },
   );
-  const alternar = () => {
-    pausado = !pausado;
-    if (pausado) video.pause();
-    else correr();
-    rotular();
-  };
-  const cargar = () => {
-    video.src = url;
-    boton.before(video);
-    video.addEventListener(
-      "playing",
-      () => {
-        video.dataset.listo = "";
-        boton.hidden = false;
-        rotular();
-      },
-      { once: true },
-    );
-    boton.addEventListener("click", alternar);
-    aLaVista.observe(foto);
-  };
-  if (document.readyState === "complete") cargar();
-  else window.addEventListener("load", cargar, { once: true });
-  limpiar.push(() => {
-    window.removeEventListener("load", cargar);
-    boton.removeEventListener("click", alternar);
-    aLaVista.disconnect();
-    boton.hidden = true;
-    video.remove();
-  });
 }
 
 export function MovimientoPortada() {
@@ -85,6 +51,7 @@ export function MovimientoPortada() {
     const ponerTema = () => (raiz.dataset.tema = oscuro.matches ? "oscuro" : "claro");
     ponerTema();
     oscuro.addEventListener("change", ponerTema, { signal });
+    ponerTrailer(raiz, signal);
 
     const quieto = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -137,7 +104,6 @@ export function MovimientoPortada() {
     });
 
     if (!quieto) {
-      ponerVideo(raiz, limpiar);
       const ver = new IntersectionObserver(
         (es) => {
           for (const e of es) {

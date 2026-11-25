@@ -192,11 +192,14 @@ html:has(.pv[data-tema="oscuro"]) body {
   inset: 0 0 64px 30%;
   overflow: hidden;
 }
+/* La foto 4K (René, 2026-11-25): alineada a su orilla izquierda, el choque (el frente del auto rojo
+   contra la camioneta, a la mitad de la foto) queda a la derecha de la caja, fuera del texto y del
+   velo: cerca del 70 % en escritorio y del 74 % en celular. */
 .pv-inicio-foto img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 88% 80%;
+  object-position: 0% 50%;
 }
 .pv-inicio-foto::after {
   content: "";
@@ -209,33 +212,6 @@ html:has(.pv[data-tema="oscuro"]) body {
     color-mix(in srgb, var(--fondo) 28%, transparent) 17%,
     transparent 24%
   );
-}
-.pv-inicio-foto video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 700ms ease;
-}
-.pv-inicio-foto video[data-listo] {
-  opacity: 1;
-}
-.pv-video-boton {
-  position: absolute;
-  z-index: 1;
-  top: 20px;
-  right: var(--pv-margen);
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.62);
-  color: #fff;
-  font-size: 0.75rem;
-}
-.pv-video-boton[hidden] {
-  display: none;
 }
 .pv-inicio-texto {
   position: relative;
@@ -297,14 +273,13 @@ html:has(.pv[data-tema="oscuro"]) body {
     position: relative;
     inset: auto;
     order: 2;
-    /* Con esta proporción los dos autos caben enteros. */
     aspect-ratio: 5 / 4;
     width: calc(100% + 2 * var(--pv-margen));
     max-height: 60svh;
     margin-inline: calc(-1 * var(--pv-margen));
   }
   .pv-inicio-foto img {
-    object-position: 88% 50%;
+    object-position: 0% 50%;
   }
   .pv-leyenda {
     position: static;
@@ -394,6 +369,55 @@ html:has(.pv[data-tema="oscuro"]) body {
   display: block;
   width: 100%;
   height: auto;
+}
+
+/* ---------- El tráiler ---------- */
+.pv-trailer {
+  padding-bottom: 0;
+}
+.pv-trailer-caja {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #0b1222;
+}
+.pv-trailer-fachada,
+.pv-trailer-caja iframe {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.pv-trailer-caja img {
+  height: 100%;
+  object-fit: cover;
+}
+.pv-trailer-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: clamp(64px, 8vw, 96px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--senal);
+  color: #fff;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 10px 40px rgb(0 0 0 / 0.35);
+  transition: transform 0.2s ease;
+}
+.pv-trailer-play svg {
+  margin-left: 4px;
+}
+.pv-trailer-fachada:hover .pv-trailer-play,
+.pv-trailer-fachada:focus-visible .pv-trailer-play {
+  transform: translate(-50%, -50%) scale(1.08);
+}
+.pv-trailer-fachada:focus-visible {
+  outline: 3px solid var(--senal);
+  outline-offset: -3px;
 }
 
 /* ---------- Los pasos ---------- */
