@@ -3,13 +3,13 @@
   "version_prompt": "escena-narracion-v2",
   "modelo": "claude-sonnet-5-5",
   "uso": {
-    "input_tokens": 745,
-    "output_tokens": 2481,
+    "input_tokens": 753,
+    "output_tokens": 2425,
     "cache_creation_input_tokens": 0,
     "cache_read_input_tokens": 3846
   },
-  "costo_usd": 0.0270692,
-  "narracion": "El hecho se ubica en el entronque de la carretera estatal 15, tramo San Martín–Atlixco, con el camino a San Lucas, a la altura del km 23+600, municipio de Tianguismanalco, Puebla, aproximadamente a las 06:40 horas. La carretera estatal consta de un arroyo de dos carriles de concreto asfáltico, uno por sentido, con circulación de Poniente a Oriente y viceversa, y acotamiento de terracería de 2.00 metros de ancho en ambos lados; el camino a San Lucas llega del Sur, es de un carril por sentido y de concreto asfáltico. La superficie se encontraba seca.\n\nSe examinan el vehículo A, marca Mazda, tipo 3, modelo 2014, color gris, de servicio particular, que circulaba por el camino a San Lucas de Sur a Norte, y el vehículo B, marca Nissan, tipo Sentra, modelo 2018, color blanco, de servicio particular, que circulaba por la carretera estatal de Poniente a Oriente. El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás sobre defensa, fascia y cofre. El vehículo B presenta en su costado derecho, a la altura de la puerta delantera, un hundimiento de derecha a izquierda, y en su parte frontal izquierda un hundimiento de adelante hacia atrás, de forma semicircular coincidente con un poste. Las zonas de contacto corresponden: la parte frontal del vehículo A con el costado derecho del vehículo B.\n\nDespués del contacto, el vehículo B dejó una huella de derrape de 18.40 metros que inicia en el área de contacto, cruza el borde de la carpeta y continúa sobre el acotamiento de terracería, hasta un poste de concreto de la línea de distribución eléctrica situado a 1.50 metros del borde de la carpeta, contra el cual se impactó. El vehículo B quedó en contacto con el poste, orientado hacia el Oriente; el vehículo A quedó sobre el entronque, 8 metros al Norte del área de contacto.",
+  "costo_usd": 0.0265252,
+  "narracion": "El hecho se ubica en el cruce de la Calle 16 de Septiembre con la Avenida de la Compañía, en San Pedro Atlixco, municipio de Tianguismanalco, Puebla, aproximadamente a las 06:40 horas. La Calle 16 de Septiembre consta de un arroyo de dos carriles de concreto asfáltico, uno por sentido, con circulación de Poniente a Oriente y viceversa, y acotamiento de terracería de 2.00 metros de ancho en ambos lados; la Avenida de la Compañía llega del Sur, es de un carril por sentido y de concreto asfáltico. La superficie se encontraba seca.\n\nSe examinan el vehículo A, marca Mazda, tipo 3, modelo 2014, color gris, de servicio particular, que circulaba por la Avenida de la Compañía de Sur a Norte, y el vehículo B, marca Nissan, tipo Sentra, modelo 2018, color blanco, de servicio particular, que circulaba por la Calle 16 de Septiembre de Poniente a Oriente. El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás sobre defensa, fascia y cofre. El vehículo B presenta en su costado derecho, a la altura de la puerta delantera, un hundimiento de derecha a izquierda, y en su parte frontal izquierda un hundimiento de adelante hacia atrás, de forma semicircular coincidente con un poste. Las zonas de contacto corresponden: la parte frontal del vehículo A con el costado derecho del vehículo B.\n\nDespués del contacto, el vehículo B dejó una huella de derrape de 18.40 metros que inicia en el área de contacto, cruza el borde de la carpeta y continúa sobre el acotamiento de terracería, hasta un poste de concreto de la línea de distribución eléctrica situado a 1.50 metros del borde de la carpeta, contra el cual se impactó. El vehículo B quedó en contacto con el poste, orientado hacia el Oriente; el vehículo A quedó sobre el cruce, 8 metros al Norte del área de contacto.",
   "salida": {
     "datos": [
       {
@@ -17,8 +17,8 @@
         "n": 1,
         "vehiculo": "ninguno",
         "campo": "lugar",
-        "valor": "entronque de la carretera estatal 15, tramo San Martín–Atlixco, con el camino a San Lucas, km 23+600",
-        "cita": "El hecho se ubica en el entronque de la carretera estatal 15, tramo San Martín–Atlixco, con el camino a San Lucas, a la altura del km 23+600"
+        "valor": "cruce de la Calle 16 de Septiembre con la Avenida de la Compañía, en San Pedro Atlixco",
+        "cita": "El hecho se ubica en el cruce de la Calle 16 de Septiembre con la Avenida de la Compañía, en San Pedro Atlixco"
       },
       {
         "seccion": "caso",
@@ -26,7 +26,7 @@
         "vehiculo": "ninguno",
         "campo": "municipio",
         "valor": "Tianguismanalco",
-        "cita": "municipio de Tianguismanalco, Puebla"
+        "cita": ""
       },
       {
         "seccion": "caso",
@@ -41,7 +41,7 @@
         "n": 1,
         "vehiculo": "ninguno",
         "campo": "fecha_hora",
-        "valor": "06:40 horas",
+        "valor": "aproximadamente a las 06:40 horas",
         "cita": "aproximadamente a las 06:40 horas"
       },
       {
@@ -98,7 +98,7 @@
         "vehiculo": "V1",
         "campo": "maniobra",
         "valor": "circula",
-        "cita": "que circulaba por el camino a San Lucas de Sur a Norte"
+        "cita": "que circulaba por la Avenida de la Compañía de Sur a Norte"
       },
       {
         "seccion": "movimiento",
@@ -106,7 +106,7 @@
         "vehiculo": "V2",
         "campo": "maniobra",
         "valor": "circula",
-        "cita": "que circulaba por la carretera estatal de Poniente a Oriente"
+        "cita": "que circulaba por la Calle 16 de Septiembre de Poniente a Oriente"
       },
       {
         "seccion": "dano",
@@ -202,7 +202,7 @@
         "vehiculo": "ninguno",
         "campo": "participante",
         "valor": "V1",
-        "cita": "Las zonas de contacto corresponden: la parte frontal del vehículo A con el costado derecho del vehículo B"
+        "cita": "la parte frontal del vehículo A con el costado derecho del vehículo B"
       },
       {
         "seccion": "impacto",
@@ -234,7 +234,7 @@
         "vehiculo": "ninguno",
         "campo": "participante",
         "valor": "V2",
-        "cita": "un poste de concreto de la línea de distribución eléctrica situado a 1.50 metros del borde de la carpeta, contra el cual se impactó"
+        "cita": "hasta un poste de concreto de la línea de distribución eléctrica situado a 1.50 metros del borde de la carpeta, contra el cual se impactó"
       },
       {
         "seccion": "impacto",
@@ -243,6 +243,14 @@
         "campo": "objeto_fijo",
         "valor": "poste de concreto de la línea de distribución eléctrica",
         "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 2,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 frontal",
+        "cita": "en su parte frontal izquierda un hundimiento de adelante hacia atrás, de forma semicircular coincidente con un poste"
       },
       {
         "seccion": "huella",
@@ -259,14 +267,6 @@
         "campo": "longitud",
         "valor": "18.40 metros",
         "cita": ""
-      },
-      {
-        "seccion": "objeto_fijo",
-        "n": 1,
-        "vehiculo": "ninguno",
-        "campo": "descripcion",
-        "valor": "poste de concreto de la línea de distribución eléctrica situado a 1.50 metros del borde de la carpeta",
-        "cita": "un poste de concreto de la línea de distribución eléctrica situado a 1.50 metros del borde de la carpeta"
       },
       {
         "seccion": "posicion",
@@ -290,14 +290,14 @@
         "vehiculo": "V1",
         "campo": "fase",
         "valor": "final",
-        "cita": "el vehículo A quedó sobre el entronque, 8 metros al Norte del área de contacto"
+        "cita": "el vehículo A quedó sobre el cruce, 8 metros al Norte del área de contacto"
       },
       {
         "seccion": "posicion",
         "n": 2,
         "vehiculo": "V1",
         "campo": "descripcion",
-        "valor": "sobre el entronque, 8 metros al Norte del área de contacto",
+        "valor": "sobre el cruce, 8 metros al Norte del área de contacto",
         "cita": ""
       }
     ]

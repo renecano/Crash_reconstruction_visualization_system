@@ -14,7 +14,7 @@ import alcance from "../../../../data/cesvi/grabaciones/ejemplos/alcance-deforma
 import carambola from "../../../../data/cesvi/grabaciones/ejemplos/carambola-lluvia.json";
 import poste from "../../../../data/cesvi/grabaciones/ejemplos/poste-terraceria.json";
 import reversa from "../../../../data/cesvi/grabaciones/ejemplos/reversa-pendiente.json";
-import crucero from "../../../../data/cesvi/grabaciones/escenas/cesvi-e814f085db.json";
+import crucero from "../../../../data/cesvi/grabaciones/ejemplos/crucero-noche.json";
 
 export interface EjemploNarracion {
   clave: string;
