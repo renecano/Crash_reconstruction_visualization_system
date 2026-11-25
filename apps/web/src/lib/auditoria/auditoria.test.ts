@@ -46,33 +46,51 @@ const ENV = {
   CROQUIS_LUGAR_RATE_PER_HOUR: "100000",
   CROQUIS_OSM_RATE_PER_HOUR: "100000",
 } as unknown as NodeJS.ProcessEnv;
-const lugarDeps = defaultLugarDeps(ENV);
+/**
+ * Cada respuesta de Nominatim y Photon se guarda por su URL (revisión de la cadena, 2026-11-24): un
+ * cambio en `lugar.ts` solo sale a la red por las consultas que nunca se hicieron. Antes se guardaba
+ * el resultado completo con la huella de `lugar.ts` y cada cambio repetía todas las búsquedas (2.6 min
+ * por caso; Nominatim bloqueó esta computadora). Las consultas a la red se espacian 1.2 s, y las que
+ * salen del disco no esperan. Solo se guardan las respuestas 200.
+ */
+let ultimaRed = 0;
+const fetchGuardado = (async (input: URL | string, init?: RequestInit) => {
+  const url = String(input);
+  const ruta = join(
+    CACHE,
+    "http",
+    `${createHash("sha256").update(url).digest("hex").slice(0, 24)}.json`,
+  );
+  if (existsSync(ruta))
+    return new Response(readFileSync(ruta, "utf8"), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  const espera = ultimaRed + 1200 - Date.now();
+  if (espera > 0) await new Promise((r) => setTimeout(r, espera));
+  ultimaRed = Date.now();
+  const r = await fetch(input, init);
+  if (r.status !== 200) return r;
+  const texto = await r.text();
+  mkdirSync(dirname(ruta), { recursive: true });
+  writeFileSync(ruta, texto);
+  return new Response(texto, { status: 200, headers: { "Content-Type": "application/json" } });
+}) as typeof fetch;
+const lugarDeps = {
+  ...defaultLugarDeps(ENV),
+  fetcher: fetchGuardado,
+  pausa: () => Promise.resolve(),
+};
 const osmDeps = defaultOsmDeps(ENV);
-/** La huella del código de la búsqueda: si cambia, lo guardado de antes no vale. */
-// `CROQUIS_VERSION_LUGAR`: la de una corrida anterior, para reusar sus búsquedas sin salir a la red
-// (Nominatim bloqueó esta computadora por la carga de la revisión; 2026-11-24).
-const VERSION_LUGAR =
-  process.env.CROQUIS_VERSION_LUGAR ??
-  createHash("sha256")
-    .update(readFileSync(join(RAIZ, "apps/web/src/server/lugar.ts"), "utf8"))
-    .digest("hex")
-    .slice(0, 12);
-let ultimaBusqueda = 0;
 const red: Red = {
-  lugar: (q, municipio, estado) =>
-    enDisco("lugar", { q, municipio, estado, version: VERSION_LUGAR }, async () => {
-      // Nominatim pide una consulta por segundo: con dos búsquedas seguidas, la segunda podía caer
-      // al «sin servicio» y perder el cruce. Se espacian.
-      const espera = ultimaBusqueda + 1500 - Date.now();
-      if (espera > 0) await new Promise((r) => setTimeout(r, espera));
-      ultimaBusqueda = Date.now();
-      const r = await buscarLugar(
-        LugarIn.parse({ q, ...(municipio ? { municipio } : {}), ...(estado ? { estado } : {}) }),
-        "auditoria",
-        lugarDeps,
-      );
-      return { resultados: r.resultados, aviso: r.aviso };
-    }),
+  lugar: async (q, municipio, estado) => {
+    const r = await buscarLugar(
+      LugarIn.parse({ q, ...(municipio ? { municipio } : {}), ...(estado ? { estado } : {}) }),
+      "auditoria",
+      lugarDeps,
+    );
+    return { resultados: r.resultados, aviso: r.aviso };
+  },
   // Las calles y los objetos del lugar: de la API de OpenStreetMap (la consulta de la batería de Unity,
   // unos 150 m a la redonda), y si no responde, de Overpass como la app.
   calles: (p) =>
