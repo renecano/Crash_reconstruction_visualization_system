@@ -187,31 +187,21 @@ html:has(.pv[data-tema="oscuro"]) body {
   align-items: center;
   padding-inline: var(--pv-margen);
 }
+/* La foto 4K (René, 2026-11-25): en escritorio empieza después de la columna del texto (el texto va
+   sobre fondo liso) y solo su propia orilla izquierda se desvanece. El punto de contacto (el frente
+   del auto rojo contra la camioneta, a la mitad de la foto) queda cerca de la mitad de la caja; en
+   celular, la foto va debajo del texto, alineada a su orilla izquierda. */
 .pv-inicio-foto {
   position: absolute;
-  inset: 0 0 64px 30%;
+  inset: 0 0 64px calc(var(--pv-margen) + 38vw);
   overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 12%);
 }
-/* La foto 4K (René, 2026-11-25): alineada a su orilla izquierda, el choque (el frente del auto rojo
-   contra la camioneta, a la mitad de la foto) queda a la derecha de la caja, fuera del texto y del
-   velo: cerca del 70 % en escritorio y del 74 % en celular. */
 .pv-inicio-foto img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 0% 50%;
-}
-.pv-inicio-foto::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    var(--fondo) 0%,
-    color-mix(in srgb, var(--fondo) 82%, transparent) 9%,
-    color-mix(in srgb, var(--fondo) 28%, transparent) 17%,
-    transparent 24%
-  );
+  object-position: 40% 50%;
 }
 .pv-inicio-texto {
   position: relative;
@@ -289,9 +279,6 @@ html:has(.pv[data-tema="oscuro"]) body {
   /* Una máscara y no un velo encima: con medidas fraccionarias el velo dejaba una raya. */
   .pv-inicio-foto {
     mask-image: linear-gradient(180deg, transparent, #000 34%);
-  }
-  .pv-inicio-foto::after {
-    content: none;
   }
 }
 
@@ -377,6 +364,8 @@ html:has(.pv[data-tema="oscuro"]) body {
 }
 .pv-trailer-caja {
   position: relative;
+  /* En 1440×900 caben el título y el video completo: el alto llega a 70vh como mucho. */
+  width: min(100%, calc(min(70vh, 100svh - 300px) * 16 / 9));
   aspect-ratio: 16 / 9;
   background: #0b1222;
   /* De noche el póster es del color de la página: el borde marca la caja. */
@@ -395,31 +384,35 @@ html:has(.pv[data-tema="oscuro"]) body {
   height: 100%;
   object-fit: cover;
 }
+/* El botón va en la esquina de abajo a la izquierda, sobre la carrocería: no tapa el choque. */
 .pv-trailer-play {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  display: grid;
-  place-items: center;
-  width: clamp(64px, 8vw, 96px);
-  aspect-ratio: 1;
-  border-radius: 50%;
+  bottom: clamp(12px, 3%, 28px);
+  left: clamp(12px, 2.5%, 28px);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px 12px 16px;
+  border-radius: 999px;
   background: var(--senal);
   color: #fff;
-  transform: translate(-50%, -50%);
+  font-family: var(--fuente-mono);
+  font-size: clamp(0.9375rem, 1.2vw, 1.125rem);
   box-shadow: 0 10px 40px rgb(0 0 0 / 0.35);
   transition: transform 0.2s ease;
 }
-.pv-trailer-play svg {
-  margin-left: 4px;
-}
 .pv-trailer-fachada:hover .pv-trailer-play,
 .pv-trailer-fachada:focus-visible .pv-trailer-play {
-  transform: translate(-50%, -50%) scale(1.08);
+  transform: scale(1.06);
 }
 .pv-trailer-fachada:focus-visible {
   outline: 3px solid var(--senal);
   outline-offset: -3px;
+}
+.pv-trailer-leyenda {
+  margin-top: -32px;
+  font-size: 0.8125rem;
+  color: var(--texto-3);
 }
 
 /* ---------- Los pasos ---------- */

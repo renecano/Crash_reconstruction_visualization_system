@@ -20,6 +20,8 @@ import "./portada-v3.css";
 const REPO = "https://github.com/renecano/Crash_reconstruction_visualization_system";
 /** El tráiler (René, 2026-11-25), en YouTube; se incrusta sin cookies y solo al tocarlo. */
 const TRAILER_YOUTUBE = "mUWk-sZgdjM";
+/** Lo que dura el tráiler publicado (28 s en YouTube). */
+const TRAILER_DURACION = "0:28";
 const SIMBOLO = MARCA.simbolo;
 const [MX, MY] = MARCA.mira as [number, number];
 const i = (n: number) => ({ "--i": n }) as CSSProperties;
@@ -197,9 +199,14 @@ function Abrir({
 }
 
 /** Lo que ocupa la foto del inicio: en celular es baja y ancha, así que basta una chica. */
-const TAMANO_INICIO = "(min-width: 72rem) 70vw, 100vw";
+/**
+ * La foto del inicio llena el alto de su caja: en escritorio se dibuja a lo ancho que da ese alto con la
+ * proporción de la foto (1.88), no al ancho de la caja.
+ */
+const TAMANO_INICIO = "(min-width: 72rem) calc((100vh - 140px) * 1.88), 100vw";
 /** El tráiler va a lo ancho del contenido (hasta 1500 px). */
-const TAMANO_TRAILER = "(min-width: 100rem) 1500px, 92vw";
+/** El tráiler: a lo ancho del contenido, hasta que su alto llega a 70vh. */
+const TAMANO_TRAILER = "(min-width: 64rem) calc(70vh * 16 / 9), 92vw";
 
 export function PortadaV3({ t }: { t: TextosPortadaV3 }) {
   // La imagen más grande de la primera pantalla se pide antes que nada (LCP).
@@ -330,7 +337,7 @@ export function PortadaV3({ t }: { t: TextosPortadaV3 }) {
                 className="pv-trailer-fachada"
                 data-youtube={TRAILER_YOUTUBE}
                 data-titulo={t.trailer.titulo}
-                aria-label={t.trailer.ver}
+                aria-label={`${t.trailer.ver}, ${TRAILER_DURACION}`}
                 data-testid="trailer"
               >
                 <picture>
@@ -351,12 +358,14 @@ export function PortadaV3({ t }: { t: TextosPortadaV3 }) {
                   />
                 </picture>
                 <span className="pv-trailer-play" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="28" height="28">
+                  <svg viewBox="0 0 24 24" width="22" height="22">
                     <path d="M8 5.5v13l10.5-6.5z" fill="currentColor" />
                   </svg>
+                  <span>{TRAILER_DURACION}</span>
                 </span>
               </a>
             </div>
+            <p className="pv-trailer-leyenda">{t.leyenda}</p>
           </section>
 
           <section className="pv-lema" aria-label={t.lemaTitulo}>
