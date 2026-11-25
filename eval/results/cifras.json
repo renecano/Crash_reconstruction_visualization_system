@@ -196,35 +196,34 @@
       "muestras": 32,
       "juego_de_muestras": "producción",
       "texto": "36 km/h (31–38)",
-      "fuente": "eval/results/ronda4_cifras/despues.json",
-      "campo": "filas.5.velocidades.1",
-      "codigo": "4f9c6b08"
+      "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
+      "campo": "filas.5.velocidades.1"
     },
     "ejemplos.reversa": {
       "que": "Ejemplo «reversa en pendiente»: velocidad del Versa (B) antes del impacto, con el frente del CR-V al lado contrario de su marcha",
-      "mejor": 24,
-      "p10": 21,
-      "p90": 28,
+      "mejor": 20,
+      "p10": 18,
+      "p90": 25,
       "unidad": "km/h",
       "muestras": 32,
       "juego_de_muestras": "producción",
-      "texto": "24 km/h (21–28)",
-      "fuente": "eval/results/tres_narraciones/cifras_despues.json",
+      "texto": "20 km/h (18–25)",
+      "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
       "campo": "filas.4.velocidades.1",
-      "motivo": "Visto bueno de René, 2026-11-24 (#311): antes, CR-V 0 (0–1) y Versa 21 (20–28), con el CR-V mirando hacia donde retrocedía y su parte trasera 1.7 m dentro del Versa en el 3D."
+      "motivo": "Visto bueno de René, 2026-11-25 (#316): la narración se ubica en la Calle Olivos (Lomas del Valle, Puebla), que baja 3.6 % hacia el norte, con el relieve real del lugar; antes, en el punto fijo de la tabla, CR-V 8 (1–16) y Versa 24 (21–28). Antes de eso (#311, 2026-11-24): CR-V 0 (0–1) y Versa 21 (20–28), con el CR-V mirando hacia donde retrocedía."
     },
     "ejemplos.reversa_crv": {
       "que": "Ejemplo «reversa en pendiente»: velocidad del CR-V (A) en reversa antes del impacto, con el frente del CR-V al lado contrario de su marcha",
-      "mejor": 8,
+      "mejor": 9,
       "p10": 1,
-      "p90": 16,
+      "p90": 18,
       "unidad": "km/h",
       "muestras": 32,
       "juego_de_muestras": "producción",
-      "texto": "8 km/h (1–16)",
-      "fuente": "eval/results/tres_narraciones/cifras_despues.json",
+      "texto": "9 km/h (1–18)",
+      "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
       "campo": "filas.4.velocidades.0",
-      "motivo": "Visto bueno de René, 2026-11-24 (#311): antes, CR-V 0 (0–1) y Versa 21 (20–28), con el CR-V mirando hacia donde retrocedía y su parte trasera 1.7 m dentro del Versa en el 3D."
+      "motivo": "Visto bueno de René, 2026-11-25 (#316): la narración se ubica en la Calle Olivos (Lomas del Valle, Puebla), que baja 3.6 % hacia el norte, con el relieve real del lugar; antes, en el punto fijo de la tabla, CR-V 8 (1–16) y Versa 24 (21–28). Antes de eso (#311, 2026-11-24): CR-V 0 (0–1) y Versa 21 (20–28), con el CR-V mirando hacia donde retrocedía."
     },
     "ejemplos.crucero": {
       "que": "Ejemplo «crucero de noche»: velocidad del Jetta (A) antes del impacto, como lo ve el perito en la app (la escena que propone La escena sobre las calles reales, aceptada, y los dos junto al choque)",

@@ -35,12 +35,12 @@ export const RECETAS: Receta[] = [
     quedo: { NP300: [0, 9], Vento: [2.6, 21] },
   },
   {
-    // De Poniente a Oriente: A alcanza a B y, por el empuje, B a C (detenidos en el semáforo). A
-    // quedó en el área del primer contacto; B, 5 m adelante; C, 10 m adelante.
+    // De Sur a Norte por la Avenida Valle Alto: A alcanza a B y, por el empuje, B a C (detenidos en
+    // el semáforo). A quedó en el área del primer contacto; B, 5 m adelante; C, 10 m adelante.
     clave: "carambola-lluvia",
-    choques: [[5.6, 0]],
-    venia: { Ranger: "Del oeste" },
-    quedo: { Ranger: [-0.5, 0], Corolla: [5.4, 0], Aveo: [9.8, 0] },
+    choques: [[0, 5.6]],
+    venia: { Ranger: "Del sur" },
+    quedo: { Ranger: [0, -0.5], Corolla: [0, 5.4], Aveo: [0, 9.8] },
   },
   {
     // A sale en reversa de una cochera hacia la calle; B circula de Sur a Norte y quedó 7 m al

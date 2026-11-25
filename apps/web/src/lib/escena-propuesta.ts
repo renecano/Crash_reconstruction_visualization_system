@@ -27,8 +27,10 @@ import {
   type Expediente,
   type SentidoNarradoLugar,
 } from "@croquis/cesvi";
+import { esLaCalleNarrada } from "./lugar-claro";
 import {
   ajustarACalle,
+  callesNarradas,
   calzadaEnSuSentido,
   cardinal,
   elegirDireccion,
@@ -44,6 +46,27 @@ import {
   type ImpactoAColocar,
   type Punto,
 } from "./escena-facil";
+
+/** Palabras de un cruce en la frase del lugar. */
+const DE_CRUCE =
+  /\b(?:cruce|crucero|esquina|intersecci[oó]n|entronque|glorieta|a la altura de|entre (?:las|la) calles?)\b/i;
+
+/**
+ * Si la frase del lugar nombra una sola calle y ningún cruce, y esa calle pasa a menos de 25 m del
+ * lugar: el punto sobre ella. null si no.
+ */
+export function calleNarradaSinCruce(
+  calles: readonly Calle[],
+  narracion: string,
+  lugar: Punto,
+): ReturnType<typeof ajustarACalle> {
+  const frase = narracion.split(/(?<=\.)\s/)[0] ?? "";
+  if (DE_CRUCE.test(frase)) return null;
+  const nombradas = callesNarradas(frase);
+  if (nombradas.length !== 1) return null;
+  const suyas = calles.filter((c) => c.nombre && esLaCalleNarrada(nombradas[0]!.nombre, c.nombre));
+  return suyas.length ? ajustarACalle(suyas, lugar, 25) : null;
+}
 
 /** La narración dice que iba en sentido contrario: no se le busca la calzada de su sentido. */
 const CONTRASENTIDO = /sentido\s+contrario|contrasentido|contraflujo|en\s+reversa|de\s+reversa/i;
@@ -93,9 +116,14 @@ export function proponerEscena(o: {
 }): EscenaPropuesta | null {
   const { impactos, calles, narracion } = o;
   const vs = o.expediente.vehiculos;
-  const cruce = proponerChoque(calles, narracion, o.lugar);
+  // La narración pone el choque en una sola calle, sin cruce («en la calle Olivos, frente al acceso
+  // vehicular…»), y esa calle está en el lugar: el choque va sobre ella, no en el cruce más cercano
+  // (René, 2026-11-25: la reversa de ejemplo caía en la esquina con Calle Laureles, donde no se puede
+  // llegar de sur a norte por Olivos).
+  const enSuCalle = o.lugar && narracion ? calleNarradaSinCruce(calles, narracion, o.lugar) : null;
+  const cruce = enSuCalle ? null : proponerChoque(calles, narracion, o.lugar);
   // Sin cruce cerca, sobre la calle más cercana al lugar (no en medio de una manzana).
-  const sobre = !cruce && o.lugar ? ajustarACalle(calles, o.lugar, 150) : null;
+  const sobre = enSuCalle ?? (!cruce && o.lugar ? ajustarACalle(calles, o.lugar, 150) : null);
   let choque = cruce?.punto ?? sobre?.punto ?? o.lugar;
   if (!choque || !impactos.length) return null;
   const propuestos: ElementoPropuesto[] = [];

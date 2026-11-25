@@ -23,10 +23,13 @@ const RAIZ = resolve(__dirname, "../../../..");
 type Json = Record<string, unknown>;
 const MUESTRAS = { samples: 32, mcSamples: 128 };
 const P = { lat: 19.3576, lon: -99.0625 };
-const m = (este: number, norte: number) => ({
-  lat: P.lat + norte / 111320,
-  lon: P.lon + este / (111320 * Math.cos((P.lat * Math.PI) / 180)),
-});
+/** Un punto a (este, norte) metros de `centro`. */
+const enMetrosDe =
+  (centro: { lat: number; lon: number }) =>
+  (este: number, norte: number) => ({
+    lat: centro.lat + norte / 111320,
+    lon: centro.lon + este / (111320 * Math.cos((centro.lat * Math.PI) / 180)),
+  });
 const RUMBO: Record<string, number> = {
   "Del sur": 0,
   "Del oeste": 90,
@@ -57,10 +60,11 @@ export const RECETAS: {
     cifra: "V1",
   },
   {
+    // De Sur a Norte por la Avenida Valle Alto (René, 2026-11-25): la misma fila, girada.
     clave: "carambola-lluvia",
-    choques: [[5.6, 0]],
-    venia: { Ranger: "Del oeste" },
-    quedo: { Ranger: [-0.5, 0], Corolla: [5.4, 0], Aveo: [9.8, 0] },
+    choques: [[0, 5.6]],
+    venia: { Ranger: "Del sur" },
+    quedo: { Ranger: [0, -0.5], Corolla: [0, 5.4], Aveo: [0, 9.8] },
     cifra: "V1",
   },
   {
@@ -92,15 +96,21 @@ export function lectura(ruta: string): { e: Expediente; narracion: string } {
   return { e: cesvi.escenaDeNarracion(g.salida, g.narracion).expediente, narracion: g.narracion };
 }
 
-export function colocarReceta(e0: Expediente, r: (typeof RECETAS)[number]): Expediente {
+export function colocarReceta(
+  e0: Expediente,
+  r: (typeof RECETAS)[number],
+  /** Dónde va el primer choque: el lugar guardado del ejemplo (René, 2026-11-25) o el punto fijo P. */
+  centro: { lat: number; lon: number } = P,
+): Expediente {
+  const m = enMetrosDe(centro);
   const impactos = impactosAColocar(e0);
   const nombres = Object.fromEntries(
     e0.vehiculos.map((v) => [v.id, facil.nombreVehiculo(v, e0.vehiculos)]),
   );
   const rumboDe = (vid: string) => RUMBO[de(r.venia, nombres[vid]!) ?? "Del sur"] ?? 0;
   const primero = impactos[0]!.vehiculos[0]!;
-  let e = facil.marcarChoque(e0, impactos, 1, P, rumboDe(primero));
-  const puntos: Record<number, { lat: number; lon: number }> = { 1: P };
+  let e = facil.marcarChoque(e0, impactos, 1, centro, rumboDe(primero));
+  const puntos: Record<number, { lat: number; lon: number }> = { 1: centro };
   (r.choques ?? []).forEach(([x, y], i) => {
     puntos[i + 2] = m(x, y);
     e = facil.marcarChoque(e, impactos, i + 2, m(x, y), rumboDe(primero));
@@ -202,14 +212,15 @@ describe("la tabla de cifras de la ronda 4", () => {
       const ej = JSON.parse(
         readFileSync(resolve(RAIZ, "data/cesvi/ejemplos/narraciones.json"), "utf8"),
       ) as {
-        ejemplos: { clave: string; grabacion?: string }[];
+        ejemplos: { clave: string; grabacion?: string; lugar: { lat: number; lon: number } }[];
       };
+      // Cada ejemplo en su lugar guardado, como abre en la app (René, 2026-11-25).
       for (const receta of RECETAS) {
         const x = ej.ejemplos.find((y) => y.clave === receta.clave)!;
         const { e } = lectura(
           `data/cesvi/grabaciones/${x.grabacion ?? `ejemplos/${x.clave}.json`}`,
         );
-        const colocado = colocarReceta(e, receta);
+        const colocado = colocarReceta(e, receta, x.lugar);
         const { r, e: final, malla } = await reconstruir(colocado, `ejemplo-${receta.clave}`);
         filas.push(fila("ejemplo", receta.clave, receta.cifra, final, r, malla));
       }
