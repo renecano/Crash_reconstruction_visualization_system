@@ -51,8 +51,12 @@ for (const equipo of EQUIPOS)
         await page.screenshot({ path: `${base}-inicio.png` });
         await page.screenshot({ path: `${base}-completa.png`, fullPage: true });
         // El tráiler con su fachada (sin tocarlo: no carga YouTube).
-        await page.getByTestId("trailer").scrollIntoViewIfNeeded();
-        await page.waitForTimeout(600);
-        await page.locator(".pv-trailer").screenshot({ path: `${base}-trailer.png` });
+        // Con la sección justo debajo de la barra fija (la captura de un elemento la tapa con ella).
+        await page.evaluate(() => {
+          const s = document.querySelector<HTMLElement>(".pv-trailer");
+          if (s) window.scrollTo(0, s.getBoundingClientRect().top + window.scrollY - 40);
+        });
+        await page.waitForTimeout(800);
+        await page.screenshot({ path: `${base}-trailer.png` });
       });
     });
