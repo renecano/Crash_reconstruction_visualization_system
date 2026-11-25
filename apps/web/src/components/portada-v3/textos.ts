@@ -52,8 +52,8 @@ export interface TextosPortadaV3 {
   rotulo: string;
   /** El titular, con el logo entre sus dos partes. */
   /**
-   * El titular, todo en texto (René, 2026-11-25: sin el logo a media frase); el logo va en el
-   * encabezado.
+   * El titular, todo en texto (René, 2026-11-25: sin el logo a media frase). El nombre de la app no
+   * se escribe: el logo va en el encabezado.
    */
   h1: string;
   lede: string;
@@ -106,7 +106,7 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
       abrir: "Open the app",
       ver: "How it works",
       rotulo: "Crash reconstruction for experts",
-      h1: "The expert tells what happened. Croquis reconstructs it with physics, in 3D.",
+      h1: "The expert tells what happened. Physics reconstructs it in 3D.",
       lede: "From the narrative to the report, with the source of every number in sight.",
       altInicio:
         "3D reconstruction of an invented example at night: two cars approach a crossing with their headlights on and a ring marks the point of impact.",
@@ -261,7 +261,7 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
     abrir: "Abrir la app",
     ver: "Cómo funciona",
     rotulo: "Reconstrucción de hechos de tránsito",
-    h1: "El perito narra el hecho. Croquis lo reconstruye con física y en 3D.",
+    h1: "El perito narra el hecho. La física lo reconstruye en 3D.",
     lede: "De la narración al dictamen, con la fuente de cada número a la vista.",
     altInicio:
       "Reconstrucción en 3D de un ejemplo inventado, de noche: dos autos llegan a un cruce con los faros encendidos y un aro marca el punto de impacto.",
