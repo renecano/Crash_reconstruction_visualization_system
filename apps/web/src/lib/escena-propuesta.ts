@@ -61,7 +61,10 @@ export function calleNarradaSinCruce(
   lugar: Punto,
 ): ReturnType<typeof ajustarACalle> {
   const frase = narracion.split(/(?<=\.)\s/)[0] ?? "";
-  if (DE_CRUCE.test(frase)) return null;
+  // Solo frente a una casa o un negocio («frente al acceso vehicular…»): a la mitad de la cuadra.
+  // Sobre una carretera o una avenida sin más, el choque sigue en el cruce más cercano (un camino de
+  // los 205 reportes cambiaba de calle a su vehículo que llega de lado).
+  if (DE_CRUCE.test(frase) || !/\bfrente\s+a(?:l)?\b/i.test(frase)) return null;
   const nombradas = callesNarradas(frase);
   if (nombradas.length !== 1) return null;
   const suyas = calles.filter((c) => c.nombre && esLaCalleNarrada(nombradas[0]!.nombre, c.nombre));
