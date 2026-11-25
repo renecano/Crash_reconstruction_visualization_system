@@ -1459,8 +1459,12 @@ René (2026-11-25): diagnosticar los 16 casos abiertos, decir si el giro de 31°
 | Atravesados sin aviso (revisión completa, 205 + 42)           | —    | —      | 0                                      |
 | «Fuera de su calle» en la revisión (205 / 42)                 | —    | 17 / 8 | 8 / 6                                  |
 
-- **Cifras:** las 13 filas de la tabla de los ejemplos y AXA, iguales (`cifras-ronda4.test.ts`). El crucero «en la app» da 20 (3–26), igual con el #316 sin este arreglo: lo movió el lugar real del crucero (#316, Azucena y Avenida del Árbol); el índice dice 20 (4–27) y espera el visto bueno de René. De los 205 reportes, ninguna cifra cambia; de las 42 narraciones de la revisión (no publicadas), 13 cambian y aud-18 queda con el candado (la animación de la Hilux llega a 59 km/h contra 40–45).
+- **Cifras:** las 13 filas de la tabla de los ejemplos y AXA, iguales (`cifras-ronda4.test.ts`). El crucero «en la app» da 20 (3–26), igual con el #316 sin este arreglo: lo movió el lugar real del crucero (#316, Azucena y Avenida del Árbol); René lo aprobó el 2026-11-25 y el índice ya lo dice, con su motivo (antes, 20 (4–27)). De los 205 reportes, ninguna cifra cambia; de las 42 narraciones de la revisión (no publicadas), 13 cambian y aud-18 queda con el candado (la animación de la Hilux llega a 59 km/h contra 40–45).
 - **Para la t9:** toca lo que pasa por La escena (los ejemplos en el navegador, el crucero en la app, Tollocan, las seis narraciones, las tres de René y la muestra de la revisión). Borrador de una tanda corta en el PR; no se tocó `tools/colaborador/` mientras corre la t9.
+
+### Los pedazos del choque parecen cubos (René, 2026-11-25) · para el paquete de daños
+
+En el tráiler, los restos del choque en el 3D (cuadros de 16.7 a 17.9 s y de 19.0 a 19.4 s) se ven en imagen fija como cubos negros, de cerca, y grises, en la toma abierta. Por eso el póster del tráiler en la portada (#319) es la foto promo `02-noche-faros.jpg`, sin restos. Se corrige con los daños: piezas sueltas y restos con la forma de lo que se rompe.
 
 ### Lo publicado
 

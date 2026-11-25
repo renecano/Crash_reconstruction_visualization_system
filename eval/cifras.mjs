@@ -302,6 +302,8 @@ function construir() {
       texto: `${v.mejor} km/h (${v.p10}–${v.p90})`,
       fuente: archivo,
       campo: "velocidad",
+      motivo:
+        "Medido con el crucero en su lugar real (#316, Calle Azucena esquina con Avenida del Árbol); René lo aprobó el 2026-11-25. Antes, 20 (4–27).",
     });
   }
 
