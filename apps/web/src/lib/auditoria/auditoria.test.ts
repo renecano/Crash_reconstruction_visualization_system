@@ -119,6 +119,7 @@ interface Caso {
   narracion: string;
   salida: SalidaCorpus;
   esperado?: Esperado;
+  lugarGuardado?: { lat: number; lon: number; nombre: string };
 }
 
 function casosDePrueba(): Caso[] {
@@ -148,7 +149,13 @@ function casosDePrueba(): Caso[] {
 function casosDeEjemplos(): Caso[] {
   const d = JSON.parse(
     readFileSync(join(RAIZ, "data/cesvi/ejemplos/narraciones.json"), "utf8"),
-  ) as { ejemplos: { clave: string; grabacion?: string }[] };
+  ) as {
+    ejemplos: {
+      clave: string;
+      grabacion?: string;
+      lugar: { lat: number; lon: number; nombre: string };
+    }[];
+  };
   return d.ejemplos.map((x) => {
     const g = JSON.parse(
       readFileSync(
@@ -156,7 +163,7 @@ function casosDeEjemplos(): Caso[] {
         "utf8",
       ),
     ) as { narracion: string; salida: SalidaCorpus };
-    return { id: x.clave, narracion: g.narracion, salida: g.salida };
+    return { id: x.clave, narracion: g.narracion, salida: g.salida, lugarGuardado: x.lugar };
   });
 }
 

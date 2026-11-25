@@ -1,5 +1,5 @@
 {
- "fecha": "2026-11-25T15:08:24.632Z",
+ "fecha": "2026-11-25T15:48:06.256Z",
  "fuentes": {
   "prueba": {
    "casos": 205,
@@ -588,29 +588,13 @@
   },
   "ejemplos": {
    "casos": 5,
-   "lugar_encontrado": 3,
+   "lugar_encontrado": 5,
    "reglas": {
     "final.no_leido": {
-     "casos": 1,
+     "casos": 4,
      "ids": [
-      "alcance-deformacion"
-     ]
-    },
-    "pregunta.lugar_dudoso": {
-     "casos": 1,
-     "ids": [
-      "carambola-lluvia"
-     ]
-    },
-    "pregunta.lugar_km": {
-     "casos": 1,
-     "ids": [
-      "alcance-deformacion"
-     ]
-    },
-    "pregunta.lugar_solo_zona": {
-     "casos": 2,
-     "ids": [
+      "alcance-deformacion",
+      "carambola-lluvia",
       "reversa-pendiente",
       "poste-terraceria"
      ]
