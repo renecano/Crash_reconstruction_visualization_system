@@ -196,7 +196,7 @@ function Abrir({
 }
 
 /** Lo que ocupa la foto del inicio: en celular es baja y ancha, así que basta una chica. */
-const TAMANO_INICIO = "(min-width: 64rem) 64vw, 100vw";
+const TAMANO_INICIO = "(min-width: 72rem) 70vw, 100vw";
 
 export function PortadaV3({ t }: { t: TextosPortadaV3 }) {
   // La imagen más grande de la primera pantalla se pide antes que nada (LCP).
@@ -303,13 +303,12 @@ export function PortadaV3({ t }: { t: TextosPortadaV3 }) {
             <div className="pv-inicio-texto">
               <p className="t-rotulo">{t.rotulo}</p>
               <h1>
-                <Palabras texto={t.h1[0].trim()} />{" "}
-                <span className="pv-mascara">
-                  <span className="pv-palabra pv-logo" style={i(5)}>
-                    <Logo ancho={300} prioridad />
-                  </span>
+                <span>
+                  <Palabras texto={t.h1[0]} />
                 </span>{" "}
-                <Palabras texto={t.h1[1].trim()} desde={6} />
+                <span>
+                  <Palabras texto={t.h1[1]} desde={5} />
+                </span>
               </h1>
               <p className="pv-lede">{t.lede}</p>
               <div className="pv-acciones">
@@ -347,22 +346,35 @@ export function PortadaV3({ t }: { t: TextosPortadaV3 }) {
           <section id="como-funciona" tabIndex={-1} className="pv-seccion pv-superficie">
             <Cabeza n={1} rotulo={t.secciones["como-funciona"]} titulo={t.comoTitulo} />
             {/* La barra de actos de la app, que aquí sigue el paso que se lee. */}
-            <div className="pv-actos" aria-hidden="true">
+            <nav className="pv-actos" aria-label={t.pasosNav}>
               <ol>
                 {t.pasos.map((p, k) => (
-                  <li key={p.nombre} data-acto={k}>
-                    {p.nombre}
+                  <li key={p.nombre}>
+                    <a
+                      href={`#paso-${PASOS[k]}`}
+                      data-acto={k}
+                      aria-label={`${k + 1}. ${p.nombre}`}
+                    >
+                      <span>{p.nombre}</span>
+                      {/* En una ventana chica, como en la app, los demás pasos van con su número. */}
+                      <b aria-hidden="true">{k + 1}</b>
+                    </a>
                   </li>
                 ))}
               </ol>
-              <div className="pv-linea" data-linea="pasos">
+              <div className="pv-linea" aria-hidden="true" data-linea="pasos">
                 <i />
                 <b />
               </div>
-            </div>
+            </nav>
             <ol className="pv-pasos">
               {t.pasos.map((p, k) => (
-                <li key={p.nombre} data-paso={k} data-testid={`paso-portada-${PASOS[k]}`}>
+                <li
+                  key={p.nombre}
+                  id={`paso-${PASOS[k]}`}
+                  data-paso={k}
+                  data-testid={`paso-portada-${PASOS[k]}`}
+                >
                   <div className="pv-paso-texto" data-ve>
                     <span className="t-rotulo">
                       {k + 1} / {t.pasos.length} · {p.nombre}

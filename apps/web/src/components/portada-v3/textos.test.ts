@@ -24,7 +24,7 @@ describe.each(["es", "en"] as const)("portada (%s)", (lang) => {
     for (const c of t.cifras) expect(c.limite.length).toBeGreaterThan(20);
     expect(t.cifras[1]!.limite).toContain(F.tasa(d.regla, lang === "es" ? "de" : "of"));
     // Fuera de las del índice (y «2D», «3D» y la versión de la licencia) no hay dígitos en los textos.
-    const resto = JSON.stringify({ ...t, cifras: [], h1: t.h1.join("") });
+    const resto = JSON.stringify({ ...t, cifras: [], h1: t.h1.join(" ") });
     expect(resto.replace(/\b[23]D\b|OFL 1\.1|"h1":/g, "")).not.toMatch(/\d/);
   });
 

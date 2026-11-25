@@ -33,6 +33,27 @@ test("@flujo la portada carga sin errores y lleva a /cesvi", async ({ page }) =>
   await sinCortina(page);
   await expect(page.locator('[data-testid^="paso-portada-"]')).toHaveCount(6);
 
+  // El indicador de los pasos sigue al que se ve, al tocar una pestaña y en un salto de scroll.
+  const pestanas = page.getByRole("navigation", { name: "Pasos" });
+  const actual = pestanas.locator("[aria-current]");
+  await expect(actual).toHaveText(/El hecho/);
+  for (const [nombre, paso] of [
+    ["Dictamen", "dictamen"],
+    ["La escena", "escena"],
+    ["Versiones", "versiones"],
+  ] as const) {
+    await pestanas.getByRole("link", { name: nombre }).click();
+    await expect(actual).toHaveText(new RegExp(nombre));
+    await expect(page.getByTestId(`paso-portada-${paso}`)).toBeInViewport();
+  }
+  for (const [y, nombre] of [
+    ["document.body.scrollHeight", "Dictamen"],
+    ["0", "El hecho"],
+  ] as const) {
+    await page.evaluate(`window.scrollTo({ top: ${y}, behavior: "instant" })`);
+    await expect(actual).toHaveText(new RegExp(nombre));
+  }
+
   // «Resultados», desde la barra: la cortina, la sección y las cifras del índice.
   await page.getByRole("link", { name: "Resultados" }).click();
   await expect(page.locator("#resultados")).toBeFocused();
@@ -63,7 +84,9 @@ test("@flujo la portada carga sin errores y lleva a /cesvi", async ({ page }) =>
   await page.emulateMedia({ colorScheme: "dark" });
   await page.goto("/en");
   await expect(page.getByTestId("portada-v3")).toHaveAttribute("data-tema", "oscuro");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("The expert tells what");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(
+    "Physics reconstructs it in 3D.",
+  );
 
   // Las páginas del producto anterior llevan a la portada (auditoría del 2026-11-15, I7).
   await page.goto("/publico");

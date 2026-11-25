@@ -34,8 +34,6 @@ const IMAGENES = {
   versiones: ["4-versiones"],
   // El perfil medido, sin la energía ni el Δv de abajo.
   analisis: ["5-analisis", [0, 84, 958, 488]],
-  // El formato y la firma, sin la hoja (lleva los resultados).
-  dictamen: ["6-dictamen", [962, 420, 464, 434]],
   "detalle-rango": ["5-supuestos", [0, 0, 446, 293]],
   "detalle-cita": ["1-hecho", [14, 160, 960, 632]],
   "detalle-supuestos": ["5-analisis", [968, 356, 456, 270]],
@@ -72,17 +70,42 @@ for (const [nombre, [archivo, recorte]] of Object.entries(IMAGENES)) {
     medidas[nombre] = { w: anchos[1], h: Math.round((anchos[1] * h) / w), anchos };
   }
 }
+// Dos páginas del PDF del dictamen, sin cifras de la reconstrucción (lo revisa el spec), sobre el
+// fondo suave de la app (`lab-dia-soft` y `lab-noche-soft`).
+for (const [tema, fondo] of [
+  ["claro", "#ECEEF1"],
+  ["oscuro", "#1E2B47"],
+]) {
+  const paginas = await Promise.all(
+    [1, 4].map((p) =>
+      sharp(join(base, `claro/6-pdf-${p}.png`))
+        .resize(748)
+        .png()
+        .toBuffer(),
+    ),
+  );
+  const { height } = await sharp(paginas[0]).metadata();
+  const hoja = { w: 1600, h: height + 72 };
+  const img = sharp(
+    await sharp({ create: { width: hoja.w, height: hoja.h, channels: 3, background: fondo } })
+      .composite(paginas.map((input, k) => ({ input, left: 36 + k * 780, top: 36 })))
+      .png()
+      .toBuffer(),
+  );
+  await guardar(`dictamen-${tema}`, img, [800, 1600], 56);
+  medidas.dictamen = { ...hoja, anchos: [800, 1600] };
+}
 // Sin la leyenda de la esquina: la portada la escribe como texto.
 const foto = sharp(
   await sharp(join(inicio, "oscuro/3-antes-del-impacto.png"))
-    .extract({ left: 900, top: 0, width: 3420, height: 2540 })
+    .extract({ left: 408, top: 0, width: 3163, height: 2256 })
     .png()
     .toBuffer(),
 );
 // 760: lo que pide un celular de 412 px con densidad 1.75 (721); 1100, uno con densidad 2.6.
 const anchos = [480, 760, 1100, 1800];
 await guardar("inicio", foto, anchos, 46);
-medidas.inicio = { w: 1800, h: Math.round((1800 * 2540) / 3420), anchos };
+medidas.inicio = { w: 1800, h: Math.round((1800 * 2256) / 3163), anchos };
 writeFileSync(
   join(WEB, "src/components/portada-v3/imagenes.json"),
   `${JSON.stringify(medidas, null, 2).replace(/\[\s+([\d,\s]+?)\s+\]/g, (_, n) => `[${n.replace(/\s+/g, " ")}]`)}\n`,

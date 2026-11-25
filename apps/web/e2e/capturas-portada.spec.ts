@@ -1,5 +1,5 @@
-import { mkdirSync } from "node:fs";
-import { join } from "node:path";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { type Page } from "@playwright/test";
 import { expect, test } from "./base";
 import { cerrarLaEscena, contestarPreguntas, irAPaso } from "./ayuda-recorrido";
@@ -83,7 +83,9 @@ for (const tema of ["claro", "oscuro"] as const)
     // Antes del impacto, sin barras (se esconden solas): la foto del inicio.
     await page.keyboard.press("Escape");
     await page.waitForTimeout(1500);
-    await page.getByTestId("tiempo-unity").fill("-0.95");
+    await page.getByTestId("camara-cinematica").click();
+    await page.waitForTimeout(1500);
+    await page.getByTestId("tiempo-unity").fill("-0.28");
     await page.getByTestId("pantalla-completa").first().click();
     await page.mouse.move(720, 450);
     await page.waitForTimeout(6000);
@@ -112,4 +114,37 @@ for (const tema of ["claro", "oscuro"] as const)
     await irAPaso(page, 9);
     await quieta(page, 9000);
     await foto("6-dictamen");
+    if (tema === "oscuro") return;
+    // El PDF del dictamen: las páginas que usa la portada, sin una velocidad.
+    const [descarga] = await Promise.all([
+      page.waitForEvent("download", { timeout: 120_000 }),
+      page.getByTestId("descargar-dictamen-pdf").click(),
+    ]);
+    const pdf = join(dir, "dictamen.pdf");
+    await descarga.saveAs(pdf);
+    const visor = await page.context().newPage();
+    const pdfjs = dirname(require.resolve("pdfjs-dist/build/pdf.mjs"));
+    await visor.route("http://pdf.local/**", (r) => {
+      const f = new URL(r.request().url()).pathname.slice(1);
+      return f
+        ? r.fulfill({ path: f === "d.pdf" ? pdf : join(pdfjs, f) })
+        : r.fulfill({ contentType: "text/html", body: "<body></body>" });
+    });
+    await visor.goto("http://pdf.local/");
+    for (const n of [1, 4]) {
+      const { texto, png } = await visor.evaluate(async (k) => {
+        const l = await import(/* webpackIgnore: true */ "/pdf.mjs" as string);
+        l.GlobalWorkerOptions.workerSrc = "/pdf.worker.mjs";
+        const p = await (await l.getDocument({ url: "/d.pdf" }).promise).getPage(k);
+        const viewport = p.getViewport({ scale: 2.7 });
+        const canvas = document.createElement("canvas");
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        await p.render({ canvas, viewport }).promise;
+        const t = (await p.getTextContent()).items as { str?: string }[];
+        return { texto: t.map((i) => i.str ?? "").join(" "), png: canvas.toDataURL("image/png") };
+      }, n);
+      expect(texto, `página ${n}`).not.toMatch(/km\/h|kJ|AXA/);
+      writeFileSync(join(dir, `6-pdf-${n}.png`), Buffer.from(png.split(",")[1]!, "base64"));
+    }
   });

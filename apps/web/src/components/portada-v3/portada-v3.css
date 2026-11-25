@@ -189,26 +189,25 @@ html:has(.pv[data-tema="oscuro"]) body {
 }
 .pv-inicio-foto {
   position: absolute;
-  inset: 0 0 0 36%;
+  inset: 0 0 64px 30%;
   overflow: hidden;
 }
 .pv-inicio-foto img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 26% 60%;
+  object-position: 88% 80%;
 }
 .pv-inicio-foto::after {
   content: "";
   position: absolute;
-  /* Un píxel de más: con medidas fraccionarias quedaba una raya en el borde. */
-  inset: -1px;
+  inset: 0;
   background: linear-gradient(
     90deg,
     var(--fondo) 0%,
-    color-mix(in srgb, var(--fondo) 88%, transparent) 12%,
-    color-mix(in srgb, var(--fondo) 34%, transparent) 26%,
-    transparent 40%
+    color-mix(in srgb, var(--fondo) 82%, transparent) 9%,
+    color-mix(in srgb, var(--fondo) 28%, transparent) 17%,
+    transparent 24%
   );
 }
 .pv-inicio-foto video {
@@ -252,20 +251,19 @@ html:has(.pv[data-tema="oscuro"]) body {
   font-weight: 400;
   line-height: 0.98;
   letter-spacing: -0.03em;
+}
+.pv-inicio h1 > span {
+  display: block;
   text-wrap: balance;
 }
-.pv-logo img {
-  width: auto;
-  height: 0.62em;
-  vertical-align: -0.06em;
-}
-.pv .pv-logo .solo-dia,
-.pv .pv-logo .solo-noche {
-  max-width: none;
-}
-.pv[data-tema="claro"] .pv-logo .solo-dia,
-.pv[data-tema="oscuro"] .pv-logo .solo-noche {
-  display: inline-block;
+@media (min-width: 72rem) {
+  /* El texto no pisa los autos de la foto. */
+  .pv-inicio h1 {
+    max-width: 36vw;
+  }
+  .pv-inicio .pv-lede {
+    max-width: 32vw;
+  }
 }
 .pv-lede {
   max-width: 30rem;
@@ -278,19 +276,16 @@ html:has(.pv[data-tema="oscuro"]) body {
   flex-wrap: wrap;
   gap: 12px;
 }
+/* Como en «Presentar»: en la franja de abajo, fuera de la foto. */
 .pv-leyenda {
   position: absolute;
   right: var(--pv-margen);
-  bottom: 20px;
-  max-width: calc(100% - 2 * var(--pv-margen));
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.62);
-  color: #fff;
-  padding: 5px 10px;
-  font-size: 0.75rem;
-  line-height: 1.35;
+  bottom: 22px;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--texto-2);
 }
-@media (max-width: 63.99rem) {
+@media (max-width: 71.99rem) {
   .pv-inicio {
     min-height: 0;
     padding-bottom: 0;
@@ -302,14 +297,26 @@ html:has(.pv[data-tema="oscuro"]) body {
     position: relative;
     inset: auto;
     order: 2;
-    height: 46svh;
+    /* Con esta proporción los dos autos caben enteros. */
+    aspect-ratio: 5 / 4;
+    width: calc(100% + 2 * var(--pv-margen));
+    max-height: 60svh;
     margin-inline: calc(-1 * var(--pv-margen));
   }
   .pv-inicio-foto img {
-    object-position: 60% 60%;
+    object-position: 88% 50%;
+  }
+  .pv-leyenda {
+    position: static;
+    order: 3;
+    padding-block: 12px 4px;
+  }
+  /* Una máscara y no un velo encima: con medidas fraccionarias el velo dejaba una raya. */
+  .pv-inicio-foto {
+    mask-image: linear-gradient(180deg, transparent, #000 34%);
   }
   .pv-inicio-foto::after {
-    background: linear-gradient(180deg, var(--fondo) 0%, transparent 34%);
+    content: none;
   }
 }
 
@@ -383,10 +390,6 @@ html:has(.pv[data-tema="oscuro"]) body {
   overflow: hidden;
   border-radius: 14px;
 }
-/* El recorte del dictamen es una columna de la app: no se estira a todo lo ancho. */
-.pv-captura[data-captura="dictamen"] {
-  width: min(100%, 36rem);
-}
 .pv-captura img {
   display: block;
   width: 100%;
@@ -402,12 +405,33 @@ html:has(.pv[data-tema="oscuro"]) body {
   background: var(--superficie);
 }
 .pv-actos li {
+  min-width: 0;
+}
+.pv-actos a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 8px;
   color: var(--texto-3);
+  text-decoration: none;
+  white-space: nowrap;
   transition: color 300ms ease;
 }
-.pv-actos li[data-actual] {
+.pv-actos a:hover {
+  color: var(--texto);
+}
+.pv-actos a[aria-current] {
   color: var(--texto);
   font-weight: 600;
+}
+.pv-actos a b {
+  display: none;
+  font-family: var(--fuente-mono);
+  font-weight: 500;
+}
+.pv-pasos > li {
+  scroll-margin-top: calc(var(--pv-barra) + 52px + 28px);
 }
 .pv-pasos {
   display: grid;
@@ -444,8 +468,23 @@ html:has(.pv[data-tema="oscuro"]) body {
   }
 }
 @media (max-width: 63.99rem) {
-  .pv-actos {
+  .pv-actos ol {
+    display: flex;
+  }
+  .pv-actos li {
+    flex: 1;
+  }
+  .pv-actos li:has([aria-current]) {
+    flex: none;
+  }
+  .pv-actos a {
+    width: 100%;
+  }
+  .pv-actos a:not([aria-current]) span {
     display: none;
+  }
+  .pv-actos a:not([aria-current]) b {
+    display: inline;
   }
 }
 

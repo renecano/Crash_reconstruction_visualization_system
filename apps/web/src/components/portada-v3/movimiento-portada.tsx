@@ -88,38 +88,52 @@ export function MovimientoPortada() {
 
     const quieto = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // La línea de la barra: hasta el centro del elemento que se lee.
-    const linea = (cual: string, lleno: number) => {
+    // La línea de una barra llega al centro de su enlace.
+    const linea = (cual: string, enlace: HTMLElement | undefined) => {
       const l = raiz.querySelector<HTMLElement>(`[data-linea="${cual}"]`);
-      l?.style.setProperty("--lleno", `${lleno}%`);
+      const li = enlace?.parentElement;
+      l?.style.setProperty("--lleno", li ? `${li.offsetLeft + li.offsetWidth / 2}px` : "0px");
     };
-    const seguir = (blancos: HTMLElement[], alEntrar: (k: number) => void) => {
-      const o = new IntersectionObserver(
-        (es) => {
-          for (const e of es)
-            if (e.isIntersecting) alEntrar(blancos.indexOf(e.target as HTMLElement));
-        },
-        { rootMargin: "-45% 0px -54% 0px" },
+    /**
+     * El bloque que se lee: el último cuyo borde de arriba ya pasó el 45 % de la ventana. Se calcula
+     * de la posición y no de entradas y salidas: un salto largo no deja marcado el de antes.
+     */
+    const seguir = (blancos: HTMLElement[], alLeer: (k: number) => void) => {
+      let cuadro = 0;
+      const leer = () => {
+        cuadro = 0;
+        const y = window.innerHeight * 0.45;
+        alLeer(
+          Math.max(
+            0,
+            blancos.findLastIndex((b) => b.getBoundingClientRect().top <= y),
+          ),
+        );
+      };
+      const pedir = () => (cuadro ||= requestAnimationFrame(leer));
+      window.addEventListener("scroll", pedir, { passive: true, signal });
+      window.addEventListener("resize", pedir, { signal });
+      limpiar.push(() => cancelAnimationFrame(cuadro));
+      leer();
+    };
+    const marcar = (enlaces: HTMLElement[], k: number, valor: string) =>
+      enlaces.forEach((a, j) =>
+        j === k ? a.setAttribute("aria-current", valor) : a.removeAttribute("aria-current"),
       );
-      blancos.forEach((b) => o.observe(b));
-      limpiar.push(() => o.disconnect());
-    };
     const enlaces = todos(".pv-nav [data-ir]");
-    // El inicio (0 %) y las secciones de la barra, en orden.
+    // El inicio (la línea vacía) y las secciones de la barra, en orden.
     const secciones = [
       raiz.querySelector<HTMLElement>("#inicio")!,
       ...enlaces.map((a) => raiz.querySelector<HTMLElement>(`#${a.dataset.ir}`)!),
     ];
     seguir(secciones, (k) => {
-      enlaces.forEach((a, j) =>
-        j === k - 1 ? a.setAttribute("aria-current", "true") : a.removeAttribute("aria-current"),
-      );
-      linea("secciones", k === 0 ? 0 : ((k - 0.5) / enlaces.length) * 100);
+      marcar(enlaces, k - 1, "true");
+      linea("secciones", enlaces[k - 1]);
     });
     const actos = todos("[data-acto]");
     seguir(todos("[data-paso]"), (k) => {
-      actos.forEach((a, j) => a.toggleAttribute("data-actual", j === k));
-      linea("pasos", ((k + 0.5) / actos.length) * 100);
+      marcar(actos, k, "step");
+      linea("pasos", actos[k]);
     });
 
     if (!quieto) {

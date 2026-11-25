@@ -1046,9 +1046,9 @@ René aprobó el storyboard versión 2 (28 s, «más épico», sin la mancha neg
 - **Qué se hizo:** página nueva en `components/portada-v3/`, cifras del índice único, capturas reales de día y de noche, logo en vez del nombre escrito. Se quitaron las tomas de video y los datos de AXA.
 - **Evidencia:** `e2e/home.spec.ts` (@flujo), `textos.test.ts` y `portada-cesvi.test.ts`. Lighthouse y peso de antes y después, en el PR.
 - **Segunda vuelta (René, 2026-11-24):** capturas de producción sin cifras de la reconstrucción, respaldo WebP, precarga y tamaños de la foto del inicio, y el lugar del video con su botón de pausa. Probada en Chromium 156, WebKit 27.2 y Firefox 157 (de Playwright); WebKit cortaba los descendentes del titular y se corrigió.
-- **Bloqueado, necesita a René:** `trailer-salida/croquis-trailer-1920x1080.mp4` y `RECURSOS_READ_WRITE_TOKEN` no están en esta máquina. Con los dos: `node apps/web/scripts/portada-video.mjs <tráiler> <inicio_s> <duración_s>`.
-- **Pendiente:** el visto bueno de René a las capturas.
-- **Siguiente paso:** activar el video y fusionar con el visto bueno.
+- **Tercera vuelta (René, 2026-11-24):** titular en dos frases sin el logo; el indicador de los pasos se calcula de la posición (antes, un salto largo dejaba marcado el paso anterior) y sus pestañas se tocan; en Dictamen, dos páginas del PDF de un ejemplo inventado (el spec falla si traen «km/h», «kJ» o «AXA»); póster con los dos autos enteros.
+- **El video lo agrega el Claude Code de René, en esta rama:** con `RECURSOS_READ_WRITE_TOKEN` en el entorno, `node apps/web/scripts/portada-video.mjs <tráiler.mp4> <inicio_s> <duración_s>` corta, comprime, sube a Blob y cambia solo `video.json`, que es lo único que se confirma. El póster es la foto aprobada y no se toca.
+- **Siguiente paso:** el video y el visto bueno de René a las capturas; después, fusionar #313.
 
 ## Necesito del otro frente
 

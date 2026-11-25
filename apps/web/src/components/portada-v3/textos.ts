@@ -47,10 +47,11 @@ export interface TextosPortadaV3 {
   otroIdioma: { texto: string; href: string; hrefLang: string };
   secciones: Record<(typeof SECCIONES)[number], string>;
   navegacion: string;
+  pasosNav: string;
   abrir: string;
   ver: string;
   rotulo: string;
-  /** El titular, con el logo entre sus dos partes. */
+  /** Sus dos frases, cada una en su renglón. */
   h1: [string, string];
   lede: string;
   altInicio: string;
@@ -99,13 +100,14 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
         limites: "Limits",
       },
       navegacion: "Sections",
+      pasosNav: "Steps",
       abrir: "Open the app",
       ver: "How it works",
       rotulo: "Crash reconstruction for experts",
-      h1: ["The expert tells what happened. ", " reconstructs it with physics, in 3D."],
+      h1: ["The expert tells what happened.", "Physics reconstructs it in 3D."],
       lede: "From the narrative to the report, with the source of every number in sight.",
       altInicio:
-        "3D reconstruction of an invented example at night: two cars approach a crossing with their headlights on and a ring marks the point of impact.",
+        "3D reconstruction of an invented example at night: two cars reach a crossing between houses, before the impact.",
       leyenda: "Illustrative reconstruction · procedural surroundings: not the real place",
       pausar: "Pause the video",
       reproducir: "Play the video",
@@ -161,7 +163,7 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
           titulo: "Sign your report.",
           texto:
             "In PDF or Word, structured like CESVI's reports. The expert writes the conclusion and signs it.",
-          alt: "Report: its format, the expert's name and the downloads; without validation it is a draft.",
+          alt: "Report: two pages of the PDF, with the facts, the damage and three frames of the 3D.",
         },
       ],
       capturas:
@@ -254,13 +256,14 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
       limites: "Límites",
     },
     navegacion: "Secciones",
+    pasosNav: "Pasos",
     abrir: "Abrir la app",
     ver: "Cómo funciona",
     rotulo: "Reconstrucción de hechos de tránsito",
-    h1: ["El perito narra el hecho. ", " lo reconstruye con física y en 3D."],
+    h1: ["El perito narra el hecho.", "La física lo reconstruye en 3D."],
     lede: "De la narración al dictamen, con la fuente de cada número a la vista.",
     altInicio:
-      "Reconstrucción en 3D de un ejemplo inventado, de noche: dos autos llegan a un cruce con los faros encendidos y un aro marca el punto de impacto.",
+      "Reconstrucción en 3D de un ejemplo inventado, de noche: dos autos llegan a un cruce entre casas, antes del impacto.",
     leyenda: "Reconstrucción ilustrativa · entorno procedural: no es el lugar real",
     pausar: "Pausar el video",
     reproducir: "Reproducir el video",
@@ -308,7 +311,7 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
         titulo: "Firma tu dictamen.",
         texto:
           "En PDF o Word, con la estructura de los reportes de CESVI. El perito escribe la conclusión y la firma.",
-        alt: "Dictamen: el formato, el nombre del perito y las descargas; sin validar es un borrador.",
+        alt: "Dictamen: dos páginas del PDF, con el hecho, los daños y tres cuadros del 3D.",
       },
     ],
     capturas: "Capturas reales de la app con un ejemplo inventado; algunas, recortadas.",
