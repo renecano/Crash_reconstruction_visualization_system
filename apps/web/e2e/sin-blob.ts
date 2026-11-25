@@ -69,6 +69,8 @@ export async function sinBlob(ctx: BrowserContext): Promise<void> {
   cortadas.set(ctx, []);
   await ctx.route(`${RECURSOS.base}/**`, async (ruta) => {
     const url = ruta.request().url();
+    // El video de la portada es opcional: sin él queda su foto fija.
+    if (url.startsWith(`${RECURSOS.base}/recursos/portada/`)) return ruta.abort("blockedbyclient");
     const archivo = archivoLocalDe(url);
     if (!archivo) {
       cortadas.get(ctx)!.push(url);
