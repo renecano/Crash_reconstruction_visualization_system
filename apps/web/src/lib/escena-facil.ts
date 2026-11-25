@@ -13,6 +13,7 @@
  *
  * Rumbos en grados desde el norte, en sentido horario (0 = norte, 90 = este), como el expediente.
  */
+import { interpretarLugar } from "./lugar-texto";
 import {
   formato as F,
   avanzar,
@@ -105,6 +106,22 @@ export function callesNarradas(narracion: string): { nombre: string; en: number 
       out.push({ nombre, en: m.index ?? 0 });
   }
   return out;
+}
+
+/**
+ * La carretera que dice la narración, para buscarla si la lectura no trajo el lugar (revisión de la
+ * cadena, René 2026-11-24: un reporte de CESVI decía «en el kilómetro 77 de la carretera
+ * Pijijiapan–Tonalá» y la lectura grabada no lo guardó). Solo si el buscador la reconoce como
+ * carretera (con su número, su kilómetro o sus poblaciones).
+ */
+export function carreteraNarrada(narracion: string): string | null {
+  const m =
+    /(?:\b(?:km\.?|kil[oó]metro)\s*\d{1,4}(?:\s*\+\s*\d{1,3})?\s+(?:de\s+la|del)\s+)?\b(?:carretera|autopista|tramo\s+carretero)\b[^.;\n]{3,110}?(?=,\s+(?:en\s+el\s+estado|el\s+d[ií]a|a\s+las)\b|[.;\n]|$)/i.exec(
+      narracion,
+    );
+  if (!m) return null;
+  const texto = m[0].trim();
+  return interpretarLugar(texto).tipo === "carretera" ? texto : null;
 }
 
 /** El cruce que dice la narración: dos calles y la frase donde aparecen; null si no nombra dos. */

@@ -38,6 +38,7 @@ import { especDel3d } from "@/components/cesvi/caso/reconstruccion";
 import {
   callesDe,
   cruceNarrado,
+  carreteraNarrada,
   finalDeLaNarracion,
   marcarFinal,
   nombreVehiculo,
@@ -217,6 +218,7 @@ export async function auditarCaso(o: {
     separarLugarYSentido(lugarTexto).lugar,
     cruce ? `${cruce.calles[0]} y ${cruce.calles[1]}` : null,
     cruce?.calles[0] ?? null,
+    carreteraNarrada(o.narracion),
   ].filter((x): x is string => Boolean(x?.trim()));
   let lugar: (Punto & { nombre: string }) | null = null;
   for (const q of consultas) {
@@ -246,6 +248,13 @@ export async function auditarCaso(o: {
     else falla("lugar.no_encontrado", `consultas: ${consultas.join(" | ") || "ninguna"}`);
     return { id: o.id, fuente: o.fuente, fallas, datos };
   }
+  // Una carretera con kilómetro: OpenStreetMap no tiene los postes de kilómetro, así que el punto
+  // cae en la carretera y La escena le pide al perito que lo lleve al kilómetro (lo dice el aviso).
+  if (/OpenStreetMap no tiene el km/.test(String(datos.lugar_aviso ?? "")))
+    falla(
+      "pregunta.lugar_km",
+      "la carretera se encontró, pero OpenStreetMap no tiene el kilómetro: La escena pide mover el punto",
+    );
   const osm = await o.red.calles(lugar).catch(() => null);
   const calles = callesDe(osm);
   datos.calles = calles.length;

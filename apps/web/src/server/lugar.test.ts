@@ -94,12 +94,115 @@ describe("buscar el lugar del hecho (A1)", () => {
     );
     expect(r.resultados[0]).toMatchObject({ lat: 25.81, lon: -108.95 });
     expect(r.aviso).toContain("MEX 15D dentro de Ahome, Sinaloa");
-    expect(r.aviso).toContain("km 47.8");
+    expect(r.aviso).toContain("km 47+800");
     const tramo = pedidos.find((p) => p.url.searchParams.get("q") === "MEX 15D")!;
     // La caja del municipio como viewbox (oeste, norte, este, sur) y acotada.
     expect(tramo.url.searchParams.get("viewbox")).toBe("-109.5,26.4,-108.6,25.4");
     expect(tramo.url.searchParams.get("bounded")).toBe("1");
     expect(pedidos.every((p) => p.ua === USER_AGENT)).toBe(true);
+  });
+
+  it("una carretera por sus poblaciones (reportes de CESVI): la vía entre ellas o, si no, el tramo", async () => {
+    const TEAPA = {
+      display_name: "Teapa, Tabasco, México",
+      lat: "17.55",
+      lon: "-92.95",
+      boundingbox: ["17.50", "17.60", "-93.00", "-92.90"],
+      address: { state: "Tabasco" },
+    };
+    const PICHUCALCO = {
+      display_name: "Pichucalco, Chiapas, México",
+      lat: "17.51",
+      lon: "-93.12",
+      boundingbox: ["17.48", "17.54", "-93.15", "-93.08"],
+      address: { state: "Chiapas" },
+    };
+    const VIA = {
+      display_name: "Carretera Teapa-Pichucalco, Tabasco",
+      lat: "17.53",
+      lon: "-93.05",
+      class: "highway",
+      type: "primary",
+    };
+    const conVia = falso((u) => {
+      const q = u.searchParams.get("q");
+      if (q === "Teapa") return { status: 200, body: [TEAPA] };
+      if (q === "Pichucalco") return { status: 200, body: [PICHUCALCO] };
+      if (q === "carretera Teapa-Pichucalco") return { status: 200, body: [VIA] };
+      return { status: 200, body: [] };
+    });
+    const r = await buscarLugar(
+      { q: "kilómetro 55+80 de la carretera Teapa-Pichucalco" },
+      "c1",
+      conVia.deps,
+    );
+    expect(r.resultados[0]).toMatchObject({ lat: 17.53, lon: -93.05 });
+    expect(r.aviso).toContain("km 55+080");
+    expect(r.aviso).toContain("mueve el mapa por la carretera");
+    // Acotada a la caja de las dos poblaciones, con margen.
+    const via = conVia.pedidos.find(
+      (p) => p.url.searchParams.get("q") === "carretera Teapa-Pichucalco",
+    )!;
+    expect(via.url.searchParams.get("bounded")).toBe("1");
+    expect(via.url.searchParams.get("viewbox")).toBe("-93.2,17.65,-92.85,17.43");
+    // Sin la vía en OSM: las poblaciones, como zona (La escena pregunta el punto).
+    const sinVia = falso((u) => {
+      const q = u.searchParams.get("q");
+      if (q === "Teapa") return { status: 200, body: [TEAPA] };
+      if (q === "Pichucalco") return { status: 200, body: [PICHUCALCO] };
+      return { status: 200, body: [] };
+    });
+    const z = await buscarLugar(
+      { q: "kilómetro 55+80 de la carretera Teapa-Pichucalco" },
+      "c1",
+      sinVia.deps,
+    );
+    expect(z.resultados.map((x) => x.precision)).toEqual(["zona", "zona"]);
+    expect(z.aviso).toContain("OpenStreetMap no tiene el km 55+080");
+  });
+
+  it("una calle sola se busca también sin su tipo: «Blvd. Costera Miguel Alemán» es «Costera Miguel Alemán»", async () => {
+    const ACAPULCO = {
+      display_name: "Acapulco de Juárez, Guerrero, México",
+      name: "Acapulco de Juárez",
+      lat: "16.85",
+      lon: "-99.88",
+      boundingbox: ["16.7", "17.1", "-100.0", "-99.6"],
+      address: { state: "Guerrero" },
+    };
+    const COSTERA = {
+      display_name: "Costera Miguel Alemán, Acapulco de Juárez, Guerrero",
+      lat: "16.86",
+      lon: "-99.88",
+      class: "highway",
+      type: "primary",
+      address: { road: "Costera Miguel Alemán", city: "Acapulco de Juárez", state: "Guerrero" },
+    };
+    const { deps, pedidos } = falso((u) => {
+      const q = u.searchParams.get("q");
+      if (q === "Acapulco de Juárez, Guerrero") return { status: 200, body: [ACAPULCO] };
+      if (q === "Costera Miguel Alemán, Acapulco de Juárez, Guerrero")
+        return { status: 200, body: [COSTERA] };
+      return { status: 200, body: [] };
+    });
+    const r = await buscarLugar(
+      {
+        q: "Blvd. Costera Miguel Alemán, colonia Club Deportivo",
+        municipio: "Acapulco de Juárez",
+        estado: "Guerrero",
+      },
+      "c1",
+      deps,
+    );
+    expect(r.resultados[0]).toMatchObject({ lat: 16.86, lon: -99.88 });
+    expect(r.aviso).toContain("se buscó «Costera Miguel Alemán»");
+    expect(
+      pedidos.some(
+        (p) =>
+          p.url.searchParams.get("q") ===
+          "Blvd. Costera Miguel Alemán, Acapulco de Juárez, Guerrero",
+      ),
+    ).toBe(true);
   });
 
   it("si la descripción completa no aparece, busca la calle dentro del municipio (B5)", async () => {
@@ -251,6 +354,13 @@ describe("buscar el lugar del hecho (A1)", () => {
   it("la primera calle de una descripción", () => {
     expect(primeraCalle("Calle Azucena esquina con Av. Reforma, col. Lomas")).toBe("Calle Azucena");
     expect(primeraCalle("En el crucero de Paseo Tollocan y Av. Las Torres")).toBe("Paseo Tollocan");
+    // Reportes de CESVI: el número de la casa y la colonia no son parte del nombre.
+    expect(primeraCalle("Avenida Pigmenio González No.500, Colonia Tecnológico")).toBe(
+      "Avenida Pigmenio González",
+    );
+    expect(primeraCalle("calle Fuente de Dalila en la colonia Jardines del Lago")).toBe(
+      "calle Fuente de Dalila",
+    );
   });
 
   it("lo que el texto dice de la zona, las calles y la colonia (B5)", () => {

@@ -387,17 +387,35 @@ export function escenaDeConversion(c: Conversion, narracion?: string): EscenaNar
   // La masa del modelo leído (René, 2026-11-20): la de su ficha o la típica de su clase, como supuesto
   // declarado. Solo se pregunta la de un vehículo sin modelo.
   // La clase que la lectura no dio, por su modelo (René, 2026-11-24), antes de su masa típica.
-  // Un ciclista que la lectura dejó como vehículo sin marca, modelo ni clase (revisión de la cadena,
-  // 2026-11-24: en el 3D salía como un auto pegado a la camioneta): es una bicicleta.
+  // Un ciclista que la lectura dejó como vehículo sin marca ni modelo (revisión de la cadena,
+  // 2026-11-24: en el 3D salía como un auto pegado a la camioneta): es una bicicleta si sus propias
+  // citas (maniobra, daños) hablan de un ciclista, aunque el vocabulario le haya dado otra clase; o,
+  // si nada lo cita, si es el único sin nada y la narración habla de un ciclista.
   if (narracion && /\b(?:ciclista|bicicleta)\b/i.test(narracion)) {
-    const sinNada = narrado.vehiculos.filter(
-      (v) => !v.clase && !v.modelo?.valor && !v.marca?.valor,
-    );
-    if (sinNada.length === 1)
+    const citas = (id: string) =>
+      [
+        ...(
+          (narrado.versiones ?? []).flatMap((v) => v.maniobras ?? []) as {
+            vehiculo: string;
+            cita?: { texto?: string };
+          }[]
+        )
+          .filter((m) => m.vehiculo === id)
+          .map((m) => m.cita?.texto ?? ""),
+        ...(narrado.danos ?? []).filter((d) => d.vehiculo === id).map((d) => d.cita?.texto ?? ""),
+      ].join(" ");
+    const sinModelo = narrado.vehiculos.filter((v) => !v.modelo?.valor && !v.marca?.valor);
+    const citado = sinModelo.filter((v) => /\b(?:ciclista|bicicleta)\b/i.test(citas(v.id)));
+    const elegidos = citado.length
+      ? citado
+      : sinModelo.filter((v) => !v.clase).length === 1
+        ? sinModelo.filter((v) => !v.clase)
+        : [];
+    if (elegidos.length)
       narrado = {
         ...narrado,
         vehiculos: narrado.vehiculos.map((v) =>
-          v === sinNada[0] ? { ...v, clase: "bicicleta" } : v,
+          elegidos.includes(v) ? { ...v, clase: "bicicleta" } : v,
         ),
       };
   }

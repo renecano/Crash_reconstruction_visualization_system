@@ -10,6 +10,7 @@ import {
 } from "@croquis/cesvi";
 import { describe, expect, it } from "vitest";
 import {
+  carreteraNarrada,
   mismaCalleNarrada,
   nombreComparable,
   poseDe,
@@ -138,5 +139,16 @@ describe("el choque en un paso a desnivel y los nombres largos de las calles", (
     expect(p.segun).toBe("a_la_altura");
     const d = enMetros([p.punto.lon, p.punto.lat], [P0.lon, P0.lat]);
     expect(Math.hypot(d.este, d.norte)).toBeLessThan(10);
+  });
+});
+
+describe("la carretera que dice la narración (revisión de la cadena, 2026-11-24)", () => {
+  it("se busca si la lectura no trajo el lugar", () => {
+    expect(
+      carreteraNarrada(
+        "El hecho de tránsito se ubica en el kilómetro 77 de la carretera Pijijiapan–Tonalá, en el estado de Chiapas, el día 16.",
+      ),
+    ).toBe("kilómetro 77 de la carretera Pijijiapan–Tonalá");
+    expect(carreteraNarrada("Circulaba por la calle Hidalgo y frenó.")).toBeNull();
   });
 });

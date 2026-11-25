@@ -66,6 +66,7 @@ import {
   avisarSinCalles,
   callesDe,
   cruceNarrado,
+  carreteraNarrada,
   callesEn,
   choqueLejosDeCalles,
   coloresVehiculos,
@@ -532,6 +533,7 @@ export function EscenaFacil({
       separarLugarYSentido(descripcionLugar).lugar,
       cruce ? `${cruce.calles[0]} y ${cruce.calles[1]}` : null,
       cruce?.calles[0] ?? null,
+      narracion ? carreteraNarrada(narracion) : null,
     ].filter((x): x is string => Boolean(x?.trim()));
     if (!consultas.length) return;
     yaBuscado.current = true;
