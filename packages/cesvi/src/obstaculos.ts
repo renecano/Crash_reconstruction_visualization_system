@@ -164,6 +164,12 @@ export interface Cruce {
   obstaculo: string;
   tipo: ObstaculoDelMapa["tipo"];
   t: number;
+  /**
+   * Antes de su posición inicial: el solver prolonga la llegada en línea recta para completar 3 s
+   * (`aproximacion_previa_s`), y en una calle curva o una glorieta esa recta entra a la manzana. No
+   * es evidencia ni mueve la cifra: es el dibujo de la llegada.
+   */
+  enLaLlegada: boolean;
 }
 
 /**
@@ -177,11 +183,20 @@ export function crucesDeTrayectorias(
     trayectoria?: Trayectoria;
   }[],
   obstaculos: readonly { nombre: string; tipo: ObstaculoDelMapa["tipo"]; puntos: Plano[] }[],
+  /** La posición inicial de cada vehículo (id del solver), con su rumbo en grados desde +x. */
+  iniciales: ReadonlyMap<string, { x: number; y: number; rumbo_deg: number }> = new Map(),
 ): Cruce[] {
   const out: Cruce[] = [];
   for (const v of vehiculos) {
     const tr = v.trayectoria;
     if (!tr?.t?.length) continue;
+    const ini = iniciales.get(v.id);
+    const antesDeIniciar = (x: number, y: number) =>
+      ini
+        ? (x - ini.x) * Math.cos((ini.rumbo_deg * Math.PI) / 180) +
+            (y - ini.y) * Math.sin((ini.rumbo_deg * Math.PI) / 180) <
+          -0.5
+        : false;
     const largo = v.dimensiones?.largo_m ?? 4.4;
     const ancho = v.dimensiones?.ancho_m ?? 1.8;
     const vistos = new Set<string>();
@@ -194,7 +209,13 @@ export function crucesDeTrayectorias(
         if (vistos.has(ob.nombre)) continue;
         if (cruzaObstaculo(rect, { puntos: ob.puntos, cerrado: ob.tipo === "edificio" })) {
           vistos.add(ob.nombre);
-          out.push({ vehiculo: v.id, obstaculo: ob.nombre, tipo: ob.tipo, t: tr.t[k]! });
+          out.push({
+            vehiculo: v.id,
+            obstaculo: ob.nombre,
+            tipo: ob.tipo,
+            t: tr.t[k]!,
+            enLaLlegada: tr.t[k]! < 0 && antesDeIniciar(tr.x[k]!, tr.y[k]!),
+          });
         }
       }
     }
@@ -223,18 +244,37 @@ export function conObstaculos(
     }),
   }));
   let dict: Json;
+  const animada = especReconstruida(r);
   try {
-    dict = reconstructionToDict(
-      reconstruct(especReconstruida(r), { relieve: (r.relieve ?? null) as never }),
-    );
+    dict = reconstructionToDict(reconstruct(animada, { relieve: (r.relieve ?? null) as never }));
   } catch {
     return r;
   }
-  const cruces = crucesDeTrayectorias(
+  const iniciales = new Map(
+    ((animada.vehiculos ?? []) as Json[]).flatMap((v) => {
+      const p = v.posicion_inicial as { x?: number; y?: number; rumbo_deg?: number } | undefined;
+      return p?.x !== undefined && p.y !== undefined
+        ? [[String(v.id), { x: p.x, y: p.y, rumbo_deg: p.rumbo_deg ?? 0 }] as const]
+        : [];
+    }),
+  );
+  const todos = crucesDeTrayectorias(
     (dict.vehiculos ?? []) as Parameters<typeof crucesDeTrayectorias>[0],
     enEscena,
+    iniciales,
   );
-  if (!cruces.length) return r;
+  // Lo de la llegada recta se dice en los límites, sin culpar a la evidencia del perito.
+  const llegada = todos.filter((c) => c.enLaLlegada);
+  const avisos = [
+    ...new Set(
+      llegada.map(
+        (c) =>
+          `Antes de su posición inicial, el 3D dibuja la llegada de ${nombre(String(r.ids[c.vehiculo] ?? c.vehiculo))} en línea recta y pasa por ${c.tipo === "edificio" ? "un edificio" : "un muro"} del mapa: es solo el dibujo de la llegada (no es evidencia ni mueve la cifra).`,
+      ),
+    ),
+  ];
+  const cruces = todos.filter((c) => !c.enLaLlegada);
+  if (!cruces.length) return avisos.length ? { ...r, limites: [...r.limites, ...avisos] } : r;
   const motivos = cruces.map((c) => {
     const id = r.ids[c.vehiculo] ?? c.vehiculo;
     return `${nombre(String(id))} cruza ${c.tipo === "edificio" ? "un edificio" : "un muro"} del mapa (${c.obstaculo}) a los ${numero(c.t, 1)} s: los vehículos no atraviesan casas ni muros.`;
@@ -246,7 +286,7 @@ export function conObstaculos(
   if (!fijadas.length)
     return {
       ...r,
-      limites: [...r.limites, ...motivos.map((m) => `No cuadra con el mapa: ${m}`)],
+      limites: [...r.limites, ...avisos, ...motivos.map((m) => `No cuadra con el mapa: ${m}`)],
     };
   return {
     ...r,
@@ -263,6 +303,7 @@ export function conObstaculos(
     velocidades: r.velocidades.map((v) => ({ ...v, previa: null, impacto: null })),
     limites: [
       ...r.limites,
+      ...avisos,
       ...motivos.map((m) => `No cuadra: ${m}`),
       `Croquis no presenta una velocidad hasta que cuadre. Revisa ${revisar.join("; ")}.`,
     ],

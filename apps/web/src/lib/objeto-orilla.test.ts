@@ -81,6 +81,36 @@ describe("el objeto fijo del choque va en la orilla, no en el carril", () => {
     ).toBeNull();
   });
 
+  it("en un cruce, el objeto no queda en el arroyo de la otra calle: el choque se recorre hacia atrás", () => {
+    // Una calle este–oeste de 10 m que cruza justo en el choque.
+    const otra: Calle = {
+      id: 2,
+      nombre: "Calle Morelos",
+      puntos: [
+        [P.lon - 0.001, P.lat],
+        [P.lon + 0.001, P.lat],
+      ],
+      ancho: 10,
+      anchoOsm: 10,
+      nodos: [3, 4],
+    };
+    const r = contraLaOrilla(conChoque, [calle, otra], null)!;
+    const o = objetoDe(r.expediente)!;
+    const pose = poseDe(r.expediente, "V1", "impacto")!;
+    const origen = [pose.punto.lon, pose.punto.lat] as [number, number];
+    // El eje de Morelos, en metros de la escena: el objeto queda a más de 5 m (fuera de su arroyo).
+    const ejeMorelos = enMetros([P.lon, P.lat], origen).norte;
+    expect(Math.abs(o.y - ejeMorelos)).toBeGreaterThan(5);
+  });
+
+  it("un bache o un registro sí están en el arroyo: no se mueven", () => {
+    const conBache = {
+      ...conChoque,
+      impactos: conChoque.impactos!.map((i) => ({ ...i, objeto_fijo: "bache" })),
+    };
+    expect(contraLaOrilla(conBache, [calle], null)).toBeNull();
+  });
+
   it("la orilla queda donde se dibuja la calle: a la mitad del ancho del eje", () => {
     const borde = avanzar([P.lon, P.lat], 270, 3.5);
     expect(enMetros(borde, [P.lon, P.lat]).este).toBeCloseTo(-3.5, 1);

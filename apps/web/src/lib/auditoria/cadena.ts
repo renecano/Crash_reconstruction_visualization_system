@@ -51,8 +51,8 @@ import { RADIO_CALLES_M } from "@/lib/calles-del-mapa";
 import { callesParaGuardar, conCallesGuardadas } from "@/lib/calles-guardadas";
 import { impactosAColocar } from "@/lib/pasos-caso";
 import { paqueteDelCaso } from "@/lib/visor-unity/paquete";
-import { EN_EL_CARRIL } from "@/lib/objeto-orilla";
-import { cruzaObstaculo, saltosDe, sobreMalla, type Plano } from "@croquis/cesvi";
+import { EN_EL_CARRIL, esObjetoDeOrilla } from "@/lib/objeto-orilla";
+import { crucesDeTrayectorias, saltosDe, sobreMalla, type Plano } from "@croquis/cesvi";
 
 type Json = Record<string, unknown>;
 type Punto = { lat: number; lon: number };
@@ -541,7 +541,8 @@ export async function auditarCaso(o: {
   }
 
   // --- Puntos 1 a 3 (René, 2026-11-24), sobre el paquete 3D que dibuja Unity ---
-  if (paquete) revisarGeometria(paquete, o, osm, r.origen, falla);
+  if (paquete)
+    revisarGeometria(paquete, { ...o, impactos: e0.impactos ?? [] }, osm, r.origen, falla);
 
   // --- Contra lo esperado de una narración nueva ---
   if (o.esperado) {
@@ -637,7 +638,7 @@ type FallaFn = (regla: string, detalle: string, vehiculo?: string) => void;
  */
 function revisarGeometria(
   paquete: Json,
-  o: { narracion: string },
+  o: { narracion: string; impactos?: readonly { orden?: number; objeto_fijo?: string }[] },
   osm: OverpassResponse | null,
   origen: readonly [number, number] | null,
   falla: FallaFn,
@@ -647,9 +648,15 @@ function revisarGeometria(
     []) as { nombre: string; posiciones: number[]; indices: number[] }[];
   const calzada = capas.find((c) => c.nombre === "calzada");
   const objetos = (res.objetos ?? []) as { id: string; tipo?: string; x: number; y: number }[];
+  // Solo los objetos de orilla: un bache, un registro o una roca sí están en el arroyo.
+  const deOrilla = (id: string) => {
+    const orden = id === "obj-1" ? 1 : Number(/^obj-choque-(\d+)$/.exec(id)?.[1] ?? NaN);
+    const imp = (o.impactos ?? []).find((i) => (i.orden ?? 1) === orden);
+    return Boolean(imp?.objeto_fijo && esObjetoDeOrilla(imp.objeto_fijo));
+  };
   if (calzada && !EN_EL_CARRIL.test(o.narracion))
     for (const ob of objetos)
-      if (/^obj-(?:1|choque-\d+)$/.test(ob.id) && sobreMalla(calzada, ob))
+      if (/^obj-(?:1|choque-\d+)$/.test(ob.id) && deOrilla(ob.id) && sobreMalla(calzada, ob))
         falla(
           "objeto.en_carril",
           `${ob.tipo ?? "el objeto"} del choque quedó sobre la calzada (x ${F.metros(ob.x, 1)}, y ${F.metros(ob.y, 1)})`,
@@ -701,26 +708,37 @@ function revisarGeometria(
     trayectoria: { t: number[]; x: number[]; y: number[]; rumbo: number[] };
   }[];
   const eventos = (res.eventos ?? []) as { t: number; tipo: string; vehiculos?: string[] }[];
+  // Como la app (`conObstaculos`): lo que cruza antes de su posición inicial es la llegada recta que
+  // dibuja el solver, y se dice en los límites; desde la posición inicial, no cuadra.
+  const iniciales = new Map(
+    (((paquete.escena as Json | undefined)?.vehiculos ?? []) as Json[]).flatMap((v) => {
+      const p = v.posicion_inicial as { x?: number; y?: number; rumbo_deg?: number } | undefined;
+      return p?.x !== undefined && p.y !== undefined
+        ? [[String(v.id), { x: p.x, y: p.y, rumbo_deg: p.rumbo_deg ?? 0 }] as const]
+        : [];
+    }),
+  );
+  const cruces = crucesDeTrayectorias(
+    vehiculos,
+    obstaculos.map((x) => ({
+      nombre: x.nombre,
+      tipo: x.cerrado ? ("edificio" as const) : ("muro" as const),
+      puntos: x.puntos,
+    })),
+    iniciales,
+  );
+  for (const c of cruces)
+    falla(
+      c.enLaLlegada
+        ? "limite.llegada_recta"
+        : c.tipo === "edificio"
+          ? "trayectoria.cruza_edificio"
+          : "trayectoria.cruza_muro",
+      `cruza ${c.obstaculo} a los ${F.numero(c.t, 2)} s${c.enLaLlegada ? ", en la llegada recta antes de su posición inicial (los límites lo dicen)" : ""}`,
+      c.vehiculo,
+    );
   for (const v of vehiculos) {
     const tr = v.trayectoria;
-    const largo = v.dimensiones?.largo_m ?? 4.5;
-    const ancho = v.dimensiones?.ancho_m ?? 1.8;
-    let ultimo = -Infinity;
-    const cruzados = new Set<string>();
-    for (let k = 0; k < tr.t.length; k++) {
-      if (tr.t[k]! - ultimo < 0.1 && k !== tr.t.length - 1) continue;
-      ultimo = tr.t[k]!;
-      const rect = { x: tr.x[k]!, y: tr.y[k]!, largo, ancho, rumbo: tr.rumbo[k]! };
-      for (const ob of obstaculos)
-        if (!cruzados.has(ob.nombre) && cruzaObstaculo(rect, ob)) {
-          cruzados.add(ob.nombre);
-          falla(
-            ob.cerrado ? "trayectoria.cruza_edificio" : "trayectoria.cruza_muro",
-            `cruza ${ob.nombre} a los ${F.numero(tr.t[k]!, 2)} s`,
-            v.id,
-          );
-        }
-    }
     const choques = eventos
       .filter((x) => /^impacto/.test(x.tipo) && (!x.vehiculos || x.vehiculos.includes(v.id)))
       .map((x) => x.t);

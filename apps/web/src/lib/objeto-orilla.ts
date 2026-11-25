@@ -14,11 +14,44 @@ import {
   type Expediente,
   type LonLat,
 } from "@croquis/cesvi";
-import { ajustarACalle, normalizar, poseDe, type Calle, type Punto } from "./escena-facil";
+import { viaWidthM } from "@croquis/scene-schema";
+import {
+  ajustarACalle,
+  normalizar,
+  poseDe,
+  sobreCalle,
+  type Calle,
+  type Punto,
+} from "./escena-facil";
 
 /** Los objetos que están en la orilla. */
 export const OBJETO_DE_ORILLA =
-  /[aá]rbol|poste|muro|barda|pared|barrera|defensa|guarnici|se[ñn]al|luminaria|sem[aá]foro|caseta|fachada|reja|malla|contenci|talud|camell[oó]n|banqueta|jardinera|hidrante|parada/i;
+  /[aá]rbol|poste|muro|barda|pared|barrera|defensa|guarnici|se[ñn]al|luminaria|sem[aá]foro|caseta|fachada|reja|malla|contenci|talud|camell[oó]n|banqueta|jardinera|hidrante|parada|castillo|columna|pilar|parapeto|obra\s+negra|construcci[oó]n|cerca|port[oó]n|zagu[aá]n|anuncio|espectacular/i;
+/**
+ * Lo que sí está sobre el arroyo de la calle (revisión de la cadena, 2026-11-24: 8 de los 205
+ * reportes): un bache, un registro, una coladera, un desagüe, un tope, unas boyas, una roca o un
+ * «cuerpo duro» sin identificar. No se lleva a la orilla.
+ */
+export const OBJETO_DEL_ARROYO =
+  /bache|registro|coladera|desag[uü]e|alcantarilla|tope|vibrador|boya|roca|piedra|cuerpo\s+duro|superficie|pavimento|carpeta/i;
+
+/** Si el objeto del choque va en la orilla (y no en el arroyo). */
+export const esObjetoDeOrilla = (objeto: string) =>
+  OBJETO_DE_ORILLA.test(objeto) && !OBJETO_DEL_ARROYO.test(objeto);
+
+/** El ancho de la calzada como lo dibuja el 3D (`viaWidthM`): `width` de OSM o carriles por tipo. */
+export function anchoComoEl3d(c: Calle): number {
+  return viaWidthM({
+    tipo: c.tipo ?? "residential",
+    ...(c.carriles !== undefined ? { carriles: c.carriles } : {}),
+    ...(c.anchoOsm !== undefined ? { ancho_m: c.anchoOsm } : {}),
+  });
+}
+
+/** Si un punto cae sobre la calzada de alguna calle (con el ancho del 3D). */
+function sobreAlgunaCalzada(calles: readonly Calle[], p: Punto, holgura = 0.2): boolean {
+  return calles.some((c) => sobreCalle(c, p).distancia < anchoComoEl3d(c) / 2 + holgura);
+}
 
 /** La narración dice que el objeto estaba sobre la calle: no se lleva a la orilla. */
 export const EN_EL_CARRIL =
@@ -76,7 +109,7 @@ export function contraLaOrilla(
 } | null {
   const imp = [...(e.impactos ?? [])].sort((a, b) => (a.orden ?? 1) - (b.orden ?? 1))[0];
   if (!imp?.objeto_fijo || (imp.vehiculos ?? []).length !== 1) return null;
-  if (!OBJETO_DE_ORILLA.test(imp.objeto_fijo)) return null;
+  if (!esObjetoDeOrilla(imp.objeto_fijo)) return null;
   if (narracion && EN_EL_CARRIL.test(narracion)) return null;
   const v = String(imp.vehiculos![0]);
   const pose = poseDe(e, v, "impacto");
@@ -98,12 +131,18 @@ export function contraLaOrilla(
   // La calle corre en el sentido de la marcha (o el contrario): se toma el que más se le parece.
   const dif = Math.abs(((sobre.rumbo - marcha + 540) % 360) - 180);
   const eje = dif <= 90 ? sobre.rumbo : normalizar(sobre.rumbo + 180);
-  const centro: LonLat = [sobre.punto.lon, sobre.punto.lat];
-  const objeto = avanzar(
-    centro,
-    normalizar(eje + 90 * s),
-    sobre.calle.ancho / 2 + FUERA_DEL_BORDE_M,
-  );
+  // La orilla con el ancho que dibuja el 3D. En un cruce, la orilla de una calle es el arroyo de la
+  // otra: el choque se recorre hacia atrás por la calle, de 2 en 2 m, hasta que el objeto quede fuera
+  // de toda calzada (hasta 40 m).
+  const fuera = anchoComoEl3d(sobre.calle) / 2 + FUERA_DEL_BORDE_M;
+  const base: LonLat = [sobre.punto.lon, sobre.punto.lat];
+  let centro = base;
+  let objeto = avanzar(centro, normalizar(eje + 90 * s), fuera);
+  for (let atras = 2; atras <= 40; atras += 2) {
+    if (!sobreAlgunaCalzada(calles, { lon: objeto[0], lat: objeto[1] })) break;
+    centro = avanzar(base, normalizar(eje + 180), atras);
+    objeto = avanzar(centro, normalizar(eje + 90 * s), fuera);
+  }
   // De frente o de reversa: inclinado hacia la orilla. De lado: paralelo a la calle.
   const lateral = giro === 90 || giro === -90;
   const marchaNueva = lateral ? eje : normalizar(eje + INCLINACION_DEG * s);

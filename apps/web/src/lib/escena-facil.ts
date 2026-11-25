@@ -300,6 +300,9 @@ export interface Calle {
   nombre: string | null;
   puntos: LonLat[];
   ancho: number;
+  /** `lanes` y `width` de OSM tal como vienen (para el ancho que dibuja el 3D, `viaWidthM`). */
+  carriles?: number;
+  anchoOsm?: number;
   /** Ids de sus nodos, en orden (para los cruces). */
   nodos: number[];
   /** Su tipo de OpenStreetMap (`highway`) y su límite (`maxspeed`), si lo trae (ronda 4). */
@@ -333,6 +336,8 @@ export function callesDe(resp: OverpassResponse | null): Calle[] {
         Number.isFinite(ancho) && ancho >= 3 && ancho <= 60
           ? ancho
           : (Number.isFinite(carriles) && carriles > 0 ? carriles : 2) * 3.3,
+      ...(Number.isFinite(carriles) && carriles > 0 ? { carriles } : {}),
+      ...(Number.isFinite(ancho) && ancho >= 3 && ancho <= 60 ? { anchoOsm: ancho } : {}),
       nodos: w.nodes.filter((id) => nodos.has(id)),
       tipo,
       ...(w.tags?.maxspeed ? { maxspeed: w.tags.maxspeed } : {}),

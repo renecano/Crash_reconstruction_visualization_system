@@ -112,6 +112,26 @@ describe("una trayectoria que cruza un edificio del mapa no cuadra", () => {
     expect(conObstaculos(r, [lejos])).toBe(r);
   });
 
+  it("un edificio en la llegada recta, antes de su posición inicial, no culpa a la evidencia: se dice", () => {
+    const k0 = tr.t.findIndex((t) => t >= -2.9);
+    const lejos = { x: tr.x[k0]!, y: tr.y[k0]! };
+    const casa: ObstaculoDelMapa = {
+      nombre: "edificio 2",
+      tipo: "edificio",
+      puntos: [
+        [-3, -3],
+        [3, -3],
+        [3, 3],
+        [-3, 3],
+        [-3, -3],
+      ].map(([dx, dy]) => avanzar(avanzar(r.origen!, 90, lejos.x + dx!), 0, lejos.y + dy!)),
+    };
+    const c = conObstaculos(r, [casa], (id) => `el ${id}`);
+    expect(c.noCuadra).toBeUndefined();
+    expect(c.velocidades).toEqual(r.velocidades);
+    expect(c.limites.at(-1)).toMatch(/es solo el dibujo de la llegada/);
+  });
+
   it("los cruces, por vehículo y obstáculo, con el primer instante", () => {
     const cruces = crucesDeTrayectorias(
       [{ id: "veh-a", trayectoria: { ...tr, rumbo: tr.x.map(() => 0) } }],
