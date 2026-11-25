@@ -67,6 +67,9 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await expect(page.getByTestId("ejemplos-narracion").getByRole("button")).toHaveCount(5);
   await page.getByTestId("ejemplo-narracion").click();
   await expect(page.getByTestId("narracion")).toHaveValue(/vehículo A, marca VW, tipo Jetta/);
+  // Sin red desde antes de leer: el ejemplo abre en su lugar guardado y pediría ahí las calles; este
+  // flujo es el de sin calles del mapa (flechas por puntos cardinales).
+  await sinRed(page);
   await page.getByTestId("leer-narracion").click();
   await expect(page.getByTestId("lectura-guardada")).toContainText("lectura guardada");
   const escena = page.getByTestId("escena");
