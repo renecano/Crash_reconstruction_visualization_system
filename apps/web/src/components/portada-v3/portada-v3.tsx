@@ -303,13 +303,7 @@ export function PortadaV3({ t }: { t: TextosPortadaV3 }) {
             <div className="pv-inicio-texto">
               <p className="t-rotulo">{t.rotulo}</p>
               <h1>
-                <Palabras texto={t.h1[0].trim()} />{" "}
-                <span className="pv-mascara">
-                  <span className="pv-palabra pv-logo" style={i(5)}>
-                    <Logo ancho={300} prioridad />
-                  </span>
-                </span>{" "}
-                <Palabras texto={t.h1[1].trim()} desde={6} />
+                <Palabras texto={t.h1} />
               </h1>
               <p className="pv-lede">{t.lede}</p>
               <div className="pv-acciones">

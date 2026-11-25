@@ -383,9 +383,16 @@ html:has(.pv[data-tema="oscuro"]) body {
   overflow: hidden;
   border-radius: 14px;
 }
-/* El recorte del dictamen es una columna de la app: no se estira a todo lo ancho. */
+/* El paso 6 es la vista previa del PDF del dictamen (René, 2026-11-25): una hoja, con su orilla y
+   su sombra, del mismo blanco de día y de noche. No se estira a todo lo ancho. */
 .pv-captura[data-captura="dictamen"] {
   width: min(100%, 36rem);
+  border-radius: 4px;
+  background: #fff;
+  border: 1px solid rgb(0 0 0 / 0.08);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.08),
+    0 18px 40px rgb(0 0 0 / 0.16);
 }
 .pv-captura img {
   display: block;

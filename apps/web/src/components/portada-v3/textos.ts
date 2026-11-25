@@ -51,7 +51,11 @@ export interface TextosPortadaV3 {
   ver: string;
   rotulo: string;
   /** El titular, con el logo entre sus dos partes. */
-  h1: [string, string];
+  /**
+   * El titular, todo en texto (René, 2026-11-25: sin el logo a media frase); el logo va en el
+   * encabezado.
+   */
+  h1: string;
   lede: string;
   altInicio: string;
   leyenda: string;
@@ -102,7 +106,7 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
       abrir: "Open the app",
       ver: "How it works",
       rotulo: "Crash reconstruction for experts",
-      h1: ["The expert tells what happened. ", " reconstructs it with physics, in 3D."],
+      h1: "The expert tells what happened. Croquis reconstructs it with physics, in 3D.",
       lede: "From the narrative to the report, with the source of every number in sight.",
       altInicio:
         "3D reconstruction of an invented example at night: two cars approach a crossing with their headlights on and a ring marks the point of impact.",
@@ -161,11 +165,11 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
           titulo: "Sign your report.",
           texto:
             "In PDF or Word, structured like CESVI's reports. The expert writes the conclusion and signs it.",
-          alt: "Report: its format, the expert's name and the downloads; without validation it is a draft.",
+          alt: "Preview of the report PDF for an invented example: the logo, the title and the expert's narrative.",
         },
       ],
       capturas:
-        "Real captures of the app, which is in Spanish, with an invented example; some are cropped.",
+        "Real captures of the app, which is in Spanish, and of the report PDF, with an invented example; some are cropped.",
       distintoTitulo: "Every number can be questioned. And answered.",
       distinto: [
         {
@@ -257,7 +261,7 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
     abrir: "Abrir la app",
     ver: "Cómo funciona",
     rotulo: "Reconstrucción de hechos de tránsito",
-    h1: ["El perito narra el hecho. ", " lo reconstruye con física y en 3D."],
+    h1: "El perito narra el hecho. Croquis lo reconstruye con física y en 3D.",
     lede: "De la narración al dictamen, con la fuente de cada número a la vista.",
     altInicio:
       "Reconstrucción en 3D de un ejemplo inventado, de noche: dos autos llegan a un cruce con los faros encendidos y un aro marca el punto de impacto.",
@@ -308,10 +312,11 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
         titulo: "Firma tu dictamen.",
         texto:
           "En PDF o Word, con la estructura de los reportes de CESVI. El perito escribe la conclusión y la firma.",
-        alt: "Dictamen: el formato, el nombre del perito y las descargas; sin validar es un borrador.",
+        alt: "Vista previa del PDF del dictamen de un ejemplo inventado: el logo, el título y la narración del perito.",
       },
     ],
-    capturas: "Capturas reales de la app con un ejemplo inventado; algunas, recortadas.",
+    capturas:
+      "Capturas reales de la app y del PDF del dictamen, con un ejemplo inventado; algunas, recortadas.",
     distintoTitulo: "Cada número se puede cuestionar. Y responder.",
     distinto: [
       {
