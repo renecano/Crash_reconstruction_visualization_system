@@ -359,13 +359,18 @@ html:has(.pv[data-tema="oscuro"]) body {
 }
 
 /* ---------- El tráiler ---------- */
+/* En 1440×900, con el título justo debajo de la barra, caben el título y el video completo. */
 .pv-trailer {
+  gap: 24px;
+  padding-top: clamp(40px, 5vh, 56px);
   padding-bottom: 0;
 }
 .pv-trailer-caja {
   position: relative;
-  /* En 1440×900 caben el título y el video completo: el alto llega a 70vh como mucho. */
-  width: min(100%, calc(min(70vh, 100svh - 300px) * 16 / 9));
+  /* El alto llega a 70vh como mucho, y deja lugar a la barra y al título. A la izquierda, como el título. */
+  width: min(100%, calc(min(70vh, 100svh - 290px) * 16 / 9));
+  margin-left: max(0px, calc((100% - 1500px) / 2));
+  margin-right: auto;
   aspect-ratio: 16 / 9;
   background: #0b1222;
   /* De noche el póster es del color de la página: el borde marca la caja. */
@@ -405,12 +410,18 @@ html:has(.pv[data-tema="oscuro"]) body {
 .pv-trailer-fachada:focus-visible .pv-trailer-play {
   transform: scale(1.06);
 }
+@media (max-width: 47.99rem) {
+  .pv-trailer-play {
+    gap: 8px;
+    padding: 8px 16px 8px 12px;
+  }
+}
 .pv-trailer-fachada:focus-visible {
   outline: 3px solid var(--senal);
   outline-offset: -3px;
 }
 .pv-trailer-leyenda {
-  margin-top: -32px;
+  margin-top: -12px;
   font-size: 0.8125rem;
   color: var(--texto-3);
 }
