@@ -8,9 +8,9 @@
  * - `<capturas>`: `claro/` y `oscuro/` de «alcance-deformacion»;
  * - `<portada-4k>`: `croquis-promo-v3/sin-logo/01-portada.jpg` (3840×2160, render del tráiler con el
  *   3D de Croquis; René, 2026-11-25), la foto del inicio;
- * - `<cuadro-trailer>`: el cuadro de 16.9 s de `croquis-trailer-3840x2160.mp4` (el choque en 3D), el
- *   póster del tráiler: `ffmpeg -ss 16.9 -i croquis-trailer-3840x2160.mp4 -frames:v 1 cuadro.png`;
- *   se recorta en 16:9 sin la leyenda de abajo (la página la escribe debajo del video).
+ * - `<cuadro-trailer>`: el póster del tráiler, `croquis-promo-v3/sin-logo/02-noche-faros.jpg` (la misma
+ *   calle de noche del tráiler, los dos vehículos, sin restos: los cuadros del choque del tráiler
+ *   traen restos que en imagen fija parecen cubos); se recorta en 16:9 sin la leyenda de abajo.
  *
  * Los recortes dejan fuera toda cifra de la reconstrucción (velocidades, rangos, energía y Δv).
  */
