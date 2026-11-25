@@ -1429,3 +1429,22 @@ La escena pregunta «¿Dónde fue?» con las opciones del buscador si el lugar e
 ### Lo publicado
 
 AXA 57 (sin cambio), crucero 20 y 12, alcance 53 y 0, carambola 24, reversa 8 y 24, poste 30 y 36: iguales a la tabla del #311 (`reconstruir` de `cifras-ronda4.test.ts`, sin navegador). La animación del alcance termina a 10 y 12 m de las posiciones finales marcadas y la del poste a 7 y 10 m: va a René (paquete aparte).
+
+## El 2D limpio, el acercamiento y el lugar de los ejemplos (2026-11-25) · rama `fix/w-2d-croquis`
+
+René (2026-11-25): «la vía del choque sale vertical, se enciman los vehículos y las etiquetas A3, B2 y B3, y las orillas salen chuecas… vuelve al croquis pericial que aprobé (propuesta 2)», el acercamiento de la foto en el 2D y que los cinco ejemplos abran siempre en su lugar. Rama aparte del #311 (la t9 corre fijada a 2dfd57dc), solo web, pruebas ligeras.
+
+### El 2D
+
+- **Qué lo rompió:** ningún commit cambió el croquis desde que René lo aprobó (16bb3d79, 2026-11-18, con AXA y cf708, de una sola vía). La regla de giro de ese mismo commit, «entre varias vías (un cruce), la de más jerarquía», ponía horizontal a Paseo Tollocan en la carambola de René (2026-11-24) y la calle del choque quedaba vertical. Las orillas tenían escalones porque cada tramo se dibujaba con puntas rectas; las etiquetas se amontonaban porque el detenido tiene la posición 1 y la 2 en el mismo lugar.
+- **Arreglo:** la vía horizontal es la que recorren los vehículos al llegar (a menos de 30°); las orillas, con uniones redondas; una posición igual a la anterior se dibuja una vez con «B1·2».
+- **Prueba visual** (`croquis-visual.test.ts`): AXA, la carambola de Tollocan y Tollocan, con la vía de llegada horizontal, ninguna etiqueta encimada y el SVG idéntico a su referencia (`__snapshots__/croquis/`). Con el código anterior, la carambola falla.
+- **Capturas** (`docs/cesvi/ronda-4/evidencia/2d/regresion-antes-*` y `regresion-despues-*`): AXA queda igual a la aprobada.
+
+### El acercamiento
+
+Botones + / − / 1:1, la rueda (sobre el cursor) y el pellizco; acercado, se arrastra (`zoom-vista.ts`, `zoom-vista.test.ts`; la e2e del croquis prueba los botones). Acerca el dibujo y el fondo juntos.
+
+### El lugar de los ejemplos
+
+Cada ejemplo guarda su lugar (`data/cesvi/ejemplos/narraciones.json`) y abre ahí sin el buscador. Las cifras en su lugar, contra la tabla (en el punto P): crucero y poste iguales; alcance 53 (48–55) contra 53 (49–56); carambola 24 (22–31) contra 24 (22–32); reversa, con el relieve real de Lomas del Valle, 7 (0–15) y 24 (22–29) contra 8 (1–16) y 24 (21–28). **Mueve cifras publicadas: no se publica sin el visto bueno de René.**

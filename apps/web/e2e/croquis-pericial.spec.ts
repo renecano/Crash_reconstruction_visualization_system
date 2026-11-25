@@ -41,4 +41,11 @@ test("@flujo /cesvi: el croquis pericial del 2D de Reconstrucción", async ({ pa
   await expect(croquis.locator("svg line[stroke^='rgb(']")).toHaveCount(0);
   await page.getByTestId("croquis-color").click();
   await expect.poll(() => croquis.locator("svg line[stroke^='rgb(']").count()).toBeGreaterThan(5);
+  // Acercar y alejar (René, 2026-11-25): con los botones; la rueda y el pellizco usan la misma vista.
+  const caja = page.getByTestId("croquis-caja");
+  await expect(caja).toHaveAttribute("data-zoom", "1");
+  await page.getByTestId("croquis-acercar").click();
+  await expect(caja).toHaveAttribute("data-zoom", "1.5");
+  await page.getByTestId("croquis-zoom-completo").click();
+  await expect(caja).toHaveAttribute("data-zoom", "1");
 });
