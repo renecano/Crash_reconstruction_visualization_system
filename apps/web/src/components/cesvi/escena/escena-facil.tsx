@@ -208,6 +208,7 @@ export function EscenaFacil({
   descripcionLugar = null,
   zona,
   onBuscarCalles,
+  onReintentarCalles,
   onVerReconstruccion,
   onNota,
   recalculo = null,
@@ -233,6 +234,8 @@ export function EscenaFacil({
   zona: { municipio?: string; estado?: string };
   /** Pide las calles alrededor de un punto (el lugar buscado). */
   onBuscarCalles: (p: Punto) => void;
+  /** Pide otra vez las calles cuando la consulta falló (René, 2026-11-25). */
+  onReintentarCalles?: () => void;
   onVerReconstruccion: () => void;
   /** Lo que decide la persona y conviene anotar en la bitácora («No sé dónde quedó…»). */
   onNota: (texto: string) => void;
@@ -1090,6 +1093,23 @@ export function EscenaFacil({
           "Este lugar no tiene calles en los datos del mapa. Marca el choque tocando el mapa; la dirección de cada vehículo la eliges tú y Croquis no la supone.",
       };
     }
+    // La consulta falló y no hay calles de ninguna fuente: no es que el lugar no tenga calles. Sin
+    // ellas Croquis no calcula la velocidad (René, 2026-11-25).
+    if (overpassFallo && !calles && onReintentarCalles)
+      return {
+        tipo: "alerta",
+        clave: "calles-fallaron",
+        texto:
+          "No se pudieron cargar las calles: reintenta. Sin ellas, Croquis no calcula la velocidad.",
+        acciones: [
+          {
+            texto: "Reintentar",
+            id: "reintentar-calles-escena",
+            principal: true,
+            hacer: onReintentarCalles,
+          },
+        ],
+      };
     return null;
   })();
 

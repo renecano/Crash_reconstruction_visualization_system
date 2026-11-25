@@ -249,7 +249,19 @@ export function RecorridoCaso({
     () => (guardadas ? respuestaDeGuardadas(guardadas) : null),
     [guardadas],
   );
-  const calles = callesOverpass ?? callesTeselas ?? callesGuardadas;
+  // Las guardadas con el caso mandan (René, 2026-11-25): un ejemplo trae las suyas y nunca depende de
+  // que la red responda; en un caso nuevo, las primeras que llegan se guardan y las de Overpass
+  // reemplazan a las de las teselas (`conCallesGuardadas`).
+  const calles = callesGuardadas ?? callesOverpass ?? callesTeselas;
+  // La consulta de calles falló y no hay calles de ninguna otra fuente: Croquis no calcula una cifra
+  // sin ellas; La escena y la reconstrucción piden reintentar (René, 2026-11-25). Un lugar donde
+  // OpenStreetMap responde sin calles no es una falla: sigue como siempre.
+  const sinCallesPorFalla = callesFallaron && !calles;
+  const [intentoCalles, setIntentoCalles] = useState(0);
+  const reintentarCalles = () => {
+    setCallesFallaron(false);
+    setIntentoCalles((n) => n + 1);
+  };
   const [objetos, setObjetos] = useState<OverpassResponse | null>(null);
   const [, setMedida] = useState<number | null>(null);
   const [mapa, setMapa] = useState<MapaMl | null>(null);
@@ -294,7 +306,9 @@ export function RecorridoCaso({
   // ofrece «Reconstruir de nuevo», en «La escena» y en «La reconstrucción», sin borrar nada más. Los
   // demás cambios del caso (lo editado en el 3D, una respuesta) se siguen recalculando solos (W4).
   const [escenaCambio, setEscenaCambio] = useState(false);
-  const rec = useReconstruccion(expediente, { alCambiar: !escenaCambio });
+  const rec = useReconstruccion(sinCallesPorFalla ? null : expediente, {
+    alCambiar: !escenaCambio,
+  });
   // Ya reconstruida con la escena que se ve (o deshecho el cambio), el aviso se va solo.
   if (escenaCambio && !rec.vieja) setEscenaCambio(false);
   const frenteAEscena = estadoFrenteAEscena({
@@ -726,7 +740,7 @@ export function RecorridoCaso({
     return () => {
       vivo = false;
     };
-  }, [claveCalles]);
+  }, [claveCalles, intentoCalles]);
   // Ronda 4 (René): con la vía del choque ya conocida, lo que la narración describe respecto al
   // límite («a exceso de velocidad») o la típica de la vía se recalcula con el límite de esa vía.
   // Las calles que llegan (Overpass o teselas) se guardan con el caso, una vez por lugar.
@@ -1284,6 +1298,8 @@ export function RecorridoCaso({
           calles={calles}
         />
       );
+    if (actual === P.reconstruccion && sinCallesPorFalla)
+      return <AvisoSinCalles onReintentar={reintentarCalles} />;
     if (actual === P.reconstruccion)
       return (
         <div className={`flex flex-col ${r ? "gap-3" : "gap-5"}`}>
@@ -1679,6 +1695,7 @@ export function RecorridoCaso({
             posicionesNarradas={leida.posiciones}
             calles={calles}
             callesFallaron={callesFallaron}
+            onReintentarCalles={reintentarCalles}
             lugar={expediente.caso.lugar?.coordenadas ?? null}
             descripcionLugar={expediente.caso.lugar?.descripcion?.valor ?? null}
             zona={{
@@ -2229,5 +2246,33 @@ export function RecorridoCaso({
         </section>
       </div>
     </div>
+  );
+}
+
+/**
+ * Las calles no llegaron (René, 2026-11-25): «el perito debe ver un aviso claro, nunca una cifra
+ * calculada sin calles». Con el botón, Croquis las pide otra vez.
+ */
+function AvisoSinCalles({ onReintentar }: { onReintentar: () => void }) {
+  return (
+    <section
+      role="alert"
+      data-testid="aviso-sin-calles"
+      className="flex flex-col gap-3 rounded-lg border border-[var(--senal)] p-4"
+    >
+      <p className="font-medium">No se pudieron cargar las calles: reintenta.</p>
+      <p className="text-sm text-[var(--texto-2)]">
+        Sin las calles del lugar, Croquis no calcula la velocidad: el choque y por dónde venía cada
+        vehículo dependen de ellas. Revisa la conexión y vuelve a intentarlo.
+      </p>
+      <button
+        type="button"
+        className="boton-principal self-start"
+        data-testid="reintentar-calles"
+        onClick={onReintentar}
+      >
+        Reintentar
+      </button>
+    </section>
   );
 }
