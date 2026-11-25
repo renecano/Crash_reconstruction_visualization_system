@@ -379,6 +379,8 @@ html:has(.pv[data-tema="oscuro"]) body {
   position: relative;
   aspect-ratio: 16 / 9;
   background: #0b1222;
+  /* De noche el póster es del color de la página: el borde marca la caja. */
+  border: 1px solid var(--linea-suave);
 }
 .pv-trailer-fachada,
 .pv-trailer-caja iframe {
