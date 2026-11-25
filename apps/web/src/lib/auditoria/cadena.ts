@@ -220,7 +220,11 @@ export async function auditarCaso(o: {
   ].filter((x): x is string => Boolean(x?.trim()));
   let lugar: (Punto & { nombre: string }) | null = null;
   for (const q of consultas) {
-    const r = await o.red.lugar(q, zona.municipio, zona.estado).catch(() => null);
+    const r = await o.red.lugar(q, zona.municipio, zona.estado).catch((x: unknown) => {
+      // Un error de la red no es un lugar que no existe: se guarda para distinguirlo.
+      datos.lugar_error = String((x as Error)?.message ?? x).slice(0, 200);
+      return null;
+    });
     // Como La escena: una zona (colonia, municipio) no es el lugar; se prueba la consulta siguiente.
     if (r?.resultados.length && r.resultados[0]!.precision !== "zona") {
       lugar = r.resultados[0]!;
@@ -237,6 +241,8 @@ export async function auditarCaso(o: {
         "pregunta.lugar_solo_zona",
         `se encontró la zona «${String(datos.lugar_zona)}»; La escena pregunta el lugar`,
       );
+    else if (datos.lugar_error)
+      falla("red.lugar", `la búsqueda falló por la red: ${String(datos.lugar_error)}`);
     else falla("lugar.no_encontrado", `consultas: ${consultas.join(" | ") || "ninguna"}`);
     return { id: o.id, fuente: o.fuente, fallas, datos };
   }
@@ -318,18 +324,43 @@ export async function auditarCaso(o: {
   for (const v of vs) {
     const pose = poseDe(e, v.id, "impacto");
     if (!pose) {
-      falla("escena.sin_pose", "La escena no lo colocó en el choque", v.id);
+      // Un vehículo que solo está en un choque posterior (o en ninguno): La escena lo deja en su
+      // lista para que el perito lo marque («El choque 2 (…)»). Eso es una pregunta, no una falla.
+      const enPrimero = impactos[0]?.vehiculos.includes(v.id);
+      const pendiente = prop.faltan.some(
+        (x) => /^El choque \d/.test(x.texto) && x.texto.includes(nombres[v.id] ?? v.id),
+      );
+      const enNinguno = !impactos.some((i) => i.vehiculos.includes(v.id));
+      if (!enPrimero && (pendiente || enNinguno))
+        falla(
+          "pregunta.choque_posterior",
+          enNinguno
+            ? "no está en ningún choque: La escena pregunta dónde estaba"
+            : "su choque no es el primero y la lectura no da sus zonas: La escena lo lista para que el perito lo marque",
+          v.id,
+        );
+      else falla("escena.sin_pose", "La escena no lo colocó en el choque", v.id);
       continue;
     }
     const llegada = rumboDeLlegada(e, v.id, pose.rumbo);
     if (calles.length) {
       const s = sobreCalle(pose.punto, pose.rumbo, calles);
-      if (s && !s.sobre)
+      if (s && !s.sobre) {
+        // Para explicar la falla: las tres calles más cercanas, con su distancia y su rumbo.
+        const cercanas = calles
+          .map((c) => ({ c, r: aLaCalle(pose.punto, c) }))
+          .sort((a, b) => a.r.m - b.r.m)
+          .slice(0, 3)
+          .map(
+            (x) =>
+              `${x.c.nombre ?? "sin nombre"} ${F.metros(x.r.m, 1)} a ${Math.round(x.r.rumbo)}°`,
+          );
         falla(
           "vehiculo.fuera_de_calle",
-          `a ${F.metros(s.m, 1)} de ${s.calle.nombre ?? "la calle más cercana"}${s.alineada ? "" : ", cruzado a ella"}`,
+          `a ${F.metros(s.m, 1)} de ${s.calle.nombre ?? "la calle más cercana"}${s.alineada ? "" : ", cruzado a ella"} (frente a ${Math.round(pose.rumbo)}°; cerca: ${cercanas.join("; ")})`,
           v.id,
         );
+      }
     }
     const sn = sentidoEnElCaso(o.narracion, v, vs);
     const esperado = o.esperado?.vehiculos?.find((x) => `V${x.letra.charCodeAt(0) - 64}` === v.id);

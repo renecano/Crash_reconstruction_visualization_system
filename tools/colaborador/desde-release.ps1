@@ -6,6 +6,7 @@
 #   powershell -ExecutionPolicy Bypass -File tools\colaborador\desde-release.ps1 -Paso fotos
 #   powershell -ExecutionPolicy Bypass -File tools\colaborador\desde-release.ps1 -Paso trailer
 #   powershell -ExecutionPolicy Bypass -File tools\colaborador\desde-release.ps1 -Paso video
+#   powershell -ExecutionPolicy Bypass -File tools\colaborador\desde-release.ps1 -Paso portada
 #
 # «trailer» usa el mismo paquete de fotos, con el plan de tomas de tools\trailer\tomas-rtx.mjs.
 #
@@ -22,7 +23,7 @@
 # vez; si se vuelve a trabar, se salta el resto de ese caso con un aviso y se sigue con el siguiente.
 # `-SoloCesvi` hace solo AXA y el lateral (la versión para CESVI), reusando los cuadros ya hechos.
 param(
-  [Parameter(Mandatory = $true)][ValidateSet("escritorio", "fotos", "trailer", "video")][string] $Paso,
+  [Parameter(Mandatory = $true)][ValidateSet("escritorio", "fotos", "trailer", "video", "portada")][string] $Paso,
   [switch] $Corto,
   # Solo la versión para CESVI (AXA y el lateral en intersección), sin el alcance inventado.
   [switch] $SoloCesvi,
@@ -204,6 +205,36 @@ if ($Paso -eq "escritorio") {
   }
   Write-Host ""
   Write-Host "Las tomas del tráiler quedaron también en $entrega (por si la subida falla, mándaselo a René por Drive)."
+} elseif ($Paso -eq "portada") {
+  # El video de la portada (René, 2026-11-24): dos tomas de 8 s, sin texto, que se repiten en bucle
+  # (tools\trailer\tomas-portada.mjs): el árbol de noche y la carambola con lluvia. El árbol es el
+  # paquete caso-3d del caso de René, que se copia al paquete de fotos. Los cuadros (JPG, 1920x1080,
+  # ultra) suben a la rama de resultados en zips de menos de 90 MB; el video lo arma René con ellos.
+  Copy-Item (Join-Path $repo "packages\scene-schema\fixtures\caso3d-narraciones\rene-arbol-curva.json") (Join-Path $trabajo "casos\arbol-noche.json") -Force
+  $plan = Join-Path $trabajo "tomas-portada.json"
+  & node (Join-Path $repo "tools\trailer\tomas-portada.mjs") $plan
+  if ($LASTEXITCODE) { throw "tomas-portada.mjs terminó con el código $LASTEXITCODE" }
+  $salida = Join-Path $raiz "portada-cuadros"
+  New-Item -ItemType Directory -Force $salida | Out-Null
+  $faltantes = Tomar -Plan $plan -Salida $salida -Extension "jpg" -Grupo 40 -TopeGrupoMin 15 -Que "las tomas de la portada" -Informe (Join-Path $destino "tomas_portada.json")
+  if ($faltantes.Count) { throw "Faltan $($faltantes.Count) cuadros ($($faltantes[0])…). Vuelve a correr la tanda: sigue desde el último terminado." }
+  if ($Zips) {
+    $carpetaZips = Join-Path $repo $Zips
+    if (Test-Path $carpetaZips) { Remove-Item -Recurse -Force $carpetaZips }
+    New-Item -ItemType Directory -Force $carpetaZips | Out-Null
+    foreach ($toma in @("arbol", "carambola")) {
+      $grupo = @(); $suma = 0; $n = 0
+      foreach ($a in @(Get-ChildItem -LiteralPath $salida -Filter "portada-$($toma)_*.jpg" | Sort-Object Name)) {
+        if ($grupo.Count -and ($suma + $a.Length) -gt 85MB) {
+          $n++; Compress-Archive -Path ($grupo | ForEach-Object { $_.FullName }) -DestinationPath (Join-Path $carpetaZips ("portada-$toma-{0:D2}.zip" -f $n))
+          $grupo = @(); $suma = 0
+        }
+        $grupo += $a; $suma += $a.Length
+      }
+      if ($grupo.Count) { $n++; Compress-Archive -Path ($grupo | ForEach-Object { $_.FullName }) -DestinationPath (Join-Path $carpetaZips ("portada-$toma-{0:D2}.zip" -f $n)) }
+      Write-Host "La toma «$toma» de la portada va a la rama de resultados en $n zips ($Zips)."
+    }
+  }
 } elseif ($Paso -eq "video") {
   # El video de Unity (René, 2026-11-17): AXA, el lateral en intersección y, para la versión pública,
   # el alcance inventado; cada caso con cuatro cámaras, cuadro por cuadro a 60 fps en ultra, montado
