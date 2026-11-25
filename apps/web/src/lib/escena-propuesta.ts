@@ -15,6 +15,7 @@
  * Todo queda como supuesto (fuente «supuesto»): se ve distinto y cambia de estado cuando el perito lo
  * confirma o lo corrige. Ningún número de la reconstrucción cambia por proponer: solo se coloca.
  */
+import { contraLaOrilla } from "./objeto-orilla";
 import {
   avanzar,
   conPosicion,
@@ -181,6 +182,21 @@ export function proponerEscena(o: {
           : "no hay calles del mapa para proponer por dónde llegaba",
     });
   }
+  // El objeto del choque en la orilla, no en el carril (René, 2026-11-24, punto 1): el vehículo sale
+  // de su carril hacia la banqueta, el camellón o el acotamiento donde está el objeto.
+  const orilla = contraLaOrilla(e, calles, narracion);
+  if (orilla) {
+    e = orilla.expediente;
+    const objeto = (e.impactos ?? []).find((i) => (i.orden ?? 1) === 1)?.objeto_fijo ?? "el objeto";
+    propuestos.push({
+      clave: "orilla-1",
+      texto: `${objeto[0]!.toUpperCase()}${objeto.slice(1)}, en la orilla ${orilla.lado === "derecha" ? "derecha" : "izquierda"}${orilla.calle ? ` de ${orilla.calle}` : ""}: ${o.nombreDe(String(impactos[0]!.vehiculos[0]))} sale de su carril para alcanzarlo`,
+      porque: orilla.cita
+        ? `la narración dice «${orilla.cita}»`
+        : "un objeto fijo está en la banqueta o el acotamiento, no en el carril; la narración no dice de qué lado: la orilla de su carril (muévelo si fue del otro lado)",
+    });
+  }
+
   // Los choques siguientes de una carambola (René, 2026-11-24): si el primero de ese choque ya está
   // colocado y se sabe con qué cara golpeó, el choque va en esa cara y el otro se coloca por sus
   // zonas de contacto, tocándose sin encimarse. Si no, lo marca el perito.

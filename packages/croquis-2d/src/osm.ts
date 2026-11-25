@@ -444,8 +444,8 @@ export function applyMap(
 
 /**
  * Consulta de los objetos del lugar que el 3D dibuja: árboles, postes de alumbrado y de luz, y
- * bardas y muros. Va aparte de la de calles (`overpassQuery`), que comparten los extractos
- * versionados.
+ * bardas y muros; y los edificios, que la reconstrucción usa como obstáculos (no se dibujan). Va
+ * aparte de la de calles (`overpassQuery`), que comparten los extractos versionados.
  */
 export function overpassQueryObjetos(lat: number, lon: number, radioM: number): string {
   const a = `around:${radioM},${lat},${lon}`;
@@ -455,6 +455,8 @@ export function overpassQueryObjetos(lat: number, lon: number, radioM: number): 
     `node(${a})["highway"="street_lamp"];` +
     `node(${a})["power"~"^(pole|tower)$"];` +
     `way(${a})["barrier"~"^(wall|fence|retaining_wall)$"];` +
+    // Los edificios (René, 2026-11-24): obstáculos de la reconstrucción; el 3D no los dibuja.
+    `way(${a})["building"];` +
     `);out body;>;out skel qt;`
   );
 }

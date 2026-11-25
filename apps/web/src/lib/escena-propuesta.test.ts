@@ -11,6 +11,7 @@ import { describe, expect, it } from "vitest";
 import { RADIO_CALLES_M } from "./calles-del-mapa";
 import { callesDe, nombreVehiculo, poseDe, rumboAlineado } from "./escena-facil";
 import { listaDeLaEscena, listaLista, proponerEscena } from "./escena-propuesta";
+import { INCLINACION_DEG } from "./objeto-orilla";
 import { impactosAColocar } from "./pasos-caso";
 
 const aqui = dirname(fileURLToPath(import.meta.url));
@@ -61,12 +62,15 @@ describe("la escena ya armada (cesvi-cf708e9fed)", () => {
     }
   });
 
-  it("el primero queda alineado con una calle del mapa (no atravesado)", () => {
+  it("el primero va con la calle del mapa (no atravesado), inclinado hacia el muro de la orilla", () => {
+    // Choca contra un muro de contención: va hacia la orilla, 20° fuera de su carril (René,
+    // 2026-11-24, punto 1: el objeto está en la orilla, no en el carril).
     const v = impactosAColocar(expediente)[0]!.vehiculos[0]!;
     const pose = poseDe(p.expediente, v, "impacto")!;
     const alineado = rumboAlineado(calles, p.puntos[1]!, pose.rumbo);
     const dif = Math.abs((((pose.rumbo - alineado) % 180) + 180) % 180);
-    expect(Math.min(dif, 180 - dif)).toBeLessThan(15);
+    expect(Math.abs(Math.min(dif, 180 - dif) - INCLINACION_DEG)).toBeLessThan(5);
+    expect(p.propuestos.some((x) => x.clave === "orilla-1")).toBe(true);
   });
 
   it("cada «Por qué» es concreto: la calle, el sentido y los daños en que se basa (René)", () => {

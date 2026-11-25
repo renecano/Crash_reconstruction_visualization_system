@@ -7,6 +7,7 @@
  * Guarda lo mismo de antes en el expediente (posiciones, rumbos y la bandera de supuesto): el
  * solver no cambia. La lógica sin interfaz está en `lib/escena-facil.ts`.
  */
+import { posesEnObstaculos } from "@/lib/poses-en-obstaculos";
 import {
   formato as F,
   agregarObjeto,
@@ -42,6 +43,7 @@ import {
   usarRelieve,
   usaRelieve,
   type Expediente,
+  type ObstaculoDelMapa,
   type PosicionDescrita,
   type RolPersona,
   type TipoObjeto,
@@ -210,6 +212,7 @@ export function EscenaFacil({
   recalculo = null,
   onReconstruir,
   errorReconstruccion = null,
+  obstaculos = [],
 }: {
   tema: "claro" | "oscuro";
   estado: EstadoEscena;
@@ -241,6 +244,8 @@ export function EscenaFacil({
   onReconstruir?: () => void;
   /** Si la última reconstrucción falló, por qué. */
   errorReconstruccion?: string | null;
+  /** Los edificios y muros del mapa (René, 2026-11-24): se avisa si un vehículo queda sobre uno. */
+  obstaculos?: readonly ObstaculoDelMapa[];
 }) {
   const e = estado.expediente;
   // Ronda 4 (René, 2026-11-18, propuesta 1): la escena ya armada con su lista. La de una pregunta a
@@ -875,6 +880,7 @@ export function EscenaFacil({
   const encimadas = useMemo(() => posicionesEncimadas(e), [e]);
   // Ronda 4 (René): encimados en el choque (más que un contacto), dicho en el momento.
   const encimadosChoque = useMemo(() => impactosEncimados(e), [e]);
+  const enObstaculos = useMemo(() => posesEnObstaculos(e, obstaculos), [e, obstaculos]);
   const descartar = (clave: string) => {
     setDescartadas((d) => [...d, clave]);
     setMensaje(null);
@@ -938,6 +944,46 @@ export function EscenaFacil({
             id: "choque-encimado-asi",
             hacer: () => descartar(clave),
           },
+        ],
+      };
+    }
+    // Un vehículo sobre un edificio o atravesando un muro del mapa (René, 2026-11-24, punto 2).
+    const enObs = enObstaculos.find(
+      (x) => !descartadas.includes(`obstaculo:${x.vehiculo}:${x.fase}:${x.obstaculo.nombre}`),
+    );
+    if (enObs) {
+      const clave = `obstaculo:${enObs.vehiculo}:${enObs.fase}:${enObs.obstaculo.nombre}`;
+      const pose = poseDe(e, enObs.vehiculo, enObs.fase);
+      const ajuste = pose ? ajustarACalle(callesMapa, pose.punto, 60) : null;
+      return {
+        tipo: "alerta",
+        clave,
+        texto: `Ojo: ${enObs.fase === "impacto" ? "en el choque" : "donde quedó"}, el ${nombres[enObs.vehiculo] ?? enObs.vehiculo} está sobre ${enObs.obstaculo.tipo === "edificio" ? "un edificio" : "un muro"} del mapa. Los vehículos no atraviesan casas ni muros: si la reconstrucción lo cruza, no cuadra.`,
+        acciones: [
+          ...(ajuste && pose
+            ? [
+                {
+                  texto: "Llevarlo a la calle",
+                  id: "obstaculo-a-la-calle",
+                  principal: true,
+                  hacer: () =>
+                    cambiar(
+                      {
+                        ...estado,
+                        expediente: conPosicion(e, {
+                          vehiculo: enObs.vehiculo as never,
+                          fase: enObs.fase,
+                          punto: ajuste.punto,
+                          rumbo: pose.rumbo,
+                          fuente: "perito",
+                        }),
+                      },
+                      exito(`¡Listo! Quedó sobre ${ajuste.calle.nombre ?? "la calle"}.`),
+                    ),
+                },
+              ]
+            : []),
+          { texto: "Así fue", id: "obstaculo-asi", hacer: () => descartar(clave) },
         ],
       };
     }

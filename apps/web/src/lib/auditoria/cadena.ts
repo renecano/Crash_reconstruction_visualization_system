@@ -51,6 +51,8 @@ import { RADIO_CALLES_M } from "@/lib/calles-del-mapa";
 import { callesParaGuardar, conCallesGuardadas } from "@/lib/calles-guardadas";
 import { impactosAColocar } from "@/lib/pasos-caso";
 import { paqueteDelCaso } from "@/lib/visor-unity/paquete";
+import { EN_EL_CARRIL } from "@/lib/objeto-orilla";
+import { cruzaObstaculo, saltosDe, sobreMalla, type Plano } from "@croquis/cesvi";
 
 type Json = Record<string, unknown>;
 type Punto = { lat: number; lon: number };
@@ -538,6 +540,9 @@ export async function auditarCaso(o: {
       );
   }
 
+  // --- Puntos 1 a 3 (René, 2026-11-24), sobre el paquete 3D que dibuja Unity ---
+  if (paquete) revisarGeometria(paquete, o, osm, r.origen, falla);
+
   // --- Contra lo esperado de una narración nueva ---
   if (o.esperado) {
     const esp = o.esperado;
@@ -622,3 +627,109 @@ function deEscena(origen: readonly [number, number], x: number, y: number): Punt
 }
 
 export { distanciaM, especReconstruida, type Expediente };
+
+type FallaFn = (regla: string, detalle: string, vehiculo?: string) => void;
+
+/**
+ * 1. Ningún objeto fijo de un choque sobre la calzada, salvo que la narración lo diga.
+ * 2. Ninguna trayectoria cruza un edificio de OpenStreetMap ni un muro o barda (los que dibuja el 3D).
+ * 3. Ningún vehículo se mueve de lado antes de su choque ni brinca de posición.
+ */
+function revisarGeometria(
+  paquete: Json,
+  o: { narracion: string },
+  osm: OverpassResponse | null,
+  origen: readonly [number, number] | null,
+  falla: FallaFn,
+): void {
+  const res = (paquete.resultado ?? {}) as Json;
+  const capas = (((paquete.escenario as Json | undefined)?.via as Json | undefined)?.capas ??
+    []) as { nombre: string; posiciones: number[]; indices: number[] }[];
+  const calzada = capas.find((c) => c.nombre === "calzada");
+  const objetos = (res.objetos ?? []) as { id: string; tipo?: string; x: number; y: number }[];
+  if (calzada && !EN_EL_CARRIL.test(o.narracion))
+    for (const ob of objetos)
+      if (/^obj-(?:1|choque-\d+)$/.test(ob.id) && sobreMalla(calzada, ob))
+        falla(
+          "objeto.en_carril",
+          `${ob.tipo ?? "el objeto"} del choque quedó sobre la calzada (x ${F.metros(ob.x, 1)}, y ${F.metros(ob.y, 1)})`,
+        );
+
+  // Los obstáculos: los muros y bardas del 3D y los edificios de OpenStreetMap.
+  const obstaculos: { nombre: string; puntos: Plano[]; cerrado: boolean }[] = [];
+  const entorno = ((paquete.escena as Json | undefined)?.entorno ?? {}) as Json;
+  for (const m of (entorno.objetos ?? []) as {
+    id: string;
+    tipo?: string;
+    posicion?: { x: number; y: number };
+    rumbo_deg?: number;
+    largo_m?: number;
+  }[]) {
+    if (!/^(?:muro|barda)$/.test(String(m.tipo)) || !m.posicion || !m.largo_m) continue;
+    const r = ((m.rumbo_deg ?? 0) * Math.PI) / 180;
+    const ux = Math.sin(r) * (m.largo_m / 2);
+    const uy = Math.cos(r) * (m.largo_m / 2);
+    obstaculos.push({
+      nombre: `${m.tipo} ${m.id}`,
+      puntos: [
+        { x: m.posicion.x - ux, y: m.posicion.y - uy },
+        { x: m.posicion.x + ux, y: m.posicion.y + uy },
+      ],
+      cerrado: false,
+    });
+  }
+  if (osm && origen) {
+    const nodos = new Map<number, { lat: number; lon: number }>();
+    for (const el of osm.elements)
+      if (el.type === "node") nodos.set((el as { id: number }).id, el as never);
+    for (const el of osm.elements) {
+      const w = el as { type: string; id: number; nodes?: number[]; tags?: Record<string, string> };
+      if (w.type !== "way" || !w.tags?.building || !w.nodes) continue;
+      const puntos = w.nodes.flatMap((id) => {
+        const n = nodos.get(id);
+        if (!n) return [];
+        const m = enMetros([n.lon, n.lat], [origen[0], origen[1]]);
+        return [{ x: m.este, y: m.norte }];
+      });
+      if (puntos.length >= 4)
+        obstaculos.push({ nombre: `edificio ${w.id}`, puntos, cerrado: true });
+    }
+  }
+  const vehiculos = (res.vehiculos ?? []) as {
+    id: string;
+    dimensiones?: { largo_m: number; ancho_m: number };
+    trayectoria: { t: number[]; x: number[]; y: number[]; rumbo: number[] };
+  }[];
+  const eventos = (res.eventos ?? []) as { t: number; tipo: string; vehiculos?: string[] }[];
+  for (const v of vehiculos) {
+    const tr = v.trayectoria;
+    const largo = v.dimensiones?.largo_m ?? 4.5;
+    const ancho = v.dimensiones?.ancho_m ?? 1.8;
+    let ultimo = -Infinity;
+    const cruzados = new Set<string>();
+    for (let k = 0; k < tr.t.length; k++) {
+      if (tr.t[k]! - ultimo < 0.1 && k !== tr.t.length - 1) continue;
+      ultimo = tr.t[k]!;
+      const rect = { x: tr.x[k]!, y: tr.y[k]!, largo, ancho, rumbo: tr.rumbo[k]! };
+      for (const ob of obstaculos)
+        if (!cruzados.has(ob.nombre) && cruzaObstaculo(rect, ob)) {
+          cruzados.add(ob.nombre);
+          falla(
+            ob.cerrado ? "trayectoria.cruza_edificio" : "trayectoria.cruza_muro",
+            `cruza ${ob.nombre} a los ${F.numero(tr.t[k]!, 2)} s`,
+            v.id,
+          );
+        }
+    }
+    const choques = eventos
+      .filter((x) => /^impacto/.test(x.tipo) && (!x.vehiculos || x.vehiculos.includes(v.id)))
+      .map((x) => x.t);
+    const primer = choques.length ? Math.min(...choques) : null;
+    for (const sa of saltosDe(tr, primer))
+      falla(
+        "trayectoria.salto",
+        `${sa.tipo === "brinco" ? "brinca" : "se mueve de lado"} a ${F.numero(sa.ms, 1)} m/s a los ${F.numero(sa.t, 2)} s${sa.tipo === "lateral" ? ", antes de su choque" : ""}`,
+        v.id,
+      );
+  }
+}

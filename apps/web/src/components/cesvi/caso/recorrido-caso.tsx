@@ -24,6 +24,7 @@ import {
   posesDeImpacto,
   posicionesEncimadas,
   conHipotesis,
+  conObstaculos,
   preguntaPendiente,
   reconstruccionContraCesvi,
   supuestoAlNoSaber,
@@ -61,6 +62,7 @@ import {
   versionesParaPresentar,
   type VersionCaso,
 } from "@/lib/versiones-caso";
+import { obstaculosDelMapa } from "@/lib/obstaculos-del-mapa";
 import { callesCerca, objetosCerca, RADIO_CALLES_M } from "@/lib/calles-del-mapa";
 import {
   callesParaGuardar,
@@ -340,10 +342,12 @@ export function RecorridoCaso({
   // (ADR 0091). Mientras no elija se ve la del daño medido, y se dice.
   // La elección se guarda con el caso; al reconstruir se aplica si esa hipótesis sigue existiendo.
   const [hipotesis, setHipotesis] = useState<string | null>(inicial.hipotesisElegida ?? null);
-  const r = useMemo(
-    () => (rec.r?.hipotesis && hipotesis ? conHipotesis(rec.r, hipotesis) : rec.r),
-    [rec.r, hipotesis],
-  );
+  // Los edificios y muros del mapa (René, 2026-11-24, punto 2): si un vehículo los cruza, no cuadra.
+  const obstaculos = useMemo(() => obstaculosDelMapa(objetos), [objetos]);
+  const r = useMemo(() => {
+    const conHip = rec.r?.hipotesis && hipotesis ? conHipotesis(rec.r, hipotesis) : rec.r;
+    return conHip ? conObstaculos(conHip, obstaculos) : conHip;
+  }, [rec.r, hipotesis, obstaculos]);
 
   // Un caso con reporte se lee del reporte: su narración no se edita ni va al dictamen.
   const editable = reporte === null;
@@ -1683,6 +1687,7 @@ export function RecorridoCaso({
             recalculo={frenteAEscena}
             onReconstruir={() => void rec.reconstruirDeNuevo()}
             errorReconstruccion={rec.estado}
+            obstaculos={obstaculos}
           />
         </div>
       ) : null}
