@@ -100,7 +100,11 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   const caja = (await mapaEscena.boundingBox())!;
   // El choque, con un toque (sin calles del mapa, se queda donde se tocó).
   await mapaEscena.click({ position: { x: caja.width * 0.7, y: caja.height * 0.45 } });
-  await expect(page.getByTestId("mensaje-exito")).toContainText("¡Listo! El choque quedó marcado.");
+  // El ejemplo abre en su lugar guardado (René, 2026-11-25): con las calles del mapa, el mensaje dice
+  // en cuáles quedó; sin ellas, «quedó marcado».
+  await expect(page.getByTestId("mensaje-exito")).toContainText(
+    /¡Listo! El choque quedó (marcado|en )/,
+  );
   await expect(page.getByTestId("choque-1")).toHaveCount(1);
   // Por dónde venía el VW Jetta (nunca «V1»): sin calles, cuatro flechas por puntos cardinales, con la
   // de Croquis resaltada.
