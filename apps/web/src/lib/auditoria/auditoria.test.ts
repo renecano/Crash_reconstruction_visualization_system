@@ -141,6 +141,25 @@ function casosDePrueba(): Caso[] {
   });
 }
 
+/**
+ * Los cinco ejemplos publicados (René, 2026-11-24): su narración y su lectura grabada, en el lugar que
+ * narran (como en la app, no en el punto fijo de la tabla de cifras).
+ */
+function casosDeEjemplos(): Caso[] {
+  const d = JSON.parse(
+    readFileSync(join(RAIZ, "data/cesvi/ejemplos/narraciones.json"), "utf8"),
+  ) as { ejemplos: { clave: string; grabacion?: string }[] };
+  return d.ejemplos.map((x) => {
+    const g = JSON.parse(
+      readFileSync(
+        join(RAIZ, `data/cesvi/grabaciones/${x.grabacion ?? `ejemplos/${x.clave}.json`}`),
+        "utf8",
+      ),
+    ) as { narracion: string; salida: SalidaCorpus };
+    return { id: x.clave, narracion: g.narracion, salida: g.salida };
+  });
+}
+
 function casosNuevos(): Caso[] {
   const d = JSON.parse(
     readFileSync(join(RAIZ, "data/cesvi/narraciones-auditoria/narraciones.json"), "utf8"),
@@ -158,7 +177,12 @@ describe("la revisión sistemática de la cadena", () => {
     "revisa cada caso de la narración al paquete 3D",
     async () => {
       const fuente = process.env.CROQUIS_AUDITORIA!;
-      const todos = fuente === "prueba" ? casosDePrueba() : casosNuevos();
+      const todos =
+        fuente === "prueba"
+          ? casosDePrueba()
+          : fuente === "ejemplos"
+            ? casosDeEjemplos()
+            : casosNuevos();
       const desde = Number(process.env.CROQUIS_DESDE ?? 0);
       const hasta = Number(process.env.CROQUIS_HASTA ?? todos.length);
       const solo = process.env.CROQUIS_SOLO?.split(",");
@@ -177,7 +201,20 @@ describe("la revisión sistemática de la cadena", () => {
         if (solo ? !solo.includes(c.id) : hechos.has(c.id)) continue;
         let fila: FilaAuditoria;
         try {
-          fila = await auditarCaso({ ...c, fuente, red });
+          const volcado = process.env.CROQUIS_VOLCAR;
+          fila = await auditarCaso({
+            ...c,
+            fuente,
+            red,
+            ...(volcado
+              ? {
+                  volcar: (nombre: string, dato: unknown) => {
+                    mkdirSync(volcado, { recursive: true });
+                    writeFileSync(join(volcado, `${c.id}.${nombre}.json`), JSON.stringify(dato));
+                  },
+                }
+              : {}),
+          });
         } catch (e) {
           fila = {
             id: c.id,

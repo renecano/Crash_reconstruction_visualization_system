@@ -620,28 +620,47 @@ export function overlapDepth(a: readonly Vec[], b: readonly Vec[]): number {
 /**
  * El primer contacto de dos vehículos sobre sus trayectorias: si en `params` se enciman más de
  * MAX_OVERLAP_M, los retrocede (cada uno en proporción a su velocidad) hasta que apenas se toquen.
+ * En el mismo sentido y a la misma velocidad (un alcance o un roce lateral) eso no los separa: si así
+ * no quedan a menos de MAX_OVERLAP_M, se retrocede solo a uno, el que los separa con menos recorrido
+ * (el que alcanza al otro).
  */
 export function firstContact(
   targets: readonly VehicleModel[],
   paths: readonly KinPath[],
   params: readonly number[],
 ): number[] {
-  const s = [...params];
-  const depth = () => {
+  const depth = (s: readonly number[]) => {
     const [a, b] = [0, 1].map((i) => {
       const [x, y, yaw] = poseAt(paths[i]!, s[i]!);
       return rectCorners(x, y, yaw, targets[i]!.body.length, targets[i]!.body.width);
     });
     return overlapDepth(a!, b!);
   };
-  if (depth() <= MAX_OVERLAP_M) return s;
+  const s = [...params];
+  if (depth(s) <= MAX_OVERLAP_M) return s;
   const v = [0, 1].map((i) => Math.max(0.0, targets[i]!.v0));
   const total = v[0]! + v[1]!;
-  if (total <= 0) return s;
-  for (let k = 0; k < 400 && depth() > TOUCH_M; k++) {
-    for (let i = 0; i < 2; i++) s[i] = s[i]! - (BACKOFF_STEP_M * v[i]!) / total;
+  if (total > 0) {
+    for (let k = 0; k < 400 && depth(s) > TOUCH_M; k++) {
+      for (let i = 0; i < 2; i++) s[i] = s[i]! - (BACKOFF_STEP_M * v[i]!) / total;
+    }
+    if (depth(s) <= MAX_OVERLAP_M) return s;
   }
-  return s;
+  let best: number[] | null = null;
+  let bestK = 0;
+  for (let i = 0; i < 2; i++) {
+    const t = [...params];
+    let k = 0;
+    while (k < 400 && depth(t) > TOUCH_M) {
+      t[i] = t[i]! - BACKOFF_STEP_M;
+      k++;
+    }
+    if (depth(t) <= MAX_OVERLAP_M && (best === null || k < bestK)) {
+      best = t;
+      bestK = k;
+    }
+  }
+  return best ?? s;
 }
 
 /** La pose inicial con el rumbo del movimiento: el del frente, o el contrario en reversa. */

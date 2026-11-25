@@ -125,9 +125,9 @@ export function contraLaOrilla(
   const giro = GIRO_CARA[cara] ?? 0;
   const narrada = ladoDeLaOrilla(narracion);
   // Un golpe de lado es contra la orilla de ese lado.
-  const lado: Orilla["lado"] =
+  const forzado = giro === 90 || giro === -90 || narrada !== null;
+  let lado: Orilla["lado"] =
     giro === 90 ? "derecha" : giro === -90 ? "izquierda" : (narrada?.lado ?? "derecha");
-  const s = lado === "derecha" ? 1 : -1;
   // La calle corre en el sentido de la marcha (o el contrario): se toma el que más se le parece.
   const dif = Math.abs(((sobre.rumbo - marcha + 540) % 360) - 180);
   const eje = dif <= 90 ? sobre.rumbo : normalizar(sobre.rumbo + 180);
@@ -136,12 +136,33 @@ export function contraLaOrilla(
   // de toda calzada (hasta 40 m).
   const fuera = anchoComoEl3d(sobre.calle) / 2 + FUERA_DEL_BORDE_M;
   const base: LonLat = [sobre.punto.lon, sobre.punto.lat];
-  let centro = base;
-  let objeto = avanzar(centro, normalizar(eje + 90 * s), fuera);
-  for (let atras = 2; atras <= 40; atras += 2) {
-    if (!sobreAlgunaCalzada(calles, { lon: objeto[0], lat: objeto[1] })) break;
-    centro = avanzar(base, normalizar(eje + 180), atras);
-    objeto = avanzar(centro, normalizar(eje + 90 * s), fuera);
+  // Si la orilla cae en una calzada paralela (la lateral de una avenida con camellón: «al lado derecho
+  // de la avenida», cesvi-ebb5c029a8), el objeto sigue hacia afuera, metro a metro, hasta la banqueta
+  // (hasta 20 m más). Solo después se recorre hacia atrás.
+  const enLaOrilla = (signo: number): { objeto: LonLat; libre: boolean; movido: number } => {
+    const primero = avanzar(base, normalizar(eje + 90 * signo), fuera);
+    for (let atras = 0; atras <= 40; atras += 2) {
+      const centro = atras ? avanzar(base, normalizar(eje + 180), atras) : base;
+      for (let mas = 0; mas <= 20; mas += 1) {
+        const objeto = avanzar(centro, normalizar(eje + 90 * signo), fuera + mas);
+        if (!sobreAlgunaCalzada(calles, { lon: objeto[0], lat: objeto[1] }))
+          return { objeto, libre: true, movido: atras + mas };
+      }
+    }
+    return { objeto: primero, libre: false, movido: Infinity };
+  };
+  let s = lado === "derecha" ? 1 : -1;
+  const primera = enLaOrilla(s);
+  let objeto = primera.objeto;
+  // Si nadie dijo el lado y esa orilla es el arroyo de otra calle (una lateral junto a la avenida,
+  // revisión de la cadena aud-05), el objeto va en la orilla libre más cercana.
+  if (primera.movido > 0 && !forzado) {
+    const otra = enLaOrilla(-s);
+    if (otra.libre && otra.movido < primera.movido) {
+      s = -s;
+      lado = lado === "derecha" ? "izquierda" : "derecha";
+      objeto = otra.objeto;
+    }
   }
   // De frente o de reversa: inclinado hacia la orilla. De lado: paralelo a la calle.
   const lateral = giro === 90 || giro === -90;

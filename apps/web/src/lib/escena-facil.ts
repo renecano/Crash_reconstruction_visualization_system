@@ -308,6 +308,11 @@ export interface Calle {
   /** Su tipo de OpenStreetMap (`highway`) y su límite (`maxspeed`), si lo trae (ronda 4). */
   tipo?: string;
   maxspeed?: string;
+  /**
+   * De un solo sentido (`oneway` de OSM, o una glorieta): 1 en el orden de sus nodos, -1 al revés.
+   * Sin el campo, de doble sentido.
+   */
+  unSentido?: 1 | -1;
 }
 
 /** Las calles de una respuesta de Overpass: las que se dibujan (sin andadores ni ciclovías). */
@@ -341,6 +346,12 @@ export function callesDe(resp: OverpassResponse | null): Calle[] {
       nodos: w.nodes.filter((id) => nodos.has(id)),
       tipo,
       ...(w.tags?.maxspeed ? { maxspeed: w.tags.maxspeed } : {}),
+      ...(w.tags?.oneway === "-1"
+        ? { unSentido: -1 as const }
+        : /^(?:yes|true|1)$/.test(w.tags?.oneway ?? "") ||
+            (w.tags?.junction === "roundabout" && w.tags?.oneway !== "no")
+          ? { unSentido: 1 as const }
+          : {}),
     });
   }
   return out;
@@ -434,8 +445,11 @@ export function crucesDe(calles: readonly Calle[]): Cruce[] {
   for (const e of porNodo.values()) {
     if (e.calles.size < 2) continue;
     const nombres = [...new Set([...e.calles].map((c) => c.nombre ?? "").filter(Boolean))];
-    // Dos tramos de la misma calle no son un cruce.
-    const distintas = new Set([...e.calles].map((c) => c.nombre ?? `#${c.id}`)).size;
+    // Dos tramos de la misma calle no son un cruce, ni una avenida con su lateral o su enlace sin
+    // nombre (`*_link`): la camioneta de aud-05 iba por Solidaridad Las Torres y La escena la ponía
+    // en el enlace, porque su unión con la avenida parecía un cruce (revisión de la cadena).
+    const vias = [...e.calles].filter((c) => c.nombre || !/_link$/.test(c.tipo ?? ""));
+    const distintas = new Set(vias.map((c) => c.nombre ?? `#${c.id}`)).size;
     if (distintas < 2) continue;
     out.push({ punto: punto(e.punto), calles: nombres });
   }
@@ -1675,4 +1689,43 @@ export function sentidoEnElCaso(
     return { rumbo, desde: cardinal(rumbo + 180), cita: citaDe(o, m[0]) };
   }
   return null;
+}
+
+const difRumbo = (a: number, b: number) => Math.abs(((a - b + 540) % 360) - 180);
+
+/** Si se puede circular por la calle con ese rumbo en ese tramo (±45°, respetando su sentido único). */
+function admiteRumbo(c: Calle, rumboTramo: number, rumbo: number): boolean {
+  if (c.unSentido === 1) return difRumbo(rumboTramo, rumbo) <= 45;
+  if (c.unSentido === -1) return difRumbo(rumboTramo + 180, rumbo) <= 45;
+  return difRumbo(rumboTramo, rumbo) <= 45 || difRumbo(rumboTramo + 180, rumbo) <= 45;
+}
+
+/**
+ * La calzada en el sentido del vehículo (revisión de la cadena, cesvi-ebb5c029a8): en una avenida con
+ * carriles centrales y laterales de un solo sentido, La escena ponía al que iba de norte a sur en la
+ * lateral que va de sur a norte, y «su derecha» quedaba hacia los carriles centrales. Si ninguna calle a
+ * 3 m del choque admite ese rumbo, el choque pasa a la calzada más cercana (a menos de 40 m) que sí lo
+ * admite. null si no hace falta moverlo o si no hay otra.
+ */
+export function calzadaEnSuSentido(
+  calles: readonly Calle[],
+  p: Punto,
+  rumbo: number,
+): { punto: Punto; calle: Calle } | null {
+  const aqui = calles.map((c) => ({ c, s: sobreCalle(c, p) })).filter((x) => x.s.distancia <= 3);
+  if (!aqui.length || aqui.some((x) => admiteRumbo(x.c, x.s.rumbo, rumbo))) return null;
+  // Solo si la calle de aquí es de un solo sentido y va al revés.
+  if (
+    !aqui.some(
+      (x) => x.c.unSentido && difRumbo(x.s.rumbo + (x.c.unSentido === -1 ? 180 : 0), rumbo) > 135,
+    )
+  )
+    return null;
+  let mejor: { punto: Punto; calle: Calle; d: number } | null = null;
+  for (const c of calles) {
+    const s = sobreCalle(c, p);
+    if (s.distancia > 40 || !admiteRumbo(c, s.rumbo, rumbo)) continue;
+    if (!mejor || s.distancia < mejor.d) mejor = { punto: s.punto, calle: c, d: s.distancia };
+  }
+  return mejor ? { punto: mejor.punto, calle: mejor.calle } : null;
 }

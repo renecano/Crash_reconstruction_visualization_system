@@ -354,6 +354,15 @@ function bisectRightNum(a: readonly number[], x: number): number {
 export class PolylineLanePath implements Path {
   /** m: la tangente se toma con este medio tramo, para que las esquinas del eje no la quiebren. */
   static readonly TANGENT_HALF_M = 2.0;
+  /**
+   * Por dentro de una esquina, una paralela más separada que el radio de la esquina suavizada
+   * retrocede y hace un rizo: un vehículo a 12 m del eje, por dentro de una vuelta de 29°, giraba
+   * sobre sí mismo (revisión de la cadena, cesvi-af2196f0fc). Si la paralela hace un rizo, la esquina
+   * se suaviza con un medio tramo de 1.5 veces la separación (y se duplica si aún lo hace); donde no
+   * hay rizo no cambia nada.
+   */
+  static readonly LOOP_HALF_FACTOR = 1.5;
+  private h: number = PolylineLanePath.TANGENT_HALF_M;
   private readonly acc: number[];
   private readonly sign: number;
   private readonly s0: number;
@@ -427,7 +436,7 @@ export class PolylineLanePath implements Path {
   }
 
   private tangent(s: number): [number, number] {
-    const h = PolylineLanePath.TANGENT_HALF_M;
+    const h = this.h;
     const p0 = this.axis(s - h);
     const p1 = this.axis(s + h);
     const dx = p1[0] - p0[0];
@@ -451,17 +460,39 @@ export class PolylineLanePath implements Path {
     return [ax + nx * d, ay + ny * d];
   }
 
+  /** La abscisa por longitud recorrida, y si la paralela hace un rizo (da media vuelta). */
+  private buildTable(): [number[], number[], boolean] {
+    const uMax = 1.2 * this.length + Math.abs(this.lateral);
+    const us: number[] = [];
+    for (let i = 0; i <= this.samples; i++) us.push((uMax * i) / this.samples);
+    const ss = [0.0];
+    let prev = this.point(0.0);
+    let step: [number, number] = [0.0, 0.0];
+    let loops = false;
+    for (const u of us.slice(1)) {
+      const p = this.point(u);
+      const nuevo: [number, number] = [p[0] - prev[0], p[1] - prev[1]];
+      if (nuevo[0] * step[0] + nuevo[1] * step[1] < 0.0) loops = true;
+      ss.push(ss[ss.length - 1]! + dmath.hypot(nuevo[0], nuevo[1]));
+      step = nuevo;
+      prev = p;
+    }
+    return [us, ss, loops];
+  }
+
   private getTable(): [number[], number[]] {
     if (this.table === null) {
-      const uMax = 1.2 * this.length + Math.abs(this.lateral);
-      const us: number[] = [];
-      for (let i = 0; i <= this.samples; i++) us.push((uMax * i) / this.samples);
-      const ss = [0.0];
-      let prev = this.point(0.0);
-      for (const u of us.slice(1)) {
-        const p = this.point(u);
-        ss.push(ss[ss.length - 1]! + dmath.hypot(p[0] - prev[0], p[1] - prev[1]));
-        prev = p;
+      let [us, ss, loops] = this.buildTable();
+      if (loops) {
+        this.h = Math.max(
+          PolylineLanePath.TANGENT_HALF_M,
+          PolylineLanePath.LOOP_HALF_FACTOR * (Math.abs(this.d0) + Math.abs(this.lateral)),
+        );
+        [us, ss, loops] = this.buildTable();
+        for (let k = 0; loops && k < 3; k++) {
+          this.h = 2.0 * this.h;
+          [us, ss, loops] = this.buildTable();
+        }
       }
       this.table = [us, ss];
     }

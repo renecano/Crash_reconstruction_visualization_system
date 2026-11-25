@@ -31,6 +31,17 @@ describe("el primer contacto", () => {
     expect(20 - s[0]!).toBeCloseTo(20 - s[1]!, 6);
   });
 
+  it("en el mismo sentido y a la misma velocidad, retrocede solo al que alcanza (el alcance lateral)", () => {
+    // A detrás de B, los dos al este a 10 m/s: el frente de A 0.8 m dentro de la cola de B.
+    const a = new StraightPath([-20, 0], 0, 40);
+    const b = new StraightPath([-16.4, 0], 0, 40);
+    const s = firstContact([cuerpo(4.4, 1.8, 10), cuerpo(4.4, 1.8, 10)], [a, b], [20, 20]);
+    expect(s[1]).toBe(20);
+    expect(s[0]).toBeLessThan(19.3);
+    const [ra, rb] = [rect(-20 + s[0]!, 0, 4.4, 1.8), rect(-16.4 + s[1]!, 0, 4.4, 1.8)];
+    expect(overlapDepth(ra, rb)).toBeLessThanOrEqual(0.02);
+  });
+
   it("si apenas se tocan, no cambia nada", () => {
     const a = new StraightPath([-20, 0], 0, 40);
     const b = new StraightPath([4.4, 0], 0, 40);

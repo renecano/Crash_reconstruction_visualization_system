@@ -103,6 +103,38 @@ describe("el objeto fijo del choque va en la orilla, no en el carril", () => {
     expect(Math.abs(o.y - ejeMorelos)).toBeGreaterThan(5);
   });
 
+  it("en una lateral junto a la avenida, sin lado narrado, el objeto va en la orilla libre (aud-05)", () => {
+    // Una avenida de 10 m paralela, con su eje 9 m al oeste: la orilla derecha de la lateral es su arroyo.
+    const oeste = (m: number) => avanzar([P.lon, P.lat], 270, m)[0];
+    const avenida: Calle = {
+      id: 3,
+      nombre: "Av. Solidaridad Las Torres",
+      puntos: [
+        [oeste(9), P.lat + 0.001],
+        [oeste(9), P.lat - 0.001],
+      ],
+      ancho: 10,
+      anchoOsm: 10,
+      nodos: [5, 6],
+    };
+    const r = contraLaOrilla(conChoque, [calle, avenida], null)!;
+    expect(r.lado).toBe("izquierda");
+    const pose = poseDe(r.expediente, "V1", "impacto")!;
+    const o = objetoDe(r.expediente)!;
+    const ejeX = enMetros([P.lon, P.lat], [pose.punto.lon, pose.punto.lat]).este;
+    expect(o.x - ejeX).toBeGreaterThan(3.5);
+    // Si la narración dice la derecha, se respeta: el objeto sigue hasta la banqueta, más allá de la
+    // avenida (cesvi-ebb5c029a8: «al lado derecho de la avenida», con laterales).
+    const der = contraLaOrilla(
+      conChoque,
+      [calle, avenida],
+      "Se fue hacia la derecha, contra un árbol.",
+    )!;
+    expect(der.lado).toBe("derecha");
+    const pd = poseDe(der.expediente, "V1", "impacto")!;
+    expect(enMetros([pd.punto.lon, pd.punto.lat], [P.lon, P.lat]).este).toBeLessThan(-12);
+  });
+
   it("un bache o un registro sí están en el arroyo: no se mueven", () => {
     const conBache = {
       ...conChoque,

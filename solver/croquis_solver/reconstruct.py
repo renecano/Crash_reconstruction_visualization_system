@@ -766,10 +766,14 @@ def overlap_depth(a: list[tuple[float, float]], b: list[tuple[float, float]]) ->
 def first_contact(
     targets: list[VehicleModel], paths: list[KinPath], params: list[float]
 ) -> list[float]:
-    """El primer contacto: si se enciman más de MAX_OVERLAP_M, los retrocede hasta tocarse."""
-    s = list(params)
+    """El primer contacto: si se enciman más de MAX_OVERLAP_M, los retrocede hasta tocarse.
 
-    def depth() -> float:
+    En el mismo sentido y a la misma velocidad (un alcance o un roce lateral), retroceder a los dos
+    en proporción a su velocidad no los separa: si así no quedan a menos de MAX_OVERLAP_M, se
+    retrocede solo a uno, el que los separa con menos recorrido (el que alcanza al otro).
+    """
+
+    def depth(s: list[float]) -> float:
         rects: list[list[tuple[float, float]]] = []
         for i in range(2):
             x, y, yaw, _ = _pose_at(paths[i], s[i])
@@ -777,18 +781,31 @@ def first_contact(
             rects.append(_rect_corners(x, y, yaw, body.length, body.width))
         return overlap_depth(rects[0], rects[1])
 
-    if depth() <= MAX_OVERLAP_M:
+    s = list(params)
+    if depth(s) <= MAX_OVERLAP_M:
         return s
     v = [max(0.0, targets[i].v0) for i in range(2)]
     total = v[0] + v[1]
-    if total <= 0:
-        return s
-    k = 0
-    while k < 400 and depth() > _TOUCH_M:
-        for i in range(2):
-            s[i] = s[i] - (_BACKOFF_STEP_M * v[i]) / total
-        k += 1
-    return s
+    if total > 0:
+        k = 0
+        while k < 400 and depth(s) > _TOUCH_M:
+            for i in range(2):
+                s[i] = s[i] - (_BACKOFF_STEP_M * v[i]) / total
+            k += 1
+        if depth(s) <= MAX_OVERLAP_M:
+            return s
+    best: list[float] | None = None
+    best_k = 0
+    for i in range(2):
+        t = list(params)
+        k = 0
+        while k < 400 and depth(t) > _TOUCH_M:
+            t[i] = t[i] - _BACKOFF_STEP_M
+            k += 1
+        if depth(t) <= MAX_OVERLAP_M and (best is None or k < best_k):
+            best = t
+            best_k = k
+    return best if best is not None else s
 
 
 def _pose_at(path: KinPath, s: float) -> tuple[float, float, float, float]:

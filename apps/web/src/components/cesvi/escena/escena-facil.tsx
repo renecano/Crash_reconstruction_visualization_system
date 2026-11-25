@@ -103,6 +103,7 @@ import {
 } from "@/lib/escena-facil";
 import { siluetaClase } from "@/lib/colocar";
 import { interpretarLugar } from "@/lib/lugar-texto";
+import { callesDelCaso, lugarClaro } from "@/lib/lugar-claro";
 import { etiquetaOpcion, type OpcionLugar, zonaDeOpcion } from "@/lib/lugar-opcion";
 import {
   agregarChoqueIntermedio,
@@ -520,6 +521,13 @@ export function EscenaFacil({
   const [buscandoNarrado, setBuscandoNarrado] = useState(false);
   // Ronda 4 (René): si el lugar narrado no aparece, se pregunta (nunca el centro del municipio).
   const [narradoSinLugar, setNarradoSinLugar] = useState<string | null>(null);
+  // El lugar que encontró el buscador, con sus opciones y su aviso: si no coincide claramente con la
+  // narración, no se propone el choque ahí (René, 2026-11-25).
+  const [busquedaNarrada, setBusquedaNarrada] = useState<{
+    nombre: string;
+    resultados: OpcionLugar[];
+    aviso: string | null;
+  } | null>(null);
   const yaBuscado = useRef(false);
   // Vivo mientras la escena está montada (en desarrollo React monta los efectos dos veces: la búsqueda
   // de la primera vuelta debe poder terminar).
@@ -578,6 +586,11 @@ export function EscenaFacil({
           }
           if (p && montada.current) {
             setLugarNarrado({ lat: p.lat, lon: p.lon });
+            setBusquedaNarrada({
+              nombre: p.nombre,
+              resultados: d?.resultados ?? [],
+              aviso: d?.aviso ?? null,
+            });
             onBuscarCalles({ lat: p.lat, lon: p.lon });
             hallado = true;
             break;
@@ -599,6 +612,22 @@ export function EscenaFacil({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- una vez, al abrir la escena
   }, []);
   const lugarBase = lugar ?? lugarNarrado;
+  // ¿El lugar encontrado es el de la narración? Con las calles de alrededor (o con el aviso del
+  // buscador, si dice que es de otro municipio). Si no es claro, el motivo.
+  const dudaLugar = useMemo(() => {
+    if (!busquedaNarrada || lugar || estado.puntos[1]) return null;
+    if (!callesMapa.length && !/No apareci[oó] en/i.test(busquedaNarrada.aviso ?? "")) return null;
+    const c = lugarClaro({
+      narradas: callesDelCaso(narracion, descripcionLugar),
+      calles: callesMapa,
+      aviso: busquedaNarrada.aviso,
+      encontrado: busquedaNarrada.nombre,
+    });
+    return c.clara ? null : c.motivo;
+  }, [busquedaNarrada, lugar, estado.puntos, callesMapa, narracion, descripcionLugar]);
+  // Con la duda, las opciones del buscador quedan a la vista para elegir (si el perito no buscó otra).
+  const opcionesLugar =
+    resultados.length || !dudaLugar || !busquedaNarrada ? resultados : busquedaNarrada.resultados;
   // Ronda 4 (René): «rumbo a Ciudad de México» es el sentido de llegada, no parte del lugar. El
   // destino se busca aparte; su rumbo desde el lugar del choque dice en qué sentido de la vía venía.
   const sentidoDelLugar = useMemo(() => {
@@ -631,7 +660,9 @@ export function EscenaFacil({
       escenaPropuesta ||
       ((estado.puntos[1] || (impactos[0]?.vehiculos ?? []).some((v) => poseDe(e, v, "impacto"))) &&
         sp.get("desde") !== "cero") ||
-      (!lugarBase && !centroMapa)
+      (!lugarBase && !centroMapa) ||
+      // El lugar encontrado no coincide claramente con la narración: primero, «¿Dónde fue?».
+      dudaLugar
     )
       return undefined;
     // Con las calles (de las teselas o de Overpass) en cuanto lleguen; sin ellas, a los 10 s.
@@ -665,7 +696,7 @@ export function EscenaFacil({
     );
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- se arma una vez, al tener calles
-  }, [nuevo, escenaPropuesta, callesMapa, lugarBase, centroMapa]);
+  }, [nuevo, escenaPropuesta, callesMapa, lugarBase, centroMapa, dudaLugar]);
 
   // Lo que Croquis propone para el primer choque.
   const propuesta = useMemo(
@@ -1925,6 +1956,13 @@ export function EscenaFacil({
             Buscando en el mapa el lugar que dice la narración…
           </p>
         ) : null}
+        {dudaLugar && busquedaNarrada && !buscandoNarrado ? (
+          <p className="t-nota text-texto" role="status" data-testid="lugar-dudoso">
+            Croquis encontró «{busquedaNarrada.nombre}», pero {dudaLugar}. ¿Dónde fue? Elige una de
+            las opciones de abajo, escribe las calles del cruce, pega las coordenadas o toca el
+            lugar en el mapa.
+          </p>
+        ) : null}
         {narradoSinLugar && !buscandoNarrado && !conPropuesta && !estado.puntos[1] ? (
           <p className="t-nota text-texto" role="status" data-testid="narrado-sin-lugar">
             {narradoSinLugar}
@@ -2011,9 +2049,9 @@ export function EscenaFacil({
                 {estadoBusqueda}
               </span>
             ) : null}
-            {resultados.length ? (
+            {opcionesLugar.length ? (
               <ul className="flex max-h-40 flex-col gap-1 overflow-y-auto">
-                {resultados.map((r) => (
+                {opcionesLugar.map((r) => (
                   <li key={`${r.lat},${r.lon}`}>
                     <button
                       type="button"
@@ -2023,6 +2061,11 @@ export function EscenaFacil({
                       onClick={() => {
                         mapa.current?.easeTo({ center: [r.lon, r.lat], zoom: 18.5 });
                         onBuscarCalles({ lat: r.lat, lon: r.lon });
+                        // El perito eligió el lugar: ya no hay duda y Croquis propone ahí.
+                        if (busquedaNarrada) {
+                          setBusquedaNarrada(null);
+                          setLugarNarrado({ lat: r.lat, lon: r.lon });
+                        }
                         setResultados([]);
                         setEstadoBusqueda(null);
                       }}

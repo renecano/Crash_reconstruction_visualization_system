@@ -29,6 +29,7 @@ import {
 } from "@croquis/cesvi";
 import {
   ajustarACalle,
+  calzadaEnSuSentido,
   cardinal,
   elegirDireccion,
   flechaPropuesta,
@@ -43,6 +44,9 @@ import {
   type ImpactoAColocar,
   type Punto,
 } from "./escena-facil";
+
+/** La narración dice que iba en sentido contrario: no se le busca la calzada de su sentido. */
+const CONTRASENTIDO = /sentido\s+contrario|contrasentido|contraflujo|en\s+reversa|de\s+reversa/i;
 
 /** Un elemento de la escena propuesta, con por qué Croquis lo puso ahí. */
 export interface ElementoPropuesto {
@@ -92,7 +96,7 @@ export function proponerEscena(o: {
   const cruce = proponerChoque(calles, narracion, o.lugar);
   // Sin cruce cerca, sobre la calle más cercana al lugar (no en medio de una manzana).
   const sobre = !cruce && o.lugar ? ajustarACalle(calles, o.lugar, 150) : null;
-  const choque = cruce?.punto ?? sobre?.punto ?? o.lugar;
+  let choque = cruce?.punto ?? sobre?.punto ?? o.lugar;
   if (!choque || !impactos.length) return null;
   const propuestos: ElementoPropuesto[] = [];
   const faltan: ElementoPropuesto[] = [];
@@ -128,6 +132,22 @@ export function proponerEscena(o: {
       : null);
   // El primero del choque fija el giro de todo el choque: el de la narración o el de la calle.
   const primero = impactos[0]!.vehiculos[0]!;
+  // En su sentido: si la calle del choque es de un solo sentido y va al revés de lo narrado, el
+  // choque pasa a la calzada que sí va así (salvo que la narración diga que iba en sentido contrario).
+  const rumboPrimero = sentido(primero)?.rumbo;
+  const enSuSentido =
+    rumboPrimero !== undefined && !(narracion && CONTRASENTIDO.test(narracion))
+      ? calzadaEnSuSentido(calles, choque, rumboPrimero)
+      : null;
+  if (enSuSentido) {
+    choque = enSuSentido.punto;
+    puntos[1] = choque;
+    propuestos.push({
+      clave: "choque-sentido",
+      texto: `El choque, en la calzada de ${enSuSentido.calle.nombre ?? "la calle"} que va hacia el ${cardinal(rumboPrimero!)}`,
+      porque: `la calle del lugar buscado es de un solo sentido y va al revés de lo que dice la narración`,
+    });
+  }
   let e = marcarChoque(
     o.expediente,
     impactos,

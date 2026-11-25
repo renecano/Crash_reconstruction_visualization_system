@@ -52,6 +52,7 @@ import { callesParaGuardar, conCallesGuardadas } from "@/lib/calles-guardadas";
 import { impactosAColocar } from "@/lib/pasos-caso";
 import { paqueteDelCaso } from "@/lib/visor-unity/paquete";
 import { EN_EL_CARRIL, esObjetoDeOrilla } from "@/lib/objeto-orilla";
+import { callesDelCaso, esLaCalleNarrada, lugarClaro } from "@/lib/lugar-claro";
 import { crucesDeTrayectorias, saltosDe, sobreMalla, type Plano } from "@croquis/cesvi";
 
 type Json = Record<string, unknown>;
@@ -180,6 +181,8 @@ export async function auditarCaso(o: {
   salida: SalidaCorpus;
   red: Red;
   esperado?: Esperado;
+  /** Para depurar un caso: recibe el expediente final y el paquete 3D. */
+  volcar?: (nombre: "expediente" | "paquete", dato: unknown) => void;
 }): Promise<FilaAuditoria> {
   const fallas: Falla[] = [];
   const datos: Json = {};
@@ -261,10 +264,32 @@ export async function auditarCaso(o: {
   const calles = callesDe(osm);
   datos.calles = calles.length;
   if (!calles.length) falla("lugar.sin_calles", "OpenStreetMap no dio calles en 150 m");
+  // Como La escena (René, 2026-11-25): si el lugar encontrado no coincide claramente con la narración,
+  // no propone el choque ahí: pregunta «¿Dónde fue?» con las opciones.
+  const claridad = lugarClaro({
+    narradas: callesDelCaso(o.narracion, lugarTexto),
+    calles,
+    aviso: (datos.lugar_aviso as string | null | undefined) ?? null,
+    encontrado: lugar.nombre,
+  });
+  if (!claridad.clara) {
+    falla(
+      "pregunta.lugar_dudoso",
+      `se encontró «${lugar.nombre}», pero ${claridad.motivo}: La escena pregunta «¿Dónde fue?» con las opciones`,
+    );
+    return { id: o.id, fuente: o.fuente, fallas, datos };
+  }
   // Las calles que nombra la narración, contra las del lugar.
   const narradas = [...(cruce?.calles ?? []), ...(o.esperado?.calles ?? [])];
-  const nombresCerca = [...new Set(calles.map((c) => c.nombre).filter((x): x is string => !!x))];
-  const faltan = narradas.filter((n) => !nombresCerca.some((c) => mismaCalle(n, c)));
+  const nombresCerca = [
+    ...new Set(
+      [
+        ...calles.map((c) => c.nombre),
+        ...(lugar.nombre.split(",")[0]?.split(/\s+y\s+/) ?? []),
+      ].filter((x): x is string => !!x),
+    ),
+  ];
+  const faltan = narradas.filter((n) => !nombresCerca.some((c) => esLaCalleNarrada(n, c)));
   if (narradas.length && faltan.length === narradas.length)
     falla(
       "lugar.no_es_el_narrado",
@@ -425,6 +450,7 @@ export async function auditarCaso(o: {
     falla("solver.error", (x as Error).message.slice(0, 300));
     return { id: o.id, fuente: o.fuente, fallas, datos };
   }
+  o.volcar?.("expediente", e);
   datos.velocidades = r.velocidades.map((v) => ({
     vehiculo: v.vehiculo,
     mejor: v.previa ? Math.round(v.previa.mejor) : null,
@@ -462,7 +488,9 @@ export async function auditarCaso(o: {
   // Lo narrado contra la cifra: la velocidad narrada.
   for (const v of r.velocidades) {
     const ve = e.vehiculos.find((x) => x.id === v.vehiculo)?.velocidad_narrada;
-    if (!ve || !v.previa) continue;
+    // Solo lo que dice la narración: la típica de la vía (sin velocidad narrada) es un supuesto que
+    // solo pesa si la evidencia no fija la cifra, y la app no la contrapone.
+    if (!ve || ve.origen !== "narración" || !v.previa) continue;
     const [lo, hi] = ve.rango_kmh;
     const fuera = v.previa.mejor < lo * 0.7 || v.previa.mejor > hi * 1.3;
     const dicho = r.limites.some(
@@ -483,6 +511,7 @@ export async function auditarCaso(o: {
     const escena = especDel3d({ ...r, relieve: malla as never }, osm, objetos) as unknown as Json;
     const parcial = reconstructionToDict(reconstruct(withRelief(escena, malla as never) as never));
     paquete = paqueteDelCaso(escena as never, parcial as never, malla as never) as unknown as Json;
+    o.volcar?.("paquete", paquete);
   } catch (x) {
     falla("paquete.error", (x as Error).message.slice(0, 300));
   }
