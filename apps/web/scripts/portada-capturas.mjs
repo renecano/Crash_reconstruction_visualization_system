@@ -8,8 +8,9 @@
  * - `<capturas>`: `claro/` y `oscuro/` de «alcance-deformacion»;
  * - `<portada-4k>`: `croquis-promo-v3/sin-logo/01-portada.jpg` (3840×2160, render del tráiler con el
  *   3D de Croquis; René, 2026-11-25), la foto del inicio;
- * - `<cuadro-trailer>`: el cuadro de 15.5 s de `croquis-trailer-3840x2160.mp4` (sin texto), el
- *   póster del tráiler: `ffmpeg -ss 15.5 -i croquis-trailer-3840x2160.mp4 -frames:v 1 cuadro.png`.
+ * - `<cuadro-trailer>`: el cuadro de 16.9 s de `croquis-trailer-3840x2160.mp4` (el choque en 3D), el
+ *   póster del tráiler: `ffmpeg -ss 16.9 -i croquis-trailer-3840x2160.mp4 -frames:v 1 cuadro.png`;
+ *   se recorta en 16:9 sin la leyenda de abajo (la página la escribe debajo del video).
  *
  * Los recortes dejan fuera toda cifra de la reconstrucción (velocidades, rangos, energía y Δv).
  */
@@ -113,13 +114,12 @@ medidas.inicio = { w: 2560, h: Math.round((2560 * ALTO_SIN_LEYENDA) / 3840), anc
 // El póster del tráiler: se pide solo al acercarse (loading="lazy").
 await guardar(
   "trailer-poster",
-  sharp(cuadroTrailer),
+  sharp(
+    await sharp(cuadroTrailer).extract({ left: 116, top: 0, width: 3608, height: 2030 }).toBuffer(),
+  ),
   [960, 1280, 1920],
-  26,
-  {
-    effort: 9,
-    chromaSubsampling: "4:2:0",
-  },
+  30,
+  { effort: 9, chromaSubsampling: "4:2:0" },
   66,
 );
 writeFileSync(
