@@ -1015,9 +1015,9 @@
     },
     "t9": {
       "titulo": "Tanda 9 · Final: los tres casos, la revisión de la cadena y lo publicado, en el navegador",
-      "nota": "René, 2026-11-24: una sola tanda final, fijada al commit con todo (83a794f2, #311, rama fix/w-tres-narraciones). En la demo local con el build de Unity publicado (945617e035988035, del release de GitHub, sin Blob), Chrome con la tarjeta de alto rendimiento. Primero el humo (si falla, se detiene). Después: los cinco ejemplos y AXA (cifra asentada); el crucero en la app; Tollocan; las seis narraciones con el caso encimado; los tres casos nuevos (árbol en curva, camión con peatón, carambola) y una muestra de 10 narraciones de la revisión de la cadena, cada uno con captura del 3D; el arranque del 3D tres veces; las dos tomas de la portada (8 s en bucle: el árbol de noche y la carambola con lluvia); las carambolas (prueba y desarrollo) y la cobertura antes (main, 13777374, en un worktree) y después; y eval/t9_comparar.mjs contra el índice de cifras y la tabla aprobada. Lo que difiera va a René con su antes y después. Nada de AXA se sube.",
+      "nota": "René, 2026-11-24: una sola tanda final, fijada al commit con todo (2dfd57dc, #311, rama fix/w-tres-narraciones). En la demo local con el build de Unity publicado (945617e035988035, del release de GitHub, sin Blob), Chrome con la tarjeta de alto rendimiento. Primero el humo (si falla, se detiene). Después: los cinco ejemplos y AXA (cifra asentada); el crucero en la app; Tollocan; las seis narraciones con el caso encimado; los tres casos nuevos (árbol en curva, camión con peatón, carambola) y una muestra de 10 narraciones de la revisión de la cadena, cada uno con captura del 3D; el arranque del 3D tres veces; las dos tomas de la portada (8 s en bucle: el árbol de noche y la carambola con lluvia); las carambolas (prueba y desarrollo) y la cobertura antes (main, 13777374, en un worktree) y después; y eval/t9_comparar.mjs contra el índice de cifras y la tabla aprobada. Lo que difiera va a René con su antes y después. Nada de AXA se sube.",
       "rama": "fix/w-tres-narraciones",
-      "commit": "83a794f231ff1233bfcb44e8b381759bfe211e8a",
+      "commit": "2dfd57dc809d345c71ad56ac07a9e66cfe98485d",
       "pasos": [
         {
           "nombre": "visor",
