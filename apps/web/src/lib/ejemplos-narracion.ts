@@ -15,6 +15,11 @@ import carambola from "../../../../data/cesvi/grabaciones/ejemplos/carambola-llu
 import poste from "../../../../data/cesvi/grabaciones/ejemplos/poste-terraceria.json";
 import reversa from "../../../../data/cesvi/grabaciones/ejemplos/reversa-pendiente.json";
 import crucero from "../../../../data/cesvi/grabaciones/ejemplos/crucero-noche.json";
+import callesAlcance from "../../../../data/cesvi/ejemplos/calles/alcance-deformacion.json";
+import callesCarambola from "../../../../data/cesvi/ejemplos/calles/carambola-lluvia.json";
+import callesCrucero from "../../../../data/cesvi/ejemplos/calles/crucero-noche.json";
+import callesPoste from "../../../../data/cesvi/ejemplos/calles/poste-terraceria.json";
+import callesReversa from "../../../../data/cesvi/ejemplos/calles/reversa-pendiente.json";
 
 export interface EjemploNarracion {
   clave: string;
@@ -31,6 +36,19 @@ export interface EjemploNarracion {
    */
   lugar: { lat: number; lon: number; nombre: string };
 }
+
+/**
+ * Las calles de cada lugar, guardadas con el ejemplo (René, 2026-11-25: «en la demo con CESVI no
+ * puede salir otra cifra porque OpenStreetMap tardó»). © colaboradores de OpenStreetMap (ODbL);
+ * `ejemplos-calles.test.ts` las genera.
+ */
+const CALLES: Record<string, unknown> = {
+  "crucero-noche": callesCrucero,
+  "alcance-deformacion": callesAlcance,
+  "carambola-lluvia": callesCarambola,
+  "reversa-pendiente": callesReversa,
+  "poste-terraceria": callesPoste,
+};
 
 const GRABADAS: Record<string, { narracion: string; salida: unknown }> = {
   "crucero-noche": crucero,
@@ -79,7 +97,12 @@ export function conLugarDelEjemplo<T extends { caso: { lugar?: object | undefine
     ...e,
     caso: {
       ...e.caso,
-      lugar: { ...e.caso.lugar, coordenadas: { lat: ej.lugar.lat, lon: ej.lugar.lon } },
+      lugar: {
+        ...e.caso.lugar,
+        coordenadas: { lat: ej.lugar.lat, lon: ej.lugar.lon },
+        // Sus calles guardadas: La escena y la reconstrucción no dependen de que responda la red.
+        ...(CALLES[ej.clave] ? { calles_del_mapa: CALLES[ej.clave] } : {}),
+      },
     },
   };
 }
