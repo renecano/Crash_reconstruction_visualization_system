@@ -1014,10 +1014,10 @@
       ]
     },
     "t9": {
-      "titulo": "Tanda 9 · Los tres casos de René y la verificación final en el navegador",
-      "nota": "René, 2026-11-24: una sola tanda final, fijada al commit con todo (#311, rama fix/w-tres-narraciones). En la demo local con el build de Unity publicado (945617e035988035, del release de GitHub, sin Blob) y en Chrome con la tarjeta de alto rendimiento. Primero el humo (si falla, se detiene). Después: los cinco ejemplos y AXA en el navegador (la cifra ya asentada, sin la cuenta a medias); el crucero como lo ve el perito en la app; Tollocan; las seis narraciones y el caso encimado; los tres casos nuevos (árbol en curva, camión con peatón y carambola), cada uno con su captura del 3D; el arranque del 3D tres veces; y eval/t9_comparar.mjs contra el índice de cifras y la tabla aprobada (lo que difiera va a René con su antes y después). Nada de AXA se sube.",
+      "titulo": "Tanda 9 · Final: los tres casos, la revisión de la cadena y lo publicado, en el navegador",
+      "nota": "René, 2026-11-24: una sola tanda final, fijada al commit con todo (83a794f2, #311, rama fix/w-tres-narraciones). En la demo local con el build de Unity publicado (945617e035988035, del release de GitHub, sin Blob), Chrome con la tarjeta de alto rendimiento. Primero el humo (si falla, se detiene). Después: los cinco ejemplos y AXA (cifra asentada); el crucero en la app; Tollocan; las seis narraciones con el caso encimado; los tres casos nuevos (árbol en curva, camión con peatón, carambola) y una muestra de 10 narraciones de la revisión de la cadena, cada uno con captura del 3D; el arranque del 3D tres veces; las dos tomas de la portada (8 s en bucle: el árbol de noche y la carambola con lluvia); las carambolas (prueba y desarrollo) y la cobertura antes (main, 13777374, en un worktree) y después; y eval/t9_comparar.mjs contra el índice de cifras y la tabla aprobada. Lo que difiera va a René con su antes y después. Nada de AXA se sube.",
       "rama": "fix/w-tres-narraciones",
-      "commit": "ff2fef2503e412d05bd6c4e575e9c4ae7a96f3d4",
+      "commit": "83a794f231ff1233bfcb44e8b381759bfe211e8a",
       "pasos": [
         {
           "nombre": "visor",
@@ -1087,6 +1087,17 @@
           ]
         },
         {
+          "nombre": "narraciones-nuevas",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues nuevas -Salida eval/results/t9/narraciones_nuevas.json",
+          "minutos": 25,
+          "tope_min": 70,
+          "salidas": [
+            "eval/results/t9",
+            "docs/cesvi/ronda-4/evidencia/fisica",
+            "apps/web/test-results/"
+          ]
+        },
+        {
           "nombre": "arranque-1",
           "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t9/arranque_945617e035988035_1.json",
           "minutos": 12,
@@ -1106,6 +1117,71 @@
           "minutos": 12,
           "tope_min": 15,
           "salidas": ["eval/results/t9"]
+        },
+        {
+          "nombre": "portada",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/desde-release.ps1 -Paso portada -Release visor-fotos-945617e035988035 -Archivo fotos-promo-945617e0.zip -Zips eval/results/t9/portada",
+          "minutos": 20,
+          "tope_min": 60,
+          "salidas": ["eval/results/t9/portada", "eval/results/rtx-t4/tomas_portada.json"]
+        },
+        {
+          "nombre": "antes-copia",
+          "comando": "powershell -NoProfile -Command \"if (Test-Path ../croquis-t9-antes) { git -c core.longpaths=true worktree remove --force ../croquis-t9-antes }; git worktree add --detach ../croquis-t9-antes 137773743c6421cefe0723c2c4ab8cef2972d1ee\"",
+          "minutos": 1,
+          "tope_min": 10
+        },
+        {
+          "nombre": "antes-dependencias",
+          "comando": "pnpm -C ../croquis-t9-antes install --frozen-lockfile --prefer-offline --package-import-method=hardlink",
+          "minutos": 3,
+          "tope_min": 15
+        },
+        {
+          "nombre": "antes-carambolas-prueba",
+          "comando": "pnpm -C ../croquis-t9-antes --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir prueba",
+          "minutos": 5,
+          "tope_min": 20
+        },
+        {
+          "nombre": "antes-carambolas-desarrollo",
+          "comando": "pnpm -C ../croquis-t9-antes --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir desarrollo",
+          "minutos": 6,
+          "tope_min": 25
+        },
+        {
+          "nombre": "antes-cobertura",
+          "comando": "pnpm -C ../croquis-t9-antes --filter @croquis/cesvi exec tsx ../../eval/t3_cobertura.mts --casos 200",
+          "minutos": 15,
+          "tope_min": 60
+        },
+        {
+          "nombre": "antes-guardar",
+          "comando": "powershell -NoProfile -Command \"New-Item -ItemType Directory -Force eval/results/t9/antes | Out-Null; Copy-Item ../croquis-t9-antes/eval/results/cesvi_r4b_carambolas_prueba.json, ../croquis-t9-antes/eval/results/cesvi_r4b_carambolas_desarrollo.json, ../croquis-t9-antes/eval/results/t3_cobertura.json eval/results/t9/antes/\"",
+          "minutos": 1,
+          "tope_min": 10,
+          "salidas": ["eval/results/t9"]
+        },
+        {
+          "nombre": "carambolas-prueba",
+          "comando": "pnpm --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir prueba",
+          "minutos": 5,
+          "tope_min": 20,
+          "salidas": ["eval/results/cesvi_r4b_carambolas_prueba.json"]
+        },
+        {
+          "nombre": "carambolas-desarrollo",
+          "comando": "pnpm --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir desarrollo",
+          "minutos": 6,
+          "tope_min": 25,
+          "salidas": ["eval/results/cesvi_r4b_carambolas_desarrollo.json"]
+        },
+        {
+          "nombre": "cobertura",
+          "comando": "pnpm --filter @croquis/cesvi exec tsx ../../eval/t3_cobertura.mts --casos 200",
+          "minutos": 15,
+          "tope_min": 60,
+          "salidas": ["eval/results/t3_cobertura.json"]
         },
         {
           "nombre": "comparar",
