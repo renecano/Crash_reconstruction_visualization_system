@@ -281,7 +281,7 @@ function construir() {
         fuente: archivo,
         campo: `filas.${i}.velocidades.${j}`,
         motivo:
-          "Visto bueno de René, 2026-11-25 (#316): la narración se ubica en la Calle Olivos (Lomas del Valle, Puebla), que baja 3.6 % hacia el norte, con el relieve real del lugar; antes, en el punto fijo de la tabla, CR-V 8 (1–16) y Versa 24 (21–28). Antes de eso (#311, 2026-11-24): CR-V 0 (0–1) y Versa 21 (20–28), con el CR-V mirando hacia donde retrocedía.",
+          "Visto bueno de René, 2026-11-25 (#316): la narración se ubica en la Calle Olivos (Lomas del Valle, Puebla), que baja 3.6 % hacia el norte, con el relieve real del lugar; el CR-V da 9 (1–18) con el caso puesto en su lugar real (el 8 (1–18) que se aprobó primero se midió trasladando la escena desde el punto fijo) y René aprobó el 9 el mismo día; antes, en el punto fijo de la tabla, CR-V 8 (1–16) y Versa 24 (21–28). Antes de eso (#311, 2026-11-24): CR-V 0 (0–1) y Versa 21 (20–28), con el CR-V mirando hacia donde retrocedía.",
       });
     }
   }
