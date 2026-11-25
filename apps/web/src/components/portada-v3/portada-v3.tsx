@@ -13,12 +13,15 @@ import { FUENTES_LABORATORIO } from "@/components/cesvi/fuentes-laboratorio";
 import { Logotipo } from "@/components/sitio/logo";
 import { MovimientoPortada } from "./movimiento-portada";
 import IMAGENES from "./imagenes.json";
-import VIDEO from "./video.json";
 import { DETALLES, LEMA, PASOS, SECCIONES, type TextosPortadaV3 } from "./textos";
 import MARCA from "../../../../../assets/brand/marca.json";
 import "./portada-v3.css";
 
 const REPO = "https://github.com/renecano/Crash_reconstruction_visualization_system";
+/** El tráiler (René, 2026-11-25), en YouTube; se incrusta sin cookies y solo al tocarlo. */
+const TRAILER_YOUTUBE = "mUWk-sZgdjM";
+/** Lo que dura el tráiler publicado (28 s en YouTube). */
+const TRAILER_DURACION = "0:28";
 const SIMBOLO = MARCA.simbolo;
 const [MX, MY] = MARCA.mira as [number, number];
 const i = (n: number) => ({ "--i": n }) as CSSProperties;
@@ -196,7 +199,14 @@ function Abrir({
 }
 
 /** Lo que ocupa la foto del inicio: en celular es baja y ancha, así que basta una chica. */
-const TAMANO_INICIO = "(min-width: 72rem) 70vw, 100vw";
+/**
+ * La foto del inicio llena el alto de su caja: en escritorio se dibuja a lo ancho que da ese alto con la
+ * proporción de la foto (1.88), no al ancho de la caja.
+ */
+const TAMANO_INICIO = "(min-width: 72rem) calc((100vh - 140px) * 1.88), 100vw";
+/** El tráiler va a lo ancho del contenido (hasta 1500 px). */
+/** El tráiler: a lo ancho del contenido, hasta que su alto llega a 70vh. */
+const TAMANO_TRAILER = "(min-width: 64rem) calc(70vh * 16 / 9), 92vw";
 
 export function PortadaV3({ t }: { t: TextosPortadaV3 }) {
   // La imagen más grande de la primera pantalla se pide antes que nada (LCP).
@@ -273,7 +283,7 @@ export function PortadaV3({ t }: { t: TextosPortadaV3 }) {
 
         <main>
           <section id="inicio" tabIndex={-1} className="pv-inicio" data-ve>
-            <div className="pv-inicio-foto" data-video={VIDEO.url ?? undefined}>
+            <div className="pv-inicio-foto">
               <picture>
                 <source
                   type="image/avif"
@@ -290,15 +300,6 @@ export function PortadaV3({ t }: { t: TextosPortadaV3 }) {
                   fetchPriority="high"
                 />
               </picture>
-              {VIDEO.url ? (
-                <button
-                  type="button"
-                  hidden
-                  className="pv-video-boton"
-                  data-pausar={t.pausar}
-                  data-reproducir={t.reproducir}
-                />
-              ) : null}
             </div>
             <div className="pv-inicio-texto">
               <p className="t-rotulo">{t.rotulo}</p>
@@ -319,6 +320,52 @@ export function PortadaV3({ t }: { t: TextosPortadaV3 }) {
               </div>
             </div>
             <p className="pv-leyenda">{t.leyenda}</p>
+          </section>
+
+          {/* El tráiler con fachada: un cuadro del video y ▶. Es un enlace a YouTube; con JavaScript,
+              al tocarlo se cambia por el reproductor de youtube-nocookie (nada se carga antes). */}
+          <section className="pv-seccion pv-trailer" aria-labelledby="pv-trailer-titulo">
+            <header className="pv-cabeza" data-ve>
+              <span className="t-rotulo">{t.trailer.rotulo}</span>
+              <h2 id="pv-trailer-titulo" className="pv-titulo">
+                <Palabras texto={t.trailer.titulo} />
+              </h2>
+            </header>
+            <div className="pv-captura pv-trailer-caja" data-ve>
+              <a
+                href={`https://www.youtube.com/watch?v=${TRAILER_YOUTUBE}`}
+                className="pv-trailer-fachada"
+                data-youtube={TRAILER_YOUTUBE}
+                data-titulo={t.trailer.titulo}
+                aria-label={`${t.trailer.ver}, ${TRAILER_DURACION}`}
+                data-testid="trailer"
+              >
+                <picture>
+                  <source
+                    type="image/avif"
+                    srcSet={juego("trailer-poster", [960, 1280, 1920], "avif")}
+                    sizes={TAMANO_TRAILER}
+                  />
+                  <img
+                    src="/portada/app/trailer-poster-1280.webp"
+                    srcSet={juego("trailer-poster", [960, 1280, 1920], "webp")}
+                    sizes={TAMANO_TRAILER}
+                    width={1920}
+                    height={1080}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
+                <span className="pv-trailer-play" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="22" height="22">
+                    <path d="M8 5.5v13l10.5-6.5z" fill="currentColor" />
+                  </svg>
+                  <span>{TRAILER_DURACION}</span>
+                </span>
+              </a>
+            </div>
+            <p className="pv-trailer-leyenda">{t.leyenda}</p>
           </section>
 
           <section className="pv-lema" aria-label={t.lemaTitulo}>

@@ -55,10 +55,9 @@ export interface TextosPortadaV3 {
   h1: [string, string];
   lede: string;
   altInicio: string;
+  /** La sección del tráiler, justo después del inicio (título de René, 2026-11-25). */
+  trailer: { rotulo: string; titulo: string; ver: string };
   leyenda: string;
-  /** El botón del video del inicio. */
-  pausar: string;
-  reproducir: string;
   lemaTitulo: string;
   /** El sentido de cada palabra del lema, en inglés. */
   lemaGlosa: readonly string[] | null;
@@ -107,10 +106,13 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
       h1: ["The expert tells what happened.", "Physics reconstructs it in 3D."],
       lede: "From the narrative to the report, with the source of every number in sight.",
       altInicio:
-        "3D reconstruction of an invented example at night: two cars reach a crossing between houses, before the impact.",
+        "3D reconstruction of an invented example, by day and at ground level: the front of a red car against a white pickup truck.",
       leyenda: "Illustrative reconstruction · procedural surroundings: not the real place",
-      pausar: "Pause the video",
-      reproducir: "Play the video",
+      trailer: {
+        rotulo: "Trailer",
+        titulo: "See it in action.",
+        ver: "Play the trailer (YouTube)",
+      },
       lemaTitulo: "What the name means, in Spanish",
       lemaGlosa: [
         "Tell.",
@@ -263,10 +265,13 @@ export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortada
     h1: ["El perito narra el hecho.", "La física lo reconstruye en 3D."],
     lede: "De la narración al dictamen, con la fuente de cada número a la vista.",
     altInicio:
-      "Reconstrucción en 3D de un ejemplo inventado, de noche: dos autos llegan a un cruce entre casas, antes del impacto.",
+      "Reconstrucción en 3D de un ejemplo inventado, de día y a ras del piso: el frente de un auto rojo contra una camioneta blanca.",
     leyenda: "Reconstrucción ilustrativa · entorno procedural: no es el lugar real",
-    pausar: "Pausar el video",
-    reproducir: "Reproducir el video",
+    trailer: {
+      rotulo: "Tráiler",
+      titulo: "Míralo en acción.",
+      ver: "Ver el tráiler (YouTube)",
+    },
     lemaTitulo: "Qué significa el nombre",
     lemaGlosa: null,
     comoTitulo: "Seis pasos, de la narración a la firma.",
