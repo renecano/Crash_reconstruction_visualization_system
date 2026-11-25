@@ -24,12 +24,10 @@ type Json = Record<string, unknown>;
 const MUESTRAS = { samples: 32, mcSamples: 128 };
 const P = { lat: 19.3576, lon: -99.0625 };
 /** Un punto a (este, norte) metros de `centro`. */
-const enMetrosDe =
-  (centro: { lat: number; lon: number }) =>
-  (este: number, norte: number) => ({
-    lat: centro.lat + norte / 111320,
-    lon: centro.lon + este / (111320 * Math.cos((centro.lat * Math.PI) / 180)),
-  });
+const enMetrosDe = (centro: { lat: number; lon: number }) => (este: number, norte: number) => ({
+  lat: centro.lat + norte / 111320,
+  lon: centro.lon + este / (111320 * Math.cos((centro.lat * Math.PI) / 180)),
+});
 const RUMBO: Record<string, number> = {
   "Del sur": 0,
   "Del oeste": 90,
