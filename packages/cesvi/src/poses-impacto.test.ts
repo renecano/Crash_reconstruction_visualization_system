@@ -64,6 +64,40 @@ describe("las poses de impacto desde el punto del perito (V2)", () => {
     expect(c!.rumbo).toBe(270);
   });
 
+  it("carambola en cadena: al que golpearon por detrás lo empujan hacia adelante (su frente)", () => {
+    // El e2e de la carambola: A pega con el frente a B; en el segundo choque solo se sabe que C se
+    // golpeó por detrás. B tiene daño posterior (del primero): en el segundo, su cara es el frente.
+    const e = {
+      caso: { modalidades: ["alcance"] },
+      vehiculos: [
+        { id: "V1", clase: "sedan_mediano" },
+        { id: "V2", clase: "suv_compacta" },
+        { id: "V3", clase: "sedan_compacto" },
+      ],
+      impactos: [
+        {
+          orden: 1,
+          vehiculos: ["V1", "V2"],
+          zonas: [{ vehiculo: "V1", zona: { cara: "frontal" } }],
+        },
+        {
+          orden: 2,
+          vehiculos: ["V2", "V3"],
+          zonas: [{ vehiculo: "V3", zona: { cara: "posterior" } }],
+        },
+      ],
+      danos: [
+        { vehiculo: "V2", zona: { cara: "posterior" } },
+        { vehiculo: "V2", zona: { cara: "frontal" } },
+      ],
+    } as unknown as Expediente;
+    const [b, c] = posesDeImpacto(e, P, 90, 2);
+    // B, medio largo detrás del punto; C, de espaldas a B y con su mismo rumbo, medio largo delante.
+    expect(c!.rumbo).toBe(90);
+    expect(rumboDeg(ll(b!.punto), ll(P))).toBeCloseTo(90, 0);
+    expect(rumboDeg(ll(P), ll(c!.punto))).toBeCloseTo(90, 0);
+  });
+
   it("sin caras de contacto, los dos en el punto con el rumbo de la flecha", () => {
     const [a, b] = posesDeImpacto(exp(null), P, 45);
     expect(a).toEqual({ vehiculo: "V1", punto: P, rumbo: 45 });
