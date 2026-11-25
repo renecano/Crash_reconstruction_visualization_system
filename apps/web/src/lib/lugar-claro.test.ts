@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { callesDelCaso, esLaCalleNarrada, lugarClaro, palabrasDeCalle } from "./lugar-claro";
+import {
+  callesDelCaso,
+  esLaCalleNarrada,
+  esLaCalleNarradaAprox,
+  lugarClaro,
+  palabrasDeCalle,
+} from "./lugar-claro";
 
 /** Los reportes de CESVI que caían en otro lugar (revisión de la cadena, René 2026-11-25). */
 describe("¿el lugar encontrado es el de la narración?", () => {
@@ -90,5 +96,20 @@ describe("¿el lugar encontrado es el de la narración?", () => {
     expect(
       callesDelCaso("Una calzada de 7.3 metros de ancho, por la Calle Hidalgo.", null),
     ).toEqual(["Calle Hidalgo"]);
+  });
+});
+
+describe("la calle de llegada con la ortografía del mapa", () => {
+  it("una palabra larga puede diferir en una letra («Matlatzincas» y «Matlazincas»)", () => {
+    expect(esLaCalleNarradaAprox("Paseo de los Matlatzincas", "Calle Paseo Matlazincas")).toBe(
+      true,
+    );
+    expect(esLaCalleNarrada("Paseo de los Matlatzincas", "Calle Paseo Matlazincas")).toBe(false);
+  });
+  it("las palabras cortas no se aproximan, y una calle distinta no coincide", () => {
+    expect(esLaCalleNarradaAprox("Calle Olivos", "Calle Olmos")).toBe(false);
+    expect(esLaCalleNarradaAprox("Avenida Tecnológico", "Avenida Solidaridad Las Torres")).toBe(
+      false,
+    );
   });
 });

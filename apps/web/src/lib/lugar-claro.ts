@@ -46,6 +46,31 @@ export function esLaCalleNarrada(narrada: string, delMapa: string): boolean {
   return comunes >= Math.min(2, pa.length) || comunes === pb.length;
 }
 
+/** ¿Dos palabras largas (7 letras o más) difieren en una sola letra? («matlatzincas», «matlazincas»). */
+function casiIgual(a: string, b: string): boolean {
+  if (a === b) return true;
+  if (Math.min(a.length, b.length) < 7 || Math.abs(a.length - b.length) > 1) return false;
+  let i = 0;
+  while (i < a.length && i < b.length && a[i] === b[i]) i++;
+  let j = 0;
+  while (j < a.length - i && j < b.length - i && a[a.length - 1 - j] === b[b.length - 1 - j]) j++;
+  return a.length - i - j <= 1 && b.length - i - j <= 1;
+}
+
+/**
+ * Como `esLaCalleNarrada`, pero una palabra larga puede diferir en una letra (la ortografía del mapa:
+ * «Paseo Matlazincas» en OpenStreetMap, «Paseo de los Matlatzincas» en la narración). Solo para la
+ * calle por la que llegaba un vehículo; la búsqueda del lugar sigue con la comparación exacta.
+ */
+export function esLaCalleNarradaAprox(narrada: string, delMapa: string): boolean {
+  if (esLaCalleNarrada(narrada, delMapa)) return true;
+  const pa = palabrasDeCalle(narrada);
+  const pb = palabrasDeCalle(delMapa);
+  if (!pa.length || !pb.length) return false;
+  const comunes = pa.filter((w) => pb.some((x) => casiIgual(w, x))).length;
+  return comunes >= Math.min(2, pa.length) || comunes === pb.length;
+}
+
 /**
  * Una carretera que no coincide por su nombre no hace dudar: en OpenStreetMap la «carretera 57» es
  * «Carretera Querétaro - San Luis Potosí». La busca su propio camino (clave, tramo y kilómetro), y si

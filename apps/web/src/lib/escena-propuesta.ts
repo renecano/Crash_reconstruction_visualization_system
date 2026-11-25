@@ -27,7 +27,7 @@ import {
   type Expediente,
   type SentidoNarradoLugar,
 } from "@croquis/cesvi";
-import { esLaCalleNarrada } from "./lugar-claro";
+import { esLaCalleNarrada, esLaCalleNarradaAprox } from "./lugar-claro";
 import { maniobraNarrada } from "./giro-sin-aviso";
 import {
   ajustarACalle,
@@ -206,11 +206,11 @@ export function proponerEscena(o: {
     const vObj = vs.find((x) => x.id === v);
     const narrada = narracion && vObj ? calleDeLlegadaNarrada(narracion, vObj, vs) : null;
     const suyas = narrada
-      ? flechas.filter((x) => x.calle && esLaCalleNarrada(narrada, x.calle))
+      ? flechas.filter((x) => x.calle && esLaCalleNarradaAprox(narrada, x.calle))
       : [];
     const j = suyas.length ? flechaPropuesta(suyas, s, porContacto) : -1;
     const f = j >= 0 ? suyas[j]! : (flechas[flechaPropuesta(flechas, s, porContacto)] ?? null);
-    const otraCalle = !!(narrada && f && !(f.calle && esLaCalleNarrada(narrada, f.calle)));
+    const otraCalle = !!(narrada && f && !(f.calle && esLaCalleNarradaAprox(narrada, f.calle)));
     if (f) e = elegirDireccion(e, impactos, v, f.rumbo, (k) => puntos[k] ?? null, true);
     // Sin una calle en el sentido narrado: como lo dice la narración (revisión de la cadena).
     else if (s) e = elegirDireccion(e, impactos, v, s.rumbo, (k) => puntos[k] ?? null, true);
