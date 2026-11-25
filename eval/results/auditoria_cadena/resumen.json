@@ -1,5 +1,5 @@
 {
- "fecha": "2026-11-25T18:50:54.498Z",
+ "fecha": "2026-11-25T22:02:49.234Z",
  "fuentes": {
   "prueba": {
    "casos": 205,
@@ -12,10 +12,11 @@
      ]
     },
     "limite.llegada_recta": {
-     "casos": 2,
+     "casos": 3,
      "ids": [
-      "cesvi-059b27d89d",
-      "cesvi-a29030f88d"
+      "cesvi-a29030f88d",
+      "cesvi-b641fb6657",
+      "cesvi-c3af05ad39"
      ]
     },
     "lugar.no_encontrado": {
@@ -410,25 +411,16 @@
      ]
     },
     "vehiculo.fuera_de_calle": {
-     "casos": 17,
+     "casos": 8,
      "ids": [
-      "cesvi-05a7c05640",
-      "cesvi-5aa5e75aca",
-      "cesvi-65daf4b688",
+      "cesvi-059b27d89d",
       "cesvi-6ca24dcfce",
       "cesvi-87b14ec4ba",
       "cesvi-928c1a7646",
-      "cesvi-97cb6986e4",
-      "cesvi-99ae88f8e3",
       "cesvi-9cb20db594",
       "cesvi-a29030f88d",
-      "cesvi-b1ab1b00df",
-      "cesvi-b641fb6657",
       "cesvi-b9f5a5ca1f",
-      "cesvi-cd894debf8",
-      "cesvi-df6a4b2324",
-      "cesvi-ec1c390b10",
-      "cesvi-feb7aaa0e1"
+      "cesvi-df6a4b2324"
      ]
     },
     "vehiculo.sin_clase": {
@@ -491,9 +483,10 @@
    "lugar_encontrado": 41,
    "reglas": {
     "candado.animacion": {
-     "casos": 2,
+     "casos": 3,
      "ids": [
       "aud-14-barda-morelos",
+      "aud-18-frontal-matlatzincas-pendiente",
       "aud-38-alcance-barrera-circuito-reforma"
      ]
     },
@@ -509,11 +502,9 @@
      ]
     },
     "limite.llegada_recta": {
-     "casos": 3,
+     "casos": 1,
      "ids": [
-      "aud-08-atropello-tollocan-carranza",
-      "aud-20-glorieta-cibeles-moto",
-      "aud-22-lateral-insurgentes-mixcoac"
+      "aud-08-atropello-tollocan-carranza"
      ]
     },
     "masa.tipica_con_modelo": {
@@ -550,31 +541,15 @@
       "aud-38-alcance-barrera-circuito-reforma"
      ]
     },
-    "trayectoria.cruza_edificio": {
-     "casos": 1,
-     "ids": [
-      "aud-32-volcadura-viaducto"
-     ]
-    },
     "vehiculo.fuera_de_calle": {
-     "casos": 8,
+     "casos": 6,
      "ids": [
       "aud-02-lateral-tecnologico-lastorres",
       "aud-07-volcadura-calzada-pacifico",
       "aud-09-ciclista-tecnologico",
       "aud-13-moto-vuelta-izquierda-tecnologico",
-      "aud-15-carambola4-tollocan-lluvia",
-      "aud-29-vuelta-izquierda-universidad-quevedo",
-      "aud-38-alcance-barrera-circuito-reforma",
+      "aud-33-alcance-bajada-reforma-lomas",
       "aud-39-atropello-autobus-tlalpan-ermita"
-     ]
-    },
-    "vehiculo.sentido": {
-     "casos": 3,
-     "ids": [
-      "aud-02-lateral-tecnologico-lastorres",
-      "aud-29-vuelta-izquierda-universidad-quevedo",
-      "aud-33-alcance-bajada-reforma-lomas"
      ]
     },
     "vuelta.fuera_de_calle": {

@@ -1437,6 +1437,31 @@ La regla `vehiculo.fuera_de_calle` marca un vehículo cuyo frente, en el choque,
 | Sobre su calle narrada, pero girado de 31° a 43° respecto al eje         | 9 de 205 (cesvi-5aa5e75aca, -65daf4b688, -928c1a7646, -97cb6986e4, -99ae88f8e3, -b1ab1b00df, -b641fb6657, -cd894debf8, -ec1c390b10), además del ciclista de aud-09 | En La escena y en el 3D, el auto atravesado en diagonal en su carril, sin aviso; la cifra sale       | Abierto: causa por diagnosticar        |
 | La calle de llegada propuesta no es la narrada, o queda lejos del choque | 3 de 205 (cesvi-9cb20db594, -a29030f88d, -df6a4b2324), 3 de 42 (aud-02 la Hilux, aud-15 el Kia a 6 m de la calzada, aud-38 «Calle Descartes»)                      | La escena propone «venía por …» con otra calle; el perito puede corregirla, pero nada le avisa       | Abierto                                |
 
+### El giro en diagonal y la calle de llegada (2026-11-25) · rama `fix/w-calle-de-llegada`, encima del #316
+
+René (2026-11-25): diagnosticar los 16 casos abiertos, decir si el giro de 31° a 43° ya estaba antes del #311, corregirlo, que la calle de llegada sea la narrada o que La escena avise, y una comprobación que falle si un vehículo queda a más de 30° de su calle sin aviso, salvo maniobras narradas. El #311 no se corrige dentro del #311: se publican juntos, #311 → #316 → este arreglo.
+
+- **Cómo se midió:** `apps/web/src/lib/auditoria/comparar-escena.test.ts` corre La escena de cualquier versión (se copia a un worktree) con la misma lectura grabada, el mismo lugar encontrado, las mismas calles guardadas y el destino narrado; reproduce la revisión completa en los 25 casos (dos filas de la revisión eran de una corrida vieja). Resultado: `eval/results/auditoria_cadena/giro_main_316_arreglo.json`.
+- **Qué lo introdujo:** 5 de los 6 casos nuevos, `b678410c` (la calzada de su sentido mueve el choque a otra calzada); el ciclista de aud-09, entre main y `ca8c23ea`. Los otros 6 girados y 3 de calle de llegada ya estaban en main.
+- **La causa:** el rumbo de cada flecha de llegada era la línea del choque al brazo de la calle a 22 m. Con el choque a 10–15 m del eje (dos calzadas, el choque movido a la de su sentido, un cruce fuera del eje), esa línea cruzaba la calle de 25° a 35°, y el vehículo quedaba atravesado en su carril.
+- **El arreglo** (`escena-facil.ts`, `escena-propuesta.ts`):
+  - el rumbo de la flecha es el del eje de la calle junto al choque (sus últimos 6 m);
+  - entre flechas casi iguales, gana la de la calle que pasa por el choque, con nombre y de más jerarquía;
+  - la calle narrada de cada vehículo («circulaba sobre…», «por el carril … del paso a desnivel», «por el mismo carril», «en sentido contrario») manda sobre las demás;
+  - si no llega al choque: «la calle de llegada no coincide con la narración: revísala»;
+  - si ya colocado ninguna calle bajo el vehículo va alineada con él: «la calle de llegada no pasa por el punto del choque: revísala», salvo una maniobra narrada;
+  - se quedan el aviso «no hay una calle en ese sentido» y las vueltas narradas del #311.
+- **La comprobación:** `giro-sin-aviso.ts`, la usan la revisión (`vehiculo.girado_sin_aviso`) y `giro-sin-aviso.test.ts` (9 pruebas en el CI, entre ellas la flecha con el choque a 12 m del eje).
+
+|                                                               | main | #316   | arreglo                                |
+| ------------------------------------------------------------- | ---- | ------ | -------------------------------------- |
+| Vehículos de los 25 casos a más de 30° o sin calle bajo ellos | 12   | 31     | 13, todos con aviso o maniobra narrada |
+| Atravesados sin aviso (revisión completa, 205 + 42)           | —    | —      | 0                                      |
+| «Fuera de su calle» en la revisión (205 / 42)                 | —    | 17 / 8 | 8 / 6                                  |
+
+- **Cifras:** las 13 filas de la tabla de los ejemplos y AXA, iguales (`cifras-ronda4.test.ts`). El crucero «en la app» da 20 (3–26), igual con el #316 sin este arreglo: lo movió el lugar real del crucero (#316, Azucena y Avenida del Árbol); el índice dice 20 (4–27) y espera el visto bueno de René. De los 205 reportes, ninguna cifra cambia; de las 42 narraciones de la revisión (no publicadas), 13 cambian y aud-18 queda con el candado (la animación de la Hilux llega a 59 km/h contra 40–45).
+- **Para la t9:** toca lo que pasa por La escena (los ejemplos en el navegador, el crucero en la app, Tollocan, las seis narraciones, las tres de René y la muestra de la revisión). Borrador de una tanda corta en el PR; no se tocó `tools/colaborador/` mientras corre la t9.
+
 ### Lo publicado
 
 AXA 57 (sin cambio), crucero 20 y 12, alcance 53 y 0, carambola 24, reversa 8 y 24, poste 30 y 36: iguales a la tabla del #311 (`reconstruir` de `cifras-ronda4.test.ts`, sin navegador). La animación del alcance termina a 10 y 12 m de las posiciones finales marcadas y la del poste a 7 y 10 m: va a René (paquete aparte).

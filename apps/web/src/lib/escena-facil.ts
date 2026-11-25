@@ -546,6 +546,19 @@ export interface Flecha {
 
 /** A qué distancia (m) del choque se dibuja cada flecha. */
 export const DISTANCIA_FLECHA_M = 22;
+/** El orden de las vías de OpenStreetMap, de más a menos importante (para las flechas encimadas). */
+const JERARQUIA: Record<string, number> = {
+  motorway: 0,
+  trunk: 1,
+  primary: 2,
+  secondary: 3,
+  tertiary: 4,
+  unclassified: 5,
+  residential: 5,
+};
+
+/** Los metros de la calle junto al choque que dan el rumbo de llegada (su dirección local). */
+const TRAMO_DEL_RUMBO_M = 6;
 
 /**
  * Las flechas de llegada al choque: una por cada calle que llega (los dos lados de una calle que
@@ -554,14 +567,30 @@ export const DISTANCIA_FLECHA_M = 22;
  */
 export function flechasDeLlegada(calles: readonly Calle[], choque: Punto): Flecha[] {
   const out: Flecha[] = [];
-  for (const c of calles) {
-    const s = sobreCalle(c, choque);
-    if (s.distancia > 25) continue;
+  // Entre flechas casi iguales (dos calzadas paralelas) se queda la de la calle que pasa por el
+  // choque (a menos de su medio ancho y 4 m), con nombre antes que sin él, y la más cercana.
+  // Con varias vías encimadas en el mismo nodo (el Periférico, su segundo piso y sus enlaces), la de
+  // más jerarquía; un enlace (`*_link`) al final.
+  const orden = (x: { c: Calle; s: { distancia: number } }) =>
+    (x.s.distancia <= x.c.ancho / 2 + 4 ? 0 : 20) +
+    (x.c.nombre ? 0 : 10) +
+    (JERARQUIA[(x.c.tipo ?? "").replace(/_link$/, "")] ?? 6) +
+    (/_link$/.test(x.c.tipo ?? "") ? 5 : 0);
+  const cerca = calles
+    .map((c) => ({ c, s: sobreCalle(c, choque) }))
+    .filter((x) => x.s.distancia <= 25)
+    .sort((a, b) => orden(a) - orden(b) || a.s.distancia - b.s.distancia);
+  for (const { c, s } of cerca) {
     // Los dos brazos desde el punto más cercano: hacia el inicio y hacia el final de la calle.
     for (const haciaFinal of [true, false]) {
       const brazo = puntoDelBrazo(c, s.tramo, s.t, haciaFinal, DISTANCIA_FLECHA_M);
       if (!brazo) continue;
-      const salida = rumboDeg(ll(choque), ll(brazo));
+      // El rumbo es el de la calle junto al choque (los últimos metros del brazo), no la línea del
+      // brazo al choque: con el choque a 10–15 m del eje (una avenida de dos calzadas, el choque en la
+      // calzada de su sentido) esa línea cruzaba la calle de 25° a 35° y el vehículo quedaba atravesado
+      // en su carril (revisión de la cadena, René 2026-11-25).
+      const cerca6 = puntoDelBrazo(c, s.tramo, s.t, haciaFinal, TRAMO_DEL_RUMBO_M) ?? brazo;
+      const salida = rumboDeg(ll(s.punto), ll(cerca6));
       const rumbo = normalizar(salida + 180);
       if (out.some((f) => difAngulo(f.rumbo, rumbo) < 25)) continue;
       out.push({ rumbo, desde: cardinal(salida), calle: c.nombre, en: brazo });
@@ -1649,6 +1678,61 @@ export function finalDeLaNarracion(
       n,
       n ? `${n} m adelante del objeto contra el que chocó` : "en el objeto contra el que chocó",
     );
+  }
+  return null;
+}
+
+/** Circular, en las formas en que lo dicen las narraciones. */
+const CIRCULABA =
+  /\b(?:circulaba|transitaba|iba|venia|avanzaba|se\s+desplazaba|se\s+dirigia|conducia|bajaba|subia|marchaba)\b/;
+
+/**
+ * La calle por la que la narración dice que llegaba un vehículo («el vehículo A circulaba sobre
+ * Avenida Tecnológico de sur a norte»; «por los carriles laterales de la Calzada de Tlalpan»): en la
+ * primera oración que lo nombra y dice que circulaba, la primera calle nombrada poco después de «sobre»
+ * o «por» (René, 2026-11-25: la calle de llegada tiene que ser la narrada). null si no la dice.
+ */
+export function calleDeLlegadaNarrada(
+  narracion: string,
+  v: Vehiculo,
+  todos: readonly Vehiculo[],
+  delOtro = true,
+): string | null {
+  const nombres = nombresDe(v, todos);
+  const nombra = (o: string) =>
+    nombres.some(
+      (n) => n.trim() && new RegExp(`\\b${escapar(sinAcentos(n))}\\b`).test(sinAcentos(o)),
+    );
+  for (const o of narracion.split(/(?<=[.;])\s+/)) {
+    const t = sinAcentos(o);
+    if (!nombra(o) || !CIRCULABA.test(t)) continue;
+    const desde = CIRCULABA.exec(t)!.index;
+    for (const c of callesNarradas(o)) {
+      if (c.en < desde) continue;
+      // «sobre» o «por» en los 40 caracteres antes del nombre («por los carriles laterales de la …»).
+      const antes = t.slice(Math.max(desde, c.en - 40), c.en);
+      if (/\b(?:sobre|por)\b/.test(antes)) return c.nombre;
+    }
+    // «por el carril derecho del paso a desnivel»: la vía del lugar, la primera que nombra la narración.
+    if (/\bcarril\b[^.;]*\bdel\s+(?:paso|puente|tunel|viaducto|distribuidor)\b/.test(t))
+      return callesNarradas(narracion)[0]?.nombre ?? null;
+    // «circulaba detrás de él por el mismo carril», «bajaba en sentido contrario»: por la calle del otro.
+    if (
+      delOtro &&
+      /\b(?:por\s+el\s+mismo\s+carril|detras\s+de\s+(?:el|ella)|en\s+sentido\s+contrario|en\s+el\s+mismo\s+sentido)\b/.test(
+        t,
+      )
+    ) {
+      for (const w of todos)
+        if (w.id !== v.id) {
+          const suya = calleDeLlegadaNarrada(narracion, w, todos, false);
+          if (suya) return suya;
+        }
+      // Si el otro tampoco la dice: la vía del lugar, si la narración pone el hecho «sobre» una sola.
+      const primera = narracion.split(/(?<=[.;])\s+/)[0] ?? "";
+      const enLugar = callesNarradas(primera);
+      if (enLugar.length === 1 && /\bsobre\b/.test(sinAcentos(primera))) return enLugar[0]!.nombre;
+    }
   }
   return null;
 }

@@ -52,6 +52,7 @@ import { callesParaGuardar, conCallesGuardadas } from "@/lib/calles-guardadas";
 import { impactosAColocar } from "@/lib/pasos-caso";
 import { paqueteDelCaso } from "@/lib/visor-unity/paquete";
 import { EN_EL_CARRIL, esObjetoDeOrilla } from "@/lib/objeto-orilla";
+import { girosSinAviso } from "@/lib/giro-sin-aviso";
 import { callesDelCaso, esLaCalleNarrada, lugarClaro } from "@/lib/lugar-claro";
 import { crucesDeTrayectorias, saltosDe, sobreMalla, type Plano } from "@croquis/cesvi";
 
@@ -416,6 +417,19 @@ export async function auditarCaso(o: {
         v.id,
       );
   }
+  // Atravesado en su calle sin que La escena lo diga (René, 2026-11-25): falla.
+  for (const g of girosSinAviso({
+    expediente: e,
+    calles,
+    propuestos: prop.propuestos.map((x) => x.texto),
+    narracion: o.narracion,
+    nombreDe: (id) => nombres[id] ?? id,
+  }))
+    falla(
+      "vehiculo.girado_sin_aviso",
+      `frente a ${g.frente}°, ${g.dif === null ? "sin calle cerca" : `${g.dif}° del eje`} de ${g.narrada ?? "su calle"}; La escena no lo avisa y la narración no le da una maniobra`,
+      g.vehiculo,
+    );
   // Nada encimado en el choque (lo que La escena avisaría).
   for (const enc of impactosEncimados(e))
     falla(
