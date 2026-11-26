@@ -1,0 +1,139 @@
+{
+ "clave": "poste-terraceria",
+ "propuesta": {
+  "puntos": {
+   "1": {
+    "lat": 18.980516,
+    "lon": -98.47662
+   }
+  },
+  "versiones": [
+   {
+    "tipo": "evidencia",
+    "maniobras": [
+     {
+      "vehiculo": "V1",
+      "tipo": "circula",
+      "cita": {
+       "texto": "que circulaba por la Avenida de la Compañía de Sur a Norte"
+      }
+     },
+     {
+      "vehiculo": "V2",
+      "tipo": "circula",
+      "cita": {
+       "texto": "que circulaba por la Calle 16 de Septiembre de Poniente a Oriente"
+      }
+     }
+    ],
+    "posiciones": [
+     {
+      "vehiculo": "V1",
+      "fase": "impacto",
+      "punto": {
+       "lat": 18.980496568964412,
+       "lon": -98.47662842011542
+      },
+      "rumbo": 22.28247753678022,
+      "fuente": "supuesto"
+     },
+     {
+      "vehiculo": "V2",
+      "fase": "impacto",
+      "punto": {
+       "lat": 18.980523239829107,
+       "lon": -98.47661686274071
+      },
+      "rumbo": 125.01889721167242,
+      "fuente": "supuesto"
+     }
+    ]
+   }
+  ]
+ },
+ "puntos": {
+  "1": {
+   "lat": 18.980516,
+   "lon": -98.47662
+  },
+  "2": {
+   "lat": 18.98044528180103,
+   "lon": -98.47646360910105
+  }
+ },
+ "notas": [],
+ "versiones": [
+  {
+   "tipo": "evidencia",
+   "maniobras": [
+    {
+     "vehiculo": "V1",
+     "tipo": "circula",
+     "cita": {
+      "texto": "que circulaba por la Avenida de la Compañía de Sur a Norte"
+     }
+    },
+    {
+     "vehiculo": "V2",
+     "tipo": "circula",
+     "cita": {
+      "texto": "que circulaba por la Calle 16 de Septiembre de Poniente a Oriente"
+     }
+    }
+   ],
+   "posiciones": [
+    {
+     "vehiculo": "V1",
+     "fase": "impacto",
+     "punto": {
+      "lat": 18.980496568964412,
+      "lon": -98.47662842011542
+     },
+     "rumbo": 22.28247753678022,
+     "fuente": "supuesto"
+    },
+    {
+     "vehiculo": "V2",
+     "fase": "impacto",
+     "punto": {
+      "lat": 18.980523239829107,
+      "lon": -98.47661686274071
+     },
+     "rumbo": 125.01889721167242,
+     "fuente": "supuesto"
+    },
+    {
+     "vehiculo": "V1",
+     "fase": "final",
+     "punto": {
+      "lat": 18.980587864894,
+      "lon": -98.47662
+     },
+     "rumbo": 25.616495984224798,
+     "fuente": "perito"
+    },
+    {
+     "vehiculo": "V2",
+     "fase": "final",
+     "punto": {
+      "lat": 18.98045132263534,
+      "lon": -98.47647769222498
+     },
+     "rumbo": 129.87365448737728,
+     "fuente": "perito"
+    }
+   ],
+   "puntos_paso": [
+    {
+     "vehiculo": "V2",
+     "orden": 1,
+     "punto": {
+      "lat": 18.980480640900513,
+      "lon": -98.47654180455052
+     },
+     "fuente": "perito"
+    }
+   ]
+  }
+ ]
+}

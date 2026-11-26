@@ -79,7 +79,6 @@ import {
   flechasDeLlegada,
   fueraDeLaCalle,
   girar,
-  marcarChoque,
   marcarFinal,
   nombreVehiculo,
   pasoActual,
@@ -89,6 +88,8 @@ import {
   proponerChoque,
   quedoJuntoAlChoque,
   finalDeLaNarracion,
+  tocarChoque,
+  tocarFinal,
   resumenEscena,
   rumboAlineado,
   sentidoEnElCaso,
@@ -654,6 +655,12 @@ export function EscenaFacil({
       vivo = false;
     };
   }, [sentidoDelLugar]);
+  // Diagnóstico (con `window.__croquisDiagnostico`): la escena a la vista de las pruebas, que la
+  // comparan con la que arma la tabla del índice (René, 2026-11-26: «el mismo código que La escena»).
+  useEffect(() => {
+    const w = window as unknown as { __croquisDiagnostico?: boolean; __croquisEscena?: unknown };
+    if (w.__croquisDiagnostico) w.__croquisEscena = { expediente: e, puntos: estado.puntos };
+  }, [e, estado.puntos]);
   // La escena ya armada: al entrar, si nadie ha marcado el choque, Croquis la propone con lo que leyó
   // (con `?desde=cero`, también en un caso que ya trae posiciones, como AXA).
   const [escenaPropuesta, setEscenaPropuesta] = useState<EscenaPropuesta | null>(null);
@@ -720,15 +727,16 @@ export function EscenaFacil({
 
   const ponerChoque = (orden: number, p: Punto, calles: string[]) => {
     const primero = impactos.find((i) => i.orden === orden)?.vehiculos[0];
-    const sentido = primero ? sentidos[primero] : null;
-    const previa = primero ? poseDe(e, primero, "impacto") : null;
-    const rumbo =
-      sentido?.rumbo ??
-      (previa && primero ? rumboDeLlegada(e, primero, previa.rumbo) : null) ??
-      (callesMapa.length ? rumboAlineado(callesMapa, p, 0) : 0);
     const siguiente: EstadoEscena = {
       ...estado,
-      expediente: marcarChoque(e, impactos, orden, p, rumbo),
+      expediente: tocarChoque(
+        e,
+        impactos,
+        orden,
+        p,
+        primero ? (sentidos[primero] ?? null) : null,
+        callesMapa,
+      ),
       puntos: { ...estado.puntos, [orden]: p },
     };
     const lejos = choqueLejosDeCalles(callesMapa, p);
@@ -843,14 +851,10 @@ export function EscenaFacil({
 
   // Dónde quedó: con un toque, alineado a la calle; arrastrar es opcional; dos botones de 15°.
   const colocarFinal = (v: string, p: Punto) => {
-    const imp = poseDe(e, v, "impacto");
-    const rumbo = callesMapa.length
-      ? rumboAlineado(callesMapa, p, poseDe(e, v, "final")?.rumbo ?? imp?.rumbo ?? 0)
-      : (poseDe(e, v, "final")?.rumbo ?? imp?.rumbo ?? 0);
     cambiar(
       {
         ...estado,
-        expediente: marcarFinal(e, v, p, rumbo),
+        expediente: tocarFinal(e, v, p, callesMapa),
         desconocidos: estado.desconocidos.filter((x) => x !== v),
         juntoAlChoque: estado.juntoAlChoque.filter((x) => x !== v),
       },

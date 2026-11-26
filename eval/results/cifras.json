@@ -189,33 +189,34 @@
       "campo": "impactos_posteriores_ocurridos / impactos_posteriores_en_escena",
       "motivo": "Se corrigió el choque fantasma de la reconstrucción previa (#323); recupera cesvi-e9aed4ab5b y agrega 3 impactos; René lo aprobó el 2026-11-26. Antes, 44 de 55."
     },
-    "ejemplos.poste": {
-      "que": "Ejemplo «poste y terracería»: velocidad del Sentra (B) antes del impacto, con la escena colocada como dice la narración (el Mazda 3 quedó 8 m al norte)",
-      "mejor": 36,
-      "p10": 31,
-      "p90": 38,
+    "ejemplos.crucero": {
+      "que": "Ejemplo «crucero de noche»: velocidad del Jetta (A) antes del impacto, como lo arma el perito en La escena",
+      "mejor": 18,
+      "p10": 4,
+      "p90": 26,
       "unidad": "km/h",
       "muestras": 32,
       "juego_de_muestras": "producción",
-      "texto": "36 km/h (31–38)",
+      "texto": "18 km/h (4–26)",
       "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
-      "campo": "filas.5.velocidades.1"
+      "campo": "filas.1.velocidades.0",
+      "motivo": "Escena como la arma el perito en La escena, en el lugar real del ejemplo (2026-11-26); pendiente del visto bueno de René. Antes, 20 (10–28) en la tabla y 20 (3–26) «en la app»."
     },
     "ejemplos.alcance": {
-      "que": "Ejemplo «alcance en carretera»: velocidad de la Ranger (A), la que alcanza, antes del impacto",
+      "que": "Ejemplo «alcance en carretera»: velocidad de la NP300 (A), la que alcanza, antes del impacto, como lo arma el perito en La escena",
       "mejor": 53,
       "p10": 49,
-      "p90": 55,
+      "p90": 56,
       "unidad": "km/h",
       "muestras": 32,
       "juego_de_muestras": "producción",
-      "texto": "53 km/h (49–55)",
+      "texto": "53 km/h (49–56)",
       "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
       "campo": "filas.2.velocidades.0",
-      "motivo": "Regla de choque de frente del #320; cambio de 1 km/h en un extremo, del tamaño del ruido; René lo aprobó el 2026-11-25. Antes, Ranger 53 (49–56) y Corolla 0 (0–9)."
+      "motivo": "Escena como la arma el perito en La escena, en el lugar real del ejemplo (2026-11-26); pendiente del visto bueno de René. Antes, 53 (49–55)."
     },
     "ejemplos.alcance_corolla": {
-      "que": "Ejemplo «alcance en carretera»: velocidad del Corolla (B), el alcanzado, antes del impacto",
+      "que": "Ejemplo «alcance en carretera»: velocidad del Vento (B), el alcanzado, antes del impacto, como lo arma el perito en La escena",
       "mejor": 0,
       "p10": 0,
       "p90": 8,
@@ -225,10 +226,23 @@
       "texto": "0 km/h (0–8)",
       "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
       "campo": "filas.2.velocidades.1",
-      "motivo": "Regla de choque de frente del #320; cambio de 1 km/h en un extremo, del tamaño del ruido; René lo aprobó el 2026-11-25. Antes, Ranger 53 (49–56) y Corolla 0 (0–9)."
+      "motivo": "Escena como la arma el perito en La escena, en el lugar real del ejemplo (2026-11-26); pendiente del visto bueno de René. Antes, 0 (0–8)."
+    },
+    "ejemplos.carambola": {
+      "que": "Ejemplo «carambola con lluvia»: velocidad de la Ranger (A) antes del primer impacto, como lo arma el perito en La escena",
+      "mejor": 25,
+      "p10": 20,
+      "p90": 32,
+      "unidad": "km/h",
+      "muestras": 32,
+      "juego_de_muestras": "producción",
+      "texto": "25 km/h (20–32)",
+      "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
+      "campo": "filas.3.velocidades.0",
+      "motivo": "Escena como la arma el perito en La escena, en el lugar real del ejemplo (2026-11-26); pendiente del visto bueno de René. Antes, 24 (19–32)."
     },
     "ejemplos.reversa": {
-      "que": "Ejemplo «reversa en pendiente»: velocidad del Versa (B) antes del impacto, con el frente del CR-V al lado contrario de su marcha",
+      "que": "Ejemplo «reversa en pendiente»: velocidad del Versa (B) antes del impacto, como lo arma el perito en La escena",
       "mejor": 20,
       "p10": 18,
       "p90": 25,
@@ -238,33 +252,33 @@
       "texto": "20 km/h (18–25)",
       "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
       "campo": "filas.4.velocidades.1",
-      "motivo": "Visto bueno de René, 2026-11-25 (#316): la narración se ubica en la Calle Olivos (Lomas del Valle, Puebla), que baja 3.6 % hacia el norte, con el relieve real del lugar; el CR-V da 9 (1–18) con el caso puesto en su lugar real (el 8 (1–18) que se aprobó primero se midió trasladando la escena desde el punto fijo) y René aprobó el 9 el mismo día; antes, en el punto fijo de la tabla, CR-V 8 (1–16) y Versa 24 (21–28). Antes de eso (#311, 2026-11-24): CR-V 0 (0–1) y Versa 21 (20–28), con el CR-V mirando hacia donde retrocedía."
+      "motivo": "Escena como la arma el perito en La escena, en el lugar real del ejemplo (2026-11-26); pendiente del visto bueno de René. Antes, 20 (18–25)."
     },
     "ejemplos.reversa_crv": {
-      "que": "Ejemplo «reversa en pendiente»: velocidad del CR-V (A) en reversa antes del impacto, con el frente del CR-V al lado contrario de su marcha",
-      "mejor": 9,
-      "p10": 1,
-      "p90": 18,
+      "que": "Ejemplo «reversa en pendiente»: velocidad del CR-V (A) en reversa antes del impacto, como lo arma el perito en La escena",
+      "mejor": 8,
+      "p10": 0,
+      "p90": 17,
       "unidad": "km/h",
       "muestras": 32,
       "juego_de_muestras": "producción",
-      "texto": "9 km/h (1–18)",
+      "texto": "8 km/h (0–17)",
       "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
       "campo": "filas.4.velocidades.0",
-      "motivo": "Visto bueno de René, 2026-11-25 (#316): la narración se ubica en la Calle Olivos (Lomas del Valle, Puebla), que baja 3.6 % hacia el norte, con el relieve real del lugar; el CR-V da 9 (1–18) con el caso puesto en su lugar real (el 8 (1–18) que se aprobó primero se midió trasladando la escena desde el punto fijo) y René aprobó el 9 el mismo día; antes, en el punto fijo de la tabla, CR-V 8 (1–16) y Versa 24 (21–28). Antes de eso (#311, 2026-11-24): CR-V 0 (0–1) y Versa 21 (20–28), con el CR-V mirando hacia donde retrocedía."
+      "motivo": "Escena como la arma el perito en La escena, en el lugar real del ejemplo (2026-11-26); pendiente del visto bueno de René. Antes, 9 (1–18)."
     },
-    "ejemplos.crucero": {
-      "que": "Ejemplo «crucero de noche»: velocidad del Jetta (A) antes del impacto, como lo ve el perito en la app (la escena que propone La escena sobre las calles reales, aceptada, y los dos junto al choque)",
-      "mejor": 20,
-      "p10": 3,
-      "p90": 26,
+    "ejemplos.poste": {
+      "que": "Ejemplo «poste y terracería»: velocidad del Sentra (B) antes del impacto, como lo arma el perito en La escena",
+      "mejor": 58,
+      "p10": 53,
+      "p90": 58,
       "unidad": "km/h",
       "muestras": 32,
       "juego_de_muestras": "producción",
-      "texto": "20 km/h (3–26)",
-      "fuente": "eval/results/ronda4_cifras/crucero_en_la_app.json",
-      "campo": "velocidad",
-      "motivo": "Medido con el crucero en su lugar real (#316, Calle Azucena esquina con Avenida del Árbol); René lo aprobó el 2026-11-25. Antes, 20 (4–27)."
+      "texto": "58 km/h (53–58)",
+      "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
+      "campo": "filas.5.velocidades.1",
+      "motivo": "Escena como la arma el perito en La escena, en el lugar real del ejemplo (2026-11-26); pendiente del visto bueno de René. Antes, 36 (31–38)."
     },
     "reversa.velocidad": {
       "que": "Velocidad supuesta de un vehículo en reversa: mediana y p10–p90 de la velocidad máxima de maniobras reales",

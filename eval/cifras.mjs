@@ -229,51 +229,72 @@ function construir() {
     });
   }
 
-  // --- Los ejemplos de narración (René, 2026-11-21 y 23) ---
-  // El poste, con la escena colocada como dice la narración, en su lugar guardado (René, 2026-11-25:
-  // cada ejemplo abre siempre en su lugar; la tabla los coloca ahí).
+  // --- Los cinco ejemplos, como los arma el perito en La escena (René, 2026-11-26) ---
+  // Una cifra por ejemplo y vehículo: la que ve el perito. La escena que propone La escena en el lugar
+  // guardado de cada ejemplo, con sus calles, corregida según la narración con las mismas funciones
+  // que usa la app (`apps/web/src/lib/ejemplo-como-perito.ts`, recetas en `recetas-perito.ts`).
   {
     const archivo = "eval/results/ejemplos_en_su_lugar/cifras.json";
     const doc = leer(archivo);
-    const i = doc.filas.findIndex((f) => f.clave === "poste-terraceria");
-    if (i < 0) throw new Error(`${archivo}: no está el ejemplo poste-terraceria`);
-    const fila = doc.filas[i];
-    const j = fila.velocidades.findIndex((v) => v.vehiculo === fila.cifra_de);
-    const v = fila.velocidades[j];
-    pon("ejemplos.poste", {
-      que: "Ejemplo «poste y terracería»: velocidad del Sentra (B) antes del impacto, con la escena colocada como dice la narración (el Mazda 3 quedó 8 m al norte)",
-      mejor: v.mejor,
-      p10: v.p10,
-      p90: v.p90,
-      unidad: "km/h",
-      muestras: doc.muestras.samples,
-      juego_de_muestras: "producción",
-      texto: `${v.mejor} km/h (${v.p10}–${v.p90})`,
-      fuente: archivo,
-      campo: `filas.${i}.velocidades.${j}`,
-      codigo: doc.codigo,
-    });
-  }
-  // El alcance en carretera (MEX 57), con la escena colocada en su lugar guardado. René, 2026-11-25
-  // (#320): la regla del choque de frente movió 1 km/h un extremo de cada rango.
-  {
-    const archivo = "eval/results/ejemplos_en_su_lugar/cifras.json";
-    const doc = leer(archivo);
-    const i = doc.filas.findIndex((f) => f.clave === "alcance-deformacion");
-    if (i < 0) throw new Error(`${archivo}: no está el ejemplo alcance-deformacion`);
-    const fila = doc.filas[i];
-    for (const [clave, vehiculo, que] of [
-      ["ejemplos.alcance", "V1", "velocidad de la Ranger (A), la que alcanza, antes del impacto"],
+    const PENDIENTE =
+      "Escena como la arma el perito en La escena, en el lugar real del ejemplo (2026-11-26); pendiente del visto bueno de René.";
+    for (const [clave, ejemplo, vehiculo, que, antes] of [
+      [
+        "ejemplos.crucero",
+        "crucero-noche",
+        "V1",
+        "«crucero de noche»: velocidad del Jetta (A) antes del impacto",
+        "20 (10–28) en la tabla y 20 (3–26) «en la app»",
+      ],
+      [
+        "ejemplos.alcance",
+        "alcance-deformacion",
+        "V1",
+        "«alcance en carretera»: velocidad de la NP300 (A), la que alcanza, antes del impacto",
+        "53 (49–55)",
+      ],
       [
         "ejemplos.alcance_corolla",
+        "alcance-deformacion",
         "V2",
-        "velocidad del Corolla (B), el alcanzado, antes del impacto",
+        "«alcance en carretera»: velocidad del Vento (B), el alcanzado, antes del impacto",
+        "0 (0–8)",
+      ],
+      [
+        "ejemplos.carambola",
+        "carambola-lluvia",
+        "V1",
+        "«carambola con lluvia»: velocidad de la Ranger (A) antes del primer impacto",
+        "24 (19–32)",
+      ],
+      [
+        "ejemplos.reversa",
+        "reversa-pendiente",
+        "V2",
+        "«reversa en pendiente»: velocidad del Versa (B) antes del impacto",
+        "20 (18–25)",
+      ],
+      [
+        "ejemplos.reversa_crv",
+        "reversa-pendiente",
+        "V1",
+        "«reversa en pendiente»: velocidad del CR-V (A) en reversa antes del impacto",
+        "9 (1–18)",
+      ],
+      [
+        "ejemplos.poste",
+        "poste-terraceria",
+        "V2",
+        "«poste y terracería»: velocidad del Sentra (B) antes del impacto",
+        "36 (31–38)",
       ],
     ]) {
-      const j = fila.velocidades.findIndex((v) => v.vehiculo === vehiculo);
-      const v = fila.velocidades[j];
+      const i = doc.filas.findIndex((f) => f.clave === ejemplo);
+      if (i < 0) throw new Error(`${archivo}: no está el ejemplo ${ejemplo}`);
+      const j = doc.filas[i].velocidades.findIndex((v) => v.vehiculo === vehiculo);
+      const v = doc.filas[i].velocidades[j];
       pon(clave, {
-        que: `Ejemplo «alcance en carretera»: ${que}`,
+        que: `Ejemplo ${que}, como lo arma el perito en La escena`,
         mejor: v.mejor,
         p10: v.p10,
         p90: v.p90,
@@ -283,63 +304,9 @@ function construir() {
         texto: `${v.mejor} km/h (${v.p10}–${v.p90})`,
         fuente: archivo,
         campo: `filas.${i}.velocidades.${j}`,
-        motivo:
-          "Regla de choque de frente del #320; cambio de 1 km/h en un extremo, del tamaño del ruido; René lo aprobó el 2026-11-25. Antes, Ranger 53 (49–56) y Corolla 0 (0–9).",
+        motivo: `${PENDIENTE} Antes, ${antes}.`,
       });
     }
-  }
-  // La reversa en pendiente. René, 2026-11-24 (#311): «Por dónde venía» ponía el frente del CR-V
-  // hacia donde retrocedía y el 3D metía su parte trasera 1.7 m dentro del Versa. René, 2026-11-25
-  // (#316): la narración se ubica en la Calle Olivos (Lomas del Valle, Puebla), una calle real que
-  // baja 3.6 % hacia el norte, con su relieve real (INEGI LiDAR); la tabla la coloca ahí.
-  {
-    const archivo = "eval/results/ejemplos_en_su_lugar/cifras.json";
-    const doc = leer(archivo);
-    const i = doc.filas.findIndex((f) => f.clave === "reversa-pendiente");
-    if (i < 0) throw new Error(`${archivo}: no está el ejemplo reversa-pendiente`);
-    const fila = doc.filas[i];
-    for (const [clave, vehiculo, que] of [
-      ["ejemplos.reversa", "V2", "velocidad del Versa (B) antes del impacto"],
-      ["ejemplos.reversa_crv", "V1", "velocidad del CR-V (A) en reversa antes del impacto"],
-    ]) {
-      const j = fila.velocidades.findIndex((v) => v.vehiculo === vehiculo);
-      const v = fila.velocidades[j];
-      pon(clave, {
-        que: `Ejemplo «reversa en pendiente»: ${que}, con el frente del CR-V al lado contrario de su marcha`,
-        mejor: v.mejor,
-        p10: v.p10,
-        p90: v.p90,
-        unidad: "km/h",
-        muestras: doc.muestras.samples,
-        juego_de_muestras: "producción",
-        texto: `${v.mejor} km/h (${v.p10}–${v.p90})`,
-        fuente: archivo,
-        campo: `filas.${i}.velocidades.${j}`,
-        motivo:
-          "Visto bueno de René, 2026-11-25 (#316): la narración se ubica en la Calle Olivos (Lomas del Valle, Puebla), que baja 3.6 % hacia el norte, con el relieve real del lugar; el CR-V da 9 (1–18) con el caso puesto en su lugar real (el 8 (1–18) que se aprobó primero se midió trasladando la escena desde el punto fijo) y René aprobó el 9 el mismo día; antes, en el punto fijo de la tabla, CR-V 8 (1–16) y Versa 24 (21–28). Antes de eso (#311, 2026-11-24): CR-V 0 (0–1) y Versa 21 (20–28), con el CR-V mirando hacia donde retrocedía.",
-      });
-    }
-  }
-  // El crucero de noche como lo ve el perito en la app: la escena que propone La escena sobre las
-  // calles reales, aceptada, con los dos junto al choque («la cifra publicada es esa», René 2026-11-23).
-  {
-    const archivo = "eval/results/ronda4_cifras/crucero_en_la_app.json";
-    const doc = leer(archivo);
-    const v = doc.velocidad;
-    pon("ejemplos.crucero", {
-      que: "Ejemplo «crucero de noche»: velocidad del Jetta (A) antes del impacto, como lo ve el perito en la app (la escena que propone La escena sobre las calles reales, aceptada, y los dos junto al choque)",
-      mejor: v.mejor,
-      p10: v.p10,
-      p90: v.p90,
-      unidad: "km/h",
-      muestras: muestrasDeProduccion().inversion,
-      juego_de_muestras: "producción",
-      texto: `${v.mejor} km/h (${v.p10}–${v.p90})`,
-      fuente: archivo,
-      campo: "velocidad",
-      motivo:
-        "Medido con el crucero en su lugar real (#316, Calle Azucena esquina con Avenida del Árbol); René lo aprobó el 2026-11-25. Antes, 20 (4–27).",
-    });
   }
 
   // --- La reversa (supuesto con fuente) ---

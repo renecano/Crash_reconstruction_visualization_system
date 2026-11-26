@@ -1,0 +1,176 @@
+{
+ "clave": "carambola-lluvia",
+ "propuesta": {
+  "puntos": {
+   "1": {
+    "lat": 25.56829,
+    "lon": -100.273407
+   },
+   "2": {
+    "lat": 25.568324655051445,
+    "lon": -100.27338069928943
+   }
+  },
+  "versiones": [
+   {
+    "tipo": "evidencia",
+    "maniobras": [
+     {
+      "vehiculo": "V1",
+      "tipo": "circula",
+      "cita": {
+       "texto": "el vehículo A circulaba detrás de ellos"
+      }
+     },
+     {
+      "vehiculo": "V2",
+      "tipo": "se_detiene",
+      "cita": {
+       "texto": "El vehículo B y el vehículo C se encontraban detenidos por el semáforo en rojo"
+      }
+     },
+     {
+      "vehiculo": "V3",
+      "tipo": "se_detiene",
+      "cita": {
+       "texto": "El vehículo B y el vehículo C se encontraban detenidos por el semáforo en rojo"
+      }
+     }
+    ],
+    "posiciones": [
+     {
+      "vehiculo": "V1",
+      "fase": "impacto",
+      "punto": {
+       "lat": 25.568270186512347,
+       "lon": -100.27342203702189
+      },
+      "rumbo": 34.3958479037355,
+      "fuente": "supuesto"
+     },
+     {
+      "vehiculo": "V2",
+      "fase": "impacto",
+      "punto": {
+       "lat": 25.568307327525723,
+       "lon": -100.27339384964567
+      },
+      "rumbo": 34.3958479037355,
+      "fuente": "supuesto"
+     },
+     {
+      "vehiculo": "V3",
+      "fase": "impacto",
+      "punto": {
+       "lat": 25.568341351810705,
+       "lon": -100.27336802763811
+      },
+      "rumbo": 34.3958479037355,
+      "fuente": "supuesto"
+     }
+    ]
+   }
+  ]
+ },
+ "puntos": {
+  "1": {
+   "lat": 25.56829,
+   "lon": -100.273407
+  },
+  "2": {
+   "lat": 25.568324655051445,
+   "lon": -100.27338069928943
+  }
+ },
+ "notas": [],
+ "versiones": [
+  {
+   "tipo": "evidencia",
+   "maniobras": [
+    {
+     "vehiculo": "V1",
+     "tipo": "circula",
+     "cita": {
+      "texto": "el vehículo A circulaba detrás de ellos"
+     }
+    },
+    {
+     "vehiculo": "V2",
+     "tipo": "se_detiene",
+     "cita": {
+      "texto": "El vehículo B y el vehículo C se encontraban detenidos por el semáforo en rojo"
+     }
+    },
+    {
+     "vehiculo": "V3",
+     "tipo": "se_detiene",
+     "cita": {
+      "texto": "El vehículo B y el vehículo C se encontraban detenidos por el semáforo en rojo"
+     }
+    }
+   ],
+   "posiciones": [
+    {
+     "vehiculo": "V1",
+     "fase": "impacto",
+     "punto": {
+      "lat": 25.568270186512347,
+      "lon": -100.27342203702189
+     },
+     "rumbo": 34.3958479037355,
+     "fuente": "supuesto"
+    },
+    {
+     "vehiculo": "V2",
+     "fase": "impacto",
+     "punto": {
+      "lat": 25.568307327525723,
+      "lon": -100.27339384964567
+     },
+     "rumbo": 34.3958479037355,
+     "fuente": "supuesto"
+    },
+    {
+     "vehiculo": "V3",
+     "fase": "impacto",
+     "punto": {
+      "lat": 25.568341351810705,
+      "lon": -100.27336802763811
+     },
+     "rumbo": 34.3958479037355,
+     "fuente": "supuesto"
+    },
+    {
+     "vehiculo": "V1",
+     "fase": "final",
+     "punto": {
+      "lat": 25.568281317685187,
+      "lon": -100.27341358925818
+     },
+     "rumbo": 34.3958479037355,
+     "fuente": "perito"
+    },
+    {
+     "vehiculo": "V2",
+     "fase": "final",
+     "punto": {
+      "lat": 25.568327062272637,
+      "lon": -100.27337887238238
+     },
+     "rumbo": 54.52459327437731,
+     "fuente": "perito"
+    },
+    {
+     "vehiculo": "V3",
+     "fase": "final",
+     "punto": {
+      "lat": 25.568364124545276,
+      "lon": -100.27335074476476
+     },
+     "rumbo": 54.5245848938448,
+     "fuente": "perito"
+    }
+   ]
+  }
+ ]
+}

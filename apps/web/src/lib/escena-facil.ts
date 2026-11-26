@@ -26,6 +26,7 @@ import {
   nombrePersona,
   OBJETO_PERSONA,
   posesDeImpacto,
+  rumboDeLlegada,
   rumboDeMarcha,
   rumboDelFrente,
   objetosDe,
@@ -1376,6 +1377,44 @@ export function elegirDireccion(
 }
 
 /** «Lo marco en el mapa»: dónde quedó, alineado a la calle si hay una cerca. */
+/**
+ * Un choque marcado con un toque en el mapa: el rumbo del primer vehículo de ese choque es el narrado,
+ * o el de su llegada si ya tenía pose, o el de la calle de ese punto. La usan La escena y la tabla de
+ * los ejemplos (René, 2026-11-26).
+ */
+export function tocarChoque(
+  e: Expediente,
+  impactos: readonly ImpactoAColocar[],
+  orden: number,
+  p: Punto,
+  sentidoDelPrimero: SentidoNarrado | null,
+  calles: readonly Calle[],
+): Expediente {
+  const primero = impactos.find((i) => i.orden === orden)?.vehiculos[0];
+  const previa = primero ? poseDe(e, primero, "impacto") : null;
+  const rumbo =
+    sentidoDelPrimero?.rumbo ??
+    (previa && primero ? rumboDeLlegada(e, primero, previa.rumbo) : null) ??
+    (calles.length ? rumboAlineado(calles, p, 0) : 0);
+  return marcarChoque(e, impactos, orden, p, rumbo);
+}
+
+/**
+ * Dónde quedó, con un toque en el mapa: el vehículo ahí, alineado a la calle de ese punto (o con su
+ * rumbo de antes, sin calles). La usan La escena y la tabla de los ejemplos (René, 2026-11-26: «el
+ * mismo código que La escena»).
+ */
+export function tocarFinal(
+  e: Expediente,
+  vehiculo: string,
+  p: Punto,
+  calles: readonly Calle[],
+): Expediente {
+  const imp = poseDe(e, vehiculo, "impacto");
+  const previo = poseDe(e, vehiculo, "final")?.rumbo ?? imp?.rumbo ?? 0;
+  return marcarFinal(e, vehiculo, p, calles.length ? rumboAlineado(calles, p, previo) : previo);
+}
+
 export function marcarFinal(e: Expediente, vehiculo: string, p: Punto, rumbo: number): Expediente {
   return conPosicion(e, {
     vehiculo: vehiculo as Id,

@@ -6,7 +6,11 @@ import { describe, it } from "vitest";
 import { expedienteAxaReconstruccion } from "@/lib/axa-reconstruccion";
 import { obstaculosDelMapa } from "@/lib/obstaculos-del-mapa";
 import { osmAlrededor } from "@/lib/visor-unity/osm-alrededor";
-import { colocarReceta, lectura, reconstruir, RECETAS } from "./cifras-ronda4.test";
+import type { SalidaCorpus } from "@croquis/cesvi";
+import { reconstruir } from "./cifras-ronda4.test";
+import { escenaComoPerito } from "./ejemplo-como-perito";
+import { conLugarDelEjemplo } from "./ejemplos-narracion";
+import { RECETAS_PERITO } from "./recetas-perito";
 
 /**
  * ¿La regla de los edificios y muros del mapa (René, 2026-11-24, punto 2) toca algo publicado? AXA y
@@ -28,12 +32,24 @@ describe("los obstáculos del mapa contra lo publicado", () => {
       const ej = JSON.parse(
         readFileSync(resolve(RAIZ, "data/cesvi/ejemplos/narraciones.json"), "utf8"),
       ) as { ejemplos: { clave: string; grabacion?: string }[] };
-      for (const receta of RECETAS) {
+      // Como los arma el perito en La escena (René, 2026-11-26).
+      for (const receta of RECETAS_PERITO) {
         const x = ej.ejemplos.find((y) => y.clave === receta.clave)!;
-        const { e } = lectura(
-          `data/cesvi/grabaciones/${x.grabacion ?? `ejemplos/${x.clave}.json`}`,
-        );
-        casos.push({ clave: receta.clave, e: colocarReceta(e, receta) });
+        const g = JSON.parse(
+          readFileSync(
+            resolve(RAIZ, `data/cesvi/grabaciones/${x.grabacion ?? `ejemplos/${x.clave}.json`}`),
+            "utf8",
+          ),
+        ) as { narracion: string; salida: SalidaCorpus };
+        const leida = cesvi.escenaDeNarracion(g.salida, g.narracion);
+        const e0 = conLugarDelEjemplo(
+          g.narracion,
+          leida.expediente as never,
+        ) as unknown as Expediente;
+        casos.push({
+          clave: receta.clave,
+          e: escenaComoPerito(e0, g.narracion, leida.posiciones, receta).expediente,
+        });
       }
       const filas: Record<string, unknown>[] = [];
       for (const c of casos) {
