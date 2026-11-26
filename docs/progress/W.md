@@ -1485,6 +1485,32 @@ René (2026-11-25): diagnosticar los 16 casos abiertos, decir si el giro de 31°
 - **La carambola de la e2e («línea base distinta»):** el Mazda (B) sale con 0 km/h, pero arrancaba en su supuesto, 12 m antes de su posición de impacto: con 0 km/h se quedaba ahí y, en el 3D y en la simulación de los conductores, el Versa lo alcanzaba 1.8 s antes del choque. Con el solver del #316 el choque se iba al arranque de los dos (12 m antes de donde lo puso el perito); con el del #320, el Versa llegaba a su punto y el Mazda seguía atrás. Arreglo: un vehículo con 0 km/h arranca detenido en su posición de impacto (`posesDeImpacto`, `especReconstruida`). Las cifras no cambian (Versa 24, Mazda 0, Aveo 1); prueba con el caso guardado (`carambola-detenido.test.ts`, `data/cesvi/grabaciones/carambola/carambola-e2e-caso.json`).
 - **Las cifras de carambolas del índice:** el #320 no las mueve (con el solver del #316 y con el del #320: 19 de 31 y 41 de 55). Las mueve el #311: en `main` dan 21 de 31 y 44 de 55; en la cabeza del #311 (`2dfd57dc`), 19 de 31 y 41 de 55. Cinco expedientes pierden un impacto posterior (prueba: cesvi-0b1f65a976, cesvi-e9aed4ab5b; desarrollo: cesvi-d6f456b23d, cesvi-644f4d909d, cesvi-31aa158ae6). Ya da 19 en `92ce9a10`, antes del arreglo de la cadena (`f31eaaff`). Espera el visto bueno de René; el índice sigue con 21 y 44.
 
+### aud-02, el aviso del límite de la vía y las carambolas (2026-11-26) · rama `feat/w-aud02-final-con-direccion`, encima del #320
+
+René (2026-11-26): las posiciones finales con dirección («hacia el noroeste», «hacia el camellón»), el aviso para autos y el diagnóstico de las 5 carambolas, en el PR que sigue al #320 y antes de la ronda con 3 personas.
+
+- **Hacia dónde salió** (`direccionDeSalida`, `finalDeLaNarracion` en `escena-facil.ts`): un punto cardinal («hacia el noroeste», «quedó al norte del cruce»), el camellón (a su izquierda: se circula por la derecha), la banqueta (a su derecha), «hacia su izquierda/derecha» y «hacia atrás». No cuentan «con el frente hacia…» (es cómo quedó) ni «de sur a norte» (es cómo circulaba). Con dirección, los metros narrados van en esa dirección; sin ella, hacia donde avanzaba, como antes. Pruebas en `escena-final-narrado.test.ts`.
+- **aud-02:** la Hilux ya queda 7 m al noroeste. Sentra de 25 (8–28) a 53 (46–55) km/h; Hilux de 27 (20–35) a 15 (13–30) km/h (es una narración de la revisión, no una cifra publicada).
+- **El aviso del límite de la vía** (`avisoSobreElLimite`, `conAvisoDelLimite`): sale cuando el mejor ajuste pasa por más de 40 km/h el límite de la vía del choque (su `maxspeed` o el de su tipo según la LGMSV, el mismo de `limiteEnElChoque`). El 40 es un umbral de diseño, no viene de una fuente. Va junto a la cifra (`sobre-el-limite`) y en los límites: «la cifra (X km/h) queda más de 40 km/h arriba del límite de esta vía (L km/h; fuente): es inusual; revisa las posiciones finales y las medidas antes de usarla». Las cifras no cambian. En la e2e del poste: con el poste golpeado en el recorrido del Camaro, el Jetta da 95 km/h y el aviso sale; antes, con 60 km/h, no sale.
+- **Las 5 carambolas del corpus:** con el #311 se pierden dos causas distintas:
+  - en `395401c7` (la clase sale del modelo): cesvi-0b1f65a976, cesvi-644f4d909d y cesvi-e9aed4ab5b;
+  - en `92ce9a10` (el primer contacto en choques oblicuos): cesvi-d6f456b23d; cesvi-31aa158ae6 da exactamente los mismos valores (otro BMW 325 contra un 550) y no se bisecó aparte.
+
+  Las clases nuevas son correctas: BMW 325/550 son sedán mediano, Ford Freestar es van y Honda Civic o Mazda 3 son sedán compacto. Lo que falla es la colocación: sin posiciones del perito, el vehículo que solo está en un impacto posterior se coloca detenido a la mitad del recorrido del que lo golpea, visto en una reconstrucción previa. En esa reconstrucción los que aún no se colocaban iban en su disposición genérica, a 40 km/h, y chocaban con el que golpea. Por ejemplo, en cesvi-e9aed4ab5b el Jeep alcanzaba a la Tacoma a los 1.55 s y ese empujón entraba en el recorrido; en la final la Tacoma se mueve 0.2 m y nunca llega. Las clases solo cambiaron en qué casos ocurría ese choque fantasma.
+
+  Arreglo (`colocarPosteriores`): la reconstrucción previa va sin los que aún no se colocan; prueba en `carambola-colocacion.test.ts`. Recupera cesvi-e9aed4ab5b y además reproduce cesvi-9ab47f7f37, cesvi-feb7aaa0e1 y cesvi-f5a7c68983, que tampoco salían en `main`.
+
+  Quedan cesvi-0b1f65a976, cesvi-644f4d909d, cesvi-d6f456b23d y cesvi-31aa158ae6. En cesvi-d6f456b23d, con el impacto declarado el solver detiene al BMW 0.2–0.4 m antes del vehículo colocado sin registrar el choque; sin el impacto declarado lo atravesaría 1.5 m. Apunta al contacto posterior del solver (`postimpact`), pendiente.
+
+| Carambolas (impactos posteriores que ocurren) | `main`   | #311 / #316 / #320 | con el arreglo |
+| --------------------------------------------- | -------- | ------------------ | -------------- |
+| Prueba                                        | 21 de 31 | 19 de 31           | 22 de 31       |
+| Desarrollo                                    | 44 de 55 | 41 de 55           | 42 de 55       |
+
+René aprobó 19 de 31 y 41 de 55 en el índice («masas por ficha del modelo (#311, 395401c7); en 5 expedientes deja de ocurrir el impacto posterior; René lo aprobó el 2026-11-26»). Con el arreglo dan 22 y 42: el índice sigue en 21 y 44 hasta que René elija.
+
+- **Para la revisión de la t9-junta:** contra el índice, las carambolas dan 19 de 31 y 41 de 55 en lugar de 21 y 44. Es esperado: lo mueve el #311 (`395401c7`, la clase y la masa por el modelo) y René lo aprobó el 2026-11-26.
+
 ### Los pedazos del choque parecen cubos (René, 2026-11-25) · para el paquete de daños
 
 En el tráiler, los restos del choque en el 3D (cuadros de 16.7 a 17.9 s y de 19.0 a 19.4 s) se ven en imagen fija como cubos negros, de cerca, y grises, en la toma abierta. Por eso el póster del tráiler en la portada (#319) es la foto promo `02-noche-faros.jpg`, sin restos. Se corrige con los daños: piezas sueltas y restos con la forma de lo que se rompe.

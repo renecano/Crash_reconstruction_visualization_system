@@ -1121,7 +1121,21 @@ function colocarPosteriores(
           ? [b, a]
           : [null, null];
     if (!fijo || !nuevo) continue;
-    const r = reconstruct(spec);
+    // El recorrido del que golpea, sin los que aún no se colocan: en su disposición genérica (a 40 km/h)
+    // chocaban con él y ese empujón entraba en el recorrido; el vehículo quedaba donde, sin ese choque
+    // fantasma, el que golpea nunca llega (René, 2026-11-26: 5 carambolas del corpus).
+    const sinColocar = structuredClone(spec);
+    sinColocar.vehiculos.forEach((v, k) => {
+      if (colocados.has(String(v.id))) return;
+      v.posicion_inicial = {
+        x: 10000 + 100 * k,
+        y: 10000,
+        rumbo_deg: 0,
+        procedencia: { fuente: "supuesto", confianza: 0.3 },
+      };
+      v.velocidad_previa = { valor: 0, unidad: "km/h", fuente: "supuesto", confianza: 0.3 };
+    });
+    const r = reconstruct(sinColocar);
     const vf = r.vehiculos.find((v) => v.id === fijo);
     const vn = r.vehiculos.find((v) => v.id === nuevo);
     const golpe = r.eventos
