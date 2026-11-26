@@ -10,69 +10,58 @@ const SALIDA = process.env.CROQUIS_CAPTURAS ?? "diag-ejemplos";
 // Como la e2e de los ejemplos: 1440×900 y 20 s por acción.
 test.use({ actionTimeout: 20_000, viewport: { width: 1440, height: 900 }, locale: "es-MX" });
 
-test("diagnóstico del mapa en el primer ejemplo", async ({ page }) => {
-  test.setTimeout(300_000);
+test("diagnóstico del mapa en los cinco ejemplos", async ({ page }) => {
+  test.setTimeout(900_000);
   mkdirSync(SALIDA, { recursive: true });
-  const r = RECETAS[0]!;
   const consola: string[] = [];
-  page.on("console", (m) => consola.push(`${m.type()}: ${m.text()}`.slice(0, 300)));
   page.on("pageerror", (e) => consola.push(`pageerror: ${e.message}`.slice(0, 300)));
-  let llamadas = 0;
-  page.on("request", (q) => {
-    if (q.url().includes("/api/cesvi/escena")) llamadas++;
-  });
-  await page.goto("/cesvi");
-  // Como la e2e de los ejemplos: un contexto WebGL para leer la tarjeta de video.
-  const gpu = await page
-    .evaluate(() => {
-      const gl = document.createElement("canvas").getContext("webgl2");
-      const ext = gl?.getExtension("WEBGL_debug_renderer_info");
-      return ext && gl ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : null;
-    })
-    .catch(() => null);
-  consola.push(`gpu: ${gpu}`);
-  await page.getByTestId("ir-caso-nuevo").click();
-  await expect(page.getByTestId("recorrido-caso")).toBeVisible();
-  await irAPaso(page, 2);
-  await page.locator(`[data-ejemplo="${r.clave}"]`).click();
-  await page.getByTestId("leer-narracion").click();
-  await expect(page.getByTestId("escena")).toBeVisible({ timeout: 60_000 });
-  await page.screenshot({ path: join(SALIDA, "1-leida.jpg"), type: "jpeg", quality: 80 });
-  consola.push(`llamadas a Claude: ${llamadas}`);
-  await irAPaso(page, 3);
-  const notas: string[] = [];
-  let error = "";
-  try {
-    await colocar(page, r, notas);
-  } catch (e) {
-    error = (e as Error).message.slice(0, 1500);
-  }
-  await page.screenshot({ path: join(SALIDA, "falla.png") });
-  const cajas: unknown[] = [];
-  for (let i = 0; i < 12; i++) {
-    cajas.push(
-      await page.evaluate(() => {
+  const filas: unknown[] = [];
+  for (const r of RECETAS) {
+    await page.goto("/cesvi");
+    await page.getByTestId("ir-caso-nuevo").click();
+    await expect(page.getByTestId("recorrido-caso")).toBeVisible();
+    await irAPaso(page, 2);
+    await page.locator(`[data-ejemplo="${r.clave}"]`).click();
+    await page.getByTestId("leer-narracion").click();
+    await expect(page.getByTestId("escena")).toBeVisible({ timeout: 60_000 });
+    await irAPaso(page, 3);
+    const notas: string[] = [];
+    let error = "";
+    try {
+      await colocar(page, r, notas);
+    } catch (e) {
+      error = (e as Error).message.slice(0, 1500);
+    }
+    let caja: unknown = null;
+    if (error) {
+      await page.screenshot({ path: join(SALIDA, `${r.clave}-falla.png`) });
+      caja = await page.evaluate(() => {
         const m = document.querySelector('[data-testid="mapa-facil"]');
-        const r = m?.getBoundingClientRect();
-        const c = m?.querySelector("canvas")?.getBoundingClientRect();
+        const b = m?.getBoundingClientRect();
+        const enc = [...document.querySelectorAll("body *")]
+          .filter((x) => {
+            const z = getComputedStyle(x).zIndex;
+            const rr = x.getBoundingClientRect();
+            return z !== "auto" && Number(z) > 5 && rr.width > 300 && rr.height > 300;
+          })
+          .map(
+            (x) =>
+              `${x.tagName}.${String(x.className).slice(0, 80)} z=${getComputedStyle(x).zIndex}`,
+          )
+          .slice(0, 8);
         return {
-          t: performance.now(),
-          mapa: r && [r.x, r.y, r.width, r.height].map((x) => Math.round(x * 10) / 10),
-          canvas: c && [c.x, c.y, c.width, c.height].map((x) => Math.round(x * 10) / 10),
-          listo: m?.getAttribute("data-listo"),
-          estilo: (m as HTMLElement | null)?.getAttribute("style"),
-          clase: m?.getAttribute("class"),
+          mapa: b && [b.x, b.y, b.width, b.height],
           pregunta: document.querySelector('[data-testid="escena-pregunta"]')?.textContent,
-          alertas: [...document.querySelectorAll('[data-testid^="mensaje-"]')].map((x) =>
-            x.textContent?.slice(0, 160),
-          ),
+          tarjeta: document.querySelector('[aria-label="La pregunta"]')?.textContent?.slice(0, 200),
+          grandesEncima: enc,
         };
-      }),
-    );
-    await page.waitForTimeout(150);
+      });
+    }
+    filas.push({ clave: r.clave, error, notas, caja });
+    if (error) break;
   }
   writeFileSync(
     join(SALIDA, "diagnostico.json"),
-    JSON.stringify({ error, notas, cajas, consola: consola.slice(-60) }, null, 1),
+    JSON.stringify({ filas, consola: consola.slice(-30) }, null, 1),
   );
 });
