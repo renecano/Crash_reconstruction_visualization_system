@@ -1,0 +1,46 @@
+# Paso: antes-dependencias
+# Comando: pnpm -C ../croquis-t9-antes install --frozen-lockfile --prefer-offline --package-import-method=hardlink
+# Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
+# Inicio: 2026-11-26 12:09:52
+
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 22m ago)
+Lockfile is up to date, resolution step is skipped
+Packages are hard linked from the content-addressable store to the virtual store.
+  Content-addressable store is at: C:\Users\MrKan\AppData\Local\pnpm\store\v11
+  Virtual store is at:             node_modules/.pnpm
+Progress: resolved 160, reused 160, downloaded 0, added 145
+Progress: resolved 289, reused 289, downloaded 0, added 274
+Progress: resolved 411, reused 411, downloaded 0, added 396
+Progress: resolved 545, reused 545, downloaded 0, added 530
+Progress: resolved 662, reused 662, downloaded 0, added 647
+Progress: resolved 759, reused 759, downloaded 0, added 746
+Progress: resolved 856, reused 856, downloaded 0, added 842
+Progress: resolved 965, reused 965, downloaded 0, added 952
+Progress: resolved 1001, reused 1001, downloaded 0, added 994
+Packages: +1001
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 1001, reused 1001, downloaded 0, added 1001, done
+.../esbuild@0.28.1/node_modules/esbuild postinstall$ node install.js
+.../esbuild@0.28.2/node_modules/esbuild postinstall$ node install.js
+.../esbuild@0.28.2/node_modules/esbuild postinstall: Done
+.../esbuild@0.28.1/node_modules/esbuild postinstall: Done
+. prepare$ node tools/git/instalar-ganchos.mjs
+. prepare: Done
+
+devDependencies:
++ @eslint/js 10.0.1
++ @fontsource-variable/anybody 5.3.0
++ @gltf-transform/cli 4.5.1
++ @gltf-transform/core 4.5.1
++ @gltf-transform/extensions 4.5.1
++ @gltf-transform/functions 4.5.1
++ esbuild 0.28.2
++ eslint 10.12.0
++ prettier 3.9.10
++ typescript 6.0.3
++ typescript-eslint 8.71.1
+
+Done in 12.3s using pnpm v12.11.2
+
+# Fin: 2026-11-26 12:10:04 · ok · 0.2 min
