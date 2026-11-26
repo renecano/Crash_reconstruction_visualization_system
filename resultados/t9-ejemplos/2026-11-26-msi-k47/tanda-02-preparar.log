@@ -1,7 +1,7 @@
 # Paso: preparar
 # Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar
 # Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
-# Inicio: 2026-11-26 13:25:46
+# Inicio: 2026-11-26 17:02:27
 
 
 == 1. Herramientas
@@ -10,9 +10,9 @@ Hay internet.
 
 == 2. Dependencias
 Scope: all 10 workspace projects
-✓ Lockfile passes supply-chain policies (verified 1h ago)
+✓ Lockfile passes supply-chain policies (verified 5h ago)
 Lockfile is up to date, resolution step is skipped
-Done in 79ms using pnpm v12.11.2
+Done in 91ms using pnpm v12.11.2
 
 == 3. El visor de Unity, desde esta computadora
 Visor 945617e035988035 servido desde el sitio: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\public\visor-unity\local
@@ -26,24 +26,24 @@ Worker de pdf.js 6.4.299 en public/pdfjs/.
 Script de Blender en public/blender/.
 Decodificadores de three 0.186.1 en public/decodificadores/r186/.
 ▲ Next.js 16.4.6 (Turbopack)
-✓ Running next.config.ts took 2.7s
+✓ Running next.config.ts took 1284ms
 - Experiments (use with caution):
   ✓ inlineCss
 
   Creating an optimized production build ...
-✓ Compiled successfully in 2.4s
+✓ Compiled successfully in 5.3s
   Running TypeScript ...
-  Finished TypeScript in 12.4s ...
+  Finished TypeScript in 36.9s ...
   Collecting page data using 31 workers ...
-✓ Running next.config.ts took 362ms
+✓ Running next.config.ts took 1560ms
   Generating static pages using 31 workers (0/63) ...
   Generating static pages using 31 workers (15/63) 
   Generating static pages using 31 workers (31/63) 
   Generating static pages using 31 workers (47/63) 
-✓ Running next.config.ts took 405ms
+✓ Running next.config.ts took 1678ms
 ○ (serwist) Using esbuild to bundle the service worker.
-✓ (serwist) 246 precache entries (25940.77 KiB)
-✓ Generating static pages using 31 workers (63/63) in 5.3s
+✓ (serwist) 246 precache entries (25946.51 KiB)
+✓ Generating static pages using 31 workers (63/63) in 16.5s
   Finalizing page optimization ...
 
 Route (app)
@@ -114,4 +114,4 @@ CSS del sistema de diseño presente (281 KB).
 
 Listo: la demo local está preparada.
 
-# Fin: 2026-11-26 13:26:20 · ok · 0.6 min
+# Fin: 2026-11-26 17:03:41 · ok · 1.2 min
