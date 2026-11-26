@@ -917,7 +917,7 @@ export function MapaFacil(p: MapaFacilProps) {
         ) : null}
         {p.queImporta?.activo ? (
           <p
-            className="escena-mensaje max-w-[15rem] text-[0.8125rem]"
+            className="max-w-[15rem] rounded-[14px] bg-superficie px-3 py-2 text-[0.8125rem] text-texto shadow-[0_6px_18px_rgba(27,34,48,0.14)]"
             role="status"
             data-testid="que-importa-nota"
           >

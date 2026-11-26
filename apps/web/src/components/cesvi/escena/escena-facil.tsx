@@ -2745,8 +2745,8 @@ export function EscenaFacil({
             ? {
                 activo: verQueImporta,
                 onAlternar: () => {
-                  // Para verlo en el mapa, la lista se cierra.
-                  setListaVista(false);
+                  // Para verlo en el mapa, la lista se da por vista y se cierra.
+                  setListaVista(true);
                   setVerQueImporta((x) => !x);
                 },
               }
