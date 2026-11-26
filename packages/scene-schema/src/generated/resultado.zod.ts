@@ -162,7 +162,7 @@ export const DanoPosterior = z.strictObject({
   ancho_m: z.number().min(0),
   centro_m: z.number(),
   energia_j: z.number().min(0),
-  origen_rigidez: z.enum(["nhtsa", "supuesto", "sin impacto"]),
+  origen_rigidez: z.enum(["nhtsa", "reporte", "supuesto", "sin impacto"]),
   cdc: ZonaCDC.optional(),
 });
 export type DanoPosterior = z.infer<typeof DanoPosterior>;

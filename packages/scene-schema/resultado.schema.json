@@ -280,7 +280,8 @@
         },
         "origen_rigidez": {
           "type": "string",
-          "enum": ["nhtsa", "reporte", "supuesto", "sin impacto"]
+          "enum": ["nhtsa", "reporte", "supuesto", "sin impacto"],
+          "title": "OrigenRigidez"
         },
         "cdc": {
           "$ref": "#/$defs/ZonaCDC"
@@ -316,13 +317,15 @@
             },
             "fuente": {
               "type": "string",
-              "enum": ["reporte", "nhtsa", "supuesto"]
+              "enum": ["reporte", "nhtsa", "supuesto"],
+              "title": "FuenteRigidez"
             },
             "nota": {
               "type": "string",
               "maxLength": 300
             }
-          }
+          },
+          "title": "RigidezDano"
         }
       }
     },
@@ -1804,7 +1807,8 @@
         },
         "origen_rigidez": {
           "type": "string",
-          "enum": ["nhtsa", "supuesto", "sin impacto"]
+          "enum": ["nhtsa", "reporte", "supuesto", "sin impacto"],
+          "title": "OrigenRigidez"
         },
         "cdc": {
           "$ref": "#/$defs/ZonaCDC"
