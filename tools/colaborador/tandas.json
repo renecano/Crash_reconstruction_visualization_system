@@ -1,6 +1,6 @@
 {
   "nota": "Lo pesado de cada tanda de la auditoría del 2026-11-15, para la computadora del colaborador (tools/colaborador/tanda.ps1). «vigente» es la que corre CORRER-TANDA-EN-RTX.bat con doble clic. Toda corrida empieza por «comprobacion»; si falla, lo pesado no corre. Cada paso: un comando que corre en la raíz del repositorio, sin preguntas y sin llaves; «minutos» es lo estimado (el tope es 4 veces eso, y al menos 10 min); «salidas» son las rutas que se suben además de los registros. «rama»: la rama donde vive la tanda mientras no esté en main. Un comando por paso (sin &&): cada uno deja su registro. Un paso con `requiere` se omite si falta esa carpeta (datos que no van en git). «privadas»: carpetas de un paso que no se suben; se comprimen en un zip en la carpeta de resultados (René, 2026-11-21: el repositorio es público). Un «antes» en otro commit va en un git worktree (sin copiar el repositorio) y sus dependencias se enlazan desde el almacén de pnpm (--prefer-offline --package-import-method=hardlink), sin copiar node_modules (René, 2026-11-23: el disco llegaba al 100 %); corrida.json guarda el disco libre antes y después de cada paso.",
-  "vigente": "t9-ejemplos",
+  "vigente": "t10-final",
   "comprobacion": {
     "pasos": [
       {
@@ -1397,8 +1397,8 @@
     },
     "t10-final": {
       "titulo": "Tanda 10 · Final: el build de Unity de la ronda final con todo lo publicado",
-      "nota": "René, 2026-11-26: la tanda final, con el build WebGL que compila Alberto desde main (daños, pedazos, entorno y paisaje, cámara lenta y «¿y si…?» en el visor), del release de GitHub, sin Blob. No es vigente hasta que el manifiesto del build esté en main; entonces se fija a ese commit. Solo el build WebGL: nada de esta tanda usa el visor de escritorio. Primero el humo (si falla, se detiene). Después: los cinco ejemplos y AXA contra el índice; las tres narraciones de René; las capturas con el Unity real (¿y si…? en 3D, daños, entorno, satélite y Presentar, solo ejemplos públicos); el video del 3D al doble (#325, AXA: los MP4 van al Escritorio y no se suben); el arranque del 3D tres veces; y comparar. Nada de AXA se sube.",
-      "rama": "main",
+      "nota": "René, 2026-11-26: la tanda final, fijada a 03340cb4 (rama release/t10-final, #350). Ese commit junta en un solo árbol lo que se publica: la cadena #311 → #331, el #344 (el Mazda del poste), el #334 («¿y si…?»), el #342 (paisaje), el #325 (video al doble), el #326 (satélite) y el manifiesto del build dd83b2d323f5ed0e (#348, con el #346 de Alberto), del release de GitHub, sin Blob. Solo el build WebGL. Primero el humo (si falla, se detiene). Después: los cinco ejemplos y AXA, tus tres narraciones, las capturas con el Unity real (¿y si…? en 3D, daños, entorno, satélite y Presentar; solo ejemplos públicos), el video del 3D al doble (AXA: los MP4 van al Escritorio y no se suben), el arranque tres veces y comparar contra el índice. El poste se publica con su cifra de la tabla, anotada como pendiente del arreglo del solver. Nada de AXA se sube.",
+      "rama": "release/t10-final",
       "pasos": [
         {
           "nombre": "visor",
@@ -1422,17 +1422,21 @@
         },
         {
           "nombre": "ejemplos",
-          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t10/ejemplos.json -Capturas docs/cesvi/ronda-4/evidencia/t10-ejemplos -Casos eval/results/t10/ejemplos-casos",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t9/ejemplos.json -Capturas docs/cesvi/ronda-4/evidencia/t10-ejemplos -Casos eval/results/t10/ejemplos-casos",
           "minutos": 6,
           "tope_min": 30,
-          "salidas": ["eval/results/t10", "docs/cesvi/ronda-4/evidencia/t10-ejemplos"]
+          "salidas": [
+            "docs/cesvi/ronda-4/evidencia/t10-ejemplos",
+            "eval/results/t10",
+            "eval/results/t9"
+          ]
         },
         {
           "nombre": "tres-narraciones",
-          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tres -Salida eval/results/t10/tres_narraciones.json",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tres -Salida eval/results/t9/tres_narraciones.json",
           "minutos": 2,
           "tope_min": 25,
-          "salidas": ["eval/results/t10"]
+          "salidas": ["eval/results/t10", "eval/results/t9"]
         },
         {
           "nombre": "final-unity",
@@ -1467,6 +1471,63 @@
           "minutos": 1,
           "tope_min": 15,
           "salidas": ["eval/results/t10"]
+        },
+        {
+          "nombre": "comparar",
+          "comando": "node eval/t9_comparar.mjs",
+          "minutos": 1,
+          "salidas": ["eval/results/t9"]
+        }
+      ],
+      "commit": "03340cb416111e1cab5b150eae82241c5ffef67a"
+    },
+    "t11-solver": {
+      "titulo": "Tanda 11 · El reajuste del rango que converge y no descarta lo medido",
+      "nota": "René, 2026-11-26: para el viernes. El arreglo de fondo del solver (Python y TS con paridad): el reajuste de cada muestra del rango converge y no trata como atípico lo medido (reposo, huellas y proyección). Se mide antes (producción) y después: los cinco ejemplos y AXA en el navegador, las carambolas (prueba y desarrollo) y la cobertura del rango. No es vigente: se fija al commit del arreglo con CI en verde. Unos 60 minutos estimados, con las medidas de la t9-junta.",
+      "rama": "main",
+      "pasos": [
+        {
+          "nombre": "visor",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 2,
+          "tope_min": 15
+        },
+        {
+          "nombre": "preparar",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar",
+          "minutos": 1,
+          "tope_min": 15
+        },
+        {
+          "nombre": "ejemplos",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t9/ejemplos.json -Capturas docs/cesvi/ronda-4/evidencia/t11-ejemplos -Casos eval/results/t11/ejemplos-casos",
+          "minutos": 6,
+          "tope_min": 30,
+          "salidas": ["eval/results/t9", "docs/cesvi/ronda-4/evidencia/t11-ejemplos"]
+        },
+        {
+          "nombre": "carambolas-prueba",
+          "comando": "pnpm --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir prueba",
+          "minutos": 2,
+          "tope_min": 20
+        },
+        {
+          "nombre": "carambolas-desarrollo",
+          "comando": "pnpm --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir desarrollo",
+          "minutos": 3,
+          "tope_min": 25
+        },
+        {
+          "nombre": "cobertura",
+          "comando": "pnpm --filter @croquis/cesvi exec tsx ../../eval/t3_cobertura.mts --casos 200",
+          "minutos": 13,
+          "tope_min": 60
+        },
+        {
+          "nombre": "comparar",
+          "comando": "node eval/t9_comparar.mjs",
+          "minutos": 1,
+          "salidas": ["eval/results/t9"]
         }
       ]
     }
