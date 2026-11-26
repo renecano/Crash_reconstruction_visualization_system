@@ -14,19 +14,56 @@ export const ALTO_VIDEO = 1080;
 export const FPS_VIDEO = 30;
 
 /**
- * Antialiasing del video (René, 2026-11-26): Unity dibuja cada cuadro al doble (3840×2160) y se reduce
- * a 1920×1080, cuatro muestras por pixel del video (supermuestreo) en cualquier nivel de calidad. Se
- * puede porque el video se hace cuadro por cuadro, no en tiempo real; tarda más, no se ve distinto.
+ * Antialiasing del video (René, 2026-11-26): con una tarjeta de video dedicada, Unity dibuja cada cuadro
+ * al doble (3840×2160) en calidad `ultra` y se reduce a 1920×1080, cuatro muestras por pixel del video
+ * (supermuestreo). Se puede porque el video se hace cuadro por cuadro, no en tiempo real.
  */
 export const SUPERMUESTREO_VIDEO = 2;
 
+/**
+ * Las tarjetas integradas no lo aguantan: en la laptop de 8 GB (Intel UHD) a 2× el 3D no dibujó ningún
+ * cuadro, Chrome llegó a 3.7 GB y la memoria libre a 13 MB; a 1× un video de 8.67 s tardó 7 min
+ * (2026-11-26). Con ellas el video va como antes: a 1× y en la calidad automática. Se reconocen por el
+ * nombre que da WebGL de la tarjeta.
+ */
+export function tarjetaIntegrada(renderer: string | null): boolean {
+  if (!renderer) return true;
+  const r = renderer.toLowerCase();
+  if (/swiftshader|llvmpipe|microsoft basic|software/.test(r)) return true;
+  if (/intel/.test(r)) return !/\barc\b/.test(r);
+  if (/radeon/.test(r)) return !/\brx\b|\bpro\b/.test(r);
+  if (/nvidia|geforce|quadro|rtx|gtx|apple m\d/.test(r)) return false;
+  return true;
+}
+
+/** Cómo se graba: el doble y `ultra` con tarjeta dedicada; 1× y automática con integrada. */
+export function modoDelVideo(renderer: string | null): { escala: 1 | 2; calidad: "ultra" | null } {
+  return tarjetaIntegrada(renderer)
+    ? { escala: 1, calidad: null }
+    : { escala: SUPERMUESTREO_VIDEO, calidad: "ultra" };
+}
+
 /** El tamaño del lienzo de Unity mientras se graba, en px de CSS (con su `devicePixelRatio`). */
-export function lienzoDelVideo(dpr: number): { ancho: number; alto: number } {
+export function lienzoDelVideo(
+  dpr: number,
+  escala = SUPERMUESTREO_VIDEO,
+): { ancho: number; alto: number } {
   const d = dpr > 0 ? dpr : 1;
   return {
-    ancho: (ANCHO_VIDEO * SUPERMUESTREO_VIDEO) / d,
-    alto: (ALTO_VIDEO * SUPERMUESTREO_VIDEO) / d,
+    ancho: (ANCHO_VIDEO * escala) / d,
+    alto: (ALTO_VIDEO * escala) / d,
   };
+}
+
+/** Cuántos cuadros se miden antes de decir cuánto tardará, si no hay una grabación anterior. */
+export const CUADROS_PARA_ESTIMAR = 8;
+/** Desde cuánto se pregunta antes de seguir (ms): dos minutos. */
+export const AVISAR_DESDE_MS = 120_000;
+
+/** «Tarda ~8 min», «Tarda ~3 min», «Tarda menos de un minuto». */
+export function textoTarda(ms: number): string {
+  if (ms < 60_000) return "Tarda menos de un minuto";
+  return `Tarda ~${Math.max(1, Math.round(ms / 60_000))} min`;
 }
 
 /** Los instantes de cada cuadro, de `inicio` a `fin` a `fps` (sin pasar de `fin`). */
@@ -97,6 +134,11 @@ export interface OpcionesGrabacion {
   credito?: string | null;
   alProgreso?: (hechos: number, total: number, ms: number) => void;
   signal?: AbortSignal;
+  /**
+   * Antes de seguir, cuánto tardará todo (ms), medido con los primeros `CUADROS_PARA_ESTIMAR`
+   * cuadros: si pasa de `AVISAR_DESDE_MS`, se pregunta y con `false` se cancela. Sin él, no se pregunta.
+   */
+  confirmar?: (msEstimados: number) => Promise<boolean>;
 }
 
 /** Espera la siguiente vuelta del navegador. */
@@ -175,6 +217,15 @@ export async function grabarVideoUnity(o: OpcionesGrabacion): Promise<Blob> {
       dibujar(ctx, cuadro, o.logo, o.credito ?? null);
       await source.add(i / FPS_VIDEO, 1 / FPS_VIDEO);
       o.alProgreso?.(i + 1, instantes.length, performance.now() - empezo);
+      if (
+        o.confirmar &&
+        i + 1 === CUADROS_PARA_ESTIMAR &&
+        instantes.length > CUADROS_PARA_ESTIMAR
+      ) {
+        const estimado = ((performance.now() - empezo) / (i + 1)) * instantes.length;
+        if (estimado > AVISAR_DESDE_MS && !(await o.confirmar(estimado)))
+          throw new DOMException("Grabación cancelada", "AbortError");
+      }
     }
     await output.finalize();
   } catch (e) {
