@@ -1394,6 +1394,81 @@
           "salidas": ["eval/results/t9"]
         }
       ]
+    },
+    "t10-final": {
+      "titulo": "Tanda 10 · Final: el build de Unity de la ronda final con todo lo publicado",
+      "nota": "René, 2026-11-26: la tanda final, con el build WebGL que compila Alberto desde main (daños, pedazos, entorno y paisaje, cámara lenta y «¿y si…?» en el visor), del release de GitHub, sin Blob. No es vigente hasta que el manifiesto del build esté en main; entonces se fija a ese commit. Solo el build WebGL: nada de esta tanda usa el visor de escritorio. Primero el humo (si falla, se detiene). Después: los cinco ejemplos y AXA contra el índice; las tres narraciones de René; las capturas con el Unity real (¿y si…? en 3D, daños, entorno, satélite y Presentar, solo ejemplos públicos); el video del 3D al doble (#325, AXA: los MP4 van al Escritorio y no se suben); el arranque del 3D tres veces; y comparar. Nada de AXA se sube.",
+      "rama": "main",
+      "pasos": [
+        {
+          "nombre": "visor",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 2,
+          "tope_min": 15
+        },
+        {
+          "nombre": "preparar",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar",
+          "minutos": 1,
+          "tope_min": 15
+        },
+        {
+          "nombre": "humo",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues humo",
+          "minutos": 1,
+          "tope_min": 8,
+          "detiene_si_falla": true,
+          "salidas": ["eval/results/humo/", "apps/web/test-results/"]
+        },
+        {
+          "nombre": "ejemplos",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t10/ejemplos.json -Capturas docs/cesvi/ronda-4/evidencia/t10-ejemplos -Casos eval/results/t10/ejemplos-casos",
+          "minutos": 6,
+          "tope_min": 30,
+          "salidas": ["eval/results/t10", "docs/cesvi/ronda-4/evidencia/t10-ejemplos"]
+        },
+        {
+          "nombre": "tres-narraciones",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tres -Salida eval/results/t10/tres_narraciones.json",
+          "minutos": 2,
+          "tope_min": 25,
+          "salidas": ["eval/results/t10"]
+        },
+        {
+          "nombre": "final-unity",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues final -Salida eval/results/t10/final_unity.json -Capturas docs/cesvi/ronda-4/evidencia/t10-final",
+          "minutos": 12,
+          "tope_min": 40,
+          "salidas": ["eval/results/t10", "docs/cesvi/ronda-4/evidencia/t10-final"]
+        },
+        {
+          "nombre": "video-3d",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues video-3d",
+          "minutos": 15,
+          "tope_min": 45
+        },
+        {
+          "nombre": "arranque-1",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t10/arranque_1.json",
+          "minutos": 1,
+          "tope_min": 15,
+          "salidas": ["eval/results/t10"]
+        },
+        {
+          "nombre": "arranque-2",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t10/arranque_2.json",
+          "minutos": 1,
+          "tope_min": 15,
+          "salidas": ["eval/results/t10"]
+        },
+        {
+          "nombre": "arranque-3",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t10/arranque_3.json",
+          "minutos": 1,
+          "tope_min": 15,
+          "salidas": ["eval/results/t10"]
+        }
+      ]
     }
   }
 }

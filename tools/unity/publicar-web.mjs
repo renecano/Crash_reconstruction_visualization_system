@@ -14,6 +14,12 @@
  *   node tools/unity/publicar-web.mjs --podar    # además, dice qué builds viejos borraría
  *   node tools/unity/publicar-web.mjs --podar --si   # y los borra
  *   node tools/unity/publicar-web.mjs --bajar <huella>  # copia ese build a .cache/visor-unity/<huella>
+ *   node tools/unity/publicar-web.mjs --release <huella>  # sube el build del release visor-web-<huella>
+ *
+ * **Desde el release (René, 2026-11-26):** Alberto compila en su Mac desde `main` y sube el zip al
+ * release de GitHub `visor-web-<huella>`; quien tiene el token lo sube a Blob desde ahí, sin compilar.
+ * El zip se baja a `.cache/visor-unity/<huella>` y su huella tiene que ser la del nombre: si no, no se
+ * sube nada.
  *
  * **Bajar (René, 2026-11-17):** una sola copia local del build que sirve producción, para que ninguna
  * prueba, medición ni la demo local vuelva a bajarlo de Blob (`tools/unity/visor-local.mjs`). Cuenta
@@ -25,17 +31,18 @@
  */
 import { Buffer } from "node:buffer";
 import { createRequire } from "node:module";
-import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { extname, join, resolve } from "node:path";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, extname, join, resolve } from "node:path";
 import process from "node:process";
 import { archivosDe, huellaCarpeta } from "../../apps/web/scripts/recursos-hash.mjs";
+import { carpetaDeCopia, leerZip, urlDelRelease } from "./visor-local.mjs";
 
 const RAIZ = resolve(import.meta.dirname, "../..");
 const require = createRequire(join(RAIZ, "apps/web/package.json"));
 const { del, head, list, put } = require("@vercel/blob");
 const { execFileSync } = await import("node:child_process");
 
-const BUILD = join(RAIZ, "apps/visor-unity/Build/web");
+const BUILD_LOCAL = join(RAIZ, "apps/visor-unity/Build/web");
 const CASO = join(RAIZ, "packages/scene-schema/fixtures/caso3d/axa_alcance.json");
 /**
  * Las escenas de D1 con su escenario (`tools/unity/paquetes-d1.ts`): las usa `medir-e6.html` para
@@ -251,7 +258,16 @@ async function inventario() {
   );
 }
 
+// El build que se sube: el local o el del release que se pide con `--release <huella>`.
+const iRelease = process.argv.indexOf("--release");
+const BUILD = iRelease > 0 ? await bajarRelease(process.argv[iRelease + 1] ?? "") : BUILD_LOCAL;
 const huella = huellaCarpeta(BUILD);
+if (iRelease > 0 && huella !== process.argv[iRelease + 1]) {
+  console.error(
+    `El release dice ${process.argv[iRelease + 1]} y su contenido tiene la huella ${huella}: no se sube.`,
+  );
+  process.exit(1);
+}
 const prefijo = `recursos/visor-unity/${huella}/`;
 const enBuild = readdirSync(join(BUILD, "Build"));
 const de = (sufijo) => {
@@ -380,4 +396,31 @@ async function podar(actual) {
     for (let i = 0; i < g.urls.length; i += 100) await del(g.urls.slice(i, i + 100), { token });
   }
   console.log("Listo.");
+}
+
+/** Baja el zip del release `visor-web-<huella>` a `.cache/visor-unity/<huella>` (si no está ya). */
+async function bajarRelease(h) {
+  if (!/^[0-9a-f]{16}$/.test(h)) {
+    console.error("Uso: --release <huella de 16 caracteres>");
+    process.exit(1);
+  }
+  const dir = carpetaDeCopia(h);
+  if (
+    existsSync(join(dir, "Build")) &&
+    readdirSync(join(dir, "Build")).some((f) => f.endsWith(".wasm"))
+  )
+    return dir;
+  const url = urlDelRelease(h);
+  console.log(`Bajando el release ${url}`);
+  const r = await fetch(url);
+  if (!r.ok) {
+    console.error(`No se pudo bajar el release (${r.status} ${url}).`);
+    process.exit(1);
+  }
+  for (const a of leerZip(Buffer.from(await r.arrayBuffer()))) {
+    const destino = join(dir, ...a.nombre.split("/"));
+    mkdirSync(dirname(destino), { recursive: true });
+    writeFileSync(destino, a.bytes);
+  }
+  return dir;
 }
