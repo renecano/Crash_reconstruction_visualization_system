@@ -236,15 +236,28 @@ function construir() {
   {
     const archivo = "eval/results/ejemplos_en_su_lugar/cifras.json";
     const doc = leer(archivo);
-    const PENDIENTE =
-      "Escena como la arma el perito en La escena, en el lugar real del ejemplo (2026-11-26); pendiente del visto bueno de René.";
-    for (const [clave, ejemplo, vehiculo, que, antes] of [
+    const APROBADO =
+      "Escena armada con el mismo código de La escena, direcciones por las calles reales (#331); René lo aprobó el 2026-11-26.";
+    const POSTE =
+      "Escena armada con el mismo código de La escena (#331). El golpe contra el poste ahora se calcula: el punto que marca el perito va en el impacto (antes quedaba «sin calcular» y el Sentra se detenía solo), y los 18.40 m de derrape después del contacto entran como evidencia. Así la velocidad antes del impacto queda arriba de la que deja el derrape (48–57 km/h) y el rango refleja la energía del poste, con sus medidas típicas como supuesto. René lo aprobó con esa condición el 2026-11-26.";
+    const REVERSA =
+      "Escena armada con el mismo código de La escena (#331). La velocidad en reversa del CR-V pesa como supuesto con su rango (NHTSA, 3.06–9.07 km/h), porque la narración no da evidencia de más. René lo aprobó con esa condición el 2026-11-26.";
+    for (const [clave, ejemplo, vehiculo, que, antes, motivo] of [
       [
         "ejemplos.crucero",
         "crucero-noche",
         "V1",
         "«crucero de noche»: velocidad del Jetta (A) antes del impacto",
-        "20 (10–28) en la tabla y 20 (3–26) «en la app»",
+        "20 (4–27) publicada y 20 (10–28) en la tabla",
+        APROBADO,
+      ],
+      [
+        "ejemplos.crucero_camaro",
+        "crucero-noche",
+        "V2",
+        "«crucero de noche»: velocidad del Camaro (B) antes del impacto",
+        "12 (3–19)",
+        APROBADO,
       ],
       [
         "ejemplos.alcance",
@@ -252,6 +265,7 @@ function construir() {
         "V1",
         "«alcance en carretera»: velocidad de la NP300 (A), la que alcanza, antes del impacto",
         "53 (49–55)",
+        APROBADO,
       ],
       [
         "ejemplos.alcance_corolla",
@@ -259,6 +273,7 @@ function construir() {
         "V2",
         "«alcance en carretera»: velocidad del Vento (B), el alcanzado, antes del impacto",
         "0 (0–8)",
+        APROBADO,
       ],
       [
         "ejemplos.carambola",
@@ -266,6 +281,7 @@ function construir() {
         "V1",
         "«carambola con lluvia»: velocidad de la Ranger (A) antes del primer impacto",
         "24 (19–32)",
+        APROBADO,
       ],
       [
         "ejemplos.reversa",
@@ -273,6 +289,7 @@ function construir() {
         "V2",
         "«reversa en pendiente»: velocidad del Versa (B) antes del impacto",
         "20 (18–25)",
+        REVERSA,
       ],
       [
         "ejemplos.reversa_crv",
@@ -280,6 +297,7 @@ function construir() {
         "V1",
         "«reversa en pendiente»: velocidad del CR-V (A) en reversa antes del impacto",
         "9 (1–18)",
+        REVERSA,
       ],
       [
         "ejemplos.poste",
@@ -287,6 +305,15 @@ function construir() {
         "V2",
         "«poste y terracería»: velocidad del Sentra (B) antes del impacto",
         "36 (31–38)",
+        POSTE,
+      ],
+      [
+        "ejemplos.poste_mazda",
+        "poste-terraceria",
+        "V1",
+        "«poste y terracería»: velocidad del Mazda 3 (A) antes del impacto (su posición final narrada, 8 m al norte, la física no la alcanza y la app lo dice)",
+        "30 (25–32)",
+        POSTE,
       ],
     ]) {
       const i = doc.filas.findIndex((f) => f.clave === ejemplo);
@@ -304,7 +331,7 @@ function construir() {
         texto: `${v.mejor} km/h (${v.p10}–${v.p90})`,
         fuente: archivo,
         campo: `filas.${i}.velocidades.${j}`,
-        motivo: `${PENDIENTE} Antes, ${antes}.`,
+        motivo: `${motivo} Antes, ${antes}.`,
       });
     }
   }

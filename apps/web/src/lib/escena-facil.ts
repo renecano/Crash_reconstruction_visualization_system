@@ -1296,7 +1296,29 @@ export function marcarChoque(
       fuente: "supuesto",
     });
   }
-  return conPersonaDelChoque(r, orden, p, rumbo);
+  return conPersonaDelChoque(conPuntoDelObjeto(r, orden, p), orden, p, rumbo);
+}
+
+/**
+ * Un choque posterior contra un objeto que trae la narración («hasta un poste … contra el cual se
+ * impactó»): el lugar que marca el perito es el del objeto, y va en el impacto, como en «¿Chocó contra
+ * algo más?», para que la reconstrucción calcule ese golpe (René, 2026-11-26: el Sentra perdía la
+ * energía del poste porque el punto no se guardaba y el impacto quedaba «sin calcular»). Una persona
+ * no es un objeto fijo: la coloca `conPersonaDelChoque`.
+ */
+function conPuntoDelObjeto(e: Expediente, orden: number, p: Punto): Expediente {
+  const imp = (e.impactos ?? []).find((i) => (i.orden ?? 1) === orden);
+  if (
+    orden <= 1 ||
+    !imp?.objeto_fijo ||
+    OBJETO_PERSONA.test(imp.objeto_fijo) ||
+    (imp.vehiculos ?? []).length !== 1
+  )
+    return e;
+  return {
+    ...e,
+    impactos: (e.impactos ?? []).map((i) => (i === imp ? { ...i, punto: p } : i)),
+  };
 }
 
 /**

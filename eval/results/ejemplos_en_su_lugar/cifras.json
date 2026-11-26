@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-11-26T20:03:48.887Z",
+  "fecha": "2026-11-26T20:25:59.206Z",
   "muestras": {
     "samples": 32,
     "mcSamples": 128
@@ -216,14 +216,14 @@
       "velocidades": [
         {
           "vehiculo": "V1",
-          "mejor": 8,
-          "p10": 0,
-          "p90": 17
+          "mejor": 6,
+          "p10": 3,
+          "p90": 7
         },
         {
           "vehiculo": "V2",
           "mejor": 20,
-          "p10": 18,
+          "p10": 16,
           "p90": 25
         }
       ],
@@ -260,21 +260,21 @@
       "velocidades": [
         {
           "vehiculo": "V1",
-          "mejor": 38,
-          "p10": 37,
-          "p90": 38
+          "mejor": 26,
+          "p10": 21,
+          "p90": 31
         },
         {
           "vehiculo": "V2",
-          "mejor": 58,
-          "p10": 53,
-          "p90": 58
+          "mejor": 71,
+          "p10": 41,
+          "p90": 80
         }
       ],
       "relieve": false,
       "topes": 0,
       "limites": [
-        "El impacto 2 no es entre dos vehículos (poste de concreto de la línea de distribución eléctrica): la reconstrucción no lo calcula.",
+        "El objeto del impacto 2 (poste de concreto de la línea de distribución eléctrica) va con medidas típicas: el perito marcó dónde está, no cómo es (supuesto).",
         "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
       ]
     },

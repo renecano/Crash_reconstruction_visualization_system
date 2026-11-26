@@ -36,3 +36,25 @@ describe("la dirección elegida y el choque marcado", () => {
     }
   });
 });
+
+describe("el choque contra el poste que trae la narración", () => {
+  it("guarda el lugar que marca el perito en el impacto, para que se calcule", () => {
+    const g = JSON.parse(
+      readFileSync(
+        resolve(__dirname, "../../../../data/cesvi/grabaciones/ejemplos/poste-terraceria.json"),
+        "utf8",
+      ),
+    ) as { narracion: string; salida: SalidaCorpus };
+    const e0 = cesvi.escenaDeNarracion(g.salida, g.narracion).expediente;
+    const imp = impactosAColocar(e0);
+    const P = { lat: 18.98, lon: -98.43 };
+    const conChoque = marcarChoque(e0, imp, 1, P, 90);
+    const Q = { lat: 18.9801, lon: -98.4298 };
+    const conPoste = marcarChoque(conChoque, imp, 2, Q, 90);
+    const poste = conPoste.impactos?.find((i) => i.orden === 2);
+    expect(poste?.objeto_fijo).toMatch(/poste/);
+    expect(poste?.punto).toEqual(Q);
+    // El primer choque no lleva punto de objeto.
+    expect(conPoste.impactos?.find((i) => i.orden === 1)?.objeto_fijo ?? null).toBeNull();
+  });
+});
