@@ -1054,14 +1054,14 @@ René aprobó el storyboard versión 2 (28 s, «más épico», sin la mancha neg
 
 Alberto lleva todo lo de Unity y René con su Claude Code, el solver y la web. El contrato está en `docs/contrato-unity.md`. Cada punto va en su PR contra `main`, y los fusiona el Claude Code de René con CI en verde.
 
-| Punto | PR | Qué quedó |
-| --- | --- | --- |
-| 1. Daños | #336 | Hundimiento exacto C1–C6 (`dano.perfil_m`), arrastre de lado por la PDOF (como mucho la mitad de C), pliegues del 16 % de C desde 3 cm (completos desde 15 cm) y solo dentro de la cara, malla refinada a 6 cm en la zona dañada, y `danos_posteriores` en su `t`. |
-| 2. Pedazos | #338 (encima de #337) | Vidrio templado, plástico y lámina, con vuelo, rebote, arrastre y reposo de fórmula cerrada (`Croquis.Core.Pedazos`). Un pedazo por cada 1,200 J (entre 4 y 240), y uno por impacto. |
-| 3. Cámara lenta | #337 | Escalón en vez de rampa y letrero «Cámara lenta ×N» (×5 en el impacto, por la velocidad que manda la web). |
-| 4. Entorno | #339 (encima de #335) | Camellón desde `red_vial` de OSM: quita lo que el plan puso adentro (43 edificios y 16 postes en Paseo Tollocan) y le pone pasto, guarnición, matas y árboles. Paisaje árido con `entorno.paisaje`. |
-| 5. «¿Y si…?» | #340 | Mismo reloj que la reconstrucción en una hipótesis, su propio daño y letrero «Hipótesis». |
-| Contrato | #335 | `escenario.entorno.paisaje` (`arido` o `templado`), opcional; lo calcula la web con la cobertura de OSM. |
+| Punto           | PR                    | Qué quedó                                                                                                                                                                                                                                                          |
+| --------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1. Daños        | #336                  | Hundimiento exacto C1–C6 (`dano.perfil_m`), arrastre de lado por la PDOF (como mucho la mitad de C), pliegues del 16 % de C desde 3 cm (completos desde 15 cm) y solo dentro de la cara, malla refinada a 6 cm en la zona dañada, y `danos_posteriores` en su `t`. |
+| 2. Pedazos      | #338 (encima de #337) | Vidrio templado, plástico y lámina, con vuelo, rebote, arrastre y reposo de fórmula cerrada (`Croquis.Core.Pedazos`). Un pedazo por cada 1,200 J (entre 4 y 240), y uno por impacto.                                                                               |
+| 3. Cámara lenta | #337                  | Escalón en vez de rampa y letrero «Cámara lenta ×N» (×5 en el impacto, por la velocidad que manda la web).                                                                                                                                                         |
+| 4. Entorno      | #339 (encima de #335) | Camellón desde `red_vial` de OSM: quita lo que el plan puso adentro (43 edificios y 16 postes en Paseo Tollocan) y le pone pasto, guarnición, matas y árboles. Paisaje árido con `entorno.paisaje`.                                                                |
+| 5. «¿Y si…?»    | #340                  | Mismo reloj que la reconstrucción en una hipótesis, su propio daño y letrero «Hipótesis».                                                                                                                                                                          |
+| Contrato        | #335                  | `escenario.entorno.paisaje` (`arido` o `templado`), opcional; lo calcula la web con la cobertura de OSM.                                                                                                                                                           |
 
 ### Evidencia
 
