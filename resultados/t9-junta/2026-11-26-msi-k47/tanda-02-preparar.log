@@ -1,0 +1,122 @@
+# Paso: preparar
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar
+# Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
+# Inicio: 2026-11-26 11:48:37
+
+
+== 1. Herramientas
+Node v26.13.1 y pnpm 12.11.2.
+Hay internet.
+
+== 2. Dependencias
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 57s ago)
+Lockfile is up to date, resolution step is skipped
+Done in 83ms using pnpm v12.11.2
+
+== 3. El visor de Unity, desde esta computadora
+Visor 945617e035988035 servido desde el sitio: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\public\visor-unity\local
+
+== 4. La app en modo local
+Compilando (unos minutos)...
+$ node scripts/build-worker.mjs && node scripts/maplibre-worker.mjs && node scripts/pdfjs-worker.mjs && node scripts/blender-script.mjs && node scripts/decodificadores.mjs && node scripts/recursos.mjs preparar && next build && node scripts/podar-estaticos.mjs && node scripts/css-check.mjs
+worker del solver → C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\public\workers\reconstruct.js
+Worker de MapLibre 6.15.0 en public/maplibre/.
+Worker de pdf.js 6.4.299 en public/pdfjs/.
+Script de Blender en public/blender/.
+Decodificadores de three 0.186.1 en public/decodificadores/r186/.
+▲ Next.js 16.4.6 (Turbopack)
+✓ Running next.config.ts took 17.7s
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+- Experiments (use with caution):
+  ✓ inlineCss
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 7.0s
+  Running TypeScript ...
+  Finished TypeScript in 10.3s ...
+  Collecting page data using 31 workers ...
+✓ Running next.config.ts took 283ms
+  Generating static pages using 31 workers (0/63) ...
+  Generating static pages using 31 workers (15/63) 
+  Generating static pages using 31 workers (31/63) 
+  Generating static pages using 31 workers (47/63) 
+✓ Running next.config.ts took 297ms
+○ (serwist) Using esbuild to bundle the service worker.
+✓ (serwist) 246 precache entries (25940.77 KiB)
+✓ Generating static pages using 31 workers (63/63) in 5.2s
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/cesvi/consideraciones
+├ ƒ /api/cesvi/declaracion
+├ ƒ /api/cesvi/escena
+├ ƒ /api/cesvi/hecho
+├ ƒ /api/cesvi/importar
+├ ƒ /api/lugar
+├ ƒ /api/osm
+├ ƒ /api/relato/extraer
+├ ƒ /api/relato/responder
+├ ƒ /api/relieve
+├ ○ /api/version
+├ ○ /cesvi
+├   /cesvi/casos/a2010930/[[...acto]]
+│ ├ ● /cesvi/casos/a2010930
+│ ├ ● /cesvi/casos/a2010930/hecho
+│ ├ ● /cesvi/casos/a2010930/escena
+│ └ ● [+5 more paths]
+├ ƒ /cesvi/casos/guardado/[id]/[[...acto]]
+├   /cesvi/casos/importar/[[...acto]]
+│ ├ ● /cesvi/casos/importar
+│ ├ ● /cesvi/casos/importar/hecho
+│ ├ ● /cesvi/casos/importar/escena
+│ └ ● [+5 more paths]
+├   /cesvi/casos/nuevo/[[...acto]]
+│ ├ ● /cesvi/casos/nuevo
+│ ├ ● /cesvi/casos/nuevo/hecho
+│ ├ ● /cesvi/casos/nuevo/escena
+│ └ ● [+5 more paths]
+├ ● /cesvi/casos/reporte/[id]/[[...acto]]
+├ ○ /cesvi/reproduccion
+├ ○ /croquis
+├ ○ /cuenta
+├ ○ /demo
+├ ○ /e9
+├ ○ /en
+├ ○ /en/croquis
+├ ○ /en/cuenta
+├ ○ /en/demo
+├ ○ /en/e9
+├ ○ /en/historia
+├ ○ /en/medicion
+├ ○ /en/publico
+├ ○ /en/recorrido
+├ ○ /en/relato
+├ ○ /en/visor
+├ ○ /historia
+├ ○ /medicion
+├ ○ /publico
+├ ○ /recorrido
+├ ○ /relato
+├   /serwist/[path]
+│ ├ ● /serwist/sw.js.map
+│ └ ● /serwist/sw.js
+└ ○ /visor
+
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+
+podar-estaticos: quité 6 archivos, 5.3 MB (maplibre-gl-dev.2iv-rrah6q3mv.mjs, maplibre-gl-shared-dev.2igpas129bw9s.mjs, maplibre-gl-shared.2igpas129bw9s.mjs, maplibre-gl-worker-dev.15915fg_tzqwt.mjs, maplibre-gl-worker.34up6k_3aq797.mjs, maplibre-gl.2f0qrvie8zuf-.mjs).
+CSS del sistema de diseño presente (281 KB).
+
+Listo: la demo local está preparada.
+
+# Fin: 2026-11-26 11:49:23 · ok · 0.8 min
