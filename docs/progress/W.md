@@ -1525,6 +1525,22 @@ René (2026-11-26) eligió 22 de 31 y 42 de 55 para el índice, con su motivo: �
 - **Lo que ve el perito en los 5 ejemplos y AXA:** nada cambia. La tabla de `cifras-ronda4.test.ts` (AXA, los cinco ejemplos y las siete narraciones) da las 13 filas iguales, con sus límites; el crucero «en la app» igual. Ninguna descripción de posición final de los ejemplos trae una dirección que el lector nuevo lea («orientado hacia el Oriente» de poste y terracería es cómo quedó; «8 m al Norte del área de contacto» y «7 m al Norte del área de contacto» siguen sin leerse, como antes). El aviso del límite no sale en ninguno (la cifra más alta es 53 km/h en una carretera federal). Lo único publicado que cambia son las carambolas del índice, aprobadas.
 - **Para la revisión de la t9-junta:** contra el índice, las carambolas dan 19 de 31 y 41 de 55 en lugar de 21 y 44. Es esperado: lo mueve el #311 (`395401c7`, la clase y la masa por el modelo) y René lo aprobó el 2026-11-26.
 
+### El paquete que sigue al #323 (René, 2026-11-26): un PR por punto, sin cambiar cifras
+
+- **#324, los detalles que vio Alberto** (`trailer-salida/_revision/alberto-detalles/`):
+  - el «km/h» con tres dígitos ya no toca la cifra en itálica y en un panel angosto baja;
+  - en Presentar queda una sola leyenda, la de la página: el 3D se dibuja más alto que su marco y la de Unity queda fuera;
+  - «Salir · Esc» y el botón del tema tienen fondo.
+- **#325, antialiasing en «Descargar video»:** Unity dibuja cada cuadro al doble (3840×2160), la web lo reduce a 1920×1080, y se graba en calidad `ultra` (luego vuelve a `auto`).
+- **#326, la foto satelital a su resolución:** MapLibre pedía las teselas raster por px de CSS (sin `pixelRatio`) y llegaban a la mitad. Con teselas declaradas de 128 px llega la resolución completa, hasta z19.
+- **#327, «Qué importa»:** en La escena, en gris los objetos y las zonas a más de 2 m de todo recorrido de la reconstrucción que se ve (`que-importa.ts`).
+- **Para la siguiente tanda** (CI no tiene el Unity real ni la llave de Esri):
+  - Presentar con Unity (una sola leyenda, completa);
+  - un cuadro del video con y sin #325 en el mismo instante;
+  - el 2D con «Fondo: foto» y el 3D en «mapa real» con y sin #326.
+
+  Todo en `trailer-salida/_revision/`.
+
 ### Los pedazos del choque parecen cubos (René, 2026-11-25) · para el paquete de daños
 
 En el tráiler, los restos del choque en el 3D (cuadros de 16.7 a 17.9 s y de 19.0 a 19.4 s) se ven en imagen fija como cubos negros, de cerca, y grises, en la toma abierta. Por eso el póster del tráiler en la portada (#319) es la foto promo `02-noche-faros.jpg`, sin restos. Se corrige con los daños: piezas sueltas y restos con la forma de lo que se rompe.
