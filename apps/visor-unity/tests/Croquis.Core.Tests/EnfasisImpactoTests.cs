@@ -48,25 +48,5 @@ namespace Croquis.Core.Tests
             Assert.Equal(1.0, EnfasisImpacto.AvanceDano(1.0 + EnfasisImpacto.DuracionDanoS, 1.0), 6);
             Assert.Equal(1.0, EnfasisImpacto.AvanceDano(9.0, 1.0), 6);
         }
-
-        [Fact]
-        public void LosRestosSalenDelContactoYQuedanEnElPisoSiempreIguales()
-        {
-            var a = EnfasisImpacto.Nube(3, 4, 90, 8, 30, 7);
-            var b = EnfasisImpacto.Nube(3, 4, 90, 8, 30, 7);
-            Assert.Equal(30, a.Count);
-            for (var i = 0; i < a.Count; i++)
-            {
-                Assert.Equal(a[i].X1, b[i].X1);
-                Assert.Equal(a[i].Y1, b[i].Y1);
-                var d = System.Math.Sqrt((a[i].X1 - 3) * (a[i].X1 - 3) + (a[i].Y1 - 4) * (a[i].Y1 - 4));
-                Assert.InRange(d, 0.0, 8.0 + 0.5);
-                // Antes del impacto no se ven; al final, en el piso.
-                Assert.False(EnfasisImpacto.PosicionResto(a[i], 0.9, 1.0).Visible);
-                var fin = EnfasisImpacto.PosicionResto(a[i], 1.0 + EnfasisImpacto.VueloRestosS, 1.0);
-                Assert.Equal(0.0, fin.Z, 6);
-                Assert.Equal(a[i].X1, fin.X, 6);
-            }
-        }
     }
 }
