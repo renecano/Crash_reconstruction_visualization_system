@@ -1084,7 +1084,62 @@ Alberto lleva todo lo de Unity y René con su Claude Code, el solver y la web. E
 - El mensaje `fantasma` del puente 1.4.0 (cambiar la hipótesis sin recargar) sigue propuesto.
 - Los letreros de pantalla no salen en las capturas del editor (`Capturas.cs` renderiza la cámara a una textura). Para verlos hay que usar el build WebGL.
 
-### Necesito del otro frente
+### Revisión visual del 3D nuevo (Alberto, 2026-11-26)
+
+En la Mac M1: la web local de `main` con el build `dd83b2d323f5ed0e`, servido desde la máquina (`visor-local.mjs preparar`). El «¿y si…?» se revisó con la web de la rama del #334 (f510ac0b), con el mismo build. Se recorrieron los cinco ejemplos públicos, Tollocan (el caso guardado de René), Paseo de la Reforma (camellón, de la batería de ciudad) y el «¿y si…?» (crucero, A a 60 km/h, con la versión encima). Capturas en `docs/progress/capturas/2026-11-26/revision/`, sin AXA.
+
+**Cómo se revisó:**
+
+- **Puntos 1 y 2:** además de verlo, se midió en el paquete que mandó la web. Para el 1, en cada cuadro el rectángulo de cada vehículo contra cada edificio. Para el 2, árboles, postes, señales, luminarias y objetos del caso que quedan a 0.6 m o más dentro de la calzada.
+- **Punto 3:** se buscaron saltos en las trayectorias: un avance mayor que 1.3 × v·dt, o más de 30° de giro entre dos cuadros.
+
+| Caso            | Punto                    | Bien / mal                                                                                                                                                                                                        | Arreglo                              |
+| --------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| Crucero         | 1 · nada atraviesa       | Bien (0 de 117 edificios)                                                                                                                                                                                         | —                                    |
+| Crucero         | 2 · nada en la carretera | Bien                                                                                                                                                                                                              | —                                    |
+| Crucero         | 4 · daños y pedazos      | Bien: 2 cm y 1 cm, 13 kJ, 15 pedazos                                                                                                                                                                              | —                                    |
+| Crucero         | 5 · cámara lenta         | Bien: «Cámara lenta ×5», sin rampa                                                                                                                                                                                | —                                    |
+| Crucero         | 6 · letreros             | Bien                                                                                                                                                                                                              | —                                    |
+| Crucero         | 7 · Presentar            | **Mal:** salen dos leyendas; la de Unity queda medio tapada por el degradado de la web                                                                                                                            | Para René (web)                      |
+| Alcance         | 1, 2                     | Bien                                                                                                                                                                                                              | —                                    |
+| Alcance         | 4                        | Bien: el Vento, 32 cm atrás (61 kJ); la NP300, 4 cm                                                                                                                                                               | —                                    |
+| Carambola       | 1, 2                     | Bien                                                                                                                                                                                                              | —                                    |
+| Carambola       | 3 · sin saltos de carril | Bien: ningún salto en las tres trayectorias; cenital cada 0.5 s                                                                                                                                                   | —                                    |
+| Carambola       | 4                        | Bien: 4 cm en el Corolla; el Ranger y el Aveo sin deformación (lo da el solver)                                                                                                                                   | —                                    |
+| Reversa         | 1, 2                     | Bien                                                                                                                                                                                                              | —                                    |
+| Reversa         | 4                        | **Ojo:** a 22 km/h, deformación 0 y energía 0 en los dos: no hay daño ni pedazos                                                                                                                                  | Para René (solver)                   |
+| Poste           | 1, 2                     | Bien                                                                                                                                                                                                              | —                                    |
+| Poste           | 4                        | Bien: 5 cm y 11 cm, 37 kJ                                                                                                                                                                                         | —                                    |
+| Tollocan        | 1                        | Bien (0 de 249 edificios)                                                                                                                                                                                         | —                                    |
+| Tollocan        | 2                        | **Mal:** el árbol del choque (`obj-1`, objeto del caso) queda dentro de la calzada, en (2.5, 0.3)                                                                                                                 | Para René (caso o web)               |
+| Tollocan        | 4                        | Bien: 56 cm, 135 kJ, deshecho al frente                                                                                                                                                                           | —                                    |
+| Tollocan        | camellón                 | No aplica: el punto está en Prado Norte, no en Paseo Tollocan (sin vías de un sentido en su OSM)                                                                                                                  | —                                    |
+| Reforma         | 1                        | Bien (0 de 510 edificios)                                                                                                                                                                                         | —                                    |
+| Reforma         | 2                        | **Mal:** cuatro señales procedurales en el arroyo de la glorieta                                                                                                                                                  | #352                                 |
+| Reforma         | camellón                 | Bien: el camellón con pasto y árboles                                                                                                                                                                             | —                                    |
+| Reforma         | entorno                  | **Mal:** la isla de la glorieta sale llena de casas                                                                                                                                                               | Para René (web: `planCuadras`)       |
+| Carretera árida | paisaje                  | **No se pudo:** un caso guardado trae sus calles y no consulta la cobertura de OSM. Sin un caso nuevo colocado en una carretera árida, la web no manda `paisaje`. Con el campo, Unity lo dibuja (captura de #346) | Para René (un caso de ejemplo árido) |
+| «¿Y si…?»       | 5 · animación            | Bien: con «Con la versión encima», el fantasma va con el mismo reloj                                                                                                                                              | —                                    |
+| «¿Y si…?»       | 6 · letreros             | **Mal:** «Hipótesis» chico, y en la cenital dos letreros encimados                                                                                                                                                | #352                                 |
+| «¿Y si…?»       | flujo                    | **Ojo:** al simular, el 3D no cambia hasta elegir la hipótesis en «Versiones» y luego «Con la versión encima»                                                                                                     | Para René (web, #334)                |
+| «¿Y si…?»       | 7 · Presentar            | Igual que el crucero: dos leyendas. «Salir · Esc» se lee, pero sobre techos claros el botón casi no contrasta                                                                                                     | Para René (web)                      |
+
+### Para René (web y solver), con su captura
+
+1. **Presentar, una sola leyenda** (`crucero-presentar.jpg`, `ysi-presentar.jpg`). La web pone su leyenda completa abajo, y la de Unity queda abajo a la izquierda, cortada por el degradado. Hay dos salidas:
+   - que la web no tape la esquina inferior izquierda del lienzo y quite la suya;
+   - o un mensaje `leyenda` en el puente (PR `contract:`) para que Unity esconda la suya en Presentar. Si eligen esta, hago el lado de Unity.
+2. **El árbol de Tollocan en la calzada** (`tollocan-arbol-en-calzada.jpg`). Es un objeto del caso: Unity lo dibuja donde llega.
+3. **La glorieta de Reforma con casas en la isla** (`reforma-camellon-glorieta.jpg`). El plan de cuadras toma la isla por una manzana.
+4. **Reversa sin daño a 22 km/h:** `dano.energia_j` = 0 y C1–C6 en ceros en los dos vehículos.
+5. **«¿Y si…?»:** que el 3D muestre la hipótesis al simular, sin ir a «Versiones».
+6. **Un ejemplo en carretera árida,** para ver el paisaje de punta a punta con datos de OSM.
+
+### Observación menor (Unity, sin cambio por ahora)
+
+En la cámara «Desde la acera», en Tollocan, Reforma y el poste, la vista queda junto a una barda y casi no se ve el choque (`poste-acera.jpg`). No estaba en la lista de esta revisión.
+
+## Necesito del otro frente
 
 - Que la web calcule `escenario.entorno.paisaje` (#335) con la cobertura de OSM alrededor del lugar. Sin él, el visor se queda en «templado».
 
