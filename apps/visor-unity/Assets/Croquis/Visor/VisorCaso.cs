@@ -234,7 +234,28 @@ namespace Croquis.Visor
                 await cielo;
                 Vigente(mio);
                 Paso("cielo");
+            // El camellón (de las calles de OSM del caso) y el paisaje árido, antes de armar el entorno:
+            // quitan lo que no va y ponen sus árboles (docs/contrato-unity.md §3).
+            List<List<Camellon.Punto>> camellones = null;
+            Omisiones.Intentar("el camellón", () =>
+            {
+                var lugar = caso.Escena?.Lugar;
+                camellones = Camellon.Buscar(lugar?.RedVial?.Vias, lugar?.AnchoCarril?.Valor ?? 3.5, e.Centro.X, e.Centro.Y, 180);
+                Camellon.Despejar(e, camellones);
+                var arboles = Camellon.Arbolado(camellones, e.Entorno?.Arboles, e.Semilla);
+                foreach (var a in arboles)
+                {
+                    a.Z = terreno.Z((float)a.X, (float)a.Y) + CamellonVista.Alto;
+                }
+
+                if (e.Entorno != null && arboles.Count > 0)
+                {
+                    e.Entorno.Arboles = (e.Entorno.Arboles ?? new ArbolEscenario[0]).Concat(arboles).ToArray();
+                }
+            });
+            Omisiones.Intentar("el paisaje árido", () => Paisaje.Arido(e));
             Omisiones.Intentar("el escenario", () => EscenarioVista.Construir(raiz, e, sol, Camera.main, terreno));
+            Omisiones.Intentar("el camellón", () => CamellonVista.Construir(raiz.Find("escenario"), camellones, terreno, e.Ambiente, e.Semilla));
             Paso("escenario");
             }
             else
