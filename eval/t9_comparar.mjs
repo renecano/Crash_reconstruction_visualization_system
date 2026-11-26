@@ -202,6 +202,20 @@ if (!tabla || !nav) {
     if (!x.capturas) salida.pendientes.push(`Sin captura del 3D: ${x.clave}.`);
 }
 
+/** Lo que cambia contra `main` y René ya aprobó: no es una falla de la tanda. */
+const ESPERADAS = {
+  "carambolas.prueba": {
+    despues: "19 de 31",
+    motivo:
+      "esperado: el #311 (395401c7, clase y masa por el modelo); René lo aprobó el 2026-11-26",
+  },
+  "carambolas.desarrollo": {
+    despues: "41 de 55",
+    motivo:
+      "esperado: el #311 (395401c7, clase y masa por el modelo); René lo aprobó el 2026-11-26",
+  },
+};
+
 // --- Carambolas y cobertura: antes (main, en eval/results/t9/antes/) y después (este commit) ---
 // René (2026-11-24): «para ver si el candado les quita cifra a algunas». Si cambian, van a René.
 salida.otras = [];
@@ -217,6 +231,12 @@ salida.otras = [];
       despues: tasa(d, "impactos_posteriores_ocurridos", "impactos_posteriores_en_escena"),
     };
     fila.cambia = fila.antes !== fila.despues;
+    // Esperado (René, 2026-11-26): lo mueve el #311 (395401c7, la clase y la masa por el modelo).
+    const esperada = ESPERADAS[fila.cifra];
+    if (fila.cambia && esperada && fila.despues === esperada.despues) {
+      fila.cambia = false;
+      fila.esperada = esperada.motivo;
+    }
     salida.otras.push(fila);
   }
   const a = leer("eval/results/t9/antes/t3_cobertura.json")?.total?.supuestos_sorteados;
@@ -270,7 +290,7 @@ for (const x of salida.nuevas ?? [])
   console.log(`  ${x.clave}: ${x.cifra} · ${x.capturas} capturas`);
 for (const x of salida.otras)
   console.log(
-    `${x.cambia ? "✗" : "✓"} ${x.cifra}: antes ${x.antes} · después ${x.despues} (publicada ${x.publicada})`,
+    `${x.cambia ? "✗" : "✓"} ${x.cifra}: antes ${x.antes} · después ${x.despues} (publicada ${x.publicada})${x.esperada ? ` · ${x.esperada}` : ""}`,
   );
 for (const c of salida.capturas) console.log(`  capturas ${c.clave}: ${c.capturas}`);
 for (const p of salida.pendientes) console.log(`  pendiente: ${p}`);

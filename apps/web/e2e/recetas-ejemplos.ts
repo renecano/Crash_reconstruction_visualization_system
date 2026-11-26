@@ -129,6 +129,13 @@ export async function colocar(page: Page, r: Receta, notas: string[]) {
         notas.push(`«${texto}»: no había flechas; se tomó la primera opción.`);
         await page.getByTestId("opcion-flecha-0").click();
       }
+      // La receta manda sobre lo que La escena lee de la narración: si pregunta «¿Seguro?», sí (t9-junta,
+      // 2026-11-26: el Sentra del poste, que la lectura del #320 ponía del sur).
+      const asi = page.getByTestId("direccion-asi");
+      if (await asi.isVisible().catch(() => false)) {
+        notas.push(`«${texto}»: La escena preguntó «¿Seguro?»; la receta se queda con la suya.`);
+        await asi.click();
+      }
     } else if (/quedó/i.test(texto)) {
       const q = de(r.quedo, vehiculo);
       if (q === undefined) {
