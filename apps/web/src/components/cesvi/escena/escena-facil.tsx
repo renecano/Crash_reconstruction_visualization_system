@@ -2742,7 +2742,14 @@ export function EscenaFacil({
         objetos={objetosMapa}
         queImporta={
           puedeQueImporta
-            ? { activo: verQueImporta, onAlternar: () => setVerQueImporta((x) => !x) }
+            ? {
+                activo: verQueImporta,
+                onAlternar: () => {
+                  // Para verlo en el mapa, la lista se cierra.
+                  setListaVista(false);
+                  setVerQueImporta((x) => !x);
+                },
+              }
             : null
         }
         terreno={terrenoMapa}

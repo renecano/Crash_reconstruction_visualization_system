@@ -915,15 +915,17 @@ export function MapaFacil(p: MapaFacilProps) {
             Qué importa
           </button>
         ) : null}
+        {p.queImporta?.activo ? (
+          <p
+            className="escena-mensaje max-w-[15rem] text-[0.8125rem]"
+            role="status"
+            data-testid="que-importa-nota"
+          >
+            En gris: lo que no toca ningún recorrido reconstruido. No influye en la cifra.
+          </p>
+        ) : null}
       </div>
-      {p.queImporta?.activo ? (
-        <p
-          className="escena-mensaje pointer-events-none absolute bottom-10 left-1/2 z-10 -translate-x-1/2 text-[0.8125rem]"
-          data-testid="que-importa-nota"
-        >
-          En gris: lo que no toca ningún recorrido reconstruido. No influye en la cifra.
-        </p>
-      ) : null}
+
       <p className="pointer-events-none absolute right-4 bottom-3 z-10 text-[0.6875rem] text-texto-3">
         © OpenStreetMap · OpenFreeMap
       </p>

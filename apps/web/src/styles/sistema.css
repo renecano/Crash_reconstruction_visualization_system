@@ -1968,6 +1968,10 @@
     outline: 3px solid var(--eleccion);
     outline-offset: 2px;
   }
+  .escena-zoom[aria-pressed="true"] {
+    background: var(--texto);
+    color: var(--fondo);
+  }
   .escena-zoom {
     display: grid;
     width: 48px;
