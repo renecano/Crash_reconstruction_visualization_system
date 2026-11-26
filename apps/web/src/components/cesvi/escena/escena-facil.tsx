@@ -1338,8 +1338,10 @@ export function EscenaFacil({
       const v = actual.vehiculo;
       if ((opcionFinal[v] ?? "marcar") !== "marcar")
         setOpcionFinal((o) => ({ ...o, [v]: "marcar" }));
-      const a = ajustarACalle(callesMapa, p, 8);
-      colocarFinal(v, a?.punto ?? p);
+      // Donde tocó: la posición final es evidencia y no se mueve en silencio (René, 2026-11-26: el
+      // Vento del ejemplo «quedó sobre el acotamiento» y se pegaba 3 m al eje de la vía). Si quedó
+      // fuera de la calle, La escena lo avisa y ofrece «Ponerlo en la calle».
+      colocarFinal(v, p);
     }
   };
 
