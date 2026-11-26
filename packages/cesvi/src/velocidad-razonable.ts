@@ -1,4 +1,17 @@
 /**
+ * Las fuentes, completas (René, 2026-11-25):
+ * - Yan, H., Maat, K. y van Wee, B. (2024). Cycling speed variation: a multilevel model of
+ *   characteristics of cyclists, trips and route tracking points. Transportation, 52(5), 1857–1886.
+ *   doi:10.1007/s11116-024-10477-6
+ * - Yan, X., Chen, J., Bai, H., Wang, T. y Yang, Z. (2020). Influence Factor Analysis of Bicycle
+ *   Free-Flow Speed for Determining the Design Speeds of Separated Bicycle Lanes. Information,
+ *   11(10), 459. doi:10.3390/info11100459
+ * - Murtagh, E. M., Mair, J. L., Aguiar, E., Tudor-Locke, C. y Murphy, M. H. (2021). Outdoor Walking
+ *   Speeds of Apparently Healthy Adults: A Systematic Review and Meta-analysis. Sports Medicine,
+ *   51(1), 125–141. doi:10.1007/s40279-020-01351-3
+ * - Reglamento de Tránsito en Carreteras y Puentes de Jurisdicción Federal, artículo 134 (Diario
+ *   Oficial de la Federación; texto consultado con la reforma del 22-11-2012).
+ *
  * Una velocidad que pasa de lo razonable para su tipo de vehículo (René, 2026-11-25: en aud-09 el
  * ciclista salía a 42 km/h). Es un aviso, no un bloqueo: el perito decide. Cada umbral dice de dónde
  * sale, y la cifra y el umbral van juntos en el límite que lee el perito.
@@ -18,7 +31,7 @@ const BICICLETA: UmbralVelocidad = {
   tipo: "bicicleta",
   kmh: 40,
   fuente:
-    "el doble de lo más alto de lo usual: la mayoría de las velocidades en bicicleta medidas en la literatura van de 12 a 20 km/h (revisión en Information 11(10):459, MDPI, 2020; y en Transportation, Springer, 2024, doi 10.1007/s11116-024-10477-6)",
+    "más del doble de la velocidad media en bicicleta medida con GPS (Yan, Maat y van Wee, 2024, Transportation 52(5):1857–1886) y por arriba de las velocidades de diseño de 25 y 30 km/h de los carriles para bicicleta (Yan et al., 2020, Information 11(10):459)",
 };
 const MOTOCICLETA: UmbralVelocidad = {
   tipo: "motocicleta",
@@ -43,7 +56,7 @@ export const UMBRAL_PEATON: UmbralVelocidad = {
   tipo: "peatón",
   kmh: 25,
   fuente:
-    "caminando se llega a unos 9 km/h y se pasa a correr hacia los 7 km/h; más de 25 km/h solo lo corre un velocista entrenado (el récord es de 44.7 km/h); revisión de velocidades al caminar en Sports Medicine, 2020 (PubMed 33030707)",
+    "muy por arriba de la velocidad al caminar de adultos sanos (Murtagh et al., 2021, Sports Medicine 51(1):125–141); más de 25 km/h solo se corre a toda velocidad (el récord es de 44.72 km/h, Mundial de Atletismo de Berlín, 2009)",
 };
 
 /** Las clases del contrato (`escena.schema.json`) que tienen un umbral. */

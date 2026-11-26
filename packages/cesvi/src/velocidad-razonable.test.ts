@@ -7,7 +7,7 @@ describe("la velocidad razonable por tipo de vehículo", () => {
     const a = avisoVelocidadRazonable("V2", umbralDeClase("bicicleta"), 42);
     expect(a).toMatch(/V2 \(bicicleta\): la cifra \(42 km\/h\) pasa de lo razonable/);
     expect(a).toMatch(/más de 40 km\/h/);
-    expect(a).toMatch(/12 a 20 km\/h/);
+    expect(a).toMatch(/Yan, Maat y van Wee, 2024/);
     expect(a).toMatch(/la decisión es del perito/);
   });
 

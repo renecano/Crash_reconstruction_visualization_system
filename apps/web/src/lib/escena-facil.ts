@@ -1699,6 +1699,9 @@ function viaDelLugar(narracion: string): string | null {
   return null;
 }
 
+/** Estar quieto en la vía. */
+const ESTACIONADO = /\b(?:estacionad|detenid|parad)[oa]s?\b/;
+
 /** Circular, en las formas en que lo dicen las narraciones. */
 const CIRCULABA =
   /\b(?:circulaba|transitaba|iba|venia|avanzaba|se\s+desplazaba|se\s+dirigia|conducia|bajaba|subia|marchaba)\b/;
@@ -1722,7 +1725,16 @@ export function calleDeLlegadaNarrada(
     );
   for (const o of narracion.split(/(?<=[.;])\s+/)) {
     const t = sinAcentos(o);
-    if (!nombra(o) || !CIRCULABA.test(t)) continue;
+    if (!nombra(o)) continue;
+    // Estacionado o detenido sin nombrar la vía: en la vía donde la narración pone el hecho (aud-37:
+    // «se encontraban estacionados junto a la guarnición»).
+    if (!CIRCULABA.test(t)) {
+      if (ESTACIONADO.test(t)) {
+        const lugar = viaDelLugar(narracion);
+        if (lugar) return lugar;
+      }
+      continue;
+    }
     const desde = CIRCULABA.exec(t)!.index;
     for (const c of callesNarradas(o)) {
       if (c.en < desde) continue;

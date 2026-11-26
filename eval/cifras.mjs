@@ -253,6 +253,40 @@ function construir() {
       codigo: doc.codigo,
     });
   }
+  // El alcance en carretera (MEX 57), con la escena colocada en su lugar guardado. René, 2026-11-25
+  // (#320): la regla del choque de frente movió 1 km/h un extremo de cada rango.
+  {
+    const archivo = "eval/results/ejemplos_en_su_lugar/cifras.json";
+    const doc = leer(archivo);
+    const i = doc.filas.findIndex((f) => f.clave === "alcance-deformacion");
+    if (i < 0) throw new Error(`${archivo}: no está el ejemplo alcance-deformacion`);
+    const fila = doc.filas[i];
+    for (const [clave, vehiculo, que] of [
+      ["ejemplos.alcance", "V1", "velocidad de la Ranger (A), la que alcanza, antes del impacto"],
+      [
+        "ejemplos.alcance_corolla",
+        "V2",
+        "velocidad del Corolla (B), el alcanzado, antes del impacto",
+      ],
+    ]) {
+      const j = fila.velocidades.findIndex((v) => v.vehiculo === vehiculo);
+      const v = fila.velocidades[j];
+      pon(clave, {
+        que: `Ejemplo «alcance en carretera»: ${que}`,
+        mejor: v.mejor,
+        p10: v.p10,
+        p90: v.p90,
+        unidad: "km/h",
+        muestras: doc.muestras.samples,
+        juego_de_muestras: "producción",
+        texto: `${v.mejor} km/h (${v.p10}–${v.p90})`,
+        fuente: archivo,
+        campo: `filas.${i}.velocidades.${j}`,
+        motivo:
+          "Regla de choque de frente del #320; cambio de 1 km/h en un extremo, del tamaño del ruido; René lo aprobó el 2026-11-25. Antes, Ranger 53 (49–56) y Corolla 0 (0–9).",
+      });
+    }
+  }
   // La reversa en pendiente. René, 2026-11-24 (#311): «Por dónde venía» ponía el frente del CR-V
   // hacia donde retrocedía y el 3D metía su parte trasera 1.7 m dentro del Versa. René, 2026-11-25
   // (#316): la narración se ubica en la Calle Olivos (Lomas del Valle, Puebla), una calle real que
