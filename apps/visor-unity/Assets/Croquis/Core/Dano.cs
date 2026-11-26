@@ -208,7 +208,7 @@ namespace Croquis.Core
         /// Los pliegues de la lámina aplastada, como fracción de c(u). Van en el plano de la cara (arriba
         /// y abajo, y a lo largo), nunca hacia adentro: la profundidad sigue siendo la del solver.
         /// </summary>
-        public const double Pliegue = 0.2;
+        public const double Pliegue = 0.16;
 
         /// <summary>La distancia entre pliegues, hacia adentro de la cara (m).</summary>
         public const double LargoPliegue = 0.13;
