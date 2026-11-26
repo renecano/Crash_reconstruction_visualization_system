@@ -52,11 +52,11 @@ export const RECETAS: Receta[] = [
   },
   {
     // A llega del Sur y B del Poniente; después del contacto, B derrapa, cruza a la terracería y
-    // pega contra un poste (el segundo choque), donde queda. A quedó 8 m al Norte.
+    // pega contra un poste (el segundo choque), donde queda. A quedó 1 m al Oriente.
     clave: "poste-terraceria",
     choques: [[18, 3]],
     venia: { "Mazda 3": "Del sur", Sentra: "Del oeste" },
-    quedo: { "Mazda 3": [0.8, 8], Sentra: [16.4, 2.7] },
+    quedo: { "Mazda 3": [1, 0], Sentra: [16.4, 2.7] },
     pasos: [{ vehiculo: "V2", en: [9, 1.5] }],
     terreno: [{ tipo: "terraceria", en: [15, 4] }],
   },

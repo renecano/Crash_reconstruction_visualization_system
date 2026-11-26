@@ -241,7 +241,7 @@ function construir() {
     const CRUCERO =
       "Escena armada con el mismo código de La escena, direcciones por las calles reales y confirmadas como con el botón «Confirmar» de la app (#331); René lo aprobó el 2026-11-26.";
     const POSTE =
-      "Escena armada con el mismo código de La escena (#331). El golpe contra el poste ahora se calcula: el punto que marca el perito va en el impacto (antes quedaba «sin calcular» y el Sentra se detenía solo), y los 18.40 m de derrape después del contacto entran como evidencia. Así la velocidad antes del impacto queda arriba de la que deja el derrape (48–57 km/h) y el rango refleja la energía del poste, con sus medidas típicas como supuesto. René lo aprobó con esa condición el 2026-11-26.";
+      "Escena armada con el mismo código de La escena (#331), con el golpe contra el poste calculado y el derrape de 18.40 m como evidencia. Desde el 2026-11-26 (fix/w-poste-mazda), el Mazda quedó «1 metro al Oriente» (decía «8 metros al Norte», que la física no alcanza) y la revisión de «reposo inalcanzable» ya no se queda en un mínimo local: pendiente del visto bueno de René.";
     const REVERSA =
       "Escena armada con el mismo código de La escena (#331). La velocidad en reversa del CR-V pesa como supuesto con su rango (NHTSA, 3.06–9.07 km/h), porque la narración no da evidencia de más; el rango del Versa cambia por eso. René lo aprobó el 2026-11-26.";
     for (const [clave, ejemplo, vehiculo, que, antes, motivo] of [
@@ -306,7 +306,7 @@ function construir() {
         "poste-terraceria",
         "V2",
         "«poste y terracería»: velocidad del Sentra (B) antes del impacto",
-        "36 (31–38)",
+        "59 (49–64), aprobada el 2026-11-26",
         POSTE,
       ],
     ]) {
