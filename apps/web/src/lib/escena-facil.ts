@@ -101,7 +101,11 @@ export function callesNarradas(narracion: string): { nombre: string; en: number 
   const out: { nombre: string; en: number }[] = [];
   for (const m of narracion.matchAll(RE_CALLE)) {
     // «… y la Calle Jazmín»: el nombre se corta en una palabra minúscula que no sea de unión.
-    const nombre = `${m[1]!} ${m[2]!}`.replace(/[.,;:]+$/, "").trim();
+    // «por la Calle 16 de Septiembre de Poniente a Oriente»: el sentido no es parte del nombre.
+    const nombre = `${m[1]!} ${m[2]!}`
+      .replace(/[.,;:]+$/, "")
+      .replace(new RegExp(`\\s+del?\\s+${PUNTO}$`, "i"), "")
+      .trim();
     if (!out.some((x) => nombreComparable(x.nombre) === nombreComparable(nombre)))
       out.push({ nombre, en: m.index ?? 0 });
   }
@@ -190,6 +194,45 @@ export interface SentidoNarrado {
  * marca, su modelo o su letra): «circulaba de sur a norte», «con dirección al poniente», «sentido
  * norte-sur». null si no lo dice.
  */
+/**
+ * Lo que una oración dice de un vehículo (René, 2026-11-26: «el vehículo A … que circulaba por la
+ * Avenida de la Compañía de Sur a Norte, y el vehículo B … que circulaba por la Calle 16 de Septiembre
+ * de Poniente a Oriente» le daba al B el sentido y la calle del A). Desde la primera vez que lo nombra
+ * hasta que nombra a otro vehículo («el vehículo B»); si lo nombra antes que a cualquier otro, desde el
+ * principio («De sur a norte circulaba el vehículo A, …»). Sin acentos, como la buscan los lectores.
+ */
+export function tramoDelVehiculo(oracion: string, nombres: readonly string[]): string {
+  const [desde, hasta] = rangoDelVehiculo(oracion, nombres);
+  return sinAcentos(oracion).slice(desde, hasta);
+}
+
+/** Dónde empieza y dónde termina `tramoDelVehiculo` en la oración (mismas posiciones sin acentos). */
+export function rangoDelVehiculo(oracion: string, nombres: readonly string[]): [number, number] {
+  const t = sinAcentos(oracion);
+  const mios = nombres
+    .filter((n) => n.trim())
+    .map((n) => new RegExp(`\\b${escapar(sinAcentos(n))}\\b`, "g"));
+  const enMi = (i: number) =>
+    mios.some((r) => {
+      r.lastIndex = 0;
+      const m = r.exec(t.slice(i));
+      return m?.index === 0;
+    });
+  let inicio = Infinity;
+  for (const r of mios) {
+    r.lastIndex = 0;
+    const m = r.exec(t);
+    if (m) inicio = Math.min(inicio, m.index);
+  }
+  if (!Number.isFinite(inicio)) return [0, t.length];
+  const otros = [...t.matchAll(/\bvehiculo\s+[a-z]\b/g)]
+    .map((m) => m.index)
+    .filter((i) => !enMi(i));
+  const antes = otros.filter((i) => i < inicio);
+  const despues = otros.filter((i) => i > inicio);
+  return [antes.length ? inicio : 0, despues.length ? Math.min(...despues) : t.length];
+}
+
 export function sentidoNarrado(
   narracion: string,
   nombres: readonly string[],
@@ -200,7 +243,7 @@ export function sentidoNarrado(
       (n) => n.trim() && new RegExp(`\\b${escapar(sinAcentos(n))}\\b`).test(sinAcentos(o)),
     );
   for (const o of oraciones.filter(nombra)) {
-    const t = sinAcentos(o);
+    const t = tramoDelVehiculo(o, nombres);
     const deA = new RegExp(`\\bde(?:l)?\\s+${PUNTO}\\s+(?:a|al|hacia(?: el)?)\\s+${PUNTO}\\b`).exec(
       t,
     );
@@ -1788,8 +1831,10 @@ export function calleDeLlegadaNarrada(
       (n) => n.trim() && new RegExp(`\\b${escapar(sinAcentos(n))}\\b`).test(sinAcentos(o)),
     );
   for (const o of narracion.split(/(?<=[.;])\s+/)) {
-    const t = sinAcentos(o);
     if (!nombra(o)) continue;
+    // Solo lo que la oración dice de ESTE vehículo (René, 2026-11-26: el poste en Tianguismanalco).
+    const [a, b] = rangoDelVehiculo(o, nombres);
+    const t = sinAcentos(o).slice(a, b);
     // Estacionado o detenido sin nombrar la vía: en la vía donde la narración pone el hecho (aud-37:
     // «se encontraban estacionados junto a la guarnición»).
     if (!CIRCULABA.test(t)) {
@@ -1800,11 +1845,13 @@ export function calleDeLlegadaNarrada(
       continue;
     }
     const desde = CIRCULABA.exec(t)!.index;
+    const completa = sinAcentos(o);
     for (const c of callesNarradas(o)) {
-      if (c.en < desde) continue;
+      if (c.en < a + desde || c.en >= b) continue;
       // La calle es lo que va después de «sobre» o «por» («por los carriles laterales de la …»), no
       // cualquier calle que siga («por el semáforo de Avenida Prado Norte» no es por dónde iba).
-      if (OBJETO_DE_LA_VIA.test(t.slice(Math.max(desde, c.en - 60), c.en))) return c.nombre;
+      if (OBJETO_DE_LA_VIA.test(completa.slice(Math.max(a + desde, c.en - 60), c.en)))
+        return c.nombre;
     }
     // «por el carril derecho del paso a desnivel»: la vía del lugar, la primera que nombra la narración.
     if (/\bcarril\b[^.;]*\bdel\s+(?:paso|puente|tunel|viaducto|distribuidor)\b/.test(t))

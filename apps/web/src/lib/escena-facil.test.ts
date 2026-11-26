@@ -44,6 +44,8 @@ import {
   quedoJuntoAlChoque,
   resumenEscena,
   sentidoNarrado,
+  calleDeLlegadaNarrada,
+  tramoDelVehiculo,
   sinFinal,
   textoChoqueListo,
   textoFlecha,
@@ -503,5 +505,31 @@ describe("el límite de la vía por donde circulaba (René, 2026-11-23)", () => 
 
   it("si el vehículo iba por la otra calle nombrada, esa", () => {
     expect(limiteEnElChoque(calles, C, { rumbo: 0, lugar })!.fuente).toContain("Isidro Fabela");
+  });
+});
+
+describe("lo que una oración dice de cada vehículo (René, 2026-11-26: el poste en Tianguismanalco)", () => {
+  const narracion =
+    "El hecho se ubica en el cruce de la Calle 16 de Septiembre con la Avenida de la Compañía, en San Pedro Atlixco. Se examinan el vehículo A, marca Mazda, tipo 3, modelo 2014, que circulaba por la Avenida de la Compañía de Sur a Norte, y el vehículo B, marca Nissan, tipo Sentra, modelo 2018, que circulaba por la Calle 16 de Septiembre de Poniente a Oriente.";
+  const mazda = { id: "V1", marca: { valor: "Mazda" }, modelo: { valor: "3" } };
+  const sentra = { id: "V2", marca: { valor: "Nissan" }, modelo: { valor: "Sentra" } };
+  const todos = [mazda, sentra] as unknown as Parameters<typeof calleDeLlegadaNarrada>[2];
+
+  it("el tramo de cada uno: desde que lo nombra hasta que nombra a otro", () => {
+    const o = narracion.split(/(?<=[.;])\s+/)[1]!;
+    expect(tramoDelVehiculo(o, ["Sentra", "Nissan", "vehículo B"])).toMatch(
+      /^vehiculo b, marca nissan.*de poniente a oriente\.$/,
+    );
+    expect(tramoDelVehiculo(o, ["3", "Mazda", "vehículo A"])).not.toMatch(/poniente/);
+  });
+
+  it("el Sentra venía del poniente por la Calle 16 de Septiembre; el Mazda, del sur por la Avenida", () => {
+    expect(sentidoNarrado(narracion, ["Sentra", "Nissan", "vehículo B"])).toMatchObject({
+      rumbo: 90,
+      desde: "oeste",
+    });
+    expect(sentidoNarrado(narracion, ["3", "Mazda", "vehículo A"])).toMatchObject({ rumbo: 0 });
+    expect(calleDeLlegadaNarrada(narracion, todos[1]!, todos)).toBe("Calle 16 de Septiembre");
+    expect(calleDeLlegadaNarrada(narracion, todos[0]!, todos)).toBe("Avenida de la Compañía");
   });
 });
