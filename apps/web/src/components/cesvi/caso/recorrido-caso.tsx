@@ -102,6 +102,7 @@ import { ActoContraste, filaDeRestos } from "./contraste-laboratorio";
 import { HechoLaboratorio } from "./hecho-laboratorio";
 import { CifraReconstruccion, DetalleReconstruccion } from "./hoja-reconstruccion";
 import { ActoVersiones } from "./versiones";
+import { HipotesisVelocidad } from "./hipotesis-velocidad";
 import { TerrenoReconstruccion } from "./terreno-reconstruccion";
 import { EnRanura, MarcoVista } from "@/components/visor-unity/marco-vista";
 import { VisorCasoUnity } from "@/components/visor-unity/visor-caso-unity";
@@ -274,6 +275,9 @@ export function RecorridoCaso({
   const [versiones, setVersiones] = useState<VersionCaso[]>([]);
   const [elegida, setElegida] = useState<string | null>(null);
   const [version3d, setVersion3d] = useState(false);
+  // «¿Y si…?» a otra velocidad en la Reconstrucción (pedido de CESVI, 2026-11-26): la que va encima.
+  // Va con la reconstrucción en que se probó: con una nueva, ya no va encima.
+  const [ysiDe, setYsiDe] = useState<{ clave: string; de: unknown } | null>(null);
   const [exportApi, setExportApi] = useState<ViewerExportApi | null>(null);
   // U6: el visor Unity (si cargó). Las fotos del dictamen salen de él.
   const [unityApi, setUnityApi] = useState<ApiVisorUnity | null>(null);
@@ -374,8 +378,13 @@ export function RecorridoCaso({
   const enEscenario = actual === P.reconstruccion || actual === P.versiones;
   const vista = vistaElegida ?? (enEscenario && rSinLimite ? "maqueta" : "mapa");
   // La versión elegida se dibuja solo en su acto: la reconstrucción se ve limpia en los demás.
+  const ysi = ysiDe && ysiDe.de === rSinLimite ? ysiDe.clave : null;
   const versionVista =
-    actual === P.versiones ? (versiones.find((v) => v.clave === elegida) ?? null) : null;
+    actual === P.versiones
+      ? (versiones.find((v) => v.clave === elegida) ?? null)
+      : actual === P.reconstruccion && ysi
+        ? (versiones.find((v) => v.clave === ysi) ?? null)
+        : null;
   const declarada = versionVista
     ? { etiqueta: versionVista.etiqueta, resultado: versionVista.resultado }
     : null;
@@ -1347,6 +1356,19 @@ export function RecorridoCaso({
               ) : null}
             </button>
           ) : null}
+          {/* «¿Y si…?» a otra velocidad (pedido de CESVI): una hipótesis, la cifra no cambia. */}
+          {r && r.velocidades.some((v) => v.previa) ? (
+            <div className="solo-trabajar">
+              <HipotesisVelocidad
+                r={r}
+                nombreDe={nombreLab}
+                versiones={versiones}
+                onVersion={(v) => setVersiones((vs) => conVersion(vs, v))}
+                activa={ysi}
+                onActiva={(clave) => setYsiDe(clave ? { clave, de: rSinLimite } : null)}
+              />
+            </div>
+          ) : null}
           {r && !r.hipotesis ? (
             <DanoContraReconstruccion
               r={r}
@@ -1945,7 +1967,7 @@ export function RecorridoCaso({
                       ? {
                           clave: versionVista.clave,
                           etiqueta: versionVista.etiqueta,
-                          escena: versionVista.tipo === "declaracion" ? versionVista.escena : null,
+                          escena: "escena" in versionVista ? versionVista.escena : null,
                           resultado: versionVista.resultado,
                         }
                       : null

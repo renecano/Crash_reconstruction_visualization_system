@@ -30,6 +30,7 @@ export * from "./discrepancia";
 export * from "./geo";
 export * from "./versiones";
 export * from "./versiones-caso";
+export * from "./hipotesis-velocidad";
 export * from "./correspondencia";
 export * from "./hecho-lectura";
 export * from "./hecho-reglas";
