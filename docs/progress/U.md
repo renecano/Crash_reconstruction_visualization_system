@@ -1069,6 +1069,11 @@ Alberto lleva todo lo de Unity y René con su Claude Code, el solver y la web. E
 - Capturas de antes y después en `docs/progress/capturas/2026-11-26/` (editor, nivel media) y del build WebGL para los letreros. Los casos son fixtures inventados; ninguno de AXA ni de CESVI.
 - **El build WebGL desde la Mac (M1, 16 GB), con Unity 6000.3.28f1:** 193 s con `Library` ya importada (`BuildPlayer`: 2 min 54 s, 0 errores); 70 MB en `apps/visor-unity/Build/web`. El comando está en #337.
 
+- **Ajustes pedidos por René (2026-11-26), PR aparte porque #336, #338 y #339 ya estaban fusionados:**
+  - **Daño:** la profundidad se cuenta desde el frente real de la carrocería, no desde la caja (las esquinas redondeadas recibían menos de C). Medido en la malla, el sedán llega a C1 con 52.0 de 52.2 cm. En la van, la lámina más cercana a C1 está 12 cm hacia dentro y ahí da 45.5 donde el solver pide 44.8; la esquina nominal no tiene lámina. Las demás estaciones quedan dentro de 2 cm o 6 %. Hay capturas cenitales con el perfil dibujado (`Capturas -perfil`, vista `planta:<vehículo>`).
+  - **Pedazos:** tamaño mínimo visible y vidrio con brillo, con la misma cantidad.
+  - **Árido:** cerros ocres y niebla de polvo de día.
+
 ### Instalado (Mac de Alberto)
 
 - Unity 6000.3.28f1 (arm64) con WebGL, con el CLI `unity`.
@@ -1076,7 +1081,6 @@ Alberto lleva todo lo de Unity y René con su Claude Code, el solver y la web. E
 
 ### Pendiente
 
-- Los cerros del horizonte siguen verdes en el paisaje árido.
 - El mensaje `fantasma` del puente 1.4.0 (cambiar la hipótesis sin recargar) sigue propuesto.
 - Los letreros de pantalla no salen en las capturas del editor (`Capturas.cs` renderiza la cámara a una textura). Para verlos hay que usar el build WebGL.
 

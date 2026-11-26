@@ -165,6 +165,38 @@ namespace Croquis.Core
             return salida;
         }
 
+        /// <summary>Toma el frente real de la carrocería (su superficie, en el marco de Unity) para el campo.</summary>
+        public static void FijarFrente(CampoDano campo, IList<V3> verticesEnUnity, IList<int> triangulos)
+        {
+            var enDano = new V3[verticesEnUnity.Count];
+            for (var i = 0; i < enDano.Length; i++)
+            {
+                enDano[i] = Cambiar(verticesEnUnity[i]);
+            }
+
+            campo.FijarFrente(enDano, triangulos);
+        }
+
+        /// <summary>Lo que se hundió de verdad la lámina en C1–C6 (m), con vértices en el marco de Unity.</summary>
+        public static double[] Medir(CampoDano campo, IList<V3> antesEnUnity, IList<V3> despuesEnUnity, out double[] pedidoAlli)
+        {
+            var a = new V3[antesEnUnity.Count];
+            var d = new V3[despuesEnUnity.Count];
+            for (var i = 0; i < a.Length; i++)
+            {
+                a[i] = Cambiar(antesEnUnity[i]);
+                d[i] = Cambiar(despuesEnUnity[i]);
+            }
+
+            return campo.MedirEnMalla(a, d, out pedidoAlli);
+        }
+
+        /// <summary>Un punto del marco del daño (x adelante, y arriba, z a la derecha) en el de Unity.</summary>
+        public static V3 AUnity(V3 enDano)
+        {
+            return Cambiar(enDano);
+        }
+
         /// <summary>Si el daño mueve un punto del marco de Unity (para refinar solo ahí la malla).</summary>
         public static bool Toca(CampoDano campo, V3 enUnity)
         {

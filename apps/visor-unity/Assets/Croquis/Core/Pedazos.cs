@@ -151,10 +151,10 @@ namespace Croquis.Core
                 var vz = tipo == Material.Vidrio ? 1.0 + 3.0 * azar.NextDouble() : 0.5 + 2.5 * azar.NextDouble();
                 var z0 = tipo == Material.Vidrio ? 0.8 + 0.5 * azar.NextDouble() : 0.35 + 0.45 * azar.NextDouble();
                 // El vidrio templado se rompe en granitos de 1 a 2 cm: cada pieza de vidrio es un puñado
-                // de ellos, de 5 a 11 cm de lado a lado.
+                // de ellos, de 8 a 14 cm de lado a lado (el tamaño mínimo que se distingue a la distancia de la cámara).
                 var tamano = tipo == Material.Vidrio
-                    ? 0.05 + 0.06 * azar.NextDouble()
-                    : tipo == Material.Plastico ? 0.03 + 0.1 * azar.NextDouble() : 0.05 + 0.15 * azar.NextDouble();
+                    ? 0.08 + 0.06 * azar.NextDouble()
+                    : tipo == Material.Plastico ? 0.05 + 0.1 * azar.NextDouble() : 0.07 + 0.15 * azar.NextDouble();
 
                 var ex = azar.NextDouble() * 2.0 - 1.0;
                 var ey = azar.NextDouble() * 2.0 - 1.0;

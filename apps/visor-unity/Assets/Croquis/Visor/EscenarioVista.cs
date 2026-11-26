@@ -48,6 +48,13 @@ namespace Croquis.Visor
             }
             // El paisaje árido (`entorno.paisaje`, de la cobertura de OSM que calcula la web): tierra y matas secas.
             var arido = e.Entorno?.Paisaje == PaisajeEntorno.Arido;
+            if (arido && !e.Ambiente.Noche)
+            {
+                // Aire de zona seca: la lejanía se funde con un horizonte de polvo, no azul (los cerros
+                // quedaban azul verdoso aunque su ladera fuera ocre). La densidad no cambia.
+                RenderSettings.fogColor = Color.Lerp(RenderSettings.fogColor, new Color(0.86f, 0.78f, 0.64f), 0.55f);
+            }
+
             foreach (var s in e.Suelo ?? new SueloEscenario[0])
             {
                 Omisiones.Intentar("un tramo de suelo", () => Suelo(escenario, s, e.Ambiente, urbana, e.Semilla, arido));
