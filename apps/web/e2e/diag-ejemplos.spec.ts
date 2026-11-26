@@ -1,0 +1,59 @@
+import { mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { expect, test } from "./base";
+import { irAPaso } from "./ayuda-recorrido";
+import { colocar, RECETAS } from "./recetas-ejemplos";
+
+/** Diagnóstico de la t9-junta (2026-11-26): por qué el mapa de La escena no queda estable. */
+const SALIDA = process.env.CROQUIS_CAPTURAS ?? "diag-ejemplos";
+
+test("diagnóstico del mapa en el primer ejemplo", async ({ page }) => {
+  test.setTimeout(300_000);
+  mkdirSync(SALIDA, { recursive: true });
+  const r = RECETAS[0]!;
+  const consola: string[] = [];
+  page.on("console", (m) => consola.push(`${m.type()}: ${m.text()}`.slice(0, 300)));
+  page.on("pageerror", (e) => consola.push(`pageerror: ${e.message}`.slice(0, 300)));
+  await page.goto("/cesvi");
+  await page.getByTestId("ir-caso-nuevo").click();
+  await irAPaso(page, 2);
+  await page.locator(`[data-ejemplo="${r.clave}"]`).click();
+  await page.getByTestId("leer-narracion").click();
+  await expect(page.getByTestId("escena")).toBeVisible({ timeout: 60_000 });
+  await irAPaso(page, 3);
+  const notas: string[] = [];
+  let error = "";
+  try {
+    await colocar(page, r, notas);
+  } catch (e) {
+    error = (e as Error).message.slice(0, 1500);
+  }
+  await page.screenshot({ path: join(SALIDA, "falla.png") });
+  const cajas: unknown[] = [];
+  for (let i = 0; i < 12; i++) {
+    cajas.push(
+      await page.evaluate(() => {
+        const m = document.querySelector('[data-testid="mapa-facil"]');
+        const r = m?.getBoundingClientRect();
+        const c = m?.querySelector("canvas")?.getBoundingClientRect();
+        return {
+          t: performance.now(),
+          mapa: r && [r.x, r.y, r.width, r.height].map((x) => Math.round(x * 10) / 10),
+          canvas: c && [c.x, c.y, c.width, c.height].map((x) => Math.round(x * 10) / 10),
+          listo: m?.getAttribute("data-listo"),
+          estilo: (m as HTMLElement | null)?.getAttribute("style"),
+          clase: m?.getAttribute("class"),
+          pregunta: document.querySelector('[data-testid="escena-pregunta"]')?.textContent,
+          alertas: [...document.querySelectorAll('[data-testid^="mensaje-"]')].map((x) =>
+            x.textContent?.slice(0, 160),
+          ),
+        };
+      }),
+    );
+    await page.waitForTimeout(150);
+  }
+  writeFileSync(
+    join(SALIDA, "diagnostico.json"),
+    JSON.stringify({ error, notas, cajas, consola: consola.slice(-60) }, null, 1),
+  );
+});
