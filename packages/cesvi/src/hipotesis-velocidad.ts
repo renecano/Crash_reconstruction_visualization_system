@@ -78,7 +78,7 @@ interface VehiculoSim {
 }
 
 const vehiculosDe = (r: unknown): VehiculoSim[] =>
-  ((r as { vehiculos?: VehiculoSim[] } | null)?.vehiculos ?? []);
+  (r as { vehiculos?: VehiculoSim[] } | null)?.vehiculos ?? [];
 
 /** «+12 km/h (+40 %)»; sin porcentaje si la base es cero. */
 function diferencia(a: number, b: number, unidad: string, dec = 0): string {
