@@ -133,6 +133,12 @@ const SEARCH_LENGTH_M = 400.0;
 const CONTACT_GAP_FLAG_M = 0.5;
 const SEEK_CONTACT_FRACTION = 0.75;
 const PATH_TIE_M = 0.05;
+/**
+ * Un contacto con un vehículo en movimiento todavía en su posición inicial (a menos de esto de su
+ * arranque) es peor que cualquiera en el que ya avanzó: en un choque de frente casi en la misma
+ * línea, las líneas de las zonas se cruzan lejos y ese cruce no es el choque (aud-18, René 2026-11-25).
+ */
+const CONTACT_AT_START_M = 0.05;
 export const PEDESTRIAN_LAUNCH_ANGLE_DEG = 10.0;
 export const PEDESTRIAN_CG_HEIGHT_FACTOR = 0.57;
 export const PEDESTRIAN_PROJECTION_FACTOR = 0.9;
@@ -1197,7 +1203,7 @@ export function reconstruct(
       seek = targetPath(targets[0]!, decl, offsets.get(targets[0]!.id)!);
       if (seek !== null) options[0] = [...options[0]!, seek];
     }
-    let best: [number, number, KinPath[], ContactSolution] | null = null;
+    let best: [number, number, KinPath[], ContactSolution, number] | null = null;
     for (const combo of product(options)) {
       const loci = targets.map((m, i) => locusFor(m, combo[i]!));
       if (tipoEvento !== "impacto_vehiculo_vehiculo") {
@@ -1206,15 +1212,40 @@ export function reconstruct(
       }
       const sol = resolveContact(loci, decl, zones);
       const rank = combo.reduce((acc, path, i) => acc + options[i]!.indexOf(path), 0);
+      const inicio = targets.some(
+        (m, i) => m.v0 > 0 && i < sol.params.length && sol.params[i]! <= CONTACT_AT_START_M,
+      )
+        ? 1
+        : 0;
       if (
         best === null ||
-        sol.gap < best[0] - PATH_TIE_M ||
-        (Math.abs(sol.gap - best[0]) <= PATH_TIE_M && rank < best[1])
+        inicio < best[4] ||
+        (inicio === best[4] &&
+          (sol.gap < best[0] - PATH_TIE_M ||
+            (Math.abs(sol.gap - best[0]) <= PATH_TIE_M && rank < best[1])))
       ) {
-        best = [sol.gap, rank, combo, sol];
+        best = [sol.gap, rank, combo, sol, inicio];
       }
     }
-    const [, , combo, sol] = best!;
+    const [, , combo, sol0, inicio] = best!;
+    let sol = sol0;
+    // Si ningún camino evita que un vehículo en movimiento choque en su posición inicial (de frente
+    // en la misma línea, con la zona de uno en su costado), el contacto es el declarado: cada uno en
+    // el punto de su camino más cercano al punto de impacto (René, 2026-11-25).
+    if (inicio && tipoEvento === "impacto_vehiculo_vehiculo" && targets.length === 2) {
+      const lociD = targets.map((m, i) => locusFor(m, combo[i]!));
+      const proy = lociD.map((loc) => loc.project(decl));
+      if (targets.every((m, i) => m.v0 <= 0 || proy[i]![0] > CONTACT_AT_START_M)) {
+        const pa = proy[0]![1];
+        const pb = proy[1]![1];
+        sol = {
+          point: [(pa[0] + pb[0]) / 2.0, (pa[1] + pb[1]) / 2.0],
+          params: [proy[0]![0], proy[1]![0]],
+          gap: dmath.hypot(pa[0] - pb[0], pa[1] - pb[1]),
+          zoneGap: sol0.zoneGap,
+        };
+      }
+    }
     targets.forEach((m, i) => paths.set(m.id, combo[i]!));
     const desvio = seek instanceof ReversePath ? seek.inner : seek;
     if (seek !== null && combo[0] === seek && desvio instanceof CompositePath) {

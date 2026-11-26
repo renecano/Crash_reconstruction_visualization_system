@@ -1,5 +1,5 @@
 {
- "fecha": "2026-11-25T22:02:49.234Z",
+ "fecha": "2026-11-26T01:16:29.648Z",
  "fuentes": {
   "prueba": {
    "casos": 205,
@@ -410,6 +410,12 @@
       "cesvi-fc5f48e946"
      ]
     },
+    "trayectoria.cruza_edificio": {
+     "casos": 1,
+     "ids": [
+      "cesvi-a29030f88d"
+     ]
+    },
     "vehiculo.fuera_de_calle": {
      "casos": 8,
      "ids": [
@@ -486,7 +492,7 @@
      "casos": 3,
      "ids": [
       "aud-14-barda-morelos",
-      "aud-18-frontal-matlatzincas-pendiente",
+      "aud-30-ciclista-alcance-universidad",
       "aud-38-alcance-barrera-circuito-reforma"
      ]
     },
@@ -542,14 +548,20 @@
      ]
     },
     "vehiculo.fuera_de_calle": {
-     "casos": 6,
+     "casos": 5,
      "ids": [
       "aud-02-lateral-tecnologico-lastorres",
       "aud-07-volcadura-calzada-pacifico",
       "aud-09-ciclista-tecnologico",
       "aud-13-moto-vuelta-izquierda-tecnologico",
-      "aud-33-alcance-bajada-reforma-lomas",
       "aud-39-atropello-autobus-tlalpan-ermita"
+     ]
+    },
+    "vehiculo.sentido": {
+     "casos": 2,
+     "ids": [
+      "aud-33-alcance-bajada-reforma-lomas",
+      "aud-37-estacionados-rio-mixcoac"
      ]
     },
     "vuelta.fuera_de_calle": {

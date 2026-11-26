@@ -27,7 +27,7 @@ import {
   type Expediente,
   type SentidoNarradoLugar,
 } from "@croquis/cesvi";
-import { esLaCalleNarrada, esLaCalleNarradaAprox } from "./lugar-claro";
+import { esLaCalleNarrada, esLaCalleNarradaAprox, palabrasDeMas } from "./lugar-claro";
 import { maniobraNarrada } from "./giro-sin-aviso";
 import {
   ajustarACalle,
@@ -205,10 +205,26 @@ export function proponerEscena(o: {
     // flecha manda; si no, la de la calle que mejor cuadra, y la escena avisa que no es la narrada.
     const vObj = vs.find((x) => x.id === v);
     const narrada = narracion && vObj ? calleDeLlegadaNarrada(narracion, vObj, vs) : null;
-    const suyas = narrada
+    // Entre las calles que coinciden con la narrada, las de nombre más parecido (sin palabras de más).
+    const coinciden = narrada
       ? flechas.filter((x) => x.calle && esLaCalleNarradaAprox(narrada, x.calle))
       : [];
-    const j = suyas.length ? flechaPropuesta(suyas, s, porContacto) : -1;
+    // Por grupos, del nombre más parecido al menos parecido: el primero que tenga una flecha en el
+    // sentido narrado manda («Avenida Río Mixcoac» sin flecha al oriente: «Circuito Interior Río Mixcoac»).
+    const niveles = [...new Set(coinciden.map((x) => palabrasDeMas(narrada!, x.calle!)))].sort(
+      (a, b) => a - b,
+    );
+    let suyas: typeof flechas = [];
+    let j = -1;
+    for (const n of niveles) {
+      const grupo = coinciden.filter((x) => palabrasDeMas(narrada!, x.calle!) === n);
+      const k = flechaPropuesta(grupo, s, porContacto);
+      if (k >= 0) {
+        suyas = grupo;
+        j = k;
+        break;
+      }
+    }
     const f = j >= 0 ? suyas[j]! : (flechas[flechaPropuesta(flechas, s, porContacto)] ?? null);
     const otraCalle = !!(narrada && f && !(f.calle && esLaCalleNarradaAprox(narrada, f.calle)));
     if (f) e = elegirDireccion(e, impactos, v, f.rumbo, (k) => puntos[k] ?? null, true);

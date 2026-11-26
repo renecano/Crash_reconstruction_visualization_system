@@ -96,6 +96,13 @@ describe("la calle por la que la narración dice que llegaba", () => {
     expect(calleDeLlegadaNarrada(n, b, todos)).toBe("Circuito Interior");
     expect(calleDeLlegadaNarrada(n, a, todos)).toBe("Circuito Interior");
   });
+  it("«por el semáforo de Avenida Prado Norte» no es por dónde iba; el lugar «sobre» sí (aud-33)", () => {
+    const n =
+      "El hecho se ubica sobre Paseo de la Reforma, en la bajada hacia el cruce con la Avenida Prado Norte. El vehículo B, tipo Hilux, circulaba de poniente a oriente por el carril derecho y se encontraba detenido por el semáforo de Avenida Prado Norte. El vehículo A, tipo Sentra, bajaba detrás de él por el mismo carril.";
+    // «por el carril derecho» es de la vía del lugar; la otra, «por el mismo carril», también.
+    expect(calleDeLlegadaNarrada(n, b, todos)).toBe("Paseo de la Reforma");
+    expect(calleDeLlegadaNarrada(n, a, todos)).toBe("Paseo de la Reforma");
+  });
   it("sin calle en su oración, null", () => {
     expect(
       calleDeLlegadaNarrada("El vehículo A, tipo Sentra, circulaba de sur a norte.", a, todos),

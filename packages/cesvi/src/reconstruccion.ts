@@ -26,6 +26,7 @@ import {
   TURN_RADIUS_M,
 } from "@croquis/solver-ts";
 import { limiteMejorFuera } from "./mejor-fuera";
+import { avisoVelocidadRazonable, UMBRAL_PEATON, umbralDeClase } from "./velocidad-razonable";
 import { candadoFisico, type NoCuadra } from "./candado";
 import { limiteContraNarracion } from "./contra-narracion";
 import { avisoReversaRapida, limiteVelocidadSupuesta, velocidadSupuestaEnReversa } from "./reversa";
@@ -1623,6 +1624,28 @@ export function interpretarResultado(
     // Las posiciones contra lo narrado (René, 2026-11-22): las dos cifras, sin forzar ninguna.
     const contra = limiteContraNarracion(v.vehiculo, base.narradas?.[v.vehiculo], v.previa);
     if (contra) limites.push(contra);
+  }
+  // Una cifra que pasa de lo razonable para su tipo de vehículo (René, 2026-11-25): aviso, no bloqueo.
+  for (const sv of (base.spec.vehiculos ?? []) as Json[]) {
+    const id = base.ids[String(sv.id)];
+    if (!id) continue;
+    const clase = ((sv.clase ?? {}) as Json).valor;
+    const umbral = umbralDeClase(typeof clase === "string" ? clase : null);
+    const mejor = velocidades.find((x) => x.vehiculo === id)?.previa?.mejor;
+    const aviso = avisoVelocidadRazonable(id, umbral, mejor);
+    if (aviso) limites.push(aviso);
+  }
+  // Y una persona a pie más rápida que lo que corre una persona (la que dice la escena).
+  for (const pe of (base.spec.personas ?? []) as Json[]) {
+    if (pe.vehiculo_id) continue;
+    const vel = pe.velocidad as Json | undefined;
+    const kmh = vel ? Number(vel.valor) * (vel.unidad === "m/s" ? 3.6 : 1) : null;
+    const aviso = avisoVelocidadRazonable(
+      typeof pe.id === "string" ? pe.id : "Peatón",
+      UMBRAL_PEATON,
+      kmh,
+    );
+    if (aviso) limites.push(aviso);
   }
   // Una reversa más rápida que cualquiera de las medidas en uso real se le dice al perito (T3.3).
   for (const sv of (base.spec.vehiculos ?? []) as Json[]) {

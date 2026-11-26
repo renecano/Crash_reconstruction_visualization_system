@@ -58,6 +58,21 @@ function casiIgual(a: string, b: string): boolean {
 }
 
 /**
+ * Cuántas palabras que distinguen a la calle del mapa no dice la narración (0: el mismo nombre). Entre
+ * varias calles del mapa que coinciden con la narrada, la de menos es la narrada (aud-33, René
+ * 2026-11-25: «Paseo de la Reforma» no es «Paseo Bosque de la Reforma», aunque compartan «Reforma»).
+ */
+export function palabrasDeMas(narrada: string, delMapa: string): number {
+  const pa = palabrasDeCalle(narrada);
+  const deMas = palabrasDeCalle(delMapa).filter((w) => !pa.some((x) => casiIgual(w, x))).length;
+  // Una privada, cerrada, andador o callejón no es la avenida o la calle que nombra la narración
+  // (aud-03: «Avenida Pino Suárez» no es «Privada Pino Suárez»), salvo que la narración diga ese tipo.
+  const tipo = (t: string) => sinAcentos(t).trim().split(/\s+/)[0] ?? "";
+  const menor = /^(?:privada|priv|cerrada|andador|callejon)$/;
+  return deMas + (menor.test(tipo(delMapa)) && tipo(delMapa) !== tipo(narrada) ? 3 : 0);
+}
+
+/**
  * Como `esLaCalleNarrada`, pero una palabra larga puede diferir en una letra (la ortografía del mapa:
  * «Paseo Matlazincas» en OpenStreetMap, «Paseo de los Matlatzincas» en la narración). Solo para la
  * calle por la que llegaba un vehículo; la búsqueda del lugar sigue con la comparación exacta.

@@ -1682,6 +1682,23 @@ export function finalDeLaNarracion(
   return null;
 }
 
+/**
+ * Lo que va entre «sobre» o «por» y el nombre de la vía por la que se circulaba: nada, un artículo o
+ * «los carriles laterales de la», «el carril central de», «la calzada de».
+ */
+const OBJETO_DE_LA_VIA =
+  /\b(?:sobre|por)\s+(?:(?:el|la|los|las)\s+)?(?:(?:carril(?:es)?|lateral(?:es)?|cuerpo|arroyo|calzada|acotamiento)\b[^,.;]{0,30}?\bde\s+(?:(?:la|el|los|las)\s+)?)?$/;
+
+/** La vía donde la narración pone el hecho: «se ubica sobre Paseo de la Reforma, en la bajada…». */
+function viaDelLugar(narracion: string): string | null {
+  const primera = narracion.split(/(?<=[.;])\s+/)[0] ?? "";
+  const tp = sinAcentos(primera);
+  for (const c of callesNarradas(primera))
+    if (/\bsobre\s+(?:(?:la|el)\s+)?$/.test(tp.slice(Math.max(0, c.en - 20), c.en)))
+      return c.nombre;
+  return null;
+}
+
 /** Circular, en las formas en que lo dicen las narraciones. */
 const CIRCULABA =
   /\b(?:circulaba|transitaba|iba|venia|avanzaba|se\s+desplazaba|se\s+dirigia|conducia|bajaba|subia|marchaba)\b/;
@@ -1709,13 +1726,19 @@ export function calleDeLlegadaNarrada(
     const desde = CIRCULABA.exec(t)!.index;
     for (const c of callesNarradas(o)) {
       if (c.en < desde) continue;
-      // «sobre» o «por» en los 40 caracteres antes del nombre («por los carriles laterales de la …»).
-      const antes = t.slice(Math.max(desde, c.en - 40), c.en);
-      if (/\b(?:sobre|por)\b/.test(antes)) return c.nombre;
+      // La calle es lo que va después de «sobre» o «por» («por los carriles laterales de la …»), no
+      // cualquier calle que siga («por el semáforo de Avenida Prado Norte» no es por dónde iba).
+      if (OBJETO_DE_LA_VIA.test(t.slice(Math.max(desde, c.en - 60), c.en))) return c.nombre;
     }
     // «por el carril derecho del paso a desnivel»: la vía del lugar, la primera que nombra la narración.
     if (/\bcarril\b[^.;]*\bdel\s+(?:paso|puente|tunel|viaducto|distribuidor)\b/.test(t))
       return callesNarradas(narracion)[0]?.nombre ?? null;
+    // «circulaba … por el carril derecho», sin nombrar la vía: el carril es de la vía donde la narración
+    // pone el hecho («se ubica sobre Paseo de la Reforma…»; aud-33).
+    if (/\bpor\s+el\s+carril\s+(?!mismo)/.test(t)) {
+      const lugar = viaDelLugar(narracion);
+      if (lugar) return lugar;
+    }
     // «circulaba detrás de él por el mismo carril», «bajaba en sentido contrario»: por la calle del otro.
     if (
       delOtro &&
@@ -1728,10 +1751,9 @@ export function calleDeLlegadaNarrada(
           const suya = calleDeLlegadaNarrada(narracion, w, todos, false);
           if (suya) return suya;
         }
-      // Si el otro tampoco la dice: la vía del lugar, si la narración pone el hecho «sobre» una sola.
-      const primera = narracion.split(/(?<=[.;])\s+/)[0] ?? "";
-      const enLugar = callesNarradas(primera);
-      if (enLugar.length === 1 && /\bsobre\b/.test(sinAcentos(primera))) return enLugar[0]!.nombre;
+      // Si el otro tampoco la dice: la vía donde la narración pone el hecho.
+      const lugar = viaDelLugar(narracion);
+      if (lugar) return lugar;
     }
   }
   return null;

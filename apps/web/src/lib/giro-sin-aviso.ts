@@ -19,7 +19,7 @@ import {
   sobreCalle,
   type Calle,
 } from "./escena-facil";
-import { esLaCalleNarradaAprox } from "./lugar-claro";
+import { esLaCalleNarradaAprox, palabrasDeMas } from "./lugar-claro";
 
 /** Grados entre el frente del vehículo y el eje de su calle a partir de los cuales está atravesado. */
 export const GIRO_MAX_DEG = 30;
@@ -94,9 +94,13 @@ export function girosSinAviso(o: {
     const difBajo = bajo.length
       ? Math.min(...bajo.map((x) => difEje(x.s.rumbo, pose.rumbo)))
       : null;
+    const coinciden = narrada
+      ? o.calles.filter((c) => c.nombre && esLaCalleNarradaAprox(narrada, c.nombre))
+      : [];
+    const deMas = Math.min(...coinciden.map((c) => palabrasDeMas(narrada!, c.nombre!)));
     const suyas = narrada
-      ? o.calles
-          .filter((c) => c.nombre && esLaCalleNarradaAprox(narrada, c.nombre))
+      ? coinciden
+          .filter((c) => palabrasDeMas(narrada, c.nombre!) === deMas)
           .map((c) => sobreCalle(c, pose.punto))
           .filter((x) => x.distancia <= 25)
       : null;

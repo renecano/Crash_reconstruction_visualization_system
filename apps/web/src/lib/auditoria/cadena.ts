@@ -465,6 +465,52 @@ export async function auditarCaso(o: {
         },
       );
     }
+    // De frente casi en la misma línea (René, 2026-11-25): ¿el solver pone el choque con un vehículo
+    // en movimiento todavía en su posición inicial? Así se perdía el frenado de aud-18.
+    const ev0 = (base.spec.eventos as Json[] | undefined)?.find((x) =>
+      String(x.tipo).startsWith("impacto_vehiculo_vehiculo"),
+    );
+    if (ev0) {
+      const zonas = ((ev0.zonas_impacto ?? []) as Json[]).map((z) => String((z.cdc as Json)?.lado));
+      const sv = (base.spec.vehiculos as Json[]).filter((v) =>
+        (ev0.actores as string[]).includes(String(v.id)),
+      );
+      const rumbos = sv.map((v) => Number((v.posicion_inicial as Json).rumbo_deg));
+      const dif = rumbos.length === 2 ? Math.abs(((rumbos[0]! - rumbos[1]! + 540) % 360) - 180) : 0;
+      datos.de_frente_colineal = zonas.length === 2 && zonas.every((z) => z === "F") && dif >= 170;
+      // La escena con lo declarado y el recorrido del 3D (con el frenado de las huellas).
+      const animada = especReconstruida({ ...r, noCuadra: undefined });
+      const sims = [base.spec, animada].map(
+        (spec) =>
+          reconstructionToDict(reconstruct(spec, { relieve: malla as never })) as unknown as {
+            vehiculos: { id: string; trayectoria: { t: number[]; x: number[]; y: number[] } }[];
+          },
+      );
+      for (const [sim, spec] of [
+        [sims[0]!, base.spec],
+        [sims[1]!, animada],
+      ] as const)
+        for (const v of (spec.vehiculos as Json[]).filter((x) =>
+          (ev0.actores as string[]).includes(String(x.id)),
+        )) {
+          const vp = Number(((v.velocidad_previa ?? {}) as Json).valor ?? 0);
+          if (!(vp > 0)) continue;
+          const tr = sim.vehiculos.find((x) => x.id === v.id)?.trayectoria;
+          if (!tr?.t.length) continue;
+          let k = 0;
+          tr.t.forEach((t, i) => {
+            if (t <= 1e-9) k = i;
+          });
+          const p0 = v.posicion_inicial as Json;
+          const recorrido = Math.hypot(tr.x[k]! - Number(p0.x), tr.y[k]! - Number(p0.y));
+          if (recorrido < 0.5 && !fallas.some((f) => f.regla === "contacto.en_su_salida"))
+            falla(
+              "contacto.en_su_salida",
+              `${String(v.id)} choca en su posición inicial (recorre ${F.metros(recorrido, 1)} antes del impacto)`,
+              base.ids[String(v.id)],
+            );
+        }
+    }
   } catch (x) {
     falla("solver.error", (x as Error).message.slice(0, 300));
     return { id: o.id, fuente: o.fuente, fallas, datos };
