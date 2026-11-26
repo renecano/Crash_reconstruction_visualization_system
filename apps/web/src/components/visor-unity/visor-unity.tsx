@@ -44,10 +44,12 @@ import {
 import { BarraReproduccion } from "./barra-reproduccion";
 import { EnRanura, useMarco } from "./marco-vista";
 import {
-  ALTO_VIDEO,
-  ANCHO_VIDEO,
   grabarVideoUnity,
+  lienzoDelVideo,
+  modoDelVideo,
   nombreDelVideo,
+  textoTarda,
+  VideoNoDisponible,
   puedeGrabarVideo,
   textoFalta,
 } from "@/lib/visor-unity/video";
@@ -100,6 +102,20 @@ export interface VersionUnity {
   etiqueta?: string;
   escena: EscenaSpec | null;
   resultado: Resultado;
+}
+
+/** El nombre de la tarjeta de video que da WebGL (null si no lo da), para el modo del video. */
+function rendererDeLaTarjeta(): string | null {
+  try {
+    const gl = document.createElement("canvas").getContext("webgl2");
+    if (!gl) return null;
+    const ext = gl.getExtension("WEBGL_debug_renderer_info");
+    const nombre = ext ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : null;
+    gl.getExtension("WEBGL_lose_context")?.loseContext();
+    return nombre;
+  } catch {
+    return null;
+  }
 }
 
 export function VisorUnity({
@@ -486,6 +502,11 @@ export function VisorUnity({
     null,
   );
   const [avisoVideo, setAvisoVideo] = useState<string | null>(null);
+  /** «Tarda ~X min. ¿Seguir?» antes de grabar todo (René, 2026-11-26). */
+  const [confirmacion, setConfirmacion] = useState<{
+    ms: number;
+    responder: (si: boolean) => void;
+  } | null>(null);
   const cancelarVideo = useRef<AbortController | null>(null);
   const caja = useRef<HTMLDivElement>(null);
   const descargarVideo = async () => {
@@ -505,9 +526,16 @@ export function VisorUnity({
     setRep(repActual.current);
     puente.enviar("pausar", {});
     puente.minimapa(false);
-    const dpr = window.devicePixelRatio || 1;
-    c.style.width = `${ANCHO_VIDEO / dpr}px`;
-    c.style.height = `${ALTO_VIDEO / dpr}px`;
+    // Con tarjeta dedicada, al doble y en `ultra` (antialiasing, René, 2026-11-26); con integrada,
+    // como antes: 1× y la calidad automática (a 2× la laptop de 8 GB no dibujó ningún cuadro).
+    let modo = modoDelVideo(rendererDeLaTarjeta());
+    const ponerModo = () => {
+      if (modo.calidad) puente.enviar("calidad", { nivel: modo.calidad });
+      const tamano = lienzoDelVideo(window.devicePixelRatio || 1, modo.escala);
+      c.style.width = `${tamano.ancho}px`;
+      c.style.height = `${tamano.alto}px`;
+    };
+    ponerModo();
     try {
       // Unity toma el tamaño nuevo en su siguiente cuadro.
       for (let i = 0; i < 6; i++) await new Promise((ok) => requestAnimationFrame(ok));
@@ -522,17 +550,36 @@ export function VisorUnity({
         enviarPiso(pv, false);
         for (let i = 0; i < 10; i++) await new Promise((ok) => requestAnimationFrame(ok));
       }
-      const video = await grabarVideoUnity({
-        credito: pv ? pv.atribucionMapa : null,
-        lienzo: c,
-        fijar: (t) => puente.enviar("fijarTiempo", { t }),
-        inicio: intervalo.inicio,
-        fin: intervalo.fin,
-        logo,
-        leyenda: LEYENDA_3D,
-        signal: corte.signal,
-        alProgreso: (hechos, total, ms) => setGrabacion({ hechos, total, ms }),
-      });
+      const grabar = () =>
+        grabarVideoUnity({
+          credito: pv ? pv.atribucionMapa : null,
+          lienzo: c,
+          fijar: (t) => puente.enviar("fijarTiempo", { t }),
+          inicio: intervalo.inicio,
+          fin: intervalo.fin,
+          logo,
+          leyenda: LEYENDA_3D,
+          signal: corte.signal,
+          alProgreso: (hechos, total, ms) => setGrabacion({ hechos, total, ms }),
+          confirmar: (ms) =>
+            new Promise<boolean>((responder) => {
+              // «Cancelar» o Esc mientras pregunta: no se queda esperando.
+              corte.signal.addEventListener("abort", () => responder(false), { once: true });
+              setConfirmacion({ ms, responder });
+            }),
+        });
+      let video: Blob;
+      try {
+        video = await grabar();
+      } catch (e) {
+        // Si al doble no llega ningún cuadro, otra vez como antes: 1× y la calidad automática.
+        if (!(e instanceof VideoNoDisponible) || modo.escala === 1) throw e;
+        if (modo.calidad) puente.enviar("calidad", { nivel: "auto" });
+        modo = { escala: 1, calidad: null };
+        ponerModo();
+        for (let i = 0; i < 6; i++) await new Promise((ok) => requestAnimationFrame(ok));
+        video = await grabar();
+      }
       const url = URL.createObjectURL(video);
       const a = document.createElement("a");
       a.href = url;
@@ -556,6 +603,8 @@ export function VisorUnity({
     } finally {
       c.style.width = antes.ancho;
       c.style.height = antes.alto;
+      if (modo.calidad) puente.enviar("calidad", { nivel: "auto" });
+      setConfirmacion(null);
       puente.minimapa(minimapa);
       grabando.current = false;
       // Si cambió la escena mientras se grababa, ahora va.
@@ -717,6 +766,36 @@ export function VisorUnity({
             <span className="t-nota" data-testid="falta-video">
               {textoFalta(grabacion.hechos, grabacion.total, grabacion.ms)} · 1920×1080, MP4
             </span>
+            {confirmacion ? (
+              <div className="flex flex-col gap-2" role="alertdialog" data-testid="video-tarda">
+                <span className="t-interfaz">
+                  {textoTarda(confirmacion.ms)} en esta computadora. ¿Seguir grabando?
+                </span>
+                <div className="flex gap-2 self-end">
+                  <button
+                    type="button"
+                    className="boton-principal boton-compacto"
+                    onClick={() => {
+                      confirmacion.responder(true);
+                      setConfirmacion(null);
+                    }}
+                    data-testid="video-seguir"
+                  >
+                    Seguir
+                  </button>
+                  <button
+                    type="button"
+                    className="boton-secundario boton-compacto"
+                    onClick={() => {
+                      confirmacion.responder(false);
+                      setConfirmacion(null);
+                    }}
+                  >
+                    No, cancelar
+                  </button>
+                </div>
+              </div>
+            ) : null}
             <button
               type="button"
               className="boton-secundario boton-compacto self-end"
