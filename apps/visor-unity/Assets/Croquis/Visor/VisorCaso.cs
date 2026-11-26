@@ -615,7 +615,9 @@ namespace Croquis.Visor
                 return;
             }
 
-            desfaseFantasma = Fantasmas.Desfase(caso.Resultado, version);
+            var hipotesis = Fantasmas.EsHipotesis(caso.Fantasma.Etiqueta);
+            desfaseFantasma = Fantasmas.Desfase(caso.Resultado, version, hipotesis);
+            var letrero = Fantasmas.Letrero(caso.Fantasma.Etiqueta);
             var dibujar = Fantasmas.VehiculosADibujar(caso.Resultado, version);
             var material = Materiales.Calca(ColorFantasma, 0.4f);
             foreach (var v in version.Vehiculos)
@@ -662,6 +664,10 @@ namespace Croquis.Visor
                 vista.Trayectoria = v.Trayectoria;
                 vista.Datos = v;
                 vista.Terreno = terreno;
+                // Su propio daño (el de su `resultado`), en su instante: con otra velocidad, otra deformación.
+                Omisiones.Intentar("el daño de la versión de " + v.Id, () => vista.Dano = DanoVista.Preparar(go.transform, v, version));
+                vista.Letrero = EtiquetaMundo.Crear(go.transform, letrero);
+                vista.AltoLetrero = (float)(v.Dimensiones?.AltoM ?? 1.5) + 0.7f;
                 fantasmas.Add(vista);
             }
 
@@ -798,6 +804,7 @@ namespace Croquis.Visor
             foreach (var g in fantasmas)
             {
                 g.Colocar(Tiempo + desfaseFantasma);
+                g.Letrero?.Mostrar(true, g.transform.position + Vector3.up * g.AltoLetrero);
             }
 
             if (dinamica != null)
@@ -865,6 +872,10 @@ namespace Croquis.Visor
         private List<Renderer> carroceria;
         private GameObject contorno;
         public TramoFreno[] Frenado { get; set; }
+
+        /// <summary>El letrero de una versión superpuesta («Hipótesis»), siempre a la vista; nulo en la reconstrucción.</summary>
+        public EtiquetaMundo Letrero { get; set; }
+        public float AltoLetrero { get; set; }
 
         /// <summary>El piso, para posar el vehículo sobre él cuando la trayectoria no trae altura.</summary>
         public Terreno Terreno { get; set; }
