@@ -21,6 +21,7 @@ import {
 } from "@croquis/cesvi";
 import { respuestaDeGuardadas } from "./calles-guardadas";
 import {
+  agregarChoqueIntermedio,
   agregarPuntoDePaso,
   callesDe,
   contraNarracion,
@@ -31,6 +32,7 @@ import {
   marcarFinal,
   nombresDe,
   nombreVehiculo,
+  OBJETOS_C1,
   ponerTerrenoEn,
   poseDe,
   puntoDelChoqueTocado,
@@ -61,8 +63,13 @@ export interface RecetaPerito {
    * calle o, sin calle, el mapa en esa dirección.
    */
   venia?: Record<string, "norte" | "sur" | "oriente" | "poniente">;
-  /** Los choques posteriores que el perito toca (el segundo de la carambola, el poste). */
+  /** Los choques posteriores entre vehículos que el perito toca en la lista («choque-<orden>»). */
   choques?: { orden: number; en: LugarTocado }[];
+  /**
+   * «¿Chocó contra algo más?»: el vehículo (por una palabra de su nombre), el objeto de La escena
+   * («poste») y dónde (el poste del ejemplo). Completa el choque que trae la narración.
+   */
+  otros?: { vehiculo: string; objeto: (typeof OBJETOS_C1)[number]["id"]; en: LugarTocado }[];
   /**
    * Dónde quedó cada vehículo (por una palabra de su nombre): «narracion» si La escena lo lee del
    * texto; un lugar tocado si el perito lo marca como dice el texto; «junto» si quedó junto al choque.
@@ -87,6 +94,7 @@ export type ToquePerito =
   | { accion: "direccion"; vehiculo: string; como: "flecha"; rumbo: number }
   | { accion: "direccion"; vehiculo: string; como: "mapa"; en: [number, number] }
   | { accion: "choque"; orden: number; en: [number, number] }
+  | { accion: "otro"; vehiculo: string; objeto: string; en: [number, number] }
   | { accion: "final"; vehiculo: string; como: "junto" | "narracion" }
   | { accion: "final"; vehiculo: string; como: "marcar"; en: [number, number] }
   | { accion: "paso"; vehiculo: string; en: [number, number] }
@@ -269,6 +277,20 @@ export function escenaComoPerito(
       calles,
     );
     puntos[c.orden] = p;
+  }
+
+  // «¿Chocó contra algo más?», como en La escena (`agregarChoqueIntermedio`, sin pegarlo a la calle).
+  for (const o of receta.otros ?? []) {
+    const v = vs.find((x) => nombre(x.id).includes(o.vehiculo));
+    if (!v) throw new Error(`${receta.clave}: no está «${o.vehiculo}».`);
+    const en = tocado(o.en);
+    e = agregarChoqueIntermedio(e, v.id, o.objeto, en);
+    toques.push({
+      accion: "otro",
+      vehiculo: v.id,
+      objeto: o.objeto,
+      en: enMetrosDesde(choque, en),
+    });
   }
 
   // Dónde quedó.

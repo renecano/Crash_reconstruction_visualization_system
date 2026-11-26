@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import * as cesvi from "@croquis/cesvi";
 import type { SalidaCorpus } from "@croquis/cesvi";
 import { describe, expect, it } from "vitest";
-import { elegirDireccion, marcarChoque, poseDe } from "./escena-facil";
+import { agregarChoqueIntermedio, elegirDireccion, marcarChoque, poseDe } from "./escena-facil";
 import { impactosAColocar } from "./pasos-caso";
 
 /**
@@ -56,5 +56,27 @@ describe("el choque contra el poste que trae la narración", () => {
     expect(poste?.punto).toEqual(Q);
     // El primer choque no lleva punto de objeto.
     expect(conPoste.impactos?.find((i) => i.orden === 1)?.objeto_fijo ?? null).toBeNull();
+  });
+});
+
+describe("«¿Chocó contra algo más?» con el poste que ya trae la narración", () => {
+  it("completa ese choque con el lugar, no agrega otro", () => {
+    const g = JSON.parse(
+      readFileSync(
+        resolve(__dirname, "../../../../data/cesvi/grabaciones/ejemplos/poste-terraceria.json"),
+        "utf8",
+      ),
+    ) as { narracion: string; salida: SalidaCorpus };
+    const e0 = cesvi.escenaDeNarracion(g.salida, g.narracion).expediente;
+    const antes = e0.impactos?.length ?? 0;
+    const Q = { lat: 18.9801, lon: -98.4298 };
+    const e1 = agregarChoqueIntermedio(e0, "V2", "poste", Q);
+    expect(e1.impactos?.length).toBe(antes);
+    const poste = e1.impactos?.find((i) => i.orden === 2);
+    expect(poste?.objeto_fijo).toMatch(/poste/);
+    expect(poste?.punto).toEqual(Q);
+    // Otro objeto, u otro poste ya marcado: uno nuevo, al final del orden.
+    const e2 = agregarChoqueIntermedio(e1, "V2", "poste", Q);
+    expect(e2.impactos?.length).toBe(antes + 1);
   });
 });

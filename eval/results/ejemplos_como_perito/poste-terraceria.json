@@ -55,10 +55,6 @@
   "1": {
    "lat": 18.980516,
    "lon": -98.47662
-  },
-  "2": {
-   "lat": 18.98047962612064,
-   "lon": -98.47645096975184
   }
  },
  "notas": [],
@@ -74,8 +70,9 @@
    "como": "confirmar"
   },
   {
-   "accion": "choque",
-   "orden": 2,
+   "accion": "otro",
+   "vehiculo": "V2",
+   "objeto": "poste",
    "en": [
     17.79,
     -4.05

@@ -1012,6 +1012,25 @@ export function agregarChoqueIntermedio(
   objeto: string,
   p: Punto,
 ): Expediente {
+  // El choque contra ese objeto que ya trae la narración («hasta un poste … contra el cual se
+  // impactó»), sin lugar todavía: se completa con el punto, no se agrega otro (René, 2026-11-26: el
+  // poste del ejemplo quedaba dos veces, el narrado «sin calcular» y el marcado).
+  const nombre = sinAcentos(objeto);
+  const narrado = (e.impactos ?? []).find(
+    (i) =>
+      (i.orden ?? 1) > 1 &&
+      !i.punto &&
+      i.objeto_fijo &&
+      !OBJETO_PERSONA.test(i.objeto_fijo) &&
+      (i.vehiculos ?? []).length === 1 &&
+      i.vehiculos![0] === vehiculo &&
+      sinAcentos(i.objeto_fijo).includes(nombre),
+  );
+  if (narrado)
+    return {
+      ...e,
+      impactos: (e.impactos ?? []).map((i) => (i === narrado ? { ...i, punto: p } : i)),
+    };
   // Nunca con el orden 1: ese es el primer golpe.
   const orden = Math.max(1, ...(e.impactos ?? []).map((i) => i.orden)) + 1;
   return {

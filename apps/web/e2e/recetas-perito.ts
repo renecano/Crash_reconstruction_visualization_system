@@ -25,6 +25,7 @@ type Toque =
   | { accion: "direccion"; vehiculo: string; como: "flecha"; rumbo: number }
   | { accion: "direccion"; vehiculo: string; como: "mapa"; en: [number, number] }
   | { accion: "choque"; orden: number; en: [number, number] }
+  | { accion: "otro"; vehiculo: string; objeto: string; en: [number, number] }
   | { accion: "final"; vehiculo: string; como: "junto" | "narracion" }
   | { accion: "final"; vehiculo: string; como: "marcar"; en: [number, number] }
   | { accion: "paso"; vehiculo: string; en: [number, number] }
@@ -128,6 +129,21 @@ export async function colocarComoPerito(page: Page, clave: string, notas: string
       await abrir(page, `choque-${t.orden}`);
       await tocarEnMetros(page, "choque-1", t.en[0], t.en[1]);
       await siPregunta(page, ["choque-asi"]);
+    } else if (t.accion === "otro") {
+      // «¿Chocó contra algo más?» → Sí → el vehículo → el objeto → donde fue; «No» al terminar.
+      if (!vieneIgual) {
+        await abrir(page, "c1-otros");
+        await page.getByTestId("otros-si").click();
+      }
+      const vb = page.getByTestId(`otros-vehiculo-${t.vehiculo}`);
+      if (await vb.count()) await vb.click();
+      const objetos = page.locator('[data-testid^="otros-objeto-"]');
+      const k = (await objetos.allTextContents()).findIndex((x) =>
+        x.toLowerCase().includes(t.objeto),
+      );
+      await objetos.nth(Math.max(0, k)).click();
+      await tocarEnMetros(page, "choque-1", t.en[0], t.en[1]);
+      if (!sigueIgual) await page.getByTestId("otros-no").click();
     } else if (t.accion === "final") {
       await abrir(page, `final-${t.vehiculo}`);
       await page.getByTestId(`final-${t.como}`).click();
@@ -144,7 +160,7 @@ export async function colocarComoPerito(page: Page, clave: string, notas: string
       await tocarEnMetros(page, "choque-1", t.en[0], t.en[1]);
       if (!sigueIgual) await page.getByTestId("terreno-listo").click();
     }
-    if (!sigueIgual || (t.accion !== "paso" && t.accion !== "terreno")) await enLaLista(page);
+    if (!sigueIgual || !["paso", "terreno", "otro"].includes(t.accion)) await enLaLista(page);
   }
   // Lo que siga propuesto (un choque posterior que propuso La escena), confirmado como lo deja la tabla.
   for (let k = 0; k < 8; k++) {
