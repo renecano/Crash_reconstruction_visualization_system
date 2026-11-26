@@ -29,7 +29,7 @@ async function arrastrarEnMetros(page: Page, testid: string, este: number, norte
   await page.mouse.up();
 }
 
-test("@flujo /cesvi: corregir después — mover el poste en el recorrido y la dirección de un vehículo cambian el resultado; fuera del recorrido, no (W4)", async ({
+test("@flujo /cesvi: corregir después — el poste golpeado en el recorrido del Camaro y la dirección de un vehículo cambian el resultado; un poste suelto fuera de los recorridos, no (W4)", async ({
   page,
 }) => {
   test.setTimeout(240_000);
@@ -81,8 +81,8 @@ test("@flujo /cesvi: corregir después — mover el poste en el recorrido y la d
   await page.getByTestId("otros-si").click();
   await page.getByTestId("otros-vehiculo-V2").click();
   await page.getByTestId("otros-objeto-0").click();
-  // El poste, donde se detiene el Camaro: en su recorrido después del choque (René, 2026-11-25).
-  await tocarEnMetros(page, "choque-1", -7.5, 7.5);
+  // El poste contra el que chocó, primero lejos de donde quedó el Camaro.
+  await tocarEnMetros(page, "choque-1", 18, 3);
   await expect(page.getByTestId("marca-objeto-2")).toHaveCount(1);
   await page.getByTestId("otros-no").click();
   await page.getByTestId("paso-listo").click();
@@ -99,13 +99,15 @@ test("@flujo /cesvi: corregir después — mover el poste en el recorrido y la d
   await expect(cifra).toBeVisible({ timeout: 90_000 });
   const antes = await cifra.innerText();
 
-  // 1. Mover el poste: se toca, se arrastra 10 m y, al soltar, se recalcula.
+  // 1. El poste contra el que chocó el Camaro, al recorrido del Camaro (donde se detiene): se toca,
+  // se arrastra y, al soltar, se recalcula. La cifra cambia (René, 2026-11-25; calibrado en
+  // «Capturas»: 60 → 95 km/h del VW Jetta).
   await irAPaso(page, 3);
   await page.getByTestId("cambiar-algo").click();
   await expect(page.getByTestId("panel-corregir")).toBeVisible();
   await page.getByTestId("marca-objeto-2").click();
   await expect(page.getByTestId("seleccion-nombre")).toHaveText(/poste/i);
-  await arrastrarEnMetros(page, "marca-objeto-2", 10, 0);
+  await arrastrarEnMetros(page, "marca-objeto-2", -25.5, 4.5);
   await expect(page.getByTestId("mensaje-exito")).toContainText("Moviste");
   // Mover algo de la escena con la reconstrucción hecha: avisa y ofrece reconstruir de nuevo.
   await expect(page.getByTestId("aviso-escena-cambio")).toBeVisible();
@@ -119,19 +121,21 @@ test("@flujo /cesvi: corregir después — mover el poste en el recorrido y la d
   const conPosteMovido = await cifra.innerText();
   expect(conPosteMovido).not.toEqual(antes);
 
-  // 1b. La prueba contraria: ya fuera del recorrido del Camaro, moverlo otros 10 m no cambia la cifra.
+  // 1b. La prueba contraria: un poste de la paleta, que nadie golpeó, lejos de los dos recorridos, no
+  // cambia la cifra. (El poste golpeado no sirve para esto: es un choque declarado y la física lleva
+  // al Camaro hasta él donde esté.)
   await irAPaso(page, 3);
   await page.getByTestId("cambiar-algo").click();
   await expect(page.getByTestId("panel-corregir")).toBeVisible();
-  await page.getByTestId("marca-objeto-2").click();
-  await expect(page.getByTestId("seleccion-nombre")).toHaveText(/poste/i);
-  await arrastrarEnMetros(page, "marca-objeto-2", 10, 0);
-  await expect(page.getByTestId("mensaje-exito")).toContainText("Moviste");
+  await page.getByTestId("paleta-poste").click();
+  await tocarEnMetros(page, "choque-1", -25, -2);
+  await expect(page.getByTestId("seleccion")).toBeVisible();
+  await page.getByTestId("sel-listo").click();
+  await expect(page.getByTestId("aviso-escena-cambio")).toBeVisible();
   await page.getByTestId("reconstruir-de-nuevo").click();
   await expect(page.getByTestId("recalculo")).toHaveAttribute("data-estado", "al_dia", {
     timeout: 90_000,
   });
-  await page.getByTestId("sel-listo").click();
   await irAPaso(page, 4);
   await expect(cifra).toBeVisible();
   expect(await cifra.innerText()).toEqual(conPosteMovido);
