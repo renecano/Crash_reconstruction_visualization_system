@@ -38,10 +38,10 @@ for (const esc of [
   {
     nombre: "tres-pasos",
     finalCamaro: [-5, 5] as const,
-    poste: [18, 3] as const,
+    poste: [-30, -12] as const,
     movimientos: [
-      [10, 0],
-      [-35.5, 4.5],
+      [-10, 0],
+      [32.5, 19.5],
     ] as const,
   },
 ])
