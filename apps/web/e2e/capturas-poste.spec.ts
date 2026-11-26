@@ -33,7 +33,7 @@ async function arrastrarEnMetros(page: Page, testid: string, este: number, norte
 }
 
 for (const esc of [
-  { nombre: "en-su-recorrido", finalCamaro: [5, 5] as const, poste: [6.5, 6.5] as const },
+  { nombre: "en-su-recorrido", finalCamaro: [-5, 5] as const, poste: [-7.5, 7.5] as const },
   { nombre: "fuera", finalCamaro: null, poste: [18, 3] as const },
 ])
   test(`capturas del poste: ${esc.nombre}`, async ({ page }) => {
