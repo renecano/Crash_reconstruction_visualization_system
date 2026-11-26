@@ -38,11 +38,10 @@ for (const esc of [
   {
     nombre: "tres-pasos",
     finalCamaro: [-5, 5] as const,
-    poste: [-30, -12] as const,
-    movimientos: [
-      [-10, 0],
-      [32.5, 19.5],
-    ] as const,
+    poste: [18, 3] as const,
+    movimientos: [[-25.5, 4.5]] as const,
+    // Un poste de la paleta (no se declaró que lo golpeara nadie), lejos de los dos recorridos.
+    posteSuelto: [-25, -2] as const,
   },
 ])
   test(`capturas del poste: ${esc.nombre}`, async ({ page }) => {
@@ -150,6 +149,29 @@ for (const esc of [
         .catch(() => undefined);
       await foto(`${5 + k * 2}-reconstruccion-movimiento-${k + 1}`);
     }
+    // El poste suelto, de la paleta.
+    await irAPaso(page, 3);
+    await page.getByTestId("cambiar-algo").click();
+    await expect(page.getByTestId("panel-corregir")).toBeVisible();
+    await page.getByTestId("paleta-poste").click();
+    await tocarEnMetros(page, "choque-1", esc.posteSuelto[0], esc.posteSuelto[1]);
+    await expect(page.getByTestId("seleccion")).toBeVisible();
+    await foto("8-escena-poste-suelto");
+    await page.getByTestId("sel-listo").click();
+    if (await page.getByTestId("reconstruir-de-nuevo").isVisible()) {
+      await page.getByTestId("reconstruir-de-nuevo").click();
+      await expect(page.getByTestId("recalculo")).toHaveAttribute("data-estado", "al_dia", {
+        timeout: 90_000,
+      });
+    }
+    await irAPaso(page, 4);
+    await expect(cifra).toBeVisible();
+    cifras.push(await cifra.innerText());
+    await page
+      .getByRole("button", { name: "Ver todo" })
+      .click()
+      .catch(() => undefined);
+    await foto("9-reconstruccion-poste-suelto");
     writeFileSync(join(SALIDA, `${esc.nombre}-cifras.json`), JSON.stringify({ cifras }, null, 1));
     expect(errores).toEqual([]);
   });
