@@ -36,9 +36,14 @@ import {
   limiteDeLaVia,
   limiteDelLugarNarrado,
   medidasDe,
+  agregarOndulacion,
+  agregarTope,
+  agregarZona,
   type Expediente,
   type LonLat,
   type TipoObjeto,
+  type TipoSuperficie,
+  type TopeNorma,
 } from "@croquis/cesvi";
 import {
   HIGHWAY_RANK,
@@ -1297,6 +1302,46 @@ export function marcarChoque(
     });
   }
   return conPersonaDelChoque(conPuntoDelObjeto(r, orden, p), orden, p, rumbo);
+}
+
+/**
+ * Dónde queda un choque que toca el perito: sobre la calle más cercana (a menos de `AJUSTE_CALLE_M`),
+ * salvo un choque posterior contra un objeto, que va donde está el objeto (René, 2026-11-26: el poste
+ * del ejemplo, a 1.50 m del borde de la carpeta, se pegaba al centro de la calle). La usan La escena
+ * y la tabla del índice.
+ */
+export function puntoDelChoqueTocado(
+  e: Expediente,
+  calles: readonly Calle[],
+  orden: number,
+  p: Punto,
+): Punto {
+  const imp = (e.impactos ?? []).find((i) => (i.orden ?? 1) === orden);
+  if (orden > 1 && imp?.objeto_fijo && !OBJETO_PERSONA.test(imp.objeto_fijo)) return p;
+  return ajustarACalle(calles, p)?.punto ?? p;
+}
+
+/** Lo que se pone en el terreno con el siguiente toque. */
+export type TerrenoAPoner =
+  | { clase: "zona"; tipo: TipoSuperficie }
+  | { clase: "ondulacion" }
+  | { clase: "tope"; norma: TopeNorma };
+
+/**
+ * «¿Cómo es el terreno?»: lo que toca el perito, alineado a la calle (las zonas a lo largo, el tope
+ * atravesado). La usan La escena y la tabla del índice.
+ */
+export function ponerTerrenoEn(
+  e: Expediente,
+  calles: readonly Calle[],
+  que: TerrenoAPoner,
+  p: Punto,
+  todo = false,
+): Expediente {
+  const rumbo = calles.length ? rumboAlineado(calles, p, 0) : 0;
+  if (que.clase === "zona") return agregarZona(e, que.tipo, p, rumbo, todo).expediente;
+  if (que.clase === "ondulacion") return agregarOndulacion(e, p, rumbo).expediente;
+  return agregarTope(e, p, rumbo, que.norma).expediente;
 }
 
 /**

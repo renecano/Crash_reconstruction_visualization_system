@@ -12,9 +12,6 @@ import {
   formato as F,
   agregarObjeto,
   agregarPersona,
-  agregarOndulacion,
-  agregarTope,
-  agregarZona,
   cambiarTamano,
   cambiarTerreno,
   conHuella,
@@ -89,6 +86,8 @@ import {
   quedoJuntoAlChoque,
   finalDeLaNarracion,
   tocarChoque,
+  ponerTerrenoEn,
+  puntoDelChoqueTocado,
   tocarFinal,
   resumenEscena,
   rumboAlineado,
@@ -1203,21 +1202,18 @@ export function EscenaFacil({
   const ponerTerreno = (p: Punto, todo = false) => {
     const que = poniendoTerreno;
     if (!que) return;
-    // Las zonas van a lo largo de la calle; el tope, atravesado.
-    const rumbo = callesMapa.length ? rumboAlineado(callesMapa, p, 0) : 0;
-    let siguiente: Expediente;
+    // Las zonas van a lo largo de la calle; el tope, atravesado (`ponerTerrenoEn`, la misma que la
+    // tabla del índice).
+    const siguiente = ponerTerrenoEn(e, callesMapa, que, p, todo);
     let texto: string;
     if (que.clase === "zona") {
-      siguiente = agregarZona(e, que.tipo, p, rumbo, todo).expediente;
       const nombre = nombreSuperficie(que.tipo).toLowerCase();
       texto = todo
         ? `¡Listo! Todo el lugar es de ${nombre}.`
         : `¡Listo! Marcaste una zona de ${nombre}. Agrega otra cosa o termina con «Listo».`;
     } else if (que.clase === "ondulacion") {
-      siguiente = agregarOndulacion(e, p, rumbo).expediente;
       texto = "¡Listo! Marcaste la zona ondulada. Sus medidas son un supuesto hasta que las midas.";
     } else {
-      siguiente = agregarTope(e, p, rumbo, que.norma).expediente;
       texto = "¡Listo! El tope quedó atravesado a la calle, con las medidas de la norma.";
     }
     cambiar({ ...estado, expediente: siguiente }, exito(texto));
@@ -1328,8 +1324,7 @@ export function EscenaFacil({
       return;
     }
     if (actual?.tipo === "choque") {
-      const a = ajustarACalle(callesMapa, p);
-      const punto = a?.punto ?? p;
+      const punto = puntoDelChoqueTocado(e, callesMapa, actual.orden, p);
       ponerChoque(actual.orden, punto, callesEn(callesMapa, punto));
       return;
     }

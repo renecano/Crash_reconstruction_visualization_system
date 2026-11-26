@@ -57,11 +57,65 @@
    "lon": -98.47662
   },
   "2": {
-   "lat": 18.98044528180103,
-   "lon": -98.47646360910105
+   "lat": 18.98047962612064,
+   "lon": -98.47645096975184
   }
  },
  "notas": [],
+ "toques": [
+  {
+   "accion": "direccion",
+   "vehiculo": "V1",
+   "como": "confirmar"
+  },
+  {
+   "accion": "direccion",
+   "vehiculo": "V2",
+   "como": "confirmar"
+  },
+  {
+   "accion": "choque",
+   "orden": 2,
+   "en": [
+    17.79,
+    -4.05
+   ]
+  },
+  {
+   "accion": "final",
+   "vehiculo": "V1",
+   "como": "marcar",
+   "en": [
+    0,
+    8
+   ]
+  },
+  {
+   "accion": "final",
+   "vehiculo": "V2",
+   "como": "marcar",
+   "en": [
+    16.2,
+    -3.72
+   ]
+  },
+  {
+   "accion": "paso",
+   "vehiculo": "V2",
+   "en": [
+    8.9,
+    -2.02
+   ]
+  },
+  {
+   "accion": "terreno",
+   "boton": "terreno-terraceria",
+   "en": [
+    15.4,
+    -1.99
+   ]
+  }
+ ],
  "versiones": [
   {
    "tipo": "evidencia",
@@ -90,7 +144,7 @@
       "lon": -98.47662842011542
      },
      "rumbo": 22.28247753678022,
-     "fuente": "supuesto"
+     "fuente": "perito"
     },
     {
      "vehiculo": "V2",
@@ -99,8 +153,8 @@
       "lat": 18.980523239829107,
       "lon": -98.47661686274071
      },
-     "rumbo": 125.01889721167242,
-     "fuente": "supuesto"
+     "rumbo": 112.28247753678022,
+     "fuente": "perito"
     },
     {
      "vehiculo": "V1",
@@ -116,10 +170,10 @@
      "vehiculo": "V2",
      "fase": "final",
      "punto": {
-      "lat": 18.98045132263534,
-      "lon": -98.47647769222498
+      "lat": 18.98048258227755,
+      "lon": -98.4764661147294
      },
-     "rumbo": 129.87365448737728,
+     "rumbo": 129.8736597773576,
      "fuente": "perito"
     }
    ],
@@ -128,8 +182,8 @@
      "vehiculo": "V2",
      "orden": 1,
      "punto": {
-      "lat": 18.980480640900513,
-      "lon": -98.47654180455052
+      "lat": 18.98049781306032,
+      "lon": -98.47653548487592
      },
      "fuente": "perito"
     }

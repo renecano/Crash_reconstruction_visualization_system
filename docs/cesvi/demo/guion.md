@@ -73,11 +73,11 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 
 | Ejemplo                                         | Qué muestra                                                                 | Lo que da                                                                |
 | ----------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| Crucero de noche en Iztapalapa                  | Lectura con citas y preguntas; de noche                                     | A · Jetta a <!--cifra:ejemplos.crucero-->18 km/h (4–26)<!--/cifra-->     |
+| Crucero de noche en Iztapalapa                  | Lectura con citas y preguntas; de noche                                     | A · Jetta a <!--cifra:ejemplos.crucero-->20 km/h (5–26)<!--/cifra-->     |
 | Alcance en carretera con la deformación medida  | Las medidas C1–C6 de los dos vehículos, su energía y su cambio de velocidad | A · NP300 a <!--cifra:ejemplos.alcance-->53 km/h (49–56)<!--/cifra-->    |
 | Carambola de noche con lluvia                   | Tres vehículos, dos impactos en orden, pavimento mojado                     | A · Ranger a <!--cifra:ejemplos.carambola-->25 km/h (20–32)<!--/cifra--> |
 | Reversa en una calle con tope                   | La reversa como supuesto con su fuente; un tope con las medidas de la norma | B · Versa a <!--cifra:ejemplos.reversa-->20 km/h (16–25)<!--/cifra-->    |
-| Choque en un entronque y salida contra un poste | Punto de paso, terracería y un objeto fijo                                  | B · Sentra a <!--cifra:ejemplos.poste-->71 km/h (41–80)<!--/cifra-->     |
+| Choque en un entronque y salida contra un poste | Punto de paso, terracería y un objeto fijo                                  | B · Sentra a <!--cifra:ejemplos.poste-->59 km/h (49–64)<!--/cifra-->     |
 
 Para la demo: la carambola (los dos impactos en orden, de noche con lluvia en el 3D) o el alcance (la deformación medida). **Dos hipótesis** solo se ven en AXA: ninguno de los ejemplos las da. En el del poste, la reconstrucción calcula los dos golpes: el del Mazda y el del poste (este, con medidas típicas como supuesto); además dice que la posición final narrada del Mazda («8 metros al Norte») no la alcanza la física. Un ejemplo sin cambios no gasta API; los cinco aún no se han visto con el 3D real de Unity.
 

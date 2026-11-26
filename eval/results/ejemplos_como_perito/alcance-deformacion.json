@@ -42,6 +42,36 @@
   }
  },
  "notas": [],
+ "toques": [
+  {
+   "accion": "direccion",
+   "vehiculo": "V1",
+   "como": "confirmar"
+  },
+  {
+   "accion": "direccion",
+   "vehiculo": "V2",
+   "como": "confirmar"
+  },
+  {
+   "accion": "final",
+   "vehiculo": "V1",
+   "como": "marcar",
+   "en": [
+    -1.65,
+    8.85
+   ]
+  },
+  {
+   "accion": "final",
+   "vehiculo": "V2",
+   "como": "marcar",
+   "en": [
+    -0.9,
+    21.19
+   ]
+  }
+ ],
  "versiones": [
   {
    "tipo": "evidencia",
@@ -54,7 +84,7 @@
       "lon": -100.59523827889335
      },
      "rumbo": 349.4446301739432,
-     "fuente": "supuesto"
+     "fuente": "perito"
     },
     {
      "vehiculo": "V2",
@@ -64,7 +94,7 @@
       "lon": -100.59524697846065
      },
      "rumbo": 349.4446301739432,
-     "fuente": "supuesto"
+     "fuente": "perito"
     },
     {
      "vehiculo": "V1",

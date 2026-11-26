@@ -191,29 +191,29 @@
     },
     "ejemplos.crucero": {
       "que": "Ejemplo «crucero de noche»: velocidad del Jetta (A) antes del impacto, como lo arma el perito en La escena",
-      "mejor": 18,
-      "p10": 4,
+      "mejor": 20,
+      "p10": 5,
       "p90": 26,
       "unidad": "km/h",
       "muestras": 32,
       "juego_de_muestras": "producción",
-      "texto": "18 km/h (4–26)",
+      "texto": "20 km/h (5–26)",
       "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
       "campo": "filas.1.velocidades.0",
-      "motivo": "Escena armada con el mismo código de La escena, direcciones por las calles reales (#331); René lo aprobó el 2026-11-26. Antes, 20 (4–27) publicada y 20 (10–28) en la tabla."
+      "motivo": "Escena armada con el mismo código de La escena, direcciones por las calles reales (#331). René aprobó Jetta 18 (4–26) y Camaro 13 (8–22) el 2026-11-26; al confirmar las dos direcciones como lo hace el botón «Confirmar» de la app, dan estas: pendientes de su visto bueno. Antes, 20 (4–27) publicada y 20 (10–28) en la tabla."
     },
     "ejemplos.crucero_camaro": {
       "que": "Ejemplo «crucero de noche»: velocidad del Camaro (B) antes del impacto, como lo arma el perito en La escena",
-      "mejor": 13,
-      "p10": 8,
-      "p90": 22,
+      "mejor": 12,
+      "p10": 6,
+      "p90": 20,
       "unidad": "km/h",
       "muestras": 32,
       "juego_de_muestras": "producción",
-      "texto": "13 km/h (8–22)",
+      "texto": "12 km/h (6–20)",
       "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
       "campo": "filas.1.velocidades.1",
-      "motivo": "Escena armada con el mismo código de La escena, direcciones por las calles reales (#331); René lo aprobó el 2026-11-26. Antes, 12 (3–19)."
+      "motivo": "Escena armada con el mismo código de La escena, direcciones por las calles reales (#331). René aprobó Jetta 18 (4–26) y Camaro 13 (8–22) el 2026-11-26; al confirmar las dos direcciones como lo hace el botón «Confirmar» de la app, dan estas: pendientes de su visto bueno. Antes, 12 (3–19)."
     },
     "ejemplos.alcance": {
       "que": "Ejemplo «alcance en carretera»: velocidad de la NP300 (A), la que alcanza, antes del impacto, como lo arma el perito en La escena",
@@ -282,29 +282,16 @@
     },
     "ejemplos.poste": {
       "que": "Ejemplo «poste y terracería»: velocidad del Sentra (B) antes del impacto, como lo arma el perito en La escena",
-      "mejor": 71,
-      "p10": 41,
-      "p90": 80,
+      "mejor": 59,
+      "p10": 49,
+      "p90": 64,
       "unidad": "km/h",
       "muestras": 32,
       "juego_de_muestras": "producción",
-      "texto": "71 km/h (41–80)",
+      "texto": "59 km/h (49–64)",
       "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
       "campo": "filas.5.velocidades.1",
       "motivo": "Escena armada con el mismo código de La escena (#331). El golpe contra el poste ahora se calcula: el punto que marca el perito va en el impacto (antes quedaba «sin calcular» y el Sentra se detenía solo), y los 18.40 m de derrape después del contacto entran como evidencia. Así la velocidad antes del impacto queda arriba de la que deja el derrape (48–57 km/h) y el rango refleja la energía del poste, con sus medidas típicas como supuesto. René lo aprobó con esa condición el 2026-11-26. Antes, 36 (31–38)."
-    },
-    "ejemplos.poste_mazda": {
-      "que": "Ejemplo «poste y terracería»: velocidad del Mazda 3 (A) antes del impacto (su posición final narrada, 8 m al norte, la física no la alcanza y la app lo dice), como lo arma el perito en La escena",
-      "mejor": 26,
-      "p10": 21,
-      "p90": 31,
-      "unidad": "km/h",
-      "muestras": 32,
-      "juego_de_muestras": "producción",
-      "texto": "26 km/h (21–31)",
-      "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
-      "campo": "filas.5.velocidades.0",
-      "motivo": "Escena armada con el mismo código de La escena (#331). El golpe contra el poste ahora se calcula: el punto que marca el perito va en el impacto (antes quedaba «sin calcular» y el Sentra se detenía solo), y los 18.40 m de derrape después del contacto entran como evidencia. Así la velocidad antes del impacto queda arriba de la que deja el derrape (48–57 km/h) y el rango refleja la energía del poste, con sus medidas típicas como supuesto. René lo aprobó con esa condición el 2026-11-26. Antes, 30 (25–32)."
     },
     "reversa.velocidad": {
       "que": "Velocidad supuesta de un vehículo en reversa: mediana y p10–p90 de la velocidad máxima de maniobras reales",

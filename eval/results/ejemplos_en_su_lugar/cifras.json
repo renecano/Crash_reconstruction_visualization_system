@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-11-26T20:25:59.206Z",
+  "fecha": "2026-11-26T20:40:03.273Z",
   "muestras": {
     "samples": 32,
     "mcSamples": 128
@@ -74,15 +74,15 @@
       "velocidades": [
         {
           "vehiculo": "V1",
-          "mejor": 18,
-          "p10": 4,
+          "mejor": 20,
+          "p10": 5,
           "p90": 26
         },
         {
           "vehiculo": "V2",
-          "mejor": 13,
-          "p10": 8,
-          "p90": 22
+          "mejor": 12,
+          "p10": 6,
+          "p90": 20
         }
       ],
       "relieve": false,
@@ -260,15 +260,15 @@
       "velocidades": [
         {
           "vehiculo": "V1",
-          "mejor": 26,
-          "p10": 21,
-          "p90": 31
+          "mejor": 25,
+          "p10": 25,
+          "p90": 28
         },
         {
           "vehiculo": "V2",
-          "mejor": 71,
-          "p10": 41,
-          "p90": 80
+          "mejor": 59,
+          "p10": 49,
+          "p90": 64
         }
       ],
       "relieve": false,

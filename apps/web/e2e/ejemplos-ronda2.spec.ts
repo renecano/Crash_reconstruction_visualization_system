@@ -3,11 +3,12 @@ import { dirname, join, resolve } from "node:path";
 import { type Page } from "@playwright/test";
 import { expect, test } from "./base";
 import { irAPaso } from "./ayuda-recorrido";
-import { colocar, RECETAS } from "./recetas-ejemplos";
+import { colocarComoPerito, conLaEscenaNueva, EJEMPLOS_PERITO } from "./recetas-perito";
 
 /**
  * Ronda 2, C: las cinco narraciones de ejemplo, de punta a punta, como las usaría un perito: elegir
- * el ejemplo, leerlo (su lectura guardada: no gasta API), colocar la escena como dice la narración,
+ * el ejemplo, leerlo (su lectura guardada: no gasta API), armar la escena en La escena nueva como la
+ * arma la tabla del índice (René, 2026-11-26: `recetas-perito.ts`, los mismos toques),
  * reconstruir, ver el 2D y abrir el dictamen. Anota lo que da cada una (la cifra, su rango, si hay
  * dos hipótesis y los límites que la app declara), para decidir si luce o si deja ver un límite.
  * No corre en CI.
@@ -68,9 +69,10 @@ test("las cinco narraciones de ejemplo, de punta a punta", async ({ page, baseUR
     if (q.url().includes("/api/cesvi/escena")) llamadasAClaude++;
   });
   const resultados: Record<string, unknown>[] = [];
+  await conLaEscenaNueva(page);
   // CROQUIS_EJEMPLO=<clave> recorre solo uno (para ajustar su receta).
   const solo = process.env.CROQUIS_EJEMPLO;
-  for (const r of RECETAS.filter((x) => !solo || x.clave === solo)) {
+  for (const r of EJEMPLOS_PERITO.filter((x) => !solo || x === solo).map((clave) => ({ clave }))) {
     const notas: string[] = [];
     const foto = (n: string) =>
       page.screenshot({ path: join(CAPTURAS, `${r.clave}-${n}.jpg`), type: "jpeg", quality: 80 });
@@ -95,14 +97,13 @@ test("las cinco narraciones de ejemplo, de punta a punta", async ({ page, baseUR
     await foto("1-leida");
     // 2. La escena, como dice la narración.
     await irAPaso(page, 3);
-    const lista = await colocar(page, r, notas);
+    const lista = await colocarComoPerito(page, r.clave, notas);
     await foto("2-escena");
     if (!lista) {
       resultados.push({ clave: r.clave, gpu, leido, guardada, colocada: false, notas });
       continue;
     }
-    await page.getByTestId("avance-ver-reconstruccion").click();
-    await expect(page.getByTestId("panel-paso")).toHaveAttribute("data-paso", "4");
+    await irAPaso(page, 4);
     await page.waitForTimeout(600);
     await foto("3-planteamiento");
     // 3. La reconstrucción.
@@ -223,5 +224,5 @@ test("las cinco narraciones de ejemplo, de punta a punta", async ({ page, baseUR
       2,
     )}\n`,
   );
-  expect(resultados).toHaveLength(solo ? 1 : RECETAS.length);
+  expect(resultados).toHaveLength(solo ? 1 : EJEMPLOS_PERITO.length);
 });

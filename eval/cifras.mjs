@@ -238,6 +238,8 @@ function construir() {
     const doc = leer(archivo);
     const APROBADO =
       "Escena armada con el mismo código de La escena, direcciones por las calles reales (#331); René lo aprobó el 2026-11-26.";
+    const CRUCERO =
+      "Escena armada con el mismo código de La escena, direcciones por las calles reales (#331). René aprobó Jetta 18 (4–26) y Camaro 13 (8–22) el 2026-11-26; al confirmar las dos direcciones como lo hace el botón «Confirmar» de la app, dan estas: pendientes de su visto bueno.";
     const POSTE =
       "Escena armada con el mismo código de La escena (#331). El golpe contra el poste ahora se calcula: el punto que marca el perito va en el impacto (antes quedaba «sin calcular» y el Sentra se detenía solo), y los 18.40 m de derrape después del contacto entran como evidencia. Así la velocidad antes del impacto queda arriba de la que deja el derrape (48–57 km/h) y el rango refleja la energía del poste, con sus medidas típicas como supuesto. René lo aprobó con esa condición el 2026-11-26.";
     const REVERSA =
@@ -249,7 +251,7 @@ function construir() {
         "V1",
         "«crucero de noche»: velocidad del Jetta (A) antes del impacto",
         "20 (4–27) publicada y 20 (10–28) en la tabla",
-        APROBADO,
+        CRUCERO,
       ],
       [
         "ejemplos.crucero_camaro",
@@ -257,7 +259,7 @@ function construir() {
         "V2",
         "«crucero de noche»: velocidad del Camaro (B) antes del impacto",
         "12 (3–19)",
-        APROBADO,
+        CRUCERO,
       ],
       [
         "ejemplos.alcance",
@@ -305,14 +307,6 @@ function construir() {
         "V2",
         "«poste y terracería»: velocidad del Sentra (B) antes del impacto",
         "36 (31–38)",
-        POSTE,
-      ],
-      [
-        "ejemplos.poste_mazda",
-        "poste-terraceria",
-        "V1",
-        "«poste y terracería»: velocidad del Mazda 3 (A) antes del impacto (su posición final narrada, 8 m al norte, la física no la alcanza y la app lo dice)",
-        "30 (25–32)",
         POSTE,
       ],
     ]) {

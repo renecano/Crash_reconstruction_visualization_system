@@ -60,6 +60,48 @@
  "notas": [
   "Honda CR-V: la propuesta lo traía a 8°; la narración lo pone desde el poniente (sin calle: se toca el mapa en esa dirección)."
  ],
+ "toques": [
+  {
+   "accion": "direccion",
+   "vehiculo": "V1",
+   "como": "mapa",
+   "en": [
+    -15,
+    0
+   ]
+  },
+  {
+   "accion": "direccion",
+   "vehiculo": "V2",
+   "como": "confirmar"
+  },
+  {
+   "accion": "final",
+   "vehiculo": "V1",
+   "como": "marcar",
+   "en": [
+    -1.8,
+    0.4
+   ]
+  },
+  {
+   "accion": "final",
+   "vehiculo": "V2",
+   "como": "marcar",
+   "en": [
+    0.6,
+    7
+   ]
+  },
+  {
+   "accion": "terreno",
+   "boton": "terreno-tope-circular",
+   "en": [
+    0.6,
+    -12
+   ]
+  }
+ ],
  "versiones": [
   {
    "tipo": "evidencia",
@@ -81,16 +123,6 @@
    ],
    "posiciones": [
     {
-     "vehiculo": "V2",
-     "fase": "impacto",
-     "punto": {
-      "lat": 18.986237010911168,
-      "lon": -98.18702680302218
-     },
-     "rumbo": 0,
-     "fuente": "perito"
-    },
-    {
      "vehiculo": "V1",
      "fase": "impacto",
      "punto": {
@@ -98,6 +130,16 @@
       "lon": -98.18705581038817
      },
      "rumbo": 270,
+     "fuente": "perito"
+    },
+    {
+     "vehiculo": "V2",
+     "fase": "impacto",
+     "punto": {
+      "lat": 18.986237010911168,
+      "lon": -98.18702680302218
+     },
+     "rumbo": 0,
      "fuente": "perito"
     },
     {

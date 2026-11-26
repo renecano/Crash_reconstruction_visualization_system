@@ -14,8 +14,6 @@
  * (`e2e/ejemplos-como-perito.spec.ts`): así la tabla no tiene una versión propia de La escena.
  */
 import {
-  agregarTope,
-  agregarZona,
   rumboDeLlegada,
   separarLugarYSentido,
   type Expediente,
@@ -33,7 +31,9 @@ import {
   marcarFinal,
   nombresDe,
   nombreVehiculo,
+  ponerTerrenoEn,
   poseDe,
+  puntoDelChoqueTocado,
   quedoJuntoAlChoque,
   sentidoNarrado,
   tocarChoque,
@@ -77,6 +77,21 @@ export interface RecetaPerito {
 /** El rumbo de llegada de quien viene desde ese punto cardinal (hacia dónde avanza). */
 const LLEGA_DESDE = { norte: 180, sur: 0, oriente: 270, poniente: 90 } as const;
 
+/**
+ * Lo que hace el perito en La escena, en orden, con los lugares en metros (este, norte) desde el primer
+ * choque: lo sigue la receta del navegador (`e2e/recetas-perito.ts`), para que la app y la tabla
+ * hagan lo mismo.
+ */
+export type ToquePerito =
+  | { accion: "direccion"; vehiculo: string; como: "confirmar" }
+  | { accion: "direccion"; vehiculo: string; como: "flecha"; rumbo: number }
+  | { accion: "direccion"; vehiculo: string; como: "mapa"; en: [number, number] }
+  | { accion: "choque"; orden: number; en: [number, number] }
+  | { accion: "final"; vehiculo: string; como: "junto" | "narracion" }
+  | { accion: "final"; vehiculo: string; como: "marcar"; en: [number, number] }
+  | { accion: "paso"; vehiculo: string; en: [number, number] }
+  | { accion: "terreno"; boton: string; en: [number, number] };
+
 export interface EscenaComoPerito {
   expediente: Expediente;
   /** El punto del primer choque. */
@@ -87,6 +102,17 @@ export interface EscenaComoPerito {
   propuesta: { expediente: Expediente; puntos: Record<number, Punto> };
   /** Qué corrigió el perito sobre la propuesta, en palabras. */
   notas: string[];
+  /** Lo que hizo, en orden, para repetirlo en el navegador. */
+  toques: ToquePerito[];
+}
+
+/** (este, norte) metros de `p` desde `c`, a centímetros. */
+export function enMetrosDesde(c: Punto, p: Punto): [number, number] {
+  const r = (x: number) => Math.round(x * 100) / 100;
+  return [
+    r((p.lon - c.lon) * 111320 * Math.cos((c.lat * Math.PI) / 180)),
+    r((p.lat - c.lat) * 111320),
+  ];
 }
 
 const de = <T>(mapa: Record<string, T>, nombre: string) =>
@@ -133,6 +159,7 @@ export function escenaComoPerito(
     separarLugarYSentido(lugar.descripcion?.valor).sentido ??
     separarLugarYSentido(narracion).sentido;
   const notas: string[] = [];
+  const toques: ToquePerito[] = [];
   if (sentidoDelLugar?.tipo === "destino")
     notas.push(`El sentido del lugar es un destino («${sentidoDelLugar.destino}»): sin buscarlo.`);
   const prop = proponerEscena({
@@ -183,18 +210,33 @@ export function escenaComoPerito(
           .map((f) => ({ f, d: Math.abs(((f.rumbo - quiere + 540) % 360) - 180) }))
           .filter((x) => x.d <= 45)
           .sort((a, b) => a.d - b.d)[0];
+        // Sin una flecha cerca, el perito toca el mapa a 15 m del choque, del lado de donde venía.
+        const en = aMetros(
+          c ?? choque,
+          -15 * Math.sin((quiere * Math.PI) / 180),
+          -15 * Math.cos((quiere * Math.PI) / 180),
+        );
         e = elegirDireccion(e, impactos, v.id, cerca?.f.rumbo ?? quiere, puntoDe);
+        toques.push(
+          cerca
+            ? { accion: "direccion", vehiculo: v.id, como: "flecha", rumbo: cerca.f.rumbo }
+            : { accion: "direccion", vehiculo: v.id, como: "mapa", en: enMetrosDesde(choque, en) },
+        );
         notas.push(
           `${nombre(v.id)}: la propuesta lo traía a ${Math.round(llega)}°; la narración lo pone desde el ${desde} (${cerca ? `la flecha del ${cerca.f.desde}` : "sin calle: se toca el mapa en esa dirección"}).`,
         );
+        continue;
       }
-      continue;
     }
-    const sentido = sentidoNarrado(narracion, nombresDe(v, vs));
-    if (!sentido || !contraNarracion(rumboDeLlegada(e, v.id, pose.rumbo), sentido)) continue;
+    const sentido = desde ? null : sentidoNarrado(narracion, nombresDe(v, vs));
     const imp = impactos.find((i) => i.vehiculos.includes(v.id));
     const c = imp ? puntoDe(imp.orden) : null;
-    if (!c) continue;
+    if (!sentido || !c || !contraNarracion(rumboDeLlegada(e, v.id, pose.rumbo), sentido)) {
+      // Lo propuesto coincide con la narración: «Confirmar», como en La escena (`confirmarItem`).
+      e = elegirDireccion(e, impactos, v.id, rumboDeLlegada(e, v.id, pose.rumbo), puntoDe);
+      toques.push({ accion: "direccion", vehiculo: v.id, como: "confirmar" });
+      continue;
+    }
     const flechas = flechasDeLlegada(calles, c);
     const i = flechaPropuesta(flechas, sentido, null);
     if (i < 0) {
@@ -204,6 +246,7 @@ export function escenaComoPerito(
       continue;
     }
     e = elegirDireccion(e, impactos, v.id, flechas[i]!.rumbo, puntoDe);
+    toques.push({ accion: "direccion", vehiculo: v.id, como: "flecha", rumbo: flechas[i]!.rumbo });
     notas.push(
       `${nombre(v.id)}: venía ${sentido.cita}; se corrigió a la flecha del ${flechas[i]!.desde}.`,
     );
@@ -211,7 +254,10 @@ export function escenaComoPerito(
 
   // Los choques posteriores que el perito toca.
   for (const c of receta.choques ?? []) {
-    const p = tocado(c.en);
+    const tocadoEn = tocado(c.en);
+    // Como en La escena: sobre la calle, salvo el choque contra un objeto (`puntoDelChoqueTocado`).
+    const p = puntoDelChoqueTocado(e, calles, c.orden, tocadoEn);
+    toques.push({ accion: "choque", orden: c.orden, en: enMetrosDesde(choque, tocadoEn) });
     const primero = impactos.find((i) => i.orden === c.orden)?.vehiculos[0];
     const v = primero ? vs.find((x) => x.id === primero) : null;
     e = tocarChoque(
@@ -229,25 +275,54 @@ export function escenaComoPerito(
   const finales = posiciones.filter((p) => p.fase === "final");
   for (const v of vs) {
     const q = de(receta.quedo, nombre(v.id)) ?? "junto";
-    if (q === "junto") e = quedoJuntoAlChoque(e, v.id);
-    else if (q === "narracion") {
+    if (q === "junto") {
+      e = quedoJuntoAlChoque(e, v.id);
+      toques.push({ accion: "final", vehiculo: v.id, como: "junto" });
+    } else if (q === "narracion") {
       const n = finales.find((p) => p.vehiculo === v.id);
       const f = n ? finalDeLaNarracion(e, v.id, n.descripcion, finales) : null;
       if (!f) throw new Error(`${receta.clave}: La escena no lee dónde quedó ${nombre(v.id)}.`);
       e = marcarFinal(e, v.id, f.punto, f.rumbo);
-    } else e = tocarFinal(e, v.id, tocado(q), calles);
+      toques.push({ accion: "final", vehiculo: v.id, como: "narracion" });
+    } else {
+      const p = tocado(q);
+      e = tocarFinal(e, v.id, p, calles);
+      toques.push({
+        accion: "final",
+        vehiculo: v.id,
+        como: "marcar",
+        en: enMetrosDesde(choque, p),
+      });
+    }
   }
-  for (const p of receta.pasos ?? []) e = agregarPuntoDePaso(e, p.vehiculo, tocado(p.en));
-  for (const t of receta.terreno ?? [])
-    e =
+  for (const p of receta.pasos ?? []) {
+    const en = tocado(p.en);
+    e = agregarPuntoDePaso(e, p.vehiculo, en);
+    toques.push({ accion: "paso", vehiculo: p.vehiculo, en: enMetrosDesde(choque, en) });
+  }
+  // «¿Cómo es el terreno?», alineado a la calle como en La escena (`ponerTerrenoEn`).
+  for (const t of receta.terreno ?? []) {
+    const en = tocado(t.en);
+    e = ponerTerrenoEn(
+      e,
+      calles,
       t.tipo === "tope-circular"
-        ? agregarTope(e, tocado(t.en), 0).expediente
-        : agregarZona(e, "terraceria", tocado(t.en), 0).expediente;
+        ? { clase: "tope", norma: "circular" }
+        : { clase: "zona", tipo: "terraceria" },
+      en,
+    );
+    toques.push({
+      accion: "terreno",
+      boton: t.tipo === "tope-circular" ? "terreno-tope-circular" : "terreno-terraceria",
+      en: enMetrosDesde(choque, en),
+    });
+  }
   return {
     expediente: e,
     choque,
     puntos,
     propuesta: { expediente: prop.expediente, puntos: { ...prop.puntos } },
     notas,
+    toques,
   };
 }

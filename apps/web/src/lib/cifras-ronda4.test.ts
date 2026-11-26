@@ -44,6 +44,7 @@ function guardarEscenaDelPerito(clave: string, a: EscenaComoPerito): void {
         propuesta: { puntos: a.propuesta.puntos, versiones: a.propuesta.expediente.versiones },
         puntos: a.puntos,
         notas: a.notas,
+        toques: a.toques,
         versiones: a.expediente.versiones,
       },
       null,
