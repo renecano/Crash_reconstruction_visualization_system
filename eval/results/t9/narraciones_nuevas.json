@@ -1,0 +1,65 @@
+{
+  "fecha": "2026-11-26T18:06:59.353Z",
+  "filas": [
+    {
+      "clave": "aud-01-alcance-tollocan",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto 49 km/h A · Volkswagen Jetta rango 45–52 Reconstrucción física de Croquis · mejor ajuste 5 10 15 20 25 30 35 40 45 50 km/h Cada punto es una de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones B · Nissan Versa 0 km/h (detenido, lo dice la narración) Lo fijan 6 evidencias",
+      "no_cuadra": false
+    },
+    {
+      "clave": "aud-02-lateral-tecnologico-lastorres",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto 25 km/h A · Nissan Sentra rango 15–45 Reconstrucción física de Croquis · mejor ajuste 5 10 15 20 25 30 35 40 45 50 55 km/h Cada punto es una de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones B · Toyota Hilux 16 km/h Lo fijan 6 evidencias",
+      "no_cuadra": false
+    },
+    {
+      "clave": "aud-04-arbol-matlatzincas",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto La evidencia no fija la velocidad de ningún vehículo. Agrega posiciones finales o medidas de deformación. A · Chevrolet Aveo la evidencia no la fija Lo fijan 4 evidencias",
+      "no_cuadra": false
+    },
+    {
+      "clave": "aud-10-reversa-estacionado-metepec",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto La evidencia no fija la velocidad de ningún vehículo. Agrega posiciones finales o medidas de deformación. A · Honda CR-V la evidencia no la fija B · Chevrolet Spark 0 km/h (detenido, lo dice la narración) Lo fijan 4 evidencias",
+      "no_cuadra": false
+    },
+    {
+      "clave": "aud-13-moto-vuelta-izquierda-tecnologico",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto 70 km/h A · Honda CB190R rango 70–97 Reconstrucción física de Croquis · mejor ajuste 45 50 55 60 65 70 75 80 85 90 95 100 km/h Cada punto es una de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones B · Nissan Versa 7 km/h Lo fijan 7 evidencias",
+      "no_cuadra": false
+    },
+    {
+      "clave": "aud-15-carambola4-tollocan-lluvia",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto 50 km/h A · Ford Ranger rango 48–59 Reconstrucción física de Croquis · mejor ajuste 20 25 30 35 40 45 50 km/h Cada punto es una de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones B · Volkswagen Vento 0 km/h (detenido, lo dice la narración) C · Nissan March 0 km/h (detenido, lo dice la narración) D · Kia Rio 0 km/h (detenido, lo dice la narración) Lo fijan 10 evidencias",
+      "no_cuadra": false
+    },
+    {
+      "clave": "aud-16-atropello-camion-pinosuarez",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto 11 km/h A · Isuzu ELF 400 rango 6–14 Reconstrucción física de Croquis · mejor ajuste 5 10 15 km/h Cada punto es una de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones Lo fijan 4 evidencias",
+      "no_cuadra": false
+    },
+    {
+      "clave": "aud-19-glorieta-insurgentes",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto 52 km/h A · Chevrolet Aveo rango 52–63 Reconstrucción física de Croquis · mejor ajuste 55 60 65 km/h Cada punto son 2 de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones B · Volkswagen Vento 46 km/h Lo fijan 6 evidencias",
+      "no_cuadra": false
+    },
+    {
+      "clave": "aud-31-alcance-puente-churubusco",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto 59 km/h A · Ford Ranger rango 54–63 Reconstrucción física de Croquis · mejor ajuste 5 10 15 20 25 30 35 40 45 50 55 60 km/h Cada punto es una de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones B · Volkswagen Gol 0 km/h (detenido, lo dice la narración) Lo fijan 6 evidencias",
+      "no_cuadra": false
+    },
+    {
+      "clave": "aud-32-volcadura-viaducto",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto 46 km/h A · Toyota Hilux rango 43–55 Reconstrucción física de Croquis · mejor ajuste A · Toyota Hilux: la narración dice al menos 90 km/h («más de 90 km/h»); las posiciones dan 46 km/h (43–55). No se fuerza ninguna de las dos: revisa las posiciones marcadas y lo que dice la narración. 40 45 50 55 60 km/h Cada punto es una de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones B · Nissan Versa 0 km/h Lo fijan 6 evidencias",
+      "no_cuadra": false
+    }
+  ]
+}

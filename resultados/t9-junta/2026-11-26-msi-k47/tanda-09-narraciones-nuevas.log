@@ -1,0 +1,46 @@
+# Paso: narraciones-nuevas
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues nuevas -Salida eval/results/t9/narraciones_nuevas.json
+# Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
+# Inicio: 2026-11-26 11:59:09
+
+
+== 1. Herramientas
+Node v26.13.1 y pnpm 12.11.2.
+Hay internet.
+
+== 2. Dependencias
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 11m ago)
+Lockfile is up to date, resolution step is skipped
+Done in 71ms using pnpm v12.11.2
+
+== 3. El visor de Unity, desde esta computadora
+Visor 945617e035988035 servido desde el sitio: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\public\visor-unity\local
+
+== 4. La app en modo local
+Ya está compilada para esta versión (2f9b158f).
+
+== 5. La lectura con IA
+No hay llave de Claude en .env.local: la lectura con IA no estará. Todo lo demás funciona (AXA, los casos de ejemplo con su lectura guardada, la reconstrucción, el 3D y el dictamen).
+
+== 6. Croquis en http://localhost:3000
+Necesitan internet: la lectura con IA de una narración nueva, los mosaicos del mapa (sin red, el mapa sale en blanco pero se puede colocar la escena) y buscar un lugar por nombre.
+Sin internet funcionan completos: el caso de AXA y los cinco casos de ejemplo, la reconstrucción, el 3D de Unity y el dictamen.
+
+Running 10 tests using 1 worker
+
+[1/10] [chromium] › e2e\narraciones-fisica.spec.ts:364:7 › las narraciones nuevas: aud-01-alcance-tollocan
+[2/10] [chromium] › e2e\narraciones-fisica.spec.ts:364:7 › las narraciones nuevas: aud-02-lateral-tecnologico-lastorres
+[3/10] [chromium] › e2e\narraciones-fisica.spec.ts:364:7 › las narraciones nuevas: aud-04-arbol-matlatzincas
+[4/10] [chromium] › e2e\narraciones-fisica.spec.ts:364:7 › las narraciones nuevas: aud-10-reversa-estacionado-metepec
+[5/10] [chromium] › e2e\narraciones-fisica.spec.ts:364:7 › las narraciones nuevas: aud-13-moto-vuelta-izquierda-tecnologico
+[6/10] [chromium] › e2e\narraciones-fisica.spec.ts:364:7 › las narraciones nuevas: aud-15-carambola4-tollocan-lluvia
+[7/10] [chromium] › e2e\narraciones-fisica.spec.ts:364:7 › las narraciones nuevas: aud-16-atropello-camion-pinosuarez
+[8/10] [chromium] › e2e\narraciones-fisica.spec.ts:364:7 › las narraciones nuevas: aud-19-glorieta-insurgentes
+[9/10] [chromium] › e2e\narraciones-fisica.spec.ts:364:7 › las narraciones nuevas: aud-31-alcance-puente-churubusco
+[10/10] [chromium] › e2e\narraciones-fisica.spec.ts:364:7 › las narraciones nuevas: aud-32-volcadura-viaducto
+  Slow test file: [chromium] › e2e\narraciones-fisica.spec.ts (7.8m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  10 passed (7.8m)
+
+# Fin: 2026-11-26 12:07:00 · ok · 7.8 min
