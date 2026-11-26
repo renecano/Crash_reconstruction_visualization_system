@@ -15,6 +15,8 @@ import type { HerramientaEdicion, MensajesDeUnity } from "@croquis/scene-schema"
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type ComponentProps } from "react";
 import { especDel3d, NotasDel3d, Visor3dCaso } from "@/components/cesvi/caso/reconstruccion";
+import { paisajeDelMapa } from "@croquis/croquis-2d";
+import { RADIO_CALLES_M } from "@/lib/calles-del-mapa";
 import { downloadBytes } from "@/lib/download";
 import { impactosAColocar } from "@/lib/pasos-caso";
 import { nombreVehiculo } from "@/lib/escena-facil";
@@ -73,6 +75,14 @@ export function VisorCasoUnity({
   );
   const ligero = sp.get("visor") === "ligero" || (automatizado && sp.get("visor") !== "unity");
   const escena = useMemo(() => especDel3d(r, calles, objetos), [r, calles, objetos]);
+  // El paisaje del lugar con la cobertura del suelo de OSM, en el radio de los objetos (contrato #335).
+  const paisaje = useMemo(
+    () =>
+      r.origen && objetos
+        ? paisajeDelMapa(objetos, { lon: r.origen[0], lat: r.origen[1], radioM: RADIO_CALLES_M })
+        : null,
+    [r.origen, objetos],
+  );
   // Todas las cámaras del caso (A6): generales, por vehículo y por persona, con el nombre del panel.
   const camaras = useMemo(() => {
     const res = r.resultado as unknown as {
@@ -196,6 +206,7 @@ export function VisorCasoUnity({
           version={presentar ? null : version}
           piso={pisoReal.piso}
           relieve={r.relieve ?? null}
+          paisaje={paisaje}
           camaras={camaras}
           onTiempo={onInstante}
           activo={activo}

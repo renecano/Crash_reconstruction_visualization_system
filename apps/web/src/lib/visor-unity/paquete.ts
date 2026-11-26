@@ -24,12 +24,14 @@ export function paqueteDelCaso(
   escena: EscenaSpec,
   resultado: Resultado,
   relieve: RelieveCaso = null,
+  /** El paisaje del lugar (contrato #335): «arido» o «templado», o null sin cobertura del mapa. */
+  paisaje: "arido" | "templado" | null = null,
 ): Caso3D {
   const paquete = armarCaso3d(
     escena,
     resultado,
     relieve ?? null,
-    escenarioDe(escena, resultado, (relieve ?? null) as RelieveEscenario | null),
+    escenarioDe(escena, resultado, (relieve ?? null) as RelieveEscenario | null, paisaje),
   );
   const errores = caso3dErrors(paquete);
   if (errores.length) {
