@@ -1,7 +1,7 @@
 {
   "name": "t3_cobertura",
-  "generated_at": "2026-11-16T00:49:31.787Z",
-  "git_commit": "44e7bf67",
+  "generated_at": "2026-11-26T18:43:35.750Z",
+  "git_commit": "2f9b158f",
   "descripcion": "Cobertura sintética del p10–p90 de la inversión: casos fabricados con velocidad verdadera conocida, medidos con los tres supuestos del impacto fijos (como antes del ADR 0139) y sorteados (como ahora). Un p10–p90 calibrado contiene la verdad cerca del 80 % de las veces.",
   "limite": "La verdad sale del mismo modelo que la inversión: mide la propagación de la incertidumbre dentro del modelo, no su parecido con un choque real.",
   "semilla": 20261115,
@@ -123,5 +123,5 @@
       }
     }
   ],
-  "segundos": 771
+  "segundos": 768
 }
