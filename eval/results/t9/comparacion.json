@@ -1,0 +1,315 @@
+{
+  "fecha": "2026-11-26T23:06:10.230Z",
+  "ejemplos": [
+    {
+      "clave": "crucero-noche",
+      "vehiculo": "V1",
+      "tabla": "20 (5–26)",
+      "publicada": "20 (10–28)",
+      "contra_publicada": [
+        {
+          "que": "p10",
+          "km_h": -5,
+          "porcentaje": "-50.0 %"
+        },
+        {
+          "que": "p90",
+          "km_h": -2,
+          "porcentaje": "-7.1 %"
+        }
+      ],
+      "navegador": "20 (5–26)",
+      "diferencias": [],
+      "coincide": true
+    },
+    {
+      "clave": "alcance-deformacion",
+      "vehiculo": "V1",
+      "tabla": "53 (49–56)",
+      "publicada": "53 (49–56)",
+      "contra_publicada": [
+        {
+          "que": "cifra",
+          "km_h": 1,
+          "porcentaje": "+1.9 %"
+        },
+        {
+          "que": "p90",
+          "km_h": -1,
+          "porcentaje": "-1.8 %"
+        }
+      ],
+      "navegador": "54 (49–55)",
+      "diferencias": [
+        {
+          "que": "cifra",
+          "km_h": 1,
+          "porcentaje": "+1.9 %"
+        },
+        {
+          "que": "p90",
+          "km_h": -1,
+          "porcentaje": "-1.8 %"
+        }
+      ],
+      "coincide": false
+    },
+    {
+      "clave": "carambola-lluvia",
+      "vehiculo": "V1",
+      "tabla": "25 (20–32)",
+      "publicada": "24 (22–32)",
+      "contra_publicada": [
+        {
+          "que": "cifra",
+          "km_h": 1,
+          "porcentaje": "+4.2 %"
+        },
+        {
+          "que": "p10",
+          "km_h": -2,
+          "porcentaje": "-9.1 %"
+        }
+      ],
+      "navegador": "25 (20–32)",
+      "diferencias": [],
+      "coincide": true
+    },
+    {
+      "clave": "reversa-pendiente",
+      "vehiculo": "V2",
+      "tabla": "20 (16–25)",
+      "publicada": "21 (20–28)",
+      "contra_publicada": [
+        {
+          "que": "cifra",
+          "km_h": -1,
+          "porcentaje": "-4.8 %"
+        },
+        {
+          "que": "p10",
+          "km_h": -4,
+          "porcentaje": "-20.0 %"
+        },
+        {
+          "que": "p90",
+          "km_h": -3,
+          "porcentaje": "-10.7 %"
+        }
+      ],
+      "navegador": "20 (16–25)",
+      "diferencias": [],
+      "coincide": true
+    },
+    {
+      "clave": "poste-terraceria",
+      "vehiculo": "V2",
+      "tabla": "59 (49–64)",
+      "publicada": "36 (31–38)",
+      "contra_publicada": [
+        {
+          "que": "cifra",
+          "km_h": 26,
+          "porcentaje": "+72.2 %"
+        },
+        {
+          "que": "p10",
+          "km_h": 4,
+          "porcentaje": "+12.9 %"
+        },
+        {
+          "que": "p90",
+          "km_h": 24,
+          "porcentaje": "+63.2 %"
+        }
+      ],
+      "navegador": "62 (35–62)",
+      "diferencias": [
+        {
+          "que": "cifra",
+          "km_h": 3,
+          "porcentaje": "+5.1 %"
+        },
+        {
+          "que": "p10",
+          "km_h": -14,
+          "porcentaje": "-28.6 %"
+        },
+        {
+          "que": "p90",
+          "km_h": -2,
+          "porcentaje": "-3.1 %"
+        }
+      ],
+      "coincide": false
+    }
+  ],
+  "indice": [
+    {
+      "cifra": "ejemplos.crucero",
+      "indice": "20 km/h (5–26)",
+      "medida": "20 (5–26)",
+      "diferencias": [],
+      "coincide": true
+    },
+    {
+      "cifra": "ejemplos.alcance",
+      "indice": "53 km/h (49–56)",
+      "medida": "54 (49–55)",
+      "diferencias": [
+        {
+          "que": "cifra",
+          "km_h": 1,
+          "porcentaje": "+1.9 %"
+        },
+        {
+          "que": "p90",
+          "km_h": -1,
+          "porcentaje": "-1.8 %"
+        }
+      ],
+      "coincide": false
+    },
+    {
+      "cifra": "ejemplos.carambola",
+      "indice": "25 km/h (20–32)",
+      "medida": "25 (20–32)",
+      "diferencias": [],
+      "coincide": true
+    },
+    {
+      "cifra": "ejemplos.reversa",
+      "indice": "20 km/h (16–25)",
+      "medida": "20 (16–25)",
+      "diferencias": [],
+      "coincide": true
+    },
+    {
+      "cifra": "ejemplos.poste",
+      "indice": "59 km/h (49–64)",
+      "medida": "62 (35–62)",
+      "diferencias": [
+        {
+          "que": "cifra",
+          "km_h": 3,
+          "porcentaje": "+5.1 %"
+        },
+        {
+          "que": "p10",
+          "km_h": -14,
+          "porcentaje": "-28.6 %"
+        },
+        {
+          "que": "p90",
+          "km_h": -2,
+          "porcentaje": "-3.1 %"
+        }
+      ],
+      "coincide": false
+    }
+  ],
+  "axa": {
+    "indice": "57 km/h (55–78)",
+    "navegador": "57 (55–78)",
+    "coincide": true
+  },
+  "capturas": [
+    {
+      "clave": "arbol",
+      "capturas": 0
+    },
+    {
+      "clave": "poste",
+      "capturas": 0
+    },
+    {
+      "clave": "puente",
+      "capturas": 0
+    },
+    {
+      "clave": "subida",
+      "capturas": 0
+    },
+    {
+      "clave": "bajada",
+      "capturas": 0
+    },
+    {
+      "clave": "curva",
+      "capturas": 0
+    },
+    {
+      "clave": "tollocan",
+      "capturas": 0
+    },
+    {
+      "clave": "encimado-antes",
+      "capturas": 0
+    },
+    {
+      "clave": "encimado-despues",
+      "capturas": 0
+    },
+    {
+      "clave": "rene-arbol-curva",
+      "capturas": 0
+    },
+    {
+      "clave": "rene-peaton-vuelta",
+      "capturas": 0
+    },
+    {
+      "clave": "rene-carambola-semaforo",
+      "capturas": 0
+    }
+  ],
+  "arranque": [],
+  "pendientes": [
+    "Sin captura del 3D: arbol.",
+    "Sin captura del 3D: poste.",
+    "Sin captura del 3D: puente.",
+    "Sin captura del 3D: subida.",
+    "Sin captura del 3D: bajada.",
+    "Sin captura del 3D: curva.",
+    "Sin captura del 3D: tollocan.",
+    "Sin captura del 3D: encimado-antes.",
+    "Sin captura del 3D: encimado-despues.",
+    "Sin captura del 3D: rene-arbol-curva.",
+    "Sin captura del 3D: rene-peaton-vuelta.",
+    "Sin captura del 3D: rene-carambola-semaforo.",
+    "Sin resultado en el navegador: rene-arbol-curva.",
+    "Sin resultado en el navegador: rene-peaton-vuelta.",
+    "Sin resultado en el navegador: rene-carambola-semaforo.",
+    "De la muestra de narraciones nuevas llegaron 0 de 10.",
+    "Falta el antes o el después de carambolas.prueba.",
+    "Falta el antes o el después de carambolas.desarrollo.",
+    "Falta el antes o el después de cobertura.rango.",
+    "Sin mediciones del arranque del 3D."
+  ],
+  "tres": [],
+  "nuevas": [],
+  "otras": [
+    {
+      "cifra": "carambolas.prueba",
+      "publicada": "22 de 31",
+      "antes": null,
+      "despues": "22 de 31",
+      "cambia": true
+    },
+    {
+      "cifra": "carambolas.desarrollo",
+      "publicada": "42 de 55",
+      "antes": null,
+      "despues": "42 de 55",
+      "cambia": true
+    },
+    {
+      "cifra": "cobertura.rango",
+      "publicada": "410 de 578",
+      "antes": null,
+      "despues": "410 de 578",
+      "cambia": true
+    }
+  ],
+  "coincide": false
+}

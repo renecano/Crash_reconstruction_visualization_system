@@ -1,23 +1,26 @@
 # Paso: comparar
 # Comando: node eval/t9_comparar.mjs
 # Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
-# Inicio: 2026-11-26 13:28:20
+# Inicio: 2026-11-26 17:06:10
 
-✗ crucero-noche: tabla 20 (10–28) · navegador 20 (4–27)
-✗ alcance-deformacion: tabla 53 (49–56) · navegador 52 (44–52)
-✗ carambola-lluvia: tabla 24 (22–32) · navegador 24 (20–32)
-✗ reversa-pendiente: tabla 24 (21–28) · navegador 43 (19–50)
-✗ poste-terraceria: tabla 36 (31–38) · navegador 70 (67–76)
-✗ ejemplos.crucero: índice 20 km/h (3–26) · medida null
-✗ ejemplos.poste: índice 36 km/h (31–38) · medida 70 (67–76)
+✓ crucero-noche: tabla 20 (5–26) · navegador 20 (5–26)
+✗ alcance-deformacion: tabla 53 (49–56) · navegador 54 (49–55)
+✓ carambola-lluvia: tabla 25 (20–32) · navegador 25 (20–32)
+✓ reversa-pendiente: tabla 20 (16–25) · navegador 20 (16–25)
+✗ poste-terraceria: tabla 59 (49–64) · navegador 62 (35–62)
+✓ ejemplos.crucero: índice 20 km/h (5–26) · medida 20 (5–26)
+✗ ejemplos.alcance: índice 53 km/h (49–56) · medida 54 (49–55)
+✓ ejemplos.carambola: índice 25 km/h (20–32) · medida 25 (20–32)
+✓ ejemplos.reversa: índice 20 km/h (16–25) · medida 20 (16–25)
+✗ ejemplos.poste: índice 59 km/h (49–64) · medida 62 (35–62)
 ✓ AXA: índice 57 km/h (55–78) · navegador 57 (55–78)
-  crucero-noche contra lo publicado 20 (10–28): p10 -6 km/h (-60.0 %), p90 -1 km/h (-3.6 %)
-  alcance-deformacion contra lo publicado 53 (49–56): cifra -1 km/h (-1.9 %), p10 -5 km/h (-10.2 %), p90 -4 km/h (-7.1 %)
-  carambola-lluvia contra lo publicado 24 (22–32): p10 -2 km/h (-9.1 %)
-  reversa-pendiente contra lo publicado 21 (20–28): cifra +22 km/h (+104.8 %), p10 -1 km/h (-5.0 %), p90 +22 km/h (+78.6 %)
-  poste-terraceria contra lo publicado 36 (31–38): cifra +34 km/h (+94.4 %), p10 +36 km/h (+116.1 %), p90 +38 km/h (+100.0 %)
-✗ carambolas.prueba: antes null · después 21 de 31 (publicada 21 de 31)
-✗ carambolas.desarrollo: antes null · después 44 de 55 (publicada 44 de 55)
+  crucero-noche contra lo publicado 20 (10–28): p10 -5 km/h (-50.0 %), p90 -2 km/h (-7.1 %)
+  alcance-deformacion contra lo publicado 53 (49–56): cifra +1 km/h (+1.9 %), p90 -1 km/h (-1.8 %)
+  carambola-lluvia contra lo publicado 24 (22–32): cifra +1 km/h (+4.2 %), p10 -2 km/h (-9.1 %)
+  reversa-pendiente contra lo publicado 21 (20–28): cifra -1 km/h (-4.8 %), p10 -4 km/h (-20.0 %), p90 -3 km/h (-10.7 %)
+  poste-terraceria contra lo publicado 36 (31–38): cifra +26 km/h (+72.2 %), p10 +4 km/h (+12.9 %), p90 +24 km/h (+63.2 %)
+✗ carambolas.prueba: antes null · después 22 de 31 (publicada 22 de 31)
+✗ carambolas.desarrollo: antes null · después 42 de 55 (publicada 42 de 55)
 ✗ cobertura.rango: antes null · después 410 de 578 (publicada 410 de 578)
   capturas arbol: 0
   capturas poste: 0
@@ -53,4 +56,4 @@
   pendiente: Sin mediciones del arranque del 3D.
 Algo no coincide con lo publicado: va a René.
 
-# Fin: 2026-11-26 13:28:20 · falló (código 1) · 0 min
+# Fin: 2026-11-26 17:06:10 · falló (código 1) · 0 min
