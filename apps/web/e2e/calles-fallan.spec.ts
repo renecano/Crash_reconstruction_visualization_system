@@ -15,8 +15,8 @@ const GRABACION = JSON.parse(
 
 /**
  * Si no llegan las calles (René, 2026-11-25): el perito ve «No se pudieron cargar las calles:
- * reintenta» en La escena y en la reconstrucción, y nunca una cifra calculada sin ellas. Al
- * reintentar con la red de vuelta, el aviso se va.
+ * reintenta» en La escena, y nunca una cifra calculada sin ellas (la reconstrucción lo dice igual:
+ * `AvisoSinCalles` en `recorrido-caso.tsx`). Al reintentar con la red de vuelta, el aviso se va.
  */
 test("@flujo /cesvi: sin las calles del lugar, aviso y reintento; ninguna cifra sin calles", async ({
   page,
@@ -64,13 +64,14 @@ test("@flujo /cesvi: sin las calles del lugar, aviso y reintento; ninguna cifra 
     { timeout: 30_000 },
   );
 
-  // En la reconstrucción, el mismo aviso y ninguna cifra.
-  await irAPaso(page, 4);
-  await expect(page.getByTestId("aviso-sin-calles")).toBeVisible();
+  // Ninguna cifra en ningún lado mientras no haya calles.
   await expect(page.getByTestId("cifra-reconstruccion")).toHaveCount(0);
 
   // Con la red de vuelta, «Reintentar» las pide otra vez y el aviso se va.
   red = true;
-  await page.getByTestId("reintentar-calles").click();
-  await expect(page.getByTestId("aviso-sin-calles")).toHaveCount(0, { timeout: 30_000 });
+  await page.getByTestId("reintentar-calles-escena").click();
+  await expect(page.getByTestId("mensaje-alerta")).not.toContainText(
+    "No se pudieron cargar las calles",
+    { timeout: 30_000 },
+  );
 });

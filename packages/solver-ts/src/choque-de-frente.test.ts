@@ -8,7 +8,7 @@ import { reconstruct } from "./reconstruct";
  * contacto con un vehículo en movimiento todavía en su posición inicial ya no se elige si hay otro.
  * Las mismas pruebas que `solver/tests/test_choque_de_frente.py`.
  */
-type Json = Record<string, any>;
+type Json = Record<string, unknown>;
 const FIXTURE = resolve(__dirname, "../../scene-schema/fixtures/frente/choque-de-frente.json");
 const spec = (): Json => JSON.parse(readFileSync(FIXTURE, "utf8")) as Json;
 
@@ -28,15 +28,15 @@ function alImpacto(s: Json, vid: string): [number, number] {
 
 function alineado(s0: Json): Json {
   const s = structuredClone(s0);
-  const a = (s.vehiculos as Json[]).find((v) => v.id === "veh-a")!;
-  const b = (s.vehiculos as Json[]).find((v) => v.id === "veh-b")!;
-  const h = (Number(a.posicion_inicial.rumbo_deg) * Math.PI) / 180;
-  Object.assign(b.posicion_inicial, {
-    x: 14 * Math.cos(h),
-    y: 14 * Math.sin(h),
-    rumbo_deg: Number(a.posicion_inicial.rumbo_deg) + 180,
-  });
-  Object.assign(a.posicion_inicial, { x: -12 * Math.cos(h), y: -12 * Math.sin(h) });
+  const vs = s.vehiculos as Json[];
+  const a = vs.find((v) => v.id === "veh-a")!;
+  const b = vs.find((v) => v.id === "veh-b")!;
+  const pa = a.posicion_inicial as Json;
+  const pb = b.posicion_inicial as Json;
+  const rumbo = Number(pa.rumbo_deg);
+  const h = (rumbo * Math.PI) / 180;
+  Object.assign(pb, { x: 14 * Math.cos(h), y: 14 * Math.sin(h), rumbo_deg: rumbo + 180 });
+  Object.assign(pa, { x: -12 * Math.cos(h), y: -12 * Math.sin(h) });
   return s;
 }
 
