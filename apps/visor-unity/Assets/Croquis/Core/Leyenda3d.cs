@@ -42,7 +42,8 @@ namespace Croquis.Core
 
             if (!string.IsNullOrWhiteSpace(etiquetaFantasma))
             {
-                texto += "\nTranslúcido: " + etiquetaFantasma.Trim();
+                // La tipografía del visor no trae «…»: con tres puntos, «¿Y si…?» no se lee «¿Y si?».
+                texto += "\nTranslúcido: " + etiquetaFantasma.Trim().Replace("…", "...");
             }
 
             return texto;
