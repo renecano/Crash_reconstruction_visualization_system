@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { freemem } from "node:os";
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import type { SalidaCorpus } from "@croquis/cesvi";
@@ -9,6 +10,7 @@ import { callesCerca, defaultOsmDeps } from "@/server/osm";
 import { armarRelieve, defaultRelieveDeps, RelieveIn } from "@/server/relieve";
 import { osmAlrededor } from "@/lib/visor-unity/osm-alrededor";
 import { auditarCaso, type Esperado, type FilaAuditoria, type Red } from "./cadena";
+import { esperarMemoria } from "./memoria";
 
 /**
  * La revisión sistemática de la cadena (René, 2026-11-24), por partes y sin navegador:
@@ -206,6 +208,12 @@ describe("la revisión sistemática de la cadena", () => {
       const filas: FilaAuditoria[] = [];
       for (const c of todos.slice(desde, hasta)) {
         if (solo ? !solo.includes(c.id) : hechos.has(c.id)) continue;
+        // Sin memoria para otro caso (René, 2026-11-26): se espera y, si no se libera, se detiene; lo
+        // hecho ya está en el archivo y la corrida se retoma donde quedó.
+        if (!(await esperarMemoria(() => freemem() / 1048576))) {
+          console.warn(`Sin memoria libre: la revisión se detiene antes de ${c.id}.`);
+          break;
+        }
         let fila: FilaAuditoria;
         try {
           const volcado = process.env.CROQUIS_VOLCAR;
