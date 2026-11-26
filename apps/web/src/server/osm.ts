@@ -118,7 +118,8 @@ export function cacheKey(
   radio: number,
   que: "calles" | "objetos" = "calles",
 ): string {
-  const base = que === "objetos" ? "croquis:osm-objetos" : "croquis:osm";
+  // «-2» desde que los objetos traen la cobertura del suelo (contrato #335): lo guardado antes no la tiene.
+  const base = que === "objetos" ? "croquis:osm-objetos-2" : "croquis:osm";
   return `${base}:${lat.toFixed(5)}:${lon.toFixed(5)}:${radio}`;
 }
 

@@ -301,6 +301,8 @@ export function escenarioDe(
   spec: EscenaSpec,
   resultado: Resultado,
   relieve: RelieveEscenario | null = null,
+  /** El paisaje que calcula la web con la cobertura del suelo de OSM (contrato #335), si lo hay. */
+  paisaje: "arido" | "templado" | null = null,
 ): Escenario {
   const lugar = spec.lugar;
   const layout = roadLayout(lugar);
@@ -494,6 +496,7 @@ export function escenarioDe(
     suelo: [suelo(320, 96, undefined, true), suelo(2400, 80, 300)],
     entorno: {
       zona: plan.zone,
+      ...(paisaje ? { paisaje } : {}),
       arboles: plan.trees
         .filter((t) => !enElCaso(libres, t))
         .map((t) => ({
