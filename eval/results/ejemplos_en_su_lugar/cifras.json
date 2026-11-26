@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-11-26T21:11:54.768Z",
+  "fecha": "2026-11-26T22:54:27.547Z",
   "muestras": {
     "samples": 32,
     "mcSamples": 128
@@ -260,14 +260,14 @@
       "velocidades": [
         {
           "vehiculo": "V1",
-          "mejor": 25,
-          "p10": 25,
+          "mejor": 26,
+          "p10": 21,
           "p90": 28
         },
         {
           "vehiculo": "V2",
-          "mejor": 59,
-          "p10": 49,
+          "mejor": 61,
+          "p10": 37,
           "p90": 64
         }
       ],

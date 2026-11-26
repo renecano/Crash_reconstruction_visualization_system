@@ -132,7 +132,12 @@
       "fecha": "2026-11-25T18:28:05.529Z",
       "que": "Ronda 2, C: lectura de la narración de ejemplo «reversa-pendiente»",
       "usd": 0.0217492
+    },
+    {
+      "fecha": "2026-11-26T22:20:09.105Z",
+      "que": "Ronda 2, C: lectura de la narración de ejemplo «poste-terraceria»",
+      "usd": 0.036223
     }
   ],
-  "total_usd": 1.7287
+  "total_usd": 1.7649
 }

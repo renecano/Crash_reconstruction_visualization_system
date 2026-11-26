@@ -1551,3 +1551,21 @@ Botones + / − / 1:1, la rueda (sobre el cursor) y el pellizco; acercado, se ar
 ### El lugar de los ejemplos
 
 Cada ejemplo guarda su lugar (`data/cesvi/ejemplos/narraciones.json`) y abre ahí sin el buscador. Las cifras en su lugar, contra la tabla (en el punto P): crucero y poste iguales; alcance 53 (48–55) contra 53 (49–56); carambola 24 (22–31) contra 24 (22–32); reversa, con el relieve real de Lomas del Valle, 7 (0–15) y 24 (22–29) contra 8 (1–16) y 24 (21–28). **Mueve cifras publicadas: no se publica sin el visto bueno de René.**
+
+## Los ejemplos con el mismo código de La escena, el poste y la reversa (2026-11-26) · #331, #334, `fix/w-poste-mazda`
+
+**Qué se hizo (#331, encima de la cadena #311 → #329):**
+
+- La tabla del índice arma cada ejemplo con el código de La escena (`ejemplo-como-perito.ts`, recetas en `recetas-perito.ts`): la propuesta en el lugar guardado, las direcciones confirmadas como con «Confirmar», el choque tocado (`puntoDelChoqueTocado`), el terreno (`ponerTerrenoEn`), «¿Chocó contra algo más?» (`agregarChoqueIntermedio`) y los finales (`tocarFinal`). Guarda los toques en `eval/results/ejemplos_como_perito/`; la receta del navegador (`e2e/recetas-perito.ts`) los repite y `e2e/ejemplos-como-perito.spec.ts` falla si la escena de la app y la de la tabla difieren (propuesta y final).
+- Errores de la app que encontró esa prueba: el golpe contra el poste no se calculaba (el punto no se guardaba y el narrado quedaba «sin calcular»); el derrape que «inicia en el área de contacto» no entraba como evidencia; la posición final tocada se pegaba hasta 8 m al eje de la calle (el Vento «sobre el acotamiento» se movía 3 m).
+- La velocidad en reversa sin evidencia pesa como supuesto con el rango de NHTSA (`a_priori`).
+- Cifras aprobadas por René el 2026-11-26: crucero 20 (5–26) y Camaro 12 (6–20); alcance 53 (49–56) y Vento 0 (0–8); carambola 25 (20–32); Versa 20 (16–25) y CR-V 6 (3–7); poste 59 (49–64). AXA sin cambio, 57 (55–78).
+- t9-ejemplos fijada a 55eccc3b (#333).
+
+**«¿Y si…?» a otra velocidad (#334):** en la Reconstrucción, la velocidad de cada vehículo; la simulación hacia adelante contra la misma a la velocidad reconstruida; cada diferencia con su valor y su porcentaje; marcada como hipótesis. e2e `ysi-velocidad.spec.ts` en verde.
+
+**El Mazda del poste (`fix/w-poste-mazda`, después de publicar):** «8 metros al Norte» era del texto del ejemplo: tras pegarle en el costado al Sentra, el Mazda avanza unos 2.5 m. La narración dice ahora «1 metro al Oriente», con su lectura regrabada (0.0362 USD). Y un error de la física: la revisión de «reposo inalcanzable» hacía un solo ajuste desde las velocidades de arranque; ahora lo repite desde la mejor solución de la inversión antes de avisar (Python y TS, referencias regeneradas).
+
+**Daños (siguiente):** en AXA, la deformación medida de la Tacoma con la rigidez del reporte (A = 55.4 kN/m, B = 385.3 kN/m²) equivale a unos 230 kJ, y el choque reconstruido disipa 61.5 kJ en total; además el solver usa la rigidez de NHTSA y no la del reporte. Plan: un PR `contract:` (lo medido y la fuente de la rigidez en `Dano`), el solver con la rigidez del reporte (Python y TS con paridad) y la comparación en Análisis.
+
+**Siguiente paso concreto:** esperar la t9-ejemplos; si sale bien, publicar #311 → #316 → #320 → #323 → #329 → #331, verificar en producción y fusionar #324, #327 y #328; luego #334 y `fix/w-poste-mazda`.
