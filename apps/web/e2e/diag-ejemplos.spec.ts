@@ -7,6 +7,9 @@ import { colocar, RECETAS } from "./recetas-ejemplos";
 /** Diagnóstico de la t9-junta (2026-11-26): por qué el mapa de La escena no queda estable. */
 const SALIDA = process.env.CROQUIS_CAPTURAS ?? "diag-ejemplos";
 
+// Como la e2e de los ejemplos: 1440×900 y 20 s por acción.
+test.use({ actionTimeout: 20_000, viewport: { width: 1440, height: 900 }, locale: "es-MX" });
+
 test("diagnóstico del mapa en el primer ejemplo", async ({ page }) => {
   test.setTimeout(300_000);
   mkdirSync(SALIDA, { recursive: true });
