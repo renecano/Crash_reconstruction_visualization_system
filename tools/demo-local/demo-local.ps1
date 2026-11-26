@@ -31,13 +31,15 @@
                            «solo-cesvi», 2560×1440, Unity en calidad alta) en -Salida y apaga
     -Despues video-3d      sirve, graba «Descargar video» del 3D de AXA con el Unity real en Chrome y
                            en Edge (e2e/video-3d-real.spec.ts; los MP4 al Escritorio) y apaga
+    -Despues final         sirve, la tanda final con el Unity real: ¿Y si…? en 3D, daños, entorno,
+                           satélite y Presentar, solo ejemplos públicos (e2e/final-unity.spec.ts) y apaga
     -Salida RUTA           a dónde escribe su resultado la comprobación o la medición
     -Capturas RUTA         dónde van las capturas de los ejemplos (por omisión, las de la t5)
     -Casos RUTA            dónde van los .croquis de los ejemplos
 #>
 param(
   [switch]$SoloPreparar,
-  [ValidateSet("", "comprobar", "fps-web", "arranque-3d", "video-3d", "narraciones", "tollocan", "tres", "nuevas", "ejemplos", "humo", "recorrido")][string]$Despues = "",
+  [ValidateSet("", "comprobar", "fps-web", "arranque-3d", "video-3d", "narraciones", "tollocan", "tres", "nuevas", "ejemplos", "humo", "recorrido", "final")][string]$Despues = "",
   [string]$Salida = "",
   [string]$Capturas = "",
   [string]$Casos = "",
@@ -205,7 +207,7 @@ try {
       if ($null -eq $gpuAntes) { Remove-ItemProperty -Path $llaveGpu -Name $chrome -ErrorAction SilentlyContinue }
       else { Set-ItemProperty -Path $llaveGpu -Name $chrome -Value $gpuAntes }
     }
-  } elseif ($Despues -in @("narraciones", "tollocan", "tres", "nuevas", "ejemplos", "humo", "recorrido")) {
+  } elseif ($Despues -in @("narraciones", "tollocan", "tres", "nuevas", "ejemplos", "humo", "recorrido", "final")) {
     # t5-verificacion (René, 2026-11-19), en el Chrome instalado contra la demo local:
     #   narraciones  las seis narraciones nuevas y el caso encimado, con capturas del 3D;
     #   tollocan     el caso de René de punta a punta;
@@ -229,6 +231,12 @@ try {
         if ($Salida) { $env:CROQUIS_RECORRIDO = $Salida }
         $grep = if ($Filtro) { @("--grep", $Filtro) } else { @() }
         & pnpm --filter "@croquis/web" exec playwright test -c playwright.recorrido.config.ts @grep
+      } elseif ($Despues -eq "final") {
+        # La tanda final (René, 2026-11-26): ¿Y si…? en 3D, daños, entorno, satélite y Presentar con el
+        # Unity real, solo con ejemplos públicos.
+        if ($Salida) { $env:CROQUIS_SALIDA = $Salida }
+        if ($Capturas) { $env:CROQUIS_CAPTURAS = $Capturas }
+        & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/final-unity.spec.ts
       } elseif ($Despues -eq "ejemplos") {
         $env:CROQUIS_UNITY = "1"
         $env:CROQUIS_CAPTURAS = if ($Capturas) { $Capturas } else { "docs/cesvi/ronda-4/evidencia/t5-ejemplos" }
