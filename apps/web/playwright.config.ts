@@ -1,6 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const PORT = 3000;
+/** Contra un sitio ya publicado (la verificación de producción): sin servidor local. */
+const URL_EXTERNA = process.env.CROQUIS_URL;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -12,7 +14,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : 2,
   reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : "list",
   use: {
-    baseURL: `http://localhost:${PORT}`,
+    baseURL: URL_EXTERNA ?? `http://localhost:${PORT}`,
     trace: "on-first-retry",
     // El service worker (ADR 0030) atiende peticiones que `page.route` no ve; solo la prueba sin red
     // (`sin-red.spec.ts`) lo permite.
@@ -28,10 +30,12 @@ export default defineConfig({
       testMatch: /(portada|relato|paginas|e9|accesibilidad|capturas-diseno)\.spec\.ts$/,
     },
   ],
-  webServer: {
-    command: "pnpm build && pnpm start",
-    url: `http://localhost:${PORT}`,
-    reuseExistingServer: !process.env.CI,
-    timeout: 240_000,
-  },
+  webServer: URL_EXTERNA
+    ? undefined
+    : {
+        command: "pnpm build && pnpm start",
+        url: `http://localhost:${PORT}`,
+        reuseExistingServer: !process.env.CI,
+        timeout: 240_000,
+      },
 });
