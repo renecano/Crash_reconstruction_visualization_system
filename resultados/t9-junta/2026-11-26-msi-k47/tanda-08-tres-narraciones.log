@@ -1,0 +1,37 @@
+# Paso: tres-narraciones
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tres -Salida eval/results/t9/tres_narraciones.json
+# Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
+# Inicio: 2026-11-26 11:57:57
+
+
+== 1. Herramientas
+Node v26.13.1 y pnpm 12.11.2.
+Hay internet.
+
+== 2. Dependencias
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 10m ago)
+Lockfile is up to date, resolution step is skipped
+Done in 84ms using pnpm v12.11.2
+
+== 3. El visor de Unity, desde esta computadora
+Visor 945617e035988035 servido desde el sitio: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\public\visor-unity\local
+
+== 4. La app en modo local
+Ya está compilada para esta versión (2f9b158f).
+
+== 5. La lectura con IA
+No hay llave de Claude en .env.local: la lectura con IA no estará. Todo lo demás funciona (AXA, los casos de ejemplo con su lectura guardada, la reconstrucción, el 3D y el dictamen).
+
+== 6. Croquis en http://localhost:3000
+Necesitan internet: la lectura con IA de una narración nueva, los mosaicos del mapa (sin red, el mapa sale en blanco pero se puede colocar la escena) y buscar un lugar por nombre.
+Sin internet funcionan completos: el caso de AXA y los cinco casos de ejemplo, la reconstrucción, el 3D de Unity y el dictamen.
+
+Running 3 tests using 1 worker
+
+[1/3] [chromium] › e2e\narraciones-fisica.spec.ts:289:7 › las tres narraciones de René: rene-arbol-curva
+[2/3] [chromium] › e2e\narraciones-fisica.spec.ts:289:7 › las tres narraciones de René: rene-peaton-vuelta
+[3/3] [chromium] › e2e\narraciones-fisica.spec.ts:289:7 › las tres narraciones de René: rene-carambola-semaforo
+  3 passed (1.1m)
+
+# Fin: 2026-11-26 11:59:05 · ok · 1.1 min
