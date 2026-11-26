@@ -200,7 +200,7 @@
       "texto": "20 km/h (5–26)",
       "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
       "campo": "filas.1.velocidades.0",
-      "motivo": "Escena armada con el mismo código de La escena, direcciones por las calles reales (#331). René aprobó Jetta 18 (4–26) y Camaro 13 (8–22) el 2026-11-26; al confirmar las dos direcciones como lo hace el botón «Confirmar» de la app, dan estas: pendientes de su visto bueno. Antes, 20 (4–27) publicada y 20 (10–28) en la tabla."
+      "motivo": "Escena armada con el mismo código de La escena, direcciones por las calles reales y confirmadas como con el botón «Confirmar» de la app (#331); René lo aprobó el 2026-11-26. Antes, 20 (4–27) publicada y 20 (10–28) en la tabla."
     },
     "ejemplos.crucero_camaro": {
       "que": "Ejemplo «crucero de noche»: velocidad del Camaro (B) antes del impacto, como lo arma el perito en La escena",
@@ -213,7 +213,7 @@
       "texto": "12 km/h (6–20)",
       "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
       "campo": "filas.1.velocidades.1",
-      "motivo": "Escena armada con el mismo código de La escena, direcciones por las calles reales (#331). René aprobó Jetta 18 (4–26) y Camaro 13 (8–22) el 2026-11-26; al confirmar las dos direcciones como lo hace el botón «Confirmar» de la app, dan estas: pendientes de su visto bueno. Antes, 12 (3–19)."
+      "motivo": "Escena armada con el mismo código de La escena, direcciones por las calles reales y confirmadas como con el botón «Confirmar» de la app (#331); René lo aprobó el 2026-11-26. Antes, 12 (3–19)."
     },
     "ejemplos.alcance": {
       "que": "Ejemplo «alcance en carretera»: velocidad de la NP300 (A), la que alcanza, antes del impacto, como lo arma el perito en La escena",
@@ -265,7 +265,7 @@
       "texto": "20 km/h (16–25)",
       "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
       "campo": "filas.4.velocidades.1",
-      "motivo": "Escena armada con el mismo código de La escena (#331). La velocidad en reversa del CR-V pesa como supuesto con su rango (NHTSA, 3.06–9.07 km/h), porque la narración no da evidencia de más. René lo aprobó con esa condición el 2026-11-26. Antes, 20 (18–25)."
+      "motivo": "Escena armada con el mismo código de La escena (#331). La velocidad en reversa del CR-V pesa como supuesto con su rango (NHTSA, 3.06–9.07 km/h), porque la narración no da evidencia de más; el rango del Versa cambia por eso. René lo aprobó el 2026-11-26. Antes, 20 (18–25)."
     },
     "ejemplos.reversa_crv": {
       "que": "Ejemplo «reversa en pendiente»: velocidad del CR-V (A) en reversa antes del impacto, como lo arma el perito en La escena",
@@ -278,7 +278,7 @@
       "texto": "6 km/h (3–7)",
       "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
       "campo": "filas.4.velocidades.0",
-      "motivo": "Escena armada con el mismo código de La escena (#331). La velocidad en reversa del CR-V pesa como supuesto con su rango (NHTSA, 3.06–9.07 km/h), porque la narración no da evidencia de más. René lo aprobó con esa condición el 2026-11-26. Antes, 9 (1–18)."
+      "motivo": "Escena armada con el mismo código de La escena (#331). La velocidad en reversa del CR-V pesa como supuesto con su rango (NHTSA, 3.06–9.07 km/h), porque la narración no da evidencia de más; el rango del Versa cambia por eso. René lo aprobó el 2026-11-26. Antes, 9 (1–18)."
     },
     "ejemplos.poste": {
       "que": "Ejemplo «poste y terracería»: velocidad del Sentra (B) antes del impacto, como lo arma el perito en La escena",

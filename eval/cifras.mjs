@@ -239,11 +239,11 @@ function construir() {
     const APROBADO =
       "Escena armada con el mismo código de La escena, direcciones por las calles reales (#331); René lo aprobó el 2026-11-26.";
     const CRUCERO =
-      "Escena armada con el mismo código de La escena, direcciones por las calles reales (#331). René aprobó Jetta 18 (4–26) y Camaro 13 (8–22) el 2026-11-26; al confirmar las dos direcciones como lo hace el botón «Confirmar» de la app, dan estas: pendientes de su visto bueno.";
+      "Escena armada con el mismo código de La escena, direcciones por las calles reales y confirmadas como con el botón «Confirmar» de la app (#331); René lo aprobó el 2026-11-26.";
     const POSTE =
       "Escena armada con el mismo código de La escena (#331). El golpe contra el poste ahora se calcula: el punto que marca el perito va en el impacto (antes quedaba «sin calcular» y el Sentra se detenía solo), y los 18.40 m de derrape después del contacto entran como evidencia. Así la velocidad antes del impacto queda arriba de la que deja el derrape (48–57 km/h) y el rango refleja la energía del poste, con sus medidas típicas como supuesto. René lo aprobó con esa condición el 2026-11-26.";
     const REVERSA =
-      "Escena armada con el mismo código de La escena (#331). La velocidad en reversa del CR-V pesa como supuesto con su rango (NHTSA, 3.06–9.07 km/h), porque la narración no da evidencia de más. René lo aprobó con esa condición el 2026-11-26.";
+      "Escena armada con el mismo código de La escena (#331). La velocidad en reversa del CR-V pesa como supuesto con su rango (NHTSA, 3.06–9.07 km/h), porque la narración no da evidencia de más; el rango del Versa cambia por eso. René lo aprobó el 2026-11-26.";
     for (const [clave, ejemplo, vehiculo, que, antes, motivo] of [
       [
         "ejemplos.crucero",
