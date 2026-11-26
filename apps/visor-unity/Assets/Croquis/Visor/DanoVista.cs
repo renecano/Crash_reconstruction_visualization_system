@@ -2,31 +2,43 @@ using System.Collections.Generic;
 using Croquis.Core;
 using Croquis.Generated;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Croquis.Visor
 {
     /// <summary>
     /// El daño del solver sobre la carrocería (auditoría del 2026-11-15, C2). Unity no calcula daño:
     /// deforma la malla con el perfil de aplastamiento del Resultado (`dano.perfil_m`, con su ancho, su
-    /// centro y la cara del CDC), con el mismo `CampoDano` que se prueba sin Unity en `Croquis.Core`.
+    /// centro, la cara del CDC y la PDOF), con el mismo `CampoDano` que se prueba sin Unity en
+    /// `Croquis.Core`. Cada impacto posterior (`danos_posteriores`) se dibuja en su instante, encima del
+    /// anterior (docs/contrato-unity.md §1).
     ///
-    /// Al armar el vehículo se prepara, por cada pieza de la carrocería que el daño toca, una copia
-    /// deformada de su malla. Antes del primer impacto del vehículo se ve la original; desde ese
-    /// instante, la deformada. Las ruedas no se deforman, y un vehículo sin modelo (la caja de
-    /// respaldo) tampoco: no tiene malla donde se note.
+    /// Al armar el vehículo, cada pieza de la carrocería que el daño toca se refina en la zona dañada
+    /// (`Refinamiento`, para que los pliegues se vean en modelos de pocos vértices) y se prepara una copia
+    /// deformada por impacto. Antes del primer impacto del vehículo se ve la original; desde cada
+    /// impacto, la suya. Las ruedas no se deforman, y un vehículo sin modelo (la caja de respaldo)
+    /// tampoco: no tiene malla donde se note.
     /// </summary>
     public sealed class DanoVista
     {
+        /// <summary>El lado más largo de un triángulo en la zona dañada, después de refinar (m).</summary>
+        private const double LadoMaximo = 0.06;
+
+        /// <summary>Tope de vértices nuevos por pieza (memoria y tiempo de carga en WebGL).</summary>
+        private const int TopeVertices = 40000;
+
         private readonly List<Pieza> piezas = new List<Pieza>();
+        private readonly double[] desdes;
+        private int etapaPuesta = -2;
         private double avance = -1.0;
 
-        private DanoVista(double desde)
+        private DanoVista(double[] desdes)
         {
-            Desde = desde;
+            this.desdes = desdes;
         }
 
-        /// <summary>El instante del Resultado desde el que se ve el daño.</summary>
-        public double Desde { get; }
+        /// <summary>El instante del Resultado desde el que se ve el primer daño.</summary>
+        public double Desde => desdes[0];
 
         /// <summary>Cuántas piezas de la carrocería cambian con el daño.</summary>
         public int Piezas => piezas.Count;
@@ -36,17 +48,23 @@ namespace Croquis.Visor
 
         /// <summary>
         /// Prepara el daño de un vehículo ya armado. Nulo si el Resultado no trae daño que dibujar para
-        /// él (`DanoDelCaso.Campo`) o si ninguna pieza cambia.
+        /// él (`DanoDelCaso.Etapas`) o si ninguna pieza cambia.
         /// </summary>
         public static DanoVista Preparar(Transform vehiculo, ResultadoVehiculo v, Caso3DResultado r)
         {
-            var campo = DanoDelCaso.Campo(v);
-            if (campo == null || vehiculo == null)
+            var etapas = DanoDelCaso.Etapas(v, r);
+            if (etapas.Count == 0 || vehiculo == null)
             {
                 return null;
             }
 
-            var dano = new DanoVista(DanoDelCaso.Instante(r, v.Id));
+            var desdes = new double[etapas.Count];
+            for (var k = 0; k < etapas.Count; k++)
+            {
+                desdes[k] = etapas[k].Desde;
+            }
+
+            var dano = new DanoVista(desdes);
             var semilla = DanoDelCaso.Semilla(r != null ? r.Semilla : 0L, v.Id);
             foreach (var filtro in vehiculo.GetComponentsInChildren<MeshFilter>(true))
             {
@@ -59,19 +77,21 @@ namespace Croquis.Visor
                     continue;
                 }
 
-                var antes = filtro.sharedMesh;
-                if (antes == null || !antes.isReadable)
+                var original = filtro.sharedMesh;
+                if (original == null || !original.isReadable)
                 {
                     continue;
                 }
 
-                var despues = Deformar(antes, campo, semilla, out var maximo);
-                if (despues == null)
+                var antes = Refinar(original, etapas) ?? original;
+                var mallas = Deformar(antes, etapas, semilla, out var maximo);
+                if (mallas == null)
                 {
                     continue;
                 }
 
-                dano.piezas.Add(new Pieza { Filtro = filtro, Antes = antes, Despues = despues });
+                filtro.sharedMesh = antes;
+                dano.piezas.Add(new Pieza { Filtro = filtro, Antes = antes, Etapas = mallas });
                 dano.DesplazamientoMaximo = System.Math.Max(dano.DesplazamientoMaximo, maximo);
             }
 
@@ -79,18 +99,25 @@ namespace Croquis.Visor
         }
 
         /// <summary>
-        /// Pone la malla que toca en el instante `t`: la original antes del impacto, la deformada después
-        /// y, en los `EnfasisImpacto.DuracionDanoS` del golpe, la que va de una a otra (ronda 4, punto 5:
-        /// que el choque se vea). Termina exactamente en la deformación del solver.
+        /// Pone la malla que toca en el instante `t`: la original antes del primer impacto, la de cada
+        /// impacto desde su instante y, en los `EnfasisImpacto.DuracionDanoS` de cada golpe, la que va de
+        /// la anterior a la suya (ronda 4, punto 5). Termina exactamente en la deformación del solver.
         /// </summary>
         public void Mostrar(double t)
         {
-            var f = EnfasisImpacto.AvanceDano(t, Desde);
-            if (System.Math.Abs(f - avance) < 1e-4)
+            var k = -1;
+            while (k + 1 < desdes.Length && t >= desdes[k + 1] - 1e-9)
+            {
+                k++;
+            }
+
+            var f = k < 0 ? 0.0 : EnfasisImpacto.AvanceDano(t, desdes[k]);
+            if (k == etapaPuesta && System.Math.Abs(f - avance) < 1e-4)
             {
                 return;
             }
 
+            etapaPuesta = k;
             avance = f;
             foreach (var p in piezas)
             {
@@ -99,54 +126,190 @@ namespace Croquis.Visor
                     continue;
                 }
 
-                if (f <= 0.0)
+                var desde = k <= 0 ? p.Antes : p.Etapas[k - 1];
+                if (k < 0)
                 {
                     p.Filtro.sharedMesh = p.Antes;
                 }
                 else if (f >= 1.0)
                 {
-                    p.Filtro.sharedMesh = p.Despues;
+                    p.Filtro.sharedMesh = p.Etapas[k];
                 }
                 else
                 {
-                    p.Filtro.sharedMesh = p.Transicion(f);
+                    p.Filtro.sharedMesh = p.Transicion(desde, p.Etapas[k], f);
                 }
             }
         }
 
-        /// <summary>La copia deformada de una malla, o nulo si el daño no mueve ninguno de sus vértices.</summary>
-        private static Mesh Deformar(Mesh antes, CampoDano campo, int semilla, out double maximo)
+        /// <summary>
+        /// Una copia de la malla con los triángulos de la zona dañada partidos (UV, normales, tangentes y
+        /// colores, interpolados), o nulo si ningún triángulo se parte.
+        /// </summary>
+        private static Mesh Refinar(Mesh m, List<(double Desde, CampoDano Campo)> etapas)
+        {
+            var subs = new int[m.subMeshCount][];
+            for (var s = 0; s < subs.Length; s++)
+            {
+                if (m.GetTopology(s) != MeshTopology.Triangles)
+                {
+                    return null;
+                }
+
+                subs[s] = m.GetTriangles(s);
+            }
+
+            var vs = m.vertices;
+            var entrada = new V3[vs.Length];
+            for (var i = 0; i < vs.Length; i++)
+            {
+                entrada[i] = new V3(vs[i].x, vs[i].y, vs[i].z);
+            }
+
+            bool EnZona(V3 p)
+            {
+                foreach (var e in etapas)
+                {
+                    if (DanoDelCaso.Toca(e.Campo, p))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            var r = Refinamiento.Partir(entrada, subs, EnZona, LadoMaximo, 4, TopeVertices);
+            if (r.Padres.Count == 0)
+            {
+                return null;
+            }
+
+            var n = r.Posiciones.Count;
+            var fina = new Mesh { name = m.name + "_fino", indexFormat = n > 65535 ? IndexFormat.UInt32 : IndexFormat.UInt16 };
+            var posiciones = new Vector3[n];
+            for (var i = 0; i < n; i++)
+            {
+                var p = r.Posiciones[i];
+                posiciones[i] = new Vector3((float)p.X, (float)p.Y, (float)p.Z);
+            }
+
+            fina.vertices = posiciones;
+            var normales = m.normals;
+            if (normales.Length == vs.Length)
+            {
+                var lista = new List<Vector3>(normales);
+                foreach (var (a, b) in r.Padres)
+                {
+                    lista.Add((lista[a] + lista[b]).normalized);
+                }
+
+                fina.SetNormals(lista);
+            }
+
+            var tangentes = m.tangents;
+            if (tangentes.Length == vs.Length)
+            {
+                var lista = new List<Vector4>(tangentes);
+                foreach (var (a, b) in r.Padres)
+                {
+                    var t = ((Vector3)lista[a] + (Vector3)lista[b]).normalized;
+                    lista.Add(new Vector4(t.x, t.y, t.z, lista[a].w));
+                }
+
+                fina.SetTangents(lista);
+            }
+
+            var colores = m.colors;
+            if (colores.Length == vs.Length)
+            {
+                var lista = new List<Color>(colores);
+                foreach (var (a, b) in r.Padres)
+                {
+                    lista.Add(Color.Lerp(lista[a], lista[b], 0.5f));
+                }
+
+                fina.SetColors(lista);
+            }
+
+            var uv = new List<Vector4>();
+            for (var canal = 0; canal < 8; canal++)
+            {
+                if (!m.HasVertexAttribute((VertexAttribute)((int)VertexAttribute.TexCoord0 + canal)))
+                {
+                    continue;
+                }
+
+                uv.Clear();
+                m.GetUVs(canal, uv);
+                if (uv.Count != vs.Length)
+                {
+                    continue;
+                }
+
+                foreach (var (a, b) in r.Padres)
+                {
+                    uv.Add((uv[a] + uv[b]) * 0.5f);
+                }
+
+                fina.SetUVs(canal, uv);
+            }
+
+            fina.subMeshCount = subs.Length;
+            for (var s = 0; s < subs.Length; s++)
+            {
+                fina.SetTriangles(r.Triangulos[s], s, false);
+            }
+
+            fina.RecalculateBounds();
+            return fina;
+        }
+
+        /// <summary>
+        /// Las copias deformadas de una malla, una por impacto (cada una con los daños de los anteriores),
+        /// o nulo si ningún daño mueve sus vértices.
+        /// </summary>
+        private static Mesh[] Deformar(Mesh antes, List<(double Desde, CampoDano Campo)> etapas, int semilla, out double maximo)
         {
             var vertices = antes.vertices;
+            var triangulos = antes.triangles;
             var entrada = new V3[vertices.Length];
             for (var i = 0; i < vertices.Length; i++)
             {
                 entrada[i] = new V3(vertices[i].x, vertices[i].y, vertices[i].z);
             }
 
-            var salida = DanoDelCaso.Deformar(campo, entrada, antes.triangles, semilla);
             maximo = 0.0;
+            var acumulado = new Vector3[vertices.Length];
             var movido = new bool[vertices.Length];
-            for (var i = 0; i < vertices.Length; i++)
+            var mallas = new Mesh[etapas.Count];
+            for (var k = 0; k < etapas.Count; k++)
             {
-                var nuevo = new Vector3((float)salida[i].X, (float)salida[i].Y, (float)salida[i].Z);
-                var d = (nuevo - vertices[i]).magnitude;
-                if (d > 1e-5f)
+                var salida = DanoDelCaso.Deformar(etapas[k].Campo, entrada, triangulos, semilla + k);
+                var nuevos = new Vector3[vertices.Length];
+                for (var i = 0; i < vertices.Length; i++)
                 {
-                    movido[i] = true;
-                    maximo = System.Math.Max(maximo, d);
+                    acumulado[i] += new Vector3((float)(salida[i].X - entrada[i].X), (float)(salida[i].Y - entrada[i].Y), (float)(salida[i].Z - entrada[i].Z));
+                    var d = acumulado[i].magnitude;
+                    if (d > 1e-5f)
+                    {
+                        movido[i] = true;
+                        maximo = System.Math.Max(maximo, d);
+                    }
+
+                    nuevos[i] = vertices[i] + acumulado[i];
                 }
 
-                vertices[i] = nuevo;
+                mallas[k] = Copia(antes, nuevos, movido, k);
             }
 
-            if (maximo <= 0.0)
-            {
-                return null;
-            }
+            return maximo > 0.0 ? mallas : null;
+        }
 
+        private static Mesh Copia(Mesh antes, Vector3[] vertices, bool[] movido, int etapa)
+        {
             var despues = Object.Instantiate(antes);
-            despues.name = antes.name + "_dano";
+            despues.name = antes.name + "_dano" + (etapa > 0 ? "_" + etapa : string.Empty);
             despues.vertices = vertices;
             // Las normales se rehacen solo donde la lámina se movió: el resto conserva las del modelo.
             var originales = antes.normals;
@@ -178,23 +341,30 @@ namespace Croquis.Visor
         {
             public MeshFilter Filtro;
             public Mesh Antes;
-            public Mesh Despues;
+            public Mesh[] Etapas;
             private Mesh enMedio;
+            private Mesh hacia;
             private Vector3[] va;
             private Vector3[] vd;
             private Vector3[] vm;
 
-            /// <summary>La malla a una fracción `f` del camino entre la original y la deformada.</summary>
-            public Mesh Transicion(double f)
+            /// <summary>La malla a una fracción `f` del camino entre `desde` y `a`.</summary>
+            public Mesh Transicion(Mesh desde, Mesh a, double f)
             {
                 if (enMedio == null)
                 {
-                    enMedio = Object.Instantiate(Despues);
+                    enMedio = Object.Instantiate(a);
                     enMedio.name = Antes.name + "_golpe";
                     enMedio.MarkDynamic();
-                    va = Antes.vertices;
-                    vd = Despues.vertices;
-                    vm = new Vector3[va.Length];
+                    vm = new Vector3[a.vertexCount];
+                }
+
+                if (hacia != a)
+                {
+                    hacia = a;
+                    va = desde.vertices;
+                    vd = a.vertices;
+                    enMedio.normals = a.normals;
                 }
 
                 var k = (float)f;

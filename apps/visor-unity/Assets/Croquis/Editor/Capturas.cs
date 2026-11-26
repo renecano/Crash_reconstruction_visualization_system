@@ -16,6 +16,7 @@ namespace Croquis.EditorTools
     ///
     ///   Unity -batchmode -projectPath apps/visor-unity -executeMethod Croquis.EditorTools.Capturas.Tomar
     ///         -casos &lt;carpeta&gt; -salida &lt;carpeta&gt; [-t 0] (varios instantes: -t -1,0.3,3)
+    ///         [-vistas "cerca:veh-a:30:4:1.6;orbita"] (separadas por «;»; sin ella, las cinco de siempre)
     ///
     /// Las capturas que se le enseñan a René salen del build WebGL (tools/unity/capturas.mjs): estas
     /// son para trabajar.
@@ -33,7 +34,7 @@ namespace Croquis.EditorTools
                 return i >= 0 && i + 1 < args.Length ? args[i + 1] : d;
             }
 
-            SessionState.SetString(Clave, Arg("-casos", "Build/casos") + "|" + Arg("-salida", "Build/capturas") + "|" + Arg("-t", "0"));
+            SessionState.SetString(Clave, Arg("-casos", "Build/casos") + "|" + Arg("-salida", "Build/capturas") + "|" + Arg("-t", "0") + "|" + Arg("-vistas", ""));
             ConstruirVisor.Preparar();
             EditorSceneManager.OpenScene(ConstruirVisor.RutaEscena);
             EditorApplication.EnterPlaymode();
@@ -73,7 +74,9 @@ namespace Croquis.EditorTools
                     var caso = Paquete.Leer(File.ReadAllText(archivo));
                     await visor.CargarAsync(caso);
                     var conductor = caso.Resultado.Vehiculos.FirstOrDefault(v => v.Involucrado)?.Id;
-                    var vistas = new[] { "cinematica", "acera", "cenital", "orbita" }.Concat(conductor != null ? new[] { "conductor:" + conductor } : new string[0]);
+                    var vistas = partes.Length > 3 && partes[3] != ""
+                        ? partes[3].Split(';')
+                        : new[] { "cinematica", "acera", "cenital", "orbita" }.Concat(conductor != null ? new[] { "conductor:" + conductor } : new string[0]);
                     foreach (var t in tiempos)
                     foreach (var vista in vistas)
                     {
@@ -87,7 +90,7 @@ namespace Croquis.EditorTools
 
                         // Con un solo instante, el nombre de siempre; con varios, también el instante.
                         var instante = tiempos.Length > 1 ? "-t" + t.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) : "";
-                        var ruta = Path.Combine(partes[1], nombre + instante + "-" + vista.Replace(":", "-") + ".png");
+                        var ruta = Path.Combine(partes[1], nombre + instante + "-" + vista.Replace(":", "-").Replace(".", "_") + ".png");
                         Guardar(camara, ruta, 1600, 900);
                         Debug.Log("[captura] " + ruta);
                     }
