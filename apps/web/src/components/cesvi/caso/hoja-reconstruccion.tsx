@@ -75,11 +75,14 @@ export function CifraReconstruccion({
       </h2>
       {v && mejor !== undefined ? (
         <>
-          <p className="flex items-end gap-3">
+          {/* La cifra va en itálica: su último dígito sobresale hacia la derecha, así que se le deja ese
+              espacio (`pr-[0.1em]`); y si el panel es angosto, el «km/h» baja en vez de encimarse
+              (Alberto, 2026-11-26: tres dígitos, como 121). */}
+          <p className="flex flex-wrap items-end gap-x-3 gap-y-1">
             <Cuenta
               valor={mejor}
               decimales={F.DECIMALES.reconstruccion}
-              className="cifra-protagonista text-[clamp(5rem,10.6vw,9.5rem)]"
+              className="cifra-protagonista pr-[0.1em] text-[clamp(5rem,10.6vw,9.5rem)]"
               testid="cifra-reconstruida"
             />
             <span className="flex flex-col pb-2">

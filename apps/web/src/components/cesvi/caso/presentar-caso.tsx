@@ -196,7 +196,7 @@ export function PresentarCaso({
         <div className="flex shrink-0 gap-2">
           <button
             type="button"
-            className="boton-secundario boton-compacto grid w-10 place-items-center px-0"
+            className="boton-secundario boton-compacto grid w-10 place-items-center bg-superficie px-0 shadow-sm"
             onClick={() => guardarTema("presentar", tema === "claro" ? "oscuro" : "claro")}
             aria-label={tema === "claro" ? "Cambiar a tema oscuro" : "Cambiar a tema claro"}
           >
@@ -204,7 +204,8 @@ export function PresentarCaso({
           </button>
           <button
             type="button"
-            className="boton-secundario boton-compacto"
+            // Sobre el 3D, con fondo como los demás botones (Alberto, 2026-11-26: no se leía).
+            className="boton-secundario boton-compacto bg-superficie shadow-sm"
             onClick={onSalir}
             data-testid="salir-presentar"
           >
