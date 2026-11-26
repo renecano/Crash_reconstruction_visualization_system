@@ -1507,7 +1507,9 @@ René (2026-11-26): las posiciones finales con dirección («hacia el noroeste»
 | Prueba                                        | 21 de 31 | 19 de 31           | 22 de 31       |
 | Desarrollo                                    | 44 de 55 | 41 de 55           | 42 de 55       |
 
-René aprobó 19 de 31 y 41 de 55 en el índice («masas por ficha del modelo (#311, 395401c7); en 5 expedientes deja de ocurrir el impacto posterior; René lo aprobó el 2026-11-26»). Con el arreglo dan 22 y 42: el índice sigue en 21 y 44 hasta que René elija.
+René (2026-11-26) eligió 22 de 31 y 42 de 55 para el índice, con su motivo: «se corrigió el choque fantasma de la reconstrucción previa (#323); recupera cesvi-e9aed4ab5b y agrega 3 impactos; René lo aprobó el 2026-11-26». Va en el #323 (`eval/cifras.mjs`, `cifras.json`, README y guion de la demo) y se aplica cuando se publique.
+
+- **Los 4 que no se recuperan, al paquete de «física de los alcances en el mismo sentido»** (después de publicar; René, 2026-11-26): cesvi-0b1f65a976, cesvi-644f4d909d, cesvi-d6f456b23d y cesvi-31aa158ae6. Es el contacto posterior del solver (`tryImpact` y `resolveSecondaryContact`, Python y TS con paridad): con el impacto declarado, el que golpea se detiene antes del colocado sin registrar el choque.
 
 - **Para la revisión de la t9-junta:** contra el índice, las carambolas dan 19 de 31 y 41 de 55 en lugar de 21 y 44. Es esperado: lo mueve el #311 (`395401c7`, la clase y la masa por el modelo) y René lo aprobó el 2026-11-26.
 
