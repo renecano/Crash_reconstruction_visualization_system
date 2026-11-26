@@ -1,5 +1,7 @@
 /**
- * «Qué importa» (René, 2026-11-26): lo de la escena que no influye en la cifra va en gris. La misma
+ * «Qué cambia la cifra» (René, 2026-11-26): lo de la escena que no influye en la cifra va en gris.
+ * Solo la cifra: un objeto puede no cambiar la velocidad y aun así importar para el dictamen
+ * (visibilidad, señales); por eso el botón no se llama «Qué importa». La misma
  * lógica que la prueba del poste (`escena-corregir.spec.ts`): un objeto fuera de los recorridos de los
  * vehículos no cambia la cifra; uno en su recorrido, sí.
  *

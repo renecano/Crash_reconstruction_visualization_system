@@ -15,7 +15,7 @@ import { tomarMapa, type MapaPrestado } from "@/lib/mapa-compartido";
 import { COLOR_MEDIDA, dibujoMedicion } from "@/lib/medir";
 import { COLOR_ONDULACION, COLOR_SUPERFICIE, COLOR_TOPE } from "@/lib/terreno-colores";
 
-/** «Qué importa»: el gris de lo que no influye en la cifra. */
+/** «Qué cambia la cifra»: el gris de lo que no influye en la cifra. */
 const COLOR_NO_IMPORTA = "#9AA0A8";
 import { estiloMapaEscena } from "./estilo-mapa-escena";
 import { svgPersona } from "./figura-persona";
@@ -53,7 +53,7 @@ export interface ObjetoMapa {
   rumbo: number;
   largo: number;
   ancho: number;
-  /** «Qué importa»: no toca ningún recorrido reconstruido, va en gris. */
+  /** «Qué cambia la cifra»: no toca ningún recorrido reconstruido, va en gris. */
   apagado?: boolean;
 }
 
@@ -93,7 +93,7 @@ export interface TerrenoMapa {
   /** El polígono de la zona o los dos extremos del tope. */
   puntos: Punto[];
   centro: Punto;
-  /** «Qué importa»: no toca ningún recorrido reconstruido, va en gris. */
+  /** «Qué cambia la cifra»: no toca ningún recorrido reconstruido, va en gris. */
   apagado?: boolean;
 }
 
@@ -130,7 +130,7 @@ export interface MapaFacilProps {
   /** W5: las zonas de otra superficie, las zonas onduladas y los topes. */
   terreno?: TerrenoMapa[];
   /**
-   * «Qué importa» (René, 2026-11-26): el botón que pone en gris lo que no influye en la cifra. Solo
+   * «Qué cambia la cifra» (René, 2026-11-26): el botón que pone en gris lo que no influye en la cifra. Solo
    * con la reconstrucción al día; null sin ella.
    */
   queImporta?: { activo: boolean; onAlternar: () => void } | null;
@@ -912,7 +912,7 @@ export function MapaFacil(p: MapaFacilProps) {
             title="En gris: lo que no toca ningún recorrido reconstruido y no influye en la cifra"
             data-testid="que-importa"
           >
-            Qué importa
+            Qué cambia la cifra
           </button>
         ) : null}
         {p.queImporta?.activo ? (

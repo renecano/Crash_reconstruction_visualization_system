@@ -1824,7 +1824,7 @@
   .escena-anillo-rotulo:empty {
     display: none;
   }
-  /* «Qué importa» (René, 2026-11-26): lo que no toca ningún recorrido reconstruido, en gris. */
+  /* «Qué cambia la cifra» (René, 2026-11-26): lo que no toca ningún recorrido reconstruido, en gris. */
   .escena-apagado {
     filter: grayscale(1);
     opacity: 0.45;

@@ -255,7 +255,7 @@ export function EscenaFacil({
   /** Los edificios y muros del mapa (René, 2026-11-24): se avisa si un vehículo queda sobre uno. */
   obstaculos?: readonly ObstaculoDelMapa[];
   /**
-   * La reconstrucción al día con esta escena (null si no hay o quedó vieja), para «Qué importa»
+   * La reconstrucción al día con esta escena (null si no hay o quedó vieja), para «Qué cambia la cifra»
    * (René, 2026-11-26): en gris lo que no toca ningún recorrido reconstruido.
    */
   reconstruccion?: Reconstruccion | null;
@@ -1824,7 +1824,7 @@ export function EscenaFacil({
       else setEditandoC1("terreno");
     }
   };
-  // «Qué importa» (René, 2026-11-26): con la reconstrucción al día, lo que no toca ningún recorrido
+  // «Qué cambia la cifra» (René, 2026-11-26): con la reconstrucción al día, lo que no toca ningún recorrido
   // va en gris (la misma lógica que la e2e del poste). Se calcula solo al pedirlo.
   const [verQueImporta, setVerQueImporta] = useState(false);
   const puedeQueImporta = reconstruccion !== null && recalculo === "al_dia";

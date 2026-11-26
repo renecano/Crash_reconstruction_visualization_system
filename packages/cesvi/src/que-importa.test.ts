@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { desdeMetros, type LonLat } from "./geo";
 import { distanciaAlBarrido, MARGEN_QUE_IMPORTA_M, queImporta, type Barrido } from "./que-importa";
 
-/** «Qué importa» (René, 2026-11-26): lo que no toca ningún recorrido no influye en la cifra. */
+/** «Qué cambia la cifra» (René, 2026-11-26): lo que no toca ningún recorrido no influye en la cifra. */
 describe("qué importa en la escena", () => {
   const origen: LonLat = [-99.05, 19.32];
   const en = (este: number, norte: number) => desdeMetros(este, norte, origen) as LonLat;
