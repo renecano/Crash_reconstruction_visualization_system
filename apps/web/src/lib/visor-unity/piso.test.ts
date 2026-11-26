@@ -6,12 +6,14 @@ import {
   atribucionDelPiso,
   ATRIBUCION_MAPA,
   desplazamientoPx,
+  estiloFoto,
   LADO_MAX_M,
   LADO_MIN_M,
   LADO_PX,
   motivoSinFoto,
   pisoDelCaso,
   SIN_AJUSTE,
+  TESELA_FOTO_PX,
   zoomParaLado,
 } from "./piso";
 
@@ -66,5 +68,21 @@ describe("el piso del modo «mapa real» (ronda 4, punto 9)", () => {
     expect(atribucionDelPiso(capas, true)).toBe(`${ATRIBUCION_MAPA} · Powered by Esri · Esri`);
     expect(atribucionDelPiso(capas, false)).toBe(ATRIBUCION_MAPA);
     expect(atribucionDelPiso(null, true)).toBe(ATRIBUCION_MAPA);
+  });
+});
+
+describe("la foto satelital a su resolución (René, 2026-11-26: «más nítido»)", () => {
+  it("las teselas se piden al zoom de la imagen de 2 048 px, no al de los 1 024 px de CSS", () => {
+    // MapLibre: zoom de la tesela = zoom + log2(512 / tileSize), sin pixelRatio.
+    const lat = 19.3;
+    const lado = 600;
+    const z = zoomParaLado(lado, lat);
+    const zTesela = z + Math.log2(512 / TESELA_FOTO_PX);
+    const mPorPxTesela = (40075016.686 * Math.cos((lat * Math.PI) / 180)) / (256 * 2 ** zTesela);
+    // Cada pixel de la tesela, uno de la imagen: lo mismo que mide un pixel de los 2 048.
+    expect(mPorPxTesela).toBeCloseTo(lado / LADO_PX, 6);
+    const fuente = estiloFoto("llave").sources.foto as { tileSize: number; maxzoom: number };
+    expect(fuente.tileSize).toBe(128);
+    expect(fuente.maxzoom).toBe(19);
   });
 });
