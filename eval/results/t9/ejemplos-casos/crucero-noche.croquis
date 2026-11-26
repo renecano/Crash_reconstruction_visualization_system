@@ -1,0 +1,1325 @@
+{
+  "formato": "croquis-caso",
+  "version": 1,
+  "guardado": "2026-11-26T17:50:35.000Z",
+  "narracion": "El hecho se ubica en el crucero de la calle Azucena esquina con Avenida del Árbol, colonia Lomas de San Lorenzo, alcaldía Iztapalapa, aproximadamente a las 22:30 horas. La calle Azucena consta de un arroyo de circulación con dos carriles asfaltados, con sentido de circulación de Sureste a Noroeste y viceversa; los carriles adyacentes se ocupan de estacionamiento. La Avenida del Árbol consta de un arroyo de circulación de cuatro carriles asfaltados, divididos por líneas longitudinales de color blanco, con sentido de circulación de Sur a Norte.\n\nSe observan dos vehículos: el vehículo A, marca VW, tipo Jetta, modelo 2002, color azul, de servicio particular, y el vehículo B, marca GM, tipo Camaro, modelo 1995, color rojo, de servicio particular.\n\nEl vehículo A presenta en la parte frontal un daño con características de hundimiento en dirección de adelante hacia atrás, acentuado sobre su costado delantero derecho y en el vértice delantero izquierdo, a una altura de 0.80 metros con respecto del piso. Presenta también un daño tipo tallón en dirección de adelante hacia atrás, con desprendimiento de pintura, sobre el vértice delantero inferior de la fascia. El conjunto de luces de ambos lados, la fascia y la parrilla se observan desacoplados de su posición original. En el vértice delantero izquierdo se describe además un hundimiento con desprendimiento de pintura a una altura de 0.73 metros, y en otra fotografía una altura de 0.72 metros. En el costado derecho no se aprecian daños por impacto contra cuerpo duro y se observa la ausencia del cuarto delantero derecho. En el habitáculo, las bolsas de aire del conductor y del copiloto se encuentran activadas. En el daño del vehículo A solo se observa desprendimiento de material, sin restos de pintura color rojo.\n\nEl vehículo B no presenta daños por impacto contra cuerpo duro en los costados delantero y medio derechos. En la parte posterior derecha se observa un ligero daño tipo hundimiento sobre la salpicadera posterior, en dirección de derecha a izquierda, con un daño tipo tallón en dirección de adelante hacia atrás con desprendimiento de pintura. Se observa también desprendimiento de pintura sobre la parte media de la puerta y la parte media de la salpicadera trasera, este último a una altura de 0.73 metros. En otra medición se registra el daño a una altura de 0.67 metros con respecto del piso. No se describen restos de pintura color azul sobre el vehículo B. No se describen huellas de frenado, restos ni posiciones finales.",
+  "escena": {
+    "posiciones": [],
+    "conteos": {
+      "filas": 38,
+      "valores_invalidos": 0,
+      "citas": 12,
+      "citas_fuera": 0,
+      "numeros": 4,
+      "numeros_fuera": 0
+    },
+    "problemas": [],
+    "preguntas": [
+      {
+        "clave": "impacto-propuesto",
+        "texto": "La narración no dice qué entró en contacto. Por los daños, Croquis supone un impacto entre V1 en su frontal y V2 en su lateral derecho. ¿Es correcto?",
+        "porQue": "Sin los impactos no hay reconstrucción; este es un supuesto hasta que el perito lo confirme.",
+        "control": {
+          "tipo": "sino"
+        },
+        "impacto": 1
+      },
+      {
+        "clave": "impactos",
+        "texto": "¿Qué vehículos chocaron primero?",
+        "porQue": "Sin los impactos no hay reconstrucción.",
+        "control": {
+          "tipo": "opciones",
+          "opciones": [
+            {
+              "valor": "V1|V2",
+              "etiqueta": "V1 y V2"
+            },
+            {
+              "valor": "V1|objeto:otro",
+              "etiqueta": "V1 contra un objeto fijo"
+            },
+            {
+              "valor": "V2|objeto:otro",
+              "etiqueta": "V2 contra un objeto fijo"
+            }
+          ]
+        }
+      },
+      {
+        "clave": "velocidad-V1",
+        "texto": "¿A qué velocidad venía V1 antes del impacto?",
+        "porQue": "Si la evidencia no fija la velocidad, la reconstrucción usa la que des, como supuesto con su rango. Con «No sé», la típica de la vía.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "km/h"
+        },
+        "vehiculo": "V1"
+      },
+      {
+        "clave": "velocidad-V2",
+        "texto": "¿A qué velocidad venía V2 antes del impacto?",
+        "porQue": "Si la evidencia no fija la velocidad, la reconstrucción usa la que des, como supuesto con su rango. Con «No sé», la típica de la vía.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "km/h"
+        },
+        "vehiculo": "V2"
+      },
+      {
+        "clave": "restos",
+        "texto": "¿Qué longitud tiene la zona de restos?",
+        "porQue": "Los restos fijan el desplazamiento después del impacto.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "m"
+        }
+      },
+      {
+        "clave": "final-V1",
+        "texto": "¿Dónde quedó V1 al final?",
+        "porQue": "La posición final es evidencia para la inversión de velocidades.",
+        "control": {
+          "tipo": "mapa"
+        },
+        "vehiculo": "V1"
+      },
+      {
+        "clave": "final-V2",
+        "texto": "¿Dónde quedó V2 al final?",
+        "porQue": "La posición final es evidencia para la inversión de velocidades.",
+        "control": {
+          "tipo": "mapa"
+        },
+        "vehiculo": "V2"
+      }
+    ]
+  },
+  "expediente": {
+    "caso": {
+      "fecha_hora": {
+        "valor": "aproximadamente 22:30 horas",
+        "fuente": "perito"
+      },
+      "lugar": {
+        "descripcion": {
+          "valor": "crucero de la calle Azucena esquina con Avenida del Árbol, colonia Lomas de San Lorenzo",
+          "fuente": "perito"
+        },
+        "municipio": {
+          "valor": "Iztapalapa",
+          "fuente": "perito"
+        },
+        "coordenadas": {
+          "lat": 19.317204,
+          "lon": -99.0593382
+        },
+        "calles_del_mapa": {
+          "fuente": "overpass",
+          "atribucion": "© OpenStreetMap contributors (ODbL)",
+          "consultado": "2026-11-25T00:00:00.000Z",
+          "centro": {
+            "lat": 19.317204,
+            "lon": -99.059338
+          },
+          "radio_m": 150,
+          "vias": [
+            {
+              "id": 39563205,
+              "tipo": "tertiary",
+              "nombre": "Avenida del Árbol",
+              "puntos": [
+                [
+                  -99.052694,
+                  19.322352
+                ],
+                [
+                  -99.052801,
+                  19.322208
+                ],
+                [
+                  -99.052908,
+                  19.322078
+                ],
+                [
+                  -99.053063,
+                  19.321875
+                ],
+                [
+                  -99.053134,
+                  19.321785
+                ],
+                [
+                  -99.053286,
+                  19.321583
+                ],
+                [
+                  -99.053348,
+                  19.321518
+                ],
+                [
+                  -99.053524,
+                  19.321298
+                ],
+                [
+                  -99.05358,
+                  19.321224
+                ],
+                [
+                  -99.053621,
+                  19.321181
+                ],
+                [
+                  -99.05369,
+                  19.321105
+                ],
+                [
+                  -99.053857,
+                  19.320963
+                ],
+                [
+                  -99.05398,
+                  19.320881
+                ],
+                [
+                  -99.054119,
+                  19.320807
+                ],
+                [
+                  -99.054191,
+                  19.320774
+                ],
+                [
+                  -99.054573,
+                  19.320587
+                ],
+                [
+                  -99.05493,
+                  19.320407
+                ],
+                [
+                  -99.055164,
+                  19.320295
+                ],
+                [
+                  -99.055353,
+                  19.320251
+                ],
+                [
+                  -99.055503,
+                  19.320223
+                ],
+                [
+                  -99.05577,
+                  19.320239
+                ],
+                [
+                  -99.055908,
+                  19.320293
+                ],
+                [
+                  -99.056029,
+                  19.320366
+                ],
+                [
+                  -99.056142,
+                  19.320436
+                ],
+                [
+                  -99.056391,
+                  19.320622
+                ],
+                [
+                  -99.056494,
+                  19.320695
+                ],
+                [
+                  -99.056579,
+                  19.320582
+                ],
+                [
+                  -99.057197,
+                  19.31984
+                ],
+                [
+                  -99.057442,
+                  19.319538
+                ],
+                [
+                  -99.057544,
+                  19.319408
+                ],
+                [
+                  -99.057667,
+                  19.319255
+                ],
+                [
+                  -99.057895,
+                  19.318972
+                ],
+                [
+                  -99.058076,
+                  19.318755
+                ],
+                [
+                  -99.05833,
+                  19.318437
+                ],
+                [
+                  -99.058426,
+                  19.318314
+                ],
+                [
+                  -99.0585,
+                  19.318227
+                ],
+                [
+                  -99.058691,
+                  19.317997
+                ],
+                [
+                  -99.058871,
+                  19.317779
+                ],
+                [
+                  -99.059123,
+                  19.317492
+                ],
+                [
+                  -99.059345,
+                  19.317208
+                ],
+                [
+                  -99.059575,
+                  19.316923
+                ],
+                [
+                  -99.059793,
+                  19.316638
+                ],
+                [
+                  -99.060021,
+                  19.316334
+                ],
+                [
+                  -99.060241,
+                  19.316056
+                ],
+                [
+                  -99.060475,
+                  19.315763
+                ],
+                [
+                  -99.060735,
+                  19.315484
+                ],
+                [
+                  -99.060822,
+                  19.315469
+                ],
+                [
+                  -99.060957,
+                  19.315474
+                ],
+                [
+                  -99.061981,
+                  19.315674
+                ],
+                [
+                  -99.062857,
+                  19.315855
+                ],
+                [
+                  -99.06343,
+                  19.315974
+                ],
+                [
+                  -99.064598,
+                  19.316207
+                ],
+                [
+                  -99.064803,
+                  19.316216
+                ],
+                [
+                  -99.064981,
+                  19.316191
+                ],
+                [
+                  -99.065093,
+                  19.316168
+                ],
+                [
+                  -99.06519,
+                  19.316101
+                ],
+                [
+                  -99.065255,
+                  19.316049
+                ],
+                [
+                  -99.065353,
+                  19.31594
+                ],
+                [
+                  -99.065434,
+                  19.315822
+                ],
+                [
+                  -99.065482,
+                  19.315776
+                ],
+                [
+                  -99.065571,
+                  19.315753
+                ]
+              ]
+            },
+            {
+              "id": 41040306,
+              "tipo": "residential",
+              "nombre": "Avenida 4",
+              "sentido_unico": "no",
+              "puntos": [
+                [
+                  -99.056732,
+                  19.317545
+                ],
+                [
+                  -99.056739,
+                  19.317488
+                ],
+                [
+                  -99.056903,
+                  19.317241
+                ],
+                [
+                  -99.057005,
+                  19.31711
+                ],
+                [
+                  -99.057106,
+                  19.316986
+                ],
+                [
+                  -99.057169,
+                  19.316904
+                ],
+                [
+                  -99.057251,
+                  19.316795
+                ],
+                [
+                  -99.057352,
+                  19.316653
+                ],
+                [
+                  -99.057463,
+                  19.316523
+                ],
+                [
+                  -99.057701,
+                  19.316219
+                ],
+                [
+                  -99.057944,
+                  19.315899
+                ],
+                [
+                  -99.058173,
+                  19.31562
+                ],
+                [
+                  -99.058386,
+                  19.315336
+                ],
+                [
+                  -99.058526,
+                  19.315134
+                ],
+                [
+                  -99.058594,
+                  19.315065
+                ],
+                [
+                  -99.05872,
+                  19.314878
+                ]
+              ]
+            },
+            {
+              "id": 41040332,
+              "tipo": "residential",
+              "nombre": "Calle San Isidro",
+              "sentido_unico": "no",
+              "puntos": [
+                [
+                  -99.063373,
+                  19.3183
+                ],
+                [
+                  -99.061839,
+                  19.317149
+                ],
+                [
+                  -99.060241,
+                  19.316056
+                ],
+                [
+                  -99.058594,
+                  19.315065
+                ]
+              ]
+            },
+            {
+              "id": 41081779,
+              "tipo": "residential",
+              "nombre": "Calle Flor de Dalia",
+              "sentido_unico": "no",
+              "puntos": [
+                [
+                  -99.063134,
+                  19.318595
+                ],
+                [
+                  -99.061604,
+                  19.317453
+                ],
+                [
+                  -99.060021,
+                  19.316334
+                ],
+                [
+                  -99.058386,
+                  19.315336
+                ]
+              ]
+            },
+            {
+              "id": 245757389,
+              "tipo": "residential",
+              "nombre": "Calle Flor de Lirio",
+              "puntos": [
+                [
+                  -99.061372,
+                  19.317731
+                ],
+                [
+                  -99.059793,
+                  19.316638
+                ],
+                [
+                  -99.058173,
+                  19.31562
+                ]
+              ]
+            },
+            {
+              "id": 245757391,
+              "tipo": "residential",
+              "nombre": "Calle Moras",
+              "puntos": [
+                [
+                  -99.061134,
+                  19.318015
+                ],
+                [
+                  -99.059575,
+                  19.316923
+                ],
+                [
+                  -99.057944,
+                  19.315899
+                ]
+              ]
+            },
+            {
+              "id": 245757393,
+              "tipo": "residential",
+              "nombre": "Calle Azucena",
+              "puntos": [
+                [
+                  -99.057701,
+                  19.316219
+                ],
+                [
+                  -99.059345,
+                  19.317208
+                ],
+                [
+                  -99.060899,
+                  19.318306
+                ]
+              ]
+            },
+            {
+              "id": 245757395,
+              "tipo": "residential",
+              "nombre": "Calle Jazmín",
+              "puntos": [
+                [
+                  -99.057463,
+                  19.316523
+                ],
+                [
+                  -99.059009,
+                  19.317444
+                ],
+                [
+                  -99.059123,
+                  19.317492
+                ],
+                [
+                  -99.059196,
+                  19.317518
+                ],
+                [
+                  -99.060675,
+                  19.318585
+                ]
+              ]
+            },
+            {
+              "id": 245757397,
+              "tipo": "residential",
+              "nombre": "Calle Alheli",
+              "puntos": [
+                [
+                  -99.057251,
+                  19.316795
+                ],
+                [
+                  -99.058871,
+                  19.317779
+                ],
+                [
+                  -99.058973,
+                  19.317795
+                ],
+                [
+                  -99.059264,
+                  19.318013
+                ],
+                [
+                  -99.059608,
+                  19.318271
+                ],
+                [
+                  -99.059736,
+                  19.318367
+                ],
+                [
+                  -99.060083,
+                  19.318627
+                ],
+                [
+                  -99.060429,
+                  19.318886
+                ]
+              ]
+            },
+            {
+              "id": 364409237,
+              "tipo": "tertiary",
+              "nombre": "Avenida 3",
+              "puntos": [
+                [
+                  -99.058949,
+                  19.320687
+                ],
+                [
+                  -99.059082,
+                  19.320535
+                ],
+                [
+                  -99.059315,
+                  19.320239
+                ],
+                [
+                  -99.059439,
+                  19.320087
+                ],
+                [
+                  -99.059573,
+                  19.319935
+                ],
+                [
+                  -99.059611,
+                  19.319888
+                ],
+                [
+                  -99.059803,
+                  19.319653
+                ],
+                [
+                  -99.060032,
+                  19.319373
+                ],
+                [
+                  -99.060296,
+                  19.31905
+                ],
+                [
+                  -99.060429,
+                  19.318886
+                ],
+                [
+                  -99.060585,
+                  19.318692
+                ],
+                [
+                  -99.060675,
+                  19.318585
+                ],
+                [
+                  -99.060899,
+                  19.318306
+                ],
+                [
+                  -99.061106,
+                  19.318051
+                ],
+                [
+                  -99.061134,
+                  19.318015
+                ],
+                [
+                  -99.061372,
+                  19.317731
+                ],
+                [
+                  -99.061604,
+                  19.317453
+                ],
+                [
+                  -99.061839,
+                  19.317149
+                ],
+                [
+                  -99.062067,
+                  19.316868
+                ],
+                [
+                  -99.062298,
+                  19.316576
+                ],
+                [
+                  -99.062525,
+                  19.316298
+                ],
+                [
+                  -99.062627,
+                  19.316164
+                ],
+                [
+                  -99.062747,
+                  19.316011
+                ],
+                [
+                  -99.062857,
+                  19.315855
+                ]
+              ]
+            },
+            {
+              "id": 654773222,
+              "tipo": "residential",
+              "nombre": "Calle Moras",
+              "puntos": [
+                [
+                  -99.057944,
+                  19.315899
+                ],
+                [
+                  -99.057638,
+                  19.315713
+                ],
+                [
+                  -99.057349,
+                  19.315523
+                ],
+                [
+                  -99.057283,
+                  19.315476
+                ],
+                [
+                  -99.057256,
+                  19.315459
+                ],
+                [
+                  -99.057075,
+                  19.315335
+                ],
+                [
+                  -99.056662,
+                  19.315065
+                ],
+                [
+                  -99.056523,
+                  19.314967
+                ],
+                [
+                  -99.056499,
+                  19.314934
+                ]
+              ]
+            },
+            {
+              "id": 654773228,
+              "tipo": "residential",
+              "nombre": "Privada Manuel Acuña",
+              "puntos": [
+                [
+                  -99.057803,
+                  19.317702
+                ],
+                [
+                  -99.057721,
+                  19.317813
+                ]
+              ]
+            },
+            {
+              "id": 886887605,
+              "tipo": "service",
+              "puntos": [
+                [
+                  -99.059264,
+                  19.318013
+                ],
+                [
+                  -99.059227,
+                  19.318057
+                ],
+                [
+                  -99.059007,
+                  19.318319
+                ]
+              ]
+            },
+            {
+              "id": 886887606,
+              "tipo": "service",
+              "puntos": [
+                [
+                  -99.059608,
+                  19.318271
+                ],
+                [
+                  -99.059574,
+                  19.318311
+                ],
+                [
+                  -99.059355,
+                  19.318574
+                ]
+              ]
+            },
+            {
+              "id": 886887607,
+              "tipo": "service",
+              "puntos": [
+                [
+                  -99.059736,
+                  19.318367
+                ],
+                [
+                  -99.059703,
+                  19.318406
+                ],
+                [
+                  -99.059483,
+                  19.318669
+                ]
+              ]
+            },
+            {
+              "id": 886887611,
+              "tipo": "residential",
+              "puntos": [
+                [
+                  -99.058691,
+                  19.317997
+                ],
+                [
+                  -99.058178,
+                  19.317653
+                ],
+                [
+                  -99.057774,
+                  19.317382
+                ],
+                [
+                  -99.057106,
+                  19.316986
+                ]
+              ]
+            },
+            {
+              "id": 886887612,
+              "tipo": "residential",
+              "puntos": [
+                [
+                  -99.05833,
+                  19.318437
+                ],
+                [
+                  -99.057624,
+                  19.317936
+                ]
+              ]
+            },
+            {
+              "id": 886887613,
+              "tipo": "residential",
+              "puntos": [
+                [
+                  -99.058426,
+                  19.318314
+                ],
+                [
+                  -99.057721,
+                  19.317813
+                ]
+              ]
+            },
+            {
+              "id": 886895307,
+              "tipo": "service",
+              "puntos": [
+                [
+                  -99.059773,
+                  19.319211
+                ],
+                [
+                  -99.059729,
+                  19.319254
+                ],
+                [
+                  -99.059704,
+                  19.319261
+                ],
+                [
+                  -99.059681,
+                  19.319254
+                ],
+                [
+                  -99.058687,
+                  19.318546
+                ],
+                [
+                  -99.058677,
+                  19.318526
+                ],
+                [
+                  -99.058689,
+                  19.318501
+                ],
+                [
+                  -99.05874,
+                  19.318444
+                ]
+              ]
+            },
+            {
+              "id": 886895308,
+              "tipo": "service",
+              "puntos": [
+                [
+                  -99.0585,
+                  19.318227
+                ],
+                [
+                  -99.058567,
+                  19.318287
+                ],
+                [
+                  -99.05874,
+                  19.318444
+                ],
+                [
+                  -99.059773,
+                  19.319211
+                ],
+                [
+                  -99.059991,
+                  19.319347
+                ],
+                [
+                  -99.060032,
+                  19.319373
+                ]
+              ]
+            },
+            {
+              "id": 953189803,
+              "tipo": "footway",
+              "puntos": [
+                [
+                  -99.061532,
+                  19.318581
+                ],
+                [
+                  -99.061254,
+                  19.318807
+                ],
+                [
+                  -99.061233,
+                  19.318818
+                ],
+                [
+                  -99.061209,
+                  19.318821
+                ],
+                [
+                  -99.061191,
+                  19.318819
+                ],
+                [
+                  -99.061175,
+                  19.318813
+                ],
+                [
+                  -99.061161,
+                  19.318803
+                ],
+                [
+                  -99.060907,
+                  19.318602
+                ],
+                [
+                  -99.060899,
+                  19.318587
+                ],
+                [
+                  -99.061212,
+                  19.318227
+                ],
+                [
+                  -99.061371,
+                  19.31809
+                ],
+                [
+                  -99.061456,
+                  19.318016
+                ],
+                [
+                  -99.061568,
+                  19.31792
+                ],
+                [
+                  -99.061731,
+                  19.318094
+                ]
+              ]
+            }
+          ]
+        }
+      },
+      "condiciones": {
+        "superficie": {
+          "valor": "asfalto",
+          "fuente": "perito",
+          "cita": {
+            "texto": "La calle Azucena consta de un arroyo de circulación con dos carriles asfaltados, con sentido de circulación de Sureste a Noroeste y viceversa"
+          }
+        }
+      },
+      "modalidades": [
+        "crucero"
+      ]
+    },
+    "vehiculos": [
+      {
+        "id": "V1",
+        "marca": {
+          "valor": "VW",
+          "fuente": "perito"
+        },
+        "modelo": {
+          "valor": "Jetta",
+          "fuente": "perito"
+        },
+        "anio": 2002,
+        "clase": "sedan_compacto",
+        "masa": {
+          "valor": 1418,
+          "unidad": "kg",
+          "fuente": "supuesto"
+        }
+      },
+      {
+        "id": "V2",
+        "marca": {
+          "valor": "GM",
+          "fuente": "perito"
+        },
+        "modelo": {
+          "valor": "Camaro",
+          "fuente": "perito"
+        },
+        "anio": 1995,
+        "clase": "sedan_mediano",
+        "masa": {
+          "valor": 1700,
+          "unidad": "kg",
+          "fuente": "supuesto"
+        }
+      }
+    ],
+    "danos": [
+      {
+        "vehiculo": "V1",
+        "zona": {
+          "cara": "frontal",
+          "vertice": "delantero_izquierdo"
+        },
+        "altura_cm": {
+          "min": 80,
+          "max": 80
+        },
+        "direcciones": [
+          "de_adelante_hacia_atras"
+        ],
+        "tipos": [
+          "hundimiento"
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "El vehículo A presenta en la parte frontal un daño con características de hundimiento en dirección de adelante hacia atrás"
+        }
+      },
+      {
+        "vehiculo": "V1",
+        "zona": {
+          "cara": "frontal"
+        },
+        "direcciones": [
+          "de_adelante_hacia_atras"
+        ],
+        "tipos": [
+          "tallon",
+          "desprendimiento"
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "Presenta también un daño tipo tallón en dirección de adelante hacia atrás, con desprendimiento de pintura, sobre el vértice delantero inferior de la fascia"
+        }
+      },
+      {
+        "vehiculo": "V2",
+        "zona": {
+          "cara": "lateral_derecho",
+          "tercio": "trasero"
+        },
+        "direcciones": [
+          "de_derecha_a_izquierda"
+        ],
+        "tipos": [
+          "hundimiento"
+        ],
+        "magnitud": {
+          "cualitativa": "leve"
+        },
+        "fuente": "perito",
+        "cita": {
+          "texto": "En la parte posterior derecha se observa un ligero daño tipo hundimiento sobre la salpicadera posterior, en dirección de derecha a izquierda"
+        }
+      },
+      {
+        "vehiculo": "V2",
+        "zona": {
+          "cara": "lateral_derecho"
+        },
+        "direcciones": [
+          "de_adelante_hacia_atras"
+        ],
+        "tipos": [
+          "tallon",
+          "desprendimiento"
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "con un daño tipo tallón en dirección de adelante hacia atrás con desprendimiento de pintura"
+        }
+      },
+      {
+        "vehiculo": "V2",
+        "zona": {
+          "cara": "lateral_derecho",
+          "tercio": "medio"
+        },
+        "altura_cm": {
+          "min": 73,
+          "max": 73
+        },
+        "tipos": [
+          "desprendimiento"
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "desprendimiento de pintura sobre la parte media de la puerta y la parte media de la salpicadera trasera, este último a una altura de 0.73 metros"
+        }
+      }
+    ],
+    "impactos": [
+      {
+        "orden": 1,
+        "vehiculos": [
+          "V1",
+          "V2"
+        ],
+        "zonas": [
+          {
+            "vehiculo": "V1",
+            "zona": {
+              "cara": "frontal"
+            }
+          },
+          {
+            "vehiculo": "V2",
+            "zona": {
+              "cara": "lateral_derecho"
+            }
+          }
+        ],
+        "fuente": "supuesto"
+      }
+    ],
+    "versiones": [
+      {
+        "tipo": "evidencia",
+        "posiciones": [
+          {
+            "vehiculo": "V1",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.317187054857964,
+              "lon": -99.05936190309708
+            },
+            "rumbo": 37.29231124679558,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V1",
+            "fase": "final",
+            "punto": {
+              "lat": 19.31719778673736,
+              "lon": -99.05935324228298
+            },
+            "rumbo": 37.29231124679558,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V2",
+            "fase": "impacto",
+            "punto": {
+              "lat": 19.317209591804698,
+              "lon": -99.05934371538568
+            },
+            "rumbo": 126.82275361127262,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V2",
+            "fase": "final",
+            "punto": {
+              "lat": 19.317201506803894,
+              "lon": -99.05933227267951
+            },
+            "rumbo": 126.82275361127262,
+            "fuente": "perito"
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion_perito": null,
+  "titulo": "Caso nuevo",
+  "bitacora": [
+    {
+      "n": 1,
+      "de": "lector",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Lectura: 36 filas con su cita."
+    },
+    {
+      "n": 2,
+      "de": "verificador_citas",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Citas encontradas en la narración: 12 de 12; números con su cita: 4 de 4. Lo que no está en el texto se descarta."
+    },
+    {
+      "n": 3,
+      "de": "validador",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Escena válida: 2 vehículos, 1 impacto."
+    },
+    {
+      "n": 4,
+      "de": "preguntador",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "7 preguntas para el perito, de lo que más cambia la reconstrucción: impacto-propuesto, impactos, velocidad-V1, velocidad-V2, restos, final-V1, final-V2."
+    },
+    {
+      "n": 5,
+      "de": "verificador_cesvi",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Sin medidas de deformación completas: no hay EBS con el método de CESVI."
+    },
+    {
+      "n": 6,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "No sé dónde fue el primer golpe: se usa el lugar del choque (supuesto)."
+    },
+    {
+      "n": 7,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Pide reconstruir."
+    },
+    {
+      "n": 8,
+      "de": "fisico",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Reconstrucción: V1 a 20 km/h (4–27), V2 a 12 km/h (4–17)."
+    },
+    {
+      "n": 9,
+      "de": "fisico",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Con los supuestos declarados: Masa de V1: 1,418 kg; Masa de V2: 1,700 kg; Posición inicial de V1: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Posición inicial de V2: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Fricción llanta–pavimento: μ = 0.7; Después del impacto: las llantas ruedan, con un arrastre de 0.35 de la fricción; Restitución del choque: e = 0.1; Fricción entre los vehículos durante el choque: razón de impulso de 0.4."
+    },
+    {
+      "n": 10,
+      "de": "verificador_cesvi",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Sin medidas de deformación completas: no hay EBS con el método de CESVI."
+    },
+    {
+      "n": 11,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Abre el dictamen."
+    },
+    {
+      "n": 12,
+      "de": "redactor",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Dictamen redactado con la reconstrucción, la verificación con el método de CESVI, esta bitácora."
+    }
+  ]
+}

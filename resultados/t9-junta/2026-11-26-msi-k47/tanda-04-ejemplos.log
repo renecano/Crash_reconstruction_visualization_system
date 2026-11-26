@@ -1,0 +1,87 @@
+# Paso: ejemplos
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t9/ejemplos.json -Capturas docs/cesvi/ronda-4/evidencia/t9-ejemplos -Casos eval/results/t9/ejemplos-casos
+# Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
+# Inicio: 2026-11-26 11:50:09
+
+
+== 1. Herramientas
+Node v26.13.1 y pnpm 12.11.2.
+Hay internet.
+
+== 2. Dependencias
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 2m ago)
+Lockfile is up to date, resolution step is skipped
+Done in 74ms using pnpm v12.11.2
+
+== 3. El visor de Unity, desde esta computadora
+Visor 945617e035988035 servido desde el sitio: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\public\visor-unity\local
+
+== 4. La app en modo local
+Ya está compilada para esta versión (2f9b158f).
+
+== 5. La lectura con IA
+No hay llave de Claude en .env.local: la lectura con IA no estará. Todo lo demás funciona (AXA, los casos de ejemplo con su lectura guardada, la reconstrucción, el 3D y el dictamen).
+
+== 6. Croquis en http://localhost:3000
+Necesitan internet: la lectura con IA de una narración nueva, los mosaicos del mapa (sin red, el mapa sale en blanco pero se puede colocar la escena) y buscar un lugar por nombre.
+Sin internet funcionan completos: el caso de AXA y los cinco casos de ejemplo, la reconstrucción, el 3D de Unity y el dictamen.
+
+Running 1 test using 1 worker
+
+[1/1] [chromium] › e2e\ejemplos-ronda2.spec.ts:57:5 › las cinco narraciones de ejemplo, de punta a punta
+  1) [chromium] › e2e\ejemplos-ronda2.spec.ts:57:5 › las cinco narraciones de ejemplo, de punta a punta 
+
+    TimeoutError: locator.click: Timeout 20000ms exceeded.
+    Call log:
+      - waiting for getByTestId('mapa-facil')
+        - locator resolved to <div data-listo="si" data-m-por-px="0.04588" class="absolute inset-0" data-testid="mapa-facil">…</div>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <button type="button" aria-label="Deshacer" data-testid="deshacer-barra" class="escena-zoom pointer-events-auto px-3 text-[0.9rem] font-semibold">↶ Deshacer</button> from <div class="pointer-events-none absolute top-4 right-20 z-10 flex flex-col items-end gap-2 ">…</div> subtree intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <button type="button" aria-label="Deshacer" data-testid="deshacer-barra" class="escena-zoom pointer-events-auto px-3 text-[0.9rem] font-semibold">↶ Deshacer</button> from <div class="pointer-events-none absolute top-4 right-20 z-10 flex flex-col items-end gap-2 ">…</div> subtree intercepts pointer events
+        - retrying click action
+          - waiting 100ms
+        39 × waiting for element to be visible, enabled and stable
+           - element is visible, enabled and stable
+           - scrolling into view if needed
+           - done scrolling
+           - <button type="button" aria-label="Deshacer" data-testid="deshacer-barra" class="escena-zoom pointer-events-auto px-3 text-[0.9rem] font-semibold">↶ Deshacer</button> from <div class="pointer-events-none absolute top-4 right-20 z-10 flex flex-col items-end gap-2 ">…</div> subtree intercepts pointer events
+         - retrying click action
+           - waiting 500ms
+
+
+       at ayuda-recorrido.ts:86
+
+      84 |   const caja = (await mapa.boundingBox())!;
+      85 |   const ref = (await page.getByTestId(desde).boundingBox())!;
+    > 86 |   await mapa.click({
+         |              ^
+      87 |     position: {
+      88 |       x: ref.x + ref.width / 2 + este / m - caja.x,
+      89 |       y: ref.y + ref.height / 2 - norte / m - caja.y,
+        at tocarEnMetros (C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\e2e\ayuda-recorrido.ts:86:14)
+        at colocar (C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\e2e\recetas-ejemplos.ts:139:12)
+        at C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\e2e\ejemplos-ronda2.spec.ts:98:19
+
+    Error Context: test-results\ejemplos-ronda2-las-cinco--e288d-de-ejemplo-de-punta-a-punta-chromium\error-context.md
+
+
+  1 failed
+    [chromium] › e2e\ejemplos-ronda2.spec.ts:57:5 › las cinco narraciones de ejemplo, de punta a punta 
+Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
+
+  × "pnpm recursive exec" failed in C:\Users\MrKan\Documents\Proyecto
+  │ Cesvi\Croquis\apps\web
+
+
+# Fin: 2026-11-26 11:50:59 · falló (código 1) · 0.8 min
