@@ -241,6 +241,15 @@
                       "codigo":  0,
                       "disco_libre_gb_antes":  822.2,
                       "disco_libre_gb_despues":  821.8
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "comparar",
+                      "estado":  "falló (código 1)",
+                      "minutos":  0,
+                      "codigo":  1,
+                      "disco_libre_gb_antes":  821.8,
+                      "disco_libre_gb_despues":  821.8
                   }
               ]
 }

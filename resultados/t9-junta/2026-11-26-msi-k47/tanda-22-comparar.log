@@ -1,0 +1,40 @@
+# Paso: comparar
+# Comando: node eval/t9_comparar.mjs
+# Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
+# Inicio: 2026-11-26 12:43:39
+
+✓ ejemplos.crucero: índice 20 km/h (3–26) · medida 20 km/h (3–26)
+✗ ejemplos.poste: índice 36 km/h (31–38) · medida null
+✗ AXA: índice 57 km/h (55–78) · navegador sin dato
+  rene-arbol-curva: 80
+  rene-peaton-vuelta: 18
+  rene-carambola-semaforo: 50
+  aud-01-alcance-tollocan: 49 · 3 capturas
+  aud-02-lateral-tecnologico-lastorres: 25 · 3 capturas
+  aud-04-arbol-matlatzincas: null · 3 capturas
+  aud-10-reversa-estacionado-metepec: 0 · 3 capturas
+  aud-13-moto-vuelta-izquierda-tecnologico: 70 · 3 capturas
+  aud-15-carambola4-tollocan-lluvia: 50 · 3 capturas
+  aud-16-atropello-camion-pinosuarez: 11 · 3 capturas
+  aud-19-glorieta-insurgentes: 52 · 3 capturas
+  aud-31-alcance-puente-churubusco: 59 · 3 capturas
+  aud-32-volcadura-viaducto: 46 · 3 capturas
+✗ carambolas.prueba: antes 21 de 31 · después 19 de 31 (publicada 21 de 31)
+✗ carambolas.desarrollo: antes 44 de 55 · después 41 de 55 (publicada 44 de 55)
+✓ cobertura.rango: antes 410 de 578 · después 410 de 578 (publicada 410 de 578)
+  capturas arbol: 2
+  capturas poste: 2
+  capturas puente: 2
+  capturas subida: 2
+  capturas bajada: 2
+  capturas curva: 2
+  capturas tollocan: 5
+  capturas encimado-antes: 2
+  capturas encimado-despues: 2
+  capturas rene-arbol-curva: 2
+  capturas rene-peaton-vuelta: 2
+  capturas rene-carambola-semaforo: 2
+  pendiente: Faltan los ejemplos del navegador o la tabla aprobada.
+Algo no coincide con lo publicado: va a René.
+
+# Fin: 2026-11-26 12:43:39 · falló (código 1) · 0 min

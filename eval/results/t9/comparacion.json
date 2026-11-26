@@ -1,0 +1,179 @@
+{
+  "fecha": "2026-11-26T18:43:39.478Z",
+  "ejemplos": [],
+  "indice": [
+    {
+      "cifra": "ejemplos.crucero",
+      "indice": "20 km/h (3–26)",
+      "medida": "20 km/h (3–26)",
+      "diferencias": [],
+      "coincide": true
+    },
+    {
+      "cifra": "ejemplos.poste",
+      "indice": "36 km/h (31–38)",
+      "medida": null,
+      "diferencias": [],
+      "coincide": false
+    }
+  ],
+  "axa": {
+    "indice": "57 km/h (55–78)",
+    "navegador": null,
+    "coincide": false
+  },
+  "capturas": [
+    {
+      "clave": "arbol",
+      "capturas": 2
+    },
+    {
+      "clave": "poste",
+      "capturas": 2
+    },
+    {
+      "clave": "puente",
+      "capturas": 2
+    },
+    {
+      "clave": "subida",
+      "capturas": 2
+    },
+    {
+      "clave": "bajada",
+      "capturas": 2
+    },
+    {
+      "clave": "curva",
+      "capturas": 2
+    },
+    {
+      "clave": "tollocan",
+      "capturas": 5
+    },
+    {
+      "clave": "encimado-antes",
+      "capturas": 2
+    },
+    {
+      "clave": "encimado-despues",
+      "capturas": 2
+    },
+    {
+      "clave": "rene-arbol-curva",
+      "capturas": 2
+    },
+    {
+      "clave": "rene-peaton-vuelta",
+      "capturas": 2
+    },
+    {
+      "clave": "rene-carambola-semaforo",
+      "capturas": 2
+    }
+  ],
+  "arranque": [
+    "arranque_945617e035988035_1.json",
+    "arranque_945617e035988035_2.json",
+    "arranque_945617e035988035_3.json"
+  ],
+  "pendientes": [
+    "Faltan los ejemplos del navegador o la tabla aprobada."
+  ],
+  "tres": [
+    {
+      "clave": "rene-arbol-curva",
+      "cifra": "80",
+      "texto": "Repetir Velocidad antes del impacto 80 km/h A · Volkswagen Jetta rango 68–91 Reconstrucción física de Croquis · mejor ajuste 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 km/h Cada punto es una de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones Lo fijan 4 evidencias",
+      "peaton_en_la_escena": 0
+    },
+    {
+      "clave": "rene-peaton-vuelta",
+      "cifra": "18",
+      "texto": "Repetir Velocidad antes del impacto 18 km/h A · Isuzu ELF 400 rango 16–19 Reconstrucción física de Croquis · mejor ajuste 16 18 20 22 km/h Cada punto son 2 de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones Lo fijan 4 evidencias",
+      "peaton_en_la_escena": 1
+    },
+    {
+      "clave": "rene-carambola-semaforo",
+      "cifra": "50",
+      "texto": "Repetir Velocidad antes del impacto 50 km/h A · Nissan NP300 rango 47–54 Reconstrucción física de Croquis · mejor ajuste 25 30 35 40 45 50 km/h Cada punto es una de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones B · Chevrolet Aveo 0 km/h (detenido, lo dice la narración) C · Kia Rio 0 km/h (detenido, lo dice la narración) Lo fijan 8 evidencias",
+      "peaton_en_la_escena": 0
+    }
+  ],
+  "nuevas": [
+    {
+      "clave": "aud-01-alcance-tollocan",
+      "cifra": "49",
+      "capturas": 3
+    },
+    {
+      "clave": "aud-02-lateral-tecnologico-lastorres",
+      "cifra": "25",
+      "capturas": 3
+    },
+    {
+      "clave": "aud-04-arbol-matlatzincas",
+      "cifra": null,
+      "capturas": 3
+    },
+    {
+      "clave": "aud-10-reversa-estacionado-metepec",
+      "cifra": "0",
+      "capturas": 3
+    },
+    {
+      "clave": "aud-13-moto-vuelta-izquierda-tecnologico",
+      "cifra": "70",
+      "capturas": 3
+    },
+    {
+      "clave": "aud-15-carambola4-tollocan-lluvia",
+      "cifra": "50",
+      "capturas": 3
+    },
+    {
+      "clave": "aud-16-atropello-camion-pinosuarez",
+      "cifra": "11",
+      "capturas": 3
+    },
+    {
+      "clave": "aud-19-glorieta-insurgentes",
+      "cifra": "52",
+      "capturas": 3
+    },
+    {
+      "clave": "aud-31-alcance-puente-churubusco",
+      "cifra": "59",
+      "capturas": 3
+    },
+    {
+      "clave": "aud-32-volcadura-viaducto",
+      "cifra": "46",
+      "capturas": 3
+    }
+  ],
+  "otras": [
+    {
+      "cifra": "carambolas.prueba",
+      "publicada": "21 de 31",
+      "antes": "21 de 31",
+      "despues": "19 de 31",
+      "cambia": true
+    },
+    {
+      "cifra": "carambolas.desarrollo",
+      "publicada": "44 de 55",
+      "antes": "44 de 55",
+      "despues": "41 de 55",
+      "cambia": true
+    },
+    {
+      "cifra": "cobertura.rango",
+      "publicada": "410 de 578",
+      "antes": "410 de 578",
+      "despues": "410 de 578",
+      "cambia": false
+    }
+  ],
+  "coincide": false
+}
