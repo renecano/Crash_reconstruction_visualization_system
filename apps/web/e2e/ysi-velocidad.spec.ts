@@ -29,7 +29,19 @@ test("@flujo «¿Y si…?»: otra velocidad cambia el choque y no la cifra recon
   await page.getByTestId("reconstruir").click();
   const cifra = page.getByTestId("cifra-reconstruccion");
   await expect(cifra).toBeVisible({ timeout: 240_000 });
-  const antes = (await cifra.textContent())?.replace(/\s+/g, " ").trim();
+  // La cifra entra contando: se lee cuando ya no cambia.
+  const texto = async () => ((await cifra.textContent()) ?? "").replace(/\s+/g, " ").trim();
+  await expect
+    .poll(
+      async () => {
+        const a = await texto();
+        await page.waitForTimeout(700);
+        return a === (await texto());
+      },
+      { timeout: 30_000 },
+    )
+    .toBe(true);
+  const antes = await texto();
 
   // La hipótesis: el Jetta 40 km/h más rápido que lo reconstruido.
   await page.getByTestId("abrir-ysi").click();
@@ -49,7 +61,7 @@ test("@flujo «¿Y si…?»: otra velocidad cambia el choque y no la cifra recon
     page.getByTestId("ysi-cambios").locator("li", { hasText: "Energía de la deformación" }).first(),
   ).toContainText("Cambia");
   // La cifra reconstruida es la misma.
-  await expect(cifra).toHaveText(antes ?? "");
+  expect(await texto()).toBe(antes);
   // Y en «Versiones», como hipótesis del perito.
   await page.getByTestId("comparar-version").click();
   await expect(page.locator('[data-tipo="hipotesis"]')).toContainText("¿Y si…?");
