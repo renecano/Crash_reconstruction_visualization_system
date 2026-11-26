@@ -417,7 +417,23 @@ async function bajarRelease(h) {
     console.error(`No se pudo bajar el release (${r.status} ${url}).`);
     process.exit(1);
   }
-  for (const a of leerZip(Buffer.from(await r.arrayBuffer()))) {
+  const archivos = leerZip(Buffer.from(await r.arrayBuffer()));
+  // Un zip hecho en la Mac puede traer basura del Finder (René, 2026-11-26): no se sube nada.
+  const basura = archivos.filter((a) =>
+    /(^|\/)(\.DS_Store|__MACOSX)(\/|$)|(^|\/)\._/.test(a.nombre),
+  );
+  if (basura.length) {
+    console.error(
+      `El zip del release trae archivos de la Mac (${basura
+        .slice(0, 5)
+        .map((a) => a.nombre)
+        .join(
+          ", ",
+        )}${basura.length > 5 ? ", …" : ""}): hay que volver a empaquetarlo sin ellos. No se sube nada.`,
+    );
+    process.exit(1);
+  }
+  for (const a of archivos) {
     const destino = join(dir, ...a.nombre.split("/"));
     mkdirSync(dirname(destino), { recursive: true });
     writeFileSync(destino, a.bytes);
