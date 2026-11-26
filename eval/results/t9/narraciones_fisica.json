@@ -1,0 +1,71 @@
+{
+  "fecha": "2026-11-26T17:57:50.360Z",
+  "filas": [
+    {
+      "clave": "arbol",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto 64 km/h A · Nissan Versa rango 50–78 Reconstrucción física de Croquis · mejor ajuste 40 45 50 55 60 65 70 75 80 85 km/h Cada punto es una de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones Lo fijan 3 evidencias",
+      "panel": "Acto 3 de 6 · Reconstrucción Repetir Velocidad antes del impacto 64 km/h A · Nissan Versa rango 50–78 Reconstrucción física de Croquis · mejor ajuste 40 45 50 55 60 65 70 75 80 85 km/h Cada punto es una de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones Lo fijan 3 evidencias Comparar con una versión Ver el detalle: velocidades, evidencia y límites ← Continuar a las versiones →",
+      "dice_supuesto_de_velocidad": true,
+      "menciona_objeto": false,
+      "menciona_estructura": false,
+      "menciona_relieve": false
+    },
+    {
+      "clave": "poste",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto 60 km/h A · Chevrolet Aveo rango 54–65 Reconstrucción física de Croquis · mejor ajuste 50 55 60 65 70 km/h Cada punto es una de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones Lo fijan 3 evidencias",
+      "panel": "Acto 3 de 6 · Reconstrucción Repetir Velocidad antes del impacto 60 km/h A · Chevrolet Aveo rango 54–65 Reconstrucción física de Croquis · mejor ajuste 50 55 60 65 70 km/h Cada punto es una de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones Lo fijan 3 evidencias Comparar con una versión Ver el detalle: velocidades, evidencia y límites ← Continuar a las versiones →",
+      "dice_supuesto_de_velocidad": true,
+      "menciona_objeto": false,
+      "menciona_estructura": false,
+      "menciona_relieve": false
+    },
+    {
+      "clave": "puente",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto La reconstrucción no cuadra: Croquis no presenta una velocidad. A · Volkswagen Jetta: el mejor ajuste (12 km/h) queda por debajo de su propio rango (20–30): la solución depende tanto de la evidencia y los supuestos que Croquis no presenta una cifra. B · Toyota Hilux: el mejor ajuste (9 km/h) queda por arriba de su propio rango (1–4): la solución depende tanto de la evidencia y los supuestos que Croquis no presenta una cifra. A · Volkswagen Jetta: en la animación llega al choque a 12 km/h, y la cifra dice que llega entre 20 y 30. La animación no mostraría lo que dice la cifra. Revisa la evidencia y los supuestos del caso (posiciones finales, huellas, masas y rumbos); las posiciones de impacto y finales, y el rumbo de cada vehículo. El 3D muestra a cada vehículo donde quedó, sin animar el choque, hasta que cuadre. A · Volkswagen Jetta no cuadra: Croquis no presenta su velocidad B · Toyota Hilux no cuadra: Croquis no presenta su velocidad Lo fijan 6 evidencias",
+      "panel": "Acto 3 de 6 · Reconstrucción Repetir Velocidad antes del impacto La reconstrucción no cuadra: Croquis no presenta una velocidad. A · Volkswagen Jetta: el mejor ajuste (12 km/h) queda por debajo de su propio rango (20–30): la solución depende tanto de la evidencia y los supuestos que Croquis no presenta una cifra. B · Toyota Hilux: el mejor ajuste (9 km/h) queda por arriba de su propio rango (1–4): la solución depende tanto de la evidencia y los supuestos que Croquis no presenta una cifra. A · Volkswagen Jetta: en la animación llega al choque a 12 km/h, y la cifra dice que llega entre 20 y 30. La animación no mostraría lo que dice la cifra. Revisa la evidencia y los supuestos del caso (posiciones finales, huellas, masas y rumbos); las posiciones de impacto y finales, y el rumbo de cada vehículo. El 3D muestra a cada vehículo donde quedó, sin animar el choque, hasta que cuadre. A · Volkswagen Jetta no cuadra: Croquis no presenta su velocidad B · Toyota Hilux no cuadra: Croquis no presenta su velocidad Lo fijan 6 evidencias Comparar con una versión Ver el detalle: velocidades, evidencia y límites ← Continuar a las versiones →",
+      "dice_supuesto_de_velocidad": true,
+      "menciona_objeto": false,
+      "menciona_estructura": false,
+      "menciona_relieve": false
+    },
+    {
+      "clave": "subida",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto 43 km/h B · Nissan Tsuru rango 26–48 Reconstrucción física de Croquis · mejor ajuste 20 25 30 35 40 45 50 km/h Cada punto es una de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones A · Ford Ranger 19 km/h Lo fijan 6 evidencias",
+      "panel": "Acto 3 de 6 · Reconstrucción Repetir Velocidad antes del impacto 43 km/h B · Nissan Tsuru rango 26–48 Reconstrucción física de Croquis · mejor ajuste 20 25 30 35 40 45 50 km/h Cada punto es una de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones A · Ford Ranger 19 km/h Lo fijan 6 evidencias Comparar con una versión Terreno La altura del terreno bajo cada vehículo, a lo largo de lo que recorrió. A · Ford Ranger Antes del impacto: 0.2 % de bajada · altura exagerada ×24 +0.13 m −0.07 m 0 m Impacto Recorrió 16.0 m; terminó −0.03 m respecto a donde empezó. B · Nissan Tsuru Antes del impacto: 2.6 % de subida · altura exagerada ×11 −0.01 m −0.94 m 0 m Impacto Recorrió 35.6 m; terminó +0.92 m respecto a donde empezó. Relieve: INEGI, modelo digital de elevación LiDAR de terreno (5 m), por Terrain Tiles; fuera de su cobertura, SRTM (30 m). Da la pendiente general de la vía, con una muestra cada 10 m (cada 30 m donde el INEGI no tiene levantamiento láser). No ve una rampa corta, el bombeo ni un tope: esos se marcan aparte. Fuente: INEGI, Relieve continental, 2016 (por Terrain Tiles de Mapzen en AWS). Términos de libre uso de la información del INEGI. Croquis remuestreó los datos; no es una postura del INEGI ni cuenta con su aval. SRTM data courtesy of the U.S. Geological Survey (dominio público), por Terrain Tiles de Mapzen en AWS. Ver el detalle: vel",
+      "dice_supuesto_de_velocidad": true,
+      "menciona_objeto": false,
+      "menciona_estructura": false,
+      "menciona_relieve": true
+    },
+    {
+      "clave": "bajada",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto La evidencia no fija la velocidad de ningún vehículo. Agrega posiciones finales o medidas de deformación. A · Mazda 3 la evidencia no la fija Lo fijan 4 evidencias",
+      "panel": "Acto 3 de 6 · Reconstrucción Repetir Velocidad antes del impacto La evidencia no fija la velocidad de ningún vehículo. Agrega posiciones finales o medidas de deformación. A · Mazda 3 la evidencia no la fija Lo fijan 4 evidencias Comparar con una versión Terreno La altura del terreno bajo cada vehículo, a lo largo de lo que recorrió. A · Mazda 3 Antes del impacto: 4.2 % de subida · altura exagerada ×6.9 +0.03 m −3.02 m 0 m Impacto Recorrió 71.0 m; terminó +2.99 m respecto a donde empezó. Relieve: Copernicus DEM GLO-30 (modelo de superficie, 30 m). Da la pendiente general de la vía, con una muestra cada 10 m (cada 30 m donde el INEGI no tiene levantamiento láser). No ve una rampa corta, el bombeo ni un tope: esos se marcan aparte. produced using Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European Union and ESA; all rights reserved Ver el detalle: velocidades, evidencia y límites ← Continuar a las versiones →",
+      "dice_supuesto_de_velocidad": true,
+      "menciona_objeto": false,
+      "menciona_estructura": false,
+      "menciona_relieve": true
+    },
+    {
+      "clave": "curva",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto 29 km/h A · Kia Rio rango 29–31 Reconstrucción física de Croquis · mejor ajuste B · Honda CR-V: la narración dice más de 30 km/h («a alta velocidad»); las posiciones dan 27 km/h (27–28). No se fuerza ninguna de las dos: revisa las posiciones marcadas y lo que dice la narración. 25 30 35 km/h Cada punto son 2 de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones B · Honda CR-V 27 km/h Lo fijan 6 evidencias",
+      "panel": "Acto 3 de 6 · Reconstrucción Repetir Velocidad antes del impacto 29 km/h A · Kia Rio rango 29–31 Reconstrucción física de Croquis · mejor ajuste B · Honda CR-V: la narración dice más de 30 km/h («a alta velocidad»); las posiciones dan 27 km/h (27–28). No se fuerza ninguna de las dos: revisa las posiciones marcadas y lo que dice la narración. 25 30 35 km/h Cada punto son 2 de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones B · Honda CR-V 27 km/h Lo fijan 6 evidencias Comparar con una versión Ver el detalle: velocidades, evidencia y límites ← Continuar a las versiones →",
+      "dice_supuesto_de_velocidad": true,
+      "menciona_objeto": false,
+      "menciona_estructura": false,
+      "menciona_relieve": false
+    },
+    {
+      "clave": "encimado",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "aviso_sin_transferencia_antes": false,
+      "aviso_en_la_escena": false
+    }
+  ]
+}
