@@ -70,8 +70,8 @@ test("@flujo /cesvi: sin las calles del lugar, aviso y reintento; ninguna cifra 
   // Con la red de vuelta, «Reintentar» las pide otra vez y el aviso se va.
   red = true;
   await page.getByTestId("reintentar-calles-escena").click();
-  await expect(page.getByTestId("mensaje-alerta")).not.toContainText(
-    "No se pudieron cargar las calles",
-    { timeout: 30_000 },
-  );
+  // Al llegar las calles el aviso desaparece (no queda otro con el mismo texto).
+  await expect(page.getByText("No se pudieron cargar las calles")).toHaveCount(0, {
+    timeout: 30_000,
+  });
 });

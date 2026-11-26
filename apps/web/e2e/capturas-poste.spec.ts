@@ -33,8 +33,17 @@ async function arrastrarEnMetros(page: Page, testid: string, este: number, norte
 }
 
 for (const esc of [
-  { nombre: "en-su-recorrido", finalCamaro: [-5, 5] as const, poste: [-7.5, 7.5] as const },
-  { nombre: "fuera", finalCamaro: null, poste: [18, 3] as const },
+  // Tres pasos (René, 2026-11-25): fuera de los recorridos, otra vez fuera y, al final, donde se
+  // detiene el GM Camaro (empujado al noroeste).
+  {
+    nombre: "tres-pasos",
+    finalCamaro: [-5, 5] as const,
+    poste: [18, 3] as const,
+    movimientos: [
+      [10, 0],
+      [-35.5, 4.5],
+    ] as const,
+  },
 ])
   test(`capturas del poste: ${esc.nombre}`, async ({ page }) => {
     test.setTimeout(300_000);
@@ -116,34 +125,31 @@ for (const esc of [
       .catch(() => undefined);
     await foto("3-reconstruccion-2d-todo");
 
-    // 1. Mover el poste: se toca, se arrastra 10 m y, al soltar, se recalcula.
-    await irAPaso(page, 3);
-    await page.getByTestId("cambiar-algo").click();
-    await expect(page.getByTestId("panel-corregir")).toBeVisible();
-    await page.getByTestId("marca-objeto-2").click();
-    await expect(page.getByTestId("seleccion-nombre")).toHaveText(/poste/i);
-    await arrastrarEnMetros(page, "marca-objeto-2", 10, 0);
-    await expect(page.getByTestId("mensaje-exito")).toContainText("Moviste");
-    await foto("4-escena-poste-movido");
-    // Mover algo de la escena con la reconstrucción hecha: avisa y ofrece reconstruir de nuevo.
-    await expect(page.getByTestId("aviso-escena-cambio")).toBeVisible();
-    await page.getByTestId("reconstruir-de-nuevo").click();
-    await expect(page.getByTestId("recalculo")).toHaveAttribute("data-estado", "al_dia", {
-      timeout: 90_000,
-    });
-    await page.getByTestId("sel-listo").click();
-    await irAPaso(page, 4);
-    await expect(cifra).toBeVisible();
-    const conPosteMovido = await cifra.innerText();
-    await foto("5-reconstruccion-2d-poste-movido");
-    await page
-      .getByRole("button", { name: "Ver todo" })
-      .click()
-      .catch(() => undefined);
-    await foto("6-reconstruccion-2d-todo-poste-movido");
-    writeFileSync(
-      join(SALIDA, `${esc.nombre}-cifras.json`),
-      JSON.stringify({ antes, conPosteMovido }, null, 1),
-    );
+    // Cada movimiento del poste: se toca, se arrastra y se reconstruye de nuevo.
+    const cifras = [antes];
+    for (const [k, [este, norte]] of esc.movimientos.entries()) {
+      await irAPaso(page, 3);
+      await page.getByTestId("cambiar-algo").click();
+      await expect(page.getByTestId("panel-corregir")).toBeVisible();
+      await page.getByTestId("marca-objeto-2").click();
+      await expect(page.getByTestId("seleccion-nombre")).toHaveText(/poste/i);
+      await arrastrarEnMetros(page, "marca-objeto-2", este, norte);
+      await expect(page.getByTestId("mensaje-exito")).toContainText("Moviste");
+      await foto(`${4 + k * 2}-escena-movimiento-${k + 1}`);
+      await page.getByTestId("reconstruir-de-nuevo").click();
+      await expect(page.getByTestId("recalculo")).toHaveAttribute("data-estado", "al_dia", {
+        timeout: 90_000,
+      });
+      await page.getByTestId("sel-listo").click();
+      await irAPaso(page, 4);
+      await expect(cifra).toBeVisible();
+      cifras.push(await cifra.innerText());
+      await page
+        .getByRole("button", { name: "Ver todo" })
+        .click()
+        .catch(() => undefined);
+      await foto(`${5 + k * 2}-reconstruccion-movimiento-${k + 1}`);
+    }
+    writeFileSync(join(SALIDA, `${esc.nombre}-cifras.json`), JSON.stringify({ cifras }, null, 1));
     expect(errores).toEqual([]);
   });
