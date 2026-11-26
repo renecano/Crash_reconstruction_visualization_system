@@ -1,0 +1,7 @@
+# Paso: antes-guardar
+# Comando: powershell -NoProfile -Command "New-Item -ItemType Directory -Force eval/results/t9/antes | Out-Null; Copy-Item ../croquis-t9-antes/eval/results/cesvi_r4b_carambolas_prueba.json, ../croquis-t9-antes/eval/results/cesvi_r4b_carambolas_desarrollo.json, ../croquis-t9-antes/eval/results/t3_cobertura.json eval/results/t9/antes/"
+# Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
+# Inicio: 2026-11-26 12:26:38
+
+
+# Fin: 2026-11-26 12:26:39 · ok · 0 min
