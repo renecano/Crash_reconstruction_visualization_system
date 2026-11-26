@@ -20,6 +20,7 @@ export * from "./cobertura";
 export * from "./dano-energia";
 export * from "./mejor-fuera";
 export * from "./velocidad-razonable";
+export * from "./que-importa";
 export * as formato from "./formato";
 export * from "./palabras";
 export * from "./pizarra";

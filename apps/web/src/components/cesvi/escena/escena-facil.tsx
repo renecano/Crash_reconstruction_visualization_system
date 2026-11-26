@@ -42,8 +42,11 @@ import {
   TIPOS_OBJETO,
   usarRelieve,
   usaRelieve,
+  barridosDeLaReconstruccion,
+  queImporta,
   type Expediente,
   type ObstaculoDelMapa,
+  type Reconstruccion,
   type PosicionDescrita,
   type RolPersona,
   type TipoObjeto,
@@ -215,6 +218,7 @@ export function EscenaFacil({
   onReconstruir,
   errorReconstruccion = null,
   obstaculos = [],
+  reconstruccion = null,
 }: {
   tema: "claro" | "oscuro";
   estado: EstadoEscena;
@@ -250,6 +254,11 @@ export function EscenaFacil({
   errorReconstruccion?: string | null;
   /** Los edificios y muros del mapa (René, 2026-11-24): se avisa si un vehículo queda sobre uno. */
   obstaculos?: readonly ObstaculoDelMapa[];
+  /**
+   * La reconstrucción al día con esta escena (null si no hay o quedó vieja), para «Qué importa»
+   * (René, 2026-11-26): en gris lo que no toca ningún recorrido reconstruido.
+   */
+  reconstruccion?: Reconstruccion | null;
 }) {
   const e = estado.expediente;
   // Ronda 4 (René, 2026-11-18, propuesta 1): la escena ya armada con su lista. La de una pregunta a
@@ -1815,6 +1824,31 @@ export function EscenaFacil({
       else setEditandoC1("terreno");
     }
   };
+  // «Qué importa» (René, 2026-11-26): con la reconstrucción al día, lo que no toca ningún recorrido
+  // va en gris (la misma lógica que la e2e del poste). Se calcula solo al pedirlo.
+  const [verQueImporta, setVerQueImporta] = useState(false);
+  const puedeQueImporta = reconstruccion !== null && recalculo === "al_dia";
+  const importa = useMemo(() => {
+    if (!verQueImporta || !reconstruccion?.origen) return null;
+    const barridos = barridosDeLaReconstruccion(reconstruccion);
+    if (!barridos) return null;
+    return queImporta(
+      [
+        ...objetosColocados.map((o) => ({
+          clave: `objeto:${o.id}`,
+          punto: [o.punto.lon, o.punto.lat] as const,
+          radioM: Math.max(o.largo, o.ancho) / 2,
+        })),
+        ...terrenoMarcado.map((t) => ({
+          clave: `terreno:${t.id}`,
+          contorno: t.puntos.map((q) => [q.lon, q.lat] as const),
+        })),
+      ],
+      barridos,
+      reconstruccion.origen,
+    );
+  }, [verQueImporta, reconstruccion, objetosColocados, terrenoMarcado]);
+  const apagado = (clave: string) => puedeQueImporta && verQueImporta && importa?.[clave] === false;
   // C3 (W5): el terreno marcado, para el mapa. Las zonas, con su fricción si el perito la fijó.
   const terrenoMapa: TerrenoMapa[] = terrenoMarcado.map((t) => ({
     id: t.id,
@@ -1823,6 +1857,7 @@ export function EscenaFacil({
     nombre: t.nombre,
     puntos: t.puntos,
     centro: t.centro,
+    apagado: apagado(`terreno:${t.id}`),
   }));
   const objetosMapa = objetosColocados.map((o) => ({
     id: o.id,
@@ -1832,6 +1867,7 @@ export function EscenaFacil({
     rumbo: o.rumbo,
     largo: o.largo,
     ancho: o.ancho,
+    apagado: apagado(`objeto:${o.id}`),
   }));
 
   // A3: los peatones y los ciclistas, con su distancia de proyección si se marcó dónde quedaron.
@@ -2704,6 +2740,11 @@ export function EscenaFacil({
           setMapaListo(m);
         }}
         objetos={objetosMapa}
+        queImporta={
+          puedeQueImporta
+            ? { activo: verQueImporta, onAlternar: () => setVerQueImporta((x) => !x) }
+            : null
+        }
         terreno={terrenoMapa}
         personas={personasMapa}
         seleccion={corrigiendo ? seleccion : null}
