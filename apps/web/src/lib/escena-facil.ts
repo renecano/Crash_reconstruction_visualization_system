@@ -1521,7 +1521,15 @@ export function callesEn(calles: readonly Calle[], p: Punto): string[] {
 export function limiteEnElChoque(
   calles: readonly Calle[],
   p: Punto,
-  o: { rumbo?: number | null; lugar?: string | null } = {},
+  o: {
+    rumbo?: number | null;
+    lugar?: string | null;
+    /**
+     * La clase sale del nombre de la vía elegida («Calle Azucena»), no del lugar narrado completo
+     * (René, 2026-11-26: «calle Azucena esquina con Avenida del Árbol» daba «avenida» a la calle).
+     */
+    claseDeSuNombre?: boolean;
+  } = {},
 ): { kmh: number; fuente: string } | null {
   const lugar = sinAcentos(o.lugar ?? "");
   const cerca = calles
@@ -1548,7 +1556,9 @@ export function limiteEnElChoque(
   // («Paseo Tollocan» es una avenida). El tipo de OpenStreetMap («secondary») no es la clase de la
   // LGMSV: Tollocan salía como «calle secundaria» de 30 km/h (René, 2026-11-23).
   const narrada =
-    mejor.en >= 0 && l?.fuente.startsWith("LGMSV") ? limiteDelLugarNarrado(o.lugar) : null;
+    mejor.en >= 0 && l?.fuente.startsWith("LGMSV")
+      ? limiteDelLugarNarrado(o.claseDeSuNombre ? mejor.c.nombre : o.lugar)
+      : null;
   if (narrada)
     return {
       kmh: narrada.kmh,

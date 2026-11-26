@@ -490,6 +490,25 @@ describe("el límite de la vía por donde circulaba (René, 2026-11-23)", () => 
     expect(limiteEnElChoque(calles, C)!.fuente).toContain("Isidro Fabela");
   });
 
+  it("con «claseDeSuNombre», cada vehículo toma la clase de SU vía, no la del lugar completo (René, 2026-11-26)", () => {
+    // El crucero: «calle Azucena esquina con Avenida del Árbol», las dos sin límite publicado.
+    const crucero: Calle[] = [
+      { ...calles[0]!, nombre: "Avenida del Árbol", tipo: "tertiary", maxspeed: undefined },
+      { ...calles[1]!, nombre: "Calle Azucena", tipo: "residential" },
+    ];
+    const lugarCrucero = "crucero de la calle Azucena esquina con Avenida del Árbol";
+    // El que circulaba por la calle Azucena (norte–sur): 30 km/h, de «calle», con su nombre.
+    expect(
+      limiteEnElChoque(crucero, C, { rumbo: 0, lugar: lugarCrucero, claseDeSuNombre: true }),
+    ).toMatchObject({ kmh: 30, fuente: expect.stringContaining("Calle Azucena") });
+    // El de la Avenida del Árbol (oriente–poniente): 50 km/h, de «avenida».
+    expect(
+      limiteEnElChoque(crucero, C, { rumbo: 90, lugar: lugarCrucero, claseDeSuNombre: true }),
+    ).toMatchObject({ kmh: 50, fuente: expect.stringContaining("Avenida del Árbol") });
+    // Sin la opción (la velocidad narrada relativa al límite, como antes), la calle salía de «avenida».
+    expect(limiteEnElChoque(crucero, C, { rumbo: 0, lugar: lugarCrucero })!.kmh).toBe(50);
+  });
+
   it("la vía narrada sin límite en el mapa toma la clase del lugar narrado, no la del tipo de OpenStreetMap", () => {
     // Así está Tollocan en OpenStreetMap junto al árbol: «secondary» y sin maxspeed.
     const sinLimite = calles.map((c) =>

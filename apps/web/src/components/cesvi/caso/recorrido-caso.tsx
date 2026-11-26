@@ -784,11 +784,29 @@ export function RecorridoCaso({
     const nuevo = conLimiteDeLaVia(expediente, limiteChoque);
     if (nuevo !== expediente) setExpediente(nuevo);
   }
-  // Una cifra más de 40 km/h arriba del límite de la vía del choque (René, 2026-11-26): aviso junto a
-  // la cifra y en los límites; las cifras no cambian.
+  // Una cifra más de 40 km/h arriba del límite de la vía por la que circulaba ESE vehículo (René,
+  // 2026-11-26): la de su rumbo en el impacto, con la clase de su propio nombre («Calle Azucena»), no
+  // la del lugar narrado completo. Aviso junto a la cifra y en los límites; las cifras no cambian.
+  const limitesPorVehiculo = useMemo(() => {
+    const out: Record<string, { kmh: number; fuente: string } | null> = {};
+    if (!calles || !expediente) return out;
+    const lasCalles = callesDe(calles);
+    for (const v of expediente.vehiculos) {
+      const pose = poseDe(v.id, "impacto");
+      out[v.id] = pose
+        ? limiteEnElChoque(lasCalles, pose.punto, {
+            rumbo: pose.rumbo,
+            lugar: lugarNarrado,
+            claseDeSuNombre: true,
+          })
+        : null;
+    }
+    return out;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- las poses salen del expediente
+  }, [calles, expediente, lugarNarrado]);
   const r = useMemo(
-    () => (rSinLimite ? conAvisoDelLimite(rSinLimite, limiteChoque) : rSinLimite),
-    [rSinLimite, limiteChoque],
+    () => (rSinLimite ? conAvisoDelLimite(rSinLimite, limitesPorVehiculo) : rSinLimite),
+    [rSinLimite, limitesPorVehiculo],
   );
   // Ronda 4: mientras Overpass no llega, las calles de las teselas del mapa del caso (también al
   // entrar directo a Reconstrucción, sin pasar por La escena).
