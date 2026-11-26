@@ -1050,6 +1050,47 @@ René aprobó el storyboard versión 2 (28 s, «más épico», sin la mancha neg
 - **El video lo agrega el Claude Code de René, en esta rama:** con `RECURSOS_READ_WRITE_TOKEN` en el entorno, `node apps/web/scripts/portada-video.mjs <tráiler.mp4> <inicio_s> <duración_s>` corta, comprime, sube a Blob y cambia solo `video.json`, que es lo único que se confirma. El póster es la foto aprobada y no se toca.
 - **Siguiente paso:** el video y el visto bueno de René a las capturas; después, fusionar #313.
 
+## Ronda final del 3D (Alberto, 2026-11-26)
+
+Alberto lleva todo lo de Unity y René con su Claude Code, el solver y la web. El contrato está en `docs/contrato-unity.md`. Cada punto va en su PR contra `main`, y los fusiona el Claude Code de René con CI en verde.
+
+| Punto | PR | Qué quedó |
+| --- | --- | --- |
+| 1. Daños | #336 | Hundimiento exacto C1–C6 (`dano.perfil_m`), arrastre de lado por la PDOF (como mucho la mitad de C), pliegues del 16 % de C desde 3 cm (completos desde 15 cm) y solo dentro de la cara, malla refinada a 6 cm en la zona dañada, y `danos_posteriores` en su `t`. |
+| 2. Pedazos | #338 (encima de #337) | Vidrio templado, plástico y lámina, con vuelo, rebote, arrastre y reposo de fórmula cerrada (`Croquis.Core.Pedazos`). Un pedazo por cada 1,200 J (entre 4 y 240), y uno por impacto. |
+| 3. Cámara lenta | #337 | Escalón en vez de rampa y letrero «Cámara lenta ×N» (×5 en el impacto, por la velocidad que manda la web). |
+| 4. Entorno | #339 (encima de #335) | Camellón desde `red_vial` de OSM: quita lo que el plan puso adentro (43 edificios y 16 postes en Paseo Tollocan) y le pone pasto, guarnición, matas y árboles. Paisaje árido con `entorno.paisaje`. |
+| 5. «¿Y si…?» | #340 | Mismo reloj que la reconstrucción en una hipótesis, su propio daño y letrero «Hipótesis». |
+| Contrato | #335 | `escenario.entorno.paisaje` (`arido` o `templado`), opcional; lo calcula la web con la cobertura de OSM. |
+
+### Evidencia
+
+- `dotnet test` de `Croquis.Core` en verde en cada rama (de 116 a 120 pruebas según la rama; 128 con todo junto).
+- Capturas de antes y después en `docs/progress/capturas/2026-11-26/` (editor, nivel media) y del build WebGL para los letreros. Los casos son fixtures inventados; ninguno de AXA ni de CESVI.
+- **El build WebGL desde la Mac (M1, 16 GB), con Unity 6000.3.28f1:** 193 s con `Library` ya importada (`BuildPlayer`: 2 min 54 s, 0 errores); 70 MB en `apps/visor-unity/Build/web`. El comando está en #337.
+
+### Instalado (Mac de Alberto)
+
+- Unity 6000.3.28f1 (arm64) con WebGL, con el CLI `unity`.
+- .NET SDK 10 en `~/.dotnet`, para `dotnet test`.
+
+### Pendiente
+
+- Los cerros del horizonte siguen verdes en el paisaje árido.
+- El mensaje `fantasma` del puente 1.4.0 (cambiar la hipótesis sin recargar) sigue propuesto.
+- Los letreros de pantalla no salen en las capturas del editor (`Capturas.cs` renderiza la cámara a una textura). Para verlos hay que usar el build WebGL.
+
+### Necesito del otro frente
+
+- Que la web calcule `escenario.entorno.paisaje` (#335) con la cobertura de OSM alrededor del lugar. Sin él, el visor se queda en «templado».
+
+### Resumen para René
+
+- **Qué quedó:** los cinco puntos, uno por PR (#336 a #340), más el contrato #335.
+- **Orden para fusionar:** #335 → #339; #337 → #338; #336 y #340 en cualquier momento.
+- **Cómo probarlo:** las capturas de cada PR. Con el build WebGL de `main` ya fusionado: Paseo Tollocan (Metepec) muestra el camellón, y cualquier choque muestra «Cámara lenta ×5» al reproducir.
+- **Qué necesito de ti:** el `paisaje` en la web y publicar el build WebGL a Blob (no tengo el token).
+
 ## Necesito del otro frente
 
 Nada por ahora.
