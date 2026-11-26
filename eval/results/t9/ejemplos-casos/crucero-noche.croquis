@@ -1,7 +1,7 @@
 {
   "formato": "croquis-caso",
   "version": 1,
-  "guardado": "2026-11-26T19:26:50.339Z",
+  "guardado": "2026-11-26T23:04:12.936Z",
   "narracion": "El hecho se ubica en el crucero de la calle Azucena esquina con Avenida del Árbol, colonia Lomas de San Lorenzo, alcaldía Iztapalapa, aproximadamente a las 22:30 horas. La calle Azucena consta de un arroyo de circulación con dos carriles asfaltados, con sentido de circulación de Sureste a Noroeste y viceversa; los carriles adyacentes se ocupan de estacionamiento. La Avenida del Árbol consta de un arroyo de circulación de cuatro carriles asfaltados, divididos por líneas longitudinales de color blanco, con sentido de circulación de Sur a Norte.\n\nSe observan dos vehículos: el vehículo A, marca VW, tipo Jetta, modelo 2002, color azul, de servicio particular, y el vehículo B, marca GM, tipo Camaro, modelo 1995, color rojo, de servicio particular.\n\nEl vehículo A presenta en la parte frontal un daño con características de hundimiento en dirección de adelante hacia atrás, acentuado sobre su costado delantero derecho y en el vértice delantero izquierdo, a una altura de 0.80 metros con respecto del piso. Presenta también un daño tipo tallón en dirección de adelante hacia atrás, con desprendimiento de pintura, sobre el vértice delantero inferior de la fascia. El conjunto de luces de ambos lados, la fascia y la parrilla se observan desacoplados de su posición original. En el vértice delantero izquierdo se describe además un hundimiento con desprendimiento de pintura a una altura de 0.73 metros, y en otra fotografía una altura de 0.72 metros. En el costado derecho no se aprecian daños por impacto contra cuerpo duro y se observa la ausencia del cuarto delantero derecho. En el habitáculo, las bolsas de aire del conductor y del copiloto se encuentran activadas. En el daño del vehículo A solo se observa desprendimiento de material, sin restos de pintura color rojo.\n\nEl vehículo B no presenta daños por impacto contra cuerpo duro en los costados delantero y medio derechos. En la parte posterior derecha se observa un ligero daño tipo hundimiento sobre la salpicadera posterior, en dirección de derecha a izquierda, con un daño tipo tallón en dirección de adelante hacia atrás con desprendimiento de pintura. Se observa también desprendimiento de pintura sobre la parte media de la puerta y la parte media de la salpicadera trasera, este último a una altura de 0.73 metros. En otra medición se registra el daño a una altura de 0.67 metros con respecto del piso. No se describen restos de pintura color azul sobre el vehículo B. No se describen huellas de frenado, restos ni posiciones finales.",
   "escena": {
     "posiciones": [],
@@ -1194,40 +1194,40 @@
             "vehiculo": "V1",
             "fase": "impacto",
             "punto": {
-              "lat": 19.3171870548566,
-              "lon": -99.05936190309818
+              "lat": 19.317197123047805,
+              "lon": -99.05932691940403
             },
-            "rumbo": 37.292311246795805,
-            "fuente": "perito"
-          },
-          {
-            "vehiculo": "V1",
-            "fase": "final",
-            "punto": {
-              "lat": 19.317197786735996,
-              "lon": -99.05935324228408
-            },
-            "rumbo": 37.292311246795805,
+            "rumbo": 302.5162893657782,
             "fuente": "perito"
           },
           {
             "vehiculo": "V2",
             "fase": "impacto",
             "punto": {
-              "lat": 19.317209591803334,
-              "lon": -99.05934371538677
+              "lat": 19.317212350780878,
+              "lon": -99.05935223223838
             },
-            "rumbo": 126.82275361127262,
+            "rumbo": 32.51628936577822,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V1",
+            "fase": "final",
+            "punto": {
+              "lat": 19.31720437434927,
+              "lon": -99.05933897313388
+            },
+            "rumbo": 302.5162893657782,
             "fuente": "perito"
           },
           {
             "vehiculo": "V2",
             "fase": "final",
             "punto": {
-              "lat": 19.31720150680253,
-              "lon": -99.0593322726806
+              "lat": 19.3172237259063,
+              "lon": -99.05934454834623
             },
-            "rumbo": 126.82275361127262,
+            "rumbo": 32.51628936577822,
             "fuente": "perito"
           }
         ]
@@ -1277,45 +1277,38 @@
       "de": "perito",
       "para": "pizarra",
       "tipo": "escribe",
-      "texto": "No sé dónde fue el primer golpe: se usa el lugar del choque (supuesto)."
+      "texto": "Pide reconstruir."
     },
     {
       "n": 7,
-      "de": "perito",
+      "de": "fisico",
       "para": "pizarra",
       "tipo": "escribe",
-      "texto": "Pide reconstruir."
+      "texto": "Reconstrucción: V1 a 20 km/h (5–26), V2 a 12 km/h (6–20)."
     },
     {
       "n": 8,
       "de": "fisico",
       "para": "pizarra",
       "tipo": "escribe",
-      "texto": "Reconstrucción: V1 a 20 km/h (4–27), V2 a 12 km/h (4–17)."
-    },
-    {
-      "n": 9,
-      "de": "fisico",
-      "para": "pizarra",
-      "tipo": "escribe",
       "texto": "Con los supuestos declarados: Masa de V1: 1,418 kg; Masa de V2: 1,700 kg; Posición inicial de V1: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Posición inicial de V2: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Fricción llanta–pavimento: μ = 0.7; Después del impacto: las llantas ruedan, con un arrastre de 0.35 de la fricción; Restitución del choque: e = 0.1; Fricción entre los vehículos durante el choque: razón de impulso de 0.4."
     },
     {
-      "n": 10,
+      "n": 9,
       "de": "verificador_cesvi",
       "para": "pizarra",
       "tipo": "escribe",
       "texto": "Sin medidas de deformación completas: no hay EBS con el método de CESVI."
     },
     {
-      "n": 11,
+      "n": 10,
       "de": "perito",
       "para": "pizarra",
       "tipo": "escribe",
       "texto": "Abre el dictamen."
     },
     {
-      "n": 12,
+      "n": 11,
       "de": "redactor",
       "para": "pizarra",
       "tipo": "escribe",

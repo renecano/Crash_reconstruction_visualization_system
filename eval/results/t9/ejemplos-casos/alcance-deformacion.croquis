@@ -1,7 +1,7 @@
 {
   "formato": "croquis-caso",
   "version": 1,
-  "guardado": "2026-11-26T19:27:09.581Z",
+  "guardado": "2026-11-26T23:04:34.819Z",
   "narracion": "El hecho se ubica en la carretera federal 57, tramo Querétaro–San Luis Potosí, a la altura del km 112+300, municipio de San Luis de la Paz, Guanajuato, aproximadamente a las 16:10 horas. La carretera consta de dos cuerpos separados por un camellón central con vegetación; el cuerpo con sentido de Sur a Norte tiene dos carriles de concreto asfáltico de 3.50 metros cada uno, con acotamiento de 2.50 metros. La superficie se encontraba seca.\n\nSe examinan el vehículo A, marca Nissan, tipo NP300, modelo 2018, color blanco, de servicio particular, y el vehículo B, marca Volkswagen, tipo Vento, modelo 2016, color gris, de servicio particular. El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás que afecta defensa, fascia, cofre, parrilla y radiador; se midió la deformación a lo ancho del frente con seis medidas a separación uniforme: C1 = 0.18 m, C2 = 0.24 m, C3 = 0.29 m, C4 = 0.31 m, C5 = 0.27 m y C6 = 0.20 m, con un ancho de daño L = 1.52 m. El vehículo B presenta en su parte posterior un hundimiento de atrás hacia adelante que afecta defensa trasera, cajuela, calaveras y panel trasero, con medidas C1 = 0.22 m, C2 = 0.30 m, C3 = 0.36 m, C4 = 0.38 m, C5 = 0.33 m y C6 = 0.25 m, y L = 1.45 m. Las zonas de contacto corresponden entre sí: la parte frontal del vehículo A con la parte posterior del vehículo B.\n\nSe localizan restos de plástico y vidrio en el carril de baja velocidad, en una franja de 6.80 metros de largo. El vehículo A quedó en el carril de baja velocidad, 9 metros adelante del inicio de los restos; el vehículo B quedó sobre el acotamiento, 21 metros adelante del inicio de los restos.",
   "escena": {
     "posiciones": [
@@ -5057,40 +5057,40 @@
             "vehiculo": "V1",
             "fase": "impacto",
             "punto": {
-              "lat": 21.29953313034778,
-              "lon": -100.59523802606955
+              "lat": 21.299534394466747,
+              "lon": -100.59523827889335
             },
-            "rumbo": 349.44463008380615,
-            "fuente": "perito"
-          },
-          {
-            "vehiculo": "V1",
-            "fase": "final",
-            "punto": {
-              "lat": 21.299635544461072,
-              "lon": -100.59525833741797
-            },
-            "rumbo": 349.55876058806916,
+            "rumbo": 349.4446301739432,
             "fuente": "perito"
           },
           {
             "vehiculo": "V2",
             "fase": "impacto",
             "punto": {
-              "lat": 21.299576628184326,
-              "lon": -100.59524672563685
+              "lat": 21.299577892303304,
+              "lon": -100.59524697846065
             },
-            "rumbo": 349.44463008380615,
+            "rumbo": 349.4446301739432,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V1",
+            "fase": "final",
+            "punto": {
+              "lat": 21.299637670304534,
+              "lon": -100.59525933972945
+            },
+            "rumbo": 349.5587607357859,
             "fuente": "perito"
           },
           {
             "vehiculo": "V2",
             "fase": "final",
             "punto": {
-              "lat": 21.299735484800333,
-              "lon": -100.59527810448753
+              "lat": 21.299748281094026,
+              "lon": -100.59525161226395
             },
-            "rumbo": 349.55876753255575,
+            "rumbo": 349.5587684217255,
             "fuente": "perito"
           }
         ]
@@ -5140,45 +5140,38 @@
       "de": "perito",
       "para": "pizarra",
       "tipo": "escribe",
-      "texto": "No sé dónde fue el primer golpe: se usa el lugar del choque (supuesto)."
+      "texto": "Pide reconstruir."
     },
     {
       "n": 7,
-      "de": "perito",
+      "de": "fisico",
       "para": "pizarra",
       "tipo": "escribe",
-      "texto": "Pide reconstruir."
+      "texto": "Reconstrucción: V1 a 54 km/h (49–55), V2 a 0 km/h (0–8)."
     },
     {
       "n": 8,
       "de": "fisico",
       "para": "pizarra",
       "tipo": "escribe",
-      "texto": "Reconstrucción: V1 a 52 km/h (44–52), V2 a 0 km/h (0–10)."
-    },
-    {
-      "n": 9,
-      "de": "fisico",
-      "para": "pizarra",
-      "tipo": "escribe",
       "texto": "Con los supuestos declarados: Masa de V1: 1,653 kg; Masa de V2: 1,191 kg; Posición inicial de V1: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Posición inicial de V2: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Fricción llanta–pavimento: μ = 0.7; Después del impacto: las llantas ruedan, con un arrastre de 0.35 de la fricción; Restitución del choque: e = 0.1; Fricción entre los vehículos durante el choque: razón de impulso de 0.4."
     },
     {
-      "n": 10,
+      "n": 9,
       "de": "verificador_cesvi",
       "para": "pizarra",
       "tipo": "escribe",
       "texto": "Método de CESVI (EBS por deformación): V1 a 39.93 km/h, V2 a 33.65 km/h."
     },
     {
-      "n": 11,
+      "n": 10,
       "de": "perito",
       "para": "pizarra",
       "tipo": "escribe",
       "texto": "Abre el dictamen."
     },
     {
-      "n": 12,
+      "n": 11,
       "de": "redactor",
       "para": "pizarra",
       "tipo": "escribe",

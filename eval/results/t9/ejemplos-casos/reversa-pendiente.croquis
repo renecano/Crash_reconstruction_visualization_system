@@ -1,7 +1,7 @@
 {
   "formato": "croquis-caso",
   "version": 1,
-  "guardado": "2026-11-26T19:27:48.797Z",
+  "guardado": "2026-11-26T23:05:20.151Z",
   "narracion": "El hecho se ubica en la calle Olivos, frente al acceso vehicular de una casa habitación, colonia Lomas del Valle, municipio de Puebla, Puebla, aproximadamente a las 08:20 horas. La calle consta de un arroyo de dos carriles de concreto asfáltico, uno por sentido, con pendiente descendente hacia el Norte; 12 metros al Sur de ese acceso se encuentra un reductor de velocidad tipo tope de 0.10 metros de alto y 1.80 metros de ancho. La superficie se encontraba seca.\n\nSe examinan el vehículo A, marca Honda, tipo CR-V, modelo 2017, color plata, de servicio particular, que salía en reversa de ese acceso vehicular hacia la calle, y el vehículo B, marca Nissan, tipo Versa, modelo 2020, color azul, de servicio particular, que circulaba de Sur a Norte. El vehículo A presenta en su parte posterior derecha un hundimiento de atrás hacia adelante y de derecha a izquierda sobre defensa y calavera. El vehículo B presenta en su costado izquierdo, a la altura de la puerta delantera, un hundimiento de izquierda a derecha con desprendimiento de pintura. Las zonas de contacto corresponden: la parte posterior del vehículo A con el costado izquierdo del vehículo B.\n\nEl vehículo A quedó con su parte posterior sobre el carril con sentido al Norte, a 2.40 metros del acceso; el vehículo B quedó 7 metros al Norte del área de contacto, junto a la guarnición.",
   "escena": {
     "posiciones": [
@@ -82,15 +82,6 @@
           "tipo": "numero",
           "unidad": "m"
         }
-      },
-      {
-        "clave": "final-V2",
-        "texto": "¿Dónde quedó V2 al final? Una posición medida en el lugar fija mejor su velocidad.",
-        "porQue": "Con la posición final que hay, la física no cuadra. Si se midió en el lugar, colócala; si no, queda el supuesto.",
-        "control": {
-          "tipo": "mapa"
-        },
-        "vehiculo": "V2"
       }
     ]
   },
@@ -725,43 +716,43 @@
         ],
         "posiciones": [
           {
+            "vehiculo": "V2",
+            "fase": "impacto",
+            "punto": {
+              "lat": 18.98623701091117,
+              "lon": -98.18702680302218
+            },
+            "rumbo": 359.9999999637954,
+            "fuente": "perito"
+          },
+          {
             "vehiculo": "V1",
             "fase": "impacto",
             "punto": {
-              "lat": 18.985810206585008,
-              "lon": -98.18713021204674
+              "lat": 18.986237010911157,
+              "lon": -98.18705581038817
             },
-            "rumbo": 277.10336276970224,
+            "rumbo": 269.9999999637954,
             "fuente": "perito"
           },
           {
             "vehiculo": "V1",
             "fase": "final",
             "punto": {
-              "lat": 18.985809859723066,
-              "lon": -98.18712726847177
+              "lat": 18.986240616097277,
+              "lon": -98.18705250629944
             },
-            "rumbo": 277.1033628580551,
-            "fuente": "perito"
-          },
-          {
-            "vehiculo": "V2",
-            "fase": "impacto",
-            "punto": {
-              "lat": 18.985806814689084,
-              "lon": -98.1871014273957
-            },
-            "rumbo": 277.03511014709227,
+            "rumbo": 188.4950427718013,
             "fuente": "perito"
           },
           {
             "vehiculo": "V2",
             "fase": "final",
             "punto": {
-              "lat": 18.985869573433998,
-              "lon": -98.18709311615909
+              "lat": 18.986300308225424,
+              "lon": -98.18702963499318
             },
-            "rumbo": 188.49506142323185,
+            "rumbo": 8.495039771187407,
             "fuente": "perito"
           }
         ]
@@ -773,12 +764,12 @@
           "id": "tope-1",
           "linea": [
             {
-              "lat": 18.9856645,
-              "lon": -98.1871091
+              "lat": 18.9861347,
+              "lon": -98.1870672
             },
             {
-              "lat": 18.9857359,
-              "lon": -98.1870998
+              "lat": 18.986124,
+              "lon": -98.1869919
             }
           ],
           "alto_m": 0.1,
@@ -834,59 +825,38 @@
       "de": "perito",
       "para": "pizarra",
       "tipo": "escribe",
-      "texto": "No sé dónde fue el primer golpe: se usa el lugar del choque (supuesto)."
+      "texto": "Pide reconstruir."
     },
     {
       "n": 7,
-      "de": "perito",
+      "de": "fisico",
       "para": "pizarra",
       "tipo": "escribe",
-      "texto": "Pide reconstruir."
+      "texto": "Reconstrucción: V1 a 6 km/h (3–7), V2 a 20 km/h (16–25)."
     },
     {
       "n": 8,
       "de": "fisico",
       "para": "pizarra",
       "tipo": "escribe",
-      "texto": "Reconstrucción: V1 a 43 km/h (19–50), V2 a 33 km/h (1–48)."
-    },
-    {
-      "n": 9,
-      "de": "fisico",
-      "para": "pizarra",
-      "tipo": "escribe",
       "texto": "Con los supuestos declarados: Masa de V1: 1,590 kg; Masa de V2: 1,110 kg; Posición inicial de V1: 12 m delante de la posición de impacto que colocó el perito: llega en reversa; Posición inicial de V2: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Fricción llanta–pavimento: μ = 0.7; Después del impacto: las llantas ruedan, con un arrastre de 0.35 de la fricción; Restitución del choque: e = 0.1; Fricción entre los vehículos durante el choque: razón de impulso de 0.4."
     },
     {
-      "n": 10,
-      "de": "fisico",
-      "para": "preguntador",
-      "tipo": "pide",
-      "texto": "La física no cuadra o no alcanza (ninguna velocidad lleva al vehículo a la posición final dada): pide evidencia al perito."
-    },
-    {
-      "n": 11,
-      "de": "preguntador",
-      "para": "fisico",
-      "tipo": "escribe",
-      "texto": "Pregunta al perito: ¿Dónde quedó V2 al final? Una posición medida en el lugar fija mejor su velocidad."
-    },
-    {
-      "n": 12,
+      "n": 9,
       "de": "verificador_cesvi",
       "para": "pizarra",
       "tipo": "escribe",
       "texto": "Sin medidas de deformación completas: no hay EBS con el método de CESVI."
     },
     {
-      "n": 13,
+      "n": 10,
       "de": "perito",
       "para": "pizarra",
       "tipo": "escribe",
       "texto": "Abre el dictamen."
     },
     {
-      "n": 14,
+      "n": 11,
       "de": "redactor",
       "para": "pizarra",
       "tipo": "escribe",

@@ -1,7 +1,7 @@
 {
   "formato": "croquis-caso",
   "version": 1,
-  "guardado": "2026-11-26T19:27:28.962Z",
+  "guardado": "2026-11-26T23:04:57.934Z",
   "narracion": "El hecho se ubica en la Avenida Valle Alto, entre la Calle Encino y la Calle Nogal, colonia Privada Valle Alto, municipio de Monterrey, Nuevo León, aproximadamente a las 21:45 horas. La avenida consta de un arroyo de tres carriles con sentido de Sur a Norte, de concreto hidráulico, con iluminación artificial funcionando y semáforo en el cruce con la Calle Nogal. Al momento del hecho se registraba lluvia ligera y la carpeta se encontraba mojada.\n\nSe examinan tres vehículos de servicio particular que se encontraban en el carril central: el vehículo A, marca Ford, tipo Ranger, modelo 2012, color negro; el vehículo B, marca Toyota, tipo Corolla, modelo 2019, color blanco; y el vehículo C, marca Chevrolet, tipo Aveo, modelo 2015, color rojo. El vehículo B y el vehículo C se encontraban detenidos por el semáforo en rojo, el vehículo C delante del vehículo B; el vehículo A circulaba detrás de ellos. El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás sobre defensa, parrilla y cofre. El vehículo B presenta en su parte posterior un hundimiento de atrás hacia adelante sobre defensa, cajuela y calaveras, y en su parte frontal un hundimiento de adelante hacia atrás sobre defensa y fascia. El vehículo C presenta en su parte posterior un hundimiento de atrás hacia adelante sobre defensa y cajuela.\n\nPrimer impacto: la parte frontal del vehículo A contra la parte posterior del vehículo B. Segundo impacto: por el empuje, la parte frontal del vehículo B contra la parte posterior del vehículo C.\n\nSe localizan restos de plástico y vidrio sobre el carril central, en el área del primer contacto. El vehículo A quedó sobre el área de restos; el vehículo B, en el mismo carril, 5 metros adelante del área de restos; y el vehículo C, 10 metros adelante del área de restos.",
   "escena": {
     "posiciones": [
@@ -121,10 +121,10 @@
         "calles_del_mapa": {
           "fuente": "overpass",
           "atribucion": "© OpenStreetMap contributors (ODbL)",
-          "consultado": "2026-11-25T00:00:00.000Z",
+          "consultado": "2026-11-26T23:04:43.912Z",
           "centro": {
-            "lat": 25.5696,
-            "lon": -100.27224
+            "lat": 25.56829,
+            "lon": -100.273407
           },
           "radio_m": 150,
           "vias": [
@@ -265,6 +265,22 @@
               ]
             },
             {
+              "id": 160985595,
+              "tipo": "residential",
+              "nombre": "Calle Sauce",
+              "sentido_unico": "yes",
+              "puntos": [
+                [
+                  -100.274031,
+                  25.567555
+                ],
+                [
+                  -100.275578,
+                  25.568346
+                ]
+              ]
+            },
+            {
               "id": 160985634,
               "tipo": "tertiary",
               "nombre": "Avenida Abeto",
@@ -305,6 +321,26 @@
               ]
             },
             {
+              "id": 160985678,
+              "tipo": "residential",
+              "nombre": "Calle Sabino",
+              "sentido_unico": "yes",
+              "puntos": [
+                [
+                  -100.275536,
+                  25.568888
+                ],
+                [
+                  -100.275365,
+                  25.568783
+                ],
+                [
+                  -100.273838,
+                  25.568037
+                ]
+              ]
+            },
+            {
               "id": 160985687,
               "tipo": "residential",
               "nombre": "Calle Encino",
@@ -325,205 +361,6 @@
                 [
                   -100.275674,
                   25.569506
-                ]
-              ]
-            },
-            {
-              "id": 160985703,
-              "tipo": "residential",
-              "nombre": "Calle Ciprés",
-              "sentido_unico": "yes",
-              "puntos": [
-                [
-                  -100.272317,
-                  25.569879
-                ],
-                [
-                  -100.272899,
-                  25.570014
-                ],
-                [
-                  -100.273119,
-                  25.570081
-                ],
-                [
-                  -100.273391,
-                  25.570199
-                ],
-                [
-                  -100.273574,
-                  25.570307
-                ],
-                [
-                  -100.273785,
-                  25.570427
-                ],
-                [
-                  -100.274062,
-                  25.570641
-                ],
-                [
-                  -100.274312,
-                  25.570874
-                ],
-                [
-                  -100.27442,
-                  25.570957
-                ],
-                [
-                  -100.274501,
-                  25.57103
-                ],
-                [
-                  -100.274737,
-                  25.571161
-                ]
-              ]
-            },
-            {
-              "id": 160985720,
-              "tipo": "unclassified",
-              "sentido_unico": "yes",
-              "puntos": [
-                [
-                  -100.270294,
-                  25.570599
-                ],
-                [
-                  -100.270366,
-                  25.570687
-                ],
-                [
-                  -100.270385,
-                  25.570712
-                ],
-                [
-                  -100.270418,
-                  25.570756
-                ],
-                [
-                  -100.270656,
-                  25.570999
-                ],
-                [
-                  -100.27078,
-                  25.571141
-                ],
-                [
-                  -100.270808,
-                  25.571216
-                ],
-                [
-                  -100.270825,
-                  25.571288
-                ],
-                [
-                  -100.270864,
-                  25.571635
-                ],
-                [
-                  -100.270875,
-                  25.571947
-                ]
-              ]
-            },
-            {
-              "id": 160985779,
-              "tipo": "residential",
-              "nombre": "Calle Ahuehuete",
-              "sentido_unico": "yes",
-              "puntos": [
-                [
-                  -100.272069,
-                  25.570786
-                ],
-                [
-                  -100.272339,
-                  25.570847
-                ],
-                [
-                  -100.27261,
-                  25.57091
-                ],
-                [
-                  -100.272915,
-                  25.571043
-                ],
-                [
-                  -100.273209,
-                  25.571208
-                ],
-                [
-                  -100.27342,
-                  25.5714
-                ],
-                [
-                  -100.273657,
-                  25.571638
-                ],
-                [
-                  -100.273772,
-                  25.57175
-                ],
-                [
-                  -100.273974,
-                  25.571893
-                ]
-              ]
-            },
-            {
-              "id": 160985786,
-              "tipo": "residential",
-              "nombre": "Calle Roble",
-              "sentido_unico": "yes",
-              "puntos": [
-                [
-                  -100.275066,
-                  25.570867
-                ],
-                [
-                  -100.275035,
-                  25.570872
-                ],
-                [
-                  -100.27501,
-                  25.570872
-                ],
-                [
-                  -100.274979,
-                  25.570859
-                ],
-                [
-                  -100.274961,
-                  25.570833
-                ],
-                [
-                  -100.274928,
-                  25.570794
-                ],
-                [
-                  -100.274623,
-                  25.570454
-                ],
-                [
-                  -100.274168,
-                  25.570069
-                ],
-                [
-                  -100.273744,
-                  25.569815
-                ],
-                [
-                  -100.273464,
-                  25.56969
-                ],
-                [
-                  -100.273071,
-                  25.569569
-                ],
-                [
-                  -100.272473,
-                  25.569396
                 ]
               ]
             },
@@ -560,58 +397,6 @@
                 [
                   -100.275362,
                   25.570536
-                ]
-              ]
-            },
-            {
-              "id": 160985799,
-              "tipo": "residential",
-              "nombre": "Calle Nogal",
-              "sentido_unico": "yes",
-              "puntos": [
-                [
-                  -100.274487,
-                  25.571588
-                ],
-                [
-                  -100.27422,
-                  25.571439
-                ],
-                [
-                  -100.274128,
-                  25.571379
-                ],
-                [
-                  -100.274051,
-                  25.571305
-                ],
-                [
-                  -100.273935,
-                  25.571193
-                ],
-                [
-                  -100.273688,
-                  25.570967
-                ],
-                [
-                  -100.273374,
-                  25.570747
-                ],
-                [
-                  -100.273021,
-                  25.570561
-                ],
-                [
-                  -100.272739,
-                  25.570457
-                ],
-                [
-                  -100.272296,
-                  25.570353
-                ],
-                [
-                  -100.272192,
-                  25.57033
                 ]
               ]
             },
@@ -772,6 +557,263 @@
               ]
             },
             {
+              "id": 654560462,
+              "tipo": "residential",
+              "nombre": "Calle Bosque Nevado",
+              "puntos": [
+                [
+                  -100.273937,
+                  25.565727
+                ],
+                [
+                  -100.273458,
+                  25.565666
+                ],
+                [
+                  -100.273329,
+                  25.565632
+                ],
+                [
+                  -100.273298,
+                  25.565634
+                ],
+                [
+                  -100.273276,
+                  25.565645
+                ],
+                [
+                  -100.273248,
+                  25.565671
+                ],
+                [
+                  -100.272852,
+                  25.566257
+                ],
+                [
+                  -100.272819,
+                  25.56634
+                ],
+                [
+                  -100.272778,
+                  25.566878
+                ],
+                [
+                  -100.272778,
+                  25.566907
+                ],
+                [
+                  -100.272785,
+                  25.566938
+                ],
+                [
+                  -100.272803,
+                  25.566965
+                ],
+                [
+                  -100.272842,
+                  25.56699
+                ],
+                [
+                  -100.273087,
+                  25.567028
+                ]
+              ]
+            },
+            {
+              "id": 654560464,
+              "tipo": "residential",
+              "nombre": "Calle Bosque De Las Aves",
+              "puntos": [
+                [
+                  -100.273006,
+                  25.567559
+                ],
+                [
+                  -100.272548,
+                  25.567495
+                ],
+                [
+                  -100.272258,
+                  25.567435
+                ],
+                [
+                  -100.272219,
+                  25.567419
+                ],
+                [
+                  -100.272191,
+                  25.567389
+                ],
+                [
+                  -100.27217,
+                  25.567356
+                ],
+                [
+                  -100.27216,
+                  25.567327
+                ],
+                [
+                  -100.272154,
+                  25.567285
+                ],
+                [
+                  -100.272163,
+                  25.567249
+                ],
+                [
+                  -100.2723,
+                  25.567012
+                ],
+                [
+                  -100.272382,
+                  25.566789
+                ],
+                [
+                  -100.272418,
+                  25.566623
+                ],
+                [
+                  -100.272419,
+                  25.566498
+                ],
+                [
+                  -100.27235,
+                  25.56628
+                ],
+                [
+                  -100.272264,
+                  25.566092
+                ],
+                [
+                  -100.272178,
+                  25.565962
+                ],
+                [
+                  -100.272167,
+                  25.56589
+                ],
+                [
+                  -100.272181,
+                  25.565816
+                ],
+                [
+                  -100.272245,
+                  25.565694
+                ],
+                [
+                  -100.272352,
+                  25.565614
+                ],
+                [
+                  -100.272545,
+                  25.565519
+                ],
+                [
+                  -100.272659,
+                  25.565438
+                ],
+                [
+                  -100.272705,
+                  25.565379
+                ],
+                [
+                  -100.272779,
+                  25.565216
+                ]
+              ]
+            },
+            {
+              "id": 654560465,
+              "tipo": "residential",
+              "nombre": "Calle Bosque Del Río",
+              "puntos": [
+                [
+                  -100.271534,
+                  25.567826
+                ],
+                [
+                  -100.27149,
+                  25.567792
+                ],
+                [
+                  -100.271464,
+                  25.567748
+                ],
+                [
+                  -100.271514,
+                  25.567042
+                ],
+                [
+                  -100.271696,
+                  25.566782
+                ],
+                [
+                  -100.271759,
+                  25.566692
+                ],
+                [
+                  -100.271797,
+                  25.566596
+                ],
+                [
+                  -100.271801,
+                  25.566513
+                ],
+                [
+                  -100.271783,
+                  25.566406
+                ],
+                [
+                  -100.271477,
+                  25.566009
+                ],
+                [
+                  -100.271446,
+                  25.565915
+                ],
+                [
+                  -100.271431,
+                  25.565805
+                ],
+                [
+                  -100.271483,
+                  25.565631
+                ],
+                [
+                  -100.271623,
+                  25.565371
+                ],
+                [
+                  -100.271794,
+                  25.565232
+                ],
+                [
+                  -100.271982,
+                  25.565136
+                ],
+                [
+                  -100.272049,
+                  25.565075
+                ],
+                [
+                  -100.272089,
+                  25.565031
+                ],
+                [
+                  -100.272109,
+                  25.564973
+                ],
+                [
+                  -100.272107,
+                  25.564859
+                ],
+                [
+                  -100.27203,
+                  25.56464
+                ]
+              ]
+            },
+            {
               "id": 654579132,
               "tipo": "residential",
               "nombre": "Privada Bosque De La Pradera",
@@ -899,110 +941,98 @@
               ]
             },
             {
-              "id": 754090762,
+              "id": 754090772,
               "tipo": "residential",
-              "nombre": "Privada Oyamel",
+              "nombre": "Calle Bosque De Las Flores",
               "puntos": [
                 [
-                  -100.271869,
-                  25.5711
+                  -100.272533,
+                  25.568066
                 ],
                 [
-                  -100.271411,
-                  25.570806
+                  -100.272006,
+                  25.567955
+                ],
+                [
+                  -100.271597,
+                  25.567851
+                ],
+                [
+                  -100.271534,
+                  25.567826
                 ]
               ]
             },
             {
-              "id": 754090767,
-              "tipo": "service",
+              "id": 754090773,
+              "tipo": "residential",
+              "nombre": "Calle Bosque Del Paraíso",
               "puntos": [
                 [
-                  -100.270972,
-                  25.571273
+                  -100.27404,
+                  25.565578
                 ],
                 [
-                  -100.271039,
-                  25.571142
+                  -100.273937,
+                  25.565727
                 ],
                 [
-                  -100.27107,
-                  25.571044
+                  -100.273733,
+                  25.566046
                 ],
                 [
-                  -100.271205,
-                  25.570615
+                  -100.27354,
+                  25.566354
                 ],
                 [
-                  -100.271257,
-                  25.57045
+                  -100.273223,
+                  25.566795
                 ],
                 [
-                  -100.27151,
-                  25.569647
+                  -100.273087,
+                  25.567028
                 ],
                 [
-                  -100.271655,
-                  25.569187
+                  -100.27305,
+                  25.567207
+                ],
+                [
+                  -100.273006,
+                  25.567559
                 ]
               ]
             },
             {
-              "id": 754090768,
-              "tipo": "unclassified",
-              "sentido_unico": "yes",
+              "id": 754090774,
+              "tipo": "residential",
               "puntos": [
                 [
-                  -100.270965,
-                  25.571919
+                  -100.273006,
+                  25.567559
                 ],
                 [
-                  -100.270945,
-                  25.571805
+                  -100.272876,
+                  25.567763
                 ],
                 [
-                  -100.270957,
-                  25.5717
+                  -100.272749,
+                  25.567954
                 ],
                 [
-                  -100.270972,
-                  25.571625
+                  -100.272668,
+                  25.568051
                 ],
                 [
-                  -100.270992,
-                  25.571548
+                  -100.272633,
+                  25.568066
                 ],
                 [
-                  -100.270995,
-                  25.571464
+                  -100.272593,
+                  25.568074
                 ],
                 [
-                  -100.270972,
-                  25.571273
-                ],
-                [
-                  -100.270884,
-                  25.571102
-                ],
-                [
-                  -100.270744,
-                  25.570916
-                ],
-                [
-                  -100.270526,
-                  25.570673
-                ],
-                [
-                  -100.270494,
-                  25.570646
-                ],
-                [
-                  -100.270418,
-                  25.570615
-                ],
-                [
-                  -100.270294,
-                  25.570599
+                  -100.272533,
+                  25.568066
                 ]
               ]
             },
@@ -1049,6 +1079,24 @@
                 [
                   -100.273492,
                   25.568178
+                ]
+              ]
+            },
+            {
+              "id": 754307492,
+              "tipo": "tertiary_link",
+              "puntos": [
+                [
+                  -100.273673,
+                  25.567626
+                ],
+                [
+                  -100.273792,
+                  25.567693
+                ],
+                [
+                  -100.273907,
+                  25.567742
                 ]
               ]
             },
@@ -1177,180 +1225,6 @@
               ]
             },
             {
-              "id": 852354298,
-              "tipo": "service",
-              "puntos": [
-                [
-                  -100.271205,
-                  25.570615
-                ],
-                [
-                  -100.271159,
-                  25.570607
-                ],
-                [
-                  -100.271111,
-                  25.570605
-                ],
-                [
-                  -100.271075,
-                  25.570627
-                ],
-                [
-                  -100.270904,
-                  25.570795
-                ]
-              ]
-            },
-            {
-              "id": 852354299,
-              "tipo": "service",
-              "puntos": [
-                [
-                  -100.271119,
-                  25.570374
-                ],
-                [
-                  -100.270766,
-                  25.570714
-                ]
-              ]
-            },
-            {
-              "id": 852354300,
-              "tipo": "service",
-              "puntos": [
-                [
-                  -100.27098,
-                  25.570296
-                ],
-                [
-                  -100.270638,
-                  25.570638
-                ]
-              ]
-            },
-            {
-              "id": 852354301,
-              "tipo": "service",
-              "puntos": [
-                [
-                  -100.270813,
-                  25.570178
-                ],
-                [
-                  -100.270494,
-                  25.570533
-                ],
-                [
-                  -100.270418,
-                  25.570615
-                ],
-                [
-                  -100.270366,
-                  25.570687
-                ]
-              ]
-            },
-            {
-              "id": 852354302,
-              "tipo": "service",
-              "puntos": [
-                [
-                  -100.270646,
-                  25.570079
-                ],
-                [
-                  -100.270233,
-                  25.570567
-                ]
-              ]
-            },
-            {
-              "id": 852354304,
-              "tipo": "service",
-              "puntos": [
-                [
-                  -100.270904,
-                  25.570795
-                ],
-                [
-                  -100.270893,
-                  25.570805
-                ],
-                [
-                  -100.27088,
-                  25.570808
-                ],
-                [
-                  -100.270865,
-                  25.570804
-                ],
-                [
-                  -100.270766,
-                  25.570714
-                ],
-                [
-                  -100.270638,
-                  25.570638
-                ],
-                [
-                  -100.270494,
-                  25.570533
-                ]
-              ]
-            },
-            {
-              "id": 852354307,
-              "tipo": "service",
-              "puntos": [
-                [
-                  -100.271257,
-                  25.57045
-                ],
-                [
-                  -100.271119,
-                  25.570374
-                ],
-                [
-                  -100.27098,
-                  25.570296
-                ],
-                [
-                  -100.270813,
-                  25.570178
-                ],
-                [
-                  -100.270646,
-                  25.570079
-                ],
-                [
-                  -100.270495,
-                  25.569989
-                ],
-                [
-                  -100.270445,
-                  25.569957
-                ],
-                [
-                  -100.270404,
-                  25.56994
-                ],
-                [
-                  -100.270366,
-                  25.569938
-                ],
-                [
-                  -100.270098,
-                  25.570046
-                ],
-                [
-                  -100.269705,
-                  25.570293
-                ]
-              ]
-            },
-            {
               "id": 868525199,
               "tipo": "tertiary",
               "nombre": "Calle Acacias",
@@ -1394,217 +1268,64 @@
               ]
             },
             {
-              "id": 868525202,
-              "tipo": "residential",
-              "nombre": "Calle Ciprés",
-              "puntos": [
-                [
-                  -100.272223,
-                  25.56986
-                ],
-                [
-                  -100.272317,
-                  25.569879
-                ]
-              ]
-            },
-            {
-              "id": 886034039,
+              "id": 944660518,
               "tipo": "service",
               "puntos": [
                 [
-                  -100.27151,
-                  25.569647
+                  -100.273618,
+                  25.567786
                 ],
                 [
-                  -100.271417,
-                  25.569532
-                ],
-                [
-                  -100.271326,
-                  25.569442
-                ],
-                [
-                  -100.271207,
-                  25.569365
-                ],
-                [
-                  -100.271158,
-                  25.569273
-                ],
-                [
-                  -100.271143,
-                  25.569231
-                ],
-                [
-                  -100.271098,
-                  25.569148
-                ],
-                [
-                  -100.271062,
-                  25.569077
+                  -100.273515,
+                  25.56773
                 ]
               ]
             },
             {
-              "id": 941392034,
+              "id": 944660519,
               "tipo": "service",
               "puntos": [
                 [
-                  -100.271257,
-                  25.57045
+                  -100.273598,
+                  25.567581
                 ],
                 [
-                  -100.271365,
-                  25.570504
-                ],
-                [
-                  -100.271374,
-                  25.570513
-                ],
-                [
-                  -100.271373,
-                  25.570526
-                ],
-                [
-                  -100.271173,
-                  25.57114
-                ],
-                [
-                  -100.271164,
-                  25.571159
-                ],
-                [
-                  -100.271144,
-                  25.571167
-                ],
-                [
-                  -100.271039,
-                  25.571142
+                  -100.273673,
+                  25.567626
                 ]
               ]
             },
             {
-              "id": 944660521,
+              "id": 944660520,
               "tipo": "service",
               "puntos": [
                 [
-                  -100.269651,
-                  25.569758
+                  -100.273484,
+                  25.567785
                 ],
                 [
-                  -100.269683,
-                  25.569733
+                  -100.273515,
+                  25.56773
                 ],
                 [
-                  -100.270115,
-                  25.569157
+                  -100.273598,
+                  25.567581
                 ],
                 [
-                  -100.270483,
-                  25.568617
+                  -100.273681,
+                  25.567416
                 ],
                 [
-                  -100.270515,
-                  25.568589
+                  -100.273696,
+                  25.567403
                 ],
                 [
-                  -100.270554,
-                  25.568583
+                  -100.273712,
+                  25.567403
                 ],
                 [
-                  -100.270601,
-                  25.568587
-                ],
-                [
-                  -100.270646,
-                  25.568603
-                ],
-                [
-                  -100.270666,
-                  25.56863
-                ],
-                [
-                  -100.270755,
-                  25.56879
-                ],
-                [
-                  -100.270857,
-                  25.568902
-                ],
-                [
-                  -100.270996,
-                  25.568984
-                ],
-                [
-                  -100.271062,
-                  25.569077
-                ]
-              ]
-            },
-            {
-              "id": 1537518596,
-              "tipo": "path",
-              "puntos": [
-                [
-                  -100.269032,
-                  25.568385
-                ],
-                [
-                  -100.269078,
-                  25.568444
-                ],
-                [
-                  -100.269138,
-                  25.568472
-                ],
-                [
-                  -100.269673,
-                  25.568437
-                ],
-                [
-                  -100.269742,
-                  25.568416
-                ],
-                [
-                  -100.26981,
-                  25.568347
-                ],
-                [
-                  -100.269872,
-                  25.568231
-                ],
-                [
-                  -100.269909,
-                  25.568165
-                ],
-                [
-                  -100.269989,
-                  25.568141
-                ],
-                [
-                  -100.27009,
-                  25.568143
-                ],
-                [
-                  -100.270266,
-                  25.568197
-                ],
-                [
-                  -100.270414,
-                  25.568268
-                ],
-                [
-                  -100.270539,
-                  25.568362
-                ],
-                [
-                  -100.270582,
-                  25.568454
-                ],
-                [
-                  -100.270646,
-                  25.568603
+                  -100.273791,
+                  25.567454
                 ]
               ]
             }
@@ -1850,60 +1571,60 @@
             "vehiculo": "V1",
             "fase": "impacto",
             "punto": {
-              "lat": 25.56845823315245,
-              "lon": -100.27370326646772
+              "lat": 25.568270186512347,
+              "lon": -100.27342203702189
             },
-            "rumbo": 18.54197384535081,
+            "rumbo": 34.3958479037355,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V2",
+            "fase": "impacto",
+            "punto": {
+              "lat": 25.568307327525723,
+              "lon": -100.27339384964567
+            },
+            "rumbo": 34.3958479037355,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V3",
+            "fase": "impacto",
+            "punto": {
+              "lat": 25.568341351810705,
+              "lon": -100.27336802763811
+            },
+            "rumbo": 34.3958479037355,
             "fuente": "perito"
           },
           {
             "vehiculo": "V1",
             "fase": "final",
             "punto": {
-              "lat": 25.56847544561439,
-              "lon": -100.27369157972694
+              "lat": 25.568281317685187,
+              "lon": -100.27341358925818
             },
-            "rumbo": 21.846839320773597,
-            "fuente": "perito"
-          },
-          {
-            "vehiculo": "V2",
-            "fase": "impacto",
-            "punto": {
-              "lat": 25.568500907659185,
-              "lon": -100.27368739911824
-            },
-            "rumbo": 18.54197384535081,
+            "rumbo": 34.3958479037355,
             "fuente": "perito"
           },
           {
             "vehiculo": "V2",
             "fase": "final",
             "punto": {
-              "lat": 25.56852568509072,
-              "lon": -100.27367698940095
+              "lat": 25.568326930924115,
+              "lon": -100.27337900589393
             },
-            "rumbo": 14.111524873700205,
-            "fuente": "perito"
-          },
-          {
-            "vehiculo": "V3",
-            "fase": "impacto",
-            "punto": {
-              "lat": 25.56854658493794,
-              "lon": -100.27366937813295
-            },
-            "rumbo": 18.54197384535081,
+            "rumbo": 54.52459330407788,
             "fuente": "perito"
           },
           {
             "vehiculo": "V3",
             "fase": "final",
             "punto": {
-              "lat": 25.568562845017993,
-              "lon": -100.27366663335565
+              "lat": 25.56836438476104,
+              "lon": -100.27335073042788
             },
-            "rumbo": 14.111520669814922,
+            "rumbo": 54.5245848350047,
             "fuente": "perito"
           }
         ]
@@ -1953,45 +1674,66 @@
       "de": "perito",
       "para": "pizarra",
       "tipo": "escribe",
-      "texto": "No sé dónde fue el primer golpe: se usa el lugar del choque (supuesto)."
+      "texto": "Pide reconstruir."
     },
     {
       "n": 7,
-      "de": "perito",
+      "de": "fisico",
       "para": "pizarra",
       "tipo": "escribe",
-      "texto": "Pide reconstruir."
+      "texto": "Reconstrucción: V1 a 25 km/h (20–32)."
     },
     {
       "n": 8,
       "de": "fisico",
       "para": "pizarra",
       "tipo": "escribe",
-      "texto": "Reconstrucción: V1 a 24 km/h (20–32)."
+      "texto": "Con los supuestos declarados: Masa de V1: 1,923 kg; Masa de V2: 1,335 kg; Masa de V3: 1,140 kg; Posición inicial de V1: 12 m antes de la posición de impacto que colocó el perito, sobre el trazo de la calle; Posición inicial de V2: Detenido en la posición de impacto que colocó el perito; Posición inicial de V3: Detenido en la posición de impacto que colocó el perito (impacto posterior); Fricción llanta–pavimento: μ = 0.55; Después del impacto: las llantas ruedan, con un arrastre de 0.35 de la fricción; Restitución del choque: e = 0.1; Fricción entre los vehículos durante el choque: razón de impulso de 0.4."
     },
     {
       "n": 9,
-      "de": "fisico",
-      "para": "pizarra",
-      "tipo": "escribe",
-      "texto": "Con los supuestos declarados: Masa de V1: 1,923 kg; Masa de V2: 1,335 kg; Masa de V3: 1,140 kg; Posición inicial de V1: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Posición inicial de V2: Detenido en la posición de impacto que colocó el perito; Posición inicial de V3: Detenido en la posición de impacto que colocó el perito (impacto posterior); Fricción llanta–pavimento: μ = 0.55; Después del impacto: las llantas ruedan, con un arrastre de 0.35 de la fricción; Restitución del choque: e = 0.1; Fricción entre los vehículos durante el choque: razón de impulso de 0.4."
-    },
-    {
-      "n": 10,
       "de": "verificador_cesvi",
       "para": "pizarra",
       "tipo": "escribe",
       "texto": "Sin medidas de deformación completas: no hay EBS con el método de CESVI."
     },
     {
+      "n": 10,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Pide reconstruir."
+    },
+    {
       "n": 11,
+      "de": "fisico",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Reconstrucción: V1 a 25 km/h (20–32)."
+    },
+    {
+      "n": 12,
+      "de": "fisico",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Con los supuestos declarados: Masa de V1: 1,923 kg; Masa de V2: 1,335 kg; Masa de V3: 1,140 kg; Posición inicial de V1: 12 m antes de la posición de impacto que colocó el perito, sobre el trazo de la calle; Posición inicial de V2: Detenido en la posición de impacto que colocó el perito; Posición inicial de V3: Detenido en la posición de impacto que colocó el perito (impacto posterior); Fricción llanta–pavimento: μ = 0.55; Después del impacto: las llantas ruedan, con un arrastre de 0.35 de la fricción; Restitución del choque: e = 0.1; Fricción entre los vehículos durante el choque: razón de impulso de 0.4."
+    },
+    {
+      "n": 13,
+      "de": "verificador_cesvi",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Sin medidas de deformación completas: no hay EBS con el método de CESVI."
+    },
+    {
+      "n": 14,
       "de": "perito",
       "para": "pizarra",
       "tipo": "escribe",
       "texto": "Abre el dictamen."
     },
     {
-      "n": 12,
+      "n": 15,
       "de": "redactor",
       "para": "pizarra",
       "tipo": "escribe",

@@ -2,7 +2,7 @@
   "descripcion": "Las cinco narraciones de ejemplo de punta a punta (ronda 2, C): la lectura guardada, la escena colocada como dice la narración (receta en el script), la reconstrucción, y el dictamen. Lo que dice la pantalla, sin interpretar. Chromium a 1440×900.",
   "script": "apps/web/e2e/ejemplos-ronda2.spec.ts",
   "sitio": "http://localhost:3000",
-  "fecha": "2026-11-26T19:28:14.162Z",
+  "fecha": "2026-11-26T23:06:01.861Z",
   "con_unity": true,
   "llamadas_a_claude": 0,
   "errores_de_pagina": [],
@@ -13,14 +13,14 @@
       "leido": "Iztapalapa·2 vehículos · 1 impacto",
       "lectura_guardada": true,
       "colocada": true,
-      "segundos_reconstruir": 1.4,
+      "segundos_reconstruir": 1.9,
       "cifra": "20",
       "de_quien": "A · VW Jetta",
-      "rango": "rango 4–27",
+      "rango": "rango 5–26",
       "sin_cifra": null,
       "sin_dispersion": false,
       "hipotesis": 0,
-      "velocidades": "Reconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V120 (4–27)4–18–27V212 (4–17)4–11–17",
+      "velocidades": "Reconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V120 (5–26)5–19–26V212 (6–20)6–12–20",
       "evidencia": "Evidencia que fija el resultado: posición final de V1, posición final de V2, rumbo final de V1, rumbo final de V2.",
       "impactos": null,
       "limites": [
@@ -28,15 +28,12 @@
       ],
       "terreno": null,
       "analisis": [
-        "Acto 5 de 6 · Análisis · 1 de 2: Los dañosDañosA · VW JettaB · GM CamaroA · cara frontalel reporte no trae medidas de la deformación6.6kJenergía de deformación12.2km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 2 · 2 · 2 · 2 · 2 · 2 cm (rigidez típica de la clase (NHTSA)).Daños narrados: frontal.Deformación medida: sin dato (el texto no trae la medida de la deformación).B · costado derechoel reporte no trae medidas de la deformación6.7kJenergía de deformación10.2km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 0 · 0 · 1 · 1 · 0 · 0 cm (rigidez típica de la clase (N",
-        "Acto 5 de 6 · Análisis · 2 de 2: Los númerosLos númerosReconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V120 (4–27)4–18–27V212 (4–17)4–11–17Verificación con el método de CESVIMétodo de CESVI: energía de deformación (McHenry) y velocidad equivalente de barrera (EBS), con las medidas del reporte. No es la misma velocidad que la de la reconstrucción física de croquis.V1Falta: las medidas C (2, 4 o 6) y L de la deformación.V2Fal"
+        "Acto 5 de 6 · Análisis · 1 de 2: Los dañosDañosA · VW JettaB · GM CamaroA · cara frontalel reporte no trae medidas de la deformación6.5kJenergía de deformación12.2km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 2 · 2 · 2 · 2 · 2 · 2 cm (rigidez típica de la clase (NHTSA)).Daños narrados: frontal.Deformación medida: sin dato (el texto no trae la medida de la deformación).B · costado derechoel reporte no trae medidas de la deformación6.7kJenergía de deformación10.1km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 0 · 0 · 1 · 1 · 0 · 0 cm (rigidez típica de la clase (N",
+        "Acto 5 de 6 · Análisis · 2 de 2: Los númerosLos númerosReconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V120 (5–26)5–19–26V212 (6–20)6–12–20Verificación con el método de CESVIMétodo de CESVI: energía de deformación (McHenry) y velocidad equivalente de barrera (EBS), con las medidas del reporte. No es la misma velocidad que la de la reconstrucción física de croquis.V1Falta: las medidas C (2, 4 o 6) y L de la deformación.V2Fal"
       ],
       "unity": "listo",
       "dictamen": true,
-      "notas": [
-        "«¿Por dónde venía el VW Jetta?»: la flecha más cercana a «Del sur» se aparta 37°.",
-        "«¿Por dónde venía el GM Camaro?»: la flecha más cercana a «Del oeste» se aparta 37°."
-      ]
+      "notas": []
     },
     {
       "clave": "alcance-deformacion",
@@ -44,14 +41,14 @@
       "leido": "San Luis de la Paz, Guanajuato·Tramo Querétaro–San Luis Potosí·2 vehículos · 1 impacto",
       "lectura_guardada": true,
       "colocada": true,
-      "segundos_reconstruir": 1.9,
-      "cifra": "52",
+      "segundos_reconstruir": 2.5,
+      "cifra": "54",
       "de_quien": "A · Nissan NP300",
-      "rango": "rango 44–52",
+      "rango": "rango 49–55",
       "sin_cifra": null,
       "sin_dispersion": false,
       "hipotesis": 0,
-      "velocidades": "Reconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V152 (44–52)44–52–52V20 (0–10)0–0–10",
+      "velocidades": "Reconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V154 (49–55)49–54–55V20 (0–8)0–0–8",
       "evidencia": "Evidencia que fija el resultado: posición final de V1, posición final de V2, rumbo final de V1, rumbo final de V2, deformación (C y L) de V1, deformación (C y L) de V2.",
       "impactos": null,
       "limites": [
@@ -59,8 +56,8 @@
       ],
       "terreno": null,
       "analisis": [
-        "Acto 5 de 6 · Análisis · 1 de 2: Los dañosDañosA · Nissan NP300B · Volkswagen VentoA · cara frontalmedidas del reporte · perfil C1–C6C118 cmC224 cmC329 cmC431 cmC527 cmC620 cm13.6kJenergía de deformación23.9km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 4 · 4 · 4 · 4 · 4 · 4 cm (rigidez típica de la clase (NHTSA)); no es la medida del reporte.Daños narrados: frontal.Deformación medida: frente; C1–C6 18 · 24 · 29 · 31 · 27 · 20 cm; L 1.52 m.B · cara posteriormedidas del reporte · perfil C1–C6C122 cmC230 cmC336 cmC438 cmC533 cmC625 cm57.5kJenergía de deformación33.2km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, co",
-        "Acto 5 de 6 · Análisis · 2 de 2: Los númerosLos númerosReconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V152 (44–52)44–52–52V20 (0–10)0–0–10Verificación con el método de CESVIMétodo de CESVI: energía de deformación (McHenry) y velocidad equivalente de barrera (EBS), con las medidas del reporte. No es la misma velocidad que la de la reconstrucción física de croquis.V1Energía de deformación (McHenry, 6 medidas)E = L/5 · [ A/2 "
+        "Acto 5 de 6 · Análisis · 1 de 2: Los dañosDañosA · Nissan NP300B · Volkswagen VentoA · cara frontalmedidas del reporte · perfil C1–C6C118 cmC224 cmC329 cmC431 cmC527 cmC620 cm14.5kJenergía de deformación24.6km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 4 · 4 · 4 · 4 · 4 · 4 cm (rigidez típica de la clase (NHTSA)); no es la medida del reporte.Daños narrados: frontal.Deformación medida: frente; C1–C6 18 · 24 · 29 · 31 · 27 · 20 cm; L 1.52 m.B · cara posteriormedidas del reporte · perfil C1–C6C122 cmC230 cmC336 cmC438 cmC533 cmC625 cm61.1kJenergía de deformación34.2km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, co",
+        "Acto 5 de 6 · Análisis · 2 de 2: Los númerosLos númerosReconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V154 (49–55)49–54–55V20 (0–8)0–0–8Verificación con el método de CESVIMétodo de CESVI: energía de deformación (McHenry) y velocidad equivalente de barrera (EBS), con las medidas del reporte. No es la misma velocidad que la de la reconstrucción física de croquis.V1Energía de deformación (McHenry, 6 medidas)E = L/5 · [ A/2 · "
       ],
       "unity": "listo",
       "dictamen": true,
@@ -72,24 +69,25 @@
       "leido": "Monterrey, Nuevo León·3 vehículos · 2 impactos",
       "lectura_guardada": true,
       "colocada": true,
-      "segundos_reconstruir": 1.4,
-      "cifra": "24",
+      "segundos_reconstruir": 1.9,
+      "cifra": "25",
       "de_quien": "A · Ford Ranger",
       "rango": "rango 20–32",
       "sin_cifra": null,
       "sin_dispersion": false,
       "hipotesis": 0,
-      "velocidades": "Reconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V124 (20–32)20–26–32V20 km/h (detenido, lo dice la narración)0–0–0V30 km/h (detenido, lo dice la narración)0–0–0",
+      "velocidades": "Reconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V125 (20–32)20–26–32V20 km/h (detenido, lo dice la narración)0–0–0V30 km/h (detenido, lo dice la narración)0–0–0",
       "evidencia": "Evidencia que fija el resultado: posición final de V1, posición final de V2, posición final de V3, rumbo final de V1, rumbo final de V2, rumbo final de V3.",
-      "impactos": "X1 · 0.00 s · V1 con V2X2 · +0.11 s · V2 con V3",
+      "impactos": "X1 · 0.00 s · V1 con V2X2 · 0.00 s · V2 con V3",
       "limites": [
+        "La trayectoria sigue el trazo real de Avenida Valle Alto, de las calles guardadas con el caso: gira 19° cerca del choque.",
         "V3: solo está en un impacto posterior y empieza detenido en la posición de impacto que colocó el perito (supuesto).",
         "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
       ],
       "terreno": null,
       "analisis": [
-        "Acto 5 de 6 · Análisis · 1 de 2: Los dañosDañosA · Ford RangerB · Toyota CorollaC · Chevrolet AveoA · cara frontalel reporte no trae medidas de la deformación3.6kJenergía de deformación10.8km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado menos de 0.5 cm en todo el ancho (rigidez típica de la clase (NHTSA)).Daños narrados: frontal.Deformación medida: sin dato (el texto no trae la medida de la deformación).B · cara posteriorel reporte no trae medidas de la deformación13.8kJenergía de deformación15.6km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 4 · 4 · 4 · 4 · 4 · 4",
-        "Acto 5 de 6 · Análisis · 2 de 2: Los númerosLos númerosReconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V124 (20–32)20–26–32V20 km/h (detenido, lo dice la narración)0–0–0V30 km/h (detenido, lo dice la narración)0–0–0Verificación con el método de CESVIMétodo de CESVI: energía de deformación (McHenry) y velocidad equivalente de barrera (EBS), con las medidas del reporte. No es la misma velocidad que la de la reconstrucción fís"
+        "Acto 5 de 6 · Análisis · 1 de 2: Los dañosDañosA · Ford RangerB · Toyota CorollaC · Chevrolet AveoA · cara frontalel reporte no trae medidas de la deformación3.9kJenergía de deformación11.3km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado menos de 0.5 cm en todo el ancho (rigidez típica de la clase (NHTSA)).Daños narrados: frontal.Deformación medida: sin dato (el texto no trae la medida de la deformación).B · cara posteriorel reporte no trae medidas de la deformación15.0kJenergía de deformación16.3km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 5 · 5 · 5 · 5 · 5 · 5",
+        "Acto 5 de 6 · Análisis · 2 de 2: Los númerosLos númerosReconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V125 (20–32)20–26–32V20 km/h (detenido, lo dice la narración)0–0–0V30 km/h (detenido, lo dice la narración)0–0–0Verificación con el método de CESVIMétodo de CESVI: energía de deformación (McHenry) y velocidad equivalente de barrera (EBS), con las medidas del reporte. No es la misma velocidad que la de la reconstrucción fís"
       ],
       "unity": "listo",
       "dictamen": true,
@@ -101,31 +99,30 @@
       "leido": "Puebla, Puebla·2 vehículos · 1 impacto",
       "lectura_guardada": true,
       "colocada": true,
-      "segundos_reconstruir": 2.4,
-      "cifra": "43",
-      "de_quien": "A · Honda CR-V",
-      "rango": "rango 19–50",
+      "segundos_reconstruir": 2.9,
+      "cifra": "20",
+      "de_quien": "B · Nissan Versa",
+      "rango": "rango 16–25",
       "sin_cifra": null,
       "sin_dispersion": false,
       "hipotesis": 0,
-      "velocidades": "Reconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V143 (19–50)19–38–50V233 (1–48)1–21–48",
-      "evidencia": "Evidencia que fija el resultado: posición final de V1, posición final de V2, rumbo final de V1, rumbo final de V2.",
+      "velocidades": "Reconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V16 (3–7)3–6–7V220 (16–25)16–21–25",
+      "evidencia": "Evidencia que fija el resultado: posición final de V1, posición final de V2, rumbo final de V1, rumbo final de V2, velocidad_declarada de V1.",
       "impactos": null,
       "limites": [
         "V1 va en reversa y la narración no dice a qué velocidad: se suponen 5.68 km/h (de 3.06 a 9.07), lo que se mide en maniobras de reversa en uso real (NHTSA, DOT HS 811 024).",
         "Los topes sin medir llevan las medidas de la NOM-034-SCT2/SEDATU-2022, tabla 38: si mediste el tope, corrígelas.",
-        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre.",
-        "V1: 43 km/h en reversa es más que la maniobra más rápida de 6 037 medidas en uso real (23 km/h; NHTSA, DOT HS 811 024). Conviene revisar el sentido de marcha y las posiciones finales."
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
       ],
-      "terreno": "TerrenoLa altura del terreno bajo cada vehículo, a lo largo de lo que recorrió.A · Honda CR-VAntes del impacto: 1.2 % de subida · altura exagerada ×22+0.09 m−0.43 m0 mImpactoRecorrió 38.4 m; terminó +0.42 m respecto a donde empezó.B · Nissan VersaAntes del impacto: 2.5 % de bajada · altura exagerada ×12+0.72 m+0.02 m0 mImpactoRecorrió 29.4 m; terminó −0.67 m respecto a donde empezó.Relieve: INEGI, modelo digital de elevación LiDAR de terreno (5 m), por Terrain Tiles. Da la pendiente general de la vía, con una muestra cada 10 m (cada 30 m donde el INEGI no tiene levantamiento láser). No ve una rampa corta, el bombeo ni un tope: esos se marcan aparte. Fuente: INEGI, Relieve continental, 2016 (por Terrain Tiles de Mapzen en AWS). Términos de libre uso de la información del INEGI. Croquis remuestreó los datos; no es una postura del INEGI ni cuenta con su aval.",
+      "terreno": "TerrenoLa altura del terreno bajo cada vehículo, a lo largo de lo que recorrió.A · Honda CR-VAntes del impacto: 2.4 % de bajada · altura exagerada ×13+0.23 m0.00 m0 mImpactoRecorrió 9.8 m; terminó −0.23 m respecto a donde empezó.B · Nissan VersaAntes del impacto: 3.6 % de bajada · altura exagerada ×7.3+1.19 m−0.44 m0 m40.0 mImpactoTope · 20 km/hRecorrió 40.0 m; terminó −1.62 m respecto a donde empezó.B · Nissan Versa cruzó un tope a 20 km/h, 2.40 s antes del impacto.Qué supone Croquis al cruzar un topeAl cruzar un tope, cada eje pierde la energía de subir su carga la altura del tope, por 1 (rango 0.5 a 1.5). Es un supuesto: no hay una medición que lo fije.Sobre el tope, las llantas pierden 0.5 de la carga que perdería una rueda rígida (rango 0 a 1). Es un supuesto: la suspensión no se modela.Relieve: INEGI, modelo digital de elevación LiDAR de terreno (5 m), por Terrain Tiles. Da la pendiente general de la vía, con una muestra cada 10 m (cada 30 m donde el INEGI no tiene levantamiento láser). No ve una rampa corta, el bombeo ni un tope: esos se marcan aparte. Fuente: INEGI, Relieve continental, 2016 (por Terrain Tiles de Mapzen en AWS). Términos de libre uso de la información del INEGI. Croquis remuestreó los datos; no es una postura del INEGI ni cuenta con su aval.",
       "analisis": [
-        "Acto 5 de 6 · Análisis · 1 de 2: Los dañosDañosA · Honda CR-VB · Nissan VersaA · cara posteriorel reporte no trae medidas de la deformación59.9kJenergía de deformación31.5km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 17 · 17 · 17 · 17 · 17 · 17 cm (rigidez típica de la clase (NHTSA)).Daños narrados: posterior.Deformación medida: sin dato (el texto no trae la medida de la deformación).B · costado izquierdoel reporte no trae medidas de la deformación72.8kJenergía de deformación45.1km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 6 · 17 · 28 · 28 · 17 · 6 cm (rigide",
-        "Acto 5 de 6 · Análisis · 2 de 2: Los númerosLos númerosReconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V143 (19–50)19–38–50V233 (1–48)1–21–48Verificación con el método de CESVIMétodo de CESVI: energía de deformación (McHenry) y velocidad equivalente de barrera (EBS), con las medidas del reporte. No es la misma velocidad que la de la reconstrucción física de croquis.V1Falta: las medidas C (2, 4 o 6) y L de la deformación.V2F"
+        "Acto 5 de 6 · Análisis · 1 de 2: Los dañosDañosA · Honda CR-VB · Nissan VersaA · cara posteriorel reporte no trae medidas de la deformación1.3kJenergía de deformación2.8km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado menos de 0.5 cm en todo el ancho (rigidez típica de la clase (NHTSA)).Daños narrados: posterior.Deformación medida: sin dato (el texto no trae la medida de la deformación).B · costado izquierdoel reporte no trae medidas de la deformación1.6kJenergía de deformación4.0km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado menos de 0.5 cm en todo el ancho (rigi",
+        "Acto 5 de 6 · Análisis · 2 de 2: Los númerosLos númerosReconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V16 (3–7)3–6–7V220 (16–25)16–21–25Verificación con el método de CESVIMétodo de CESVI: energía de deformación (McHenry) y velocidad equivalente de barrera (EBS), con las medidas del reporte. No es la misma velocidad que la de la reconstrucción física de croquis.V1Falta: las medidas C (2, 4 o 6) y L de la deformación.V2Falta"
       ],
       "unity": "listo",
       "dictamen": true,
       "notas": [
-        "«¿Por dónde venía el Nissan Versa?»: la flecha más cercana a «Del sur» se aparta 83°."
+        "Por dónde venía V2: ya estaba confirmado."
       ]
     },
     {
@@ -134,32 +131,28 @@
       "leido": "Tianguismanalco, Puebla·2 vehículos · 2 impactos",
       "lectura_guardada": true,
       "colocada": true,
-      "segundos_reconstruir": 1.9,
-      "cifra": "70",
-      "de_quien": "A · Mazda 3",
-      "rango": "rango 67–76",
+      "segundos_reconstruir": 2.9,
+      "cifra": "62",
+      "de_quien": "B · Nissan Sentra",
+      "rango": "rango 35–62",
       "sin_cifra": null,
       "sin_dispersion": false,
       "hipotesis": 0,
-      "velocidades": "Reconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V170 (67–76)67–70–76V249 (40–50)40–49–50",
-      "evidencia": "Evidencia que fija el resultado: posición final de V1, posición final de V2, rumbo final de V1, rumbo final de V2, punto de paso 1 de V2.",
+      "velocidades": "Reconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V126 (22–28)22–25–28V262 (35–62)35–55–62",
+      "evidencia": "Evidencia que fija el resultado: posición final de V1, posición final de V2, rumbo final de V1, rumbo final de V2, huella después del impacto de V2, punto de paso 1 de V2, lugar del choque intermedio (impacto 2).",
       "impactos": null,
       "limites": [
-        "El impacto 2 no es entre dos vehículos (poste de concreto de la línea de distribución eléctrica): la reconstrucción no lo calcula.",
-        "V2: la evidencia empuja el rumbo fuera del rango permitido (±20° sobre el que se colocó en el mapa). El mejor ajuste queda en el límite, −55.1°, así que no cabe bien con lo demás: conviene revisar las posiciones y el rumbo de llegada.",
+        "El objeto del impacto 2 (poste de concreto de la línea de distribución eléctrica) va con medidas típicas: el perito marcó dónde está, no cómo es (supuesto).",
         "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
       ],
       "terreno": "TerrenoEl terreno marcado no cambia la altura: solo la fricción de sus zonas.",
       "analisis": [
-        "Acto 5 de 6 · Análisis · 1 de 2: Los dañosDañosA · Mazda 3B · Nissan SentraA · cara frontalel reporte no trae medidas de la deformación72.6kJenergía de deformación44.1km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 20 · 20 · 20 · 20 · 20 · 20 cm (rigidez típica de la clase (NHTSA)).Daños narrados: frontal.Deformación medida: sin dato (el texto no trae la medida de la deformación).B · costado derechoel reporte no trae medidas de la deformación118.2kJenergía de deformación44.1km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 8 · 23 · 38 · 38 · 23 · 8 cm (rigidez típic",
-        "Acto 5 de 6 · Análisis · 2 de 2: Los númerosLos númerosReconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V170 (67–76)67–70–76V249 (40–50)40–49–50Verificación con el método de CESVIMétodo de CESVI: energía de deformación (McHenry) y velocidad equivalente de barrera (EBS), con las medidas del reporte. No es la misma velocidad que la de la reconstrucción física de croquis.V1Falta: las medidas C (2, 4 o 6) y L de la deformación.V"
+        "Acto 5 de 6 · Análisis · 1 de 2: Los dañosDañosA · Mazda 3B · Nissan SentraA · cara frontalel reporte no trae medidas de la deformación17.9kJenergía de deformación15.5km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 7 · 7 · 7 · 7 · 7 · 7 cm (rigidez típica de la clase (NHTSA)).Daños narrados: frontal.Deformación medida: sin dato (el texto no trae la medida de la deformación).B · costado derechoel reporte no trae medidas de la deformación29.2kJenergía de deformación15.5km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 3 · 8 · 14 · 14 · 8 · 3 cm (rigidez típica de la c",
+        "Acto 5 de 6 · Análisis · 2 de 2: Los númerosLos númerosReconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V126 (22–28)22–25–28V262 (35–62)35–55–62Verificación con el método de CESVIMétodo de CESVI: energía de deformación (McHenry) y velocidad equivalente de barrera (EBS), con las medidas del reporte. No es la misma velocidad que la de la reconstrucción física de croquis.V1Falta: las medidas C (2, 4 o 6) y L de la deformación.V"
       ],
       "unity": "listo",
       "dictamen": true,
-      "notas": [
-        "«¿Por dónde venía el Nissan Sentra?»: la flecha más cercana a «Del oeste» se aparta 35°.",
-        "«¿Por dónde venía el Nissan Sentra?»: La escena preguntó «¿Seguro?»; la receta se queda con la suya."
-      ]
+      "notas": []
     }
   ],
   "axa": "57 (55–78)"

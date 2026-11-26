@@ -1,7 +1,7 @@
 {
   "formato": "croquis-caso",
   "version": 1,
-  "guardado": "2026-11-26T19:28:08.823Z",
+  "guardado": "2026-11-26T23:05:44.639Z",
   "narracion": "El hecho se ubica en el cruce de la Calle 16 de Septiembre con la Avenida de la Compañía, en San Pedro Atlixco, municipio de Tianguismanalco, Puebla, aproximadamente a las 06:40 horas. La Calle 16 de Septiembre consta de un arroyo de dos carriles de concreto asfáltico, uno por sentido, con circulación de Poniente a Oriente y viceversa, y acotamiento de terracería de 2.00 metros de ancho en ambos lados; la Avenida de la Compañía llega del Sur, es de un carril por sentido y de concreto asfáltico. La superficie se encontraba seca.\n\nSe examinan el vehículo A, marca Mazda, tipo 3, modelo 2014, color gris, de servicio particular, que circulaba por la Avenida de la Compañía de Sur a Norte, y el vehículo B, marca Nissan, tipo Sentra, modelo 2018, color blanco, de servicio particular, que circulaba por la Calle 16 de Septiembre de Poniente a Oriente. El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás sobre defensa, fascia y cofre. El vehículo B presenta en su costado derecho, a la altura de la puerta delantera, un hundimiento de derecha a izquierda, y en su parte frontal izquierda un hundimiento de adelante hacia atrás, de forma semicircular coincidente con un poste. Las zonas de contacto corresponden: la parte frontal del vehículo A con el costado derecho del vehículo B.\n\nDespués del contacto, el vehículo B dejó una huella de derrape de 18.40 metros que inicia en el área de contacto, cruza el borde de la carpeta y continúa sobre el acotamiento de terracería, hasta un poste de concreto de la línea de distribución eléctrica situado a 1.50 metros del borde de la carpeta, contra el cual se impactó. El vehículo B quedó en contacto con el poste, orientado hacia el Oriente; el vehículo A quedó sobre el cruce, 8 metros al Norte del área de contacto.",
   "escena": {
     "posiciones": [
@@ -759,6 +759,10 @@
         "fuente": "perito",
         "cita": {
           "texto": "hasta un poste de concreto de la línea de distribución eléctrica situado a 1.50 metros del borde de la carpeta, contra el cual se impactó"
+        },
+        "punto": {
+          "lat": 18.98047994690016,
+          "lon": -98.47645115612069
         }
       }
     ],
@@ -786,40 +790,40 @@
             "vehiculo": "V1",
             "fase": "impacto",
             "punto": {
-              "lat": 18.98049201478702,
-              "lon": -98.47663039359229
+              "lat": 18.980496568964412,
+              "lon": -98.47662842011542
             },
-            "rumbo": 22.282478086804304,
-            "fuente": "perito"
-          },
-          {
-            "vehiculo": "V1",
-            "fase": "final",
-            "punto": {
-              "lat": 18.98057280774349,
-              "lon": -98.47659119607373
-            },
-            "rumbo": 25.616498003209585,
+            "rumbo": 22.28247753678022,
             "fuente": "perito"
           },
           {
             "vehiculo": "V2",
             "fase": "impacto",
             "punto": {
-              "lat": 18.98051868565161,
-              "lon": -98.47661883621763
+              "lat": 18.980523239829107,
+              "lon": -98.47661686274071
             },
-            "rumbo": 125.15257757359427,
+            "rumbo": 112.28247753678022,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V1",
+            "fase": "final",
+            "punto": {
+              "lat": 18.980588106174622,
+              "lon": -98.47661999999943
+            },
+            "rumbo": 25.61649595187191,
             "fuente": "perito"
           },
           {
             "vehiculo": "V2",
             "fase": "final",
             "punto": {
-              "lat": 18.980535851597764,
-              "lon": -98.47646634413353
+              "lat": 18.980483026016515,
+              "lon": -98.47646648737256
             },
-            "rumbo": 129.87366879199521,
+            "rumbo": 129.87365985245037,
             "fuente": "perito"
           }
         ],
@@ -828,8 +832,8 @@
             "vehiculo": "V2",
             "orden": 1,
             "punto": {
-              "lat": 18.98052495722945,
-              "lon": -98.4765368961026
+              "lat": 18.980498306824586,
+              "lon": -98.47653556805574
             },
             "fuente": "perito"
           }
@@ -859,20 +863,20 @@
           "tipo": "terraceria",
           "poligono": [
             {
-              "lat": 18.9804298,
-              "lon": -98.4765699
+              "lat": 18.9803709,
+              "lon": -98.4764013
             },
             {
-              "lat": 18.9806915,
-              "lon": -98.4765005
+              "lat": 18.9805439,
+              "lon": -98.4766202
             },
             {
-              "lat": 18.9806653,
-              "lon": -98.4763898
+              "lat": 18.9806267,
+              "lon": -98.4765471
             },
             {
-              "lat": 18.9804036,
-              "lon": -98.4764592
+              "lat": 18.9804537,
+              "lon": -98.4763281
             }
           ],
           "fuente": "perito"
@@ -923,59 +927,52 @@
       "de": "perito",
       "para": "pizarra",
       "tipo": "escribe",
-      "texto": "No sé dónde fue el primer golpe: se usa el lugar del choque (supuesto)."
+      "texto": "Pide reconstruir."
     },
     {
       "n": 7,
-      "de": "perito",
+      "de": "fisico",
       "para": "pizarra",
       "tipo": "escribe",
-      "texto": "Pide reconstruir."
+      "texto": "Reconstrucción: V1 a 26 km/h (22–28), V2 a 62 km/h (35–62)."
     },
     {
       "n": 8,
       "de": "fisico",
       "para": "pizarra",
       "tipo": "escribe",
-      "texto": "Reconstrucción: V1 a 70 km/h (67–76), V2 a 49 km/h (40–50)."
-    },
-    {
-      "n": 9,
-      "de": "fisico",
-      "para": "pizarra",
-      "tipo": "escribe",
       "texto": "Con los supuestos declarados: Masa de V1: 1,405 kg; Masa de V2: 1,405 kg; Posición inicial de V1: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Posición inicial de V2: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Fricción llanta–pavimento: μ = 0.7; Después del impacto: las llantas ruedan, con un arrastre de 0.35 de la fricción; Restitución del choque: e = 0.1; Fricción entre los vehículos durante el choque: razón de impulso de 0.4."
     },
     {
-      "n": 10,
+      "n": 9,
       "de": "fisico",
       "para": "preguntador",
       "tipo": "pide",
       "texto": "La física no cuadra o no alcanza (ninguna velocidad lleva al vehículo a la posición final dada): pide evidencia al perito."
     },
     {
-      "n": 11,
+      "n": 10,
       "de": "preguntador",
       "para": "fisico",
       "tipo": "escribe",
       "texto": "Pregunta al perito: ¿Dónde quedó V1 al final? Una posición medida en el lugar fija mejor su velocidad. ¿Dónde quedó V2 al final? Una posición medida en el lugar fija mejor su velocidad."
     },
     {
-      "n": 12,
+      "n": 11,
       "de": "verificador_cesvi",
       "para": "pizarra",
       "tipo": "escribe",
       "texto": "Sin medidas de deformación completas: no hay EBS con el método de CESVI."
     },
     {
-      "n": 13,
+      "n": 12,
       "de": "perito",
       "para": "pizarra",
       "tipo": "escribe",
       "texto": "Abre el dictamen."
     },
     {
-      "n": 14,
+      "n": 13,
       "de": "redactor",
       "para": "pizarra",
       "tipo": "escribe",
