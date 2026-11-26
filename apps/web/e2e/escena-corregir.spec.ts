@@ -29,7 +29,7 @@ async function arrastrarEnMetros(page: Page, testid: string, este: number, norte
   await page.mouse.up();
 }
 
-test("@flujo /cesvi: corregir después — mover el poste y la dirección de un vehículo cambian el resultado (W4)", async ({
+test("@flujo /cesvi: corregir después — mover el poste en el recorrido y la dirección de un vehículo cambian el resultado; fuera del recorrido, no (W4)", async ({
   page,
 }) => {
   test.setTimeout(240_000);
@@ -72,7 +72,8 @@ test("@flujo /cesvi: corregir después — mover el poste y la dirección de un 
   await page.getByTestId("listo-final").click();
   await expect(pregunta).toHaveText("¿Por dónde venía el GM Camaro?");
   await page.getByTestId("no-se-direccion").click();
-  await page.getByTestId("final-junto").click();
+  // El Jetta lo golpea en su costado derecho: el Camaro sale empujado al noroeste y queda a 5 m.
+  await tocarEnMetros(page, "choque-1", -5, 5);
   await page.getByTestId("listo-final").click();
   await expect(pregunta).toHaveText("¿Dónde fue el primer golpe?");
   await page.getByTestId("golpe-nose").click();
@@ -80,7 +81,8 @@ test("@flujo /cesvi: corregir después — mover el poste y la dirección de un 
   await page.getByTestId("otros-si").click();
   await page.getByTestId("otros-vehiculo-V2").click();
   await page.getByTestId("otros-objeto-0").click();
-  await tocarEnMetros(page, "choque-1", 18, 3);
+  // El poste, donde se detiene el Camaro: en su recorrido después del choque (René, 2026-11-25).
+  await tocarEnMetros(page, "choque-1", -7.5, 7.5);
   await expect(page.getByTestId("marca-objeto-2")).toHaveCount(1);
   await page.getByTestId("otros-no").click();
   await page.getByTestId("paso-listo").click();
@@ -116,6 +118,23 @@ test("@flujo /cesvi: corregir después — mover el poste y la dirección de un 
   await expect(cifra).toBeVisible();
   const conPosteMovido = await cifra.innerText();
   expect(conPosteMovido).not.toEqual(antes);
+
+  // 1b. La prueba contraria: ya fuera del recorrido del Camaro, moverlo otros 10 m no cambia la cifra.
+  await irAPaso(page, 3);
+  await page.getByTestId("cambiar-algo").click();
+  await expect(page.getByTestId("panel-corregir")).toBeVisible();
+  await page.getByTestId("marca-objeto-2").click();
+  await expect(page.getByTestId("seleccion-nombre")).toHaveText(/poste/i);
+  await arrastrarEnMetros(page, "marca-objeto-2", 10, 0);
+  await expect(page.getByTestId("mensaje-exito")).toContainText("Moviste");
+  await page.getByTestId("reconstruir-de-nuevo").click();
+  await expect(page.getByTestId("recalculo")).toHaveAttribute("data-estado", "al_dia", {
+    timeout: 90_000,
+  });
+  await page.getByTestId("sel-listo").click();
+  await irAPaso(page, 4);
+  await expect(cifra).toBeVisible();
+  expect(await cifra.innerText()).toEqual(conPosteMovido);
 
   // 2. Corregir la dirección del VW Jetta, ya colocado: se toca y «Cambiar por dónde venía».
   await irAPaso(page, 3);
