@@ -1363,10 +1363,10 @@
       ]
     },
     "t9-ejemplos": {
-      "titulo": "Tanda 9 · Solo los ejemplos: repetir el paso que falló en la t9-junta",
-      "nota": "René, 2026-11-26: en la t9-junta el paso de los ejemplos falló por la prueba, no por la app ni por la máquina (el clic de la receta caía bajo «Deshacer», y la receta no contestaba el «¿Seguro?» de La escena). Fijada a fc0501b3 (rama fix/e2e-receta-mapa): el commit de la t9-junta (2f9b158f) más el arreglo de la prueba y de «comparar» (las carambolas en 19 de 31 y 41 de 55 son esperadas); la app es la misma. Pasos: visor, preparar, ejemplos y comparar.",
-      "rama": "fix/e2e-receta-mapa",
-      "commit": "fc0501b30ed1c51d47e4cf6af16adf1a4accf5eb",
+      "titulo": "Tanda 9 · Solo los ejemplos, armados con el mismo código de La escena (#331)",
+      "nota": "René, 2026-11-26: la tabla del índice arma cada ejemplo con el mismo código de La escena y el navegador repite sus toques con La escena nueva (e2e/recetas-perito.ts). Fijada a 55eccc3b (rama fix/w-ejemplos-como-la-app, #331): la cadena completa #311 → #316 → #320 → #323 → #329 más el #331 (el poste calculado con el derrape como evidencia, la reversa con el supuesto de NHTSA, una cifra por ejemplo). Si sale bien, se publica la cadena en ese orden. Pasos: visor, preparar, ejemplos y comparar (eval/t9_comparar.mjs contra eval/results/ejemplos_en_su_lugar/cifras.json y el índice).",
+      "rama": "fix/w-ejemplos-como-la-app",
+      "commit": "55eccc3b80c351ef58a9d41ac4b15d8e61747a3f",
       "pasos": [
         {
           "nombre": "visor",
