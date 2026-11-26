@@ -251,6 +251,51 @@ namespace Croquis.Core.Tests
             Assert.Equal(1.25, etapas[1].Desde);
         }
 
+        /// <summary>
+        /// Un frente redondeado como el de los modelos: las esquinas 35 cm detrás de la cara de la caja.
+        /// La lámina tiene que llegar a C1–C6 en cada estación, también en la esquina (René, 2026-11-26).
+        /// </summary>
+        [Fact]
+        public void EnUnFrenteRedondeadoLaLaminaLlegaAlPerfilEnCadaEstacion()
+        {
+            var m = new MedidasVehiculo(4.5, 1.8, 1.45, 2.65);
+            var perfil = new[] { 0.52, 0.42, 0.31, 0.21, 0.10, 0.026 };
+            var campo = new CampoDano(new EntradaDano { Lado = 'F', Perfil = perfil, Ancho = 1.7, Centro = 0.0, PdofHoras = 11.4 }, "sedan_mediano", m);
+            // Rejilla del frente en el marco de Unity (x a la derecha, y arriba, z adelante), a cada 4 cm.
+            var v = new List<V3>();
+            var t = new List<int>();
+            const int Nu = 46;
+            const int Ny = 36;
+            for (var j = 0; j <= Ny; j++)
+            {
+                for (var i = 0; i <= Nu; i++)
+                {
+                    var x = -m.Ancho / 2.0 + m.Ancho * i / Nu;
+                    var y = m.Alto * j / Ny;
+                    var r = x / (m.Ancho / 2.0);
+                    v.Add(new V3(x, y, m.Largo / 2.0 - 0.35 * r * r));
+                }
+            }
+
+            for (var j = 0; j < Ny; j++)
+            {
+                for (var i = 0; i < Nu; i++)
+                {
+                    var a = j * (Nu + 1) + i;
+                    t.AddRange(new[] { a, a + Nu + 1, a + 1, a + 1, a + Nu + 1, a + Nu + 2 });
+                }
+            }
+
+            DanoDelCaso.FijarFrente(campo, v, t);
+            var despues = DanoDelCaso.Deformar(campo, v.ToArray(), t.ToArray(), 5);
+            var medido = DanoDelCaso.Medir(campo, v, despues, out var alli);
+            for (var k = 0; k < 6; k++)
+            {
+                Assert.True(Math.Abs(medido[k] - perfil[k]) <= Math.Max(0.02, 0.06 * perfil[k]), "C" + (k + 1) + ": medido " + medido[k] + ", solver " + perfil[k]);
+                Assert.True(Math.Abs(medido[k] - alli[k]) <= Math.Max(0.02, 0.06 * alli[k]), "C" + (k + 1) + ": medido " + medido[k] + ", solver ahí " + alli[k]);
+            }
+        }
+
         [Fact]
         public void LaSemillaDeLasArrugasEsEstable()
         {
