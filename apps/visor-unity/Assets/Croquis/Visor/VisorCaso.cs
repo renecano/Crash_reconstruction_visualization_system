@@ -192,6 +192,7 @@ namespace Croquis.Visor
         public async Awaitable CargarAsync(Caso3D caso)
         {
             var mio = ++turnoDeCarga;
+            leyendaVisible = true;
             Omisiones.Limpiar();
             PasosDeCarga.Clear();
             PasosDeCarga["leer_sobre"] = Math.Round(LecturaDelPaquete.Sobre, 1);
@@ -777,6 +778,27 @@ namespace Croquis.Visor
 
             ActualizarLeyenda();
         }
+
+        /// <summary>
+        /// Si se ve la leyenda ilustrativa de Unity (puente 1.4.0, mensaje `leyenda`). La web la apaga
+        /// solo mientras pone la suya encima (Presentar). Cada caso cargado empieza con ella a la vista.
+        /// </summary>
+        public bool LeyendaVisible
+        {
+            get => leyendaVisible;
+            set
+            {
+                leyendaVisible = value;
+                var texto = EscenarioVista.TextoDeLeyenda(raiz);
+                var lienzo = texto != null ? texto.GetComponentInParent<Canvas>(true) : null;
+                if (lienzo != null)
+                {
+                    lienzo.gameObject.SetActive(value);
+                }
+            }
+        }
+
+        private bool leyendaVisible = true;
 
         private void ActualizarLeyenda()
         {
