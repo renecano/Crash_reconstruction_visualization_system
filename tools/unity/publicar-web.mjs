@@ -260,7 +260,8 @@ async function inventario() {
 
 // El build que se sube: el local o el del release que se pide con `--release <huella>`.
 const iRelease = process.argv.indexOf("--release");
-const BUILD = iRelease > 0 ? await bajarRelease(process.argv[iRelease + 1] ?? "") : BUILD_LOCAL;
+const DEL_RELEASE = iRelease > 0 ? await bajarRelease(process.argv[iRelease + 1] ?? "") : null;
+const BUILD = DEL_RELEASE ? soloElBuild(DEL_RELEASE, process.argv[iRelease + 1]) : BUILD_LOCAL;
 const huella = huellaCarpeta(BUILD);
 if (iRelease > 0 && huella !== process.argv[iRelease + 1]) {
   console.error(
@@ -276,8 +277,15 @@ const de = (sufijo) => {
   return f;
 };
 
-const casosD1 = existsSync(CASOS_D1)
-  ? readdirSync(CASOS_D1)
+// Con `--release`, los casos de D1 y el paquete de AXA son los que vienen con ese build.
+const CASOS =
+  DEL_RELEASE && existsSync(join(DEL_RELEASE, "casos")) ? join(DEL_RELEASE, "casos") : CASOS_D1;
+const CASO_AXA =
+  DEL_RELEASE && existsSync(join(DEL_RELEASE, "axa_alcance.json"))
+    ? join(DEL_RELEASE, "axa_alcance.json")
+    : CASO;
+const casosD1 = existsSync(CASOS)
+  ? readdirSync(CASOS)
       .filter((f) => f.endsWith(".json"))
       .sort()
   : [];
@@ -289,8 +297,8 @@ if (casosD1.length < 10) {
 }
 const subir = [
   ...archivosDe(BUILD).map((rel) => [rel, readFileSync(join(BUILD, rel))]),
-  ["axa_alcance.json", readFileSync(CASO)],
-  ...casosD1.map((f) => [`casos/${f}`, readFileSync(join(CASOS_D1, f))]),
+  ["axa_alcance.json", readFileSync(CASO_AXA)],
+  ...casosD1.map((f) => [`casos/${f}`, readFileSync(join(CASOS, f))]),
 ];
 for (const [rel, cuerpo] of subir) {
   const pathname = prefijo + rel;
@@ -439,4 +447,20 @@ async function bajarRelease(h) {
     writeFileSync(destino, a.bytes);
   }
   return dir;
+}
+
+/**
+ * El zip del release lleva lo mismo que el prefijo de Blob: el build (`Build/`, `index.html`,
+ * `StreamingAssets/`), el paquete de AXA y los casos de D1. La huella es la del build solo, así que se
+ * aparta en `.cache/publicar/<huella>` para calcularla y subirlo; los casos salen del release.
+ */
+function soloElBuild(dir, h) {
+  const destino = join(RAIZ, ".cache", "publicar", h);
+  for (const rel of archivosDe(dir)) {
+    if (rel === "axa_alcance.json" || rel.startsWith("casos/")) continue;
+    const a = join(destino, ...rel.split("/"));
+    mkdirSync(dirname(a), { recursive: true });
+    writeFileSync(a, readFileSync(join(dir, ...rel.split("/"))));
+  }
+  return destino;
 }
