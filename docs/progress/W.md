@@ -1511,6 +1511,18 @@ René (2026-11-26) eligió 22 de 31 y 42 de 55 para el índice, con su motivo: �
 
 - **Los 4 que no se recuperan, al paquete de «física de los alcances en el mismo sentido»** (después de publicar; René, 2026-11-26): cesvi-0b1f65a976, cesvi-644f4d909d, cesvi-d6f456b23d y cesvi-31aa158ae6. Es el contacto posterior del solver (`tryImpact` y `resolveSecondaryContact`, Python y TS con paridad): con el impacto declarado, el que golpea se detiene antes del colocado sin registrar el choque.
 
+- **La revisión con el lector final** (René, 2026-11-26; por tandas según la memoria libre, `eval/auditoria_por_tandas.mts`: 42 en 4 tandas y 205 en 14, con 1.0–2.1 GB libres). Solo los que cambian:
+
+| Caso                                          | Antes (#320)                        | Ahora (#323)                        | Por qué                                                       |
+| --------------------------------------------- | ----------------------------------- | ----------------------------------- | ------------------------------------------------------------- |
+| aud-02                                        | Sentra 25 (8–28), Hilux 27 (20–35)  | Sentra 53 (46–55), Hilux 15 (13–30) | «desplazado hacia el noroeste… a 7 m»                         |
+| aud-22                                        | V1 49 (48–49), V2 1 (0–18)          | V1 49 (49–49), V2 4 (0–22)          | «desplazado hacia el noreste y quedó a 4 m»                   |
+| aud-27                                        | V1 40 (35–44), V2 49 (46–55)        | V1 38 (34–43), V2 53 (48–59)        | «a 2 m del punto de contacto, desplazado hacia atrás»         |
+| aud-29                                        | V2 25 (22–31), V1 17 (14–24)        | V2 34 (29–43), V1 10 (8–15)         | «desplazado hacia el noreste y quedó a 5 m»                   |
+| aud-38                                        | sin cifra (candado de la animación) | CR-V 74 (71–76), Jetta 0 (0–7)      | «se desvió hacia la derecha… a 6 m» (adelante y a la derecha) |
+| cesvi-316a61cb43 y cesvi-c6e5335493 (iguales) | V4 sin cifra                        | V4 45 (32–57)                       | la colocación sin el choque fantasma                          |
+
+- **Lo que ve el perito en los 5 ejemplos y AXA:** nada cambia. La tabla de `cifras-ronda4.test.ts` (AXA, los cinco ejemplos y las siete narraciones) da las 13 filas iguales, con sus límites; el crucero «en la app» igual. Ninguna descripción de posición final de los ejemplos trae una dirección que el lector nuevo lea («orientado hacia el Oriente» de poste y terracería es cómo quedó; «8 m al Norte del área de contacto» y «7 m al Norte del área de contacto» siguen sin leerse, como antes). El aviso del límite no sale en ninguno (la cifra más alta es 53 km/h en una carretera federal). Lo único publicado que cambia son las carambolas del índice, aprobadas.
 - **Para la revisión de la t9-junta:** contra el índice, las carambolas dan 19 de 31 y 41 de 55 en lugar de 21 y 44. Es esperado: lo mueve el #311 (`395401c7`, la clase y la masa por el modelo) y René lo aprobó el 2026-11-26.
 
 ### Los pedazos del choque parecen cubos (René, 2026-11-25) · para el paquete de daños
