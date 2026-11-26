@@ -70,7 +70,7 @@ namespace Croquis.Core.Tests
                 foreach (var v in caso.Resultado.Vehiculos)
                 {
                     var campo = DanoDelCaso.Campo(v);
-                    var tiene = v.Dano?.PerfilM != null && v.Dano.PerfilM.Any(c => c > 0.0) && v.Dano.AnchoM > 0.0
+                    var tiene = v.Dano?.OrigenRigidez != OrigenRigidez.SinImpacto && v.Dano?.PerfilM != null && v.Dano.PerfilM.Any(c => c > 0.0) && v.Dano.AnchoM > 0.0
                         && DanoDelCaso.Lado(v.Dano.Cdc?.Lado) != null && !PerfilClase.De(v.Clase).DosRuedas;
                     Assert.True((campo != null) == tiene, nombre + " " + v.Id);
                     con += campo != null ? 1 : 0;
@@ -138,6 +138,165 @@ namespace Croquis.Core.Tests
         }
 
         [Fact]
+        public void LaPdofOblicuaArrastraLaLaminaDeLadoSinCambiarLaProfundidad()
+        {
+            var m = new MedidasVehiculo(4.3, 1.8, 1.5, 2.6);
+            EntradaDano Entrada(double? pdof) => new EntradaDano
+            {
+                Lado = 'F',
+                Perfil = new[] { 0.4, 0.4, 0.4, 0.4, 0.4, 0.4 },
+                Ancho = 1.6,
+                Centro = 0.0,
+                PdofHoras = pdof,
+            };
+            var p = new V3(m.Largo / 2.0, 0.7, 0.0);
+            var recto = new CampoDano(Entrada(12), "sedan_compacto", m).Desplazamiento(p, out _, out _);
+            var oblicuo = new CampoDano(Entrada(1), "sedan_compacto", m).Desplazamiento(p, out _, out _);
+            var sinPdof = new CampoDano(Entrada(null), "sedan_compacto", m).Desplazamiento(p, out _, out _);
+            // Misma profundidad hacia adentro con o sin PDOF: la profundidad es la del solver.
+            Assert.Equal(recto.X, oblicuo.X, 9);
+            Assert.Equal(recto.X, sinPdof.X, 9);
+            Assert.Equal(0.0, recto.Z, 9);
+            // A la 1, la fuerza llega desde adelante a la derecha: empuja la lámina hacia la izquierda (z < 0).
+            Assert.True(oblicuo.Z < -0.05, "arrastre " + oblicuo.Z);
+            Assert.True(-oblicuo.Z <= CampoDano.CizallaMaxima * 0.4 + 1e-9);
+            // A las 3 la fuerza no entra por el frente: no arrastra.
+            Assert.Equal(0.0, CampoDano.Cizalla(3, new V3(1, 0, 0), new V3(0, 0, -1)), 9);
+        }
+
+        [Fact]
+        public void LosPlieguesSoloAparecenEnAplastamientosGrandesYNoHundenMas()
+        {
+            var m = new MedidasVehiculo(4.3, 1.8, 1.5, 2.6);
+            CampoDano Campo(double c) => new CampoDano(new EntradaDano
+            {
+                Lado = 'F',
+                Perfil = new[] { c, c, c, c, c, c },
+                Ancho = 1.6,
+                Centro = 0.0,
+            }, "sedan_compacto", m);
+            var p = new V3(m.Largo / 2.0 - 0.05, 0.7, 0.1);
+            Assert.Equal(0.0, Campo(0.02).Pliegues(p, 1.0, 3).Largo, 9);
+            var grande = Campo(0.6).Pliegues(p, 1.0, 3);
+            Assert.True(grande.Largo > 0.0 && grande.Largo <= CampoDano.Pliegue * 0.6 * 1.2);
+            // Nunca hacia adentro de la cara.
+            Assert.Equal(0.0, grande.X, 9);
+        }
+
+        [Fact]
+        public void RefinarParteSoloLaZonaYNoDejaGrietas()
+        {
+            // Dos triángulos grandes (un cuadro de 1 m) con una costura: el vértice 1 y el 4 en el mismo lugar.
+            var v = new[] { new V3(0, 0, 0), new V3(1, 0, 0), new V3(0, 1, 0), new V3(1, 0, 0), new V3(1, 1, 0) };
+            var t = new[] { new[] { 0, 1, 2 }, new[] { 3, 4, 2 } };
+            // La zona es solo la mitad izquierda.
+            var r = Refinamiento.Partir(v, t, p => p.X < 0.3, 0.2, 4, 10000);
+            Assert.True(r.Padres.Count > 0);
+            double Area(IList<V3> pos, int[] tri)
+            {
+                var a = 0.0;
+                for (var k = 0; k + 2 < tri.Length; k += 3)
+                {
+                    var p0 = pos[tri[k]];
+                    var p1 = pos[tri[k + 1]];
+                    var p2 = pos[tri[k + 2]];
+                    a += ((p1.X - p0.X) * (p2.Y - p0.Y) - (p2.X - p0.X) * (p1.Y - p0.Y)) / 2.0;
+                }
+
+                return a;
+            }
+
+            // Misma área y mismo giro (todo positivo): nada se volteó ni quedó sin cubrir.
+            Assert.Equal(0.5, Area(r.Posiciones, r.Triangulos[0]), 9);
+            Assert.Equal(0.5, Area(r.Posiciones, r.Triangulos[1]), 9);
+            // Cada arista de un lado aparece también del otro (o es borde): sin grietas en T.
+            var aristas = new Dictionary<string, int>();
+            string L(V3 a, V3 b) => string.Join("|", new[] { a, b }.Select(q => Math.Round(q.X, 6) + "," + Math.Round(q.Y, 6)).OrderBy(x => x));
+            foreach (var tri in r.Triangulos)
+            {
+                for (var k = 0; k + 2 < tri.Length; k += 3)
+                {
+                    for (var e = 0; e < 3; e++)
+                    {
+                        var llave = L(r.Posiciones[tri[k + e]], r.Posiciones[tri[k + (e + 1) % 3]]);
+                        aristas[llave] = aristas.TryGetValue(llave, out var n) ? n + 1 : 1;
+                    }
+                }
+            }
+
+            var interiores = aristas.Where(a => a.Value == 1).Select(a => a.Key).Where(k =>
+            {
+                var pts = k.Split('|').Select(q => q.Split(',').Select(double.Parse).ToArray()).ToArray();
+                bool Borde(double[] a, double[] b) => (a[0] == 0 && b[0] == 0) || (a[1] == 0 && b[1] == 0) || (a[0] == 1 && b[0] == 1) || (a[1] == 1 && b[1] == 1);
+                return !Borde(pts[0], pts[1]);
+            }).ToList();
+            Assert.Empty(interiores);
+        }
+
+        [Fact]
+        public void CadaImpactoPosteriorSeDibujaEnSuInstante()
+        {
+            var (_, caso) = Casos().First(c => c.Nombre == "alcance");
+            var r = caso.Resultado;
+            var v = r.Vehiculos.First(x => DanoDelCaso.Campo(x) != null);
+            var d = v.Dano;
+            v.DanosPosteriores = new[]
+            {
+                new DanosPosterioreElement { AnchoM = d.AnchoM, CentroM = d.CentroM, Cdc = d.Cdc, PerfilM = d.PerfilM, T = 1.25, EventoId = "e2", OrigenRigidez = OrigenRigidez.Supuesto },
+                new DanosPosterioreElement { AnchoM = d.AnchoM, CentroM = d.CentroM, Cdc = d.Cdc, PerfilM = d.PerfilM, T = 2.0, EventoId = "e3", OrigenRigidez = OrigenRigidez.SinImpacto },
+            };
+            var etapas = DanoDelCaso.Etapas(v, r);
+            Assert.Equal(2, etapas.Count);
+            Assert.Equal(DanoDelCaso.Instante(r, v.Id), etapas[0].Desde);
+            Assert.Equal(1.25, etapas[1].Desde);
+        }
+
+        /// <summary>
+        /// Un frente redondeado como el de los modelos: las esquinas 35 cm detrás de la cara de la caja.
+        /// La lámina tiene que llegar a C1–C6 en cada estación, también en la esquina (René, 2026-11-26).
+        /// </summary>
+        [Fact]
+        public void EnUnFrenteRedondeadoLaLaminaLlegaAlPerfilEnCadaEstacion()
+        {
+            var m = new MedidasVehiculo(4.5, 1.8, 1.45, 2.65);
+            var perfil = new[] { 0.52, 0.42, 0.31, 0.21, 0.10, 0.026 };
+            var campo = new CampoDano(new EntradaDano { Lado = 'F', Perfil = perfil, Ancho = 1.7, Centro = 0.0, PdofHoras = 11.4 }, "sedan_mediano", m);
+            // Rejilla del frente en el marco de Unity (x a la derecha, y arriba, z adelante), a cada 4 cm.
+            var v = new List<V3>();
+            var t = new List<int>();
+            const int Nu = 46;
+            const int Ny = 36;
+            for (var j = 0; j <= Ny; j++)
+            {
+                for (var i = 0; i <= Nu; i++)
+                {
+                    var x = -m.Ancho / 2.0 + m.Ancho * i / Nu;
+                    var y = m.Alto * j / Ny;
+                    var r = x / (m.Ancho / 2.0);
+                    v.Add(new V3(x, y, m.Largo / 2.0 - 0.35 * r * r));
+                }
+            }
+
+            for (var j = 0; j < Ny; j++)
+            {
+                for (var i = 0; i < Nu; i++)
+                {
+                    var a = j * (Nu + 1) + i;
+                    t.AddRange(new[] { a, a + Nu + 1, a + 1, a + 1, a + Nu + 1, a + Nu + 2 });
+                }
+            }
+
+            DanoDelCaso.FijarFrente(campo, v, t);
+            var despues = DanoDelCaso.Deformar(campo, v.ToArray(), t.ToArray(), 5);
+            var medido = DanoDelCaso.Medir(campo, v, despues, out var alli);
+            for (var k = 0; k < 6; k++)
+            {
+                Assert.True(Math.Abs(medido[k] - perfil[k]) <= Math.Max(0.02, 0.06 * perfil[k]), "C" + (k + 1) + ": medido " + medido[k] + ", solver " + perfil[k]);
+                Assert.True(Math.Abs(medido[k] - alli[k]) <= Math.Max(0.02, 0.06 * alli[k]), "C" + (k + 1) + ": medido " + medido[k] + ", solver ahí " + alli[k]);
+            }
+        }
+
+        [Fact]
         public void LaSemillaDeLasArrugasEsEstable()
         {
             Assert.Equal(DanoDelCaso.Semilla(719300, "veh-a"), DanoDelCaso.Semilla(719300, "veh-a"));
@@ -157,7 +316,7 @@ namespace Croquis.Core.Tests
             Assert.Contains("DanoVista.Preparar(", caso);
             Assert.Contains("Dano?.Mostrar(t)", caso);
             var dano = File.ReadAllText(Path.Combine(visor, "DanoVista.cs"));
-            Assert.Contains("DanoDelCaso.Campo(", dano);
+            Assert.Contains("DanoDelCaso.Etapas(", dano);
             Assert.Contains("DanoDelCaso.Deformar(", dano);
         }
 

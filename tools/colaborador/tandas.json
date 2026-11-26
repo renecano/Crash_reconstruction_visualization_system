@@ -1,6 +1,6 @@
 {
   "nota": "Lo pesado de cada tanda de la auditoría del 2026-11-15, para la computadora del colaborador (tools/colaborador/tanda.ps1). «vigente» es la que corre CORRER-TANDA-EN-RTX.bat con doble clic. Toda corrida empieza por «comprobacion»; si falla, lo pesado no corre. Cada paso: un comando que corre en la raíz del repositorio, sin preguntas y sin llaves; «minutos» es lo estimado (el tope es 4 veces eso, y al menos 10 min); «salidas» son las rutas que se suben además de los registros. «rama»: la rama donde vive la tanda mientras no esté en main. Un comando por paso (sin &&): cada uno deja su registro. Un paso con `requiere` se omite si falta esa carpeta (datos que no van en git). «privadas»: carpetas de un paso que no se suben; se comprimen en un zip en la carpeta de resultados (René, 2026-11-21: el repositorio es público). Un «antes» en otro commit va en un git worktree (sin copiar el repositorio) y sus dependencias se enlazan desde el almacén de pnpm (--prefer-offline --package-import-method=hardlink), sin copiar node_modules (René, 2026-11-23: el disco llegaba al 100 %); corrida.json guarda el disco libre antes y después de cada paso.",
-  "vigente": "t8",
+  "vigente": "t9-ejemplos",
   "comprobacion": {
     "pasos": [
       {
@@ -1010,6 +1010,463 @@
           "minutos": 20,
           "tope_min": 60,
           "salidas": ["eval/results/t8/tomas-trailer", "eval/results/rtx-t4/tomas_trailer.json"]
+        }
+      ]
+    },
+    "t9": {
+      "titulo": "CANCELADA (René, 2026-11-25: no empezó; la reemplaza la tanda junta sobre el commit final del #320) · Tanda 9 · Final: los tres casos, la revisión de la cadena y lo publicado, en el navegador",
+      "nota": "René, 2026-11-24: una sola tanda final, fijada al commit con todo (2dfd57dc, #311, rama fix/w-tres-narraciones). En la demo local con el build de Unity publicado (945617e035988035, del release de GitHub, sin Blob), Chrome con la tarjeta de alto rendimiento. Primero el humo (si falla, se detiene). Después: los cinco ejemplos y AXA (cifra asentada); el crucero en la app; Tollocan; las seis narraciones con el caso encimado; los tres casos nuevos (árbol en curva, camión con peatón, carambola) y una muestra de 10 narraciones de la revisión de la cadena, cada uno con captura del 3D; el arranque del 3D tres veces; las dos tomas de la portada (8 s en bucle: el árbol de noche y la carambola con lluvia); las carambolas (prueba y desarrollo) y la cobertura antes (main, 13777374, en un worktree) y después; y eval/t9_comparar.mjs contra el índice de cifras y la tabla aprobada. Lo que difiera va a René con su antes y después. Nada de AXA se sube.",
+      "rama": "fix/w-tres-narraciones",
+      "commit": "2dfd57dc809d345c71ad56ac07a9e66cfe98485d",
+      "pasos": [
+        {
+          "nombre": "visor",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 2,
+          "tope_min": 15
+        },
+        {
+          "nombre": "preparar",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar",
+          "minutos": 8,
+          "tope_min": 15
+        },
+        {
+          "nombre": "humo",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues humo",
+          "minutos": 6,
+          "tope_min": 8,
+          "salidas": ["eval/results/humo/", "apps/web/test-results/"],
+          "detiene_si_falla": true
+        },
+        {
+          "nombre": "ejemplos",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t9/ejemplos.json -Capturas docs/cesvi/ronda-4/evidencia/t9-ejemplos -Casos eval/results/t9/ejemplos-casos",
+          "minutos": 12,
+          "tope_min": 30,
+          "salidas": ["eval/results/t9", "docs/cesvi/ronda-4/evidencia/t9-ejemplos"]
+        },
+        {
+          "nombre": "crucero-en-la-app",
+          "comando": "powershell -NoProfile -Command \"$env:CROQUIS_EJEMPLO_APP='../../eval/results/t9/crucero_en_la_app.json'; pnpm --filter @croquis/web exec vitest run src/lib/ejemplo-en-la-app.test.ts\"",
+          "minutos": 2,
+          "tope_min": 10,
+          "salidas": ["eval/results/t9"]
+        },
+        {
+          "nombre": "tollocan",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tollocan -Salida eval/results/t9/tollocan.json",
+          "minutos": 6,
+          "tope_min": 15,
+          "salidas": [
+            "eval/results/t9",
+            "docs/cesvi/ronda-4/evidencia/fisica",
+            "apps/web/test-results/"
+          ]
+        },
+        {
+          "nombre": "narraciones",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues narraciones -Salida eval/results/t9/narraciones_fisica.json",
+          "minutos": 12,
+          "tope_min": 30,
+          "salidas": [
+            "eval/results/t9",
+            "docs/cesvi/ronda-4/evidencia/fisica",
+            "apps/web/test-results/"
+          ]
+        },
+        {
+          "nombre": "tres-narraciones",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tres -Salida eval/results/t9/tres_narraciones.json",
+          "minutos": 8,
+          "tope_min": 25,
+          "salidas": [
+            "eval/results/t9",
+            "docs/cesvi/ronda-4/evidencia/fisica",
+            "apps/web/test-results/"
+          ]
+        },
+        {
+          "nombre": "narraciones-nuevas",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues nuevas -Salida eval/results/t9/narraciones_nuevas.json",
+          "minutos": 25,
+          "tope_min": 70,
+          "salidas": [
+            "eval/results/t9",
+            "docs/cesvi/ronda-4/evidencia/fisica",
+            "apps/web/test-results/"
+          ]
+        },
+        {
+          "nombre": "arranque-1",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t9/arranque_945617e035988035_1.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t9"]
+        },
+        {
+          "nombre": "arranque-2",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t9/arranque_945617e035988035_2.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t9"]
+        },
+        {
+          "nombre": "arranque-3",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t9/arranque_945617e035988035_3.json",
+          "minutos": 12,
+          "tope_min": 15,
+          "salidas": ["eval/results/t9"]
+        },
+        {
+          "nombre": "portada",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/colaborador/desde-release.ps1 -Paso portada -Release visor-fotos-945617e035988035 -Archivo fotos-promo-945617e0.zip -Zips eval/results/t9/portada",
+          "minutos": 20,
+          "tope_min": 60,
+          "salidas": ["eval/results/t9/portada", "eval/results/rtx-t4/tomas_portada.json"]
+        },
+        {
+          "nombre": "antes-copia",
+          "comando": "powershell -NoProfile -Command \"if (Test-Path ../croquis-t9-antes) { git -c core.longpaths=true worktree remove --force ../croquis-t9-antes }; git worktree add --detach ../croquis-t9-antes 137773743c6421cefe0723c2c4ab8cef2972d1ee\"",
+          "minutos": 1,
+          "tope_min": 10
+        },
+        {
+          "nombre": "antes-dependencias",
+          "comando": "pnpm -C ../croquis-t9-antes install --frozen-lockfile --prefer-offline --package-import-method=hardlink",
+          "minutos": 3,
+          "tope_min": 15
+        },
+        {
+          "nombre": "antes-carambolas-prueba",
+          "comando": "pnpm -C ../croquis-t9-antes --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir prueba",
+          "minutos": 5,
+          "tope_min": 20
+        },
+        {
+          "nombre": "antes-carambolas-desarrollo",
+          "comando": "pnpm -C ../croquis-t9-antes --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir desarrollo",
+          "minutos": 6,
+          "tope_min": 25
+        },
+        {
+          "nombre": "antes-cobertura",
+          "comando": "pnpm -C ../croquis-t9-antes --filter @croquis/cesvi exec tsx ../../eval/t3_cobertura.mts --casos 200",
+          "minutos": 15,
+          "tope_min": 60
+        },
+        {
+          "nombre": "antes-guardar",
+          "comando": "powershell -NoProfile -Command \"New-Item -ItemType Directory -Force eval/results/t9/antes | Out-Null; Copy-Item ../croquis-t9-antes/eval/results/cesvi_r4b_carambolas_prueba.json, ../croquis-t9-antes/eval/results/cesvi_r4b_carambolas_desarrollo.json, ../croquis-t9-antes/eval/results/t3_cobertura.json eval/results/t9/antes/\"",
+          "minutos": 1,
+          "tope_min": 10,
+          "salidas": ["eval/results/t9"]
+        },
+        {
+          "nombre": "carambolas-prueba",
+          "comando": "pnpm --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir prueba",
+          "minutos": 5,
+          "tope_min": 20,
+          "salidas": ["eval/results/cesvi_r4b_carambolas_prueba.json"]
+        },
+        {
+          "nombre": "carambolas-desarrollo",
+          "comando": "pnpm --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir desarrollo",
+          "minutos": 6,
+          "tope_min": 25,
+          "salidas": ["eval/results/cesvi_r4b_carambolas_desarrollo.json"]
+        },
+        {
+          "nombre": "cobertura",
+          "comando": "pnpm --filter @croquis/cesvi exec tsx ../../eval/t3_cobertura.mts --casos 200",
+          "minutos": 15,
+          "tope_min": 60,
+          "salidas": ["eval/results/t3_cobertura.json"]
+        },
+        {
+          "nombre": "comparar",
+          "comando": "node eval/t9_comparar.mjs",
+          "minutos": 1,
+          "salidas": ["eval/results/t9"]
+        }
+      ]
+    },
+    "t9-junta": {
+      "titulo": "Tanda junta (t9 + t9b) · Final: los tres casos, la revisión de la cadena, La escena y lo publicado, en el navegador",
+      "nota": "René, 2026-11-25: reemplaza a la t9 (cancelada, no empezó) y a la t9b. Una sola tanda fijada al commit final del #320 (2f9b158f, rama fix/w-calle-de-llegada, con CI en verde), que trae el #311 y el #316 debajo. Los mismos pasos de la t9 sin la portada: en la demo local con el build de Unity publicado (945617e035988035, del release de GitHub, sin Blob), Chrome con la tarjeta de alto rendimiento. Primero el humo (si falla, se detiene). Después: los cinco ejemplos y AXA; el crucero en la app; Tollocan; las seis narraciones; los tres casos nuevos y una muestra de 10 narraciones de la revisión de la cadena (La escena, con las calles guardadas de los ejemplos), cada uno con captura del 3D; el arranque del 3D tres veces; las carambolas (prueba y desarrollo) y la cobertura antes (main, 13777374, en un worktree) y después; y eval/t9_comparar.mjs contra el índice de cifras y la tabla aprobada. Lo que difiera va a René con su antes y después. Nada de AXA se sube. Medida en la RTX (2026-11-26, msi-k47): 57 min en total contra 175 min estimados; los minutos de cada paso son los medidos, redondeados hacia arriba (los ejemplos fallaron a los 0.8 min por la prueba; se estiman 6).",
+      "rama": "fix/w-calle-de-llegada",
+      "commit": "2f9b158f19c92fa6dd4c51ca8367c20c9851a9cd",
+      "pasos": [
+        {
+          "nombre": "visor",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 1,
+          "tope_min": 15
+        },
+        {
+          "nombre": "preparar",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar",
+          "minutos": 1,
+          "tope_min": 15
+        },
+        {
+          "nombre": "humo",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues humo",
+          "minutos": 1,
+          "tope_min": 8,
+          "salidas": ["eval/results/humo/", "apps/web/test-results/"],
+          "detiene_si_falla": true
+        },
+        {
+          "nombre": "ejemplos",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t9/ejemplos.json -Capturas docs/cesvi/ronda-4/evidencia/t9-ejemplos -Casos eval/results/t9/ejemplos-casos",
+          "minutos": 6,
+          "tope_min": 30,
+          "salidas": ["eval/results/t9", "docs/cesvi/ronda-4/evidencia/t9-ejemplos"]
+        },
+        {
+          "nombre": "crucero-en-la-app",
+          "comando": "powershell -NoProfile -Command \"$env:CROQUIS_EJEMPLO_APP='../../eval/results/t9/crucero_en_la_app.json'; pnpm --filter @croquis/web exec vitest run src/lib/ejemplo-en-la-app.test.ts\"",
+          "minutos": 1,
+          "tope_min": 10,
+          "salidas": ["eval/results/t9"]
+        },
+        {
+          "nombre": "tollocan",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tollocan -Salida eval/results/t9/tollocan.json",
+          "minutos": 3,
+          "tope_min": 15,
+          "salidas": [
+            "eval/results/t9",
+            "docs/cesvi/ronda-4/evidencia/fisica",
+            "apps/web/test-results/"
+          ]
+        },
+        {
+          "nombre": "narraciones",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues narraciones -Salida eval/results/t9/narraciones_fisica.json",
+          "minutos": 5,
+          "tope_min": 30,
+          "salidas": [
+            "eval/results/t9",
+            "docs/cesvi/ronda-4/evidencia/fisica",
+            "apps/web/test-results/"
+          ]
+        },
+        {
+          "nombre": "tres-narraciones",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tres -Salida eval/results/t9/tres_narraciones.json",
+          "minutos": 2,
+          "tope_min": 25,
+          "salidas": [
+            "eval/results/t9",
+            "docs/cesvi/ronda-4/evidencia/fisica",
+            "apps/web/test-results/"
+          ]
+        },
+        {
+          "nombre": "narraciones-nuevas",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues nuevas -Salida eval/results/t9/narraciones_nuevas.json",
+          "minutos": 8,
+          "tope_min": 70,
+          "salidas": [
+            "eval/results/t9",
+            "docs/cesvi/ronda-4/evidencia/fisica",
+            "apps/web/test-results/"
+          ]
+        },
+        {
+          "nombre": "arranque-1",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t9/arranque_945617e035988035_1.json",
+          "minutos": 1,
+          "tope_min": 15,
+          "salidas": ["eval/results/t9"]
+        },
+        {
+          "nombre": "arranque-2",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t9/arranque_945617e035988035_2.json",
+          "minutos": 1,
+          "tope_min": 15,
+          "salidas": ["eval/results/t9"]
+        },
+        {
+          "nombre": "arranque-3",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t9/arranque_945617e035988035_3.json",
+          "minutos": 1,
+          "tope_min": 15,
+          "salidas": ["eval/results/t9"]
+        },
+        {
+          "nombre": "antes-copia",
+          "comando": "powershell -NoProfile -Command \"if (Test-Path ../croquis-t9-antes) { git -c core.longpaths=true worktree remove --force ../croquis-t9-antes }; git worktree add --detach ../croquis-t9-antes 137773743c6421cefe0723c2c4ab8cef2972d1ee\"",
+          "minutos": 1,
+          "tope_min": 10
+        },
+        {
+          "nombre": "antes-dependencias",
+          "comando": "pnpm -C ../croquis-t9-antes install --frozen-lockfile --prefer-offline --package-import-method=hardlink",
+          "minutos": 1,
+          "tope_min": 15
+        },
+        {
+          "nombre": "antes-carambolas-prueba",
+          "comando": "pnpm -C ../croquis-t9-antes --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir prueba",
+          "minutos": 2,
+          "tope_min": 20
+        },
+        {
+          "nombre": "antes-carambolas-desarrollo",
+          "comando": "pnpm -C ../croquis-t9-antes --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir desarrollo",
+          "minutos": 2,
+          "tope_min": 25
+        },
+        {
+          "nombre": "antes-cobertura",
+          "comando": "pnpm -C ../croquis-t9-antes --filter @croquis/cesvi exec tsx ../../eval/t3_cobertura.mts --casos 200",
+          "minutos": 13,
+          "tope_min": 60
+        },
+        {
+          "nombre": "antes-guardar",
+          "comando": "powershell -NoProfile -Command \"New-Item -ItemType Directory -Force eval/results/t9/antes | Out-Null; Copy-Item ../croquis-t9-antes/eval/results/cesvi_r4b_carambolas_prueba.json, ../croquis-t9-antes/eval/results/cesvi_r4b_carambolas_desarrollo.json, ../croquis-t9-antes/eval/results/t3_cobertura.json eval/results/t9/antes/\"",
+          "minutos": 1,
+          "tope_min": 10,
+          "salidas": ["eval/results/t9"]
+        },
+        {
+          "nombre": "carambolas-prueba",
+          "comando": "pnpm --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir prueba",
+          "minutos": 2,
+          "tope_min": 20,
+          "salidas": ["eval/results/cesvi_r4b_carambolas_prueba.json"]
+        },
+        {
+          "nombre": "carambolas-desarrollo",
+          "comando": "pnpm --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir desarrollo",
+          "minutos": 3,
+          "tope_min": 25,
+          "salidas": ["eval/results/cesvi_r4b_carambolas_desarrollo.json"]
+        },
+        {
+          "nombre": "cobertura",
+          "comando": "pnpm --filter @croquis/cesvi exec tsx ../../eval/t3_cobertura.mts --casos 200",
+          "minutos": 13,
+          "tope_min": 60,
+          "salidas": ["eval/results/t3_cobertura.json"]
+        },
+        {
+          "nombre": "comparar",
+          "comando": "node eval/t9_comparar.mjs",
+          "minutos": 1,
+          "salidas": ["eval/results/t9"]
+        }
+      ]
+    },
+    "t9-ejemplos": {
+      "titulo": "Tanda 9 · Solo los ejemplos, armados con el mismo código de La escena (#331)",
+      "nota": "René, 2026-11-26: la tabla del índice arma cada ejemplo con el mismo código de La escena y el navegador repite sus toques con La escena nueva (e2e/recetas-perito.ts). Fijada a 55eccc3b (rama fix/w-ejemplos-como-la-app, #331): la cadena completa #311 → #316 → #320 → #323 → #329 más el #331 (el poste calculado con el derrape como evidencia, la reversa con el supuesto de NHTSA, una cifra por ejemplo). Si sale bien, se publica la cadena en ese orden. Pasos: visor, preparar, ejemplos y comparar (eval/t9_comparar.mjs contra eval/results/ejemplos_en_su_lugar/cifras.json y el índice).",
+      "rama": "fix/w-ejemplos-como-la-app",
+      "commit": "55eccc3b80c351ef58a9d41ac4b15d8e61747a3f",
+      "pasos": [
+        {
+          "nombre": "visor",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 1,
+          "tope_min": 15
+        },
+        {
+          "nombre": "preparar",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar",
+          "minutos": 1,
+          "tope_min": 15
+        },
+        {
+          "nombre": "ejemplos",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t9/ejemplos.json -Capturas docs/cesvi/ronda-4/evidencia/t9-ejemplos -Casos eval/results/t9/ejemplos-casos",
+          "minutos": 6,
+          "tope_min": 30,
+          "salidas": ["eval/results/t9", "docs/cesvi/ronda-4/evidencia/t9-ejemplos"]
+        },
+        {
+          "nombre": "comparar",
+          "comando": "node eval/t9_comparar.mjs",
+          "minutos": 1,
+          "salidas": ["eval/results/t9"]
+        }
+      ]
+    },
+    "t10-final": {
+      "titulo": "Tanda 10 · Final: el build de Unity de la ronda final con todo lo publicado",
+      "nota": "René, 2026-11-26: la tanda final, con el build WebGL que compila Alberto desde main (daños, pedazos, entorno y paisaje, cámara lenta y «¿y si…?» en el visor), del release de GitHub, sin Blob. No es vigente hasta que el manifiesto del build esté en main; entonces se fija a ese commit. Solo el build WebGL: nada de esta tanda usa el visor de escritorio. Primero el humo (si falla, se detiene). Después: los cinco ejemplos y AXA contra el índice; las tres narraciones de René; las capturas con el Unity real (¿y si…? en 3D, daños, entorno, satélite y Presentar, solo ejemplos públicos); el video del 3D al doble (#325, AXA: los MP4 van al Escritorio y no se suben); el arranque del 3D tres veces; y comparar. Nada de AXA se sube.",
+      "rama": "main",
+      "pasos": [
+        {
+          "nombre": "visor",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 2,
+          "tope_min": 15
+        },
+        {
+          "nombre": "preparar",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar",
+          "minutos": 1,
+          "tope_min": 15
+        },
+        {
+          "nombre": "humo",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues humo",
+          "minutos": 1,
+          "tope_min": 8,
+          "detiene_si_falla": true,
+          "salidas": ["eval/results/humo/", "apps/web/test-results/"]
+        },
+        {
+          "nombre": "ejemplos",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t10/ejemplos.json -Capturas docs/cesvi/ronda-4/evidencia/t10-ejemplos -Casos eval/results/t10/ejemplos-casos",
+          "minutos": 6,
+          "tope_min": 30,
+          "salidas": ["eval/results/t10", "docs/cesvi/ronda-4/evidencia/t10-ejemplos"]
+        },
+        {
+          "nombre": "tres-narraciones",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tres -Salida eval/results/t10/tres_narraciones.json",
+          "minutos": 2,
+          "tope_min": 25,
+          "salidas": ["eval/results/t10"]
+        },
+        {
+          "nombre": "final-unity",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues final -Salida eval/results/t10/final_unity.json -Capturas docs/cesvi/ronda-4/evidencia/t10-final",
+          "minutos": 12,
+          "tope_min": 40,
+          "salidas": ["eval/results/t10", "docs/cesvi/ronda-4/evidencia/t10-final"]
+        },
+        {
+          "nombre": "video-3d",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues video-3d",
+          "minutos": 15,
+          "tope_min": 45
+        },
+        {
+          "nombre": "arranque-1",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t10/arranque_1.json",
+          "minutos": 1,
+          "tope_min": 15,
+          "salidas": ["eval/results/t10"]
+        },
+        {
+          "nombre": "arranque-2",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t10/arranque_2.json",
+          "minutos": 1,
+          "tope_min": 15,
+          "salidas": ["eval/results/t10"]
+        },
+        {
+          "nombre": "arranque-3",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues arranque-3d -Salida eval/results/t10/arranque_3.json",
+          "minutos": 1,
+          "tope_min": 15,
+          "salidas": ["eval/results/t10"]
         }
       ]
     }

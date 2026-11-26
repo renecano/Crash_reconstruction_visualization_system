@@ -442,6 +442,17 @@ export function applyMap(
 
 // --- Objetos del lugar (R10, ADR 0081) ------------------------------------------------------------
 
+/** La cobertura de zona seca y la verde del contrato del paisaje (#335, `escenario.entorno.paisaje`). */
+export const COBERTURA_ARIDA = ["scrub", "sand", "bare_rock", "scree", "desert"] as const;
+export const COBERTURA_VERDE_NATURAL = ["wood", "grassland", "heath"] as const;
+export const COBERTURA_VERDE_LANDUSE = [
+  "forest",
+  "meadow",
+  "farmland",
+  "orchard",
+  "grass",
+] as const;
+
 /**
  * Consulta de los objetos del lugar que el 3D dibuja: árboles, postes de alumbrado y de luz, y
  * bardas y muros; y los edificios, que la reconstrucción usa como obstáculos (no se dibujan). Va
@@ -457,6 +468,11 @@ export function overpassQueryObjetos(lat: number, lon: number, radioM: number): 
     `way(${a})["barrier"~"^(wall|fence|retaining_wall)$"];` +
     // Los edificios (René, 2026-11-24): obstáculos de la reconstrucción; el 3D no los dibuja.
     `way(${a})["building"];` +
+    // La cobertura del suelo, para el paisaje del 3D (contrato #335): las áreas secas y las verdes.
+    `way(${a})["natural"~"^(${COBERTURA_ARIDA.join("|")}|${COBERTURA_VERDE_NATURAL.join("|")})$"];` +
+    `way(${a})["landuse"~"^(${COBERTURA_VERDE_LANDUSE.join("|")})$"];` +
+    `relation(${a})["natural"~"^(${COBERTURA_ARIDA.join("|")}|${COBERTURA_VERDE_NATURAL.join("|")})$"];` +
+    `relation(${a})["landuse"~"^(${COBERTURA_VERDE_LANDUSE.join("|")})$"];` +
     `);out body;>;out skel qt;`
   );
 }
@@ -530,4 +546,94 @@ export function objetosDelMapa(
     .filter((x) => Math.hypot(x.posicion.x, x.posicion.y) <= o.radioM)
     .sort((x, y) => Math.hypot(x.posicion.x, x.posicion.y) - Math.hypot(y.posicion.x, y.posicion.y))
     .slice(0, o.max);
+}
+
+// --- El paisaje del lugar (contrato #335) ---------------------------------------------------------
+
+interface OsmRelation {
+  type: "relation";
+  id: number;
+  members: { type: string; ref: number; role?: string }[];
+  tags?: Record<string, string>;
+}
+
+/** De qué es una cobertura: seca, verde o ninguna de las dos. */
+function claseDeCobertura(tags: Record<string, string> | undefined): "arida" | "verde" | null {
+  const n = tags?.natural;
+  const l = tags?.landuse;
+  if (n && (COBERTURA_ARIDA as readonly string[]).includes(n)) return "arida";
+  if (n && (COBERTURA_VERDE_NATURAL as readonly string[]).includes(n)) return "verde";
+  if (l && (COBERTURA_VERDE_LANDUSE as readonly string[]).includes(l)) return "verde";
+  return null;
+}
+
+/** Si (x, y) cae dentro del polígono (regla par-impar). */
+function dentro(x: number, y: number, pol: readonly Point[]): boolean {
+  let d = false;
+  for (let i = 0, j = pol.length - 1; i < pol.length; j = i++) {
+    const a = pol[i]!;
+    const b = pol[j]!;
+    if (a.y > y !== b.y > y && x < ((b.x - a.x) * (y - a.y)) / (b.y - a.y) + a.x) d = !d;
+  }
+  return d;
+}
+
+/**
+ * El paisaje del lugar para el 3D (contrato #335): «arido» si, dentro del radio, la cobertura de zona
+ * seca de OpenStreetMap ocupa más que la verde; «templado» si hay cobertura y no es así; null sin
+ * cobertura (Unity dibuja el templado de siempre). Se mide en una rejilla de puntos cada `paso` m
+ * dentro del círculo, con los polígonos cerrados (de una vía, o las vías exteriores cerradas de una
+ * relación). Ninguna cifra de la reconstrucción depende de esto.
+ */
+export function paisajeDelMapa(
+  resp: OverpassResponse,
+  o: { lat: number; lon: number; radioM: number; paso?: number },
+): "arido" | "templado" | null {
+  const nodos = new Map<number, OsmNode>();
+  const vias = new Map<number, OsmWay>();
+  for (const e of resp.elements) {
+    if (e.type === "node") nodos.set((e as OsmNode).id, e as OsmNode);
+    else if (e.type === "way") vias.set((e as OsmWay).id, e as OsmWay);
+  }
+  const kx = 111320 * Math.cos((o.lat * Math.PI) / 180);
+  const poligono = (w: OsmWay): Point[] | null => {
+    if (w.nodes.length < 4 || w.nodes[0] !== w.nodes[w.nodes.length - 1]) return null;
+    const pts = w.nodes.flatMap((id) => {
+      const n = nodos.get(id);
+      return n ? [{ x: (n.lon - o.lon) * kx, y: (n.lat - o.lat) * 111320 }] : [];
+    });
+    return pts.length >= 4 ? pts : null;
+  };
+  const areas: { clase: "arida" | "verde"; pol: Point[] }[] = [];
+  for (const e of resp.elements) {
+    if (e.type === "way") {
+      const w = e as OsmWay;
+      const clase = claseDeCobertura(w.tags);
+      const pol = clase ? poligono(w) : null;
+      if (clase && pol) areas.push({ clase, pol });
+    } else if (e.type === "relation") {
+      const r = e as OsmRelation;
+      const clase = claseDeCobertura(r.tags);
+      if (!clase) continue;
+      for (const m of r.members) {
+        if (m.type !== "way" || (m.role && m.role !== "outer")) continue;
+        const w = vias.get(m.ref);
+        const pol = w ? poligono(w) : null;
+        if (pol) areas.push({ clase, pol });
+      }
+    }
+  }
+  if (!areas.length) return null;
+  const paso = o.paso ?? 10;
+  let arida = 0;
+  let verde = 0;
+  for (let x = -o.radioM; x <= o.radioM; x += paso)
+    for (let y = -o.radioM; y <= o.radioM; y += paso) {
+      if (x * x + y * y > o.radioM * o.radioM) continue;
+      const a = areas.find((z) => dentro(x, y, z.pol));
+      if (a?.clase === "arida") arida++;
+      else if (a?.clase === "verde") verde++;
+    }
+  if (!arida && !verde) return null;
+  return arida > verde ? "arido" : "templado";
 }
