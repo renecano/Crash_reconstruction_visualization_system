@@ -283,6 +283,11 @@ export interface EscenaSolver {
   origen: LonLat | null;
   /** La velocidad narrada de cada vehículo del expediente, para decir si las posiciones la contradicen. */
   narradas?: Record<string, VelocidadNarrada>;
+  /**
+   * La posición de impacto que colocó el perito, por vehículo de la escena v1, de los que arrancan
+   * antes de ella (supuesto): si su velocidad reconstruida es 0, el 3D lo deja detenido ahí.
+   */
+  posesDeImpacto?: Record<string, { x: number; y: number; rumbo_deg: number }>;
 }
 
 /** La escena del solver a partir del expediente (sin correr el solver). */
@@ -477,6 +482,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
     );
   }
   const detenidos: Id[] = [];
+  const posesDeImpacto: Record<string, { x: number; y: number; rumbo_deg: number }> = {};
   for (const v of vehiculos) {
     const sv = spec.vehiculos[orden.indexOf(v.id)]!;
     if (v.masa && v.masa.unidad === "kg") {
@@ -543,6 +549,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       // de antes del choque, empieza detrás de ellas (René, 2026-11-24: 18 m de derrape en 12 m).
       const antes = arranqueAntes(v.id);
       const d = man === "detenido" ? 0 : reversa ? -ANTES_DEL_IMPACTO_M : antes;
+      if (d !== 0) posesDeImpacto[String(sv.id)] = { x, y, rumbo_deg: r };
       // Quien da vuelta (René, 2026-11-24: el camión que daba vuelta a la derecha y atropellaba al
       // peatón): el rumbo del choque es el de después de la vuelta; empieza en la calle de donde
       // venía, al principio del cuarto de círculo que traza el solver, y el arco termina
@@ -1084,7 +1091,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   const velocidadesNarradas = Object.fromEntries(
     e.vehiculos.flatMap((v) => (v.velocidad_narrada ? [[v.id, v.velocidad_narrada]] : [])),
   );
-  return { spec, ids, limites, origen, narradas: velocidadesNarradas };
+  return { spec, ids, limites, origen, narradas: velocidadesNarradas, posesDeImpacto };
 }
 
 const CARA_POR_OMISION = "B";
@@ -1849,6 +1856,19 @@ export function especReconstruida(r: Reconstruccion): Json {
     }
     if (!v?.previa) continue;
     const { mejor, p10, p90 } = v.previa;
+    // Con 0 km/h no llega a ningún lado: arranca detenido donde el perito lo puso en el impacto. Si
+    // no, se quedaba en su arranque supuesto (12 m antes) y el otro lo alcanzaba antes del choque
+    // (la carambola de la e2e, René, 2026-11-25).
+    const enImpacto = r.posesDeImpacto?.[String(sv.id)];
+    if (mejor < 0.5 && enImpacto)
+      sv.posicion_inicial = {
+        ...enImpacto,
+        procedencia: {
+          fuente: "supuesto",
+          confianza: 0.5,
+          nota: "Detenido en la posición de impacto que colocó el perito: su velocidad reconstruida es 0 km/h.",
+        },
+      };
     sv.velocidad_previa = {
       valor: Math.round(mejor * 100) / 100,
       unidad: "km/h",
