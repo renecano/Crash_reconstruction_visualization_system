@@ -120,16 +120,30 @@ describe("hacia dónde salió después del choque (René, 2026-11-25, aud-02)", 
     expect(d.rumbo).toBeCloseTo(rumbo, 0);
   });
 
-  it("el camellón queda a su izquierda y la banqueta a su derecha (se circula por la derecha)", () => {
+  it("el camellón queda a su izquierda y la banqueta a su derecha: adelante y hacia ese lado", () => {
     expect(direccionDeSalida("quedó a 3 m, hacia el camellón", 0)).toEqual({
-      rumbo: 270,
-      texto: "hacia el camellón (a su izquierda)",
+      rumbo: 315,
+      texto: "adelante y hacia el camellón (a su izquierda)",
     });
-    expect(direccionDeSalida("quedó contra la banqueta", 90)?.rumbo).toBe(180);
-    expect(direccionDeSalida("se desplazó hacia su izquierda", 90)?.rumbo).toBe(0);
+    expect(direccionDeSalida("salió hacia la banqueta", 90)?.rumbo).toBe(135);
+    expect(direccionDeSalida("se desvió hacia la derecha", 90)?.rumbo).toBe(135);
+    expect(direccionDeSalida("se desplazó hacia su izquierda", 90)?.rumbo).toBe(45);
     expect(direccionDeSalida("fue empujado hacia atrás", 90)?.rumbo).toBe(270);
     const f = finalDeLaNarracion(e, "V1", "quedó a 3 m, hacia el camellón")!;
     expect(desdeElChoque(f).m).toBeCloseTo(3, 1);
+  });
+
+  it("«junto a la guarnición» o «contra la banqueta» dicen dónde quedó, no hacia dónde salió", () => {
+    expect(direccionDeSalida("quedó tendido a 12 m, junto a la guarnición", 0)).toBeNull();
+    expect(
+      direccionDeSalida("quedó contra la banqueta, a 5 m del punto de contacto", 0),
+    ).toBeNull();
+    const f = finalDeLaNarracion(
+      e,
+      "V1",
+      "quedó a 12 m del punto de contacto, junto a la guarnición",
+    )!;
+    expect(f.texto).toMatch(/hacia donde avanzaba/);
   });
 
   it("«con el frente hacia…» y «de sur a norte» no dicen hacia dónde salió", () => {

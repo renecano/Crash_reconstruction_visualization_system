@@ -1591,8 +1591,8 @@ const idDeLetra = (l: string) => `V${l.toUpperCase().charCodeAt(0) - 64}`;
  * Hacia dónde dice la narración que salió un vehículo después del choque (René, 2026-11-25, aud-02:
  * «fue desplazado hacia el noroeste del cruce y quedó detenido a 7 m del punto de contacto» lo ponía 7 m
  * adelante en su propia línea, al poniente). Un punto cardinal («hacia el noroeste», «quedó al norte del
- * cruce»), el camellón (a su izquierda: se circula por la derecha), la banqueta (a su derecha), «hacia
- * su izquierda/derecha» o «hacia atrás». No cuenta «con el frente hacia…» (es cómo quedó, no hacia dónde
+ * cruce»), «hacia el camellón» (a su izquierda: se circula por la derecha), «hacia la banqueta» (a su
+ * derecha), «hacia su izquierda/derecha» (los lados, adelante y a 45°) o «hacia atrás». No cuenta «con el frente hacia…» (es cómo quedó, no hacia dónde
  * salió) ni «de sur a norte» (es cómo circulaba). null si no lo dice.
  */
 export function direccionDeSalida(
@@ -1617,15 +1617,22 @@ export function direccionDeSalida(
     const nombre = c[1]!;
     return { rumbo: RUMBO_DE[nombre]!, texto: `hacia el ${nombre}` };
   }
-  if (/\b(?:hacia|contra|sobre|al|junto\s+al)\s+(?:el\s+)?camellon\b/.test(d))
-    return { rumbo: normalizar(marcha - 90), texto: "hacia el camellón (a su izquierda)" };
-  if (/\b(?:hacia|contra|sobre|a)\s+(?:la\s+)?(?:banqueta|acera|guarnicion)\b/.test(d))
-    return { rumbo: normalizar(marcha + 90), texto: "hacia la banqueta (a su derecha)" };
+  // Los lados son relativos a su marcha: después del choque sigue avanzando, así que sale adelante y
+  // hacia ese lado (45°, supuesto). Solo con «hacia»: «junto a la guarnición» dice dónde quedó, no
+  // hacia dónde salió.
+  const aUnLado = (signo: -1 | 1, texto: string) => ({
+    rumbo: normalizar(marcha + signo * 45),
+    texto: `adelante y ${texto}`,
+  });
+  if (/\bhacia\s+(?:el\s+)?camellon\b/.test(d))
+    return aUnLado(-1, "hacia el camellón (a su izquierda)");
+  if (/\bhacia\s+(?:la\s+)?(?:banqueta|acera|guarnicion)\b/.test(d))
+    return aUnLado(1, "hacia la banqueta (a su derecha)");
   const lado = /\bhacia\s+(?:su\s+|la\s+)?(izquierda|derecha)\b/.exec(d);
   if (lado)
     return lado[1] === "izquierda"
-      ? { rumbo: normalizar(marcha - 90), texto: "hacia su izquierda" }
-      : { rumbo: normalizar(marcha + 90), texto: "hacia su derecha" };
+      ? aUnLado(-1, "hacia su izquierda")
+      : aUnLado(1, "hacia su derecha");
   if (/\bhacia\s+atras\b|\bhacia\s+donde\s+venia\b/.test(d))
     return { rumbo: normalizar(marcha + 180), texto: "hacia atrás, de donde venía" };
   return null;
