@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Croquis.Generated;
 
 namespace Croquis.Core
@@ -20,17 +21,49 @@ namespace Croquis.Core
         public static CampoDano Campo(ResultadoVehiculo v)
         {
             var dano = v?.Dano;
-            if (dano?.PerfilM == null || dano.PerfilM.Length != 6 || dano.AnchoM <= 0.0 || dano.Cdc == null)
+            return dano == null || dano.OrigenRigidez == OrigenRigidez.SinImpacto ? null : Campo(v, dano.PerfilM, dano.AnchoM, dano.CentroM, dano.Cdc, v.PdofHoras);
+        }
+
+        /// <summary>
+        /// Los daños de un vehículo en orden, cada uno con el instante desde el que se ve: el del primer
+        /// impacto (`dano`, en `Instante`) y los de cada impacto posterior (`danos_posteriores`, en su `t`),
+        /// que se dibujan encima del anterior. Vacío si no hay nada que dibujar.
+        /// </summary>
+        public static List<(double Desde, CampoDano Campo)> Etapas(ResultadoVehiculo v, Caso3DResultado r)
+        {
+            var etapas = new List<(double, CampoDano)>();
+            var primero = Campo(v);
+            if (primero != null)
+            {
+                etapas.Add((Instante(r, v.Id), primero));
+            }
+
+            foreach (var p in v?.DanosPosteriores ?? new DanosPosterioreElement[0])
+            {
+                var campo = p == null || p.OrigenRigidez == OrigenRigidez.SinImpacto ? null : Campo(v, p.PerfilM, p.AnchoM, p.CentroM, p.Cdc, p.PdofHoras);
+                if (campo != null)
+                {
+                    etapas.Add((p.T, campo));
+                }
+            }
+
+            etapas.Sort((a, b) => a.Item1.CompareTo(b.Item1));
+            return etapas;
+        }
+
+        private static CampoDano Campo(ResultadoVehiculo v, double[] perfil, double ancho, double centro, Cdc cdc, double? pdof)
+        {
+            if (perfil == null || perfil.Length != 6 || ancho <= 0.0 || cdc == null)
             {
                 return null;
             }
 
-            if (Array.TrueForAll(dano.PerfilM, c => c <= 0.0) || PerfilClase.De(v.Clase).DosRuedas)
+            if (Array.TrueForAll(perfil, c => c <= 0.0) || PerfilClase.De(v.Clase).DosRuedas)
             {
                 return null;
             }
 
-            var lado = Lado(dano.Cdc.Lado);
+            var lado = Lado(cdc.Lado);
             if (lado == null)
             {
                 return null;
@@ -40,10 +73,11 @@ namespace Croquis.Core
             var entrada = new EntradaDano
             {
                 Lado = lado.Value,
-                Perfil = dano.PerfilM,
-                Ancho = dano.AnchoM,
-                Centro = dano.CentroM,
-                ZonaVertical = dano.Cdc.ZonaVertical.HasValue ? dano.Cdc.ZonaVertical.Value.ToString()[0] : (char?)null,
+                Perfil = perfil,
+                Ancho = ancho,
+                Centro = centro,
+                ZonaVertical = cdc.ZonaVertical.HasValue ? cdc.ZonaVertical.Value.ToString()[0] : (char?)null,
+                PdofHoras = pdof,
             };
             return new CampoDano(entrada, v.Clase, new MedidasVehiculo(d.LargoM, d.AnchoM, d.AltoM, d.DistanciaEntreEjesM));
         }
@@ -129,6 +163,13 @@ namespace Croquis.Core
             }
 
             return salida;
+        }
+
+        /// <summary>Si el daño mueve un punto del marco de Unity (para refinar solo ahí la malla).</summary>
+        public static bool Toca(CampoDano campo, V3 enUnity)
+        {
+            campo.Desplazamiento(Cambiar(enUnity), out var peso, out _);
+            return peso > 0.0;
         }
 
         /// <summary>Del marco de Unity al del daño y de regreso: se intercambian x y z.</summary>

@@ -188,6 +188,9 @@ namespace Croquis.Core
 
         /// <summary>La zona vertical del CDC, o nulo.</summary>
         public char? ZonaVertical;
+
+        /// <summary>La dirección de la fuerza principal en horas de reloj (12 de frente, 3 desde la derecha), o nulo.</summary>
+        public double? PdofHoras;
     }
 
     /// <summary>
@@ -200,6 +203,20 @@ namespace Croquis.Core
         public const double Caida = 0.15;
 
         private const double Arruga = 0.03;
+
+        /// <summary>
+        /// Los pliegues de la lámina aplastada, como fracción de c(u). Van en el plano de la cara (arriba
+        /// y abajo, y a lo largo), nunca hacia adentro: la profundidad sigue siendo la del solver.
+        /// </summary>
+        public const double Pliegue = 0.2;
+
+        /// <summary>La distancia entre pliegues, hacia adentro de la cara (m).</summary>
+        public const double LargoPliegue = 0.13;
+
+        /// <summary>El arrastre de lado por la PDOF, como mucho esta fracción de c(u) (unos 27°).</summary>
+        public const double CizallaMaxima = 0.5;
+
+        private readonly double cizalla;
 
         private readonly EntradaDano entrada;
         private readonly double cara;
@@ -237,6 +254,7 @@ namespace Croquis.Core
                     throw new ArgumentException("El daño visual solo existe en las caras F, B, L y R.");
             }
 
+            cizalla = Cizalla(entrada.PdofHoras, afuera, aLoLargo);
             RangoVertical(entrada.ZonaVertical, clase, m, out y0, out y1);
             BandaMedicion(entrada.ZonaVertical, clase, m, out var b0, out var b1);
             Banda0 = b0;
@@ -247,6 +265,33 @@ namespace Croquis.Core
         public double Banda1 { get; }
         public V3 Afuera => afuera;
         public V3 ALoLargo => aLoLargo;
+
+        /// <summary>Cuánto se arrastra la lámina a lo largo de la cara por cada metro que se hunde.</summary>
+        public double CizallaPorMetro => cizalla;
+
+        /// <summary>
+        /// De la PDOF al arrastre de lado: la fuerza empuja hacia adentro y, si llega oblicua, también a lo
+        /// largo de la cara. Es la tangente del ángulo entre la fuerza y la normal hacia adentro, acotada a
+        /// `CizallaMaxima`; 0 sin PDOF o si la fuerza no entra por esta cara.
+        /// </summary>
+        public static double Cizalla(double? pdofHoras, V3 afuera, V3 aLoLargo)
+        {
+            if (!pdofHoras.HasValue || double.IsNaN(pdofHoras.Value))
+            {
+                return 0.0;
+            }
+
+            // De dónde viene la fuerza (x adelante, z a la derecha); empuja hacia el lado contrario.
+            var a = pdofHoras.Value * Math.PI / 6.0;
+            var empuje = new V3(-Math.Cos(a), 0, -Math.Sin(a));
+            var normal = -empuje.Punto(afuera);
+            if (normal < 0.3)
+            {
+                return 0.0;
+            }
+
+            return Math.Max(-CizallaMaxima, Math.Min(CizallaMaxima, empuje.Punto(aLoLargo) / normal));
+        }
 
         private static double Paso(double a, double b, double x)
         {
@@ -291,7 +336,7 @@ namespace Croquis.Core
             var w = 1.0 - Paso(0.0, 1.6 * c + 0.3, profundidad);
             var m = Paso(y0 - 0.1, y0 + 0.1, p.Y) * (1.0 - Paso(y1 - 0.1, y1 + 0.1, p.Y));
             peso = m * w;
-            return afuera * (-c * peso);
+            return afuera * (-c * peso) + aLoLargo * (cizalla * c * peso);
         }
 
         /// <summary>
@@ -392,10 +437,36 @@ namespace Croquis.Core
             for (var i = 0; i < vertices.Length; i++)
             {
                 var id = ids[i];
-                salida[i] = principal[id] + new V3(ruido[3 * id], ruido[3 * id + 1], ruido[3 * id + 2]);
+                salida[i] = principal[id] + new V3(ruido[3 * id], ruido[3 * id + 1], ruido[3 * id + 2]) + Pliegues(vertices[i], peso[id], semilla);
             }
 
             return salida;
+        }
+
+        /// <summary>
+        /// Los pliegues de acordeón de un punto (ronda final, Alberto 2026-11-26: «a gran velocidad, que se
+        /// vea deshecho, solo hasta donde dice el cálculo»). Crecen con c(u) y casi no aparecen en un
+        /// raspón: con 3 cm no hay; desde 15 cm, completos. Solo mueven la lámina arriba y abajo y a lo
+        /// largo de la cara, así que el perfil que se mide hacia adentro no cambia.
+        /// </summary>
+        public V3 Pliegues(V3 p, double peso, int semilla)
+        {
+            if (peso <= 0.0)
+            {
+                return new V3(0, 0, 0);
+            }
+
+            var c = Aplastamiento(p.Punto(aLoLargo));
+            var a = Pliegue * c * peso * Paso(0.03, 0.15, c);
+            if (a <= 0.0)
+            {
+                return new V3(0, 0, 0);
+            }
+
+            var hacia = Math.Max(0.0, cara - p.Punto(afuera));
+            var u = p.Punto(aLoLargo);
+            var fase = 2.0 * Math.PI * hacia / LargoPliegue + 3.0 * Ruido(u * 2.5, p.Y * 2.5, 5.0, semilla);
+            return new V3(0, a * Math.Sin(fase), 0) + aLoLargo * (0.5 * a * Math.Cos(0.7 * fase + 1.3));
         }
 
         /// <summary>
