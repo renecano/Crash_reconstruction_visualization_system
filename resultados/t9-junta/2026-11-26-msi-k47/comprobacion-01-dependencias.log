@@ -1,0 +1,109 @@
+# Paso: dependencias
+# Comando: pnpm install --frozen-lockfile
+# Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
+# Inicio: 2026-11-26 11:47:09
+
+Scope: all 10 workspace projects
+? Verifying lockfile against supply-chain policies (1189 entries)...
+Downloading @img/sharp-win32-x64@0.35.5: 0.00 B/8.57 MB
+Update available! 12.11.2 → 12.23.0.
+Changelog: https://pnpm.io/v/12.23.0
+To update, run: Invoke-WebRequest https://get.pnpm.io/install.ps1 -UseBasicParsing | Invoke-Expression
+Downloading pdfjs-dist@6.4.299: 0.00 B/8.53 MB
+Downloading maplibre-gl@6.15.0: 0.00 B/6.16 MB
+Packages are hard linked from the content-addressable store to the virtual store.
+  Content-addressable store is at: C:\Users\MrKan\AppData\Local\pnpm\store\v11
+  Virtual store is at:             node_modules/.pnpm
+Progress: resolved 1001, reused 0, downloaded 96, added 75
+Downloading @swc/core-win32-x64-msvc@1.16.13: 0.00 B/8.83 MB
+[WARN] Tarball download average speed 34 KiB/s (size 59 KiB) is below 50 KiB/s: https://registry.npmjs.org/jackspeak/-/jackspeak-3.4.3.tgz (GET)
+[WARN] Tarball download average speed 48 KiB/s (size 84 KiB) is below 50 KiB/s: https://registry.npmjs.org/lightningcss/-/lightningcss-1.32.0.tgz (GET)
+[WARN] Tarball download average speed 29 KiB/s (size 54 KiB) is below 50 KiB/s: https://registry.npmjs.org/parse5/-/parse5-8.0.1.tgz (GET)
+Progress: resolved 1001, reused 0, downloaded 192, added 192
+Downloading @remotion/compositor-win32-x64-msvc@4.0.539: 0.00 B/10.77 MB
+[WARN] Tarball download average speed 24 KiB/s (size 28 KiB) is below 50 KiB/s: https://registry.npmjs.org/lerc/-/lerc-3.0.0.tgz (GET)
+[WARN] Tarball download average speed 7 KiB/s (size 9 KiB) is below 50 KiB/s: https://registry.npmjs.org/is-symbol/-/is-symbol-1.1.1.tgz (GET)
+Progress: resolved 1001, reused 0, downloaded 223, added 218
+[WARN] Tarball download average speed 31 KiB/s (size 71 KiB) is below 50 KiB/s: https://registry.npmjs.org/jose/-/jose-5.10.0.tgz (GET)
+[WARN] Tarball download average speed 27 KiB/s (size 65 KiB) is below 50 KiB/s: https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.71.1.tgz (GET)
+Downloading @rspack/binding-win32-x64-msvc@1.7.11: 0.00 B/18.35 MB
+Downloading @rolldown/binding-win32-x64-msvc@1.2.13: 0.00 B/8.25 MB
+Progress: resolved 1001, reused 0, downloaded 324, added 320
+[WARN] Tarball download average speed 13 KiB/s (size 13 KiB) is below 50 KiB/s: https://registry.npmjs.org/optionator/-/optionator-0.9.4.tgz (GET)
+[WARN] Tarball download average speed 28 KiB/s (size 29 KiB) is below 50 KiB/s: https://registry.npmjs.org/undici-types/-/undici-types-8.9.0.tgz (GET)
+[WARN] Tarball download average speed 45 KiB/s (size 46 KiB) is below 50 KiB/s: https://registry.npmjs.org/resolve/-/resolve-2.0.0-next.7.tgz (GET)
+[WARN] Tarball download average speed 46 KiB/s (size 77 KiB) is below 50 KiB/s: https://registry.npmjs.org/csp_evaluator/-/csp_evaluator-1.1.8.tgz (GET)
+[WARN] Tarball download average speed 42 KiB/s (size 45 KiB) is below 50 KiB/s: https://registry.npmjs.org/cjs-module-lexer/-/cjs-module-lexer-2.3.0.tgz (GET)
+Progress: resolved 1001, reused 0, downloaded 349, added 341
+[WARN] Tarball download average speed 48 KiB/s (size 98 KiB) is below 50 KiB/s: https://registry.npmjs.org/entities/-/entities-8.1.0.tgz (GET)
+Progress: resolved 1001, reused 0, downloaded 444, added 417
+Progress: resolved 1001, reused 0, downloaded 467, added 448
+[WARN] Tarball download average speed 22 KiB/s (size 36 KiB) is below 50 KiB/s: https://registry.npmjs.org/eslint-scope/-/eslint-scope-9.1.2.tgz (GET)
+Progress: resolved 1001, reused 0, downloaded 508, added 512
+[WARN] Tarball download average speed 12 KiB/s (size 16 KiB) is below 50 KiB/s: https://registry.npmjs.org/eslint-module-utils/-/eslint-module-utils-2.14.0.tgz (GET)
+[WARN] Tarball download average speed 6 KiB/s (size 8 KiB) is below 50 KiB/s: https://registry.npmjs.org/string.prototype.trimend/-/string.prototype.trimend-1.0.10.tgz (GET)
+[WARN] Tarball download average speed 11 KiB/s (size 14 KiB) is below 50 KiB/s: https://registry.npmjs.org/@eslint/config-helpers/-/config-helpers-0.7.0.tgz (GET)
+[WARN] Tarball download average speed 4 KiB/s (size 5 KiB) is below 50 KiB/s: https://registry.npmjs.org/es-errors/-/es-errors-1.3.0.tgz (GET)
+[WARN] Tarball download average speed 11 KiB/s (size 19 KiB) is below 50 KiB/s: https://registry.npmjs.org/quicktype/-/quicktype-26.0.0.tgz (GET)
+[WARN] Tarball download average speed 12 KiB/s (size 34 KiB) is below 50 KiB/s: https://registry.npmjs.org/ws/-/ws-8.22.0.tgz (GET)
+[WARN] Tarball download average speed 13 KiB/s (size 38 KiB) is below 50 KiB/s: https://registry.npmjs.org/ignore/-/ignore-7.0.12.tgz (GET)
+[WARN] Tarball download average speed 41 KiB/s (size 146 KiB) is below 50 KiB/s: https://registry.npmjs.org/lodash-es/-/lodash-es-4.18.1.tgz (GET)
+Downloading next@16.4.6: 0.00 B/43.66 MB
+[WARN] Tarball download average speed 19 KiB/s (size 30 KiB) is below 50 KiB/s: https://registry.npmjs.org/@cspotcode/source-map-support/-/source-map-support-0.8.1.tgz (GET)
+[WARN] Tarball download average speed 29 KiB/s (size 109 KiB) is below 50 KiB/s: https://registry.npmjs.org/yaml/-/yaml-2.9.1.tgz (GET)
+Downloading pdfjs-dist@6.4.299: 5.37 MB/8.53 MB
+Downloading next@16.4.6: 339.00 kB/43.66 MB
+Downloading @next/swc-win32-x64-msvc@16.4.6: 0.00 B/36.16 MB
+Downloading @next/swc-win32-x64-msvc@16.4.6: 237.56 kB/36.16 MB
+[WARN] Tarball download average speed 9 KiB/s (size 10 KiB) is below 50 KiB/s: https://registry.npmjs.org/whatwg-mimetype/-/whatwg-mimetype-5.0.0.tgz (GET)
+[WARN] Tarball download average speed 7 KiB/s (size 8 KiB) is below 50 KiB/s: https://registry.npmjs.org/kolorist/-/kolorist-1.8.0.tgz (GET)
+[WARN] Tarball download average speed 14 KiB/s (size 16 KiB) is below 50 KiB/s: https://registry.npmjs.org/pbf/-/pbf-5.1.2.tgz (GET)
+[WARN] Tarball download average speed 8 KiB/s (size 9 KiB) is below 50 KiB/s: https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.1.2.tgz (GET)
+[WARN] Tarball download average speed 9 KiB/s (size 10 KiB) is below 50 KiB/s: https://registry.npmjs.org/@csstools/css-tokenizer/-/css-tokenizer-4.0.2.tgz (GET)
+[WARN] Tarball download average speed 8 KiB/s (size 9 KiB) is below 50 KiB/s: https://registry.npmjs.org/which-builtin-type/-/which-builtin-type-1.2.1.tgz (GET)
+Downloading @napi-rs/canvas-win32-x64-msvc@1.0.11: 0.00 B/15.25 MB
+[WARN] Tarball download average speed 32 KiB/s (size 38 KiB) is below 50 KiB/s: https://registry.npmjs.org/argparse/-/argparse-2.0.1.tgz (GET)
+[WARN] Tarball download average speed 15 KiB/s (size 18 KiB) is below 50 KiB/s: https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz (GET)
+Progress: resolved 1001, reused 0, downloaded 764, added 737
+Progress: resolved 1001, reused 0, downloaded 796, added 778
+Progress: resolved 1001, reused 0, downloaded 825, added 800
+[WARN] Tarball download average speed 47 KiB/s (size 99 KiB) is below 50 KiB/s: https://registry.npmjs.org/path-scurry/-/path-scurry-1.11.1.tgz (GET)
+Progress: resolved 1001, reused 0, downloaded 860, added 832
+Progress: resolved 1001, reused 0, downloaded 860, added 863
+[WARN] Tarball download average speed 24 KiB/s (size 29 KiB) is below 50 KiB/s: https://registry.npmjs.org/@vercel/cli-exec/-/cli-exec-1.0.1.tgz (GET)
+Downloading @napi-rs/canvas-win32-x64-msvc@1.0.11: 2.26 MB/15.25 MB
+[WARN] Tarball download average speed 21 KiB/s (size 37 KiB) is below 50 KiB/s: https://registry.npmjs.org/neo-async/-/neo-async-2.6.2.tgz (GET)
+Downloading @next/swc-win32-x64-msvc@16.4.6: 5.33 MB/36.16 MB
+Progress: resolved 1001, reused 0, downloaded 988, added 961
+Progress: resolved 1001, reused 0, downloaded 993, added 992
+✓ Lockfile passes supply-chain policies (1189 entries in 31.5s)
+Lockfile is up to date, resolution step is skipped
+Downloading next@16.4.6: 17.96 MB/43.66 MB
+Downloading next@16.4.6: 36.35 MB/43.66 MB
+Downloading next@16.4.6: 43.66 MB/43.66 MB, done
+Packages: +1001
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 1001, reused 0, downloaded 997, added 1001, done
+.../esbuild@0.28.2/node_modules/esbuild postinstall$ node install.js
+.../esbuild@0.28.1/node_modules/esbuild postinstall$ node install.js
+.../esbuild@0.28.1/node_modules/esbuild postinstall: Done
+.../esbuild@0.28.2/node_modules/esbuild postinstall: Done
+. prepare$ node tools/git/instalar-ganchos.mjs
+. prepare: Done
+
+devDependencies:
++ @eslint/js 10.0.1
++ @fontsource-variable/anybody 5.3.0
++ @gltf-transform/cli 4.5.1
++ @gltf-transform/core 4.5.1
++ @gltf-transform/extensions 4.5.1
++ @gltf-transform/functions 4.5.1
++ esbuild 0.28.2
++ eslint 10.12.0
++ prettier 3.9.10
++ typescript 6.0.3
++ typescript-eslint 8.71.1
+
+Done in 40.1s using pnpm v12.11.2
+
+# Fin: 2026-11-26 11:47:50 · ok · 0.7 min

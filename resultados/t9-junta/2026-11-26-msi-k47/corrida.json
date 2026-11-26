@@ -1,0 +1,57 @@
+{
+    "tanda":  "t9-junta",
+    "titulo":  "Tanda junta (t9 + t9b) · Final: los tres casos, la revisión de la cadena, La escena y lo publicado, en el navegador",
+    "equipo_nombre":  "msi-k47",
+    "gpu":  "Intel(R) UHD Graphics + NVIDIA GeForce RTX 4070 Laptop GPU",
+    "parte":  "todo",
+    "fecha":  "2026-11-26",
+    "commit":  "2f9b158f19c92fa6dd4c51ca8367c20c9851a9cd",
+    "rama_del_repositorio":  "HEAD",
+    "archivos_con_cambios":  0,
+    "duracion_min":  0.8,
+    "equipo":  {
+                   "tarjetas_de_video":  [
+                                             "Intel(R) UHD Graphics",
+                                             "NVIDIA GeForce RTX 4070 Laptop GPU"
+                                         ],
+                   "memoria_gb":  31.7,
+                   "procesador":  "Intel(R) Core(TM) i9-14900HX",
+                   "nucleos_logicos":  32,
+                   "disco_libre_gb":  821.9,
+                   "windows":  "Microsoft Windows 11 Home",
+                   "git":  "git version 2.56.1.windows.1",
+                   "node":  "v26.13.1",
+                   "pnpm":  "12.11.2",
+                   "uv":  null,
+                   "python":  null,
+                   "dotnet":  null,
+                   "unity_instalados":  [
+                                            "6000.6.10f1"
+                                        ],
+                   "unity_del_proyecto":  "6000.3.28f1",
+                   "unity_coincide":  false,
+                   "instalado_en_esta_corrida":  [
+
+                                                 ]
+               },
+    "pasos":  [
+                  {
+                      "grupo":  "comprobacion",
+                      "paso":  "dependencias",
+                      "estado":  "ok",
+                      "minutos":  0.7,
+                      "codigo":  0,
+                      "disco_libre_gb_antes":  821.9,
+                      "disco_libre_gb_despues":  820.3
+                  },
+                  {
+                      "grupo":  "comprobacion",
+                      "paso":  "solver-en-reversa",
+                      "estado":  "ok",
+                      "minutos":  0.1,
+                      "codigo":  0,
+                      "disco_libre_gb_antes":  820.3,
+                      "disco_libre_gb_despues":  820.3
+                  }
+              ]
+}
