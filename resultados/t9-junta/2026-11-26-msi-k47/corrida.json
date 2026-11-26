@@ -8,7 +8,7 @@
     "commit":  "2f9b158f19c92fa6dd4c51ca8367c20c9851a9cd",
     "rama_del_repositorio":  "HEAD",
     "archivos_con_cambios":  0,
-    "duracion_min":  3.9,
+    "duracion_min":  4.2,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "Intel(R) UHD Graphics",
@@ -86,6 +86,15 @@
                       "estado":  "falló (código 1)",
                       "minutos":  0.8,
                       "codigo":  1,
+                      "disco_libre_gb_antes":  819.8,
+                      "disco_libre_gb_despues":  819.8
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "crucero-en-la-app",
+                      "estado":  "ok",
+                      "minutos":  0.3,
+                      "codigo":  0,
                       "disco_libre_gb_antes":  819.8,
                       "disco_libre_gb_despues":  819.8
                   }
