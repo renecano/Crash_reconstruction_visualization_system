@@ -1602,7 +1602,7 @@ export function direccionDeSalida(
   const d = sinAcentos(descripcion.toLowerCase())
     .replace(
       new RegExp(
-        String.raw`con\s+el\s+frente\s+(?:hacia|al|viendo\s+al)\s+(?:el\s+)?${PUNTO}\b`,
+        String.raw`(?:con\s+el\s+frente|orientad[oa]|mirando|viendo)\s+(?:hacia|al|viendo\s+al)\s+(?:el\s+)?${PUNTO}\b`,
         "g",
       ),
       " ",

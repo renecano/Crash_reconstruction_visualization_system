@@ -148,6 +148,8 @@ describe("hacia dónde salió después del choque (René, 2026-11-25, aud-02)", 
 
   it("«con el frente hacia…» y «de sur a norte» no dicen hacia dónde salió", () => {
     expect(direccionDeSalida("quedó con el frente hacia el noroeste", 0)).toBeNull();
+    // Poste y terracería: «en contacto con el poste, orientado hacia el Oriente».
+    expect(direccionDeSalida("en contacto con el poste, orientado hacia el Oriente", 0)).toBeNull();
     expect(direccionDeSalida("circulaba de sur a norte y quedó a 3 m", 0)).toBeNull();
     // Sin dirección, los metros siguen yendo hacia donde avanzaba.
     const f = finalDeLaNarracion(e, "V1", "a 3 m del punto de contacto, sobre su mismo carril")!;
