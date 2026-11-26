@@ -17,12 +17,28 @@ test("diagnóstico del mapa en el primer ejemplo", async ({ page }) => {
   const consola: string[] = [];
   page.on("console", (m) => consola.push(`${m.type()}: ${m.text()}`.slice(0, 300)));
   page.on("pageerror", (e) => consola.push(`pageerror: ${e.message}`.slice(0, 300)));
+  let llamadas = 0;
+  page.on("request", (q) => {
+    if (q.url().includes("/api/cesvi/escena")) llamadas++;
+  });
   await page.goto("/cesvi");
+  // Como la e2e de los ejemplos: un contexto WebGL para leer la tarjeta de video.
+  const gpu = await page
+    .evaluate(() => {
+      const gl = document.createElement("canvas").getContext("webgl2");
+      const ext = gl?.getExtension("WEBGL_debug_renderer_info");
+      return ext && gl ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : null;
+    })
+    .catch(() => null);
+  consola.push(`gpu: ${gpu}`);
   await page.getByTestId("ir-caso-nuevo").click();
+  await expect(page.getByTestId("recorrido-caso")).toBeVisible();
   await irAPaso(page, 2);
   await page.locator(`[data-ejemplo="${r.clave}"]`).click();
   await page.getByTestId("leer-narracion").click();
   await expect(page.getByTestId("escena")).toBeVisible({ timeout: 60_000 });
+  await page.screenshot({ path: join(SALIDA, "1-leida.jpg"), type: "jpeg", quality: 80 });
+  consola.push(`llamadas a Claude: ${llamadas}`);
   await irAPaso(page, 3);
   const notas: string[] = [];
   let error = "";
