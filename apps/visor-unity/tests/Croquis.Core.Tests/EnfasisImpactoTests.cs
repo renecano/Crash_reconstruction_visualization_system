@@ -12,8 +12,9 @@ namespace Croquis.Core.Tests
             Assert.Equal(EnfasisImpacto.FactorMinimo, EnfasisImpacto.FactorCamaraLenta(2.0, 2.0), 6);
             Assert.Equal(1.0, EnfasisImpacto.FactorCamaraLenta(2.0 - EnfasisImpacto.AntesS - 0.01, 2.0), 6);
             Assert.Equal(1.0, EnfasisImpacto.FactorCamaraLenta(2.0 + EnfasisImpacto.DespuesS + 0.01, 2.0), 6);
-            var antes = EnfasisImpacto.FactorCamaraLenta(1.8, 2.0);
-            Assert.InRange(antes, EnfasisImpacto.FactorMinimo, 1.0);
+            // Escalón, no rampa: en toda la ventana va al mismo ritmo, así nada se ve frenar.
+            Assert.Equal(EnfasisImpacto.FactorMinimo, EnfasisImpacto.FactorCamaraLenta(2.0 - EnfasisImpacto.AntesS + 0.01, 2.0), 6);
+            Assert.Equal(EnfasisImpacto.FactorMinimo, EnfasisImpacto.FactorCamaraLenta(2.0 + EnfasisImpacto.DespuesS - 0.01, 2.0), 6);
             // Sin impacto, nada cambia.
             Assert.Equal(1.0, EnfasisImpacto.FactorCamaraLenta(2.0, double.NaN), 6);
         }
@@ -23,6 +24,20 @@ namespace Croquis.Core.Tests
         {
             Assert.Equal(1.0, EnfasisImpacto.PesoCamara(5.0, 5.0), 6);
             Assert.Equal(0.0, EnfasisImpacto.PesoCamara(0.0, 5.0), 6);
+            Assert.InRange(EnfasisImpacto.PesoCamara(4.8, 5.0), 0.01, 0.99);
+            Assert.Equal(0.0, EnfasisImpacto.PesoCamara(5.0, double.NaN), 6);
+        }
+
+        [Fact]
+        public void ElLetreroDiceCuantasVecesMasLento()
+        {
+            Assert.Equal("Cámara lenta ×5", EnfasisImpacto.EtiquetaCamaraLenta(EnfasisImpacto.FactorMinimo));
+            Assert.Equal("Cámara lenta ×20", EnfasisImpacto.EtiquetaCamaraLenta(0.25 * EnfasisImpacto.FactorMinimo));
+            Assert.Equal("Cámara lenta ×2", EnfasisImpacto.EtiquetaCamaraLenta(0.5));
+            Assert.Equal("Cámara lenta ×1.5", EnfasisImpacto.EtiquetaCamaraLenta(1 / 1.5));
+            Assert.Null(EnfasisImpacto.EtiquetaCamaraLenta(1.0));
+            Assert.Null(EnfasisImpacto.EtiquetaCamaraLenta(2.0));
+            Assert.Null(EnfasisImpacto.EtiquetaCamaraLenta(0.0));
         }
 
         [Fact]

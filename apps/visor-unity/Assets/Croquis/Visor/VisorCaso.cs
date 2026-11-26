@@ -96,6 +96,64 @@ namespace Croquis.Visor
             Camara = GetComponent<CamaraVisor>();
             piso = GameObject.Find("Piso");
             sol = FindFirstObjectByType<Light>();
+            letreroLenta = Letrero();
+        }
+
+        /// <summary>«Cámara lenta ×N», arriba al centro, mientras la reproducción va más lenta que el tiempo real.</summary>
+        private GameObject letreroLenta;
+        private Text textoLenta;
+
+        private GameObject Letrero()
+        {
+            var go = new GameObject("letrero_camara_lenta");
+            go.transform.SetParent(transform, false);
+            var canvas = go.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 101;
+            var escala = go.AddComponent<CanvasScaler>();
+            escala.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            escala.referenceResolution = new Vector2(1280, 720);
+            // El mismo recuadro de la leyenda (contraste AA de día y de noche, `Leyenda3d`).
+            var fondo = new GameObject("fondo").AddComponent<Image>();
+            fondo.transform.SetParent(go.transform, false);
+            var f = Leyenda3d.Fondo;
+            fondo.color = new Color((float)f.R, (float)f.G, (float)f.B, (float)f.A);
+            fondo.raycastTarget = false;
+            var caja = fondo.gameObject.AddComponent<HorizontalLayoutGroup>();
+            caja.padding = new RectOffset(12, 12, 5, 5);
+            caja.childControlWidth = true;
+            caja.childControlHeight = true;
+            var ajuste = fondo.gameObject.AddComponent<ContentSizeFitter>();
+            ajuste.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            ajuste.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            var rf = fondo.rectTransform;
+            rf.anchorMin = rf.anchorMax = rf.pivot = new Vector2(0.5f, 1f);
+            rf.anchoredPosition = new Vector2(0f, -14f);
+            textoLenta = new GameObject("texto").AddComponent<Text>();
+            textoLenta.transform.SetParent(fondo.transform, false);
+            textoLenta.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            textoLenta.fontSize = 18;
+            textoLenta.fontStyle = FontStyle.Bold;
+            var t = Leyenda3d.Texto;
+            textoLenta.color = new Color((float)t.R, (float)t.G, (float)t.B, (float)t.A);
+            textoLenta.horizontalOverflow = HorizontalWrapMode.Overflow;
+            textoLenta.raycastTarget = false;
+            go.SetActive(false);
+            return go;
+        }
+
+        private void MostrarLetrero(double ritmo)
+        {
+            var texto = Reproduciendo ? EnfasisImpacto.EtiquetaCamaraLenta(ritmo) : null;
+            if (texto != null && textoLenta.text != texto)
+            {
+                textoLenta.text = texto;
+            }
+
+            if (letreroLenta.activeSelf != (texto != null))
+            {
+                letreroLenta.SetActive(texto != null);
+            }
         }
 
         /// <summary>
@@ -752,13 +810,14 @@ namespace Croquis.Visor
 
         private void Update()
         {
+            // Cámara lenta automática en el impacto: el ritmo cambia, las poses no (ronda 4, punto 5).
+            var factor = EnfasisActivo ? EnfasisImpacto.FactorCamaraLenta(Tiempo, tImpacto) : 1.0;
+            MostrarLetrero(Velocidad * factor);
             if (!Reproduciendo)
             {
                 return;
             }
 
-            // Cámara lenta automática en el impacto: el ritmo cambia, las poses no (ronda 4, punto 5).
-            var factor = EnfasisActivo ? EnfasisImpacto.FactorCamaraLenta(Tiempo, tImpacto) : 1.0;
             Fijar(Tiempo + Time.unscaledDeltaTime * Velocidad * factor);
             if (Tiempo >= fin)
             {

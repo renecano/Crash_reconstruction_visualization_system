@@ -10,8 +10,8 @@ namespace Croquis.Core
     /// deformación del solver (`dano.perfil_m`). Solo cambian el ritmo, la cámara y lo que se ve
     /// alrededor del golpe.
     ///
-    /// - **Cámara lenta automática:** la reproducción baja a `FactorMinimo` en el impacto y vuelve sola a
-    ///   la velocidad elegida, con rampas suaves.
+    /// - **Cámara lenta automática:** la reproducción baja de golpe a `FactorMinimo` alrededor del impacto
+    ///   y vuelve igual a la velocidad elegida, con el letrero «Cámara lenta ×N» a la vista.
     /// - **La cinematográfica** se acerca al punto de impacto durante el golpe (`PesoCamara`).
     /// - **La deformación** crece en `DuracionDanoS` del caso, de la forma original a la del solver.
     /// - **Restos y vidrios** salen del punto de contacto y caen al piso (ilustrativos; con semilla).
@@ -41,8 +41,9 @@ namespace Croquis.Core
         }
 
         /// <summary>
-        /// El factor de la velocidad de reproducción en `t`: 1 lejos del impacto y `FactorMinimo` en él,
-        /// con rampas suaves de `AntesS` y `DespuesS`.
+        /// El factor de la velocidad de reproducción en `t`: `FactorMinimo` de `AntesS` antes del impacto
+        /// a `DespuesS` después, y 1 fuera. Es un escalón, no una rampa (Alberto, 2026-11-26): con rampa los
+        /// vehículos se veían desacelerar, como si frenaran. El letrero de `EtiquetaCamaraLenta` lo avisa.
         /// </summary>
         public static double FactorCamaraLenta(double t, double tImpacto)
         {
@@ -52,17 +53,37 @@ namespace Croquis.Core
             }
 
             var d = t - tImpacto;
-            var cerca = d < 0 ? Suave(1.0 + d / AntesS) : Suave(1.0 - d / DespuesS);
-            return 1.0 - (1.0 - FactorMinimo) * cerca;
+            return d >= -AntesS && d <= DespuesS ? FactorMinimo : 1.0;
         }
 
         /// <summary>
         /// Cuánto se acerca la cinematográfica al punto de impacto (0 a 1): todo en el golpe, nada lejos
-        /// de él. La ventana es la misma de la cámara lenta.
+        /// de él, con rampas suaves en la misma ventana de la cámara lenta (la cámara sí se mueve suave).
         /// </summary>
         public static double PesoCamara(double t, double tImpacto)
         {
-            return (1.0 - FactorCamaraLenta(t, tImpacto)) / (1.0 - FactorMinimo);
+            if (double.IsNaN(tImpacto) || double.IsInfinity(tImpacto))
+            {
+                return 0.0;
+            }
+
+            var d = t - tImpacto;
+            return d < 0 ? Suave(1.0 + d / AntesS) : Suave(1.0 - d / DespuesS);
+        }
+
+        /// <summary>
+        /// El letrero de la cámara lenta para el ritmo total de la reproducción (la velocidad elegida por
+        /// la del impacto): «Cámara lenta ×5» a 0.2; nulo a ritmo normal o más rápido.
+        /// </summary>
+        public static string EtiquetaCamaraLenta(double ritmo)
+        {
+            if (!(ritmo > 0) || ritmo >= 0.999)
+            {
+                return null;
+            }
+
+            var n = 1.0 / ritmo;
+            return "Cámara lenta ×" + (Math.Abs(n - Math.Round(n)) < 0.05 ? Math.Round(n).ToString("0") : n.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture));
         }
 
         /// <summary>Qué tanto de la deformación del solver se ve en `t` (0 antes del impacto, 1 al final).</summary>
