@@ -13,13 +13,13 @@ namespace Croquis.Visor
     ///   Aparece en el impacto y se queda.
     /// - **Los pedazos** de cada impacto (docs/contrato-unity.md §1): granitos de vidrio templado, lascas
     ///   de plástico y de mica, y tiras de lámina, en la cantidad que da la energía de la deformación.
-    ///   Vuelan, rebotan, se arrastran y se detienen con la física de `Restos` (Core, probada con
+    ///   Vuelan, rebotan, se arrastran y se detienen con la física de `Pedazos` (Core, probada con
     ///   `dotnet test`). Son decoración con semilla y no cambian ningún número: la deformación sigue
     ///   siendo la del solver (`DanoVista`).
     /// </summary>
     public sealed class ImpactoVista
     {
-        private readonly List<(Transform T, Restos.Pieza P, double T0)> piezas = new List<(Transform, Restos.Pieza, double)>();
+        private readonly List<(Transform T, Pedazos.Pieza P, double T0)> piezas = new List<(Transform, Pedazos.Pieza, double)>();
         private readonly double tImpacto;
         private readonly Terreno terreno;
         private GameObject marca;
@@ -31,7 +31,7 @@ namespace Croquis.Visor
         }
 
         /// <summary>Cuántos pedazos se armaron (para el diagnóstico).</summary>
-        public int Pedazos => piezas.Count;
+        public int CuantosPedazos => piezas.Count;
 
         /// <summary>Arma la marca del primer impacto y los pedazos de todos; nulo si el Resultado no trae impactos.</summary>
         public static ImpactoVista Construir(Transform padre, Caso3DResultado r, double tImpacto, Terreno terreno, bool noche)
@@ -41,7 +41,7 @@ namespace Croquis.Visor
                 return null;
             }
 
-            var impactos = Restos.Impactos(r);
+            var impactos = Pedazos.Impactos(r);
             if (impactos.Count == 0 && (r.PuntoImpacto == null || double.IsNaN(tImpacto)))
             {
                 return null;
@@ -55,12 +55,12 @@ namespace Croquis.Visor
 
             var nube = new GameObject("impacto_restos");
             nube.transform.SetParent(padre, false);
-            var formas = new Dictionary<(Restos.Material, int), (Mesh Malla, Vector3 Escala)>();
+            var formas = new Dictionary<(Pedazos.Material, int), (Mesh Malla, Vector3 Escala)>();
             for (var k = 0; k < impactos.Count; k++)
             {
                 var imp = impactos[k];
                 var semilla = (int)((r.Semilla + 31 + 7919L * k) % int.MaxValue);
-                foreach (var p in Restos.Nube(imp.X, imp.Y, imp.Fuentes, imp.EnergiaJ, semilla))
+                foreach (var p in Pedazos.Nube(imp.X, imp.Y, imp.Fuentes, imp.EnergiaJ, semilla))
                 {
                     var llave = (p.Tipo, p.Variante);
                     if (!formas.TryGetValue(llave, out var forma))
@@ -69,13 +69,13 @@ namespace Croquis.Visor
                         formas[llave] = forma;
                     }
 
-                    var go = new GameObject(p.Tipo == Restos.Material.Vidrio ? "vidrio" : p.Tipo == Restos.Material.Plastico ? "plastico" : "lamina");
+                    var go = new GameObject(p.Tipo == Pedazos.Material.Vidrio ? "vidrio" : p.Tipo == Pedazos.Material.Plastico ? "plastico" : "lamina");
                     go.transform.SetParent(nube.transform, false);
                     go.transform.localScale = forma.Escala * (float)p.Tamano;
                     go.AddComponent<MeshFilter>().sharedMesh = forma.Malla;
                     var mr = go.AddComponent<MeshRenderer>();
                     mr.sharedMaterial = MaterialDe(p.Tipo, p.Variante);
-                    mr.shadowCastingMode = p.Tipo != Restos.Material.Vidrio && p.Tamano > 0.05 ? ShadowCastingMode.On : ShadowCastingMode.Off;
+                    mr.shadowCastingMode = p.Tipo != Pedazos.Material.Vidrio && p.Tamano > 0.05 ? ShadowCastingMode.On : ShadowCastingMode.Off;
                     go.SetActive(false);
                     v.piezas.Add((go.transform, p, imp.T));
                 }
@@ -110,19 +110,28 @@ namespace Croquis.Visor
         }
 
         /// <summary>
-        /// La forma de un pedazo, de tamaño 1 (se escala con el suyo): un granito casi cúbico de vidrio
+        /// La forma de un pedazo, de tamaño 1 (se escala con el suyo): un puñado de granitos de vidrio
         /// templado, una lasca plana de plástico de cinco lados o una tira de lámina doblada.
         /// </summary>
-        private static (Mesh, Vector3) Forma(Restos.Material tipo, int variante)
+        private static (Mesh, Vector3) Forma(Pedazos.Material tipo, int variante)
         {
             var m = new Malla();
             var azar = new Azar(1009 + 17 * (int)tipo + variante);
             switch (tipo)
             {
-                case Restos.Material.Vidrio:
-                    m.Caja(Vector3.zero, Vector3.right, Vector3.forward, 1f, 1f, 1f);
-                    return (m.Cerrar("resto_vidrio"), new Vector3(azar.Entre(0.7f, 1f), azar.Entre(0.45f, 0.7f), azar.Entre(0.6f, 0.9f)));
-                case Restos.Material.Plastico:
+                case Pedazos.Material.Vidrio:
+                    // Un puñado de granitos casi cúbicos (de 1 a 2 cm con la escala de la pieza).
+                    for (var k = 0; k < 7; k++)
+                    {
+                        var r = azar.Entre(0f, 0.5f);
+                        var ang = azar.Entre(0f, Mathf.PI * 2f);
+                        var lado = azar.Entre(0.12f, 0.2f);
+                        var giro = Quaternion.Euler(0f, azar.Entre(0f, 90f), 0f);
+                        m.Caja(new Vector3(Mathf.Cos(ang) * r, 0f, Mathf.Sin(ang) * r), giro * Vector3.right, giro * Vector3.forward, lado, lado * 0.7f, lado * azar.Entre(0.8f, 1f));
+                    }
+
+                    return (m.Cerrar("resto_vidrio"), Vector3.one);
+                case Pedazos.Material.Plastico:
                     m.Prisma(Vector3.zero, 0.5f, 0.05f, 5 + variante % 2);
                     return (m.Cerrar("resto_plastico"), new Vector3(1f, 1f, azar.Entre(0.4f, 0.75f)));
                 default:
@@ -137,13 +146,13 @@ namespace Croquis.Visor
         }
 
         /// <summary>Vidrio verdoso que brilla con la luz; fascia negra, micas roja, ámbar y clara; lámina gris.</summary>
-        private static UnityEngine.Material MaterialDe(Restos.Material tipo, int variante)
+        private static UnityEngine.Material MaterialDe(Pedazos.Material tipo, int variante)
         {
             switch (tipo)
             {
-                case Restos.Material.Vidrio:
+                case Pedazos.Material.Vidrio:
                     return Materiales.Liso(new Color(0.66f, 0.78f, 0.76f), 0.95f);
-                case Restos.Material.Plastico:
+                case Pedazos.Material.Plastico:
                     switch (variante)
                     {
                         case 1:
@@ -171,7 +180,7 @@ namespace Croquis.Visor
 
             foreach (var (tr, p, t0) in piezas)
             {
-                var pose = Restos.Posicion(p, t - t0);
+                var pose = Pedazos.Posicion(p, t - t0);
                 if (tr.gameObject.activeSelf != pose.Visible)
                 {
                     tr.gameObject.SetActive(pose.Visible);

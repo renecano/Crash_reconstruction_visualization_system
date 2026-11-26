@@ -13,7 +13,7 @@ namespace Croquis.Core
     ///   y vuelve igual a la velocidad elegida, con el letrero «Cámara lenta ×N» a la vista.
     /// - **La cinematográfica** se acerca al punto de impacto durante el golpe (`PesoCamara`).
     /// - **La deformación** crece en `DuracionDanoS` del caso, de la forma original a la del solver.
-    /// - **Restos y vidrios** salen del punto de contacto con su física (`Restos`; decoración, con semilla).
+    /// - **Restos y vidrios** salen del punto de contacto con su física (`Pedazos`; decoración, con semilla).
     /// - **La marca del contacto** se queda en el piso desde el impacto.
     /// </summary>
     public static class EnfasisImpacto

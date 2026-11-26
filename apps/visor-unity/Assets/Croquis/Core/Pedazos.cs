@@ -14,7 +14,7 @@ namespace Croquis.Core
     /// energía de la deformación (`dano.energia_j`), nunca la profundidad. Con la misma semilla, los
     /// mismos pedazos.
     /// </summary>
-    public static class Restos
+    public static class Pedazos
     {
         public enum Material
         {
@@ -26,7 +26,7 @@ namespace Croquis.Core
         public const double Gravedad = 9.81;
 
         /// <summary>Un pedazo por cada tanto de energía de deformación (J), entre `Minimo` y `Maximo`.</summary>
-        public const double JoulesPorPieza = 2500.0;
+        public const double JoulesPorPieza = 1200.0;
 
         public const int Minimo = 4;
         public const int Maximo = 240;
@@ -150,8 +150,10 @@ namespace Croquis.Core
                 var vy = f.Vy * lleva + Math.Sin(a) * rocio;
                 var vz = tipo == Material.Vidrio ? 1.0 + 3.0 * azar.NextDouble() : 0.5 + 2.5 * azar.NextDouble();
                 var z0 = tipo == Material.Vidrio ? 0.8 + 0.5 * azar.NextDouble() : 0.35 + 0.45 * azar.NextDouble();
+                // El vidrio templado se rompe en granitos de 1 a 2 cm: cada pieza de vidrio es un puñado
+                // de ellos, de 5 a 11 cm de lado a lado.
                 var tamano = tipo == Material.Vidrio
-                    ? 0.008 + 0.014 * azar.NextDouble()
+                    ? 0.05 + 0.06 * azar.NextDouble()
                     : tipo == Material.Plastico ? 0.03 + 0.1 * azar.NextDouble() : 0.05 + 0.15 * azar.NextDouble();
 
                 var ex = azar.NextDouble() * 2.0 - 1.0;
