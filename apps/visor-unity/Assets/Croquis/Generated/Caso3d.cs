@@ -3316,6 +3316,18 @@ namespace Croquis.Generated
         [JsonProperty("edificios")]
         public EdificioEscenario[] Edificios { get; set; }
 
+        /// <summary>
+        /// El paisaje del lugar para el 3D (ronda final, 2026-11-26): «arido» donde la cobertura de
+        /// OpenStreetMap alrededor del lugar es de zona seca
+        /// (`natural=scrub|sand|bare_rock|scree|desert`) más que verde
+        /// (`natural=wood|grassland|heath`, `landuse=forest|meadow|farmland|orchard|grass`); si no,
+        /// «templado». Lo calcula la web con los mismos datos de OSM del caso. Sin él, Unity dibuja
+        /// el templado de siempre. Solo cambia el suelo, las matas y los árboles procedurales;
+        /// ninguna cifra.
+        /// </summary>
+        [JsonProperty("paisaje", NullValueHandling = NullValueHandling.Ignore)]
+        public PaisajeEntorno? Paisaje { get; set; }
+
         [JsonProperty("postes")]
         public PosteEscenario[] Postes { get; set; }
 
@@ -5763,6 +5775,17 @@ namespace Croquis.Generated
     /// </summary>
     public enum TipoLote { Baldio, Casa, Comercio, Fondo, Taller };
 
+    /// <summary>
+    /// El paisaje del lugar para el 3D (ronda final, 2026-11-26): «arido» donde la cobertura de
+    /// OpenStreetMap alrededor del lugar es de zona seca
+    /// (`natural=scrub|sand|bare_rock|scree|desert`) más que verde
+    /// (`natural=wood|grassland|heath`, `landuse=forest|meadow|farmland|orchard|grass`); si no,
+    /// «templado». Lo calcula la web con los mismos datos de OSM del caso. Sin él, Unity dibuja
+    /// el templado de siempre. Solo cambia el suelo, las matas y los árboles procedurales;
+    /// ninguna cifra.
+    /// </summary>
+    public enum PaisajeEntorno { Arido, Templado };
+
     public enum TipoSenal { Alto, Ceda, Informativa, Velocidad };
 
     public enum ZonaEntorno { Rural, Urbana };
@@ -5918,6 +5941,7 @@ namespace Croquis.Generated
                 EspecieArbolConverter.Singleton,
                 MaterialFachadaConverter.Singleton,
                 TipoLoteConverter.Singleton,
+                PaisajeEntornoConverter.Singleton,
                 TipoSenalConverter.Singleton,
                 ZonaEntornoConverter.Singleton,
                 TipoEvidenciaConverter.Singleton,
@@ -11981,6 +12005,47 @@ namespace Croquis.Generated
         }
 
         public static readonly TipoLoteConverter Singleton = new TipoLoteConverter();
+    }
+
+    internal class PaisajeEntornoConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(PaisajeEntorno) || t == typeof(PaisajeEntorno?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "arido":
+                    return PaisajeEntorno.Arido;
+                case "templado":
+                    return PaisajeEntorno.Templado;
+            }
+            throw new Exception("Cannot unmarshal type PaisajeEntorno");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (PaisajeEntorno)untypedValue;
+            switch (value)
+            {
+                case PaisajeEntorno.Arido:
+                    serializer.Serialize(writer, "arido");
+                    return;
+                case PaisajeEntorno.Templado:
+                    serializer.Serialize(writer, "templado");
+                    return;
+            }
+            throw new Exception("Cannot marshal type PaisajeEntorno");
+        }
+
+        public static readonly PaisajeEntornoConverter Singleton = new PaisajeEntornoConverter();
     }
 
     internal class TipoSenalConverter : JsonConverter

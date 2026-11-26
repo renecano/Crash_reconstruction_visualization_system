@@ -321,6 +321,7 @@ export const Escenario = z.strictObject({
   suelo: z.array(SueloEscenario),
   entorno: z.strictObject({
     zona: z.enum(["rural", "urbana"]),
+    paisaje: z.enum(["arido", "templado"]).optional(),
     arboles: z.array(ArbolEscenario),
     edificios: z.array(EdificioEscenario),
     postes: z.array(PosteEscenario),

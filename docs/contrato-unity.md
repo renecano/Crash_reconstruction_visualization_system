@@ -58,6 +58,8 @@ Esto ya está en el contrato y no necesita cambios:
 
 - **Cámara lenta:** el mensaje `velocidad` con `x` 0.25, 0.5 o 1.
 - **Entorno (camellón, desierto):** `escenario.entorno` trae la zona (`rural` o `urbana`), los árboles, edificios, postes, cercas, señales, cerros y la silueta; `escenario.via`, `suelo` y `terreno`, la calle, el piso y el relieve. Si hace falta un dato que no esté (por ejemplo, el ancho del camellón), se pide en un PR `contract:` pequeño antes de usarlo.
+- **Camellón (Alberto, 2026-11-26):** no necesita campo nuevo. Unity lo saca de las calles de OSM del caso (`escena.lugar.red_vial.vias`): dos `way` principales de un sentido, casi paralelos y en sentidos contrarios, con el mismo nombre; el camellón es lo que queda entre sus orillas de adentro, con el ancho de calzada de `viaWidthM`. Quita del entorno procedural lo que cae dentro (edificios, postes, señales y cercas) y le pone pasto, guarnición, matas y árboles.
+- **Paisaje árido (propuesto en este PR `contract:`):** `escenario.entorno.paisaje`, opcional, `arido` o `templado`. **Lo calcula la web** con OSM alrededor del lugar (mismo radio que las calles): «árido» si el área de `natural=scrub|sand|bare_rock|scree|desert` es mayor que la de `natural=wood|grassland|heath` y `landuse=forest|meadow|farmland|orchard|grass`; si no, o sin datos, «templado» (o no se manda). Unity lo lee en cuanto esté en `main`: tierra en vez de pasto, matas secas y ralas, y pocos pirules en vez de fresnos. No cambia ninguna cifra.
 
 ## Cómo pedir un cambio
 
