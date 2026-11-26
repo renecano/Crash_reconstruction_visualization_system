@@ -1476,6 +1476,13 @@ René (2026-11-25): diagnosticar los 16 casos abiertos, decir si el giro de 31°
   - Reglamento de Tránsito en Carreteras y Puentes de Jurisdicción Federal, artículo 134 (DOF; texto con la reforma del 22-11-2012): máximas de 80 km/h para camiones y tractocamiones y 95 km/h para autobuses de día; 110 km/h donde un señalamiento lo fija.
   - Récord de velocidad a pie: 44.72 km/h, entre los metros 60 y 80 del 100 m del Mundial de Atletismo de Berlín, 2009.
 
+### Lo que quedó por caso (René, 2026-11-25, noche)
+
+- **aud-02 (25 y 27 km/h):** el lector de posiciones finales coloca la Hilux 7 m adelante en su propia línea de marcha (al oeste), no al noroeste como dice la narración («desplazado hacia el noroeste del cruce»): con ese final, el solver la ve seguir de frente con casi toda su velocidad (27 km/h, rodando con el arrastre de las llantas) y al Sentra transmitiéndole poco (25 km/h). La cuenta a mano suponía el final al noroeste. El supuesto de después del choque se ve en los supuestos: «Después del impacto: las llantas ruedan, con un arrastre de … de la fricción» (con su fuente y su rango). Pendiente: que el final narrado respete la dirección («hacia el noroeste»).
+- **aud-18:** junto a la cifra se ve «la narración dice al menos 60 km/h («más de 60 km/h»); las posiciones dan 57 km/h (52–59)» (`contra-narracion`).
+- **aud-37:** los estacionados van en la vía donde la narración pone el hecho; los tres quedan alineados con Avenida Río Mixcoac y el Kia da 46 (46–48), como en el #316 (46 (44–50)). La vía corre al noroeste (319°) y la narración dice «de oriente a poniente»: 49°, dentro de lo que La escena acepta.
+- **A2010930 (prueba del recorrido 3D):** el reporte no dice si la Silverado estaba detenida o circulaba (usa el método del «alcance clásico» y solo calcula la Tacoma: 63.15 km/h por daños y 60.27 km/h por desplazamiento). Con la regla nueva, la Tacoma da 62.8 (60.0–82.7), cerca de lo que calculó CESVI (antes 87.7), y la Silverado 0 (0–7) (antes 0.2). La cifra publicada de AXA (57 (55–78) y 15 (1–21)) no cambia. La prueba exige que la Silverado quede arriba de 0: espera la decisión de René.
+
 ### Los pedazos del choque parecen cubos (René, 2026-11-25) · para el paquete de daños
 
 En el tráiler, los restos del choque en el 3D (cuadros de 16.7 a 17.9 s y de 19.0 a 19.4 s) se ven en imagen fija como cubos negros, de cerca, y grises, en la toma abierta. Por eso el póster del tráiler en la portada (#319) es la foto promo `02-noche-faros.jpg`, sin restos. Se corrige con los daños: piezas sueltas y restos con la forma de lo que se rompe.
