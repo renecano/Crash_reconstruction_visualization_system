@@ -98,6 +98,8 @@ test("@flujo /cesvi: corregir después — el poste golpeado en el recorrido del
   const cifra = page.getByTestId("cifra-reconstruccion");
   await expect(cifra).toBeVisible({ timeout: 90_000 });
   const antes = await cifra.innerText();
+  // 60 km/h en una calle de ciudad: alto, pero sin el aviso del límite de la vía.
+  await expect(page.getByTestId("sobre-el-limite")).toHaveCount(0);
 
   // 1. El poste contra el que chocó el Camaro, al recorrido del Camaro (donde se detiene): se toca,
   // se arrastra y, al soltar, se recalcula. La cifra cambia (René, 2026-11-25; calibrado en
@@ -120,6 +122,13 @@ test("@flujo /cesvi: corregir después — el poste golpeado en el recorrido del
   await expect(cifra).toBeVisible();
   const conPosteMovido = await cifra.innerText();
   expect(conPosteMovido).not.toEqual(antes);
+  // 95 km/h: más de 40 km/h arriba del límite de la vía, junto a la cifra (René, 2026-11-26).
+  await expect(page.getByTestId("sobre-el-limite")).toContainText(
+    "queda más de 40 km/h arriba del límite de esta vía",
+  );
+  await expect(page.getByTestId("sobre-el-limite")).toContainText(
+    "revisa las posiciones finales y las medidas antes de usarla",
+  );
 
   // 1b. La prueba contraria: un poste de la paleta, que nadie golpeó, lejos de los dos recorridos, no
   // cambia la cifra. (El poste golpeado no sirve para esto: es un choque declarado y la física lleva

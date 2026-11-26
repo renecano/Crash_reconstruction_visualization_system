@@ -29,6 +29,7 @@ import {
   reconstruccionContraCesvi,
   supuestoAlNoSaber,
   revisarRelato,
+  conAvisoDelLimite,
   conLimiteDeLaVia,
   supuestosDeClase,
   supuestosDeclarados,
@@ -358,7 +359,7 @@ export function RecorridoCaso({
   const [hipotesis, setHipotesis] = useState<string | null>(inicial.hipotesisElegida ?? null);
   // Los edificios y muros del mapa (René, 2026-11-24, punto 2): si un vehículo los cruza, no cuadra.
   const obstaculos = useMemo(() => obstaculosDelMapa(objetos), [objetos]);
-  const r = useMemo(() => {
+  const rSinLimite = useMemo(() => {
     const conHip = rec.r?.hipotesis && hipotesis ? conHipotesis(rec.r, hipotesis) : rec.r;
     return conHip ? conObstaculos(conHip, obstaculos) : conHip;
   }, [rec.r, hipotesis, obstaculos]);
@@ -371,7 +372,7 @@ export function RecorridoCaso({
   const actual = clave(paso);
   // El escenario grande de la reconstrucción, también en «Versiones» (con el fantasma encima).
   const enEscenario = actual === P.reconstruccion || actual === P.versiones;
-  const vista = vistaElegida ?? (enEscenario && r ? "maqueta" : "mapa");
+  const vista = vistaElegida ?? (enEscenario && rSinLimite ? "maqueta" : "mapa");
   // La versión elegida se dibuja solo en su acto: la reconstrucción se ve limpia en los demás.
   const versionVista =
     actual === P.versiones ? (versiones.find((v) => v.clave === elegida) ?? null) : null;
@@ -433,14 +434,17 @@ export function RecorridoCaso({
   const supuestos = useMemo(
     () =>
       expediente
-        ? [...supuestosDeClaseVigentes(leida, expediente), ...supuestosDeclarados(expediente, r)]
+        ? [
+            ...supuestosDeClaseVigentes(leida, expediente),
+            ...supuestosDeclarados(expediente, rSinLimite),
+          ]
         : [],
-    [expediente, r, leida],
+    [expediente, rSinLimite, leida],
   );
   // La velocidad de la reconstrucción contra la de cada método del reporte (ADR 0091).
   const contraCesvi = useMemo(
-    () => (expediente && r ? reconstruccionContraCesvi(expediente, r) : null),
-    [expediente, r],
+    () => (expediente && rSinLimite ? reconstruccionContraCesvi(expediente, rSinLimite) : null),
+    [expediente, rSinLimite],
   );
   // La reproducción trae la comparación medida en E-R4; un reporte importado se compara aquí.
   const comparacionReporte = useMemo(
@@ -780,6 +784,12 @@ export function RecorridoCaso({
     const nuevo = conLimiteDeLaVia(expediente, limiteChoque);
     if (nuevo !== expediente) setExpediente(nuevo);
   }
+  // Una cifra más de 40 km/h arriba del límite de la vía del choque (René, 2026-11-26): aviso junto a
+  // la cifra y en los límites; las cifras no cambian.
+  const r = useMemo(
+    () => (rSinLimite ? conAvisoDelLimite(rSinLimite, limiteChoque) : rSinLimite),
+    [rSinLimite, limiteChoque],
+  );
   // Ronda 4: mientras Overpass no llega, las calles de las teselas del mapa del caso (también al
   // entrar directo a Reconstrucción, sin pasar por La escena).
   useEffect(() => {

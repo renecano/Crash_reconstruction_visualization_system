@@ -53,6 +53,11 @@ export function CifraReconstruccion({
     const m = /^(V\d+): (la narración dice .*las posiciones dan .*)$/.exec(l);
     return m ? [`${nombres[m[1]!] ?? m[1]}: ${m[2]}`] : [];
   });
+  // Una cifra muy por arriba del límite de su vía (René, 2026-11-26): junto a la cifra.
+  const sobreElLimite = r.limites.flatMap((l) => {
+    const m = /^(V\d+): (la cifra .* arriba del límite de esta vía .*)$/.exec(l);
+    return m ? [`${nombres[m[1]!] ?? m[1]}: ${m[2]}`] : [];
+  });
   return (
     <section className="flex flex-col gap-3" data-testid="cifra-reconstruccion">
       <div className="flex items-center justify-end gap-3">
@@ -109,6 +114,16 @@ export function CifraReconstruccion({
               className="t-nota text-senal-texto"
               role="note"
               data-testid="contra-narracion"
+            >
+              {c}
+            </p>
+          ))}
+          {sobreElLimite.map((c) => (
+            <p
+              key={c}
+              className="t-nota text-senal-texto"
+              role="note"
+              data-testid="sobre-el-limite"
             >
               {c}
             </p>
