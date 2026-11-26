@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { instantesDelVideo, nombreDelVideo, puedeGrabarVideo, textoFalta } from "./video";
+import {
+  ALTO_VIDEO,
+  ANCHO_VIDEO,
+  instantesDelVideo,
+  lienzoDelVideo,
+  nombreDelVideo,
+  puedeGrabarVideo,
+  SUPERMUESTREO_VIDEO,
+  textoFalta,
+} from "./video";
 
 describe("descargar el video del 3D (René, 2026-11-18, B7)", () => {
   it("un cuadro cada 1/30 s, de principio a fin, sin pasarse", () => {
@@ -29,5 +38,17 @@ describe("descargar el video del 3D (René, 2026-11-18, B7)", () => {
 
   it("sin WebCodecs (jsdom) dice que no puede", () => {
     expect(puedeGrabarVideo()).toBe(false);
+  });
+});
+
+describe("el antialiasing del video (René, 2026-11-26)", () => {
+  it("Unity dibuja al doble: 3840×2160 pixeles reales, con cualquier devicePixelRatio", () => {
+    expect(SUPERMUESTREO_VIDEO).toBe(2);
+    for (const dpr of [1, 1.25, 2]) {
+      const l = lienzoDelVideo(dpr);
+      expect(l.ancho * dpr).toBeCloseTo(ANCHO_VIDEO * 2, 6);
+      expect(l.alto * dpr).toBeCloseTo(ALTO_VIDEO * 2, 6);
+    }
+    expect(lienzoDelVideo(0)).toEqual({ ancho: 3840, alto: 2160 });
   });
 });

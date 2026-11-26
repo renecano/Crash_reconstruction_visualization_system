@@ -13,6 +13,22 @@ export const ANCHO_VIDEO = 1920;
 export const ALTO_VIDEO = 1080;
 export const FPS_VIDEO = 30;
 
+/**
+ * Antialiasing del video (René, 2026-11-26): Unity dibuja cada cuadro al doble (3840×2160) y se reduce
+ * a 1920×1080, cuatro muestras por pixel del video (supermuestreo) en cualquier nivel de calidad. Se
+ * puede porque el video se hace cuadro por cuadro, no en tiempo real; tarda más, no se ve distinto.
+ */
+export const SUPERMUESTREO_VIDEO = 2;
+
+/** El tamaño del lienzo de Unity mientras se graba, en px de CSS (con su `devicePixelRatio`). */
+export function lienzoDelVideo(dpr: number): { ancho: number; alto: number } {
+  const d = dpr > 0 ? dpr : 1;
+  return {
+    ancho: (ANCHO_VIDEO * SUPERMUESTREO_VIDEO) / d,
+    alto: (ALTO_VIDEO * SUPERMUESTREO_VIDEO) / d,
+  };
+}
+
 /** Los instantes de cada cuadro, de `inicio` a `fin` a `fps` (sin pasar de `fin`). */
 export function instantesDelVideo(inicio: number, fin: number, fps = FPS_VIDEO): number[] {
   if (!(fin > inicio)) return [inicio];
@@ -190,6 +206,9 @@ function dibujar(
   const dh = h * k;
   ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, ANCHO_VIDEO, ALTO_VIDEO);
+  // La reducción del cuadro al doble promedia sus pixeles (el supermuestreo).
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
   ctx.drawImage(cuadro, (ANCHO_VIDEO - dw) / 2, (ALTO_VIDEO - dh) / 2, dw, dh);
   if (logo && logo.naturalWidth > 0) {
     const alto = 44;

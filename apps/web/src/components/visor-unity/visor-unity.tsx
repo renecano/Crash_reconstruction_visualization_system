@@ -44,9 +44,8 @@ import {
 import { BarraReproduccion } from "./barra-reproduccion";
 import { EnRanura, useMarco } from "./marco-vista";
 import {
-  ALTO_VIDEO,
-  ANCHO_VIDEO,
   grabarVideoUnity,
+  lienzoDelVideo,
   nombreDelVideo,
   puedeGrabarVideo,
   textoFalta,
@@ -502,9 +501,12 @@ export function VisorUnity({
     setRep(repActual.current);
     puente.enviar("pausar", {});
     puente.minimapa(false);
-    const dpr = window.devicePixelRatio || 1;
-    c.style.width = `${ANCHO_VIDEO / dpr}px`;
-    c.style.height = `${ALTO_VIDEO / dpr}px`;
+    // Al doble y en la calidad más alta: el video sale con antialiasing (René, 2026-11-26). Al
+    // terminar, Unity vuelve a la calidad automática, la de siempre.
+    puente.enviar("calidad", { nivel: "ultra" });
+    const tamano = lienzoDelVideo(window.devicePixelRatio || 1);
+    c.style.width = `${tamano.ancho}px`;
+    c.style.height = `${tamano.alto}px`;
     try {
       // Unity toma el tamaño nuevo en su siguiente cuadro.
       for (let i = 0; i < 6; i++) await new Promise((ok) => requestAnimationFrame(ok));
@@ -553,6 +555,7 @@ export function VisorUnity({
     } finally {
       c.style.width = antes.ancho;
       c.style.height = antes.alto;
+      puente.enviar("calidad", { nivel: "auto" });
       puente.minimapa(minimapa);
       grabando.current = false;
       // Si cambió la escena mientras se grababa, ahora va.
