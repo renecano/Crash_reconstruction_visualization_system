@@ -121,8 +121,27 @@ export const Dano = z.strictObject({
   ancho_m: z.number().min(0),
   centro_m: z.number(),
   energia_j: z.number().min(0),
-  origen_rigidez: z.enum(["nhtsa", "supuesto", "sin impacto"]),
+  origen_rigidez: z.enum(["nhtsa", "reporte", "supuesto", "sin impacto"]),
   cdc: ZonaCDC.optional(),
+  medido_m: z
+    .tuple([
+      z.number().min(0),
+      z.number().min(0),
+      z.number().min(0),
+      z.number().min(0),
+      z.number().min(0),
+      z.number().min(0),
+    ])
+    .optional(),
+  energia_medida_j: z.number().min(0).optional(),
+  rigidez: z
+    .strictObject({
+      a_n_m: z.number().min(0),
+      b_n_m2: z.number().gt(0),
+      fuente: z.enum(["reporte", "nhtsa", "supuesto"]),
+      nota: z.string().max(300).optional(),
+    })
+    .optional(),
 });
 export type Dano = z.infer<typeof Dano>;
 

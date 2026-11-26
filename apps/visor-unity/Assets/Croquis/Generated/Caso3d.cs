@@ -5144,8 +5144,25 @@ namespace Croquis.Generated
         [JsonConverter(typeof(FluffyMinMaxValueCheckConverter))]
         public double EnergiaJ { get; set; }
 
+        /// <summary>
+        /// Opcional: la energía que absorbe la deformación medida con la misma rigidez (CRASH3),
+        /// para compararla con `energia_j`, la que reparte el choque reconstruido.
+        /// </summary>
+        [JsonProperty("energia_medida_j", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(FluffyMinMaxValueCheckConverter))]
+        public double? EnergiaMedidaJ { get; set; }
+
+        /// <summary>
+        /// Opcional (2026-11-26, sin cambio de versión): C1 a C6 que midió el perito en esa cara,
+        /// con la misma convención que `perfil_m`, para ponerlos junto a lo calculado. Sin medidas,
+        /// no va.
+        /// </summary>
+        [JsonProperty("medido_m", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(MagentaDecodeArrayConverter))]
+        public double[] MedidoM { get; set; }
+
         [JsonProperty("origen_rigidez")]
-        public OrigenRigidez OrigenRigidez { get; set; }
+        public DanoOrigenRigidez OrigenRigidez { get; set; }
 
         /// <summary>
         /// C1 a C6 equiespaciados sobre el ancho dañado: de izquierda a derecha del vehículo en el
@@ -5154,6 +5171,12 @@ namespace Croquis.Generated
         [JsonProperty("perfil_m")]
         [JsonConverter(typeof(MagentaDecodeArrayConverter))]
         public double[] PerfilM { get; set; }
+
+        /// <summary>
+        /// Opcional: los coeficientes CRASH3 con que se calculó la deformación y de dónde salen.
+        /// </summary>
+        [JsonProperty("rigidez", NullValueHandling = NullValueHandling.Ignore)]
+        public DanoRigidez Rigidez { get; set; }
     }
 
     public partial class Cdc
@@ -5169,6 +5192,26 @@ namespace Croquis.Generated
 
         [JsonProperty("zona_vertical", NullValueHandling = NullValueHandling.Ignore)]
         public ZonaVertical? ZonaVertical { get; set; }
+    }
+
+    /// <summary>
+    /// Opcional: los coeficientes CRASH3 con que se calculó la deformación y de dónde salen.
+    /// </summary>
+    public partial class DanoRigidez
+    {
+        [JsonProperty("a_n_m")]
+        [JsonConverter(typeof(FluffyMinMaxValueCheckConverter))]
+        public double ANM { get; set; }
+
+        [JsonProperty("b_n_m2")]
+        public double BNM2 { get; set; }
+
+        [JsonProperty("fuente")]
+        public StickyFuente Fuente { get; set; }
+
+        [JsonProperty("nota", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(FluffyMinMaxLengthCheckConverter))]
+        public string Nota { get; set; }
     }
 
     /// <summary>
@@ -5204,7 +5247,7 @@ namespace Croquis.Generated
         public string EventoId { get; set; }
 
         [JsonProperty("origen_rigidez")]
-        public OrigenRigidez OrigenRigidez { get; set; }
+        public DanosPosterioreOrigenRigidez OrigenRigidez { get; set; }
 
         [JsonProperty("pdof_horas", NullValueHandling = NullValueHandling.Ignore)]
         public double? PdofHoras { get; set; }
@@ -5831,7 +5874,11 @@ namespace Croquis.Generated
 
     public enum FaseFase { Caminando, DePie, Deslizamiento, Montado, Reposo, Vuelo };
 
-    public enum OrigenRigidez { Nhtsa, SinImpacto, Supuesto };
+    public enum DanoOrigenRigidez { Nhtsa, Reporte, SinImpacto, Supuesto };
+
+    public enum StickyFuente { Nhtsa, Reporte, Supuesto };
+
+    public enum DanosPosterioreOrigenRigidez { Nhtsa, SinImpacto, Supuesto };
 
     public enum LadoTropiezo { Derecho, Izquierdo };
 
@@ -5960,7 +6007,9 @@ namespace Croquis.Generated
                 FormaConverter.Singleton,
                 AlcanceDeteccionNocturnaTipoConverter.Singleton,
                 FaseFaseConverter.Singleton,
-                OrigenRigidezConverter.Singleton,
+                DanoOrigenRigidezConverter.Singleton,
+                StickyFuenteConverter.Singleton,
+                DanosPosterioreOrigenRigidezConverter.Singleton,
                 LadoTropiezoConverter.Singleton,
                 VersionResultadoConverter.Singleton,
                 TipoObjetivoConverter.Singleton,
@@ -13369,52 +13418,6 @@ namespace Croquis.Generated
         public static readonly MinMaxValueCheckConverter17 Singleton = new MinMaxValueCheckConverter17();
     }
 
-    internal class OrigenRigidezConverter : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(OrigenRigidez) || t == typeof(OrigenRigidez?);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            if (reader.TokenType == JsonToken.Null) return null;
-            var value = serializer.Deserialize<string>(reader);
-            switch (value)
-            {
-                case "nhtsa":
-                    return OrigenRigidez.Nhtsa;
-                case "sin impacto":
-                    return OrigenRigidez.SinImpacto;
-                case "supuesto":
-                    return OrigenRigidez.Supuesto;
-            }
-            throw new Exception("Cannot unmarshal type OrigenRigidez");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            if (untypedValue == null)
-            {
-                serializer.Serialize(writer, null);
-                return;
-            }
-            var value = (OrigenRigidez)untypedValue;
-            switch (value)
-            {
-                case OrigenRigidez.Nhtsa:
-                    serializer.Serialize(writer, "nhtsa");
-                    return;
-                case OrigenRigidez.SinImpacto:
-                    serializer.Serialize(writer, "sin impacto");
-                    return;
-                case OrigenRigidez.Supuesto:
-                    serializer.Serialize(writer, "supuesto");
-                    return;
-            }
-            throw new Exception("Cannot marshal type OrigenRigidez");
-        }
-
-        public static readonly OrigenRigidezConverter Singleton = new OrigenRigidezConverter();
-    }
-
     internal class MagentaDecodeArrayConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double[]);
@@ -13447,6 +13450,149 @@ namespace Croquis.Generated
         }
 
         public static readonly MagentaDecodeArrayConverter Singleton = new MagentaDecodeArrayConverter();
+    }
+
+    internal class DanoOrigenRigidezConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(DanoOrigenRigidez) || t == typeof(DanoOrigenRigidez?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "nhtsa":
+                    return DanoOrigenRigidez.Nhtsa;
+                case "reporte":
+                    return DanoOrigenRigidez.Reporte;
+                case "sin impacto":
+                    return DanoOrigenRigidez.SinImpacto;
+                case "supuesto":
+                    return DanoOrigenRigidez.Supuesto;
+            }
+            throw new Exception("Cannot unmarshal type DanoOrigenRigidez");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (DanoOrigenRigidez)untypedValue;
+            switch (value)
+            {
+                case DanoOrigenRigidez.Nhtsa:
+                    serializer.Serialize(writer, "nhtsa");
+                    return;
+                case DanoOrigenRigidez.Reporte:
+                    serializer.Serialize(writer, "reporte");
+                    return;
+                case DanoOrigenRigidez.SinImpacto:
+                    serializer.Serialize(writer, "sin impacto");
+                    return;
+                case DanoOrigenRigidez.Supuesto:
+                    serializer.Serialize(writer, "supuesto");
+                    return;
+            }
+            throw new Exception("Cannot marshal type DanoOrigenRigidez");
+        }
+
+        public static readonly DanoOrigenRigidezConverter Singleton = new DanoOrigenRigidezConverter();
+    }
+
+    internal class StickyFuenteConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(StickyFuente) || t == typeof(StickyFuente?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "nhtsa":
+                    return StickyFuente.Nhtsa;
+                case "reporte":
+                    return StickyFuente.Reporte;
+                case "supuesto":
+                    return StickyFuente.Supuesto;
+            }
+            throw new Exception("Cannot unmarshal type StickyFuente");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (StickyFuente)untypedValue;
+            switch (value)
+            {
+                case StickyFuente.Nhtsa:
+                    serializer.Serialize(writer, "nhtsa");
+                    return;
+                case StickyFuente.Reporte:
+                    serializer.Serialize(writer, "reporte");
+                    return;
+                case StickyFuente.Supuesto:
+                    serializer.Serialize(writer, "supuesto");
+                    return;
+            }
+            throw new Exception("Cannot marshal type StickyFuente");
+        }
+
+        public static readonly StickyFuenteConverter Singleton = new StickyFuenteConverter();
+    }
+
+    internal class DanosPosterioreOrigenRigidezConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(DanosPosterioreOrigenRigidez) || t == typeof(DanosPosterioreOrigenRigidez?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "nhtsa":
+                    return DanosPosterioreOrigenRigidez.Nhtsa;
+                case "sin impacto":
+                    return DanosPosterioreOrigenRigidez.SinImpacto;
+                case "supuesto":
+                    return DanosPosterioreOrigenRigidez.Supuesto;
+            }
+            throw new Exception("Cannot unmarshal type DanosPosterioreOrigenRigidez");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (DanosPosterioreOrigenRigidez)untypedValue;
+            switch (value)
+            {
+                case DanosPosterioreOrigenRigidez.Nhtsa:
+                    serializer.Serialize(writer, "nhtsa");
+                    return;
+                case DanosPosterioreOrigenRigidez.SinImpacto:
+                    serializer.Serialize(writer, "sin impacto");
+                    return;
+                case DanosPosterioreOrigenRigidez.Supuesto:
+                    serializer.Serialize(writer, "supuesto");
+                    return;
+            }
+            throw new Exception("Cannot marshal type DanosPosterioreOrigenRigidez");
+        }
+
+        public static readonly DanosPosterioreOrigenRigidezConverter Singleton = new DanosPosterioreOrigenRigidezConverter();
     }
 
     internal class MinMaxValueCheckConverter18 : JsonConverter
