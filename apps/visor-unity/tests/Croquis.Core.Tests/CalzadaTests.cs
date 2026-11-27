@@ -63,7 +63,7 @@ namespace Croquis.Core.Tests
                 n++;
             }
 
-            Assert.True(n >= 15, "escenas revisadas: " + n);
+            Assert.True(n >= 18, "escenas revisadas: " + n);
         }
 
         [Fact]
