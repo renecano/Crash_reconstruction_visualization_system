@@ -1681,6 +1681,7 @@ export function RecorridoCaso({
       {escenaFacil && expediente && leida ? (
         <div className="relative min-h-0 flex-1" data-testid="escena-fondo">
           <EscenaFacil
+            reconstruccion={rec.vieja ? null : r}
             tema={tema}
             onCallesDelMapa={setCallesTeselas}
             estado={{

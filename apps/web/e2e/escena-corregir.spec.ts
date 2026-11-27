@@ -149,6 +149,18 @@ test("@flujo /cesvi: corregir después — el poste golpeado en el recorrido del
   await expect(cifra).toBeVisible();
   expect(await cifra.innerText()).toEqual(conPosteMovido);
 
+  // «Qué importa» (René, 2026-11-26): en La escena, el poste suelto (fuera de los recorridos) va en
+  // gris; el poste del choque declarado no se apaga.
+  await irAPaso(page, 3);
+  await page.getByTestId("que-importa").click();
+  await expect(page.getByTestId("que-importa-nota")).toBeVisible();
+  await expect(page.locator('[data-testid^="objeto-"][data-influye="no"]')).toHaveCount(1, {
+    timeout: 30_000,
+  });
+  await expect(page.getByTestId("marca-objeto-2")).not.toHaveAttribute("data-influye", "no");
+  await page.getByTestId("que-importa").click();
+  await expect(page.locator('[data-influye="no"]')).toHaveCount(0);
+
   // 2. Corregir la dirección del VW Jetta, ya colocado: se toca y «Cambiar por dónde venía».
   await irAPaso(page, 3);
   await page.getByTestId("cambiar-algo").click();
