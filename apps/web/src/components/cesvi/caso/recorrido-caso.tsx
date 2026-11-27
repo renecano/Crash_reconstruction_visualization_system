@@ -69,6 +69,7 @@ import { callesCerca, objetosCerca, RADIO_CALLES_M } from "@/lib/calles-del-mapa
 import {
   callesParaGuardar,
   conCallesGuardadas,
+  guardadasCerca,
   respuestaDeGuardadas,
 } from "@/lib/calles-guardadas";
 import { downloadBytes } from "@/lib/download";
@@ -321,8 +322,11 @@ export function RecorridoCaso({
   // ofrece «Reconstruir de nuevo», en «La escena» y en «La reconstrucción», sin borrar nada más. Los
   // demás cambios del caso (lo editado en el 3D, una respuesta) se siguen recalculando solos (W4).
   const [escenaCambio, setEscenaCambio] = useState(false);
+  // Las calles del lugar que todavía no llegan (se calcula abajo, con el punto del choque).
+  const [callesPorLlegar, setCallesPorLlegar] = useState(false);
   const rec = useReconstruccion(sinCallesPorFalla ? null : expediente, {
     alCambiar: !escenaCambio,
+    esperar: callesPorLlegar,
   });
   // Ya reconstruida con la escena que se ve (o deshecho el cambio), el aviso se va solo.
   if (escenaCambio && !rec.vieja) setEscenaCambio(false);
@@ -770,6 +774,13 @@ export function RecorridoCaso({
   // límite («a exceso de velocidad») o la típica de la vía se recalcula con el límite de esa vía.
   // Las calles que llegan (Overpass o teselas) se guardan con el caso, una vez por lugar.
   const recienLlegadas = callesOverpass ?? callesTeselas;
+  // «Reconstruir» espera las de Overpass (o que fallen): al llegar cambian la escena del solver. Si el
+  // caso ya guarda las de Overpass de este lugar, no hay nada que esperar.
+  const yaGuardadas =
+    expediente?.caso.lugar?.calles_del_mapa?.fuente === "overpass" &&
+    guardadasCerca(expediente, origenCalles) !== null;
+  const porLlegar = Boolean(origenCalles) && !callesFallaron && !callesOverpass && !yaGuardadas;
+  if (porLlegar !== callesPorLlegar) setCallesPorLlegar(porLlegar);
   if (expediente && recienLlegadas && origenCalles) {
     const nuevo = conCallesGuardadas(
       expediente,
