@@ -1599,3 +1599,5 @@ Cada ejemplo guarda su lugar (`data/cesvi/ejemplos/narraciones.json`) y abre ah�
     - el diálogo dice el factor y la duración.
   - Capturas: `capturas/demo/8-*`.
 - **6 · Kit para la ronda con 3 personas** (`docs/ronda-final/README.md`): el enlace, tres tareas (un ejemplo hasta el dictamen, un choque propio narrado, «¿Y si…?» y el recorrido desde el inicio) y diez preguntas, en lenguaje de perito.
+
+- **2026-11-27 · 2D limpio en casos nuevos (Alberto, `fix/w-2d-casos-nuevos`).** El croquis solo dibuja las calles que recorre alguien o que pasan a ≤ 10 m del choque (más los tramos de OSM que las continúan). Las rayas de una calle se cortan donde entra otra, pero no en las uniones de tramos de una misma calle. Se dibujan los objetos del caso (árbol con copa, poste, muro) con su etiqueta. «P1·2» cuando la persona no se movió antes del impacto. Sin calles de OSM, la vía de la escena (franjas, anillo de glorieta y arcos). La prueba visual suma curva, carretera (SON 100), glorieta y atropello. Capturas antes/después en `docs/cesvi/ronda-4/evidencia/2d-casos-nuevos/`. La colocación y las cifras no cambian.
