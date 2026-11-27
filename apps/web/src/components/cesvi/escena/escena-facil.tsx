@@ -413,6 +413,8 @@ export function EscenaFacil({
           v,
           n.descripcion,
           posicionesNarradas.filter((x) => x.fase === "final"),
+          new Set(),
+          callesMapa,
         )
       : null;
   };

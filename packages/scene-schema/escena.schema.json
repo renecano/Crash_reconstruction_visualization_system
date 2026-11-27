@@ -1489,6 +1489,11 @@
               "maxspeed": { "type": "string", "maxLength": 20 },
               "carriles": { "type": "string", "maxLength": 10 },
               "sentido_unico": { "type": "string", "maxLength": 10 },
+              "acotamiento": {
+                "type": "string",
+                "maxLength": 10,
+                "description": "El ancho del acotamiento (René, 2026-11-27): `shoulder:width` de OpenStreetMap (o `shoulder:right:width`, `shoulder:both:width`), tal como viene."
+              },
               "nivel": {
                 "type": "integer",
                 "minimum": -5,

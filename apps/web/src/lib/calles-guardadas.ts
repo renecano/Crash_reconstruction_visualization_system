@@ -7,6 +7,7 @@
  */
 import type { Expediente } from "@croquis/cesvi";
 import type { OsmNode, OsmWay, OverpassResponse } from "@croquis/croquis-2d";
+import { acotamientoDeTags } from "./escena-facil";
 import { nivelDeTags } from "./nivel-via";
 
 type Guardadas = NonNullable<NonNullable<Expediente["caso"]["lugar"]>["calles_del_mapa"]>;
@@ -45,6 +46,7 @@ export function callesParaGuardar(
       ...(t.lanes ? { carriles: t.lanes.slice(0, 10) } : {}),
       ...(t.oneway ? { sentido_unico: t.oneway.slice(0, 10) } : {}),
       ...(t.width ? { ancho: t.width.slice(0, 10) } : {}),
+      ...(acotamientoDeTags(t) !== null ? { acotamiento: String(acotamientoDeTags(t)) } : {}),
       // El nivel (René, 2026-11-27): para no colocar abajo lo narrado arriba, ni al revés.
       ...(nivelDeTags(t) !== 0 ? { nivel: nivelDeTags(t) } : {}),
       puntos: puntos.slice(0, 2000),
@@ -91,6 +93,7 @@ export function respuestaDeGuardadas(g: Guardadas): OverpassResponse {
         ...(v.sentido_unico ? { oneway: v.sentido_unico } : {}),
         ...(v.ancho ? { width: v.ancho } : {}),
         ...(v.nivel ? { layer: String(v.nivel) } : {}),
+        ...(v.acotamiento ? { "shoulder:width": v.acotamiento } : {}),
       },
     } as OsmWay);
   }

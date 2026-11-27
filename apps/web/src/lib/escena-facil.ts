@@ -352,6 +352,8 @@ export interface Calle {
   /** `lanes` y `width` de OSM tal como vienen (para el ancho que dibuja el 3D, `viaWidthM`). */
   carriles?: number;
   anchoOsm?: number;
+  /** El ancho del acotamiento de OSM (`shoulder:width`), en m, si lo trae (René, 2026-11-27). */
+  acotamiento?: number;
   /** Ids de sus nodos, en orden (para los cruces). */
   nodos: number[];
   /** Su tipo de OpenStreetMap (`highway`) y su límite (`maxspeed`), si lo trae (ronda 4). */
@@ -362,6 +364,14 @@ export interface Calle {
    * Sin el campo, de doble sentido.
    */
   unSentido?: 1 | -1;
+}
+
+/** El ancho del acotamiento de una vía de OSM (m): `shoulder:width` o sus variantes; null sin él. */
+export function acotamientoDeTags(tags: Record<string, string> | undefined): number | null {
+  const t =
+    tags?.["shoulder:width"] ?? tags?.["shoulder:right:width"] ?? tags?.["shoulder:both:width"];
+  const v = Number.parseFloat(t ?? "");
+  return Number.isFinite(v) && v > 0.3 && v <= 6 ? v : null;
 }
 
 /** Las calles de una respuesta de Overpass: las que se dibujan (sin andadores ni ciclovías). */
@@ -392,6 +402,7 @@ export function callesDe(resp: OverpassResponse | null): Calle[] {
           : (Number.isFinite(carriles) && carriles > 0 ? carriles : 2) * 3.3,
       ...(Number.isFinite(carriles) && carriles > 0 ? { carriles } : {}),
       ...(Number.isFinite(ancho) && ancho >= 3 && ancho <= 60 ? { anchoOsm: ancho } : {}),
+      ...(acotamientoDeTags(w.tags) !== null ? { acotamiento: acotamientoDeTags(w.tags)! } : {}),
       nodos: w.nodes.filter((id) => nodos.has(id)),
       tipo,
       ...(w.tags?.maxspeed ? { maxspeed: w.tags.maxspeed } : {}),
@@ -1928,8 +1939,34 @@ export function direccionDeSalida(
   return null;
 }
 
-/** m: del centro de un carril de 3.5 m al centro de un acotamiento de 2.5 m (supuesto). */
-export const ACOTAMIENTO_DERECHA_M = 3;
+/** m: el ancho del acotamiento cuando OSM no lo trae (supuesto, René 2026-11-27). */
+export const ACOTAMIENTO_SUPUESTO_M = 2.5;
+/** m: el ancho del carril cuando no se conoce la calle (supuesto). */
+const CARRIL_SUPUESTO_M = 3.5;
+
+/**
+ * Cuánto se corre a su derecha un vehículo que quedó «sobre el acotamiento»: del centro de su carril al
+ * centro del acotamiento, medio carril más medio acotamiento. El carril, de la calle (su ancho entre
+ * sus carriles); el acotamiento, de OSM (`shoulder:width`) o, si no lo trae, el supuesto de 2.5 m.
+ */
+export function corrimientoAlAcotamiento(
+  calles: readonly Calle[],
+  p: Punto,
+): { metros: number; carrilM: number; acotamientoM: number; delMapa: boolean } {
+  const s = calles.length ? ajustarACalle(calles, p) : null;
+  const carril = s
+    ? s.calle.ancho / Math.max(1, s.calle.carriles ?? Math.round(s.calle.ancho / 3.3))
+    : CARRIL_SUPUESTO_M;
+  const acot = s?.calle.acotamiento ?? null;
+  const acotamientoM = acot ?? ACOTAMIENTO_SUPUESTO_M;
+  const r1 = (x: number) => Math.round(x * 10) / 10;
+  return {
+    metros: r1(carril / 2 + acotamientoM / 2),
+    carrilM: r1(carril),
+    acotamientoM: r1(acotamientoM),
+    delMapa: acot !== null,
+  };
+}
 
 export interface FinalNarrado {
   punto: Punto;
@@ -1952,6 +1989,8 @@ export function finalDeLaNarracion(
   /** Las descripciones de los demás, para «a 1 m detrás del vehículo B». */
   otras: readonly { vehiculo: string; descripcion: string }[] = [],
   vistos: ReadonlySet<string> = new Set(),
+  /** Las calles del lugar, para el ancho del carril y del acotamiento (René, 2026-11-27). */
+  calles: readonly Calle[] = [],
 ): FinalNarrado | null {
   const imp = poseDe(e, vehiculo, "impacto");
   if (!imp) return null;
@@ -1989,7 +2028,14 @@ export function finalDeLaNarracion(
     const finOtro =
       poseDe(e, otro, "final") ??
       (suyo
-        ? finalDeLaNarracion(e, otro, suyo.descripcion, otras, new Set([...vistos, vehiculo]))
+        ? finalDeLaNarracion(
+            e,
+            otro,
+            suyo.descripcion,
+            otras,
+            new Set([...vistos, vehiculo]),
+            calles,
+          )
         : null);
     const vo = e.vehiculos.find((x) => x.id === otro);
     const vv = e.vehiculos.find((x) => x.id === vehiculo);
@@ -2018,14 +2064,15 @@ export function finalDeLaNarracion(
   ).exec(d);
   // «sobre el acotamiento» (René, 2026-11-26: el Vento quedó en el acotamiento, no en su carril): del
   // centro de su carril (3.5 m) al centro del acotamiento (2.5 m), 3 m a su derecha (supuesto).
-  const enElAcotamiento = (f: FinalNarrado): FinalNarrado =>
-    /\bsobre\s+el\s+acotamiento\b/.test(sinAcentos(d))
-      ? {
-          ...f,
-          punto: punto(avanzar(ll(f.punto), normalizar(marcha + 90), ACOTAMIENTO_DERECHA_M)),
-          texto: `${f.texto}, sobre el acotamiento (${ACOTAMIENTO_DERECHA_M} m a la derecha de su carril, supuesto)`,
-        }
-      : f;
+  const enElAcotamiento = (f: FinalNarrado): FinalNarrado => {
+    if (!/\bsobre\s+el\s+acotamiento\b/.test(sinAcentos(d))) return f;
+    const c = corrimientoAlAcotamiento(calles, f.punto);
+    return {
+      ...f,
+      punto: punto(avanzar(ll(f.punto), normalizar(marcha + 90), c.metros)),
+      texto: `${f.texto}, sobre el acotamiento: ${c.metros} m a la derecha de su carril (medio carril de ${c.carrilM} m y medio acotamiento de ${c.acotamientoM} m${c.delMapa ? ", de OpenStreetMap" : ", supuesto"}; corrígelo en «Escribir las posiciones en metros»)`,
+    };
+  };
   // «5 metros adelante del área de restos», «9 metros adelante del inicio de los restos» (René,
   // 2026-11-27): desde donde están los restos, el punto del primer choque, hacia donde avanzaba; no
   // desde su propia pose (el tercero de una carambola choca más adelante).

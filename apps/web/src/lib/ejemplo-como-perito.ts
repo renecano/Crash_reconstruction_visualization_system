@@ -309,7 +309,7 @@ export function escenaComoPerito(
       toques.push({ accion: "final", vehiculo: v.id, como: "junto" });
     } else if (q === "narracion") {
       const n = finales.find((p) => p.vehiculo === v.id);
-      const f = n ? finalDeLaNarracion(e, v.id, n.descripcion, finales) : null;
+      const f = n ? finalDeLaNarracion(e, v.id, n.descripcion, finales, new Set(), calles) : null;
       if (!f) throw new Error(`${receta.clave}: La escena no lee dónde quedó ${nombre(v.id)}.`);
       e = marcarFinal(e, v.id, f.punto, f.rumbo);
       toques.push({ accion: "final", vehiculo: v.id, como: "narracion" });

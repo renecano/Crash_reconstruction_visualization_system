@@ -81,6 +81,7 @@ export const CallesGuardadas = z.strictObject({
         maxspeed: z.string().max(20).optional(),
         carriles: z.string().max(10).optional(),
         sentido_unico: z.string().max(10).optional(),
+        acotamiento: z.string().max(10).optional(),
         nivel: z.int().min(-5).max(5).optional(),
         ancho: z.string().max(10).optional(),
         puntos: z

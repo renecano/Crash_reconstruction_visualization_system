@@ -5,7 +5,14 @@ import type { Expediente, SalidaCorpus } from "@croquis/cesvi";
 import { describe, expect, it } from "vitest";
 import { escenaComoPerito } from "./ejemplo-como-perito";
 import { conLugarDelEjemplo } from "./ejemplos-narracion";
-import { conPosicionEscrita, finalDeLaNarracion, medidaEscrita, poseDe } from "./escena-facil";
+import {
+  acotamientoDeTags,
+  conPosicionEscrita,
+  corrimientoAlAcotamiento,
+  finalDeLaNarracion,
+  medidaEscrita,
+  poseDe,
+} from "./escena-facil";
 import { RECETAS_PERITO } from "./recetas-perito";
 
 /**
@@ -92,5 +99,49 @@ describe("las posiciones escritas en metros (René, 2026-11-27)", () => {
     const med = medidaEscrita(e, v, "final", [])!;
     expect(Number.isFinite(med.adelante)).toBe(true);
     expect(Number.isFinite(med.izquierda)).toBe(true);
+  });
+});
+
+describe("«sobre el acotamiento»: un supuesto visible y editable (René, 2026-11-27)", () => {
+  const lat0 = 19.3;
+  const ll2 = (x: number, y: number): [number, number] => [
+    -99.18 + x / (111320 * Math.cos((lat0 * Math.PI) / 180)),
+    lat0 + y / 111320,
+  ];
+  const calle = (acotamiento?: number) => ({
+    id: 1,
+    nombre: "Carretera",
+    puntos: [ll2(-100, 0), ll2(100, 0)],
+    ancho: 7,
+    carriles: 2,
+    nodos: [1, 2],
+    tipo: "primary",
+    ...(acotamiento ? { acotamiento } : {}),
+  });
+  const p = { lon: ll2(0, 0)[0], lat: ll2(0, 0)[1] };
+  it("con el ancho de OSM (shoulder:width): medio carril más medio acotamiento", () => {
+    expect(corrimientoAlAcotamiento([calle(3)], p)).toEqual({
+      metros: 3.3,
+      carrilM: 3.5,
+      acotamientoM: 3,
+      delMapa: true,
+    });
+  });
+  it("sin él, el supuesto de 2.5 m, y lo dice", () => {
+    expect(corrimientoAlAcotamiento([calle()], p)).toMatchObject({ metros: 3, delMapa: false });
+    expect(acotamientoDeTags({ "shoulder:width": "2.8" })).toBe(2.8);
+    expect(acotamientoDeTags({ highway: "primary" })).toBeNull();
+  });
+  it("el texto lo dice como supuesto y cómo corregirlo", () => {
+    const a = armada("alcance-deformacion");
+    const vento = a.vehiculos.find((x) => JSON.stringify(x).includes("Vento"))!.id;
+    const g = finalDeLaNarracion(
+      a,
+      vento,
+      "sobre el acotamiento, 21 metros adelante del inicio de los restos",
+    )!;
+    expect(g.texto).toMatch(
+      /medio acotamiento de 2.5 m, supuesto; corrígelo en «Escribir las posiciones en metros»/,
+    );
   });
 });

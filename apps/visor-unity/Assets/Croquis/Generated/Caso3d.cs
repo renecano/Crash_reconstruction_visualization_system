@@ -1102,6 +1102,14 @@ namespace Croquis.Generated
 
     public partial class Via
     {
+        /// <summary>
+        /// El ancho del acotamiento (René, 2026-11-27): `shoulder:width` de OpenStreetMap (o
+        /// `shoulder:right:width`, `shoulder:both:width`), tal como viene.
+        /// </summary>
+        [JsonProperty("acotamiento", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(CunningMinMaxLengthCheckConverter))]
+        public string Acotamiento { get; set; }
+
         [JsonProperty("ancho", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(CunningMinMaxLengthCheckConverter))]
         public string Ancho { get; set; }
