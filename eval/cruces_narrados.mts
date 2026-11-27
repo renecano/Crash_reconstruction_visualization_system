@@ -40,6 +40,7 @@ import {
   proponerChoque,
 } from "../apps/web/src/lib/escena-facil";
 import { callesDelCaso, lugarClaro } from "../apps/web/src/lib/lugar-claro";
+import { zonaNarrada } from "../apps/web/src/lib/lugar-texto";
 import { osmAlrededor } from "../apps/web/src/lib/visor-unity/osm-alrededor";
 import { crucesPorNombre } from "../apps/web/src/server/cruces";
 
@@ -235,9 +236,14 @@ for (const c of todos.slice(0, HASTA)) {
     : null;
   fila.cruces_reales = reales ? reales.length : null;
   // El lugar, como La escena.
+  // `antes`, como `main`; `despues`, con la colonia o la zona narrada (como La escena).
+  const zonaDelCruce =
+    MODO === "despues" ? (zonaNarrada(lugarTexto) ?? zonaNarrada(c.narracion)) : null;
   const consultas = [
     separarLugarYSentido(lugarTexto).lugar,
-    cruce ? `${cruce.calles[0]} y ${cruce.calles[1]}` : null,
+    cruce
+      ? `${cruce.calles[0]} y ${cruce.calles[1]}${zonaDelCruce ? `, ${zonaDelCruce}` : ""}`
+      : null,
     MODO === "antes" ? (cruce?.calles[0] ?? null) : null,
     carreteraNarrada(c.narracion),
   ].filter((x): x is string => Boolean(x?.trim()));

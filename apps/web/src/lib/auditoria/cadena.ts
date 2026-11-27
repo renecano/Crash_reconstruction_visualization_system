@@ -54,6 +54,7 @@ import { paqueteDelCaso } from "@/lib/visor-unity/paquete";
 import { EN_EL_CARRIL, esObjetoDeOrilla } from "@/lib/objeto-orilla";
 import { girosSinAviso } from "@/lib/giro-sin-aviso";
 import { callesDelCaso, esLaCalleNarrada, lugarClaro } from "@/lib/lugar-claro";
+import { zonaNarrada } from "@/lib/lugar-texto";
 import { crucesDeTrayectorias, saltosDe, sobreMalla, type Plano } from "@croquis/cesvi";
 
 type Json = Record<string, unknown>;
@@ -222,9 +223,13 @@ export async function auditarCaso(o: {
     estado: e0.caso.lugar?.estado?.valor,
   };
   const cruce = cruceNarrado(o.narracion);
+  const zonaDelCruce = zonaNarrada(lugarTexto) ?? zonaNarrada(o.narracion);
   const consultas = [
     separarLugarYSentido(lugarTexto).lugar,
-    cruce ? `${cruce.calles[0]} y ${cruce.calles[1]}` : null,
+    // Con la colonia o la zona narrada, para ordenar los cruces si hay varios (René, 2026-11-27).
+    cruce
+      ? `${cruce.calles[0]} y ${cruce.calles[1]}${zonaDelCruce ? `, ${zonaDelCruce}` : ""}`
+      : null,
     // Como La escena (René, 2026-11-27, #388): con un cruce narrado no se busca una calle sola.
     carreteraNarrada(o.narracion),
   ].filter((x): x is string => Boolean(x?.trim()));

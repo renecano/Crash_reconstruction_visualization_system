@@ -486,6 +486,38 @@ async function nominatim(params: Record<string, string>, deps: LugarDeps): Promi
   return d;
 }
 
+export const NOMINATIM_INVERSA_URL = "https://nominatim.openstreetmap.org/reverse";
+
+/** La colonia (o barrio, fraccionamiento) de un punto, con la búsqueda inversa de Nominatim. */
+async function coloniaEn(lat: number, lon: number, deps: LugarDeps): Promise<string | null> {
+  const url = new URL(NOMINATIM_INVERSA_URL);
+  for (const [k, v] of Object.entries({
+    format: "jsonv2",
+    lat: String(lat),
+    lon: String(lon),
+    zoom: "16",
+    addressdetails: "1",
+    "accept-language": "es",
+  }))
+    url.searchParams.set(k, v);
+  try {
+    const r = await deps.fetcher(url, {
+      headers: { "User-Agent": USER_AGENT, Accept: "application/json" },
+      signal: AbortSignal.timeout(ESPERA_MS),
+    });
+    if (!r.ok) return null;
+    const d = (await r.json().catch(() => null)) as { address?: Record<string, string> } | null;
+    const a = d?.address ?? {};
+    const colonia = a.suburb ?? a.neighbourhood ?? a.quarter ?? a.residential ?? a.city_district;
+    if (colonia) return colonia;
+    // Sin colonias en el mapa (Toluca): el código postal y la localidad.
+    const localidad = a.village ?? a.town ?? a.hamlet ?? a.city;
+    return [a.postcode ? `C.P. ${a.postcode}` : null, localidad].filter(Boolean).join(", ") || null;
+  } catch {
+    return null;
+  }
+}
+
 async function photon(q: string, deps: LugarDeps): Promise<ResultadoLugar[]> {
   const url = new URL(PHOTON_URL);
   url.searchParams.set("q", q);
@@ -680,8 +712,15 @@ export async function buscarLugar(
   const interpretado = interpretarLugar(texto);
   let out: Omit<LugarOut, "cache">;
   try {
-    out = await conNominatim(zona, interpretado, nom, (cs, caja, centro) =>
-      crucesPorNombre(cs, caja, centro, deps.fetcher),
+    out = await conNominatim(
+      zona,
+      interpretado,
+      nom,
+      (cs, caja, centro) => crucesPorNombre(cs, caja, centro, deps.fetcher),
+      async (lat, lon) => {
+        if (consultas++ > 0) await pausa(PAUSA_NOMINATIM_MS);
+        return coloniaEn(lat, lon, deps);
+      },
     );
   } catch (e) {
     if (!(e instanceof SinServicio)) throw e;
@@ -725,6 +764,8 @@ async function conNominatim(
     caja: { sur: number; oeste: number; norte: number; este: number },
     centro: { lat: number; lon: number } | null,
   ) => Promise<{ lat: number; lon: number }[] | null> = async () => null,
+  /** La colonia de un punto (la búsqueda inversa de Nominatim); null si no se sabe. */
+  coloniaDelPunto: (lat: number, lon: number) => Promise<string | null> = async () => null,
 ): Promise<Omit<LugarOut, "cache">> {
   const { municipio, estado, texto } = zona;
   const donde = [municipio, estado].filter(Boolean).join(", ");
@@ -920,22 +961,97 @@ async function conNominatim(
       ? { lat: Number(cajaMunicipio.lat), lon: Number(cajaMunicipio.lon) }
       : null;
     const reales = await cruces(vias, { sur, norte, oeste, este }, centro);
-    if (reales?.length)
+    const deCruce = (p: { lat: number; lon: number }, nombre: string): ResultadoLugar => ({
+      nombre,
+      lat: p.lat,
+      lon: p.lon,
+      ...(municipio ? { municipio } : {}),
+      ...(estado ? { estado } : {}),
+      precision: "cruce" as const,
+    });
+    if (reales?.length === 1)
       return {
-        resultados: reales.map((p, k) => ({
-          nombre: `Cruce de ${vias[0]} con ${vias[1]}${reales.length > 1 ? ` (${k + 1} de ${reales.length})` : ""}`,
-          lat: p.lat,
-          lon: p.lon,
-          ...(municipio ? { municipio } : {}),
-          ...(estado ? { estado } : {}),
-          precision: "cruce" as const,
-        })),
-        aviso:
-          reales.length === 1
-            ? `El cruce de ${vias[0]} con ${vias[1]}${enDonde}.`
-            : `${vias[0]} y ${vias[1]} se cruzan en ${reales.length} lugares${enDonde}: elige el del hecho.`,
+        resultados: [deCruce(reales[0]!, `Cruce de ${vias[0]} con ${vias[1]}`)],
+        aviso: `El cruce de ${vias[0]} con ${vias[1]}${enDonde}.`,
         fuente: "nominatim",
       };
+    if (reales && reales.length > 1) {
+      // Varios cruces (René, 2026-11-27): el orden no es arbitrario y el aviso dice cuál es.
+      // - La narración dice «centro»: el más cercano al centro del municipio primero (el punto de la
+      //   ciudad en OSM; `reales` ya viene en ese orden).
+      // - Nombra otra colonia y OSM la tiene (con su nombre, como colonia o barrio): los que quedan en
+      //   ella primero, luego del más cercano a ella al más lejano.
+      // - No la tiene, o no nombra ninguna: se dice y el perito elige.
+      const colonia = coloniaDe(texto);
+      const nombreColonia =
+        colonia
+          ?.replace(
+            /^(?:colonia|fraccionamiento|fracc\.?|barrio|residencial|unidad habitacional)\s+/i,
+            "",
+          )
+          .trim() ?? null;
+      const laColonia = colonia
+        ? /^(?:colonia|unidad)/i.test(colonia)
+          ? `la colonia ${nombreColonia}`
+          : `el ${
+              colonia
+                .replace(/^fracc\.?\s/i, "fraccionamiento ")
+                .toLowerCase()
+                .split(" ")[0]
+            } ${nombreColonia}`
+        : null;
+      const esCentro = !!nombreColonia && /^centro(?:\s+hist[oó]rico)?$/i.test(nombreColonia);
+      let zonaCaja: Nominatim | null = null;
+      if (colonia && nombreColonia && !esCentro) {
+        const r = await nom({
+          q: donde ? `${nombreColonia}, ${donde}` : nombreColonia,
+          viewbox: viewbox(cajaCruce.boundingbox),
+          bounded: "1",
+          limit: "5",
+        });
+        // Solo un área que se llame así (no un restaurante ni una calle «del Centro»).
+        zonaCaja =
+          r.find(
+            (x) =>
+              x.boundingbox &&
+              /^(suburb|neighbourhood|quarter|city_district|borough|residential|hamlet|village|town|isolated_dwelling)$/.test(
+                x.addresstype ?? "",
+              ) &&
+              sinAcentos(x.name ?? "").includes(sinAcentos(nombreColonia)),
+          ) ?? null;
+      }
+      const enZona = (p: { lat: number; lon: number }) => {
+        const bb = zonaCaja?.boundingbox?.map(Number);
+        return !!bb && p.lat >= bb[0]! && p.lat <= bb[1]! && p.lon >= bb[2]! && p.lon <= bb[3]!;
+      };
+      const ref = zonaCaja ? { lat: Number(zonaCaja.lat), lon: Number(zonaCaja.lon) } : null;
+      const lejos = (p: { lat: number; lon: number }) =>
+        ref
+          ? Math.hypot(p.lat - ref.lat, (p.lon - ref.lon) * Math.cos((ref.lat * Math.PI) / 180))
+          : 0;
+      const ordenados = ref
+        ? [...reales].sort((a, b) => Number(enZona(b)) - Number(enZona(a)) || lejos(a) - lejos(b))
+        : reales;
+      const dentro = ordenados.filter(enZona).length;
+      // La colonia de cada cruce (o su código postal y su localidad), para que el perito sepa cuál es.
+      const resultados: ResultadoLugar[] = [];
+      for (const p of ordenados) {
+        const suya = await coloniaDelPunto(p.lat, p.lon).catch(() => null);
+        resultados.push(deCruce(p, `Cruce de ${vias[0]} con ${vias[1]}${suya ? `, ${suya}` : ""}`));
+      }
+      const cuantos = `${vias[0]} y ${vias[1]} se cruzan en ${reales.length} lugares${enDonde}`;
+      const delCentro = municipio ? `al centro de ${municipio}` : "al centro del municipio";
+      const aviso = !colonia
+        ? `${cuantos} y la narración no dice la colonia ni la zona: elige el del hecho (van del más cercano ${delCentro} al más lejano).`
+        : esCentro
+          ? `${cuantos}; la narración dice «centro»: el más cercano ${delCentro} va primero. Elige el del hecho.`
+          : !zonaCaja
+            ? `${cuantos}. No encontré ${laColonia} en el mapa: elige el del hecho (van del más cercano ${delCentro} al más lejano).`
+            : dentro
+              ? `${cuantos}; ${dentro === 1 ? "uno queda" : `${dentro} quedan`} en ${laColonia}, que nombra la narración, y ${dentro === 1 ? "va" : "van"} primero. Elige el del hecho.`
+              : `${cuantos}; ninguno queda en ${laColonia}: van del más cercano a ella al más lejano. Elige el del hecho.`;
+      return { resultados, aviso, fuente: "nominatim" };
+    }
     if (reales)
       return {
         resultados: [],
@@ -943,6 +1059,8 @@ async function conNominatim(
         fuente: "nominatim",
       };
   }
+  // Overpass no respondió (`reales` null): se intenta con las geometrías de Nominatim, sin afirmar
+  // que no se cruzan en otro lugar.
   if (vias && cajaCruce?.boundingbox) {
     // Con variantes del nombre (revisión de la cadena, René 2026-11-24): «Avenida de los Insurgentes
     // Sur» es «Avenida Insurgentes Sur» en OpenStreetMap.
@@ -979,13 +1097,13 @@ async function conNominatim(
             precision: "cruce" as const,
           },
         ],
-        aviso: `El cruce de ${vias[0]} y ${vias[1]}${donde ? ` en ${donde}` : ""}.`,
+        aviso: `El cruce de ${vias[0]} y ${vias[1]}${donde ? ` en ${donde}` : ""}. OpenStreetMap no respondió para ver si se cruzan en otro lugar: revisa que sea el del hecho.`,
         fuente: "nominatim",
       };
     }
     return {
       resultados: [],
-      aviso: `No encontré el cruce de ${vias[0]} con ${vias[1]}${enDonde}: márcalo tú en el mapa.`,
+      aviso: `No pude comprobar el cruce de ${vias[0]} con ${vias[1]}${enDonde}: OpenStreetMap no respondió. Vuelve a buscar en un momento o márcalo tú en el mapa.`,
       fuente: "nominatim",
     };
   }

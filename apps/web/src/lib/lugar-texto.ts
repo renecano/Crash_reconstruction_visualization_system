@@ -168,3 +168,39 @@ export function interpretarLugar(texto: string): LugarInterpretado {
     desdeCarretera(t) ?? { tipo: "texto", texto: t }
   );
 }
+
+/**
+ * La colonia o la zona que nombra un texto (René, 2026-11-27, #388): para ordenar los cruces cuando
+ * dos calles se cruzan en varios lugares. «colonia Centro», «col. Reforma», «fraccionamiento Las
+ * Américas», «barrio de San Juan», «en el centro de Toluca» (la colonia Centro). Null si no nombra
+ * ninguna.
+ */
+export function zonaNarrada(texto: string | null | undefined): string | null {
+  if (!texto) return null;
+  const tipo =
+    /\b(colonia|col\.|fraccionamiento|fracc\.?|barrio(?:\s+de)?|residencial|unidad\s+habitacional)\s+([A-ZÁÉÍÓÚÑ0-9][^,;.()]*)/i.exec(
+      texto,
+    );
+  if (tipo) {
+    // Hasta donde empieza otra cosa: «colonia Centro y circulaba…», «colonia Centro del municipio…».
+    const nombre = tipo[2]!
+      .split(
+        /\s+(?:y|e|en|del?\s+municipio|de\s+la\s+alcald[ií]a|cuando|donde|al|rumbo|sobre)\s+/i,
+      )[0]!
+      .trim();
+    if (nombre.length < 3) return null;
+    const t = tipo[1]!.toLowerCase();
+    if (t.startsWith("col")) return `colonia ${nombre}`;
+    if (t.startsWith("frac")) return `fraccionamiento ${nombre}`;
+    if (t.startsWith("barrio")) return `barrio ${nombre}`;
+    return `${tipo[1]} ${nombre}`;
+  }
+  // «en el centro de Toluca», «en la zona centro», «en el centro histórico»; no un centro comercial.
+  if (
+    /\b(?:el|la\s+zona)\s+centro(?:\s+hist[oó]rico)?\b(?!\s+(?:comercial|de\s+salud|deportivo|educativo|escolar|cultural|de\s+atenci[oó]n|de\s+(?:la\s+)?(?:calle|v[ií]a|carril|cruce|intersecci[oó]n)))/i.test(
+      texto,
+    )
+  )
+    return "colonia Centro";
+  return null;
+}

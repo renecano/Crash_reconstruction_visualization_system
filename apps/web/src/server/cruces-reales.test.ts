@@ -64,20 +64,40 @@ const CASOS: {
   estado: string;
   /** El cruce real: el nodo que comparten las dos calles en OSM (leído el 2026-11-27). */
   real: { lat: number; lon: number };
+  /**
+   * Con varios cruces: `primero`, el real va primero (la narración nombra su colonia); `entre`, va
+   * entre las opciones y el aviso dice que la narración no nombra la colonia. Sin él, hay un solo cruce.
+   */
+  varios?: "primero" | "entre";
+  /** Lo que tiene que decir el aviso. */
+  aviso?: RegExp;
 }[] = [
+  {
+    nombre: "toluca-lerdo-nicolas-bravo-centro",
+    q: "avenida Lerdo de Tejada y calle Nicolás Bravo, colonia Centro",
+    municipio: "Toluca",
+    estado: "Estado de México",
+    real: { lat: 19.29299, lon: -99.65772 },
+    varios: "primero",
+    aviso: /la narración dice «centro»: el más cercano al centro de Toluca va primero/,
+  },
   {
     nombre: "toluca-lerdo-nicolas-bravo",
     q: "avenida Lerdo de Tejada y calle Nicolás Bravo",
     municipio: "Toluca",
     estado: "Estado de México",
     real: { lat: 19.29299, lon: -99.65772 },
+    varios: "entre",
+    aviso: /la narración no dice la colonia ni la zona: elige el del hecho/,
   },
   {
-    nombre: "toluca-independencia-juarez",
-    q: "avenida Independencia y avenida Juárez",
+    nombre: "toluca-independencia-juarez-centro",
+    q: "avenida Independencia y avenida Juárez, colonia Centro",
     municipio: "Toluca",
     estado: "Estado de México",
     real: { lat: 19.292076, lon: -99.654422 },
+    varios: "primero",
+    aviso: /la narración dice «centro»: el más cercano al centro de Toluca va primero/,
   },
   {
     nombre: "cdmx-eje-central-juarez",
@@ -118,8 +138,13 @@ describe("el cruce narrado, en lugares reales (#388)", () => {
           out.aviso,
         );
       expect(out.resultados.length).toBeGreaterThan(0);
-      expect(out.resultados[0]!.precision).toBe("cruce");
-      expect(metros(out.resultados[0]!, c.real)).toBeLessThan(TOPE_M);
+      expect(out.resultados.every((r) => r.precision === "cruce")).toBe(true);
+      if (c.aviso) expect(out.aviso).toMatch(c.aviso);
+      if (!c.varios) expect(out.resultados).toHaveLength(1);
+      else expect(out.resultados.length).toBeGreaterThan(1);
+      if (c.varios === "entre")
+        expect(Math.min(...out.resultados.map((r) => metros(r, c.real)))).toBeLessThan(TOPE_M);
+      else expect(metros(out.resultados[0]!, c.real)).toBeLessThan(TOPE_M);
     });
   }
 });

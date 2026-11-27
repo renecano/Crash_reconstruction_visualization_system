@@ -109,7 +109,7 @@ import {
 } from "@/lib/escena-facil";
 import { siluetaClase } from "@/lib/colocar";
 import { pedirRuta } from "@/lib/trayecto-previo";
-import { interpretarLugar } from "@/lib/lugar-texto";
+import { interpretarLugar, zonaNarrada } from "@/lib/lugar-texto";
 import { callesDelCaso, lugarClaro } from "@/lib/lugar-claro";
 import { etiquetaOpcion, type OpcionLugar, zonaDeOpcion } from "@/lib/lugar-opcion";
 import {
@@ -583,10 +583,14 @@ export function EscenaFacil({
   useEffect(() => {
     if (lugar || yaBuscado.current || estado.puntos[1]) return;
     const cruce = narracion ? cruceNarrado(narracion) : null;
+    const zonaDelCruce = zonaNarrada(descripcionLugar) ?? zonaNarrada(narracion);
     // Ronda 4 (René): solo el lugar va al buscador, nunca la frase completa con su «rumbo a…».
     const consultas = [
       separarLugarYSentido(descripcionLugar).lugar,
-      cruce ? `${cruce.calles[0]} y ${cruce.calles[1]}` : null,
+      // Con la colonia o la zona narrada, para ordenar los cruces si hay varios (René, 2026-11-27).
+      cruce
+        ? `${cruce.calles[0]} y ${cruce.calles[1]}${zonaDelCruce ? `, ${zonaDelCruce}` : ""}`
+        : null,
       // Con un cruce narrado no se busca una de sus calles sola (René, 2026-11-27, #388): su punto
       // medio llevaba el choque a otra esquina, a 1.4 km del cruce.
       narracion ? carreteraNarrada(narracion) : null,
