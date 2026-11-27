@@ -1270,6 +1270,14 @@ export function EscenaFacil({
 
   // Un toque en el mapa, según la pregunta en curso.
   const tocar = (p: Punto) => {
+    // «¿De dónde venía?» va primero: lo pidió el perito con su botón, aun con la lista abierta.
+    if (herramienta && typeof herramienta === "object" && "previo" in herramienta) {
+      const v = herramienta.previo;
+      onPrevios?.({ ...previos, [v]: p });
+      onNota(`De dónde venía el ${nombres[v]} (trayecto ilustrativo, no es evidencia).`);
+      setHerramienta(null);
+      return;
+    }
     if (poniendo) {
       // W4: el objeto de la paleta va donde tocó; los tramos, a lo largo de la calle.
       const tipo = TIPOS_OBJETO.find((t) => t.tipo === poniendo)!;
@@ -1320,13 +1328,6 @@ export function EscenaFacil({
     }
     if (herramienta === "medir") {
       setMedicion((m) => (m.length >= 2 ? [p] : [...m, p]));
-      return;
-    }
-    if (herramienta && typeof herramienta === "object" && "previo" in herramienta) {
-      const v = herramienta.previo;
-      onPrevios?.({ ...previos, [v]: p });
-      onNota(`De dónde venía el ${nombres[v]} (trayecto ilustrativo, no es evidencia).`);
-      setHerramienta(null);
       return;
     }
     if (herramienta && typeof herramienta === "object") {

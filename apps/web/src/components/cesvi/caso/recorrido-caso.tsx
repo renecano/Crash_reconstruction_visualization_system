@@ -1524,6 +1524,7 @@ export function RecorridoCaso({
         exportApi={vista === "3d" ? exportApi : null}
         unity={vista === "3d" ? unityApi : null}
         pedidoExportar={pedidoExportar}
+        previos={Object.keys(previos).map((id) => nombreLab(id))}
         mapa={mapa}
         validacion={validacion}
         onValidacion={setValidacion}
