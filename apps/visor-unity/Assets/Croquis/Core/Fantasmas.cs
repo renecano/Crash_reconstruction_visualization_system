@@ -42,11 +42,34 @@ namespace Croquis.Core
 
         /// <summary>
         /// Lo que se suma al instante de la reconstrucción para tener el de la versión: cada resultado
-        /// tiene su impacto en su propio reloj, y se alinean por él.
+        /// tiene su impacto en su propio reloj, y se alinean por él. Una hipótesis del «¿Y si…?» no se
+        /// alinea: corre desde los mismos instantes que la reconstrucción y su impacto puede llegar antes,
+        /// después o no llegar (docs/contrato-unity.md §2), que es justo lo que se quiere ver.
         /// </summary>
-        public static double Desfase(Caso3DResultado reconstruida, Caso3DResultado version)
+        public static double Desfase(Caso3DResultado reconstruida, Caso3DResultado version, bool hipotesis = false)
         {
-            return TImpacto(version) - TImpacto(reconstruida);
+            return hipotesis ? 0.0 : TImpacto(version) - TImpacto(reconstruida);
+        }
+
+        /// <summary>
+        /// Si la versión es una hipótesis del perito (el «¿Y si…?» a otra velocidad) y no lo que declaró un
+        /// conductor: la web lo dice en la etiqueta, «¿Y si…? A · Jetta a 60 km/h (hipótesis)».
+        /// </summary>
+        public static bool EsHipotesis(string etiqueta)
+        {
+            if (string.IsNullOrWhiteSpace(etiqueta))
+            {
+                return false;
+            }
+
+            var e = etiqueta.Trim().ToLowerInvariant();
+            return e.Contains("hipótesis") || e.Contains("hipotesis") || e.StartsWith("¿y si", StringComparison.Ordinal);
+        }
+
+        /// <summary>El letrero que va sobre cada vehículo de la versión, siempre a la vista.</summary>
+        public static string Letrero(string etiqueta)
+        {
+            return EsHipotesis(etiqueta) ? "Hipótesis" : "Versión declarada";
         }
 
         /// <summary>

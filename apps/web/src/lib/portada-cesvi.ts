@@ -1,82 +1,34 @@
 /**
- * Los datos de la portada de CESVI (comentario de René, 2026-10-24, punto 4). Todo se calcula al
- * compilar, de `eval/results`, de `data/` y del caso de AXA; nada se escribe a mano. Si falta un
- * dato, el build falla.
- *
- * - **671:** los reportes de CESVI del corpus (`eval/results/cesvi_corpus_extraccion.json`).
- * - **205:** los de la prueba reconstruidos a ciegas (`data/cesvi/r4/pagina.json`, de E-R4).
- * - **58.3 % y 37.2 %:** la modalidad de Croquis contra el título del reporte y la de la regla simple
- *   (siempre alcance), en la prueba (`eval/results/cesvi_r4c_titulo_prueba.json`, v4).
- * - **AXA A2010930:** lo que concluyó CESVI (los valores impresos del caso) contra lo que obtiene
- *   Croquis con el mismo método (`reproducir`), la modalidad que infiere Croquis de la narración
- *   (`modalidadInferida`).
+ * Las cifras de la portada, del índice único (`eval/results/cifras.json`; ADR 0138): nada se escribe a
+ * mano y ninguna es de un caso (René, 2026-11-24). Si falta una, el build falla.
  */
-import { caso, modalidadInferida, reproducir } from "@croquis/cesvi";
-import corpus from "../../../../eval/results/cesvi_corpus_extraccion.json";
-import { casoAxa } from "./axa-reconstruccion";
-import { PAGINA, TITULO } from "./reproduccion-dictamenes";
+import indice from "../../../../eval/results/cifras.json";
 
-export interface FilaAxa {
-  cesvi: number;
-  croquis: number;
-  /** (Croquis − CESVI) / CESVI, en %. */
+export interface TasaPublicada {
+  k: number;
+  n: number;
   pct: number;
 }
 
 export interface DatosPortadaCesvi {
-  reportes: number;
-  aCiegas: number;
-  /**
-   * La modalidad acertada, como tasa completa: k de n y su porcentaje. El denominador son los
-   * reportes de la prueba que traen la modalidad en su título, no todos los reconstruidos a ciegas
-   * (auditoría del 2026-11-15, C3): la portada dice «k de n», nunca el porcentaje solo.
-   */
-  modalidad: { k: number; n: number; pct: number };
-  /** La regla simple (decir siempre la modalidad más frecuente), sobre el mismo denominador. */
-  regla: { k: number; n: number; pct: number };
-  axa: {
-    id: string;
-    lugar: string;
-    modalidad: { cesvi: string; croquis: string | null };
-    restos: FilaAxa;
-    deformacion: FilaAxa;
-    /** El comienzo de la narración del caso, para el ejemplo de «Narra como siempre». */
-    narracion: string;
-  };
+  /** Velocidades verdaderas conocidas que cayeron dentro del rango, y lo que se espera. */
+  cobertura: TasaPublicada & { esperado_pct: number };
+  /** Modalidad acertada contra el título del reporte. */
+  modalidad: TasaPublicada;
+  /** La regla simple (siempre la modalidad más frecuente), sobre los mismos reportes. */
+  regla: TasaPublicada;
+  /** Impactos posteriores de una carambola que ocurren en la reconstrucción. */
+  carambolas: TasaPublicada;
 }
 
-const fila = (cesvi: number, croquis: number): FilaAxa => ({
-  cesvi,
-  croquis,
-  pct: (100 * (croquis - cesvi)) / cesvi,
-});
-
 export function datosPortadaCesvi(): DatosPortadaCesvi {
-  const c = caso("A2010930");
-  const filas = reproducir(c).filas;
-  const croquis = (clave: string) => {
-    const v = filas.find((f) => f.clave === clave)?.croquis;
-    if (typeof v !== "number") throw new Error(`Falta ${clave} en la reproducción de AXA`);
-    return v;
-  };
-  const axa = casoAxa();
-  if (!axa.escena) throw new Error("El caso de AXA no trae su escena");
-  const modalidad = modalidadInferida(axa.escena.expediente, axa.narracion ?? "").modalidad;
-  const v4 = TITULO.v4.titulo_del_reporte;
-  if (v4.croquis.pct === null || v4.linea_base.pct === null)
-    throw new Error("Falta la medición de la modalidad contra el título");
+  const c = indice.cifras;
+  const tasa = ({ k, n, pct }: TasaPublicada): TasaPublicada => ({ k, n, pct });
+  const cobertura = c["cobertura.rango"];
   return {
-    reportes: corpus.dictamenes,
-    aCiegas: PAGINA.dictamenes,
-    modalidad: { k: v4.croquis.k, n: v4.croquis.n, pct: v4.croquis.pct },
-    regla: { k: v4.linea_base.k, n: v4.linea_base.n, pct: v4.linea_base.pct },
-    axa: {
-      id: c.id,
-      lugar: c.lugar.municipio ? `${c.lugar.municipio}, ${c.lugar.estado}` : "",
-      modalidad: { cesvi: c.modalidad_dictaminada, croquis: modalidad },
-      restos: fila(c.calculos.desplazamiento.reporte.v_kmh.valor, croquis("v3_kmh")),
-      deformacion: fila(c.calculos.deformacion_B.reporte.ebs_kmh.valor, croquis("ebs_kmh_datos")),
-      narracion: (axa.narracion ?? "").split(/(?<=\.)\s/)[0] ?? "",
-    },
+    cobertura: { ...tasa(cobertura), esperado_pct: cobertura.esperado_pct },
+    modalidad: tasa(c["er4.modalidad_titulo"]),
+    regla: tasa(c["er4.regla_simple"]),
+    carambolas: tasa(c["carambolas.prueba"]),
   };
 }
