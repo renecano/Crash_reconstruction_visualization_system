@@ -8,7 +8,7 @@
     "commit":  "03340cb416111e1cab5b150eae82241c5ffef67a",
     "rama_del_repositorio":  "HEAD",
     "archivos_con_cambios":  0,
-    "duracion_min":  4.6,
+    "duracion_min":  6.2,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "Intel(R) UHD Graphics",
@@ -104,6 +104,15 @@
                       "estado":  "falló (código 1)",
                       "minutos":  0.1,
                       "codigo":  1,
+                      "disco_libre_gb_antes":  813.8,
+                      "disco_libre_gb_despues":  813.8
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "video-3d",
+                      "estado":  "ok",
+                      "minutos":  1.5,
+                      "codigo":  0,
                       "disco_libre_gb_antes":  813.8,
                       "disco_libre_gb_despues":  813.8
                   }
