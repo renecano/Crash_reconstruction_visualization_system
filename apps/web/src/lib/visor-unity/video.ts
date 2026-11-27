@@ -144,27 +144,40 @@ export interface OpcionesGrabacion {
 /** Espera la siguiente vuelta del navegador. */
 const vuelta = () => new Promise<void>((ok) => requestAnimationFrame(() => ok()));
 
-/** Graba el MP4. Rechaza con `VideoNoDisponible` si el navegador no puede codificar H.264. */
-export async function grabarVideoUnity(o: OpcionesGrabacion): Promise<Blob> {
-  if (!puedeGrabarVideo())
-    throw new VideoNoDisponible("Este navegador no puede grabar el video: usa Chrome o Edge.");
-  const mb = await import("mediabunny");
-  const codec = await mb.getFirstEncodableVideoCodec(["avc"], {
-    width: ANCHO_VIDEO,
-    height: ALTO_VIDEO,
-    bitrate: mb.QUALITY_HIGH,
-  });
-  if (!codec) throw new VideoNoDisponible("Este navegador no tiene codificador H.264 para el MP4.");
+/**
+ * Lo que se le dice al perito si de verdad no se puede (nunca el error crudo del navegador, como el
+ * «Encoding error» de la Intel UHD, 2026-11-26).
+ */
+export const SIN_VIDEO =
+  "No se pudo hacer el video en esta computadora. Cierra otras pestañas y vuelve a intentarlo; si sigue igual, actualiza Chrome o Edge, o haz el video en otra computadora.";
 
-  // El lienzo donde se compone cada cuadro: el de Unity a 1920×1080 y el logo.
-  const comp = document.createElement("canvas");
-  comp.width = ANCHO_VIDEO;
-  comp.height = ALTO_VIDEO;
-  const ctx = comp.getContext("2d");
-  if (!ctx) throw new VideoNoDisponible("No hay contexto 2D para componer el video.");
+/**
+ * Las configuraciones del codificador H.264, en orden: si una falla (en la laptop con Intel UHD, el
+ * codificador por hardware dio «Encoding error», 2026-11-26), se vuelve a grabar con la siguiente.
+ */
+export const CODIFICADORES = [
+  { aceleracion: "no-preference", calidad: "alta" },
+  { aceleracion: "prefer-software", calidad: "alta" },
+  { aceleracion: "prefer-software", calidad: "media" },
+] as const;
 
-  // Los cuadros del lienzo de Unity, según los va dibujando.
-  const pista = o.lienzo.captureStream().getVideoTracks()[0];
+/**
+ * Con tarjeta dedicada se graba al doble solo si lo aguanta de verdad: en laptops híbridas Chrome
+ * reporta la NVIDIA y dibuja en la Intel. Se miden los primeros cuadros al doble; si tardan más que
+ * esto cada uno (ms), el video va a 1×. A 1× la Intel UHD tardó ~1.6 s por cuadro (2026-11-26).
+ */
+export const UMBRAL_DOBLE_MS = 250;
+/** Cuántos cuadros al doble se miden. */
+export const CUADROS_PARA_MEDIR = 5;
+
+/** 2 si los cuadros medidos al doble salen a tiempo; 1 si no (o si no llegó ninguno). */
+export function escalaMedida(msPorCuadro: number): 1 | 2 {
+  return Number.isFinite(msPorCuadro) && msPorCuadro <= UMBRAL_DOBLE_MS ? 2 : 1;
+}
+
+/** Los cuadros del lienzo de Unity, según los va dibujando. */
+function lectorDeCuadros(lienzo: HTMLCanvasElement) {
+  const pista = lienzo.captureStream().getVideoTracks()[0];
   if (!pista) throw new VideoNoDisponible("El lienzo del 3D no entrega cuadros.");
   const Proc = (globalThis as unknown as { MediaStreamTrackProcessor: ConstructorProcesador })
     .MediaStreamTrackProcessor;
@@ -181,66 +194,153 @@ export async function grabarVideoUnity(o: OpcionesGrabacion): Promise<Blob> {
       llegados++;
     }
   })();
-  /** Espera `n` cuadros nuevos del lienzo (Unity ya dibujó el instante pedido). */
-  const esperarCuadros = async (n: number) => {
-    const meta = llegados + n;
-    const limite = performance.now() + 3000;
-    while (llegados < meta && performance.now() < limite) await vuelta();
+  return {
+    ultimo: () => ultimo,
+    /** Espera `n` cuadros nuevos (Unity ya dibujó el instante pedido); false si no llegaron en 3 s. */
+    esperar: async (n: number) => {
+      const meta = llegados + n;
+      const limite = performance.now() + 3000;
+      while (llegados < meta && performance.now() < limite) await vuelta();
+      return llegados >= meta;
+    },
+    cerrar: async () => {
+      leyendo = false;
+      pista.stop();
+      await lector.cancel().catch(() => undefined);
+      await lectura.catch(() => undefined);
+      ultimo?.close();
+      ultimo = null;
+    },
+  };
+}
+
+/**
+ * Cuánto tarda Unity en dibujar cada cuadro al tamaño actual del lienzo (ms), con los primeros
+ * instantes del video. Infinity si no llega ninguno.
+ */
+export async function msPorCuadro(
+  lienzo: HTMLCanvasElement,
+  fijar: (t: number) => void,
+  instantes: number[],
+): Promise<number> {
+  const l = lectorDeCuadros(lienzo);
+  try {
+    fijar(instantes[0]!);
+    if (!(await l.esperar(4))) return Infinity;
+    const muestra = instantes.slice(1, 1 + CUADROS_PARA_MEDIR);
+    const t0 = performance.now();
+    for (const t of muestra) {
+      fijar(t);
+      if (!(await l.esperar(2))) return Infinity;
+    }
+    return muestra.length ? (performance.now() - t0) / muestra.length : 0;
+  } finally {
+    await l.cerrar();
+  }
+}
+
+/**
+ * Graba el MP4. Si el codificador falla, vuelve a grabar con la siguiente configuración de
+ * `CODIFICADORES`; si fallan todas, o si el 3D no dibuja, rechaza con `VideoNoDisponible`.
+ */
+export async function grabarVideoUnity(o: OpcionesGrabacion): Promise<Blob> {
+  if (!puedeGrabarVideo())
+    throw new VideoNoDisponible("Este navegador no puede grabar el video: usa Chrome o Edge.");
+  const mb = await import("mediabunny");
+
+  // El lienzo donde se compone cada cuadro: el de Unity a 1920×1080 y el logo.
+  const comp = document.createElement("canvas");
+  comp.width = ANCHO_VIDEO;
+  comp.height = ALTO_VIDEO;
+  const ctx = comp.getContext("2d");
+  if (!ctx) throw new VideoNoDisponible("No hay contexto 2D para componer el video.");
+
+  const instantes = instantesDelVideo(o.inicio, o.fin);
+  let pregunto = false;
+  const pasada = async (
+    l: ReturnType<typeof lectorDeCuadros>,
+    cfg: (typeof CODIFICADORES)[number],
+  ): Promise<Blob | null> => {
+    const bitrate = cfg.calidad === "alta" ? mb.QUALITY_HIGH : mb.QUALITY_MEDIUM;
+    const codec = await mb.getFirstEncodableVideoCodec(["avc"], {
+      width: ANCHO_VIDEO,
+      height: ALTO_VIDEO,
+      bitrate,
+    });
+    if (!codec) return null;
+    const output = new mb.Output({
+      format: new mb.Mp4OutputFormat({ fastStart: "in-memory" }),
+      target: new mb.BufferTarget(),
+    });
+    const source = new mb.CanvasSource(comp, {
+      codec,
+      bitrate,
+      keyFrameInterval: 2,
+      hardwareAcceleration: cfg.aceleracion,
+    });
+    output.addVideoTrack(source, { frameRate: FPS_VIDEO });
+    output.setMetadataTags({
+      title: "Croquis — reconstrucción ilustrativa",
+      description: o.leyenda,
+      comment: o.leyenda,
+    });
+    const empezo = performance.now();
+    await output.start();
+    try {
+      for (let i = 0; i < instantes.length; i++) {
+        if (o.signal?.aborted) throw new DOMException("Grabación cancelada", "AbortError");
+        o.fijar(instantes[i]!);
+        // Dos cuadros: el primero puede ser del instante anterior.
+        await l.esperar(i === 0 ? 4 : 2);
+        const cuadro = l.ultimo();
+        if (!cuadro) throw new VideoNoDisponible("El 3D no dibujó ningún cuadro.");
+        dibujar(ctx, cuadro, o.logo, o.credito ?? null);
+        await source.add(i / FPS_VIDEO, 1 / FPS_VIDEO);
+        o.alProgreso?.(i + 1, instantes.length, performance.now() - empezo);
+        if (
+          o.confirmar &&
+          !pregunto &&
+          i + 1 === CUADROS_PARA_ESTIMAR &&
+          instantes.length > CUADROS_PARA_ESTIMAR
+        ) {
+          pregunto = true;
+          const estimado = ((performance.now() - empezo) / (i + 1)) * instantes.length;
+          if (estimado > AVISAR_DESDE_MS && !(await o.confirmar(estimado)))
+            throw new DOMException("Grabación cancelada", "AbortError");
+        }
+      }
+      await output.finalize();
+    } catch (e) {
+      await output.cancel().catch(() => undefined);
+      throw e;
+    }
+    const bytes = output.target.buffer;
+    if (!bytes) throw new Error("El video quedó vacío.");
+    return new Blob([bytes], { type: "video/mp4" });
   };
 
-  const output = new mb.Output({
-    format: new mb.Mp4OutputFormat({ fastStart: "in-memory" }),
-    target: new mb.BufferTarget(),
-  });
-  const source = new mb.CanvasSource(comp, {
-    codec,
-    bitrate: mb.QUALITY_HIGH,
-    keyFrameInterval: 2,
-  });
-  output.addVideoTrack(source, { frameRate: FPS_VIDEO });
-  output.setMetadataTags({
-    title: "Croquis — reconstrucción ilustrativa",
-    description: o.leyenda,
-    comment: o.leyenda,
-  });
-  const instantes = instantesDelVideo(o.inicio, o.fin);
-  const empezo = performance.now();
-  await output.start();
+  const l = lectorDeCuadros(o.lienzo);
   try {
-    for (let i = 0; i < instantes.length; i++) {
-      if (o.signal?.aborted) throw new DOMException("Grabación cancelada", "AbortError");
-      o.fijar(instantes[i]!);
-      // Dos cuadros: el primero puede ser del instante anterior.
-      await esperarCuadros(i === 0 ? 4 : 2);
-      const cuadro = ultimo as VideoFrame | null;
-      if (!cuadro) throw new VideoNoDisponible("El 3D no dibujó ningún cuadro.");
-      dibujar(ctx, cuadro, o.logo, o.credito ?? null);
-      await source.add(i / FPS_VIDEO, 1 / FPS_VIDEO);
-      o.alProgreso?.(i + 1, instantes.length, performance.now() - empezo);
-      if (
-        o.confirmar &&
-        i + 1 === CUADROS_PARA_ESTIMAR &&
-        instantes.length > CUADROS_PARA_ESTIMAR
-      ) {
-        const estimado = ((performance.now() - empezo) / (i + 1)) * instantes.length;
-        if (estimado > AVISAR_DESDE_MS && !(await o.confirmar(estimado)))
-          throw new DOMException("Grabación cancelada", "AbortError");
+    let fallo: unknown = null;
+    for (const cfg of CODIFICADORES) {
+      try {
+        const video = await pasada(l, cfg);
+        if (video) return video;
+      } catch (e) {
+        // Cancelar o un 3D que no dibuja no se arreglan con otro codificador.
+        if (
+          e instanceof VideoNoDisponible ||
+          (e instanceof DOMException && e.name === "AbortError")
+        )
+          throw e;
+        fallo = e;
+        console.warn(`Video: falló el codificador (${cfg.aceleracion}, ${cfg.calidad})`, e);
       }
     }
-    await output.finalize();
-  } catch (e) {
-    await output.cancel();
-    throw e;
+    throw new VideoNoDisponible(SIN_VIDEO, { cause: fallo });
   } finally {
-    leyendo = false;
-    pista.stop();
-    await lector.cancel().catch(() => undefined);
-    await lectura.catch(() => undefined);
-    (ultimo as VideoFrame | null)?.close();
+    await l.cerrar();
   }
-  const bytes = output.target.buffer;
-  if (!bytes) throw new VideoNoDisponible("El video quedó vacío.");
-  return new Blob([bytes], { type: "video/mp4" });
 }
 
 /** El cuadro llenando 1920×1080 (sin deformar) y el logo arriba a la derecha, con su sombra. */

@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   ALTO_VIDEO,
+  CODIFICADORES,
+  escalaMedida,
+  SIN_VIDEO,
+  UMBRAL_DOBLE_MS,
   ANCHO_VIDEO,
   instantesDelVideo,
   lienzoDelVideo,
@@ -79,5 +83,21 @@ describe("el modo del video según la tarjeta (René, 2026-11-26: medido en la l
     expect(textoTarda(30_000)).toBe("Tarda menos de un minuto");
     expect(textoTarda(420_000)).toBe("Tarda ~7 min");
     expect(lienzoDelVideo(1, 1)).toEqual({ ancho: 1920, alto: 1080 });
+  });
+
+  it("al doble solo si los cuadros medidos salen a tiempo (no por el nombre de la tarjeta)", () => {
+    expect(escalaMedida(60)).toBe(2);
+    expect(escalaMedida(UMBRAL_DOBLE_MS)).toBe(2);
+    expect(escalaMedida(UMBRAL_DOBLE_MS + 1)).toBe(1);
+    // Ningún cuadro al doble (la Intel UHD): 1×.
+    expect(escalaMedida(Infinity)).toBe(1);
+    expect(escalaMedida(Number.NaN)).toBe(1);
+  });
+
+  it("si el codificador falla, reintenta por software antes de rendirse, con un mensaje claro", () => {
+    expect(CODIFICADORES[0].aceleracion).toBe("no-preference");
+    expect(CODIFICADORES.slice(1).every((c) => c.aceleracion === "prefer-software")).toBe(true);
+    expect(SIN_VIDEO).not.toMatch(/error/i);
+    expect(SIN_VIDEO).toContain("vuelve a intentarlo");
   });
 });
