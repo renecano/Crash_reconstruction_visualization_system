@@ -527,6 +527,8 @@ namespace Croquis.Visor
             var previo = modo;
             Encuadrar("todo");
             modo = previo;
+            // El encuadre al abrir no es del perito: «Desde arriba» sigue sola a los vehículos.
+            cenitalTocada = false;
             Minimapa();
         }
 

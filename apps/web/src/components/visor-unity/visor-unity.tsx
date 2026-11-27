@@ -592,10 +592,14 @@ export function VisorUnity({
       return true;
     }
   });
+  // A pantalla completa, con la barra de abajo a la vista, el minimapa la tapaba: se esconde y vuelve
+  // cuando la barra se esconde (René, 2026-11-27).
+  const { completa: completaMinimapa, bajoBarra: barraMinimapa } = useMarco();
+  const minimapaVisible = minimapa && !(completaMinimapa && barraMinimapa > 0);
   useEffect(() => {
     if (!puente || !listo) return;
-    puente.minimapa(minimapa);
-  }, [puente, listo, minimapa]);
+    puente.minimapa(minimapaVisible);
+  }, [puente, listo, minimapaVisible]);
   // «Descargar video» (René, 2026-11-18, B7): la reproducción completa con la cámara elegida, a
   // 1920×1080, cuadro por cuadro (`lib/visor-unity/video.ts`).
   const [grabacion, setGrabacion] = useState<{ hechos: number; total: number; ms: number } | null>(
