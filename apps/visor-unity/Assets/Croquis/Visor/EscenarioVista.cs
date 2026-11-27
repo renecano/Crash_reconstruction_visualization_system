@@ -46,9 +46,18 @@ namespace Croquis.Visor
             {
                 Omisiones.Intentar("la carretera", () => CarreteraVista.Construir(escenario, e.Via, e.Ambiente, terreno, e.Semilla));
             }
+            // El paisaje árido (`entorno.paisaje`, de la cobertura de OSM que calcula la web): tierra y matas secas.
+            var arido = e.Entorno?.Paisaje == PaisajeEntorno.Arido;
+            if (arido && !e.Ambiente.Noche)
+            {
+                // Aire de zona seca: la lejanía se funde con un horizonte de polvo, no azul (los cerros
+                // quedaban azul verdoso aunque su ladera fuera ocre). La densidad no cambia.
+                RenderSettings.fogColor = Color.Lerp(RenderSettings.fogColor, new Color(0.86f, 0.78f, 0.64f), 0.55f);
+            }
+
             foreach (var s in e.Suelo ?? new SueloEscenario[0])
             {
-                Omisiones.Intentar("un tramo de suelo", () => Suelo(escenario, s, e.Ambiente, urbana, e.Semilla));
+                Omisiones.Intentar("un tramo de suelo", () => Suelo(escenario, s, e.Ambiente, urbana, e.Semilla, arido));
             }
 
             Omisiones.Intentar("el entorno", () => EntornoVista.Construir(escenario, e.Entorno, e.Ambiente, e.Semilla));
@@ -585,7 +594,7 @@ namespace Croquis.Visor
             parapeto.Poner(padre, "puente_parapetos", Materiales.Liso(new Color(0.72f, 0.71f, 0.68f), 0.2f));
         }
 
-        private static void Suelo(Transform padre, SueloEscenario s, AmbienteEscenario a, bool urbana, long semilla)
+        private static void Suelo(Transform padre, SueloEscenario s, AmbienteEscenario a, bool urbana, long semilla, bool arido = false)
         {
             var n = (int)s.Segmentos + 1;
             var lado = (float)s.LadoM;
@@ -595,7 +604,7 @@ namespace Croquis.Visor
             // El parche fino va 3 cm abajo de la vía y el lejano 5 cm, como en el visor web.
             var bajo = lejano ? -0.05f : -0.03f;
             // En la ciudad, entre las cuadras hay tierra apisonada, no un prado.
-            var textura = urbana ? "grava" : "pasto";
+            var textura = urbana || arido ? "grava" : "pasto";
             var mosaico = Materiales.Mosaico(textura) * (lejano ? 3f : 1f);
             var pasto = new Malla();
             var capa = new Malla();
@@ -638,6 +647,11 @@ namespace Croquis.Visor
             {
                 tinte = a.Noche ? new Color(0.42f, 0.41f, 0.4f) : new Color(0.72f, 0.69f, 0.64f);
             }
+            else if (arido)
+            {
+                // Tierra clara de zona seca, sin el verde de temporada.
+                tinte = a.Noche ? new Color(0.72f, 0.66f, 0.56f) : new Color(1.62f, 1.44f, 1.14f);
+            }
 
             var suelo = pasto.Poner(padre, lejano ? "suelo_lejano" : "suelo", Materiales.Pbr(textura, tinte), false);
             // En baja y media, las dos capas de encima (tonos y parcelas) van en el material del suelo: una
@@ -678,7 +692,7 @@ namespace Croquis.Visor
                 }
             }
 
-            var tonoSeco = urbana ? new Color(0.3f, 0.27f, 0.23f, 0.4f) : new Color(0.5f, 0.47f, 0.24f, a.Noche ? 0.16f : 0.3f);
+            var tonoSeco = urbana ? new Color(0.3f, 0.27f, 0.23f, 0.4f) : arido ? new Color(0.62f, 0.5f, 0.34f, a.Noche ? 0.14f : 0.26f) : new Color(0.5f, 0.47f, 0.24f, a.Noche ? 0.16f : 0.3f);
             if (unido != null)
             {
                 var deTonos = Materiales.Tonos(tonoSeco);
@@ -694,7 +708,7 @@ namespace Croquis.Visor
             }
             if (!lejano && !urbana)
             {
-                Matas(padre, s, bajo, semilla, a.Noche);
+                Matas(padre, s, bajo, semilla, a.Noche, arido);
             }
 
             // Las parcelas (barbecho) y la orilla seca junto a la vía: una capa de tierra cuya
@@ -741,7 +755,7 @@ namespace Croquis.Visor
         /// Matas de pasto: tarjetas cruzadas chicas sobre el parche fino del suelo, más tupidas cerca de
         /// la vía, donde las ve la cámara. Con semilla; no van donde el suelo es orilla seca.
         /// </summary>
-        private static void Matas(Transform padre, SueloEscenario s, float bajo, long semilla, bool noche)
+        private static void Matas(Transform padre, SueloEscenario s, float bajo, long semilla, bool noche, bool arido = false)
         {
             var n = (int)s.Segmentos + 1;
             var lado = (float)s.LadoM;
@@ -750,7 +764,8 @@ namespace Croquis.Visor
             var azar = new Azar(semilla + 307);
             var verdes = new Malla { NormalArriba = true };
             var secas = new Malla { NormalArriba = true };
-            var Intentos = Calidad.Perfil.Matas;
+            // En zona árida, matorral ralo y seco.
+            var Intentos = arido ? Calidad.Perfil.Matas * 2 / 5 : Calidad.Perfil.Matas;
             // En manchones, no regadas parejo (René, 2026-11-10: «puntitos repetidos»): cada manchón
             // tiene su tamaño, su radio y casi siempre un solo tono (verde o seco), y entre manchones
             // queda pasto liso. El total de matas es el mismo de antes.
@@ -782,7 +797,7 @@ namespace Croquis.Visor
                 var y = cy + Mathf.Sin(ang) * r;
                 var alto = azar.Entre(0.12f, 0.36f) * escala;
                 var giro = azar.Entre(0f, Mathf.PI);
-                var esSeca = azar.Siguiente() < (secoManchon ? 0.85f : 0.12f);
+                var esSeca = arido || azar.Siguiente() < (secoManchon ? 0.85f : 0.12f);
                 var fi = Mathf.Clamp((x - x0) / lado * (n - 1), 0f, n - 1.001f);
                 var fj = Mathf.Clamp((y - y0) / lado * (n - 1), 0f, n - 1.001f);
                 var nodo = Mathf.RoundToInt(fj) * n + Mathf.RoundToInt(fi);

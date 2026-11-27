@@ -847,6 +847,12 @@ namespace Croquis.Visor
                 var textura = Materiales.Ladera(lejana);
                 var mat = new Material(Materiales.Liso(Color.white, 0.02f)) { name = "cerros_" + i };
                 mat.SetTexture("_BaseMap", textura);
+                if (en.Paisaje == PaisajeEntorno.Arido)
+                {
+                    // Zona seca: el verde de la ladera se va a paja y ocre (la textura es la misma).
+                    mat.SetColor("_BaseColor", new Color(1.3f, 1.12f, 0.5f));
+                }
+
                 m.Poner(padre, "cerros_" + i, mat, false, false);
             }
 
