@@ -1217,3 +1217,5 @@ Nada por ahora.
 - banquetas donde OSM dice `sidewalk`.
 
 Los tres necesitan pasar la etiqueta en el paquete (PR aparte).
+
+- **El trayecto previo en Unity** (`feat/u-trayecto-previo`, contrato #375): antes de `t_inicio` el vehículo va por `trayecto_previo` (`Core/Previo.cs`). Se dibujan la ruta punteada en azul claro, la calle lejana como franja de asfalto sobre el suelo de la escena y un piso grande ligero, sin edificios lejos. El letrero «Trayecto ilustrativo: no es evidencia» se ve también en pausa, porque así se graba el video. La reproducción empieza donde empieza el trayecto más largo. La cámara automática sigue al vehículo y en 1.5 s pasa a la llegada, el impacto y el final de siempre. Medido en la MacBook M1 con 5.8 km y 1 210 puntos (`tools/unity/medir-trayecto.mjs` → `eval/results/u_trayecto_previo/medicion.json`): carga en 2.9 s; 14.5 fps (p50) siguiendo al vehículo, contra 14.5 a 17.5 fps con el choque quieto. El trayecto no los baja; esta Mac, bajo Playwright, dibuja la escena completa a esa velocidad. Capturas: `capturas/demo/5-trayecto-t*.jpg`.

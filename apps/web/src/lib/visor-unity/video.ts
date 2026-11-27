@@ -105,6 +105,13 @@ export const enLenta = (t: number, l: CamaraLenta) => t >= l.desde - 1e-9 && t <
 /** «Cámara lenta ×5». */
 export const rotuloLenta = (l: CamaraLenta) => `Cámara lenta ×${Math.round(1 / l.factor)}`;
 
+/** «45 s», «3 min 10 s»: lo que dura el video, para elegir antes de grabar. */
+export function duracionVideo(segundos: number): string {
+  const s = Math.max(1, Math.round(segundos));
+  if (s < 60) return `${s} s`;
+  return `${Math.floor(s / 60)} min${s % 60 ? ` ${s % 60} s` : ""}`;
+}
+
 /** «Faltan 40 s», «Falta 1 min 5 s», «Casi listo», a partir de lo que llevan los cuadros hechos. */
 export function textoFalta(hechos: number, total: number, msTranscurridos: number): string {
   if (hechos <= 0) return "Calculando cuánto falta…";

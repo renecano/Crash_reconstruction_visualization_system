@@ -105,6 +105,7 @@ import {
   type Punto,
 } from "@/lib/escena-facil";
 import { siluetaClase } from "@/lib/colocar";
+import { pedirRuta } from "@/lib/trayecto-previo";
 import { interpretarLugar } from "@/lib/lugar-texto";
 import { callesDelCaso, lugarClaro } from "@/lib/lugar-claro";
 import { etiquetaOpcion, type OpcionLugar, zonaDeOpcion } from "@/lib/lugar-opcion";
@@ -197,6 +198,16 @@ type Mensaje = {
 /** Cómo contesta el perito «¿Dónde quedó después del choque?». */
 type OpcionFinal = "narracion" | "marcar" | "junto" | "nose";
 
+/** La ruta de donde venía cada vehículo: ilustrativa, en otro color que los trayectos del choque. */
+const COLOR_PREVIO = "#0EA5E9";
+
+/** «2.1 km», «480 m». */
+const distanciaRuta = (m: number) =>
+  m >= 1000 ? `${F.numero(m / 1000, 1)} km` : `${Math.round(m / 10) * 10} m`;
+/** «~3 min», «~40 s». */
+const duracionRuta = (s: number) =>
+  s >= 90 ? `~${Math.round(s / 60)} min` : `~${Math.round(s)} s`;
+
 export function EscenaFacil({
   tema,
   estado,
@@ -219,7 +230,15 @@ export function EscenaFacil({
   errorReconstruccion = null,
   obstaculos = [],
   reconstruccion = null,
+  previos = {},
+  onPrevios,
 }: {
+  /**
+   * De dónde venía cada vehículo (René, 2026-11-27), por id: el inicio del trayecto previo ilustrativo.
+   * No entra a la reconstrucción: va con el caso, fuera del expediente.
+   */
+  previos?: Readonly<Record<string, Punto>>;
+  onPrevios?: (p: Readonly<Record<string, Punto>>) => void;
   tema: "claro" | "oscuro";
   estado: EstadoEscena;
   onEstado: (e: EstadoEscena) => void;
@@ -399,7 +418,13 @@ export function EscenaFacil({
   const [descartadas, setDescartadas] = useState<readonly string[]>([]);
   const [listaVista, setListaVista] = useState(false);
   const [mas, setMas] = useState(false);
-  const [herramienta, setHerramienta] = useState<"medir" | { inicial: string } | null>(null);
+  const [herramienta, setHerramienta] = useState<
+    "medir" | { inicial: string } | { previo: string } | null
+  >(null);
+  // La ruta por las calles de cada trayecto previo (hasta donde empieza su llegada), para el mapa.
+  const [rutasPrevias, setRutasPrevias] = useState<
+    Record<string, { puntos: Punto[]; distancia_m: number; duracion_s: number } | { error: string }>
+  >({});
   const [medicion, setMedicion] = useState<Punto[]>([]);
   // Esc termina la medición (ronda 2, A5), como dice su banda.
   useEffect(() => {
@@ -1245,6 +1270,14 @@ export function EscenaFacil({
 
   // Un toque en el mapa, según la pregunta en curso.
   const tocar = (p: Punto) => {
+    // «¿De dónde venía?» va primero: lo pidió el perito con su botón, aun con la lista abierta.
+    if (herramienta && typeof herramienta === "object" && "previo" in herramienta) {
+      const v = herramienta.previo;
+      onPrevios?.({ ...previos, [v]: p });
+      onNota(`De dónde venía el ${nombres[v]} (trayecto ilustrativo, no es evidencia).`);
+      setHerramienta(null);
+      return;
+    }
     if (poniendo) {
       // W4: el objeto de la paleta va donde tocó; los tramos, a lo largo de la calle.
       const tipo = TIPOS_OBJETO.find((t) => t.tipo === poniendo)!;
@@ -1929,6 +1962,65 @@ export function EscenaFacil({
     propuesta: i === propuestaFlecha,
     color: vehiculoActual ? colores[vehiculoActual]!.css : "#2563EB",
   }));
+  // La ruta de cada trayecto previo: de donde marcó el perito hasta donde empieza su llegada (el
+  // inicio marcado o el choque). El 3D vuelve a trazarla hasta el inicio exacto de la reconstrucción.
+  const destinosPrevios = Object.fromEntries(
+    vehiculos.map((v) => [
+      v.id,
+      (poseDe(e, v.id, "inicial") ?? poseDe(e, v.id, "impacto"))?.punto ?? null,
+    ]),
+  );
+  const claveRutas = JSON.stringify([previos, destinosPrevios]);
+  useEffect(() => {
+    let vivo = true;
+    for (const [id, desde] of Object.entries(previos)) {
+      const hasta = destinosPrevios[id];
+      if (!hasta) continue;
+      void pedirRuta(desde, hasta).then((r) => {
+        if (!vivo) return;
+        setRutasPrevias((x) => ({
+          ...x,
+          [id]:
+            "error" in r
+              ? r
+              : {
+                  puntos: r.puntos.map(([lat, lon]) => ({ lat, lon })),
+                  distancia_m: r.distancia_m,
+                  duracion_s: r.duracion_s,
+                },
+        }));
+      });
+    }
+    return () => {
+      vivo = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `claveRutas` resume previos y destinos
+  }, [claveRutas]);
+  const filasPrevias = vehiculos.map((v) => {
+    const r = rutasPrevias[v.id];
+    const marcado = Boolean(previos[v.id]);
+    return {
+      id: v.id,
+      nombre: nombres[v.id] ?? v.id,
+      marcado,
+      marcando:
+        typeof herramienta === "object" && herramienta !== null && "previo" in herramienta
+          ? herramienta.previo === v.id
+          : false,
+      texto: !marcado
+        ? null
+        : !r
+          ? "Trazando la ruta por las calles…"
+          : "error" in r
+            ? r.error
+            : `${distanciaRuta(r.distancia_m)} por las calles · ${duracionRuta(r.duracion_s)} (estimado) · trayecto ilustrativo: no es evidencia`,
+    };
+  });
+  // De dónde venía: la ruta por las calles, punteada en azul claro (ilustrativa).
+  const lineasPrevias = vehiculos.flatMap((v) => {
+    const r = rutasPrevias[v.id];
+    return r && "puntos" in r && previos[v.id] ? [{ puntos: r.puntos, color: COLOR_PREVIO }] : [];
+  });
   const lineas = vehiculos.flatMap((v) => {
     const imp = poseDe(e, v.id, "impacto");
     if (!imp || imp.fuente === "supuesto") return [];
@@ -1942,6 +2034,7 @@ export function EscenaFacil({
   // A3: de donde golpearon a la persona a donde quedó (la proyección), discontinua como las demás.
   for (const per of personasColocadas)
     if (per.final) lineas.push({ puntos: [per.punto, per.final], color: COLOR_PERSONA[tema] });
+  lineas.push(...lineasPrevias);
   const choques = impactos.flatMap((i) => {
     const p = puntoChoque(i.orden);
     return p ? [{ orden: i.orden, punto: p }] : [];
@@ -2983,6 +3076,18 @@ export function EscenaFacil({
       {/* La hoja de la pregunta: a la izquierda; en el celular, abajo. */}
       {nuevo && enLista ? (
         <ListaEscena
+          previos={onPrevios ? filasPrevias : undefined}
+          onMarcarPrevio={(id) => {
+            setHerramienta({ previo: id });
+            // Para marcar lejos (hasta 5 km): el mapa se aleja un poco si está muy cerca.
+            const m = mapa.current;
+            if (m && m.getZoom() > 15) m.easeTo({ zoom: 15 });
+          }}
+          onBorrarPrevio={(id) => {
+            const resto = { ...previos };
+            delete resto[id];
+            onPrevios?.(resto);
+          }}
           items={itemsLista}
           listo={listaLista(itemsLista)}
           onConfirmar={confirmarItem}
@@ -3075,7 +3180,10 @@ export function EscenaFacil({
                       type="button"
                       className="boton-secundario escena-boton"
                       aria-pressed={
-                        typeof herramienta === "object" && herramienta?.inicial === v.id
+                        typeof herramienta === "object" &&
+                        herramienta !== null &&
+                        "inicial" in herramienta &&
+                        herramienta.inicial === v.id
                       }
                       onClick={() => setHerramienta({ inicial: v.id })}
                     >
@@ -3085,7 +3193,7 @@ export function EscenaFacil({
                     </button>
                   ))}
                 </div>
-                {typeof herramienta === "object" && herramienta ? (
+                {typeof herramienta === "object" && herramienta && "inicial" in herramienta ? (
                   <span role="status">
                     Toca el mapa donde empezó el {nombres[herramienta.inicial]}.
                   </span>
