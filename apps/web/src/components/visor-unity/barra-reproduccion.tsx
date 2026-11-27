@@ -10,6 +10,7 @@
  */
 import { formato as F } from "@croquis/cesvi";
 import {
+  alFinal,
   etiquetaVelocidad,
   VELOCIDADES,
   type Accion,
@@ -34,6 +35,8 @@ export function BarraReproduccion({
   onAccion: (a: Accion) => void;
 }) {
   const { inicio, fin } = intervalo;
+  // Al final, el botón dice «Repetir» (↻) y vuelve a empezar.
+  const terminada = estado.pausado && alFinal(estado.t, intervalo);
   const fraccion = (x: number) => (fin > inicio ? ((x - inicio) / (fin - inicio)) * 100 : 0);
   // Con el marco del caso (René, 2026-11-17) va abajo, fuera de la escena; sin él, encima.
   const { enMarco } = useMarco();
@@ -51,13 +54,13 @@ export function BarraReproduccion({
       <button
         type="button"
         className="boton-principal grid h-11 w-11 shrink-0 place-items-center rounded-control p-0"
-        aria-label={corre ? "Pausar" : "Reproducir"}
+        aria-label={corre ? "Pausar" : terminada ? "Repetir" : "Reproducir"}
         onClick={() => onAccion({ tipo: "alternar" })}
         data-testid={`reproducir-${de}`}
         // Espacio, a pantalla completa, toca este botón (el marco lo busca por aquí).
         data-reproducir
       >
-        {corre ? "❚❚" : "▶"}
+        {corre ? "❚❚" : terminada ? "↻" : "▶"}
       </button>
       {/* Un contenedor con nombre: las etiquetas se acomodan según el ancho de la línea, no de la
           ventana (a 1280 px «Llegada» e «Impacto» se encimaban; René, 2026-11-18). */}
