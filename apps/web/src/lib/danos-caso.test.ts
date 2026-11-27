@@ -30,6 +30,24 @@ describe("los daños de AXA A2010930 (prompt del rediseño §0.1)", () => {
     },
   );
 
+  it(
+    "lo medido junto a lo calculado, con el aviso neutral si pide más energía de la que el choque da",
+    { timeout: 60_000 },
+    () => {
+      const v2 = filasDano(e, resultadoAjustado(r), r.ids).find((f) => f.vehiculo === "V2")!;
+      expect(v2.calculado.tipo).toBe("calculado");
+      if (v2.calculado.tipo !== "calculado") return;
+      expect(v2.calculado.medidoCm).toEqual([96, 90, 79, 59, 39, 20]);
+      expect(v2.calculado.rigidez).toBe("rigidez del reporte");
+      expect(v2.calculado.rigidezNota).toMatch(/imprime N\/m y J.*kN\/m y kJ/);
+      expect(v2.calculado.energiaMedidaKj).toBeGreaterThan(220);
+      expect(v2.calculado.maxDisipableKj).toBeLessThan(70);
+      expect(v2.calculado.aviso).toMatch(
+        /^La deformación medida, con la rigidez del reporte, equivale a 22\d kJ; un choque a estas velocidades puede disipar a lo más \d+ kJ: revisa la rigidez o las medidas\.$/,
+      );
+    },
+  );
+
   it("con el resultado de partida (velocidades supuestas, sin choque) dice «sin dato», no 0", () => {
     const filas = filasDano(e, r.resultado, r.ids);
     for (const f of filas) {
