@@ -1,7 +1,7 @@
 # Paso: tollocan
 # Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tollocan -Salida eval/results/t11/tollocan.json
 # Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
-# Inicio: 2026-11-27 15:11:06
+# Inicio: 2026-11-27 15:56:42
 
 
 == 1. Herramientas
@@ -12,7 +12,7 @@ Hay internet.
 Scope: all 10 workspace projects
 ✓ Lockfile passes supply-chain policies (verified 1d ago)
 Lockfile is up to date, resolution step is skipped
-Done in 72ms using pnpm v12.11.2
+Done in 76ms using pnpm v12.11.2
 
 == 3. El visor de Unity, desde esta computadora
 Visor 8a302a256a257a16 servido desde el sitio: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\public\visor-unity\local
@@ -32,7 +32,7 @@ Running 3 tests using 1 worker
 [1/3] [chromium] › e2e\narraciones-fisica.spec.ts:234:5 › Tollocan de René, de punta a punta
 [2/3] [chromium] › e2e\narraciones-fisica.spec.ts:364:7 › las narraciones nuevas: aud-01-alcance-tollocan
 [3/3] [chromium] › e2e\narraciones-fisica.spec.ts:364:7 › las narraciones nuevas: aud-15-carambola4-tollocan-lluvia
-  3 passed (2.2m)
+  3 passed (2.3m)
 Tarjeta que usó Chrome: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\eval\results\t11\tollocan.json.gpu.json
 
-# Fin: 2026-11-27 15:13:25 · ok · 2.3 min
+# Fin: 2026-11-27 15:59:06 · ok · 2.4 min
