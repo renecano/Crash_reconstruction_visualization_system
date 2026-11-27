@@ -1,0 +1,39 @@
+# Paso: preparar
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar
+# Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
+# Inicio: 2026-11-27 15:04:52
+
+
+== 1. Herramientas
+Node v26.13.1 y pnpm 12.11.2.
+Hay internet.
+
+== 2. Dependencias
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 1d ago)
+Lockfile is up to date, resolution step is skipped
+Done in 83ms using pnpm v12.11.2
+
+== 3. El visor de Unity, desde esta computadora
+Visor 8a302a256a257a16 servido desde el sitio: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\public\visor-unity\local
+
+== 4. La app en modo local
+Compilando (unos minutos)...
+$ node scripts/build-worker.mjs && node scripts/maplibre-worker.mjs && node scripts/pdfjs-worker.mjs && node scripts/blender-script.mjs && node scripts/decodificadores.mjs && node scripts/recursos.mjs preparar && next build && node scripts/podar-estaticos.mjs && node scripts/css-check.mjs
+worker del solver → C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\public\workers\reconstruct.js
+Worker de MapLibre 6.15.0 en public/maplibre/.
+Worker de pdf.js 6.4.299 en public/pdfjs/.
+Script de Blender en public/blender/.
+Decodificadores de three 0.186.1 en public/decodificadores/r186/.
+▲ Next.js 16.4.6 (Turbopack)
+✓ Running next.config.ts took 1242ms
+- Experiments (use with caution):
+  ✓ inlineCss
+
+  Creating an optimized production build ...
+¿Desea terminar el trabajo por lotes (S/N)? 
+^CError: ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL
+
+  × "pnpm recursive run" failed in C:\Users\MrKan\Documents\Proyecto
+  │ Cesvi\Croquis\apps\web
+

@@ -1,14 +1,11 @@
 # Paso: dependencias
 # Comando: pnpm install --frozen-lockfile
 # Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
-# Inicio: 2026-11-27 15:04:28
+# Inicio: 2026-11-27 15:05:39
 
 Scope: all 10 workspace projects
 ✓ Lockfile passes supply-chain policies (verified 1d ago)
 Lockfile is up to date, resolution step is skipped
-Update available! 12.11.2 → 12.23.0.
-Changelog: https://pnpm.io/v/12.23.0
-To update, run: Invoke-WebRequest https://get.pnpm.io/install.ps1 -UseBasicParsing | Invoke-Expression
-Done in 658ms using pnpm v12.11.2
+Done in 75ms using pnpm v12.11.2
 
-# Fin: 2026-11-27 15:04:29 · ok · 0 min
+# Fin: 2026-11-27 15:05:40 · ok · 0 min
