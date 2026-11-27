@@ -1134,6 +1134,15 @@ export const Frenado = z.strictObject({
 });
 export type Frenado = z.infer<typeof Frenado>;
 
+/** Un nodo de OSM sobre las calles, ya en metros locales: un semáforo (`highway=traffic_signals`) o un paso peatonal (`highway=crossing` o `crossing=*`). */
+export const NodoMapa = z.strictObject({
+  id_osm: z.int(),
+  tipo: z.enum(["semaforo", "paso_peatonal"]),
+  x: z.number(),
+  y: z.number(),
+});
+export type NodoMapa = z.infer<typeof NodoMapa>;
+
 /** Una calle de OSM (un `way` con `highway`), ya en metros locales. */
 export const ViaMapa = z.strictObject({
   id_osm: z.int(),
@@ -1142,6 +1151,11 @@ export const ViaMapa = z.strictObject({
   carriles: z.int().min(1).max(12).optional(),
   ancho_m: z.number().min(2).max(60).optional(),
   un_sentido: z.boolean().optional(),
+  carriles_ida: z.int().min(0).max(12).optional(),
+  carriles_vuelta: z.int().min(0).max(12).optional(),
+  vueltas: z.array(z.string().max(60)).max(12).optional(),
+  vueltas_vuelta: z.array(z.string().max(60)).max(12).optional(),
+  banqueta: z.enum(["ambos", "izquierda", "derecha", "ninguna"]).optional(),
   puntos: z.array(Punto2D).min(2).max(400),
 });
 export type ViaMapa = z.infer<typeof ViaMapa>;
@@ -1154,6 +1168,7 @@ export const RedVial = z.strictObject({
   consultado: z.string().max(40),
   nodo_cruce: z.int().optional(),
   vias: z.array(ViaMapa).min(1).max(64),
+  nodos: z.array(NodoMapa).max(128).optional(),
 });
 export type RedVial = z.infer<typeof RedVial>;
 

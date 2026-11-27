@@ -63,7 +63,19 @@ export interface ViaMapa {
   carriles?: number;
   ancho_m?: number;
   un_sentido?: boolean;
+  carriles_ida?: number;
+  carriles_vuelta?: number;
+  vueltas?: string[];
+  vueltas_vuelta?: string[];
+  banqueta?: "ambos" | "izquierda" | "derecha" | "ninguna";
   puntos: Point[];
+}
+
+export interface NodoMapa {
+  id_osm: number;
+  tipo: "semaforo" | "paso_peatonal";
+  x: number;
+  y: number;
 }
 
 export interface RedVial {
@@ -73,6 +85,7 @@ export interface RedVial {
   consultado: string;
   nodo_cruce?: number;
   vias: ViaMapa[];
+  nodos?: NodoMapa[];
 }
 
 /** Este y norte (m) de un punto respecto al origen. */
@@ -234,6 +247,7 @@ export function recorteEnCirculo(pts: readonly Point[], r: number): Point[] {
 export function redVialFrom(resp: OverpassResponse, o: RedVialOptions): RedVial {
   const { nodes, ways } = parts(resp);
   const vias: ViaMapa[] = [];
+  const usados = new Set<number>();
   const maxR = 1.5 * o.radioM;
   for (const w of ways) {
     let pts = w.nodes
@@ -259,7 +273,9 @@ export function redVialFrom(resp: OverpassResponse, o: RedVialOptions): RedVial 
     const width = widthOf(w);
     if (width !== undefined) via.ancho_m = width;
     if (oneway(w) !== 0) via.un_sentido = true;
+    Object.assign(via, detalleDe(w));
     vias.push(via);
+    for (const id of w.nodes) usados.add(id);
   }
   // Las de mayor jerarquía primero; el contrato admite hasta 64.
   vias.sort(
@@ -273,7 +289,71 @@ export function redVialFrom(resp: OverpassResponse, o: RedVialOptions): RedVial 
     vias: vias.slice(0, 64),
   };
   if (o.nodoCruce !== undefined) red.nodo_cruce = o.nodoCruce;
+  // Los semáforos y pasos peatonales sobre las calles, los más cercanos primero.
+  const nodos: NodoMapa[] = [];
+  for (const id of usados) {
+    const n = nodes.get(id);
+    const t = n?.tags;
+    if (!n || !t) continue;
+    const p = rotateDeg(enu(n.lat, n.lon, o.lat, o.lon), -o.rotacionDeg);
+    if (Math.hypot(p.x, p.y) > maxR) continue;
+    const x = Math.round(p.x * 1000) / 1000;
+    const y = Math.round(p.y * 1000) / 1000;
+    if (t.highway === "traffic_signals") nodos.push({ id_osm: id, tipo: "semaforo", x, y });
+    if (t.highway === "crossing" || (t.crossing !== undefined && t.crossing !== "no"))
+      nodos.push({ id_osm: id, tipo: "paso_peatonal", x, y });
+  }
+  nodos.sort((a, b) => Math.hypot(a.x, a.y) - Math.hypot(b.x, b.y) || a.id_osm - b.id_osm);
+  if (nodos.length) red.nodos = nodos.slice(0, 128);
   return red;
+}
+
+/**
+ * Lo que OSM dice de los carriles y las banquetas de una calle, en el sentido de sus puntos (con
+ * `oneway=-1` los puntos ya van al revés, así que adelante y atrás, izquierda y derecha, se cambian).
+ */
+export function detalleDe(
+  w: OsmWay,
+): Pick<ViaMapa, "carriles_ida" | "carriles_vuelta" | "vueltas" | "vueltas_vuelta" | "banqueta"> {
+  const t = w.tags ?? {};
+  const alReves = oneway(w) === -1;
+  const par = <T>(ida: T, vuelta: T): [T, T] => (alReves ? [vuelta, ida] : [ida, vuelta]);
+  const num = (v?: string) => {
+    const n = Number.parseInt(v ?? "", 10);
+    return Number.isFinite(n) && n >= 0 && n <= 12 ? n : undefined;
+  };
+  const flechas = (v?: string) =>
+    v === undefined
+      ? undefined
+      : v
+          .split("|")
+          .slice(0, 12)
+          .map((f) => f.trim().slice(0, 60));
+  const out: ReturnType<typeof detalleDe> = {};
+  const [ida, vuelta] = par(num(t["lanes:forward"]), num(t["lanes:backward"]));
+  if (ida !== undefined) out.carriles_ida = ida;
+  if (vuelta !== undefined) out.carriles_vuelta = vuelta;
+  const [ida0, fv] = par(flechas(t["turn:lanes:forward"]), flechas(t["turn:lanes:backward"]));
+  // En un sentido, `turn:lanes` va en el sentido de circulación, que es el de los puntos.
+  const fi = ida0 ?? (oneway(w) !== 0 ? flechas(t["turn:lanes"]) : undefined);
+  if (fi) out.vueltas = fi;
+  if (fv) out.vueltas_vuelta = fv;
+  // `sidewalk=both|left|right|no|separate` o `sidewalk:both|left|right=yes|no|separate`.
+  const hay = (v?: string) =>
+    v === undefined ? undefined : v === "no" || v === "none" ? false : true;
+  const sw = t.sidewalk;
+  let izq =
+    hay(t["sidewalk:left"]) ??
+    hay(t["sidewalk:both"]) ??
+    (sw === undefined ? undefined : sw === "both" || sw === "left" || sw === "separate");
+  let der =
+    hay(t["sidewalk:right"]) ??
+    hay(t["sidewalk:both"]) ??
+    (sw === undefined ? undefined : sw === "both" || sw === "right" || sw === "separate");
+  [izq, der] = par(izq, der);
+  if (izq !== undefined || der !== undefined)
+    out.banqueta = izq && der ? "ambos" : izq ? "izquierda" : der ? "derecha" : "ninguna";
+  return out;
 }
 
 export interface TemplateFromMap {
@@ -315,7 +395,8 @@ export function templateFromCrossing(c: Crossing): TemplateFromMap {
 export function overpassQuery(lat: number, lon: number, radioM: number): string {
   return (
     `[out:json][timeout:25];way(around:${radioM},${lat},${lon})["highway"];` +
-    "out body;>;out skel qt;"
+    // Los nodos con sus etiquetas (`out body`): los semáforos y los pasos peatonales.
+    "out body;>;out body qt;"
   );
 }
 

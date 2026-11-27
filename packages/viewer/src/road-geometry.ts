@@ -341,6 +341,12 @@ export function buildMapRoadGeometry(
   for (const v of vias) {
     const r = v.ancho / 2;
     const sidewalks = (opts.banquetas ?? false) && !NO_SIDEWALK.test(v.tipo ?? "");
+    // Lo que diga OSM de la calle (`sidewalk`, punto 9) manda sobre lo que declare la escena.
+    // `side` +1 es la izquierda del sentido de los puntos.
+    const conBanqueta = (side: number): boolean =>
+      v.banqueta
+        ? v.banqueta === "ambos" || v.banqueta === (side > 0 ? "izquierda" : "derecha")
+        : sidewalks;
     const offsets = mapViaLineOffsets(v);
     for (let i = 0; i < v.puntos.length; i++) {
       const a = v.puntos[i]!;
@@ -371,13 +377,13 @@ export function buildMapRoadGeometry(
         }
       }
       for (const side of [-1, 1]) {
-        if (sidewalks) {
+        if (conBanqueta(side)) {
           along(a, b, side * (r + SIDEWALK_WIDTH / 2), 2, 0, (c, dd, l) => {
             if (inCrossing(c, v, dd, SIDEWALK_WIDTH / 2) || onOtherPavement(c, v, 0)) return;
             orientedQuad(sidewalk, c, dd, l, SIDEWALK_WIDTH);
           });
         }
-        if (withCurbs) {
+        if (withCurbs || conBanqueta(side)) {
           along(a, b, side * r, 2, 0, (c, dd, l) => {
             if (inCrossing(c, v, dd, 0.3) || onOtherPavement(c, v, -0.05)) return;
             curbs.push({

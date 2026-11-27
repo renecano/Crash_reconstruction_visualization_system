@@ -72,9 +72,10 @@ export function instantesDelVideo(
   fin: number,
   fps = FPS_VIDEO,
   lenta: CamaraLenta | null = null,
+  acelerado: Acelerado | null = null,
 ): number[] {
   if (!(fin > inicio)) return [inicio];
-  if (!lenta) {
+  if (!lenta && !acelerado) {
     const n = Math.floor((fin - inicio) * fps + 1e-9) + 1;
     return Array.from({ length: n }, (_, i) => inicio + i / fps);
   }
@@ -82,10 +83,53 @@ export function instantesDelVideo(
   const t: number[] = [];
   for (let x = inicio; x <= fin + 1e-9;) {
     t.push(x);
-    x += (enLenta(x, lenta) ? lenta.factor : 1) / fps;
+    const factor =
+      acelerado && x < acelerado.hasta - 1e-9
+        ? acelerado.factor
+        : lenta && enLenta(x, lenta)
+          ? lenta.factor
+          : 1;
+    x += factor / fps;
   }
   return t;
 }
+
+/** El trayecto lejano acelerado en el video: hasta `hasta` (s), cada cuadro avanza `factor` veces. */
+export interface Acelerado {
+  hasta: number;
+  factor: number;
+}
+
+/** Lo que dura el video «Desde el inicio» (René, 2026-11-27: ~1 min, no 12). */
+export const VIDEO_DESDE_EL_INICIO_S = 60;
+/** La llegada, los últimos segundos antes de la reconstrucción, va a velocidad normal. */
+export const LLEGADA_NORMAL_S = 8;
+const FACTORES = [2, 5, 10, 20, 50, 100, 200, 500];
+
+/**
+ * Cuánto acelerar el trayecto lejano para que el video «Desde el inicio» dure ~1 min: el tramo de
+ * `inicio` a `reconstruccion − LLEGADA_NORMAL_S` va ×N (el primer N redondo que alcanza); la llegada y la
+ * reconstrucción, como siempre (con su cámara lenta). Null si no hace falta.
+ */
+export function aceleradoDelVideo(
+  inicio: number,
+  reconstruccion: number,
+  fin: number,
+  lenta: CamaraLenta | null,
+  objetivoS = VIDEO_DESDE_EL_INICIO_S,
+): Acelerado | null {
+  const hasta = reconstruccion - LLEGADA_NORMAL_S;
+  if (!(hasta > inicio)) return null;
+  const resto = instantesDelVideo(hasta, fin, FPS_VIDEO, lenta).length / FPS_VIDEO;
+  const lejos = hasta - inicio;
+  if (lejos + resto <= objetivoS) return null;
+  const queda = Math.max(5, objetivoS - resto);
+  const factor = FACTORES.find((f) => lejos / f <= queda) ?? FACTORES.at(-1)!;
+  return { hasta, factor };
+}
+
+/** «Trayecto ilustrativo · acelerado ×20». */
+export const rotuloAcelerado = (a: Acelerado) => `Trayecto ilustrativo · acelerado ×${a.factor}`;
 
 /** La cámara lenta del video: de `desde` a `hasta` (s, 0 es el impacto), a `factor` de la velocidad. */
 export interface CamaraLenta {
@@ -180,6 +224,8 @@ export interface OpcionesGrabacion {
   confirmar?: (msEstimados: number) => Promise<boolean>;
   /** La cámara lenta alrededor del impacto (con su letrero en el cuadro); sin ella, todo a 1×. */
   lenta?: CamaraLenta | null;
+  /** El trayecto lejano acelerado (con su letrero en el cuadro). */
+  acelerado?: Acelerado | null;
 }
 
 /** Espera la siguiente vuelta del navegador. */
@@ -296,7 +342,13 @@ export async function grabarVideoUnity(o: OpcionesGrabacion): Promise<Blob> {
   const ctx = comp.getContext("2d");
   if (!ctx) throw new VideoNoDisponible("No hay contexto 2D para componer el video.");
 
-  const instantes = instantesDelVideo(o.inicio, o.fin, FPS_VIDEO, o.lenta ?? null);
+  const instantes = instantesDelVideo(
+    o.inicio,
+    o.fin,
+    FPS_VIDEO,
+    o.lenta ?? null,
+    o.acelerado ?? null,
+  );
   let pregunto = false;
   const pasada = async (
     l: ReturnType<typeof lectorDeCuadros>,
@@ -340,7 +392,11 @@ export async function grabarVideoUnity(o: OpcionesGrabacion): Promise<Blob> {
           cuadro,
           o.logo,
           o.credito ?? null,
-          o.lenta && enLenta(instantes[i]!, o.lenta) ? rotuloLenta(o.lenta) : null,
+          o.acelerado && instantes[i]! < o.acelerado.hasta
+            ? rotuloAcelerado(o.acelerado)
+            : o.lenta && enLenta(instantes[i]!, o.lenta)
+              ? rotuloLenta(o.lenta)
+              : null,
         );
         await source.add(i / FPS_VIDEO, 1 / FPS_VIDEO);
         o.alProgreso?.(i + 1, instantes.length, performance.now() - empezo);

@@ -63,7 +63,7 @@ namespace Croquis.Core.Tests
                 n++;
             }
 
-            Assert.True(n >= 14, "escenas revisadas: " + n);
+            Assert.True(n >= 18, "escenas revisadas: " + n);
         }
 
         [Fact]
@@ -78,6 +78,21 @@ namespace Croquis.Core.Tests
             Assert.Empty(Calzada.Invasores(e));
             // Se cortan, no se pierden: quedan los tramos de fuera de la vía.
             Assert.True(e.Entorno.Cercas.Length >= cercas - 11);
+        }
+
+        [Fact]
+        public void EnMatlatzincasLasDefensasYaNoCruzanLosCarriles()
+        {
+            // René, 2026-11-27: en su caso de Paseo Matlatzincas los postes de las defensas quedaban en
+            // medio de los carriles.
+            var raiz = Path.GetFullPath(Path.Combine(Aqui(), "..", "..", "..", ".."));
+            var e = Paquete.Leer(File.ReadAllText(Path.Combine(raiz, "packages", "scene-schema", "fixtures", "caso3d-ciudad", "matlatzincas.json"))).Escenario;
+            Assert.Contains(Calzada.Invasores(e), x => x.StartsWith("defensa"));
+            var antes = e.Via.Barreras.Length;
+            Calzada.Despejar(e);
+            Assert.Empty(Calzada.Invasores(e));
+            // Se cortan, no se pierden las de la orilla.
+            Assert.True(e.Via.Barreras.Length >= antes / 2);
         }
 
         [Fact]

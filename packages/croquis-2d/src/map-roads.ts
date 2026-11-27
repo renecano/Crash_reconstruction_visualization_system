@@ -15,6 +15,11 @@ export interface MapVia {
   unSentido?: boolean;
   /** `highway` de OSM. */
   tipo?: string;
+  /** `lanes:forward` y `lanes:backward`: en el sentido de los puntos y en contra. */
+  carrilesIda?: number;
+  carrilesVuelta?: number;
+  /** `sidewalk`: de qué lado hay banqueta, según el sentido de los puntos. */
+  banqueta?: "ambos" | "izquierda" | "derecha" | "ninguna";
 }
 
 /** Ancho de las rayas (m). */
@@ -50,6 +55,23 @@ export function mapViaLineOffsets(
   v: MapVia,
 ): { edges: number[]; center: number[]; dashed: number[] } | null {
   if (v.carriles === undefined) return null;
+  const ida = v.carrilesIda;
+  const vuelta = v.carrilesVuelta;
+  // Doble sentido con distintos carriles por sentido (`lanes:forward`/`backward`): la raya central
+  // no va a la mitad. Los de ida van a la derecha del sentido de los puntos.
+  if (!v.unSentido && ida && vuelta && ida !== vuelta) {
+    const w = v.ancho / (ida + vuelta);
+    const c = v.ancho / 2 - vuelta * w;
+    const dashed: number[] = [];
+    for (let k = 1; k < vuelta; k++) dashed.push(c + k * w);
+    for (let k = 1; k < ida; k++) dashed.push(c - k * w);
+    const half = v.ancho / 2;
+    return {
+      edges: [-half + LINE_WIDTH, half - LINE_WIDTH],
+      center: [c - 0.1, c + 0.1],
+      dashed,
+    };
+  }
   return stripLineOffsets(
     { center: { x: 0, y: 0 }, length: 0, heading: 0, width: v.ancho, lanes: v.carriles, median: 0 },
     !(v.unSentido ?? false),

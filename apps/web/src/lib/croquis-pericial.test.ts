@@ -8,6 +8,8 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
+  tramosFueraDeOtras,
+  viasRelevantes,
   colocarEtiquetas,
   croquisPericial,
   direccionDeLlegada,
@@ -130,5 +132,31 @@ describe("el croquis pericial (ronda 4)", () => {
     expect(color).toContain("rgb(");
     expect(escalaRedonda(100)).toBe(20);
     expect(escalaRedonda(48)).toBe(10);
+  });
+});
+
+describe("solo las calles que importan (René, 2026-11-27)", () => {
+  const recta = (x0: number, y0: number, x1: number, y1: number, ancho = 7) => ({
+    puntos: [
+      { x: x0, y: y0 },
+      { x: x1, y: y1 },
+    ],
+    ancho,
+  });
+  it("quedan la recorrida, la que cruza en el choque y el tramo que sigue; se va la lejana", () => {
+    const recorrida = recta(-50, 0, 0, 0);
+    const sigue = recta(0, 0, 60, 2);
+    const cruza = recta(5, -40, 5, 40);
+    const lejana = recta(-50, 40, 50, 40);
+    const r = viasRelevantes([recorrida, sigue, cruza, lejana], [[{ x: -30, y: 0 }]], {
+      x: 5,
+      y: 0,
+    });
+    expect(r).toEqual([recorrida, sigue, cruza]);
+  });
+  it("la raya de una calle no atraviesa a la que cruza", () => {
+    const tramos = tramosFueraDeOtras(recta(-20, 0, 20, 0).puntos, [recta(0, -20, 0, 20)]);
+    expect(tramos).toHaveLength(2);
+    for (const t of tramos) for (const p of t) expect(Math.abs(p.x)).toBeGreaterThan(3.5);
   });
 });

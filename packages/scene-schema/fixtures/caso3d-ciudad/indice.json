@@ -82,12 +82,12 @@
       "postes": 11,
       "senales": 16,
       "rodadas": 300,
-      "vertices_via": 9621,
+      "vertices_via": 9912,
       "objetos_del_choque": [
         "poste"
       ],
       "vehiculos": 1,
-      "bytes": 642011
+      "bytes": 652110
     },
     {
       "clave": "toluca-arbol",
@@ -100,12 +100,12 @@
       "postes": 11,
       "senales": 16,
       "rodadas": 300,
-      "vertices_via": 9621,
+      "vertices_via": 9912,
       "objetos_del_choque": [
         "arbol"
       ],
       "vehiculos": 1,
-      "bytes": 643966
+      "bytes": 654065
     },
     {
       "clave": "toluca-pared",
@@ -118,12 +118,12 @@
       "postes": 11,
       "senales": 16,
       "rodadas": 300,
-      "vertices_via": 9621,
+      "vertices_via": 9912,
       "objetos_del_choque": [
         "muro"
       ],
       "vehiculos": 1,
-      "bytes": 652568
+      "bytes": 662667
     },
     {
       "clave": "axa",
@@ -194,6 +194,173 @@
       "bytes": 448945
     },
     {
+      "clave": "matlatzincas",
+      "que": "El caso de René en Paseo Matlatzincas, tal cual (árbol en la curva, de noche)",
+      "lugar": "matlatzincas_rene",
+      "ms_armado": 2496,
+      "zona": "urbana",
+      "edificios": 540,
+      "arboles": 234,
+      "postes": 22,
+      "senales": 20,
+      "rodadas": 836,
+      "vertices_via": 27216,
+      "objetos_del_choque": [
+        "arbol",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste"
+      ],
+      "vehiculos": 1,
+      "bytes": 1276371
+    },
+    {
+      "clave": "viaducto",
+      "que": "Viaducto Miguel Alemán con su lateral y el paso a desnivel de Insurgentes",
+      "lugar": "viaducto_la_piedad",
+      "ms_armado": 881,
+      "zona": "urbana",
+      "edificios": 603,
+      "arboles": 238,
+      "postes": 31,
+      "senales": 41,
+      "rodadas": 388,
+      "vertices_via": 28011,
+      "objetos_del_choque": [
+        "arbol",
+        "arbol",
+        "barda",
+        "arbol",
+        "barda",
+        "barda",
+        "barda",
+        "barda",
+        "barda",
+        "arbol",
+        "barda",
+        "barda",
+        "arbol",
+        "barda",
+        "barda",
+        "barda",
+        "barda",
+        "barda",
+        "barda",
+        "barda",
+        "barda",
+        "barda",
+        "barda",
+        "barda"
+      ],
+      "vehiculos": 1,
+      "bytes": 1325769
+    },
+    {
+      "clave": "periferico",
+      "que": "Anillo Periférico en CU, con laterales",
+      "lugar": "periferico_cu",
+      "ms_armado": 1237,
+      "zona": "urbana",
+      "edificios": 551,
+      "arboles": 288,
+      "postes": 28,
+      "senales": 46,
+      "rodadas": 404,
+      "vertices_via": 23701,
+      "objetos_del_choque": [
+        "arbol",
+        "muro",
+        "muro",
+        "muro",
+        "muro",
+        "muro",
+        "muro"
+      ],
+      "vehiculos": 1,
+      "bytes": 1161424
+    },
+    {
+      "clave": "circuito-interior",
+      "que": "Circuito Interior en Río Mixcoac",
+      "lugar": "circuito_rio_mixcoac",
+      "ms_armado": 1420,
+      "zona": "urbana",
+      "edificios": 563,
+      "arboles": 229,
+      "postes": 30,
+      "senales": 24,
+      "rodadas": 804,
+      "vertices_via": 25821,
+      "objetos_del_choque": [
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol",
+        "arbol"
+      ],
+      "vehiculos": 1,
+      "bytes": 1285944
+    },
+    {
       "clave": "metepec-arbol",
       "que": "Paseo Tollocan en Metepec, contra un árbol",
       "lugar": "tollocan_metepec",
@@ -204,14 +371,14 @@
       "postes": 41,
       "senales": 45,
       "rodadas": 204,
-      "vertices_via": 16597,
+      "vertices_via": 16608,
       "objetos_del_choque": [
         "arbol",
         "poste",
         "poste"
       ],
       "vehiculos": 1,
-      "bytes": 886700
+      "bytes": 887097
     },
     {
       "clave": "reforma-poste",
@@ -219,12 +386,12 @@
       "lugar": "reforma_cdmx",
       "ms_armado": 1940,
       "zona": "urbana",
-      "edificios": 556,
+      "edificios": 537,
       "arboles": 173,
       "postes": 5,
       "senales": 27,
       "rodadas": 862,
-      "vertices_via": 23621,
+      "vertices_via": 28635,
       "objetos_del_choque": [
         "poste",
         "muro",
@@ -240,7 +407,7 @@
         "barda"
       ],
       "vehiculos": 1,
-      "bytes": 1138419
+      "bytes": 1369799
     },
     {
       "clave": "insurgentes-arbol",
@@ -253,7 +420,7 @@
       "postes": 17,
       "senales": 25,
       "rodadas": 664,
-      "vertices_via": 26083,
+      "vertices_via": 28799,
       "objetos_del_choque": [
         "arbol",
         "poste",
@@ -321,7 +488,7 @@
         "poste"
       ],
       "vehiculos": 1,
-      "bytes": 1255919
+      "bytes": 1388677
     },
     {
       "clave": "guadalajara-poste",
@@ -334,7 +501,7 @@
       "postes": 11,
       "senales": 18,
       "rodadas": 138,
-      "vertices_via": 5971,
+      "vertices_via": 7459,
       "objetos_del_choque": [
         "poste",
         "arbol",
@@ -396,7 +563,7 @@
         "barda"
       ],
       "vehiculos": 1,
-      "bytes": 540826
+      "bytes": 612319
     },
     {
       "clave": "monterrey-pared",
@@ -409,7 +576,7 @@
       "postes": 21,
       "senales": 20,
       "rodadas": 368,
-      "vertices_via": 14653,
+      "vertices_via": 14971,
       "objetos_del_choque": [
         "muro",
         "muro",
@@ -446,7 +613,7 @@
         "muro"
       ],
       "vehiculos": 1,
-      "bytes": 849762
+      "bytes": 860603
     }
   ]
 }

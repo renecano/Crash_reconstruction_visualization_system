@@ -686,6 +686,14 @@ class Dispositivo(BaseModel):
     procedencia: Procedencia
 
 
+class Vuelta(RootModel[str]):
+    root: Annotated[str, Field(max_length=60)]
+
+
+class VueltasVueltaItem(RootModel[str]):
+    root: Annotated[str, Field(max_length=60)]
+
+
 class ViaMapa(BaseModel):
     """
     Una calle de OSM (un `way` con `highway`), ya en metros locales.
@@ -700,7 +708,41 @@ class ViaMapa(BaseModel):
     carriles: Annotated[int | None, Field(ge=1, le=12)] = None
     ancho_m: Annotated[float | None, Field(ge=2.0, le=60.0)] = None
     un_sentido: bool | None = None
+    carriles_ida: Annotated[int | None, Field(ge=0, le=12)] = None
+    """
+    Carriles en el sentido de los puntos (`lanes:forward`; desde 2.3.0 sin cambiar la versión, como ADR 0142).
+    """
+    carriles_vuelta: Annotated[int | None, Field(ge=0, le=12)] = None
+    """
+    Carriles en contra del sentido de los puntos (`lanes:backward`).
+    """
+    vueltas: Annotated[list[Vuelta] | None, Field(max_length=12)] = None
+    """
+    Las flechas de cada carril en el sentido de los puntos, de izquierda a derecha (`turn:lanes` o `turn:lanes:forward`): «left», «through;right», «» sin flecha.
+    """
+    vueltas_vuelta: Annotated[list[VueltasVueltaItem] | None, Field(max_length=12)] = None
+    """
+    Igual que `vueltas`, para los carriles en contra del sentido de los puntos (`turn:lanes:backward`), de izquierda a derecha según su propio sentido.
+    """
+    banqueta: Literal["ambos", "izquierda", "derecha", "ninguna"] | None = None
+    """
+    Dónde tiene banqueta (`sidewalk`), a la izquierda o a la derecha según el sentido de los puntos.
+    """
     puntos: Annotated[list[Punto2D], Field(max_length=400, min_length=2)]
+
+
+class NodoMapa(BaseModel):
+    """
+    Un nodo de OSM sobre las calles, ya en metros locales: un semáforo (`highway=traffic_signals`) o un paso peatonal (`highway=crossing` o `crossing=*`).
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    id_osm: int
+    tipo: Literal["semaforo", "paso_peatonal"]
+    x: float
+    y: float
 
 
 class UbicacionReal(BaseModel):
@@ -2237,6 +2279,10 @@ class RedVial(BaseModel):
     Nodo OSM del cruce que queda en el origen de la escena, si lo hay.
     """
     vias: Annotated[list[ViaMapa], Field(max_length=64, min_length=1)]
+    nodos: Annotated[list[NodoMapa] | None, Field(max_length=128)] = None
+    """
+    Los semáforos y pasos peatonales de OSM sobre las calles (desde 2.3.0 sin cambiar la versión).
+    """
 
 
 class Lugar(BaseModel):
