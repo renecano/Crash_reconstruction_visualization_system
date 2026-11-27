@@ -1,5 +1,5 @@
-{"fecha":"2026-11-27T21:06:48.017Z","caso":"AXA","estado":"listo","segundos":19.9,"fases":["arrancando @0.0 s","calculando @1.1 s","listo @19.9 s"]}
-{"fecha":"2026-11-27T21:06:54.707Z","caso":"Tollocan","estado":"listo","segundos":4.9,"fases":["arrancando @0.0 s","calculando @0.5 s","listo @4.9 s"]}
-{"fecha":"2026-11-27T21:07:00.135Z","caso":"Reforma, CDMX (batería de ciudad)","estado":"listo","segundos":3.7,"fases":["arrancando @0.0 s","calculando @0.5 s","listo @3.7 s"]}
-{"fecha":"2026-11-27T21:07:05.409Z","caso":"Centro de Guadalajara (batería de ciudad)","estado":"listo","segundos":3.6,"fases":["arrancando @0.0 s","calculando @0.9 s","listo @3.6 s"]}
-{"fecha":"2026-11-27T21:07:16.879Z","caso":"Ejemplo crucero de noche","estado":"listo","segundos":6.5,"fases":["arrancando @0.0 s","calculando @1.4 s","listo @6.5 s"],"notas":["«¿Por dónde venía el VW Jetta?»: la flecha más cercana a «Del sur» se aparta 37°.","«¿Por dónde venía el GM Camaro?»: la flecha más cercana a «Del oeste» se aparta 37°."]}
+{"fecha":"2026-11-27T21:52:07.826Z","caso":"AXA","estado":"listo","segundos":16.1,"fases":["arrancando @0.0 s","calculando @1.5 s","listo @16.1 s"]}
+{"fecha":"2026-11-27T21:52:16.230Z","caso":"Tollocan","estado":"listo","segundos":6.3,"fases":["arrancando @0.0 s","calculando @1.1 s","listo @6.3 s"]}
+{"fecha":"2026-11-27T21:52:23.033Z","caso":"Reforma, CDMX (batería de ciudad)","estado":"listo","segundos":4.8,"fases":["arrancando @0.0 s","calculando @1.4 s","listo @4.8 s"]}
+{"fecha":"2026-11-27T21:52:29.040Z","caso":"Centro de Guadalajara (batería de ciudad)","estado":"listo","segundos":4,"fases":["arrancando @0.0 s","calculando @1.0 s","listo @4.0 s"]}
+{"fecha":"2026-11-27T21:52:40.742Z","caso":"Ejemplo crucero de noche","estado":"listo","segundos":5.3,"fases":["arrancando @0.0 s","calculando @1.9 s","listo @5.3 s"],"notas":["«¿Por dónde venía el VW Jetta?»: la flecha más cercana a «Del sur» se aparta 37°.","«¿Por dónde venía el GM Camaro?»: la flecha más cercana a «Del oeste» se aparta 37°."]}
