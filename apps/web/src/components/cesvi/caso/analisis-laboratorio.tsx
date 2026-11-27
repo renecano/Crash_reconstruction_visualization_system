@@ -169,9 +169,23 @@ function TarjetaDano({
                   <Cifra valor={c.deltaVKmh} unidad="km/h" etiqueta="cambio de velocidad (Δv)" />
                 ) : null}
               </div>
+              {c.roce ? (
+                // Un roce bajo el umbral de CRASH3 (René, 2026-11-26): 0 cm es lo correcto; se dice
+                // por qué, con las dos energías.
+                <p className="t-nota" data-testid={`dano-roce-${v}`}>
+                  Sin deformación permanente: en el choque absorbe{" "}
+                  <span className="cifras">{c.roce.energiaKj} kJ</span> y esta zona no se deforma
+                  con menos de <span className="cifras">{c.roce.umbralKj} kJ</span> (umbral de
+                  CRASH3, A²/2B en <span className="cifras">{c.roce.anchoM} m</span> de ancho, con
+                  la {c.rigidez}). Es un roce: deja rayones o pintura desprendida, sin aplastamiento
+                  que CRASH3 pueda medir.
+                </p>
+              ) : null}
               <p className="t-nota">
                 {METODO.reconstruccion}, con las velocidades reconstruidas; perfil estimado{" "}
-                {c.perfilCm.every((x) => x === 0) ? (
+                {c.roce ? (
+                  <span className="cifras">0 cm en todo el ancho</span>
+                ) : c.perfilCm.every((x) => x === 0) ? (
                   // Con poca energía, la deformación queda por debajo de medio centímetro y redondea
                   // a cero: se dice así, sin una fila de ceros (ronda 2, B).
                   <span className="cifras">menos de 0.5 cm en todo el ancho</span>

@@ -1,7 +1,7 @@
 import { reconstruirExpediente, resultadoAjustado } from "@croquis/cesvi";
 import { describe, expect, it } from "vitest";
 import { expedienteAxaReconstruccion, SPEC_ID_APP } from "./axa-reconstruccion";
-import { filasDano } from "./danos-caso";
+import { filasDano, roceBajoElUmbral } from "./danos-caso";
 
 describe("los daños de AXA A2010930 (prompt del rediseño §0.1)", () => {
   const e = expedienteAxaReconstruccion();
@@ -54,5 +54,24 @@ describe("los daños de AXA A2010930 (prompt del rediseño §0.1)", () => {
       expect(f.calculado.tipo).toBe("sin_dato");
       if (f.calculado.tipo === "sin_dato") expect(f.calculado.motivo).toMatch(/no absorbe energía/);
     }
+  });
+});
+
+describe("el roce bajo el umbral de CRASH3 (René, 2026-11-26, la reversa)", () => {
+  // La parte posterior de una SUV compacta (NHTSA): A²/2B = 5590 J/m; en 0.72 m, 4.0 kJ.
+  const rigidez = { a_n_m: 97012, b_n_m2: 841777 };
+  it("con el perfil en cero y menos energía que el umbral, dice las dos energías", () => {
+    expect(
+      roceBajoElUmbral(1300, { perfil_m: [0, 0, 0, 0, 0, 0], ancho_m: 0.72, rigidez }),
+    ).toEqual({ energiaKj: 1.3, umbralKj: 4, anchoM: 0.7 });
+  });
+  it("si hay deformación, si pasa el umbral o si falta la rigidez, no es un roce", () => {
+    expect(
+      roceBajoElUmbral(1300, { perfil_m: [0, 0.01, 0, 0, 0, 0], ancho_m: 0.72, rigidez }),
+    ).toBeNull();
+    expect(
+      roceBajoElUmbral(5000, { perfil_m: [0, 0, 0, 0, 0, 0], ancho_m: 0.72, rigidez }),
+    ).toBeNull();
+    expect(roceBajoElUmbral(1300, { perfil_m: [0, 0, 0, 0, 0, 0], ancho_m: 0.72 })).toBeNull();
   });
 });
