@@ -83,7 +83,7 @@ import type { ResultadoMaqueta } from "@/lib/maqueta";
 import { MODALIDAD } from "@/lib/nombres-cesvi";
 import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
 import { leerTransiciones, useTema, useTransiciones, type Modo } from "@/lib/preferencias-cesvi";
-import { lecturaGuardada } from "@/lib/ejemplos-narracion";
+import { conLugarDelEjemplo, lecturaGuardada } from "@/lib/ejemplos-narracion";
 import { Calculos, type DistanciaRestos } from "../calculos";
 import { Expediente as ExpedienteCesvi } from "../expediente";
 import { DictamenCaso } from "../dictamen-caso";
@@ -542,7 +542,11 @@ export function RecorridoCaso({
         return;
       }
       if (redactada !== texto) setTexto(redactada);
-      abrirEscena({ ...p.escena, preguntas: p.preguntas });
+      // Un ejemplo sin cambios abre en su lugar guardado, sin el buscador (René, 2026-11-25).
+      const escena = deEjemplo
+        ? { ...p.escena, expediente: conLugarDelEjemplo(redactada, p.escena.expediente) }
+        : p.escena;
+      abrirEscena({ ...escena, preguntas: p.preguntas });
       setLecturaGuardadaUsada(deEjemplo);
       setEstado(null);
     } catch {

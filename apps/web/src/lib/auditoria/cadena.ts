@@ -181,6 +181,8 @@ export async function auditarCaso(o: {
   salida: SalidaCorpus;
   red: Red;
   esperado?: Esperado;
+  /** El lugar guardado del caso (los cinco ejemplos): no se busca. */
+  lugarGuardado?: Punto & { nombre: string };
   /** Para depurar un caso: recibe el expediente final y el paquete 3D. */
   volcar?: (nombre: "expediente" | "paquete", dato: unknown) => void;
 }): Promise<FilaAuditoria> {
@@ -225,8 +227,8 @@ export async function auditarCaso(o: {
     cruce?.calles[0] ?? null,
     carreteraNarrada(o.narracion),
   ].filter((x): x is string => Boolean(x?.trim()));
-  let lugar: (Punto & { nombre: string }) | null = null;
-  for (const q of consultas) {
+  let lugar: (Punto & { nombre: string }) | null = o.lugarGuardado ?? null;
+  for (const q of lugar ? [] : consultas) {
     const r = await o.red.lugar(q, zona.municipio, zona.estado).catch((x: unknown) => {
       // Un error de la red no es un lugar que no existe: se guarda para distinguirlo.
       datos.lugar_error = String((x as Error)?.message ?? x).slice(0, 200);
@@ -266,12 +268,14 @@ export async function auditarCaso(o: {
   if (!calles.length) falla("lugar.sin_calles", "OpenStreetMap no dio calles en 150 m");
   // Como La escena (René, 2026-11-25): si el lugar encontrado no coincide claramente con la narración,
   // no propone el choque ahí: pregunta «¿Dónde fue?» con las opciones.
-  const claridad = lugarClaro({
-    narradas: callesDelCaso(o.narracion, lugarTexto),
-    calles,
-    aviso: (datos.lugar_aviso as string | null | undefined) ?? null,
-    encontrado: lugar.nombre,
-  });
+  const claridad = o.lugarGuardado
+    ? { clara: true, motivo: null }
+    : lugarClaro({
+        narradas: callesDelCaso(o.narracion, lugarTexto),
+        calles,
+        aviso: (datos.lugar_aviso as string | null | undefined) ?? null,
+        encontrado: lugar.nombre,
+      });
   if (!claridad.clara) {
     falla(
       "pregunta.lugar_dudoso",
@@ -290,7 +294,8 @@ export async function auditarCaso(o: {
     ),
   ];
   const faltan = narradas.filter((n) => !nombresCerca.some((c) => esLaCalleNarrada(n, c)));
-  if (narradas.length && faltan.length === narradas.length)
+  // Un lugar guardado (los ejemplos) es ilustrativo: no se compara con las calles narradas.
+  if (!o.lugarGuardado && narradas.length && faltan.length === narradas.length)
     falla(
       "lugar.no_es_el_narrado",
       `ninguna de ${narradas.join(", ")} está a 150 m del lugar buscado (${lugar.nombre})`,

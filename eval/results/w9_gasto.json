@@ -112,7 +112,27 @@
       "fecha": "2026-11-17T02:13:52.831Z",
       "que": "Ronda 2, C: lectura de la narración de ejemplo «alcance-deformacion»",
       "usd": 0.031967
+    },
+    {
+      "fecha": "2026-11-25T17:59:50.045Z",
+      "que": "Ronda 2, C: lectura de la narración de ejemplo «crucero-noche»",
+      "usd": 0.035133
+    },
+    {
+      "fecha": "2026-11-25T18:00:01.602Z",
+      "que": "Ronda 2, C: lectura de la narración de ejemplo «poste-terraceria»",
+      "usd": 0.0265252
+    },
+    {
+      "fecha": "2026-11-25T18:27:55.709Z",
+      "que": "Ronda 2, C: lectura de la narración de ejemplo «carambola-lluvia»",
+      "usd": 0.039329
+    },
+    {
+      "fecha": "2026-11-25T18:28:05.529Z",
+      "que": "Ronda 2, C: lectura de la narración de ejemplo «reversa-pendiente»",
+      "usd": 0.0217492
     }
   ],
-  "total_usd": 1.6059
+  "total_usd": 1.7287
 }

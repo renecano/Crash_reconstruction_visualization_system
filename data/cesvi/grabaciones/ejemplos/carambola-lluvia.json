@@ -3,13 +3,13 @@
   "version_prompt": "escena-narracion-v2",
   "modelo": "claude-sonnet-5-5",
   "uso": {
-    "input_tokens": 757,
-    "output_tokens": 2780,
+    "input_tokens": 762,
+    "output_tokens": 2819,
     "cache_creation_input_tokens": 3846,
     "cache_read_input_tokens": 0
   },
-  "costo_usd": 0.038929,
-  "narracion": "El hecho se ubica en el Boulevard de los Pinos, entre las calles Encino y Nogal, colonia Valle Alto, municipio de Monterrey, Nuevo León, aproximadamente a las 21:45 horas. El boulevard consta de un arroyo de tres carriles con sentido de Poniente a Oriente, de concreto hidráulico, con iluminación artificial funcionando y semáforo en el cruce con la calle Nogal. Al momento del hecho se registraba lluvia ligera y la carpeta se encontraba mojada.\n\nSe examinan tres vehículos de servicio particular que se encontraban en el carril central: el vehículo A, marca Ford, tipo Ranger, modelo 2012, color negro; el vehículo B, marca Toyota, tipo Corolla, modelo 2019, color blanco; y el vehículo C, marca Chevrolet, tipo Aveo, modelo 2015, color rojo. El vehículo B y el vehículo C se encontraban detenidos por el semáforo en rojo, el vehículo C delante del vehículo B; el vehículo A circulaba detrás de ellos. El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás sobre defensa, parrilla y cofre. El vehículo B presenta en su parte posterior un hundimiento de atrás hacia adelante sobre defensa, cajuela y calaveras, y en su parte frontal un hundimiento de adelante hacia atrás sobre defensa y fascia. El vehículo C presenta en su parte posterior un hundimiento de atrás hacia adelante sobre defensa y cajuela.\n\nPrimer impacto: la parte frontal del vehículo A contra la parte posterior del vehículo B. Segundo impacto: por el empuje, la parte frontal del vehículo B contra la parte posterior del vehículo C.\n\nSe localizan restos de plástico y vidrio sobre el carril central, en el área del primer contacto. El vehículo A quedó sobre el área de restos; el vehículo B, en el mismo carril, 5 metros adelante del área de restos; y el vehículo C, 10 metros adelante del área de restos.",
+  "costo_usd": 0.039329,
+  "narracion": "El hecho se ubica en la Avenida Valle Alto, entre la Calle Encino y la Calle Nogal, colonia Privada Valle Alto, municipio de Monterrey, Nuevo León, aproximadamente a las 21:45 horas. La avenida consta de un arroyo de tres carriles con sentido de Sur a Norte, de concreto hidráulico, con iluminación artificial funcionando y semáforo en el cruce con la Calle Nogal. Al momento del hecho se registraba lluvia ligera y la carpeta se encontraba mojada.\n\nSe examinan tres vehículos de servicio particular que se encontraban en el carril central: el vehículo A, marca Ford, tipo Ranger, modelo 2012, color negro; el vehículo B, marca Toyota, tipo Corolla, modelo 2019, color blanco; y el vehículo C, marca Chevrolet, tipo Aveo, modelo 2015, color rojo. El vehículo B y el vehículo C se encontraban detenidos por el semáforo en rojo, el vehículo C delante del vehículo B; el vehículo A circulaba detrás de ellos. El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás sobre defensa, parrilla y cofre. El vehículo B presenta en su parte posterior un hundimiento de atrás hacia adelante sobre defensa, cajuela y calaveras, y en su parte frontal un hundimiento de adelante hacia atrás sobre defensa y fascia. El vehículo C presenta en su parte posterior un hundimiento de atrás hacia adelante sobre defensa y cajuela.\n\nPrimer impacto: la parte frontal del vehículo A contra la parte posterior del vehículo B. Segundo impacto: por el empuje, la parte frontal del vehículo B contra la parte posterior del vehículo C.\n\nSe localizan restos de plástico y vidrio sobre el carril central, en el área del primer contacto. El vehículo A quedó sobre el área de restos; el vehículo B, en el mismo carril, 5 metros adelante del área de restos; y el vehículo C, 10 metros adelante del área de restos.",
   "salida": {
     "datos": [
       {
@@ -24,9 +24,17 @@
         "seccion": "caso",
         "n": 1,
         "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 21:45 horas",
+        "cita": "aproximadamente a las 21:45 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
         "campo": "lugar",
-        "valor": "Boulevard de los Pinos, entre las calles Encino y Nogal, colonia Valle Alto",
-        "cita": "El hecho se ubica en el Boulevard de los Pinos, entre las calles Encino y Nogal, colonia Valle Alto"
+        "valor": "Avenida Valle Alto, entre la Calle Encino y la Calle Nogal, colonia Privada Valle Alto",
+        "cita": "El hecho se ubica en la Avenida Valle Alto, entre la Calle Encino y la Calle Nogal, colonia Privada Valle Alto"
       },
       {
         "seccion": "caso",
@@ -34,7 +42,7 @@
         "vehiculo": "ninguno",
         "campo": "municipio",
         "valor": "Monterrey",
-        "cita": "municipio de Monterrey, Nuevo León, aproximadamente a las 21:45 horas"
+        "cita": "municipio de Monterrey, Nuevo León"
       },
       {
         "seccion": "caso",
@@ -42,14 +50,6 @@
         "vehiculo": "ninguno",
         "campo": "entidad",
         "valor": "Nuevo León",
-        "cita": ""
-      },
-      {
-        "seccion": "caso",
-        "n": 1,
-        "vehiculo": "ninguno",
-        "campo": "fecha_hora",
-        "valor": "21:45 horas",
         "cita": ""
       },
       {
@@ -125,12 +125,36 @@
         "cita": ""
       },
       {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "el vehículo A circulaba detrás de ellos"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "se_detiene",
+        "cita": "El vehículo B y el vehículo C se encontraban detenidos por el semáforo en rojo"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "maniobra",
+        "valor": "se_detiene",
+        "cita": "El vehículo B y el vehículo C se encontraban detenidos por el semáforo en rojo"
+      },
+      {
         "seccion": "dano",
         "n": 1,
         "vehiculo": "V1",
         "campo": "cara",
         "valor": "frontal",
-        "cita": "El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás sobre defensa, parrilla y cofre."
+        "cita": "El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás sobre defensa, parrilla y cofre"
       },
       {
         "seccion": "dano",
@@ -202,7 +226,7 @@
         "vehiculo": "V3",
         "campo": "cara",
         "valor": "posterior",
-        "cita": "El vehículo C presenta en su parte posterior un hundimiento de atrás hacia adelante sobre defensa y cajuela."
+        "cita": "El vehículo C presenta en su parte posterior un hundimiento de atrás hacia adelante sobre defensa y cajuela"
       },
       {
         "seccion": "dano",
@@ -223,7 +247,7 @@
       {
         "seccion": "impacto",
         "n": 1,
-        "vehiculo": "V1",
+        "vehiculo": "ninguno",
         "campo": "participante",
         "valor": "V1",
         "cita": "Primer impacto: la parte frontal del vehículo A contra la parte posterior del vehículo B."
@@ -231,7 +255,7 @@
       {
         "seccion": "impacto",
         "n": 1,
-        "vehiculo": "V2",
+        "vehiculo": "ninguno",
         "campo": "participante",
         "valor": "V2",
         "cita": ""
@@ -239,7 +263,7 @@
       {
         "seccion": "impacto",
         "n": 1,
-        "vehiculo": "V1",
+        "vehiculo": "ninguno",
         "campo": "contacto",
         "valor": "V1 frontal",
         "cita": ""
@@ -247,7 +271,7 @@
       {
         "seccion": "impacto",
         "n": 1,
-        "vehiculo": "V2",
+        "vehiculo": "ninguno",
         "campo": "contacto",
         "valor": "V2 posterior",
         "cita": ""
@@ -255,7 +279,7 @@
       {
         "seccion": "impacto",
         "n": 2,
-        "vehiculo": "V2",
+        "vehiculo": "ninguno",
         "campo": "participante",
         "valor": "V2",
         "cita": "Segundo impacto: por el empuje, la parte frontal del vehículo B contra la parte posterior del vehículo C."
@@ -263,7 +287,7 @@
       {
         "seccion": "impacto",
         "n": 2,
-        "vehiculo": "V3",
+        "vehiculo": "ninguno",
         "campo": "participante",
         "valor": "V3",
         "cita": ""
@@ -271,7 +295,7 @@
       {
         "seccion": "impacto",
         "n": 2,
-        "vehiculo": "V2",
+        "vehiculo": "ninguno",
         "campo": "contacto",
         "valor": "V2 frontal",
         "cita": ""
@@ -279,34 +303,10 @@
       {
         "seccion": "impacto",
         "n": 2,
-        "vehiculo": "V3",
+        "vehiculo": "ninguno",
         "campo": "contacto",
         "valor": "V3 posterior",
         "cita": ""
-      },
-      {
-        "seccion": "movimiento",
-        "n": 1,
-        "vehiculo": "V1",
-        "campo": "maniobra",
-        "valor": "circula",
-        "cita": "el vehículo A circulaba detrás de ellos"
-      },
-      {
-        "seccion": "movimiento",
-        "n": 2,
-        "vehiculo": "V2",
-        "campo": "maniobra",
-        "valor": "se_detiene",
-        "cita": "El vehículo B y el vehículo C se encontraban detenidos por el semáforo en rojo"
-      },
-      {
-        "seccion": "movimiento",
-        "n": 3,
-        "vehiculo": "V3",
-        "campo": "maniobra",
-        "valor": "se_detiene",
-        "cita": "El vehículo B y el vehículo C se encontraban detenidos por el semáforo en rojo"
       },
       {
         "seccion": "posicion",

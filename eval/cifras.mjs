@@ -229,9 +229,10 @@ function construir() {
   }
 
   // --- Los ejemplos de narración (René, 2026-11-21 y 23) ---
-  // El poste, con la escena colocada como dice la narración, en la tabla aprobada de la ronda 4.
+  // El poste, con la escena colocada como dice la narración, en su lugar guardado (René, 2026-11-25:
+  // cada ejemplo abre siempre en su lugar; la tabla los coloca ahí).
   {
-    const archivo = "eval/results/ronda4_cifras/despues.json";
+    const archivo = "eval/results/ejemplos_en_su_lugar/cifras.json";
     const doc = leer(archivo);
     const i = doc.filas.findIndex((f) => f.clave === "poste-terraceria");
     if (i < 0) throw new Error(`${archivo}: no está el ejemplo poste-terraceria`);
@@ -252,11 +253,12 @@ function construir() {
       codigo: doc.codigo,
     });
   }
-  // La reversa en pendiente (René, 2026-11-24, visto bueno): «Por dónde venía» ponía el frente del
-  // CR-V hacia donde retrocedía, del lado equivocado del Versa, y el 3D metía su parte trasera 1.7 m
-  // dentro de él. Con el frente al lado contrario de la marcha, las cifras de la tabla de esta rama.
+  // La reversa en pendiente. René, 2026-11-24 (#311): «Por dónde venía» ponía el frente del CR-V
+  // hacia donde retrocedía y el 3D metía su parte trasera 1.7 m dentro del Versa. René, 2026-11-25
+  // (#316): la narración se ubica en la Calle Olivos (Lomas del Valle, Puebla), una calle real que
+  // baja 3.6 % hacia el norte, con su relieve real (INEGI LiDAR); la tabla la coloca ahí.
   {
-    const archivo = "eval/results/tres_narraciones/cifras_despues.json";
+    const archivo = "eval/results/ejemplos_en_su_lugar/cifras.json";
     const doc = leer(archivo);
     const i = doc.filas.findIndex((f) => f.clave === "reversa-pendiente");
     if (i < 0) throw new Error(`${archivo}: no está el ejemplo reversa-pendiente`);
@@ -279,7 +281,7 @@ function construir() {
         fuente: archivo,
         campo: `filas.${i}.velocidades.${j}`,
         motivo:
-          "Visto bueno de René, 2026-11-24 (#311): antes, CR-V 0 (0–1) y Versa 21 (20–28), con el CR-V mirando hacia donde retrocedía y su parte trasera 1.7 m dentro del Versa en el 3D.",
+          "Visto bueno de René, 2026-11-25 (#316): la narración se ubica en la Calle Olivos (Lomas del Valle, Puebla), que baja 3.6 % hacia el norte, con el relieve real del lugar; el CR-V da 9 (1–18) con el caso puesto en su lugar real (el 8 (1–18) que se aprobó primero se midió trasladando la escena desde el punto fijo) y René aprobó el 9 el mismo día; antes, en el punto fijo de la tabla, CR-V 8 (1–16) y Versa 24 (21–28). Antes de eso (#311, 2026-11-24): CR-V 0 (0–1) y Versa 21 (20–28), con el CR-V mirando hacia donde retrocedía.",
       });
     }
   }

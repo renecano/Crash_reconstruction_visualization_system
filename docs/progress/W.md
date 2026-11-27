@@ -1426,6 +1426,36 @@ La escena pregunta «¿Dónde fue?» con las opciones del buscador si el lugar e
 - 205 reportes: encontrado 90 (sin pregunta), solo la zona 46, carretera sin km 17, «¿Dónde fue?» 21, no encontrado 31 (10 sin lugar en el texto).
 - De los cinco ejemplos, la carambola pregunta (el buscador daba Avenida Puerta del Sol por Boulevard de los Pinos). Las e2e de los ejemplos van sin red y no cambian.
 
+### Vehículo fuera de su calle al chocar (no estaba en la tabla de arriba; corregido el 2026-11-25)
+
+La regla `vehiculo.fuera_de_calle` marca un vehículo cuyo frente, en el choque, no queda a menos de 30° del eje de ninguna calle cercana (a la mitad de su ancho más 4 m). Marca 17 de 205 y 8 de 42; la tabla anterior no la incluía.
+
+| Grupo                                                                    | Casos                                                                                                                                                              | Qué ve el perito                                                                                     | Estado                                 |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| La narración da un sentido que ninguna calle del lugar tiene             | 4 de 205 (cesvi-05a7c05640, -6ca24dcfce, -b9f5a5ca1f, -feb7aaa0e1)                                                                                                 | La escena avisa «en este lugar no hay una calle en ese sentido: revisa que el lugar sea el del caso» | Explicado, con aviso                   |
+| Maniobra narrada: vuelta en el cruce o salida del camino                 | 1 de 205 (cesvi-87b14ec4ba, al castillo en la orilla), 5 de 42 (aud-07, -09 el Gol, -13, -29, -39)                                                                 | El vehículo a media vuelta o fuera del camino, como dice la narración                                | Correcto (la regla no sabe de vueltas) |
+| Sobre su calle narrada, pero girado de 31° a 43° respecto al eje         | 9 de 205 (cesvi-5aa5e75aca, -65daf4b688, -928c1a7646, -97cb6986e4, -99ae88f8e3, -b1ab1b00df, -b641fb6657, -cd894debf8, -ec1c390b10), además del ciclista de aud-09 | En La escena y en el 3D, el auto atravesado en diagonal en su carril, sin aviso; la cifra sale       | Abierto: causa por diagnosticar        |
+| La calle de llegada propuesta no es la narrada, o queda lejos del choque | 3 de 205 (cesvi-9cb20db594, -a29030f88d, -df6a4b2324), 3 de 42 (aud-02 la Hilux, aud-15 el Kia a 6 m de la calzada, aud-38 «Calle Descartes»)                      | La escena propone «venía por …» con otra calle; el perito puede corregirla, pero nada le avisa       | Abierto                                |
+
 ### Lo publicado
 
 AXA 57 (sin cambio), crucero 20 y 12, alcance 53 y 0, carambola 24, reversa 8 y 24, poste 30 y 36: iguales a la tabla del #311 (`reconstruir` de `cifras-ronda4.test.ts`, sin navegador). La animación del alcance termina a 10 y 12 m de las posiciones finales marcadas y la del poste a 7 y 10 m: va a René (paquete aparte).
+
+## El 2D limpio, el acercamiento y el lugar de los ejemplos (2026-11-25) · rama `fix/w-2d-croquis`
+
+René (2026-11-25): «la vía del choque sale vertical, se enciman los vehículos y las etiquetas A3, B2 y B3, y las orillas salen chuecas… vuelve al croquis pericial que aprobé (propuesta 2)», el acercamiento de la foto en el 2D y que los cinco ejemplos abran siempre en su lugar. Rama aparte del #311 (la t9 corre fijada a 2dfd57dc), solo web, pruebas ligeras.
+
+### El 2D
+
+- **Qué lo rompió:** ningún commit cambió el croquis desde que René lo aprobó (16bb3d79, 2026-11-18, con AXA y cf708, de una sola vía). La regla de giro de ese mismo commit, «entre varias vías (un cruce), la de más jerarquía», ponía horizontal a Paseo Tollocan en la carambola de René (2026-11-24) y la calle del choque quedaba vertical. Las orillas tenían escalones porque cada tramo se dibujaba con puntas rectas; las etiquetas se amontonaban porque el detenido tiene la posición 1 y la 2 en el mismo lugar.
+- **Arreglo:** la vía horizontal es la que recorren los vehículos al llegar (a menos de 30°); las orillas, con uniones redondas; una posición igual a la anterior se dibuja una vez con «B1·2».
+- **Prueba visual** (`croquis-visual.test.ts`): AXA, la carambola de Tollocan y Tollocan, con la vía de llegada horizontal, ninguna etiqueta encimada y el SVG idéntico a su referencia (`__snapshots__/croquis/`). Con el código anterior, la carambola falla.
+- **Capturas** (`docs/cesvi/ronda-4/evidencia/2d/regresion-antes-*` y `regresion-despues-*`): AXA queda igual a la aprobada.
+
+### El acercamiento
+
+Botones + / − / 1:1, la rueda (sobre el cursor) y el pellizco; acercado, se arrastra (`zoom-vista.ts`, `zoom-vista.test.ts`; la e2e del croquis prueba los botones). Acerca el dibujo y el fondo juntos.
+
+### El lugar de los ejemplos
+
+Cada ejemplo guarda su lugar (`data/cesvi/ejemplos/narraciones.json`) y abre ahí sin el buscador. Las cifras en su lugar, contra la tabla (en el punto P): crucero y poste iguales; alcance 53 (48–55) contra 53 (49–56); carambola 24 (22–31) contra 24 (22–32); reversa, con el relieve real de Lomas del Valle, 7 (0–15) y 24 (22–29) contra 8 (1–16) y 24 (21–28). **Mueve cifras publicadas: no se publica sin el visto bueno de René.**

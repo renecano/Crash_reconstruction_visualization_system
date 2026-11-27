@@ -1,25 +1,25 @@
 {
   "descripcion": "Qué leyó Claude de cada narración de ejemplo (ronda 2, C), armado con las reglas de la app: cada dato con su cita revisada contra el texto.",
   "script": "eval/ronda2_narraciones.mts",
-  "fecha": "2026-11-17T02:18:30.011Z",
+  "fecha": "2026-11-25T18:28:06.997Z",
   "ejemplos": [
     {
       "clave": "crucero-noche",
       "grabada": true,
-      "version_prompt": "escena-narracion-v1",
+      "version_prompt": "escena-narracion-v2",
       "modelo": "claude-sonnet-5-5",
-      "costo_usd": 0.0259064,
+      "costo_usd": 0.035133,
       "filas": 36,
       "vehiculos": 2,
       "impactos": 0,
-      "danos": 5,
+      "danos": 6,
       "danos_con_medidas": 0,
       "posiciones_finales": 0,
       "huellas": 0,
       "maniobras": [],
       "objetos_fijos": [],
-      "preguntas": 9,
-      "citas": 15,
+      "preguntas": 7,
+      "citas": 12,
       "citas_fuera": 0,
       "numeros_fuera": 0
     },
@@ -38,7 +38,7 @@
       "huellas": 0,
       "maniobras": [],
       "objetos_fijos": [],
-      "preguntas": 5,
+      "preguntas": 3,
       "citas": 13,
       "citas_fuera": 0,
       "numeros_fuera": 0
@@ -48,7 +48,7 @@
       "grabada": true,
       "version_prompt": "escena-narracion-v2",
       "modelo": "claude-sonnet-5-5",
-      "costo_usd": 0.038929,
+      "costo_usd": 0.039329,
       "filas": 43,
       "vehiculos": 3,
       "impactos": 2,
@@ -62,8 +62,8 @@
         "se_detiene"
       ],
       "objetos_fijos": [],
-      "preguntas": 8,
-      "citas": 18,
+      "preguntas": 3,
+      "citas": 19,
       "citas_fuera": 0,
       "numeros_fuera": 0
     },
@@ -72,7 +72,7 @@
       "grabada": true,
       "version_prompt": "escena-narracion-v2",
       "modelo": "claude-sonnet-5-5",
-      "costo_usd": 0.0218192,
+      "costo_usd": 0.0217492,
       "filas": 30,
       "vehiculos": 2,
       "impactos": 1,
@@ -85,8 +85,8 @@
         "circula"
       ],
       "objetos_fijos": [],
-      "preguntas": 6,
-      "citas": 11,
+      "preguntas": 4,
+      "citas": 12,
       "citas_fuera": 0,
       "numeros_fuera": 0
     },
@@ -95,7 +95,7 @@
       "grabada": true,
       "version_prompt": "escena-narracion-v2",
       "modelo": "claude-sonnet-5-5",
-      "costo_usd": 0.0270692,
+      "costo_usd": 0.0265252,
       "filas": 36,
       "vehiculos": 2,
       "impactos": 2,
@@ -110,8 +110,8 @@
       "objetos_fijos": [
         "poste de concreto de la línea de distribución eléctrica"
       ],
-      "preguntas": 7,
-      "citas": 16,
+      "preguntas": 4,
+      "citas": 15,
       "citas_fuera": 0,
       "numeros_fuera": 0
     }

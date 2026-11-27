@@ -9,8 +9,13 @@ import type { Expediente } from "@croquis/cesvi";
 import { overpassDeTeselas, type LineaTesela } from "@croquis/croquis-2d";
 import { describe, expect, it } from "vitest";
 import { RADIO_CALLES_M } from "./calles-del-mapa";
-import { callesDe, nombreVehiculo, poseDe, rumboAlineado } from "./escena-facil";
-import { listaDeLaEscena, listaLista, proponerEscena } from "./escena-propuesta";
+import { callesDe, nombreVehiculo, poseDe, rumboAlineado, type Calle } from "./escena-facil";
+import {
+  calleNarradaSinCruce,
+  listaDeLaEscena,
+  listaLista,
+  proponerEscena,
+} from "./escena-propuesta";
 import { INCLINACION_DEG } from "./objeto-orilla";
 import { impactosAColocar } from "./pasos-caso";
 
@@ -192,5 +197,51 @@ describe("la lista de La escena (ronda 4, propuesta 1)", () => {
     // «No sé por dónde venía» también cuenta como respondido.
     const conNoSe = listaDeLaEscena({ ...base, expediente: p.expediente, direccionesNoSe: [v] });
     expect(conNoSe.find((x) => x.clave === `direccion-${v}`)!.estado).toBe("confirmado");
+  });
+});
+
+describe("una sola calle narrada, sin cruce (René, 2026-11-25)", () => {
+  // Calle Olivos sale de Calle Laureles hacia el norte: el choque va sobre Olivos, no en la esquina.
+  const laureles: Calle = {
+    id: 1,
+    nombre: "Calle Laureles",
+    puntos: [
+      [-98.188342, 18.985953],
+      [-98.187103, 18.985807],
+      [-98.185773, 18.985652],
+    ],
+    ancho: 6.6,
+    nodos: [11, 12, 13],
+  };
+  const olivos: Calle = {
+    id: 2,
+    nombre: "Calle Olivos",
+    puntos: [
+      [-98.186967, 18.986667],
+      [-98.187103, 18.985807],
+    ],
+    ancho: 6.6,
+    nodos: [21, 12],
+  };
+  const lugar = { lat: 18.986237, lon: -98.187035 };
+
+  it("«en la calle Olivos, frente al acceso…»: sobre Olivos, en el lugar", () => {
+    const p = calleNarradaSinCruce(
+      [laureles, olivos],
+      "El hecho se ubica en la calle Olivos, frente al acceso vehicular de una casa habitación, colonia Lomas del Valle. La calle consta de dos carriles.",
+      lugar,
+    );
+    expect(p?.calle.nombre).toBe("Calle Olivos");
+    expect(p!.distancia).toBeLessThan(1);
+  });
+
+  it("con un cruce en la frase, no", () => {
+    expect(
+      calleNarradaSinCruce(
+        [laureles, olivos],
+        "El hecho se ubica en el cruce de la calle Olivos y la calle Laureles.",
+        lugar,
+      ),
+    ).toBeNull();
   });
 });
