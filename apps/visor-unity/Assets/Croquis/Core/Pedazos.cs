@@ -342,7 +342,7 @@ namespace Croquis.Core
                     frenteY += f.Y + (rapidez > 0.1 ? f.Vy / rapidez * medio : 0.0);
                     if (Math.Abs(DanoDelCaso.Instante(r, v.Id) - e.T) < 1e-6)
                     {
-                        energia += v.Dano?.EnergiaJ ?? 0.0;
+                        energia += DanoDelCaso.EnergiaADibujar(v.Dano);
                     }
                     else
                     {

@@ -192,6 +192,7 @@ namespace Croquis.Visor
         public async Awaitable CargarAsync(Caso3D caso)
         {
             var mio = ++turnoDeCarga;
+            danoMedido = Array.Exists(caso.Resultado?.Vehiculos ?? new ResultadoVehiculo[0], v => DanoDelCaso.UsaMedido(v.Dano));
             Omisiones.Limpiar();
             PasosDeCarga.Clear();
             PasosDeCarga["leer_sobre"] = Math.Round(LecturaDelPaquete.Sobre, 1);
@@ -783,9 +784,12 @@ namespace Croquis.Visor
             var texto = EscenarioVista.TextoDeLeyenda(raiz);
             if (texto != null)
             {
-                texto.text = Leyenda3d.Mensaje(conEscenario, pisoMapa.Puesto ? pisoMapa.Atribucion : null, etiquetaFantasma);
+                texto.text = Leyenda3d.Mensaje(conEscenario, pisoMapa.Puesto ? pisoMapa.Atribucion : null, etiquetaFantasma, danoMedido);
             }
         }
+
+        /// <summary>Si algún vehículo del caso se dibuja con los C1–C6 que midió el perito.</summary>
+        private bool danoMedido;
 
         public void Fijar(double t)
         {

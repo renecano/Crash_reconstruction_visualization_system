@@ -21,7 +21,29 @@ namespace Croquis.Core
         public static CampoDano Campo(ResultadoVehiculo v)
         {
             var dano = v?.Dano;
-            return dano == null || dano.OrigenRigidez == OrigenRigidez.SinImpacto ? null : Campo(v, dano.PerfilM, dano.AnchoM, dano.CentroM, dano.Cdc, v.PdofHoras);
+            return dano == null || dano.OrigenRigidez == OrigenRigidez.SinImpacto ? null : Campo(v, PerfilADibujar(dano), dano.AnchoM, dano.CentroM, dano.Cdc, v.PdofHoras);
+        }
+
+        /// <summary>
+        /// El perfil que se dibuja (René, 2026-11-26): lo que midió el perito (`dano.medido_m`, C1–C6 con
+        /// la convención de `perfil_m`) si lo trae, porque es la evidencia del vehículo real; si no, lo
+        /// calculado (`perfil_m`).
+        /// </summary>
+        public static double[] PerfilADibujar(Dano dano)
+        {
+            return UsaMedido(dano) ? dano.MedidoM : dano?.PerfilM;
+        }
+
+        /// <summary>Si el daño trae C1–C6 medidos (seis valores, alguno mayor que cero).</summary>
+        public static bool UsaMedido(Dano dano)
+        {
+            return dano?.MedidoM != null && dano.MedidoM.Length == 6 && Array.Exists(dano.MedidoM, c => c > 0.0);
+        }
+
+        /// <summary>La energía que va con el perfil que se dibuja: la de lo medido si se dibuja lo medido.</summary>
+        public static double EnergiaADibujar(Dano dano)
+        {
+            return UsaMedido(dano) && dano.EnergiaMedidaJ.HasValue ? dano.EnergiaMedidaJ.Value : dano?.EnergiaJ ?? 0.0;
         }
 
         /// <summary>
