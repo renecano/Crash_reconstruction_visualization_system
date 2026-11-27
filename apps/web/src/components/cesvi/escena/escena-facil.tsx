@@ -203,7 +203,7 @@ const COLOR_PREVIO = "#0EA5E9";
 
 /** «2.1 km», «480 m». */
 const distanciaRuta = (m: number) =>
-  m >= 1000 ? `${(m / 1000).toFixed(1)} km` : `${Math.round(m / 10) * 10} m`;
+  m >= 1000 ? `${F.numero(m / 1000, 1)} km` : `${Math.round(m / 10) * 10} m`;
 /** «~3 min», «~40 s». */
 const duracionRuta = (s: number) =>
   s >= 90 ? `~${Math.round(s / 60)} min` : `~${Math.round(s)} s`;
