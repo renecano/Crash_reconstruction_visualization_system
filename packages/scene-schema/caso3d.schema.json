@@ -1130,6 +1130,45 @@
           "items": {
             "$ref": "#/$defs/TramoFreno"
           }
+        },
+        "trayecto_previo": {
+          "$ref": "#/$defs/TrayectoPrevio"
+        }
+      }
+    },
+    "TrayectoPrevio": {
+      "title": "TrayectoPrevio",
+      "description": "De dónde venía el vehículo (René, 2026-11-27): la ruta por las calles desde donde marcó el perito hasta el primer punto de su trayectoria en el Resultado, con sus tiempos. Ilustrativo, no evidencia: no entra al solver ni a ninguna cifra. Termina en la posición, la velocidad y el instante del inicio de la reconstrucción (`resultado.t_inicio`).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "t", "distancia_m"],
+      "properties": {
+        "x": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "type": "number" },
+          "description": "Metros al este, del inicio al empalme."
+        },
+        "y": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "type": "number" },
+          "description": "Metros al norte."
+        },
+        "t": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "type": "number" },
+          "description": "El instante de cada punto (s; 0 es el impacto). Crece; el último es `resultado.t_inicio`."
+        },
+        "v_ms": {
+          "type": "array",
+          "items": { "type": "number", "minimum": 0 },
+          "description": "La velocidad en cada punto (m/s), nunca mayor que la reconstruida."
+        },
+        "distancia_m": {
+          "type": "number",
+          "minimum": 0
         }
       }
     },
