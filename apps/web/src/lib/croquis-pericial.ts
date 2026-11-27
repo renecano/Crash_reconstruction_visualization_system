@@ -215,15 +215,115 @@ export function colocarEtiquetas(
   return out;
 }
 
+/** La distancia de `p` a la polilínea `ps`. */
+function aPolilinea(p: P, ps: readonly P[]): number {
+  let d = Infinity;
+  for (let i = 0; i + 1 < ps.length; i++) d = Math.min(d, aSegmento(p, ps[i]!, ps[i + 1]!).d);
+  return ps.length === 1 ? Math.hypot(p.x - ps[0]!.x, p.y - ps[0]!.y) : d;
+}
+
+/** Si `b` sigue a `a`: comparten un extremo y van casi en línea (OSM parte una calle en tramos). */
+function continua(a: ViaCroquis, b: ViaCroquis): boolean {
+  const extremos = (v: ViaCroquis) => {
+    const n = v.puntos.length;
+    const rumbo = (p: P, q: P) => Math.atan2(q.y - p.y, q.x - p.x);
+    return [
+      { p: v.puntos[0]!, hacia: rumbo(v.puntos[1] ?? v.puntos[0]!, v.puntos[0]!) },
+      { p: v.puntos[n - 1]!, hacia: rumbo(v.puntos[n - 2] ?? v.puntos[n - 1]!, v.puntos[n - 1]!) },
+    ];
+  };
+  return extremos(a).some((ea) =>
+    extremos(b).some(
+      (eb) =>
+        Math.hypot(ea.p.x - eb.p.x, ea.p.y - eb.p.y) < 1 && Math.cos(ea.hacia - eb.hacia) < -0.85, // de frente, a menos de ~30°
+    ),
+  );
+}
+
+/** A qué distancia del choque una calle que no recorre nadie todavía va en el croquis (m). */
+export const CRUCE_CERCANO_M = 10;
+
+/**
+ * Solo las calles que importan (René, 2026-11-27: en un caso nuevo se enciman bordes de varias calles):
+ * las que recorre algún vehículo o persona y las que pasan a menos de `CRUCE_CERCANO_M` del choque.
+ */
+export function viasRelevantes(
+  vias: readonly ViaCroquis[],
+  recorridos: readonly (readonly P[])[],
+  choque: P,
+): ViaCroquis[] {
+  const dentro = new Set(
+    vias.filter((v) => {
+      if (aPolilinea(choque, v.puntos) - v.ancho / 2 <= CRUCE_CERCANO_M) return true;
+      const cerca = v.ancho / 2 + 3;
+      return recorridos.some((r) => r.some((p) => aPolilinea(p, v.puntos) <= cerca));
+    }),
+  );
+  // OSM parte una calle en tramos: el tramo que sigue a uno que se queda también se queda, para que
+  // ningún borde quede colgando.
+  for (let cambio = true; cambio;) {
+    cambio = false;
+    for (const v of vias)
+      if (!dentro.has(v) && [...dentro].some((d) => continua(d, v))) {
+        dentro.add(v);
+        cambio = true;
+      }
+  }
+  return vias.filter((v) => dentro.has(v));
+}
+
+/**
+ * Los tramos de una raya de carril que no entran en otra calle: en un empalme o un cruce, las rayas de
+ * una no atraviesan a la otra.
+ */
+export function tramosFueraDeOtras(
+  raya: readonly P[],
+  otras: readonly ViaCroquis[],
+  paso = 1,
+): P[][] {
+  const fuera = (p: P) => otras.every((o) => aPolilinea(p, o.puntos) > o.ancho / 2 + 0.3);
+  const tramos: P[][] = [];
+  let actual: P[] = [];
+  for (let i = 0; i + 1 < raya.length; i++) {
+    const a = raya[i]!;
+    const b = raya[i + 1]!;
+    const n = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / paso));
+    for (let k = i === 0 ? 0 : 1; k <= n; k++) {
+      const p = { x: a.x + ((b.x - a.x) * k) / n, y: a.y + ((b.y - a.y) * k) / n };
+      if (fuera(p)) actual.push(p);
+      else {
+        if (actual.length >= 2) tramos.push(actual);
+        actual = [];
+      }
+    }
+  }
+  if (actual.length >= 2) tramos.push(actual);
+  // Sin pedacitos sueltos junto a un cruce.
+  const largo = (t: P[]) =>
+    t.slice(1).reduce((s, p, i) => s + Math.hypot(p.x - t[i]!.x, p.y - t[i]!.y), 0);
+  return tramos.filter((t) => largo(t) >= 2);
+}
+
 /** El croquis pericial como SVG (texto), con su giro, para la pantalla y el dictamen. */
 export function croquisPericial(
   resultado: ResultadoMaqueta,
-  vias: readonly ViaCroquis[],
+  todasLasVias: readonly ViaCroquis[],
   nombres: Readonly<Record<string, string>>,
   o: OpcionesCroquis,
 ): { svg: string; giro: number } {
-  const giro = giroDelCroquis(resultado, vias);
   const c = resultado.punto_impacto ?? { x: 0, y: 0 };
+  const recorridos = [
+    ...resultado.vehiculos.map((v) =>
+      v.trayectoria.t.map((_, i) => ({ x: v.trayectoria.x[i]!, y: v.trayectoria.y[i]! })),
+    ),
+    ...(resultado.personas ?? []).flatMap((q) =>
+      q.trayectoria?.t?.length
+        ? [q.trayectoria.t.map((_, i) => ({ x: q.trayectoria!.x[i]!, y: q.trayectoria!.y[i]! }))]
+        : [],
+    ),
+  ];
+  const vias = viasRelevantes(todasLasVias, recorridos, c);
+  const giro = giroDelCroquis(resultado, vias);
   const g = (-giro * Math.PI) / 180;
   // De la escena (x al este, y al norte) a la hoja: el choque al centro, la vía principal horizontal.
   const hoja = (p: P): P => {
@@ -290,12 +390,15 @@ export function croquisPericial(
     );
   for (const v of vias) {
     const n = Math.max(1, Math.round(v.carriles ?? (v.ancho >= 6 ? 2 : 1)));
+    const otras = vias.filter((o) => o !== v && !continua(v, o));
     for (let k = 1; k < n; k++) {
       const d = -v.ancho / 2 + (k * v.ancho) / n;
       const doble = !v.unSentido && k === n / 2;
-      partes.push(
-        `<polyline points="${poli(desplazar(v.puntos, d))}" fill="none" stroke="#000" stroke-width="${r1(linea * (doble ? 1.2 : 0.8))}" ${doble ? "" : `stroke-dasharray="${r1(fs * 0.9)} ${r1(fs * 0.9)}"`}/>`,
-      );
+      // Las rayas de una calle no atraviesan a otra en un empalme o un cruce (René, 2026-11-27).
+      for (const tramo of tramosFueraDeOtras(desplazar(v.puntos, d), otras))
+        partes.push(
+          `<polyline points="${poli(tramo)}" fill="none" stroke="#000" stroke-width="${r1(linea * (doble ? 1.2 : 0.8))}" ${doble ? "" : `stroke-dasharray="${r1(fs * 0.9)} ${r1(fs * 0.9)}"`}/>`,
+        );
     }
   }
 
@@ -322,6 +425,50 @@ export function croquisPericial(
     }
   }
 
+  // Los objetos del caso (René, 2026-11-27: en la curva no se veía el árbol): el árbol con su tronco
+  // y su copa punteada, un poste como un punto y lo demás (un muro, una barda) con su planta. Los del
+  // mapa (`osm-…`) no: son entorno.
+  const objetosDelCaso = (resultado.objetos ?? []).filter((q) => !q.id.startsWith("osm-"));
+  const etiquetasObjetos: { id: string; x: number; y: number; texto: string }[] = [];
+  for (const q of objetosDelCaso) {
+    const h = hoja(q);
+    if (q.tipo === "arbol") {
+      const copa = q.copa?.radio_m ?? 2;
+      partes.push(
+        `<circle cx="${r1(h.x)}" cy="${r1(h.y)}" r="${r1(copa)}" fill="none" stroke="#000" stroke-width="${r1(linea)}" stroke-dasharray="${r1(fs * 0.25)} ${r1(fs * 0.2)}" data-objeto="${esc(q.id)}"/>`,
+        `<circle cx="${r1(h.x)}" cy="${r1(h.y)}" r="${r1(Math.max(0.25, q.radio_m ?? 0.2))}" fill="#000"/>`,
+      );
+    } else if ((q.largo_m ?? 0) > 1.2 || (q.ancho_m ?? 0) > 1.2) {
+      const L = (q.largo_m ?? 1) / 2;
+      const A = (q.ancho_m ?? 0.3) / 2;
+      const r = ((q.rumbo_deg ?? 0) * Math.PI) / 180;
+      const esq = [
+        [L, A],
+        [L, -A],
+        [-L, -A],
+        [-L, A],
+      ].map(([u, w]) =>
+        hoja({
+          x: q.x + u! * Math.cos(r) - w! * Math.sin(r),
+          y: q.y + u! * Math.sin(r) + w! * Math.cos(r),
+        }),
+      );
+      partes.push(
+        `<polygon points="${esq.map((p) => `${r1(p.x)},${r1(p.y)}`).join(" ")}" fill="#555" stroke="#000" stroke-width="${r1(linea)}" data-objeto="${esc(q.id)}"/>`,
+      );
+    } else {
+      partes.push(
+        `<circle cx="${r1(h.x)}" cy="${r1(h.y)}" r="${r1(Math.max(0.3, q.radio_m ?? 0.2))}" fill="#000" data-objeto="${esc(q.id)}"/>`,
+      );
+    }
+    const nombre: Record<string, string> = { arbol: "Árbol", poste: "Poste", muro: "Muro" };
+    etiquetasObjetos.push({
+      id: `objeto-${q.id}`,
+      ...h,
+      texto: nombre[q.tipo] ?? q.tipo.charAt(0).toUpperCase() + q.tipo.slice(1),
+    });
+  }
+
   // Los vehículos en sus tres posiciones, y sus etiquetas.
   const silueta = (
     v: (typeof vehiculos)[number],
@@ -345,7 +492,7 @@ export function croquisPericial(
     return { esq, frente };
   };
   const ocupados: { x: number; y: number; r: number }[] = [];
-  const porEtiquetar: { id: string; x: number; y: number; texto: string }[] = [];
+  const porEtiquetar: { id: string; x: number; y: number; texto: string }[] = [...etiquetasObjetos];
   vehiculos.forEach((v) => {
     const letra = (nombres[v.id] ?? v.id).trim().charAt(0).toUpperCase();
     const poses = posicionesDelCroquis(v.trayectoria, ti);
@@ -395,14 +542,23 @@ export function croquisPericial(
       poseEn(tr as TrayectoriaResultado, ti),
       { x: tr.x[n - 1]!, y: tr.y[n - 1]! },
     ];
+    // Igual que con los vehículos: la persona que no se movió antes del impacto lleva «P1·2».
+    const misma = (a: P, b: P) => Math.hypot(a.x - b.x, a.y - b.y) < 0.3;
     poses.forEach((pose, j) => {
+      if (j < poses.length - 1 && misma(pose, poses[j + 1]!)) return;
+      let desde = j;
+      while (desde > 0 && misma(poses[desde - 1]!, pose)) desde--;
       const h = hoja(pose);
       const rp = fs * 0.35;
       partes.push(
         `<circle cx="${r1(h.x)}" cy="${r1(h.y)}" r="${r1(rp)}" fill="${j === 2 ? "#d4d4d4" : "#fff"}" stroke="#000" stroke-width="${r1(linea * 1.2)}" ${j === 0 ? `stroke-dasharray="${r1(fs * 0.15)} ${r1(fs * 0.12)}"` : ""} data-persona="${esc(q.id)}" data-posicion="${j + 1}"/>`,
       );
       ocupados.push({ ...h, r: rp });
-      porEtiquetar.push({ id: `${q.id}-${j + 1}`, ...h, texto: `${letra}${j + 1}` });
+      porEtiquetar.push({
+        id: `${q.id}-${j + 1}`,
+        ...h,
+        texto: desde < j ? `${letra}${desde + 1}·${j + 1}` : `${letra}${j + 1}`,
+      });
     });
   });
   // El impacto.
@@ -415,7 +571,13 @@ export function croquisPericial(
   // «Impacto» primero (es la más ancha) y con su tamaño.
   // El ancho (medio) de cada etiqueta: «Impacto», una doble («B1·2») o una sencilla («A1»).
   const medio = (e: { id: string; texto?: string }) =>
-    e.id === "impacto" ? rEt * 4.2 : (e.texto?.length ?? 0) > 3 ? rEt * 1.7 : rEt;
+    e.id === "impacto"
+      ? rEt * 4.2
+      : (e.texto?.length ?? 0) > 4
+        ? rEt * 0.55 * e.texto!.length // un objeto: «Árbol», «Poste»
+        : (e.texto?.length ?? 0) > 3
+          ? rEt * 1.7
+          : rEt;
   const lugares = colocarEtiquetas(
     [
       { id: "impacto", x: 0, y: 0, r: rEt * 4.2 },
@@ -461,15 +623,51 @@ export function croquisPericial(
   return { svg, giro };
 }
 
-/** Las vías de una escena (las del mapa, con sus carriles y su tipo), para el croquis. */
+/**
+ * Las vías de una escena para el croquis: las del mapa, con sus carriles y su tipo. Sin calles del mapa,
+ * la vía que describe la escena (René, 2026-11-27: una glorieta sin mapa salía sin calles): sus franjas,
+ * su anillo y sus arcos.
+ */
 export function viasDeEscena(spec: EscenaSpec): ViaCroquis[] {
-  return (sceneLayout(spec).mapa?.vias ?? []).map((v) => ({
+  const lay = sceneLayout(spec);
+  const mapa = (lay.mapa?.vias ?? []).map((v) => ({
     puntos: v.puntos,
     ancho: v.ancho,
     carriles: v.carriles,
     unSentido: v.unSentido,
     tipo: v.tipo,
   }));
+  if (mapa.length) return mapa;
+  const out: ViaCroquis[] = [];
+  for (const st of lay.road.strips) {
+    const h = (st.heading * Math.PI) / 180;
+    const d = { x: (Math.cos(h) * st.length) / 2, y: (Math.sin(h) * st.length) / 2 };
+    out.push({
+      puntos: [
+        { x: st.center.x - d.x, y: st.center.y - d.y },
+        { x: st.center.x + d.x, y: st.center.y + d.y },
+      ],
+      ancho: st.width,
+      carriles: st.lanes,
+    });
+  }
+  const arco = (c: P, r: number, desde: number, hasta: number) => {
+    const n = Math.max(8, Math.ceil(Math.abs(hasta - desde) / 6));
+    return Array.from({ length: n + 1 }, (_, k) => {
+      const a = ((desde + ((hasta - desde) * k) / n) * Math.PI) / 180;
+      return { x: c.x + Math.cos(a) * r, y: c.y + Math.sin(a) * r };
+    });
+  };
+  for (const g of lay.road.rings)
+    out.push({
+      puntos: arco(g.center, (g.innerRadius + g.outerRadius) / 2, 0, 360),
+      ancho: g.outerRadius - g.innerRadius,
+      carriles: 1,
+      unSentido: true,
+    });
+  for (const a of lay.road.arcs)
+    out.push({ puntos: arco(a.center, a.radius, a.from, a.to), ancho: a.width, carriles: 2 });
+  return out;
 }
 
 /** El SVG del croquis como PNG (data URL), para el dictamen: el mismo dibujo que en pantalla. */

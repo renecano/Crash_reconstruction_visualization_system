@@ -33,6 +33,9 @@ namespace Croquis.Core
 
         private const double Celda = 4.0;
 
+        /// <summary>Cuánto adentro de la vía tiene que estar una defensa para cortarla (m): en la orilla, se queda.</summary>
+        public const double MargenBarrera = 0.4;
+
         /// <summary>Los triángulos de la vía, con una rejilla de 4 m para buscar rápido.</summary>
         public sealed class Via
         {
@@ -196,6 +199,83 @@ namespace Croquis.Core
                 return null;
             }
 
+            /// <summary>Si un punto está metido en la vía: dentro y también a `MargenBarrera` en las cuatro direcciones.</summary>
+            public bool EnMedio(double x, double y)
+            {
+                return Dentro(x, y) && Dentro(x + MargenBarrera, y) && Dentro(x - MargenBarrera, y) && Dentro(x, y + MargenBarrera) && Dentro(x, y - MargenBarrera);
+            }
+
+            /// <summary>
+            /// Los pedazos de una defensa que no se meten en la vía (cada uno de `CercaMinima` o más). Una defensa
+            /// va en la orilla y puede tocarla; lo que se corta es lo que cruza los carriles.
+            /// </summary>
+            public List<List<PuntoPlano>> CortarBarrera(PuntoPlano[] linea)
+            {
+                var pedazos = new List<List<PuntoPlano>>();
+                var actual = new List<PuntoPlano>();
+                var largo = 0.0;
+                void Cerrar()
+                {
+                    if (actual.Count >= 2 && largo >= CercaMinima)
+                    {
+                        pedazos.Add(actual);
+                    }
+
+                    actual = new List<PuntoPlano>();
+                    largo = 0.0;
+                }
+
+                for (var i = 0; i + 1 < (linea?.Length ?? 0); i++)
+                {
+                    var a = linea[i];
+                    var b = linea[i + 1];
+                    var l = Math.Sqrt((b.X - a.X) * (b.X - a.X) + (b.Y - a.Y) * (b.Y - a.Y));
+                    var n = Math.Max(1, (int)Math.Ceiling(l / 0.25));
+                    for (var k = i == 0 ? 0 : 1; k <= n; k++)
+                    {
+                        var x = a.X + (b.X - a.X) * k / n;
+                        var y = a.Y + (b.Y - a.Y) * k / n;
+                        if (EnMedio(x, y))
+                        {
+                            Cerrar();
+                            continue;
+                        }
+
+                        if (actual.Count > 0)
+                        {
+                            var q = actual[actual.Count - 1];
+                            largo += Math.Sqrt((x - q.X) * (x - q.X) + (y - q.Y) * (y - q.Y));
+                        }
+
+                        actual.Add(new PuntoPlano { X = x, Y = y });
+                    }
+                }
+
+                Cerrar();
+                return pedazos;
+            }
+
+            /// <summary>Si una defensa se mete en la vía en algún punto (cada 25 cm).</summary>
+            public bool BarreraEnMedio(PuntoPlano[] linea)
+            {
+                for (var i = 0; i + 1 < (linea?.Length ?? 0); i++)
+                {
+                    var a = linea[i];
+                    var b = linea[i + 1];
+                    var l = Math.Sqrt((b.X - a.X) * (b.X - a.X) + (b.Y - a.Y) * (b.Y - a.Y));
+                    var n = Math.Max(1, (int)Math.Ceiling(l / 0.25));
+                    for (var k = 0; k <= n; k++)
+                    {
+                        if (EnMedio(a.X + (b.X - a.X) * k / n, a.Y + (b.Y - a.Y) * k / n))
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+            }
+
             /// <summary>Los tramos de una cerca que quedan fuera de la vía (cada uno de `CercaMinima` o más).</summary>
             public List<(double Ax, double Ay, double Bx, double By)> Cortar(double ax, double ay, double bx, double by)
             {
@@ -276,6 +356,14 @@ namespace Croquis.Core
                 }
             }
 
+            foreach (var linea in e.Via?.Barreras ?? new PuntoPlano[0][])
+            {
+                if (v.BarreraEnMedio(linea))
+                {
+                    lista.Add("defensa (" + linea[0].X.ToString("0.0") + ", " + linea[0].Y.ToString("0.0") + ")");
+                }
+            }
+
             foreach (var b in en?.Edificios ?? new EdificioEscenario[0])
             {
                 if (v.TocaRectangulo(b.X, b.Y, b.RumboRad, b.LargoM, b.FondoM))
@@ -291,7 +379,7 @@ namespace Croquis.Core
         public static int Despejar(Escenario e)
         {
             var v = Via.De(e);
-            if (v.Triangulos == 0 || e?.Entorno == null)
+            if (v.Triangulos == 0 || e == null)
             {
                 return 0;
             }
@@ -316,38 +404,65 @@ namespace Croquis.Core
                 return true;
             }
 
-            var en = e.Entorno;
-            en.Senales = Array.FindAll(en.Senales ?? new SenalEscenario[0], s => Quedarse(s.X, s.Y, RadioPoste, (x, y) => { s.X = x; s.Y = y; }));
-            en.Postes = Array.FindAll(en.Postes ?? new PosteEscenario[0], s => Quedarse(s.X, s.Y, RadioPoste, (x, y) => { s.X = x; s.Y = y; }));
-            en.Arboles = Array.FindAll(en.Arboles ?? new ArbolEscenario[0], s => Quedarse(s.X, s.Y, RadioArbol, (x, y) => { s.X = x; s.Y = y; }));
-            e.Luminarias = Array.FindAll(e.Luminarias ?? new LuminariaEscenario[0], s => Quedarse(s.X, s.Y, RadioPoste, (x, y) => { s.X = x; s.Y = y; }));
-
-            // Las cercas se cortan donde cruzan una vía, nunca la atraviesan.
-            var cercas = new List<SegmentoPlano>();
-            foreach (var c in en.Cercas ?? new SegmentoPlano[0])
+            if (e.Entorno != null)
             {
-                if (!v.TocaTramo(c.Ax, c.Ay, c.Bx, c.By))
+                var en = e.Entorno;
+                en.Senales = Array.FindAll(en.Senales ?? new SenalEscenario[0], s => Quedarse(s.X, s.Y, RadioPoste, (x, y) => { s.X = x; s.Y = y; }));
+                en.Postes = Array.FindAll(en.Postes ?? new PosteEscenario[0], s => Quedarse(s.X, s.Y, RadioPoste, (x, y) => { s.X = x; s.Y = y; }));
+                en.Arboles = Array.FindAll(en.Arboles ?? new ArbolEscenario[0], s => Quedarse(s.X, s.Y, RadioArbol, (x, y) => { s.X = x; s.Y = y; }));
+                e.Luminarias = Array.FindAll(e.Luminarias ?? new LuminariaEscenario[0], s => Quedarse(s.X, s.Y, RadioPoste, (x, y) => { s.X = x; s.Y = y; }));
+
+                // Las cercas se cortan donde cruzan una vía, nunca la atraviesan.
+                var cercas = new List<SegmentoPlano>();
+                foreach (var c in en.Cercas ?? new SegmentoPlano[0])
                 {
-                    cercas.Add(c);
-                    continue;
+                    if (!v.TocaTramo(c.Ax, c.Ay, c.Bx, c.By))
+                    {
+                        cercas.Add(c);
+                        continue;
+                    }
+
+                    cambiados++;
+                    foreach (var t in v.Cortar(c.Ax, c.Ay, c.Bx, c.By))
+                    {
+                        cercas.Add(new SegmentoPlano { Ax = t.Ax, Ay = t.Ay, Bx = t.Bx, By = t.By });
+                    }
                 }
 
-                cambiados++;
-                foreach (var t in v.Cortar(c.Ax, c.Ay, c.Bx, c.By))
+                en.Cercas = cercas.ToArray();
+
+                // Un edificio o una barda sobre la vía no se puede mover sin chocar con otro lote: se quita.
+                en.Edificios = Array.FindAll(en.Edificios ?? new EdificioEscenario[0], b =>
                 {
-                    cercas.Add(new SegmentoPlano { Ax = t.Ax, Ay = t.Ay, Bx = t.Bx, By = t.By });
-                }
+                    var toca = v.TocaRectangulo(b.X, b.Y, b.RumboRad, b.LargoM, b.FondoM);
+                    cambiados += toca ? 1 : 0;
+                    return !toca;
+                });
             }
 
-            en.Cercas = cercas.ToArray();
-
-            // Un edificio o una barda sobre la vía no se puede mover sin chocar con otro lote: se quita.
-            en.Edificios = Array.FindAll(en.Edificios ?? new EdificioEscenario[0], b =>
+            // Las defensas (guardarrieles) se cortan donde cruzan los carriles; en la orilla se quedan
+            // (René, 2026-11-27: en Paseo Matlatzincas sus postes quedaban en medio de los carriles).
+            if (e.Via?.Barreras != null)
             {
-                var toca = v.TocaRectangulo(b.X, b.Y, b.RumboRad, b.LargoM, b.FondoM);
-                cambiados += toca ? 1 : 0;
-                return !toca;
-            });
+                var barreras = new List<PuntoPlano[]>();
+                foreach (var linea in e.Via.Barreras)
+                {
+                    if (!v.BarreraEnMedio(linea))
+                    {
+                        barreras.Add(linea);
+                        continue;
+                    }
+
+                    cambiados++;
+                    foreach (var pedazo in v.CortarBarrera(linea))
+                    {
+                        barreras.Add(pedazo.ToArray());
+                    }
+                }
+
+                e.Via.Barreras = barreras.ToArray();
+            }
+
             return cambiados;
         }
     }

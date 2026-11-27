@@ -129,5 +129,24 @@ namespace Croquis.Core.Tests
 
             Assert.True(n > 10);
         }
+
+        [Fact]
+        public void DesdeArribaEncuadraVehiculosChoqueYFinalesConMargen()
+        {
+            var vehiculos = new CajaPlano();
+            vehiculos.Agregar(-60.0, -2.0); // uno llega desde 60 m al oeste
+            vehiculos.Agregar(-55.0, 2.0);
+            var finales = new CajaPlano();
+            finales.Agregar(8.0, -6.0);
+            finales.Agregar(14.0, 3.0);
+            var e = CamaraAutomatica.Cenital(vehiculos, finales, new V3(0, 0.5, 0), 40.0, 16.0 / 9.0);
+            // El centro entre lo más lejano de los dos lados.
+            Assert.InRange(e.X, -24.0, -22.0);
+            // Lo bastante alto para ver de −60 a 14 m (74 m) con margen, pero no «altísimo».
+            var anchoVisto = 2.0 * e.Alto * Math.Tan(20.0 * Math.PI / 180.0) * 16.0 / 9.0;
+            Assert.InRange(anchoVisto, 74.0, 74.0 * 1.25 + 7.0);
+            // Sin nada que encuadrar, la altura de siempre.
+            Assert.Equal(40.0, CamaraAutomatica.Cenital(null, null, null, 40.0, 1.0).Alto);
+        }
     }
 }

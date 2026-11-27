@@ -1,6 +1,6 @@
 {
   "nota": "Lo pesado de cada tanda de la auditoría del 2026-11-15, para la computadora del colaborador (tools/colaborador/tanda.ps1). «vigente» es la que corre CORRER-TANDA-EN-RTX.bat con doble clic. Toda corrida empieza por «comprobacion»; si falla, lo pesado no corre. Cada paso: un comando que corre en la raíz del repositorio, sin preguntas y sin llaves; «minutos» es lo estimado (el tope es 4 veces eso, y al menos 10 min); «salidas» son las rutas que se suben además de los registros. «rama»: la rama donde vive la tanda mientras no esté en main. Un comando por paso (sin &&): cada uno deja su registro. Un paso con `requiere` se omite si falta esa carpeta (datos que no van en git). «privadas»: carpetas de un paso que no se suben; se comprimen en un zip en la carpeta de resultados (René, 2026-11-21: el repositorio es público). Un «antes» en otro commit va en un git worktree (sin copiar el repositorio) y sus dependencias se enlazan desde el almacén de pnpm (--prefer-offline --package-import-method=hardlink), sin copiar node_modules (René, 2026-11-23: el disco llegaba al 100 %); corrida.json guarda el disco libre antes y después de cada paso.",
-  "vigente": "t10-final",
+  "vigente": "t11-solver",
   "comprobacion": {
     "pasos": [
       {
@@ -1482,9 +1482,9 @@
       "commit": "03340cb416111e1cab5b150eae82241c5ffef67a"
     },
     "t11-solver": {
-      "titulo": "Tanda 11 · Lo medido como restricción, el árbol en la orilla, AXA con su rigidez y el build 932aa256",
-      "nota": "René, 2026-11-26 (noche): todo lo del viernes en una sola tanda. El solver (Python y TS con paridad): lo medido es una restricción, el reajuste del rango converge y la huella de después del choque bloquea las llantas; el árbol de Tollocan en la orilla; AXA con la rigidez del reporte y lo medido en el 3D (#349); el build de Unity 932aa256 (#367); el video en la tarjeta integrada (#364) y el ensayo de la demo (#366) en esta computadora; el caso árido en la carretera a Bahía de Kino. Cada paso deja en <salida>.gpu.json la tarjeta que usó Chrome. Las capturas del ensayo llevan AXA y se quedan en esta computadora, fuera del repo. Unos 120 minutos estimados.",
-      "rama": "main",
+      "titulo": "Tanda 11 · Lo medido como restricción, el árbol en la orilla, AXA con su rigidez y el build 8a302a25",
+      "nota": "René, 2026-11-26 (noche): todo lo del viernes en una sola tanda. El solver (Python y TS con paridad): lo medido es una restricción, el reajuste del rango converge y la huella de después del choque bloquea las llantas; el árbol de Tollocan en la orilla; AXA con la rigidez del reporte y lo medido en el 3D (#349); el build de Unity 8a302a25 (rayones del roce #370, nada sobre la calzada #372); el video en la tarjeta integrada (#364) y el ensayo de la demo (#366) en esta computadora; el caso árido en la carretera a Bahía de Kino. Cada paso deja en <salida>.gpu.json la tarjeta que usó Chrome. Las capturas del ensayo llevan AXA y se quedan en esta computadora, fuera del repo. Unos 120 minutos estimados.",
+      "rama": "fix/solver-evidencia-dura",
       "pasos": [
         {
           "nombre": "visor",
@@ -1579,7 +1579,8 @@
           "minutos": 1,
           "salidas": ["eval/results/t11-solver"]
         }
-      ]
+      ],
+      "commit": "faf4cb06cc32ee83aa645aca6870334ff3a42947"
     }
   }
 }

@@ -15,6 +15,8 @@ namespace Croquis.Visor
     public sealed class VisorPuente : MonoBehaviour
     {
         /// <summary>La versión del contrato: debe coincidir con VISOR_PUENTE_VERSION.</summary>
+        private bool reproduciaAntes;
+
         public const string Version = "1.5.0";
 
         private const float SegundosPorReporteFps = 5f;
@@ -74,6 +76,13 @@ namespace Croquis.Visor
                     Enviar("tiempo", new JObject { { "t", Math.Round(visor.Tiempo, 3) } });
                 }
             }
+            else if (reproduciaAntes)
+            {
+                // Se detuvo (llegó al final): el último instante, para que la barra ofrezca «Repetir».
+                Enviar("tiempo", new JObject { { "t", Math.Round(visor.Tiempo, 3) } });
+            }
+
+            reproduciaAntes = visor.Reproduciendo;
         }
 
         public void cargarCaso(string texto)

@@ -28,6 +28,13 @@ const CASOS = [
   { clave: "axa", ruta: "caso3d/axa_agentes.json" },
   { clave: "carambola-tollocan-semaforo", ruta: "caso3d-narraciones/rene-carambola-semaforo.json" },
   { clave: "tollocan", ruta: "caso3d-narraciones/tollocan.json" },
+  // Casos nuevos (René, 2026-11-27): solo las calles que importan, las rayas cortadas en los cruces y
+  // los objetos del caso.
+  { clave: "curva-arbol", ruta: "caso3d-narraciones/rene-arbol-curva.json" },
+  { clave: "carretera-son100", ruta: "caso3d-ciudad/son100-kino.json" },
+  { clave: "glorieta", ruta: "caso3d/glorieta.json" },
+  // Da vuelta hacia la calle donde atropella: la horizontal es esa calle, no por donde llegaba.
+  { clave: "atropello", ruta: "caso3d-narraciones/rene-peaton-vuelta.json", daVuelta: true },
 ];
 
 function dibujo(ruta: string) {
@@ -59,7 +66,7 @@ describe("el croquis pericial, contra sus capturas aprobadas", () => {
     it(c.clave, async () => {
       const { svg, giro, res } = dibujo(c.ruta);
       // 1. La vía de llegada, horizontal.
-      const llegada = direccionDeLlegada(res);
+      const llegada = "daVuelta" in c ? null : direccionDeLlegada(res);
       if (llegada !== null) {
         const d = Math.abs((((llegada - giro) % 180) + 180) % 180);
         expect(Math.min(d, 180 - d)).toBeLessThan(30);

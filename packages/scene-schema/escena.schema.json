@@ -650,6 +650,12 @@
           "minItems": 1,
           "maxItems": 64,
           "items": { "$ref": "#/$defs/ViaMapa" }
+        },
+        "nodos": {
+          "type": "array",
+          "maxItems": 128,
+          "items": { "$ref": "#/$defs/NodoMapa" },
+          "description": "Los semáforos y pasos peatonales de OSM sobre las calles (desde 2.3.0 sin cambiar la versión)."
         }
       }
     },
@@ -665,12 +671,53 @@
         "carriles": { "type": "integer", "minimum": 1, "maximum": 12 },
         "ancho_m": { "type": "number", "minimum": 2, "maximum": 60 },
         "un_sentido": { "type": "boolean" },
+        "carriles_ida": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 12,
+          "description": "Carriles en el sentido de los puntos (`lanes:forward`; desde 2.3.0 sin cambiar la versión, como ADR 0142)."
+        },
+        "carriles_vuelta": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 12,
+          "description": "Carriles en contra del sentido de los puntos (`lanes:backward`)."
+        },
+        "vueltas": {
+          "type": "array",
+          "maxItems": 12,
+          "items": { "type": "string", "maxLength": 60 },
+          "description": "Las flechas de cada carril en el sentido de los puntos, de izquierda a derecha (`turn:lanes` o `turn:lanes:forward`): «left», «through;right», «» sin flecha."
+        },
+        "vueltas_vuelta": {
+          "type": "array",
+          "maxItems": 12,
+          "items": { "type": "string", "maxLength": 60 },
+          "description": "Igual que `vueltas`, para los carriles en contra del sentido de los puntos (`turn:lanes:backward`), de izquierda a derecha según su propio sentido."
+        },
+        "banqueta": {
+          "type": "string",
+          "enum": ["ambos", "izquierda", "derecha", "ninguna"],
+          "description": "Dónde tiene banqueta (`sidewalk`), a la izquierda o a la derecha según el sentido de los puntos."
+        },
         "puntos": {
           "type": "array",
           "minItems": 2,
           "maxItems": 400,
           "items": { "$ref": "#/$defs/Punto2D" }
         }
+      }
+    },
+    "NodoMapa": {
+      "type": "object",
+      "description": "Un nodo de OSM sobre las calles, ya en metros locales: un semáforo (`highway=traffic_signals`) o un paso peatonal (`highway=crossing` o `crossing=*`).",
+      "additionalProperties": false,
+      "required": ["id_osm", "tipo", "x", "y"],
+      "properties": {
+        "id_osm": { "type": "integer" },
+        "tipo": { "type": "string", "enum": ["semaforo", "paso_peatonal"] },
+        "x": { "type": "number" },
+        "y": { "type": "number" }
       }
     },
     "UbicacionReal": {
