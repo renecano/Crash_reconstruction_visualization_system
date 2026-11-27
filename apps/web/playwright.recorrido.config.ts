@@ -12,7 +12,9 @@ import { defineConfig, devices } from "@playwright/test";
  */
 export default defineConfig({
   testDir: "./e2e",
-  testMatch: /recorrido-fotos\.spec\.ts$/,
+  testMatch: process.env.CROQUIS_CAPTURAS
+    ? /capturas-portada\.spec\.ts$/
+    : /recorrido-fotos\.spec\.ts$/,
   workers: 1,
   reporter: "line",
   timeout: 1_800_000,

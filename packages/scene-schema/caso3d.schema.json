@@ -720,15 +720,32 @@
           "additionalProperties": false,
           "required": ["tipo", "centro", "rumbo_deg", "largo_m", "ancho_m", "altura_m"],
           "properties": {
-            "tipo": { "type": "string", "enum": ["puente", "paso_a_desnivel"] },
-            "centro": { "$ref": "#/$defs/PuntoPlano" },
+            "tipo": {
+              "type": "string",
+              "enum": ["puente", "paso_a_desnivel"]
+            },
+            "centro": {
+              "$ref": "#/$defs/PuntoPlano"
+            },
             "rumbo_deg": {
               "type": "number",
               "description": "El eje de la losa, en grados desde el eje x de la escena (antihorario)."
             },
-            "largo_m": { "type": "number", "minimum": 10, "maximum": 400 },
-            "ancho_m": { "type": "number", "minimum": 4, "maximum": 60 },
-            "altura_m": { "type": "number", "minimum": 2, "maximum": 30 }
+            "largo_m": {
+              "type": "number",
+              "minimum": 10,
+              "maximum": 400
+            },
+            "ancho_m": {
+              "type": "number",
+              "minimum": 4,
+              "maximum": 60
+            },
+            "altura_m": {
+              "type": "number",
+              "minimum": 2,
+              "maximum": 30
+            }
           }
         },
         "via": {
@@ -798,6 +815,12 @@
               "title": "ZonaEntorno",
               "type": "string",
               "enum": ["rural", "urbana"]
+            },
+            "paisaje": {
+              "title": "PaisajeEntorno",
+              "type": "string",
+              "enum": ["arido", "templado"],
+              "description": "El paisaje del lugar para el 3D (ronda final, 2026-11-26): «arido» donde la cobertura de OpenStreetMap alrededor del lugar es de zona seca (`natural=scrub|sand|bare_rock|scree|desert`) más que verde (`natural=wood|grassland|heath`, `landuse=forest|meadow|farmland|orchard|grass`); si no, «templado». Lo calcula la web con los mismos datos de OSM del caso. Sin él, Unity dibuja el templado de siempre. Solo cambia el suelo, las matas y los árboles procedurales; ninguna cifra."
             },
             "arboles": {
               "type": "array",

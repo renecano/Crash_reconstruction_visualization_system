@@ -107,15 +107,10 @@ try {
       }
     };
     const toma = (nombre) => !solo || solo.has(nombre);
-    // La apertura de la portada: el símbolo y luego el nombre. La apertura se retira en cuanto el
-    // video del fondo tiene su primer cuadro; sin el video espera 6 s, y así se alcanza a ver el
-    // nombre (aparece entre 1.35 y 2.25 s).
+    // La apertura de la portada: la cortina con el símbolo (dura 1.1 s).
     if (toma("portada-apertura")) {
-      // (La petición se deja sin responder: si falla, la portada retira la apertura de inmediato.)
-      await page.route(/\.(mp4|webm)(\?|$)/, () => {});
       await page.goto(BASE + "/", { waitUntil: "commit", timeout: 120_000 });
-      await rafaga("portada-apertura", [900, 1700, 2500, 3300], "#intro .intro-word");
-      await page.unrouteAll({ behavior: "ignoreErrors" });
+      await rafaga("portada-apertura", [300, 600, 900], "[data-cortina]");
     }
     // Entrar a un caso: la transición completa.
     if (toma("entrar-al-caso") || toma("entre-actos")) {
