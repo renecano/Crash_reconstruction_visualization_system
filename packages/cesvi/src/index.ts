@@ -55,5 +55,6 @@ export * from "./velocidad-narrada";
 export * from "./contra-narracion";
 export * from "./candado";
 export * from "./obstaculos";
+export * from "./obstaculos-rigidos";
 export * from "./lugar-narrado";
 export * from "./eje-calle";

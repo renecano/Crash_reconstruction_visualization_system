@@ -1391,6 +1391,7 @@ export function RecorridoCaso({
                 onVersion={(v) => setVersiones((vs) => conVersion(vs, v))}
                 activa={ysi}
                 onActiva={(clave) => setYsiDe(clave ? { clave, de: rSinLimite } : null)}
+                obstaculos={obstaculos}
               />
             </div>
           ) : null}

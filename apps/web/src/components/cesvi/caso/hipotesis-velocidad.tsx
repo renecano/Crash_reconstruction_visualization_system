@@ -3,7 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import {
   cambiosDeVelocidad,
+  contraObstaculos,
+  enMetros,
   especDeHipotesisVelocidad,
+  type ObstaculoDelMapa,
   MEDIO_EN_PALABRAS,
   especReconstruida,
   resumenHipotesisVelocidad,
@@ -19,6 +22,8 @@ import { reconstruirEnNavegador } from "@/lib/reconstruct-client";
 import { claveHipotesis, type VersionCaso, type VersionVelocidad } from "@/lib/versiones-caso";
 import { Tarjeta } from "./versiones";
 
+type Json = Record<string, unknown>;
+
 /**
  * «¿Y si…?» a otra velocidad, en la Reconstrucción (pedido de CESVI; René, 2026-11-26): el perito
  * cambia la velocidad de cada vehículo y ve cómo habría sido el choque, simulado hacia adelante con la
@@ -32,8 +37,14 @@ export function HipotesisVelocidad({
   onVersion,
   activa,
   onActiva,
+  obstaculos = null,
 }: {
   r: Reconstruccion;
+  /**
+   * Los edificios y muros del mapa (René, 2026-11-27): en la hipótesis son obstáculos rígidos; el
+   * vehículo que llega a uno choca contra él y se detiene, en vez de atravesarlo.
+   */
+  obstaculos?: readonly ObstaculoDelMapa[] | null;
   nombreDe: (id: string) => string;
   versiones: readonly VersionCaso[];
   onVersion: (v: VersionVelocidad) => void;
@@ -41,6 +52,32 @@ export function HipotesisVelocidad({
   activa: string | null;
   onActiva: (clave: string | null) => void;
 }) {
+  // La hipótesis hacia adelante, con los obstáculos del mapa como muros rígidos.
+  const simularHipotesis = async (spec: Json) => {
+    const origen = r.origen;
+    const enEscena =
+      origen && obstaculos?.length
+        ? obstaculos.map((o) => ({
+            nombre: o.nombre,
+            tipo: o.tipo,
+            puntos: o.puntos.map((p) => {
+              const m = enMetros(p, origen);
+              return { x: m.este, y: m.norte };
+            }),
+          }))
+        : [];
+    const hecho = await contraObstaculos(
+      spec,
+      enEscena,
+      async (s) =>
+        (await reconstruirEnNavegador(s as unknown as EscenaSpec, r.relieve)) as unknown as Json,
+    );
+    const choques = hecho.choques.map(
+      (c) =>
+        `${nombreDe(r.ids[c.vehiculo] ?? c.vehiculo)} choca contra ${c.tipo === "edificio" ? "el edificio" : "el muro"} «${c.obstaculo}» y se detiene`,
+    );
+    return { spec: hecho.spec, resultado: hecho.resultado, choques };
+  };
   const reconstruida = (id: string) =>
     r.velocidades.find((v) => v.vehiculo === id)?.previa?.mejor ?? null;
   const ids = [...new Set(Object.values(r.ids).map(String))].sort((a, b) =>
@@ -85,19 +122,20 @@ export function HipotesisVelocidad({
       const hip = especDeHipotesisVelocidad(base, new Map(), e);
       void Promise.all([
         reconstruirEnNavegador(base.spec as unknown as EscenaSpec, r.relieve),
-        reconstruirEnNavegador(hip.spec as unknown as EscenaSpec, r.relieve),
+        simularHipotesis(hip.spec),
       ])
-        .then(([linea, resultado]) => {
+        .then(([linea, h]) => {
+          const resultado = h.resultado as unknown as Resultado;
           const cambios = cambiosDeVelocidad(r.ids, resultado, linea, nombreDe);
           onVersion({
             clave,
             tipo: "hipotesis",
             clase: "velocidad",
             titulo: `Con la velocidad declarada: ${nombreDe(d.id)} a ${d.kmh} km/h (${MEDIO_EN_PALABRAS[d.medio]})`,
-            resumen: resumenHipotesisVelocidad(cambios),
+            resumen: [resumenHipotesisVelocidad(cambios), ...h.choques].join("; "),
             etiqueta: `la velocidad que declaró ${MEDIO_EN_PALABRAS[d.medio]}`,
-            resultado: resultado as Resultado,
-            escena: hip.spec as unknown as EscenaSpec,
+            resultado,
+            escena: h.spec as unknown as EscenaSpec,
             velocidades: e,
             cambios,
           });
@@ -124,10 +162,11 @@ export function HipotesisVelocidad({
       // con las velocidades del perito.
       const base = { ...r, spec: especReconstruida(r) } as unknown as EscenaSolver;
       const hip = especDeHipotesisVelocidad(base, new Map(), e);
-      const [linea, resultado] = await Promise.all([
+      const [linea, h] = await Promise.all([
         reconstruirEnNavegador(base.spec as unknown as EscenaSpec, r.relieve),
-        reconstruirEnNavegador(hip.spec as unknown as EscenaSpec, r.relieve),
+        simularHipotesis(hip.spec),
       ]);
+      const resultado = h.resultado as unknown as Resultado;
       const cambios = cambiosDeVelocidad(r.ids, resultado, linea, nombreDe);
       const clave = claveHipotesis(versiones);
       onVersion({
@@ -135,10 +174,10 @@ export function HipotesisVelocidad({
         tipo: "hipotesis",
         clase: "velocidad",
         titulo: tituloHipotesisVelocidad(e, nombreDe),
-        resumen: resumenHipotesisVelocidad(cambios),
+        resumen: [resumenHipotesisVelocidad(cambios), ...h.choques].join("; "),
         etiqueta: "la hipótesis «¿y si…?» del perito",
-        resultado: resultado as Resultado,
-        escena: hip.spec as unknown as EscenaSpec,
+        resultado,
+        escena: h.spec as unknown as EscenaSpec,
         velocidades: e,
         cambios,
       });
