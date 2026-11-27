@@ -1,0 +1,866 @@
+{
+  "formato": "croquis-caso",
+  "version": 1,
+  "guardado": "2026-11-27T23:53:18.982Z",
+  "narracion": "El hecho se ubica en la calle Olivos, frente al acceso vehicular de una casa habitación, colonia Lomas del Valle, municipio de Puebla, Puebla, aproximadamente a las 08:20 horas. La calle consta de un arroyo de dos carriles de concreto asfáltico, uno por sentido, con pendiente descendente hacia el Norte; 12 metros al Sur de ese acceso se encuentra un reductor de velocidad tipo tope de 0.10 metros de alto y 1.80 metros de ancho. La superficie se encontraba seca.\n\nSe examinan el vehículo A, marca Honda, tipo CR-V, modelo 2017, color plata, de servicio particular, que salía en reversa de ese acceso vehicular hacia la calle, y el vehículo B, marca Nissan, tipo Versa, modelo 2020, color azul, de servicio particular, que circulaba de Sur a Norte. El vehículo A presenta en su parte posterior derecha un hundimiento de atrás hacia adelante y de derecha a izquierda sobre defensa y calavera. El vehículo B presenta en su costado izquierdo, a la altura de la puerta delantera, un hundimiento de izquierda a derecha con desprendimiento de pintura. Las zonas de contacto corresponden: la parte posterior del vehículo A con el costado izquierdo del vehículo B.\n\nEl vehículo A quedó con su parte posterior sobre el carril con sentido al Norte, a 2.40 metros del acceso; el vehículo B quedó 7 metros al Norte del área de contacto, junto a la guarnición.",
+  "escena": {
+    "posiciones": [
+      {
+        "vehiculo": "V1",
+        "fase": "final",
+        "descripcion": "con su parte posterior sobre el carril con sentido al Norte, a 2.40 metros del acceso",
+        "cita": {
+          "texto": "El vehículo A quedó con su parte posterior sobre el carril con sentido al Norte, a 2.40 metros del acceso"
+        }
+      },
+      {
+        "vehiculo": "V2",
+        "fase": "final",
+        "descripcion": "7 metros al Norte del área de contacto, junto a la guarnición",
+        "cita": {
+          "texto": "el vehículo B quedó 7 metros al Norte del área de contacto, junto a la guarnición"
+        }
+      }
+    ],
+    "conteos": {
+      "filas": 32,
+      "valores_invalidos": 0,
+      "citas": 12,
+      "citas_fuera": 0,
+      "numeros": 2,
+      "numeros_fuera": 0
+    },
+    "problemas": [],
+    "preguntas": [
+      {
+        "clave": "impactos",
+        "texto": "¿Qué vehículos chocaron primero?",
+        "porQue": "Sin los impactos no hay reconstrucción.",
+        "control": {
+          "tipo": "opciones",
+          "opciones": [
+            {
+              "valor": "V1|V2",
+              "etiqueta": "V1 y V2"
+            },
+            {
+              "valor": "V1|objeto:otro",
+              "etiqueta": "V1 contra un objeto fijo"
+            },
+            {
+              "valor": "V2|objeto:otro",
+              "etiqueta": "V2 contra un objeto fijo"
+            }
+          ]
+        }
+      },
+      {
+        "clave": "velocidad-V1",
+        "texto": "¿A qué velocidad venía V1 antes del impacto?",
+        "porQue": "Si la evidencia no fija la velocidad, la reconstrucción usa la que des, como supuesto con su rango. Con «No sé», la típica de la vía.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "km/h"
+        },
+        "vehiculo": "V1"
+      },
+      {
+        "clave": "velocidad-V2",
+        "texto": "¿A qué velocidad venía V2 antes del impacto?",
+        "porQue": "Si la evidencia no fija la velocidad, la reconstrucción usa la que des, como supuesto con su rango. Con «No sé», la típica de la vía.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "km/h"
+        },
+        "vehiculo": "V2"
+      },
+      {
+        "clave": "restos",
+        "texto": "¿Qué longitud tiene la zona de restos?",
+        "porQue": "Los restos fijan el desplazamiento después del impacto.",
+        "control": {
+          "tipo": "numero",
+          "unidad": "m"
+        }
+      }
+    ]
+  },
+  "expediente": {
+    "caso": {
+      "fecha_hora": {
+        "valor": "aproximadamente a las 08:20 horas",
+        "fuente": "perito"
+      },
+      "lugar": {
+        "descripcion": {
+          "valor": "calle Olivos, frente al acceso vehicular de una casa habitación, colonia Lomas del Valle",
+          "fuente": "perito"
+        },
+        "municipio": {
+          "valor": "Puebla",
+          "fuente": "perito"
+        },
+        "estado": {
+          "valor": "Puebla",
+          "fuente": "perito"
+        },
+        "coordenadas": {
+          "lat": 18.986237,
+          "lon": -98.187035
+        },
+        "calles_del_mapa": {
+          "fuente": "overpass",
+          "atribucion": "© OpenStreetMap contributors (ODbL)",
+          "consultado": "2026-11-25T00:00:00.000Z",
+          "centro": {
+            "lat": 18.986237,
+            "lon": -98.187035
+          },
+          "radio_m": 150,
+          "vias": [
+            {
+              "id": 112434045,
+              "tipo": "residential",
+              "nombre": "Calle Laureles",
+              "carriles": "2",
+              "puntos": [
+                [
+                  -98.188342,
+                  18.985953
+                ],
+                [
+                  -98.187103,
+                  18.985807
+                ],
+                [
+                  -98.185773,
+                  18.985652
+                ]
+              ]
+            },
+            {
+              "id": 112434062,
+              "tipo": "residential",
+              "nombre": "Calle Higueras",
+              "puntos": [
+                [
+                  -98.18582,
+                  18.98532
+                ],
+                [
+                  -98.185124,
+                  18.985224
+                ],
+                [
+                  -98.184435,
+                  18.985128
+                ]
+              ]
+            },
+            {
+              "id": 112434102,
+              "tipo": "tertiary",
+              "nombre": "Carretera al Batán",
+              "carriles": "2",
+              "puntos": [
+                [
+                  -98.187321,
+                  18.978736
+                ],
+                [
+                  -98.187283,
+                  18.979742
+                ],
+                [
+                  -98.187277,
+                  18.979863
+                ],
+                [
+                  -98.187209,
+                  18.981839
+                ],
+                [
+                  -98.187207,
+                  18.981939
+                ],
+                [
+                  -98.187206,
+                  18.982081
+                ],
+                [
+                  -98.18723,
+                  18.982289
+                ],
+                [
+                  -98.187267,
+                  18.982423
+                ],
+                [
+                  -98.188271,
+                  18.985167
+                ],
+                [
+                  -98.188832,
+                  18.986546
+                ],
+                [
+                  -98.188854,
+                  18.986696
+                ],
+                [
+                  -98.188828,
+                  18.986811
+                ],
+                [
+                  -98.188731,
+                  18.986925
+                ],
+                [
+                  -98.188517,
+                  18.986957
+                ],
+                [
+                  -98.188107,
+                  18.98687
+                ],
+                [
+                  -98.187525,
+                  18.986858
+                ],
+                [
+                  -98.187174,
+                  18.986853
+                ],
+                [
+                  -98.187104,
+                  18.986853
+                ],
+                [
+                  -98.186965,
+                  18.986856
+                ],
+                [
+                  -98.185845,
+                  18.986904
+                ],
+                [
+                  -98.185599,
+                  18.986883
+                ]
+              ]
+            },
+            {
+              "id": 112434168,
+              "tipo": "residential",
+              "nombre": "Calle Perales",
+              "puntos": [
+                [
+                  -98.185773,
+                  18.985652
+                ],
+                [
+                  -98.18582,
+                  18.98532
+                ],
+                [
+                  -98.185882,
+                  18.984885
+                ],
+                [
+                  -98.185991,
+                  18.984119
+                ]
+              ]
+            },
+            {
+              "id": 112434214,
+              "tipo": "residential",
+              "nombre": "Calle Nogales",
+              "carriles": "2",
+              "puntos": [
+                [
+                  -98.185882,
+                  18.984885
+                ],
+                [
+                  -98.188092,
+                  18.985145
+                ]
+              ]
+            },
+            {
+              "id": 112434244,
+              "tipo": "residential",
+              "nombre": "Calle Olivos",
+              "carriles": "2",
+              "puntos": [
+                [
+                  -98.186967,
+                  18.986668
+                ],
+                [
+                  -98.187103,
+                  18.985807
+                ]
+              ]
+            },
+            {
+              "id": 524272314,
+              "tipo": "unclassified",
+              "carriles": "1",
+              "puntos": [
+                [
+                  -98.188532,
+                  18.98865
+                ],
+                [
+                  -98.188317,
+                  18.988506
+                ],
+                [
+                  -98.188075,
+                  18.988359
+                ],
+                [
+                  -98.18788,
+                  18.988195
+                ],
+                [
+                  -98.187789,
+                  18.988156
+                ],
+                [
+                  -98.187745,
+                  18.988043
+                ],
+                [
+                  -98.187776,
+                  18.987651
+                ],
+                [
+                  -98.187765,
+                  18.987578
+                ],
+                [
+                  -98.187563,
+                  18.987427
+                ],
+                [
+                  -98.187313,
+                  18.98727
+                ],
+                [
+                  -98.187239,
+                  18.987102
+                ],
+                [
+                  -98.187202,
+                  18.986986
+                ],
+                [
+                  -98.187174,
+                  18.986853
+                ]
+              ]
+            },
+            {
+              "id": 626665404,
+              "tipo": "tertiary",
+              "nombre": "Carretera al Batán",
+              "carriles": "1",
+              "puntos": [
+                [
+                  -98.185599,
+                  18.986883
+                ],
+                [
+                  -98.185353,
+                  18.986861
+                ]
+              ]
+            },
+            {
+              "id": 775087745,
+              "tipo": "residential",
+              "nombre": "Circuito Valle Alto",
+              "puntos": [
+                [
+                  -98.188513,
+                  18.985214
+                ],
+                [
+                  -98.188488,
+                  18.985183
+                ],
+                [
+                  -98.188352,
+                  18.984856
+                ],
+                [
+                  -98.188353,
+                  18.984827
+                ]
+              ]
+            },
+            {
+              "id": 775087746,
+              "tipo": "residential",
+              "nombre": "Circuito Valle Alto",
+              "puntos": [
+                [
+                  -98.188675,
+                  18.985175
+                ],
+                [
+                  -98.188555,
+                  18.985219
+                ],
+                [
+                  -98.188513,
+                  18.985214
+                ]
+              ]
+            },
+            {
+              "id": 775087747,
+              "tipo": "residential",
+              "carriles": "2",
+              "puntos": [
+                [
+                  -98.1878,
+                  18.984213
+                ],
+                [
+                  -98.188135,
+                  18.985111
+                ],
+                [
+                  -98.18815,
+                  18.985151
+                ],
+                [
+                  -98.188164,
+                  18.985189
+                ],
+                [
+                  -98.188717,
+                  18.986663
+                ],
+                [
+                  -98.188717,
+                  18.986729
+                ],
+                [
+                  -98.188678,
+                  18.986785
+                ]
+              ]
+            },
+            {
+              "id": 775087748,
+              "tipo": "residential",
+              "carriles": "2",
+              "puntos": [
+                [
+                  -98.186979,
+                  18.986743
+                ],
+                [
+                  -98.186972,
+                  18.986794
+                ],
+                [
+                  -98.186965,
+                  18.986856
+                ]
+              ]
+            },
+            {
+              "id": 775087749,
+              "tipo": "residential",
+              "carriles": "2",
+              "puntos": [
+                [
+                  -98.188678,
+                  18.986785
+                ],
+                [
+                  -98.188599,
+                  18.986806
+                ],
+                [
+                  -98.18851,
+                  18.986802
+                ],
+                [
+                  -98.188088,
+                  18.986747
+                ],
+                [
+                  -98.187363,
+                  18.986726
+                ],
+                [
+                  -98.187049,
+                  18.98674
+                ],
+                [
+                  -98.186979,
+                  18.986743
+                ],
+                [
+                  -98.186917,
+                  18.986746
+                ],
+                [
+                  -98.186633,
+                  18.986758
+                ]
+              ]
+            },
+            {
+              "id": 877576684,
+              "tipo": "residential",
+              "nombre": "Calle Nogales",
+              "carriles": "2",
+              "puntos": [
+                [
+                  -98.188092,
+                  18.985145
+                ],
+                [
+                  -98.18815,
+                  18.985151
+                ]
+              ]
+            },
+            {
+              "id": 877576685,
+              "tipo": "residential",
+              "nombre": "Calle Nogales",
+              "carriles": "1",
+              "puntos": [
+                [
+                  -98.18815,
+                  18.985151
+                ],
+                [
+                  -98.188271,
+                  18.985167
+                ]
+              ]
+            },
+            {
+              "id": 954195897,
+              "tipo": "service",
+              "puntos": [
+                [
+                  -98.187765,
+                  18.987578
+                ],
+                [
+                  -98.188174,
+                  18.988081
+                ]
+              ]
+            }
+          ]
+        }
+      },
+      "condiciones": {
+        "superficie": {
+          "valor": "asfalto",
+          "fuente": "perito",
+          "cita": {
+            "texto": "La calle consta de un arroyo de dos carriles de concreto asfáltico, uno por sentido, con pendiente descendente hacia el Norte"
+          }
+        },
+        "estado_superficie": {
+          "valor": "seco",
+          "fuente": "perito",
+          "cita": {
+            "texto": "La superficie se encontraba seca"
+          }
+        },
+        "pendiente": {
+          "valor": "bajada",
+          "fuente": "perito",
+          "cita": {
+            "texto": "La calle consta de un arroyo de dos carriles de concreto asfáltico, uno por sentido, con pendiente descendente hacia el Norte"
+          }
+        }
+      },
+      "modalidades": []
+    },
+    "vehiculos": [
+      {
+        "id": "V1",
+        "marca": {
+          "valor": "Honda",
+          "fuente": "perito"
+        },
+        "modelo": {
+          "valor": "CR-V",
+          "fuente": "perito"
+        },
+        "anio": 2017,
+        "clase": "suv_compacta",
+        "masa": {
+          "valor": 1590,
+          "unidad": "kg",
+          "fuente": "supuesto"
+        }
+      },
+      {
+        "id": "V2",
+        "marca": {
+          "valor": "Nissan",
+          "fuente": "perito"
+        },
+        "modelo": {
+          "valor": "Versa",
+          "fuente": "perito"
+        },
+        "anio": 2020,
+        "clase": "sedan_compacto",
+        "masa": {
+          "valor": 1110,
+          "unidad": "kg",
+          "fuente": "supuesto"
+        }
+      }
+    ],
+    "danos": [
+      {
+        "vehiculo": "V1",
+        "zona": {
+          "cara": "posterior",
+          "vertice": "posterior_derecho"
+        },
+        "direcciones": [
+          "de_atras_hacia_adelante",
+          "de_derecha_a_izquierda"
+        ],
+        "tipos": [
+          "hundimiento"
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "El vehículo A presenta en su parte posterior derecha un hundimiento de atrás hacia adelante y de derecha a izquierda sobre defensa y calavera"
+        }
+      },
+      {
+        "vehiculo": "V2",
+        "zona": {
+          "cara": "lateral_izquierdo",
+          "tercio": "delantero"
+        },
+        "direcciones": [
+          "de_izquierda_a_derecha"
+        ],
+        "tipos": [
+          "hundimiento",
+          "desprendimiento"
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "El vehículo B presenta en su costado izquierdo, a la altura de la puerta delantera, un hundimiento de izquierda a derecha con desprendimiento de pintura"
+        }
+      }
+    ],
+    "impactos": [
+      {
+        "orden": 1,
+        "vehiculos": [
+          "V1",
+          "V2"
+        ],
+        "zonas": [
+          {
+            "vehiculo": "V1",
+            "zona": {
+              "cara": "posterior"
+            }
+          },
+          {
+            "vehiculo": "V2",
+            "zona": {
+              "cara": "lateral_izquierdo"
+            }
+          }
+        ],
+        "fuente": "perito",
+        "cita": {
+          "texto": "la parte posterior del vehículo A con el costado izquierdo del vehículo B"
+        }
+      }
+    ],
+    "versiones": [
+      {
+        "tipo": "evidencia",
+        "maniobras": [
+          {
+            "vehiculo": "V1",
+            "tipo": "reversa",
+            "cita": {
+              "texto": "que salía en reversa de ese acceso vehicular hacia la calle"
+            }
+          },
+          {
+            "vehiculo": "V2",
+            "tipo": "circula",
+            "cita": {
+              "texto": "que circulaba de Sur a Norte"
+            }
+          }
+        ],
+        "posiciones": [
+          {
+            "vehiculo": "V2",
+            "fase": "impacto",
+            "punto": {
+              "lat": 18.98623701091117,
+              "lon": -98.18702680302218
+            },
+            "rumbo": 359.9999999637954,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V1",
+            "fase": "impacto",
+            "punto": {
+              "lat": 18.986237010911157,
+              "lon": -98.18705581038817
+            },
+            "rumbo": 269.9999999637954,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V1",
+            "fase": "final",
+            "punto": {
+              "lat": 18.986240321563006,
+              "lon": -98.18705042090507
+            },
+            "rumbo": 188.4950427866071,
+            "fuente": "perito"
+          },
+          {
+            "vehiculo": "V2",
+            "fase": "final",
+            "punto": {
+              "lat": 18.986300160959317,
+              "lon": -98.18702991949446
+            },
+            "rumbo": 8.495039778590183,
+            "fuente": "perito"
+          }
+        ]
+      }
+    ],
+    "terreno": {
+      "topes": [
+        {
+          "id": "tope-1",
+          "linea": [
+            {
+              "lat": 18.986135,
+              "lon": -98.1870672
+            },
+            {
+              "lat": 18.9861244,
+              "lon": -98.1869919
+            }
+          ],
+          "alto_m": 0.1,
+          "largo_m": 1.4,
+          "fuente": "supuesto"
+        }
+      ],
+      "relieve": {
+        "fuente": "dem"
+      }
+    }
+  },
+  "conclusion_perito": null,
+  "titulo": "Caso nuevo",
+  "bitacora": [
+    {
+      "n": 1,
+      "de": "lector",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Lectura: 30 filas con su cita."
+    },
+    {
+      "n": 2,
+      "de": "verificador_citas",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Citas encontradas en la narración: 12 de 12; números con su cita: 2 de 2. Lo que no está en el texto se descarta."
+    },
+    {
+      "n": 3,
+      "de": "validador",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Escena válida: 2 vehículos, 1 impacto."
+    },
+    {
+      "n": 4,
+      "de": "preguntador",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "4 preguntas para el perito, de lo que más cambia la reconstrucción: impactos, velocidad-V1, velocidad-V2, restos."
+    },
+    {
+      "n": 5,
+      "de": "verificador_cesvi",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Sin medidas de deformación completas: no hay EBS con el método de CESVI."
+    },
+    {
+      "n": 6,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Pide reconstruir."
+    },
+    {
+      "n": 7,
+      "de": "fisico",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Reconstrucción: V1 a 6 km/h (3–8), V2 a 20 km/h (17–26)."
+    },
+    {
+      "n": 8,
+      "de": "fisico",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Con los supuestos declarados: Masa de V1: 1,590 kg; Masa de V2: 1,110 kg; Posición inicial de V1: 12 m delante de la posición de impacto que colocó el perito: llega en reversa; Posición inicial de V2: 12 m antes de la posición de impacto que colocó el perito, en su rumbo; Fricción llanta–pavimento: μ = 0.7; Después del impacto: las llantas ruedan, con un arrastre de 0.35 de la fricción; Restitución del choque: e = 0.1; Fricción entre los vehículos durante el choque: razón de impulso de 0.4."
+    },
+    {
+      "n": 9,
+      "de": "verificador_cesvi",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Sin medidas de deformación completas: no hay EBS con el método de CESVI."
+    },
+    {
+      "n": 10,
+      "de": "perito",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Abre el dictamen."
+    },
+    {
+      "n": 11,
+      "de": "redactor",
+      "para": "pizarra",
+      "tipo": "escribe",
+      "texto": "Dictamen redactado con la reconstrucción, la verificación con el método de CESVI, esta bitácora."
+    }
+  ]
+}
