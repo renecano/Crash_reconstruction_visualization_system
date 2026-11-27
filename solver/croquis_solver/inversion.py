@@ -1893,10 +1893,7 @@ def _estimate(
         # Una muestra que viola lo medido no es una solución: se reajusta desde el modo con el
         # ajuste completo y, si sigue sin cumplirlo, se descarta (cuántas quedan: `muestras`).
         if _viola_lo_medido(f, best):
-            # Desde el punto de siempre y no desde el modo: desde el modo se atoraba y descartaba
-            # muestras que sí tienen solución, casi todas de un mismo lado (René, 2026-11-27).
-            fijos = {k: v for k, v in best.values.items() if k not in free}
-            f = fit_evidence(s, e, dt=dt, start=fijos, free=free, downed_mu=dmu)
+            f = fit_evidence(s, e, dt=dt, start=dict(best.values), free=free, downed_mu=dmu)
             if _viola_lo_medido(f, best):
                 continue
         fits.append(f)
