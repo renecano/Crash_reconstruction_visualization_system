@@ -1,0 +1,5 @@
+{"fecha":"2026-11-27T01:19:29.631Z","caso":"AXA","estado":"listo","segundos":14.6,"fases":["arrancando @0.0 s","calculando @1.2 s","listo @14.6 s"]}
+{"fecha":"2026-11-27T01:19:37.250Z","caso":"Tollocan","estado":"listo","segundos":5.8,"fases":["arrancando @0.0 s","calculando @0.5 s","listo @5.8 s"]}
+{"fecha":"2026-11-27T01:19:42.685Z","caso":"Reforma, CDMX (batería de ciudad)","estado":"listo","segundos":3.7,"fases":["arrancando @0.0 s","calculando @1.0 s","listo @3.7 s"]}
+{"fecha":"2026-11-27T01:19:47.953Z","caso":"Centro de Guadalajara (batería de ciudad)","estado":"listo","segundos":3.5,"fases":["arrancando @0.0 s","calculando @0.9 s","listo @3.5 s"]}
+{"fecha":"2026-11-27T01:19:55.980Z","caso":"Ejemplo crucero de noche","estado":"listo","segundos":4,"fases":["arrancando @0.0 s","calculando @1.4 s","listo @4.0 s"],"notas":["«¿Por dónde venía el VW Jetta?»: la flecha más cercana a «Del sur» se aparta 37°.","«¿Por dónde venía el GM Camaro?»: la flecha más cercana a «Del oeste» se aparta 37°."]}
