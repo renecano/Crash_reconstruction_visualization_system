@@ -280,10 +280,52 @@
         },
         "origen_rigidez": {
           "type": "string",
-          "enum": ["nhtsa", "supuesto", "sin impacto"]
+          "enum": ["nhtsa", "reporte", "supuesto", "sin impacto"],
+          "title": "OrigenRigidez"
         },
         "cdc": {
           "$ref": "#/$defs/ZonaCDC"
+        },
+        "medido_m": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0
+          },
+          "minItems": 6,
+          "maxItems": 6,
+          "description": "Opcional (2026-11-26, sin cambio de versión): C1 a C6 que midió el perito en esa cara, con la misma convención que `perfil_m`, para ponerlos junto a lo calculado. Sin medidas, no va."
+        },
+        "energia_medida_j": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Opcional: la energía que absorbe la deformación medida con la misma rigidez (CRASH3), para compararla con `energia_j`, la que reparte el choque reconstruido."
+        },
+        "rigidez": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["a_n_m", "b_n_m2", "fuente"],
+          "description": "Opcional: los coeficientes CRASH3 con que se calculó la deformación y de dónde salen.",
+          "properties": {
+            "a_n_m": {
+              "type": "number",
+              "minimum": 0
+            },
+            "b_n_m2": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "fuente": {
+              "type": "string",
+              "enum": ["reporte", "nhtsa", "supuesto"],
+              "title": "FuenteRigidez"
+            },
+            "nota": {
+              "type": "string",
+              "maxLength": 300
+            }
+          },
+          "title": "RigidezDano"
         }
       }
     },
@@ -1765,7 +1807,8 @@
         },
         "origen_rigidez": {
           "type": "string",
-          "enum": ["nhtsa", "supuesto", "sin impacto"]
+          "enum": ["nhtsa", "reporte", "supuesto", "sin impacto"],
+          "title": "OrigenRigidez"
         },
         "cdc": {
           "$ref": "#/$defs/ZonaCDC"

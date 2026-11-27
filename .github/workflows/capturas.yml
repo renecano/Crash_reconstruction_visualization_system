@@ -1,0 +1,50 @@
+# Capturas a mano (René, 2026-11-25): corre una prueba de capturas de Playwright sobre una rama y
+# sube la carpeta que escribe. Para las capturas que René aprueba sin abrir un navegador en su
+# laptop (8 GB). No corre en cada PR.
+name: Capturas
+
+on:
+  workflow_dispatch:
+    inputs:
+      rama:
+        description: "Rama o commit"
+        required: true
+      prueba:
+        description: "La prueba de capturas, desde apps/web (p. ej. e2e/capturas-portada-pagina.spec.ts)"
+        required: true
+      carpeta:
+        description: "La carpeta que escribe la prueba (CROQUIS_CAPTURAS), desde apps/web"
+        required: true
+        default: capturas
+
+permissions:
+  contents: read
+
+jobs:
+  capturas:
+    name: Capturas
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.0-noble
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.rama }}
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @croquis/web exec playwright test --project=chromium "$PRUEBA"
+        env:
+          CI: "true"
+          PRUEBA: ${{ inputs.prueba }}
+          CROQUIS_CAPTURAS: ${{ inputs.carpeta }}
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: capturas
+          path: apps/web/${{ inputs.carpeta }}
+          retention-days: 14

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Croquis.Generated;
 
 namespace Croquis.Core
@@ -20,17 +21,71 @@ namespace Croquis.Core
         public static CampoDano Campo(ResultadoVehiculo v)
         {
             var dano = v?.Dano;
-            if (dano?.PerfilM == null || dano.PerfilM.Length != 6 || dano.AnchoM <= 0.0 || dano.Cdc == null)
+            return dano == null || dano.OrigenRigidez == OrigenRigidez.SinImpacto ? null : Campo(v, PerfilADibujar(dano), dano.AnchoM, dano.CentroM, dano.Cdc, v.PdofHoras);
+        }
+
+        /// <summary>
+        /// El perfil que se dibuja (René, 2026-11-26): lo que midió el perito (`dano.medido_m`, C1–C6 con
+        /// la convención de `perfil_m`) si lo trae, porque es la evidencia del vehículo real; si no, lo
+        /// calculado (`perfil_m`).
+        /// </summary>
+        public static double[] PerfilADibujar(Dano dano)
+        {
+            return UsaMedido(dano) ? dano.MedidoM : dano?.PerfilM;
+        }
+
+        /// <summary>Si el daño trae C1–C6 medidos (seis valores, alguno mayor que cero).</summary>
+        public static bool UsaMedido(Dano dano)
+        {
+            return dano?.MedidoM != null && dano.MedidoM.Length == 6 && Array.Exists(dano.MedidoM, c => c > 0.0);
+        }
+
+        /// <summary>La energía que va con el perfil que se dibuja: la de lo medido si se dibuja lo medido.</summary>
+        public static double EnergiaADibujar(Dano dano)
+        {
+            return UsaMedido(dano) && dano.EnergiaMedidaJ.HasValue ? dano.EnergiaMedidaJ.Value : dano?.EnergiaJ ?? 0.0;
+        }
+
+        /// <summary>
+        /// Los daños de un vehículo en orden, cada uno con el instante desde el que se ve: el del primer
+        /// impacto (`dano`, en `Instante`) y los de cada impacto posterior (`danos_posteriores`, en su `t`),
+        /// que se dibujan encima del anterior. Vacío si no hay nada que dibujar.
+        /// </summary>
+        public static List<(double Desde, CampoDano Campo)> Etapas(ResultadoVehiculo v, Caso3DResultado r)
+        {
+            var etapas = new List<(double, CampoDano)>();
+            var primero = Campo(v);
+            if (primero != null)
+            {
+                etapas.Add((Instante(r, v.Id), primero));
+            }
+
+            foreach (var p in v?.DanosPosteriores ?? new DanosPosterioreElement[0])
+            {
+                var campo = p == null || p.OrigenRigidez == OrigenRigidez.SinImpacto ? null : Campo(v, p.PerfilM, p.AnchoM, p.CentroM, p.Cdc, p.PdofHoras);
+                if (campo != null)
+                {
+                    etapas.Add((p.T, campo));
+                }
+            }
+
+            etapas.Sort((a, b) => a.Item1.CompareTo(b.Item1));
+            return etapas;
+        }
+
+        private static CampoDano Campo(ResultadoVehiculo v, double[] perfil, double ancho, double centro, Cdc cdc, double? pdof)
+        {
+            if (perfil == null || perfil.Length != 6 || ancho <= 0.0 || cdc == null)
             {
                 return null;
             }
 
-            if (Array.TrueForAll(dano.PerfilM, c => c <= 0.0) || PerfilClase.De(v.Clase).DosRuedas)
+            if (Array.TrueForAll(perfil, c => c <= 0.0) || PerfilClase.De(v.Clase).DosRuedas)
             {
                 return null;
             }
 
-            var lado = Lado(dano.Cdc.Lado);
+            var lado = Lado(cdc.Lado);
             if (lado == null)
             {
                 return null;
@@ -40,10 +95,11 @@ namespace Croquis.Core
             var entrada = new EntradaDano
             {
                 Lado = lado.Value,
-                Perfil = dano.PerfilM,
-                Ancho = dano.AnchoM,
-                Centro = dano.CentroM,
-                ZonaVertical = dano.Cdc.ZonaVertical.HasValue ? dano.Cdc.ZonaVertical.Value.ToString()[0] : (char?)null,
+                Perfil = perfil,
+                Ancho = ancho,
+                Centro = centro,
+                ZonaVertical = cdc.ZonaVertical.HasValue ? cdc.ZonaVertical.Value.ToString()[0] : (char?)null,
+                PdofHoras = pdof,
             };
             return new CampoDano(entrada, v.Clase, new MedidasVehiculo(d.LargoM, d.AnchoM, d.AltoM, d.DistanciaEntreEjesM));
         }
@@ -129,6 +185,45 @@ namespace Croquis.Core
             }
 
             return salida;
+        }
+
+        /// <summary>Toma el frente real de la carrocería (su superficie, en el marco de Unity) para el campo.</summary>
+        public static void FijarFrente(CampoDano campo, IList<V3> verticesEnUnity, IList<int> triangulos)
+        {
+            var enDano = new V3[verticesEnUnity.Count];
+            for (var i = 0; i < enDano.Length; i++)
+            {
+                enDano[i] = Cambiar(verticesEnUnity[i]);
+            }
+
+            campo.FijarFrente(enDano, triangulos);
+        }
+
+        /// <summary>Lo que se hundió de verdad la lámina en C1–C6 (m), con vértices en el marco de Unity.</summary>
+        public static double[] Medir(CampoDano campo, IList<V3> antesEnUnity, IList<V3> despuesEnUnity, out double[] pedidoAlli)
+        {
+            var a = new V3[antesEnUnity.Count];
+            var d = new V3[despuesEnUnity.Count];
+            for (var i = 0; i < a.Length; i++)
+            {
+                a[i] = Cambiar(antesEnUnity[i]);
+                d[i] = Cambiar(despuesEnUnity[i]);
+            }
+
+            return campo.MedirEnMalla(a, d, out pedidoAlli);
+        }
+
+        /// <summary>Un punto del marco del daño (x adelante, y arriba, z a la derecha) en el de Unity.</summary>
+        public static V3 AUnity(V3 enDano)
+        {
+            return Cambiar(enDano);
+        }
+
+        /// <summary>Si el daño mueve un punto del marco de Unity (para refinar solo ahí la malla).</summary>
+        public static bool Toca(CampoDano campo, V3 enUnity)
+        {
+            campo.Desplazamiento(Cambiar(enUnity), out var peso, out _);
+            return peso > 0.0;
         }
 
         /// <summary>Del marco de Unity al del daño y de regreso: se intercambian x y z.</summary>
