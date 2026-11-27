@@ -1,0 +1,26 @@
+{
+  "fecha": "2026-11-27T01:23:18.205Z",
+  "filas": [
+    {
+      "clave": "rene-arbol-curva",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto 80 km/h A · Volkswagen Jetta rango 68–91 Reconstrucción física de Croquis · mejor ajuste 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 km/h Cada punto es una de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones Lo fijan 4 evidencias",
+      "no_cuadra": false,
+      "peaton_en_la_escena": 0
+    },
+    {
+      "clave": "rene-peaton-vuelta",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto 18 km/h A · Isuzu ELF 400 rango 16–19 Reconstrucción física de Croquis · mejor ajuste 16 18 20 22 km/h Cada punto son 2 de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones Lo fijan 4 evidencias",
+      "no_cuadra": false,
+      "peaton_en_la_escena": 1
+    },
+    {
+      "clave": "rene-carambola-semaforo",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto 50 km/h A · Nissan NP300 rango 47–54 Reconstrucción física de Croquis · mejor ajuste 25 30 35 40 45 50 km/h Cada punto es una de las 32 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones B · Chevrolet Aveo 0 km/h (detenido, lo dice la narración) C · Kia Rio 0 km/h (detenido, lo dice la narración) Lo fijan 8 evidencias",
+      "no_cuadra": false,
+      "peaton_en_la_escena": 0
+    }
+  ]
+}
