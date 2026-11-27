@@ -61,6 +61,20 @@ Esto ya está en el contrato y no necesita cambios:
 - **Camellón (Alberto, 2026-11-26):** no necesita campo nuevo. Unity lo saca de las calles de OSM del caso (`escena.lugar.red_vial.vias`): dos `way` principales de un sentido, casi paralelos y en sentidos contrarios, con el mismo nombre; el camellón es lo que queda entre sus orillas de adentro, con el ancho de calzada de `viaWidthM`. Quita del entorno procedural lo que cae dentro (edificios, postes, señales y cercas) y le pone pasto, guarnición, matas y árboles.
 - **Paisaje árido (propuesto en este PR `contract:`):** `escenario.entorno.paisaje`, opcional, `arido` o `templado`. **Lo calcula la web** con OSM alrededor del lugar (mismo radio que las calles): «árido» si el área de `natural=scrub|sand|bare_rock|scree|desert` es mayor que la de `natural=wood|grassland|heath` y `landuse=forest|meadow|farmland|orchard|grass`; si no, o sin datos, «templado» (o no se manda). Unity lo lee en cuanto esté en `main`: tierra en vez de pasto, matas secas y ralas, y pocos pirules en vez de fresnos. No cambia ninguna cifra.
 
+## 4. De dónde venía: el trayecto previo (René, 2026-11-27)
+
+**Campo opcional `escenario.vehiculos[].trayecto_previo`** (`TrayectoPrevio` en `caso3d.schema.json`). Sin él, todo funciona como hoy.
+
+- **Qué es:** la ruta por las calles reales (OSRM sobre OpenStreetMap, respetando sentidos; ADR 0147) desde donde el perito marcó «¿De dónde venía?» hasta el primer punto de la trayectoria de ese vehículo en el Resultado. Hasta ~5 km.
+- **Campos:** `x`, `y` (m, X este, Y norte), `t` (s, 0 es el impacto, crece y termina en `resultado.t_inicio`), `v_ms` (opcional) y `distancia_m`.
+- **Cómo se mueve el vehículo:** antes de `resultado.t_inicio`, sobre `trayecto_previo` (lineal entre puntos, con el rumbo de la ruta); desde `t_inicio`, la trayectoria del Resultado como siempre. El último punto del trayecto coincide con el primero de la trayectoria, en posición, velocidad e instante: empalma sin saltos.
+- **Es ilustrativo, no evidencia.** No entra al solver ni a ninguna cifra; el tramo reconstruido no cambia. La velocidad es la reconstruida antes del impacto, nunca mayor, frenando en curvas y vueltas (`apps/web/src/lib/trayecto-previo.ts`, con sus fuentes).
+- **En el 3D:**
+  - se distingue del tramo reconstruido con una línea punteada en otro color;
+  - lleva el letrero «Trayecto ilustrativo: no es evidencia» mientras el vehículo va por él;
+  - el entorno lejano va más ligero según la distancia (calle y piso, sin edificios detallados);
+  - la cámara «automática» sigue al vehículo durante el trayecto y llega al impacto con la cámara lenta de siempre.
+
 ## Cómo pedir un cambio
 
 Un PR `contract:` pequeño a `main` que toque el esquema (`caso3d.schema.json` o `resultado.schema.json`, de donde se generan Zod, Pydantic y C#), `visor-puente.md` y este documento. Los PR que solo cambian `apps/visor-unity/**` los fusiona el Claude Code de René con CI en verde.
