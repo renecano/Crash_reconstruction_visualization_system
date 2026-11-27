@@ -33,13 +33,19 @@
                            en Edge (e2e/video-3d-real.spec.ts; los MP4 al Escritorio) y apaga
     -Despues final         sirve, la tanda final con el Unity real: ¿Y si…? en 3D, daños, entorno,
                            satélite y Presentar, solo ejemplos públicos (e2e/final-unity.spec.ts) y apaga
+    -Despues ensayo        sirve, corre el ensayo automático de la demo (e2e/ensayo-automatico.spec.ts:
+                           AXA de punta a punta y los ejemplos hasta su cifra) en Chrome y apaga; las
+                           capturas llevan AXA y se quedan fuera del repo; con -Salida copia ahí ensayo.json
+    -Gpu integrada         con -Despues video-3d: Chrome y Edge en la tarjeta integrada (el arreglo de
+                           «Descargar video» en tarjeta integrada, #364); al final, como estaban
     -Salida RUTA           a dónde escribe su resultado la comprobación o la medición
     -Capturas RUTA         dónde van las capturas de los ejemplos (por omisión, las de la t5)
     -Casos RUTA            dónde van los .croquis de los ejemplos
 #>
 param(
   [switch]$SoloPreparar,
-  [ValidateSet("", "comprobar", "fps-web", "arranque-3d", "video-3d", "narraciones", "tollocan", "tres", "nuevas", "ejemplos", "humo", "recorrido", "final")][string]$Despues = "",
+  [ValidateSet("", "comprobar", "fps-web", "arranque-3d", "video-3d", "narraciones", "tollocan", "tres", "nuevas", "ejemplos", "humo", "recorrido", "final", "ensayo")][string]$Despues = "",
+  [ValidateSet("", "integrada")][string]$Gpu = "",
   [string]$Salida = "",
   [string]$Capturas = "",
   [string]$Casos = "",
@@ -219,7 +225,7 @@ try {
       if ($null -eq $gpuAntes) { Remove-ItemProperty -Path $llaveGpu -Name $chrome -ErrorAction SilentlyContinue }
       else { Set-ItemProperty -Path $llaveGpu -Name $chrome -Value $gpuAntes }
     }
-  } elseif ($Despues -in @("narraciones", "tollocan", "tres", "nuevas", "ejemplos", "humo", "recorrido", "final")) {
+  } elseif ($Despues -in @("narraciones", "tollocan", "tres", "nuevas", "ejemplos", "humo", "recorrido", "final", "ensayo")) {
     # t5-verificacion (René, 2026-11-19), en el Chrome instalado contra la demo local:
     #   narraciones  las seis narraciones nuevas y el caso encimado, con capturas del 3D;
     #   tollocan     el caso de René de punta a punta;
@@ -249,6 +255,20 @@ try {
         if ($Salida) { $env:CROQUIS_SALIDA = $Salida }
         if ($Capturas) { $env:CROQUIS_CAPTURAS = $Capturas }
         & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/final-unity.spec.ts
+      } elseif ($Despues -eq "ensayo") {
+        # El ensayo de Alberto (#366, René 2026-11-26): las capturas llevan AXA y se quedan en esta
+        # computadora, fuera del repo; al repo solo va ensayo.json (cifras y tiempos).
+        $carpetaEnsayo = Join-Path $env:LOCALAPPDATA ("croquis-demo-local\ensayo-" + (Get-Date -Format "yyyyMMdd-HHmm"))
+        $env:CROQUIS_ENSAYO = $carpetaEnsayo
+        & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/ensayo-automatico.spec.ts --headed
+        $codigoEnsayo = $LASTEXITCODE
+        $json = Join-Path $carpetaEnsayo "ensayo.json"
+        if ($Salida -and (Test-Path $json)) {
+          New-Item -ItemType Directory -Force (Split-Path $Salida) | Out-Null
+          Copy-Item $json $Salida -Force
+        }
+        Escribir "Ensayo (capturas con AXA, fuera del repo): $carpetaEnsayo" "Cyan"
+        $global:LASTEXITCODE = $codigoEnsayo
       } elseif ($Despues -eq "ejemplos") {
         $env:CROQUIS_UNITY = "1"
         $env:CROQUIS_CAPTURAS = if ($Capturas) { $Capturas } else { "docs/cesvi/ronda-4/evidencia/t5-ejemplos" }
@@ -267,11 +287,30 @@ try {
     # B7 (René, 2026-11-18): el video del 3D con el Unity real, en los navegadores instalados.
     if ($Salida) { $env:CROQUIS_SALIDA = $Salida }
     $codigo = 0
-    foreach ($canal in @("chrome", "msedge")) {
-      Escribir "Video del 3D en $canal..."
-      $env:CROQUIS_CANAL = $canal
-      & pnpm --filter "@croquis/web" exec playwright test e2e/video-3d-real.spec.ts --project=chromium --headed
-      if ($LASTEXITCODE) { $codigo = $LASTEXITCODE; Escribir "El video en $canal falló (código $LASTEXITCODE)." "Yellow" }
+    # -Gpu integrada (#364): los dos navegadores en la tarjeta integrada; al final, como estaban.
+    $llaveGpu = "HKCU:\Software\Microsoft\DirectX\UserGpuPreferences"
+    $preferencias = @{}
+    if ($Gpu -eq "integrada") {
+      if (-not (Test-Path $llaveGpu)) { New-Item -Path $llaveGpu -Force | Out-Null }
+      $edge = @("${env:ProgramFiles(x86)}\Microsoft\Edge\Application\msedge.exe", "$env:ProgramFiles\Microsoft\Edge\Application\msedge.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
+      foreach ($exe in @($chrome, $edge) | Where-Object { $_ }) {
+        $preferencias[$exe] = (Get-ItemProperty -Path $llaveGpu -Name $exe -ErrorAction SilentlyContinue).$exe
+        Set-ItemProperty -Path $llaveGpu -Name $exe -Value "GpuPreference=1;"
+      }
+      Escribir "Video del 3D con Chrome y Edge en la tarjeta integrada." "Cyan"
+    }
+    try {
+      foreach ($canal in @("chrome", "msedge")) {
+        Escribir "Video del 3D en $canal..."
+        $env:CROQUIS_CANAL = $canal
+        & pnpm --filter "@croquis/web" exec playwright test e2e/video-3d-real.spec.ts --project=chromium --headed
+        if ($LASTEXITCODE) { $codigo = $LASTEXITCODE; Escribir "El video en $canal falló (código $LASTEXITCODE)." "Yellow" }
+      }
+    } finally {
+      foreach ($exe in $preferencias.Keys) {
+        if ($null -eq $preferencias[$exe]) { Remove-ItemProperty -Path $llaveGpu -Name $exe -ErrorAction SilentlyContinue }
+        else { Set-ItemProperty -Path $llaveGpu -Name $exe -Value $preferencias[$exe] }
+      }
     }
   } else {
     $trabajo = Join-Path $env:LOCALAPPDATA "croquis-demo-local\fps-web"
