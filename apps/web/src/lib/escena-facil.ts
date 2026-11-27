@@ -1490,6 +1490,44 @@ export function tocarChoque(
  * rumbo de antes, sin calles). La usan La escena y la tabla de los ejemplos (René, 2026-11-26: «el
  * mismo código que La escena»).
  */
+/** m: un toque a menos de esto del centro de un carril se ajusta a él (René, 2026-11-27). */
+export const TOLERANCIA_CARRIL_M = 0.75;
+
+/**
+ * El toque del perito, al centro de su carril (René, 2026-11-27: la carambola daba 24 en Chromium y 25
+ * en WebKit con la misma receta; un toque unos píxeles al lado no debe cambiar la cifra). Solo si cae
+ * dentro de la calzada y a menos de `TOLERANCIA_CARRIL_M` del centro de un carril; si no (el
+ * acotamiento, la banqueta), queda donde tocó: la posición final es evidencia y no se mueve en
+ * silencio. Solo se mueve a lo ancho de la calle: la distancia a lo largo es la que mide el perito.
+ */
+export function alCarril(
+  calles: readonly Calle[],
+  p: Punto,
+): { punto: Punto; movidoM: number; carril: number; calle: string | null } | null {
+  const s = ajustarACalle(calles, p, AJUSTE_CALLE_M);
+  if (!s) return null;
+  const pie = s.punto;
+  const m = enMetros(ll(p), ll(pie));
+  const r = (s.rumbo * Math.PI) / 180;
+  // A la derecha de la dirección de la calle: (cos r, −sin r) en (este, norte).
+  const lado = m.este * Math.cos(r) - m.norte * Math.sin(r);
+  const ancho = s.calle.ancho;
+  if (Math.abs(lado) > ancho / 2) return null;
+  const n = Math.max(1, s.calle.carriles ?? Math.round(ancho / 3.3));
+  const w = ancho / n;
+  let k = Math.floor((lado + ancho / 2) / w);
+  k = Math.max(0, Math.min(n - 1, k));
+  const centro = -ancho / 2 + (k + 0.5) * w;
+  const movido = Math.abs(lado - centro);
+  if (movido > TOLERANCIA_CARRIL_M || movido < 0.05) return null;
+  return {
+    punto: punto(avanzar(ll(pie), normalizar(s.rumbo + 90), centro)),
+    movidoM: movido,
+    carril: k + 1,
+    calle: s.calle.nombre,
+  };
+}
+
 export function tocarFinal(
   e: Expediente,
   vehiculo: string,
@@ -1498,7 +1536,8 @@ export function tocarFinal(
 ): Expediente {
   const imp = poseDe(e, vehiculo, "impacto");
   const previo = poseDe(e, vehiculo, "final")?.rumbo ?? imp?.rumbo ?? 0;
-  return marcarFinal(e, vehiculo, p, calles.length ? rumboAlineado(calles, p, previo) : previo);
+  const q = alCarril(calles, p)?.punto ?? p;
+  return marcarFinal(e, vehiculo, q, calles.length ? rumboAlineado(calles, q, previo) : previo);
 }
 
 export function marcarFinal(e: Expediente, vehiculo: string, p: Punto, rumbo: number): Expediente {

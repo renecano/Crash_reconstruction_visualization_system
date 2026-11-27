@@ -92,6 +92,7 @@ import {
   ponerTerrenoEn,
   puntoDelChoqueTocado,
   tocarFinal,
+  alCarril,
   resumenEscena,
   rumboAlineado,
   sentidoEnElCaso,
@@ -884,6 +885,8 @@ export function EscenaFacil({
 
   // Dónde quedó: con un toque, alineado a la calle; arrastrar es opcional; dos botones de 15°.
   const colocarFinal = (v: string, p: Punto) => {
+    // Al centro de su carril si cayó cerca (René, 2026-11-27), y se dice cuánto se movió.
+    const aj = alCarril(callesMapa, p);
     cambiar(
       {
         ...estado,
@@ -891,7 +894,11 @@ export function EscenaFacil({
         desconocidos: estado.desconocidos.filter((x) => x !== v),
         juntoAlChoque: estado.juntoAlChoque.filter((x) => x !== v),
       },
-      null,
+      aj
+        ? exito(
+            `Ajustado al centro de su carril (el ${aj.carril}.º de izquierda a derecha${aj.calle ? ` de ${aj.calle}` : ""}): se movió ${F.metros(aj.movidoM, 1)} a lo ancho de la calle.`,
+          )
+        : null,
     );
     setColocando(v);
   };
