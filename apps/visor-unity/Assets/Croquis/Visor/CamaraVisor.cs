@@ -455,7 +455,7 @@ namespace Croquis.Visor
                 return true;
             }
 
-            if (nuevo == "cenital" || nuevo == "orbita" || nuevo == "cinematica" || nuevo == "acera")
+            if (nuevo == "cenital" || nuevo == "orbita" || nuevo == "cinematica" || nuevo == "acera" || nuevo == "automatica")
             {
                 modo = nuevo;
                 return true;
@@ -511,6 +511,7 @@ namespace Croquis.Visor
             todo = Encuadre.VerTodo(caso);
             inicio = resultado.TInicio;
             azBase = float.NaN;
+            tomaImpacto = null;
             desvioDespeje = 0f;
             orbitaTocada = false;
             yaw = AnguloInicial;
@@ -1039,6 +1040,21 @@ namespace Croquis.Visor
                     return;
                 }
 
+                case "automatica":
+                {
+                    if (resultado?.PuntoImpacto != null && Caso != null)
+                    {
+                        camara.fieldOfView = 45f;
+                        var toma = Automatica(Caso.Tiempo);
+                        var ojoA = new Vector3((float)toma.Ojo.X, (float)toma.Ojo.Y, (float)toma.Ojo.Z);
+                        var miraA = new Vector3((float)toma.Mira.X, (float)toma.Mira.Y, (float)toma.Mira.Z);
+                        camara.transform.SetPositionAndRotation(ojoA, Quaternion.LookRotation(miraA - ojoA, Vector3.up));
+                        return;
+                    }
+
+                    goto case "cinematica";
+                }
+
                 case "cinematica":
                 {
                     // Como la del visor web: una lente de 50 mm en acciones chicas y de 35 mm en grandes,
@@ -1099,6 +1115,133 @@ namespace Croquis.Visor
             PoseOrbita(out var o, out var mi);
             camara.transform.position = o;
             camara.transform.LookAt(mi);
+        }
+
+        private Toma? tomaImpacto;
+        private List<Estorbo> fijos;
+
+        /// <summary>Lo construido y las copas, como estorbos de `CamaraAutomatica`.</summary>
+        private List<Estorbo> EstorbosFijos()
+        {
+            var lista = new List<Estorbo>();
+            foreach (var b in Bultos)
+            {
+                lista.Add(new Estorbo { Cx = b.C.x, Cz = b.C.y, Ux = b.U.x, Uz = b.U.y, MedioLargo = b.Hw, MedioAncho = b.Hd, Y0 = -1.0, Y1 = b.Alto + 0.3 });
+            }
+
+            foreach (var c in Copas)
+            {
+                lista.Add(new Estorbo { Cx = c.x, Cz = c.y, MedioLargo = c.z, Y0 = 2.0, Y1 = 10.0, Cilindro = true });
+            }
+
+            return lista;
+        }
+
+        /// <summary>El piso, para la altura del contacto con relieve; nulo, plano.</summary>
+        public Terreno Terreno { get; set; }
+
+        private double Suelo => Terreno != null ? Terreno.Z((float)resultado.PuntoImpacto.X, (float)resultado.PuntoImpacto.Y) : 0.0;
+
+        private V3 Contacto => new V3(resultado.PuntoImpacto.X, Suelo + CamaraAutomatica.AlturaContacto, resultado.PuntoImpacto.Y);
+
+        /// <summary>
+        /// La cámara «automática» (puente 1.5.0, el video): la llegada, el impacto de lado al contacto y el
+        /// final desde arriba (`CamaraAutomatica`). El lado del impacto se elige una vez por caso, con los
+        /// vehículos donde estaban en el impacto; las otras dos tomas siguen a los vehículos.
+        /// </summary>
+        private Toma Automatica(double t)
+        {
+            var tI = Caso.TImpacto;
+            if (double.IsNaN(tI))
+            {
+                tI = 0.0;
+            }
+
+            if (tomaImpacto == null)
+            {
+                fijos = EstorbosFijos();
+                var enImpacto = CamaraAutomatica.Vehiculos(resultado, tI, Suelo);
+                var actores = Actores(tI);
+                var a = actores.Count > 0 ? actores[0] : Contacto;
+                var b = actores.Count > 1 ? actores[1] : Contacto;
+                var todos = new List<Estorbo>(fijos);
+                todos.AddRange(enImpacto);
+                todos.AddRange(CamaraAutomatica.Vehiculos(resultado, tI + 0.5, Suelo));
+                tomaImpacto = CamaraAutomatica.Impacto(Contacto, a, b, todos);
+                Debug.Log("[cámara automática] impacto desde " + tomaImpacto.Value.Ojo.X.ToString("0.0") + ", " + tomaImpacto.Value.Ojo.Y.ToString("0.0") + ", " + tomaImpacto.Value.Ojo.Z.ToString("0.0"));
+            }
+
+            var aspecto = camara != null ? camara.aspect : 16f / 9f;
+            var impacto = tomaImpacto.Value;
+            var llegada = CamaraAutomatica.Panorama(Lente.VehiculosEn(resultado, t), Contacto, impacto, 45.0, aspecto, new[] { 32.0, 45.0, 60.0, 80.0 }, fijos);
+            var final = CamaraAutomatica.Panorama(Lente.VehiculosEn(resultado, resultado.TFin), Contacto, impacto, 45.0, aspecto, new[] { 62.0, 75.0, 88.0 }, fijos);
+            return CamaraAutomatica.En(t, tI, llegada, impacto, final);
+        }
+
+        /// <summary>El centro de los vehículos del impacto principal en `tI` (por los actores del evento; si no, los dos más cercanos al contacto).</summary>
+        private List<V3> Actores(double tI)
+        {
+            var ids = new List<string>();
+            foreach (var e in resultado.Eventos ?? new ResultadoEvento[0])
+            {
+                var esImpacto = e.Tipo == StickyTipo.ImpactoVehiculoVehiculo || e.Tipo == StickyTipo.ImpactoVehiculoObjeto || e.Tipo == StickyTipo.ImpactoVehiculoPersona;
+                if (esImpacto && System.Math.Abs(e.T - tI) < 1e-3 && e.Actores != null)
+                {
+                    ids.AddRange(e.Actores);
+                    break;
+                }
+            }
+
+            var lista = new List<V3>();
+            foreach (var v in resultado.Vehiculos)
+            {
+                if (ids.Count == 0 || ids.Contains(v.Id))
+                {
+                    var p = Muestreo.Pose(v.Trayectoria, tI);
+                    lista.Add(new V3(p.X, 0.0, p.Y));
+                }
+            }
+
+            var c = Contacto;
+            lista.Sort((x, y) => ((x.X - c.X) * (x.X - c.X) + (x.Z - c.Z) * (x.Z - c.Z)).CompareTo((y.X - c.X) * (y.X - c.X) + (y.Z - c.Z) * (y.Z - c.Z)));
+            return lista;
+        }
+
+        /// <summary>
+        /// Para las pruebas (`depurar` `{"contacto": true}`): dónde cae el punto de contacto en la pantalla
+        /// (fracción desde arriba a la izquierda), si queda dentro del cuadro y si nada lo tapa (lo
+        /// construido, las copas y los vehículos donde están ahora).
+        /// </summary>
+        public (float Fx, float Fy, bool EnCuadro, bool Despejado)? ContactoEnPantalla()
+        {
+            if (camara == null || resultado?.PuntoImpacto == null)
+            {
+                return null;
+            }
+
+            var c = Contacto;
+            var pp = camara.WorldToScreenPoint(new Vector3((float)c.X, (float)c.Y, (float)c.Z));
+            var fx = pp.x / camara.pixelWidth;
+            var fy = 1f - pp.y / camara.pixelHeight;
+            var todos = EstorbosFijos();
+            foreach (var v in Vehiculos)
+            {
+                if (v?.Datos?.Dimensiones == null)
+                {
+                    continue;
+                }
+
+                var tr = v.transform;
+                var f = tr.forward;
+                var d = v.Datos.Dimensiones;
+                var e = Estorbo.Vehiculo(tr.position.x, tr.position.z, System.Math.Atan2(f.z, f.x), d.LargoM, d.AnchoM, d.AltoM);
+                e.Y0 = tr.position.y - 0.5;
+                e.Y1 = tr.position.y + d.AltoM;
+                todos.Add(e);
+            }
+
+            var o = camara.transform.position;
+            return (fx, fy, pp.z > 0f && fx >= 0f && fx <= 1f && fy >= 0f && fy <= 1f, CamaraAutomatica.Despejado(new V3(o.x, o.y, o.z), c, todos));
         }
 
         /// <summary>La altura del ojo del conductor en `visibilidad` del Resultado; si no, la de un auto.</summary>
