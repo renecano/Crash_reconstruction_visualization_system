@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["44e7bf67", "85843204", "98db06e7"]
+        version: ["44e7bf673549ba2f142b261cf118da9018d16eb9", "85843204a9461c4b0c6462d9843ace2e6a47ccba", "98db06e7612c23a53dee2599a6370ec7de9bc10a"]
     steps:
       - uses: actions/checkout@v7
         with:
