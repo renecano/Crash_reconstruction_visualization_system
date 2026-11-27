@@ -29,7 +29,7 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { distanciaM, escenaDeNarracion, separarLugarYSentido } from "../packages/cesvi/src/index";
+import { escenaDeNarracion, separarLugarYSentido } from "../packages/cesvi/src/index";
 import type { SalidaCorpus } from "../packages/cesvi/src/index";
 import type { OverpassResponse } from "../packages/croquis-2d/src/index";
 import { MemoryRateLimiter } from "../packages/extraction/src/server/rate-limit";
@@ -50,6 +50,11 @@ const DATOS = resolve(process.env.CROQUIS_DATOS ?? RAIZ);
 const CACHE = join(DATOS, "data/raw/auditoria-cache");
 const HASTA = Number(process.env.CROQUIS_HASTA ?? Infinity);
 const TOPE_M = 30;
+const metros = (a: { lat: number; lon: number }, b: { lat: number; lon: number }) =>
+  Math.hypot(
+    (a.lon - b.lon) * 111320 * Math.cos((a.lat * Math.PI) / 180),
+    (a.lat - b.lat) * 111320,
+  );
 const USER_AGENT = "Croquis/0.1 (evaluacion de cruces narrados)";
 
 // --- La red, con las cachés de la revisión de la cadena ---------------------------------------------
@@ -273,7 +278,7 @@ for (const c of todos.slice(0, HASTA)) {
       const punto = p?.punto ?? lugar;
       fila.resultado = "propone";
       fila.distancia_m = reales?.length
-        ? Math.round(Math.min(...reales.map((x) => distanciaM(punto, x))))
+        ? Math.round(Math.min(...reales.map((x) => metros(punto, x))))
         : null;
     }
   } else if (fila.resultado === "sin_lugar") fila.motivo = aviso ?? "sin lugar";
