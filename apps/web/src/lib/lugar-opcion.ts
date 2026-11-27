@@ -8,6 +8,8 @@ export interface OpcionLugar {
   lon: number;
   municipio?: string;
   estado?: string;
+  /** Cruce, calle o solo una zona (colonia, municipio): sobre una zona no se arma la escena sola. */
+  precision?: "cruce" | "calle" | "zona";
 }
 
 /** «Mazatlán, Sinaloa»; sin municipio ni estado, null. */

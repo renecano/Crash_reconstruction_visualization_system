@@ -12,7 +12,15 @@
 
 export type LugarInterpretado =
   | { tipo: "punto"; lat: number; lon: number; origen: "coordenadas" | "google" | "osm" }
-  | { tipo: "carretera"; ref: string; km: number | null; texto: string }
+  | {
+      tipo: "carretera";
+      /** La clave de OSM («MEX 57D»), si el texto trae el número. */
+      ref: string | null;
+      km: number | null;
+      /** Las poblaciones del tramo o de los extremos de la carretera («Palo Alto», «Querétaro»). */
+      tramo: string[];
+      texto: string;
+    }
   | { tipo: "texto"; texto: string };
 
 const valido = (lat: number, lon: number) =>
@@ -84,23 +92,69 @@ function desdeDecimales(t: string): LugarInterpretado | null {
 /**
  * Carretera con número y, si lo trae, kilómetro: «MEX-15 km 47+800», «carretera federal 15D km 47»,
  * «Fed. 57 km 12.5». La clave sale como la escribe OSM en México: «MEX 15D».
+ *
+ * También la carretera por sus poblaciones, como la escriben los reportes de CESVI (revisión de la
+ * cadena, René 2026-11-24: 33 de los 205 reportes de la prueba ciega no encontraban su lugar así):
+ * «kilómetro 206+100 de la carretera México – Piedras Negras, número 57, en el tramo Palo Alto -
+ * Querétaro», «Km. 3 de la carretera Álamo-Miquetla». El tramo, si viene, manda sobre los extremos
+ * de la carretera: está más cerca del punto.
  */
-function desdeCarretera(t: string): LugarInterpretado | null {
-  const ref = t.match(
-    /\b(?:MEX|carretera(?:\s+federal)?|fed(?:eral)?\.?|autopista|libramiento)\s*[-\s]?\s*(\d{1,3})\s*([A-Z])?\b/i,
+const POBLACION = String.raw`([A-ZÁÉÍÓÚÑ\d][\p{L}\d.' ]*?)`;
+const FIN_DE_POBLACION = String.raw`(?=\s*(?:[,;()]|$)|\s+(?:a\s+(?:la|el)\s|en\s+el|en\s+la|cerca|km\b|kil[oó]metro|comunidad|con\s+direcci|tramo|perteneciente|\d))`;
+
+function poblaciones(t: string): string[] {
+  const par = (re: RegExp) => {
+    const m = re.exec(t);
+    return m
+      ? [m[1]!, m[2]!].map((x) => x.replace(/\s+/g, " ").trim()).filter((x) => x.length >= 3)
+      : [];
+  };
+  const tramo = par(
+    new RegExp(
+      String.raw`\btramo(?:\s+carretero)?\s*[:;]?\s*${POBLACION}\s*[-–—]\s*${POBLACION}${FIN_DE_POBLACION}`,
+      "iu",
+    ),
   );
-  const km = t.match(/\bkm\.?\s*(\d{1,4})(?:\s*\+\s*(\d{1,3})|[.,](\d+))?/i);
-  if (!ref) return null;
+  if (tramo.length === 2) return tramo;
+  const via = par(
+    new RegExp(
+      String.raw`\b(?:carretera|autopista|camino|tramo\s+carretero)(?:\s+(?:federal|libre|de\s+cuota|principal|internacional))*(?:\s+(?:n[uú]m(?:ero)?\.?|no\.?)?\s*\(?\d{1,3}\s?D?\)?)?\s*[:,]?\s+${POBLACION}\s*[-–—]\s*${POBLACION}${FIN_DE_POBLACION}`,
+      "iu",
+    ),
+  );
+  if (via.length === 2) return via;
+  // «carretera a la Concordia»: un solo destino.
+  const a =
+    /\b(?:carretera|camino)\s+a\s+(?:la\s+|el\s+)?([A-ZÁÉÍÓÚÑ][\p{L}.' ]*?)(?=\s*(?:[,;()]|$)|\s+(?:a\s+la\s+altura|en\s+el|cerca|km\b|kil[oó]metro))/iu.exec(
+      t,
+    );
+  return a ? [a[1]!.trim()] : [];
+}
+
+function desdeCarretera(t: string): LugarInterpretado | null {
+  const conVia = /\b(?:carretera|autopista|libramiento|camino|tramo\s+carretero)\b/i.test(t);
+  // «57D», «150 D»; una letra suelta tras un espacio («57 a la altura») no es parte de la clave.
+  // «número 57», «(150 D)» solo si el texto habla de una carretera (no «el número 43» de una casa).
+  const ref =
+    t.match(
+      /\b(?:MEX|carretera(?:\s+federal)?|fed(?:eral)?\.?|autopista|libramiento)\s*[-\s]?\s*(?:n[uú]m(?:ero)?\.?\s*|no\.?\s*)?(\d{1,3})(?:\s?(D))?\b/i,
+    ) ?? (conVia ? t.match(/\bn[uú]mero\s+(\d{1,3})(D)?\b|\((\d{1,3})\s?(D)\)/i) : null);
+  const km = t.match(/\b(?:km|kil[oó]metro)\.?\s*(\d{1,4})(?:\s*\+\s*(\d{1,3})|[.,](\d+))?/i);
+  const tramo = poblaciones(t);
+  if (!ref && !(conVia && (tramo.length || km))) return null;
   let k: number | null = null;
   if (km) {
     k = Number(km[1]);
     if (km[2]) k += Number(km[2]) / 1000;
     else if (km[3]) k += Number(`0.${km[3]}`);
   }
+  const numero = ref ? (ref[1] ?? ref[3]) : undefined;
+  const letra = ref ? (ref[2] ?? ref[4]) : undefined;
   return {
     tipo: "carretera",
-    ref: `MEX ${ref[1]}${ref[2] ? ref[2].toUpperCase() : ""}`,
+    ref: numero ? `MEX ${numero}${letra ? letra.toUpperCase() : ""}` : null,
     km: k,
+    tramo,
     texto: t,
   };
 }

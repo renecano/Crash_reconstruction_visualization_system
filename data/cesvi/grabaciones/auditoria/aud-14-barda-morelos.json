@@ -1,0 +1,194 @@
+{
+  "id": "aud-14-barda-morelos",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 422,
+    "output_tokens": 1526,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0168732,
+  "narracion": "El hecho se ubica sobre Avenida Morelos, en la colonia Centro, en Toluca, Estado de México, aproximadamente a las 0:40 horas. El alumbrado público de ese tramo no funcionaba. El vehículo A, marca Volkswagen, tipo Vento, modelo 2018, circulaba de poniente a oriente por el carril derecho, a unos 50 km/h según su conductor. De acuerdo con su declaración, un vehículo salió de una cochera del lado derecho; el conductor del vehículo A frenó, dejando huellas de frenado de 7 m antes del impacto, giró hacia la derecha, subió la banqueta y se impactó con su parte frontal contra la barda perimetral de un predio, de block y concreto. El vehículo A quedó detenido contra la barda, con el frente hacia el sureste y la parte posterior a 1 m de la guarnición. El vehículo que salía de la cochera no tuvo contacto y no fue identificado. El vehículo A presenta hundimiento frontal, acentuado hacia el lado derecho, con la defensa desprendida. La barda presenta fractura en un tramo de unos 2 m. Pavimento seco.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Avenida Morelos, colonia Centro",
+        "cita": "El hecho se ubica sobre Avenida Morelos, en la colonia Centro, en Toluca, Estado de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Toluca",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "0:40 horas",
+        "cita": "aproximadamente a las 0:40 horas"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Volkswagen",
+        "cita": "El vehículo A, marca Volkswagen, tipo Vento, modelo 2018"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Vento",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2018",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba de poniente a oriente por el carril derecho, a unos 50 km/h según su conductor"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "frena",
+        "cita": "el conductor del vehículo A frenó, dejando huellas de frenado de 7 m antes del impacto"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "vira_derecha",
+        "cita": "giró hacia la derecha, subió la banqueta y se impactó con su parte frontal contra la barda perimetral"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "frenado",
+        "cita": "dejando huellas de frenado de 7 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "7 m",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "se impactó con su parte frontal contra la barda perimetral de un predio, de block y concreto"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "objeto_fijo",
+        "valor": "barda perimetral de un predio, de block y concreto",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A quedó detenido contra la barda, con el frente hacia el sureste y la parte posterior a 1 m de la guarnición"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "detenido contra la barda, con el frente hacia el sureste y la parte posterior a 1 m de la guarnición",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta hundimiento frontal, acentuado hacia el lado derecho, con la defensa desprendida"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "desprendimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "objeto_fijo",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "descripcion",
+        "valor": "barda con fractura en un tramo de unos 2 m",
+        "cita": "La barda presenta fractura en un tramo de unos 2 m"
+      }
+    ]
+  }
+}

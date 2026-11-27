@@ -38,13 +38,29 @@ const impactoDe = (e: Expediente, orden: number) =>
   [...(e.impactos ?? [])].sort((a, b) => a.orden - b.orden).find((i) => i.orden === orden) ??
   [...(e.impactos ?? [])].sort((a, b) => a.orden - b.orden)[0];
 
-/** La cara de contacto de un vehículo en un impacto (la de la zona, o la de más daños). */
+/**
+ * La cara de contacto de un vehículo en un impacto: la de su zona en ese impacto; si no la da, la de
+ * sus daños que no se usó en un impacto anterior. En una carambola en cadena, al que golpearon por
+ * detrás en un impacto anterior lo empujaron hacia adelante: su cara en el siguiente es el frente (el
+ * CX-3 del e2e de la carambola tomaba su daño posterior, del primer impacto, y el Aveo quedaba
+ * dentro de él, de frente: «encimados 0.9 m»).
+ */
 function caraDe(e: Expediente, v: Id, orden: number): Cara | null {
   const imp = impactoDe(e, orden);
   const z = imp?.zonas?.find((x) => x.vehiculo === v)?.zona.cara;
-  const deDanos = (e.danos ?? []).find((d) => d.vehiculo === v && !d.dano_previo)?.zona.cara;
-  const c = z ?? deDanos;
-  return c && c in NORMAL ? (c as Cara) : null;
+  if (z && z in NORMAL) return z as Cara;
+  const danos = (e.danos ?? [])
+    .filter((d) => d.vehiculo === v && !d.dano_previo)
+    .map((d) => d.zona.cara)
+    .filter((c): c is Cara => c in NORMAL);
+  const anteriores = [...(e.impactos ?? [])]
+    .filter((i) => i.orden < (imp?.orden ?? orden) && (i.vehiculos ?? []).includes(v as never))
+    .map((i) => caraDe(e, v, i.orden))
+    .filter((c): c is Cara => c !== null);
+  if (anteriores.includes("posterior") && !anteriores.includes("frontal")) return "frontal";
+  return (
+    danos.find((c) => !anteriores.includes(c)) ?? (anteriores.length ? null : (danos[0] ?? null))
+  );
 }
 
 export interface PoseImpacto {

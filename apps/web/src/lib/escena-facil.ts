@@ -13,6 +13,7 @@
  *
  * Rumbos en grados desde el norte, en sentido horario (0 = norte, 90 = este), como el expediente.
  */
+import { interpretarLugar } from "./lugar-texto";
 import {
   formato as F,
   avanzar,
@@ -20,14 +21,20 @@ import {
   distanciaM,
   distanciaProyeccion,
   enMetros,
+  agregarPersona,
+  moverPersona,
   nombrePersona,
+  OBJETO_PERSONA,
   posesDeImpacto,
+  rumboDeMarcha,
+  rumboDelFrente,
   objetosDe,
   piezasTerreno,
   rumboDeg,
   usaRelieve,
   limiteDeLaVia,
   limiteDelLugarNarrado,
+  medidasDe,
   type Expediente,
   type LonLat,
   type TipoObjeto,
@@ -76,14 +83,16 @@ export function citaCorta(oracion: string, foco: string, max = 90): string {
   return `${ini > 0 ? "… " : ""}${oracion.slice(ini, fin).trim()}${fin < oracion.length ? " …" : ""}`;
 }
 
-// El tipo de vía en mayúscula o minúscula; el nombre, con mayúscula (la expresión no lleva «i»: con
+// El tipo de vía en mayúscula o minúscula (con «Viaducto», «Anillo», «Autopista», «Libramiento» y
+// «Glorieta», revisión de la cadena 2026-11-24); el nombre, con mayúscula (la expresión no lleva «i»: con
 // ella, «calle Azucena esquina con Av» se tragaba las palabras en minúscula).
 const TIPO_VIA =
-  "(?:[Cc]alle|[Aa]venida|[Aa]v\\.?|[Bb]oulevard|[Bb]lvd\\.?|[Bb]ulevar|[Cc]alzada|[Cc]arretera|[Pp]rivada|[Pp]rolongaci[oó]n|[Pp]erif[eé]rico|[Cc]ircuito|[Cc]amino|[Pp]aseo|[Ee]je)";
+  "(?:[Cc]alle|[Aa]venida|[Aa]v\\.?|[Bb]oulevard|[Bb]lvd\\.?|[Bb]ulevar|[Cc]alzada|[Cc]arretera|[Pp]rivada|[Pp]rolongaci[oó]n|[Pp]erif[eé]rico|[Cc]ircuito|[Cc]amino|[Pp]aseo|[Ee]je|[Vv]iaducto|[Aa]nillo|[Aa]utopista|[Ll]ibramiento|[Gg]lorieta)";
 const PALABRA_NOMBRE = "[A-ZÁÉÍÓÚÑ0-9][\\wÁÉÍÓÚÑáéíóúñ.'-]*";
 const UNION = "(?:\\s+(?:de|del|la|las|los|el)\\s+|\\s+)";
 const RE_CALLE = new RegExp(
-  `\\b(${TIPO_VIA})\\s+(${PALABRA_NOMBRE}(?:${UNION}${PALABRA_NOMBRE}){0,3})`,
+  // «Avenida de los Insurgentes Sur», «Calzada de Tlalpan»: los artículos pueden ir antes del nombre.
+  `\\b(${TIPO_VIA})\\s+((?:(?:de|del)\\s+(?:la\\s+|las\\s+|los\\s+|el\\s+)?)?${PALABRA_NOMBRE}(?:${UNION}${PALABRA_NOMBRE}){0,3})`,
   "g",
 );
 
@@ -97,6 +106,22 @@ export function callesNarradas(narracion: string): { nombre: string; en: number 
       out.push({ nombre, en: m.index ?? 0 });
   }
   return out;
+}
+
+/**
+ * La carretera que dice la narración, para buscarla si la lectura no trajo el lugar (revisión de la
+ * cadena, René 2026-11-24: un reporte de CESVI decía «en el kilómetro 77 de la carretera
+ * Pijijiapan–Tonalá» y la lectura grabada no lo guardó). Solo si el buscador la reconoce como
+ * carretera (con su número, su kilómetro o sus poblaciones).
+ */
+export function carreteraNarrada(narracion: string): string | null {
+  const m =
+    /(?:\b(?:km\.?|kil[oó]metro)\s*\d{1,4}(?:\s*\+\s*\d{1,3})?\s+(?:de\s+la|del)\s+)?\b(?:carretera|autopista|tramo\s+carretero)\b[^.;\n]{3,110}?(?=,\s+(?:en\s+el\s+estado|el\s+d[ií]a|a\s+las)\b|[.;\n]|$)/i.exec(
+      narracion,
+    );
+  if (!m) return null;
+  const texto = m[0].trim();
+  return interpretarLugar(texto).tipo === "carretera" ? texto : null;
 }
 
 /** El cruce que dice la narración: dos calles y la frase donde aparecen; null si no nombra dos. */
@@ -275,11 +300,19 @@ export interface Calle {
   nombre: string | null;
   puntos: LonLat[];
   ancho: number;
+  /** `lanes` y `width` de OSM tal como vienen (para el ancho que dibuja el 3D, `viaWidthM`). */
+  carriles?: number;
+  anchoOsm?: number;
   /** Ids de sus nodos, en orden (para los cruces). */
   nodos: number[];
   /** Su tipo de OpenStreetMap (`highway`) y su límite (`maxspeed`), si lo trae (ronda 4). */
   tipo?: string;
   maxspeed?: string;
+  /**
+   * De un solo sentido (`oneway` de OSM, o una glorieta): 1 en el orden de sus nodos, -1 al revés.
+   * Sin el campo, de doble sentido.
+   */
+  unSentido?: 1 | -1;
 }
 
 /** Las calles de una respuesta de Overpass: las que se dibujan (sin andadores ni ciclovías). */
@@ -308,9 +341,17 @@ export function callesDe(resp: OverpassResponse | null): Calle[] {
         Number.isFinite(ancho) && ancho >= 3 && ancho <= 60
           ? ancho
           : (Number.isFinite(carriles) && carriles > 0 ? carriles : 2) * 3.3,
+      ...(Number.isFinite(carriles) && carriles > 0 ? { carriles } : {}),
+      ...(Number.isFinite(ancho) && ancho >= 3 && ancho <= 60 ? { anchoOsm: ancho } : {}),
       nodos: w.nodes.filter((id) => nodos.has(id)),
       tipo,
       ...(w.tags?.maxspeed ? { maxspeed: w.tags.maxspeed } : {}),
+      ...(w.tags?.oneway === "-1"
+        ? { unSentido: -1 as const }
+        : /^(?:yes|true|1)$/.test(w.tags?.oneway ?? "") ||
+            (w.tags?.junction === "roundabout" && w.tags?.oneway !== "no")
+          ? { unSentido: 1 as const }
+          : {}),
     });
   }
   return out;
@@ -374,6 +415,23 @@ export interface Cruce {
   calles: string[];
 }
 
+/**
+ * ¿El nombre del mapa es la calle narrada? Por sus palabras que la distinguen («Viaducto Miguel
+ * Alemán» es «Viaducto Presidente Miguel Alemán Valdés»): todas las de la más corta están en la otra,
+ * o por inclusión del nombre completo.
+ */
+export function mismaCalleNarrada(delMapa: string, narradaComparable: string): boolean {
+  const x = nombreComparable(delMapa);
+  const b = narradaComparable;
+  if (x === b || x.includes(b) || b.includes(x)) return true;
+  const palabras = (s: string) =>
+    s.split(/\s+/).filter((w) => w.length > 2 && !/^(?:de|del|la|las|los|el|y)$/.test(w));
+  const pa = palabras(x);
+  const pb = palabras(b);
+  const [corta, larga] = pa.length <= pb.length ? [pa, new Set(pb)] : [pb, new Set(pa)];
+  return corta.length >= 2 && corta.every((w) => larga.has(w));
+}
+
 /** Los cruces: nodos que comparten dos o más calles distintas. */
 export function crucesDe(calles: readonly Calle[]): Cruce[] {
   const porNodo = new Map<number, { punto: LonLat; calles: Set<Calle> }>();
@@ -387,8 +445,11 @@ export function crucesDe(calles: readonly Calle[]): Cruce[] {
   for (const e of porNodo.values()) {
     if (e.calles.size < 2) continue;
     const nombres = [...new Set([...e.calles].map((c) => c.nombre ?? "").filter(Boolean))];
-    // Dos tramos de la misma calle no son un cruce.
-    const distintas = new Set([...e.calles].map((c) => c.nombre ?? `#${c.id}`)).size;
+    // Dos tramos de la misma calle no son un cruce, ni una avenida con su lateral o su enlace sin
+    // nombre (`*_link`): la camioneta de aud-05 iba por Solidaridad Las Torres y La escena la ponía
+    // en el enlace, porque su unión con la avenida parecía un cruce (revisión de la cadena).
+    const vias = [...e.calles].filter((c) => c.nombre || !/_link$/.test(c.tipo ?? ""));
+    const distintas = new Set(vias.map((c) => c.nombre ?? `#${c.id}`)).size;
     if (distintas < 2) continue;
     out.push({ punto: punto(e.punto), calles: nombres });
   }
@@ -404,7 +465,7 @@ export interface PropuestaChoque {
    * «narracion»: el cruce de las dos calles que nombra; «una_calle»: solo una de ellas está en el
    * mapa y se propone su cruce más cercano; «cercania»: el cruce más cercano al lugar.
    */
-  segun: "narracion" | "una_calle" | "cercania";
+  segun: "narracion" | "una_calle" | "cercania" | "a_la_altura";
   cita: string | null;
   /** La calle de la narración que sí está (en «una_calle») y la que no se encontró. */
   encontrada?: string;
@@ -428,14 +489,31 @@ export function proponerChoque(
   const porCercania = [...cruces].sort((a, b) => cerca(a) - cerca(b));
   if (narrado) {
     const buscadas = narrado.calles.map(nombreComparable);
-    const tiene = (c: Cruce, b: string) =>
-      c.calles.some((n) => {
-        const x = nombreComparable(n);
-        return x === b || x.includes(b) || b.includes(x);
-      });
+    const tiene = (c: Cruce, b: string) => c.calles.some((n) => mismaCalleNarrada(n, b));
     const ambas = porCercania.find((c) => buscadas.every((b) => tiene(c, b)));
     if (ambas)
       return { punto: ambas.punto, calles: ambas.calles, segun: "narracion", cita: narrado.cita };
+    // Un paso a desnivel (el Viaducto bajo Insurgentes) no comparte nodo: el choque va sobre la
+    // primera calle narrada («sobre X, a la altura de Y»), en su punto más cercano a la segunda, si
+    // pasan a menos de 60 m (revisión de la cadena, René 2026-11-24).
+    const sobre = calles.filter((c) => c.nombre && mismaCalleNarrada(c.nombre, buscadas[0]!));
+    const otra = calles.filter((c) => c.nombre && mismaCalleNarrada(c.nombre, buscadas[1]!));
+    let alto: { m: number; punto: LonLat; a: string; b: string } | null = null;
+    for (const a of sobre)
+      for (const p of a.puntos)
+        for (const b of otra)
+          for (const q of b.puntos) {
+            const d = enMetros(p, q);
+            const m = Math.hypot(d.este, d.norte);
+            if (!alto || m < alto.m) alto = { m, punto: p, a: a.nombre!, b: b.nombre! };
+          }
+    if (alto && alto.m <= 60)
+      return {
+        punto: punto(alto.punto),
+        calles: [alto.a, alto.b],
+        segun: "a_la_altura",
+        cita: narrado.cita,
+      };
     const una = porCercania.find((c) => buscadas.some((b) => tiene(c, b)));
     if (una) {
       const k = buscadas.findIndex((b) => tiene(una, b));
@@ -559,8 +637,15 @@ export function flechaPropuesta(
       mejor = i;
     }
   });
+  // Una flecha que contradice el sentido narrado no se propone (revisión de la cadena, René
+  // 2026-11-24: el March «de norte a sur» quedaba «de este a oeste» porque en el lugar no había otra
+  // calle): sin ella, el vehículo va como dice la narración y el perito revisa el lugar.
+  if (sentido && d > FLECHA_CONTRA_NARRADO_DEG) return -1;
   return mejor;
 }
+
+/** Grados: más que esto entre la flecha de una calle y el sentido narrado, la flecha no se propone. */
+export const FLECHA_CONTRA_NARRADO_DEG = 60;
 
 /** ¿La flecha elegida va en contra de lo que dice la narración (más de 100°)? */
 export const contraNarracion = (rumbo: number, sentido: SentidoNarrado | null) =>
@@ -1041,7 +1126,10 @@ export function resumenPersonas(e: Expediente): LineaResumen[] {
         d !== null
           ? `Quedó a ${F.metros(d, 1)} de ahí: es la distancia de proyección.`
           : "Falta marcar dónde quedó: con eso Croquis mide la distancia de proyección.",
-      supuesto: null,
+      supuesto:
+        p.fuente === "supuesto"
+          ? "Croquis lo puso en el punto de contacto del choque. Si estaba en otro lugar, muévelo."
+          : null,
     };
   });
 }
@@ -1110,8 +1198,9 @@ export const pasoActual = (pasos: readonly PasoEscena[]) => pasos.find((p) => !p
 /**
  * «Sí, fue en ese cruce» o un toque en el mapa: el choque en `p`. Las poses de impacto las propone
  * Croquis con las zonas de contacto (con fuente «supuesto» hasta que la persona dice por dónde venía
- * cada uno); en una carambola, solo las de quien entra en ese choque. `rumbo`: el del primer
- * vehículo (el de la narración, el de la calle o el que ya tenía).
+ * cada uno); en una carambola, solo las de quien entra en ese choque. `rumbo`: hacia dónde avanzaba
+ * el primer vehículo (el de la narración, el de la calle o el que ya tenía); en reversa, su frente
+ * queda al lado contrario (`rumboDelFrente`; si da vuelta, con la vuelta dada).
  */
 export function marcarChoque(
   e: Expediente,
@@ -1122,7 +1211,9 @@ export function marcarChoque(
 ): Expediente {
   const antes = new Set(impactos.filter((x) => x.orden < orden).flatMap((x) => x.vehiculos));
   let r = e;
-  for (const pose of posesDeImpacto(e, p, rumbo, orden)) {
+  const primero = impactos.find((x) => x.orden === orden)?.vehiculos[0];
+  const frente = primero ? rumboDelFrente(e, primero, rumbo) : rumbo;
+  for (const pose of posesDeImpacto(e, p, frente, orden)) {
     if (antes.has(pose.vehiculo)) continue;
     r = conPosicion(r, {
       vehiculo: pose.vehiculo,
@@ -1132,11 +1223,36 @@ export function marcarChoque(
       fuente: "supuesto",
     });
   }
-  return r;
+  return conPersonaDelChoque(r, orden, p, rumbo);
 }
 
 /**
- * «Por dónde venía»: el vehículo avanzaba con `rumbo` al llegar al choque. El primero de su choque
+ * Un choque contra una persona («impactó a un peatón»): Croquis la coloca en el punto de contacto,
+ * cruzando delante del vehículo, como supuesto que el perito puede mover (René, 2026-11-24: el peatón
+ * del camión que daba vuelta nunca aparecía en el 3D, porque la lectura lo dejaba como «objeto
+ * peatón» y nadie lo colocaba). Si ya la colocó el perito, no se toca.
+ */
+function conPersonaDelChoque(e: Expediente, orden: number, p: Punto, rumbo: number): Expediente {
+  const imp = (e.impactos ?? []).find((i) => (i.orden ?? 1) === orden);
+  if (!imp?.objeto_fijo || !OBJETO_PERSONA.test(imp.objeto_fijo)) return e;
+  const actual = imp.persona ? (e.personas ?? []).find((x) => x.id === imp.persona) : undefined;
+  if (actual && actual.fuente !== "supuesto") return e;
+  if (actual) return moverPersona(e, actual.id, p);
+  const rol = /ciclista|bicicleta/i.test(imp.objeto_fijo) ? "ciclista" : "peaton";
+  const { expediente, id } = agregarPersona(e, rol, p, normalizar(rumbo + 90));
+  return {
+    ...expediente,
+    personas: (expediente.personas ?? []).map((x) =>
+      x.id === id
+        ? { ...x, fuente: "supuesto" as const, ...(imp.cita ? { cita: imp.cita } : {}) }
+        : x,
+    ),
+  };
+}
+
+/**
+ * «Por dónde venía»: el vehículo avanzaba con `rumbo` al llegar al choque (en reversa, su frente mira
+ * al lado contrario: la pose guarda el frente). El primero de su choque
  * gira todo el choque (los demás se recolocan por sus zonas de contacto); su pose queda como dato
  * de la persona. Con «No sé por dónde venía» (`noSe`), se queda la que propone Croquis, como
  * supuesto.
@@ -1180,7 +1296,9 @@ export function elegirDireccion(
     vehiculo: vehiculo as Id,
     fase: "impacto",
     punto: nueva?.punto ?? pose.punto,
-    rumbo: primero ? (nueva?.rumbo ?? rumbo) : rumbo,
+    rumbo: primero
+      ? (nueva?.rumbo ?? rumboDelFrente(e, vehiculo, rumbo))
+      : rumboDelFrente(e, vehiculo, rumbo),
     fuente: noSe ? "supuesto" : "perito",
   });
 }
@@ -1197,13 +1315,13 @@ export function marcarFinal(e: Expediente, vehiculo: string, p: Punto, rumbo: nu
 }
 
 /**
- * «Quedó junto al choque»: un poco adelante de su pose de impacto (1.5 m en su rumbo), con el mismo
- * rumbo. Sin pose de impacto, nada cambia.
+ * «Quedó junto al choque»: un poco adelante de su pose de impacto (1.5 m hacia donde avanzaba; en
+ * reversa, hacia atrás), con el mismo rumbo. Sin pose de impacto, nada cambia.
  */
 export function quedoJuntoAlChoque(e: Expediente, vehiculo: string): Expediente {
   const pose = poseDe(e, vehiculo, "impacto");
   if (!pose) return e;
-  const p = punto(avanzar(ll(pose.punto), pose.rumbo, 1.5));
+  const p = punto(avanzar(ll(pose.punto), rumboDeMarcha(e, vehiculo, pose.rumbo), 1.5));
   return marcarFinal(e, vehiculo, p, pose.rumbo);
 }
 
@@ -1432,4 +1550,182 @@ export function avisarSinCalles(o: {
     !o.yaVisto &&
     !o.descartado
   );
+}
+
+/** Un número de la narración («6», «2.5», «2,5»). */
+const NUM = String.raw`(\d+(?:[.,]\d+)?)`;
+const metros = (x: string) => Number(x.replace(",", "."));
+/** El vehículo que nombra la narración («vehículo B») como id del expediente («V2»). */
+const idDeLetra = (l: string) => `V${l.toUpperCase().charCodeAt(0) - 64}`;
+
+export interface FinalNarrado {
+  punto: Punto;
+  rumbo: number;
+  /** Cómo lo colocó Croquis, para el perito: «6 m adelante del choque, hacia donde avanzaba». */
+  texto: string;
+}
+
+/**
+ * Dónde quedó, como lo dice la narración (René, 2026-11-24): las distancias que da contra el choque,
+ * contra otro vehículo o contra donde estaba detenido. Antes La escena solo ofrecía «junto al
+ * choque» o marcarlo a mano, y el camión que quedó «6 m después del paso peatonal» quedaba a 1.5 m
+ * (la reconstrucción daba 7 km/h contra los 15 narrados). Lo que no reconoce da null: el perito lo
+ * marca en el mapa.
+ */
+export function finalDeLaNarracion(
+  e: Expediente,
+  vehiculo: string,
+  descripcion: string,
+  /** Las descripciones de los demás, para «a 1 m detrás del vehículo B». */
+  otras: readonly { vehiculo: string; descripcion: string }[] = [],
+  vistos: ReadonlySet<string> = new Set(),
+): FinalNarrado | null {
+  const imp = poseDe(e, vehiculo, "impacto");
+  if (!imp) return null;
+  const d = descripcion.toLowerCase();
+  const marcha = rumboDeMarcha(e, vehiculo, imp.rumbo);
+  // «con el frente hacia el suroeste»: el rumbo con que quedó.
+  const f = new RegExp(
+    String.raw`con\s+el\s+frente\s+(?:hacia|al|viendo\s+al)\s+(?:el\s+)?${PUNTO}\b`,
+  ).exec(sinAcentos(d));
+  const frente = f ? RUMBO_DE[f[1]!] : undefined;
+  const adelante = (n: number, texto: string): FinalNarrado => ({
+    punto: punto(avanzar(ll(imp.punto), marcha, n)),
+    rumbo: frente ?? imp.rumbo,
+    texto,
+  });
+  // «a 1 m detrás del vehículo B», «a 2 m delante del vehículo C», «a 1 m del vehículo B»: desde donde
+  // quedó el otro, defensa con defensa más N; sin «detrás» ni «delante», del lado donde estaba este en
+  // el choque.
+  const rel = new RegExp(
+    String.raw`a\s+${NUM}\s*m(?:etros?)?\s+(?:(detr[aá]s|delante|adelante|enfrente)\s+)?del\s+veh[ií]culo\s+([a-z])\b`,
+  ).exec(d);
+  if (rel) {
+    const otro = idDeLetra(rel[3]!);
+    if (vistos.has(otro) || otro === vehiculo) return null;
+    const suyo = otras.find((o) => o.vehiculo === otro);
+    const finOtro =
+      poseDe(e, otro, "final") ??
+      (suyo
+        ? finalDeLaNarracion(e, otro, suyo.descripcion, otras, new Set([...vistos, vehiculo]))
+        : null);
+    const vo = e.vehiculos.find((x) => x.id === otro);
+    const vv = e.vehiculos.find((x) => x.id === vehiculo);
+    if (!finOtro || !vo || !vv) return null;
+    const n = metros(rel[1]!);
+    const separacion = (medidasDe(vo).largo + medidasDe(vv).largo) / 2 + n;
+    const lado = rel[2] ? (/detr/.test(rel[2]) ? "detrás" : "delante") : null;
+    const haciaEste = enMetros(ll(imp.punto), ll(finOtro.punto));
+    const rumboSep =
+      lado === "detrás"
+        ? normalizar(finOtro.rumbo + 180)
+        : lado === "delante"
+          ? finOtro.rumbo
+          : normalizar((Math.atan2(haciaEste.este, haciaEste.norte) * 180) / Math.PI);
+    return {
+      punto: punto(avanzar(ll(finOtro.punto), rumboSep, separacion)),
+      rumbo: frente ?? (lado ? finOtro.rumbo : imp.rumbo),
+      texto: `${n} m ${lado ? `${lado} de` : "de"} donde quedó el vehículo ${rel[3]!.toUpperCase()}`,
+    };
+  }
+  // «6 m después del paso peatonal», «a 4 m adelante del punto de contacto», «a 2 m del punto del
+  // primer impacto», «a 3 m de donde estaba detenido» (o estacionado): desde su pose del choque, hacia
+  // donde avanzaba.
+  const desde = new RegExp(
+    String.raw`${NUM}\s*m(?:etros?)?\s+(?:despu[eé]s|adelante|m[aá]s\s+all[aá])\s+del?\s+(?:paso\s+peatonal|punto\s+de\s+(?:contacto|impacto)|impacto|choque|cruce|contacto)|a\s+${NUM}\s*m(?:etros?)?\s+del\s+punto\s+del?\s+(?:primer\s+)?(?:impacto|choque|contacto)|a\s+${NUM}\s*m(?:etros?)?\s+de\s+donde\s+(?:estaba|se\s+encontraba)\s+(?:detenid|estacionad)[oa]`,
+  ).exec(d);
+  if (desde) {
+    const n = metros(desde[1] ?? desde[2] ?? desde[3]!);
+    return adelante(n, `${n} m adelante de su posición en el choque, hacia donde avanzaba`);
+  }
+  // «junto al árbol», «contra la barda», «a 2 m adelante del poste»: en el objeto del choque (su pose
+  // del choque), más los metros que diga hacia donde avanzaba.
+  const objeto = new RegExp(
+    String.raw`(?:a\s+${NUM}\s*m(?:etros?)?\s+(?:adelante|delante|despu[eé]s|m[aá]s\s+all[aá])\s+del?\s+(?:la\s+)?|junto\s+(?:al?|a\s+la)\s+|contra\s+(?:el|la)\s+)(?:arbol|árbol|poste|barda|muro|barrera|pared)`,
+  ).exec(d);
+  if (objeto) {
+    const n = objeto[1] ? metros(objeto[1]) : 0;
+    return adelante(
+      n,
+      n ? `${n} m adelante del objeto contra el que chocó` : "en el objeto contra el que chocó",
+    );
+  }
+  return null;
+}
+
+/**
+ * El sentido de un vehículo en su caso: el que dice la narración, o el relativo a otro (René,
+ * 2026-11-24: «el vehículo B … bajaba en sentido contrario» quedaba cruzado, porque solo se entendían
+ * los puntos cardinales). «En sentido contrario» u «opuesto» es el contrario del otro vehículo que
+ * nombra la oración (o del único otro con sentido); «en el mismo sentido», «por el mismo carril» o
+ * «detrás de él», el mismo.
+ */
+export function sentidoEnElCaso(
+  narracion: string,
+  v: Vehiculo,
+  todos: readonly Vehiculo[],
+): SentidoNarrado | null {
+  const propio = sentidoNarrado(narracion, nombresDe(v, todos));
+  if (propio) return propio;
+  const nombra = (o: string, w: Vehiculo) =>
+    nombresDe(w, todos).some(
+      (n) => n.trim() && new RegExp(`\\b${escapar(sinAcentos(n))}\\b`).test(sinAcentos(o)),
+    );
+  const otros = todos
+    .filter((w) => w.id !== v.id)
+    .map((w) => ({ w, s: sentidoNarrado(narracion, nombresDe(w, todos)) }))
+    .filter((x): x is { w: Vehiculo; s: SentidoNarrado } => x.s !== null);
+  for (const o of narracion.split(/(?<=[.;])\s+/).filter((x) => nombra(x, v))) {
+    const t = sinAcentos(o);
+    const m =
+      /\b(?:en|con|por el|circulaba en)\s+(?:el\s+)?(sentido|direccion)\s+(contrari[oa]|opuest[oa]|invers[oa])\b|\ben\s+el\s+mismo\s+sentido\b|\bpor\s+el\s+mismo\s+carril\b|\bdetras\s+de\s+(?:el|ella|este|este\s+ultimo)\b/.exec(
+        t,
+      );
+    if (!m) continue;
+    const ref = otros.find((x) => nombra(o, x.w)) ?? (otros.length === 1 ? otros[0] : undefined);
+    if (!ref) continue;
+    const mismo = !m[2];
+    const rumbo = normalizar(ref.s.rumbo + (mismo ? 0 : 180));
+    return { rumbo, desde: cardinal(rumbo + 180), cita: citaDe(o, m[0]) };
+  }
+  return null;
+}
+
+const difRumbo = (a: number, b: number) => Math.abs(((a - b + 540) % 360) - 180);
+
+/** Si se puede circular por la calle con ese rumbo en ese tramo (±45°, respetando su sentido único). */
+function admiteRumbo(c: Calle, rumboTramo: number, rumbo: number): boolean {
+  if (c.unSentido === 1) return difRumbo(rumboTramo, rumbo) <= 45;
+  if (c.unSentido === -1) return difRumbo(rumboTramo + 180, rumbo) <= 45;
+  return difRumbo(rumboTramo, rumbo) <= 45 || difRumbo(rumboTramo + 180, rumbo) <= 45;
+}
+
+/**
+ * La calzada en el sentido del vehículo (revisión de la cadena, cesvi-ebb5c029a8): en una avenida con
+ * carriles centrales y laterales de un solo sentido, La escena ponía al que iba de norte a sur en la
+ * lateral que va de sur a norte, y «su derecha» quedaba hacia los carriles centrales. Si ninguna calle a
+ * 3 m del choque admite ese rumbo, el choque pasa a la calzada más cercana (a menos de 40 m) que sí lo
+ * admite. null si no hace falta moverlo o si no hay otra.
+ */
+export function calzadaEnSuSentido(
+  calles: readonly Calle[],
+  p: Punto,
+  rumbo: number,
+): { punto: Punto; calle: Calle } | null {
+  const aqui = calles.map((c) => ({ c, s: sobreCalle(c, p) })).filter((x) => x.s.distancia <= 3);
+  if (!aqui.length || aqui.some((x) => admiteRumbo(x.c, x.s.rumbo, rumbo))) return null;
+  // Solo si la calle de aquí es de un solo sentido y va al revés.
+  if (
+    !aqui.some(
+      (x) => x.c.unSentido && difRumbo(x.s.rumbo + (x.c.unSentido === -1 ? 180 : 0), rumbo) > 135,
+    )
+  )
+    return null;
+  let mejor: { punto: Punto; calle: Calle; d: number } | null = null;
+  for (const c of calles) {
+    const s = sobreCalle(c, p);
+    if (s.distancia > 40 || !admiteRumbo(c, s.rumbo, rumbo)) continue;
+    if (!mejor || s.distancia < mejor.d) mejor = { punto: s.punto, calle: c, d: s.distancia };
+  }
+  return mejor ? { punto: mejor.punto, calle: mejor.calle } : null;
 }

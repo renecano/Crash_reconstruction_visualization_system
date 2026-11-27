@@ -1,0 +1,394 @@
+{
+  "id": "aud-26-carambola4-tlalpan",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 538,
+    "output_tokens": 3006,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0319052,
+  "narracion": "El hecho se ubica sobre la Calzada de Tlalpan, a la altura de la colonia Portales Sur, alcaldía Benito Juárez, Ciudad de México, aproximadamente a las 17:40 horas. Por el carril derecho, con dirección al Centro, se encontraban detenidos por el semáforo, en este orden, el vehículo D, marca Toyota, tipo Corolla, modelo 2018; el vehículo C, marca Volkswagen, tipo Gol, modelo 2016; y el vehículo B, marca Nissan, tipo Tsuru, modelo 2012. El vehículo A, camioneta marca Nissan, tipo NP300, modelo 2020, circulaba por el mismo carril y en el mismo sentido. Su conductor declaró que se distrajo y no vio el alto. Frenó, dejando huellas de frenado de 6 m antes del impacto, y se impactó con su parte frontal contra la parte posterior del vehículo B, que fue proyectado contra el vehículo C, y este contra el vehículo D. Posiciones finales: el vehículo D quedó a 1 m de donde estaba detenido; el vehículo C, pegado al vehículo D; el vehículo B, a 1 m detrás del vehículo C; y el vehículo A, pegado al vehículo B. El vehículo A presenta daños en la defensa y la parrilla; los vehículos B y C, en las partes frontal y posterior; el vehículo D, en la defensa trasera. Pavimento seco, día nublado.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Calzada de Tlalpan, a la altura de la colonia Portales Sur",
+        "cita": "El hecho se ubica sobre la Calzada de Tlalpan, a la altura de la colonia Portales Sur, alcaldía Benito Juárez, Ciudad de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Benito Juárez",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Ciudad de México",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 17:40 horas",
+        "cita": "aproximadamente a las 17:40 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "alcance",
+        "cita": "se impactó con su parte frontal contra la parte posterior del vehículo B, que fue proyectado contra el vehículo C"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Nissan",
+        "cita": "El vehículo A, camioneta marca Nissan, tipo NP300, modelo 2020"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "NP300",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2020",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "clase",
+        "valor": "pickup",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Nissan",
+        "cita": "el vehículo B, marca Nissan, tipo Tsuru, modelo 2012"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Tsuru",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2012",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "marca",
+        "valor": "Volkswagen",
+        "cita": "el vehículo C, marca Volkswagen, tipo Gol, modelo 2016"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "modelo",
+        "valor": "Gol",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "anio",
+        "valor": "2016",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 4,
+        "vehiculo": "V4",
+        "campo": "marca",
+        "valor": "Toyota",
+        "cita": "el vehículo D, marca Toyota, tipo Corolla, modelo 2018"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 4,
+        "vehiculo": "V4",
+        "campo": "modelo",
+        "valor": "Corolla",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 4,
+        "vehiculo": "V4",
+        "campo": "anio",
+        "valor": "2018",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "El vehículo A, camioneta marca Nissan, tipo NP300, modelo 2020, circulaba por el mismo carril y en el mismo sentido"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "frena",
+        "cita": "Frenó, dejando huellas de frenado de 6 m antes del impacto"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "se_detiene",
+        "cita": "se encontraban detenidos por el semáforo, en este orden"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "maniobra",
+        "valor": "se_detiene",
+        "cita": "se encontraban detenidos por el semáforo, en este orden"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 4,
+        "vehiculo": "V4",
+        "campo": "maniobra",
+        "valor": "se_detiene",
+        "cita": "se encontraban detenidos por el semáforo, en este orden"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "frenado",
+        "cita": "Frenó, dejando huellas de frenado de 6 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "6 m",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "se impactó con su parte frontal contra la parte posterior del vehículo B"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 posterior",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 2,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": "el vehículo B, que fue proyectado contra el vehículo C"
+      },
+      {
+        "seccion": "impacto",
+        "n": 2,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V3",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 3,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V3",
+        "cita": "y este contra el vehículo D"
+      },
+      {
+        "seccion": "impacto",
+        "n": 3,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V4",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V4",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo D quedó a 1 m de donde estaba detenido"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V4",
+        "campo": "descripcion",
+        "valor": "a 1 m de donde estaba detenido",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V3",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo C, pegado al vehículo D"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V3",
+        "campo": "descripcion",
+        "valor": "pegado al vehículo D",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo B, a 1 m detrás del vehículo C"
+      },
+      {
+        "seccion": "posicion",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "a 1 m detrás del vehículo C",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo A, pegado al vehículo B"
+      },
+      {
+        "seccion": "posicion",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "pegado al vehículo B",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta daños en la defensa y la parrilla"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "los vehículos B y C, en las partes frontal y posterior"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "los vehículos B y C, en las partes frontal y posterior"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V3",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "los vehículos B y C, en las partes frontal y posterior"
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V3",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "los vehículos B y C, en las partes frontal y posterior"
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V4",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "el vehículo D, en la defensa trasera"
+      }
+    ]
+  }
+}

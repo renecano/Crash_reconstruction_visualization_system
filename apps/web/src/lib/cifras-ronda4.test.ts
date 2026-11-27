@@ -142,6 +142,7 @@ export async function reconstruir(e0: Expediente, id: string) {
   let r = cesvi.interpretarResultado(
     base,
     fullResult(base.spec, { ...MUESTRAS, relieve: malla as never }),
+    { relieve: malla },
   );
   const tipicas = (cesvi as Json).expedienteConTipicas as
     ((x: Expediente, y: unknown) => Expediente | null) | undefined;
@@ -152,6 +153,7 @@ export async function reconstruir(e0: Expediente, id: string) {
     r = cesvi.interpretarResultado(
       base,
       fullResult(base.spec, { ...MUESTRAS, relieve: malla as never }),
+      { relieve: malla },
     );
   }
   return { r, e, malla };

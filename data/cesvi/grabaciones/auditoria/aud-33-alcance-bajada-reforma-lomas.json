@@ -1,0 +1,250 @@
+{
+  "id": "aud-33-alcance-bajada-reforma-lomas",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 467,
+    "output_tokens": 1952,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0212232,
+  "narracion": "El hecho se ubica sobre Paseo de la Reforma, en la bajada hacia el cruce con la Avenida Prado Norte, colonia Lomas de Chapultepec, alcaldía Miguel Hidalgo, Ciudad de México, aproximadamente a las 7:10 horas. El vehículo B, marca Chevrolet, tipo Aveo, modelo 2019, circulaba de poniente a oriente por el carril derecho y se encontraba detenido por el semáforo de Avenida Prado Norte. El vehículo A, camioneta marca Mercedes-Benz, tipo Sprinter, modelo 2017, con pasajeros, bajaba detrás de él por el mismo carril, a unos 60 km/h según su conductor. Al ver al vehículo B detenido frenó, dejando huellas de frenado de 14 m antes del impacto, y se impactó con su parte frontal contra la parte posterior del vehículo B. El vehículo B quedó a 4 m de donde estaba detenido, antes del paso peatonal; el vehículo A quedó a 1 m detrás del vehículo B. El vehículo A presenta hundimiento en la parte frontal; el vehículo B, hundimiento severo en la parte posterior, con la tapa de la cajuela deformada. Pavimento seco, día nublado.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "alcance",
+        "cita": "se impactó con su parte frontal contra la parte posterior del vehículo B"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Paseo de la Reforma, en la bajada hacia el cruce con la Avenida Prado Norte, colonia Lomas de Chapultepec",
+        "cita": "El hecho se ubica sobre Paseo de la Reforma, en la bajada hacia el cruce con la Avenida Prado Norte, colonia Lomas de Chapultepec"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Miguel Hidalgo",
+        "cita": "alcaldía Miguel Hidalgo, Ciudad de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Ciudad de México",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 7:10 horas",
+        "cita": "aproximadamente a las 7:10 horas"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Mercedes-Benz",
+        "cita": "camioneta marca Mercedes-Benz, tipo Sprinter, modelo 2017"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Sprinter",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2017",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Chevrolet",
+        "cita": "El vehículo B, marca Chevrolet, tipo Aveo, modelo 2019"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Aveo",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2019",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "se impactó con su parte frontal contra la parte posterior del vehículo B"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 posterior",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "se_detiene",
+        "cita": "circulaba de poniente a oriente por el carril derecho y se encontraba detenido por el semáforo de Avenida Prado Norte"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "frena",
+        "cita": "Al ver al vehículo B detenido frenó, dejando huellas de frenado de 14 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "frenado",
+        "cita": "dejando huellas de frenado de 14 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "14 m",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo B quedó a 4 m de donde estaba detenido, antes del paso peatonal"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "a 4 m de donde estaba detenido, antes del paso peatonal",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo A quedó a 1 m detrás del vehículo B"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "a 1 m detrás del vehículo B",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta hundimiento en la parte frontal"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "el vehículo B, hundimiento severo en la parte posterior, con la tapa de la cajuela deformada"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "deformacion",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "magnitud",
+        "valor": "severa",
+        "cita": ""
+      }
+    ]
+  }
+}

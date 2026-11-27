@@ -1,0 +1,138 @@
+{
+  "id": "aud-23-atropello-autobus-insurgentes-quevedo",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 395,
+    "output_tokens": 1162,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0131792,
+  "narracion": "El hecho se ubica sobre Avenida de los Insurgentes Sur, unos 15 m al norte de su cruce con Avenida Miguel Ángel de Quevedo, colonia Chimalistac, alcaldía Álvaro Obregón, Ciudad de México, aproximadamente a las 13:30 horas, con lluvia. El vehículo A, autobús de pasajeros marca Volvo, modelo 2018, circulaba sobre Avenida de los Insurgentes Sur de norte a sur, por el carril derecho. Un peatón, adulto, cruzaba la avenida de oriente a poniente, fuera del paso peatonal. El autobús impactó al peatón con su esquina frontal izquierda. El peatón quedó tendido sobre el carril, a 4 m del punto de contacto. El autobús quedó detenido 7 m después del punto de contacto, antes del paso peatonal del cruce. Por el pavimento mojado no se apreciaron huellas de frenado. El autobús presenta el parabrisas estrellado en su parte inferior izquierda. Pavimento mojado, día nublado.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "atropellamiento",
+        "cita": "El autobús impactó al peatón con su esquina frontal izquierda."
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Avenida de los Insurgentes Sur, unos 15 m al norte de su cruce con Avenida Miguel Ángel de Quevedo, colonia Chimalistac",
+        "cita": "El hecho se ubica sobre Avenida de los Insurgentes Sur, unos 15 m al norte de su cruce con Avenida Miguel Ángel de Quevedo, colonia Chimalistac"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Álvaro Obregón",
+        "cita": "alcaldía Álvaro Obregón, Ciudad de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Ciudad de México",
+        "cita": "alcaldía Álvaro Obregón, Ciudad de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 13:30 horas",
+        "cita": "aproximadamente a las 13:30 horas, con lluvia"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "clase",
+        "valor": "autobus",
+        "cita": "El vehículo A, autobús de pasajeros marca Volvo, modelo 2018"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Volvo",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2018",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba sobre Avenida de los Insurgentes Sur de norte a sur, por el carril derecho"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "El autobús impactó al peatón con su esquina frontal izquierda."
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "objeto_fijo",
+        "valor": "peatón",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El autobús quedó detenido 7 m después del punto de contacto, antes del paso peatonal del cruce."
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "detenido 7 m después del punto de contacto, antes del paso peatonal del cruce",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El autobús presenta el parabrisas estrellado en su parte inferior izquierda."
+      }
+    ]
+  }
+}

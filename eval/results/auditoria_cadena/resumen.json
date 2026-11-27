@@ -1,0 +1,621 @@
+{
+ "fecha": "2026-11-25T15:08:24.632Z",
+ "fuentes": {
+  "prueba": {
+   "casos": 205,
+   "lugar_encontrado": 128,
+   "reglas": {
+    "escena.sin_pose": {
+     "casos": 1,
+     "ids": [
+      "cesvi-cb04fdb41b"
+     ]
+    },
+    "limite.llegada_recta": {
+     "casos": 2,
+     "ids": [
+      "cesvi-059b27d89d",
+      "cesvi-a29030f88d"
+     ]
+    },
+    "lugar.no_encontrado": {
+     "casos": 31,
+     "ids": [
+      "cesvi-04c4022204",
+      "cesvi-16853d8646",
+      "cesvi-17068f5d53",
+      "cesvi-2276b03fc0",
+      "cesvi-3481483d69",
+      "cesvi-36340d20a2",
+      "cesvi-4055e6fd60",
+      "cesvi-47c32388f7",
+      "cesvi-4f39800f79",
+      "cesvi-5becbd0fbb",
+      "cesvi-5dfc9ba3c0",
+      "cesvi-6a3f3106f0",
+      "cesvi-76db6d8acd",
+      "cesvi-7a3e5a6055",
+      "cesvi-7be5e8a261",
+      "cesvi-84cfa78565",
+      "cesvi-85b5b83442",
+      "cesvi-8dfd2f1c6f",
+      "cesvi-9200983dab",
+      "cesvi-9b2fc2ffc7",
+      "cesvi-a8b1cf4c43",
+      "cesvi-cade1c89cb",
+      "cesvi-ce2e6cce75",
+      "cesvi-d24f648593",
+      "cesvi-e6067d3d1b",
+      "cesvi-e69d48f64f",
+      "cesvi-e9c4e081fe",
+      "cesvi-edc4d70d79",
+      "cesvi-f344a46f3f",
+      "cesvi-f6bafdd302",
+      "cesvi-fb43c646b6"
+     ]
+    },
+    "lugar.sin_calles": {
+     "casos": 1,
+     "ids": [
+      "cesvi-7b8ab3e55e"
+     ]
+    },
+    "masa.sin_modelo": {
+     "casos": 55,
+     "ids": [
+      "cesvi-037dde2760",
+      "cesvi-0b1f65a976",
+      "cesvi-11fb37efea",
+      "cesvi-147df2914c",
+      "cesvi-16c23ff0f7",
+      "cesvi-16eb0fba1f",
+      "cesvi-240b770de0",
+      "cesvi-257e1374a0",
+      "cesvi-285a38dbd1",
+      "cesvi-2a83292792",
+      "cesvi-2b10fea718",
+      "cesvi-316a61cb43",
+      "cesvi-4055e6fd60",
+      "cesvi-466c13a262",
+      "cesvi-4a5c51d807",
+      "cesvi-4f918c2927",
+      "cesvi-5242a129c5",
+      "cesvi-52c47a9f37",
+      "cesvi-5aa5e75aca",
+      "cesvi-5db0896348",
+      "cesvi-5dfc9ba3c0",
+      "cesvi-5e0f7da79c",
+      "cesvi-644837b23b",
+      "cesvi-662e6d9423",
+      "cesvi-6a3f3106f0",
+      "cesvi-6c34c6ac79",
+      "cesvi-6f70c56733",
+      "cesvi-7377724258",
+      "cesvi-7968cc5df9",
+      "cesvi-7a3e5a6055",
+      "cesvi-7b8ab3e55e",
+      "cesvi-818c2eb6d6",
+      "cesvi-85090bf850",
+      "cesvi-9ab47f7f37",
+      "cesvi-a29030f88d",
+      "cesvi-af2196f0fc",
+      "cesvi-b1ab1b00df",
+      "cesvi-b7834ff8b0",
+      "cesvi-b7ca573795",
+      "cesvi-bb774b3897",
+      "cesvi-bdf8899ada",
+      "cesvi-c0bc4df135",
+      "cesvi-c3af05ad39",
+      "cesvi-cade1c89cb",
+      "cesvi-d0c7ed3ad8",
+      "cesvi-d4772dda4f",
+      "cesvi-d4b38174d1",
+      "cesvi-d84907cf47",
+      "cesvi-de7323cf1c",
+      "cesvi-e8474c118b",
+      "cesvi-e9aed4ab5b",
+      "cesvi-f6bafdd302",
+      "cesvi-f7779cef54",
+      "cesvi-faa8a2bde0",
+      "cesvi-fb43c646b6"
+     ]
+    },
+    "masa.tipica_con_modelo": {
+     "casos": 158,
+     "ids": [
+      "cesvi-0221ee4ec4",
+      "cesvi-037dde2760",
+      "cesvi-04c4022204",
+      "cesvi-059b27d89d",
+      "cesvi-05a7c05640",
+      "cesvi-06e4ee9b97",
+      "cesvi-09828841f1",
+      "cesvi-0b1f65a976",
+      "cesvi-0eeebbed82",
+      "cesvi-12f0cdba9c",
+      "cesvi-147df2914c",
+      "cesvi-14b9bd1a4e",
+      "cesvi-16853d8646",
+      "cesvi-16b9b82f10",
+      "cesvi-16c23ff0f7",
+      "cesvi-16eb0fba1f",
+      "cesvi-17afa381e4",
+      "cesvi-1bc2829bb6",
+      "cesvi-2251d90ba3",
+      "cesvi-2276b03fc0",
+      "cesvi-240b770de0",
+      "cesvi-24f644a44f",
+      "cesvi-257e1374a0",
+      "cesvi-2a83292792",
+      "cesvi-30fa1926dc",
+      "cesvi-316a61cb43",
+      "cesvi-31fcbca870",
+      "cesvi-3481483d69",
+      "cesvi-352e083b8a",
+      "cesvi-358b91874b",
+      "cesvi-36340d20a2",
+      "cesvi-3bde7bd134",
+      "cesvi-3eab5db876",
+      "cesvi-3fa0cd2ba1",
+      "cesvi-3fb401796c",
+      "cesvi-460d7f3120",
+      "cesvi-47c32388f7",
+      "cesvi-4a5c51d807",
+      "cesvi-4e4d78194f",
+      "cesvi-4e9cbd1711",
+      "cesvi-4ee7f719b9",
+      "cesvi-4ef2a9d90b",
+      "cesvi-4f39800f79",
+      "cesvi-4f918c2927",
+      "cesvi-52de2b4555",
+      "cesvi-549b436c96",
+      "cesvi-581f3c5f7e",
+      "cesvi-5863ef5531",
+      "cesvi-5becbd0fbb",
+      "cesvi-5cb23d1cfd",
+      "cesvi-5cf7e956c6",
+      "cesvi-5f9276cffe",
+      "cesvi-6256dba174",
+      "cesvi-639ce6d42f",
+      "cesvi-6400c99448",
+      "cesvi-644837b23b",
+      "cesvi-65daf4b688",
+      "cesvi-6c34c6ac79",
+      "cesvi-6ca24dcfce",
+      "cesvi-6dbc809e80",
+      "cesvi-736d92094b",
+      "cesvi-73ea769d2f",
+      "cesvi-76cbfb506e",
+      "cesvi-76db6d8acd",
+      "cesvi-78d98fd926",
+      "cesvi-7968cc5df9",
+      "cesvi-7b8ab3e55e",
+      "cesvi-7d5dbd5fdb",
+      "cesvi-7f1fa3c962",
+      "cesvi-7f6b73260c",
+      "cesvi-8022b514b7",
+      "cesvi-818c2eb6d6",
+      "cesvi-8324c1892b",
+      "cesvi-840953e0be",
+      "cesvi-84cfa78565",
+      "cesvi-853129f415",
+      "cesvi-85894938e3",
+      "cesvi-85b5b83442",
+      "cesvi-87b14ec4ba",
+      "cesvi-89637693fe",
+      "cesvi-8dfd2f1c6f",
+      "cesvi-8e3a7ac59f",
+      "cesvi-8edf93b5c6",
+      "cesvi-9200983dab",
+      "cesvi-928c1a7646",
+      "cesvi-94c84e00ab",
+      "cesvi-97cb6986e4",
+      "cesvi-99ae88f8e3",
+      "cesvi-9ab47f7f37",
+      "cesvi-9b2fc2ffc7",
+      "cesvi-9babee8d11",
+      "cesvi-9f15522337",
+      "cesvi-a29030f88d",
+      "cesvi-a4177250d4",
+      "cesvi-a514a9a881",
+      "cesvi-a7570ee749",
+      "cesvi-a8bf6a49ac",
+      "cesvi-a8e0a03cfd",
+      "cesvi-ab666b294f",
+      "cesvi-abc31b1de8",
+      "cesvi-aee9753bf1",
+      "cesvi-af71476614",
+      "cesvi-b1ab1b00df",
+      "cesvi-b37686e37c",
+      "cesvi-b641fb6657",
+      "cesvi-b7834ff8b0",
+      "cesvi-b7ca573795",
+      "cesvi-b8c6174603",
+      "cesvi-b9f5a5ca1f",
+      "cesvi-ba1949532f",
+      "cesvi-bb774b3897",
+      "cesvi-bdf8899ada",
+      "cesvi-be27388d4a",
+      "cesvi-bf10fcba2f",
+      "cesvi-c0bc4df135",
+      "cesvi-c3a461721a",
+      "cesvi-c4100ea323",
+      "cesvi-c6269d800e",
+      "cesvi-c6e5335493",
+      "cesvi-c97f0058a8",
+      "cesvi-c9ea862641",
+      "cesvi-cb04fdb41b",
+      "cesvi-cd894debf8",
+      "cesvi-cdaf2821ca",
+      "cesvi-ce2e6cce75",
+      "cesvi-cf708e9fed",
+      "cesvi-d0c7ed3ad8",
+      "cesvi-d24f648593",
+      "cesvi-d2c5cede7c",
+      "cesvi-d4283db9c4",
+      "cesvi-d4772dda4f",
+      "cesvi-d4b38174d1",
+      "cesvi-d4f9c1a411",
+      "cesvi-d646b64594",
+      "cesvi-d8a73cd0be",
+      "cesvi-d950dda14b",
+      "cesvi-de7323cf1c",
+      "cesvi-def04a2cc3",
+      "cesvi-df473476cf",
+      "cesvi-df6a4b2324",
+      "cesvi-e53c722cc2",
+      "cesvi-e6067d3d1b",
+      "cesvi-e69d48f64f",
+      "cesvi-e8474c118b",
+      "cesvi-e9aed4ab5b",
+      "cesvi-e9c4e081fe",
+      "cesvi-eb4d9c1c4e",
+      "cesvi-ebb5c029a8",
+      "cesvi-ec1c390b10",
+      "cesvi-f290a77272",
+      "cesvi-f6bafdd302",
+      "cesvi-f85560ba6c",
+      "cesvi-f9de9836d6",
+      "cesvi-fa403f1905",
+      "cesvi-fb43c646b6",
+      "cesvi-fc5f48e946",
+      "cesvi-feb7aaa0e1",
+      "cesvi-feef78b49a"
+     ]
+    },
+    "pregunta.choque_posterior": {
+     "casos": 22,
+     "ids": [
+      "cesvi-316a61cb43",
+      "cesvi-4ef2a9d90b",
+      "cesvi-58c038ffdf",
+      "cesvi-736d92094b",
+      "cesvi-7b8ab3e55e",
+      "cesvi-818c2eb6d6",
+      "cesvi-85090bf850",
+      "cesvi-923e562683",
+      "cesvi-928c1a7646",
+      "cesvi-9ab47f7f37",
+      "cesvi-aee9753bf1",
+      "cesvi-af2196f0fc",
+      "cesvi-b1ab1b00df",
+      "cesvi-b9f5a5ca1f",
+      "cesvi-c0bc4df135",
+      "cesvi-c6e5335493",
+      "cesvi-cf708e9fed",
+      "cesvi-d4772dda4f",
+      "cesvi-d646b64594",
+      "cesvi-e53c722cc2",
+      "cesvi-eed00406c6",
+      "cesvi-feb7aaa0e1"
+     ]
+    },
+    "pregunta.lugar_dudoso": {
+     "casos": 21,
+     "ids": [
+      "cesvi-147df2914c",
+      "cesvi-16c23ff0f7",
+      "cesvi-240b770de0",
+      "cesvi-257e1374a0",
+      "cesvi-4a5c51d807",
+      "cesvi-52de2b4555",
+      "cesvi-6256dba174",
+      "cesvi-639ce6d42f",
+      "cesvi-662e6d9423",
+      "cesvi-6dbc809e80",
+      "cesvi-73ea769d2f",
+      "cesvi-78d98fd926",
+      "cesvi-8edf93b5c6",
+      "cesvi-b7834ff8b0",
+      "cesvi-cdaf2821ca",
+      "cesvi-d4283db9c4",
+      "cesvi-de7323cf1c",
+      "cesvi-e984ff56d3",
+      "cesvi-f85560ba6c",
+      "cesvi-f9de9836d6",
+      "cesvi-faa8a2bde0"
+     ]
+    },
+    "pregunta.lugar_km": {
+     "casos": 17,
+     "ids": [
+      "cesvi-285a38dbd1",
+      "cesvi-358b91874b",
+      "cesvi-5242a129c5",
+      "cesvi-5863ef5531",
+      "cesvi-5f9276cffe",
+      "cesvi-7b8ab3e55e",
+      "cesvi-7f6b73260c",
+      "cesvi-85090bf850",
+      "cesvi-97cb6986e4",
+      "cesvi-af2196f0fc",
+      "cesvi-b7ca573795",
+      "cesvi-bdf8899ada",
+      "cesvi-c3af05ad39",
+      "cesvi-c4100ea323",
+      "cesvi-d4772dda4f",
+      "cesvi-d4f9c1a411",
+      "cesvi-eed00406c6"
+     ]
+    },
+    "pregunta.lugar_solo_zona": {
+     "casos": 46,
+     "ids": [
+      "cesvi-0b1f65a976",
+      "cesvi-11fb37efea",
+      "cesvi-12f0cdba9c",
+      "cesvi-14b9bd1a4e",
+      "cesvi-16b9b82f10",
+      "cesvi-16eb0fba1f",
+      "cesvi-17afa381e4",
+      "cesvi-1bc2829bb6",
+      "cesvi-2a83292792",
+      "cesvi-31fcbca870",
+      "cesvi-3fb401796c",
+      "cesvi-476cf1439b",
+      "cesvi-4ee7f719b9",
+      "cesvi-4f918c2927",
+      "cesvi-52fb9f9c5d",
+      "cesvi-5518ddf7bc",
+      "cesvi-581f3c5f7e",
+      "cesvi-5cf7e956c6",
+      "cesvi-5db0896348",
+      "cesvi-5e0f7da79c",
+      "cesvi-6400c99448",
+      "cesvi-644837b23b",
+      "cesvi-6f007ef54a",
+      "cesvi-71660b61b8",
+      "cesvi-7377724258",
+      "cesvi-76cbfb506e",
+      "cesvi-7968cc5df9",
+      "cesvi-7fceadfdca",
+      "cesvi-89637693fe",
+      "cesvi-94c84e00ab",
+      "cesvi-9babee8d11",
+      "cesvi-9f15522337",
+      "cesvi-a7570ee749",
+      "cesvi-a8e0a03cfd",
+      "cesvi-b8c6174603",
+      "cesvi-bb774b3897",
+      "cesvi-c97f0058a8",
+      "cesvi-c9ea862641",
+      "cesvi-d55ce7a8fe",
+      "cesvi-d950dda14b",
+      "cesvi-def04a2cc3",
+      "cesvi-e8474c118b",
+      "cesvi-e9aed4ab5b",
+      "cesvi-eb4d9c1c4e",
+      "cesvi-f7779cef54",
+      "cesvi-fc5f48e946"
+     ]
+    },
+    "vehiculo.fuera_de_calle": {
+     "casos": 17,
+     "ids": [
+      "cesvi-05a7c05640",
+      "cesvi-5aa5e75aca",
+      "cesvi-65daf4b688",
+      "cesvi-6ca24dcfce",
+      "cesvi-87b14ec4ba",
+      "cesvi-928c1a7646",
+      "cesvi-97cb6986e4",
+      "cesvi-99ae88f8e3",
+      "cesvi-9cb20db594",
+      "cesvi-a29030f88d",
+      "cesvi-b1ab1b00df",
+      "cesvi-b641fb6657",
+      "cesvi-b9f5a5ca1f",
+      "cesvi-cd894debf8",
+      "cesvi-df6a4b2324",
+      "cesvi-ec1c390b10",
+      "cesvi-feb7aaa0e1"
+     ]
+    },
+    "vehiculo.sin_clase": {
+     "casos": 48,
+     "ids": [
+      "cesvi-037dde2760",
+      "cesvi-0b1f65a976",
+      "cesvi-147df2914c",
+      "cesvi-17068f5d53",
+      "cesvi-240b770de0",
+      "cesvi-257e1374a0",
+      "cesvi-285a38dbd1",
+      "cesvi-2a83292792",
+      "cesvi-316a61cb43",
+      "cesvi-358b91874b",
+      "cesvi-4055e6fd60",
+      "cesvi-466c13a262",
+      "cesvi-4a5c51d807",
+      "cesvi-4f918c2927",
+      "cesvi-58c038ffdf",
+      "cesvi-5aa5e75aca",
+      "cesvi-5e0f7da79c",
+      "cesvi-644837b23b",
+      "cesvi-6c34c6ac79",
+      "cesvi-7377724258",
+      "cesvi-7968cc5df9",
+      "cesvi-7a3e5a6055",
+      "cesvi-7be5e8a261",
+      "cesvi-7fceadfdca",
+      "cesvi-85090bf850",
+      "cesvi-923e562683",
+      "cesvi-a29030f88d",
+      "cesvi-a8b1cf4c43",
+      "cesvi-a8e0a03cfd",
+      "cesvi-aee9753bf1",
+      "cesvi-b1ab1b00df",
+      "cesvi-b7ca573795",
+      "cesvi-bb774b3897",
+      "cesvi-c0bc4df135",
+      "cesvi-c9ea862641",
+      "cesvi-cade1c89cb",
+      "cesvi-cdaf2821ca",
+      "cesvi-cf708e9fed",
+      "cesvi-d0c7ed3ad8",
+      "cesvi-d4772dda4f",
+      "cesvi-d4b38174d1",
+      "cesvi-d84907cf47",
+      "cesvi-e6067d3d1b",
+      "cesvi-e8474c118b",
+      "cesvi-eed00406c6",
+      "cesvi-f6bafdd302",
+      "cesvi-faa8a2bde0",
+      "cesvi-fb43c646b6"
+     ]
+    }
+   }
+  },
+  "nuevas": {
+   "casos": 42,
+   "lugar_encontrado": 41,
+   "reglas": {
+    "candado.animacion": {
+     "casos": 2,
+     "ids": [
+      "aud-14-barda-morelos",
+      "aud-38-alcance-barrera-circuito-reforma"
+     ]
+    },
+    "final.no_leido": {
+     "casos": 6,
+     "ids": [
+      "aud-07-volcadura-calzada-pacifico",
+      "aud-15-carambola4-tollocan-lluvia",
+      "aud-17-moto-estacionado-estado-de-mexico",
+      "aud-26-carambola4-tlalpan",
+      "aud-30-ciclista-alcance-universidad",
+      "aud-36-reversa-atropello-camion-cuauhtemoc"
+     ]
+    },
+    "limite.llegada_recta": {
+     "casos": 3,
+     "ids": [
+      "aud-08-atropello-tollocan-carranza",
+      "aud-20-glorieta-cibeles-moto",
+      "aud-22-lateral-insurgentes-mixcoac"
+     ]
+    },
+    "masa.tipica_con_modelo": {
+     "casos": 10,
+     "ids": [
+      "aud-06-carambola3-tecnologico",
+      "aud-09-ciclista-tecnologico",
+      "aud-10-reversa-estacionado-metepec",
+      "aud-13-moto-vuelta-izquierda-tecnologico",
+      "aud-22-lateral-insurgentes-mixcoac",
+      "aud-25-moto-muro-viaducto",
+      "aud-26-carambola4-tlalpan",
+      "aud-29-vuelta-izquierda-universidad-quevedo",
+      "aud-30-ciclista-alcance-universidad",
+      "aud-31-alcance-puente-churubusco"
+     ]
+    },
+    "pregunta.lugar_dudoso": {
+     "casos": 2,
+     "ids": [
+      "aud-21-glorieta-angel-ciclista",
+      "aud-42-lateral-barrera-churubusco"
+     ]
+    },
+    "pregunta.lugar_solo_zona": {
+     "casos": 1,
+     "ids": [
+      "aud-24-barrera-periferico-sur"
+     ]
+    },
+    "pregunta.objeto_otro_choque": {
+     "casos": 1,
+     "ids": [
+      "aud-38-alcance-barrera-circuito-reforma"
+     ]
+    },
+    "trayectoria.cruza_edificio": {
+     "casos": 1,
+     "ids": [
+      "aud-32-volcadura-viaducto"
+     ]
+    },
+    "vehiculo.fuera_de_calle": {
+     "casos": 8,
+     "ids": [
+      "aud-02-lateral-tecnologico-lastorres",
+      "aud-07-volcadura-calzada-pacifico",
+      "aud-09-ciclista-tecnologico",
+      "aud-13-moto-vuelta-izquierda-tecnologico",
+      "aud-15-carambola4-tollocan-lluvia",
+      "aud-29-vuelta-izquierda-universidad-quevedo",
+      "aud-38-alcance-barrera-circuito-reforma",
+      "aud-39-atropello-autobus-tlalpan-ermita"
+     ]
+    },
+    "vehiculo.sentido": {
+     "casos": 3,
+     "ids": [
+      "aud-02-lateral-tecnologico-lastorres",
+      "aud-29-vuelta-izquierda-universidad-quevedo",
+      "aud-33-alcance-bajada-reforma-lomas"
+     ]
+    },
+    "vuelta.fuera_de_calle": {
+     "casos": 2,
+     "ids": [
+      "aud-03-atropello-pinosuarez-lastorres",
+      "aud-16-atropello-camion-pinosuarez"
+     ]
+    }
+   }
+  },
+  "ejemplos": {
+   "casos": 5,
+   "lugar_encontrado": 3,
+   "reglas": {
+    "final.no_leido": {
+     "casos": 1,
+     "ids": [
+      "alcance-deformacion"
+     ]
+    },
+    "pregunta.lugar_dudoso": {
+     "casos": 1,
+     "ids": [
+      "carambola-lluvia"
+     ]
+    },
+    "pregunta.lugar_km": {
+     "casos": 1,
+     "ids": [
+      "alcance-deformacion"
+     ]
+    },
+    "pregunta.lugar_solo_zona": {
+     "casos": 2,
+     "ids": [
+      "reversa-pendiente",
+      "poste-terraceria"
+     ]
+    }
+   }
+  }
+ }
+}

@@ -2465,6 +2465,16 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 
 ### Endurecimiento pendiente
 
+- **La llegada de cada vehículo por su propia calle** (revisión de la cadena, 2026-11-25; René lo puso en el paquete que sigue al #311).
+  - Para completar 3 s antes del choque, el solver prolonga en línea recta la llegada de cada vehículo hacia atrás desde su posición inicial (`aproximacion_previa_s`). Solo sigue un eje de calle, el de `lugar.eje_via`.
+  - En 6 casos de la revisión (2 de los 205 reportes y 4 de las 42 narraciones), esa recta pasa por un edificio del mapa. No es evidencia ni mueve la cifra, y la hoja lo dice en sus límites (`limite.llegada_recta`).
+  - El arreglo: un eje por vehículo en el contrato y que el solver lo siga, Python y TS con paridad, con el antes y el después de las cifras publicadas.
+- **Alcance en el mismo sentido: el de adelante queda en 0 km/h y la animación no termina donde lo marcó el perito** (revisión de la cadena, 2026-11-25).
+  - En el ejemplo publicado «alcance en carretera» (53 y 0 km/h), la animación termina a 10 y 12 m de las posiciones finales marcadas. En el del poste en terracería, a 7 y 10 m. En AXA, el crucero, la carambola y la reversa, a menos de 4 m.
+  - En la volcadura del Viaducto (aud-32), el Versa queda en 0 km/h y la animación lo lleva 17 m más allá de su marca, hasta un edificio. El candado no da cifra ahí.
+  - Una regla en el candado («la animación termina lejos de la posición final marcada») quitaría la cifra de dos ejemplos publicados. Va al paquete aparte, con el antes y el después para René.
+- **Una volcadura después de un segundo choque contra un objeto que no se colocó** (aud-32): la posición final del que vuelca viene de algo que la reconstrucción no calcula, y aun así cuenta como evidencia de reposo.
+
 - **Ronda 4, la curva en la física** (René, 2026-11-19).
   - La curva narrada queda como condición con su cita, y el 3D dibuja la curva real cuando hay calles.
   - La física, en cambio, no la sigue: el solver solo sabe seguir la curva de su plantilla (un arco fijo con centro en (0, −r), `roadAxis`), no la de la calle real. La aproximación sigue siendo recta, de 12 m.

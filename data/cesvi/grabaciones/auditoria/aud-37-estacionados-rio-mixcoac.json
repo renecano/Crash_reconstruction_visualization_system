@@ -1,0 +1,322 @@
+{
+  "id": "aud-37-estacionados-rio-mixcoac",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 548,
+    "output_tokens": 2407,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0259352,
+  "narracion": "El hecho se ubica sobre Avenida Río Mixcoac, a la altura de la colonia Acacias, alcaldía Benito Juárez, Ciudad de México, aproximadamente a las 22:30 horas, con lluvia. El vehículo C, marca Chevrolet, tipo Aveo, modelo 2017, y detrás de él el vehículo B, marca Nissan, tipo Tsuru, modelo 2013, se encontraban estacionados junto a la guarnición del lado derecho, con el frente hacia el poniente, sin ocupantes. El vehículo A, marca Kia, tipo Rio, modelo 2023, circulaba de oriente a poniente por el carril derecho, a unos 50 km/h según su conductor. Al frenar sobre el pavimento mojado, el vehículo derrapó hacia la derecha, dejando huellas de derrape de 12 m antes del impacto, y se impactó con su parte frontal derecha contra la parte posterior del vehículo B, que fue proyectado contra la parte posterior del vehículo C. Posiciones finales: el vehículo C quedó a 1 m de donde estaba estacionado; el vehículo B, a 2 m de donde estaba estacionado, pegado al vehículo C; el vehículo A, a 1 m detrás del vehículo B. El vehículo A presenta hundimiento frontal derecho; el vehículo B, daños en la parte posterior y en la frontal; el vehículo C, en la defensa trasera. Pavimento mojado; la vía cuenta con alumbrado público.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "carambola",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Avenida Río Mixcoac, a la altura de la colonia Acacias",
+        "cita": "El hecho se ubica sobre Avenida Río Mixcoac, a la altura de la colonia Acacias"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Benito Juárez",
+        "cita": "alcaldía Benito Juárez, Ciudad de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Ciudad de México",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 22:30 horas",
+        "cita": "aproximadamente a las 22:30 horas, con lluvia"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Kia",
+        "cita": "El vehículo A, marca Kia, tipo Rio, modelo 2023"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Rio",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2023",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Nissan",
+        "cita": "el vehículo B, marca Nissan, tipo Tsuru, modelo 2013"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Tsuru",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2013",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "marca",
+        "valor": "Chevrolet",
+        "cita": "El vehículo C, marca Chevrolet, tipo Aveo, modelo 2017"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "modelo",
+        "valor": "Aveo",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "anio",
+        "valor": "2017",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "frena",
+        "cita": "Al frenar sobre el pavimento mojado, el vehículo derrapó hacia la derecha"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "se_detiene",
+        "cita": "se encontraban estacionados junto a la guarnición del lado derecho"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "maniobra",
+        "valor": "se_detiene",
+        "cita": "se encontraban estacionados junto a la guarnición del lado derecho"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "derrape",
+        "cita": "dejando huellas de derrape de 12 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "12 m",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "se impactó con su parte frontal derecha contra la parte posterior del vehículo B"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 posterior",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 2,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": "que fue proyectado contra la parte posterior del vehículo C"
+      },
+      {
+        "seccion": "impacto",
+        "n": 2,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V3",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 2,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V3 posterior",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V3",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo C quedó a 1 m de donde estaba estacionado"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V3",
+        "campo": "descripcion",
+        "valor": "a 1 m de donde estaba estacionado",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo B, a 2 m de donde estaba estacionado, pegado al vehículo C"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "a 2 m de donde estaba estacionado, pegado al vehículo C",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo A, a 1 m detrás del vehículo B"
+      },
+      {
+        "seccion": "posicion",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "a 1 m detrás del vehículo B",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta hundimiento frontal derecho"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "el vehículo B, daños en la parte posterior y en la frontal"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "el vehículo B, daños en la parte posterior y en la frontal"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V3",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "el vehículo C, en la defensa trasera"
+      }
+    ]
+  }
+}

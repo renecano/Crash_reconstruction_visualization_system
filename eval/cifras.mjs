@@ -252,6 +252,37 @@ function construir() {
       codigo: doc.codigo,
     });
   }
+  // La reversa en pendiente (René, 2026-11-24, visto bueno): «Por dónde venía» ponía el frente del
+  // CR-V hacia donde retrocedía, del lado equivocado del Versa, y el 3D metía su parte trasera 1.7 m
+  // dentro de él. Con el frente al lado contrario de la marcha, las cifras de la tabla de esta rama.
+  {
+    const archivo = "eval/results/tres_narraciones/cifras_despues.json";
+    const doc = leer(archivo);
+    const i = doc.filas.findIndex((f) => f.clave === "reversa-pendiente");
+    if (i < 0) throw new Error(`${archivo}: no está el ejemplo reversa-pendiente`);
+    const fila = doc.filas[i];
+    for (const [clave, vehiculo, que] of [
+      ["ejemplos.reversa", "V2", "velocidad del Versa (B) antes del impacto"],
+      ["ejemplos.reversa_crv", "V1", "velocidad del CR-V (A) en reversa antes del impacto"],
+    ]) {
+      const j = fila.velocidades.findIndex((v) => v.vehiculo === vehiculo);
+      const v = fila.velocidades[j];
+      pon(clave, {
+        que: `Ejemplo «reversa en pendiente»: ${que}, con el frente del CR-V al lado contrario de su marcha`,
+        mejor: v.mejor,
+        p10: v.p10,
+        p90: v.p90,
+        unidad: "km/h",
+        muestras: doc.muestras.samples,
+        juego_de_muestras: "producción",
+        texto: `${v.mejor} km/h (${v.p10}–${v.p90})`,
+        fuente: archivo,
+        campo: `filas.${i}.velocidades.${j}`,
+        motivo:
+          "Visto bueno de René, 2026-11-24 (#311): antes, CR-V 0 (0–1) y Versa 21 (20–28), con el CR-V mirando hacia donde retrocedía y su parte trasera 1.7 m dentro del Versa en el 3D.",
+      });
+    }
+  }
   // El crucero de noche como lo ve el perito en la app: la escena que propone La escena sobre las
   // calles reales, aceptada, con los dos junto al choque («la cifra publicada es esa», René 2026-11-23).
   {

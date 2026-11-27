@@ -9,6 +9,7 @@ import {
   evidenciaEnPalabras,
   mejorFueraDelRango,
   type Reconstruccion,
+  sinCifraEnTexto,
 } from "@croquis/cesvi";
 import type { ReactNode } from "react";
 import {
@@ -174,6 +175,23 @@ export function CifraReconstruccion({
             </div>
           </details>
         </>
+      ) : r.noCuadra ? (
+        // El candado físico (René, 2026-11-24): la cifra no se presenta; se dice qué no cuadra y qué
+        // revisar. El 3D deja a los vehículos donde quedaron, sin animar el choque.
+        <div className="flex flex-col gap-2" data-testid="no-cuadra">
+          <p className="t-cuerpo font-semibold">
+            La reconstrucción no cuadra: Croquis no presenta una velocidad.
+          </p>
+          <ul className="t-cuerpo flex list-disc flex-col gap-1 pl-5">
+            {r.noCuadra.motivos.map((m) => (
+              <li key={m}>{conNombres(m, nombres)}</li>
+            ))}
+          </ul>
+          <p className="t-cuerpo">Revisa {r.noCuadra.revisar.join("; ")}.</p>
+          <p className="t-nota">
+            El 3D muestra a cada vehículo donde quedó, sin animar el choque, hasta que cuadre.
+          </p>
+        </div>
       ) : (
         <p className="t-cuerpo" data-testid="sin-cifra">
           La evidencia no fija la velocidad de ningún vehículo. Agrega posiciones finales o medidas
@@ -187,7 +205,7 @@ export function CifraReconstruccion({
             <dd className="font-mono text-[0.875rem]">
               {o.previa
                 ? F.kmhConUnidad(o.previa.mejor, "reconstruccion")
-                : "la evidencia no la fija"}
+                : sinCifraEnTexto(r, o.vehiculo)}
             </dd>
           </div>
         ))}
@@ -241,4 +259,9 @@ export function DetalleReconstruccion({
       <div className="flex flex-col gap-5 pt-3">{children}</div>
     </details>
   );
+}
+
+/** «V2 y V3 quedan encimados…» con el nombre que ve el perito («B · Aveo»). */
+function conNombres(texto: string, nombres: Record<string, string>): string {
+  return texto.replace(/\bV\d+\b/g, (id) => nombres[id] ?? id);
 }

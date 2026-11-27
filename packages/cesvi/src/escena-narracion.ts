@@ -27,7 +27,7 @@ import {
   type SalidaCorpus,
 } from "./corpus";
 import { conVelocidadesNarradas } from "./velocidad-narrada";
-import { conMasasDelModelo } from "./fichas";
+import { conClasesDelModelo, conMasasDelModelo } from "./fichas";
 import { usaRelieve, usarRelieve } from "./terreno";
 import { GLOSARIO, glosarioParaPrompt } from "./hecho-lectura";
 
@@ -207,6 +207,29 @@ function zonaUnica(e: Expediente, v: Id): Zona | null {
 }
 
 /**
+ * El de en medio de una carambola (René, 2026-11-24: el Aveo, «daños en la parte posterior y en la
+ * frontal»): si sus daños están en varias caras y los otros impactos ya dicen cuáles usaron, la que
+ * queda es la de este impacto. Si no queda exactamente una, null (se pregunta).
+ */
+function zonaQueQueda(
+  e: Expediente,
+  impactos: NonNullable<Expediente["impactos"]>,
+  este: NonNullable<Expediente["impactos"]>[number],
+  v: Id,
+): Zona | null {
+  const caras = new Set(
+    (e.danos ?? []).filter((d) => d.vehiculo === v && !d.dano_previo).map((d) => d.zona.cara),
+  );
+  for (const x of impactos) {
+    if (x === este) continue;
+    const z = x.zonas?.find((y) => y.vehiculo === v);
+    if (!z) return null;
+    caras.delete(z.zona.cara);
+  }
+  return caras.size === 1 ? { cara: [...caras][0]! } : null;
+}
+
+/**
  * Las zonas de contacto de cada impacto, de los daños que narra el perito: un vehículo que
  * participa en un solo impacto y tiene sus daños en una sola cara (`zonaUnica`) la aporta.
  * Si tiene varias zonas o varios impactos, la asignación es ambigua y se pregunta.
@@ -220,8 +243,8 @@ function conZonas(e: Expediente): { expediente: Expediente; ambiguas: [number, I
     for (const v of i.vehiculos ?? []) {
       if (zonas.some((z) => z.vehiculo === v)) continue;
       const enCuantos = impactos.filter((x) => x.vehiculos?.includes(v)).length;
-      const zona = zonaUnica(e, v);
-      if (enCuantos === 1 && zona) zonas.push({ vehiculo: v, zona });
+      const zona = enCuantos === 1 ? zonaUnica(e, v) : zonaQueQueda(e, impactos, i, v);
+      if (zona) zonas.push({ vehiculo: v, zona });
       else ambiguas.push([i.orden, v]);
     }
     return zonas.length ? { ...i, zonas } : i;
@@ -363,7 +386,40 @@ export function escenaDeConversion(c: Conversion, narracion?: string): EscenaNar
   let narrado = narracion ? conVelocidadesNarradas(c.expediente, narracion) : c.expediente;
   // La masa del modelo leído (René, 2026-11-20): la de su ficha o la típica de su clase, como supuesto
   // declarado. Solo se pregunta la de un vehículo sin modelo.
-  narrado = conMasasDelModelo(narrado, masaTipica);
+  // La clase que la lectura no dio, por su modelo (René, 2026-11-24), antes de su masa típica.
+  // Un ciclista que la lectura dejó como vehículo sin marca ni modelo (revisión de la cadena,
+  // 2026-11-24: en el 3D salía como un auto pegado a la camioneta): es una bicicleta si sus propias
+  // citas (maniobra, daños) hablan de un ciclista, aunque el vocabulario le haya dado otra clase; o,
+  // si nada lo cita, si es el único sin nada y la narración habla de un ciclista.
+  if (narracion && /\b(?:ciclista|bicicleta)\b/i.test(narracion)) {
+    const citas = (id: string) =>
+      [
+        ...(
+          (narrado.versiones ?? []).flatMap((v) => v.maniobras ?? []) as {
+            vehiculo: string;
+            cita?: { texto?: string };
+          }[]
+        )
+          .filter((m) => m.vehiculo === id)
+          .map((m) => m.cita?.texto ?? ""),
+        ...(narrado.danos ?? []).filter((d) => d.vehiculo === id).map((d) => d.cita?.texto ?? ""),
+      ].join(" ");
+    const sinModelo = narrado.vehiculos.filter((v) => !v.modelo?.valor && !v.marca?.valor);
+    const citado = sinModelo.filter((v) => /\b(?:ciclista|bicicleta)\b/i.test(citas(v.id)));
+    const elegidos = citado.length
+      ? citado
+      : sinModelo.filter((v) => !v.clase).length === 1
+        ? sinModelo.filter((v) => !v.clase)
+        : [];
+    if (elegidos.length)
+      narrado = {
+        ...narrado,
+        vehiculos: narrado.vehiculos.map((v) =>
+          elegidos.includes(v) ? { ...v, clase: "bicicleta" } : v,
+        ),
+      };
+  }
+  narrado = conMasasDelModelo(conClasesDelModelo(narrado), masaTipica);
   // Una subida o una bajada narradas (ronda 4): la reconstrucción usa el relieve real del lugar, no
   // una pendiente supuesta. Sobre un puente no: el relieve es el del suelo de abajo.
   const cond = narrado.caso.condiciones;
@@ -435,10 +491,19 @@ export function escenaDeConversion(c: Conversion, narracion?: string): EscenaNar
     });
   }
   for (const [orden, v] of ambiguas) {
+    // En una carambola cada choque lleva su zona (René, 2026-11-24: la pregunta se leía como «¿dónde
+    // quedaron los daños?» y parecía que solo dejaba una cara para el de en medio).
+    const imp = (expediente.impactos ?? []).find((x) => x.orden === orden);
+    const contra = (imp?.vehiculos ?? []).filter((x) => x !== v);
+    const varios = (expediente.impactos ?? []).filter((x) => x.vehiculos?.includes(v)).length > 1;
     preguntas.push({
       clave: `zona-${orden}-${v}`,
-      texto: `¿Con qué zona entró en contacto ${v} en el impacto ${orden}?`,
-      porQue: "La zona de contacto fija la dirección de la fuerza en el impacto.",
+      texto: contra.length
+        ? `En el choque de ${v} contra ${contra.join(" y ")}, ¿con qué parte golpeó ${v}?`
+        : `¿Con qué zona entró en contacto ${v} en el impacto ${orden}?`,
+      porQue: varios
+        ? `${v} chocó más de una vez: aquí va solo la parte de este choque; la de cada otro choque va en su propia pregunta. La zona de contacto fija la dirección de la fuerza.`
+        : "La zona de contacto fija la dirección de la fuerza en el impacto.",
       control: { tipo: "opciones", opciones: CARAS_PREGUNTA },
       vehiculo: v,
       impacto: orden,

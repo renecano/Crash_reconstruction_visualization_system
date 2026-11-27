@@ -1,0 +1,170 @@
+{
+  "id": "aud-03-atropello-pinosuarez-lastorres",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 478,
+    "output_tokens": 1327,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0149952,
+  "narracion": "El hecho se ubica en el cruce de Avenida Pino Suárez y Avenida Solidaridad Las Torres, colonia La Providencia, en Metepec, Estado de México, aproximadamente a las 16:20 horas, con lluvia moderada. El vehículo A, marca Nissan, tipo March, modelo 2021, circulaba sobre Avenida Pino Suárez de norte a sur y, al llegar al cruce, dio vuelta a la izquierda para incorporarse a Avenida Solidaridad Las Torres con dirección al oriente, a unos 20 km/h según su conductor. Al completar la vuelta, impactó con su parte frontal izquierda a un peatón, adulto, que cruzaba Avenida Solidaridad Las Torres de sur a norte sobre el paso peatonal. El peatón quedó tendido sobre el arroyo vehicular, aproximadamente a 3 m del punto de contacto. El vehículo A frenó y quedó detenido 5 m después del paso peatonal, sobre el carril izquierdo. Por el pavimento mojado no se apreciaron huellas de frenado. El vehículo A presenta un abollamiento en el cofre, del lado izquierdo, y el parabrisas estrellado en su esquina inferior izquierda. Pavimento mojado; el cruce cuenta con semáforo.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "atropellamiento",
+        "cita": "impactó con su parte frontal izquierda a un peatón, adulto, que cruzaba Avenida Solidaridad Las Torres"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 16:20 horas",
+        "cita": "aproximadamente a las 16:20 horas, con lluvia moderada"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "cruce de Avenida Pino Suárez y Avenida Solidaridad Las Torres, colonia La Providencia",
+        "cita": "en el cruce de Avenida Pino Suárez y Avenida Solidaridad Las Torres, colonia La Providencia"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Metepec",
+        "cita": "colonia La Providencia, en Metepec, Estado de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Nissan",
+        "cita": "El vehículo A, marca Nissan, tipo March, modelo 2021"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "March",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2021",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "vira_izquierda",
+        "cita": "dio vuelta a la izquierda para incorporarse a Avenida Solidaridad Las Torres con dirección al oriente"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "impactó con su parte frontal izquierda a un peatón, adulto"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "objeto_fijo",
+        "valor": "peatón",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta un abollamiento en el cofre, del lado izquierdo"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "izquierdo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "el parabrisas estrellado en su esquina inferior izquierda"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "fractura",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A frenó y quedó detenido 5 m después del paso peatonal, sobre el carril izquierdo"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "detenido 5 m después del paso peatonal, sobre el carril izquierdo",
+        "cita": ""
+      }
+    ]
+  }
+}

@@ -15,24 +15,38 @@
  * Todo queda como supuesto (fuente «supuesto»): se ve distinto y cambia de estado cuando el perito lo
  * confirma o lo corrige. Ningún número de la reconstrucción cambia por proponer: solo se coloca.
  */
-import { rumboHacia, type Expediente, type SentidoNarradoLugar } from "@croquis/cesvi";
+import { contraLaOrilla } from "./objeto-orilla";
+import {
+  avanzar,
+  conPosicion,
+  formato as F,
+  impactosEncimados,
+  medidasDe,
+  rumboDeLlegada,
+  rumboHacia,
+  type Expediente,
+  type SentidoNarradoLugar,
+} from "@croquis/cesvi";
 import {
   ajustarACalle,
+  calzadaEnSuSentido,
   cardinal,
   elegirDireccion,
   flechaPropuesta,
   flechasDeLlegada,
   marcarChoque,
-  nombresDe,
   poseDe,
   proponerChoque,
   rumboAlineado,
-  sentidoNarrado,
+  sentidoEnElCaso,
   textoFlecha,
   type Calle,
   type ImpactoAColocar,
   type Punto,
 } from "./escena-facil";
+
+/** La narración dice que iba en sentido contrario: no se le busca la calzada de su sentido. */
+const CONTRASENTIDO = /sentido\s+contrario|contrasentido|contraflujo|en\s+reversa|de\s+reversa/i;
 
 /** Un elemento de la escena propuesta, con por qué Croquis lo puso ahí. */
 export interface ElementoPropuesto {
@@ -56,6 +70,8 @@ const POR_QUE_CHOQUE: Record<string, string> = {
   narracion: "la narración nombra las dos calles del cruce",
   una_calle: "la narración nombra una de las calles; es su cruce más cercano al lugar",
   cercania: "es el cruce más cercano al lugar del caso",
+  a_la_altura:
+    "la narración nombra las dos calles y no se cruzan a nivel (un paso a desnivel): va sobre la primera, a la altura de la segunda",
 };
 
 /**
@@ -80,7 +96,7 @@ export function proponerEscena(o: {
   const cruce = proponerChoque(calles, narracion, o.lugar);
   // Sin cruce cerca, sobre la calle más cercana al lugar (no en medio de una manzana).
   const sobre = !cruce && o.lugar ? ajustarACalle(calles, o.lugar, 150) : null;
-  const choque = cruce?.punto ?? sobre?.punto ?? o.lugar;
+  let choque = cruce?.punto ?? sobre?.punto ?? o.lugar;
   if (!choque || !impactos.length) return null;
   const propuestos: ElementoPropuesto[] = [];
   const faltan: ElementoPropuesto[] = [];
@@ -100,12 +116,10 @@ export function proponerEscena(o: {
   });
   const sentido = (v: string) =>
     (narracion
-      ? sentidoNarrado(
+      ? sentidoEnElCaso(
           narracion,
-          nombresDe(
-            vs.find((x) => x.id === v)!,
-            vs,
-          ),
+          vs.find((x) => x.id === v)!,
+          vs,
         )
       : null) ??
     // El del lugar, para el que va primero en el choque (o el único).
@@ -118,6 +132,22 @@ export function proponerEscena(o: {
       : null);
   // El primero del choque fija el giro de todo el choque: el de la narración o el de la calle.
   const primero = impactos[0]!.vehiculos[0]!;
+  // En su sentido: si la calle del choque es de un solo sentido y va al revés de lo narrado, el
+  // choque pasa a la calzada que sí va así (salvo que la narración diga que iba en sentido contrario).
+  const rumboPrimero = sentido(primero)?.rumbo;
+  const enSuSentido =
+    rumboPrimero !== undefined && !(narracion && CONTRASENTIDO.test(narracion))
+      ? calzadaEnSuSentido(calles, choque, rumboPrimero)
+      : null;
+  if (enSuSentido) {
+    choque = enSuSentido.punto;
+    puntos[1] = choque;
+    propuestos.push({
+      clave: "choque-sentido",
+      texto: `El choque, en la calzada de ${enSuSentido.calle.nombre ?? "la calle"} que va hacia el ${cardinal(rumboPrimero!)}`,
+      porque: `la calle del lugar buscado es de un solo sentido y va al revés de lo que dice la narración`,
+    });
+  }
   let e = marcarChoque(
     o.expediente,
     impactos,
@@ -130,9 +160,12 @@ export function proponerEscena(o: {
   const flechas = calles.length ? flechasDeLlegada(calles, choque) : [];
   for (const v of impactos[0]!.vehiculos) {
     const s = sentido(v);
-    const i = flechaPropuesta(flechas, s, poseDe(e, v, "impacto")?.rumbo ?? null);
+    const r = poseDe(e, v, "impacto")?.rumbo;
+    const i = flechaPropuesta(flechas, s, r === undefined ? null : rumboDeLlegada(e, v, r));
     const f = i >= 0 ? flechas[i]! : null;
     if (f) e = elegirDireccion(e, impactos, v, f.rumbo, (k) => puntos[k] ?? null, true);
+    // Sin una calle en el sentido narrado: como lo dice la narración (revisión de la cadena).
+    else if (s) e = elegirDireccion(e, impactos, v, s.rumbo, (k) => puntos[k] ?? null, true);
     // René (2026-11-18): concreto, por qué calle y en qué sentido, y en qué se basa.
     const caraDe = (id: string) =>
       (o.expediente.danos ?? [])
@@ -157,7 +190,9 @@ export function proponerEscena(o: {
       clave: `direccion-${v}`,
       texto: f
         ? `${o.nombreDe(v)}: venía por ${f.calle ?? "la calle sin nombre del mapa"}, de ${f.desde} a ${cardinal(f.rumbo)}`
-        : `${o.nombreDe(v)}: en el choque, alineado con la calle`,
+        : s
+          ? `${o.nombreDe(v)}: venía de ${s.desde} a ${cardinal(s.rumbo)}, como dice la narración; en este lugar no hay una calle en ese sentido: revisa que el lugar sea el del caso`
+          : `${o.nombreDe(v)}: en el choque, alineado con la calle`,
       porque: s
         ? `la narración dice «${s.cita}»`
         : f
@@ -167,11 +202,98 @@ export function proponerEscena(o: {
           : "no hay calles del mapa para proponer por dónde llegaba",
     });
   }
+  // El objeto del choque en la orilla, no en el carril (René, 2026-11-24, punto 1): el vehículo sale
+  // de su carril hacia la banqueta, el camellón o el acotamiento donde está el objeto.
+  const orilla = contraLaOrilla(e, calles, narracion);
+  if (orilla) {
+    e = orilla.expediente;
+    const objeto = (e.impactos ?? []).find((i) => (i.orden ?? 1) === 1)?.objeto_fijo ?? "el objeto";
+    propuestos.push({
+      clave: "orilla-1",
+      texto: `${objeto[0]!.toUpperCase()}${objeto.slice(1)}, en la orilla ${orilla.lado === "derecha" ? "derecha" : "izquierda"}${orilla.calle ? ` de ${orilla.calle}` : ""}: ${o.nombreDe(String(impactos[0]!.vehiculos[0]))} sale de su carril para alcanzarlo`,
+      porque: orilla.cita
+        ? `la narración dice «${orilla.cita}»`
+        : "un objeto fijo está en la banqueta o el acotamiento, no en el carril; la narración no dice de qué lado: la orilla de su carril (muévelo si fue del otro lado)",
+    });
+  }
+
+  // Los choques siguientes de una carambola (René, 2026-11-24): si el primero de ese choque ya está
+  // colocado y se sabe con qué cara golpeó, el choque va en esa cara y el otro se coloca por sus
+  // zonas de contacto, tocándose sin encimarse. Si no, lo marca el perito.
   for (const k of impactos.slice(1)) {
+    const primeroK = k.vehiculos[0]!;
+    const pose = poseDe(e, primeroK, "impacto");
+    let zona = (e.impactos ?? [])
+      .find((i) => i.orden === k.orden)
+      ?.zonas?.find((z) => z.vehiculo === primeroK)?.zona.cara;
+    // Sin zonas en este choque: si en uno anterior lo golpearon por detrás, salió empujado hacia
+    // adelante: su frente contra la parte trasera del siguiente (supuesto de la carambola en cadena).
+    let enCadena = false;
+    if (!zona) {
+      const golpeadoAtras = (e.impactos ?? []).some(
+        (i) =>
+          i.orden < k.orden &&
+          i.zonas?.some((z) => z.vehiculo === primeroK && z.zona.cara === "posterior"),
+      );
+      if (golpeadoAtras && k.vehiculos.length === 2) {
+        zona = "frontal";
+        enCadena = true;
+        const otro = k.vehiculos[1]!;
+        e = {
+          ...e,
+          impactos: (e.impactos ?? []).map((i) =>
+            i.orden === k.orden
+              ? {
+                  ...i,
+                  zonas: [
+                    ...(i.zonas ?? []).filter(
+                      (z) => z.vehiculo !== primeroK && z.vehiculo !== otro,
+                    ),
+                    { vehiculo: primeroK, zona: { cara: "frontal" as const } },
+                    ...(i.zonas?.some((z) => z.vehiculo === otro)
+                      ? i.zonas.filter((z) => z.vehiculo === otro)
+                      : [{ vehiculo: otro, zona: { cara: "posterior" as const } }]),
+                  ],
+                }
+              : i,
+          ),
+        };
+      }
+    }
+    const v = vs.find((x) => x.id === primeroK);
+    const giro = zona ? GIRO_DE_CARA[zona] : undefined;
+    if (pose && v && zona && giro !== undefined && k.vehiculos.length === 2) {
+      const m = medidasDe(v);
+      const media = zona === "frontal" || zona === "posterior" ? m.largo / 2 : m.ancho / 2;
+      const [lon, lat] = avanzar([pose.punto.lon, pose.punto.lat], pose.rumbo + giro, media);
+      const punto = { lat, lon };
+      e = marcarChoque(e, impactos, k.orden, punto, rumboDeLlegada(e, primeroK, pose.rumbo));
+      puntos[k.orden] = punto;
+      const otro = k.vehiculos[1]!;
+      propuestos.push({
+        clave: `choque-${k.orden}`,
+        texto: `El choque ${k.orden}: ${o.nombreDe(primeroK)} contra ${o.nombreDe(otro)}`,
+        porque: enCadena
+          ? `supuesto de la carambola en cadena: a ${o.nombreDe(primeroK)} lo golpearon por detrás y salió empujado; su frente contra la parte trasera de ${o.nombreDe(otro)}`
+          : `en la cara ${zona.replaceAll("_", " ")} de ${o.nombreDe(primeroK)}, que ya está colocado; ${o.nombreDe(otro)} va por sus zonas de contacto`,
+      });
+      continue;
+    }
     faltan.push({
       clave: `choque-${k.orden}`,
       texto: `El choque ${k.orden} (${k.vehiculos.map(o.nombreDe).join(" con ")})`,
       porque: "Croquis propone el primero; los siguientes los marcas tú",
+    });
+  }
+  // Nada encimado en el choque (revisión de la cadena, René 2026-11-24): la flecha de cada calle gira
+  // al vehículo en su lugar y podía dejarlo dentro del otro. Se separan como con «Separarlos»: defensa
+  // con defensa si es un alcance, o por el eje de menor traslape.
+  for (const enc of impactosEncimados(e)) {
+    for (const pose of enc.propuesta) e = conPosicion(e, { ...pose, fase: "impacto" });
+    propuestos.push({
+      clave: `separados-${enc.orden}`,
+      texto: `En el choque ${enc.orden}, ${enc.vehiculos.map(o.nombreDe).join(" y ")} se tocan sin encimarse`,
+      porque: `con la dirección de cada uno quedaban encimados ${F.metros(enc.traslape_m)}: Croquis los separó lo mínimo`,
     });
   }
   for (const v of vs) {
@@ -184,6 +306,14 @@ export function proponerEscena(o: {
   }
   return { expediente: e, puntos, propuestos, faltan };
 }
+
+/** Hacia dónde mira cada cara respecto al frente (grados, en el sentido del reloj). */
+const GIRO_DE_CARA: Record<string, number> = {
+  frontal: 0,
+  posterior: 180,
+  lateral_derecho: 90,
+  lateral_izquierdo: -90,
+};
 
 /** Una fila de la lista de La escena (ronda 4, propuesta 1): qué es, en qué estado y qué hace. */
 export interface ItemEscena {
@@ -276,7 +406,7 @@ export function listaDeLaEscena(o: {
           clave: claveD,
           texto: pose
             ? confirmada
-              ? `${o.nombreDe(v)}: venía de ${cardinal(pose.rumbo + 180)} a ${cardinal(pose.rumbo)}`
+              ? `${o.nombreDe(v)}: venía de ${cardinal(rumboDeLlegada(o.expediente, v, pose.rumbo) + 180)} a ${cardinal(rumboDeLlegada(o.expediente, v, pose.rumbo))}`
               : (p?.texto ?? `${o.nombreDe(v)}: por dónde venía`)
             : `Por dónde venía ${o.nombreDe(v)}`,
           porque: pose && !confirmada ? (p?.porque ?? "lo propone Croquis por los daños") : null,

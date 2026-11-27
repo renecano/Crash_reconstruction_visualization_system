@@ -1,0 +1,250 @@
+{
+  "id": "aud-01-alcance-tollocan",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 477,
+    "output_tokens": 1885,
+    "cache_creation_input_tokens": 3846,
+    "cache_read_input_tokens": 0
+  },
+  "costo_usd": 0.029419,
+  "narracion": "El hecho se ubica sobre Paseo Tollocan, a la altura de la Avenida Isidro Fabela, colonia Científicos, en Toluca, Estado de México, aproximadamente a las 7:45 horas. El vehículo B, marca Nissan, tipo Versa, modelo 2022, circulaba por el carril central de Paseo Tollocan con dirección a la Ciudad de México y se encontraba detenido por el alto del semáforo. El vehículo A, marca Volkswagen, tipo Jetta, modelo 2017, circulaba detrás de él, por el mismo carril y en el mismo sentido, a unos 60 km/h según la declaración de su conductor. Al percatarse de que el vehículo B estaba detenido, el conductor del vehículo A frenó, dejando huellas de frenado de 12 m antes del impacto, y se impactó con su parte frontal contra la parte posterior del vehículo B. Posiciones finales: el vehículo B quedó a 3 m de donde estaba detenido, sobre el mismo carril; el vehículo A quedó a 1 m detrás del vehículo B. El vehículo A presenta hundimiento en la parte frontal, acentuado hacia el lado derecho; el vehículo B, deformación en la defensa trasera y en la tapa de la cajuela. Pavimento seco, día despejado.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "alcance",
+        "cita": "se impactó con su parte frontal contra la parte posterior del vehículo B"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 7:45 horas",
+        "cita": "aproximadamente a las 7:45 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Paseo Tollocan, a la altura de la Avenida Isidro Fabela, colonia Científicos",
+        "cita": "sobre Paseo Tollocan, a la altura de la Avenida Isidro Fabela, colonia Científicos"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Toluca",
+        "cita": "en Toluca, Estado de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Volkswagen",
+        "cita": "El vehículo A, marca Volkswagen, tipo Jetta, modelo 2017"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Jetta",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2017",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Nissan",
+        "cita": "El vehículo B, marca Nissan, tipo Versa, modelo 2022"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Versa",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2022",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "se_detiene",
+        "cita": "se encontraba detenido por el alto del semáforo"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "frena",
+        "cita": "el conductor del vehículo A frenó, dejando huellas de frenado de 12 m antes del impacto"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "velocidad",
+        "valor": "60 km/h",
+        "cita": "a unos 60 km/h según la declaración de su conductor"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "frenado",
+        "cita": "dejando huellas de frenado de 12 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "12 m",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "se impactó con su parte frontal contra la parte posterior del vehículo B"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 posterior",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo B quedó a 3 m de donde estaba detenido, sobre el mismo carril"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "a 3 m de donde estaba detenido, sobre el mismo carril",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo A quedó a 1 m detrás del vehículo B"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "a 1 m detrás del vehículo B",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta hundimiento en la parte frontal, acentuado hacia el lado derecho"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "el vehículo B, deformación en la defensa trasera y en la tapa de la cajuela"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "deformacion",
+        "cita": ""
+      }
+    ]
+  }
+}

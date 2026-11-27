@@ -1,0 +1,132 @@
+{
+ "filas": [
+  {
+   "clave": "axa",
+   "origen": {
+    "lat": 26.20915,
+    "lon": -109.0597
+   },
+   "edificios": 0,
+   "muros": 0,
+   "cifra_antes": [
+    [
+     "V2",
+     56.87
+    ],
+    [
+     "V1",
+     14.98
+    ]
+   ],
+   "no_cuadra": null
+  },
+  {
+   "clave": "crucero-noche",
+   "origen": {
+    "lat": 19.357593929587544,
+    "lon": -99.0625
+   },
+   "edificios": 68,
+   "muros": 6,
+   "cifra_antes": [
+    [
+     "V1",
+     19.68
+    ],
+    [
+     "V2",
+     12.08
+    ]
+   ],
+   "no_cuadra": [
+    "V2 cruza un muro del mapa (muro 455572472 de OpenStreetMap) a los −0.6 s: los vehículos no atraviesan casas ni muros."
+   ]
+  },
+  {
+   "clave": "alcance-deformacion",
+   "origen": {
+    "lat": 19.357598111427237,
+    "lon": -99.0625
+   },
+   "edificios": 68,
+   "muros": 6,
+   "cifra_antes": [
+    [
+     "V1",
+     53.46
+    ],
+    [
+     "V2",
+     0
+    ]
+   ],
+   "no_cuadra": [
+    "V1 cruza un muro del mapa (muro 455572472 de OpenStreetMap) a los 2.9 s: los vehículos no atraviesan casas ni muros.",
+    "V2 cruza un muro del mapa (muro 455572472 de OpenStreetMap) a los 1.1 s: los vehículos no atraviesan casas ni muros."
+   ]
+  },
+  {
+   "clave": "carambola-lluvia",
+   "origen": {
+    "lat": 19.3576,
+    "lon": -99.06250159662149
+   },
+   "edificios": 68,
+   "muros": 6,
+   "cifra_antes": [
+    [
+     "V1",
+     24.35
+    ]
+   ],
+   "no_cuadra": [
+    "V1 cruza un muro del mapa (muro 455572472 de OpenStreetMap) a los 0.0 s: los vehículos no atraviesan casas ni muros.",
+    "V3 cruza un muro del mapa (muro 456638699 de OpenStreetMap) a los 0.3 s: los vehículos no atraviesan casas ni muros."
+   ]
+  },
+  {
+   "clave": "reversa-pendiente",
+   "origen": {
+    "lat": 19.3576,
+    "lon": -99.06250624350491
+   },
+   "edificios": 68,
+   "muros": 6,
+   "cifra_antes": [
+    [
+     "V1",
+     8.14
+    ],
+    [
+     "V2",
+     23.57
+    ]
+   ],
+   "no_cuadra": [
+    "V2 cruza un muro del mapa (muro 455572472 de OpenStreetMap) a los 0.5 s: los vehículos no atraviesan casas ni muros."
+   ]
+  },
+  {
+   "clave": "poste-terraceria",
+   "origen": {
+    "lat": 19.357593412478337,
+    "lon": -99.0625
+   },
+   "edificios": 68,
+   "muros": 6,
+   "cifra_antes": [
+    [
+     "V1",
+     30.36
+    ],
+    [
+     "V2",
+     35.87
+    ]
+   ],
+   "no_cuadra": [
+    "V2 cruza un muro del mapa (muro 455572472 de OpenStreetMap) a los −0.2 s: los vehículos no atraviesan casas ni muros."
+   ]
+  }
+ ]
+}

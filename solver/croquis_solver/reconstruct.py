@@ -705,6 +705,109 @@ def _path_candidates(m: VehicleModel, lane_width: float, axis: RoadAxis) -> list
     return [ReversePath(back), literal] if back is not None else [literal]
 
 
+# m: lo más que dos contornos pueden quedar encimados en el contacto que resuelven las zonas.
+# Más que esto (un choque oblicuo: el frente de uno contra el costado del otro a 45°, con los
+# centros de zona juntos, mete la esquina de uno en el otro), cada vehículo retrocede sobre su
+# trayectoria, en proporción a su velocidad, hasta el primer contacto (revisión de la cadena,
+# René 2026-11-24). Por debajo no se toca nada: es el mismo umbral del candado físico.
+MAX_OVERLAP_M = 0.5
+_BACKOFF_STEP_M = 0.05
+_TOUCH_M = 0.02
+
+
+def _rect_corners(
+    x: float, y: float, yaw: float, length: float, width: float
+) -> list[tuple[float, float]]:
+    c = dmath.cos(yaw)
+    s = dmath.sin(yaw)
+    half_l = 0.5 * length
+    half_w = 0.5 * width
+    return [
+        (x + half_l * c - half_w * s, y + half_l * s + half_w * c),
+        (x + half_l * c + half_w * s, y + half_l * s - half_w * c),
+        (x - half_l * c + half_w * s, y - half_l * s - half_w * c),
+        (x - half_l * c - half_w * s, y - half_l * s + half_w * c),
+    ]
+
+
+def overlap_depth(a: list[tuple[float, float]], b: list[tuple[float, float]]) -> float:
+    """Lo que se enciman dos rectángulos por su eje de menor traslape (0 si no se tocan)."""
+    best = math.inf
+    for poly in (a, b):
+        for i in range(2):
+            p = poly[i]
+            q = poly[i + 1]
+            ex = q[0] - p[0]
+            ey = q[1] - p[1]
+            n = math.sqrt(ex * ex + ey * ey)
+            if n == 0:
+                continue
+            ax = -ey / n
+            ay = ex / n
+            amin = math.inf
+            amax = -math.inf
+            bmin = math.inf
+            bmax = -math.inf
+            for v in a:
+                d = v[0] * ax + v[1] * ay
+                amin = min(amin, d)
+                amax = max(amax, d)
+            for v in b:
+                d = v[0] * ax + v[1] * ay
+                bmin = min(bmin, d)
+                bmax = max(bmax, d)
+            o = min(amax, bmax) - max(amin, bmin)
+            if o <= 0:
+                return 0.0
+            best = min(best, o)
+    return best
+
+
+def first_contact(
+    targets: list[VehicleModel], paths: list[KinPath], params: list[float]
+) -> list[float]:
+    """El primer contacto: si se enciman más de MAX_OVERLAP_M, los retrocede hasta tocarse.
+
+    En el mismo sentido y a la misma velocidad (un alcance o un roce lateral), retroceder a los dos
+    en proporción a su velocidad no los separa: si así no quedan a menos de MAX_OVERLAP_M, se
+    retrocede solo a uno, el que los separa con menos recorrido (el que alcanza al otro).
+    """
+
+    def depth(s: list[float]) -> float:
+        rects: list[list[tuple[float, float]]] = []
+        for i in range(2):
+            x, y, yaw, _ = _pose_at(paths[i], s[i])
+            body = targets[i].body
+            rects.append(_rect_corners(x, y, yaw, body.length, body.width))
+        return overlap_depth(rects[0], rects[1])
+
+    s = list(params)
+    if depth(s) <= MAX_OVERLAP_M:
+        return s
+    v = [max(0.0, targets[i].v0) for i in range(2)]
+    total = v[0] + v[1]
+    if total > 0:
+        k = 0
+        while k < 400 and depth(s) > _TOUCH_M:
+            for i in range(2):
+                s[i] = s[i] - (_BACKOFF_STEP_M * v[i]) / total
+            k += 1
+        if depth(s) <= MAX_OVERLAP_M:
+            return s
+    best: list[float] | None = None
+    best_k = 0
+    for i in range(2):
+        t = list(params)
+        k = 0
+        while k < 400 and depth(t) > _TOUCH_M:
+            t[i] = t[i] - _BACKOFF_STEP_M
+            k += 1
+        if depth(t) <= MAX_OVERLAP_M and (best is None or k < best_k):
+            best = t
+            best_k = k
+    return best if best is not None else s
+
+
 def _pose_at(path: KinPath, s: float) -> tuple[float, float, float, float]:
     """(x, y, rumbo, curvatura) para cualquier s; antes de s = 0 se extrapola en línea recta."""
     if s >= 0:
@@ -1093,7 +1196,15 @@ def reconstruct(
                 f"hacia la {'izquierda' if (lateral > 0) != targets[0].reverse else 'derecha'}.",
             )
         impact_point = sol.point
-        for m, s_m in zip(targets, sol.params, strict=False):
+        # El primer contacto: sin contornos encimados de más (revisión de la cadena, 2026-11-24).
+        contacto = (
+            first_contact(targets, list(combo), list(sol.params))
+            if tipo_evento == "impacto_vehiculo_vehiculo"
+            and len(targets) == 2
+            and len(sol.params) >= 2
+            else list(sol.params)
+        )
+        for m, s_m in zip(targets, contacto, strict=False):
             s_contact[m.id] = s_m
         # Lo que separa las zonas fuera de lo que se extienden a lo largo de sus caras (ADR 0135).
         if sol.zone_gap > CONTACT_GAP_FLAG_M:

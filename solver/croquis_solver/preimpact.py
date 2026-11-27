@@ -347,6 +347,12 @@ class PolylineLanePath(Path):
 
     # m: la tangente se toma con este medio tramo, para que las esquinas del eje no la quiebren.
     TANGENT_HALF_M = 2.0
+    # Por dentro de una esquina, una paralela más separada que el radio de la esquina suavizada
+    # retrocede y hace un rizo: un vehículo a 12 m del eje, por dentro de una vuelta de 29°, giraba
+    # sobre sí mismo (revisión de la cadena, cesvi-af2196f0fc). Si la paralela hace un rizo, la
+    # esquina se suaviza con un medio tramo de 1.5 veces la separación (y se duplica si aún lo
+    # hace); donde no hay rizo no cambia nada.
+    LOOP_HALF_FACTOR = 1.5
 
     def __init__(
         self,
@@ -361,6 +367,7 @@ class PolylineLanePath(Path):
         self.lateral = lateral
         self.change_length = change_length
         self.samples = samples
+        self._h = self.TANGENT_HALF_M
         x, y, yaw = pose
         # La longitud acumulada del eje.
         self.pts = puntos
@@ -412,7 +419,7 @@ class PolylineLanePath(Path):
         return (a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f)
 
     def _tangent(self, s: float) -> tuple[float, float]:
-        h = self.TANGENT_HALF_M
+        h = self._h
         p0 = self._axis(s - h)
         p1 = self._axis(s + h)
         dx, dy = p1[0] - p0[0], p1[1] - p0[1]
@@ -433,16 +440,38 @@ class PolylineLanePath(Path):
         d = self.d0 + lat
         return (ax + nx * d, ay + ny * d)
 
+    def _build_table(self) -> tuple[list[float], list[float], bool]:
+        """La abscisa por longitud recorrida, y si la paralela hace un rizo (da media vuelta)."""
+        u_max = 1.2 * self.length + abs(self.lateral)
+        us = [u_max * i / self.samples for i in range(self.samples + 1)]
+        ss = [0.0]
+        prev = self._point(0.0)
+        step = (0.0, 0.0)
+        loops = False
+        for u in us[1:]:
+            p = self._point(u)
+            nuevo = (p[0] - prev[0], p[1] - prev[1])
+            if nuevo[0] * step[0] + nuevo[1] * step[1] < 0.0:
+                loops = True
+            ss.append(ss[-1] + dmath.hypot(nuevo[0], nuevo[1]))
+            step = nuevo
+            prev = p
+        return us, ss, loops
+
     def _get_table(self) -> tuple[list[float], list[float]]:
         if self._table is None:
-            u_max = 1.2 * self.length + abs(self.lateral)
-            us = [u_max * i / self.samples for i in range(self.samples + 1)]
-            ss = [0.0]
-            prev = self._point(0.0)
-            for u in us[1:]:
-                p = self._point(u)
-                ss.append(ss[-1] + dmath.hypot(p[0] - prev[0], p[1] - prev[1]))
-                prev = p
+            us, ss, loops = self._build_table()
+            if loops:
+                self._h = max(
+                    self.TANGENT_HALF_M,
+                    self.LOOP_HALF_FACTOR * (abs(self.d0) + abs(self.lateral)),
+                )
+                us, ss, loops = self._build_table()
+                k = 0
+                while loops and k < 3:
+                    self._h = 2.0 * self._h
+                    us, ss, loops = self._build_table()
+                    k += 1
             self._table = (us, ss)
         return self._table
 
