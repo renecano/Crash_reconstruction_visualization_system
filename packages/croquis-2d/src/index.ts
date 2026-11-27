@@ -16,6 +16,7 @@ export {
   type Ring,
   type RoadLayout,
   type SceneLayout,
+  type MapLayout,
   type VehicleGlyph,
 } from "./layout";
 export {
