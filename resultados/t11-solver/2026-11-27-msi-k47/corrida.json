@@ -7,8 +7,8 @@
     "fecha":  "2026-11-27",
     "commit":  "faf4cb06cc32ee83aa645aca6870334ff3a42947",
     "rama_del_repositorio":  "HEAD",
-    "archivos_con_cambios":  5,
-    "duracion_min":  45.4,
+    "archivos_con_cambios":  0,
+    "duracion_min":  0.1,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "Intel(R) UHD Graphics",
@@ -17,7 +17,7 @@
                    "memoria_gb":  31.7,
                    "procesador":  "Intel(R) Core(TM) i9-14900HX",
                    "nucleos_logicos":  32,
-                   "disco_libre_gb":  808.7,
+                   "disco_libre_gb":  808.3,
                    "windows":  "Microsoft Windows 11 Home",
                    "git":  "git version 2.56.1.windows.1",
                    "node":  "v26.13.1",
@@ -41,8 +41,8 @@
                       "estado":  "ok",
                       "minutos":  0,
                       "codigo":  0,
-                      "disco_libre_gb_antes":  808.7,
-                      "disco_libre_gb_despues":  808.7
+                      "disco_libre_gb_antes":  808.3,
+                      "disco_libre_gb_despues":  808.3
                   },
                   {
                       "grupo":  "comprobacion",
@@ -50,132 +50,6 @@
                       "estado":  "ok",
                       "minutos":  0,
                       "codigo":  0,
-                      "disco_libre_gb_antes":  808.7,
-                      "disco_libre_gb_despues":  808.7
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "visor",
-                      "estado":  "ok",
-                      "minutos":  0,
-                      "codigo":  0,
-                      "disco_libre_gb_antes":  808.7,
-                      "disco_libre_gb_despues":  808.7
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "preparar",
-                      "estado":  "ok",
-                      "minutos":  0.5,
-                      "codigo":  0,
-                      "disco_libre_gb_antes":  808.7,
-                      "disco_libre_gb_despues":  808.5
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "humo",
-                      "estado":  "ok",
-                      "minutos":  1,
-                      "codigo":  0,
-                      "disco_libre_gb_antes":  808.5,
-                      "disco_libre_gb_despues":  808.5
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "ejemplos",
-                      "estado":  "ok",
-                      "minutos":  2.3,
-                      "codigo":  0,
-                      "disco_libre_gb_antes":  808.5,
-                      "disco_libre_gb_despues":  808.5
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "tres-narraciones",
-                      "estado":  "ok",
-                      "minutos":  1.3,
-                      "codigo":  0,
-                      "disco_libre_gb_antes":  808.5,
-                      "disco_libre_gb_despues":  808.5
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "tollocan",
-                      "estado":  "ok",
-                      "minutos":  2.3,
-                      "codigo":  0,
-                      "disco_libre_gb_antes":  808.5,
-                      "disco_libre_gb_despues":  808.5
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "final-unity",
-                      "estado":  "falló (código 1)",
-                      "minutos":  1.8,
-                      "codigo":  1,
-                      "disco_libre_gb_antes":  808.5,
-                      "disco_libre_gb_despues":  808.5
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "video-integrada",
-                      "estado":  "ok",
-                      "minutos":  1.6,
-                      "codigo":  0,
-                      "disco_libre_gb_antes":  808.5,
-                      "disco_libre_gb_despues":  808.5
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "ensayo",
-                      "estado":  "falló (código 1)",
-                      "minutos":  1.3,
-                      "codigo":  1,
-                      "disco_libre_gb_antes":  808.5,
-                      "disco_libre_gb_despues":  808.5
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "carambolas-prueba",
-                      "estado":  "ok",
-                      "minutos":  2.1,
-                      "codigo":  0,
-                      "disco_libre_gb_antes":  808.5,
-                      "disco_libre_gb_despues":  808.5
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "carambolas-desarrollo",
-                      "estado":  "ok",
-                      "minutos":  2.5,
-                      "codigo":  0,
-                      "disco_libre_gb_antes":  808.5,
-                      "disco_libre_gb_despues":  808.5
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "cobertura",
-                      "estado":  "ok",
-                      "minutos":  23.1,
-                      "codigo":  0,
-                      "disco_libre_gb_antes":  808.5,
-                      "disco_libre_gb_despues":  808.3
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "narraciones-42",
-                      "estado":  "ok",
-                      "minutos":  4.8,
-                      "codigo":  0,
-                      "disco_libre_gb_antes":  808.3,
-                      "disco_libre_gb_despues":  808.3
-                  },
-                  {
-                      "grupo":  "tanda",
-                      "paso":  "comparar",
-                      "estado":  "falló (código 1)",
-                      "minutos":  0,
-                      "codigo":  1,
                       "disco_libre_gb_antes":  808.3,
                       "disco_libre_gb_despues":  808.3
                   }
