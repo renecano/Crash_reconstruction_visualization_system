@@ -1,0 +1,40 @@
+# Paso: humo
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues humo
+# Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
+# Inicio: 2026-11-27 15:06:17
+
+
+== 1. Herramientas
+Node v26.13.1 y pnpm 12.11.2.
+Hay internet.
+
+== 2. Dependencias
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 1d ago)
+Lockfile is up to date, resolution step is skipped
+Done in 72ms using pnpm v12.11.2
+
+== 3. El visor de Unity, desde esta computadora
+Visor 8a302a256a257a16 servido desde el sitio: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\public\visor-unity\local
+
+== 4. La app en modo local
+Ya está compilada para esta versión (faf4cb06).
+
+== 5. La lectura con IA
+No hay llave de Claude en .env.local: la lectura con IA no estará. Todo lo demás funciona (AXA, los casos de ejemplo con su lectura guardada, la reconstrucción, el 3D y el dictamen).
+
+== 6. Croquis en http://localhost:3000
+Necesitan internet: la lectura con IA de una narración nueva, los mosaicos del mapa (sin red, el mapa sale en blanco pero se puede colocar la escena) y buscar un lugar por nombre.
+Sin internet funcionan completos: el caso de AXA y los cinco casos de ejemplo, la reconstrucción, el 3D de Unity y el dictamen.
+
+Running 5 tests using 1 worker
+
+[1/5] [chromium] › e2e\humo-3d.spec.ts:165:5 › humo: AXA de La escena nueva al 3D de Unity
+[2/5] [chromium] › e2e\humo-3d.spec.ts:175:5 › humo: Tollocan de La escena nueva al 3D de Unity
+[3/5] [chromium] › e2e\humo-3d.spec.ts:209:7 › humo: Reforma, CDMX (batería de ciudad) de La escena nueva al 3D de Unity
+[4/5] [chromium] › e2e\humo-3d.spec.ts:209:7 › humo: Centro de Guadalajara (batería de ciudad) de La escena nueva al 3D de Unity
+[5/5] [chromium] › e2e\humo-3d.spec.ts:218:5 › humo: un ejemplo («Crucero de noche») de La escena al 3D de Unity
+  5 passed (54.9s)
+Tarjeta que usó Chrome: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\eval\results\gpu-humo.json
+
+# Fin: 2026-11-27 15:07:18 · ok · 1 min
