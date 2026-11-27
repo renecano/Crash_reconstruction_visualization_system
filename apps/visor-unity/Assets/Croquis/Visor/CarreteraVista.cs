@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Croquis.Core;
 using Croquis.Generated;
 using UnityEngine;
 
@@ -119,8 +120,11 @@ namespace Croquis.Visor
             OrillaDeGrava(raiz, orillas, terreno);
             Vialetas(raiz, v, terreno, a.Noche, centro, claro);
             Reflejantes(raiz, v, orillas, terreno, a.Noche);
-            Senalamiento(raiz, orillas, terreno, semilla, centro, claro);
-            Matorrales(raiz, orillas, terreno, semilla, a.Noche, centro, claro);
+            // Nada sobre la calzada ni el acotamiento, tampoco los del otro cuerpo de la carretera (René,
+            // 2026-11-27): la orilla de un cuerpo puede dar al otro.
+            var via = Calzada.Via.De(v);
+            Senalamiento(raiz, orillas, terreno, semilla, centro, claro, via);
+            Matorrales(raiz, orillas, terreno, semilla, a.Noche, centro, claro, via);
         }
 
         // ---- Orillas del acotamiento ------------------------------------------------------------------
@@ -601,7 +605,7 @@ namespace Croquis.Visor
         /// quien maneja. Es genérico: orla, una flecha y franjas blancas, sin texto. Un nombre de lugar
         /// o una velocidad inventados se leerían como datos del sitio, y no lo son.
         /// </summary>
-        private static void Senalamiento(Transform padre, List<Orilla> orillas, Terreno terreno, long semilla, Vector2 centro, float claro)
+        private static void Senalamiento(Transform padre, List<Orilla> orillas, Terreno terreno, long semilla, Vector2 centro, float claro, Calzada.Via via)
         {
             if (orillas.Count == 0)
             {
@@ -668,6 +672,11 @@ namespace Croquis.Visor
                 const float Bajo = 2.2f;
                 var q0 = punto + or.Afuera * 1.3f;
                 var q1 = punto + or.Afuera * (1.3f + Ancho);
+                if (via.TocaTramo(q0.x, q0.y, q1.x, q1.y))
+                {
+                    continue;
+                }
+
                 var pie0 = terreno.P(q0.x, q0.y);
                 var pie1 = terreno.P(q1.x, q1.y);
                 var piso = Mathf.Max(pie0.y, pie1.y);
@@ -730,7 +739,7 @@ namespace Croquis.Visor
         /// manchones de tamaños distintos. Tres tarjetas cruzadas cada uno, con tres follajes (verde,
         /// olivo y seco).
         /// </summary>
-        private static void Matorrales(Transform padre, List<Orilla> orillas, Terreno terreno, long semilla, bool noche, Vector2 centro, float claro)
+        private static void Matorrales(Transform padre, List<Orilla> orillas, Terreno terreno, long semilla, bool noche, Vector2 centro, float claro, Calzada.Via via)
         {
             var total = 0f;
             foreach (var o in orillas)
@@ -801,7 +810,11 @@ namespace Croquis.Visor
                     var ancho = Mathf.Lerp(0.5f, 3.4f, Mathf.Pow(azar.Siguiente(), 2.2f));
                     var alto = ancho * azar.Entre(0.45f, 0.85f);
                     var cual = azar.Siguiente() < 0.75f ? follaje : (int)Mathf.Min(2f, azar.Entre(0f, 3f));
-                    Matorral(mallas[cual], terreno, p, ancho, alto, azar.Entre(0f, Mathf.PI));
+                    var giro = azar.Entre(0f, Mathf.PI);
+                    if (!via.TocaDisco(p.x, p.y, ancho / 2f))
+                    {
+                        Matorral(mallas[cual], terreno, p, ancho, alto, giro);
+                    }
                 }
 
                 // Uno suelto entre grupos, a veces.
@@ -811,7 +824,13 @@ namespace Croquis.Visor
                     if ((p - centro).magnitude >= claro)
                     {
                         var ancho = Mathf.Lerp(0.6f, 2f, azar.Siguiente());
-                        Matorral(mallas[(int)Mathf.Min(2f, azar.Entre(0f, 3f))], terreno, p, ancho, ancho * azar.Entre(0.5f, 0.8f), azar.Entre(0f, Mathf.PI));
+                        var cual = (int)Mathf.Min(2f, azar.Entre(0f, 3f));
+                        var alto = ancho * azar.Entre(0.5f, 0.8f);
+                        var giro = azar.Entre(0f, Mathf.PI);
+                        if (!via.TocaDisco(p.x, p.y, ancho / 2f))
+                        {
+                            Matorral(mallas[cual], terreno, p, ancho, alto, giro);
+                        }
                     }
                 }
             }

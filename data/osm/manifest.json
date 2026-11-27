@@ -110,5 +110,28 @@
     "descargado": "2026-11-20",
     "sha256": "1f6995cef6c9a3c59079c0aeb9a304e33d3456dceb01dc5394a58c943874167a",
     "elementos": 114
+  },
+  "mex57_san_luis": {
+    "descripcion": "La MEX 57 (Querétaro–San Luis Potosí, dos cuerpos) en San Luis de la Paz, Guanajuato, en el lugar del ejemplo del alcance — batería de carreteras del visor 3D (2026-11-27)",
+    "lat": 21.299558,
+    "lon": -100.595243,
+    "bbox": [-100.59684, 21.29816, -100.59364, 21.30096],
+    "url": "https://api.openstreetmap.org/api/0.6/map?bbox=-100.59684,21.29816,-100.59364,21.30096",
+    "nota": "API principal de OpenStreetMap (Overpass estaba saturado); el XML se pasó al formato de Overpass (nodos y vías).",
+    "descargado": "2026-11-27",
+    "sha256": "ef6e9ddc015bd52a81c6f9936d5b5dd072bd93a9f1b9b8fd27ca07f71ebde68a",
+    "elementos": 1181
+  },
+  "son100_kino": {
+    "descripcion": "La SON 100 (Hermosillo–Bahía de Kino, dos carriles), Sonora — batería de carreteras del visor 3D (2026-11-27)",
+    "lat": 28.8318826,
+    "lon": -111.6593152,
+    "bbox": [-111.66092, 28.83048, -111.65772, 28.83328],
+    "url": "https://overpass-api.de/api/interpreter",
+    "consulta": "[out:json][timeout:60];(nwr(28.83048,-111.66092,28.83328,-111.65772););out body;>;out skel qt;",
+    "datos_osm": "2026-11-27T14:35:37Z",
+    "descargado": "2026-11-27",
+    "sha256": "6fc73a1c0623c51310583d226782451763228666a6730d6763fab1591c80200f",
+    "elementos": 212
   }
 }
