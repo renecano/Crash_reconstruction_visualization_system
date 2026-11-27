@@ -22,7 +22,7 @@ const CASA = {
     { x: 6, y: 12 },
   ],
 };
-const simular = (s: Json) => Promise.resolve(reconstructionToDict(reconstruct(s as never)) as Json);
+const simular = (s: Json) => Promise.resolve(reconstructionToDict(reconstruct(s as never)));
 const trayectoria = (r: Json, id: string) =>
   (r.vehiculos as Json[]).find((v) => v.id === id)!.trayectoria as Tr;
 /** m: lo más adentro de la casa que llega el centro de B. */
