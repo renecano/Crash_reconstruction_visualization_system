@@ -1,0 +1,954 @@
+[
+  {
+    "escena": "tollocan",
+    "calle": "Paseo Tollocan (Toluca)",
+    "osm": {
+      "via": "",
+      "highway": "service",
+      "lanes": null,
+      "lanes:forward": null,
+      "lanes:backward": null,
+      "oneway": null,
+      "width": null,
+      "sidewalk": null,
+      "turn:lanes": null,
+      "otro_cuerpo": 0,
+      "laterales": [],
+      "semaforos_80m": 0,
+      "pasos_peatonales_80m": 0,
+      "puentes_80m": [],
+      "distancia_al_eje_m": 0.0
+    },
+    "lo_que_entendio_la_web": {
+      "id_osm": 840217528,
+      "tipo": "service",
+      "puntos": [
+        {
+          "x": 2.536,
+          "y": 0.255
+        },
+        {
+          "x": -1.977,
+          "y": -1.223
+        },
+        {
+          "x": -7.392,
+          "y": -2.135
+        },
+        {
+          "x": -99.115,
+          "y": -3.192
+        },
+        {
+          "x": -104.646,
+          "y": -3.258
+        }
+      ]
+    },
+    "3d": {
+      "calzadas_en_la_seccion": 2,
+      "anchos_m": [
+        7.3,
+        3.5
+      ],
+      "carriles_por_calzada": [
+        1,
+        1
+      ],
+      "calzada_del_choque": 1,
+      "seccion_a_m_del_choque": 10.0,
+      "separaciones_m": [
+        4.8
+      ],
+      "acotamiento": false,
+      "banqueta": false,
+      "guarniciones": 0,
+      "barreras": 0,
+      "semaforos": 0,
+      "pasos_peatonales": false
+    }
+  },
+  {
+    "escena": "metepec-arbol",
+    "calle": "Paseo Tollocan (Metepec)",
+    "osm": {
+      "via": "Avenida Paseo Tollocan",
+      "highway": "secondary",
+      "lanes": "2",
+      "lanes:forward": null,
+      "lanes:backward": null,
+      "oneway": "yes",
+      "width": null,
+      "sidewalk": null,
+      "turn:lanes": null,
+      "otro_cuerpo": 0,
+      "laterales": [],
+      "semaforos_80m": 0,
+      "pasos_peatonales_80m": 1,
+      "puentes_80m": [],
+      "distancia_al_eje_m": 0.3
+    },
+    "lo_que_entendio_la_web": {
+      "id_osm": 772543821,
+      "tipo": "secondary",
+      "puntos": [
+        {
+          "x": -91.929,
+          "y": 3.136
+        },
+        {
+          "x": 81.686,
+          "y": -2.613
+        },
+        {
+          "x": 91.363,
+          "y": -3.069
+        }
+      ],
+      "nombre": "Avenida Paseo Tollocan",
+      "carriles": 2,
+      "un_sentido": true
+    },
+    "3d": {
+      "calzadas_en_la_seccion": 4,
+      "anchos_m": [
+        6.9,
+        3.5,
+        10.4,
+        8.2
+      ],
+      "carriles_por_calzada": [
+        2,
+        1,
+        3,
+        2
+      ],
+      "calzada_del_choque": 0,
+      "seccion_a_m_del_choque": 0.0,
+      "separaciones_m": [
+        10.4,
+        7.8,
+        26.5
+      ],
+      "acotamiento": true,
+      "banqueta": false,
+      "guarniciones": 0,
+      "barreras": 16,
+      "semaforos": 0,
+      "pasos_peatonales": false
+    }
+  },
+  {
+    "escena": "toluca-poste",
+    "calle": "Centro de Toluca",
+    "osm": {
+      "via": "Rivapalacio",
+      "highway": "residential",
+      "lanes": null,
+      "lanes:forward": null,
+      "lanes:backward": null,
+      "oneway": "yes",
+      "width": "7",
+      "sidewalk": null,
+      "turn:lanes": null,
+      "otro_cuerpo": 0,
+      "laterales": [],
+      "semaforos_80m": 1,
+      "pasos_peatonales_80m": 2,
+      "puentes_80m": [],
+      "distancia_al_eje_m": 13.4
+    },
+    "lo_que_entendio_la_web": {
+      "id_osm": 314875486,
+      "tipo": "residential",
+      "puntos": [
+        {
+          "x": -8.9,
+          "y": -47.514
+        },
+        {
+          "x": -9.225,
+          "y": -39.975
+        },
+        {
+          "x": -13.402,
+          "y": 57.421
+        },
+        {
+          "x": -14.179,
+          "y": 75.668
+        },
+        {
+          "x": -14.389,
+          "y": 80.994
+        }
+      ],
+      "nombre": "Rivapalacio",
+      "ancho_m": 7,
+      "un_sentido": true
+    },
+    "3d": {
+      "calzadas_en_la_seccion": 1,
+      "anchos_m": [
+        6.9
+      ],
+      "carriles_por_calzada": [
+        1
+      ],
+      "calzada_del_choque": null,
+      "seccion_a_m_del_choque": 0.0,
+      "separaciones_m": [],
+      "acotamiento": false,
+      "banqueta": false,
+      "guarniciones": 0,
+      "barreras": 0,
+      "semaforos": 0,
+      "pasos_peatonales": false
+    }
+  },
+  {
+    "escena": "reforma-poste",
+    "calle": "Paseo de la Reforma (glorieta del Ángel)",
+    "osm": {
+      "via": "Avenida Paseo de la Reforma",
+      "highway": "primary",
+      "lanes": "3",
+      "lanes:forward": null,
+      "lanes:backward": null,
+      "oneway": "alternating",
+      "width": null,
+      "sidewalk": null,
+      "turn:lanes": null,
+      "otro_cuerpo": 8,
+      "laterales": [],
+      "semaforos_80m": 6,
+      "pasos_peatonales_80m": 6,
+      "puentes_80m": [],
+      "distancia_al_eje_m": 47.7
+    },
+    "lo_que_entendio_la_web": {
+      "id_osm": 1247301676,
+      "tipo": "primary",
+      "puntos": [
+        {
+          "x": -30.421,
+          "y": 35.138
+        },
+        {
+          "x": -36.44,
+          "y": 28.277
+        },
+        {
+          "x": -39.67,
+          "y": 23.117
+        },
+        {
+          "x": -42.837,
+          "y": 16.001
+        },
+        {
+          "x": -44.84,
+          "y": 8.462
+        },
+        {
+          "x": -45.616,
+          "y": 1.323
+        },
+        {
+          "x": -45.197,
+          "y": -7.105
+        },
+        {
+          "x": -43.435,
+          "y": -15.011
+        }
+      ],
+      "nombre": "Avenida Paseo de la Reforma",
+      "carriles": 3
+    },
+    "3d": {
+      "calzadas_en_la_seccion": 2,
+      "anchos_m": [
+        10.4,
+        10.4
+      ],
+      "carriles_por_calzada": [
+        2,
+        3
+      ],
+      "calzada_del_choque": null,
+      "seccion_a_m_del_choque": 0.0,
+      "separaciones_m": [
+        87.8
+      ],
+      "acotamiento": false,
+      "banqueta": false,
+      "guarniciones": 0,
+      "barreras": 0,
+      "semaforos": 0,
+      "pasos_peatonales": false
+    }
+  },
+  {
+    "escena": "insurgentes-arbol",
+    "calle": "Insurgentes (glorieta de Insurgentes)",
+    "osm": {
+      "via": "Avenida Chapultepec",
+      "highway": "primary",
+      "lanes": "2",
+      "lanes:forward": null,
+      "lanes:backward": null,
+      "oneway": "yes",
+      "width": null,
+      "sidewalk": "no",
+      "turn:lanes": null,
+      "otro_cuerpo": 3,
+      "laterales": [
+        "Avenida Oaxaca"
+      ],
+      "semaforos_80m": 0,
+      "pasos_peatonales_80m": 0,
+      "puentes_80m": [
+        "Avenida Chapultepec",
+        "Avenida Oaxaca",
+        "Glorieta de los Insurgentes"
+      ],
+      "distancia_al_eje_m": 5.1
+    },
+    "lo_que_entendio_la_web": {
+      "id_osm": 128551538,
+      "tipo": "primary",
+      "puntos": [
+        {
+          "x": -113.518,
+          "y": -25.141
+        },
+        {
+          "x": -91.758,
+          "y": -20.894
+        },
+        {
+          "x": -43.111,
+          "y": -15.323
+        },
+        {
+          "x": -17.219,
+          "y": -13.254
+        },
+        {
+          "x": 1.51,
+          "y": -6.238
+        },
+        {
+          "x": 19.201,
+          "y": 4.192
+        },
+        {
+          "x": 75.567,
+          "y": 32.091
+        },
+        {
+          "x": 98.082,
+          "y": 40.786
+        },
+        {
+          "x": 208.192,
+          "y": 65.739
+        }
+      ],
+      "nombre": "Avenida Chapultepec",
+      "carriles": 2,
+      "un_sentido": true
+    },
+    "3d": {
+      "calzadas_en_la_seccion": 4,
+      "anchos_m": [
+        11.1,
+        7.0,
+        6.9,
+        8.2
+      ],
+      "carriles_por_calzada": [
+        1,
+        3,
+        2,
+        1
+      ],
+      "calzada_del_choque": 1,
+      "seccion_a_m_del_choque": -20.0,
+      "separaciones_m": [
+        37.3,
+        45.4,
+        8.3
+      ],
+      "acotamiento": false,
+      "banqueta": false,
+      "guarniciones": 0,
+      "barreras": 0,
+      "semaforos": 0,
+      "pasos_peatonales": false
+    }
+  },
+  {
+    "escena": "viaducto",
+    "calle": "Viaducto Miguel Alemán (lateral, paso a desnivel)",
+    "osm": {
+      "via": "Viaducto Miguel Alemán",
+      "highway": "secondary",
+      "lanes": "2",
+      "lanes:forward": null,
+      "lanes:backward": null,
+      "oneway": "yes",
+      "width": null,
+      "sidewalk": null,
+      "turn:lanes": null,
+      "otro_cuerpo": 10,
+      "laterales": [],
+      "semaforos_80m": 6,
+      "pasos_peatonales_80m": 15,
+      "puentes_80m": [
+        "Avenida Coyoacán",
+        "Calle Patricio Sanz"
+      ],
+      "distancia_al_eje_m": 0.5
+    },
+    "lo_que_entendio_la_web": {
+      "id_osm": 617283797,
+      "tipo": "secondary",
+      "puntos": [
+        {
+          "x": 176.746,
+          "y": 67.684
+        },
+        {
+          "x": 153.934,
+          "y": 59.056
+        },
+        {
+          "x": 138.087,
+          "y": 53.44
+        },
+        {
+          "x": 84.618,
+          "y": 31.513
+        },
+        {
+          "x": 58.776,
+          "y": 20.048
+        },
+        {
+          "x": 48.696,
+          "y": 15.401
+        },
+        {
+          "x": 36.31,
+          "y": 10.964
+        },
+        {
+          "x": 16.792,
+          "y": 5.082
+        },
+        {
+          "x": 12.386,
+          "y": 3.758
+        },
+        {
+          "x": 6.503,
+          "y": 2.046
+        },
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": -12.733,
+          "y": -3.125
+        }
+      ],
+      "nombre": "Viaducto Miguel Alemán",
+      "carriles": 2,
+      "un_sentido": true
+    },
+    "3d": {
+      "calzadas_en_la_seccion": 5,
+      "anchos_m": [
+        6.9,
+        10.4,
+        10.5,
+        15.1,
+        3.9
+      ],
+      "carriles_por_calzada": [
+        2,
+        3,
+        3,
+        3,
+        1
+      ],
+      "calzada_del_choque": 0,
+      "seccion_a_m_del_choque": -20.0,
+      "separaciones_m": [
+        4.5,
+        11.4,
+        2.2,
+        5.1
+      ],
+      "acotamiento": true,
+      "banqueta": false,
+      "guarniciones": 0,
+      "barreras": 18,
+      "semaforos": 0,
+      "pasos_peatonales": false
+    }
+  },
+  {
+    "escena": "periferico",
+    "calle": "Anillo Periférico (CU)",
+    "osm": {
+      "via": "Anillo Periférico",
+      "highway": "motorway",
+      "lanes": "3",
+      "lanes:forward": null,
+      "lanes:backward": null,
+      "oneway": "yes",
+      "width": null,
+      "sidewalk": null,
+      "turn:lanes": null,
+      "otro_cuerpo": 1,
+      "laterales": [
+        "Boulevard Adolfo Ruiz Cortines",
+        "service"
+      ],
+      "semaforos_80m": 0,
+      "pasos_peatonales_80m": 0,
+      "puentes_80m": [
+        "Autopista Urbana Sur",
+        "motorway_link"
+      ],
+      "distancia_al_eje_m": 0.6
+    },
+    "lo_que_entendio_la_web": {
+      "id_osm": 52460806,
+      "tipo": "motorway",
+      "puntos": [
+        {
+          "x": 198.114,
+          "y": -27.621
+        },
+        {
+          "x": 121.368,
+          "y": -17.08
+        },
+        {
+          "x": 57.646,
+          "y": -8.329
+        },
+        {
+          "x": 53.836,
+          "y": -7.806
+        },
+        {
+          "x": 39.071,
+          "y": -5.782
+        },
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": -52.178,
+          "y": 7.728
+        },
+        {
+          "x": -63.029,
+          "y": 9.452
+        },
+        {
+          "x": -113.13,
+          "y": 17.38
+        },
+        {
+          "x": -165.151,
+          "y": 25.608
+        },
+        {
+          "x": -212.963,
+          "y": 33.181
+        }
+      ],
+      "nombre": "Anillo Periférico",
+      "carriles": 3,
+      "un_sentido": true
+    },
+    "3d": {
+      "calzadas_en_la_seccion": 5,
+      "anchos_m": [
+        3.4,
+        3.4,
+        6.9,
+        28.1,
+        6.9
+      ],
+      "carriles_por_calzada": [
+        1,
+        1,
+        1,
+        10,
+        2
+      ],
+      "calzada_del_choque": 3,
+      "seccion_a_m_del_choque": 0.0,
+      "separaciones_m": [
+        8.3,
+        9.0,
+        4.8,
+        9.5
+      ],
+      "acotamiento": true,
+      "banqueta": false,
+      "guarniciones": 0,
+      "barreras": 20,
+      "semaforos": 0,
+      "pasos_peatonales": false
+    }
+  },
+  {
+    "escena": "circuito-interior",
+    "calle": "Circuito Interior (Río Mixcoac)",
+    "osm": {
+      "via": "Avenida Río Mixcoac",
+      "highway": "secondary",
+      "lanes": "2",
+      "lanes:forward": null,
+      "lanes:backward": null,
+      "oneway": "yes",
+      "width": null,
+      "sidewalk": "right",
+      "turn:lanes": null,
+      "otro_cuerpo": 2,
+      "laterales": [],
+      "semaforos_80m": 0,
+      "pasos_peatonales_80m": 6,
+      "puentes_80m": [
+        "Circuito Interior Río Mixcoac"
+      ],
+      "distancia_al_eje_m": 2.1
+    },
+    "lo_que_entendio_la_web": {
+      "id_osm": 569079957,
+      "tipo": "secondary",
+      "puntos": [
+        {
+          "x": -129.283,
+          "y": 93.137
+        },
+        {
+          "x": -123.314,
+          "y": 88.445
+        },
+        {
+          "x": -117.743,
+          "y": 84.063
+        },
+        {
+          "x": -105.931,
+          "y": 76.647
+        },
+        {
+          "x": -93.888,
+          "y": 69.719
+        },
+        {
+          "x": -68.68,
+          "y": 57.944
+        },
+        {
+          "x": -51.298,
+          "y": 49.582
+        },
+        {
+          "x": -40.367,
+          "y": 43.121
+        },
+        {
+          "x": -29.079,
+          "y": 34.293
+        },
+        {
+          "x": -17.361,
+          "y": 21.961
+        },
+        {
+          "x": -7.364,
+          "y": 9.318
+        },
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 4.374,
+          "y": -5.26
+        },
+        {
+          "x": 39.727,
+          "y": -47.058
+        },
+        {
+          "x": 45.003,
+          "y": -53.24
+        },
+        {
+          "x": 50.448,
+          "y": -59.256
+        },
+        {
+          "x": 94.822,
+          "y": -108.282
+        },
+        {
+          "x": 101.504,
+          "y": -115.665
+        },
+        {
+          "x": 108.512,
+          "y": -123.415
+        }
+      ],
+      "nombre": "Avenida Río Mixcoac",
+      "carriles": 2,
+      "un_sentido": true
+    },
+    "3d": {
+      "calzadas_en_la_seccion": 3,
+      "anchos_m": [
+        6.9,
+        19.2,
+        6.9
+      ],
+      "carriles_por_calzada": [
+        2,
+        7,
+        2
+      ],
+      "calzada_del_choque": 0,
+      "seccion_a_m_del_choque": 10.0,
+      "separaciones_m": [
+        1.0,
+        6.2
+      ],
+      "acotamiento": true,
+      "banqueta": false,
+      "guarniciones": 0,
+      "barreras": 12,
+      "semaforos": 0,
+      "pasos_peatonales": false
+    }
+  },
+  {
+    "escena": "axa",
+    "calle": "MEX 15D (AXA)",
+    "osm": {
+      "via": "Carretera Los Mochis - Cd. Obregón (Cuota)",
+      "highway": "motorway",
+      "lanes": "2",
+      "lanes:forward": null,
+      "lanes:backward": null,
+      "oneway": "yes",
+      "width": null,
+      "sidewalk": null,
+      "turn:lanes": null,
+      "otro_cuerpo": 1,
+      "laterales": [],
+      "semaforos_80m": 0,
+      "pasos_peatonales_80m": 0,
+      "puentes_80m": [],
+      "distancia_al_eje_m": 1.1
+    },
+    "lo_que_entendio_la_web": {
+      "id_osm": 626882568,
+      "tipo": "motorway",
+      "puntos": [
+        {
+          "x": -46.011,
+          "y": -177.49
+        },
+        {
+          "x": -42.05,
+          "y": -161.122
+        },
+        {
+          "x": -31.505,
+          "y": -119.146
+        },
+        {
+          "x": -24.921,
+          "y": -93.771
+        },
+        {
+          "x": -19.613,
+          "y": -71.921
+        },
+        {
+          "x": -7.772,
+          "y": -25.808
+        },
+        {
+          "x": -2.584,
+          "y": -5.271
+        },
+        {
+          "x": 12.899,
+          "y": 51.394
+        },
+        {
+          "x": 27.614,
+          "y": 109.394
+        },
+        {
+          "x": 43.038,
+          "y": 169.606
+        }
+      ],
+      "nombre": "Carretera Los Mochis - Cd. Obregón (Cuota)",
+      "carriles": 2,
+      "un_sentido": true
+    },
+    "3d": {
+      "calzadas_en_la_seccion": 2,
+      "anchos_m": [
+        6.9,
+        6.9
+      ],
+      "carriles_por_calzada": [
+        2,
+        2
+      ],
+      "calzada_del_choque": 0,
+      "seccion_a_m_del_choque": 0.0,
+      "separaciones_m": [
+        11.5
+      ],
+      "acotamiento": true,
+      "banqueta": false,
+      "guarniciones": 0,
+      "barreras": 4,
+      "semaforos": 0,
+      "pasos_peatonales": false
+    }
+  },
+  {
+    "escena": "mex57-alcance",
+    "calle": "MEX 57 (dos cuerpos)",
+    "osm": {
+      "via": "",
+      "highway": "residential",
+      "lanes": null,
+      "lanes:forward": null,
+      "lanes:backward": null,
+      "oneway": null,
+      "width": null,
+      "sidewalk": null,
+      "turn:lanes": null,
+      "otro_cuerpo": 0,
+      "laterales": [
+        "service"
+      ],
+      "semaforos_80m": 0,
+      "pasos_peatonales_80m": 0,
+      "puentes_80m": [],
+      "distancia_al_eje_m": 0.2
+    },
+    "lo_que_entendio_la_web": {
+      "id_osm": 748859006,
+      "tipo": "residential",
+      "puntos": [
+        {
+          "x": -0.01,
+          "y": -0.033
+        },
+        {
+          "x": 23.869,
+          "y": 4.737
+        }
+      ]
+    },
+    "3d": {
+      "calzadas_en_la_seccion": 1,
+      "anchos_m": [
+        6.9
+      ],
+      "carriles_por_calzada": [
+        1
+      ],
+      "calzada_del_choque": 0,
+      "seccion_a_m_del_choque": 10.0,
+      "separaciones_m": [],
+      "acotamiento": false,
+      "banqueta": false,
+      "guarniciones": 0,
+      "barreras": 4,
+      "semaforos": 0,
+      "pasos_peatonales": false
+    }
+  },
+  {
+    "escena": "son100-kino",
+    "calle": "SON 100 (dos carriles, Sonora)",
+    "osm": {
+      "via": "Carretera Hermosillo - Bahía de Kino",
+      "highway": "primary",
+      "lanes": "2",
+      "lanes:forward": null,
+      "lanes:backward": null,
+      "oneway": null,
+      "width": null,
+      "sidewalk": null,
+      "turn:lanes": null,
+      "otro_cuerpo": 0,
+      "laterales": [],
+      "semaforos_80m": 0,
+      "pasos_peatonales_80m": 0,
+      "puentes_80m": [],
+      "distancia_al_eje_m": 0.3
+    },
+    "lo_que_entendio_la_web": {
+      "id_osm": 838354203,
+      "tipo": "primary",
+      "puntos": [
+        {
+          "x": 224.976,
+          "y": 3.319
+        },
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": -224.982,
+          "y": -2.874
+        }
+      ],
+      "nombre": "Carretera Hermosillo - Bahía de Kino",
+      "carriles": 2
+    },
+    "3d": {
+      "calzadas_en_la_seccion": 1,
+      "anchos_m": [
+        9.9
+      ],
+      "carriles_por_calzada": [
+        3
+      ],
+      "calzada_del_choque": 0,
+      "seccion_a_m_del_choque": 0.0,
+      "separaciones_m": [],
+      "acotamiento": false,
+      "banqueta": false,
+      "guarniciones": 0,
+      "barreras": 0,
+      "semaforos": 0,
+      "pasos_peatonales": false
+    }
+  }
+]
