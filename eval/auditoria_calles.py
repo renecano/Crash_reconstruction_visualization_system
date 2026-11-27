@@ -18,7 +18,9 @@ from __future__ import annotations
 import itertools
 import json
 import math
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 RAIZ = Path(__file__).resolve().parents[1]
 DIR = RAIZ / "packages/scene-schema/fixtures/caso3d-ciudad"
@@ -61,7 +63,9 @@ def enu(lat: float, lon: float, lat0: float, lon0: float) -> tuple[float, float]
     return (lon - lon0) * k * math.cos(math.radians(lat0)), (lat - lat0) * k
 
 
-def dist_seg(p, a, b) -> tuple[float, float]:
+def dist_seg(
+    p: tuple[float, float], a: tuple[float, float], b: tuple[float, float]
+) -> tuple[float, float]:
     """Distancia de p al segmento ab y el rumbo del segmento."""
     ax, ay = a
     bx, by = b
@@ -74,19 +78,19 @@ def dist_seg(p, a, b) -> tuple[float, float]:
 class Indice:
     """Los triángulos de una capa en una rejilla de 4 m: dice rápido si un punto cae en ella."""
 
-    def __init__(self, tris):
-        self.celdas: dict[tuple[int, int], list] = {}
+    def __init__(self, tris: list[Any]) -> None:
+        self.celdas: dict[tuple[int, int], list[Any]] = {}
         for t in tris:
             xs, ys = t[0::2], t[1::2]
             for gx in range(math.floor(min(xs) / 4), math.floor(max(xs) / 4) + 1):
                 for gy in range(math.floor(min(ys) / 4), math.floor(max(ys) / 4) + 1):
                     self.celdas.setdefault((gx, gy), []).append(t)
 
-    def __call__(self, x, y) -> bool:
+    def __call__(self, x: float, y: float) -> bool:
         return dentro(self.celdas.get((math.floor(x / 4), math.floor(y / 4)), []), x, y)
 
 
-def dentro(tris, x, y) -> bool:
+def dentro(tris: list[Any], x: float, y: float) -> bool:
     for ax, ay, bx, by, cx, cy in tris:
         d1 = (x - bx) * (ay - by) - (ax - bx) * (y - by)
         d2 = (x - cx) * (by - cy) - (bx - cx) * (y - cy)
@@ -96,9 +100,11 @@ def dentro(tris, x, y) -> bool:
     return False
 
 
-def capas(e) -> dict[str, list]:
-    out: dict[str, list] = {}
-    for c in (e.get("via") or {}).get("capas", []):
+def capas(e: Any) -> dict[str, list[Any]]:
+    out: dict[str, list[Any]] = {}
+    via: Any = e.get("via") or {}
+    lista: list[Any] = via.get("capas", [])
+    for c in lista:
         p, i = c["posiciones"], c["indices"]
         out.setdefault(c["nombre"], []).extend(
             (
@@ -116,7 +122,8 @@ def capas(e) -> dict[str, list]:
 
 def tramos(muestras: list[bool], paso: float) -> list[tuple[float, float]]:
     """Los tramos [inicio, fin] (m sobre la sección) donde la muestra es verdadera."""
-    out, ini = [], None
+    out: list[tuple[float, float]] = []
+    ini: int | None = None
     for k, s in enumerate([*muestras, False]):
         if s and ini is None:
             ini = k
@@ -126,45 +133,49 @@ def tramos(muestras: list[bool], paso: float) -> list[tuple[float, float]]:
     return out
 
 
-def auditar(clave: str, nombre: str, indice: dict) -> dict:
-    c = json.loads((DIR / f"{clave}.json").read_text())
+def auditar(clave: str, nombre: str, indice: dict[str, Any]) -> dict[str, Any]:
+    c: Any = json.loads((DIR / f"{clave}.json").read_text())
     lugar = indice[clave]["lugar"]
-    osm = json.loads((RAIZ / f"data/osm/{lugar}.overpass.json").read_text())["elements"]
+    osm: Any = json.loads((RAIZ / f"data/osm/{lugar}.overpass.json").read_text())["elements"]
     u = c["escena"]["lugar"]["ubicacion_real"]
     lat0, lon0 = u["lat"], u["lon"]
     pi = c["resultado"]["punto_impacto"]
     p = (pi["x"], pi["y"])
-    nodos = {e["id"]: e for e in osm if e["type"] == "node"}
-    xy = {i: enu(n["lat"], n["lon"], lat0, lon0) for i, n in nodos.items()}
-    vias = [
+    nodos: dict[int, Any] = {e["id"]: e for e in osm if e["type"] == "node"}
+    xy: dict[int, tuple[float, float]] = {
+        i: enu(n["lat"], n["lon"], lat0, lon0) for i, n in nodos.items()
+    }
+    vias: list[Any] = [
         e for e in osm if e["type"] == "way" and e.get("tags", {}).get("highway") in VEHICULARES
     ]
 
-    def cerca(w):
+    def cerca(w: Any) -> tuple[float, float]:
         mejor = (1e9, 0.0)
         pts = [xy[i] for i in w["nodes"] if i in xy]
         for a, b in itertools.pairwise(pts):
             mejor = min(mejor, dist_seg(p, a, b))
         return mejor
 
-    medidas = sorted(((cerca(w), w) for w in vias), key=lambda x: x[0][0])
+    medidas: list[tuple[tuple[float, float], Any]] = sorted(
+        ((cerca(w), w) for w in vias), key=lambda x: x[0][0]
+    )
     (d0, rumbo), w0 = medidas[0]
-    t0 = w0.get("tags", {})
-    nom = t0.get("name", "")
-    otro_cuerpo = [
+    t0: Any = w0.get("tags", {})
+    nom: str = t0.get("name", "")
+    otro_cuerpo: list[Any] = [
         w
-        for (d, r), w in medidas[1:]
+        for (d, _r), w in medidas[1:]
         if d < 60
         and nom
         and w.get("tags", {}).get("name") == nom
         and w.get("tags", {}).get("oneway") == "yes"
     ]
 
-    def paralela(r):
+    def paralela(r: float) -> bool:
         a = abs((r - rumbo + math.pi / 2) % math.pi - math.pi / 2)
         return a < math.radians(20)
 
-    laterales = [
+    laterales: list[Any] = [
         w
         for (d, r), w in medidas[1:]
         if d < 60
@@ -178,25 +189,31 @@ def auditar(clave: str, nombre: str, indice: dict) -> dict:
     ]
     radio = 80.0
 
-    def nodos_con(pred):
+    def nodos_con(pred: Callable[[Any], bool]) -> int:
         return sum(
             1 for i, n in nodos.items() if pred(n.get("tags", {})) and math.dist(xy[i], p) < radio
         )
 
-    semaforos = nodos_con(lambda t: t.get("highway") == "traffic_signals")
-    cruces = nodos_con(lambda t: t.get("highway") == "crossing" or "crossing" in t)
-    puentes = sorted(
+    def semaforo(t: Any) -> bool:
+        return t.get("highway") == "traffic_signals"
+
+    def cruce(t: Any) -> bool:
+        return t.get("highway") == "crossing" or "crossing" in t
+
+    semaforos = nodos_con(semaforo)
+    cruces = nodos_con(cruce)
+    puentes: list[Any] = sorted(
         {
             w["tags"].get("name", w["tags"].get("highway"))
-            for (d, r), w in medidas
+            for (d, _r), w in medidas
             if d < radio
             and (w["tags"].get("bridge") == "yes" or w["tags"].get("layer", "0") not in ("0", "-0"))
         }
     )
 
     # La sección transversal del 3D: en el punto del choque o, si ahí cae un cruce, en el primer
-    # lugar     # limpio a lo largo de la vía (hasta 60 m).
-    e = c.get("escenario") or {}
+    # lugar limpio a lo largo de la vía (hasta 60 m).
+    e: Any = c.get("escenario") or {}
     cs = capas(e)
     idx = {
         n: Indice(cs.get(n, []))
@@ -215,7 +232,9 @@ def auditar(clave: str, nombre: str, indice: dict) -> dict:
     paso, mitad = 0.1, 70.0
     esperado = (int(t0["lanes"]) if str(t0.get("lanes", "")).isdigit() else 2) * 3.5 * 1.8 + 4
 
-    def seccion(q):
+    def seccion(
+        q: tuple[float, float],
+    ) -> tuple[list[tuple[float, float]], list[int], int | None, dict[str, list[bool]]]:
         pts = [
             (q[0] + nx * (k * paso - mitad), q[1] + ny * (k * paso - mitad))
             for k in range(int(2 * mitad / paso) + 1)
@@ -235,7 +254,7 @@ def auditar(clave: str, nombre: str, indice: dict) -> dict:
                 ):
                     raya[j] = True
         calz = tramos(en["calzada"], paso)
-        rayas = []
+        rayas: list[tuple[float, float]] = []
         for r in tramos(raya, paso):
             # Una doble raya (la amarilla del centro) es una sola división.
             if rayas and r[0] - rayas[-1][1] < 0.5:
@@ -243,7 +262,7 @@ def auditar(clave: str, nombre: str, indice: dict) -> dict:
             else:
                 rayas.append(r)
         # Carriles por calzada: las divisiones de en medio más uno. Las líneas a menos de 2.6 m de
-        # la         # orilla son de orilla (el acotamiento pavimentado), no dividen carriles.
+        # la orilla son de orilla (el acotamiento pavimentado), no dividen carriles.
         # Una raya de carril mide centímetros; una transversal (alto, cebra) cruza la sección.
         rayas = [r for r in rayas if r[1] - r[0] <= 0.8]
         carriles = [
@@ -263,12 +282,11 @@ def auditar(clave: str, nombre: str, indice: dict) -> dict:
                 desplazada = float(t)
                 break
     huecos = [round(calz[k + 1][0] - calz[k][1], 1) for k in range(len(calz) - 1)]
-    via = e.get("via") or {}
-    red = [
-        v
-        for v in (c["escena"]["lugar"].get("red_vial") or {}).get("vias", [])
-        if v.get("id_osm") == w0["id"]
-    ]
+    via: Any = e.get("via") or {}
+    red_vial: Any = c["escena"]["lugar"].get("red_vial") or {}
+    todas: list[Any] = red_vial.get("vias", [])
+    red = [v for v in todas if v.get("id_osm") == w0["id"]]
+    dispositivos: list[Any] = e.get("dispositivos") or []
     return {
         "escena": clave,
         "calle": nombre,
@@ -303,18 +321,16 @@ def auditar(clave: str, nombre: str, indice: dict) -> dict:
             "banqueta": any(en["banqueta"]),
             "guarniciones": len(via.get("guarniciones") or []),
             "barreras": len(via.get("barreras") or []),
-            "semaforos": sum(
-                1 for d in e.get("dispositivos") or [] if "semaforo" in str(d.get("tipo", ""))
-            ),
+            "semaforos": sum(1 for d in dispositivos if "semaforo" in str(d.get("tipo", ""))),
             "pasos_peatonales": any(en["paso_peatonal"]),
         },
     }
 
 
-def juicio(a: dict) -> list[tuple[str, str, str, str]]:
+def juicio(a: dict[str, Any]) -> list[tuple[str, str, str, str]]:
     """(etiqueta, lo de OSM, lo del 3D, bien/mal) por cada cosa que se compara."""
     o, d = a["osm"], a["3d"]
-    out = []
+    out: list[tuple[str, str, str, str]] = []
     k = d["calzada_del_choque"]
     lanes = o["lanes"]
     if lanes:
@@ -415,7 +431,9 @@ def juicio(a: dict) -> list[tuple[str, str, str, str]]:
 
 
 def main() -> None:
-    indice = {c["clave"]: c for c in json.loads((DIR / "indice.json").read_text())["casos"]}
+    indice: dict[str, Any] = {
+        c["clave"]: c for c in json.loads((DIR / "indice.json").read_text())["casos"]
+    }
     filas = [auditar(clave, nombre, indice) for clave, nombre in ESCENAS]
     SALIDA.mkdir(parents=True, exist_ok=True)
     (SALIDA / "auditoria_calles.json").write_text(
