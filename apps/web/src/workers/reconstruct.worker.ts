@@ -19,6 +19,7 @@ import {
   reconstruct,
   enParalelo,
   reconstructionToDict,
+  sensibilidadDeReposos,
   simulateDrivers,
   withRelief,
 } from "@croquis/solver-ts";
@@ -33,11 +34,26 @@ interface Request {
   enOtroWorker?: boolean;
   /** La malla de relieve que cita la escena (C3, W5): no viaja en la escena, se adjunta aquí. */
   relieve?: Record<string, unknown> | null;
+  /**
+   * Qué reposo pesa más en la cifra (René, 2026-11-27): el resultado ya calculado (sus parámetros) y
+   * el vehículo de la cifra (id del solver).
+   */
+  sensibilidad?: { resultado: Record<string, unknown>; objetivo: string };
 }
 
 self.onmessage = (ev: MessageEvent<Request>) => {
   const { id, completo, agentes, paralelo, enOtroWorker } = ev.data;
   try {
+    if (ev.data.sensibilidad) {
+      const { resultado, objetivo } = ev.data.sensibilidad;
+      const filas = sensibilidadDeReposos(
+        withRelief(ev.data.spec, ev.data.relieve ?? null),
+        resultado,
+        objetivo,
+      );
+      self.postMessage({ id, fase: "sensibilidad", sensibilidad: filas });
+      return;
+    }
     if (paralelo) {
       const r = enParalelo(ev.data.spec, {
         ...PRODUCTION_SAMPLES,

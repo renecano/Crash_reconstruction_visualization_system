@@ -1,0 +1,96 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import * as cesvi from "@croquis/cesvi";
+import type { Expediente, SalidaCorpus } from "@croquis/cesvi";
+import { describe, expect, it } from "vitest";
+import { escenaComoPerito } from "./ejemplo-como-perito";
+import { conLugarDelEjemplo } from "./ejemplos-narracion";
+import { conPosicionEscrita, finalDeLaNarracion, medidaEscrita, poseDe } from "./escena-facil";
+import { RECETAS_PERITO } from "./recetas-perito";
+
+/**
+ * La distancia que da la narración, exacta (René, 2026-11-27: un toque a lo largo movía la carambola de
+ * 25 a 21.5). «5 metros adelante del área de restos» y «10 metros adelante del área de restos»: desde su
+ * posición en el choque, hacia donde avanzaba.
+ */
+const RAIZ = resolve(__dirname, "../../../..");
+function armada(clave: string): Expediente {
+  const receta = RECETAS_PERITO.find((r) => r.clave === clave)!;
+  const g = JSON.parse(
+    readFileSync(resolve(RAIZ, `data/cesvi/grabaciones/ejemplos/${clave}.json`), "utf8"),
+  ) as { narracion: string; salida: SalidaCorpus };
+  const leida = cesvi.escenaDeNarracion(g.salida, g.narracion);
+  const e0 = conLugarDelEjemplo(g.narracion, leida.expediente as never) as unknown as Expediente;
+  return escenaComoPerito(e0, g.narracion, leida.posiciones, receta).expediente;
+}
+/** El punto del primer choque, o el centro de las poses de impacto de sus vehículos. */
+function puntoDelPrimerChoque(e: Expediente) {
+  const p = [...(e.impactos ?? [])].sort((a, b) => a.orden - b.orden)[0]!;
+  if (p.punto) return p.punto;
+  const q = (p.vehiculos ?? []).map((v) => poseDe(e, String(v), "impacto")!.punto);
+  return {
+    lat: q.reduce((s, x) => s + x.lat, 0) / q.length,
+    lon: q.reduce((s, x) => s + x.lon, 0) / q.length,
+  };
+}
+const m = (a: { lat: number; lon: number }, b: { lat: number; lon: number }) =>
+  cesvi.distanciaM([a.lon, a.lat], [b.lon, b.lat]);
+
+describe("la distancia narrada desde el área de restos", () => {
+  const e = armada("carambola-lluvia");
+  const id = (palabra: string) =>
+    e.vehiculos.find((v) => JSON.stringify(v).toLowerCase().includes(palabra))!.id;
+  it.each([
+    ["corolla", "el vehículo B, en el mismo carril, 5 metros adelante del área de restos", 5],
+    ["aveo", "y el vehículo C, 10 metros adelante del área de restos", 10],
+  ])("%s: %s", (palabra, texto, metros) => {
+    const v = id(palabra);
+    const f = finalDeLaNarracion(e, v, texto)!;
+    expect(f).not.toBeNull();
+    // Desde los restos (el punto del primer choque), no desde su propia pose.
+    const choque = puntoDelPrimerChoque(e);
+    expect(m(f.punto, choque)).toBeCloseTo(metros, 1);
+  });
+  it("«9 metros adelante del inicio de los restos» (el alcance)", () => {
+    const a = armada("alcance-deformacion");
+    const v = a.vehiculos.find((x) => JSON.stringify(x).includes("NP300"))!.id;
+    const f = finalDeLaNarracion(
+      a,
+      v,
+      "quedó en el carril de baja velocidad, 9 metros adelante del inicio de los restos",
+    )!;
+    const choque = puntoDelPrimerChoque(a);
+    expect(m(f.punto, choque)).toBeCloseTo(9, 1);
+    // «sobre el acotamiento, 21 metros adelante»: 21 m y 3 m a su derecha.
+    const vento = a.vehiculos.find((x) => JSON.stringify(x).includes("Vento"))!.id;
+    const g = finalDeLaNarracion(
+      a,
+      vento,
+      "sobre el acotamiento, 21 metros adelante del inicio de los restos",
+    )!;
+    expect(m(g.punto, choque)).toBeCloseTo(Math.hypot(21, 3), 1);
+    expect(g.texto).toMatch(/sobre el acotamiento/);
+  });
+});
+
+describe("las posiciones escritas en metros (René, 2026-11-27)", () => {
+  const e = armada("carambola-lluvia");
+  const v = e.vehiculos.find((x) => JSON.stringify(x).toLowerCase().includes("corolla"))!.id;
+  it("el reposo a 5 m adelante y 0.5 m a la izquierda: exacto, y la medida que ve el perito vuelve igual", () => {
+    const x = conPosicionEscrita(e, v, "final", 5, 0.5, []);
+    expect(m(poseDe(x, v, "final")!.punto, poseDe(x, v, "impacto")!.punto)).toBeCloseTo(
+      Math.hypot(5, 0.5),
+      2,
+    );
+    expect(medidaEscrita(x, v, "final", [])).toEqual({
+      adelante: 5,
+      izquierda: 0.5,
+      desde: "su posición en el choque",
+    });
+  });
+  it("la posición tocada también se ve en metros", () => {
+    const med = medidaEscrita(e, v, "final", [])!;
+    expect(Number.isFinite(med.adelante)).toBe(true);
+    expect(Number.isFinite(med.izquierda)).toBe(true);
+  });
+});

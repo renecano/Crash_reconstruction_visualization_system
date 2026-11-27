@@ -93,6 +93,8 @@ import {
   puntoDelChoqueTocado,
   tocarFinal,
   alCarril,
+  medidaEscrita,
+  conPosicionEscrita,
   resumenEscena,
   rumboAlineado,
   sentidoEnElCaso,
@@ -3205,6 +3207,74 @@ export function EscenaFacil({
                     Toca el mapa donde empezó el {nombres[herramienta.inicial]}.
                   </span>
                 ) : null}
+              </div>
+              {/* Las posiciones en metros, escritas en vez de tocadas (René, 2026-11-27): se ven y se
+                  editan; al escribir, la posición queda exacta. */}
+              <div className="flex flex-col gap-2" data-testid="posiciones-escritas">
+                <span className="font-semibold">Escribir las posiciones en metros</span>
+                {e.vehiculos.flatMap((v) =>
+                  (["inicial", "impacto", "final"] as const).flatMap((fase) => {
+                    const m = medidaEscrita(e, v.id, fase, callesMapa);
+                    if (!m) return [];
+                    const poner = (adelante: number, izquierda: number) =>
+                      onEstado({
+                        ...estado,
+                        expediente: conPosicionEscrita(
+                          e,
+                          v.id,
+                          fase,
+                          adelante,
+                          izquierda,
+                          callesMapa,
+                        ),
+                      });
+                    const campo = (
+                      valor: number,
+                      testid: string,
+                      onValor: (x: number) => void,
+                      etiqueta: string,
+                    ) => (
+                      <input
+                        className="campo h-10 w-20 px-2 font-mono"
+                        inputMode="decimal"
+                        aria-label={etiqueta}
+                        defaultValue={String(valor)}
+                        key={`${testid}-${valor}`}
+                        onBlur={(ev) => {
+                          const x = Number(ev.target.value.replace(",", "."));
+                          if (Number.isFinite(x) && x !== valor) onValor(x);
+                        }}
+                        onKeyDown={(ev) => {
+                          if (ev.key === "Enter") (ev.target as HTMLInputElement).blur();
+                        }}
+                        data-testid={testid}
+                      />
+                    );
+                    const quien = `${fase === "final" ? "Dónde quedó" : fase === "inicial" ? "Dónde empezó" : "El choque de"} el ${nombres[v.id]}`;
+                    return [
+                      <div
+                        key={`${v.id}-${fase}`}
+                        className="flex flex-wrap items-center gap-2 t-nota"
+                      >
+                        <span>{quien}:</span>
+                        {campo(
+                          m.adelante,
+                          `escrita-${v.id}-${fase}-adelante`,
+                          (x) => poner(x, m.izquierda),
+                          `${quien}, metros adelante`,
+                        )}
+                        m adelante y
+                        {campo(
+                          m.izquierda,
+                          `escrita-${v.id}-${fase}-izquierda`,
+                          (x) => poner(m.adelante, x),
+                          `${quien}, metros a la izquierda`,
+                        )}
+                        m a la izquierda de {m.desde} (negativo: atrás o a la derecha)
+                      </div>,
+                    ];
+                  }),
+                )}
               </div>
               {colocando ? (
                 <label className="flex items-center gap-2">

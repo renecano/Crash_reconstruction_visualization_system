@@ -12,7 +12,10 @@ import {
   type Reconstruccion,
   sinCifraEnTexto,
 } from "@croquis/cesvi";
-import type { ReactNode } from "react";
+import { type ReactNode, useEffect, useState } from "react";
+import type { SensibilidadReposo } from "@croquis/solver-ts";
+import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
+import { sensibilidadEnNavegador } from "@/lib/reconstruct-client";
 import {
   frasePercentil,
   histograma,
@@ -291,7 +294,61 @@ export function CifraReconstruccion({
           </dd>
         </div>
       </dl>
+      {v && !v.previa?.medida ? (
+        <SensibilidadDeLaCifra r={r} nombres={nombres} vehiculo={v.vehiculo} />
+      ) : null}
     </section>
+  );
+}
+
+/**
+ * Qué medida pesa más en la cifra (René, 2026-11-27): «±1 m en el reposo del Corolla mueve la cifra
+ * ±2 km/h». Se calcula en su propio worker después del resultado; mientras, no se dice nada.
+ */
+function SensibilidadDeLaCifra({
+  r,
+  nombres,
+  vehiculo,
+}: {
+  r: Reconstruccion;
+  nombres: Record<string, string>;
+  vehiculo: string;
+}) {
+  const [filas, setFilas] = useState<{ r: Reconstruccion; s: SensibilidadReposo[] } | null>(null);
+  const objetivo = Object.keys(r.ids).find((k) => r.ids[k] === vehiculo) ?? null;
+  useEffect(() => {
+    if (!objetivo || !r.resultado || typeof Worker === "undefined") return undefined;
+    let vivo = true;
+    sensibilidadEnNavegador(
+      r.spec as unknown as EscenaSpec,
+      r.resultado as unknown as Resultado,
+      objetivo,
+      r.relieve ?? null,
+    )
+      .then((s) => {
+        if (vivo) setFilas({ r, s });
+      })
+      .catch(() => undefined);
+    return () => {
+      vivo = false;
+    };
+  }, [r, objetivo]);
+  const s = filas?.r === r ? filas.s.filter((x) => x.kmhPorMetro >= 0.5) : [];
+  if (!s.length) return null;
+  const nombre = (sid: string) => nombres[r.ids[sid] ?? sid] ?? r.ids[sid] ?? sid;
+  return (
+    <p className="t-nota" data-testid="sensibilidad-cifra">
+      Qué medida pesa más: ±1 m en el reposo del {nombre(s[0]!.vehiculo)} mueve la cifra ±
+      {F.kmhConUnidad(s[0]!.kmhPorMetro, "reconstruccion")}
+      {s
+        .slice(1, 3)
+        .map(
+          (x) =>
+            `; el del ${nombre(x.vehiculo)}, ±${F.kmhConUnidad(x.kmhPorMetro, "reconstruccion")}`,
+        )
+        .join("")}
+      . Es la que conviene medir con más cuidado.
+    </p>
   );
 }
 

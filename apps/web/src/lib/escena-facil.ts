@@ -1490,6 +1490,79 @@ export function tocarChoque(
  * rumbo de antes, sin calles). La usan La escena y la tabla de los ejemplos (René, 2026-11-26: «el
  * mismo código que La escena»).
  */
+/** Las posiciones que el perito puede escribir en metros en vez de tocarlas (René, 2026-11-27). */
+export type FaseEscrita = "final" | "inicial" | "impacto";
+
+/** Desde dónde se mide cada posición escrita: su pose del choque o, la del choque, el cruce. */
+function referenciaEscrita(
+  e: Expediente,
+  vehiculo: string,
+  fase: FaseEscrita,
+  calles: readonly Calle[],
+): { punto: Punto; marcha: number; desde: string } | null {
+  const imp = poseDe(e, vehiculo, "impacto");
+  if (!imp) return null;
+  const marcha = rumboDeMarcha(e, vehiculo, imp.rumbo);
+  if (fase !== "impacto") return { punto: imp.punto, marcha, desde: "su posición en el choque" };
+  const cruce = crucesDe(calles)
+    .map((c) => ({ c, d: distanciaM(ll(c.punto), ll(imp.punto)) }))
+    .sort((a, b) => a.d - b.d)[0];
+  if (!cruce || cruce.d > 150) return null;
+  return {
+    punto: cruce.c.punto,
+    marcha,
+    desde: `el cruce de ${cruce.c.calles.slice(0, 2).join(" y ") || "las calles"}`,
+  };
+}
+
+/**
+ * Lo que mide una posición desde su referencia: metros adelante (hacia donde avanzaba; negativo,
+ * atrás) y a la izquierda (negativo, a la derecha). La ve el perito en metros y la puede editar.
+ */
+export function medidaEscrita(
+  e: Expediente,
+  vehiculo: string,
+  fase: FaseEscrita,
+  calles: readonly Calle[],
+): { adelante: number; izquierda: number; desde: string } | null {
+  const ref = referenciaEscrita(e, vehiculo, fase, calles);
+  const pose = poseDe(e, vehiculo, fase);
+  if (!ref || !pose) return null;
+  const m = enMetros(ll(pose.punto), ll(ref.punto));
+  const r = (ref.marcha * Math.PI) / 180;
+  const adelante = m.este * Math.sin(r) + m.norte * Math.cos(r);
+  const izquierda = -(m.este * Math.cos(r) - m.norte * Math.sin(r));
+  const r1 = (x: number) => Math.round(x * 10) / 10;
+  return { adelante: r1(adelante), izquierda: r1(izquierda), desde: ref.desde };
+}
+
+/** La posición a esos metros de su referencia, exacta (fuente: el perito). */
+export function conPosicionEscrita(
+  e: Expediente,
+  vehiculo: string,
+  fase: FaseEscrita,
+  adelante: number,
+  izquierda: number,
+  calles: readonly Calle[],
+): Expediente {
+  const ref = referenciaEscrita(e, vehiculo, fase, calles);
+  if (!ref) return e;
+  const q = avanzar(
+    avanzar(ll(ref.punto), ref.marcha, adelante),
+    normalizar(ref.marcha - 90),
+    izquierda,
+  );
+  const imp = poseDe(e, vehiculo, "impacto")!;
+  const rumbo = poseDe(e, vehiculo, fase)?.rumbo ?? imp.rumbo;
+  return conPosicion(e, {
+    vehiculo: vehiculo as Id,
+    fase,
+    punto: punto(q),
+    rumbo: normalizar(rumbo),
+    fuente: "perito",
+  });
+}
+
 /** m: un toque a menos de esto del centro de un carril se ajusta a él (René, 2026-11-27). */
 export const TOLERANCIA_CARRIL_M = 0.75;
 
@@ -1855,6 +1928,9 @@ export function direccionDeSalida(
   return null;
 }
 
+/** m: del centro de un carril de 3.5 m al centro de un acotamiento de 2.5 m (supuesto). */
+export const ACOTAMIENTO_DERECHA_M = 3;
+
 export interface FinalNarrado {
   punto: Punto;
   rumbo: number;
@@ -1940,9 +2016,49 @@ export function finalDeLaNarracion(
   const desde = new RegExp(
     String.raw`${NUM}\s*m(?:etros?)?\s+(?:despu[eé]s|adelante|m[aá]s\s+all[aá])\s+del?\s+(?:paso\s+peatonal|punto\s+de\s+(?:contacto|impacto)|impacto|choque|cruce|contacto)|a\s+${NUM}\s*m(?:etros?)?\s+del\s+punto\s+del?\s+(?:primer\s+)?(?:impacto|choque|contacto)|a\s+${NUM}\s*m(?:etros?)?\s+de\s+donde\s+(?:estaba|se\s+encontraba)\s+(?:detenid|estacionad)[oa]`,
   ).exec(d);
+  // «sobre el acotamiento» (René, 2026-11-26: el Vento quedó en el acotamiento, no en su carril): del
+  // centro de su carril (3.5 m) al centro del acotamiento (2.5 m), 3 m a su derecha (supuesto).
+  const enElAcotamiento = (f: FinalNarrado): FinalNarrado =>
+    /\bsobre\s+el\s+acotamiento\b/.test(sinAcentos(d))
+      ? {
+          ...f,
+          punto: punto(avanzar(ll(f.punto), normalizar(marcha + 90), ACOTAMIENTO_DERECHA_M)),
+          texto: `${f.texto}, sobre el acotamiento (${ACOTAMIENTO_DERECHA_M} m a la derecha de su carril, supuesto)`,
+        }
+      : f;
+  // «5 metros adelante del área de restos», «9 metros adelante del inicio de los restos» (René,
+  // 2026-11-27): desde donde están los restos, el punto del primer choque, hacia donde avanzaba; no
+  // desde su propia pose (el tercero de una carambola choca más adelante).
+  const restos = new RegExp(
+    String.raw`${NUM}\s*m(?:etros?)?\s+(?:despu[eé]s|adelante|m[aá]s\s+all[aá])\s+del?\s+(?:(?:[aá]rea|zona)\s+de\s+(?:los\s+)?restos|inicio\s+de\s+(?:los\s+)?restos|(?:[aá]rea|zona)\s+del\s+primer\s+contacto)`,
+  ).exec(d);
+  const primero = [...(e.impactos ?? [])].sort((a, b) => (a.orden ?? 1) - (b.orden ?? 1))[0];
+  // El punto del primer choque; si no está guardado, el centro de las poses de sus vehículos.
+  const poses = (primero?.vehiculos ?? []).flatMap((x) => {
+    const q = poseDe(e, String(x), "impacto");
+    return q ? [q.punto] : [];
+  });
+  const enLosRestos: Punto | null =
+    primero?.punto ??
+    (poses.length
+      ? {
+          lat: poses.reduce((a, q) => a + q.lat, 0) / poses.length,
+          lon: poses.reduce((a, q) => a + q.lon, 0) / poses.length,
+        }
+      : null);
+  if (restos && enLosRestos) {
+    const n = metros(restos[1]!);
+    return enElAcotamiento({
+      punto: punto(avanzar(ll(enLosRestos), marcha, n)),
+      rumbo: frente ?? imp.rumbo,
+      texto: `${n} m adelante del área de los restos (el primer choque), hacia donde avanzaba`,
+    });
+  }
   if (desde) {
     const n = metros(desde[1] ?? desde[2] ?? desde[3]!);
-    return adelante(n, `${n} m adelante de su posición en el choque, hacia donde avanzaba`);
+    return enElAcotamiento(
+      adelante(n, `${n} m adelante de su posición en el choque, hacia donde avanzaba`),
+    );
   }
   // «junto al árbol», «contra la barda», «a 2 m adelante del poste»: en el objeto del choque (su pose
   // del choque), más los metros que diga hacia donde avanzaba.
