@@ -1,0 +1,55 @@
+# Regenera las referencias del solver en CI, no en la laptop (René, 2026-11-27: lo pesado en CI).
+# Corre solo al subir una rama `regenerar/<algo>`: reconstruye las referencias de Python
+# (`reconstruct --all` y `eval/w3|w5|w7_fixtures.py`), los paquetes caso-3d y el C# generado, y los
+# commitea en esa misma rama. De ahí se traen los generados a la rama de trabajo.
+name: Regenerar referencias del solver
+
+on:
+  push:
+    branches: ["regenerar/**"]
+
+permissions:
+  contents: write
+
+jobs:
+  regenerar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          enable-cache: true
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: uv sync --all-packages --all-groups --locked
+      - run: pnpm install --frozen-lockfile
+      - name: Referencias de Python
+        working-directory: solver
+        run: uv run croquis-solver reconstruct --all
+      - name: Referencias de C1
+        run: |
+          for f in eval/w3_fixtures.py eval/w5_fixtures.py eval/w7_fixtures.py; do
+            uv run --project solver python "$f"
+          done
+          # Las escenas solo cambian de formato al reescribirse: se quedan como están.
+          git checkout -- packages/scene-schema/fixtures/c1/alcance_muro.json \
+            packages/scene-schema/fixtures/c1/carambola_cuatro.json \
+            packages/scene-schema/fixtures/inversion/lateral_puntos_paso.json \
+            packages/scene-schema/fixtures/terraceria_topes.json
+      - name: Paquetes caso-3d y C#
+        run: pnpm --filter @croquis/scene-schema run generate
+      - name: Commit en la misma rama
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add packages/scene-schema/fixtures apps/visor-unity/Assets/Croquis/Generated
+          if git diff --cached --quiet; then
+            echo "Sin cambios en las referencias."
+          else
+            git commit -m "chore(solver): references regenerated in CI"
+            git push
+          fi
