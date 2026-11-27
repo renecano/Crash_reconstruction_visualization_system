@@ -44,10 +44,14 @@ import {
 import { BarraReproduccion } from "./barra-reproduccion";
 import { EnRanura, useMarco } from "./marco-vista";
 import {
+  escalaMedida,
   grabarVideoUnity,
+  instantesDelVideo,
   lienzoDelVideo,
+  msPorCuadro,
   modoDelVideo,
   nombreDelVideo,
+  SIN_VIDEO,
   textoTarda,
   VideoNoDisponible,
   puedeGrabarVideo,
@@ -542,6 +546,13 @@ export function VisorUnity({
       c.style.height = `${tamano.alto}px`;
     };
     ponerModo();
+    const fijar = (t: number) => puente.enviar("fijarTiempo", { t });
+    const bajarA1x = async () => {
+      if (modo.calidad) puente.enviar("calidad", { nivel: "auto" });
+      modo = { escala: 1, calidad: null };
+      ponerModo();
+      for (let i = 0; i < 6; i++) await new Promise((ok) => requestAnimationFrame(ok));
+    };
     try {
       // Unity toma el tamaño nuevo en su siguiente cuadro.
       for (let i = 0; i < 6; i++) await new Promise((ok) => requestAnimationFrame(ok));
@@ -556,11 +567,20 @@ export function VisorUnity({
         enviarPiso(pv, false);
         for (let i = 0; i < 10; i++) await new Promise((ok) => requestAnimationFrame(ok));
       }
+      // El nombre de la tarjeta no basta (en laptops híbridas Chrome reporta la NVIDIA y dibuja en
+      // la Intel): al doble solo si los primeros cuadros salen a tiempo.
+      if (
+        modo.escala === 2 &&
+        escalaMedida(
+          await msPorCuadro(c, fijar, instantesDelVideo(intervalo.inicio, intervalo.fin)),
+        ) === 1
+      )
+        await bajarA1x();
       const grabar = () =>
         grabarVideoUnity({
           credito: pv ? pv.atribucionMapa : null,
           lienzo: c,
-          fijar: (t) => puente.enviar("fijarTiempo", { t }),
+          fijar,
           inicio: intervalo.inicio,
           fin: intervalo.fin,
           logo,
@@ -578,12 +598,10 @@ export function VisorUnity({
       try {
         video = await grabar();
       } catch (e) {
-        // Si al doble no llega ningún cuadro, otra vez como antes: 1× y la calidad automática.
+        // Si al doble no sale (no llega ningún cuadro o falla el codificador), otra vez a 1× y con
+        // la calidad automática.
         if (!(e instanceof VideoNoDisponible) || modo.escala === 1) throw e;
-        if (modo.calidad) puente.enviar("calidad", { nivel: "auto" });
-        modo = { escala: 1, calidad: null };
-        ponerModo();
-        for (let i = 0; i < 6; i++) await new Promise((ok) => requestAnimationFrame(ok));
+        await bajarA1x();
         video = await grabar();
       }
       const url = URL.createObjectURL(video);
@@ -599,12 +617,14 @@ export function VisorUnity({
       setTimeout(() => URL.revokeObjectURL(url), 60_000);
       setAvisoVideo("Listo: el video se descargó.");
     } catch (e) {
+      // El error del navegador, solo para quien lo depure; al perito, un mensaje claro.
+      if (!(e instanceof DOMException && e.name === "AbortError")) console.warn("Video:", e);
       setAvisoVideo(
         e instanceof DOMException && e.name === "AbortError"
           ? "Se canceló el video."
-          : e instanceof Error
-            ? `No se pudo hacer el video: ${e.message}`
-            : "No se pudo hacer el video.",
+          : e instanceof VideoNoDisponible
+            ? e.message
+            : SIN_VIDEO,
       );
     } finally {
       c.style.width = antes.ancho;
