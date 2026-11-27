@@ -5,31 +5,99 @@ using Croquis.Generated;
 namespace Croquis.Core
 {
     /// <summary>
-    /// Nada procedural en medio de la carretera (revisión del 2026-11-26): las señales, postes, árboles y
-    /// luminarias del entorno que el plan dejó dentro de la calzada (`escenario.via`, capa `calzada`) se
-    /// llevan a la orilla más cercana, o se quitan si no hay orilla a menos de 30 m. Los objetos del caso (`resultado.objetos`) no se tocan: son
-    /// evidencia y van donde los puso el perito.
+    /// Nada procedural sobre la vía (revisión del 2026-11-26; René, 2026-11-27: en AXA la cerca de alambre
+    /// atravesaba los carriles). Ningún objeto que puso el plan del entorno puede tocar la calzada ni el
+    /// acotamiento (`escenario.via`, capas `calzada` y `acotamiento`):
+    /// - las señales, los postes, las luminarias y los árboles se llevan a la orilla más cercana, o se
+    ///   quitan si no hay orilla a menos de 30 m;
+    /// - las cercas (postes y alambre) se cortan donde cruzan una vía: quedan los tramos de fuera;
+    /// - los edificios y bardas que la tocan se quitan.
+    /// Los objetos del caso (`resultado.objetos`) no se tocan: son evidencia y van donde los puso el perito.
     /// </summary>
     public static class Calzada
     {
-        /// <summary>Qué tan adentro tiene que estar un punto para contar como «en medio» (m).</summary>
-        public const double Margen = 0.6;
-
         /// <summary>Cuánto más allá de la orilla queda lo que se mueve (m).</summary>
-        public const double Holgura = 0.8;
+        public const double Holgura = 0.5;
 
         /// <summary>Hasta dónde se busca la orilla (m); en un cruce enorme puede no haber, y entonces se quita.</summary>
         public const double Busqueda = 30.0;
 
-        private sealed class Triangulos
+        /// <summary>El radio de lo que ocupa en el piso un poste, una señal o una luminaria (m).</summary>
+        public const double RadioPoste = 0.3;
+
+        /// <summary>El de un árbol: el tronco y el arranque de las raíces (m).</summary>
+        public const double RadioArbol = 0.5;
+
+        /// <summary>El tramo de cerca más corto que vale la pena dibujar (m).</summary>
+        public const double CercaMinima = 1.5;
+
+        private const double Celda = 4.0;
+
+        /// <summary>Los triángulos de la vía, con una rejilla de 4 m para buscar rápido.</summary>
+        public sealed class Via
         {
-            public readonly List<(double Ax, double Ay, double Bx, double By, double Cx, double Cy, double X0, double Y0, double X1, double Y1)> Lista =
+            private readonly List<(double Ax, double Ay, double Bx, double By, double Cx, double Cy, double X0, double Y0, double X1, double Y1)> lista =
                 new List<(double, double, double, double, double, double, double, double, double, double)>();
 
+            private readonly Dictionary<(long, long), List<int>> rejilla = new Dictionary<(long, long), List<int>>();
+
+            public int Triangulos => lista.Count;
+
+            public static Via De(Escenario e)
+            {
+                return De(e?.Via);
+            }
+
+            public static Via De(ViaEscenario via)
+            {
+                var v = new Via();
+                foreach (var capa in via?.Capas ?? new CapaEscenario[0])
+                {
+                    if ((capa.Nombre != NombreCapa.Calzada && capa.Nombre != NombreCapa.Acotamiento) || capa.Posiciones == null || capa.Indices == null)
+                    {
+                        continue;
+                    }
+
+                    var p = capa.Posiciones;
+                    var i = capa.Indices;
+                    for (var k = 0; k + 2 < i.Length; k += 3)
+                    {
+                        v.Agregar(p[2 * i[k]], p[2 * i[k] + 1], p[2 * i[k + 1]], p[2 * i[k + 1] + 1], p[2 * i[k + 2]], p[2 * i[k + 2] + 1]);
+                    }
+                }
+
+                return v;
+            }
+
+            private void Agregar(double ax, double ay, double bx, double by, double cx, double cy)
+            {
+                var t = (ax, ay, bx, by, cx, cy, Math.Min(ax, Math.Min(bx, cx)), Math.Min(ay, Math.Min(by, cy)), Math.Max(ax, Math.Max(bx, cx)), Math.Max(ay, Math.Max(by, cy)));
+                lista.Add(t);
+                for (var gx = (long)Math.Floor(t.Item7 / Celda); gx <= (long)Math.Floor(t.Item9 / Celda); gx++)
+                {
+                    for (var gy = (long)Math.Floor(t.Item8 / Celda); gy <= (long)Math.Floor(t.Item10 / Celda); gy++)
+                    {
+                        if (!rejilla.TryGetValue((gx, gy), out var l))
+                        {
+                            rejilla[(gx, gy)] = l = new List<int>();
+                        }
+
+                        l.Add(lista.Count - 1);
+                    }
+                }
+            }
+
+            /// <summary>Si el punto cae sobre la calzada o el acotamiento.</summary>
             public bool Dentro(double x, double y)
             {
-                foreach (var t in Lista)
+                if (!rejilla.TryGetValue(((long)Math.Floor(x / Celda), (long)Math.Floor(y / Celda)), out var l))
                 {
+                    return false;
+                }
+
+                foreach (var k in l)
+                {
+                    var t = lista[k];
                     if (x < t.X0 || x > t.X1 || y < t.Y0 || y > t.Y1)
                     {
                         continue;
@@ -48,70 +116,197 @@ namespace Croquis.Core
 
                 return false;
             }
-        }
 
-        /// <summary>Si (x, y) está en medio de la calzada: dentro, y también a `Margen` en las cuatro direcciones.</summary>
-        private static bool EnMedio(Triangulos t, double x, double y)
-        {
-            return t.Dentro(x + Margen, y) && t.Dentro(x - Margen, y) && t.Dentro(x, y + Margen) && t.Dentro(x, y - Margen);
-        }
-
-        /// <summary>La orilla más cercana (con `Holgura` de más), o nulo si no hay a menos de `Busqueda` m.</summary>
-        private static (double X, double Y)? Orilla(Triangulos t, double x, double y)
-        {
-            for (var r = 0.5; r <= Busqueda; r += 0.5)
+            /// <summary>Si un disco de radio r (un poste, un tronco) toca la vía: su centro y 8 puntos de su orilla.</summary>
+            public bool TocaDisco(double x, double y, double r)
             {
-                for (var k = 0; k < 16; k++)
-                {
-                    var a = k * Math.PI / 8.0;
-                    var px = x + Math.Cos(a) * r;
-                    var py = y + Math.Sin(a) * r;
-                    if (!t.Dentro(px, py))
-                    {
-                        return (x + Math.Cos(a) * (r + Holgura), y + Math.Sin(a) * (r + Holgura));
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>Lleva a la orilla (o quita) lo procedural que quedó en medio de la calzada; devuelve cuántos.</summary>
-        public static int Despejar(Escenario e)
-        {
-            var t = new Triangulos();
-            foreach (var capa in e?.Via?.Capas ?? new CapaEscenario[0])
-            {
-                if (capa.Nombre != NombreCapa.Calzada || capa.Posiciones == null || capa.Indices == null)
-                {
-                    continue;
-                }
-
-                var p = capa.Posiciones;
-                var i = capa.Indices;
-                for (var k = 0; k + 2 < i.Length; k += 3)
-                {
-                    double ax = p[2 * i[k]], ay = p[2 * i[k] + 1], bx = p[2 * i[k + 1]], by = p[2 * i[k + 1] + 1], cx = p[2 * i[k + 2]], cy = p[2 * i[k + 2] + 1];
-                    t.Lista.Add((ax, ay, bx, by, cx, cy, Math.Min(ax, Math.Min(bx, cx)), Math.Min(ay, Math.Min(by, cy)), Math.Max(ax, Math.Max(bx, cx)), Math.Max(ay, Math.Max(by, cy))));
-                }
-            }
-
-            if (t.Lista.Count == 0 || e.Entorno == null)
-            {
-                return 0;
-            }
-
-            var movidos = 0;
-            // Lo lleva a la orilla; si no hay orilla cerca (en medio de un cruce enorme), dice que se quite.
-            bool Quedarse(double x, double y, Action<double, double> poner)
-            {
-                if (!EnMedio(t, x, y))
+                if (Dentro(x, y))
                 {
                     return true;
                 }
 
-                movidos++;
-                var o = Orilla(t, x, y);
+                for (var k = 0; k < 8; k++)
+                {
+                    var a = k * Math.PI / 4.0;
+                    if (Dentro(x + Math.Cos(a) * r, y + Math.Sin(a) * r))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            /// <summary>Si un rectángulo (centro, eje largo con rumbo, medidas) toca la vía: una rejilla de puntos a menos de 1 m.</summary>
+            public bool TocaRectangulo(double cx, double cy, double rumbo, double largo, double fondo)
+            {
+                var c = Math.Cos(rumbo);
+                var s = Math.Sin(rumbo);
+                var nu = Math.Max(1, (int)Math.Ceiling(largo / 1.0));
+                var nv = Math.Max(1, (int)Math.Ceiling(fondo / 1.0));
+                for (var i = 0; i <= nu; i++)
+                {
+                    for (var j = 0; j <= nv; j++)
+                    {
+                        var u = -largo / 2.0 + largo * i / nu;
+                        var v = -fondo / 2.0 + fondo * j / nv;
+                        if (Dentro(cx + u * c - v * s, cy + u * s + v * c))
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+            }
+
+            /// <summary>Si un tramo toca la vía, cada 25 cm y con el grueso de un poste.</summary>
+            public bool TocaTramo(double ax, double ay, double bx, double by)
+            {
+                var largo = Math.Sqrt((bx - ax) * (bx - ax) + (by - ay) * (by - ay));
+                var n = Math.Max(1, (int)Math.Ceiling(largo / 0.25));
+                for (var k = 0; k <= n; k++)
+                {
+                    if (TocaDisco(ax + (bx - ax) * k / n, ay + (by - ay) * k / n, 0.1))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            /// <summary>El lugar libre más cercano para un disco de radio r (con `Holgura`), o nulo si no hay a menos de `Busqueda` m.</summary>
+            public (double X, double Y)? Orilla(double x, double y, double r)
+            {
+                for (var d = 0.5; d <= Busqueda; d += 0.5)
+                {
+                    for (var k = 0; k < 16; k++)
+                    {
+                        var a = k * Math.PI / 8.0;
+                        var px = x + Math.Cos(a) * d;
+                        var py = y + Math.Sin(a) * d;
+                        if (!TocaDisco(px, py, r + Holgura))
+                        {
+                            return (px, py);
+                        }
+                    }
+                }
+
+                return null;
+            }
+
+            /// <summary>Los tramos de una cerca que quedan fuera de la vía (cada uno de `CercaMinima` o más).</summary>
+            public List<(double Ax, double Ay, double Bx, double By)> Cortar(double ax, double ay, double bx, double by)
+            {
+                var tramos = new List<(double, double, double, double)>();
+                var largo = Math.Sqrt((bx - ax) * (bx - ax) + (by - ay) * (by - ay));
+                var n = Math.Max(1, (int)Math.Ceiling(largo / 0.25));
+                var inicio = -1;
+                for (var k = 0; k <= n + 1; k++)
+                {
+                    var libre = k <= n && !TocaDisco(ax + (bx - ax) * k / n, ay + (by - ay) * k / n, Holgura);
+                    if (libre && inicio < 0)
+                    {
+                        inicio = k;
+                    }
+                    else if (!libre && inicio >= 0)
+                    {
+                        var fin = k - 1;
+                        if (largo * (fin - inicio) / n >= CercaMinima)
+                        {
+                            tramos.Add((ax + (bx - ax) * inicio / n, ay + (by - ay) * inicio / n, ax + (bx - ax) * fin / n, ay + (by - ay) * fin / n));
+                        }
+
+                        inicio = -1;
+                    }
+                }
+
+                return tramos;
+            }
+        }
+
+        /// <summary>
+        /// Lo procedural que toca la calzada o el acotamiento, como «tipo (x, y)». Vacío si nada. Es la medida
+        /// de la prueba: después de `Despejar` debe quedar vacío en todo paquete.
+        /// </summary>
+        public static List<string> Invasores(Escenario e)
+        {
+            var lista = new List<string>();
+            var v = Via.De(e);
+            if (v.Triangulos == 0)
+            {
+                return lista;
+            }
+
+            var en = e.Entorno;
+            void Disco(string que, double x, double y, double r)
+            {
+                if (v.TocaDisco(x, y, r))
+                {
+                    lista.Add(que + " (" + x.ToString("0.0") + ", " + y.ToString("0.0") + ")");
+                }
+            }
+
+            foreach (var s in en?.Senales ?? new SenalEscenario[0])
+            {
+                Disco("señal", s.X, s.Y, RadioPoste);
+            }
+
+            foreach (var s in en?.Postes ?? new PosteEscenario[0])
+            {
+                Disco("poste", s.X, s.Y, RadioPoste);
+            }
+
+            foreach (var s in en?.Arboles ?? new ArbolEscenario[0])
+            {
+                Disco("árbol", s.X, s.Y, RadioArbol);
+            }
+
+            foreach (var s in e.Luminarias ?? new LuminariaEscenario[0])
+            {
+                Disco("luminaria", s.X, s.Y, RadioPoste);
+            }
+
+            foreach (var c in en?.Cercas ?? new SegmentoPlano[0])
+            {
+                if (v.TocaTramo(c.Ax, c.Ay, c.Bx, c.By))
+                {
+                    lista.Add("cerca (" + c.Ax.ToString("0.0") + ", " + c.Ay.ToString("0.0") + ") → (" + c.Bx.ToString("0.0") + ", " + c.By.ToString("0.0") + ")");
+                }
+            }
+
+            foreach (var b in en?.Edificios ?? new EdificioEscenario[0])
+            {
+                if (v.TocaRectangulo(b.X, b.Y, b.RumboRad, b.LargoM, b.FondoM))
+                {
+                    lista.Add("edificio (" + b.X.ToString("0.0") + ", " + b.Y.ToString("0.0") + ")");
+                }
+            }
+
+            return lista;
+        }
+
+        /// <summary>Lleva a la orilla, corta o quita lo procedural que toca la vía; devuelve cuántos objetos cambió.</summary>
+        public static int Despejar(Escenario e)
+        {
+            var v = Via.De(e);
+            if (v.Triangulos == 0 || e?.Entorno == null)
+            {
+                return 0;
+            }
+
+            var cambiados = 0;
+            // Lo lleva a la orilla; si no hay orilla cerca (en medio de un cruce enorme), dice que se quite.
+            bool Quedarse(double x, double y, double r, Action<double, double> poner)
+            {
+                if (!v.TocaDisco(x, y, r))
+                {
+                    return true;
+                }
+
+                cambiados++;
+                var o = v.Orilla(x, y, r);
                 if (!o.HasValue)
                 {
                     return false;
@@ -122,11 +317,38 @@ namespace Croquis.Core
             }
 
             var en = e.Entorno;
-            en.Senales = Array.FindAll(en.Senales ?? new SenalEscenario[0], s => Quedarse(s.X, s.Y, (x, y) => { s.X = x; s.Y = y; }));
-            en.Postes = Array.FindAll(en.Postes ?? new PosteEscenario[0], s => Quedarse(s.X, s.Y, (x, y) => { s.X = x; s.Y = y; }));
-            en.Arboles = Array.FindAll(en.Arboles ?? new ArbolEscenario[0], s => Quedarse(s.X, s.Y, (x, y) => { s.X = x; s.Y = y; }));
-            e.Luminarias = Array.FindAll(e.Luminarias ?? new LuminariaEscenario[0], s => Quedarse(s.X, s.Y, (x, y) => { s.X = x; s.Y = y; }));
-            return movidos;
+            en.Senales = Array.FindAll(en.Senales ?? new SenalEscenario[0], s => Quedarse(s.X, s.Y, RadioPoste, (x, y) => { s.X = x; s.Y = y; }));
+            en.Postes = Array.FindAll(en.Postes ?? new PosteEscenario[0], s => Quedarse(s.X, s.Y, RadioPoste, (x, y) => { s.X = x; s.Y = y; }));
+            en.Arboles = Array.FindAll(en.Arboles ?? new ArbolEscenario[0], s => Quedarse(s.X, s.Y, RadioArbol, (x, y) => { s.X = x; s.Y = y; }));
+            e.Luminarias = Array.FindAll(e.Luminarias ?? new LuminariaEscenario[0], s => Quedarse(s.X, s.Y, RadioPoste, (x, y) => { s.X = x; s.Y = y; }));
+
+            // Las cercas se cortan donde cruzan una vía, nunca la atraviesan.
+            var cercas = new List<SegmentoPlano>();
+            foreach (var c in en.Cercas ?? new SegmentoPlano[0])
+            {
+                if (!v.TocaTramo(c.Ax, c.Ay, c.Bx, c.By))
+                {
+                    cercas.Add(c);
+                    continue;
+                }
+
+                cambiados++;
+                foreach (var t in v.Cortar(c.Ax, c.Ay, c.Bx, c.By))
+                {
+                    cercas.Add(new SegmentoPlano { Ax = t.Ax, Ay = t.Ay, Bx = t.Bx, By = t.By });
+                }
+            }
+
+            en.Cercas = cercas.ToArray();
+
+            // Un edificio o una barda sobre la vía no se puede mover sin chocar con otro lote: se quita.
+            en.Edificios = Array.FindAll(en.Edificios ?? new EdificioEscenario[0], b =>
+            {
+                var toca = v.TocaRectangulo(b.X, b.Y, b.RumboRad, b.LargoM, b.FondoM);
+                cambiados += toca ? 1 : 0;
+                return !toca;
+            });
+            return cambiados;
         }
     }
 }
