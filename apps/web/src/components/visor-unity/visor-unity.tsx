@@ -10,7 +10,7 @@
  */
 import type { CamaraDelCaso } from "@/lib/visor-unity/camaras";
 import type { PisoUnity } from "@/lib/visor-unity/piso";
-import { conLeyenda, conPisoYFantasma } from "@croquis/scene-schema";
+import { conCamaraAutomatica, conLeyenda, conPisoYFantasma } from "@croquis/scene-schema";
 import type {
   Resultado,
   CamaraVisor,
@@ -45,6 +45,7 @@ import {
 import { BarraReproduccion } from "./barra-reproduccion";
 import { EnRanura, useMarco } from "./marco-vista";
 import {
+  CAMARA_LENTA_VIDEO,
   escalaMedida,
   grabarVideoUnity,
   instantesDelVideo,
@@ -567,8 +568,17 @@ export function VisorUnity({
   } | null>(null);
   const cancelarVideo = useRef<AbortController | null>(null);
   const caja = useRef<HTMLDivElement>(null);
-  const descargarVideo = async () => {
+  // La cámara del video (René, 2026-11-27): el perito la elige en el diálogo, antes de grabar. Por
+  // omisión, la «Automática» (puente 1.5.0): el contacto siempre a la vista.
+  const [dialogoVideo, setDialogoVideo] = useState<string | null>(null);
+  const automatica = conCamaraAutomatica(puente?.version);
+  const abrirDialogoVideo = () => {
+    setAvisoVideo(null);
+    setDialogoVideo(automatica ? "automatica" : (elegida?.modo ?? "cinematica"));
+  };
+  const descargarVideo = async (camaraVideo: CamaraVisor) => {
     const c = lienzo.current;
+    setDialogoVideo(null);
     if (!puente || !intervalo || !c || grabacion) return;
     setAvisoVideo(null);
     if (!puedeGrabarVideo()) {
@@ -584,6 +594,7 @@ export function VisorUnity({
     setRep(repActual.current);
     puente.enviar("pausar", {});
     puente.minimapa(false);
+    puente.enviar("camara", { modo: camaraVideo });
     // Con tarjeta dedicada, al doble y en `ultra` (antialiasing, René, 2026-11-26); con integrada,
     // como antes: 1× y la calidad automática (a 2× la laptop de 8 GB no dibujó ningún cuadro).
     let modo = modoDelVideo(rendererDeLaTarjeta());
@@ -633,6 +644,8 @@ export function VisorUnity({
           fin: intervalo.fin,
           logo,
           leyenda: LEYENDA_3D,
+          // La automática lleva el impacto en cámara lenta, con su letrero.
+          lenta: camaraVideo === "automatica" ? CAMARA_LENTA_VIDEO : null,
           signal: corte.signal,
           alProgreso: (hechos, total, ms) => setGrabacion({ hechos, total, ms }),
           confirmar: (ms) =>
@@ -657,7 +670,9 @@ export function VisorUnity({
       a.href = url;
       a.download = nombreDelVideo(
         escena.meta?.titulo ?? escena.meta?.id ?? "caso",
-        camaras.find((x) => x.modo === elegida?.modo)?.nombre ?? null,
+        camaraVideo === "automatica"
+          ? "automatica"
+          : (camaras.find((x) => x.modo === camaraVideo)?.nombre ?? null),
       );
       document.body.appendChild(a);
       a.click();
@@ -685,6 +700,8 @@ export function VisorUnity({
       setVueltas((v) => v + 1);
       if (pisoActual.current) enviarPiso(pisoActual.current, true);
       puente.enviar("fijarTiempo", { t: antes.t });
+      // De vuelta a la cámara que el perito tenía en el 3D.
+      puente.enviar("camara", { modo: elegida?.modo ?? "cinematica" });
       cancelarVideo.current = null;
       setGrabacion(null);
     }
@@ -793,7 +810,7 @@ export function VisorUnity({
             <button
               type="button"
               className="boton-secundario boton-compacto"
-              onClick={() => void descargarVideo()}
+              onClick={abrirDialogoVideo}
               disabled={grabacion !== null}
               data-testid="descargar-video"
             >
@@ -810,6 +827,70 @@ export function VisorUnity({
         >
           {avisoVideo}
         </p>
+      ) : null}
+      {dialogoVideo && !grabacion ? (
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-fondo/80">
+          <form
+            className="vidrio flex w-[min(380px,90%)] flex-col gap-3 rounded-panel p-5"
+            role="dialog"
+            aria-label="Descargar video"
+            data-testid="dialogo-video"
+            onSubmit={(e) => {
+              e.preventDefault();
+              void descargarVideo(dialogoVideo as CamaraVisor);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setDialogoVideo(null);
+            }}
+          >
+            <span className="t-interfaz font-semibold">Descargar video</span>
+            <label className="flex flex-col gap-1">
+              <span className="t-nota">Cámara</span>
+              <select
+                className="campo"
+                value={dialogoVideo}
+                onChange={(e) => setDialogoVideo(e.target.value)}
+                data-testid="video-camara"
+                autoFocus
+              >
+                {automatica ? (
+                  <option value="automatica">Automática: la llegada, el impacto y el final</option>
+                ) : null}
+                {camaras.map((x) => (
+                  <option key={x.modo} value={x.modo}>
+                    {x.nombre}
+                    {x.modo === elegida?.modo ? " (la que tienes en el 3D)" : ""}
+                  </option>
+                ))}
+                {camaras.some((x) => x.modo === "cinematica") ? null : (
+                  <option value="cinematica">Cinematográfica</option>
+                )}
+              </select>
+            </label>
+            {dialogoVideo === "automatica" ? (
+              <span className="t-nota" data-testid="video-camara-nota">
+                El punto de contacto siempre a la vista: la llegada, el impacto de cerca y en cámara
+                lenta, y las posiciones finales desde arriba.
+              </span>
+            ) : null}
+            <div className="flex gap-2 self-end">
+              <button
+                type="button"
+                className="boton-secundario boton-compacto"
+                onClick={() => setDialogoVideo(null)}
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="boton-principal boton-compacto"
+                data-testid="video-grabar"
+              >
+                Grabar
+              </button>
+            </div>
+          </form>
+        </div>
       ) : null}
       {grabacion ? (
         <div
