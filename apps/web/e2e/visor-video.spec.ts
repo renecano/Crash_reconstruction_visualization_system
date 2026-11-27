@@ -48,7 +48,10 @@ test("/cesvi: descargar el video del 3D en MP4 1080p", async ({ page }) => {
 
   // Cancelar con Esc deja todo como estaba.
   const boton = page.getByTestId("descargar-video");
+  // El perito elige la cámara antes de grabar (René, 2026-11-27); por omisión, la automática.
   await boton.click();
+  await expect(page.getByTestId("video-camara")).toHaveValue("automatica");
+  await page.getByTestId("video-grabar").click();
   await expect(page.getByTestId("grabando-video")).toBeVisible();
   await expect(page.getByTestId("falta-video")).toContainText("1920×1080, MP4");
   await page.screenshot({
@@ -62,12 +65,24 @@ test("/cesvi: descargar el video del 3D en MP4 1080p", async ({ page }) => {
   // El video completo.
   const [descarga] = await Promise.all([
     page.waitForEvent("download", { timeout: 360_000 }),
-    boton.click(),
+    boton.click().then(() => page.getByTestId("video-grabar").click()),
   ]);
   await expect(page.getByTestId("falta-video")).toHaveCount(0, { timeout: 360_000 });
   expect(descarga.suggestedFilename()).toMatch(/^croquis-.+\.mp4$/);
   const { input, paquetes } = await leerMp4(readFileSync(await descarga.path()));
-  // Los instantes que Unity recibió: de inicio a fin cada 1/30 s.
+  // Los instantes que Unity recibió: de inicio a fin cada 1/30 s, y en el impacto (de −0.35 a 0.8 s)
+  // cada 1/150 s: la cámara lenta ×5 de la automática. Y la cámara: la automática para grabar y luego
+  // la que tenía el perito.
+  const camaras = await page.evaluate(() =>
+    (
+      window as unknown as {
+        __unityFalso: { recibidos: { metodo: string; datos: { modo?: string } }[] };
+      }
+    ).__unityFalso.recibidos
+      .filter((r) => r.metodo === "camara")
+      .map((r) => r.datos.modo),
+  );
+  expect(camaras.slice(-2)).toEqual(["automatica", "cinematica"]);
   const fijados = await page.evaluate(() =>
     (
       window as unknown as {
@@ -80,6 +95,8 @@ test("/cesvi: descargar el video del 3D en MP4 1080p", async ({ page }) => {
   expect(paquetes).toBeGreaterThan(30);
   expect(await input.computeDuration()).toBeCloseTo(paquetes / 30, 1);
   expect(fijados.length).toBeGreaterThanOrEqual(paquetes);
+  const lentos = fijados.filter((t, i) => i > 0 && t > 0 && t < 0.7 && t - fijados[i - 1]! < 0.01);
+  expect(lentos.length).toBeGreaterThan(80);
   const tags = await input.getMetadataTags();
   expect(String(tags.comment ?? tags.description ?? "")).toContain("ilustrativa");
   await expect(page.getByTestId("aviso-video")).toContainText("Listo");
@@ -120,7 +137,10 @@ test("/cesvi: si el codificador falla, el reintento por software entrega el MP4"
   await abrirEl3d(page);
   const [descarga] = await Promise.all([
     page.waitForEvent("download", { timeout: 360_000 }),
-    page.getByTestId("descargar-video").click(),
+    page
+      .getByTestId("descargar-video")
+      .click()
+      .then(() => page.getByTestId("video-grabar").click()),
   ]);
   await expect(page.getByTestId("aviso-video")).toContainText("Listo", { timeout: 60_000 });
   await expect(page.getByTestId("aviso-video")).not.toContainText("Encoding");

@@ -7,6 +7,8 @@ import {
   UMBRAL_DOBLE_MS,
   ANCHO_VIDEO,
   instantesDelVideo,
+  CAMARA_LENTA_VIDEO,
+  rotuloLenta,
   lienzoDelVideo,
   modoDelVideo,
   tarjetaIntegrada,
@@ -26,6 +28,13 @@ describe("descargar el video del 3D (René, 2026-11-18, B7)", () => {
     expect(instantesDelVideo(0, 0.1)).toHaveLength(4);
     // Un intervalo vacío da un solo cuadro.
     expect(instantesDelVideo(3, 3)).toEqual([3]);
+    // La cámara lenta del impacto: en la ventana, cada cuadro avanza la quinta parte.
+    const l = instantesDelVideo(-1, 1, 30, CAMARA_LENTA_VIDEO);
+    const enVentana = l.filter((t) => t >= -0.35 && t <= 0.8);
+    expect(enVentana.length).toBeGreaterThanOrEqual(165); // ~1.13 s × 30 / 0.2
+    expect(l.filter((t) => t < -0.35).length).toBe(Math.ceil(0.65 * 30));
+    expect(l.at(-1)).toBeLessThanOrEqual(1 + 1e-9);
+    expect(rotuloLenta(CAMARA_LENTA_VIDEO)).toBe("Cámara lenta ×5");
   });
 
   it("cuánto falta, en palabras", () => {

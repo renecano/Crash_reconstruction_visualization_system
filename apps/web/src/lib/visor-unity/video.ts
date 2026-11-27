@@ -67,11 +67,43 @@ export function textoTarda(ms: number): string {
 }
 
 /** Los instantes de cada cuadro, de `inicio` a `fin` a `fps` (sin pasar de `fin`). */
-export function instantesDelVideo(inicio: number, fin: number, fps = FPS_VIDEO): number[] {
+export function instantesDelVideo(
+  inicio: number,
+  fin: number,
+  fps = FPS_VIDEO,
+  lenta: CamaraLenta | null = null,
+): number[] {
   if (!(fin > inicio)) return [inicio];
-  const n = Math.floor((fin - inicio) * fps + 1e-9) + 1;
-  return Array.from({ length: n }, (_, i) => inicio + i / fps);
+  if (!lenta) {
+    const n = Math.floor((fin - inicio) * fps + 1e-9) + 1;
+    return Array.from({ length: n }, (_, i) => inicio + i / fps);
+  }
+  // En la ventana del impacto, cada cuadro avanza `factor` de lo normal: el impacto dura más en el video.
+  const t: number[] = [];
+  for (let x = inicio; x <= fin + 1e-9;) {
+    t.push(x);
+    x += (enLenta(x, lenta) ? lenta.factor : 1) / fps;
+  }
+  return t;
 }
+
+/** La cámara lenta del video: de `desde` a `hasta` (s, 0 es el impacto), a `factor` de la velocidad. */
+export interface CamaraLenta {
+  desde: number;
+  hasta: number;
+  factor: number;
+}
+
+/**
+ * La misma ventana y el mismo ×5 que la reproducción en Unity (`EnfasisImpacto`: 0.35 s antes y 0.8 s
+ * después del impacto, a 0.2 de la velocidad).
+ */
+export const CAMARA_LENTA_VIDEO: CamaraLenta = { desde: -0.35, hasta: 0.8, factor: 0.2 };
+
+export const enLenta = (t: number, l: CamaraLenta) => t >= l.desde - 1e-9 && t <= l.hasta + 1e-9;
+
+/** «Cámara lenta ×5». */
+export const rotuloLenta = (l: CamaraLenta) => `Cámara lenta ×${Math.round(1 / l.factor)}`;
 
 /** «Faltan 40 s», «Falta 1 min 5 s», «Casi listo», a partir de lo que llevan los cuadros hechos. */
 export function textoFalta(hechos: number, total: number, msTranscurridos: number): string {
@@ -139,6 +171,8 @@ export interface OpcionesGrabacion {
    * cuadros: si pasa de `AVISAR_DESDE_MS`, se pregunta y con `false` se cancela. Sin él, no se pregunta.
    */
   confirmar?: (msEstimados: number) => Promise<boolean>;
+  /** La cámara lenta alrededor del impacto (con su letrero en el cuadro); sin ella, todo a 1×. */
+  lenta?: CamaraLenta | null;
 }
 
 /** Espera la siguiente vuelta del navegador. */
@@ -255,7 +289,7 @@ export async function grabarVideoUnity(o: OpcionesGrabacion): Promise<Blob> {
   const ctx = comp.getContext("2d");
   if (!ctx) throw new VideoNoDisponible("No hay contexto 2D para componer el video.");
 
-  const instantes = instantesDelVideo(o.inicio, o.fin);
+  const instantes = instantesDelVideo(o.inicio, o.fin, FPS_VIDEO, o.lenta ?? null);
   let pregunto = false;
   const pasada = async (
     l: ReturnType<typeof lectorDeCuadros>,
@@ -294,7 +328,13 @@ export async function grabarVideoUnity(o: OpcionesGrabacion): Promise<Blob> {
         await l.esperar(i === 0 ? 4 : 2);
         const cuadro = l.ultimo();
         if (!cuadro) throw new VideoNoDisponible("El 3D no dibujó ningún cuadro.");
-        dibujar(ctx, cuadro, o.logo, o.credito ?? null);
+        dibujar(
+          ctx,
+          cuadro,
+          o.logo,
+          o.credito ?? null,
+          o.lenta && enLenta(instantes[i]!, o.lenta) ? rotuloLenta(o.lenta) : null,
+        );
         await source.add(i / FPS_VIDEO, 1 / FPS_VIDEO);
         o.alProgreso?.(i + 1, instantes.length, performance.now() - empezo);
         if (
@@ -349,6 +389,7 @@ function dibujar(
   cuadro: VideoFrame,
   logo: HTMLImageElement | null,
   credito: string | null = null,
+  rotulo: string | null = null,
 ) {
   const w = cuadro.displayWidth;
   const h = cuadro.displayHeight;
@@ -368,6 +409,17 @@ function dibujar(
     ctx.shadowColor = "rgba(0,0,0,0.55)";
     ctx.shadowBlur = 12;
     ctx.drawImage(logo, ANCHO_VIDEO - ancho - 48, 40, ancho, alto);
+    ctx.restore();
+  }
+  if (rotulo) {
+    ctx.save();
+    ctx.font = "600 30px system-ui, sans-serif";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.shadowColor = "rgba(0,0,0,0.7)";
+    ctx.shadowBlur = 8;
+    ctx.fillStyle = "#fff";
+    ctx.fillText(rotulo, 48, 44);
     ctx.restore();
   }
   if (credito) {
