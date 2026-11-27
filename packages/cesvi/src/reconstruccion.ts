@@ -126,6 +126,23 @@ export function derrapeAntes(cita: string | undefined): boolean {
   );
 }
 /**
+ * Si la cita de un derrape lo pone después del choque: «Después del contacto, el vehículo B dejó una
+ * huella de derrape … que inicia en el área de contacto». Va como evidencia de lo que recorrió después
+ * del impacto (René, 2026-11-26: los 18.40 m del Sentra no entraban a la reconstrucción).
+ */
+export function derrapeDespues(cita: string | undefined): boolean {
+  const t = cita ?? "";
+  return (
+    /\b(?:despu[eé]s|posterior(?:es|mente)?|tras)\b[^.]{0,20}\b(?:del?|al)\s+(?:impacto|choque|colisi[oó]n|golpe|contacto)/i.test(
+      t,
+    ) ||
+    /\b(?:inicia|empieza|comienza|parte)\s+en\s+(?:el|la)\s+(?:[aá]rea|punto|zona)\s+de\s+(?:contacto|impacto)/i.test(
+      t,
+    )
+  );
+}
+
+/**
  * Las medidas de un objeto que el perito marca sin medirlo: valores típicos, declarados como
  * supuesto. El muro, la barda, la barrera y la guarnición son un tramo de 6 m.
  */
@@ -1065,7 +1082,11 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       tipo: h.tipo === "frenado" ? "marcas_frenado" : "marcas_derrape",
       // Un derrape que la narración pone antes del choque («antes de la salida del camino», «previo
       // al impacto») es de antes del impacto, como el frenado (René, 2026-11-24).
-      ...(h.tipo === "frenado" || derrapeAntes(h.cita?.texto) ? { fase: "antes_impacto" } : {}),
+      ...(h.tipo === "frenado" || derrapeAntes(h.cita?.texto)
+        ? { fase: "antes_impacto" }
+        : derrapeDespues(h.cita?.texto)
+          ? { fase: "despues_impacto" }
+          : {}),
       vehiculo_id: idEscena(h.vehiculo),
       longitud: {
         valor: h.longitud.valor,

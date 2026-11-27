@@ -47,6 +47,8 @@ const VIGENTES = [
   // Solo el bloque «Ahora»: desde «Antes: …» la sección es la bitácora de las fases anteriores.
   { ruta: "docs/PROGRESS.md", seccion: "## Estado actual", hasta: /^- \*\*Antes/ },
   { ruta: "docs/cesvi/PLAN-CESVI.md" },
+  // El guion de la demo (René, 2026-11-26: sus cifras de los ejemplos se habían quedado atrás).
+  { ruta: "docs/cesvi/demo/guion.md" },
 ];
 
 /** Las líneas del documento (o de su sección), con su número. */

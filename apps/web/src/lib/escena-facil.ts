@@ -26,6 +26,7 @@ import {
   nombrePersona,
   OBJETO_PERSONA,
   posesDeImpacto,
+  rumboDeLlegada,
   rumboDeMarcha,
   rumboDelFrente,
   objetosDe,
@@ -35,9 +36,14 @@ import {
   limiteDeLaVia,
   limiteDelLugarNarrado,
   medidasDe,
+  agregarOndulacion,
+  agregarTope,
+  agregarZona,
   type Expediente,
   type LonLat,
   type TipoObjeto,
+  type TipoSuperficie,
+  type TopeNorma,
 } from "@croquis/cesvi";
 import {
   HIGHWAY_RANK,
@@ -1006,6 +1012,25 @@ export function agregarChoqueIntermedio(
   objeto: string,
   p: Punto,
 ): Expediente {
+  // El choque contra ese objeto que ya trae la narración («hasta un poste … contra el cual se
+  // impactó»), sin lugar todavía: se completa con el punto, no se agrega otro (René, 2026-11-26: el
+  // poste del ejemplo quedaba dos veces, el narrado «sin calcular» y el marcado).
+  const nombre = sinAcentos(objeto);
+  const narrado = (e.impactos ?? []).find(
+    (i) =>
+      (i.orden ?? 1) > 1 &&
+      !i.punto &&
+      i.objeto_fijo &&
+      !OBJETO_PERSONA.test(i.objeto_fijo) &&
+      (i.vehiculos ?? []).length === 1 &&
+      i.vehiculos![0] === vehiculo &&
+      sinAcentos(i.objeto_fijo).includes(nombre),
+  );
+  if (narrado)
+    return {
+      ...e,
+      impactos: (e.impactos ?? []).map((i) => (i === narrado ? { ...i, punto: p } : i)),
+    };
   // Nunca con el orden 1: ese es el primer golpe.
   const orden = Math.max(1, ...(e.impactos ?? []).map((i) => i.orden)) + 1;
   return {
@@ -1295,7 +1320,69 @@ export function marcarChoque(
       fuente: "supuesto",
     });
   }
-  return conPersonaDelChoque(r, orden, p, rumbo);
+  return conPersonaDelChoque(conPuntoDelObjeto(r, orden, p), orden, p, rumbo);
+}
+
+/**
+ * Dónde queda un choque que toca el perito: sobre la calle más cercana (a menos de `AJUSTE_CALLE_M`),
+ * salvo un choque posterior contra un objeto, que va donde está el objeto (René, 2026-11-26: el poste
+ * del ejemplo, a 1.50 m del borde de la carpeta, se pegaba al centro de la calle). La usan La escena
+ * y la tabla del índice.
+ */
+export function puntoDelChoqueTocado(
+  e: Expediente,
+  calles: readonly Calle[],
+  orden: number,
+  p: Punto,
+): Punto {
+  const imp = (e.impactos ?? []).find((i) => (i.orden ?? 1) === orden);
+  if (orden > 1 && imp?.objeto_fijo && !OBJETO_PERSONA.test(imp.objeto_fijo)) return p;
+  return ajustarACalle(calles, p)?.punto ?? p;
+}
+
+/** Lo que se pone en el terreno con el siguiente toque. */
+export type TerrenoAPoner =
+  | { clase: "zona"; tipo: TipoSuperficie }
+  | { clase: "ondulacion" }
+  | { clase: "tope"; norma: TopeNorma };
+
+/**
+ * «¿Cómo es el terreno?»: lo que toca el perito, alineado a la calle (las zonas a lo largo, el tope
+ * atravesado). La usan La escena y la tabla del índice.
+ */
+export function ponerTerrenoEn(
+  e: Expediente,
+  calles: readonly Calle[],
+  que: TerrenoAPoner,
+  p: Punto,
+  todo = false,
+): Expediente {
+  const rumbo = calles.length ? rumboAlineado(calles, p, 0) : 0;
+  if (que.clase === "zona") return agregarZona(e, que.tipo, p, rumbo, todo).expediente;
+  if (que.clase === "ondulacion") return agregarOndulacion(e, p, rumbo).expediente;
+  return agregarTope(e, p, rumbo, que.norma).expediente;
+}
+
+/**
+ * Un choque posterior contra un objeto que trae la narración («hasta un poste … contra el cual se
+ * impactó»): el lugar que marca el perito es el del objeto, y va en el impacto, como en «¿Chocó contra
+ * algo más?», para que la reconstrucción calcule ese golpe (René, 2026-11-26: el Sentra perdía la
+ * energía del poste porque el punto no se guardaba y el impacto quedaba «sin calcular»). Una persona
+ * no es un objeto fijo: la coloca `conPersonaDelChoque`.
+ */
+function conPuntoDelObjeto(e: Expediente, orden: number, p: Punto): Expediente {
+  const imp = (e.impactos ?? []).find((i) => (i.orden ?? 1) === orden);
+  if (
+    orden <= 1 ||
+    !imp?.objeto_fijo ||
+    OBJETO_PERSONA.test(imp.objeto_fijo) ||
+    (imp.vehiculos ?? []).length !== 1
+  )
+    return e;
+  return {
+    ...e,
+    impactos: (e.impactos ?? []).map((i) => (i === imp ? { ...i, punto: p } : i)),
+  };
 }
 
 /**
@@ -1376,6 +1463,44 @@ export function elegirDireccion(
 }
 
 /** «Lo marco en el mapa»: dónde quedó, alineado a la calle si hay una cerca. */
+/**
+ * Un choque marcado con un toque en el mapa: el rumbo del primer vehículo de ese choque es el narrado,
+ * o el de su llegada si ya tenía pose, o el de la calle de ese punto. La usan La escena y la tabla de
+ * los ejemplos (René, 2026-11-26).
+ */
+export function tocarChoque(
+  e: Expediente,
+  impactos: readonly ImpactoAColocar[],
+  orden: number,
+  p: Punto,
+  sentidoDelPrimero: SentidoNarrado | null,
+  calles: readonly Calle[],
+): Expediente {
+  const primero = impactos.find((i) => i.orden === orden)?.vehiculos[0];
+  const previa = primero ? poseDe(e, primero, "impacto") : null;
+  const rumbo =
+    sentidoDelPrimero?.rumbo ??
+    (previa && primero ? rumboDeLlegada(e, primero, previa.rumbo) : null) ??
+    (calles.length ? rumboAlineado(calles, p, 0) : 0);
+  return marcarChoque(e, impactos, orden, p, rumbo);
+}
+
+/**
+ * Dónde quedó, con un toque en el mapa: el vehículo ahí, alineado a la calle de ese punto (o con su
+ * rumbo de antes, sin calles). La usan La escena y la tabla de los ejemplos (René, 2026-11-26: «el
+ * mismo código que La escena»).
+ */
+export function tocarFinal(
+  e: Expediente,
+  vehiculo: string,
+  p: Punto,
+  calles: readonly Calle[],
+): Expediente {
+  const imp = poseDe(e, vehiculo, "impacto");
+  const previo = poseDe(e, vehiculo, "final")?.rumbo ?? imp?.rumbo ?? 0;
+  return marcarFinal(e, vehiculo, p, calles.length ? rumboAlineado(calles, p, previo) : previo);
+}
+
 export function marcarFinal(e: Expediente, vehiculo: string, p: Punto, rumbo: number): Expediente {
   return conPosicion(e, {
     vehiculo: vehiculo as Id,

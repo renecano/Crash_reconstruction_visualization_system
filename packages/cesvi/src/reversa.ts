@@ -37,6 +37,10 @@ export function velocidadSupuestaEnReversa(): Record<string, unknown> {
     fuente: "supuesto",
     confianza: 0.5,
     nota: `Supuesto: mediana de la velocidad máxima en ${REVERSA_MANIOBRAS} maniobras de reversa en uso real (${REVERSA_FUENTE}); el rango es donde cae el 80 % de las maniobras.`,
+    // Pesa como supuesto con su rango, como la velocidad narrada: si la evidencia no la saca de ahí,
+    // la reversa queda en lo medido por NHTSA (René, 2026-11-26: el CR-V daba de 0 a 17 km/h sin
+    // evidencia de más de 9). Si la evidencia la saca, lo dice `avisoReversaRapida`.
+    a_priori: true,
   };
 }
 

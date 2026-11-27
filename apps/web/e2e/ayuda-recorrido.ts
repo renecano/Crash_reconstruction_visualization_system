@@ -74,21 +74,35 @@ export async function mapaFacil(page: Page) {
 
 /**
  * Toca el mapa de la escena fácil a (este, norte) metros del centro de un marcador (`choque-1`…):
- * con la escala que el mapa publica en `data-m-por-px`.
+ * con la escala que el mapa publica en `data-m-por-px`. Si ese punto cae fuera del mapa o debajo de un
+ * control (t9-junta, 2026-11-26: «21 m adelante» con el mapa acercado caía bajo «Deshacer»), aleja el
+ * mapa y vuelve a calcular, como lo haría el perito; hasta tres veces.
  */
 export async function tocarEnMetros(page: Page, desde: string, este: number, norte: number) {
   const mapa = page.getByTestId("mapa-facil");
   await expect(mapa).toHaveAttribute("data-m-por-px", /\d/);
-  await page.waitForTimeout(700); // el mapa termina de moverse
-  const m = Number(await mapa.getAttribute("data-m-por-px"));
-  const caja = (await mapa.boundingBox())!;
-  const ref = (await page.getByTestId(desde).boundingBox())!;
-  await mapa.click({
-    position: {
-      x: ref.x + ref.width / 2 + este / m - caja.x,
-      y: ref.y + ref.height / 2 - norte / m - caja.y,
-    },
-  });
+  for (let intento = 0; ; intento++) {
+    await page.waitForTimeout(700); // el mapa termina de moverse
+    const m = Number(await mapa.getAttribute("data-m-por-px"));
+    const caja = (await mapa.boundingBox())!;
+    const ref = (await page.getByTestId(desde).boundingBox())!;
+    const x = ref.x + ref.width / 2 + este / m;
+    const y = ref.y + ref.height / 2 - norte / m;
+    const libre = await page.evaluate(
+      ([px, py]) => {
+        const el = document.elementFromPoint(px!, py!);
+        const m = document.querySelector('[data-testid="mapa-facil"]');
+        // Libre si ese punto es del mapa (su lienzo o un marcador), no un control encima.
+        return !!el && !!m && m.contains(el) && !el.closest("button, a, input, [role='button']");
+      },
+      [x, y],
+    );
+    if (libre || intento >= 3) {
+      await mapa.click({ position: { x: x - caja.x, y: y - caja.y } });
+      return;
+    }
+    await page.getByTestId("alejar").click();
+  }
 }
 
 /**

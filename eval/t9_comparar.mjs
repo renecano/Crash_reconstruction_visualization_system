@@ -48,8 +48,10 @@ function comparar(esperada, cifra, p10, p90) {
   return { diferencias, coincide };
 }
 
-// --- Los cinco ejemplos en el navegador, contra la tabla aprobada ---
-const tabla = leer("eval/results/tres_narraciones/cifras_despues.json");
+// --- Los cinco ejemplos en el navegador, contra la tabla del índice ---
+// René, 2026-11-26 (#331): la tabla arma cada ejemplo con el mismo código de La escena y el navegador
+// sigue sus toques (`e2e/recetas-perito.ts`).
+const tabla = leer("eval/results/ejemplos_en_su_lugar/cifras.json");
 const publicada = leer("eval/results/ronda4_cifras/despues.json");
 const nav = leer("eval/results/t9/ejemplos.json");
 if (!tabla || !nav) {
@@ -89,31 +91,25 @@ if (!tabla || !nav) {
   }
 }
 
-// --- Lo que publica el índice: el crucero en la app y el poste ---
-{
-  const app = leer("eval/results/t9/crucero_en_la_app.json");
-  const c = cifras["ejemplos.crucero"];
-  const r =
-    app && c ? comparar(c, app.velocidad.mejor, app.velocidad.p10, app.velocidad.p90) : null;
+// --- Lo que publica el índice: una cifra por ejemplo (René, 2026-11-26) ---
+for (const [cifra, clave] of [
+  ["ejemplos.crucero", "crucero-noche"],
+  ["ejemplos.alcance", "alcance-deformacion"],
+  ["ejemplos.carambola", "carambola-lluvia"],
+  ["ejemplos.reversa", "reversa-pendiente"],
+  ["ejemplos.poste", "poste-terraceria"],
+]) {
+  const c = cifras[cifra];
+  const e = salida.ejemplos.find((x) => x.clave === clave);
+  const m = /(\d+) \((\d+)–(\d+)\)/.exec(e?.navegador ?? "");
+  const r = c && m ? comparar(c, Number(m[1]), Number(m[2]), Number(m[3])) : null;
   if (!r?.coincide) todoCoincide = false;
   salida.indice.push({
-    cifra: "ejemplos.crucero",
+    cifra,
     indice: c?.texto ?? null,
-    medida: app ? `${app.velocidad.mejor} km/h (${app.velocidad.p10}–${app.velocidad.p90})` : null,
+    medida: e?.navegador ?? null,
     diferencias: r?.diferencias ?? [],
     coincide: Boolean(r?.coincide),
-  });
-  const p = cifras["ejemplos.poste"];
-  const e = salida.ejemplos.find((x) => x.clave === "poste-terraceria");
-  const m = /(\d+) \((\d+)–(\d+)\)/.exec(e?.navegador ?? "");
-  const rp = p && m ? comparar(p, Number(m[1]), Number(m[2]), Number(m[3])) : null;
-  if (!rp?.coincide) todoCoincide = false;
-  salida.indice.push({
-    cifra: "ejemplos.poste",
-    indice: p?.texto ?? null,
-    medida: e?.navegador ?? null,
-    diferencias: rp?.diferencias ?? [],
-    coincide: Boolean(rp?.coincide),
   });
 }
 
@@ -202,6 +198,20 @@ if (!tabla || !nav) {
     if (!x.capturas) salida.pendientes.push(`Sin captura del 3D: ${x.clave}.`);
 }
 
+/** Lo que cambia contra `main` y René ya aprobó: no es una falla de la tanda. */
+const ESPERADAS = {
+  "carambolas.prueba": {
+    despues: "19 de 31",
+    motivo:
+      "esperado: el #311 (395401c7, clase y masa por el modelo); René lo aprobó el 2026-11-26",
+  },
+  "carambolas.desarrollo": {
+    despues: "41 de 55",
+    motivo:
+      "esperado: el #311 (395401c7, clase y masa por el modelo); René lo aprobó el 2026-11-26",
+  },
+};
+
 // --- Carambolas y cobertura: antes (main, en eval/results/t9/antes/) y después (este commit) ---
 // René (2026-11-24): «para ver si el candado les quita cifra a algunas». Si cambian, van a René.
 salida.otras = [];
@@ -217,6 +227,12 @@ salida.otras = [];
       despues: tasa(d, "impactos_posteriores_ocurridos", "impactos_posteriores_en_escena"),
     };
     fila.cambia = fila.antes !== fila.despues;
+    // Esperado (René, 2026-11-26): lo mueve el #311 (395401c7, la clase y la masa por el modelo).
+    const esperada = ESPERADAS[fila.cifra];
+    if (fila.cambia && esperada && fila.despues === esperada.despues) {
+      fila.cambia = false;
+      fila.esperada = esperada.motivo;
+    }
     salida.otras.push(fila);
   }
   const a = leer("eval/results/t9/antes/t3_cobertura.json")?.total?.supuestos_sorteados;
@@ -270,7 +286,7 @@ for (const x of salida.nuevas ?? [])
   console.log(`  ${x.clave}: ${x.cifra} · ${x.capturas} capturas`);
 for (const x of salida.otras)
   console.log(
-    `${x.cambia ? "✗" : "✓"} ${x.cifra}: antes ${x.antes} · después ${x.despues} (publicada ${x.publicada})`,
+    `${x.cambia ? "✗" : "✓"} ${x.cifra}: antes ${x.antes} · después ${x.despues} (publicada ${x.publicada})${x.esperada ? ` · ${x.esperada}` : ""}`,
   );
 for (const c of salida.capturas) console.log(`  capturas ${c.clave}: ${c.capturas}`);
 for (const p of salida.pendientes) console.log(`  pendiente: ${p}`);

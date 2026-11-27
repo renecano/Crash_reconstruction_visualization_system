@@ -12,9 +12,6 @@ import {
   formato as F,
   agregarObjeto,
   agregarPersona,
-  agregarOndulacion,
-  agregarTope,
-  agregarZona,
   cambiarTamano,
   cambiarTerreno,
   conHuella,
@@ -79,7 +76,6 @@ import {
   flechasDeLlegada,
   fueraDeLaCalle,
   girar,
-  marcarChoque,
   marcarFinal,
   nombreVehiculo,
   pasoActual,
@@ -89,6 +85,10 @@ import {
   proponerChoque,
   quedoJuntoAlChoque,
   finalDeLaNarracion,
+  tocarChoque,
+  ponerTerrenoEn,
+  puntoDelChoqueTocado,
+  tocarFinal,
   resumenEscena,
   rumboAlineado,
   sentidoEnElCaso,
@@ -654,6 +654,12 @@ export function EscenaFacil({
       vivo = false;
     };
   }, [sentidoDelLugar]);
+  // Diagnóstico (con `window.__croquisDiagnostico`): la escena a la vista de las pruebas, que la
+  // comparan con la que arma la tabla del índice (René, 2026-11-26: «el mismo código que La escena»).
+  useEffect(() => {
+    const w = window as unknown as { __croquisDiagnostico?: boolean; __croquisEscena?: unknown };
+    if (w.__croquisDiagnostico) w.__croquisEscena = { expediente: e, puntos: estado.puntos };
+  }, [e, estado.puntos]);
   // La escena ya armada: al entrar, si nadie ha marcado el choque, Croquis la propone con lo que leyó
   // (con `?desde=cero`, también en un caso que ya trae posiciones, como AXA).
   const [escenaPropuesta, setEscenaPropuesta] = useState<EscenaPropuesta | null>(null);
@@ -720,15 +726,16 @@ export function EscenaFacil({
 
   const ponerChoque = (orden: number, p: Punto, calles: string[]) => {
     const primero = impactos.find((i) => i.orden === orden)?.vehiculos[0];
-    const sentido = primero ? sentidos[primero] : null;
-    const previa = primero ? poseDe(e, primero, "impacto") : null;
-    const rumbo =
-      sentido?.rumbo ??
-      (previa && primero ? rumboDeLlegada(e, primero, previa.rumbo) : null) ??
-      (callesMapa.length ? rumboAlineado(callesMapa, p, 0) : 0);
     const siguiente: EstadoEscena = {
       ...estado,
-      expediente: marcarChoque(e, impactos, orden, p, rumbo),
+      expediente: tocarChoque(
+        e,
+        impactos,
+        orden,
+        p,
+        primero ? (sentidos[primero] ?? null) : null,
+        callesMapa,
+      ),
       puntos: { ...estado.puntos, [orden]: p },
     };
     const lejos = choqueLejosDeCalles(callesMapa, p);
@@ -843,14 +850,10 @@ export function EscenaFacil({
 
   // Dónde quedó: con un toque, alineado a la calle; arrastrar es opcional; dos botones de 15°.
   const colocarFinal = (v: string, p: Punto) => {
-    const imp = poseDe(e, v, "impacto");
-    const rumbo = callesMapa.length
-      ? rumboAlineado(callesMapa, p, poseDe(e, v, "final")?.rumbo ?? imp?.rumbo ?? 0)
-      : (poseDe(e, v, "final")?.rumbo ?? imp?.rumbo ?? 0);
     cambiar(
       {
         ...estado,
-        expediente: marcarFinal(e, v, p, rumbo),
+        expediente: tocarFinal(e, v, p, callesMapa),
         desconocidos: estado.desconocidos.filter((x) => x !== v),
         juntoAlChoque: estado.juntoAlChoque.filter((x) => x !== v),
       },
@@ -1199,21 +1202,18 @@ export function EscenaFacil({
   const ponerTerreno = (p: Punto, todo = false) => {
     const que = poniendoTerreno;
     if (!que) return;
-    // Las zonas van a lo largo de la calle; el tope, atravesado.
-    const rumbo = callesMapa.length ? rumboAlineado(callesMapa, p, 0) : 0;
-    let siguiente: Expediente;
+    // Las zonas van a lo largo de la calle; el tope, atravesado (`ponerTerrenoEn`, la misma que la
+    // tabla del índice).
+    const siguiente = ponerTerrenoEn(e, callesMapa, que, p, todo);
     let texto: string;
     if (que.clase === "zona") {
-      siguiente = agregarZona(e, que.tipo, p, rumbo, todo).expediente;
       const nombre = nombreSuperficie(que.tipo).toLowerCase();
       texto = todo
         ? `¡Listo! Todo el lugar es de ${nombre}.`
         : `¡Listo! Marcaste una zona de ${nombre}. Agrega otra cosa o termina con «Listo».`;
     } else if (que.clase === "ondulacion") {
-      siguiente = agregarOndulacion(e, p, rumbo).expediente;
       texto = "¡Listo! Marcaste la zona ondulada. Sus medidas son un supuesto hasta que las midas.";
     } else {
-      siguiente = agregarTope(e, p, rumbo, que.norma).expediente;
       texto = "¡Listo! El tope quedó atravesado a la calle, con las medidas de la norma.";
     }
     cambiar({ ...estado, expediente: siguiente }, exito(texto));
@@ -1324,8 +1324,7 @@ export function EscenaFacil({
       return;
     }
     if (actual?.tipo === "choque") {
-      const a = ajustarACalle(callesMapa, p);
-      const punto = a?.punto ?? p;
+      const punto = puntoDelChoqueTocado(e, callesMapa, actual.orden, p);
       ponerChoque(actual.orden, punto, callesEn(callesMapa, punto));
       return;
     }
@@ -1339,8 +1338,10 @@ export function EscenaFacil({
       const v = actual.vehiculo;
       if ((opcionFinal[v] ?? "marcar") !== "marcar")
         setOpcionFinal((o) => ({ ...o, [v]: "marcar" }));
-      const a = ajustarACalle(callesMapa, p, 8);
-      colocarFinal(v, a?.punto ?? p);
+      // Donde tocó: la posición final es evidencia y no se mueve en silencio (René, 2026-11-26: el
+      // Vento del ejemplo «quedó sobre el acotamiento» y se pegaba 3 m al eje de la vía). Si quedó
+      // fuera de la calle, La escena lo avisa y ofrece «Ponerlo en la calle».
+      colocarFinal(v, p);
     }
   };
 
