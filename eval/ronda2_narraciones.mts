@@ -30,7 +30,11 @@ import {
 } from "../packages/cesvi/src/server/corpus";
 
 const RAIZ = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const EJEMPLOS = join(RAIZ, "data/cesvi/ejemplos/narraciones.json");
+// `CROQUIS_LISTA`: otra lista con el mismo formato (las narraciones de prueba que no son ejemplos de
+// la app, como el caso árido de Sonora de la t11), cada una con su `grabacion`.
+const EJEMPLOS = process.env.CROQUIS_LISTA
+  ? resolve(RAIZ, process.env.CROQUIS_LISTA)
+  : join(RAIZ, "data/cesvi/ejemplos/narraciones.json");
 const GRABACIONES = join(RAIZ, "data/cesvi/grabaciones");
 const GASTO_W9 = join(RAIZ, "eval/results/w9_gasto.json");
 const SALIDA = join(RAIZ, "eval/results/ronda2_narraciones.json");
@@ -71,6 +75,7 @@ function anotarGasto(que: string, usd: number) {
 
 async function grabar(claves: string[]) {
   mkdirSync(join(GRABACIONES, "ejemplos"), { recursive: true });
+  for (const e of ejemplos) mkdirSync(dirname(rutaDe(e)), { recursive: true });
   const c = clienteCorpus();
   for (const e of ejemplos) {
     if (!e.narracion || (claves.length && !claves.includes(e.clave))) continue;

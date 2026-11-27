@@ -34,8 +34,9 @@ describe("un vehículo con 0 km/h en la reconstrucción", () => {
       const base = especDeExpediente(CASO.expediente);
       const r = interpretarResultado(base, fullResult(base.spec, PRODUCTION_SAMPLES));
       const kmh = (id: string) => r.velocidades.find((v) => v.vehiculo === id)!.previa!.mejor;
-      // Las cifras no cambian: el Versa a 24 km/h y el Mazda detenido.
-      expect(kmh("V1")).toBeCloseTo(23.87, 1);
+      // El Versa a 24 km/h y el Mazda detenido. Con lo medido como restricción en el pulido (René,
+      // 2026-11-26), el Versa pasa de 23.87 a 24.39 km/h, en la misma cuenca.
+      expect(kmh("V1")).toBeCloseTo(24.39, 1);
       expect(kmh("V2")).toBe(0);
       // En la escena del 3D, el Mazda está en su posición de impacto desde el principio.
       const sid = Object.keys(r.ids).find((k) => r.ids[k] === "V2")!;

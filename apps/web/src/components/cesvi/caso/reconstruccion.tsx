@@ -77,6 +77,11 @@ export interface EstadoReconstruccion {
 
 /** Cuánto se espera después del último cambio para recalcular (ms): un arrastre son varios cambios. */
 const ESPERA_RECALCULO_MS = 700;
+/**
+ * Lo más que «Reconstruir» espera las calles del lugar (ms): después reconstruye sin ellas y, si
+ * llegan, se recalcula sola (como antes de esperarlas).
+ */
+export const ESPERA_CALLES_MAX_MS = 20_000;
 
 /**
  * La reconstrucción del caso. Con `alCambiar` (W4, «al soltar se recalcula»), si ya hubo una y el
@@ -85,7 +90,16 @@ const ESPERA_RECALCULO_MS = 700;
  */
 export function useReconstruccion(
   expediente: Expediente | null,
-  opciones: { alCambiar?: boolean } = {},
+  opciones: {
+    alCambiar?: boolean;
+    /**
+     * Las calles del lugar todavía no llegan (René, 2026-11-27): entran a la reconstrucción (el eje
+     * de la vía, su nivel, su límite), así que «Reconstruir» las espera. Antes se reconstruía sin
+     * ellas, la cifra se veía un momento y, al llegar, quedaba vieja: se recalculaba sola con
+     * «Siguiente» apagado y «Para seguir falta: reconstruir».
+     */
+    esperar?: boolean;
+  } = {},
 ): EstadoReconstruccion {
   const [r, setR] = useState<Reconstruccion | null>(null);
   const [de, setDe] = useState<Expediente | null>(null);
@@ -144,12 +158,44 @@ export function useReconstruccion(
       if (mio === turno.current) setRecalculando(false);
     }
   }, []);
-  const reconstruir = useCallback(async () => {
-    if (expediente) await calcular(expediente, true);
-  }, [expediente, calcular]);
-  const reconstruirDeNuevo = useCallback(async () => {
-    if (expediente) await calcular(expediente, false);
-  }, [expediente, calcular]);
+  const esperar = opciones.esperar ?? false;
+  // Lo que pidió el perito mientras llegan las calles: se hace en cuanto llegan (o fallan).
+  const [pendiente, setPendiente] = useState<"limpiar" | "de_nuevo" | null>(null);
+  const [vencio, setVencio] = useState(false);
+  const tope = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (tope.current) clearTimeout(tope.current);
+    },
+    [],
+  );
+  const pedir = useCallback(
+    async (modo: "limpiar" | "de_nuevo") => {
+      if (!expediente) return;
+      if (esperar) {
+        setPendiente(modo);
+        setVencio(false);
+        if (tope.current) clearTimeout(tope.current);
+        tope.current = setTimeout(() => setVencio(true), ESPERA_CALLES_MAX_MS);
+        setEstado("Esperando las calles del lugar de OpenStreetMap para reconstruir con ellas…");
+        return;
+      }
+      await calcular(expediente, modo === "limpiar");
+    },
+    [expediente, calcular, esperar],
+  );
+  useEffect(() => {
+    if (!pendiente || (esperar && !vencio) || !expediente) return undefined;
+    const t = setTimeout(() => {
+      setPendiente(null);
+      setVencio(false);
+      if (tope.current) clearTimeout(tope.current);
+      void calcular(expediente, pendiente === "limpiar");
+    }, 0);
+    return () => clearTimeout(t);
+  }, [pendiente, esperar, vencio, expediente, calcular]);
+  const reconstruir = useCallback(() => pedir("limpiar"), [pedir]);
+  const reconstruirDeNuevo = useCallback(() => pedir("de_nuevo"), [pedir]);
   const alCambiar = opciones.alCambiar ?? false;
   useEffect(() => {
     if (!alCambiar || !expediente || de === null || de === expediente) return;
