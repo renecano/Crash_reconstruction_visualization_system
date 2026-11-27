@@ -68,9 +68,9 @@ export const es = {
   },
   meta: {
     inicio: {
-      titulo: "Croquis — cuenta lo que pasó, míralo pasar",
+      titulo: "Croquis — reconstrucción de hechos de tránsito",
       descripcion:
-        "Cuenta un percance vial con tus palabras y Croquis lo reconstruye en 3D con física real. Es una reconstrucción ilustrativa, no un peritaje.",
+        "El perito narra el hecho y Croquis lo reconstruye con física y en 3D, con la fuente de cada número. El dictamen es del perito.",
     },
     cuenta: {
       titulo: "Cuenta qué pasó — Croquis",

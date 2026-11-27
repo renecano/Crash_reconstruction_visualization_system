@@ -302,3 +302,131 @@ export function planCuadras(
   }
   return { lotes, postes };
 }
+
+type Xy = { x: number; y: number };
+
+/**
+ * Las islas centrales de las glorietas (René, 2026-11-26: «la glorieta de Reforma sale llena de
+ * casas»). Las calles guardadas con el caso no traen `junction=roundabout`, así que el anillo se
+ * reconoce por su forma: un ciclo de vías del mapa (o una sola vía cerrada) de 30 a 800 m de
+ * perímetro, redondo (4πA/P² ≥ 0.6) y sin esquinas (ningún vértice gira 55° o más). Una manzana
+ * también es un ciclo, pero tiene esquinas de 90°. Devuelve cada isla como polígono en planta.
+ */
+export function islasDeGlorieta(vias: readonly { puntos: readonly Xy[] }[]): Xy[][] {
+  const clave = (p: Xy) => `${Math.round(p.x)},${Math.round(p.y)}`;
+  const largo = (ps: readonly Xy[]) =>
+    ps.slice(1).reduce((s, p, i) => s + Math.hypot(p.x - ps[i]!.x, p.y - ps[i]!.y), 0);
+  const aristas = vias
+    .filter((v) => v.puntos.length >= 2)
+    .map((v) => ({
+      a: clave(v.puntos[0]!),
+      b: clave(v.puntos[v.puntos.length - 1]!),
+      pts: v.puntos,
+      l: largo(v.puntos),
+    }));
+  const vecinos = new Map<string, number[]>();
+  aristas.forEach((e, i) => {
+    for (const n of [e.a, e.b]) vecinos.set(n, [...(vecinos.get(n) ?? []), i]);
+  });
+
+  /** El camino más corto (por largo) de `desde` a `hasta` sin la arista `sin`, hasta 800 m. */
+  const camino = (desde: string, hasta: string, sin: number): number[] | null => {
+    const dist = new Map<string, number>([[desde, 0]]);
+    const previa = new Map<string, number>();
+    const abiertos = new Set([desde]);
+    while (abiertos.size) {
+      let n = "";
+      let dn = Infinity;
+      for (const k of abiertos)
+        if (dist.get(k)! < dn) {
+          dn = dist.get(k)!;
+          n = k;
+        }
+      abiertos.delete(n);
+      if (n === hasta) break;
+      for (const i of vecinos.get(n) ?? []) {
+        if (i === sin) continue;
+        const e = aristas[i]!;
+        const otro = e.a === n ? e.b : e.a;
+        const d = dn + e.l;
+        if (d <= 800 && d < (dist.get(otro) ?? Infinity)) {
+          dist.set(otro, d);
+          previa.set(otro, i);
+          abiertos.add(otro);
+        }
+      }
+    }
+    if (!dist.has(hasta)) return null;
+    const ruta: number[] = [];
+    for (let n = hasta; n !== desde;) {
+      const i = previa.get(n)!;
+      ruta.push(i);
+      n = aristas[i]!.a === n ? aristas[i]!.b : aristas[i]!.a;
+    }
+    return ruta.reverse();
+  };
+
+  const islas: Xy[][] = [];
+  const vistas: Xy[] = [];
+  const candidatos: Xy[][] = [];
+  aristas.forEach((e, i) => {
+    if (e.a === e.b) {
+      candidatos.push([...e.pts]);
+      return;
+    }
+    const ruta = camino(e.b, e.a, i);
+    if (!ruta) return;
+    // El polígono: la arista y luego el camino de regreso, cada tramo en su sentido.
+    const pol: Xy[] = [...e.pts];
+    let n = e.b;
+    for (const j of ruta) {
+      const r = aristas[j]!;
+      const pts = r.a === n ? r.pts : [...r.pts].reverse();
+      pol.push(...pts.slice(1));
+      n = r.a === n ? r.b : r.a;
+    }
+    candidatos.push(pol);
+  });
+  for (const pol of candidatos) {
+    const ps = clave(pol[0]!) === clave(pol[pol.length - 1]!) ? pol.slice(0, -1) : pol;
+    if (ps.length < 4) continue;
+    const perimetro = largo([...ps, ps[0]!]);
+    let area = 0;
+    for (let k = 0; k < ps.length; k++) {
+      const p = ps[k]!;
+      const q = ps[(k + 1) % ps.length]!;
+      area += p.x * q.y - q.x * p.y;
+    }
+    area = Math.abs(area) / 2;
+    if (perimetro < 30 || perimetro > 800 || (4 * Math.PI * area) / perimetro ** 2 < 0.6) continue;
+    const giroMax = Math.max(
+      ...ps.map((p, k) => {
+        const a = ps[(k + ps.length - 1) % ps.length]!;
+        const b = ps[(k + 1) % ps.length]!;
+        const u = Math.atan2(p.y - a.y, p.x - a.x);
+        const v = Math.atan2(b.y - p.y, b.x - p.x);
+        return Math.abs(Math.atan2(Math.sin(v - u), Math.cos(v - u)));
+      }),
+    );
+    if (giroMax >= (55 * Math.PI) / 180) continue;
+    const c = ps.reduce((s, p) => ({ x: s.x + p.x / ps.length, y: s.y + p.y / ps.length }), {
+      x: 0,
+      y: 0,
+    });
+    if (vistas.some((v) => Math.hypot(v.x - c.x, v.y - c.y) < 5)) continue;
+    vistas.push(c);
+    islas.push(ps);
+  }
+  return islas;
+}
+
+/** Si un punto cae dentro de un polígono en planta. */
+export function dentroDe(p: Xy, pol: readonly Xy[]): boolean {
+  let d = false;
+  for (let i = 0, j = pol.length - 1; i < pol.length; j = i++) {
+    const a = pol[i]!;
+    const b = pol[j]!;
+    if (a.y > p.y !== b.y > p.y && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x) d = !d;
+  }
+  return d;
+}

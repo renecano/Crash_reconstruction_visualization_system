@@ -107,6 +107,16 @@ test("@flujo /cesvi: el 3D en Unity — mover el poste recalcula y las fotos del
       { timeout: 60_000 },
     )
     .toEqual(["antes", "impacto", "reposo"]);
+
+  // Presentar (puente 1.4.0): la web pone su leyenda y Unity esconde la suya; al salir, vuelve.
+  const leyendas = async () =>
+    (await recibidos(page)).filter((m) => m.metodo === "leyenda").map((m) => m.datos.visible);
+  await page.getByTestId("modo-presentar").click();
+  await expect(page.getByTestId("presentar-caso")).toBeVisible({ timeout: 60_000 });
+  await expect.poll(async () => (await leyendas()).at(-1)).toBe(false);
+  await expect(page.getByTestId("salir-presentar")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect.poll(async () => (await leyendas()).at(-1)).toBe(true);
   expect(errores).toEqual([]);
 });
 
