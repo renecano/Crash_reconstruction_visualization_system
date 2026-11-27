@@ -31,6 +31,16 @@ export type Calculo =
       deltaVKmh: number | null;
       perfilCm: number[];
       rigidez: string;
+      /** De dónde salen A y B, en palabras (`dano.rigidez.nota`). */
+      rigidezNota: string | null;
+      /** Lo medido, C1–C6 en cm, para ponerlo junto a lo calculado (`dano.medido_m`). */
+      medidoCm: number[] | null;
+      /** La energía que implica lo medido con la misma rigidez (`dano.energia_medida_j`). */
+      energiaMedidaKj: number | null;
+      /** Lo más que puede disipar el choque a las velocidades reconstruidas (plástico total). */
+      maxDisipableKj: number | null;
+      /** El aviso neutral si lo medido pide más energía de la que el choque puede dar. */
+      aviso: string | null;
     }
   | { tipo: "sin_dato"; motivo: string };
 
@@ -41,6 +51,32 @@ export interface FilaDano {
 }
 
 const r1 = (x: number) => Math.round(x * 10) / 10;
+
+/**
+ * Lo más que puede disipar el primer choque entre dos vehículos: la energía cinética relativa con la
+ * masa reducida, ½·m₁m₂/(m₁+m₂)·|v₁ − v₂|², con las velocidades justo antes del impacto. Es el
+ * límite de un choque totalmente plástico; null si no hay un choque entre dos vehículos.
+ */
+export function energiaMaximaDisipable(res: Json | null): number | null {
+  const ev = ((res?.eventos ?? []) as Json[]).find((e) => e.tipo === "impacto_vehiculo_vehiculo");
+  const actores = (ev?.actores ?? []) as string[];
+  if (actores.length !== 2) return null;
+  const vs = ((res?.vehiculos ?? []) as Json[]).filter((v) => actores.includes(String(v.id)));
+  if (vs.length !== 2) return null;
+  const estado = (v: Json) => {
+    const tr = v.trayectoria as { t: number[]; vx: number[]; vy: number[] } | undefined;
+    const m = (v.dimensiones as { masa_kg?: number } | undefined)?.masa_kg;
+    if (!tr || !m) return null;
+    let k = 0;
+    for (let i = 0; i < tr.t.length; i++) if (tr.t[i]! < 0) k = i;
+    return { m, vx: tr.vx[k]!, vy: tr.vy[k]! };
+  };
+  const a = estado(vs[0]!);
+  const b = estado(vs[1]!);
+  if (!a || !b) return null;
+  const mu = (a.m * b.m) / (a.m + b.m);
+  return 0.5 * mu * ((a.vx - b.vx) ** 2 + (a.vy - b.vy) ** 2);
+}
 
 /**
  * Las filas de daño de cada vehículo del expediente. `ajustado` es el resultado del solver con las
@@ -55,8 +91,17 @@ export function filasDano(
     id: String(v.id),
     deltaV: typeof v.delta_v_kmh === "number" ? v.delta_v_kmh : null,
     dano: v.dano as
-      { perfil_m?: number[]; energia_j?: number; origen_rigidez?: string } | undefined,
+      | {
+          perfil_m?: number[];
+          energia_j?: number;
+          origen_rigidez?: string;
+          medido_m?: number[];
+          energia_medida_j?: number;
+          rigidez?: { fuente?: string; nota?: string };
+        }
+      | undefined,
   }));
+  const maximo = energiaMaximaDisipable(ajustado);
   return e.vehiculos.map((v) => {
     const conMedida = (e.danos ?? []).filter(
       (d) => d.vehiculo === v.id && !d.dano_previo && (d.magnitud?.c_m?.length ?? 0) > 0,
@@ -92,7 +137,20 @@ export function filasDano(
               rigidez:
                 c.dano?.origen_rigidez === "nhtsa"
                   ? "rigidez típica de la clase (NHTSA)"
-                  : "rigidez del reporte",
+                  : c.dano?.origen_rigidez === "reporte"
+                    ? "rigidez del reporte"
+                    : "rigidez supuesta (respaldo genérico)",
+              rigidezNota: c.dano?.rigidez?.nota ?? null,
+              medidoCm: c.dano?.medido_m ? c.dano.medido_m.map((x) => Math.round(x * 100)) : null,
+              energiaMedidaKj:
+                c.dano?.energia_medida_j !== undefined ? r1(c.dano.energia_medida_j / 1000) : null,
+              maxDisipableKj: maximo === null ? null : r1(maximo / 1000),
+              aviso:
+                c.dano?.energia_medida_j !== undefined &&
+                maximo !== null &&
+                c.dano.energia_medida_j > maximo
+                  ? `La deformación medida, con la ${c.dano?.origen_rigidez === "reporte" ? "rigidez del reporte" : "rigidez usada"}, equivale a ${Math.round(c.dano.energia_medida_j / 1000)} kJ; un choque a estas velocidades puede disipar a lo más ${Math.round(maximo / 1000)} kJ: revisa la rigidez o las medidas.`
+                  : null,
             };
     return { vehiculo: v.id, medido, calculado };
   });

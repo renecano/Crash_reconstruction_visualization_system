@@ -937,7 +937,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
               a: rig.A * kilo,
               b: rig.B * kilo,
               ...DEL_PERITO,
-              nota: `Del reporte: A = ${rig.A}, B = ${rig.B}${kilo === 1000 ? " (en kN/m y kN/m²)" : ""}.`,
+              nota: `Del reporte: A = ${rig.A}, B = ${rig.B}${kilo === 1000 ? ". El reporte imprime N/m y J, pero su resultado solo cuadra con kN/m y kJ: se leen así" : ""}.`,
             },
           }
         : {}),
