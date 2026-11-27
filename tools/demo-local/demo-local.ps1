@@ -176,6 +176,18 @@ try {
     Start-Sleep -Seconds 2
   }
   if (-not $listo) { Fallar "El servidor local no respondió en 2 minutos (registro: $registro)." }
+  # René, 2026-11-26: qué tarjeta usa Chrome de verdad (el nombre de WebGL no basta en una laptop
+  # híbrida). Mide el uso 3D por tarjeta mientras corre la prueba y lo deja en <salida>.gpu.json.
+  $gpuSalida = $null; $gpuDetener = $null; $gpuTrabajo = $null
+  if ($Despues) {
+    $gpuSalida = if ($Salida) { "$Salida.gpu.json" } else { Join-Path $Repo "eval\results\gpu-$Despues.json" }
+    $gpuDetener = Join-Path $env:TEMP "croquis-gpu-detener-$PID"
+    Remove-Item $gpuDetener -ErrorAction SilentlyContinue
+    $gpuTrabajo = Start-Job -ScriptBlock {
+      param($script, $salida, $detener)
+      & powershell -NoProfile -ExecutionPolicy Bypass -File $script -Salida $salida -Detener $detener
+    } -ArgumentList (Join-Path $Repo "tools\demo-local\gpu-uso.ps1"), $gpuSalida, $gpuDetener
+  }
   # t4c (René, 2026-11-18): las pruebas, en el Chrome instalado (el navegador de la demo y el de
   # fps-web); en la RTX, el Chromium de Playwright no compiló el WebAssembly de Unity.
   $chrome = @(
@@ -273,6 +285,13 @@ try {
     }
   }
 } finally {
+  if ($gpuTrabajo) {
+    New-Item -ItemType File -Force $gpuDetener | Out-Null
+    Wait-Job $gpuTrabajo -Timeout 30 | Out-Null
+    Remove-Job $gpuTrabajo -Force -ErrorAction SilentlyContinue
+    Remove-Item $gpuDetener -ErrorAction SilentlyContinue
+    if ($gpuSalida -and (Test-Path $gpuSalida)) { Escribir "Tarjeta que usó Chrome: $gpuSalida" "Cyan" }
+  }
   ApagarPuerto
   if (-not $servidor.HasExited) { try { Stop-Process -Id $servidor.Id -Force } catch { } }
 }
