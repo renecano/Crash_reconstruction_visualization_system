@@ -2,7 +2,7 @@
   "descripcion": "Las cinco narraciones de ejemplo de punta a punta (ronda 2, C): la lectura guardada, la escena colocada como dice la narración (receta en el script), la reconstrucción, y el dictamen. Lo que dice la pantalla, sin interpretar. Chromium a 1440×900.",
   "script": "apps/web/e2e/ejemplos-ronda2.spec.ts",
   "sitio": "http://localhost:3000",
-  "fecha": "2026-11-27T01:30:22.215Z",
+  "fecha": "2026-11-27T01:38:15.783Z",
   "con_unity": true,
   "llamadas_a_claude": 0,
   "errores_de_pagina": [],
@@ -86,7 +86,7 @@
       ],
       "terreno": null,
       "analisis": [
-        "Acto 5 de 6 · Análisis · 1 de 2: Los dañosDañosA · Ford RangerB · Toyota CorollaC · Chevrolet AveoA · cara frontalel reporte no trae medidas de la deformación3.9kJenergía de deformación11.3km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado menos de 0.5 cm en todo el ancho (rigidez típica de la clase (NHTSA)).Daños narrados: frontal.Deformación medida: sin dato (el texto no trae la medida de la deformación).B · cara posteriorel reporte no trae medidas de la deformación15.0kJenergía de deformación16.3km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 5 · 5 · 5 · 5 · 5 · 5",
+        "Acto 5 de 6 · Análisis · 1 de 2: Los dañosDañosA · Ford RangerB · Toyota CorollaC · Chevrolet AveoA · cara frontalel reporte no trae medidas de la deformación3.9kJenergía de deformación11.3km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado menos de 0.5 cm en todo el ancho (rigidez típica de la clase (NHTSA)).Daños narrados: frontal.Deformación medida: sin dato (el texto no trae la medida de la deformación).B · cara posteriorel reporte no trae medidas de la deformación14.9kJenergía de deformación16.2km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 5 · 5 · 5 · 5 · 5 · 5",
         "Acto 5 de 6 · Análisis · 2 de 2: Los númerosLos númerosReconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V125 (20–32)20–26–32V20 km/h (detenido, lo dice la narración)0–0–0V30 km/h (detenido, lo dice la narración)0–0–0Verificación con el método de CESVIMétodo de CESVI: energía de deformación (McHenry) y velocidad equivalente de barrera (EBS), con las medidas del reporte. No es la misma velocidad que la de la reconstrucción fís"
       ],
       "unity": "listo",
