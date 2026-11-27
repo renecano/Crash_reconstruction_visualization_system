@@ -4,17 +4,24 @@
  */
 
 /** Sube cuando cambia un mensaje. Unity la anuncia en `listo`. */
-export const VISOR_PUENTE_VERSION = "1.3.0" as const;
+export const VISOR_PUENTE_VERSION = "1.4.0" as const;
 
 /**
  * Las versiones con las que la web todavía trabaja: la 1.2.0 es la del build publicado antes de la
  * ronda 4 (sin piso de mapa ni fantasma). Con otra, la web no carga el caso y abre el visor ligero.
  */
-export const VERSIONES_PUENTE_COMPATIBLES: readonly string[] = ["1.2.0", VISOR_PUENTE_VERSION];
+export const VERSIONES_PUENTE_COMPATIBLES: readonly string[] = [
+  "1.2.0",
+  "1.3.0",
+  VISOR_PUENTE_VERSION,
+];
 
 /** Si el build anunciado entiende el piso de mapa y el fantasma (puente 1.3.0, ronda 4). */
 export const conPisoYFantasma = (version: string | null | undefined): boolean =>
-  version === "1.3.0";
+  version === "1.3.0" || version === "1.4.0";
+
+/** Si el build anunciado entiende el mensaje `leyenda` (puente 1.4.0, Presentar). */
+export const conLeyenda = (version: string | null | undefined): boolean => version === "1.4.0";
 
 export const CALIDADES_VISOR = ["baja", "media", "alta", "ultra", "auto"] as const;
 export type CalidadVisor = (typeof CALIDADES_VISOR)[number];
@@ -80,6 +87,12 @@ export interface MensajesAUnity {
     lado_m?: number;
     atribucion?: string;
   };
+  /**
+   * 1.4.0 (Presentar, 2026-11-26): muestra u oculta la leyenda ilustrativa que dibuja Unity. La web la
+   * oculta solo mientras pone la suya completa encima del 3D (Presentar) y la vuelve a mostrar al
+   * salir. Las capturas (`capturar`) no cambian: la leyenda del dictamen la pone la web.
+   */
+  leyenda: { visible: boolean };
 }
 
 export const CODIGOS_ERROR_VISOR = [
@@ -151,6 +164,7 @@ export const NOMBRES_A_UNITY = [
   "modoEdicion",
   "marcadores",
   "piso",
+  "leyenda",
 ] as const satisfies readonly (keyof MensajesAUnity)[];
 
 export const NOMBRES_DE_UNITY = [

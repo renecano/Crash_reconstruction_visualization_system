@@ -25,13 +25,15 @@ export function paqueteDelCaso(
   escena: EscenaSpec,
   resultado: Resultado,
   relieve: RelieveCaso = null,
+  /** El paisaje del lugar (contrato #335): «arido» o «templado», o null sin cobertura del mapa. */
+  paisaje: "arido" | "templado" | null = null,
 ): Caso3D {
   // Donde el reporte midió la deformación, el 3D dibuja esa y no la calculada (René, 2026-11-24).
   const paquete = armarCaso3d(
     escena,
     conDeformacionMedida(escena, resultado),
     relieve ?? null,
-    escenarioDe(escena, resultado, (relieve ?? null) as RelieveEscenario | null),
+    escenarioDe(escena, resultado, (relieve ?? null) as RelieveEscenario | null, paisaje),
   );
   const errores = caso3dErrors(paquete);
   if (errores.length) {

@@ -118,8 +118,9 @@ export function cacheKey(
   radio: number,
   que: "calles" | "objetos" = "calles",
 ): string {
-  // v2 (2026-11-24): los objetos traen también los edificios; lo guardado antes no los tiene.
-  const base = que === "objetos" ? "croquis:osm-objetos:v2" : "croquis:osm";
+  // v3 (2026-11-26): los objetos traen los edificios (2026-11-24) y la cobertura del suelo (contrato
+  // #335); lo guardado antes no trae alguna de las dos.
+  const base = que === "objetos" ? "croquis:osm-objetos:v3" : "croquis:osm";
   return `${base}:${lat.toFixed(5)}:${lon.toFixed(5)}:${radio}`;
 }
 

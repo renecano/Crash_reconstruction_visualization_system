@@ -1,6 +1,6 @@
 # Puente web ↔ visor Unity
 
-**Versión 1.3.0.** Los tipos están en `src/visor-puente.ts` (`VISOR_PUENTE_VERSION`), y una prueba revisa que este documento y los tipos nombren los mismos mensajes. Este contrato solo cambia con un PR `contract:`.
+**Versión 1.4.0.** Los tipos están en `src/visor-puente.ts` (`VISOR_PUENTE_VERSION`), y una prueba revisa que este documento y los tipos nombren los mismos mensajes. Este contrato solo cambia con un PR `contract:`.
 
 ## Cómo viajan los mensajes
 
@@ -24,6 +24,7 @@
 | `modoEdicion` | `on`: sí o no; `herramienta`, `vehiculo_id`              | Permite arrastrar objetos o marcar un punto, según la herramienta.                                         |
 | `marcadores`  | `visibles`: sí o no                                      | Muestra u oculta los puntos de C1: primer golpe, choques intermedios y puntos de paso.                     |
 | `piso`        | `imagen`, `centro_x`, `centro_y`, `lado_m`, `atribucion` | Cambia el piso del modo «mapa real» sin recargar el caso. Con `imagen` nula, vuelve al entorno procedural. |
+| `leyenda`     | `visible`: sí o no                                       | Muestra u oculta la leyenda ilustrativa de Unity. La web la oculta solo mientras pone la suya (Presentar). |
 
 **`modo`:** `cenital`, `cinematica`, `orbita`, `acera`, `libre`, `conductor:<id del vehículo>`, `cerca:<id del vehículo>:<azimut°>:<distancia m>:<altura m>` o `persona:<id de la persona>`. `acera` es de pie junto al árbol más cercano a la acción. `cerca` sigue al vehículo desde un azimut contado desde su frente hacia su derecha (la web la usa para «Detrás de A» y para el daño). `persona` sigue a quien va a pie, en bici o en moto, desde su costado.
 
@@ -39,7 +40,11 @@
 - **Dos campos opcionales en `caso-3d`.**
   - `piso`: lo mismo, dentro del paquete. Lleva solo el mapa de OpenStreetMap: la foto satelital va por el mensaje y nunca se guarda.
   - `fantasma`: una versión del caso (`etiqueta` y `resultado`). Unity dibuja sus vehículos translúcidos, sin daño, con el mismo reloj que la reconstrucción.
-- **La web sigue aceptando la 1.2.0** (`VERSIONES_PUENTE_COMPATIBLES`). Con ella no manda el piso ni el fantasma.
+- **La web sigue aceptando la 1.2.0** (`VERSIONES_PUENTE_COMPATIBLES`). Con ella no manda el piso ni el fantasma (`conPisoYFantasma`, verdadero en la 1.3.0 y la 1.4.0).
+
+**Cambios de la 1.4.0** (Presentar, 2026-11-26):
+
+- **El mensaje `leyenda`.** En Presentar la web pone su leyenda completa encima del 3D, y la de Unity quedaba repetida y medio tapada por el degradado. La web manda `leyenda` con `visible: false` al entrar a Presentar y con `visible: true` al salir. Al cargar un caso, Unity la muestra. La web sigue aceptando la 1.3.0 y la 1.2.0: a esas no les manda el mensaje (`conLeyenda`).
 
 **`vista`:** `antes` (t = −1 s), `impacto` (t = 0) y `reposo` (al final) salen con la cámara cinematográfica; `conductor:<id del vehículo>`, con la de ese conductor en el impacto. La foto se toma a la escala de dibujo completa, sin minimapa ni panel; la leyenda ilustrativa la pone la web al pie.
 
