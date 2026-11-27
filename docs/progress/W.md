@@ -1614,3 +1614,6 @@ Narración de prueba en la carretera estatal 100 (SON 100), Hermosillo–Bahía 
 ### Un toque de diferencia (la carambola)
 
 `apps/web/src/lib/toques-carambola.test.ts` (`CROQUIS_TOQUES=<salida>`): la receta del índice con los lugares que el perito toca a mano movidos hasta ±1 m en cada eje, 12 variantes con semilla fija; antes (main) y después (esta rama) en `eval/results/carambola_toques/`.
+
+- **Resultado (13 variantes, la 0 es la receta del índice):** antes (main), la cifra del Ranger va de 21.3 a 27.0 km/h (p10 15.8–23.1, p90 29.5–34.3); después, de 21.5 a 26.5 (p10 15.9–22.3, p90 29.6–34.4); ninguna variante sin cifra. El arreglo casi no cambia la dispersión: no es ruido del solver, es la evidencia. La cifra sale de cuánto empujó el Ranger al Corolla («5 metros adelante del área de restos»), y un toque de 1 m es el 20 % de esa distancia: el Corolla 0.9 m más atrás da 21.5; 0.5 m más adelante, 26.5. Los rangos se traslapan en 22–29 en todas las variantes. El ensayo de Alberto, 24 (20–30), cae dentro.
+- **Para que un toque no mueva la cifra:** cuando la narración da la distancia («5 metros adelante del área de restos»), La escena debería colocar el reposo a esa distancia exacta sobre el carril, en vez de pedir el toque (hoy solo lee las distancias con punto cardinal). Propuesto a René; no está hecho.
