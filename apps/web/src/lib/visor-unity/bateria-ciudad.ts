@@ -35,6 +35,18 @@ const LUGARES = {
   // en San Luis de la Paz (el lugar del ejemplo del alcance) y la SON 100, de dos carriles, en Sonora.
   mex57_san_luis: { lat: 21.299558, lon: -100.595243, nombre: "MEX 57, San Luis de la Paz" },
   son100_kino: { lat: 28.8318826, lon: -111.6593152, nombre: "SON 100 Hermosillo–Bahía de Kino" },
+  // La auditoría de calles (René, 2026-11-27): vías rápidas de la CDMX con laterales y pasos a desnivel.
+  viaducto_la_piedad: {
+    lat: 19.4005649,
+    lon: -99.1679851,
+    nombre: "Viaducto Miguel Alemán, La Piedad",
+  },
+  periferico_cu: { lat: 19.302856, lon: -99.17327, nombre: "Anillo Periférico, CU" },
+  circuito_rio_mixcoac: {
+    lat: 19.3667959,
+    lon: -99.179544,
+    nombre: "Circuito Interior (Río Mixcoac)",
+  },
 } as const;
 type Lugar = keyof typeof LUGARES;
 
@@ -181,6 +193,24 @@ export const CASOS_BATERIA: readonly CasoBateria[] = [
     que: "Carretera de dos carriles en zona árida (SON 100, Sonora)",
     lugar: "son100_kino",
     expediente: enLugar("son100_kino"),
+  },
+  {
+    clave: "viaducto",
+    que: "Viaducto Miguel Alemán con su lateral y el paso a desnivel de Insurgentes",
+    lugar: "viaducto_la_piedad",
+    expediente: enLugar("viaducto_la_piedad"),
+  },
+  {
+    clave: "periferico",
+    que: "Anillo Periférico en CU, con laterales",
+    lugar: "periferico_cu",
+    expediente: enLugar("periferico_cu"),
+  },
+  {
+    clave: "circuito-interior",
+    que: "Circuito Interior en Río Mixcoac",
+    lugar: "circuito_rio_mixcoac",
+    expediente: enLugar("circuito_rio_mixcoac"),
   },
   {
     clave: "metepec-arbol",
