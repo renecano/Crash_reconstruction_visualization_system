@@ -15,7 +15,7 @@ import type { HerramientaEdicion, MensajesDeUnity } from "@croquis/scene-schema"
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type ComponentProps } from "react";
 import { especDel3d, NotasDel3d, Visor3dCaso } from "@/components/cesvi/caso/reconstruccion";
-import { paisajeDelMapa } from "@croquis/croquis-2d";
+import { paisajeDelClima, paisajeDelMapa } from "@croquis/croquis-2d";
 import { RADIO_CALLES_M } from "@/lib/calles-del-mapa";
 import { downloadBytes } from "@/lib/download";
 import { impactosAColocar } from "@/lib/pasos-caso";
@@ -75,12 +75,16 @@ export function VisorCasoUnity({
   );
   const ligero = sp.get("visor") === "ligero" || (automatizado && sp.get("visor") !== "unity");
   const escena = useMemo(() => especDel3d(r, calles, objetos), [r, calles, objetos]);
-  // El paisaje del lugar con la cobertura del suelo de OSM, en el radio de los objetos (contrato #335).
+  // El paisaje del lugar con la cobertura del suelo de OSM, en el radio de los objetos (contrato #335);
+  // sin ella, con el clima del lugar (Köppen-Geiger, solo México).
   const paisaje = useMemo(
     () =>
-      r.origen && objetos
-        ? paisajeDelMapa(objetos, { lon: r.origen[0], lat: r.origen[1], radioM: RADIO_CALLES_M })
-        : null,
+      !r.origen
+        ? null
+        : objetos
+          ? paisajeDelMapa(objetos, { lon: r.origen[0], lat: r.origen[1], radioM: RADIO_CALLES_M })
+          : // Sin los objetos de OSM (todavía no llegan o Overpass falló), el clima del lugar.
+            paisajeDelClima(r.origen[1], r.origen[0]),
     [r.origen, objetos],
   );
   // Todas las cámaras del caso (A6): generales, por vehículo y por persona, con el nombre del panel.
