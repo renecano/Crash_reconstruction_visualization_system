@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { paisajeDelClima } from "./clima";
 import { overpassQueryObjetos, paisajeDelMapa, type OverpassResponse } from "./osm";
 
 /** El paisaje del lugar para el 3D (contrato #335), con la cobertura del suelo de OSM. */
@@ -45,14 +46,33 @@ describe("el paisaje del lugar (contrato #335)", () => {
     expect(paisajeDelMapa(r, { ...O, radioM: 150 })).toBe("templado");
   });
 
-  it("sin cobertura, o fuera del radio, no dice nada (Unity dibuja el templado de siempre)", () => {
-    expect(paisajeDelMapa({ elements: [] }, { ...O, radioM: 150 })).toBeNull();
-    const lejos = resp(cuadrado(1, 2000, 0, 100, { natural: "desert" }));
-    expect(paisajeDelMapa(lejos, { ...O, radioM: 150 })).toBeNull();
+  it("sin cobertura, o fuera del radio, decide el clima del lugar (en México)", () => {
+    // O está en el Bajío semiárido (BSh/BSk): sin cobertura de OSM, el clima dice «árido».
+    expect(paisajeDelMapa({ elements: [] }, { ...O, radioM: 150 })).toBe("arido");
+    const lejos = resp(cuadrado(1, 2000, 0, 100, { landuse: "forest" }));
+    expect(paisajeDelMapa(lejos, { ...O, radioM: 150 })).toBe("arido");
     // Lo que no es cobertura (un edificio) no cuenta.
     expect(
       paisajeDelMapa(resp(cuadrado(1, 0, 0, 100, { building: "yes" })), { ...O, radioM: 150 }),
-    ).toBeNull();
+    ).toBe("arido");
+    // Fuera de México no hay clima guardado: no dice nada (Unity dibuja el templado de siempre).
+    expect(paisajeDelMapa({ elements: [] }, { lat: 40.4, lon: -3.7, radioM: 150 })).toBeNull();
+  });
+
+  it("OSM manda si trae cobertura, aunque el clima diga otra cosa", () => {
+    const r = resp(cuadrado(1, 0, 0, 300, { landuse: "forest" }));
+    expect(paisajeDelMapa(r, { ...O, radioM: 150 })).toBe("templado");
+  });
+
+  it("el clima de lugares conocidos (Köppen-Geiger de Beck et al., 1991–2020)", () => {
+    // Bahía de Kino y la carretera Hermosillo–Kino (Sonora): desierto.
+    expect(paisajeDelClima(28.82, -111.94)).toBe("arido");
+    expect(paisajeDelClima(28.94045, -111.3259)).toBe("arido");
+    // Toluca y la Ciudad de México: templados.
+    expect(paisajeDelClima(19.2925, -99.6557)).toBe("templado");
+    expect(paisajeDelClima(19.4326, -99.1332)).toBe("templado");
+    // Fuera del recorte: nada.
+    expect(paisajeDelClima(40.4, -3.7)).toBeNull();
   });
 
   it("una relación cuenta por sus vías exteriores cerradas", () => {

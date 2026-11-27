@@ -7,6 +7,7 @@
  * se gira `−rotacion_deg` para que el eje de la calle principal quede sobre +X, como en las
  * plantillas paramétricas (ADR 0006).
  */
+import { paisajeDelClima } from "./clima";
 import type { EscenaSpec } from "@croquis/scene-schema";
 
 export const EARTH_RADIUS_M = 6_371_008.8;
@@ -578,8 +579,9 @@ function dentro(x: number, y: number, pol: readonly Point[]): boolean {
 
 /**
  * El paisaje del lugar para el 3D (contrato #335): «arido» si, dentro del radio, la cobertura de zona
- * seca de OpenStreetMap ocupa más que la verde; «templado» si hay cobertura y no es así; null sin
- * cobertura (Unity dibuja el templado de siempre). Se mide en una rejilla de puntos cada `paso` m
+ * seca de OpenStreetMap ocupa más que la verde; «templado» si hay cobertura y no es así. OSM manda
+ * si trae cobertura; sin ella, el clima del lugar (`paisajeDelClima`: Köppen-Geiger de 1 km, solo
+ * México), y null fuera de México (Unity dibuja el templado de siempre). Se mide en una rejilla de puntos cada `paso` m
  * dentro del círculo, con los polígonos cerrados (de una vía, o las vías exteriores cerradas de una
  * relación). Ninguna cifra de la reconstrucción depende de esto.
  */
@@ -621,7 +623,8 @@ export function paisajeDelMapa(
       }
     }
   }
-  if (!areas.length) return null;
+  // Sin cobertura de OSM alrededor, el clima del lugar (Köppen-Geiger, solo México).
+  if (!areas.length) return paisajeDelClima(o.lat, o.lon);
   const paso = o.paso ?? 10;
   let arida = 0;
   let verde = 0;
@@ -632,6 +635,6 @@ export function paisajeDelMapa(
       if (a?.clase === "arida") arida++;
       else if (a?.clase === "verde") verde++;
     }
-  if (!arida && !verde) return null;
+  if (!arida && !verde) return paisajeDelClima(o.lat, o.lon);
   return arida > verde ? "arido" : "templado";
 }

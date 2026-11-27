@@ -29,4 +29,5 @@ export {
 export * from "./map-roads";
 export * from "./markings";
 export * from "./osm";
+export * from "./clima";
 export * from "./teselas";
