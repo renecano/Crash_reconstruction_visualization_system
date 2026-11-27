@@ -333,9 +333,9 @@ export function detalleDe(
   const [ida, vuelta] = par(num(t["lanes:forward"]), num(t["lanes:backward"]));
   if (ida !== undefined) out.carriles_ida = ida;
   if (vuelta !== undefined) out.carriles_vuelta = vuelta;
-  let [fi, fv] = par(flechas(t["turn:lanes:forward"]), flechas(t["turn:lanes:backward"]));
+  const [ida0, fv] = par(flechas(t["turn:lanes:forward"]), flechas(t["turn:lanes:backward"]));
   // En un sentido, `turn:lanes` va en el sentido de circulación, que es el de los puntos.
-  if (oneway(w) !== 0) fi ??= flechas(t["turn:lanes"]);
+  const fi = ida0 ?? (oneway(w) !== 0 ? flechas(t["turn:lanes"]) : undefined);
   if (fi) out.vueltas = fi;
   if (fv) out.vueltas_vuelta = fv;
   // `sidewalk=both|left|right|no|separate` o `sidewalk:both|left|right=yes|no|separate`.
