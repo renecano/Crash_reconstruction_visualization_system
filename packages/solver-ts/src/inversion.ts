@@ -1932,8 +1932,11 @@ function polish(spec: Json, ev: Evidence, best: Fit, freeParams: Param[], dt: nu
 /** Cuánto se pasa lo medido de 3σ, en conjunto: √Σ max(0, |r| − 3)² sobre los residuos medidos. */
 function excesoMedido(fit: Fit): number {
   let s = 0.0;
-  for (const [k, v] of fit.residuals)
-    if (esMedido(k)) s += Math.max(0.0, Math.abs(v) - SIGMAS_MEDIDO) ** 2;
+  for (const [k, v] of fit.residuals) {
+    if (!esMedido(k)) continue;
+    const e = Math.max(0.0, Math.abs(v) - SIGMAS_MEDIDO);
+    s += e * e;
+  }
   return Math.sqrt(s);
 }
 

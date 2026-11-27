@@ -1932,7 +1932,8 @@ def _exceso_medido(fit: Fit) -> float:
     s = 0.0
     for k, v in fit.residuals.items():
         if _es_medido(k):
-            s += max(0.0, abs(v) - SIGMAS_MEDIDO) ** 2
+            e = max(0.0, abs(v) - SIGMAS_MEDIDO)
+            s += e * e
     return math.sqrt(s)
 
 
