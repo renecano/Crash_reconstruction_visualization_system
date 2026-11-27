@@ -1489,6 +1489,12 @@
               "maxspeed": { "type": "string", "maxLength": 20 },
               "carriles": { "type": "string", "maxLength": 10 },
               "sentido_unico": { "type": "string", "maxLength": 10 },
+              "nivel": {
+                "type": "integer",
+                "minimum": -5,
+                "maximum": 5,
+                "description": "El nivel de la vía (René, 2026-11-27): `layer` de OpenStreetMap; un `bridge` sin `layer`, 1; un `tunnel`, -1. Sin el campo, a ras del piso. Un vehículo narrado abajo no queda en la vía de arriba, ni al revés."
+              },
               "ancho": { "type": "string", "maxLength": 10 },
               "puntos": {
                 "type": "array",

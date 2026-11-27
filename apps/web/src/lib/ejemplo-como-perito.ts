@@ -43,6 +43,7 @@ import {
   type Punto,
 } from "./escena-facil";
 import { proponerEscena, rumboDelSentido } from "./escena-propuesta";
+import { callesDelNivel } from "./nivel-via";
 import { impactosAColocar } from "./pasos-caso";
 
 /**
@@ -154,7 +155,13 @@ export function escenaComoPerito(
   const coords = lugar?.coordenadas;
   if (!coords || !lugar?.calles_del_mapa)
     throw new Error(`${receta.clave}: sin el lugar o las calles guardadas del ejemplo.`);
-  const calles = callesDe(respuestaDeGuardadas(lugar.calles_del_mapa));
+  // Las del nivel narrado, como La escena (René, 2026-11-27, #380).
+  const calles = callesDe(
+    callesDelNivel(
+      respuestaDeGuardadas(lugar.calles_del_mapa),
+      Boolean(e0.caso.condiciones?.estructura),
+    ),
+  );
   const impactos = impactosAColocar(e0);
   const vs = e0.vehiculos;
   const nombre = (id: string) =>

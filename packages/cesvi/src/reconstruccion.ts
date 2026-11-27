@@ -67,6 +67,7 @@ import { objetosDe, TIPOS_OBJETO } from "./objetos";
 import { medidasDe } from "./poses-impacto";
 import { arranqueSobreElEje, ejeDeLaCalle, type EjeCalle } from "./eje-calle";
 import { cruceDeLaVuelta } from "./vuelta";
+import { viasDelNivel } from "./nivel-via";
 import {
   conVelocidadDelPerito,
   enCota,
@@ -591,7 +592,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
         // a 10 m de ella en un cruce ancho). Sin calles, los 2 m de siempre.
         // La vuelta, en un cruce real de la red vial (René, 2026-11-27): donde la calle de llegada
         // toca de verdad la calzada del choque. Sin un cruce así, la regla de antes, y se dice.
-        const calles = e.caso.lugar?.calles_del_mapa?.vias ?? [];
+        const calles = viasDelNivel(e);
         const cruce = calles.length
           ? cruceDeLaVuelta(
               calles.map((via) => ({
@@ -689,7 +690,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   if (origen && guardadas && primeraPose) {
     const choque = local(primeraPose.punto);
     ejeReal = ejeDeLaCalle(
-      guardadas.vias.map((v) => ({
+      viasDelNivel(e).map((v) => ({
         tipo: v.tipo,
         ...(v.nombre ? { nombre: v.nombre } : {}),
         puntos: v.puntos.map(([lon, lat]) => local({ lat, lon })),

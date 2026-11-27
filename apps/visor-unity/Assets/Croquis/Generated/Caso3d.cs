@@ -1117,6 +1117,14 @@ namespace Croquis.Generated
         [JsonConverter(typeof(MagentaMinMaxLengthCheckConverter))]
         public string Maxspeed { get; set; }
 
+        /// <summary>
+        /// El nivel de la vía (René, 2026-11-27): `layer` de OpenStreetMap; un `bridge` sin `layer`,
+        /// 1; un `tunnel`, -1. Sin el campo, a ras del piso. Un vehículo narrado abajo no queda en
+        /// la vía de arriba, ni al revés.
+        /// </summary>
+        [JsonProperty("nivel", NullValueHandling = NullValueHandling.Ignore)]
+        public long? Nivel { get; set; }
+
         [JsonProperty("nombre", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(StickyMinMaxLengthCheckConverter))]
         public string Nombre { get; set; }

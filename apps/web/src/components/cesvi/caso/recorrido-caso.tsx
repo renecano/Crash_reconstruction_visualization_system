@@ -64,6 +64,7 @@ import {
   type VersionCaso,
 } from "@/lib/versiones-caso";
 import { obstaculosDelMapa } from "@/lib/obstaculos-del-mapa";
+import { callesDelNivel } from "@/lib/nivel-via";
 import { callesCerca, objetosCerca, RADIO_CALLES_M } from "@/lib/calles-del-mapa";
 import {
   callesParaGuardar,
@@ -260,6 +261,10 @@ export function RecorridoCaso({
   // que la red responda; en un caso nuevo, las primeras que llegan se guardan y las de Overpass
   // reemplazan a las de las teselas (`conCallesGuardadas`).
   const calles = callesGuardadas ?? callesOverpass ?? callesTeselas;
+  // Las calles del nivel narrado (René, 2026-11-27, #380): sin un puente o un paso a desnivel narrado,
+  // La escena no coloca ni hace dar vuelta en una vía elevada; con uno, no en la de abajo.
+  const elevado = Boolean(expediente?.caso.condiciones?.estructura);
+  const callesEscena = useMemo(() => callesDelNivel(calles, elevado), [calles, elevado]);
   // La consulta de calles falló y no hay calles de ninguna otra fuente: Croquis no calcula una cifra
   // sin ellas; La escena y la reconstrucción piden reintentar (René, 2026-11-25). Un lugar donde
   // OpenStreetMap responde sin calles no es una falla: sigue como siempre.
@@ -1753,7 +1758,7 @@ export function RecorridoCaso({
             impactos={impactos}
             narracion={texto.trim() || null}
             posicionesNarradas={leida.posiciones}
-            calles={calles}
+            calles={callesEscena}
             callesFallaron={callesFallaron}
             onReintentarCalles={reintentarCalles}
             lugar={expediente.caso.lugar?.coordenadas ?? null}

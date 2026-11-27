@@ -1278,6 +1278,10 @@ class Via(BaseModel):
     maxspeed: Annotated[str | None, Field(max_length=20)] = None
     carriles: Annotated[str | None, Field(max_length=10)] = None
     sentido_unico: Annotated[str | None, Field(max_length=10)] = None
+    nivel: Annotated[int | None, Field(ge=-5, le=5)] = None
+    """
+    El nivel de la vía (René, 2026-11-27): `layer` de OpenStreetMap; un `bridge` sin `layer`, 1; un `tunnel`, -1. Sin el campo, a ras del piso. Un vehículo narrado abajo no queda en la vía de arriba, ni al revés.
+    """
     ancho: Annotated[str | None, Field(max_length=10)] = None
     puntos: Annotated[list[Punto1], Field(max_length=2000, min_length=2)]
     """
