@@ -12,7 +12,7 @@ describe("la deformación medida por CESVI en el 3D (René, 2026-11-24)", () => 
   });
 
   it(
-    "en AXA, la Tacoma lleva en el 3D los 96, 86, 52 y 20 cm medidos y no los 5 cm calculados",
+    "en AXA, la Tacoma lleva en el 3D los 96, 86, 52 y 20 cm medidos y no lo calculado",
     { timeout: 240_000 },
     () => {
       const r = reconstruirExpediente(expedienteAxaReconstruccion(), "axa-a2010930", {
@@ -28,7 +28,8 @@ describe("la deformación medida por CESVI en el 3D (René, 2026-11-24)", () => 
       const despues = conDeformacionMedida(escena, resultado).vehiculos.find(
         (v) => v.id === tacoma.vehiculo,
       )!;
-      expect(Math.max(...(antes.dano?.perfil_m ?? [0]))).toBeLessThan(0.2);
+      // Lo calculado queda lejos de lo medido: con la rigidez del reporte (#349), unos 25 cm.
+      expect(Math.max(...(antes.dano?.perfil_m ?? [0]))).toBeLessThan(0.5);
       expect(Math.max(...(despues.dano?.perfil_m ?? [0]))).toBe(0.96);
       expect(despues.dano?.ancho_m).toBeCloseTo(1.689, 3);
       // Lo demás del resultado (trayectorias, velocidades) no cambia.
