@@ -1,0 +1,56 @@
+# Paso: comparar
+# Comando: node eval/t9_comparar.mjs
+# Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
+# Inicio: 2026-11-26 19:44:16
+
+✓ crucero-noche: tabla 20 (5–26) · navegador 20 (5–26)
+✗ alcance-deformacion: tabla 53 (49–56) · navegador 54 (49–55)
+✓ carambola-lluvia: tabla 25 (20–32) · navegador 25 (20–32)
+✓ reversa-pendiente: tabla 20 (16–25) · navegador 20 (16–25)
+✗ poste-terraceria: tabla 61 (37–64) · navegador 63 (43–65)
+✓ ejemplos.crucero: índice 20 km/h (5–26) · medida 20 (5–26)
+✗ ejemplos.alcance: índice 53 km/h (49–56) · medida 54 (49–55)
+✓ ejemplos.carambola: índice 25 km/h (20–32) · medida 25 (20–32)
+✓ ejemplos.reversa: índice 20 km/h (16–25) · medida 20 (16–25)
+✗ ejemplos.poste: índice 61 km/h (37–64) · medida 63 (43–65)
+✓ AXA: índice 57 km/h (55–78) · navegador 57 (55–78)
+  crucero-noche contra lo publicado 20 (10–28): p10 -5 km/h (-50.0 %), p90 -2 km/h (-7.1 %)
+  alcance-deformacion contra lo publicado 53 (49–56): cifra +1 km/h (+1.9 %), p90 -1 km/h (-1.8 %)
+  carambola-lluvia contra lo publicado 24 (22–32): cifra +1 km/h (+4.2 %), p10 -2 km/h (-9.1 %)
+  reversa-pendiente contra lo publicado 21 (20–28): cifra -1 km/h (-4.8 %), p10 -4 km/h (-20.0 %), p90 -3 km/h (-10.7 %)
+  poste-terraceria contra lo publicado 36 (31–38): cifra +27 km/h (+75.0 %), p10 +12 km/h (+38.7 %), p90 +27 km/h (+71.1 %)
+  rene-arbol-curva: 80
+  rene-peaton-vuelta: 18
+  rene-carambola-semaforo: 50
+✗ carambolas.prueba: antes null · después 22 de 31 (publicada 22 de 31)
+✗ carambolas.desarrollo: antes null · después 42 de 55 (publicada 42 de 55)
+✗ cobertura.rango: antes null · después 410 de 578 (publicada 410 de 578)
+  capturas arbol: 0
+  capturas poste: 0
+  capturas puente: 0
+  capturas subida: 0
+  capturas bajada: 0
+  capturas curva: 0
+  capturas tollocan: 0
+  capturas encimado-antes: 0
+  capturas encimado-despues: 0
+  capturas rene-arbol-curva: 2
+  capturas rene-peaton-vuelta: 2
+  capturas rene-carambola-semaforo: 2
+  pendiente: Sin captura del 3D: arbol.
+  pendiente: Sin captura del 3D: poste.
+  pendiente: Sin captura del 3D: puente.
+  pendiente: Sin captura del 3D: subida.
+  pendiente: Sin captura del 3D: bajada.
+  pendiente: Sin captura del 3D: curva.
+  pendiente: Sin captura del 3D: tollocan.
+  pendiente: Sin captura del 3D: encimado-antes.
+  pendiente: Sin captura del 3D: encimado-despues.
+  pendiente: De la muestra de narraciones nuevas llegaron 0 de 10.
+  pendiente: Falta el antes o el después de carambolas.prueba.
+  pendiente: Falta el antes o el después de carambolas.desarrollo.
+  pendiente: Falta el antes o el después de cobertura.rango.
+  pendiente: Sin mediciones del arranque del 3D.
+Algo no coincide con lo publicado: va a René.
+
+# Fin: 2026-11-26 19:44:17 · falló (código 1) · 0 min
