@@ -993,9 +993,13 @@ class _Problem:
         fixed: dict[str, float],
         dt: float,
         downed_mu: float | None = None,
+        *,
+        duro: bool = True,
     ) -> None:
         self.spec, self.ev, self.params, self.fixed, self.dt = spec, ev, params, fixed, dt
         self.downed_mu = downed_mu
+        # Lo medido como restricción; sin ella, la pérdida de siempre (para buscar la cuenca).
+        self.duro = duro
         self.names: list[str] = []
         self._cache: dict[tuple[float, ...], list[float]] = {}
         self.active: dict[str, float] = {}
@@ -1034,7 +1038,7 @@ class _Problem:
                 self.names.extend(sorted(res))
             out = [float(res.get(k, 1e3)) for k in self.names]
         # Lo medido, cuadrático: la soft-L1 no lo puede tratar como atípico.
-        if self.names and len(out) == len(self.names):
+        if self.duro and self.names and len(out) == len(self.names):
             out = [_a_duro(v) if _es_medido(k) else v for k, v in zip(self.names, out, strict=True)]
         self._cache[key] = out
         return out
@@ -1042,7 +1046,7 @@ class _Problem:
     def residual_map(self, r: Sequence[float]) -> dict[str, float]:
         """Los residuos con su nombre, en sigmas (lo medido, de vuelta de su forma cuadrática)."""
         return {
-            k: _de_duro(float(v)) if _es_medido(k) else float(v)
+            k: _de_duro(float(v)) if self.duro and _es_medido(k) else float(v)
             for k, v in zip(self.names, r, strict=True)
         }
 
@@ -1071,17 +1075,19 @@ def fit_evidence(
     start: dict[str, float] | None = None,
     free: set[str] | None = None,
     downed_mu: float | None = None,
+    duro: bool = True,
 ) -> Fit:
     """Mejor ajuste (mínimos cuadrados robustos) de velocidades y rumbos a la evidencia.
 
-    `start` cambia el punto de arranque; los parámetros fuera de `free` quedan fijos en él.
+    `start` cambia el punto de arranque; los parámetros fuera de `free` quedan fijos en él. Sin
+    `duro`, lo medido va con la pérdida de siempre (el multiarranque busca así la cuenca).
     """
     base = with_marks(spec, ev)
     params = parameters(base, ev)
     x_start = {p.name: p.start for p in params} | (start or {})
     free_params = [p for p in params if free is None or p.name in free]
     fixed = {n: v for n, v in x_start.items() if all(p.name != n for p in free_params)}
-    prob = _Problem(base, ev, free_params, fixed, dt, downed_mu)
+    prob = _Problem(base, ev, free_params, fixed, dt, downed_mu, duro=duro)
     x0 = [min(max(x_start[p.name], p.lo), p.hi) for p in free_params]
     if not free_params or ev.empty():
         res0 = _residuals(apply_values(base, x_start), ev, dt, downed_mu) or {}
@@ -1172,6 +1178,7 @@ def _chord_refit(prob: _Problem, x_best: list[float], j: list[list[float]]) -> F
         return acc
 
     accepted = 0
+    refrescado = False
     for _ in range(CHORD_ITER):
         w = [1.0 / math.sqrt(math.sqrt(1.0 + e * e)) for e in r]  # raíz del peso IRLS de soft_l1
         a = [[w[i] * v for v in j[i]] for i in range(len(r))]
@@ -1205,7 +1212,14 @@ def _chord_refit(prob: _Problem, x_best: list[float], j: list[list[float]]) -> F
                 x, r, moved = x_new, r_new, True
                 break
         if not moved:
-            break
+            # La cuerda se atoró lejos del modo (su jacobiano ya no sirve ahí): se recalcula una vez
+            # en el punto actual antes de parar; sin esto, la muestra se quedaba en un escalón.
+            if refrescado or accepted == 0:
+                break
+            j = _sample_jac(prob, x)
+            refrescado = True
+            continue
+        refrescado = False
         accepted += 1
         big = 0.0
         for v in step:
@@ -1584,17 +1598,21 @@ def find_modes(spec: JsonObj, ev: Evidence, params: list[Param], *, dt: float = 
     agrupan por modo y los `REFINE_MODES` mejores se afinan con el ajuste completo. Devuelve los
     modos afinados, del menor costo al mayor; dos afinados son modos distintos solo si hay una loma
     entre ellos."""
+    # La cuenca se busca con la pérdida de siempre: con lo medido cuadrático desde lejos, los pasos
+    # se acortan y el arranque se queda en otro mínimo (René, 2026-11-27: la carambola de la e2e).
+    # Lo medido como restricción entra después, en el ajuste del modo y el pulido.
     if not params or ev.empty():
-        return [Mode(fit_evidence(spec, ev, dt=dt), 1)]
+        return [Mode(fit_evidence(spec, ev, dt=dt, duro=False), 1)]
     screened = [
-        (fit_evidence(spec, ev, dt=dt, start=s, max_nfev=SCREEN_NFEV), 1)
+        (fit_evidence(spec, ev, dt=dt, start=s, max_nfev=SCREEN_NFEV, duro=False), 1)
         for s in multistart_starts(spec, ev, params)
     ]
     modes = _group(screened)
     refined = [
-        (fit_evidence(spec, ev, dt=dt, start=m.fit.values), m.starts) for m in modes[:REFINE_MODES]
+        (fit_evidence(spec, ev, dt=dt, start=m.fit.values, duro=False), m.starts)
+        for m in modes[:REFINE_MODES]
     ]
-    return _group(refined, _Problem(with_marks(spec, ev), ev, params, {}, dt))
+    return _group(refined, _Problem(with_marks(spec, ev), ev, params, {}, dt, duro=False))
 
 
 def invert(
@@ -1924,7 +1942,8 @@ def _polish(spec: JsonObj, ev: Evidence, best: Fit, free_params: list[Param], dt
             break
         f = g
         x = [g.values[p.name] for p in free_params]
-    return f if f.cost < best.cost else best
+    # `best` puede venir del multiarranque (sin lo medido como restricción): su costo no se compara.
+    return f
 
 
 def _exceso_medido(fit: Fit) -> float:
@@ -1978,7 +1997,9 @@ def _estimate_of(
 
 def _sample_jac(prob: _Problem, x: list[float]) -> list[list[float]]:
     """El jacobiano de la muestra en `x`, con sus restricciones activas, sin tocar `prob`."""
-    p = _Problem(prob.spec, prob.ev, prob.params, prob.fixed, prob.dt, prob.downed_mu)
+    p = _Problem(
+        prob.spec, prob.ev, prob.params, prob.fixed, prob.dt, prob.downed_mu, duro=prob.duro
+    )
     p.names.extend(prob.names)
     p.activate(x)
     return p.jac(x)
