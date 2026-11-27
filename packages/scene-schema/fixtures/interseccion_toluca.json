@@ -463,7 +463,8 @@
           ],
           "nombre": "Calle Pablo Sidar",
           "carriles": 3,
-          "un_sentido": true
+          "un_sentido": true,
+          "vueltas": ["left", "through", "right"]
         },
         {
           "id_osm": 840623318,
@@ -497,7 +498,8 @@
           ],
           "nombre": "Calle Juan Aldama",
           "carriles": 3,
-          "un_sentido": true
+          "un_sentido": true,
+          "vueltas": ["left", "through", ""]
         },
         {
           "id_osm": 841427162,
@@ -531,7 +533,8 @@
           ],
           "nombre": "Calle Rafael Miguel Hidalgo",
           "carriles": 3,
-          "un_sentido": true
+          "un_sentido": true,
+          "vueltas": ["through", "through", "through;right"]
         },
         {
           "id_osm": 842769179,

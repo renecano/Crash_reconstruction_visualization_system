@@ -60,7 +60,7 @@ describe("calles de OSM en producción (ADR 0040)", () => {
     expect((d.calls[0]!.headers as Record<string, string>)["User-Agent"]).toBe(USER_AGENT);
     const body = new URLSearchParams(d.calls[0]!.body as URLSearchParams).get("data");
     expect(body).toBe(
-      '[out:json][timeout:25];way(around:150,19.27897,-99.65399)["highway"];out body;>;out skel qt;',
+      '[out:json][timeout:25];way(around:150,19.27897,-99.65399)["highway"];out body;>;out body qt;',
     );
     // El mismo punto (redondeado a ~1 m) no vuelve a Overpass.
     const b = await callesCerca({ lat: 19.2789749, lon: -99.6539869, radio: 150 }, "ip", d);

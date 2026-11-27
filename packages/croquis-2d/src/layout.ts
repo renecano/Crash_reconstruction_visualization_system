@@ -93,8 +93,15 @@ export interface MapLayout {
     /** `lanes`, `oneway` y `highway` de OSM, si vienen (ADR 0039). */
     carriles?: number;
     unSentido?: boolean;
+    carrilesIda?: number;
+    carrilesVuelta?: number;
+    vueltas?: string[];
+    vueltasVuelta?: string[];
+    banqueta?: "ambos" | "izquierda" | "derecha" | "ninguna";
     tipo?: string;
   }[];
+  /** Los semáforos y pasos peatonales de OSM sobre las calles. */
+  nodos?: { tipo: "semaforo" | "paso_peatonal"; x: number; y: number }[];
   atribucion: string;
 }
 
@@ -360,7 +367,15 @@ export function sceneLayout(spec: EscenaSpec, clases?: TablaClases): SceneLayout
           carriles: v.carriles,
           unSentido: v.un_sentido,
           tipo: v.tipo,
+          ...(v.carriles_ida !== undefined ? { carrilesIda: v.carriles_ida } : {}),
+          ...(v.carriles_vuelta !== undefined ? { carrilesVuelta: v.carriles_vuelta } : {}),
+          ...(v.vueltas ? { vueltas: v.vueltas } : {}),
+          ...(v.vueltas_vuelta ? { vueltasVuelta: v.vueltas_vuelta } : {}),
+          ...(v.banqueta ? { banqueta: v.banqueta } : {}),
         })),
+        ...(red.nodos?.length
+          ? { nodos: red.nodos.map((n) => ({ tipo: n.tipo, x: n.x, y: n.y })) }
+          : {}),
         atribucion: red.atribucion,
       }
     : undefined;
