@@ -60,11 +60,15 @@ describe("la cifra contra el límite de la vía", () => {
         { vehiculo: "V2", previa: { mejor: 20 } },
       ],
     } as unknown as Reconstruccion;
-    const con = conAvisoDelLimite(r, calle);
+    const con = conAvisoDelLimite(r, { V1: calle, V2: calle });
     expect(con.limites).toHaveLength(2);
     expect(con.limites[1]).toMatch(/^V1: la cifra \(95 km\/h\)/);
     expect(con.velocidades).toBe(r.velocidades);
-    expect(conAvisoDelLimite(con, calle).limites).toHaveLength(2);
-    expect(conAvisoDelLimite(r, null)).toBe(r);
+    expect(conAvisoDelLimite(con, { V1: calle }).limites).toHaveLength(2);
+    expect(conAvisoDelLimite(r, {})).toBe(r);
+    // Cada vehículo con el límite de su vía: el mismo 95 en una avenida de 80 no avisa.
+    expect(
+      conAvisoDelLimite(r, { V1: { kmh: 80, fuente: "maxspeed de OpenStreetMap" } }).limites,
+    ).toHaveLength(1);
   });
 });

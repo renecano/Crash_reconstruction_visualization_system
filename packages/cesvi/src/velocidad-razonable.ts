@@ -112,15 +112,16 @@ export function avisoSobreElLimite(
 
 /**
  * La reconstrucción con el aviso del límite de la vía en sus límites, para cada vehículo cuya cifra lo
- * pasa por más del margen. El límite es el de la vía del choque (su `maxspeed` o el de su tipo según la
- * LGMSV), que conoce la web con las calles del lugar. Las cifras no cambian.
+ * pasa por más del margen. El límite es el de la vía por la que circulaba ESE vehículo (René,
+ * 2026-11-26: su `maxspeed` o el de su tipo según la LGMSV), que conoce la web con las calles del lugar.
+ * Las cifras no cambian.
  */
 export function conAvisoDelLimite(
   r: Reconstruccion,
-  limite: { kmh: number; fuente: string } | null,
+  limites: Readonly<Record<string, { kmh: number; fuente: string } | null>>,
 ): Reconstruccion {
   const avisos = r.velocidades
-    .map((v) => avisoSobreElLimite(v.vehiculo, v.previa?.mejor, limite))
+    .map((v) => avisoSobreElLimite(v.vehiculo, v.previa?.mejor, limites[v.vehiculo] ?? null))
     .filter((x): x is string => x !== null && !r.limites.includes(x));
   return avisos.length ? { ...r, limites: [...r.limites, ...avisos] } : r;
 }
