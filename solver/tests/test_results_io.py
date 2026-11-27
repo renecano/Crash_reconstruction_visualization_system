@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import os
 
 import pytest
 
@@ -12,7 +13,38 @@ def test_hay_un_resultado_versionado_por_escena() -> None:
     assert list_results() == list_fixtures()
 
 
-@pytest.mark.parametrize("target", result_targets())
+# Las referencias más lentas, de la más a la menos lenta (medido el 2026-11-27: 303, 171, 163, 90,
+# 76 y 56 s en la laptop). CI las reparte entre dos trabajos con `CROQUIS_RESULTADOS=1/2` o `2/2`:
+# cada lenta va al trabajo con menos carga y las demás se alternan. Sin la variable, todas.
+_LENTAS = (
+    "inversion/axa_reposo_lejano",
+    "inversion/axa_alcance",
+    "glorieta",
+    "lateral_interseccion",
+    "inversion/lateral_puntos_paso",
+    "inversion/arbol_velocidad_declarada",
+)
+_COSTO_S = (303, 171, 163, 90, 76, 56)
+
+
+def _de_esta_parte(targets: list[str]) -> list[str]:
+    parte = os.environ.get("CROQUIS_RESULTADOS")
+    if not parte:
+        return targets
+    k = int(parte.split("/")[0]) - 1
+    carga = [0, 0]
+    dueno: dict[str, int] = {}
+    for t, c in zip(_LENTAS, _COSTO_S, strict=True):
+        i = 0 if carga[0] <= carga[1] else 1
+        dueno[t] = i
+        carga[i] += c
+    resto = [t for t in targets if t not in dueno]
+    for j, t in enumerate(resto):
+        dueno[t] = j % 2
+    return [t for t in targets if dueno[t] == k]
+
+
+@pytest.mark.parametrize("target", _de_esta_parte(result_targets()))
 def test_resultados_versionados_coinciden_con_el_solver(target: str) -> None:
     """Equivale a `croquis-solver reconstruct --check`, un resultado por prueba para que CI los
     reparta entre procesos (`pytest -n auto`): con el multiarranque, juntos pasaban de 10 min."""
