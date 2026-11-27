@@ -14,7 +14,12 @@ import alcance from "../../../../data/cesvi/grabaciones/ejemplos/alcance-deforma
 import carambola from "../../../../data/cesvi/grabaciones/ejemplos/carambola-lluvia.json";
 import poste from "../../../../data/cesvi/grabaciones/ejemplos/poste-terraceria.json";
 import reversa from "../../../../data/cesvi/grabaciones/ejemplos/reversa-pendiente.json";
-import crucero from "../../../../data/cesvi/grabaciones/escenas/cesvi-e814f085db.json";
+import crucero from "../../../../data/cesvi/grabaciones/ejemplos/crucero-noche.json";
+import callesAlcance from "../../../../data/cesvi/ejemplos/calles/alcance-deformacion.json";
+import callesCarambola from "../../../../data/cesvi/ejemplos/calles/carambola-lluvia.json";
+import callesCrucero from "../../../../data/cesvi/ejemplos/calles/crucero-noche.json";
+import callesPoste from "../../../../data/cesvi/ejemplos/calles/poste-terraceria.json";
+import callesReversa from "../../../../data/cesvi/ejemplos/calles/reversa-pendiente.json";
 
 export interface EjemploNarracion {
   clave: string;
@@ -25,7 +30,25 @@ export interface EjemploNarracion {
   narracion: string;
   /** La lectura que hizo Claude de esta narración, tal como la devuelve la API. */
   salida: SalidaCorpus;
+  /**
+   * Dónde abre el ejemplo (René, 2026-11-25: «los cinco ejemplos tienen que abrir siempre en su lugar,
+   * sin preguntar “¿Dónde fue?”»): guardado con el ejemplo, sin depender del buscador. Ilustrativo.
+   */
+  lugar: { lat: number; lon: number; nombre: string };
 }
+
+/**
+ * Las calles de cada lugar, guardadas con el ejemplo (René, 2026-11-25: «en la demo con CESVI no
+ * puede salir otra cifra porque OpenStreetMap tardó»). © colaboradores de OpenStreetMap (ODbL);
+ * `ejemplos-calles.test.ts` las genera.
+ */
+const CALLES: Record<string, unknown> = {
+  "crucero-noche": callesCrucero,
+  "alcance-deformacion": callesAlcance,
+  "carambola-lluvia": callesCarambola,
+  "reversa-pendiente": callesReversa,
+  "poste-terraceria": callesPoste,
+};
 
 const GRABADAS: Record<string, { narracion: string; salida: unknown }> = {
   "crucero-noche": crucero,
@@ -45,6 +68,7 @@ export const EJEMPLOS: readonly EjemploNarracion[] = DATOS.ejemplos.flatMap((e) 
           linea: e.linea,
           narracion: g.narracion,
           salida: g.salida as SalidaCorpus,
+          lugar: e.lugar,
         },
       ]
     : [];
@@ -60,4 +84,25 @@ export function ejemploDe(texto: string): EjemploNarracion | null {
 /** La lectura guardada de una narración de ejemplo sin cambios; null si no es un ejemplo. */
 export function lecturaGuardada(texto: string): SalidaCorpus | null {
   return ejemploDe(texto)?.salida ?? null;
+}
+
+/** Con el lugar del ejemplo, si la narración es un ejemplo sin cambios: el caso abre ahí. */
+export function conLugarDelEjemplo<T extends { caso: { lugar?: object | undefined } }>(
+  texto: string,
+  e: T,
+): T {
+  const ej = ejemploDe(texto);
+  if (!ej) return e;
+  return {
+    ...e,
+    caso: {
+      ...e.caso,
+      lugar: {
+        ...e.caso.lugar,
+        coordenadas: { lat: ej.lugar.lat, lon: ej.lugar.lon },
+        // Sus calles guardadas: La escena y la reconstrucción no dependen de que responda la red.
+        ...(CALLES[ej.clave] ? { calles_del_mapa: CALLES[ej.clave] } : {}),
+      },
+    },
+  };
 }

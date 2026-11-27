@@ -463,7 +463,9 @@ export function evidenceFromSpec(spec: Json, seed = EVIDENCE_SEED, nDamage = N_D
       const fase =
         (e.fase as string | undefined) || (e.tipo === "marcas_frenado" ? "antes_impacto" : null);
       if (fase === "despues_impacto") slide.set(str(e.vehiculo_id), lenM(e.longitud as Json));
-      else if (fase === "antes_impacto" && e.tipo === "marcas_frenado") {
+      // Un derrape antes del impacto (René, 2026-11-24: «derrape de 18 m antes de la salida del
+      // camino») también disipa con la fricción: va como el frenado.
+      else if (fase === "antes_impacto") {
         skid.set(str(e.vehiculo_id), lenM(e.longitud as Json));
       }
     }

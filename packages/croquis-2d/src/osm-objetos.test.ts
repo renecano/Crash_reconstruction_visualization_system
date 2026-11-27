@@ -40,5 +40,6 @@ describe("los objetos del lugar desde OpenStreetMap (R10)", () => {
     expect(q).toContain('["natural"="tree"]');
     expect(q).toContain('["highway"="street_lamp"]');
     expect(q).toContain("barrier");
+    expect(q).toContain('["building"]');
   });
 });

@@ -6,6 +6,7 @@ import { colocar, RECETAS } from "./recetas-ejemplos";
 import { cerrarLaEscena, contestarPreguntas, irAPaso } from "./ayuda-recorrido";
 import { conPosicion, escenaDeNarracion, type SalidaCorpus } from "@croquis/cesvi";
 import { casoParaGuardar } from "../src/lib/caso-guardado";
+import { rehacerLaEscena } from "../src/lib/rehacer-escena";
 
 /**
  * Ronda 4 (René, 2026-11-18): «Prueba con 6 narraciones nuevas que cubran cada caso (árbol, poste,
@@ -199,11 +200,13 @@ test("caso encimado a propósito: antes y después en el 3D", async ({ page }) =
     .isVisible()
     .catch(() => false);
   await capturar3d(page, "encimado-antes");
-  // En La escena, el aviso con «Separarlos».
+  // En La escena, el aviso con «Separarlos». El clic lleva tope (t8, 2026-11-24): sin él, si el botón
+  // del mapa no está a la mano, esperaba hasta el tope de la prueba (15 min) y el error decía «sin el
+  // panel de pasos». Si no está, `irAPaso` llega a La escena por los pasos.
   await page
     .getByTestId("vista-mapa")
     .first()
-    .click()
+    .click({ timeout: 10_000 })
     .catch(() => undefined);
   await irAPaso(page, 3);
   const separar = page.getByTestId("separar-choque-encimado");
@@ -273,3 +276,130 @@ test("Tollocan de René, de punta a punta", async ({ page }) => {
   });
   escribirSalida(JSON.stringify({ fecha: new Date().toISOString(), filas }, null, 2) + "\n");
 });
+
+/**
+ * Las tres narraciones que René probó en producción (2026-11-24), en el navegador con el Unity real:
+ * el árbol al salir de una curva, el camión que da vuelta y atropella a un peatón, y la carambola en el
+ * semáforo. Cada una abre su caso con La escena rehecha como la haría hoy el perito
+ * (`rehacerLaEscena`: sus choques donde él los marcó, la dirección con la vuelta dada, el peatón,
+ * «Separarlos» y «Como dice la narración»), lee la cifra ya asentada (sin la cuenta a medias) o el
+ * «no cuadra», y captura el 3D. Corre con `-Despues tres` (t9).
+ */
+for (const clave of ["rene-arbol-curva", "rene-peaton-vuelta", "rene-carambola-semaforo"]) {
+  test(`las tres narraciones de René: ${clave}`, async ({ page }) => {
+    test.setTimeout(600_000);
+    mkdirSync(CAPTURAS, { recursive: true });
+    const c = JSON.parse(
+      readFileSync(join(RAIZ, `data/cesvi/casos/${clave}.croquis`), "utf8"),
+    ) as Pick<Parameters<typeof casoParaGuardar>[0], "narracion" | "escena" | "expediente"> & {
+      titulo?: string;
+    };
+    const e = rehacerLaEscena(c.expediente, c.escena.posiciones);
+    const ruta = join(RAIZ, `eval/results/t9/casos/${clave}.croquis`);
+    mkdirSync(dirname(ruta), { recursive: true });
+    writeFileSync(
+      ruta,
+      JSON.stringify(
+        casoParaGuardar({
+          narracion: c.narracion,
+          escena: c.escena,
+          expediente: e,
+          validacion: null,
+          ...(c.titulo ? { titulo: c.titulo } : {}),
+        }),
+      ),
+    );
+    await page.goto("/cesvi");
+    const gpu = await rendererWebgl(page);
+    await page.getByTestId("abrir-caso-casos").setInputFiles(ruta);
+    await expect(page.getByTestId("recorrido-caso")).toBeVisible({ timeout: 60_000 });
+    await irAPaso(page, 4);
+    const rec = page.getByTestId("reconstruir");
+    if (await rec.isVisible().catch(() => false)) await rec.click();
+    await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 240_000 });
+    // La cifra grande cuenta 1.45 s hasta su valor: se lee asentada (t8, 2026-11-24).
+    await page.waitForTimeout(3000);
+    const noCuadra = await page
+      .getByTestId("no-cuadra")
+      .isVisible()
+      .catch(() => false);
+    const cifra = (await page.getByTestId("cifra-reconstruccion").innerText()).replace(/\s+/g, " ");
+    await capturar3d(page, clave);
+    filas.push({
+      clave,
+      gpu,
+      cifra,
+      no_cuadra: noCuadra,
+      peaton_en_la_escena: (e.personas ?? []).length,
+    });
+    escribirSalida(JSON.stringify({ fecha: new Date().toISOString(), filas }, null, 2) + "\n");
+  });
+}
+
+/**
+ * Una muestra de las narraciones nuevas de la revisión de la cadena (René, 2026-11-24: «una muestra
+ * de 10 de las narraciones nuevas con captura del 3D»), por el flujo del perito: la narración con su
+ * lectura grabada (`data/cesvi/grabaciones/auditoria/`), La escena que propone Croquis sobre el mapa
+ * real, la reconstrucción y el 3D de Unity. Corre con `-Despues nuevas` (t9).
+ */
+const MUESTRA_NUEVAS = [
+  "aud-01-alcance-tollocan",
+  "aud-02-lateral-tecnologico-lastorres",
+  "aud-04-arbol-matlatzincas",
+  "aud-10-reversa-estacionado-metepec",
+  "aud-13-moto-vuelta-izquierda-tecnologico",
+  "aud-15-carambola4-tollocan-lluvia",
+  "aud-16-atropello-camion-pinosuarez",
+  "aud-19-glorieta-insurgentes",
+  "aud-31-alcance-puente-churubusco",
+  "aud-32-volcadura-viaducto",
+];
+const nuevas = (
+  JSON.parse(
+    readFileSync(join(RAIZ, "data/cesvi/narraciones-auditoria/narraciones.json"), "utf8"),
+  ) as { narraciones: { id: string; texto: string }[] }
+).narraciones.filter((n) => MUESTRA_NUEVAS.includes(n.id));
+
+for (const n of nuevas) {
+  test(`las narraciones nuevas: ${n.id}`, async ({ page }) => {
+    test.setTimeout(900_000);
+    mkdirSync(CAPTURAS, { recursive: true });
+    const salida = (
+      JSON.parse(
+        readFileSync(join(RAIZ, `data/cesvi/grabaciones/auditoria/${n.id}.json`), "utf8"),
+      ) as { salida: unknown }
+    ).salida;
+    await page.addInitScript(() => localStorage.setItem("croquis.escena", "nueva"));
+    await page.route("**/api/cesvi/escena", (r) =>
+      r.fulfill({ json: { metodo: "claude", salida } }),
+    );
+    await page.goto("/cesvi");
+    const gpu = await rendererWebgl(page);
+    await page.getByTestId("ir-caso-nuevo").click();
+    await irAPaso(page, 2);
+    await page.getByTestId("narracion").fill(n.texto);
+    await page.getByTestId("leer-narracion").click();
+    await expect(page.getByTestId("escena")).toContainText("vehículo", { timeout: 180_000 });
+    await contestarPreguntas(page);
+    await irAPaso(page, 3);
+    await page.waitForTimeout(12_000);
+    await page.screenshot({
+      path: join(CAPTURAS, `${n.id}-0-la-escena.jpg`),
+      quality: 82,
+      type: "jpeg",
+    });
+    await cerrarLaEscena(page);
+    await page.getByTestId("lista-ver-reconstruccion").click();
+    await page.getByTestId("reconstruir").click();
+    await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 240_000 });
+    await page.waitForTimeout(3000);
+    const noCuadra = await page
+      .getByTestId("no-cuadra")
+      .isVisible()
+      .catch(() => false);
+    const cifra = (await page.getByTestId("cifra-reconstruccion").innerText()).replace(/\s+/g, " ");
+    await capturar3d(page, n.id);
+    filas.push({ clave: n.id, gpu, cifra, no_cuadra: noCuadra });
+    escribirSalida(JSON.stringify({ fecha: new Date().toISOString(), filas }, null, 2) + "\n");
+  });
+}

@@ -1,0 +1,194 @@
+{
+  "id": "aud-09-ciclista-tecnologico",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 446,
+    "output_tokens": 1626,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0179212,
+  "narracion": "El hecho se ubica en el cruce de Avenida Tecnológico y Avenida Estado de México, colonia San Salvador Tizatlalli, en Metepec, Estado de México, aproximadamente a las 11:00 horas. El vehículo A, marca Volkswagen, tipo Gol, modelo 2019, circulaba sobre Avenida Tecnológico de norte a sur, por el carril derecho, y dio vuelta a la derecha para incorporarse a Avenida Estado de México con dirección al poniente. Un ciclista, adulto, circulaba en el mismo sentido por la orilla derecha de Avenida Tecnológico y continuaba de frente. Al dar la vuelta, el vehículo A impactó con su costado delantero derecho la bicicleta. El ciclista quedó tendido a 4 m del punto de contacto, sobre Avenida Estado de México, y la bicicleta a 1 m de él. El vehículo A quedó detenido 6 m después del paso peatonal de Avenida Estado de México. No se observaron huellas de frenado. El vehículo A presenta un rayón y un abollamiento leve en la salpicadera delantera derecha; la bicicleta, la rueda delantera doblada. Pavimento seco, día soleado.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "cruce de Avenida Tecnológico y Avenida Estado de México, colonia San Salvador Tizatlalli",
+        "cita": "El hecho se ubica en el cruce de Avenida Tecnológico y Avenida Estado de México, colonia San Salvador Tizatlalli, en Metepec, Estado de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Metepec",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 11:00 horas",
+        "cita": "aproximadamente a las 11:00 horas"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Volkswagen",
+        "cita": "El vehículo A, marca Volkswagen, tipo Gol, modelo 2019"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Gol",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2019",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "vira_derecha",
+        "cita": "circulaba sobre Avenida Tecnológico de norte a sur, por el carril derecho, y dio vuelta a la derecha para incorporarse a Avenida Estado de México"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "Un ciclista, adulto, circulaba en el mismo sentido por la orilla derecha de Avenida Tecnológico y continuaba de frente"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "clase",
+        "valor": "bicicleta",
+        "cita": "Un ciclista, adulto, circulaba en el mismo sentido por la orilla derecha de Avenida Tecnológico"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "el vehículo A impactó con su costado delantero derecho la bicicleta"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 lateral_derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El ciclista quedó tendido a 4 m del punto de contacto, sobre Avenida Estado de México, y la bicicleta a 1 m de él"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "el ciclista quedó tendido a 4 m del punto de contacto, sobre Avenida Estado de México, y la bicicleta a 1 m de él",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A quedó detenido 6 m después del paso peatonal de Avenida Estado de México"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "detenido 6 m después del paso peatonal de Avenida Estado de México",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "vertice",
+        "valor": "delantero_derecho",
+        "cita": "El vehículo A presenta un rayón y un abollamiento leve en la salpicadera delantera derecha"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "tallon",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "magnitud",
+        "valor": "leve",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "deformacion",
+        "cita": "la bicicleta, la rueda delantera doblada"
+      }
+    ]
+  }
+}

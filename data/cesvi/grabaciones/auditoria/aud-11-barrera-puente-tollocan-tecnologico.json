@@ -1,0 +1,194 @@
+{
+  "id": "aud-11-barrera-puente-tollocan-tecnologico",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 461,
+    "output_tokens": 1567,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0173612,
+  "narracion": "El hecho se ubica en el paso a desnivel de Paseo Tollocan en su cruce con Avenida Tecnológico, colonia San Jerónimo Chicahualco, en Metepec, Estado de México, aproximadamente a las 2:10 horas. El vehículo A, marca Volkswagen, tipo Jetta, modelo 2016, circulaba sobre el puente con dirección a Toluca, por el carril izquierdo, a más de 100 km/h, según las cámaras de la vialidad. En la bajada del puente el conductor perdió el control: el vehículo giró en sentido contrario a las manecillas del reloj, derrapó y se impactó con su costado izquierdo contra la barrera metálica de contención del lado izquierdo. En el pavimento se observaron huellas de derrape de 30 m antes del impacto. Después del impacto el vehículo siguió deslizándose junto a la barrera y quedó detenido a 15 m del punto de impacto, sobre el carril izquierdo, con el frente hacia el sur. Presenta deformación severa en el costado izquierdo, en las puertas y el poste central, y daños en la salpicadera trasera izquierda. La barrera quedó deformada en un tramo de unos 8 m. Pavimento seco; la vía cuenta con alumbrado público.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "objeto_fijo",
+        "cita": "se impactó con su costado izquierdo contra la barrera metálica de contención del lado izquierdo"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 2:10 horas",
+        "cita": "aproximadamente a las 2:10 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "paso a desnivel de Paseo Tollocan en su cruce con Avenida Tecnológico, colonia San Jerónimo Chicahualco",
+        "cita": "paso a desnivel de Paseo Tollocan en su cruce con Avenida Tecnológico, colonia San Jerónimo Chicahualco"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Metepec",
+        "cita": "en Metepec, Estado de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Volkswagen",
+        "cita": "El vehículo A, marca Volkswagen, tipo Jetta, modelo 2016"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Jetta",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2016",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba sobre el puente con dirección a Toluca, por el carril izquierdo, a más de 100 km/h"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "se impactó con su costado izquierdo contra la barrera metálica de contención del lado izquierdo"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "objeto_fijo",
+        "valor": "barrera metálica de contención",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 lateral_izquierdo",
+        "cita": ""
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "derrape",
+        "cita": "huellas de derrape de 30 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "30 m",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "quedó detenido a 15 m del punto de impacto, sobre el carril izquierdo, con el frente hacia el sur"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "detenido a 15 m del punto de impacto, sobre el carril izquierdo, con el frente hacia el sur",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "Presenta deformación severa en el costado izquierdo, en las puertas y el poste central"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "deformacion",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "magnitud",
+        "valor": "severa",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "daños en la salpicadera trasera izquierda"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "trasero",
+        "cita": ""
+      },
+      {
+        "seccion": "objeto_fijo",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "descripcion",
+        "valor": "barrera metálica de contención deformada en un tramo de unos 8 m",
+        "cita": "La barrera quedó deformada en un tramo de unos 8 m"
+      }
+    ]
+  }
+}

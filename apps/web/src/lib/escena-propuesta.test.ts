@@ -9,8 +9,14 @@ import type { Expediente } from "@croquis/cesvi";
 import { overpassDeTeselas, type LineaTesela } from "@croquis/croquis-2d";
 import { describe, expect, it } from "vitest";
 import { RADIO_CALLES_M } from "./calles-del-mapa";
-import { callesDe, nombreVehiculo, poseDe, rumboAlineado } from "./escena-facil";
-import { listaDeLaEscena, listaLista, proponerEscena } from "./escena-propuesta";
+import { callesDe, nombreVehiculo, poseDe, rumboAlineado, type Calle } from "./escena-facil";
+import {
+  calleNarradaSinCruce,
+  listaDeLaEscena,
+  listaLista,
+  proponerEscena,
+} from "./escena-propuesta";
+import { INCLINACION_DEG } from "./objeto-orilla";
 import { impactosAColocar } from "./pasos-caso";
 
 const aqui = dirname(fileURLToPath(import.meta.url));
@@ -61,12 +67,15 @@ describe("la escena ya armada (cesvi-cf708e9fed)", () => {
     }
   });
 
-  it("el primero queda alineado con una calle del mapa (no atravesado)", () => {
+  it("el primero va con la calle del mapa (no atravesado), inclinado hacia el muro de la orilla", () => {
+    // Choca contra un muro de contención: va hacia la orilla, 20° fuera de su carril (René,
+    // 2026-11-24, punto 1: el objeto está en la orilla, no en el carril).
     const v = impactosAColocar(expediente)[0]!.vehiculos[0]!;
     const pose = poseDe(p.expediente, v, "impacto")!;
     const alineado = rumboAlineado(calles, p.puntos[1]!, pose.rumbo);
     const dif = Math.abs((((pose.rumbo - alineado) % 180) + 180) % 180);
-    expect(Math.min(dif, 180 - dif)).toBeLessThan(15);
+    expect(Math.abs(Math.min(dif, 180 - dif) - INCLINACION_DEG)).toBeLessThan(5);
+    expect(p.propuestos.some((x) => x.clave === "orilla-1")).toBe(true);
   });
 
   it("cada «Por qué» es concreto: la calle, el sentido y los daños en que se basa (René)", () => {
@@ -188,5 +197,51 @@ describe("la lista de La escena (ronda 4, propuesta 1)", () => {
     // «No sé por dónde venía» también cuenta como respondido.
     const conNoSe = listaDeLaEscena({ ...base, expediente: p.expediente, direccionesNoSe: [v] });
     expect(conNoSe.find((x) => x.clave === `direccion-${v}`)!.estado).toBe("confirmado");
+  });
+});
+
+describe("una sola calle narrada, sin cruce (René, 2026-11-25)", () => {
+  // Calle Olivos sale de Calle Laureles hacia el norte: el choque va sobre Olivos, no en la esquina.
+  const laureles: Calle = {
+    id: 1,
+    nombre: "Calle Laureles",
+    puntos: [
+      [-98.188342, 18.985953],
+      [-98.187103, 18.985807],
+      [-98.185773, 18.985652],
+    ],
+    ancho: 6.6,
+    nodos: [11, 12, 13],
+  };
+  const olivos: Calle = {
+    id: 2,
+    nombre: "Calle Olivos",
+    puntos: [
+      [-98.186967, 18.986667],
+      [-98.187103, 18.985807],
+    ],
+    ancho: 6.6,
+    nodos: [21, 12],
+  };
+  const lugar = { lat: 18.986237, lon: -98.187035 };
+
+  it("«en la calle Olivos, frente al acceso…»: sobre Olivos, en el lugar", () => {
+    const p = calleNarradaSinCruce(
+      [laureles, olivos],
+      "El hecho se ubica en la calle Olivos, frente al acceso vehicular de una casa habitación, colonia Lomas del Valle. La calle consta de dos carriles.",
+      lugar,
+    );
+    expect(p?.calle.nombre).toBe("Calle Olivos");
+    expect(p!.distancia).toBeLessThan(1);
+  });
+
+  it("con un cruce en la frase, no", () => {
+    expect(
+      calleNarradaSinCruce(
+        [laureles, olivos],
+        "El hecho se ubica en el cruce de la calle Olivos y la calle Laureles.",
+        lugar,
+      ),
+    ).toBeNull();
   });
 });

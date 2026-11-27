@@ -75,29 +75,67 @@ function aSegmento(p: P, a: P, b: P): { d: number; ang: number } {
   };
 }
 
+/** La diferencia entre dos direcciones de vía (sin sentido), de 0° a 90°. */
+const difVia = (a: number, b: number) => {
+  const d = Math.abs((((a - b) % 180) + 180) % 180);
+  return Math.min(d, 180 - d);
+};
+
 /**
- * El giro del croquis (grados): el que deja horizontal la vía principal cerca del choque (o, sin
- * vías, el recorrido del vehículo más rápido), entre −90° y 90° para que nada quede de cabeza.
+ * Hacia dónde avanzaban los vehículos al llegar al choque (grados desde el este): el recorrido del
+ * último segundo antes del impacto del que más avanzó; null si nadie se movía.
+ */
+export function direccionDeLlegada(resultado: ResultadoMaqueta): number | null {
+  const ti = tImpacto(resultado);
+  let mejor: { m: number; ang: number } | null = null;
+  for (const v of resultado.vehiculos) {
+    const tr = v.trayectoria;
+    if (!tr.t.length) continue;
+    const a = poseEn(tr, Math.max(tr.t[0]!, ti - 1));
+    const b = poseEn(tr, ti);
+    const m = Math.hypot(b.x - a.x, b.y - a.y);
+    if (m > 0.5 && (!mejor || m > mejor.m))
+      mejor = { m, ang: (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI };
+  }
+  return mejor?.ang ?? null;
+}
+
+/**
+ * El giro del croquis (grados): el que deja horizontal la vía del choque (o, sin vías, el recorrido
+ * del vehículo más rápido), entre −90° y 90° para que nada quede de cabeza.
  */
 export function giroDelCroquis(resultado: ResultadoMaqueta, vias: readonly ViaCroquis[]): number {
   const c = resultado.punto_impacto ?? { x: 0, y: 0 };
-  // Primero la vía donde fue el choque (el impacto cae sobre ella); entre varias (un cruce), la de
-  // más jerarquía. Si ninguna lo contiene, la más cercana a menos de 30 m.
-  let mejor: { dentro: boolean; rango: number; d: number; ang: number } | null = null;
+  // La vía del choque es la que recorren los vehículos al llegar: en un cruce, la de su dirección,
+  // no la de más jerarquía (René, 2026-11-25: en la carambola de Tollocan el croquis ponía
+  // horizontal a Paseo Tollocan y la calle del choque quedaba vertical). Entre las que contienen el
+  // impacto, primero las que van como la llegada (a menos de 30°); luego la de más jerarquía. Si
+  // ninguna lo contiene, la más cercana a menos de 30 m.
+  const llegada = direccionDeLlegada(resultado);
+  let mejor: {
+    dentro: boolean;
+    alineada: boolean;
+    rango: number;
+    d: number;
+    ang: number;
+  } | null = null;
   for (const v of vias) {
     const rango = RANGO[v.tipo ?? ""] ?? 2;
     for (let i = 0; i + 1 < v.puntos.length; i++) {
       const s = aSegmento(c, v.puntos[i]!, v.puntos[i + 1]!);
       if (s.d > Math.max(30, v.ancho * 2)) continue;
       const dentro = s.d <= v.ancho / 2 + 1.5;
+      const alineada = llegada !== null && difVia(s.ang, llegada) <= 30;
       const gana =
         !mejor ||
         (dentro && !mejor.dentro) ||
         (dentro === mejor.dentro &&
           (dentro
-            ? rango > mejor.rango || (rango === mejor.rango && s.d < mejor.d)
+            ? (alineada && !mejor.alineada) ||
+              (alineada === mejor.alineada &&
+                (rango > mejor.rango || (rango === mejor.rango && s.d < mejor.d)))
             : s.d < mejor.d));
-      if (gana) mejor = { dentro, rango, d: s.d, ang: s.ang };
+      if (gana) mejor = { dentro, alineada, rango, d: s.d, ang: s.ang };
     }
   }
   let ang = mejor?.ang;
@@ -244,11 +282,11 @@ export function croquisPericial(
   const fondoVia = o.fondo ? 'fill-opacity="0"' : "";
   for (const v of vias)
     partes.push(
-      `<polyline points="${poli(v.puntos)}" fill="none" stroke="#000" stroke-width="${r1(v.ancho + linea * 2)}" stroke-linejoin="round" stroke-linecap="butt"/>`,
+      `<polyline points="${poli(v.puntos)}" fill="none" stroke="#000" stroke-width="${r1(v.ancho + linea * 2)}" stroke-linejoin="round" stroke-linecap="round"/>`,
     );
   for (const v of vias)
     partes.push(
-      `<polyline points="${poli(v.puntos)}" fill="none" stroke="#fff" stroke-opacity="${o.fondo ? 0.55 : 1}" stroke-width="${r1(v.ancho)}" stroke-linejoin="round" stroke-linecap="butt" ${fondoVia}/>`,
+      `<polyline points="${poli(v.puntos)}" fill="none" stroke="#fff" stroke-opacity="${o.fondo ? 0.55 : 1}" stroke-width="${r1(v.ancho)}" stroke-linejoin="round" stroke-linecap="round" ${fondoVia}/>`,
     );
   for (const v of vias) {
     const n = Math.max(1, Math.round(v.carriles ?? (v.ancho >= 6 ? 2 : 1)));
@@ -310,7 +348,16 @@ export function croquisPericial(
   const porEtiquetar: { id: string; x: number; y: number; texto: string }[] = [];
   vehiculos.forEach((v) => {
     const letra = (nombres[v.id] ?? v.id).trim().charAt(0).toUpperCase();
-    posicionesDelCroquis(v.trayectoria, ti).forEach((pose, k) => {
+    const poses = posicionesDelCroquis(v.trayectoria, ti);
+    // Una posición igual a la anterior (el detenido en el semáforo: antes del impacto y en el impacto
+    // está en el mismo lugar) se dibuja una vez, con una sola etiqueta: «B1·2» (René, 2026-11-25).
+    const igual = (a: (typeof poses)[number], b: (typeof poses)[number]) =>
+      Math.hypot(a.x - b.x, a.y - b.y) < 0.3 &&
+      Math.abs(Math.atan2(Math.sin(a.rumbo - b.rumbo), Math.cos(a.rumbo - b.rumbo))) < 0.09;
+    poses.forEach((pose, k) => {
+      if (k < poses.length - 1 && igual(pose, poses[k + 1]!)) return;
+      let desde = k;
+      while (desde > 0 && igual(poses[desde - 1]!, pose)) desde--;
       const { esq, frente } = silueta(v, pose);
       const pts = esq.map((p) => `${r1(p.x)},${r1(p.y)}`).join(" ");
       const estilo =
@@ -325,7 +372,11 @@ export function croquisPericial(
       );
       const centro = hoja(pose);
       ocupados.push({ ...centro, r: Math.max(v.dimensiones.largo_m, v.dimensiones.ancho_m) / 2 });
-      porEtiquetar.push({ id: `${v.id}-${k + 1}`, ...centro, texto: `${letra}${k + 1}` });
+      porEtiquetar.push({
+        id: `${v.id}-${k + 1}`,
+        ...centro,
+        texto: desde < k ? `${letra}${desde + 1}·${k + 1}` : `${letra}${k + 1}`,
+      });
     });
   });
   // Las personas a pie o en bicicleta (A3): su recorrido y P1, P2, P3 (Q… si hay más de una).
@@ -362,17 +413,23 @@ export function croquisPericial(
   ocupados.push({ x: 0, y: 0, r: ri });
   const rEt = fs * 0.85;
   // «Impacto» primero (es la más ancha) y con su tamaño.
+  // El ancho (medio) de cada etiqueta: «Impacto», una doble («B1·2») o una sencilla («A1»).
+  const medio = (e: { id: string; texto?: string }) =>
+    e.id === "impacto" ? rEt * 4.2 : (e.texto?.length ?? 0) > 3 ? rEt * 1.7 : rEt;
   const lugares = colocarEtiquetas(
-    [{ id: "impacto", x: 0, y: 0, r: rEt * 4.2 }, ...porEtiquetar],
+    [
+      { id: "impacto", x: 0, y: 0, r: rEt * 4.2 },
+      ...porEtiquetar.map((e) => (medio(e) > rEt ? { ...e, r: medio(e) } : e)),
+    ],
     rEt,
     ocupados,
   );
   for (const e of [...porEtiquetar, { id: "impacto", x: 0, y: 0, texto: "Impacto" }]) {
     const q = lugares[e.id]!;
-    const ancho = e.id === "impacto" ? rEt * 4.2 : rEt;
+    const ancho = medio(e);
     partes.push(
       `<line x1="${r1(e.x)}" y1="${r1(e.y)}" x2="${r1(q.x)}" y2="${r1(q.y)}" stroke="#000" stroke-width="${r1(linea * 0.7)}"/>`,
-      e.id === "impacto"
+      ancho > rEt
         ? `<rect x="${r1(q.x - ancho)}" y="${r1(q.y - rEt)}" width="${r1(ancho * 2)}" height="${r1(rEt * 2)}" rx="${r1(rEt)}" fill="#fff" stroke="#000" stroke-width="${r1(linea)}"/>`
         : `<circle cx="${r1(q.x)}" cy="${r1(q.y)}" r="${r1(rEt)}" fill="#fff" stroke="#000" stroke-width="${r1(linea)}"/>`,
       `<text x="${r1(q.x)}" y="${r1(q.y)}" font-size="${r1(fs * (e.id === "impacto" ? 0.85 : 0.95))}" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="#000" data-etiqueta="${esc(e.texto)}">${esc(e.texto)}</text>`,

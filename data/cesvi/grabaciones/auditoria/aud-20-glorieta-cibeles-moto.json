@@ -1,0 +1,210 @@
+{
+  "id": "aud-20-glorieta-cibeles-moto",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 433,
+    "output_tokens": 1689,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0185252,
+  "narracion": "El hecho se ubica en la Glorieta de las Cibeles, en la incorporación de la calle Durango, colonia Roma Norte, alcaldía Cuauhtémoc, Ciudad de México, aproximadamente a las 22:50 horas. El vehículo B, motocicleta marca Italika, tipo FT150, modelo 2021, circulaba dentro de la glorieta por su costado poniente, de norte a sur. El vehículo A, marca Volkswagen, tipo Jetta, modelo 2020, circulaba sobre la calle Durango de poniente a oriente, a unos 30 km/h según su conductor, e ingresó a la glorieta sin detenerse. El vehículo A impactó con su parte frontal el costado derecho de la motocicleta. La motocicleta quedó caída a 5 m del punto de contacto, junto a la guarnición de la fuente. El vehículo A quedó detenido 2 m después del punto de contacto. No se observaron huellas de frenado. El vehículo A presenta un abollamiento en la defensa delantera y el cofre; la motocicleta, daños en el costado derecho, el escape y el manubrio. Pavimento seco; la glorieta cuenta con alumbrado público.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Glorieta de las Cibeles, en la incorporación de la calle Durango, colonia Roma Norte",
+        "cita": "El hecho se ubica en la Glorieta de las Cibeles, en la incorporación de la calle Durango, colonia Roma Norte"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "alcaldía Cuauhtémoc",
+        "cita": "alcaldía Cuauhtémoc, Ciudad de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Ciudad de México",
+        "cita": "alcaldía Cuauhtémoc, Ciudad de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 22:50 horas",
+        "cita": "aproximadamente a las 22:50 horas"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Volkswagen",
+        "cita": "El vehículo A, marca Volkswagen, tipo Jetta, modelo 2020"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Jetta",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2020",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Italika",
+        "cita": "El vehículo B, motocicleta marca Italika, tipo FT150, modelo 2021"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "FT150",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2021",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "clase",
+        "valor": "motocicleta",
+        "cita": "El vehículo B, motocicleta marca Italika"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba dentro de la glorieta por su costado poniente, de norte a sur"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba sobre la calle Durango de poniente a oriente, a unos 30 km/h según su conductor, e ingresó a la glorieta sin detenerse"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "El vehículo A impactó con su parte frontal el costado derecho de la motocicleta."
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 lateral_derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "La motocicleta quedó caída a 5 m del punto de contacto, junto a la guarnición de la fuente."
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "caída a 5 m del punto de contacto, junto a la guarnición de la fuente",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A quedó detenido 2 m después del punto de contacto."
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "detenido 2 m después del punto de contacto",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta un abollamiento en la defensa delantera y el cofre"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "deformacion",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "la motocicleta, daños en el costado derecho, el escape y el manubrio"
+      }
+    ]
+  }
+}

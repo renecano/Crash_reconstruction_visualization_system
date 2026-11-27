@@ -36,7 +36,7 @@ const TIPO: Record<VersionCaso["tipo"], string> = {
 };
 
 /** Una tarjeta de «Qué cambia»: el concepto, las dos lecturas y si coinciden. */
-function Tarjeta({
+export function Tarjeta({
   concepto,
   filas,
   estado,
@@ -293,6 +293,30 @@ export function ActoVersiones({
               nombreDe={nombreDe}
               onSugerencia={(sugerencia) => onVersion({ ...v, sugerencia })}
             />
+          ) : v.clase === "velocidad" ? (
+            <div className="flex flex-col gap-3" data-testid="cambios-velocidad">
+              <p className="t-nota border-l-2 border-senal pl-3 text-senal-texto">
+                Hipótesis del perito: la cifra reconstruida no cambia.
+              </p>
+              <ul className="flex flex-col gap-2">
+                {v.cambios.map((c) => (
+                  <Tarjeta
+                    key={c.concepto}
+                    fila={c.clave}
+                    concepto={c.concepto}
+                    filas={[
+                      ["Con la hipótesis", c.version],
+                      ["A la velocidad reconstruida", c.reconstruccion],
+                    ]}
+                    estado={
+                      c.cambia
+                        ? { texto: "Cambia", clase: "insignia insignia-senal" }
+                        : { texto: "Igual", clase: "insignia" }
+                    }
+                  />
+                ))}
+              </ul>
+            </div>
           ) : (
             <div className="flex flex-col gap-3">
               {v.prueba.lineaBaseDistinta ? (

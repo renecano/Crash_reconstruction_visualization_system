@@ -15,6 +15,8 @@ import type { HerramientaEdicion, MensajesDeUnity } from "@croquis/scene-schema"
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type ComponentProps } from "react";
 import { especDel3d, NotasDel3d, Visor3dCaso } from "@/components/cesvi/caso/reconstruccion";
+import { paisajeDelClima, paisajeDelMapa } from "@croquis/croquis-2d";
+import { RADIO_CALLES_M } from "@/lib/calles-del-mapa";
 import { downloadBytes } from "@/lib/download";
 import { impactosAColocar } from "@/lib/pasos-caso";
 import { nombreVehiculo } from "@/lib/escena-facil";
@@ -73,6 +75,18 @@ export function VisorCasoUnity({
   );
   const ligero = sp.get("visor") === "ligero" || (automatizado && sp.get("visor") !== "unity");
   const escena = useMemo(() => especDel3d(r, calles, objetos), [r, calles, objetos]);
+  // El paisaje del lugar con la cobertura del suelo de OSM, en el radio de los objetos (contrato #335);
+  // sin ella, con el clima del lugar (Köppen-Geiger, solo México).
+  const paisaje = useMemo(
+    () =>
+      !r.origen
+        ? null
+        : objetos
+          ? paisajeDelMapa(objetos, { lon: r.origen[0], lat: r.origen[1], radioM: RADIO_CALLES_M })
+          : // Sin los objetos de OSM (todavía no llegan o Overpass falló), el clima del lugar.
+            paisajeDelClima(r.origen[1], r.origen[0]),
+    [r.origen, objetos],
+  );
   // Todas las cámaras del caso (A6): generales, por vehículo y por persona, con el nombre del panel.
   const camaras = useMemo(() => {
     const res = r.resultado as unknown as {
@@ -172,7 +186,7 @@ export function VisorCasoUnity({
         presentar
           ? // Detrás del diálogo de Presentar (z-50), donde iba la maqueta, sobre la franja de los capítulos
             // (el minimapa de Unity la tapaba): el velo de la izquierda lo cubre.
-            "visible pointer-events-none fixed top-0 right-0 bottom-28 left-[30%] z-[49]"
+            "visible pointer-events-none fixed top-0 right-0 bottom-28 left-[30%] z-[49] overflow-hidden"
           : enMarco
             ? "flex h-full flex-col"
             : `flex h-full flex-col gap-2 p-3 ${props.expandido ? "pt-40 pb-28" : "pt-16"} ${props.aSangre ? "[&>p]:order-last" : ""}`
@@ -190,12 +204,21 @@ export function VisorCasoUnity({
           )}
         />
       )}
-      <div className={presentar ? "relative h-full w-full" : "relative min-h-0 flex-1"}>
+      {/* En Presentar, el 3D se dibuja más alto que su marco: la leyenda que pone Unity abajo a la izquierda
+          caía bajo el velo, cortada, y repetía la de la página (Alberto, 2026-11-26). Queda una sola, la
+          de la página, completa. La de Unity mide unos 34 px de referencia en 1280 (MargenY, el texto y
+          su margen de 10 px), 1.9vw con el 3D a 70vw de ancho: el marco recorta 3.5vw. */}
+      <div
+        className={
+          presentar ? "absolute inset-x-0 top-0 h-[calc(100%+3.5vw)]" : "relative min-h-0 flex-1"
+        }
+      >
         <VisorUnity
           escena={escena}
           version={presentar ? null : version}
           piso={pisoReal.piso}
           relieve={r.relieve ?? null}
+          paisaje={paisaje}
           camaras={camaras}
           onTiempo={onInstante}
           activo={activo}

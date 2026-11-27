@@ -250,16 +250,31 @@ export function checkDamage(spec: Json, seed: number, samples: number): Inconsis
   return out;
 }
 
-export function checkRest(spec: Json): Inconsistency[] {
+/**
+ * Un reposo que ningún ajuste alcanza. Un solo ajuste desde las velocidades de arranque puede
+ * quedarse en un mínimo local: si no alcanza un reposo y hay inversión, se repite desde su mejor
+ * solución, y solo se avisa si tampoco (René, 2026-11-26: el Sentra del ejemplo del poste salía
+ * «inalcanzable» aunque la inversión lo llevaba a su lugar).
+ */
+export function checkRest(spec: Json, inversion: Inversion | null = null): Inconsistency[] {
   const out: Inconsistency[] = [];
   const ev = evidenceFromSpec(spec);
   if (ev.rest.size === 0) return out;
-  const fit = fitEvidence(spec, new Evidence(ev.rest, new Map(), new Map()));
+  const soloReposo = new Evidence(ev.rest, new Map(), new Map());
+  const fits = [fitEvidence(spec, soloReposo)];
   const byId = new Map((spec.vehiculos as Json[]).map((v) => [str(v.id), v]));
+  const falla = (fit: (typeof fits)[number], vid: string) =>
+    dmath.hypot(
+      fit.residuals.get(`reposo:${vid}:x`) ?? 0.0,
+      fit.residuals.get(`reposo:${vid}:y`) ?? 0.0,
+    ) * SIGMA_POSITION_M;
+  if (
+    inversion !== null &&
+    [...ev.rest.keys()].some((vid) => falla(fits[0]!, vid) > REST_SIGMAS * SIGMA_POSITION_M)
+  )
+    fits.push(fitEvidence(spec, soloReposo, { start: new Map(inversion.best.values) }));
   for (const vid of ev.rest.keys()) {
-    const rx = fit.residuals.get(`reposo:${vid}:x`) ?? 0.0;
-    const ry = fit.residuals.get(`reposo:${vid}:y`) ?? 0.0;
-    const miss = dmath.hypot(rx, ry) * SIGMA_POSITION_M;
+    const miss = Math.min(...fits.map((f) => falla(f, vid)));
     if (miss > REST_SIGMAS * SIGMA_POSITION_M) {
       out.push({
         codigo: "reposo_inalcanzable",
@@ -408,7 +423,7 @@ export function checkConsistency(
   return [
     ...basic,
     ...checkDamage(spec, seed, samples),
-    ...checkRest(spec),
+    ...checkRest(spec, inversion),
     ...(inversion !== null ? checkSpeedEvidence(spec, inversion) : []),
     ...(inversion !== null ? checkDamageReach(spec, inversion) : []),
     ...(inversion !== null ? checkAssumedRest(spec, inversion) : []),

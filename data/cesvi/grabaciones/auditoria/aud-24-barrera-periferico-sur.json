@@ -1,0 +1,194 @@
+{
+  "id": "aud-24-barrera-periferico-sur",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 439,
+    "output_tokens": 1612,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0177672,
+  "narracion": "El hecho se ubica sobre el Anillo Periférico Sur, a la altura de la colonia Jardines del Pedregal, alcaldía Álvaro Obregón, Ciudad de México, aproximadamente a las 17:30 horas, con lluvia. El vehículo A, camioneta marca Honda, tipo CR-V, modelo 2020, circulaba por el carril izquierdo de los carriles centrales con dirección a Xochimilco, a unos 80 km/h según su conductor. Al frenar por la reducción del tránsito, el vehículo perdió adherencia sobre el pavimento mojado, derrapó hacia la izquierda y se impactó con su parte frontal izquierda contra la barrera metálica de contención del camellón central. En el pavimento se observaron huellas de derrape de 20 m antes del impacto. Después del impacto, el vehículo rebotó y quedó detenido a 6 m del punto de impacto, atravesado sobre el carril izquierdo, con el frente hacia el norte. Presenta hundimiento en la parte frontal izquierda, con el faro y la salpicadera izquierda destruidos. La barrera quedó deformada en un tramo de unos 4 m. Pavimento mojado, día nublado.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "objeto_fijo",
+        "cita": "se impactó con su parte frontal izquierda contra la barrera metálica de contención del camellón central"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 17:30 horas",
+        "cita": "aproximadamente a las 17:30 horas, con lluvia"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Anillo Periférico Sur, a la altura de la colonia Jardines del Pedregal",
+        "cita": "sobre el Anillo Periférico Sur, a la altura de la colonia Jardines del Pedregal"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Álvaro Obregón",
+        "cita": "alcaldía Álvaro Obregón, Ciudad de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Ciudad de México",
+        "cita": "alcaldía Álvaro Obregón, Ciudad de México"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Honda",
+        "cita": "camioneta marca Honda, tipo CR-V, modelo 2020"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "CR-V",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2020",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba por el carril izquierdo de los carriles centrales con dirección a Xochimilco"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "velocidad",
+        "valor": "80 km/h",
+        "cita": "a unos 80 km/h según su conductor"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "frena",
+        "cita": "Al frenar por la reducción del tránsito, el vehículo perdió adherencia"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "se impactó con su parte frontal izquierda contra la barrera metálica de contención del camellón central"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "objeto_fijo",
+        "valor": "barrera metálica de contención del camellón central",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "derrape",
+        "cita": "huellas de derrape de 20 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "20 m",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "quedó detenido a 6 m del punto de impacto, atravesado sobre el carril izquierdo, con el frente hacia el norte"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "detenido a 6 m del punto de impacto, atravesado sobre el carril izquierdo, con el frente hacia el norte",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "Presenta hundimiento en la parte frontal izquierda, con el faro y la salpicadera izquierda destruidos"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "izquierdo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "objeto_fijo",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "descripcion",
+        "valor": "barrera metálica de contención del camellón central, deformada en un tramo de unos 4 m",
+        "cita": "La barrera quedó deformada en un tramo de unos 4 m"
+      }
+    ]
+  }
+}

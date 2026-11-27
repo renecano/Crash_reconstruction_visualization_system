@@ -1,0 +1,178 @@
+{
+  "id": "rene-arbol-curva",
+  "modalidad_c0": "tres-narraciones",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 409,
+    "output_tokens": 1431,
+    "cache_creation_input_tokens": 3846,
+    "cache_read_input_tokens": 0
+  },
+  "costo_usd": 0.024743,
+  "narracion": "El hecho se ubica sobre Paseo de los Matlatzincas, a la altura de la colonia Ciprés, en Toluca, Estado de México, aproximadamente a las 22:40 horas. El vehículo A, marca Volkswagen, tipo Jetta, modelo 2019, circulaba de norte a sur a aproximadamente 80 km/h según la declaración de su conductor. Al entrar a una curva hacia la derecha, el conductor perdió el control: el vehículo se fue hacia el lado izquierdo, salió del arroyo vehicular por el costado exterior de la curva, subió la guarnición y se impactó con su parte frontal izquierda contra un árbol de aproximadamente 40 cm de diámetro, ubicado a 3 m de la orilla del camino. En el pavimento se observaron huellas de derrape de 18 m antes de la salida del camino. El vehículo A quedó detenido junto al árbol, con el frente hacia el suroeste. Presenta hundimiento en la parte frontal izquierda, acentuado hacia el faro izquierdo. El pavimento estaba seco y la vía cuenta con alumbrado público.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Paseo de los Matlatzincas, a la altura de la colonia Ciprés",
+        "cita": "El hecho se ubica sobre Paseo de los Matlatzincas, a la altura de la colonia Ciprés, en Toluca, Estado de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Toluca",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 22:40 horas",
+        "cita": "aproximadamente a las 22:40 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "salida_de_camino",
+        "cita": "salió del arroyo vehicular por el costado exterior de la curva, subió la guarnición y se impactó"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Volkswagen",
+        "cita": "El vehículo A, marca Volkswagen, tipo Jetta, modelo 2019"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Jetta",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2019",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba de norte a sur a aproximadamente 80 km/h según la declaración de su conductor"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "se impactó con su parte frontal izquierda contra un árbol de aproximadamente 40 cm de diámetro"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "objeto_fijo",
+        "valor": "árbol",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "objeto_fijo",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "descripcion",
+        "valor": "árbol de aproximadamente 40 cm de diámetro, ubicado a 3 m de la orilla del camino",
+        "cita": "un árbol de aproximadamente 40 cm de diámetro, ubicado a 3 m de la orilla del camino"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "derrape",
+        "cita": "En el pavimento se observaron huellas de derrape de 18 m antes de la salida del camino"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "18 m",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A quedó detenido junto al árbol, con el frente hacia el suroeste"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "detenido junto al árbol, con el frente hacia el suroeste",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "Presenta hundimiento en la parte frontal izquierda, acentuado hacia el faro izquierdo"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "izquierdo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      }
+    ]
+  }
+}

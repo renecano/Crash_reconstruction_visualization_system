@@ -55,6 +55,12 @@ export interface ResultadoLugar {
   /** El municipio (o la alcaldía) y el estado donde cae, para que el perito elija bien. */
   municipio?: string;
   estado?: string;
+  /**
+   * Qué tan preciso es (revisión de la cadena, René 2026-11-24): el cruce de dos vías, una calle, o
+   * solo una zona (colonia, pueblo, municipio). Sobre una zona La escena no arma la escena sola: el
+   * centro de una colonia no es el lugar del choque.
+   */
+  precision?: "cruce" | "calle" | "zona";
 }
 
 export interface LugarOut {
@@ -130,8 +136,9 @@ const sinAcentos = (s: string) =>
     .trim();
 
 export function cacheKey(c: LugarConsulta): string {
-  // v2: desde B5 los resultados traen municipio y estado; los guardados antes no.
-  return `croquis:lugar:v2:${normalizar(c.q)}|${normalizar(c.municipio)}|${normalizar(c.estado)}`;
+  // v2: desde B5 los resultados traen municipio y estado; los guardados antes no. v3: su precisión
+  // (cruce, calle o zona) y la alcaldía en la Ciudad de México (revisión de la cadena, 2026-11-24).
+  return `croquis:lugar:v3:${normalizar(c.q)}|${normalizar(c.municipio)}|${normalizar(c.estado)}`;
 }
 
 // --- Lo que dice el texto --------------------------------------------------------------------------
@@ -225,7 +232,18 @@ const PREFIJO_DE_LUGAR =
  * dos; «a la altura de» un municipio no es un cruce.
  */
 export function viasDelCruce(texto: string, municipio?: string): [string, string] | null {
-  const limpio = texto.replace(/[–—]/g, "-").trim();
+  // Lo que sigue a las calles no es parte del cruce (revisión de la cadena, René 2026-11-24: en los
+  // reportes reales de CESVI, «calles de Surutato y Mapiri en la colonia Loma Linda» daba la calle
+  // «Mapiri en la colonia Loma Linda»): la colonia y el número de la casa.
+  const limpio = texto
+    .replace(/[–—]/g, "-")
+    .replace(/[“”"«»]/g, "")
+    .replace(
+      /\s+(?:en\s+|de\s+)?(?:la\s+)?(?:col\.?|colonia|fracc\.?|fraccionamiento|barrio|unidad\s+habitacional)\s+.*$/i,
+      "",
+    )
+    .replace(/\s*,?\s*(?:\bNo\.?\s*\d|\bN\.\s*\d|#\s*\d).*$/i, "")
+    .trim();
   const puente =
     /^(?:en\s+)?(?:el\s+)?(?:paso\s+a\s+desnivel|puente(?:\s+vehicular)?|distribuidor\s+vial)\s+(?:de\s+(?:la\s+|el\s+)?|del\s+)?(.+?)\s+sobre\s+(?:la\s+|el\s+)?([^,;]+)/i.exec(
       limpio,
@@ -233,10 +251,38 @@ export function viasDelCruce(texto: string, municipio?: string): [string, string
   const altura =
     /^(.+?)\s+a\s+la\s+altura\s+de(?:l)?\s+(?:la\s+|el\s+)?(?:calle\s+)?([^,;]+)/i.exec(limpio);
   const cruce =
-    /^(?:en\s+)?(?:el\s+)?(?:crucero|cruce|intersecci[oó]n)\s+(?:de\s+)?(?:la\s+)?(.+?)\s+(?:con|y)\s+(?:la\s+|el\s+)?([^,;]+)/i.exec(
+    /^(?:en\s+)?(?:el\s+|la\s+)?(?:crucero|cruce|intersecci[oó]n)\s+(?:que\s+(?:conforman?|forman?)\s+)?(?:de\s+)?(?:las\s+calles\s+|la\s+|el\s+)?(.+?)\s+(?:con|y|e)\s+(?:la\s+|el\s+)?([^,;]+)/i.exec(
       limpio,
     );
-  const m = puente ?? cruce ?? altura;
+  // «calles de X y Y», «entre las calles X y Y», «calle X y la calle Y».
+  const calles =
+    /^(?:entre\s+)?(?:las\s+)?calles?\s+(?:de\s+)?(.+?)\s+(?:y|e)\s+(?:la\s+|el\s+)?(?:calle\s+)?([^,;]+)/i.exec(
+      limpio,
+    );
+  // «Avenida X, unos 15 m al norte de su cruce con Avenida Y»; «Paseo X, en la bajada hacia el cruce
+  // con Y».
+  const suCruce =
+    /^(.+?),?\s+(?:a\s+)?(?:unos\s+|aproximadamente\s+)?(?:\d+(?:[.,]\d+)?\s*m(?:etros)?\s+(?:al\s+\w+\s+|antes\s+|despu[eé]s\s+)?)?(?:de|en)\s+su\s+(?:cruce|intersecci[oó]n|esquina)\s+con\s+(?:la\s+|el\s+)?([^,;]+)/i.exec(
+      limpio,
+    );
+  const elCruce =
+    /^(.+?),\s+[^,;]{0,70}?\b(?:el|su)\s+(?:cruce|intersecci[oó]n|esquina)\s+con\s+(?:la\s+|el\s+)?([^,;]+)/i.exec(
+      limpio,
+    );
+  const entre = /^entre\s+(?:la\s+|el\s+)?(.+?)\s+y\s+(?:la\s+|el\s+)?([^,;]+)/i.exec(limpio);
+  // «X esquina con Y», «X casi esquina Y».
+  const esquina =
+    /^(.+?)\s+(?:casi\s+)?esq(?:uina|\.)?\s+(?:con\s+|de\s+)?(?:la\s+|el\s+)?(?:calle\s+)?([^,;]+)/i.exec(
+      limpio,
+    );
+  // «Circuito Interior e Insurgentes Norte», «Eje Central y Viaducto Miguel Alemán»: dos vías con tipo.
+  const TIPO = String.raw`(?:av\.?|avenida|calle|calz\.?|calzada|blvd\.?|boulevard|bulevar|eje|circuito|perif[eé]rico|viaducto|paseo|carretera|prolongaci[oó]n|prol\.?|anillo|v[ií]a)`;
+  const dosVias = new RegExp(
+    String.raw`^(${TIPO}\s+.+?)\s+(?:y|e)\s+(?:la\s+|el\s+)?((?:${TIPO}\s+)?[A-ZÁÉÍÓÚÑ][^,;]*)$`,
+    "i",
+  ).exec(limpio);
+  const m =
+    puente ?? cruce ?? suCruce ?? elCruce ?? calles ?? entre ?? esquina ?? altura ?? dosVias;
   let par: [string, string] | null = m ? [m[1]!.trim(), m[2]!.trim()] : null;
   if (!par) {
     const otra = segundaCalle(limpio);
@@ -246,14 +292,23 @@ export function viasDelCruce(texto: string, municipio?: string): [string, string
   const [a, b] = par.map((x) =>
     x
       .replace(PREFIJO_DE_LUGAR, "")
+      .replace(/^(?:las\s+calles\s+|la\s+calle\s+|calles?\s+de\s+|la\s+|el\s+)/i, "")
+      .replace(/\s+casi$/i, "")
       .replace(/[,;.\s]+$/, "")
       .trim(),
   ) as [string, string];
   if (a.length < 3 || b.length < 3 || sinAcentos(a) === sinAcentos(b)) return null;
-  // «a la altura de Amanalco»: el municipio, no una calle.
+  // «a la altura de Amanalco»: el municipio, no una calle. «a la altura del metro…», «del número…»,
+  // «del establecimiento…», «del retorno…»: una referencia, no una calle.
   if (
     municipio &&
     (sinAcentos(b).includes(sinAcentos(municipio)) || sinAcentos(municipio).includes(sinAcentos(b)))
+  )
+    return null;
+  if (
+    /^(?:metro|n[uú]mero|establecimiento|retorno|domicilio|estacionamiento|puente|kil[oó]metro|km)\b/i.test(
+      b,
+    )
   )
     return null;
   return [a, b];
@@ -322,6 +377,7 @@ export const CRUCE_M = 40;
 export function cruceDeVias(
   a: readonly Nominatim[],
   b: readonly Nominatim[],
+  tope = CRUCE_M,
 ): { lat: number; lon: number; m: number; de: Nominatim } | null {
   let mejor: { lat: number; lon: number; m: number; de: Nominatim } | null = null;
   for (const x of a)
@@ -331,7 +387,7 @@ export function cruceDeVias(
           const c = cercania(ta, tb);
           if (!mejor || c.m < mejor.m) mejor = { ...c, de: x };
         }
-  return mejor && mejor.m <= CRUCE_M ? mejor : null;
+  return mejor && mejor.m <= tope ? mejor : null;
 }
 
 /** La primera calle de una descripción: «Calle Azucena esquina con Av. Reforma, col. …» → «Calle Azucena». */
@@ -339,7 +395,15 @@ export function primeraCalle(texto: string): string {
   const corte = texto.split(
     /\s+(?:esquina\s+con|esq\.?|y\s+(?:la\s+)?(?:calle|av\.?|avenida)|entre|frente\s+a|a\s+la\s+altura\s+de)\s+|,|;/i,
   )[0];
-  return (corte ?? texto)
+  // «… No.500», «… #27», «… en la colonia Jardines del Lago» (revisión de la cadena, René
+  // 2026-11-24): el número de la casa y la colonia no son parte del nombre de la calle.
+  const sinCasa = (corte ?? texto)
+    .replace(/\s+(?:No\.?|N\.|#|n[uú]m(?:ero)?\.?)\s*\d.*$/i, "")
+    .replace(
+      /\s+(?:en\s+|de\s+)?(?:la\s+)?(?:col\.?|colonia|fracc\.?|fraccionamiento|barrio)\s+.*$/i,
+      "",
+    );
+  return sinCasa
     .replace(/^(?:en\s+)?(?:el\s+)?(?:crucero|cruce|intersecci[oó]n)\s+(?:de\s+)?(?:la\s+)?/i, "")
     .replace(PREFIJO_DE_LUGAR, "")
     .replace(/^(?:las\s+)?calles\s+/i, "")
@@ -379,6 +443,10 @@ interface Nominatim {
   address?: Record<string, string | undefined>;
   /** Con `polygon_geojson=1`: la geometría de la vía (para el cruce de dos). */
   geojson?: { type: string; coordinates: unknown };
+  /** El tipo del resultado en jsonv2 («road», «suburb», «city»…) y su clase («highway», «place»…). */
+  addresstype?: string;
+  category?: string;
+  type?: string;
 }
 
 class SinServicio extends Error {}
@@ -394,16 +462,23 @@ async function nominatim(params: Record<string, string>, deps: LugarDeps): Promi
     ...params,
   }))
     url.searchParams.set(k, v);
-  let r: Response;
-  try {
-    r = await deps.fetcher(url, {
-      headers: { "User-Agent": USER_AGENT, Accept: "application/json" },
-      signal: AbortSignal.timeout(ESPERA_MS),
-    });
-  } catch {
-    throw new SinServicio();
+  let r: Response | null = null;
+  // Si Nominatim pide calma (429, o 629 cuando se pasa del ancho de banda), una espera y un reintento
+  // (revisión de la cadena, René 2026-11-24: el cruce se perdía y caía a una sola calle).
+  for (let intento = 0; intento < 2; intento++) {
+    try {
+      r = await deps.fetcher(url, {
+        headers: { "User-Agent": USER_AGENT, Accept: "application/json" },
+        signal: AbortSignal.timeout(ESPERA_MS),
+      });
+    } catch {
+      throw new SinServicio();
+    }
+    if (r.status !== 429 && r.status !== 629) break;
+    if (intento === 0)
+      await (deps.pausa ?? ((ms: number) => new Promise((x) => setTimeout(x, ms))))(2000);
   }
-  if (!r.ok) throw new SinServicio();
+  if (!r?.ok) throw new SinServicio();
   const d = (await r.json().catch(() => null)) as Nominatim[] | null;
   if (!Array.isArray(d)) throw new SinServicio();
   return d;
@@ -445,10 +520,49 @@ async function photon(q: string, deps: LugarDeps): Promise<ResultadoLugar[]> {
 }
 
 /** Un resultado con su calle y colonia, y aparte su municipio y estado. */
+/** Lo que para Nominatim es una zona (colonia, pueblo, municipio); lo demás es un punto preciso. */
+const TIPOS_DE_ZONA = new Set([
+  "suburb",
+  "neighbourhood",
+  "quarter",
+  "city",
+  "town",
+  "village",
+  "hamlet",
+  "municipality",
+  "county",
+  "state",
+  "region",
+  "country",
+  "city_district",
+  "borough",
+  "postcode",
+  "residential",
+  "allotments",
+]);
+
 function aResultado(x: Nominatim): ResultadoLugar {
   const a = x.address ?? {};
+  // En la Ciudad de México, Nominatim da la ciudad como municipio: el del caso es la alcaldía.
+  const cdmx = /ciudad de m[eé]xico/i.test(a.city ?? a.state ?? "");
   const municipio =
-    a.city ?? a.town ?? a.municipality ?? a.county ?? a.city_district ?? a.borough ?? a.village;
+    (cdmx ? (a.borough ?? a.city_district) : undefined) ??
+    a.city ??
+    a.town ??
+    a.municipality ??
+    a.county ??
+    a.city_district ??
+    a.borough ??
+    a.village;
+  // Sin el tipo (una respuesta que no lo trae), no se sabe: no se trata como zona.
+  const precision: ResultadoLugar["precision"] =
+    !x.category && !x.addresstype
+      ? undefined
+      : x.category === "boundary" ||
+          x.category === "place" ||
+          TIPOS_DE_ZONA.has(x.addresstype ?? "")
+        ? "zona"
+        : "calle";
   const lugar = [
     a.road ?? x.name,
     a.neighbourhood ?? a.suburb ?? a.quarter ?? a.hamlet ?? a.village,
@@ -459,7 +573,40 @@ function aResultado(x: Nominatim): ResultadoLugar {
     lon: Number(x.lon),
     ...(municipio ? { municipio } : {}),
     ...(a.state ? { estado: a.state } : {}),
+    ...(precision ? { precision } : {}),
   };
+}
+
+/**
+ * Los nombres con que se busca una vía de un cruce: el narrado, sin los artículos de en medio («de
+ * los», «de la») y sin su tipo («Avenida»). OpenStreetMap la puede tener con cualquiera.
+ */
+/** m: a lo más esto entre dos vías para tomar su punto más cercano como el cruce aproximado. */
+const CERCA_DEL_CRUCE_M = 150;
+
+export function variantesDeVia(nombre: string): string[] {
+  // «paso a desnivel de Avenida Río Churubusco (Circuito Interior)»: la vía, y su otro nombre.
+  const entre = /\(([^)]+)\)/.exec(nombre)?.[1]?.trim();
+  const v = nombre
+    .replace(
+      /^(?:el\s+)?(?:paso\s+a\s+desnivel|puente(?:\s+vehicular)?|distribuidor\s+vial)\s+(?:de\s+(?:la\s+|el\s+)?|del\s+)?/i,
+      "",
+    )
+    .replace(/\s*\([^)]*\)\s*/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  const otras = entre && entre.length >= 3 ? [entre] : [];
+  const sinArticulos = v.replace(/\s+de(?:\s+(?:los|las|la|el))?\s+/gi, " ").replace(/\s+/g, " ");
+  const tipo =
+    /^(?:avenida|av\.?|calle|calzada|calz\.?|boulevard|blvd\.?|paseo|eje|circuito|carretera|prolongaci[oó]n|prol\.?)\s+/i;
+  return [
+    ...new Set(
+      [v, sinArticulos, sinArticulos.replace(tipo, ""), tipo.test(v) ? null : `Avenida ${v}`]
+        .concat(otras)
+        .filter((x): x is string => Boolean(x))
+        .map((x) => x.trim()),
+    ),
+  ].filter((x) => x.length >= 3);
 }
 
 /** Sin repetir el mismo punto (a ~10 m) ni el mismo nombre en el mismo municipio. */
@@ -510,7 +657,11 @@ export async function buscarLugar(
   c = {
     ...c,
     q: sinMarcas(c.q) ?? c.q,
-    municipio: sinMarcas(c.municipio),
+    // «alcaldía Benito Juárez», «municipio de Metepec» (revisión de la cadena, René 2026-11-24): la
+    // caja del municipio no aparecía y el cruce no se intentaba.
+    municipio: sinMarcas(c.municipio)
+      ?.replace(/^(?:la\s+)?(?:alcald[ií]a|municipio|delegaci[oó]n)\s+(?:de\s+)?/i, "")
+      .trim(),
     estado: sinMarcas(c.estado),
   };
   const delTexto = zonaDelTexto(c.q);
@@ -534,7 +685,7 @@ export async function buscarLugar(
     const donde = [municipio, estado].filter(Boolean).join(", ");
     const q =
       interpretado.tipo === "carretera"
-        ? [interpretado.ref, donde].filter(Boolean).join(", ")
+        ? [interpretado.ref ?? interpretado.tramo.join(" - "), donde].filter(Boolean).join(", ")
         : [texto, donde].filter(Boolean).join(", ");
     try {
       const resultados = sinRepetir(await photon(q, deps));
@@ -605,33 +756,79 @@ async function conNominatim(
   };
 
   if (interpretado.tipo === "carretera") {
-    const km = interpretado.km !== null ? `el km ${interpretado.km}` : "el kilómetro";
-    const caja = cajaMunicipio ?? (await estadoCaja());
-    if (caja?.boundingbox) {
-      const tramos = await nom({
-        q: interpretado.ref,
-        viewbox: viewbox(caja.boundingbox),
-        bounded: "1",
-      });
-      const zonaTexto = cajaMunicipio ? donde : estado!;
-      if (tramos.length)
-        return {
-          resultados: sinRepetir(tramos.map(aResultado)),
-          aviso: `La ${interpretado.ref} dentro de ${zonaTexto}. OpenStreetMap no tiene ${km}: mueve el mapa por la carretera hasta el punto.`,
-          fuente: "nominatim",
-        };
+    // «el km 236+500», como lo escriben los reportes.
+    const k = interpretado.km;
+    const metrosKm = k !== null ? Math.round((k - Math.floor(k)) * 1000) : 0;
+    const km =
+      k !== null
+        ? `el km ${Math.floor(k)}${metrosKm ? `+${String(metrosKm).padStart(3, "0")}` : ""}`
+        : "el kilómetro";
+    const { ref, tramo } = interpretado;
+    // Cómo se llama la carretera para buscarla: su clave («MEX 57D») o sus poblaciones («carretera
+    // Teapa-Pichucalco», como la nombran OSM y los reportes de CESVI).
+    const palabra = /autopista/i.test(interpretado.texto) ? "autopista" : "carretera";
+    const nombre = ref ?? (tramo.length === 2 ? `${palabra} ${tramo[0]}-${tramo[1]}` : null);
+    const enCaja = async (caja: [string, string, string, string]) =>
+      nombre ? nom({ q: nombre, viewbox: viewbox(caja), bounded: "1" }) : [];
+    const sobreLaVia = (zonaTexto: string, tramos: Nominatim[]) => ({
+      resultados: sinRepetir(tramos.map(aResultado)),
+      aviso: `La ${nombre} dentro de ${zonaTexto}. OpenStreetMap no tiene ${km}: mueve el mapa por la carretera hasta el punto.`,
+      fuente: "nominatim" as const,
+    });
+    // 1) El municipio del caso.
+    if (cajaMunicipio?.boundingbox) {
+      const tramos = await enCaja(cajaMunicipio.boundingbox);
+      if (tramos.length) return sobreLaVia(donde, tramos);
+    }
+    // 2) Las poblaciones del tramo: la carretera entre ellas o, si no aparece, las poblaciones.
+    // (Revisión de la cadena, René 2026-11-24: los reportes de CESVI nombran así la carretera.)
+    const poblaciones: Nominatim[] = [];
+    for (const p of tramo) {
+      const r = await nom({ q: [p, estado].filter(Boolean).join(", "), limit: "1" });
+      const x = r.find((y) => y.boundingbox && enEstado(y)) ?? r.find((y) => y.boundingbox);
+      if (x) poblaciones.push(x);
+    }
+    if (poblaciones.length) {
+      const cajas = poblaciones.map((x) => x.boundingbox!.map(Number));
+      const sur = Math.min(...cajas.map((c) => c[0]!));
+      const norte = Math.max(...cajas.map((c) => c[1]!));
+      const oeste = Math.min(...cajas.map((c) => c[2]!));
+      const este = Math.max(...cajas.map((c) => c[3]!));
+      // Un margen de 0.05° (unos 5 km): la carretera puede salir de las cajas de las poblaciones.
+      const caja = [sur - 0.05, norte + 0.05, oeste - 0.05, este + 0.05].map((x) =>
+        String(Math.round(x * 1e4) / 1e4),
+      ) as [string, string, string, string];
+      const tramos = await enCaja(caja);
+      const entre = tramo.join(" y ");
+      if (tramos.length) return sobreLaVia(`el tramo de ${entre}`, tramos);
       return {
-        resultados: [],
-        aviso: `No se encontró la ${interpretado.ref} dentro de ${zonaTexto}. ¿Dónde fue? Pega las coordenadas o un link de Google Maps, o toca el lugar en el mapa.`,
+        resultados: sinRepetir(poblaciones.map(aResultado)).map((x) => ({
+          ...x,
+          precision: "zona" as const,
+        })),
+        aviso: `OpenStreetMap no tiene ${km} de la carretera de ${entre}: el mapa abre en el tramo. Mueve el mapa por la carretera hasta el punto, o pega las coordenadas.`,
         fuente: "nominatim",
       };
     }
-    const tramos = await nom({ q: interpretado.ref });
+    // 3) El municipio solo: el mapa abre ahí y el perito lleva el punto a la carretera.
+    if (cajaMunicipio?.boundingbox)
+      return {
+        resultados: [{ ...aResultado(cajaMunicipio), precision: "zona" }],
+        aviso: `No se encontró la ${nombre ?? "carretera"} dentro de ${donde}, y OpenStreetMap no tiene ${km}: el mapa abre en el municipio. Mueve el mapa hasta el punto, o pega las coordenadas.`,
+        fuente: "nominatim",
+      };
+    // 4) El estado, o la carretera en todo el país.
+    const cajaE = await estadoCaja();
+    if (cajaE?.boundingbox && nombre) {
+      const tramos = await enCaja(cajaE.boundingbox);
+      if (tramos.length) return sobreLaVia(estado!, tramos);
+    }
+    const tramos = ref ? await nom({ q: ref }) : [];
     return {
       resultados: sinRepetir(tramos.map(aResultado)),
       aviso: tramos.length
-        ? `La ${interpretado.ref}; el caso no dice el municipio y OpenStreetMap no tiene ${km}.`
-        : "No se encontró la carretera. Prueba con el municipio.",
+        ? `La ${ref}; el caso no dice el municipio y OpenStreetMap no tiene ${km}.`
+        : "No se encontró la carretera. ¿Dónde fue? Pega las coordenadas o un link de Google Maps, o toca el lugar en el mapa.",
       fuente: "nominatim",
     };
   }
@@ -651,14 +848,25 @@ async function conNominatim(
       : s;
   const calle = primeraCalle(texto).replace(/\s*[–—]\s*/g, " - ");
   const colonia = coloniaDe(texto);
+  // La calle también sin su tipo y sin artículos (revisión de la cadena, René 2026-11-24): OSM tiene
+  // «Costera Miguel Alemán» y los reportes de CESVI dicen «Blvd. Costera Miguel Alemán». Como último
+  // recurso, el tipo y la primera palabra del nombre («Av. Central Hank González» es «Avenida
+  // Central» en OSM); el aviso dice qué se buscó.
+  const delNombre = calle ? variantesDeVia(calle).filter((x) => x !== calle) : [];
+  const corta =
+    /^((?:avenida|av\.?|calle|calzada|calz\.?|boulevard|blvd\.?|bulevar|paseo|circuito)\s+\S+)\s+\S+\s+\S+/i.exec(
+      calle,
+    )?.[1];
   const variantes = [
     ...new Set(
       [
         sinZona(texto),
         colonia && calle ? `${calle}, ${colonia}` : null,
         calle,
+        ...delNombre,
         segundaCalle(texto),
         colonia,
+        corta ? corta.replace(/^av\.?\s/i, "Avenida ").replace(/^blvd\.?\s/i, "Boulevard ") : null,
       ].filter((s): s is string => Boolean(s && s.trim().length >= 3)),
     ),
   ];
@@ -674,8 +882,12 @@ async function conNominatim(
           bounded: "1",
         })
       ).map(aResultado);
-      if (r.some(delMunicipio) || (r.length && !municipio)) return { v, r, delCaso: true };
-      if (r.length && !otro) otro = { v, r };
+      // Una zona (la colonia) se guarda por si nada más aparece; se sigue buscando algo preciso
+      // («Anillo Periférico Sur, a la altura de la colonia…» daba la colonia y paraba).
+      const preciso = r[0]?.precision !== "zona";
+      if (preciso && (r.some(delMunicipio) || (r.length && !municipio)))
+        return { v, r, delCaso: true };
+      if (r.length && (!otro || (preciso && otro.r[0]?.precision === "zona"))) otro = { v, r };
     }
     return otro ? { ...otro, delCaso: false } : null;
   };
@@ -685,21 +897,41 @@ async function conNominatim(
   const vias = viasDelCruce(texto, municipio);
   const cajaCruce = cajaMunicipio ?? (await estadoCaja());
   if (vias && cajaCruce?.boundingbox) {
-    const geometria = (v: string) =>
-      nom({
-        q: donde ? `${v}, ${donde}` : v,
-        viewbox: viewbox(cajaCruce.boundingbox!),
-        bounded: "1",
-        polygon_geojson: "1",
-        limit: "10",
-      });
+    // Con variantes del nombre (revisión de la cadena, René 2026-11-24): «Avenida de los Insurgentes
+    // Sur» es «Avenida Insurgentes Sur» en OpenStreetMap.
+    const geometria = async (v: string) => {
+      for (const n of variantesDeVia(v)) {
+        const r = await nom({
+          q: donde ? `${n}, ${donde}` : n,
+          viewbox: viewbox(cajaCruce.boundingbox!),
+          bounded: "1",
+          polygon_geojson: "1",
+          // Solo vías y lugares: «Paseo de la Reforma» y «Prado Norte» daban paradas de autobús.
+          layer: "address",
+          limit: "10",
+        });
+        if (r.length) return r;
+      }
+      return [];
+    };
     const a = await geometria(vias[0]);
     const b = a.length ? await geometria(vias[1]) : [];
-    const c = cruceDeVias(a, b);
+    // Nominatim da a lo más 10 tramos por vía y el del cruce puede no venir: basta el punto donde se
+    // acercan más (a menos de 150 m); La escena encuentra el cruce exacto con las calles del mapa a
+    // 150 m de ahí (revisión de la cadena, 2026-11-24).
+    const c = cruceDeVias(a, b) ?? cruceDeVias(a, b, CERCA_DEL_CRUCE_M);
     if (c) {
       const base = aResultado(c.de);
       return {
-        resultados: [{ ...base, nombre: `${vias[0]} y ${vias[1]}`, lat: c.lat, lon: c.lon }],
+        resultados: [
+          {
+            ...base,
+            nombre: `${vias[0]} y ${vias[1]}`,
+            lat: c.lat,
+            lon: c.lon,
+            precision: "cruce" as const,
+          },
+        ],
         aviso: `El cruce de ${vias[0]} y ${vias[1]}${donde ? ` en ${donde}` : ""}.`,
         fuente: "nominatim",
       };

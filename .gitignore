@@ -97,3 +97,8 @@ docs/cesvi/ronda-2/ejemplos/
 /.cache/
 # El build de Unity servido desde el sitio (demo local y plan B): lo copia tools/unity/visor-local.mjs.
 apps/web/public/visor-unity/local/
+
+# Revisión de la cadena: historial de corridas (solo local)
+eval/results/auditoria_cadena/*_historial.jsonl
+eval/results/auditoria_cadena/*pasada*.jsonl
+eval/results/auditoria_cadena/*parcial*.jsonl

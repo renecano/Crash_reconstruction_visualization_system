@@ -66,25 +66,46 @@ namespace Croquis.Visor
 
             var dano = new DanoVista(desdes);
             var semilla = DanoDelCaso.Semilla(r != null ? r.Semilla : 0L, v.Id);
+            var carroceria = new List<MeshFilter>();
+            var todos = new List<V3>();
+            var triangulos = new List<int>();
             foreach (var filtro in vehiculo.GetComponentsInChildren<MeshFilter>(true))
             {
                 // La carrocería son las piezas que cuelgan directo del vehículo, con sus vértices en el
                 // marco del vehículo (`ArmadorVehiculo.Armar`). Las ruedas van en su propio nodo y la
                 // caja de respaldo va escalada: ninguna de las dos se deforma.
                 var t = filtro.transform;
-                if (t.parent != vehiculo || t.localPosition != Vector3.zero || t.localScale != Vector3.one || t.localRotation != Quaternion.identity)
-                {
-                    continue;
-                }
-
                 var original = filtro.sharedMesh;
-                if (original == null || !original.isReadable)
+                if (t.parent != vehiculo || t.localPosition != Vector3.zero || t.localScale != Vector3.one || t.localRotation != Quaternion.identity
+                    || original == null || !original.isReadable)
                 {
                     continue;
                 }
 
-                var antes = Refinar(original, etapas) ?? original;
-                var mallas = Deformar(antes, etapas, semilla, out var maximo);
+                carroceria.Add(filtro);
+                foreach (var i in original.triangles)
+                {
+                    triangulos.Add(todos.Count + i);
+                }
+
+                foreach (var p in original.vertices)
+                {
+                    todos.Add(new V3(p.x, p.y, p.z));
+                }
+            }
+
+            // La profundidad se cuenta desde el frente real de toda la carrocería, no desde la caja.
+            foreach (var e in etapas)
+            {
+                DanoDelCaso.FijarFrente(e.Campo, todos, triangulos);
+            }
+
+            var antesTodos = new List<V3>();
+            var despuesTodos = new List<V3>();
+            foreach (var filtro in carroceria)
+            {
+                var antes = Refinar(filtro.sharedMesh, etapas) ?? filtro.sharedMesh;
+                var mallas = Deformar(antes, etapas, semilla, out var maximo, out var primera);
                 if (mallas == null)
                 {
                     continue;
@@ -93,9 +114,76 @@ namespace Croquis.Visor
                 filtro.sharedMesh = antes;
                 dano.piezas.Add(new Pieza { Filtro = filtro, Antes = antes, Etapas = mallas });
                 dano.DesplazamientoMaximo = System.Math.Max(dano.DesplazamientoMaximo, maximo);
+                foreach (var p in antes.vertices)
+                {
+                    antesTodos.Add(new V3(p.x, p.y, p.z));
+                }
+
+                foreach (var p in primera)
+                {
+                    despuesTodos.Add(new V3(p.x, p.y, p.z));
+                }
             }
 
-            return dano.piezas.Count > 0 ? dano : null;
+            if (dano.piezas.Count == 0)
+            {
+                return null;
+            }
+
+            // Lo que se hundió de verdad la lámina en C1–C6, contra lo que pide el solver (en la bitácora).
+            var campo = etapas[0].Campo;
+            dano.Pedido = campo.Perfil;
+            dano.Medido = DanoDelCaso.Medir(campo, antesTodos, despuesTodos, out var alli);
+            dano.PedidoAlli = alli;
+            dano.CampoPrimero = campo;
+            Debug.Log("[daño] " + v.Id + " C1–C6 (cm) " + (DanoDelCaso.UsaMedido(v.Dano) ? "medidos" : "calculados") + " " + Cm(dano.Pedido) + " · en la malla " + Cm(dano.Medido) + " · lo pedido donde se midió " + Cm(dano.PedidoAlli));
+            return dano;
+        }
+
+        /// <summary>El perfil del primer impacto que pide el solver y el que quedó en la malla (m), C1 a C6.</summary>
+        public double[] Pedido { get; private set; }
+        public double[] Medido { get; private set; }
+
+        /// <summary>Lo que pide el perfil del solver en los puntos de lámina donde se midió cada estación (m).</summary>
+        public double[] PedidoAlli { get; private set; }
+
+        private CampoDano CampoPrimero { get; set; }
+
+        private static string Cm(double[] c)
+        {
+            var partes = new string[c.Length];
+            for (var k = 0; k < c.Length; k++)
+            {
+                partes[k] = double.IsNaN(c[k]) ? "—" : (c[k] * 100.0).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            return string.Join(" ", partes);
+        }
+
+        /// <summary>
+        /// Para revisar el daño (capturas): por estación C1–C6, en el marco del vehículo, el frente antes del
+        /// golpe, el frente a la profundidad del solver y el frente a la profundidad que quedó en la malla.
+        /// </summary>
+        public List<(Vector3 Frente, Vector3 Pedido, Vector3 Medido)> Estaciones()
+        {
+            // A la altura donde se mide (el centro de la banda de la estructura).
+            var altura = (float)((CampoPrimero.Banda0 + CampoPrimero.Banda1) / 2.0);
+            var lista = new List<(Vector3, Vector3, Vector3)>();
+            var c = CampoPrimero;
+            for (var k = 0; k < 6; k++)
+            {
+                var u = c.Estacion(k);
+                var f = c.FrenteEnEstacion(k);
+                Vector3 En(double a)
+                {
+                    var p = DanoDelCaso.AUnity(c.Afuera * a + c.ALoLargo * u);
+                    return new Vector3((float)p.X, altura, (float)p.Z);
+                }
+
+                lista.Add((En(f), En(f - Pedido[k]), En(f - (double.IsNaN(Medido[k]) ? 0.0 : Medido[k]))));
+            }
+
+            return lista;
         }
 
         /// <summary>
@@ -269,7 +357,7 @@ namespace Croquis.Visor
         /// Las copias deformadas de una malla, una por impacto (cada una con los daños de los anteriores),
         /// o nulo si ningún daño mueve sus vértices.
         /// </summary>
-        private static Mesh[] Deformar(Mesh antes, List<(double Desde, CampoDano Campo)> etapas, int semilla, out double maximo)
+        private static Mesh[] Deformar(Mesh antes, List<(double Desde, CampoDano Campo)> etapas, int semilla, out double maximo, out Vector3[] primera)
         {
             var vertices = antes.vertices;
             var triangulos = antes.triangles;
@@ -283,6 +371,7 @@ namespace Croquis.Visor
             var acumulado = new Vector3[vertices.Length];
             var movido = new bool[vertices.Length];
             var mallas = new Mesh[etapas.Count];
+            primera = null;
             for (var k = 0; k < etapas.Count; k++)
             {
                 var salida = DanoDelCaso.Deformar(etapas[k].Campo, entrada, triangulos, semilla + k);
@@ -301,6 +390,7 @@ namespace Croquis.Visor
                 }
 
                 mallas[k] = Copia(antes, nuevos, movido, k);
+                primera = primera ?? nuevos;
             }
 
             return maximo > 0.0 ? mallas : null;

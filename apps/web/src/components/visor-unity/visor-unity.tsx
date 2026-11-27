@@ -10,7 +10,7 @@
  */
 import type { CamaraDelCaso } from "@/lib/visor-unity/camaras";
 import type { PisoUnity } from "@/lib/visor-unity/piso";
-import { conPisoYFantasma } from "@croquis/scene-schema";
+import { conLeyenda, conPisoYFantasma } from "@croquis/scene-schema";
 import type {
   Resultado,
   CamaraVisor,
@@ -31,6 +31,7 @@ import {
   PuenteUnity,
   type MotivoRespaldo,
 } from "@/lib/visor-unity/puente";
+import { deformacionesMedidas } from "@/lib/visor-unity/deformacion-medida";
 import { paqueteDelCaso, type RelieveCaso } from "@/lib/visor-unity/paquete";
 import type { CanalTiempo } from "@/lib/visor-unity/canal";
 import {
@@ -43,10 +44,16 @@ import {
 import { BarraReproduccion } from "./barra-reproduccion";
 import { EnRanura, useMarco } from "./marco-vista";
 import {
-  ALTO_VIDEO,
-  ANCHO_VIDEO,
+  escalaMedida,
   grabarVideoUnity,
+  instantesDelVideo,
+  lienzoDelVideo,
+  msPorCuadro,
+  modoDelVideo,
   nombreDelVideo,
+  SIN_VIDEO,
+  textoTarda,
+  VideoNoDisponible,
   puedeGrabarVideo,
   textoFalta,
 } from "@/lib/visor-unity/video";
@@ -101,11 +108,26 @@ export interface VersionUnity {
   resultado: Resultado;
 }
 
+/** El nombre de la tarjeta de video que da WebGL (null si no lo da), para el modo del video. */
+function rendererDeLaTarjeta(): string | null {
+  try {
+    const gl = document.createElement("canvas").getContext("webgl2");
+    if (!gl) return null;
+    const ext = gl.getExtension("WEBGL_debug_renderer_info");
+    const nombre = ext ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : null;
+    gl.getExtension("WEBGL_lose_context")?.loseContext();
+    return nombre;
+  } catch {
+    return null;
+  }
+}
+
 export function VisorUnity({
   escena,
   version = null,
   piso = null,
   relieve = null,
+  paisaje = null,
   activo = true,
   dormir = false,
   camara = null,
@@ -132,6 +154,8 @@ export function VisorUnity({
    */
   piso?: PisoUnity | null;
   relieve?: RelieveCaso;
+  /** El paisaje del lugar (contrato #335), que la web calcula con la cobertura del suelo de OSM. */
+  paisaje?: "arido" | "templado" | null;
   /** El 3D está a la vista: si no, la reproducción se pausa. */
   activo?: boolean;
   /**
@@ -301,7 +325,7 @@ export function VisorUnity({
       }
       marcar("solver_listo");
       if (mio !== turno.current) return;
-      const paquete = paqueteDelCaso(aCargar, resultado, relieve);
+      const paquete = paqueteDelCaso(aCargar, resultado, relieve, paisaje);
       const p = pisoActual.current;
       const conExtras = {
         ...paquete,
@@ -363,7 +387,7 @@ export function VisorUnity({
       cb.current.onApi?.(api);
       const final = completo ? await completo.catch(() => null) : null;
       if (final && mio === turno.current && final !== resultado) {
-        const conFinal = paqueteDelCaso(aCargar, final, relieve);
+        const conFinal = paqueteDelCaso(aCargar, final, relieve, paisaje);
         if (!vClave) paqueteBase.current = conFinal;
         cb.current.onApi?.({ ...api, paquete: paqueteBase.current ?? conFinal });
       }
@@ -389,7 +413,7 @@ export function VisorUnity({
       });
     // `vClave` sale de `objetivo`; `vueltas`, para la escena que esperó a que Unity terminara.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [puente, objetivo, relieve, dormir, vueltas]);
+  }, [puente, objetivo, relieve, paisaje, dormir, vueltas]);
 
   /** Manda el piso a Unity: lo que se ve en vivo, o el mapa solo (para el video). */
   const enviarPiso = (p: PisoUnity | null, vivo: boolean) => {
@@ -425,6 +449,12 @@ export function VisorUnity({
   }, [puente, dormir, vueltas]);
 
   const listo = estado.fase === "listo";
+  // Puente 1.4.0: en Presentar la web pone su leyenda completa encima del 3D y Unity esconde la suya;
+  // al salir, la vuelve a mostrar. Cada caso cargado la muestra de nuevo, por eso depende de `cargada`.
+  useEffect(() => {
+    if (!puente || !listo || !conLeyenda(puente.version)) return;
+    puente.enviar("leyenda", { visible: !tiempo });
+  }, [puente, listo, tiempo, cargada]);
   useEffect(() => {
     if (!puente || !listo) return;
     if (tiempo) {
@@ -482,6 +512,11 @@ export function VisorUnity({
     null,
   );
   const [avisoVideo, setAvisoVideo] = useState<string | null>(null);
+  /** «Tarda ~X min. ¿Seguir?» antes de grabar todo (René, 2026-11-26). */
+  const [confirmacion, setConfirmacion] = useState<{
+    ms: number;
+    responder: (si: boolean) => void;
+  } | null>(null);
   const cancelarVideo = useRef<AbortController | null>(null);
   const caja = useRef<HTMLDivElement>(null);
   const descargarVideo = async () => {
@@ -501,9 +536,23 @@ export function VisorUnity({
     setRep(repActual.current);
     puente.enviar("pausar", {});
     puente.minimapa(false);
-    const dpr = window.devicePixelRatio || 1;
-    c.style.width = `${ANCHO_VIDEO / dpr}px`;
-    c.style.height = `${ALTO_VIDEO / dpr}px`;
+    // Con tarjeta dedicada, al doble y en `ultra` (antialiasing, René, 2026-11-26); con integrada,
+    // como antes: 1× y la calidad automática (a 2× la laptop de 8 GB no dibujó ningún cuadro).
+    let modo = modoDelVideo(rendererDeLaTarjeta());
+    const ponerModo = () => {
+      if (modo.calidad) puente.enviar("calidad", { nivel: modo.calidad });
+      const tamano = lienzoDelVideo(window.devicePixelRatio || 1, modo.escala);
+      c.style.width = `${tamano.ancho}px`;
+      c.style.height = `${tamano.alto}px`;
+    };
+    ponerModo();
+    const fijar = (t: number) => puente.enviar("fijarTiempo", { t });
+    const bajarA1x = async () => {
+      if (modo.calidad) puente.enviar("calidad", { nivel: "auto" });
+      modo = { escala: 1, calidad: null };
+      ponerModo();
+      for (let i = 0; i < 6; i++) await new Promise((ok) => requestAnimationFrame(ok));
+    };
     try {
       // Unity toma el tamaño nuevo en su siguiente cuadro.
       for (let i = 0; i < 6; i++) await new Promise((ok) => requestAnimationFrame(ok));
@@ -518,17 +567,43 @@ export function VisorUnity({
         enviarPiso(pv, false);
         for (let i = 0; i < 10; i++) await new Promise((ok) => requestAnimationFrame(ok));
       }
-      const video = await grabarVideoUnity({
-        credito: pv ? pv.atribucionMapa : null,
-        lienzo: c,
-        fijar: (t) => puente.enviar("fijarTiempo", { t }),
-        inicio: intervalo.inicio,
-        fin: intervalo.fin,
-        logo,
-        leyenda: LEYENDA_3D,
-        signal: corte.signal,
-        alProgreso: (hechos, total, ms) => setGrabacion({ hechos, total, ms }),
-      });
+      // El nombre de la tarjeta no basta (en laptops híbridas Chrome reporta la NVIDIA y dibuja en
+      // la Intel): al doble solo si los primeros cuadros salen a tiempo.
+      if (
+        modo.escala === 2 &&
+        escalaMedida(
+          await msPorCuadro(c, fijar, instantesDelVideo(intervalo.inicio, intervalo.fin)),
+        ) === 1
+      )
+        await bajarA1x();
+      const grabar = () =>
+        grabarVideoUnity({
+          credito: pv ? pv.atribucionMapa : null,
+          lienzo: c,
+          fijar,
+          inicio: intervalo.inicio,
+          fin: intervalo.fin,
+          logo,
+          leyenda: LEYENDA_3D,
+          signal: corte.signal,
+          alProgreso: (hechos, total, ms) => setGrabacion({ hechos, total, ms }),
+          confirmar: (ms) =>
+            new Promise<boolean>((responder) => {
+              // «Cancelar» o Esc mientras pregunta: no se queda esperando.
+              corte.signal.addEventListener("abort", () => responder(false), { once: true });
+              setConfirmacion({ ms, responder });
+            }),
+        });
+      let video: Blob;
+      try {
+        video = await grabar();
+      } catch (e) {
+        // Si al doble no sale (no llega ningún cuadro o falla el codificador), otra vez a 1× y con
+        // la calidad automática.
+        if (!(e instanceof VideoNoDisponible) || modo.escala === 1) throw e;
+        await bajarA1x();
+        video = await grabar();
+      }
       const url = URL.createObjectURL(video);
       const a = document.createElement("a");
       a.href = url;
@@ -542,16 +617,20 @@ export function VisorUnity({
       setTimeout(() => URL.revokeObjectURL(url), 60_000);
       setAvisoVideo("Listo: el video se descargó.");
     } catch (e) {
+      // El error del navegador, solo para quien lo depure; al perito, un mensaje claro.
+      if (!(e instanceof DOMException && e.name === "AbortError")) console.warn("Video:", e);
       setAvisoVideo(
         e instanceof DOMException && e.name === "AbortError"
           ? "Se canceló el video."
-          : e instanceof Error
-            ? `No se pudo hacer el video: ${e.message}`
-            : "No se pudo hacer el video.",
+          : e instanceof VideoNoDisponible
+            ? e.message
+            : SIN_VIDEO,
       );
     } finally {
       c.style.width = antes.ancho;
       c.style.height = antes.alto;
+      if (modo.calidad) puente.enviar("calidad", { nivel: "auto" });
+      setConfirmacion(null);
       puente.minimapa(minimapa);
       grabando.current = false;
       // Si cambió la escena mientras se grababa, ahora va.
@@ -624,6 +703,20 @@ export function VisorUnity({
         // Unity lee el tamaño del lienzo; sin esto toma 300×150.
         style={{ width: "100%", height: "100%" }}
       />
+      {/* La deformación que dibuja el 3D es la medida por CESVI donde el reporte la midió (René,
+          2026-11-24): se dice cuál, con sus medidas. */}
+      {listo && escena && deformacionesMedidas(escena).length ? (
+        <p
+          className="t-nota vidrio absolute top-3 left-3 z-10 max-w-[60%] rounded-control px-3 py-1.5"
+          data-testid="visor-unity-deformacion-medida"
+        >
+          Deformación medida por CESVI:{" "}
+          {deformacionesMedidas(escena)
+            .map((d) => `${d.perfil_m.map((c) => Math.round(c * 100)).join(", ")} cm`)
+            .join("; ")}
+          .
+        </p>
+      ) : null}
       {/* Lo que el 3D no pudo dibujar y omitió (René, 2026-11-20): el caso abre igual y el perito lo sabe. */}
       {listo && omitidos.length ? (
         <p
@@ -699,6 +792,36 @@ export function VisorUnity({
             <span className="t-nota" data-testid="falta-video">
               {textoFalta(grabacion.hechos, grabacion.total, grabacion.ms)} · 1920×1080, MP4
             </span>
+            {confirmacion ? (
+              <div className="flex flex-col gap-2" role="alertdialog" data-testid="video-tarda">
+                <span className="t-interfaz">
+                  {textoTarda(confirmacion.ms)} en esta computadora. ¿Seguir grabando?
+                </span>
+                <div className="flex gap-2 self-end">
+                  <button
+                    type="button"
+                    className="boton-principal boton-compacto"
+                    onClick={() => {
+                      confirmacion.responder(true);
+                      setConfirmacion(null);
+                    }}
+                    data-testid="video-seguir"
+                  >
+                    Seguir
+                  </button>
+                  <button
+                    type="button"
+                    className="boton-secundario boton-compacto"
+                    onClick={() => {
+                      confirmacion.responder(false);
+                      setConfirmacion(null);
+                    }}
+                  >
+                    No, cancelar
+                  </button>
+                </div>
+              </div>
+            ) : null}
             <button
               type="button"
               className="boton-secundario boton-compacto self-end"

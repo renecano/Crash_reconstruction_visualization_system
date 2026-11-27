@@ -1,0 +1,130 @@
+{
+  "id": "aud-39-atropello-autobus-tlalpan-ermita",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 420,
+    "output_tokens": 1037,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0119792,
+  "narracion": "El hecho se ubica en el cruce de la Calzada de Tlalpan y la Calzada Ermita Iztapalapa, colonia Ermita, alcaldía Benito Juárez, Ciudad de México, aproximadamente a las 7:00 horas. El vehículo A, autobús de pasajeros marca Volvo, modelo 2016, circulaba por los carriles laterales de la Calzada de Tlalpan de sur a norte y dio vuelta a la derecha para incorporarse a la Calzada Ermita Iztapalapa con dirección al oriente, a unos 15 km/h según su conductor. Un peatón, adulto, cruzaba la Calzada Ermita Iztapalapa de norte a sur sobre el paso peatonal. Al dar la vuelta, el autobús impactó al peatón con su esquina frontal derecha. El peatón quedó tendido a 2 m del punto de contacto, sobre el paso peatonal. El autobús quedó detenido 5 m después del paso peatonal. No se observaron huellas de frenado. El autobús no presenta daños visibles. Pavimento seco, amanecer con luz natural; el cruce cuenta con semáforos.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "atropellamiento",
+        "cita": "Al dar la vuelta, el autobús impactó al peatón con su esquina frontal derecha."
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 7:00 horas",
+        "cita": "aproximadamente a las 7:00 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "cruce de la Calzada de Tlalpan y la Calzada Ermita Iztapalapa, colonia Ermita",
+        "cita": "El hecho se ubica en el cruce de la Calzada de Tlalpan y la Calzada Ermita Iztapalapa, colonia Ermita"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "alcaldía Benito Juárez",
+        "cita": "alcaldía Benito Juárez, Ciudad de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Ciudad de México",
+        "cita": "alcaldía Benito Juárez, Ciudad de México"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Volvo",
+        "cita": "autobús de pasajeros marca Volvo, modelo 2016"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2016",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "clase",
+        "valor": "autobus",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "vira_derecha",
+        "cita": "dio vuelta a la derecha para incorporarse a la Calzada Ermita Iztapalapa con dirección al oriente"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "Al dar la vuelta, el autobús impactó al peatón con su esquina frontal derecha."
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "objeto_fijo",
+        "valor": "peatón",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El autobús quedó detenido 5 m después del paso peatonal."
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "detenido 5 m después del paso peatonal",
+        "cita": ""
+      }
+    ]
+  }
+}

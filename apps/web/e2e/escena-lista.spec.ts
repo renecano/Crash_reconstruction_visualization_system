@@ -40,6 +40,9 @@ test("@flujo /cesvi: la escena ya armada se revisa en su lista y llega a la reco
   await page.getByTestId("ir-caso-nuevo").click();
   await irAPaso(page, 2);
   await page.getByTestId("ejemplo-narracion").click();
+  // Con una frase más ya no es el ejemplo (que abre en su lugar guardado): el caso llega sin lugar.
+  await page.getByTestId("narracion").press("Control+End");
+  await page.getByTestId("narracion").pressSequentially(" Sin testigos.");
   await page.getByTestId("leer-narracion").click();
   await expect(page.getByTestId("escena")).toContainText("2 vehículos · 1 impacto");
   await page.getByTestId("confirmar-impacto").click();

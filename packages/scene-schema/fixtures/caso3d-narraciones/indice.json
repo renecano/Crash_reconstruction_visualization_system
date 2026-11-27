@@ -167,6 +167,79 @@
       ],
       "vehiculos": 1,
       "bytes": 621078
+    },
+    {
+      "clave": "rene-arbol-curva",
+      "propuesta": false,
+      "con_relieve": false,
+      "zona": "urbana",
+      "edificios": 539,
+      "arboles": 240,
+      "postes": 22,
+      "senales": 20,
+      "rodadas": 832,
+      "vertices_via": 26984,
+      "objetos_del_choque": [
+        "arbol",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste"
+      ],
+      "vehiculos": 1,
+      "bytes": 1269661
+    },
+    {
+      "clave": "rene-peaton-vuelta",
+      "propuesta": false,
+      "con_relieve": false,
+      "zona": "urbana",
+      "edificios": 409,
+      "arboles": 165,
+      "postes": 16,
+      "senales": 10,
+      "rodadas": 274,
+      "vertices_via": 7984,
+      "objetos_del_choque": [
+        "poste",
+        "poste",
+        "barda",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste",
+        "poste"
+      ],
+      "vehiculos": 1,
+      "bytes": 569662
+    },
+    {
+      "clave": "rene-carambola-semaforo",
+      "propuesta": false,
+      "con_relieve": false,
+      "zona": "urbana",
+      "edificios": 617,
+      "arboles": 197,
+      "postes": 15,
+      "senales": 20,
+      "rodadas": 348,
+      "vertices_via": 12245,
+      "objetos_del_choque": [
+        "poste",
+        "poste"
+      ],
+      "vehiculos": 3,
+      "bytes": 812513
     }
   ]
 }

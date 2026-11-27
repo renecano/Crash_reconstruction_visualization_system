@@ -7,13 +7,11 @@
  * Guarda lo mismo de antes en el expediente (posiciones, rumbos y la bandera de supuesto): el
  * solver no cambia. La lógica sin interfaz está en `lib/escena-facil.ts`.
  */
+import { posesEnObstaculos } from "@/lib/poses-en-obstaculos";
 import {
   formato as F,
   agregarObjeto,
   agregarPersona,
-  agregarOndulacion,
-  agregarTope,
-  agregarZona,
   cambiarTamano,
   cambiarTerreno,
   conHuella,
@@ -37,10 +35,15 @@ import {
   posicionesEncimadas,
   impactosEncimados,
   quitarTerreno,
+  rumboDeLlegada,
   TIPOS_OBJETO,
   usarRelieve,
   usaRelieve,
+  barridosDeLaReconstruccion,
+  queImporta,
   type Expediente,
+  type ObstaculoDelMapa,
+  type Reconstruccion,
   type PosicionDescrita,
   type RolPersona,
   type TipoObjeto,
@@ -65,6 +68,7 @@ import {
   avisarSinCalles,
   callesDe,
   cruceNarrado,
+  carreteraNarrada,
   callesEn,
   choqueLejosDeCalles,
   coloresVehiculos,
@@ -75,9 +79,7 @@ import {
   flechasDeLlegada,
   fueraDeLaCalle,
   girar,
-  marcarChoque,
   marcarFinal,
-  nombresDe,
   nombreVehiculo,
   pasoActual,
   pasosEscena,
@@ -85,9 +87,14 @@ import {
   ponerEnLaCalle,
   proponerChoque,
   quedoJuntoAlChoque,
+  finalDeLaNarracion,
+  tocarChoque,
+  ponerTerrenoEn,
+  puntoDelChoqueTocado,
+  tocarFinal,
   resumenEscena,
   rumboAlineado,
-  sentidoNarrado,
+  sentidoEnElCaso,
   sinFinal,
   textoChoqueListo,
   textoFlecha,
@@ -99,6 +106,7 @@ import {
 } from "@/lib/escena-facil";
 import { siluetaClase } from "@/lib/colocar";
 import { interpretarLugar } from "@/lib/lugar-texto";
+import { callesDelCaso, lugarClaro } from "@/lib/lugar-claro";
 import { etiquetaOpcion, type OpcionLugar, zonaDeOpcion } from "@/lib/lugar-opcion";
 import {
   agregarChoqueIntermedio,
@@ -186,6 +194,9 @@ type Mensaje = {
   deshacer?: boolean;
 };
 
+/** Cómo contesta el perito «¿Dónde quedó después del choque?». */
+type OpcionFinal = "narracion" | "marcar" | "junto" | "nose";
+
 export function EscenaFacil({
   tema,
   estado,
@@ -200,11 +211,14 @@ export function EscenaFacil({
   descripcionLugar = null,
   zona,
   onBuscarCalles,
+  onReintentarCalles,
   onVerReconstruccion,
   onNota,
   recalculo = null,
   onReconstruir,
   errorReconstruccion = null,
+  obstaculos = [],
+  reconstruccion = null,
 }: {
   tema: "claro" | "oscuro";
   estado: EstadoEscena;
@@ -224,6 +238,8 @@ export function EscenaFacil({
   zona: { municipio?: string; estado?: string };
   /** Pide las calles alrededor de un punto (el lugar buscado). */
   onBuscarCalles: (p: Punto) => void;
+  /** Pide otra vez las calles cuando la consulta falló (René, 2026-11-25). */
+  onReintentarCalles?: () => void;
   onVerReconstruccion: () => void;
   /** Lo que decide la persona y conviene anotar en la bitácora («No sé dónde quedó…»). */
   onNota: (texto: string) => void;
@@ -236,6 +252,13 @@ export function EscenaFacil({
   onReconstruir?: () => void;
   /** Si la última reconstrucción falló, por qué. */
   errorReconstruccion?: string | null;
+  /** Los edificios y muros del mapa (René, 2026-11-24): se avisa si un vehículo queda sobre uno. */
+  obstaculos?: readonly ObstaculoDelMapa[];
+  /**
+   * La reconstrucción al día con esta escena (null si no hay o quedó vieja), para «Qué cambia la cifra»
+   * (René, 2026-11-26): en gris lo que no toca ningún recorrido reconstruido.
+   */
+  reconstruccion?: Reconstruccion | null;
 }) {
   const e = estado.expediente;
   // Ronda 4 (René, 2026-11-18, propuesta 1): la escena ya armada con su lista. La de una pregunta a
@@ -338,10 +361,7 @@ export function EscenaFacil({
   const sentidos = useMemo(
     () =>
       Object.fromEntries(
-        vehiculos.map((v) => [
-          v.id,
-          narracion ? sentidoNarrado(narracion, nombresDe(v, vehiculos)) : null,
-        ]),
+        vehiculos.map((v) => [v.id, narracion ? sentidoEnElCaso(narracion, v, vehiculos) : null]),
       ),
     [vehiculos, narracion],
   );
@@ -361,7 +381,19 @@ export function EscenaFacil({
     tipo: "choque" | "direccion" | "final";
     id: string;
   } | null>(null);
-  const [opcionFinal, setOpcionFinal] = useState<Record<string, "marcar" | "junto" | "nose">>({});
+  const [opcionFinal, setOpcionFinal] = useState<Record<string, OpcionFinal>>({});
+  /** Dónde quedó como lo dice la narración (René, 2026-11-24), o null si no da una distancia. */
+  const finalNarradoDe = (v: string) => {
+    const n = posicionesNarradas.find((p) => p.vehiculo === v && p.fase === "final");
+    return n
+      ? finalDeLaNarracion(
+          e,
+          v,
+          n.descripcion,
+          posicionesNarradas.filter((x) => x.fase === "final"),
+        )
+      : null;
+  };
   const [marcoYo, setMarcoYo] = useState(false);
   const [mensaje, setMensaje] = useState<Mensaje | null>(null);
   const [descartadas, setDescartadas] = useState<readonly string[]>([]);
@@ -501,6 +533,13 @@ export function EscenaFacil({
   const [buscandoNarrado, setBuscandoNarrado] = useState(false);
   // Ronda 4 (René): si el lugar narrado no aparece, se pregunta (nunca el centro del municipio).
   const [narradoSinLugar, setNarradoSinLugar] = useState<string | null>(null);
+  // El lugar que encontró el buscador, con sus opciones y su aviso: si no coincide claramente con la
+  // narración, no se propone el choque ahí (René, 2026-11-25).
+  const [busquedaNarrada, setBusquedaNarrada] = useState<{
+    nombre: string;
+    resultados: OpcionLugar[];
+    aviso: string | null;
+  } | null>(null);
   const yaBuscado = useRef(false);
   // Vivo mientras la escena está montada (en desarrollo React monta los efectos dos veces: la búsqueda
   // de la primera vuelta debe poder terminar).
@@ -519,6 +558,7 @@ export function EscenaFacil({
       separarLugarYSentido(descripcionLugar).lugar,
       cruce ? `${cruce.calles[0]} y ${cruce.calles[1]}` : null,
       cruce?.calles[0] ?? null,
+      narracion ? carreteraNarrada(narracion) : null,
     ].filter((x): x is string => Boolean(x?.trim()));
     if (!consultas.length) return;
     yaBuscado.current = true;
@@ -550,8 +590,19 @@ export function EscenaFacil({
             break;
           }
           const p = r.ok ? d?.resultados?.[0] : undefined;
+          // Solo una zona (la colonia, el municipio) no es el lugar del choque (revisión de la cadena,
+          // René 2026-11-24): se prueba la consulta siguiente y, si nada es preciso, se pregunta.
+          if (p?.precision === "zona") {
+            aviso ??= `Solo se encontró la zona («${p.nombre}»), no el lugar del choque. Escribe las calles del cruce, pega las coordenadas o un link de Google Maps, o toca el lugar en el mapa.`;
+            continue;
+          }
           if (p && montada.current) {
             setLugarNarrado({ lat: p.lat, lon: p.lon });
+            setBusquedaNarrada({
+              nombre: p.nombre,
+              resultados: d?.resultados ?? [],
+              aviso: d?.aviso ?? null,
+            });
             onBuscarCalles({ lat: p.lat, lon: p.lon });
             hallado = true;
             break;
@@ -573,6 +624,22 @@ export function EscenaFacil({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- una vez, al abrir la escena
   }, []);
   const lugarBase = lugar ?? lugarNarrado;
+  // ¿El lugar encontrado es el de la narración? Con las calles de alrededor (o con el aviso del
+  // buscador, si dice que es de otro municipio). Si no es claro, el motivo.
+  const dudaLugar = useMemo(() => {
+    if (!busquedaNarrada || lugar || estado.puntos[1]) return null;
+    if (!callesMapa.length && !/No apareci[oó] en/i.test(busquedaNarrada.aviso ?? "")) return null;
+    const c = lugarClaro({
+      narradas: callesDelCaso(narracion, descripcionLugar),
+      calles: callesMapa,
+      aviso: busquedaNarrada.aviso,
+      encontrado: busquedaNarrada.nombre,
+    });
+    return c.clara ? null : c.motivo;
+  }, [busquedaNarrada, lugar, estado.puntos, callesMapa, narracion, descripcionLugar]);
+  // Con la duda, las opciones del buscador quedan a la vista para elegir (si el perito no buscó otra).
+  const opcionesLugar =
+    resultados.length || !dudaLugar || !busquedaNarrada ? resultados : busquedaNarrada.resultados;
   // Ronda 4 (René): «rumbo a Ciudad de México» es el sentido de llegada, no parte del lugar. El
   // destino se busca aparte; su rumbo desde el lugar del choque dice en qué sentido de la vía venía.
   const sentidoDelLugar = useMemo(() => {
@@ -596,6 +663,12 @@ export function EscenaFacil({
       vivo = false;
     };
   }, [sentidoDelLugar]);
+  // Diagnóstico (con `window.__croquisDiagnostico`): la escena a la vista de las pruebas, que la
+  // comparan con la que arma la tabla del índice (René, 2026-11-26: «el mismo código que La escena»).
+  useEffect(() => {
+    const w = window as unknown as { __croquisDiagnostico?: boolean; __croquisEscena?: unknown };
+    if (w.__croquisDiagnostico) w.__croquisEscena = { expediente: e, puntos: estado.puntos };
+  }, [e, estado.puntos]);
   // La escena ya armada: al entrar, si nadie ha marcado el choque, Croquis la propone con lo que leyó
   // (con `?desde=cero`, también en un caso que ya trae posiciones, como AXA).
   const [escenaPropuesta, setEscenaPropuesta] = useState<EscenaPropuesta | null>(null);
@@ -605,7 +678,9 @@ export function EscenaFacil({
       escenaPropuesta ||
       ((estado.puntos[1] || (impactos[0]?.vehiculos ?? []).some((v) => poseDe(e, v, "impacto"))) &&
         sp.get("desde") !== "cero") ||
-      (!lugarBase && !centroMapa)
+      (!lugarBase && !centroMapa) ||
+      // El lugar encontrado no coincide claramente con la narración: primero, «¿Dónde fue?».
+      dudaLugar
     )
       return undefined;
     // Con las calles (de las teselas o de Overpass) en cuanto lleguen; sin ellas, a los 10 s.
@@ -639,7 +714,7 @@ export function EscenaFacil({
     );
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- se arma una vez, al tener calles
-  }, [nuevo, escenaPropuesta, callesMapa, lugarBase, centroMapa]);
+  }, [nuevo, escenaPropuesta, callesMapa, lugarBase, centroMapa, dudaLugar]);
 
   // Lo que Croquis propone para el primer choque.
   const propuesta = useMemo(
@@ -660,13 +735,16 @@ export function EscenaFacil({
 
   const ponerChoque = (orden: number, p: Punto, calles: string[]) => {
     const primero = impactos.find((i) => i.orden === orden)?.vehiculos[0];
-    const sentido = primero ? sentidos[primero] : null;
-    const previa = primero ? poseDe(e, primero, "impacto") : null;
-    const rumbo =
-      sentido?.rumbo ?? previa?.rumbo ?? (callesMapa.length ? rumboAlineado(callesMapa, p, 0) : 0);
     const siguiente: EstadoEscena = {
       ...estado,
-      expediente: marcarChoque(e, impactos, orden, p, rumbo),
+      expediente: tocarChoque(
+        e,
+        impactos,
+        orden,
+        p,
+        primero ? (sentidos[primero] ?? null) : null,
+        callesMapa,
+      ),
       puntos: { ...estado.puntos, [orden]: p },
     };
     const lejos = choqueLejosDeCalles(callesMapa, p);
@@ -716,7 +794,9 @@ export function EscenaFacil({
     ? flechaPropuesta(
         flechas,
         sentidos[vehiculoActual] ?? null,
-        poseDe(e, vehiculoActual, "impacto")?.rumbo ?? null,
+        ((r) => (r === undefined ? null : rumboDeLlegada(e, vehiculoActual, r)))(
+          poseDe(e, vehiculoActual, "impacto")?.rumbo,
+        ),
       )
     : -1;
 
@@ -779,14 +859,10 @@ export function EscenaFacil({
 
   // Dónde quedó: con un toque, alineado a la calle; arrastrar es opcional; dos botones de 15°.
   const colocarFinal = (v: string, p: Punto) => {
-    const imp = poseDe(e, v, "impacto");
-    const rumbo = callesMapa.length
-      ? rumboAlineado(callesMapa, p, poseDe(e, v, "final")?.rumbo ?? imp?.rumbo ?? 0)
-      : (poseDe(e, v, "final")?.rumbo ?? imp?.rumbo ?? 0);
     cambiar(
       {
         ...estado,
-        expediente: marcarFinal(e, v, p, rumbo),
+        expediente: tocarFinal(e, v, p, callesMapa),
         desconocidos: estado.desconocidos.filter((x) => x !== v),
         juntoAlChoque: estado.juntoAlChoque.filter((x) => x !== v),
       },
@@ -795,7 +871,21 @@ export function EscenaFacil({
     setColocando(v);
   };
   const terminarFinal = (v: string) => {
-    const op = opcionFinal[v] ?? "marcar";
+    const op = opcionFinal[v] ?? (finalNarradoDe(v) ? "narracion" : "marcar");
+    if (op === "narracion") {
+      const f = finalNarradoDe(v);
+      if (!f) return;
+      cambiar(
+        {
+          ...estado,
+          expediente: marcarFinal(e, v, f.punto, f.rumbo),
+          desconocidos: estado.desconocidos.filter((x) => x !== v),
+          juntoAlChoque: estado.juntoAlChoque.filter((x) => x !== v),
+        },
+        exito(`¡Listo! El ${nombres[v]} quedó ${f.texto}, como dice la narración.`),
+      );
+      return;
+    }
     if (op === "marcar") {
       if (!poseDe(e, v, "final")) return;
       setColocando(null);
@@ -836,6 +926,7 @@ export function EscenaFacil({
   const encimadas = useMemo(() => posicionesEncimadas(e), [e]);
   // Ronda 4 (René): encimados en el choque (más que un contacto), dicho en el momento.
   const encimadosChoque = useMemo(() => impactosEncimados(e), [e]);
+  const enObstaculos = useMemo(() => posesEnObstaculos(e, obstaculos), [e, obstaculos]);
   const descartar = (clave: string) => {
     setDescartadas((d) => [...d, clave]);
     setMensaje(null);
@@ -902,6 +993,46 @@ export function EscenaFacil({
         ],
       };
     }
+    // Un vehículo sobre un edificio o atravesando un muro del mapa (René, 2026-11-24, punto 2).
+    const enObs = enObstaculos.find(
+      (x) => !descartadas.includes(`obstaculo:${x.vehiculo}:${x.fase}:${x.obstaculo.nombre}`),
+    );
+    if (enObs) {
+      const clave = `obstaculo:${enObs.vehiculo}:${enObs.fase}:${enObs.obstaculo.nombre}`;
+      const pose = poseDe(e, enObs.vehiculo, enObs.fase);
+      const ajuste = pose ? ajustarACalle(callesMapa, pose.punto, 60) : null;
+      return {
+        tipo: "alerta",
+        clave,
+        texto: `Ojo: ${enObs.fase === "impacto" ? "en el choque" : "donde quedó"}, el ${nombres[enObs.vehiculo] ?? enObs.vehiculo} está sobre ${enObs.obstaculo.tipo === "edificio" ? "un edificio" : "un muro"} del mapa. Los vehículos no atraviesan casas ni muros: si la reconstrucción lo cruza, no cuadra.`,
+        acciones: [
+          ...(ajuste && pose
+            ? [
+                {
+                  texto: "Llevarlo a la calle",
+                  id: "obstaculo-a-la-calle",
+                  principal: true,
+                  hacer: () =>
+                    cambiar(
+                      {
+                        ...estado,
+                        expediente: conPosicion(e, {
+                          vehiculo: enObs.vehiculo as never,
+                          fase: enObs.fase,
+                          punto: ajuste.punto,
+                          rumbo: pose.rumbo,
+                          fuente: "perito",
+                        }),
+                      },
+                      exito(`¡Listo! Quedó sobre ${ajuste.calle.nombre ?? "la calle"}.`),
+                    ),
+                },
+              ]
+            : []),
+          { texto: "Así fue", id: "obstaculo-asi", hacer: () => descartar(clave) },
+        ],
+      };
+    }
     // W4: un objeto del lugar encima de un vehículo en reposo o de otro objeto.
     const emp = empalmesDeObjetos(e).find(
       (x) => !descartadas.includes(`empalme:${x.objeto}:${x.con}`),
@@ -950,6 +1081,23 @@ export function EscenaFacil({
               ),
           },
           { texto: "Así está bien", id: "fuera-asi", hacer: () => descartar(`fuera:${v}`) },
+        ],
+      };
+    // La consulta falló y no hay calles de ninguna fuente: no es que el lugar no tenga calles. Sin
+    // ellas Croquis no calcula la velocidad (René, 2026-11-25).
+    if (overpassFallo && !calles && onReintentarCalles)
+      return {
+        tipo: "alerta",
+        clave: "calles-fallaron",
+        texto:
+          "No se pudieron cargar las calles: reintenta. Sin ellas, Croquis no calcula la velocidad.",
+        acciones: [
+          {
+            texto: "Reintentar",
+            id: "reintentar-calles-escena",
+            principal: true,
+            hacer: onReintentarCalles,
+          },
         ],
       };
     if (
@@ -1063,21 +1211,18 @@ export function EscenaFacil({
   const ponerTerreno = (p: Punto, todo = false) => {
     const que = poniendoTerreno;
     if (!que) return;
-    // Las zonas van a lo largo de la calle; el tope, atravesado.
-    const rumbo = callesMapa.length ? rumboAlineado(callesMapa, p, 0) : 0;
-    let siguiente: Expediente;
+    // Las zonas van a lo largo de la calle; el tope, atravesado (`ponerTerrenoEn`, la misma que la
+    // tabla del índice).
+    const siguiente = ponerTerrenoEn(e, callesMapa, que, p, todo);
     let texto: string;
     if (que.clase === "zona") {
-      siguiente = agregarZona(e, que.tipo, p, rumbo, todo).expediente;
       const nombre = nombreSuperficie(que.tipo).toLowerCase();
       texto = todo
         ? `¡Listo! Todo el lugar es de ${nombre}.`
         : `¡Listo! Marcaste una zona de ${nombre}. Agrega otra cosa o termina con «Listo».`;
     } else if (que.clase === "ondulacion") {
-      siguiente = agregarOndulacion(e, p, rumbo).expediente;
       texto = "¡Listo! Marcaste la zona ondulada. Sus medidas son un supuesto hasta que las midas.";
     } else {
-      siguiente = agregarTope(e, p, rumbo, que.norma).expediente;
       texto = "¡Listo! El tope quedó atravesado a la calle, con las medidas de la norma.";
     }
     cambiar({ ...estado, expediente: siguiente }, exito(texto));
@@ -1188,8 +1333,7 @@ export function EscenaFacil({
       return;
     }
     if (actual?.tipo === "choque") {
-      const a = ajustarACalle(callesMapa, p);
-      const punto = a?.punto ?? p;
+      const punto = puntoDelChoqueTocado(e, callesMapa, actual.orden, p);
       ponerChoque(actual.orden, punto, callesEn(callesMapa, punto));
       return;
     }
@@ -1203,8 +1347,10 @@ export function EscenaFacil({
       const v = actual.vehiculo;
       if ((opcionFinal[v] ?? "marcar") !== "marcar")
         setOpcionFinal((o) => ({ ...o, [v]: "marcar" }));
-      const a = ajustarACalle(callesMapa, p, 8);
-      colocarFinal(v, a?.punto ?? p);
+      // Donde tocó: la posición final es evidencia y no se mueve en silencio (René, 2026-11-26: el
+      // Vento del ejemplo «quedó sobre el acotamiento» y se pegaba 3 m al eje de la vía). Si quedó
+      // fuera de la calle, La escena lo avisa y ofrece «Ponerlo en la calle».
+      colocarFinal(v, p);
     }
   };
 
@@ -1679,6 +1825,31 @@ export function EscenaFacil({
       else setEditandoC1("terreno");
     }
   };
+  // «Qué cambia la cifra» (René, 2026-11-26): con la reconstrucción al día, lo que no toca ningún recorrido
+  // va en gris (la misma lógica que la e2e del poste). Se calcula solo al pedirlo.
+  const [verQueImporta, setVerQueImporta] = useState(false);
+  const puedeQueImporta = reconstruccion !== null && recalculo === "al_dia";
+  const importa = useMemo(() => {
+    if (!verQueImporta || !reconstruccion?.origen) return null;
+    const barridos = barridosDeLaReconstruccion(reconstruccion);
+    if (!barridos) return null;
+    return queImporta(
+      [
+        ...objetosColocados.map((o) => ({
+          clave: `objeto:${o.id}`,
+          punto: [o.punto.lon, o.punto.lat] as const,
+          radioM: Math.max(o.largo, o.ancho) / 2,
+        })),
+        ...terrenoMarcado.map((t) => ({
+          clave: `terreno:${t.id}`,
+          contorno: t.puntos.map((q) => [q.lon, q.lat] as const),
+        })),
+      ],
+      barridos,
+      reconstruccion.origen,
+    );
+  }, [verQueImporta, reconstruccion, objetosColocados, terrenoMarcado]);
+  const apagado = (clave: string) => puedeQueImporta && verQueImporta && importa?.[clave] === false;
   // C3 (W5): el terreno marcado, para el mapa. Las zonas, con su fricción si el perito la fijó.
   const terrenoMapa: TerrenoMapa[] = terrenoMarcado.map((t) => ({
     id: t.id,
@@ -1687,6 +1858,7 @@ export function EscenaFacil({
     nombre: t.nombre,
     puntos: t.puntos,
     centro: t.centro,
+    apagado: apagado(`terreno:${t.id}`),
   }));
   const objetosMapa = objetosColocados.map((o) => ({
     id: o.id,
@@ -1696,6 +1868,7 @@ export function EscenaFacil({
     rumbo: o.rumbo,
     largo: o.largo,
     ancho: o.ancho,
+    apagado: apagado(`objeto:${o.id}`),
   }));
 
   // A3: los peatones y los ciclistas, con su distancia de proyección si se marcó dónde quedaron.
@@ -1840,6 +2013,13 @@ export function EscenaFacil({
             Buscando en el mapa el lugar que dice la narración…
           </p>
         ) : null}
+        {dudaLugar && busquedaNarrada && !buscandoNarrado ? (
+          <p className="t-nota text-texto" role="status" data-testid="lugar-dudoso">
+            Croquis encontró «{busquedaNarrada.nombre}», pero {dudaLugar}. ¿Dónde fue? Elige una de
+            las opciones de abajo, escribe las calles del cruce, pega las coordenadas o toca el
+            lugar en el mapa.
+          </p>
+        ) : null}
         {narradoSinLugar && !buscandoNarrado && !conPropuesta && !estado.puntos[1] ? (
           <p className="t-nota text-texto" role="status" data-testid="narrado-sin-lugar">
             {narradoSinLugar}
@@ -1851,7 +2031,7 @@ export function EscenaFacil({
             data-testid="escena-propuesta"
           >
             <span className="text-[0.8125rem] font-semibold text-texto-2">
-              {propuesta.segun === "narracion"
+              {propuesta.segun === "narracion" || propuesta.segun === "a_la_altura"
                 ? "Croquis lo leyó en la narración"
                 : propuesta.segun === "una_calle"
                   ? "La narración dice"
@@ -1865,6 +2045,12 @@ export function EscenaFacil({
                 En el mapa está {propuesta.encontrada}, pero no {propuesta.faltante}. Croquis te
                 propone su cruce más cercano:{" "}
                 <b className="text-texto">{propuesta.calles.slice(0, 2).join(" y ")}</b>.
+              </p>
+            ) : propuesta.segun === "a_la_altura" ? (
+              <p className="t-nota" data-testid="propuesta-a-la-altura">
+                {propuesta.calles[0]} y {propuesta.calles[1]} no se cruzan a nivel (un paso a
+                desnivel): Croquis propone el choque sobre {propuesta.calles[0]}, a la altura de{" "}
+                {propuesta.calles[1]}.
               </p>
             ) : propuesta.segun === "cercania" && propuesta.calles.length ? (
               <p className="font-semibold">{propuesta.calles.slice(0, 2).join(" y ")}</p>
@@ -1920,9 +2106,9 @@ export function EscenaFacil({
                 {estadoBusqueda}
               </span>
             ) : null}
-            {resultados.length ? (
+            {opcionesLugar.length ? (
               <ul className="flex max-h-40 flex-col gap-1 overflow-y-auto">
-                {resultados.map((r) => (
+                {opcionesLugar.map((r) => (
                   <li key={`${r.lat},${r.lon}`}>
                     <button
                       type="button"
@@ -1932,6 +2118,11 @@ export function EscenaFacil({
                       onClick={() => {
                         mapa.current?.easeTo({ center: [r.lon, r.lat], zoom: 18.5 });
                         onBuscarCalles({ lat: r.lat, lon: r.lon });
+                        // El perito eligió el lugar: ya no hay duda y Croquis propone ahí.
+                        if (busquedaNarrada) {
+                          setBusquedaNarrada(null);
+                          setLugarNarrado({ lat: r.lat, lon: r.lon });
+                        }
                         setResultados([]);
                         setEstadoBusqueda(null);
                       }}
@@ -2263,7 +2454,7 @@ export function EscenaFacil({
             if (!pose) return;
             aplicarDireccion(
               v,
-              pose.rumbo,
+              rumboDeLlegada(e, v, pose.rumbo),
               true,
               `Croquis usa la dirección que dan los daños para el ${nombres[v]}.`,
             );
@@ -2276,15 +2467,29 @@ export function EscenaFacil({
     );
   } else if (actual?.tipo === "vehiculo") {
     const v = actual.vehiculo;
-    const op = opcionFinal[v] ?? "marcar";
+    const op = opcionFinal[v] ?? (finalNarradoDe(v) ? "narracion" : "marcar");
     const imp = poseDe(e, v, "impacto");
     const narrada = posicionesNarradas.find((p) => p.vehiculo === v && p.fase === "final");
     const desde = imp
       ? flechasDeLlegada(callesMapa, choqueDe(v) ?? imp.punto).find(
-          (f) => Math.abs(((f.rumbo - imp.rumbo + 540) % 360) - 180) < 30,
+          (f) => Math.abs(((f.rumbo - rumboDeLlegada(e, v, imp.rumbo) + 540) % 360) - 180) < 30,
         )
       : null;
-    const opciones: { clave: "marcar" | "junto" | "nose"; titulo: string; detalle?: string }[] = [
+    const comoNarra = finalNarradoDe(v);
+    const opciones: {
+      clave: OpcionFinal;
+      titulo: string;
+      detalle?: string;
+    }[] = [
+      ...(comoNarra
+        ? [
+            {
+              clave: "narracion" as const,
+              titulo: "Como dice la narración",
+              detalle: `Croquis lo coloca ${comoNarra.texto}.`,
+            },
+          ]
+        : []),
       {
         clave: "marcar",
         titulo: "Lo marco en el mapa",
@@ -2460,7 +2665,16 @@ export function EscenaFacil({
       const pose = poseDe(e, v, "impacto");
       if (!pose) return;
       cambiar(
-        { ...estado, expediente: elegirDireccion(e, impactos, v, pose.rumbo, puntoChoque) },
+        {
+          ...estado,
+          expediente: elegirDireccion(
+            e,
+            impactos,
+            v,
+            rumboDeLlegada(e, v, pose.rumbo),
+            puntoChoque,
+          ),
+        },
         exito(`¡Listo! Confirmaste por dónde venía ${nombres[v] ?? v}.`),
       );
     }
@@ -2527,6 +2741,18 @@ export function EscenaFacil({
           setMapaListo(m);
         }}
         objetos={objetosMapa}
+        queImporta={
+          puedeQueImporta
+            ? {
+                activo: verQueImporta,
+                onAlternar: () => {
+                  // Al encenderlo, la lista se cierra para ver el mapa; al apagarlo, vuelve.
+                  setListaVista(!verQueImporta);
+                  setVerQueImporta((x) => !x);
+                },
+              }
+            : null
+        }
         terreno={terrenoMapa}
         personas={personasMapa}
         seleccion={corrigiendo ? seleccion : null}
@@ -2967,6 +3193,7 @@ export function EscenaFacil({
                     className="boton-secundario escena-boton self-start px-3"
                     onClick={() => cambiarLinea(l)}
                     data-testid={`cambiar-linea-${k}`}
+                    data-linea={l.tipo}
                   >
                     Cambiar
                   </button>

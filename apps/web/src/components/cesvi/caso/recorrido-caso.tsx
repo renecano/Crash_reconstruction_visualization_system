@@ -24,10 +24,12 @@ import {
   posesDeImpacto,
   posicionesEncimadas,
   conHipotesis,
+  conObstaculos,
   preguntaPendiente,
   reconstruccionContraCesvi,
   supuestoAlNoSaber,
   revisarRelato,
+  conAvisoDelLimite,
   conLimiteDeLaVia,
   supuestosDeClase,
   supuestosDeclarados,
@@ -61,6 +63,7 @@ import {
   versionesParaPresentar,
   type VersionCaso,
 } from "@/lib/versiones-caso";
+import { obstaculosDelMapa } from "@/lib/obstaculos-del-mapa";
 import { callesCerca, objetosCerca, RADIO_CALLES_M } from "@/lib/calles-del-mapa";
 import {
   callesParaGuardar,
@@ -81,7 +84,7 @@ import type { ResultadoMaqueta } from "@/lib/maqueta";
 import { MODALIDAD } from "@/lib/nombres-cesvi";
 import { colorDeVehiculo } from "@/lib/vehiculos-cesvi";
 import { leerTransiciones, useTema, useTransiciones, type Modo } from "@/lib/preferencias-cesvi";
-import { lecturaGuardada } from "@/lib/ejemplos-narracion";
+import { conLugarDelEjemplo, lecturaGuardada } from "@/lib/ejemplos-narracion";
 import { Calculos, type DistanciaRestos } from "../calculos";
 import { Expediente as ExpedienteCesvi } from "../expediente";
 import { DictamenCaso } from "../dictamen-caso";
@@ -99,6 +102,7 @@ import { ActoContraste, filaDeRestos } from "./contraste-laboratorio";
 import { HechoLaboratorio } from "./hecho-laboratorio";
 import { CifraReconstruccion, DetalleReconstruccion } from "./hoja-reconstruccion";
 import { ActoVersiones } from "./versiones";
+import { HipotesisVelocidad } from "./hipotesis-velocidad";
 import { TerrenoReconstruccion } from "./terreno-reconstruccion";
 import { EnRanura, MarcoVista } from "@/components/visor-unity/marco-vista";
 import { VisorCasoUnity } from "@/components/visor-unity/visor-caso-unity";
@@ -247,7 +251,19 @@ export function RecorridoCaso({
     () => (guardadas ? respuestaDeGuardadas(guardadas) : null),
     [guardadas],
   );
-  const calles = callesOverpass ?? callesTeselas ?? callesGuardadas;
+  // Las guardadas con el caso mandan (René, 2026-11-25): un ejemplo trae las suyas y nunca depende de
+  // que la red responda; en un caso nuevo, las primeras que llegan se guardan y las de Overpass
+  // reemplazan a las de las teselas (`conCallesGuardadas`).
+  const calles = callesGuardadas ?? callesOverpass ?? callesTeselas;
+  // La consulta de calles falló y no hay calles de ninguna otra fuente: Croquis no calcula una cifra
+  // sin ellas; La escena y la reconstrucción piden reintentar (René, 2026-11-25). Un lugar donde
+  // OpenStreetMap responde sin calles no es una falla: sigue como siempre.
+  const sinCallesPorFalla = callesFallaron && !calles;
+  const [intentoCalles, setIntentoCalles] = useState(0);
+  const reintentarCalles = () => {
+    setCallesFallaron(false);
+    setIntentoCalles((n) => n + 1);
+  };
   const [objetos, setObjetos] = useState<OverpassResponse | null>(null);
   const [, setMedida] = useState<number | null>(null);
   const [mapa, setMapa] = useState<MapaMl | null>(null);
@@ -259,6 +275,9 @@ export function RecorridoCaso({
   const [versiones, setVersiones] = useState<VersionCaso[]>([]);
   const [elegida, setElegida] = useState<string | null>(null);
   const [version3d, setVersion3d] = useState(false);
+  // «¿Y si…?» a otra velocidad en la Reconstrucción (pedido de CESVI, 2026-11-26): la que va encima.
+  // Va con la reconstrucción en que se probó: con una nueva, ya no va encima.
+  const [ysiDe, setYsiDe] = useState<{ clave: string; de: unknown } | null>(null);
   const [exportApi, setExportApi] = useState<ViewerExportApi | null>(null);
   // U6: el visor Unity (si cargó). Las fotos del dictamen salen de él.
   const [unityApi, setUnityApi] = useState<ApiVisorUnity | null>(null);
@@ -292,7 +311,9 @@ export function RecorridoCaso({
   // ofrece «Reconstruir de nuevo», en «La escena» y en «La reconstrucción», sin borrar nada más. Los
   // demás cambios del caso (lo editado en el 3D, una respuesta) se siguen recalculando solos (W4).
   const [escenaCambio, setEscenaCambio] = useState(false);
-  const rec = useReconstruccion(expediente, { alCambiar: !escenaCambio });
+  const rec = useReconstruccion(sinCallesPorFalla ? null : expediente, {
+    alCambiar: !escenaCambio,
+  });
   // Ya reconstruida con la escena que se ve (o deshecho el cambio), el aviso se va solo.
   if (escenaCambio && !rec.vieja) setEscenaCambio(false);
   const frenteAEscena = estadoFrenteAEscena({
@@ -340,10 +361,12 @@ export function RecorridoCaso({
   // (ADR 0091). Mientras no elija se ve la del daño medido, y se dice.
   // La elección se guarda con el caso; al reconstruir se aplica si esa hipótesis sigue existiendo.
   const [hipotesis, setHipotesis] = useState<string | null>(inicial.hipotesisElegida ?? null);
-  const r = useMemo(
-    () => (rec.r?.hipotesis && hipotesis ? conHipotesis(rec.r, hipotesis) : rec.r),
-    [rec.r, hipotesis],
-  );
+  // Los edificios y muros del mapa (René, 2026-11-24, punto 2): si un vehículo los cruza, no cuadra.
+  const obstaculos = useMemo(() => obstaculosDelMapa(objetos), [objetos]);
+  const rSinLimite = useMemo(() => {
+    const conHip = rec.r?.hipotesis && hipotesis ? conHipotesis(rec.r, hipotesis) : rec.r;
+    return conHip ? conObstaculos(conHip, obstaculos) : conHip;
+  }, [rec.r, hipotesis, obstaculos]);
 
   // Un caso con reporte se lee del reporte: su narración no se edita ni va al dictamen.
   const editable = reporte === null;
@@ -353,10 +376,15 @@ export function RecorridoCaso({
   const actual = clave(paso);
   // El escenario grande de la reconstrucción, también en «Versiones» (con el fantasma encima).
   const enEscenario = actual === P.reconstruccion || actual === P.versiones;
-  const vista = vistaElegida ?? (enEscenario && r ? "maqueta" : "mapa");
+  const vista = vistaElegida ?? (enEscenario && rSinLimite ? "maqueta" : "mapa");
   // La versión elegida se dibuja solo en su acto: la reconstrucción se ve limpia en los demás.
+  const ysi = ysiDe && ysiDe.de === rSinLimite ? ysiDe.clave : null;
   const versionVista =
-    actual === P.versiones ? (versiones.find((v) => v.clave === elegida) ?? null) : null;
+    actual === P.versiones
+      ? (versiones.find((v) => v.clave === elegida) ?? null)
+      : actual === P.reconstruccion && ysi
+        ? (versiones.find((v) => v.clave === ysi) ?? null)
+        : null;
   const declarada = versionVista
     ? { etiqueta: versionVista.etiqueta, resultado: versionVista.resultado }
     : null;
@@ -415,14 +443,17 @@ export function RecorridoCaso({
   const supuestos = useMemo(
     () =>
       expediente
-        ? [...supuestosDeClaseVigentes(leida, expediente), ...supuestosDeclarados(expediente, r)]
+        ? [
+            ...supuestosDeClaseVigentes(leida, expediente),
+            ...supuestosDeclarados(expediente, rSinLimite),
+          ]
         : [],
-    [expediente, r, leida],
+    [expediente, rSinLimite, leida],
   );
   // La velocidad de la reconstrucción contra la de cada método del reporte (ADR 0091).
   const contraCesvi = useMemo(
-    () => (expediente && r ? reconstruccionContraCesvi(expediente, r) : null),
-    [expediente, r],
+    () => (expediente && rSinLimite ? reconstruccionContraCesvi(expediente, rSinLimite) : null),
+    [expediente, rSinLimite],
   );
   // La reproducción trae la comparación medida en E-R4; un reporte importado se compara aquí.
   const comparacionReporte = useMemo(
@@ -538,7 +569,11 @@ export function RecorridoCaso({
         return;
       }
       if (redactada !== texto) setTexto(redactada);
-      abrirEscena({ ...p.escena, preguntas: p.preguntas });
+      // Un ejemplo sin cambios abre en su lugar guardado, sin el buscador (René, 2026-11-25).
+      const escena = deEjemplo
+        ? { ...p.escena, expediente: conLugarDelEjemplo(redactada, p.escena.expediente) }
+        : p.escena;
+      abrirEscena({ ...escena, preguntas: p.preguntas });
       setLecturaGuardadaUsada(deEjemplo);
       setEstado(null);
     } catch {
@@ -718,7 +753,7 @@ export function RecorridoCaso({
     return () => {
       vivo = false;
     };
-  }, [claveCalles]);
+  }, [claveCalles, intentoCalles]);
   // Ronda 4 (René): con la vía del choque ya conocida, lo que la narración describe respecto al
   // límite («a exceso de velocidad») o la típica de la vía se recalcula con el límite de esa vía.
   // Las calles que llegan (Overpass o teselas) se guardan con el caso, una vez por lugar.
@@ -758,6 +793,30 @@ export function RecorridoCaso({
     const nuevo = conLimiteDeLaVia(expediente, limiteChoque);
     if (nuevo !== expediente) setExpediente(nuevo);
   }
+  // Una cifra más de 40 km/h arriba del límite de la vía por la que circulaba ESE vehículo (René,
+  // 2026-11-26): la de su rumbo en el impacto, con la clase de su propio nombre («Calle Azucena»), no
+  // la del lugar narrado completo. Aviso junto a la cifra y en los límites; las cifras no cambian.
+  const limitesPorVehiculo = useMemo(() => {
+    const out: Record<string, { kmh: number; fuente: string } | null> = {};
+    if (!calles || !expediente) return out;
+    const lasCalles = callesDe(calles);
+    for (const v of expediente.vehiculos) {
+      const pose = poseDe(v.id, "impacto");
+      out[v.id] = pose
+        ? limiteEnElChoque(lasCalles, pose.punto, {
+            rumbo: pose.rumbo,
+            lugar: lugarNarrado,
+            claseDeSuNombre: true,
+          })
+        : null;
+    }
+    return out;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- las poses salen del expediente
+  }, [calles, expediente, lugarNarrado]);
+  const r = useMemo(
+    () => (rSinLimite ? conAvisoDelLimite(rSinLimite, limitesPorVehiculo) : rSinLimite),
+    [rSinLimite, limitesPorVehiculo],
+  );
   // Ronda 4: mientras Overpass no llega, las calles de las teselas del mapa del caso (también al
   // entrar directo a Reconstrucción, sin pasar por La escena).
   useEffect(() => {
@@ -1276,6 +1335,8 @@ export function RecorridoCaso({
           calles={calles}
         />
       );
+    if (actual === P.reconstruccion && sinCallesPorFalla)
+      return <AvisoSinCalles onReintentar={reintentarCalles} />;
     if (actual === P.reconstruccion)
       return (
         <div className={`flex flex-col ${r ? "gap-3" : "gap-5"}`}>
@@ -1312,6 +1373,19 @@ export function RecorridoCaso({
                 <span className="cifras ml-2 text-texto-3">· {versiones.length}</span>
               ) : null}
             </button>
+          ) : null}
+          {/* «¿Y si…?» a otra velocidad (pedido de CESVI): una hipótesis, la cifra no cambia. */}
+          {r && r.velocidades.some((v) => v.previa) ? (
+            <div className="solo-trabajar">
+              <HipotesisVelocidad
+                r={r}
+                nombreDe={nombreLab}
+                versiones={versiones}
+                onVersion={(v) => setVersiones((vs) => conVersion(vs, v))}
+                activa={ysi}
+                onActiva={(clave) => setYsiDe(clave ? { clave, de: rSinLimite } : null)}
+              />
+            </div>
           ) : null}
           {r && !r.hipotesis ? (
             <DanoContraReconstruccion
@@ -1647,6 +1721,7 @@ export function RecorridoCaso({
       {escenaFacil && expediente && leida ? (
         <div className="relative min-h-0 flex-1" data-testid="escena-fondo">
           <EscenaFacil
+            reconstruccion={rec.vieja ? null : r}
             tema={tema}
             onCallesDelMapa={setCallesTeselas}
             estado={{
@@ -1671,6 +1746,7 @@ export function RecorridoCaso({
             posicionesNarradas={leida.posiciones}
             calles={calles}
             callesFallaron={callesFallaron}
+            onReintentarCalles={reintentarCalles}
             lugar={expediente.caso.lugar?.coordenadas ?? null}
             descripcionLugar={expediente.caso.lugar?.descripcion?.valor ?? null}
             zona={{
@@ -1683,6 +1759,7 @@ export function RecorridoCaso({
             recalculo={frenteAEscena}
             onReconstruir={() => void rec.reconstruirDeNuevo()}
             errorReconstruccion={rec.estado}
+            obstaculos={obstaculos}
           />
         </div>
       ) : null}
@@ -1903,13 +1980,15 @@ export function RecorridoCaso({
                   contraCesvi={contraCesvi}
                   declarada={declarada}
                   // Ronda 4: en «Versiones», el 3D alterna entre la reconstrucción y la versión
-                  // elegida, con la misma cámara y el mismo instante.
+                  // elegida, con la misma cámara y el mismo instante. En la Reconstrucción, el
+                  // «¿Y si…?» que se acaba de simular va encima de inmediato (pedido de CESVI):
+                  // ahí la única versión a la vista es esa.
                   version={
-                    versionVista && version3d
+                    versionVista && (version3d || actual === P.reconstruccion)
                       ? {
                           clave: versionVista.clave,
                           etiqueta: versionVista.etiqueta,
-                          escena: versionVista.tipo === "declaracion" ? versionVista.escena : null,
+                          escena: "escena" in versionVista ? versionVista.escena : null,
                           resultado: versionVista.resultado,
                         }
                       : null
@@ -2220,5 +2299,33 @@ export function RecorridoCaso({
         </section>
       </div>
     </div>
+  );
+}
+
+/**
+ * Las calles no llegaron (René, 2026-11-25): «el perito debe ver un aviso claro, nunca una cifra
+ * calculada sin calles». Con el botón, Croquis las pide otra vez.
+ */
+function AvisoSinCalles({ onReintentar }: { onReintentar: () => void }) {
+  return (
+    <section
+      role="alert"
+      data-testid="aviso-sin-calles"
+      className="flex flex-col gap-3 rounded-lg border border-[var(--senal)] p-4"
+    >
+      <p className="font-medium">No se pudieron cargar las calles: reintenta.</p>
+      <p className="text-sm text-[var(--texto-2)]">
+        Sin las calles del lugar, Croquis no calcula la velocidad: el choque y por dónde venía cada
+        vehículo dependen de ellas. Revisa la conexión y vuelve a intentarlo.
+      </p>
+      <button
+        type="button"
+        className="boton-principal self-start"
+        data-testid="reintentar-calles"
+        onClick={onReintentar}
+      >
+        Reintentar
+      </button>
+    </section>
   );
 }

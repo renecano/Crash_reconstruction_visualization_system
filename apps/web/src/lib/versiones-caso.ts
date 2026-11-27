@@ -12,6 +12,7 @@ import {
   type FilaDeclarada,
   type HipotesisConductor,
   type PruebaConductores,
+  type VelocidadElegida,
   type VersionDeclarada,
 } from "@croquis/cesvi";
 import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
@@ -45,6 +46,8 @@ export interface VersionDeclaracion extends Comun {
 
 export interface VersionHipotesis extends Comun {
   tipo: "hipotesis";
+  /** La de los conductores (R12a): una decisión, hasta el primer contacto. */
+  clase?: "conductores";
   h: HipotesisConductor;
   prueba: PruebaConductores;
   cambios: CambioVersion[];
@@ -52,7 +55,21 @@ export interface VersionHipotesis extends Comun {
   agentes: Json;
 }
 
-export type VersionCaso = VersionDeclaracion | VersionHipotesis;
+/**
+ * «¿Y si…?» a otra velocidad (pedido de CESVI; René, 2026-11-26): la escena de la reconstrucción con
+ * la velocidad que elige el perito, simulada hacia adelante con el choque y el daño. Es una hipótesis:
+ * la cifra reconstruida no cambia.
+ */
+export interface VersionVelocidad extends Comun {
+  tipo: "hipotesis";
+  clase: "velocidad";
+  velocidades: VelocidadElegida[];
+  /** La escena de la hipótesis: el 3D la carga tal cual. */
+  escena: EscenaSpec;
+  cambios: CambioVersion[];
+}
+
+export type VersionCaso = VersionDeclaracion | VersionHipotesis | VersionVelocidad;
 
 /** Hasta cuántas hipótesis guarda el acto (la más vieja sale al probar otra). */
 export const MAX_HIPOTESIS = 6;

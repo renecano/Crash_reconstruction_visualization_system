@@ -7,7 +7,7 @@ import { proponerEscena } from "@/lib/escena-propuesta";
 import { impactosAColocar } from "@/lib/pasos-caso";
 import { buscarLugar, defaultLugarDeps } from "@/server/lugar";
 import { lectura, reconstruir } from "./cifras-ronda4.test";
-import { osmAlrededor } from "./visor-unity/bateria-narraciones.test";
+import { osmAlrededor } from "./visor-unity/osm-alrededor";
 
 /**
  * Lo que ve un perito que abre un ejemplo en la app (René, 2026-11-23: «la cifra publicada es esa»):

@@ -44,6 +44,7 @@ from croquis_solver.inversion import (
     PRIORIDAD,
     SIGMA_POSITION_M,
     Evidence,
+    Fit,
     Inversion,
     assumed_rest_miss,
     damage_sigma,
@@ -270,17 +271,30 @@ def check_damage(spec: JsonObj, seed: int, samples: int) -> list[Inconsistency]:
     return out
 
 
-def check_rest(spec: JsonObj) -> list[Inconsistency]:
+def check_rest(spec: JsonObj, inversion: Inversion | None = None) -> list[Inconsistency]:
+    """Un reposo que ningún ajuste alcanza. Un solo ajuste desde las velocidades de arranque puede
+    quedarse en un mínimo local: si no alcanza un reposo y hay inversión, se repite desde su mejor
+    solución, y solo se avisa si tampoco (René, 2026-11-26: el Sentra del ejemplo del poste salía
+    «inalcanzable» aunque la inversión lo llevaba a su lugar)."""
     out: list[Inconsistency] = []
     ev = evidence_from_spec(spec)
     if not ev.rest:
         return out
-    fit = fit_evidence(spec, Evidence(ev.rest, {}, {}))
+    solo_reposo = Evidence(ev.rest, {}, {})
+    fits = [fit_evidence(spec, solo_reposo)]
     by_id = {v["id"]: v for v in spec["vehiculos"]}
-    for vid in ev.rest:
+
+    def falla(fit: Fit, vid: str) -> float:
         rx = fit.residuals.get(f"reposo:{vid}:x", 0.0)
         ry = fit.residuals.get(f"reposo:{vid}:y", 0.0)
-        miss = dmath.hypot(rx, ry) * SIGMA_POSITION_M
+        return dmath.hypot(rx, ry) * SIGMA_POSITION_M
+
+    if inversion is not None and any(
+        falla(fits[0], vid) > REST_SIGMAS * SIGMA_POSITION_M for vid in ev.rest
+    ):
+        fits.append(fit_evidence(spec, solo_reposo, start=dict(inversion.best.values)))
+    for vid in ev.rest:
+        miss = min(falla(f, vid) for f in fits)
         if miss > REST_SIGMAS * SIGMA_POSITION_M:
             out.append(
                 Inconsistency(
@@ -440,7 +454,7 @@ def check_consistency(
     return (
         basic
         + check_damage(spec, seed, samples)
-        + check_rest(spec)
+        + check_rest(spec, inversion)
         + (check_speed_evidence(spec, inversion) if inversion is not None else [])
         + (check_damage_reach(spec, inversion) if inversion is not None else [])
         + (check_assumed_rest(spec, inversion) if inversion is not None else [])

@@ -6,6 +6,8 @@ import json
 import math
 from pathlib import Path
 
+import pytest
+
 from croquis_solver.preimpact import PolylineLanePath
 from croquis_solver.reconstruct import reconstruct
 from croquis_solver.road import lane_following_path, road_axis
@@ -52,3 +54,17 @@ def test_la_referencia_de_paridad_esta_al_dia() -> None:
         for s, x, y, h, _k in c["poses"]:
             q = p.pose(s)
             assert (q.x, q.y, q.heading) == (x, y, h)
+
+
+def test_por_dentro_de_la_esquina_la_paralela_no_hace_rizo() -> None:
+    # Revisión de la cadena (cesvi-af2196f0fc): un vehículo a 12 m del eje, por dentro de la vuelta,
+    # giraba sobre sí mismo. Ahora avanza siempre hacia adelante y termina a 12 m del eje.
+    p = PolylineLanePath(EJE, (12.0, -40.0, math.pi / 2), 120.0)
+    prev = p.pose(0.0)
+    for i in range(1, 241):
+        q = p.pose(i * 0.5)
+        avance = (q.x - prev.x) * math.cos(prev.heading) + (q.y - prev.y) * math.sin(prev.heading)
+        assert avance > 0.0, i
+        prev = q
+    assert math.cos(prev.heading) > 0.95  # al oriente, después de la curva
+    assert prev.y == pytest.approx(10.0 - 12.0, abs=1.0)

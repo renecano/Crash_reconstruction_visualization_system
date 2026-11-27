@@ -1069,6 +1069,11 @@ Alberto lleva todo lo de Unity y René con su Claude Code, el solver y la web. E
 - Capturas de antes y después en `docs/progress/capturas/2026-11-26/` (editor, nivel media) y del build WebGL para los letreros. Los casos son fixtures inventados; ninguno de AXA ni de CESVI.
 - **El build WebGL desde la Mac (M1, 16 GB), con Unity 6000.3.28f1:** 193 s con `Library` ya importada (`BuildPlayer`: 2 min 54 s, 0 errores); 70 MB en `apps/visor-unity/Build/web`. El comando está en #337.
 
+- **Ajustes pedidos por René (2026-11-26), PR aparte porque #336, #338 y #339 ya estaban fusionados:**
+  - **Daño:** la profundidad se cuenta desde el frente real de la carrocería, no desde la caja (las esquinas redondeadas recibían menos de C). Medido en la malla, el sedán llega a C1 con 52.0 de 52.2 cm. En la van, la lámina más cercana a C1 está 12 cm hacia dentro y ahí da 45.5 donde el solver pide 44.8; la esquina nominal no tiene lámina. Las demás estaciones quedan dentro de 2 cm o 6 %. Hay capturas cenitales con el perfil dibujado (`Capturas -perfil`, vista `planta:<vehículo>`).
+  - **Pedazos:** tamaño mínimo visible y vidrio con brillo, con la misma cantidad.
+  - **Árido:** cerros ocres y niebla de polvo de día.
+
 ### Instalado (Mac de Alberto)
 
 - Unity 6000.3.28f1 (arm64) con WebGL, con el CLI `unity`.
@@ -1076,11 +1081,70 @@ Alberto lleva todo lo de Unity y René con su Claude Code, el solver y la web. E
 
 ### Pendiente
 
-- Los cerros del horizonte siguen verdes en el paisaje árido.
 - El mensaje `fantasma` del puente 1.4.0 (cambiar la hipótesis sin recargar) sigue propuesto.
 - Los letreros de pantalla no salen en las capturas del editor (`Capturas.cs` renderiza la cámara a una textura). Para verlos hay que usar el build WebGL.
 
-### Necesito del otro frente
+### Cierre para la t11 (Alberto, 2026-11-26, con permiso de René para fusionar)
+
+El Claude Code de René estaba detenido. Mientras tanto, René me autorizó a fusionar con CI en verde los PR que no tocan cifras.
+
+**Fusionados:**
+
+- #345 (contrato del daño medido) → #358 (Unity dibuja los C1–C6 medidos);
+- #354 (puente 1.4.0, mensaje `leyenda`) → #355 (Unity) y #360 (web: una sola leyenda en Presentar; «Salir · Esc» con fondo);
+- #356 (cámara «Desde la acera»), #357 (recorrido visual versionado);
+- #359 (respaldo por clima del paisaje, Köppen-Geiger 1991–2020, solo México);
+- #361 (sin casas en la isla de las glorietas).
+
+**Pendiente:** #362 («¿Y si…?» en el 3D al simular) va encima de #334 y entra después de él.
+
+**La pregunta de #345 (ancho y centro de lo medido):** se respondió leyendo el solver de #349. `medido_m` va sobre el mismo `ancho_m` (el medido) y el mismo `centro_m` (de la zona del CDC) que `perfil_m`.
+
+### Release para la t11
+
+- **El release:** `visor-web-932aa256f4466ebc`, compilado desde `main` en 0a02044e: 78 s, 0 errores, 36.2 MB, sin archivos de Mac.
+- **Puente 1.4.0:** necesita una web con #354. La web de la t10-final (03340cb4) no acepta la 1.4.0 y abre el visor ligero.
+- **El recorrido con este build** (`e2e/revision-3d.spec.ts`, web local de `main`): los cinco ejemplos, Tollocan, Reforma y la carretera Hermosillo–Bahía de Kino, 8 de 8.
+  - Ningún vehículo dentro de un edificio ni saltos de trayectoria.
+  - Una sola leyenda en Presentar.
+  - La isla de la glorieta de Reforma, sin casas.
+  - Bahía de Kino sin cobertura de OSM: `paisaje: arido` (el clima).
+  - En el punto de la carretera donde OSM sí trae cobertura, sale «templado» porque OSM manda. Es la Costa de Hermosillo, zona agrícola; no lo confirmé con OSM.
+- **El «¿Y si…?»** se revisó en el build nuevo con el paquete de la hipótesis: cámara lenta ×5, letreros «Hipótesis» y fantasma.
+- **Lo que queda en la calzada,** según el paquete de la web:
+  - el árbol del caso de Tollocan (`obj-1`, evidencia): para René;
+  - una luminaria del plan de la web, que Unity lleva a la orilla (#352).
+
+### t10-final (rama `resultados/t10-final-2026-11-26-msi-k47`, commit 03340cb4, RTX 4070)
+
+Revisión sin publicar nada: publicar lo hace el Claude Code de René.
+
+| Paso                                          | Estado                                                                                                    |
+| --------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| comprobación: dependencias, solver en reversa | ok                                                                                                        |
+| visor (build `dd83b2d3`), preparar, humo      | ok                                                                                                        |
+| ejemplos                                      | ok (5 de 5)                                                                                               |
+| tres narraciones de René                      | ok (3 de 3)                                                                                               |
+| **final-unity**                               | **falló:** «No tests found». `playwright.produccion.config.ts` no incluye `final-unity` en su `testMatch` |
+| video-3d                                      | ok                                                                                                        |
+| arranque-1, arranque-2, arranque-3            | **no corrieron** (no están en `corrida.json`)                                                             |
+
+- Los ejemplos se guardaron en `eval/results/t9/ejemplos.json` y las narraciones en `eval/results/t9/`, no en `eval/results/t10/` como dice `tandas.json`. El comando que quedó en el registro usa `-Salida eval/results/t9/ejemplos.json`.
+
+**Contra el índice** (`eval/results/cifras.json` de la misma rama), en km/h:
+
+| Caso          | t10        | Índice     | Diferencia                                           |
+| ------------- | ---------- | ---------- | ---------------------------------------------------- |
+| Crucero (A)   | 20 (5–26)  | 20 (5–26)  | coincide                                             |
+| Alcance (A)   | 54 (49–55) | 53 (49–56) | mejor +1 (+1.9 %), p90 −1 (−1.8 %)                   |
+| Carambola (A) | 25 (20–32) | 25 (20–32) | coincide                                             |
+| Reversa (B)   | 20 (16–25) | 20 (16–25) | coincide                                             |
+| Poste (B)     | 63 (43–65) | 61 (37–64) | mejor +2 (+3.3 %), p10 +6 (+16.2 %), p90 +1 (+1.6 %) |
+| AXA (V2)      | 57 (55–78) | 57 (55–78) | coincide                                             |
+
+El alcance y el poste no coinciden con el índice. Va para René, sin tocar el solver ni las cifras.
+
+## Necesito del otro frente
 
 - Que la web calcule `escenario.entorno.paisaje` (#335) con la cobertura de OSM alrededor del lugar. Sin él, el visor se queda en «templado».
 

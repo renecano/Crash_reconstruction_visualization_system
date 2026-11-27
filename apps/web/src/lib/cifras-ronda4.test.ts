@@ -6,7 +6,9 @@ import { fullResult } from "@croquis/solver-ts";
 import { describe, expect, it } from "vitest";
 import { expedienteAxaReconstruccion } from "@/lib/axa-reconstruccion";
 import * as facil from "@/lib/escena-facil";
-import { impactosAColocar } from "@/lib/pasos-caso";
+import { escenaComoPerito, type EscenaComoPerito } from "@/lib/ejemplo-como-perito";
+import { conLugarDelEjemplo } from "@/lib/ejemplos-narracion";
+import { RECETAS_PERITO } from "@/lib/recetas-perito";
 import { armarRelieve, defaultRelieveDeps, RelieveIn } from "@/server/relieve";
 
 /**
@@ -22,68 +24,6 @@ import { armarRelieve, defaultRelieveDeps, RelieveIn } from "@/server/relieve";
 const RAIZ = resolve(__dirname, "../../../..");
 type Json = Record<string, unknown>;
 const MUESTRAS = { samples: 32, mcSamples: 128 };
-const P = { lat: 19.3576, lon: -99.0625 };
-const m = (este: number, norte: number) => ({
-  lat: P.lat + norte / 111320,
-  lon: P.lon + este / (111320 * Math.cos((P.lat * Math.PI) / 180)),
-});
-const RUMBO: Record<string, number> = {
-  "Del sur": 0,
-  "Del oeste": 90,
-  "Del norte": 180,
-  "Del este": 270,
-};
-
-/** Las recetas de los ejemplos, como en e2e/recetas-ejemplos.ts. */
-export const RECETAS: {
-  clave: string;
-  choques?: [number, number][];
-  venia: Record<string, string>;
-  quedo: Record<string, [number, number] | "junto">;
-  pasos?: { vehiculo: string; en: [number, number] }[];
-  terreno?: { tipo: "tope-circular" | "terraceria"; en: [number, number] }[];
-  cifra: string;
-}[] = [
-  {
-    clave: "crucero-noche",
-    venia: { Jetta: "Del sur", Camaro: "Del oeste" },
-    quedo: { Jetta: "junto", Camaro: "junto" },
-    cifra: "V1",
-  },
-  {
-    clave: "alcance-deformacion",
-    venia: { NP300: "Del sur", Vento: "Del sur" },
-    quedo: { NP300: [0, 9], Vento: [2.6, 21] },
-    cifra: "V1",
-  },
-  {
-    clave: "carambola-lluvia",
-    choques: [[5.6, 0]],
-    venia: { Ranger: "Del oeste" },
-    quedo: { Ranger: [-0.5, 0], Corolla: [5.4, 0], Aveo: [9.8, 0] },
-    cifra: "V1",
-  },
-  {
-    clave: "reversa-pendiente",
-    venia: { "CR-V": "Del oeste", Versa: "Del sur" },
-    quedo: { "CR-V": [-1.8, 0.4], Versa: [0.6, 7] },
-    terreno: [{ tipo: "tope-circular", en: [0.6, -12] }],
-    cifra: "V2",
-  },
-  {
-    clave: "poste-terraceria",
-    choques: [[18, 3]],
-    venia: { "Mazda 3": "Del sur", Sentra: "Del oeste" },
-    quedo: { "Mazda 3": [0.8, 8], Sentra: [16.4, 2.7] },
-    pasos: [{ vehiculo: "V2", en: [9, 1.5] }],
-    terreno: [{ tipo: "terraceria", en: [15, 4] }],
-    cifra: "V2",
-  },
-];
-
-const de = <T>(mapa: Record<string, T>, texto: string) =>
-  Object.entries(mapa).find(([k]) => texto.includes(k))?.[1];
-
 export function lectura(ruta: string): { e: Expediente; narracion: string } {
   const g = JSON.parse(readFileSync(resolve(RAIZ, ruta), "utf8")) as {
     narracion: string;
@@ -92,36 +32,25 @@ export function lectura(ruta: string): { e: Expediente; narracion: string } {
   return { e: cesvi.escenaDeNarracion(g.salida, g.narracion).expediente, narracion: g.narracion };
 }
 
-export function colocarReceta(e0: Expediente, r: (typeof RECETAS)[number]): Expediente {
-  const impactos = impactosAColocar(e0);
-  const nombres = Object.fromEntries(
-    e0.vehiculos.map((v) => [v.id, facil.nombreVehiculo(v, e0.vehiculos)]),
+/** La escena del perito de cada ejemplo, para la prueba que la compara con la de la app. */
+function guardarEscenaDelPerito(clave: string, a: EscenaComoPerito): void {
+  const dir = resolve(RAIZ, "eval/results/ejemplos_como_perito");
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(
+    resolve(dir, `${clave}.json`),
+    `${JSON.stringify(
+      {
+        clave,
+        propuesta: { puntos: a.propuesta.puntos, versiones: a.propuesta.expediente.versiones },
+        puntos: a.puntos,
+        notas: a.notas,
+        toques: a.toques,
+        versiones: a.expediente.versiones,
+      },
+      null,
+      1,
+    )}\n`,
   );
-  const rumboDe = (vid: string) => RUMBO[de(r.venia, nombres[vid]!) ?? "Del sur"] ?? 0;
-  const primero = impactos[0]!.vehiculos[0]!;
-  let e = facil.marcarChoque(e0, impactos, 1, P, rumboDe(primero));
-  const puntos: Record<number, { lat: number; lon: number }> = { 1: P };
-  (r.choques ?? []).forEach(([x, y], i) => {
-    puntos[i + 2] = m(x, y);
-    e = facil.marcarChoque(e, impactos, i + 2, m(x, y), rumboDe(primero));
-  });
-  for (const v of e.vehiculos) {
-    const venia = de(r.venia, nombres[v.id]!);
-    if (venia)
-      e = facil.elegirDireccion(e, impactos, v.id, RUMBO[venia]!, (o) => puntos[o] ?? null);
-    const q = de(r.quedo, nombres[v.id]!) ?? "junto";
-    if (q === "junto") e = facil.quedoJuntoAlChoque(e, v.id);
-    else
-      e = facil.marcarFinal(e, v.id, m(q[0], q[1]), facil.poseDe(e, v.id, "impacto")?.rumbo ?? 0);
-  }
-  for (const p of r.pasos ?? []) e = facil.agregarPuntoDePaso(e, p.vehiculo, m(p.en[0], p.en[1]));
-  for (const t of r.terreno ?? []) {
-    e =
-      t.tipo === "tope-circular"
-        ? cesvi.agregarTope(e, m(t.en[0], t.en[1]), 0).expediente
-        : cesvi.agregarZona(e, "terraceria", m(t.en[0], t.en[1]), 0).expediente;
-  }
-  return e;
 }
 
 /** Como la web: el relieve real si se pide y la velocidad típica donde exista (en el #284). */
@@ -142,6 +71,7 @@ export async function reconstruir(e0: Expediente, id: string) {
   let r = cesvi.interpretarResultado(
     base,
     fullResult(base.spec, { ...MUESTRAS, relieve: malla as never }),
+    { relieve: malla },
   );
   const tipicas = (cesvi as Json).expedienteConTipicas as
     ((x: Expediente, y: unknown) => Expediente | null) | undefined;
@@ -152,6 +82,7 @@ export async function reconstruir(e0: Expediente, id: string) {
     r = cesvi.interpretarResultado(
       base,
       fullResult(base.spec, { ...MUESTRAS, relieve: malla as never }),
+      { relieve: malla },
     );
   }
   return { r, e, malla };
@@ -200,15 +131,28 @@ describe("la tabla de cifras de la ronda 4", () => {
       const ej = JSON.parse(
         readFileSync(resolve(RAIZ, "data/cesvi/ejemplos/narraciones.json"), "utf8"),
       ) as {
-        ejemplos: { clave: string; grabacion?: string }[];
+        ejemplos: { clave: string; grabacion?: string; lugar: { lat: number; lon: number } }[];
       };
-      for (const receta of RECETAS) {
+      // Cada ejemplo como lo arma el perito en La escena (René, 2026-11-26): la escena que propone La
+      // escena en su lugar guardado, con sus calles, corregida según la narración, con las mismas
+      // funciones que usa la app (`ejemplo-como-perito.ts`). La escena queda en
+      // `eval/results/ejemplos_como_perito/` para compararla con la de la app.
+      for (const receta of RECETAS_PERITO) {
         const x = ej.ejemplos.find((y) => y.clave === receta.clave)!;
-        const { e } = lectura(
-          `data/cesvi/grabaciones/${x.grabacion ?? `ejemplos/${x.clave}.json`}`,
-        );
-        const colocado = colocarReceta(e, receta);
-        const { r, e: final, malla } = await reconstruir(colocado, `ejemplo-${receta.clave}`);
+        const g = JSON.parse(
+          readFileSync(
+            resolve(RAIZ, `data/cesvi/grabaciones/${x.grabacion ?? `ejemplos/${x.clave}.json`}`),
+            "utf8",
+          ),
+        ) as { narracion: string; salida: SalidaCorpus };
+        const leida = cesvi.escenaDeNarracion(g.salida, g.narracion);
+        const e0 = conLugarDelEjemplo(
+          g.narracion,
+          leida.expediente as never,
+        ) as unknown as Expediente;
+        const armada = escenaComoPerito(e0, g.narracion, leida.posiciones, receta);
+        guardarEscenaDelPerito(receta.clave, armada);
+        const { r, e: final, malla } = await reconstruir(armada.expediente, "caso-nuevo");
         filas.push(fila("ejemplo", receta.clave, receta.cifra, final, r, malla));
       }
       const colocaciones = resolve(

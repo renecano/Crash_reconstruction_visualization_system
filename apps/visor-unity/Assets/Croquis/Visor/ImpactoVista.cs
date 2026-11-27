@@ -74,7 +74,7 @@ namespace Croquis.Visor
                     go.transform.localScale = forma.Escala * (float)p.Tamano;
                     go.AddComponent<MeshFilter>().sharedMesh = forma.Malla;
                     var mr = go.AddComponent<MeshRenderer>();
-                    mr.sharedMaterial = MaterialDe(p.Tipo, p.Variante);
+                    mr.sharedMaterial = MaterialDe(p.Tipo, p.Variante, noche);
                     mr.shadowCastingMode = p.Tipo != Pedazos.Material.Vidrio && p.Tamano > 0.05 ? ShadowCastingMode.On : ShadowCastingMode.Off;
                     go.SetActive(false);
                     v.piezas.Add((go.transform, p, imp.T));
@@ -146,12 +146,13 @@ namespace Croquis.Visor
         }
 
         /// <summary>Vidrio verdoso que brilla con la luz; fascia negra, micas roja, ámbar y clara; lámina gris.</summary>
-        private static UnityEngine.Material MaterialDe(Pedazos.Material tipo, int variante)
+        private static UnityEngine.Material MaterialDe(Pedazos.Material tipo, int variante, bool noche)
         {
             switch (tipo)
             {
                 case Pedazos.Material.Vidrio:
-                    return Materiales.Liso(new Color(0.66f, 0.78f, 0.76f), 0.95f);
+                    // Que brille: un poco de brillo propio, además del reflejo (de noche, apenas).
+                    return Materiales.Emisivo(new Color(0.78f, 0.88f, 0.88f), noche ? new Color(0.06f, 0.07f, 0.07f) : new Color(0.32f, 0.38f, 0.38f));
                 case Pedazos.Material.Plastico:
                     switch (variante)
                     {
@@ -162,7 +163,7 @@ namespace Croquis.Visor
                         case 3:
                             return Materiales.Liso(new Color(0.84f, 0.86f, 0.9f), 0.9f);
                         default:
-                            return Materiales.Liso(new Color(0.05f, 0.05f, 0.055f), 0.35f);
+                            return Materiales.Liso(new Color(0.07f, 0.07f, 0.075f), 0.45f);
                     }
 
                 default:

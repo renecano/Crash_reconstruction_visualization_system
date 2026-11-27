@@ -1,0 +1,114 @@
+{
+ "clave": "crucero-noche",
+ "propuesta": {
+  "puntos": {
+   "1": {
+    "lat": 19.317208,
+    "lon": -99.059345
+   }
+  },
+  "versiones": [
+   {
+    "tipo": "evidencia",
+    "posiciones": [
+     {
+      "vehiculo": "V1",
+      "fase": "impacto",
+      "punto": {
+       "lat": 19.317197123047805,
+       "lon": -99.05932691940403
+      },
+      "rumbo": 302.5162893657782,
+      "fuente": "supuesto"
+     },
+     {
+      "vehiculo": "V2",
+      "fase": "impacto",
+      "punto": {
+       "lat": 19.317212350780878,
+       "lon": -99.05935223223838
+      },
+      "rumbo": 37.29231042421088,
+      "fuente": "supuesto"
+     }
+    ]
+   }
+  ]
+ },
+ "puntos": {
+  "1": {
+   "lat": 19.317208,
+   "lon": -99.059345
+  }
+ },
+ "notas": [],
+ "toques": [
+  {
+   "accion": "direccion",
+   "vehiculo": "V1",
+   "como": "confirmar"
+  },
+  {
+   "accion": "direccion",
+   "vehiculo": "V2",
+   "como": "confirmar"
+  },
+  {
+   "accion": "final",
+   "vehiculo": "V1",
+   "como": "junto"
+  },
+  {
+   "accion": "final",
+   "vehiculo": "V2",
+   "como": "junto"
+  }
+ ],
+ "versiones": [
+  {
+   "tipo": "evidencia",
+   "posiciones": [
+    {
+     "vehiculo": "V1",
+     "fase": "impacto",
+     "punto": {
+      "lat": 19.317197123047805,
+      "lon": -99.05932691940403
+     },
+     "rumbo": 302.5162893657782,
+     "fuente": "perito"
+    },
+    {
+     "vehiculo": "V2",
+     "fase": "impacto",
+     "punto": {
+      "lat": 19.317212350780878,
+      "lon": -99.05935223223838
+     },
+     "rumbo": 32.51628936577822,
+     "fuente": "perito"
+    },
+    {
+     "vehiculo": "V1",
+     "fase": "final",
+     "punto": {
+      "lat": 19.31720437434927,
+      "lon": -99.05933897313388
+     },
+     "rumbo": 302.5162893657782,
+     "fuente": "perito"
+    },
+    {
+     "vehiculo": "V2",
+     "fase": "final",
+     "punto": {
+      "lat": 19.3172237259063,
+      "lon": -99.05934454834623
+     },
+     "rumbo": 32.51628936577822,
+     "fuente": "perito"
+    }
+   ]
+  }
+ ]
+}
