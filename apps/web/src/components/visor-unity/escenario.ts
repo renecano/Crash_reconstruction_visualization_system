@@ -37,7 +37,14 @@ import {
   type SignalPhase,
 } from "@croquis/viewer/puro";
 
-import { enElCaso, planCuadras, zonasDelCaso, type Lote } from "./cuadras";
+import {
+  dentroDe,
+  enElCaso,
+  islasDeGlorieta,
+  planCuadras,
+  zonasDelCaso,
+  type Lote,
+} from "./cuadras";
 
 /**
  * La malla de rayas blancas sin las de orilla: se quita todo triángulo cuyos tres vértices caen en
@@ -384,7 +391,9 @@ export function escenarioDe(
     plan.zone === "urbana"
       ? planCuadras(corredores, { x: accion.cx, y: accion.cy }, spec.meta.semilla, libres)
       : null;
-  const edificios: Lote[] =
+  // Ninguna casa en la isla de una glorieta (`islasDeGlorieta`).
+  const islas = mapa?.vias ? islasDeGlorieta(mapa.vias) : [];
+  const conCasas: Lote[] =
     cuadras?.lotes ??
     plan.buildings
       .filter(
@@ -398,6 +407,9 @@ export function escenarioDe(
         herreria: false,
         zaguan: false,
       }));
+  const edificios = islas.length
+    ? conCasas.filter((b) => !islas.some((isla) => dentroDe(b, isla)))
+    : conCasas;
   // El piso: el ondulado decorativo, más el relieve real del lugar si el caso lo trae y el
   // hundimiento bajo un puente narrado (ronda 4). Unity usa la misma altura para las vías
   // (`RelieveMalla` y `EstructuraVia` en Croquis.Core), así que vías y suelo no se despegan.
