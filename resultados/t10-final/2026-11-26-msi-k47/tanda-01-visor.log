@@ -1,9 +1,8 @@
 # Paso: visor
 # Comando: node tools/unity/visor-local.mjs copia
 # Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
-# Inicio: 2026-11-26 19:18:29
+# Inicio: 2026-11-26 19:27:24
 
-Bajando el build dd83b2d323f5ed0e del release de GitHub (no de Blob)...
 Copia lista en C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\.cache\visor-unity\dd83b2d323f5ed0e
 
-# Fin: 2026-11-26 19:18:32 · ok · 0.1 min
+# Fin: 2026-11-26 19:27:24 · ok · 0 min
