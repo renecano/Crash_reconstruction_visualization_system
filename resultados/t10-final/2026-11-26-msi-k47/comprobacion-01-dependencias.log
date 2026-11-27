@@ -1,0 +1,11 @@
+# Paso: dependencias
+# Comando: pnpm install --frozen-lockfile
+# Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
+# Inicio: 2026-11-26 19:18:23
+
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 7h ago)
+Lockfile is up to date, resolution step is skipped
+Done in 123ms using pnpm v12.11.2
+
+# Fin: 2026-11-26 19:18:24 · ok · 0 min
