@@ -1961,9 +1961,11 @@ export function RecorridoCaso({
                   contraCesvi={contraCesvi}
                   declarada={declarada}
                   // Ronda 4: en «Versiones», el 3D alterna entre la reconstrucción y la versión
-                  // elegida, con la misma cámara y el mismo instante.
+                  // elegida, con la misma cámara y el mismo instante. En la Reconstrucción, el
+                  // «¿Y si…?» que se acaba de simular va encima de inmediato (pedido de CESVI):
+                  // ahí la única versión a la vista es esa.
                   version={
-                    versionVista && version3d
+                    versionVista && (version3d || actual === P.reconstruccion)
                       ? {
                           clave: versionVista.clave,
                           etiqueta: versionVista.etiqueta,
