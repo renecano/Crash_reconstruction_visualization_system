@@ -256,7 +256,7 @@ SCALE = {"velocidad": 10.0, "rumbo": 10.0}
 IDENT_MAX = {"velocidad": 30.0, "rumbo": 15.0}
 # Que el reajuste de cada muestra converja (René, 2026-11-26): con 4 pasos de a lo más una escala y
 # fracciones de ½ y ¼, las muestras caían en una retícula de 10, 5 y 2.5 km/h sin converger.
-CHORD_ITER = 25  # iteraciones de cada reajuste perturbado (cuerda con el jacobiano del mejor)
+CHORD_ITER = 8  # iteraciones de cada reajuste perturbado (cuerda con el jacobiano del mejor)
 CHORD_FRACCIONES = (1.0, 0.5, 0.25, 0.125, 0.0625, 0.03125)
 # Una muestra que deja algo medido más lejos que esto (sigmas), o 1σ más que el modo, se rehace.
 SIGMAS_MEDIDO = 3.0
