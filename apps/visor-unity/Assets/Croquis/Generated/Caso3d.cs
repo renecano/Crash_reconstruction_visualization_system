@@ -5144,6 +5144,23 @@ namespace Croquis.Generated
         [JsonConverter(typeof(FluffyMinMaxValueCheckConverter))]
         public double EnergiaJ { get; set; }
 
+        /// <summary>
+        /// Opcional: la energía que absorbe la deformación medida con la misma rigidez (CRASH3),
+        /// para compararla con `energia_j`, la que reparte el choque reconstruido.
+        /// </summary>
+        [JsonProperty("energia_medida_j", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(FluffyMinMaxValueCheckConverter))]
+        public double? EnergiaMedidaJ { get; set; }
+
+        /// <summary>
+        /// Opcional (2026-11-26, sin cambio de versión): C1 a C6 que midió el perito en esa cara,
+        /// con la misma convención que `perfil_m`, para ponerlos junto a lo calculado. Sin medidas,
+        /// no va.
+        /// </summary>
+        [JsonProperty("medido_m", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(MagentaDecodeArrayConverter))]
+        public double[] MedidoM { get; set; }
+
         [JsonProperty("origen_rigidez")]
         public OrigenRigidez OrigenRigidez { get; set; }
 
@@ -5154,6 +5171,12 @@ namespace Croquis.Generated
         [JsonProperty("perfil_m")]
         [JsonConverter(typeof(MagentaDecodeArrayConverter))]
         public double[] PerfilM { get; set; }
+
+        /// <summary>
+        /// Opcional: los coeficientes CRASH3 con que se calculó la deformación y de dónde salen.
+        /// </summary>
+        [JsonProperty("rigidez", NullValueHandling = NullValueHandling.Ignore)]
+        public RigidezDano Rigidez { get; set; }
     }
 
     public partial class Cdc
@@ -5169,6 +5192,26 @@ namespace Croquis.Generated
 
         [JsonProperty("zona_vertical", NullValueHandling = NullValueHandling.Ignore)]
         public ZonaVertical? ZonaVertical { get; set; }
+    }
+
+    /// <summary>
+    /// Opcional: los coeficientes CRASH3 con que se calculó la deformación y de dónde salen.
+    /// </summary>
+    public partial class RigidezDano
+    {
+        [JsonProperty("a_n_m")]
+        [JsonConverter(typeof(FluffyMinMaxValueCheckConverter))]
+        public double ANM { get; set; }
+
+        [JsonProperty("b_n_m2")]
+        public double BNM2 { get; set; }
+
+        [JsonProperty("fuente")]
+        public FuenteRigidez Fuente { get; set; }
+
+        [JsonProperty("nota", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(FluffyMinMaxLengthCheckConverter))]
+        public string Nota { get; set; }
     }
 
     /// <summary>
@@ -5831,7 +5874,9 @@ namespace Croquis.Generated
 
     public enum FaseFase { Caminando, DePie, Deslizamiento, Montado, Reposo, Vuelo };
 
-    public enum OrigenRigidez { Nhtsa, SinImpacto, Supuesto };
+    public enum OrigenRigidez { Nhtsa, Reporte, SinImpacto, Supuesto };
+
+    public enum FuenteRigidez { Nhtsa, Reporte, Supuesto };
 
     public enum LadoTropiezo { Derecho, Izquierdo };
 
@@ -5961,6 +6006,7 @@ namespace Croquis.Generated
                 AlcanceDeteccionNocturnaTipoConverter.Singleton,
                 FaseFaseConverter.Singleton,
                 OrigenRigidezConverter.Singleton,
+                FuenteRigidezConverter.Singleton,
                 LadoTropiezoConverter.Singleton,
                 VersionResultadoConverter.Singleton,
                 TipoObjetivoConverter.Singleton,
@@ -13369,52 +13415,6 @@ namespace Croquis.Generated
         public static readonly MinMaxValueCheckConverter17 Singleton = new MinMaxValueCheckConverter17();
     }
 
-    internal class OrigenRigidezConverter : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(OrigenRigidez) || t == typeof(OrigenRigidez?);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            if (reader.TokenType == JsonToken.Null) return null;
-            var value = serializer.Deserialize<string>(reader);
-            switch (value)
-            {
-                case "nhtsa":
-                    return OrigenRigidez.Nhtsa;
-                case "sin impacto":
-                    return OrigenRigidez.SinImpacto;
-                case "supuesto":
-                    return OrigenRigidez.Supuesto;
-            }
-            throw new Exception("Cannot unmarshal type OrigenRigidez");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            if (untypedValue == null)
-            {
-                serializer.Serialize(writer, null);
-                return;
-            }
-            var value = (OrigenRigidez)untypedValue;
-            switch (value)
-            {
-                case OrigenRigidez.Nhtsa:
-                    serializer.Serialize(writer, "nhtsa");
-                    return;
-                case OrigenRigidez.SinImpacto:
-                    serializer.Serialize(writer, "sin impacto");
-                    return;
-                case OrigenRigidez.Supuesto:
-                    serializer.Serialize(writer, "supuesto");
-                    return;
-            }
-            throw new Exception("Cannot marshal type OrigenRigidez");
-        }
-
-        public static readonly OrigenRigidezConverter Singleton = new OrigenRigidezConverter();
-    }
-
     internal class MagentaDecodeArrayConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(double[]);
@@ -13447,6 +13447,103 @@ namespace Croquis.Generated
         }
 
         public static readonly MagentaDecodeArrayConverter Singleton = new MagentaDecodeArrayConverter();
+    }
+
+    internal class OrigenRigidezConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(OrigenRigidez) || t == typeof(OrigenRigidez?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "nhtsa":
+                    return OrigenRigidez.Nhtsa;
+                case "reporte":
+                    return OrigenRigidez.Reporte;
+                case "sin impacto":
+                    return OrigenRigidez.SinImpacto;
+                case "supuesto":
+                    return OrigenRigidez.Supuesto;
+            }
+            throw new Exception("Cannot unmarshal type OrigenRigidez");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (OrigenRigidez)untypedValue;
+            switch (value)
+            {
+                case OrigenRigidez.Nhtsa:
+                    serializer.Serialize(writer, "nhtsa");
+                    return;
+                case OrigenRigidez.Reporte:
+                    serializer.Serialize(writer, "reporte");
+                    return;
+                case OrigenRigidez.SinImpacto:
+                    serializer.Serialize(writer, "sin impacto");
+                    return;
+                case OrigenRigidez.Supuesto:
+                    serializer.Serialize(writer, "supuesto");
+                    return;
+            }
+            throw new Exception("Cannot marshal type OrigenRigidez");
+        }
+
+        public static readonly OrigenRigidezConverter Singleton = new OrigenRigidezConverter();
+    }
+
+    internal class FuenteRigidezConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(FuenteRigidez) || t == typeof(FuenteRigidez?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "nhtsa":
+                    return FuenteRigidez.Nhtsa;
+                case "reporte":
+                    return FuenteRigidez.Reporte;
+                case "supuesto":
+                    return FuenteRigidez.Supuesto;
+            }
+            throw new Exception("Cannot unmarshal type FuenteRigidez");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (FuenteRigidez)untypedValue;
+            switch (value)
+            {
+                case FuenteRigidez.Nhtsa:
+                    serializer.Serialize(writer, "nhtsa");
+                    return;
+                case FuenteRigidez.Reporte:
+                    serializer.Serialize(writer, "reporte");
+                    return;
+                case FuenteRigidez.Supuesto:
+                    serializer.Serialize(writer, "supuesto");
+                    return;
+            }
+            throw new Exception("Cannot marshal type FuenteRigidez");
+        }
+
+        public static readonly FuenteRigidezConverter Singleton = new FuenteRigidezConverter();
     }
 
     internal class MinMaxValueCheckConverter18 : JsonConverter
