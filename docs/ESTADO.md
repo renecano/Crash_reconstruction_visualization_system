@@ -11,7 +11,7 @@ Las cifras de este archivo salen de `eval/results/`. Las marcadas están atadas 
 Sitio: <https://croquis-sage.vercel.app/cesvi>.
 
 - **El flujo del perito, completo:** narrar, colocar en el mapa, reconstruir, ver en 3D, comparar con el reporte de CESVI y con la declaración de un conductor, y sacar el dictamen en PDF y Word.
-- **El caso de AXA (A2010930):** V2 a <!--cifra:axa.v2-->57 km/h (55–78)<!--/cifra--> y V1 a <!--cifra:axa.v1-->15 km/h (1–21)<!--/cifra-->, con <!--cifra:axa.hipotesis-->2<!--/cifra--> hipótesis. La que se ve sin elegir se llama «<!--cifra:axa.hipotesis_visible-->La más cercana al daño medido<!--/cifra-->».
+- **El caso de AXA (A2010930):** V2 a <!--cifra:axa.v2-->57 km/h (53–88)<!--/cifra--> y V1 a <!--cifra:axa.v1-->15 km/h (1–21)<!--/cifra-->, con <!--cifra:axa.hipotesis-->2<!--/cifra--> hipótesis. La que se ve sin elegir se llama «<!--cifra:axa.hipotesis_visible-->La más cercana al daño medido<!--/cifra-->».
 - **La reproducción de reportes:** los <!--cifra:er4.prueba-->205<!--/cifra--> de la prueba congelada se reconstruyen y se ven en 3D. La modalidad coincide con el título del reporte en <!--cifra:er4.modalidad_titulo-->91 de 156 (58.3 %)<!--/cifra-->.
 - **El visor Unity en la web,** con edición en 3D que vuelve a correr el solver, con controles de reproducción (pausar, deslizador, ¼× ½× 1×, ir al impacto, ver todo, repetir) y con el daño del solver en la carrocería después del impacto (U8, ADR 0117; build `e06bdd73b0ce3706`). El visor de escritorio está en un release de GitHub y es anterior al daño.
 - **La reversa:** quien retrocede sin velocidad dicha se reconstruye a <!--cifra:reversa.velocidad-->5.68 km/h (3.06–9.07)<!--/cifra-->, como supuesto con su fuente.

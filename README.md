@@ -101,7 +101,7 @@ La modalidad contra el título sale de [`cesvi_r4c_titulo_prueba.json`](eval/res
 | ------------------------------------------------------ | ---------- | ----------------------------------------------- | ---------------------------------------- |
 | Método de CESVI, por la separación de los restos       | 60.27 km/h | 60.27 km/h                                      | 0                                        |
 | Método de CESVI, por deformación                       | 63.15 km/h | 63.90 km/h                                      | +0.75 km/h                               |
-| Reconstrucción física, «La más cercana al daño medido» | 63.15 km/h | <!--cifra:axa.v2-->57 km/h (55–78)<!--/cifra--> | −6.28 km/h, −9.94 % (56.87 contra 63.15) |
+| Reconstrucción física, «La más cercana al daño medido» | 63.15 km/h | <!--cifra:axa.v2-->57 km/h (53–88)<!--/cifra--> | −6.28 km/h, −9.94 % (56.87 contra 63.15) |
 | Alternativa, «Cuadra con el reposo supuesto»           | 63.15 km/h | 34.44 km/h                                      | supuesto                                 |
 
 - **De dónde sale:** la reproducción del método, de [`axa_diagnostico.json`](eval/results/axa_diagnostico.json); la reconstrucción física, de [`axa_rango_estable.json`](eval/results/axa_rango_estable.json) (20 semillas, 32 simulaciones); las dos hipótesis, de [`w8/axa_hipotesis.json`](eval/results/w8/axa_hipotesis.json), del 14 de noviembre: después solo cambiaron los rangos ([`w8/t3_comparacion.json`](eval/results/w8/t3_comparacion.json)).
