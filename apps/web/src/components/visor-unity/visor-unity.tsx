@@ -704,8 +704,9 @@ export function VisorUnity({
         style={{ width: "100%", height: "100%" }}
       />
       {/* La deformación que dibuja el 3D es la medida por CESVI donde el reporte la midió (René,
-          2026-11-24): se dice cuál, con sus medidas. */}
-      {listo && escena && deformacionesMedidas(escena).length ? (
+          2026-11-24): se dice cuál, con sus medidas. En Presentar no: el 3D sube detrás del encabezado
+          y el aviso quedaba encimado (René, 2026-11-27); Análisis ya lo dice. */}
+      {listo && !tiempo && escena && deformacionesMedidas(escena).length ? (
         <p
           className="t-nota vidrio absolute top-3 left-3 z-10 max-w-[60%] rounded-control px-3 py-1.5"
           data-testid="visor-unity-deformacion-medida"

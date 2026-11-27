@@ -1585,3 +1585,7 @@ Cada ejemplo guarda su lugar (`data/cesvi/ejemplos/narraciones.json`) y abre ah�
 **Daños (siguiente):** en AXA, la deformación medida de la Tacoma con la rigidez del reporte (A = 55.4 kN/m, B = 385.3 kN/m²) equivale a unos 230 kJ, y el choque reconstruido disipa 61.5 kJ en total; además el solver usa la rigidez de NHTSA y no la del reporte. Plan: un PR `contract:` (lo medido y la fuente de la rigidez en `Dano`), el solver con la rigidez del reporte (Python y TS con paridad) y la comparación en Análisis.
 
 **Siguiente paso concreto:** esperar la t9-ejemplos; si sale bien, publicar #311 → #316 → #320 → #323 → #329 → #331, verificar en producción y fusionar #324, #327 y #328; luego #334 y `fix/w-poste-mazda`.
+
+## Demo con CESVI (2026-11-27) · lo de Unity y la web sin cifras
+
+- **1 · Presentar sin el aviso encimado** (`fix/w-presentar-aviso-deformacion`): el aviso «Deformación medida por CESVI» se asomaba detrás del encabezado (el 3D sube detrás de él); en Presentar ya no se muestra (Trabajar y Análisis lo siguen diciendo). Capturas con el ejemplo del alcance: `capturas/demo/1-presentar-antes.jpg` (producción) y `1-presentar-despues.jpg` (local). Prueba manual de capturas: `e2e/capturas-demo-final.spec.ts`.
