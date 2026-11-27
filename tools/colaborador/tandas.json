@@ -1483,7 +1483,7 @@
     },
     "t11-solver": {
       "titulo": "Tanda 11 · El reajuste del rango que converge y no descarta lo medido",
-      "nota": "René, 2026-11-26: para el viernes. El arreglo de fondo del solver (Python y TS con paridad): el reajuste de cada muestra del rango converge y no trata como atípico lo medido (reposo, huellas y proyección). Se mide antes (producción) y después: los cinco ejemplos y AXA en el navegador, las carambolas (prueba y desarrollo) y la cobertura del rango. No es vigente: se fija al commit del arreglo con CI en verde. Unos 60 minutos estimados, con las medidas de la t9-junta.",
+      "nota": "René, 2026-11-26: para el viernes. El arreglo de fondo del solver (Python y TS con paridad): el reajuste de cada muestra del rango converge y no trata como atípico lo medido. Mide los cinco ejemplos y AXA en el navegador, las capturas con el Unity real (incluido el caso árido de Sonora), las carambolas y la cobertura; cada paso deja en <salida>.gpu.json la tarjeta que usó Chrome de verdad. Compara con eval/tanda_comparar.mjs (contra el índice, con 1 km/h de precisión de los toques). No es vigente: se fija a un main posterior al #354 con el arreglo y el manifiesto del build 932aa256.",
       "rama": "main",
       "pasos": [
         {
@@ -1500,10 +1500,17 @@
         },
         {
           "nombre": "ejemplos",
-          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t9/ejemplos.json -Capturas docs/cesvi/ronda-4/evidencia/t11-ejemplos -Casos eval/results/t11/ejemplos-casos",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t11/ejemplos.json -Capturas docs/cesvi/ronda-4/evidencia/t11-ejemplos -Casos eval/results/t11/ejemplos-casos",
           "minutos": 6,
           "tope_min": 30,
-          "salidas": ["eval/results/t9", "docs/cesvi/ronda-4/evidencia/t11-ejemplos"]
+          "salidas": ["eval/results/t11", "docs/cesvi/ronda-4/evidencia/t11-ejemplos"]
+        },
+        {
+          "nombre": "final-unity",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues final -Salida eval/results/t11/final_unity.json -Capturas docs/cesvi/ronda-4/evidencia/t11-final",
+          "minutos": 12,
+          "tope_min": 40,
+          "salidas": ["eval/results/t11", "docs/cesvi/ronda-4/evidencia/t11-final"]
         },
         {
           "nombre": "carambolas-prueba",
@@ -1525,9 +1532,9 @@
         },
         {
           "nombre": "comparar",
-          "comando": "node eval/t9_comparar.mjs",
+          "comando": "node eval/tanda_comparar.mjs --tanda t11-solver",
           "minutos": 1,
-          "salidas": ["eval/results/t9"]
+          "salidas": ["eval/results/t11-solver"]
         }
       ]
     }
