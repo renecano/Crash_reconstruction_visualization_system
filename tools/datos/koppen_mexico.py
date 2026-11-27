@@ -2,7 +2,9 @@
 # requires-python = ">=3.12,<3.14"
 # dependencies = ["tifffile>=2025.5", "imagecodecs>=2025.3", "numpy>=2.2"]
 # ///
-"""Recorte de México del mapa Köppen-Geiger de 1 km (Beck et al. 2023, CC BY 4.0), solo «árido o no».
+"""Recorte de México del mapa Köppen-Geiger de 1 km (Beck et al. 2023, CC BY 4.0).
+
+Solo guarda «árido o no».
 
 Respaldo del paisaje del 3D (`paisajeDelMapa` en packages/croquis-2d): cuando OpenStreetMap no trae
 cobertura del suelo a 150 m, el clima del lugar decide. BWh, BWk, BSh y BSk (clases 4 a 7) son
@@ -16,6 +18,7 @@ cobertura del suelo a 150 m, el clima del lugar decide. BWh, BWk, BSh y BSk (cla
 Formato de salida: la rejilla del recorte (esquina noroeste, paso en grados, columnas y filas) y,
 por fila de norte a sur, las corridas alternadas «no árido, árido, no árido…» que empiezan en «no
 árido», como enteros sin signo LEB128 y luego en base64. Mismo archivo con la misma entrada.
+Después: `pnpm exec prettier --write <destino>` (el formato del repositorio).
 """
 
 import base64
@@ -48,10 +51,10 @@ def main(tif: str, destino: str) -> None:
         paso = float(escala[0])
         lon0, lat0 = float(punto[3]), float(punto[4])
         mapa = pagina.asarray()
-    c0 = int(round((OESTE - lon0) / paso))
-    c1 = int(round((ESTE - lon0) / paso))
-    f0 = int(round((lat0 - NORTE) / paso))
-    f1 = int(round((lat0 - SUR) / paso))
+    c0 = round((OESTE - lon0) / paso)
+    c1 = round((ESTE - lon0) / paso)
+    f0 = round((lat0 - NORTE) / paso)
+    f1 = round((lat0 - SUR) / paso)
     arido = np.isin(mapa[f0:f1, c0:c1], ARIDAS)
     filas = []
     for fila in arido:
@@ -62,7 +65,10 @@ def main(tif: str, destino: str) -> None:
             corridas = [0, *corridas]
         filas.append(base64.b64encode(b"".join(leb128(n) for n in corridas)).decode())
     salida = {
-        "fuente": "Beck et al. (2023), High-resolution (1 km) Köppen-Geiger maps for 1901–2099 based on constrained CMIP6 projections, Scientific Data 10, 724. 1991–2020, 0.00833°.",
+        "fuente": (
+            "Beck et al. (2023), High-resolution (1 km) Köppen-Geiger maps for 1901–2099 based on "
+            "constrained CMIP6 projections, Scientific Data 10, 724. 1991–2020, 0.00833°."
+        ),
         "licencia": "CC BY 4.0",
         "url": "https://doi.org/10.6084/m9.figshare.21789074",
         "aridas": ["BWh", "BWk", "BSh", "BSk"],
@@ -75,7 +81,9 @@ def main(tif: str, destino: str) -> None:
     with open(destino, "w", encoding="utf-8") as f:
         json.dump(salida, f, ensure_ascii=False, separators=(",", ":"))
         f.write("\n")
-    print(f"{destino}: {arido.shape[1]}×{arido.shape[0]} celdas, {arido.mean() * 100:.1f} % árido")
+    sys.stdout.write(
+        f"{destino}: {arido.shape[1]}×{arido.shape[0]} celdas, {arido.mean() * 100:.1f} % árido\n"
+    )
 
 
 if __name__ == "__main__":
