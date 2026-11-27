@@ -1,487 +1,397 @@
 /**
- * Los textos de la portada v3 (`docs/cesvi/rediseno/Portada-v3.html`), en español y en inglés. Cada
- * cifra sale de los datos que se calculan al compilar (`lib/portada-cesvi.ts`); ninguna se escribe
- * a mano. Donde la referencia afirmaba algo que el producto de hoy no hace, el texto se ajustó al
- * mínimo (anotado en PROGRESS, portada v3).
+ * Los textos de la portada, en español y en inglés (René, 2026-11-24). Cada cifra sale del índice
+ * único (`lib/portada-cesvi.ts`) con el formateador único; ninguna se escribe a mano. El nombre de
+ * la app no se escribe: donde va, va el logo.
  */
+import { formato as F } from "@croquis/cesvi";
 import type { Lang } from "@/i18n";
-import type { DatosPortadaCesvi } from "@/lib/portada-cesvi";
+import type { DatosPortadaCesvi, TasaPublicada } from "@/lib/portada-cesvi";
 
-/**
- * La captura mal copiada de «piezas sueltas»: es una ilustración de un error de captura (un dígito
- * transpuesto), no un resultado ni un dato de ningún caso. Toma el valor real del reporte y lo
- * escribe con las dos últimas cifras al revés.
- */
-export function capturaMalCopiada(valor: string): string {
-  return valor.length >= 2 ? `${valor.slice(0, -2)}${valor.at(-1)}${valor.at(-2)}` : valor;
+/** Las secciones de la barra, en orden. */
+export const SECCIONES = ["como-funciona", "distinto", "resultados", "limites"] as const;
+/** Los pasos de la app: la clave es el nombre de su captura en `public/portada/app/`. */
+export const PASOS = [
+  "hecho",
+  "escena",
+  "reconstruccion",
+  "versiones",
+  "analisis",
+  "dictamen",
+] as const;
+export const DETALLES = ["rango", "cita", "supuestos", "dictamen"] as const;
+
+/** Las siete letras: el lema va en español en los dos idiomas (es el nombre). */
+export const LEMA = [
+  "Cuenta.",
+  "Reconoce.",
+  "Ordena.",
+  "¿Qué falta?",
+  "Ubica.",
+  "Impacta.",
+  "Simula.",
+] as const;
+
+interface Cifra {
+  clave: string;
+  tasa: TasaPublicada;
+  /** «de» u «of», entre k y n. */
+  de: string;
+  pct: string;
+  que: string;
+  limite: string;
 }
 
-/**
- * La narración de AXA en segmentos, con lo que la lectura de Croquis extrae marcado en el orden en
- * que aparece: la modalidad, la vía y la ubicación (el kilómetro). Si alguno no está, el build falla.
- */
-export function segmentosNarracion(
-  narracion: string,
-  modalidad: string,
-): { texto: string; marca: boolean }[] {
-  const buscar = [new RegExp(modalidad, "i"), /carretera\s+[^,]+/i, /km\s*\d+\s*\+\s*\d+/i];
-  const out: { texto: string; marca: boolean }[] = [];
-  let resto = narracion;
-  for (const rx of buscar) {
-    const m = rx.exec(resto);
-    if (!m || !modalidad) throw new Error(`La narración de AXA no trae ${rx.source}`);
-    if (m.index) out.push({ texto: resto.slice(0, m.index), marca: false });
-    out.push({ texto: m[0], marca: true });
-    resto = resto.slice(m.index + m[0].length);
-  }
-  if (resto) out.push({ texto: resto, marca: false });
-  return out;
+export interface TextosPortadaV3 {
+  lang: Lang;
+  saltar: string;
+  otroIdioma: { texto: string; href: string; hrefLang: string };
+  secciones: Record<(typeof SECCIONES)[number], string>;
+  navegacion: string;
+  pasosNav: string;
+  abrir: string;
+  ver: string;
+  rotulo: string;
+  /** Sus dos frases, cada una en su renglón. */
+  h1: [string, string];
+  lede: string;
+  altInicio: string;
+  /** La sección del tráiler, justo después del inicio (título de René, 2026-11-25). */
+  trailer: { rotulo: string; titulo: string; ver: string };
+  leyenda: string;
+  lemaTitulo: string;
+  /** El sentido de cada palabra del lema, en inglés. */
+  lemaGlosa: readonly string[] | null;
+  comoTitulo: string;
+  pasos: { nombre: string; titulo: string; texto: string; alt: string }[];
+  capturas: string;
+  distintoTitulo: string;
+  distinto: { titulo: string; texto: string; alt: string }[];
+  resultadosTitulo: string;
+  resultadosNota: string;
+  cifras: Cifra[];
+  limitesTitulo: string;
+  limites: { titulo: string; texto: string }[];
+  firma: string;
+  cierre: string;
+  pie: { leyenda: string; fuentes: string; lista: string[]; codigo: string };
 }
 
-export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi) {
-  const locale = lang === "es" ? "es-MX" : "en-US";
-  const n = (x: number, dec = 2) =>
-    x.toLocaleString(locale, { minimumFractionDigits: dec, maximumFractionDigits: dec });
-  const pct = (x: number) =>
-    `${Math.abs(x) < 0.005 ? "" : x > 0 ? "+" : "−"}${n(Math.abs(x) < 0.005 ? 0 : Math.abs(x))} %`;
-  const entero = (x: number) => x.toLocaleString(locale);
-  const a = d.axa;
-  const deformacionCesvi = n(a.deformacion.cesvi);
-  const igualModalidad = a.modalidad.croquis === a.modalidad.cesvi;
-  const restos = n(a.restos.croquis);
-  // El ejemplo de «Narra como siempre» es el comienzo de la narración de AXA: se marca lo que la
-  // lectura de Croquis extrae (modalidad, vía y ubicación).
-  const narracion = segmentosNarracion(a.narracion, a.modalidad.cesvi ?? "");
-  const cifras = {
-    cifraModalidad: d.modalidad.pct,
-    cifraRegla: d.regla.pct,
-    cifraRestos: Math.round(a.restos.croquis * 100) / 100,
-  };
-  if (lang === "en") {
-    const modalidad = (m: string | null) => (m === "alcance" ? "Rear-end" : (m ?? "—"));
+export function textosPortadaV3(lang: Lang, d: DatosPortadaCesvi): TextosPortadaV3 {
+  const es = lang === "es";
+  const de = es ? "de" : "of";
+  const cifra = (
+    clave: string,
+    tasa: TasaPublicada,
+    textos: { que: string; limite: string },
+  ): Cifra => ({ clave, tasa, de, pct: F.porcentaje(tasa.pct, 1), ...textos });
+  const regla = F.tasa(d.regla, de);
+  const esperado = F.porcentaje(d.cobertura.esperado_pct, 0);
+
+  if (!es)
     return {
       lang,
-      inicio: "/en",
-      otroIdioma: { texto: "Español", href: "/" },
-      marca: "Crash reconstruction for experts",
-      nav: [
-        ["hecho", "The crash"],
-        ["problema", "The problem"],
-        ["prueba", "The proof"],
-        ["metodo", "How it works"],
-        ["preguntas", "Questions"],
-      ] as [string, string][],
-      etiquetas: {
-        hecho: "The crash",
-        problema: "The problem",
-        prueba: "The proof",
-        metodo: "How it works",
-        preguntas: "Questions",
-        significado: "What it means",
-        cierre: "Enter",
-      } as Record<string, string>,
-      entrar: "Enter Croquis",
-      acceso: "Expert access",
-      como: "How it works",
-      eyebrow: "Crash reconstruction",
-      h1: ["Reconstruct the crash.", "Defend", " the report."],
-      lede: "Narrate the crash in your technical language. You place it on the real site; Croquis reconstructs it with verifiable physics and builds your report, with the source of every number.",
-      proof: [
-        "From narrative to signature",
-        "Every number with its source",
-        "The report always belongs to the expert",
-      ],
-      significa: "What does Croquis mean?",
-      abrir: "Open the case file",
-      problemaH: ["Today a report is assembled from", "loose pieces."],
-      frags: [
-        {
-          tool: "By hand",
-          que: "Sketch",
-          h: "The sketch, by hand",
-          p: "Positions, distances and trajectories drawn separately, without the real site underneath.",
-          fault: { tipo: "texto" as const, texto: "Scale? Orientation?" },
-        },
-        {
-          tool: "Spreadsheet",
-          que: "Speeds",
-          h: "The calculations, on another sheet",
-          p: "McHenry, displacement and braking typed by hand; one miscopied digit changes the conclusion.",
-          fault: {
-            tipo: "captura" as const,
-            antes: deformacionCesvi,
-            despues: capturaMalCopiada(deformacionCesvi),
-          },
-        },
-        {
-          tool: "Word processor",
-          que: "Report",
-          h: "The report, from scratch",
-          p: "Written by copying from everything above, with no trace of where each number came from.",
-          fault: { tipo: "texto" as const, texto: "Source: no record" },
-        },
-      ],
-      junta: ["Croquis joins it into ", "a single flow", ", from narrative to signature."],
-      pruebaH: ["We took one of their reports.", "Croquis reached the same result."],
-      caso: `AXA ${a.id}`,
-      casoResto: ` · a ${modalidad(a.modalidad.cesvi).toLowerCase()} collision in ${a.lugar} · same data, same method.`,
-      cols: ["Item", "CESVI report", "Croquis", "Difference"],
-      filas: [
-        {
-          k: "Collision type",
-          cesvi: modalidad(a.modalidad.cesvi),
-          croquis: modalidad(a.modalidad.croquis),
-          dif: igualModalidad ? "Matches" : "Differs",
-          chip: true,
-          ok: igualModalidad,
-        },
-        {
-          k: "Speed from debris",
-          cesvi: n(a.restos.cesvi),
-          croquis: restos,
-          dif: pct(a.restos.pct),
-          chip: false,
-          ok: Math.abs(a.restos.pct) < 0.005,
-        },
-        {
-          k: "Speed from crush",
-          cesvi: deformacionCesvi,
-          croquis: n(a.deformacion.croquis),
-          dif: pct(a.deformacion.pct),
-          chip: false,
-          ok: Math.abs(a.deformacion.pct) < 0.005,
-        },
-      ],
-      nota: `Speeds in km/h. The ${n(Math.abs(a.deformacion.pct))} % difference comes from the data printed in the report; Croquis shows it instead of hiding it.`,
-      cifras: [
-        [d.reportes, "CESVI reports studied to build it"],
-        [d.aCiegas, "reconstructed blind, without seeing their conclusions"],
-      ] as [number, string][],
-      versus: {
-        aria: `Correct collision type in the ${entero(d.modalidad.n)} reports that state it in their title: Croquis ${entero(d.modalidad.k)} of ${entero(d.modalidad.n)} (${n(d.modalidad.pct, 1)} percent), simple rule ${entero(d.regla.k)} of ${entero(d.regla.n)} (${n(d.regla.pct, 1)} percent)`,
-        croquis: "Croquis",
-        regla: "Simple rule",
-        nota: `Correct collision types: ${entero(d.modalidad.k)} of the ${entero(d.modalidad.n)} reports that state the type in their title (out of the ${entero(d.aCiegas)} reconstructed blind); the simple rule gets ${entero(d.regla.k)} of ${entero(d.regla.n)}.`,
+      saltar: "Skip to content",
+      otroIdioma: { texto: "Español", href: "/", hrefLang: "es-MX" },
+      secciones: {
+        "como-funciona": "How it works",
+        distinto: "What sets it apart",
+        resultados: "Results",
+        limites: "Limits",
       },
-      metodoH: ["Narrate. Place.", "Reconstruct."],
+      navegacion: "Sections",
+      pasosNav: "Steps",
+      abrir: "Open the app",
+      ver: "How it works",
+      rotulo: "Crash reconstruction for experts",
+      h1: ["The expert tells what happened.", "Physics reconstructs it in 3D."],
+      lede: "From the narrative to the report, with the source of every number in sight.",
+      altInicio:
+        "3D reconstruction of an invented example, by day and at ground level: the front of a red car against a white pickup truck.",
+      leyenda: "Illustrative reconstruction · procedural surroundings: not the real place",
+      trailer: {
+        rotulo: "Trailer",
+        titulo: "See it in action.",
+        ver: "Play the trailer (YouTube)",
+      },
+      lemaTitulo: "What the name means, in Spanish",
+      lemaGlosa: [
+        "Tell.",
+        "Recognize.",
+        "Order.",
+        "What's missing?",
+        "Place.",
+        "Impact.",
+        "Simulate.",
+      ],
+      comoTitulo: "Six steps, from the narrative to the signature.",
       pasos: [
         {
-          k: "Narrative",
-          h: "Narrate as always",
-          p: "Croquis understands collision type, contact zones and debris, and only asks what is missing.",
+          nombre: "The facts",
+          titulo: "Narrate as always.",
+          texto:
+            "The expert writes or pastes the narrative. The reading marks vehicles, damage, place and measurements, and asks only for what is missing.",
+          alt: "The facts: the narrative with each datum underlined and, beside it, the two vehicles that were read.",
         },
         {
-          k: "Site",
-          h: "Mark the impact",
-          p: "On the real map. Croquis proposes where each vehicle was; you only adjust.",
+          nombre: "The scene",
+          titulo: "Place it on the map.",
+          texto:
+            "Where the impact was, where each vehicle came from and where it came to rest. The expert confirms or corrects with a tap.",
+          alt: "The scene: the map with both vehicles, their paths, the impact and a dirt area.",
         },
         {
-          k: "Signature",
-          h: "Sign the report",
-          p: "Speeds with their range, verification with CESVI's method and the document in PDF or Word.",
+          nombre: "Reconstruction",
+          titulo: "Physics does the rest.",
+          texto:
+            "It searches for the speeds that explain the final positions and the damage. The result is seen in 3D and on the 2D sketch, with its range.",
+          alt: "Reconstruction: the impact in 3D, full screen.",
+        },
+        {
+          nombre: "Versions",
+          titulo: "Test every version.",
+          texto:
+            "What each driver stated and the expert's own hypotheses are simulated with the same physics, and what changes is shown. It never says who is right.",
+          alt: "Versions: the 3D and, beside it, the form for what a driver stated.",
+        },
+        {
+          nombre: "Analysis",
+          titulo: "Check it with numbers.",
+          texto:
+            "Damage, energy and a verification with CESVI's method, with every assumption and its range.",
+          alt: "Analysis: the crush profile measured in the report.",
+        },
+        {
+          nombre: "Report",
+          titulo: "Sign your report.",
+          texto:
+            "In PDF or Word, structured like CESVI's reports. The expert writes the conclusion and signs it.",
+          alt: "Report: two pages of the PDF, with the facts, the damage and three frames of the 3D.",
         },
       ],
-      narracion,
-      ...cifras,
-      detectado: "Detected",
-      marcas: ["Collision type", "Road", "Location"],
-      coord: [
-        ["Point", "Impact"],
-        ["Direction", "South → north"],
-        ["V1", "Proposed · adjustable"],
-        ["V2", "Proposed · adjustable"],
-      ] as [string, string][],
-      dict: {
-        aria: "Example of a line in the report",
-        lab: "Speed from debris",
-        src: ["Source: report", "Method: CESVI"],
-        valido: "Validated by",
-        perito: "Expert",
+      capturas:
+        "Real captures of the app, which is in Spanish, with an invented example; some are cropped.",
+      distintoTitulo: "Every number can be questioned. And answered.",
+      distinto: [
+        {
+          titulo: "Physics with its uncertainty.",
+          texto:
+            "Whatever is uncertain varies within its range in every simulation, so a speed never comes alone.",
+          alt: "Two assumptions of the physics with their value and their range.",
+        },
+        {
+          titulo: "Every datum, with its quote.",
+          texto: "The reading points to the sentence each datum was taken from.",
+          alt: "A narrative with the quoted sentences highlighted.",
+        },
+        {
+          titulo: "Assumptions in plain sight.",
+          texto:
+            "What the narrative does not say goes in as a marked assumption, with its reason and, when it varies, its range.",
+          alt: "The mass of each vehicle as an assumption, with its range.",
+        },
+        {
+          titulo: "The report belongs to the expert.",
+          texto:
+            "The app does not write the conclusion or sign. Without validation, it stays a draft.",
+          alt: "The expert's conclusion box, empty, with the note that the app does not write it.",
+        },
+      ],
+      resultadosTitulo: "Measured, with its limit beside it.",
+      resultadosNota: "Published figures, computed from the repository's evaluations.",
+      cifras: [
+        cifra("cobertura", d.cobertura, {
+          que: "known speeds fell inside the range",
+          limite: `In made-up cases; about ${esperado} was expected, so the range still promises more than it delivers.`,
+        }),
+        cifra("modalidad", d.modalidad, {
+          que: "collision types match the report's title",
+          limite: `Only reports that state it in their title; always saying the most frequent one gets ${regla}.`,
+        }),
+        cifra("carambolas", d.carambolas, {
+          que: "later pile-up impacts happen in the reconstruction",
+          limite: "Only those that make it into the scene; it is a small sample.",
+        }),
+      ],
+      limitesTitulo: "What it does not do.",
+      limites: [
+        {
+          titulo: "It does not assign blame.",
+          texto: "It compares versions with physics; it never says who is right.",
+        },
+        {
+          titulo: "It does not diagnose.",
+          texto: "It does not estimate injuries or show injured people.",
+        },
+        {
+          titulo: "AI does not compute.",
+          texto:
+            "AI reads the narrative and puts it in order. Speeds and paths are computed by physics, with the same result every time.",
+        },
+        {
+          titulo: "It is not the real place.",
+          texto:
+            "The 3D is illustrative; it supports the expert's work and does not replace evidence.",
+        },
+      ],
+      firma: "The expert signs the report.",
+      cierre: "From the narrative to the signature.",
+      pie: {
+        leyenda: "Supporting reconstruction. The report belongs to the expert.",
+        fuentes: "Data and credits",
+        lista: [
+          "Streets: © OpenStreetMap contributors (ODbL); map by OpenFreeMap",
+          "Crash data: NHTSA and INEGI (ATUS)",
+          "Typefaces: Instrument Serif, Instrument Sans and Geist Mono; logo set in Anybody (SIL OFL 1.1)",
+        ],
+        codigo: "Code (MIT)",
       },
-      tenets: [
-        {
-          h: "Nothing is invented.",
-          p: "Every datum says whether it comes from the expert, the report or an assumption. What is missing is asked.",
-          tags: "Expert · Report · Assumption",
-        },
-        {
-          h: "It always gives the same result.",
-          p: "The same case produces the same result, with its input fingerprint to repeat it.",
-          tags: "Input fingerprint",
-        },
-        {
-          h: "The signature is yours.",
-          p: "Croquis reconstructs and suggests. The expert reviews, decides and validates the report.",
-          tags: "Review · Decide · Validate",
-        },
-      ],
-      preguntasH: ["Questions from", "experts."],
-      faq: [
-        [
-          "Does Croquis sign the report?",
-          "No. Croquis reconstructs and suggests; the expert reviews, decides and validates. The signature always belongs to the expert.",
-        ],
-        [
-          "Where does each number come from?",
-          "Every datum says whether it comes from the expert, the report or an assumption, and the report keeps that source next to the value.",
-        ],
-        [
-          "What if the narrative is missing a datum?",
-          "Croquis asks for what is missing before reconstructing; whatever you choose not to give goes in as an assumption and is marked as such.",
-        ],
-        [
-          "If I reconstruct the same case twice, does the result change?",
-          "No. The same case produces the same result and keeps its input fingerprint so anyone can repeat it.",
-        ],
-        [
-          "How often does it get the collision type right?",
-          `Of the ${entero(d.aCiegas)} reports reconstructed blind, ${entero(d.modalidad.n)} state the collision type in their title. Croquis got ${entero(d.modalidad.k)} of ${entero(d.modalidad.n)} right (${n(d.modalidad.pct, 1)} %), against ${entero(d.regla.k)} of ${entero(d.regla.n)} (${n(d.regla.pct, 1)} %) for a simple rule.`,
-        ],
-        [
-          "In what format does the report come out?",
-          "In PDF or Word, with the speeds and their range and the verification with CESVI's method.",
-        ],
-      ] as [string, string][],
-      acroH: ["Seven letters.", "One method."],
-      acroP:
-        "Croquis is not only the expert's drawing. Each letter is a step of the reconstruction. Tap a letter to read it.",
-      descifrar: "Decode Croquis",
-      cerrar: "Close again",
-      verSignificado: ": see meaning",
-      // Las siglas son en español: cada palabra va tal cual, con su sentido en inglés.
-      acro: [
-        ["C", "Cuenta", "Tell: narrate the crash in your technical language, as always."],
-        ["R", "Reconoce", "Recognize: collision type, contact zones and debris."],
-        ["O", "Ordena", "Order: each datum with its source, expert, report or assumption."],
-        ["Q", "¿Qué falta?", "What's missing? Ask only what the narrative doesn't say."],
-        ["U", "Ubica", "Place: put the crash on the real site."],
-        ["I", "Impacta", "Impact: compute the impact with verifiable physics."],
-        ["S", "Simula", "Simulate: reconstruct the crash and build the report for your signature."],
-      ] as [string, string, string][],
-      acroEn: ["In English", "Crash Reconstruction from Oral Queries Using Impact Simulation"],
-      cierreH: ["From narrative", "to signature."],
-      creditos:
-        "Everything you see is a reconstruction computed by Croquis (illustrative; the report belongs to the expert). Streets © OpenStreetMap contributors (ODbL).",
-      toastSketch:
-        "<b>Hand-drawn sketch mode.</b> This is how it used to be drawn. Type “croquis” again to go back.",
-      toastVuelta: "<b>Back to the case file.</b> Croquis does it for you.",
-      toastDato: `<b>${restos} km/h</b> · speed from debris · source: report · method: CESVI. That's how traceable every number is.`,
-      consola: 'Are you an expert who also codes? Type "croquis" anywhere on the page.',
     };
-  }
-  const modalidad = (m: string | null) => (m ? m.charAt(0).toUpperCase() + m.slice(1) : "—");
+
   return {
     lang,
-    inicio: "/",
-    otroIdioma: { texto: "English", href: "/en" },
-    marca: "Reconstrucción pericial",
-    nav: [
-      ["hecho", "El hecho"],
-      ["problema", "El problema"],
-      ["prueba", "La prueba"],
-      ["metodo", "Cómo funciona"],
-      ["preguntas", "Preguntas"],
-    ] as [string, string][],
-    etiquetas: {
-      hecho: "El hecho",
-      problema: "El problema",
-      prueba: "La prueba",
-      metodo: "Cómo funciona",
-      preguntas: "Preguntas",
-      significado: "Qué significa",
-      cierre: "Entrar",
-    } as Record<string, string>,
-    entrar: "Entrar a Croquis",
-    acceso: "Acceso para peritos",
-    como: "Cómo funciona",
-    eyebrow: "Reconstrucción de hechos de tránsito",
-    h1: ["Reconstruye el hecho.", "Defiende", " el dictamen."],
-    // Ajuste contra la referencia: el lugar lo marca el perito en el mapa («lo ubicas»).
-    lede: "Narra el choque con tu lenguaje técnico. Lo ubicas en el lugar real; Croquis lo reconstruye con física verificable y arma tu dictamen, con la fuente de cada número.",
-    proof: [
-      "Del relato a la firma",
-      "Cada número con su fuente",
-      "El dictamen siempre es del perito",
-    ],
-    significa: "¿Qué significa Croquis?",
-    abrir: "Abrir el expediente",
-    problemaH: ["Hoy un dictamen se arma con", "piezas sueltas."],
-    frags: [
-      {
-        tool: "A mano",
-        que: "Croquis",
-        h: "El croquis, a mano",
-        p: "Posiciones, distancias y trayectorias dibujadas aparte, sin el lugar real debajo.",
-        fault: { tipo: "texto" as const, texto: "¿Escala? ¿Orientación?" },
-      },
-      {
-        tool: "Hoja de cálculo",
-        que: "Velocidades",
-        h: "Los cálculos, en otra hoja",
-        p: "McHenry, desplazamiento y frenado se capturan a mano; un dígito mal copiado cambia la conclusión.",
-        fault: {
-          tipo: "captura" as const,
-          antes: deformacionCesvi,
-          despues: capturaMalCopiada(deformacionCesvi),
-        },
-      },
-      {
-        tool: "Procesador de texto",
-        que: "Dictamen",
-        h: "El dictamen, desde cero",
-        p: "Se redacta copiando de todo lo anterior, sin una traza de dónde salió cada número.",
-        fault: { tipo: "texto" as const, texto: "Fuente: sin registro" },
-      },
-    ],
-    junta: ["Croquis lo une en ", "un solo flujo", ", del relato a la firma."],
-    pruebaH: ["Tomamos uno de sus reportes.", "Croquis llegó a lo mismo."],
-    caso: `AXA ${a.id}`,
-    casoResto: ` · un ${a.modalidad.cesvi} en ${a.lugar} · mismos datos, mismo método.`,
-    cols: ["Concepto", "Reporte de CESVI", "Croquis", "Diferencia"],
-    filas: [
-      {
-        k: "Modalidad",
-        cesvi: modalidad(a.modalidad.cesvi),
-        croquis: modalidad(a.modalidad.croquis),
-        dif: igualModalidad ? "Coincide" : "Difiere",
-        chip: true,
-        ok: igualModalidad,
-      },
-      {
-        k: "Velocidad por restos",
-        cesvi: n(a.restos.cesvi),
-        croquis: restos,
-        dif: pct(a.restos.pct),
-        chip: false,
-        ok: Math.abs(a.restos.pct) < 0.005,
-      },
-      {
-        k: "Velocidad por deformación",
-        cesvi: deformacionCesvi,
-        croquis: n(a.deformacion.croquis),
-        dif: pct(a.deformacion.pct),
-        chip: false,
-        ok: Math.abs(a.deformacion.pct) < 0.005,
-      },
-    ],
-    nota: `Velocidades en km/h. La diferencia de ${n(Math.abs(a.deformacion.pct))} % viene de los datos impresos en el reporte; Croquis la muestra en lugar de esconderla.`,
-    cifras: [
-      [d.reportes, "reportes de CESVI estudiados para construirlo"],
-      [d.aCiegas, "reconstruidos a ciegas, sin ver sus conclusiones"],
-    ] as [number, string][],
-    versus: {
-      aria: `Modalidad correcta en los ${entero(d.modalidad.n)} reportes que la dicen en su título: Croquis ${entero(d.modalidad.k)} de ${entero(d.modalidad.n)} (${n(d.modalidad.pct, 1)} por ciento), regla simple ${entero(d.regla.k)} de ${entero(d.regla.n)} (${n(d.regla.pct, 1)} por ciento)`,
-      croquis: "Croquis",
-      regla: "Regla simple",
-      nota: `Modalidades correctas: ${entero(d.modalidad.k)} de los ${entero(d.modalidad.n)} reportes que dicen la modalidad en su título (de los ${entero(d.aCiegas)} reconstruidos a ciegas); la regla simple acierta ${entero(d.regla.k)} de ${entero(d.regla.n)}.`,
+    saltar: "Saltar al contenido",
+    otroIdioma: { texto: "English", href: "/en", hrefLang: "en" },
+    secciones: {
+      "como-funciona": "Cómo funciona",
+      distinto: "Lo distinto",
+      resultados: "Resultados",
+      limites: "Límites",
     },
-    metodoH: ["Narra. Ubica.", "Reconstruye."],
+    navegacion: "Secciones",
+    pasosNav: "Pasos",
+    abrir: "Abrir la app",
+    ver: "Cómo funciona",
+    rotulo: "Reconstrucción de hechos de tránsito",
+    h1: ["El perito narra el hecho.", "La física lo reconstruye en 3D."],
+    lede: "De la narración al dictamen, con la fuente de cada número a la vista.",
+    altInicio:
+      "Reconstrucción en 3D de un ejemplo inventado, de día y a ras del piso: el frente de un auto rojo contra una camioneta blanca.",
+    leyenda: "Reconstrucción ilustrativa · entorno procedural: no es el lugar real",
+    trailer: {
+      rotulo: "Tráiler",
+      titulo: "Míralo en acción.",
+      ver: "Ver el tráiler (YouTube)",
+    },
+    lemaTitulo: "Qué significa el nombre",
+    lemaGlosa: null,
+    comoTitulo: "Seis pasos, de la narración a la firma.",
     pasos: [
       {
-        k: "Relato",
-        h: "Narra como siempre",
-        p: "Croquis entiende modalidad, zonas de contacto y restos, y solo pregunta lo que falta.",
+        nombre: "El hecho",
+        titulo: "Narra como siempre.",
+        texto:
+          "El perito escribe o pega su narración. La lectura marca vehículos, daños, lugar y medidas, y pregunta solo lo que falta.",
+        alt: "El hecho: la narración con cada dato subrayado y, al lado, los dos vehículos leídos.",
       },
       {
-        k: "Lugar",
-        h: "Marca el impacto",
-        p: "Sobre el mapa real. Croquis propone dónde iba cada vehículo; tú solo ajustas.",
+        nombre: "La escena",
+        titulo: "Ubícalo en el mapa.",
+        texto:
+          "Dónde fue el choque, por dónde venía cada vehículo y dónde quedó. El perito confirma o corrige con un toque.",
+        alt: "La escena: el mapa con los dos vehículos, sus trayectorias, el choque y una zona de terracería.",
       },
       {
-        k: "Firma",
-        h: "Firma el dictamen",
-        p: "Velocidades con su rango, verificación con el método de CESVI y el documento en PDF o Word.",
+        nombre: "Reconstrucción",
+        titulo: "La física hace el resto.",
+        texto:
+          "Busca las velocidades que explican las posiciones finales y los daños. El resultado se ve en 3D y en el croquis 2D, con su rango.",
+        alt: "Reconstrucción: el impacto en 3D, a pantalla completa.",
+      },
+      {
+        nombre: "Versiones",
+        titulo: "Prueba cada versión.",
+        texto:
+          "Lo que declaró cada conductor y las hipótesis del perito se simulan con la misma física, y se ve qué cambia. Nunca dice quién tiene razón.",
+        alt: "Versiones: el 3D y, al lado, el formulario de lo que declaró un conductor.",
+      },
+      {
+        nombre: "Análisis",
+        titulo: "Compruébalo con números.",
+        texto:
+          "Daños, energía y la verificación con el método de CESVI, con cada supuesto y su rango.",
+        alt: "Análisis: el perfil de la deformación medida en el reporte.",
+      },
+      {
+        nombre: "Dictamen",
+        titulo: "Firma tu dictamen.",
+        texto:
+          "En PDF o Word, con la estructura de los reportes de CESVI. El perito escribe la conclusión y la firma.",
+        alt: "Dictamen: dos páginas del PDF, con el hecho, los daños y tres cuadros del 3D.",
       },
     ],
-    narracion,
-    ...cifras,
-    detectado: "Detectado",
-    // Ajuste contra la referencia: la lectura no extrae el sentido de circulación; se marcan la
-    // modalidad, la vía y la ubicación.
-    marcas: ["Modalidad", "Vía", "Ubicación"],
-    coord: [
-      ["Punto", "Impacto"],
-      ["Sentido", "Sur → norte"],
-      ["V1", "Propuesto · ajustable"],
-      ["V2", "Propuesto · ajustable"],
-    ] as [string, string][],
-    dict: {
-      aria: "Ejemplo de un renglón del dictamen",
-      lab: "Velocidad por restos",
-      src: ["Fuente: reporte", "Método: CESVI"],
-      valido: "Validó",
-      perito: "Perito",
+    capturas: "Capturas reales de la app con un ejemplo inventado; algunas, recortadas.",
+    distintoTitulo: "Cada número se puede cuestionar. Y responder.",
+    distinto: [
+      {
+        titulo: "Física con su incertidumbre.",
+        texto:
+          "Lo incierto varía dentro de su rango en cada simulación: una velocidad nunca va sola.",
+        alt: "Dos supuestos de la física con su valor y su rango.",
+      },
+      {
+        titulo: "Cada dato, con su cita.",
+        texto: "La lectura señala la frase del reporte de la que salió cada dato.",
+        alt: "Una narración con las frases citadas resaltadas.",
+      },
+      {
+        titulo: "Los supuestos, a la vista.",
+        texto:
+          "Lo que la narración no dice entra como supuesto marcado, con su porqué y, si varía, su rango.",
+        alt: "La masa de cada vehículo como supuesto, con su rango.",
+      },
+      {
+        titulo: "El dictamen es del perito.",
+        texto: "La app no redacta la conclusión ni firma. Sin validar, sale como borrador.",
+        alt: "La conclusión del perito, vacía, con la nota de que la app no la redacta.",
+      },
+    ],
+    resultadosTitulo: "Medido, y con su límite al lado.",
+    resultadosNota: "Cifras publicadas, calculadas de las evaluaciones del repositorio.",
+    cifras: [
+      cifra("cobertura", d.cobertura, {
+        que: "velocidades conocidas cayeron dentro del rango",
+        limite: `En casos fabricados; se esperaba cerca de ${esperado}, así que el rango todavía promete más de lo que cumple.`,
+      }),
+      cifra("modalidad", d.modalidad, {
+        que: "modalidades coinciden con el título del reporte",
+        limite: `Solo los reportes que la dicen en su título; decir siempre la más frecuente acierta ${regla}.`,
+      }),
+      cifra("carambolas", d.carambolas, {
+        que: "impactos posteriores de carambola ocurren en la reconstrucción",
+        limite: "Solo los que pasan a la escena; es una muestra chica.",
+      }),
+    ],
+    limitesTitulo: "Lo que no hace.",
+    limites: [
+      {
+        titulo: "No decide culpas.",
+        texto: "Compara versiones con física; nunca dice quién tiene razón.",
+      },
+      {
+        titulo: "No hace diagnósticos.",
+        texto: "No estima lesiones ni muestra personas lesionadas.",
+      },
+      {
+        titulo: "La IA no calcula.",
+        texto:
+          "La IA lee la narración y la ordena. Las velocidades y las trayectorias las calcula la física, con el mismo resultado cada vez.",
+      },
+      {
+        titulo: "No es el lugar real.",
+        texto: "El 3D es ilustrativo: apoya el trabajo del perito y no sustituye a la evidencia.",
+      },
+    ],
+    firma: "El dictamen lo firma el perito.",
+    cierre: "De la narración a la firma.",
+    pie: {
+      leyenda: "Reconstrucción de apoyo. El dictamen es del perito.",
+      fuentes: "Datos y atribuciones",
+      lista: [
+        "Calles: © colaboradores de OpenStreetMap (ODbL); mapa de OpenFreeMap",
+        "Datos de choques: NHTSA e INEGI (ATUS)",
+        "Tipografías: Instrument Serif, Instrument Sans y Geist Mono; logotipo con Anybody (SIL OFL 1.1)",
+      ],
+      codigo: "Código (MIT)",
     },
-    tenets: [
-      {
-        h: "Nada se inventa.",
-        p: "Cada dato dice si viene del perito, del reporte o de un supuesto. Lo que falta, se pregunta.",
-        tags: "Perito · Reporte · Supuesto",
-      },
-      {
-        h: "Siempre da lo mismo.",
-        p: "El mismo caso produce el mismo resultado, con su huella de entradas para repetirlo.",
-        tags: "Huella de entradas",
-      },
-      {
-        h: "La firma es tuya.",
-        p: "Croquis reconstruye y sugiere. El perito revisa, decide y valida el dictamen.",
-        tags: "Revisa · Decide · Valida",
-      },
-    ],
-    preguntasH: ["Preguntas de", "peritos."],
-    faq: [
-      [
-        "¿Croquis firma el dictamen?",
-        "No. Croquis reconstruye y sugiere; el perito revisa, decide y valida. La firma siempre es del perito.",
-      ],
-      [
-        "¿De dónde sale cada número?",
-        "Cada dato indica si viene del perito, del reporte o de un supuesto, y el dictamen conserva esa fuente junto al valor.",
-      ],
-      [
-        "¿Qué pasa si al relato le falta un dato?",
-        // Ajuste contra la referencia: lo que el perito decide no dar entra como supuesto, marcado.
-        "Croquis te pregunta lo que falta antes de reconstruir; lo que decidas no dar entra como supuesto y queda marcado así.",
-      ],
-      [
-        "¿Si reconstruyo el mismo caso dos veces, cambia el resultado?",
-        "No. El mismo caso produce el mismo resultado y guarda su huella de entradas para que cualquiera lo repita.",
-      ],
-      [
-        "¿Qué tan seguido acierta la modalidad?",
-        `De los ${entero(d.aCiegas)} reportes reconstruidos a ciegas, ${entero(d.modalidad.n)} dicen la modalidad en su título. Croquis acertó ${entero(d.modalidad.k)} de ${entero(d.modalidad.n)} (${n(d.modalidad.pct, 1)} %), contra ${entero(d.regla.k)} de ${entero(d.regla.n)} (${n(d.regla.pct, 1)} %) de una regla simple.`,
-      ],
-      [
-        "¿En qué formato sale el dictamen?",
-        "En PDF o Word, con las velocidades y su rango y la verificación con el método de CESVI.",
-      ],
-    ] as [string, string][],
-    acroH: ["Siete letras.", "Un método."],
-    acroP:
-      "Croquis no es solo el dibujo del perito. Cada letra es un paso de la reconstrucción. Toca una letra para leerla.",
-    descifrar: "Descifrar Croquis",
-    cerrar: "Volver a cerrar",
-    verSignificado: ": ver significado",
-    acro: [
-      ["C", "Cuenta", "Narra el hecho con tu lenguaje técnico, como siempre."],
-      ["R", "Reconoce", "Identifica modalidad, zonas de contacto y restos."],
-      ["O", "Ordena", "Acomoda cada dato con su fuente: perito, reporte o supuesto."],
-      ["Q", "¿Qué falta?", "Pregunta solo lo que el relato no dice."],
-      ["U", "Ubica", "Sitúa el hecho sobre el lugar real."],
-      ["I", "Impacta", "Calcula el impacto con física verificable."],
-      ["S", "Simula", "Reconstruye el hecho y arma el dictamen para tu firma."],
-    ] as [string, string, string][],
-    acroEn: ["En inglés", "Crash Reconstruction from Oral Queries Using Impact Simulation"],
-    cierreH: ["Del relato", "a la firma."],
-    creditos:
-      "Todo lo que ves es una reconstrucción calculada por Croquis (ilustrativa; el dictamen es del perito). Calles © colaboradores de OpenStreetMap (ODbL).",
-    toastSketch:
-      "<b>Modo croquis a mano.</b> Así se dibujaba antes. Escribe “croquis” otra vez para volver.",
-    toastVuelta: "<b>De vuelta al expediente.</b> Croquis lo hace por ti.",
-    toastDato: `<b>${restos} km/h</b> · velocidad por restos · fuente: reporte · método: CESVI. Así de trazable es cada número.`,
-    consola: '¿Eres perito y además programas? Escribe "croquis" en cualquier parte de la página.',
   };
 }
-
-export type TextosPortadaV3 = ReturnType<typeof textosPortadaV3>;

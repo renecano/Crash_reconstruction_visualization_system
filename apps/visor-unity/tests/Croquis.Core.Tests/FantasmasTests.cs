@@ -147,5 +147,23 @@ namespace Croquis.Core.Tests
             Assert.Equal(ultima.Y, despues.Y, 12);
             Assert.Equal(ultima.Rumbo, despues.Rumbo, 12);
         }
+
+        [Fact]
+        public void LaHipotesisVaConElMismoRelojYSeNombraAsi()
+        {
+            Assert.True(Fantasmas.EsHipotesis("¿Y si…? A · Jetta a 60 km/h (hipótesis)"));
+            Assert.True(Fantasmas.EsHipotesis("¿y si B iba a 40?"));
+            Assert.False(Fantasmas.EsHipotesis("lo que declaró el conductor de B · GM Camaro"));
+            Assert.False(Fantasmas.EsHipotesis(null));
+            Assert.Equal("Hipótesis", Fantasmas.Letrero("¿Y si…? A a 60 km/h (hipótesis)"));
+            Assert.Equal("Versión declarada", Fantasmas.Letrero("lo que declaró el conductor de A"));
+            // La tipografía del visor no trae «…»: la leyenda lo escribe con tres puntos.
+            Assert.EndsWith("Translúcido: ¿Y si...? A a 60 km/h (hipótesis)", Leyenda3d.Mensaje(true, null, "¿Y si…? A a 60 km/h (hipótesis)"));
+
+            var reconstruida = new Caso3DResultado { Eventos = new[] { new ResultadoEvento { T = 0.0, Tipo = StickyTipo.ImpactoVehiculoVehiculo } } };
+            var version = new Caso3DResultado { Eventos = new[] { new ResultadoEvento { T = 0.7, Tipo = StickyTipo.ImpactoVehiculoVehiculo } } };
+            Assert.Equal(0.7, Fantasmas.Desfase(reconstruida, version), 9);
+            Assert.Equal(0.0, Fantasmas.Desfase(reconstruida, version, hipotesis: true), 9);
+        }
     }
 }
