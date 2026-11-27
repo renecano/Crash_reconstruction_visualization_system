@@ -334,16 +334,42 @@ export function conVelocidadesNarradas(e: Expediente, narracion: string): Expedi
   };
 }
 
-/** La velocidad que contestó el perito (km/h), o la típica de la vía si dijo «No sé». */
-export function conVelocidadDelPerito(e: Expediente, vehiculo: Id, kmh: number | null): Expediente {
+/** De dónde sale la velocidad que da el perito («¿cómo lo sabes?», René 2026-11-27). */
+export type MedioVelocidad = NonNullable<VelocidadNarrada["medio"]>;
+/** Cámara, GPS o tacógrafo: medida por un instrumento. Conductor o testigo: declarada. */
+export const MEDIOS_MEDIDA: readonly MedioVelocidad[] = ["camara", "gps", "tacografo"];
+export const MEDIO_EN_PALABRAS: Record<MedioVelocidad, string> = {
+  camara: "la cámara",
+  gps: "el GPS",
+  tacografo: "el tacógrafo",
+  conductor: "el conductor",
+  testigo: "un testigo",
+};
+
+/**
+ * La velocidad que contestó el perito (km/h) y cómo la sabe, o la típica de la vía si dijo «No sé».
+ * Medida (cámara, GPS, tacógrafo): restricción dura. Declarada (conductor, testigo, la de omisión):
+ * se compara con la física.
+ */
+export function conVelocidadDelPerito(
+  e: Expediente,
+  vehiculo: Id,
+  kmh: number | null,
+  medio: MedioVelocidad = "conductor",
+): Expediente {
   const limite = limiteDelExpediente(e);
+  const medida = MEDIOS_MEDIDA.includes(medio);
   const v: VelocidadNarrada =
     kmh !== null
       ? {
           kmh,
           rango_kmh: [Math.round(kmh * 0.9 * 10) / 10, Math.round(kmh * 1.1 * 10) / 10],
           origen: "perito",
-          descripcion: `${kmh} km/h, la que dio el perito`,
+          como_se_sabe: medida ? "medida" : "declarada",
+          medio,
+          descripcion: medida
+            ? `${kmh} km/h, medida por ${MEDIO_EN_PALABRAS[medio]}`
+            : `${kmh} km/h, la que declaró ${MEDIO_EN_PALABRAS[medio]}`,
         }
       : {
           ...respectoAlLimite("alrededor", limite.kmh),
@@ -389,8 +415,24 @@ export function conLimiteDeLaVia(
   return cambio ? { ...e, vehiculos } : e;
 }
 
-/** La velocidad narrada como `velocidad_previa` del solver: un supuesto con su rango. */
+/** Si la velocidad del perito la midió un instrumento (restricción dura). */
+export const esVelocidadMedida = (v: VelocidadNarrada | undefined | null): boolean =>
+  v?.origen === "perito" && v.como_se_sabe === "medida";
+
+/**
+ * La velocidad narrada como `velocidad_previa` del solver: un supuesto con su rango. La medida por
+ * un instrumento va como restricción dura (`medida`): el solver no la ajusta.
+ */
 export function velocidadPreviaDeclarada(v: VelocidadNarrada): Record<string, unknown> {
+  if (esVelocidadMedida(v))
+    return {
+      valor: v.kmh,
+      unidad: "km/h",
+      fuente: "usuario",
+      confianza: 0.9,
+      nota: `Medida por ${MEDIO_EN_PALABRAS[v.medio ?? "camara"]}: restricción dura, el solver no la ajusta.`,
+      medida: true,
+    };
   const deDonde =
     v.origen === "perito"
       ? "La dio el perito"

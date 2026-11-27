@@ -702,6 +702,10 @@ def parameters(spec: JsonObj, ev: Evidence) -> list[Param]:
     ids = moving_vehicles(spec)
     for vid in ids:
         vp: JsonObj = by_id[vid].get("velocidad_previa") or {}
+        # Medida por un instrumento (cámara, GPS, tacógrafo; René, 2026-11-27): restricción dura, no
+        # se ajusta; lo demás se ajusta a ella.
+        if vp.get("medida") is True:
+            continue
         val = float(vp.get("valor", 40.0)) * (3.6 if vp.get("unidad") == "m/s" else 1.0)
         start = min(max(val, 5.0), SPEED_BOUNDS_KMH[1] - 1)
         out.append(Param("velocidad", vid, start, *SPEED_BOUNDS_KMH, _stated(vp or None)))

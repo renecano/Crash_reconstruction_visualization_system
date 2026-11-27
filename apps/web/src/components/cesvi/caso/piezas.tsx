@@ -13,6 +13,7 @@ import {
   conClase,
   conMasa,
   conVelocidadDelPerito,
+  type MedioVelocidad,
   conMasaTipica,
   conOrdenImpactos,
   conPrimerImpacto,
@@ -763,6 +764,9 @@ export function Pregunta({
   onAlMapa?: () => void;
 }) {
   const [valor, setValor] = useState("");
+  // «¿Cómo lo sabes?» (René, 2026-11-27): medida (cámara, GPS, tacógrafo) o declarada (conductor,
+  // testigo). Por omisión, lo que dijo el conductor: una declaración, no una medida.
+  const [medio, setMedio] = useState<MedioVelocidad>("conductor");
   const numero = Number(valor.replace(",", "."));
   const c = p.control;
   const aplicar = () => {
@@ -771,7 +775,7 @@ export function Pregunta({
       onCambio(conMasa(expediente, p.vehiculo, numero));
     if (p.clave === "restos") onCambio(conRestos(expediente, numero));
     if (p.clave.startsWith("velocidad-") && p.vehiculo)
-      onCambio(conVelocidadDelPerito(expediente, p.vehiculo, numero));
+      onCambio(conVelocidadDelPerito(expediente, p.vehiculo, numero, medio));
     if (p.clave.startsWith("huella-") && p.vehiculo)
       onCambio(conHuella(expediente, p.vehiculo, numero));
   };
@@ -857,6 +861,27 @@ export function Pregunta({
               data-testid={`valor-${p.clave}`}
             />
             <span className="t-nota">{c.unidad}</span>
+            {p.clave.startsWith("velocidad-") ? (
+              <label className="flex items-center gap-2 t-nota">
+                ¿Cómo lo sabes?
+                <select
+                  className="campo h-10"
+                  value={medio}
+                  onChange={(e) => setMedio(e.target.value as MedioVelocidad)}
+                  data-testid={`medio-${p.clave}`}
+                >
+                  <optgroup label="Medida (restricción dura)">
+                    <option value="camara">Cámara</option>
+                    <option value="gps">GPS</option>
+                    <option value="tacografo">Tacógrafo</option>
+                  </optgroup>
+                  <optgroup label="Declarada (se compara con la física)">
+                    <option value="conductor">Lo dijo el conductor</option>
+                    <option value="testigo">Lo dijo un testigo</option>
+                  </optgroup>
+                </select>
+              </label>
+            ) : null}
             <button type="button" className="boton-secundario boton-compacto" onClick={aplicar}>
               Usar
             </button>

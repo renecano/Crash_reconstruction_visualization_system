@@ -6,6 +6,7 @@
  */
 import {
   formato as F,
+  MEDIO_EN_PALABRAS,
   evidenciaEnPalabras,
   mejorFueraDelRango,
   type Reconstruccion,
@@ -52,6 +53,34 @@ export function CifraReconstruccion({
   const contras = r.limites.flatMap((l) => {
     const m = /^(V\d+): (la narración dice .*las posiciones dan .*)$/.exec(l);
     return m ? [`${nombres[m[1]!] ?? m[1]}: ${m[2]}`] : [];
+  });
+  // La velocidad que dio el perito (René, 2026-11-27): la medida se dice como dato; la declarada,
+  // junto a lo que da la física («declaró 50; la física da 15–25»).
+  const delPerito = r.velocidades.flatMap((x) => {
+    const n = r.narradas?.[x.vehiculo];
+    if (!n || n.origen !== "perito") return [];
+    const quien = nombres[x.vehiculo] ?? x.vehiculo;
+    if (x.previa?.medida)
+      return [
+        {
+          clave: x.vehiculo,
+          medida: true,
+          texto: `${quien}: ${F.kmhConUnidad(n.kmh, "reconstruccion")} medida por ${MEDIO_EN_PALABRAS[n.medio ?? "camara"]}; la física no la ajusta.`,
+        },
+      ];
+    const ra = rangoDeVelocidad(x);
+    const fisica = ra
+      ? `${F.rangoKmh(ra.p10, ra.p90, "reconstruccion")} km/h`
+      : x.previa
+        ? F.kmhConUnidad(x.previa.mejor, "reconstruccion")
+        : null;
+    return [
+      {
+        clave: x.vehiculo,
+        medida: false,
+        texto: `${quien}: declaró ${F.kmhConUnidad(n.kmh, "reconstruccion")} (${MEDIO_EN_PALABRAS[n.medio ?? "conductor"]}); ${fisica ? `la física da ${fisica}` : "la física no da una cifra"}.`,
+      },
+    ];
   });
   // Una cifra muy por arriba del límite de su vía (René, 2026-11-26): junto a la cifra.
   const sobreElLimite = r.limites.flatMap((l) => {
@@ -102,8 +131,19 @@ export function CifraReconstruccion({
             </span>
           </p>
           <p className="t-nota" data-testid="metodo-cifra">
-            {METODO.reconstruccion} · mejor ajuste
+            {v.previa?.medida
+              ? "Velocidad medida, no ajustada"
+              : `${METODO.reconstruccion} · mejor ajuste`}
           </p>
+          {delPerito.map((d) => (
+            <p
+              key={d.clave}
+              className="t-nota"
+              data-testid={d.medida ? "velocidad-medida" : "declarada-vs-fisica"}
+            >
+              {d.texto}
+            </p>
+          ))}
           {fuera ? (
             <p className="t-nota text-senal-texto" role="note" data-testid="mejor-fuera-del-rango">
               El mejor ajuste queda {fuera === "arriba" ? "por arriba" : "por debajo"} del rango: el
