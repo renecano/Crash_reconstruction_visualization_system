@@ -1482,8 +1482,8 @@
       "commit": "03340cb416111e1cab5b150eae82241c5ffef67a"
     },
     "t11-solver": {
-      "titulo": "Tanda 11 · El reajuste del rango que converge y no descarta lo medido",
-      "nota": "René, 2026-11-26: para el viernes. El arreglo de fondo del solver (Python y TS con paridad): el reajuste de cada muestra del rango converge y no trata como atípico lo medido (reposo, huellas y proyección). Se mide antes (producción) y después: los cinco ejemplos y AXA en el navegador, las carambolas (prueba y desarrollo) y la cobertura del rango. No es vigente: se fija al commit del arreglo con CI en verde. Unos 60 minutos estimados, con las medidas de la t9-junta.",
+      "titulo": "Tanda 11 · Lo medido como restricción, el árbol en la orilla, AXA con su rigidez y el build 932aa256",
+      "nota": "René, 2026-11-26 (noche): todo lo del viernes en una sola tanda. El solver (Python y TS con paridad): lo medido es una restricción, el reajuste del rango converge y la huella de después del choque bloquea las llantas; el árbol de Tollocan en la orilla; AXA con la rigidez del reporte y lo medido en el 3D (#349); el build de Unity 932aa256 (#367); el video en la tarjeta integrada (#364) y el ensayo de la demo (#366) en esta computadora; el caso árido en la carretera a Bahía de Kino. Cada paso deja en <salida>.gpu.json la tarjeta que usó Chrome. Las capturas del ensayo llevan AXA y se quedan en esta computadora, fuera del repo. Unos 120 minutos estimados.",
       "rama": "main",
       "pasos": [
         {
@@ -1499,11 +1499,54 @@
           "tope_min": 15
         },
         {
+          "nombre": "humo",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues humo",
+          "minutos": 1,
+          "tope_min": 8,
+          "detiene_si_falla": true,
+          "salidas": ["eval/results/humo/", "apps/web/test-results/"]
+        },
+        {
           "nombre": "ejemplos",
-          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t9/ejemplos.json -Capturas docs/cesvi/ronda-4/evidencia/t11-ejemplos -Casos eval/results/t11/ejemplos-casos",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t11/ejemplos.json -Capturas docs/cesvi/ronda-4/evidencia/t11-ejemplos -Casos eval/results/t11/ejemplos-casos",
           "minutos": 6,
           "tope_min": 30,
-          "salidas": ["eval/results/t9", "docs/cesvi/ronda-4/evidencia/t11-ejemplos"]
+          "salidas": ["eval/results/t11", "docs/cesvi/ronda-4/evidencia/t11-ejemplos"]
+        },
+        {
+          "nombre": "tres-narraciones",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tres -Salida eval/results/t11/tres_narraciones.json",
+          "minutos": 2,
+          "tope_min": 25,
+          "salidas": ["eval/results/t11"]
+        },
+        {
+          "nombre": "tollocan",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tollocan -Salida eval/results/t11/tollocan.json",
+          "minutos": 2,
+          "tope_min": 20,
+          "salidas": ["eval/results/t11"]
+        },
+        {
+          "nombre": "final-unity",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues final -Salida eval/results/t11/final_unity.json -Capturas docs/cesvi/ronda-4/evidencia/t11-final",
+          "minutos": 14,
+          "tope_min": 45,
+          "salidas": ["eval/results/t11", "docs/cesvi/ronda-4/evidencia/t11-final"]
+        },
+        {
+          "nombre": "video-integrada",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues video-3d -Gpu integrada -Salida eval/results/t11/video_integrada.json",
+          "minutos": 15,
+          "tope_min": 45,
+          "salidas": ["eval/results/t11"]
+        },
+        {
+          "nombre": "ensayo",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ensayo -Salida eval/results/t11/ensayo.json",
+          "minutos": 10,
+          "tope_min": 40,
+          "salidas": ["eval/results/t11"]
         },
         {
           "nombre": "carambolas-prueba",
@@ -1524,10 +1567,17 @@
           "tope_min": 60
         },
         {
+          "nombre": "narraciones-42",
+          "comando": "powershell -NoProfile -Command \"$env:CROQUIS_AUDITORIA='nuevas'; $env:CROQUIS_DE_NUEVO='1'; pnpm --filter @croquis/web exec vitest run src/lib/auditoria; node eval/auditoria_cadena_resumen.mjs\"",
+          "minutos": 20,
+          "tope_min": 60,
+          "salidas": ["eval/results/auditoria_cadena"]
+        },
+        {
           "nombre": "comparar",
-          "comando": "node eval/t9_comparar.mjs",
+          "comando": "node eval/tanda_comparar.mjs --tanda t11-solver",
           "minutos": 1,
-          "salidas": ["eval/results/t9"]
+          "salidas": ["eval/results/t11-solver"]
         }
       ]
     }

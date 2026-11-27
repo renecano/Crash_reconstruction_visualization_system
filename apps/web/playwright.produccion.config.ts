@@ -11,7 +11,7 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
   testDir: "./e2e",
   testMatch:
-    /(visor-unity-real|capturas-marco|capturas-ronda4-b|capturas-ronda4-escena|unity-130-real|blob-transferencia|ensayo-demo|ensayo-automatico|pasada-ronda2|medir-pasos|medir-unity-arranque|ejemplos-ronda2|narraciones-fisica|humo-3d)\.spec\.ts$/,
+    /(visor-unity-real|capturas-marco|capturas-ronda4-b|capturas-ronda4-escena|unity-130-real|blob-transferencia|ensayo-demo|ensayo-automatico|pasada-ronda2|medir-pasos|medir-unity-arranque|ejemplos-ronda2|narraciones-fisica|humo-3d|final-unity|produccion-salud)\.spec\.ts$/,
   workers: 1,
   reporter: "line",
   use: {
