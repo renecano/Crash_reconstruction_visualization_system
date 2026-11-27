@@ -8,6 +8,8 @@ import {
   ANCHO_VIDEO,
   instantesDelVideo,
   CAMARA_LENTA_VIDEO,
+  aceleradoDelVideo,
+  rotuloAcelerado,
   rotuloLenta,
   lienzoDelVideo,
   modoDelVideo,
@@ -108,5 +110,23 @@ describe("el modo del video según la tarjeta (René, 2026-11-26: medido en la l
     expect(CODIFICADORES.slice(1).every((c) => c.aceleracion === "prefer-software")).toBe(true);
     expect(SIN_VIDEO).not.toMatch(/error/i);
     expect(SIN_VIDEO).toContain("vuelve a intentarlo");
+  });
+  it("«Desde el inicio» acelera el trayecto lejano para que el video dure ~1 min (René, 2026-11-27)", () => {
+    // El crucero con 3.8 km previos: ~700 s de trayecto, la reconstrucción desde −3 s hasta 4 s.
+    const inicio = -703;
+    const reconstruccion = -3;
+    const fin = 4;
+    const a = aceleradoDelVideo(inicio, reconstruccion, fin, CAMARA_LENTA_VIDEO)!;
+    expect(a.hasta).toBe(reconstruccion - 8);
+    const t = instantesDelVideo(inicio, fin, 30, CAMARA_LENTA_VIDEO, a);
+    expect(t.length / 30).toBeLessThanOrEqual(60);
+    expect(t.length / 30).toBeGreaterThan(30);
+    // La llegada va a 1× y el impacto en cámara lenta, como siempre.
+    const llegada = t.filter((x) => x >= a.hasta && x < -0.35);
+    expect(llegada.length).toBeGreaterThanOrEqual(Math.floor((a.hasta * -1 - 0.35) * 30) - 1);
+    expect(t.filter((x) => x >= -0.35 && x <= 0.8).length).toBeGreaterThan(160);
+    expect(rotuloAcelerado(a)).toMatch(/^Trayecto ilustrativo · acelerado ×\d+$/);
+    // Un trayecto corto no se acelera.
+    expect(aceleradoDelVideo(-20, -3, 4, null)).toBeNull();
   });
 });

@@ -94,8 +94,14 @@ export function NubeSimulaciones({
             {m}
           </span>
         ))}
-        <span className="absolute top-[0.7rem] right-0 translate-x-0 bg-superficie pl-1">km/h</span>
       </div>
+      {/* La unidad en su propio renglón: junto al último número del eje se encimaba («2( km/h»). */}
+      <span
+        className="-mt-1 self-end font-mono text-[0.6875rem] text-texto-3"
+        data-testid="nube-unidad"
+      >
+        km/h
+      </span>
       <p className="t-nota" data-testid="nube-leyenda">
         {nube.porPunto === 1
           ? `Cada punto es una de las ${muestras} simulaciones`

@@ -45,6 +45,7 @@ import {
 import { BarraReproduccion } from "./barra-reproduccion";
 import { EnRanura, useMarco } from "./marco-vista";
 import {
+  aceleradoDelVideo,
   CAMARA_LENTA_VIDEO,
   duracionVideo,
   FPS_VIDEO,
@@ -124,6 +125,26 @@ function rendererDeLaTarjeta(): string | null {
   } catch {
     return null;
   }
+}
+
+/**
+ * La leyenda del 3D como la escribe Unity (`Leyenda3d.Mensaje`), para cuando la pone la web: a pantalla
+ * completa y en Presentar.
+ */
+export function textoLeyenda3d(o: {
+  danoMedido: boolean;
+  piso: string | null;
+  hipotesis: string | null;
+}): string {
+  let t = "Reconstrucción ilustrativa";
+  if (o.danoMedido) t += " · daño: C1–C6 medidos por el perito";
+  if (o.piso !== null)
+    t += o.piso.trim()
+      ? ` · piso: imagen del lugar (${o.piso.trim()})`
+      : " · piso: imagen del lugar";
+  else t += " · entorno procedural: no es el lugar real";
+  if (o.hipotesis?.trim()) t += `\nTranslúcido: ${o.hipotesis.trim()}`;
+  return t;
 }
 
 export function VisorUnity({
@@ -231,6 +252,11 @@ export function VisorUnity({
   const [rep, setRep] = useState<EstadoReproduccion>(ESTADO_INICIAL);
   const repActual = useRef(rep);
   const [intervalo, setIntervalo] = useState<Intervalo | null>(null);
+  // El intervalo para el aviso de tiempo de Unity, que se oye fuera del ciclo de React.
+  const intervaloActual = useRef<Intervalo | null>(null);
+  useEffect(() => {
+    intervaloActual.current = intervalo;
+  }, [intervalo]);
   // Los callbacks del padre cambian en cada render: se leen de una referencia.
   const cb = useRef({ onApi, onTiempo, onObjetoEditado, onPuntoMarcado });
   useEffect(() => {
@@ -254,9 +280,18 @@ export function VisorUnity({
     const alMensaje = (m: MensajeDeUnity) => {
       if (m.tipo === "tiempo") {
         cb.current.onTiempo?.(m.t);
-        // El deslizador sigue a Unity, sin redibujar la página en cada cuadro.
-        if (vivo && Math.abs(m.t - repActual.current.t) >= 0.04) {
-          repActual.current = { ...repActual.current, t: m.t };
+        // El deslizador sigue a Unity, sin redibujar la página en cada cuadro. Al llegar al final,
+        // la barra queda en pausa y su botón dice «Repetir».
+        const iv = intervaloActual.current;
+        const sigue = iv
+          ? reproducir(repActual.current, { tipo: "tiempo", t: m.t }, iv).estado
+          : { ...repActual.current, t: m.t };
+        if (
+          vivo &&
+          (Math.abs(sigue.t - repActual.current.t) >= 0.04 ||
+            sigue.pausado !== repActual.current.pausado)
+        ) {
+          repActual.current = sigue;
           setRep(repActual.current);
         }
       } else if (m.tipo === "objetoEditado") cb.current.onObjetoEditado?.(m);
@@ -502,10 +537,14 @@ export function VisorUnity({
   const listo = estado.fase === "listo";
   // Puente 1.4.0: en Presentar la web pone su leyenda completa encima del 3D y Unity esconde la suya;
   // al salir, la vuelve a mostrar. Cada caso cargado la muestra de nuevo, por eso depende de `cargada`.
+  // A pantalla completa la barra de abajo va encima de la escena: Unity esconde su leyenda y la web
+  // pone la misma arriba de la barra, siempre a la vista (René, 2026-11-27: se enciman).
+  const { completa: aPantallaCompleta, bajoBarra } = useMarco();
+  const leyendaWeb = Boolean(aPantallaCompleta && !tiempo && puente && conLeyenda(puente.version));
   useEffect(() => {
     if (!puente || !listo || !conLeyenda(puente.version)) return;
-    puente.enviar("leyenda", { visible: !tiempo });
-  }, [puente, listo, tiempo, cargada]);
+    puente.enviar("leyenda", { visible: !tiempo && !aPantallaCompleta });
+  }, [puente, listo, tiempo, cargada, aPantallaCompleta]);
   useEffect(() => {
     if (!puente || !listo) return;
     if (tiempo) {
@@ -553,10 +592,14 @@ export function VisorUnity({
       return true;
     }
   });
+  // A pantalla completa, con la barra de abajo a la vista, el minimapa la tapaba: se esconde y vuelve
+  // cuando la barra se esconde (René, 2026-11-27).
+  const { completa: completaMinimapa, bajoBarra: barraMinimapa } = useMarco();
+  const minimapaVisible = minimapa && !(completaMinimapa && barraMinimapa > 0);
   useEffect(() => {
     if (!puente || !listo) return;
-    puente.minimapa(minimapa);
-  }, [puente, listo, minimapa]);
+    puente.minimapa(minimapaVisible);
+  }, [puente, listo, minimapaVisible]);
   // «Descargar video» (René, 2026-11-18, B7): la reproducción completa con la cámara elegida, a
   // 1920×1080, cuadro por cuadro (`lib/visor-unity/video.ts`).
   const [grabacion, setGrabacion] = useState<{ hechos: number; total: number; ms: number } | null>(
@@ -653,8 +696,18 @@ export function VisorUnity({
           fin: intervalo.fin,
           logo,
           leyenda: LEYENDA_3D,
-          // La automática lleva el impacto en cámara lenta, con su letrero.
+          // La automática lleva el impacto en cámara lenta, con su letrero; «Desde el inicio», el
+          // trayecto lejano acelerado para que el video dure ~1 min (René, 2026-11-27).
           lenta: camaraVideo === "automatica" ? CAMARA_LENTA_VIDEO : null,
+          acelerado:
+            desde < (intervalo.reconstruccion ?? desde)
+              ? aceleradoDelVideo(
+                  desde,
+                  intervalo.reconstruccion!,
+                  intervalo.fin,
+                  camaraVideo === "automatica" ? CAMARA_LENTA_VIDEO : null,
+                )
+              : null,
           signal: corte.signal,
           alProgreso: (hechos, total, ms) => setGrabacion({ hechos, total, ms }),
           confirmar: (ms) =>
@@ -792,9 +845,23 @@ export function VisorUnity({
         </p>
       ) : null}
       {/* Lo que el 3D no pudo dibujar y omitió (René, 2026-11-20): el caso abre igual y el perito lo sabe. */}
+      {listo && leyendaWeb ? (
+        <p
+          className="t-nota vidrio absolute left-3 z-30 max-w-[70%] rounded-control px-3 py-1.5 whitespace-pre-line"
+          style={{ bottom: bajoBarra + 12 }}
+          data-testid="leyenda-pantalla-completa"
+        >
+          {textoLeyenda3d({
+            danoMedido: Boolean(escena && deformacionesMedidas(escena).length),
+            piso: piso ? (piso.atribucionVivo ?? piso.atribucionMapa ?? "") : null,
+            hipotesis: version?.etiqueta ?? null,
+          })}
+        </p>
+      ) : null}
       {listo && omitidos.length ? (
         <p
-          className="t-nota vidrio absolute bottom-3 left-3 z-10 max-w-[60%] rounded-control px-3 py-1.5"
+          className="t-nota vidrio absolute left-3 z-10 max-w-[60%] rounded-control px-3 py-1.5"
+          style={{ bottom: (leyendaWeb ? bajoBarra + 64 : 0) + 12 }}
           data-testid="visor-unity-omitidos"
         >
           En el 3D se omitió, por un dato que no se pudo leer: {omitidos.join("; ")}. La
@@ -883,13 +950,13 @@ export function VisorUnity({
                   const d0 = inicio
                     ? intervalo.inicio
                     : (intervalo.reconstruccion ?? intervalo.inicio);
+                  const lenta = dialogoVideo === "automatica" ? CAMARA_LENTA_VIDEO : null;
+                  const acel =
+                    inicio && intervalo.reconstruccion !== undefined
+                      ? aceleradoDelVideo(d0, intervalo.reconstruccion, intervalo.fin, lenta)
+                      : null;
                   const seg =
-                    instantesDelVideo(
-                      d0,
-                      intervalo.fin,
-                      FPS_VIDEO,
-                      dialogoVideo === "automatica" ? CAMARA_LENTA_VIDEO : null,
-                    ).length / FPS_VIDEO;
+                    instantesDelVideo(d0, intervalo.fin, FPS_VIDEO, lenta, acel).length / FPS_VIDEO;
                   return (
                     <label key={String(inicio)} className="flex items-center gap-2">
                       <input
@@ -900,7 +967,7 @@ export function VisorUnity({
                         data-testid={inicio ? "video-desde-inicio" : "video-solo-choque"}
                       />
                       {inicio
-                        ? `Desde el inicio (~${duracionVideo(seg)} de video)`
+                        ? `Desde el inicio (~${duracionVideo(seg)} de video${acel ? `, el trayecto lejano acelerado ×${acel.factor}` : ""})`
                         : `Solo el choque (~${duracionVideo(seg)} de video)`}
                     </label>
                   );

@@ -166,5 +166,16 @@
     "descargado": "2026-11-27",
     "sha256": "a658ece8ec108c17e19b33c3ac00bc0daf17254156219d5f08bab0d1c3335bf4",
     "elementos": 985
+  },
+  "matlatzincas_rene": {
+    "descripcion": "Alrededor del caso de René en Paseo Matlatzincas (data/cesvi/casos/rene-arbol-curva.croquis), Toluca, Estado de México — batería del visor 3D (2026-11-27: defensas en medio de los carriles)",
+    "lat": 19.288151,
+    "lon": -99.68004,
+    "bbox": [-99.68164, 19.28675, -99.67844, 19.28955],
+    "url": "https://api.openstreetmap.org/api/0.6/map?bbox=-99.68164,19.28675,-99.67844,19.28955",
+    "nota": "API principal de OpenStreetMap; el XML se pasó al formato de Overpass (nodos y vías).",
+    "descargado": "2026-11-27",
+    "sha256": "08ef1fed9bb2d39efd0f5d214c91a22ae106d388d870838e7a35124e16f43bbc",
+    "elementos": 784
   }
 }

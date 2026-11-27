@@ -51,6 +51,12 @@ export type Accion =
 
 const acota = (t: number, i: Intervalo) => Math.min(i.fin, Math.max(i.inicio, t));
 
+/** Lo que puede faltar al último aviso de tiempo de Unity antes de que se detenga (s del caso). */
+export const CASI_FIN = 0.3;
+
+/** Si `t` ya es el final de la reproducción (Unity manda el último instante y se detiene). */
+export const alFinal = (t: number, i: Intervalo) => t >= i.fin - 1e-3;
+
 /**
  * El estado que sigue y lo que hay que mandarle a Unity. Mover el deslizador o ir al impacto pausa:
  * el perito quiere ver ese instante, no que siga corriendo.
@@ -61,18 +67,21 @@ export function reproducir(
   i: Intervalo,
 ): { estado: EstadoReproduccion; ordenes: Orden[] } {
   switch (a.tipo) {
-    case "tiempo":
-      return { estado: { ...e, t: acota(a.t, i) }, ordenes: [] };
+    case "tiempo": {
+      // Al llegar al final Unity se detiene: la barra queda en pausa, lista para «Repetir»
+      // (René, 2026-11-27: «se queda en pausa y no deja repetir»).
+      // Unity avisa cada décima de segundo mientras reproduce: un aviso a menos de `CASI_FIN` del
+      // final ya es el final (se detiene antes del siguiente).
+      const t = a.t >= i.fin - CASI_FIN ? i.fin : acota(a.t, i);
+      return { estado: { ...e, t, pausado: e.pausado || alFinal(t, i) }, ordenes: [] };
+    }
     case "alternar": {
       if (!e.pausado) return { estado: { ...e, pausado: true }, ordenes: [orden("pausar", {})] };
       // Al final, reproducir vuelve a empezar.
-      const alFinal = e.t >= i.fin - 1e-3;
+      const fin = alFinal(e.t, i);
       return {
-        estado: { ...e, pausado: false, t: alFinal ? i.inicio : e.t },
-        ordenes: [
-          ...(alFinal ? [orden("fijarTiempo", { t: i.inicio })] : []),
-          orden("reproducir", {}),
-        ],
+        estado: { ...e, pausado: false, t: fin ? i.inicio : e.t },
+        ordenes: [...(fin ? [orden("fijarTiempo", { t: i.inicio })] : []), orden("reproducir", {})],
       };
     }
     case "ir": {
