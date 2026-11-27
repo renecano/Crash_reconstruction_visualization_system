@@ -254,7 +254,12 @@ SCALE = {"velocidad": 10.0, "rumbo": 10.0}
 # Desviación local (Laplace) por encima de la cual la evidencia no fija el parámetro: el intervalo
 # saldría de los límites de búsqueda y no de la evidencia, así que no se reporta.
 IDENT_MAX = {"velocidad": 30.0, "rumbo": 15.0}
-CHORD_ITER = 4  # iteraciones de cada reajuste perturbado (cuerda con el jacobiano del mejor)
+# Que el reajuste de cada muestra converja (René, 2026-11-26): con 4 pasos de a lo más una escala y
+# fracciones de ½ y ¼, las muestras caían en una retícula de 10, 5 y 2.5 km/h sin converger.
+CHORD_ITER = 25  # iteraciones de cada reajuste perturbado (cuerda con el jacobiano del mejor)
+CHORD_FRACCIONES = (1.0, 0.5, 0.25, 0.125, 0.0625, 0.03125)
+# Una muestra que deja algo medido más lejos que esto (sigmas), o 1σ más que el modo, se rehace.
+SIGMAS_MEDIDO = 3.0
 CHORD_TRUST = 1.0  # paso máximo de la cuerda, en escalas (10 km/h, 10°; ADR 0091)
 # Multiarranque (ADR 0091): arranques fijos, pocas iteraciones en cada uno y se afinan los mejores.
 EVIDENCE_SEED = 0  # la evidencia no depende de la semilla de la escena
@@ -819,6 +824,26 @@ def position_at(ts: list[float], xs: list[float], ys: list[float], t: float) -> 
     return xs[-1], ys[-1]
 
 
+# Lo medido (dónde quedó cada uno, la huella de después del impacto, la proyección y la
+# deformación) es una restricción dentro de su incertidumbre, no un residuo que la pérdida soft-L1
+# pueda tratar como atípico (René, 2026-11-26: el Sentra del poste a 5–10 m de su reposo
+# «ajustaba»). Para el optimizador, su residuo r va como r·√(1 + r²/4), cuya soft-L1 vale
+# exactamente r²: cuadrático.
+_MEDIDO = ("reposo:", "marcas_despues:", "proyeccion:", "dano:", "dano_minimo:")
+
+
+def _es_medido(k: str) -> bool:
+    return k.startswith(_MEDIDO)
+
+
+def _a_duro(v: float) -> float:
+    return v * math.sqrt(1.0 + v * v / 4.0)
+
+
+def _de_duro(v: float) -> float:
+    return math.copysign(math.sqrt(2.0 * (math.sqrt(1.0 + v * v) - 1.0)), v) if v else 0.0
+
+
 def _residuals(
     spec: JsonObj,
     ev: Evidence,
@@ -1008,8 +1033,18 @@ class _Problem:
             if not self.names:
                 self.names.extend(sorted(res))
             out = [float(res.get(k, 1e3)) for k in self.names]
+        # Lo medido, cuadrático: la soft-L1 no lo puede tratar como atípico.
+        if self.names and len(out) == len(self.names):
+            out = [_a_duro(v) if _es_medido(k) else v for k, v in zip(self.names, out, strict=True)]
         self._cache[key] = out
         return out
+
+    def residual_map(self, r: Sequence[float]) -> dict[str, float]:
+        """Los residuos con su nombre, en sigmas (lo medido, de vuelta de su forma cuadrática)."""
+        return {
+            k: _de_duro(float(v)) if _es_medido(k) else float(v)
+            for k, v in zip(self.names, r, strict=True)
+        }
 
     def jac(self, x: Sequence[float]) -> list[list[float]]:
         """Jacobiano (filas: residuos; columnas: parámetros) por diferencias hacia adelante con paso
@@ -1059,7 +1094,7 @@ def fit_evidence(
     del first
     return Fit(
         prob.values(x_best),
-        {k: float(r) for k, r in zip(prob.names, best, strict=True)},
+        prob.residual_map(best),
         cost,
         ok,
     )
@@ -1163,7 +1198,7 @@ def _chord_refit(prob: _Problem, x_best: list[float], j: list[list[float]]) -> F
         if big_scaled > CHORD_TRUST:
             step = [v * CHORD_TRUST / big_scaled for v in step]
         moved = False
-        for frac in (1.0, 0.5, 0.25):
+        for frac in CHORD_FRACCIONES:
             x_new = [min(max(x[k] + frac * step[k], lo[k]), hi[k]) for k in range(len(x))]
             r_new = prob(x_new)
             if loss(r_new) < loss(r):
@@ -1181,7 +1216,7 @@ def _chord_refit(prob: _Problem, x_best: list[float], j: list[list[float]]) -> F
         return None
     return Fit(
         prob.values(list(x)),
-        {k: float(v) for k, v in zip(prob.names, r, strict=True)},
+        prob.residual_map(r),
         loss(r),
         True,
     )
@@ -1837,6 +1872,12 @@ def _estimate(
             or _chord_refit(prob, x_best, _sample_jac(prob, x_best))
             or _at(prob, x_best)
         )
+        # Una muestra que viola lo medido no es una solución: se reajusta desde el modo con el
+        # ajuste completo y, si sigue sin cumplirlo, se descarta (cuántas quedan: `muestras`).
+        if _viola_lo_medido(f, best):
+            f = fit_evidence(s, e, dt=dt, start=dict(best.values), free=free, downed_mu=dmu)
+            if _viola_lo_medido(f, best):
+                continue
         fits.append(f)
         try:
             r = reconstruct(apply_values(with_marks(s, e), f.values), dt=dt, downed_mu=dmu)
@@ -1886,14 +1927,44 @@ def _polish(spec: JsonObj, ev: Evidence, best: Fit, free_params: list[Param], dt
     return f if f.cost < best.cost else best
 
 
+def _exceso_medido(fit: Fit) -> float:
+    """Cuánto se pasa lo medido de 3σ, en conjunto: √Σ max(0, |r| − 3)² sobre lo medido."""
+    s = 0.0
+    for k, v in fit.residuals.items():
+        if _es_medido(k):
+            s += max(0.0, abs(v) - SIGMAS_MEDIDO) ** 2
+    return math.sqrt(s)
+
+
+def _viola_lo_medido(fit: Fit, modo: Fit) -> bool:
+    """Si una muestra viola lo medido: si el modo lo cumple todo a 3σ, la muestra también tiene que
+    cumplirlo; si el modo ya no cabe (la evidencia choca entre sí), la muestra puede repartir el
+    error de otro modo, pero no pasarse más de 1σ de lo que se pasa el modo."""
+    m = _exceso_medido(modo)
+    return _exceso_medido(fit) > (m + 1.0 if m > 0.0 else 0.0)
+
+
 def _estimate_of(
     p: Param, sigma: float, identifiable: bool, best: float | None, samples: list[float]
 ) -> Estimate:
     """La estimación de un parámetro: el p10–p90 de las muestras o, si ninguna se apartó de la
     solución (el costo tiene un quiebre ahí), el lineal: mejor ± `Z_P90`·σ local, dentro de los
     límites (ADR 0091)."""
-    if not identifiable or best is None or not samples:
+    if not identifiable or best is None:
         return Estimate(p, sigma, identifiable, best, None)
+    # Si ninguna muestra cumplió lo medido (todas se descartaron), el lineal alrededor del modo.
+    if not samples:
+        if not math.isfinite(sigma) or sigma <= 0:
+            return Estimate(p, sigma, identifiable, best, None)
+        return Estimate(
+            p,
+            sigma,
+            identifiable,
+            best,
+            # La única solución que queda: el mejor ajuste.
+            Distribution(max(p.lo, best - Z_P90 * sigma), best, min(p.hi, best + Z_P90 * sigma), 1),
+            "laplace",
+        )
     dist = distribution(samples)
     if dist.p90 - dist.p10 > 1e-9 or not math.isfinite(sigma) or sigma <= 0:
         return Estimate(p, sigma, identifiable, best, dist)
@@ -1917,7 +1988,7 @@ def _at(prob: _Problem, x: list[float]) -> Fit:
     r = prob(x)
     return Fit(
         prob.values(list(x)),
-        {k: float(v) for k, v in zip(prob.names, r, strict=True)},
+        prob.residual_map(r),
         soft_l1_cost(r),
         True,
     )

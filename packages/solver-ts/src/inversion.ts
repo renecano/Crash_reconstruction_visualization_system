@@ -195,7 +195,12 @@ const JAC_STEP: Record<string, number> = { velocidad: 1.0, rumbo: 1.0 };
 const BOUND_TOL: Record<string, number> = { velocidad: 0.1, rumbo: 0.1 };
 export const SCALE: Record<string, number> = { velocidad: 10.0, rumbo: 10.0 };
 const IDENT_MAX: Record<string, number> = { velocidad: 30.0, rumbo: 15.0 };
-const CHORD_ITER = 4;
+// Que el reajuste de cada muestra converja (René, 2026-11-26): con 4 pasos de a lo más una escala
+// y fracciones de ½ y ¼, las muestras caían en una retícula de 10, 5 y 2.5 km/h sin converger.
+const CHORD_ITER = 25;
+const CHORD_FRACCIONES = [1.0, 0.5, 0.25, 0.125, 0.0625, 0.03125];
+/** Una muestra que deja algo medido más lejos que esto (sigmas), o 1σ más que el modo, se rehace. */
+export const SIGMAS_MEDIDO = 3.0;
 const CHORD_TRUST = 1.0;
 // Multiarranque (ADR 0091): arranques fijos, pocas iteraciones en cada uno y se afinan los mejores.
 export const EVIDENCE_SEED = 0;
@@ -903,6 +908,18 @@ export function positionAt(ts: number[], xs: number[], ys: number[], t: number):
   return [xs[xs.length - 1]!, ys[ys.length - 1]!];
 }
 
+/**
+ * Lo medido (dónde quedó cada uno, la huella de después del impacto, la proyección y la deformación)
+ * es una restricción dentro de su incertidumbre, no un residuo que la pérdida soft-L1 pueda tratar
+ * como atípico (René, 2026-11-26: el Sentra del poste a 5–10 m de su reposo «ajustaba»). Para el
+ * optimizador, su residuo r va como r·√(1 + r²/4), cuya soft-L1 vale exactamente r²: cuadrático.
+ */
+const MEDIDO = ["reposo:", "marcas_despues:", "proyeccion:", "dano:", "dano_minimo:"];
+export const esMedido = (k: string) => MEDIDO.some((m) => k.startsWith(m));
+export const aDuro = (v: number) => v * Math.sqrt(1.0 + (v * v) / 4.0);
+export const deDuro = (v: number) =>
+  v === 0 ? 0.0 : Math.sign(v) * Math.sqrt(2.0 * (Math.sqrt(1.0 + v * v) - 1.0));
+
 export function residuals(
   spec: Json,
   ev: Evidence,
@@ -1103,8 +1120,16 @@ class Problem {
       if (this.names.length === 0) this.names.push(...[...res.keys()].sort());
       out = this.names.map((k) => res.get(k) ?? 1e3);
     }
+    // Lo medido, cuadrático: la soft-L1 no lo puede tratar como atípico.
+    if (this.names.length && out.length === this.names.length)
+      out = out.map((v, i) => (esMedido(this.names[i]!) ? aDuro(v) : v));
     this.cache.set(key, out);
     return out;
+  }
+
+  /** Los residuos con su nombre, en sigmas (lo medido, de vuelta de su forma cuadrática). */
+  residualMap(r: readonly number[]): Map<string, number> {
+    return new Map(this.names.map((k, i) => [k, esMedido(k) ? deDuro(r[i]!) : r[i]!]));
   }
 
   /** Jacobiano (filas: residuos; columnas: parámetros) por diferencias hacia adelante. */
@@ -1166,7 +1191,7 @@ export function fitEvidence(
   const best = prob.call(sol.x);
   return {
     values: prob.values(sol.x),
-    residuals: new Map(prob.names.map((k, i) => [k, best[i]!])),
+    residuals: prob.residualMap(best),
     cost: sol.cost,
     success: sol.success,
   };
@@ -1254,7 +1279,7 @@ function chordRefit(prob: Problem, xBest: readonly number[], j: number[][]): Fit
     });
     if (bigScaled > CHORD_TRUST) step = step.map((v) => (v * CHORD_TRUST) / bigScaled);
     let moved = false;
-    for (const frac of [1.0, 0.5, 0.25]) {
+    for (const frac of CHORD_FRACCIONES) {
       const xNew = x.map((xk, k) => Math.min(Math.max(xk + frac * step[k]!, lo[k]!), hi[k]!));
       const rNew = prob.call(xNew);
       if (loss(rNew) < loss(r)) {
@@ -1273,7 +1298,7 @@ function chordRefit(prob: Problem, xBest: readonly number[], j: number[][]): Fit
   if (accepted === 0) return null;
   return {
     values: prob.values(x),
-    residuals: new Map(prob.names.map((k, i) => [k, r[i]!])),
+    residuals: prob.residualMap(r),
     cost: loss(r),
     success: true,
   };
@@ -1842,10 +1867,16 @@ function estimate(
     // El rango sale de las entradas alrededor del modo elegido, sin saltar a otro: la cuerda con el
     // jacobiano del modo; si no mejora, con el de la muestra; si tampoco, el modo ya es el óptimo
     // local de la muestra.
-    const f =
+    let f =
       chordRefit(prob, xBest, jBest) ??
       chordRefit(prob, xBest, sampleJac(prob, xBest)) ??
       at(prob, xBest);
+    // Una muestra que viola lo medido no es una solución: se reajusta desde el modo con el ajuste
+    // completo y, si sigue sin cumplirlo, se descarta (cuántas quedan lo dice `muestras`).
+    if (violaLoMedido(f, best)) {
+      f = fitEvidence(s, e, { dt, start: new Map(best.values), free, downedMu });
+      if (violaLoMedido(f, best)) continue;
+    }
     fits.push(f);
     const r = tryReconstruct(applyValues(withMarks(s, e), f.values), dt, downedMu);
     if (r === null) continue;
@@ -1897,6 +1928,25 @@ function polish(spec: Json, ev: Evidence, best: Fit, freeParams: Param[], dt: nu
 }
 
 /** La estimación de un parámetro: el p10–p90 de las muestras o, con ancho cero, el lineal. */
+/** Si el ajuste deja algo medido a más de 3σ, o a más de 1σ de lo que lo deja el modo. */
+/** Cuánto se pasa lo medido de 3σ, en conjunto: √Σ max(0, |r| − 3)² sobre los residuos medidos. */
+function excesoMedido(fit: Fit): number {
+  let s = 0.0;
+  for (const [k, v] of fit.residuals)
+    if (esMedido(k)) s += Math.max(0.0, Math.abs(v) - SIGMAS_MEDIDO) ** 2;
+  return Math.sqrt(s);
+}
+
+/**
+ * Si una muestra viola lo medido: si el modo lo cumple todo a 3σ, la muestra también tiene que
+ * cumplirlo; si el modo ya no cabe (la evidencia choca entre sí), la muestra puede repartir el error
+ * de otro modo, pero no pasarse más de 1σ de lo que se pasa el modo.
+ */
+function violaLoMedido(fit: Fit, modo: Fit): boolean {
+  const m = excesoMedido(modo);
+  return excesoMedido(fit) > (m > 0.0 ? m + 1.0 : 0.0);
+}
+
 function estimateOf(
   p: Param,
   sigma: number,
@@ -1904,8 +1954,25 @@ function estimateOf(
   best: number | null,
   samples: number[],
 ): Estimate {
-  if (!identifiable || best === null || !samples.length)
-    return new Estimate(p, sigma, identifiable, best, null);
+  if (!identifiable || best === null) return new Estimate(p, sigma, identifiable, best, null);
+  // Si ninguna muestra cumplió lo medido (todas se descartaron), el lineal alrededor del modo.
+  if (!samples.length) {
+    if (!Number.isFinite(sigma) || sigma <= 0)
+      return new Estimate(p, sigma, identifiable, best, null);
+    return new Estimate(
+      p,
+      sigma,
+      identifiable,
+      best,
+      new Distribution(
+        Math.max(p.lo, best - Z_P90 * sigma),
+        best,
+        Math.min(p.hi, best + Z_P90 * sigma),
+        1, // la única solución que queda: el mejor ajuste
+      ),
+      "laplace",
+    );
+  }
   const dist = distribution(samples);
   if (dist.p90 - dist.p10 > 1e-9 || !Number.isFinite(sigma) || sigma <= 0)
     return new Estimate(p, sigma, identifiable, best, dist);
@@ -1934,7 +2001,7 @@ function at(prob: Problem, x: number[]): Fit {
   const r = prob.call(x);
   return {
     values: prob.values(x),
-    residuals: new Map(prob.names.map((k, i) => [k, r[i]!])),
+    residuals: prob.residualMap(r),
     cost: softL1Cost(r),
     success: true,
   };

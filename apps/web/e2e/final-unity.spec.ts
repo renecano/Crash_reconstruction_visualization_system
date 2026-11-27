@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { type Page } from "@playwright/test";
 import { expect, test } from "./base";
@@ -141,4 +141,77 @@ test("Presentar con el Unity real: la carambola", async ({ page }) => {
     await foto(page, `presentar-${k}`);
   }
   filas.push({ prueba: "presentar", segundos_reconstruir: s, gpu });
+});
+
+/**
+ * El paisaje árido de punta a punta (René, 2026-11-26): un caso nuevo narrado en la carretera a Bahía
+ * de Kino (Sonora), con las calles y la cobertura de OpenStreetMap en vivo. La lectura va grabada
+ * (`data/cesvi/grabaciones/pruebas/arida-bahia-kino.json`): no gasta API.
+ */
+test("paisaje árido: un caso nuevo en la carretera a Bahía de Kino", async ({ page }) => {
+  test.setTimeout(600_000);
+  const lista = JSON.parse(
+    readFileSync(resolve(RAIZ, "data/cesvi/pruebas/narraciones.json"), "utf8"),
+  ) as {
+    ejemplos: { narracion: string; grabacion: string; lugar: { lat: number; lon: number } }[];
+  };
+  const caso = lista.ejemplos[0]!;
+  const grabada = JSON.parse(
+    readFileSync(resolve(RAIZ, "data/cesvi/grabaciones", caso.grabacion), "utf8"),
+  ) as { salida: unknown };
+  await page.route("**/api/cesvi/escena", (r) =>
+    r.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({ metodo: "claude", salida: grabada.salida }),
+    }),
+  );
+  await page.goto("/cesvi");
+  await page.getByTestId("ir-caso-nuevo").click();
+  await irAPaso(page, 2);
+  await page.getByTestId("narracion").fill(caso.narracion);
+  await page.getByTestId("leer-narracion").click();
+  await expect(page.getByTestId("escena")).toBeVisible({ timeout: 60_000 });
+  await irAPaso(page, 3);
+  const lista3 = page.getByTestId("lista-escena");
+  await expect(lista3).toBeVisible({ timeout: 60_000 });
+  const guia = page.getByTestId("cerrar-guia");
+  if (await guia.isVisible().catch(() => false)) await guia.click();
+  // El lugar por sus coordenadas, y el choque donde queda el mapa.
+  const marcar = page.getByTestId("marcar-choque-1");
+  if (await marcar.count()) {
+    await marcar.click();
+    await page.getByTestId("escena-buscar").fill(`${caso.lugar.lat}, ${caso.lugar.lon}`);
+    await page.getByTestId("escena-buscar").press("Enter");
+    const opcion = page.getByTestId("opcion-lugar").first();
+    if (await opcion.isVisible({ timeout: 10_000 }).catch(() => false)) await opcion.click();
+    const mapa = page.getByTestId("mapa-facil");
+    await expect(mapa).toHaveAttribute("data-listo", "si", { timeout: 60_000 });
+    await page.waitForTimeout(2000);
+    const caja = (await mapa.boundingBox())!;
+    await mapa.click({ position: { x: caja.width / 2, y: caja.height / 2 } });
+    const asi = page.getByTestId("choque-asi");
+    if (await asi.isVisible({ timeout: 3000 }).catch(() => false)) await asi.click();
+  }
+  // Lo que propone La escena, aceptado; dónde quedaron, junto al choque.
+  for (let k = 0; k < 12; k++) {
+    await expect(lista3).toBeVisible({ timeout: 30_000 });
+    const confirmar = page.locator('[data-testid^="confirmar-"]').first();
+    if (await confirmar.count()) {
+      await confirmar.click();
+      continue;
+    }
+    const final = page.locator('[data-testid^="marcar-final-"]').first();
+    if (!(await final.count())) break;
+    await final.click();
+    await page.getByTestId("final-junto").click();
+    await page.getByTestId("listo-final").click();
+  }
+  await irAPaso(page, 4);
+  await page.getByTestId("reconstruir").click();
+  await expect(page.getByTestId("cifra-reconstruccion")).toBeVisible({ timeout: 240_000 });
+  await foto(page, "arida-sonora-reconstruccion");
+  if (process.env.CROQUIS_SIN_3D === "1") return;
+  const gpu = await en3d(page);
+  await foto(page, "arida-sonora-3d");
+  filas.push({ prueba: "arida-sonora", gpu });
 });

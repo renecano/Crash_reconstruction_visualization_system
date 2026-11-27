@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-11-26T22:54:27.547Z",
+  "fecha": "2026-11-27T03:56:04.718Z",
   "muestras": {
     "samples": 32,
     "mcSamples": 128
@@ -32,13 +32,13 @@
           "vehiculo": "V2",
           "mejor": 57,
           "p10": 55,
-          "p90": 78
+          "p90": 79
         },
         {
           "vehiculo": "V1",
           "mejor": 15,
-          "p10": 1,
-          "p90": 21
+          "p10": 0,
+          "p90": 20
         }
       ],
       "relieve": false,
@@ -75,14 +75,14 @@
         {
           "vehiculo": "V1",
           "mejor": 20,
-          "p10": 5,
-          "p90": 26
+          "p10": 7,
+          "p90": 27
         },
         {
           "vehiculo": "V2",
           "mejor": 12,
-          "p10": 6,
-          "p90": 20
+          "p10": 4,
+          "p90": 18
         }
       ],
       "relieve": false,
@@ -116,15 +116,15 @@
       "velocidades": [
         {
           "vehiculo": "V1",
-          "mejor": 53,
-          "p10": 49,
-          "p90": 56
+          "mejor": 54,
+          "p10": 45,
+          "p90": 55
         },
         {
           "vehiculo": "V2",
           "mejor": 0,
           "p10": 0,
-          "p90": 8
+          "p90": 14
         }
       ],
       "relieve": false,
@@ -218,13 +218,13 @@
           "vehiculo": "V1",
           "mejor": 6,
           "p10": 3,
-          "p90": 7
+          "p90": 8
         },
         {
           "vehiculo": "V2",
           "mejor": 20,
-          "p10": 16,
-          "p90": 25
+          "p10": 17,
+          "p90": 29
         }
       ],
       "relieve": true,
@@ -260,15 +260,15 @@
       "velocidades": [
         {
           "vehiculo": "V1",
-          "mejor": 26,
+          "mejor": 24,
           "p10": 21,
           "p90": 28
         },
         {
           "vehiculo": "V2",
-          "mejor": 61,
-          "p10": 37,
-          "p90": 64
+          "mejor": 52,
+          "p10": 45,
+          "p90": 53
         }
       ],
       "relieve": false,
@@ -627,9 +627,9 @@
       "velocidades": [
         {
           "vehiculo": "V1",
-          "mejor": 45,
-          "p10": 31,
-          "p90": 59
+          "mejor": 44,
+          "p10": 30,
+          "p90": 58
         }
       ],
       "relieve": false,

@@ -66,6 +66,7 @@ import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from 
 import { objetosDe, TIPOS_OBJETO } from "./objetos";
 import { medidasDe } from "./poses-impacto";
 import { arranqueSobreElEje, ejeDeLaCalle, type EjeCalle } from "./eje-calle";
+import { choqueEnLaOrilla, ladoNarrado, TIPOS_DE_ORILLA } from "./orilla";
 import {
   conVelocidadDelPerito,
   enCota,
@@ -284,6 +285,92 @@ export function zonaHorizontal(z: {
   return null;
 }
 
+type PosicionPerito = NonNullable<
+  NonNullable<Expediente["versiones"]>[number]["posiciones"]
+>[number];
+
+/**
+ * El choque contra un árbol, un poste o una señal en la orilla de la calle (René, 2026-11-26; ver
+ * `orilla.ts`): si con las calles guardadas el objeto caería dentro de la calzada donde el perito
+ * colocó el choque, la pose de impacto del vehículo (y su reposo, si lo dejó junto al choque) pasa al
+ * borde compatible con la narración. Se dice en los límites. Sin calles guardadas, igual que antes.
+ */
+function alBordeDeLaCalle(
+  e: Expediente,
+  posiciones: PosicionPerito[],
+  o: {
+    golpea: Id | undefined;
+    objeto: string | null;
+    cara: string;
+    antesM: number;
+    textos: (string | undefined)[];
+  },
+  limites: string[],
+): PosicionPerito[] {
+  const guardadas = e.caso.lugar?.calles_del_mapa;
+  const v = o.golpea ? e.vehiculos.find((x) => x.id === o.golpea) : undefined;
+  const imp = posiciones.find((p) => p.vehiculo === o.golpea && p.fase === "impacto");
+  if (!guardadas || !v || !imp || !o.objeto || !TIPOS_DE_ORILLA.has(o.objeto)) return posiciones;
+  const base: LonLat = [imp.punto.lon, imp.punto.lat];
+  const enM = (lon: number, lat: number) => {
+    const m = enMetros([lon, lat], base);
+    return { x: m.este, y: m.norte };
+  };
+  const giro =
+    o.cara === "posterior"
+      ? 180
+      : o.cara === "lateral_izquierdo"
+        ? 90
+        : o.cara === "lateral_derecho"
+          ? -90
+          : 0;
+  const m = medidasDe(v);
+  const alcance = (giro === 0 || giro === 180 ? m.largo : m.ancho) / 2 + 0.15;
+  const r0 = rumboEscena(imp.rumbo);
+  const nuevo = choqueEnLaOrilla({
+    impacto: { x: 0, y: 0, rumboDeg: r0 },
+    alcance,
+    giroCara: giro,
+    antesM: o.antesM,
+    vias: guardadas.vias.map((via) => ({
+      tipo: via.tipo,
+      ...(via.nombre ? { nombre: via.nombre } : {}),
+      ...(Number.isFinite(Number.parseInt(via.carriles ?? "", 10))
+        ? { carriles: Number.parseInt(via.carriles!, 10) }
+        : {}),
+      ...(Number.isFinite(Number.parseFloat(via.ancho ?? ""))
+        ? { ancho_m: Number.parseFloat(via.ancho!) }
+        : {}),
+      puntos: via.puntos.map(([lon, lat]) => enM(lon, lat)),
+    })),
+    lado: ladoNarrado(o.textos),
+  });
+  if (!nuevo) return posiciones;
+  const [lon, lat] = desdeMetros(nuevo.impacto.x, nuevo.impacto.y, base);
+  const rumboNorte = (((90 - nuevo.impacto.rumboDeg) % 360) + 360) % 360;
+  const giroRumbo = nuevo.impacto.rumboDeg - r0;
+  const tipo = o.objeto === "arbol" ? "árbol" : o.objeto === "senal" ? "señal" : o.objeto;
+  limites.push(
+    `Donde colocaste el choque, el ${tipo} quedaba ${metros(nuevo.dentroM)} dentro de la calzada de ${nuevo.via ?? "la calle"}: va en la orilla ${nuevo.lado === "derecha" ? "derecha" : "izquierda"} del vehículo y el choque, en ese borde (${metros(Math.hypot(nuevo.impacto.x, nuevo.impacto.y))} de donde lo colocaste; supuesto).`,
+  );
+  return posiciones.map((p) => {
+    if (p.vehiculo !== o.golpea) return p;
+    if (p === imp) return { ...p, punto: { lon, lat }, rumbo: rumboNorte };
+    // El reposo junto al choque (a menos de 3 m) se va con él.
+    const q = enM(p.punto.lon, p.punto.lat);
+    if (p.fase !== "final" || Math.hypot(q.x, q.y) > 3) return p;
+    const [lf, af] = desdeMetros(q.x + nuevo.impacto.x, q.y + nuevo.impacto.y, base);
+    return {
+      ...p,
+      punto: { lon: lf, lat: af },
+      rumbo:
+        Math.abs(p.rumbo - imp.rumbo) < 1
+          ? rumboNorte
+          : (((p.rumbo - giroRumbo) % 360) + 360) % 360,
+    };
+  });
+}
+
 /** Rumbo del contrato 2.0.0 (grados desde el norte, horario) al de la escena v1 (desde +X, antihorario). */
 export function rumboEscena(rumboNorte: number): number {
   const r = (((90 - rumboNorte) % 360) + 360) % 360;
@@ -474,10 +561,23 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   // 2. La evidencia del perito. Las poses de impacto que propone Croquis desde el punto que marcó el
   // perito (fantasmas sin aceptar) también cuentan: solo fijan el origen y el arranque, que en la
   // escena ya van como supuesto.
-  const posiciones =
-    (e.versiones ?? [])
-      .find((v) => v.tipo === "evidencia")
-      ?.posiciones?.filter((p) => p.fuente === "perito" || p.fuente === "supuesto") ?? [];
+  const evidenciaVersion = (e.versiones ?? []).find((v) => v.tipo === "evidencia");
+  const posiciones = alBordeDeLaCalle(
+    e,
+    evidenciaVersion?.posiciones?.filter((p) => p.fuente === "perito" || p.fuente === "supuesto") ??
+      [],
+    {
+      golpea: enImpacto.length === 1 ? enImpacto[0] : undefined,
+      objeto,
+      cara: zonasPrimero.find((z) => z.vehiculo === enImpacto[0])?.zona.cara ?? "frontal",
+      antesM: enImpacto[0] ? arranqueAntes(enImpacto[0]) : ANTES_DEL_IMPACTO_M,
+      textos: [
+        primero?.cita?.texto,
+        ...(evidenciaVersion?.maniobras ?? []).map((m) => m.cita?.texto),
+      ],
+    },
+    limites,
+  );
   const deImpacto = posiciones.filter((p) => p.fase === "impacto");
   // El origen es el primer impacto: el promedio de las posiciones de impacto de sus vehículos (o
   // de todas, si el perito no colocó a ninguno de ellos).

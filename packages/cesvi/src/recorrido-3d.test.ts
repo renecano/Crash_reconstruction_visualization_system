@@ -44,13 +44,12 @@ describe("el caso del recorrido en 3D (R9)", () => {
     const lado = (id: string) => vs.find((v) => r.ids[v.id] === id)!.dano.cdc?.lado;
     expect(lado("V1")).toBe("B");
     expect(lado("V2")).toBe("F");
-    // El reporte no dice si la Silverado (A, V1) se movía; se compara contra el cálculo de CESVI
-    // (René, 2026-11-25). CESVI calcula la Tacoma (B, V2) en 63.15 km/h por la deformación y en
-    // 60.27 km/h por los restos: la cifra de Croquis queda dentro de ±10 % de ese par. De la
-    // Silverado, CESVI no da velocidad: solo se pide que no sea negativa.
-    const kmh = (id: string) => r.velocidades.find((v) => v.vehiculo === id)!.previa!.mejor;
-    expect(kmh("V2")).toBeGreaterThanOrEqual(60.27 * 0.9);
-    expect(kmh("V2")).toBeLessThanOrEqual(63.15 * 1.1);
-    expect(kmh("V1")).toBeGreaterThanOrEqual(0);
+    // Con lo medido como restricción (René, 2026-11-26), los reposos que propone el paso 4 para este
+    // recorrido quedan a más de 5σ del mejor ajuste y su rango no lo contiene: el candado no da cifra
+    // y dice qué revisar. Antes daba 62.8 km/h (CESVI: 60.27–63.15) porque la soft-L1 descontaba un
+    // reposo medido a 8.9σ. Revisar la propuesta del paso 4 queda en «Endurecimiento pendiente».
+    expect(r.noCuadra).toBeTruthy();
+    expect(r.velocidades.every((v) => v.previa === null)).toBe(true);
+    expect(r.noCuadra!.revisar.join(" ")).toMatch(/posiciones finales/);
   }, 60_000);
 });

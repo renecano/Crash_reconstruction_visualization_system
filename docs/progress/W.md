@@ -1585,3 +1585,32 @@ Cada ejemplo guarda su lugar (`data/cesvi/ejemplos/narraciones.json`) y abre ah�
 **Daños (siguiente):** en AXA, la deformación medida de la Tacoma con la rigidez del reporte (A = 55.4 kN/m, B = 385.3 kN/m²) equivale a unos 230 kJ, y el choque reconstruido disipa 61.5 kJ en total; además el solver usa la rigidez de NHTSA y no la del reporte. Plan: un PR `contract:` (lo medido y la fuente de la rigidez en `Dano`), el solver con la rigidez del reporte (Python y TS con paridad) y la comparación en Análisis.
 
 **Siguiente paso concreto:** esperar la t9-ejemplos; si sale bien, publicar #311 → #316 → #320 → #323 → #329 → #331, verificar en producción y fusionar #324, #327 y #328; luego #334 y `fix/w-poste-mazda`.
+
+## La t11: lo medido como restricción, Tollocan, la reversa y el caso árido (2026-11-26, noche) · `fix/solver-evidencia-dura`
+
+**Plan (René, 2026-11-26 noche: «lo del viernes se hace YA»):** el arreglo de fondo del solver (Python y TS con paridad), la reversa, el árbol de Tollocan en la orilla, AXA (#349, ya en producción, ad3a1c7d), el build 932aa256 (#367), las herramientas de la t11 (#365) con el video en la tarjeta integrada (#364) y el ensayo (#366), y el caso árido de Sonora. Una sola tanda, fijada a un commit de esta rama; a `main` (producción) solo después de la t11 y del visto bueno de René a las cifras.
+
+### El solver: lo medido es una restricción
+
+- **Lo medido no es un atípico.** Los residuos medidos (`reposo:`, `marcas_despues:`, `proyeccion:`, `dano:`, `dano_minimo:`) entran a la soft-L1 transformados (r′ = r·√(1 + r²/4)), de modo que su costo es r², el cuadrático de siempre: la pérdida robusta sigue para los supuestos, ya no para la evidencia medida.
+- **Ninguna muestra del rango viola lo medido.** Cada muestra se reajusta desde el modo con la cuerda (25 iteraciones, pasos de 1 a 1/32: converge, sin escalones de 5 km/h); si viola lo medido, se reajusta completa desde el modo y, si sigue, se descarta (`estimacion.muestras` dice cuántas quedaron). «Viola»: el exceso conjunto sobre 3σ, √Σ max(0, |r| − 3)², pasa el del modo (si el modo lo cumple todo, la muestra también debe cumplirlo; si el modo ya no cabe, la muestra puede repartir el error pero no pasarse más de 1σ). Si no queda ninguna, el lineal alrededor del modo.
+- **Una huella de después del choque bloquea las llantas:** con `marcas_derrape`/`marcas_frenado` en `despues_impacto`, el vehículo desliza con la fricción completa (Fricke: asfalto seco 0.55–0.8, terracería 0.4–0.7), no rueda con 0.3–0.5 de ella.
+- **Pruebas:** `apps/web/src/lib/solver-rango.test.ts` (el Sentra del poste sale del choque a ≥ 43 km/h, como piden sus 18.40 m de derrape, y su p10 ≥ 43; ningún rango de los cinco ejemplos en una retícula de 2.5 km/h); paridad TS–Python con las referencias regeneradas (`reconstruct --all`, `eval/w3|w5|w7_fixtures.py`).
+- **Cifras de Node (`eval/results/ejemplos_en_su_lugar/cifras.json`), antes → después:** AXA Tacoma 57 (55–78) → 57 (55–79), Silverado 15 (1–21) → 15 (0–20); crucero Jetta 20 (5–26) → 20 (7–27), Camaro 12 (6–20) → 12 (4–18); alcance NP300 53 (49–56) → 54 (45–55), Vento 0 (0–8) → 0 (0–14); carambola 25 (20–32), igual; reversa CR-V 6 (3–7) → 6 (3–8), Versa 20 (16–25) → 20 (17–29); poste Mazda 26 (21–28) → 24 (21–28), Sentra 61 (37–64) → 52 (45–53); Tollocan 45 (31–59) → 44 (30–58); las seis narraciones de la ronda 4, iguales. Las cifras del índice que salen del navegador (t10) no cambian hasta medirlas en la t11.
+- **R9 (el recorrido de AXA con la evidencia que propone el paso 4, solo en pruebas):** con lo medido como restricción, sus reposos propuestos quedan a 6.5σ y 5.4σ del mejor ajuste (antes, 8.9σ, que la soft-L1 descontaba); el mejor ajuste da 54 km/h, por debajo del rango de sus muestras (62–91), y el candado no da cifra. Es lo correcto: la cifra de antes (62.8) salía de ignorar un reposo medido. La prueba ahora pide el candado; revisar la propuesta del paso 4 para AXA queda en «Endurecimiento pendiente».
+
+### Tollocan: el árbol en la orilla
+
+`packages/cesvi/src/orilla.ts`: si el primer choque es de un vehículo contra un árbol, un poste o una señal y, con las calles guardadas del caso, el objeto caería dentro de la calzada (el ancho del 3D, `viaWidthM`), la pose de impacto del perito pasa al borde: del lado que dice la narración o, si no lo dice, hacia donde iba; el vehículo sale de su carril y llega de frente al objeto (el reposo junto al choque se va con él). Se dice en los límites, con cuánto quedaba dentro. Prueba: `orilla.test.ts` (casos de la orilla y Tollocan con una calle de tres carriles centrada en el choque de René). Sin calles guardadas, igual que antes; ninguno de los cinco ejemplos cambia.
+
+### La reversa: un roce, y se dice por qué
+
+Con las velocidades reconstruidas, el choque disipa 2.98 kJ: 1.3 kJ en la parte posterior del CR-V (umbral de CRASH3, 5590 J/m × 0.72 m = 4.0 kJ) y 1.6 kJ en el costado del Versa (2003 J/m × 1.8 m = 3.6 kJ). La geometría (el CR-V sale perpendicular desde el poniente) y los reposos (el Versa sigue 7 m, el CR-V se detiene) son de un roce, y las direcciones narradas del daño también. Un hundimiento local de lámina con pintura desprendida es lo que deja un roce en reversa; CRASH3 mide aplastamiento y con menos energía que el umbral da 0 cm, que es lo correcto. El panel lo explica con las dos energías (`roceBajoElUmbral`, `dano-roce-<V>`) y el contrato de Unity pide rayones en la zona del CDC (`docs/contrato-unity.md`, para Alberto). Rama `feat/w-roce-sin-deformacion`.
+
+### El caso árido (Sonora)
+
+Narración de prueba en la carretera estatal 100 (SON 100), Hermosillo–Bahía de Kino, a la entrada de Bahía de Kino (28.82875, −111.91024; OSM: `natural=sand`): `data/cesvi/pruebas/narraciones.json`, lectura grabada en `data/cesvi/grabaciones/pruebas/arida-bahia-kino.json` (0.0310 USD, W9). La e2e de la tanda final la arma de punta a punta con las calles y la cobertura de OSM en vivo (`final-unity.spec.ts`, «paisaje árido»). `eval/ronda2_narraciones.mts` graba listas de otra carpeta con `CROQUIS_LISTA`.
+
+### Un toque de diferencia (la carambola)
+
+`apps/web/src/lib/toques-carambola.test.ts` (`CROQUIS_TOQUES=<salida>`): la receta del índice con los lugares que el perito toca a mano movidos hasta ±1 m en cada eje, 12 variantes con semilla fija; antes (main) y después (esta rama) en `eval/results/carambola_toques/`.
