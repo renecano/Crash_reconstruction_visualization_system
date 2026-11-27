@@ -158,6 +158,42 @@
       "bytes": 341724
     },
     {
+      "clave": "mex57-alcance",
+      "que": "Carretera de dos cuerpos con cercas (MEX 57, San Luis de la Paz)",
+      "lugar": "mex57_san_luis",
+      "ms_armado": 359,
+      "zona": "urbana",
+      "edificios": 447,
+      "arboles": 98,
+      "postes": 19,
+      "senales": 14,
+      "rodadas": 56,
+      "vertices_via": 1765,
+      "objetos_del_choque": [
+        "arbol"
+      ],
+      "vehiculos": 1,
+      "bytes": 357674
+    },
+    {
+      "clave": "son100-kino",
+      "que": "Carretera de dos carriles en zona árida (SON 100, Sonora)",
+      "lugar": "son100_kino",
+      "ms_armado": 340,
+      "zona": "urbana",
+      "edificios": 471,
+      "arboles": 55,
+      "postes": 12,
+      "senales": 16,
+      "rodadas": 12,
+      "vertices_via": 4891,
+      "objetos_del_choque": [
+        "arbol"
+      ],
+      "vehiculos": 1,
+      "bytes": 448945
+    },
+    {
       "clave": "metepec-arbol",
       "que": "Paseo Tollocan en Metepec, contra un árbol",
       "lugar": "tollocan_metepec",

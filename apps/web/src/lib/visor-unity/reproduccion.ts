@@ -32,6 +32,11 @@ export const ESTADO_INICIAL: EstadoReproduccion = { t: 0, pausado: false, veloci
 export interface Intervalo {
   inicio: number;
   fin: number;
+  /**
+   * Dónde empieza la reconstrucción cuando hay trayecto previo (René, 2026-11-27): antes de ese
+   * instante, lo ilustrativo. Sin trayecto previo, igual a `inicio`.
+   */
+  reconstruccion?: number;
 }
 
 export type Accion =

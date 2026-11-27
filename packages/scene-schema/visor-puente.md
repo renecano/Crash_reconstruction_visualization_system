@@ -1,6 +1,6 @@
 # Puente web ↔ visor Unity
 
-**Versión 1.4.0.** Los tipos están en `src/visor-puente.ts` (`VISOR_PUENTE_VERSION`), y una prueba revisa que este documento y los tipos nombren los mismos mensajes. Este contrato solo cambia con un PR `contract:`.
+**Versión 1.5.0.** Los tipos están en `src/visor-puente.ts` (`VISOR_PUENTE_VERSION`), y una prueba revisa que este documento y los tipos nombren los mismos mensajes. Este contrato solo cambia con un PR `contract:`.
 
 ## Cómo viajan los mensajes
 
@@ -26,7 +26,7 @@
 | `piso`        | `imagen`, `centro_x`, `centro_y`, `lado_m`, `atribucion` | Cambia el piso del modo «mapa real» sin recargar el caso. Con `imagen` nula, vuelve al entorno procedural. |
 | `leyenda`     | `visible`: sí o no                                       | Muestra u oculta la leyenda ilustrativa de Unity. La web la oculta solo mientras pone la suya (Presentar). |
 
-**`modo`:** `cenital`, `cinematica`, `orbita`, `acera`, `libre`, `conductor:<id del vehículo>`, `cerca:<id del vehículo>:<azimut°>:<distancia m>:<altura m>` o `persona:<id de la persona>`. `acera` es de pie junto al árbol más cercano a la acción. `cerca` sigue al vehículo desde un azimut contado desde su frente hacia su derecha (la web la usa para «Detrás de A» y para el daño). `persona` sigue a quien va a pie, en bici o en moto, desde su costado.
+**`modo`:** `cenital`, `cinematica`, `orbita`, `acera`, `libre`, `automatica`, `conductor:<id del vehículo>`, `cerca:<id del vehículo>:<azimut°>:<distancia m>:<altura m>` o `persona:<id de la persona>`. `acera` es de pie junto al árbol más cercano a la acción. `cerca` sigue al vehículo desde un azimut contado desde su frente hacia su derecha (la web la usa para «Detrás de A» y para el daño). `persona` sigue a quien va a pie, en bici o en moto, desde su costado.
 
 **`herramienta`:** `mover` (la de omisión: arrastrar un objeto lo mueve, la rueda o dos dedos lo giran, y con mayúsculas la rueda cambia su largo), `punto_inicial`, `choque_intermedio` o `punto_paso` (un clic en el piso marca ese punto). Los puntos de un vehículo llevan su `vehiculo_id`.
 
@@ -45,6 +45,15 @@
 **Cambios de la 1.4.0** (Presentar, 2026-11-26):
 
 - **El mensaje `leyenda`.** En Presentar la web pone su leyenda completa encima del 3D, y la de Unity quedaba repetida y medio tapada por el degradado. La web manda `leyenda` con `visible: false` al entrar a Presentar y con `visible: true` al salir. Al cargar un caso, Unity la muestra. La web sigue aceptando la 1.3.0 y la 1.2.0: a esas no les manda el mensaje (`conLeyenda`).
+
+**Cambios de la 1.5.0** (el video, 2026-11-27):
+
+- **La cámara `automatica`.** Con «Descargar video» el impacto podía quedar tapado: en un alcance, la cámara fija lo veía desde atrás de los vehículos. La `automatica` cambia de toma según el instante, y en todas el punto de contacto (`resultado.punto_impacto`) se ve sin que nada lo tape (edificios, copas de árboles ni los propios vehículos):
+  - **La llegada:** desde arriba y de lado, con los vehículos y el punto de contacto en cuadro.
+  - **El impacto:** de cerca, de lado al contacto (perpendicular a la línea entre los vehículos) y desde un lado despejado. La cámara lenta la pone la web con los instantes que pide (`fijarTiempo`).
+  - **El final:** desde arriba, con las posiciones finales y el punto de contacto.
+  - Entre una toma y otra, Unity pasa con un movimiento suave.
+- La web sigue aceptando la 1.4.0, la 1.3.0 y la 1.2.0; a esas no les ofrece la `automatica` (`conCamaraAutomatica`) y graba con la cámara que el perito tiene elegida.
 
 **`vista`:** `antes` (t = −1 s), `impacto` (t = 0) y `reposo` (al final) salen con la cámara cinematográfica; `conductor:<id del vehículo>`, con la de ese conductor en el impacto. La foto se toma a la escala de dibujo completa, sin minimapa ni panel; la leyenda ilustrativa la pone la web al pie.
 

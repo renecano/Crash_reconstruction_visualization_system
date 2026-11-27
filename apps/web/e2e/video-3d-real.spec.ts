@@ -49,7 +49,10 @@ test(`video del 3D con el Unity real (${CANAL})`, async ({ page }) => {
   const t0 = Date.now();
   const [descarga] = await Promise.all([
     page.waitForEvent("download", { timeout: 840_000 }),
-    page.getByTestId("descargar-video").click(),
+    page
+      .getByTestId("descargar-video")
+      .click()
+      .then(() => page.getByTestId("video-grabar").click()),
   ]);
   const segundos = Math.round((Date.now() - t0) / 100) / 10;
   mkdirSync(ESCRITORIO, { recursive: true });

@@ -68,6 +68,8 @@ export interface CasoExpediente {
   /** Los vehículos de los que el perito no sabe dónde quedaron (B). */
   finalesDesconocidos?: string[];
   direccionesSupuestas?: string[];
+  /** De dónde venía cada vehículo (trayecto previo ilustrativo), por id del expediente. */
+  trayectosPrevios?: Record<string, { lat: number; lon: number }>;
 }
 
 export const casoNuevo = (): CasoExpediente => ({
@@ -253,6 +255,7 @@ export function abrirGuardado(a: Almacen, id: string): CasoExpediente | null {
     hipotesisElegida: c.hipotesisElegida,
     finalesDesconocidos: c.finalesDesconocidos,
     direccionesSupuestas: c.direccionesSupuestas,
+    trayectosPrevios: c.trayectosPrevios,
   };
 }
 

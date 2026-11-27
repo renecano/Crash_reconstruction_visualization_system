@@ -142,9 +142,18 @@ namespace Croquis.Visor
             return go;
         }
 
+        /// <summary>Si algún vehículo trae trayecto previo, y dónde empieza la reconstrucción.</summary>
+        private bool hayPrevio;
+        private double tInicioResultado;
+
+        /// <summary>Lo que dice el letrero mientras un vehículo va por su trayecto previo (también en pausa: el video se graba así).</summary>
+        public const string LetreroPrevio = "Trayecto ilustrativo: no es evidencia";
+
         private void MostrarLetrero(double ritmo)
         {
-            var texto = Reproduciendo ? EnfasisImpacto.EtiquetaCamaraLenta(ritmo) : null;
+            var texto = hayPrevio && Tiempo < tInicioResultado - 1e-6
+                ? LetreroPrevio
+                : Reproduciendo ? EnfasisImpacto.EtiquetaCamaraLenta(ritmo) : null;
             if (texto != null && textoLenta.text != texto)
             {
                 textoLenta.text = texto;
@@ -266,6 +275,9 @@ namespace Croquis.Visor
                     vista.Roce = RozaduraVista.Preparar(go.transform, v, r, color, otro?.Color != null ? Materiales.Hex(otro.Color, Color.gray) : (Color?)null);
                 });
                 vista.Frenado = extra?.Frenado;
+                // De dónde venía (ilustrativo, no evidencia): antes de `t_inicio` va por su trayecto previo.
+                vista.Previo = Previo.Hay(extra?.TrayectoPrevio) ? extra.TrayectoPrevio : null;
+                vista.TInicioResultado = r.TInicio;
                 Omisiones.Intentar("las luces de " + v.Id, () => vista.Luces(noche, extra == null || extra.Faros, (float)v.Dimensiones.LargoM));
                 foreach (var tr in go.GetComponentsInChildren<Transform>(true))
                 {
@@ -339,6 +351,16 @@ namespace Croquis.Visor
                 tImpacto = r.PuntoImpacto != null ? Fantasmas.TImpacto(r) : double.NaN;
                 impacto = ImpactoVista.Construir(raiz, r, tImpacto, terreno, noche);
             });
+            // El trayecto previo: la reproducción empieza donde empieza el más largo, con su ruta punteada
+            // y el entorno lejano ligero.
+            inicio = Previo.InicioDelCaso(r.TInicio, vehiculos.Select(x => x.Previo));
+            tInicioResultado = r.TInicio;
+            hayPrevio = inicio < r.TInicio;
+            if (hayPrevio)
+            {
+                Omisiones.Intentar("el trayecto previo", () => RutaPreviaVista.Construir(raiz, vehiculos, terreno, e?.Suelo, e?.Entorno?.Paisaje, noche));
+            }
+
             Paso("caso_y_terreno");
             Omisiones.Intentar("la edición en 3D", () => Editor.Preparar(r.Objetos, terreno));
             foreach (var v in vehiculos)
@@ -525,6 +547,7 @@ namespace Croquis.Visor
             // mensaje gana al del paquete.
             conEscenario = e != null;
             terrenoDelCaso = terreno;
+            Camara.Terreno = terreno;
             var pedido = hayPisoPendiente ? pisoPendiente : caso.Piso;
             hayPisoPendiente = false;
             pisoPendiente = null;
@@ -896,6 +919,11 @@ namespace Croquis.Visor
         /// <summary>La carrocería deformada con el daño del Resultado; nulo si no trae daño que dibujar.</summary>
         public DanoVista Dano { get; set; }
 
+        /// <summary>De dónde venía (ilustrativo): el trayecto antes de `TInicioResultado`; nulo sin él.</summary>
+        public TrayectoPrevio Previo { get; set; }
+
+        public double TInicioResultado { get; set; }
+
         /// <summary>Los rayones y la pintura ajena de un roce sin deformación; nulo si no hubo roce.</summary>
         public RozaduraVista Roce { get; set; }
 
@@ -991,7 +1019,7 @@ namespace Croquis.Visor
         {
             Dano?.Mostrar(t);
             Roce?.Mostrar(t);
-            var p = Ejes.AUnity(Muestreo.Pose(Trayectoria, t));
+            var p = Ejes.AUnity(Previo != null && t < TInicioResultado ? Core.Previo.Pose(Previo, t) : Muestreo.Pose(Trayectoria, t));
             var posicion = new Vector3((float)p.Px, (float)p.Py, (float)p.Pz);
             var giro = Quaternion.Euler((float)p.EulerX, (float)p.EulerY, (float)p.EulerZ);
             if (Terreno != null && !Terreno.Plano && (Trayectoria.Z == null || Trayectoria.Z.Length == 0))

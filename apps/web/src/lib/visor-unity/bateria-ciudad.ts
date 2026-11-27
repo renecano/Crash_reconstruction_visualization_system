@@ -31,6 +31,10 @@ const LUGARES = {
   centro_guadalajara: { lat: 20.6767, lon: -103.3469, nombre: "Centro de Guadalajara" },
   centro_monterrey: { lat: 25.6694, lon: -100.3097, nombre: "Centro de Monterrey" },
   axa_mex15d: { lat: 26.20915, lon: -109.0597, nombre: "MEX 15D (AXA)" },
+  // Carreteras (René, 2026-11-27: la cerca de alambre cruzaba los carriles): la MEX 57 de dos cuerpos
+  // en San Luis de la Paz (el lugar del ejemplo del alcance) y la SON 100, de dos carriles, en Sonora.
+  mex57_san_luis: { lat: 21.299558, lon: -100.595243, nombre: "MEX 57, San Luis de la Paz" },
+  son100_kino: { lat: 28.8318826, lon: -111.6593152, nombre: "SON 100 Hermosillo–Bahía de Kino" },
 } as const;
 type Lugar = keyof typeof LUGARES;
 
@@ -165,6 +169,18 @@ export const CASOS_BATERIA: readonly CasoBateria[] = [
         }),
       };
     },
+  },
+  {
+    clave: "mex57-alcance",
+    que: "Carretera de dos cuerpos con cercas (MEX 57, San Luis de la Paz)",
+    lugar: "mex57_san_luis",
+    expediente: enLugar("mex57_san_luis"),
+  },
+  {
+    clave: "son100-kino",
+    que: "Carretera de dos carriles en zona árida (SON 100, Sonora)",
+    lugar: "son100_kino",
+    expediente: enLugar("son100_kino"),
   },
   {
     clave: "metepec-arbol",

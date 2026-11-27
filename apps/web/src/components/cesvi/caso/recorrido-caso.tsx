@@ -234,6 +234,11 @@ export function RecorridoCaso({
     inicial.direccionesSupuestas ?? [],
   );
   const [juntoAlChoque, setJuntoAlChoque] = useState<readonly string[]>([]);
+  // De dónde venía cada vehículo (René, 2026-11-27): el inicio del trayecto previo ilustrativo, por id
+  // del expediente. Va con el caso, fuera del expediente: no entra a la reconstrucción.
+  const [previos, setPrevios] = useState<Readonly<Record<string, { lat: number; lon: number }>>>(
+    inicial.trayectosPrevios ?? {},
+  );
   // C1 (W3): lo contestado en las preguntas del primer golpe, los otros choques y los puntos de paso.
   // null: todavía no se decide si se preguntan (depende de cómo llega la escena al abrir el caso).
   const [c1, setC1] = useState<RespuestasC1 | null>(null);
@@ -626,6 +631,7 @@ export function RecorridoCaso({
     setHipotesis(c.hipotesisElegida);
     setDesconocidos(c.finalesDesconocidos);
     setDireccionesNoSe(c.direccionesSupuestas);
+    setPrevios(c.trayectosPrevios);
     // Las preguntas de C1 se deciden otra vez con la escena de este caso.
     setC1(null);
     // La bitácora del archivo sigue en la pizarra (R12b): se escribe después de ella.
@@ -657,6 +663,7 @@ export function RecorridoCaso({
           hipotesisElegida: hipotesis,
           finalesDesconocidos: desconocidos,
           direccionesSupuestas: direccionesNoSe,
+          trayectosPrevios: previos,
         })
       : null;
   const guardarEnEquipo = () => {
@@ -1517,6 +1524,7 @@ export function RecorridoCaso({
         exportApi={vista === "3d" ? exportApi : null}
         unity={vista === "3d" ? unityApi : null}
         pedidoExportar={pedidoExportar}
+        previos={Object.keys(previos).map((id) => nombreLab(id))}
         mapa={mapa}
         validacion={validacion}
         onValidacion={setValidacion}
@@ -1754,6 +1762,8 @@ export function RecorridoCaso({
               estado: expediente.caso.lugar?.estado?.valor,
             }}
             onBuscarCalles={setCentroBuscado}
+            previos={previos}
+            onPrevios={setPrevios}
             onVerReconstruccion={() => irA(paso + 1)}
             onNota={(t) => setPizarra((x) => delPerito(x, t))}
             recalculo={frenteAEscena}
@@ -1971,6 +1981,7 @@ export function RecorridoCaso({
                     letra: letraDe(String(id)),
                   }))}
                   onApiUnity={setUnityApi}
+                  previos={previos}
                   onInstante={alInstante}
                   presentar={presentando && unityApi ? canalPresentar : null}
                   r={r}

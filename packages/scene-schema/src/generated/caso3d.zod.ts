@@ -285,12 +285,23 @@ export type TerrenoEscenario = z.infer<typeof TerrenoEscenario>;
 export const TramoFreno = z.strictObject({ desde: z.number(), hasta: z.number() });
 export type TramoFreno = z.infer<typeof TramoFreno>;
 
+/** De dónde venía el vehículo (René, 2026-11-27): la ruta por las calles desde donde marcó el perito hasta el primer punto de su trayectoria en el Resultado, con sus tiempos. Ilustrativo, no evidencia: no entra al solver ni a ninguna cifra. Termina en la posición, la velocidad y el instante del inicio de la reconstrucción (`resultado.t_inicio`). */
+export const TrayectoPrevio = z.strictObject({
+  x: z.array(z.number()).min(2),
+  y: z.array(z.number()).min(2),
+  t: z.array(z.number()).min(2),
+  v_ms: z.array(z.number().min(0)).optional(),
+  distancia_m: z.number().min(0),
+});
+export type TrayectoPrevio = z.infer<typeof TrayectoPrevio>;
+
 /** Lo que el visor necesita de cada vehículo y no está en su trayectoria. */
 export const VehiculoEscenario = z.strictObject({
   id: z.string().min(1).max(80),
   color: z.string().regex(new RegExp("^#[0-9a-fA-F]{6}$")).optional(),
   faros: z.boolean(),
   frenado: z.array(TramoFreno),
+  trayecto_previo: TrayectoPrevio.optional(),
 });
 export type VehiculoEscenario = z.infer<typeof VehiculoEscenario>;
 

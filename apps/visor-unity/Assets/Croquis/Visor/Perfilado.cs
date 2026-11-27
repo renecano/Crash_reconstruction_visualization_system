@@ -222,6 +222,15 @@ namespace Croquis.Visor
                 }
             }
 
+            if (j["contacto"] != null)
+            {
+                // Dónde se ve el punto de contacto y si algo lo tapa (la prueba de la cámara del video).
+                var c = UnityEngine.Object.FindFirstObjectByType<CamaraVisor>()?.ContactoEnPantalla();
+                return c == null
+                    ? new JObject { { "sin_contacto", true } }
+                    : new JObject { { "fx", c.Value.Fx }, { "fy", c.Value.Fy }, { "en_cuadro", c.Value.EnCuadro }, { "despejado", c.Value.Despejado } };
+            }
+
             if (j["pantalla"] != null && Camera.main != null)
             {
                 // Dónde se ve un punto de la escena (x este, y norte, a ras del piso), como fracción
