@@ -24,6 +24,12 @@ namespace Croquis.Visor
         /// <summary>La capa del marcador de la cámara: solo la ve el minimapa.</summary>
         public const int CapaMinimapa = 31;
 
+        /// <summary>
+        /// Las copas de los árboles del caso (el árbol del choque): «Desde arriba» no las dibuja para que no
+        /// tapen los vehículos (prueba como perito, 2026-11-27); el tronco sí se ve.
+        /// </summary>
+        public const int CapaCopasDelCaso = 30;
+
         /// <summary>La elevación de la órbita (grados): alta, para ver la calle por encima de las azoteas.</summary>
         private const float ElevacionOrbita = 50f;
 
@@ -1336,6 +1342,13 @@ namespace Croquis.Visor
         /// <summary>El minimapa se ve salvo en la cenital, que ya es la vista desde arriba.</summary>
         private void ActualizarMinimapa()
         {
+            if (camara != null)
+            {
+                camara.cullingMask = modo == "cenital"
+                    ? camara.cullingMask & ~(1 << CapaCopasDelCaso)
+                    : camara.cullingMask | (1 << CapaCopasDelCaso);
+            }
+
             if (minimapa == null)
             {
                 return;
