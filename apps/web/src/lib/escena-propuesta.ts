@@ -27,9 +27,12 @@ import {
   type Expediente,
   type SentidoNarradoLugar,
 } from "@croquis/cesvi";
-import { esLaCalleNarrada } from "./lugar-claro";
+import { esLaCalleNarrada, esLaCalleNarradaAprox, palabrasDeMas } from "./lugar-claro";
+import { maniobraNarrada } from "./giro-sin-aviso";
 import {
   ajustarACalle,
+  calleDeLlegadaNarrada,
+  sobreCalle,
   callesNarradas,
   calzadaEnSuSentido,
   cardinal,
@@ -70,6 +73,11 @@ export function calleNarradaSinCruce(
   const suyas = calles.filter((c) => c.nombre && esLaCalleNarrada(nombradas[0]!.nombre, c.nombre));
   return suyas.length ? ajustarACalle(suyas, lugar, 25) : null;
 }
+
+/** Lo que dice La escena cuando la calle de llegada no es la que nombra la narración (René, 2026-11-25). */
+export const AVISO_CALLE_DE_LLEGADA = "la calle de llegada no coincide con la narración: revísala";
+/** Y cuando la calle de llegada no pasa por el punto del choque. */
+export const AVISO_CALLE_LEJOS = "la calle de llegada no pasa por el punto del choque: revísala";
 
 /** La narración dice que iba en sentido contrario: no se le busca la calzada de su sentido. */
 const CONTRASENTIDO = /sentido\s+contrario|contrasentido|contraflujo|en\s+reversa|de\s+reversa/i;
@@ -192,11 +200,50 @@ export function proponerEscena(o: {
   for (const v of impactos[0]!.vehiculos) {
     const s = sentido(v);
     const r = poseDe(e, v, "impacto")?.rumbo;
-    const i = flechaPropuesta(flechas, s, r === undefined ? null : rumboDeLlegada(e, v, r));
-    const f = i >= 0 ? flechas[i]! : null;
+    const porContacto = r === undefined ? null : rumboDeLlegada(e, v, r);
+    // La calle por la que la narración dice que llegaba (René, 2026-11-25): si llega al choque, su
+    // flecha manda; si no, la de la calle que mejor cuadra, y la escena avisa que no es la narrada.
+    const vObj = vs.find((x) => x.id === v);
+    const narrada = narracion && vObj ? calleDeLlegadaNarrada(narracion, vObj, vs) : null;
+    // Entre las calles que coinciden con la narrada, las de nombre más parecido (sin palabras de más).
+    const coinciden = narrada
+      ? flechas.filter((x) => x.calle && esLaCalleNarradaAprox(narrada, x.calle))
+      : [];
+    // Por grupos, del nombre más parecido al menos parecido: el primero que tenga una flecha en el
+    // sentido narrado manda («Avenida Río Mixcoac» sin flecha al oriente: «Circuito Interior Río Mixcoac»).
+    const niveles = [...new Set(coinciden.map((x) => palabrasDeMas(narrada!, x.calle!)))].sort(
+      (a, b) => a - b,
+    );
+    let suyas: typeof flechas = [];
+    let j = -1;
+    for (const n of niveles) {
+      const grupo = coinciden.filter((x) => palabrasDeMas(narrada!, x.calle!) === n);
+      const k = flechaPropuesta(grupo, s, porContacto);
+      if (k >= 0) {
+        suyas = grupo;
+        j = k;
+        break;
+      }
+    }
+    const f = j >= 0 ? suyas[j]! : (flechas[flechaPropuesta(flechas, s, porContacto)] ?? null);
+    const otraCalle = !!(narrada && f && !(f.calle && esLaCalleNarradaAprox(narrada, f.calle)));
     if (f) e = elegirDireccion(e, impactos, v, f.rumbo, (k) => puntos[k] ?? null, true);
     // Sin una calle en el sentido narrado: como lo dice la narración (revisión de la cadena).
     else if (s) e = elegirDireccion(e, impactos, v, s.rumbo, (k) => puntos[k] ?? null, true);
+    // Ya colocado, ninguna calle bajo el vehículo (a menos de su medio ancho y 4 m) va alineada con él
+    // (±30°): quedaría atravesado. Se propone igual, con aviso (René, 2026-11-25).
+    const calleF = f ? calles.find((c) => sobreCalle(c, f.en).distancia < 0.5) : undefined;
+    const puesto = f ? poseDe(e, v, "impacto") : null;
+    // Una vuelta, una salida del camino o una volcadura narradas lo sacan del eje a propósito.
+    const lejos =
+      !otraCalle &&
+      !!puesto &&
+      !(narracion && vObj && maniobraNarrada(narracion, vObj, vs)) &&
+      !calles.some((c) => {
+        const x = sobreCalle(c, puesto.punto);
+        const d = Math.abs(((x.rumbo - puesto.rumbo) % 180) + 180) % 180;
+        return x.distancia <= c.ancho / 2 + 4 && Math.min(d, 180 - d) <= 30;
+      });
     // René (2026-11-18): concreto, por qué calle y en qué sentido, y en qué se basa.
     const caraDe = (id: string) =>
       (o.expediente.danos ?? [])
@@ -220,17 +267,23 @@ export function proponerEscena(o: {
     propuestos.push({
       clave: `direccion-${v}`,
       texto: f
-        ? `${o.nombreDe(v)}: venía por ${f.calle ?? "la calle sin nombre del mapa"}, de ${f.desde} a ${cardinal(f.rumbo)}`
+        ? `${o.nombreDe(v)}: venía por ${f.calle ?? "la calle sin nombre del mapa"}, de ${f.desde} a ${cardinal(f.rumbo)}${otraCalle ? `; ${AVISO_CALLE_DE_LLEGADA}` : lejos ? `; ${AVISO_CALLE_LEJOS}` : ""}`
         : s
           ? `${o.nombreDe(v)}: venía de ${s.desde} a ${cardinal(s.rumbo)}, como dice la narración; en este lugar no hay una calle en ese sentido: revisa que el lugar sea el del caso`
           : `${o.nombreDe(v)}: en el choque, alineado con la calle`,
-      porque: s
-        ? `la narración dice «${s.cita}»`
-        : f
-          ? daños.length
-            ? `${daños.join(" y ")} cuadran con que llegara así (${textoFlecha(f).toLowerCase()})`
-            : "por las zonas de contacto de los vehículos"
-          : "no hay calles del mapa para proponer por dónde llegaba",
+      porque: otraCalle
+        ? `la narración dice que venía por ${narrada}, y esa calle no llega al choque en este lugar`
+        : lejos
+          ? calleF
+            ? `${f!.calle ?? "la calle"} pasa a ${F.metros(sobreCalle(calleF, choque).distancia, 0)} del choque, fuera de su arroyo`
+            : "ninguna calle que pase por el choque va en ese sentido"
+          : s
+            ? `la narración dice «${s.cita}»`
+            : f
+              ? daños.length
+                ? `${daños.join(" y ")} cuadran con que llegara así (${textoFlecha(f).toLowerCase()})`
+                : "por las zonas de contacto de los vehículos"
+              : "no hay calles del mapa para proponer por dónde llegaba",
     });
   }
   // El objeto del choque en la orilla, no en el carril (René, 2026-11-24, punto 1): el vehículo sale

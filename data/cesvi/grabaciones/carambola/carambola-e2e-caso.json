@@ -1,0 +1,276 @@
+{
+ "descripcion": "El caso de la carambola de la e2e (cesvi-caso.spec.ts), como lo guarda la app después de La escena; lo guardó el flujo «Capturas» (capturas-carambola.spec.ts) el 2026-11-25.",
+ "expediente": {
+  "caso": {
+   "fecha_hora": {
+    "valor": "aproximadamente a las 19:40 horas",
+    "fuente": "perito"
+   },
+   "lugar": {
+    "descripcion": {
+     "valor": "Paseo Tollocan, en sentido poniente a oriente",
+     "fuente": "perito"
+    },
+    "municipio": {
+     "valor": "Toluca",
+     "fuente": "perito"
+    },
+    "estado": {
+     "valor": "Estado de México",
+     "fuente": "perito"
+    }
+   },
+   "condiciones": {
+    "superficie": {
+     "valor": "asfalto",
+     "fuente": "perito",
+     "cita": {
+      "texto": "La vialidad es de corte recto, con tres carriles de circulación en ese sentido, carpeta asfáltica mojada y semáforo"
+     }
+    },
+    "estado_superficie": {
+     "valor": "mojado",
+     "fuente": "perito",
+     "cita": {
+      "texto": "La vialidad es de corte recto, con tres carriles de circulación en ese sentido, carpeta asfáltica mojada y semáforo"
+     }
+    }
+   },
+   "modalidades": []
+  },
+  "vehiculos": [
+   {
+    "id": "V1",
+    "marca": {
+     "valor": "Nissan",
+     "fuente": "perito"
+    },
+    "modelo": {
+     "valor": "Versa",
+     "fuente": "perito"
+    },
+    "clase": "sedan_compacto",
+    "masa": {
+     "valor": 1110,
+     "unidad": "kg",
+     "fuente": "supuesto"
+    }
+   },
+   {
+    "id": "V2",
+    "marca": {
+     "valor": "Mazda",
+     "fuente": "perito"
+    },
+    "modelo": {
+     "valor": "CX-3",
+     "fuente": "perito"
+    },
+    "clase": "suv_compacta",
+    "masa": {
+     "valor": 1405,
+     "unidad": "kg",
+     "fuente": "supuesto"
+    }
+   },
+   {
+    "id": "V3",
+    "marca": {
+     "valor": "Chevrolet",
+     "fuente": "perito"
+    },
+    "modelo": {
+     "valor": "Aveo",
+     "fuente": "perito"
+    },
+    "clase": "sedan_compacto",
+    "masa": {
+     "valor": 1140,
+     "unidad": "kg",
+     "fuente": "supuesto"
+    }
+   }
+  ],
+  "danos": [
+   {
+    "vehiculo": "V1",
+    "zona": {
+     "cara": "frontal",
+     "tercio": "derecho"
+    },
+    "direcciones": [
+     "de_adelante_hacia_atras"
+    ],
+    "tipos": [
+     "hundimiento"
+    ],
+    "fuente": "perito",
+    "cita": {
+     "texto": "El vehículo A presenta en su parte frontal derecha un daño tipo hundimiento de magnitud media, de adelante hacia atrás"
+    }
+   },
+   {
+    "vehiculo": "V2",
+    "zona": {
+     "cara": "posterior"
+    },
+    "direcciones": [
+     "de_atras_hacia_adelante"
+    ],
+    "tipos": [
+     "hundimiento"
+    ],
+    "fuente": "perito",
+    "cita": {
+     "texto": "El vehículo B presenta en su parte posterior un daño tipo hundimiento de magnitud media, de atrás hacia adelante"
+    }
+   },
+   {
+    "vehiculo": "V2",
+    "zona": {
+     "cara": "frontal"
+    },
+    "direcciones": [
+     "de_adelante_hacia_atras"
+    ],
+    "tipos": [
+     "hundimiento"
+    ],
+    "magnitud": {
+     "cualitativa": "leve"
+    },
+    "fuente": "perito",
+    "cita": {
+     "texto": "en su parte frontal un daño leve tipo hundimiento, de adelante hacia atrás"
+    }
+   },
+   {
+    "vehiculo": "V3",
+    "zona": {
+     "cara": "posterior"
+    },
+    "direcciones": [
+     "de_atras_hacia_adelante"
+    ],
+    "tipos": [
+     "hundimiento"
+    ],
+    "magnitud": {
+     "cualitativa": "leve"
+    },
+    "fuente": "perito",
+    "cita": {
+     "texto": "El vehículo C presenta en su parte posterior un daño leve tipo hundimiento, de atrás hacia adelante"
+    }
+   }
+  ],
+  "impactos": [
+   {
+    "orden": 1,
+    "vehiculos": [
+     "V1",
+     "V2"
+    ],
+    "fuente": "perito",
+    "cita": {
+     "texto": "Primer impacto: la parte frontal del vehículo A contra la parte posterior del vehículo B"
+    },
+    "zonas": [
+     {
+      "vehiculo": "V1",
+      "zona": {
+       "cara": "frontal",
+       "tercio": "derecho"
+      }
+     }
+    ]
+   },
+   {
+    "orden": 2,
+    "vehiculos": [
+     "V2",
+     "V3"
+    ],
+    "fuente": "perito",
+    "cita": {
+     "texto": "Segundo impacto: por el empuje, la parte frontal del vehículo B contra la parte posterior del vehículo C"
+    },
+    "zonas": [
+     {
+      "vehiculo": "V3",
+      "zona": {
+       "cara": "posterior"
+      }
+     }
+    ]
+   }
+  ],
+  "versiones": [
+   {
+    "tipo": "evidencia",
+    "posiciones": [
+     {
+      "vehiculo": "V1",
+      "fase": "impacto",
+      "punto": {
+       "lat": 19.440684060048113,
+       "lon": -99.07749307676086
+      },
+      "rumbo": 90,
+      "fuente": "perito"
+     },
+     {
+      "vehiculo": "V1",
+      "fase": "final",
+      "punto": {
+       "lat": 19.44068406004905,
+       "lon": -99.07747648504696
+      },
+      "rumbo": 90,
+      "fuente": "perito"
+     },
+     {
+      "vehiculo": "V2",
+      "fase": "impacto",
+      "punto": {
+       "lat": 19.440684060048113,
+       "lon": -99.077450828129
+      },
+      "rumbo": 90,
+      "fuente": "perito"
+     },
+     {
+      "vehiculo": "V2",
+      "fase": "final",
+      "punto": {
+       "lat": 19.44068406004918,
+       "lon": -99.07742007911025
+      },
+      "rumbo": 90,
+      "fuente": "perito"
+     },
+     {
+      "vehiculo": "V3",
+      "fase": "impacto",
+      "punto": {
+       "lat": 19.440684060048696,
+       "lon": -99.07739707260316
+      },
+      "rumbo": 90,
+      "fuente": "perito"
+     },
+     {
+      "vehiculo": "V3",
+      "fase": "final",
+      "punto": {
+       "lat": 19.440684060049207,
+       "lon": -99.07737805115742
+      },
+      "rumbo": 90,
+      "fuente": "perito"
+     }
+    ]
+   }
+  ]
+ }
+}

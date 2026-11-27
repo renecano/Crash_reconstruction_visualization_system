@@ -199,6 +199,32 @@
       "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
       "campo": "filas.5.velocidades.1"
     },
+    "ejemplos.alcance": {
+      "que": "Ejemplo «alcance en carretera»: velocidad de la Ranger (A), la que alcanza, antes del impacto",
+      "mejor": 53,
+      "p10": 49,
+      "p90": 55,
+      "unidad": "km/h",
+      "muestras": 32,
+      "juego_de_muestras": "producción",
+      "texto": "53 km/h (49–55)",
+      "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
+      "campo": "filas.2.velocidades.0",
+      "motivo": "Regla de choque de frente del #320; cambio de 1 km/h en un extremo, del tamaño del ruido; René lo aprobó el 2026-11-25. Antes, Ranger 53 (49–56) y Corolla 0 (0–9)."
+    },
+    "ejemplos.alcance_corolla": {
+      "que": "Ejemplo «alcance en carretera»: velocidad del Corolla (B), el alcanzado, antes del impacto",
+      "mejor": 0,
+      "p10": 0,
+      "p90": 8,
+      "unidad": "km/h",
+      "muestras": 32,
+      "juego_de_muestras": "producción",
+      "texto": "0 km/h (0–8)",
+      "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
+      "campo": "filas.2.velocidades.1",
+      "motivo": "Regla de choque de frente del #320; cambio de 1 km/h en un extremo, del tamaño del ruido; René lo aprobó el 2026-11-25. Antes, Ranger 53 (49–56) y Corolla 0 (0–9)."
+    },
     "ejemplos.reversa": {
       "que": "Ejemplo «reversa en pendiente»: velocidad del Versa (B) antes del impacto, con el frente del CR-V al lado contrario de su marcha",
       "mejor": 20,
@@ -228,14 +254,15 @@
     "ejemplos.crucero": {
       "que": "Ejemplo «crucero de noche»: velocidad del Jetta (A) antes del impacto, como lo ve el perito en la app (la escena que propone La escena sobre las calles reales, aceptada, y los dos junto al choque)",
       "mejor": 20,
-      "p10": 4,
-      "p90": 27,
+      "p10": 3,
+      "p90": 26,
       "unidad": "km/h",
       "muestras": 32,
       "juego_de_muestras": "producción",
-      "texto": "20 km/h (4–27)",
+      "texto": "20 km/h (3–26)",
       "fuente": "eval/results/ronda4_cifras/crucero_en_la_app.json",
-      "campo": "velocidad"
+      "campo": "velocidad",
+      "motivo": "Medido con el crucero en su lugar real (#316, Calle Azucena esquina con Avenida del Árbol); René lo aprobó el 2026-11-25. Antes, 20 (4–27)."
     },
     "reversa.velocidad": {
       "que": "Velocidad supuesta de un vehículo en reversa: mediana y p10–p90 de la velocidad máxima de maniobras reales",

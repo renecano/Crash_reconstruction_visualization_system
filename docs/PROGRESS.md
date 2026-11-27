@@ -2465,6 +2465,7 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 
 ### Endurecimiento pendiente
 
+- **aud-18 (frontal en pendiente en Matlatzincas), resuelto en el #320:** con la regla de choque de frente (el contacto ya no se toma en el arranque de un vehículo en marcha) vuelve a dar cifra: Kia 44 (41–49) e Hilux 57 (52–59); junto a la cifra, la nota de que la narración dice «más de 60 km/h». Queda el aviso de calle de llegada («Matlazincas» en el mapa).
 - **La llegada de cada vehículo por su propia calle** (revisión de la cadena, 2026-11-25; René lo puso en el paquete que sigue al #311).
   - Para completar 3 s antes del choque, el solver prolonga en línea recta la llegada de cada vehículo hacia atrás desde su posición inicial (`aproximacion_previa_s`). Solo sigue un eje de calle, el de `lugar.eje_via`.
   - En 6 casos de la revisión (2 de los 205 reportes y 4 de las 42 narraciones), esa recta pasa por un edificio del mapa. No es evidencia ni mueve la cifra, y la hoja lo dice en sus límites (`limite.llegada_recta`).

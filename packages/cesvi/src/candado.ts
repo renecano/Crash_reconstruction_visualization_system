@@ -15,7 +15,8 @@
  */
 import { reconstruct, reconstructionToDict } from "@croquis/solver-ts";
 import type { Expediente } from "./corpus";
-import { metros, numero } from "./formato";
+import { kmhConUnidad, metros, numero, rangoKmh } from "./formato";
+import { HOLGURA_FUERA_KMH, mejorFueraDelRango } from "./mejor-fuera";
 import { traslape } from "./encimadas";
 
 type Id = Expediente["vehiculos"][number]["id"];
@@ -120,6 +121,24 @@ export function candadoFisico(o: {
   const listo = (): Candado => ({
     noCuadra: motivos.length ? { motivos, revisar: [...revisar], cifras: cifrasDe(fijadas) } : null,
   });
+
+  // 0. El mejor ajuste fuera de su propio rango (René, 2026-11-25, aud-30: «33 con rango 13–30»): la
+  // solución depende tanto de la evidencia y los supuestos que no hay una cifra que presentar.
+  // Solo si sale por más del 10 % del ancho del rango: el p10 y el p90 de 128 simulaciones tienen su
+  // propia incertidumbre, de ese orden; por menos, queda el límite con las dos cifras (`mejor-fuera`).
+  for (const v of fijadas) {
+    const lado = mejorFueraDelRango(v.previa);
+    const { mejor, p10, p90 } = v.previa!;
+    if (!lado || p10 === undefined || p90 === undefined) continue;
+    const fuera = lado === "arriba" ? mejor - p90 : p10 - mejor;
+    if (fuera <= Math.max(HOLGURA_FUERA_KMH, 0.1 * (p90 - p10))) continue;
+    motivos.push(
+      `${nombre(v.vehiculo)}: el mejor ajuste (${kmhConUnidad(v.previa!.mejor, "reconstruccion")}) queda ${lado === "arriba" ? "por arriba" : "por debajo"} de su propio rango (${rangoKmh(v.previa!.p10, v.previa!.p90, "reconstruccion")}): la solución depende tanto de la evidencia y los supuestos que Croquis no presenta una cifra.`,
+    );
+    revisar.add(
+      "la evidencia y los supuestos del caso (posiciones finales, huellas, masas y rumbos)",
+    );
+  }
 
   // 3. La frenada que exigen las huellas de antes del choque.
   const huellas = ((o.especAnimada.evidencias ?? []) as Json[]).filter(

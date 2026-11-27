@@ -337,7 +337,10 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   // suyo.
   const rumboDe = (v: string, fase: string) =>
     posiciones.find((p) => p.vehiculo === v && p.fase === fase)!.rumbo;
-  expect(rumboDe("V1", "final")).toBe((rumboDe("V1", "impacto") + 15) % 360);
+  // El final se alinea con la calle donde se tocó (René, 2026-11-25: el ejemplo trae sus calles
+  // guardadas) y luego se gira 15°: la calle en ese punto puede ir un poco distinta que en el choque.
+  const giro = rumboDe("V1", "final") - rumboDe("V1", "impacto") - 15;
+  expect(Math.abs((((giro % 360) + 540) % 360) - 180)).toBeLessThan(1);
   expect(rumboDe("V2", "final")).toBe(rumboDe("V2", "impacto"));
   expect(d.expediente.resultado.validado_por).toBe("Perito de prueba");
   expect(d.conclusion_perito).toBe("Conclusión de prueba del perito.");

@@ -110,6 +110,10 @@ SEARCH_LENGTH_M = 400.0  # tramo de trayectoria donde se busca el contacto
 CONTACT_GAP_FLAG_M = 0.5
 SEEK_CONTACT_FRACTION = 0.75
 PATH_TIE_M = 0.05  # empate de holgura: se prefiere seguir el carril
+# Un contacto con un vehículo en movimiento todavía en su posición inicial (a menos de esto de su
+# arranque) es peor que cualquiera en el que ya avanzó: en un choque de frente casi en la misma
+# línea, las líneas de las zonas se cruzan lejos y ese cruce no es el choque (aud-18, 2026-11-25).
+CONTACT_AT_START_M = 0.05
 PEDESTRIAN_LAUNCH_ANGLE_DEG = 10.0
 PEDESTRIAN_CG_HEIGHT_FACTOR = 0.57  # altura del CG como fracción de la estatura
 PEDESTRIAN_PROJECTION_FACTOR = 0.9
@@ -1162,7 +1166,7 @@ def reconstruct(
             seek = _target_path(targets[0], declared, offsets[targets[0].id])
             if seek is not None:
                 options[0] = [*options[0], seek]
-        best: tuple[float, int, tuple[KinPath, ...], ContactSolution] | None = None
+        best: tuple[float, int, tuple[KinPath, ...], ContactSolution, int] | None = None
         for combo in itertools.product(*options):
             loci = [locus_for(m, path) for m, path in zip(targets, combo, strict=True)]
             if tipo_evento != "impacto_vehiculo_vehiculo":
@@ -1170,14 +1174,43 @@ def reconstruct(
                 loci.append(Locus(lambda _s, p=fixed: (p[0], p[1], 0.0), (0.0, 0.0), 0.0))
             sol = resolve_contact(loci, declared, zones)
             rank = sum(opts.index(path) for opts, path in zip(options, combo, strict=True))
+            inicio = int(
+                any(
+                    m.v0 > 0 and s_c <= CONTACT_AT_START_M
+                    for m, s_c in zip(targets, sol.params, strict=False)
+                )
+            )
             if (
                 best is None
-                or sol.gap < best[0] - PATH_TIE_M
-                or (abs(sol.gap - best[0]) <= PATH_TIE_M and rank < best[1])
+                or inicio < best[4]
+                or (
+                    inicio == best[4]
+                    and (
+                        sol.gap < best[0] - PATH_TIE_M
+                        or (abs(sol.gap - best[0]) <= PATH_TIE_M and rank < best[1])
+                    )
+                )
             ):
-                best = (sol.gap, rank, combo, sol)
+                best = (sol.gap, rank, combo, sol, inicio)
         assert best is not None
-        _, _, combo, sol = best
+        _, _, combo, sol, inicio = best
+        # Si ningún camino evita que un vehículo en movimiento choque en su posición inicial (de
+        # frente en la misma línea, con la zona de uno en su costado), el contacto es el declarado:
+        # cada uno en el punto de su camino más cercano al punto de impacto (René, 2026-11-25).
+        if inicio and tipo_evento == "impacto_vehiculo_vehiculo" and len(targets) == 2:
+            loci_d = [locus_for(m, path) for m, path in zip(targets, combo, strict=True)]
+            proy = [loc.project(declared) for loc in loci_d]
+            if all(
+                m.v0 <= 0 or s_p > CONTACT_AT_START_M
+                for m, (s_p, _) in zip(targets, proy, strict=True)
+            ):
+                pa, pb = proy[0][1], proy[1][1]
+                sol = ContactSolution(
+                    ((pa[0] + pb[0]) / 2.0, (pa[1] + pb[1]) / 2.0),
+                    (proy[0][0], proy[1][0]),
+                    dmath.hypot(pa[0] - pb[0], pa[1] - pb[1]),
+                    sol.zone_gap,
+                )
         for m, path in zip(targets, combo, strict=True):
             paths[m.id] = path
         desvio = seek.inner if isinstance(seek, ReversePath) else seek

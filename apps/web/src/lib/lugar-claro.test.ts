@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { callesDelCaso, esLaCalleNarrada, lugarClaro, palabrasDeCalle } from "./lugar-claro";
+import {
+  callesDelCaso,
+  esLaCalleNarrada,
+  esLaCalleNarradaAprox,
+  lugarClaro,
+  palabrasDeMas,
+  palabrasDeCalle,
+} from "./lugar-claro";
 
 /** Los reportes de CESVI que caían en otro lugar (revisión de la cadena, René 2026-11-25). */
 describe("¿el lugar encontrado es el de la narración?", () => {
@@ -90,5 +97,33 @@ describe("¿el lugar encontrado es el de la narración?", () => {
     expect(
       callesDelCaso("Una calzada de 7.3 metros de ancho, por la Calle Hidalgo.", null),
     ).toEqual(["Calle Hidalgo"]);
+  });
+});
+
+describe("la calle de llegada con la ortografía del mapa", () => {
+  it("una palabra larga puede diferir en una letra («Matlatzincas» y «Matlazincas»)", () => {
+    expect(esLaCalleNarradaAprox("Paseo de los Matlatzincas", "Calle Paseo Matlazincas")).toBe(
+      true,
+    );
+    expect(esLaCalleNarrada("Paseo de los Matlatzincas", "Calle Paseo Matlazincas")).toBe(false);
+  });
+  it("las palabras cortas no se aproximan, y una calle distinta no coincide", () => {
+    expect(esLaCalleNarradaAprox("Calle Olivos", "Calle Olmos")).toBe(false);
+    expect(esLaCalleNarradaAprox("Avenida Tecnológico", "Avenida Solidaridad Las Torres")).toBe(
+      false,
+    );
+  });
+});
+
+describe("entre varias calles que coinciden, la de nombre más parecido", () => {
+  it("«Paseo de la Reforma» no es «Paseo Bosque de la Reforma»", () => {
+    expect(palabrasDeMas("Paseo de la Reforma", "Avenida Paseo de la Reforma")).toBe(0);
+    expect(palabrasDeMas("Paseo de la Reforma", "Avenida Paseo Bosque de la Reforma")).toBe(1);
+  });
+  it("una privada no es la avenida narrada", () => {
+    expect(palabrasDeMas("Avenida Pino Suárez", "Privada Pino Suárez")).toBeGreaterThan(
+      palabrasDeMas("Avenida Pino Suárez", "Calle José María Pino Suárez"),
+    );
+    expect(palabrasDeMas("Privada Pino Suárez", "Privada Pino Suárez")).toBe(0);
   });
 });

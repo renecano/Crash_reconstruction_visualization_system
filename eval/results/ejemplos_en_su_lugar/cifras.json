@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-11-25T18:29:42.088Z",
+  "fecha": "2026-11-26T01:18:01.898Z",
   "muestras": {
     "samples": 32,
     "mcSamples": 128
@@ -118,13 +118,13 @@
           "vehiculo": "V1",
           "mejor": 53,
           "p10": 49,
-          "p90": 56
+          "p90": 55
         },
         {
           "vehiculo": "V2",
           "mejor": 0,
           "p10": 0,
-          "p90": 9
+          "p90": 8
         }
       ],
       "relieve": false,

@@ -1,0 +1,287 @@
+{
+ "descripcion": "Calles narradas que coinciden con dos o más calles del mapa de nombres distintos; ahora gana la de menos palabras de más (René, 2026-11-25).",
+ "casos": [
+  {
+   "fuente": "prueba",
+   "id": "cesvi-3fa0cd2ba1",
+   "narrada": "Viaducto Rojo Gómez",
+   "coinciden": [
+    {
+     "nombre": "Calle Viaducto Licenciado Javier Rojo Gómez",
+     "de_mas": 2
+    },
+    {
+     "nombre": "Viaducto Javier Rojo Gómez",
+     "de_mas": 1
+    }
+   ]
+  },
+  {
+   "fuente": "prueba",
+   "id": "cesvi-466c13a262",
+   "narrada": "calle Quina",
+   "coinciden": [
+    {
+     "nombre": "Privada Quina",
+     "de_mas": 3
+    },
+    {
+     "nombre": "Calle Quina",
+     "de_mas": 0
+    }
+   ]
+  },
+  {
+   "fuente": "prueba",
+   "id": "cesvi-5dd2c6df58",
+   "narrada": "Avenida Carlos Hank González",
+   "coinciden": [
+    {
+     "nombre": "Calle Gobernador Profesor Carlos Hank González",
+     "de_mas": 2
+    },
+    {
+     "nombre": "Carlos Hank González",
+     "de_mas": 0
+    }
+   ]
+  },
+  {
+   "fuente": "prueba",
+   "id": "cesvi-a514a9a881",
+   "narrada": "calle Piru",
+   "coinciden": [
+    {
+     "nombre": "Calle Pirú",
+     "de_mas": 0
+    },
+    {
+     "nombre": "1a Cerrada Pirú",
+     "de_mas": 1
+    },
+    {
+     "nombre": "2a Cerrada Pirú",
+     "de_mas": 1
+    }
+   ]
+  },
+  {
+   "fuente": "prueba",
+   "id": "cesvi-ab666b294f",
+   "narrada": "calle Apolo XI",
+   "coinciden": [
+    {
+     "nombre": "Calle Apolo XI",
+     "de_mas": 0
+    },
+    {
+     "nombre": "Privada Apolo Xi",
+     "de_mas": 3
+    }
+   ]
+  },
+  {
+   "fuente": "prueba",
+   "id": "cesvi-c0bc4df135",
+   "narrada": "calle Oriente 157",
+   "coinciden": [
+    {
+     "nombre": "Cerrada Oriente 157",
+     "de_mas": 3
+    },
+    {
+     "nombre": "Calle Oriente 157",
+     "de_mas": 0
+    }
+   ]
+  },
+  {
+   "fuente": "prueba",
+   "id": "cesvi-cb04fdb41b",
+   "narrada": "Av. Revolución",
+   "coinciden": [
+    {
+     "nombre": "Cerrada Revolución",
+     "de_mas": 3
+    },
+    {
+     "nombre": "Avenida Revolución",
+     "de_mas": 0
+    }
+   ]
+  },
+  {
+   "fuente": "prueba",
+   "id": "cesvi-cb04fdb41b",
+   "narrada": "calle Bayoneta",
+   "coinciden": [
+    {
+     "nombre": "Cerrada La Bayoneta",
+     "de_mas": 3
+    },
+    {
+     "nombre": "Calle La Bayoneta",
+     "de_mas": 0
+    }
+   ]
+  },
+  {
+   "fuente": "prueba",
+   "id": "cesvi-ebb5c029a8",
+   "narrada": "Avenida Hidalgo",
+   "coinciden": [
+    {
+     "nombre": "Avenida Miguel Hidalgo y Costilla",
+     "de_mas": 2
+    },
+    {
+     "nombre": "Avenida Hidalgo",
+     "de_mas": 0
+    }
+   ]
+  },
+  {
+   "fuente": "nuevas",
+   "id": "aud-03-atropello-pinosuarez-lastorres",
+   "narrada": "Avenida Pino Suárez",
+   "coinciden": [
+    {
+     "nombre": "Privada Pino Suárez",
+     "de_mas": 3
+    },
+    {
+     "nombre": "Calle José María Pino Suárez",
+     "de_mas": 2
+    },
+    {
+     "nombre": "Privada De Pino Suárez",
+     "de_mas": 3
+    }
+   ]
+  },
+  {
+   "fuente": "nuevas",
+   "id": "aud-22-lateral-insurgentes-mixcoac",
+   "narrada": "Avenida Río Mixcoac",
+   "coinciden": [
+    {
+     "nombre": "Avenida Río Mixcoac",
+     "de_mas": 0
+    },
+    {
+     "nombre": "Circuito Interior Río Mixcoac",
+     "de_mas": 1
+    }
+   ]
+  },
+  {
+   "fuente": "nuevas",
+   "id": "aud-27-frontal-quevedo",
+   "narrada": "Avenida Miguel Ángel de Quevedo",
+   "coinciden": [
+    {
+     "nombre": "Cerrada Miguel Ángel de Quevedo",
+     "de_mas": 3
+    },
+    {
+     "nombre": "Avenida Miguel Ángel de Quevedo",
+     "de_mas": 0
+    }
+   ]
+  },
+  {
+   "fuente": "nuevas",
+   "id": "aud-31-alcance-puente-churubusco",
+   "narrada": "Avenida Río Churubusco",
+   "coinciden": [
+    {
+     "nombre": "Avenida Río Churubusco",
+     "de_mas": 0
+    },
+    {
+     "nombre": "Circuito Interior Río Churubusco",
+     "de_mas": 1
+    }
+   ]
+  },
+  {
+   "fuente": "nuevas",
+   "id": "aud-33-alcance-bajada-reforma-lomas",
+   "narrada": "Paseo de la Reforma",
+   "coinciden": [
+    {
+     "nombre": "Avenida Paseo Bosque de la Reforma",
+     "de_mas": 1
+    },
+    {
+     "nombre": "Avenida Paseo de la Reforma",
+     "de_mas": 0
+    },
+    {
+     "nombre": "Calle Parque Vía Reforma",
+     "de_mas": 2
+    }
+   ]
+  },
+  {
+   "fuente": "nuevas",
+   "id": "aud-37-estacionados-rio-mixcoac",
+   "narrada": "Avenida Río Mixcoac",
+   "coinciden": [
+    {
+     "nombre": "Avenida Río Mixcoac",
+     "de_mas": 0
+    },
+    {
+     "nombre": "Circuito Interior Río Mixcoac",
+     "de_mas": 1
+    }
+   ]
+  },
+  {
+   "fuente": "nuevas",
+   "id": "aud-38-alcance-barrera-circuito-reforma",
+   "narrada": "Avenida Melchor Ocampo",
+   "coinciden": [
+    {
+     "nombre": "Calzada Melchor Ocampo",
+     "de_mas": 0
+    },
+    {
+     "nombre": "Circuito Interior Melchor Ocampo",
+     "de_mas": 1
+    }
+   ]
+  },
+  {
+   "fuente": "nuevas",
+   "id": "aud-41-atropello-vuelta-derecha-insurgentes-mixcoac",
+   "narrada": "Avenida Río Mixcoac",
+   "coinciden": [
+    {
+     "nombre": "Avenida Río Mixcoac",
+     "de_mas": 0
+    },
+    {
+     "nombre": "Circuito Interior Río Mixcoac",
+     "de_mas": 1
+    }
+   ]
+  },
+  {
+   "fuente": "nuevas",
+   "id": "aud-41-atropello-vuelta-derecha-insurgentes-mixcoac",
+   "narrada": "Avenida Río Mixcoac. Por",
+   "coinciden": [
+    {
+     "nombre": "Avenida Río Mixcoac",
+     "de_mas": 0
+    },
+    {
+     "nombre": "Circuito Interior Río Mixcoac",
+     "de_mas": 1
+    }
+   ]
+  }
+ ]
+}
