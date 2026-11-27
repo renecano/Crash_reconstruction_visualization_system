@@ -1,7 +1,7 @@
 # Paso: humo
 # Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues humo
 # Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
-# Inicio: 2026-11-26 19:19:05
+# Inicio: 2026-11-26 19:27:30
 
 
 == 1. Herramientas
@@ -12,7 +12,7 @@ Hay internet.
 Scope: all 10 workspace projects
 ✓ Lockfile passes supply-chain policies (verified 7h ago)
 Lockfile is up to date, resolution step is skipped
-Done in 76ms using pnpm v12.11.2
+Done in 66ms using pnpm v12.11.2
 
 == 3. El visor de Unity, desde esta computadora
 Visor dd83b2d323f5ed0e servido desde el sitio: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\public\visor-unity\local
@@ -34,6 +34,6 @@ Running 5 tests using 1 worker
 [3/5] [chromium] › e2e\humo-3d.spec.ts:209:7 › humo: Reforma, CDMX (batería de ciudad) de La escena nueva al 3D de Unity
 [4/5] [chromium] › e2e\humo-3d.spec.ts:209:7 › humo: Centro de Guadalajara (batería de ciudad) de La escena nueva al 3D de Unity
 [5/5] [chromium] › e2e\humo-3d.spec.ts:218:5 › humo: un ejemplo («Crucero de noche») de La escena al 3D de Unity
-  5 passed (47.0s)
+  5 passed (41.4s)
 
-# Fin: 2026-11-26 19:19:56 · ok · 0.9 min
+# Fin: 2026-11-26 19:28:16 · ok · 0.8 min
