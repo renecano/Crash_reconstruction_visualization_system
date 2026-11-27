@@ -1,7 +1,7 @@
 # Paso: preparar
 # Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar
 # Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
-# Inicio: 2026-11-27 15:04:52
+# Inicio: 2026-11-27 15:05:47
 
 
 == 1. Herramientas
@@ -12,7 +12,7 @@ Hay internet.
 Scope: all 10 workspace projects
 ✓ Lockfile passes supply-chain policies (verified 1d ago)
 Lockfile is up to date, resolution step is skipped
-Done in 83ms using pnpm v12.11.2
+Done in 71ms using pnpm v12.11.2
 
 == 3. El visor de Unity, desde esta computadora
 Visor 8a302a256a257a16 servido desde el sitio: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\public\visor-unity\local
@@ -26,14 +26,93 @@ Worker de pdf.js 6.4.299 en public/pdfjs/.
 Script de Blender en public/blender/.
 Decodificadores de three 0.186.1 en public/decodificadores/r186/.
 ▲ Next.js 16.4.6 (Turbopack)
-✓ Running next.config.ts took 1242ms
+✓ Running next.config.ts took 345ms
 - Experiments (use with caution):
   ✓ inlineCss
 
   Creating an optimized production build ...
-¿Desea terminar el trabajo por lotes (S/N)? 
-^CError: ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL
+✓ Compiled successfully in 4.1s
+  Running TypeScript ...
+  Finished TypeScript in 12.6s ...
+  Collecting page data using 31 workers ...
+✓ Running next.config.ts took 358ms
+  Generating static pages using 31 workers (0/64) ...
+  Generating static pages using 31 workers (16/64) 
+  Generating static pages using 31 workers (32/64) 
+✓ Running next.config.ts took 418ms
+○ (serwist) Using esbuild to bundle the service worker.
+✓ (serwist) 229 precache entries (25460.54 KiB)
+  Generating static pages using 31 workers (48/64) 
+✓ Generating static pages using 31 workers (64/64) in 4.7s
+  Finalizing page optimization ...
 
-  × "pnpm recursive run" failed in C:\Users\MrKan\Documents\Proyecto
-  │ Cesvi\Croquis\apps\web
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/cesvi/consideraciones
+├ ƒ /api/cesvi/declaracion
+├ ƒ /api/cesvi/escena
+├ ƒ /api/cesvi/hecho
+├ ƒ /api/cesvi/importar
+├ ƒ /api/lugar
+├ ƒ /api/osm
+├ ƒ /api/relato/extraer
+├ ƒ /api/relato/responder
+├ ƒ /api/relieve
+├ ƒ /api/ruta
+├ ○ /api/version
+├ ○ /cesvi
+├   /cesvi/casos/a2010930/[[...acto]]
+│ ├ ● /cesvi/casos/a2010930
+│ ├ ● /cesvi/casos/a2010930/hecho
+│ ├ ● /cesvi/casos/a2010930/escena
+│ └ ● [+5 more paths]
+├ ƒ /cesvi/casos/guardado/[id]/[[...acto]]
+├   /cesvi/casos/importar/[[...acto]]
+│ ├ ● /cesvi/casos/importar
+│ ├ ● /cesvi/casos/importar/hecho
+│ ├ ● /cesvi/casos/importar/escena
+│ └ ● [+5 more paths]
+├   /cesvi/casos/nuevo/[[...acto]]
+│ ├ ● /cesvi/casos/nuevo
+│ ├ ● /cesvi/casos/nuevo/hecho
+│ ├ ● /cesvi/casos/nuevo/escena
+│ └ ● [+5 more paths]
+├ ● /cesvi/casos/reporte/[id]/[[...acto]]
+├ ○ /cesvi/reproduccion
+├ ○ /croquis
+├ ○ /cuenta
+├ ○ /demo
+├ ○ /e9
+├ ○ /en
+├ ○ /en/croquis
+├ ○ /en/cuenta
+├ ○ /en/demo
+├ ○ /en/e9
+├ ○ /en/historia
+├ ○ /en/medicion
+├ ○ /en/publico
+├ ○ /en/recorrido
+├ ○ /en/relato
+├ ○ /en/visor
+├ ○ /historia
+├ ○ /medicion
+├ ○ /publico
+├ ○ /recorrido
+├ ○ /relato
+├   /serwist/[path]
+│ ├ ● /serwist/sw.js.map
+│ └ ● /serwist/sw.js
+└ ○ /visor
 
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+
+podar-estaticos: quité 6 archivos, 5.3 MB (maplibre-gl-dev.2iv-rrah6q3mv.mjs, maplibre-gl-shared-dev.2igpas129bw9s.mjs, maplibre-gl-shared.2igpas129bw9s.mjs, maplibre-gl-worker-dev.15915fg_tzqwt.mjs, maplibre-gl-worker.34up6k_3aq797.mjs, maplibre-gl.2f0qrvie8zuf-.mjs).
+CSS del sistema de diseño presente (254 KB).
+
+Listo: la demo local está preparada.
+
+# Fin: 2026-11-27 15:06:14 · ok · 0.5 min

@@ -8,7 +8,7 @@
     "commit":  "faf4cb06cc32ee83aa645aca6870334ff3a42947",
     "rama_del_repositorio":  "HEAD",
     "archivos_con_cambios":  0,
-    "duracion_min":  0.1,
+    "duracion_min":  0.6,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "Intel(R) UHD Graphics",
@@ -61,6 +61,15 @@
                       "codigo":  0,
                       "disco_libre_gb_antes":  808.7,
                       "disco_libre_gb_despues":  808.7
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "preparar",
+                      "estado":  "ok",
+                      "minutos":  0.5,
+                      "codigo":  0,
+                      "disco_libre_gb_antes":  808.7,
+                      "disco_libre_gb_despues":  808.5
                   }
               ]
 }
