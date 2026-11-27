@@ -1,7 +1,7 @@
 # Paso: tres-narraciones
 # Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tres -Salida eval/results/t9/tres_narraciones.json
 # Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
-# Inicio: 2026-11-26 19:22:08
+# Inicio: 2026-11-26 19:30:28
 
 
 == 1. Herramientas
@@ -12,7 +12,7 @@ Hay internet.
 Scope: all 10 workspace projects
 ✓ Lockfile passes supply-chain policies (verified 7h ago)
 Lockfile is up to date, resolution step is skipped
-Done in 92ms using pnpm v12.11.2
+Done in 76ms using pnpm v12.11.2
 
 == 3. El visor de Unity, desde esta computadora
 Visor dd83b2d323f5ed0e servido desde el sitio: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\public\visor-unity\local
@@ -34,4 +34,4 @@ Running 3 tests using 1 worker
 [3/3] [chromium] › e2e\narraciones-fisica.spec.ts:289:7 › las tres narraciones de René: rene-carambola-semaforo
   3 passed (1.1m)
 
-# Fin: 2026-11-26 19:23:19 · ok · 1.2 min
+# Fin: 2026-11-26 19:31:37 · ok · 1.1 min
