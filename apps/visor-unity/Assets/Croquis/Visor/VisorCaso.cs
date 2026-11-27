@@ -258,6 +258,13 @@ namespace Croquis.Visor
                 Vigente(mio);
                 // El daño del solver sobre la carrocería: se prepara aquí y se ve desde su impacto.
                 Omisiones.Intentar("el daño de " + v.Id, () => vista.Dano = DanoVista.Preparar(go.transform, v, r));
+                // Un roce bajo el umbral de CRASH3 no hunde la lámina: rayones y la pintura del otro.
+                Omisiones.Intentar("el roce de " + v.Id, () =>
+                {
+                    var contra = RozaduraDelCaso.De(v, r)?.Contra;
+                    var otro = contra != null && e?.Vehiculos != null ? Array.Find(e.Vehiculos, x => x.Id == contra) : null;
+                    vista.Roce = RozaduraVista.Preparar(go.transform, v, r, color, otro?.Color != null ? Materiales.Hex(otro.Color, Color.gray) : (Color?)null);
+                });
                 vista.Frenado = extra?.Frenado;
                 Omisiones.Intentar("las luces de " + v.Id, () => vista.Luces(noche, extra == null || extra.Faros, (float)v.Dimensiones.LargoM));
                 foreach (var tr in go.GetComponentsInChildren<Transform>(true))
@@ -889,6 +896,9 @@ namespace Croquis.Visor
         /// <summary>La carrocería deformada con el daño del Resultado; nulo si no trae daño que dibujar.</summary>
         public DanoVista Dano { get; set; }
 
+        /// <summary>Los rayones y la pintura ajena de un roce sin deformación; nulo si no hubo roce.</summary>
+        public RozaduraVista Roce { get; set; }
+
         /// <summary>
         /// Si se tiende después del impacto (dos ruedas que el solver arrastra caídas) y hacia qué lado:
         /// ±1; 0, no. La caída es ilustrativa: el solver no la calcula (ADR 0114).
@@ -980,6 +990,7 @@ namespace Croquis.Visor
         public void Colocar(double t)
         {
             Dano?.Mostrar(t);
+            Roce?.Mostrar(t);
             var p = Ejes.AUnity(Muestreo.Pose(Trayectoria, t));
             var posicion = new Vector3((float)p.Px, (float)p.Py, (float)p.Pz);
             var giro = Quaternion.Euler((float)p.EulerX, (float)p.EulerY, (float)p.EulerZ);
