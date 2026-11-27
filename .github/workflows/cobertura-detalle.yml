@@ -1,0 +1,51 @@
+name: Cobertura caso por caso (a mano)
+
+# René, 2026-11-27: la cobertura de la t11 dio 404 de 579 contra 410 de 578 publicada. Corre
+# eval/t3_cobertura.mts (200 casos por escena, la misma semilla) con la versión publicada
+# (44e7bf67), con main antes de #369 (85843204) y con #369 (98db06e7), y guarda cada caso.
+# Solo corre en esta rama.
+on:
+  push:
+    branches: ["regenerar/cobertura-detalle"]
+
+permissions:
+  contents: read
+
+jobs:
+  cobertura:
+    name: cobertura ${{ matrix.version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ["44e7bf67", "85843204", "98db06e7"]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: herramientas
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ matrix.version }}
+          path: codigo
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: codigo/package.json
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: codigo/.node-version
+      - run: pnpm install --frozen-lockfile
+        working-directory: codigo
+      - run: node ../herramientas/tools/eval/cobertura-detalle.mjs eval/t3_cobertura.mts
+        working-directory: codigo
+      - run: pnpm exec tsx ../../eval/t3_cobertura.mts --casos 200 --salida eval/results/t3_cobertura_${{ matrix.version }}.json
+        working-directory: codigo/packages/cesvi
+        env:
+          CROQUIS_DETALLE: ${{ github.workspace }}/detalle-${{ matrix.version }}.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: cobertura-${{ matrix.version }}
+          path: |
+            detalle-${{ matrix.version }}.json
+            codigo/eval/results/t3_cobertura_${{ matrix.version }}.json
