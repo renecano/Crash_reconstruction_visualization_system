@@ -1,7 +1,7 @@
 # Paso: comparar
 # Comando: node eval/tanda_comparar.mjs --tanda t11-solver
 # Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
-# Inicio: 2026-11-27 15:50:59
+# Inicio: 2026-11-27 16:42:35
 
 ✗ crucero-noche: navegador 20 (1–27) · índice 20 km/h (5–26) (distinta) · tabla 20 (1–27) (igual)
 ✗ alcance-deformacion: navegador 54 (44–54) · índice 54 km/h (49–55) (distinta) · tabla 53 (44–53) (precisión de los toques)
@@ -23,4 +23,4 @@
   GPU en ensayo: Intel(R) UHD Graphics
 Algo no coincide: va a René.
 
-# Fin: 2026-11-27 15:50:59 · falló (código 1) · 0 min
+# Fin: 2026-11-27 16:42:35 · falló (código 1) · 0 min

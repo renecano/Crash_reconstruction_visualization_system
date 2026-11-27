@@ -1,7 +1,7 @@
 {
   "tanda": "t11-solver",
   "commit": null,
-  "fecha": "2026-11-27T21:50:59.941Z",
+  "fecha": "2026-11-27T22:42:35.691Z",
   "tolerancia_kmh": 1,
   "ejemplos": [
     {
@@ -211,14 +211,14 @@
         {
           "tarjeta": "NVIDIA GeForce RTX 4070 Laptop GPU",
           "luid": "0x00000000_0x00015c40",
-          "uso_3d_medio": 3.9,
-          "uso_3d_maximo": 18.3
+          "uso_3d_medio": 4.3,
+          "uso_3d_maximo": 27.6
         },
         {
           "tarjeta": "Intel(R) UHD Graphics",
           "luid": "0x00000000_0x00015839",
           "uso_3d_medio": 0,
-          "uso_3d_maximo": 0
+          "uso_3d_maximo": 0.2
         }
       ]
     },
@@ -229,8 +229,8 @@
         {
           "tarjeta": "NVIDIA GeForce RTX 4070 Laptop GPU",
           "luid": "0x00000000_0x00015c40",
-          "uso_3d_medio": 8.4,
-          "uso_3d_maximo": 38
+          "uso_3d_medio": 7.3,
+          "uso_3d_maximo": 31
         },
         {
           "tarjeta": "Intel(R) UHD Graphics",
@@ -247,8 +247,8 @@
         {
           "tarjeta": "NVIDIA GeForce RTX 4070 Laptop GPU",
           "luid": "0x00000000_0x00015c40",
-          "uso_3d_medio": 4.6,
-          "uso_3d_maximo": 18.2
+          "uso_3d_medio": 3.3,
+          "uso_3d_maximo": 16.4
         },
         {
           "tarjeta": "Intel(R) UHD Graphics",
@@ -265,8 +265,8 @@
         {
           "tarjeta": "NVIDIA GeForce RTX 4070 Laptop GPU",
           "luid": "0x00000000_0x00015c40",
-          "uso_3d_medio": 9.6,
-          "uso_3d_maximo": 20.7
+          "uso_3d_medio": 7.6,
+          "uso_3d_maximo": 20.4
         },
         {
           "tarjeta": "Intel(R) UHD Graphics",
@@ -283,14 +283,14 @@
         {
           "tarjeta": "Intel(R) UHD Graphics",
           "luid": "0x00000000_0x00015839",
-          "uso_3d_medio": 31.3,
-          "uso_3d_maximo": 96.2
+          "uso_3d_medio": 43.8,
+          "uso_3d_maximo": 94.8
         },
         {
           "tarjeta": "NVIDIA GeForce RTX 4070 Laptop GPU",
           "luid": "0x00000000_0x00015c40",
-          "uso_3d_medio": 14,
-          "uso_3d_maximo": 77.6
+          "uso_3d_medio": 0,
+          "uso_3d_maximo": 0
         }
       ]
     },
@@ -301,14 +301,14 @@
         {
           "tarjeta": "Intel(R) UHD Graphics",
           "luid": "0x00000000_0x00015839",
-          "uso_3d_medio": 9.9,
-          "uso_3d_maximo": 16.1
+          "uso_3d_medio": 10.4,
+          "uso_3d_maximo": 15.8
         },
         {
           "tarjeta": "NVIDIA GeForce RTX 4070 Laptop GPU",
           "luid": "0x00000000_0x00015c40",
-          "uso_3d_medio": 4.5,
-          "uso_3d_maximo": 21.3
+          "uso_3d_medio": 5,
+          "uso_3d_maximo": 23.3
         }
       ]
     }

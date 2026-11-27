@@ -8,7 +8,7 @@
     "commit":  "faf4cb06cc32ee83aa645aca6870334ff3a42947",
     "rama_del_repositorio":  "HEAD",
     "archivos_con_cambios":  5,
-    "duracion_min":  51.1,
+    "duracion_min":  51.2,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "Intel(R) UHD Graphics",
@@ -167,6 +167,15 @@
                       "estado":  "ok",
                       "minutos":  1.7,
                       "codigo":  0,
+                      "disco_libre_gb_antes":  808,
+                      "disco_libre_gb_despues":  808
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "comparar",
+                      "estado":  "falló (código 1)",
+                      "minutos":  0,
+                      "codigo":  1,
                       "disco_libre_gb_antes":  808,
                       "disco_libre_gb_despues":  808
                   }
