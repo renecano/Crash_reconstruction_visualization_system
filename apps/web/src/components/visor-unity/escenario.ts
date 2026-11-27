@@ -37,6 +37,7 @@ import {
   type SignalPhase,
 } from "@croquis/viewer/puro";
 
+import { enMalla, flechasDeVuelta, pasosDeOsm, semaforosDeOsm, unirMallas } from "./calles-osm";
 import {
   dentroDe,
   enElCaso,
@@ -332,7 +333,12 @@ export function escenarioDe(
 
   // La vía, igual que en el visor web: red del mapa si la hay; si no, la plantilla.
   const mainWidth = layout.strips[0]?.width ?? layout.arcs[0]?.width ?? 7;
-  const crosswalks = sceneCrosswalks(lugar, mainWidth);
+  const pasosDeclarados = sceneCrosswalks(lugar, mainWidth);
+  // Los pasos peatonales de OSM (punto 9), además de los que declara la escena.
+  const crosswalks = [
+    ...pasosDeclarados,
+    ...(mapa?.nodos ? pasosDeOsm(mapa.vias, mapa.nodos, pasosDeclarados) : []),
+  ];
   const devTipos = (lugar.dispositivos ?? []).map((d) => d.tipo);
   const limite = (lugar.dispositivos ?? []).find((d) => d.limite_velocidad)?.limite_velocidad;
   const dobleSentido = lugar.sentidos.valor === "doble_sentido";
@@ -364,7 +370,11 @@ export function escenarioDe(
     zoneFor(lugar) === "urbana" &&
     layout.strips.every((s) => s.width <= 8) &&
     !devTipos.some((t) => t === "linea_continua" || t === "linea_discontinua");
-  const blancas = deColonia ? sinRayasDeOrilla(road.whiteLines, corredoresVia) : road.whiteLines;
+  const blancas = unirMallas(
+    deColonia ? sinRayasDeOrilla(road.whiteLines, corredoresVia) : road.whiteLines,
+    // Las flechas de cada carril (`turn:lanes`, punto 9).
+    mapa ? flechasDeVuelta(mapa.vias) : { positions: [], indices: [] },
+  );
   const capas = [
     capa("acotamiento", decor.shoulders, 0.004),
     capa("calzada", road.pavement, 0),
@@ -576,7 +586,22 @@ export function escenarioDe(
         alto_m: cm(s.height),
       })),
     },
-    dispositivos: dispositivosDe(spec, resultado, centro),
+    dispositivos: [
+      ...dispositivosDe(spec, resultado, centro),
+      // Los semáforos de OSM (punto 9), apagados: OSM no dice su fase.
+      ...(mapa?.nodos
+        ? semaforosDeOsm(
+            mapa.vias,
+            mapa.nodos,
+            (lugar.dispositivos ?? []).flatMap((d) =>
+              (d.tipo === "semaforo" || d.tipo === "semaforo_peatonal") && d.posicion
+                ? [d.posicion]
+                : [],
+            ),
+            (p) => enMalla(road.pavement, p),
+          )
+        : []),
+    ],
     ...marcasDe(spec, resultado),
     evidencias: (spec.evidencias ?? [])
       .filter((ev) => EVIDENCIAS_CON_TRAZO.has(ev.tipo) && (ev.puntos?.length ?? 0) > 0)

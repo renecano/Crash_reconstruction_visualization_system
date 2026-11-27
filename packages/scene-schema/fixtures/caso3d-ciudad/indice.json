@@ -82,12 +82,12 @@
       "postes": 11,
       "senales": 16,
       "rodadas": 300,
-      "vertices_via": 9621,
+      "vertices_via": 9912,
       "objetos_del_choque": [
         "poste"
       ],
       "vehiculos": 1,
-      "bytes": 642011
+      "bytes": 652110
     },
     {
       "clave": "toluca-arbol",
@@ -100,12 +100,12 @@
       "postes": 11,
       "senales": 16,
       "rodadas": 300,
-      "vertices_via": 9621,
+      "vertices_via": 9912,
       "objetos_del_choque": [
         "arbol"
       ],
       "vehiculos": 1,
-      "bytes": 643966
+      "bytes": 654065
     },
     {
       "clave": "toluca-pared",
@@ -118,12 +118,12 @@
       "postes": 11,
       "senales": 16,
       "rodadas": 300,
-      "vertices_via": 9621,
+      "vertices_via": 9912,
       "objetos_del_choque": [
         "muro"
       ],
       "vehiculos": 1,
-      "bytes": 652568
+      "bytes": 662667
     },
     {
       "clave": "axa",
@@ -204,7 +204,7 @@
       "postes": 31,
       "senales": 41,
       "rodadas": 388,
-      "vertices_via": 25421,
+      "vertices_via": 28011,
       "objetos_del_choque": [
         "arbol",
         "arbol",
@@ -232,7 +232,7 @@
         "barda"
       ],
       "vehiculos": 1,
-      "bytes": 1203272
+      "bytes": 1325769
     },
     {
       "clave": "periferico",
@@ -245,7 +245,7 @@
       "postes": 28,
       "senales": 46,
       "rodadas": 404,
-      "vertices_via": 22064,
+      "vertices_via": 23701,
       "objetos_del_choque": [
         "arbol",
         "muro",
@@ -256,7 +256,7 @@
         "muro"
       ],
       "vehiculos": 1,
-      "bytes": 1079461
+      "bytes": 1161424
     },
     {
       "clave": "circuito-interior",
@@ -269,7 +269,7 @@
       "postes": 30,
       "senales": 24,
       "rodadas": 804,
-      "vertices_via": 23435,
+      "vertices_via": 25821,
       "objetos_del_choque": [
         "arbol",
         "arbol",
@@ -325,7 +325,7 @@
         "arbol"
       ],
       "vehiculos": 1,
-      "bytes": 1179215
+      "bytes": 1285944
     },
     {
       "clave": "metepec-arbol",
@@ -338,14 +338,14 @@
       "postes": 41,
       "senales": 45,
       "rodadas": 204,
-      "vertices_via": 16597,
+      "vertices_via": 16608,
       "objetos_del_choque": [
         "arbol",
         "poste",
         "poste"
       ],
       "vehiculos": 1,
-      "bytes": 886700
+      "bytes": 887097
     },
     {
       "clave": "reforma-poste",
@@ -353,12 +353,12 @@
       "lugar": "reforma_cdmx",
       "ms_armado": 1940,
       "zona": "urbana",
-      "edificios": 556,
+      "edificios": 537,
       "arboles": 173,
       "postes": 5,
       "senales": 27,
       "rodadas": 862,
-      "vertices_via": 23621,
+      "vertices_via": 28635,
       "objetos_del_choque": [
         "poste",
         "muro",
@@ -374,7 +374,7 @@
         "barda"
       ],
       "vehiculos": 1,
-      "bytes": 1138419
+      "bytes": 1369799
     },
     {
       "clave": "insurgentes-arbol",
@@ -387,7 +387,7 @@
       "postes": 17,
       "senales": 25,
       "rodadas": 664,
-      "vertices_via": 26083,
+      "vertices_via": 28799,
       "objetos_del_choque": [
         "arbol",
         "poste",
@@ -455,7 +455,7 @@
         "poste"
       ],
       "vehiculos": 1,
-      "bytes": 1255919
+      "bytes": 1388677
     },
     {
       "clave": "guadalajara-poste",
@@ -468,7 +468,7 @@
       "postes": 11,
       "senales": 18,
       "rodadas": 138,
-      "vertices_via": 5971,
+      "vertices_via": 7459,
       "objetos_del_choque": [
         "poste",
         "arbol",
@@ -530,7 +530,7 @@
         "barda"
       ],
       "vehiculos": 1,
-      "bytes": 540826
+      "bytes": 612319
     },
     {
       "clave": "monterrey-pared",
@@ -543,7 +543,7 @@
       "postes": 21,
       "senales": 20,
       "rodadas": 368,
-      "vertices_via": 14653,
+      "vertices_via": 14971,
       "objetos_del_choque": [
         "muro",
         "muro",
@@ -580,7 +580,7 @@
         "muro"
       ],
       "vehiculos": 1,
-      "bytes": 849762
+      "bytes": 860603
     }
   ]
 }
