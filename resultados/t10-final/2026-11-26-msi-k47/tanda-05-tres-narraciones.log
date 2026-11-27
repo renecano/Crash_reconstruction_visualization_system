@@ -1,7 +1,7 @@
 # Paso: tres-narraciones
 # Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tres -Salida eval/results/t9/tres_narraciones.json
 # Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
-# Inicio: 2026-11-26 19:30:28
+# Inicio: 2026-11-26 19:38:21
 
 
 == 1. Herramientas
@@ -32,6 +32,6 @@ Running 3 tests using 1 worker
 [1/3] [chromium] › e2e\narraciones-fisica.spec.ts:289:7 › las tres narraciones de René: rene-arbol-curva
 [2/3] [chromium] › e2e\narraciones-fisica.spec.ts:289:7 › las tres narraciones de René: rene-peaton-vuelta
 [3/3] [chromium] › e2e\narraciones-fisica.spec.ts:289:7 › las tres narraciones de René: rene-carambola-semaforo
-  3 passed (1.1m)
+  3 passed (1.2m)
 
-# Fin: 2026-11-26 19:31:37 · ok · 1.1 min
+# Fin: 2026-11-26 19:39:34 · ok · 1.2 min
