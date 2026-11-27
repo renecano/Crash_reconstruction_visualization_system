@@ -1,0 +1,23 @@
+{
+  "fecha": "2026-11-27T15:37:25.753Z",
+  "equipo": "MacBook con Apple M1, 16 GB; Chromium de Playwright con ventana (ANGLE Metal); 1600×900",
+  "paquete": "packages/scene-schema/fixtures/caso3d-previo/mex57-previo.json",
+  "trayecto": {
+    "distancia_m": 5760.9,
+    "puntos": 1210,
+    "duracion_s": 477.633
+  },
+  "carga_s": 2.859,
+  "fps_p50_durante_el_trayecto": [
+    50,
+    14.5,
+    14.5,
+    14.5
+  ],
+  "fps_p50_choque_quieto_cinematica": [
+    14.5,
+    17.5,
+    17.2
+  ],
+  "nota": "Las capturas de esta medición están en docs/progress/capturas/demo/5-trayecto-t*.jpg. El choque quieto sin moverse da los mismos fps: el trayecto no los baja en esta máquina."
+}
