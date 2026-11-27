@@ -35,6 +35,8 @@ const LUGARES = {
   // en San Luis de la Paz (el lugar del ejemplo del alcance) y la SON 100, de dos carriles, en Sonora.
   mex57_san_luis: { lat: 21.299558, lon: -100.595243, nombre: "MEX 57, San Luis de la Paz" },
   son100_kino: { lat: 28.8318826, lon: -111.6593152, nombre: "SON 100 Hermosillo–Bahía de Kino" },
+  // El caso de René en Paseo Matlatzincas (árbol en la curva, de noche; 2026-11-27: cercas en los carriles).
+  matlatzincas_rene: { lat: 19.288151, lon: -99.68004, nombre: "Paseo Matlatzincas" },
 } as const;
 type Lugar = keyof typeof LUGARES;
 
@@ -54,6 +56,15 @@ export interface CasoBateria {
    */
   callesDe?: string;
 }
+
+const delArchivo =
+  (archivo: string) =>
+  (raiz: string): Expediente =>
+    (
+      JSON.parse(readFileSync(resolve(raiz, "data/cesvi/casos", archivo), "utf8")) as {
+        expediente: Expediente;
+      }
+    ).expediente;
 
 const tollocan = (raiz: string): Expediente =>
   (
@@ -181,6 +192,12 @@ export const CASOS_BATERIA: readonly CasoBateria[] = [
     que: "Carretera de dos carriles en zona árida (SON 100, Sonora)",
     lugar: "son100_kino",
     expediente: enLugar("son100_kino"),
+  },
+  {
+    clave: "matlatzincas",
+    que: "El caso de René en Paseo Matlatzincas, tal cual (árbol en la curva, de noche)",
+    lugar: "matlatzincas_rene",
+    expediente: delArchivo("rene-arbol-curva.croquis"),
   },
   {
     clave: "metepec-arbol",
