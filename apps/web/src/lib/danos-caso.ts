@@ -41,6 +41,12 @@ export type Calculo =
       maxDisipableKj: number | null;
       /** El aviso neutral si lo medido pide más energía de la que el choque puede dar. */
       aviso: string | null;
+      /**
+       * Un roce bajo el umbral de CRASH3 (René, 2026-11-26, la reversa): la energía que absorbe y la
+       * que necesita esa zona para deformarse (A²/2B por el ancho dañado). Con menos, 0 cm es lo
+       * correcto: no se inventa daño.
+       */
+      roce: { energiaKj: number; umbralKj: number; anchoM: number } | null;
     }
   | { tipo: "sin_dato"; motivo: string };
 
@@ -82,6 +88,26 @@ export function energiaMaximaDisipable(res: Json | null): number | null {
  * Las filas de daño de cada vehículo del expediente. `ajustado` es el resultado del solver con las
  * velocidades reconstruidas (`resultadoAjustado`); `ids` lleva del id de la escena al del caso.
  */
+/**
+ * Si el choque es un roce bajo el umbral de deformación de CRASH3: el perfil es cero en todo el ancho
+ * y la energía que absorbe no pasa A²/(2B)·L, la energía con la que esa zona empieza a deformarse.
+ */
+export function roceBajoElUmbral(
+  energiaJ: number,
+  dano:
+    | { perfil_m?: number[]; ancho_m?: number; rigidez?: { a_n_m?: number; b_n_m2?: number } }
+    | undefined,
+): { energiaKj: number; umbralKj: number; anchoM: number } | null {
+  const a = dano?.rigidez?.a_n_m;
+  const b = dano?.rigidez?.b_n_m2;
+  const l = dano?.ancho_m;
+  if (!dano?.perfil_m?.every((c) => c === 0) || !a || !b || !l) return null;
+  const umbral = ((a * a) / (2 * b)) * l;
+  return energiaJ <= umbral
+    ? { energiaKj: r1(energiaJ / 1000), umbralKj: r1(umbral / 1000), anchoM: r1(l) }
+    : null;
+}
+
 export function filasDano(
   e: Expediente,
   ajustado: Json | null,
@@ -97,7 +123,8 @@ export function filasDano(
           origen_rigidez?: string;
           medido_m?: number[];
           energia_medida_j?: number;
-          rigidez?: { fuente?: string; nota?: string };
+          ancho_m?: number;
+          rigidez?: { fuente?: string; nota?: string; a_n_m?: number; b_n_m2?: number };
         }
       | undefined,
   }));
@@ -151,6 +178,7 @@ export function filasDano(
                 c.dano.energia_medida_j > maximo
                   ? `La deformación medida, con la ${c.dano?.origen_rigidez === "reporte" ? "rigidez del reporte" : "rigidez usada"}, equivale a ${Math.round(c.dano.energia_medida_j / 1000)} kJ; un choque a estas velocidades puede disipar a lo más ${Math.round(maximo / 1000)} kJ: revisa la rigidez o las medidas.`
                   : null,
+              roce: roceBajoElUmbral(energia, c.dano),
             };
     return { vehiculo: v.id, medido, calculado };
   });
