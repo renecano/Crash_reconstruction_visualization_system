@@ -33,6 +33,8 @@ export interface RutaOut {
   /** La ruta como [lat, lon], del inicio al final. */
   puntos: [number, number][];
   distancia_m: number;
+  /** La duración que estima el enrutador con las velocidades de cada calle (s): orientativa. */
+  duracion_s: number;
   fuente: string;
 }
 
@@ -108,7 +110,11 @@ export async function rutaPorCalles(
   if (!r.ok) throw new RutaError(502, `No se pudo trazar la ruta por las calles (${r.status}).`);
   const j = (await r.json()) as {
     code?: string;
-    routes?: { distance: number; geometry: { coordinates: [number, number][] } }[];
+    routes?: {
+      distance: number;
+      duration?: number;
+      geometry: { coordinates: [number, number][] };
+    }[];
   };
   const ruta = j.routes?.[0];
   if (j.code !== "Ok" || !ruta || ruta.geometry.coordinates.length < 2)
@@ -121,6 +127,7 @@ export async function rutaPorCalles(
   const salida: RutaOut = {
     puntos: ruta.geometry.coordinates.map(([lon, lat]) => [lat, lon]),
     distancia_m: ruta.distance,
+    duracion_s: ruta.duration ?? 0,
     fuente: "OSRM sobre OpenStreetMap (© colaboradores de OpenStreetMap, ODbL)",
   };
   await deps.cache.set(clave, salida);

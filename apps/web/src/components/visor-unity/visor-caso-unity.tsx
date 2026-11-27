@@ -46,8 +46,11 @@ export function VisorCasoUnity({
   presentar = null,
   onInstante,
   version = null,
+  previos = null,
   ...props
 }: ComponentProps<typeof Visor3dCaso> & {
+  /** De dónde venía cada vehículo (trayecto previo ilustrativo), por id del expediente. */
+  previos?: Readonly<Record<string, { lat: number; lon: number }>> | null;
   /** Ronda 4: la versión del caso que se ve en el 3D en vez de la reconstrucción (alternar). */
   version?: VersionUnity | null;
   /** Por dónde va el 3D, para el instante que comparten el 2D y el 3D (A6). */
@@ -121,6 +124,14 @@ export function VisorCasoUnity({
           : null,
     [camaraPedida, presentar],
   );
+  // Unity habla con los ids del Resultado: de dónde venía cada vehículo, con su `resId`.
+  const previosUnity = useMemo(() => {
+    if (!previos) return null;
+    const m = Object.fromEntries(
+      vehiculos.flatMap((v) => (previos[v.id] ? [[v.resId, previos[v.id]!]] : [])),
+    );
+    return Object.keys(m).length ? m : null;
+  }, [previos, vehiculos]);
   const [editando, setEditando] = useState(false);
   const [herramienta, setHerramienta] = useState<HerramientaEdicion>("mover");
   const [vehiculo, setVehiculo] = useState<string | null>(vehiculos[0]?.id ?? null);
@@ -219,6 +230,8 @@ export function VisorCasoUnity({
           piso={pisoReal.piso}
           relieve={r.relieve ?? null}
           paisaje={paisaje}
+          previos={previosUnity}
+          origen={r.origen}
           camaras={camaras}
           onTiempo={onInstante}
           activo={activo}

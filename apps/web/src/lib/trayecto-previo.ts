@@ -117,3 +117,107 @@ export function textoDelTrayecto(tr: Pick<TrayectoPrevio, "distancia_m" | "durac
   const dur = s < 60 ? `${s} s` : `${Math.floor(s / 60)} min${s % 60 ? ` ${s % 60} s` : ""}`;
   return `${km} · ~${dur}`;
 }
+
+/** Un punto del mapa. */
+export interface LatLon {
+  lat: number;
+  lon: number;
+}
+
+/** El trayecto como va en el paquete caso-3d (`escenario.vehiculos[].trayecto_previo`). */
+export interface TrayectoDelPaquete {
+  x: number[];
+  y: number[];
+  t: number[];
+  v_ms: number[];
+  distancia_m: number;
+}
+
+const RADIO_TIERRA_M = 6371008.8;
+
+/** De metros de la escena (x este, y norte) a lat/lon, alrededor de `origen` ([lon, lat]). */
+export function aLatLon(x: number, y: number, origen: readonly [number, number]): LatLon {
+  const k = (Math.PI / 180) * RADIO_TIERRA_M;
+  return {
+    lat: origen[1] + y / k,
+    lon: origen[0] + x / (k * Math.cos((origen[1] * Math.PI) / 180)),
+  };
+}
+
+/** De lat/lon a metros de la escena (la misma proyección que las calles del mapa, `enu`). */
+export function aMetros(p: LatLon, origen: readonly [number, number]): [number, number] {
+  const k = (Math.PI / 180) * RADIO_TIERRA_M;
+  return [(p.lon - origen[0]) * k * Math.cos((origen[1] * Math.PI) / 180), (p.lat - origen[1]) * k];
+}
+
+interface TrayectoriaResultado {
+  t: number[];
+  x: number[];
+  y: number[];
+  vx: number[];
+  vy: number[];
+}
+
+/** La ruta por las calles (`/api/ruta`), o null si no se pudo: sin ruta no se inventa un trayecto. */
+export async function pedirRuta(
+  desde: LatLon,
+  hasta: LatLon,
+  pedir: typeof fetch = fetch,
+): Promise<
+  { puntos: [number, number][]; distancia_m: number; duracion_s: number } | { error: string }
+> {
+  const q = new URLSearchParams({
+    desde_lat: String(desde.lat),
+    desde_lon: String(desde.lon),
+    hasta_lat: String(hasta.lat),
+    hasta_lon: String(hasta.lon),
+  });
+  try {
+    const r = await pedir(`/api/ruta?${q}`);
+    const j = (await r.json()) as {
+      puntos?: [number, number][];
+      distancia_m?: number;
+      duracion_s?: number;
+      error?: string;
+    };
+    if (!r.ok || !j.puntos)
+      return { error: j.error ?? "No se pudo trazar la ruta por las calles." };
+    return { puntos: j.puntos, distancia_m: j.distancia_m ?? 0, duracion_s: j.duracion_s ?? 0 };
+  } catch {
+    return { error: "No se pudo trazar la ruta por las calles (sin red)." };
+  }
+}
+
+/**
+ * Los trayectos previos del paquete, por id del vehículo en el Resultado: la ruta por las calles desde
+ * donde marcó el perito hasta el primer punto de su trayectoria, con el perfil de velocidad. Un vehículo
+ * sin ruta (sin red o sin camino) se queda sin trayecto.
+ */
+export async function trayectosDelCaso(
+  previos: Readonly<Record<string, LatLon>>,
+  vehiculos: readonly { id: string; trayectoria: TrayectoriaResultado }[],
+  origen: readonly [number, number],
+  pedir: typeof fetch = fetch,
+): Promise<Record<string, TrayectoDelPaquete>> {
+  const salida: Record<string, TrayectoDelPaquete> = {};
+  for (const [id, inicio] of Object.entries(previos)) {
+    const tr = vehiculos.find((v) => v.id === id)?.trayectoria;
+    if (!tr?.t.length) continue;
+    const x0 = tr.x[0]!;
+    const y0 = tr.y[0]!;
+    const ruta = await pedirRuta(inicio, aLatLon(x0, y0, origen), pedir);
+    if ("error" in ruta) continue;
+    const metros = ruta.puntos.map(([lat, lon]) => aMetros({ lat, lon }, origen));
+    // Termina exactamente en el primer punto de la reconstrucción.
+    metros.push([x0, y0]);
+    const p = perfilDelTrayecto(metros, Math.hypot(tr.vx[0]!, tr.vy[0]!), tr.t[0]!);
+    salida[id] = {
+      x: p.puntos.map((q) => Math.round(q[0] * 100) / 100),
+      y: p.puntos.map((q) => Math.round(q[1] * 100) / 100),
+      t: p.t.map((t, i) => (i === p.t.length - 1 ? tr.t[0]! : Math.round(t * 1000) / 1000)),
+      v_ms: p.v.map((v) => Math.round(v * 100) / 100),
+      distancia_m: Math.round(p.distancia_m * 10) / 10,
+    };
+  }
+  return salida;
+}

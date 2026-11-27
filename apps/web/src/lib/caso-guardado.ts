@@ -79,6 +79,11 @@ export interface CasoGuardado {
   finales_desconocidos?: string[];
   /** Los vehículos de los que no sabe por dónde venían (escena fácil), opcional. */
   direcciones_supuestas?: string[];
+  /**
+   * De dónde venía cada vehículo (René, 2026-11-27), por id del expediente, opcional: el inicio del
+   * trayecto previo ilustrativo. Va fuera del expediente: no entra a la reconstrucción ni a ninguna cifra.
+   */
+  trayectos_previos?: Record<string, { lat: number; lon: number }>;
 }
 
 export interface CasoAbierto {
@@ -97,6 +102,7 @@ export interface CasoAbierto {
   /** Los vehículos sin posición final porque el perito no sabe dónde quedaron. */
   finalesDesconocidos: string[];
   direccionesSupuestas: string[];
+  trayectosPrevios: Record<string, { lat: number; lon: number }>;
 }
 
 /** El expediente sin su resultado: lo que el perito valida. */
@@ -132,6 +138,7 @@ export function casoParaGuardar(c: {
   hipotesisElegida?: string | null;
   finalesDesconocidos?: readonly string[];
   direccionesSupuestas?: readonly string[];
+  trayectosPrevios?: Readonly<Record<string, { lat: number; lon: number }>>;
 }): CasoGuardado {
   const { posiciones, conteos, problemas, preguntas } = c.escena;
   const base = sinResultado(c.expediente);
@@ -161,6 +168,9 @@ export function casoParaGuardar(c: {
     ...(c.finalesDesconocidos?.length ? { finales_desconocidos: [...c.finalesDesconocidos] } : {}),
     ...(c.direccionesSupuestas?.length
       ? { direcciones_supuestas: [...c.direccionesSupuestas] }
+      : {}),
+    ...(c.trayectosPrevios && Object.keys(c.trayectosPrevios).length
+      ? { trayectos_previos: { ...c.trayectosPrevios } }
       : {}),
   };
 }
@@ -213,5 +223,16 @@ export function leerCasoGuardado(datos: unknown): CasoAbierto | { error: string 
           (x): x is string => typeof x === "string" && expediente.vehiculos.some((v) => v.id === x),
         )
       : [],
+    // Solo vehículos del expediente y coordenadas válidas.
+    trayectosPrevios: Object.fromEntries(
+      Object.entries(c.trayectos_previos ?? {}).filter(
+        ([id, p]) =>
+          expediente.vehiculos.some((v) => v.id === id) &&
+          Number.isFinite(p?.lat) &&
+          Number.isFinite(p?.lon) &&
+          Math.abs(p.lat) <= 90 &&
+          Math.abs(p.lon) <= 180,
+      ),
+    ),
   };
 }

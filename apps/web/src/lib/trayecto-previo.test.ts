@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
+  aLatLon,
+  aMetros,
+  trayectosDelCaso,
   ACELERACION_LATERAL,
   FRENADO,
   perfilDelTrayecto,
@@ -54,5 +57,53 @@ describe("el trayecto previo ilustrativo (René, 2026-11-27)", () => {
   it("dice la distancia y la duración", () => {
     expect(textoDelTrayecto({ distancia_m: 2140, duracion_s: 220 })).toBe("2.1 km · ~3 min 40 s");
     expect(textoDelTrayecto({ distancia_m: 480, duracion_s: 35 })).toBe("480 m · ~35 s");
+  });
+
+  it("en el paquete, la ruta termina en el primer punto de la reconstrucción, en su instante", async () => {
+    const origen = [-99.6557, 19.2925] as const;
+    // La ruta llega 1 km al oeste del inicio de la reconstrucción y de ahí al punto (como OSRM).
+    const oeste = aLatLon(-1000, 20, origen);
+    const cerca = aLatLon(-10, 20, origen);
+    const pedir = (async () =>
+      new Response(
+        JSON.stringify({
+          puntos: [
+            [oeste.lat, oeste.lon],
+            [cerca.lat, cerca.lon],
+          ],
+          distancia_m: 990,
+          duracion_s: 80,
+        }),
+      )) as unknown as typeof fetch;
+    const tr = await trayectosDelCaso(
+      { "veh-a": oeste },
+      [
+        {
+          id: "veh-a",
+          trayectoria: { t: [-3, -2.9], x: [0, 1.2], y: [20, 20], vx: [12, 12], vy: [0, 0] },
+        },
+      ],
+      origen,
+      pedir,
+    );
+    const a = tr["veh-a"]!;
+    expect(a.x.at(-1)).toBe(0);
+    expect(a.y.at(-1)).toBe(20);
+    expect(a.t.at(-1)).toBe(-3);
+    expect(a.v_ms.at(-1)).toBe(12);
+    expect(Math.max(...a.v_ms)).toBeLessThanOrEqual(12);
+    expect(a.distancia_m).toBeCloseTo(1000, -1);
+    expect(aMetros(aLatLon(5, 7, origen), origen)[0]).toBeCloseTo(5, 6);
+    // Sin ruta, ningún trayecto inventado.
+    const sinRuta = (async () =>
+      new Response(JSON.stringify({ error: "x" }), { status: 404 })) as unknown as typeof fetch;
+    expect(
+      await trayectosDelCaso(
+        { "veh-a": oeste },
+        [{ id: "veh-a", trayectoria: { t: [-3], x: [0], y: [20], vx: [12], vy: [0] } }],
+        origen,
+        sinRuta,
+      ),
+    ).toEqual({});
   });
 });

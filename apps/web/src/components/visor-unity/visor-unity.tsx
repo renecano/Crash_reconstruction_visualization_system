@@ -32,6 +32,7 @@ import {
   type MotivoRespaldo,
 } from "@/lib/visor-unity/puente";
 import { deformacionesMedidas } from "@/lib/visor-unity/deformacion-medida";
+import { type LatLon, trayectosDelCaso } from "@/lib/trayecto-previo";
 import { paqueteDelCaso, type RelieveCaso } from "@/lib/visor-unity/paquete";
 import type { CanalTiempo } from "@/lib/visor-unity/canal";
 import {
@@ -128,6 +129,8 @@ export function VisorUnity({
   piso = null,
   relieve = null,
   paisaje = null,
+  previos = null,
+  origen = null,
   activo = true,
   dormir = false,
   camara = null,
@@ -156,6 +159,12 @@ export function VisorUnity({
   relieve?: RelieveCaso;
   /** El paisaje del lugar (contrato #335), que la web calcula con la cobertura del suelo de OSM. */
   paisaje?: "arido" | "templado" | null;
+  /**
+   * De dónde venía cada vehículo (René, 2026-11-27), por su id en el Resultado, y el origen de la escena
+   * ([lon, lat]): el 3D le agrega su trayecto previo ilustrativo por las calles. No entra a ninguna cifra.
+   */
+  previos?: Readonly<Record<string, LatLon>> | null;
+  origen?: readonly [number, number] | null;
   /** El 3D está a la vista: si no, la reproducción se pausa. */
   activo?: boolean;
   /**
@@ -276,7 +285,12 @@ export function VisorUnity({
   // Cada escena nueva: el Resultado completo, el paquete y a Unity. El último pedido gana. Con el 3D
   // dormido se espera; al despertar, solo se carga si la escena o el relieve cambiaron.
   const turno = useRef(0);
-  const pedida = useRef<{ objetivo: typeof objetivo; relieve: RelieveCaso } | null>(null);
+  const pedida = useRef<{
+    objetivo: typeof objetivo;
+    relieve: RelieveCaso;
+    previos: string;
+  } | null>(null);
+  const clavePrevios = previos && origen ? JSON.stringify([previos, origen]) : "";
   const cargando = useRef(false);
   /**
    * Una carga en Unity a la vez (René, 2026-11-20): una escena nueva mientras Unity carga la anterior
@@ -290,13 +304,18 @@ export function VisorUnity({
   const [omitidos, setOmitidos] = useState<string[]>([]);
   useEffect(() => {
     if (!puente || dormir) return;
-    if (pedida.current?.objetivo === objetivo && pedida.current.relieve === relieve) return;
+    if (
+      pedida.current?.objetivo === objetivo &&
+      pedida.current.relieve === relieve &&
+      pedida.current.previos === clavePrevios
+    )
+      return;
     if (enUnity.current) return;
     // Mientras se graba el video, la escena no cambia: la nueva va al terminar (René, 2026-11-20).
     if (grabando.current) return;
     // Al alternar entre la reconstrucción y una versión (ronda 4) se queda el mismo instante.
     const mantener = pedida.current !== null && pedida.current.objetivo.clave !== objetivo.clave;
-    pedida.current = { objetivo, relieve };
+    pedida.current = { objetivo, relieve, previos: clavePrevios };
     const mio = ++turno.current;
     cargando.current = true;
     puente.despertar();
@@ -326,9 +345,30 @@ export function VisorUnity({
       marcar("solver_listo");
       if (mio !== turno.current) return;
       const paquete = paqueteDelCaso(aCargar, resultado, relieve, paisaje);
+      // De dónde venía cada vehículo: la ruta por las calles hasta el inicio de la reconstrucción (solo
+      // en la reconstrucción; una versión no la lleva). Sin red o sin ruta, el 3D va como siempre.
+      const trayectos =
+        previos && origen && !fijo && Object.keys(previos).length
+          ? await trayectosDelCaso(
+              previos,
+              (resultado.vehiculos ?? []) as unknown as Parameters<typeof trayectosDelCaso>[1],
+              origen,
+            )
+          : {};
+      if (mio !== turno.current) return;
       const p = pisoActual.current;
       const conExtras = {
         ...paquete,
+        ...(paquete.escenario && Object.keys(trayectos).length
+          ? {
+              escenario: {
+                ...paquete.escenario,
+                vehiculos: paquete.escenario.vehiculos.map((v) =>
+                  trayectos[v.id] ? { ...v, trayecto_previo: trayectos[v.id] } : v,
+                ),
+              },
+            }
+          : {}),
         ...(p
           ? {
               piso: {
@@ -367,7 +407,15 @@ export function VisorUnity({
         : resultado.t_inicio;
       repActual.current = { ...(mantener ? repActual.current : ESTADO_INICIAL), t: t0 };
       setRep(repActual.current);
-      setIntervalo({ inicio: resultado.t_inicio, fin: resultado.t_fin });
+      const inicioPrevio = Math.min(
+        resultado.t_inicio,
+        ...Object.values(trayectos).map((x) => x.t[0] ?? resultado.t_inicio),
+      );
+      setIntervalo({
+        inicio: inicioPrevio,
+        fin: resultado.t_fin,
+        reconstruccion: resultado.t_inicio,
+      });
       if (mantener) puente.enviar("fijarTiempo", { t: t0 });
       if (!fijo && !vClave) paqueteBase.current = paquete;
       const api = {
@@ -413,7 +461,7 @@ export function VisorUnity({
       });
     // `vClave` sale de `objetivo`; `vueltas`, para la escena que esperó a que Unity terminara.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [puente, objetivo, relieve, paisaje, dormir, vueltas]);
+  }, [puente, objetivo, relieve, paisaje, dormir, vueltas, clavePrevios]);
 
   /** Manda el piso a Unity: lo que se ve en vivo, o el mapa solo (para el video). */
   const enviarPiso = (p: PisoUnity | null, vivo: boolean) => {
