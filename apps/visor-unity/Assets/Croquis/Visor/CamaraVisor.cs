@@ -1175,7 +1175,30 @@ namespace Croquis.Visor
             var impacto = tomaImpacto.Value;
             var llegada = CamaraAutomatica.Panorama(Lente.VehiculosEn(resultado, t), Contacto, impacto, 45.0, aspecto, new[] { 32.0, 45.0, 60.0, 80.0 }, fijos);
             var final = CamaraAutomatica.Panorama(Lente.VehiculosEn(resultado, resultado.TFin), Contacto, impacto, 45.0, aspecto, new[] { 62.0, 75.0, 88.0 }, fijos);
-            return CamaraAutomatica.En(t, tI, llegada, impacto, final);
+            var toma = CamaraAutomatica.En(t, tI, llegada, impacto, final);
+            // Con trayecto previo, sigue al que viene de más lejos hasta que empieza la reconstrucción.
+            VehiculoVista seguido = null;
+            foreach (var v in Vehiculos)
+            {
+                if (v != null && v.Previo != null && (seguido == null || Previo.Inicio(v.Previo) < Previo.Inicio(seguido.Previo)))
+                {
+                    seguido = v;
+                }
+            }
+
+            if (seguido != null)
+            {
+                var peso = CamaraAutomatica.PesoSeguimiento(t, seguido.TInicioResultado);
+                if (peso > 0.0)
+                {
+                    var tr = seguido.transform;
+                    var f = tr.forward;
+                    var sigue = CamaraAutomatica.Seguir(new V3(tr.position.x, tr.position.y, tr.position.z), System.Math.Atan2(f.z, f.x));
+                    toma = CamaraAutomatica.Mezclar(toma, sigue, peso);
+                }
+            }
+
+            return toma;
         }
 
         /// <summary>El centro de los vehículos del impacto principal en `tI` (por los actores del evento; si no, los dos más cercanos al contacto).</summary>

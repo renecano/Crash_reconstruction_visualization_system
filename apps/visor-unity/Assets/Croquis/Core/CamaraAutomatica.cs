@@ -215,6 +215,32 @@ namespace Croquis.Core
             return t < tImpacto - AntesS - TransicionS / 2.0 ? "llegada" : t <= tImpacto + DespuesS + TransicionS / 2.0 ? "impacto" : "final";
         }
 
+        /// <summary>
+        /// Siguiendo a un vehículo por su trayecto previo (René, 2026-11-27): 11 m atrás y 4.5 m arriba,
+        /// mirando un poco adelante de él. `rumbo` en radianes desde el este hacia el norte (planta x, z).
+        /// </summary>
+        public static Toma Seguir(V3 posicion, double rumbo)
+        {
+            var dx = Math.Cos(rumbo);
+            var dz = Math.Sin(rumbo);
+            return new Toma
+            {
+                Ojo = new V3(posicion.X - dx * 11.0, posicion.Y + 4.5, posicion.Z - dz * 11.0),
+                Mira = new V3(posicion.X + dx * 6.0, posicion.Y + 1.0, posicion.Z + dz * 6.0),
+            };
+        }
+
+        /// <summary>Cuánto pesa el seguimiento en `t`: todo durante el trayecto; nada desde el inicio de la reconstrucción, con 1.5 s de paso.</summary>
+        public static double PesoSeguimiento(double t, double tInicioReconstruccion)
+        {
+            return 1.0 - Suave((t - (tInicioReconstruccion - 1.5)) / 1.5);
+        }
+
+        public static Toma Mezclar(Toma x, Toma y, double f)
+        {
+            return Mezcla(x, y, f);
+        }
+
         private static Toma Mezcla(Toma x, Toma y, double f)
         {
             return new Toma { Ojo = x.Ojo * (1.0 - f) + y.Ojo * f, Mira = x.Mira * (1.0 - f) + y.Mira * f };
