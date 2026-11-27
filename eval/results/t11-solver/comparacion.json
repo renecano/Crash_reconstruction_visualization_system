@@ -1,0 +1,318 @@
+{
+  "tanda": "t11-solver",
+  "commit": null,
+  "fecha": "2026-11-27T21:50:59.941Z",
+  "tolerancia_kmh": 1,
+  "ejemplos": [
+    {
+      "ejemplo": "crucero-noche",
+      "cifra": "ejemplos.crucero",
+      "navegador": "20 (1–27)",
+      "indice": "20 km/h (5–26)",
+      "tabla": "20 (1–27)",
+      "contra_indice": {
+        "estado": "distinta",
+        "diferencias": [
+          {
+            "que": "p10",
+            "km_h": -4,
+            "porcentaje": "-80.0 %"
+          },
+          {
+            "que": "p90",
+            "km_h": 1,
+            "porcentaje": "+3.8 %"
+          }
+        ]
+      },
+      "contra_tabla": {
+        "estado": "igual",
+        "diferencias": []
+      },
+      "coincide": false
+    },
+    {
+      "ejemplo": "alcance-deformacion",
+      "cifra": "ejemplos.alcance",
+      "navegador": "54 (44–54)",
+      "indice": "54 km/h (49–55)",
+      "tabla": "53 (44–53)",
+      "contra_indice": {
+        "estado": "distinta",
+        "diferencias": [
+          {
+            "que": "p10",
+            "km_h": -5,
+            "porcentaje": "-10.2 %"
+          },
+          {
+            "que": "p90",
+            "km_h": -1,
+            "porcentaje": "-1.8 %"
+          }
+        ]
+      },
+      "contra_tabla": {
+        "estado": "precisión de los toques",
+        "diferencias": [
+          {
+            "que": "cifra",
+            "km_h": 1,
+            "porcentaje": "+1.9 %"
+          },
+          {
+            "que": "p90",
+            "km_h": 1,
+            "porcentaje": "+1.9 %"
+          }
+        ]
+      },
+      "coincide": false
+    },
+    {
+      "ejemplo": "carambola-lluvia",
+      "cifra": "ejemplos.carambola",
+      "navegador": "25 (20–32)",
+      "indice": "25 km/h (20–32)",
+      "tabla": "25 (20–32)",
+      "contra_indice": {
+        "estado": "igual",
+        "diferencias": []
+      },
+      "contra_tabla": {
+        "estado": "igual",
+        "diferencias": []
+      },
+      "coincide": true
+    },
+    {
+      "ejemplo": "reversa-pendiente",
+      "cifra": "ejemplos.reversa",
+      "navegador": "20 (17–26)",
+      "indice": "20 km/h (16–25)",
+      "tabla": "20 (17–26)",
+      "contra_indice": {
+        "estado": "precisión de los toques",
+        "diferencias": [
+          {
+            "que": "p10",
+            "km_h": 1,
+            "porcentaje": "+6.3 %"
+          },
+          {
+            "que": "p90",
+            "km_h": 1,
+            "porcentaje": "+4.0 %"
+          }
+        ]
+      },
+      "contra_tabla": {
+        "estado": "igual",
+        "diferencias": []
+      },
+      "coincide": true
+    },
+    {
+      "ejemplo": "poste-terraceria",
+      "cifra": "ejemplos.poste",
+      "navegador": "50 (47–57)",
+      "indice": "63 km/h (43–65)",
+      "tabla": "50 (46–59)",
+      "contra_indice": {
+        "estado": "distinta",
+        "diferencias": [
+          {
+            "que": "cifra",
+            "km_h": -13,
+            "porcentaje": "-20.6 %"
+          },
+          {
+            "que": "p10",
+            "km_h": 4,
+            "porcentaje": "+9.3 %"
+          },
+          {
+            "que": "p90",
+            "km_h": -8,
+            "porcentaje": "-12.3 %"
+          }
+        ]
+      },
+      "contra_tabla": {
+        "estado": "distinta",
+        "diferencias": [
+          {
+            "que": "p10",
+            "km_h": 1,
+            "porcentaje": "+2.2 %"
+          },
+          {
+            "que": "p90",
+            "km_h": -2,
+            "porcentaje": "-3.4 %"
+          }
+        ]
+      },
+      "coincide": false
+    }
+  ],
+  "axa": {
+    "indice": "57 km/h (55–79)",
+    "navegador": "57 (55–79)",
+    "estado": "igual",
+    "diferencias": []
+  },
+  "tres": [
+    {
+      "clave": "rene-arbol-curva",
+      "cifra": "80"
+    },
+    {
+      "clave": "rene-peaton-vuelta",
+      "cifra": "19"
+    },
+    {
+      "clave": "rene-carambola-semaforo",
+      "cifra": "50"
+    }
+  ],
+  "capturas": {
+    "pruebas": [
+      "arida-sonora"
+    ],
+    "fotos": 6
+  },
+  "arranque": [],
+  "otras": [
+    {
+      "cifra": "carambolas.prueba",
+      "publicada": "22 de 31",
+      "medida": "22 de 31",
+      "cambia": false
+    },
+    {
+      "cifra": "carambolas.desarrollo",
+      "publicada": "42 de 55",
+      "medida": "42 de 55",
+      "cambia": false
+    },
+    {
+      "cifra": "cobertura.rango",
+      "publicada": "410 de 578",
+      "medida": "404 de 579",
+      "cambia": true
+    }
+  ],
+  "gpu": [
+    {
+      "paso": "ejemplos",
+      "dibujo_en": "NVIDIA GeForce RTX 4070 Laptop GPU",
+      "tarjetas": [
+        {
+          "tarjeta": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "luid": "0x00000000_0x00015c40",
+          "uso_3d_medio": 3.9,
+          "uso_3d_maximo": 18.3
+        },
+        {
+          "tarjeta": "Intel(R) UHD Graphics",
+          "luid": "0x00000000_0x00015839",
+          "uso_3d_medio": 0,
+          "uso_3d_maximo": 0
+        }
+      ]
+    },
+    {
+      "paso": "tres-narraciones",
+      "dibujo_en": "NVIDIA GeForce RTX 4070 Laptop GPU",
+      "tarjetas": [
+        {
+          "tarjeta": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "luid": "0x00000000_0x00015c40",
+          "uso_3d_medio": 8.4,
+          "uso_3d_maximo": 38
+        },
+        {
+          "tarjeta": "Intel(R) UHD Graphics",
+          "luid": "0x00000000_0x00015839",
+          "uso_3d_medio": 0,
+          "uso_3d_maximo": 0
+        }
+      ]
+    },
+    {
+      "paso": "tollocan",
+      "dibujo_en": "NVIDIA GeForce RTX 4070 Laptop GPU",
+      "tarjetas": [
+        {
+          "tarjeta": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "luid": "0x00000000_0x00015c40",
+          "uso_3d_medio": 4.6,
+          "uso_3d_maximo": 18.2
+        },
+        {
+          "tarjeta": "Intel(R) UHD Graphics",
+          "luid": "0x00000000_0x00015839",
+          "uso_3d_medio": 0,
+          "uso_3d_maximo": 0
+        }
+      ]
+    },
+    {
+      "paso": "final-unity",
+      "dibujo_en": "NVIDIA GeForce RTX 4070 Laptop GPU",
+      "tarjetas": [
+        {
+          "tarjeta": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "luid": "0x00000000_0x00015c40",
+          "uso_3d_medio": 9.6,
+          "uso_3d_maximo": 20.7
+        },
+        {
+          "tarjeta": "Intel(R) UHD Graphics",
+          "luid": "0x00000000_0x00015839",
+          "uso_3d_medio": 0,
+          "uso_3d_maximo": 0
+        }
+      ]
+    },
+    {
+      "paso": "video-integrada",
+      "dibujo_en": "Intel(R) UHD Graphics",
+      "tarjetas": [
+        {
+          "tarjeta": "Intel(R) UHD Graphics",
+          "luid": "0x00000000_0x00015839",
+          "uso_3d_medio": 31.3,
+          "uso_3d_maximo": 96.2
+        },
+        {
+          "tarjeta": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "luid": "0x00000000_0x00015c40",
+          "uso_3d_medio": 14,
+          "uso_3d_maximo": 77.6
+        }
+      ]
+    },
+    {
+      "paso": "ensayo",
+      "dibujo_en": "Intel(R) UHD Graphics",
+      "tarjetas": [
+        {
+          "tarjeta": "Intel(R) UHD Graphics",
+          "luid": "0x00000000_0x00015839",
+          "uso_3d_medio": 9.9,
+          "uso_3d_maximo": 16.1
+        },
+        {
+          "tarjeta": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "luid": "0x00000000_0x00015c40",
+          "uso_3d_medio": 4.5,
+          "uso_3d_maximo": 21.3
+        }
+      ]
+    }
+  ],
+  "pendientes": [],
+  "coincide": false
+}
