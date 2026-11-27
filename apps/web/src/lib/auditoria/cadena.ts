@@ -225,7 +225,7 @@ export async function auditarCaso(o: {
   const consultas = [
     separarLugarYSentido(lugarTexto).lugar,
     cruce ? `${cruce.calles[0]} y ${cruce.calles[1]}` : null,
-    cruce?.calles[0] ?? null,
+    // Como La escena (René, 2026-11-27, #388): con un cruce narrado no se busca una calle sola.
     carreteraNarrada(o.narracion),
   ].filter((x): x is string => Boolean(x?.trim()));
   let lugar: (Punto & { nombre: string }) | null = o.lugarGuardado ?? null;
@@ -235,6 +235,17 @@ export async function auditarCaso(o: {
       datos.lugar_error = String((x as Error)?.message ?? x).slice(0, 200);
       return null;
     });
+    // Como La escena (#388): las calles se cruzan en varios lugares y el perito elige.
+    const varios = (r?.resultados ?? []).filter((x) => x.precision === "cruce");
+    if (varios.length > 1) {
+      datos.cruces = varios.length;
+      datos.lugar_aviso = r!.aviso;
+      falla(
+        "pregunta.varios_cruces",
+        `las calles se cruzan en ${varios.length} lugares: La escena pregunta cuál`,
+      );
+      return { id: o.id, fuente: o.fuente, fallas, datos };
+    }
     // Como La escena: una zona (colonia, municipio) no es el lugar; se prueba la consulta siguiente.
     if (r?.resultados.length && r.resultados[0]!.precision !== "zona") {
       lugar = r.resultados[0]!;

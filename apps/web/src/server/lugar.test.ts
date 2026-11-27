@@ -230,7 +230,8 @@ describe("buscar el lugar del hecho (A1)", () => {
     });
     const r = await buscarLugar(
       {
-        q: "Calle Azucena esquina con Av. Reforma, colonia Lomas San Lorenzo",
+        // Sin cruce: con uno que no aparece se dice y no se propone una calle sola (#388).
+        q: "Calle Azucena, colonia Lomas San Lorenzo",
         municipio: "Iztapalapa",
         estado: "Ciudad de México",
       },
@@ -566,8 +567,11 @@ describe("el cruce de dos vías y, si nada cuadra, la pregunta (ronda 4, René)"
       deps,
     );
     expect(r.resultados).toEqual([]);
-    expect(r.aviso).toContain("No se encontró «Solidaridad Las Torres y Paseo Tollocan» en Toluca");
-    expect(r.aviso).toContain("¿Dónde fue?");
+    // René, 2026-11-27 (#388): se dice qué cruce no se encontró y no se propone otra esquina.
+    expect(r.aviso).toContain(
+      "No encontré el cruce de Solidaridad Las Torres con Paseo Tollocan en Toluca",
+    );
+    expect(r.aviso).toContain("márcalo tú");
   });
 });
 

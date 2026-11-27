@@ -587,7 +587,8 @@ export function EscenaFacil({
     const consultas = [
       separarLugarYSentido(descripcionLugar).lugar,
       cruce ? `${cruce.calles[0]} y ${cruce.calles[1]}` : null,
-      cruce?.calles[0] ?? null,
+      // Con un cruce narrado no se busca una de sus calles sola (René, 2026-11-27, #388): su punto
+      // medio llevaba el choque a otra esquina, a 1.4 km del cruce.
       narracion ? carreteraNarrada(narracion) : null,
     ].filter((x): x is string => Boolean(x?.trim()));
     if (!consultas.length) return;
@@ -614,6 +615,18 @@ export function EscenaFacil({
               setResultados(d.resultados);
               setEstadoBusqueda(
                 "La narración no dice el municipio ni el estado: elige el lugar del caso.",
+              );
+            }
+            hallado = true;
+            break;
+          }
+          // Las dos calles se cruzan en varios lugares (René, 2026-11-27, #388): el perito elige.
+          const cruces = (d?.resultados ?? []).filter((x) => x.precision === "cruce");
+          if (r.ok && cruces.length > 1) {
+            if (montada.current) {
+              setResultados(cruces);
+              setEstadoBusqueda(
+                d?.aviso ?? "Las calles se cruzan en varios lugares: elige el del hecho.",
               );
             }
             hallado = true;
@@ -2117,6 +2130,13 @@ export function EscenaFacil({
             Buscando en el mapa el lugar que dice la narración…
           </p>
         ) : null}
+        {busquedaNarrada && !dudaLugar && !buscandoNarrado && !estado.puntos[1] ? (
+          // Qué encontró Croquis, siempre a la vista (René, 2026-11-27, #388).
+          <p className="t-nota text-texto" role="status" data-testid="lugar-encontrado">
+            Croquis encontró: «{busquedaNarrada.nombre}»
+            {busquedaNarrada.aviso ? `. ${busquedaNarrada.aviso}` : ""}
+          </p>
+        ) : null}
         {dudaLugar && busquedaNarrada && !buscandoNarrado ? (
           <p className="t-nota text-texto" role="status" data-testid="lugar-dudoso">
             Croquis encontró «{busquedaNarrada.nombre}», pero {dudaLugar}. ¿Dónde fue? Elige una de
@@ -2222,9 +2242,14 @@ export function EscenaFacil({
                       onClick={() => {
                         mapa.current?.easeTo({ center: [r.lon, r.lat], zoom: 18.5 });
                         onBuscarCalles({ lat: r.lat, lon: r.lon });
-                        // El perito eligió el lugar: ya no hay duda y Croquis propone ahí.
-                        if (busquedaNarrada) {
-                          setBusquedaNarrada(null);
+                        // El perito eligió el lugar: ya no hay duda y Croquis propone ahí. También al
+                        // elegir uno de los cruces de las calles narradas (René, 2026-11-27, #388).
+                        if (busquedaNarrada || (r.precision === "cruce" && !lugar)) {
+                          setBusquedaNarrada(
+                            r.precision === "cruce"
+                              ? { nombre: r.nombre, resultados: [r], aviso: null }
+                              : null,
+                          );
                           setLugarNarrado({ lat: r.lat, lon: r.lon });
                         }
                         setResultados([]);

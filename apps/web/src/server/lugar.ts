@@ -26,6 +26,8 @@ import {
 import { z } from "zod";
 import { interpretarLugar } from "@/lib/lugar-texto";
 
+import { crucesPorNombre } from "./cruces";
+
 export const NOMINATIM_URL = "https://nominatim.openstreetmap.org/search";
 export const PHOTON_URL = "https://photon.komoot.io/api/";
 export const USER_AGENT =
@@ -678,7 +680,9 @@ export async function buscarLugar(
   const interpretado = interpretarLugar(texto);
   let out: Omit<LugarOut, "cache">;
   try {
-    out = await conNominatim(zona, interpretado, nom);
+    out = await conNominatim(zona, interpretado, nom, (cs, caja, centro) =>
+      crucesPorNombre(cs, caja, centro, deps.fetcher),
+    );
   } catch (e) {
     if (!(e instanceof SinServicio)) throw e;
     // Nominatim no respondió: Photon, con la carretera o el texto y la zona.
@@ -715,6 +719,12 @@ async function conNominatim(
   zona: { municipio?: string; estado?: string; texto: string },
   interpretado: ReturnType<typeof interpretarLugar>,
   nom: (params: Record<string, string>) => Promise<Nominatim[]>,
+  /** Los cruces reales de dos calles en una caja (Overpass); null si no respondió. */
+  cruces: (
+    calles: readonly [string, string],
+    caja: { sur: number; oeste: number; norte: number; este: number },
+    centro: { lat: number; lon: number } | null,
+  ) => Promise<{ lat: number; lon: number }[] | null> = async () => null,
 ): Promise<Omit<LugarOut, "cache">> {
   const { municipio, estado, texto } = zona;
   const donde = [municipio, estado].filter(Boolean).join(", ");
@@ -896,6 +906,43 @@ async function conNominatim(
   // tocan. Antes que la primera calle sola, que cae en cualquier punto de ella.
   const vias = viasDelCruce(texto, municipio);
   const cajaCruce = cajaMunicipio ?? (await estadoCaja());
+  const enDonde = donde ? ` en ${donde}` : "";
+  // El cruce narrado, con las dos calles (René, 2026-11-27; #388): sus cruces reales en OSM. Uno, el
+  // lugar; varios, el perito elige; ninguno, se dice y no se propone otra esquina.
+  if (vias && cajaCruce?.boundingbox) {
+    const [sur, norte, oeste, este] = cajaCruce.boundingbox.map(Number) as [
+      number,
+      number,
+      number,
+      number,
+    ];
+    const centro = cajaMunicipio
+      ? { lat: Number(cajaMunicipio.lat), lon: Number(cajaMunicipio.lon) }
+      : null;
+    const reales = await cruces(vias, { sur, norte, oeste, este }, centro);
+    if (reales?.length)
+      return {
+        resultados: reales.map((p, k) => ({
+          nombre: `Cruce de ${vias[0]} con ${vias[1]}${reales.length > 1 ? ` (${k + 1} de ${reales.length})` : ""}`,
+          lat: p.lat,
+          lon: p.lon,
+          ...(municipio ? { municipio } : {}),
+          ...(estado ? { estado } : {}),
+          precision: "cruce" as const,
+        })),
+        aviso:
+          reales.length === 1
+            ? `El cruce de ${vias[0]} con ${vias[1]}${enDonde}.`
+            : `${vias[0]} y ${vias[1]} se cruzan en ${reales.length} lugares${enDonde}: elige el del hecho.`,
+        fuente: "nominatim",
+      };
+    if (reales)
+      return {
+        resultados: [],
+        aviso: `No encontré el cruce de ${vias[0]} con ${vias[1]}${enDonde}: márcalo tú en el mapa.`,
+        fuente: "nominatim",
+      };
+  }
   if (vias && cajaCruce?.boundingbox) {
     // Con variantes del nombre (revisión de la cadena, René 2026-11-24): «Avenida de los Insurgentes
     // Sur» es «Avenida Insurgentes Sur» en OpenStreetMap.
@@ -936,6 +983,11 @@ async function conNominatim(
         fuente: "nominatim",
       };
     }
+    return {
+      resultados: [],
+      aviso: `No encontré el cruce de ${vias[0]} con ${vias[1]}${enDonde}: márcalo tú en el mapa.`,
+      fuente: "nominatim",
+    };
   }
 
   if (cajaMunicipio) {
