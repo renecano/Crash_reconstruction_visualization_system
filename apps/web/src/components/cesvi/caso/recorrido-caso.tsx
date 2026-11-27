@@ -42,7 +42,8 @@ import {
   type SalidaCorpus,
 } from "@croquis/cesvi";
 import { overpassDeTeselas, type OverpassResponse } from "@croquis/croquis-2d";
-import { conPisoYFantasma } from "@croquis/scene-schema";
+import { conPisoYFantasma, conTrayectoPrevio } from "@croquis/scene-schema";
+import { usePuenteDelBuild } from "@/lib/visor-unity/puente-del-build";
 import { preloadRenderer, type ViewerExportApi } from "@croquis/viewer";
 import type { Map as MapaMl } from "maplibre-gl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -239,6 +240,10 @@ export function RecorridoCaso({
   const [previos, setPrevios] = useState<Readonly<Record<string, { lat: number; lon: number }>>>(
     inicial.trayectosPrevios ?? {},
   );
+  // El trayecto previo solo si el build publicado lo dibuja (René, 2026-11-27: el 8a302a no lo trae):
+  // sin eso, La escena no pregunta «¿De dónde venía?» y ni el 3D ni el dictamen lo mencionan.
+  const conPrevios = conTrayectoPrevio(usePuenteDelBuild());
+  const previosVigentes = conPrevios ? previos : {};
   // C1 (W3): lo contestado en las preguntas del primer golpe, los otros choques y los puntos de paso.
   // null: todavía no se decide si se preguntan (depende de cómo llega la escena al abrir el caso).
   const [c1, setC1] = useState<RespuestasC1 | null>(null);
@@ -1524,7 +1529,7 @@ export function RecorridoCaso({
         exportApi={vista === "3d" ? exportApi : null}
         unity={vista === "3d" ? unityApi : null}
         pedidoExportar={pedidoExportar}
-        previos={Object.keys(previos).map((id) => nombreLab(id))}
+        previos={Object.keys(previosVigentes).map((id) => nombreLab(id))}
         mapa={mapa}
         validacion={validacion}
         onValidacion={setValidacion}
@@ -1762,8 +1767,8 @@ export function RecorridoCaso({
               estado: expediente.caso.lugar?.estado?.valor,
             }}
             onBuscarCalles={setCentroBuscado}
-            previos={previos}
-            onPrevios={setPrevios}
+            previos={previosVigentes}
+            onPrevios={conPrevios ? setPrevios : undefined}
             onVerReconstruccion={() => irA(paso + 1)}
             onNota={(t) => setPizarra((x) => delPerito(x, t))}
             recalculo={frenteAEscena}
@@ -1981,7 +1986,7 @@ export function RecorridoCaso({
                     letra: letraDe(String(id)),
                   }))}
                   onApiUnity={setUnityApi}
-                  previos={previos}
+                  previos={previosVigentes}
                   onInstante={alInstante}
                   presentar={presentando && unityApi ? canalPresentar : null}
                   r={r}

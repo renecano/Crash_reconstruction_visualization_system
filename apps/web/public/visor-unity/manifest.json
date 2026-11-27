@@ -18,5 +18,6 @@
     "nocturno_lluvia-noche",
     "terraceria-dia",
     "terraceria-noche"
-  ]
+  ],
+  "puente": "1.4.0"
 }

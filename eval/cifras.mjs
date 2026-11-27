@@ -277,7 +277,7 @@ function construir() {
         APROBADO,
       ],
       [
-        "ejemplos.alcance_corolla",
+        "ejemplos.alcance_vento",
         "alcance-deformacion",
         "V2",
         "«alcance en carretera»: velocidad del Vento (B), el alcanzado, antes del impacto",

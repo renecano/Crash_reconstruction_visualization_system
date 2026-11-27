@@ -109,3 +109,23 @@ test("@flujo de dónde venía: la ruta por las calles, ilustrativa, sin cambiar 
   expect(tr.distancia_m).toBeGreaterThan(1.2 * recta);
   expect(n).toBeGreaterThan(RUTA.puntos.length);
 });
+
+test("@flujo con un build sin trayecto previo (puente 1.4.0), La escena no pregunta de dónde venía", async ({
+  page,
+}) => {
+  test.setTimeout(240_000);
+  // René, 2026-11-27: el build 8a302a no dibuja el trayecto previo; la web no lo ofrece.
+  await conUnityFalso(page, "1.4.0");
+  await conLaEscenaNueva(page);
+  await page.goto("/cesvi");
+  await page.getByTestId("ir-caso-nuevo").click();
+  await irAPaso(page, 2);
+  await page.locator('[data-ejemplo="crucero-noche"]').click();
+  await page.getByTestId("leer-narracion").click();
+  await expect(page.getByTestId("escena")).toBeVisible({ timeout: 60_000 });
+  await irAPaso(page, 3);
+  const notas: string[] = [];
+  expect(await colocarComoPerito(page, "crucero-noche", notas), notas.join(" ")).toBe(true);
+  await expect(page.getByTestId("lista-escena")).toBeVisible();
+  await expect(page.getByTestId("de-donde-venia")).toHaveCount(0);
+});
