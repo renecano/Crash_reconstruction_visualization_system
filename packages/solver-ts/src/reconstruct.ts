@@ -381,12 +381,12 @@ const largoM = (valor: number, unidad: string) => Number(valor) * (LARGO_M[unida
  */
 function danosDeclarados(spec: Json, zonas: Map<string, Json | null>): Map<string, DanoDeclarado> {
   const out = new Map<string, DanoDeclarado>();
-  for (const d of ((spec.danos_declarados as Json[] | undefined) ?? []) as Json[]) {
+  for (const d of (spec.danos_declarados as Json[] | undefined) ?? []) {
     const ancho = d.ancho_danado as Json | undefined;
     if (!ancho || ancho.valor === undefined || ancho.valor === null) continue;
     const vid = String(d.vehiculo_id);
-    const lado = String(((d.zona as Json | undefined) ?? {}).lado ?? "F");
-    const cara = String((zonas.get(vid) ?? {}).lado ?? "");
+    const lado = str(((d.zona as Json | undefined) ?? {}).lado, "F");
+    const cara = str((zonas.get(vid) ?? {}).lado, "");
     const previo = out.get(vid);
     if (previo && (previo.lado === cara || lado !== cara)) continue;
     const perfil = d.perfil_aplastamiento as Json | undefined;
@@ -396,14 +396,14 @@ function danosDeclarados(spec: Json, zonas: Map<string, Json | null>): Map<strin
       lado,
       perfilM:
         perfil && valores.length >= 2
-          ? valores.map((c) => largoM(c, String(perfil.unidad ?? "m")))
+          ? valores.map((c) => largoM(c, str(perfil.unidad, "m")))
           : null,
-      anchoM: largoM(Number(ancho.valor), String(ancho.unidad ?? "m")),
+      anchoM: largoM(Number(ancho.valor), str(ancho.unidad, "m")),
       rigidez:
         rig && rig.a !== undefined && rig.a !== null && rig.b !== undefined && rig.b !== null
           ? new Stiffness(Number(rig.a), Number(rig.b))
           : null,
-      nota: rig ? String(rig.nota ?? "") : "",
+      nota: rig ? str(rig.nota, "") : "",
     });
   }
   return out;
