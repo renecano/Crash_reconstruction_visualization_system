@@ -54,7 +54,7 @@ const VIGENTES = [
 /** Las líneas del documento (o de su sección), con su número. */
 // 4. Todo el repo. Lo que es historia o solo coincide en el número no cuenta.
 const HISTORIA =
-  /^(docs\/(adr|progress|historial|auditoria|cesvi\/entrante)\/|docs\/PROGRESS\.md$|eval\/results\/|eval\/(cifras|verificar_cifras)\.mjs$)|\.test\.|\/fixtures\/|\.(png|jpe?g|webp|gif|glb|gltf|pdf|docx|wasm|data|zip|ico|woff2?|ttf|lock|yaml)$/;
+  /^(docs\/(adr|progress|historial|auditoria|cesvi\/entrante)\/|docs\/PROGRESS\.md$|eval\/results\/|eval\/(cifras|verificar_cifras)\.mjs$)|\.test\.|\/fixtures\/|\.Tests\/Datos\/|\.(png|jpe?g|webp|gif|glb|gltf|pdf|docx|wasm|data|zip|ico|woff2?|ttf|lock|yaml)$/;
 // Los resultados que describen el estado de hoy (se regeneran con la app vigente).
 const RESULTADOS_VIGENTES = ["eval/results/laboratorio_axa.json"];
 const VISTOS = new Set();

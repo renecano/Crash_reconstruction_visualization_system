@@ -96,6 +96,64 @@ namespace Croquis.Visor
             Camara = GetComponent<CamaraVisor>();
             piso = GameObject.Find("Piso");
             sol = FindFirstObjectByType<Light>();
+            letreroLenta = Letrero();
+        }
+
+        /// <summary>«Cámara lenta ×N», arriba al centro, mientras la reproducción va más lenta que el tiempo real.</summary>
+        private GameObject letreroLenta;
+        private Text textoLenta;
+
+        private GameObject Letrero()
+        {
+            var go = new GameObject("letrero_camara_lenta");
+            go.transform.SetParent(transform, false);
+            var canvas = go.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 101;
+            var escala = go.AddComponent<CanvasScaler>();
+            escala.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            escala.referenceResolution = new Vector2(1280, 720);
+            // El mismo recuadro de la leyenda (contraste AA de día y de noche, `Leyenda3d`).
+            var fondo = new GameObject("fondo").AddComponent<Image>();
+            fondo.transform.SetParent(go.transform, false);
+            var f = Leyenda3d.Fondo;
+            fondo.color = new Color((float)f.R, (float)f.G, (float)f.B, (float)f.A);
+            fondo.raycastTarget = false;
+            var caja = fondo.gameObject.AddComponent<HorizontalLayoutGroup>();
+            caja.padding = new RectOffset(12, 12, 5, 5);
+            caja.childControlWidth = true;
+            caja.childControlHeight = true;
+            var ajuste = fondo.gameObject.AddComponent<ContentSizeFitter>();
+            ajuste.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            ajuste.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            var rf = fondo.rectTransform;
+            rf.anchorMin = rf.anchorMax = rf.pivot = new Vector2(0.5f, 1f);
+            rf.anchoredPosition = new Vector2(0f, -14f);
+            textoLenta = new GameObject("texto").AddComponent<Text>();
+            textoLenta.transform.SetParent(fondo.transform, false);
+            textoLenta.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            textoLenta.fontSize = 18;
+            textoLenta.fontStyle = FontStyle.Bold;
+            var t = Leyenda3d.Texto;
+            textoLenta.color = new Color((float)t.R, (float)t.G, (float)t.B, (float)t.A);
+            textoLenta.horizontalOverflow = HorizontalWrapMode.Overflow;
+            textoLenta.raycastTarget = false;
+            go.SetActive(false);
+            return go;
+        }
+
+        private void MostrarLetrero(double ritmo)
+        {
+            var texto = Reproduciendo ? EnfasisImpacto.EtiquetaCamaraLenta(ritmo) : null;
+            if (texto != null && textoLenta.text != texto)
+            {
+                textoLenta.text = texto;
+            }
+
+            if (letreroLenta.activeSelf != (texto != null))
+            {
+                letreroLenta.SetActive(texto != null);
+            }
         }
 
         /// <summary>
@@ -134,6 +192,8 @@ namespace Croquis.Visor
         public async Awaitable CargarAsync(Caso3D caso)
         {
             var mio = ++turnoDeCarga;
+            leyendaVisible = true;
+            danoMedido = Array.Exists(caso.Resultado?.Vehiculos ?? new ResultadoVehiculo[0], v => DanoDelCaso.UsaMedido(v.Dano));
             Omisiones.Limpiar();
             PasosDeCarga.Clear();
             PasosDeCarga["leer_sobre"] = Math.Round(LecturaDelPaquete.Sobre, 1);
@@ -234,7 +294,29 @@ namespace Croquis.Visor
                 await cielo;
                 Vigente(mio);
                 Paso("cielo");
+            // El camellón (de las calles de OSM del caso) y el paisaje árido, antes de armar el entorno:
+            // quitan lo que no va y ponen sus árboles (docs/contrato-unity.md §3).
+            List<List<Camellon.Punto>> camellones = null;
+            Omisiones.Intentar("el camellón", () =>
+            {
+                var lugar = caso.Escena?.Lugar;
+                camellones = Camellon.Buscar(lugar?.RedVial?.Vias, lugar?.AnchoCarril?.Valor ?? 3.5, e.Centro.X, e.Centro.Y, 180);
+                Camellon.Despejar(e, camellones);
+                var arboles = Camellon.Arbolado(camellones, e.Entorno?.Arboles, e.Semilla);
+                foreach (var a in arboles)
+                {
+                    a.Z = terreno.Z((float)a.X, (float)a.Y) + CamellonVista.Alto;
+                }
+
+                if (e.Entorno != null && arboles.Count > 0)
+                {
+                    e.Entorno.Arboles = (e.Entorno.Arboles ?? new ArbolEscenario[0]).Concat(arboles).ToArray();
+                }
+            });
+            Omisiones.Intentar("el paisaje árido", () => Paisaje.Arido(e));
+            Omisiones.Intentar("la calzada despejada", () => Calzada.Despejar(e));
             Omisiones.Intentar("el escenario", () => EscenarioVista.Construir(raiz, e, sol, Camera.main, terreno));
+            Omisiones.Intentar("el camellón", () => CamellonVista.Construir(raiz.Find("escenario"), camellones, terreno, e.Ambiente, e.Semilla));
             Paso("escenario");
             }
             else
@@ -536,7 +618,9 @@ namespace Croquis.Visor
                 return;
             }
 
-            desfaseFantasma = Fantasmas.Desfase(caso.Resultado, version);
+            var hipotesis = Fantasmas.EsHipotesis(caso.Fantasma.Etiqueta);
+            desfaseFantasma = Fantasmas.Desfase(caso.Resultado, version, hipotesis);
+            var letrero = Fantasmas.Letrero(caso.Fantasma.Etiqueta);
             var dibujar = Fantasmas.VehiculosADibujar(caso.Resultado, version);
             var material = Materiales.Calca(ColorFantasma, 0.4f);
             foreach (var v in version.Vehiculos)
@@ -583,6 +667,10 @@ namespace Croquis.Visor
                 vista.Trayectoria = v.Trayectoria;
                 vista.Datos = v;
                 vista.Terreno = terreno;
+                // Su propio daño (el de su `resultado`), en su instante: con otra velocidad, otra deformación.
+                Omisiones.Intentar("el daño de la versión de " + v.Id, () => vista.Dano = DanoVista.Preparar(go.transform, v, version));
+                vista.Letrero = EtiquetaMundo.CrearDestacada(go.transform, letrero);
+                vista.AltoLetrero = (float)(v.Dimensiones?.AltoM ?? 1.5) + 0.7f;
                 fantasmas.Add(vista);
             }
 
@@ -693,14 +781,38 @@ namespace Croquis.Visor
             ActualizarLeyenda();
         }
 
+        /// <summary>
+        /// Si se ve la leyenda ilustrativa de Unity (puente 1.4.0, mensaje `leyenda`). La web la apaga
+        /// solo mientras pone la suya encima (Presentar). Cada caso cargado empieza con ella a la vista.
+        /// </summary>
+        public bool LeyendaVisible
+        {
+            get => leyendaVisible;
+            set
+            {
+                leyendaVisible = value;
+                var texto = EscenarioVista.TextoDeLeyenda(raiz);
+                var lienzo = texto != null ? texto.GetComponentInParent<Canvas>(true) : null;
+                if (lienzo != null)
+                {
+                    lienzo.gameObject.SetActive(value);
+                }
+            }
+        }
+
+        private bool leyendaVisible = true;
+
         private void ActualizarLeyenda()
         {
             var texto = EscenarioVista.TextoDeLeyenda(raiz);
             if (texto != null)
             {
-                texto.text = Leyenda3d.Mensaje(conEscenario, pisoMapa.Puesto ? pisoMapa.Atribucion : null, etiquetaFantasma);
+                texto.text = Leyenda3d.Mensaje(conEscenario, pisoMapa.Puesto ? pisoMapa.Atribucion : null, etiquetaFantasma, danoMedido);
             }
         }
+
+        /// <summary>Si algún vehículo del caso se dibuja con los C1–C6 que midió el perito.</summary>
+        private bool danoMedido;
 
         public void Fijar(double t)
         {
@@ -719,6 +831,7 @@ namespace Croquis.Visor
             foreach (var g in fantasmas)
             {
                 g.Colocar(Tiempo + desfaseFantasma);
+                g.Letrero?.Mostrar(true, g.transform.position + Vector3.up * g.AltoLetrero);
             }
 
             if (dinamica != null)
@@ -731,13 +844,14 @@ namespace Croquis.Visor
 
         private void Update()
         {
+            // Cámara lenta automática en el impacto: el ritmo cambia, las poses no (ronda 4, punto 5).
+            var factor = EnfasisActivo ? EnfasisImpacto.FactorCamaraLenta(Tiempo, tImpacto) : 1.0;
+            MostrarLetrero(Velocidad * factor);
             if (!Reproduciendo)
             {
                 return;
             }
 
-            // Cámara lenta automática en el impacto: el ritmo cambia, las poses no (ronda 4, punto 5).
-            var factor = EnfasisActivo ? EnfasisImpacto.FactorCamaraLenta(Tiempo, tImpacto) : 1.0;
             Fijar(Tiempo + Time.unscaledDeltaTime * Velocidad * factor);
             if (Tiempo >= fin)
             {
@@ -785,6 +899,10 @@ namespace Croquis.Visor
         private List<Renderer> carroceria;
         private GameObject contorno;
         public TramoFreno[] Frenado { get; set; }
+
+        /// <summary>El letrero de una versión superpuesta («Hipótesis»), siempre a la vista; nulo en la reconstrucción.</summary>
+        public EtiquetaMundo Letrero { get; set; }
+        public float AltoLetrero { get; set; }
 
         /// <summary>El piso, para posar el vehículo sobre él cuando la trayectoria no trae altura.</summary>
         public Terreno Terreno { get; set; }
@@ -1022,8 +1140,42 @@ namespace Croquis.Visor
     {
         private RectTransform lienzo;
         private Text texto;
+        private RectTransform caja;
         private bool visible;
         private Vector3 donde;
+
+        // Los letreros destacados encendidos: si dos caen casi en el mismo lugar de la pantalla (los dos
+        // fantasmas vistos desde arriba), solo se dibuja el primero.
+        private static readonly System.Collections.Generic.List<EtiquetaMundo> Destacados = new System.Collections.Generic.List<EtiquetaMundo>();
+
+        /// <summary>
+        /// Un letrero destacado (el de una versión superpuesta, «Hipótesis»): más grande, en negrita y con
+        /// el recuadro de contraste AA de la leyenda (`Leyenda3d`), para leerse sobre cualquier fondo.
+        /// </summary>
+        public static EtiquetaMundo CrearDestacada(Transform padre, string mensaje)
+        {
+            var e = Crear(padre, mensaje);
+            e.texto.fontSize = 16;
+            e.texto.fontStyle = FontStyle.Bold;
+            e.texto.rectTransform.sizeDelta = new Vector2(260f, 26f);
+            Destroy(e.texto.GetComponent<Outline>());
+            var fondo = new GameObject("fondo").AddComponent<Image>();
+            fondo.transform.SetParent(e.lienzo, false);
+            fondo.transform.SetAsFirstSibling();
+            var f = Leyenda3d.Fondo;
+            fondo.color = new Color((float)f.R, (float)f.G, (float)f.B, (float)f.A);
+            fondo.raycastTarget = false;
+            e.caja = fondo.rectTransform;
+            e.caja.sizeDelta = new Vector2(e.texto.preferredWidth + 18f, 26f);
+            fondo.enabled = false;
+            Destacados.Add(e);
+            return e;
+        }
+
+        private void OnDestroy()
+        {
+            Destacados.Remove(this);
+        }
 
         public static EtiquetaMundo Crear(Transform padre, string mensaje)
         {
@@ -1069,15 +1221,43 @@ namespace Croquis.Visor
             }
 
             var p = camara.WorldToScreenPoint(donde);
-            if (p.z <= 0f)
+            var tapado = false;
+            if (caja != null)
+            {
+                foreach (var otro in Destacados)
+                {
+                    if (otro == this)
+                    {
+                        break;
+                    }
+
+                    if (otro.visible && otro.texto.enabled && (camara.WorldToScreenPoint(otro.donde) - p).sqrMagnitude < 40f * 40f)
+                    {
+                        tapado = true;
+                        break;
+                    }
+                }
+            }
+
+            if (p.z <= 0f || tapado)
             {
                 texto.enabled = false;
+                if (caja != null)
+                {
+                    caja.GetComponent<Image>().enabled = false;
+                }
+
                 return;
             }
 
             RectTransformUtility.ScreenPointToLocalPointInRectangle(lienzo, p, null, out var local);
             texto.rectTransform.anchoredPosition = local;
             texto.enabled = true;
+            if (caja != null)
+            {
+                caja.anchoredPosition = local;
+                caja.GetComponent<Image>().enabled = true;
+            }
         }
     }
 

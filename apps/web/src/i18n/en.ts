@@ -70,9 +70,9 @@ export const en: Dict = {
   },
   meta: {
     inicio: {
-      titulo: "Croquis — tell what happened, watch it happen",
+      titulo: "Croquis — crash reconstruction for experts",
       descripcion:
-        "Describe a road crash in your own words and Croquis rebuilds it in 3D with real physics. It is an illustrative reconstruction, not a forensic report.",
+        "The expert tells what happened and Croquis reconstructs it with physics, in 3D, with the source of every number. The report belongs to the expert.",
     },
     cuenta: {
       titulo: "Tell what happened — Croquis",
