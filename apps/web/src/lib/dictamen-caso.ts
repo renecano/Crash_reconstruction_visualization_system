@@ -81,6 +81,11 @@ export interface DatosDictamenCaso {
   } | null;
   /** Con la estructura de los reportes de CESVI (si el perito la pide). */
   estructuraCesvi: boolean;
+  /**
+   * Los vehículos a los que el perito les marcó de dónde venían (René, 2026-11-27): el 3D muestra su
+   * trayecto previo por las calles, ilustrativo. Vacío o ausente si no marcó ninguno.
+   */
+  trayectosPrevios?: readonly string[];
   trazabilidad: { metodo: string; huella: string };
   /** Lo que el caso no trae, como supuesto declarado con su justificación (ADR 0091). */
   supuestos?: readonly SupuestoDeclarado[];
@@ -314,6 +319,13 @@ function secciones(d: DatosDictamenCaso) {
     ),
     // La deformación medida contra la reconstrucción que se ve, con sus números.
     ...lecturasDeDano(r).map((l) => parrafo(danoEnTexto(l))),
+    ...(d.trayectosPrevios?.length
+      ? [
+          nota(
+            `De dónde venía ${d.trayectosPrevios.join(" y ")}: el 3D muestra su recorrido por las calles hasta donde empieza la reconstrucción. Es un trayecto ilustrativo, no es evidencia: no entra a la reconstrucción ni a ninguna cifra.`,
+          ),
+        ]
+      : []),
     // Cada rango dice de cuántas simulaciones sale, y por qué va en enteros.
     nota(
       `El rango entre paréntesis es el ${notaDeMuestras(r)}. Las velocidades de la reconstrucción van en enteros: el rango cambia cerca de 1 km/h entre corridas y varios km/h con los supuestos.`,

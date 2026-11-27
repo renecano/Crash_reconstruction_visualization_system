@@ -93,7 +93,23 @@ export function ListaEscena({
   onVer,
   guia,
   onCerrarGuia,
+  previos,
+  onMarcarPrevio,
+  onBorrarPrevio,
 }: {
+  /**
+   * «¿De dónde venía?» por vehículo (René, 2026-11-27): el inicio del trayecto previo ilustrativo, con
+   * su distancia y su duración. Sin esto, la sección no se muestra.
+   */
+  previos?: readonly {
+    id: string;
+    nombre: string;
+    marcado: boolean;
+    marcando: boolean;
+    texto: string | null;
+  }[];
+  onMarcarPrevio?: (id: string) => void;
+  onBorrarPrevio?: (id: string) => void;
   items: readonly ItemEscena[];
   /** Todo lo obligatorio está: «Ver la reconstrucción» se activa. */
   listo: boolean;
@@ -151,6 +167,56 @@ export function ListaEscena({
           <Fila key={i.clave} item={i} onConfirmar={onConfirmar} onAbrir={onAbrir} />
         ))}
       </ul>
+      {previos?.length ? (
+        <section
+          className="flex flex-col gap-2 border-t border-linea-suave pt-3"
+          aria-label="De dónde venía cada vehículo"
+          data-testid="de-donde-venia"
+        >
+          <span className="font-semibold">¿De dónde venía? (opcional)</span>
+          <span className="t-nota">
+            Para ver el choque desde donde venía cada vehículo, hasta 5 km antes. Es un trayecto
+            ilustrativo por las calles: no es evidencia y no cambia la reconstrucción.
+          </span>
+          <ul className="flex flex-col gap-2">
+            {previos.map((v) => (
+              <li key={v.id} className="flex flex-col gap-1" data-testid={`previo-${v.id}`}>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="min-w-0 flex-1">{v.nombre}</span>
+                  <button
+                    type="button"
+                    className="boton-compacto boton-secundario"
+                    aria-pressed={v.marcando}
+                    onClick={() => onMarcarPrevio?.(v.id)}
+                    data-testid={`marcar-previo-${v.id}`}
+                  >
+                    {v.marcado ? "Mover el inicio" : "Marcar en el mapa"}
+                  </button>
+                  {v.marcado ? (
+                    <button
+                      type="button"
+                      className="boton-compacto boton-secundario"
+                      onClick={() => onBorrarPrevio?.(v.id)}
+                      data-testid={`borrar-previo-${v.id}`}
+                    >
+                      Borrar
+                    </button>
+                  ) : null}
+                </div>
+                {v.marcando ? (
+                  <span className="t-nota" role="status">
+                    Aleja el mapa y toca de dónde venía {v.nombre}.
+                  </span>
+                ) : v.texto ? (
+                  <span className="t-nota" data-testid={`texto-previo-${v.id}`}>
+                    {v.texto}
+                  </span>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
       <div className="mt-auto flex flex-col gap-2 border-t border-linea-suave pt-4">
         <span className="t-nota" data-testid="avance-lista">
           {hechos} de {obligatorios.length} listos

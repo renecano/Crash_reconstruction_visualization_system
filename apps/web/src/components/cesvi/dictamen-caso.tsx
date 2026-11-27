@@ -136,7 +136,10 @@ export function DictamenCaso({
   letraDe,
   acciones,
   pedidoExportar = 0,
+  previos = [],
 }: {
+  /** Los vehículos con trayecto previo ilustrativo («A · Jetta»), para la nota del dictamen. */
+  previos?: readonly string[];
   /** Sube cada vez que el perito pulsa «Exportar» en la barra: lleva la vista a las descargas. */
   pedidoExportar?: number;
   /** El título del hecho, para la hoja. */
@@ -271,6 +274,7 @@ export function DictamenCaso({
       versiones,
       validacion,
       estructuraCesvi,
+      trayectosPrevios: previos,
       contraDeformacion: contra,
       trazabilidad: {
         metodo: `reconstrucción física de Croquis (versión ${String(reconstruccion.resultado.version_resultado ?? "")}) y verificación con el método de CESVI`,
