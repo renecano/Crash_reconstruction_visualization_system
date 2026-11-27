@@ -585,16 +585,17 @@ export function EscenaFacil({
     const cruce = narracion ? cruceNarrado(narracion) : null;
     const zonaDelCruce = zonaNarrada(descripcionLugar) ?? zonaNarrada(narracion);
     // Ronda 4 (René): solo el lugar va al buscador, nunca la frase completa con su «rumbo a…».
-    const consultas = [
-      separarLugarYSentido(descripcionLugar).lugar,
-      // Con la colonia o la zona narrada, para ordenar los cruces si hay varios (René, 2026-11-27).
+    // Con un cruce narrado se busca el cruce, con la colonia o la zona narrada para ordenar si hay
+    // varios, y nada más (René, 2026-11-27, #388): una de sus calles sola, o la descripción sin su
+    // «hacia el cruce con…», daba un punto de la calle a kilómetros del cruce. Si no aparece, se dice.
+    const consultas = (
       cruce
-        ? `${cruce.calles[0]} y ${cruce.calles[1]}${zonaDelCruce ? `, ${zonaDelCruce}` : ""}`
-        : null,
-      // Con un cruce narrado no se busca una de sus calles sola (René, 2026-11-27, #388): su punto
-      // medio llevaba el choque a otra esquina, a 1.4 km del cruce.
-      narracion ? carreteraNarrada(narracion) : null,
-    ].filter((x): x is string => Boolean(x?.trim()));
+        ? [`${cruce.calles[0]} y ${cruce.calles[1]}${zonaDelCruce ? `, ${zonaDelCruce}` : ""}`]
+        : [
+            separarLugarYSentido(descripcionLugar).lugar,
+            narracion ? carreteraNarrada(narracion) : null,
+          ]
+    ).filter((x): x is string => Boolean(x?.trim()));
     if (!consultas.length) return;
     yaBuscado.current = true;
     const buscarEn = async () => {

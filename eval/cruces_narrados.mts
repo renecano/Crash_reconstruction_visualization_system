@@ -167,14 +167,30 @@ async function cajaDe(municipio: string, estado?: string) {
   u.searchParams.set("q", [municipio, estado].filter(Boolean).join(", "));
   u.searchParams.set("limit", "3");
   u.searchParams.set("countrycodes", "mx");
+  u.searchParams.set("addressdetails", "1");
   const r = await fetchGuardado(u);
   if (!r.ok) return null;
   const xs = (await r.json()) as {
     lat: string;
     lon: string;
+    name?: string;
+    display_name: string;
+    address?: Record<string, string>;
     boundingbox?: [string, string, string, string];
   }[];
-  const x = xs.find((y) => y.boundingbox);
+  // Como `buscarLugar`: el área que se llama como el municipio y cae en su estado (no otro «Miguel
+  // Hidalgo» del país, ni una calle con su nombre).
+  const sin = (t: string) => t.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+  const enEstado = (y: (typeof xs)[number]) =>
+    !estado || sin(y.address?.state ?? y.display_name).includes(sin(estado));
+  const seLlama = (y: (typeof xs)[number]) => {
+    const n = sin(y.name ?? y.display_name.split(",")[0] ?? "");
+    const m = sin(municipio);
+    return n.includes(m) || m.includes(n);
+  };
+  const x =
+    xs.find((y) => y.boundingbox && enEstado(y) && seLlama(y)) ??
+    xs.find((y) => y.boundingbox && enEstado(y));
   if (!x?.boundingbox) return null;
   const [sur, norte, oeste, este] = x.boundingbox.map(Number) as [number, number, number, number];
   // Una caja de más de ~1° (un estado entero) es demasiado para Overpass; se toma su centro ±0.25°.
@@ -198,6 +214,9 @@ interface Fila {
   cruces_reales: number | null;
   resultado: "propone" | "pregunta" | "sin_lugar";
   motivo?: string;
+  propuesto?: { lat: number; lon: number };
+  lugar_buscado?: { lat: number; lon: number };
+  real_cercano?: { lat: number; lon: number };
   /** m del choque propuesto al cruce real más cercano. */
   distancia_m?: number | null;
 }
@@ -239,14 +258,18 @@ for (const c of todos.slice(0, HASTA)) {
   // `antes`, como `main`; `despues`, con la colonia o la zona narrada (como La escena).
   const zonaDelCruce =
     MODO === "despues" ? (zonaNarrada(lugarTexto) ?? zonaNarrada(c.narracion)) : null;
-  const consultas = [
-    separarLugarYSentido(lugarTexto).lugar,
-    cruce
-      ? `${cruce.calles[0]} y ${cruce.calles[1]}${zonaDelCruce ? `, ${zonaDelCruce}` : ""}`
-      : null,
-    MODO === "antes" ? (cruce?.calles[0] ?? null) : null,
-    carreteraNarrada(c.narracion),
-  ].filter((x): x is string => Boolean(x?.trim()));
+  const consultas = (
+    MODO === "antes"
+      ? [
+          separarLugarYSentido(lugarTexto).lugar,
+          cruce ? `${cruce.calles[0]} y ${cruce.calles[1]}` : null,
+          cruce?.calles[0] ?? null,
+          carreteraNarrada(c.narracion),
+        ]
+      : cruce
+        ? [`${cruce.calles[0]} y ${cruce.calles[1]}${zonaDelCruce ? `, ${zonaDelCruce}` : ""}`]
+        : [separarLugarYSentido(lugarTexto).lugar, carreteraNarrada(c.narracion)]
+  ).filter((x): x is string => Boolean(x?.trim()));
   let lugar: { lat: number; lon: number; nombre: string } | null = null;
   let aviso: string | null = null;
   for (const q of consultas) {
@@ -283,6 +306,10 @@ for (const c of todos.slice(0, HASTA)) {
       const p = proponerChoque(calles, c.narracion, lugar);
       const punto = p?.punto ?? lugar;
       fila.resultado = "propone";
+      fila.propuesto = { lat: punto.lat, lon: punto.lon };
+      fila.lugar_buscado = { lat: lugar.lat, lon: lugar.lon };
+      if (reales?.length)
+        fila.real_cercano = [...reales].sort((x, y) => metros(punto, x) - metros(punto, y))[0];
       fila.distancia_m = reales?.length
         ? Math.round(Math.min(...reales.map((x) => metros(punto, x))))
         : null;

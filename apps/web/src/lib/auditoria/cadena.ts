@@ -224,15 +224,12 @@ export async function auditarCaso(o: {
   };
   const cruce = cruceNarrado(o.narracion);
   const zonaDelCruce = zonaNarrada(lugarTexto) ?? zonaNarrada(o.narracion);
-  const consultas = [
-    separarLugarYSentido(lugarTexto).lugar,
-    // Con la colonia o la zona narrada, para ordenar los cruces si hay varios (René, 2026-11-27).
+  // Como La escena (René, 2026-11-27, #388): con un cruce narrado se busca el cruce y nada más.
+  const consultas = (
     cruce
-      ? `${cruce.calles[0]} y ${cruce.calles[1]}${zonaDelCruce ? `, ${zonaDelCruce}` : ""}`
-      : null,
-    // Como La escena (René, 2026-11-27, #388): con un cruce narrado no se busca una calle sola.
-    carreteraNarrada(o.narracion),
-  ].filter((x): x is string => Boolean(x?.trim()));
+      ? [`${cruce.calles[0]} y ${cruce.calles[1]}${zonaDelCruce ? `, ${zonaDelCruce}` : ""}`]
+      : [separarLugarYSentido(lugarTexto).lugar, carreteraNarrada(o.narracion)]
+  ).filter((x): x is string => Boolean(x?.trim()));
   let lugar: (Punto & { nombre: string }) | null = o.lugarGuardado ?? null;
   for (const q of lugar ? [] : consultas) {
     const r = await o.red.lugar(q, zona.municipio, zona.estado).catch((x: unknown) => {
