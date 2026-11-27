@@ -1585,3 +1585,5 @@ Cada ejemplo guarda su lugar (`data/cesvi/ejemplos/narraciones.json`) y abre ah�
 **Daños (siguiente):** en AXA, la deformación medida de la Tacoma con la rigidez del reporte (A = 55.4 kN/m, B = 385.3 kN/m²) equivale a unos 230 kJ, y el choque reconstruido disipa 61.5 kJ en total; además el solver usa la rigidez de NHTSA y no la del reporte. Plan: un PR `contract:` (lo medido y la fuente de la rigidez en `Dano`), el solver con la rigidez del reporte (Python y TS con paridad) y la comparación en Análisis.
 
 **Siguiente paso concreto:** esperar la t9-ejemplos; si sale bien, publicar #311 → #316 → #320 → #323 → #329 → #331, verificar en producción y fusionar #324, #327 y #328; luego #334 y `fix/w-poste-mazda`.
+
+- **6 · Kit para la ronda con 3 personas** (`docs/ronda-final/README.md`): el enlace, tres tareas (un ejemplo hasta el dictamen, un choque propio narrado, «¿Y si…?» y el recorrido desde el inicio) y diez preguntas, en lenguaje de perito.
