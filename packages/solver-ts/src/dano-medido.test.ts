@@ -47,7 +47,7 @@ describe("el daño medido junto al calculado", () => {
   });
 
   it("sin medidas, la rigidez de NHTSA de la clase, con su fuente, y nada medido", () => {
-    const d = dano(loadFixture("alcance") as unknown as Json, "veh-b");
+    const d = dano(loadFixture("alcance"), "veh-b");
     expect((d.rigidez as Json).fuente).toBe("nhtsa");
     expect(String((d.rigidez as Json).nota)).toMatch(/NHTSA|FMVSS|pruebas/);
     expect(d.medido_m).toBeUndefined();
