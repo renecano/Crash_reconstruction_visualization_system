@@ -1,7 +1,7 @@
 # Paso: ejemplos
 # Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t9/ejemplos.json -Capturas docs/cesvi/ronda-4/evidencia/t10-ejemplos -Casos eval/results/t10/ejemplos-casos
 # Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
-# Inicio: 2026-11-26 19:20:01
+# Inicio: 2026-11-26 19:28:19
 
 
 == 1. Herramientas
@@ -12,7 +12,7 @@ Hay internet.
 Scope: all 10 workspace projects
 ✓ Lockfile passes supply-chain policies (verified 7h ago)
 Lockfile is up to date, resolution step is skipped
-Done in 69ms using pnpm v12.11.2
+Done in 76ms using pnpm v12.11.2
 
 == 3. El visor de Unity, desde esta computadora
 Visor dd83b2d323f5ed0e servido desde el sitio: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\public\visor-unity\local
@@ -32,4 +32,4 @@ Running 1 test using 1 worker
 [1/1] [chromium] › e2e\ejemplos-ronda2.spec.ts:58:5 › las cinco narraciones de ejemplo, de punta a punta
   1 passed (2.0m)
 
-# Fin: 2026-11-26 19:22:02 · ok · 2 min
+# Fin: 2026-11-26 19:30:23 · ok · 2.1 min
