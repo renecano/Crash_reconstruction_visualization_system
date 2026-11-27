@@ -1598,3 +1598,4 @@ Cada ejemplo guarda su lugar (`data/cesvi/ejemplos/narraciones.json`) y abre ah�
     - los últimos 8 s, a velocidad normal, y el impacto en cámara lenta;
     - el diálogo dice el factor y la duración.
   - Capturas: `capturas/demo/8-*`.
+- **6 · Kit para la ronda con 3 personas** (`docs/ronda-final/README.md`): el enlace, tres tareas (un ejemplo hasta el dictamen, un choque propio narrado, «¿Y si…?» y el recorrido desde el inicio) y diez preguntas, en lenguaje de perito.
