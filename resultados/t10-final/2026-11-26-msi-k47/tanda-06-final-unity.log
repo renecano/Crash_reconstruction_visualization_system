@@ -1,7 +1,7 @@
 # Paso: final-unity
 # Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues final -Salida eval/results/t10/final_unity.json -Capturas docs/cesvi/ronda-4/evidencia/t10-final
 # Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
-# Inicio: 2026-11-26 19:31:40
+# Inicio: 2026-11-26 19:39:37
 
 
 == 1. Herramientas
@@ -12,7 +12,7 @@ Hay internet.
 Scope: all 10 workspace projects
 ✓ Lockfile passes supply-chain policies (verified 7h ago)
 Lockfile is up to date, resolution step is skipped
-Done in 77ms using pnpm v12.11.2
+Done in 73ms using pnpm v12.11.2
 
 == 3. El visor de Unity, desde esta computadora
 Visor dd83b2d323f5ed0e servido desde el sitio: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\public\visor-unity\local
@@ -36,4 +36,4 @@ Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
   │ Cesvi\Croquis\apps\web
 
 
-# Fin: 2026-11-26 19:31:44 · falló (código 1) · 0.1 min
+# Fin: 2026-11-26 19:39:41 · falló (código 1) · 0.1 min
