@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   cambiosDeVelocidad,
   especDeHipotesisVelocidad,
+  MEDIO_EN_PALABRAS,
   especReconstruida,
   resumenHipotesisVelocidad,
   tituloHipotesisVelocidad,
@@ -63,6 +64,49 @@ export function HipotesisVelocidad({
     }
     return out;
   };
+
+  // La velocidad que declaró el conductor o un testigo (René, 2026-11-27): si la física da otra,
+  // la simulación con la declarada queda sola en Versiones, una vez por vehículo, para compararla y
+  // elegir cuál lleva el dictamen. La cifra reconstruida no cambia.
+  const declaradas = Object.entries(r.narradas ?? {}).flatMap(([id, n]) => {
+    if (n.origen !== "perito" || n.como_se_sabe === "medida") return [];
+    const rec = reconstruida(id);
+    if (rec === null || Math.abs(n.kmh - rec) < 0.5) return [];
+    return [{ id, kmh: n.kmh, medio: n.medio ?? "conductor" }];
+  });
+  const pedidas = useRef(new Set<string>());
+  useEffect(() => {
+    for (const d of declaradas) {
+      const clave = `declarada-${d.id}`;
+      if (pedidas.current.has(clave) || versiones.some((v) => v.clave === clave)) continue;
+      pedidas.current.add(clave);
+      const e: VelocidadElegida[] = [{ vehiculo: d.id, kmh: d.kmh }];
+      const base = { ...r, spec: especReconstruida(r) } as unknown as EscenaSolver;
+      const hip = especDeHipotesisVelocidad(base, new Map(), e);
+      void Promise.all([
+        reconstruirEnNavegador(base.spec as unknown as EscenaSpec, r.relieve),
+        reconstruirEnNavegador(hip.spec as unknown as EscenaSpec, r.relieve),
+      ])
+        .then(([linea, resultado]) => {
+          const cambios = cambiosDeVelocidad(r.ids, resultado, linea, nombreDe);
+          onVersion({
+            clave,
+            tipo: "hipotesis",
+            clase: "velocidad",
+            titulo: `Con la velocidad declarada: ${nombreDe(d.id)} a ${d.kmh} km/h (${MEDIO_EN_PALABRAS[d.medio]})`,
+            resumen: resumenHipotesisVelocidad(cambios),
+            etiqueta: `la velocidad que declaró ${MEDIO_EN_PALABRAS[d.medio]}`,
+            resultado: resultado as Resultado,
+            escena: hip.spec as unknown as EscenaSpec,
+            velocidades: e,
+            cambios,
+          });
+        })
+        .catch(() => pedidas.current.delete(clave));
+    }
+    // Una vez por reconstrucción y por velocidad declarada.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [r, declaradas.map((d) => `${d.id}:${d.kmh}`).join(",")]);
 
   const simular = async () => {
     const e = elegidas();

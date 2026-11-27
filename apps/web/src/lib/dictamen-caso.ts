@@ -16,6 +16,7 @@
  */
 import { HUELLA_PARA_QUE, huellaLetraChica } from "./huella-documento";
 import {
+  MEDIO_EN_PALABRAS,
   formato as F,
   alternativaSupuesta,
   modalidadInferida,
@@ -40,6 +41,36 @@ import { dictamenDocx } from "./exportar-cesvi";
 import { ANCHO_LOGO, PROPORCION_LOGO } from "./marca-dictamen";
 import { pdfBytes } from "./pdf";
 import type { VersionesDictamen } from "./versiones-caso";
+
+/**
+ * La velocidad previa de un vehículo en la tabla del dictamen (René, 2026-11-27): la medida se dice
+ * con su instrumento; con una declarada, la que eligió el perito y la otra al lado.
+ */
+export function velocidadEnDictamen(
+  r: Reconstruccion,
+  v: Reconstruccion["velocidades"][number],
+  eleccion: "fisica" | "declarada",
+): string {
+  const n = r.narradas?.[v.vehiculo];
+  const medio = (m: string | undefined, omision: "camara" | "conductor") =>
+    MEDIO_EN_PALABRAS[(m ?? omision) as keyof typeof MEDIO_EN_PALABRAS];
+  if (v.previa?.medida) return `${kmh(v.previa.mejor)} (medida por ${medio(n?.medio, "camara")})`;
+  const fisica = v.previa
+    ? v.previa.p10 !== undefined && v.previa.p90 !== undefined
+      ? `${kmh(v.previa.mejor)} (${kmh(v.previa.p10)}–${kmh(v.previa.p90)})`
+      : kmh(v.previa.mejor)
+    : null;
+  const declarada = n && n.origen === "perito" ? n : null;
+  if (!declarada) return fisica ?? sinCifraEnTexto(r, v.vehiculo);
+  const quien = medio(declarada.medio, "conductor");
+  const rangoFisico =
+    v.previa?.p10 !== undefined && v.previa.p90 !== undefined
+      ? `${kmh(v.previa.p10)}–${kmh(v.previa.p90)}`
+      : fisica;
+  if (eleccion === "declarada")
+    return `${kmh(declarada.kmh)} (declarada por ${quien}); la física da ${rangoFisico ?? "sin cifra"}`;
+  return `${fisica ?? sinCifraEnTexto(r, v.vehiculo)}; declaró ${kmh(declarada.kmh)} (${quien})`;
+}
 
 export interface DatosDictamenCaso {
   expediente: Expediente;
@@ -86,6 +117,11 @@ export interface DatosDictamenCaso {
    * trayecto previo por las calles, ilustrativo. Vacío o ausente si no marcó ninguno.
    */
   trayectosPrevios?: readonly string[];
+  /**
+   * La velocidad que lleva el dictamen de cada vehículo con una velocidad declarada por el perito
+   * (René, 2026-11-27): la de la física (la de omisión) o la declarada, con la otra al lado.
+   */
+  velocidadDictamen?: Readonly<Record<string, "fisica" | "declarada">>;
   trazabilidad: { metodo: string; huella: string };
   /** Lo que el caso no trae, como supuesto declarado con su justificación (ADR 0091). */
   supuestos?: readonly SupuestoDeclarado[];
@@ -311,9 +347,7 @@ function secciones(d: DatosDictamenCaso) {
       ],
       r.velocidades.map((v) => [
         v.vehiculo,
-        v.previa
-          ? `${kmh(v.previa.mejor)} (${kmh(v.previa.p10)}–${kmh(v.previa.p90)})`
-          : sinCifraEnTexto(r, v.vehiculo),
+        velocidadEnDictamen(r, v, d.velocidadDictamen?.[v.vehiculo] ?? "fisica"),
         v.impacto ? `${kmh(v.impacto.p10)}–${kmh(v.impacto.p50)}–${kmh(v.impacto.p90)}` : "—",
       ]),
     ),
