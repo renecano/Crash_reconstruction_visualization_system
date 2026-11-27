@@ -1904,10 +1904,13 @@ function estimate(
       chordRefit(prob, xBest, jBest) ??
       chordRefit(prob, xBest, sampleJac(prob, xBest)) ??
       at(prob, xBest);
-    // Una muestra que viola lo medido no es una solución: se reajusta desde el modo con el ajuste
-    // completo y, si sigue sin cumplirlo, se descarta (cuántas quedan lo dice `muestras`).
+    // Una muestra que viola lo medido no es una solución: se reajusta con el ajuste completo y, si
+    // sigue sin cumplirlo, se descarta (cuántas quedan lo dice `muestras`). El reajuste arranca del
+    // punto de siempre y no del modo: desde el modo se atoraba y descartaba muestras que sí tienen
+    // solución, casi todas de un mismo lado, y el rango quedaba recortado (René, 2026-11-27).
     if (violaLoMedido(f, best)) {
-      f = fitEvidence(s, e, { dt, start: new Map(best.values), free, downedMu });
+      const fijos = new Map([...best.values].filter(([k]) => !free.has(k)));
+      f = fitEvidence(s, e, { dt, start: fijos, free, downedMu });
       if (violaLoMedido(f, best)) continue;
     }
     fits.push(f);

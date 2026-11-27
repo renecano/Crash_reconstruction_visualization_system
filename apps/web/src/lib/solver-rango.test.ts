@@ -12,6 +12,7 @@ import {
 import { describe, expect, it } from "vitest";
 import { escenaComoPerito } from "./ejemplo-como-perito";
 import { conLugarDelEjemplo } from "./ejemplos-narracion";
+import { expedienteAxaReconstruccion, SPEC_ID_APP } from "./axa-reconstruccion";
 import { RECETAS_PERITO } from "./recetas-perito";
 
 /**
@@ -44,7 +45,11 @@ const invertir = (spec: Json) =>
   ) as unknown as {
     best: { values: Map<string, number> };
     fits: { values: Map<string, number> }[];
-    estimates: { param: { name: string }; dist: { p10: number } | null }[];
+    estimates: {
+      param: { name: string };
+      best: number | null;
+      dist: { p10: number; p90: number } | null;
+    }[];
   };
 
 describe("el rango respeta lo medido y converge", () => {
@@ -77,6 +82,24 @@ describe("el rango respeta lo medido y converge", () => {
           return k !== 0 && Math.abs(x - modo - 2.5 * k) < 0.01;
         }).length;
         expect(enReticula / xs.length, `${r.clave} · ${nombre}`).toBeLessThan(0.2);
+      }
+    }
+  }, 900_000);
+
+  it("el mejor ajuste queda dentro de su propio rango: es una solución más (René, 2026-11-27)", () => {
+    const casos: [string, Json][] = [
+      ...RECETAS_PERITO.map((r) => [r.clave, especDe(r.clave)] as [string, Json]),
+      [
+        "axa",
+        cesvi.especDeExpediente(expedienteAxaReconstruccion(), SPEC_ID_APP).spec as unknown as Json,
+      ],
+    ];
+    for (const [clave, spec] of casos) {
+      for (const e of invertir(spec).estimates) {
+        if (!e.param.name.startsWith("velocidad:") || e.best === null || !e.dist) continue;
+        // Medio km/h: lo que esconde el redondeo de la pantalla (`HOLGURA_FUERA_KMH`).
+        expect(e.best, `${clave} · ${e.param.name}`).toBeGreaterThanOrEqual(e.dist.p10 - 0.5);
+        expect(e.best, `${clave} · ${e.param.name}`).toBeLessThanOrEqual(e.dist.p90 + 0.5);
       }
     }
   }, 900_000);
