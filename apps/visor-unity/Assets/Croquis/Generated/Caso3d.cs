@@ -1810,6 +1810,14 @@ namespace Croquis.Generated
         public string Cita { get; set; }
 
         /// <summary>
+        /// La respuesta del perito (René, 2026-11-27) a «¿cómo lo sabes?»: medida (cámara, GPS,
+        /// tacógrafo) entra como restricción dura; declarada (conductor, testigo) se compara con la
+        /// física y queda como versión. Sin este campo, declarada.
+        /// </summary>
+        [JsonProperty("como_se_sabe", NullValueHandling = NullValueHandling.Ignore)]
+        public ComoSeSabe? ComoSeSabe { get; set; }
+
+        /// <summary>
         /// «a más de X»: X es el mínimo; «a menos de X»: el máximo (ronda 4). Es una cota, no un
         /// valor: `kmh` es X y el solver solo la hace cumplir.
         /// </summary>
@@ -1844,6 +1852,13 @@ namespace Croquis.Generated
         [JsonProperty("limite_kmh", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(MinMaxValueCheckConverter4))]
         public double? LimiteKmh { get; set; }
+
+        /// <summary>
+        /// De dónde sale (René, 2026-11-27). Cámara, GPS o tacógrafo van con `como_se_sabe: medida`;
+        /// conductor o testigo, con `declarada`.
+        /// </summary>
+        [JsonProperty("medio", NullValueHandling = NullValueHandling.Ignore)]
+        public Medio? Medio { get; set; }
 
         /// <summary>
         /// narración: la cifra o la descripción de la narración; perito: la contestó el perito; via:
@@ -2179,6 +2194,14 @@ namespace Croquis.Generated
 
         [JsonProperty("fuente")]
         public VisibilidadFuente Fuente { get; set; }
+
+        /// <summary>
+        /// Solo en `velocidad_previa` (René, 2026-11-27): la midió un instrumento (cámara, GPS,
+        /// tacógrafo). Es una restricción dura: el solver no la ajusta, ajusta lo demás y avisa si
+        /// la evidencia no cuadra con ella. No va junto con `a_priori`.
+        /// </summary>
+        [JsonProperty("medida", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? Medida { get; set; }
 
         [JsonProperty("nota", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(FluffyMinMaxLengthCheckConverter))]
@@ -5766,6 +5789,13 @@ namespace Croquis.Generated
     public enum FluffyFuente { Dictamen, NhtsaE2, Perito, TablaCesvi };
 
     /// <summary>
+    /// La respuesta del perito (René, 2026-11-27) a «¿cómo lo sabes?»: medida (cámara, GPS,
+    /// tacógrafo) entra como restricción dura; declarada (conductor, testigo) se compara con la
+    /// física y queda como versión. Sin este campo, declarada.
+    /// </summary>
+    public enum ComoSeSabe { Declarada, Medida };
+
+    /// <summary>
     /// «a más de X»: X es el mínimo; «a menos de X»: el máximo (ronda 4). Es una cota, no un
     /// valor: `kmh` es X y el solver solo la hace cumplir.
     ///
@@ -5773,6 +5803,12 @@ namespace Croquis.Generated
     /// `valor`), no un valor con su rango; el solver la hace cumplir sin empujar hacia ella.
     /// </summary>
     public enum Cota { Maximo, Minimo };
+
+    /// <summary>
+    /// De dónde sale (René, 2026-11-27). Cámara, GPS o tacógrafo van con `como_se_sabe: medida`;
+    /// conductor o testigo, con `declarada`.
+    /// </summary>
+    public enum Medio { Camara, Conductor, Gps, Tacografo, Testigo };
 
     /// <summary>
     /// narración: la cifra o la descripción de la narración; perito: la contestó el perito; via:
@@ -5993,7 +6029,9 @@ namespace Croquis.Generated
                 PurpleFuenteConverter.Singleton,
                 TipoSuperficieConverter.Singleton,
                 FluffyFuenteConverter.Singleton,
+                ComoSeSabeConverter.Singleton,
                 CotaConverter.Singleton,
+                MedioConverter.Singleton,
                 VelocidadNarradaOrigenConverter.Singleton,
                 RespectoAlLimiteConverter.Singleton,
                 SentidoMarchaEnumConverter.Singleton,
@@ -9998,6 +10036,47 @@ namespace Croquis.Generated
         public static readonly FluffyFuenteConverter Singleton = new FluffyFuenteConverter();
     }
 
+    internal class ComoSeSabeConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(ComoSeSabe) || t == typeof(ComoSeSabe?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "declarada":
+                    return ComoSeSabe.Declarada;
+                case "medida":
+                    return ComoSeSabe.Medida;
+            }
+            throw new Exception("Cannot unmarshal type ComoSeSabe");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (ComoSeSabe)untypedValue;
+            switch (value)
+            {
+                case ComoSeSabe.Declarada:
+                    serializer.Serialize(writer, "declarada");
+                    return;
+                case ComoSeSabe.Medida:
+                    serializer.Serialize(writer, "medida");
+                    return;
+            }
+            throw new Exception("Cannot marshal type ComoSeSabe");
+        }
+
+        public static readonly ComoSeSabeConverter Singleton = new ComoSeSabeConverter();
+    }
+
     internal class CotaConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(Cota) || t == typeof(Cota?);
@@ -10071,6 +10150,62 @@ namespace Croquis.Generated
         }
 
         public static readonly MinMaxValueCheckConverter4 Singleton = new MinMaxValueCheckConverter4();
+    }
+
+    internal class MedioConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(Medio) || t == typeof(Medio?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "camara":
+                    return Medio.Camara;
+                case "conductor":
+                    return Medio.Conductor;
+                case "gps":
+                    return Medio.Gps;
+                case "tacografo":
+                    return Medio.Tacografo;
+                case "testigo":
+                    return Medio.Testigo;
+            }
+            throw new Exception("Cannot unmarshal type Medio");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (Medio)untypedValue;
+            switch (value)
+            {
+                case Medio.Camara:
+                    serializer.Serialize(writer, "camara");
+                    return;
+                case Medio.Conductor:
+                    serializer.Serialize(writer, "conductor");
+                    return;
+                case Medio.Gps:
+                    serializer.Serialize(writer, "gps");
+                    return;
+                case Medio.Tacografo:
+                    serializer.Serialize(writer, "tacografo");
+                    return;
+                case Medio.Testigo:
+                    serializer.Serialize(writer, "testigo");
+                    return;
+            }
+            throw new Exception("Cannot marshal type Medio");
+        }
+
+        public static readonly MedioConverter Singleton = new MedioConverter();
     }
 
     internal class VelocidadNarradaOrigenConverter : JsonConverter

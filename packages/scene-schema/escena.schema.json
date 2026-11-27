@@ -139,6 +139,10 @@
         "a_priori": {
           "type": "boolean",
           "description": "Solo en `velocidad_previa`: la velocidad declarada (narración, perito o vía) entra a la inversión como supuesto con su `rango` (p10–p90). Pesa solo donde la evidencia no fija la velocidad, y en las simulaciones se sortea dentro de su rango (ronda 4)."
+        },
+        "medida": {
+          "type": "boolean",
+          "description": "Solo en `velocidad_previa` (René, 2026-11-27): la midió un instrumento (cámara, GPS, tacógrafo). Es una restricción dura: el solver no la ajusta, ajusta lo demás y avisa si la evidencia no cuadra con ella. No va junto con `a_priori`."
         }
       }
     },
@@ -1703,6 +1707,16 @@
           "items": { "type": "number", "minimum": 0, "maximum": 300 },
           "minItems": 2,
           "maxItems": 2
+        },
+        "como_se_sabe": {
+          "type": "string",
+          "enum": ["medida", "declarada"],
+          "description": "La respuesta del perito (René, 2026-11-27) a «¿cómo lo sabes?»: medida (cámara, GPS, tacógrafo) entra como restricción dura; declarada (conductor, testigo) se compara con la física y queda como versión. Sin este campo, declarada."
+        },
+        "medio": {
+          "type": "string",
+          "enum": ["camara", "gps", "tacografo", "conductor", "testigo"],
+          "description": "De dónde sale (René, 2026-11-27). Cámara, GPS o tacógrafo van con `como_se_sabe: medida`; conductor o testigo, con `declarada`."
         },
         "origen": {
           "type": "string",
