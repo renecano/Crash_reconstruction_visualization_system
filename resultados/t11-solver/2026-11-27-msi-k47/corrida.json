@@ -7,8 +7,8 @@
     "fecha":  "2026-11-27",
     "commit":  "faf4cb06cc32ee83aa645aca6870334ff3a42947",
     "rama_del_repositorio":  "HEAD",
-    "archivos_con_cambios":  0,
-    "duracion_min":  13.2,
+    "archivos_con_cambios":  1,
+    "duracion_min":  15.8,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "Intel(R) UHD Graphics",
@@ -131,6 +131,15 @@
                       "estado":  "falló (código 1)",
                       "minutos":  1.5,
                       "codigo":  1,
+                      "disco_libre_gb_antes":  808.2,
+                      "disco_libre_gb_despues":  808.2
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "carambolas-prueba",
+                      "estado":  "ok",
+                      "minutos":  2.6,
+                      "codigo":  0,
                       "disco_libre_gb_antes":  808.2,
                       "disco_libre_gb_despues":  808.2
                   }
