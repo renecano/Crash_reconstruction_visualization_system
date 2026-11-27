@@ -704,6 +704,8 @@ namespace Croquis.Visor
                 fantasmas.Add(vista);
             }
 
+            Camara.Fantasmas.Clear();
+            Camara.Fantasmas.AddRange(fantasmas);
             if (fantasmas.Count > 0)
             {
                 etiquetaFantasma = string.IsNullOrWhiteSpace(caso.Fantasma.Etiqueta) ? "otra versión del caso" : caso.Fantasma.Etiqueta;

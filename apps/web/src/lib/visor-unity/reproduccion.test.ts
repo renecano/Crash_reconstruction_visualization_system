@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { ESTADO_INICIAL, etiquetaVelocidad, reproducir, VELOCIDADES } from "./reproduccion";
+import {
+  alFinal,
+  ESTADO_INICIAL,
+  etiquetaVelocidad,
+  reproducir,
+  VELOCIDADES,
+} from "./reproduccion";
 
 const I = { inicio: -3, fin: 6 };
 
@@ -62,5 +68,21 @@ describe("la reproducción del 3D de Unity", () => {
     const u = reproducir(ESTADO_INICIAL, { tipo: "tiempo", t: 2.5 }, I);
     expect(u.estado.t).toBe(2.5);
     expect(u.ordenes).toEqual([]);
+  });
+  it("al llegar al final queda en pausa, aunque el último aviso de Unity llegue unas décimas antes (René, 2026-11-27)", () => {
+    const i = { inicio: -3, fin: 4 };
+    const corriendo = { ...ESTADO_INICIAL, t: 3.5, pausado: false };
+    const casi = reproducir(corriendo, { tipo: "tiempo", t: 3.85 }, i).estado;
+    expect(casi).toMatchObject({ t: 4, pausado: true });
+    expect(alFinal(casi.t, i)).toBe(true);
+    // A media reproducción, el aviso solo mueve el instante.
+    expect(reproducir(corriendo, { tipo: "tiempo", t: 1 }, i).estado).toMatchObject({
+      t: 1,
+      pausado: false,
+    });
+    // Y «Repetir» (el mismo botón) vuelve a empezar.
+    const r = reproducir(casi, { tipo: "alternar" }, i);
+    expect(r.estado).toMatchObject({ t: -3, pausado: false });
+    expect(r.ordenes.map((o) => o.mensaje)).toEqual(["fijarTiempo", "reproducir"]);
   });
 });

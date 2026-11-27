@@ -59,6 +59,12 @@ namespace Croquis.Visor
         private float distOrbita = 30f;
         private bool orbitaTocada;
 
+        /// <summary>Si el perito movió o acercó «Desde arriba» (o pidió un encuadre): entonces ya no sigue sola.</summary>
+        private bool cenitalTocada;
+
+        /// <summary>Los vehículos de la hipótesis («¿Y si…?», translúcidos): las tomas también los encuadran.</summary>
+        public List<VehiculoVista> Fantasmas { get; } = new List<VehiculoVista>();
+
         // La libre: posición y hacia dónde mira.
         private Vector3 posLibre;
         private float yawLibre;
@@ -514,6 +520,7 @@ namespace Croquis.Visor
             tomaImpacto = null;
             desvioDespeje = 0f;
             orbitaTocada = false;
+            cenitalTocada = false;
             yaw = AnguloInicial;
             pitch = ElevacionOrbita;
             // Al abrir, el marco es «Ver todo» sin cambiar de cámara: la de arranque sigue siendo la misma.
@@ -546,6 +553,8 @@ namespace Croquis.Visor
             var alto = que == "impacto" ? marcoLado : (float)todo.Alto;
             centroCenital = marcoCentro;
             altoCenital = (float)Lente.DistanciaParaVer(ancho, alto, 40f, aspecto) * 1.05f;
+            // «Ver todo» o «Ir al impacto» es un encuadre pedido: «Desde arriba» se queda en él.
+            cenitalTocada = true;
             objetivo = marcoCentro;
             // En la órbita, el marco se ve inclinado: su lado mayor a lo ancho y, a lo alto, lo que ocupa
             // visto con la elevación de la cámara.
@@ -832,6 +841,10 @@ namespace Croquis.Visor
             if (girar != Vector2.zero || mover != Vector2.zero || acercar != 0f)
             {
                 orbitaTocada = true;
+                if (modo == "cenital")
+                {
+                    cenitalTocada = true;
+                }
             }
 
             var escala = Screen.height > 0 ? 1f / Screen.height : 0.001f;
@@ -917,6 +930,20 @@ namespace Croquis.Visor
             {
                 case "cenital":
                     camara.fieldOfView = 40f;
+                    if (!cenitalTocada && resultado != null && Caso != null)
+                    {
+                        // Encuadra los vehículos en el instante, el choque y las posiciones finales, con margen.
+                        var e = CamaraAutomatica.Cenital(
+                            CajaVehiculos(Caso.Tiempo),
+                            Lente.VehiculosEn(resultado, resultado.TFin),
+                            resultado.PuntoImpacto != null ? Contacto : (V3?)null,
+                            40.0,
+                            camara.aspect);
+                        var suelo = resultado.PuntoImpacto != null ? (float)Suelo : 0f;
+                        centroCenital = new Vector3((float)e.X, suelo, (float)e.Z);
+                        altoCenital = (float)e.Alto;
+                    }
+
                     camara.transform.SetPositionAndRotation(centroCenital + Vector3.up * altoCenital, Quaternion.Euler(90f, 0f, 0f));
                     return;
                 case "orbita":
@@ -1061,7 +1088,7 @@ namespace Croquis.Visor
                     // baja, a tres cuartos, girando despacio con el tiempo del caso. Encuadra los vehículos
                     // en el instante (y el impacto) para que llenen el cuadro: antes encuadraba toda la zona
                     // y los coches salían chicos (René, 2026-11-10).
-                    var caja = resultado != null ? Lente.VehiculosEn(resultado, Caso != null ? Caso.Tiempo : 0.0) : null;
+                    var caja = resultado != null ? CajaVehiculos(Caso != null ? Caso.Tiempo : 0.0) : null;
                     var tam = caja != null && !caja.Vacia ? Mathf.Max((float)caja.Ancho, (float)caja.Alto) : lado;
                     var k = Mathf.Clamp01((tam - 12f) / 30f);
                     var vfov = CampoDeLente(Mathf.Lerp(50f, 35f, k));
@@ -1142,6 +1169,29 @@ namespace Croquis.Visor
 
         private double Suelo => Terreno != null ? Terreno.Z((float)resultado.PuntoImpacto.X, (float)resultado.PuntoImpacto.Y) : 0.0;
 
+        /// <summary>
+        /// La caja de los vehículos en `t` (y el impacto), con los de la hipótesis donde se ven ahora: en un
+        /// «¿Y si…?» que sale disparado, la cámara no los pierde.
+        /// </summary>
+        private CajaPlano CajaVehiculos(double t)
+        {
+            var caja = Lente.VehiculosEn(resultado, t) ?? new CajaPlano();
+            foreach (var f in Fantasmas)
+            {
+                if (f == null || !f.gameObject.activeInHierarchy)
+                {
+                    continue;
+                }
+
+                var p = f.transform.position;
+                var r = (float)(f.Datos?.Dimensiones?.LargoM ?? 4.5) / 2f;
+                caja.Agregar(p.x - r, p.z - r);
+                caja.Agregar(p.x + r, p.z + r);
+            }
+
+            return caja;
+        }
+
         private V3 Contacto => new V3(resultado.PuntoImpacto.X, Suelo + CamaraAutomatica.AlturaContacto, resultado.PuntoImpacto.Y);
 
         /// <summary>
@@ -1173,7 +1223,7 @@ namespace Croquis.Visor
 
             var aspecto = camara != null ? camara.aspect : 16f / 9f;
             var impacto = tomaImpacto.Value;
-            var llegada = CamaraAutomatica.Panorama(Lente.VehiculosEn(resultado, t), Contacto, impacto, 45.0, aspecto, new[] { 32.0, 45.0, 60.0, 80.0 }, fijos);
+            var llegada = CamaraAutomatica.Panorama(CajaVehiculos(t), Contacto, impacto, 45.0, aspecto, new[] { 32.0, 45.0, 60.0, 80.0 }, fijos);
             var final = CamaraAutomatica.Panorama(Lente.VehiculosEn(resultado, resultado.TFin), Contacto, impacto, 45.0, aspecto, new[] { 62.0, 75.0, 88.0 }, fijos);
             var toma = CamaraAutomatica.En(t, tI, llegada, impacto, final);
             // Con trayecto previo, sigue al que viene de más lejos hasta que empieza la reconstrucción.
