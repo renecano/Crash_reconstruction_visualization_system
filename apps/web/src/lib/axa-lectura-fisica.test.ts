@@ -104,7 +104,7 @@ describe("la lectura física de AXA", () => {
       );
       const ebs = k.filas.find((f) => f.metodo.startsWith("Deformación"))!;
       expect(lineaContraCesvi(ebs, "B · Tacoma")).toContain(
-        "B · Tacoma (V2) antes del impacto: Croquis 57 km/h (55–78)",
+        "B · Tacoma (V2) antes del impacto: Croquis 57 km/h (55–79)",
       );
       // El dictamen: la misma forma de nombrar.
       const texto = JSON.stringify(

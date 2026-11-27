@@ -1,0 +1,241 @@
+{
+  "id": "ejemplo-arida-bahia-kino",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 644,
+    "output_tokens": 2009,
+    "cache_creation_input_tokens": 3846,
+    "cache_read_input_tokens": 0
+  },
+  "costo_usd": 0.030993,
+  "narracion": "El hecho se ubica en la carretera estatal número 100, tramo Hermosillo–Bahía de Kino, a la altura del km 105, a la entrada de Bahía de Kino, municipio de Hermosillo, Sonora, aproximadamente a las 15:40 horas. La carretera consta de un arroyo de dos carriles de concreto asfáltico, uno por sentido, con acotamiento de terracería de 1.50 metros a cada lado, en tramo recto y sensiblemente plano, en zona desértica con matorral. La superficie se encontraba seca y el cielo despejado.\n\nSe examinan el vehículo A, marca Chevrolet, tipo Silverado 1500, modelo 2019, color blanco, de servicio particular, que circulaba de Oriente a Poniente, y el vehículo B, marca Nissan, tipo March, modelo 2018, color rojo, de servicio particular, que circulaba delante del vehículo A en el mismo sentido y disminuyó su velocidad para incorporarse a un camino de terracería a su derecha. El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás sobre defensa, parrilla y cofre. El vehículo B presenta en su parte posterior un hundimiento de atrás hacia adelante sobre defensa trasera, cajuela y calaveras. Las zonas de contacto corresponden: la parte frontal del vehículo A con la parte posterior del vehículo B.\n\nSe localizan restos de plástico y vidrio sobre el carril con sentido al Poniente, en una franja de 5 metros de largo. El vehículo A quedó sobre el carril, 6 metros al Poniente del inicio de los restos; el vehículo B quedó sobre el acotamiento de terracería del lado derecho, 15 metros al Poniente del inicio de los restos.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "carretera estatal número 100, tramo Hermosillo–Bahía de Kino, km 105, a la entrada de Bahía de Kino",
+        "cita": "El hecho se ubica en la carretera estatal número 100, tramo Hermosillo–Bahía de Kino, a la altura del km 105, a la entrada de Bahía de Kino"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Hermosillo",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Sonora",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 15:40 horas",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "alcance",
+        "cita": "que circulaba delante del vehículo A en el mismo sentido y disminuyó su velocidad para incorporarse a un camino de terracería a su derecha"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Chevrolet",
+        "cita": "vehículo A, marca Chevrolet, tipo Silverado 1500, modelo 2019, color blanco"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Silverado 1500",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2019",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Nissan",
+        "cita": "el vehículo B, marca Nissan, tipo March, modelo 2018, color rojo"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "March",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2018",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "que circulaba de Oriente a Poniente"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "frena",
+        "cita": "que circulaba delante del vehículo A en el mismo sentido y disminuyó su velocidad para incorporarse a un camino de terracería a su derecha"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás sobre defensa, parrilla y cofre"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "direccion",
+        "valor": "de_adelante_hacia_atras",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "El vehículo B presenta en su parte posterior un hundimiento de atrás hacia adelante sobre defensa trasera, cajuela y calaveras"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "direccion",
+        "valor": "de_atras_hacia_adelante",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "Las zonas de contacto corresponden: la parte frontal del vehículo A con la parte posterior del vehículo B"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 posterior",
+        "cita": ""
+      },
+      {
+        "seccion": "restos",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "longitud",
+        "valor": "5 metros",
+        "cita": "Se localizan restos de plástico y vidrio sobre el carril con sentido al Poniente, en una franja de 5 metros de largo"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A quedó sobre el carril, 6 metros al Poniente del inicio de los restos"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "sobre el carril, 6 metros al Poniente del inicio de los restos",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo B quedó sobre el acotamiento de terracería del lado derecho, 15 metros al Poniente del inicio de los restos"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "sobre el acotamiento de terracería del lado derecho, 15 metros al Poniente del inicio de los restos",
+        "cita": ""
+      }
+    ]
+  }
+}

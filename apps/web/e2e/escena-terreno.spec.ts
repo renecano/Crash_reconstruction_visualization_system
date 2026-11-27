@@ -181,12 +181,15 @@ test("@flujo /cesvi: ¿cómo es el terreno? — un tope, una zona ondulada y el 
   await expect(page.getByTestId("maqueta-curvas")).toHaveCount(1);
   await terreno.scrollIntoViewIfNeeded();
   await foto(page, "5-reconstruccion-terreno");
-  // Los cruces de tope con su velocidad y lo que supone Croquis al cruzarlos.
-  const supuestos = page.getByTestId("supuestos-tope");
-  await expect(page.getByTestId("cruces-tope")).toBeVisible();
-  await supuestos.locator("summary").click();
-  await supuestos.scrollIntoViewIfNeeded();
-  await foto(page, "6-cruces-y-supuestos");
+  // Con lo medido como restricción (René, 2026-11-27), en este caso el mejor ajuste del Jetta queda
+  // fuera de su propio rango: el candado no presenta una velocidad ni los cruces del tope, y dice qué
+  // no cuadra. Los cruces con su velocidad se prueban con la reversa de los ejemplos, que sí da cifra
+  // (`terreno-reconstruccion.test.tsx`). Por qué queda fuera: «Endurecimiento pendiente».
+  const noCuadra = page.getByTestId("no-cuadra");
+  await expect(noCuadra).toContainText("La reconstrucción no cuadra");
+  await expect(noCuadra).toContainText("VW Jetta");
+  await expect(page.getByTestId("cruces-tope")).toHaveCount(0);
+  await foto(page, "6-no-cuadra");
 
   // Corregir después: se toca el tope y se le da la altura medida; deja de ser «de la norma».
   await irAPaso(page, 3);

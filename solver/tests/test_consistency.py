@@ -153,11 +153,16 @@ def test_velocidad_fuera_de_lo_que_fija_la_evidencia() -> None:
 
 def test_escenas_canonicas_sin_banderas() -> None:
     # La glorieta también queda limpia, pero su inversión tarda; la cubre la prueba de resultados.
-    # El cruce lateral también: con el multiarranque (ADR 0091) su mejor ajuste deja a B casi
-    # detenido y la evidencia ya no fija la velocidad de A, así que no hay con qué contrastar la
-    # declarada (antes, otro mínimo con más costo pedía más velocidad para A).
-    for name in ("alcance", "nocturno_lluvia", "poste", "lateral_interseccion"):
+    for name in ("alcance", "nocturno_lluvia", "poste"):
         assert _codes(load_fixture(name)) == [], name
+
+
+def test_cruce_lateral_pregunta_la_velocidad_que_no_cuadra_con_los_reposos() -> None:
+    # Con lo medido como restricción (René, 2026-11-26), los reposos del cruce lateral fijan la
+    # velocidad de A en unos 61–79 km/h, y la declarada va de 35 a 55: se pregunta. Antes, la
+    # soft-L1 dejaba los reposos a 1.7σ con B casi detenido y A sin cifra, y no había con qué
+    # contrastar la declarada.
+    assert _codes(load_fixture("lateral_interseccion")) == ["velocidad_vs_evidencia"]
 
 
 def test_vehiculo_fuera_de_las_calles_del_mapa() -> None:
