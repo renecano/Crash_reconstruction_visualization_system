@@ -1,0 +1,168 @@
+{
+ "clave": "reversa-pendiente",
+ "propuesta": {
+  "puntos": {
+   "1": {
+    "lat": 18.986237010911168,
+    "lon": -98.18703507725445
+   }
+  },
+  "versiones": [
+   {
+    "tipo": "evidencia",
+    "maniobras": [
+     {
+      "vehiculo": "V1",
+      "tipo": "reversa",
+      "cita": {
+       "texto": "que salía en reversa de ese acceso vehicular hacia la calle"
+      }
+     },
+     {
+      "vehiculo": "V2",
+      "tipo": "circula",
+      "cita": {
+       "texto": "que circulaba de Sur a Norte"
+      }
+     }
+    ],
+    "posiciones": [
+     {
+      "vehiculo": "V1",
+      "fase": "impacto",
+      "punto": {
+       "lat": 18.98621148359279,
+       "lon": -98.187039109444
+      },
+      "rumbo": 188.4950429554026,
+      "fuente": "perito"
+     },
+     {
+      "vehiculo": "V2",
+      "fase": "impacto",
+      "punto": {
+       "lat": 18.986250886387342,
+       "lon": -98.18703288554173
+      },
+      "rumbo": 8.495042955402596,
+      "fuente": "perito"
+     }
+    ]
+   }
+  ]
+ },
+ "puntos": {
+  "1": {
+   "lat": 18.986237010911168,
+   "lon": -98.18703507725445
+  }
+ },
+ "notas": [
+  "Honda CR-V: la propuesta lo traía a 8°; la narración lo pone desde el poniente (sin calle: se toca el mapa en esa dirección)."
+ ],
+ "toques": [
+  {
+   "accion": "direccion",
+   "vehiculo": "V1",
+   "como": "mapa",
+   "en": [
+    -15,
+    0
+   ]
+  },
+  {
+   "accion": "direccion",
+   "vehiculo": "V2",
+   "como": "confirmar"
+  },
+  {
+   "accion": "final",
+   "vehiculo": "V1",
+   "como": "marcar",
+   "en": [
+    -1.8,
+    0.4
+   ]
+  },
+  {
+   "accion": "final",
+   "vehiculo": "V2",
+   "como": "marcar",
+   "en": [
+    0.6,
+    7
+   ]
+  },
+  {
+   "accion": "terreno",
+   "boton": "terreno-tope-circular",
+   "en": [
+    0.6,
+    -12
+   ]
+  }
+ ],
+ "versiones": [
+  {
+   "tipo": "evidencia",
+   "maniobras": [
+    {
+     "vehiculo": "V1",
+     "tipo": "reversa",
+     "cita": {
+      "texto": "que salía en reversa de ese acceso vehicular hacia la calle"
+     }
+    },
+    {
+     "vehiculo": "V2",
+     "tipo": "circula",
+     "cita": {
+      "texto": "que circulaba de Sur a Norte"
+     }
+    }
+   ],
+   "posiciones": [
+    {
+     "vehiculo": "V1",
+     "fase": "impacto",
+     "punto": {
+      "lat": 18.986237010911168,
+      "lon": -98.18705581038817
+     },
+     "rumbo": 270,
+     "fuente": "perito"
+    },
+    {
+     "vehiculo": "V2",
+     "fase": "impacto",
+     "punto": {
+      "lat": 18.986237010911168,
+      "lon": -98.18702680302218
+     },
+     "rumbo": 0,
+     "fuente": "perito"
+    },
+    {
+     "vehiculo": "V1",
+     "fase": "final",
+     "punto": {
+      "lat": 18.986240604155867,
+      "lon": -98.18705217714518
+     },
+     "rumbo": 188.49504277240158,
+     "fuente": "perito"
+    },
+    {
+     "vehiculo": "V2",
+     "fase": "final",
+     "punto": {
+      "lat": 18.986299892693417,
+      "lon": -98.18702937729087
+     },
+     "rumbo": 8.495039792075431,
+     "fuente": "perito"
+    }
+   ]
+  }
+ ]
+}

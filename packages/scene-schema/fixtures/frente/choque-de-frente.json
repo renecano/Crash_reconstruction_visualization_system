@@ -1,0 +1,269 @@
+{
+  "meta": {
+    "id": "aud-18",
+    "version_esquema": "2.3.0",
+    "idioma": "es-MX",
+    "semilla": 80649,
+    "creado": "2026-10-13T00:00:00-06:00",
+    "relato": "",
+    "origen_relato": "escrito",
+    "sintetico": false,
+    "descripcion": "Choque de frente casi en la misma línea (aud-18 de la revisión de la cadena, narración escrita para la revisión): A sube a 40 km/h, B baja a 60 km/h y frena 9 m antes del impacto; frentes con frentes. Para las pruebas del contacto de frente (René, 2026-11-25)."
+  },
+  "lugar": {
+    "tipo_via": {
+      "valor": "recta",
+      "fuente": "default",
+      "confianza": 0.3
+    },
+    "carriles_por_sentido": {
+      "valor": 2,
+      "fuente": "default",
+      "confianza": 0.3
+    },
+    "ancho_carril": {
+      "valor": 3.5,
+      "unidad": "m",
+      "fuente": "default",
+      "confianza": 0.3
+    },
+    "sentidos": {
+      "valor": "doble_sentido",
+      "fuente": "default",
+      "confianza": 0.3
+    },
+    "superficie": {
+      "valor": "asfalto",
+      "fuente": "default",
+      "confianza": 0.3
+    },
+    "estado_superficie": {
+      "valor": "seco",
+      "fuente": "usuario",
+      "confianza": 0.4
+    },
+    "eje_via": {
+      "puntos": [
+        {
+          "x": 0.086,
+          "y": 0.196
+        },
+        {
+          "x": 7.852,
+          "y": 11.65
+        },
+        {
+          "x": 15.934,
+          "y": 21.879
+        },
+        {
+          "x": 39.024,
+          "y": 44.007
+        }
+      ],
+      "nombre": "Calle Paseo Matlazincas",
+      "fuente": "mapa",
+      "confianza": 0.8,
+      "nota": "El trazo de Calle Paseo Matlazincas en las calles guardadas con el caso (gira 12° cerca del choque)."
+    },
+    "terreno": {
+      "relieve": {
+        "fuente": "dem",
+        "procedencia": {
+          "fuente": "mapa",
+          "confianza": 0.7
+        }
+      }
+    }
+  },
+  "entorno": {
+    "clima": {
+      "valor": "despejado",
+      "fuente": "default",
+      "confianza": 0.3
+    },
+    "iluminacion": {
+      "valor": "noche_con_alumbrado",
+      "fuente": "supuesto",
+      "confianza": 0.4
+    }
+  },
+  "vehiculos": [
+    {
+      "id": "veh-a",
+      "rol": "A",
+      "clase": {
+        "valor": "sedan_compacto",
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "color": {
+        "nombre": {
+          "valor": "gris",
+          "fuente": "default",
+          "confianza": 0.3
+        },
+        "hex": "#8a8d91"
+      },
+      "maniobra": {
+        "valor": "recto",
+        "fuente": "default",
+        "confianza": 0.3
+      },
+      "velocidad_previa": {
+        "valor": 40,
+        "unidad": "km/h",
+        "rango": [34, 46],
+        "fuente": "relato",
+        "confianza": 0.6,
+        "nota": "La narración dice «40 km/h». Supuesto declarado con su rango: solo pesa si la evidencia no fija la velocidad.",
+        "a_priori": true
+      },
+      "posicion_inicial": {
+        "x": 8.132,
+        "y": 11.954,
+        "rumbo_deg": -126.655,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "12 m antes de la posición de impacto que colocó el perito, sobre el trazo de la calle."
+        }
+      },
+      "masa": {
+        "valor": 1255,
+        "unidad": "kg",
+        "fuente": "supuesto",
+        "confianza": 0.5
+      },
+      "posicion_final": {
+        "x": 0.257,
+        "y": 0.382,
+        "rumbo_deg": -123.95139989932568,
+        "procedencia": {
+          "fuente": "usuario",
+          "confianza": 0.9
+        }
+      }
+    },
+    {
+      "id": "veh-b",
+      "rol": "B",
+      "clase": {
+        "valor": "pickup",
+        "fuente": "supuesto",
+        "confianza": 0.4
+      },
+      "color": {
+        "nombre": {
+          "valor": "gris",
+          "fuente": "default",
+          "confianza": 0.3
+        },
+        "hex": "#8a8d91"
+      },
+      "maniobra": {
+        "valor": "recto",
+        "fuente": "default",
+        "confianza": 0.3
+      },
+      "velocidad_previa": {
+        "valor": 60,
+        "unidad": "km/h",
+        "rango": [60, 60],
+        "fuente": "relato",
+        "confianza": 0.6,
+        "nota": "La narración dice «más de 60 km/h»: al menos 60 km/h, una cota y no un valor. Supuesto declarado con su rango: solo pesa si la evidencia no fija la velocidad.",
+        "a_priori": true,
+        "cota": "minimo"
+      },
+      "posicion_inicial": {
+        "x": -7.732,
+        "y": -11.418,
+        "rumbo_deg": 55.862,
+        "procedencia": {
+          "fuente": "supuesto",
+          "confianza": 0.5,
+          "nota": "14 m antes de la posición de impacto que colocó el perito, sobre el trazo de la calle, detrás de sus huellas."
+        }
+      },
+      "masa": {
+        "valor": 1890,
+        "unidad": "kg",
+        "fuente": "supuesto",
+        "confianza": 0.5
+      },
+      "posicion_final": {
+        "x": -0.749,
+        "y": -1.26,
+        "rumbo_deg": 51.29807686579403,
+        "procedencia": {
+          "fuente": "usuario",
+          "confianza": 0.9
+        }
+      },
+      "frenado": {
+        "aplico": {
+          "valor": true,
+          "fuente": "relato",
+          "confianza": 0.8
+        },
+        "distancia_antes_impacto": {
+          "valor": 9,
+          "unidad": "m",
+          "fuente": "relato",
+          "confianza": 0.8
+        }
+      }
+    }
+  ],
+  "personas": [],
+  "eventos": [
+    {
+      "id": "ev-1",
+      "orden": 0,
+      "tipo": "impacto_vehiculo_vehiculo",
+      "actores": ["veh-a", "veh-b"],
+      "procedencia": {
+        "fuente": "default",
+        "confianza": 0.3
+      },
+      "zonas_impacto": [
+        {
+          "vehiculo_id": "veh-a",
+          "cdc": {
+            "lado": "F"
+          }
+        },
+        {
+          "vehiculo_id": "veh-b",
+          "cdc": {
+            "lado": "F"
+          }
+        }
+      ],
+      "punto_impacto": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  ],
+  "danos_declarados": [],
+  "evidencias": [
+    {
+      "id": "evid-huella-1",
+      "tipo": "marcas_frenado",
+      "fase": "antes_impacto",
+      "vehiculo_id": "veh-b",
+      "longitud": {
+        "valor": 9,
+        "unidad": "m",
+        "fuente": "usuario",
+        "confianza": 0.9
+      },
+      "procedencia": {
+        "fuente": "usuario",
+        "confianza": 0.9
+      }
+    }
+  ]
+}

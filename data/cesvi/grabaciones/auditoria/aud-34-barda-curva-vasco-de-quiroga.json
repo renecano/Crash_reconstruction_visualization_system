@@ -1,0 +1,194 @@
+{
+  "id": "aud-34-barda-curva-vasco-de-quiroga",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 415,
+    "output_tokens": 1545,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0170492,
+  "narracion": "El hecho se ubica sobre Avenida Vasco de Quiroga, en la colonia Santa Fe, alcaldía Álvaro Obregón, Ciudad de México, aproximadamente a las 0:20 horas. En ese tramo la vía no cuenta con alumbrado público. El vehículo A, marca Nissan, tipo Versa, modelo 2018, circulaba en bajada de poniente a oriente, a más de 60 km/h según los testigos. Al entrar a una curva hacia la izquierda, el conductor perdió el control: el vehículo se abrió hacia el lado derecho, salió del camino por el costado exterior de la curva, subió la banqueta y se impactó con su parte frontal derecha contra la barda de block de un predio. En el pavimento se observaron huellas de derrape de 14 m antes de salir del camino. El vehículo A quedó detenido junto a la barda, a 3 m de la orilla del camino, con el frente hacia el sureste. Presenta hundimiento en la parte frontal derecha, con la defensa y el faro derecho desprendidos. La barda presenta fractura en un tramo de 1.5 m. Pavimento seco.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "salida_de_camino",
+        "cita": "salió del camino por el costado exterior de la curva, subió la banqueta y se impactó con su parte frontal derecha contra la barda de block"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 0:20 horas",
+        "cita": "aproximadamente a las 0:20 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Avenida Vasco de Quiroga, colonia Santa Fe",
+        "cita": "El hecho se ubica sobre Avenida Vasco de Quiroga, en la colonia Santa Fe"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Álvaro Obregón",
+        "cita": "alcaldía Álvaro Obregón, Ciudad de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Ciudad de México",
+        "cita": "alcaldía Álvaro Obregón, Ciudad de México"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Nissan",
+        "cita": "El vehículo A, marca Nissan, tipo Versa, modelo 2018"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Versa",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2018",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba en bajada de poniente a oriente, a más de 60 km/h según los testigos"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "se impactó con su parte frontal derecha contra la barda de block de un predio"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "objeto_fijo",
+        "valor": "barda de block",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "derrape",
+        "cita": "En el pavimento se observaron huellas de derrape de 14 m antes de salir del camino"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "14 m",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A quedó detenido junto a la barda, a 3 m de la orilla del camino, con el frente hacia el sureste"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "junto a la barda, a 3 m de la orilla del camino, con el frente hacia el sureste",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "Presenta hundimiento en la parte frontal derecha, con la defensa y el faro derecho desprendidos"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "vertice",
+        "valor": "delantero_derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "desprendimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "objeto_fijo",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "descripcion",
+        "valor": "barda de block de un predio con fractura en un tramo de 1.5 m",
+        "cita": "La barda presenta fractura en un tramo de 1.5 m"
+      }
+    ]
+  }
+}

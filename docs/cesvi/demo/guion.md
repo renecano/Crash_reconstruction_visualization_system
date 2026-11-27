@@ -71,15 +71,15 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 
 **Los cinco ejemplos** (`docs/cesvi/ronda-2/narraciones.md`; cifras del 2026-11-16 en producción, con la escena colocada como dice cada narración):
 
-| Ejemplo                                         | Qué muestra                                                                 | Lo que da                    |
-| ----------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------- |
-| Crucero de noche en Iztapalapa                  | Lectura con citas y preguntas; de noche                                     | A · Jetta a 16 km/h (7–24)   |
-| Alcance en carretera con la deformación medida  | Las medidas C1–C6 de los dos vehículos, su energía y su cambio de velocidad | A · NP300 a 62 km/h (53–62)  |
-| Carambola de noche con lluvia                   | Tres vehículos, dos impactos en orden, pavimento mojado                     | A · Ranger a 34 km/h (30–41) |
-| Reversa en una calle con tope                   | La reversa como supuesto con su fuente; un tope con las medidas de la norma | B · Versa a 21 km/h (20–26)  |
-| Choque en un entronque y salida contra un poste | Punto de paso, terracería y un objeto fijo                                  | B · Sentra a 36 km/h (31–38) |
+| Ejemplo                                         | Qué muestra                                                                 | Lo que da                                                                |
+| ----------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Crucero de noche en Iztapalapa                  | Lectura con citas y preguntas; de noche                                     | A · Jetta a <!--cifra:ejemplos.crucero-->20 km/h (5–26)<!--/cifra-->     |
+| Alcance en carretera con la deformación medida  | Las medidas C1–C6 de los dos vehículos, su energía y su cambio de velocidad | A · NP300 a <!--cifra:ejemplos.alcance-->54 km/h (49–55)<!--/cifra-->    |
+| Carambola de noche con lluvia                   | Tres vehículos, dos impactos en orden, pavimento mojado                     | A · Ranger a <!--cifra:ejemplos.carambola-->25 km/h (20–32)<!--/cifra--> |
+| Reversa en una calle con tope                   | La reversa como supuesto con su fuente; un tope con las medidas de la norma | B · Versa a <!--cifra:ejemplos.reversa-->20 km/h (16–25)<!--/cifra-->    |
+| Choque en un entronque y salida contra un poste | Punto de paso, terracería y un objeto fijo                                  | B · Sentra a <!--cifra:ejemplos.poste-->63 km/h (43–65)<!--/cifra-->     |
 
-Para la demo: la carambola (los dos impactos en orden, de noche con lluvia en el 3D) o el alcance (la deformación medida). **Dos hipótesis** solo se ven en AXA: ninguno de los ejemplos las da. En el del poste, la app dice que el golpe contra el poste no lo calcula (sí el choque entre los dos vehículos). Un ejemplo sin cambios no gasta API; los cinco aún no se han visto con el 3D real de Unity.
+Para la demo: la carambola (los dos impactos en orden, de noche con lluvia en el 3D) o el alcance (la deformación medida). **Dos hipótesis** solo se ven en AXA: ninguno de los ejemplos las da. **El del poste no se usa en la demo** hasta el arreglo del rango del solver (su extremo bajo incluye muestras en las que el Sentra no llega al poste; ver «Endurecimiento pendiente» en `docs/PROGRESS.md`). Un ejemplo sin cambios no gasta API; los cinco aún no se han visto con el 3D real de Unity.
 
 **Plan B:** si Claude no responde, la pantalla lo dice y conserva la narración; se sigue con el caso de AXA o se llena la escena a mano.
 
@@ -96,7 +96,7 @@ Croquis lee el reporte completo de CESVI y arma el expediente con la cita de cad
 > Lista → «Ver los 205 reportes de la reproducción…» → el reporte `257e13` → colocar → reconstruir → 3D (unos 17 s).
 
 - **Los impactos en orden,** en 3D.
-- **Sin las posiciones del perito,** la evidencia no fija ninguna velocidad, y la pantalla lo dice así. En la prueba con 33 carambolas, todas se reconstruyen y se ven en 3D; ocurren <!--cifra:carambolas.prueba-->21 de 31<!--/cifra--> impactos posteriores.
+- **Sin las posiciones del perito,** la evidencia no fija ninguna velocidad, y la pantalla lo dice así. En la prueba con 33 carambolas, todas se reconstruyen y se ven en 3D; ocurren <!--cifra:carambolas.prueba-->22 de 31<!--/cifra--> impactos posteriores.
 
 ## 5 · Cierre (1 min)
 

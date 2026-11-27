@@ -1362,3 +1362,226 @@ Viene de U0 (ADR 0111). Vale cuando el PR de contrato 2.3.0 esté en `main`:
   Son la misma receta colocada con toques en otro tamaño de pantalla, así que los coches quedan en posiciones algo distintas. Antes de usar esas cifras en una pieza, conviene revisarlas.
 
 - **Árbol y curva:** el límite de la vía depende de la calle del mapa donde queda el choque. En la Mac, el árbol cayó junto a una calle secundaria (30 km/h): 39 (30–47) no contradice «exceso de velocidad», y el aviso no sale. En la curva, el Circuito Exterior (80 km/h) sí lo dispara: «la narración dice más de 80 km/h («a alta velocidad»); las posiciones dan 10 km/h (7–14)». Ese aviso solo salía junto a la cifra del vehículo que la encabeza (el Rio); desde 26e78eca sale para cada vehículo que contradiga lo narrado (la CR-V), con su nombre.
+
+## Las tres narraciones de René en producción (2026-11-24) · rama `fix/w-tres-narraciones`
+
+René probó tres narraciones en producción y la reconstrucción no tenía sentido físico: el árbol al salir de una curva (Jetta a unos 80, derrape de 18 m), el camión Isuzu que da vuelta a la derecha y atropella a un peatón (7 km/h contra 15 narrados, sin peatón en el 3D, la vuelta donde no hay calle) y la carambola en el semáforo de Tollocan (163 km/h con 9 m de frenado, el 3D distinto de la cifra, el Aveo detenido con «la evidencia no la fija»).
+
+### Causas y arreglos
+
+| Síntoma                              | Causa                                                                                                          | Arreglo                                                                                                      | Prueba                                          |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- |
+| Árbol: el derrape no frenaba         | El derrape de antes del choque no entraba a la inversión, y el auto arrancaba 12 m antes del árbol             | El derrape de antes del choque frena como una huella de frenado (Python y TS); arranca detrás de sus huellas | `tres-narraciones.test.ts` (árbol), paridad     |
+| Posiciones finales «junto al choque» | La escena no leía las distancias de la narración                                                               | «Como dice la narración» en «¿Dónde quedó?» (`finalDeLaNarracion`)                                           | `escena-final-narrado.test.ts`                  |
+| El peatón no aparece                 | La lectura lo deja como «objeto peatón» y nadie lo colocaba                                                    | Al marcar el choque, el peatón queda en el punto de contacto (supuesto)                                      | `escena-peaton.test.ts`                         |
+| La vuelta donde no hay calle         | «Por dónde venía» guardaba la llegada como rumbo del choque; el solver trazaba la vuelta al revés              | El choque lleva la vuelta dada y el arranque va en la calle de llegada, al inicio del arco                   | `tres-narraciones.test.ts` (camión)             |
+| 163 km/h y el 3D distinto            | Aveo y Rio colocados encimados: el solver los separa de golpe; «Separarlos» los mandaba de carril              | «Separarlos» defensa con defensa por su rumbo; el candado físico                                             | `tres-narraciones.test.ts` (carambola, candado) |
+| Aveo «la evidencia no la fija»       | La hoja no distinguía al detenido                                                                              | «0 km/h (detenido, lo dice la narración)»                                                                    | revisado en la hoja                             |
+| El de en medio, una sola cara        | La pregunta era por choque pero se leía como «dónde quedaron los daños»                                        | Croquis deduce la cara del segundo choque; la pregunta dice de qué choque es                                 | `tres-narraciones.test.ts` (en medio)           |
+| «restos 10 m (perito)»               | No es un valor por omisión: es la respuesta guardada a «¿Qué longitud tiene la zona de restos?» (10, 6 y 10 m) | Sin cambio                                                                                                   | —                                               |
+
+**Candado físico** (`packages/cesvi/src/candado.ts`): no se presenta la cifra si exige frenar más de 1 g, si el recorrido del 3D llega al choque a otra velocidad que la del rango, o si los vehículos quedan encimados más de 0.5 m al chocar. La hoja dice qué no cuadra y qué revisar; el 3D deja a cada vehículo quieto donde quedó.
+
+**La reversa de ejemplo:** el candado encontró que su 3D metía al CR-V 1.7 m dentro del Versa. La causa era la misma de la vuelta: en reversa, «Por dónde venía» ponía el frente hacia donde retrocedía. Corregido.
+
+### Cifras (sin navegador, `eval/results/tres_narraciones/cifras_despues.json`)
+
+- AXA, crucero, alcance, carambola, poste, árbol, poste, puente, bajada, curva y Tollocan: iguales a la tabla aprobada.
+- **Reversa:** 0 (0–1) y 21 (20–28) → 8 (1–16) y 24 (21–28). **No se fusiona sin el visto bueno de René.**
+- **Subida** (narración, colocación fija del #284): 20 y 45 → no cuadra (encimados 0.9 m: la colocación pone al Tsuru cruzando y la narración dice de frente).
+- Los tres casos, con La escena rehecha: árbol 80 km/h (56 al árbol); camión 18 km/h, con el peatón; carambola, NP300 a 50 km/h, Aveo y Rio detenidos.
+
+### Pendiente
+
+- La t9 (fijada a esta rama) en la RTX; la batería de Unity con los tres casos, en la laptop de René con su permiso.
+- Las carambolas y el 91 de 156: en la t9 no; se miden después si René lo pide (el candado puede quitar cifras de las que se encimen).
+- AXA: el 3D dibuja la deformación que calcula el solver (5 cm) y no la medida por CESVI (hasta 96 cm). Va a René.
+
+## La revisión sistemática de la cadena, puntos 1 a 3 y «otro lugar» (2026-11-24 y 25) · misma rama
+
+René (2026-11-24 y 25): revisar de la narración al paquete 3D los 205 reportes de prueba de CESVI y 42 narraciones escritas para esto, con comprobaciones automáticas de los puntos 1 a 3 (objeto fijo en la orilla, nada que cruce edificios ni muros, carambolas sin saltos), y que Croquis nunca ponga el choque en otro lugar sin avisar. Sin navegador: `apps/web/src/lib/auditoria/` (`CROQUIS_AUDITORIA=prueba|nuevas|ejemplos`); el resumen, `node eval/auditoria_cadena_resumen.mjs` → `eval/results/auditoria_cadena/resumen.json`.
+
+### Causas y arreglos
+
+| Lo que salía                                                                     | Casos                         | Causa                                                                                                                                                                        | Arreglo                                                                                                                                                                         | Prueba                                               |
+| -------------------------------------------------------------------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| Objeto fijo sobre la calzada                                                     | 18 → 0                        | La escena y el 3D medían distinto la calle (una avenida sin carriles en OSM: 6.6 m contra 14 m); en un cruce la orilla de una calle es el arroyo de la otra                  | El ancho del 3D (`viaWidthM`); el objeto se recorre hacia atrás y, en una avenida con laterales, sigue hasta la banqueta; sin lado narrado, la orilla libre más cercana         | `objeto-orilla.test.ts`                              |
+| Poste en el enlace de la avenida (aud-05)                                        | 1 → 0                         | La unión de una avenida con su enlace sin nombre (`*_link`) contaba como cruce                                                                                               | Ya no es un cruce                                                                                                                                                               | aud-05 en la revisión                                |
+| Vehículo a contrasentido en una calzada de un solo sentido (cesvi-ebb5c029a8)    | 1 → 0                         | La escena no leía `oneway` de OSM                                                                                                                                            | Si la calle del choque va al revés de lo narrado, el choque pasa a la calzada de su sentido (a menos de 40 m)                                                                   | `escena-sentido.test.ts`                             |
+| Encimados al chocar en alcances del mismo sentido                                | 3 → 0                         | A la misma velocidad, retroceder a los dos en proporción no los separa                                                                                                       | Se retrocede solo al que alcanza (Python y TS, paridad)                                                                                                                         | `test_primer_contacto.py`, `primer-contacto.test.ts` |
+| Salto lateral antes del choque (cesvi-af2196f0fc)                                | 1 → 0                         | A 12 m del eje, por dentro de una vuelta, la paralela hacía un rizo                                                                                                          | Si hace rizo, la esquina se suaviza con 1.5 veces la separación; sin rizo no cambia nada (la referencia de paridad sigue igual, con un caso nuevo)                              | `test_road_polilinea.py`, `polilinea.test.ts`        |
+| Trayectoria que cruza un edificio desde su posición inicial                      | 1 (aud-32)                    | Volcadura tras un segundo choque que no se calcula, y alcance en el mismo sentido: el ajuste deja al de adelante en 0 km/h y la animación lo lleva 17 m más allá de su marca | El candado no da cifra (correcto); el arreglo de fondo va al paquete aparte (ver «Endurecimiento pendiente»)                                                                    | aud-32 en la revisión                                |
+| Edificio en la llegada recta antes de la posición inicial                        | 2 de 205, 3 de 42             | El solver prolonga la llegada en línea recta 3 s                                                                                                                             | Lo dicen los límites; el arreglo (llegada por su calle) va al paquete aparte                                                                                                    | `obstaculos.test.ts`                                 |
+| Animación distinta de la cifra                                                   | 2 de 42                       | El candado lo detecta y no da cifra                                                                                                                                          | Sin cambio: el perito ve qué revisar                                                                                                                                            | —                                                    |
+| Cifra contra la «velocidad narrada»                                              | 1 → 0                         | Falla de la regla de la revisión: comparaba la típica de la vía, que no es narrada                                                                                           | La regla solo compara lo que dice la narración                                                                                                                                  | —                                                    |
+| Carambola del e2e «no cuadra» (B y C encimados 0.9 m), rojo en CI desde a3921a77 | e2e                           | En el segundo choque, la cara de B salía de su daño posterior (del primero): C quedaba de frente, dentro de B                                                                | En una cadena, al golpeado por detrás lo empujan hacia adelante: su cara en el siguiente es el frente; una cara ya usada en un impacto anterior no se repite (`posesDeImpacto`) | `poses-impacto.test.ts`; e2e de la carambola         |
+| Paridad de las preguntas de extracción                                           | 6 de 74 escenas de Relatos-MX | El orden y la prioridad de sus preguntas salen de la sensibilidad del solver, que cambió con el primer contacto                                                              | Referencia regenerada con Python (`croquis-extraction golden build`); ninguna es cifra de CESVI                                                                                 | `questions.test.ts`, `test_relatos_mx.py`            |
+
+### El lugar (`apps/web/src/lib/lugar-claro.ts`)
+
+La escena pregunta «¿Dónde fue?» con las opciones del buscador si el lugar encontrado no coincide claramente con la narración: las opciones son de otro municipio; ninguna calle que nombra la narración está alrededor (ni en el nombre del lugar encontrado; una carretera confirma si coincide, y no hace dudar si no); o la narración no nombra calles y el buscador solo encontró parte del lugar. La revisión usa la misma regla.
+
+- De los 10 reportes que caían en otro lugar: 2 quedan encontrados (Avenida 9ª Poniente y calle 6ª Sur Poniente; Avenida 8 y calle 2-A: los números se comparan como números) y 8 pasan a preguntar.
+- La regla encontró 13 más que antes se proponían sin avisar: 6 con opciones de otro municipio, 3 con solo parte del lugar y 4 con otra calle (dos son el mismo lugar con otro nombre: Periférico Sur es Boulevard Adolfo Ruiz Cortines, y el Eje 3 Oriente ahí es Avenida Armada de México).
+- 205 reportes: encontrado 90 (sin pregunta), solo la zona 46, carretera sin km 17, «¿Dónde fue?» 21, no encontrado 31 (10 sin lugar en el texto).
+- De los cinco ejemplos, la carambola pregunta (el buscador daba Avenida Puerta del Sol por Boulevard de los Pinos). Las e2e de los ejemplos van sin red y no cambian.
+
+### Vehículo fuera de su calle al chocar (no estaba en la tabla de arriba; corregido el 2026-11-25)
+
+La regla `vehiculo.fuera_de_calle` marca un vehículo cuyo frente, en el choque, no queda a menos de 30° del eje de ninguna calle cercana (a la mitad de su ancho más 4 m). Marca 17 de 205 y 8 de 42; la tabla anterior no la incluía.
+
+| Grupo                                                                    | Casos                                                                                                                                                              | Qué ve el perito                                                                                     | Estado                                 |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| La narración da un sentido que ninguna calle del lugar tiene             | 4 de 205 (cesvi-05a7c05640, -6ca24dcfce, -b9f5a5ca1f, -feb7aaa0e1)                                                                                                 | La escena avisa «en este lugar no hay una calle en ese sentido: revisa que el lugar sea el del caso» | Explicado, con aviso                   |
+| Maniobra narrada: vuelta en el cruce o salida del camino                 | 1 de 205 (cesvi-87b14ec4ba, al castillo en la orilla), 5 de 42 (aud-07, -09 el Gol, -13, -29, -39)                                                                 | El vehículo a media vuelta o fuera del camino, como dice la narración                                | Correcto (la regla no sabe de vueltas) |
+| Sobre su calle narrada, pero girado de 31° a 43° respecto al eje         | 9 de 205 (cesvi-5aa5e75aca, -65daf4b688, -928c1a7646, -97cb6986e4, -99ae88f8e3, -b1ab1b00df, -b641fb6657, -cd894debf8, -ec1c390b10), además del ciclista de aud-09 | En La escena y en el 3D, el auto atravesado en diagonal en su carril, sin aviso; la cifra sale       | Abierto: causa por diagnosticar        |
+| La calle de llegada propuesta no es la narrada, o queda lejos del choque | 3 de 205 (cesvi-9cb20db594, -a29030f88d, -df6a4b2324), 3 de 42 (aud-02 la Hilux, aud-15 el Kia a 6 m de la calzada, aud-38 «Calle Descartes»)                      | La escena propone «venía por …» con otra calle; el perito puede corregirla, pero nada le avisa       | Abierto                                |
+
+### El giro en diagonal y la calle de llegada (2026-11-25) · rama `fix/w-calle-de-llegada`, encima del #316
+
+René (2026-11-25): diagnosticar los 16 casos abiertos, decir si el giro de 31° a 43° ya estaba antes del #311, corregirlo, que la calle de llegada sea la narrada o que La escena avise, y una comprobación que falle si un vehículo queda a más de 30° de su calle sin aviso, salvo maniobras narradas. El #311 no se corrige dentro del #311: se publican juntos, #311 → #316 → este arreglo.
+
+- **Cómo se midió:** `apps/web/src/lib/auditoria/comparar-escena.test.ts` corre La escena de cualquier versión (se copia a un worktree) con la misma lectura grabada, el mismo lugar encontrado, las mismas calles guardadas y el destino narrado; reproduce la revisión completa en los 25 casos (dos filas de la revisión eran de una corrida vieja). Resultado: `eval/results/auditoria_cadena/giro_main_316_arreglo.json`.
+- **Qué lo introdujo:** 5 de los 6 casos nuevos, `b678410c` (la calzada de su sentido mueve el choque a otra calzada); el ciclista de aud-09, entre main y `ca8c23ea`. Los otros 6 girados y 3 de calle de llegada ya estaban en main.
+- **La causa:** el rumbo de cada flecha de llegada era la línea del choque al brazo de la calle a 22 m. Con el choque a 10–15 m del eje (dos calzadas, el choque movido a la de su sentido, un cruce fuera del eje), esa línea cruzaba la calle de 25° a 35°, y el vehículo quedaba atravesado en su carril.
+- **El arreglo** (`escena-facil.ts`, `escena-propuesta.ts`):
+  - el rumbo de la flecha es el del eje de la calle junto al choque (sus últimos 6 m);
+  - entre flechas casi iguales, gana la de la calle que pasa por el choque, con nombre y de más jerarquía;
+  - la calle narrada de cada vehículo («circulaba sobre…», «por el carril … del paso a desnivel», «por el mismo carril», «en sentido contrario») manda sobre las demás;
+  - si no llega al choque: «la calle de llegada no coincide con la narración: revísala»;
+  - si ya colocado ninguna calle bajo el vehículo va alineada con él: «la calle de llegada no pasa por el punto del choque: revísala», salvo una maniobra narrada;
+  - se quedan el aviso «no hay una calle en ese sentido» y las vueltas narradas del #311.
+- **La comprobación:** `giro-sin-aviso.ts`, la usan la revisión (`vehiculo.girado_sin_aviso`) y `giro-sin-aviso.test.ts` (9 pruebas en el CI, entre ellas la flecha con el choque a 12 m del eje).
+
+|                                                               | main | #316   | arreglo                                |
+| ------------------------------------------------------------- | ---- | ------ | -------------------------------------- |
+| Vehículos de los 25 casos a más de 30° o sin calle bajo ellos | 12   | 31     | 13, todos con aviso o maniobra narrada |
+| Atravesados sin aviso (revisión completa, 205 + 42)           | —    | —      | 0                                      |
+| «Fuera de su calle» en la revisión (205 / 42)                 | —    | 17 / 8 | 8 / 6                                  |
+
+- **Cifras:** las 13 filas de la tabla de los ejemplos y AXA, iguales (`cifras-ronda4.test.ts`). El crucero «en la app» da 20 (3–26), igual con el #316 sin este arreglo: lo movió el lugar real del crucero (#316, Azucena y Avenida del Árbol); René lo aprobó el 2026-11-25 y el índice ya lo dice, con su motivo (antes, 20 (4–27)). De los 205 reportes, ninguna cifra cambia; de las 42 narraciones de la revisión (no publicadas), 13 cambian y aud-18 queda con el candado (la animación de la Hilux llega a 59 km/h contra 40–45).
+- **Para la t9:** toca lo que pasa por La escena (los ejemplos en el navegador, el crucero en la app, Tollocan, las seis narraciones, las tres de René y la muestra de la revisión). Borrador de una tanda corta en el PR; no se tocó `tools/colaborador/` mientras corre la t9.
+
+### La segunda vuelta del #320 (René, 2026-11-25, noche)
+
+- **Las calles de los ejemplos, guardadas.** Los cinco abren con las calles de su lugar en `data/cesvi/ejemplos/calles/` (OpenStreetMap, ODbL; `ejemplos-calles.test.ts` las genera de lo guardado de la revisión). En un caso, las calles guardadas con el caso mandan; las de Overpass reemplazan a las de las teselas al guardarse. Si la consulta de calles falla y no hay calles de ninguna fuente, La escena y la reconstrucción dicen «No se pudieron cargar las calles: reintenta» con un botón, y no se calcula ninguna cifra (`calles-fallan.spec.ts`). Un lugar donde OpenStreetMap responde sin calles sigue como antes.
+- **La e2e del poste** (`escena-corregir.spec.ts`), con las calles guardadas, antes (#316) y después (#320): la escena es la misma (choque en Árbol y Azucena; el Jetta del sureste, el Camaro del suroeste y «junto al choque»). El poste queda a unos 18 m al este, fuera del recorrido del Camaro, que queda junto al choque: no influye en ninguna de las dos. En el #316 la prueba pasaba porque el p90 cambiaba 1 km/h (27 → 26), ruido de las simulaciones; en el #320, 20 (14–27) antes y después. La prueba no se cambió: espera la decisión de René.
+- **Choques de frente casi en la misma línea.** En los 205, 29 son de frente con frentes y a 170° o más; con el solver anterior, 3 casos «chocaban» con un vehículo en su posición inicial (uno de frente, cesvi-a29030f88d; los otros dos de frente con la zona de uno en su costado), además de aud-18 en la animación. La causa: las líneas que recorren las zonas se cruzan lejos y el solver tomaba ese cruce. El arreglo (Python y TS, misma aritmética): un contacto con un vehículo en movimiento en su posición inicial pierde frente a cualquier otro; si todos los caminos lo dejan así, cada uno va al punto de su camino más cercano al impacto declarado. Pruebas: `solver/tests/test_choque_de_frente.py` y `packages/solver-ts/src/choque-de-frente.test.ts` (alineado, desfasado y con frenado de un lado). Ahora, 0 de 205. aud-18 vuelve a tener cifra: Kia 44 (41–49), Hilux 57 (52–59) (narradas: 40 y «más de 60»).
+- **El candado** (`candado.ts`): un mejor ajuste fuera de su propio rango no da cifra y dice por qué (aud-30: 33 km/h con rango 13–30). Prueba: `candado-mejor-fuera.test.ts`.
+- **Los nombres de calle**: entre varias calles del mapa que coinciden con la narrada, gana la de menos palabras de más; una privada, cerrada, andador o callejón no es la avenida narrada; si el nombre más parecido no tiene flecha en el sentido narrado, se prueba el siguiente. En los 205 y las 42, 12 calles narradas coinciden con varias de nombres distintos (`eval/results/auditoria_cadena/nombres_confusos.json`); con la regla, las 12 eligen la narrada. La calle de llegada es lo que va después de «sobre» o «por» (no «por el semáforo de Avenida Prado Norte»), y «por el carril derecho» es de la vía donde la narración pone el hecho.
+- **Velocidades por tipo** (`velocidad-razonable.ts`): aviso, no bloqueo, si la cifra pasa de 40 km/h en bicicleta, 25 km/h a pie, 140 km/h en moto, 110 km/h en camión de carga o 125 km/h en autobús. Fuentes:
+  - Yan, H., Maat, K. y van Wee, B. (2024). Cycling speed variation: a multilevel model of characteristics of cyclists, trips and route tracking points. _Transportation_, 52(5), 1857–1886. doi:10.1007/s11116-024-10477-6.
+  - Yan, X., Chen, J., Bai, H., Wang, T. y Yang, Z. (2020). Influence Factor Analysis of Bicycle Free-Flow Speed for Determining the Design Speeds of Separated Bicycle Lanes. _Information_, 11(10), 459. doi:10.3390/info11100459.
+  - Murtagh, E. M., Mair, J. L., Aguiar, E., Tudor-Locke, C. y Murphy, M. H. (2021). Outdoor Walking Speeds of Apparently Healthy Adults: A Systematic Review and Meta-analysis. _Sports Medicine_, 51(1), 125–141. doi:10.1007/s40279-020-01351-3.
+  - Reglamento de Tránsito en Carreteras y Puentes de Jurisdicción Federal, artículo 134 (DOF; texto con la reforma del 22-11-2012): máximas de 80 km/h para camiones y tractocamiones y 95 km/h para autobuses de día; 110 km/h donde un señalamiento lo fija.
+  - Récord de velocidad a pie: 44.72 km/h, entre los metros 60 y 80 del 100 m del Mundial de Atletismo de Berlín, 2009.
+
+### Lo que quedó por caso (René, 2026-11-25, noche)
+
+- **aud-02 (25 y 27 km/h):** el lector de posiciones finales coloca la Hilux 7 m adelante en su propia línea de marcha (al oeste), no al noroeste como dice la narración («desplazado hacia el noroeste del cruce»): con ese final, el solver la ve seguir de frente con casi toda su velocidad (27 km/h, rodando con el arrastre de las llantas) y al Sentra transmitiéndole poco (25 km/h). La cuenta a mano suponía el final al noroeste. El supuesto de después del choque se ve en los supuestos: «Después del impacto: las llantas ruedan, con un arrastre de … de la fricción» (con su fuente y su rango). Pendiente: que el final narrado respete la dirección («hacia el noroeste»).
+- **aud-18:** junto a la cifra se ve «la narración dice al menos 60 km/h («más de 60 km/h»); las posiciones dan 57 km/h (52–59)» (`contra-narracion`).
+- **aud-37:** los estacionados van en la vía donde la narración pone el hecho; los tres quedan alineados con Avenida Río Mixcoac y el Kia da 46 (46–48), como en el #316 (46 (44–50)). La vía corre al noroeste (319°) y la narración dice «de oriente a poniente»: 49°, dentro de lo que La escena acepta.
+- **A2010930 (prueba del recorrido 3D):** el reporte no dice si la Silverado estaba detenida o circulaba (usa el método del «alcance clásico» y solo calcula la Tacoma: 63.15 km/h por daños y 60.27 km/h por desplazamiento). La prueba arma su propia escena (`proponerVersiones` con el reposo de B que propone, rumbo 0 y otra semilla); la cifra publicada sale del ejemplo de AXA de la app (reposo de B detrás de A, como supuesto, en el tramo real de la MEX 15D). Decisión de René (2026-11-25): la prueba exige la Tacoma dentro de ±10 % del cálculo de CESVI (54.2–69.5 km/h; da 62.8) y la Silverado en 0 o más; «el reporte no dice si la Silverado se movía; se compara contra el cálculo de CESVI». El 3D del ejemplo de AXA llega al choque a 56.87 y 14.98 km/h, las cifras que ve el perito (prueba en `axa-lectura-fisica.test.ts`).
+- **La carambola de la e2e («línea base distinta»):** el Mazda (B) sale con 0 km/h, pero arrancaba en su supuesto, 12 m antes de su posición de impacto: con 0 km/h se quedaba ahí y, en el 3D y en la simulación de los conductores, el Versa lo alcanzaba 1.8 s antes del choque. Con el solver del #316 el choque se iba al arranque de los dos (12 m antes de donde lo puso el perito); con el del #320, el Versa llegaba a su punto y el Mazda seguía atrás. Arreglo: un vehículo con 0 km/h arranca detenido en su posición de impacto (`posesDeImpacto`, `especReconstruida`). Las cifras no cambian (Versa 24, Mazda 0, Aveo 1); prueba con el caso guardado (`carambola-detenido.test.ts`, `data/cesvi/grabaciones/carambola/carambola-e2e-caso.json`).
+- **Las cifras de carambolas del índice:** el #320 no las mueve (con el solver del #316 y con el del #320: 19 de 31 y 41 de 55). Las mueve el #311: en `main` dan 21 de 31 y 44 de 55; en la cabeza del #311 (`2dfd57dc`), 19 de 31 y 41 de 55. Cinco expedientes pierden un impacto posterior (prueba: cesvi-0b1f65a976, cesvi-e9aed4ab5b; desarrollo: cesvi-d6f456b23d, cesvi-644f4d909d, cesvi-31aa158ae6). Ya da 19 en `92ce9a10`, antes del arreglo de la cadena (`f31eaaff`). Espera el visto bueno de René; el índice sigue con 21 y 44.
+
+### aud-02, el aviso del límite de la vía y las carambolas (2026-11-26) · rama `feat/w-aud02-final-con-direccion`, encima del #320
+
+René (2026-11-26): las posiciones finales con dirección («hacia el noroeste», «hacia el camellón»), el aviso para autos y el diagnóstico de las 5 carambolas, en el PR que sigue al #320 y antes de la ronda con 3 personas.
+
+- **Hacia dónde salió** (`direccionDeSalida`, `finalDeLaNarracion` en `escena-facil.ts`): un punto cardinal («hacia el noroeste», «quedó al norte del cruce»), el camellón (a su izquierda: se circula por la derecha), la banqueta (a su derecha), «hacia su izquierda/derecha» y «hacia atrás». No cuentan «con el frente hacia…» (es cómo quedó) ni «de sur a norte» (es cómo circulaba). Con dirección, los metros narrados van en esa dirección; sin ella, hacia donde avanzaba, como antes. Pruebas en `escena-final-narrado.test.ts`.
+- **aud-02:** la Hilux ya queda 7 m al noroeste. Sentra de 25 (8–28) a 53 (46–55) km/h; Hilux de 27 (20–35) a 15 (13–30) km/h (es una narración de la revisión, no una cifra publicada).
+- **El aviso del límite de la vía** (`avisoSobreElLimite`, `conAvisoDelLimite`): sale cuando el mejor ajuste pasa por más de 40 km/h el límite de la vía del choque (su `maxspeed` o el de su tipo según la LGMSV, el mismo de `limiteEnElChoque`). El 40 es un umbral de diseño, no viene de una fuente. Va junto a la cifra (`sobre-el-limite`) y en los límites: «la cifra (X km/h) queda más de 40 km/h arriba del límite de esta vía (L km/h; fuente): es inusual; revisa las posiciones finales y las medidas antes de usarla». Las cifras no cambian. En la e2e del poste: con el poste golpeado en el recorrido del Camaro, el Jetta da 95 km/h y el aviso sale; antes, con 60 km/h, no sale.
+- **Las 5 carambolas del corpus:** con el #311 se pierden dos causas distintas:
+  - en `395401c7` (la clase sale del modelo): cesvi-0b1f65a976, cesvi-644f4d909d y cesvi-e9aed4ab5b;
+  - en `92ce9a10` (el primer contacto en choques oblicuos): cesvi-d6f456b23d; cesvi-31aa158ae6 da exactamente los mismos valores (otro BMW 325 contra un 550) y no se bisecó aparte.
+
+  Las clases nuevas son correctas: BMW 325/550 son sedán mediano, Ford Freestar es van y Honda Civic o Mazda 3 son sedán compacto. Lo que falla es la colocación: sin posiciones del perito, el vehículo que solo está en un impacto posterior se coloca detenido a la mitad del recorrido del que lo golpea, visto en una reconstrucción previa. En esa reconstrucción los que aún no se colocaban iban en su disposición genérica, a 40 km/h, y chocaban con el que golpea. Por ejemplo, en cesvi-e9aed4ab5b el Jeep alcanzaba a la Tacoma a los 1.55 s y ese empujón entraba en el recorrido; en la final la Tacoma se mueve 0.2 m y nunca llega. Las clases solo cambiaron en qué casos ocurría ese choque fantasma.
+
+  Arreglo (`colocarPosteriores`): la reconstrucción previa va sin los que aún no se colocan; prueba en `carambola-colocacion.test.ts`. Recupera cesvi-e9aed4ab5b y además reproduce cesvi-9ab47f7f37, cesvi-feb7aaa0e1 y cesvi-f5a7c68983, que tampoco salían en `main`.
+
+  Quedan cesvi-0b1f65a976, cesvi-644f4d909d, cesvi-d6f456b23d y cesvi-31aa158ae6. En cesvi-d6f456b23d, con el impacto declarado el solver detiene al BMW 0.2–0.4 m antes del vehículo colocado sin registrar el choque; sin el impacto declarado lo atravesaría 1.5 m. Apunta al contacto posterior del solver (`postimpact`), pendiente.
+
+| Carambolas (impactos posteriores que ocurren) | `main`   | #311 / #316 / #320 | con el arreglo |
+| --------------------------------------------- | -------- | ------------------ | -------------- |
+| Prueba                                        | 21 de 31 | 19 de 31           | 22 de 31       |
+| Desarrollo                                    | 44 de 55 | 41 de 55           | 42 de 55       |
+
+René (2026-11-26) eligió 22 de 31 y 42 de 55 para el índice, con su motivo: «se corrigió el choque fantasma de la reconstrucción previa (#323); recupera cesvi-e9aed4ab5b y agrega 3 impactos; René lo aprobó el 2026-11-26». Va en el #323 (`eval/cifras.mjs`, `cifras.json`, README y guion de la demo) y se aplica cuando se publique.
+
+- **Los 4 que no se recuperan, al paquete de «física de los alcances en el mismo sentido»** (después de publicar; René, 2026-11-26): cesvi-0b1f65a976, cesvi-644f4d909d, cesvi-d6f456b23d y cesvi-31aa158ae6. Es el contacto posterior del solver (`tryImpact` y `resolveSecondaryContact`, Python y TS con paridad): con el impacto declarado, el que golpea se detiene antes del colocado sin registrar el choque.
+
+- **La revisión con el lector final** (René, 2026-11-26; por tandas según la memoria libre, `eval/auditoria_por_tandas.mts`: 42 en 4 tandas y 205 en 14, con 1.0–2.1 GB libres). Solo los que cambian:
+
+| Caso                                          | Antes (#320)                        | Ahora (#323)                        | Por qué                                                       |
+| --------------------------------------------- | ----------------------------------- | ----------------------------------- | ------------------------------------------------------------- |
+| aud-02                                        | Sentra 25 (8–28), Hilux 27 (20–35)  | Sentra 53 (46–55), Hilux 15 (13–30) | «desplazado hacia el noroeste… a 7 m»                         |
+| aud-22                                        | V1 49 (48–49), V2 1 (0–18)          | V1 49 (49–49), V2 4 (0–22)          | «desplazado hacia el noreste y quedó a 4 m»                   |
+| aud-27                                        | V1 40 (35–44), V2 49 (46–55)        | V1 38 (34–43), V2 53 (48–59)        | «a 2 m del punto de contacto, desplazado hacia atrás»         |
+| aud-29                                        | V2 25 (22–31), V1 17 (14–24)        | V2 34 (29–43), V1 10 (8–15)         | «desplazado hacia el noreste y quedó a 5 m»                   |
+| aud-38                                        | sin cifra (candado de la animación) | CR-V 74 (71–76), Jetta 0 (0–7)      | «se desvió hacia la derecha… a 6 m» (adelante y a la derecha) |
+| cesvi-316a61cb43 y cesvi-c6e5335493 (iguales) | V4 sin cifra                        | V4 45 (32–57)                       | la colocación sin el choque fantasma                          |
+
+- **Lo que ve el perito en los 5 ejemplos y AXA:** nada cambia. La tabla de `cifras-ronda4.test.ts` (AXA, los cinco ejemplos y las siete narraciones) da las 13 filas iguales, con sus límites; el crucero «en la app» igual. Ninguna descripción de posición final de los ejemplos trae una dirección que el lector nuevo lea («orientado hacia el Oriente» de poste y terracería es cómo quedó; «8 m al Norte del área de contacto» y «7 m al Norte del área de contacto» siguen sin leerse, como antes). El aviso del límite no sale en ninguno (la cifra más alta es 53 km/h en una carretera federal). Lo único publicado que cambia son las carambolas del índice, aprobadas.
+- **Para la revisión de la t9-junta:** contra el índice, las carambolas dan 19 de 31 y 41 de 55 en lugar de 21 y 44. Es esperado: lo mueve el #311 (`395401c7`, la clase y la masa por el modelo) y René lo aprobó el 2026-11-26.
+
+### El paquete que sigue al #323 (René, 2026-11-26): un PR por punto, sin cambiar cifras
+
+- **#324, los detalles que vio Alberto** (`trailer-salida/_revision/alberto-detalles/`):
+  - el «km/h» con tres dígitos ya no toca la cifra en itálica y en un panel angosto baja;
+  - en Presentar queda una sola leyenda, la de la página: el 3D se dibuja más alto que su marco y la de Unity queda fuera;
+  - «Salir · Esc» y el botón del tema tienen fondo.
+- **#325, antialiasing en «Descargar video»:** Unity dibuja cada cuadro al doble (3840×2160), la web lo reduce a 1920×1080, y se graba en calidad `ultra` (luego vuelve a `auto`).
+- **#326, la foto satelital a su resolución:** MapLibre pedía las teselas raster por px de CSS (sin `pixelRatio`) y llegaban a la mitad. Con teselas declaradas de 128 px llega la resolución completa, hasta z19.
+- **#327, «Qué importa»:** en La escena, en gris los objetos y las zonas a más de 2 m de todo recorrido de la reconstrucción que se ve (`que-importa.ts`).
+- **Para la siguiente tanda** (CI no tiene el Unity real ni la llave de Esri):
+  - Presentar con Unity (una sola leyenda, completa);
+  - un cuadro del video con y sin #325 en el mismo instante;
+  - el 2D con «Fondo: foto» y el 3D en «mapa real» con y sin #326.
+
+  Todo en `trailer-salida/_revision/`.
+
+### Los pedazos del choque parecen cubos (René, 2026-11-25) · para el paquete de daños
+
+En el tráiler, los restos del choque en el 3D (cuadros de 16.7 a 17.9 s y de 19.0 a 19.4 s) se ven en imagen fija como cubos negros, de cerca, y grises, en la toma abierta. Por eso el póster del tráiler en la portada (#319) es la foto promo `02-noche-faros.jpg`, sin restos. Se corrige con los daños: piezas sueltas y restos con la forma de lo que se rompe.
+
+### Lo publicado
+
+AXA 57 (sin cambio), crucero 20 y 12, alcance 53 y 0, carambola 24, reversa 8 y 24, poste 30 y 36: iguales a la tabla del #311 (`reconstruir` de `cifras-ronda4.test.ts`, sin navegador). La animación del alcance termina a 10 y 12 m de las posiciones finales marcadas y la del poste a 7 y 10 m: va a René (paquete aparte).
+
+## El 2D limpio, el acercamiento y el lugar de los ejemplos (2026-11-25) · rama `fix/w-2d-croquis`
+
+René (2026-11-25): «la vía del choque sale vertical, se enciman los vehículos y las etiquetas A3, B2 y B3, y las orillas salen chuecas… vuelve al croquis pericial que aprobé (propuesta 2)», el acercamiento de la foto en el 2D y que los cinco ejemplos abran siempre en su lugar. Rama aparte del #311 (la t9 corre fijada a 2dfd57dc), solo web, pruebas ligeras.
+
+### El 2D
+
+- **Qué lo rompió:** ningún commit cambió el croquis desde que René lo aprobó (16bb3d79, 2026-11-18, con AXA y cf708, de una sola vía). La regla de giro de ese mismo commit, «entre varias vías (un cruce), la de más jerarquía», ponía horizontal a Paseo Tollocan en la carambola de René (2026-11-24) y la calle del choque quedaba vertical. Las orillas tenían escalones porque cada tramo se dibujaba con puntas rectas; las etiquetas se amontonaban porque el detenido tiene la posición 1 y la 2 en el mismo lugar.
+- **Arreglo:** la vía horizontal es la que recorren los vehículos al llegar (a menos de 30°); las orillas, con uniones redondas; una posición igual a la anterior se dibuja una vez con «B1·2».
+- **Prueba visual** (`croquis-visual.test.ts`): AXA, la carambola de Tollocan y Tollocan, con la vía de llegada horizontal, ninguna etiqueta encimada y el SVG idéntico a su referencia (`__snapshots__/croquis/`). Con el código anterior, la carambola falla.
+- **Capturas** (`docs/cesvi/ronda-4/evidencia/2d/regresion-antes-*` y `regresion-despues-*`): AXA queda igual a la aprobada.
+
+### El acercamiento
+
+Botones + / − / 1:1, la rueda (sobre el cursor) y el pellizco; acercado, se arrastra (`zoom-vista.ts`, `zoom-vista.test.ts`; la e2e del croquis prueba los botones). Acerca el dibujo y el fondo juntos.
+
+### El lugar de los ejemplos
+
+Cada ejemplo guarda su lugar (`data/cesvi/ejemplos/narraciones.json`) y abre ahí sin el buscador. Las cifras en su lugar, contra la tabla (en el punto P): crucero y poste iguales; alcance 53 (48–55) contra 53 (49–56); carambola 24 (22–31) contra 24 (22–32); reversa, con el relieve real de Lomas del Valle, 7 (0–15) y 24 (22–29) contra 8 (1–16) y 24 (21–28). **Mueve cifras publicadas: no se publica sin el visto bueno de René.**
+
+## Los ejemplos con el mismo código de La escena, el poste y la reversa (2026-11-26) · #331, #334, `fix/w-poste-mazda`
+
+**Qué se hizo (#331, encima de la cadena #311 → #329):**
+
+- La tabla del índice arma cada ejemplo con el código de La escena (`ejemplo-como-perito.ts`, recetas en `recetas-perito.ts`): la propuesta en el lugar guardado, las direcciones confirmadas como con «Confirmar», el choque tocado (`puntoDelChoqueTocado`), el terreno (`ponerTerrenoEn`), «¿Chocó contra algo más?» (`agregarChoqueIntermedio`) y los finales (`tocarFinal`). Guarda los toques en `eval/results/ejemplos_como_perito/`; la receta del navegador (`e2e/recetas-perito.ts`) los repite y `e2e/ejemplos-como-perito.spec.ts` falla si la escena de la app y la de la tabla difieren (propuesta y final).
+- Errores de la app que encontró esa prueba: el golpe contra el poste no se calculaba (el punto no se guardaba y el narrado quedaba «sin calcular»); el derrape que «inicia en el área de contacto» no entraba como evidencia; la posición final tocada se pegaba hasta 8 m al eje de la calle (el Vento «sobre el acotamiento» se movía 3 m).
+- La velocidad en reversa sin evidencia pesa como supuesto con el rango de NHTSA (`a_priori`).
+- Cifras aprobadas por René el 2026-11-26: crucero 20 (5–26) y Camaro 12 (6–20); alcance 53 (49–56) y Vento 0 (0–8); carambola 25 (20–32); Versa 20 (16–25) y CR-V 6 (3–7); poste 59 (49–64). AXA sin cambio, 57 (55–78).
+- t9-ejemplos fijada a 55eccc3b (#333).
+
+**«¿Y si…?» a otra velocidad (#334):** en la Reconstrucción, la velocidad de cada vehículo; la simulación hacia adelante contra la misma a la velocidad reconstruida; cada diferencia con su valor y su porcentaje; marcada como hipótesis. e2e `ysi-velocidad.spec.ts` en verde.
+
+**El Mazda del poste (`fix/w-poste-mazda`, después de publicar):** «8 metros al Norte» era del texto del ejemplo: tras pegarle en el costado al Sentra, el Mazda avanza unos 2.5 m. La narración dice ahora «1 metro al Oriente», con su lectura regrabada (0.0362 USD). Y un error de la física: la revisión de «reposo inalcanzable» hacía un solo ajuste desde las velocidades de arranque; ahora lo repite desde la mejor solución de la inversión antes de avisar (Python y TS, referencias regeneradas).
+
+**Daños (siguiente):** en AXA, la deformación medida de la Tacoma con la rigidez del reporte (A = 55.4 kN/m, B = 385.3 kN/m²) equivale a unos 230 kJ, y el choque reconstruido disipa 61.5 kJ en total; además el solver usa la rigidez de NHTSA y no la del reporte. Plan: un PR `contract:` (lo medido y la fuente de la rigidez en `Dano`), el solver con la rigidez del reporte (Python y TS con paridad) y la comparación en Análisis.
+
+**Siguiente paso concreto:** esperar la t9-ejemplos; si sale bien, publicar #311 → #316 → #320 → #323 → #329 → #331, verificar en producción y fusionar #324, #327 y #328; luego #334 y `fix/w-poste-mazda`.

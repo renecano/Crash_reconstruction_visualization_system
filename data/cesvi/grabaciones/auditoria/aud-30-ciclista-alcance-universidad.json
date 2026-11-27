@@ -1,0 +1,218 @@
+{
+  "id": "aud-30-ciclista-alcance-universidad",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 429,
+    "output_tokens": 1669,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0183172,
+  "narracion": "El hecho se ubica sobre Avenida Universidad, a la altura de la colonia Santa Cruz Atoyac, alcaldía Benito Juárez, Ciudad de México, aproximadamente a las 23:00 horas. El alumbrado público de ese tramo era insuficiente. Un ciclista, adulto, circulaba de sur a norte por la orilla del carril derecho, sin luces en la bicicleta. El vehículo A, marca Chevrolet, tipo Beat, modelo 2021, circulaba detrás de él, por el mismo carril y en el mismo sentido, a más de 60 km/h según los testigos. Al percatarse de la bicicleta, el conductor del vehículo A frenó, dejando huellas de frenado de 10 m antes del impacto, y la alcanzó con su parte frontal derecha. El ciclista quedó tendido a 12 m del punto de contacto, junto a la guarnición, y la bicicleta a 2 m detrás de él. El vehículo A quedó detenido 10 m después del punto de contacto. Presenta el cofre abollado y el parabrisas estrellado del lado derecho; la bicicleta, la rueda trasera destruida. Pavimento seco.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Avenida Universidad, a la altura de la colonia Santa Cruz Atoyac",
+        "cita": "El hecho se ubica sobre Avenida Universidad, a la altura de la colonia Santa Cruz Atoyac"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Benito Juárez",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Ciudad de México",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 23:00 horas",
+        "cita": "Ciudad de México, aproximadamente a las 23:00 horas"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Chevrolet",
+        "cita": "El vehículo A, marca Chevrolet, tipo Beat, modelo 2021"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Beat",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2021",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "clase",
+        "valor": "bicicleta",
+        "cita": "Un ciclista, adulto, circulaba de sur a norte por la orilla del carril derecho, sin luces en la bicicleta"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "frena",
+        "cita": "el conductor del vehículo A frenó, dejando huellas de frenado de 10 m antes del impacto"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "Un ciclista, adulto, circulaba de sur a norte por la orilla del carril derecho"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "y la alcanzó con su parte frontal derecha"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "frenado",
+        "cita": "dejando huellas de frenado de 10 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "10 m",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El ciclista quedó tendido a 12 m del punto de contacto, junto a la guarnición"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "tendido a 12 m del punto de contacto, junto a la guarnición",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "la bicicleta a 2 m detrás de él"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "la bicicleta a 2 m detrás del ciclista",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A quedó detenido 10 m después del punto de contacto"
+      },
+      {
+        "seccion": "posicion",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "detenido 10 m después del punto de contacto",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "Presenta el cofre abollado y el parabrisas estrellado del lado derecho"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "vertice",
+        "valor": "delantero_derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "la bicicleta, la rueda trasera destruida"
+      }
+    ]
+  }
+}

@@ -3,6 +3,7 @@ import { join } from "node:path";
 import {
   danoEnTexto,
   especDeExpediente,
+  especReconstruida,
   formato as F,
   interpretarResultado,
   lecturasDeDano,
@@ -12,6 +13,7 @@ import {
   verificacionCesvi,
 } from "@croquis/cesvi";
 import { fullResult, PRODUCTION_SAMPLES } from "../../../../packages/solver-ts/src/full-result";
+import { reconstruct, reconstructionToDict } from "../../../../packages/solver-ts/src/reconstruct";
 import { describe, expect, it } from "vitest";
 import { casoAxa, expedienteAxaReconstruccion } from "./axa-reconstruccion";
 import { lecturaFisica } from "./contraste-lab";
@@ -32,6 +34,7 @@ const medida = (
       es_la_de_la_app: boolean;
       hipotesis: number;
       V2: { mejor: number; p10: number; p90: number };
+      V1: { mejor: number; p10: number; p90: number };
     }[];
   }
 ).filas.find((f) => f.es_la_de_la_app)!;
@@ -73,6 +76,18 @@ describe("la lectura física de AXA", () => {
       filasDeLaHoja(r, (id) => id, null).find((x) => x.etiqueta.startsWith("V2"))!.valor,
     ).toContain(texto);
     expect(citaVelocidad(r, "V2", "B")).toContain(texto);
+    // El 3D del ejemplo se mueve con las mismas cifras que se le muestran al perito (René, 2026-11-25):
+    // la escena que recibe Unity (`especDel3d` → `especReconstruida`) llega al choque a 57 y 15 km/h.
+    const del3d = reconstructionToDict(reconstruct(especReconstruida(r))) as {
+      vehiculos: { id: string; v_impacto_kmh: number }[];
+    };
+    for (const id of ["V2", "V1"] as const) {
+      const sid = Object.keys(r.ids).find((k) => r.ids[k] === id)!;
+      expect(del3d.vehiculos.find((x) => x.id === sid)!.v_impacto_kmh).toBeCloseTo(
+        medida[id].mejor,
+        2,
+      );
+    }
   });
 
   it(

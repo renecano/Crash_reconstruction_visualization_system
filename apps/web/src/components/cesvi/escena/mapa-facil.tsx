@@ -14,6 +14,9 @@ import type { Punto } from "@/lib/escena-facil";
 import { tomarMapa, type MapaPrestado } from "@/lib/mapa-compartido";
 import { COLOR_MEDIDA, dibujoMedicion } from "@/lib/medir";
 import { COLOR_ONDULACION, COLOR_SUPERFICIE, COLOR_TOPE } from "@/lib/terreno-colores";
+
+/** «Qué cambia la cifra»: el gris de lo que no influye en la cifra. */
+const COLOR_NO_IMPORTA = "#9AA0A8";
 import { estiloMapaEscena } from "./estilo-mapa-escena";
 import { svgPersona } from "./figura-persona";
 
@@ -50,6 +53,8 @@ export interface ObjetoMapa {
   rumbo: number;
   largo: number;
   ancho: number;
+  /** «Qué cambia la cifra»: no toca ningún recorrido reconstruido, va en gris. */
+  apagado?: boolean;
 }
 
 /**
@@ -88,6 +93,8 @@ export interface TerrenoMapa {
   /** El polígono de la zona o los dos extremos del tope. */
   puntos: Punto[];
   centro: Punto;
+  /** «Qué cambia la cifra»: no toca ningún recorrido reconstruido, va en gris. */
+  apagado?: boolean;
 }
 
 export interface MapaFacilProps {
@@ -122,6 +129,11 @@ export interface MapaFacilProps {
   objetos?: ObjetoMapa[];
   /** W5: las zonas de otra superficie, las zonas onduladas y los topes. */
   terreno?: TerrenoMapa[];
+  /**
+   * «Qué cambia la cifra» (René, 2026-11-26): el botón que pone en gris lo que no influye en la cifra. Solo
+   * con la reconstrucción al día; null sin ella.
+   */
+  queImporta?: { activo: boolean; onAlternar: () => void } | null;
   /** A3: los peatones y los ciclistas que colocó el perito. */
   personas?: PersonaMapa[];
   /**
@@ -592,9 +604,13 @@ export function MapaFacil(p: MapaFacilProps) {
 
     for (const o of p.objetos ?? []) {
       const el = document.createElement("div");
-      el.className = "escena-objeto";
+      el.className = o.apagado ? "escena-objeto escena-apagado" : "escena-objeto";
       el.setAttribute("data-testid", `objeto-${o.id}`);
-      el.setAttribute("aria-label", o.nombre);
+      if (o.apagado) el.setAttribute("data-influye", "no");
+      el.setAttribute(
+        "aria-label",
+        o.apagado ? `${o.nombre}: no toca ningún recorrido, no influye en la cifra` : o.nombre,
+      );
       el.setAttribute("role", "img");
       el.style.pointerEvents = "none";
       const cuerpo = document.createElement("div");
@@ -708,6 +724,10 @@ export function MapaFacil(p: MapaFacilProps) {
       const el = document.createElement("div");
       el.setAttribute("data-testid", `terreno-${t.id}`);
       el.setAttribute("data-clase", t.clase);
+      if (t.apagado) {
+        el.className = "escena-apagado";
+        el.setAttribute("data-influye", "no");
+      }
       el.style.pointerEvents = "none";
       const nombre = document.createElement("span");
       nombre.className = "escena-etiqueta escena-etiqueta-terreno";
@@ -883,7 +903,29 @@ export function MapaFacil(p: MapaFacilProps) {
             </kbd>
           </button>
         ) : null}
+        {p.queImporta ? (
+          <button
+            type="button"
+            className="escena-zoom flex w-auto items-center gap-1.5 px-3 text-[0.8125rem]"
+            onClick={p.queImporta.onAlternar}
+            aria-pressed={p.queImporta.activo}
+            title="En gris: lo que no toca ningún recorrido reconstruido y no influye en la cifra"
+            data-testid="que-importa"
+          >
+            Qué cambia la cifra
+          </button>
+        ) : null}
+        {p.queImporta?.activo ? (
+          <p
+            className="max-w-[15rem] rounded-[14px] bg-superficie px-3 py-2 text-[0.8125rem] text-texto shadow-[0_6px_18px_rgba(27,34,48,0.14)]"
+            role="status"
+            data-testid="que-importa-nota"
+          >
+            En gris: lo que no toca ningún recorrido reconstruido. No influye en la cifra.
+          </p>
+        ) : null}
       </div>
+
       <p className="pointer-events-none absolute right-4 bottom-3 z-10 text-[0.6875rem] text-texto-3">
         © OpenStreetMap · OpenFreeMap
       </p>
@@ -936,11 +978,13 @@ function encuadrar(m: MapaMl, puntos: readonly Punto[], animar: boolean) {
 }
 
 const colorTerreno = (t: TerrenoMapa) =>
-  t.clase === "tope"
-    ? COLOR_TOPE
-    : t.clase === "ondulacion"
-      ? COLOR_ONDULACION
-      : (COLOR_SUPERFICIE[t.tipo as keyof typeof COLOR_SUPERFICIE] ?? "#8A8F98");
+  t.apagado
+    ? COLOR_NO_IMPORTA
+    : t.clase === "tope"
+      ? COLOR_TOPE
+      : t.clase === "ondulacion"
+        ? COLOR_ONDULACION
+        : (COLOR_SUPERFICIE[t.tipo as keyof typeof COLOR_SUPERFICIE] ?? "#8A8F98");
 
 /** El terreno marcado: las zonas como polígonos de su color y los topes como una franja amarilla. */
 function dibujarTerreno(m: MapaMl, terreno: readonly TerrenoMapa[]) {

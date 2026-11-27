@@ -40,6 +40,10 @@ namespace Croquis.TestsCiudad
             { "bajada", new[] { "relieve", "objeto:barrera" } },
             { "curva", new[] { "curva" } },
             { "tollocan", new[] { "objeto:arbol" } },
+            // Las tres narraciones que René probó en producción (2026-11-24).
+            { "rene-arbol-curva", new[] { "objeto:arbol" } },
+            { "rene-peaton-vuelta", new[] { "persona", "curva" } },
+            { "rene-carambola-semaforo", new[] { "vehiculos:3" } },
         };
 
         public static IEnumerable<string> Casos() => Esperado.Keys;
@@ -148,6 +152,25 @@ namespace Croquis.TestsCiudad
                         if (!(cerca <= 4.5))
                         {
                             faltan.Add($"el vehículo chocando con el {tipo} (a {cerca:0.0} m en el impacto)");
+                        }
+                    }
+                    else if (e == "persona")
+                    {
+                        // El peatón atropellado se ve en la escena (antes la lectura lo dejaba como objeto).
+                        fila["persona"] = Resources.FindObjectsOfTypeAll<GameObject>().Any(g => g.name.StartsWith("persona_", StringComparison.Ordinal) && g.scene.IsValid());
+                        if (!(bool)fila["persona"])
+                        {
+                            faltan.Add("el peatón");
+                        }
+                    }
+                    else if (e.StartsWith("vehiculos:", StringComparison.Ordinal))
+                    {
+                        var n = int.Parse(e.Substring(10), System.Globalization.CultureInfo.InvariantCulture);
+                        var hay = UnityEngine.Object.FindObjectsByType<VehiculoVista>(FindObjectsSortMode.None).Length;
+                        fila["vehiculos"] = hay;
+                        if (hay != n)
+                        {
+                            faltan.Add($"los {n} vehículos (se ven {hay})");
                         }
                     }
                     else if (e == "puente")

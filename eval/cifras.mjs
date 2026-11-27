@@ -225,51 +225,173 @@ function construir() {
       texto: `${k} de ${n}`,
       fuente: archivo,
       campo: "impactos_posteriores_ocurridos / impactos_posteriores_en_escena",
+      motivo: `Se corrigió el choque fantasma de la reconstrucción previa (#323); recupera cesvi-e9aed4ab5b y agrega 3 impactos; René lo aprobó el 2026-11-26. Antes, ${p === "prueba" ? "21 de 31" : "44 de 55"}.`,
     });
   }
 
-  // --- Los ejemplos de narración (René, 2026-11-21 y 23) ---
-  // El poste, con la escena colocada como dice la narración, en la tabla aprobada de la ronda 4.
+  const EN_EL_NAVEGADOR = new Set([
+    "ejemplos.crucero",
+    "ejemplos.alcance",
+    "ejemplos.carambola",
+    "ejemplos.reversa",
+    "ejemplos.poste",
+  ]);
+  // --- Los cinco ejemplos, como los arma el perito en La escena (René, 2026-11-26) ---
+  // Una cifra por ejemplo y vehículo: la que ve el perito. La escena que propone La escena en el lugar
+  // guardado de cada ejemplo, con sus calles, corregida según la narración con las mismas funciones
+  // que usa la app (`apps/web/src/lib/ejemplo-como-perito.ts`, recetas en `recetas-perito.ts`).
   {
-    const archivo = "eval/results/ronda4_cifras/despues.json";
+    const archivo = "eval/results/ejemplos_en_su_lugar/cifras.json";
     const doc = leer(archivo);
-    const i = doc.filas.findIndex((f) => f.clave === "poste-terraceria");
-    if (i < 0) throw new Error(`${archivo}: no está el ejemplo poste-terraceria`);
-    const fila = doc.filas[i];
-    const j = fila.velocidades.findIndex((v) => v.vehiculo === fila.cifra_de);
-    const v = fila.velocidades[j];
-    pon("ejemplos.poste", {
-      que: "Ejemplo «poste y terracería»: velocidad del Sentra (B) antes del impacto, con la escena colocada como dice la narración (el Mazda 3 quedó 8 m al norte)",
-      mejor: v.mejor,
-      p10: v.p10,
-      p90: v.p90,
-      unidad: "km/h",
-      muestras: doc.muestras.samples,
-      juego_de_muestras: "producción",
-      texto: `${v.mejor} km/h (${v.p10}–${v.p90})`,
-      fuente: archivo,
-      campo: `filas.${i}.velocidades.${j}`,
-      codigo: doc.codigo,
-    });
+    const APROBADO =
+      "Escena armada con el mismo código de La escena, direcciones por las calles reales (#331); René lo aprobó el 2026-11-26.";
+    const CRUCERO =
+      "Escena armada con el mismo código de La escena, direcciones por las calles reales y confirmadas como con el botón «Confirmar» de la app (#331); René lo aprobó el 2026-11-26.";
+    const POSTE =
+      "Escena armada con el mismo código de La escena (#331), con el golpe contra el poste calculado y el derrape de 18.40 m como evidencia. Desde el 2026-11-26 (fix/w-poste-mazda), el Mazda quedó «1 metro al Oriente» (decía «8 metros al Norte», que la física no alcanza) y la revisión de «reposo inalcanzable» ya no se queda en un mínimo local: pendiente del visto bueno de René.";
+    const REVERSA =
+      "Escena armada con el mismo código de La escena (#331). La velocidad en reversa del CR-V pesa como supuesto con su rango (NHTSA, 3.06–9.07 km/h), porque la narración no da evidencia de más; el rango del Versa cambia por eso. René lo aprobó el 2026-11-26.";
+    for (const [clave, ejemplo, vehiculo, que, antes, motivo] of [
+      [
+        "ejemplos.crucero",
+        "crucero-noche",
+        "V1",
+        "«crucero de noche»: velocidad del Jetta (A) antes del impacto",
+        "20 (4–27) publicada y 20 (10–28) en la tabla",
+        CRUCERO,
+      ],
+      [
+        "ejemplos.crucero_camaro",
+        "crucero-noche",
+        "V2",
+        "«crucero de noche»: velocidad del Camaro (B) antes del impacto",
+        "12 (3–19)",
+        CRUCERO,
+      ],
+      [
+        "ejemplos.alcance",
+        "alcance-deformacion",
+        "V1",
+        "«alcance en carretera»: velocidad de la NP300 (A), la que alcanza, antes del impacto",
+        "53 (49–55)",
+        APROBADO,
+      ],
+      [
+        "ejemplos.alcance_corolla",
+        "alcance-deformacion",
+        "V2",
+        "«alcance en carretera»: velocidad del Vento (B), el alcanzado, antes del impacto",
+        "0 (0–8)",
+        APROBADO,
+      ],
+      [
+        "ejemplos.carambola",
+        "carambola-lluvia",
+        "V1",
+        "«carambola con lluvia»: velocidad de la Ranger (A) antes del primer impacto",
+        "24 (19–32)",
+        APROBADO,
+      ],
+      [
+        "ejemplos.reversa",
+        "reversa-pendiente",
+        "V2",
+        "«reversa en pendiente»: velocidad del Versa (B) antes del impacto",
+        "20 (18–25)",
+        REVERSA,
+      ],
+      [
+        "ejemplos.reversa_crv",
+        "reversa-pendiente",
+        "V1",
+        "«reversa en pendiente»: velocidad del CR-V (A) en reversa antes del impacto",
+        "9 (1–18)",
+        REVERSA,
+      ],
+      [
+        "ejemplos.poste",
+        "poste-terraceria",
+        "V2",
+        "«poste y terracería»: velocidad del Sentra (B) antes del impacto",
+        "59 (49–64), aprobada el 2026-11-26",
+        POSTE,
+      ],
+    ]) {
+      // Las cinco principales las guarda el índice del navegador (bloque siguiente).
+      if (EN_EL_NAVEGADOR.has(clave)) continue;
+      const i = doc.filas.findIndex((f) => f.clave === ejemplo);
+      if (i < 0) throw new Error(`${archivo}: no está el ejemplo ${ejemplo}`);
+      const j = doc.filas[i].velocidades.findIndex((v) => v.vehiculo === vehiculo);
+      const v = doc.filas[i].velocidades[j];
+      pon(clave, {
+        que: `Ejemplo ${que}, como lo arma el perito en La escena`,
+        mejor: v.mejor,
+        p10: v.p10,
+        p90: v.p90,
+        unidad: "km/h",
+        muestras: doc.muestras.samples,
+        juego_de_muestras: "producción",
+        texto: `${v.mejor} km/h (${v.p10}–${v.p90})`,
+        fuente: archivo,
+        campo: `filas.${i}.velocidades.${j}`,
+        motivo: `${motivo} Antes, ${antes}.`,
+      });
+    }
   }
-  // El crucero de noche como lo ve el perito en la app: la escena que propone La escena sobre las
-  // calles reales, aceptada, con los dos junto al choque («la cifra publicada es esa», René 2026-11-23).
+
+  // --- Los cinco ejemplos medidos en el navegador (René, 2026-11-26) ---
+  // El índice guarda lo que da la app: la cifra principal de cada ejemplo, medida en el navegador con
+  // el Unity real en la t10-final (los toques de la receta del perito). Reemplaza la de la tabla, que
+  // puede diferir hasta 1 km/h por dónde caen los toques. Las de los otros vehículos siguen siendo de
+  // la tabla: el navegador no las mide.
   {
-    const archivo = "eval/results/ronda4_cifras/crucero_en_la_app.json";
+    const archivo = "eval/results/t10/ejemplos.json";
     const doc = leer(archivo);
-    const v = doc.velocidad;
-    pon("ejemplos.crucero", {
-      que: "Ejemplo «crucero de noche»: velocidad del Jetta (A) antes del impacto, como lo ve el perito en la app (la escena que propone La escena sobre las calles reales, aceptada, y los dos junto al choque)",
-      mejor: v.mejor,
-      p10: v.p10,
-      p90: v.p90,
-      unidad: "km/h",
-      muestras: muestrasDeProduccion().inversion,
-      juego_de_muestras: "producción",
-      texto: `${v.mejor} km/h (${v.p10}–${v.p90})`,
-      fuente: archivo,
-      campo: "velocidad",
-    });
+    const MOTIVO = "Medido en el navegador con Unity real (t10-final, 2026-11-26); René lo aprobó.";
+    for (const [clave, ejemplo, que, extra] of [
+      ["ejemplos.crucero", "crucero-noche", "«crucero de noche»: velocidad del Jetta (A)", ""],
+      [
+        "ejemplos.alcance",
+        "alcance-deformacion",
+        "«alcance en carretera»: velocidad de la NP300 (A), la que alcanza",
+        " La tabla da 53 (49–56): la diferencia es por dónde caen los toques.",
+      ],
+      [
+        "ejemplos.carambola",
+        "carambola-lluvia",
+        "«carambola con lluvia»: velocidad de la Ranger (A) antes del primer impacto",
+        "",
+      ],
+      [
+        "ejemplos.reversa",
+        "reversa-pendiente",
+        "«reversa en pendiente»: velocidad del Versa (B)",
+        "",
+      ],
+      [
+        "ejemplos.poste",
+        "poste-terraceria",
+        "«poste y terracería»: velocidad del Sentra (B)",
+        " Pendiente del arreglo del rango del solver: su extremo bajo incluye muestras en las que el Sentra no llega al poste; fuera de la demo hasta entonces.",
+      ],
+    ]) {
+      const i = doc.ejemplos.findIndex((e) => e.clave === ejemplo);
+      if (i < 0) throw new Error(`${archivo}: no está el ejemplo ${ejemplo}`);
+      const e = doc.ejemplos[i];
+      const m = /(\d+)\s*–\s*(\d+)/.exec(e.rango ?? "");
+      if (!e.cifra || !m) throw new Error(`${archivo}: ${ejemplo} sin cifra o sin rango`);
+      const v = { mejor: Number(e.cifra), p10: Number(m[1]), p90: Number(m[2]) };
+      pon(clave, {
+        que: `Ejemplo ${que} antes del impacto, en la app (navegador con Unity real)`,
+        ...v,
+        unidad: "km/h",
+        juego_de_muestras: "producción",
+        texto: `${v.mejor} km/h (${v.p10}–${v.p90})`,
+        fuente: archivo,
+        campo: `ejemplos.${i}`,
+        motivo: `${MOTIVO}${extra}`,
+      });
+    }
   }
 
   // --- La reversa (supuesto con fuente) ---

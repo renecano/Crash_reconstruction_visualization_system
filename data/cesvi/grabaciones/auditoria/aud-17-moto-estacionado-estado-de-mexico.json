@@ -1,0 +1,242 @@
+{
+  "id": "aud-17-moto-estacionado-estado-de-mexico",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 421,
+    "output_tokens": 1829,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0199012,
+  "narracion": "El hecho se ubica sobre Avenida Estado de México, colonia San Salvador Tizatlalli, en Metepec, Estado de México, aproximadamente a las 14:00 horas. El vehículo B, marca Nissan, tipo March, modelo 2017, se encontraba estacionado junto a la guarnición del lado derecho, con el frente hacia el poniente, sin ocupantes. El vehículo A, motocicleta marca Italika, tipo FT150, modelo 2023, circulaba de oriente a poniente por el carril derecho, a más de 60 km/h según los testigos. Al aproximarse al vehículo B, el motociclista frenó, dejando huellas de frenado de 4 m antes del impacto, y se impactó con su parte frontal contra la parte posterior del vehículo B. El vehículo B quedó a 1 m de donde estaba estacionado. La motocicleta quedó caída a 2 m a la izquierda del vehículo B, sobre el carril. El vehículo B presenta hundimiento en la tapa de la cajuela y la defensa trasera; la motocicleta, daños en la horquilla, el faro y el tanque. Pavimento seco, día soleado.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Avenida Estado de México, colonia San Salvador Tizatlalli",
+        "cita": "El hecho se ubica sobre Avenida Estado de México, colonia San Salvador Tizatlalli, en Metepec, Estado de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Metepec",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 14:00 horas",
+        "cita": "aproximadamente a las 14:00 horas"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Italika",
+        "cita": "El vehículo A, motocicleta marca Italika, tipo FT150, modelo 2023"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "FT150",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2023",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "clase",
+        "valor": "motocicleta",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Nissan",
+        "cita": "El vehículo B, marca Nissan, tipo March, modelo 2017"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "March",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2017",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "se_detiene",
+        "cita": "se encontraba estacionado junto a la guarnición del lado derecho"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba de oriente a poniente por el carril derecho"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "frena",
+        "cita": "el motociclista frenó, dejando huellas de frenado de 4 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "frenado",
+        "cita": "dejando huellas de frenado de 4 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "4 m",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "se impactó con su parte frontal contra la parte posterior del vehículo B"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 posterior",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "inicial",
+        "cita": "se encontraba estacionado junto a la guarnición del lado derecho, con el frente hacia el poniente"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "estacionado junto a la guarnición del lado derecho, con el frente hacia el poniente",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo B quedó a 1 m de donde estaba estacionado."
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "a 1 m de donde estaba estacionado",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "La motocicleta quedó caída a 2 m a la izquierda del vehículo B, sobre el carril."
+      },
+      {
+        "seccion": "posicion",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "caída a 2 m a la izquierda del vehículo B, sobre el carril",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "El vehículo B presenta hundimiento en la tapa de la cajuela y la defensa trasera"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      }
+    ]
+  }
+}

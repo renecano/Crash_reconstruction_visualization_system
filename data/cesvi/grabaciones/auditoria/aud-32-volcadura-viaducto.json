@@ -1,0 +1,282 @@
+{
+  "id": "aud-32-volcadura-viaducto",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 487,
+    "output_tokens": 2137,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0231132,
+  "narracion": "El hecho se ubica sobre el Viaducto Miguel Alemán, a la altura de la Avenida de los Insurgentes Sur, colonia Roma Sur, alcaldía Cuauhtémoc, Ciudad de México, aproximadamente a las 16:00 horas. El vehículo A, camioneta marca Toyota, tipo Hilux, modelo 2019, circulaba de oriente a poniente por el carril izquierdo, a más de 90 km/h según las cámaras de la vialidad. El vehículo B, marca Nissan, tipo Versa, modelo 2020, circulaba en el mismo sentido por el carril central y se cambió al carril izquierdo, delante del vehículo A. El vehículo A impactó con su parte frontal derecha la parte posterior izquierda del vehículo B. Después del impacto, el vehículo A derrapó hacia la izquierda, dejando huellas de derrape de 22 m después del impacto, golpeó la guarnición del camellón central y volcó; quedó sobre su costado izquierdo, a 30 m del punto de contacto. El vehículo B giró y quedó a 12 m del punto de contacto, sobre el carril central. El vehículo A presenta daños en la parte frontal derecha, el toldo y el costado izquierdo; el vehículo B, en la parte posterior izquierda. Pavimento seco, día soleado.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Viaducto Miguel Alemán, a la altura de la Avenida de los Insurgentes Sur, colonia Roma Sur",
+        "cita": "El hecho se ubica sobre el Viaducto Miguel Alemán, a la altura de la Avenida de los Insurgentes Sur, colonia Roma Sur"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Cuauhtémoc",
+        "cita": "alcaldía Cuauhtémoc, Ciudad de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Ciudad de México",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 16:00 horas",
+        "cita": "aproximadamente a las 16:00 horas"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Toyota",
+        "cita": "camioneta marca Toyota, tipo Hilux, modelo 2019"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Hilux",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2019",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "clase",
+        "valor": "pickup",
+        "cita": "El vehículo A, camioneta marca Toyota, tipo Hilux"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Nissan",
+        "cita": "El vehículo B, marca Nissan, tipo Versa, modelo 2020"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Versa",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2020",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba de oriente a poniente por el carril izquierdo, a más de 90 km/h"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "cambia_carril",
+        "cita": "se cambió al carril izquierdo, delante del vehículo A"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "El vehículo A impactó con su parte frontal derecha la parte posterior izquierda del vehículo B."
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "contacto",
+        "valor": "V2 posterior",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "golpeó la guarnición del camellón central y volcó"
+      },
+      {
+        "seccion": "impacto",
+        "n": 2,
+        "vehiculo": "ninguno",
+        "campo": "objeto_fijo",
+        "valor": "guarnición del camellón central",
+        "cita": ""
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "derrape",
+        "cita": "dejando huellas de derrape de 22 m después del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "22 m",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta daños en la parte frontal derecha, el toldo y el costado izquierdo"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "vertice",
+        "valor": "delantero_derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "techo",
+        "cita": "el toldo"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "lateral_izquierdo",
+        "cita": "el costado izquierdo"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "el vehículo B, en la parte posterior izquierda"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "tercio",
+        "valor": "izquierdo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V2",
+        "campo": "vertice",
+        "valor": "posterior_izquierdo",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "quedó sobre su costado izquierdo, a 30 m del punto de contacto"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "sobre su costado izquierdo, a 30 m del punto de contacto",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo B giró y quedó a 12 m del punto de contacto, sobre el carril central"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "a 12 m del punto de contacto, sobre el carril central",
+        "cita": ""
+      }
+    ]
+  }
+}

@@ -29,7 +29,7 @@ async function arrastrarEnMetros(page: Page, testid: string, este: number, norte
   await page.mouse.up();
 }
 
-test("@flujo /cesvi: corregir después — mover el poste y la dirección de un vehículo cambian el resultado (W4)", async ({
+test("@flujo /cesvi: corregir después — el poste golpeado en el recorrido del Camaro y la dirección de un vehículo cambian el resultado; un poste suelto fuera de los recorridos, no (W4)", async ({
   page,
 }) => {
   test.setTimeout(240_000);
@@ -72,7 +72,8 @@ test("@flujo /cesvi: corregir después — mover el poste y la dirección de un 
   await page.getByTestId("listo-final").click();
   await expect(pregunta).toHaveText("¿Por dónde venía el GM Camaro?");
   await page.getByTestId("no-se-direccion").click();
-  await page.getByTestId("final-junto").click();
+  // El Jetta lo golpea en su costado derecho: el Camaro sale empujado al noroeste y queda a 5 m.
+  await tocarEnMetros(page, "choque-1", -5, 5);
   await page.getByTestId("listo-final").click();
   await expect(pregunta).toHaveText("¿Dónde fue el primer golpe?");
   await page.getByTestId("golpe-nose").click();
@@ -80,6 +81,7 @@ test("@flujo /cesvi: corregir después — mover el poste y la dirección de un 
   await page.getByTestId("otros-si").click();
   await page.getByTestId("otros-vehiculo-V2").click();
   await page.getByTestId("otros-objeto-0").click();
+  // El poste contra el que chocó, primero lejos de donde quedó el Camaro.
   await tocarEnMetros(page, "choque-1", 18, 3);
   await expect(page.getByTestId("marca-objeto-2")).toHaveCount(1);
   await page.getByTestId("otros-no").click();
@@ -96,14 +98,18 @@ test("@flujo /cesvi: corregir después — mover el poste y la dirección de un 
   const cifra = page.getByTestId("cifra-reconstruccion");
   await expect(cifra).toBeVisible({ timeout: 90_000 });
   const antes = await cifra.innerText();
+  // 60 km/h en una calle de ciudad: alto, pero sin el aviso del límite de la vía.
+  await expect(page.getByTestId("sobre-el-limite")).toHaveCount(0);
 
-  // 1. Mover el poste: se toca, se arrastra 10 m y, al soltar, se recalcula.
+  // 1. El poste contra el que chocó el Camaro, al recorrido del Camaro (donde se detiene): se toca,
+  // se arrastra y, al soltar, se recalcula. La cifra cambia (René, 2026-11-25; calibrado en
+  // «Capturas»: 60 → 95 km/h del VW Jetta).
   await irAPaso(page, 3);
   await page.getByTestId("cambiar-algo").click();
   await expect(page.getByTestId("panel-corregir")).toBeVisible();
   await page.getByTestId("marca-objeto-2").click();
   await expect(page.getByTestId("seleccion-nombre")).toHaveText(/poste/i);
-  await arrastrarEnMetros(page, "marca-objeto-2", 10, 0);
+  await arrastrarEnMetros(page, "marca-objeto-2", -25.5, 4.5);
   await expect(page.getByTestId("mensaje-exito")).toContainText("Moviste");
   // Mover algo de la escena con la reconstrucción hecha: avisa y ofrece reconstruir de nuevo.
   await expect(page.getByTestId("aviso-escena-cambio")).toBeVisible();
@@ -116,6 +122,44 @@ test("@flujo /cesvi: corregir después — mover el poste y la dirección de un 
   await expect(cifra).toBeVisible();
   const conPosteMovido = await cifra.innerText();
   expect(conPosteMovido).not.toEqual(antes);
+  // 95 km/h: más de 40 km/h arriba del límite de la vía, junto a la cifra (René, 2026-11-26).
+  await expect(page.getByTestId("sobre-el-limite")).toContainText(
+    "queda más de 40 km/h arriba del límite de esta vía",
+  );
+  await expect(page.getByTestId("sobre-el-limite")).toContainText(
+    "revisa las posiciones finales y las medidas antes de usarla",
+  );
+
+  // 1b. La prueba contraria: un poste de la paleta, que nadie golpeó, lejos de los dos recorridos, no
+  // cambia la cifra. (El poste golpeado no sirve para esto: es un choque declarado y la física lleva
+  // al Camaro hasta él donde esté.)
+  await irAPaso(page, 3);
+  await page.getByTestId("cambiar-algo").click();
+  await expect(page.getByTestId("panel-corregir")).toBeVisible();
+  await page.getByTestId("paleta-poste").click();
+  await tocarEnMetros(page, "choque-1", -25, -2);
+  await expect(page.getByTestId("seleccion")).toBeVisible();
+  await page.getByTestId("sel-listo").click();
+  await expect(page.getByTestId("aviso-escena-cambio")).toBeVisible();
+  await page.getByTestId("reconstruir-de-nuevo").click();
+  await expect(page.getByTestId("recalculo")).toHaveAttribute("data-estado", "al_dia", {
+    timeout: 90_000,
+  });
+  await irAPaso(page, 4);
+  await expect(cifra).toBeVisible();
+  expect(await cifra.innerText()).toEqual(conPosteMovido);
+
+  // «Qué importa» (René, 2026-11-26): en La escena, el poste suelto (fuera de los recorridos) va en
+  // gris; el poste del choque declarado no se apaga.
+  await irAPaso(page, 3);
+  await page.getByTestId("que-importa").click();
+  await expect(page.getByTestId("que-importa-nota")).toBeVisible();
+  await expect(page.locator('[data-testid^="objeto-"][data-influye="no"]')).toHaveCount(1, {
+    timeout: 30_000,
+  });
+  await expect(page.getByTestId("marca-objeto-2")).not.toHaveAttribute("data-influye", "no");
+  await page.getByTestId("que-importa").click();
+  await expect(page.locator('[data-influye="no"]')).toHaveCount(0);
 
   // 2. Corregir la dirección del VW Jetta, ya colocado: se toca y «Cambiar por dónde venía».
   await irAPaso(page, 3);

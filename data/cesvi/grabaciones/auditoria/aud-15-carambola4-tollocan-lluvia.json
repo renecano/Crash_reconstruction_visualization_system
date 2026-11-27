@@ -1,0 +1,394 @@
+{
+  "id": "aud-15-carambola4-tollocan-lluvia",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 570,
+    "output_tokens": 2985,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0317592,
+  "narracion": "El hecho se ubica sobre Paseo Tollocan, a la altura de Avenida Pino Suárez, colonia Vértice, en Toluca, Estado de México, aproximadamente a las 19:30 horas, ya de noche y con lluvia intensa. Por el carril central, con dirección a la Ciudad de México, se encontraban detenidos por el semáforo, en este orden, el vehículo D, marca Kia, tipo Rio, modelo 2022; el vehículo C, marca Nissan, tipo March, modelo 2018; y el vehículo B, marca Volkswagen, tipo Vento, modelo 2020. El vehículo A, camioneta marca Ford, tipo Ranger, modelo 2019, circulaba por el mismo carril a unos 60 km/h, según su conductor. Al ver a los vehículos detenidos frenó, dejando huellas de frenado de 15 m antes del impacto, y se impactó con su parte frontal contra la parte posterior del vehículo B; este fue proyectado contra el vehículo C, y el vehículo C contra el vehículo D. Posiciones finales: el vehículo D quedó a 2 m de donde estaba detenido; el vehículo C, pegado a la parte posterior del vehículo D; el vehículo B, a 1 m detrás del vehículo C; y el vehículo A, a 2 m detrás del vehículo B. El vehículo A presenta hundimiento frontal; los vehículos B y C, daños en la parte frontal y en la posterior; el vehículo D, en la parte posterior. Pavimento mojado; la vía cuenta con alumbrado público.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "carambola",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 19:30 horas",
+        "cita": "aproximadamente a las 19:30 horas, ya de noche y con lluvia intensa"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Paseo Tollocan, a la altura de Avenida Pino Suárez, colonia Vértice",
+        "cita": "El hecho se ubica sobre Paseo Tollocan, a la altura de Avenida Pino Suárez, colonia Vértice"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Toluca",
+        "cita": "colonia Vértice, en Toluca, Estado de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Ford",
+        "cita": "El vehículo A, camioneta marca Ford, tipo Ranger, modelo 2019"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Ranger",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2019",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "clase",
+        "valor": "pickup",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Volkswagen",
+        "cita": "el vehículo B, marca Volkswagen, tipo Vento, modelo 2020"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Vento",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2020",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "marca",
+        "valor": "Nissan",
+        "cita": "el vehículo C, marca Nissan, tipo March, modelo 2018"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "modelo",
+        "valor": "March",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "anio",
+        "valor": "2018",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 4,
+        "vehiculo": "V4",
+        "campo": "marca",
+        "valor": "Kia",
+        "cita": "el vehículo D, marca Kia, tipo Rio, modelo 2022"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 4,
+        "vehiculo": "V4",
+        "campo": "modelo",
+        "valor": "Rio",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 4,
+        "vehiculo": "V4",
+        "campo": "anio",
+        "valor": "2022",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "frena",
+        "cita": "Al ver a los vehículos detenidos frenó, dejando huellas de frenado de 15 m antes del impacto"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "se_detiene",
+        "cita": "se encontraban detenidos por el semáforo, en este orden, el vehículo D"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "maniobra",
+        "valor": "se_detiene",
+        "cita": "se encontraban detenidos por el semáforo, en este orden, el vehículo D"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 4,
+        "vehiculo": "V4",
+        "campo": "maniobra",
+        "valor": "se_detiene",
+        "cita": "se encontraban detenidos por el semáforo, en este orden, el vehículo D"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "frenado",
+        "cita": "dejando huellas de frenado de 15 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "15 m",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "se impactó con su parte frontal contra la parte posterior del vehículo B"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 posterior",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 2,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": "este fue proyectado contra el vehículo C"
+      },
+      {
+        "seccion": "impacto",
+        "n": 2,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V3",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 3,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V3",
+        "cita": "y el vehículo C contra el vehículo D"
+      },
+      {
+        "seccion": "impacto",
+        "n": 3,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V4",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V4",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo D quedó a 2 m de donde estaba detenido"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V4",
+        "campo": "descripcion",
+        "valor": "quedó a 2 m de donde estaba detenido",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V3",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo C, pegado a la parte posterior del vehículo D"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V3",
+        "campo": "descripcion",
+        "valor": "pegado a la parte posterior del vehículo D",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo B, a 1 m detrás del vehículo C"
+      },
+      {
+        "seccion": "posicion",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "a 1 m detrás del vehículo C",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo A, a 2 m detrás del vehículo B"
+      },
+      {
+        "seccion": "posicion",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "a 2 m detrás del vehículo B",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta hundimiento frontal"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "los vehículos B y C, daños en la parte frontal y en la posterior"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "los vehículos B y C, daños en la parte frontal y en la posterior"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V3",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "los vehículos B y C, daños en la parte frontal y en la posterior"
+      },
+      {
+        "seccion": "dano",
+        "n": 5,
+        "vehiculo": "V3",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "los vehículos B y C, daños en la parte frontal y en la posterior"
+      },
+      {
+        "seccion": "dano",
+        "n": 6,
+        "vehiculo": "V4",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "el vehículo D, en la parte posterior"
+      }
+    ]
+  }
+}

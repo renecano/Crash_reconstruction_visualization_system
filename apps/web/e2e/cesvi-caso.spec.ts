@@ -67,6 +67,9 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   await expect(page.getByTestId("ejemplos-narracion").getByRole("button")).toHaveCount(5);
   await page.getByTestId("ejemplo-narracion").click();
   await expect(page.getByTestId("narracion")).toHaveValue(/vehículo A, marca VW, tipo Jetta/);
+  // Sin red desde antes de leer: el ejemplo abre en su lugar guardado y pediría ahí las calles; este
+  // flujo es el de sin calles del mapa (flechas por puntos cardinales).
+  await sinRed(page);
   await page.getByTestId("leer-narracion").click();
   await expect(page.getByTestId("lectura-guardada")).toContainText("lectura guardada");
   const escena = page.getByTestId("escena");
@@ -100,7 +103,11 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   const caja = (await mapaEscena.boundingBox())!;
   // El choque, con un toque (sin calles del mapa, se queda donde se tocó).
   await mapaEscena.click({ position: { x: caja.width * 0.7, y: caja.height * 0.45 } });
-  await expect(page.getByTestId("mensaje-exito")).toContainText("¡Listo! El choque quedó marcado.");
+  // El ejemplo abre en su lugar guardado (René, 2026-11-25): con las calles del mapa, el mensaje dice
+  // en cuáles quedó; sin ellas, «quedó marcado».
+  await expect(page.getByTestId("mensaje-exito")).toContainText(
+    /¡Listo! El choque quedó (marcado|en )/,
+  );
   await expect(page.getByTestId("choque-1")).toHaveCount(1);
   // Por dónde venía el VW Jetta (nunca «V1»): sin calles, cuatro flechas por puntos cardinales, con la
   // de Croquis resaltada.
@@ -330,7 +337,10 @@ test("@flujo /cesvi: un caso nuevo desde la lista, de la narración al dictamen"
   // suyo.
   const rumboDe = (v: string, fase: string) =>
     posiciones.find((p) => p.vehiculo === v && p.fase === fase)!.rumbo;
-  expect(rumboDe("V1", "final")).toBe((rumboDe("V1", "impacto") + 15) % 360);
+  // El final se alinea con la calle donde se tocó (René, 2026-11-25: el ejemplo trae sus calles
+  // guardadas) y luego se gira 15°: la calle en ese punto puede ir un poco distinta que en el choque.
+  const giro = rumboDe("V1", "final") - rumboDe("V1", "impacto") - 15;
+  expect(Math.abs((((giro % 360) + 540) % 360) - 180)).toBeLessThan(1);
   expect(rumboDe("V2", "final")).toBe(rumboDe("V2", "impacto"));
   expect(d.expediente.resultado.validado_por).toBe("Perito de prueba");
   expect(d.conclusion_perito).toBe("Conclusión de prueba del perito.");

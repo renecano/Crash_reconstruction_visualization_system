@@ -23,8 +23,11 @@ import {
   PRODUCTION_SAMPLES,
   reconstruct,
   SIGMA_POSITION_M,
+  TURN_RADIUS_M,
 } from "@croquis/solver-ts";
 import { limiteMejorFuera } from "./mejor-fuera";
+import { avisoVelocidadRazonable, UMBRAL_PEATON, umbralDeClase } from "./velocidad-razonable";
+import { candadoFisico, type NoCuadra } from "./candado";
 import { limiteContraNarracion } from "./contra-narracion";
 import { avisoReversaRapida, limiteVelocidadSupuesta, velocidadSupuestaEnReversa } from "./reversa";
 
@@ -115,6 +118,30 @@ const OBJETO_PRIMERO: [RegExp, string][] = [
   ...OBJETO,
 ];
 const SUPUESTA = { unidad: "m", fuente: "default", confianza: 0.5 } as const;
+
+/** Si la cita de un derrape lo pone antes del choque o de la salida del camino. */
+export function derrapeAntes(cita: string | undefined): boolean {
+  return /\b(?:antes|previo|previas?)\b[^.]{0,40}\b(?:impacto|choque|colisi[oó]n|salida|salir|golpe|contacto)/i.test(
+    cita ?? "",
+  );
+}
+/**
+ * Si la cita de un derrape lo pone después del choque: «Después del contacto, el vehículo B dejó una
+ * huella de derrape … que inicia en el área de contacto». Va como evidencia de lo que recorrió después
+ * del impacto (René, 2026-11-26: los 18.40 m del Sentra no entraban a la reconstrucción).
+ */
+export function derrapeDespues(cita: string | undefined): boolean {
+  const t = cita ?? "";
+  return (
+    /\b(?:despu[eé]s|posterior(?:es|mente)?|tras)\b[^.]{0,20}\b(?:del?|al)\s+(?:impacto|choque|colisi[oó]n|golpe|contacto)/i.test(
+      t,
+    ) ||
+    /\b(?:inicia|empieza|comienza|parte)\s+en\s+(?:el|la)\s+(?:[aá]rea|punto|zona)\s+de\s+(?:contacto|impacto)/i.test(
+      t,
+    )
+  );
+}
+
 /**
  * Las medidas de un objeto que el perito marca sin medirlo: valores típicos, declarados como
  * supuesto. El muro, la barda, la barrera y la guarnición son un tramo de 6 m.
@@ -167,6 +194,46 @@ const DEL_PERITO = { fuente: "usuario", confianza: 0.9 } as const;
 const PRECISION_CHOQUE_M = 2;
 /** Sin posición inicial del perito, el vehículo empieza 12 m antes del impacto en su rumbo. */
 const ANTES_DEL_IMPACTO_M = 12;
+/** m: lo que avanza derecho después de la vuelta, antes del choque, si no hay calles guardadas. */
+const DESPUES_DE_LA_VUELTA_M = 2;
+/** m: lo más que se alarga ese tramo para llegar al eje de la calle de llegada. */
+const RECTO_MAXIMO_M = 30;
+
+/**
+ * Los metros en recta entre el fin del arco de la vuelta y el choque para que el arranque quede sobre
+ * el eje de la calle de llegada: la distancia, medida hacia la salida, del choque al eje de la calle
+ * paralela a la llegada más cercana, menos el radio del arco. Sin una calle así, `DESPUES_DE_LA_VUELTA_M`.
+ */
+export function rectoTrasLaVuelta(
+  vias: readonly (readonly { x: number; y: number }[])[],
+  choque: { x: number; y: number },
+  llegada: number,
+  salida: number,
+): number {
+  const A = [Math.cos(llegada), Math.sin(llegada)];
+  const H = [Math.cos(salida), Math.sin(salida)];
+  let mejor: number | null = null;
+  for (const via of vias)
+    for (let i = 1; i < via.length; i++) {
+      const p = via[i - 1]!;
+      const q = via[i]!;
+      const ux = q.x - p.x;
+      const uy = q.y - p.y;
+      const l = Math.hypot(ux, uy);
+      if (l < 1) continue;
+      // Paralela a la llegada (±25°).
+      if (Math.abs((ux * A[0]! + uy * A[1]!) / l) < Math.cos((25 * Math.PI) / 180)) continue;
+      // Cerca del choque: a menos de 60 m del tramo.
+      const t = Math.max(0, Math.min(1, ((choque.x - p.x) * ux + (choque.y - p.y) * uy) / (l * l)));
+      const cx = p.x + t * ux;
+      const cy = p.y + t * uy;
+      if (Math.hypot(choque.x - cx, choque.y - cy) > 60) continue;
+      const dH = (choque.x - cx) * H[0]! + (choque.y - cy) * H[1]!;
+      if (dH > 0 && (mejor === null || dH < mejor)) mejor = dH;
+    }
+  if (mejor === null) return DESPUES_DE_LA_VUELTA_M;
+  return Math.min(RECTO_MAXIMO_M, Math.max(DESPUES_DE_LA_VUELTA_M, mejor - TURN_RADIUS_M));
+}
 /** La maniobra de la escena v1 para cada maniobra narrada que cambia la reconstrucción (R4b). */
 const MANIOBRA_ESCENA: Record<string, string> = {
   reversa: "reversa",
@@ -233,6 +300,11 @@ export interface EscenaSolver {
   origen: LonLat | null;
   /** La velocidad narrada de cada vehículo del expediente, para decir si las posiciones la contradicen. */
   narradas?: Record<string, VelocidadNarrada>;
+  /**
+   * La posición de impacto que colocó el perito, por vehículo de la escena v1, de los que arrancan
+   * antes de ella (supuesto): si su velocidad reconstruida es 0, el 3D lo deja detenido ahí.
+   */
+  posesDeImpacto?: Record<string, { x: number; y: number; rumbo_deg: number }>;
 }
 
 /** La escena del solver a partir del expediente (sin correr el solver). */
@@ -269,6 +341,20 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   // 1. Base válida con buildSpec, con la maniobra que dice la narración (R4b): quien retrocede va en
   // reversa (avanza con la parte posterior por delante) y quien estaba detenido empieza quieto.
   const maniobraNarrada = new Map<Id, string>();
+  // Lo que miden las huellas de antes del choque de cada vehículo (frenado, o derrape que la narración
+  // pone antes): el arranque va detrás de ellas, con 5 m de margen (René, 2026-11-24).
+  const arranqueAntes = (id: Id): number => {
+    const largos = (e.evidencias?.huellas ?? [])
+      .filter(
+        (h) =>
+          h.vehiculo === id &&
+          h.longitud &&
+          (h.tipo === "frenado" || (h.tipo === "derrape" && derrapeAntes(h.cita?.texto))),
+      )
+      .map((h) => (h.longitud!.unidad === "cm" ? h.longitud!.valor / 100 : h.longitud!.valor));
+    const l = largos.length ? Math.max(...largos) : 0;
+    return l + 5 > ANTES_DEL_IMPACTO_M ? Math.ceil(l + 5) : ANTES_DEL_IMPACTO_M;
+  };
   const narradas = (e.versiones ?? []).find((v) => v.tipo === "evidencia")?.maniobras ?? [];
   // El sentido de marcha va aparte de la forma de la maniobra (T3.3): quien retrocede dando vuelta
   // conserva las dos cosas.
@@ -413,6 +499,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
     );
   }
   const detenidos: Id[] = [];
+  const posesDeImpacto: Record<string, { x: number; y: number; rumbo_deg: number }> = {};
   for (const v of vehiculos) {
     const sv = spec.vehiculos[orden.indexOf(v.id)]!;
     if (v.masa && v.masa.unidad === "kg") {
@@ -475,23 +562,67 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       const rad = (r * Math.PI) / 180;
       const man = maniobraNarrada.get(v.id);
       const reversa = enReversa.has(v.id);
-      // En reversa llega de frente a su rumbo (avanza hacia atrás); detenido, ya está ahí.
-      const d = man === "detenido" ? 0 : reversa ? -ANTES_DEL_IMPACTO_M : ANTES_DEL_IMPACTO_M;
-      sv.posicion_inicial = {
-        x: Math.round((x - d * Math.cos(rad)) * 1000) / 1000,
-        y: Math.round((y - d * Math.sin(rad)) * 1000) / 1000,
-        rumbo_deg: r,
-        procedencia: {
-          fuente: "supuesto",
-          confianza: 0.5,
-          nota:
-            man === "detenido"
-              ? "Detenido en la posición de impacto que colocó el perito."
-              : reversa
-                ? `${ANTES_DEL_IMPACTO_M} m delante de la posición de impacto que colocó el perito: llega en reversa.`
-                : `${ANTES_DEL_IMPACTO_M} m antes de la posición de impacto que colocó el perito, en su rumbo.`,
-        },
-      };
+      // En reversa llega de frente a su rumbo (avanza hacia atrás); detenido, ya está ahí. Con huellas
+      // de antes del choque, empieza detrás de ellas (René, 2026-11-24: 18 m de derrape en 12 m).
+      const antes = arranqueAntes(v.id);
+      const d = man === "detenido" ? 0 : reversa ? -ANTES_DEL_IMPACTO_M : antes;
+      if (d !== 0) posesDeImpacto[String(sv.id)] = { x, y, rumbo_deg: r };
+      // Quien da vuelta (René, 2026-11-24: el camión que daba vuelta a la derecha y atropellaba al
+      // peatón): el rumbo del choque es el de después de la vuelta; empieza en la calle de donde
+      // venía, al principio del cuarto de círculo que traza el solver, y el arco termina
+      // DESPUES_DE_LA_VUELTA_M antes del choque. Antes empezaba 12 m atrás en el rumbo del choque y
+      // la vuelta salía donde no había calle.
+      const giro = reversa
+        ? 0
+        : man === "vuelta_derecha"
+          ? -90
+          : man === "vuelta_izquierda"
+            ? 90
+            : 0;
+      if (giro !== 0) {
+        const llegada = ((r - giro) * Math.PI) / 180;
+        // Con las calles guardadas del caso, el tramo recto después del arco es el que deja el
+        // arranque sobre el eje de la calle de llegada (revisión de la cadena, 2026-11-24: arrancaba
+        // a 10 m de ella en un cruce ancho). Sin calles, los 2 m de siempre.
+        const recto = rectoTrasLaVuelta(
+          e.caso.lugar?.calles_del_mapa?.vias.map((via) =>
+            via.puntos.map(([lon, lat]) => local({ lat, lon })),
+          ) ?? [],
+          { x, y },
+          llegada,
+          rad,
+        );
+        const tras = TURN_RADIUS_M + recto;
+        sv.posicion_inicial = {
+          x:
+            Math.round((x - TURN_RADIUS_M * Math.cos(llegada) - tras * Math.cos(rad)) * 1000) /
+            1000,
+          y:
+            Math.round((y - TURN_RADIUS_M * Math.sin(llegada) - tras * Math.sin(rad)) * 1000) /
+            1000,
+          rumbo_deg: Math.round((r - giro) * 1000) / 1000,
+          procedencia: {
+            fuente: "supuesto",
+            confianza: 0.5,
+            nota: `En la calle de donde venía, al empezar la vuelta: el arco del solver (radio de ${TURN_RADIUS_M} m) termina ${Math.round(recto * 10) / 10} m antes de la posición de impacto que colocó el perito.`,
+          },
+        };
+      } else
+        sv.posicion_inicial = {
+          x: Math.round((x - d * Math.cos(rad)) * 1000) / 1000,
+          y: Math.round((y - d * Math.sin(rad)) * 1000) / 1000,
+          rumbo_deg: r,
+          procedencia: {
+            fuente: "supuesto",
+            confianza: 0.5,
+            nota:
+              man === "detenido"
+                ? "Detenido en la posición de impacto que colocó el perito."
+                : reversa
+                  ? `${ANTES_DEL_IMPACTO_M} m delante de la posición de impacto que colocó el perito: llega en reversa.`
+                  : `${antes} m antes de la posición de impacto que colocó el perito, en su rumbo${antes > ANTES_DEL_IMPACTO_M ? ", detrás de sus huellas" : ""}.`,
+          },
+        };
     }
     const fin = posiciones.find((p) => p.vehiculo === v.id && p.fase === "final");
     if (fin?.fuente === "supuesto") {
@@ -561,7 +692,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
         ejeReal.puntos,
         p,
         (rumboEscena(imp.rumbo) * Math.PI) / 180,
-        ANTES_DEL_IMPACTO_M,
+        arranqueAntes(v.id),
       );
       sv.posicion_inicial = {
         x: Math.round(a.x * 1000) / 1000,
@@ -570,7 +701,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
         procedencia: {
           fuente: "supuesto",
           confianza: 0.5,
-          nota: `${ANTES_DEL_IMPACTO_M} m antes de la posición de impacto que colocó el perito, sobre el trazo de la calle.`,
+          nota: `${arranqueAntes(v.id)} m antes de la posición de impacto que colocó el perito, sobre el trazo de la calle${arranqueAntes(v.id) > ANTES_DEL_IMPACTO_M ? ", detrás de sus huellas" : ""}.`,
         },
       };
     }
@@ -949,7 +1080,13 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
     spec.evidencias.push({
       id: `evid-huella-${k + 1}`,
       tipo: h.tipo === "frenado" ? "marcas_frenado" : "marcas_derrape",
-      ...(h.tipo === "frenado" ? { fase: "antes_impacto" } : {}),
+      // Un derrape que la narración pone antes del choque («antes de la salida del camino», «previo
+      // al impacto») es de antes del impacto, como el frenado (René, 2026-11-24).
+      ...(h.tipo === "frenado" || derrapeAntes(h.cita?.texto)
+        ? { fase: "antes_impacto" }
+        : derrapeDespues(h.cita?.texto)
+          ? { fase: "despues_impacto" }
+          : {}),
       vehiculo_id: idEscena(h.vehiculo),
       longitud: {
         valor: h.longitud.valor,
@@ -975,7 +1112,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   const velocidadesNarradas = Object.fromEntries(
     e.vehiculos.flatMap((v) => (v.velocidad_narrada ? [[v.id, v.velocidad_narrada]] : [])),
   );
-  return { spec, ids, limites, origen, narradas: velocidadesNarradas };
+  return { spec, ids, limites, origen, narradas: velocidadesNarradas, posesDeImpacto };
 }
 
 const CARA_POR_OMISION = "B";
@@ -1005,7 +1142,21 @@ function colocarPosteriores(
           ? [b, a]
           : [null, null];
     if (!fijo || !nuevo) continue;
-    const r = reconstruct(spec);
+    // El recorrido del que golpea, sin los que aún no se colocan: en su disposición genérica (a 40 km/h)
+    // chocaban con él y ese empujón entraba en el recorrido; el vehículo quedaba donde, sin ese choque
+    // fantasma, el que golpea nunca llega (René, 2026-11-26: 5 carambolas del corpus).
+    const sinColocar = structuredClone(spec);
+    sinColocar.vehiculos.forEach((v, k) => {
+      if (colocados.has(String(v.id))) return;
+      v.posicion_inicial = {
+        x: 10000 + 100 * k,
+        y: 10000,
+        rumbo_deg: 0,
+        procedencia: { fuente: "supuesto", confianza: 0.3 },
+      };
+      v.velocidad_previa = { valor: 0, unidad: "km/h", fuente: "supuesto", confianza: 0.3 };
+    });
+    const r = reconstruct(sinColocar);
     const vf = r.vehiculos.find((v) => v.id === fijo);
     const vn = r.vehiculos.find((v) => v.id === nuevo);
     const golpe = r.eventos
@@ -1179,6 +1330,11 @@ export interface HipotesisReconstruccion {
 export interface Reconstruccion extends EscenaSolver {
   /** El resultado completo del solver (trayectorias, incertidumbre, inversión, consistencia). */
   resultado: Json;
+  /**
+   * El candado físico (René, 2026-11-24): presente si la cifra no cuadra con la física o con el 3D.
+   * Entonces ninguna velocidad trae cifra (`previa` y `impacto` van en null) y el 3D no anima.
+   */
+  noCuadra?: NoCuadra;
   velocidades: VelocidadReconstruida[];
   /** Los impactos que ocurrieron en la reconstrucción, en orden (más de uno en una carambola). */
   impactos: ImpactoReconstruido[];
@@ -1326,7 +1482,11 @@ export function conHipotesis(r: Reconstruccion, clave: string): Reconstruccion {
     h.familia === "reposo" ? r.resultado.inversion_reposo_supuesto : r.resultado.inversion
   ) as Inversion;
   const inv = h.modo === 1 ? familia : familia.alternativas![h.modo - 2]!;
-  const otra = interpretarResultado(r, { ...r.resultado, inversion: inv });
+  const otra = interpretarResultado(
+    r,
+    { ...r.resultado, inversion: inv },
+    { relieve: r.relieve ?? null },
+  );
   return { ...otra, limites: r.limites, hipotesis: r.hipotesis, elegida: clave };
 }
 
@@ -1404,7 +1564,12 @@ export function avisoDeProyeccion(spec: Json, resultado: Json): string | null {
   return `La persona quedó a ${metros(m)} de donde la golpearon, según lo marcado; con la velocidad reconstruida, la proyección es de ${metros(d.distancia_proyeccion_m)} (de ${metros(a)} a ${metros(b)}). La posición final del vehículo y la de la persona no cuadran juntas: revisa cuál está mejor medida.`;
 }
 
-export function interpretarResultado(base: EscenaSolver, resultado: Json): Reconstruccion {
+export function interpretarResultado(
+  base: EscenaSolver,
+  resultado: Json,
+  /** La malla de relieve con que se reconstruyó: el candado reproduce el 3D con ella. */
+  opciones: { relieve?: unknown } = {},
+): Reconstruccion {
   const inv = resultado.inversion as Inversion;
   const limites = [...base.limites];
   if (!inv.evidencia.length) {
@@ -1502,6 +1667,28 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
     const contra = limiteContraNarracion(v.vehiculo, base.narradas?.[v.vehiculo], v.previa);
     if (contra) limites.push(contra);
   }
+  // Una cifra que pasa de lo razonable para su tipo de vehículo (René, 2026-11-25): aviso, no bloqueo.
+  for (const sv of (base.spec.vehiculos ?? []) as Json[]) {
+    const id = base.ids[String(sv.id)];
+    if (!id) continue;
+    const clase = ((sv.clase ?? {}) as Json).valor;
+    const umbral = umbralDeClase(typeof clase === "string" ? clase : null);
+    const mejor = velocidades.find((x) => x.vehiculo === id)?.previa?.mejor;
+    const aviso = avisoVelocidadRazonable(id, umbral, mejor);
+    if (aviso) limites.push(aviso);
+  }
+  // Y una persona a pie más rápida que lo que corre una persona (la que dice la escena).
+  for (const pe of (base.spec.personas ?? []) as Json[]) {
+    if (pe.vehiculo_id) continue;
+    const vel = pe.velocidad as Json | undefined;
+    const kmh = vel ? Number(vel.valor) * (vel.unidad === "m/s" ? 3.6 : 1) : null;
+    const aviso = avisoVelocidadRazonable(
+      typeof pe.id === "string" ? pe.id : "Peatón",
+      UMBRAL_PEATON,
+      kmh,
+    );
+    if (aviso) limites.push(aviso);
+  }
   // Una reversa más rápida que cualquiera de las medidas en uso real se le dice al perito (T3.3).
   for (const sv of (base.spec.vehiculos ?? []) as Json[]) {
     const id = base.ids[String(sv.id)];
@@ -1522,7 +1709,7 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
     ? [...hipotesisDe(base, inv, "dano"), ...hipotesisDe(base, alterna, "reposo")]
     : hipotesisDe(base, inv, "evidencia");
   const hipotesis = todas.length > 1 ? todas : null;
-  return {
+  const rec: Reconstruccion = {
     ...base,
     limites,
     resultado,
@@ -1532,6 +1719,25 @@ export function interpretarResultado(base: EscenaSolver, resultado: Json): Recon
     hipotesis,
     elegida: null,
     terreno,
+  };
+  // El candado físico (René, 2026-11-24): si la cifra no cuadra con la física o con lo que reproduce
+  // el 3D, no se presenta como resultado; se dice qué no cuadra y qué revisar.
+  const { noCuadra } = candadoFisico({
+    especAnimada: especReconstruida(rec),
+    relieve: opciones.relieve ?? null,
+    ids: base.ids,
+    velocidades,
+  });
+  if (!noCuadra) return rec;
+  return {
+    ...rec,
+    noCuadra,
+    velocidades: velocidades.map((v) => ({ ...v, previa: null, impacto: null })),
+    limites: [
+      ...limites,
+      ...noCuadra.motivos.map((m) => `No cuadra: ${m}`),
+      `Croquis no presenta una velocidad hasta que cuadre. Revisa ${noCuadra.revisar.join("; ")}.`,
+    ],
   };
 }
 
@@ -1590,6 +1796,9 @@ export function reconstruirExpediente(
  * todo fijado por la evidencia, queda igual).
  */
 export function expedienteConTipicas(e: Expediente, r: Reconstruccion): Expediente | null {
+  // Lo que no cuadra no trae cifras (el candado las quita): no es que la evidencia no las fije, así
+  // que no se le ponen las típicas de la vía (René, 2026-11-24).
+  if (r.noCuadra) return null;
   const detenidos = new Set(
     (e.versiones ?? [])
       .find((x) => x.tipo === "evidencia")
@@ -1682,6 +1891,19 @@ export function especReconstruida(r: Reconstruccion): Json {
     }
     if (!v?.previa) continue;
     const { mejor, p10, p90 } = v.previa;
+    // Con 0 km/h no llega a ningún lado: arranca detenido donde el perito lo puso en el impacto. Si
+    // no, se quedaba en su arranque supuesto (12 m antes) y el otro lo alcanzaba antes del choque
+    // (la carambola de la e2e, René, 2026-11-25).
+    const enImpacto = r.posesDeImpacto?.[String(sv.id)];
+    if (mejor < 0.5 && enImpacto)
+      sv.posicion_inicial = {
+        ...enImpacto,
+        procedencia: {
+          fuente: "supuesto",
+          confianza: 0.5,
+          nota: "Detenido en la posición de impacto que colocó el perito: su velocidad reconstruida es 0 km/h.",
+        },
+      };
     sv.velocidad_previa = {
       valor: Math.round(mejor * 100) / 100,
       unidad: "km/h",
@@ -1692,6 +1914,39 @@ export function especReconstruida(r: Reconstruccion): Json {
       confianza: 0.7,
       nota: "Velocidad que reproduce la evidencia del perito (Croquis la ajusta a la evidencia; el rango es donde cae el 80 % de las simulaciones).",
     };
+  }
+  // Las huellas de antes del choque frenan en el recorrido como en el ajuste (`withMarks` del solver):
+  // sin esto, el 3D llegaba al choque a la velocidad previa, sin frenar (René, 2026-11-24).
+  for (const ev of (spec.evidencias ?? []) as Json[]) {
+    const antes = ev.fase === "antes_impacto" || (ev.tipo === "marcas_frenado" && !ev.fase);
+    if (!antes || (ev.tipo !== "marcas_frenado" && ev.tipo !== "marcas_derrape")) continue;
+    const sv = spec.vehiculos.find((v) => v.id === ev.vehiculo_id);
+    const largo = Number((ev.longitud as Json | undefined)?.valor);
+    if (!sv || !(largo > 0)) continue;
+    const fr = (sv.frenado ?? {}) as Json;
+    if (((fr.distancia_antes_impacto ?? {}) as Json).fuente === "usuario") continue;
+    fr.aplico = { valor: true, fuente: "relato", confianza: 0.8 };
+    fr.distancia_antes_impacto = { valor: largo, unidad: "m", fuente: "relato", confianza: 0.8 };
+    sv.frenado = fr;
+  }
+  // El candado físico (René, 2026-11-24): lo que no cuadra no se anima. El 3D muestra a cada vehículo
+  // quieto donde el perito dijo que quedó, sin choque: la animación nunca muestra una velocidad que
+  // Croquis no presenta.
+  if (r.noCuadra) {
+    for (const sv of spec.vehiculos) {
+      const fin = (sv.posicion_final ?? null) as Json | null;
+      if (fin) sv.posicion_inicial = { ...fin };
+      sv.velocidad_previa = {
+        valor: 0,
+        unidad: "km/h",
+        fuente: "supuesto",
+        confianza: 0.5,
+        nota: "La reconstrucción no cuadra: el 3D muestra dónde quedó, sin animar el choque.",
+      };
+      sv.maniobra = { valor: "detenido", fuente: "supuesto", confianza: 0.5 };
+      delete sv.frenado;
+    }
+    spec.eventos = [];
   }
   return spec;
 }

@@ -1,0 +1,210 @@
+{
+  "id": "aud-29-vuelta-izquierda-universidad-quevedo",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 491,
+    "output_tokens": 1672,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0184712,
+  "narracion": "El hecho se ubica en el cruce de Avenida Universidad y Avenida Miguel Ángel de Quevedo, colonia Oxtopulco Universidad, alcaldía Coyoacán, Ciudad de México, aproximadamente a las 20:00 horas, de noche y con lluvia. El vehículo A, marca Chevrolet, tipo Spark, modelo 2019, circulaba sobre Avenida Universidad de norte a sur y dio vuelta a la izquierda para incorporarse a Avenida Miguel Ángel de Quevedo con dirección al oriente. El vehículo B, marca Toyota, tipo Corolla, modelo 2022, circulaba sobre Avenida Universidad de sur a norte, por el carril izquierdo, a unos 50 km/h según su conductor, y siguió de frente. Dentro del cruce, el vehículo B impactó con su parte frontal el costado derecho del vehículo A. El vehículo A fue desplazado hacia el noreste y quedó a 5 m del punto de contacto. El vehículo B quedó a 2 m del punto de contacto. Por el pavimento mojado no se apreciaron huellas de frenado. El vehículo A presenta hundimiento en las puertas del costado derecho; el vehículo B, en la parte frontal. Pavimento mojado; el cruce cuenta con alumbrado público y semáforos.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "cruce de Avenida Universidad y Avenida Miguel Ángel de Quevedo, colonia Oxtopulco Universidad",
+        "cita": "El hecho se ubica en el cruce de Avenida Universidad y Avenida Miguel Ángel de Quevedo, colonia Oxtopulco Universidad"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Coyoacán",
+        "cita": "alcaldía Coyoacán, Ciudad de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Ciudad de México",
+        "cita": ""
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 20:00 horas",
+        "cita": "aproximadamente a las 20:00 horas, de noche y con lluvia"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Chevrolet",
+        "cita": "El vehículo A, marca Chevrolet, tipo Spark, modelo 2019"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Spark",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2019",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Toyota",
+        "cita": "El vehículo B, marca Toyota, tipo Corolla, modelo 2022"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Corolla",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2022",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "vira_izquierda",
+        "cita": "circulaba sobre Avenida Universidad de norte a sur y dio vuelta a la izquierda para incorporarse a Avenida Miguel Ángel de Quevedo"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "circula",
+        "cita": "circulaba sobre Avenida Universidad de sur a norte, por el carril izquierdo, a unos 50 km/h según su conductor, y siguió de frente"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": "el vehículo B impactó con su parte frontal el costado derecho del vehículo A"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 lateral_derecho",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A fue desplazado hacia el noreste y quedó a 5 m del punto de contacto"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "desplazado hacia el noreste, a 5 m del punto de contacto",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo B quedó a 2 m del punto de contacto"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "a 2 m del punto de contacto",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "lateral_derecho",
+        "cita": "El vehículo A presenta hundimiento en las puertas del costado derecho"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "el vehículo B, en la parte frontal"
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      }
+    ]
+  }
+}

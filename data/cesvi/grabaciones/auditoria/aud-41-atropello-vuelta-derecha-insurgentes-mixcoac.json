@@ -1,0 +1,154 @@
+{
+  "id": "aud-41-atropello-vuelta-derecha-insurgentes-mixcoac",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 456,
+    "output_tokens": 1270,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0143812,
+  "narracion": "El hecho se ubica en el cruce de Avenida de los Insurgentes Sur y Avenida Río Mixcoac, colonia Actipan, alcaldía Benito Juárez, Ciudad de México, aproximadamente a las 17:10 horas, con lluvia ligera. El vehículo A, marca Chevrolet, tipo Aveo, modelo 2020, circulaba sobre Avenida de los Insurgentes Sur de sur a norte, por el carril derecho, y dio vuelta a la derecha para incorporarse a Avenida Río Mixcoac con dirección al oriente. Un peatón, adulto, cruzaba Avenida Río Mixcoac de sur a norte sobre el paso peatonal. Al dar la vuelta, el vehículo A impactó al peatón con su parte frontal izquierda. El peatón quedó tendido a 2 m del punto de contacto. El vehículo A frenó y quedó detenido 4 m después del paso peatonal, sobre el carril derecho de Avenida Río Mixcoac. Por el pavimento mojado no se apreciaron huellas de frenado. El vehículo A presenta un abollamiento en el cofre, del lado izquierdo. Pavimento mojado, día nublado; el cruce cuenta con semáforos.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "atropellamiento",
+        "cita": "Al dar la vuelta, el vehículo A impactó al peatón con su parte frontal izquierda."
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 17:10 horas",
+        "cita": "aproximadamente a las 17:10 horas, con lluvia ligera"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "cruce de Avenida de los Insurgentes Sur y Avenida Río Mixcoac, colonia Actipan",
+        "cita": "El hecho se ubica en el cruce de Avenida de los Insurgentes Sur y Avenida Río Mixcoac, colonia Actipan"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "alcaldía Benito Juárez",
+        "cita": "alcaldía Benito Juárez, Ciudad de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Ciudad de México",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Chevrolet",
+        "cita": "El vehículo A, marca Chevrolet, tipo Aveo, modelo 2020"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "Aveo",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2020",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "vira_derecha",
+        "cita": "circulaba sobre Avenida de los Insurgentes Sur de sur a norte, por el carril derecho, y dio vuelta a la derecha"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "Al dar la vuelta, el vehículo A impactó al peatón con su parte frontal izquierda."
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "objeto_fijo",
+        "valor": "peatón",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo A presenta un abollamiento en el cofre, del lado izquierdo."
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tercio",
+        "valor": "izquierdo",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo",
+        "valor": "hundimiento",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "El vehículo A frenó y quedó detenido 4 m después del paso peatonal, sobre el carril derecho de Avenida Río Mixcoac."
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "detenido 4 m después del paso peatonal, sobre el carril derecho de Avenida Río Mixcoac",
+        "cita": ""
+      }
+    ]
+  }
+}

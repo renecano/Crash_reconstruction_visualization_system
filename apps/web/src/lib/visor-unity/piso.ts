@@ -175,15 +175,24 @@ async function dibujarVista(
   }
 }
 
+/**
+ * El tamaño con que se declaran las teselas de la foto (René, 2026-11-26: «más nítido»). MapLibre
+ * elige el zoom de las teselas raster por los px de CSS, no por `pixelRatio` (`coveringZoomLevel`,
+ * maplibre-gl 6.15: `zoom + scaleZoom(512 / tileSize)`): la vista es de 1 024 px de CSS con
+ * `pixelRatio` 2 para dar 2 048, y con 256 las teselas llegaban a la mitad de su resolución y se
+ * estiraban al doble. Con 128 pide el zoom siguiente y cada pixel de la tesela es uno de la imagen.
+ */
+export const TESELA_FOTO_PX = (256 * LADO_CSS) / LADO_PX;
+
 /** El estilo de la foto: solo las teselas de World Imagery (más allá de z19 se amplía la última). */
-function estiloFoto(llave: string): StyleSpecification {
+export function estiloFoto(llave: string): StyleSpecification {
   return {
     version: 8,
     sources: {
       foto: {
         type: "raster",
         tiles: [`${SERVICIO_ESRI}/tile/{z}/{y}/{x}?token=${llave}`],
-        tileSize: 256,
+        tileSize: TESELA_FOTO_PX,
         maxzoom: 19,
       },
     },

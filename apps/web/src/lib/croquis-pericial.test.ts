@@ -10,6 +10,7 @@ import { describe, expect, it } from "vitest";
 import {
   colocarEtiquetas,
   croquisPericial,
+  direccionDeLlegada,
   escalaRedonda,
   giroDelCroquis,
   posicionesDelCroquis,
@@ -41,8 +42,22 @@ describe("el croquis pericial (ronda 4)", () => {
   it("gira para dejar horizontal la vía principal, nunca de cabeza", () => {
     expect(giroDelCroquis(res, [via(35)])).toBeCloseTo(35, 1);
     expect(giroDelCroquis(res, [via(150)])).toBeCloseTo(-30, 1);
-    // Gana la vía de más jerarquía cerca del choque.
-    expect(giroDelCroquis(res, [via(10, "residential"), via(60, "trunk")])).toBeCloseTo(60, 1);
+    // En un cruce gana la vía por la que llegan los vehículos, aunque la otra tenga más jerarquía
+    // (René, 2026-11-25: la carambola de Tollocan dejaba vertical la calle del choque). Si ninguna va
+    // como la llegada, la de más jerarquía.
+    const llegada = direccionDeLlegada(res)!;
+    const r = (x: number) => {
+      let g = x;
+      while (g > 90) g -= 180;
+      while (g <= -90) g += 180;
+      return g;
+    };
+    expect(
+      giroDelCroquis(res, [via(llegada, "residential"), via(llegada + 90, "trunk")]),
+    ).toBeCloseTo(r(llegada), 0);
+    expect(
+      giroDelCroquis(res, [via(llegada + 50, "residential"), via(llegada - 50, "trunk")]),
+    ).toBeCloseTo(r(llegada - 50), 0);
     // La vía donde fue el choque gana a una avenida cercana que no lo contiene.
     const avenida = via(0, "trunk");
     avenida.puntos = avenida.puntos.map((p) => ({ x: p.x, y: p.y - 20 }));
@@ -51,9 +66,11 @@ describe("el croquis pericial (ronda 4)", () => {
 
   it("cada vehículo en sus tres posiciones (antes, impacto, reposo), con A1…B3 y el impacto", () => {
     const { svg } = croquisPericial(res, [via(35)], nombres, { proporcion: 1.6 });
-    for (const e of ["A1", "A2", "A3", "B1", "B2", "B3", "Impacto"])
+    // B está detenido: antes del impacto y en el impacto en el mismo lugar, una sola silueta «B1·2».
+    for (const e of ["A1", "A2", "A3", "B1·2", "B3", "Impacto"])
       expect(svg).toContain(`data-etiqueta="${e}"`);
-    expect(svg.match(/data-vehiculo="/g)!.length).toBe(res.vehiculos.length * 3);
+    expect(svg).not.toContain('data-etiqueta="B1"');
+    expect(svg.match(/data-vehiculo="/g)!.length).toBe(5);
     expect(svg).toContain('data-impacto="si"');
     // Sin fondo, no hay imagen; con él, sí, tenue.
     expect(svg).not.toContain("data-fondo");

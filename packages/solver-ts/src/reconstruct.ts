@@ -125,7 +125,7 @@ const T_POST_MAX = 30.0;
 // Los nominales; el rango de cada uno lo sortea el muestreo (impact-assumptions.ts, ADR 0139).
 export const RESTITUTION_VV = RESTITUTION[0];
 export const IMPULSE_RATIO = IMPULSE_RATIO_RANGE[0];
-const TURN_RADIUS_M = 8.0;
+export const TURN_RADIUS_M = 8.0;
 const LANE_CHANGE_LENGTH_M = 40.0;
 const LANE_WIDTH_DEFAULT = 3.5;
 const DEFAULT_BRAKE_BEFORE_IMPACT_S = 0.6;
@@ -133,6 +133,12 @@ const SEARCH_LENGTH_M = 400.0;
 const CONTACT_GAP_FLAG_M = 0.5;
 const SEEK_CONTACT_FRACTION = 0.75;
 const PATH_TIE_M = 0.05;
+/**
+ * Un contacto con un vehículo en movimiento todavía en su posición inicial (a menos de esto de su
+ * arranque) es peor que cualquiera en el que ya avanzó: en un choque de frente casi en la misma
+ * línea, las líneas de las zonas se cruzan lejos y ese cruce no es el choque (aud-18, René 2026-11-25).
+ */
+const CONTACT_AT_START_M = 0.05;
 export const PEDESTRIAN_LAUNCH_ANGLE_DEG = 10.0;
 export const PEDESTRIAN_CG_HEIGHT_FACTOR = 0.57;
 export const PEDESTRIAN_PROJECTION_FACTOR = 0.9;
@@ -555,6 +561,112 @@ function vehicleModel(v: Json, clases: Record<string, Json>, flag: Flag): Vehicl
 function thenStraight(part: KinPath, extra = 400.0): CompositePath {
   const end = part.pose(part.length);
   return new CompositePath([part, new StraightPath([end.x, end.y], end.heading, extra)]);
+}
+
+/**
+ * m: lo más que dos contornos pueden quedar encimados en el contacto que resuelven las zonas. Más que
+ * esto (un choque oblicuo: el frente de uno contra el costado del otro a 45°, con los centros de zona
+ * juntos, mete la esquina de uno en el otro), cada vehículo retrocede sobre su trayectoria, en
+ * proporción a su velocidad, hasta el primer contacto (revisión de la cadena, René 2026-11-24). Por
+ * debajo no se toca nada: es el mismo umbral del candado físico.
+ */
+export const MAX_OVERLAP_M = 0.5;
+/** m: el paso con que se retrocede, y lo que puede quedar encimado al terminar. */
+const BACKOFF_STEP_M = 0.05;
+const TOUCH_M = 0.02;
+
+function rectCorners(x: number, y: number, yaw: number, length: number, width: number): Vec[] {
+  const c = dmath.cos(yaw);
+  const s = dmath.sin(yaw);
+  const l = 0.5 * length;
+  const w = 0.5 * width;
+  return [
+    [x + l * c - w * s, y + l * s + w * c],
+    [x + l * c + w * s, y + l * s - w * c],
+    [x - l * c + w * s, y - l * s - w * c],
+    [x - l * c - w * s, y - l * s + w * c],
+  ];
+}
+
+/** Lo que se enciman dos rectángulos por su eje de menor traslape (0 si no se tocan). */
+export function overlapDepth(a: readonly Vec[], b: readonly Vec[]): number {
+  let best = Infinity;
+  for (const poly of [a, b]) {
+    for (let i = 0; i < 2; i++) {
+      const p = poly[i]!;
+      const q = poly[i + 1]!;
+      const ex = q[0] - p[0];
+      const ey = q[1] - p[1];
+      const n = Math.sqrt(ex * ex + ey * ey);
+      if (n === 0) continue;
+      const ax = -ey / n;
+      const ay = ex / n;
+      let amin = Infinity;
+      let amax = -Infinity;
+      let bmin = Infinity;
+      let bmax = -Infinity;
+      for (const v of a) {
+        const d = v[0] * ax + v[1] * ay;
+        amin = Math.min(amin, d);
+        amax = Math.max(amax, d);
+      }
+      for (const v of b) {
+        const d = v[0] * ax + v[1] * ay;
+        bmin = Math.min(bmin, d);
+        bmax = Math.max(bmax, d);
+      }
+      const o = Math.min(amax, bmax) - Math.max(amin, bmin);
+      if (o <= 0) return 0.0;
+      best = Math.min(best, o);
+    }
+  }
+  return best;
+}
+
+/**
+ * El primer contacto de dos vehículos sobre sus trayectorias: si en `params` se enciman más de
+ * MAX_OVERLAP_M, los retrocede (cada uno en proporción a su velocidad) hasta que apenas se toquen.
+ * En el mismo sentido y a la misma velocidad (un alcance o un roce lateral) eso no los separa: si así
+ * no quedan a menos de MAX_OVERLAP_M, se retrocede solo a uno, el que los separa con menos recorrido
+ * (el que alcanza al otro).
+ */
+export function firstContact(
+  targets: readonly VehicleModel[],
+  paths: readonly KinPath[],
+  params: readonly number[],
+): number[] {
+  const depth = (s: readonly number[]) => {
+    const [a, b] = [0, 1].map((i) => {
+      const [x, y, yaw] = poseAt(paths[i]!, s[i]!);
+      return rectCorners(x, y, yaw, targets[i]!.body.length, targets[i]!.body.width);
+    });
+    return overlapDepth(a!, b!);
+  };
+  const s = [...params];
+  if (depth(s) <= MAX_OVERLAP_M) return s;
+  const v = [0, 1].map((i) => Math.max(0.0, targets[i]!.v0));
+  const total = v[0]! + v[1]!;
+  if (total > 0) {
+    for (let k = 0; k < 400 && depth(s) > TOUCH_M; k++) {
+      for (let i = 0; i < 2; i++) s[i] = s[i]! - (BACKOFF_STEP_M * v[i]!) / total;
+    }
+    if (depth(s) <= MAX_OVERLAP_M) return s;
+  }
+  let best: number[] | null = null;
+  let bestK = 0;
+  for (let i = 0; i < 2; i++) {
+    const t = [...params];
+    let k = 0;
+    while (k < 400 && depth(t) > TOUCH_M) {
+      t[i] = t[i]! - BACKOFF_STEP_M;
+      k++;
+    }
+    if (depth(t) <= MAX_OVERLAP_M && (best === null || k < bestK)) {
+      best = t;
+      bestK = k;
+    }
+  }
+  return best ?? s;
 }
 
 /** La pose inicial con el rumbo del movimiento: el del frente, o el contrario en reversa. */
@@ -1091,7 +1203,7 @@ export function reconstruct(
       seek = targetPath(targets[0]!, decl, offsets.get(targets[0]!.id)!);
       if (seek !== null) options[0] = [...options[0]!, seek];
     }
-    let best: [number, number, KinPath[], ContactSolution] | null = null;
+    let best: [number, number, KinPath[], ContactSolution, number] | null = null;
     for (const combo of product(options)) {
       const loci = targets.map((m, i) => locusFor(m, combo[i]!));
       if (tipoEvento !== "impacto_vehiculo_vehiculo") {
@@ -1100,15 +1212,40 @@ export function reconstruct(
       }
       const sol = resolveContact(loci, decl, zones);
       const rank = combo.reduce((acc, path, i) => acc + options[i]!.indexOf(path), 0);
+      const inicio = targets.some(
+        (m, i) => m.v0 > 0 && i < sol.params.length && sol.params[i]! <= CONTACT_AT_START_M,
+      )
+        ? 1
+        : 0;
       if (
         best === null ||
-        sol.gap < best[0] - PATH_TIE_M ||
-        (Math.abs(sol.gap - best[0]) <= PATH_TIE_M && rank < best[1])
+        inicio < best[4] ||
+        (inicio === best[4] &&
+          (sol.gap < best[0] - PATH_TIE_M ||
+            (Math.abs(sol.gap - best[0]) <= PATH_TIE_M && rank < best[1])))
       ) {
-        best = [sol.gap, rank, combo, sol];
+        best = [sol.gap, rank, combo, sol, inicio];
       }
     }
-    const [, , combo, sol] = best!;
+    const [, , combo, sol0, inicio] = best!;
+    let sol = sol0;
+    // Si ningún camino evita que un vehículo en movimiento choque en su posición inicial (de frente
+    // en la misma línea, con la zona de uno en su costado), el contacto es el declarado: cada uno en
+    // el punto de su camino más cercano al punto de impacto (René, 2026-11-25).
+    if (inicio && tipoEvento === "impacto_vehiculo_vehiculo" && targets.length === 2) {
+      const lociD = targets.map((m, i) => locusFor(m, combo[i]!));
+      const proy = lociD.map((loc) => loc.project(decl));
+      if (targets.every((m, i) => m.v0 <= 0 || proy[i]![0] > CONTACT_AT_START_M)) {
+        const pa = proy[0]![1];
+        const pb = proy[1]![1];
+        sol = {
+          point: [(pa[0] + pb[0]) / 2.0, (pa[1] + pb[1]) / 2.0],
+          params: [proy[0]![0], proy[1]![0]],
+          gap: dmath.hypot(pa[0] - pb[0], pa[1] - pb[1]),
+          zoneGap: sol0.zoneGap,
+        };
+      }
+    }
     targets.forEach((m, i) => paths.set(m.id, combo[i]!));
     const desvio = seek instanceof ReversePath ? seek.inner : seek;
     if (seek !== null && combo[0] === seek && desvio instanceof CompositePath) {
@@ -1128,8 +1265,13 @@ export function reconstruct(
       );
     }
     impactPoint = sol.point;
+    // El primer contacto: sin contornos encimados de más (revisión de la cadena, 2026-11-24).
+    const contacto =
+      tipoEvento === "impacto_vehiculo_vehiculo" && targets.length === 2 && sol.params.length >= 2
+        ? firstContact(targets, combo, sol.params)
+        : sol.params;
     targets.forEach((m, i) => {
-      if (i < sol.params.length) sContact.set(m.id, sol.params[i]!);
+      if (i < contacto.length) sContact.set(m.id, contacto[i]!);
     });
     // Lo que separa las zonas fuera de lo que se extienden a lo largo de sus caras (ADR 0135).
     if (sol.zoneGap > CONTACT_GAP_FLAG_M) {

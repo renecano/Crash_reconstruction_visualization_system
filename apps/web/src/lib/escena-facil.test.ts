@@ -44,6 +44,8 @@ import {
   quedoJuntoAlChoque,
   resumenEscena,
   sentidoNarrado,
+  calleDeLlegadaNarrada,
+  tramoDelVehiculo,
   sinFinal,
   textoChoqueListo,
   textoFlecha,
@@ -490,6 +492,25 @@ describe("el límite de la vía por donde circulaba (René, 2026-11-23)", () => 
     expect(limiteEnElChoque(calles, C)!.fuente).toContain("Isidro Fabela");
   });
 
+  it("con «claseDeSuNombre», cada vehículo toma la clase de SU vía, no la del lugar completo (René, 2026-11-26)", () => {
+    // El crucero: «calle Azucena esquina con Avenida del Árbol», las dos sin límite publicado.
+    const crucero: Calle[] = [
+      { ...calles[0]!, nombre: "Avenida del Árbol", tipo: "tertiary", maxspeed: undefined },
+      { ...calles[1]!, nombre: "Calle Azucena", tipo: "residential" },
+    ];
+    const lugarCrucero = "crucero de la calle Azucena esquina con Avenida del Árbol";
+    // El que circulaba por la calle Azucena (norte–sur): 30 km/h, de «calle», con su nombre.
+    expect(
+      limiteEnElChoque(crucero, C, { rumbo: 0, lugar: lugarCrucero, claseDeSuNombre: true }),
+    ).toMatchObject({ kmh: 30, fuente: expect.stringContaining("Calle Azucena") });
+    // El de la Avenida del Árbol (oriente–poniente): 50 km/h, de «avenida».
+    expect(
+      limiteEnElChoque(crucero, C, { rumbo: 90, lugar: lugarCrucero, claseDeSuNombre: true }),
+    ).toMatchObject({ kmh: 50, fuente: expect.stringContaining("Avenida del Árbol") });
+    // Sin la opción (la velocidad narrada relativa al límite, como antes), la calle salía de «avenida».
+    expect(limiteEnElChoque(crucero, C, { rumbo: 0, lugar: lugarCrucero })!.kmh).toBe(50);
+  });
+
   it("la vía narrada sin límite en el mapa toma la clase del lugar narrado, no la del tipo de OpenStreetMap", () => {
     // Así está Tollocan en OpenStreetMap junto al árbol: «secondary» y sin maxspeed.
     const sinLimite = calles.map((c) =>
@@ -503,5 +524,31 @@ describe("el límite de la vía por donde circulaba (René, 2026-11-23)", () => 
 
   it("si el vehículo iba por la otra calle nombrada, esa", () => {
     expect(limiteEnElChoque(calles, C, { rumbo: 0, lugar })!.fuente).toContain("Isidro Fabela");
+  });
+});
+
+describe("lo que una oración dice de cada vehículo (René, 2026-11-26: el poste en Tianguismanalco)", () => {
+  const narracion =
+    "El hecho se ubica en el cruce de la Calle 16 de Septiembre con la Avenida de la Compañía, en San Pedro Atlixco. Se examinan el vehículo A, marca Mazda, tipo 3, modelo 2014, que circulaba por la Avenida de la Compañía de Sur a Norte, y el vehículo B, marca Nissan, tipo Sentra, modelo 2018, que circulaba por la Calle 16 de Septiembre de Poniente a Oriente.";
+  const mazda = { id: "V1", marca: { valor: "Mazda" }, modelo: { valor: "3" } };
+  const sentra = { id: "V2", marca: { valor: "Nissan" }, modelo: { valor: "Sentra" } };
+  const todos = [mazda, sentra] as unknown as Parameters<typeof calleDeLlegadaNarrada>[2];
+
+  it("el tramo de cada uno: desde que lo nombra hasta que nombra a otro", () => {
+    const o = narracion.split(/(?<=[.;])\s+/)[1]!;
+    expect(tramoDelVehiculo(o, ["Sentra", "Nissan", "vehículo B"])).toMatch(
+      /^vehiculo b, marca nissan.*de poniente a oriente\.$/,
+    );
+    expect(tramoDelVehiculo(o, ["3", "Mazda", "vehículo A"])).not.toMatch(/poniente/);
+  });
+
+  it("el Sentra venía del poniente por la Calle 16 de Septiembre; el Mazda, del sur por la Avenida", () => {
+    expect(sentidoNarrado(narracion, ["Sentra", "Nissan", "vehículo B"])).toMatchObject({
+      rumbo: 90,
+      desde: "oeste",
+    });
+    expect(sentidoNarrado(narracion, ["3", "Mazda", "vehículo A"])).toMatchObject({ rumbo: 0 });
+    expect(calleDeLlegadaNarrada(narracion, todos[1]!, todos)).toBe("Calle 16 de Septiembre");
+    expect(calleDeLlegadaNarrada(narracion, todos[0]!, todos)).toBe("Avenida de la Compañía");
   });
 });

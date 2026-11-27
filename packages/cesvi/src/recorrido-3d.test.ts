@@ -44,6 +44,13 @@ describe("el caso del recorrido en 3D (R9)", () => {
     const lado = (id: string) => vs.find((v) => r.ids[v.id] === id)!.dano.cdc?.lado;
     expect(lado("V1")).toBe("B");
     expect(lado("V2")).toBe("F");
-    expect(r.velocidades.every((v) => v.previa === null || v.previa.mejor > 0)).toBe(true);
+    // El reporte no dice si la Silverado (A, V1) se movía; se compara contra el cálculo de CESVI
+    // (René, 2026-11-25). CESVI calcula la Tacoma (B, V2) en 63.15 km/h por la deformación y en
+    // 60.27 km/h por los restos: la cifra de Croquis queda dentro de ±10 % de ese par. De la
+    // Silverado, CESVI no da velocidad: solo se pide que no sea negativa.
+    const kmh = (id: string) => r.velocidades.find((v) => v.vehiculo === id)!.previa!.mejor;
+    expect(kmh("V2")).toBeGreaterThanOrEqual(60.27 * 0.9);
+    expect(kmh("V2")).toBeLessThanOrEqual(63.15 * 1.1);
+    expect(kmh("V1")).toBeGreaterThanOrEqual(0);
   }, 60_000);
 });

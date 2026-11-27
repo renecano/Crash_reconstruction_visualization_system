@@ -67,6 +67,40 @@ describe("lo que se escribe en «Buscar el lugar» (René, 2026-11-04, A1)", () 
     expect(interpretarLugar("Fed. 57 km 12.5")).toMatchObject({ ref: "MEX 57", km: 12.5 });
   });
 
+  it("la carretera por sus poblaciones, como la escriben los reportes de CESVI", () => {
+    expect(
+      interpretarLugar(
+        "kilómetro 206+100 de la carretera México – Piedras Negras, número 57, en el tramo Palo Alto - Querétaro",
+      ),
+    ).toMatchObject({
+      tipo: "carretera",
+      ref: "MEX 57",
+      km: 206.1,
+      tramo: ["Palo Alto", "Querétaro"],
+    });
+    expect(
+      interpretarLugar("Km. 3 de la carretera Álamo-Miquetla, cerca del poblado Aquiles Serdán"),
+    ).toMatchObject({
+      ref: null,
+      km: 3,
+      tramo: ["Álamo", "Miquetla"],
+    });
+    expect(
+      interpretarLugar("carretera Pachuca-Atotonilco a la entrada de Atotonilco el Grande"),
+    ).toMatchObject({ tramo: ["Pachuca", "Atotonilco"] });
+    expect(
+      interpretarLugar("kilómetro 225+950 de la autopista Puebla-Orizaba (150 D)"),
+    ).toMatchObject({
+      ref: "MEX 150D",
+    });
+    // «57 a la altura»: la «a» no es parte de la clave.
+    expect(interpretarLugar("carretera 57 a la altura de la colonia Alta Vida")).toMatchObject({
+      ref: "MEX 57",
+    });
+    // El número de una casa no es una carretera.
+    expect(interpretarLugar("calle Zenzontle frente al número 43").tipo).toBe("texto");
+  });
+
   it("lo demás es texto; coordenadas imposibles no son punto", () => {
     expect(interpretarLugar("Paseo Tollocan, Toluca").tipo).toBe("texto");
     expect(interpretarLugar("95.5, 200").tipo).toBe("texto");

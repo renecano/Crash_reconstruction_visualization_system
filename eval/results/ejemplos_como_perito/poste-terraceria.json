@@ -1,0 +1,190 @@
+{
+ "clave": "poste-terraceria",
+ "propuesta": {
+  "puntos": {
+   "1": {
+    "lat": 18.980516,
+    "lon": -98.47662
+   }
+  },
+  "versiones": [
+   {
+    "tipo": "evidencia",
+    "maniobras": [
+     {
+      "vehiculo": "V1",
+      "tipo": "circula",
+      "cita": {
+       "texto": "que circulaba por la Avenida de la Compañía de Sur a Norte"
+      }
+     },
+     {
+      "vehiculo": "V2",
+      "tipo": "circula",
+      "cita": {
+       "texto": "que circulaba por la Calle 16 de Septiembre de Poniente a Oriente"
+      }
+     }
+    ],
+    "posiciones": [
+     {
+      "vehiculo": "V1",
+      "fase": "impacto",
+      "punto": {
+       "lat": 18.980496568964412,
+       "lon": -98.47662842011542
+      },
+      "rumbo": 22.28247753678022,
+      "fuente": "supuesto"
+     },
+     {
+      "vehiculo": "V2",
+      "fase": "impacto",
+      "punto": {
+       "lat": 18.980523239829107,
+       "lon": -98.47661686274071
+      },
+      "rumbo": 125.01889721167242,
+      "fuente": "supuesto"
+     }
+    ]
+   }
+  ]
+ },
+ "puntos": {
+  "1": {
+   "lat": 18.980516,
+   "lon": -98.47662
+  }
+ },
+ "notas": [],
+ "toques": [
+  {
+   "accion": "direccion",
+   "vehiculo": "V1",
+   "como": "confirmar"
+  },
+  {
+   "accion": "direccion",
+   "vehiculo": "V2",
+   "como": "confirmar"
+  },
+  {
+   "accion": "otro",
+   "vehiculo": "V2",
+   "objeto": "poste",
+   "en": [
+    17.79,
+    -4.05
+   ]
+  },
+  {
+   "accion": "final",
+   "vehiculo": "V1",
+   "como": "marcar",
+   "en": [
+    1,
+    0
+   ]
+  },
+  {
+   "accion": "final",
+   "vehiculo": "V2",
+   "como": "marcar",
+   "en": [
+    16.2,
+    -3.72
+   ]
+  },
+  {
+   "accion": "paso",
+   "vehiculo": "V2",
+   "en": [
+    8.9,
+    -2.02
+   ]
+  },
+  {
+   "accion": "terreno",
+   "boton": "terreno-terraceria",
+   "en": [
+    15.4,
+    -1.99
+   ]
+  }
+ ],
+ "versiones": [
+  {
+   "tipo": "evidencia",
+   "maniobras": [
+    {
+     "vehiculo": "V1",
+     "tipo": "circula",
+     "cita": {
+      "texto": "que circulaba por la Avenida de la Compañía de Sur a Norte"
+     }
+    },
+    {
+     "vehiculo": "V2",
+     "tipo": "circula",
+     "cita": {
+      "texto": "que circulaba por la Calle 16 de Septiembre de Poniente a Oriente"
+     }
+    }
+   ],
+   "posiciones": [
+    {
+     "vehiculo": "V1",
+     "fase": "impacto",
+     "punto": {
+      "lat": 18.980496568964412,
+      "lon": -98.47662842011542
+     },
+     "rumbo": 22.28247753678022,
+     "fuente": "perito"
+    },
+    {
+     "vehiculo": "V2",
+     "fase": "impacto",
+     "punto": {
+      "lat": 18.980523239829107,
+      "lon": -98.47661686274071
+     },
+     "rumbo": 112.28247753678022,
+     "fuente": "perito"
+    },
+    {
+     "vehiculo": "V1",
+     "fase": "final",
+     "punto": {
+      "lat": 18.980516,
+      "lon": -98.47661050038701
+     },
+     "rumbo": 309.8736654325543,
+     "fuente": "perito"
+    },
+    {
+     "vehiculo": "V2",
+     "fase": "final",
+     "punto": {
+      "lat": 18.98048258227755,
+      "lon": -98.4764661147294
+     },
+     "rumbo": 129.8736597773576,
+     "fuente": "perito"
+    }
+   ],
+   "puntos_paso": [
+    {
+     "vehiculo": "V2",
+     "orden": 1,
+     "punto": {
+      "lat": 18.98049781306032,
+      "lon": -98.47653548487592
+     },
+     "fuente": "perito"
+    }
+   ]
+  }
+ ]
+}

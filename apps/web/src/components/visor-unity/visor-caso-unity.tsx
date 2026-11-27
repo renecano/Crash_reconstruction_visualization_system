@@ -186,7 +186,7 @@ export function VisorCasoUnity({
         presentar
           ? // Detrás del diálogo de Presentar (z-50), donde iba la maqueta, sobre la franja de los capítulos
             // (el minimapa de Unity la tapaba): el velo de la izquierda lo cubre.
-            "visible pointer-events-none fixed top-0 right-0 bottom-28 left-[30%] z-[49]"
+            "visible pointer-events-none fixed top-0 right-0 bottom-28 left-[30%] z-[49] overflow-hidden"
           : enMarco
             ? "flex h-full flex-col"
             : `flex h-full flex-col gap-2 p-3 ${props.expandido ? "pt-40 pb-28" : "pt-16"} ${props.aSangre ? "[&>p]:order-last" : ""}`
@@ -204,7 +204,15 @@ export function VisorCasoUnity({
           )}
         />
       )}
-      <div className={presentar ? "relative h-full w-full" : "relative min-h-0 flex-1"}>
+      {/* En Presentar, el 3D se dibuja más alto que su marco: la leyenda que pone Unity abajo a la izquierda
+          caía bajo el velo, cortada, y repetía la de la página (Alberto, 2026-11-26). Queda una sola, la
+          de la página, completa. La de Unity mide unos 34 px de referencia en 1280 (MargenY, el texto y
+          su margen de 10 px), 1.9vw con el 3D a 70vw de ancho: el marco recorta 3.5vw. */}
+      <div
+        className={
+          presentar ? "absolute inset-x-0 top-0 h-[calc(100%+3.5vw)]" : "relative min-h-0 flex-1"
+        }
+      >
         <VisorUnity
           escena={escena}
           version={presentar ? null : version}

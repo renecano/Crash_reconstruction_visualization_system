@@ -115,7 +115,7 @@ export function resultadoDeHipotesis(r: Reconstruccion, agentes: Json): Json | n
 
 /** Una diferencia de la versión contra la reconstrucción, como la lee el perito. */
 export interface CambioVersion {
-  clave: "velocidad" | "contacto" | "trayectoria" | "punto";
+  clave: "velocidad" | "contacto" | "trayectoria" | "punto" | "dano";
   /** Qué se compara: «Velocidad al contacto · A · Nissan Versa». */
   concepto: string;
   /** Lo que da la versión. */

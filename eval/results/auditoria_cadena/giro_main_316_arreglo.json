@@ -1,0 +1,944 @@
+{
+ "descripcion": "La escena en los 25 casos de la revisión con un vehículo fuera de su calle: main, el #316 (490349a6) y el arreglo, con el mismo lugar, las mismas calles guardadas y el destino narrado. Por vehículo: frente (rumbo) y grados al eje de la calle más alineada bajo él (null: ninguna a menos de su medio ancho y 4 m). Script: apps/web/src/lib/auditoria/comparar-escena.test.ts.",
+ "casos": [
+  {
+   "id": "cesvi-5aa5e75aca",
+   "main": {
+    "V1": [
+     31,
+     0
+    ],
+    "V2": [
+     297,
+     0
+    ]
+   },
+   "pr316": {
+    "V1": [
+     50,
+     31
+    ],
+    "V2": [
+     290,
+     0
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     199,
+     0
+    ],
+    "V2": [
+     290,
+     0
+    ]
+   },
+   "avisos_arreglo": 0,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Volskwagen Tuareg: venía por la calle sin nombre del mapa, de este a oeste",
+    "Cadillac CTS: venía por Boulevard Alfonso Zaragoza Maytorena, de norte a sur"
+   ]
+  },
+  {
+   "id": "cesvi-65daf4b688",
+   "main": {
+    "V1": [
+     306,
+     30
+    ],
+    "V2": [
+     233,
+     11
+    ]
+   },
+   "pr316": {
+    "V1": [
+     279,
+     34
+    ],
+    "V2": [
+     181,
+     12
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     244,
+     0
+    ],
+    "V2": [
+     169,
+     5
+    ]
+   },
+   "avisos_arreglo": 0,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Volkswagen Bora: venía por Calle Hacienda Mazatepec, de noreste a suroeste",
+    "Audi A-4: venía por Avenida Sauzales, de norte a sur"
+   ]
+  },
+  {
+   "id": "cesvi-928c1a7646",
+   "main": {
+    "V1": [
+     263,
+     0
+    ],
+    "V2": [
+     131,
+     36
+    ]
+   },
+   "pr316": {
+    "V1": [
+     263,
+     0
+    ],
+    "V2": [
+     131,
+     36
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     263,
+     0
+    ],
+    "V2": [
+     164,
+     68
+    ]
+   },
+   "avisos_arreglo": 1,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Mitsubishi Lancer: venía por la calle sin nombre del mapa, de este a oeste",
+    "VW Jetta: venía por la calle sin nombre del mapa, de norte a sur; la calle de llegada no pasa por el punto del choque: revísala"
+   ]
+  },
+  {
+   "id": "cesvi-97cb6986e4",
+   "main": {
+    "V1": [
+     205,
+     32
+    ],
+    "V2": [
+     205,
+     32
+    ]
+   },
+   "pr316": {
+    "V1": [
+     205,
+     32
+    ],
+    "V2": [
+     205,
+     32
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     237,
+     0
+    ],
+    "V2": [
+     237,
+     0
+    ]
+   },
+   "avisos_arreglo": 0,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Ford Ranger: venía por Carretera México - Pachuca (Libre), de noreste a suroeste",
+    "Chrysler Cherokee: venía por Carretera México - Pachuca (Libre), de noreste a suroeste"
+   ]
+  },
+  {
+   "id": "cesvi-99ae88f8e3",
+   "main": {
+    "V1": [
+     255,
+     33
+    ],
+    "V2": [
+     94,
+     24
+    ]
+   },
+   "pr316": {
+    "V1": [
+     255,
+     33
+    ],
+    "V2": [
+     94,
+     24
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     271,
+     28
+    ],
+    "V2": [
+     119,
+     0
+    ]
+   },
+   "avisos_arreglo": 0,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Mercedes Benz E350: venía por Avenida Profesor Isidro Salas Barrón, de este a oeste",
+    "Audi Q7: venía por Avenida Profesor Isidro Salas Barrón, de noroeste a sureste"
+   ]
+  },
+  {
+   "id": "cesvi-b1ab1b00df",
+   "main": {
+    "V1": [
+     286,
+     38
+    ],
+    "V2": [
+     71,
+     0
+    ]
+   },
+   "pr316": {
+    "V1": [
+     286,
+     38
+    ],
+    "V2": [
+     71,
+     0
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     248,
+     0
+    ],
+    "V2": [
+     71,
+     0
+    ]
+   },
+   "avisos_arreglo": 0,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Mazda C-X7: venía por Boulevard Pedro Infante Cruz, de este a oeste",
+    "Pontiac GTO: venía por Boulevard Pedro Infante Cruz, de oeste a este"
+   ]
+  },
+  {
+   "id": "cesvi-b641fb6657",
+   "main": {
+    "V1": [
+     184,
+     34
+    ]
+   },
+   "pr316": {
+    "V1": [
+     184,
+     34
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     217,
+     1
+    ]
+   },
+   "avisos_arreglo": 0,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Ford Courier: venía por Avenida Revolución, de noreste a suroeste"
+   ]
+  },
+  {
+   "id": "cesvi-cd894debf8",
+   "main": {
+    "V1": [
+     95,
+     0
+    ],
+    "V2": [
+     19,
+     0
+    ]
+   },
+   "pr316": {
+    "V1": [
+     93,
+     0
+    ],
+    "V2": [
+     51,
+     31
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     93,
+     0
+    ],
+    "V2": [
+     20,
+     0
+    ]
+   },
+   "avisos_arreglo": 0,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Nissan 350Z: venía por Viaducto Miguel Alemán, de oeste a este",
+    "Honda Accord: venía por Avenida Patriotismo, de sur a norte"
+   ]
+  },
+  {
+   "id": "cesvi-ec1c390b10",
+   "main": {
+    "V1": [
+     285,
+     37
+    ],
+    "V2": [
+     285,
+     36
+    ]
+   },
+   "pr316": {
+    "V1": [
+     285,
+     37
+    ],
+    "V2": [
+     285,
+     36
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     248,
+     0
+    ],
+    "V2": [
+     248,
+     2
+    ]
+   },
+   "avisos_arreglo": 0,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Pontiac Matiz: venía por Boulevard Independencia, de este a oeste",
+    "Chevrolet Cavalier: venía por Boulevard Independencia, de este a oeste"
+   ]
+  },
+  {
+   "id": "cesvi-9cb20db594",
+   "main": {
+    "V1": [
+     81,
+     86
+    ],
+    "V2": [
+     286,
+     66
+    ]
+   },
+   "pr316": {
+    "V1": [
+     81,
+     86
+    ],
+    "V2": [
+     286,
+     66
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     73,
+     77
+    ],
+    "V2": [
+     252,
+     77
+    ]
+   },
+   "avisos_arreglo": 2,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Honda Civic A: venía por Ciudades Hermanas, de oeste a este; la calle de llegada no pasa por el punto del choque: revísala",
+    "Honda Civic B: venía por Boulevard Ciudades Hermanas, de este a oeste; la calle de llegada no pasa por el punto del choque: revísala"
+   ]
+  },
+  {
+   "id": "cesvi-a29030f88d",
+   "main": {
+    "V1": [
+     226,
+     7
+    ],
+    "V2": [
+     54,
+     0
+    ]
+   },
+   "pr316": {
+    "V1": [
+     194,
+     68
+    ],
+    "V2": [
+     28,
+     54
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     233,
+     29
+    ],
+    "V2": [
+     50,
+     33
+    ]
+   },
+   "avisos_arreglo": 1,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Chrysler Cirrus: venía por Avenida 608, de noreste a suroeste",
+    "Land Rover 75: venía por Avenida 608, de suroeste a noreste; la calle de llegada no pasa por el punto del choque: revísala"
+   ]
+  },
+  {
+   "id": "cesvi-df6a4b2324",
+   "main": {
+    "V1": [
+     8,
+     0
+    ],
+    "V2": [
+     81,
+     72
+    ]
+   },
+   "pr316": {
+    "V1": [
+     8,
+     0
+    ],
+    "V2": [
+     81,
+     72
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     9,
+     0
+    ],
+    "V2": [
+     127,
+     61
+    ]
+   },
+   "avisos_arreglo": 1,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Chevrolet plataforma caja abierta: venía por Libramiento Oriente, de sur a norte",
+    "Chevrolet Cheyenne: venía por Boulevard Tiburcio Garza Zamora, de noroeste a sureste; la calle de llegada no pasa por el punto del choque: revísala"
+   ]
+  },
+  {
+   "id": "cesvi-05a7c05640",
+   "main": {
+    "V1": [
+     112,
+     17
+    ],
+    "V2": [
+     256,
+     0
+    ]
+   },
+   "pr316": {
+    "V1": [
+     180,
+     51
+    ],
+    "V2": [
+     76,
+     0
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     129,
+     0
+    ],
+    "V2": [
+     256,
+     0
+    ]
+   },
+   "avisos_arreglo": 0,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Nissan Sentra: venía por la calle sin nombre del mapa, de noroeste a sureste",
+    "VW New Beetle: venía por Carretera Coatzacoalcos-Minatitlán, de este a oeste"
+   ]
+  },
+  {
+   "id": "cesvi-6ca24dcfce",
+   "main": {
+    "V1": [
+     156,
+     29
+    ],
+    "V2": [
+     156,
+     29
+    ]
+   },
+   "pr316": {
+    "V1": [
+     270,
+     70
+    ],
+    "V2": [
+     351,
+     8
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     270,
+     70
+    ],
+    "V2": [
+     351,
+     8
+    ]
+   },
+   "avisos_arreglo": 1,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Ford Ecosport: venía de este a oeste, como dice la narración; en este lugar no hay una calle en ese sentido: revisa que el lugar sea el del caso",
+    "Nissan Tsuru: venía por Anillo Periférico, de sur a norte"
+   ]
+  },
+  {
+   "id": "cesvi-b9f5a5ca1f",
+   "main": {
+    "V1": [
+     100,
+     0
+    ],
+    "V2": [
+     280,
+     0
+    ]
+   },
+   "pr316": {
+    "V1": [
+     180,
+     80
+    ],
+    "V2": [
+     280,
+     0
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     180,
+     80
+    ],
+    "V2": [
+     280,
+     0
+    ]
+   },
+   "avisos_arreglo": 1,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Ford Ranger: venía de norte a sur, como dice la narración; en este lugar no hay una calle en ese sentido: revisa que el lugar sea el del caso",
+    "Chevrolet Malibu: venía por Carretera Poza Rica El Chote, de este a oeste"
+   ]
+  },
+  {
+   "id": "cesvi-feb7aaa0e1",
+   "main": {
+    "V2": [
+     100,
+     22
+    ],
+    "V3": [
+     100,
+     20
+    ]
+   },
+   "pr316": {
+    "V2": [
+     180,
+     32
+    ],
+    "V3": [
+     324,
+     24
+    ]
+   },
+   "arreglo": {
+    "V2": [
+     123,
+     0
+    ],
+    "V3": [
+     300,
+     0
+    ]
+   },
+   "avisos_arreglo": 0,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Volkswagen Gol: venía por Boulevard Centenario, de noroeste a sureste",
+    "Nissan Tsuru: venía por Boulevard Centenario, de sureste a noroeste"
+   ]
+  },
+  {
+   "id": "cesvi-87b14ec4ba",
+   "main": {
+    "V1": [
+     40,
+     0
+    ]
+   },
+   "pr316": {
+    "V1": [
+     60,
+     null
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     60,
+     null
+    ]
+   },
+   "avisos_arreglo": 0,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Mazda3: venía por Carretera Entronque Tulancingo - Venta Grande, de suroeste a noreste"
+   ]
+  },
+  {
+   "id": "aud-02-lateral-tecnologico-lastorres",
+   "main": {
+    "V1": [
+     4,
+     0
+    ],
+    "V2": [
+     214,
+     31
+    ]
+   },
+   "pr316": {
+    "V1": [
+     4,
+     0
+    ],
+    "V2": [
+     214,
+     31
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     4,
+     0
+    ],
+    "V2": [
+     270,
+     51
+    ]
+   },
+   "avisos_arreglo": 1,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Nissan Sentra: venía por Avenida Tecnológico, de sur a norte",
+    "Toyota Hilux: venía de este a oeste, como dice la narración; en este lugar no hay una calle en ese sentido: revisa que el lugar sea el del caso"
+   ]
+  },
+  {
+   "id": "aud-09-ciclista-tecnologico",
+   "main": {
+    "V1": [
+     183,
+     0
+    ],
+    "V2": [
+     183,
+     0
+    ]
+   },
+   "pr316": {
+    "V1": [
+     273,
+     48
+    ],
+    "V2": [
+     214,
+     31
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     273,
+     48
+    ],
+    "V2": [
+     183,
+     0
+    ]
+   },
+   "avisos_arreglo": 0,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Volkswagen Gol: venía por Avenida Tecnológico, de norte a sur",
+    "Vehículo B: venía por Avenida Tecnológico, de norte a sur"
+   ]
+  },
+  {
+   "id": "aud-15-carambola4-tollocan-lluvia",
+   "main": {
+    "V1": [
+     91,
+     0
+    ],
+    "V2": [
+     91,
+     0
+    ]
+   },
+   "pr316": {
+    "V1": [
+     44,
+     24
+    ],
+    "V2": [
+     44,
+     24
+    ],
+    "V3": [
+     44,
+     24
+    ],
+    "V4": [
+     44,
+     33
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     91,
+     6
+    ],
+    "V2": [
+     91,
+     13
+    ],
+    "V3": [
+     91,
+     13
+    ],
+    "V4": [
+     91,
+     1
+    ]
+   },
+   "avisos_arreglo": 0,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Ford Ranger: venía por Avenida Paseo Tollocan, de oeste a este",
+    "Volkswagen Vento: venía por Avenida Paseo Tollocan, de oeste a este"
+   ]
+  },
+  {
+   "id": "aud-38-alcance-barrera-circuito-reforma",
+   "main": {
+    "V1": [
+     197,
+     7
+    ],
+    "V2": [
+     197,
+     7
+    ]
+   },
+   "pr316": {
+    "V1": [
+     169,
+     43
+    ],
+    "V2": [
+     169,
+     43
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     212,
+     0
+    ],
+    "V2": [
+     212,
+     0
+    ]
+   },
+   "avisos_arreglo": 0,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Honda CR-V: venía por Circuito Interior Melchor Ocampo, de noreste a suroeste",
+    "Volkswagen Jetta: venía por Circuito Interior Melchor Ocampo, de noreste a suroeste"
+   ]
+  },
+  {
+   "id": "aud-07-volcadura-calzada-pacifico",
+   "main": {
+    "V1": [
+     13,
+     1
+    ]
+   },
+   "pr316": {
+    "V1": [
+     90,
+     79
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     90,
+     79
+    ]
+   },
+   "avisos_arreglo": 0,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Nissan NP300: venía por la calle sin nombre del mapa, de sur a norte"
+   ]
+  },
+  {
+   "id": "aud-13-moto-vuelta-izquierda-tecnologico",
+   "main": {
+    "V1": [
+     183,
+     0
+    ],
+    "V2": [
+     4,
+     0
+    ]
+   },
+   "pr316": {
+    "V1": [
+     183,
+     0
+    ],
+    "V2": [
+     274,
+     46
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     183,
+     0
+    ],
+    "V2": [
+     274,
+     46
+    ]
+   },
+   "avisos_arreglo": 0,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Honda CB190R: venía por Avenida Tecnológico, de norte a sur",
+    "Nissan Versa: venía por Avenida Tecnológico, de sur a norte"
+   ]
+  },
+  {
+   "id": "aud-29-vuelta-izquierda-universidad-quevedo",
+   "main": {
+    "V1": [
+     171,
+     6
+    ],
+    "V2": [
+     4,
+     6
+    ]
+   },
+   "pr316": {
+    "V1": [
+     148,
+     43
+    ],
+    "V2": [
+     10,
+     0
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     90,
+     11
+    ],
+    "V2": [
+     10,
+     0
+    ]
+   },
+   "avisos_arreglo": 1,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Toyota Corolla: venía por Avenida Universidad, de sur a norte",
+    "Chevrolet Spark: venía de norte a sur, como dice la narración; en este lugar no hay una calle en ese sentido: revisa que el lugar sea el del caso"
+   ]
+  },
+  {
+   "id": "aud-39-atropello-autobus-tlalpan-ermita",
+   "main": {
+    "V1": [
+     11,
+     0
+    ]
+   },
+   "pr316": {
+    "V1": [
+     102,
+     88
+    ]
+   },
+   "arreglo": {
+    "V1": [
+     102,
+     88
+    ]
+   },
+   "avisos_arreglo": 0,
+   "girados_sin_aviso_arreglo": [],
+   "propuesta_arreglo": [
+    "Volvo: venía por Calzada de Tlalpan, de sur a norte"
+   ]
+  }
+ ]
+}

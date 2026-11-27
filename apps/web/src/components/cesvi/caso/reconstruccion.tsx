@@ -35,6 +35,7 @@ import {
   supuestosEnUnaLinea,
   type SupuestoDeclarado,
   lineaContraCesvi,
+  sinCifraEnTexto,
 } from "@croquis/cesvi";
 import { LEGEND_TEXT_CESVI, type EscenaSpec } from "@croquis/scene-schema";
 import type { ViewerExportApi } from "@croquis/viewer";
@@ -114,6 +115,7 @@ export function useReconstruccion(
       let interpretada = interpretarResultado(
         base,
         resultado as unknown as Record<string, unknown>,
+        { relieve: malla },
       );
       // Ronda 4: lo que la evidencia no fija va con la velocidad típica de la vía (supuesto con su
       // rango), nunca con el arranque del ajuste. Si todo quedó fijado, no se recalcula.
@@ -126,7 +128,9 @@ export function useReconstruccion(
           malla,
         );
         if (mio !== turno.current) return;
-        interpretada = interpretarResultado(base, resultado as unknown as Record<string, unknown>);
+        interpretada = interpretarResultado(base, resultado as unknown as Record<string, unknown>, {
+          relieve: malla,
+        });
       }
       const json = resultado as unknown as Record<string, unknown>;
       setR({ ...interpretada, relieve: malla });
@@ -257,7 +261,7 @@ export function TablaVelocidades({ r }: { r: Reconstruccion }) {
                   </span>
                 </>
               ) : (
-                <span className="font-sans text-texto-3">la evidencia no la fija</span>
+                <span className="font-sans text-texto-3">{sinCifraEnTexto(r, v.vehiculo)}</span>
               )}
             </td>
             <td className="py-2.5 text-right">

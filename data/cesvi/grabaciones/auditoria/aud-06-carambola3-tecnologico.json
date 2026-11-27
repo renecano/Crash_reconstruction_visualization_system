@@ -1,0 +1,322 @@
+{
+  "id": "aud-06-carambola3-tecnologico",
+  "modalidad_c0": "auditoria",
+  "version_prompt": "escena-narracion-v2",
+  "modelo": "claude-sonnet-5-5",
+  "uso": {
+    "input_tokens": 542,
+    "output_tokens": 2537,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3846
+  },
+  "costo_usd": 0.0272232,
+  "narracion": "El hecho se ubica sobre Avenida Tecnológico, a la altura de Avenida Estado de México, colonia San Salvador Tizatlalli, en Metepec, Estado de México, aproximadamente a las 18:05 horas. El vehículo C, camioneta marca Honda, tipo CR-V, modelo 2019, y detrás de él el vehículo B, marca Chevrolet, tipo Beat, modelo 2020, circulaban de norte a sur por el carril derecho y se encontraban detenidos por el semáforo, antes del paso peatonal. El vehículo A, camión de reparto marca Isuzu, tipo ELF 300, modelo 2017, con carga, circulaba detrás en el mismo carril a más de 50 km/h, según los testigos. Al ver a los vehículos detenidos frenó, dejando huellas de frenado de 10 m antes del impacto, y se impactó con su parte frontal contra la parte posterior del vehículo B, que fue proyectado contra la parte posterior del vehículo C. Posiciones finales: el vehículo C quedó a 2 m de donde estaba detenido, sobre el paso peatonal; el vehículo B, a 3 m de donde estaba detenido, pegado al vehículo C; el vehículo A, a 1 m detrás del vehículo B. El vehículo B presenta daños severos en la parte posterior y daños en la frontal; el vehículo C, en la parte posterior; el camión, en la defensa y la parrilla. Pavimento seco, atardecer con luz natural.",
+  "salida": {
+    "datos": [
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "modalidad",
+        "valor": "alcance",
+        "cita": "se impactó con su parte frontal contra la parte posterior del vehículo B, que fue proyectado contra la parte posterior del vehículo C"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "fecha_hora",
+        "valor": "aproximadamente a las 18:05 horas",
+        "cita": "aproximadamente a las 18:05 horas"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "lugar",
+        "valor": "Avenida Tecnológico, a la altura de Avenida Estado de México, colonia San Salvador Tizatlalli",
+        "cita": "El hecho se ubica sobre Avenida Tecnológico, a la altura de Avenida Estado de México, colonia San Salvador Tizatlalli"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "municipio",
+        "valor": "Metepec",
+        "cita": "en Metepec, Estado de México"
+      },
+      {
+        "seccion": "caso",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "entidad",
+        "valor": "Estado de México",
+        "cita": "en Metepec, Estado de México"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "marca",
+        "valor": "Isuzu",
+        "cita": "El vehículo A, camión de reparto marca Isuzu, tipo ELF 300, modelo 2017"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "modelo",
+        "valor": "ELF 300",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "anio",
+        "valor": "2017",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "clase",
+        "valor": "camion_unitario",
+        "cita": "camión de reparto marca Isuzu"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "marca",
+        "valor": "Chevrolet",
+        "cita": "el vehículo B, marca Chevrolet, tipo Beat, modelo 2020"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "modelo",
+        "valor": "Beat",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "anio",
+        "valor": "2020",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "marca",
+        "valor": "Honda",
+        "cita": "El vehículo C, camioneta marca Honda, tipo CR-V, modelo 2019"
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "modelo",
+        "valor": "CR-V",
+        "cita": ""
+      },
+      {
+        "seccion": "vehiculo",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "anio",
+        "valor": "2019",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "El vehículo B presenta daños severos en la parte posterior y daños en la frontal"
+      },
+      {
+        "seccion": "dano",
+        "n": 1,
+        "vehiculo": "V2",
+        "campo": "magnitud",
+        "valor": "severa",
+        "cita": ""
+      },
+      {
+        "seccion": "dano",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "El vehículo B presenta daños severos en la parte posterior y daños en la frontal"
+      },
+      {
+        "seccion": "dano",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "cara",
+        "valor": "posterior",
+        "cita": "el vehículo C, en la parte posterior"
+      },
+      {
+        "seccion": "dano",
+        "n": 4,
+        "vehiculo": "V1",
+        "campo": "cara",
+        "valor": "frontal",
+        "cita": "el camión, en la defensa y la parrilla"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V1",
+        "cita": "se impactó con su parte frontal contra la parte posterior del vehículo B"
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V1 frontal",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 1,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V2 posterior",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 2,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V2",
+        "cita": "que fue proyectado contra la parte posterior del vehículo C"
+      },
+      {
+        "seccion": "impacto",
+        "n": 2,
+        "vehiculo": "ninguno",
+        "campo": "participante",
+        "valor": "V3",
+        "cita": ""
+      },
+      {
+        "seccion": "impacto",
+        "n": 2,
+        "vehiculo": "ninguno",
+        "campo": "contacto",
+        "valor": "V3 posterior",
+        "cita": ""
+      },
+      {
+        "seccion": "movimiento",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "maniobra",
+        "valor": "frena",
+        "cita": "Al ver a los vehículos detenidos frenó, dejando huellas de frenado de 10 m antes del impacto"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "maniobra",
+        "valor": "se_detiene",
+        "cita": "se encontraban detenidos por el semáforo, antes del paso peatonal"
+      },
+      {
+        "seccion": "movimiento",
+        "n": 3,
+        "vehiculo": "V3",
+        "campo": "maniobra",
+        "valor": "se_detiene",
+        "cita": "se encontraban detenidos por el semáforo, antes del paso peatonal"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "tipo_huella",
+        "valor": "frenado",
+        "cita": "dejando huellas de frenado de 10 m antes del impacto"
+      },
+      {
+        "seccion": "huella",
+        "n": 1,
+        "vehiculo": "V1",
+        "campo": "longitud",
+        "valor": "10 m",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V3",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo C quedó a 2 m de donde estaba detenido, sobre el paso peatonal"
+      },
+      {
+        "seccion": "posicion",
+        "n": 1,
+        "vehiculo": "V3",
+        "campo": "descripcion",
+        "valor": "a 2 m de donde estaba detenido, sobre el paso peatonal",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo B, a 3 m de donde estaba detenido, pegado al vehículo C"
+      },
+      {
+        "seccion": "posicion",
+        "n": 2,
+        "vehiculo": "V2",
+        "campo": "descripcion",
+        "valor": "a 3 m de donde estaba detenido, pegado al vehículo C",
+        "cita": ""
+      },
+      {
+        "seccion": "posicion",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "fase",
+        "valor": "final",
+        "cita": "el vehículo A, a 1 m detrás del vehículo B"
+      },
+      {
+        "seccion": "posicion",
+        "n": 3,
+        "vehiculo": "V1",
+        "campo": "descripcion",
+        "valor": "a 1 m detrás del vehículo B",
+        "cita": ""
+      }
+    ]
+  }
+}

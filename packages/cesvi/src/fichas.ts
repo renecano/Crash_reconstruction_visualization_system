@@ -6,6 +6,7 @@
 import type { Expediente } from "./corpus";
 import FICHAS from "./data/fichas-tecnicas.json";
 import MASAS_MODELO from "./data/masas-modelo.json";
+import CLASES_MODELO from "./data/clases-modelo.json";
 
 export interface FichaTecnica {
   marca: string;
@@ -100,6 +101,59 @@ export function conMasasDelModelo(
     if (kg === undefined) return v;
     cambio = true;
     return { ...v, masa: { valor: kg, unidad: "kg" as const, fuente: "supuesto" as const } };
+  });
+  return cambio ? { ...e, vehiculos } : e;
+}
+
+type ClasesModelo = {
+  familias: Record<string, string[]>;
+  marcas_de_tractocamion: string[];
+  marcas_de_camion: string[];
+  marcas_de_motocicleta: string[];
+};
+const CLASES = CLASES_MODELO as ClasesModelo;
+const CLASE_DE_FAMILIA = new Map(
+  Object.entries(CLASES.familias).flatMap(([clase, fs]) => fs.map((f) => [f, clase] as const)),
+);
+const enPalabras = (t: string) =>
+  normal(t)
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
+/**
+ * La clase de un vehículo por su modelo (René, 2026-11-24: «el tipo de vehículo sale del modelo»): en
+ * 945 menciones de las 671 lecturas del corpus la lectura no dio la clase, ni de un Tsuru. Se busca la
+ * familia exacta, luego la más larga con que empieza el modelo («ram 4000» → «ram»), y al final la
+ * marca de los tractocamiones, camiones y motocicletas. null si no se reconoce: se pregunta.
+ */
+export function claseDeModelo(v: Expediente["vehiculos"][number]): string | null {
+  const modelo = enPalabras(v.modelo?.valor ?? "");
+  const marca = enPalabras(v.marca?.valor ?? "");
+  for (const t of [modelo, `${marca} ${modelo}`.trim()])
+    if (t && CLASE_DE_FAMILIA.has(t)) return CLASE_DE_FAMILIA.get(t)!;
+  let mejor: string | null = null;
+  for (const f of CLASE_DE_FAMILIA.keys())
+    if (
+      f.length >= 3 &&
+      (` ${modelo} `.includes(` ${f} `) || ` ${marca} ${modelo} `.includes(` ${f} `))
+    )
+      if (!mejor || f.length > mejor.length) mejor = f;
+  if (mejor) return CLASE_DE_FAMILIA.get(mejor)!;
+  if (CLASES.marcas_de_tractocamion.some((m) => marca.includes(m))) return "tractocamion";
+  if (CLASES.marcas_de_camion.some((m) => marca.includes(m))) return "camion_unitario";
+  if (CLASES.marcas_de_motocicleta.some((m) => marca.includes(m))) return "motocicleta";
+  return null;
+}
+
+/** La clase de cada vehículo que la lectura no dio, por su modelo (`claseDeModelo`). */
+export function conClasesDelModelo(e: Expediente): Expediente {
+  let cambio = false;
+  const vehiculos = e.vehiculos.map((v) => {
+    if (v.clase) return v;
+    const clase = claseDeModelo(v);
+    if (!clase) return v;
+    cambio = true;
+    return { ...v, clase: clase as NonNullable<typeof v.clase> };
   });
   return cambio ? { ...e, vehiculos } : e;
 }

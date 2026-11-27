@@ -35,12 +35,12 @@ export const RECETAS: Receta[] = [
     quedo: { NP300: [0, 9], Vento: [2.6, 21] },
   },
   {
-    // De Poniente a Oriente: A alcanza a B y, por el empuje, B a C (detenidos en el semáforo). A
-    // quedó en el área del primer contacto; B, 5 m adelante; C, 10 m adelante.
+    // De Sur a Norte por la Avenida Valle Alto: A alcanza a B y, por el empuje, B a C (detenidos en
+    // el semáforo). A quedó en el área del primer contacto; B, 5 m adelante; C, 10 m adelante.
     clave: "carambola-lluvia",
-    choques: [[5.6, 0]],
-    venia: { Ranger: "Del oeste" },
-    quedo: { Ranger: [-0.5, 0], Corolla: [5.4, 0], Aveo: [9.8, 0] },
+    choques: [[0, 5.6]],
+    venia: { Ranger: "Del sur" },
+    quedo: { Ranger: [0, -0.5], Corolla: [0, 5.4], Aveo: [0, 9.8] },
   },
   {
     // A sale en reversa de una cochera hacia la calle; B circula de Sur a Norte y quedó 7 m al
@@ -52,11 +52,11 @@ export const RECETAS: Receta[] = [
   },
   {
     // A llega del Sur y B del Poniente; después del contacto, B derrapa, cruza a la terracería y
-    // pega contra un poste (el segundo choque), donde queda. A quedó 8 m al Norte.
+    // pega contra un poste (el segundo choque), donde queda. A quedó 1 m al Oriente.
     clave: "poste-terraceria",
     choques: [[18, 3]],
     venia: { "Mazda 3": "Del sur", Sentra: "Del oeste" },
-    quedo: { "Mazda 3": [0.8, 8], Sentra: [16.4, 2.7] },
+    quedo: { "Mazda 3": [1, 0], Sentra: [16.4, 2.7] },
     pasos: [{ vehiculo: "V2", en: [9, 1.5] }],
     terreno: [{ tipo: "terraceria", en: [15, 4] }],
   },
@@ -128,6 +128,13 @@ export async function colocar(page: Page, r: Receta, notas: string[]) {
       else {
         notas.push(`«${texto}»: no había flechas; se tomó la primera opción.`);
         await page.getByTestId("opcion-flecha-0").click();
+      }
+      // La receta manda sobre lo que La escena lee de la narración: si pregunta «¿Seguro?», sí (t9-junta,
+      // 2026-11-26: el Sentra del poste, que la lectura del #320 ponía del sur).
+      const asi = page.getByTestId("direccion-asi");
+      if (await asi.isVisible().catch(() => false)) {
+        notas.push(`«${texto}»: La escena preguntó «¿Seguro?»; la receta se queda con la suya.`);
+        await asi.click();
       }
     } else if (/quedó/i.test(texto)) {
       const q = de(r.quedo, vehiculo);
