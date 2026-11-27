@@ -1,5 +1,5 @@
 {
- "fecha": "2026-11-26T19:15:07.524Z",
+ "fecha": "2026-11-27T21:50:56.670Z",
  "fuentes": {
   "prueba": {
    "casos": 205,
@@ -488,11 +488,10 @@
    "casos": 42,
    "lugar_encontrado": 41,
    "reglas": {
-    "candado.animacion": {
-     "casos": 2,
+    "candado.frenado": {
+     "casos": 1,
      "ids": [
-      "aud-14-barda-morelos",
-      "aud-30-ciclista-alcance-universidad"
+      "aud-27-frontal-quevedo"
      ]
     },
     "final.no_leido": {
@@ -509,7 +508,7 @@
     "limite.llegada_recta": {
      "casos": 1,
      "ids": [
-      "aud-08-atropello-tollocan-carranza"
+      "aud-22-lateral-insurgentes-mixcoac"
      ]
     },
     "masa.tipica_con_modelo": {
@@ -547,9 +546,8 @@
      ]
     },
     "vehiculo.fuera_de_calle": {
-     "casos": 5,
+     "casos": 4,
      "ids": [
-      "aud-02-lateral-tecnologico-lastorres",
       "aud-07-volcadura-calzada-pacifico",
       "aud-09-ciclista-tecnologico",
       "aud-13-moto-vuelta-izquierda-tecnologico",
@@ -557,10 +555,11 @@
      ]
     },
     "vehiculo.sentido": {
-     "casos": 2,
+     "casos": 3,
      "ids": [
       "aud-33-alcance-bajada-reforma-lomas",
-      "aud-37-estacionados-rio-mixcoac"
+      "aud-37-estacionados-rio-mixcoac",
+      "aud-38-alcance-barrera-circuito-reforma"
      ]
     },
     "vuelta.fuera_de_calle": {
