@@ -10,7 +10,7 @@
  */
 import type { CamaraDelCaso } from "@/lib/visor-unity/camaras";
 import type { PisoUnity } from "@/lib/visor-unity/piso";
-import { conPisoYFantasma } from "@croquis/scene-schema";
+import { conLeyenda, conPisoYFantasma } from "@croquis/scene-schema";
 import type {
   Resultado,
   CamaraVisor,
@@ -428,6 +428,12 @@ export function VisorUnity({
   }, [puente, dormir, vueltas]);
 
   const listo = estado.fase === "listo";
+  // Puente 1.4.0: en Presentar la web pone su leyenda completa encima del 3D y Unity esconde la suya;
+  // al salir, la vuelve a mostrar. Cada caso cargado la muestra de nuevo, por eso depende de `cargada`.
+  useEffect(() => {
+    if (!puente || !listo || !conLeyenda(puente.version)) return;
+    puente.enviar("leyenda", { visible: !tiempo });
+  }, [puente, listo, tiempo, cargada]);
   useEffect(() => {
     if (!puente || !listo) return;
     if (tiempo) {
