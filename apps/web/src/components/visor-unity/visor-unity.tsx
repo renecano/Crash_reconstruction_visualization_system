@@ -46,6 +46,8 @@ import { BarraReproduccion } from "./barra-reproduccion";
 import { EnRanura, useMarco } from "./marco-vista";
 import {
   CAMARA_LENTA_VIDEO,
+  duracionVideo,
+  FPS_VIDEO,
   escalaMedida,
   grabarVideoUnity,
   instantesDelVideo,
@@ -576,10 +578,19 @@ export function VisorUnity({
     setAvisoVideo(null);
     setDialogoVideo(automatica ? "automatica" : (elegida?.modo ?? "cinematica"));
   };
+  // «Solo el choque» o «Desde el inicio» (el trayecto previo, René 2026-11-27).
+  const [videoDesdeInicio, setVideoDesdeInicio] = useState(false);
+  const conPrevio = Boolean(
+    intervalo?.reconstruccion !== undefined && intervalo.reconstruccion > intervalo.inicio + 0.5,
+  );
   const descargarVideo = async (camaraVideo: CamaraVisor) => {
     const c = lienzo.current;
     setDialogoVideo(null);
     if (!puente || !intervalo || !c || grabacion) return;
+    const desde =
+      conPrevio && videoDesdeInicio
+        ? intervalo.inicio
+        : (intervalo.reconstruccion ?? intervalo.inicio);
     setAvisoVideo(null);
     if (!puedeGrabarVideo()) {
       setAvisoVideo("Este navegador no puede grabar el video: usa Chrome o Edge.");
@@ -630,9 +641,7 @@ export function VisorUnity({
       // la Intel): al doble solo si los primeros cuadros salen a tiempo.
       if (
         modo.escala === 2 &&
-        escalaMedida(
-          await msPorCuadro(c, fijar, instantesDelVideo(intervalo.inicio, intervalo.fin)),
-        ) === 1
+        escalaMedida(await msPorCuadro(c, fijar, instantesDelVideo(desde, intervalo.fin))) === 1
       )
         await bajarA1x();
       const grabar = () =>
@@ -640,7 +649,7 @@ export function VisorUnity({
           credito: pv ? pv.atribucionMapa : null,
           lienzo: c,
           fijar,
-          inicio: intervalo.inicio,
+          inicio: desde,
           fin: intervalo.fin,
           logo,
           leyenda: LEYENDA_3D,
@@ -867,6 +876,42 @@ export function VisorUnity({
                 )}
               </select>
             </label>
+            {conPrevio && intervalo ? (
+              <fieldset className="flex flex-col gap-1" data-testid="video-desde">
+                <legend className="t-nota">Qué grabar</legend>
+                {[false, true].map((inicio) => {
+                  const d0 = inicio
+                    ? intervalo.inicio
+                    : (intervalo.reconstruccion ?? intervalo.inicio);
+                  const seg =
+                    instantesDelVideo(
+                      d0,
+                      intervalo.fin,
+                      FPS_VIDEO,
+                      dialogoVideo === "automatica" ? CAMARA_LENTA_VIDEO : null,
+                    ).length / FPS_VIDEO;
+                  return (
+                    <label key={String(inicio)} className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="video-desde"
+                        checked={videoDesdeInicio === inicio}
+                        onChange={() => setVideoDesdeInicio(inicio)}
+                        data-testid={inicio ? "video-desde-inicio" : "video-solo-choque"}
+                      />
+                      {inicio
+                        ? `Desde el inicio (~${duracionVideo(seg)} de video)`
+                        : `Solo el choque (~${duracionVideo(seg)} de video)`}
+                    </label>
+                  );
+                })}
+                {videoDesdeInicio ? (
+                  <span className="t-nota">
+                    El trayecto previo es ilustrativo: no es evidencia.
+                  </span>
+                ) : null}
+              </fieldset>
+            ) : null}
             {dialogoVideo === "automatica" ? (
               <span className="t-nota" data-testid="video-camara-nota">
                 El punto de contacto siempre a la vista: la llegada, el impacto de cerca y en cámara
