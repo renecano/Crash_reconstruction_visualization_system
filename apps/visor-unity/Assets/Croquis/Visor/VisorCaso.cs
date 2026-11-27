@@ -193,6 +193,7 @@ namespace Croquis.Visor
         {
             var mio = ++turnoDeCarga;
             leyendaVisible = true;
+            danoMedido = Array.Exists(caso.Resultado?.Vehiculos ?? new ResultadoVehiculo[0], v => DanoDelCaso.UsaMedido(v.Dano));
             Omisiones.Limpiar();
             PasosDeCarga.Clear();
             PasosDeCarga["leer_sobre"] = Math.Round(LecturaDelPaquete.Sobre, 1);
@@ -313,6 +314,7 @@ namespace Croquis.Visor
                 }
             });
             Omisiones.Intentar("el paisaje árido", () => Paisaje.Arido(e));
+            Omisiones.Intentar("la calzada despejada", () => Calzada.Despejar(e));
             Omisiones.Intentar("el escenario", () => EscenarioVista.Construir(raiz, e, sol, Camera.main, terreno));
             Omisiones.Intentar("el camellón", () => CamellonVista.Construir(raiz.Find("escenario"), camellones, terreno, e.Ambiente, e.Semilla));
             Paso("escenario");
@@ -667,7 +669,7 @@ namespace Croquis.Visor
                 vista.Terreno = terreno;
                 // Su propio daño (el de su `resultado`), en su instante: con otra velocidad, otra deformación.
                 Omisiones.Intentar("el daño de la versión de " + v.Id, () => vista.Dano = DanoVista.Preparar(go.transform, v, version));
-                vista.Letrero = EtiquetaMundo.Crear(go.transform, letrero);
+                vista.Letrero = EtiquetaMundo.CrearDestacada(go.transform, letrero);
                 vista.AltoLetrero = (float)(v.Dimensiones?.AltoM ?? 1.5) + 0.7f;
                 fantasmas.Add(vista);
             }
@@ -805,9 +807,12 @@ namespace Croquis.Visor
             var texto = EscenarioVista.TextoDeLeyenda(raiz);
             if (texto != null)
             {
-                texto.text = Leyenda3d.Mensaje(conEscenario, pisoMapa.Puesto ? pisoMapa.Atribucion : null, etiquetaFantasma);
+                texto.text = Leyenda3d.Mensaje(conEscenario, pisoMapa.Puesto ? pisoMapa.Atribucion : null, etiquetaFantasma, danoMedido);
             }
         }
+
+        /// <summary>Si algún vehículo del caso se dibuja con los C1–C6 que midió el perito.</summary>
+        private bool danoMedido;
 
         public void Fijar(double t)
         {
@@ -1135,8 +1140,42 @@ namespace Croquis.Visor
     {
         private RectTransform lienzo;
         private Text texto;
+        private RectTransform caja;
         private bool visible;
         private Vector3 donde;
+
+        // Los letreros destacados encendidos: si dos caen casi en el mismo lugar de la pantalla (los dos
+        // fantasmas vistos desde arriba), solo se dibuja el primero.
+        private static readonly System.Collections.Generic.List<EtiquetaMundo> Destacados = new System.Collections.Generic.List<EtiquetaMundo>();
+
+        /// <summary>
+        /// Un letrero destacado (el de una versión superpuesta, «Hipótesis»): más grande, en negrita y con
+        /// el recuadro de contraste AA de la leyenda (`Leyenda3d`), para leerse sobre cualquier fondo.
+        /// </summary>
+        public static EtiquetaMundo CrearDestacada(Transform padre, string mensaje)
+        {
+            var e = Crear(padre, mensaje);
+            e.texto.fontSize = 16;
+            e.texto.fontStyle = FontStyle.Bold;
+            e.texto.rectTransform.sizeDelta = new Vector2(260f, 26f);
+            Destroy(e.texto.GetComponent<Outline>());
+            var fondo = new GameObject("fondo").AddComponent<Image>();
+            fondo.transform.SetParent(e.lienzo, false);
+            fondo.transform.SetAsFirstSibling();
+            var f = Leyenda3d.Fondo;
+            fondo.color = new Color((float)f.R, (float)f.G, (float)f.B, (float)f.A);
+            fondo.raycastTarget = false;
+            e.caja = fondo.rectTransform;
+            e.caja.sizeDelta = new Vector2(e.texto.preferredWidth + 18f, 26f);
+            fondo.enabled = false;
+            Destacados.Add(e);
+            return e;
+        }
+
+        private void OnDestroy()
+        {
+            Destacados.Remove(this);
+        }
 
         public static EtiquetaMundo Crear(Transform padre, string mensaje)
         {
@@ -1182,15 +1221,43 @@ namespace Croquis.Visor
             }
 
             var p = camara.WorldToScreenPoint(donde);
-            if (p.z <= 0f)
+            var tapado = false;
+            if (caja != null)
+            {
+                foreach (var otro in Destacados)
+                {
+                    if (otro == this)
+                    {
+                        break;
+                    }
+
+                    if (otro.visible && otro.texto.enabled && (camara.WorldToScreenPoint(otro.donde) - p).sqrMagnitude < 40f * 40f)
+                    {
+                        tapado = true;
+                        break;
+                    }
+                }
+            }
+
+            if (p.z <= 0f || tapado)
             {
                 texto.enabled = false;
+                if (caja != null)
+                {
+                    caja.GetComponent<Image>().enabled = false;
+                }
+
                 return;
             }
 
             RectTransformUtility.ScreenPointToLocalPointInRectangle(lienzo, p, null, out var local);
             texto.rectTransform.anchoredPosition = local;
             texto.enabled = true;
+            if (caja != null)
+            {
+                caja.anchoredPosition = local;
+                caja.GetComponent<Image>().enabled = true;
+            }
         }
     }
 

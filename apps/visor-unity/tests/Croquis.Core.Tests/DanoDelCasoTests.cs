@@ -297,6 +297,27 @@ namespace Croquis.Core.Tests
         }
 
         [Fact]
+        public void ConC1C6MedidosSeDibujaLoMedidoYSiNoLoCalculado()
+        {
+            var (_, caso) = Casos().First(c => c.Nombre == "alcance");
+            var v = caso.Resultado.Vehiculos.First(x => DanoDelCaso.Campo(x) != null);
+            var calculado = v.Dano.PerfilM;
+            Assert.False(DanoDelCaso.UsaMedido(v.Dano));
+            Assert.Equal(calculado, DanoDelCaso.Campo(v).Perfil);
+            v.Dano.MedidoM = new[] { 0.96, 0.90, 0.79, 0.59, 0.39, 0.20 };
+            v.Dano.EnergiaMedidaJ = 223500;
+            Assert.True(DanoDelCaso.UsaMedido(v.Dano));
+            Assert.Equal(v.Dano.MedidoM, DanoDelCaso.Campo(v).Perfil);
+            Assert.Equal(223500, DanoDelCaso.EnergiaADibujar(v.Dano));
+            // Medido en ceros no cuenta como medido.
+            v.Dano.MedidoM = new double[6];
+            Assert.Equal(calculado, DanoDelCaso.Campo(v).Perfil);
+            Assert.Equal(v.Dano.EnergiaJ, DanoDelCaso.EnergiaADibujar(v.Dano));
+            Assert.Contains("C1–C6 medidos por el perito", Leyenda3d.Mensaje(true, null, null, true));
+            Assert.DoesNotContain("medidos", Leyenda3d.Mensaje(true));
+        }
+
+        [Fact]
         public void LaSemillaDeLasArrugasEsEstable()
         {
             Assert.Equal(DanoDelCaso.Semilla(719300, "veh-a"), DanoDelCaso.Semilla(719300, "veh-a"));

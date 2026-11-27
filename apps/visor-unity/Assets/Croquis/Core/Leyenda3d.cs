@@ -26,9 +26,15 @@ namespace Croquis.Core
         /// piso del mapa real (ADR 0124), que el piso es una imagen del lugar, con el crédito que pide su
         /// licencia; con una versión superpuesta (ADR 0123), en otro renglón, cuál es la translúcida.
         /// </summary>
-        public static string Mensaje(bool entornoProcedural, string atribucionPiso = null, string etiquetaFantasma = null)
+        public static string Mensaje(bool entornoProcedural, string atribucionPiso = null, string etiquetaFantasma = null, bool danoMedido = false)
         {
             var texto = "Reconstrucción ilustrativa";
+            if (danoMedido)
+            {
+                // Lo que se ve de la carrocería es lo que midió el perito, no lo calculado (René, 2026-11-26).
+                texto += " · daño: C1–C6 medidos por el perito";
+            }
+
             if (atribucionPiso != null)
             {
                 texto += string.IsNullOrWhiteSpace(atribucionPiso)
