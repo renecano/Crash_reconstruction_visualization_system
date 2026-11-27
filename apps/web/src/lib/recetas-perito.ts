@@ -61,8 +61,10 @@ export const RECETAS_PERITO: readonly (RecetaPerito & { cifra: string })[] = [
       { vehiculo: "Sentra", objeto: "poste", en: { de: "Sentra", adelante: 18, izquierda: 3 } },
     ],
     quedo: {
-      // «el vehículo A quedó sobre el cruce, 8 metros al Norte del área de contacto».
-      Mazda: [0, 8],
+      // «el vehículo A quedó sobre el cruce, 1 metro al Oriente del área de contacto» (René, 2026-11-26:
+      // decía «8 metros al Norte», que la física no alcanza: tras pegarle en el costado al Sentra, el
+      // Mazda avanza unos 2.5 m).
+      Mazda: [1, 0],
       // «El vehículo B quedó en contacto con el poste».
       Sentra: { de: "Sentra", adelante: 16.4, izquierda: 2.7 },
     },
