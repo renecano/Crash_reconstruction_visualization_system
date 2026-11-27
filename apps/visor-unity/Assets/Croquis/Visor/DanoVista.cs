@@ -66,33 +66,7 @@ namespace Croquis.Visor
 
             var dano = new DanoVista(desdes);
             var semilla = DanoDelCaso.Semilla(r != null ? r.Semilla : 0L, v.Id);
-            var carroceria = new List<MeshFilter>();
-            var todos = new List<V3>();
-            var triangulos = new List<int>();
-            foreach (var filtro in vehiculo.GetComponentsInChildren<MeshFilter>(true))
-            {
-                // La carrocería son las piezas que cuelgan directo del vehículo, con sus vértices en el
-                // marco del vehículo (`ArmadorVehiculo.Armar`). Las ruedas van en su propio nodo y la
-                // caja de respaldo va escalada: ninguna de las dos se deforma.
-                var t = filtro.transform;
-                var original = filtro.sharedMesh;
-                if (t.parent != vehiculo || t.localPosition != Vector3.zero || t.localScale != Vector3.one || t.localRotation != Quaternion.identity
-                    || original == null || !original.isReadable)
-                {
-                    continue;
-                }
-
-                carroceria.Add(filtro);
-                foreach (var i in original.triangles)
-                {
-                    triangulos.Add(todos.Count + i);
-                }
-
-                foreach (var p in original.vertices)
-                {
-                    todos.Add(new V3(p.x, p.y, p.z));
-                }
-            }
+            var carroceria = Carroceria(vehiculo, out var todos, out var triangulos);
 
             // La profundidad se cuenta desde el frente real de toda la carrocería, no desde la caja.
             foreach (var e in etapas)
@@ -138,6 +112,43 @@ namespace Croquis.Visor
             dano.CampoPrimero = campo;
             Debug.Log("[daño] " + v.Id + " C1–C6 (cm) " + (DanoDelCaso.UsaMedido(v.Dano) ? "medidos" : "calculados") + " " + Cm(dano.Pedido) + " · en la malla " + Cm(dano.Medido) + " · lo pedido donde se midió " + Cm(dano.PedidoAlli));
             return dano;
+        }
+
+        /// <summary>
+        /// Las piezas de la carrocería y toda su superficie junta (vértices y triángulos en el marco del
+        /// vehículo). La usan el daño y el roce.
+        /// </summary>
+        public static List<MeshFilter> Carroceria(Transform vehiculo, out List<V3> todos, out List<int> triangulos)
+        {
+            var carroceria = new List<MeshFilter>();
+            todos = new List<V3>();
+            triangulos = new List<int>();
+            foreach (var filtro in vehiculo.GetComponentsInChildren<MeshFilter>(true))
+            {
+                // La carrocería son las piezas que cuelgan directo del vehículo, con sus vértices en el
+                // marco del vehículo (`ArmadorVehiculo.Armar`). Las ruedas van en su propio nodo y la
+                // caja de respaldo va escalada: ninguna de las dos se deforma.
+                var t = filtro.transform;
+                var original = filtro.sharedMesh;
+                if (t.parent != vehiculo || t.localPosition != Vector3.zero || t.localScale != Vector3.one || t.localRotation != Quaternion.identity
+                    || original == null || !original.isReadable)
+                {
+                    continue;
+                }
+
+                carroceria.Add(filtro);
+                foreach (var i in original.triangles)
+                {
+                    triangulos.Add(todos.Count + i);
+                }
+
+                foreach (var p in original.vertices)
+                {
+                    todos.Add(new V3(p.x, p.y, p.z));
+                }
+            }
+
+            return carroceria;
         }
 
         /// <summary>El perfil del primer impacto que pide el solver y el que quedó en la malla (m), C1 a C6.</summary>

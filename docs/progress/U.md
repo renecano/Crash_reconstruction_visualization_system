@@ -1162,3 +1162,7 @@ Nada por ahora.
 ## Bloqueado
 
 - Nada. (La medición de alta y ultra en la computadora con tarjeta de video llegó el 2026-11-12: `eval/results/e6_unity_escritorio.json`.)
+
+## Demo con CESVI (2026-11-27)
+
+- **Roce sin deformación** (`feat/u-roce`): en la reversa publicada el CR-V roza al Versa (1 349 J y 1 642 J, el 13 % y el 29 % del umbral de CRASH3 A²/2B·L de cada cara), y la lámina no se hunde, como debe ser. Unity ahora dibuja en la zona del CDC (`ancho_m` alrededor de `centro_m`, a la altura de la estructura) rayones, una banda tenue de abrasión y la pintura del otro vehículo, sobre la lámina real y sin mover un vértice; cuántos y qué tan marcados va con E / (A²/2B·L) (`Core/Rozadura.cs`, 4 pruebas; `Visor/RozaduraVista.cs`). Sobre pintura clara el rayón es oscuro; sobre oscura, claro. Capturas: `capturas/demo/2-roce-versa-*.jpg`.

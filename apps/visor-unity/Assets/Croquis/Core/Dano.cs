@@ -289,7 +289,8 @@ namespace Croquis.Core
             escalaU = mitadReal > 0.0 ? Math.Max(1.0, Math.Min(1.15, mitadNominal / mitadReal)) : 1.0;
         }
 
-        private double SuperficieEn(double u, double y)
+        /// <summary>La lámina de afuera en la columna u y la altura y (la de la caja si no se tomó el frente).</summary>
+        public double SuperficieEn(double u, double y)
         {
             var mejor = double.NegativeInfinity;
             var iu = (long)Math.Floor(u / CubetaU);
