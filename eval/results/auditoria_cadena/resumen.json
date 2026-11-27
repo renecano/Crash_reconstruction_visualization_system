@@ -1,5 +1,5 @@
 {
- "fecha": "2026-11-26T01:16:29.648Z",
+ "fecha": "2026-11-26T16:30:36.468Z",
  "fuentes": {
   "prueba": {
    "casos": 205,
@@ -489,11 +489,10 @@
    "lugar_encontrado": 41,
    "reglas": {
     "candado.animacion": {
-     "casos": 3,
+     "casos": 2,
      "ids": [
       "aud-14-barda-morelos",
-      "aud-30-ciclista-alcance-universidad",
-      "aud-38-alcance-barrera-circuito-reforma"
+      "aud-30-ciclista-alcance-universidad"
      ]
     },
     "final.no_leido": {

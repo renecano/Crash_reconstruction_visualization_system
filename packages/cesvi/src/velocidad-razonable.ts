@@ -17,6 +17,7 @@
  * sale, y la cifra y el umbral van juntos en el límite que lee el perito.
  */
 import { kmhConUnidad } from "./formato";
+import type { Reconstruccion } from "./reconstruccion";
 
 export interface UmbralVelocidad {
   /** El tipo, como lo lee el perito. */
@@ -85,4 +86,41 @@ export function avisoVelocidadRazonable(
     `${vehiculo} (${umbral.tipo}): la cifra (${kmhConUnidad(kmh, "reconstruccion")}) pasa de lo razonable para su tipo, ` +
     `más de ${umbral.kmh} km/h (${umbral.fuente}). Revisa la evidencia del caso; la decisión es del perito.`
   );
+}
+
+/**
+ * Cuánto puede pasar el mejor ajuste del límite de la vía antes de avisar (René, 2026-11-26). Es un
+ * umbral de diseño, no viene de una fuente: separa una cifra alta pero posible de una que casi siempre
+ * sale de unas posiciones finales o unas medidas mal puestas (el crucero de la e2e del poste daba
+ * 95 km/h en una calle de ciudad).
+ */
+export const MARGEN_SOBRE_EL_LIMITE_KMH = 40;
+
+/** El aviso de una cifra muy por arriba del límite de su vía; null si no pasa del margen. */
+export function avisoSobreElLimite(
+  vehiculo: string,
+  kmh: number | null | undefined,
+  limite: { kmh: number; fuente: string } | null,
+): string | null {
+  if (!limite || kmh === null || kmh === undefined) return null;
+  if (!(kmh > limite.kmh + MARGEN_SOBRE_EL_LIMITE_KMH)) return null;
+  return (
+    `${vehiculo}: la cifra (${kmhConUnidad(kmh, "reconstruccion")}) queda más de ${MARGEN_SOBRE_EL_LIMITE_KMH} km/h arriba del límite de esta vía ` +
+    `(${limite.kmh} km/h; ${limite.fuente}): es inusual; revisa las posiciones finales y las medidas antes de usarla.`
+  );
+}
+
+/**
+ * La reconstrucción con el aviso del límite de la vía en sus límites, para cada vehículo cuya cifra lo
+ * pasa por más del margen. El límite es el de la vía del choque (su `maxspeed` o el de su tipo según la
+ * LGMSV), que conoce la web con las calles del lugar. Las cifras no cambian.
+ */
+export function conAvisoDelLimite(
+  r: Reconstruccion,
+  limite: { kmh: number; fuente: string } | null,
+): Reconstruccion {
+  const avisos = r.velocidades
+    .map((v) => avisoSobreElLimite(v.vehiculo, v.previa?.mejor, limite))
+    .filter((x): x is string => x !== null && !r.limites.includes(x));
+  return avisos.length ? { ...r, limites: [...r.limites, ...avisos] } : r;
 }

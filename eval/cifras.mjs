@@ -225,6 +225,7 @@ function construir() {
       texto: `${k} de ${n}`,
       fuente: archivo,
       campo: "impactos_posteriores_ocurridos / impactos_posteriores_en_escena",
+      motivo: `Se corrigió el choque fantasma de la reconstrucción previa (#323); recupera cesvi-e9aed4ab5b y agrega 3 impactos; René lo aprobó el 2026-11-26. Antes, ${p === "prueba" ? "21 de 31" : "44 de 55"}.`,
     });
   }
 

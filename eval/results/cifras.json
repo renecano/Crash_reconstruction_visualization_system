@@ -171,21 +171,23 @@
     },
     "carambolas.prueba": {
       "que": "Carambolas (prueba): impactos posteriores entre vehículos que ocurren en la reconstrucción, de los que pasan a la escena",
-      "k": 21,
+      "k": 22,
       "n": 31,
-      "pct": 67.7,
-      "texto": "21 de 31",
+      "pct": 71,
+      "texto": "22 de 31",
       "fuente": "eval/results/cesvi_r4b_carambolas_prueba.json",
-      "campo": "impactos_posteriores_ocurridos / impactos_posteriores_en_escena"
+      "campo": "impactos_posteriores_ocurridos / impactos_posteriores_en_escena",
+      "motivo": "Se corrigió el choque fantasma de la reconstrucción previa (#323); recupera cesvi-e9aed4ab5b y agrega 3 impactos; René lo aprobó el 2026-11-26. Antes, 21 de 31."
     },
     "carambolas.desarrollo": {
       "que": "Carambolas (desarrollo): impactos posteriores entre vehículos que ocurren en la reconstrucción, de los que pasan a la escena",
-      "k": 44,
+      "k": 42,
       "n": 55,
-      "pct": 80,
-      "texto": "44 de 55",
+      "pct": 76.4,
+      "texto": "42 de 55",
       "fuente": "eval/results/cesvi_r4b_carambolas_desarrollo.json",
-      "campo": "impactos_posteriores_ocurridos / impactos_posteriores_en_escena"
+      "campo": "impactos_posteriores_ocurridos / impactos_posteriores_en_escena",
+      "motivo": "Se corrigió el choque fantasma de la reconstrucción previa (#323); recupera cesvi-e9aed4ab5b y agrega 3 impactos; René lo aprobó el 2026-11-26. Antes, 44 de 55."
     },
     "ejemplos.poste": {
       "que": "Ejemplo «poste y terracería»: velocidad del Sentra (B) antes del impacto, con la escena colocada como dice la narración (el Mazda 3 quedó 8 m al norte)",

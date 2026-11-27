@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { avisoVelocidadRazonable, UMBRAL_PEATON, umbralDeClase } from "./velocidad-razonable";
+import type { Reconstruccion } from "./reconstruccion";
+import {
+  avisoSobreElLimite,
+  avisoVelocidadRazonable,
+  conAvisoDelLimite,
+  MARGEN_SOBRE_EL_LIMITE_KMH,
+  UMBRAL_PEATON,
+  umbralDeClase,
+} from "./velocidad-razonable";
 
 /** Aviso, no bloqueo, cuando la cifra pasa de lo razonable para su tipo (René, 2026-11-25). */
 describe("la velocidad razonable por tipo de vehículo", () => {
@@ -22,5 +30,41 @@ describe("la velocidad razonable por tipo de vehículo", () => {
     expect(umbralDeClase("autobus")!.kmh).toBe(125);
     expect(avisoVelocidadRazonable("P1", UMBRAL_PEATON, 30)).toMatch(/peatón/);
     expect(umbralDeClase("sedan_compacto")).toBeNull();
+  });
+});
+
+/** Una cifra muy por arriba del límite de su vía (René, 2026-11-26): aviso para autos. */
+describe("la cifra contra el límite de la vía", () => {
+  const calle = { kmh: 50, fuente: "LGMSV, art. 49 fr. III; Calle Azucena" };
+
+  it("avisa cuando el mejor ajuste pasa el límite por más de 40 km/h, sin juzgar al conductor", () => {
+    const a = avisoSobreElLimite("V1", 95, calle)!;
+    expect(a).toBe(
+      "V1: la cifra (95 km/h) queda más de 40 km/h arriba del límite de esta vía (50 km/h; LGMSV, art. 49 fr. III; Calle Azucena): es inusual; revisa las posiciones finales y las medidas antes de usarla.",
+    );
+    expect(a).not.toMatch(/exceso|culpa|infracci/i);
+    expect(MARGEN_SOBRE_EL_LIMITE_KMH).toBe(40);
+  });
+
+  it("no avisa hasta el límite más 40, ni sin límite o sin cifra", () => {
+    expect(avisoSobreElLimite("V1", 90, calle)).toBeNull();
+    expect(avisoSobreElLimite("V1", 95, null)).toBeNull();
+    expect(avisoSobreElLimite("V1", null, calle)).toBeNull();
+  });
+
+  it("va en los límites de la reconstrucción, una vez, y las cifras no cambian", () => {
+    const r = {
+      limites: ["otro límite"],
+      velocidades: [
+        { vehiculo: "V1", previa: { mejor: 95 } },
+        { vehiculo: "V2", previa: { mejor: 20 } },
+      ],
+    } as unknown as Reconstruccion;
+    const con = conAvisoDelLimite(r, calle);
+    expect(con.limites).toHaveLength(2);
+    expect(con.limites[1]).toMatch(/^V1: la cifra \(95 km\/h\)/);
+    expect(con.velocidades).toBe(r.velocidades);
+    expect(conAvisoDelLimite(con, calle).limites).toHaveLength(2);
+    expect(conAvisoDelLimite(r, null)).toBe(r);
   });
 });

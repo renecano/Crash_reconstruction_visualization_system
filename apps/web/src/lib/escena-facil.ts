@@ -1587,6 +1587,57 @@ const metros = (x: string) => Number(x.replace(",", "."));
 /** El vehículo que nombra la narración («vehículo B») como id del expediente («V2»). */
 const idDeLetra = (l: string) => `V${l.toUpperCase().charCodeAt(0) - 64}`;
 
+/**
+ * Hacia dónde dice la narración que salió un vehículo después del choque (René, 2026-11-25, aud-02:
+ * «fue desplazado hacia el noroeste del cruce y quedó detenido a 7 m del punto de contacto» lo ponía 7 m
+ * adelante en su propia línea, al poniente). Un punto cardinal («hacia el noroeste», «quedó al norte del
+ * cruce»), «hacia el camellón» (a su izquierda: se circula por la derecha), «hacia la banqueta» (a su
+ * derecha), «hacia su izquierda/derecha» (los lados, adelante y a 45°) o «hacia atrás». No cuenta «con el frente hacia…» (es cómo quedó, no hacia dónde
+ * salió) ni «de sur a norte» (es cómo circulaba). null si no lo dice.
+ */
+export function direccionDeSalida(
+  descripcion: string,
+  marcha: number,
+): { rumbo: number; texto: string } | null {
+  const d = sinAcentos(descripcion.toLowerCase())
+    .replace(
+      new RegExp(
+        String.raw`(?:con\s+el\s+frente|orientad[oa]|mirando|viendo)\s+(?:hacia|al|viendo\s+al)\s+(?:el\s+)?${PUNTO}\b`,
+        "g",
+      ),
+      " ",
+    )
+    .replace(new RegExp(String.raw`\bde\s+${PUNTO}\s+a\s+${PUNTO}\b`, "g"), " ");
+  const c =
+    new RegExp(String.raw`\bhacia\s+(?:el\s+)?${PUNTO}\b`).exec(d) ??
+    new RegExp(
+      String.raw`\bal\s+${PUNTO}\s+del?\s+(?:cruce|choque|punto|impacto|contacto|lugar)`,
+    ).exec(d);
+  if (c) {
+    const nombre = c[1]!;
+    return { rumbo: RUMBO_DE[nombre]!, texto: `hacia el ${nombre}` };
+  }
+  // Los lados son relativos a su marcha: después del choque sigue avanzando, así que sale adelante y
+  // hacia ese lado (45°, supuesto). Solo con «hacia»: «junto a la guarnición» dice dónde quedó, no
+  // hacia dónde salió.
+  const aUnLado = (signo: -1 | 1, texto: string) => ({
+    rumbo: normalizar(marcha + signo * 45),
+    texto: `adelante y ${texto}`,
+  });
+  if (/\bhacia\s+(?:el\s+)?camellon\b/.test(d))
+    return aUnLado(-1, "hacia el camellón (a su izquierda)");
+  if (/\bhacia\s+(?:la\s+)?(?:banqueta|acera|guarnicion)\b/.test(d))
+    return aUnLado(1, "hacia la banqueta (a su derecha)");
+  const lado = /\bhacia\s+(?:su\s+|la\s+)?(izquierda|derecha)\b/.exec(d);
+  if (lado)
+    return lado[1] === "izquierda"
+      ? aUnLado(-1, "hacia su izquierda")
+      : aUnLado(1, "hacia su derecha");
+  if (/\bhacia\s+atras\b|\bhacia\s+donde\s+venia\b/.test(d))
+    return { rumbo: normalizar(marcha + 180), texto: "hacia atrás, de donde venía" };
+  return null;
+}
+
 export interface FinalNarrado {
   punto: Punto;
   rumbo: number;
@@ -1618,11 +1669,20 @@ export function finalDeLaNarracion(
     String.raw`con\s+el\s+frente\s+(?:hacia|al|viendo\s+al)\s+(?:el\s+)?${PUNTO}\b`,
   ).exec(sinAcentos(d));
   const frente = f ? RUMBO_DE[f[1]!] : undefined;
-  const adelante = (n: number, texto: string): FinalNarrado => ({
-    punto: punto(avanzar(ll(imp.punto), marcha, n)),
-    rumbo: frente ?? imp.rumbo,
-    texto,
-  });
+  const salida = direccionDeSalida(descripcion, marcha);
+  // Con una dirección narrada, los metros van en esa dirección; si no, hacia donde avanzaba.
+  const adelante = (n: number, texto: string): FinalNarrado =>
+    salida && n > 0
+      ? {
+          punto: punto(avanzar(ll(imp.punto), salida.rumbo, n)),
+          rumbo: frente ?? imp.rumbo,
+          texto: `${n} m ${salida.texto} de su posición en el choque, como dice la narración`,
+        }
+      : {
+          punto: punto(avanzar(ll(imp.punto), marcha, n)),
+          rumbo: frente ?? imp.rumbo,
+          texto,
+        };
   // «a 1 m detrás del vehículo B», «a 2 m delante del vehículo C», «a 1 m del vehículo B»: desde donde
   // quedó el otro, defensa con defensa más N; sin «detrás» ni «delante», del lado donde estaba este en
   // el choque.
@@ -1679,6 +1739,10 @@ export function finalDeLaNarracion(
       n ? `${n} m adelante del objeto contra el que chocó` : "en el objeto contra el que chocó",
     );
   }
+  // «quedó a 5 m, hacia el camellón», «a 4 metros al norte del cruce»: con la dirección narrada, los
+  // metros que diga, aunque no diga desde dónde (desde su pose del choque).
+  const suelto = new RegExp(String.raw`\ba\s+${NUM}\s*m(?:etros?)?\b`).exec(d);
+  if (suelto && salida) return adelante(metros(suelto[1]!), "");
   return null;
 }
 
