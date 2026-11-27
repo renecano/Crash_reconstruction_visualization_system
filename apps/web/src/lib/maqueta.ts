@@ -40,6 +40,18 @@ export interface ResultadoMaqueta {
   punto_impacto?: { x: number; y: number } | null;
   vehiculos: VehiculoResultado[];
   personas?: PersonaResultado[];
+  /** Los objetos del Resultado (los del caso y los del mapa), para el croquis. */
+  objetos?: {
+    id: string;
+    tipo: string;
+    x: number;
+    y: number;
+    rumbo_deg?: number;
+    largo_m?: number;
+    ancho_m?: number;
+    radio_m?: number;
+    copa?: { radio_m: number };
+  }[];
   eventos?: { tipo: string; t: number }[];
 }
 
