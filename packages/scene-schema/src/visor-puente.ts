@@ -4,7 +4,7 @@
  */
 
 /** Sube cuando cambia un mensaje. Unity la anuncia en `listo`. */
-export const VISOR_PUENTE_VERSION = "1.4.0" as const;
+export const VISOR_PUENTE_VERSION = "1.5.0" as const;
 
 /**
  * Las versiones con las que la web todavía trabaja: la 1.2.0 es la del build publicado antes de la
@@ -13,15 +13,21 @@ export const VISOR_PUENTE_VERSION = "1.4.0" as const;
 export const VERSIONES_PUENTE_COMPATIBLES: readonly string[] = [
   "1.2.0",
   "1.3.0",
+  "1.4.0",
   VISOR_PUENTE_VERSION,
 ];
 
 /** Si el build anunciado entiende el piso de mapa y el fantasma (puente 1.3.0, ronda 4). */
 export const conPisoYFantasma = (version: string | null | undefined): boolean =>
-  version === "1.3.0" || version === "1.4.0";
+  version === "1.3.0" || version === "1.4.0" || version === "1.5.0";
 
 /** Si el build anunciado entiende el mensaje `leyenda` (puente 1.4.0, Presentar). */
-export const conLeyenda = (version: string | null | undefined): boolean => version === "1.4.0";
+export const conLeyenda = (version: string | null | undefined): boolean =>
+  version === "1.4.0" || version === "1.5.0";
+
+/** Si el build anunciado tiene la cámara `automatica` (puente 1.5.0, el video). */
+export const conCamaraAutomatica = (version: string | null | undefined): boolean =>
+  version === "1.5.0";
 
 export const CALIDADES_VISOR = ["baja", "media", "alta", "ultra", "auto"] as const;
 export type CalidadVisor = (typeof CALIDADES_VISOR)[number];
@@ -33,6 +39,8 @@ export type CamaraVisor =
   | "orbita"
   | "acera"
   | "libre"
+  /** Tomas que siempre dejan ver el punto de contacto: la llegada, el impacto de lado y el final desde arriba. */
+  | "automatica"
   | `conductor:${string}`
   /** Junto a un vehículo, siguiéndolo: `cerca:<id>:<azimut°>:<distancia m>:<altura m>`. */
   | `cerca:${string}`
