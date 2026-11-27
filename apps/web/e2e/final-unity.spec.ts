@@ -132,7 +132,9 @@ test("Presentar con el Unity real: la carambola", async ({ page }) => {
   test.setTimeout(600_000);
   const s = await reconstruido(page, "carambola-lluvia");
   const gpu = await en3d(page);
-  await page.getByTestId("presentar-caso").click();
+  // Presentar se abre con su botón; `presentar-caso` es la vista que aparece (como en cesvi.spec).
+  await page.getByTestId("modo-presentar").click();
+  await expect(page.getByTestId("presentar-caso")).toBeVisible({ timeout: 30_000 });
   await page.waitForTimeout(4000);
   await foto(page, "presentar-1");
   for (let k = 2; k <= 4; k++) {
