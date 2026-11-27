@@ -40,6 +40,8 @@ export const { dynamic, dynamicParams, revalidate, generateStaticParams, GET } =
       "public/decodificadores/**",
       "public/blender/**",
       "public/hdri/**",
+      // Las capturas de la portada (dos temas, dos anchos, AVIF y WebP): cada quien baja la suya.
+      "public/portada/app/**",
       // El build de Unity servido desde el sitio (demo local, plan B): unos 70 MB que Unity pide al
       // abrir el 3D.
       "public/visor-unity/local/**",

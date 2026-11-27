@@ -10,7 +10,7 @@
  */
 import type { CamaraDelCaso } from "@/lib/visor-unity/camaras";
 import type { PisoUnity } from "@/lib/visor-unity/piso";
-import { conPisoYFantasma } from "@croquis/scene-schema";
+import { conLeyenda, conPisoYFantasma } from "@croquis/scene-schema";
 import type {
   Resultado,
   CamaraVisor,
@@ -107,6 +107,7 @@ export function VisorUnity({
   version = null,
   piso = null,
   relieve = null,
+  paisaje = null,
   activo = true,
   dormir = false,
   camara = null,
@@ -133,6 +134,8 @@ export function VisorUnity({
    */
   piso?: PisoUnity | null;
   relieve?: RelieveCaso;
+  /** El paisaje del lugar (contrato #335), que la web calcula con la cobertura del suelo de OSM. */
+  paisaje?: "arido" | "templado" | null;
   /** El 3D está a la vista: si no, la reproducción se pausa. */
   activo?: boolean;
   /**
@@ -302,7 +305,7 @@ export function VisorUnity({
       }
       marcar("solver_listo");
       if (mio !== turno.current) return;
-      const paquete = paqueteDelCaso(aCargar, resultado, relieve);
+      const paquete = paqueteDelCaso(aCargar, resultado, relieve, paisaje);
       const p = pisoActual.current;
       const conExtras = {
         ...paquete,
@@ -364,7 +367,7 @@ export function VisorUnity({
       cb.current.onApi?.(api);
       const final = completo ? await completo.catch(() => null) : null;
       if (final && mio === turno.current && final !== resultado) {
-        const conFinal = paqueteDelCaso(aCargar, final, relieve);
+        const conFinal = paqueteDelCaso(aCargar, final, relieve, paisaje);
         if (!vClave) paqueteBase.current = conFinal;
         cb.current.onApi?.({ ...api, paquete: paqueteBase.current ?? conFinal });
       }
@@ -390,7 +393,7 @@ export function VisorUnity({
       });
     // `vClave` sale de `objetivo`; `vueltas`, para la escena que esperó a que Unity terminara.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [puente, objetivo, relieve, dormir, vueltas]);
+  }, [puente, objetivo, relieve, paisaje, dormir, vueltas]);
 
   /** Manda el piso a Unity: lo que se ve en vivo, o el mapa solo (para el video). */
   const enviarPiso = (p: PisoUnity | null, vivo: boolean) => {
@@ -426,6 +429,12 @@ export function VisorUnity({
   }, [puente, dormir, vueltas]);
 
   const listo = estado.fase === "listo";
+  // Puente 1.4.0: en Presentar la web pone su leyenda completa encima del 3D y Unity esconde la suya;
+  // al salir, la vuelve a mostrar. Cada caso cargado la muestra de nuevo, por eso depende de `cargada`.
+  useEffect(() => {
+    if (!puente || !listo || !conLeyenda(puente.version)) return;
+    puente.enviar("leyenda", { visible: !tiempo });
+  }, [puente, listo, tiempo, cargada]);
   useEffect(() => {
     if (!puente || !listo) return;
     if (tiempo) {

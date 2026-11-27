@@ -257,6 +257,97 @@ namespace Croquis.Visor
             return En(az, 4f, 30f);
         }
 
+        /// <summary>
+        /// Dónde se para la cámara de la acera: a la altura de una persona junto al árbol (o, si el árbol está
+        /// a más de 10 m del choque, a 10 m del choque en la línea hacia él), del lado del
+        /// choque, si desde ahí se ve la acción sin nada en medio (y lo más despejado de postes y paredes).
+        /// Si no, alrededor del choque, de 9 a 23 m, el punto con vista libre más cercano al árbol. Primero
+        /// a 2.5 m de lo construido y luego a 1 m; si tampoco, sube de 1.5 en 1.5 m hasta 6.2 m. Es determinista: el mismo caso da el mismo lugar.
+        /// </summary>
+        private Vector3 PuntoDeAcera(Vector3 arbol, Vector3 accion)
+        {
+            var hacia = accion - arbol;
+            hacia.y = 0f;
+            var d = hacia.sqrMagnitude > 1e-4f ? hacia.normalized : Vector3.forward;
+            // Si el árbol queda lejos del choque, la referencia se acerca sobre la misma línea: a lo más
+            // a 10 m del choque, para que se vea de cerca.
+            if (hacia.magnitude > 10f)
+            {
+                arbol = new Vector3(accion.x, arbol.y, accion.z) - d * 10f;
+            }
+
+            var costado = Vector3.Cross(Vector3.up, d);
+
+            // Junto al árbol: el lugar con el choque a la vista y el cuadro más despejado.
+            Vector3? JuntoAlArbol(float holgura)
+            {
+                var mejor = float.MinValue;
+                Vector3? elegido = null;
+                foreach (var atras in new[] { 3f, 6f, 9f, 1.5f })
+                {
+                    foreach (var alLado in new[] { 2.5f, -2.5f, 4.5f, -4.5f, 1f, -1f })
+                    {
+                        var otro = arbol - d * atras + costado * alLado + Vector3.up * 1.7f;
+                        if (EnBulto(otro, holgura) || !Despejada(otro, accion))
+                        {
+                            continue;
+                        }
+
+                        // El cuadro entero libre: también a 5 m a cada lado del choque.
+                        var nota = Mathf.Min(Despeje(otro, accion), 1.5f) - atras * 0.05f
+                            + (Despejada(otro, accion + costado * 5f) ? 1f : 0f)
+                            + (Despejada(otro, accion - costado * 5f) ? 1f : 0f);
+                        if (nota > mejor)
+                        {
+                            mejor = nota;
+                            elegido = otro;
+                        }
+                    }
+                }
+
+                return elegido;
+            }
+
+            // Alrededor del choque, de 9 a 23 m: el lugar con vista libre más cercano al árbol.
+            Vector3? Alrededor(float holgura, float h)
+            {
+                var menor = float.MaxValue;
+                Vector3? elegido = null;
+                foreach (var radio in new[] { 9f, 12f, 15f, 19f, 23f })
+                {
+                    for (var k = 0; k < 24; k++)
+                    {
+                        var ang = k * Mathf.PI / 12f;
+                        var otro = new Vector3(accion.x, 0f, accion.z) + new Vector3(Mathf.Cos(ang), 0f, Mathf.Sin(ang)) * radio + Vector3.up * h;
+                        if (EnBulto(otro, holgura) || !Despejada(otro, accion))
+                        {
+                            continue;
+                        }
+
+                        var lejos = (new Vector2(otro.x, otro.z) - new Vector2(arbol.x, arbol.z)).magnitude;
+                        if (lejos < menor)
+                        {
+                            menor = lejos;
+                            elegido = otro;
+                        }
+                    }
+                }
+
+                return elegido;
+            }
+
+            // A 2.5 m de lo construido (una pared pegada llena medio cuadro); si no hay, a 1 m; y al final, más alto.
+            var lugar = JuntoAlArbol(2.5f) ?? Alrededor(2.5f, 1.7f) ?? JuntoAlArbol(1f) ?? Alrededor(1f, 1.7f)
+                ?? Alrededor(1f, 3.2f) ?? Alrededor(1f, 4.7f) ?? Alrededor(1f, 6.2f);
+            if (lugar.HasValue)
+            {
+                return lugar.Value;
+            }
+
+            // Sin vista libre en ningún lado (no debería pasar): junto al árbol, como antes.
+            return arbol - d * 6f + Vector3.up * 1.7f;
+        }
+
         /// <summary>Si desde `ojo` se ve `mira` sin estar dentro de algo ni con algo en medio.</summary>
         private bool Despejada(Vector3 ojo, Vector3 mira, bool conCopas = false)
         {
@@ -923,78 +1014,19 @@ namespace Croquis.Visor
 
                 case "acera":
                 {
-                    // De pie junto al árbol más cercano, con la acción detrás: para juzgar el entorno de
-                    // cerca. Sin árboles, a la orilla de la vía.
+                    // De pie en la acera, junto al árbol más cercano, mirando el choque (René, 2026-11-26:
+                    // «que no quede frente a una barda»). Junto al árbol solo vale un lugar desde el que el
+                    // choque se ve sin nada en medio; si ninguno, otro punto alrededor del choque con
+                    // vista libre, lo más cerca del árbol; si tampoco, un poco más alto. Sin árboles, a
+                    // la orilla de la vía.
                     camara.fieldOfView = 55f;
+                    var accion = centro + Vector3.up * 1f;
                     if (Arbol.HasValue)
                     {
-                        var haciaCentro = centro - Arbol.Value;
-                        haciaCentro.y = 0f;
-                        var d = haciaCentro.normalized;
-                        var costado = Vector3.Cross(Vector3.up, d);
-                        // De los lugares posibles, el primero fuera de los edificios y más despejado de postes.
-                        var mira = Arbol.Value + d * 6f + Vector3.up * 3.2f;
-                        var ojo = Arbol.Value - d * 9f + costado * 4.5f + Vector3.up * 1.7f;
-                        var mejor = float.MinValue;
-                        foreach (var atras in new[] { 9f, 6f, 12f })
-                        {
-                            foreach (var alLado in new[] { 4.5f, -4.5f, 2.5f, -2.5f, 1f, -1f })
-                            {
-                                var otro = Arbol.Value - d * atras + costado * alLado + Vector3.up * 1.7f;
-                                var nota = Mathf.Min(Despeje(otro, mira), 1.5f);
-                                if (EnBulto(otro, 1f))
-                                {
-                                    nota -= 100f;
-                                }
-                                else if (!Despejada(otro, mira))
-                                {
-                                    nota -= 50f;
-                                }
-
-                                if (nota > mejor)
-                                {
-                                    mejor = nota;
-                                    ojo = otro;
-                                }
-                            }
-                        }
-
-                        if (mejor < 0f)
-                        {
-                            // Ningún lugar de esos quedó libre (una calle con fachadas pegadas): se
-                            // rodea el árbol hasta ver su copa sin nada en medio, de preferencia con
-                            // la acción al fondo.
-                            var copa = Arbol.Value + Vector3.up * 3.2f;
-                            var mejorVista = float.MinValue;
-                            foreach (var radio in new[] { 7f, 9f, 5f, 11f })
-                            {
-                                for (var k = 0; k < 24; k++)
-                                {
-                                    var ang = k * Mathf.PI / 12f;
-                                    var otro = Arbol.Value
-                                        + new Vector3(Mathf.Cos(ang), 0f, Mathf.Sin(ang)) * radio
-                                        + Vector3.up * 1.7f;
-                                    if (EnBulto(otro, 0.9f) || !Despejada(otro, copa))
-                                    {
-                                        continue;
-                                    }
-
-                                    var hacia = Arbol.Value - otro;
-                                    hacia.y = 0f;
-                                    var vista = Vector3.Dot(hacia.normalized, d)
-                                        + Mathf.Min(Despeje(otro, copa), 1.5f) * 0.2f;
-                                    if (vista > mejorVista)
-                                    {
-                                        mejorVista = vista;
-                                        ojo = otro;
-                                        mira = copa + d * 2f;
-                                    }
-                                }
-                            }
-                        }
-
+                        var ojo = PuntoDeAcera(Arbol.Value, accion);
                         camara.transform.position = ojo;
-                        camara.transform.LookAt(mira);
+                        // El choque al centro, con un poco del árbol y la calle: se mira un poco arriba de la acción.
+                        camara.transform.LookAt(accion + Vector3.up * 0.4f);
                     }
                     else
                     {

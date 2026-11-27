@@ -29,7 +29,7 @@ function llaveEsri(): string {
 /**
  * Lo que la app carga hoy: lo propio; el visor de Unity y los modelos, de Vercel Blob (con WebAssembly
  * y workers desde blob:); los mosaicos y las consultas del mapa, por https; y las imágenes y fuentes
- * que arma en memoria (data: y blob:).
+ * que arma en memoria (data: y blob:); en la portada, el reproductor del tráiler (youtube-nocookie).
  */
 const POLITICA_DE_CONTENIDO = [
   "default-src 'self'",
@@ -40,6 +40,7 @@ const POLITICA_DE_CONTENIDO = [
   "connect-src 'self' https: blob: data:",
   "worker-src 'self' blob:",
   "media-src 'self' blob: https://*.public.blob.vercel-storage.com",
+  "frame-src https://www.youtube-nocookie.com",
   "frame-ancestors 'self'",
   "base-uri 'self'",
   "form-action 'self'",
