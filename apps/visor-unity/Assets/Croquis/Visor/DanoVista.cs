@@ -136,7 +136,7 @@ namespace Croquis.Visor
             dano.Medido = DanoDelCaso.Medir(campo, antesTodos, despuesTodos, out var alli);
             dano.PedidoAlli = alli;
             dano.CampoPrimero = campo;
-            Debug.Log("[daño] " + v.Id + " C1–C6 (cm) solver " + Cm(dano.Pedido) + " · en la malla " + Cm(dano.Medido) + " · el solver donde se midió " + Cm(dano.PedidoAlli));
+            Debug.Log("[daño] " + v.Id + " C1–C6 (cm) " + (DanoDelCaso.UsaMedido(v.Dano) ? "medidos" : "calculados") + " " + Cm(dano.Pedido) + " · en la malla " + Cm(dano.Medido) + " · lo pedido donde se midió " + Cm(dano.PedidoAlli));
             return dano;
         }
 
