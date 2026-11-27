@@ -1,27 +1,77 @@
-136 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+116 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-167 ms [warning] Service Worker registration blocked by Playwright
+147 ms [warning] Service Worker registration blocked by Playwright
+291 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+292 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+294 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+295 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+298 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+298 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+299 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+299 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+300 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+306 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+306 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+307 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+308 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+309 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+309 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+310 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
 311 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 312 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-315 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+313 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+314 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 315 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+316 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+317 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+317 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 318 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 319 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-319 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-319 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+320 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 320 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-326 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+321 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+322 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+322 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+323 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+324 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+324 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 326 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+327 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 327 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
@@ -35,7 +85,11 @@
  The policy is report-only, so the violation has been logged but no further action has been taken.
 331 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
+331 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
 332 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+333 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 333 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
@@ -44,6 +98,8 @@
 335 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 336 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+337 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 337 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
@@ -65,8 +121,6 @@
  The policy is report-only, so the violation has been logged but no further action has been taken.
 344 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-344 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
 345 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 346 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
@@ -77,17 +131,7 @@
  The policy is report-only, so the violation has been logged but no further action has been taken.
 349 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-349 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-350 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-350 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-351 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
 352 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-353 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 353 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
@@ -95,13 +139,7 @@
  The policy is report-only, so the violation has been logged but no further action has been taken.
 355 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-355 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
 356 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-357 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-358 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 358 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
@@ -109,13 +147,11 @@
  The policy is report-only, so the violation has been logged but no further action has been taken.
 360 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-361 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-362 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
 362 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 363 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+364 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 364 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
@@ -129,7 +165,13 @@
  The policy is report-only, so the violation has been logged but no further action has been taken.
 369 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
+369 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
 371 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+372 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+373 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 374 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
@@ -139,216 +181,128 @@
  The policy is report-only, so the violation has been logged but no further action has been taken.
 376 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-377 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-379 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-380 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-382 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-383 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-384 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-385 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-386 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-387 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-387 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-388 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-389 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-390 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-390 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-392 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-393 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-393 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-394 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-395 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-395 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-396 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-810 ms [warning] layers[highway-shield-non-us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
-810 ms [warning] layers[highway-shield-us-interstate].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
-932 ms [warning] layers[highway-shield-non-us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
-932 ms [warning] layers[highway-shield-us-interstate].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
-1106 ms [warning] layers[road_shield_us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
-1590 ms [info] [croquis] unity:arranque 1580 ms
-1600 ms [info] [croquis] unity:precarga 1590 ms
-1601 ms [info] [croquis] unity:precarga_lista 1592 ms
-1601 ms [info] [croquis] unity:cargador 1592 ms
-1606 ms [info] [croquis] unity:cargador_listo 1596 ms
-1707 ms [log] [UnityMemory] Configuration Parameters - Can be set up in boot.config
+737 ms [warning] layers[highway-shield-non-us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+737 ms [warning] layers[highway-shield-us-interstate].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+842 ms [warning] layers[highway-shield-non-us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+842 ms [warning] layers[highway-shield-us-interstate].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+1010 ms [warning] layers[road_shield_us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+1605 ms [info] [croquis] unity:arranque 1598 ms
+1613 ms [info] [croquis] unity:precarga 1608 ms
+1614 ms [info] [croquis] unity:precarga_lista 1609 ms
+1614 ms [info] [croquis] unity:cargador 1609 ms
+1619 ms [info] [croquis] unity:cargador_listo 1613 ms
+1724 ms [log] [UnityMemory] Configuration Parameters - Can be set up in boot.config
 
-1708 ms [log]     "memorysetup-allocator-temp-initial-block-size-main=262144"
+1724 ms [log]     "memorysetup-allocator-temp-initial-block-size-main=262144"
 
-1708 ms [log]     "memorysetup-allocator-temp-initial-block-size-worker=262144"
+1724 ms [log]     "memorysetup-allocator-temp-initial-block-size-worker=262144"
 
-1708 ms [log]     "memorysetup-remapper-allocator-initial-capacity=32768"
+1724 ms [log]     "memorysetup-remapper-allocator-initial-capacity=32768"
 
-1708 ms [log]     "memorysetup-temp-allocator-size-background-worker=32768"
+1724 ms [log]     "memorysetup-temp-allocator-size-background-worker=32768"
 
-1708 ms [log]     "memorysetup-bucket-allocator-granularity=16"
+1724 ms [log]     "memorysetup-bucket-allocator-granularity=16"
 
-1708 ms [log]     "memorysetup-bucket-allocator-bucket-count=8"
+1724 ms [log]     "memorysetup-bucket-allocator-bucket-count=8"
 
-1708 ms [log]     "memorysetup-bucket-allocator-block-size=4194304"
+1724 ms [log]     "memorysetup-bucket-allocator-block-size=4194304"
 
-1708 ms [log]     "memorysetup-bucket-allocator-block-count=1"
+1724 ms [log]     "memorysetup-bucket-allocator-block-count=1"
 
-1708 ms [log]     "memorysetup-main-allocator-block-size=16777216"
+1724 ms [log]     "memorysetup-main-allocator-block-size=16777216"
 
-1708 ms [log]     "memorysetup-thread-allocator-block-size=16777216"
+1724 ms [log]     "memorysetup-thread-allocator-block-size=16777216"
 
-1708 ms [log]     "memorysetup-gfx-main-allocator-block-size=16777216"
+1724 ms [log]     "memorysetup-gfx-main-allocator-block-size=16777216"
 
-1708 ms [log]     "memorysetup-gfx-thread-allocator-block-size=16777216"
+1724 ms [log]     "memorysetup-gfx-thread-allocator-block-size=16777216"
 
-1708 ms [log]     "memorysetup-cache-allocator-block-size=4194304"
+1724 ms [log]     "memorysetup-cache-allocator-block-size=4194304"
 
-1708 ms [log]     "memorysetup-typetree-allocator-block-size=2097152"
+1724 ms [log]     "memorysetup-typetree-allocator-block-size=2097152"
 
-1708 ms [log]     "memorysetup-profiler-bucket-allocator-granularity=16"
+1724 ms [log]     "memorysetup-profiler-bucket-allocator-granularity=16"
 
-1708 ms [log]     "memorysetup-profiler-bucket-allocator-bucket-count=8"
+1724 ms [log]     "memorysetup-profiler-bucket-allocator-bucket-count=8"
 
-1708 ms [log]     "memorysetup-profiler-bucket-allocator-block-size=4194304"
+1724 ms [log]     "memorysetup-profiler-bucket-allocator-block-size=4194304"
 
-1708 ms [log]     "memorysetup-profiler-bucket-allocator-block-count=1"
+1724 ms [log]     "memorysetup-profiler-bucket-allocator-block-count=1"
 
-1708 ms [log]     "memorysetup-profiler-allocator-block-size=16777216"
+1724 ms [log]     "memorysetup-profiler-allocator-block-size=16777216"
 
-1708 ms [log]     "memorysetup-profiler-editor-allocator-block-size=1048576"
+1724 ms [log]     "memorysetup-profiler-editor-allocator-block-size=1048576"
 
-1708 ms [log]     "memorysetup-temp-allocator-size-main=4194304"
+1724 ms [log]     "memorysetup-temp-allocator-size-main=4194304"
 
-1708 ms [log]     "memorysetup-job-temp-allocator-block-size=2097152"
+1724 ms [log]     "memorysetup-job-temp-allocator-block-size=2097152"
 
-1709 ms [log]     "memorysetup-job-temp-allocator-block-size-background=1048576"
+1724 ms [log]     "memorysetup-job-temp-allocator-block-size-background=1048576"
 
-1709 ms [log]     "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+1724 ms [log]     "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
 
-1731 ms [log] [Physics::Module] Initialized fallback backend.
+1747 ms [log] [Physics::Module] Initialized fallback backend.
 
-1731 ms [log] [Physics::Module] Id: 0xdecafbad
+1747 ms [log] [Physics::Module] Id: 0xdecafbad
 
-1731 ms [log] Loading player data from data.unity3d
+1749 ms [log] Loading player data from data.unity3d
 
-1736 ms [log] Initialize engine version: 6000.3.28f1 (8f082d2fe476)
+1752 ms [log] Initialize engine version: 6000.3.28f1 (8f082d2fe476)
 
-1737 ms [log] Creating WebGL 2.0 context.
-1756 ms [log] Renderer: WebKit WebGL
+1753 ms [log] Creating WebGL 2.0 context.
+1767 ms [log] Renderer: WebKit WebGL
 
-1756 ms [log] Vendor:   WebKit
+1767 ms [log] Vendor:   WebKit
 
-1756 ms [log] Version:  OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium))
+1767 ms [log] Version:  OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium))
 
-1757 ms [log] GLES:     3
+1767 ms [log] GLES:     3
 
-1757 ms [log]  EXT_clip_control EXT_color_buffer_float EXT_color_buffer_half_float EXT_conservative_depth EXT_depth_clamp EXT_disjoint_timer_query_webgl2 EXT_float_blend EXT_polygon_offset_clamp EXT_render_snorm EXT_texture_compression_bptc EXT_texture_compression_rgtc EXT_texture_filter_anisotropic EXT_texture_mirror_clamp_to_edge EXT_texture_norm16 KHR_parallel_shader_compile NV_shader_noperspective_interpolation OES_draw_buffers_indexed OES_sample_variables OES_shader_multisample_interpolation OES_texture_float_linear OVR_multiview2 WEBGL_blend_func_extended WEBGL_clip_cull_distance WEBGL_compressed_texture_s3tc WEBGL_compressed_texture_s3tc_srgb WEBGL_debug_renderer_info WEBGL_debug_shaders WEBGL_lose_context WEBGL_multi_draw WEBGL_polygon_mode WEBGL_provoking_vertex WEBGL_shader_pixel_local_storage WEBGL_stencil_texturing GL_EXT_clip_control GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_conservative_depth GL_EXT_depth_clamp GL_EXT_disjoint_timer_query_webgl2 GL_EXT_float_blend GL_EXT_polygon_offset_
+1767 ms [log]  EXT_clip_control EXT_color_buffer_float EXT_color_buffer_half_float EXT_conservative_depth EXT_depth_clamp EXT_disjoint_timer_query_webgl2 EXT_float_blend EXT_polygon_offset_clamp EXT_render_snorm EXT_texture_compression_bptc EXT_texture_compression_rgtc EXT_texture_filter_anisotropic EXT_texture_mirror_clamp_to_edge EXT_texture_norm16 KHR_parallel_shader_compile NV_shader_noperspective_interpolation OES_draw_buffers_indexed OES_sample_variables OES_shader_multisample_interpolation OES_texture_float_linear OVR_multiview2 WEBGL_blend_func_extended WEBGL_clip_cull_distance WEBGL_compressed_texture_s3tc WEBGL_compressed_texture_s3tc_srgb WEBGL_debug_renderer_info WEBGL_debug_shaders WEBGL_lose_context WEBGL_multi_draw WEBGL_polygon_mode WEBGL_provoking_vertex WEBGL_shader_pixel_local_storage WEBGL_stencil_texturing GL_EXT_clip_control GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_conservative_depth GL_EXT_depth_clamp GL_EXT_disjoint_timer_query_webgl2 GL_EXT_float_blend GL_EXT_polygon_offset_
 
-1757 ms [log] clamp GL_EXT_render_snorm GL_EXT_texture_compression_bptc GL_EXT_texture_compression_rgtc GL_EXT_texture_filter_anisotropic GL_EXT_texture_mirror_clamp_to_edge GL_EXT_texture_norm16 GL_KHR_parallel_shader_compile GL_NV_shader_noperspective_interpolation GL_OES_draw_buffers_indexed GL_OES_sample_variables GL_OES_shader_multisample_interpolation GL_OES_texture_float_linear GL_OVR_multiview2 GL_WEBGL_blend_func_extended GL_WEBGL_clip_cull_distance GL_WEBGL_compressed_texture_s3tc GL_WEBGL_compressed_texture_s3tc_srgb GL_WEBGL_debug_renderer_info GL_WEBGL_debug_shaders GL_WEBGL_lose_context GL_WEBGL_multi_draw GL_WEBGL_polygon_mode GL_WEBGL_provoking_vertex GL_WEBGL_shader_pixel_local_storage GL_WEBGL_stencil_texturing
+1767 ms [log] clamp GL_EXT_render_snorm GL_EXT_texture_compression_bptc GL_EXT_texture_compression_rgtc GL_EXT_texture_filter_anisotropic GL_EXT_texture_mirror_clamp_to_edge GL_EXT_texture_norm16 GL_KHR_parallel_shader_compile GL_NV_shader_noperspective_interpolation GL_OES_draw_buffers_indexed GL_OES_sample_variables GL_OES_shader_multisample_interpolation GL_OES_texture_float_linear GL_OVR_multiview2 GL_WEBGL_blend_func_extended GL_WEBGL_clip_cull_distance GL_WEBGL_compressed_texture_s3tc GL_WEBGL_compressed_texture_s3tc_srgb GL_WEBGL_debug_renderer_info GL_WEBGL_debug_shaders GL_WEBGL_lose_context GL_WEBGL_multi_draw GL_WEBGL_polygon_mode GL_WEBGL_provoking_vertex GL_WEBGL_shader_pixel_local_storage GL_WEBGL_stencil_texturing
 
-1759 ms [warning] WebGL: INVALID_ENUM: getInternalformatParameter: invalid internalformat
-1759 ms [warning] WebGL: INVALID_ENUM: getInternalformatParameter: invalid internalformat
-1759 ms [warning] WebGL: INVALID_ENUM: getInternalformatParameter: invalid internalformat
-1759 ms [warning] WebGL: INVALID_ENUM: getInternalformatParameter: invalid internalformat
-1759 ms [warning] WebGL: INVALID_ENUM: getInternalformatParameter: invalid internalformat
-1759 ms [warning] WebGL: INVALID_ENUM: getInternalformatParameter: invalid internalformat
-1764 ms [log] OPENGL LOG: Creating OpenGL ES 3.0 graphics device ; Context level  <OpenGL ES 3.0> ; Context handle 1
+1769 ms [warning] WebGL: INVALID_ENUM: getInternalformatParameter: invalid internalformat
+1769 ms [warning] WebGL: INVALID_ENUM: getInternalformatParameter: invalid internalformat
+1769 ms [warning] WebGL: INVALID_ENUM: getInternalformatParameter: invalid internalformat
+1770 ms [warning] WebGL: INVALID_ENUM: getInternalformatParameter: invalid internalformat
+1770 ms [warning] WebGL: INVALID_ENUM: getInternalformatParameter: invalid internalformat
+1770 ms [warning] WebGL: INVALID_ENUM: getInternalformatParameter: invalid internalformat
+1772 ms [log] OPENGL LOG: Creating OpenGL ES 3.0 graphics device ; Context level  <OpenGL ES 3.0> ; Context handle 1
 
-1793 ms [log] [Physics::Module] Selected backend.
+1801 ms [log] [Physics::Module] Selected backend.
 
-1793 ms [log] [Physics::Module] Name: PhysX
+1801 ms [log] [Physics::Module] Name: PhysX
 
-1793 ms [log] [Physics::Module] Id: 0xf2b8ea05
+1801 ms [log] [Physics::Module] Id: 0xf2b8ea05
 
-1793 ms [log] [Physics::Module] SDK Version: 4.1.2
+1801 ms [log] [Physics::Module] SDK Version: 4.1.2
 
-1793 ms [log] [Physics::Module] Integration Version: 1.0.0
+1801 ms [log] [Physics::Module] Integration Version: 1.0.0
 
-1793 ms [log] [Physics::Module] Threading Mode: Single-Threaded
+1801 ms [log] [Physics::Module] Threading Mode: Single-Threaded
 
-1843 ms [log] ERROR: Shader 
-1843 ms [log] Hidden/CoreSRP/CoreCopy shader is not supported on this GPU (none of subshaders/fallbacks are suitable)
+1850 ms [log] ERROR: Shader 
+1850 ms [log] Hidden/CoreSRP/CoreCopy shader is not supported on this GPU (none of subshaders/fallbacks are suitable)
 
-1843 ms [log] ERROR: Shader 
-1843 ms [log] Hidden/Universal Render Pipeline/StencilDitherMaskSeed shader is not supported on this GPU (none of subshaders/fallbacks are suitable)
+1850 ms [log] ERROR: Shader 
+1850 ms [log] Hidden/Universal Render Pipeline/StencilDitherMaskSeed shader is not supported on this GPU (none of subshaders/fallbacks are suitable)
 
-1844 ms [log] ERROR: Shader 
-1844 ms [log] Hidden/Universal/HDRDebugView shader is not supported on this GPU (none of subshaders/fallbacks are suitable)
+1851 ms [log] ERROR: Shader 
+1851 ms [log] Hidden/Universal/HDRDebugView shader is not supported on this GPU (none of subshaders/fallbacks are suitable)
 
-1859 ms [log] Input Manager initialize...
+1867 ms [log] Input Manager initialize...
 
-1883 ms [log] UnloadTime: 0.399999 ms
+1886 ms [log] UnloadTime: 0.300000 ms
 
-1888 ms [error] UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+1891 ms [error] UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
 
-1888 ms [error] UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
+1891 ms [error] UpdateVolumeStack must not be called before VolumeManager.instance.Initialize. If you tries calling this from Awake or Start, try instead to use the RenderPipelineManager.activeRenderPipelineCreated callback to be sure your render pipeline is fully initialized before calling this.
 
-1900 ms [info] [croquis] unity:instancia 1891 ms
-2034 ms [info] [croquis] unity:listo 2025 ms
-2048 ms [info] [croquis] unity:solver 2038 ms
-2864 ms [info] [croquis] unity:solver_listo 2855 ms
-2907 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2908 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2909 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2910 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2911 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2912 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2912 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2913 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2913 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2918 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2919 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2919 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2920 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2921 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2922 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2923 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2923 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2925 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2925 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2926 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2928 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2928 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2929 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
+1902 ms [info] [croquis] unity:instancia 1897 ms
+2025 ms [info] [croquis] unity:listo 2019 ms
+2034 ms [info] [croquis] unity:solver 2028 ms
+2889 ms [info] [croquis] unity:solver_listo 2883 ms
 2930 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2931 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
@@ -357,21 +311,19 @@
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2932 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-2933 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+2934 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+2934 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+2934 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2934 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2935 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-2935 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2936 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2938 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2938 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
 2939 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+2940 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2940 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
@@ -389,25 +341,33 @@
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2946 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-2947 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+2946 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-2947 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+2948 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2948 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2949 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-2949 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+2950 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2950 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-2955 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+2951 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+2952 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+2952 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+2953 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+2954 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+2954 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2955 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2956 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2957 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2957 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
@@ -419,37 +379,59 @@
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2961 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
+2961 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
 2962 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-2963 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+2962 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2963 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2964 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
+2965 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+2965 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
 2966 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-2970 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+2967 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+2967 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+2968 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+2969 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+2969 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2970 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2971 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
+2972 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+2972 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
 2973 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2974 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-2974 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+2975 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+2975 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2976 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
+2977 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
 2978 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
+2979 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+2980 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
 2981 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2982 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2983 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2984 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
@@ -457,35 +439,25 @@
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2986 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-2987 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2988 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2989 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2989 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+2990 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2991 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2991 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-2992 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2993 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-2994 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
 2995 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-2996 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
 2997 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+2998 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 2999 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 3000 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 3001 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3002 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 3003 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
@@ -499,23 +471,29 @@
  The policy is report-only, so the violation has been logged but no further action has been taken.
 3008 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-3009 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+3010 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 3010 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 3011 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
+3012 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3013 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3015 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
 3016 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 3018 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-3019 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-3019 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+3020 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 3021 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-3021 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+3022 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3024 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 3024 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
@@ -525,51 +503,73 @@
  The policy is report-only, so the violation has been logged but no further action has been taken.
 3027 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-3028 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
 3029 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-3030 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-3031 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-3032 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 3034 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-3037 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+3036 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 3037 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3038 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3039 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 3040 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-3041 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
-3041 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
- The policy is report-only, so the violation has been logged but no further action has been taken.
 3042 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-3055 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+3043 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3044 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3045 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3046 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3047 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3048 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3049 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3050 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3053 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3056 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3056 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
 3057 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-3057 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+3058 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
  The policy is report-only, so the violation has been logged but no further action has been taken.
-3066 ms [info] [croquis] unity:cargar_caso 3057 ms
-3075 ms [debug] [croquis] paquete-3d (265766 bytes)
-3289 ms [warning] [UnityCache] Response is served without Content-Length header. Please reconfigure server to include valid Content-Length for better download performance.
-3313 ms [warning] [UnityCache] Response is served without Content-Length header. Please reconfigure server to include valid Content-Length for better download performance.
-3986 ms [log] [daño] veh-a C1–C6 (cm) solver 2.8 16.8 56.1 56.1 16.8 2.8 · en la malla 3.2 18.1 53.6 54.9 18.1 3.3 · el solver donde se midió 3.3 17.8 54.5 54.5 17.8 3.3
+3059 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3059 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3064 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3066 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3066 ms [info] Evaluating a string as JavaScript violates the following Content Security Policy directive because 'unsafe-eval' is not an allowed source of script: "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://*.public.blob.vercel-storage.com".
+ The policy is report-only, so the violation has been logged but no further action has been taken.
+3075 ms [info] [croquis] unity:cargar_caso 3069 ms
+3085 ms [debug] [croquis] paquete-3d (265766 bytes)
+3300 ms [warning] [UnityCache] Response is served without Content-Length header. Please reconfigure server to include valid Content-Length for better download performance.
+3324 ms [warning] [UnityCache] Response is served without Content-Length header. Please reconfigure server to include valid Content-Length for better download performance.
+3978 ms [log] [daño] veh-a C1–C6 (cm) solver 2.8 16.8 56.1 56.1 16.8 2.8 · en la malla 3.2 18.1 53.6 54.9 18.1 3.3 · el solver donde se midió 3.3 17.8 54.5 54.5 17.8 3.3
 
-4460 ms [log] [carga] leer_sobre 2.2 ms, leer_paquete 192.6 ms, caracteres_paquete 265766 ms, vehiculos 718.4 ms, cielo 718.4 ms, escenario 934.7 ms, caso_y_terreno 941 ms, estacionados_y_personas 941.8 ms, antes_de_unir_sombras 971.8 ms, sombras_unidas 973.7 ms, piso 973.8 ms, total 974 ms, primer_cuadro 1179.9 ms, segundo_cuadro 1186.9 ms
+4434 ms [log] [carga] leer_sobre 2.3 ms, leer_paquete 191 ms, caracteres_paquete 265766 ms, vehiculos 700.7 ms, cielo 700.7 ms, escenario 908.9 ms, caso_y_terreno 915.2 ms, estacionados_y_personas 915.9 ms, antes_de_unir_sombras 944.7 ms, sombras_unidas 946.7 ms, piso 946.9 ms, total 946.9 ms, primer_cuadro 1146.1 ms, segundo_cuadro 1151.9 ms
 
-4571 ms [info] [croquis] unity:caso_cargado 4562 ms
-4609 ms [info] [croquis] unity:solver 4599 ms
-4616 ms [info] [croquis] unity:solver_listo 4607 ms
-4644 ms [info] [croquis] unity:cargar_caso 4635 ms
-4653 ms [debug] [croquis] paquete-3d (266464 bytes)
-5271 ms [log] [daño] veh-a C1–C6 (cm) solver 2.8 16.8 56.1 56.1 16.8 2.8 · en la malla 3.2 18.1 53.6 54.9 18.1 3.3 · el solver donde se midió 3.3 17.8 54.5 54.5 17.8 3.3
+4546 ms [info] [croquis] unity:caso_cargado 4540 ms
+4577 ms [info] [croquis] unity:solver 4571 ms
+4584 ms [info] [croquis] unity:solver_listo 4578 ms
+4609 ms [info] [croquis] unity:cargar_caso 4604 ms
+4619 ms [debug] [croquis] paquete-3d (266464 bytes)
+5213 ms [log] [daño] veh-a C1–C6 (cm) solver 2.8 16.8 56.1 56.1 16.8 2.8 · en la malla 3.2 18.1 53.6 54.9 18.1 3.3 · el solver donde se midió 3.3 17.8 54.5 54.5 17.8 3.3
 
-5408 ms [log] [carga] leer_sobre 0.9 ms, leer_paquete 111.9 ms, caracteres_paquete 266464 ms, vehiculos 508.7 ms, cielo 508.7 ms, escenario 576.8 ms, caso_y_terreno 579.5 ms, estacionados_y_personas 579.5 ms, antes_de_unir_sombras 606.2 ms, sombras_unidas 608.7 ms, piso 608.7 ms, total 608.8 ms, primer_cuadro 637.6 ms, segundo_cuadro 643.4 ms
+5339 ms [log] [carga] leer_sobre 0.8 ms, leer_paquete 103.5 ms, caracteres_paquete 266464 ms, vehiculos 492.6 ms, cielo 492.7 ms, escenario 556.6 ms, caso_y_terreno 559.3 ms, estacionados_y_personas 559.4 ms, antes_de_unir_sombras 586 ms, sombras_unidas 588.3 ms, piso 588.3 ms, total 588.4 ms, primer_cuadro 610.3 ms, segundo_cuadro 616.9 ms
 
-5411 ms [info] [croquis] unity:caso_cargado 5402 ms
+5342 ms [info] [croquis] unity:caso_cargado 5337 ms
