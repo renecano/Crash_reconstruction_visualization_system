@@ -1,7 +1,7 @@
 # Paso: video-3d
 # Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues video-3d
 # Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
-# Inicio: 2026-11-26 19:23:29
+# Inicio: 2026-11-26 19:31:47
 
 
 == 1. Herramientas
@@ -12,7 +12,7 @@ Hay internet.
 Scope: all 10 workspace projects
 ✓ Lockfile passes supply-chain policies (verified 7h ago)
 Lockfile is up to date, resolution step is skipped
-Done in 81ms using pnpm v12.11.2
+Done in 79ms using pnpm v12.11.2
 
 == 3. El visor de Unity, desde esta computadora
 Visor dd83b2d323f5ed0e servido desde el sitio: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\public\visor-unity\local
@@ -30,10 +30,17 @@ Video del 3D en chrome...
 
 Running 1 test using 1 worker
 
-  x  1 [chromium] › e2e\video-3d-real.spec.ts:29:5 › video del 3D con el Unity real (chrome) (3.5m)
+  ok 1 [chromium] › e2e\video-3d-real.spec.ts:29:5 › video del 3D con el Unity real (chrome) (44.0s)
+
+  1 passed (45.1s)
+Video del 3D en msedge...
+
+Running 1 test using 1 worker
+
+  x  1 [chromium] › e2e\video-3d-real.spec.ts:29:5 › video del 3D con el Unity real (msedge) (1.2m)
 
 
-  1) [chromium] › e2e\video-3d-real.spec.ts:29:5 › video del 3D con el Unity real (chrome) ─────────
+  1) [chromium] › e2e\video-3d-real.spec.ts:29:5 › video del 3D con el Unity real (msedge) ─────────
 
     Test was interrupted.
 
@@ -51,10 +58,10 @@ Running 1 test using 1 worker
       54 |   const segundos = Math.round((Date.now() - t0) / 100) / 10;
         at C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\e2e\video-3d-real.spec.ts:51:10
 
-    Error Context: test-results\video-3d-real-video-del-3D-con-el-Unity-real-chrome--chromium\error-context.md
+    Error Context: test-results\video-3d-real-video-del-3D-con-el-Unity-real-msedge--chromium\error-context.md
 
   1 interrupted
-    [chromium] › e2e\video-3d-real.spec.ts:29:5 › video del 3D con el Unity real (chrome) ──────────
+    [chromium] › e2e\video-3d-real.spec.ts:29:5 › video del 3D con el Unity real (msedge) ──────────
 ¿Desea terminar el trabajo por lotes (S/N)? Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
 
   × "pnpm recursive exec" failed in C:\Users\MrKan\Documents\Proyecto
