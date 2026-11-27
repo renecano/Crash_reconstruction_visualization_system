@@ -1,7 +1,7 @@
 # Paso: narraciones-42
 # Comando: powershell -NoProfile -Command "$env:CROQUIS_AUDITORIA='nuevas'; $env:CROQUIS_DE_NUEVO='1'; pnpm --filter @croquis/web exec vitest run src/lib/auditoria; node eval/auditoria_cadena_resumen.mjs"
 # Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
-# Inicio: 2026-11-27 15:46:07
+# Inicio: 2026-11-27 16:40:52
 
 [33m(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
   - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
@@ -9,18 +9,18 @@ Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.[39m
 
 [1m[30m[46m RUN [49m[39m[22m [36mv5.0.3 [39m[90mC:/Users/MrKan/Documents/Proyecto Cesvi/Croquis/apps/web[39m
 
- [32m✓[39m src/lib/auditoria/memoria.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 2[2mms[22m[39m
+ [32m✓[39m src/lib/auditoria/memoria.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 6[2mms[22m[39m
  [2m[90m↓[39m[22m src/lib/auditoria/nombres-confusos.test.ts [2m([22m[2m1 test[22m[2m | [22m[33m1 skipped[39m[2m)[22m
  [2m[90m↓[39m[22m src/lib/auditoria/comparar-escena.test.ts [2m([22m[2m1 test[22m[2m | [22m[33m1 skipped[39m[2m)[22m
- [32m✓[39m src/lib/auditoria/cadena-reglas.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 2[2mms[22m[39m
- [32m✓[39m src/lib/auditoria/auditoria.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 281325[2mms[22m[39m
+ [32m✓[39m src/lib/auditoria/cadena-reglas.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m src/lib/auditoria/auditoria.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 90583[2mms[22m[39m
    [32m✓[39m la revisión sistemática de la cadena [2m(1)[22m
-     [33m[2m✓[22m[39m revisa cada caso de la narración al paquete 3D[33m 281325[2mms[22m[39m
+     [33m[2m✓[22m[39m revisa cada caso de la narración al paquete 3D[33m 90582[2mms[22m[39m
 
 [2m Test Files [22m [1m[32m3 passed[39m[22m[2m | [22m[33m2 skipped[39m[90m (5)[39m
 [2m      Tests [22m [1m[32m6 passed[39m[22m[2m | [22m[33m2 skipped[39m[90m (8)[39m
-[2m   Start at [22m 15:46:09
-[2m   Duration [22m 287.21s[2m (tests 92%, environment 4%, transform 1%, setup 1%, import 1%)[22m
+[2m   Start at [22m 16:40:54
+[2m   Duration [22m 97.35s[2m (tests 78%, environment 10%, transform 6%, import 4%, setup 2%)[22m
 
 prueba 205 {
   'escena.sin_pose': 1,
@@ -51,4 +51,4 @@ nuevas 42 {
 }
 ejemplos 5 { 'final.no_leido': 4 }
 
-# Fin: 2026-11-27 15:50:56 · ok · 4.8 min
+# Fin: 2026-11-27 16:42:32 · ok · 1.7 min
