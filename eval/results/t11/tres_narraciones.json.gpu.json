@@ -1,0 +1,25 @@
+﻿{
+    "descripcion":  "Uso del motor 3D de la GPU por los procesos de Chrome y Edge, por tarjeta (contadores de Windows). La que mÃ¡s usa es la que dibujÃ³.",
+    "fecha":  "2026-11-27T15:56:38",
+    "muestras":  27,
+    "dibujo_en":  "NVIDIA GeForce RTX 4070 Laptop GPU",
+    "tarjetas":  [
+                     {
+                         "tarjeta":  "NVIDIA GeForce RTX 4070 Laptop GPU",
+                         "luid":  "0x00000000_0x00015c40",
+                         "uso_3d_medio":  7.3,
+                         "uso_3d_maximo":  31
+                     },
+                     {
+                         "tarjeta":  "Intel(R) UHD Graphics",
+                         "luid":  "0x00000000_0x00015839",
+                         "uso_3d_medio":  0,
+                         "uso_3d_maximo":  0
+                     }
+                 ],
+    "todas":  [
+                  "Intel(R) UHD Graphics",
+                  "Microsoft Basic Render Driver",
+                  "NVIDIA GeForce RTX 4070 Laptop GPU"
+              ]
+}
