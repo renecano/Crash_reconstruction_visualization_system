@@ -188,6 +188,9 @@ namespace Croquis.Core
 
         /// <summary>La zona vertical del CDC, o nulo.</summary>
         public char? ZonaVertical;
+
+        /// <summary>La dirección de la fuerza principal en horas de reloj (12 de frente, 3 desde la derecha), o nulo.</summary>
+        public double? PdofHoras;
     }
 
     /// <summary>
@@ -200,6 +203,199 @@ namespace Croquis.Core
         public const double Caida = 0.15;
 
         private const double Arruga = 0.03;
+
+        /// <summary>
+        /// Los pliegues de la lámina aplastada, como fracción de c(u). Van en el plano de la cara (arriba
+        /// y abajo, y a lo largo), nunca hacia adentro: la profundidad sigue siendo la del solver.
+        /// </summary>
+        public const double Pliegue = 0.12;
+
+        /// <summary>La distancia entre pliegues, hacia adentro de la cara (m).</summary>
+        public const double LargoPliegue = 0.18;
+
+        /// <summary>El arrastre de lado por la PDOF, como mucho esta fracción de c(u) (unos 27°).</summary>
+        public const double CizallaMaxima = 0.5;
+
+        private readonly double cizalla;
+
+        // El frente real del vehículo por columna a lo largo de la cara, a la altura del golpe: la profundidad de cada
+        // punto se cuenta desde ahí y no desde la cara recta de la caja. Sin él, en un frente redondeado
+        // las esquinas quedaban detrás de la caja y recibían menos de C (René, 2026-11-26).
+        private Dictionary<long, double> frente;
+
+        // Para medir: la superficie por columna y altura (8 cm), para quedarse con la lámina de afuera aunque
+        // otra pieza (una salpicadera) sobresalga en la misma columna.
+        private Dictionary<(long, long), double> superficie;
+
+        // Las medidas del vehículo cuentan los espejos; la carrocería del modelo, a la altura del golpe, es
+        // más angosta. Las estaciones C1–C6 se reparten sobre la carrocería real: u del modelo × escalaU
+        // es u del solver (1 sin `FijarFrente`; nunca menos de 1 ni más de 1.15).
+        private readonly double mitadNominal;
+        private double escalaU = 1.0;
+        private const double CubetaU = 0.03;
+
+        /// <summary>
+        /// Toma el frente real de la carrocería (en el marco del daño) de su superficie: cada triángulo se
+        /// muestrea cada 3 cm. Con solo los vértices no basta: en estos modelos una fascia es un cuadro
+        /// con vértices nada más en las orillas, y en medio el «frente» salía de una pieza de adentro.
+        /// </summary>
+        public void FijarFrente(IList<V3> vertices, IList<int> triangulos)
+        {
+            frente = new Dictionary<long, double>();
+            superficie = new Dictionary<(long, long), double>();
+            var mitadReal = 0.0;
+            void Poner(V3 p)
+            {
+                var clave = ((long)Math.Floor(p.Punto(aLoLargo) / CubetaU), (long)Math.Floor(p.Y / 0.08));
+                var s0 = p.Punto(afuera);
+                superficie[clave] = superficie.TryGetValue(clave, out var m0) ? Math.Max(m0, s0) : s0;
+
+                // Solo a la altura del golpe (la banda de la estructura): el parabrisas o el techo, aunque
+                // miren al frente, están detrás de la fascia y no son el frente.
+                if (p.Y < Banda0 || p.Y > Banda1)
+                {
+                    return;
+                }
+
+                mitadReal = Math.Max(mitadReal, Math.Abs(p.Punto(aLoLargo)));
+                var llave = (long)Math.Floor(p.Punto(aLoLargo) / CubetaU);
+                var a = p.Punto(afuera);
+                frente[llave] = frente.TryGetValue(llave, out var m) ? Math.Max(m, a) : a;
+            }
+
+            foreach (var p in vertices)
+            {
+                Poner(p);
+            }
+
+            for (var t = 0; t + 2 < triangulos.Count; t += 3)
+            {
+                var a = vertices[triangulos[t]];
+                var b = vertices[triangulos[t + 1]];
+                var c = vertices[triangulos[t + 2]];
+                var lado = Math.Max((a + b * -1).Largo, Math.Max((b + c * -1).Largo, (c + a * -1).Largo));
+                var n = (int)Math.Min(200, Math.Ceiling(lado / CubetaU));
+                for (var i = 0; i <= n && n > 1; i++)
+                {
+                    for (var j = 0; i + j <= n; j++)
+                    {
+                        var wa = (double)i / n;
+                        var wb = (double)j / n;
+                        Poner(a * wa + b * wb + c * (1.0 - wa - wb));
+                    }
+                }
+            }
+
+            escalaU = mitadReal > 0.0 ? Math.Max(1.0, Math.Min(1.15, mitadNominal / mitadReal)) : 1.0;
+        }
+
+        private double SuperficieEn(double u, double y)
+        {
+            var mejor = double.NegativeInfinity;
+            var iu = (long)Math.Floor(u / CubetaU);
+            var iy = (long)Math.Floor(y / 0.08);
+            for (var dy = -1; dy <= 1; dy++)
+            {
+                if (superficie != null && superficie.TryGetValue((iu, iy + dy), out var m))
+                {
+                    mejor = Math.Max(mejor, m);
+                }
+            }
+
+            return double.IsNegativeInfinity(mejor) ? CaraEn(u, y) : mejor;
+        }
+
+        /// <summary>Dónde está el frente en la columna u (a la altura del golpe; `y` no cuenta): el real si se tomó, si no la cara de la caja.</summary>
+        public double CaraEn(double u, double y)
+        {
+            if (frente == null)
+            {
+                return cara;
+            }
+
+            var iu = (long)Math.Floor(u / CubetaU);
+            var mejor = double.NegativeInfinity;
+            // Primero su propia columna; solo si está vacía, las de al lado.
+            for (var anillo = 0; anillo <= 2 && double.IsNegativeInfinity(mejor); anillo++)
+            {
+                foreach (var du in anillo == 0 ? new[] { 0 } : new[] { -anillo, anillo })
+                {
+                    if (frente.TryGetValue(iu + du, out var m))
+                    {
+                        mejor = Math.Max(mejor, m);
+                    }
+                }
+            }
+
+            return double.IsNegativeInfinity(mejor) ? cara : mejor;
+        }
+
+        /// <summary>
+        /// Cuánto se hundió de verdad la lámina en cada estación C1–C6 (m): el promedio de lo que bajaron,
+        /// hacia adentro de la cara, los vértices de la superficie del frente (a 2.5 cm del frente real) en la
+        /// franja central de la banda de medición y a ±2.5 cm de la estación (hasta ±12 cm si ahí no hay lámina). Es lo que mide CRASH3: cuánto se movió la superficie
+        /// en ese punto. Mismo orden de vértices en `antes` y `despues` (marco del daño); NaN si en una
+        /// estación no hay lámina. `pedidoAlli`: lo que pide el perfil del solver en esos mismos puntos
+        /// (en la orilla de un modelo redondeado, la lámina más cercana puede quedar unos cm adentro).
+        /// </summary>
+        public double[] MedirEnMalla(IList<V3> antes, IList<V3> despues, out double[] pedidoAlli)
+        {
+            var medido = new double[6];
+            pedidoAlli = new double[6];
+            // La franja central de la banda, como `MedirPerfil`: en sus orillas el campo pasa suave a cero.
+            var mitad = (Banda0 + Banda1) / 2.0;
+            var banda = Math.Max(0.05, Math.Min(0.15, (Banda1 - Banda0) / 2.0));
+            for (var k = 0; k < 6; k++)
+            {
+                var uk = Estacion(k);
+                medido[k] = double.NaN;
+                pedidoAlli[k] = double.NaN;
+                // En la orilla, la carrocería del modelo puede ser más angosta que el ancho del vehículo (que
+                // cuenta los espejos): la ventana se abre hasta 12 cm para llegar a la lámina más cercana.
+                foreach (var ventana in new[] { 0.025, 0.05, 0.08, 0.12 })
+                {
+                    var suma = 0.0;
+                    var pide = 0.0;
+                    var n = 0;
+                    for (var i = 0; i < antes.Count; i++)
+                    {
+                        var p = antes[i];
+                        var u = p.Punto(aLoLargo);
+                        // C1 y C6 están en la orilla del ancho dañado: se miden solo hacia adentro, donde rige el perfil.
+                        var afueraDelAncho = (k == 0 && u > uk + 0.002) || (k == 5 && u < uk - 0.002);
+                        if (afueraDelAncho || Math.Abs(u - uk) > ventana || Math.Abs(p.Y - mitad) > banda || p.Punto(afuera) < SuperficieEn(u, p.Y) - 0.025 || p.Punto(afuera) < CaraEn(u, p.Y) - 0.15)
+                        {
+                            continue;
+                        }
+
+                        suma += p.Punto(afuera) - despues[i].Punto(afuera);
+                        pide += Aplastamiento(u * escalaU);
+                        n++;
+                    }
+
+                    if (n > 0)
+                    {
+                        medido[k] = suma / n;
+                        pedidoAlli[k] = pide / n;
+                        break;
+                    }
+                }
+            }
+
+            return medido;
+        }
+
+        /// <summary>Dónde va la estación Ck (k de 0 a 5) a lo largo de la cara.</summary>
+        public double Estacion(int k)
+        {
+            return (entrada.Centro + (0.5 - k / 5.0) * entrada.Ancho) / escalaU;
+        }
+
+        /// <summary>El frente real antes del golpe en la estación Ck, dentro de la banda de medición (o la cara de la caja).</summary>
+        public double FrenteEnEstacion(int k)
+        {
+            return CaraEn(Estacion(k), (Banda0 + Banda1) / 2.0);
+        }
 
         private readonly EntradaDano entrada;
         private readonly double cara;
@@ -237,6 +433,8 @@ namespace Croquis.Core
                     throw new ArgumentException("El daño visual solo existe en las caras F, B, L y R.");
             }
 
+            mitadNominal = entrada.Lado == 'F' || entrada.Lado == 'B' ? m.Ancho / 2.0 : m.Largo / 2.0;
+            cizalla = Cizalla(entrada.PdofHoras, afuera, aLoLargo);
             RangoVertical(entrada.ZonaVertical, clase, m, out y0, out y1);
             BandaMedicion(entrada.ZonaVertical, clase, m, out var b0, out var b1);
             Banda0 = b0;
@@ -246,7 +444,37 @@ namespace Croquis.Core
         public double Banda0 { get; }
         public double Banda1 { get; }
         public V3 Afuera => afuera;
+
+        /// <summary>El perfil C1–C6 del solver (m).</summary>
+        public double[] Perfil => entrada.Perfil;
         public V3 ALoLargo => aLoLargo;
+
+        /// <summary>Cuánto se arrastra la lámina a lo largo de la cara por cada metro que se hunde.</summary>
+        public double CizallaPorMetro => cizalla;
+
+        /// <summary>
+        /// De la PDOF al arrastre de lado: la fuerza empuja hacia adentro y, si llega oblicua, también a lo
+        /// largo de la cara. Es la tangente del ángulo entre la fuerza y la normal hacia adentro, acotada a
+        /// `CizallaMaxima`; 0 sin PDOF o si la fuerza no entra por esta cara.
+        /// </summary>
+        public static double Cizalla(double? pdofHoras, V3 afuera, V3 aLoLargo)
+        {
+            if (!pdofHoras.HasValue || double.IsNaN(pdofHoras.Value))
+            {
+                return 0.0;
+            }
+
+            // De dónde viene la fuerza (x adelante, z a la derecha); empuja hacia el lado contrario.
+            var a = pdofHoras.Value * Math.PI / 6.0;
+            var empuje = new V3(-Math.Cos(a), 0, -Math.Sin(a));
+            var normal = -empuje.Punto(afuera);
+            if (normal < 0.3)
+            {
+                return 0.0;
+            }
+
+            return Math.Max(-CizallaMaxima, Math.Min(CizallaMaxima, empuje.Punto(aLoLargo) / normal));
+        }
 
         private static double Paso(double a, double b, double x)
         {
@@ -280,18 +508,18 @@ namespace Croquis.Core
         /// <summary>El desplazamiento de un punto, sin arrugas; también su peso y su c(u).</summary>
         public V3 Desplazamiento(V3 p, out double peso, out double c)
         {
-            c = Aplastamiento(p.Punto(aLoLargo));
+            c = Aplastamiento(p.Punto(aLoLargo) * escalaU);
             if (c <= 0.0)
             {
                 peso = 0.0;
                 return new V3(0, 0, 0);
             }
 
-            var profundidad = Math.Max(0.0, cara - p.Punto(afuera));
+            var profundidad = Math.Max(0.0, CaraEn(p.Punto(aLoLargo), p.Y) - p.Punto(afuera));
             var w = 1.0 - Paso(0.0, 1.6 * c + 0.3, profundidad);
             var m = Paso(y0 - 0.1, y0 + 0.1, p.Y) * (1.0 - Paso(y1 - 0.1, y1 + 0.1, p.Y));
             peso = m * w;
-            return afuera * (-c * peso);
+            return afuera * (-c * peso) + aLoLargo * (cizalla * c * peso);
         }
 
         /// <summary>
@@ -392,10 +620,43 @@ namespace Croquis.Core
             for (var i = 0; i < vertices.Length; i++)
             {
                 var id = ids[i];
-                salida[i] = principal[id] + new V3(ruido[3 * id], ruido[3 * id + 1], ruido[3 * id + 2]);
+                salida[i] = principal[id] + new V3(ruido[3 * id], ruido[3 * id + 1], ruido[3 * id + 2]) + Pliegues(vertices[i], peso[id], semilla);
             }
 
             return salida;
+        }
+
+        /// <summary>
+        /// Los pliegues de acordeón de un punto (ronda final, Alberto 2026-11-26: «a gran velocidad, que se
+        /// vea deshecho, solo hasta donde dice el cálculo»). Crecen con c(u) y casi no aparecen en un
+        /// raspón: con 3 cm no hay; desde 15 cm, completos. Solo mueven la lámina arriba y abajo y a lo
+        /// largo de la cara, así que el perfil que se mide hacia adentro no cambia.
+        /// </summary>
+        public V3 Pliegues(V3 p, double peso, int semilla)
+        {
+            if (peso <= 0.0)
+            {
+                return new V3(0, 0, 0);
+            }
+
+            var c = Aplastamiento(p.Punto(aLoLargo) * escalaU);
+            var a = Pliegue * c * peso * Paso(0.03, 0.15, c);
+            if (a <= 0.0)
+            {
+                return new V3(0, 0, 0);
+            }
+
+            var hacia = Math.Max(0.0, CaraEn(p.Punto(aLoLargo), p.Y) - p.Punto(afuera));
+            // Solo en lo que de verdad se aplastó: de la cara a poco más de C hacia adentro.
+            a *= 1.0 - Paso(0.6 * c, c + 0.25, hacia);
+            if (a <= 0.0)
+            {
+                return new V3(0, 0, 0);
+            }
+
+            var u = p.Punto(aLoLargo);
+            var fase = 2.0 * Math.PI * hacia / LargoPliegue + 3.0 * Ruido(u * 2.5, p.Y * 2.5, 5.0, semilla);
+            return new V3(0, a * Math.Sin(fase), 0) + aLoLargo * (0.5 * a * Math.Cos(0.7 * fase + 1.3));
         }
 
         /// <summary>

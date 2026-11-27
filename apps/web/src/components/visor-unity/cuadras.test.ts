@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { distanceToRoad } from "@croquis/viewer/puro";
-import { ANCHO_BANQUETA_M, enElCaso, planCuadras, RADIO_FONDO_M, zonasDelCaso } from "./cuadras";
+import {
+  ANCHO_BANQUETA_M,
+  dentroDe,
+  enElCaso,
+  islasDeGlorieta,
+  planCuadras,
+  RADIO_FONDO_M,
+  zonasDelCaso,
+} from "./cuadras";
 
 /** Un cruce de dos calles de 7 m, de 240 m cada una. */
 const CRUCE = [
@@ -97,5 +105,56 @@ describe("lo que recorre el caso queda libre (U6)", () => {
     expect(con.lotes.length).toBeLessThan(sin.lotes.length);
     expect(enElCaso(zonas, { x: 6, y: 8 })).toBe(true);
     expect(enElCaso(zonas, { x: 6, y: 30 })).toBe(false);
+  });
+});
+
+describe("islasDeGlorieta", () => {
+  /** Un arco de la glorieta de radio `r` (m), de `a0` a `a1` grados, en `n` tramos. */
+  const arco = (r: number, a0: number, a1: number, n = 8) => ({
+    puntos: Array.from({ length: n + 1 }, (_, k) => {
+      const a = ((a0 + ((a1 - a0) * k) / n) * Math.PI) / 180;
+      return { x: r * Math.cos(a), y: r * Math.sin(a) };
+    }),
+  });
+  /** Una calle recta de `p` a `q`. */
+  const recta = (p: [number, number], q: [number, number]) => ({
+    puntos: [
+      { x: p[0], y: p[1] },
+      { x: q[0], y: q[1] },
+    ],
+  });
+
+  it("reconoce el anillo de una glorieta partido en cuatro vías, con sus calles que llegan", () => {
+    const r = 40;
+    const vias = [
+      arco(r, 0, 90),
+      arco(r, 90, 180),
+      arco(r, 180, 270),
+      arco(r, 270, 360),
+      recta([r, 0], [200, 0]),
+      recta([0, r], [0, 200]),
+      recta([-r, 0], [-200, 0]),
+      recta([0, -r], [0, -200]),
+    ];
+    const islas = islasDeGlorieta(vias);
+    expect(islas).toHaveLength(1);
+    expect(dentroDe({ x: 0, y: 0 }, islas[0]!)).toBe(true);
+    expect(dentroDe({ x: 10, y: -12 }, islas[0]!)).toBe(true);
+    expect(dentroDe({ x: 60, y: 60 }, islas[0]!)).toBe(false);
+  });
+
+  it("una vía cerrada redonda también es glorieta", () => {
+    expect(islasDeGlorieta([arco(25, 0, 360, 24)])).toHaveLength(1);
+  });
+
+  it("una manzana (cuatro calles en cuadro) no es glorieta: tiene esquinas", () => {
+    const manzana = [
+      recta([0, 0], [100, 0]),
+      recta([100, 0], [100, 100]),
+      recta([100, 100], [0, 100]),
+      recta([0, 100], [0, 0]),
+    ];
+    expect(islasDeGlorieta(manzana)).toEqual([]);
+    expect(islasDeGlorieta(CRUCE.map((c) => recta([c.a.x, c.a.y], [c.b.x, c.b.y])))).toEqual([]);
   });
 });

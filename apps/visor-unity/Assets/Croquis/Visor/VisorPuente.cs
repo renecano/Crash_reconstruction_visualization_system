@@ -15,7 +15,7 @@ namespace Croquis.Visor
     public sealed class VisorPuente : MonoBehaviour
     {
         /// <summary>La versión del contrato: debe coincidir con VISOR_PUENTE_VERSION.</summary>
-        public const string Version = "1.3.0";
+        public const string Version = "1.4.0";
 
         private const float SegundosPorReporteFps = 5f;
         private const float SegundosPorReporteTiempo = 0.1f;
@@ -177,6 +177,15 @@ namespace Croquis.Visor
         public void marcadores(string texto)
         {
             Campos(texto, j => visor.Marcadores((bool)j["visibles"]));
+        }
+
+        /// <summary>
+        /// 1.4.0: muestra u oculta la leyenda ilustrativa de Unity. La web la oculta solo mientras pone la
+        /// suya completa encima del 3D (Presentar); al cargar un caso vuelve a mostrarse.
+        /// </summary>
+        public void leyenda(string texto)
+        {
+            Campos(texto, j => visor.LeyendaVisible = (bool)j["visible"]);
         }
 
         /// <summary>
