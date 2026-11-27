@@ -525,6 +525,7 @@ namespace Croquis.Visor
             // mensaje gana al del paquete.
             conEscenario = e != null;
             terrenoDelCaso = terreno;
+            Camara.Terreno = terreno;
             var pedido = hayPisoPendiente ? pisoPendiente : caso.Piso;
             hayPisoPendiente = false;
             pisoPendiente = null;
