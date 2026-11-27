@@ -1,7 +1,7 @@
 {
   "formato": "croquis-caso",
   "version": 1,
-  "guardado": "2026-11-27T21:08:43.940Z",
+  "guardado": "2026-11-27T21:54:02.657Z",
   "narracion": "El hecho se ubica en la Avenida Valle Alto, entre la Calle Encino y la Calle Nogal, colonia Privada Valle Alto, municipio de Monterrey, Nuevo León, aproximadamente a las 21:45 horas. La avenida consta de un arroyo de tres carriles con sentido de Sur a Norte, de concreto hidráulico, con iluminación artificial funcionando y semáforo en el cruce con la Calle Nogal. Al momento del hecho se registraba lluvia ligera y la carpeta se encontraba mojada.\n\nSe examinan tres vehículos de servicio particular que se encontraban en el carril central: el vehículo A, marca Ford, tipo Ranger, modelo 2012, color negro; el vehículo B, marca Toyota, tipo Corolla, modelo 2019, color blanco; y el vehículo C, marca Chevrolet, tipo Aveo, modelo 2015, color rojo. El vehículo B y el vehículo C se encontraban detenidos por el semáforo en rojo, el vehículo C delante del vehículo B; el vehículo A circulaba detrás de ellos. El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás sobre defensa, parrilla y cofre. El vehículo B presenta en su parte posterior un hundimiento de atrás hacia adelante sobre defensa, cajuela y calaveras, y en su parte frontal un hundimiento de adelante hacia atrás sobre defensa y fascia. El vehículo C presenta en su parte posterior un hundimiento de atrás hacia adelante sobre defensa y cajuela.\n\nPrimer impacto: la parte frontal del vehículo A contra la parte posterior del vehículo B. Segundo impacto: por el empuje, la parte frontal del vehículo B contra la parte posterior del vehículo C.\n\nSe localizan restos de plástico y vidrio sobre el carril central, en el área del primer contacto. El vehículo A quedó sobre el área de restos; el vehículo B, en el mismo carril, 5 metros adelante del área de restos; y el vehículo C, 10 metros adelante del área de restos.",
   "escena": {
     "posiciones": [
@@ -121,7 +121,7 @@
         "calles_del_mapa": {
           "fuente": "overpass",
           "atribucion": "© OpenStreetMap contributors (ODbL)",
-          "consultado": "2026-11-27T21:08:26.575Z",
+          "consultado": "2026-11-27T21:53:46.126Z",
           "centro": {
             "lat": 25.56829,
             "lon": -100.273407
