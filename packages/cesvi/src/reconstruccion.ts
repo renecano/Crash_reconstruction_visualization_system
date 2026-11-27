@@ -66,6 +66,7 @@ import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from 
 import { objetosDe, TIPOS_OBJETO } from "./objetos";
 import { medidasDe } from "./poses-impacto";
 import { arranqueSobreElEje, ejeDeLaCalle, type EjeCalle } from "./eje-calle";
+import { cruceDeLaVuelta } from "./vuelta";
 import {
   conVelocidadDelPerito,
   enCota,
@@ -588,14 +589,33 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
         // Con las calles guardadas del caso, el tramo recto después del arco es el que deja el
         // arranque sobre el eje de la calle de llegada (revisión de la cadena, 2026-11-24: arrancaba
         // a 10 m de ella en un cruce ancho). Sin calles, los 2 m de siempre.
-        const recto = rectoTrasLaVuelta(
-          e.caso.lugar?.calles_del_mapa?.vias.map((via) =>
-            via.puntos.map(([lon, lat]) => local({ lat, lon })),
-          ) ?? [],
-          { x, y },
-          llegada,
-          rad,
-        );
+        // La vuelta, en un cruce real de la red vial (René, 2026-11-27): donde la calle de llegada
+        // toca de verdad la calzada del choque. Sin un cruce así, la regla de antes, y se dice.
+        const calles = e.caso.lugar?.calles_del_mapa?.vias ?? [];
+        const cruce = calles.length
+          ? cruceDeLaVuelta(
+              calles.map((via) => ({
+                tipo: via.tipo,
+                ...(via.nombre ? { nombre: via.nombre } : {}),
+                puntos: via.puntos.map(([lon, lat]) => local({ lat, lon })),
+              })),
+              { x, y },
+              llegada,
+              rad,
+            )
+          : null;
+        if (calles.length && !cruce)
+          limites.push(
+            `${v.id}: la narración dice que dio vuelta, pero en las calles del mapa no hay un cruce antes del choque por donde venía: la vuelta se dibuja ahí como supuesto. Revisa dónde colocaste el choque o de dónde venía.`,
+          );
+        const recto = cruce
+          ? Math.min(RECTO_MAXIMO_M, Math.max(0, cruce.distanciaM - TURN_RADIUS_M))
+          : rectoTrasLaVuelta(
+              calles.map((via) => via.puntos.map(([lon, lat]) => local({ lat, lon }))),
+              { x, y },
+              llegada,
+              rad,
+            );
         const tras = TURN_RADIUS_M + recto;
         sv.posicion_inicial = {
           x:
