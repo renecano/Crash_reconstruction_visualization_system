@@ -1,0 +1,24 @@
+{
+  "fecha": "2026-11-27T23:58:33.576Z",
+  "filas": [
+    {
+      "clave": "tollocan",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto 44 km/h A · Vehículo A rango 30–58 Reconstrucción física de Croquis · mejor ajuste 20 25 30 35 40 45 50 55 60 65 km/h Cada punto es una de las 31 simulaciones, al contacto: el mismo choque con lo incierto dentro de su rango. El corchete marca donde cae el 80 %. mejor ajuste. Los percentiles de las simulaciones Lo fijan 6 evidencias Qué medida pesa más: ±1 m en el reposo del A · Vehículo A mueve la cifra ±1 km/h. Es la que conviene medir con más cuidado.",
+      "dice_supuesto_de_velocidad": false,
+      "menciona_arbol": false
+    },
+    {
+      "clave": "aud-01-alcance-tollocan",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto La reconstrucción no cuadra: Croquis no presenta una velocidad. A · Volkswagen Jetta cruza un edificio del mapa (edificio 1421282804 de OpenStreetMap) a los −1.6 s: los vehículos no atraviesan casas ni muros. B · Nissan Versa cruza un edificio del mapa (edificio 1421282804 de OpenStreetMap) a los −3.0 s: los vehículos no atraviesan casas ni muros. B · Nissan Versa cruza un edificio del mapa (edificio 1421282809 de OpenStreetMap) a los −3.0 s: los vehículos no atraviesan casas ni muros. Revisa dónde quedó y por dónde venía cada vehículo, para que su recorrido vaya por la calle. El 3D muestra a cada vehículo donde quedó, sin animar el choque, hasta que cuadre. A · Volkswagen Jetta no cuadra: Croquis no presenta su velocidad B · Nissan Versa 0 km/h (detenido, lo dice la narración) Lo fijan 6 evidencias",
+      "no_cuadra": true
+    },
+    {
+      "clave": "aud-15-carambola4-tollocan-lluvia",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "cifra": "Repetir Velocidad antes del impacto La reconstrucción no cuadra: Croquis no presenta una velocidad. B · Volkswagen Vento y C · Nissan March quedan encimados 0.9 m al chocar en la simulación, y el solver los separa de golpe: la animación los mostraría saltando. Revisa las posiciones de impacto, para que los vehículos se toquen sin encimarse (en La escena, «Separarlos»). El 3D muestra a cada vehículo donde quedó, sin animar el choque, hasta que cuadre. A · Ford Ranger no cuadra: Croquis no presenta su velocidad B · Volkswagen Vento 0 km/h (detenido, lo dice la narración) C · Nissan March 0 km/h (detenido, lo dice la narración) D · Kia Rio 0 km/h (detenido, lo dice la narración) Lo fijan 10 evidencias",
+      "no_cuadra": true
+    }
+  ]
+}

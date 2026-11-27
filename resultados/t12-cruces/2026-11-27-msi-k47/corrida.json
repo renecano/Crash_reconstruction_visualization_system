@@ -8,7 +8,7 @@
     "commit":  "b856da7b1170472d6725f97207b35362108b473e",
     "rama_del_repositorio":  "HEAD",
     "archivos_con_cambios":  0,
-    "duracion_min":  6.5,
+    "duracion_min":  9.3,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "Intel(R) UHD Graphics",
@@ -94,6 +94,15 @@
                       "paso":  "tres-narraciones",
                       "estado":  "ok",
                       "minutos":  1.8,
+                      "codigo":  0,
+                      "disco_libre_gb_antes":  807.4,
+                      "disco_libre_gb_despues":  807.4
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "tollocan",
+                      "estado":  "ok",
+                      "minutos":  2.7,
                       "codigo":  0,
                       "disco_libre_gb_antes":  807.4,
                       "disco_libre_gb_despues":  807.4

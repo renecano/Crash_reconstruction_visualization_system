@@ -1,0 +1,38 @@
+# Paso: tollocan
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues tollocan -Salida eval/results/t12/tollocan.json
+# Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
+# Inicio: 2026-11-27 17:55:56
+
+
+== 1. Herramientas
+Node v26.13.1 y pnpm 12.11.2.
+Hay internet.
+
+== 2. Dependencias
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 1d ago)
+Lockfile is up to date, resolution step is skipped
+Done in 75ms using pnpm v12.11.2
+
+== 3. El visor de Unity, desde esta computadora
+Visor 9b485d0574678674 servido desde el sitio: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\public\visor-unity\local
+
+== 4. La app en modo local
+Ya está compilada para esta versión (b856da7b).
+
+== 5. La lectura con IA
+No hay llave de Claude en .env.local: la lectura con IA no estará. Todo lo demás funciona (AXA, los casos de ejemplo con su lectura guardada, la reconstrucción, el 3D y el dictamen).
+
+== 6. Croquis en http://localhost:3000
+Necesitan internet: la lectura con IA de una narración nueva, los mosaicos del mapa (sin red, el mapa sale en blanco pero se puede colocar la escena) y buscar un lugar por nombre.
+Sin internet funcionan completos: el caso de AXA y los cinco casos de ejemplo, la reconstrucción, el 3D de Unity y el dictamen.
+
+Running 3 tests using 1 worker
+
+[1/3] [chromium] › e2e\narraciones-fisica.spec.ts:234:5 › Tollocan de René, de punta a punta
+[2/3] [chromium] › e2e\narraciones-fisica.spec.ts:364:7 › las narraciones nuevas: aud-01-alcance-tollocan
+[3/3] [chromium] › e2e\narraciones-fisica.spec.ts:364:7 › las narraciones nuevas: aud-15-carambola4-tollocan-lluvia
+  3 passed (2.6m)
+Tarjeta que usó Chrome: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\eval\results\t12\tollocan.json.gpu.json
+
+# Fin: 2026-11-27 17:58:36 · ok · 2.7 min
