@@ -180,6 +180,46 @@ function TarjetaDano({
                 )}{" "}
                 ({c.rigidez}){medido ? "; no es la medida del reporte" : ""}.
               </p>
+              {c.medidoCm ? (
+                // Lo medido y lo calculado lado a lado, en los mismos seis puntos (René, 2026-11-26).
+                <dl
+                  className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[0.8125rem]"
+                  data-testid={`dano-lado-a-lado-${v}`}
+                >
+                  <dt className="text-texto-3">Medido, C1–C6</dt>
+                  <dd className="cifras">{c.medidoCm.join(" · ")} cm</dd>
+                  <dt className="text-texto-3">Calculado, C1–C6</dt>
+                  <dd className="cifras">{c.perfilCm.join(" · ")} cm</dd>
+                  {c.energiaMedidaKj !== null ? (
+                    <>
+                      <dt className="text-texto-3">Energía de lo medido</dt>
+                      <dd className="cifras">{c.energiaMedidaKj} kJ</dd>
+                    </>
+                  ) : null}
+                  {c.maxDisipableKj !== null ? (
+                    <>
+                      <dt className="text-texto-3">Lo más que disipa el choque</dt>
+                      <dd className="cifras">
+                        {c.maxDisipableKj} kJ, a las velocidades reconstruidas
+                      </dd>
+                    </>
+                  ) : null}
+                </dl>
+              ) : null}
+              {c.aviso ? (
+                <p
+                  className="t-nota border-l-2 border-senal pl-3 text-senal-texto"
+                  role="status"
+                  data-testid={`dano-aviso-${v}`}
+                >
+                  {c.aviso}
+                </p>
+              ) : null}
+              {c.rigidezNota ? (
+                <p className="t-nota" data-testid={`dano-rigidez-${v}`}>
+                  Rigidez: {c.rigidezNota}
+                </p>
+              ) : null}
             </>
           ) : !r ? (
             <p className="t-nota">Reconstruye para ver el daño que calcula Croquis.</p>

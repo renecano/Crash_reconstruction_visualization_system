@@ -18,7 +18,7 @@ import {
   Locus,
   resolveContact,
 } from "./contact";
-import { profileForEnergy, TRIANGULAR_SHAPES } from "./crash3";
+import { crushEnergy, profileForEnergy, Stiffness, TRIANGULAR_SHAPES } from "./crash3";
 import { narrowObject } from "./fixed-object";
 import {
   absPeakFactor,
@@ -80,7 +80,7 @@ import { degrees, pyRound, pySum, radians, str } from "./pymath";
 import { laneFollowingPath, roadAxis, type RoadAxis } from "./road";
 import { CG_HEIGHT_FRACTION, type RolloverCheck, rolloverToDict, tripCheck } from "./rollover";
 import { type SceneObject, sceneObjects, sceneObjectToDict } from "./scene-objects";
-import { stiffnessFor, zonaFromCdcSide } from "./stiffness";
+import { stiffnessFor, zonaFromCdcSide, type StiffnessEntry } from "./stiffness";
 import {
   BUMP_CONTACT,
   BUMP_ENERGY,
@@ -230,6 +230,11 @@ export interface VehicleOutcome {
   terrainPose?: [number[], number[], number[]] | null;
   /** Llegó al impacto en reversa (T3.3). */
   reverse?: boolean;
+  /**
+   * Lo medido junto a lo calculado y la rigidez con su fuente (René, 2026-11-26): `medido_m`,
+   * `energia_medida_j` y `rigidez` del daño del primer impacto.
+   */
+  danoExtra?: Json | null;
 }
 
 /** El daño de un impacto posterior en un vehículo que ya tenía daño (carambola, ADR 0066). */
@@ -358,6 +363,80 @@ export function reconstructionToDict(rec: Reconstruction): Json {
   return out;
 }
 
+/** El daño que midió el perito en una cara (`danos_declarados`). */
+interface DanoDeclarado {
+  lado: string;
+  perfilM: number[] | null;
+  anchoM: number;
+  rigidez: Stiffness | null;
+  nota: string;
+}
+
+const LARGO_M: Record<string, number> = { m: 1.0, cm: 0.01, mm: 0.001, km: 1000.0 };
+const largoM = (valor: number, unidad: string) => Number(valor) * (LARGO_M[unidad] ?? 1.0);
+
+/**
+ * Por vehículo, el daño medido de la cara del primer contacto (si hay varios); si no se sabe la
+ * cara, el primero, como en la inversión.
+ */
+function danosDeclarados(spec: Json, zonas: Map<string, Json | null>): Map<string, DanoDeclarado> {
+  const out = new Map<string, DanoDeclarado>();
+  for (const d of (spec.danos_declarados as Json[] | undefined) ?? []) {
+    const ancho = d.ancho_danado as Json | undefined;
+    if (!ancho || ancho.valor === undefined || ancho.valor === null) continue;
+    const vid = String(d.vehiculo_id);
+    const lado = str(((d.zona as Json | undefined) ?? {}).lado, "F");
+    const cara = str((zonas.get(vid) ?? {}).lado, "");
+    const previo = out.get(vid);
+    if (previo && (previo.lado === cara || lado !== cara)) continue;
+    const perfil = d.perfil_aplastamiento as Json | undefined;
+    const valores = ((perfil?.valor as number[] | undefined) ?? []).map(Number);
+    const rig = d.rigidez as Json | undefined;
+    out.set(vid, {
+      lado,
+      perfilM:
+        perfil && valores.length >= 2
+          ? valores.map((c) => largoM(c, str(perfil.unidad, "m")))
+          : null,
+      anchoM: largoM(Number(ancho.valor), str(ancho.unidad, "m")),
+      rigidez:
+        rig && rig.a !== undefined && rig.a !== null && rig.b !== undefined && rig.b !== null
+          ? new Stiffness(Number(rig.a), Number(rig.b))
+          : null,
+      nota: rig ? str(rig.nota, "") : "",
+    });
+  }
+  return out;
+}
+
+/** Un perfil de N ≥ 2 puntos equiespaciados, a los seis de CRASH3 (interpolación lineal). */
+function aSeis(p: readonly number[]): number[] {
+  const out: number[] = [];
+  for (let i = 0; i < 6; i++) {
+    const t = (i * (p.length - 1)) / 5;
+    const j = Math.min(Math.trunc(t), p.length - 2);
+    const u = t - j;
+    out.push(p[j]! + (p[j + 1]! - p[j]!) * u);
+  }
+  return out;
+}
+
+/** Los coeficientes con que se calculó la deformación y de dónde salen. */
+function rigidezDict(k: StiffnessEntry, clase: string, zona: string): Json {
+  let nota: string;
+  if (k.origen === "reporte") nota = k.nota || "Los coeficientes A y B que escribe el reporte.";
+  else if (k.origen === "nhtsa") {
+    nota = k.nota || `Pruebas de choque de NHTSA de la clase ${clase}, zona ${zona}.`;
+    if (k.nTests) nota = `${nota} (${k.nTests} pruebas)`;
+  } else nota = k.nota;
+  return {
+    a_n_m: r6(k.stiffness.a),
+    b_n_m2: r6(k.stiffness.b),
+    fuente: k.origen === "reporte" || k.origen === "nhtsa" ? k.origen : "supuesto",
+    nota: [...nota].slice(0, 300).join(""),
+  };
+}
+
 function danoDict(
   profile: readonly number[],
   width: number,
@@ -393,6 +472,7 @@ function vehicleDict(v: VehicleOutcome): Json {
     v.stiffnessOrigen,
     v.cdc,
   );
+  if (v.danoExtra) Object.assign(dano, v.danoExtra);
   const d: Json = {
     id: v.id,
     rol: v.rol,
@@ -1403,6 +1483,7 @@ export function reconstruct(
   const postStart = new Map(models.map((m) => [m.id, impactStates.get(m.id)!]));
   const deltaV = new Map<string, number>(models.map((m) => [m.id, 0.0]));
   const pdof = new Map<string, number | null>(models.map((m) => [m.id, null]));
+  const danoExtra = new Map<string, Json>();
   const crush = new Map<string, [number[], number, number, string]>(
     models.map((m) => [m.id, [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0], m.body.width, 0.0, "sin impacto"]]),
   );
@@ -1493,15 +1574,41 @@ export function reconstruct(
     // Reparto de la energía disipada entre carrocerías: inversamente a la rigidez B.
     const cdcA = zonas.get(a.id) ?? {};
     const cdcB = zonas.get(b.id) ?? {};
-    const ka = stiffnessFor(a.clase, zonaFromCdcSide(str(cdcA.lado, "F")));
-    const kb = stiffnessFor(b.clase, zonaFromCdcSide(str(cdcB.lado, "F")));
+    // Con el daño medido en la cara del contacto (René, 2026-11-26): la rigidez del reporte si
+    // la trae, y la forma y el ancho de lo medido; la profundidad sale de la energía del choque.
+    const declarados = danosDeclarados(spec, zonas);
+    const rigidezDe = (m: VehicleModel, cdc: Json): [StiffnessEntry, DanoDeclarado | null] => {
+      const lado = str(cdc.lado, "F");
+      let d = declarados.get(m.id) ?? null;
+      if (d && d.lado !== lado) d = null;
+      if (d && d.rigidez)
+        return [
+          { stiffness: d.rigidez, origen: "reporte", nTests: 0, nota: d.nota, samples: [] },
+          d,
+        ];
+      return [stiffnessFor(m.clase, zonaFromCdcSide(lado)), d];
+    };
+    const [ka, da] = rigidezDe(a, cdcA);
+    const [kb, db] = rigidezDe(b, cdcB);
     const wa = 1.0 / ka.stiffness.b;
     const wb = 1.0 / kb.stiffness.b;
-    for (const [m, e, k] of [
-      [a, (res.energyLoss * wa) / (wa + wb), ka],
-      [b, (res.energyLoss * wb) / (wa + wb), kb],
+    for (const [m, e, k, d, cdc] of [
+      [a, (res.energyLoss * wa) / (wa + wb), ka, da, cdcA],
+      [b, (res.energyLoss * wb) / (wa + wb), kb, db, cdcB],
     ] as const) {
-      const [shape, width] = crushShapeAndWidth(zonas.get(m.id), m.body);
+      let [shape, width] = crushShapeAndWidth(zonas.get(m.id), m.body);
+      const extra: Json = {
+        rigidez: rigidezDict(k, m.clase, zonaFromCdcSide(str(cdc.lado, "F"))),
+      };
+      if (d && d.perfilM && Math.max(...d.perfilM) > 0) {
+        const medido = aSeis(d.perfilM);
+        const tope = Math.max(...medido);
+        shape = medido.map((c) => c / tope);
+        width = d.anchoM;
+        extra.medido_m = medido.map((c) => r6(c));
+        extra.energia_medida_j = r6(crushEnergy(medido, d.anchoM, k.stiffness), 3);
+      }
+      danoExtra.set(m.id, extra);
       crush.set(m.id, [profileForEnergy(e, width, k.stiffness, shape), width, e, k.origen]);
     }
     eventosOut.push({
@@ -2217,6 +2324,7 @@ export function reconstruct(
       rollover: null,
       laterDamage: laterDamage.get(m.id)!,
       terrainPose,
+      danoExtra: danoExtra.get(m.id) ?? null,
     });
     if (m.braking && m.v0 > 0 && sContact.has(m.id)) {
       const tb = profiles.get(m.id)!.tBrake;

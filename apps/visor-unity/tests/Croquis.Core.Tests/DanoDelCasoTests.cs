@@ -70,7 +70,9 @@ namespace Croquis.Core.Tests
                 foreach (var v in caso.Resultado.Vehiculos)
                 {
                     var campo = DanoDelCaso.Campo(v);
-                    var tiene = v.Dano?.OrigenRigidez != OrigenRigidez.SinImpacto && v.Dano?.PerfilM != null && v.Dano.PerfilM.Any(c => c > 0.0) && v.Dano.AnchoM > 0.0
+                    // Lo que se dibuja: lo medido si lo hay (contrato #345), si no, el perfil del solver.
+                    var perfil = DanoDelCaso.UsaMedido(v.Dano) ? v.Dano.MedidoM : v.Dano?.PerfilM;
+                    var tiene = v.Dano?.OrigenRigidez != OrigenRigidez.SinImpacto && perfil != null && perfil.Any(c => c > 0.0) && v.Dano.AnchoM > 0.0
                         && DanoDelCaso.Lado(v.Dano.Cdc?.Lado) != null && !PerfilClase.De(v.Clase).DosRuedas;
                     Assert.True((campo != null) == tiene, nombre + " " + v.Id);
                     con += campo != null ? 1 : 0;

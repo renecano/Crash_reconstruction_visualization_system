@@ -78,7 +78,7 @@ from croquis_solver.preimpact import (
 )
 from croquis_solver.road import RoadAxis, lane_following_path, road_axis
 from croquis_solver.scene_objects import SceneObject, scene_objects
-from croquis_solver.stiffness import stiffness_for, zona_from_cdc_side
+from croquis_solver.stiffness import StiffnessEntry, stiffness_for, zona_from_cdc_side
 from croquis_solver.terrain import (
     BUMP_CONTACT,
     BUMP_ENERGY,
@@ -193,6 +193,9 @@ class VehicleOutcome:
     terrain_pose: tuple[list[float], list[float], list[float]] | None = None
     # Llegó al impacto en reversa (T3.3).
     reverse: bool = False
+    # Lo medido junto a lo calculado y la rigidez con su fuente (René, 2026-11-26): `medido_m`,
+    # `energia_medida_j` y `rigidez` del daño del primer impacto.
+    dano_extra: JsonObj | None = None
 
 
 @dataclass
@@ -378,6 +381,83 @@ class Reconstruction:
         return json.dumps(self.to_dict(), ensure_ascii=False, indent=1)
 
 
+@dataclass(frozen=True)
+class _DanoDeclarado:
+    """El daño que midió el perito en una cara (`danos_declarados`)."""
+
+    lado: str
+    perfil_m: tuple[float, ...] | None
+    ancho_m: float
+    rigidez: Stiffness | None
+    nota: str
+
+
+def _largo_m(valor: float, unidad: str) -> float:
+    return float(valor) * _LEN.get(unidad, 1.0)
+
+
+def _danos_declarados(spec: JsonObj, zonas: dict[str, JsonObj | None]) -> dict[str, _DanoDeclarado]:
+    """Por vehículo, el daño medido de la cara del primer contacto (si hay varios); si no se sabe la
+    cara, el primero, como en la inversión."""
+    out: dict[str, _DanoDeclarado] = {}
+    declarados: list[JsonObj] = spec.get("danos_declarados", None) or []
+    for d in declarados:
+        ancho: JsonObj | None = d.get("ancho_danado")
+        if not ancho or ancho.get("valor") is None:
+            continue
+        vid = str(d["vehiculo_id"])
+        zona: JsonObj = d.get("zona") or {}
+        lado = str(zona.get("lado", "F"))
+        cara = str((zonas.get(vid) or {}).get("lado", ""))
+        previo = out.get(vid)
+        if previo is not None and (previo.lado == cara or lado != cara):
+            continue
+        perfil: JsonObj | None = d.get("perfil_aplastamiento")
+        valores: list[float] = list(perfil.get("valor") or []) if perfil else []
+        rig: JsonObj | None = d.get("rigidez")
+        out[vid] = _DanoDeclarado(
+            lado,
+            tuple(_largo_m(c, str(perfil.get("unidad", "m"))) for c in valores)
+            if perfil and len(valores) >= 2
+            else None,
+            _largo_m(float(ancho["valor"]), str(ancho.get("unidad", "m"))),
+            Stiffness(float(rig["a"]), float(rig["b"]))
+            if rig and rig.get("a") is not None and rig.get("b") is not None
+            else None,
+            str(rig.get("nota", "")) if rig else "",
+        )
+    return out
+
+
+def _a_seis(p: tuple[float, ...]) -> list[float]:
+    """Un perfil de N ≥ 2 puntos equiespaciados, a los seis de CRASH3 (interpolación lineal)."""
+    out: list[float] = []
+    for i in range(6):
+        t = i * (len(p) - 1) / 5
+        j = min(int(t), len(p) - 2)
+        u = t - j
+        out.append(p[j] + (p[j + 1] - p[j]) * u)
+    return out
+
+
+def _rigidez_dict(k: StiffnessEntry, clase: str, zona: str) -> JsonObj:
+    """Los coeficientes con que se calculó la deformación y de dónde salen."""
+    if k.origen == "reporte":
+        nota = k.nota or "Los coeficientes A y B que escribe el reporte."
+    elif k.origen == "nhtsa":
+        nota = k.nota or f"Pruebas de choque de NHTSA de la clase {clase}, zona {zona}."
+        if k.n_tests:
+            nota = f"{nota} ({k.n_tests} pruebas)"
+    else:
+        nota = k.nota
+    return {
+        "a_n_m": _r(k.stiffness.a),
+        "b_n_m2": _r(k.stiffness.b),
+        "fuente": k.origen if k.origen in ("reporte", "nhtsa") else "supuesto",
+        "nota": nota[:300],
+    }
+
+
 def _dano_dict(
     profile: list[float],
     width: float,
@@ -410,6 +490,8 @@ def _vehicle_dict(v: VehicleOutcome) -> JsonObj:
         v.stiffness_origen,
         v.cdc,
     )
+    if v.dano_extra:
+        dano.update(v.dano_extra)
     d: JsonObj = {
         "id": v.id,
         "rol": v.rol,
@@ -1367,6 +1449,7 @@ def reconstruct(
     post_start: dict[str, State2D] = {m.id: impact_states[m.id] for m in models}
     delta_v: dict[str, float] = dict.fromkeys(by_id, 0.0)
     pdof: dict[str, float | None] = dict.fromkeys(by_id, None)
+    dano_extra: dict[str, JsonObj] = {}
     crush: dict[str, tuple[list[float], float, float, str]] = {
         m.id: ([0.0] * 6, m.body.width, 0.0, "sin impacto") for m in models
     }
@@ -1460,14 +1543,38 @@ def reconstruct(
         # Reparto de la energía disipada entre carrocerías: inversamente a la rigidez B.
         cdc_a: JsonObj = zonas.get(a.id) or {}
         cdc_b: JsonObj = zonas.get(b.id) or {}
-        ka = stiffness_for(a.clase, zona_from_cdc_side(str(cdc_a.get("lado", "F"))))
-        kb = stiffness_for(b.clase, zona_from_cdc_side(str(cdc_b.get("lado", "F"))))
+        # Con el daño medido en la cara del contacto (René, 2026-11-26): la rigidez del reporte si
+        # la trae, y la forma y el ancho de lo medido; la profundidad sale de la energía del choque.
+        declarados = _danos_declarados(spec, zonas)
+
+        def rigidez_de(
+            m: VehicleModel, cdc: JsonObj
+        ) -> tuple[StiffnessEntry, _DanoDeclarado | None]:
+            lado = str(cdc.get("lado", "F"))
+            d = declarados.get(m.id)
+            if d is not None and d.lado != lado:
+                d = None
+            if d is not None and d.rigidez is not None:
+                return StiffnessEntry(d.rigidez, "reporte", 0, d.nota), d
+            return stiffness_for(m.clase, zona_from_cdc_side(lado)), d
+
+        ka, da = rigidez_de(a, cdc_a)
+        kb, db = rigidez_de(b, cdc_b)
         wa, wb = 1.0 / ka.stiffness.b, 1.0 / kb.stiffness.b
-        for m, e, k in (
-            (a, res.energy_loss * wa / (wa + wb), ka),
-            (b, res.energy_loss * wb / (wa + wb), kb),
+        for m, e, k, d, cdc in (
+            (a, res.energy_loss * wa / (wa + wb), ka, da, cdc_a),
+            (b, res.energy_loss * wb / (wa + wb), kb, db, cdc_b),
         ):
             shape, width = _crush_shape_and_width(zonas.get(m.id), m.body)
+            extra: JsonObj = {
+                "rigidez": _rigidez_dict(k, m.clase, zona_from_cdc_side(str(cdc.get("lado", "F"))))
+            }
+            if d is not None and d.perfil_m is not None and max(d.perfil_m) > 0:
+                medido = _a_seis(d.perfil_m)
+                shape, width = [c / max(medido) for c in medido], d.ancho_m
+                extra["medido_m"] = [_r(c) for c in medido]
+                extra["energia_medida_j"] = _r(crush_energy(medido, d.ancho_m, k.stiffness), 3)
+            dano_extra[m.id] = extra
             crush[m.id] = (profile_for_energy(e, width, k.stiffness, shape), width, e, k.origen)
         eventos_out.append(
             EventOutcome(
@@ -2128,6 +2235,7 @@ def reconstruct(
                 distance_post_m=dist_post,
                 later_damage=later_damage[m.id],
                 terrain_pose=terrain_pose,
+                dano_extra=dano_extra.get(m.id),
             )
         )
         if m.braking and m.v0 > 0 and m.id in s_contact:
