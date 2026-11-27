@@ -252,6 +252,39 @@ namespace Croquis.Core
             return x * x * (3.0 - 2.0 * x);
         }
 
+        /// <summary>
+        /// «Desde arriba» (René, 2026-11-27: «arranca altísimo y hay que acercar a mano»): el centro y la
+        /// altura que encuadran, con margen, los vehículos en el instante, el punto del choque y las
+        /// posiciones finales. Como depende del instante, sigue a los vehículos al reproducir.
+        /// </summary>
+        public static (double X, double Z, double Alto) Cenital(CajaPlano vehiculos, CajaPlano finales, V3? contacto, double vfov, double aspecto)
+        {
+            var c = new CajaPlano();
+            foreach (var caja in new[] { vehiculos, finales })
+            {
+                if (caja != null && !caja.Vacia)
+                {
+                    c.Agregar(caja.MinX, caja.MinY);
+                    c.Agregar(caja.MaxX, caja.MaxY);
+                }
+            }
+
+            if (contacto.HasValue)
+            {
+                c.Agregar(contacto.Value.X, contacto.Value.Z);
+            }
+
+            if (c.Vacia)
+            {
+                return (0.0, 0.0, 40.0);
+            }
+
+            // Margen: un cuarto de cada lado y nunca menos de 6 m, para que nada quede pegado a la orilla.
+            var ancho = Math.Max(12.0, c.Ancho * 1.25 + 6.0);
+            var alto = Math.Max(12.0, c.Alto * 1.25 + 6.0);
+            return (c.CentroX, c.CentroY, Lente.DistanciaParaVer(ancho, alto, vfov, aspecto));
+        }
+
         /// <summary>Los vehículos del Resultado en `t`, como estorbos (marco de Unity).</summary>
         public static List<Estorbo> Vehiculos(Caso3DResultado r, double t, double suelo = 0.0)
         {

@@ -27,14 +27,22 @@ import {
 import { createPortal } from "react-dom";
 
 export type NombreRanura = "vista" | "izquierda" | "derecha" | "abajo" | "pie";
-type Ranuras = Record<NombreRanura, HTMLElement | null> & { completa: boolean };
+type Ranuras = Record<NombreRanura, HTMLElement | null> & {
+  completa: boolean;
+  /** A pantalla completa, lo que ocupa la barra de abajo cuando se ve (px); 0 si no se ve. */
+  bajoBarra?: number;
+};
 
 const Contexto = createContext<Ranuras | null>(null);
 
 /** Si hay un marco con barras alrededor, y si está a pantalla completa. */
-export function useMarco(): { enMarco: boolean; completa: boolean } {
+export function useMarco(): { enMarco: boolean; completa: boolean; bajoBarra: number } {
   const r = useContext(Contexto);
-  return { enMarco: Boolean(r?.abajo), completa: r?.completa ?? false };
+  return {
+    enMarco: Boolean(r?.abajo),
+    completa: r?.completa ?? false,
+    bajoBarra: r?.bajoBarra ?? 0,
+  };
 }
 
 /**
@@ -172,6 +180,18 @@ export function MarcoVista({
   }, [conBarras, alternarCompleta, mostrar]);
 
   const ocultas = completa && !visibles;
+  // A pantalla completa la barra de abajo va encima de la escena: lo que ocupa, para que la leyenda se
+  // ponga arriba de ella y nunca quede encimada (René, 2026-11-27).
+  const pie = useRef<HTMLDivElement>(null);
+  const [altoPie, setAltoPie] = useState(0);
+  useEffect(() => {
+    const el = pie.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const o = new ResizeObserver(() => setAltoPie(el.getBoundingClientRect().height));
+    o.observe(el);
+    return () => o.disconnect();
+  }, [completa]);
+  const bajoBarra = completa && !ocultas ? altoPie : 0;
   const barra = `flex flex-wrap items-center gap-2 transition-opacity duration-300 ${
     ocultas ? "pointer-events-none opacity-0" : "opacity-100"
   }`;
@@ -188,7 +208,7 @@ export function MarcoVista({
       aria-label={etiqueta}
       tabIndex={-1}
     >
-      <Contexto.Provider value={conBarras ? ranuras : null}>
+      <Contexto.Provider value={conBarras ? { ...ranuras, bajoBarra } : null}>
         {conBarras ? (
           <div
             className={`${barra} z-20 justify-between px-3 py-2 ${completa ? "absolute inset-x-0 top-0 bg-gradient-to-b from-fondo/90 to-transparent pb-6" : "border-b border-linea-suave"}`}
@@ -221,6 +241,7 @@ export function MarcoVista({
         </div>
         {conBarras ? (
           <div
+            ref={pie}
             className={`${barra} z-20 flex-col items-stretch px-3 py-2 ${completa ? "absolute inset-x-0 bottom-0 bg-gradient-to-t from-fondo/90 to-transparent pt-6" : "border-t border-linea-suave"}`}
             data-barra="inferior"
             data-testid="marco-barra-inferior"
