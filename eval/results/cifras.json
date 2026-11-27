@@ -189,19 +189,6 @@
       "campo": "impactos_posteriores_ocurridos / impactos_posteriores_en_escena",
       "motivo": "Se corrigió el choque fantasma de la reconstrucción previa (#323); recupera cesvi-e9aed4ab5b y agrega 3 impactos; René lo aprobó el 2026-11-26. Antes, 44 de 55."
     },
-    "ejemplos.crucero": {
-      "que": "Ejemplo «crucero de noche»: velocidad del Jetta (A) antes del impacto, como lo arma el perito en La escena",
-      "mejor": 20,
-      "p10": 5,
-      "p90": 26,
-      "unidad": "km/h",
-      "muestras": 32,
-      "juego_de_muestras": "producción",
-      "texto": "20 km/h (5–26)",
-      "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
-      "campo": "filas.1.velocidades.0",
-      "motivo": "Escena armada con el mismo código de La escena, direcciones por las calles reales y confirmadas como con el botón «Confirmar» de la app (#331); René lo aprobó el 2026-11-26. Antes, 20 (4–27) publicada y 20 (10–28) en la tabla."
-    },
     "ejemplos.crucero_camaro": {
       "que": "Ejemplo «crucero de noche»: velocidad del Camaro (B) antes del impacto, como lo arma el perito en La escena",
       "mejor": 12,
@@ -214,19 +201,6 @@
       "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
       "campo": "filas.1.velocidades.1",
       "motivo": "Escena armada con el mismo código de La escena, direcciones por las calles reales y confirmadas como con el botón «Confirmar» de la app (#331); René lo aprobó el 2026-11-26. Antes, 12 (3–19)."
-    },
-    "ejemplos.alcance": {
-      "que": "Ejemplo «alcance en carretera»: velocidad de la NP300 (A), la que alcanza, antes del impacto, como lo arma el perito en La escena",
-      "mejor": 53,
-      "p10": 49,
-      "p90": 56,
-      "unidad": "km/h",
-      "muestras": 32,
-      "juego_de_muestras": "producción",
-      "texto": "53 km/h (49–56)",
-      "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
-      "campo": "filas.2.velocidades.0",
-      "motivo": "Escena armada con el mismo código de La escena, direcciones por las calles reales (#331); René lo aprobó el 2026-11-26. Antes, 53 (49–55)."
     },
     "ejemplos.alcance_corolla": {
       "que": "Ejemplo «alcance en carretera»: velocidad del Vento (B), el alcanzado, antes del impacto, como lo arma el perito en La escena",
@@ -241,32 +215,6 @@
       "campo": "filas.2.velocidades.1",
       "motivo": "Escena armada con el mismo código de La escena, direcciones por las calles reales (#331); René lo aprobó el 2026-11-26. Antes, 0 (0–8)."
     },
-    "ejemplos.carambola": {
-      "que": "Ejemplo «carambola con lluvia»: velocidad de la Ranger (A) antes del primer impacto, como lo arma el perito en La escena",
-      "mejor": 25,
-      "p10": 20,
-      "p90": 32,
-      "unidad": "km/h",
-      "muestras": 32,
-      "juego_de_muestras": "producción",
-      "texto": "25 km/h (20–32)",
-      "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
-      "campo": "filas.3.velocidades.0",
-      "motivo": "Escena armada con el mismo código de La escena, direcciones por las calles reales (#331); René lo aprobó el 2026-11-26. Antes, 24 (19–32)."
-    },
-    "ejemplos.reversa": {
-      "que": "Ejemplo «reversa en pendiente»: velocidad del Versa (B) antes del impacto, como lo arma el perito en La escena",
-      "mejor": 20,
-      "p10": 16,
-      "p90": 25,
-      "unidad": "km/h",
-      "muestras": 32,
-      "juego_de_muestras": "producción",
-      "texto": "20 km/h (16–25)",
-      "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
-      "campo": "filas.4.velocidades.1",
-      "motivo": "Escena armada con el mismo código de La escena (#331). La velocidad en reversa del CR-V pesa como supuesto con su rango (NHTSA, 3.06–9.07 km/h), porque la narración no da evidencia de más; el rango del Versa cambia por eso. René lo aprobó el 2026-11-26. Antes, 20 (18–25)."
-    },
     "ejemplos.reversa_crv": {
       "que": "Ejemplo «reversa en pendiente»: velocidad del CR-V (A) en reversa antes del impacto, como lo arma el perito en La escena",
       "mejor": 6,
@@ -280,18 +228,65 @@
       "campo": "filas.4.velocidades.0",
       "motivo": "Escena armada con el mismo código de La escena (#331). La velocidad en reversa del CR-V pesa como supuesto con su rango (NHTSA, 3.06–9.07 km/h), porque la narración no da evidencia de más; el rango del Versa cambia por eso. René lo aprobó el 2026-11-26. Antes, 9 (1–18)."
     },
-    "ejemplos.poste": {
-      "que": "Ejemplo «poste y terracería»: velocidad del Sentra (B) antes del impacto, como lo arma el perito en La escena",
-      "mejor": 61,
-      "p10": 37,
-      "p90": 64,
+    "ejemplos.crucero": {
+      "que": "Ejemplo «crucero de noche»: velocidad del Jetta (A) antes del impacto, en la app (navegador con Unity real)",
+      "mejor": 20,
+      "p10": 5,
+      "p90": 26,
       "unidad": "km/h",
-      "muestras": 32,
       "juego_de_muestras": "producción",
-      "texto": "61 km/h (37–64)",
-      "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
-      "campo": "filas.5.velocidades.1",
-      "motivo": "Escena armada con el mismo código de La escena (#331), con el golpe contra el poste calculado y el derrape de 18.40 m como evidencia. Desde el 2026-11-26 (fix/w-poste-mazda), el Mazda quedó «1 metro al Oriente» (decía «8 metros al Norte», que la física no alcanza) y la revisión de «reposo inalcanzable» ya no se queda en un mínimo local: pendiente del visto bueno de René. Antes, 59 (49–64), aprobada el 2026-11-26."
+      "texto": "20 km/h (5–26)",
+      "fuente": "eval/results/t10/ejemplos.json",
+      "campo": "ejemplos.0",
+      "motivo": "Medido en el navegador con Unity real (t10-final, 2026-11-26); René lo aprobó."
+    },
+    "ejemplos.alcance": {
+      "que": "Ejemplo «alcance en carretera»: velocidad de la NP300 (A), la que alcanza antes del impacto, en la app (navegador con Unity real)",
+      "mejor": 54,
+      "p10": 49,
+      "p90": 55,
+      "unidad": "km/h",
+      "juego_de_muestras": "producción",
+      "texto": "54 km/h (49–55)",
+      "fuente": "eval/results/t10/ejemplos.json",
+      "campo": "ejemplos.1",
+      "motivo": "Medido en el navegador con Unity real (t10-final, 2026-11-26); René lo aprobó. La tabla da 53 (49–56): la diferencia es por dónde caen los toques."
+    },
+    "ejemplos.carambola": {
+      "que": "Ejemplo «carambola con lluvia»: velocidad de la Ranger (A) antes del primer impacto antes del impacto, en la app (navegador con Unity real)",
+      "mejor": 25,
+      "p10": 20,
+      "p90": 32,
+      "unidad": "km/h",
+      "juego_de_muestras": "producción",
+      "texto": "25 km/h (20–32)",
+      "fuente": "eval/results/t10/ejemplos.json",
+      "campo": "ejemplos.2",
+      "motivo": "Medido en el navegador con Unity real (t10-final, 2026-11-26); René lo aprobó."
+    },
+    "ejemplos.reversa": {
+      "que": "Ejemplo «reversa en pendiente»: velocidad del Versa (B) antes del impacto, en la app (navegador con Unity real)",
+      "mejor": 20,
+      "p10": 16,
+      "p90": 25,
+      "unidad": "km/h",
+      "juego_de_muestras": "producción",
+      "texto": "20 km/h (16–25)",
+      "fuente": "eval/results/t10/ejemplos.json",
+      "campo": "ejemplos.3",
+      "motivo": "Medido en el navegador con Unity real (t10-final, 2026-11-26); René lo aprobó."
+    },
+    "ejemplos.poste": {
+      "que": "Ejemplo «poste y terracería»: velocidad del Sentra (B) antes del impacto, en la app (navegador con Unity real)",
+      "mejor": 63,
+      "p10": 43,
+      "p90": 65,
+      "unidad": "km/h",
+      "juego_de_muestras": "producción",
+      "texto": "63 km/h (43–65)",
+      "fuente": "eval/results/t10/ejemplos.json",
+      "campo": "ejemplos.4",
+      "motivo": "Medido en el navegador con Unity real (t10-final, 2026-11-26); René lo aprobó. Pendiente del arreglo del rango del solver: su extremo bajo incluye muestras en las que el Sentra no llega al poste; fuera de la demo hasta entonces."
     },
     "reversa.velocidad": {
       "que": "Velocidad supuesta de un vehículo en reversa: mediana y p10–p90 de la velocidad máxima de maniobras reales",

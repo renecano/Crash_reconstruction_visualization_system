@@ -229,6 +229,13 @@ function construir() {
     });
   }
 
+  const EN_EL_NAVEGADOR = new Set([
+    "ejemplos.crucero",
+    "ejemplos.alcance",
+    "ejemplos.carambola",
+    "ejemplos.reversa",
+    "ejemplos.poste",
+  ]);
   // --- Los cinco ejemplos, como los arma el perito en La escena (René, 2026-11-26) ---
   // Una cifra por ejemplo y vehículo: la que ve el perito. La escena que propone La escena en el lugar
   // guardado de cada ejemplo, con sus calles, corregida según la narración con las mismas funciones
@@ -310,6 +317,8 @@ function construir() {
         POSTE,
       ],
     ]) {
+      // Las cinco principales las guarda el índice del navegador (bloque siguiente).
+      if (EN_EL_NAVEGADOR.has(clave)) continue;
       const i = doc.filas.findIndex((f) => f.clave === ejemplo);
       if (i < 0) throw new Error(`${archivo}: no está el ejemplo ${ejemplo}`);
       const j = doc.filas[i].velocidades.findIndex((v) => v.vehiculo === vehiculo);
@@ -326,6 +335,61 @@ function construir() {
         fuente: archivo,
         campo: `filas.${i}.velocidades.${j}`,
         motivo: `${motivo} Antes, ${antes}.`,
+      });
+    }
+  }
+
+  // --- Los cinco ejemplos medidos en el navegador (René, 2026-11-26) ---
+  // El índice guarda lo que da la app: la cifra principal de cada ejemplo, medida en el navegador con
+  // el Unity real en la t10-final (los toques de la receta del perito). Reemplaza la de la tabla, que
+  // puede diferir hasta 1 km/h por dónde caen los toques. Las de los otros vehículos siguen siendo de
+  // la tabla: el navegador no las mide.
+  {
+    const archivo = "eval/results/t10/ejemplos.json";
+    const doc = leer(archivo);
+    const MOTIVO = "Medido en el navegador con Unity real (t10-final, 2026-11-26); René lo aprobó.";
+    for (const [clave, ejemplo, que, extra] of [
+      ["ejemplos.crucero", "crucero-noche", "«crucero de noche»: velocidad del Jetta (A)", ""],
+      [
+        "ejemplos.alcance",
+        "alcance-deformacion",
+        "«alcance en carretera»: velocidad de la NP300 (A), la que alcanza",
+        " La tabla da 53 (49–56): la diferencia es por dónde caen los toques.",
+      ],
+      [
+        "ejemplos.carambola",
+        "carambola-lluvia",
+        "«carambola con lluvia»: velocidad de la Ranger (A) antes del primer impacto",
+        "",
+      ],
+      [
+        "ejemplos.reversa",
+        "reversa-pendiente",
+        "«reversa en pendiente»: velocidad del Versa (B)",
+        "",
+      ],
+      [
+        "ejemplos.poste",
+        "poste-terraceria",
+        "«poste y terracería»: velocidad del Sentra (B)",
+        " Pendiente del arreglo del rango del solver: su extremo bajo incluye muestras en las que el Sentra no llega al poste; fuera de la demo hasta entonces.",
+      ],
+    ]) {
+      const i = doc.ejemplos.findIndex((e) => e.clave === ejemplo);
+      if (i < 0) throw new Error(`${archivo}: no está el ejemplo ${ejemplo}`);
+      const e = doc.ejemplos[i];
+      const m = /(\d+)\s*–\s*(\d+)/.exec(e.rango ?? "");
+      if (!e.cifra || !m) throw new Error(`${archivo}: ${ejemplo} sin cifra o sin rango`);
+      const v = { mejor: Number(e.cifra), p10: Number(m[1]), p90: Number(m[2]) };
+      pon(clave, {
+        que: `Ejemplo ${que} antes del impacto, en la app (navegador con Unity real)`,
+        ...v,
+        unidad: "km/h",
+        juego_de_muestras: "producción",
+        texto: `${v.mejor} km/h (${v.p10}–${v.p90})`,
+        fuente: archivo,
+        campo: `ejemplos.${i}`,
+        motivo: `${MOTIVO}${extra}`,
       });
     }
   }
