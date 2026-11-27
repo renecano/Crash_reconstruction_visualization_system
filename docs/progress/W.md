@@ -1587,3 +1587,14 @@ Cada ejemplo guarda su lugar (`data/cesvi/ejemplos/narraciones.json`) y abre ah�
 **Siguiente paso concreto:** esperar la t9-ejemplos; si sale bien, publicar #311 → #316 → #320 → #323 → #329 → #331, verificar en producción y fusionar #324, #327 y #328; luego #334 y `fix/w-poste-mazda`.
 
 - **3 · Recorrido desde el inicio, lado web** (`feat/w-trayecto-previo`, PR en borrador): «¿De dónde venía?» por vehículo en La escena (marcar, mover, borrar; ruta OSRM por las calles con su distancia y su duración estimada; aviso «trayecto ilustrativo: no es evidencia»). El punto se guarda con el caso, fuera del expediente, y no entra a la reconstrucción. El 3D recibe `trayecto_previo`: perfil de velocidad con 0.35 g lateral (TRR 1628), 3.4 m/s² de frenado (AASHTO) y 1.5 m/s² de arranque (**supuesto, sin fuente**). El dictamen lleva una nota. El video ofrece «Solo el choque» o «Desde el inicio». e2e `@flujo trayecto-previo.spec.ts` en verde en local. ADR 0147 y `data/SOURCES.md`. Capturas: `capturas/demo/6-previo-*.jpg`.
+- **Ajustes de la prueba de René en producción** (`feat/u-camaras-encuadre`, 2026-11-27):
+  - **«Desde arriba»:** encuadra, con margen, los vehículos en el instante, el choque y las posiciones finales, y los sigue al reproducir. Si el perito la mueve o pide «Ver todo» o «Ir al impacto», se queda donde la dejó.
+  - **«¿Y si…?»:** la cinematográfica, la automática y «Desde arriba» encuadran también los vehículos de la hipótesis.
+  - **Fin de la reproducción:** la barra queda en pausa y el botón dice «Repetir» (↻), que empieza de nuevo. Unity manda su último instante al detenerse, y la web toma como final un aviso a menos de 0.3 s del fin, así funciona también con el build actual. e2e `@flujo reproduccion-repetir.spec.ts`.
+  - **Pantalla completa:** Unity esconde su leyenda y la web la pone encima de la barra (sube y baja con ella). El minimapa se esconde mientras la barra está a la vista.
+  - **Gráfica de puntos:** «km/h» en su propio renglón.
+  - **Video «Desde el inicio»:**
+    - el trayecto lejano va acelerado ×N (2, 5, 10, 20…) para que dure ~1 min, con el letrero «Trayecto ilustrativo · acelerado ×N»;
+    - los últimos 8 s, a velocidad normal, y el impacto en cámara lenta;
+    - el diálogo dice el factor y la duración.
+  - Capturas: `capturas/demo/8-*`.
