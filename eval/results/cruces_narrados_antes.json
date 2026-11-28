@@ -2,32 +2,32 @@
  "descripcion": "El cruce narrado (#388): cuántos casos nombran un cruce y en cuántos el choque propuesto queda a más de 30 m del cruce real de OSM (el más cercano de los cruces de las dos calles en el municipio).",
  "script": "eval/cruces_narrados.mts",
  "modo": "antes",
- "fecha": "2026-11-27",
+ "fecha": "2026-11-28",
  "tope_m": 30,
  "casos_revisados": 247,
  "prueba": {
   "nombran_un_cruce": 99,
-  "con_cruce_real_en_osm": 29,
-  "osm_sin_el_cruce": 27,
-  "sin_medir_overpass_o_municipio": 43,
+  "con_cruce_real_en_osm": 33,
+  "osm_sin_el_cruce": 26,
+  "sin_medir_overpass_o_municipio": 40,
   "propone": 65,
   "pregunta": 13,
   "sin_lugar": 21,
-  "propone_medible": 22,
-  "a_mas_de_30_m": 6,
-  "a_30_m_o_menos": 16
+  "propone_medible": 26,
+  "a_mas_de_30_m": 9,
+  "a_30_m_o_menos": 17
  },
  "nuevas": {
   "nombran_un_cruce": 25,
-  "con_cruce_real_en_osm": 15,
-  "osm_sin_el_cruce": 10,
-  "sin_medir_overpass_o_municipio": 0,
+  "con_cruce_real_en_osm": 16,
+  "osm_sin_el_cruce": 6,
+  "sin_medir_overpass_o_municipio": 3,
   "propone": 23,
   "pregunta": 2,
   "sin_lugar": 0,
-  "propone_medible": 14,
+  "propone_medible": 15,
   "a_mas_de_30_m": 12,
-  "a_30_m_o_menos": 2
+  "a_30_m_o_menos": 3
  },
  "filas": [
   {
@@ -39,6 +39,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4950074,
+    "lon": -99.1539526
+   },
+   "lugar_buscado": {
+    "lat": 19.49476821761103,
+    "lon": -99.15394969161348
+   },
    "distancia_m": null
   },
   {
@@ -50,6 +58,14 @@
    ],
    "cruces_reales": 0,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 20.6707668,
+    "lon": -103.412395
+   },
+   "lugar_buscado": {
+    "lat": 20.6707668,
+    "lon": -103.412395
+   },
    "distancia_m": null
   },
   {
@@ -61,6 +77,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 24.7784049,
+    "lon": -107.4035132
+   },
+   "lugar_buscado": {
+    "lat": 24.778404899999998,
+    "lon": -107.4035132
+   },
+   "real_cercano": {
+    "lat": 24.778405,
+    "lon": -107.403513
+   },
    "distancia_m": 0
   },
   {
@@ -72,6 +100,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3605756,
+    "lon": -99.1103701
+   },
+   "lugar_buscado": {
+    "lat": 19.3605756,
+    "lon": -99.1103701
+   },
    "distancia_m": null
   },
   {
@@ -138,6 +174,18 @@
    ],
    "cruces_reales": 3,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 22.6194326,
+    "lon": -105.6023958
+   },
+   "lugar_buscado": {
+    "lat": 22.619432600000003,
+    "lon": -105.6023958
+   },
+   "real_cercano": {
+    "lat": 22.619451,
+    "lon": -105.602263
+   },
    "distancia_m": 14
   },
   {
@@ -160,6 +208,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.2899443,
+    "lon": -99.0560382
+   },
+   "lugar_buscado": {
+    "lat": 19.2899443,
+    "lon": -99.0560382
+   },
    "distancia_m": null
   },
   {
@@ -169,8 +225,16 @@
     "carretera Toluca-Naucalpan",
     "calle 5"
    ],
-   "cruces_reales": null,
+   "cruces_reales": 0,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4212607,
+    "lon": -99.4884029
+   },
+   "lugar_buscado": {
+    "lat": 19.4218633,
+    "lon": -99.4882892
+   },
    "distancia_m": null
   },
   {
@@ -182,6 +246,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3549741,
+    "lon": -99.1574613
+   },
+   "lugar_buscado": {
+    "lat": 19.3549741,
+    "lon": -99.1574613
+   },
    "distancia_m": null
   },
   {
@@ -193,6 +265,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 21.0930138,
+    "lon": -101.6514462
+   },
+   "lugar_buscado": {
+    "lat": 21.0926635,
+    "lon": -101.6515382
+   },
+   "real_cercano": {
+    "lat": 21.095355,
+    "lon": -101.650832
+   },
    "distancia_m": 268
   },
   {
@@ -215,6 +299,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4470838,
+    "lon": -99.1470575
+   },
+   "lugar_buscado": {
+    "lat": 19.44708130321607,
+    "lon": -99.14704181707593
+   },
+   "real_cercano": {
+    "lat": 19.447073,
+    "lon": -99.146988
+   },
    "distancia_m": 7
   },
   {
@@ -226,6 +322,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 24.8077783,
+    "lon": -107.3689252
+   },
+   "lugar_buscado": {
+    "lat": 24.8077213,
+    "lon": -107.368604
+   },
+   "real_cercano": {
+    "lat": 24.806476,
+    "lon": -107.361943
+   },
    "distancia_m": 720
   },
   {
@@ -237,6 +345,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3631028,
+    "lon": -99.138785
+   },
+   "lugar_buscado": {
+    "lat": 19.3631028,
+    "lon": -99.138785
+   },
    "distancia_m": null
   },
   {
@@ -248,6 +364,14 @@
    ],
    "cruces_reales": 0,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 20.1109695,
+    "lon": -98.7274715
+   },
+   "lugar_buscado": {
+    "lat": 20.1109695,
+    "lon": -98.72747149999998
+   },
    "distancia_m": null
   },
   {
@@ -270,6 +394,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 26.0249412,
+    "lon": -98.2423714
+   },
+   "lugar_buscado": {
+    "lat": 26.0249412,
+    "lon": -98.2423714
+   },
+   "real_cercano": {
+    "lat": 26.024941,
+    "lon": -98.242371
+   },
    "distancia_m": 0
   },
   {
@@ -292,6 +428,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3585088,
+    "lon": -99.0894051
+   },
+   "lugar_buscado": {
+    "lat": 19.3581158,
+    "lon": -99.0894943
+   },
    "distancia_m": null
   },
   {
@@ -314,6 +458,14 @@
    ],
    "cruces_reales": 0,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 20.0975479,
+    "lon": -98.7662847
+   },
+   "lugar_buscado": {
+    "lat": 20.0963829,
+    "lon": -98.7650526
+   },
    "distancia_m": null
   },
   {
@@ -325,6 +477,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.372631,
+    "lon": -99.188106
+   },
+   "lugar_buscado": {
+    "lat": 19.37306509730767,
+    "lon": -99.18930567834641
+   },
    "distancia_m": null
   },
   {
@@ -336,6 +496,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 31.855347,
+    "lon": -116.6146671
+   },
+   "lugar_buscado": {
+    "lat": 31.855347,
+    "lon": -116.61466710000002
+   },
+   "real_cercano": {
+    "lat": 31.855366,
+    "lon": -116.614608
+   },
    "distancia_m": 6
   },
   {
@@ -347,6 +519,18 @@
    ],
    "cruces_reales": 2,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.6225807,
+    "lon": -99.1614047
+   },
+   "lugar_buscado": {
+    "lat": 19.622580700000004,
+    "lon": -99.1614047
+   },
+   "real_cercano": {
+    "lat": 19.62249,
+    "lon": -99.161395
+   },
    "distancia_m": 10
   },
   {
@@ -358,6 +542,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3983276,
+    "lon": -99.1487353
+   },
+   "lugar_buscado": {
+    "lat": 19.3983276,
+    "lon": -99.14873529999998
+   },
    "distancia_m": null
   },
   {
@@ -367,8 +559,20 @@
     "Avenida Valle de Guadiana",
     "Avenida Carlos Hank González"
    ],
-   "cruces_reales": 7,
+   "cruces_reales": 20,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4999433,
+    "lon": -99.0384681
+   },
+   "lugar_buscado": {
+    "lat": 19.5005765,
+    "lon": -99.0401246
+   },
+   "real_cercano": {
+    "lat": 19.499943,
+    "lon": -99.038468
+   },
    "distancia_m": 0
   },
   {
@@ -402,6 +606,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.2920154,
+    "lon": -99.1107691
+   },
+   "lugar_buscado": {
+    "lat": 19.2920154,
+    "lon": -99.1107691
+   },
+   "real_cercano": {
+    "lat": 19.292076,
+    "lon": -99.110726
+   },
    "distancia_m": 8
   },
   {
@@ -424,6 +640,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.316787,
+    "lon": -99.2550612
+   },
+   "lugar_buscado": {
+    "lat": 19.3169085,
+    "lon": -99.2541666
+   },
+   "real_cercano": {
+    "lat": 19.307074,
+    "lon": -99.247805
+   },
    "distancia_m": 1323
   },
   {
@@ -435,6 +663,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3664424,
+    "lon": -99.0567933
+   },
+   "lugar_buscado": {
+    "lat": 19.3678362,
+    "lon": -99.0572615
+   },
    "distancia_m": null
   },
   {
@@ -457,6 +693,14 @@
    ],
    "cruces_reales": 0,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 21.0402431,
+    "lon": -97.4384791
+   },
+   "lugar_buscado": {
+    "lat": 21.0410436,
+    "lon": -97.4394169
+   },
    "distancia_m": null
   },
   {
@@ -468,6 +712,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 18.846706,
+    "lon": -98.939032
+   },
+   "lugar_buscado": {
+    "lat": 18.8464781,
+    "lon": -98.9390503
+   },
+   "real_cercano": {
+    "lat": 18.841959,
+    "lon": -98.940699
+   },
    "distancia_m": 557
   },
   {
@@ -521,9 +777,21 @@
     "Paseo de los Leones",
     "Puerta de Hierro"
    ],
-   "cruces_reales": 0,
+   "cruces_reales": 1,
    "resultado": "propone",
-   "distancia_m": null
+   "propuesto": {
+    "lat": 25.7171377,
+    "lon": -100.3841537
+   },
+   "lugar_buscado": {
+    "lat": 25.7173296,
+    "lon": -100.3841499
+   },
+   "real_cercano": {
+    "lat": 25.743742,
+    "lon": -100.420558
+   },
+   "distancia_m": 4701
   },
   {
    "id": "cesvi-7f1fa3c962",
@@ -534,6 +802,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4595171,
+    "lon": -99.1397689
+   },
+   "lugar_buscado": {
+    "lat": 19.4592217,
+    "lon": -99.1396056
+   },
    "distancia_m": null
   },
   {
@@ -545,6 +821,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.2843087,
+    "lon": -99.0011677
+   },
+   "lugar_buscado": {
+    "lat": 19.2843087,
+    "lon": -99.0011677
+   },
    "distancia_m": null
   },
   {
@@ -556,6 +840,14 @@
    ],
    "cruces_reales": 0,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 23.259782,
+    "lon": -106.4429955
+   },
+   "lugar_buscado": {
+    "lat": 23.2596888,
+    "lon": -106.4429115
+   },
    "distancia_m": null
   },
   {
@@ -567,6 +859,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 20.7232739,
+    "lon": -103.3220539
+   },
+   "lugar_buscado": {
+    "lat": 20.7232739,
+    "lon": -103.3220539
+   },
+   "real_cercano": {
+    "lat": 20.723274,
+    "lon": -103.322054
+   },
    "distancia_m": 0
   },
   {
@@ -578,6 +882,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 24.1385201,
+    "lon": -110.3220072
+   },
+   "lugar_buscado": {
+    "lat": 24.1385201,
+    "lon": -110.3220072
+   },
+   "real_cercano": {
+    "lat": 24.13852,
+    "lon": -110.322007
+   },
    "distancia_m": 0
   },
   {
@@ -611,6 +927,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.398484,
+    "lon": -99.1374134
+   },
+   "lugar_buscado": {
+    "lat": 19.3980208,
+    "lon": -99.1372226
+   },
    "distancia_m": null
   },
   {
@@ -633,6 +957,14 @@
    ],
    "cruces_reales": 0,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 24.8151393,
+    "lon": -107.4076411
+   },
+   "lugar_buscado": {
+    "lat": 24.8151393,
+    "lon": -107.4076411
+   },
    "distancia_m": null
   },
   {
@@ -644,6 +976,14 @@
    ],
    "cruces_reales": 0,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 24.8144484,
+    "lon": -107.3740636
+   },
+   "lugar_buscado": {
+    "lat": 24.814581,
+    "lon": -107.3732807
+   },
    "distancia_m": null
   },
   {
@@ -666,6 +1006,14 @@
    ],
    "cruces_reales": 0,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 24.7931856,
+    "lon": -107.3902291
+   },
+   "lugar_buscado": {
+    "lat": 24.7931183,
+    "lon": -107.3902233
+   },
    "distancia_m": null
   },
   {
@@ -677,6 +1025,14 @@
    ],
    "cruces_reales": 0,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4576792,
+    "lon": -99.0696367
+   },
+   "lugar_buscado": {
+    "lat": 19.4582177,
+    "lon": -99.06939
+   },
    "distancia_m": null
   },
   {
@@ -688,6 +1044,14 @@
    ],
    "cruces_reales": 0,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.6175746,
+    "lon": -99.0520696
+   },
+   "lugar_buscado": {
+    "lat": 19.6173337,
+    "lon": -99.0519139
+   },
    "distancia_m": null
   },
   {
@@ -699,6 +1063,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 18.8944867,
+    "lon": -99.1676275
+   },
+   "lugar_buscado": {
+    "lat": 18.8944867,
+    "lon": -99.1676275
+   },
+   "real_cercano": {
+    "lat": 18.894487,
+    "lon": -99.167627
+   },
    "distancia_m": 0
   },
   {
@@ -721,6 +1097,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 26.0482334,
+    "lon": -98.3754837
+   },
+   "lugar_buscado": {
+    "lat": 26.0482334,
+    "lon": -98.3754837
+   },
+   "real_cercano": {
+    "lat": 26.048233,
+    "lon": -98.375484
+   },
    "distancia_m": 0
   },
   {
@@ -743,6 +1131,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 18.9462548,
+    "lon": -99.2338566
+   },
+   "lugar_buscado": {
+    "lat": 18.9462548,
+    "lon": -99.23385660000001
+   },
+   "real_cercano": {
+    "lat": 18.946248,
+    "lon": -99.233921
+   },
    "distancia_m": 7
   },
   {
@@ -754,6 +1154,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4572233,
+    "lon": -99.1488967
+   },
+   "lugar_buscado": {
+    "lat": 19.457183399999998,
+    "lon": -99.14875769999999
+   },
    "distancia_m": null
   },
   {
@@ -765,6 +1173,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 20.3383907,
+    "lon": -102.2893491
+   },
+   "lugar_buscado": {
+    "lat": 20.3383907,
+    "lon": -102.2893491
+   },
+   "real_cercano": {
+    "lat": 20.338391,
+    "lon": -102.289349
+   },
    "distancia_m": 0
   },
   {
@@ -776,6 +1196,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3379476,
+    "lon": -99.1924814
+   },
+   "lugar_buscado": {
+    "lat": 19.3377784,
+    "lon": -99.192784
+   },
    "distancia_m": null
   },
   {
@@ -787,6 +1215,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 20.4897417,
+    "lon": -97.4642209
+   },
+   "lugar_buscado": {
+    "lat": 20.4897417,
+    "lon": -97.4642209
+   },
+   "real_cercano": {
+    "lat": 20.495414,
+    "lon": -97.470359
+   },
    "distancia_m": 899
   },
   {
@@ -796,9 +1236,21 @@
     "calle Cero",
     "calle C"
    ],
-   "cruces_reales": null,
+   "cruces_reales": 1,
    "resultado": "propone",
-   "distancia_m": null
+   "propuesto": {
+    "lat": 22.3093137,
+    "lon": -97.856452
+   },
+   "lugar_buscado": {
+    "lat": 22.3093137,
+    "lon": -97.856452
+   },
+   "real_cercano": {
+    "lat": 22.309314,
+    "lon": -97.856452
+   },
+   "distancia_m": 0
   },
   {
    "id": "cesvi-bf10fcba2f",
@@ -807,9 +1259,21 @@
     "Avenida 9",
     "calle 6"
    ],
-   "cruces_reales": null,
+   "cruces_reales": 1,
    "resultado": "propone",
-   "distancia_m": null
+   "propuesto": {
+    "lat": 16.7071053,
+    "lon": -93.1252415
+   },
+   "lugar_buscado": {
+    "lat": 16.7071053,
+    "lon": -93.1252415
+   },
+   "real_cercano": {
+    "lat": 16.788195,
+    "lon": -93.102951
+   },
+   "distancia_m": 9335
   },
   {
    "id": "cesvi-c0bc4df135",
@@ -820,6 +1284,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4858402,
+    "lon": -99.0919054
+   },
+   "lugar_buscado": {
+    "lat": 19.4857729,
+    "lon": -99.0917411
+   },
    "distancia_m": null
   },
   {
@@ -831,6 +1303,14 @@
    ],
    "cruces_reales": 0,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 29.0624776,
+    "lon": -110.9644194
+   },
+   "lugar_buscado": {
+    "lat": 29.0623519,
+    "lon": -110.9644509
+   },
    "distancia_m": null
   },
   {
@@ -842,6 +1322,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4033118,
+    "lon": -99.1846537
+   },
+   "lugar_buscado": {
+    "lat": 19.40354308454368,
+    "lon": -99.18461889817912
+   },
    "distancia_m": null
   },
   {
@@ -875,6 +1363,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3931464,
+    "lon": -99.1867817
+   },
+   "lugar_buscado": {
+    "lat": 19.392975699999997,
+    "lon": -99.1862257
+   },
    "distancia_m": null
   },
   {
@@ -886,6 +1382,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3998316,
+    "lon": -99.1800769
+   },
+   "lugar_buscado": {
+    "lat": 19.399705400000002,
+    "lon": -99.18020030000002
+   },
    "distancia_m": null
   },
   {
@@ -897,6 +1401,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3989646,
+    "lon": -99.1764077
+   },
+   "lugar_buscado": {
+    "lat": 19.398718,
+    "lon": -99.1765009
+   },
    "distancia_m": null
   },
   {
@@ -908,6 +1420,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 29.3209959,
+    "lon": -100.9322802
+   },
+   "lugar_buscado": {
+    "lat": 29.3209959,
+    "lon": -100.9322802
+   },
+   "real_cercano": {
+    "lat": 29.320996,
+    "lon": -100.93228
+   },
    "distancia_m": 0
   },
   {
@@ -919,6 +1443,14 @@
    ],
    "cruces_reales": 0,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 24.8221822,
+    "lon": -107.4073568
+   },
+   "lugar_buscado": {
+    "lat": 24.82228,
+    "lon": -107.4072829
+   },
    "distancia_m": null
   },
   {
@@ -941,6 +1473,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4531839,
+    "lon": -99.1313459
+   },
+   "lugar_buscado": {
+    "lat": 19.4531839,
+    "lon": -99.1313459
+   },
    "distancia_m": null
   },
   {
@@ -952,6 +1492,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3653485,
+    "lon": -99.0520979
+   },
+   "lugar_buscado": {
+    "lat": 19.3653485,
+    "lon": -99.0520979
+   },
    "distancia_m": null
   },
   {
@@ -963,6 +1511,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 24.8290069,
+    "lon": -107.4549023
+   },
+   "lugar_buscado": {
+    "lat": 24.8290069,
+    "lon": -107.45490229999999
+   },
+   "real_cercano": {
+    "lat": 24.829039,
+    "lon": -107.454866
+   },
    "distancia_m": 5
   },
   {
@@ -974,6 +1534,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4580889,
+    "lon": -99.1631048
+   },
+   "lugar_buscado": {
+    "lat": 19.4581902,
+    "lon": -99.1631769
+   },
    "distancia_m": null
   },
   {
@@ -1007,6 +1575,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 21.4210391,
+    "lon": -103.1116784
+   },
+   "lugar_buscado": {
+    "lat": 21.4198785,
+    "lon": -103.1116245
+   },
    "distancia_m": null
   },
   {
@@ -1027,9 +1603,21 @@
     "Avenida Hidalgo",
     "Privada de Otates"
    ],
-   "cruces_reales": 0,
+   "cruces_reales": 1,
    "resultado": "propone",
-   "distancia_m": null
+   "propuesto": {
+    "lat": 22.2746239,
+    "lon": -97.8740773
+   },
+   "lugar_buscado": {
+    "lat": 22.2746713,
+    "lon": -97.8743653
+   },
+   "real_cercano": {
+    "lat": 22.269096,
+    "lon": -97.873794
+   },
+   "distancia_m": 616
   },
   {
    "id": "cesvi-ec1c390b10",
@@ -1040,6 +1628,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 25.5438885,
+    "lon": -103.4558502
+   },
+   "lugar_buscado": {
+    "lat": 25.5438879,
+    "lon": -103.4554057
+   },
+   "real_cercano": {
+    "lat": 25.571309,
+    "lon": -103.420283
+   },
    "distancia_m": 4699
   },
   {
@@ -1051,6 +1651,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4444366,
+    "lon": -99.0945053
+   },
+   "lugar_buscado": {
+    "lat": 19.444436599999996,
+    "lon": -99.09450529999998
+   },
    "distancia_m": null
   },
   {
@@ -1084,6 +1692,14 @@
    ],
    "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.2899443,
+    "lon": -99.0560382
+   },
+   "lugar_buscado": {
+    "lat": 19.2899443,
+    "lon": -99.0560382
+   },
    "distancia_m": null
   },
   {
@@ -1117,6 +1733,14 @@
    ],
    "cruces_reales": 0,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 25.7871582,
+    "lon": -109.0079644
+   },
+   "lugar_buscado": {
+    "lat": 25.7872044,
+    "lon": -109.0080445
+   },
    "distancia_m": null
   },
   {
@@ -1128,6 +1752,18 @@
    ],
    "cruces_reales": 2,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.287909,
+    "lon": -99.5984514
+   },
+   "lugar_buscado": {
+    "lat": 19.2875467,
+    "lon": -99.5979311
+   },
+   "real_cercano": {
+    "lat": 19.282049,
+    "lon": -99.641631
+   },
    "distancia_m": 4584
   },
   {
@@ -1139,6 +1775,18 @@
    ],
    "cruces_reales": 2,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.2472194,
+    "lon": -99.5778941
+   },
+   "lugar_buscado": {
+    "lat": 19.2468559,
+    "lon": -99.5779233
+   },
+   "real_cercano": {
+    "lat": 19.277221,
+    "lon": -99.574521
+   },
    "distancia_m": 3359
   },
   {
@@ -1150,6 +1798,18 @@
    ],
    "cruces_reales": 2,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.2854857,
+    "lon": -99.6038776
+   },
+   "lugar_buscado": {
+    "lat": 19.2854664,
+    "lon": -99.6042208
+   },
+   "real_cercano": {
+    "lat": 19.270178,
+    "lon": -99.641166
+   },
    "distancia_m": 4273
   },
   {
@@ -1161,6 +1821,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.2472194,
+    "lon": -99.5778941
+   },
+   "lugar_buscado": {
+    "lat": 19.2468559,
+    "lon": -99.5779233
+   },
+   "real_cercano": {
+    "lat": 19.250403,
+    "lon": -99.577665
+   },
    "distancia_m": 355
   },
   {
@@ -1172,6 +1844,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.287909,
+    "lon": -99.5984514
+   },
+   "lugar_buscado": {
+    "lat": 19.2875467,
+    "lon": -99.5979311
+   },
+   "real_cercano": {
+    "lat": 19.273009,
+    "lon": -99.658483
+   },
    "distancia_m": 6522
   },
   {
@@ -1183,6 +1867,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.2472194,
+    "lon": -99.5778941
+   },
+   "lugar_buscado": {
+    "lat": 19.2468559,
+    "lon": -99.5779233
+   },
+   "real_cercano": {
+    "lat": 19.250403,
+    "lon": -99.577665
+   },
    "distancia_m": 355
   },
   {
@@ -1194,6 +1890,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.2869966,
+    "lon": -99.5998513
+   },
+   "lugar_buscado": {
+    "lat": 19.2869785,
+    "lon": -99.599326
+   },
+   "real_cercano": {
+    "lat": 19.286223,
+    "lon": -99.573452
+   },
    "distancia_m": 2775
   },
   {
@@ -1205,6 +1913,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.2472194,
+    "lon": -99.5778941
+   },
+   "lugar_buscado": {
+    "lat": 19.2468559,
+    "lon": -99.5779233
+   },
+   "real_cercano": {
+    "lat": 19.250403,
+    "lon": -99.577665
+   },
    "distancia_m": 355
   },
   {
@@ -1216,6 +1936,18 @@
    ],
    "cruces_reales": 3,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.287909,
+    "lon": -99.5984514
+   },
+   "lugar_buscado": {
+    "lat": 19.2875467,
+    "lon": -99.5979311
+   },
+   "real_cercano": {
+    "lat": 19.287304,
+    "lon": -99.611605
+   },
    "distancia_m": 1384
   },
   {
@@ -1227,6 +1959,18 @@
    ],
    "cruces_reales": 3,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.287909,
+    "lon": -99.5984514
+   },
+   "lugar_buscado": {
+    "lat": 19.2875467,
+    "lon": -99.5979311
+   },
+   "real_cercano": {
+    "lat": 19.287304,
+    "lon": -99.611605
+   },
    "distancia_m": 1384
   },
   {
@@ -1236,8 +1980,16 @@
     "Glorieta de Insurgentes",
     "Avenida Chapultepec"
    ],
-   "cruces_reales": 0,
+   "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4237352,
+    "lon": -99.1623371
+   },
+   "lugar_buscado": {
+    "lat": 19.4231225,
+    "lon": -99.1626947
+   },
    "distancia_m": null
   },
   {
@@ -1247,8 +1999,16 @@
     "Glorieta de las Cibeles",
     "calle Durango"
    ],
-   "cruces_reales": 0,
+   "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4203136,
+    "lon": -99.1640119
+   },
+   "lugar_buscado": {
+    "lat": 19.4199035,
+    "lon": -99.1640652
+   },
    "distancia_m": null
   },
   {
@@ -1271,6 +2031,14 @@
    ],
    "cruces_reales": 0,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3681613,
+    "lon": -99.1808704
+   },
+   "lugar_buscado": {
+    "lat": 19.36816205,
+    "lon": -99.18095430000001
+   },
    "distancia_m": null
   },
   {
@@ -1282,6 +2050,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3492105,
+    "lon": -99.18684
+   },
+   "lugar_buscado": {
+    "lat": 19.3492105,
+    "lon": -99.18684
+   },
+   "real_cercano": {
+    "lat": 19.349193,
+    "lon": -99.186932
+   },
    "distancia_m": 10
   },
   {
@@ -1291,8 +2071,16 @@
     "Eje Central Lázaro Cárdenas",
     "Avenida Juárez"
    ],
-   "cruces_reales": 0,
+   "cruces_reales": null,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4265746,
+    "lon": -99.14208
+   },
+   "lugar_buscado": {
+    "lat": 19.4267538,
+    "lon": -99.1420543
+   },
    "distancia_m": null
   },
   {
@@ -1302,9 +2090,21 @@
     "Avenida Universidad",
     "Avenida Miguel Ángel de Quevedo"
    ],
-   "cruces_reales": 0,
+   "cruces_reales": 2,
    "resultado": "propone",
-   "distancia_m": null
+   "propuesto": {
+    "lat": 19.3467999,
+    "lon": -99.1806136
+   },
+   "lugar_buscado": {
+    "lat": 19.347019900000003,
+    "lon": -99.18049884999999
+   },
+   "real_cercano": {
+    "lat": 19.34683,
+    "lon": -99.180545
+   },
+   "distancia_m": 8
   },
   {
    "id": "aud-31-alcance-puente-churubusco",
@@ -1315,6 +2115,18 @@
    ],
    "cruces_reales": 118,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3575527,
+    "lon": -99.1517085
+   },
+   "lugar_buscado": {
+    "lat": 19.35693266329938,
+    "lon": -99.14478792268363
+   },
+   "real_cercano": {
+    "lat": 19.357676,
+    "lon": -99.151682
+   },
    "distancia_m": 14
   },
   {
@@ -1326,6 +2138,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4013089,
+    "lon": -99.1659204
+   },
+   "lugar_buscado": {
+    "lat": 19.4012633,
+    "lon": -99.1657359
+   },
+   "real_cercano": {
+    "lat": 19.399941,
+    "lon": -99.170555
+   },
    "distancia_m": 510
   },
   {
@@ -1337,6 +2161,18 @@
    ],
    "cruces_reales": 1,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4047903,
+    "lon": -99.2295934
+   },
+   "lugar_buscado": {
+    "lat": 19.4049043,
+    "lon": -99.2296403
+   },
+   "real_cercano": {
+    "lat": 19.426908,
+    "lon": -99.205872
+   },
    "distancia_m": 3502
   },
   {
@@ -1348,6 +2184,14 @@
    ],
    "cruces_reales": 0,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3945279,
+    "lon": -99.233659
+   },
+   "lugar_buscado": {
+    "lat": 19.3944979,
+    "lon": -99.2337349
+   },
    "distancia_m": null
   },
   {
@@ -1359,6 +2203,14 @@
    ],
    "cruces_reales": 0,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4267698,
+    "lon": -99.1757271
+   },
+   "lugar_buscado": {
+    "lat": 19.427306,
+    "lon": -99.1752022
+   },
    "distancia_m": null
   },
   {
@@ -1370,6 +2222,14 @@
    ],
    "cruces_reales": 0,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3599919,
+    "lon": -99.1431424
+   },
+   "lugar_buscado": {
+    "lat": 19.36029515009825,
+    "lon": -99.14332393035936
+   },
    "distancia_m": null
   },
   {
@@ -1381,6 +2241,14 @@
    ],
    "cruces_reales": 0,
    "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3681613,
+    "lon": -99.1808704
+   },
+   "lugar_buscado": {
+    "lat": 19.36816205,
+    "lon": -99.18095430000001
+   },
    "distancia_m": null
   },
   {

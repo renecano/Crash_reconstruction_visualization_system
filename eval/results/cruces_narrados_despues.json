@@ -2,32 +2,32 @@
  "descripcion": "El cruce narrado (#388): cuántos casos nombran un cruce y en cuántos el choque propuesto queda a más de 30 m del cruce real de OSM (el más cercano de los cruces de las dos calles en el municipio).",
  "script": "eval/cruces_narrados.mts",
  "modo": "despues",
- "fecha": "2026-11-27",
+ "fecha": "2026-11-28",
  "tope_m": 30,
  "casos_revisados": 247,
  "prueba": {
-  "nombran_un_cruce": 99,
+  "nombran_un_cruce": 100,
   "con_cruce_real_en_osm": 29,
-  "osm_sin_el_cruce": 27,
-  "sin_medir_overpass_o_municipio": 43,
-  "propone": 45,
-  "pregunta": 14,
-  "sin_lugar": 40,
-  "propone_medible": 22,
-  "a_mas_de_30_m": 1,
-  "a_30_m_o_menos": 21
+  "osm_sin_el_cruce": 21,
+  "sin_medir_overpass_o_municipio": 50,
+  "propone": 50,
+  "pregunta": 13,
+  "sin_lugar": 37,
+  "propone_medible": 23,
+  "a_mas_de_30_m": 0,
+  "a_30_m_o_menos": 23
  },
  "nuevas": {
   "nombran_un_cruce": 25,
   "con_cruce_real_en_osm": 15,
-  "osm_sin_el_cruce": 10,
-  "sin_medir_overpass_o_municipio": 0,
-  "propone": 13,
-  "pregunta": 8,
-  "sin_lugar": 4,
-  "propone_medible": 10,
+  "osm_sin_el_cruce": 6,
+  "sin_medir_overpass_o_municipio": 4,
+  "propone": 10,
+  "pregunta": 12,
+  "sin_lugar": 3,
+  "propone_medible": 8,
   "a_mas_de_30_m": 0,
-  "a_30_m_o_menos": 10
+  "a_30_m_o_menos": 8
  },
  "filas": [
   {
@@ -38,8 +38,16 @@
     "Calzada Vallejo"
    ],
    "cruces_reales": null,
-   "resultado": "sin_lugar",
-   "motivo": "sin lugar"
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4950074,
+    "lon": -99.1539526
+   },
+   "lugar_buscado": {
+    "lat": 19.49476821761103,
+    "lon": -99.15394969161348
+   },
+   "distancia_m": null
   },
   {
    "id": "cesvi-06e4ee9b97",
@@ -48,7 +56,7 @@
     "calle Santa Rosa de Lima",
     "Camino Real"
    ],
-   "cruces_reales": 0,
+   "cruces_reales": null,
    "resultado": "sin_lugar",
    "motivo": "sin lugar"
   },
@@ -83,8 +91,16 @@
     "Atanasio Sarabia"
    ],
    "cruces_reales": null,
-   "resultado": "sin_lugar",
-   "motivo": "sin lugar"
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3605756,
+    "lon": -99.1103701
+   },
+   "lugar_buscado": {
+    "lat": 19.3605756,
+    "lon": -99.1103701
+   },
+   "distancia_m": null
   },
   {
    "id": "cesvi-12f0cdba9c",
@@ -127,8 +143,16 @@
     "Blvd. Adolfo Ruíz Cortínez"
    ],
    "cruces_reales": null,
-   "resultado": "sin_lugar",
-   "motivo": "sin lugar"
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 17.8487942,
+    "lon": -92.8804389
+   },
+   "lugar_buscado": {
+    "lat": 17.848794,
+    "lon": -92.880439
+   },
+   "distancia_m": null
   },
   {
    "id": "cesvi-17afa381e4",
@@ -159,7 +183,7 @@
     "Eje 3 Oriente",
     "calle Cafetales"
    ],
-   "cruces_reales": 34,
+   "cruces_reales": null,
    "resultado": "pregunta",
    "motivo": "varios cruces (5)"
   },
@@ -189,7 +213,7 @@
     "carretera Toluca-Naucalpan",
     "calle 5"
    ],
-   "cruces_reales": null,
+   "cruces_reales": 0,
    "resultado": "sin_lugar",
    "motivo": "sin lugar"
   },
@@ -207,8 +231,8 @@
     "lon": -99.1574613
    },
    "lugar_buscado": {
-    "lat": 19.354974,
-    "lon": -99.157461
+    "lat": 19.3549741,
+    "lon": -99.1574613
    },
    "distancia_m": null
   },
@@ -219,7 +243,7 @@
     "Av. Pradera",
     "calle Golfo de Bengala"
    ],
-   "cruces_reales": 1,
+   "cruces_reales": null,
    "resultado": "propone",
    "propuesto": {
     "lat": 21.0953545,
@@ -229,11 +253,7 @@
     "lat": 21.095355,
     "lon": -101.650832
    },
-   "real_cercano": {
-    "lat": 21.095355,
-    "lon": -101.650832
-   },
-   "distancia_m": 0
+   "distancia_m": null
   },
   {
    "id": "cesvi-3481483d69",
@@ -416,9 +436,9 @@
     "Boulevard Felipe Ángeles",
     "calle Av. Francisco Sarabia"
    ],
-   "cruces_reales": 0,
-   "resultado": "pregunta",
-   "motivo": "varios cruces (2)"
+   "cruces_reales": null,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
   },
   {
    "id": "cesvi-52c47a9f37",
@@ -483,7 +503,7 @@
     "Avenida Valle de Guadiana",
     "Avenida Carlos Hank González"
    ],
-   "cruces_reales": 7,
+   "cruces_reales": 20,
    "resultado": "pregunta",
    "motivo": "varios cruces (5)"
   },
@@ -539,7 +559,7 @@
     "Av. General Lázaro Cárdenas",
     "calle Juan de Dios Batís"
    ],
-   "cruces_reales": 0,
+   "cruces_reales": null,
    "resultado": "sin_lugar",
    "motivo": "sin lugar"
   },
@@ -685,9 +705,17 @@
     "Paseo de los Leones",
     "Puerta de Hierro"
    ],
-   "cruces_reales": 0,
-   "resultado": "sin_lugar",
-   "motivo": "sin lugar"
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 25.7437084,
+    "lon": -100.4207785
+   },
+   "lugar_buscado": {
+    "lat": 25.743742,
+    "lon": -100.420558
+   },
+   "distancia_m": null
   },
   {
    "id": "cesvi-7f1fa3c962",
@@ -707,6 +735,17 @@
     "lon": -99.139839
    },
    "distancia_m": null
+  },
+  {
+   "id": "cesvi-8022b514b7",
+   "fuente": "prueba",
+   "calles": [
+    "Circuito Interior",
+    "Insurgentes Norte"
+   ],
+   "cruces_reales": null,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (2)"
   },
   {
    "id": "cesvi-818c2eb6d6",
@@ -1017,16 +1056,8 @@
     "Eje 2 Norte"
    ],
    "cruces_reales": null,
-   "resultado": "propone",
-   "propuesto": {
-    "lat": 19.4603334,
-    "lon": -99.1449393
-   },
-   "lugar_buscado": {
-    "lat": 19.4601969,
-    "lon": -99.1450553
-   },
-   "distancia_m": null
+   "resultado": "pregunta",
+   "motivo": "varios cruces (5)"
   },
   {
    "id": "cesvi-b37686e37c",
@@ -1092,7 +1123,7 @@
     "calle Cero",
     "calle C"
    ],
-   "cruces_reales": null,
+   "cruces_reales": 1,
    "resultado": "sin_lugar",
    "motivo": "sin lugar"
   },
@@ -1103,9 +1134,21 @@
     "Avenida 9",
     "calle 6"
    ],
-   "cruces_reales": null,
-   "resultado": "sin_lugar",
-   "motivo": "sin lugar"
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 16.788195,
+    "lon": -93.102951
+   },
+   "lugar_buscado": {
+    "lat": 16.788195,
+    "lon": -93.102951
+   },
+   "real_cercano": {
+    "lat": 16.788195,
+    "lon": -93.102951
+   },
+   "distancia_m": 0
   },
   {
    "id": "cesvi-c0bc4df135",
@@ -1121,8 +1164,8 @@
     "lon": -99.0892393
    },
    "lugar_buscado": {
-    "lat": 19.484733,
-    "lon": -99.089239
+    "lat": 19.484674917378552,
+    "lon": -99.08909937660354
    },
    "distancia_m": null
   },
@@ -1250,16 +1293,8 @@
     "calzada"
    ],
    "cruces_reales": 0,
-   "resultado": "propone",
-   "propuesto": {
-    "lat": 24.8221822,
-    "lon": -107.4073568
-   },
-   "lugar_buscado": {
-    "lat": 24.82228,
-    "lon": -107.4072829
-   },
-   "distancia_m": null
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
   },
   {
    "id": "cesvi-d4283db9c4",
@@ -1282,12 +1317,12 @@
    "cruces_reales": null,
    "resultado": "propone",
    "propuesto": {
-    "lat": 19.4550296,
-    "lon": -99.1394284
+    "lat": 19.4531839,
+    "lon": -99.1313459
    },
    "lugar_buscado": {
-    "lat": 19.45451,
-    "lon": -99.1373134
+    "lat": 19.4531839,
+    "lon": -99.1313459
    },
    "distancia_m": null
   },
@@ -1299,8 +1334,16 @@
     "calle 2-A"
    ],
    "cruces_reales": null,
-   "resultado": "sin_lugar",
-   "motivo": "sin lugar"
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3653485,
+    "lon": -99.0520979
+   },
+   "lugar_buscado": {
+    "lat": 19.3653485,
+    "lon": -99.0520979
+   },
+   "distancia_m": null
   },
   {
    "id": "cesvi-d84907cf47",
@@ -1310,8 +1353,20 @@
     "boulevard Paseo del Roble"
    ],
    "cruces_reales": 1,
-   "resultado": "pregunta",
-   "motivo": "lugar dudoso"
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 24.8290069,
+    "lon": -107.4549023
+   },
+   "lugar_buscado": {
+    "lat": 24.829039,
+    "lon": -107.454866
+   },
+   "real_cercano": {
+    "lat": 24.829039,
+    "lon": -107.454866
+   },
+   "distancia_m": 5
   },
   {
    "id": "cesvi-d8a73cd0be",
@@ -1321,16 +1376,8 @@
     "Calzada de los Gallos"
    ],
    "cruces_reales": null,
-   "resultado": "propone",
-   "propuesto": {
-    "lat": 19.4168385,
-    "lon": -99.1788375
-   },
-   "lugar_buscado": {
-    "lat": 19.416827,
-    "lon": -99.1790004
-   },
-   "distancia_m": null
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
   },
   {
    "id": "cesvi-d950dda14b",
@@ -1358,7 +1405,7 @@
     "carretera Texcoco-Lechería",
     "calle Puebla"
    ],
-   "cruces_reales": 0,
+   "cruces_reales": null,
    "resultado": "sin_lugar",
    "motivo": "sin lugar"
   },
@@ -1389,8 +1436,8 @@
     "Eje 10"
    ],
    "cruces_reales": null,
-   "resultado": "pregunta",
-   "motivo": "lugar dudoso"
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
   },
   {
    "id": "cesvi-ebb5c029a8",
@@ -1399,9 +1446,17 @@
     "Avenida Hidalgo",
     "Privada de Otates"
    ],
-   "cruces_reales": 0,
-   "resultado": "sin_lugar",
-   "motivo": "sin lugar"
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 22.2690954,
+    "lon": -97.8738006
+   },
+   "lugar_buscado": {
+    "lat": 22.269096,
+    "lon": -97.873794
+   },
+   "distancia_m": null
   },
   {
    "id": "cesvi-ec1c390b10",
@@ -1413,18 +1468,18 @@
    "cruces_reales": 1,
    "resultado": "propone",
    "propuesto": {
-    "lat": 25.5438885,
-    "lon": -103.4558502
+    "lat": 25.5712593,
+    "lon": -103.4202368
    },
    "lugar_buscado": {
-    "lat": 25.5438879,
-    "lon": -103.4554057
+    "lat": 25.571309,
+    "lon": -103.420283
    },
    "real_cercano": {
     "lat": 25.571309,
     "lon": -103.420283
    },
-   "distancia_m": 4699
+   "distancia_m": 7
   },
   {
    "id": "cesvi-f290a77272",
@@ -1555,7 +1610,7 @@
     "Boulevard Centenario",
     "Paseo Los Mochis"
    ],
-   "cruces_reales": 0,
+   "cruces_reales": null,
    "resultado": "propone",
    "propuesto": {
     "lat": 25.7871582,
@@ -1596,7 +1651,7 @@
     "Avenida Pino Suárez",
     "Avenida Solidaridad Las Torres"
    ],
-   "cruces_reales": 2,
+   "cruces_reales": null,
    "resultado": "pregunta",
    "motivo": "varios cruces (2)"
   },
@@ -1744,17 +1799,9 @@
     "Glorieta de Insurgentes",
     "Avenida Chapultepec"
    ],
-   "cruces_reales": 0,
-   "resultado": "propone",
-   "propuesto": {
-    "lat": 19.4237352,
-    "lon": -99.1623371
-   },
-   "lugar_buscado": {
-    "lat": 19.42377455,
-    "lon": -99.16218195000002
-   },
-   "distancia_m": null
+   "cruces_reales": null,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (5)"
   },
   {
    "id": "aud-20-glorieta-cibeles-moto",
@@ -1763,7 +1810,7 @@
     "Glorieta de las Cibeles",
     "calle Durango"
    ],
-   "cruces_reales": 0,
+   "cruces_reales": null,
    "resultado": "sin_lugar",
    "motivo": "sin lugar"
   },
@@ -1819,7 +1866,7 @@
     "Eje Central Lázaro Cárdenas",
     "Avenida Juárez"
    ],
-   "cruces_reales": 0,
+   "cruces_reales": null,
    "resultado": "propone",
    "propuesto": {
     "lat": 19.4342374,
@@ -1838,9 +1885,9 @@
     "Avenida Universidad",
     "Avenida Miguel Ángel de Quevedo"
    ],
-   "cruces_reales": 0,
-   "resultado": "sin_lugar",
-   "motivo": "sin lugar"
+   "cruces_reales": 2,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (2)"
   },
   {
    "id": "aud-31-alcance-puente-churubusco",
@@ -1850,20 +1897,8 @@
     "Circuito Interior"
    ],
    "cruces_reales": 118,
-   "resultado": "propone",
-   "propuesto": {
-    "lat": 19.3579428,
-    "lon": -99.1317151
-   },
-   "lugar_buscado": {
-    "lat": 19.35655,
-    "lon": -99.1389212
-   },
-   "real_cercano": {
-    "lat": 19.35773,
-    "lon": -99.131676
-   },
-   "distancia_m": 24
+   "resultado": "pregunta",
+   "motivo": "varios cruces (5)"
   },
   {
    "id": "aud-32-volcadura-viaducto",
@@ -1943,12 +1978,12 @@
    "cruces_reales": 0,
    "resultado": "propone",
    "propuesto": {
-    "lat": 19.398484,
-    "lon": -99.1374134
+    "lat": 19.3599919,
+    "lon": -99.1431424
    },
    "lugar_buscado": {
-    "lat": 19.3980208,
-    "lon": -99.1372226
+    "lat": 19.36029515009825,
+    "lon": -99.14332393035936
    },
    "distancia_m": null
   },
@@ -1971,20 +2006,8 @@
     "Circuito Interior"
    ],
    "cruces_reales": 118,
-   "resultado": "propone",
-   "propuesto": {
-    "lat": 19.3579428,
-    "lon": -99.1317151
-   },
-   "lugar_buscado": {
-    "lat": 19.35655,
-    "lon": -99.1389212
-   },
-   "real_cercano": {
-    "lat": 19.35773,
-    "lon": -99.131676
-   },
-   "distancia_m": 24
+   "resultado": "pregunta",
+   "motivo": "varios cruces (5)"
   }
  ]
 }
