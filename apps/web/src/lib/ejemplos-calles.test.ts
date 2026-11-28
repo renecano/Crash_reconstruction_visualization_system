@@ -2,7 +2,7 @@
  * Las calles fijas de los cinco ejemplos y de AXA (René, 2026-11-25 y 2026-11-27: «en la demo con
  * CESVI no puede salir otra cifra porque OpenStreetMap tardó»; la carambola daba 25 o 23 según la
  * red). Cada una va centrada en el punto del choque que arma La escena, con un radio que cubre todas
- * sus posiciones más 60 m, y marcada `fija`: en un ejemplo publicado nunca se reemplaza por las que
+ * sus posiciones y su lugar guardado más 60 m, y marcada `fija`: en un ejemplo publicado nunca se reemplaza por las que
  * lleguen de la red. © colaboradores de OpenStreetMap (ODbL), de Overpass, con la consulta de la app.
  *
  * Se generan saliendo a la red (Overpass, como `/api/osm`), una vez:
@@ -110,16 +110,18 @@ describe("las calles fijas de los ejemplos y de AXA", () => {
         for (let vuelta = 0; vuelta < 3; vuelta++) {
           const { choque, posiciones } = choqueYPosiciones(armado(e.clave, calles));
           if (antes && metros(antes, choque) < 2) break;
-          calles = await fijas(choque, radioPara(choque, posiciones));
+          // También el lugar guardado: ahí están las calles que narra el ejemplo (la carambola narra
+          // «entre la Calle Encino y la Calle Nogal», a 185 m de su choque) y La escena las busca.
+          calles = await fijas(choque, radioPara(choque, [...posiciones, e.lugar]));
           antes = choque;
         }
-        writeFileSync(join(SALIDA, `${e.clave}.json`), `${JSON.stringify(calles)}\n`);
+        writeFileSync(join(SALIDA, `${e.clave}.json`), `${JSON.stringify(calles, null, 2)}\n`);
         console.log("CALLES", e.clave, calles!.centro, calles!.radio_m, calles!.vias.length);
       }
       const axa = expedienteAxaReconstruccion();
       const { choque, posiciones } = choqueYPosiciones(axa);
       const g = await fijas(choque, radioPara(choque, posiciones));
-      writeFileSync(AXA, `${JSON.stringify(g)}\n`);
+      writeFileSync(AXA, `${JSON.stringify(g, null, 2)}\n`);
       console.log("CALLES axa", g.centro, g.radio_m, g.vias.length);
     },
   );
@@ -142,6 +144,12 @@ describe("las calles fijas de los ejemplos y de AXA", () => {
       ).toBeLessThan(15);
       for (const p of posiciones)
         expect(metros(g!.centro as Punto, p), `${clave}: una posición queda fuera`).toBeLessThan(
+          g!.radio_m,
+        );
+      // Y su lugar guardado, donde están las calles que narra.
+      const lugar = e.caso.lugar?.coordenadas as Punto | undefined;
+      if (lugar)
+        expect(metros(g!.centro as Punto, lugar), `${clave}: su lugar queda fuera`).toBeLessThan(
           g!.radio_m,
         );
       expect(guardadasCerca(e, choque), clave).not.toBeNull();
