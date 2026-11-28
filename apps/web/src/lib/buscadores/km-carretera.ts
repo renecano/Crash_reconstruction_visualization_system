@@ -15,8 +15,12 @@
  * colocación con la interfaz de René (`buscadores-lugar.ts`).
  */
 import { consultarOverpass } from "./overpass";
+import { leerCarretera, NOMBRE } from "./carretera-narrada";
 import type { BuscarKmCarretera, RedLugar, ZonaCaso } from "../buscadores-lugar";
 import { ATRIBUCION_OSM, geocodificar } from "./geocodificar";
+
+/** La carretera narrada, sin km (vive en `carretera-narrada`, sin dependencias del servidor). */
+export { leerCarretera };
 
 export interface PuntoBuscado {
   lat: number;
@@ -63,26 +67,15 @@ export interface DepsKm {
   poblacion: (nombre: string) => Promise<LatLon | null>;
 }
 
-const NOMBRE =
-  "[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñ.]*(?:\\s+(?:de\\s+|del\\s+|la\\s+)?[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñ.]*){0,3}";
-
 /** Lo que dice el texto del kilómetro; `null` si no nombra un km de una carretera. */
 export function leerKmCarretera(texto: string): KmNarrado | null {
   const k = /\b(?:km\.?|kil[oó]metro)\s*(\d{1,4}(?:[.,]\d+)?)(?:\s*\+\s*(\d{1,3}))?/i.exec(texto);
   if (!k) return null;
   const km = Number(k[1]!.replace(",", ".")) + (k[2] ? Number(k[2]) / 1000 : 0);
-  const r =
-    /\bMEX\s*[-–]?\s*(\d{1,3})\s*([Dd])?\b/.exec(texto) ??
-    /\b(?:carretera|autopista)(?:\s+federal)?(?:\s+(?:n[uú]mero|no\.))?\s+(\d{1,3})\s*([Dd])?\b/i.exec(
-      texto,
-    );
-  const ref = r ? `MEX ${r[1]}${r[2] ? "D" : ""}` : null;
-  const t = new RegExp(`(${NOMBRE})\\s*[–—-]\\s*(${NOMBRE})`).exec(texto);
-  const tramo: [string, string] | null =
-    t && !/^MEX$/i.test(t[1]!) ? [t[1]!.trim(), t[2]!.trim()] : null;
+  const v = leerCarretera(texto);
+  if (!v) return null;
   const c = new RegExp(`\\bcerca\\s+de\\s+(${NOMBRE})`).exec(texto);
-  if (!ref && !tramo) return null;
-  return { ref, tramo, km, cercaDe: c ? c[1]!.trim() : null };
+  return { ...v, km, cercaDe: c ? c[1]!.trim() : null };
 }
 
 const R = 6_371_000;
@@ -187,6 +180,24 @@ export function consultaKm(n: KmNarrado, c: LatLon, radioM: number): string {
     `[out:json][timeout:60];way(${b})["highway"~"^(motorway|trunk|primary|secondary)(_link)?$"]${filtro}->.w;` +
     `.w out tags geom;node(around.w:40)["highway"="milestone"];out;`
   );
+}
+
+/**
+ * Solo la carretera (por su número o por su tramo, en una sola consulta y sin mojones), alrededor de
+ * `c`: para el punto más cercano a una población narrada (René, 2026-11-28). Más ligera que `consultaKm`.
+ */
+export function consultaCarretera(
+  v: { ref: string | null; tramo: [string, string] | null },
+  c: LatLon,
+  radioM: number,
+): string {
+  const b = caja(c, radioM);
+  const hw = `["highway"~"^(motorway|trunk|primary|secondary|tertiary)(_link)?$"]`;
+  const filtros = [
+    v.ref ? `["ref"~"^${v.ref.replace(" ", " ?-?")}${v.ref.endsWith("D") ? "" : "D?"}$"]` : null,
+    v.tramo ? `["name"~"${v.tramo[0]}.*${v.tramo[1]}|${v.tramo[1]}.*${v.tramo[0]}",i]` : null,
+  ].filter(Boolean);
+  return `[out:json][timeout:25];(${filtros.map((f) => `way(${b})${hw}${f};`).join("")});out tags geom;`;
 }
 
 /** Dónde queda el km que dice el texto; `null` si no nombra uno o no se encuentra la carretera. */
