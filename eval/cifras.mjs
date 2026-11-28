@@ -384,7 +384,13 @@ function construir() {
         "ejemplos.poste",
         "poste-terraceria",
         "«poste y terracería»: velocidad del Sentra (B)",
-        " Respeta el derrape de 18.40 m: sale del choque a 43 km/h o más (Fricke); vuelve a la demo (René, 2026-11-27).",
+        " Respeta el derrape de 18.40 m: sale del choque a 43 km/h o más (Fricke).",
+        // El poste narrado aparece solo, como supuesto, y su choque entra al cálculo (#427, después del
+        // revert #425 por inestable). Medida dos veces en el navegador en producción, la misma cifra;
+        // estable a 4 cm, 11 cm y 1 m del reposo (prueba en objetos-narrados.test.ts). René lo aprobó el
+        // 2026-11-28. Antes, 50 (47–57), con el poste marcado a mano por la receta.
+        "eval/results/verif-produccion/ejemplos-poste-427-1.json",
+        "El poste narrado ahora aparece solo, como supuesto, y su choque entra al cálculo; René lo aprobó el 2026-11-28. Medido dos veces en el navegador en producción (#427), la misma cifra, y estable ante unos centímetros del reposo del Sentra. Antes, 50 km/h (47–57), con el poste marcado a mano.",
       ],
     ]) {
       // Un ejemplo puede venir de otra medición del navegador (la carambola, de producción).

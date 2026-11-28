@@ -77,7 +77,7 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 | Alcance en carretera con la deformación medida  | Las medidas C1–C6 de los dos vehículos, su energía y su cambio de velocidad | A · NP300 a <!--cifra:ejemplos.alcance-->53 km/h (44–53)<!--/cifra-->    |
 | Carambola de noche con lluvia                   | Tres vehículos, dos impactos en orden, pavimento mojado                     | A · Ranger a <!--cifra:ejemplos.carambola-->24 km/h (20–32)<!--/cifra--> |
 | Reversa en una calle con tope                   | La reversa como supuesto con su fuente; un tope con las medidas de la norma | B · Versa a <!--cifra:ejemplos.reversa-->20 km/h (17–26)<!--/cifra-->    |
-| Choque en un entronque y salida contra un poste | Punto de paso, terracería y un objeto fijo                                  | B · Sentra a <!--cifra:ejemplos.poste-->50 km/h (47–57)<!--/cifra-->     |
+| Choque en un entronque y salida contra un poste | Punto de paso, terracería y un objeto fijo                                  | B · Sentra a <!--cifra:ejemplos.poste-->50 km/h (47–52)<!--/cifra-->     |
 
 Para la demo: la carambola (los dos impactos en orden, de noche con lluvia en el 3D) o el alcance (la deformación medida). **Dos hipótesis** solo se ven en AXA: ninguno de los ejemplos las da. **El del poste vuelve a la demo** (René, 2026-11-27): con lo medido como restricción, el Sentra respeta su derrape de 18.40 m y sale del choque a 43 km/h o más. Un ejemplo sin cambios no gasta API; los cinco ya se vieron con el 3D real de Unity en la t11.
 
