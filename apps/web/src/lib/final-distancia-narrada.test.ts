@@ -179,3 +179,65 @@ describe("posiciones finales narradas que no se ofrecían (René, 2026-11-27, #3
     expect(f!.texto).toMatch(/de donde quedó el vehículo B/);
   });
 });
+
+describe("las posiciones finales de los casos de Alberto (#396)", () => {
+  const a = armada("alcance-deformacion");
+  const [va, vb] = a.vehiculos.map((x) => x.id) as [string, string];
+  const casos: [string, string, string, RegExp][] = [
+    [
+      "moto-cruce",
+      vb,
+      "el vehículo B se detuvo 3 metros adelante sobre Nicolás Bravo",
+      /3 m adelante .*sobre Nicolás Bravo/,
+    ],
+    [
+      "noche-lluvia",
+      va,
+      "los dos vehículos quedaron sobre la calzada a 4 metros uno del otro",
+      /4 m de donde quedó el vehículo B/,
+    ],
+    [
+      "glorieta",
+      va,
+      "ambos vehículos quedaron dentro de la glorieta, a unos 5 metros del punto de impacto",
+      /5 m adelante/,
+    ],
+    [
+      "rebase-carretera A",
+      va,
+      "el vehículo A quedó sobre el acotamiento sur",
+      /supuesto: la narración no dice cuántos metros/,
+    ],
+    [
+      "rebase-carretera B",
+      vb,
+      "el vehículo B sobre su carril, a 7 metros del punto de impacto",
+      /7 m adelante/,
+    ],
+    [
+      "volcadura",
+      va,
+      "quedó con las llantas hacia arriba a 25 metros del borde de la carretera",
+      /25 m fuera de la orilla/,
+    ],
+    [
+      "desierto-chihuahua B",
+      vb,
+      "el vehículo B salió del camino y quedó a 35 metros del punto de impacto",
+      /35 m adelante/,
+    ],
+    [
+      "desierto-chihuahua A",
+      va,
+      "el tractocamión se detuvo 60 metros adelante sobre el acotamiento",
+      /^60 m adelante[^]*sobre el acotamiento: /,
+    ],
+  ];
+  for (const [caso, v, frase, texto] of casos)
+    it(`${caso}: «${frase}» se ofrece`, () => {
+      const otras = caso === "noche-lluvia" ? [{ vehiculo: vb, descripcion: frase }] : [];
+      const f = finalDeLaNarracion(a, v, frase, otras);
+      expect(f, caso).not.toBeNull();
+      expect(f!.texto).toMatch(texto);
+    });
+});

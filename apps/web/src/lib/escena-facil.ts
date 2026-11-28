@@ -2076,7 +2076,7 @@ export function finalDeLaNarracion(
   // primer impacto», «a 3 m de donde estaba detenido» (o estacionado): desde su pose del choque, hacia
   // donde avanzaba.
   const desde = new RegExp(
-    String.raw`${NUM}\s*m(?:etros?)?\s+(?:despu[eé]s|adelante|m[aá]s\s+all[aá])\s+del?\s+(?:paso\s+peatonal|punto\s+de\s+(?:contacto|impacto)|impacto|choque|cruce|contacto)|a\s+${NUM}\s*m(?:etros?)?\s+del\s+punto\s+del?\s+(?:primer\s+)?(?:impacto|choque|contacto)|a\s+${NUM}\s*m(?:etros?)?\s+de\s+donde\s+(?:estaba|se\s+encontraba)\s+(?:detenid|estacionad)[oa]`,
+    String.raw`${NUM}\s*m(?:etros?)?\s+(?:despu[eé]s|adelante|m[aá]s\s+all[aá])\s+del?\s+(?:paso\s+peatonal|punto\s+de\s+(?:contacto|impacto)|impacto|choque|cruce|contacto)|a\s+(?:unos\s+|aproximadamente\s+|cerca\s+de\s+)?${NUM}\s*m(?:etros?)?\s+del\s+punto\s+del?\s+(?:primer\s+)?(?:impacto|choque|contacto)|a\s+${NUM}\s*m(?:etros?)?\s+de\s+donde\s+(?:estaba|se\s+encontraba)\s+(?:detenid|estacionad)[oa]`,
   ).exec(d);
   // «sobre el acotamiento» (René, 2026-11-26: el Vento quedó en el acotamiento, no en su carril): del
   // centro de su carril (3.5 m) al centro del acotamiento (2.5 m), 3 m a su derecha (supuesto).
@@ -2145,7 +2145,12 @@ export function finalDeLaNarracion(
   ).exec(d);
   if (!desde && masAdelante) {
     const n = metros(masAdelante[1]!);
-    const sobre = masAdelante[2]?.trim();
+    const sobreMin = /^acotamiento\b/.test(masAdelante[2]?.trim() ?? "")
+      ? undefined
+      : masAdelante[2]?.trim();
+    // Como la escribió el perito («Nicolás Bravo»), no en minúsculas.
+    const i = sobreMin ? descripcion.toLowerCase().indexOf(sobreMin) : -1;
+    const sobre = sobreMin && i >= 0 ? descripcion.slice(i, i + sobreMin.length) : sobreMin;
     return enElAcotamiento(
       adelante(
         n,
@@ -2175,6 +2180,15 @@ export function finalDeLaNarracion(
   // metros que diga, aunque no diga desde dónde (desde su pose del choque).
   const suelto = new RegExp(String.raw`\ba\s+${NUM}\s*m(?:etros?)?\b`).exec(d);
   if (suelto && salida) return adelante(metros(suelto[1]!), "");
+  // «el vehículo A quedó sobre el acotamiento sur», sin metros (René, 2026-11-28, #396): en el
+  // acotamiento, a la altura del choque; cuánto avanzó es un supuesto y se dice.
+  if (/\bsobre\s+el\s+acotamiento\b/.test(sinAcentos(d)))
+    return enElAcotamiento(
+      adelante(
+        0,
+        "a la altura de su posición en el choque (supuesto: la narración no dice cuántos metros avanzó)",
+      ),
+    );
   return null;
 }
 
