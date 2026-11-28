@@ -1,8 +1,8 @@
 # Paso: carambolas-prueba
 # Comando: pnpm --filter @croquis/cesvi exec tsx ../../eval/cesvi_r6_carambolas.mts medir prueba
 # Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
-# Inicio: 2026-11-27 18:04:36
+# Inicio: 2026-11-27 19:24:21
 
-33/33 reconstruidas (33 válidas, 33 en 3D); impactos posteriores: 22 de 31 ocurren; mediana 1156 ms
+33/33 reconstruidas (33 válidas, 33 en 3D); impactos posteriores: 22 de 31 ocurren; mediana 1096 ms
 
-# Fin: 2026-11-27 18:06:50 · ok · 2.2 min
+# Fin: 2026-11-27 19:26:20 · ok · 2 min
