@@ -56,6 +56,10 @@ import {
 const DE_CRUCE =
   /\b(?:cruce|crucero|esquina|intersecci[oó]n|entronque|glorieta|a la altura de|entre (?:las|la) calles?)\b/i;
 
+/** «a la altura de la colonia X» (con su nombre): un tramo de la calle, no un cruce. */
+const A_LA_ALTURA_DE_COLONIA =
+  /\ba\s+la\s+altura\s+de\s+la\s+colonia\s+[A-ZÁÉÍÓÚÑ][\wÁÉÍÓÚÑáéíóúñ.'-]*(?:\s+(?:de\s+(?:la\s+|los\s+|las\s+)?|del\s+)?[A-ZÁÉÍÓÚÑ][\wÁÉÍÓÚÑáéíóúñ.'-]*)*/;
+
 /**
  * Si la frase del lugar nombra una sola calle y ningún cruce, y esa calle pasa a menos de 25 m del
  * lugar: el punto sobre ella. null si no.
@@ -65,11 +69,15 @@ export function calleNarradaSinCruce(
   narracion: string,
   lugar: Punto,
 ): ReturnType<typeof ajustarACalle> {
-  const frase = narracion.split(/(?<=\.)\s/)[0] ?? "";
-  // Solo frente a una casa o un negocio («frente al acceso vehicular…»): a la mitad de la cuadra.
-  // Sobre una carretera o una avenida sin más, el choque sigue en el cruce más cercano (un camino de
-  // los 205 reportes cambiaba de calle a su vehículo que llega de lado).
-  if (DE_CRUCE.test(frase) || !/\bfrente\s+a(?:l)?\b/i.test(frase)) return null;
+  const frase0 = narracion.split(/(?<=\.)\s/)[0] ?? "";
+  // «a la altura de la colonia Ciprés» es un tramo de la calle, no un cruce (René, 2026-11-28, caso 1:
+  // el choque iba al cruce más cercano, con otra avenida, y el Jetta llegaba por ella).
+  const enColonia = A_LA_ALTURA_DE_COLONIA.test(frase0);
+  const frase = frase0.replace(A_LA_ALTURA_DE_COLONIA, " ");
+  // Solo frente a una casa o un negocio («frente al acceso vehicular…») o a la altura de una colonia:
+  // a la mitad de la cuadra. Sobre una carretera o una avenida sin más, el choque sigue en el cruce
+  // más cercano (un camino de los 205 reportes cambiaba de calle a su vehículo que llega de lado).
+  if (DE_CRUCE.test(frase) || !(enColonia || /\bfrente\s+a(?:l)?\b/i.test(frase))) return null;
   const nombradas = callesNarradas(frase);
   if (nombradas.length !== 1) return null;
   const suyas = calles.filter((c) => c.nombre && esLaCalleNarrada(nombradas[0]!.nombre, c.nombre));
