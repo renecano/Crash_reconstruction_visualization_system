@@ -19,6 +19,7 @@ import {
   formato as F,
   avanzar,
   conPosicion,
+  volcaduraSinChoque,
   distanciaM,
   distanciaProyeccion,
   enMetros,
@@ -978,7 +979,14 @@ export function pasosEscena(
       hecho: omitidas || s.c1.terrenoListo === true || terrenoMarcado(e),
     },
   ];
-  return [...choques, ...vehiculos, ...c1];
+  // Una volcadura sin choque (René, 2026-11-28): ni primer golpe ni choques contra algo más, que
+  // crearían un impacto que la narración no da.
+  const sinChoque = volcaduraSinChoque(e);
+  return [
+    ...choques,
+    ...vehiculos,
+    ...c1.filter((p) => !sinChoque || (p.tipo !== "golpe" && p.tipo !== "otros")),
+  ];
 }
 
 // --- C1 (W3): el primer golpe, los choques contra algo más y los puntos de paso ------------------

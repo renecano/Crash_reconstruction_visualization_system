@@ -9,6 +9,7 @@
  * perito en el mapa, y la descripción le dice dónde.
  */
 import MASAS_TIPICAS from "./data/masas-tipicas.json";
+import { AVISO_VOLCADURA, comoVolcaduraSinChoque, narraVolcaduraSinChoque } from "./volcadura";
 import {
   CLAVE_ORDEN_IMPACTOS,
   esCarambola,
@@ -189,6 +190,8 @@ export interface EscenaNarrada {
   problemas: string[];
   /** Lo que más cambia la reconstrucción y la narración no dice, en ese orden. Todas admiten «No sé». */
   preguntas: PreguntaEscena[];
+  /** Lo que Croquis tiene que decir del caso antes de seguir («todavía no reconstruye volcaduras»). */
+  aviso?: string;
 }
 
 /**
@@ -427,8 +430,16 @@ export function escenaDeConversion(c: Conversion, narracion?: string): EscenaNar
     narrado = usarRelieve(narrado, true);
   const leido = conZonas(narrado);
   const preguntas: PreguntaEscena[] = [];
-  const propuesto = leido.expediente.impactos?.length ? null : impactoPropuesto(leido.expediente);
-  const expediente = propuesto ? { ...leido.expediente, impactos: [propuesto] } : leido.expediente;
+  // Una volcadura sin choque contra nada (René, 2026-11-28): no se supone un impacto ni se pregunta
+  // contra qué chocó; se dice que Croquis todavía no la reconstruye.
+  const vuelco = narraVolcaduraSinChoque(leido.expediente, narracion);
+  const propuesto =
+    vuelco || leido.expediente.impactos?.length ? null : impactoPropuesto(leido.expediente);
+  const expediente = vuelco
+    ? comoVolcaduraSinChoque(leido.expediente)
+    : propuesto
+      ? { ...leido.expediente, impactos: [propuesto] }
+      : leido.expediente;
   const { ambiguas } = leido;
   if (propuesto) {
     const partes = propuesto.zonas!.map((z) => `${z.vehiculo} en su ${enPalabras(z.zona)}`);
@@ -445,36 +456,37 @@ export function escenaDeConversion(c: Conversion, narracion?: string): EscenaNar
   // con un solo vehículo, contra qué.
   const ids = expediente.vehiculos.map((v) => v.id);
   const pares = ids.flatMap((a, i) => ids.slice(i + 1).map((b) => [a, b] as const));
-  preguntas.push(
-    ids.length === 1
-      ? {
-          clave: "impactos",
-          texto: `¿Contra qué chocó ${ids[0]}?`,
-          porQue: "Sin los impactos no hay reconstrucción.",
-          control: {
-            tipo: "opciones",
-            opciones: OBJETOS_PREGUNTA.map((o) => ({
-              valor: `${ids[0]}|objeto:${o.valor}`,
-              etiqueta: o.etiqueta,
-            })),
-          },
-        }
-      : {
-          clave: "impactos",
-          texto: "¿Qué vehículos chocaron primero?",
-          porQue: "Sin los impactos no hay reconstrucción.",
-          control: {
-            tipo: "opciones",
-            opciones: [
-              ...pares.map(([a, b]) => ({ valor: `${a}|${b}`, etiqueta: `${a} y ${b}` })),
-              ...ids.map((v) => ({
-                valor: `${v}|objeto:otro`,
-                etiqueta: `${v} contra un objeto fijo`,
+  if (!vuelco)
+    preguntas.push(
+      ids.length === 1
+        ? {
+            clave: "impactos",
+            texto: `¿Contra qué chocó ${ids[0]}?`,
+            porQue: "Sin los impactos no hay reconstrucción.",
+            control: {
+              tipo: "opciones",
+              opciones: OBJETOS_PREGUNTA.map((o) => ({
+                valor: `${ids[0]}|objeto:${o.valor}`,
+                etiqueta: o.etiqueta,
               })),
-            ],
+            },
+          }
+        : {
+            clave: "impactos",
+            texto: "¿Qué vehículos chocaron primero?",
+            porQue: "Sin los impactos no hay reconstrucción.",
+            control: {
+              tipo: "opciones",
+              opciones: [
+                ...pares.map(([a, b]) => ({ valor: `${a}|${b}`, etiqueta: `${a} y ${b}` })),
+                ...ids.map((v) => ({
+                  valor: `${v}|objeto:otro`,
+                  etiqueta: `${v} contra un objeto fijo`,
+                })),
+              ],
+            },
           },
-        },
-  );
+    );
   // Carambola (T6.3): si el texto no dice en qué orden ocurrieron los impactos, el orden en que
   // quedaron al leerlos es un supuesto de Croquis; el perito lo declara. La primera opción es ese.
   const ordenes = ordenesPosibles(expediente);
@@ -575,6 +587,7 @@ export function escenaDeConversion(c: Conversion, narracion?: string): EscenaNar
     conteos: c.conteos,
     problemas: problemasExpediente(expediente),
     preguntas,
+    ...(vuelco ? { aviso: AVISO_VOLCADURA } : {}),
   };
 }
 

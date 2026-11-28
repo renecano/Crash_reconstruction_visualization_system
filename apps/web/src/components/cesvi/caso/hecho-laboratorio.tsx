@@ -6,7 +6,9 @@
  * mención de un vehículo ilumina su tarjeta, y al revés. Sin mapa en este acto.
  */
 import {
+  AVISO_VOLCADURA,
   minimoParaReconstruir,
+  volcaduraSinChoque,
   supuestosDeClase,
   supuestosDeclarados,
   type EscenaNarrada,
@@ -291,6 +293,12 @@ export function HechoLaboratorio({
           </dl>
         ) : null}
         <div className="solo-trabajar mt-4 flex flex-col gap-3 border-t border-linea-suave pt-4">
+          {volcaduraSinChoque(e) ? (
+            // René, 2026-11-28: dicho claro, sin inventar contra qué chocó ni una cifra.
+            <p className="t-interfaz" role="status" data-testid="aviso-volcadura">
+              <b>{AVISO_VOLCADURA}</b>
+            </p>
+          ) : null}
           {minimo.nivel !== "completo" ? (
             <p className="t-interfaz" role="status" data-testid="minimo-reconstruir">
               {minimo.nivel === "nada" ? (

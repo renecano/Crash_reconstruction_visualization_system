@@ -19,6 +19,7 @@ import { contraLaOrilla } from "./objeto-orilla";
 import {
   avanzar,
   conPosicion,
+  volcaduraSinChoque,
   distanciaM,
   formato as F,
   impactosEncimados,
@@ -511,9 +512,11 @@ export function listaDeLaEscena(o: {
           (varios ? `El choque ${i.orden}, donde lo marcaste` : "El choque, donde lo marcaste"))
         : o.conLugar === false && i.orden === 1
           ? "Dónde fue el hecho: busca el lugar y marca el choque"
-          : varios
-            ? `Dónde fue el choque ${i.orden}`
-            : "Dónde fue el choque",
+          : volcaduraSinChoque(e)
+            ? "Dónde empezó la volcadura"
+            : varios
+              ? `Dónde fue el choque ${i.orden}`
+              : "Dónde fue el choque",
       porque: colocado ? (p?.porque ?? null) : null,
       estado: !colocado ? "falta" : p && !o.confirmados.has(clave) ? "propuesto" : "confirmado",
       opcional: false,

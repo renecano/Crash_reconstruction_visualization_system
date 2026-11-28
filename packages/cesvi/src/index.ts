@@ -51,6 +51,7 @@ export * from "./terreno";
 export * from "./relieve";
 export * from "./iluminacion";
 export * from "./personas";
+export * from "./volcadura";
 export * from "./velocidad-narrada";
 export * from "./contra-narracion";
 export * from "./candado";

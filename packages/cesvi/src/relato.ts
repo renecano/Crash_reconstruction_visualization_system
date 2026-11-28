@@ -12,6 +12,7 @@
  * Todo es determinista y sin red.
  */
 import type { Expediente, FilaCorpus, SalidaCorpus } from "./corpus";
+import { volcaduraSinChoque } from "./volcadura";
 import type { SupuestoDeclarado } from "./supuestos";
 
 // --- ¿El relato tiene contenido? ----------------------------------------------------------------
@@ -988,12 +989,17 @@ export function minimoParaReconstruir(
 ): MinimoReconstruir {
   const impactos = e.impactos ?? [];
   const vehiculo = e.vehiculos.length >= 1;
+  // Una volcadura sin choque no tiene otro actor ni impacto: no se calcula, pero se puede seguir
+  // al croquis y al dictamen (René, 2026-11-28).
+  const vuelco = volcaduraSinChoque(e);
   const otroActor =
+    vuelco ||
     e.vehiculos.length >= 2 ||
     impactos.some((i) => Boolean(i.objeto_fijo)) ||
     (e.caso.modalidades ?? []).some((m) => m === "atropellamiento" || m === "objeto_fijo") ||
     /\b(peat[oó]n|ciclista|poste|[aá]rbol|muro|barda|barrera)\b/i.test(o.narracion ?? "");
   const impacto =
+    vuelco ||
     (e.caso.modalidades ?? []).length > 0 ||
     (e.danos ?? []).some((d) => !d.dano_previo && Boolean(d.zona?.cara)) ||
     impactos.some((i) => (i.zonas ?? []).length > 0 || i.fuente !== "supuesto");
