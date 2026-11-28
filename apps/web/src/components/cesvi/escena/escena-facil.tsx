@@ -956,8 +956,11 @@ export function EscenaFacil({
           desconocidos: estado.desconocidos.filter((x) => x !== v),
           juntoAlChoque: estado.juntoAlChoque.filter((x) => x !== v),
         },
-        exito(`¡Listo! El ${nombres[v]} quedó ${f.texto}, como dice la narración.`),
+        exito(`¡Listo! El ${nombres[v]} quedó ${f.texto}.`),
       );
+      // Como con las demás opciones: la pregunta se cierra (abierta desde la lista, se quedaba ahí).
+      setColocando(null);
+      setEditando(null);
       return;
     }
     if (op === "marcar") {
