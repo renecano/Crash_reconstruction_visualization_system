@@ -2,9 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   ALTO_VIDEO,
   CODIFICADORES,
-  escalaMedida,
   SIN_VIDEO,
-  UMBRAL_DOBLE_MS,
+  META_RAPIDO_MS,
+  aTiempo,
+  elegirModo,
   ANCHO_VIDEO,
   instantesDelVideo,
   CAMARA_LENTA_VIDEO,
@@ -12,7 +13,10 @@ import {
   rotuloAcelerado,
   rotuloLenta,
   lienzoDelVideo,
-  modoDelVideo,
+  modosDelVideo,
+  estimarVideo,
+  guardarMedida,
+  medidaGuardada,
   tarjetaIntegrada,
   textoTarda,
   nombreDelVideo,
@@ -72,21 +76,31 @@ describe("el antialiasing del video (René, 2026-11-26)", () => {
 });
 
 describe("el modo del video según la tarjeta (René, 2026-11-26: medido en la laptop de 8 GB)", () => {
-  it("integradas y por software van como antes; las dedicadas, al doble y en ultra", () => {
+  it("«Rápido» prueba alta y luego media; «Máxima», el doble en ultra solo con tarjeta dedicada", () => {
+    const rapido = [
+      { escala: 1, nivel: "alta" },
+      { escala: 1, nivel: "media" },
+    ];
     for (const r of [
       "ANGLE (Intel, Intel(R) UHD Graphics 620 (0x00005917) Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (AMD, AMD Radeon(TM) Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero)), SwiftShader driver)",
       null,
     ])
-      expect(modoDelVideo(r)).toEqual({ escala: 1, calidad: null });
+      for (const c of ["rapido", "maxima"] as const) expect(modosDelVideo(r, c)).toEqual(rapido);
     for (const r of [
       "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (AMD, AMD Radeon RX 6700 XT Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (Intel, Intel(R) Arc(TM) A770 Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "Apple M2",
-    ])
-      expect(modoDelVideo(r)).toEqual({ escala: 2, calidad: "ultra" });
+    ]) {
+      expect(modosDelVideo(r)).toEqual(rapido);
+      expect(modosDelVideo(r, "maxima")).toEqual([
+        { escala: 2, nivel: "ultra" },
+        { escala: 1, nivel: "ultra" },
+        { escala: 1, nivel: "alta" },
+      ]);
+    }
     expect(tarjetaIntegrada("Intel(R) Iris(R) Xe Graphics")).toBe(true);
   });
 
@@ -96,13 +110,51 @@ describe("el modo del video según la tarjeta (René, 2026-11-26: medido en la l
     expect(lienzoDelVideo(1, 1)).toEqual({ ancho: 1920, alto: 1080 });
   });
 
-  it("al doble solo si los cuadros medidos salen a tiempo (no por el nombre de la tarjeta)", () => {
-    expect(escalaMedida(60)).toBe(2);
-    expect(escalaMedida(UMBRAL_DOBLE_MS)).toBe(2);
-    expect(escalaMedida(UMBRAL_DOBLE_MS + 1)).toBe(1);
-    // Ningún cuadro al doble (la Intel UHD): 1×.
-    expect(escalaMedida(Infinity)).toBe(1);
-    expect(escalaMedida(Number.NaN)).toBe(1);
+  it("elige con lo medido y la meta de 2 min, no por el nombre de la tarjeta", () => {
+    const alta = { escala: 1, nivel: "alta" } as const;
+    const media = { escala: 1, nivel: "media" } as const;
+    const doble = { escala: 2, nivel: "ultra" } as const;
+    // Mac M1, AXA con cámara lenta (397 cuadros, 2026-11-28): alta 371 ms no cabe en 2 min; media
+    // 313 ms tampoco, pero es la más rápida.
+    expect(aTiempo(371, 397)).toBe(false);
+    expect(
+      elegirModo(
+        [
+          { modo: alta, ms: 371 },
+          { modo: media, ms: 313 },
+        ],
+        "rapido",
+        397,
+      )?.modo,
+    ).toBe(media);
+    // Un choque más corto: alta sí cabe y se queda con su MSAA.
+    expect(aTiempo(371, 300)).toBe(true);
+    expect(elegirModo([{ modo: alta, ms: 371 }], "rapido", 300)?.modo).toBe(alta);
+    expect(META_RAPIDO_MS).toBe(120_000);
+    // Máxima: el primero que termina en 10 min; al doble a 2.9 s por cuadro no (19 min), 1× alta sí.
+    expect(elegirModo([{ modo: doble, ms: 1400 }], "maxima", 397)?.modo).toBe(doble);
+    expect(
+      elegirModo(
+        [
+          { modo: doble, ms: 2900 },
+          { modo: alta, ms: 371 },
+        ],
+        "maxima",
+        397,
+      )?.modo,
+    ).toBe(alta);
+    expect(
+      elegirModo(
+        [
+          { modo: doble, ms: Infinity },
+          { modo: alta, ms: 968 },
+        ],
+        "maxima",
+        397,
+      )?.modo,
+    ).toBe(alta);
+    // Ninguno dibujó: nada (el video dice que no se pudo).
+    expect(elegirModo([{ modo: alta, ms: Infinity }], "rapido", 397)).toBeNull();
   });
 
   it("si el codificador falla, reintenta por software antes de rendirse, con un mensaje claro", () => {
@@ -128,5 +180,24 @@ describe("el modo del video según la tarjeta (René, 2026-11-26: medido en la l
     expect(rotuloAcelerado(a)).toMatch(/^Trayecto ilustrativo · acelerado ×\d+$/);
     // Un trayecto corto no se acelera.
     expect(aceleradoDelVideo(-20, -3, 4, null)).toBeNull();
+  });
+
+  it("estima antes de empezar con lo que tardó cada cuadro la última vez", () => {
+    expect(estimarVideo(450, null)).toBeNull();
+    expect(estimarVideo(450, 120)).toBe(54_000);
+    expect(textoTarda(estimarVideo(450, 120)!)).toBe("Tarda menos de un minuto");
+    const m = {
+      cuadros: 450,
+      ms_total: 90_000,
+      ms_unity: 80_000,
+      ms_componer: 5_000,
+      ms_codificar: 4_000,
+      ms_cerrar: 1_000,
+    };
+    localStorage.removeItem("croquis.video.msPorCuadro.rapido");
+    expect(medidaGuardada("rapido")).toBeNull();
+    guardarMedida("rapido", m);
+    expect(medidaGuardada("rapido")).toBe(200);
+    expect(medidaGuardada("maxima")).toBeNull();
   });
 });

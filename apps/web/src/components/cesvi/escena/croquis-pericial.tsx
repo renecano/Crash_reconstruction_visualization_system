@@ -59,13 +59,14 @@ export function CroquisPericialVista({
     conFoto: fondo === "foto",
     ajuste,
   });
-  const { svg } = useMemo(
+  // El croquis no depende del instante: se arma una vez y en cada cuadro solo se mueve la capa de
+  // encima (René, 2026-11-28: rehacer todo en cada cuadro hacía temblar el 2D).
+  const { svg, viewBox, linea, ahora } = useMemo(
     () =>
       croquisPericial(resultado, vias, nombres, {
         proporcion,
         todo,
         color,
-        t,
         fondo:
           fondo !== "ninguno" && piso.piso
             ? {
@@ -77,7 +78,7 @@ export function CroquisPericialVista({
               }
             : null,
       }),
-    [resultado, vias, nombres, proporcion, todo, color, t, fondo, piso.piso],
+    [resultado, vias, nombres, proporcion, todo, color, fondo, piso.piso],
   );
   const letras = Object.values(nombres);
 
@@ -186,10 +187,36 @@ export function CroquisPericialVista({
       >
         {/* El SVG lo arma `croquisPericial` con datos del solver: el mismo del dictamen. */}
         <div
-          className="h-full w-full origin-top-left [&>svg]:h-full [&>svg]:w-full"
+          className="relative h-full w-full origin-top-left"
           style={{ transform: `translate(${vista.dx}px, ${vista.dy}px) scale(${vista.k})` }}
-          dangerouslySetInnerHTML={{ __html: svg }}
-        />
+        >
+          <div
+            className="h-full w-full [&>svg]:h-full [&>svg]:w-full"
+            dangerouslySetInnerHTML={{ __html: svg }}
+          />
+          {/* El vehículo en movimiento, sin redondear: lo único que cambia en cada cuadro. */}
+          <svg
+            className="pointer-events-none absolute inset-0 h-full w-full"
+            viewBox={viewBox}
+            preserveAspectRatio="xMidYMid meet"
+            aria-hidden="true"
+            data-testid="croquis-movimiento"
+          >
+            {t === null
+              ? null
+              : ahora(t).map((v) => (
+                  <polygon
+                    key={v.id}
+                    points={v.puntos.map((p) => `${p.x},${p.y}`).join(" ")}
+                    fill="#2563EB"
+                    fillOpacity={0.18}
+                    stroke="#2563EB"
+                    strokeWidth={linea}
+                    data-ahora={v.id}
+                  />
+                ))}
+          </svg>
+        </div>
         <div
           className="vidrio absolute right-3 top-3 flex flex-col gap-1 rounded-panel p-1"
           role="group"

@@ -550,6 +550,7 @@ namespace Croquis.Visor
             inicio = resultado.TInicio;
             azBase = float.NaN;
             tomaImpacto = null;
+            tomaVuelo = null;
             desvioDespeje = 0f;
             orbitaTocada = false;
             cenitalTocada = false;
@@ -1179,6 +1180,9 @@ namespace Croquis.Visor
         }
 
         private Toma? tomaImpacto;
+
+        /// <summary>La toma del vuelo del motociclista (se elige una vez por caso).</summary>
+        private Toma? tomaVuelo;
         private List<Estorbo> fijos;
 
         /// <summary>Lo construido y las copas, como estorbos de `CamaraAutomatica`.</summary>
@@ -1262,15 +1266,49 @@ namespace Croquis.Visor
                 var todos = new List<Estorbo>(fijos);
                 todos.AddRange(enImpacto);
                 todos.AddRange(CamaraAutomatica.Vehiculos(resultado, tI + 0.5, Suelo));
-                tomaImpacto = CamaraAutomatica.Impacto(Contacto, a, b, todos);
+                // Si alguien sale volando de su moto, que también se vea dónde cae.
+                V3? cae = null;
+                foreach (var pv in Peatones)
+                {
+                    if (pv != null && pv.Vuelo != null)
+                    {
+                        cae = new V3(pv.Vuelo.XFinal, Suelo + 0.3, pv.Vuelo.YFinal);
+                        break;
+                    }
+                }
+
+                tomaImpacto = CamaraAutomatica.Impacto(Contacto, a, b, todos, cae);
                 Debug.Log("[cámara automática] impacto desde " + tomaImpacto.Value.Ojo.X.ToString("0.0") + ", " + tomaImpacto.Value.Ojo.Y.ToString("0.0") + ", " + tomaImpacto.Value.Ojo.Z.ToString("0.0"));
             }
 
             var aspecto = camara != null ? camara.aspect : 16f / 9f;
             var impacto = tomaImpacto.Value;
             var llegada = CamaraAutomatica.Panorama(CajaVehiculos(t), Contacto, impacto, 45.0, aspecto, new[] { 32.0, 45.0, 60.0, 80.0 }, fijos);
-            var final = CamaraAutomatica.Panorama(Lente.VehiculosEn(resultado, resultado.TFin), Contacto, impacto, 45.0, aspecto, new[] { 62.0, 75.0, 88.0 }, fijos);
+            var cajaFinal = Lente.VehiculosEn(resultado, resultado.TFin);
+            // Donde quedó el motociclista o el ciclista, también en la toma final.
+            foreach (var pv in Peatones)
+            {
+                if (pv != null && pv.Vuelo != null)
+                {
+                    cajaFinal.Agregar(pv.Vuelo.XFinal, pv.Vuelo.YFinal);
+                }
+            }
+
+            var final = CamaraAutomatica.Panorama(cajaFinal, Contacto, impacto, 45.0, aspecto, new[] { 62.0, 75.0, 88.0 }, fijos);
             var toma = CamaraAutomatica.En(t, tI, llegada, impacto, final);
+            // El motociclista o el ciclista que sale volando, siempre a la vista (René, 2026-11-28): una
+            // toma fija de lado a su vuelo, del impacto hasta la toma final.
+            foreach (var pv in Peatones)
+            {
+                var peso = pv != null && pv.Vuelo != null ? pv.Vuelo.PesoCamara(t) : 0.0;
+                if (peso > 0.0)
+                {
+                    tomaVuelo ??= VueloOcupante.TomaVuelo(Contacto, new V3(pv.Vuelo.XFinal, Suelo + 0.3, pv.Vuelo.YFinal), fijos, 45.0, aspecto);
+                    toma = CamaraAutomatica.Mezclar(toma, tomaVuelo.Value, peso);
+                    break;
+                }
+            }
+
             // Con trayecto previo, sigue al que viene de más lejos hasta que empieza la reconstrucción.
             VehiculoVista seguido = null;
             foreach (var v in Vehiculos)

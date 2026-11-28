@@ -33,6 +33,20 @@ export const FIGURA_PERSONA: Record<RolPersona, Figura> = {
       "M14 6.8 L11.6 10.2",
     ],
   },
+  // La moto: las dos ruedas, el tanque y el asiento, y el motociclista inclinado hacia el manubrio.
+  motociclista: {
+    circulos: [
+      [5.4, 17, 3.6, false],
+      [18.6, 17, 3.6, false],
+      [12.6, 4.4, 2.2, true],
+    ],
+    trazos: [
+      "M5.4 17 L9.6 12.4 H15.6 L18.6 17",
+      "M15.6 12.4 L17.4 8.6 H19.6",
+      "M12 7 L10.6 12.4",
+      "M12 8.4 L16.4 9.4",
+    ],
+  },
 };
 
 /** La figura para la paleta y los avisos: toma el color del texto. */

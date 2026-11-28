@@ -24,6 +24,7 @@ import {
   distanciaProyeccion,
   enMetros,
   agregarPersona,
+  marcarFinalPersona,
   moverPersona,
   nombrePersona,
   OBJETO_PERSONA,
@@ -1467,6 +1468,44 @@ function conPersonaDelChoque(e: Expediente, orden: number, p: Punto, rumbo: numb
         : x,
     ),
   };
+}
+
+/**
+ * «El peatón quedó tendido … a 4 m del punto de contacto»: los metros que da la narración entre donde
+ * golpearon a la persona y donde quedó; null si no los da.
+ */
+export function distanciaNarradaDePersona(narracion: string | null): number | null {
+  if (!narracion) return null;
+  const m =
+    /\b(?:peat[oó]n|ciclista|persona|transe[uú]nte|lesionad[oa])(?![\wáéíóúñ])[^.]*?\bqued[oó](?![\wáéíóúñ])[^.]*?\ba\s+(?:unos\s+|aproximadamente\s+|cerca\s+de\s+)?(\d{1,3}(?:[.,]\d+)?)\s*m(?:etros?)?\s+del?\s+(?:punto\s+de(?:l)?\s+(?:contacto|impacto|atropell\w*)|(?:primer\s+)?(?:impacto|contacto|choque|atropell\w*))/i.exec(
+      narracion,
+    );
+  const n = m ? Number(m[1]!.replace(",", ".")) : NaN;
+  return Number.isFinite(n) && n > 0 ? n : null;
+}
+
+/**
+ * Dónde quedó la persona golpeada, como lo dice la narración (René, 2026-11-28: el peatón del caso 2
+ * quedó «a 4 m del punto de contacto» y el perito tenía que ponerlo): a esos metros de donde la
+ * golpearon, hacia donde avanzaba el vehículo (la dirección de la proyección; supuesto). Solo mientras
+ * la persona sea un supuesto de Croquis: si el perito marca dónde quedó, es suya y no se toca.
+ */
+export function conReposoNarradoDePersonas(e: Expediente, narracion: string | null): Expediente {
+  const n = distanciaNarradaDePersona(narracion);
+  if (n === null || !(e.personas ?? []).some((p) => p.fuente === "supuesto")) return e;
+  let r = e;
+  for (const imp of e.impactos ?? []) {
+    const per = imp.persona ? (r.personas ?? []).find((p) => p.id === imp.persona) : undefined;
+    const v = imp.vehiculos?.[0];
+    if (!per || per.fuente !== "supuesto" || !v) continue;
+    const pose = poseDe(r, String(v), "impacto");
+    if (!pose) continue;
+    const marcha = rumboDeMarcha(r, String(v), pose.rumbo);
+    const fin = punto(avanzar(ll(per.punto), marcha, n));
+    if (per.final && distanciaM(ll(per.final), ll(fin)) < 0.01) continue;
+    r = marcarFinalPersona(r, per.id, fin);
+  }
+  return r;
 }
 
 /**

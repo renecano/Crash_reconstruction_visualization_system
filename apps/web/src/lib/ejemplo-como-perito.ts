@@ -27,6 +27,7 @@ import {
   contraNarracion,
   elegirDireccion,
   finalDeLaNarracion,
+  conReposoNarradoDePersonas,
   flechaPropuesta,
   flechasDeLlegada,
   marcarFinal,
@@ -349,7 +350,8 @@ export function escenaComoPerito(
     });
   }
   return {
-    expediente: e,
+    // Como La escena tras cada cambio: el peatón donde la narración dice que quedó (supuesto).
+    expediente: conReposoNarradoDePersonas(e, narracion),
     choque,
     puntos,
     propuesta: { expediente: prop.expediente, puntos: { ...prop.puntos } },

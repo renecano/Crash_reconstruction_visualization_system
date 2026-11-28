@@ -19,7 +19,9 @@ export const ROLES_PERSONA: readonly { rol: RolPersona; nombre: string }[] = [
   { rol: "ciclista", nombre: "Ciclista" },
 ];
 
-export const nombreRol = (r: RolPersona) => ROLES_PERSONA.find((x) => x.rol === r)!.nombre;
+/** Lo que se coloca suelto desde la paleta es el peatón o el ciclista; el motociclista va en su moto. */
+export const nombreRol = (r: RolPersona) =>
+  r === "motociclista" ? "Motociclista" : ROLES_PERSONA.find((x) => x.rol === r)!.nombre;
 
 /** «Peatón», «Peatón 2», «Ciclista»: por su rol y su orden entre los de su rol. */
 export function nombrePersona(e: Expediente, id: string): string {

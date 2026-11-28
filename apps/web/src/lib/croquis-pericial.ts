@@ -42,8 +42,12 @@ export interface OpcionesCroquis {
     ladoM: number;
     opacidad: number;
   } | null;
-  /** El instante de la línea de tiempo: el vehículo en movimiento, encima, con trazo fino. */
-  t?: number | null;
+}
+
+/** Un vehículo en movimiento en el instante de la línea de tiempo, en las coordenadas del croquis. */
+export interface VehiculoAhora {
+  id: string;
+  puntos: { x: number; y: number }[];
 }
 
 type P = { x: number; y: number };
@@ -489,7 +493,20 @@ export function croquisPericial(
   todasLasVias: readonly ViaCroquis[],
   nombres: Readonly<Record<string, string>>,
   o: OpcionesCroquis,
-): { svg: string; giro: number } {
+): {
+  svg: string;
+  giro: number;
+  /** El `viewBox` del SVG: la capa del movimiento va con el mismo. */
+  viewBox: string;
+  /** El grueso de línea del croquis (unidades del SVG). */
+  linea: number;
+  /**
+   * Los vehículos en movimiento en el instante `t`, sin redondear (René, 2026-11-28: el 2D temblaba
+   * porque se rehacía todo el croquis en cada cuadro). Barato: se llama en cada cuadro; lo demás del
+   * croquis no depende de `t`. Vacío cerca del impacto (encima de la posición 2 estorba).
+   */
+  ahora: (t: number) => VehiculoAhora[];
+} {
   const c = resultado.punto_impacto ?? { x: 0, y: 0 };
   const recorridos = [
     ...resultado.vehiculos.map((v) =>
@@ -859,16 +876,6 @@ export function croquisPericial(
     );
   }
 
-  // El vehículo en movimiento, en el instante de la línea de tiempo.
-  // Solo lejos del impacto: en el impacto, encima de la posición 2, no aporta y estorba.
-  if (o.t !== null && o.t !== undefined && Math.abs(o.t - ti) > 0.15)
-    for (const v of vehiculos) {
-      const { esq } = silueta(v, poseEn(v.trayectoria, o.t));
-      partes.push(
-        `<polygon points="${esq.map((p) => `${r1(p.x)},${r1(p.y)}`).join(" ")}" fill="#2563EB" fill-opacity="0.18" stroke="#2563EB" stroke-width="${r1(linea)}" data-ahora="${esc(v.id)}"/>`,
-      );
-    }
-
   // El norte (gira con el croquis), arriba a la izquierda: a la derecha van los botones de zoom (René,
   // 2026-11-28: quedaba detrás). La escala, abajo a la izquierda con margen. La leyenda, abajo a la
   // derecha: qué es 1, 2 y 3 y qué letra es cada vehículo.
@@ -892,8 +899,14 @@ export function croquisPericial(
     `<g data-leyenda="si"><rect x="${r1(l0.x)}" y="${r1(l0.y)}" width="${r1(leyAncho)}" height="${r1(leyAlto)}" fill="#fff" stroke="#000" stroke-width="${r1(linea * 0.5)}"/>${filas}</g>`,
   );
 
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${r1(x0)} ${r1(y0)} ${r1(W)} ${r1(y1 - y0)}" preserveAspectRatio="xMidYMid meet" font-family="Inter, system-ui, sans-serif" role="img" aria-label="Croquis de la reconstrucción: la vía, cada vehículo antes del impacto, en el impacto y en reposo, el punto de impacto, el norte y la escala.">${partes.join("")}</svg>`;
-  return { svg, giro };
+  const viewBox = `${r1(x0)} ${r1(y0)} ${r1(W)} ${r1(y1 - y0)}`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" preserveAspectRatio="xMidYMid meet" font-family="Inter, system-ui, sans-serif" role="img" aria-label="Croquis de la reconstrucción: la vía, cada vehículo antes del impacto, en el impacto y en reposo, el punto de impacto, el norte y la escala.">${partes.join("")}</svg>`;
+  // El vehículo en movimiento: solo lejos del impacto (en el impacto, encima de la posición 2, estorba).
+  const ahora = (t: number): VehiculoAhora[] =>
+    Math.abs(t - ti) > 0.15
+      ? vehiculos.map((v) => ({ id: v.id, puntos: silueta(v, poseEn(v.trayectoria, t)).esq }))
+      : [];
+  return { svg, giro, viewBox, linea, ahora };
 }
 
 /**
