@@ -2,12 +2,11 @@
  * Buscar un lugar por su nombre para los buscadores (René, 2026-11-28): primero Nominatim, con su
  * política de uso (una consulta por segundo como máximo, el User-Agent de Croquis, caché de respuestas
  * y la atribución «© OpenStreetMap contributors»); si no responde o no encuentra, el geocodificador de
- * Esri con la llave que ya usa la app (`LLAVE_ESRI`; no se pide ni se copia). Cada resultado dice de
+ * Esri con la clave de geocodificación del servidor (`ESRI_GEOCODE_API_KEY`; nunca la pública). Cada resultado dice de
  * dónde salió, para que la explicación lo diga («encontrado con Esri»).
  */
 import { USER_AGENT } from "../../server/osm";
 import type { RedLugar } from "../buscadores-lugar";
-import { LLAVE_ESRI } from "../visor-unity/piso";
 
 export const ATRIBUCION_OSM = "© OpenStreetMap contributors";
 const NOMINATIM = "https://nominatim.openstreetmap.org/search";
@@ -69,32 +68,65 @@ async function nominatim(texto: string, limite: number, red: RedLugar) {
   return out;
 }
 
-async function esri(texto: string, limite: number, red: RedLugar) {
-  if (!LLAVE_ESRI) return [];
-  const url = `${ESRI}?f=json&countryCode=MEX&maxLocations=${limite}&outFields=Type,PlaceName&singleLine=${encodeURIComponent(texto)}&token=${LLAVE_ESRI}`;
-  const guardado = cache.get(url);
-  if (guardado) return guardado;
-  const r = await red.fetch(url);
-  if (!r.ok) throw new Error(`Esri respondió ${r.status}`);
-  const d = (await r.json()) as {
-    candidates?: {
-      address: string;
-      location: { x: number; y: number };
-      attributes?: { Type?: string; PlaceName?: string };
-    }[];
-    error?: { message?: string };
+/**
+ * La clave de geocodificación de Esri (René, 2026-11-28): solo del servidor, `ESRI_GEOCODE_API_KEY`
+ * (geocodificación sin almacenar). Nunca la pública de los mapas base, nunca en el navegador. Sin ella,
+ * Esri no está disponible y los buscadores siguen sin él.
+ */
+function llaveGeocodificacion(): string | null {
+  if (typeof window !== "undefined") return null;
+  return process.env.ESRI_GEOCODE_API_KEY?.trim() || null;
+}
+
+/**
+ * Esri, de respaldo: por POST, con la clave en el cuerpo (no en la URL, para que no quede en registros
+ * ni en mensajes de error). Sin clave, con error de red o con un error de Esri, «Esri no disponible»:
+ * una lista vacía, sin romper nada. Sus resultados solo se guardan en memoria mientras dura el proceso
+ * (geocodificación sin almacenar, `forStorage=false`).
+ */
+async function esri(texto: string, limite: number, red: RedLugar): Promise<LugarGeocodificado[]> {
+  const llave = llaveGeocodificacion();
+  if (!llave) return [];
+  const params = {
+    f: "json",
+    countryCode: "MEX",
+    maxLocations: String(limite),
+    outFields: "Type,PlaceName",
+    forStorage: "false",
+    singleLine: texto,
   };
-  if (d.error) throw new Error(`Esri: ${d.error.message ?? "error"}`);
-  const out = (d.candidates ?? []).map((c) => ({
-    lat: c.location.y,
-    lon: c.location.x,
-    nombre: c.attributes?.PlaceName || c.address,
-    categoria: "esri",
-    tipo: c.attributes?.Type ?? "",
-    fuente: "esri" as const,
-  }));
-  guardar(url, out);
-  return out;
+  const clave = `esri:${JSON.stringify(params)}`;
+  const guardado = cache.get(clave);
+  if (guardado) return guardado;
+  try {
+    const r = await red.fetch(ESRI, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ ...params, token: llave }),
+    });
+    if (!r.ok) return [];
+    const d = (await r.json()) as {
+      candidates?: {
+        address: string;
+        location: { x: number; y: number };
+        attributes?: { Type?: string; PlaceName?: string };
+      }[];
+      error?: unknown;
+    };
+    if (d.error) return [];
+    const out = (d.candidates ?? []).map((c) => ({
+      lat: c.location.y,
+      lon: c.location.x,
+      nombre: c.attributes?.PlaceName || c.address,
+      categoria: "esri",
+      tipo: c.attributes?.Type ?? "",
+      fuente: "esri" as const,
+    }));
+    guardar(clave, out);
+    return out;
+  } catch {
+    return [];
+  }
 }
 
 /** Busca el lugar: Nominatim y, si no responde o no encuentra, Esri. Lanza si ninguno responde. */

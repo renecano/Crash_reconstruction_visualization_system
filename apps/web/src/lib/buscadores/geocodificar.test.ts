@@ -1,9 +1,12 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+// @vitest-environment node
+// La geocodificación de Esri corre solo en el servidor (sin `window`): la prueba, en Node.
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { RedLugar } from "../buscadores-lugar";
 import { deDondeSalio, geocodificar, olvidarGeocodificaciones } from "./geocodificar";
 
-// La llave de Esri de la app, sin copiarla: en la prueba, una de mentira.
-vi.mock("../visor-unity/piso", () => ({ LLAVE_ESRI: "llave-de-prueba" }));
+// La clave de geocodificación de Esri es del servidor (`ESRI_GEOCODE_API_KEY`): en la prueba, una de
+// mentira; la de verdad nunca aparece en pruebas ni registros.
+const LLAVE = "llave-de-prueba";
 
 const portales = [
   { lat: "19.3699", lon: "-99.14158", name: "Portales", category: "railway", type: "station" },
@@ -20,13 +23,14 @@ const esriPortales = {
 
 /** Una red que anota lo que se pidió y responde según el servicio. */
 function red(nominatim: () => Response, esri: () => Response) {
-  const pedidos: { url: string; ua?: string }[] = [];
+  const pedidos: { url: string; ua?: string; cuerpo?: string }[] = [];
   const pausas: number[] = [];
   const r: RedLugar = {
     fetch: (async (url: string, init?: RequestInit) => {
       pedidos.push({
         url,
         ua: (init?.headers as Record<string, string> | undefined)?.["User-Agent"],
+        ...(init?.body ? { cuerpo: String(init.body) } : {}),
       });
       return url.includes("nominatim") ? nominatim() : esri();
     }) as typeof fetch,
@@ -37,7 +41,11 @@ function red(nominatim: () => Response, esri: () => Response) {
   return { r, pedidos, pausas };
 }
 
-beforeEach(() => olvidarGeocodificaciones());
+beforeEach(() => {
+  olvidarGeocodificaciones();
+  vi.stubEnv("ESRI_GEOCODE_API_KEY", LLAVE);
+});
+afterEach(() => vi.unstubAllEnvs());
 
 describe("geocodificar (política de Nominatim y respaldo de Esri)", () => {
   it("Nominatim con el User-Agent de Croquis, en caché y sin pasar de una consulta por segundo", async () => {
@@ -72,7 +80,10 @@ describe("geocodificar (política de Nominatim y respaldo de Esri)", () => {
       fuente: "esri",
       resultados: [{ lat: 19.37, lon: -99.1416, nombre: "Portales" }],
     });
-    expect(pedidos[1]!.url).toContain("token=llave-de-prueba");
+    // La clave va en el cuerpo del POST, nunca en la URL.
+    expect(pedidos[1]!.url).not.toContain(LLAVE);
+    expect(pedidos[1]!.cuerpo).toContain(`token=${LLAVE}`);
+    expect(pedidos[1]!.cuerpo).toContain("forStorage=false");
     expect(deDondeSalio(g.fuente)).toBe(" (encontrado con Esri)");
   });
 
@@ -82,6 +93,25 @@ describe("geocodificar (política de Nominatim y respaldo de Esri)", () => {
       () => new Response(JSON.stringify(esriPortales)),
     );
     expect((await geocodificar("Portales", r)).fuente).toBe("esri");
+  });
+
+  it("sin la clave del servidor, Esri no está disponible y no se le pide nada", async () => {
+    vi.stubEnv("ESRI_GEOCODE_API_KEY", "");
+    const { r, pedidos } = red(
+      () => new Response("[]"),
+      () => new Response(JSON.stringify(esriPortales)),
+    );
+    expect(await geocodificar("Portales", r)).toEqual({ resultados: [], fuente: null });
+    expect(pedidos.some((x) => x.url.includes("arcgis"))).toBe(false);
+  });
+
+  it("si Esri responde con error, no rompe nada ni dice la clave", async () => {
+    const { r } = red(
+      () => new Response("[]"),
+      () =>
+        new Response(JSON.stringify({ error: { code: 498, message: `Invalid token ${LLAVE}` } })),
+    );
+    expect(await geocodificar("Portales", r)).toEqual({ resultados: [], fuente: null });
   });
 
   it("si ninguno responde, lanza (el buscador lo explica); nunca un punto inventado", async () => {
