@@ -1918,7 +1918,7 @@ class ObjetoExpediente(BaseModel):
 
 class PersonaExpediente(BaseModel):
     """
-    Un peatón o un ciclista que el perito coloca en la escena (ronda 4, A3): dónde estaba cuando lo golpearon, hacia dónde iba y, si se sabe, dónde quedó. De lo golpeado a donde quedó es la distancia de proyección.
+    Un peatón o un ciclista que el perito coloca en la escena (ronda 4, A3): dónde estaba cuando lo golpearon, hacia dónde iba y, si se sabe, dónde quedó. De lo golpeado a donde quedó es la distancia de proyección. Un motociclista o un ciclista que va en un vehículo del expediente lleva `vehiculo` (2026-11-28): va con él hasta el impacto y de ahí sale; `final` es donde quedó.
     """
 
     model_config = ConfigDict(
@@ -1928,7 +1928,11 @@ class PersonaExpediente(BaseModel):
     """
     Identificador estable dentro del expediente.
     """
-    rol: Literal["peaton", "ciclista"]
+    rol: Literal["peaton", "ciclista", "motociclista"]
+    vehiculo: Annotated[str | None, Field(pattern="^[A-Z][A-Z0-9]{0,3}$")] = None
+    """
+    El vehículo del expediente en que iba (la moto del motociclista o la bicicleta del ciclista), si va en uno (2026-11-28, opcional): llega con él al impacto y de ahí sale. Sin el campo, va a pie o en una bicicleta que no es vehículo del expediente.
+    """
     punto: Coordenadas
     """
     Dónde estaba al ser golpeado (o donde la colocó el perito).

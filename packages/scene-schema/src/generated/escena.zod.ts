@@ -901,10 +901,11 @@ export const ObjetoExpediente = z.strictObject({
 });
 export type ObjetoExpediente = z.infer<typeof ObjetoExpediente>;
 
-/** Un peatón o un ciclista que el perito coloca en la escena (ronda 4, A3): dónde estaba cuando lo golpearon, hacia dónde iba y, si se sabe, dónde quedó. De lo golpeado a donde quedó es la distancia de proyección. */
+/** Un peatón o un ciclista que el perito coloca en la escena (ronda 4, A3): dónde estaba cuando lo golpearon, hacia dónde iba y, si se sabe, dónde quedó. De lo golpeado a donde quedó es la distancia de proyección. Un motociclista o un ciclista que va en un vehículo del expediente lleva `vehiculo` (2026-11-28): va con él hasta el impacto y de ahí sale; `final` es donde quedó. */
 export const PersonaExpediente = z.strictObject({
   id: z.string().regex(new RegExp("^[a-z0-9_-]{1,40}$")),
-  rol: z.enum(["peaton", "ciclista"]),
+  rol: z.enum(["peaton", "ciclista", "motociclista"]),
+  vehiculo: IdVehiculoExpediente.optional(),
   punto: Coordenadas,
   rumbo_deg: z.number().min(0).lt(360).optional(),
   final: Coordenadas.optional(),

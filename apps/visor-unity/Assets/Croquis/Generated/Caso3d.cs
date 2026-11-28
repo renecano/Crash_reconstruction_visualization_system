@@ -1496,7 +1496,9 @@ namespace Croquis.Generated
     /// <summary>
     /// Un peatón o un ciclista que el perito coloca en la escena (ronda 4, A3): dónde estaba
     /// cuando lo golpearon, hacia dónde iba y, si se sabe, dónde quedó. De lo golpeado a donde
-    /// quedó es la distancia de proyección.
+    /// quedó es la distancia de proyección. Un motociclista o un ciclista que va en un vehículo
+    /// del expediente lleva `vehiculo` (2026-11-28): va con él hasta el impacto y de ahí sale;
+    /// `final` es donde quedó.
     /// </summary>
     public partial class ExpedientePersona
     {
@@ -1533,6 +1535,14 @@ namespace Croquis.Generated
         [JsonProperty("rumbo_deg", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(FluffyMinMaxValueCheckConverter))]
         public double? RumboDeg { get; set; }
+
+        /// <summary>
+        /// El vehículo del expediente en que iba (la moto del motociclista o la bicicleta del
+        /// ciclista), si va en uno (2026-11-28, opcional): llega con él al impacto y de ahí sale.
+        /// Sin el campo, va a pie o en una bicicleta que no es vehículo del expediente.
+        /// </summary>
+        [JsonProperty("vehiculo", NullValueHandling = NullValueHandling.Ignore)]
+        public string Vehiculo { get; set; }
     }
 
     /// <summary>
@@ -5858,7 +5868,7 @@ namespace Croquis.Generated
 
     public enum TentacledTipo { Arbol, Barrera, Guarnicion, Muro, Poste, Senal, VehiculoEstacionado };
 
-    public enum PersonaRolEnum { Ciclista, Peaton };
+    public enum PersonaRolEnum { Ciclista, Motociclista, Peaton };
 
     public enum Veredicto { NoSeSostiene, Parcial, SeSostiene, SinJuicio };
 
@@ -9611,6 +9621,8 @@ namespace Croquis.Generated
             {
                 case "ciclista":
                     return PersonaRolEnum.Ciclista;
+                case "motociclista":
+                    return PersonaRolEnum.Motociclista;
                 case "peaton":
                     return PersonaRolEnum.Peaton;
             }
@@ -9629,6 +9641,9 @@ namespace Croquis.Generated
             {
                 case PersonaRolEnum.Ciclista:
                     serializer.Serialize(writer, "ciclista");
+                    return;
+                case PersonaRolEnum.Motociclista:
+                    serializer.Serialize(writer, "motociclista");
                     return;
                 case PersonaRolEnum.Peaton:
                     serializer.Serialize(writer, "peaton");
