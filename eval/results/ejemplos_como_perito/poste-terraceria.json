@@ -70,15 +70,6 @@
    "como": "confirmar"
   },
   {
-   "accion": "otro",
-   "vehiculo": "V2",
-   "objeto": "poste",
-   "en": [
-    17.79,
-    -4.05
-   ]
-  },
-  {
    "accion": "final",
    "vehiculo": "V1",
    "como": "marcar",

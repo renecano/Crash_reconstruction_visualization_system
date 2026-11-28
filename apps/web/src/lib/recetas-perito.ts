@@ -58,10 +58,8 @@ export const RECETAS_PERITO: readonly (RecetaPerito & { cifra: string })[] = [
     // «una huella de derrape de 18.40 metros que inicia en el área de contacto … hasta un poste …
     // situado a 1.50 metros del borde de la carpeta»: adelante en la marcha del Sentra, hacia su
     // izquierda (el golpe del Mazda en su costado derecho lo empuja a ese lado).
-    // En La escena: «¿Chocó contra algo más?» → el Sentra → Poste, y se toca donde está.
-    otros: [
-      { vehiculo: "Sentra", objeto: "poste", en: { de: "Sentra", adelante: 18, izquierda: 3 } },
-    ],
+    // El poste lo coloca Croquis solo, donde quedó el Sentra, contra su frente (supuesto visible; René
+    // aprobó la cifra el 2026-11-28): el perito no lo marca.
     quedo: {
       // «el vehículo A quedó sobre el cruce, 1 metro al Oriente del área de contacto» (René, 2026-11-26:
       // decía «8 metros al Norte», que la física no alcanza: tras pegarle en el costado al Sentra, el
