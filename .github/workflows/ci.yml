@@ -40,12 +40,34 @@ jobs:
       - run: pnpm format:check
       - run: pnpm lint
       - run: pnpm typecheck
+      # Sin las reconstrucciones completas de la web: van en su job, en paralelo (`pesadas`).
       - run: pnpm test
+        env:
+          CROQUIS_PRUEBAS: ligeras
       # Zod, los tipos C# y los paquetes caso-3d, al día con los esquemas (ADR 0111).
       - run: pnpm --filter @croquis/scene-schema generate:check
       # Los generados de la web, al día con sus fuentes: datos de las páginas (eval/results), tokens e
       # íconos de la marca, imagen para redes y fuente (auditoría del 2026-11-15, I4).
       - run: pnpm --filter @croquis/web generate:check
+
+  pesadas:
+    # Las pruebas de cálculo que reconstruyen casos completos (los ejemplos, AXA, la velocidad del
+    # perito, el rango del solver): en paralelo con el job web, para que ninguno pase de 10 minutos
+    # (René, 2026-11-28: el job web llegó al tope con todas juntas). La lista, en apps/web/vitest.config.ts.
+    name: Reconstrucciones de los ejemplos (pruebas de cálculo)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @croquis/web exec vitest run
+        env:
+          CROQUIS_PRUEBAS: pesadas
 
   visor:
     name: Visor Unity (Croquis.Core, fidelidad)
