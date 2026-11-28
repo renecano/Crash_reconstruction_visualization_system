@@ -18,6 +18,7 @@ import { leerCarretera } from "./buscadores/carretera-narrada";
 import {
   formato as F,
   avanzar,
+  conObjetosNarrados,
   conPosicion,
   distanciaM,
   distanciaProyeccion,
@@ -1038,10 +1039,20 @@ export interface ChoqueIntermedio {
   vehiculo: string;
   objeto: string;
   punto: Punto;
+  /**
+   * El objeto lo nombra la narración y el perito no lo marcó: Croquis lo pone donde quedó el vehículo
+   * (René, 2026-11-28). El texto del supuesto, para el perito.
+   */
+  supuesto?: string;
 }
 
-/** Los choques contra objetos que el perito marcó después del primer golpe, en su orden. */
-export function choquesIntermedios(e: Expediente): ChoqueIntermedio[] {
+/**
+ * Los choques contra objetos después del primer golpe, en su orden: los que marcó el perito y los que
+ * nombra la narración (donde quedó el vehículo, como supuesto, mientras el perito no los mueva).
+ */
+export function choquesIntermedios(e0: Expediente): ChoqueIntermedio[] {
+  const { expediente: e, colocados } = conObjetosNarrados(e0);
+  const supuesto = new Map(colocados.map((c) => [c.orden, c.texto]));
   return [...(e.impactos ?? [])]
     .sort((a, b) => a.orden - b.orden)
     .flatMap((i) =>
@@ -1052,6 +1063,7 @@ export function choquesIntermedios(e: Expediente): ChoqueIntermedio[] {
               vehiculo: String(i.vehiculos![0]),
               objeto: i.objeto_fijo,
               punto: i.punto,
+              ...(supuesto.has(i.orden) ? { supuesto: supuesto.get(i.orden)! } : {}),
             },
           ]
         : [],
@@ -1230,8 +1242,10 @@ export function resumenC1(s: {
       vehiculo: c.vehiculo,
       orden: c.orden,
       texto: `Después, el ${s.nombres[c.vehiculo] ?? c.vehiculo} chocó contra ${objeto}`,
-      detalle: "Donde lo marcaste. Croquis usa medidas típicas del objeto y el dictamen lo dice.",
-      supuesto: null,
+      detalle: c.supuesto
+        ? "Croquis usa medidas típicas del objeto y el dictamen lo dice."
+        : "Donde lo marcaste. Croquis usa medidas típicas del objeto y el dictamen lo dice.",
+      supuesto: c.supuesto ?? null,
     });
   }
   const pasos = puntosDePaso(s.e);
