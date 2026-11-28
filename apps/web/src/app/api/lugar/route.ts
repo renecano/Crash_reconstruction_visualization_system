@@ -7,7 +7,8 @@ import { clientKeyFrom } from "@/server/relato";
 import { buscarLugar, defaultLugarDeps, LugarError, LugarIn } from "@/server/lugar";
 
 export const runtime = "nodejs";
-export const maxDuration = 30;
+// 60 s, como `/api/lugar/narrado`: también busca cruces, con réplicas y reintento (René, 2026-11-28).
+export const maxDuration = 60;
 
 let deps: ReturnType<typeof defaultLugarDeps> | null = null;
 
