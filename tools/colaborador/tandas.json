@@ -1,6 +1,6 @@
 {
   "nota": "Lo pesado de cada tanda de la auditoría del 2026-11-15, para la computadora del colaborador (tools/colaborador/tanda.ps1). «vigente» es la que corre CORRER-TANDA-EN-RTX.bat con doble clic. Toda corrida empieza por «comprobacion»; si falla, lo pesado no corre. Cada paso: un comando que corre en la raíz del repositorio, sin preguntas y sin llaves; «minutos» es lo estimado (el tope es 4 veces eso, y al menos 10 min); «salidas» son las rutas que se suben además de los registros. «rama»: la rama donde vive la tanda mientras no esté en main. Un comando por paso (sin &&): cada uno deja su registro. Un paso con `requiere` se omite si falta esa carpeta (datos que no van en git). «privadas»: carpetas de un paso que no se suben; se comprimen en un zip en la carpeta de resultados (René, 2026-11-21: el repositorio es público). Un «antes» en otro commit va en un git worktree (sin copiar el repositorio) y sus dependencias se enlazan desde el almacén de pnpm (--prefer-offline --package-import-method=hardlink), sin copiar node_modules (René, 2026-11-23: el disco llegaba al 100 %); corrida.json guarda el disco libre antes y después de cada paso.",
-  "vigente": "t12-cruces",
+  "vigente": "t13-visor",
   "comprobacion": {
     "pasos": [
       {
@@ -1683,6 +1683,67 @@
         }
       ],
       "commit": "b856da7b1170472d6725f97207b35362108b473e"
+    },
+    "t13-visor": {
+      "titulo": "Tanda 13 · El build a288a754 (#426): motociclista, cámaras sin copas y video a resolución completa",
+      "nota": "René, 2026-11-28: una tanda corta, fijada a main (rama release/t13), con el build de Alberto a288a754 en el manifiesto (#426: #397 «Desde arriba» sin copas y cámaras sin troncos ni postes; #416 la escala fija mientras graba el video; #424 el motociclista sale de su moto en un arco, cae, rueda y se desliza hasta donde quedó). El build sale del release de GitHub, nunca de Blob. Primero el humo con AXA (si falla, se detiene). Después: los cinco ejemplos, la tanda final con el Unity real (incluye los casos 5 y 7 de la demo, con motociclista; su lectura va grabada y no gasta API), el video medido en la tarjeta integrada (e2e/video-medicion.spec.ts; los MP4 de AXA no se suben) y el ensayo (sus capturas llevan AXA y se quedan en esta computadora). Si sale bien, se publica el manifiesto. Unos 60 minutos estimados.",
+      "rama": "release/t13",
+      "pasos": [
+        {
+          "nombre": "visor",
+          "comando": "node tools/unity/visor-local.mjs copia",
+          "minutos": 2,
+          "tope_min": 15
+        },
+        {
+          "nombre": "preparar",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -SoloPreparar",
+          "minutos": 1,
+          "tope_min": 15
+        },
+        {
+          "nombre": "humo",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues humo",
+          "minutos": 1,
+          "tope_min": 8,
+          "detiene_si_falla": true,
+          "salidas": ["eval/results/humo/", "apps/web/test-results/"]
+        },
+        {
+          "nombre": "ejemplos",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ejemplos -Salida eval/results/t13/ejemplos.json -Capturas docs/cesvi/ronda-4/evidencia/t13-ejemplos -Casos eval/results/t13/ejemplos-casos",
+          "minutos": 6,
+          "tope_min": 30,
+          "salidas": ["eval/results/t13", "docs/cesvi/ronda-4/evidencia/t13-ejemplos"]
+        },
+        {
+          "nombre": "final-unity",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues final -Salida eval/results/t13/final_unity.json -Capturas docs/cesvi/ronda-4/evidencia/t13-final",
+          "minutos": 22,
+          "tope_min": 60,
+          "salidas": ["eval/results/t13", "docs/cesvi/ronda-4/evidencia/t13-final"]
+        },
+        {
+          "nombre": "video-integrada",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues video-medicion -Gpu integrada -Salida eval/results/t13/video_medicion.jsonl",
+          "minutos": 15,
+          "tope_min": 60,
+          "salidas": ["eval/results/t13"]
+        },
+        {
+          "nombre": "ensayo",
+          "comando": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ensayo -Salida eval/results/t13/ensayo.json",
+          "minutos": 10,
+          "tope_min": 40,
+          "salidas": ["eval/results/t13"]
+        },
+        {
+          "nombre": "comparar",
+          "comando": "node eval/tanda_comparar.mjs --tanda t13-visor",
+          "minutos": 1,
+          "salidas": ["eval/results/t12-cruces"]
+        }
+      ]
     }
   }
 }

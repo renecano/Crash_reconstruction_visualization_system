@@ -1,0 +1,244 @@
+{
+ "id": "presentar-caso5",
+ "titulo": "5) CHOQUE DE FRENTE: CAMIÓN CONTRA MOTOCICLETA (carretera a Temascaltepec, Santa Cruz Cuahutenco)",
+ "fuente": "trailer-salida/casos-para-presentar.txt (René, 2026-11-28)",
+ "grabado": "2026-11-28, /api/cesvi/escena en producción",
+ "narracion": "El hecho se ubica sobre la carretera federal 134 Toluca–Temascaltepec (Calzada al Pacífico), a la altura de la localidad de Santa Cruz Cuahutenco, en Zinacantepec, Estado de México, aproximadamente a las 16:30 horas. La vía es de un carril por sentido, con acotamiento de tierra. El vehículo A, camión de volteo marca International, tipo 4300, modelo 2016, circulaba en dirección a Toluca a unos 60 km/h según su conductor. El vehículo B, motocicleta marca Italika, tipo FT150, modelo 2022, con un solo ocupante, circulaba en sentido contrario, en dirección a Temascaltepec; al intentar rebasar a otro vehículo en una curva suave invadió el carril contrario y se impactó de frente con la parte frontal izquierda del vehículo A. El vehículo A frenó y dejó huellas de frenado de 14 m antes del punto de impacto; quedó detenido 3 m después del punto de impacto, sobre su propio carril. La motocicleta fue proyectada hacia atrás y quedó tendida sobre el acotamiento de su sentido, a 9 m del punto de impacto; el motociclista quedó a 12 m del punto de impacto, sobre el mismo acotamiento. La motocicleta presenta destrucción de la parte frontal, horquilla doblada y rueda delantera deformada; el camión, daño en la defensa delantera izquierda y la salpicadera. Pavimento seco, día nublado.",
+ "salida": {
+  "datos": [
+   {
+    "seccion": "caso",
+    "n": 1,
+    "vehiculo": "ninguno",
+    "campo": "modalidad",
+    "valor": "frontal",
+    "cita": "se impactó de frente con la parte frontal izquierda del vehículo A"
+   },
+   {
+    "seccion": "caso",
+    "n": 1,
+    "vehiculo": "ninguno",
+    "campo": "lugar",
+    "valor": "carretera federal 134 Toluca–Temascaltepec (Calzada al Pacífico), a la altura de la localidad de Santa Cruz Cuahutenco",
+    "cita": "El hecho se ubica sobre la carretera federal 134 Toluca–Temascaltepec (Calzada al Pacífico), a la altura de la localidad de Santa Cruz Cuahutenco"
+   },
+   {
+    "seccion": "caso",
+    "n": 1,
+    "vehiculo": "ninguno",
+    "campo": "municipio",
+    "valor": "Zinacantepec",
+    "cita": "en Zinacantepec, Estado de México"
+   },
+   {
+    "seccion": "caso",
+    "n": 1,
+    "vehiculo": "ninguno",
+    "campo": "entidad",
+    "valor": "Estado de México",
+    "cita": ""
+   },
+   {
+    "seccion": "caso",
+    "n": 1,
+    "vehiculo": "ninguno",
+    "campo": "fecha_hora",
+    "valor": "16:30 horas",
+    "cita": "aproximadamente a las 16:30 horas"
+   },
+   {
+    "seccion": "vehiculo",
+    "n": 1,
+    "vehiculo": "V1",
+    "campo": "marca",
+    "valor": "International",
+    "cita": "camión de volteo marca International, tipo 4300, modelo 2016"
+   },
+   {
+    "seccion": "vehiculo",
+    "n": 1,
+    "vehiculo": "V1",
+    "campo": "modelo",
+    "valor": "4300",
+    "cita": ""
+   },
+   {
+    "seccion": "vehiculo",
+    "n": 1,
+    "vehiculo": "V1",
+    "campo": "anio",
+    "valor": "2016",
+    "cita": ""
+   },
+   {
+    "seccion": "vehiculo",
+    "n": 1,
+    "vehiculo": "V1",
+    "campo": "clase",
+    "valor": "camion_unitario",
+    "cita": ""
+   },
+   {
+    "seccion": "vehiculo",
+    "n": 2,
+    "vehiculo": "V2",
+    "campo": "marca",
+    "valor": "Italika",
+    "cita": "motocicleta marca Italika, tipo FT150, modelo 2022"
+   },
+   {
+    "seccion": "vehiculo",
+    "n": 2,
+    "vehiculo": "V2",
+    "campo": "modelo",
+    "valor": "FT150",
+    "cita": ""
+   },
+   {
+    "seccion": "vehiculo",
+    "n": 2,
+    "vehiculo": "V2",
+    "campo": "anio",
+    "valor": "2022",
+    "cita": ""
+   },
+   {
+    "seccion": "vehiculo",
+    "n": 2,
+    "vehiculo": "V2",
+    "campo": "clase",
+    "valor": "motocicleta",
+    "cita": ""
+   },
+   {
+    "seccion": "impacto",
+    "n": 1,
+    "vehiculo": "ninguno",
+    "campo": "participante",
+    "valor": "V1",
+    "cita": "se impactó de frente con la parte frontal izquierda del vehículo A"
+   },
+   {
+    "seccion": "impacto",
+    "n": 1,
+    "vehiculo": "ninguno",
+    "campo": "participante",
+    "valor": "V2",
+    "cita": ""
+   },
+   {
+    "seccion": "impacto",
+    "n": 1,
+    "vehiculo": "ninguno",
+    "campo": "contacto",
+    "valor": "V1 frontal",
+    "cita": ""
+   },
+   {
+    "seccion": "movimiento",
+    "n": 1,
+    "vehiculo": "V1",
+    "campo": "maniobra",
+    "valor": "circula",
+    "cita": "circulaba en dirección a Toluca a unos 60 km/h según su conductor"
+   },
+   {
+    "seccion": "movimiento",
+    "n": 2,
+    "vehiculo": "V2",
+    "campo": "maniobra",
+    "valor": "circula",
+    "cita": "circulaba en sentido contrario, en dirección a Temascaltepec"
+   },
+   {
+    "seccion": "movimiento",
+    "n": 3,
+    "vehiculo": "V2",
+    "campo": "maniobra",
+    "valor": "otra",
+    "cita": "al intentar rebasar a otro vehículo en una curva suave invadió el carril contrario"
+   },
+   {
+    "seccion": "huella",
+    "n": 1,
+    "vehiculo": "V1",
+    "campo": "tipo_huella",
+    "valor": "frenado",
+    "cita": "dejó huellas de frenado de 14 m antes del punto de impacto"
+   },
+   {
+    "seccion": "huella",
+    "n": 1,
+    "vehiculo": "V1",
+    "campo": "longitud",
+    "valor": "14 m",
+    "cita": ""
+   },
+   {
+    "seccion": "posicion",
+    "n": 1,
+    "vehiculo": "V1",
+    "campo": "fase",
+    "valor": "final",
+    "cita": "quedó detenido 3 m después del punto de impacto, sobre su propio carril"
+   },
+   {
+    "seccion": "posicion",
+    "n": 1,
+    "vehiculo": "V1",
+    "campo": "descripcion",
+    "valor": "sobre su propio carril, a 3 m después del punto de impacto",
+    "cita": ""
+   },
+   {
+    "seccion": "posicion",
+    "n": 2,
+    "vehiculo": "V2",
+    "campo": "fase",
+    "valor": "final",
+    "cita": "quedó tendida sobre el acotamiento de su sentido, a 9 m del punto de impacto"
+   },
+   {
+    "seccion": "posicion",
+    "n": 2,
+    "vehiculo": "V2",
+    "campo": "descripcion",
+    "valor": "sobre el acotamiento de su sentido, a 9 m del punto de impacto",
+    "cita": ""
+   },
+   {
+    "seccion": "dano",
+    "n": 1,
+    "vehiculo": "V2",
+    "campo": "cara",
+    "valor": "frontal",
+    "cita": "La motocicleta presenta destrucción de la parte frontal, horquilla doblada y rueda delantera deformada"
+   },
+   {
+    "seccion": "dano",
+    "n": 1,
+    "vehiculo": "V2",
+    "campo": "tipo",
+    "valor": "deformacion",
+    "cita": ""
+   },
+   {
+    "seccion": "dano",
+    "n": 2,
+    "vehiculo": "V1",
+    "campo": "cara",
+    "valor": "frontal",
+    "cita": "el camión, daño en la defensa delantera izquierda y la salpicadera"
+   },
+   {
+    "seccion": "dano",
+    "n": 2,
+    "vehiculo": "V1",
+    "campo": "tercio",
+    "valor": "izquierdo",
+    "cita": ""
+   }
+  ]
+ },
+ "modelo": "claude-sonnet-5-5"
+}

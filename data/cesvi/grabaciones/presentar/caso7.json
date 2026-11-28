@@ -1,0 +1,236 @@
+{
+ "id": "presentar-caso7",
+ "titulo": "7) MOTO CONTRA AUTO EN EL CENTRO, DE NOCHE Y CON LLUVIA, CON VELOCIDAD MEDIDA POR CÁMARA (Toluca)",
+ "fuente": "trailer-salida/casos-para-presentar.txt (René, 2026-11-28)",
+ "grabado": "2026-11-28, /api/cesvi/escena en producción",
+ "narracion": "El hecho se ubica en el cruce de Lerdo de Tejada y Nicolás Bravo, en el centro de Toluca, Estado de México, aproximadamente a las 19:20 horas. El vehículo A, marca Nissan, tipo Versa, modelo 2021, circulaba sobre Lerdo de Tejada. El vehículo B, motocicleta marca Honda, tipo CB190R, modelo 2023, con un solo ocupante, circulaba sobre Nicolás Bravo de sur a norte a 47 km/h antes de frenar, velocidad medida en el video de la cámara de vigilancia del C5 ubicada en la esquina, y cruzó con el semáforo en rojo. El motociclista frenó al ver al vehículo A, dejando una huella de frenado de 7 m sobre el pavimento mojado, y se impactó con su parte frontal contra el costado derecho del vehículo A, a la altura de la puerta trasera. El vehículo A quedó detenido 5 m adelante del punto de impacto, sobre Lerdo de Tejada; la motocicleta quedó tendida a 3 m del punto de impacto, hacia el costado izquierdo de su sentido, y el motociclista a 6 m. El vehículo A presenta hundimiento en la puerta trasera derecha; la motocicleta, daño frontal. Llovía al momento del hecho: pavimento mojado, de noche, con alumbrado público.",
+ "salida": {
+  "datos": [
+   {
+    "seccion": "caso",
+    "n": 1,
+    "vehiculo": "ninguno",
+    "campo": "lugar",
+    "valor": "cruce de Lerdo de Tejada y Nicolás Bravo, en el centro",
+    "cita": "El hecho se ubica en el cruce de Lerdo de Tejada y Nicolás Bravo, en el centro de Toluca, Estado de México"
+   },
+   {
+    "seccion": "caso",
+    "n": 1,
+    "vehiculo": "ninguno",
+    "campo": "municipio",
+    "valor": "Toluca",
+    "cita": ""
+   },
+   {
+    "seccion": "caso",
+    "n": 1,
+    "vehiculo": "ninguno",
+    "campo": "entidad",
+    "valor": "Estado de México",
+    "cita": ""
+   },
+   {
+    "seccion": "caso",
+    "n": 1,
+    "vehiculo": "ninguno",
+    "campo": "fecha_hora",
+    "valor": "aproximadamente a las 19:20 horas",
+    "cita": "aproximadamente a las 19:20 horas"
+   },
+   {
+    "seccion": "vehiculo",
+    "n": 1,
+    "vehiculo": "V1",
+    "campo": "marca",
+    "valor": "Nissan",
+    "cita": "El vehículo A, marca Nissan, tipo Versa, modelo 2021, circulaba sobre Lerdo de Tejada"
+   },
+   {
+    "seccion": "vehiculo",
+    "n": 1,
+    "vehiculo": "V1",
+    "campo": "modelo",
+    "valor": "Versa",
+    "cita": ""
+   },
+   {
+    "seccion": "vehiculo",
+    "n": 1,
+    "vehiculo": "V1",
+    "campo": "anio",
+    "valor": "2021",
+    "cita": ""
+   },
+   {
+    "seccion": "vehiculo",
+    "n": 2,
+    "vehiculo": "V2",
+    "campo": "marca",
+    "valor": "Honda",
+    "cita": "motocicleta marca Honda, tipo CB190R, modelo 2023"
+   },
+   {
+    "seccion": "vehiculo",
+    "n": 2,
+    "vehiculo": "V2",
+    "campo": "modelo",
+    "valor": "CB190R",
+    "cita": ""
+   },
+   {
+    "seccion": "vehiculo",
+    "n": 2,
+    "vehiculo": "V2",
+    "campo": "anio",
+    "valor": "2023",
+    "cita": ""
+   },
+   {
+    "seccion": "vehiculo",
+    "n": 2,
+    "vehiculo": "V2",
+    "campo": "clase",
+    "valor": "motocicleta",
+    "cita": ""
+   },
+   {
+    "seccion": "movimiento",
+    "n": 1,
+    "vehiculo": "V1",
+    "campo": "maniobra",
+    "valor": "circula",
+    "cita": "circulaba sobre Lerdo de Tejada"
+   },
+   {
+    "seccion": "movimiento",
+    "n": 2,
+    "vehiculo": "V2",
+    "campo": "maniobra",
+    "valor": "circula",
+    "cita": "circulaba sobre Nicolás Bravo de sur a norte a 47 km/h antes de frenar"
+   },
+   {
+    "seccion": "movimiento",
+    "n": 3,
+    "vehiculo": "V2",
+    "campo": "maniobra",
+    "valor": "frena",
+    "cita": "El motociclista frenó al ver al vehículo A"
+   },
+   {
+    "seccion": "huella",
+    "n": 1,
+    "vehiculo": "V2",
+    "campo": "tipo_huella",
+    "valor": "frenado",
+    "cita": "dejando una huella de frenado de 7 m sobre el pavimento mojado"
+   },
+   {
+    "seccion": "huella",
+    "n": 1,
+    "vehiculo": "V2",
+    "campo": "longitud",
+    "valor": "7 m",
+    "cita": ""
+   },
+   {
+    "seccion": "impacto",
+    "n": 1,
+    "vehiculo": "ninguno",
+    "campo": "participante",
+    "valor": "V1",
+    "cita": "se impactó con su parte frontal contra el costado derecho del vehículo A, a la altura de la puerta trasera"
+   },
+   {
+    "seccion": "impacto",
+    "n": 1,
+    "vehiculo": "ninguno",
+    "campo": "participante",
+    "valor": "V2",
+    "cita": ""
+   },
+   {
+    "seccion": "impacto",
+    "n": 1,
+    "vehiculo": "ninguno",
+    "campo": "contacto",
+    "valor": "V2 frontal",
+    "cita": ""
+   },
+   {
+    "seccion": "impacto",
+    "n": 1,
+    "vehiculo": "ninguno",
+    "campo": "contacto",
+    "valor": "V1 lateral_derecho",
+    "cita": ""
+   },
+   {
+    "seccion": "posicion",
+    "n": 1,
+    "vehiculo": "V1",
+    "campo": "fase",
+    "valor": "final",
+    "cita": "El vehículo A quedó detenido 5 m adelante del punto de impacto, sobre Lerdo de Tejada"
+   },
+   {
+    "seccion": "posicion",
+    "n": 1,
+    "vehiculo": "V1",
+    "campo": "descripcion",
+    "valor": "detenido 5 m adelante del punto de impacto, sobre Lerdo de Tejada",
+    "cita": ""
+   },
+   {
+    "seccion": "posicion",
+    "n": 2,
+    "vehiculo": "V2",
+    "campo": "fase",
+    "valor": "final",
+    "cita": "la motocicleta quedó tendida a 3 m del punto de impacto, hacia el costado izquierdo de su sentido"
+   },
+   {
+    "seccion": "posicion",
+    "n": 2,
+    "vehiculo": "V2",
+    "campo": "descripcion",
+    "valor": "tendida a 3 m del punto de impacto, hacia el costado izquierdo de su sentido",
+    "cita": ""
+   },
+   {
+    "seccion": "dano",
+    "n": 1,
+    "vehiculo": "V1",
+    "campo": "cara",
+    "valor": "lateral_derecho",
+    "cita": "El vehículo A presenta hundimiento en la puerta trasera derecha"
+   },
+   {
+    "seccion": "dano",
+    "n": 1,
+    "vehiculo": "V1",
+    "campo": "tercio",
+    "valor": "trasero",
+    "cita": ""
+   },
+   {
+    "seccion": "dano",
+    "n": 1,
+    "vehiculo": "V1",
+    "campo": "tipo",
+    "valor": "hundimiento",
+    "cita": ""
+   },
+   {
+    "seccion": "dano",
+    "n": 2,
+    "vehiculo": "V2",
+    "campo": "cara",
+    "valor": "frontal",
+    "cita": "la motocicleta, daño frontal"
+   }
+  ]
+ },
+ "modelo": "claude-sonnet-5-5"
+}

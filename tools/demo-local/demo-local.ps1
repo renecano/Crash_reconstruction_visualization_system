@@ -31,6 +31,9 @@
                            «solo-cesvi», 2560×1440, Unity en calidad alta) en -Salida y apaga
     -Despues video-3d      sirve, graba «Descargar video» del 3D de AXA con el Unity real en Chrome y
                            en Edge (e2e/video-3d-real.spec.ts; los MP4 al Escritorio) y apaga
+    -Despues video-medicion  sirve, mide cuánto tarda el video del choque de AXA por calidad
+                           (e2e/video-medicion.spec.ts, #422) en Chrome; con -Gpu integrada, en la tarjeta
+                           integrada; la salida, con -Salida (una línea JSON por grabación)
     -Despues final         sirve, la tanda final con el Unity real: ¿Y si…? en 3D, daños, entorno,
                            satélite y Presentar, solo ejemplos públicos (e2e/final-unity.spec.ts) y apaga
     -Despues ensayo        sirve, corre el ensayo automático de la demo (e2e/ensayo-automatico.spec.ts:
@@ -44,7 +47,7 @@
 #>
 param(
   [switch]$SoloPreparar,
-  [ValidateSet("", "comprobar", "fps-web", "arranque-3d", "video-3d", "narraciones", "tollocan", "tres", "nuevas", "ejemplos", "humo", "recorrido", "final", "ensayo")][string]$Despues = "",
+  [ValidateSet("", "comprobar", "fps-web", "arranque-3d", "video-3d", "video-medicion", "narraciones", "tollocan", "tres", "nuevas", "ejemplos", "humo", "recorrido", "final", "ensayo")][string]$Despues = "",
   [ValidateSet("", "integrada")][string]$Gpu = "",
   [string]$Salida = "",
   [string]$Capturas = "",
@@ -279,6 +282,26 @@ try {
         & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/narraciones-fisica.spec.ts -g $filtro
       }
       $codigo = $LASTEXITCODE
+    } finally {
+      if ($null -eq $gpuAntes) { Remove-ItemProperty -Path $llaveGpu -Name $chrome -ErrorAction SilentlyContinue }
+      else { Set-ItemProperty -Path $llaveGpu -Name $chrome -Value $gpuAntes }
+    }
+  } elseif ($Despues -eq "video-medicion") {
+    # t13 (René, 2026-11-28): cuánto tarda el video y en qué se va el tiempo, con el build nuevo, en la
+    # tarjeta integrada si se pide; al final, la preferencia de Chrome como estaba.
+    if (-not $chrome) { Fallar "No encontré Google Chrome: el video se mide en Chrome." }
+    $llaveGpu = "HKCU:\Software\Microsoft\DirectX\UserGpuPreferences"
+    if (-not (Test-Path $llaveGpu)) { New-Item -Path $llaveGpu -Force | Out-Null }
+    $gpuAntes = (Get-ItemProperty -Path $llaveGpu -Name $chrome -ErrorAction SilentlyContinue).$chrome
+    if ($Gpu -eq "integrada") {
+      Set-ItemProperty -Path $llaveGpu -Name $chrome -Value "GpuPreference=1;"
+      Escribir "Video medido con Chrome en la tarjeta integrada." "Cyan"
+    }
+    try {
+      $env:CROQUIS_URL = $Url
+      $env:CROQUIS_CANAL = "chrome"
+      if ($Salida) { $env:CROQUIS_SALIDA = $Salida }
+      & pnpm --filter "@croquis/web" exec playwright test -c playwright.produccion.config.ts e2e/video-medicion.spec.ts --headed
     } finally {
       if ($null -eq $gpuAntes) { Remove-ItemProperty -Path $llaveGpu -Name $chrome -ErrorAction SilentlyContinue }
       else { Set-ItemProperty -Path $llaveGpu -Name $chrome -Value $gpuAntes }

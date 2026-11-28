@@ -217,3 +217,128 @@ test("paisaje árido: un caso nuevo en la carretera a Bahía de Kino", async ({ 
   await foto(page, "arida-sonora-3d");
   filas.push({ prueba: "arida-sonora", gpu });
 });
+
+/**
+ * Los motociclistas de la demo (René, 2026-11-28, t13): los casos 5 (camión contra moto en la carretera
+ * a Temascaltepec) y 7 (moto contra auto en el centro de Toluca, con la velocidad medida por cámara) de
+ * `trailer-salida/casos-para-presentar.txt`, con el build a288a754 (#424: el motociclista sale de su
+ * moto en un arco, cae, rueda y se desliza hasta donde quedó). La lectura va grabada
+ * (`data/cesvi/grabaciones/presentar/`): no gasta API. El lugar, como lo encuentra Croquis; los
+ * reposos, como los dice la narración si La escena los ofrece.
+ */
+for (const n of [5, 7])
+  test(`motociclista: el caso ${n} de la demo, de punta a punta con el Unity real`, async ({
+    page,
+  }) => {
+    test.setTimeout(900_000);
+    const grabada = JSON.parse(
+      readFileSync(resolve(RAIZ, `data/cesvi/grabaciones/presentar/caso${n}.json`), "utf8"),
+    ) as { narracion: string; salida: unknown };
+    await page.route("**/api/cesvi/escena", (r) =>
+      r.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({ metodo: "claude", salida: grabada.salida }),
+      }),
+    );
+    const fila: Record<string, unknown> = { prueba: `motociclista-caso${n}` };
+    await page.goto("/cesvi");
+    await page.getByTestId("ir-caso-nuevo").click();
+    await irAPaso(page, 2);
+    await page.getByTestId("narracion").fill(grabada.narracion);
+    await page.getByTestId("leer-narracion").click();
+    await expect(page.getByTestId("escena")).toBeVisible({ timeout: 60_000 });
+    await irAPaso(page, 3);
+    const lista = page.getByTestId("lista-escena");
+    await expect(lista).toBeVisible({ timeout: 90_000 });
+    const guia = page.getByTestId("cerrar-guia");
+    if (await guia.isVisible().catch(() => false)) await guia.click();
+    await page.waitForTimeout(12_000);
+    const pasos: string[] = [];
+    for (let k = 0; k < 30; k++) {
+      if (
+        await page
+          .getByTestId("lista-ver-reconstruccion")
+          .isEnabled()
+          .catch(() => false)
+      )
+        break;
+      const confirmar = page.locator('[data-testid^="confirmar-"]').first();
+      if (await confirmar.isVisible().catch(() => false)) {
+        pasos.push(String(await confirmar.getAttribute("data-testid")));
+        await confirmar.click();
+        continue;
+      }
+      const marcar = page.locator('[data-testid^="marcar-"]').first();
+      if (!(await marcar.isVisible().catch(() => false))) break;
+      const id = (await marcar.getAttribute("data-testid")) ?? "";
+      pasos.push(id);
+      await marcar.click();
+      if (id.startsWith("marcar-choque")) {
+        // El lugar que encontró Croquis; si no, el centro del mapa.
+        // `isVisible` no espera: se espera el panel del lugar (o el aviso de que no lo encontró).
+        const si = page.getByTestId("lugar-si");
+        await si
+          .or(page.getByTestId("narrado-sin-lugar"))
+          .or(page.getByTestId("lugar-dudoso"))
+          .first()
+          .waitFor({ state: "visible", timeout: 90_000 })
+          .catch(() => undefined);
+        if (await si.isVisible().catch(() => false)) {
+          fila.lugar = (await page.getByTestId("lugar-encontrado").innerText()).replace(
+            /\s+/g,
+            " ",
+          );
+          await si.click();
+        }
+        await page.waitForTimeout(6000);
+        const acepta = page.getByTestId("aceptar-choque");
+        if (await acepta.isVisible().catch(() => false)) await acepta.click();
+        else {
+          const mapa = page.getByTestId("mapa-facil");
+          const caja = (await mapa.boundingBox())!;
+          await mapa.click({ position: { x: caja.width / 2, y: caja.height / 2 } });
+        }
+      } else if (id.startsWith("marcar-direccion")) {
+        const propuesta = page.locator('[data-testid^="opcion-flecha-"][data-propuesta="si"]');
+        await (
+          (await propuesta.count()) ? propuesta.first() : page.getByTestId("opcion-flecha-0")
+        ).click();
+      } else if (id.startsWith("marcar-final")) {
+        const narrada = page.getByTestId("final-narracion");
+        const hay = await narrada.isVisible().catch(() => false);
+        pasos.push(`  reposo narrado: ${hay}`);
+        await (hay ? narrada : page.getByTestId("final-junto")).click();
+        await page.getByTestId("listo-final").click();
+      } else {
+        for (const b of ["golpe-nose", "otros-no", "paso-listo", "terreno-liso"]) {
+          const x = page.getByTestId(b);
+          if (await x.isVisible().catch(() => false)) {
+            await x.click();
+            break;
+          }
+        }
+      }
+      await expect(lista).toBeVisible({ timeout: 30_000 });
+    }
+    fila.pasos = pasos;
+    await foto(page, `motociclista-caso${n}-escena`);
+    await irAPaso(page, 4);
+    const rec = page.getByTestId("reconstruir");
+    if (await rec.isVisible().catch(() => false)) await rec.click();
+    const cifra = page.getByTestId("cifra-reconstruccion");
+    await expect(cifra).toBeVisible({ timeout: 240_000 });
+    fila.cifra = (await cifra.innerText()).replace(/\s+/g, " ").slice(0, 600);
+    await foto(page, `motociclista-caso${n}-reconstruccion`);
+    if (process.env.CROQUIS_SIN_3D === "1") {
+      filas.push(fila);
+      return;
+    }
+    fila.gpu = await en3d(page);
+    await page.getByRole("button", { name: "Ir al impacto" }).click();
+    await page.waitForTimeout(2500);
+    await foto(page, `motociclista-caso${n}-3d-impacto`);
+    await page.getByTestId("repetir-unity").click();
+    await page.waitForTimeout(9000);
+    await foto(page, `motociclista-caso${n}-3d-despues`);
+    filas.push(fila);
+  });
