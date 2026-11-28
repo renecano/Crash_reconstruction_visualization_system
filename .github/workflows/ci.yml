@@ -60,9 +60,20 @@ jobs:
       - run: dotnet test apps/visor-unity/tests/Croquis.Core.Tests -c Release
 
   e2e:
-    name: E2E de los flujos principales (Chromium)
+    # Las e2e van en dos mitades en paralelo para seguir bajo 10 minutos: juntas pasaban del límite y
+    # el trabajo se cancelaba (2026-11-27, en `main` desde #384). Se corren todas; solo se reparten. El
+    # nombre sin sufijo es el que pide la regla de `main`; la otra mitad lleva «2/2».
+    name: E2E de los flujos principales (Chromium)${{ matrix.sufijo }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - mitad: "1/2"
+            sufijo: ""
+          - mitad: "2/2"
+            sufijo: " 2/2"
     # La imagen oficial de Playwright ya trae Chromium y sus paquetes del sistema: sin ella, el
     # paso de apt de `--with-deps` llegó a tardar más de 8 min (2026-10-22) y cortaba el trabajo.
     # Su versión va con la de @playwright/test del catálogo (pnpm-workspace.yaml).
@@ -77,13 +88,13 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       # Una prueba por flujo principal, marcada con @flujo en su título.
-      - run: pnpm --filter @croquis/web exec playwright test --project=chromium --grep @flujo --pass-with-no-tests
+      - run: pnpm --filter @croquis/web exec playwright test --project=chromium --grep @flujo --pass-with-no-tests --shard=${{ matrix.mitad }}
         env:
           CI: "true"
       - uses: actions/upload-artifact@v7
         if: failure()
         with:
-          name: playwright-report
+          name: playwright-report-${{ strategy.job-index }}
           path: apps/web/playwright-report
           retention-days: 7
 
