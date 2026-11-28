@@ -77,6 +77,15 @@ export function CifraReconstruccion({
       : x.previa
         ? F.kmhConUnidad(x.previa.mejor, "reconstruccion")
         : null;
+    // La medida que no cuadra (René, 2026-11-28): la cifra de arriba es la física, sin ella.
+    if (n.como_se_sabe === "medida")
+      return [
+        {
+          clave: x.vehiculo,
+          medida: true,
+          texto: `${quien}: ${F.kmhConUnidad(n.kmh, "reconstruccion")} medida por ${MEDIO_EN_PALABRAS[n.medio ?? "camara"]}, que no cuadra con las posiciones; ${fisica ? `la física, sin ella, da ${fisica}` : "la física no da una cifra"}.`,
+        },
+      ];
     return [
       {
         clave: x.vehiculo,
@@ -138,6 +147,15 @@ export function CifraReconstruccion({
               ? "Velocidad medida, no ajustada"
               : `${METODO.reconstruccion} · mejor ajuste`}
           </p>
+          {r.medidaIncompatible ? (
+            <p
+              role="alert"
+              className="rounded-lg border border-[var(--senal)] p-3 text-sm"
+              data-testid="medida-incompatible"
+            >
+              {r.medidaIncompatible.texto}
+            </p>
+          ) : null}
           {delPerito.map((d) => (
             <p
               key={d.clave}

@@ -401,7 +401,11 @@ export interface EscenaSolver {
 }
 
 /** La escena del solver a partir del expediente (sin correr el solver). */
-export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaSolver {
+export function especDeExpediente(e0: Expediente, specId = "caso-nuevo"): EscenaSolver {
+  // La velocidad DECLARADA por el perito (conductor, testigo) nunca entra al solver (René,
+  // 2026-11-28): solo se compara con la física. Para el solver es como «No sé»: la típica de la vía.
+  // (En el poste, la declarada del Sentra tiraba del ajuste y lo dejaba dentro de un edificio.)
+  const e = sinDeclaradasDelPerito(e0);
   const limites: string[] = [];
   const impactos = [...(e.impactos ?? [])].sort((a, b) => a.orden - b.orden);
   const primero = impactos.find((i) => i.orden === 1) ?? impactos[0];
@@ -1234,8 +1238,9 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       `${nombres}: sin sus posiciones en el mapa, Croquis ${colocados.length === 1 ? "lo coloca detenido" : "los coloca detenidos"} en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.`,
     );
   }
+  // Las del expediente que ve el perito (con la declarada, que el solver no usa): para compararlas.
   const velocidadesNarradas = Object.fromEntries(
-    e.vehiculos.flatMap((v) => (v.velocidad_narrada ? [[v.id, v.velocidad_narrada]] : [])),
+    e0.vehiculos.flatMap((v) => (v.velocidad_narrada ? [[v.id, v.velocidad_narrada]] : [])),
   );
   return { spec, ids, limites, origen, narradas: velocidadesNarradas, posesDeImpacto };
 }
@@ -1468,6 +1473,12 @@ export interface Reconstruccion extends EscenaSolver {
    * Entonces ninguna velocidad trae cifra (`previa` y `impacto` van en null) y el 3D no anima.
    */
   noCuadra?: NoCuadra;
+  /**
+   * La velocidad medida no cabe con la evidencia (René, 2026-11-28): con ella la reconstrucción no
+   * cuadra, así que se muestra la física sin ella (marcada como tal) y el conflicto; el perito decide
+   * cuál usa en el dictamen.
+   */
+  medidaIncompatible?: { vehiculos: { vehiculo: Id; kmh: number }[]; texto: string };
   velocidades: VelocidadReconstruida[];
   /** Los impactos que ocurrieron en la reconstrucción, en orden (más de uno en una carambola). */
   impactos: ImpactoReconstruido[];
@@ -1914,6 +1925,18 @@ export function interpretarResultado(
   };
 }
 
+/**
+ * El expediente para el solver: cada velocidad declarada por el perito (no medida) se cambia por la
+ * típica de la vía, como si hubiera dicho «No sé». La declarada sigue en el expediente que ve el perito,
+ * para compararla con la física.
+ */
+export function sinDeclaradasDelPerito(e: Expediente): Expediente {
+  const declaradas = e.vehiculos.filter(
+    (v) => v.velocidad_narrada?.origen === "perito" && !esVelocidadMedida(v.velocidad_narrada),
+  );
+  return declaradas.reduce((x, v) => conVelocidadDelPerito(x, v.id, null), e);
+}
+
 /** La evidencia del solver en palabras («reposo:veh-a» → «posición final de V1»). */
 export function evidenciaEnPalabras(etiqueta: string, ids: Record<string, Id>): string {
   const [tipo, sid] = etiqueta.split(":");
@@ -1951,6 +1974,55 @@ export function reconstruirExpediente(
   e: Expediente,
   specId?: string,
   muestras: { samples?: number; mcSamples?: number } = {},
+): Reconstruccion {
+  const r = reconstruirUnaVez(e, specId, muestras);
+  // La velocidad medida que no cabe: la física sin ella, con el conflicto (René, 2026-11-28).
+  if (!r.noCuadra || !hayVelocidadMedida(e)) return r;
+  const fisica = reconstruirUnaVez(sinMedidasDelPerito(e), specId, muestras);
+  return fisica.noCuadra ? r : conConflictoDeMedida(e, r, fisica);
+}
+
+/** Si algún vehículo trae una velocidad medida por un instrumento. */
+export function hayVelocidadMedida(e: Expediente): boolean {
+  return e.vehiculos.some((v) => esVelocidadMedida(v.velocidad_narrada));
+}
+
+/** El expediente sin las velocidades medidas: para el solver, como si el perito dijera «No sé». */
+export function sinMedidasDelPerito(e: Expediente): Expediente {
+  return e.vehiculos
+    .filter((v) => esVelocidadMedida(v.velocidad_narrada))
+    .reduce((x, v) => conVelocidadDelPerito(x, v.id, null), e);
+}
+
+/**
+ * La reconstrucción física (sin las medidas) con el conflicto a la vista: «Con la velocidad medida de
+ * X km/h no cuadra: …; la medida no es compatible con las posiciones».
+ */
+export function conConflictoDeMedida(
+  e: Expediente,
+  conMedida: Reconstruccion,
+  fisica: Reconstruccion,
+): Reconstruccion {
+  const vehiculos = e.vehiculos
+    .filter((v) => esVelocidadMedida(v.velocidad_narrada))
+    .map((v) => ({ vehiculo: v.id, kmh: Math.round(v.velocidad_narrada!.kmh) }));
+  const motivo = conMedida.noCuadra?.motivos[0] ?? "lo medido y las posiciones no caben juntos";
+  const cuales = vehiculos.map((x) => `${x.kmh} km/h (${x.vehiculo})`).join(" y ");
+  const texto = `Con la velocidad medida de ${cuales} no cuadra: ${motivo}. La medida no es compatible con las posiciones: revisa la medida o las posiciones. Croquis muestra la reconstrucción física, sin la medida; en el dictamen decides cuál usar.`;
+  return {
+    ...fisica,
+    // Las velocidades que dio el perito, con la medida, para que la hoja diga «medida X; la física Y».
+    narradas: conMedida.narradas,
+    medidaIncompatible: { vehiculos, texto },
+    limites: [texto, ...fisica.limites],
+  };
+}
+
+/** Una reconstrucción: con lo que dice el expediente y, lo que la evidencia no fija, con la típica. */
+function reconstruirUnaVez(
+  e: Expediente,
+  specId: string | undefined,
+  muestras: { samples?: number; mcSamples?: number },
 ): Reconstruccion {
   const base = especDeExpediente(e, specId);
   const r = interpretarResultado(base, fullResult(base.spec, muestras));
