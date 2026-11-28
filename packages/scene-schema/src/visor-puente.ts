@@ -84,7 +84,12 @@ export interface MensajesAUnity {
   pausar: Record<string, never>;
   velocidad: { x: number };
   camara: { modo: CamaraVisor };
-  calidad: { nivel: CalidadVisor };
+  /**
+   * `escala` (opcional, 2026-11-28): la escala de dibujo fija (1 = la resolución completa del lienzo)
+   * o `null` para devolverla a la automática. La usa el video, que graba cuadro por cuadro y no debe
+   * bajar la resolución por los fps bajos. Sin el campo, la escala no cambia.
+   */
+  calidad: { nivel: CalidadVisor; escala?: number | null };
   encuadrar: { zona: ZonaEncuadre };
   capturar: { vista: VistaCaptura; ancho: number; alto: number };
   /** Sin `herramienta`, `mover`. */
