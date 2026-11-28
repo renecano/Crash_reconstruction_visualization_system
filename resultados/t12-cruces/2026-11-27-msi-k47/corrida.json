@@ -8,7 +8,7 @@
     "commit":  "b856da7b1170472d6725f97207b35362108b473e",
     "rama_del_repositorio":  "HEAD",
     "archivos_con_cambios":  0,
-    "duracion_min":  10.6,
+    "duracion_min":  12.3,
     "equipo":  {
                    "tarjetas_de_video":  [
                                              "Intel(R) UHD Graphics",
@@ -112,6 +112,15 @@
                       "paso":  "final-unity",
                       "estado":  "ok",
                       "minutos":  2.1,
+                      "codigo":  0,
+                      "disco_libre_gb_antes":  807.1,
+                      "disco_libre_gb_despues":  807.1
+                  },
+                  {
+                      "grupo":  "tanda",
+                      "paso":  "video-integrada",
+                      "estado":  "ok",
+                      "minutos":  1.6,
                       "codigo":  0,
                       "disco_libre_gb_antes":  807.1,
                       "disco_libre_gb_despues":  807.1
