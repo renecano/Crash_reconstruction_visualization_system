@@ -171,17 +171,36 @@ namespace Croquis.Core.Tests
         }
 
         [Fact]
-        public void LaCamaraDejaAlOcupanteALaVista()
+        public void LaTomaDelVueloEncuadraElContactoYDondeCae()
         {
-            var toma = new Toma { Ojo = new V3(0, 2, -10), Mira = new V3(0, 1, 0) };
-            var contacto = new V3(0, 1, 0);
-            var ocupante = new V3(12, 0.2, 0);
-            Assert.Equal(toma.Ojo.X, VueloOcupante.ConOcupante(toma, contacto, ocupante, 0.0).Ojo.X);
-            var con = VueloOcupante.ConOcupante(toma, contacto, ocupante, 1.0);
-            // Mira al medio y se aleja: el contacto y el ocupante entran.
-            Assert.Equal(6.0, con.Mira.X, 6);
-            var lejos = Math.Sqrt(Math.Pow(con.Ojo.X - con.Mira.X, 2) + Math.Pow(con.Ojo.Z - con.Mira.Z, 2));
-            Assert.True(lejos > 10.0);
+            var contacto = new V3(0, 0.5, 0);
+            var cae = new V3(-12.9, 0.3, 0);
+            var camion = Estorbo.Vehiculo(3.0, 0.0, 0.0, 7.5, 2.4, 3.0);
+            var t = VueloOcupante.TomaVuelo(contacto, cae, new[] { camion });
+            Assert.True(CamaraAutomatica.Despejado(t.Ojo, contacto, new[] { camion }));
+            Assert.True(CamaraAutomatica.Despejado(t.Ojo, cae, new[] { camion }));
+            // Los dos dentro del ancho del cuadro (16:9, 45° vertical).
+            var hfov = 2.0 * Math.Atan(Math.Tan(45.0 * Math.PI / 360.0) * 16.0 / 9.0);
+            double Angulo(V3 p)
+            {
+                var ax = t.Mira.X - t.Ojo.X;
+                var az = t.Mira.Z - t.Ojo.Z;
+                var bx = p.X - t.Ojo.X;
+                var bz = p.Z - t.Ojo.Z;
+                return Math.Abs(Math.Atan2(ax * bz - az * bx, ax * bx + az * bz));
+            }
+
+            Assert.True(Angulo(contacto) < hfov / 2.0);
+            Assert.True(Angulo(cae) < hfov / 2.0);
+        }
+
+        [Fact]
+        public void LaTomaDelVueloEntraAlSalirYCedeALaFinal()
+        {
+            var v = Vuelo(Moto());
+            Assert.Equal(0.0, v.PesoCamara(v.T0 - 0.1));
+            Assert.Equal(1.0, v.PesoCamara(v.T0 + 0.5), 9);
+            Assert.Equal(0.0, v.PesoCamara(v.T0 + CamaraAutomatica.DespuesS + CamaraAutomatica.TransicionS + 0.1), 9);
         }
     }
 }

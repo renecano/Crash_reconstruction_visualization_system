@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Croquis.Generated;
 
 namespace Croquis.Core
@@ -249,31 +250,48 @@ namespace Croquis.Core
         }
 
         /// <summary>
-        /// La toma de la cámara con el ocupante a la vista durante su vuelo (`peso` de 0 a 1): mira al
-        /// medio entre el contacto y el ocupante y se aleja lo que haga falta para que entren los dos.
+        /// La toma del vuelo (fija, se elige una vez): de lado a la línea del contacto a donde cae, mirando
+        /// a su punto medio, tan lejos como haga falta para que entren los dos (con `vfov` vertical y
+        /// `aspecto`), del primer lado desde donde los dos se ven despejados. Sin lado despejado, desde
+        /// arriba.
         /// </summary>
-        public static Toma ConOcupante(Toma toma, V3 contacto, V3 ocupante, double peso)
+        public static Toma TomaVuelo(V3 contacto, V3 cae, IList<Estorbo> estorbos, double vfov = 45.0, double aspecto = 16.0 / 9.0)
         {
-            if (peso <= 0.0)
+            var mx = (contacto.X + cae.X) / 2.0;
+            var mz = (contacto.Z + cae.Z) / 2.0;
+            var suelo = Math.Min(contacto.Y, cae.Y);
+            var dx = cae.X - contacto.X;
+            var dz = cae.Z - contacto.Z;
+            var largo = Math.Max(2.0, Math.Sqrt(dx * dx + dz * dz));
+            var linea = Math.Atan2(dz, dx);
+            var hfov = 2.0 * Math.Atan(Math.Tan(vfov * Math.PI / 360.0) * aspecto);
+            // Los dos extremos y un margen de 3 m dentro del ancho del cuadro.
+            var lejos = Math.Max(8.0, (largo / 2.0 + 3.0) / Math.Tan(hfov / 2.0));
+            var mira = new V3(mx, suelo + 0.6, mz);
+            foreach (var extra in new[] { 1.0, 1.25, 1.5 })
             {
-                return toma;
+                foreach (var giro in new[] { 0.0, 20.0, -20.0, 40.0, -40.0 })
+                {
+                    foreach (var lado in new[] { 90.0, -90.0 })
+                    {
+                        var az = linea + (lado + giro) * Math.PI / 180.0;
+                        var d = lejos * extra;
+                        var ojo = new V3(mx + Math.Cos(az) * d, suelo + 0.35 * d, mz + Math.Sin(az) * d);
+                        if (CamaraAutomatica.Despejado(ojo, contacto, estorbos) && CamaraAutomatica.Despejado(ojo, cae, estorbos))
+                        {
+                            return new Toma { Ojo = ojo, Mira = mira };
+                        }
+                    }
+                }
             }
 
-            var medio = new V3((contacto.X + ocupante.X) / 2.0, (contacto.Y + ocupante.Y) / 2.0, (contacto.Z + ocupante.Z) / 2.0);
-            var mira = Mezcla(toma.Mira, medio, peso);
-            var sx = ocupante.X - contacto.X;
-            var sz = ocupante.Z - contacto.Z;
-            var separacion = Math.Sqrt(sx * sx + sz * sz);
-            var ox = toma.Ojo.X - toma.Mira.X;
-            var oy = toma.Ojo.Y - toma.Mira.Y;
-            var oz = toma.Ojo.Z - toma.Mira.Z;
-            var lejos = Math.Sqrt(ox * ox + oy * oy + oz * oz);
-            var extra = lejos > 1e-6 ? peso * separacion * 0.8 / lejos : 0.0;
-            var ojo = new V3(mira.X + ox * (1.0 + extra), mira.Y + oy * (1.0 + extra), mira.Z + oz * (1.0 + extra));
-            return new Toma { Ojo = ojo, Mira = mira };
+            return new Toma { Ojo = new V3(mx + 0.5, suelo + lejos * 1.2, mz + 0.5), Mira = mira };
         }
 
-        /// <summary>Cuánto pesa el ocupante en la toma en `t`: entra al salir y se queda hasta que se detiene.</summary>
+        /// <summary>
+        /// Cuánto pesa la toma del vuelo en `t`: entra en 0.3 s al salir y se queda hasta que la toma
+        /// final (desde arriba, `CamaraAutomatica.DespuesS` después del impacto) la reemplaza.
+        /// </summary>
         public double PesoCamara(double t)
         {
             var s = t - T0;
@@ -282,13 +300,14 @@ namespace Croquis.Core
                 return 0.0;
             }
 
-            var entra = Math.Min(1.0, s / 0.3);
-            return entra * entra * (3.0 - 2.0 * entra);
+            var entra = Suave(Math.Min(1.0, s / 0.3));
+            var sale = Suave(Math.Max(0.0, Math.Min(1.0, (t - (T0 + CamaraAutomatica.DespuesS)) / CamaraAutomatica.TransicionS)));
+            return entra * (1.0 - sale);
         }
 
-        private static V3 Mezcla(V3 a, V3 b, double f)
+        private static double Suave(double x)
         {
-            return new V3(a.X + (b.X - a.X) * f, a.Y + (b.Y - a.Y) * f, a.Z + (b.Z - a.Z) * f);
+            return x * x * (3.0 - 2.0 * x);
         }
     }
 }
