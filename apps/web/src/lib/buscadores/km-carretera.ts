@@ -71,6 +71,20 @@ export function leerKmCarretera(texto: string): KmNarrado | null {
   const k = /\b(?:km\.?|kil[oó]metro)\s*(\d{1,4}(?:[.,]\d+)?)(?:\s*\+\s*(\d{1,3}))?/i.exec(texto);
   if (!k) return null;
   const km = Number(k[1]!.replace(",", ".")) + (k[2] ? Number(k[2]) / 1000 : 0);
+  const v = leerCarretera(texto);
+  if (!v) return null;
+  const c = new RegExp(`\\bcerca\\s+de\\s+(${NOMBRE})`).exec(texto);
+  return { ...v, km, cercaDe: c ? c[1]!.trim() : null };
+}
+
+/**
+ * La carretera que nombra el texto, sin kilómetro: su número («carretera federal 134», «MEX-15D») y su
+ * tramo («Toluca–Temascaltepec»). `null` si no nombra una (René, 2026-11-28: «a la altura de la
+ * localidad de X» sobre una carretera es una referencia, no un km).
+ */
+export function leerCarretera(
+  texto: string,
+): { ref: string | null; tramo: [string, string] | null } | null {
   const r =
     /\bMEX\s*[-–]?\s*(\d{1,3})\s*([Dd])?\b/.exec(texto) ??
     /\b(?:carretera|autopista)(?:\s+federal)?(?:\s+(?:n[uú]mero|no\.))?\s+(\d{1,3})\s*([Dd])?\b/i.exec(
@@ -80,9 +94,8 @@ export function leerKmCarretera(texto: string): KmNarrado | null {
   const t = new RegExp(`(${NOMBRE})\\s*[–—-]\\s*(${NOMBRE})`).exec(texto);
   const tramo: [string, string] | null =
     t && !/^MEX$/i.test(t[1]!) ? [t[1]!.trim(), t[2]!.trim()] : null;
-  const c = new RegExp(`\\bcerca\\s+de\\s+(${NOMBRE})`).exec(texto);
   if (!ref && !tramo) return null;
-  return { ref, tramo, km, cercaDe: c ? c[1]!.trim() : null };
+  return { ref, tramo };
 }
 
 const R = 6_371_000;
@@ -187,6 +200,24 @@ export function consultaKm(n: KmNarrado, c: LatLon, radioM: number): string {
     `[out:json][timeout:60];way(${b})["highway"~"^(motorway|trunk|primary|secondary)(_link)?$"]${filtro}->.w;` +
     `.w out tags geom;node(around.w:40)["highway"="milestone"];out;`
   );
+}
+
+/**
+ * Solo la carretera (por su número o por su tramo, en una sola consulta y sin mojones), alrededor de
+ * `c`: para el punto más cercano a una población narrada (René, 2026-11-28). Más ligera que `consultaKm`.
+ */
+export function consultaCarretera(
+  v: { ref: string | null; tramo: [string, string] | null },
+  c: LatLon,
+  radioM: number,
+): string {
+  const b = caja(c, radioM);
+  const hw = `["highway"~"^(motorway|trunk|primary|secondary|tertiary)(_link)?$"]`;
+  const filtros = [
+    v.ref ? `["ref"~"^${v.ref.replace(" ", " ?-?")}${v.ref.endsWith("D") ? "" : "D?"}$"]` : null,
+    v.tramo ? `["name"~"${v.tramo[0]}.*${v.tramo[1]}|${v.tramo[1]}.*${v.tramo[0]}",i]` : null,
+  ].filter(Boolean);
+  return `[out:json][timeout:25];(${filtros.map((f) => `way(${b})${hw}${f};`).join("")});out tags geom;`;
 }
 
 /** Dónde queda el km que dice el texto; `null` si no nombra uno o no se encuentra la carretera. */

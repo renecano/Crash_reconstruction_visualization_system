@@ -16,6 +16,7 @@ import { consultarOverpass } from "./overpass";
 import { patronDeCalle } from "../../server/cruces";
 import type { BuscarReferencia, RedLugar, ZonaCaso } from "../buscadores-lugar";
 import { ATRIBUCION_OSM, geocodificar } from "./geocodificar";
+import { consultaCarretera, leerCarretera, leerKmCarretera } from "./km-carretera";
 import { coincideCalle } from "./normalizar-calle";
 
 type LatLon = { lat: number; lon: number };
@@ -29,10 +30,13 @@ export interface ReferenciaNarrada {
   /** La calle donde fue el hecho, si la narración la nombra. */
   calle: string | null;
   /**
-   * La narración dice «colonia» (René, 2026-11-28: «a la altura de la colonia Ciprés» tomaba una calle
-   * Ciprés a más de 700 m): solo vale una colonia o un barrio del mapa, no una calle con ese nombre.
+   * La narración dice «colonia», «localidad», «poblado»… (René, 2026-11-28: «a la altura de la colonia
+   * Ciprés» tomaba una calle Ciprés a más de 700 m): solo vale un lugar poblado del mapa (colonia,
+   * barrio, localidad), no una calle con ese nombre.
    */
-  colonia?: boolean;
+  asentamiento?: boolean;
+  /** La carretera donde fue el hecho, si la narración la nombra y no da el kilómetro. */
+  carretera?: { ref: string | null; tramo: [string, string] | null };
 }
 
 export interface PuntoReferido {
@@ -69,7 +73,18 @@ export interface DepsReferencia {
 const NOMBRE =
   "[A-ZÁÉÍÓÚÑ0-9][\\wÁÉÍÓÚÑáéíóúñ.'-]*(?:\\s+(?:de\\s+(?:la\\s+|los\\s+|las\\s+)?|del\\s+|y\\s+)?[A-ZÁÉÍÓÚÑ0-9][\\wÁÉÍÓÚÑáéíóúñ.'-]*){0,4}";
 
-const PATRONES: { tipo: TipoReferencia; re: RegExp }[] = [
+/** Las palabras de un lugar poblado: «la localidad de», «el poblado», «la colonia»… */
+const ASENTAMIENTO =
+  "localidad|poblaci[oó]n|poblado|pueblo|comunidad|colonia|ranch[eí]r[ií]a|ejido|fraccionamiento|barrio|ranchos?|congregaci[oó]n";
+
+const PATRONES: {
+  tipo: TipoReferencia;
+  re: RegExp;
+  /** Lo que nombra es un lugar poblado: solo vale una colonia, localidad o población del mapa. */
+  asentamiento?: boolean;
+  /** Solo cuando la narración nombra una carretera (sin ella, «cerca de X» es demasiado vago). */
+  soloEnCarretera?: boolean;
+}[] = [
   {
     tipo: "estacion",
     re: new RegExp(
@@ -89,6 +104,25 @@ const PATRONES: { tipo: TipoReferencia; re: RegExp }[] = [
     ),
   },
   {
+    // «a la altura de la localidad de Santa Cruz Cuahutenco», «a la altura del poblado Miguel Alemán»
+    // (René, 2026-11-28): una población, no un kilómetro ni una calle con ese nombre.
+    tipo: "lugar",
+    asentamiento: true,
+    re: new RegExp(
+      `\\b(?:[Aa]\\s+la\\s+altura|[Ee]n|[Cc]erca)\\s+(?:de\\s+la\\s+|del\\s+|de\\s+)?(?:${ASENTAMIENTO})\\s+(?:de\\s+)?(${NOMBRE})`,
+    ),
+  },
+  {
+    // «poco antes de llegar a Bahía de Kino», «a la entrada de San Felipe», «cerca de Villa Ahumada»
+    // sobre una carretera (René, 2026-11-28): la población, y el punto de la carretera más cercano.
+    tipo: "lugar",
+    asentamiento: true,
+    soloEnCarretera: true,
+    re: new RegExp(
+      `\\b(?:(?:poco\\s+)?antes\\s+de\\s+llegar\\s+a|a\\s+la\\s+(?:entrada|salida)\\s+de|cerca\\s+de)\\s+(${NOMBRE})`,
+    ),
+  },
+  {
     tipo: "lugar",
     re: new RegExp(
       `\\b(?:salida\\s+(?:a|hacia)|a\\s+la\\s+altura\\s+de(?:\\s+la\\s+colonia)?|en\\s+la\\s+colonia|colonia|pueblo\\s+de)\\s+(${NOMBRE})`,
@@ -100,7 +134,9 @@ const CALLE =
 
 /** La referencia que dice el texto (la primera que encuentre) y la calle; `null` si no hay. */
 export function leerReferencia(texto: string): ReferenciaNarrada | null {
-  for (const { tipo, re } of PATRONES) {
+  const carretera = leerKmCarretera(texto) ? null : leerCarretera(texto);
+  for (const { tipo, re, asentamiento: dePoblacion, soloEnCarretera } of PATRONES) {
+    if (soloEnCarretera && !carretera) continue;
     const m = re.exec(texto);
     const nombre = (m?.[1] ?? m?.[2])?.trim();
     if (!nombre) continue;
@@ -122,8 +158,16 @@ export function leerReferencia(texto: string): ReferenciaNarrada | null {
       .join(" ")
       .replace(/[.,;:]+$/, "")
       .replace(/\s+del?\s+(?:metro|metrob[uú]s|tren\s+ligero)$/i, "");
-    const colonia = tipo === "lugar" && /\bcolonia\b/i.test(m![0]);
-    return { tipo, nombre: limpio, calle, ...(colonia ? { colonia: true } : {}) };
+    const asentamiento =
+      dePoblacion || (tipo === "lugar" && new RegExp(`\\b(?:${ASENTAMIENTO})\\b`, "i").test(m![0]));
+    // La carretera, cuando la narración no da el km (con km, es el buscador del km).
+    return {
+      tipo,
+      nombre: limpio,
+      calle: carretera ? null : calle,
+      ...(asentamiento ? { asentamiento: true } : {}),
+      ...(carretera ? { carretera } : {}),
+    };
   }
   return null;
 }
@@ -224,8 +268,8 @@ export async function ubicarReferencia(
   }));
   // «la colonia Ciprés»: una colonia o un barrio; si el mapa no la tiene, no se toma una calle
   // Ciprés: no se encontró.
-  const delTipo = todos.filter((x) => (r.colonia ? COLONIA(x.e) : CLASES[r.tipo](x.e)));
-  if (r.colonia && !delTipo.length) return null;
+  const delTipo = todos.filter((x) => (r.asentamiento ? COLONIA(x.e) : CLASES[r.tipo](x.e)));
+  if (r.asentamiento && !delTipo.length) return null;
   const usar = delTipo.length ? delTipo : todos;
   // Los candidatos distintos: los que están a más de 300 m uno de otro (una estación trae andenes y
   // accesos; la Diana tiene dos esculturas en el mapa).
@@ -244,6 +288,8 @@ export async function ubicarReferencia(
   const dicha = (c: (typeof candidatos)[number]) =>
     `${COMO[r.tipo] ? `${COMO[r.tipo]} ` : ""}${c.e.name}`.trim();
   const mayuscula = (t: string) => `${t[0]!.toUpperCase()}${t.slice(1)}`;
+
+  if (r.carretera) return sobreLaCarretera(r, r.carretera, candidatos, tipoDudoso, deps);
 
   if (r.calle) {
     // Para cada candidato, el punto más cercano de la calle narrada; gana el que la tiene más cerca.
@@ -309,6 +355,77 @@ export async function ubicarReferencia(
     referencia: { nombre: c.e.name, osm: `${c.e.category}/${c.e.type}` },
     calle: null,
     explicacion: `${mayuscula(dicha(c))}, según el mapa (la narración no dice en qué calle).${ambigua}`,
+  };
+}
+
+/** m: a lo más esto de la población, la carretera narrada; más lejos, no es «a la altura de». */
+const CARRETERA_CERCA_M = 5000;
+/** «300 m», «1.2 km». */
+const distancia = (m: number) =>
+  m < 1000 ? `${Math.round(m / 10) * 10} m` : `${(m / 1000).toFixed(1)} km`;
+
+/**
+ * «Sobre la carretera federal 134, a la altura de la localidad de Santa Cruz Cuahutenco» (René,
+ * 2026-11-28): el punto de esa carretera más cercano a la población, sin pedir recorrerla a mano. Con
+ * varias poblaciones de ese nombre en la zona, las opciones van por cercanía, con su distancia.
+ */
+async function sobreLaCarretera(
+  r: ReferenciaNarrada,
+  carretera: NonNullable<ReferenciaNarrada["carretera"]>,
+  candidatos: { e: Encontrado; p: LatLon }[],
+  tipoDudoso: boolean,
+  deps: DepsReferencia,
+): Promise<PuntoReferido | null> {
+  const via = carretera.ref ?? `${carretera.tramo![0]}–${carretera.tramo![1]}`;
+  const hallados: { c: (typeof candidatos)[number]; q: LatLon; m: number }[] = [];
+  for (const c of candidatos.slice(0, 3)) {
+    // Por su número o por su tramo, en una sola consulta; primero en una caja chica (más rápida en
+    // Overpass: la población suele estar junto a la carretera) y, si no aparece, en la de 6 km.
+    let vias: Elemento[] = [];
+    for (const radio of [3000, CARRETERA_CERCA_M + 1000]) {
+      vias = (await deps.overpass(consultaCarretera(carretera, c.p, radio))).elements.filter(
+        (e) => e.type === "way" && e.geometry?.length,
+      );
+      if (vias.length) break;
+    }
+    let mejor: { q: LatLon; m: number } | null = null;
+    for (const v of vias) {
+      const x = puntoMasCercano(v.geometry!, c.p);
+      if (x && (!mejor || x.m < mejor.m)) mejor = x;
+    }
+    if (mejor && mejor.m <= CARRETERA_CERCA_M) hallados.push({ c, ...mejor });
+  }
+  hallados.sort((a, b) => a.m - b.m);
+  const primero = hallados[0];
+  if (!primero) {
+    const c = candidatos[0]!;
+    return {
+      ...c.p,
+      seguridad: "baja",
+      referencia: { nombre: c.e.name, osm: `${c.e.category}/${c.e.type}` },
+      calle: null,
+      explicacion: `${c.e.name} está en el mapa, pero la ${via} no pasa a menos de ${distancia(CARRETERA_CERCA_M)}: se tomó la población misma. Marca el lugar si lo conoces.`,
+    };
+  }
+  const varios = hallados.length > 1;
+  return {
+    ...primero.q,
+    seguridad: !varios && !tipoDudoso && primero.m <= 1000 ? "media" : "baja",
+    ...(varios
+      ? {
+          opciones: hallados.map((x) => ({
+            ...x.q,
+            nombre: `${via} a ${distancia(x.m)} de ${x.c.e.name}`,
+          })),
+        }
+      : {}),
+    referencia: { nombre: primero.c.e.name, osm: `${primero.c.e.category}/${primero.c.e.type}` },
+    calle: `la ${via}`,
+    explicacion:
+      `El punto de la ${via} más cercano a ${primero.c.e.name} (a ${distancia(primero.m)}), según el mapa; la narración no da el kilómetro.` +
+      (varios
+        ? ` Hay ${hallados.length} lugares llamados «${r.nombre}» junto a la carretera: van del más cercano al más lejano.`
+        : ""),
   };
 }
 
