@@ -1,0 +1,381 @@
+{
+  "fuente": "OpenStreetMap (ODbL-1.0), © colaboradores de OpenStreetMap",
+  "lugares": {
+    "toluca-centro": {
+      "consulta": "way(around:...)[\"highway\"][\"name\"];out tags;",
+      "consultado": "2026-11-28T00:01:51Z",
+      "vias": [
+        {
+          "id": 224670049,
+          "tags": {
+            "highway": "residential",
+            "name": "Callejón José Hernández"
+          }
+        },
+        {
+          "id": 224670057,
+          "tags": {
+            "highway": "residential",
+            "name": "Calle Nezahualpilli"
+          }
+        },
+        {
+          "id": 224670071,
+          "tags": {
+            "alt_name": "Andador Xóchitl",
+            "highway": "residential",
+            "name": "Calle Xóchitl"
+          }
+        },
+        {
+          "id": 284840881,
+          "tags": {
+            "highway": "steps",
+            "name": "Calle Protacio Gómez"
+          }
+        },
+        {
+          "id": 314875486,
+          "tags": {
+            "alt_name": "Calle Mariano Riva Palacio",
+            "highway": "residential",
+            "name": "Rivapalacio"
+          }
+        },
+        {
+          "id": 314879101,
+          "tags": {
+            "highway": "pedestrian",
+            "name": "Belisario Domínguez"
+          }
+        },
+        {
+          "id": 362363682,
+          "tags": {
+            "highway": "secondary",
+            "name": "Calle Primo de Verdad"
+          }
+        },
+        {
+          "id": 614574582,
+          "tags": {
+            "highway": "residential",
+            "name": "Calle Aquiles Serdán"
+          }
+        },
+        {
+          "id": 614838450,
+          "tags": {
+            "highway": "residential",
+            "name": "Calle Papatzin"
+          }
+        },
+        {
+          "id": 614932093,
+          "tags": {
+            "highway": "residential",
+            "name": "Calle Nicolás Bravo"
+          }
+        },
+        {
+          "id": 614932098,
+          "tags": {
+            "highway": "secondary",
+            "name": "Vicente Villada"
+          }
+        },
+        {
+          "id": 614932103,
+          "tags": {
+            "highway": "secondary",
+            "name": "Calle 5 de Febrero"
+          }
+        },
+        {
+          "id": 614932124,
+          "tags": {
+            "highway": "tertiary",
+            "name": "Calle Nicolás Bravo"
+          }
+        },
+        {
+          "id": 620996468,
+          "tags": {
+            "highway": "cycleway",
+            "name": "Ciclovía Independencia"
+          }
+        },
+        {
+          "id": 621005404,
+          "tags": {
+            "highway": "cycleway",
+            "name": "Ciclovía Alameda - Teatro Morelos"
+          }
+        },
+        {
+          "id": 621038224,
+          "tags": {
+            "highway": "cycleway",
+            "name": "Ciclovía Lerdo"
+          }
+        },
+        {
+          "id": 778052580,
+          "tags": {
+            "highway": "secondary",
+            "name": "Avenida Sebastián Lerdo de Tejada",
+            "short_name": "Lerdo"
+          }
+        },
+        {
+          "id": 778072156,
+          "tags": {
+            "highway": "path",
+            "name": "Calle Luis Gutiérrez"
+          }
+        },
+        {
+          "id": 840597812,
+          "tags": {
+            "highway": "residential",
+            "name": "Calle Santos Degollado"
+          }
+        },
+        {
+          "id": 841478635,
+          "tags": {
+            "highway": "residential",
+            "name": "Calle 18 de Marzo"
+          }
+        },
+        {
+          "id": 841478641,
+          "tags": {
+            "highway": "path",
+            "name": "Calle Eduardo Mendieta"
+          }
+        },
+        {
+          "id": 841514105,
+          "tags": {
+            "alt_name": "Avenida De La Independencia",
+            "highway": "secondary",
+            "name": "Avenida Independencia"
+          }
+        },
+        {
+          "id": 868659114,
+          "tags": {
+            "highway": "residential",
+            "name": "Calle Protacio Gómez"
+          }
+        }
+      ]
+    },
+    "eje-central": {
+      "consulta": "way(around:...)[\"highway\"][\"name\"];out tags;",
+      "consultado": "2026-11-28T00:02:50Z",
+      "vias": [
+        {
+          "id": 4780781,
+          "tags": {
+            "highway": "pedestrian",
+            "name": "Calle Francisco I. Madero"
+          }
+        },
+        {
+          "id": 24703903,
+          "tags": {
+            "highway": "residential",
+            "name": "Calle López"
+          }
+        },
+        {
+          "id": 24715603,
+          "tags": {
+            "highway": "living_street",
+            "name": "Avenida 16 de Septiembre"
+          }
+        },
+        {
+          "id": 217323082,
+          "tags": {
+            "highway": "pedestrian",
+            "name": "Callejón Condesa"
+          }
+        },
+        {
+          "id": 361358030,
+          "tags": {
+            "highway": "residential",
+            "name": "Calle Independencia"
+          }
+        },
+        {
+          "id": 518424334,
+          "tags": {
+            "highway": "living_street",
+            "name": "Calle Dolores"
+          }
+        },
+        {
+          "id": 518424498,
+          "tags": {
+            "highway": "pedestrian",
+            "name": "Calle Dolores"
+          }
+        },
+        {
+          "id": 539349042,
+          "tags": {
+            "highway": "pedestrian",
+            "name": "Segundo Callejón de Dolores"
+          }
+        },
+        {
+          "id": 539349043,
+          "tags": {
+            "highway": "pedestrian",
+            "name": "Primer Callejón de Dolores"
+          }
+        },
+        {
+          "id": 616921713,
+          "tags": {
+            "highway": "secondary",
+            "name": "Avenida Juárez"
+          }
+        },
+        {
+          "id": 846008895,
+          "tags": {
+            "alt_name": "Eje Central",
+            "highway": "primary",
+            "name": "Avenida Lázaro Cárdenas",
+            "old_name": "Calle San Juán de Letrán",
+            "ref": "EJE CENTRAL"
+          }
+        },
+        {
+          "id": 1135302411,
+          "tags": {
+            "alt_name": "Eje Central",
+            "highway": "primary",
+            "name": "Avenida Lázaro Cárdenas",
+            "old_name": "Calle Juan Ruiz de Alarcón",
+            "ref": "EJE CENTRAL"
+          }
+        }
+      ]
+    },
+    "aeropuerto": {
+      "consulta": "way(around:...)[\"highway\"][\"name\"];out tags;",
+      "consultado": "2026-11-27T23:59:45Z",
+      "vias": [
+        {
+          "id": 145080109,
+          "tags": {
+            "highway": "tertiary",
+            "name": "Boulevard Aeropuerto Miguel Alemán Valdez"
+          }
+        },
+        {
+          "id": 218731130,
+          "tags": {
+            "alt_name": "Calle Cadena 1",
+            "highway": "residential",
+            "name": "La Cadena"
+          }
+        },
+        {
+          "id": 218731146,
+          "tags": {
+            "highway": "residential",
+            "name": "Calle Juan Pablo Galeana"
+          }
+        },
+        {
+          "id": 218731252,
+          "tags": {
+            "alt_name": "2da 5 de Mayo",
+            "highway": "residential",
+            "name": "Calle Segunda 5 De Mayo"
+          }
+        },
+        {
+          "id": 773884540,
+          "tags": {
+            "highway": "primary",
+            "name": "Boulevard Aeropuerto Miguel Alemán Valdez"
+          }
+        }
+      ]
+    },
+    "tollocan": {
+      "consulta": "way(around:...)[\"highway\"][\"name\"];out tags;",
+      "consultado": "2026-11-28T00:03:49Z",
+      "vias": [
+        {
+          "id": 26620958,
+          "tags": {
+            "highway": "secondary",
+            "name": "Avenida Paseo Tollocan",
+            "ref": "MEX 15"
+          }
+        },
+        {
+          "id": 26620969,
+          "tags": {
+            "highway": "trunk",
+            "name": "Avenida Paseo Tollocan"
+          }
+        },
+        {
+          "id": 96160097,
+          "tags": {
+            "highway": "trunk",
+            "name": "Paseo Tollocan",
+            "ref": "MEX 15"
+          }
+        },
+        {
+          "id": 99437229,
+          "tags": {
+            "highway": "secondary",
+            "name": "Avenida Paseo Tollocan"
+          }
+        },
+        {
+          "id": 189197272,
+          "tags": {
+            "highway": "tertiary",
+            "name": "Avenida Paseo Tollocan"
+          }
+        },
+        {
+          "id": 204972525,
+          "tags": {
+            "highway": "cycleway",
+            "name": "Ciclovía Tollocan"
+          }
+        },
+        {
+          "id": 772543821,
+          "tags": {
+            "alt_name": "Avenida Baja Velocidad",
+            "highway": "secondary",
+            "name": "Avenida Paseo Tollocan"
+          }
+        },
+        {
+          "id": 773815177,
+          "tags": {
+            "alt_name": "Calle Paseo Tollocan",
+            "highway": "secondary",
+            "name": "Avenida Paseo Tollocan"
+          }
+        }
+      ]
+    }
+  }
+}
