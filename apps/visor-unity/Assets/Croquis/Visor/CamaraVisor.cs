@@ -1284,7 +1284,17 @@ namespace Croquis.Visor
             var aspecto = camara != null ? camara.aspect : 16f / 9f;
             var impacto = tomaImpacto.Value;
             var llegada = CamaraAutomatica.Panorama(CajaVehiculos(t), Contacto, impacto, 45.0, aspecto, new[] { 32.0, 45.0, 60.0, 80.0 }, fijos);
-            var final = CamaraAutomatica.Panorama(Lente.VehiculosEn(resultado, resultado.TFin), Contacto, impacto, 45.0, aspecto, new[] { 62.0, 75.0, 88.0 }, fijos);
+            var cajaFinal = Lente.VehiculosEn(resultado, resultado.TFin);
+            // Donde quedó el motociclista o el ciclista, también en la toma final.
+            foreach (var pv in Peatones)
+            {
+                if (pv != null && pv.Vuelo != null)
+                {
+                    cajaFinal.Agregar(pv.Vuelo.XFinal, pv.Vuelo.YFinal);
+                }
+            }
+
+            var final = CamaraAutomatica.Panorama(cajaFinal, Contacto, impacto, 45.0, aspecto, new[] { 62.0, 75.0, 88.0 }, fijos);
             var toma = CamaraAutomatica.En(t, tI, llegada, impacto, final);
             // El motociclista o el ciclista que sale volando, siempre a la vista (René, 2026-11-28): una
             // toma fija de lado a su vuelo, del impacto hasta la toma final.
