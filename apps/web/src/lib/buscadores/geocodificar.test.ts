@@ -122,3 +122,31 @@ describe("geocodificar (política de Nominatim y respaldo de Esri)", () => {
     await expect(geocodificar("Portales", r)).rejects.toThrow("Nominatim respondió 503");
   });
 });
+
+describe("Esri, solo dentro de la zona del caso (René, 2026-11-28)", () => {
+  const candidato = (City: string, Subregion: string, Region: string, y: number, x: number) => ({
+    address: `Farmacia Guadalajara, ${City}`,
+    location: { x, y },
+    attributes: { Type: "Pharmacy", PlaceName: "Farmacia Guadalajara", City, Subregion, Region },
+  });
+  it("descarta lo que cae en otro estado o municipio; se queda con el del caso", async () => {
+    const { r } = red(
+      () => new Response("[]"),
+      () =>
+        new Response(
+          JSON.stringify({
+            candidates: [
+              candidato("Ciudad Juárez", "Juárez", "Chihuahua", 31.7463, -106.4531),
+              candidato("Toluca de Lerdo", "Toluca", "México", 19.29, -99.65),
+            ],
+          }),
+        ),
+    );
+    const g = await geocodificar("Farmacia Guadalajara Juárez, Toluca", r, 5, {
+      municipio: "Toluca",
+      estado: "Estado de México",
+    });
+    expect(g.fuente).toBe("esri");
+    expect(g.resultados.map((x) => x.lat)).toEqual([19.29]);
+  });
+});
