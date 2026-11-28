@@ -164,7 +164,10 @@ for (const p of ["prueba", "desarrollo"]) {
   if (!medida) salida.pendientes.push(`Sin la medición de carambolas (${p}).`);
 }
 if (pasos.has("cobertura")) {
-  const d = leer("eval/results/t3_cobertura.json")?.total?.supuestos_sorteados;
+  // La de la tanda (su `--salida`), no la publicada (René, 2026-11-27: la t12 midió 404 de 579 y
+  // «comparar» leyó el archivo publicado, 410 de 578, y dijo que no cambiaba).
+  const salidaCob = /--salida\s+(\S+)/.exec(pasos.get("cobertura").comando ?? "")?.[1];
+  const d = leer(salidaCob ?? "eval/results/t3_cobertura.json")?.total?.supuestos_sorteados;
   const c = cifras["cobertura.rango"];
   const medida = d ? `${d.dentro} de ${d.velocidades}` : null;
   const publicada = c ? `${c.k} de ${c.n}` : null;

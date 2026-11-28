@@ -66,10 +66,14 @@ import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from 
 import { objetosDe, TIPOS_OBJETO } from "./objetos";
 import { medidasDe } from "./poses-impacto";
 import { arranqueSobreElEje, ejeDeLaCalle, type EjeCalle } from "./eje-calle";
+import { cruceDeLaVuelta } from "./vuelta";
+import { viasDelNivel } from "./nivel-via";
 import { choqueEnLaOrilla, ladoNarrado, TIPOS_DE_ORILLA } from "./orilla";
 import {
   conVelocidadDelPerito,
   enCota,
+  esVelocidadMedida,
+  MEDIO_EN_PALABRAS,
   velocidadPreviaDeclarada,
   type VelocidadNarrada,
 } from "./velocidad-narrada";
@@ -254,6 +258,8 @@ const TIPOS_PLANOS = new Set(["muro", "barda", "vehiculo_estacionado", "contened
 function limiteDeVelocidadNarrada(id: Id, v: VelocidadNarrada): string {
   const [lo, hi] = v.rango_kmh;
   const rango = `${Math.round(lo)} a ${Math.round(hi)} km/h`;
+  if (esVelocidadMedida(v))
+    return `${id}: su velocidad previa la midió ${MEDIO_EN_PALABRAS[v.medio ?? "camara"]} (${Math.round(v.kmh)} km/h): es una restricción; lo demás se ajusta a ella.`;
   if (v.origen === "perito")
     return `${id}: su velocidad previa es la que dio el perito (${rango}); solo pesa si la evidencia no la fija.`;
   if (v.origen === "via")
@@ -684,14 +690,33 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
         // Con las calles guardadas del caso, el tramo recto después del arco es el que deja el
         // arranque sobre el eje de la calle de llegada (revisión de la cadena, 2026-11-24: arrancaba
         // a 10 m de ella en un cruce ancho). Sin calles, los 2 m de siempre.
-        const recto = rectoTrasLaVuelta(
-          e.caso.lugar?.calles_del_mapa?.vias.map((via) =>
-            via.puntos.map(([lon, lat]) => local({ lat, lon })),
-          ) ?? [],
-          { x, y },
-          llegada,
-          rad,
-        );
+        // La vuelta, en un cruce real de la red vial (René, 2026-11-27): donde la calle de llegada
+        // toca de verdad la calzada del choque. Sin un cruce así, la regla de antes, y se dice.
+        const calles = viasDelNivel(e);
+        const cruce = calles.length
+          ? cruceDeLaVuelta(
+              calles.map((via) => ({
+                tipo: via.tipo,
+                ...(via.nombre ? { nombre: via.nombre } : {}),
+                puntos: via.puntos.map(([lon, lat]) => local({ lat, lon })),
+              })),
+              { x, y },
+              llegada,
+              rad,
+            )
+          : null;
+        if (calles.length && !cruce)
+          limites.push(
+            `${v.id}: la narración dice que dio vuelta, pero en las calles del mapa no hay un cruce antes del choque por donde venía: la vuelta se dibuja ahí como supuesto. Revisa dónde colocaste el choque o de dónde venía.`,
+          );
+        const recto = cruce
+          ? Math.min(RECTO_MAXIMO_M, Math.max(0, cruce.distanciaM - TURN_RADIUS_M))
+          : rectoTrasLaVuelta(
+              calles.map((via) => via.puntos.map(([lon, lat]) => local({ lat, lon }))),
+              { x, y },
+              llegada,
+              rad,
+            );
         const tras = TURN_RADIUS_M + recto;
         sv.posicion_inicial = {
           x:
@@ -765,7 +790,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   if (origen && guardadas && primeraPose) {
     const choque = local(primeraPose.punto);
     ejeReal = ejeDeLaCalle(
-      guardadas.vias.map((v) => ({
+      viasDelNivel(e).map((v) => ({
         tipo: v.tipo,
         ...(v.nombre ? { nombre: v.nombre } : {}),
         puntos: v.puntos.map(([lon, lat]) => local({ lat, lon })),
@@ -1321,7 +1346,15 @@ function colocarPosteriores(
 export interface VelocidadReconstruida {
   vehiculo: Id;
   /** Lo que fija la evidencia: mejor estimación y percentiles (km/h). null si no lo fija. */
-  previa: { mejor: number; p10?: number; p50?: number; p90?: number; rango_por?: string } | null;
+  previa: {
+    mejor: number;
+    p10?: number;
+    p50?: number;
+    p90?: number;
+    rango_por?: string;
+    /** La midió un instrumento (René, 2026-11-27): no es una cifra del ajuste, es un dato. */
+    medida?: boolean;
+  } | null;
   impacto: {
     p10?: number;
     p50?: number;
@@ -1744,18 +1777,52 @@ export function interpretarResultado(
       `${id}: la evidencia empuja el rumbo fuera del rango permitido (±${ANGLE_BOUND_DEG}° sobre el que se colocó en el mapa). El mejor ajuste queda en el límite, ${grados(p.estimacion.mejor)}, así que no cabe bien con lo demás: conviene revisar las posiciones y el rumbo de llegada.`,
     );
   }
-  const velocidades = Object.entries(base.ids).map(([sid, id]) => {
+  const velocidades = Object.entries(base.ids).map(([sid, id]): VelocidadReconstruida => {
     const p = inv.parametros.find((x) => x.vehiculo === sid && x.parametro === "velocidad_previa");
     const i = inv.velocidad_impacto.find((x) => x.vehiculo === sid);
+    const vp = ((base.spec.vehiculos as Json[]).find((x) => x.id === sid)?.velocidad_previa ??
+      null) as Json | null;
     return {
       vehiculo: id,
-      previa: p?.identificable && p.estimacion ? p.estimacion : null,
+      previa:
+        vp?.medida === true
+          ? { mejor: Number(vp.valor), medida: true }
+          : p?.identificable && p.estimacion
+            ? p.estimacion
+            : null,
       impacto:
         inv.evidencia.length && i
           ? { p10: i.p10, p50: i.p50, p90: i.p90, valores: i.valores_kmh ?? [] }
           : null,
     };
   });
+  // La velocidad medida no se cambia (René, 2026-11-27): si lo medido no cuadra con ella, se avisa.
+  const medidas = velocidades.filter((v) => v.previa?.medida).map((v) => v.vehiculo);
+  if (medidas.length) {
+    const fuera = ((inv.residuos ?? []) as { nombre: string; sigma: number }[]).filter(
+      (r) =>
+        /^(reposo|marcas_despues|proyeccion|dano|dano_minimo):/.test(r.nombre) &&
+        Math.abs(r.sigma) > 3,
+    );
+    if (fuera.length) {
+      const que = [
+        ...new Set(
+          fuera.map((r) =>
+            r.nombre.startsWith("reposo:")
+              ? "dónde quedaron"
+              : r.nombre.startsWith("marcas_despues:")
+                ? "las huellas de después del choque"
+                : r.nombre.startsWith("proyeccion:")
+                  ? "la proyección"
+                  : "la deformación medida",
+          ),
+        ),
+      ];
+      limites.push(
+        `La velocidad medida de ${medidas.join(" y ")} no cuadra con ${que.join(", ")}: con ella, lo medido queda a más de 3σ. Croquis no la cambia; revisa la medida o esa evidencia.`,
+      );
+    }
+  }
   // Un rango no es una garantía: su cobertura medida va con los límites (René, 2026-11-15).
   if (velocidades.some((v) => v.previa?.p10 !== undefined && v.previa.p90 !== undefined))
     limites.push(limiteDeCobertura());
@@ -1832,7 +1899,13 @@ export function interpretarResultado(
   return {
     ...rec,
     noCuadra,
-    velocidades: velocidades.map((v) => ({ ...v, previa: null, impacto: null })),
+    // Lo que midió un instrumento no es una cifra de Croquis: se sigue viendo (René, 2026-11-27); las
+    // demás no se presentan hasta que cuadre.
+    velocidades: velocidades.map((v) => ({
+      ...v,
+      previa: v.previa?.medida ? v.previa : null,
+      impacto: null,
+    })),
     limites: [
       ...limites,
       ...noCuadra.motivos.map((m) => `No cuadra: ${m}`),

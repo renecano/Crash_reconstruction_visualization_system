@@ -72,6 +72,7 @@ export const CallesGuardadas = z.strictObject({
   consultado: z.iso.datetime({ offset: true }),
   centro: Coordenadas,
   radio_m: z.number().min(10).max(2000),
+  fija: z.boolean().optional(),
   vias: z
     .array(
       z.strictObject({
@@ -81,6 +82,8 @@ export const CallesGuardadas = z.strictObject({
         maxspeed: z.string().max(20).optional(),
         carriles: z.string().max(10).optional(),
         sentido_unico: z.string().max(10).optional(),
+        acotamiento: z.string().max(10).optional(),
+        nivel: z.int().min(-5).max(5).optional(),
         ancho: z.string().max(10).optional(),
         puntos: z
           .array(z.tuple([z.number(), z.number()]))
@@ -432,6 +435,7 @@ export const CampoVelocidad = z.strictObject({
   nota: z.string().max(300).optional(),
   cota: z.enum(["minimo", "maximo"]).optional(),
   a_priori: z.boolean().optional(),
+  medida: z.boolean().optional(),
 });
 export type CampoVelocidad = z.infer<typeof CampoVelocidad>;
 
@@ -1005,6 +1009,8 @@ export type Rigidez = z.infer<typeof Rigidez>;
 export const VelocidadNarrada = z.strictObject({
   kmh: z.number().min(0).max(300),
   rango_kmh: z.tuple([z.number().min(0).max(300), z.number().min(0).max(300)]),
+  como_se_sabe: z.enum(["medida", "declarada"]).optional(),
+  medio: z.enum(["camara", "gps", "tacografo", "conductor", "testigo"]).optional(),
   origen: z.enum(["narración", "perito", "via"]),
   descripcion: z.string().max(200),
   cita: z.string().max(400).optional(),

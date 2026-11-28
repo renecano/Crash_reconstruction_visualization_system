@@ -352,6 +352,8 @@ export interface Calle {
   /** `lanes` y `width` de OSM tal como vienen (para el ancho que dibuja el 3D, `viaWidthM`). */
   carriles?: number;
   anchoOsm?: number;
+  /** El ancho del acotamiento de OSM (`shoulder:width`), en m, si lo trae (René, 2026-11-27). */
+  acotamiento?: number;
   /** Ids de sus nodos, en orden (para los cruces). */
   nodos: number[];
   /** Su tipo de OpenStreetMap (`highway`) y su límite (`maxspeed`), si lo trae (ronda 4). */
@@ -362,6 +364,14 @@ export interface Calle {
    * Sin el campo, de doble sentido.
    */
   unSentido?: 1 | -1;
+}
+
+/** El ancho del acotamiento de una vía de OSM (m): `shoulder:width` o sus variantes; null sin él. */
+export function acotamientoDeTags(tags: Record<string, string> | undefined): number | null {
+  const t =
+    tags?.["shoulder:width"] ?? tags?.["shoulder:right:width"] ?? tags?.["shoulder:both:width"];
+  const v = Number.parseFloat(t ?? "");
+  return Number.isFinite(v) && v > 0.3 && v <= 6 ? v : null;
 }
 
 /** Las calles de una respuesta de Overpass: las que se dibujan (sin andadores ni ciclovías). */
@@ -392,6 +402,7 @@ export function callesDe(resp: OverpassResponse | null): Calle[] {
           : (Number.isFinite(carriles) && carriles > 0 ? carriles : 2) * 3.3,
       ...(Number.isFinite(carriles) && carriles > 0 ? { carriles } : {}),
       ...(Number.isFinite(ancho) && ancho >= 3 && ancho <= 60 ? { anchoOsm: ancho } : {}),
+      ...(acotamientoDeTags(w.tags) !== null ? { acotamiento: acotamientoDeTags(w.tags)! } : {}),
       nodos: w.nodes.filter((id) => nodos.has(id)),
       tipo,
       ...(w.tags?.maxspeed ? { maxspeed: w.tags.maxspeed } : {}),
@@ -1490,6 +1501,117 @@ export function tocarChoque(
  * rumbo de antes, sin calles). La usan La escena y la tabla de los ejemplos (René, 2026-11-26: «el
  * mismo código que La escena»).
  */
+/** Las posiciones que el perito puede escribir en metros en vez de tocarlas (René, 2026-11-27). */
+export type FaseEscrita = "final" | "inicial" | "impacto";
+
+/** Desde dónde se mide cada posición escrita: su pose del choque o, la del choque, el cruce. */
+function referenciaEscrita(
+  e: Expediente,
+  vehiculo: string,
+  fase: FaseEscrita,
+  calles: readonly Calle[],
+): { punto: Punto; marcha: number; desde: string } | null {
+  const imp = poseDe(e, vehiculo, "impacto");
+  if (!imp) return null;
+  const marcha = rumboDeMarcha(e, vehiculo, imp.rumbo);
+  if (fase !== "impacto") return { punto: imp.punto, marcha, desde: "su posición en el choque" };
+  const cruce = crucesDe(calles)
+    .map((c) => ({ c, d: distanciaM(ll(c.punto), ll(imp.punto)) }))
+    .sort((a, b) => a.d - b.d)[0];
+  if (!cruce || cruce.d > 150) return null;
+  return {
+    punto: cruce.c.punto,
+    marcha,
+    desde: `el cruce de ${cruce.c.calles.slice(0, 2).join(" y ") || "las calles"}`,
+  };
+}
+
+/**
+ * Lo que mide una posición desde su referencia: metros adelante (hacia donde avanzaba; negativo,
+ * atrás) y a la izquierda (negativo, a la derecha). La ve el perito en metros y la puede editar.
+ */
+export function medidaEscrita(
+  e: Expediente,
+  vehiculo: string,
+  fase: FaseEscrita,
+  calles: readonly Calle[],
+): { adelante: number; izquierda: number; desde: string } | null {
+  const ref = referenciaEscrita(e, vehiculo, fase, calles);
+  const pose = poseDe(e, vehiculo, fase);
+  if (!ref || !pose) return null;
+  const m = enMetros(ll(pose.punto), ll(ref.punto));
+  const r = (ref.marcha * Math.PI) / 180;
+  const adelante = m.este * Math.sin(r) + m.norte * Math.cos(r);
+  const izquierda = -(m.este * Math.cos(r) - m.norte * Math.sin(r));
+  const r1 = (x: number) => Math.round(x * 10) / 10;
+  return { adelante: r1(adelante), izquierda: r1(izquierda), desde: ref.desde };
+}
+
+/** La posición a esos metros de su referencia, exacta (fuente: el perito). */
+export function conPosicionEscrita(
+  e: Expediente,
+  vehiculo: string,
+  fase: FaseEscrita,
+  adelante: number,
+  izquierda: number,
+  calles: readonly Calle[],
+): Expediente {
+  const ref = referenciaEscrita(e, vehiculo, fase, calles);
+  if (!ref) return e;
+  const q = avanzar(
+    avanzar(ll(ref.punto), ref.marcha, adelante),
+    normalizar(ref.marcha - 90),
+    izquierda,
+  );
+  const imp = poseDe(e, vehiculo, "impacto")!;
+  const rumbo = poseDe(e, vehiculo, fase)?.rumbo ?? imp.rumbo;
+  return conPosicion(e, {
+    vehiculo: vehiculo as Id,
+    fase,
+    punto: punto(q),
+    rumbo: normalizar(rumbo),
+    fuente: "perito",
+  });
+}
+
+/** m: un toque a menos de esto del centro de un carril se ajusta a él (René, 2026-11-27). */
+export const TOLERANCIA_CARRIL_M = 0.75;
+
+/**
+ * El toque del perito, al centro de su carril (René, 2026-11-27: la carambola daba 24 en Chromium y 25
+ * en WebKit con la misma receta; un toque unos píxeles al lado no debe cambiar la cifra). Solo si cae
+ * dentro de la calzada y a menos de `TOLERANCIA_CARRIL_M` del centro de un carril; si no (el
+ * acotamiento, la banqueta), queda donde tocó: la posición final es evidencia y no se mueve en
+ * silencio. Solo se mueve a lo ancho de la calle: la distancia a lo largo es la que mide el perito.
+ */
+export function alCarril(
+  calles: readonly Calle[],
+  p: Punto,
+): { punto: Punto; movidoM: number; carril: number; calle: string | null } | null {
+  const s = ajustarACalle(calles, p, AJUSTE_CALLE_M);
+  if (!s) return null;
+  const pie = s.punto;
+  const m = enMetros(ll(p), ll(pie));
+  const r = (s.rumbo * Math.PI) / 180;
+  // A la derecha de la dirección de la calle: (cos r, −sin r) en (este, norte).
+  const lado = m.este * Math.cos(r) - m.norte * Math.sin(r);
+  const ancho = s.calle.ancho;
+  if (Math.abs(lado) > ancho / 2) return null;
+  const n = Math.max(1, s.calle.carriles ?? Math.round(ancho / 3.3));
+  const w = ancho / n;
+  let k = Math.floor((lado + ancho / 2) / w);
+  k = Math.max(0, Math.min(n - 1, k));
+  const centro = -ancho / 2 + (k + 0.5) * w;
+  const movido = Math.abs(lado - centro);
+  if (movido > TOLERANCIA_CARRIL_M || movido < 0.05) return null;
+  return {
+    punto: punto(avanzar(ll(pie), normalizar(s.rumbo + 90), centro)),
+    movidoM: movido,
+    carril: k + 1,
+    calle: s.calle.nombre,
+  };
+}
+
 export function tocarFinal(
   e: Expediente,
   vehiculo: string,
@@ -1498,7 +1620,8 @@ export function tocarFinal(
 ): Expediente {
   const imp = poseDe(e, vehiculo, "impacto");
   const previo = poseDe(e, vehiculo, "final")?.rumbo ?? imp?.rumbo ?? 0;
-  return marcarFinal(e, vehiculo, p, calles.length ? rumboAlineado(calles, p, previo) : previo);
+  const q = alCarril(calles, p)?.punto ?? p;
+  return marcarFinal(e, vehiculo, q, calles.length ? rumboAlineado(calles, q, previo) : previo);
 }
 
 export function marcarFinal(e: Expediente, vehiculo: string, p: Punto, rumbo: number): Expediente {
@@ -1816,6 +1939,35 @@ export function direccionDeSalida(
   return null;
 }
 
+/** m: el ancho del acotamiento cuando OSM no lo trae (supuesto, René 2026-11-27). */
+export const ACOTAMIENTO_SUPUESTO_M = 2.5;
+/** m: el ancho del carril cuando no se conoce la calle (supuesto). */
+const CARRIL_SUPUESTO_M = 3.5;
+
+/**
+ * Cuánto se corre a su derecha un vehículo que quedó «sobre el acotamiento»: del centro de su carril al
+ * centro del acotamiento, medio carril más medio acotamiento. El carril, de la calle (su ancho entre
+ * sus carriles); el acotamiento, de OSM (`shoulder:width`) o, si no lo trae, el supuesto de 2.5 m.
+ */
+export function corrimientoAlAcotamiento(
+  calles: readonly Calle[],
+  p: Punto,
+): { metros: number; carrilM: number; acotamientoM: number; delMapa: boolean } {
+  const s = calles.length ? ajustarACalle(calles, p) : null;
+  const carril = s
+    ? s.calle.ancho / Math.max(1, s.calle.carriles ?? Math.round(s.calle.ancho / 3.3))
+    : CARRIL_SUPUESTO_M;
+  const acot = s?.calle.acotamiento ?? null;
+  const acotamientoM = acot ?? ACOTAMIENTO_SUPUESTO_M;
+  const r1 = (x: number) => Math.round(x * 10) / 10;
+  return {
+    metros: r1(carril / 2 + acotamientoM / 2),
+    carrilM: r1(carril),
+    acotamientoM: r1(acotamientoM),
+    delMapa: acot !== null,
+  };
+}
+
 export interface FinalNarrado {
   punto: Punto;
   rumbo: number;
@@ -1837,10 +1989,28 @@ export function finalDeLaNarracion(
   /** Las descripciones de los demás, para «a 1 m detrás del vehículo B». */
   otras: readonly { vehiculo: string; descripcion: string }[] = [],
   vistos: ReadonlySet<string> = new Set(),
+  /** Las calles del lugar, para el ancho del carril y del acotamiento (René, 2026-11-27). */
+  calles: readonly Calle[] = [],
 ): FinalNarrado | null {
   const imp = poseDe(e, vehiculo, "impacto");
   if (!imp) return null;
-  const d = descripcion.toLowerCase();
+  // «a 3 m uno del otro», «separados 3 m entre sí» (René, 2026-11-27): con un solo otro vehículo, es
+  // «a 3 m del vehículo B».
+  const otrosVehiculos = e.vehiculos.filter((x) => x.id !== vehiculo);
+  const letraOtro =
+    otrosVehiculos.length === 1 && /^V\d+$/.test(otrosVehiculos[0]!.id)
+      ? String.fromCharCode(64 + Number(otrosVehiculos[0]!.id.slice(1))).toLowerCase()
+      : null;
+  const d = letraOtro
+    ? descripcion
+        .toLowerCase()
+        .replace(
+          new RegExp(
+            String.raw`(?:a\s+)?${NUM}\s*m(?:etros?)?\s+(?:el\s+)?uno\s+del\s+otro|separad[oa]s\s+(?:por\s+)?(?:unos\s+)?${NUM}\s*m(?:etros?)?(?:\s+entre\s+s[ií])?`,
+          ),
+          (_t, a?: string, b?: string) => `a ${a ?? b} m del vehiculo ${letraOtro}`,
+        )
+    : descripcion.toLowerCase();
   const marcha = rumboDeMarcha(e, vehiculo, imp.rumbo);
   // «con el frente hacia el suroeste»: el rumbo con que quedó.
   const f = new RegExp(
@@ -1874,7 +2044,14 @@ export function finalDeLaNarracion(
     const finOtro =
       poseDe(e, otro, "final") ??
       (suyo
-        ? finalDeLaNarracion(e, otro, suyo.descripcion, otras, new Set([...vistos, vehiculo]))
+        ? finalDeLaNarracion(
+            e,
+            otro,
+            suyo.descripcion,
+            otras,
+            new Set([...vistos, vehiculo]),
+            calles,
+          )
         : null);
     const vo = e.vehiculos.find((x) => x.id === otro);
     const vv = e.vehiculos.find((x) => x.id === vehiculo);
@@ -1901,9 +2078,86 @@ export function finalDeLaNarracion(
   const desde = new RegExp(
     String.raw`${NUM}\s*m(?:etros?)?\s+(?:despu[eé]s|adelante|m[aá]s\s+all[aá])\s+del?\s+(?:paso\s+peatonal|punto\s+de\s+(?:contacto|impacto)|impacto|choque|cruce|contacto)|a\s+${NUM}\s*m(?:etros?)?\s+del\s+punto\s+del?\s+(?:primer\s+)?(?:impacto|choque|contacto)|a\s+${NUM}\s*m(?:etros?)?\s+de\s+donde\s+(?:estaba|se\s+encontraba)\s+(?:detenid|estacionad)[oa]`,
   ).exec(d);
+  // «sobre el acotamiento» (René, 2026-11-26: el Vento quedó en el acotamiento, no en su carril): del
+  // centro de su carril (3.5 m) al centro del acotamiento (2.5 m), 3 m a su derecha (supuesto).
+  const enElAcotamiento = (f: FinalNarrado): FinalNarrado => {
+    if (!/\bsobre\s+el\s+acotamiento\b/.test(sinAcentos(d))) return f;
+    const c = corrimientoAlAcotamiento(calles, f.punto);
+    return {
+      ...f,
+      punto: punto(avanzar(ll(f.punto), normalizar(marcha + 90), c.metros)),
+      texto: `${f.texto}, sobre el acotamiento: ${c.metros} m a la derecha de su carril (medio carril de ${c.carrilM} m y medio acotamiento de ${c.acotamientoM} m${c.delMapa ? ", de OpenStreetMap" : ", supuesto"}; corrígelo en «Escribir las posiciones en metros»)`,
+    };
+  };
+  // «5 metros adelante del área de restos», «9 metros adelante del inicio de los restos» (René,
+  // 2026-11-27): desde donde están los restos, el punto del primer choque, hacia donde avanzaba; no
+  // desde su propia pose (el tercero de una carambola choca más adelante).
+  const restos = new RegExp(
+    String.raw`${NUM}\s*m(?:etros?)?\s+(?:despu[eé]s|adelante|m[aá]s\s+all[aá])\s+del?\s+(?:(?:[aá]rea|zona)\s+de\s+(?:los\s+)?restos|inicio\s+de\s+(?:los\s+)?restos|(?:[aá]rea|zona)\s+del\s+primer\s+contacto)`,
+  ).exec(d);
+  const primero = [...(e.impactos ?? [])].sort((a, b) => (a.orden ?? 1) - (b.orden ?? 1))[0];
+  // El punto del primer choque; si no está guardado, el centro de las poses de sus vehículos.
+  const poses = (primero?.vehiculos ?? []).flatMap((x) => {
+    const q = poseDe(e, String(x), "impacto");
+    return q ? [q.punto] : [];
+  });
+  const enLosRestos: Punto | null =
+    primero?.punto ??
+    (poses.length
+      ? {
+          lat: poses.reduce((a, q) => a + q.lat, 0) / poses.length,
+          lon: poses.reduce((a, q) => a + q.lon, 0) / poses.length,
+        }
+      : null);
+  if (restos && enLosRestos) {
+    const n = metros(restos[1]!);
+    return enElAcotamiento({
+      punto: punto(avanzar(ll(enLosRestos), marcha, n)),
+      rumbo: frente ?? imp.rumbo,
+      texto: `${n} m adelante del área de los restos (el primer choque), hacia donde avanzaba`,
+    });
+  }
+  // «a 25 m del borde de la carretera», «a 4 m de la orilla del camino, del lado izquierdo» (René,
+  // 2026-11-27: la volcadura narrada a 110 km/h salía en 10 km/h porque el reposo no se ofrecía): desde
+  // la orilla de la calzada, hacia afuera, a la altura de donde chocó. El lado, el narrado; si no lo
+  // dice, la derecha de su marcha (supuesto, lo dice el texto).
+  const borde = new RegExp(
+    String.raw`a\s+(?:unos\s+|aproximadamente\s+)?${NUM}\s*m(?:etros?)?\s+(?:fuera\s+)?del?\s+(?:la\s+)?(?:borde|orilla|limite|l[ií]mite)\s+(?:de\s+la\s+|del\s+)?(?:carretera|cinta\s+asf[aá]ltica|camino|calzada|arroyo|pavimento|asfalto|acotamiento|v[ií]a|carpeta)`,
+  ).exec(d);
+  if (borde) {
+    const n = metros(borde[1]!);
+    const izquierda = /\b(?:lado|costado|margen)\s+izquierd[oa]\b|\ba\s+la\s+izquierda\b/.test(d);
+    const derecha = /\b(?:lado|costado|margen)\s+derech[oa]\b|\ba\s+la\s+derecha\b/.test(d);
+    const s = calles.length ? ajustarACalle(calles, imp.punto) : null;
+    const mitad = s ? s.calle.ancho / 2 : CARRIL_SUPUESTO_M / 2;
+    const eje = s?.punto ?? imp.punto;
+    const lado = izquierda && !derecha ? -90 : 90;
+    return {
+      punto: punto(avanzar(ll(eje), normalizar(marcha + lado), mitad + n)),
+      rumbo: frente ?? imp.rumbo,
+      texto: `${n} m fuera de la orilla de la calzada, a la ${lado < 0 ? "izquierda" : "derecha"} de su marcha${izquierda || derecha ? "" : " (el lado es supuesto: la narración no lo dice)"}, a la altura del choque${s ? ` (la calzada de ${F.metros(s.calle.ancho, 1)})` : " (calzada supuesta de un carril)"}; corrígelo en «Escribir las posiciones en metros»`,
+    };
+  }
+  // «se detuvo 3 metros adelante sobre Nicolás Bravo», «quedó 10 m más adelante»: desde su pose del
+  // choque, hacia donde avanzaba.
+  const masAdelante = new RegExp(
+    String.raw`${NUM}\s*m(?:etros?)?\s+(?:m[aá]s\s+)?adelante(?:\s+sobre\s+(?:la\s+|el\s+)?([^,.;]+))?(?![\s]+del?\b)`,
+  ).exec(d);
+  if (!desde && masAdelante) {
+    const n = metros(masAdelante[1]!);
+    const sobre = masAdelante[2]?.trim();
+    return enElAcotamiento(
+      adelante(
+        n,
+        `${n} m adelante de su posición en el choque${sobre ? `, sobre ${sobre}` : ""}, hacia donde avanzaba`,
+      ),
+    );
+  }
   if (desde) {
     const n = metros(desde[1] ?? desde[2] ?? desde[3]!);
-    return adelante(n, `${n} m adelante de su posición en el choque, hacia donde avanzaba`);
+    return enElAcotamiento(
+      adelante(n, `${n} m adelante de su posición en el choque, hacia donde avanzaba`),
+    );
   }
   // «junto al árbol», «contra la barda», «a 2 m adelante del poste»: en el objeto del choque (su pose
   // del choque), más los metros que diga hacia donde avanzaba.

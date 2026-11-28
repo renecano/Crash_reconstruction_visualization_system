@@ -1,0 +1,42 @@
+{
+  "descripcion": "Las cinco narraciones de ejemplo de punta a punta (ronda 2, C): la lectura guardada, la escena colocada como dice la narración (receta en el script), la reconstrucción, y el dictamen. Lo que dice la pantalla, sin interpretar. Chromium a 1440×900.",
+  "script": "apps/web/e2e/ejemplos-ronda2.spec.ts",
+  "sitio": "https://croquis-sage.vercel.app",
+  "fecha": "2026-11-27T23:42:02.316Z",
+  "con_unity": false,
+  "llamadas_a_claude": 0,
+  "errores_de_pagina": [],
+  "ejemplos": [
+    {
+      "clave": "carambola-lluvia",
+      "gpu": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "leido": "Monterrey, Nuevo León·3 vehículos · 2 impactos",
+      "lectura_guardada": true,
+      "colocada": true,
+      "segundos_reconstruir": 27.6,
+      "cifra": "23",
+      "de_quien": "A · Ford Ranger",
+      "rango": "rango 20–30",
+      "sin_cifra": null,
+      "sin_dispersion": false,
+      "hipotesis": 0,
+      "velocidades": "Reconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V123 (20–30)20–25–30V20 km/h (detenido, lo dice la narración)0–0–0V30 km/h (detenido, lo dice la narración)0–0–0",
+      "evidencia": "Evidencia que fija el resultado: posición final de V1, posición final de V2, posición final de V3, rumbo final de V1, rumbo final de V2, rumbo final de V3.",
+      "impactos": "X1 · 0.00 s · V1 con V2X2 · 0.00 s · V2 con V3",
+      "limites": [
+        "La trayectoria sigue el trazo real de Avenida Valle Alto, de las calles guardadas con el caso: gira 15° cerca del choque.",
+        "V3: solo está en un impacto posterior y empieza detenido en la posición de impacto que colocó el perito (supuesto).",
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+      ],
+      "terreno": null,
+      "analisis": [
+        "Acto 5 de 6 · Análisis · 1 de 2: Los dañosDañosA · Ford RangerB · Toyota CorollaC · Chevrolet AveoA · cara frontalel reporte no trae medidas de la deformación2.7kJenergía de deformación8.8km/hcambio de velocidad (Δv)Sin deformación permanente: en el choque absorbe 2.7 kJ y esta zona no se deforma con menos de 6 kJ (umbral de CRASH3, A²/2B en 1.9 m de ancho, con la rigidez típica de la clase (NHTSA)). Es un roce: deja rayones o pintura desprendida, sin aplastamiento que CRASH3 pueda medir.Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 0 cm en todo el ancho (rigidez típica de la clase (NHTSA)).Rigidez: Mediana de pruebas frontales a 0° contra barrera rígid",
+        "Acto 5 de 6 · Análisis · 2 de 2: Los númerosLos númerosReconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V123 (20–30)20–25–30V20 km/h (detenido, lo dice la narración)0–0–0V30 km/h (detenido, lo dice la narración)0–0–0Verificación con el método de CESVIMétodo de CESVI: energía de deformación (McHenry) y velocidad equivalente de barrera (EBS), con las medidas del reporte. No es la misma velocidad que la de la reconstrucción fís"
+      ],
+      "unity": null,
+      "dictamen": true,
+      "notas": []
+    }
+  ],
+  "axa": null
+}

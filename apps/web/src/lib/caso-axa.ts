@@ -28,6 +28,9 @@ import {
 } from "@croquis/cesvi";
 import lecturas from "../../../../data/cesvi/grabaciones/importar/lecturas-a2010930.json";
 import ejemplo from "../../../../data/cesvi/grabaciones/importar/ejemplo.json";
+// Las calles de AXA, centradas en el impacto y fijas (René, 2026-11-27): su cifra no depende de la red.
+// © colaboradores de OpenStreetMap (ODbL); las genera `ejemplos-calles.test.ts`.
+import callesAxa from "../../../../data/cesvi/casos/axa-calles.json";
 import grabacionHecho from "../../../../data/cesvi/grabaciones/hecho-A2010930.json";
 import type { CasoExpediente } from "./casos";
 
@@ -54,6 +57,9 @@ export function casoAxaSinColocar(): CasoExpediente {
               valor: `Ubicación ilustrativa sobre ${u.via.ref}: el reporte no da coordenadas.`,
               fuente: "supuesto",
             },
+            calles_del_mapa: callesAxa as NonNullable<
+              NonNullable<Expediente["caso"]["lugar"]>["calles_del_mapa"]
+            >,
           },
         },
       }

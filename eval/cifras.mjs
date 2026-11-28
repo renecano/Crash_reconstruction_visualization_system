@@ -181,6 +181,8 @@ function construir() {
       texto: tasaTexto(c),
       fuente: archivo,
       campo: "total.supuestos_sorteados",
+      motivo:
+        "Arreglo del solver, #369 (lo medido como restricción); detalle caso por caso en eval/results/t3_cobertura_detalle; René lo aprobó el 2026-11-27. Antes, 410 de 578 (70.9 %).",
     });
   }
 
@@ -349,7 +351,7 @@ function construir() {
     const doc = leer(archivo);
     const MOTIVO =
       "Medido en el navegador con Unity real (t11-solver, 2026-11-27), con lo medido como restricción del solver (#369); René lo aprobó.";
-    for (const [clave, ejemplo, que, extra] of [
+    for (const [clave, ejemplo, que, extra, propio, motivoPropio] of [
       ["ejemplos.crucero", "crucero-noche", "«crucero de noche»: velocidad del Jetta (A)", ""],
       [
         "ejemplos.alcance",
@@ -362,6 +364,11 @@ function construir() {
         "carambola-lluvia",
         "«carambola con lluvia»: velocidad de la Ranger (A) antes del primer impacto",
         "",
+        // Con sus calles fijas, centradas en el choque (#400): medida en el navegador en producción
+        // (dos veces, la misma cifra); la tabla da lo mismo. René lo aprobó el 2026-11-28. Antes, 25
+        // (20–32): según la red, la app reemplazaba sus calles y daba 23 o 25.
+        "eval/results/verif-produccion/ejemplos-2026-11-28.json",
+        "Medido en el navegador en producción (2026-11-28) con las calles fijas del ejemplo, centradas en el choque (#400); René lo aprobó. Antes, 25 km/h (20–32): según la red, la app reemplazaba sus calles y daba 23 o 25.",
       ],
       [
         "ejemplos.reversa",
@@ -376,11 +383,14 @@ function construir() {
         " Respeta el derrape de 18.40 m: sale del choque a 43 km/h o más (Fricke); vuelve a la demo (René, 2026-11-27).",
       ],
     ]) {
-      const i = doc.ejemplos.findIndex((e) => e.clave === ejemplo);
-      if (i < 0) throw new Error(`${archivo}: no está el ejemplo ${ejemplo}`);
-      const e = doc.ejemplos[i];
+      // Un ejemplo puede venir de otra medición del navegador (la carambola, de producción).
+      const fuente = propio ?? archivo;
+      const d = propio ? leer(propio) : doc;
+      const i = d.ejemplos.findIndex((e) => e.clave === ejemplo);
+      if (i < 0) throw new Error(`${fuente}: no está el ejemplo ${ejemplo}`);
+      const e = d.ejemplos[i];
       const m = /(\d+)\s*–\s*(\d+)/.exec(e.rango ?? "");
-      if (!e.cifra || !m) throw new Error(`${archivo}: ${ejemplo} sin cifra o sin rango`);
+      if (!e.cifra || !m) throw new Error(`${fuente}: ${ejemplo} sin cifra o sin rango`);
       const v = { mejor: Number(e.cifra), p10: Number(m[1]), p90: Number(m[2]) };
       pon(clave, {
         que: `Ejemplo ${que} antes del impacto, en la app (navegador con Unity real)`,
@@ -388,9 +398,9 @@ function construir() {
         unidad: "km/h",
         juego_de_muestras: "producción",
         texto: `${v.mejor} km/h (${v.p10}–${v.p90})`,
-        fuente: archivo,
+        fuente,
         campo: `ejemplos.${i}`,
-        motivo: `${MOTIVO}${extra}`,
+        motivo: motivoPropio ?? `${MOTIVO}${extra}`,
       });
     }
   }

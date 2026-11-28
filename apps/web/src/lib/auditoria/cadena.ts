@@ -54,6 +54,7 @@ import { paqueteDelCaso } from "@/lib/visor-unity/paquete";
 import { EN_EL_CARRIL, esObjetoDeOrilla } from "@/lib/objeto-orilla";
 import { girosSinAviso } from "@/lib/giro-sin-aviso";
 import { callesDelCaso, esLaCalleNarrada, lugarClaro } from "@/lib/lugar-claro";
+import { zonaNarrada } from "@/lib/lugar-texto";
 import { crucesDeTrayectorias, saltosDe, sobreMalla, type Plano } from "@croquis/cesvi";
 
 type Json = Record<string, unknown>;
@@ -67,6 +68,28 @@ export interface Red {
   ): Promise<{
     resultados: (Punto & { nombre: string; precision?: "cruce" | "calle" | "zona" })[];
     aviso: string | null;
+  }>;
+  /**
+   * Los buscadores en orden, como La escena (`/api/lugar/narrado`, #388). Sin él, la cadena busca
+   * como antes (consulta por consulta).
+   */
+  lugarNarrado?(
+    narracion: string,
+    lugar: string | null,
+    municipio?: string,
+    estado?: string,
+  ): Promise<{
+    resultado:
+      | {
+          encontrado: true;
+          punto: Punto;
+          como: string;
+          seguridad: string;
+          que: string;
+          explicacion: string;
+          opciones?: { punto: Punto; que: string }[];
+        }
+      | { encontrado: false; explicacion: string };
   }>;
   calles(p: Punto): Promise<OverpassResponse | null>;
   objetos(p: Punto): Promise<OverpassResponse | null>;
@@ -222,19 +245,56 @@ export async function auditarCaso(o: {
     estado: e0.caso.lugar?.estado?.valor,
   };
   const cruce = cruceNarrado(o.narracion);
-  const consultas = [
-    separarLugarYSentido(lugarTexto).lugar,
-    cruce ? `${cruce.calles[0]} y ${cruce.calles[1]}` : null,
-    cruce?.calles[0] ?? null,
-    carreteraNarrada(o.narracion),
-  ].filter((x): x is string => Boolean(x?.trim()));
+  const zonaDelCruce = zonaNarrada(lugarTexto) ?? zonaNarrada(o.narracion);
+  // Como La escena (René, 2026-11-27, #388): con un cruce narrado se busca el cruce y nada más.
+  const consultas = (
+    cruce
+      ? [`${cruce.calles[0]} y ${cruce.calles[1]}${zonaDelCruce ? `, ${zonaDelCruce}` : ""}`]
+      : [separarLugarYSentido(lugarTexto).lugar, carreteraNarrada(o.narracion)]
+  ).filter((x): x is string => Boolean(x?.trim()));
   let lugar: (Punto & { nombre: string }) | null = o.lugarGuardado ?? null;
-  for (const q of lugar ? [] : consultas) {
+  // Como La escena (#388): los buscadores en orden, en el servidor.
+  if (!lugar && o.red.lugarNarrado) {
+    const r = await o.red
+      .lugarNarrado(o.narracion, lugarTexto, zona.municipio, zona.estado)
+      .catch((x: unknown) => {
+        datos.lugar_error = String((x as Error)?.message ?? x).slice(0, 200);
+        return null;
+      });
+    const res = r?.resultado;
+    if (res?.encontrado && (res.opciones?.length ?? 0) > 1) {
+      datos.cruces = res.opciones!.length;
+      datos.lugar_aviso = res.explicacion;
+      falla(
+        "pregunta.varios_cruces",
+        `hay ${res.opciones!.length} lugares posibles: La escena pregunta cuál`,
+      );
+      return { id: o.id, fuente: o.fuente, fallas, datos };
+    }
+    if (res?.encontrado) {
+      lugar = { ...res.punto, nombre: res.que };
+      datos.lugar_aviso = res.explicacion;
+      datos.lugar_como = res.como;
+      datos.lugar_seguridad = res.seguridad;
+    } else if (res) datos.lugar_no_encontrado = res.explicacion;
+  }
+  for (const q of lugar || o.red.lugarNarrado ? [] : consultas) {
     const r = await o.red.lugar(q, zona.municipio, zona.estado).catch((x: unknown) => {
       // Un error de la red no es un lugar que no existe: se guarda para distinguirlo.
       datos.lugar_error = String((x as Error)?.message ?? x).slice(0, 200);
       return null;
     });
+    // Como La escena (#388): las calles se cruzan en varios lugares y el perito elige.
+    const varios = (r?.resultados ?? []).filter((x) => x.precision === "cruce");
+    if (varios.length > 1) {
+      datos.cruces = varios.length;
+      datos.lugar_aviso = r!.aviso;
+      falla(
+        "pregunta.varios_cruces",
+        `las calles se cruzan en ${varios.length} lugares: La escena pregunta cuál`,
+      );
+      return { id: o.id, fuente: o.fuente, fallas, datos };
+    }
     // Como La escena: una zona (colonia, municipio) no es el lugar; se prueba la consulta siguiente.
     if (r?.resultados.length && r.resultados[0]!.precision !== "zona") {
       lugar = r.resultados[0]!;
@@ -253,6 +313,8 @@ export async function auditarCaso(o: {
       );
     else if (datos.lugar_error)
       falla("red.lugar", `la búsqueda falló por la red: ${String(datos.lugar_error)}`);
+    else if (datos.lugar_no_encontrado)
+      falla("pregunta.lugar_no_encontrado", String(datos.lugar_no_encontrado));
     else falla("lugar.no_encontrado", `consultas: ${consultas.join(" | ") || "ninguna"}`);
     return { id: o.id, fuente: o.fuente, fallas, datos };
   }

@@ -135,18 +135,19 @@
     },
     "cobertura.rango": {
       "que": "Cobertura sintética del p10–p90 de la inversión: de las velocidades verdaderas conocidas, cuántas cayeron dentro del rango",
-      "k": 410,
-      "n": 578,
-      "pct": 70.9,
+      "k": 404,
+      "n": 579,
+      "pct": 69.8,
       "esperado_pct": 80,
       "ic95_pct": [
-        67.1,
-        74.49
+        65.91,
+        73.38
       ],
       "casos_por_escena": 200,
-      "texto": "410 de 578 (70.9 %)",
+      "texto": "404 de 579 (69.8 %)",
       "fuente": "eval/results/t3_cobertura.json",
-      "campo": "total.supuestos_sorteados"
+      "campo": "total.supuestos_sorteados",
+      "motivo": "Arreglo del solver, #369 (lo medido como restricción); detalle caso por caso en eval/results/t3_cobertura_detalle; René lo aprobó el 2026-11-27. Antes, 410 de 578 (70.9 %)."
     },
     "paridad.numeros": {
       "que": "Números comparados entre el solver TS y la referencia Python (E7)",
@@ -254,15 +255,15 @@
     },
     "ejemplos.carambola": {
       "que": "Ejemplo «carambola con lluvia»: velocidad de la Ranger (A) antes del primer impacto antes del impacto, en la app (navegador con Unity real)",
-      "mejor": 25,
+      "mejor": 24,
       "p10": 20,
       "p90": 32,
       "unidad": "km/h",
       "juego_de_muestras": "producción",
-      "texto": "25 km/h (20–32)",
-      "fuente": "eval/results/t11/ejemplos.json",
+      "texto": "24 km/h (20–32)",
+      "fuente": "eval/results/verif-produccion/ejemplos-2026-11-28.json",
       "campo": "ejemplos.2",
-      "motivo": "Medido en el navegador con Unity real (t11-solver, 2026-11-27), con lo medido como restricción del solver (#369); René lo aprobó."
+      "motivo": "Medido en el navegador en producción (2026-11-28) con las calles fijas del ejemplo, centradas en el choque (#400); René lo aprobó. Antes, 25 km/h (20–32): según la red, la app reemplazaba sus calles y daba 23 o 25."
     },
     "ejemplos.reversa": {
       "que": "Ejemplo «reversa en pendiente»: velocidad del Versa (B) antes del impacto, en la app (navegador con Unity real)",

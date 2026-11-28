@@ -1635,3 +1635,67 @@ Narración de prueba en la carretera estatal 100 (SON 100), Hermosillo–Bahía 
 - **2026-11-27 · 2D limpio en casos nuevos (Alberto, `fix/w-2d-casos-nuevos`).** El croquis solo dibuja las calles que recorre alguien o que pasan a ≤ 10 m del choque (más los tramos de OSM que las continúan). Las rayas de una calle se cortan donde entra otra, pero no en las uniones de tramos de una misma calle. Se dibujan los objetos del caso (árbol con copa, poste, muro) con su etiqueta. «P1·2» cuando la persona no se movió antes del impacto. Sin calles de OSM, la vía de la escena (franjas, anillo de glorieta y arcos). La prueba visual suma curva, carretera (SON 100), glorieta y atropello. Capturas antes/después en `docs/cesvi/ronda-4/evidencia/2d-casos-nuevos/`. La colocación y las cifras no cambian.
 
 - **2026-11-27 · Punto 9: el detalle de las calles de OSM llega al 3D (Alberto, `feat/w-calles-detalle`, sobre el contrato #385).** `red_vial` guarda `lanes:forward`/`backward`, `turn:lanes`, `sidewalk` y los nodos de semáforos y pasos peatonales. La consulta de producción pide las etiquetas de los nodos (`out body`). El paquete caso-3d dibuja los pasos peatonales de OSM, las banquetas del lado que dice OSM, la raya central recorrida si hay más carriles de un sentido, las flechas de cada carril y los semáforos (en la orilla, fuera de la calzada y apagados, porque OSM no dice su fase). Unity ya dibujaba capas y dispositivos: no hace falta un build nuevo. Batería: 11 paquetes de ciudad regenerados, con `resultado` y vehículos idénticos. AXA no se tocó: el generador da hoy otro `resultado` para AXA, por un cambio en `main` que no es de este frente (para René). Capturas en `docs/cesvi/ronda-4/evidencia/calles-osm/`.
+
+## t12: puntos 1–5, posiciones a lo largo de la calle, acotamiento y cruces narrados (2026-11-27) · #382, `contract/velocidad-medida`
+
+**Qué se hizo:**
+
+- **1 · Velocidad medida o declarada** (`velocidad_previa.medida`, `VelocidadNarrada.como_se_sabe`/`medio`): la medida queda fija y no la ajusta el solver (Python y TS); la declarada se compara con la física («declaró 50; la física da 15–25») y el dictamen elige cuál usa.
+- **2 · «¿Y si…?» con edificios, muros y bardas como obstáculos rígidos** (`contraObstaculos`).
+- **3 · La vuelta del camión, en un cruce real** (`cruceDeLaVuelta`).
+- **4 · Vías elevadas** (`nivel` desde `layer`/`bridge`/`tunnel`; `viasDelNivel`, `callesDelNivel`).
+- **5 · El toque se ajusta al carril** (`alCarril`, 0.75 m, solo a lo ancho).
+- **A lo largo de la calle:**
+  - Las distancias narradas («N m adelante del área de restos») se miden desde el primer choque.
+  - Las posiciones se pueden escribir en metros («Escribir las posiciones en metros»).
+  - La Reconstrucción muestra cuánto mueve la cifra cada metro de toque (`sensibilidadDeReposos`).
+- **Acotamiento (René):** «sobre el acotamiento» corre medio carril más medio acotamiento. El carril sale de la calle; el acotamiento, de `shoulder:width` de OSM (se guarda con el caso: contrato `acotamiento`) o del supuesto de 2.5 m. El texto lo dice y dice dónde corregirlo.
+- **Cruces narrados (#388, Alberto):**
+  - **Cómo se encuentra el cruce:**
+    - Se busca en Overpass (`server/cruces.ts`) los nodos que comparten las dos calles dentro del municipio, por `name`, `alt_name`, `official_name`, `old_name`, `short_name` y `ref`. Un eje se busca también por sus dos partes («Eje Central Lázaro Cárdenas» es «Avenida Lázaro Cárdenas» en OSM).
+    - **Si las calles se cruzan en un solo lugar,** ese es el lugar.
+    - **Si se cruzan en varios,** se ofrecen al perito en un orden que no es arbitrario, y el aviso dice cuál es:
+      - «centro» en la narración: el más cercano al centro del municipio va primero.
+      - Una colonia que OSM tiene: los cruces dentro de ella van primero.
+      - Una colonia que OSM no tiene, o ninguna: se dice y el perito elige.
+    - Cada opción lleva su colonia o, donde OSM no tiene colonias (Toluca), su código postal y su localidad.
+    - **Si no se cruzan:** «No encontré el cruce de X con Y: márcalo tú». **Si Overpass no responde:** «No pude comprobar…».
+  - **La Escena busca solo el cruce cuando la narración nombra uno.** Antes probaba primero la descripción, y `separarLugarYSentido` le quitaba «hacia el cruce con…». También probaba una sola de las calles, cuyo punto medio daba otra esquina.
+  - La revisión de la cadena hace lo mismo y guarda en caché las consultas POST por su cuerpo.
+
+**Evidencia:**
+
+- **Respaldo three.js sin cambios por #387** (`packages/viewer/src/respaldo-calles.test.ts`): 84 huellas (21 escenas × 4 opciones) grabadas con el código de `90d7e7fa`. El código de hoy las reproduce bit a bit sin los datos nuevos de OSM, y la prueba falla si se dejan.
+- **Cruces reales** (`server/cruces-reales.test.ts`, respuestas grabadas): fallan a más de 30 m del nodo de OSM.
+  - Lerdo de Tejada y Nicolás Bravo, con «centro» (sale primero el del centro, C.P. 50000) y sin colonia (el cruce real está entre las opciones).
+  - Independencia y Juárez, Toluca.
+  - Eje Central y Juárez, CDMX.
+  - Tecnológico y Estado de México, Metepec.
+- **Medición** (`eval/cruces_narrados.mts` → `eval/results/cruces_narrados_{antes,despues}.json`): el choque propuesto contra el cruce real de OSM más cercano, dentro del municipio. Es una cota optimista: si hay varios cruces, cuenta el más cercano.
+
+|                                           | 205 reportes | 42 narraciones |
+| ----------------------------------------- | ------------ | -------------- |
+| Nombran un cruce                          | 99           | 25             |
+| OSM tiene el cruce                        | 29           | 15             |
+| A más de 30 m, antes → después            | 6 → 1        | 12 → 0         |
+| A 30 m o menos, antes → después           | 16 → 21      | 2 → 10         |
+| La escena pregunta, antes → después       | 13 → 14      | 2 → 8          |
+| Sin lugar («márcalo tú»), antes → después | 21 → 40      | 0 → 4          |
+
+- **El que queda a más de 30 m** (`cesvi-ec1c390b10`, Boulevard Independencia y Calzada Abastos): el lugar propuesto está a 4.7 km del cruce de OSM. Falta confirmar la causa; puede ser la ruta de respaldo de Nominatim cuando Overpass no responde.
+- **Lo que no sale gratis:** los «sin lugar» suben. Son casos donde OSM no tiene el cruce y antes se proponía un punto de alguna calle; ahora se le pide al perito que lo marque.
+
+**Pendiente (después de la demo; René, 2026-11-27):** ordenar los cruces por colonia donde OSM no tiene colonias, con el catálogo de colonias por código postal de SEPOMEX o con el Marco Geoestadístico del INEGI. Ver «Endurecimiento pendiente» en `docs/PROGRESS.md`.
+
+**Siguiente paso concreto:** publicar #369 (ya en esta rama), subir el build `visor-web-9b485d0574678674` (puente 1.5.0) a Blob, ponerlo en el manifiesto y fijar la t12 con esta rama. La t12 confirma en el navegador la carambola 24 (20–32), la única cifra que mueve esta rama en Node (por el acotamiento).
+
+- **2026-11-28 · El 2D limpio en AXA, los cinco ejemplos y los casos nuevos (Alberto, `fix/w-2d-croquis-limpio`).** El quiebre de la orilla en AXA no lo introdujo #384: sale igual antes de ese cambio, en cuanto el caso trae las calles de OSM. Ahí la MEX-15D llega en dos tramos con un ligero ángulo y anchos distintos. Cambios:
+  - los tramos continuos de una calle se unen en una sola, con un solo ancho, recta si cabe en 1.5 m y con curva suave si curva;
+  - las rayas de carril, finas y grises, no van bajo un recorrido;
+  - cada recorrido, una línea continua de su color con flechas;
+  - en el impacto, cada vehículo con su contorno y su color semitransparente, sin flechas dentro de otro vehículo y con una flecha por vehículo;
+  - las líneas de etiqueta no se cruzan ni pasan por un vehículo ajeno;
+  - la leyenda «1 inicio · 2 impacto · 3 reposo» con la letra de cada vehículo;
+  - el norte, arriba a la izquierda (lejos del zoom), y la escala con margen.
+
+  La prueba visual revisa todo eso en AXA (con y sin calles de OSM), los cinco ejemplos y los casos nuevos. Capturas lado a lado en `docs/cesvi/ronda-4/evidencia/2d-limpio/`; las de AXA, solo en local.

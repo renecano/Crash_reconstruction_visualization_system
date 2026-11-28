@@ -176,6 +176,15 @@ export function DictamenCaso({
 }) {
   // El dictamen sale con la estructura de los reportes de CESVI, salvo que el perito pida el otro.
   const [estructuraCesvi, setEstructuraCesvi] = useState(true);
+  // La velocidad que lleva el dictamen de cada vehículo con una velocidad declarada (René,
+  // 2026-11-27): la física por omisión, o la declarada; la otra va al lado.
+  const [velocidadDictamen, setVelocidadDictamen] = useState<
+    Record<string, "fisica" | "declarada">
+  >({});
+  const conDeclarada = reconstruccion.velocidades.filter((v) => {
+    const n = reconstruccion.narradas?.[v.vehiculo];
+    return n?.origen === "perito" && n.como_se_sabe !== "medida" && !v.previa?.medida;
+  });
   const campoConclusion = useRef<HTMLTextAreaElement>(null);
   const [perito, setPerito] = useState(guardada?.perito ?? "");
   const [conclusion, setConclusion] = useState(guardada?.conclusion ?? "");
@@ -275,6 +284,7 @@ export function DictamenCaso({
       validacion,
       estructuraCesvi,
       trayectosPrevios: previos,
+      velocidadDictamen,
       contraDeformacion: contra,
       trazabilidad: {
         metodo: `reconstrucción física de Croquis (versión ${String(reconstruccion.resultado.version_resultado ?? "")}) y verificación con el método de CESVI`,
@@ -464,6 +474,39 @@ export function DictamenCaso({
             {avisoCita}
           </p>
         ) : null}
+        {conDeclarada.map((v) => {
+          const n = reconstruccion.narradas![v.vehiculo]!;
+          const eleccion = velocidadDictamen[v.vehiculo] ?? "fisica";
+          return (
+            <div
+              key={v.vehiculo}
+              className="flex flex-col gap-1.5"
+              data-testid={`velocidad-dictamen-${v.vehiculo}`}
+            >
+              <span className="font-semibold">
+                Velocidad de {letraDe(v.vehiculo)} en el dictamen
+              </span>
+              <div
+                className="segmentado"
+                role="group"
+                aria-label={`Velocidad de ${letraDe(v.vehiculo)} en el dictamen`}
+              >
+                {(["fisica", "declarada"] as const).map((op) => (
+                  <button
+                    key={op}
+                    type="button"
+                    aria-pressed={eleccion === op}
+                    onClick={() => setVelocidadDictamen((x) => ({ ...x, [v.vehiculo]: op }))}
+                    data-testid={`velocidad-dictamen-${v.vehiculo}-${op}`}
+                  >
+                    {op === "fisica" ? "La de la física" : `La declarada (${n.kmh} km/h)`}
+                  </button>
+                ))}
+              </div>
+              <p className="t-nota">La otra va al lado, con su origen.</p>
+            </div>
+          );
+        })}
         <div className="flex flex-col gap-1.5">
           <span className="font-semibold">Formato</span>
           <div className="segmentado" role="group" aria-label="Formato del dictamen">

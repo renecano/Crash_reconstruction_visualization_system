@@ -6,6 +6,7 @@ import type { SalidaCorpus } from "@croquis/cesvi";
 import { describe, expect, it } from "vitest";
 import { RADIO_CALLES_M } from "@/lib/calles-del-mapa";
 import { buscarLugar, defaultLugarDeps, LugarIn } from "@/server/lugar";
+import { buscarLugarNarrado } from "@/server/lugar-narrado";
 import { callesCerca, defaultOsmDeps } from "@/server/osm";
 import { armarRelieve, defaultRelieveDeps, RelieveIn } from "@/server/relieve";
 import { osmAlrededor } from "@/lib/visor-unity/osm-alrededor";
@@ -57,7 +58,8 @@ const ENV = {
  */
 let ultimaRed = 0;
 const fetchGuardado = (async (input: URL | string, init?: RequestInit) => {
-  const url = String(input);
+  // Una consulta POST (los cruces de Overpass, #388) se guarda por su cuerpo: la URL es la misma.
+  const url = init?.body ? `${String(input)} ${String(init.body)}` : String(input);
   const ruta = join(
     CACHE,
     "http",
@@ -73,6 +75,10 @@ const fetchGuardado = (async (input: URL | string, init?: RequestInit) => {
   ultimaRed = Date.now();
   const r = await fetch(input, init);
   if (r.status !== 200) return r;
+  // Una respuesta de Overpass sin `elements` (su aviso de tiempo agotado) no se guarda.
+  if (init?.body && !/"elements"/.test(await r.clone().text())) return r;
+  if (init?.body && /"remark"\s*:\s*"[^"]*(?:error|timed out)/i.test(await r.clone().text()))
+    return r;
   const texto = await r.text();
   mkdirSync(dirname(ruta), { recursive: true });
   writeFileSync(ruta, texto);
@@ -93,6 +99,13 @@ const red: Red = {
     );
     return { resultados: r.resultados, aviso: r.aviso };
   },
+  // Como La escena (#388): los buscadores en orden.
+  lugarNarrado: (narracion, lugar, municipio, estado) =>
+    buscarLugarNarrado(
+      { narracion, lugar, ...(municipio ? { municipio } : {}), ...(estado ? { estado } : {}) },
+      "auditoria",
+      lugarDeps,
+    ) as never,
   // Las calles y los objetos del lugar: de la API de OpenStreetMap (la consulta de la batería de Unity,
   // unos 150 m a la redonda), y si no responde, de Overpass como la app.
   calles: (p) =>
