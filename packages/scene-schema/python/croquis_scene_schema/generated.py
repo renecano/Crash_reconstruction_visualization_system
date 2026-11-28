@@ -98,6 +98,10 @@ class CampoVelocidad(BaseModel):
     """
     Solo en `velocidad_previa`: la velocidad declarada (narración, perito o vía) entra a la inversión como supuesto con su `rango` (p10–p90). Pesa solo donde la evidencia no fija la velocidad, y en las simulaciones se sortea dentro de su rango (ronda 4).
     """
+    medida: bool | None = None
+    """
+    Solo en `velocidad_previa` (René, 2026-11-27): la midió un instrumento (cámara, GPS, tacógrafo). Es una restricción dura: el solver no la ajusta, ajusta lo demás y avisa si la evidencia no cuadra con ella. No va junto con `a_priori`.
+    """
 
 
 class CampoMasa(BaseModel):
@@ -1316,6 +1320,14 @@ class Via(BaseModel):
     maxspeed: Annotated[str | None, Field(max_length=20)] = None
     carriles: Annotated[str | None, Field(max_length=10)] = None
     sentido_unico: Annotated[str | None, Field(max_length=10)] = None
+    acotamiento: Annotated[str | None, Field(max_length=10)] = None
+    """
+    El ancho del acotamiento (René, 2026-11-27): `shoulder:width` de OpenStreetMap (o `shoulder:right:width`, `shoulder:both:width`), tal como viene.
+    """
+    nivel: Annotated[int | None, Field(ge=-5, le=5)] = None
+    """
+    El nivel de la vía (René, 2026-11-27): `layer` de OpenStreetMap; un `bridge` sin `layer`, 1; un `tunnel`, -1. Sin el campo, a ras del piso. Un vehículo narrado abajo no queda en la vía de arriba, ni al revés.
+    """
     ancho: Annotated[str | None, Field(max_length=10)] = None
     puntos: Annotated[list[Punto1], Field(max_length=2000, min_length=2)]
     """
@@ -1549,6 +1561,14 @@ class VelocidadNarrada(BaseModel):
     rango_kmh: Annotated[list[RangoKmhItem], Field(max_length=2, min_length=2)]
     """
     El rango [mínimo, máximo] en km/h.
+    """
+    como_se_sabe: Literal["medida", "declarada"] | None = None
+    """
+    La respuesta del perito (René, 2026-11-27) a «¿cómo lo sabes?»: medida (cámara, GPS, tacógrafo) entra como restricción dura; declarada (conductor, testigo) se compara con la física y queda como versión. Sin este campo, declarada.
+    """
+    medio: Literal["camara", "gps", "tacografo", "conductor", "testigo"] | None = None
+    """
+    De dónde sale (René, 2026-11-27). Cámara, GPS o tacógrafo van con `como_se_sabe: medida`; conductor o testigo, con `declarada`.
     """
     origen: Literal["narración", "perito", "via"]
     """

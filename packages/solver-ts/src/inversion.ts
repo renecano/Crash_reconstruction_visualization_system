@@ -660,6 +660,9 @@ export function parameters(spec: Json, ev: Evidence): Param[] {
   const ids = movingVehicles(spec);
   for (const vid of ids) {
     const vp = (byId.get(vid)!.velocidad_previa ?? {}) as Json;
+    // Medida por un instrumento (cámara, GPS, tacógrafo; René, 2026-11-27): restricción dura, no se
+    // ajusta; lo demás se ajusta a ella.
+    if (vp.medida === true) continue;
     const val = Number(vp.valor ?? 40.0) * (vp.unidad === "m/s" ? 3.6 : 1.0);
     const start = Math.min(Math.max(val, 5.0), SPEED_BOUNDS_KMH[1] - 1);
     const declared = Object.keys(vp).length > 0 && stated(vp);

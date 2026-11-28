@@ -92,6 +92,9 @@ import {
   ponerTerrenoEn,
   puntoDelChoqueTocado,
   tocarFinal,
+  alCarril,
+  medidaEscrita,
+  conPosicionEscrita,
   resumenEscena,
   rumboAlineado,
   sentidoEnElCaso,
@@ -106,7 +109,11 @@ import {
 } from "@/lib/escena-facil";
 import { siluetaClase } from "@/lib/colocar";
 import { pedirRuta } from "@/lib/trayecto-previo";
-import { interpretarLugar } from "@/lib/lugar-texto";
+import { interpretarLugar, zonaNarrada } from "@/lib/lugar-texto";
+import { lugarParaProponer, textoDelHallazgo } from "@/lib/lugar-confirmado";
+
+/** El aviso cuando no se encontró el lugar narrado: nunca un punto por omisión (#388). */
+const NO_ENCONTRADO = "No encontré el lugar narrado: márcalo tú";
 import { callesDelCaso, lugarClaro } from "@/lib/lugar-claro";
 import { etiquetaOpcion, type OpcionLugar, zonaDeOpcion } from "@/lib/lugar-opcion";
 import {
@@ -410,6 +417,8 @@ export function EscenaFacil({
           v,
           n.descripcion,
           posicionesNarradas.filter((x) => x.fase === "final"),
+          new Set(),
+          callesMapa,
         )
       : null;
   };
@@ -558,6 +567,10 @@ export function EscenaFacil({
   const [buscandoNarrado, setBuscandoNarrado] = useState(false);
   // Ronda 4 (René): si el lugar narrado no aparece, se pregunta (nunca el centro del municipio).
   const [narradoSinLugar, setNarradoSinLugar] = useState<string | null>(null);
+  // El lugar que confirmó el perito (René, 2026-11-27, #388): la escena se propone solo ahí o en el
+  // lugar guardado del caso, nunca en lo que Croquis encontró solo ni en el centro del mapa.
+  const [lugarConfirmado, setLugarConfirmado] = useState<Punto | null>(null);
+  const [moviendoLugar, setMoviendoLugar] = useState(false);
   // El lugar que encontró el buscador, con sus opciones y su aviso: si no coincide claramente con la
   // narración, no se propone el choque ahí (René, 2026-11-25).
   const [busquedaNarrada, setBusquedaNarrada] = useState<{
@@ -578,13 +591,19 @@ export function EscenaFacil({
   useEffect(() => {
     if (lugar || yaBuscado.current || estado.puntos[1]) return;
     const cruce = narracion ? cruceNarrado(narracion) : null;
+    const zonaDelCruce = zonaNarrada(descripcionLugar) ?? zonaNarrada(narracion);
     // Ronda 4 (René): solo el lugar va al buscador, nunca la frase completa con su «rumbo a…».
-    const consultas = [
-      separarLugarYSentido(descripcionLugar).lugar,
-      cruce ? `${cruce.calles[0]} y ${cruce.calles[1]}` : null,
-      cruce?.calles[0] ?? null,
-      narracion ? carreteraNarrada(narracion) : null,
-    ].filter((x): x is string => Boolean(x?.trim()));
+    // Con un cruce narrado se busca el cruce, con la colonia o la zona narrada para ordenar si hay
+    // varios, y nada más (René, 2026-11-27, #388): una de sus calles sola, o la descripción sin su
+    // «hacia el cruce con…», daba un punto de la calle a kilómetros del cruce. Si no aparece, se dice.
+    const consultas = (
+      cruce
+        ? [`${cruce.calles[0]} y ${cruce.calles[1]}${zonaDelCruce ? `, ${zonaDelCruce}` : ""}`]
+        : [
+            separarLugarYSentido(descripcionLugar).lugar,
+            narracion ? carreteraNarrada(narracion) : null,
+          ]
+    ).filter((x): x is string => Boolean(x?.trim()));
     if (!consultas.length) return;
     yaBuscado.current = true;
     const buscarEn = async () => {
@@ -614,6 +633,18 @@ export function EscenaFacil({
             hallado = true;
             break;
           }
+          // Las dos calles se cruzan en varios lugares (René, 2026-11-27, #388): el perito elige.
+          const cruces = (d?.resultados ?? []).filter((x) => x.precision === "cruce");
+          if (r.ok && cruces.length > 1) {
+            if (montada.current) {
+              setResultados(cruces);
+              setEstadoBusqueda(
+                d?.aviso ?? "Las calles se cruzan en varios lugares: elige el del hecho.",
+              );
+            }
+            hallado = true;
+            break;
+          }
           const p = r.ok ? d?.resultados?.[0] : undefined;
           // Solo una zona (la colonia, el municipio) no es el lugar del choque (revisión de la cadena,
           // René 2026-11-24): se prueba la consulta siguiente y, si nada es preciso, se pregunta.
@@ -638,11 +669,22 @@ export function EscenaFacil({
       }
       if (montada.current) {
         setBuscandoNarrado(false);
-        if (!hallado)
+        if (!hallado) {
           setNarradoSinLugar(
-            aviso ??
-              `No se encontró «${consultas[0]}». ¿Dónde fue? Escribe las calles del cruce, pega las coordenadas o un link de Google Maps, o toca el lugar en el mapa.`,
+            `${NO_ENCONTRADO}.${aviso ? ` ${aviso}` : ""} Mueve el mapa hasta el lugar y oprime «Aquí fue», escribe las calles del cruce o pega las coordenadas o un link de Google Maps.`,
           );
+          // El mapa, en el municipio del caso: para que el perito lo busque desde ahí.
+          const donde = [zona.municipio, zona.estado].filter(Boolean).join(", ");
+          if (donde)
+            void fetch(`/api/lugar?${new URLSearchParams({ q: donde }).toString()}`)
+              .then((r) => (r.ok ? r.json() : null))
+              .then((d: { resultados?: OpcionLugar[] } | null) => {
+                const z = d?.resultados?.[0];
+                if (z && montada.current)
+                  mapa.current?.easeTo({ center: [z.lon, z.lat], zoom: 13 });
+              })
+              .catch(() => undefined);
+        }
       }
     };
     void buscarEn();
@@ -697,13 +739,14 @@ export function EscenaFacil({
   // La escena ya armada: al entrar, si nadie ha marcado el choque, Croquis la propone con lo que leyó
   // (con `?desde=cero`, también en un caso que ya trae posiciones, como AXA).
   const [escenaPropuesta, setEscenaPropuesta] = useState<EscenaPropuesta | null>(null);
+  const lugarPropuesta = lugarParaProponer({ guardado: lugar, confirmado: lugarConfirmado });
   useEffect(() => {
     if (
       !nuevo ||
       escenaPropuesta ||
       ((estado.puntos[1] || (impactos[0]?.vehiculos ?? []).some((v) => poseDe(e, v, "impacto"))) &&
         sp.get("desde") !== "cero") ||
-      (!lugarBase && !centroMapa) ||
+      !lugarPropuesta ||
       // El lugar encontrado no coincide claramente con la narración: primero, «¿Dónde fue?».
       dudaLugar
     )
@@ -720,9 +763,9 @@ export function EscenaFacil({
           impactos,
           calles: callesMapa,
           narracion,
-          lugar: lugarBase ?? centroMapa,
+          lugar: lugarPropuesta,
           nombreDe: (id) => nombres[id] ?? id,
-          rumboNarrado: rumboDelSentido(sentidoDelLugar, destinoNarrado, lugarBase ?? centroMapa),
+          rumboNarrado: rumboDelSentido(sentidoDelLugar, destinoNarrado, lugarPropuesta),
         });
         if (!p) return;
         setEscenaPropuesta(p);
@@ -739,7 +782,7 @@ export function EscenaFacil({
     );
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- se arma una vez, al tener calles
-  }, [nuevo, escenaPropuesta, callesMapa, lugarBase, centroMapa, dudaLugar]);
+  }, [nuevo, escenaPropuesta, callesMapa, lugarPropuesta, dudaLugar]);
 
   // Lo que Croquis propone para el primer choque.
   const propuesta = useMemo(
@@ -884,6 +927,8 @@ export function EscenaFacil({
 
   // Dónde quedó: con un toque, alineado a la calle; arrastrar es opcional; dos botones de 15°.
   const colocarFinal = (v: string, p: Punto) => {
+    // Al centro de su carril si cayó cerca (René, 2026-11-27), y se dice cuánto se movió.
+    const aj = alCarril(callesMapa, p);
     cambiar(
       {
         ...estado,
@@ -891,7 +936,11 @@ export function EscenaFacil({
         desconocidos: estado.desconocidos.filter((x) => x !== v),
         juntoAlChoque: estado.juntoAlChoque.filter((x) => x !== v),
       },
-      null,
+      aj
+        ? exito(
+            `Ajustado al centro de su carril (el ${aj.carril}.º de izquierda a derecha${aj.calle ? ` de ${aj.calle}` : ""}): se movió ${F.metros(aj.movidoM, 1)} a lo ancho de la calle.`,
+          )
+        : null,
     );
     setColocando(v);
   };
@@ -1397,6 +1446,9 @@ export function EscenaFacil({
     const ir = (p: Punto) => {
       mapa.current?.easeTo({ center: [p.lon, p.lat], zoom: 18.5 });
       onBuscarCalles(p);
+      // Unas coordenadas o un link que pegó el perito: él dice que ahí fue.
+      setLugarConfirmado(p);
+      setMoviendoLugar(false);
       setResultados([]);
       setEstadoBusqueda(null);
     };
@@ -2106,6 +2158,74 @@ export function EscenaFacil({
             Buscando en el mapa el lugar que dice la narración…
           </p>
         ) : null}
+        {busquedaNarrada && !dudaLugar && !buscandoNarrado && !estado.puntos[1] && !lugar ? (
+          // Qué encontró Croquis, cómo y qué tan seguro; el perito confirma antes de La escena
+          // (René, 2026-11-27, #388).
+          <div className="flex flex-col gap-2" data-testid="lugar-encontrado">
+            <p
+              className="t-nota text-texto"
+              role="status"
+              data-seguridad={
+                textoDelHallazgo({
+                  nombre: busquedaNarrada.nombre,
+                  precision: busquedaNarrada.resultados[0]?.precision,
+                  aviso: busquedaNarrada.aviso,
+                }).seguridad
+              }
+            >
+              {
+                textoDelHallazgo({
+                  nombre: busquedaNarrada.nombre,
+                  precision: busquedaNarrada.resultados[0]?.precision,
+                  aviso: busquedaNarrada.aviso,
+                }).texto
+              }
+              {busquedaNarrada.aviso ? `. ${busquedaNarrada.aviso}` : ""}
+            </p>
+            {lugarConfirmado ? null : moviendoLugar ? (
+              <p className="t-nota">Mueve el mapa hasta el lugar del choque y oprime «Aquí fue».</p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  className="boton-principal escena-boton"
+                  data-testid="lugar-si"
+                  onClick={() => lugarNarrado && setLugarConfirmado(lugarNarrado)}
+                >
+                  Sí, aquí fue
+                </button>
+                <button
+                  type="button"
+                  className="boton-secundario escena-boton"
+                  data-testid="lugar-mover"
+                  onClick={() => setMoviendoLugar(true)}
+                >
+                  Moverlo
+                </button>
+              </div>
+            )}
+          </div>
+        ) : null}
+        {!lugarPropuesta &&
+        !buscandoNarrado &&
+        !estado.puntos[1] &&
+        (moviendoLugar || narradoSinLugar) ? (
+          <button
+            type="button"
+            className="boton-principal escena-boton self-start"
+            data-testid="lugar-aqui-fue"
+            onClick={() => {
+              const c = mapa.current?.getCenter();
+              if (!c) return;
+              const p = { lat: c.lat, lon: c.lng };
+              setLugarConfirmado(p);
+              setMoviendoLugar(false);
+              onBuscarCalles(p);
+            }}
+          >
+            Aquí fue (el centro del mapa)
+          </button>
+        ) : null}
         {dudaLugar && busquedaNarrada && !buscandoNarrado ? (
           <p className="t-nota text-texto" role="status" data-testid="lugar-dudoso">
             Croquis encontró «{busquedaNarrada.nombre}», pero {dudaLugar}. ¿Dónde fue? Elige una de
@@ -2211,11 +2331,19 @@ export function EscenaFacil({
                       onClick={() => {
                         mapa.current?.easeTo({ center: [r.lon, r.lat], zoom: 18.5 });
                         onBuscarCalles({ lat: r.lat, lon: r.lon });
-                        // El perito eligió el lugar: ya no hay duda y Croquis propone ahí.
-                        if (busquedaNarrada) {
-                          setBusquedaNarrada(null);
+                        // El perito eligió el lugar: ya no hay duda y Croquis propone ahí. También al
+                        // elegir uno de los cruces de las calles narradas (René, 2026-11-27, #388).
+                        if (busquedaNarrada || (r.precision === "cruce" && !lugar)) {
+                          setBusquedaNarrada(
+                            r.precision === "cruce"
+                              ? { nombre: r.nombre, resultados: [r], aviso: null }
+                              : null,
+                          );
                           setLugarNarrado({ lat: r.lat, lon: r.lon });
                         }
+                        // El perito eligió esta opción: ahí fue.
+                        setLugarConfirmado({ lat: r.lat, lon: r.lon });
+                        setMoviendoLugar(false);
                         setResultados([]);
                         setEstadoBusqueda(null);
                       }}
@@ -3198,6 +3326,74 @@ export function EscenaFacil({
                     Toca el mapa donde empezó el {nombres[herramienta.inicial]}.
                   </span>
                 ) : null}
+              </div>
+              {/* Las posiciones en metros, escritas en vez de tocadas (René, 2026-11-27): se ven y se
+                  editan; al escribir, la posición queda exacta. */}
+              <div className="flex flex-col gap-2" data-testid="posiciones-escritas">
+                <span className="font-semibold">Escribir las posiciones en metros</span>
+                {e.vehiculos.flatMap((v) =>
+                  (["inicial", "impacto", "final"] as const).flatMap((fase) => {
+                    const m = medidaEscrita(e, v.id, fase, callesMapa);
+                    if (!m) return [];
+                    const poner = (adelante: number, izquierda: number) =>
+                      onEstado({
+                        ...estado,
+                        expediente: conPosicionEscrita(
+                          e,
+                          v.id,
+                          fase,
+                          adelante,
+                          izquierda,
+                          callesMapa,
+                        ),
+                      });
+                    const campo = (
+                      valor: number,
+                      testid: string,
+                      onValor: (x: number) => void,
+                      etiqueta: string,
+                    ) => (
+                      <input
+                        className="campo h-10 w-20 px-2 font-mono"
+                        inputMode="decimal"
+                        aria-label={etiqueta}
+                        defaultValue={String(valor)}
+                        key={`${testid}-${valor}`}
+                        onBlur={(ev) => {
+                          const x = Number(ev.target.value.replace(",", "."));
+                          if (Number.isFinite(x) && x !== valor) onValor(x);
+                        }}
+                        onKeyDown={(ev) => {
+                          if (ev.key === "Enter") (ev.target as HTMLInputElement).blur();
+                        }}
+                        data-testid={testid}
+                      />
+                    );
+                    const quien = `${fase === "final" ? "Dónde quedó" : fase === "inicial" ? "Dónde empezó" : "El choque de"} el ${nombres[v.id]}`;
+                    return [
+                      <div
+                        key={`${v.id}-${fase}`}
+                        className="flex flex-wrap items-center gap-2 t-nota"
+                      >
+                        <span>{quien}:</span>
+                        {campo(
+                          m.adelante,
+                          `escrita-${v.id}-${fase}-adelante`,
+                          (x) => poner(x, m.izquierda),
+                          `${quien}, metros adelante`,
+                        )}
+                        m adelante y
+                        {campo(
+                          m.izquierda,
+                          `escrita-${v.id}-${fase}-izquierda`,
+                          (x) => poner(m.adelante, x),
+                          `${quien}, metros a la izquierda`,
+                        )}
+                        m a la izquierda de {m.desde} (negativo: atrás o a la derecha)
+                      </div>,
+                    ];
+                  }),
+                )}
               </div>
               {colocando ? (
                 <label className="flex items-center gap-2">

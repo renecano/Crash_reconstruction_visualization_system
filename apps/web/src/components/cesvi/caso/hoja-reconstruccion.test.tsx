@@ -69,3 +69,47 @@ describe("las posiciones contra lo narrado (René, 2026-11-22)", () => {
     );
   });
 });
+
+describe("la velocidad que dio el perito junto a la cifra (René, 2026-11-27)", () => {
+  it("declarada: lo que declaró y lo que da la física", () => {
+    const r = reconstruccion(19, 15, 25) as unknown as Record<string, unknown>;
+    r.narradas = {
+      V2: {
+        kmh: 50,
+        rango_kmh: [45, 55],
+        origen: "perito",
+        como_se_sabe: "declarada",
+        medio: "conductor",
+      },
+    };
+    pintar(r as unknown as Reconstruccion);
+    expect(screen.getByTestId("declarada-vs-fisica").textContent).toBe(
+      "B · Camaro: declaró 50 km/h (el conductor); la física da 15–25 km/h.",
+    );
+    expect(screen.queryByTestId("velocidad-medida")).toBeNull();
+  });
+
+  it("medida: la cifra es la medida, sin rango ni «mejor ajuste»", () => {
+    const r = {
+      velocidades: [{ vehiculo: "V2", previa: { mejor: 50, medida: true }, impacto: null }],
+      evidencia: ["reposo:veh-b"],
+      ids: { "veh-b": "V2" },
+      limites: [],
+      narradas: {
+        V2: {
+          kmh: 50,
+          rango_kmh: [45, 55],
+          origen: "perito",
+          como_se_sabe: "medida",
+          medio: "camara",
+        },
+      },
+    } as unknown as Reconstruccion;
+    pintar(r);
+    expect(screen.getByTestId("velocidad-medida").textContent).toBe(
+      "B · Camaro: 50 km/h medida por la cámara; la física no la ajusta.",
+    );
+    expect(screen.getByTestId("metodo-cifra").textContent).toBe("Velocidad medida, no ajustada");
+    expect(screen.queryByTestId("cifra-rango")).toBeNull();
+  });
+});

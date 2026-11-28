@@ -1,3 +1,4 @@
+import type { SensibilidadReposo } from "@croquis/solver-ts";
 /**
  * Reconstrucción en el navegador con el solver TS en un Web Worker (sin servidor). Un solo worker
  * por página; cada petición lleva un id para emparejar sus respuestas.
@@ -6,7 +7,7 @@ import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
 
 interface Reply {
   id: number;
-  fase?: "reconstruccion" | "completo" | "agentes" | "paralelo";
+  fase?: "reconstruccion" | "completo" | "agentes" | "paralelo" | "sensibilidad";
   resultado?: Resultado;
   agentes?: Record<string, unknown> | null;
   incertidumbre?: Record<string, unknown>;
@@ -27,6 +28,8 @@ interface Pending {
   onParalelo?: (r: Paralelo) => void;
   /** Si va al worker de las hipótesis. */
   hipotesis?: boolean;
+  /** Para `sensibilidadEnNavegador`: qué reposo pesa más en la cifra. */
+  onSensibilidad?: (s: SensibilidadReposo[]) => void;
 }
 
 /**
@@ -34,7 +37,7 @@ interface Pending {
  * (R12a), que tardan menos de un segundo y no deben esperar detrás de un resultado completo, y el de
  * la hipótesis del reposo supuesto, que corre al mismo tiempo que el resultado completo (W8).
  */
-type Cual = "general" | "conductores" | "hipotesis";
+type Cual = "general" | "conductores" | "hipotesis" | "sensibilidad";
 interface Paralelo {
   incertidumbre: Record<string, unknown>;
   reposoSupuesto: Record<string, unknown> | null;
@@ -54,6 +57,13 @@ function getWorker(cual: Cual = "general"): Worker {
     const p = pending.get(ev.data.id);
     if (!p) return;
     const { fase, resultado, error } = ev.data;
+    if (fase === "sensibilidad" && p.onSensibilidad) {
+      pending.delete(ev.data.id);
+      p.onSensibilidad(
+        (ev.data as unknown as { sensibilidad?: SensibilidadReposo[] }).sensibilidad ?? [],
+      );
+      return;
+    }
     if (fase === "agentes" && p.onAgentes) {
       pending.delete(ev.data.id);
       p.onAgentes(ev.data.agentes ?? null);
@@ -81,13 +91,49 @@ function getWorker(cual: Cual = "general"): Worker {
   };
   worker.onerror = (ev) => {
     for (const [id, p] of pending) {
-      const suyo = p.agentes ? "conductores" : p.hipotesis ? "hipotesis" : "general";
+      const suyo = p.agentes
+        ? "conductores"
+        : p.hipotesis
+          ? "hipotesis"
+          : p.onSensibilidad
+            ? "sensibilidad"
+            : "general";
       if (suyo !== cual) continue;
       p.reject(new Error(ev.message || "La reconstrucción falló."));
       pending.delete(id);
     }
   };
   return worker;
+}
+
+/**
+ * Qué reposo medido pesa más en la cifra de `objetivo` (René, 2026-11-27), en su propio worker y
+ * después del resultado: km/h que cambia la cifra por metro que se mueve cada reposo.
+ */
+export function sensibilidadEnNavegador(
+  spec: EscenaSpec,
+  resultado: Resultado,
+  objetivo: string,
+  relieve?: object | null,
+): Promise<SensibilidadReposo[]> {
+  return new Promise((resolve, reject) => {
+    const id = nextId++;
+    pending.set(id, {
+      completo: false,
+      resolve: () => resolve([]),
+      reject,
+      onSensibilidad: resolve,
+    });
+    getWorker("sensibilidad").postMessage({
+      id,
+      spec,
+      sensibilidad: {
+        resultado: { inversion: (resultado as Record<string, unknown>).inversion },
+        objetivo,
+      },
+      ...(relieve ? { relieve } : {}),
+    });
+  });
 }
 
 /** Solo la reconstrucción (trayectorias, daño, personas): lo necesario para dibujar. */

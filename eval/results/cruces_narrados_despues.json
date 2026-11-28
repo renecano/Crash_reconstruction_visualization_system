@@ -1,0 +1,2013 @@
+{
+ "descripcion": "El cruce narrado (#388): cuántos casos nombran un cruce y en cuántos el choque propuesto queda a más de 30 m del cruce real de OSM (el más cercano de los cruces de las dos calles en el municipio).",
+ "script": "eval/cruces_narrados.mts",
+ "modo": "despues",
+ "fecha": "2026-11-28",
+ "tope_m": 30,
+ "casos_revisados": 247,
+ "prueba": {
+  "nombran_un_cruce": 100,
+  "con_cruce_real_en_osm": 29,
+  "osm_sin_el_cruce": 21,
+  "sin_medir_overpass_o_municipio": 50,
+  "propone": 50,
+  "pregunta": 13,
+  "sin_lugar": 37,
+  "propone_medible": 23,
+  "a_mas_de_30_m": 0,
+  "a_30_m_o_menos": 23
+ },
+ "nuevas": {
+  "nombran_un_cruce": 25,
+  "con_cruce_real_en_osm": 15,
+  "osm_sin_el_cruce": 6,
+  "sin_medir_overpass_o_municipio": 4,
+  "propone": 10,
+  "pregunta": 12,
+  "sin_lugar": 3,
+  "propone_medible": 8,
+  "a_mas_de_30_m": 0,
+  "a_30_m_o_menos": 8
+ },
+ "filas": [
+  {
+   "id": "cesvi-0221ee4ec4",
+   "fuente": "prueba",
+   "calles": [
+    "Avenida Poniente 140",
+    "Calzada Vallejo"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4950074,
+    "lon": -99.1539526
+   },
+   "lugar_buscado": {
+    "lat": 19.49476821761103,
+    "lon": -99.15394969161348
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-06e4ee9b97",
+   "fuente": "prueba",
+   "calles": [
+    "calle Santa Rosa de Lima",
+    "Camino Real"
+   ],
+   "cruces_reales": null,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-09828841f1",
+   "fuente": "prueba",
+   "calles": [
+    "Surutato",
+    "Mapiri"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 24.7784049,
+    "lon": -107.4035132
+   },
+   "lugar_buscado": {
+    "lat": 24.778405,
+    "lon": -107.403513
+   },
+   "real_cercano": {
+    "lat": 24.778405,
+    "lon": -107.403513
+   },
+   "distancia_m": 0
+  },
+  {
+   "id": "cesvi-0eeebbed82",
+   "fuente": "prueba",
+   "calles": [
+    "Eje 3 Oriente",
+    "Atanasio Sarabia"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3605756,
+    "lon": -99.1103701
+   },
+   "lugar_buscado": {
+    "lat": 19.3605756,
+    "lon": -99.1103701
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-12f0cdba9c",
+   "fuente": "prueba",
+   "calles": [
+    "Boulevard Rabon Grande",
+    "calle Ciruelos"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-147df2914c",
+   "fuente": "prueba",
+   "calles": [
+    "calle Lázaro Cárdenas",
+    "carretera Cuautla-Ciudad de Ayala"
+   ],
+   "cruces_reales": 0,
+   "resultado": "pregunta",
+   "motivo": "lugar dudoso"
+  },
+  {
+   "id": "cesvi-16853d8646",
+   "fuente": "prueba",
+   "calles": [
+    "Zaragoza",
+    "José Limón"
+   ],
+   "cruces_reales": 2,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (2)"
+  },
+  {
+   "id": "cesvi-16c23ff0f7",
+   "fuente": "prueba",
+   "calles": [
+    "Av. 27 de Febrero",
+    "Blvd. Adolfo Ruíz Cortínez"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 17.8487942,
+    "lon": -92.8804389
+   },
+   "lugar_buscado": {
+    "lat": 17.848794,
+    "lon": -92.880439
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-17afa381e4",
+   "fuente": "prueba",
+   "calles": [
+    "Totonacas",
+    "Rey Topilitzin"
+   ],
+   "cruces_reales": null,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-2251d90ba3",
+   "fuente": "prueba",
+   "calles": [
+    "avenida Miguel Hidalgo",
+    "calle Gabriel Leyva"
+   ],
+   "cruces_reales": 3,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (3)"
+  },
+  {
+   "id": "cesvi-240b770de0",
+   "fuente": "prueba",
+   "calles": [
+    "Eje 3 Oriente",
+    "calle Cafetales"
+   ],
+   "cruces_reales": null,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (5)"
+  },
+  {
+   "id": "cesvi-24f644a44f",
+   "fuente": "prueba",
+   "calles": [
+    "Avenida La Turba",
+    "Calle Medusa"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.2899443,
+    "lon": -99.0560382
+   },
+   "lugar_buscado": {
+    "lat": 19.289904,
+    "lon": -99.056068
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-2b10fea718",
+   "fuente": "prueba",
+   "calles": [
+    "carretera Toluca-Naucalpan",
+    "calle 5"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-30fa1926dc",
+   "fuente": "prueba",
+   "calles": [
+    "calle San Pedro",
+    "calle París"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3549741,
+    "lon": -99.1574613
+   },
+   "lugar_buscado": {
+    "lat": 19.3549741,
+    "lon": -99.1574613
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-316a61cb43",
+   "fuente": "prueba",
+   "calles": [
+    "Av. Pradera",
+    "calle Golfo de Bengala"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 21.0953545,
+    "lon": -101.6508316
+   },
+   "lugar_buscado": {
+    "lat": 21.095355,
+    "lon": -101.650832
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-3481483d69",
+   "fuente": "prueba",
+   "calles": [
+    "Vallarta",
+    "Sirconia"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-352e083b8a",
+   "fuente": "prueba",
+   "calles": [
+    "calle Camelia",
+    "Eje 1"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4470838,
+    "lon": -99.1470575
+   },
+   "lugar_buscado": {
+    "lat": 19.447073,
+    "lon": -99.146988
+   },
+   "real_cercano": {
+    "lat": 19.447073,
+    "lon": -99.146988
+   },
+   "distancia_m": 7
+  },
+  {
+   "id": "cesvi-3bde7bd134",
+   "fuente": "prueba",
+   "calles": [
+    "calle Hidalgo",
+    "calle Los Sabinos"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 24.8064463,
+    "lon": -107.3620111
+   },
+   "lugar_buscado": {
+    "lat": 24.806476,
+    "lon": -107.361943
+   },
+   "real_cercano": {
+    "lat": 24.806476,
+    "lon": -107.361943
+   },
+   "distancia_m": 8
+  },
+  {
+   "id": "cesvi-3eab5db876",
+   "fuente": "prueba",
+   "calles": [
+    "Avenida Plutarco Elías Calles",
+    "Avenida de los Montes"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3631028,
+    "lon": -99.138785
+   },
+   "lugar_buscado": {
+    "lat": 19.363103,
+    "lon": -99.138785
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-3fa0cd2ba1",
+   "fuente": "prueba",
+   "calles": [
+    "Viaducto Rojo Gómez",
+    "Avenida Universidad"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-3fb401796c",
+   "fuente": "prueba",
+   "calles": [
+    "avenida Aguascalientes",
+    "avenida Zacatecas"
+   ],
+   "cruces_reales": null,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (5)"
+  },
+  {
+   "id": "cesvi-466c13a262",
+   "fuente": "prueba",
+   "calles": [
+    "calle Rubén",
+    "calle Quina"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 26.0249412,
+    "lon": -98.2423714
+   },
+   "lugar_buscado": {
+    "lat": 26.024941,
+    "lon": -98.242371
+   },
+   "real_cercano": {
+    "lat": 26.024941,
+    "lon": -98.242371
+   },
+   "distancia_m": 0
+  },
+  {
+   "id": "cesvi-4a5c51d807",
+   "fuente": "prueba",
+   "calles": [
+    "Avenida Terranova",
+    "Calle Florencia"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 20.6951835,
+    "lon": -103.386274
+   },
+   "lugar_buscado": {
+    "lat": 20.695187,
+    "lon": -103.386337
+   },
+   "real_cercano": {
+    "lat": 20.695187,
+    "lon": -103.386337
+   },
+   "distancia_m": 7
+  },
+  {
+   "id": "cesvi-4e9cbd1711",
+   "fuente": "prueba",
+   "calles": [
+    "calle Estrella",
+    "calle Durazno"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3364459,
+    "lon": -99.0801879
+   },
+   "lugar_buscado": {
+    "lat": 19.336446,
+    "lon": -99.080188
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-4ee7f719b9",
+   "fuente": "prueba",
+   "calles": [
+    "avenida Arrollo",
+    "Carretera Federal Libre"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-4ef2a9d90b",
+   "fuente": "prueba",
+   "calles": [
+    "Boulevard Felipe Ángeles",
+    "calle Av. Francisco Sarabia"
+   ],
+   "cruces_reales": null,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-52c47a9f37",
+   "fuente": "prueba",
+   "calles": [
+    "avenida Molinos",
+    "calle Tiziano"
+   ],
+   "cruces_reales": null,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-549b436c96",
+   "fuente": "prueba",
+   "calles": [
+    "BUCANEROS",
+    "BRISAS"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 31.8553851,
+    "lon": -116.6145491
+   },
+   "lugar_buscado": {
+    "lat": 31.855366,
+    "lon": -116.614608
+   },
+   "real_cercano": {
+    "lat": 31.855366,
+    "lon": -116.614608
+   },
+   "distancia_m": 6
+  },
+  {
+   "id": "cesvi-58c038ffdf",
+   "fuente": "prueba",
+   "calles": [
+    "Avenida José López Portillo",
+    "avenida Las Torres"
+   ],
+   "cruces_reales": 2,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (2)"
+  },
+  {
+   "id": "cesvi-5cb23d1cfd",
+   "fuente": "prueba",
+   "calles": [
+    "avenida La Morena",
+    "avenida La Quemada. La"
+   ],
+   "cruces_reales": null,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-5dd2c6df58",
+   "fuente": "prueba",
+   "calles": [
+    "Avenida Valle de Guadiana",
+    "Avenida Carlos Hank González"
+   ],
+   "cruces_reales": 20,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (5)"
+  },
+  {
+   "id": "cesvi-639ce6d42f",
+   "fuente": "prueba",
+   "calles": [
+    "avenida Morones Prieto",
+    "calle Zaragoza"
+   ],
+   "cruces_reales": 4,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (4)"
+  },
+  {
+   "id": "cesvi-6400c99448",
+   "fuente": "prueba",
+   "calles": [
+    "avenida Arrollo",
+    "Carretera Federal Libre"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-65daf4b688",
+   "fuente": "prueba",
+   "calles": [
+    "calle Hacienda Mazatepec",
+    "calle Sauzales"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.2920634,
+    "lon": -99.1106625
+   },
+   "lugar_buscado": {
+    "lat": 19.292076,
+    "lon": -99.110726
+   },
+   "real_cercano": {
+    "lat": 19.292076,
+    "lon": -99.110726
+   },
+   "distancia_m": 7
+  },
+  {
+   "id": "cesvi-662e6d9423",
+   "fuente": "prueba",
+   "calles": [
+    "Av. General Lázaro Cárdenas",
+    "calle Juan de Dios Batís"
+   ],
+   "cruces_reales": null,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-6c34c6ac79",
+   "fuente": "prueba",
+   "calles": [
+    "Avenida San Jerónimo",
+    "Avenida San Bernabé"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3070739,
+    "lon": -99.2478054
+   },
+   "lugar_buscado": {
+    "lat": 19.307074,
+    "lon": -99.247805
+   },
+   "real_cercano": {
+    "lat": 19.307074,
+    "lon": -99.247805
+   },
+   "distancia_m": 0
+  },
+  {
+   "id": "cesvi-6ca24dcfce",
+   "fuente": "prueba",
+   "calles": [
+    "Anillo Periférico",
+    "Avenida del Rosal"
+   ],
+   "cruces_reales": null,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-6dbc809e80",
+   "fuente": "prueba",
+   "calles": [
+    "calle Famosa",
+    "Av. Nogalar"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 25.7264064,
+    "lon": -100.2983442
+   },
+   "lugar_buscado": {
+    "lat": 25.726406,
+    "lon": -100.298344
+   },
+   "real_cercano": {
+    "lat": 25.726406,
+    "lon": -100.298344
+   },
+   "distancia_m": 0
+  },
+  {
+   "id": "cesvi-6f70c56733",
+   "fuente": "prueba",
+   "calles": [
+    "carretera Tuxpan-Tamiahua",
+    "calzada de 7.3"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-736d92094b",
+   "fuente": "prueba",
+   "calles": [
+    "AVENIDA REFORMA",
+    "NICOLAS BRAVO"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 18.8419713,
+    "lon": -98.9407316
+   },
+   "lugar_buscado": {
+    "lat": 18.841959,
+    "lon": -98.940699
+   },
+   "real_cercano": {
+    "lat": 18.841959,
+    "lon": -98.940699
+   },
+   "distancia_m": 4
+  },
+  {
+   "id": "cesvi-7377724258",
+   "fuente": "prueba",
+   "calles": [
+    "Avenida Bosques de la Reforma",
+    "Bosques de Maple"
+   ],
+   "cruces_reales": null,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-73ea769d2f",
+   "fuente": "prueba",
+   "calles": [
+    "calle Libertad",
+    "calle Matamoros"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-78d98fd926",
+   "fuente": "prueba",
+   "calles": [
+    "kilómetro 10",
+    "Texca"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-7a3e5a6055",
+   "fuente": "prueba",
+   "calles": [
+    "carretera principal Bariometo",
+    "las vias a navolato"
+   ],
+   "cruces_reales": null,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-7d5dbd5fdb",
+   "fuente": "prueba",
+   "calles": [
+    "Paseo de los Leones",
+    "Puerta de Hierro"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 25.7437084,
+    "lon": -100.4207785
+   },
+   "lugar_buscado": {
+    "lat": 25.743742,
+    "lon": -100.420558
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-7f1fa3c962",
+   "fuente": "prueba",
+   "calles": [
+    "calle Héctor Berlioz",
+    "Calzada Vallejo"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4595397,
+    "lon": -99.1399089
+   },
+   "lugar_buscado": {
+    "lat": 19.459528,
+    "lon": -99.139839
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-8022b514b7",
+   "fuente": "prueba",
+   "calles": [
+    "Circuito Interior",
+    "Insurgentes Norte"
+   ],
+   "cruces_reales": null,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (2)"
+  },
+  {
+   "id": "cesvi-818c2eb6d6",
+   "fuente": "prueba",
+   "calles": [
+    "calle Crater Atlas",
+    "Mar de los Humores"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.2843087,
+    "lon": -99.0011677
+   },
+   "lugar_buscado": {
+    "lat": 19.284309,
+    "lon": -99.001168
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-840953e0be",
+   "fuente": "prueba",
+   "calles": [
+    "avenida Carlos Canseco La Marina",
+    "Cerro de la Cierpe"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-85894938e3",
+   "fuente": "prueba",
+   "calles": [
+    "calle Celerino Navarro",
+    "calle Arnulfo González"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 20.7232739,
+    "lon": -103.3220539
+   },
+   "lugar_buscado": {
+    "lat": 20.723274,
+    "lon": -103.322054
+   },
+   "real_cercano": {
+    "lat": 20.723274,
+    "lon": -103.322054
+   },
+   "distancia_m": 0
+  },
+  {
+   "id": "cesvi-87cc4e2767",
+   "fuente": "prueba",
+   "calles": [
+    "calle Jalisco",
+    "calle Josefa Ortiz de Domínguez"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 24.1385201,
+    "lon": -110.3220072
+   },
+   "lugar_buscado": {
+    "lat": 24.13852,
+    "lon": -110.322007
+   },
+   "real_cercano": {
+    "lat": 24.13852,
+    "lon": -110.322007
+   },
+   "distancia_m": 0
+  },
+  {
+   "id": "cesvi-8dfd2f1c6f",
+   "fuente": "prueba",
+   "calles": [
+    "Av. Ejercito Nacional",
+    "Ferrocarril de Cuernavaca"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4387074,
+    "lon": -99.2059628
+   },
+   "lugar_buscado": {
+    "lat": 19.43858,
+    "lon": -99.205918
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-8edf93b5c6",
+   "fuente": "prueba",
+   "calles": [
+    "Avenida Periférico Sur",
+    "Avenida Santa Teresa"
+   ],
+   "cruces_reales": null,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-923e562683",
+   "fuente": "prueba",
+   "calles": [
+    "Calzada de Tlalpan",
+    "Viaducto"
+   ],
+   "cruces_reales": null,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-94c84e00ab",
+   "fuente": "prueba",
+   "calles": [
+    "calle San Gaspar",
+    "prolongación Mascota"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 20.6769238,
+    "lon": -103.2612581
+   },
+   "lugar_buscado": {
+    "lat": 20.676924,
+    "lon": -103.261258
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-99ae88f8e3",
+   "fuente": "prueba",
+   "calles": [
+    "calle Alfonso Zaragoza",
+    "calle Isidro Barrón"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-9ab47f7f37",
+   "fuente": "prueba",
+   "calles": [
+    "Avenida Doctor Mora",
+    "[NUMERO]"
+   ],
+   "cruces_reales": 0,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 24.8144484,
+    "lon": -107.3740636
+   },
+   "lugar_buscado": {
+    "lat": 24.814581,
+    "lon": -107.3732807
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-9b2fc2ffc7",
+   "fuente": "prueba",
+   "calles": [
+    "MALECÓN",
+    "MÉNDEZ"
+   ],
+   "cruces_reales": null,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (2)"
+  },
+  {
+   "id": "cesvi-9cb20db594",
+   "fuente": "prueba",
+   "calles": [
+    "calle Río Mocorito",
+    "calle Jesús Andrade"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-a29030f88d",
+   "fuente": "prueba",
+   "calles": [
+    "avenida 608",
+    "estación del metro Bosque de Aragón"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-a4177250d4",
+   "fuente": "prueba",
+   "calles": [
+    "calle Chopos",
+    "carretera Lechería Texcoco"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-a514a9a881",
+   "fuente": "prueba",
+   "calles": [
+    "calle Chopo",
+    "calle Piru"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 18.8944867,
+    "lon": -99.1676275
+   },
+   "lugar_buscado": {
+    "lat": 18.894487,
+    "lon": -99.167627
+   },
+   "real_cercano": {
+    "lat": 18.894487,
+    "lon": -99.167627
+   },
+   "distancia_m": 0
+  },
+  {
+   "id": "cesvi-a7570ee749",
+   "fuente": "prueba",
+   "calles": [
+    "calle Gómez Marín",
+    "calle Camperos"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-a8bf6a49ac",
+   "fuente": "prueba",
+   "calles": [
+    "calle España",
+    "calle Irlanda"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 26.0482334,
+    "lon": -98.3754837
+   },
+   "lugar_buscado": {
+    "lat": 26.048233,
+    "lon": -98.375484
+   },
+   "real_cercano": {
+    "lat": 26.048233,
+    "lon": -98.375484
+   },
+   "distancia_m": 0
+  },
+  {
+   "id": "cesvi-a8e0a03cfd",
+   "fuente": "prueba",
+   "calles": [
+    "carretera Ejido Tierra",
+    "carretera Quila"
+   ],
+   "cruces_reales": null,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-ab666b294f",
+   "fuente": "prueba",
+   "calles": [
+    "Av. Poder Legislativo",
+    "calle Apolo XI"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 18.9462548,
+    "lon": -99.2338566
+   },
+   "lugar_buscado": {
+    "lat": 18.946248,
+    "lon": -99.233921
+   },
+   "real_cercano": {
+    "lat": 18.946248,
+    "lon": -99.233921
+   },
+   "distancia_m": 7
+  },
+  {
+   "id": "cesvi-af71476614",
+   "fuente": "prueba",
+   "calles": [
+    "avenida Insurgentes Norte",
+    "Eje 2 Norte"
+   ],
+   "cruces_reales": null,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (5)"
+  },
+  {
+   "id": "cesvi-b37686e37c",
+   "fuente": "prueba",
+   "calles": [
+    "calle 16 de Septiembre",
+    "calle María"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 20.3383907,
+    "lon": -102.2893491
+   },
+   "lugar_buscado": {
+    "lat": 20.338391,
+    "lon": -102.289349
+   },
+   "real_cercano": {
+    "lat": 20.338391,
+    "lon": -102.289349
+   },
+   "distancia_m": 0
+  },
+  {
+   "id": "cesvi-b641fb6657",
+   "fuente": "prueba",
+   "calles": [
+    "Avenida Revolución",
+    "Mixcoac"
+   ],
+   "cruces_reales": null,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (5)"
+  },
+  {
+   "id": "cesvi-b9f5a5ca1f",
+   "fuente": "prueba",
+   "calles": [
+    "carretera Poza Rica",
+    "Avenida Adolfo López Mateos"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 20.495414,
+    "lon": -97.4703592
+   },
+   "lugar_buscado": {
+    "lat": 20.495414,
+    "lon": -97.470359
+   },
+   "real_cercano": {
+    "lat": 20.495414,
+    "lon": -97.470359
+   },
+   "distancia_m": 0
+  },
+  {
+   "id": "cesvi-be27388d4a",
+   "fuente": "prueba",
+   "calles": [
+    "calle Cero",
+    "calle C"
+   ],
+   "cruces_reales": 1,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-bf10fcba2f",
+   "fuente": "prueba",
+   "calles": [
+    "Avenida 9",
+    "calle 6"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 16.788195,
+    "lon": -93.102951
+   },
+   "lugar_buscado": {
+    "lat": 16.788195,
+    "lon": -93.102951
+   },
+   "real_cercano": {
+    "lat": 16.788195,
+    "lon": -93.102951
+   },
+   "distancia_m": 0
+  },
+  {
+   "id": "cesvi-c0bc4df135",
+   "fuente": "prueba",
+   "calles": [
+    "Avenida Gran Canal",
+    "calle Oriente 157"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4847326,
+    "lon": -99.0892393
+   },
+   "lugar_buscado": {
+    "lat": 19.484674917378552,
+    "lon": -99.08909937660354
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-c3a461721a",
+   "fuente": "prueba",
+   "calles": [
+    "avenida de la Reforma",
+    "calle Juan Navarrete"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-c6269d800e",
+   "fuente": "prueba",
+   "calles": [
+    "Avenida Revolución",
+    "Avenida José Martí"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4033118,
+    "lon": -99.1846537
+   },
+   "lugar_buscado": {
+    "lat": 19.403312,
+    "lon": -99.184654
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-c97f0058a8",
+   "fuente": "prueba",
+   "calles": [
+    "calle Amapola",
+    "avenida Paseo Tulipanes"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-c9ea862641",
+   "fuente": "prueba",
+   "calles": [
+    "avenida Gustavo Baz",
+    "calle Lázaro Cárdenas"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-cb04fdb41b",
+   "fuente": "prueba",
+   "calles": [
+    "Av. Revolución",
+    "calle Bayoneta"
+   ],
+   "cruces_reales": null,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-cd894debf8",
+   "fuente": "prueba",
+   "calles": [
+    "Viaducto Miguel Alemán",
+    "Avenida Patriotismo"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3995289,
+    "lon": -99.1801862
+   },
+   "lugar_buscado": {
+    "lat": 19.39968,
+    "lon": -99.180132
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-cf708e9fed",
+   "fuente": "prueba",
+   "calles": [
+    "Periférico Sur",
+    "avenida Viaducto"
+   ],
+   "cruces_reales": null,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-d0c7ed3ad8",
+   "fuente": "prueba",
+   "calles": [
+    "Guerrero",
+    "Rayón"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 29.3209959,
+    "lon": -100.9322802
+   },
+   "lugar_buscado": {
+    "lat": 29.320996,
+    "lon": -100.93228
+   },
+   "real_cercano": {
+    "lat": 29.320996,
+    "lon": -100.93228
+   },
+   "distancia_m": 0
+  },
+  {
+   "id": "cesvi-d2c5cede7c",
+   "fuente": "prueba",
+   "calles": [
+    "Boulevard Rotarismo",
+    "calzada"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-d4283db9c4",
+   "fuente": "prueba",
+   "calles": [
+    "Avenida Eje Central",
+    "Viaducto Miguel Alemán"
+   ],
+   "cruces_reales": null,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (2)"
+  },
+  {
+   "id": "cesvi-d4b38174d1",
+   "fuente": "prueba",
+   "calles": [
+    "avenida Manuel González",
+    "Eje 2 Norte"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4531839,
+    "lon": -99.1313459
+   },
+   "lugar_buscado": {
+    "lat": 19.4531839,
+    "lon": -99.1313459
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-d646b64594",
+   "fuente": "prueba",
+   "calles": [
+    "Avenida 8",
+    "calle 2-A"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3653485,
+    "lon": -99.0520979
+   },
+   "lugar_buscado": {
+    "lat": 19.3653485,
+    "lon": -99.0520979
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-d84907cf47",
+   "fuente": "prueba",
+   "calles": [
+    "boulevard Paseo del Laurel",
+    "boulevard Paseo del Roble"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 24.8290069,
+    "lon": -107.4549023
+   },
+   "lugar_buscado": {
+    "lat": 24.829039,
+    "lon": -107.454866
+   },
+   "real_cercano": {
+    "lat": 24.829039,
+    "lon": -107.454866
+   },
+   "distancia_m": 5
+  },
+  {
+   "id": "cesvi-d8a73cd0be",
+   "fuente": "prueba",
+   "calles": [
+    "Circuito Interior",
+    "Calzada de los Gallos"
+   ],
+   "cruces_reales": null,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-d950dda14b",
+   "fuente": "prueba",
+   "calles": [
+    "calle Luna",
+    "calle Neptuno"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.337416,
+    "lon": -99.1032896
+   },
+   "lugar_buscado": {
+    "lat": 19.337416,
+    "lon": -99.10329
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-def04a2cc3",
+   "fuente": "prueba",
+   "calles": [
+    "carretera Texcoco-Lechería",
+    "calle Puebla"
+   ],
+   "cruces_reales": null,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-df473476cf",
+   "fuente": "prueba",
+   "calles": [
+    "Carretera Federal Guadalajara-Saltillo",
+    "Guadalupe"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 21.4210391,
+    "lon": -103.1116784
+   },
+   "lugar_buscado": {
+    "lat": 21.4198785,
+    "lon": -103.1116245
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-e984ff56d3",
+   "fuente": "prueba",
+   "calles": [
+    "Avenida Universidad",
+    "Eje 10"
+   ],
+   "cruces_reales": null,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "cesvi-ebb5c029a8",
+   "fuente": "prueba",
+   "calles": [
+    "Avenida Hidalgo",
+    "Privada de Otates"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 22.2690954,
+    "lon": -97.8738006
+   },
+   "lugar_buscado": {
+    "lat": 22.269096,
+    "lon": -97.873794
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-ec1c390b10",
+   "fuente": "prueba",
+   "calles": [
+    "Boulevard Independencia",
+    "Calzada Abastos"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 25.5712593,
+    "lon": -103.4202368
+   },
+   "lugar_buscado": {
+    "lat": 25.571309,
+    "lon": -103.420283
+   },
+   "real_cercano": {
+    "lat": 25.571309,
+    "lon": -103.420283
+   },
+   "distancia_m": 7
+  },
+  {
+   "id": "cesvi-f290a77272",
+   "fuente": "prueba",
+   "calles": [
+    "calle África",
+    "calle China"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4445071,
+    "lon": -99.094539
+   },
+   "lugar_buscado": {
+    "lat": 19.444472,
+    "lon": -99.094522
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-f7779cef54",
+   "fuente": "prueba",
+   "calles": [
+    "calle Santísima",
+    "Eje 1 Cuahutemoc"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3671556,
+    "lon": -99.1621447
+   },
+   "lugar_buscado": {
+    "lat": 19.367143,
+    "lon": -99.162083
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-f85560ba6c",
+   "fuente": "prueba",
+   "calles": [
+    "Periférico",
+    "Viaducto"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4524196,
+    "lon": -99.2198557
+   },
+   "lugar_buscado": {
+    "lat": 19.452423,
+    "lon": -99.219981
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-fa403f1905",
+   "fuente": "prueba",
+   "calles": [
+    "Avenida La Turba",
+    "Calle Medusa"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.2899443,
+    "lon": -99.0560382
+   },
+   "lugar_buscado": {
+    "lat": 19.289904,
+    "lon": -99.056068
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "cesvi-fb43c646b6",
+   "fuente": "prueba",
+   "calles": [
+    "vía Gustavo Baz",
+    "Pirúl"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.5180852,
+    "lon": -99.2135518
+   },
+   "lugar_buscado": {
+    "lat": 19.518085,
+    "lon": -99.213552
+   },
+   "real_cercano": {
+    "lat": 19.518085,
+    "lon": -99.213552
+   },
+   "distancia_m": 0
+  },
+  {
+   "id": "cesvi-fc5f48e946",
+   "fuente": "prueba",
+   "calles": [
+    "calle Revolución",
+    "calle Reforma"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 25.580891,
+    "lon": -108.4611478
+   },
+   "lugar_buscado": {
+    "lat": 25.580891,
+    "lon": -108.461148
+   },
+   "real_cercano": {
+    "lat": 25.580891,
+    "lon": -108.461148
+   },
+   "distancia_m": 0
+  },
+  {
+   "id": "cesvi-feb7aaa0e1",
+   "fuente": "prueba",
+   "calles": [
+    "Boulevard Centenario",
+    "Paseo Los Mochis"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 25.7871582,
+    "lon": -109.0079644
+   },
+   "lugar_buscado": {
+    "lat": 25.7872044,
+    "lon": -109.0080445
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "aud-01-alcance-tollocan",
+   "fuente": "nuevas",
+   "calles": [
+    "Paseo Tollocan",
+    "Avenida Isidro Fabela"
+   ],
+   "cruces_reales": 2,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (2)"
+  },
+  {
+   "id": "aud-02-lateral-tecnologico-lastorres",
+   "fuente": "nuevas",
+   "calles": [
+    "Avenida Tecnológico",
+    "Avenida Solidaridad Las Torres"
+   ],
+   "cruces_reales": 2,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (2)"
+  },
+  {
+   "id": "aud-03-atropello-pinosuarez-lastorres",
+   "fuente": "nuevas",
+   "calles": [
+    "Avenida Pino Suárez",
+    "Avenida Solidaridad Las Torres"
+   ],
+   "cruces_reales": null,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (2)"
+  },
+  {
+   "id": "aud-06-carambola3-tecnologico",
+   "fuente": "nuevas",
+   "calles": [
+    "Avenida Tecnológico",
+    "Avenida Estado de México"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.250431,
+    "lon": -99.5775985
+   },
+   "lugar_buscado": {
+    "lat": 19.250403,
+    "lon": -99.577665
+   },
+   "real_cercano": {
+    "lat": 19.250403,
+    "lon": -99.577665
+   },
+   "distancia_m": 8
+  },
+  {
+   "id": "aud-08-atropello-tollocan-carranza",
+   "fuente": "nuevas",
+   "calles": [
+    "Paseo Tollocan",
+    "calle Jesús Carranza"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.272857,
+    "lon": -99.6585034
+   },
+   "lugar_buscado": {
+    "lat": 19.273009,
+    "lon": -99.658483
+   },
+   "real_cercano": {
+    "lat": 19.273009,
+    "lon": -99.658483
+   },
+   "distancia_m": 17
+  },
+  {
+   "id": "aud-09-ciclista-tecnologico",
+   "fuente": "nuevas",
+   "calles": [
+    "Avenida Tecnológico",
+    "Avenida Estado de México"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.250431,
+    "lon": -99.5775985
+   },
+   "lugar_buscado": {
+    "lat": 19.250403,
+    "lon": -99.577665
+   },
+   "real_cercano": {
+    "lat": 19.250403,
+    "lon": -99.577665
+   },
+   "distancia_m": 8
+  },
+  {
+   "id": "aud-11-barrera-puente-tollocan-tecnologico",
+   "fuente": "nuevas",
+   "calles": [
+    "Paseo Tollocan",
+    "Avenida Tecnológico"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.2862201,
+    "lon": -99.5733843
+   },
+   "lugar_buscado": {
+    "lat": 19.286223,
+    "lon": -99.573452
+   },
+   "real_cercano": {
+    "lat": 19.286223,
+    "lon": -99.573452
+   },
+   "distancia_m": 7
+  },
+  {
+   "id": "aud-13-moto-vuelta-izquierda-tecnologico",
+   "fuente": "nuevas",
+   "calles": [
+    "Avenida Tecnológico",
+    "Avenida Estado de México"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.250431,
+    "lon": -99.5775985
+   },
+   "lugar_buscado": {
+    "lat": 19.250403,
+    "lon": -99.577665
+   },
+   "real_cercano": {
+    "lat": 19.250403,
+    "lon": -99.577665
+   },
+   "distancia_m": 8
+  },
+  {
+   "id": "aud-15-carambola4-tollocan-lluvia",
+   "fuente": "nuevas",
+   "calles": [
+    "Paseo Tollocan",
+    "Avenida Pino Suárez"
+   ],
+   "cruces_reales": 3,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (3)"
+  },
+  {
+   "id": "aud-16-atropello-camion-pinosuarez",
+   "fuente": "nuevas",
+   "calles": [
+    "Paseo Tollocan",
+    "Avenida Pino Suárez"
+   ],
+   "cruces_reales": 3,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (3)"
+  },
+  {
+   "id": "aud-19-glorieta-insurgentes",
+   "fuente": "nuevas",
+   "calles": [
+    "Glorieta de Insurgentes",
+    "Avenida Chapultepec"
+   ],
+   "cruces_reales": null,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (5)"
+  },
+  {
+   "id": "aud-20-glorieta-cibeles-moto",
+   "fuente": "nuevas",
+   "calles": [
+    "Glorieta de las Cibeles",
+    "calle Durango"
+   ],
+   "cruces_reales": null,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "aud-21-glorieta-angel-ciclista",
+   "fuente": "nuevas",
+   "calles": [
+    "glorieta del Ángel",
+    "Paseo de la Reforma"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "aud-22-lateral-insurgentes-mixcoac",
+   "fuente": "nuevas",
+   "calles": [
+    "Avenida de los Insurgentes Sur",
+    "Avenida Río Mixcoac"
+   ],
+   "cruces_reales": 0,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (2)"
+  },
+  {
+   "id": "aud-23-atropello-autobus-insurgentes-quevedo",
+   "fuente": "nuevas",
+   "calles": [
+    "Avenida de los Insurgentes Sur",
+    "Avenida Miguel Ángel de Quevedo"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3491755,
+    "lon": -99.1870236
+   },
+   "lugar_buscado": {
+    "lat": 19.349193,
+    "lon": -99.186932
+   },
+   "real_cercano": {
+    "lat": 19.349193,
+    "lon": -99.186932
+   },
+   "distancia_m": 10
+  },
+  {
+   "id": "aud-28-atropello-camion-eje-central",
+   "fuente": "nuevas",
+   "calles": [
+    "Eje Central Lázaro Cárdenas",
+    "Avenida Juárez"
+   ],
+   "cruces_reales": null,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4342374,
+    "lon": -99.1408512
+   },
+   "lugar_buscado": {
+    "lat": 19.434237,
+    "lon": -99.140851
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "aud-29-vuelta-izquierda-universidad-quevedo",
+   "fuente": "nuevas",
+   "calles": [
+    "Avenida Universidad",
+    "Avenida Miguel Ángel de Quevedo"
+   ],
+   "cruces_reales": 2,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (2)"
+  },
+  {
+   "id": "aud-31-alcance-puente-churubusco",
+   "fuente": "nuevas",
+   "calles": [
+    "Avenida Río Churubusco",
+    "Circuito Interior"
+   ],
+   "cruces_reales": 118,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (5)"
+  },
+  {
+   "id": "aud-32-volcadura-viaducto",
+   "fuente": "nuevas",
+   "calles": [
+    "Viaducto Miguel Alemán",
+    "Avenida de los Insurgentes Sur"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3999406,
+    "lon": -99.1705553
+   },
+   "lugar_buscado": {
+    "lat": 19.399941,
+    "lon": -99.170555
+   },
+   "real_cercano": {
+    "lat": 19.399941,
+    "lon": -99.170555
+   },
+   "distancia_m": 0
+  },
+  {
+   "id": "aud-33-alcance-bajada-reforma-lomas",
+   "fuente": "nuevas",
+   "calles": [
+    "Paseo de la Reforma",
+    "Avenida Prado Norte"
+   ],
+   "cruces_reales": 1,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.4269637,
+    "lon": -99.2057928
+   },
+   "lugar_buscado": {
+    "lat": 19.426908,
+    "lon": -99.205872
+   },
+   "real_cercano": {
+    "lat": 19.426908,
+    "lon": -99.205872
+   },
+   "distancia_m": 10
+  },
+  {
+   "id": "aud-35-arbol-constituyentes-lluvia",
+   "fuente": "nuevas",
+   "calles": [
+    "Avenida Constituyentes",
+    "Segunda Sección del Bosque de Chapultepec"
+   ],
+   "cruces_reales": 0,
+   "resultado": "sin_lugar",
+   "motivo": "sin lugar"
+  },
+  {
+   "id": "aud-38-alcance-barrera-circuito-reforma",
+   "fuente": "nuevas",
+   "calles": [
+    "Circuito Interior",
+    "Avenida Melchor Ocampo"
+   ],
+   "cruces_reales": 0,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (5)"
+  },
+  {
+   "id": "aud-39-atropello-autobus-tlalpan-ermita",
+   "fuente": "nuevas",
+   "calles": [
+    "Calzada de Tlalpan",
+    "Calzada Ermita Iztapalapa"
+   ],
+   "cruces_reales": 0,
+   "resultado": "propone",
+   "propuesto": {
+    "lat": 19.3599919,
+    "lon": -99.1431424
+   },
+   "lugar_buscado": {
+    "lat": 19.36029515009825,
+    "lon": -99.14332393035936
+   },
+   "distancia_m": null
+  },
+  {
+   "id": "aud-41-atropello-vuelta-derecha-insurgentes-mixcoac",
+   "fuente": "nuevas",
+   "calles": [
+    "Avenida de los Insurgentes Sur",
+    "Avenida Río Mixcoac"
+   ],
+   "cruces_reales": 0,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (2)"
+  },
+  {
+   "id": "aud-42-lateral-barrera-churubusco",
+   "fuente": "nuevas",
+   "calles": [
+    "Avenida Río Churubusco",
+    "Circuito Interior"
+   ],
+   "cruces_reales": 118,
+   "resultado": "pregunta",
+   "motivo": "varios cruces (5)"
+  }
+ ]
+}

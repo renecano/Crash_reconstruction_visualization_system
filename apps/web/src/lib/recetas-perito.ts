@@ -17,10 +17,11 @@ export const RECETAS_PERITO: readonly (RecetaPerito & { cifra: string })[] = [
     clave: "alcance-deformacion",
     quedo: {
       // «El vehículo A quedó en el carril de baja velocidad, 9 metros adelante del inicio de los restos».
-      NP300: { de: "NP300", adelante: 9 },
+      NP300: "narracion",
       // «el vehículo B quedó sobre el acotamiento, 21 metros adelante»: del centro del carril de 3.50 m
       // al centro del acotamiento de 2.50 m hay 3.00 m, a la derecha.
-      Vento: { de: "Vento", adelante: 21, izquierda: -3 },
+      // «sobre el acotamiento»: 3 m a su derecha, como lo lee La escena (supuesto).
+      Vento: "narracion",
     },
     cifra: "V1",
   },
@@ -30,9 +31,10 @@ export const RECETAS_PERITO: readonly (RecetaPerito & { cifra: string })[] = [
       // «El vehículo A quedó sobre el área de restos» («en el área del primer contacto»).
       Ranger: "junto",
       // «el vehículo B, en el mismo carril, 5 metros adelante del área de restos».
-      Corolla: { de: "Corolla", adelante: 5 },
+      // La escena lo lee de la narración desde el 2026-11-27 y el perito lo acepta.
+      Corolla: "narracion",
       // «y el vehículo C, 10 metros adelante del área de restos».
-      Aveo: { de: "Aveo", adelante: 10 },
+      Aveo: "narracion",
     },
     cifra: "V1",
   },

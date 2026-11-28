@@ -57,7 +57,8 @@ const ENV = {
  */
 let ultimaRed = 0;
 const fetchGuardado = (async (input: URL | string, init?: RequestInit) => {
-  const url = String(input);
+  // Una consulta POST (los cruces de Overpass, #388) se guarda por su cuerpo: la URL es la misma.
+  const url = init?.body ? `${String(input)} ${String(init.body)}` : String(input);
   const ruta = join(
     CACHE,
     "http",
@@ -73,6 +74,10 @@ const fetchGuardado = (async (input: URL | string, init?: RequestInit) => {
   ultimaRed = Date.now();
   const r = await fetch(input, init);
   if (r.status !== 200) return r;
+  // Una respuesta de Overpass sin `elements` (su aviso de tiempo agotado) no se guarda.
+  if (init?.body && !/"elements"/.test(await r.clone().text())) return r;
+  if (init?.body && /"remark"\s*:\s*"[^"]*(?:error|timed out)/i.test(await r.clone().text()))
+    return r;
   const texto = await r.text();
   mkdirSync(dirname(ruta), { recursive: true });
   writeFileSync(ruta, texto);
