@@ -171,3 +171,53 @@ describe("buscarReferencia, con la interfaz de René (red inyectada, respuestas 
     expect(r).toMatchObject({ encontrado: false, aplica: true });
   });
 });
+
+describe("«la colonia X»: una colonia, nunca una calle con ese nombre (René, 2026-11-28, caso 1)", () => {
+  const narracion =
+    "El hecho se ubica sobre Paseo de los Matlatzincas, a la altura de la colonia Ciprés, en Toluca, Estado de México.";
+
+  it("lee la colonia y la calle", () => {
+    expect(leerReferencia(narracion)).toEqual({
+      tipo: "lugar",
+      nombre: "Ciprés",
+      calle: "Paseo de los Matlatzincas",
+      colonia: true,
+    });
+  });
+
+  it("si el mapa solo tiene calles Ciprés, no se encontró (y no se consulta Overpass)", async () => {
+    let consultas = 0;
+    const p = await ubicarReferencia(narracion, "Toluca, Estado de México", {
+      buscar: async () => [
+        {
+          category: "highway",
+          type: "residential",
+          name: "Calle Ciprés",
+          lat: 19.3452805,
+          lon: -99.6829827,
+        },
+        {
+          category: "highway",
+          type: "residential",
+          name: "Privada Ciprés",
+          lat: 19.2784709,
+          lon: -99.6618347,
+        },
+      ],
+      overpass: async () => {
+        consultas++;
+        return { elements: [] };
+      },
+    });
+    expect(p).toBeNull();
+    expect(consultas).toBe(0);
+  });
+
+  it("la consulta de calles pide solo la calle narrada, por su nombre", () => {
+    const q = consultaCalles({ lat: 19.29, lon: -99.68 }, "Paseo de los Matlatzincas");
+    expect(q).toContain(
+      '["highway"]["name"~"m[aáÁA]tl[aáÁA]tz[iíÍI][nñÑN]c[aáÁA]s",i];out tags geom;',
+    );
+    expect(consultaCalles({ lat: 19.29, lon: -99.68 })).toContain('["highway"]["name"];');
+  });
+});

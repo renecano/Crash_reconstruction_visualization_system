@@ -5,14 +5,20 @@
  * comparten las dos calles dentro de la caja del municipio: esos son sus cruces, todos. Una avenida de
  * dos cuerpos da dos o cuatro nodos por cruce: se juntan los que quedan a menos de `JUNTAR_M`.
  */
-import { OVERPASS_INSTANCES, USER_AGENT } from "./osm";
+import { overpassConRelevo } from "./overpass-relevo";
 
 /** Cuántos cruces se ofrecen al perito como mucho (los más cercanos al centro del municipio). */
 export const CRUCES_A_OFRECER = 5;
 /** m: los nodos de un mismo cruce (los cuerpos de una avenida) quedan a menos de esto. */
 export const JUNTAR_M = 40;
-/** El tiempo total que se le da a Overpass (s). */
-const ESPERA_TOTAL_S = 30;
+/**
+ * El tiempo total para las dos consultas de un cruce (s), con sus réplicas y su reintento: un solo tope,
+ * dentro de los 60 s de la función. «El mapa no respondió» detiene la búsqueda (René, 2026-11-28), así
+ * que el cruce puede usar casi todo el tiempo.
+ */
+const ESPERA_TOTAL_S = 45;
+/** Lo que se le pide a Overpass por consulta (su `[timeout:]`, en el servidor de Overpass). */
+const TIMEOUT_CONSULTA_S = 30;
 
 const TIPOS = String.raw`(?:avenida|avda\.?|av\.?|calle|c\.|calzada|calz\.?|boulevard|blvd\.?|bulevar|paseo|prolongaci[oó]n|prol\.?|privada|priv\.?|andador|cerrada|cda\.?|circuito|carretera|camino|libramiento|glorieta|callej[oó]n|retorno)`;
 
@@ -196,7 +202,7 @@ export function consultaCruces(
 ): string {
   const bb = `${caja.sur},${caja.oeste},${caja.norte},${caja.este}`;
   return [
-    `[out:json][timeout:${ESPERA_TOTAL_S}];`,
+    `[out:json][timeout:${TIMEOUT_CONSULTA_S}];`,
     `way["highway"][~"${CLAVES_NOMBRE}"~"${a}",i](${bb})->.a;`,
     `way["highway"][~"${CLAVES_NOMBRE}"~"${b}",i](${bb})->.b;`,
     `node(w.a)(w.b);`,
@@ -237,7 +243,7 @@ export function consultaGeometria(
 ): string {
   const bb = `${caja.sur},${caja.oeste},${caja.norte},${caja.este}`;
   return [
-    `[out:json][timeout:${ESPERA_TOTAL_S}];`,
+    `[out:json][timeout:${TIMEOUT_CONSULTA_S}];`,
     `way["highway"][~"${CLAVES_NOMBRE}"~"${a}",i](${bb})->.a;`,
     `way["highway"][~"${CLAVES_NOMBRE}"~"${b}",i](${bb})->.b;`,
     `(.a; .b;);`,
@@ -347,44 +353,17 @@ async function pedirOverpass(
     }[]
   | null
 > {
-  const body = new URLSearchParams({ data: consulta });
-  // Dos vueltas por las instancias, con una pausa entre ellas: Overpass pide esperar y reintentar
-  // cuando está saturado (502 «at capacity», René 2026-11-27).
-  const intentos = [...OVERPASS_INSTANCES, ...OVERPASS_INSTANCES];
-  for (let k = 0; k < intentos.length; k++) {
-    const { url, esperaS } = intentos[k]!;
-    if (k === OVERPASS_INSTANCES.length && fin - Date.now() > 4000)
-      await new Promise((r) => setTimeout(r, 2000));
-    const queda = fin - Date.now();
-    if (queda <= 1000) break;
-    try {
-      const res = await fetcher(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": USER_AGENT },
-        body,
-        signal: AbortSignal.timeout(Math.min(esperaS * 1000, queda)),
-      });
-      if (!res.ok) continue;
-      const d = (await res.json()) as {
-        elements?: {
-          type: string;
-          lat?: number;
-          lon?: number;
-          tags?: Record<string, string>;
-          geometry?: { lat: number; lon: number }[];
-        }[];
-        remark?: string;
-      };
-      // Sin `elements` no es una respuesta de Overpass (un error, una página): la siguiente instancia.
-      if (!Array.isArray(d?.elements)) continue;
-      // Tiempo agotado o memoria: Overpass responde `elements: []` con su `remark`; no es «no se cruzan».
-      if (d.remark && /error|timed out|out of memory/i.test(d.remark)) continue;
-      return d.elements;
-    } catch {
-      // La siguiente instancia.
-    }
-  }
-  return null;
+  // Con relevo entre las réplicas y dos vueltas (René, 2026-11-28): ver `overpass-relevo`.
+  const d = await overpassConRelevo<{
+    elements: {
+      type: string;
+      lat?: number;
+      lon?: number;
+      tags?: Record<string, string>;
+      geometry?: { lat: number; lon: number }[];
+    }[];
+  }>(consulta, fetcher, fin);
+  return d?.elements ?? null;
 }
 
 /**
@@ -412,12 +391,8 @@ export async function crucesPorNombre(
       : [],
   );
   if (nodos.length) return crucesDeNodos(nodos, centro).slice(0, tope);
-  // Sin nodo común: donde las vías pasan a menos de 20 m (con su propio tiempo, la primera ya respondió).
-  const vias = await pedirOverpass(
-    consultaGeometria(a, b, caja),
-    fetcher,
-    Date.now() + ESPERA_TOTAL_S * 1000,
-  );
+  // Sin nodo común: donde las vías pasan a menos de 20 m, con lo que queda del mismo tope.
+  const vias = await pedirOverpass(consultaGeometria(a, b, caja), fetcher, fin);
   if (!vias) return null;
   return crucesDeNodos(crucesPorCercania(vias, a, b), centro).slice(0, tope);
 }
