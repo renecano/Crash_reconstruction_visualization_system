@@ -209,51 +209,7 @@ namespace Croquis.Core
             /// Los pedazos de una defensa que no se meten en la vía (cada uno de `CercaMinima` o más). Una defensa
             /// va en la orilla y puede tocarla; lo que se corta es lo que cruza los carriles.
             /// </summary>
-            public List<List<PuntoPlano>> CortarBarrera(PuntoPlano[] linea)
-            {
-                var pedazos = new List<List<PuntoPlano>>();
-                var actual = new List<PuntoPlano>();
-                var largo = 0.0;
-                void Cerrar()
-                {
-                    if (actual.Count >= 2 && largo >= CercaMinima)
-                    {
-                        pedazos.Add(actual);
-                    }
-
-                    actual = new List<PuntoPlano>();
-                    largo = 0.0;
-                }
-
-                for (var i = 0; i + 1 < (linea?.Length ?? 0); i++)
-                {
-                    var a = linea[i];
-                    var b = linea[i + 1];
-                    var l = Math.Sqrt((b.X - a.X) * (b.X - a.X) + (b.Y - a.Y) * (b.Y - a.Y));
-                    var n = Math.Max(1, (int)Math.Ceiling(l / 0.25));
-                    for (var k = i == 0 ? 0 : 1; k <= n; k++)
-                    {
-                        var x = a.X + (b.X - a.X) * k / n;
-                        var y = a.Y + (b.Y - a.Y) * k / n;
-                        if (EnMedio(x, y))
-                        {
-                            Cerrar();
-                            continue;
-                        }
-
-                        if (actual.Count > 0)
-                        {
-                            var q = actual[actual.Count - 1];
-                            largo += Math.Sqrt((x - q.X) * (x - q.X) + (y - q.Y) * (y - q.Y));
-                        }
-
-                        actual.Add(new PuntoPlano { X = x, Y = y });
-                    }
-                }
-
-                Cerrar();
-                return pedazos;
-            }
+            public List<List<PuntoPlano>> CortarBarrera(PuntoPlano[] linea) => CortarLinea(linea, EnMedio);
 
             /// <summary>Si una defensa se mete en la vía en algún punto (cada 25 cm).</summary>
             public bool BarreraEnMedio(PuntoPlano[] linea)
@@ -376,6 +332,143 @@ namespace Croquis.Core
         }
 
         /// <summary>Lleva a la orilla, corta o quita lo procedural que toca la vía; devuelve cuántos objetos cambió.</summary>
+        /// <summary>
+        /// Los pedazos de una línea (cada 25 cm) que quedan fuera de lo que marca `quitar`, cada uno de
+        /// `CercaMinima` o más.
+        /// </summary>
+        public static List<List<PuntoPlano>> CortarLinea(PuntoPlano[] linea, Func<double, double, bool> quitar)
+        {
+            var pedazos = new List<List<PuntoPlano>>();
+            var actual = new List<PuntoPlano>();
+            var largo = 0.0;
+            void Cerrar()
+            {
+                if (actual.Count >= 2 && largo >= CercaMinima)
+                {
+                    pedazos.Add(actual);
+                }
+
+                actual = new List<PuntoPlano>();
+                largo = 0.0;
+            }
+
+            for (var i = 0; i + 1 < (linea?.Length ?? 0); i++)
+            {
+                var a = linea[i];
+                var b = linea[i + 1];
+                var l = Math.Sqrt((b.X - a.X) * (b.X - a.X) + (b.Y - a.Y) * (b.Y - a.Y));
+                var n = Math.Max(1, (int)Math.Ceiling(l / 0.25));
+                for (var k = i == 0 ? 0 : 1; k <= n; k++)
+                {
+                    var x = a.X + (b.X - a.X) * k / n;
+                    var y = a.Y + (b.Y - a.Y) * k / n;
+                    if (quitar(x, y))
+                    {
+                        Cerrar();
+                        continue;
+                    }
+
+                    if (actual.Count > 0)
+                    {
+                        var q = actual[actual.Count - 1];
+                        largo += Math.Sqrt((x - q.X) * (x - q.X) + (y - q.Y) * (y - q.Y));
+                    }
+
+                    actual.Add(new PuntoPlano { X = x, Y = y });
+                }
+            }
+
+            Cerrar();
+            return pedazos;
+        }
+
+        /// <summary>Lo que recorre un vehículo del caso en planta y su medio ancho con holgura.</summary>
+        public sealed class Recorrido
+        {
+            public double[] X = new double[0];
+            public double[] Y = new double[0];
+            public double Medio;
+        }
+
+        /// <summary>Cuánto se agrega al medio ancho del vehículo: la defensa no roza el coche que pasa.</summary>
+        public const double HolguraRecorrido = 0.5;
+
+        /// <summary>La distancia del punto al recorrido.</summary>
+        private static double AlRecorrido(Recorrido r, double x, double y)
+        {
+            var mejor = double.MaxValue;
+            for (var i = 0; i + 1 < r.X.Length; i++)
+            {
+                var dx = r.X[i + 1] - r.X[i];
+                var dy = r.Y[i + 1] - r.Y[i];
+                var l2 = dx * dx + dy * dy;
+                var t = l2 > 0 ? Math.Max(0, Math.Min(1, ((x - r.X[i]) * dx + (y - r.Y[i]) * dy) / l2)) : 0;
+                var ex = x - r.X[i] - t * dx;
+                var ey = y - r.Y[i] - t * dy;
+                mejor = Math.Min(mejor, Math.Sqrt(ex * ex + ey * ey));
+            }
+
+            return r.X.Length == 1 ? Math.Sqrt((x - r.X[0]) * (x - r.X[0]) + (y - r.Y[0]) * (y - r.Y[0])) : mejor;
+        }
+
+        /// <summary>
+        /// Las defensas se cortan donde pasa un vehículo del caso: el visor no lo pone atravesando una
+        /// (René, 2026-11-27: en Paseo Matlatzincas el coche cruzaba la defensa para llegar al árbol). Las
+        /// defensas son del mapa, no evidencia; las del caso (`objetos`) no se tocan. Devuelve cuántas cortó.
+        /// </summary>
+        public static int AbrirPasoEnBarreras(Escenario e, IReadOnlyList<Recorrido> recorridos)
+        {
+            if (e?.Via?.Barreras == null || recorridos == null || recorridos.Count == 0)
+            {
+                return 0;
+            }
+
+            bool EnPaso(double x, double y)
+            {
+                foreach (var r in recorridos)
+                {
+                    if (AlRecorrido(r, x, y) <= r.Medio)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            var cortadas = 0;
+            var barreras = new List<PuntoPlano[]>();
+            foreach (var linea in e.Via.Barreras)
+            {
+                var toca = false;
+                for (var i = 0; i + 1 < (linea?.Length ?? 0) && !toca; i++)
+                {
+                    var a = linea[i];
+                    var b = linea[i + 1];
+                    var n = Math.Max(1, (int)Math.Ceiling(Math.Sqrt((b.X - a.X) * (b.X - a.X) + (b.Y - a.Y) * (b.Y - a.Y)) / 0.25));
+                    for (var k = 0; k <= n && !toca; k++)
+                    {
+                        toca = EnPaso(a.X + (b.X - a.X) * k / n, a.Y + (b.Y - a.Y) * k / n);
+                    }
+                }
+
+                if (!toca)
+                {
+                    barreras.Add(linea);
+                    continue;
+                }
+
+                cortadas++;
+                foreach (var pedazo in CortarLinea(linea, EnPaso))
+                {
+                    barreras.Add(pedazo.ToArray());
+                }
+            }
+
+            e.Via.Barreras = barreras.ToArray();
+            return cortadas;
+        }
+
         public static int Despejar(Escenario e)
         {
             var v = Via.De(e);

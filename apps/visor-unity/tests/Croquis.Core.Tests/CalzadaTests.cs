@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -93,6 +94,50 @@ namespace Croquis.Core.Tests
             Assert.Empty(Calzada.Invasores(e));
             // Se cortan, no se pierden las de la orilla.
             Assert.True(e.Via.Barreras.Length >= antes / 2);
+        }
+
+        [Fact]
+        public void EnMatlatzincasNingunaDefensaQuedaEnElRecorridoDelVehiculo()
+        {
+            // René, 2026-11-27: el coche cruzaba la defensa para llegar al árbol. Se corta donde pasa.
+            var raiz = Path.GetFullPath(Path.Combine(Aqui(), "..", "..", "..", ".."));
+            var paquete = Paquete.Leer(File.ReadAllText(Path.Combine(raiz, "packages", "scene-schema", "fixtures", "caso3d-ciudad", "matlatzincas.json")));
+            // Las defensas tal como vienen del mapa (antes del corte de los carriles, que en este paquete ya
+            // las quita del recorrido; en el caso de René el coche sale por la orilla, donde se quedan).
+            var e = paquete.Escenario;
+            var recorridos = paquete.Resultado.Vehiculos
+                .Select(v => new Calzada.Recorrido { X = v.Trayectoria.X, Y = v.Trayectoria.Y, Medio = v.Dimensiones.AnchoM / 2.0 + Calzada.HolguraRecorrido })
+                .ToList();
+            bool EnPaso(double x, double y) => recorridos.Any(r => Enumerable.Range(0, r.X.Length - 1).Any(i =>
+            {
+                var dx = r.X[i + 1] - r.X[i];
+                var dy = r.Y[i + 1] - r.Y[i];
+                var l2 = dx * dx + dy * dy;
+                var t = l2 > 0 ? Math.Max(0, Math.Min(1, ((x - r.X[i]) * dx + (y - r.Y[i]) * dy) / l2)) : 0;
+                return Math.Sqrt(Math.Pow(x - r.X[i] - t * dx, 2) + Math.Pow(y - r.Y[i] - t * dy, 2)) <= r.Medio;
+            }));
+            // Cada 25 cm de cada defensa: un tramo puede cruzar el recorrido entre dos vértices.
+            bool Cruza(PuntoPlano[] l) => Enumerable.Range(0, l.Length - 1).Any(i =>
+            {
+                var n = Math.Max(1, (int)Math.Ceiling(Math.Sqrt(Math.Pow(l[i + 1].X - l[i].X, 2) + Math.Pow(l[i + 1].Y - l[i].Y, 2)) / 0.25));
+                return Enumerable.Range(0, n + 1).Any(k => EnPaso(l[i].X + (l[i + 1].X - l[i].X) * k / n, l[i].Y + (l[i + 1].Y - l[i].Y) * k / n));
+            });
+            Assert.Contains(e.Via.Barreras, Cruza);
+            var antes = e.Via.Barreras.Sum(l => l.Length);
+            Assert.True(Calzada.AbrirPasoEnBarreras(e, recorridos) > 0);
+            Assert.DoesNotContain(e.Via.Barreras, Cruza);
+            // Solo se corta el paso: casi toda la defensa se queda.
+            Assert.True(e.Via.Barreras.Length >= 30);
+        }
+
+        [Fact]
+        public void UnaDefensaQueCruzaElRecorridoQuedaEnDosTramos()
+        {
+            var e = new Escenario { Via = new ViaEscenario { Barreras = new[] { new[] { new PuntoPlano { X = -10, Y = 5 }, new PuntoPlano { X = 10, Y = 5 } } } } };
+            var r = new Calzada.Recorrido { X = new[] { 0.0, 0.0 }, Y = new[] { -20.0, 20.0 }, Medio = 1.5 };
+            Assert.Equal(1, Calzada.AbrirPasoEnBarreras(e, new[] { r }));
+            Assert.Equal(2, e.Via.Barreras.Length);
+            Assert.All(e.Via.Barreras, l => Assert.All(l, p => Assert.True(Math.Abs(p.X) > 1.5)));
         }
 
         [Fact]
