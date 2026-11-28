@@ -111,6 +111,7 @@ namespace Croquis.Visor
                 g.Malla.triangles = triangulos;
                 g.Malla.bounds = caja;
                 var go = new GameObject("arboles_" + par.Key);
+                go.layer = CamaraVisor.CapaCopas; // «Desde arriba» no dibuja las copas
                 go.transform.SetParent(transform, false);
                 go.AddComponent<MeshFilter>().sharedMesh = g.Malla;
                 var mr = go.AddComponent<MeshRenderer>();

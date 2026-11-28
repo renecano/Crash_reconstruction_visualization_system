@@ -141,19 +141,12 @@ namespace Croquis.Visor
             if (impostores != null)
             {
                 impostores.Cerrar();
-                foreach (Transform t in padre)
-                {
-                    if (t.name.StartsWith("arboles_"))
-                    {
-                        t.gameObject.layer = CamaraVisor.CapaCopasDelCaso;
-                    }
-                }
             }
 
             var copas = copasPlanta.Poner(padre, "copas_colocadas", Materiales.Arbol("fresno", "planta"), false);
             if (copas != null)
             {
-                copas.layer = CamaraVisor.CapaCopasDelCaso;
+                copas.layer = CamaraVisor.CapaCopas;
             }
             placas.Poner(padre, "placas_colocadas", Materiales.Liso(new Color(0.9f, 0.9f, 0.88f), 0.4f));
         }

@@ -89,7 +89,11 @@ namespace Croquis.Visor
             foreach (var par in plantas)
             {
                 // La planta ya no da sombra: la dan las tarjetas de sombra del impostor.
-                par.Value.Poner(padre, "copas_" + par.Key, Materiales.Arbol(par.Key, "planta"), false);
+                var copas = par.Value.Poner(padre, "copas_" + par.Key, Materiales.Arbol(par.Key, "planta"), false);
+                if (copas != null)
+                {
+                    copas.layer = CamaraVisor.CapaCopas; // «Desde arriba» no dibuja las copas
+                }
             }
 
             palmas.Poner(padre, "palmas", Materiales.Liso(new Color(0.2f, 0.34f, 0.14f), 0.25f));
