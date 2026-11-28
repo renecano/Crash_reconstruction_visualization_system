@@ -17,6 +17,7 @@
 import { consultarOverpass } from "./overpass";
 import type { BuscarKmCarretera, RedLugar, ZonaCaso } from "../buscadores-lugar";
 import { ATRIBUCION_OSM, geocodificar } from "./geocodificar";
+import { cargarCarreteras, viasDeLaRed } from "./carreteras-locales";
 
 export interface PuntoBuscado {
   lat: number;
@@ -59,6 +60,11 @@ export interface RespuestaOverpass {
 export interface DepsKm {
   /** Una consulta de Overpass QL (en producción, `/api/osm`; en las pruebas, respuestas grabadas). */
   overpass: (consulta: string) => Promise<RespuestaOverpass>;
+  /**
+   * Primero, las carreteras guardadas en Croquis (`carreteras-locales.ts`), alrededor de los extremos
+   * del tramo o de la población; Overpass, solo si ahí no está la carretera.
+   */
+  locales?: (n: KmNarrado, centros: LatLon[], radioM: number) => Promise<RespuestaOverpass>;
   /** Dónde está una población (en producción, `/api/lugar`). */
   poblacion: (nombre: string) => Promise<LatLon | null>;
 }
@@ -78,9 +84,14 @@ export function leerKmCarretera(texto: string): KmNarrado | null {
     );
   const ref = r ? `MEX ${r[1]}${r[2] ? "D" : ""}` : null;
   const t = new RegExp(`(${NOMBRE})\\s*[–—-]\\s*(${NOMBRE})`).exec(texto);
+  // «Carretera Toluca–Atlacomulco», «Autopista Toluca-Atlacomulco»: las poblaciones, sin la palabra.
+  const poblacion = (x: string) =>
+    x.replace(/^(?:carretera|autopista)(?:\s+(?:federal|libre|de\s+cuota))?\s+/i, "").trim();
   const tramo: [string, string] | null =
-    t && !/^MEX$/i.test(t[1]!) ? [t[1]!.trim(), t[2]!.trim()] : null;
-  const c = new RegExp(`\\bcerca\\s+de\\s+(${NOMBRE})`).exec(texto);
+    t && !/^MEX$/i.test(t[1]!) ? [poblacion(t[1]!), poblacion(t[2]!)] : null;
+  const c =
+    new RegExp(`\\bcerca\\s+de\\s+(${NOMBRE})`).exec(texto) ??
+    new RegExp(`\\ben\\s+el\\s+municipio\\s+de\\s+(${NOMBRE})`).exec(texto);
   if (!ref && !tramo) return null;
   return { ref, tramo, km, cercaDe: c ? c[1]!.trim() : null };
 }
@@ -200,8 +211,13 @@ export async function ubicarKm(texto: string, deps: DepsKm): Promise<PuntoBuscad
   if (!centro) return null;
   const radio = origen ? n.km * 1000 + 15_000 : 25_000;
   // La carretera alrededor de los dos extremos del tramo: el km se puede contar desde cualquiera.
-  const resp = await deps.overpass(consultaKm(n, centro, radio));
-  if (origen && destino) {
+  const centros = origen && destino ? [origen, destino] : [centro];
+  const guardadas = deps.locales
+    ? await deps.locales(n, centros, radio).catch(() => ({ elements: [] }))
+    : { elements: [] };
+  const hay = guardadas.elements.some((e) => e.type === "way");
+  const resp = hay ? guardadas : await deps.overpass(consultaKm(n, centro, radio));
+  if (!hay && origen && destino) {
     const ids = new Set(resp.elements.map((e) => `${e.type}/${(e as { id?: number }).id}`));
     for (const e of (await deps.overpass(consultaKm(n, destino, radio))).elements)
       if (!ids.has(`${e.type}/${(e as { id?: number }).id}`)) resp.elements.push(e);
@@ -343,6 +359,7 @@ export function depsDeRed(
     fuentes,
     // Con sus réplicas y un reintento (René, 2026-11-28): una sola instancia saturada daba 502.
     overpass: (consulta) => consultarOverpass<RespuestaOverpass>(consulta, red),
+    locales: async (n, centros, radio) => viasDeLaRed(await cargarCarreteras(), n, centros, radio),
     poblacion: async (nombre) => {
       const g = await geocodificar(
         [nombre, zona.estado].filter(Boolean).join(", "),
