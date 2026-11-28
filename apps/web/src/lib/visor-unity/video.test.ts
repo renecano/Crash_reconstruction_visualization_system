@@ -3,7 +3,8 @@ import {
   ALTO_VIDEO,
   CODIFICADORES,
   SIN_VIDEO,
-  UMBRAL_RAPIDO_MS,
+  META_RAPIDO_MS,
+  aTiempo,
   elegirModo,
   ANCHO_VIDEO,
   instantesDelVideo,
@@ -96,6 +97,7 @@ describe("el modo del video según la tarjeta (René, 2026-11-26: medido en la l
       expect(modosDelVideo(r)).toEqual(rapido);
       expect(modosDelVideo(r, "maxima")).toEqual([
         { escala: 2, nivel: "ultra" },
+        { escala: 1, nivel: "ultra" },
         { escala: 1, nivel: "alta" },
       ]);
     }
@@ -108,32 +110,39 @@ describe("el modo del video según la tarjeta (René, 2026-11-26: medido en la l
     expect(lienzoDelVideo(1, 1)).toEqual({ ancho: 1920, alto: 1080 });
   });
 
-  it("elige con lo medido, no por el nombre de la tarjeta", () => {
+  it("elige con lo medido y la meta de 2 min, no por el nombre de la tarjeta", () => {
     const alta = { escala: 1, nivel: "alta" } as const;
     const media = { escala: 1, nivel: "media" } as const;
     const doble = { escala: 2, nivel: "ultra" } as const;
-    // Rápido: alta si sale a tiempo; si no, media; si ninguna, la más rápida.
-    expect(elegirModo([{ modo: alta, ms: 90 }], "rapido")?.modo).toBe(alta);
+    // Mac M1, AXA con cámara lenta (397 cuadros, 2026-11-28): alta 371 ms no cabe en 2 min; media
+    // 313 ms tampoco, pero es la más rápida.
+    expect(aTiempo(371, 397)).toBe(false);
     expect(
       elegirModo(
         [
-          { modo: alta, ms: 968 },
-          { modo: media, ms: UMBRAL_RAPIDO_MS },
+          { modo: alta, ms: 371 },
+          { modo: media, ms: 313 },
         ],
         "rapido",
+        397,
       )?.modo,
     ).toBe(media);
+    // Un choque más corto: alta sí cabe y se queda con su MSAA.
+    expect(aTiempo(371, 300)).toBe(true);
+    expect(elegirModo([{ modo: alta, ms: 371 }], "rapido", 300)?.modo).toBe(alta);
+    expect(META_RAPIDO_MS).toBe(120_000);
+    // Máxima: el primero que termina en 10 min; al doble a 2.9 s por cuadro no (19 min), 1× alta sí.
+    expect(elegirModo([{ modo: doble, ms: 1400 }], "maxima", 397)?.modo).toBe(doble);
     expect(
       elegirModo(
         [
-          { modo: alta, ms: 968 },
-          { modo: media, ms: 400 },
+          { modo: doble, ms: 2900 },
+          { modo: alta, ms: 371 },
         ],
-        "rapido",
+        "maxima",
+        397,
       )?.modo,
-    ).toBe(media);
-    // Máxima: el primero que dibuja, aunque tarde (se dice cuánto antes de empezar).
-    expect(elegirModo([{ modo: doble, ms: 2900 }], "maxima")?.modo).toBe(doble);
+    ).toBe(alta);
     expect(
       elegirModo(
         [
@@ -141,10 +150,11 @@ describe("el modo del video según la tarjeta (René, 2026-11-26: medido en la l
           { modo: alta, ms: 968 },
         ],
         "maxima",
+        397,
       )?.modo,
     ).toBe(alta);
     // Ninguno dibujó: nada (el video dice que no se pudo).
-    expect(elegirModo([{ modo: alta, ms: Infinity }], "rapido")).toBeNull();
+    expect(elegirModo([{ modo: alta, ms: Infinity }], "rapido", 397)).toBeNull();
   });
 
   it("si el codificador falla, reintenta por software antes de rendirse, con un mensaje claro", () => {

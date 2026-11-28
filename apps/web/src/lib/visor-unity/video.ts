@@ -42,8 +42,9 @@ export function tarjetaIntegrada(renderer: string | null): boolean {
  * por cuadro los fps son bajos, y el video salía con bordes dentados.
  * - `rapido` (por omisión): 1920×1080, en `alta` (antialiasing MSAA ×4) si la tarjeta lo dibuja a
  *   tiempo; si no, en `media` (antialiasing FXAA).
- * - `maxima`: con tarjeta dedicada, el doble en `ultra` (supermuestreo); si a 2× no dibuja, 1× en
- *   `alta`. Con integrada, como `rapido` (a 2× la laptop de 8 GB no dibujó ningún cuadro).
+ * - `maxima`: con tarjeta dedicada, el doble en `ultra` (supermuestreo), o 1× en `ultra`, o 1× en
+ *   `alta`: el primero que termine en 10 min. Con integrada, como `rapido` (a 2× la laptop de 8 GB no
+ *   dibujó ningún cuadro).
  */
 export type CalidadVideo = "rapido" | "maxima";
 export interface ModoVideo {
@@ -61,29 +62,41 @@ export function modosDelVideo(
     { escala: 1, nivel: "media" },
   ];
   if (calidad === "rapido" || tarjetaIntegrada(renderer)) return rapido;
-  return [{ escala: SUPERMUESTREO_VIDEO, nivel: "ultra" }, rapido[0]!];
+  return [
+    { escala: SUPERMUESTREO_VIDEO, nivel: "ultra" },
+    { escala: 1, nivel: "ultra" },
+    rapido[0]!,
+  ];
 }
 
+/** La meta de «Rápido» (ms): un video de ~10 s del choque en 1 a 2 minutos (René, 2026-11-28). */
+export const META_RAPIDO_MS = 120_000;
+
 /**
- * Lo más que puede tardar cada cuadro en «Rápido» (ms): un choque de ~10 s son ~300–400 cuadros
- * (con la cámara lenta), y la meta es de 1 a 2 minutos.
+ * El tope de «Máxima calidad» (ms): el perito eligió esperar, pero no una hora (en la Mac M1, al doble
+ * en `ultra`, un video de 13 s no terminó en 60 min; 2026-11-28).
  */
-export const UMBRAL_RAPIDO_MS = 250;
+export const META_MAXIMA_MS = 600_000;
+
+/** ¿Este modo hace el video de `cuadros` cuadros dentro de la meta de la calidad elegida? */
+export const aTiempo = (ms: number, cuadros: number, calidad: CalidadVideo = "rapido") =>
+  ms * cuadros <= (calidad === "maxima" ? META_MAXIMA_MS : META_RAPIDO_MS);
 
 /**
  * El modo con que se graba, con lo medido de cada uno (ms por cuadro; Infinity si no dibujó). En
- * «Rápido», el primero que sale a tiempo o, si ninguno, el más rápido; en «Máxima calidad», el primero
- * que dibuja (el perito eligió esperar: se le dice cuánto antes de empezar).
+ * cada calidad, el primero que hace el video dentro de su meta (2 min en «Rápido», 10 en «Máxima») o,
+ * si ninguno, el más rápido. Antes de empezar se le dice al perito cuánto tardará.
  */
 export function elegirModo(
   medidos: { modo: ModoVideo; ms: number }[],
   calidad: CalidadVideo,
+  cuadros: number,
 ): { modo: ModoVideo; ms: number } | null {
   const dibujan = medidos.filter((m) => Number.isFinite(m.ms));
   if (!dibujan.length) return null;
-  if (calidad === "maxima") return dibujan[0]!;
   return (
-    dibujan.find((m) => m.ms <= UMBRAL_RAPIDO_MS) ?? dibujan.reduce((a, b) => (b.ms < a.ms ? b : a))
+    dibujan.find((m) => aTiempo(m.ms, cuadros, calidad)) ??
+    dibujan.reduce((a, b) => (b.ms < a.ms ? b : a))
   );
 }
 

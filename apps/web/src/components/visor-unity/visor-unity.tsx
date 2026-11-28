@@ -55,7 +55,7 @@ import {
   msPorCuadro,
   modosDelVideo,
   elegirModo,
-  UMBRAL_RAPIDO_MS,
+  aTiempo,
   type ModoVideo,
   estimarVideo,
   guardarMedida,
@@ -690,6 +690,14 @@ export function VisorUnity({
       }
       // Se mide cada modo, en orden, hasta tener con cuál grabar (el nombre de la tarjeta no basta: en
       // laptops híbridas Chrome reporta la NVIDIA y dibuja en la Intel).
+      // La automática lleva el impacto en cámara lenta, con su letrero; «Desde el inicio», el
+      // trayecto lejano acelerado para que el video dure ~1 min (René, 2026-11-27).
+      const lenta = camaraVideo === "automatica" ? CAMARA_LENTA_VIDEO : null;
+      const acelerado =
+        desde < (intervalo.reconstruccion ?? desde)
+          ? aceleradoDelVideo(desde, intervalo.reconstruccion!, intervalo.fin, lenta)
+          : null;
+      const cuadros = instantesDelVideo(desde, intervalo.fin, FPS_VIDEO, lenta, acelerado).length;
       const medidos: { modo: ModoVideo; ms: number }[] = [];
       for (const m of candidatos) {
         if (m !== modo) await ponerModo(m);
@@ -697,10 +705,10 @@ export function VisorUnity({
           modo: m,
           ms: await msPorCuadro(c, fijar, instantesDelVideo(desde, intervalo.fin)),
         });
-        const e = elegirModo(medidos, calidadVideo);
-        if (e && (calidadVideo === "maxima" || e.ms <= UMBRAL_RAPIDO_MS)) break;
+        const e = elegirModo(medidos, calidadVideo, cuadros);
+        if (e && aTiempo(e.ms, cuadros, calidadVideo)) break;
       }
-      const elegido = elegirModo(medidos, calidadVideo);
+      const elegido = elegirModo(medidos, calidadVideo, cuadros);
       if (!elegido) throw new VideoNoDisponible("El 3D no dibujó ningún cuadro.");
       if (elegido.modo !== modo) await ponerModo(elegido.modo);
       const grabar = (msMedido?: number) =>
@@ -712,18 +720,8 @@ export function VisorUnity({
           fin: intervalo.fin,
           logo,
           leyenda: LEYENDA_3D,
-          // La automática lleva el impacto en cámara lenta, con su letrero; «Desde el inicio», el
-          // trayecto lejano acelerado para que el video dure ~1 min (René, 2026-11-27).
-          lenta: camaraVideo === "automatica" ? CAMARA_LENTA_VIDEO : null,
-          acelerado:
-            desde < (intervalo.reconstruccion ?? desde)
-              ? aceleradoDelVideo(
-                  desde,
-                  intervalo.reconstruccion!,
-                  intervalo.fin,
-                  camaraVideo === "automatica" ? CAMARA_LENTA_VIDEO : null,
-                )
-              : null,
+          lenta,
+          acelerado,
           signal: corte.signal,
           msPorCuadro: msMedido,
           alProgreso: (hechos, total, ms) => setGrabacion({ hechos, total, ms }),
