@@ -1,0 +1,18 @@
+# Paso: narraciones-42
+# Comando: powershell -NoProfile -Command "$env:CROQUIS_AUDITORIA='nuevas'; $env:CROQUIS_DE_NUEVO='1'; pnpm --filter @croquis/web exec vitest run src/lib/auditoria; node eval/auditoria_cadena_resumen.mjs"
+# Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
+# Inicio: 2026-11-27 19:09:49
+
+[33m(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.[39m
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.3 [39m[90mC:/Users/MrKan/Documents/Proyecto Cesvi/Croquis/apps/web[39m
+
+ [32m✓[39m src/lib/auditoria/memoria.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+¿Desea terminar el trabajo por lotes (S/N)? 
+^CError: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
+
+  × "pnpm recursive exec" failed in C:\Users\MrKan\Documents\Proyecto
+  │ Cesvi\Croquis\apps\web
+
