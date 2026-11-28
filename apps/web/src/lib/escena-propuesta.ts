@@ -106,6 +106,8 @@ const POR_QUE_CHOQUE: Record<string, string> = {
   narracion: "la narración nombra las dos calles del cruce",
   una_calle: "la narración nombra una de las calles; es su cruce más cercano al lugar",
   cercania: "es el cruce más cercano al lugar del caso",
+  carretera:
+    "la narración nombra la carretera: el choque va sobre ella, en su punto más cercano al lugar encontrado",
   a_la_altura:
     "la narración nombra las dos calles y no se cruzan a nivel (un paso a desnivel): va sobre la primera, a la altura de la segunda",
 };
@@ -145,7 +147,7 @@ export function proponerEscena(o: {
   propuestos.push({
     clave: "choque-1",
     texto: cruce?.calles.length
-      ? `El choque, en ${cruce.calles.length > 1 ? `el cruce de ${cruce.calles.join(" y ")}` : cruce.calles[0]}`
+      ? `El choque, ${cruce.segun === "carretera" ? "sobre" : "en"} ${cruce.calles.length > 1 ? `el cruce de ${cruce.calles.join(" y ")}` : cruce.calles[0]}`
       : sobre
         ? `El choque, sobre ${sobre.calle.nombre ?? "la calle más cercana"}`
         : "El choque, en el lugar del caso",

@@ -14,6 +14,7 @@
  * Rumbos en grados desde el norte, en sentido horario (0 = norte, 90 = este), como el expediente.
  */
 import { interpretarLugar } from "./lugar-texto";
+import { leerCarretera } from "./buscadores/carretera-narrada";
 import {
   formato as F,
   avanzar,
@@ -359,6 +360,8 @@ export interface Calle {
   /** Su tipo de OpenStreetMap (`highway`) y su límite (`maxspeed`), si lo trae (ronda 4). */
   tipo?: string;
   maxspeed?: string;
+  /** Su número de carretera de OSM (`ref`: «MEX 134»), si lo trae. */
+  ref?: string;
   /**
    * De un solo sentido (`oneway` de OSM, o una glorieta): 1 en el orden de sus nodos, -1 al revés.
    * Sin el campo, de doble sentido.
@@ -406,6 +409,7 @@ export function callesDe(resp: OverpassResponse | null): Calle[] {
       nodos: w.nodes.filter((id) => nodos.has(id)),
       tipo,
       ...(w.tags?.maxspeed ? { maxspeed: w.tags.maxspeed } : {}),
+      ...(w.tags?.ref ? { ref: w.tags.ref } : {}),
       ...(w.tags?.oneway === "-1"
         ? { unSentido: -1 as const }
         : /^(?:yes|true|1)$/.test(w.tags?.oneway ?? "") ||
@@ -525,7 +529,7 @@ export interface PropuestaChoque {
    * «narracion»: el cruce de las dos calles que nombra; «una_calle»: solo una de ellas está en el
    * mapa y se propone su cruce más cercano; «cercania»: el cruce más cercano al lugar.
    */
-  segun: "narracion" | "una_calle" | "cercania" | "a_la_altura";
+  segun: "narracion" | "una_calle" | "cercania" | "a_la_altura" | "carretera";
   cita: string | null;
   /** La calle de la narración que sí está (en «una_calle») y la que no se encontró. */
   encontrada?: string;
@@ -587,9 +591,46 @@ export function proponerChoque(
       };
     }
   }
+  // La narración nombra una carretera y ningún cruce (René, 2026-11-28: «sobre la carretera
+  // Hermosillo–Bahía de Kino, a la altura del poblado Miguel Alemán» quedó en «Calle Yucatán», una calle
+  // del pueblo): el choque va SOBRE esa carretera, en su punto más cercano al lugar, nunca en otra calle.
+  const carretera = !narrado && narracion && lugar ? leerCarretera(narracion) : null;
+  if (carretera) {
+    const suyas = calles.filter((c) => esLaCarretera(c, carretera));
+    const a = suyas.length ? ajustarACalle(suyas, lugar!, 3000) : null;
+    if (a)
+      return {
+        punto: a.punto,
+        calles: [a.calle.nombre ?? a.calle.ref ?? "la carretera"],
+        segun: "carretera",
+        cita: /\b(?:sobre|en)\s+la\s+(?:carretera|autopista)[^,.;]*/i.exec(narracion!)?.[0] ?? null,
+      };
+  }
   const primero = porCercania[0]!;
   if (lugar && cerca(primero) > 150) return null;
   return { punto: primero.punto, calles: primero.calles, segun: "cercania", cita: null };
+}
+
+/**
+ * ¿Esta vía del mapa es la carretera narrada? Por su número (`ref` «MEX 134», «MEX-134», «134») o por
+ * su tramo en el nombre («Carretera Hermosillo - Bahía de Kino»), sin acentos ni mayúsculas.
+ */
+export function esLaCarretera(
+  c: Calle,
+  v: { ref: string | null; tramo: [string, string] | null },
+): boolean {
+  const numero = v.ref ? /\d+\s*D?$/i.exec(v.ref)?.[0].replace(/\s/g, "").toUpperCase() : null;
+  if (numero && c.ref) {
+    const refs = c.ref
+      .split(/[;,]/)
+      .map((r) => /\d+\s*D?$/i.exec(r.trim())?.[0].replace(/\s/g, "").toUpperCase());
+    if (refs.includes(numero)) return true;
+  }
+  if (v.tramo && c.nombre) {
+    const n = sinAcentos(c.nombre).toLowerCase();
+    if (v.tramo.every((t) => n.includes(sinAcentos(t).toLowerCase()))) return true;
+  }
+  return false;
 }
 
 /** Una flecha: por dónde pudo llegar un vehículo al choque. */
