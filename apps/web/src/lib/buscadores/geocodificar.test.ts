@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { RedLugar } from "../buscadores-lugar";
-import { deDondeSalio, geocodificar, olvidarGeocodificaciones } from "./geocodificar";
+import {
+  deDondeSalio,
+  fijarCacheNominatim,
+  geocodificar,
+  olvidarGeocodificaciones,
+} from "./geocodificar";
 
 // La llave de Esri de la app, sin copiarla: en la prueba, una de mentira.
 vi.mock("../visor-unity/piso", () => ({ LLAVE_ESRI: "llave-de-prueba" }));
@@ -90,5 +95,25 @@ describe("geocodificar (política de Nominatim y respaldo de Esri)", () => {
       () => new Response("", { status: 403 }),
     );
     await expect(geocodificar("Portales", r)).rejects.toThrow("Nominatim respondió 503");
+  });
+
+  it("solo Nominatim va a la caché permanente; Esri, solo en memoria durante la sesión", async () => {
+    const guardadas: string[] = [];
+    fijarCacheNominatim({ get: () => undefined, set: (k) => void guardadas.push(k) });
+    const nominatimOk = red(
+      () => new Response(JSON.stringify(portales)),
+      () => new Response("{}"),
+    );
+    await geocodificar("Portales, Ciudad de México", nominatimOk.r);
+    expect(guardadas.some((k) => k.includes("nominatim"))).toBe(true);
+    const conEsri = red(
+      () => new Response("[]"),
+      () => new Response(JSON.stringify(esriPortales)),
+    );
+    expect((await geocodificar("Diana Cazadora", conEsri.r)).fuente).toBe("esri");
+    expect(guardadas.some((k) => k.includes("arcgis"))).toBe(false);
+    // En la misma sesión, Esri no se vuelve a pedir.
+    await geocodificar("Diana Cazadora", conEsri.r);
+    expect(conEsri.pedidos.filter((p) => p.url.includes("arcgis"))).toHaveLength(1);
   });
 });

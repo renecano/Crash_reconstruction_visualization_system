@@ -1,9 +1,10 @@
 /**
  * Buscar un lugar por su nombre para los buscadores (René, 2026-11-28): primero Nominatim, con su
  * política de uso (una consulta por segundo como máximo, el User-Agent de Croquis, caché de respuestas
- * y la atribución «© OpenStreetMap contributors»); si no responde o no encuentra, el geocodificador de
- * Esri con la llave que ya usa la app (`LLAVE_ESRI`; no se pide ni se copia). Cada resultado dice de
- * dónde salió, para que la explicación lo diga («encontrado con Esri»).
+ * que puede ser permanente y la atribución «© OpenStreetMap contributors»); si no responde o no
+ * encuentra, el geocodificador de Esri, con sus resultados solo en memoria durante la sesión. La llamada
+ * a Esri con la llave de servidor (`ESRI_GEOCODE_API_KEY`) la conecta la colocación al integrar los
+ * buscadores. Cada resultado dice de dónde salió («encontrado con Esri»).
  */
 import { USER_AGENT } from "../../server/osm";
 import type { RedLugar } from "../buscadores-lugar";
@@ -29,20 +30,43 @@ export interface Geocodificacion {
   fuente: "nominatim" | "esri" | null;
 }
 
-/** Las respuestas ya pedidas (por URL), para no repetir consultas: lo pide la política de Nominatim. */
-const cache = new Map<string, LugarGeocodificado[]>();
+/**
+ * La caché de Nominatim (lo pide su política de uso): puede ser permanente. Por omisión, en memoria;
+ * la colocación puede conectar una que dure (`fijarCacheNominatim`).
+ */
+export interface CacheNominatim {
+  get: (
+    clave: string,
+  ) => Promise<LugarGeocodificado[] | undefined> | LugarGeocodificado[] | undefined;
+  set: (clave: string, valor: LugarGeocodificado[]) => Promise<void> | void;
+}
 const MAX_CACHE = 500;
+function enMemoria(): CacheNominatim {
+  const m = new Map<string, LugarGeocodificado[]>();
+  return {
+    get: (k) => m.get(k),
+    set: (k, v) => {
+      if (m.size >= MAX_CACHE) m.delete(m.keys().next().value!);
+      m.set(k, v);
+    },
+  };
+}
+let cacheNominatim: CacheNominatim = enMemoria();
+/** Conecta una caché permanente para Nominatim (solo Nominatim: Esri no lo permite). */
+export function fijarCacheNominatim(c: CacheNominatim) {
+  cacheNominatim = c;
+}
+/**
+ * Los resultados de Esri, solo en memoria y durante la sesión: sus condiciones no permiten guardarlos
+ * (René, 2026-11-28). Nunca van a la caché de Nominatim.
+ */
+const sesionEsri = new Map<string, LugarGeocodificado[]>();
 /** Cuándo salió la última consulta a Nominatim (ms), para no pasar de una por segundo. */
 let ultimaNominatim = 0;
 
-function guardar(url: string, r: LugarGeocodificado[]) {
-  if (cache.size >= MAX_CACHE) cache.delete(cache.keys().next().value!);
-  cache.set(url, r);
-}
-
 async function nominatim(texto: string, limite: number, red: RedLugar) {
   const url = `${NOMINATIM}?format=jsonv2&limit=${limite}&countrycodes=mx&q=${encodeURIComponent(texto)}`;
-  const guardado = cache.get(url);
+  const guardado = await cacheNominatim.get(url);
   if (guardado) return guardado;
   const espera = 1000 - (Date.now() - ultimaNominatim);
   if (espera > 0 && ultimaNominatim > 0) await red.pausa?.(espera);
@@ -65,14 +89,14 @@ async function nominatim(texto: string, limite: number, red: RedLugar) {
     tipo: x.type ?? "",
     fuente: "nominatim" as const,
   }));
-  guardar(url, out);
+  await cacheNominatim.set(url, out);
   return out;
 }
 
 async function esri(texto: string, limite: number, red: RedLugar) {
   if (!LLAVE_ESRI) return [];
   const url = `${ESRI}?f=json&countryCode=MEX&maxLocations=${limite}&outFields=Type,PlaceName&singleLine=${encodeURIComponent(texto)}&token=${LLAVE_ESRI}`;
-  const guardado = cache.get(url);
+  const guardado = sesionEsri.get(url);
   if (guardado) return guardado;
   const r = await red.fetch(url);
   if (!r.ok) throw new Error(`Esri respondió ${r.status}`);
@@ -93,7 +117,8 @@ async function esri(texto: string, limite: number, red: RedLugar) {
     tipo: c.attributes?.Type ?? "",
     fuente: "esri" as const,
   }));
-  guardar(url, out);
+  if (sesionEsri.size >= MAX_CACHE) sesionEsri.delete(sesionEsri.keys().next().value!);
+  sesionEsri.set(url, out);
   return out;
 }
 
@@ -126,6 +151,7 @@ export const deDondeSalio = (f: "nominatim" | "esri" | null) =>
 
 /** Para las pruebas: olvida la caché y la hora de la última consulta. */
 export function olvidarGeocodificaciones() {
-  cache.clear();
+  cacheNominatim = enMemoria();
+  sesionEsri.clear();
   ultimaNominatim = 0;
 }
