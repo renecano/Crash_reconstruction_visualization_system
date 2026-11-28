@@ -1271,6 +1271,17 @@ namespace Croquis.Visor
             var llegada = CamaraAutomatica.Panorama(CajaVehiculos(t), Contacto, impacto, 45.0, aspecto, new[] { 32.0, 45.0, 60.0, 80.0 }, fijos);
             var final = CamaraAutomatica.Panorama(Lente.VehiculosEn(resultado, resultado.TFin), Contacto, impacto, 45.0, aspecto, new[] { 62.0, 75.0, 88.0 }, fijos);
             var toma = CamaraAutomatica.En(t, tI, llegada, impacto, final);
+            // El motociclista o el ciclista que sale volando, siempre a la vista (René, 2026-11-28).
+            foreach (var pv in Peatones)
+            {
+                var peso = pv != null && pv.Vuelo != null ? pv.Vuelo.PesoCamara(t) : 0.0;
+                if (peso > 0.0)
+                {
+                    var q = pv.transform.position;
+                    toma = VueloOcupante.ConOcupante(toma, Contacto, new V3(q.x, q.y + 0.5, q.z), peso);
+                }
+            }
+
             // Con trayecto previo, sigue al que viene de más lejos hasta que empieza la reconstrucción.
             VehiculoVista seguido = null;
             foreach (var v in Vehiculos)

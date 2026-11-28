@@ -202,6 +202,7 @@ namespace Croquis.Visor
         {
             var mio = ++turnoDeCarga;
             leyendaVisible = true;
+            ocupanteNarrado = null;
             danoMedido = Array.Exists(caso.Resultado?.Vehiculos ?? new ResultadoVehiculo[0], v => DanoDelCaso.UsaMedido(v.Dano));
             Omisiones.Limpiar();
             PasosDeCarga.Clear();
@@ -433,6 +434,19 @@ namespace Croquis.Visor
                 {
                     var persona = await PersonaVista.ConTrayectoriaAsync(raiz, p, terreno, cuerpos);
                     Vigente(mio);
+                    // El motociclista o el ciclista: después del impacto, su vuelo ilustrativo hasta la
+                    // posición final narrada (René, 2026-11-28; `VueloOcupante`).
+                    persona.Vuelo = VueloOcupante.Armar(
+                        p,
+                        Array.Find(r.Vehiculos, v => v.Id == p.VehiculoId),
+                        Array.Find(caso.Escena?.Personas ?? new EscenaPersona[0], x => x.Id == p.Id),
+                        tImpacto);
+                    if (persona.Vuelo != null)
+                    {
+                        // Si alguno es supuesto, la leyenda lo dice.
+                        ocupanteNarrado = (ocupanteNarrado ?? true) && !persona.Vuelo.Supuesta;
+                    }
+
                     personas.Add(persona);
                     continue;
                 }
@@ -884,12 +898,15 @@ namespace Croquis.Visor
             var texto = EscenarioVista.TextoDeLeyenda(raiz);
             if (texto != null)
             {
-                texto.text = Leyenda3d.Mensaje(conEscenario, pisoMapa.Puesto ? pisoMapa.Atribucion : null, etiquetaFantasma, danoMedido);
+                texto.text = Leyenda3d.Mensaje(conEscenario, pisoMapa.Puesto ? pisoMapa.Atribucion : null, etiquetaFantasma, danoMedido, ocupanteNarrado);
             }
         }
 
         /// <summary>Si algún vehículo del caso se dibuja con los C1–C6 que midió el perito.</summary>
         private bool danoMedido;
+
+        /// <summary>Con un ocupante que sale de su moto o bicicleta: si su posición final es la narrada (o supuesta); null, sin él.</summary>
+        private bool? ocupanteNarrado;
 
         public void Fijar(double t)
         {
