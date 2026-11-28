@@ -2410,9 +2410,16 @@ export function EscenaFacil({
                 key={c.orden}
                 className="flex items-center justify-between gap-2 rounded-control bg-superficie-alta px-3 py-1"
               >
-                <span className="text-[0.9375rem]">
-                  El {nombres[c.vehiculo]} contra{" "}
-                  {OBJETOS_C1.find((o) => o.id === c.objeto)?.con ?? c.objeto}
+                <span className="flex flex-col text-[0.9375rem]">
+                  <span>
+                    El {nombres[c.vehiculo]} contra{" "}
+                    {OBJETOS_C1.find((o) => o.id === c.objeto)?.con ?? c.objeto}
+                  </span>
+                  {c.supuesto ? (
+                    <span className="t-nota text-texto-2" data-testid={`otros-supuesto-${c.orden}`}>
+                      {c.supuesto}
+                    </span>
+                  ) : null}
                 </span>
                 <button
                   type="button"
