@@ -2,7 +2,7 @@
   "descripcion": "Las cinco narraciones de ejemplo de punta a punta (ronda 2, C): la lectura guardada, la escena colocada como dice la narración (receta en el script), la reconstrucción, y el dictamen. Lo que dice la pantalla, sin interpretar. Chromium a 1440×900.",
   "script": "apps/web/e2e/ejemplos-ronda2.spec.ts",
   "sitio": "http://localhost:3000",
-  "fecha": "2026-11-27T23:53:57.339Z",
+  "fecha": "2026-11-28T01:14:53.809Z",
   "con_unity": true,
   "llamadas_a_claude": 0,
   "errores_de_pagina": [],
@@ -56,7 +56,7 @@
       ],
       "terreno": null,
       "analisis": [
-        "Acto 5 de 6 · Análisis · 1 de 2: Los dañosDañosA · Nissan NP300B · Volkswagen VentoA · cara frontalmedidas del reporte · perfil C1–C6C118 cmC224 cmC329 cmC431 cmC527 cmC620 cm14.5kJenergía de deformación24.6km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 4 · 5 · 6 · 6 · 5 · 4 cm (rigidez típica de la clase (NHTSA)); no es la medida del reporte.Medido, C1–C618 · 24 · 29 · 31 · 27 · 20 cmCalculado, C1–C64 · 5 · 6 · 6 · 5 · 4 cmEnergía de lo medido101.7 kJLo más que disipa el choque76.4 kJ, a las velocidades reconstruidasLa deformación medida, con la rigidez usada, equivale a 102 kJ; un choque a estas velocidades puede disipar a l",
+        "Acto 5 de 6 · Análisis · 1 de 2: Los dañosDañosA · Nissan NP300B · Volkswagen VentoA · cara frontalmedidas del reporte · perfil C1–C6C118 cmC224 cmC329 cmC431 cmC527 cmC620 cm14.3kJenergía de deformación24.3km/hcambio de velocidad (Δv)Reconstrucción física de Croquis, con las velocidades reconstruidas; perfil estimado 4 · 5 · 6 · 6 · 5 · 4 cm (rigidez típica de la clase (NHTSA)); no es la medida del reporte.Medido, C1–C618 · 24 · 29 · 31 · 27 · 20 cmCalculado, C1–C64 · 5 · 6 · 6 · 5 · 4 cmEnergía de lo medido101.7 kJLo más que disipa el choque76.4 kJ, a las velocidades reconstruidasLa deformación medida, con la rigidez usada, equivale a 102 kJ; un choque a estas velocidades puede disipar a l",
         "Acto 5 de 6 · Análisis · 2 de 2: Los númerosLos númerosReconstrucción física de Croquis (inversión con las trayectorias, el impulso del choque y la evidencia del perito). velocidad previa: la que traía antes de frenar o del primer contacto; al contacto: la que traía en el instante del impacto.VehículoVelocidad previa (km/h)Al contacto en las simulaciones, p10–p50–p90 (km/h)V154 (44–54)44–51–54V20 (0–14)0–2–14Verificación con el método de CESVIMétodo de CESVI: energía de deformación (McHenry) y velocidad equivalente de barrera (EBS), con las medidas del reporte. No es la misma velocidad que la de la reconstrucción física de croquis.V1Energía de deformación (McHenry, 6 medidas)E = L/5 · [ A/2 "
       ],
       "unity": "listo",
@@ -69,7 +69,7 @@
       "leido": "Monterrey, Nuevo León·3 vehículos · 2 impactos",
       "lectura_guardada": true,
       "colocada": true,
-      "segundos_reconstruir": 23.6,
+      "segundos_reconstruir": 7.5,
       "cifra": "25",
       "de_quien": "A · Ford Ranger",
       "rango": "rango 20–32",
@@ -80,7 +80,7 @@
       "evidencia": "Evidencia que fija el resultado: posición final de V1, posición final de V2, posición final de V3, rumbo final de V1, rumbo final de V2, rumbo final de V3.",
       "impactos": "X1 · 0.00 s · V1 con V2X2 · 0.00 s · V2 con V3",
       "limites": [
-        "La trayectoria sigue el trazo real de Avenida Valle Alto, de las calles guardadas con el caso: gira 19° cerca del choque.",
+        "La trayectoria sigue el trazo real de Avenida Valle Alto, de las calles guardadas con el caso: gira 18° cerca del choque.",
         "V3: solo está en un impacto posterior y empieza detenido en la posición de impacto que colocó el perito (supuesto).",
         "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
       ],
@@ -99,7 +99,7 @@
       "leido": "Puebla, Puebla·2 vehículos · 1 impacto",
       "lectura_guardada": true,
       "colocada": true,
-      "segundos_reconstruir": 5.5,
+      "segundos_reconstruir": 3.4,
       "cifra": "20",
       "de_quien": "B · Nissan Versa",
       "rango": "rango 17–26",
@@ -131,7 +131,7 @@
       "leido": "Tianguismanalco, Puebla·2 vehículos · 2 impactos",
       "lectura_guardada": true,
       "colocada": true,
-      "segundos_reconstruir": 5,
+      "segundos_reconstruir": 3.4,
       "cifra": "50",
       "de_quien": "B · Nissan Sentra",
       "rango": "rango 47–57",
