@@ -2,7 +2,12 @@
 // La geocodificación de Esri corre solo en el servidor (sin `window`): la prueba, en Node.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { RedLugar } from "../buscadores-lugar";
-import { deDondeSalio, geocodificar, olvidarGeocodificaciones } from "./geocodificar";
+import {
+  deDondeSalio,
+  fijarCacheNominatim,
+  geocodificar,
+  olvidarGeocodificaciones,
+} from "./geocodificar";
 
 // La clave de geocodificación de Esri es del servidor (`ESRI_GEOCODE_API_KEY`): en la prueba, una de
 // mentira; la de verdad nunca aparece en pruebas ni registros.
@@ -120,5 +125,33 @@ describe("geocodificar (política de Nominatim y respaldo de Esri)", () => {
       () => new Response("", { status: 403 }),
     );
     await expect(geocodificar("Portales", r)).rejects.toThrow("Nominatim respondió 503");
+  });
+
+  it("la caché permanente guarda solo lo de Nominatim; lo de Esri, solo en memoria", async () => {
+    const guardados: string[] = [];
+    const permanente = new Map<string, unknown>();
+    fijarCacheNominatim({
+      get: (k) => permanente.get(k) as never,
+      set: (k, v) => {
+        guardados.push(k);
+        permanente.set(k, v);
+      },
+    });
+    let nominatimCae = false;
+    const { r, pedidos } = red(
+      () =>
+        nominatimCae ? new Response("", { status: 503 }) : new Response(JSON.stringify(portales)),
+      () => new Response(JSON.stringify(esriPortales)),
+    );
+    await geocodificar("Portales", r);
+    nominatimCae = true;
+    const e1 = await geocodificar("Portales, CDMX", r);
+    const e2 = await geocodificar("Portales, CDMX", r);
+    expect(e1.fuente).toBe("esri");
+    expect(e2).toEqual(e1);
+    expect(guardados).toHaveLength(1);
+    expect(guardados[0]).toContain("nominatim");
+    // La segunda vez, Esri salió de la memoria de la sesión: no se volvió a pedir.
+    expect(pedidos.filter((p) => !p.url.includes("nominatim"))).toHaveLength(1);
   });
 });
