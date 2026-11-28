@@ -1747,6 +1747,7 @@ En local, con #413 y la caché vacía:
 | 3    | El cruce                                          | 8 s                                                                                                                            |
 
 **Siguiente paso concreto:** fusionar #412 y #413 con CI en verde. Correr de nuevo los tres casos en producción, tres veces cada uno, y abrirlos de punta a punta en La escena: el lugar, las opciones y si la escena cuadra con la narración (la vuelta del caso 2 en la esquina). #411 espera el visto bueno de René a la cifra del poste.
+
 - **2026-11-28 · El 2D ya no tiembla al reproducir** (René, en producción). Había tres causas:
   - El croquis pericial rehacía todo el SVG (vías, etiquetas, leyenda y el fondo del mapa) y lo reemplazaba en cada cuadro. Ahora se arma una vez, y solo se mueve una capa encima con los vehículos en movimiento, sin redondear (`croquisPericial(...).ahora(t)`).
   - React aplicaba el instante en una tarea aparte, a veces después de pintar, así que unos cuadros repetían el instante y otros saltaban doble. Ahora el reloj (`requestAnimationFrame`) lo aplica en el mismo cuadro (`flushSync`).
