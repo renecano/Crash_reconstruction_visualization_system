@@ -6,7 +6,7 @@
  * dónde salió, para que la explicación lo diga («encontrado con Esri»).
  */
 import { USER_AGENT } from "../../server/osm";
-import type { RedLugar } from "../buscadores-lugar";
+import type { RedLugar, ZonaCaso } from "../buscadores-lugar";
 
 export const ATRIBUCION_OSM = "© OpenStreetMap contributors";
 const NOMINATIM = "https://nominatim.openstreetmap.org/search";
@@ -84,18 +84,37 @@ function llaveGeocodificacion(): string | null {
  * una lista vacía, sin romper nada. Sus resultados solo se guardan en memoria mientras dura el proceso
  * (geocodificación sin almacenar, `forStorage=false`).
  */
-async function esri(texto: string, limite: number, red: RedLugar): Promise<LugarGeocodificado[]> {
+/** Sin acentos ni mayúsculas ni «estado de», para comparar nombres de lugares. */
+const plano = (t: string | undefined) =>
+  (t ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/^estado de\s+/, "")
+    .trim();
+const coincide = (a: string | undefined, b: string | undefined) => {
+  const x = plano(a);
+  const y = plano(b);
+  return Boolean(x && y && (x.includes(y) || y.includes(x)));
+};
+
+async function esri(
+  texto: string,
+  limite: number,
+  red: RedLugar,
+  zona?: ZonaCaso,
+): Promise<LugarGeocodificado[]> {
   const llave = llaveGeocodificacion();
   if (!llave) return [];
   const params = {
     f: "json",
     countryCode: "MEX",
     maxLocations: String(limite),
-    outFields: "Type,PlaceName",
+    outFields: "Type,PlaceName,City,Subregion,Region",
     forStorage: "false",
     singleLine: texto,
   };
-  const clave = `esri:${JSON.stringify(params)}`;
+  const clave = `esri:${JSON.stringify(params)}:${JSON.stringify(zona ?? {})}`;
   const guardado = cache.get(clave);
   if (guardado) return guardado;
   try {
@@ -109,19 +128,34 @@ async function esri(texto: string, limite: number, red: RedLugar): Promise<Lugar
       candidates?: {
         address: string;
         location: { x: number; y: number };
-        attributes?: { Type?: string; PlaceName?: string };
+        attributes?: {
+          Type?: string;
+          PlaceName?: string;
+          City?: string;
+          Subregion?: string;
+          Region?: string;
+        };
       }[];
       error?: unknown;
     };
     if (d.error) return [];
-    const out = (d.candidates ?? []).map((c) => ({
-      lat: c.location.y,
-      lon: c.location.x,
-      nombre: c.attributes?.PlaceName || c.address,
-      categoria: "esri",
-      tipo: c.attributes?.Type ?? "",
-      fuente: "esri" as const,
-    }));
+    // Solo lo que cae en el estado del caso y, si se sabe, en su municipio (René, 2026-11-28: sin esto
+    // Esri daba «Farmacia Guadalajara Juárez, Toluca» en Ciudad Juárez). Nunca otro lugar del país.
+    const enZona = (a: NonNullable<typeof d.candidates>[number]["attributes"]) =>
+      (!zona?.estado || coincide(a?.Region, zona.estado)) &&
+      (!zona?.municipio ||
+        coincide(a?.Subregion, zona.municipio) ||
+        coincide(a?.City, zona.municipio));
+    const out = (d.candidates ?? [])
+      .filter((c) => enZona(c.attributes))
+      .map((c) => ({
+        lat: c.location.y,
+        lon: c.location.x,
+        nombre: c.attributes?.PlaceName || c.address,
+        categoria: "esri",
+        tipo: c.attributes?.Type ?? "",
+        fuente: "esri" as const,
+      }));
     guardar(clave, out);
     return out;
   } catch {
@@ -134,6 +168,8 @@ export async function geocodificar(
   texto: string,
   red: RedLugar,
   limite = 8,
+  /** La zona del caso: Esri solo da lo que cae en ella (Nominatim ya la lleva en el texto). */
+  zona?: ZonaCaso,
 ): Promise<Geocodificacion> {
   let fallo: unknown = null;
   try {
@@ -143,7 +179,7 @@ export async function geocodificar(
     fallo = e;
   }
   try {
-    const r = await esri(texto, limite, red);
+    const r = await esri(texto, limite, red, zona);
     if (r.length) return { resultados: r, fuente: "esri" };
   } catch (e) {
     fallo ??= e;

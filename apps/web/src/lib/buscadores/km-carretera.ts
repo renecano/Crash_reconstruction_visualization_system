@@ -14,7 +14,7 @@
  * Siempre con su explicación para el perito y su nivel de seguridad. No toca la escena: lo conecta la
  * colocación con la interfaz de René (`buscadores-lugar.ts`).
  */
-import { USER_AGENT } from "../../server/osm";
+import { consultarOverpass } from "./overpass";
 import type { BuscarKmCarretera, RedLugar, ZonaCaso } from "../buscadores-lugar";
 import { ATRIBUCION_OSM, geocodificar } from "./geocodificar";
 
@@ -330,8 +330,6 @@ export async function ubicarKm(texto: string, deps: DepsKm): Promise<PuntoBuscad
   return null;
 }
 
-const OVERPASS = "https://overpass-api.de/api/interpreter";
-
 /**
  * Las consultas por la red inyectada: Overpass por POST y las poblaciones con `geocodificar` (Nominatim
  * con su política de uso y, de respaldo, Esri). `fuentes` dice de dónde salieron las poblaciones.
@@ -343,17 +341,15 @@ export function depsDeRed(
   const fuentes = new Set<"nominatim" | "esri">();
   return {
     fuentes,
-    overpass: async (consulta) => {
-      const r = await red.fetch(OVERPASS, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": USER_AGENT },
-        body: new URLSearchParams({ data: consulta }).toString(),
-      });
-      if (!r.ok) throw new Error(`Overpass respondió ${r.status}`);
-      return (await r.json()) as RespuestaOverpass;
-    },
+    // Con sus réplicas y un reintento (René, 2026-11-28): una sola instancia saturada daba 502.
+    overpass: (consulta) => consultarOverpass<RespuestaOverpass>(consulta, red),
     poblacion: async (nombre) => {
-      const g = await geocodificar([nombre, zona.estado].filter(Boolean).join(", "), red, 5);
+      const g = await geocodificar(
+        [nombre, zona.estado].filter(Boolean).join(", "),
+        red,
+        5,
+        zona.estado ? { estado: zona.estado } : undefined,
+      );
       if (g.fuente) fuentes.add(g.fuente);
       // La población, no un arroyo ni una calle con su nombre («Arroyo Villa Ahumada»).
       const p =

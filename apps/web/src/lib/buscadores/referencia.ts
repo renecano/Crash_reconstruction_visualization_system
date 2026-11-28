@@ -12,7 +12,7 @@
  * Siempre con su explicación para el perito y su nivel de seguridad. No toca la escena: lo conecta la
  * interfaz de buscadores.
  */
-import { USER_AGENT } from "../../server/osm";
+import { consultarOverpass } from "./overpass";
 import type { BuscarReferencia, RedLugar, ZonaCaso } from "../buscadores-lugar";
 import { ATRIBUCION_OSM, geocodificar } from "./geocodificar";
 import { coincideCalle } from "./normalizar-calle";
@@ -293,16 +293,17 @@ export async function ubicarReferencia(
   };
 }
 
-const OVERPASS = "https://overpass-api.de/api/interpreter";
-
 /** Las consultas a OSM por la red inyectada: Nominatim (con su pausa de 1 s) y Overpass por POST. */
-export function depsDeRed(red: RedLugar): DepsReferencia & { fuentes: Set<"nominatim" | "esri"> } {
+export function depsDeRed(
+  red: RedLugar,
+  zona?: ZonaCaso,
+): DepsReferencia & { fuentes: Set<"nominatim" | "esri"> } {
   const fuentes = new Set<"nominatim" | "esri">();
   return {
     fuentes,
     // Nominatim con su política de uso y, de respaldo, Esri (`geocodificar`).
     buscar: async (texto) => {
-      const g = await geocodificar(texto, red, 8);
+      const g = await geocodificar(texto, red, 8, zona);
       if (g.fuente) fuentes.add(g.fuente);
       return g.resultados.map((x) => ({
         category: x.categoria,
@@ -312,15 +313,8 @@ export function depsDeRed(red: RedLugar): DepsReferencia & { fuentes: Set<"nomin
         lon: x.lon,
       }));
     },
-    overpass: async (consulta) => {
-      const r = await red.fetch(OVERPASS, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": USER_AGENT },
-        body: new URLSearchParams({ data: consulta }).toString(),
-      });
-      if (!r.ok) throw new Error(`Overpass respondió ${r.status}`);
-      return (await r.json()) as RespuestaOverpass;
-    },
+    // Con sus réplicas y un reintento (René, 2026-11-28): una sola instancia saturada daba 502.
+    overpass: (consulta) => consultarOverpass<RespuestaOverpass>(consulta, red),
   };
 }
 
@@ -343,7 +337,7 @@ export const buscarReferencia: BuscarReferencia = async (narracion, zona, red) =
     };
   const z = textoDeZona(zona);
   let p: PuntoReferido | null;
-  const deps = depsDeRed(red);
+  const deps = depsDeRed(red, zona);
   try {
     p = z ? await ubicarReferencia(narracion, z, deps) : null;
   } catch (e) {
