@@ -46,28 +46,30 @@ function revisar(cuadros: Cuadro[]) {
     expect(p.dt).toBeGreaterThan(0);
     expect(Math.abs(p.dt - p.dms)).toBeLessThan(0.002);
   }
-  // Cada vehículo: en pantalla, cada paso va hacia adelante y cambia poco respecto al anterior (sin
-  // cuadros repetidos, saltos dobles ni idas y vueltas).
+  // Cada vehículo: en pantalla, cada paso va hacia adelante y a una rapidez pareja: el paso entre
+  // cuadros, dividido entre el reloj que pasó (en una máquina lenta un cuadro puede durar el doble y
+  // el paso también: eso no es temblor), cambia poco de un cuadro al siguiente. Un cuadro repetido o
+  // un salto doble rompen esa rapidez.
   let movidos = 0;
   const ids = new Set(cuadros.flatMap((c) => Object.keys(c.v)));
   for (const id of ids) {
-    const d: [number, number][] = [];
+    const d: { x: number; y: number; s: number }[] = [];
     for (let i = 1; i < cuadros.length; i++) {
       const a = cuadros[i - 1]!.v[id];
       const b = cuadros[i]!.v[id];
-      if (a && b) d.push([b[0] - a[0], b[1] - a[1]]);
+      const s = (cuadros[i]!.ms - cuadros[i - 1]!.ms) / 1000;
+      if (a && b && s > 0) d.push({ x: b[0] - a[0], y: b[1] - a[1], s });
     }
-    const largo = d.map(([x, y]) => Math.hypot(x, y));
+    const largo = d.map((p) => Math.hypot(p.x, p.y));
     if (largo.filter((l) => l > 0.05).length < 30) continue; // quieto en este tramo
     movidos++;
     for (let i = 1; i < d.length; i++) {
       if (largo[i - 1]! < 0.05 || largo[i]! < 0.05) continue;
-      const coseno =
-        (d[i - 1]![0] * d[i]![0] + d[i - 1]![1] * d[i]![1]) / (largo[i - 1]! * largo[i]!);
+      const coseno = (d[i - 1]!.x * d[i]!.x + d[i - 1]!.y * d[i]!.y) / (largo[i - 1]! * largo[i]!);
       expect(coseno).toBeGreaterThan(0.9);
-      expect(Math.abs(largo[i]! - largo[i - 1]!)).toBeLessThan(
-        Math.max(0.15, largo[i - 1]! * 0.25),
-      );
+      const antes = largo[i - 1]! / d[i - 1]!.s;
+      const ahora = largo[i]! / d[i]!.s;
+      expect(Math.abs(ahora - antes)).toBeLessThan(Math.max(9, antes * 0.25));
     }
   }
   expect(movidos).toBeGreaterThanOrEqual(1);
