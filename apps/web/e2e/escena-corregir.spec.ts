@@ -98,12 +98,14 @@ test("@flujo /cesvi: corregir después — el poste golpeado en el recorrido del
   const cifra = page.getByTestId("cifra-reconstruccion");
   await expect(cifra).toBeVisible({ timeout: 90_000 });
   const antes = await cifra.innerText();
-  // 60 km/h en una calle de ciudad: alto, pero sin el aviso del límite de la vía.
+  // Sin el aviso del límite de la vía.
   await expect(page.getByTestId("sobre-el-limite")).toHaveCount(0);
 
   // 1. El poste contra el que chocó el Camaro, al recorrido del Camaro (donde se detiene): se toca,
-  // se arrastra y, al soltar, se recalcula. La cifra cambia (René, 2026-11-25; calibrado en
-  // «Capturas»: 60 → 95 km/h del VW Jetta).
+  // se arrastra y, al soltar, se recalcula. El resultado cambia (René, 2026-11-25). Desde el
+  // 2026-11-28 el poste narrado entra solo al cálculo, donde quedó el Camaro (#411), y llevarlo 25 m
+  // más allá ya no da una cifra: la reconstrucción dice que no cuadra. El aviso del límite de la vía
+  // junto a la cifra lo prueba `hoja-reconstruccion.test.tsx`.
   await irAPaso(page, 3);
   await page.getByTestId("cambiar-algo").click();
   await expect(page.getByTestId("panel-corregir")).toBeVisible();
@@ -121,15 +123,8 @@ test("@flujo /cesvi: corregir después — el poste golpeado en el recorrido del
   await irAPaso(page, 4);
   await expect(cifra).toBeVisible();
   const conPosteMovido = await cifra.innerText();
-  console.log(`[calibración] antes: ${antes} · con el poste movido: ${conPosteMovido}`);
   expect(conPosteMovido).not.toEqual(antes);
-  // 95 km/h: más de 40 km/h arriba del límite de la vía, junto a la cifra (René, 2026-11-26).
-  await expect(page.getByTestId("sobre-el-limite")).toContainText(
-    "queda más de 40 km/h arriba del límite de esta vía",
-  );
-  await expect(page.getByTestId("sobre-el-limite")).toContainText(
-    "revisa las posiciones finales y las medidas antes de usarla",
-  );
+  await expect(cifra).toContainText("La reconstrucción no cuadra");
 
   // 1b. La prueba contraria: un poste de la paleta, que nadie golpeó, lejos de los dos recorridos, no
   // cambia la cifra. (El poste golpeado no sirve para esto: es un choque declarado y la física lleva
