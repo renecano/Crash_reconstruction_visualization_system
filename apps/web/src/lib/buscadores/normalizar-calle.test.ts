@@ -1,7 +1,12 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { coincideCalle, nombresDeVia, normalizarNombreCalle } from "./normalizar-calle";
+import {
+  claveDeCalle,
+  coincideCalle,
+  nombresDeVia,
+  normalizarNombreCalle,
+} from "./normalizar-calle";
 
 /** Las calles de OSM alrededor de cada lugar (solo sus etiquetas de nombre), grabadas el 2026-11-27. */
 const OSM = JSON.parse(
@@ -20,24 +25,24 @@ const enElMapa = (lugar: string, narrada: string) => {
   return out;
 };
 
-describe("normalizarNombreCalle", () => {
+describe("claveDeCalle", () => {
   it("abreviaturas, títulos, acentos, mayúsculas y el tipo de vía", () => {
-    expect(normalizarNombreCalle("Av. Gral. Lázaro Cárdenas")).toBe("lazaro cardenas");
-    expect(normalizarNombreCalle("AVENIDA LÁZARO CÁRDENAS")).toBe("lazaro cardenas");
-    expect(normalizarNombreCalle("Blvd. Aeropuerto")).toBe("aeropuerto");
-    expect(normalizarNombreCalle("Calz. de Tlalpan")).toBe("tlalpan");
-    expect(normalizarNombreCalle("Prol. Lic. Benito Juárez")).toBe("prolongacion benito juarez");
-    expect(normalizarNombreCalle("Priv. Sta. Fe")).toBe("privada santa fe");
-    expect(normalizarNombreCalle("Cda. Sto. Domingo")).toBe("cerrada santo domingo");
-    expect(normalizarNombreCalle("Avenida de la Independencia")).toBe("independencia");
-    expect(normalizarNombreCalle("Ing. Dr. Pdte. Gob. Madero")).toBe("madero");
+    expect(claveDeCalle("Av. Gral. Lázaro Cárdenas")).toBe("lazaro cardenas");
+    expect(claveDeCalle("AVENIDA LÁZARO CÁRDENAS")).toBe("lazaro cardenas");
+    expect(claveDeCalle("Blvd. Aeropuerto")).toBe("aeropuerto");
+    expect(claveDeCalle("Calz. de Tlalpan")).toBe("tlalpan");
+    expect(claveDeCalle("Prol. Lic. Benito Juárez")).toBe("prolongacion benito juarez");
+    expect(claveDeCalle("Priv. Sta. Fe")).toBe("privada santa fe");
+    expect(claveDeCalle("Cda. Sto. Domingo")).toBe("cerrada santo domingo");
+    expect(claveDeCalle("Avenida de la Independencia")).toBe("independencia");
+    expect(claveDeCalle("Ing. Dr. Pdte. Gob. Madero")).toBe("madero");
   });
 
   it("los números escritos en fechas", () => {
-    expect(normalizarNombreCalle("Cinco de Mayo")).toBe(normalizarNombreCalle("Calle 5 de Mayo"));
-    expect(normalizarNombreCalle("Dieciséis de Septiembre")).toBe("16 de septiembre");
-    expect(normalizarNombreCalle("Primero de Mayo")).toBe(normalizarNombreCalle("1o. de Mayo"));
-    expect(normalizarNombreCalle("Cinco de Febrero")).not.toBe(normalizarNombreCalle("5 de Mayo"));
+    expect(claveDeCalle("Cinco de Mayo")).toBe(claveDeCalle("Calle 5 de Mayo"));
+    expect(claveDeCalle("Dieciséis de Septiembre")).toBe("16 de septiembre");
+    expect(claveDeCalle("Primero de Mayo")).toBe(claveDeCalle("1o. de Mayo"));
+    expect(claveDeCalle("Cinco de Febrero")).not.toBe(claveDeCalle("5 de Mayo"));
   });
 
   it("todos los nombres de una vía de OSM", () => {
@@ -51,6 +56,39 @@ describe("normalizarNombreCalle", () => {
       { nombre: "Eje Central", etiqueta: "alt_name" },
       { nombre: "Eje Central Lázaro Cárdenas", etiqueta: "alt_name" },
     ]);
+  });
+});
+
+describe("normalizarNombreCalle (la interfaz de René)", () => {
+  it("base, formas y patrón", () => {
+    const r = normalizarNombreCalle("Av. Gral. Lázaro Cárdenas");
+    expect(r.base).toBe("general lazaro cardenas");
+    expect(r.formas).toEqual([
+      "general lazaro cardenas",
+      "lazaro cardenas",
+      "gral lazaro cardenas",
+    ]);
+    expect(r.patron).not.toContain("\\");
+    // El patrón encuentra los nombres como vienen en OSM, con acentos, mayúsculas y abreviaturas.
+    const re = new RegExp(r.patron!, "i");
+    for (const osm of [
+      "Avenida Lázaro Cárdenas",
+      "Av. Gral. Lázaro Cárdenas",
+      "Eje Central Lázaro Cárdenas",
+    ])
+      expect(re.test(osm)).toBe(true);
+    expect(re.test("Avenida Cuauhtémoc")).toBe(false);
+  });
+  it("los números en cifra y en letra", () => {
+    const r = normalizarNombreCalle("Calle Cinco de Mayo");
+    expect(r.formas).toEqual(expect.arrayContaining(["5 de mayo", "cinco de mayo"]));
+    const re = new RegExp(r.patron!, "i");
+    expect(re.test("Calle 5 de Mayo")).toBe(true);
+    expect(re.test("Avenida Cinco de Mayo")).toBe(true);
+    expect(re.test("Calle 5 de Febrero")).toBe(false);
+  });
+  it("sin nombre, sin patrón", () => {
+    expect(normalizarNombreCalle("  ").patron).toBeNull();
   });
 });
 
