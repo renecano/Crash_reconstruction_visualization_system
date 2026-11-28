@@ -8,7 +8,8 @@
 type P = { x: number; y: number };
 
 /** Los tipos de OSM por los que circulan vehículos (sin andadores, ciclovías ni escaleras). */
-const DE_VEHICULOS = new Set([
+/** Los tipos de vía de OSM por donde circulan vehículos. */
+export const VIAS_DE_VEHICULOS: ReadonlySet<string> = new Set([
   "motorway",
   "motorway_link",
   "trunk",
@@ -95,7 +96,7 @@ export function ejeDeLaCalle(
 ): EjeCalle | null {
   let mejor: { v: (typeof vias)[number]; d: number } | null = null;
   for (const v of vias) {
-    if (!DE_VEHICULOS.has(v.tipo) || v.puntos.length < 2) continue;
+    if (!VIAS_DE_VEHICULOS.has(v.tipo) || v.puntos.length < 2) continue;
     const { d } = proyectar(v.puntos, choque);
     if (d <= ALCANCE_VIA_M && (!mejor || d < mejor.d)) mejor = { v, d };
   }

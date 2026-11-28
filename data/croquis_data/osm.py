@@ -62,7 +62,7 @@ def query(lat: float, lon: float, radio_m: int) -> str:
     """Consulta Overpass QL: calles a menos de ``radio_m`` del punto, con sus nodos."""
     return (
         f'[out:json][timeout:25];way(around:{radio_m},{lat},{lon})["highway"];'
-        "out body;>;out skel qt;"
+        "out body;>;out body qt;"
     )
 
 

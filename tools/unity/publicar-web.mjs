@@ -14,7 +14,7 @@
  *   node tools/unity/publicar-web.mjs --podar    # además, dice qué builds viejos borraría
  *   node tools/unity/publicar-web.mjs --podar --si   # y los borra
  *   node tools/unity/publicar-web.mjs --bajar <huella>  # copia ese build a .cache/visor-unity/<huella>
- *   node tools/unity/publicar-web.mjs --release <huella>  # sube el build del release visor-web-<huella>
+ *   node tools/unity/publicar-web.mjs --release <huella> --puente <versión>  # sube el build del release visor-web-<huella>
  *
  * **Desde el release (René, 2026-11-26):** Alberto compila en su Mac desde `main` y sube el zip al
  * release de GitHub `visor-web-<huella>`; quien tiene el token lo sube a Blob desde ahí, sin compilar.
@@ -260,6 +260,18 @@ async function inventario() {
 
 // El build que se sube: el local o el del release que se pide con `--release <huella>`.
 const iRelease = process.argv.indexOf("--release");
+// La versión del puente del build (René, 2026-11-27): va al manifiesto para que la web no ofrezca lo
+// que el build no trae. Con `--release` es obligatoria (la dice la nota del release).
+const iPuente = process.argv.indexOf("--puente");
+const PUENTE = iPuente > 0 ? (process.argv[iPuente + 1] ?? "") : "";
+if (PUENTE && !/^\d+\.\d+\.\d+$/.test(PUENTE)) {
+  console.error(`--puente ${PUENTE}: se espera una versión como 1.5.0.`);
+  process.exit(1);
+}
+if (iRelease > 0 && !PUENTE) {
+  console.error("Con --release va también --puente <versión> (la dice la nota del release).");
+  process.exit(1);
+}
 const DEL_RELEASE = iRelease > 0 ? await bajarRelease(process.argv[iRelease + 1] ?? "") : null;
 const BUILD = DEL_RELEASE ? soloElBuild(DEL_RELEASE, process.argv[iRelease + 1]) : BUILD_LOCAL;
 const huella = huellaCarpeta(BUILD);
@@ -328,6 +340,7 @@ const manifiesto = {
   code: de(".wasm"),
   caso: "axa_alcance.json",
   casos: casosD1.map((f) => f.replace(/\.json$/, "")),
+  ...(PUENTE ? { puente: PUENTE } : {}),
 };
 writeFileSync(
   join(RAIZ, "apps/web/public/visor-unity/manifest.json"),

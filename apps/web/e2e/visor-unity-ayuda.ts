@@ -36,6 +36,7 @@ export async function conUnityFalso(page: Page, version: string) {
         data: "x.data",
         framework: "x.framework.js",
         code: "x.wasm",
+        puente: version,
       },
     }),
   );

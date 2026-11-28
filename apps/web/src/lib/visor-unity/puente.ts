@@ -29,6 +29,12 @@ export interface ManifiestoVisorUnity {
    * Vercel Blob: la demo local y el plan B (`tools/unity/visor-local.mjs`, René 2026-11-17).
    */
   modelos?: string;
+  /**
+   * La versión del puente que habla el build (René, 2026-11-27): la web la lee antes de arrancar
+   * Unity para no ofrecer lo que el build no trae (el trayecto previo, la cámara automática). La
+   * escribe `publicar-web.mjs --puente`; sin ella, se toma como de antes de la 1.5.0.
+   */
+  puente?: string;
 }
 
 /** Lo que `createUnityInstance` devuelve y usamos. */

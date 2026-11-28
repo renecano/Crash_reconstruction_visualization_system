@@ -1807,15 +1807,25 @@ export function reconstruct(
   const post = new Map<string, [Trajectory, boolean, number]>();
   const muDowned = downedMotorcycleFriction(String((lugar.superficie as Json).valor));
 
+  // Una huella de derrape o de frenado de después del impacto dice que sus llantas deslizaban
+  // (René, 2026-11-26: el Sentra del poste salía del choque «rodando» con 0.3–0.5 de la fricción y le
+  // bastaban 30 km/h para los 18.40 m de su derrape).
+  const deslizaDespues = new Set(
+    ((spec.evidencias ?? []) as Json[])
+      .filter(
+        (e) =>
+          (e.tipo === "marcas_derrape" || e.tipo === "marcas_frenado") &&
+          e.fase === "despues_impacto",
+      )
+      .map((e) => String(e.vehiculo_id)),
+  );
   const postBody = (m: VehicleModel): JointBody => {
     const start = postStart.get(m.id)!;
     const downed = DOWNED_SLIDE_CLASSES.has(m.clase);
+    const desliza = m.braking || downed || deslizaDespues.has(m.id);
     // Caída, se arrastra de lado: todo el contacto desliza con el arrastre medido.
-    const wheels = fourWheels(m.wheelbase, m.track, m.cgFromFront, m.braking || downed);
-    const drag =
-      m.braking || downed
-        ? ROLLING_RESISTANCE
-        : Math.max(ROLLING_RESISTANCE, sup.dragFraction * mu);
+    const wheels = fourWheels(m.wheelbase, m.track, m.cgFromFront, desliza);
+    const drag = desliza ? ROLLING_RESISTANCE : Math.max(ROLLING_RESISTANCE, sup.dragFraction * mu);
     const muPost = downed ? (opts.downedMu ?? muDowned.nominal) : mu;
     // Un vehículo que todavía no choca (solo está en un impacto posterior) rueda libre hasta su
     // primer impacto (ADR 0066).

@@ -69,17 +69,17 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 - **La escena llega armada** (ronda 4): Croquis la propone con lo que leyó. A la izquierda va la lista: cada cosa propuesta, lista o pendiente, con su «Por qué» (la calle y el sentido en que venía, y el daño en que se apoya). Lo propuesto se confirma o se corrige; lo que falta abre su pregunta en el mapa. Arriba están las herramientas con su tecla: girar (Q/E), «Alinear con la calle» (A), «Voltear 180°» (F), deshacer, acercar y medir (M). «Ver la reconstrucción» se activa en el panel al completar.
 - **Reconstruir y ver en 3D** (unos 5 s; el 3D ya está en caché). Antes de reconstruir sale la misma incógnita que en AXA, ahora con lo que colocó el perito.
 
-**Los cinco ejemplos** (`docs/cesvi/ronda-2/narraciones.md`; cifras del 2026-11-16 en producción, con la escena colocada como dice cada narración):
+**Los cinco ejemplos** (`docs/cesvi/ronda-2/narraciones.md`; cifras del navegador con el Unity real en la t11, 2026-11-27, con la escena colocada como dice cada narración y lo medido como restricción del solver):
 
 | Ejemplo                                         | Qué muestra                                                                 | Lo que da                                                                |
 | ----------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| Crucero de noche en Iztapalapa                  | Lectura con citas y preguntas; de noche                                     | A · Jetta a <!--cifra:ejemplos.crucero-->20 km/h (5–26)<!--/cifra-->     |
-| Alcance en carretera con la deformación medida  | Las medidas C1–C6 de los dos vehículos, su energía y su cambio de velocidad | A · NP300 a <!--cifra:ejemplos.alcance-->54 km/h (49–55)<!--/cifra-->    |
+| Crucero de noche en Iztapalapa                  | Lectura con citas y preguntas; de noche                                     | A · Jetta a <!--cifra:ejemplos.crucero-->20 km/h (1–27)<!--/cifra-->     |
+| Alcance en carretera con la deformación medida  | Las medidas C1–C6 de los dos vehículos, su energía y su cambio de velocidad | A · NP300 a <!--cifra:ejemplos.alcance-->54 km/h (44–54)<!--/cifra-->    |
 | Carambola de noche con lluvia                   | Tres vehículos, dos impactos en orden, pavimento mojado                     | A · Ranger a <!--cifra:ejemplos.carambola-->25 km/h (20–32)<!--/cifra--> |
-| Reversa en una calle con tope                   | La reversa como supuesto con su fuente; un tope con las medidas de la norma | B · Versa a <!--cifra:ejemplos.reversa-->20 km/h (16–25)<!--/cifra-->    |
-| Choque en un entronque y salida contra un poste | Punto de paso, terracería y un objeto fijo                                  | B · Sentra a <!--cifra:ejemplos.poste-->63 km/h (43–65)<!--/cifra-->     |
+| Reversa en una calle con tope                   | La reversa como supuesto con su fuente; un tope con las medidas de la norma | B · Versa a <!--cifra:ejemplos.reversa-->20 km/h (17–26)<!--/cifra-->    |
+| Choque en un entronque y salida contra un poste | Punto de paso, terracería y un objeto fijo                                  | B · Sentra a <!--cifra:ejemplos.poste-->50 km/h (47–57)<!--/cifra-->     |
 
-Para la demo: la carambola (los dos impactos en orden, de noche con lluvia en el 3D) o el alcance (la deformación medida). **Dos hipótesis** solo se ven en AXA: ninguno de los ejemplos las da. **El del poste no se usa en la demo** hasta el arreglo del rango del solver (su extremo bajo incluye muestras en las que el Sentra no llega al poste; ver «Endurecimiento pendiente» en `docs/PROGRESS.md`). Un ejemplo sin cambios no gasta API; los cinco aún no se han visto con el 3D real de Unity.
+Para la demo: la carambola (los dos impactos en orden, de noche con lluvia en el 3D) o el alcance (la deformación medida). **Dos hipótesis** solo se ven en AXA: ninguno de los ejemplos las da. **El del poste vuelve a la demo** (René, 2026-11-27): con lo medido como restricción, el Sentra respeta su derrape de 18.40 m y sale del choque a 43 km/h o más. Un ejemplo sin cambios no gasta API; los cinco ya se vieron con el 3D real de Unity en la t11.
 
 **Plan B:** si Claude no responde, la pantalla lo dice y conserva la narración; se sigue con el caso de AXA o se llena la escena a mano.
 

@@ -98,12 +98,20 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Los resultados versionados del solver y la extracción.
+          # Los resultados versionados del solver, en dos mitades con la misma carga
+          # (`CROQUIS_RESULTADOS`, 2026-11-27: juntos pasaban de 10 min), y la extracción. Los
+          # nombres «1/2» y «2/2» son los que pide la regla de `main`; la otra mitad va aparte.
           - parte: "1/2"
+            resultados: "1/2"
             pruebas: >-
               solver/tests/test_results_io.py extraction/tests
+          - parte: "referencias 2/2"
+            resultados: "2/2"
+            pruebas: >-
+              solver/tests/test_results_io.py
           # El resto del solver y lo demás.
           - parte: "2/2"
+            resultados: ""
             pruebas: >-
               solver/tests --ignore=solver/tests/test_results_io.py
               packages/scene-schema/python/tests data/tests eval/tests
@@ -121,3 +129,5 @@ jobs:
       - if: matrix.parte == '2/2'
         run: uv run pyright
       - run: uv run pytest -n auto --dist worksteal ${{ matrix.pruebas }}
+        env:
+          CROQUIS_RESULTADOS: ${{ matrix.resultados }}

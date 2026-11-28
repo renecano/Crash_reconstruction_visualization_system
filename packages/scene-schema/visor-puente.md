@@ -54,6 +54,7 @@
   - **El final:** desde arriba, con las posiciones finales y el punto de contacto.
   - Entre una toma y otra, Unity pasa con un movimiento suave.
 - La web sigue aceptando la 1.4.0, la 1.3.0 y la 1.2.0; a esas no les ofrece la `automatica` (`conCamaraAutomatica`) y graba con la cámara que el perito tiene elegida.
+- **El trayecto previo** (`trayecto_previo` del paquete, Unity #377) lo dibujan los builds de la 1.5.0 compilados desde `main` (`conTrayectoPrevio`). La web sabe qué versión trae el build publicado antes de arrancar Unity: el manifiesto lleva `puente` (lo escribe `publicar-web.mjs --release <huella> --puente <versión>`). Con un build de antes de la 1.5.0, La escena no pregunta «¿De dónde venía?» (René, 2026-11-27).
 
 **`vista`:** `antes` (t = −1 s), `impacto` (t = 0) y `reposo` (al final) salen con la cámara cinematográfica; `conductor:<id del vehículo>`, con la de ese conductor en el impacto. La foto se toma a la escala de dibujo completa, sin minimapa ni panel; la leyenda ilustrativa la pone la web al pie.
 
