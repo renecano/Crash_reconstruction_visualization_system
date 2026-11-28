@@ -12,6 +12,7 @@
  * Siempre con su explicación para el perito y su nivel de seguridad. No toca la escena: lo conecta la
  * interfaz de buscadores.
  */
+import type { BuscarReferencia, RedLugar, ZonaCaso } from "../buscadores-lugar";
 import { coincideCalle } from "./normalizar-calle";
 
 type LatLon = { lat: number; lon: number };
@@ -34,6 +35,8 @@ export interface PuntoReferido {
   referencia: { nombre: string; osm: string };
   calle: string | null;
   explicacion: string;
+  /** Si hay varias referencias con ese nombre: todas, la elegida primero. */
+  opciones?: { lat: number; lon: number; nombre: string }[];
 }
 
 interface Elemento {
@@ -190,7 +193,7 @@ const COMO: Record<TipoReferencia, string> = {
  * Dónde queda la referencia del texto y, si nombra la calle, el punto de la calle más cercano a ella.
  * `zona`: la alcaldía o el municipio de la narración. `null` si no hay referencia o no se encuentra.
  */
-export async function buscarReferencia(
+export async function ubicarReferencia(
   texto: string,
   zona: string,
   deps: DepsReferencia,
@@ -247,10 +250,23 @@ export async function buscarReferencia(
     }
     if (mejor && mejor.m <= 700) {
       const seg =
-        tipoDudoso || mejor.seguridad === "baja" ? "baja" : mejor.m <= 150 ? "alta" : "media";
+        tipoDudoso || mejor.seguridad === "baja"
+          ? "baja"
+          : mejor.m <= 150 && !ambigua
+            ? "alta"
+            : "media";
+      const elegida = mejor.c;
       return {
         ...mejor.q,
         seguridad: seg,
+        ...(ambigua
+          ? {
+              opciones: [elegida, ...candidatos.filter((x) => x !== elegida)].map((x) => ({
+                ...x.p,
+                nombre: x.e.name,
+              })),
+            }
+          : {}),
         referencia: { nombre: mejor.c.e.name, osm: `${mejor.c.e.category}/${mejor.c.e.type}` },
         calle: mejor.nombre,
         explicacion: `El punto de ${mejor.nombre} más cercano a ${dicha(mejor.c)} (a ${Math.round(mejor.m)} m), según el mapa.${ambigua}`,
@@ -274,3 +290,82 @@ export async function buscarReferencia(
     explicacion: `${mayuscula(dicha(c))}, según el mapa (la narración no dice en qué calle).${ambigua}`,
   };
 }
+
+const OVERPASS = "https://overpass-api.de/api/interpreter";
+const NOMINATIM = "https://nominatim.openstreetmap.org/search";
+
+/** Las consultas a OSM por la red inyectada: Nominatim (con su pausa de 1 s) y Overpass por POST. */
+export function depsDeRed(red: RedLugar): DepsReferencia {
+  let primera = true;
+  return {
+    buscar: async (texto) => {
+      if (!primera) await red.pausa?.(1000);
+      primera = false;
+      const r = await red.fetch(
+        `${NOMINATIM}?format=jsonv2&limit=8&countrycodes=mx&q=${encodeURIComponent(texto)}`,
+      );
+      if (!r.ok) throw new Error(`Nominatim respondió ${r.status}`);
+      return (await r.json()) as Encontrado[];
+    },
+    overpass: async (consulta) => {
+      const r = await red.fetch(OVERPASS, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ data: consulta }).toString(),
+      });
+      if (!r.ok) throw new Error(`Overpass respondió ${r.status}`);
+      return (await r.json()) as RespuestaOverpass;
+    },
+  };
+}
+
+/** La zona como texto para el buscador: «Benito Juárez, Ciudad de México». */
+export const textoDeZona = (z: ZonaCaso) => [z.municipio, z.estado].filter(Boolean).join(", ");
+
+/**
+ * El buscador de referencias con la interfaz de René (`BuscarReferencia`): «Croquis encontró: Calzada de
+ * Tlalpan a la altura de la estación Portales · …». Nunca un punto por omisión: si no lo encuentra, dice
+ * por qué.
+ */
+export const buscarReferencia: BuscarReferencia = async (narracion, zona, red) => {
+  const r = leerReferencia(narracion);
+  if (!r)
+    return {
+      encontrado: false,
+      como: "referencia",
+      aplica: false,
+      explicacion: "La narración no da una referencia (una estación, una glorieta, una colonia…).",
+    };
+  const z = textoDeZona(zona);
+  let p: PuntoReferido | null;
+  try {
+    p = z ? await ubicarReferencia(narracion, z, depsDeRed(red)) : null;
+  } catch (e) {
+    return {
+      encontrado: false,
+      como: "referencia",
+      aplica: true,
+      explicacion: `No pude consultar OpenStreetMap para «${r.nombre}»: ${e instanceof Error ? e.message : String(e)}.`,
+    };
+  }
+  if (!p)
+    return {
+      encontrado: false,
+      como: "referencia",
+      aplica: true,
+      explicacion: z
+        ? `No encontré «${r.nombre}» en OpenStreetMap en ${z}.`
+        : `No sé en qué municipio buscar «${r.nombre}»: la narración no lo dice.`,
+    };
+  return {
+    encontrado: true,
+    punto: { lat: p.lat, lon: p.lon },
+    como: "referencia",
+    seguridad: p.seguridad,
+    que: p.calle ? `${p.calle} a la altura de ${p.referencia.nombre}` : p.referencia.nombre,
+    explicacion: p.explicacion,
+    ...(p.opciones
+      ? { opciones: p.opciones.map((o) => ({ punto: { lat: o.lat, lon: o.lon }, que: o.nombre })) }
+      : {}),
+  };
+};

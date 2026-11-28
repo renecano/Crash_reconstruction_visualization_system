@@ -1,8 +1,10 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
+import type { RedLugar } from "../buscadores-lugar";
 import {
   buscarReferencia,
+  ubicarReferencia,
   consultaCalles,
   leerReferencia,
   type DepsReferencia,
@@ -64,9 +66,9 @@ describe("leerReferencia", () => {
   });
 });
 
-describe("buscarReferencia, con lo grabado", () => {
+describe("ubicarReferencia, con lo grabado", () => {
   it("Calzada de Tlalpan a la altura de Metro Portales", async () => {
-    const p = await buscarReferencia(
+    const p = await ubicarReferencia(
       "sobre la Calzada de Tlalpan, a la altura de la estación Portales del Metro",
       "Benito Juárez, Ciudad de México",
       grabadas,
@@ -82,7 +84,7 @@ describe("buscarReferencia, con lo grabado", () => {
   });
 
   it("la glorieta de la Diana Cazadora: de las dos del mapa, la que está en Reforma", async () => {
-    const p = await buscarReferencia(
+    const p = await ubicarReferencia(
       "en la glorieta de la Diana Cazadora, sobre Paseo de la Reforma",
       "Cuauhtémoc, Ciudad de México",
       grabadas,
@@ -90,10 +92,13 @@ describe("buscarReferencia, con lo grabado", () => {
     expect(p!.calle).toMatch(/Reforma/);
     expect(km(p!, { lat: 19.42513, lon: -99.17163 })).toBeLessThan(0.15);
     expect(p!.explicacion).toContain("Hay 2 lugares con ese nombre en el mapa");
+    // Dos posibles: seguridad media y las dos opciones, la elegida primero.
+    expect(p!.seguridad).toBe("media");
+    expect(p!.opciones?.length).toBe(2);
   });
 
   it("Periférico Sur a la altura de la salida a San Jerónimo", async () => {
-    const p = await buscarReferencia(
+    const p = await ubicarReferencia(
       "en los carriles centrales del Anillo Periférico Sur, a la altura de la salida a San Jerónimo",
       "Álvaro Obregón, Ciudad de México",
       grabadas,
@@ -107,11 +112,59 @@ describe("buscarReferencia, con lo grabado", () => {
 
   it("sin referencia en el mapa no inventa un punto", async () => {
     expect(
-      await buscarReferencia(
+      await ubicarReferencia(
         "a la altura de la estación Inexistente",
         "Benito Juárez, Ciudad de México",
         grabadas,
       ),
     ).toBeNull();
+  });
+});
+
+describe("buscarReferencia, con la interfaz de René (red inyectada, respuestas grabadas)", () => {
+  const red: RedLugar = {
+    fetch: (async (url: string, init?: RequestInit) => {
+      const u = String(url);
+      if (u.includes("nominatim")) {
+        const q = decodeURIComponent(new URL(u).searchParams.get("q") ?? "");
+        return new Response(JSON.stringify(G.busquedas[q] ?? []));
+      }
+      const consulta = new URLSearchParams(String(init?.body)).get("data") ?? "";
+      return new Response(JSON.stringify(await grabadas.overpass(consulta)));
+    }) as typeof fetch,
+    pausa: async () => undefined,
+  };
+  it("Tlalpan a la altura de Metro Portales", async () => {
+    const r = await buscarReferencia(
+      "sobre la Calzada de Tlalpan, a la altura de la estación Portales del Metro",
+      { municipio: "Benito Juárez", estado: "Ciudad de México" },
+      red,
+    );
+    expect(r).toMatchObject({
+      encontrado: true,
+      como: "referencia",
+      seguridad: "alta",
+      que: "Calzada de Tlalpan a la altura de Portales",
+    });
+  });
+  it("la Diana: las dos opciones, la de Reforma primero", async () => {
+    const r = await buscarReferencia(
+      "en la glorieta de la Diana Cazadora, sobre Paseo de la Reforma",
+      { municipio: "Cuauhtémoc", estado: "Ciudad de México" },
+      red,
+    );
+    expect(r.encontrado && r.opciones?.length).toBe(2);
+    // La primera es la Diana de la glorieta de Reforma (19.4251, −99.1716), no la otra escultura.
+    expect(
+      r.encontrado && km(r.opciones![0]!.punto, { lat: 19.42513, lon: -99.17163 }),
+    ).toBeLessThan(0.1);
+  });
+  it("no aplica sin referencia; sin municipio no busca", async () => {
+    expect(await buscarReferencia("en el cruce de Juárez y Morelos", {}, red)).toMatchObject({
+      encontrado: false,
+      aplica: false,
+    });
+    const r = await buscarReferencia("a la altura de la estación Portales", {}, red);
+    expect(r).toMatchObject({ encontrado: false, aplica: true });
   });
 });
