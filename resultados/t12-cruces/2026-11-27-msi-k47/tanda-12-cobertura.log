@@ -1,35 +1,78 @@
 # Paso: cobertura
 # Comando: pnpm --filter @croquis/cesvi exec tsx ../../eval/t3_cobertura.mts --casos 200 --salida eval/results/t12/t3_cobertura.json
 # Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
-# Inicio: 2026-11-27 18:09:20
+# Inicio: 2026-11-27 19:28:45
 
-alcance: 10 de 200 casos (23 s)
-alcance: 20 de 200 casos (44 s)
-alcance: 30 de 200 casos (66 s)
-alcance: 40 de 200 casos (91 s)
-alcance: 50 de 200 casos (120 s)
-alcance: 60 de 200 casos (151 s)
-alcance: 70 de 200 casos (177 s)
-alcance: 80 de 200 casos (201 s)
-alcance: 90 de 200 casos (226 s)
-alcance: 100 de 200 casos (255 s)
-alcance: 110 de 200 casos (277 s)
-alcance: 120 de 200 casos (303 s)
-alcance: 130 de 200 casos (332 s)
-alcance: 140 de 200 casos (358 s)
-alcance: 150 de 200 casos (385 s)
-alcance: 160 de 200 casos (409 s)
-alcance: 170 de 200 casos (437 s)
-alcance: 180 de 200 casos (464 s)
-alcance: 190 de 200 casos (494 s)
-alcance: 200 de 200 casos (523 s)
-lateral_interseccion: 10 de 200 casos (589 s)
-lateral_interseccion: 20 de 200 casos (648 s)
-lateral_interseccion: 30 de 200 casos (714 s)
-lateral_interseccion: 40 de 200 casos (3482 s)
-lateral_interseccion: 50 de 200 casos (3533 s)
-lateral_interseccion: 60 de 200 casos (3587 s)
+alcance: 10 de 200 casos (22 s)
+alcance: 20 de 200 casos (42 s)
+alcance: 30 de 200 casos (64 s)
+alcance: 40 de 200 casos (83 s)
+alcance: 50 de 200 casos (103 s)
+alcance: 60 de 200 casos (126 s)
+alcance: 70 de 200 casos (145 s)
+alcance: 80 de 200 casos (162 s)
+alcance: 90 de 200 casos (181 s)
+alcance: 100 de 200 casos (202 s)
+alcance: 110 de 200 casos (220 s)
+alcance: 120 de 200 casos (240 s)
+alcance: 130 de 200 casos (261 s)
+alcance: 140 de 200 casos (280 s)
+alcance: 150 de 200 casos (299 s)
+alcance: 160 de 200 casos (316 s)
+alcance: 170 de 200 casos (336 s)
+alcance: 180 de 200 casos (355 s)
+alcance: 190 de 200 casos (376 s)
+alcance: 200 de 200 casos (397 s)
+lateral_interseccion: 10 de 200 casos (447 s)
+lateral_interseccion: 20 de 200 casos (493 s)
+lateral_interseccion: 30 de 200 casos (545 s)
+lateral_interseccion: 40 de 200 casos (597 s)
+lateral_interseccion: 50 de 200 casos (642 s)
+lateral_interseccion: 60 de 200 casos (692 s)
+lateral_interseccion: 70 de 200 casos (737 s)
+lateral_interseccion: 80 de 200 casos (785 s)
+lateral_interseccion: 90 de 200 casos (830 s)
+lateral_interseccion: 100 de 200 casos (876 s)
+lateral_interseccion: 110 de 200 casos (922 s)
+lateral_interseccion: 120 de 200 casos (968 s)
+lateral_interseccion: 130 de 200 casos (1023 s)
+lateral_interseccion: 140 de 200 casos (1069 s)
+lateral_interseccion: 150 de 200 casos (1114 s)
+lateral_interseccion: 160 de 200 casos (1161 s)
+lateral_interseccion: 170 de 200 casos (1213 s)
+lateral_interseccion: 180 de 200 casos (1255 s)
+lateral_interseccion: 190 de 200 casos (1307 s)
+lateral_interseccion: 200 de 200 casos (1354 s)
+{
+ "total": {
+  "supuestos_fijos": {
+   "velocidades": 579,
+   "dentro": 348,
+   "cobertura_pct": 60.1,
+   "ic95_pct": [
+    56.06,
+    64.01
+   ],
+   "ancho_mediano_kmh": 11.38,
+   "error_absoluto_mediano_kmh": 4.78,
+   "verdad_abajo_del_rango": 102,
+   "verdad_arriba_del_rango": 129
+  },
+  "supuestos_sorteados": {
+   "velocidades": 579,
+   "dentro": 404,
+   "cobertura_pct": 69.78,
+   "ic95_pct": [
+    65.91,
+    73.38
+   ],
+   "ancho_mediano_kmh": 13.31,
+   "error_absoluto_mediano_kmh": 4.78,
+   "verdad_abajo_del_rango": 75,
+   "verdad_arriba_del_rango": 100
+  }
+ },
+ "segundos": 1354
+}
 
-# detenido por pasar de 60 min
-
-# Fin: 2026-11-27 19:09:44 · detenido por pasar de 60 min · 60.4 min
+# Fin: 2026-11-27 19:51:20 · ok · 22.6 min
