@@ -29,6 +29,13 @@ export const conLeyenda = (version: string | null | undefined): boolean =>
 export const conCamaraAutomatica = (version: string | null | undefined): boolean =>
   version === "1.5.0";
 
+/**
+ * Si el build dibuja el trayecto previo ilustrativo (`trayecto_previo` del paquete, Unity #377): los
+ * builds de la 1.5.0 compilados desde `main` (René, 2026-11-27: el 8a302a, de la 1.4.0, no lo trae).
+ */
+export const conTrayectoPrevio = (version: string | null | undefined): boolean =>
+  version === "1.5.0";
+
 export const CALIDADES_VISOR = ["baja", "media", "alta", "ultra", "auto"] as const;
 export type CalidadVisor = (typeof CALIDADES_VISOR)[number];
 

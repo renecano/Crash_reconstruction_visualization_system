@@ -195,7 +195,12 @@ const JAC_STEP: Record<string, number> = { velocidad: 1.0, rumbo: 1.0 };
 const BOUND_TOL: Record<string, number> = { velocidad: 0.1, rumbo: 0.1 };
 export const SCALE: Record<string, number> = { velocidad: 10.0, rumbo: 10.0 };
 const IDENT_MAX: Record<string, number> = { velocidad: 30.0, rumbo: 15.0 };
-const CHORD_ITER = 4;
+// Que el reajuste de cada muestra converja (René, 2026-11-26): con 4 pasos de a lo más una escala
+// y fracciones de ½ y ¼, las muestras caían en una retícula de 10, 5 y 2.5 km/h sin converger.
+const CHORD_ITER = 8;
+const CHORD_FRACCIONES = [1.0, 0.5, 0.25, 0.125, 0.0625, 0.03125];
+/** Una muestra que deja algo medido más lejos que esto (sigmas), o 1σ más que el modo, se rehace. */
+export const SIGMAS_MEDIDO = 3.0;
 const CHORD_TRUST = 1.0;
 // Multiarranque (ADR 0091): arranques fijos, pocas iteraciones en cada uno y se afinan los mejores.
 export const EVIDENCE_SEED = 0;
@@ -903,6 +908,18 @@ export function positionAt(ts: number[], xs: number[], ys: number[], t: number):
   return [xs[xs.length - 1]!, ys[ys.length - 1]!];
 }
 
+/**
+ * Lo medido (dónde quedó cada uno, la huella de después del impacto, la proyección y la deformación)
+ * es una restricción dentro de su incertidumbre, no un residuo que la pérdida soft-L1 pueda tratar
+ * como atípico (René, 2026-11-26: el Sentra del poste a 5–10 m de su reposo «ajustaba»). Para el
+ * optimizador, su residuo r va como r·√(1 + r²/4), cuya soft-L1 vale exactamente r²: cuadrático.
+ */
+const MEDIDO = ["reposo:", "marcas_despues:", "proyeccion:", "dano:", "dano_minimo:"];
+export const esMedido = (k: string) => MEDIDO.some((m) => k.startsWith(m));
+export const aDuro = (v: number) => v * Math.sqrt(1.0 + (v * v) / 4.0);
+export const deDuro = (v: number) =>
+  v === 0 ? 0.0 : Math.sign(v) * Math.sqrt(2.0 * (Math.sqrt(1.0 + v * v) - 1.0));
+
 export function residuals(
   spec: Json,
   ev: Evidence,
@@ -1058,6 +1075,8 @@ class Problem {
     readonly fixed: Map<string, number>,
     readonly dt: number,
     readonly downedMu: number | null = null,
+    /** Lo medido como restricción; sin ella, la pérdida de siempre (para buscar la cuenca). */
+    readonly duro = true,
   ) {}
 
   values(x: readonly number[]): Map<string, number> {
@@ -1103,8 +1122,16 @@ class Problem {
       if (this.names.length === 0) this.names.push(...[...res.keys()].sort());
       out = this.names.map((k) => res.get(k) ?? 1e3);
     }
+    // Lo medido, cuadrático: la soft-L1 no lo puede tratar como atípico.
+    if (this.duro && this.names.length && out.length === this.names.length)
+      out = out.map((v, i) => (esMedido(this.names[i]!) ? aDuro(v) : v));
     this.cache.set(key, out);
     return out;
+  }
+
+  /** Los residuos con su nombre, en sigmas (lo medido, de vuelta de su forma cuadrática). */
+  residualMap(r: readonly number[]): Map<string, number> {
+    return new Map(this.names.map((k, i) => [k, this.duro && esMedido(k) ? deDuro(r[i]!) : r[i]!]));
   }
 
   /** Jacobiano (filas: residuos; columnas: parámetros) por diferencias hacia adelante. */
@@ -1132,6 +1159,8 @@ export function fitEvidence(
     start?: Map<string, number> | null;
     free?: Set<string> | null;
     downedMu?: number | null;
+    /** Sin él, lo medido va con la pérdida de siempre (el multiarranque busca así la cuenca). */
+    duro?: boolean;
   } = {},
 ): Fit {
   const dt = opts.dt ?? 0.1;
@@ -1143,7 +1172,15 @@ export function fitEvidence(
   const free = opts.free ?? null;
   const freeParams = params.filter((p) => free === null || free.has(p.name));
   const fixed = new Map([...xStart].filter(([n]) => freeParams.every((p) => p.name !== n)));
-  const prob = new Problem(base, ev, freeParams, fixed, dt, opts.downedMu ?? null);
+  const prob = new Problem(
+    base,
+    ev,
+    freeParams,
+    fixed,
+    dt,
+    opts.downedMu ?? null,
+    opts.duro ?? true,
+  );
   const x0 = freeParams.map((p) => Math.min(Math.max(xStart.get(p.name)!, p.lo), p.hi));
   if (freeParams.length === 0 || ev.empty()) {
     const res0 =
@@ -1166,7 +1203,7 @@ export function fitEvidence(
   const best = prob.call(sol.x);
   return {
     values: prob.values(sol.x),
-    residuals: new Map(prob.names.map((k, i) => [k, best[i]!])),
+    residuals: prob.residualMap(best),
     cost: sol.cost,
     success: sol.success,
   };
@@ -1211,7 +1248,8 @@ function laplace(j: number[][], params: Param[]): Map<string, number> {
   return out;
 }
 
-function chordRefit(prob: Problem, xBest: readonly number[], j: number[][]): Fit | null {
+function chordRefit(prob: Problem, xBest: readonly number[], j0: number[][]): Fit | null {
+  let j = j0;
   const lo = prob.params.map((p) => p.lo);
   const hi = prob.params.map((p) => p.hi);
   let x = [...xBest];
@@ -1225,6 +1263,7 @@ function chordRefit(prob: Problem, xBest: readonly number[], j: number[][]): Fit
     return acc;
   };
   let accepted = 0;
+  let refrescado = false;
   for (let it = 0; it < CHORD_ITER; it++) {
     const w = r.map((e) => 1.0 / Math.sqrt(Math.sqrt(1.0 + e * e)));
     const a = r.map((_, i) => j[i]!.map((v) => w[i]! * v));
@@ -1254,7 +1293,7 @@ function chordRefit(prob: Problem, xBest: readonly number[], j: number[][]): Fit
     });
     if (bigScaled > CHORD_TRUST) step = step.map((v) => (v * CHORD_TRUST) / bigScaled);
     let moved = false;
-    for (const frac of [1.0, 0.5, 0.25]) {
+    for (const frac of CHORD_FRACCIONES) {
       const xNew = x.map((xk, k) => Math.min(Math.max(xk + frac * step[k]!, lo[k]!), hi[k]!));
       const rNew = prob.call(xNew);
       if (loss(rNew) < loss(r)) {
@@ -1264,7 +1303,15 @@ function chordRefit(prob: Problem, xBest: readonly number[], j: number[][]): Fit
         break;
       }
     }
-    if (!moved) break;
+    if (!moved) {
+      // La cuerda se atoró lejos del modo (su jacobiano ya no sirve ahí): se recalcula una vez en el
+      // punto actual antes de parar; sin esto, la muestra se quedaba en un escalón.
+      if (refrescado || accepted === 0) break;
+      j = sampleJac(prob, x);
+      refrescado = true;
+      continue;
+    }
+    refrescado = false;
     accepted += 1;
     let big = 0;
     for (const v of step) big = Math.max(big, Math.abs(v));
@@ -1273,7 +1320,7 @@ function chordRefit(prob: Problem, xBest: readonly number[], j: number[][]): Fit
   if (accepted === 0) return null;
   return {
     values: prob.values(x),
-    residuals: new Map(prob.names.map((k, i) => [k, r[i]!])),
+    residuals: prob.residualMap(r),
     cost: loss(r),
     success: true,
   };
@@ -1612,14 +1659,25 @@ function group(fits: [Fit, number][], prob: Problem | null = null): Mode[] {
  * por modo; los `REFINE_MODES` mejores se afinan con el ajuste completo.
  */
 export function findModes(spec: Json, ev: Evidence, params: Param[], dt = 0.1): Mode[] {
-  if (!params.length || ev.empty()) return [new Mode(fitEvidence(spec, ev, { dt }), 1)];
+  // La cuenca se busca con la pérdida de siempre: con lo medido cuadrático desde lejos, los pasos se
+  // acortan y el arranque se queda en otro mínimo (René, 2026-11-27: la carambola de la e2e). Lo
+  // medido como restricción entra después, en el ajuste del modo y el pulido.
+  if (!params.length || ev.empty())
+    return [new Mode(fitEvidence(spec, ev, { dt, duro: false }), 1)];
   const screened = multistartStarts(spec, ev, params).map(
-    (start) => [fitEvidence(spec, ev, { dt, start, maxNfev: SCREEN_NFEV }), 1] as [Fit, number],
+    (start) =>
+      [fitEvidence(spec, ev, { dt, start, maxNfev: SCREEN_NFEV, duro: false }), 1] as [Fit, number],
   );
   const refined = group(screened)
     .slice(0, REFINE_MODES)
-    .map((m) => [fitEvidence(spec, ev, { dt, start: m.fit.values }), m.starts] as [Fit, number]);
-  return group(refined, new Problem(withMarks(spec, ev), ev, params, new Map(), dt));
+    .map(
+      (m) =>
+        [fitEvidence(spec, ev, { dt, start: m.fit.values, duro: false }), m.starts] as [
+          Fit,
+          number,
+        ],
+    );
+  return group(refined, new Problem(withMarks(spec, ev), ev, params, new Map(), dt, null, false));
 }
 
 /**
@@ -1842,10 +1900,16 @@ function estimate(
     // El rango sale de las entradas alrededor del modo elegido, sin saltar a otro: la cuerda con el
     // jacobiano del modo; si no mejora, con el de la muestra; si tampoco, el modo ya es el óptimo
     // local de la muestra.
-    const f =
+    let f =
       chordRefit(prob, xBest, jBest) ??
       chordRefit(prob, xBest, sampleJac(prob, xBest)) ??
       at(prob, xBest);
+    // Una muestra que viola lo medido no es una solución: se reajusta desde el modo con el ajuste
+    // completo y, si sigue sin cumplirlo, se descarta (cuántas quedan lo dice `muestras`).
+    if (violaLoMedido(f, best)) {
+      f = fitEvidence(s, e, { dt, start: new Map(best.values), free, downedMu });
+      if (violaLoMedido(f, best)) continue;
+    }
     fits.push(f);
     const r = tryReconstruct(applyValues(withMarks(s, e), f.values), dt, downedMu);
     if (r === null) continue;
@@ -1893,10 +1957,33 @@ function polish(spec: Json, ev: Evidence, best: Fit, freeParams: Param[], dt: nu
     f = g;
     x = freeParams.map((p) => g.values.get(p.name)!);
   }
-  return f.cost < best.cost ? f : best;
+  // `best` puede venir del multiarranque (sin lo medido como restricción): su costo no se compara.
+  return f;
 }
 
 /** La estimación de un parámetro: el p10–p90 de las muestras o, con ancho cero, el lineal. */
+/** Si el ajuste deja algo medido a más de 3σ, o a más de 1σ de lo que lo deja el modo. */
+/** Cuánto se pasa lo medido de 3σ, en conjunto: √Σ max(0, |r| − 3)² sobre los residuos medidos. */
+function excesoMedido(fit: Fit): number {
+  let s = 0.0;
+  for (const [k, v] of fit.residuals) {
+    if (!esMedido(k)) continue;
+    const e = Math.max(0.0, Math.abs(v) - SIGMAS_MEDIDO);
+    s += e * e;
+  }
+  return Math.sqrt(s);
+}
+
+/**
+ * Si una muestra viola lo medido: si el modo lo cumple todo a 3σ, la muestra también tiene que
+ * cumplirlo; si el modo ya no cabe (la evidencia choca entre sí), la muestra puede repartir el error
+ * de otro modo, pero no pasarse más de 1σ de lo que se pasa el modo.
+ */
+function violaLoMedido(fit: Fit, modo: Fit): boolean {
+  const m = excesoMedido(modo);
+  return excesoMedido(fit) > (m > 0.0 ? m + 1.0 : 0.0);
+}
+
 function estimateOf(
   p: Param,
   sigma: number,
@@ -1904,8 +1991,25 @@ function estimateOf(
   best: number | null,
   samples: number[],
 ): Estimate {
-  if (!identifiable || best === null || !samples.length)
-    return new Estimate(p, sigma, identifiable, best, null);
+  if (!identifiable || best === null) return new Estimate(p, sigma, identifiable, best, null);
+  // Si ninguna muestra cumplió lo medido (todas se descartaron), el lineal alrededor del modo.
+  if (!samples.length) {
+    if (!Number.isFinite(sigma) || sigma <= 0)
+      return new Estimate(p, sigma, identifiable, best, null);
+    return new Estimate(
+      p,
+      sigma,
+      identifiable,
+      best,
+      new Distribution(
+        Math.max(p.lo, best - Z_P90 * sigma),
+        best,
+        Math.min(p.hi, best + Z_P90 * sigma),
+        1, // la única solución que queda: el mejor ajuste
+      ),
+      "laplace",
+    );
+  }
   const dist = distribution(samples);
   if (dist.p90 - dist.p10 > 1e-9 || !Number.isFinite(sigma) || sigma <= 0)
     return new Estimate(p, sigma, identifiable, best, dist);
@@ -1923,7 +2027,15 @@ function estimateOf(
 
 /** El jacobiano de la muestra en `x`, con sus restricciones activas, sin tocar `prob`. */
 function sampleJac(prob: Problem, x: number[]): number[][] {
-  const p = new Problem(prob.spec, prob.ev, prob.params, prob.fixed, prob.dt, prob.downedMu);
+  const p = new Problem(
+    prob.spec,
+    prob.ev,
+    prob.params,
+    prob.fixed,
+    prob.dt,
+    prob.downedMu,
+    prob.duro,
+  );
   p.names.push(...prob.names);
   p.activate(x);
   return p.jac(x);
@@ -1934,7 +2046,7 @@ function at(prob: Problem, x: number[]): Fit {
   const r = prob.call(x);
   return {
     values: prob.values(x),
-    residuals: new Map(prob.names.map((k, i) => [k, r[i]!])),
+    residuals: prob.residualMap(r),
     cost: softL1Cost(r),
     success: true,
   };

@@ -1,0 +1,241 @@
+{
+  "fecha": "2026-11-27T13:45:28.740Z",
+  "clave": "carambola-lluvia",
+  "cifra_de": "V1",
+  "toque_m": 1,
+  "semilla": 20261126,
+  "muestras": {
+    "samples": 32,
+    "mcSamples": 128
+  },
+  "resumen": {
+    "variantes": 13,
+    "con_cifra": 13,
+    "mejor": [
+      21.3,
+      27
+    ],
+    "p10": [
+      15.8,
+      23.1
+    ],
+    "p90": [
+      29.5,
+      34.3
+    ]
+  },
+  "filas": [
+    {
+      "variante": 0,
+      "toques": {},
+      "mejor": 25.1,
+      "p10": 20.3,
+      "p90": 32.4,
+      "no_cuadra": null
+    },
+    {
+      "variante": 1,
+      "toques": {
+        "Corolla": [
+          0.79,
+          0.37
+        ],
+        "Aveo": [
+          -0.67,
+          0.59
+        ]
+      },
+      "mejor": 24.9,
+      "p10": 19.2,
+      "p90": 31.5,
+      "no_cuadra": null
+    },
+    {
+      "variante": 2,
+      "toques": {
+        "Corolla": [
+          0.54,
+          -0.37
+        ],
+        "Aveo": [
+          0.48,
+          0.04
+        ]
+      },
+      "mejor": 27,
+      "p10": 22.4,
+      "p90": 34.3,
+      "no_cuadra": null
+    },
+    {
+      "variante": 3,
+      "toques": {
+        "Corolla": [
+          0.67,
+          -0.18
+        ],
+        "Aveo": [
+          0.04,
+          -0.05
+        ]
+      },
+      "mejor": 26.5,
+      "p10": 21.3,
+      "p90": 33.2,
+      "no_cuadra": null
+    },
+    {
+      "variante": 4,
+      "toques": {
+        "Corolla": [
+          -0.8,
+          -0.29
+        ],
+        "Aveo": [
+          0.14,
+          0.42
+        ]
+      },
+      "mejor": 23.2,
+      "p10": 19.5,
+      "p90": 31.3,
+      "no_cuadra": null
+    },
+    {
+      "variante": 5,
+      "toques": {
+        "Corolla": [
+          -0.89,
+          -0.83
+        ],
+        "Aveo": [
+          -0.95,
+          0.56
+        ]
+      },
+      "mejor": 21.3,
+      "p10": 15.8,
+      "p90": 29.5,
+      "no_cuadra": null
+    },
+    {
+      "variante": 6,
+      "toques": {
+        "Corolla": [
+          0.17,
+          0.16
+        ],
+        "Aveo": [
+          0.8,
+          0.76
+        ]
+      },
+      "mejor": 26.1,
+      "p10": 23.1,
+      "p90": 33.8,
+      "no_cuadra": null
+    },
+    {
+      "variante": 7,
+      "toques": {
+        "Corolla": [
+          -0.81,
+          -0.69
+        ],
+        "Aveo": [
+          -0.14,
+          -0.96
+        ]
+      },
+      "mejor": 22.7,
+      "p10": 17.3,
+      "p90": 31.2,
+      "no_cuadra": null
+    },
+    {
+      "variante": 8,
+      "toques": {
+        "Corolla": [
+          0.8,
+          -0.92
+        ],
+        "Aveo": [
+          -0.6,
+          0.29
+        ]
+      },
+      "mejor": 24.9,
+      "p10": 19.4,
+      "p90": 32.1,
+      "no_cuadra": null
+    },
+    {
+      "variante": 9,
+      "toques": {
+        "Corolla": [
+          -0.07,
+          0.88
+        ],
+        "Aveo": [
+          -0.16,
+          0.95
+        ]
+      },
+      "mejor": 23.9,
+      "p10": 19.7,
+      "p90": 31.4,
+      "no_cuadra": null
+    },
+    {
+      "variante": 10,
+      "toques": {
+        "Corolla": [
+          -0.28,
+          0.67
+        ],
+        "Aveo": [
+          0.77,
+          -0.57
+        ]
+      },
+      "mejor": 25.5,
+      "p10": 20.9,
+      "p90": 33.4,
+      "no_cuadra": null
+    },
+    {
+      "variante": 11,
+      "toques": {
+        "Corolla": [
+          0.57,
+          0.55
+        ],
+        "Aveo": [
+          0.26,
+          0.33
+        ]
+      },
+      "mejor": 26.4,
+      "p10": 21.8,
+      "p90": 33.5,
+      "no_cuadra": null
+    },
+    {
+      "variante": 12,
+      "toques": {
+        "Corolla": [
+          0.35,
+          0.21
+        ],
+        "Aveo": [
+          0.15,
+          -0.06
+        ]
+      },
+      "mejor": 26,
+      "p10": 21.1,
+      "p90": 33,
+      "no_cuadra": null
+    }
+  ]
+}

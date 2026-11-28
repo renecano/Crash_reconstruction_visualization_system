@@ -1768,18 +1768,24 @@ def reconstruct(
     post: dict[str, tuple[Trajectory, bool, float]] = {}
     mu_downed = friction.downed_motorcycle_friction(lugar["superficie"]["valor"])
 
+    # Una huella de derrape o de frenado de después del impacto dice que sus llantas deslizaban
+    # (René, 2026-11-26: el Sentra del poste salía del choque «rodando» con 0.3–0.5 de la fricción y
+    # le bastaban 30 km/h para los 18.40 m de su derrape).
+    evidencias: list[JsonObj] = spec.get("evidencias", None) or []
+    desliza_despues = {
+        str(e.get("vehiculo_id"))
+        for e in evidencias
+        if e.get("tipo") in ("marcas_derrape", "marcas_frenado")
+        and e.get("fase") == "despues_impacto"
+    }
+
     def post_body(m: VehicleModel) -> JointBody:
         start = post_start[m.id]
         downed = m.clase in friction.DOWNED_SLIDE_CLASSES
+        desliza = m.braking or downed or m.id in desliza_despues
         # Caída, se arrastra de lado: todo el contacto desliza con el arrastre medido.
-        wheels = WheelConfig.four_wheels(
-            m.wheelbase, m.track, m.cg_from_front, locked=m.braking or downed
-        )
-        drag = (
-            ROLLING_RESISTANCE
-            if m.braking or downed
-            else max(ROLLING_RESISTANCE, sup.drag_fraction * mu)
-        )
+        wheels = WheelConfig.four_wheels(m.wheelbase, m.track, m.cg_from_front, locked=desliza)
+        drag = ROLLING_RESISTANCE if desliza else max(ROLLING_RESISTANCE, sup.drag_fraction * mu)
         mu_post = (mu_downed.nominal if downed_mu is None else downed_mu) if downed else mu
         # Un vehículo que todavía no choca (solo está en un impacto posterior) rueda libre hasta
         # su primer impacto (ADR 0066).

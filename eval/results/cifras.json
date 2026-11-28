@@ -97,26 +97,26 @@
     "axa.v2": {
       "que": "AXA A2010930: velocidad de V2 (B) antes del impacto, reconstrucción física de la app",
       "mejor": 56.87,
-      "p10": 55.11,
-      "p90": 78.06,
+      "p10": 54.54,
+      "p90": 79.15,
       "unidad": "km/h",
       "muestras": 32,
       "juego_de_muestras": "producción",
-      "texto": "57 km/h (55–78)",
-      "texto_completo": "56.87 km/h (55.11–78.06)",
+      "texto": "57 km/h (55–79)",
+      "texto_completo": "56.87 km/h (54.54–79.15)",
       "fuente": "eval/results/axa_rango_estable.json",
       "campo": "filas.0.V2"
     },
     "axa.v1": {
       "que": "AXA A2010930: velocidad de V1 (A) antes del impacto, reconstrucción física de la app",
       "mejor": 14.98,
-      "p10": 1.04,
-      "p90": 21.38,
+      "p10": 0.36,
+      "p90": 21.53,
       "unidad": "km/h",
       "muestras": 32,
       "juego_de_muestras": "producción",
-      "texto": "15 km/h (1–21)",
-      "texto_completo": "14.98 km/h (1.04–21.38)",
+      "texto": "15 km/h (0–22)",
+      "texto_completo": "14.98 km/h (0.36–21.53)",
       "fuente": "eval/results/axa_rango_estable.json",
       "campo": "filas.0.V1"
     },
@@ -192,65 +192,65 @@
     "ejemplos.crucero_camaro": {
       "que": "Ejemplo «crucero de noche»: velocidad del Camaro (B) antes del impacto, como lo arma el perito en La escena",
       "mejor": 12,
-      "p10": 6,
-      "p90": 20,
+      "p10": 4,
+      "p90": 17,
       "unidad": "km/h",
       "muestras": 32,
       "juego_de_muestras": "producción",
-      "texto": "12 km/h (6–20)",
+      "texto": "12 km/h (4–17)",
       "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
       "campo": "filas.1.velocidades.1",
-      "motivo": "Escena armada con el mismo código de La escena, direcciones por las calles reales y confirmadas como con el botón «Confirmar» de la app (#331); René lo aprobó el 2026-11-26. Antes, 12 (3–19)."
+      "motivo": "Escena armada con el mismo código de La escena, direcciones por las calles reales y confirmadas como con el botón «Confirmar» de la app (#331); con lo medido como restricción del solver (#369), René lo aprobó el 2026-11-27. Antes, 12 (3–19)."
     },
-    "ejemplos.alcance_corolla": {
+    "ejemplos.alcance_vento": {
       "que": "Ejemplo «alcance en carretera»: velocidad del Vento (B), el alcanzado, antes del impacto, como lo arma el perito en La escena",
       "mejor": 0,
       "p10": 0,
-      "p90": 8,
+      "p90": 14,
       "unidad": "km/h",
       "muestras": 32,
       "juego_de_muestras": "producción",
-      "texto": "0 km/h (0–8)",
+      "texto": "0 km/h (0–14)",
       "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
       "campo": "filas.2.velocidades.1",
-      "motivo": "Escena armada con el mismo código de La escena, direcciones por las calles reales (#331); René lo aprobó el 2026-11-26. Antes, 0 (0–8)."
+      "motivo": "Escena armada con el mismo código de La escena, direcciones por las calles reales (#331); con lo medido como restricción del solver (#369), René lo aprobó el 2026-11-27. Antes, 0 (0–8)."
     },
     "ejemplos.reversa_crv": {
       "que": "Ejemplo «reversa en pendiente»: velocidad del CR-V (A) en reversa antes del impacto, como lo arma el perito en La escena",
       "mejor": 6,
       "p10": 3,
-      "p90": 7,
+      "p90": 8,
       "unidad": "km/h",
       "muestras": 32,
       "juego_de_muestras": "producción",
-      "texto": "6 km/h (3–7)",
+      "texto": "6 km/h (3–8)",
       "fuente": "eval/results/ejemplos_en_su_lugar/cifras.json",
       "campo": "filas.4.velocidades.0",
-      "motivo": "Escena armada con el mismo código de La escena (#331). La velocidad en reversa del CR-V pesa como supuesto con su rango (NHTSA, 3.06–9.07 km/h), porque la narración no da evidencia de más; el rango del Versa cambia por eso. René lo aprobó el 2026-11-26. Antes, 9 (1–18)."
+      "motivo": "Escena armada con el mismo código de La escena (#331). La velocidad en reversa del CR-V pesa como supuesto con su rango (NHTSA, 3.06–9.07 km/h), porque la narración no da evidencia de más; el rango del Versa cambia por eso. Con lo medido como restricción del solver (#369), René lo aprobó el 2026-11-27. Antes, 9 (1–18)."
     },
     "ejemplos.crucero": {
       "que": "Ejemplo «crucero de noche»: velocidad del Jetta (A) antes del impacto, en la app (navegador con Unity real)",
       "mejor": 20,
-      "p10": 5,
-      "p90": 26,
+      "p10": 1,
+      "p90": 27,
       "unidad": "km/h",
       "juego_de_muestras": "producción",
-      "texto": "20 km/h (5–26)",
-      "fuente": "eval/results/t10/ejemplos.json",
+      "texto": "20 km/h (1–27)",
+      "fuente": "eval/results/t11/ejemplos.json",
       "campo": "ejemplos.0",
-      "motivo": "Medido en el navegador con Unity real (t10-final, 2026-11-26); René lo aprobó."
+      "motivo": "Medido en el navegador con Unity real (t11-solver, 2026-11-27), con lo medido como restricción del solver (#369); René lo aprobó."
     },
     "ejemplos.alcance": {
       "que": "Ejemplo «alcance en carretera»: velocidad de la NP300 (A), la que alcanza antes del impacto, en la app (navegador con Unity real)",
       "mejor": 54,
-      "p10": 49,
-      "p90": 55,
+      "p10": 44,
+      "p90": 54,
       "unidad": "km/h",
       "juego_de_muestras": "producción",
-      "texto": "54 km/h (49–55)",
-      "fuente": "eval/results/t10/ejemplos.json",
+      "texto": "54 km/h (44–54)",
+      "fuente": "eval/results/t11/ejemplos.json",
       "campo": "ejemplos.1",
-      "motivo": "Medido en el navegador con Unity real (t10-final, 2026-11-26); René lo aprobó. La tabla da 53 (49–56): la diferencia es por dónde caen los toques."
+      "motivo": "Medido en el navegador con Unity real (t11-solver, 2026-11-27), con lo medido como restricción del solver (#369); René lo aprobó. La tabla da 53 (44–53): la diferencia es por dónde caen los toques."
     },
     "ejemplos.carambola": {
       "que": "Ejemplo «carambola con lluvia»: velocidad de la Ranger (A) antes del primer impacto antes del impacto, en la app (navegador con Unity real)",
@@ -260,33 +260,33 @@
       "unidad": "km/h",
       "juego_de_muestras": "producción",
       "texto": "25 km/h (20–32)",
-      "fuente": "eval/results/t10/ejemplos.json",
+      "fuente": "eval/results/t11/ejemplos.json",
       "campo": "ejemplos.2",
-      "motivo": "Medido en el navegador con Unity real (t10-final, 2026-11-26); René lo aprobó."
+      "motivo": "Medido en el navegador con Unity real (t11-solver, 2026-11-27), con lo medido como restricción del solver (#369); René lo aprobó."
     },
     "ejemplos.reversa": {
       "que": "Ejemplo «reversa en pendiente»: velocidad del Versa (B) antes del impacto, en la app (navegador con Unity real)",
       "mejor": 20,
-      "p10": 16,
-      "p90": 25,
+      "p10": 17,
+      "p90": 26,
       "unidad": "km/h",
       "juego_de_muestras": "producción",
-      "texto": "20 km/h (16–25)",
-      "fuente": "eval/results/t10/ejemplos.json",
+      "texto": "20 km/h (17–26)",
+      "fuente": "eval/results/t11/ejemplos.json",
       "campo": "ejemplos.3",
-      "motivo": "Medido en el navegador con Unity real (t10-final, 2026-11-26); René lo aprobó."
+      "motivo": "Medido en el navegador con Unity real (t11-solver, 2026-11-27), con lo medido como restricción del solver (#369); René lo aprobó."
     },
     "ejemplos.poste": {
       "que": "Ejemplo «poste y terracería»: velocidad del Sentra (B) antes del impacto, en la app (navegador con Unity real)",
-      "mejor": 63,
-      "p10": 43,
-      "p90": 65,
+      "mejor": 50,
+      "p10": 47,
+      "p90": 57,
       "unidad": "km/h",
       "juego_de_muestras": "producción",
-      "texto": "63 km/h (43–65)",
-      "fuente": "eval/results/t10/ejemplos.json",
+      "texto": "50 km/h (47–57)",
+      "fuente": "eval/results/t11/ejemplos.json",
       "campo": "ejemplos.4",
-      "motivo": "Medido en el navegador con Unity real (t10-final, 2026-11-26); René lo aprobó. Pendiente del arreglo del rango del solver: su extremo bajo incluye muestras en las que el Sentra no llega al poste; fuera de la demo hasta entonces."
+      "motivo": "Medido en el navegador con Unity real (t11-solver, 2026-11-27), con lo medido como restricción del solver (#369); René lo aprobó. Respeta el derrape de 18.40 m: sale del choque a 43 km/h o más (Fricke); vuelve a la demo (René, 2026-11-27)."
     },
     "reversa.velocidad": {
       "que": "Velocidad supuesta de un vehículo en reversa: mediana y p10–p90 de la velocidad máxima de maniobras reales",
