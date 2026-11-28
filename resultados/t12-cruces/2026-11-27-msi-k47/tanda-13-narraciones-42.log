@@ -1,7 +1,7 @@
 # Paso: narraciones-42
 # Comando: powershell -NoProfile -Command "$env:CROQUIS_AUDITORIA='nuevas'; $env:CROQUIS_DE_NUEVO='1'; pnpm --filter @croquis/web exec vitest run src/lib/auditoria; node eval/auditoria_cadena_resumen.mjs"
 # Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
-# Inicio: 2026-11-27 19:09:49
+# Inicio: 2026-11-27 19:51:23
 
 [33m(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
   - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
@@ -9,10 +9,46 @@ Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.[39m
 
 [1m[30m[46m RUN [49m[39m[22m [36mv5.0.3 [39m[90mC:/Users/MrKan/Documents/Proyecto Cesvi/Croquis/apps/web[39m
 
- [32m✓[39m src/lib/auditoria/memoria.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 3[2mms[22m[39m
-¿Desea terminar el trabajo por lotes (S/N)? 
-^CError: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
+ [32m✓[39m src/lib/auditoria/memoria.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 2[2mms[22m[39m
+ [2m[90m↓[39m[22m src/lib/auditoria/nombres-confusos.test.ts [2m([22m[2m1 test[22m[2m | [22m[33m1 skipped[39m[2m)[22m
+ [2m[90m↓[39m[22m src/lib/auditoria/comparar-escena.test.ts [2m([22m[2m1 test[22m[2m | [22m[33m1 skipped[39m[2m)[22m
+ [32m✓[39m src/lib/auditoria/cadena-reglas.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 2[2mms[22m[39m
+ [32m✓[39m src/lib/auditoria/auditoria.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 393108[2mms[22m[39m
+   [32m✓[39m la revisión sistemática de la cadena [2m(1)[22m
+     [33m[2m✓[22m[39m revisa cada caso de la narración al paquete 3D[33m 393107[2mms[22m[39m
 
-  × "pnpm recursive exec" failed in C:\Users\MrKan\Documents\Proyecto
-  │ Cesvi\Croquis\apps\web
+[2m Test Files [22m [1m[32m3 passed[39m[22m[2m | [22m[33m2 skipped[39m[90m (5)[39m
+[2m      Tests [22m [1m[32m6 passed[39m[22m[2m | [22m[33m2 skipped[39m[90m (8)[39m
+[2m   Start at [22m 19:51:23
+[2m   Duration [22m 396.29s[2m (tests 97%, environment 1%, transform 1%, import 1%)[22m
 
+prueba 205 {
+  'escena.sin_pose': 1,
+  'limite.llegada_recta': 3,
+  'lugar.no_encontrado': 31,
+  'lugar.sin_calles': 1,
+  'masa.sin_modelo': 55,
+  'masa.tipica_con_modelo': 158,
+  'pregunta.choque_posterior': 22,
+  'pregunta.lugar_dudoso': 21,
+  'pregunta.lugar_km': 17,
+  'pregunta.lugar_solo_zona': 46,
+  'trayectoria.cruza_edificio': 1,
+  'vehiculo.fuera_de_calle': 8,
+  'vehiculo.sin_clase': 48
+}
+nuevas 42 {
+  'candado.animacion': 1,
+  'candado.frenado': 1,
+  'final.no_leido': 5,
+  'lugar.no_encontrado': 7,
+  'masa.tipica_con_modelo': 10,
+  'pregunta.lugar_solo_zona': 4,
+  'pregunta.objeto_otro_choque': 1,
+  'pregunta.varios_cruces': 5,
+  'vehiculo.fuera_de_calle': 1,
+  'vehiculo.sentido': 1
+}
+ejemplos 5 { 'final.no_leido': 4 }
+
+# Fin: 2026-11-27 19:58:00 · ok · 6.6 min

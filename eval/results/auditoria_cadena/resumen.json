@@ -1,5 +1,5 @@
 {
- "fecha": "2026-11-26T19:15:07.524Z",
+ "fecha": "2026-11-28T01:58:00.027Z",
  "fuentes": {
   "prueba": {
    "casos": 205,
@@ -486,30 +486,40 @@
   },
   "nuevas": {
    "casos": 42,
-   "lugar_encontrado": 41,
+   "lugar_encontrado": 26,
    "reglas": {
     "candado.animacion": {
-     "casos": 2,
+     "casos": 1,
      "ids": [
-      "aud-14-barda-morelos",
-      "aud-30-ciclista-alcance-universidad"
+      "aud-09-ciclista-tecnologico"
+     ]
+    },
+    "candado.frenado": {
+     "casos": 1,
+     "ids": [
+      "aud-27-frontal-quevedo"
      ]
     },
     "final.no_leido": {
-     "casos": 6,
+     "casos": 5,
      "ids": [
       "aud-07-volcadura-calzada-pacifico",
-      "aud-15-carambola4-tollocan-lluvia",
       "aud-17-moto-estacionado-estado-de-mexico",
       "aud-26-carambola4-tlalpan",
       "aud-30-ciclista-alcance-universidad",
       "aud-36-reversa-atropello-camion-cuauhtemoc"
      ]
     },
-    "limite.llegada_recta": {
-     "casos": 1,
+    "lugar.no_encontrado": {
+     "casos": 7,
      "ids": [
-      "aud-08-atropello-tollocan-carranza"
+      "aud-02-lateral-tecnologico-lastorres",
+      "aud-03-atropello-pinosuarez-lastorres",
+      "aud-08-atropello-tollocan-carranza",
+      "aud-20-glorieta-cibeles-moto",
+      "aud-29-vuelta-izquierda-universidad-quevedo",
+      "aud-32-volcadura-viaducto",
+      "aud-35-arbol-constituyentes-lluvia"
      ]
     },
     "masa.tipica_con_modelo": {
@@ -527,17 +537,13 @@
       "aud-31-alcance-puente-churubusco"
      ]
     },
-    "pregunta.lugar_dudoso": {
-     "casos": 2,
+    "pregunta.lugar_solo_zona": {
+     "casos": 4,
      "ids": [
       "aud-21-glorieta-angel-ciclista",
+      "aud-24-barrera-periferico-sur",
+      "aud-31-alcance-puente-churubusco",
       "aud-42-lateral-barrera-churubusco"
-     ]
-    },
-    "pregunta.lugar_solo_zona": {
-     "casos": 1,
-     "ids": [
-      "aud-24-barrera-periferico-sur"
      ]
     },
     "pregunta.objeto_otro_choque": {
@@ -546,28 +552,26 @@
       "aud-38-alcance-barrera-circuito-reforma"
      ]
     },
-    "vehiculo.fuera_de_calle": {
+    "pregunta.varios_cruces": {
      "casos": 5,
      "ids": [
-      "aud-02-lateral-tecnologico-lastorres",
-      "aud-07-volcadura-calzada-pacifico",
-      "aud-09-ciclista-tecnologico",
-      "aud-13-moto-vuelta-izquierda-tecnologico",
-      "aud-39-atropello-autobus-tlalpan-ermita"
+      "aud-01-alcance-tollocan",
+      "aud-15-carambola4-tollocan-lluvia",
+      "aud-16-atropello-camion-pinosuarez",
+      "aud-22-lateral-insurgentes-mixcoac",
+      "aud-41-atropello-vuelta-derecha-insurgentes-mixcoac"
+     ]
+    },
+    "vehiculo.fuera_de_calle": {
+     "casos": 1,
+     "ids": [
+      "aud-07-volcadura-calzada-pacifico"
      ]
     },
     "vehiculo.sentido": {
-     "casos": 2,
+     "casos": 1,
      "ids": [
-      "aud-33-alcance-bajada-reforma-lomas",
       "aud-37-estacionados-rio-mixcoac"
-     ]
-    },
-    "vuelta.fuera_de_calle": {
-     "casos": 2,
-     "ids": [
-      "aud-03-atropello-pinosuarez-lastorres",
-      "aud-16-atropello-camion-pinosuarez"
      ]
     }
    }
