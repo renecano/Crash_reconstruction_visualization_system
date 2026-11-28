@@ -36,6 +36,8 @@ import {
   sobreCalle,
   callesNarradas,
   calzadaEnSuSentido,
+  conReposoNarradoDePersonas,
+  distanciaNarradaDePersona,
   crucesDe,
   cardinal,
   elegirDireccion,
@@ -401,6 +403,18 @@ export function proponerEscena(o: {
       texto: `${o.nombreDe(sinCruce.vehiculo)}: ${AVISO_VUELTA_SIN_CRUCE}`,
       porque: `la narración dice «${sinCruce.cita}» y no hay una esquina del mapa a menos de ${VUELTA_CRUCE_M} m del choque`,
     });
+  }
+  // El peatón o el ciclista, donde la narración dice que quedó (René, 2026-11-28).
+  const conReposo = conReposoNarradoDePersonas(e, narracion);
+  if (conReposo !== e) {
+    e = conReposo;
+    const m = distanciaNarradaDePersona(narracion)!;
+    for (const per of (e.personas ?? []).filter((x) => x.fuente === "supuesto" && x.final))
+      propuestos.push({
+        clave: `persona-final-${per.id}`,
+        texto: `${per.rol === "ciclista" ? "El ciclista" : "El peatón"} quedó a ${F.metros(m, 1)} de donde lo golpearon, hacia donde avanzaba el vehículo`,
+        porque: `la narración da la distancia; el lado es un supuesto (hacia donde lo proyectó el golpe): muévelo si quedó en otro lugar`,
+      });
   }
   for (const v of vs) {
     if (!poseDe(e, v.id, "final"))

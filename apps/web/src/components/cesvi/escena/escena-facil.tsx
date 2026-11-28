@@ -123,6 +123,7 @@ import {
   agregarChoqueIntermedio,
   agregarPuntoDePaso,
   choquesIntermedios,
+  conReposoNarradoDePersonas,
   articuloObjeto,
   marcarPrimerGolpe,
   OBJETOS_C1,
@@ -217,6 +218,16 @@ const distanciaRuta = (m: number) =>
 /** «~3 min», «~40 s». */
 const duracionRuta = (s: number) =>
   s >= 90 ? `~${Math.round(s / 60)} min` : `~${Math.round(s)} s`;
+
+/** La persona, ya del perito: marcó dónde quedó. */
+function conFuentePersona(e: Expediente, id: string): Expediente {
+  return {
+    ...e,
+    personas: (e.personas ?? []).map((p) =>
+      p.id === id ? { ...p, fuente: "perito" as const } : p,
+    ),
+  };
+}
 
 export function EscenaFacil({
   tema,
@@ -535,7 +546,11 @@ export function EscenaFacil({
   const cambiar = (siguiente: EstadoEscena, m?: Mensaje | null) => {
     setPila((x) => [...x.slice(-MAX_DESHACER), estado]);
     setFuturo([]);
-    onEstado(siguiente);
+    // El peatón golpeado, donde la narración dice que quedó, mientras sea un supuesto (René, 2026-11-28).
+    const conReposo = conReposoNarradoDePersonas(siguiente.expediente, narracion ?? null);
+    onEstado(
+      conReposo === siguiente.expediente ? siguiente : { ...siguiente, expediente: conReposo },
+    );
     if (m !== undefined) setMensaje(m);
   };
   /** Lo seleccionado sigue seleccionado al deshacer o rehacer, si sigue en la escena. */
@@ -1375,7 +1390,8 @@ export function EscenaFacil({
       return;
     }
     if (marcando) {
-      const x = marcarFinalPersona(e, marcando, p);
+      // Marcado por el perito: la persona es suya (ya no se recalcula con la narración).
+      const x = conFuentePersona(marcarFinalPersona(e, marcando, p), marcando);
       const per = x.personas?.find((q) => q.id === marcando);
       const d = per ? distanciaProyeccion(per) : null;
       cambiar(
