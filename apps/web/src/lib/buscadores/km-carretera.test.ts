@@ -1,8 +1,10 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
+import type { RedLugar } from "../buscadores-lugar";
 import {
   buscarKmCarretera,
+  ubicarKm,
   consultaKm,
   leerKmCarretera,
   type DepsKm,
@@ -78,15 +80,16 @@ describe("leerKmCarretera", () => {
   });
 });
 
-describe("buscarKmCarretera, con OSM grabado", () => {
+describe("ubicarKm, con OSM grabado", () => {
   it("Toluca–Zitácuaro km 30: medido por la carretera desde Toluca, aproximado y dicho", async () => {
-    const p = await buscarKmCarretera(
+    const p = await ubicarKm(
       "en la carretera federal 15, tramo Toluca–Zitácuaro, kilómetro 30, cerca de Villa Victoria",
       grabadas,
     );
     expect(p).not.toBeNull();
     expect(p!.metodo).toBe("medido-desde-origen");
-    expect(p!.seguridad).toBe("baja");
+    // Villa Victoria, que también dice la narración, queda cerca: lo corrobora.
+    expect(p!.seguridad).toBe("media");
     expect(p!.explicacion).toContain("medido por la carretera desde Toluca");
     expect(p!.explicacion).toContain("aproximado");
     // Ya no cae dentro de Toluca (el error de la prueba como perito): a más de 15 km en línea recta.
@@ -95,7 +98,7 @@ describe("buscarKmCarretera, con OSM grabado", () => {
   });
 
   it("carretera 45 km 120 desde Chihuahua, cerca de Villa Ahumada: avisa que no cuadran", async () => {
-    const p = await buscarKmCarretera(
+    const p = await ubicarKm(
       "en la carretera federal 45, tramo Chihuahua–Ciudad Juárez, kilómetro 120, cerca de Villa Ahumada",
       grabadas,
     );
@@ -107,14 +110,14 @@ describe("buscarKmCarretera, con OSM grabado", () => {
   });
 
   it("solo la carretera y la población: el punto más cercano a ella, y dice por qué no ubica el km", async () => {
-    const p = await buscarKmCarretera("Carretera 45, km 120, cerca de Villa Ahumada", grabadas);
+    const p = await ubicarKm("Carretera 45, km 120, cerca de Villa Ahumada", grabadas);
     expect(p).toMatchObject({ metodo: "cerca-de-poblacion", seguridad: "baja" });
     expect(distanciaKm(p!, G.poblaciones["villa-ahumada"]!)).toBeLessThan(10);
     expect(p!.explicacion).toContain("no se pudo ubicar");
   });
 
   it("sin tramo ni población no inventa un punto", async () => {
-    expect(await buscarKmCarretera("MEX-15D km 54", grabadas)).toBeNull();
+    expect(await ubicarKm("MEX-15D km 54", grabadas)).toBeNull();
   });
 });
 
@@ -148,13 +151,70 @@ describe("con mojones (red sintética: OSM no tiene mojones en los tramos de pru
     poblacion: async () => ({ lat: 20, lon: -100 }),
   };
   it("el mojón exacto", async () => {
-    const p = await buscarKmCarretera("MEX-99 km 110, cerca de Pueblo", deps);
+    const p = await ubicarKm("MEX-99 km 110, cerca de Pueblo", deps);
     expect(p).toMatchObject({ metodo: "mojon", seguridad: "alta", lat: linea[15]!.lat });
   });
   it("interpolado entre dos mojones", async () => {
-    const p = await buscarKmCarretera("MEX-99 km 104, cerca de Pueblo", deps);
+    const p = await ubicarKm("MEX-99 km 104, cerca de Pueblo", deps);
     expect(p!.metodo).toBe("interpolado");
     expect(p!.explicacion).toContain("entre los mojones 100 y 110");
     expect(p!.lat).toBeCloseTo(linea[9]!.lat, 5);
+  });
+});
+
+describe("buscarKmCarretera, con la interfaz de René (red inyectada, respuestas grabadas)", () => {
+  /** La red: Nominatim por la población que pide la URL y Overpass por la carretera que pide la consulta. */
+  const red: RedLugar = {
+    fetch: (async (url: string, init?: RequestInit) => {
+      const u = String(url);
+      if (u.includes("nominatim")) {
+        const q = decodeURIComponent(new URL(u).searchParams.get("q") ?? "")
+          .split(",")[0]!
+          .trim();
+        const p = G.poblaciones[POBLACIONES[q] ?? ""];
+        return new Response(JSON.stringify(p ? [{ lat: String(p.lat), lon: String(p.lon) }] : []));
+      }
+      const consulta = new URLSearchParams(String(init?.body)).get("data") ?? "";
+      return new Response(JSON.stringify(consulta.includes("45") ? G.mex45 : G.mex15));
+    }) as typeof fetch,
+    pausa: async () => undefined,
+  };
+  it("encuentra el km y lo dice como lo verá el perito", async () => {
+    const r = await buscarKmCarretera(
+      "en la carretera federal 15, tramo Toluca–Zitácuaro, kilómetro 30, cerca de Villa Victoria",
+      { municipio: "Villa Victoria", estado: "Estado de México" },
+      red,
+    );
+    expect(r).toMatchObject({
+      encontrado: true,
+      como: "km",
+      seguridad: "media",
+      que: "km 30 de la MEX 15",
+    });
+  });
+  it("no aplica si la narración no nombra un km", async () => {
+    expect(await buscarKmCarretera("en el cruce de Juárez y Morelos", {}, red)).toEqual({
+      encontrado: false,
+      como: "km",
+      aplica: false,
+      explicacion: "La narración no nombra el kilómetro de una carretera.",
+    });
+  });
+  it("sin tramo ni población: no lo encuentra y dice por qué (nunca un punto por omisión)", async () => {
+    const r = await buscarKmCarretera("MEX-15D km 54", {}, red);
+    expect(r).toMatchObject({ encontrado: false, como: "km", aplica: true });
+    expect(!r.encontrado && r.explicacion).toContain("no dice el tramo ni una población cercana");
+  });
+  it("si la red falla, lo dice", async () => {
+    const caida: RedLugar = {
+      fetch: (async () => new Response("", { status: 502 })) as typeof fetch,
+    };
+    const r = await buscarKmCarretera(
+      "carretera federal 15, tramo Toluca–Zitácuaro, km 30",
+      {},
+      caida,
+    );
+    expect(r).toMatchObject({ encontrado: false, aplica: true });
+    expect(!r.encontrado && r.explicacion).toContain("No pude consultar OpenStreetMap");
   });
 });

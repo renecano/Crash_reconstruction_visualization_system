@@ -12,8 +12,9 @@
  * 4. Sin origen ni mojones, solo el punto de la carretera más cercano a la población que se nombra.
  *
  * Siempre con su explicación para el perito y su nivel de seguridad. No toca la escena: lo conecta la
- * interfaz de buscadores.
+ * colocación con la interfaz de René (`buscadores-lugar.ts`).
  */
+import type { BuscarKmCarretera, RedLugar, ZonaCaso } from "../buscadores-lugar";
 
 export interface PuntoBuscado {
   lat: number;
@@ -187,7 +188,7 @@ export function consultaKm(n: KmNarrado, c: LatLon, radioM: number): string {
 }
 
 /** Dónde queda el km que dice el texto; `null` si no nombra uno o no se encuentra la carretera. */
-export async function buscarKmCarretera(texto: string, deps: DepsKm): Promise<PuntoBuscado | null> {
+export async function ubicarKm(texto: string, deps: DepsKm): Promise<PuntoBuscado | null> {
   const n = leerKmCarretera(texto);
   if (!n) return null;
   const origen = n.tramo ? await deps.poblacion(n.tramo[0]) : null;
@@ -267,7 +268,8 @@ export async function buscarKmCarretera(texto: string, deps: DepsKm): Promise<Pu
         const a = aviso(p);
         return {
           ...p,
-          seguridad: "baja",
+          // Media si la población que también dice la narración queda cerca: lo corrobora.
+          seguridad: cerca && !a.lejos ? "media" : "baja",
           metodo: "medido-desde-origen",
           explicacion:
             `km ${n.km} de la ${nombreVia}, medido por la carretera desde ${n.tramo[0]}` +
@@ -295,3 +297,81 @@ export async function buscarKmCarretera(texto: string, deps: DepsKm): Promise<Pu
   }
   return null;
 }
+
+const OVERPASS = "https://overpass-api.de/api/interpreter";
+const NOMINATIM = "https://nominatim.openstreetmap.org/search";
+
+/** Las consultas a OSM por la red inyectada: Overpass por POST y Nominatim con su pausa de 1 s. */
+export function depsDeRed(zona: ZonaCaso, red: RedLugar): DepsKm {
+  let primera = true;
+  return {
+    overpass: async (consulta) => {
+      const r = await red.fetch(OVERPASS, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ data: consulta }).toString(),
+      });
+      if (!r.ok) throw new Error(`Overpass respondió ${r.status}`);
+      return (await r.json()) as RespuestaOverpass;
+    },
+    poblacion: async (nombre) => {
+      if (!primera) await red.pausa?.(1000);
+      primera = false;
+      const q = [nombre, zona.estado].filter(Boolean).join(", ");
+      const r = await red.fetch(
+        `${NOMINATIM}?format=jsonv2&limit=1&countrycodes=mx&q=${encodeURIComponent(q)}`,
+      );
+      if (!r.ok) throw new Error(`Nominatim respondió ${r.status}`);
+      const d = (await r.json()) as { lat: string; lon: string }[];
+      return d[0] ? { lat: Number(d[0].lat), lon: Number(d[0].lon) } : null;
+    },
+  };
+}
+
+/**
+ * El buscador del km con la interfaz de René (`BuscarKmCarretera`): «Croquis encontró: km 30 de la MEX 15
+ * · …». Nunca un punto por omisión: si no lo ubica, dice por qué.
+ */
+export const buscarKmCarretera: BuscarKmCarretera = async (narracion, zona, red) => {
+  const n = leerKmCarretera(narracion);
+  if (!n)
+    return {
+      encontrado: false,
+      como: "km",
+      aplica: false,
+      explicacion: "La narración no nombra el kilómetro de una carretera.",
+    };
+  const via = n.ref ?? `${n.tramo![0]}–${n.tramo![1]}`;
+  let p: PuntoBuscado | null;
+  try {
+    p = await ubicarKm(narracion, depsDeRed(zona, red));
+  } catch (e) {
+    return {
+      encontrado: false,
+      como: "km",
+      aplica: true,
+      explicacion: `No pude consultar OpenStreetMap para el km ${n.km} de la ${via}: ${e instanceof Error ? e.message : String(e)}.`,
+    };
+  }
+  if (!p)
+    return {
+      encontrado: false,
+      como: "km",
+      aplica: true,
+      explicacion:
+        n.tramo || n.cercaDe
+          ? `No encontré la ${via} en OpenStreetMap cerca de ${n.tramo?.[0] ?? n.cercaDe}.`
+          : `No puedo ubicar el km ${n.km} de la ${via}: el mapa no tiene sus postes y la narración no dice el tramo ni una población cercana.`,
+    };
+  return {
+    encontrado: true,
+    punto: { lat: p.lat, lon: p.lon },
+    como: "km",
+    seguridad: p.seguridad,
+    que:
+      p.metodo === "cerca-de-poblacion"
+        ? `la ${via} cerca de ${n.cercaDe}`
+        : `km ${n.km} de la ${via}`,
+    explicacion: p.explicacion,
+  };
+};
