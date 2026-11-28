@@ -1,0 +1,25 @@
+{
+  "fecha": "2026-11-28T01:21:15.288Z",
+  "filas": [
+    {
+      "prueba": "ysi",
+      "segundos_reconstruir": 1.883,
+      "kmh": 60,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "prueba": "danos-entorno-satelite",
+      "segundos_reconstruir": 2.402,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "prueba": "presentar",
+      "segundos_reconstruir": 14.224,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "prueba": "arida-sonora",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002820) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  ]
+}
