@@ -1,0 +1,127 @@
+{
+  "name": "t3_cobertura",
+  "generated_at": "2026-11-27T23:38:07.341Z",
+  "git_commit": "98db06e7",
+  "descripcion": "Cobertura sintética del p10–p90 de la inversión: casos fabricados con velocidad verdadera conocida, medidos con los tres supuestos del impacto fijos (como antes del ADR 0139) y sorteados (como ahora). Un p10–p90 calibrado contiene la verdad cerca del 80 % de las veces.",
+  "limite": "La verdad sale del mismo modelo que la inversión: mide la propagación de la incertidumbre dentro del modelo, no su parecido con un choque real.",
+  "semilla": 20261115,
+  "casos_por_escena": 200,
+  "muestras_de_la_inversion": 32,
+  "ruido": {
+    "posicion_m": 1,
+    "rumbo_deg": 20
+  },
+  "verdad": {
+    "velocidad": "0.6 a 1.4 veces la del relato de la escena",
+    "masa": "±5 %",
+    "friccion": "el rango de la tabla para la superficie",
+    "restitucion": [
+      0,
+      0.3
+    ],
+    "razon_impulso": [
+      0.29,
+      0.49
+    ],
+    "arrastre": [
+      0.3,
+      0.5
+    ]
+  },
+  "esperado_pct": 80,
+  "total": {
+    "supuestos_fijos": {
+      "velocidades": 579,
+      "dentro": 348,
+      "cobertura_pct": 60.1,
+      "ic95_pct": [
+        56.06,
+        64.01
+      ],
+      "ancho_mediano_kmh": 11.38,
+      "error_absoluto_mediano_kmh": 4.78,
+      "verdad_abajo_del_rango": 102,
+      "verdad_arriba_del_rango": 129
+    },
+    "supuestos_sorteados": {
+      "velocidades": 579,
+      "dentro": 404,
+      "cobertura_pct": 69.78,
+      "ic95_pct": [
+        65.91,
+        73.38
+      ],
+      "ancho_mediano_kmh": 13.31,
+      "error_absoluto_mediano_kmh": 4.78,
+      "verdad_abajo_del_rango": 75,
+      "verdad_arriba_del_rango": 100
+    }
+  },
+  "escenas": [
+    {
+      "escena": "alcance",
+      "casos": 200,
+      "sin_integrar": 0,
+      "sin_estimar": 0,
+      "supuestos_fijos": {
+        "velocidades": 187,
+        "dentro": 117,
+        "cobertura_pct": 62.57,
+        "ic95_pct": [
+          55.44,
+          69.18
+        ],
+        "ancho_mediano_kmh": 11.15,
+        "error_absoluto_mediano_kmh": 3.78,
+        "verdad_abajo_del_rango": 38,
+        "verdad_arriba_del_rango": 32
+      },
+      "supuestos_sorteados": {
+        "velocidades": 187,
+        "dentro": 129,
+        "cobertura_pct": 68.98,
+        "ic95_pct": [
+          62.03,
+          75.18
+        ],
+        "ancho_mediano_kmh": 12.94,
+        "error_absoluto_mediano_kmh": 3.78,
+        "verdad_abajo_del_rango": 34,
+        "verdad_arriba_del_rango": 24
+      }
+    },
+    {
+      "escena": "lateral_interseccion",
+      "casos": 200,
+      "sin_integrar": 0,
+      "sin_estimar": 0,
+      "supuestos_fijos": {
+        "velocidades": 392,
+        "dentro": 231,
+        "cobertura_pct": 58.93,
+        "ic95_pct": [
+          53.99,
+          63.69
+        ],
+        "ancho_mediano_kmh": 12.28,
+        "error_absoluto_mediano_kmh": 5.39,
+        "verdad_abajo_del_rango": 64,
+        "verdad_arriba_del_rango": 97
+      },
+      "supuestos_sorteados": {
+        "velocidades": 392,
+        "dentro": 275,
+        "cobertura_pct": 70.15,
+        "ic95_pct": [
+          65.45,
+          74.47
+        ],
+        "ancho_mediano_kmh": 13.74,
+        "error_absoluto_mediano_kmh": 5.39,
+        "verdad_abajo_del_rango": 41,
+        "verdad_arriba_del_rango": 76
+      }
+    }
+  ],
+  "segundos": 1453
+}

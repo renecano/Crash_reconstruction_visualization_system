@@ -245,6 +245,9 @@ export function viasDelCruce(texto: string, municipio?: string): [string, string
       "",
     )
     .replace(/\s*,?\s*(?:\bNo\.?\s*\d|\bN\.\s*\d|#\s*\d).*$/i, "")
+    // La coma que queda antes de la colonia quitada (René, 2026-11-27: «Boulevard Independencia y
+    // Calzada Abastos, colonia Magdalenas» no se leía como cruce y caía a 4.7 km del cruce).
+    .replace(/[\s,;.]+$/, "")
     .trim();
   const puente =
     /^(?:en\s+)?(?:el\s+)?(?:paso\s+a\s+desnivel|puente(?:\s+vehicular)?|distribuidor\s+vial)\s+(?:de\s+(?:la\s+|el\s+)?|del\s+)?(.+?)\s+sobre\s+(?:la\s+|el\s+)?([^,;]+)/i.exec(

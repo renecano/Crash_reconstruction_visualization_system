@@ -678,3 +678,11 @@ describe("varios cruces de las mismas dos calles: el orden y el aviso (René, 20
     expect(r.aviso).toContain("No pude comprobar el cruce de Durango con Orizaba");
   });
 });
+
+describe("la colonia después del cruce no lo esconde (René, 2026-11-27, Torreón)", () => {
+  it("«X y Y, colonia Z» es el cruce de X con Y", () => {
+    expect(
+      viasDelCruce("Boulevard Independencia y Calzada Abastos, colonia Magdalenas", "Torreón"),
+    ).toEqual(["Boulevard Independencia", "Calzada Abastos"]);
+  });
+});

@@ -1994,7 +1994,23 @@ export function finalDeLaNarracion(
 ): FinalNarrado | null {
   const imp = poseDe(e, vehiculo, "impacto");
   if (!imp) return null;
-  const d = descripcion.toLowerCase();
+  // «a 3 m uno del otro», «separados 3 m entre sí» (René, 2026-11-27): con un solo otro vehículo, es
+  // «a 3 m del vehículo B».
+  const otrosVehiculos = e.vehiculos.filter((x) => x.id !== vehiculo);
+  const letraOtro =
+    otrosVehiculos.length === 1 && /^V\d+$/.test(otrosVehiculos[0]!.id)
+      ? String.fromCharCode(64 + Number(otrosVehiculos[0]!.id.slice(1))).toLowerCase()
+      : null;
+  const d = letraOtro
+    ? descripcion
+        .toLowerCase()
+        .replace(
+          new RegExp(
+            String.raw`(?:a\s+)?${NUM}\s*m(?:etros?)?\s+(?:el\s+)?uno\s+del\s+otro|separad[oa]s\s+(?:por\s+)?(?:unos\s+)?${NUM}\s*m(?:etros?)?(?:\s+entre\s+s[ií])?`,
+          ),
+          (_t, a?: string, b?: string) => `a ${a ?? b} m del vehiculo ${letraOtro}`,
+        )
+    : descripcion.toLowerCase();
   const marcha = rumboDeMarcha(e, vehiculo, imp.rumbo);
   // «con el frente hacia el suroeste»: el rumbo con que quedó.
   const f = new RegExp(
@@ -2100,6 +2116,42 @@ export function finalDeLaNarracion(
       rumbo: frente ?? imp.rumbo,
       texto: `${n} m adelante del área de los restos (el primer choque), hacia donde avanzaba`,
     });
+  }
+  // «a 25 m del borde de la carretera», «a 4 m de la orilla del camino, del lado izquierdo» (René,
+  // 2026-11-27: la volcadura narrada a 110 km/h salía en 10 km/h porque el reposo no se ofrecía): desde
+  // la orilla de la calzada, hacia afuera, a la altura de donde chocó. El lado, el narrado; si no lo
+  // dice, la derecha de su marcha (supuesto, lo dice el texto).
+  const borde = new RegExp(
+    String.raw`a\s+(?:unos\s+|aproximadamente\s+)?${NUM}\s*m(?:etros?)?\s+(?:fuera\s+)?del?\s+(?:la\s+)?(?:borde|orilla|limite|l[ií]mite)\s+(?:de\s+la\s+|del\s+)?(?:carretera|cinta\s+asf[aá]ltica|camino|calzada|arroyo|pavimento|asfalto|acotamiento|v[ií]a|carpeta)`,
+  ).exec(d);
+  if (borde) {
+    const n = metros(borde[1]!);
+    const izquierda = /\b(?:lado|costado|margen)\s+izquierd[oa]\b|\ba\s+la\s+izquierda\b/.test(d);
+    const derecha = /\b(?:lado|costado|margen)\s+derech[oa]\b|\ba\s+la\s+derecha\b/.test(d);
+    const s = calles.length ? ajustarACalle(calles, imp.punto) : null;
+    const mitad = s ? s.calle.ancho / 2 : CARRIL_SUPUESTO_M / 2;
+    const eje = s?.punto ?? imp.punto;
+    const lado = izquierda && !derecha ? -90 : 90;
+    return {
+      punto: punto(avanzar(ll(eje), normalizar(marcha + lado), mitad + n)),
+      rumbo: frente ?? imp.rumbo,
+      texto: `${n} m fuera de la orilla de la calzada, a la ${lado < 0 ? "izquierda" : "derecha"} de su marcha${izquierda || derecha ? "" : " (el lado es supuesto: la narración no lo dice)"}, a la altura del choque${s ? ` (la calzada de ${F.metros(s.calle.ancho, 1)})` : " (calzada supuesta de un carril)"}; corrígelo en «Escribir las posiciones en metros»`,
+    };
+  }
+  // «se detuvo 3 metros adelante sobre Nicolás Bravo», «quedó 10 m más adelante»: desde su pose del
+  // choque, hacia donde avanzaba.
+  const masAdelante = new RegExp(
+    String.raw`${NUM}\s*m(?:etros?)?\s+(?:m[aá]s\s+)?adelante(?:\s+sobre\s+(?:la\s+|el\s+)?([^,.;]+))?(?![\s]+del?\b)`,
+  ).exec(d);
+  if (!desde && masAdelante) {
+    const n = metros(masAdelante[1]!);
+    const sobre = masAdelante[2]?.trim();
+    return enElAcotamiento(
+      adelante(
+        n,
+        `${n} m adelante de su posición en el choque${sobre ? `, sobre ${sobre}` : ""}, hacia donde avanzaba`,
+      ),
+    );
   }
   if (desde) {
     const n = metros(desde[1] ?? desde[2] ?? desde[3]!);

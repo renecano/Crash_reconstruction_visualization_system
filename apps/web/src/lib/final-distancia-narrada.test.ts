@@ -145,3 +145,37 @@ describe("«sobre el acotamiento»: un supuesto visible y editable (René, 2026-
     );
   });
 });
+
+describe("posiciones finales narradas que no se ofrecían (René, 2026-11-27, #388)", () => {
+  const a = armada("alcance-deformacion");
+  const ids = a.vehiculos.map((x) => x.id);
+  const v = ids[0]!;
+  const imp = poseDe(a, v, "impacto")!;
+  const m = (p: { lat: number; lon: number }, q: { lat: number; lon: number }) =>
+    Math.hypot(
+      (p.lon - q.lon) * 111320 * Math.cos((p.lat * Math.PI) / 180),
+      (p.lat - q.lat) * 111320,
+    );
+  it("«a 25 m del borde de la carretera»: fuera de la orilla, y dice qué supone", () => {
+    const f = finalDeLaNarracion(a, v, "quedó volcado a 25 metros del borde de la carretera")!;
+    expect(f).not.toBeNull();
+    // Media calzada supuesta (un carril de 3.5 m) más 25 m.
+    expect(m(f.punto, imp.punto)).toBeCloseTo(26.75, 0);
+    expect(f.texto).toMatch(/25 m fuera de la orilla de la calzada/);
+    expect(f.texto).toMatch(/el lado es supuesto/);
+  });
+  it("«3 m adelante sobre Nicolás Bravo»: desde su pose del choque, hacia donde avanzaba", () => {
+    const f = finalDeLaNarracion(a, v, "se detuvo 3 metros adelante sobre Nicolás Bravo")!;
+    expect(f).not.toBeNull();
+    expect(m(f.punto, imp.punto)).toBeCloseTo(3, 0);
+    expect(f.texto).toMatch(/sobre nicol[aá]s bravo/i);
+  });
+  it("«a 3 m uno del otro»: desde donde quedó el otro vehículo", () => {
+    const otro = ids[1]!;
+    const f = finalDeLaNarracion(a, v, "quedaron a 3 metros uno del otro", [
+      { vehiculo: otro, descripcion: "se detuvo 10 metros adelante del punto de contacto" },
+    ]);
+    expect(f).not.toBeNull();
+    expect(f!.texto).toMatch(/de donde quedó el vehículo B/);
+  });
+});

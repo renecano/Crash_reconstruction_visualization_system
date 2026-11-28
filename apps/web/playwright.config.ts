@@ -10,7 +10,9 @@ export default defineConfig({
   // lo cancelaba y no quedaba el reporte con la traza del reintento.
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 1 : 2,
-  reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : "list",
+  // En CI, también una línea por prueba (René, 2026-11-27): si el job llega a su tope y se cancela, el
+  // registro dice cuál se quedó colgada; «github» solo escribe al final.
+  reporter: process.env.CI ? [["github"], ["line"], ["html", { open: "never" }]] : "list",
   use: {
     baseURL: `http://localhost:${PORT}`,
     trace: "on-first-retry",
