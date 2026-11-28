@@ -13,7 +13,7 @@
  *   mueve.
  */
 import type { LugarConsulta, LugarDeps, ResultadoLugar } from "./lugar";
-import { buscarLugar } from "./lugar";
+import { buscarLugar, viasDelCruce } from "./lugar";
 import {
   type ComoSeEncontro,
   type LugarEncontrado,
@@ -61,7 +61,7 @@ function deResultados(
   if (!primero) return null;
   const varios = utiles.length > 1;
   const seguridad: LugarEncontrado["seguridad"] =
-    como === "cruce" && !varios && !/no respondi/i.test(aviso ?? "")
+    como === "cruce" && !varios && !/no respondi|Hay otros \d+ m[aá]s lejos/i.test(aviso ?? "")
       ? "alta"
       : como === "cruce"
         ? "media"
@@ -77,6 +77,18 @@ function deResultados(
       ? { opciones: utiles.map((r) => ({ punto: { lat: r.lat, lon: r.lon }, que: r.nombre })) }
       : {}),
   };
+}
+
+/** El cruce que nombra la narración sin el tipo de vía («cruce de X y Y», «X esquina con Y»). */
+function cruceSinTipo(
+  narracion: string,
+  municipio?: string,
+): { calles: [string, string]; cita: string } | null {
+  const frase = /\b(?:el\s+|la\s+)?(?:crucero|cruce|intersecci[oó]n|esquina)\b[^.;]*/i.exec(
+    narracion,
+  )?.[0];
+  const vs = frase ? viasDelCruce(frase, municipio) : null;
+  return vs ? { calles: vs, cita: frase!.trim() } : null;
 }
 
 /** El mapa no respondió: se dice, sin punto, para que el perito reintente. */
@@ -106,11 +118,13 @@ export async function buscarLugarNarrado(
   const red: RedLugar = { fetch: deps.fetcher, pausa: deps.pausa };
 
   // 1. El cruce narrado.
-  const cruce = cruceNarrado(i.narracion);
+  // También sin el tipo de vía («en el cruce de Lerdo de Tejada y Nicolás Bravo»; René, 2026-11-28):
+  // así el cruce lleva la zona narrada («en el centro de Toluca»).
+  const cruce = cruceNarrado(i.narracion) ?? cruceSinTipo(i.narracion, i.municipio);
   if (cruce) {
     const colonia = zonaNarrada(i.lugar) ?? zonaNarrada(i.narracion);
     const r = await buscarLugar(
-      consulta(`${cruce.calles[0]} y ${cruce.calles[1]}${colonia ? `, ${colonia}` : ""}`),
+      consulta(`cruce de ${cruce.calles[0]} y ${cruce.calles[1]}${colonia ? `, ${colonia}` : ""}`),
       clientKey,
       deps,
     ).catch(() => null);

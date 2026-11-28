@@ -78,8 +78,9 @@ const CASOS: {
     municipio: "Toluca",
     estado: "Estado de México",
     real: { lat: 19.29299, lon: -99.65772 },
-    varios: "primero",
-    aviso: /la narración dice «centro»: el más cercano al centro de Toluca va primero/,
+    // «Centro» y el cruce del centro claramente más cerca que los demás: ese, sin preguntar (René,
+    // 2026-11-28, caso 7 de la demo); el aviso dice que hay otros.
+    aviso: /más cercano al centro de Toluca \(a \d+ m\), como dice la narración\. Hay otros \d+ más lejos/,
   },
   {
     nombre: "toluca-lerdo-nicolas-bravo",
@@ -96,8 +97,9 @@ const CASOS: {
     municipio: "Toluca",
     estado: "Estado de México",
     real: { lat: 19.292076, lon: -99.654422 },
-    varios: "primero",
-    aviso: /la narración dice «centro»: el más cercano al centro de Toluca va primero/,
+    // «Centro» y el cruce del centro claramente más cerca que los demás: ese, sin preguntar (René,
+    // 2026-11-28, caso 7 de la demo); el aviso dice que hay otros.
+    aviso: /más cercano al centro de Toluca \(a \d+ m\), como dice la narración\. Hay otros \d+ más lejos/,
   },
   {
     nombre: "cdmx-eje-central-juarez",
