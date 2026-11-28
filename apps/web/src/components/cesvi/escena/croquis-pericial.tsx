@@ -273,9 +273,14 @@ export function CroquisPericialVista({
             <b>✕ Impacto</b>: el punto de impacto de la reconstrucción.
           </li>
           <li>
-            Línea punteada: el recorrido{color ? ", del azul (lento) al naranja (rápido)" : ""}.
+            {color
+              ? "El recorrido, del azul (lento) al naranja (rápido)."
+              : "El recorrido de cada vehículo: una línea continua de su color, con flechas de hacia dónde iba."}
           </li>
-          <li>La vía con sus bordes y carriles; el norte y la escala, en el dibujo.</li>
+          <li>
+            La vía con sus bordes; los carriles, en gris punteado. El norte, la escala y la leyenda
+            (1 inicio · 2 impacto · 3 reposo y qué letra es cada vehículo), en el dibujo.
+          </li>
           <li>Vehículos: {letras.join(" · ") || "—"}.</li>
           {fondo !== "ninguno" && piso.piso ? (
             <li>
