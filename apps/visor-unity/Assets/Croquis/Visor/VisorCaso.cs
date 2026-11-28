@@ -440,7 +440,8 @@ namespace Croquis.Visor
                         p,
                         Array.Find(r.Vehiculos, v => v.Id == p.VehiculoId),
                         Array.Find(caso.Escena?.Personas ?? new EscenaPersona[0], x => x.Id == p.Id),
-                        tImpacto);
+                        tImpacto,
+                        Array.FindAll(r.Vehiculos, v => v.Id != p.VehiculoId));
                     if (persona.Vuelo != null)
                     {
                         // Si alguno es supuesto, la leyenda lo dice.

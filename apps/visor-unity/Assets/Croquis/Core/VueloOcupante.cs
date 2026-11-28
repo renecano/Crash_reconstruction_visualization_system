@@ -58,12 +58,18 @@ namespace Croquis.Core
         /// <summary>Las vueltas que da rodando (enteras: queda boca abajo como cayó).</summary>
         public int Vueltas { get; }
 
-        private readonly double ux, uy, distancia, dAire, vAire, vz0, vSuelo, rumbo;
+        private readonly double ux, uy, distancia, dAire, vAire, vSuelo, rumbo;
+        private double vz0;
 
         /// <param name="x0">Dónde va el ocupante en el impacto (su centro, metros).</param>
         /// <param name="z0">La altura de su centro sobre la moto.</param>
         /// <param name="vx">La velocidad de la moto en el impacto (m/s).</param>
-        public VueloOcupante(double t0, double x0, double y0, double z0, double vx, double vy, double xFinal, double yFinal, bool supuesta)
+        /// <param name="vMinima">
+        /// Lo más rápido que va, hacia donde vuela, el otro vehículo del choque (m/s): el ocupante sale
+        /// más rápido que él para no quedar dentro de su carrocería (de frente contra un camión, el
+        /// camión sigue avanzando unos metros).
+        /// </param>
+        public VueloOcupante(double t0, double x0, double y0, double z0, double vx, double vy, double xFinal, double yFinal, bool supuesta, double vMinima = 0.0)
         {
             T0 = t0;
             X0 = x0;
@@ -94,7 +100,21 @@ namespace Croquis.Core
             // Lo que recorre en el aire a la rapidez de la moto; si la posición narrada está más cerca,
             // el arco se acorta (más lento) para que el resto alcance a rodar y deslizarse.
             vAire = Math.Min(v * Math.Cos(AnguloSalida), FraccionAireMax * distancia / TAire);
-            dAire = vAire * TAire;
+            if (vMinima > 0.0 && vAire < vMinima + 1.0)
+            {
+                // Más rápido que quien lo empuja; si así el arco se pasa, más bajo (hasta caer de la
+                // altura del asiento) para que aún caiga antes de su posición final.
+                vAire = vMinima + 1.0;
+                var tope = 0.9 * distancia / vAire;
+                if (tope < TAire)
+                {
+                    TAire = Math.Max(Math.Sqrt(2.0 * Z0 / Gravedad), tope);
+                    vz0 = Math.Max(0.0, (0.5 * Gravedad * TAire * TAire - Z0) / TAire);
+                }
+            }
+
+            dAire = Math.Min(vAire * TAire, distancia);
+            vAire = TAire > 0.0 ? dAire / TAire : vAire;
             var dSuelo = distancia - dAire;
             vSuelo = vAire * ConservaAlCaer;
             // Frena parejo: recorre dSuelo y se detiene justo en la posición final.
@@ -107,7 +127,7 @@ namespace Croquis.Core
         /// Arma el vuelo del ocupante de una moto o una bicicleta, o null si no lo es o no hay con qué
         /// (sin trayectoria propia, sin el vehículo o sin instante de impacto).
         /// </summary>
-        public static VueloOcupante Armar(ResultadoPersona p, ResultadoVehiculo vehiculo, EscenaPersona enEscena, double tImpacto)
+        public static VueloOcupante Armar(ResultadoPersona p, ResultadoVehiculo vehiculo, EscenaPersona enEscena, double tImpacto, ResultadoVehiculo[] otros = null)
         {
             if (p == null || vehiculo?.Trayectoria?.T == null || vehiculo.Trayectoria.T.Length < 2)
             {
@@ -134,14 +154,42 @@ namespace Croquis.Core
             var narrada = enEscena?.PosicionFinal;
             if (narrada != null)
             {
-                return new VueloOcupante(tImpacto, antes.X, antes.Y, antes.Z, vx, vy, narrada.X, narrada.Y, false);
+                var vMin = MasRapidoHacia(otros, tImpacto, narrada.X - antes.X, narrada.Y - antes.Y);
+                return new VueloOcupante(tImpacto, antes.X, antes.Y, antes.Z, vx, vy, narrada.X, narrada.Y, false, vMin);
             }
 
             // Sin posición narrada: junto a la moto, hacia donde iba, como supuesto visible.
             var n = tr.T.Length - 1;
             var vn = Math.Sqrt(vx * vx + vy * vy);
             var (ex, ey) = vn > 1e-6 ? (vx / vn, vy / vn) : (Math.Cos(tr.Rumbo[n]), Math.Sin(tr.Rumbo[n]));
-            return new VueloOcupante(tImpacto, antes.X, antes.Y, antes.Z, vx, vy, tr.X[n] + ex * SupuestoJuntoAMotoM, tr.Y[n] + ey * SupuestoJuntoAMotoM, true);
+            var xs = tr.X[n] + ex * SupuestoJuntoAMotoM;
+            var ys = tr.Y[n] + ey * SupuestoJuntoAMotoM;
+            return new VueloOcupante(tImpacto, antes.X, antes.Y, antes.Z, vx, vy, xs, ys, true, MasRapidoHacia(otros, tImpacto, xs - antes.X, ys - antes.Y));
+        }
+
+        /// <summary>Lo más rápido que van los otros vehículos en el impacto hacia (dx, dy) (m/s; 0 si ninguno).</summary>
+        private static double MasRapidoHacia(ResultadoVehiculo[] otros, double t, double dx, double dy)
+        {
+            var d = Math.Sqrt(dx * dx + dy * dy);
+            if (otros == null || d < 1e-6)
+            {
+                return 0.0;
+            }
+
+            var max = 0.0;
+            foreach (var o in otros)
+            {
+                var tr = o?.Trayectoria;
+                if (tr?.T == null || tr.T.Length < 2 || tr.Vx == null || tr.Vy == null)
+                {
+                    continue;
+                }
+
+                Muestreo.Tramo(tr.T, t, out var i, out _);
+                max = Math.Max(max, (tr.Vx[i] * dx + tr.Vy[i] * dy) / d);
+            }
+
+            return max;
         }
 
         /// <summary>Cuánto ha recorrido hacia la posición final en `t` (m), desde el impacto.</summary>

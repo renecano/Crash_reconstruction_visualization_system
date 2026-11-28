@@ -148,6 +148,21 @@ namespace Croquis.Core.Tests
         }
 
         [Fact]
+        public void DeFrenteContraUnCamionSaleMasRapidoQueElCamionYAunAsiTerminaEnLoNarrado()
+        {
+            // Caso 5: la moto a 70 km/h contra un camión a 60 km/h (16.7 m/s) que sigue avanzando; el
+            // motociclista quedó a 12 m. Sale por delante del camión: nunca dentro de su carrocería.
+            var v = new VueloOcupante(0.0, -0.9, 0.0, 1.05, 19.4, 0.0, -12.9, 0.0, false, 16.7);
+            for (var t = 0.02; t <= v.TAire; t += 0.02)
+            {
+                Assert.True(v.Recorrido(t) > 16.7 * t, $"en t={t:0.00} el camión lo alcanza");
+            }
+
+            Assert.Equal(-12.9, v.Pose(v.TFin).X, 6);
+            Assert.True(v.TAire >= Math.Sqrt(2.0 * 1.05 / VueloOcupante.Gravedad) - 1e-9);
+        }
+
+        [Fact]
         public void SaleInclinadoNoDePie()
         {
             var v = Vuelo(Moto());
