@@ -102,16 +102,16 @@ test("@flujo /cesvi: corregir después — el poste golpeado en el recorrido del
   await expect(page.getByTestId("sobre-el-limite")).toHaveCount(0);
 
   // 1. El poste contra el que chocó el Camaro, al recorrido del Camaro (donde se detiene): se toca,
-  // se arrastra y, al soltar, se recalcula. El resultado cambia (René, 2026-11-25). Desde el
-  // 2026-11-28 el poste narrado entra solo al cálculo, donde quedó el Camaro (#411), y llevarlo 25 m
-  // más allá ya no da una cifra: la reconstrucción dice que no cuadra. El aviso del límite de la vía
-  // junto a la cifra lo prueba `hoja-reconstruccion.test.tsx`.
+  // se arrastra y, al soltar, se recalcula. La cifra cambia (René, 2026-11-25). Desde el 2026-11-28
+  // el poste narrado entra solo al cálculo, donde quedó el Camaro (#411): se lleva 6 m más allá (25 m
+  // ya no cuadran). El aviso del límite de la vía junto a la cifra lo prueba
+  // `hoja-reconstruccion.test.tsx`.
   await irAPaso(page, 3);
   await page.getByTestId("cambiar-algo").click();
   await expect(page.getByTestId("panel-corregir")).toBeVisible();
   await page.getByTestId("marca-objeto-2").click();
   await expect(page.getByTestId("seleccion-nombre")).toHaveText(/poste/i);
-  await arrastrarEnMetros(page, "marca-objeto-2", -25.5, 4.5);
+  await arrastrarEnMetros(page, "marca-objeto-2", -6, 1);
   await expect(page.getByTestId("mensaje-exito")).toContainText("Moviste");
   // Mover algo de la escena con la reconstrucción hecha: avisa y ofrece reconstruir de nuevo.
   await expect(page.getByTestId("aviso-escena-cambio")).toBeVisible();
@@ -123,8 +123,8 @@ test("@flujo /cesvi: corregir después — el poste golpeado en el recorrido del
   await irAPaso(page, 4);
   await expect(cifra).toBeVisible();
   const conPosteMovido = await cifra.innerText();
+  expect(conPosteMovido, conPosteMovido).not.toContain("no cuadra");
   expect(conPosteMovido).not.toEqual(antes);
-  await expect(cifra).toContainText("La reconstrucción no cuadra");
 
   // 1b. La prueba contraria: un poste de la paleta, que nadie golpeó, lejos de los dos recorridos, no
   // cambia la cifra. (El poste golpeado no sirve para esto: es un choque declarado y la física lleva
