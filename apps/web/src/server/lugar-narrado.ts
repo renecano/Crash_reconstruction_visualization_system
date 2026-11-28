@@ -79,6 +79,18 @@ function deResultados(
   };
 }
 
+/** El mapa no respondió: se dice, sin punto, para que el perito reintente. */
+function sinRespuesta(
+  como: ComoSeEncontro,
+  explicacion: string,
+  intentos: LugarNarradoOut["intentos"],
+): LugarNarradoOut {
+  return {
+    resultado: { encontrado: false, como, aplica: true, explicacion, sinRespuesta: true },
+    intentos: [...intentos, { como, aplica: true, explicacion }],
+  };
+}
+
 export async function buscarLugarNarrado(
   i: LugarNarradoIn,
   clientKey: string,
@@ -104,12 +116,16 @@ export async function buscarLugarNarrado(
     ).catch(() => null);
     const hallado = r ? deResultados("cruce", r.resultados, r.aviso) : null;
     if (hallado) return { resultado: hallado, intentos };
-    intentos.push({
-      como: "cruce",
-      aplica: true,
-      explicacion:
-        r?.aviso ?? `No pude buscar el cruce de ${cruce.calles[0]} con ${cruce.calles[1]}.`,
-    });
+    // El mapa no respondió (René, 2026-11-28): no se sabe si el cruce existe. No se pasa al siguiente
+    // método: el perito reintenta.
+    if (!r || r.sinRespuesta)
+      return sinRespuesta(
+        "cruce",
+        r?.aviso ??
+          `No pude comprobar el cruce de ${cruce.calles[0]} con ${cruce.calles[1]} (el mapa no respondió): reintenta.`,
+        intentos,
+      );
+    intentos.push({ como: "cruce", aplica: true, explicacion: r.aviso ?? "No encontré el cruce." });
   } else
     intentos.push({
       como: "cruce",
@@ -122,13 +138,15 @@ export async function buscarLugarNarrado(
     ["km", buscadores.km],
     ["referencia", buscadores.referencia],
   ] as const) {
-    const r = await buscar(i.narracion, zona, red).catch((e: unknown): ResultadoBuscador => ({
+    const r = await buscar(i.narracion, zona, red).catch((): ResultadoBuscador => ({
       encontrado: false,
       como,
       aplica: true,
-      explicacion: `No pude buscar: ${String((e as Error)?.message ?? e).slice(0, 120)}`,
+      explicacion: "No pude buscar (el mapa no respondió): reintenta.",
+      sinRespuesta: true,
     }));
     if (r.encontrado) return { resultado: r, intentos };
+    if (r.sinRespuesta) return sinRespuesta(como, r.explicacion, intentos);
     intentos.push({ como, aplica: r.aplica, explicacion: r.explicacion });
   }
 
@@ -139,6 +157,12 @@ export async function buscarLugarNarrado(
     const r = await buscarLugar(consulta(lugar), clientKey, deps).catch(() => null);
     const hallado = r ? deResultados("calle", r.resultados, r.aviso) : null;
     if (hallado) return { resultado: hallado, intentos };
+    if (!r || r.sinRespuesta)
+      return sinRespuesta(
+        "calle",
+        r?.aviso ?? `No pude buscar «${lugar}» (el mapa no respondió): reintenta.`,
+        intentos,
+      );
     intentos.push({
       como: "calle",
       aplica: true,

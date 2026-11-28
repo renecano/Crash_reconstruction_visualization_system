@@ -106,3 +106,51 @@ describe("el lugar narrado, con los buscadores en orden (#388)", () => {
     expect(r.intentos.find((x) => x.como === "calle")).toMatchObject({ aplica: false });
   });
 });
+
+describe("sin respuesta del mapa, no se pasa al siguiente método (René, 2026-11-28)", () => {
+  it("el cruce no se pudo comprobar: se dice y no se prueban el km, la referencia ni la calle", async () => {
+    let llamadas = 0;
+    const contar = (async () => {
+      llamadas++;
+      return { encontrado: false, como: "km", aplica: false, explicacion: "" };
+    }) as unknown as BuscarKmCarretera & BuscarReferencia;
+    const caido: LugarDeps = {
+      ...sinNada,
+      cache: new MemoryLugarCache(),
+      fetcher: (async (input: RequestInfo | URL) => {
+        const u = String(input);
+        if (u.includes("interpreter")) return new Response("", { status: 502 });
+        if (u.includes("q=Toluca"))
+          return new Response(
+            JSON.stringify([
+              {
+                display_name: "Toluca, Estado de México",
+                name: "Toluca",
+                lat: "19.29",
+                lon: "-99.65",
+                boundingbox: ["19.2", "19.4", "-99.8", "-99.5"],
+                address: { city: "Toluca", state: "Estado de México" },
+                addresstype: "city",
+              },
+            ]),
+            { status: 200 },
+          );
+        return new Response("[]", { status: 200 });
+      }) as typeof fetch,
+    };
+    const r = await buscarLugarNarrado(
+      {
+        narracion:
+          "El hecho ocurrió en el cruce de la avenida Uno con la avenida Dos, en Toluca, Estado de México.",
+        municipio: "Toluca",
+        estado: "Estado de México",
+      },
+      "prueba",
+      caido,
+      { km: contar, referencia: contar },
+    );
+    expect(r.resultado).toMatchObject({ encontrado: false, sinRespuesta: true });
+    expect(r.resultado.explicacion).toMatch(/\(el mapa no respondió\): reintenta\.$/);
+    expect(llamadas).toBe(0);
+  });
+});

@@ -18,8 +18,11 @@ import {
   danoEnTexto,
   lecturasDeDano,
   formato as F,
+  conConflictoDeMedida,
   especDeExpediente,
   expedienteConTipicas,
+  hayVelocidadMedida,
+  sinMedidasDelPerito,
   especReconstruida,
   evidenciaEnPalabras,
   impactosEnMapa,
@@ -111,40 +114,57 @@ export function useReconstruccion(
     }
     setRecalculando(true);
     try {
-      let base = especDeExpediente(exp);
       // W5: el relieve real, si el perito lo pidió. Sin malla (sin red), el solver va en plano y
       // lo avisa.
-      const malla = usaRelieve(exp) && base.origen ? await relieveDelLugar(base.origen) : null;
-      let resultado = await reconstruirCompletoEnNavegador(
-        base.spec as unknown as EscenaSpec,
-        undefined,
-        malla,
-      );
-      if (mio !== turno.current) return;
-      let interpretada = interpretarResultado(
-        base,
-        resultado as unknown as Record<string, unknown>,
-        { relieve: malla },
-      );
-      // Ronda 4: lo que la evidencia no fija va con la velocidad típica de la vía (supuesto con su
-      // rango), nunca con el arranque del ajuste. Si todo quedó fijado, no se recalcula.
-      const conTipicas = expedienteConTipicas(exp, interpretada);
-      if (conTipicas) {
-        base = especDeExpediente(conTipicas);
-        resultado = await reconstruirCompletoEnNavegador(
+      const base0 = especDeExpediente(exp);
+      const malla = usaRelieve(exp) && base0.origen ? await relieveDelLugar(base0.origen) : null;
+      /** Una reconstrucción, como `reconstruirExpediente`: lo que la evidencia no fija, con la típica. */
+      const unaVez = async (x: Expediente) => {
+        let base = especDeExpediente(x);
+        let resultado = await reconstruirCompletoEnNavegador(
           base.spec as unknown as EscenaSpec,
           undefined,
           malla,
         );
+        let interpretada = interpretarResultado(
+          base,
+          resultado as unknown as Record<string, unknown>,
+          { relieve: malla },
+        );
+        // Ronda 4: lo que la evidencia no fija va con la velocidad típica de la vía (supuesto con su
+        // rango), nunca con el arranque del ajuste. Si todo quedó fijado, no se recalcula.
+        const conTipicas = expedienteConTipicas(x, interpretada);
+        if (conTipicas) {
+          base = especDeExpediente(conTipicas);
+          resultado = await reconstruirCompletoEnNavegador(
+            base.spec as unknown as EscenaSpec,
+            undefined,
+            malla,
+          );
+          interpretada = interpretarResultado(
+            base,
+            resultado as unknown as Record<string, unknown>,
+            { relieve: malla },
+          );
+        }
+        return { base, interpretada, json: resultado as unknown as Record<string, unknown> };
+      };
+      let una = await unaVez(exp);
+      if (mio !== turno.current) return;
+      // La velocidad medida que no cabe con la evidencia (René, 2026-11-28): la física sin ella, con
+      // el conflicto a la vista; el perito decide cuál usa en el dictamen.
+      if (una.interpretada.noCuadra && hayVelocidadMedida(exp)) {
+        const fisica = await unaVez(sinMedidasDelPerito(exp));
         if (mio !== turno.current) return;
-        interpretada = interpretarResultado(base, resultado as unknown as Record<string, unknown>, {
-          relieve: malla,
-        });
+        if (!fisica.interpretada.noCuadra)
+          una = {
+            ...fisica,
+            interpretada: conConflictoDeMedida(exp, una.interpretada, fisica.interpretada),
+          };
       }
-      const json = resultado as unknown as Record<string, unknown>;
-      setR({ ...interpretada, relieve: malla });
+      setR({ ...una.interpretada, relieve: malla });
       setDe(exp);
-      setImpactos(impactosEnMapa(base, json));
+      setImpactos(impactosEnMapa(una.base, una.json));
       setEstado(null);
     } catch (e) {
       if (mio === turno.current)
