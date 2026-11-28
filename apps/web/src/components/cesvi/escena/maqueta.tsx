@@ -725,6 +725,7 @@ export function EscenaMaqueta({
             <g
               transform={colocar(pa, v)}
               filter="url(#mq-sombra)"
+              data-vehiculo-maqueta={v.id}
               data-tip={tips[v.id]}
               tabIndex={tips[v.id] ? 0 : undefined}
             >
