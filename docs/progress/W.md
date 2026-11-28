@@ -1688,3 +1688,14 @@ Narración de prueba en la carretera estatal 100 (SON 100), Hermosillo–Bahía 
 **Pendiente (después de la demo; René, 2026-11-27):** ordenar los cruces por colonia donde OSM no tiene colonias, con el catálogo de colonias por código postal de SEPOMEX o con el Marco Geoestadístico del INEGI. Ver «Endurecimiento pendiente» en `docs/PROGRESS.md`.
 
 **Siguiente paso concreto:** publicar #369 (ya en esta rama), subir el build `visor-web-9b485d0574678674` (puente 1.5.0) a Blob, ponerlo en el manifiesto y fijar la t12 con esta rama. La t12 confirma en el navegador la carambola 24 (20–32), la única cifra que mueve esta rama en Node (por el acotamiento).
+
+- **2026-11-28 · El 2D limpio en AXA, los cinco ejemplos y los casos nuevos (Alberto, `fix/w-2d-croquis-limpio`).** El quiebre de la orilla en AXA no lo introdujo #384: sale igual antes de ese cambio, en cuanto el caso trae las calles de OSM. Ahí la MEX-15D llega en dos tramos con un ligero ángulo y anchos distintos. Cambios:
+  - los tramos continuos de una calle se unen en una sola, con un solo ancho, recta si cabe en 1.5 m y con curva suave si curva;
+  - las rayas de carril, finas y grises, no van bajo un recorrido;
+  - cada recorrido, una línea continua de su color con flechas;
+  - en el impacto, cada vehículo con su contorno y su color semitransparente, sin flechas dentro de otro vehículo y con una flecha por vehículo;
+  - las líneas de etiqueta no se cruzan ni pasan por un vehículo ajeno;
+  - la leyenda «1 inicio · 2 impacto · 3 reposo» con la letra de cada vehículo;
+  - el norte, arriba a la izquierda (lejos del zoom), y la escala con margen.
+
+  La prueba visual revisa todo eso en AXA (con y sin calles de OSM), los cinco ejemplos y los casos nuevos. Capturas lado a lado en `docs/cesvi/ronda-4/evidencia/2d-limpio/`; las de AXA, solo en local.
