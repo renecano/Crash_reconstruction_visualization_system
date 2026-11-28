@@ -13,6 +13,7 @@
  * interfaz de buscadores.
  */
 import { consultarOverpass } from "./overpass";
+import { patronDeCalle } from "../../server/cruces";
 import type { BuscarReferencia, RedLugar, ZonaCaso } from "../buscadores-lugar";
 import { ATRIBUCION_OSM, geocodificar } from "./geocodificar";
 import { coincideCalle } from "./normalizar-calle";
@@ -27,6 +28,11 @@ export interface ReferenciaNarrada {
   nombre: string;
   /** La calle donde fue el hecho, si la narración la nombra. */
   calle: string | null;
+  /**
+   * La narración dice «colonia» (René, 2026-11-28: «a la altura de la colonia Ciprés» tomaba una calle
+   * Ciprés a más de 700 m): solo vale una colonia o un barrio del mapa, no una calle con ese nombre.
+   */
+  colonia?: boolean;
 }
 
 export interface PuntoReferido {
@@ -116,7 +122,8 @@ export function leerReferencia(texto: string): ReferenciaNarrada | null {
       .join(" ")
       .replace(/[.,;:]+$/, "")
       .replace(/\s+del?\s+(?:metro|metrob[uú]s|tren\s+ligero)$/i, "");
-    return { tipo, nombre: limpio, calle };
+    const colonia = tipo === "lugar" && /\bcolonia\b/i.test(m![0]);
+    return { tipo, nombre: limpio, calle, ...(colonia ? { colonia: true } : {}) };
   }
   return null;
 }
@@ -144,14 +151,23 @@ const CLASES: Record<TipoReferencia, (e: Encontrado) => boolean> = {
   comercio: (e) => (e.category === "shop" && e.type === "mall") || e.category === "landuse",
 };
 
+/** Una colonia, un barrio o un fraccionamiento del mapa. */
+const COLONIA = (e: Encontrado) => ["place", "boundary"].includes(e.category);
+
 /** La búsqueda de la referencia en el buscador de lugares. */
 export function textoDeBusqueda(r: ReferenciaNarrada, zona: string): string {
   return `${r.nombre}, ${zona}`;
 }
 
-/** La consulta de las calles con nombre alrededor de la referencia. */
-export function consultaCalles(p: LatLon): string {
-  return `[out:json][timeout:30];way(around:700,${p.lat.toFixed(6)},${p.lon.toFixed(6)})["highway"]["name"];out tags geom;`;
+/**
+ * La consulta de las calles alrededor de la referencia. Con la calle narrada, solo esa, por su nombre
+ * (René, 2026-11-28: todas las calles con nombre a 700 m, con su geometría, eran hasta 135 KB por
+ * candidato y desde Vercel se agotaba el tiempo).
+ */
+export function consultaCalles(p: LatLon, calle?: string | null): string {
+  const patron = calle ? patronDeCalle(calle) : null;
+  const nombre = patron ? `["name"~"${patron}",i]` : `["name"]`;
+  return `[out:json][timeout:30];way(around:700,${p.lat.toFixed(6)},${p.lon.toFixed(6)})["highway"]${nombre};out tags geom;`;
 }
 
 function metros(a: LatLon, b: LatLon): number {
@@ -206,7 +222,10 @@ export async function ubicarReferencia(
     e,
     p: { lat: Number(e.lat), lon: Number(e.lon) },
   }));
-  const delTipo = todos.filter((x) => CLASES[r.tipo](x.e));
+  // «la colonia Ciprés»: una colonia o un barrio; si el mapa no la tiene, no se toma una calle
+  // Ciprés: no se encontró.
+  const delTipo = todos.filter((x) => (r.colonia ? COLONIA(x.e) : CLASES[r.tipo](x.e)));
+  if (r.colonia && !delTipo.length) return null;
   const usar = delTipo.length ? delTipo : todos;
   // Los candidatos distintos: los que están a más de 300 m uno de otro (una estación trae andenes y
   // accesos; la Diana tiene dos esculturas en el mapa).
@@ -236,7 +255,7 @@ export async function ubicarReferencia(
       seguridad: "alta" | "media" | "baja";
     } | null = null;
     for (const c of candidatos.slice(0, 3)) {
-      const vias = (await deps.overpass(consultaCalles(c.p))).elements.filter(
+      const vias = (await deps.overpass(consultaCalles(c.p, r.calle))).elements.filter(
         (e) => e.type === "way" && e.geometry?.length && e.tags && coincideCalle(r.calle!, e.tags),
       );
       for (const v of vias) {
