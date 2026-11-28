@@ -1,0 +1,51 @@
+{
+  "name": "axa_hipotesis",
+  "generated_at": "2026-11-28T15:09:43.259Z",
+  "git_commit": "04d627ff",
+  "descripcion": "AXA A2010930 con la semilla y las muestras de producción: cada hipótesis que muestra la reconstrucción y la velocidad de V2 y V1 al elegirla.",
+  "visible": {
+    "V2": {
+      "mejor": 56.87,
+      "p10": 54.54,
+      "p90": 79.15
+    },
+    "V1": {
+      "mejor": 14.98,
+      "p10": 0.36,
+      "p90": 21.53
+    },
+    "elegida": null
+  },
+  "hipotesis": [
+    {
+      "clave": "dano",
+      "titulo": "La más cercana al daño medido",
+      "alcanza_dano": true,
+      "V2": {
+        "mejor": 56.87,
+        "p10": 54.54,
+        "p90": 79.15
+      },
+      "V1": {
+        "mejor": 14.98,
+        "p10": 0.36,
+        "p90": 21.53
+      }
+    },
+    {
+      "clave": "reposo",
+      "titulo": "Cuadra con el reposo supuesto",
+      "alcanza_dano": false,
+      "V2": {
+        "mejor": 35.76,
+        "p10": 29.33,
+        "p90": 63.95
+      },
+      "V1": {
+        "mejor": 29.19,
+        "p10": 20.74,
+        "p90": 34.13
+      }
+    }
+  ]
+}
