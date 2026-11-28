@@ -348,7 +348,13 @@ async function pedirOverpass(
   | null
 > {
   const body = new URLSearchParams({ data: consulta });
-  for (const { url, esperaS } of OVERPASS_INSTANCES) {
+  // Dos vueltas por las instancias, con una pausa entre ellas: Overpass pide esperar y reintentar
+  // cuando está saturado (502 «at capacity», René 2026-11-27).
+  const intentos = [...OVERPASS_INSTANCES, ...OVERPASS_INSTANCES];
+  for (let k = 0; k < intentos.length; k++) {
+    const { url, esperaS } = intentos[k]!;
+    if (k === OVERPASS_INSTANCES.length && fin - Date.now() > 4000)
+      await new Promise((r) => setTimeout(r, 2000));
     const queda = fin - Date.now();
     if (queda <= 1000) break;
     try {
