@@ -50,4 +50,11 @@ describe("las cámaras del 3D (René, 2026-11-16, A6)", () => {
     // Sin ids internos en los nombres.
     for (const x of c) expect(x.nombre).not.toMatch(/veh-|per-|V\d/);
   });
+
+  it("con un build que la entiende, la «Automática» del video también en el 3D, primero", () => {
+    expect(camarasDelCaso([], []).some((x) => x.modo === "automatica")).toBe(false);
+    const c = camarasDelCaso([], [], true);
+    expect(c[0]).toMatchObject({ modo: "automatica", grupo: "general" });
+    expect(c[0]!.nombre).toMatch(/^Automática/);
+  });
 });

@@ -25,7 +25,7 @@ import type { CanalTiempo } from "@/lib/visor-unity/canal";
 import { aplicarObjetoEditado, aplicarPuntoMarcado } from "@/lib/visor-unity/edicion";
 import { nombreDelPaquete } from "@/lib/visor-unity/paquete";
 import { EnRanura, useMarco } from "./marco-vista";
-import { conPisoYFantasma } from "@croquis/scene-schema";
+import { conCamaraAutomatica, conPisoYFantasma } from "@croquis/scene-schema";
 import { ATRIBUCION_MAPA } from "@/lib/visor-unity/piso";
 import { MAPA_REAL_APAGADO, PanelMapaReal, usePisoMapaReal } from "./mapa-real";
 import { VisorUnity, type ApiVisorUnity, type VersionUnity } from "./visor-unity";
@@ -90,6 +90,7 @@ export function VisorCasoUnity({
             paisajeDelClima(r.origen[1], r.origen[0]),
     [r.origen, objetos],
   );
+  const [api, setApi] = useState<ApiVisorUnity | null>(null);
   // Todas las cámaras del caso (A6): generales, por vehículo y por persona, con el nombre del panel.
   const camaras = useMemo(() => {
     const res = r.resultado as unknown as {
@@ -111,8 +112,9 @@ export function VisorCasoUnity({
         };
       }),
       (res.personas ?? []).map((p) => ({ id: p.id, rol: p.rol ?? "" })),
+      conCamaraAutomatica(api?.puente),
     );
-  }, [r, vehiculos, expediente]);
+  }, [r, vehiculos, expediente, api?.puente]);
   const camara = useMemo(
     () =>
       presentar
@@ -136,7 +138,6 @@ export function VisorCasoUnity({
   const [herramienta, setHerramienta] = useState<HerramientaEdicion>("mover");
   const [vehiculo, setVehiculo] = useState<string | null>(vehiculos[0]?.id ?? null);
   const [aviso, setAviso] = useState<string | null>(null);
-  const [api, setApi] = useState<ApiVisorUnity | null>(null);
   // Ronda 4, punto 9: el modo «mapa real» (solo con un build que lo entiende, puente 1.3.0).
   const [mapaReal, setMapaReal] = useState(MAPA_REAL_APAGADO);
   const conMapaReal = conPisoYFantasma(api?.puente) && r.origen !== null && !presentar;

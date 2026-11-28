@@ -98,8 +98,21 @@ const NOMBRE_ROL: Record<string, string> = {
 export function camarasDelCaso(
   vehiculos: readonly VehiculoParaCamaras[],
   personas: readonly PersonaParaCamaras[] = [],
+  /** Con un build que la entiende (puente 1.5.0): la «Automática» del video, también en el 3D. */
+  conAutomatica = false,
 ): CamaraDelCaso[] {
   const generales: CamaraDelCaso[] = [
+    // René, 2026-11-28 (ensayo de la demo): la que lleva el video, también para verla en el 3D.
+    ...(conAutomatica
+      ? [
+          {
+            modo: "automatica",
+            nombre: "Automática: la llegada, el impacto y el final",
+            grupo: "general",
+            grupoNombre: "Generales",
+          } as CamaraDelCaso,
+        ]
+      : []),
     {
       modo: "orbita",
       nombre: "Alrededor de la escena (se puede girar)",
