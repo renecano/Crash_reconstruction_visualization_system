@@ -15,8 +15,12 @@
  * colocación con la interfaz de René (`buscadores-lugar.ts`).
  */
 import { consultarOverpass } from "./overpass";
+import { leerCarretera, NOMBRE } from "./carretera-narrada";
 import type { BuscarKmCarretera, RedLugar, ZonaCaso } from "../buscadores-lugar";
 import { ATRIBUCION_OSM, geocodificar } from "./geocodificar";
+
+/** La carretera narrada, sin km (vive en `carretera-narrada`, sin dependencias del servidor). */
+export { leerCarretera };
 
 export interface PuntoBuscado {
   lat: number;
@@ -63,9 +67,6 @@ export interface DepsKm {
   poblacion: (nombre: string) => Promise<LatLon | null>;
 }
 
-const NOMBRE =
-  "[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñ.]*(?:\\s+(?:de\\s+|del\\s+|la\\s+)?[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñ.]*){0,3}";
-
 /** Lo que dice el texto del kilómetro; `null` si no nombra un km de una carretera. */
 export function leerKmCarretera(texto: string): KmNarrado | null {
   const k = /\b(?:km\.?|kil[oó]metro)\s*(\d{1,4}(?:[.,]\d+)?)(?:\s*\+\s*(\d{1,3}))?/i.exec(texto);
@@ -75,27 +76,6 @@ export function leerKmCarretera(texto: string): KmNarrado | null {
   if (!v) return null;
   const c = new RegExp(`\\bcerca\\s+de\\s+(${NOMBRE})`).exec(texto);
   return { ...v, km, cercaDe: c ? c[1]!.trim() : null };
-}
-
-/**
- * La carretera que nombra el texto, sin kilómetro: su número («carretera federal 134», «MEX-15D») y su
- * tramo («Toluca–Temascaltepec»). `null` si no nombra una (René, 2026-11-28: «a la altura de la
- * localidad de X» sobre una carretera es una referencia, no un km).
- */
-export function leerCarretera(
-  texto: string,
-): { ref: string | null; tramo: [string, string] | null } | null {
-  const r =
-    /\bMEX\s*[-–]?\s*(\d{1,3})\s*([Dd])?\b/.exec(texto) ??
-    /\b(?:carretera|autopista)(?:\s+federal)?(?:\s+(?:n[uú]mero|no\.))?\s+(\d{1,3})\s*([Dd])?\b/i.exec(
-      texto,
-    );
-  const ref = r ? `MEX ${r[1]}${r[2] ? "D" : ""}` : null;
-  const t = new RegExp(`(${NOMBRE})\\s*[–—-]\\s*(${NOMBRE})`).exec(texto);
-  const tramo: [string, string] | null =
-    t && !/^MEX$/i.test(t[1]!) ? [t[1]!.trim(), t[2]!.trim()] : null;
-  if (!ref && !tramo) return null;
-  return { ref, tramo };
 }
 
 const R = 6_371_000;
