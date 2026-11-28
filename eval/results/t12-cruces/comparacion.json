@@ -1,0 +1,272 @@
+{
+  "tanda": "t12-cruces",
+  "commit": "d3f9c53dc38f90bed09c16ac7194b4c88c73fa8e",
+  "fecha": "2026-11-28T01:58:03.195Z",
+  "tolerancia_kmh": 1,
+  "ejemplos": [
+    {
+      "ejemplo": "crucero-noche",
+      "cifra": "ejemplos.crucero",
+      "navegador": "20 (1–27)",
+      "indice": "20 km/h (1–27)",
+      "tabla": "20 (1–27)",
+      "contra_indice": {
+        "estado": "igual",
+        "diferencias": []
+      },
+      "contra_tabla": {
+        "estado": "igual",
+        "diferencias": []
+      },
+      "coincide": true
+    },
+    {
+      "ejemplo": "alcance-deformacion",
+      "cifra": "ejemplos.alcance",
+      "navegador": "54 (44–54)",
+      "indice": "54 km/h (44–54)",
+      "tabla": "53 (44–53)",
+      "contra_indice": {
+        "estado": "igual",
+        "diferencias": []
+      },
+      "contra_tabla": {
+        "estado": "precisión de los toques",
+        "diferencias": [
+          {
+            "que": "cifra",
+            "km_h": 1,
+            "porcentaje": "+1.9 %"
+          },
+          {
+            "que": "p90",
+            "km_h": 1,
+            "porcentaje": "+1.9 %"
+          }
+        ]
+      },
+      "coincide": true
+    },
+    {
+      "ejemplo": "carambola-lluvia",
+      "cifra": "ejemplos.carambola",
+      "navegador": "25 (20–32)",
+      "indice": "25 km/h (20–32)",
+      "tabla": "25 (20–32)",
+      "contra_indice": {
+        "estado": "igual",
+        "diferencias": []
+      },
+      "contra_tabla": {
+        "estado": "igual",
+        "diferencias": []
+      },
+      "coincide": true
+    },
+    {
+      "ejemplo": "reversa-pendiente",
+      "cifra": "ejemplos.reversa",
+      "navegador": "20 (17–26)",
+      "indice": "20 km/h (17–26)",
+      "tabla": "20 (17–26)",
+      "contra_indice": {
+        "estado": "igual",
+        "diferencias": []
+      },
+      "contra_tabla": {
+        "estado": "igual",
+        "diferencias": []
+      },
+      "coincide": true
+    },
+    {
+      "ejemplo": "poste-terraceria",
+      "cifra": "ejemplos.poste",
+      "navegador": "50 (47–57)",
+      "indice": "50 km/h (47–57)",
+      "tabla": "50 (46–59)",
+      "contra_indice": {
+        "estado": "igual",
+        "diferencias": []
+      },
+      "contra_tabla": {
+        "estado": "distinta",
+        "diferencias": [
+          {
+            "que": "p10",
+            "km_h": 1,
+            "porcentaje": "+2.2 %"
+          },
+          {
+            "que": "p90",
+            "km_h": -2,
+            "porcentaje": "-3.4 %"
+          }
+        ]
+      },
+      "coincide": true
+    }
+  ],
+  "axa": {
+    "indice": "57 km/h (55–79)",
+    "navegador": "57 (55–79)",
+    "estado": "igual",
+    "diferencias": []
+  },
+  "tres": [
+    {
+      "clave": "rene-arbol-curva",
+      "cifra": "80"
+    },
+    {
+      "clave": "rene-peaton-vuelta",
+      "cifra": "19"
+    },
+    {
+      "clave": "rene-carambola-semaforo",
+      "cifra": "50"
+    }
+  ],
+  "capturas": {
+    "pruebas": [
+      "ysi",
+      "danos-entorno-satelite",
+      "presentar",
+      "arida-sonora"
+    ],
+    "fotos": 10
+  },
+  "arranque": [],
+  "otras": [
+    {
+      "cifra": "carambolas.prueba",
+      "publicada": "22 de 31",
+      "medida": "22 de 31",
+      "cambia": false
+    },
+    {
+      "cifra": "carambolas.desarrollo",
+      "publicada": "42 de 55",
+      "medida": "42 de 55",
+      "cambia": false
+    },
+    {
+      "cifra": "cobertura.rango",
+      "publicada": "410 de 578",
+      "medida": "410 de 578",
+      "cambia": false
+    }
+  ],
+  "gpu": [
+    {
+      "paso": "ejemplos",
+      "dibujo_en": "NVIDIA GeForce RTX 4070 Laptop GPU",
+      "tarjetas": [
+        {
+          "tarjeta": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "luid": "0x00000000_0x00015c40",
+          "uso_3d_medio": 3.5,
+          "uso_3d_maximo": 8.8
+        },
+        {
+          "tarjeta": "Intel(R) UHD Graphics",
+          "luid": "0x00000000_0x00015839",
+          "uso_3d_medio": 0,
+          "uso_3d_maximo": 0
+        }
+      ]
+    },
+    {
+      "paso": "tres-narraciones",
+      "dibujo_en": "NVIDIA GeForce RTX 4070 Laptop GPU",
+      "tarjetas": [
+        {
+          "tarjeta": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "luid": "0x00000000_0x00015c40",
+          "uso_3d_medio": 5.9,
+          "uso_3d_maximo": 19.9
+        },
+        {
+          "tarjeta": "Intel(R) UHD Graphics",
+          "luid": "0x00000000_0x00015839",
+          "uso_3d_medio": 0.5,
+          "uso_3d_maximo": 12.3
+        }
+      ]
+    },
+    {
+      "paso": "tollocan",
+      "dibujo_en": "NVIDIA GeForce RTX 4070 Laptop GPU",
+      "tarjetas": [
+        {
+          "tarjeta": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "luid": "0x00000000_0x00015c40",
+          "uso_3d_medio": 4.6,
+          "uso_3d_maximo": 21.9
+        },
+        {
+          "tarjeta": "Intel(R) UHD Graphics",
+          "luid": "0x00000000_0x00015839",
+          "uso_3d_medio": 0,
+          "uso_3d_maximo": 0
+        }
+      ]
+    },
+    {
+      "paso": "final-unity",
+      "dibujo_en": "NVIDIA GeForce RTX 4070 Laptop GPU",
+      "tarjetas": [
+        {
+          "tarjeta": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "luid": "0x00000000_0x00015c40",
+          "uso_3d_medio": 6.4,
+          "uso_3d_maximo": 22.1
+        },
+        {
+          "tarjeta": "Intel(R) UHD Graphics",
+          "luid": "0x00000000_0x00015839",
+          "uso_3d_medio": 0,
+          "uso_3d_maximo": 0
+        }
+      ]
+    },
+    {
+      "paso": "video-integrada",
+      "dibujo_en": "Intel(R) UHD Graphics",
+      "tarjetas": [
+        {
+          "tarjeta": "Intel(R) UHD Graphics",
+          "luid": "0x00000000_0x00015839",
+          "uso_3d_medio": 51.9,
+          "uso_3d_maximo": 94.8
+        },
+        {
+          "tarjeta": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "luid": "0x00000000_0x00015c40",
+          "uso_3d_medio": 0,
+          "uso_3d_maximo": 0.1
+        }
+      ]
+    },
+    {
+      "paso": "ensayo",
+      "dibujo_en": "Intel(R) UHD Graphics",
+      "tarjetas": [
+        {
+          "tarjeta": "Intel(R) UHD Graphics",
+          "luid": "0x00000000_0x00015839",
+          "uso_3d_medio": 8,
+          "uso_3d_maximo": 15.9
+        },
+        {
+          "tarjeta": "NVIDIA GeForce RTX 4070 Laptop GPU",
+          "luid": "0x00000000_0x00015c40",
+          "uso_3d_medio": 4.2,
+          "uso_3d_maximo": 23.9
+        }
+      ]
+    }
+  ],
+  "pendientes": [],
+  "coincide": true
+}

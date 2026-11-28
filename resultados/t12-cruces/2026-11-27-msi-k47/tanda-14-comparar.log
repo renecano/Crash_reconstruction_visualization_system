@@ -1,0 +1,26 @@
+# Paso: comparar
+# Comando: node eval/tanda_comparar.mjs --tanda t12-cruces
+# Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
+# Inicio: 2026-11-27 19:58:03
+
+✓ crucero-noche: navegador 20 (1–27) · índice 20 km/h (1–27) (igual) · tabla 20 (1–27) (igual)
+✓ alcance-deformacion: navegador 54 (44–54) · índice 54 km/h (44–54) (igual) · tabla 53 (44–53) (precisión de los toques)
+✓ carambola-lluvia: navegador 25 (20–32) · índice 25 km/h (20–32) (igual) · tabla 25 (20–32) (igual)
+✓ reversa-pendiente: navegador 20 (17–26) · índice 20 km/h (17–26) (igual) · tabla 20 (17–26) (igual)
+✓ poste-terraceria: navegador 50 (47–57) · índice 50 km/h (47–57) (igual) · tabla 50 (46–59) (distinta)
+✓ AXA: 57 (55–79) · índice 57 km/h (55–79)
+  rene-arbol-curva: 80
+  rene-peaton-vuelta: 19
+  rene-carambola-semaforo: 50
+✓ carambolas.prueba: 22 de 31 (publicada 22 de 31)
+✓ carambolas.desarrollo: 42 de 55 (publicada 42 de 55)
+✓ cobertura.rango: 410 de 578 (publicada 410 de 578)
+  GPU en ejemplos: NVIDIA GeForce RTX 4070 Laptop GPU
+  GPU en tres-narraciones: NVIDIA GeForce RTX 4070 Laptop GPU
+  GPU en tollocan: NVIDIA GeForce RTX 4070 Laptop GPU
+  GPU en final-unity: NVIDIA GeForce RTX 4070 Laptop GPU
+  GPU en video-integrada: Intel(R) UHD Graphics
+  GPU en ensayo: Intel(R) UHD Graphics
+Todo coincide con lo publicado.
+
+# Fin: 2026-11-27 19:58:03 · ok · 0 min
